@@ -571,242 +571,333 @@ For example, the ``stopwatch.h`` file could look like:
 
 .. code::
 
-   /*
-    *  stopwatch.h
-    *
-    *  This file is part of NEST.
-    *
-    *  Copyright (C) 2004 The NEST Initiative
-    *
-    *  NEST is free software: you can redistribute it and/or modify
-    *  it under the terms of the GNU General Public License as published by
-    *  the Free Software Foundation, either version 2 of the License, or
-    *  (at your option) any later version.
-    *
-    *  NEST is distributed in the hope that it will be useful,
-    *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-    *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    *  GNU General Public License for more details.
-    *
-    *  You should have received a copy of the GNU General Public License
-    *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-    *
-    */
+    /*
+     *  stopwatch.h
+     *
+     *  This file is part of NEST.
+     *
+     *  Copyright (C) 2004 The NEST Initiative
+     *
+     *  NEST is free software: you can redistribute it and/or modify
+     *  it under the terms of the GNU General Public License as published by
+     *  the Free Software Foundation, either version 2 of the License, or
+     *  (at your option) any later version.
+     *
+     *  NEST is distributed in the hope that it will be useful,
+     *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+     *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     *  GNU General Public License for more details.
+     *
+     *  You should have received a copy of the GNU General Public License
+     *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+     *
+     */
 
-   #ifndef STOPWATCH_H
-   #define STOPWATCH_H
+    #ifndef STOPWATCH_H
+    #define STOPWATCH_H
 
-   #include <sys/time.h>
+    // C includes:
+    #include <sys/time.h>
 
-   #include <iostream>
-   #include <cassert>
+    // C++ includes:
+    #include <cassert>
+    #include <iostream>
 
-   namespace nest
-   {
-   class Stopwatch
-   {
-   public:
-     typedef size_t timestamp_t;
-     typedef size_t timeunit_t;
+    namespace nest
+    {
 
-     enum
-     {
-       MICROSEC = ( timeunit_t ) 1,
-       MILLISEC = MICROSEC * 1000,
-       SECONDS = MILLISEC * 1000,
-       MINUTES = SECONDS * 60,
-       HOURS = MINUTES * 60,
-       DAYS = HOURS * 24
-     };
+    /***********************************************************************
+     * Stopwatch                                                           *
+     *   Accumulates time between start and stop, and provides             *
+     *   the elapsed time with different time units.                       *
+     *                                                                     *
+     *   Partly inspired by com.google.common.base.Stopwatch.java          *
+     *   Not thread-safe: - Do not share stopwatches among threads.        *
+     *                    - Let each thread have its own stopwatch.        *
+     *                                                                     *
+     *   Usage example:                                                    *
+     *     Stopwatch x;                                                    *
+     *     x.start();                                                      *
+     *     // ... do computations for 15.34 sec                            *
+     *     x.stop(); // only pauses stopwatch                              *
+     *     x.print("Time needed "); // > Time needed 15.34 sec.            *
+     *     x.start(); // resumes stopwatch                                 *
+     *     // ... next computations for 11.22 sec                          *
+     *     x.stop();                                                       *
+     *     x.print("Time needed "); // > Time needed 26,56 sec.            *
+     *     x.reset(); // reset to default values                           *
+     *     x.start(); // starts the stopwatch from 0                       *
+     *     // ... computation 5.7 sec                                      *
+     *     x.print("Time "); // > Time 5.7 sec.                            *
+     *     // ^ intermediate timing without stopping the stopwatch         *
+     *     // ... more computations 1.7643 min                             *
+     *     x.stop();                                                       *
+     *     x.print("Time needed ", Stopwatch::MINUTES, std::cerr);         *
+     *     // > Time needed 1,8593 min. (on cerr)                          *
+     *     // other units and output streams possible                      *
+     ***********************************************************************/
+    class Stopwatch
+    {
+    public:
+      typedef size_t timestamp_t;
+      typedef size_t timeunit_t;
 
-     Stopwatch();
+      enum
+      {
+        MICROSEC = ( timeunit_t ) 1,
+        MILLISEC = MICROSEC * 1000,
+        SECONDS = MILLISEC * 1000,
+        MINUTES = SECONDS * 60,
+        HOURS = MINUTES * 60,
+        DAYS = HOURS * 24
+      };
 
-     void start();
+      static bool correct_timeunit( timeunit_t t );
 
-     void stop();
+      /**
+       * Creates a stopwatch that is not running.
+       */
+      Stopwatch()
+      {
+        reset();
+      }
 
-     bool isRunning() const;
+      /**
+       * Starts or resumes the stopwatch, if it is not running already.
+       */
+      void start();
 
-     double elapsed( timeunit_t timeunit = SECONDS ) const;
+      /**
+       * Stops the stopwatch, if it is not stopped already.
+       */
+      void stop();
 
-     timestamp_t elapsed_timestamp() const;
+      /**
+       * Returns, whether the stopwatch is running.
+       */
+      bool isRunning() const;
 
-     void reset();
+      /**
+       * Returns the time elapsed between the start and stop of the
+       * stopwatch. If it is running, it returns the time from start
+       * until now. If the stopwatch is run previously, the previous
+       * runtime is added. If you want only the last measurment, you
+       * have to reset the timer, before stating the measurment.
+       * Does not change the running state.
+       */
+      double elapsed( timeunit_t timeunit = SECONDS ) const;
 
-     void print( const char* msg = "",
-                 timeunit_t timeunit = SECONDS,
-                 std::ostream& os = std::cout ) const;
+      /**
+       * Returns the time elapsed between the start and stop of the
+       * stopwatch. If it is running, it returns the time from start
+       * until now. If the stopwatch is run previously, the previous
+       * runtime is added. If you want only the last measurment, you
+       * have to reset the timer, before stating the measurment.
+       * Does not change the running state.
+       * In contrast to Stopwatch::elapsed(), only the timestamp is returned,
+       * that is the number if microseconds as an integer.
+       */
+      timestamp_t elapsed_timestamp() const;
 
-     friend std::ostream& operator<<( std::ostream& os,
-                                      const Stopwatch& stopwatch );
+      /**
+       * Resets the stopwatch.
+       */
+      void reset();
 
-   private:
-     timestamp_t begin_, end_;
-     size_t prev_elapsed_;
-     bool running_;
+      /**
+       * This method prints out the currently elapsed time.
+       */
+      void print( const char* msg = "", timeunit_t timeunit = SECONDS, std::ostream& os = std::cout ) const;
 
-     static timestamp_t get_timestamp();
-   };
+      /**
+       * Convenient method for writing time in seconds
+       * to some ostream.
+       */
+      friend std::ostream& operator<<( std::ostream& os, const Stopwatch& stopwatch );
 
-   inline bool
-   Stopwatch::correct_timeunit( timeunit_t t )
-   {
-     return t == MICROSEC || t == MILLISEC || t == SECONDS || t == MINUTES
-            || t == HOURS || t == DAYS;
-   }
+    private:
+    #ifndef DISABLE_TIMING
+      timestamp_t _beg, _end;
+      size_t _prev_elapsed;
+      bool _running;
+    #endif
 
-   inline void
-   nest::Stopwatch::start()
-   {
-     if ( not isRunning() )
-     {
-       prev_elapsed_ += end_ - begin_;  // store prev. time, if we resume
-       end_ = begin_ = get_timestamp(); // invariant: end_ >= begin_
-       running_ = true;                 // we start running
-     }
-   }
+      /**
+       * Returns current time in microseconds since EPOCH.
+       */
+      static timestamp_t get_timestamp();
+    };
 
-   inline void
-   nest::Stopwatch::stop()
-   {
-     if ( isRunning() )
-     {
-       end_ = get_timestamp(); // invariant: end_ >= begin_
-       running_ = false;       // we stopped running
-     }
-   }
+    inline bool
+    Stopwatch::correct_timeunit( timeunit_t t )
+    {
+      return t == MICROSEC || t == MILLISEC || t == SECONDS || t == MINUTES || t == HOURS || t == DAYS;
+    }
 
-   inline bool
-   nest::Stopwatch::isRunning() const
-   {
-     return running_;
-   }
+    inline void
+    nest::Stopwatch::start()
+    {
+    #ifndef DISABLE_TIMING
+      if ( not isRunning() )
+      {
+        _prev_elapsed += _end - _beg;  // store prev. time, if we resume
+        _end = _beg = get_timestamp(); // invariant: _end >= _beg
+        _running = true;               // we start running
+      }
+    #endif
+    }
 
-   inline double
-   nest::Stopwatch::elapsed( timeunit_t timeunit ) const
-   {
-     assert( correct_timeunit( timeunit ) );
-     return 1.0 * elapsed_timestamp() / timeunit;
-   }
+    inline void
+    nest::Stopwatch::stop()
+    {
+    #ifndef DISABLE_TIMING
+      if ( isRunning() )
+      {
+        _end = get_timestamp(); // invariant: _end >= _beg
+        _running = false;       // we stopped running
+      }
+    #endif
+    }
 
-   inline nest::Stopwatch::timestamp_t
-   nest::Stopwatch::elapsed_timestamp() const
-   {
-     if ( isRunning() )
-     {
-       // get intermediate elapsed time; do not change end_, to be const
-       return get_timestamp() - begin_ + prev_elapsed_;
-     }
-     else
-     {
-       // stopped before, get time of current measurment + last measurments
-       return end_ - begin_ + prev_elapsed_;
-     }
-   }
+    inline bool
+    nest::Stopwatch::isRunning() const
+    {
+    #ifndef DISABLE_TIMING
+      return _running;
+    #else
+      return false;
+    #endif
+    }
 
-   inline void
-   nest::Stopwatch::reset()
-   {
-     begin_ = 0; // invariant: end_ >= begin_
-     end_ = 0;
-     prev_elapsed_ = 0; // erase all prev. measurments
-     running_ = false;  // of course not running.
-   }
+    inline double
+    nest::Stopwatch::elapsed( timeunit_t timeunit ) const
+    {
+    #ifndef DISABLE_TIMING
+      assert( correct_timeunit( timeunit ) );
+      return 1.0 * elapsed_timestamp() / timeunit;
+    #else
+      return 0.0;
+    #endif
+    }
 
-   inline void
-   nest::Stopwatch::print( const char* msg,
-                           timeunit_t timeunit,
-                           std::ostream& os ) const
-   {
-     assert( correct_timeunit( timeunit ) );
-     double e = elapsed( timeunit );
-     os << msg << e;
-     switch ( timeunit )
-     {
-     case MICROSEC:
-       os << " microsec.";
-       break;
-     case MILLISEC:
-       os << " millisec.";
-       break;
-     case SECONDS:
-       os << " sec.";
-       break;
-     case MINUTES:
-       os << " min.";
-       break;
-     case HOURS:
-       os << " h.";
-       break;
-     case DAYS:
-       os << " days.";
-       break;
-     }
-     os << std::endl;
-   }
+    inline nest::Stopwatch::timestamp_t
+    nest::Stopwatch::elapsed_timestamp() const
+    {
+    #ifndef DISABLE_TIMING
+      if ( isRunning() )
+      {
+        // get intermediate elapsed time; do not change _end, to be const
+        return get_timestamp() - _beg + _prev_elapsed;
+      }
+      else
+      {
+        // stopped before, get time of current measurment + last measurments
+        return _end - _beg + _prev_elapsed;
+      }
+    #else
+      return ( timestamp_t ) 0;
+    #endif
+    }
 
-   inline nest::Stopwatch::timestamp_t
-   nest::Stopwatch::get_timestamp()
-   {
-     // works with:
-     // * hambach (Linux 2.6.32 x86_64)
-     // * JuQueen (BG/Q)
-     // * MacOS 10.9
-     struct timeval now;
-     gettimeofday( &now, ( struct timezone* ) 0 );
-     return ( nest::Stopwatch::timestamp_t ) now.tv_usec
-            + ( nest::Stopwatch::timestamp_t ) now.tv_sec
-              * nest::Stopwatch::SECONDS;
-   }
+    inline void
+    nest::Stopwatch::reset()
+    {
+    #ifndef DISABLE_TIMING
+      _beg = 0; // invariant: _end >= _beg
+      _end = 0;
+      _prev_elapsed = 0; // erase all prev. measurments
+      _running = false;  // of course not running.
+    #endif
+    }
 
-   } // namespace nest
-   #endif // STOPWATCH_H
+    inline void
+    nest::Stopwatch::print( const char* msg, timeunit_t timeunit, std::ostream& os ) const
+    {
+    #ifndef DISABLE_TIMING
+      assert( correct_timeunit( timeunit ) );
+      double e = elapsed( timeunit );
+      os << msg << e;
+      switch ( timeunit )
+      {
+      case MICROSEC:
+        os << " microsec.";
+        break;
+      case MILLISEC:
+        os << " millisec.";
+        break;
+      case SECONDS:
+        os << " sec.";
+        break;
+      case MINUTES:
+        os << " min.";
+        break;
+      case HOURS:
+        os << " h.";
+        break;
+      case DAYS:
+        os << " days.";
+        break;
+      }
+    #ifdef DEBUG
+      os << " (running: " << ( _running ? "true" : "false" ) << ", begin: " << _beg << ", end: " << _end
+         << ", diff: " << ( _end - _beg ) << ", prev: " << _prev_elapsed << ")";
+    #endif
+      os << std::endl;
+    #endif
+    }
+
+    inline nest::Stopwatch::timestamp_t
+    nest::Stopwatch::get_timestamp()
+    {
+      // works with:
+      // * hambach (Linux 2.6.32 x86_64)
+      // * JuQueen (BG/Q)
+      // * MacOS 10.9
+      struct timeval now;
+      gettimeofday( &now, ( struct timezone* ) 0 );
+      return ( nest::Stopwatch::timestamp_t ) now.tv_usec
+        + ( nest::Stopwatch::timestamp_t ) now.tv_sec * nest::Stopwatch::SECONDS;
+    }
+
+    } /* namespace timer */
+    #endif /* STOPWATCH_H */
 
 And the corresponding ``stopwatch.cpp``:
 
 .. code::
 
-   /*
-    *  stopwatch.cpp
-    *
-    *  This file is part of NEST.
-    *
-    *  Copyright (C) 2004 The NEST Initiative
-    *
-    *  NEST is free software: you can redistribute it and/or modify
-    *  it under the terms of the GNU General Public License as published by
-    *  the Free Software Foundation, either version 2 of the License, or
-    *  (at your option) any later version.
-    *
-    *  NEST is distributed in the hope that it will be useful,
-    *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-    *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    *  GNU General Public License for more details.
-    *
-    *  You should have received a copy of the GNU General Public License
-    *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-    *
-    */
+    /*
+     *  stopwatch.cpp
+     *
+     *  This file is part of NEST.
+     *
+     *  Copyright (C) 2004 The NEST Initiative
+     *
+     *  NEST is free software: you can redistribute it and/or modify
+     *  it under the terms of the GNU General Public License as published by
+     *  the Free Software Foundation, either version 2 of the License, or
+     *  (at your option) any later version.
+     *
+     *  NEST is distributed in the hope that it will be useful,
+     *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+     *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     *  GNU General Public License for more details.
+     *
+     *  You should have received a copy of the GNU General Public License
+     *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+     *
+     */
 
-   #include "stopwatch.h"
+    #include "stopwatch.h"
 
-   namespace nest
-   {
-   std::ostream& operator<<( std::ostream& os, const Stopwatch& stopwatch )
-   {
-     stopwatch.print( "", Stopwatch::SECONDS, os );
-     return os;
-   }
-   }
-
-
-   nest::Stopwatch::Stopwatch()
-     : begin_( 0 )
-     , end_( 0 )
-     , prev_elapsed_( 0 )
-     , running_( false )
-   {
-   }
+    namespace nest
+    {
+    std::ostream& operator<<( std::ostream& os, const Stopwatch& stopwatch )
+    {
+      stopwatch.print( "", Stopwatch::SECONDS, os );
+      return os;
+    }
+    }
 
 .. _clang-format-file:
 

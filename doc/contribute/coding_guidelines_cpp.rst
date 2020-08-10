@@ -145,27 +145,64 @@ checks on all changed files as we do during the Travis CI tasks.
    $ ./extras/check_code_style.sh --help
    Usage: check_code_style.sh [options ...]
 
-   Setup of Tooling is explained here:
-       https://nest.github.io/nest-simulator/coding_guidelines_c++
+   Usage: ./extras/check_code_style.sh [options ...]
+
+   This script processes C/C++ and Python source code files to verify compliance with the NEST
+   coding  style  guidelines.  The  checks are performed the same way as in the NEST Travis CI
+   build and test environment. If no file is specified, a local 'git diff' is issued to obtain
+   the changed files in the commit range '<git-sha-start>..<git-sha-end>'. By default, this is
+   'master..head'.
+
+   The script expects to be run from the base directory of the NEST sources,
+   i.e. all executions should start like:
+    ./extras/check_code_style.sh ...
+
+   The setup of the tooling is explained here:
+   https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html
 
    Options:
 
-       --help               Print program options and exit
-       --incremental        Do analysis one file after another.
-       --file=/path/to/file Perform the static analysis on this file only.
-       --git-start=SHA      Enter the default SHA for git to start the diff
-                            (default=master)
-       --git-end=SHA        Enter the default SHA for git to end the diff
-                            (default=HEAD)
-       --nest-src=/path     The base directory for the NEST sources
-                            (default=. assuming you execute check_code_style.sh
-                            from the base directory.)
-       --cppcheck=exe       Enter the executable that is used for cppcheck.
-                            (default=cppcheck)
-       --clang-format=exe   Enter the executable that is used for clang-format.
-                            (default=clang-format)
-       --vera++=exe         Enter the executable that is used for vera++.
-                            (default=vera++)
+       --help                           This help.
+
+       --[i]ncremental                  Prompt user before each file analysis.
+
+       --file=/path/to/file             Perform the analysis on this file.
+
+       --git-start=Git_SHA_value        Hash value (Git SHA) from which Git starts the diff.
+                                        Default: --git-start=master
+
+       --git-end=Git_SHA_value          Hash value (Git SHA) at which Git ends the diff.
+                                        Default: --git-start=HEAD
+
+       --vera++=exe                     The name of the VERA++ executable.
+                                        Default: --vera++=vera++
+
+       --cppcheck=exe                   The name of the CPPCHECK executable.
+                                        Default: --cppcheck=cppcheck
+                                        Note: CPPCHECK version 1.69 or later is required.
+                                              This corresponds to the version installed in
+                                              the NEST Travis CI build and test environment.
+
+       --clang-format=exe               The name of the CLANG-FORMAT executable.
+                                        Default: --clang-format=clang-format-3.6
+                                        Note: CLANG-FORMAT version 3.6 is required.
+                                              This corresponds to the version installed in
+                                              the NEST Travis CI build and test environment.
+
+       --pep8=exe                       The name of the PEP8 executable.
+                                        Default: --pep8=pep8
+
+       --perform-vera=on/off            Turn on/off VERA++ analysis.
+                                        Default: --perform-vera=on
+
+       --perform-cppcheck=on/off        Turn on/off CPPCHECK analysis.
+                                        Default: --perform-cppcheck=off
+
+       --perform-clang-format=on/off    Turn on/off CLANG-FORMAT analysis.
+                                        Default: --perform-clang-format=on
+
+       --perform-pep8=on/off            Turn on/off PEP8 analysis.
+                                        Default: --perform-pep8=on
 
 Assuming you are in source directory of NEST and you want to check all changed
 files between the commits ``104d47c0`` and ``d66e4465``, execute the following

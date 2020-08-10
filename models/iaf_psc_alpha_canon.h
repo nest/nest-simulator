@@ -35,33 +35,38 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
-
-// Includes from precise:
 #include "slice_ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
 
-/** @BeginDocumentation
-Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron
-with alpha-shape postsynaptic currents; canoncial implementation.
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, precise
 
-This model is deprecated and will be removed in NEST 3. Please use
-``iaf_psc_alpha_ps`` instead.
+Short description
++++++++++++++++++
 
-Description:
+Current-based leaky integrate-and-fire neuron with alpha-shaped
+post-synaptic currents - canonical implementation of precise spike
+timing version
+
+Description
++++++++++++
+
+.. note::
+   This model is deprecated and will be removed in NEST 3.
+   Please use ``iaf_psc_alpha_ps`` instead.
 
 iaf_psc_alpha_canon is the "canonical" implementatoin of the leaky
 integrate-and-fire model neuron with alpha-shaped postsynaptic
-currents in the sense of [1].  This is the most exact implementation
+currents in the sense of [1]_. This is the most exact implementation
 available.
 
 PSCs are normalized to an amplitude of 1pA.
 
 The canonical implementation handles neuronal dynamics in a locally
 event-based manner with in coarse time grid defined by the minimum
-delay in the network, see [1]. Incoming spikes are applied at the
+delay in the network, see [1]_. Incoming spikes are applied at the
 precise moment of their arrival, while the precise time of outgoing
 spikes is determined by interpolation once a threshold crossing has
 been detected. Return from refractoriness occurs precisly at spike
@@ -71,35 +76,38 @@ This implementation is more complex than the plain iaf_psc_alpha
 neuron, but achieves much higher precision. In particular, it does not
 suffer any binning of spike times to grid points. Depending on your
 application, the canonical application may provide superior overall
-performance given an accuracy goal; see [1] for details.  Subthreshold
-dynamics are integrated using exact integration between events [2].
+performance given an accuracy goal; see [1]_ for details. Subthreshold
+dynamics are integrated using exact integration between events [2]_.
 
-Remarks:
+.. note::
+   Please note that this node is capable of sending precise spike
+   times to target nodes (on-grid spike time plus offset).
 
-Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset).
+   A further improvement of precise simulation is implemented in
+   iaf_psc_exp_ps based on [3]_.
 
-A further improvement of precise simulation is implemented in
-iaf_psc_exp_ps based on [3].
-
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-V_m          double - Membrane potential in mV
-E_L          double - Resting membrane potential in mV.
-V_min        double - Absolute lower value for the membrane potential.
-C_m          double - Capacity of the membrane in pF
-tau_m        double - Membrane time constant in ms.
-t_ref        double - Duration of refractory period in ms.
-V_th         double - Spike threshold in mV.
-V_reset      double - Reset potential of the membrane in mV.
-tau_syn      double - Rise time of the synaptic alpha function in ms.
-I_e          double - Constant external input current in pA.
-Interpol_Order  int - Interpolation order for spike time:
-                      0-none, 1-linear, 2-quadratic, 3-cubic
+===============  ======  ==========================================================
+ V_m             mV      Membrane potential
+ E_L             mV      Resting membrane potential
+ V_min           mV      Absolute lower value for the membrane potential.
+ C_m             pF      Capacity of the membrane
+ tau_m           ms      Membrane time constant
+ t_ref           ms      Duration of refractory period
+ V_th            mV      Spike threshold
+ V_reset         mV      Reset potential of the membrane
+ tau_syn         ms      Rise time of the synaptic alpha function
+ I_e             pA      Constant external input current
+ Interpol_Order  (int)   Interpolation order for spike time:
+                         0-none, 1-linear, 2-quadratic, 3-cubic
+===============  ======  ==========================================================
 
-Remarks:
+Remarks
++++++++
 
 This model transmits precise spike times to target nodes (on-grid spike
 time and offset). If this node is connected to a spike_recorder, the
@@ -112,34 +120,46 @@ can only change at on-grid times.
 
 If tau_m is very close to tau_syn, the model will numerically behave as
 if tau_m is equal to tau_syn, to avoid numerical instabilities.
-For details, please see doc/model_details/IAF_neurons_singularity.ipynb.
+For details, please check out the `IAF neurons singularity
+<https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 A further improvement of precise simulation is implemented in iaf_psc_exp_ps
-based on [3].
+based on [3]_.
 
 For details about exact subthreshold integration, please see
-``doc/model_details/exact-integration.ipynb``.
+:doc:`../guides/exact-integration`.
 
-References:
 
-[1] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact Subthreshold
-    Integration with Continuous Spike Times in Discrete Time Neural Network
-    Simulations. To appear in Neural Computation.
-[2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-    systems with applications to neuronal modeling. Biologial Cybernetics
-    81:381-402.
-[3] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010)
-    A general and efficient method for incorporating exact spike times in
-    globally time-driven simulations Front Neuroinformatics, 4:113
+References
+++++++++++
 
-Author: Diesmann, Eppler, Morrison, Plesser, Straube
+.. [1] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact Subthreshold
+       Integration with Continuous Spike Times in Discrete Time Neural Network
+       Simulations. To appear in Neural Computation.
+.. [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
+       systems with applications to neuronal modeling. Biologial Cybernetics
+       81:381-402.
+.. [3] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010)
+       A general and efficient method for incorporating exact spike times in
+       globally time-driven simulations Front Neuroinformatics, 4:113
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-SeeAlso: iaf_psc_alpha_ps, iaf_psc_alpha, iaf_psc_alpha_presc, iaf_psc_exp_ps
-*/
+Receives
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+iaf_psc_alpha_ps, iaf_psc_alpha, iaf_psc_alpha_presc, iaf_psc_exp_ps
+
+EndUserDocs */
+
 class iaf_psc_alpha_canon : public Archiving_Node
 {
 public:

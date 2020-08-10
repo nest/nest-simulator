@@ -83,7 +83,7 @@ junit_open ()
         bail_out 'junit_open: file_name not given!'
     fi
 
-    JUNIT_FILE="${TEST_OUTDIR}/$1.xml"
+    JUNIT_FILE="${REPORTDIR}/$1.xml"
     JUNIT_TESTS=0
     JUNIT_SKIPS=0
     JUNIT_FAILURES=0

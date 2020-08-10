@@ -1,5 +1,5 @@
 /*
- *  iaf_psc_exp_ps.h
+ *  iaf_psc_exp_ps_lossless.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef IAF_PSC_EXP_PS_H
-#define IAF_PSC_EXP_PS_H
+#ifndef IAF_PSC_EXP_PS_LOSSLESS_H
+#define IAF_PSC_EXP_PS_LOSSLESS_H
 
 // C++ includes:
 #include <vector>
@@ -36,100 +36,109 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
+#include "slice_ring_buffer.h"
 #include "universal_data_logger.h"
 
-// Includes from precise:
-#include "slice_ring_buffer.h"
 
 namespace nest
 {
 
-/** @BeginDocumentation
-Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron
-with exponential postsynaptic currents; canoncial implementation;
-regula falsi method for approximation of threshold crossing.
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, precise
 
-Description:
+Short description
++++++++++++++++++
 
-iaf_psc_exp_ps is the "canonical" implementation of the leaky
+Current-based leaky integrate-and-fire neuron with exponential-shaped
+post-synaptic currents predicting the exact number of spikes using a
+state space analysis
+
+Description
++++++++++++
+
+iaf_psc_exp_ps_lossless is the precise state space implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
-that uses the regula falsi method to approximate the timing of a threshold
-crossing. This is the most exact implementation available.
+that uses time reversal to detect spikes [1]_. This is the most exact
+implementation available.
 
-The canonical implementation handles neuronal dynamics in a locally
-event-based manner with in coarse time grid defined by the minimum
-delay in the network, see [1,2]. Incoming spikes are applied at the
-precise moment of their arrival, while the precise time of outgoing
-spikes is determined by regula falsi once a threshold crossing has
-been detected. Return from refractoriness occurs precisely at spike
-time plus refractory period.
+Time-reversed state space analysis provides a general method to solve the
+threshold-detection problem for an integrable, affine or linear time
+evolution. This method is based on the idea of propagating the threshold
+backwards in time, and see whether it meets the initial state, rather
+than propagating the initial state forward in time and see whether it
+meets the threshold.
 
-This implementation is more complex than the plain iaf_psc_exp
-neuron, but achieves much higher precision. In particular, it does not
-suffer any binning of spike times to grid points. Depending on your
-application, the canonical application with regula falsi may provide
-superior overall performance given an accuracy goal; see [1,2] for
-details. Subthreshold dynamics are integrated using exact integration
-between events [3].
-
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
-E_L           double - Resting membrane potential in mV.
-C_m           double - Capacitance of the membrane in pF.
-tau_m         double - Membrane time constant in ms.
-tau_syn_ex    double - Excitatory synaptic time constant in ms.
-tau_syn_in    double - Inhibitory synaptic time constant in ms.
-t_ref         double - Duration of refractory period in ms.
-V_th          double - Spike threshold in mV.
-I_e           double - Constant input current in pA.
-V_min         double - Absolute lower value for the membrane potential in mV.
-V_reset       double - Reset value for the membrane potential in mV.
 
-Remarks:
+===========  ========  ==========================================================
+ E_L         mV        Resting membrane potential
+ C_m         pF/mum^2  Specific capacitance of the membrane
+ tau_m       ms        Membrane time constant
+ tau_syn_ex  ms        Excitatory synaptic time constant
+ tau_syn_in  ms        Inhibitory synaptic time constant
+ t_ref       ms        Duration of refractory period
+ V_th        mV        Spike threshold
+ I_e         pA        Constant input current
+ V_min       mV        Absolute lower value for the membrane potential.
+ V_reset     mV        Reset value for the membrane potential.
+===========  ========  ==========================================================
 
-Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time and offset).
+Remarks
++++++++
+
+This model transmits precise spike times to target nodes (on-grid spike
+time and offset). If this node is connected to a spike_recorder, the
+property "precise_times" of the spike_recorder has to be set to true in
+order to record the offsets in addition to the on-grid spike times.
 
 The iaf_psc_delta_ps neuron accepts connections transmitting
 CurrentEvents. These events transmit stepwise-constant currents which
 can only change at on-grid times.
 
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities.
-For details, please see doc/model_details/IAF_neurons_singularity.ipynb.
+In the current implementation, tau_syn_ex and tau_syn_in must be equal.
+This is because the state space would be 3-dimensional otherwise, which
+makes the detection of threshold crossing more difficult [1].
+Support for different time constants may be added in the future,
+see issue #921.
 
 For details about exact subthreshold integration, please see
-``doc/model_details/exact-integration.ipynb``.
+:doc:`../guides/exact-integration`.
 
-References:
+References
+++++++++++
 
-  [1] Morrison A, Straube S, Plesser HE & Diesmann M (2007) Exact subthreshold
-      integration with continuous spike times in discrete time neural network
-      simulations. Neural Comput 19, 47-79
-  [2] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M (2010) A
-      general and efficient method for incorporating precise spike times in
-      globally timedriven simulations. Front Neuroinform 4:113
-  [3] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-      systems with applications to neuronal modeling. Biol Cybern 81:381-402
+.. [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
+       (2018) Perfect Detection of Spikes in the Linear Sub-threshold
+       Dynamics of Point Neurons. Front. Neuroinform. 11:75.
+       doi: 10.3389/fninf.2017.00075
 
-Author: Kunkel
+Sends
++++++
 
-Sends: SpikeEvent
+SpikeEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Receives
+++++++++
 
-SeeAlso: iaf_psc_exp, iaf_psc_alpha_ps
-*/
-class iaf_psc_exp_ps : public Archiving_Node
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+iaf_psc_exp_ps
+
+EndUserDocs */
+
+class iaf_psc_exp_ps_lossless : public Archiving_Node
 {
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create
       model prototype instances.
   */
-  iaf_psc_exp_ps();
+  iaf_psc_exp_ps_lossless();
 
   /** Copy constructor.
       GenericModel::allocate_() uses the copy constructor to clone
@@ -138,7 +147,7 @@ public:
       @note The copy constructor MUST NOT be used to create nodes based
       on nodes that have been placed in the network.
   */
-  iaf_psc_exp_ps( const iaf_psc_exp_ps& );
+  iaf_psc_exp_ps_lossless( const iaf_psc_exp_ps_lossless& );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -150,16 +159,15 @@ public:
 
   port send_test_event( Node&, rport, synindex, bool );
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( SpikeEvent&, port );
+  port handles_test_event( CurrentEvent&, port );
+  port handles_test_event( DataLoggingRequest&, port );
 
   void handle( SpikeEvent& );
   void handle( CurrentEvent& );
   void handle( DataLoggingRequest& );
 
-  bool
-  is_off_grid() const
+  bool is_off_grid() const // uses off_grid events
   {
     return true;
   }
@@ -209,21 +217,20 @@ private:
   //@}
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< iaf_psc_exp_ps >;
-  friend class UniversalDataLogger< iaf_psc_exp_ps >;
+  friend class RecordablesMap< iaf_psc_exp_ps_lossless >;
+  friend class UniversalDataLogger< iaf_psc_exp_ps_lossless >;
 
   /**
    * Propagate neuron state.
-   * Propagate the neuron's state by dt.
    * @param dt Interval over which to propagate
    */
   void propagate_( const double dt );
 
   /**
-   * Trigger iterative method to find the precise spike time within
-   * the mini-timestep (t0,t0+dt] assuming that the membrane
-   * potential was below threshold at t0 and above at t0+dt. Emit
-   * the spike and reset the neuron.
+   * Emit a single spike caused by DC current in absence of spike input.
+   * Emits a single spike and reset neuron given that the membrane
+   * potential was below threshold at the beginning of a mini-timestep
+   * and above afterwards.
    *
    * @param origin  Time stamp at beginning of slice
    * @param lag     Time step within slice
@@ -233,14 +240,30 @@ private:
   void emit_spike_( const Time& origin, const long lag, const double t0, const double dt );
 
   /**
-   * Instantaneously emit a spike at the precise time defined by
-   * origin, lag and spike_offset and reset the neuron.
+   * Emit a single spike at a precisely given time.
    *
    * @param origin        Time stamp at beginning of slice
    * @param lag           Time step within slice
    * @param spike_offset  Time offset for spike
    */
   void emit_instant_spike_( const Time& origin, const long lag, const double spike_offset );
+
+  /**
+   * Retrospective spike detection by state space analysis.
+   * The state space spanning the non-spiking region is bound by the following
+   * system of inequalities:
+   * threshold line V < \theta, envelope, V < b(I_e), line corresponding to the
+   * final timestep
+   * V < f(h, I) (or) linear approximation of the envelope, V < g(h, I_e).
+   * The state space spanning the spiking region is bound by the following
+   * system of inequalities:
+   * threshold line V < \theta, envelope, V > b(I_e) and line corresponding to
+   * the final timestep
+   * V > f(h, I) (or) linear approximation of the envelope, V < g(h, I_e).
+   * Note that in Algorithm 1 and 2 of [1], a typo interchanges g and f.
+   * @returns time interval in which threshold was crossed, or nan.
+   */
+  double is_spike_( const double );
 
   // ----------------------------------------------------------------
 
@@ -285,12 +308,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-
-    /** Set values from dictionary.
-     * @returns Change in reversal potential E_L, to be passed to State_::set()
-     */
-    double set( const DictionaryDatum&, Node* node );
+    void get( DictionaryDatum& ) const;               //!< Store current values in dictionary
+    double set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ----------------------------------------------------------------
@@ -300,10 +319,10 @@ private:
    */
   struct State_
   {
-    double y0_;    //!< External input current
-    double y1_ex_; //!< Exc. exponetial current
-    double y1_in_; //!< Inh. exponetial current
-    double y2_;    //!< Membrane potential (relative to resting potential)
+    double y0_;       //!< External input current
+    double I_syn_ex_; //!< Exc. exponential current
+    double I_syn_in_; //!< Inh. exponential current
+    double y2_;       //!< Membrane potential (relative to resting potential)
 
     bool is_refractory_;       //!< True while refractory
     long last_spike_step_;     //!< Time stamp of most recent spike
@@ -312,13 +331,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-
-    /** Set values from dictionary.
-     * @param dictionary to take data from
-     * @param current parameters
-     * @param Change in reversal potential E_L specified by this dict
-     */
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const DictionaryDatum&, const Parameters_&, double delta_EL, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -328,8 +341,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_psc_exp_ps& );
-    Buffers_( const Buffers_&, iaf_psc_exp_ps& );
+    Buffers_( iaf_psc_exp_ps_lossless& );
+    Buffers_( const Buffers_&, iaf_psc_exp_ps_lossless& );
 
     /**
      * Queue for incoming events.
@@ -339,7 +352,7 @@ private:
     RingBuffer currents_;
 
     //! Logger for all analog data
-    UniversalDataLogger< iaf_psc_exp_ps > logger_;
+    UniversalDataLogger< iaf_psc_exp_ps_lossless > logger_;
   };
 
   // ----------------------------------------------------------------
@@ -349,18 +362,50 @@ private:
    */
   struct Variables_
   {
-    double h_ms_;           //!< Time resolution [ms]
-    long refractory_steps_; //!< Refractory time in steps
-    double exp_tau_m_;      //!< exp(-h/tau_m)
-    double exp_tau_ex_;     //!< exp(-h/tau_ex)
-    double exp_tau_in_;     //!< exp(-h/tau_in)
-    double P20_;            //!< Progagator matrix element, 2nd row
-    double P21_in_;         //!< Progagator matrix element, 2nd row
-    double P21_ex_;         //!< Progagator matrix element, 2nd row
-    double y0_before_;      //!< y0_ at beginning of ministep
-    double y1_ex_before_;   //!< y1_ at beginning of ministep
-    double y1_in_before_;   //!< y1_ at beginning of ministep
-    double y2_before_;      //!< y2_ at beginning of ministep
+    double h_ms_;            //!< Time resolution [ms]
+    long refractory_steps_;  //!< Refractory time in steps
+    double exp_tau_m_;       //!< exp(-h/tau_m)
+    double exp_tau_ex_;      //!< exp(-h/tau_ex)
+    double exp_tau_in_;      //!< exp(-h/tau_in)
+    double P20_;             //!< Progagator matrix element, 2nd row
+    double P21_in_;          //!< Progagator matrix element, 2nd row
+    double P21_ex_;          //!< Progagator matrix element, 2nd row
+    double y0_before_;       //!< y0_ at beginning of ministep
+    double I_syn_ex_before_; //!< I_syn_ex_ at beginning of ministep
+    double I_syn_in_before_; //!< I_syn_in_ at beginning of ministep
+    double y2_before_;       //!< y2_ at beginning of ministep
+
+    /**
+     * Pre-computed constants for inequality V < g(h, I_e)
+     */
+    //@{
+    double a1_;
+    double a2_;
+    double a3_;
+    double a4_;
+    //@}
+
+    /**
+     * Pre-computed constants for inequality V < f(h, I)
+     */
+    //@{
+    double b1_;
+    double b2_;
+    double b3_;
+    double b4_;
+    //@}
+
+    /**
+     * Pre-computed constants for inequality V < b(I_e)
+     */
+    //@{
+    double c1_;
+    double c2_;
+    double c3_;
+    double c4_;
+    double c5_;
+    double c6_;
+    //@}
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -371,11 +416,25 @@ private:
   {
     return S_.y2_ + P_.E_L_;
   }
-
+  double
+  get_I_syn_() const
+  {
+    return S_.I_syn_ex_ + S_.I_syn_in_;
+  }
+  double
+  get_I_syn_ex_() const
+  {
+    return S_.I_syn_ex_;
+  }
+  double
+  get_I_syn_in_() const
+  {
+    return S_.I_syn_in_;
+  }
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_exp_ps_data
+   * @defgroup iaf_psc_exp_ps_lossless_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -388,11 +447,11 @@ private:
   /** @} */
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< iaf_psc_exp_ps > recordablesMap_;
+  static RecordablesMap< iaf_psc_exp_ps_lossless > recordablesMap_;
 };
 
 inline port
-nest::iaf_psc_exp_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_psc_exp_ps_lossless::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -400,7 +459,7 @@ nest::iaf_psc_exp_ps::send_test_event( Node& target, rport receptor_type, synind
 }
 
 inline port
-iaf_psc_exp_ps::handles_test_event( SpikeEvent&, rport receptor_type )
+iaf_psc_exp_ps_lossless::handles_test_event( SpikeEvent&, port receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -410,7 +469,7 @@ iaf_psc_exp_ps::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
+iaf_psc_exp_ps_lossless::handles_test_event( CurrentEvent&, port receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -420,7 +479,7 @@ iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_exp_ps_lossless::handles_test_event( DataLoggingRequest& dlr, port receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -430,34 +489,24 @@ iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type
 }
 
 inline void
-iaf_psc_exp_ps::get_status( DictionaryDatum& d ) const
+iaf_psc_exp_ps_lossless::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
-
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_psc_exp_ps::set_status( const DictionaryDatum& d )
+iaf_psc_exp_ps_lossless::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
-  Archiving_Node::set_status( d );
+  Parameters_ ptmp = P_;                 // temporary copy in case of errors
+  double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                      // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );   // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
 }
-
 } // namespace
-
-#endif // IAF_PSC_EXP_PS_H
+#endif // IAF_PSC_EXP_PS_LOSSLESS_H

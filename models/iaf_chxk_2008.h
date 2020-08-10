@@ -44,24 +44,14 @@
 
 namespace nest
 {
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, integrate-and-fire, conductance-based
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based, precise
 
 Short description
 +++++++++++++++++
 
-Conductance based leaky integrate-and-fire neuron model used in Casti et al. 2008
+Conductance-based leaky integrate-and-fire neuron model supporting
+precise spike times used in Casti et al. 2008
 
 Description
 +++++++++++
@@ -137,6 +127,18 @@ See also
 iaf_cond_alpha
 
 EndUserDocs */
+
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
 
 class iaf_chxk_2008 : public Archiving_Node
 {

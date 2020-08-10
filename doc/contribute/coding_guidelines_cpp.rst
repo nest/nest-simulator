@@ -11,9 +11,6 @@ on their own.
 
 For Python, we enforce `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_ formatting.
 
-Note that older code might not conform to this rules and should be fixed when
-convenient.
-
 .. contents:: On this page, you'll find
    :local:
    :depth: 3
@@ -22,7 +19,7 @@ Tooling
 -------
 
 The code has to compile without warnings (in the default settings of the build
-infrastructure). We restrict ourselves to C++03 standard for a larger support of
+infrastructure). We restrict ourselves to the C++11 standard for a larger support of
 compilers on various cluster systems and supercomputers.
 
 The `clang-format <http://clang.llvm.org/docs/ClangFormat.html>`_ tool is built
@@ -42,9 +39,10 @@ call:
 
    ./extras/format_all_c_c++_files.sh [start folder, defaults to '$PWD']
 
-We use clang-format version 3.6 in the TravisCI. Older versions do not
-understand all formatting options we defined in ``.clang-format``. Version 3.7
-has formatting differences to 3.6.
+We use clang-format version 3.6 in the Travis CI. Older versions do not
+understand all formatting options we defined in ``.clang-format``. Newer versions
+lead to formatting differences to files formatted with version 3.6 even though the
+same set of rules is used.
 
 Get ``clang-format``:
 Ubuntu see `here <http://llvm.org/apt/>`_:
@@ -140,7 +138,7 @@ Local static analysis
 #####################
 
 We ship a script ``./extras/check_code_style.sh`` that lets you perform the
-checks on all changed files as we do during the TravisCI tasks.
+checks on all changed files as we do during the Travis CI tasks.
 
 .. code::
 
@@ -187,9 +185,9 @@ C++ language features
 2. Prefer ISO C++ library functions over their ISO C library equivalents.
 3. Prefer ISO C++ library containers (STL).
 4. Prefer C++ headers over their C equivalents.
-5. Don't use printf and related functions.
+5. Don't use ``printf`` and related functions.
 6. Use C++ style cast notation (see :ref:`books`).
-7. Use the const qualifier where appropriate. Use it consistently (see :ref:`books`)!
+7. Use the ``const`` qualifier where appropriate. Use it consistently (see :ref:`books`)!
 8. Use namespaces and exceptions.
 9. Try to avoid static class members which need a constructor (non POD).
 
@@ -202,16 +200,15 @@ Language of comments and identifiers
 Debugging and quality control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Use the assert macro intensively to check program invariants.
-Support for a C++ unit-testing framework for fine grain testing of the
-functionality is planned. Until then create unit-tests with the supplied SLI
-and Python unit-testing infrastructure.
+Use the ``assert`` macro intensively to check program invariants.
+Create expressive unit-tests using one of the supplied SLI and Python unit-testing
+infrastructure or the C++ testing framework based on Boost.
 
 Compiler
 ~~~~~~~~
 
 NEST compiles with any recent version of the `GNU C/C++
-Compiler <https://gcc.gnu.org/>`_ ``gcc``. Support and limitation for further
+Compiler <https://gcc.gnu.org/>`_ ``gcc``. Support for and limitations of other
 compilers is described in the :doc:`Installation Instructions <../installation/index>`
 
 Online reference documents
@@ -248,7 +245,7 @@ Guide <https://google-styleguide.googlecode.com/svn/trunk/cppguide.html>`_.
 The #define guard
 ~~~~~~~~~~~~~~~~~
 
-All header files should have ``#define`` guards to prevent multiple inclusion.
+All header files should have ``#define`` guards to prevent multiple inclusions.
 The format of the symbol name should be ``<FILE>_H``. The file ``iaf_cond_alpha.h``
 should have the following guard:
 
@@ -354,7 +351,9 @@ Variables and class members
 In general, use meaningful, non-abbreviated names or follow naming conventions
 from the neuroscience field, e.g. the membrane potential is ``V_m``. Use the
 ``lower_case_under_lined`` notation. Private member variables should end with an
-underscore (``name_``).
+underscore (``name_``). If applicable, the general rule is use is to use the
+same notation for biophysical quantities as is used in `Dayan&Abbot, 2001
+<https://www.gatsby.ucl.ac.uk/~lmate/biblio/dayanabbott.pdf>`_.
 
 Constants should be defined with ``enums`` and not with ``#define``, and use the
 ``UPPER_CASE_UNDER_LINED`` notation:
@@ -374,7 +373,7 @@ Constants should be defined with ``enums`` and not with ``#define``, and use the
 Built-in types
 **************
 
-All code for the nest kernel should use the type aliases, defined in ``nest.h``.
+All code for the NEST kernel should use the type aliases, defined in ``nest.h``.
 Thus, use ``nest::float_t`` instead of ``float``.
 
 Functions and class methods

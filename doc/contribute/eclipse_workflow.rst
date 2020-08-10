@@ -1,8 +1,7 @@
 Developing NEST with Eclipse
 ============================
 
-These instructions are based on Eclipse Mars (4.5). They are based
-on earlier instructions by Thomas Heiberg.
+These instructions are based on Eclipse Mars (4.5).
 
 .. contents:: On this page, you'll find
    :local:

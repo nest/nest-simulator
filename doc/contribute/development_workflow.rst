@@ -8,7 +8,7 @@ NEST Git workflow
 Basic Git setup
 ---------------
 
-The NEST development team uses git for version control.
+The NEST development takes place in a repository using the Git version control system.
 The following sections document the general steps required to set up a working
 installation of Git. If you have Git set up already, skip to the :ref:`workflow` section.
 
@@ -56,7 +56,7 @@ forked copy of NEST.
 Downloading your fork
 #####################
 
-After forking the repository, you need to download it to your local computer to
+After forking the repository, you need to download (*clone*) it to your local computer to
 work with the code.
 
 The following commands should do it. The next section explains the commands.
@@ -95,7 +95,7 @@ address for the remote. It should point to your GitHub fork.
 
 Next, you connect your local copy to the central [NEST GitHub
 repository][NEST GitHub], so that you can keep your local copy and remote fork
-up to date in the future. Conventionally, the main source code repository is
+up to date in the future. By convention, the main source code repository is usually
 called ``upstream``.
 
 **Link your repository to the upstream repository**
@@ -221,7 +221,7 @@ Editing workflow - command list
 
    git diff
 
-4. Inform git that you want to save these changes.
+4. Inform Git that you want to save these changes.
 
 .. code::
 
@@ -273,10 +273,10 @@ Editing workflow - commands explained
 
    .. code::
 
-      diff --git a/development_workflow.md b/development_workflow.md
+      diff --git a/development_workflow.rst b/development_workflow.rst
       index f05f0cd..e581f00 100644
-      --- a/development_workflow.md
-     +++ b/development_workflow.md
+      --- a/development_workflow.rst
+     +++ b/development_workflow.rst
       @@ -8,17 +8,22 @@ layout: index
 
 6. Inform Git of what modified or new files you want to save (stage) using ``git add modified_file``.
@@ -285,7 +285,7 @@ Editing workflow - commands explained
    related, complete changes. Leave files with unfinished changes for later
    commits.
 
-7. To commit the staged files into the local copy of your repo, do
+7. To commit the staged files into the local copy of your repository, run 
    ``git commit``. Write a clear Git commit message that describes the changes
    that you have made. Please read `this article <http://chris.beams.io/posts/git-commit/>`_
    on writing commit messages. If a commit fixes an open issue on the `GitHub issue
@@ -302,8 +302,8 @@ Editing workflow - commands explained
 
       git push origin my-new-feature
 
-Assuming you have followed the instructions in these pages, git will create
-a default link to your GitHub repo called ``origin``. In git >= 1.7 you can
+Assuming you have followed the instructions in these pages, Git will create
+a default link to your GitHub repository called ``origin``. In Git >= 1.7 you can
 ensure that the link to origin is permanently set by using the ``--set-upstream``
 option:
 
@@ -312,7 +312,7 @@ option:
    git push --set-upstream origin my-new-feature
 
 From now on, Git will know that ``my-new-feature`` is related to the
-``my-new-feature`` branch in your own GitHub repo. Subsequent push calls
+``my-new-feature`` branch in your own GitHub repository. Subsequent push calls
 are then simplified to the following:
 
 .. code::

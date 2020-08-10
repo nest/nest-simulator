@@ -34,8 +34,8 @@ from werkzeug.wrappers import Response
 
 import nest
 import RestrictedPython
-RESTRICTED_OFF = bool(os.environ.get('NEST_SERVER_RESTRICTED_OFF', False))
-if RESTRICTED_OFF:
+RESTRICTION_OFF = bool(os.environ.get('NEST_SERVER_RESTRICTION_OFF', False))
+if RESTRICTION_OFF:
     print('*** WARNING: NEST Server is running without any restriction. ***')
 
 
@@ -64,7 +64,7 @@ def route_exec():
 
         locals = dict()
         response = dict()
-        if RESTRICTED_OFF:
+        if RESTRICTION_OFF:
             with Capturing() as stdout:
                 exec(source_cleaned, get_globals(), locals)
             if len(stdout) > 0:

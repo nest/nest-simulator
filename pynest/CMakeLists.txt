@@ -110,6 +110,10 @@ if ( HAVE_PYTHON )
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/spatial_distributions
       )
 
+  install( DIRECTORY nest/server/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/server
+      )
+
   find_program( NOSETESTS nosetests )
   if ( NOT NOSETESTS STREQUAL "NOSETESTS-NOTFOUND" )
     add_test( NAME PyNEST

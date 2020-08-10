@@ -126,7 +126,7 @@ spiketimes = []
 for trial in [0, 1]:
 
     # Before we build the network, we reset the simulation kernel to ensure
-    # that previous NEST simulations in the python shell will not disturb this
+    # that previous NEST simulations in the Python shell will not disturb this
     # simulation and set the simulation resolution (later defined
     # synaptic delays cannot be smaller than the simulation resolution).
     nest.ResetKernel()

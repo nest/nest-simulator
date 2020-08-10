@@ -64,7 +64,7 @@ Description:
 
 Remarks:
 
-  This test script is based on the python version 
+  This test script is based on the Python version 
   
       test_pp_psc_delta.py
       
@@ -72,7 +72,7 @@ Remarks:
   
       test_iaf_dc_aligned.sli
       
-  as a guideline. The commented code is the original python test code.
+  as a guideline. The commented code is the original Python test code.
   
   Test 5) was added later (2014), when support for several adaptation time 
   constants was added to pp_psc_delta.

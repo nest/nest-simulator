@@ -103,7 +103,7 @@ fi
 
 mkdir "${TEST_OUTDIR}"
 
-PYTHON="${PYTHON:-python}"
+PYTHON="${PYTHON:-python3}"
 
 TMPDIR="${TMPDIR:-${TEST_OUTDIR}}"
 TEST_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/nest.XXXXX")"
@@ -472,7 +472,7 @@ else
 fi
 
 # Use plain python here to collect results
-python "$(dirname $0)/summarize_tests.py" "${TEST_OUTDIR}"
+python3 "$(dirname $0)/summarize_tests.py" "${TEST_OUTDIR}"
 TESTSUITE_RESULT=$?
 
 # Mac OS X: Restore old crash reporter state

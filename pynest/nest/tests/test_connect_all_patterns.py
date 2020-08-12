@@ -50,9 +50,9 @@ class TestConnectAllPatterns(unittest.TestCase):
             command = nest.ll_api.sli_func(
                 "mpirun", 2, "nosetests", test_script)
             command = command.split()
-            process = sp.Popen(command, stdout=sp.PIPE, stderr=sp.PIPE)
-            stdout, stderr = process.communicate()
-            retcode = process.returncode
+            my_env = os.environ.copy()
+            retcode = sp.call(command, env=my_env,
+                              stdout=sp.PIPE, stderr=sp.PIPE)
             if retcode != 0:
                 failing_tests.append(script)
         self.assertTrue(not failing_tests, 'The following tests failed when ' +

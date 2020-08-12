@@ -49,11 +49,6 @@ the **typeset documentation** as part of the review process. To learn how to tes
 locally offline, please check out our
 :doc:`User documentation workflow <../documentation_workflow/user_documentation_workflow>`.
 
-Additional workflows
---------------------
-
-You may also be interested in our :doc:`Xcode <xcode_workflow>` and :doc:`Eclipse <eclipse_workflow>` workflows.
-
 Have a question?
 ----------------
 

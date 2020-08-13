@@ -36,7 +36,7 @@ import nest
 import RestrictedPython
 RESTRICTION_OFF = bool(os.environ.get('NEST_SERVER_RESTRICTION_OFF', False))
 if RESTRICTION_OFF:
-    print('*** WARNING: NEST Server is running without any restriction. ***')
+    print('*** WARNING: NEST Server is run without a RestrictedPython trusted environment. ***')
 
 
 __all__ = [

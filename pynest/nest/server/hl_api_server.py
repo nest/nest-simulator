@@ -218,8 +218,7 @@ def get_restricted_globals():
     )
 
     # Add modules to restricted globals
-    module_names = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
-    modules = dict([(module, importlib.import_module(module)) for module in module_names])
+    modules = dict([(module, importlib.import_module(module)) for module in MODULES])
     restricted_globals.update(modules)
 
     return restricted_globals

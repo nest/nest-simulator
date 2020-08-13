@@ -12,7 +12,7 @@ NEST can be compiled without any external packages; such a configuration may be 
 
 To configure NEST for compilation without external packages, use the following  command::
 
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
           -Dwith-python=OFF \
           -Dwith-gsl=OFF \
           -Dwith-readline=OFF \
@@ -29,7 +29,7 @@ NEST provides a cmake tool-chain file for cross compilation for BlueGene/Q. When
 configuring NEST use the following ``cmake`` line::
 
     cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
-          -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+          -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
           -Dwith-python=OFF \
           -Dstatic-libraries=ON \
           </path/to/NEST/src>
@@ -73,7 +73,7 @@ A complete ``cmake`` line for PyNEST could look like this::
     module load gsl
 
     cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
-      -DCMAKE_INSTALL_PREFIX=</install/path> \
+      -DCMAKE_INSTALL_PREFIX=<nest_install_dir> \
       -Dstatic-libraries=OFF \
       -Dcythonize-pynest=OFF \
     	  -DCMAKE_C_COMPILER=/bgsys/drivers/ppcfloor/comm/xl/bin/mpixlc_r \
@@ -161,7 +161,7 @@ On the K Computer:
   To install NEST, use the following ``cmake`` line::
 
       cmake -DCMAKE_TOOLCHAIN_FILE=Platform/Fujitsu-Sparc64 \
-            -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+            -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
             -Dwith-gsl=/path/to/gsl-2.1.install/ \
             -Dwith-optimize="-Kfast" \
             -Dwith-defines="-DUSE_PMA" \

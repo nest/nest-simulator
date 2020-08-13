@@ -73,7 +73,7 @@ The following are the basic steps to compile and install NEST from source code. 
 
 .. code-block:: sh
 
-   cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
+   cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
 
 .. note::
 

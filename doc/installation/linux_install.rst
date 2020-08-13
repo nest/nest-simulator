@@ -127,7 +127,7 @@ For your convenience, a shell script setting all required environment variables 
 
 .. code-block:: sh
 
-   source <nest_install_dir>bin/nest_vars.sh
+   source <nest_install_dir>/bin/nest_vars.sh
 
 You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically whenever you open a new terminal.
 

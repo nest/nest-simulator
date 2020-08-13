@@ -130,7 +130,7 @@ If your Python version is correct and you still have the same error, then try on
 
           .. code-block:: bash
 
-              source </path/to/nest_install_dir>/bin/nest_vars.sh
+              source <nest_install_dir>/bin/nest_vars.sh
 
 
 

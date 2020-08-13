@@ -22,7 +22,6 @@
 import importlib
 import inspect
 import io
-import os
 import sys
 
 import flask
@@ -34,7 +33,11 @@ from werkzeug.wrappers import Response
 
 import nest
 import RestrictedPython
+
+import os
+MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
 RESTRICTION_OFF = bool(os.environ.get('NEST_SERVER_RESTRICTION_OFF', False))
+
 if RESTRICTION_OFF:
     print('*** WARNING: NEST Server is run without a RestrictedPython trusted environment. ***')
 
@@ -174,8 +177,7 @@ def get_globals():
     copied_globals = globals().copy()
 
     # Add modules to copied globals
-    modules = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
-    modules = dict([(module, importlib.import_module(module)) for module in modules])
+    modules = dict([(module, importlib.import_module(module)) for module in MODULES])
     copied_globals.update(modules)
 
     return copied_globals

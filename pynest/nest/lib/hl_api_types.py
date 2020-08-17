@@ -332,7 +332,7 @@ class NodeCollection(object):
         """
 
         if not self:
-            return
+            raise ValueError('Cannot get parameter of empty NodeCollection')
 
         # ------------------------- #
         #      Checks of input      #
@@ -469,6 +469,9 @@ class NodeCollection(object):
         return numpy.array(self.tolist(), dtype=dtype)
 
     def __getattr__(self, attr):
+        if not self:
+            raise AttributeError('Cannot get attribute of empty NodeCollection')
+
         if attr == 'spatial':
             metadata = sli_func('GetMetadata', self._datum)
             val = metadata if metadata else None

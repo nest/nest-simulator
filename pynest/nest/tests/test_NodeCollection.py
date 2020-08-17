@@ -715,9 +715,14 @@ class TestNodeCollection(unittest.TestCase):
         with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
             nest.Connect(empty_nc, empty_nc)
 
+        with self.assertRaises(ValueError):
+            empty_nc.get()
+
+        with self.assertRaises(AttributeError):
+            empty_nc.V_m
+
         self.assertFalse(empty_nc)
         self.assertTrue(nodes)
-        self.assertIsNone(empty_nc.get())
         self.assertIsNone(empty_nc.set())  # Also checking that it does not raise an error
 
     def test_empty_nc_addition(self):

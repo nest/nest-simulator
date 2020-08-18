@@ -191,7 +191,7 @@ class GetConnectionsTestCase(unittest.TestCase):
 
             conns = nest.GetConnections(source=src, synapse_label=label)
             self.assertEqual(reference_list, conns.synapse_model)
-            
+
             conns = nest.GetConnections(target=tgt, synapse_label=label)
             self.assertEqual(reference_list, conns.synapse_model)
 

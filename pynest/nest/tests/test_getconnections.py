@@ -28,8 +28,6 @@ import nest
 
 nest.set_verbosity('M_ERROR')
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
-
 
 @nest.ll_api.check_stack
 class GetConnectionsTestCase(unittest.TestCase):
@@ -149,7 +147,6 @@ class GetConnectionsTestCase(unittest.TestCase):
             conns = nest.GetConnections(target=tgt, synapse_model=synapse_model)
             self.assertEqual(reference_list, conns.synapse_model)
 
-    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_GetConnectionsSynapseLabel(self):
         """GetConnections using synapse_label as argument"""
 
@@ -162,8 +159,8 @@ class GetConnectionsTestCase(unittest.TestCase):
         for synapse_model in labeled_synapse_models:
             nest.ResetKernel()
 
-            src = nest.Create('hh_psc_alpha_gap', num_src)
-            tgt = nest.Create('hh_psc_alpha_gap', num_tgt)
+            src = nest.Create('iaf_psc_alpha', num_src)
+            tgt = nest.Create('iaf_psc_alpha', num_tgt)
 
             # First create one connection with static_synapse
             nest.Connect(src[0], tgt[0])

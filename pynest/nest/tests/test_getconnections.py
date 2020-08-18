@@ -32,7 +32,6 @@ HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
 @nest.ll_api.check_stack
-@unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class GetConnectionsTestCase(unittest.TestCase):
     """Find connections and test if values can be set."""
 
@@ -114,64 +113,86 @@ class GetConnectionsTestCase(unittest.TestCase):
     def test_GetConnectionsSynapseModel(self):
         """GetConnections using synapse_model as argument"""
 
+        num_src = 3
+        num_tgt = 5
+
         for synapse_model in nest.Models('synapses'):
             nest.ResetKernel()
 
-            src = nest.Create('iaf_psc_alpha', 3)
-            trgt = nest.Create('iaf_psc_alpha', 5)
+            src = nest.Create('iaf_psc_alpha', num_src)
+            tgt = nest.Create('iaf_psc_alpha', num_tgt)
 
             # First create one connection with static_synapse
-            nest.Connect(src[0], trgt[0])
+            nest.Connect(src[0], tgt[0])
 
             try:
                 # Connect with specified synapse
-                nest.Connect(src, trgt, syn_spec={'synapse_model': synapse_model})
+                nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model})
             except nest.kernel.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue
 
-            reference_list = [synapse_model] * 3 * 5
+            reference_list = [synapse_model] * num_src * num_tgt
             if synapse_model == 'static_synapse':
                 reference_list += ['static_synapse']
 
             conns = nest.GetConnections(synapse_model=synapse_model)
             self.assertEqual(reference_list, conns.synapse_model)
 
-            # Also test that it works if we specify source and synapse_model
+            # Also test that it works if we specify source/target and synapse_model
+            conns = nest.GetConnections(source=src, target=tgt, synapse_model=synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
+
             conns = nest.GetConnections(source=src, synapse_model=synapse_model)
             self.assertEqual(reference_list, conns.synapse_model)
 
+            conns = nest.GetConnections(target=tgt, synapse_model=synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
+
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_GetConnectionsSynapseLabel(self):
         """GetConnections using synapse_label as argument"""
 
         labeled_synapse_models = [s for s in nest.Models(mtype='synapses') if s.endswith("_lbl")]
 
+        label = 123
+        num_src = 3
+        num_tgt = 5
+
         for synapse_model in labeled_synapse_models:
             nest.ResetKernel()
 
-            src = nest.Create('hh_psc_alpha_gap', 3)
-            trgt = nest.Create('hh_psc_alpha_gap', 5)
+            src = nest.Create('hh_psc_alpha_gap', num_src)
+            tgt = nest.Create('hh_psc_alpha_gap', num_tgt)
 
             # First create one connection with static_synapse
-            nest.Connect(src[0], trgt[0])
+            nest.Connect(src[0], tgt[0])
 
             try:
                 # Connect with specified synapse
-                nest.Connect(src, trgt, syn_spec={'synapse_model': synapse_model, "synapse_label": 123, })
+                nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model, "synapse_label": label})
             except nest.kernel.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue
 
-            reference_list = [synapse_model] * 3 * 5
+            reference_list = [synapse_model] * num_src * num_tgt
+            label_list = [label] * num_src * num_tgt
 
             # Call GetConnections with specified synapse_label and test that connections with
             # corresponding model are returned
-            conns = nest.GetConnections(synapse_label=123)
-            self.assertEqual(reference_list, conns.synapse_model)
-            self.assertEqual([123] * 3 * 5, conns.synapse_label)
+            conns = nest.GetConnections(synapse_label=label)
 
-            # Also test that it works if we specify source and synapse_label
-            conns = nest.GetConnections(source=src, synapse_label=123)
+            self.assertEqual(reference_list, conns.synapse_model)
+            self.assertEqual(label_list, conns.synapse_label)
+
+            # Also test that it works if we specify source/target and synapse_label
+            conns = nest.GetConnections(source=src, target=tgt, synapse_label=label)
+            self.assertEqual(reference_list, conns.synapse_model)
+
+            conns = nest.GetConnections(source=src, synapse_label=label)
+            self.assertEqual(reference_list, conns.synapse_model)
+            
+            conns = nest.GetConnections(target=tgt, synapse_label=label)
             self.assertEqual(reference_list, conns.synapse_model)
 
 

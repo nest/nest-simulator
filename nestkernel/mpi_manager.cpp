@@ -120,9 +120,10 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
     set_communicator( MPI_COMM_WORLD );
 #endif /* #ifdef HAVE_MUSIC */
   }
-
-  MPI_Comm_size( comm, &num_processes_ );
-  MPI_Comm_rank( comm, &rank_ );
+  else
+  {
+    set_communicator( MPI_COMM_WORLD );
+  }
 
   // use at least 2 * number of processes entries (need at least two
   // entries per process to use flag of first entry as validity and

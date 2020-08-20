@@ -122,7 +122,16 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   }
   else
   {
+#ifdef HAVE_MUSIC
+    LOG( M_ERROR,
+      "MPIManager::init_mpi()",
+      "When compiled with MUSIC, NEST must be initialized before any other modules that call MPI_Init(). "
+      "Calling MPI_Abort()." );
+    comm = MPI_COMM_WORLD;
+    mpi_abort( 1 );
+#else
     set_communicator( MPI_COMM_WORLD );
+#endif
   }
 
   // use at least 2 * number of processes entries (need at least two

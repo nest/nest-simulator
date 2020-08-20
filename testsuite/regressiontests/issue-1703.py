@@ -36,17 +36,28 @@ EXIT_FAILURE = 127
 EXIT_SEGFAULT = 139
 
 try:
+    import nest
     from mpi4py import MPI
 except ImportError:
+    # Skip test if mpi4py is not installed, or if NEST is
+    # installed without Python support.
     sys.exit(EXIT_SKIPPED)
 
 cmd = shlex.split('python -c "from mpi4py import MPI; import nest; nest.Simulate(10)"')
 exit_code = sp.call(cmd)
 
-
-if exit_code == 0:
-    sys.exit(EXIT_SUCCESS)
-elif exit_code == -11:
-    sys.exit(EXIT_SEGFAULT)
+if nest.ll_api.sli_func("statusdict/have_music ::"):
+    # Expect error, not segfault
+    if exit_code == 1:
+        sys.exit(EXIT_SUCCESS)
+    elif exit_code == -11:
+        sys.exit(EXIT_SEGFAULT)
+    else:
+        sys.exit(EXIT_FAILURE)
 else:
-    sys.exit(EXIT_FAILURE)
+    if exit_code == 0:
+        sys.exit(EXIT_SUCCESS)
+    elif exit_code == -11:
+        sys.exit(EXIT_SEGFAULT)
+    else:
+        sys.exit(EXIT_FAILURE)

@@ -27,7 +27,7 @@ This is a regression test for GitHub issue 1703.
 """
 
 import sys
-import subprocess as sp
+import subprocess
 import shlex
 
 EXIT_SUCCESS = 0
@@ -35,16 +35,18 @@ EXIT_SKIPPED = 200
 EXIT_FAILURE = 127
 EXIT_SEGFAULT = 139
 
+# Check that NEST is installed with Python support, and that mpi4py is available.
+# If not, the test is skipped.
 try:
     import nest
     from mpi4py import MPI
 except ImportError:
-    # Skip test if mpi4py is not installed, or if NEST is
-    # installed without Python support.
     sys.exit(EXIT_SKIPPED)
 
+# Attempt to import MPI from mpi4py before NEST. Running the script in a separate process,
+# in case it ends in a segmentation fault.
 cmd = shlex.split('python -c "from mpi4py import MPI; import nest; nest.Simulate(10)"')
-exit_code = sp.call(cmd)
+exit_code = subprocess.call(cmd)
 
 if nest.ll_api.sli_func("statusdict/have_music ::"):
     # Expect error, not segfault

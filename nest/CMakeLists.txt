@@ -50,6 +50,9 @@ else ()
     set_target_properties( nest_lib
         PROPERTIES
         OUTPUT_NAME nest
+        
+        # delay lookup of symbols from libpython when building with MPI4Py
+        LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup"
         )
 endif ()
 

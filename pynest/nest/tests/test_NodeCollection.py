@@ -703,34 +703,35 @@ class TestNodeCollection(unittest.TestCase):
 
     def test_empty_nc(self):
         """Connection with empty NodeCollection raises error"""
-        empty_nc = nest.NodeCollection([])
         nodes = nest.Create('iaf_psc_alpha', 5)
 
-        with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
-            nest.Connect(nodes, empty_nc)
+        for empty_nc in [nest.NodeCollection(), nest.NodeCollection([])]:
 
-        with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
-            nest.Connect(empty_nc, nodes)
+            with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
+                nest.Connect(nodes, empty_nc)
 
-        with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
-            nest.Connect(empty_nc, empty_nc)
+            with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
+                nest.Connect(empty_nc, nodes)
 
-        with self.assertRaises(ValueError):
-            empty_nc.get()
+            with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
+                nest.Connect(empty_nc, empty_nc)
 
-        with self.assertRaises(AttributeError):
-            empty_nc.V_m
+            with self.assertRaises(ValueError):
+                empty_nc.get()
 
-        self.assertFalse(empty_nc)
-        self.assertTrue(nodes)
-        self.assertIsNone(empty_nc.set())  # Also checking that it does not raise an error
+            with self.assertRaises(AttributeError):
+                empty_nc.V_m
+
+            self.assertFalse(empty_nc)
+            self.assertTrue(nodes)
+            self.assertIsNone(empty_nc.set())  # Also checking that it does not raise an error
 
     def test_empty_nc_addition(self):
         """Combine NodeCollection with empty NodeCollection and connect"""
         n = 5
         vm = -50.
 
-        nodes_a = nest.NodeCollection([])
+        nodes_a = nest.NodeCollection()
         nodes_a += nest.Create('iaf_psc_alpha', n)
         nest.Connect(nodes_a, nodes_a)
         self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)

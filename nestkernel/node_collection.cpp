@@ -294,6 +294,10 @@ NodeCollectionPrimitive::to_array() const
 
 NodeCollectionPTR NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
 {
+  if ( not valid() or not rhs->valid() )
+  {
+    throw KernelException( "InvalidNodeCollection" );
+  }
   if ( rhs->empty() )
   {
     return NodeCollectionPTR( new NodeCollectionPrimitive( *this ) );
@@ -318,10 +322,7 @@ NodeCollectionPTR NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) co
   {
     throw BadProperty( "Can only join NodeCollections with same metadata." );
   }
-  if ( not valid() or not rhs->valid() )
-  {
-    throw KernelException( "InvalidNodeCollection" );
-  }
+
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
 
   if ( rhs_ptr ) // if rhs is Primitive

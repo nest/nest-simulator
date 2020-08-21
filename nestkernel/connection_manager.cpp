@@ -358,11 +358,11 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 {
   if ( sources->empty() )
   {
-    throw BadProperty( "Presynaptic nodes cannot be an empty NodeCollection" );
+    throw IllegalConnection( "Presynaptic nodes cannot be an empty NodeCollection" );
   }
   if ( targets->empty() )
   {
-    throw BadProperty( "Postsynaptic nodes cannot be an empty NodeCollection" );
+    throw IllegalConnection( "Postsynaptic nodes cannot be an empty NodeCollection" );
   }
 
   conn_spec->clear_access_flags();

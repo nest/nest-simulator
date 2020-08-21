@@ -707,13 +707,13 @@ class TestNodeCollection(unittest.TestCase):
 
         for empty_nc in [nest.NodeCollection(), nest.NodeCollection([])]:
 
-            with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
+            with self.assertRaises(nest.kernel.NESTErrors.IllegalConnection):
                 nest.Connect(nodes, empty_nc)
 
-            with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
+            with self.assertRaises(nest.kernel.NESTErrors.IllegalConnection):
                 nest.Connect(empty_nc, nodes)
 
-            with self.assertRaises(nest.kernel.NESTErrors.BadProperty):
+            with self.assertRaises(nest.kernel.NESTErrors.IllegalConnection):
                 nest.Connect(empty_nc, empty_nc)
 
             with self.assertRaises(ValueError):

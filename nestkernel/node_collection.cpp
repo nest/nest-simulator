@@ -300,7 +300,19 @@ NodeCollectionPTR NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) co
   }
   if ( empty() )
   {
-    return NodeCollectionPTR( rhs );
+    auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
+    if ( rhs_ptr )
+    {
+      // rhs is primitive
+      return std::make_shared< NodeCollectionPrimitive >( *rhs_ptr );
+    }
+    else
+    {
+      // rhs is composite
+      auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
+      assert( rhs_ptr );
+      return std::make_shared< NodeCollectionComposite >( *rhs_ptr );
+    }
   }
   if ( ( get_metadata().get() or rhs->get_metadata().get() ) and not( get_metadata() == rhs->get_metadata() ) )
   {

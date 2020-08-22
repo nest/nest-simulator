@@ -27,7 +27,7 @@ from math import exp
 import numpy as np
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class STDPTripletConnectionTestCase(unittest.TestCase):
     """Check stdp_triplet_connection model properties."""
 
@@ -40,7 +40,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         self.decay_duration = 5.0
         self.synapse_model = "stdp_triplet_synapse"
         self.syn_spec = {
-            "model": self.synapse_model,
+            "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
             # set receptor 1 post-synaptically, to not generate extra spikes
             "receptor_type": 1,
@@ -77,7 +77,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         """Get synapse parameter status."""
         stats = nest.GetConnections(
             self.pre_neuron, synapse_model=self.synapse_model)
-        return nest.GetStatus(stats, [which])[0][0]
+        return stats.get(which) if len(stats) == 1 else stats.get(which)[0]
 
     def decay(self, time, Kplus, Kplus_triplet, Kminus, Kminus_triplet):
         """Decay variables."""
@@ -121,7 +121,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
         def badPropertyWith(content, parameters):
             self.assertRaisesRegexp(
-                nest.NESTError, "BadProperty(.+)" + content,
+                nest.kernel.NESTError, "BadProperty(.+)" + content,
                 setupProperty, parameters
             )
 
@@ -290,11 +290,13 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         self.generateSpikes(self.pre_neuron, [3.0])  # trigger computation
 
         nest.Simulate(20.0)
+        print(limited_weight)
+        print(self.status('weight'))
         self.assertAlmostEqualDetailed(limited_weight, self.status(
             "weight"), "weight should have been limited")
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
 
     def setUp(self):
@@ -306,7 +308,7 @@ class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
         self.decay_duration = 5.0
         self.synapse_model = "stdp_triplet_synapse"
         self.syn_spec = {
-            "model": self.synapse_model,
+            "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
             # set receptor 1 post-synaptically, to not generate extra spikes
             "receptor_type": 1,
@@ -345,6 +347,7 @@ def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
     runner.run(suite_inh())
+
 
 if __name__ == "__main__":
     run()

@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-464 - Ensure that UniversalDataLogger triggers assertion with frozen multimeter.
 

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<!--[if IE 7]>
+<html class="ie ie7" lang="en-US">
+<![endif]--><!--[if IE 8]>
+<html class="ie ie8" lang="en-US">
+<![endif]--><!--[if !(IE 7) | !(IE 8)  ]><!--><html lang="en-US"><!--<![endif]-->
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width">
+    <title>NEST Simulator</title>
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <link rel="pingback" href="https://www.nest-simulator.org/xmlrpc.php">
+    <!--[if lt IE 9]>
+    <script src="../../assets/js/html5shiv.min.js" type="text/javascript"></script>
+    <![endif]-->
+    <link rel="stylesheet" id="blogsynthesis_jss_css-css"
+          href="../../assets/css/jss-style.min.css" type="text/css" media="all">
+    <link rel="stylesheet" id="parent-style-css"
+          href="../../assets/css/style.css" type="text/css" media="all">
+    <link rel="stylesheet" id="twentytwelve-fonts-css"
+          href="https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700&amp;subset=latin,latin-ext" type="text/css" media="all">
+    <!--[if lt IE 9]>
+    <link rel='stylesheet' id='twentytwelve-ie-css' href='../../assests/css/ie.css'
+          type='text/css' media='all' />
+    <![endif]-->
+    <script type="text/javascript"
+            src="../../assets/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript"
+            src="../../assets/js/jquery-migrate-3.0.0.js"></script>
+    <script type="text/javascript"
+            src="../../assets/js/jss-script.min.js?ver=4.4"></script>
+
+    <script type="text/javascript"
+            src="../../assets/js/jquery.mmenu.all.js"></script>
+    <link rel="stylesheet" id="parent-style-css"
+          href="../../assets/css/jquery.mmenu.all.css" type="text/css" media="all">
+	<script type="text/javascript">
+	 jQuery(document).ready(function( $ ) {
+		$("#nest-menu").mmenu({
+		   "extensions": [
+			  "fx-menu-zoom"
+		   ]
+		}, {
+		   // configuration
+		   clone: true
+		});
+		$("#hide").click(function(){
+			$("#mm-nest-menu").toggle();
+		});
+	});
+    </script>
+<!--
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+    </script>
+    <script type="text/javascript" async
+            src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+-->
+    <style>#responsive-menu .appendLink, #responsive-menu .responsive-menu li a, #responsive-menu #responsive-menu-title a,#responsive-menu .responsive-menu, #responsive-menu div, #responsive-menu .responsive-menu li, #responsive-menu{box-sizing: content-box !important;-moz-box-sizing: content-box !important;-webkit-box-sizing: content-box !important;-o-box-sizing: content-box !important}.RMPushOpen{width: 100% !important;overflow-x: hidden !important;height: 100% !important}.RMPushSlide{position: relative;left: 75%}#responsive-menu{position: absolute;width: 75%;left: -75%;top: 0px;background: #43494C;z-index: 9999;box-shadow: 0px 1px 8px #333333;font-size: 13px !important;max-width: 999px;display: none}#responsive-menu.admin-bar-showing{padding-top: 32px}#click-menu.admin-bar-showing{margin-top: 32px}#responsive-menu #rm-additional-content{padding: 10px 5% !important;width: 90% !important;color: #FFFFFF}#responsive-menu .appendLink{right: 0px !important;position: absolute !important;border: 1px solid #3C3C3C !important;padding: 12px 10px !important;color: #FFFFFF !important;background: #43494C !important;height: 20px !important;line-height: 20px !important;border-right: 0px !important}#responsive-menu .appendLink:hover{cursor: pointer;background: #3C3C3C !important;color: #FFFFFF !important}#responsive-menu .responsive-menu, #responsive-menu div, #responsive-menu .responsive-menu li,#responsive-menu{text-align: left !important}#responsive-menu .RMImage{vertical-align: middle;margin-right: 10px;display: inline-block}#responsive-menu.RMOpened{}#responsive-menu,#responsive-menu input{}#responsive-menu #responsive-menu-title{width: 95% !important;font-size: 14px !important;padding: 20px 0px 20px 5% !important;margin-left: 0px !important;background: #43494C !important;white-space: nowrap !important}#responsive-menu #responsive-menu-title,#responsive-menu #responsive-menu-title a{color: #FFFFFF !important;text-decoration: none !important;overflow: hidden !important}#responsive-menu #responsive-menu-title a:hover{color: #FFFFFF !important;text-decoration: none !important}#responsive-menu .appendLink,#responsive-menu .responsive-menu li a,#responsive-menu #responsive-menu-title a{transition: 1s all;-webkit-transition: 1s all;-moz-transition: 1s all;-o-transition: 1s all}#responsive-menu .responsive-menu{width: 100% !important;list-style-type: none !important;margin: 0px !important}#responsive-menu .responsive-menu li.current-menu-item > a,#responsive-menu .responsive-menu li.current-menu-item > .appendLink,#responsive-menu .responsive-menu li.current_page_item > a,#responsive-menu .responsive-menu li.current_page_item > .appendLink{background: #43494C !important;color: #FFFFFF !important}#responsive-menu .responsive-menu li.current-menu-item > a:hover,#responsive-menu .responsive-menu li.current-menu-item > .appendLink:hover,#responsive-menu .responsive-menu li.current_page_item > a:hover,#responsive-menu .responsive-menu li.current_page_item > .appendLink:hover{background: #43494C !important;color: #FFFFFF !important}#responsive-menu.responsive-menu ul{margin-left: 0px !important}#responsive-menu .responsive-menu li{list-style-type: none !important;position: relative !important}#responsive-menu .responsive-menu ul li:last-child{padding-bottom: 0px !important}#responsive-menu .responsive-menu li a{padding: 12px 0px 12px 5% !important;width: 95% !important;display: block !important;height: 20px !important;line-height: 20px !important;overflow: hidden !important;white-space: nowrap !important;color: #FFFFFF !important;border-top: 1px solid #3C3C3C !important;text-decoration: none !important}#click-menu{text-align: center;cursor: pointer;font-size: 13px !important;display: none;position: absolute;right: 5%;top: 60px;color: #FFFFFF;background: #000000;padding: 5px;z-index: 9999}#responsive-menu #responsiveSearch{display: block !important;width: 95% !important;padding-left: 5% !important;border-top: 1px solid #3C3C3C !important;clear: both !important;padding-top: 10px !important;padding-bottom: 10px !important;height: 40px !important;line-height: 40px !important}#responsive-menu #responsiveSearchSubmit{display: none !important}#responsive-menu #responsiveSearchInput{width: 91% !important;padding: 5px 0px 5px 3% !important;-webkit-appearance: none !important;border-radius: 2px !important;border: 1px solid #3C3C3C !important}#responsive-menu .responsive-menu,#responsive-menu div,#responsive-menu .responsive-menu li{width: 100% !important;margin-left: 0px !important;padding-left: 0px !important}#responsive-menu .responsive-menu li li a{padding-left: 10% !important;width: 90% !important;overflow: hidden !important}#responsive-menu .responsive-menu li li li a{padding-left: 15% !important;width: 85% !important;overflow: hidden !important}#responsive-menu .responsive-menu li li li li a{padding-left: 20% !important;width: 80% !important;overflow: hidden !important}#responsive-menu .responsive-menu li li li li li a{padding-left: 25% !important;width: 75% !important;overflow: hidden !important}#responsive-menu .responsive-menu li a:hover{background: #3C3C3C !important;color: #FFFFFF !important;list-style-type: none !important;text-decoration: none !important}#click-menu #RMX{display: none;font-size: 24px;line-height: 27px !important;height: 27px !important;color: #FFFFFF !important}#click-menu .threeLines{width: 33px !important;height: 27px !important;margin: auto !important}#click-menu .threeLines .line{height: 5px !important;margin-bottom: 6px !important;background: #FFFFFF !important;width: 100% !important}#click-menu .threeLines .line.last{margin-bottom: 0px !important}@media only screen and ( min-width : 0px ) and ( max-width : 600px ){#click-menu{display: block}}</style>
+
+
+	<link rel="stylesheet" id="parent-style-css" href="../../assets/css/style.css" type="text/css" media="all">
+
+ <!--wp code prettify
+    <link rel="stylesheet" type="text/css" href="../../assets/css/prettify.css">
+    <script type="text/javascript" src="../../assets/js/code-prettify/prettify.js"></script>
+ -->
+  <link rel="stylesheet" href="../../assets/js/highlight/styles/default.css">
+  <script src="../../assets/js/highlight/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+</head>
+<body class="page page-template-default custom-font-enabled single-author">
+<div id="page" class="hfeed site">
+        <header id="masthead" class="site-header" role="banner">
+        <hgroup>
+        <h1 class="site-title">
+            <a href="https://www.nest-simulator.org/"
+               title="NEST Simulator online">
+                <img src="https://www.nest-simulator.org/wp-content/uploads/2015/03/nest_logo.png">
+            </a>
+        </h1>
+        </hgroup>
+        <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button id="hide">Menu</button>
+            <a class="assistive-text" href="#content"
+               title="Skip to content">Skip to content</a>
+            <div class="menu-main-container" id="nest-menu">
+                <ul id="menu-main" class="nav-menu">
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page">
+                        <a href="../../index.html">About NEST</a>
+                    </li>
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                        <a href="../../download/">Download</a>
+                    </li>
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                        <a href="../../features/">Features</a>
+                    </li>
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children ">
+                        <a href="../../documentation/">Documentation</a>
+                        <ul class="sub-menu">
+                            <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                                <a href="../../installation/">Installing NEST</a>
+                            </li>
+                            <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children ">
+                                <a href="../../introduction-to-pynest/">Introduction to PyNEST</a>
+                                <ul class="sub-menu">
+                                    <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                                        <a href="../../introduction-to-pynest/part-1-neurons-and-simple-neural-networks/">Part 1: Neurons and simple neural networks</a>
+                                    </li>
+                                    <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                                        <a href="../../introduction-to-pynest/part-2-populations-of-neurons/">Part 2: Populations of neurons</a>
+                                    </li>
+                                    <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                                        <a href="../../introduction-to-pynest/part-3-connecting-networks-with-synapses/">Part 3: Connecting networks with synapses</a>
+                                    </li>
+                                    <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                                        <a href="../../introduction-to-pynest/part-4-topologically-structured-networks/">Part 4: Topologically structured networks</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                                <a href="../../more-example-networks/">Example Networks</a>
+                            </li>
+                            <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                                <a href="../../frequently-asked-questions/">
+                                    FAQ</a>
+                            </li>
+                            <li class="menu-item menu-item-type-custom menu-item-object-custom ">
+                                <a href="http://nest.github.io/nest-simulator/">Developer Manual</a>
+                            </li>
+                            <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                                <a href="../../quickref/">NEST/SLI Quick Reference</a>
+                            </li>
+                            <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                                <a href="../../helpindex/">NEST Command Index</a>
+                            </li>
+                            <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                                <a href="../../pynest-api/">High-level API of
+                                    PyNEST</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                        <a href="../../publications/">Publications</a>
+                    </li>
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page ">
+                        <a href="../../community/">Community</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="header-search"></div>
+        </nav><!-- #site-navigation -->
+    </header><!-- #masthead -->
+    
+    <div id="main" class="wrapper">
+
+	<div id="primary" class="site-content">
+        <div id="content" role="main">
+            <article class=" page type-page status-publish hentry">
+                <div class="entry-content">
+			        <div id="mw-content-text" class="mw-content-ltr"
+                         dir="ltr" lang="en">

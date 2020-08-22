@@ -253,16 +253,6 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-class Forall_iterFunction : public SLIFunction
-{
-public:
-  Forall_iterFunction()
-  {
-  }
-  void execute( SLIInterpreter* ) const;
-};
-
-
 class Forallindexed_aFunction : public SLIFunction
 {
 public:
@@ -363,15 +353,19 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: switch - finish a case ... switch structure
+
  Synopsis: mark proc1...procn switch-> -
+
  Description:
    switch executes proc1 ... procn and removes the mark. If any executed
    proc containes an exit command, switch will remove the other procs without
    execution. switch is used together with case.
+
  Parameters:
    proc1...procn: executable procedure tokens.
+
  Examples:
 
    mark
@@ -385,7 +379,6 @@ public:
    mark {1 ==} {2 ==} switch -->  1 2
 
  Author: Gewaltig
- FirstVersion: ??
 
  SeeAlso: case, switchdefault, exit, mark
 */
@@ -400,18 +393,22 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: switchdefault - finish a case ... switchdefault structure
+
  Synopsis: mark proc1...procn procdefault switchdefault -> -
+
  Description:
    Like switch, switchdefault executes any of proc1...procn.
    If an execution it meets an exit command, no further procs are executed.
    If n=0, e.g. no procedure other than procdefault is found, procdefault
    will be executed. Thus, procdefault will be skipped if any other proc
    exists.
+
  Parameters:
    proc1...procn: executable procedure tokens.
    procdefault  : execulable procedure called if no other proc is present.
+
  Examples:
 
    mark
@@ -433,6 +430,7 @@ public:
    --> default
 
  Author: Hehl
+
  FirstVersion: April 16, 1999
 
  SeeAlso: case, switch, exit, mark
@@ -447,15 +445,17 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: case - like if, but test a series of conditions.
  Synopsis: bool proc case --> proc
                               -
  Description:
    case tests the bool and pushes proc if true, else does nothing.
+
  Parameters:
    bool : condition for case to test
    proc : procedure to be executed if case is true
+
  Examples:
 
    true {(hello) ==} case --> hello
@@ -473,8 +473,9 @@ public:
    --> 3
 
  Author: Gewaltig
- FirstVersion: ??
+
  Remarks: Use exit to make sure that switch is exited.
+
  SeeAlso: switch, switchdefault, exit, mark, if
 */
 
@@ -530,15 +531,6 @@ class TimeFunction : public SLIFunction
 {
 public:
   TimeFunction()
-  {
-  }
-  void execute( SLIInterpreter* ) const;
-};
-
-class Sleep_iFunction : public SLIFunction
-{
-public:
-  Sleep_iFunction()
   {
   }
   void execute( SLIInterpreter* ) const;

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_max_delay - sli script to test whether max_delay is updated correctly
 
    Synopsis: (test_max_delay) run
@@ -43,6 +43,6 @@
 /iaf_psc_alpha Create
 1.0 delay Connect
 
-{ 0 GetStatus /max_delay get delay eq } assert_or_die
+{ GetKernelStatus /max_delay get delay eq } assert_or_die
 
 endusing

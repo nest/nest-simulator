@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-955 - Check that CreateLayer even works with a single neuron layer on multiple processes
 
@@ -37,7 +37,7 @@ Author: Hans Ekkehard Plesser, 2015-02-03 based on a reproducer by Janne Morén
 
 [1 2 4]
 {
-  << 
+  <<
     /positions [[0.0 0.0]]
     /elements /iaf_psc_alpha
   >>
@@ -52,7 +52,7 @@ Author: Hans Ekkehard Plesser, 2015-02-03 based on a reproducer by Janne Morén
   pop % leave empty stack
 
 <<   % test grid layer as well
-    /rows 1 /columns 1
+    /shape [ 1 1 ]
     /elements /iaf_psc_alpha
   >>
   CreateLayer

@@ -71,8 +71,7 @@ nest::GrowthCurveLinear::update( double t,
   double growth_rate ) const
 {
   const double Ca = Ca_minus * std::exp( ( t_minus - t ) / tau_Ca );
-  const double z_value = growth_rate * tau_Ca * ( Ca - Ca_minus ) / eps_
-    + growth_rate * ( t - t_minus ) + z_minus;
+  const double z_value = growth_rate * tau_Ca * ( Ca - Ca_minus ) / eps_ + growth_rate * ( t - t_minus ) + z_minus;
 
   return std::max( z_value, 0.0 );
 }
@@ -123,8 +122,7 @@ nest::GrowthCurveGaussian::update( double t,
   for ( double lag = t_minus; lag < ( t - h / 2.0 ); lag += h )
   {
     Ca = Ca - ( ( Ca / tau_Ca ) * h );
-    const double dz =
-      h * growth_rate * ( 2.0 * exp( -pow( ( Ca - xi ) / zeta, 2 ) ) - 1.0 );
+    const double dz = h * growth_rate * ( 2.0 * exp( -pow( ( Ca - xi ) / zeta, 2 ) ) - 1.0 );
     z_value = z_value + dz;
   }
 
@@ -181,8 +179,7 @@ nest::GrowthCurveSigmoid::update( double t,
   for ( double lag = t_minus; lag < ( t - h / 2.0 ); lag += h )
   {
     Ca = Ca - ( ( Ca / tau_Ca ) * h );
-    const double dz = h * growth_rate
-      * ( ( 2.0 / ( 1.0 + exp( ( Ca - eps_ ) / psi_ ) ) ) - 1.0 );
+    const double dz = h * growth_rate * ( ( 2.0 / ( 1.0 + exp( ( Ca - eps_ ) / psi_ ) ) ) - 1.0 );
     z_value = z_value + dz;
   }
 

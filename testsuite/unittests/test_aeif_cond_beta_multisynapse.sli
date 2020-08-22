@@ -20,7 +20,7 @@
  *
  */
  
- /* BeginDocumentation
+ /** @BeginDocumentation
    Name: testsuite::test_aeif_cond_beta_multisynapse - sli script for the aeif multisynapse model with synaptic conductance modeled by a double exponential function
 
    Synopsis: (test_aeif_cond_beta_multisynapse) run
@@ -61,10 +61,9 @@
 (unittest) run
 /unittest using
 
-0
 << 
     /overwrite_files true
->> SetStatus
+>> SetKernelStatus
 
 % This test should only run if we have GSL
 skip_if_without_gsl
@@ -89,11 +88,7 @@ sg << /spike_times [spike_time] >> SetStatus % generates a single peak
 
 % Creates a voltmeter
 /voltmeter Create /vm Set
-vm << /withtime true
-/time_in_steps true
-/interval dt
-/to_file true
-/precision 5 >> SetStatus
+vm << /time_in_steps true /interval dt >> SetStatus
 
 % Creates one aeif_conf_beta_multisynapse neuron
 /aeif_cond_beta_multisynapse Create /multisynapse_neuron Set
@@ -115,12 +110,11 @@ delays length 1 arraystore Range /synapses_idx exch def
   /W exch def
   /delay exch def
   % connect spike generator to each port
-  [sg] [multisynapse_neuron] /one_to_one <<
-  /model /static_synapse
+  sg multisynapse_neuron /one_to_one <<
+  /synapse_model /static_synapse
   /delay delay
   /weight W
   /receptor_type syn_id >> Connect
-  
 } ScanThread
 
 % connects voltmeter
@@ -129,7 +123,7 @@ vm multisynapse_neuron 1. 8. /static_synapse Connect
 simulation_t ms Simulate % run simulation
 
 % Gets the membrane voltage of the multisynapse neuron
-/d vm GetStatus /events get def
+/d vm /events get def
 d /V_m get cva /Vms Set
 d /times get cva /ts Set % get times
 
@@ -191,7 +185,7 @@ d /times get cva /ts Set % get times
   /res 0.1 def
   /V_reset -111. def
   
-  0 << /resolution res >> SetStatus
+  << /resolution res >> SetKernelStatus
   /nrn /aeif_cond_beta_multisynapse 
     << /w 0. /a 0. /b 0. /Delta_T 0. /t_ref 0. /I_e 1000.
        /V_reset V_reset >>
@@ -199,8 +193,7 @@ d /times get cva /ts Set % get times
   def
   
   /sd /spike_detector << /time_in_steps true >> Create def
-  /vm /voltmeter << /withtime true /time_in_steps true
-                    /interval res >> Create def
+  /vm /voltmeter << /time_in_steps true /interval res >> Create def
   
   nrn sd Connect
   vm nrn Connect
@@ -224,7 +217,7 @@ d /times get cva /ts Set % get times
   /res 0.1 def
   /V_reset -111. def
   
-  0 << /resolution res >> SetStatus
+  << /resolution res >> SetKernelStatus
   /nrn /aeif_cond_beta_multisynapse 
     << /w 0. /a 0. /b 0. /Delta_T 0. /t_ref res /I_e 1000.
        /V_reset V_reset >>
@@ -232,8 +225,7 @@ d /times get cva /ts Set % get times
   def
   
   /sd /spike_detector << /time_in_steps true >> Create def
-  /vm /voltmeter << /withtime true /time_in_steps true
-                    /interval res >> Create def
+  /vm /voltmeter << /time_in_steps true /interval res >> Create def
   
   nrn sd Connect
   vm nrn Connect
@@ -269,7 +261,7 @@ d /times get cva /ts Set % get times
   /b 100. def
   /tau_w 1.0 def
   
-  0 << /resolution res >> SetStatus
+  << /resolution res >> SetKernelStatus
   /nrn /aeif_cond_beta_multisynapse 
     << /w 0. /a a /b b /tau_w tau_w /Delta_T 0. /t_ref t_ref /I_e 1000.
        /E_L E_L /V_reset V_reset >>
@@ -277,8 +269,7 @@ d /times get cva /ts Set % get times
   def
   
   /sd /spike_detector << /time_in_steps true >> Create def
-  /vm /multimeter << /withtime true /time_in_steps true
-                     /interval res /record_from [ /V_m /w ] >> Create def
+  /vm /multimeter << /time_in_steps true /interval res /record_from [ /V_m /w ] >> Create def
   
   nrn sd Connect
   vm nrn Connect
@@ -331,12 +322,14 @@ d /times get cva /ts Set % get times
   ResetKernel
   /nrn /aeif_cond_beta_multisynapse Create def
   
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval 1.0 /record_from [ /V_m /w /g_1 ] >> Create def
+  /mm /multimeter << /time_in_steps true
+                     /interval 1.0
+		     /record_from [ /V_m /w /g_1 ]
+		  >> Create def
   
   mm nrn Connect
   
-  /len 1 GetStatus /recordables get length def
+  /len nrn /recordables get length def
   len 3 eq
   end
 }
@@ -360,13 +353,13 @@ assert_or_die
   /nrn /aeif_cond_beta_multisynapse <<  
     /E_rev E_rev1 /tau_rise tau_rise1 /tau_decay tau_decay1
       >> Create def
-  /len1 1 GetStatus /recordables get length def
+  /len1 nrn /recordables get length def
   
-  1 << /E_rev E_rev2 /tau_rise tau_rise2 /tau_decay tau_decay2 >> SetStatus
-  /len2 1 GetStatus /recordables get length def
+  nrn << /E_rev E_rev2 /tau_rise tau_rise2 /tau_decay tau_decay2 >> SetStatus
+  /len2 nrn /recordables get length def
   
-  1 << /E_rev E_rev3 /tau_rise tau_rise3 /tau_decay tau_decay3 >> SetStatus
-  /len3 1 GetStatus /recordables get length def
+  nrn << /E_rev E_rev3 /tau_rise tau_rise3 /tau_decay tau_decay3 >> SetStatus
+  /len3 nrn /recordables get length def
   
   len1 5 eq len2 4 eq and len3 6 eq and
   end
@@ -454,7 +447,7 @@ assert_or_die
     end
   } def
 
-  0 << /resolution dt >> SetStatus
+  << /resolution dt >> SetKernelStatus
 
   % Create a spike generator that generates a single spike
   /spike_generator Create /sg Set
@@ -474,8 +467,8 @@ assert_or_die
     /W exch def
     /delay exch def
     % Connect spike generator to each port
-    [sg] [nrn] /one_to_one <<
-      /model /static_synapse
+    sg nrn /one_to_one <<
+      /synapse_model /static_synapse
       /delay delay
       /weight W
       /receptor_type syn_id >>
@@ -483,8 +476,10 @@ assert_or_die
   } ScanThread
 
   % Create the multimeter that will record from the 3 conductance channels
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval dt /record_from [ /g_1 /g_2 /g_3 /g_4 ] >> Create def
+  /mm /multimeter << /time_in_steps true
+                     /interval dt
+		     /record_from [ /g_1 /g_2 /g_3 /g_4 ]
+		  >> Create def
 
   mm nrn Connect
 

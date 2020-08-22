@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::issue-264 Ensure error is raised on times incommensurate with resolution
 
@@ -48,7 +48,7 @@ M_ERROR setverbosity
 % Check incommensurate simulation time
 {
   ResetKernel
-  0 << /resolution 1.0 /tics_per_ms 1000 >> SetStatus
+  << /resolution 1.0 /tics_per_ms 1000 >> SetKernelStatus
   1.5 Simulate
 } fail_or_die
 
@@ -60,14 +60,14 @@ M_ERROR setverbosity
   % stimulating device
   {
     ResetKernel
-    0 << /resolution 1.0 /tics_per_ms 1000 >> SetStatus
+    << /resolution 1.0 /tics_per_ms 1000 >> SetKernelStatus
     /spike_generator << item 1.5 >> SetDefaults
   } fail_or_die
     
   % recording device
   {
     ResetKernel
-    0 << /resolution 1.0 /tics_per_ms 1000 >> SetStatus
+    << /resolution 1.0 /tics_per_ms 1000 >> SetKernelStatus
     /spike_detector << item 1.5 >> SetDefaults
   } fail_or_die
 } forall
@@ -80,14 +80,14 @@ M_ERROR setverbosity
   % stimulating device
   {
     ResetKernel
-    0 << /resolution 1.0 /tics_per_ms 1000 >> SetStatus
+    << /resolution 1.0 /tics_per_ms 1000 >> SetKernelStatus
     /spike_generator Create << item 1.5 >> SetStatus
   } fail_or_die
     
   % recording device
   {
     ResetKernel
-    0 << /resolution 1.0 /tics_per_ms 1000 >> SetStatus
+    << /resolution 1.0 /tics_per_ms 1000 >> SetKernelStatus
     /spike_detector Create << item 1.5 >> SetStatus
   } fail_or_die
 } forall

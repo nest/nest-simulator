@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_threaded_neuron_device_connections - test for correct creation of neuron-neuron, neuron-device, device-neuron and device-device connections using multiple threads
 
 Synopsis: (test_threaded_neuron_device_connections) run -> dies if assertion fails
@@ -42,7 +42,7 @@ skip_if_not_threaded
 M_ERROR setverbosity
 
 ResetKernel
-0 << /total_num_virtual_procs 2 >> SetStatus
+<< /total_num_virtual_procs 2 >> SetKernelStatus
 
 % create nodes
 /n1 /iaf_psc_delta Create def
@@ -51,38 +51,45 @@ ResetKernel
 /d4 /spike_detector Create def
 /g5 /spike_generator Create def
 /v6 /volume_transmitter Create def
-/stdp_dopamine_synapse << /vt v6 >> SetDefaults
+/stdp_dopamine_synapse << /vt v6 0 get >> SetDefaults
 
 % neuron-neuron
-[n1 n2] [n3 n3] /one_to_one Connect
-[n2 n3] [n1] Connect
-n2 n1 << /weight 1. >> Connect
+n1 n3 Connect
+n2 n3 Connect
+n2 n1 Connect
+n3 n1 Connect
+n2 n1 << >> << /weight 1. >> Connect
 
 % neuron-device
-[n1 n1] [d4 n3] /one_to_one Connect
-[n2 n3] [d4] Connect
-n2 d4 << /weight 1. >> Connect
+n1 d4 Connect
+n1 n3 Connect
+n2 d4 Connect
+n3 d4 Connect
+n2 d4 << >> << /weight 1. >> Connect
 
 % device-neuron
-[g5 g5] [n2 n3] /one_to_one Connect
-[g5 g5] [n1] Connect
-g5 n3 << /weight 1. >> Connect
+g5 n2 Connect
+g5 n3 Connect
+g5 n1 Connect
+g5 n1 Connect
+g5 n3 << >> << /weight 1. >> Connect
 
 % device-device
-[g5 g5] [d4] Connect
-g5 d4 << /weight 1. >> Connect
+g5 d4 Connect
+g5 d4 Connect
+g5 d4 Connect
+g5 d4 << >> << /weight 1. >> Connect
 
 % neuron-globally receiving device (volume transmitter)
 n1 v6 Connect
 n2 v6 Connect
 
 /conn << >> GetConnections def
-
 % expected connections with expected threads
 /target_conn <[1 3 1] [2 3 1] [2 1 1] [3 1 1] [2 1 1] % neuron-neuron
               [1 4 1] [1 3 1] [2 4 0] [3 4 1] [2 4 0] % neuron-device
               [5 2 0] [5 3 1] [5 1 1] [5 1 1] [5 3 1] % device-neuron
-              [5 4 0] [5 4 0] [5 4 0]                 % device-device
+              [5 4 0] [5 4 0] [5 4 0] [5 4 0]         % device-device
               [1 6 0] [1 6 1] [2 6 0] [2 6 1]> def    % neuron-globally receiving device
 
 conn {

@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multimeter - Minimal test for correct multimeter setup
  
 Synopsis: (test_multimeter) run -> NEST exits if test fails
@@ -64,7 +64,7 @@ Author: Hans Ekkehard Plesser, 2010-05-05
     (Testing model: ) model cvs join ==
 
     ResetKernel
-    0 << /resolution res >> SetStatus
+    << /resolution res >> SetKernelStatus
 
     % get recordables, if none, return true
     model GetDefaults dup /recordables known

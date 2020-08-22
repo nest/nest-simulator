@@ -119,8 +119,7 @@ Model::set_status( DictionaryDatum d )
   }
   catch ( BadProperty& e )
   {
-    throw BadProperty( String::compose(
-      "Setting status of model '%1': %2", get_name(), e.message() ) );
+    throw BadProperty( String::compose( "Setting status of model '%1': %2", get_name(), e.message() ) );
   }
 }
 
@@ -136,8 +135,7 @@ Model::get_status( void )
   }
 
   ( *d )[ names::instantiations ] = Token( tmp );
-  ( *d )[ names::type_id ] =
-    LiteralDatum( kernel().model_manager.get_model( type_id_ )->get_name() );
+  ( *d )[ names::type_id ] = LiteralDatum( kernel().model_manager.get_model( type_id_ )->get_name() );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {

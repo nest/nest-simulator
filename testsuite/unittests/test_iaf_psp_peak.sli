@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_psp_peak - test of closed form expression for peak
 
 Synopsis: (test_iaf_psp_peak) run -> compare expression with numerics

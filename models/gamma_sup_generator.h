@@ -32,55 +32,55 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
 #include "stimulating_device.h"
-
-/*BeginDocumentation
-Name: gamma_sup_generator - simulate the superimposed spike train of a
-                            population of gamma process.
-Description:
-
-  The gamma_sup_generator generator simulates the pooled spike train of a
-  population of neurons firing independently with gamma process statistics.
-
-Parameters:
-   The following parameters appear in the element's status dictionary:
-
-   rate         double - mean firing rate of the component processes,
-                         default: 0s^-1
-   gamma_shape  long   - shape paramter of component gamma processes, default: 1
-   n_proc       long   - number of superimposed independent component processes,
-                         default: 1
-
-Remarks:
-   The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
-   Statistical properties of superimposed stationary spike trains,
-   Journal of Computational Neuroscience.
-   URL: http://www.springerlink.com/content/u75211r381p08301/
-   DOI: 10.1007/s10827-011-0362-8
-
-Author:
-   Jan 2011, Moritz Deger
-
-SeeAlso: ppd_sup_generator, poisson_generator_ps, spike_generator, Device,
-StimulatingDevice
-*/
 
 namespace nest
 {
 
-/**
- * Generator of the spike output of a population of gamma processes with
- * integer shape parameter.
- *
- * This gamma process superposition generator sends different spike
- * trains to all its targets.
- *
- * @ingroup Devices
- */
-class gamma_sup_generator : public Node
+/* BeginUserDocs: device, generator
+
+Short description
++++++++++++++++++
+
+Simulate the superimposed spike train of a population of gamma process
+
+Description
++++++++++++
+
+The gamma_sup_generator generator simulates the pooled spike train of a
+population of neurons firing independently with gamma process statistics.
+
+Parameters
+++++++++++
+
+The following parameters appear in the element's status dictionary:
+
+============  ======== =========================================================
+ rate         spikes/s Mean firing rate of the component processes,
+                       default: 0 spikes/s
+ gamma_shape  integer  Shape paramter of component gamma processes, default: 1
+ n_proc       integer  Number of superimposed independent component processes,
+                       default: 1
+============  ======== =========================================================
+
+References
+++++++++++
+
+.. [1] Deger, Helias, Boucsein, Rotter (2011). Statistical properties of
+       superimposed stationary spike trains. Journal of Computational
+       Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
+
+See also
+++++++++
+
+ppd_sup_generator, poisson_generator_ps, spike_generator
+
+EndUserDocs */
+
+class gamma_sup_generator : public DeviceNode
 {
 
 public:
@@ -92,11 +92,18 @@ public:
   {
     return false;
   }
+
   bool
   is_off_grid() const
   {
     return false;
-  } // does not use off_grid events
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
 
   using Node::event_hook;
 
@@ -136,7 +143,7 @@ private:
   struct Parameters_
   {
     double rate_;               //!< rate of component gamma process [Hz]
-    unsigned long gamma_shape_; //!< gamma shape parameter [1]
+    unsigned long gamma_shape_; //!< gamma shape parameter [1]_
     unsigned long n_proc_;      //!< number of component processes
 
     /**
@@ -149,8 +156,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -160,15 +167,13 @@ private:
 
     librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    std::vector< unsigned long >
-      occ_; //!< occupation numbers of internal states
+    std::vector< unsigned long > occ_;        //!< occupation numbers of internal states
 
   public:
     Internal_states_( size_t num_bins,
       unsigned long ini_occ_ref,
-      unsigned long ini_occ_act ); //!< initialize occupation numbers
-    unsigned long update( double transition_prob,
-      librandom::RngPtr rng ); //!< update age dist and generate spikes
+      unsigned long ini_occ_act );                                         //!< initialize occupation numbers
+    unsigned long update( double transition_prob, librandom::RngPtr rng ); //!< update age dist and generate spikes
   };
 
 
@@ -212,10 +217,7 @@ private:
 };
 
 inline port
-gamma_sup_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+gamma_sup_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -232,8 +234,9 @@ gamma_sup_generator::send_test_event( Node& target,
     const port p = target.handles_test_event( e, receptor_type );
     if ( p != invalid_port_ )
     {
+      // count number of targets
       ++P_.num_targets_;
-    } // count number of targets
+    }
     return p;
   }
 }
@@ -249,7 +252,7 @@ inline void
 gamma_sup_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

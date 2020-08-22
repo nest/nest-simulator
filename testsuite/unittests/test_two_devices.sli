@@ -47,11 +47,10 @@ and fixed.
 
 ResetKernel
 
-0 d                    SetStatus
-0 << /resolution h >>  SetStatus
+d SetKernelStatus
+<< /resolution h >> SetKernelStatus
 
 /spike_detector Create /sp Set   
-sp  << /withgid false  /withtime true /to_memory true >> SetStatus
  
 /poisson_generator_ps Create /pn Set
 pn << /rate 10000.0 >> SetStatus

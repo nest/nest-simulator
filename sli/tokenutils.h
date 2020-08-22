@@ -268,8 +268,7 @@ Token newToken< std::string >( std::string const& value );
 template <>
 std::vector< long > getValue< std::vector< long > >( const Token& );
 template <>
-void setValue< std::vector< long > >( const Token&,
-  std::vector< long > const& value );
+void setValue< std::vector< long > >( const Token&, std::vector< long > const& value );
 
 template <>
 Token newToken< std::vector< long > >( std::vector< long > const& value );
@@ -279,8 +278,7 @@ Token newToken< std::vector< long > >( std::vector< long > const& value );
 template <>
 std::vector< double > getValue< std::vector< double > >( const Token& );
 template <>
-void setValue< std::vector< double > >( const Token&,
-  std::vector< double > const& value );
+void setValue< std::vector< double > >( const Token&, std::vector< double > const& value );
 
 template <>
 Token newToken< std::vector< double > >( std::vector< double > const& value );

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_spike_detector - sli script to test spike_detector device
 
    Synopsis: (test_spike_detector) run
@@ -46,9 +46,9 @@
 
 ResetKernel
 
-0 << 
+<< 
      /resolution h
-  >> SetStatus
+  >> SetKernelStatus
 
 /spk_tms [0.1 5.0 5.3 5.33 5.4 5.9 6.0 ] def
 /spike_generator Create /sg Set
@@ -58,7 +58,6 @@ sg <<
    >> SetStatus     
 
 /spike_detector Create /sd Set
-sd << /withtime true /to_memory true /time_in_steps false /precise_times true >> SetStatus 
 
 sg sd Connect
 
@@ -77,86 +76,3 @@ spk_tms sub spk_tms div { abs } Map Max
 true exch {and} Fold   % all equal ?
 
 assert_or_die
-
-% test the setting of the /precision value absent precise models
-% 1. checking the default value and changing it
-
-  ResetKernel
-  /spike_detector Create /sd Set
-
-  % is the default correctly set to 3?
-  sd GetStatus /precision get dup /p_val Set 3 eq assert_or_die
-
-  % is the precision still the same after simulating for some time?
-  100 Simulate
-  sd GetStatus /precision get p_val eq assert_or_die
-
-% 2. setting Precision 
-
-  ResetKernel
-  /spike_detector Create /sd Set
-
-  % can the precision be correctly set?
-  sd << /precision 15 >> SetStatus 
-  sd GetStatus /precision get 15 eq assert_or_die
-
-  % is the precision the same after simulating?
-  100 Simulate
-  sd GetStatus /precision get 15 eq assert_or_die
-
-% test the behavior of the /precise_times flag
-% 3. if the user does not set it
-
-  ResetKernel
-  /spike_detector Create /sd Set
-
-  % is the default correctly set to false?
-  sd GetStatus /precise_times get dup /pt_flag Set false eq assert_or_die
-
-  % is the flag still the same after simulating for some time?
-  100 Simulate
-  sd GetStatus /precise_times get pt_flag eq assert_or_die
-
-  % is the flag still the same after the creation of a precise neuron?
-  /iaf_psc_exp_ps Create ;
-  sd GetStatus /precise_times get pt_flag eq assert_or_die
-
-  % does the flag change to true if simulating with a precise neuron around?
-  100 Simulate
-  sd GetStatus /precise_times get true eq assert_or_die
-
-  % check if precision correctly increased to 15.
-  sd GetStatus /precision get 15 eq assert_or_die
-
-% 4.a if the user sets the flag to false
-
-  ResetKernel
-  /spike_detector Create /sd Set
-  sd << /precise_times false >> SetStatus
-  /iaf_psc_exp_ps Create ;
-  100 Simulate
-  sd GetStatus /precise_times get false eq assert_or_die
-
-% 4.b if the user sets the flag to true
-
-  ResetKernel
-  /spike_detector Create /sd Set
-  sd << /precise_times true >> SetStatus
-  /iaf_psc_exp_ps Create ;
-  100 Simulate
-  sd GetStatus /precise_times get true eq assert_or_die
-
-% 5. can precision be set correctly when precise models exist?
-
-  ResetKernel
-  /spike_detector Create /sd Set
-
-  % checking to see if precision gets set correctly.
-  /iaf_psc_exp_ps Create ;
-  sd << /precision 15 >> SetStatus 
-  sd GetStatus /precision get 15 eq assert_or_die
-
-  % does it remain the same after simulation?
-  100 Simulate
-  sd GetStatus /precision get 15 eq assert_or_die
-

@@ -39,8 +39,7 @@ sli::pool AggregateDatum< std::string, &SLIInterpreter::Stringtype >::memory(
 
 template <>
 void
-AggregateDatum< std::string, &SLIInterpreter::Stringtype >::pprint(
-  std::ostream& out ) const
+AggregateDatum< std::string, &SLIInterpreter::Stringtype >::pprint( std::ostream& out ) const
 {
   out << '(';
   print( out );
@@ -56,7 +55,7 @@ template class AggregateDatum< std::string, &SLIInterpreter::Stringtype >;
 const ToUppercase_sFunction touppercase_sfunction;
 const ToLowercase_sFunction tolowercase_sfunction;
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ToUppercase - Convert a string to upper case.
    Synopsis:
    (string) ToUppercase -> (string)
@@ -85,7 +84,7 @@ ToUppercase_sFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: ToLowercase - Convert a string to lower case.
    Synopsis:
    (string) ToLowercase -> (string)

@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+[ -f /etc/profile.d/nest-simulator.sh ] && rm -f /etc/profile.d/nest-simulator.sh
+exit 0

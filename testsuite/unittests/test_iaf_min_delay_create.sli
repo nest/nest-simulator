@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_iaf_min_delay_create - sli script for testing automatic adjustment of min_delay
 
 Synopsis: (test_iaf_min_delay_create) run -> compares results for different min_delays
@@ -57,7 +57,7 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractor
 
   ResetKernel
 
-  0 << /local_num_threads 1 /resolution h >> SetStatus
+  << /local_num_threads 1 /resolution h >> SetKernelStatus
 
   /iaf_psc_alpha Create
   /iaf_psc_alpha Create
@@ -69,7 +69,6 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractor
   dc_gen <<  /amplitude 1000. >> SetStatus
 
   /voltmeter Create /vm Set
-  vm << /withtime true >> SetStatus
 
   % must connect with explicit delay to assure
   % consistency as min_delay varies      

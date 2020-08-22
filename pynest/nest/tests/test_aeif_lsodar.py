@@ -55,7 +55,7 @@ Details:
   recorded variables and the reference is smaller than a given tolerance.
 """
 
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 path = os.path.abspath(os.path.dirname(__file__))
 
 # --------------------------------------------------------------------------- #
@@ -71,8 +71,7 @@ di_tolerances_lsodar = {
     "aeif_psc_exp": {"V_m": 5e-4, "w": 1e-4},
     "aeif_psc_delta": {"V_m": 5e-4, "w": 1e-4},
     "aeif_cond_alpha_multisynapse": {"V_m": 5e-4, "w": 1e-4},
-    "aeif_cond_beta_multisynapse": {"V_m": 5e-4, "w": 1e-4},
-    "aeif_cond_alpha_RK5": {"V_m": 5e-3, "w": 2e-3}
+    "aeif_cond_beta_multisynapse": {"V_m": 5e-4, "w": 1e-4}
 }
 
 # "high" difference for V_m on aeif_psc_* because of 1 gap in spike-time on
@@ -82,8 +81,7 @@ di_tolerances_iaf = {
     "aeif_cond_exp": {"V_m": 5e-4, "g_ex": 1e-6},
     "aeif_psc_alpha": {"V_m": 5e-3, "I_syn_ex": 1e-6},
     "aeif_psc_delta": {"V_m": 5e-3},
-    "aeif_psc_exp": {"V_m": 5e-3, "I_syn_ex": 1e-6},
-    "aeif_cond_alpha_RK5": {"V_m": 2e-3, "g_ex": 1e-6}
+    "aeif_psc_exp": {"V_m": 5e-3, "I_syn_ex": 1e-6}
 }
 
 
@@ -99,8 +97,7 @@ models = [
     "aeif_psc_delta",
     "aeif_psc_exp",
     "aeif_cond_alpha_multisynapse",
-    "aeif_cond_beta_multisynapse",
-    "aeif_cond_alpha_RK5"
+    "aeif_cond_beta_multisynapse"
 ]
 
 num_models = len(models)
@@ -185,8 +182,7 @@ di_syn_types = {
     "aeif_cond_exp": "cond_exp",
     "aeif_psc_alpha": "psc_alpha",
     "aeif_psc_exp": "psc_exp",
-    "aeif_psc_delta": "psc_delta",
-    "aeif_cond_alpha_RK5": "cond_alpha"
+    "aeif_psc_delta": "psc_delta"
 }
 
 
@@ -221,7 +217,7 @@ class AEIFTestCase(unittest.TestCase):
         Parameters
         ----------
         multimeters : dict of tuples
-            Dictionary containing the model name as key and the GID of the
+            Dictionary containing the model name as key and the node ID of the
             associated multimeter as value.
         params : dict
             Parameters used for the models.

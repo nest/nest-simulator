@@ -31,7 +31,7 @@
 #ifndef SYNAPTIC_ELEMENT_H
 #define SYNAPTIC_ELEMENT_H
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: synaptic_element - Contact point element for the dynamic creation
    and deletion of synapses.
 
@@ -78,7 +78,9 @@
    focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
 
   FirstVersion: July 2013
+
   Author: Mikael Naveau, Sandra Diaz
+
   SeeAlso: GrowthCurve, SPManager, SPBuilder, Node, ArchivingNode.
 */
 
@@ -166,6 +168,8 @@ public:
   /**
   * \fn double get_z_value(Archiving_Node const *a, double t) const
   * Get the number of synaptic_element at the time t (in ms)
+  * Returns a negative number when synaptic elements must be deleted
+  * during the next update
   * @param a node of this synaptic_element
   * @param t Current time (in ms)
   */

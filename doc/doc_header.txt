@@ -20,7 +20,7 @@
 */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: [namespace::]Command - Short description.
 
 Synopsis: arg1 ... argn Command -> res1 ... resn

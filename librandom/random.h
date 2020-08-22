@@ -34,11 +34,9 @@
 namespace librandom
 {
 
-librandom::RngDatum create_rng( const long seed,
-  const RngFactoryDatum& factory );
+librandom::RngDatum create_rng( const long seed, const RngFactoryDatum& factory );
 
-librandom::RdvDatum create_rdv( const RdvFactoryDatum& factory,
-  const RngDatum& rng );
+librandom::RdvDatum create_rdv( const RdvFactoryDatum& factory, const RngDatum& rng );
 
 void set_status( const DictionaryDatum& dict, RdvDatum& rdv );
 DictionaryDatum get_status( const RdvDatum& rdv );

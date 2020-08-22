@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_iaf_ps_psp_accuracy - test of precise integrate-and-fire neurons' accuracy of PSP
 
 Synopsis: (test_iaf_ps_psp_accuracy) run -> compare one voltage with analytics
@@ -98,14 +98,14 @@ M_ERROR setverbosity
 
 
 <<
-  /E_L       0.0      % resting potential in mV 
-  /V_m       0.0      % initial membrane potential in mV  
-  /V_th     15.0      % spike threshold in mV
-  /I_e       0.0      % DC current in pA
-  /tau_m    10.0      % membrane time constant in ms
-  /tau_syn   0.3      % synaptic time constant in ms
-  /C_m     250.0      % membrane capacity in pF
-  /Interpol_Order O
+  /E_L         0.0      % resting potential in mV 
+  /V_m         0.0      % initial membrane potential in mV  
+  /V_th        15.0      % spike threshold in mV
+  /I_e         0.0      % DC current in pA
+  /tau_m       10.0      % membrane time constant in ms
+  /tau_syn_ex  0.3      % synaptic time constant in ms
+  /tau_syn_in  0.3      % synaptic time constant in ms
+  /C_m         250.0      % membrane capacity in pF
 >> /P Set
 
 
@@ -120,7 +120,7 @@ M_ERROR setverbosity
 
 ResetKernel
 
-0 << /tics_per_ms min_exponent neg dexp /resolution h  >> SetStatus
+<< /tics_per_ms min_exponent neg dexp /resolution h  >> SetKernelStatus
 
 
 /spike_generator Create /sg Set
@@ -161,8 +161,8 @@ P begin
 
  % traditional infix math notation: 
  ( 
-  weight * E/tau_syn * 1/C_m 
-    * ( (exp(-t/tau_m)-exp(-t/tau_syn))/(1/tau_syn - 1/tau_m)^2 - t*exp(-t/tau_syn)/(1/tau_syn - 1/tau_m) ) 
+  weight * E/tau_syn_ex * 1/C_m 
+    * ( (exp(-t/tau_m)-exp(-t/tau_syn_ex))/(1/tau_syn_ex - 1/tau_m)^2 - t*exp(-t/tau_syn_ex)/(1/tau_syn_ex - 1/tau_m) ) 
  )
  ExecMath 
 
@@ -192,15 +192,12 @@ hlist
 {
  /i Set
  [ i ]
- i /iaf_psc_alpha_canon AlignedImpact join
- i /iaf_psc_alpha_presc AlignedImpact join
+ i /iaf_psc_alpha_ps AlignedImpact join
 }
 Map
 /r Set
 
-
-r Transpose [[3 5]] Part Flatten {1e-14 leq} Map % comment to see individual results
-
+r Transpose [3] Part Flatten {1e-12 leq} Map % comment to see individual results
 
 true exch {and} Fold % all accurate ?
 

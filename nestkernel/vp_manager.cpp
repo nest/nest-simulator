@@ -70,14 +70,12 @@ void
 nest::VPManager::set_status( const DictionaryDatum& d )
 {
   long n_threads = get_num_threads();
-  bool n_threads_updated =
-    updateValue< long >( d, names::local_num_threads, n_threads );
+  bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
   if ( n_threads_updated )
   {
-    if ( kernel().node_manager.size() > 1 )
+    if ( kernel().node_manager.size() > 0 )
     {
-      throw KernelException(
-        "Nodes exist: Thread/process number cannot be changed." );
+      throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
     }
     if ( kernel().model_manager.has_user_models() )
     {
@@ -115,30 +113,29 @@ nest::VPManager::set_status( const DictionaryDatum& d )
         "Model defaults have been modified: Thread/process number cannot be "
         "changed." );
     }
-
-    if ( n_threads > 1 && force_singlethreading_ )
+    if ( kernel().sp_manager.is_structural_plasticity_enabled() and ( n_threads > 1 ) )
     {
-      LOG( M_WARNING,
-        "VPManager::set_status",
-        "No multithreading available, using single threading" );
+      throw KernelException(
+        "Multiple threads can not be used if structural plasticity is "
+        "enabled" );
+    }
+
+    if ( n_threads > 1 and force_singlethreading_ )
+    {
+      LOG( M_WARNING, "VPManager::set_status", "No multithreading available, using single threading" );
       n_threads = 1;
     }
 
-    // it is essential to call reset() here to adapt memory pools and more
-    // to the new number of threads and VPs.
-    set_num_threads( n_threads );
-    kernel().num_threads_changed_reset();
+    kernel().change_number_of_threads( n_threads );
   }
 
   long n_vps = get_num_virtual_processes();
-  bool n_vps_updated =
-    updateValue< long >( d, names::total_num_virtual_procs, n_vps );
+  bool n_vps_updated = updateValue< long >( d, names::total_num_virtual_procs, n_vps );
   if ( n_vps_updated )
   {
-    if ( kernel().node_manager.size() > 1 )
+    if ( kernel().node_manager.size() > 0 )
     {
-      throw KernelException(
-        "Nodes exist: Thread/process number cannot be changed." );
+      throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
     }
     if ( kernel().model_manager.has_user_models() )
     {
@@ -185,18 +182,13 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     }
 
     long n_threads = n_vps / kernel().mpi_manager.get_num_processes();
-    if ( ( n_threads > 1 ) && ( force_singlethreading_ ) )
+    if ( ( n_threads > 1 ) and ( force_singlethreading_ ) )
     {
-      LOG( M_WARNING,
-        "VPManager::set_status",
-        "No multithreading available, using single threading" );
+      LOG( M_WARNING, "VPManager::set_status", "No multithreading available, using single threading" );
       n_threads = 1;
     }
 
-    // it is essential to call reset() here to adapt memory pools and more
-    // to the new number of threads and VPs
-    set_num_threads( n_threads );
-    kernel().num_threads_changed_reset();
+    kernel().change_number_of_threads( n_threads );
   }
 }
 
@@ -210,11 +202,9 @@ nest::VPManager::get_status( DictionaryDatum& d )
 void
 nest::VPManager::set_num_threads( nest::thread n_threads )
 {
-  if ( kernel().sp_manager.is_structural_plasticity_enabled()
-    && ( n_threads > 1 ) )
+  if ( kernel().sp_manager.is_structural_plasticity_enabled() and ( n_threads > 1 ) )
   {
-    throw KernelException(
-      "Multiple threads can not be used if structural plasticity is enabled" );
+    throw KernelException( "Multiple threads can not be used if structural plasticity is enabled" );
   }
   n_threads_ = n_threads;
 

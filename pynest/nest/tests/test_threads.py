@@ -27,15 +27,14 @@ import unittest
 import nest
 
 
-@nest.check_stack
+@nest.ll_api.check_stack
 class ThreadTestCase(unittest.TestCase):
     """Tests for multi-threading"""
 
     def nest_multithreaded(self):
         """Return True, if we have a thread-enabled NEST, False otherwise"""
 
-        nest.sr("statusdict/threading :: (no) eq not")
-        return nest.spp()
+        return nest.ll_api.sli_func("statusdict/threading :: (no) eq not")
 
     def test_Threads(self):
         """Multiple threads"""
@@ -68,10 +67,10 @@ class ThreadTestCase(unittest.TestCase):
         conn = nest.GetConnections(pre)
         # Because of threading, targets may be in a different order than
         # in post, so we sort the vector.
-        targets = list(nest.GetStatus(conn, "target"))
+        targets = list(conn.get("target"))
         targets.sort()
 
-        self.assertEqual(targets, list(post))
+        self.assertEqual(targets, post.tolist())
 
     def test_ThreadsGetEvents(self):
         """ Gathering events across threads """

@@ -32,7 +32,6 @@
 #include "functiondatum.h"
 #include "integerdatum.h"
 #include "interpret.h"
-#include "iteratordatum.h"
 #include "stringdatum.h"
 
 void
@@ -54,12 +53,10 @@ IsetcallbackFunction::execute( SLIInterpreter* i ) const
 void
 IiterateFunction::backtrace( SLIInterpreter* i, int p ) const
 {
-  ProcedureDatum const* pd =
-    dynamic_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
+  ProcedureDatum const* pd = dynamic_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
   assert( pd != NULL );
 
-  IntegerDatum* id =
-    dynamic_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
+  IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
   assert( id != NULL );
 
   std::cerr << "In procedure:" << std::endl;
@@ -85,10 +82,8 @@ IiterateFunction::execute( SLIInterpreter* i ) const
      <proc>  <pos>   %iterate
   */
 
-  ProcedureDatum const* pd =
-    static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
-  long& pos =
-    static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() )->get();
+  ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
+  long& pos = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() )->get();
 
   while ( pd->index_is_valid( pos ) )
   {
@@ -115,10 +110,8 @@ IloopFunction::execute( SLIInterpreter* i ) const
   // stack: mark procedure n   %loop
   // level:  4      3      2     1
 
-  ProcedureDatum const* proc =
-    static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
-  long& pos =
-    static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() )->get();
+  ProcedureDatum const* proc = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
+  long& pos = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() )->get();
 
   while ( proc->index_is_valid( pos ) )
   {
@@ -139,12 +132,10 @@ IloopFunction::execute( SLIInterpreter* i ) const
 void
 IloopFunction::backtrace( SLIInterpreter* i, int p ) const
 {
-  ProcedureDatum const* pd =
-    dynamic_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
+  ProcedureDatum const* pd = dynamic_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
   assert( pd != NULL );
 
-  IntegerDatum* id =
-    dynamic_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
+  IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
   assert( id != NULL );
 
   std::cerr << "During loop:" << std::endl;
@@ -162,11 +153,9 @@ IloopFunction::backtrace( SLIInterpreter* i, int p ) const
 void
 IrepeatFunction::execute( SLIInterpreter* i ) const
 {
-  ProcedureDatum* proc =
-    static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
+  ProcedureDatum* proc = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
 
-  long& pos =
-    static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() )->get();
+  long& pos = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() )->get();
   while ( proc->index_is_valid( pos ) )
   {
     const Token& t = proc->get( pos );
@@ -195,20 +184,16 @@ IrepeatFunction::execute( SLIInterpreter* i ) const
 void
 IrepeatFunction::backtrace( SLIInterpreter* i, int p ) const
 {
-  IntegerDatum* count =
-    static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
+  IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
   assert( count != NULL );
 
-  ProcedureDatum const* pd =
-    static_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
+  ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
   assert( pd != NULL );
 
-  IntegerDatum* id =
-    static_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
+  IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
   assert( id != NULL );
 
-  std::cerr << "During repeat with " << count->get() << " iterations remaining."
-            << std::endl;
+  std::cerr << "During repeat with " << count->get() << " iterations remaining." << std::endl;
 
   pd->list( std::cerr, "   ", id->get() - 1 );
   std::cerr << std::endl;
@@ -223,11 +208,9 @@ void
 IforFunction::execute( SLIInterpreter* i ) const
 {
 
-  IntegerDatum* proccount =
-    static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() );
+  IntegerDatum* proccount = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() );
 
-  ProcedureDatum const* proc =
-    static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
+  ProcedureDatum const* proc = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
 
   long& pos = proccount->get();
 
@@ -243,14 +226,11 @@ IforFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( t );
   }
 
-  IntegerDatum* count =
-    static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
+  IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
 
-  IntegerDatum* lim =
-    static_cast< IntegerDatum* >( i->EStack.pick( 4 ).datum() );
+  IntegerDatum* lim = static_cast< IntegerDatum* >( i->EStack.pick( 4 ).datum() );
 
-  IntegerDatum* inc =
-    static_cast< IntegerDatum* >( i->EStack.pick( 5 ).datum() );
+  IntegerDatum* inc = static_cast< IntegerDatum* >( i->EStack.pick( 5 ).datum() );
 
 
   if ( ( ( inc->get() > 0 ) && ( count->get() <= lim->get() ) )
@@ -271,18 +251,14 @@ IforFunction::execute( SLIInterpreter* i ) const
 void
 IforFunction::backtrace( SLIInterpreter* i, int p ) const
 {
-  IntegerDatum* count =
-    static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
+  IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
   assert( count != NULL );
-  ProcedureDatum const* pd =
-    static_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
+  ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 2 ).datum() );
   assert( pd != NULL );
-  IntegerDatum* id =
-    static_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
+  IntegerDatum* id = static_cast< IntegerDatum* >( i->EStack.pick( p + 1 ).datum() );
   assert( id != NULL );
 
-  std::cerr << "During for at iterator value " << count->get() << "."
-            << std::endl;
+  std::cerr << "During for at iterator value " << count->get() << "." << std::endl;
 
   pd->list( std::cerr, "   ", id->get() - 1 );
   std::cerr << std::endl;
@@ -297,11 +273,9 @@ void
 IforallarrayFunction::execute( SLIInterpreter* i ) const
 {
 
-  IntegerDatum* proccount =
-    static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() );
+  IntegerDatum* proccount = static_cast< IntegerDatum* >( i->EStack.pick( 1 ).datum() );
 
-  ProcedureDatum const* proc =
-    static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
+  ProcedureDatum const* proc = static_cast< ProcedureDatum* >( i->EStack.pick( 2 ).datum() );
 
   long& pos = proccount->get();
 
@@ -317,8 +291,7 @@ IforallarrayFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( t );
   }
 
-  IntegerDatum* count =
-    static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
+  IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
   ArrayDatum* ad = static_cast< ArrayDatum* >( i->EStack.pick( 4 ).datum() );
 
   long& idx = count->get();
@@ -341,56 +314,10 @@ IforallarrayFunction::execute( SLIInterpreter* i ) const
 void
 IforallarrayFunction::backtrace( SLIInterpreter* i, int p ) const
 {
-  IntegerDatum* count =
-    static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
+  IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 3 ).datum() );
   assert( count != NULL );
 
-  std::cerr << "During forall (array) at iteration " << count->get() << "."
-            << std::endl;
-}
-
-
-/*********************************************************/
-/* %foralliter                                          */
-/*  call: mark iterator proc %foralliter                */
-/*  pick   3     2    1      0                          */
-/*********************************************************/
-void
-IforalliterFunction::execute( SLIInterpreter* i ) const
-{
-  IteratorDatum* iter =
-    static_cast< IteratorDatum* >( i->EStack.pick( 2 ).datum() );
-
-
-  if ( iter->pos() < iter->end() )
-  {
-
-    i->OStack.push( iter->pos() ); // push current element to operand stack
-    iter->incr();
-    i->EStack.push( i->EStack.pick( 1 ) );
-    if ( i->step_mode() )
-    {
-      std::cerr << "foralliter:"
-                << " Limit: " << iter->end() << " Pos: " << iter->pos();
-      i->OStack.pick( 0 ).pprint( std::cerr );
-      std::cerr << std::endl;
-    }
-  }
-  else
-  {
-    i->EStack.pop( 4 );
-    i->dec_call_depth();
-  }
-}
-
-void
-IforalliterFunction::backtrace( SLIInterpreter* i, int p ) const
-{
-  IteratorDatum* iter =
-    static_cast< IteratorDatum* >( i->EStack.pick( p + 2 ).datum() );
-
-  std::cerr << "During forall (iterator) at iteration " << iter->pos() << "."
-            << std::endl;
+  std::cerr << "During forall (array) at iteration " << count->get() << "." << std::endl;
 }
 
 
@@ -402,17 +329,15 @@ IforalliterFunction::backtrace( SLIInterpreter* i, int p ) const
 void
 IforallindexedarrayFunction::execute( SLIInterpreter* i ) const
 {
-  IntegerDatum* count =
-    static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
-  IntegerDatum* limit =
-    static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
+  IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
+  IntegerDatum* limit = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
 
   long& cnt = count->get();
   if ( cnt < limit->get() )
   {
     ArrayDatum* obj = static_cast< ArrayDatum* >( i->EStack.pick( 4 ).datum() );
 
-    i->OStack.push( obj->get( cnt ) ); // push element to user
+    i->OStack.push( obj->get( cnt ) );                    // push element to user
     i->OStack.push_by_pointer( new IntegerDatum( cnt ) ); // push index to user
     ++cnt;
     i->EStack.push( i->EStack.pick( 1 ) );
@@ -427,23 +352,19 @@ IforallindexedarrayFunction::execute( SLIInterpreter* i ) const
 void
 IforallindexedarrayFunction::backtrace( SLIInterpreter* i, int p ) const
 {
-  IntegerDatum* count =
-    static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
+  IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
   assert( count != NULL );
 
-  std::cerr << "During forallindexed (array) at iteration " << count->get() - 1
-            << "." << std::endl;
+  std::cerr << "During forallindexed (array) at iteration " << count->get() - 1 << "." << std::endl;
 }
 
 void
 IforallindexedstringFunction::backtrace( SLIInterpreter* i, int p ) const
 {
-  IntegerDatum* count =
-    static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
+  IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
   assert( count != NULL );
 
-  std::cerr << "During forallindexed (string) at iteration " << count->get() - 1
-            << "." << std::endl;
+  std::cerr << "During forallindexed (string) at iteration " << count->get() - 1 << "." << std::endl;
 }
 
 /*********************************************************/
@@ -454,15 +375,12 @@ IforallindexedstringFunction::backtrace( SLIInterpreter* i, int p ) const
 void
 IforallindexedstringFunction::execute( SLIInterpreter* i ) const
 {
-  IntegerDatum* count =
-    static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
-  IntegerDatum* limit =
-    static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
+  IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
+  IntegerDatum* limit = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
 
   if ( count->get() < limit->get() )
   {
-    StringDatum const* obj =
-      static_cast< StringDatum* >( i->EStack.pick( 4 ).datum() );
+    StringDatum const* obj = static_cast< StringDatum* >( i->EStack.pick( 4 ).datum() );
 
     i->OStack.push( ( *obj )[ count->get() ] ); // push element to user
     i->OStack.push( count->get() );             // push index to user
@@ -471,8 +389,7 @@ IforallindexedstringFunction::execute( SLIInterpreter* i ) const
     if ( i->step_mode() )
     {
       std::cerr << "forallindexed:"
-                << " Limit: " << limit->get() << " Pos: " << count->get()
-                << " Iterator: ";
+                << " Limit: " << limit->get() << " Pos: " << count->get() << " Iterator: ";
       i->OStack.pick( 1 ).pprint( std::cerr );
       std::cerr << std::endl;
     }
@@ -487,12 +404,10 @@ IforallindexedstringFunction::execute( SLIInterpreter* i ) const
 void
 IforallstringFunction::backtrace( SLIInterpreter* i, int p ) const
 {
-  IntegerDatum* count =
-    static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
+  IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
   assert( count != NULL );
 
-  std::cerr << "During forall (string) at iteration " << count->get() - 1 << "."
-            << std::endl;
+  std::cerr << "During forall (string) at iteration " << count->get() - 1 << "." << std::endl;
 }
 /*********************************************************/
 /* %forallstring                                         */
@@ -502,24 +417,19 @@ IforallstringFunction::backtrace( SLIInterpreter* i, int p ) const
 void
 IforallstringFunction::execute( SLIInterpreter* i ) const
 {
-  IntegerDatum* count =
-    static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
-  IntegerDatum* limit =
-    static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
+  IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
+  IntegerDatum* limit = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
 
   if ( count->get() < limit->get() )
   {
-    StringDatum const* obj =
-      static_cast< StringDatum* >( i->EStack.pick( 4 ).datum() );
-    i->OStack.push_by_pointer(
-      new IntegerDatum( ( *obj )[ count->get() ] ) ); // push element to user
+    StringDatum const* obj = static_cast< StringDatum* >( i->EStack.pick( 4 ).datum() );
+    i->OStack.push_by_pointer( new IntegerDatum( ( *obj )[ count->get() ] ) ); // push element to user
     ++( count->get() );
     i->EStack.push( i->EStack.pick( 1 ) );
     if ( i->step_mode() )
     {
       std::cerr << "forall:"
-                << " Limit: " << limit->get() << " Pos: " << count->get()
-                << " Iterator: ";
+                << " Limit: " << limit->get() << " Pos: " << count->get() << " Iterator: ";
       i->OStack.top().pprint( std::cerr );
       std::cerr << std::endl;
     }

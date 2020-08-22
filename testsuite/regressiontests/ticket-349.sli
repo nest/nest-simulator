@@ -32,12 +32,12 @@
  *
  */
 
-% The following test needs the model iaf_cond_alpha, so
-% this test should only run if we have GSL
-statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
-
 (unittest) run
 /unittest using
+
+% The following test needs the model iaf_cond_alpha, so
+% this test should only run if we have GSL
+skip_if_without_gsl
 
 % First test: connect with illegal entry
 {
@@ -96,7 +96,7 @@ statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
 
 } pass_or_die
 
-% Third test: connect Multimeter with empty list, then simulate. Must not crash.
+% Third test: connect multimeter with empty list, then simulate. Must not crash.
 {
   ResetKernel
 

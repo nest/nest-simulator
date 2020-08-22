@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_rdv_param_setting - test parameter setting on RDVs
 
 Synopsis: (test_rdv_param_setting.sli) run -> dies if assertion fails

@@ -25,15 +25,9 @@
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09
 template <>
-sli::pool AggregateDatum< Name, &SLIInterpreter::Nametype >::memory(
-  sizeof( NameDatum ),
-  10240,
-  1 );
+sli::pool AggregateDatum< Name, &SLIInterpreter::Nametype >::memory( sizeof( NameDatum ), 10240, 1 );
 template <>
-sli::pool AggregateDatum< Name, &SLIInterpreter::Literaltype >::memory(
-  sizeof( LiteralDatum ),
-  10240,
-  1 );
+sli::pool AggregateDatum< Name, &SLIInterpreter::Literaltype >::memory( sizeof( LiteralDatum ), 10240, 1 );
 
 
 // explicit template instantiation needed

@@ -20,58 +20,15 @@
  *
  */
 
-
-/*BeginDocumentation
-  Name: inhomogeneous_poisson_generator - provides Poisson spike trains
-        at a piecewise constant rate
-
-  Description:
-    The inhomogeneous Poisson generator provides Poisson spike trains at a
-    piecewise constant rate to the connected node(s). The rate of the process
-    is changed at the specified times. The unit of the instantaneous rate
-    is spikes/s. By default, each target of the generator will receive
-    a different spike train.
-
-  Parameters:
-   The following parameters can be set in the status dictionary:
-   rate_times   list of doubles - Times at which rate changes in ms
-   rate_values  list of doubles - Rate of Poisson spike train in spikes/s
-   allow_offgrid_times     bool - If false, spike times will be rounded to the
-                                  nearest step if they are less than tic/2 from
-                                  the step, otherwise NEST reports an error.
-                                  If true, spike times are rounded to the
-                                  nearest step if within tic/2 from the step,
-                                  otherwise they are rounded up to the *end*
-                                  of the step. Default: false
-
-  Examples:
-    The rate can be altered in the following way:
-    /inhomogeneous_poisson_generator Create /sc Set
-    sc << /rate_times [0.2 0.5] /rate_values [2.0 4.0] >> SetStatus
-
-    The average firing rate of each realization of the Poisson process will be
-    0.0 in the time interval [0, 0.2), 2.0 in the interval [0.2, 0.5)
-    and 4.0 from then on.
-
-  Receives: DataLoggingRequest
-
-  Sends: SpikeEvent
-
-  Authors: Renato Duarte, Barna Zajzon
-
-  SeeAlso: sinusoidal_poisson_generator, step_current_generator, Device,
-           StimulatingDevice
-*/
-
 #ifndef INHOMOGENEOUS_POISSON_GENERATOR_H
 #define INHOMOGENEOUS_POISSON_GENERATOR_H
 
 #include "poisson_randomdev.h"
 
 #include "connection.h"
+#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
 #include "stimulating_device.h"
 
 #include <vector>
@@ -82,7 +39,58 @@
 namespace nest
 {
 
-class inhomogeneous_poisson_generator : public Node
+/* BeginUserDocs: device, generator
+
+Short description
++++++++++++++++++
+
+Provides Poisson spike trains at a piecewise constant rate
+
+Description
++++++++++++
+
+The inhomogeneous Poisson generator provides Poisson spike trains at a
+piecewise constant rate to the connected node(s). The rate of the process
+is changed at the specified times. The unit of the instantaneous rate
+is spikes/s. By default, each target of the generator will receive
+a different spike train.
+
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary:
+
+==================== ================ =========================================
+ rate_times          list of ms       Times at which rate changes
+ rate_values         list of spikes/s Rate of Poisson spike train
+ allow_offgrid_times boolean          If false, spike times will be rounded to
+                                      the nearest step if they are less than
+                                      tic/2 from the step, otherwise NEST
+                                      reports an error.
+                                      If true, spike times are rounded to the
+                                      nearest step if within tic/2 from the
+                                      step,otherwise they are rounded up to the
+                                      *end* of the step. Default: false
+==================== ================ =========================================
+
+Receives
+++++++++
+
+DataLoggingRequest
+
+Sends
++++++
+
+SpikeEvent
+
+See also
+++++++++
+
+sinusoidal_poisson_generator, step_current_generator
+
+EndUserDocs */
+
+class inhomogeneous_poisson_generator : public DeviceNode
 {
 
 public:
@@ -93,6 +101,12 @@ public:
   has_proxies() const
   {
     return false;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
   }
 
   /**
@@ -135,7 +149,7 @@ private:
     //!< Store current values in dictionary
     void get( DictionaryDatum& ) const;
     //!< Set values from dictionary
-    void set( const DictionaryDatum&, Buffers_& );
+    void set( const DictionaryDatum&, Buffers_&, Node* );
     //!< Align rate time to grid if necessary and insert it into rate_times_
     void assert_valid_rate_time_and_insert( const double_t t );
   };
@@ -202,7 +216,7 @@ inhomogeneous_poisson_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
-  ptmp.set( d, B_ ); // throws if BadProperty
+  ptmp.set( d, B_, this ); // throws if BadProperty
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.

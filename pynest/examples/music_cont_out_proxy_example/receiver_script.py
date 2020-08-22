@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # receiver_script.py
@@ -19,6 +19,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Music example receiver script
+------------------------------
+
+Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+and cannot be enabled at the same time.
+
+"""
 
 import sys
 import music

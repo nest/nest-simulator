@@ -61,8 +61,7 @@ STDPHomCommonProperties::get_status( DictionaryDatum& d ) const
 }
 
 void
-STDPHomCommonProperties::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+STDPHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 

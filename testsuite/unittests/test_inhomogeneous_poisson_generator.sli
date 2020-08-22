@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_inhomogeneous_poisson_generator - sli script to test
    inhomogeneous_poisson_generator device
 
@@ -44,10 +44,7 @@
 % Rate times and values must be set together.
 {
   ResetKernel
-  0 <<
-      /local_num_threads 1
-      /resolution 0.1
-  >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /inhomogeneous_poisson_generator Create /ipg Set
   ipg <<
@@ -60,10 +57,7 @@ fail_or_die
 % Rate times and values must be set together.
 {
   ResetKernel
-  0 <<
-      /local_num_threads 1
-      /resolution 0.1
-  >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /inhomogeneous_poisson_generator Create /ipg Set
   ipg <<
@@ -76,10 +70,7 @@ fail_or_die
 % Length of rate times and values must match.
 {
   ResetKernel
-  0 <<
-      /local_num_threads 1
-      /resolution 0.1
-  >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /inhomogeneous_poisson_generator Create /ipg Set
   ipg <<
@@ -93,10 +84,7 @@ fail_or_die
 % Rate times must be strictly increasing.
 {
   ResetKernel
-  0 <<
-      /local_num_threads 1
-      /resolution 0.1
-  >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /inhomogeneous_poisson_generator Create /ipg Set
   ipg <<
@@ -110,10 +98,7 @@ fail_or_die
 % Try offgrid time point.
 {
   ResetKernel
-  0 <<
-      /local_num_threads 1
-      /resolution 0.1
-  >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /inhomogeneous_poisson_generator Create /ipg Set
   ipg <<
@@ -127,10 +112,7 @@ fail_or_die
 % Try wrong time point representation but allow offgrid times.
 {
   ResetKernel
-  0 <<
-      /local_num_threads 1
-      /resolution 0.1
-  >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /ipg /inhomogeneous_poisson_generator << /allow_offgrid_times true >> Create def
 
@@ -145,10 +127,7 @@ pass_or_die
 % allow_offgrid_times can't be modified separately after rates have been set.
 {
   ResetKernel
-  0 <<
-      /local_num_threads 1
-      /resolution 0.1
-  >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /ipg /inhomogeneous_poisson_generator Create def
 
@@ -167,10 +146,7 @@ fail_or_die
 % allow_offgrid_times can't be modified separately after rates have been set.
 {
   ResetKernel
-  0 <<
-      /local_num_threads 1
-      /resolution 0.1
-  >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /ipg /inhomogeneous_poisson_generator << /allow_offgrid_times true >> Create def
 
@@ -191,10 +167,7 @@ fail_or_die
 % time points should lie strictly in the future.
 {
   ResetKernel
-  0 <<
-      /local_num_threads 1
-      /resolution 0.1
-  >> SetStatus
+  << /local_num_threads 1 /resolution 0.1 >> SetKernelStatus
 
   /inhomogeneous_poisson_generator Create /ipg Set
   ipg <<

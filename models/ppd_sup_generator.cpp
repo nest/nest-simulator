@@ -27,6 +27,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -44,8 +45,7 @@
  * Constructor of age distribution class
  * ---------------------------------------------------------------- */
 
-nest::ppd_sup_generator::Age_distribution_::Age_distribution_(
-  size_t num_age_bins,
+nest::ppd_sup_generator::Age_distribution_::Age_distribution_( size_t num_age_bins,
   unsigned long ini_occ_ref,
   unsigned long ini_occ_act )
 {
@@ -59,8 +59,7 @@ nest::ppd_sup_generator::Age_distribution_::Age_distribution_(
  * ---------------------------------------------------------------- */
 
 unsigned long
-nest::ppd_sup_generator::Age_distribution_::update( double hazard_step,
-  librandom::RngPtr rng )
+nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, librandom::RngPtr rng )
 {
   unsigned long n_spikes; // only set from poisson_dev, bino_dev or 0, thus >= 0
   if ( occ_active_ > 0 )
@@ -73,8 +72,7 @@ nest::ppd_sup_generator::Age_distribution_::update( double hazard_step,
     of thumb, this approximation is good if n >= 20 and p <= 0.05, or if
     n >= 100 and np <= 10. Source:
     http://en.wikipedia.org/wiki/Binomial_distribution#Poisson_approximation */
-    if ( ( occ_active_ >= 100 && hazard_step <= 0.01 )
-      || ( occ_active_ >= 500 && hazard_step * occ_active_ <= 0.1 ) )
+    if ( ( occ_active_ >= 100 && hazard_step <= 0.01 ) || ( occ_active_ >= 500 && hazard_step * occ_active_ <= 0.1 ) )
     {
       poisson_dev_.set_lambda( hazard_step * occ_active_ );
       n_spikes = poisson_dev_.ldev( rng );
@@ -133,41 +131,38 @@ nest::ppd_sup_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
+nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
 
-  updateValue< double >( d, names::dead_time, dead_time_ );
+  updateValueParam< double >( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
   {
     throw BadProperty( "The dead time cannot be negative." );
   }
 
-  updateValue< double >( d, names::rate, rate_ );
+  updateValueParam< double >( d, names::rate, rate_, node );
   if ( 1000.0 / rate_ <= dead_time_ )
   {
-    throw BadProperty(
-      "The inverse rate has to be larger than the dead time." );
+    throw BadProperty( "The inverse rate has to be larger than the dead time." );
   }
 
   long n_proc_l = n_proc_;
-  updateValue< long >( d, names::n_proc, n_proc_l );
+  updateValueParam< long >( d, names::n_proc, n_proc_l, node );
   if ( n_proc_l < 1 )
   {
-    throw BadProperty(
-      "The number of component processes cannot be smaller than one" );
+    throw BadProperty( "The number of component processes cannot be smaller than one" );
   }
   else
   {
     n_proc_ = static_cast< unsigned long >( n_proc_l );
   }
 
-  updateValue< double >( d, names::frequency, frequency_ );
+  updateValueParam< double >( d, names::frequency, frequency_, node );
 
-  updateValue< double >( d, names::relative_amplitude, amplitude_ );
+  updateValueParam< double >( d, names::relative_amplitude, amplitude_, node );
   if ( amplitude_ > 1.0 or amplitude_ < 0.0 )
   {
-    throw BadProperty(
-      "The relative amplitude of the rate modulation must be in [0,1]." );
+    throw BadProperty( "The relative amplitude of the rate modulation must be in [0,1]." );
   }
 }
 
@@ -177,14 +172,14 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::ppd_sup_generator::ppd_sup_generator()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
 {
 }
 
 nest::ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
 {
@@ -217,8 +212,7 @@ nest::ppd_sup_generator::calibrate()
   double h = Time::get_resolution().get_ms();
 
   // compute number of age bins that need to be kept track of
-  unsigned long num_age_bins =
-    static_cast< unsigned long >( P_.dead_time_ / h );
+  unsigned long num_age_bins = static_cast< unsigned long >( P_.dead_time_ / h );
 
   // compute omega to evaluate modulation with, units [rad/ms]
   V_.omega_ = 2.0 * numerics::pi * P_.frequency_ / 1000.0;
@@ -227,14 +221,12 @@ nest::ppd_sup_generator::calibrate()
   V_.hazard_step_ = 1.0 / ( 1000.0 / P_.rate_ - P_.dead_time_ ) * h;
 
   // equilibrium occupation of dead time bins (in case of constant rate)
-  unsigned long ini_occ_0 =
-    static_cast< unsigned long >( P_.rate_ / 1000.0 * P_.n_proc_ * h );
+  unsigned long ini_occ_0 = static_cast< unsigned long >( P_.rate_ / 1000.0 * P_.n_proc_ * h );
 
   // If new targets have been added during a simulation break, we
   // initialize the new elements in age_distributions with the initial dist. The
   // existing elements are unchanged.
-  Age_distribution_ age_distribution0(
-    num_age_bins, ini_occ_0, P_.n_proc_ - ini_occ_0 * num_age_bins );
+  Age_distribution_ age_distribution0( num_age_bins, ini_occ_0, P_.n_proc_ - ini_occ_0 * num_age_bins );
   B_.age_distributions_.resize( P_.num_targets_, age_distribution0 );
 }
 
@@ -246,8 +238,7 @@ nest::ppd_sup_generator::calibrate()
 void
 nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
@@ -268,8 +259,7 @@ nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
     if ( P_.amplitude_ > 0.0 && ( P_.frequency_ > 0.0 || P_.frequency_ < 0.0 ) )
     {
       double t_ms = t.get_ms();
-      V_.hazard_step_t_ = V_.hazard_step_
-        * ( 1.0 + P_.amplitude_ * std::sin( V_.omega_ * t_ms ) );
+      V_.hazard_step_t_ = V_.hazard_step_ * ( 1.0 + P_.amplitude_ * std::sin( V_.omega_ * t_ms ) );
     }
     else
     {
@@ -289,13 +279,12 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
   const port prt = e.get_port();
 
   // we handle only one port here, get reference to vector element
-  assert(
-    0 <= prt && static_cast< size_t >( prt ) < B_.age_distributions_.size() );
+  assert( 0 <= prt && static_cast< size_t >( prt ) < B_.age_distributions_.size() );
 
   // age_distribution object propagates one time step and returns number of
   // spikes
-  unsigned long n_spikes = B_.age_distributions_[ prt ].update(
-    V_.hazard_step_t_, kernel().rng_manager.get_rng( get_thread() ) );
+  unsigned long n_spikes =
+    B_.age_distributions_[ prt ].update( V_.hazard_step_t_, kernel().rng_manager.get_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

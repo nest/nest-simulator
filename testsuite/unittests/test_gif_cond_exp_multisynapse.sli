@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_gif_cond_exp_multisynapse - sli script for test of
 gif_cond_exp_multisynapse with external DC current and spike generators
 
@@ -42,11 +42,11 @@ Author:  March 2016, Setareh
 SeeAlso: gif_cond_exp_multisynapse, testsuite::test_gif_cond_exp
 */
 
-% This test should only run if we have GSL
-statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
-
 (unittest) run
 /unittest using
+
+% This test should only run if we have GSL
+skip_if_without_gsl
 
 % neuron with default parameters should fire spikes at 29.7, 63.4, 104.4 and
 % 144.4 ms
@@ -64,12 +64,12 @@ statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
   /params Set 
 
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1 
       /resolution 0.1
       /grng_seed 1
       /rng_seeds [1]
-  >> SetStatus
+  >> SetKernelStatus
 
   /gif_cond_exp_multisynapse Create /neuron Set
 
@@ -87,18 +87,18 @@ statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
   dc_gen <<  /amplitude 170. >> SetStatus
 
   /spike_detector Create /sd Set
-  sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
+  sd << /time_in_steps true >> SetStatus
 
   dc_gen neuron Connect
 
   neuron sd Connect
 
-  sg1 neuron << /weight 1.0 /receptor_type 1 >> Connect
-  sg2 neuron << /weight 1.0 /receptor_type 2 >> Connect
+  sg1 neuron << >> << /receptor_type 1 >> Connect
+  sg2 neuron << >> << /receptor_type 2 >> Connect
 
   150.0 Simulate
 
-  sd GetStatus /events get /times get
+  sd /events get /times get
 } def
 
 % Test 1: wrong parameters (negative lambda)

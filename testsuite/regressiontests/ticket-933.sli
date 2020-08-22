@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-933 Ensure that pp_pop_psc_delta generates same results when run in small intervals
 

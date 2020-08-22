@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_iaf_i0_refractory - sli script for test of iaf_psc_alpha internal DC current
 
 Synopsis: (test_iaf_i0_refractory) run -> compare cout with comments in file
@@ -41,7 +41,7 @@ Description:
  reported at time 3.0 ms, corresponding to computation step 30, 15, 6, 
  and 3, respectively.
 
- The results are consistent with those of iaf_psc_alpha_canon capable of
+ The results are consistent with those of iaf_psc_alpha_ps capable of
  handling off-grid spike timing when the interpolation order is set to
  0.
 
@@ -67,10 +67,10 @@ SeeAlso: iaf_psc_alpha, testsuite::test_iaf_i0
 ResetKernel
 
 
-0 << 
+<< 
        /local_num_threads 1   
        /resolution h
-     >> SetStatus
+     >> SetKernelStatus
 
 
 /iaf_psc_alpha Create /neuron Set
@@ -78,11 +78,11 @@ neuron << /I_e 1450.0 >> SetStatus
 
 
 /voltmeter Create /vm Set
-vm << /withtime true /to_memory true  /time_in_steps true /interval h >> SetStatus
+vm << /time_in_steps true /interval h >> SetStatus
 
 
 /spike_detector Create /sd Set
-sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
+sd << /time_in_steps true >> SetStatus
 
 vm neuron 1.0 h Connect
 neuron sd 1.0 h Connect

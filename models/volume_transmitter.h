@@ -34,14 +34,19 @@
 #include "namedatum.h"
 
 
-/* BeginDocumentation
+namespace nest
+{
 
-Name: volume_transmitter - Node used in combination with neuromodulated synaptic
-plasticity. It collects all spikes emitted by the population of neurons
-connected to the volume transmitter and transmits the signal to a user-specific
-subset of synapses.
+/* BeginUserDocs: device, generator
 
-Description:
+Short description
++++++++++++++++++
+
+Node used in combination with neuromodulated synaptic plasticity
+
+Description
++++++++++++
+
 The volume transmitter is used in combination with neuromodulated
 synaptic plasticty, plasticity that depends not only on the activity
 of the pre- and the postsynaptic neuron but also on a non-local
@@ -59,53 +64,39 @@ intervals of a manifold of the minimal synaptic delay. In order to
 insure the link between the neuromodulatory synapses and the volume
 transmitter, the volume transmitter is passed as a parameter when a
 neuromodulatory synapse is defined. The implementation is based on the
-framework presented in [1].
+framework presented in [1]_.
 
-Examples:
-/volume_transmitter Create /vol Set
-/iaf_psc_alpha Create /pre_neuron Set
-/iaf_psc_alpha Create /post_neuron Set
-/iaf_psc_alpha Create /neuromod_neuron Set
-/stdp_dopamine_synapse  << /vt vol >>  SetDefaults
-neuromod_neuron vol Connect
-pre_neuron post_neuron /stdp_dopamine_synapse Connect
+Parameters
+++++++++++
 
-Parameters:
-deliver_interval - time interval given in d_min time steps, in which
-                   the volume signal is delivered from the volume
-                   transmitter to the assigned synapses
+- deliver_interval - time interval given in d_min time steps, in which
+                     the volume signal is delivered from the volume
+                     transmitter to the assigned synapses
 
-References:
-[1] Potjans W, Morrison A and Diesmann M (2010). Enabling functional
-    neural circuit simulations with distributed computing of
-    neuromodulated plasticity.
-    Front. Comput. Neurosci. 4:141. doi:10.3389/fncom.2010.00141
+References
+++++++++++
 
-Author: Wiebke Potjans, Abigail Morrison
-Remarks: major changes to update function after code revision in Apr 2013 (SK)
-Receives: SpikeEvent
 
-SeeAlso: stdp_dopamine_synapse
+.. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional
+       neural circuit simulations with distributed computing of
+       neuromodulated plasticity. Frontiers in Computattional Neuroscience,
+       4:141. DOI: https://doi.org/10.3389/fncom.2010.00141
 
-*/
 
-namespace nest
-{
+Receives
+++++++++
+
+SpikeEvent
+
+See also
+++++++++
+
+stdp_dopamine_synapse
+
+EndUserDocs */
 
 class ConnectorBase;
 
-/**
- * volume transmitter class.
- *
- * This class manages spike recording for normal and precise spikes. It
- * receives spikes via its handle(SpikeEvent&) method and buffers them. In the
- * update() method it stores the newly collected buffer elements, which are
- * delivered in time steps of (d_min*deliver_interval) to the neuromodulated
- * synapses. In addition the synapses can ask the volume transmitter to deliver
- * the elements stored in the update() method with the method deliver_spikes().
- *
- * @ingroup Devices
- */
 class volume_transmitter : public Archiving_Node
 {
 
@@ -118,10 +109,17 @@ public:
   {
     return false;
   }
+
   bool
   local_receiver() const
   {
     return false;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::other;
   }
 
   /**
@@ -138,6 +136,14 @@ public:
 
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
+
+  /**
+   * Since volume transmitters are duplicated on each thread, and are
+   * hence treated just as devices during node creation, we need to
+   * define the corresponding setter and getter for local_device_id.
+   **/
+  void set_local_device_id( const index ldid );
+  index get_local_device_id() const;
 
   const std::vector< spikecounter >& deliver_spikes();
 
@@ -157,7 +163,7 @@ private:
   {
     Parameters_();
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
     long deliver_interval_; //!< update interval in d_min time steps
   };
 
@@ -172,6 +178,8 @@ private:
 
   Parameters_ P_;
   Buffers_ B_;
+
+  index local_device_id_;
 };
 
 inline port
@@ -189,15 +197,13 @@ volume_transmitter::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   Archiving_Node::get_status( d );
-
-  ( *d )[ names::element_type ] = LiteralDatum( names::other );
 }
 
 inline void
 volume_transmitter::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -213,6 +219,18 @@ inline const std::vector< nest::spikecounter >&
 volume_transmitter::deliver_spikes()
 {
   return B_.spikecounter_;
+}
+
+inline void
+volume_transmitter::set_local_device_id( const index ldid )
+{
+  local_device_id_ = ldid;
+}
+
+inline index
+volume_transmitter::get_local_device_id() const
+{
+  return local_device_id_;
 }
 
 } // namespace

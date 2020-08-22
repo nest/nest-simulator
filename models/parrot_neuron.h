@@ -20,11 +20,28 @@
  *
  */
 
+#ifndef PARROT_NEURON_H
+#define PARROT_NEURON_H
 
-/* BeginDocumentation
-Name: parrot_neuron - Neuron that repeats incoming spikes.
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 
-Description:
+namespace nest
+{
+
+/* BeginUserDocs: neuron, parrot
+
+Short description
++++++++++++++++++
+
+Neuron that repeats incoming spikes
+
+Description
++++++++++++
 
 The parrot neuron simply emits one spike for every incoming spike.
 An important application is to provide identical poisson spike
@@ -39,6 +56,9 @@ Remarks:
 - Weights on connection to the parrot_neuron are ignored.
 - Weights on connections from the parrot_neuron are handled as usual.
 - Delays are honored on incoming and outgoing connections.
+- Multiplicity may be used to indicate number of spikes in a single
+  time step. Instead of the accumulated weigths of the incoming spikes, the
+  number of the spikes is stored within a ring buffer.
 
 Only spikes arriving on connections to port 0 will be repeated.
 Connections onto port 1 will be accepted, but spikes incoming
@@ -47,39 +67,18 @@ and post-synaptic spike times for STDP protocols by connecting
 two parrot neurons spiking at desired times by, e.g., a
 stdp_synapse onto port 1 on the post-synaptic parrot neuron.
 
-Receives: SpikeEvent
+Receives
+++++++++
 
-Sends: SpikeEvent
+SpikeEvent
 
-Parameters:
-No parameters to be set in the status dictionary.
+Sends
++++++
 
-Author: David Reichert, Abigail Morrison, Alexander Seeholzer, Hans Ekkehard
-Plesser
-FirstVersion: May 2006
-*/
+SpikeEvent
 
+EndUserDocs */
 
-/**
- * The parrot neuron emits one spike for every incoming spike,
- * but may use multiplicity to indicate number of spikes in a single
- * time step.
- * Instead of the accumulated weigths of the incoming spikes, the
- * number of the spikes is stored within a ring buffer.
- */
-
-#ifndef PARROT_NEURON_H
-#define PARROT_NEURON_H
-
-// Includes from nestkernel:
-#include "archiving_node.h"
-#include "connection.h"
-#include "event.h"
-#include "nest_types.h"
-#include "ring_buffer.h"
-
-namespace nest
-{
 class parrot_neuron : public Archiving_Node
 {
 
@@ -132,10 +131,7 @@ private:
 };
 
 inline port
-parrot_neuron::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+parrot_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

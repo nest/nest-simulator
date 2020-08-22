@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_lazyhandler - test if SLI returns exit code 0 when an error is handled by a lazy user error handler.
 
 Synopsis: (test_lazyhandler) run -> 

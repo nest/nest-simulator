@@ -37,7 +37,7 @@
 namespace nest
 {
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: sli_neuron - neuron with SLI callback
 
 Description:
@@ -72,7 +72,7 @@ If an error occurs during the evaluation of /calibrate or /update, the
 errorneous neuron is skipped and update proceeds to the next node
 until the time-slice is finished. After the time-slice is finished,
 simulation terminates with an additional error message that issues the
-global id of the errorneous node.
+node ID of the errorneous node.
 
 Errors are handled by the SLI standard errorhandler. In addition, the
 contents of the error dictionary is copied into the node's status
@@ -80,13 +80,14 @@ dictionary, to allow debugging of the node.
 
 Parameters:
 
-
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author: Diesmann, Plesser, Gewaltig
+
 FirstVersion: January 2009
+
 SeeAlso: iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, testsuite::test_sli_neuron
 */
 

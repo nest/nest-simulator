@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_random_binomial - test of binomial random deviates 
 
 Synopsis: (test_random_binomial) run -> compare binomial random numbers with desired distribution.
@@ -91,7 +91,7 @@ SeeAlso: rdevdict::binomial
 
 
 % compute kalpha to compare against 
-% python code to get value:
+% Python code to get value:
 % import scipy.stats
 % import scipy.optimize
 % alpha = 0.05

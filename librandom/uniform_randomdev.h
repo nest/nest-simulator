@@ -26,9 +26,6 @@
 // C++ includes:
 #include <cmath>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from librandom:
 #include "randomdev.h"
 #include "randomgen.h"
@@ -53,7 +50,7 @@
 namespace librandom
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::uniform - uniform random deviate generator
 Description: Generates uniformly distributed numbers in the interval
              [low, high).
@@ -63,6 +60,7 @@ Parameters:
   high - upper interval boudnary, excluded
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
+
 Author: Hans Ekkehard Plesser
 */
 
@@ -77,8 +75,8 @@ class UniformRandomDev : public RandomDev
 {
 
 public:
-  // accept only lockPTRs for initialization,
-  // otherwise creation of a lock ptr would
+  // accept only shared_ptrs for initialization,
+  // otherwise creation of a shared_ptr would
   // occur as side effect---might be unhealthy
   UniformRandomDev( RngPtr r_in );
   UniformRandomDev(); // threaded

@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-716 - stdp dopamine synapse changes weight in the absence of presynaptic spikes
 
@@ -40,7 +40,7 @@ M_ERROR setverbosity
 ResetKernel
 
 /vol /volume_transmitter Create def
-/stdp_dopamine_synapse << /vt vol >> SetDefaults
+/stdp_dopamine_synapse << /vt vol 0 get >> SetDefaults
 
 /n_pre /parrot_neuron Create def % does not fire
 /n_post /parrot_neuron Create def
@@ -49,7 +49,7 @@ ResetKernel
 /sg_post /spike_generator << /spike_times [0.5 1.1 3.4] >> Create def
 /sg_dopa /spike_generator << /spike_times [1.4 2.3 4.6] >> Create def
 
-n_pre n_post /stdp_dopamine_synapse Connect
+n_pre n_post << >> /stdp_dopamine_synapse Connect
 sg_dopa n_dopa Connect
 n_dopa vol Connect
 sg_post n_post Connect

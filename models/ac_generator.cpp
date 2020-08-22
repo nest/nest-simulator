@@ -26,6 +26,7 @@
 #include <cmath>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -71,8 +72,7 @@ nest::ac_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::ac_generator::Parameters_& nest::ac_generator::Parameters_::operator=(
-  const Parameters_& p )
+nest::ac_generator::Parameters_& nest::ac_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -125,12 +125,12 @@ nest::ac_generator::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::ac_generator::Parameters_::set( const DictionaryDatum& d )
+nest::ac_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::amplitude, amp_ );
-  updateValue< double >( d, names::offset, offset_ );
-  updateValue< double >( d, names::frequency, freq_ );
-  updateValue< double >( d, names::phase, phi_deg_ );
+  updateValueParam< double >( d, names::amplitude, amp_, node );
+  updateValueParam< double >( d, names::offset, offset_, node );
+  updateValueParam< double >( d, names::frequency, freq_, node );
+  updateValueParam< double >( d, names::phase, phi_deg_, node );
 }
 
 
@@ -139,7 +139,7 @@ nest::ac_generator::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::ac_generator::ac_generator()
-  : Node()
+  : DeviceNode()
   , device_()
   , P_()
   , S_()
@@ -149,7 +149,7 @@ nest::ac_generator::ac_generator()
 }
 
 nest::ac_generator::ac_generator( const ac_generator& n )
-  : Node( n )
+  : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -206,8 +206,7 @@ nest::ac_generator::calibrate()
 void
 nest::ac_generator::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   long start = origin.get_steps();

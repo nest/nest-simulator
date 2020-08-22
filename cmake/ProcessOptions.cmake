@@ -32,6 +32,14 @@ function( NEST_PROCESS_WITH_OPTIMIZE )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_VERSION_SUFFIX )
+  if ( with-version-suffix )
+    foreach ( flag ${with-version-suffix} )
+      set( NEST_VERSION_SUFFIX "${flag}" PARENT_SCOPE )
+    endforeach ()
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_WITH_DEBUG )
   if ( with-debug )
     if ( with-debug STREQUAL "ON" )
@@ -44,10 +52,30 @@ function( NEST_PROCESS_WITH_DEBUG )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_INTEL_COMPILER_FLAGS )
+  if ( NOT with-intel-compiler-flags )
+    set( with-intel-compiler-flags "-fp-model strict" )
+  endif ()
+  if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Intel")
+  foreach ( flag ${with-intel-compiler-flags} )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" PARENT_SCOPE )
+  endforeach ()
+  endif ()
+  if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+    foreach ( flag ${with-intel-compiler-flags} )
+      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE )
+    endforeach ()
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_WITH_WARNING )
   if ( with-warning )
     if ( with-warning STREQUAL "ON" )
-      set( with-warning "-Wall" )
+      if ( NOT k-computer STREQUAL "ON" )
+        set( with-warning "-Wall" )
+      else()
+        set( with-warning "" )
+      endif()
     endif ()
     foreach ( flag ${with-warning} )
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" PARENT_SCOPE )
@@ -107,7 +135,8 @@ function( NEST_PROCESS_K_COMPUTER )
     set( IS_K ON PARENT_SCOPE )
     # need alternative tokens command to compile NEST
     set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --alternative_tokens" PARENT_SCOPE )
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --alternative_tokens" PARENT_SCOPE )
+    # FCC accepts GNU flags when -Xg is supplied
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xg --alternative_tokens" PARENT_SCOPE )
   endif ()
 endfunction()
 
@@ -149,6 +178,11 @@ endfunction()
 function( NEST_PROCESS_STATIC_LIBRARIES )
   # build static or shared libraries
   if ( static-libraries )
+
+    if ( with-readline )
+      message( FATAL_ERROR "-Dstatic-libraries=ON requires -Dwith-readline=OFF" )
+    endif ()
+
     set( BUILD_SHARED_LIBS OFF PARENT_SCOPE )
     # set RPATH stuff
     set( CMAKE_SKIP_RPATH TRUE PARENT_SCOPE )
@@ -158,6 +192,13 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
       # be used, so we'll add both to the preference list.
       set( CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib;.dylib;.so" PARENT_SCOPE )
     endif ()
+
+    if ( Fugaku )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Bstatic" PARENT_SCOPE )
+    else()
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static" PARENT_SCOPE )
+    endif()
+
   else ()
     set( BUILD_SHARED_LIBS ON PARENT_SCOPE )
 
@@ -172,21 +213,35 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
     # (but later on when installing)
     set( CMAKE_BUILD_WITH_INSTALL_RPATH FALSE PARENT_SCOPE )
 
-    # set the rpath only when installed
+    # set run-time search path (RPATH) so that dynamic libraries in ``lib/nest`` can be located
+
+    # Note: "$ORIGIN" (on Linux) and "@loader_path" (on MacOS) are not CMake variables, but special keywords for the
+    # Linux resp. the macOS dynamic loader. They refer to the path in which the object is located, e.g.
+    # ``${CMAKE_INSTALL_PREFIX}/bin`` for the nest and sli executables, ``${CMAKE_INSTALL_PREFIX}/lib/nest`` for all
+    # dynamic libraries except PyNEST (libnestkernel.so, etc.), and  something like
+    # ``${CMAKE_INSTALL_PREFIX}/lib/python3.x/site-packages/nest`` for ``pynestkernel.so``. The RPATH is relative to
+    # this origin, so the binary ``bin/nest`` can find the files in the relative location ``../lib/nest``, and
+    # similarly for PyNEST and the other libraries. For simplicity, we set all the possibilities on all generated
+    # objects.
+
+    # PyNEST can only act as an entry point; it does not need to be included in the other objects' RPATH itself.
+
     if ( APPLE )
       set( CMAKE_INSTALL_RPATH
-          "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
+          # for binaries
           "@loader_path/../${CMAKE_INSTALL_LIBDIR}/nest"
-          # for pynestkernel: @loader_path at <prefix>/lib/python2.7/site-packages/nest
-          "@loader_path/../../.."
+          # for libraries (except pynestkernel)
+          "@loader_path/../../${CMAKE_INSTALL_LIBDIR}/nest"
+          # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
           "@loader_path/../../../nest"
           PARENT_SCOPE )
     else ()
       set( CMAKE_INSTALL_RPATH
-          "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+          # for binaries
           "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/nest"
-          # for pynestkernel: origin at <prefix>/lib/python2.7/site-packages/nest
-          "\$ORIGIN/../../.."
+          # for libraries (except pynestkernel)
+          "\$ORIGIN/../../${CMAKE_INSTALL_LIBDIR}/nest"
+          # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
           "\$ORIGIN/../../../nest"
           PARENT_SCOPE )
     endif ()
@@ -338,16 +393,12 @@ endfunction()
 function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
-  if ( ${with-python} STREQUAL "ON" OR  ${with-python} STREQUAL "2" OR  ${with-python} STREQUAL "3" )
+  if ( ${with-python} STREQUAL "2" )
+    message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting with-python=ON" )
+  elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter
-    if ( ${with-python} STREQUAL "ON" )
-      find_package( PythonInterp )
-    elseif ( ${with-python} STREQUAL "2" )  
-      find_package( PythonInterp 2 REQUIRED )
-    elseif ( ${with-python} STREQUAL "3" )
-      find_package( PythonInterp 3 REQUIRED )
-    endif ()
+    find_package( PythonInterp 3 REQUIRED )
 
     if ( PYTHONINTERP_FOUND )
       set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
@@ -355,7 +406,7 @@ function( NEST_PROCESS_WITH_PYTHON )
       set( PYTHON ${PYTHON_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON_VERSION ${PYTHON_VERSION_STRING} PARENT_SCOPE )
 
-      # Localize Python lib/header files and make sure that their version matches 
+      # Localize Python lib/header files and make sure that their version matches
       # the Python interpreter version !
       find_package( PythonLibs ${PYTHON_VERSION_STRING} EXACT )
       if ( PYTHONLIBS_FOUND )
@@ -396,7 +447,7 @@ function( NEST_PROCESS_WITH_OPENMP )
   if ( with-openmp )
     if ( NOT "${with-openmp}" STREQUAL "ON" )
       message( STATUS "Set OpenMP argument: ${with-openmp}")
-      # set variablesin this scope
+      # set variables in this scope
       set( OPENMP_FOUND ON )
       set( OpenMP_C_FLAGS "${with-openmp}" )
       set( OpenMP_CXX_FLAGS "${with-openmp}" )
@@ -411,8 +462,17 @@ function( NEST_PROCESS_WITH_OPENMP )
       # set flags
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+    else()
+      message( FATAL_ERROR "CMake can not find OpenMP." )
     endif ()
   endif ()
+
+  # Provide a dummy OpenMP::OpenMP_CXX if no OpenMP or if flags explicitly
+  # given. Needed to avoid problems where OpenMP::OpenMP_CXX is used.
+  if ( NOT TARGET OpenMP::OpenMP_CXX )
+    add_library(OpenMP::OpenMP_CXX INTERFACE IMPORTED)
+  endif()
+
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI )
@@ -504,10 +564,71 @@ function( NEST_PROCESS_WITH_MUSIC )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_SIONLIB )
+  set( HAVE_SIONLIB OFF )
+  if ( with-sionlib )
+    if ( NOT ${with-sionlib} STREQUAL "ON" )
+      set( SIONLIB_ROOT_DIR "${with-sionlib}" CACHE INTERNAL "sionlib" )
+    endif()
+
+    if ( NOT HAVE_MPI )
+      message( FATAL_ERROR "SIONlib requires -Dwith-mpi=ON." )
+    endif ()
+
+    find_package( SIONlib )
+    include_directories( ${SIONLIB_INCLUDE} )
+
+    # is linked in nestkernel/CMakeLists.txt
+    if ( SIONLIB_FOUND )
+      set( HAVE_SIONLIB ON CACHE INTERNAL "sionlib" )
+    endif ()
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_WITH_BOOST )
+  # Find Boost
+  set( HAVE_BOOST OFF PARENT_SCOPE )
+  if ( with-boost )
+    if ( NOT ${with-boost} STREQUAL "ON" )
+      # a path is set
+      set( BOOST_ROOT "${with-boost}" )
+    endif ()
+
+    set(Boost_USE_DEBUG_LIBS OFF)  # ignore debug libs
+    set(Boost_USE_RELEASE_LIBS ON) # only find release libs
+    # Needs Boost version >=1.62.0 to use Boost sorting, JUNIT logging
+    find_package( Boost 1.62.0 )
+    if ( Boost_FOUND )
+      # export found variables to parent scope
+      set( HAVE_BOOST ON PARENT_SCOPE )
+      # Boost uses lower case in variable names
+      set( BOOST_FOUND "${Boost_FOUND}" PARENT_SCOPE )
+      set( BOOST_LIBRARIES "${Boost_LIBRARIES}" PARENT_SCOPE )
+      set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIRS}" PARENT_SCOPE )
+      set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
+      
+      include_directories( ${Boost_INCLUDE_DIRS} )
+    endif ()
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_TARGET_BITS_SPLIT )
+  if ( target-bits-split )
+    # set to value according to defines in config.h
+    if ( ${target-bits-split} STREQUAL "standard" )
+      set( TARGET_BITS_SPLIT 0 PARENT_SCOPE )
+    elseif ( ${target-bits-split} STREQUAL "hpc" )
+      set( TARGET_BITS_SPLIT 1 PARENT_SCOPE )
+    else()
+      message( FATAL_ERROR "Invalid target-bits-split selected." )
+    endif()
+  endif()
+endfunction()
+
 function( NEST_DEFAULT_MODULES )
     # requires HAVE_LIBNEUROSIM set
     # Static modules
-    set( SLI_MODULES models precise topology )
+    set( SLI_MODULES models topology )
     if ( HAVE_LIBNEUROSIM )
       set( SLI_MODULES ${SLI_MODULES} conngen )
     endif ()
@@ -518,4 +639,38 @@ function( NEST_DEFAULT_MODULES )
       list( APPEND SLI_MODULE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/${mod}" )
     endforeach ()
     set( SLI_MODULE_INCLUDE_DIRS ${SLI_MODULE_INCLUDE_DIRS} PARENT_SCOPE )
+endfunction()
+
+function( NEST_PROCESS_WITH_MPI4PY )
+  if ( HAVE_MPI AND HAVE_PYTHON )
+    include( FindPythonModule )
+    find_python_module(mpi4py)
+
+    if ( HAVE_MPI4PY )
+      include_directories( "${PY_MPI4PY}/include" )
+    endif ()
+
+  endif ()
+endfunction ()
+
+function( NEST_PROCESS_WITH_RECORDINGBACKEND_ARBOR )
+  if (with-recordingbackend-arbor)
+	if (NOT HAVE_MPI)  
+	  message( FATAL_ERROR "Recording backend Arbor needs MPI." )
+    endif ()
+	
+	if (NOT HAVE_PYTHON) 
+	  message( FATAL_ERROR "Recording backend Arbor needs Python." )
+	endif ()  
+	
+    include( FindPythonModule )	
+    
+	find_python_module(mpi4py)
+	if ( HAVE_MPI4PY )
+	  include_directories( "${PY_MPI4PY}/include" )
+	else ()
+	  message( FATAL_ERROR "CMake cannot find mpi4py, needed for recording backend Arbor" )
+    endif ()
+	set( HAVE_RECORDINGBACKEND_ARBOR ON PARENT_SCOPE )
+  endif()
 endfunction()

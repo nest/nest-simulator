@@ -52,6 +52,14 @@ bg_get_stack_mem()
   return ( unsigned long ) memory;
 }
 
+unsigned long
+bg_get_mmap_mem()
+{
+  bgmemsize_t memory = 0;
+  Kernel_GetMemorySize( KERNEL_MEMSIZE_MMAP, &memory );
+  return ( unsigned long ) memory;
+}
+
 #else
 
 /* ISO C forbids an empty translation unit, so we define dummies. */
@@ -69,6 +77,13 @@ bg_get_stack_mem()
   return 0;
 }
 
+unsigned long
+bg_get_mmap_mem()
+{
+  assert( 0 || "Only implemented on BlueGene." );
+  return 0;
+}
+
 #endif
 
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
@@ -79,10 +94,8 @@ darwin_get_used_mem()
   struct task_basic_info t_info;
   mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
 
-  kern_return_t result = task_info(
-    mach_task_self(), TASK_BASIC_INFO, ( task_info_t ) &t_info, &t_info_count );
-  assert(
-    result == KERN_SUCCESS || "Problem occured during getting of task_info." );
+  kern_return_t result = task_info( mach_task_self(), TASK_BASIC_INFO, ( task_info_t ) &t_info, &t_info_count );
+  assert( result == KERN_SUCCESS || "Problem occured during getting of task_info." );
   return t_info.resident_size;
 }
 #else

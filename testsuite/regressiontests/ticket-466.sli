@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::ticket-466.sli - test if mirollo_strogatz_ps can handle simultaneous inputs
 
 Synopsis: (ticket-466.sli) run -> dies if assertion fails
@@ -38,7 +38,7 @@ FirstVersion: 2010-10-05
 
 modeldict /mirollo_strogatz_ps known not
 {
-  statusdict/exitcodes/success :: quit_i
+  /skipped exit_test_gracefully
 } if
 
 M_ERROR setverbosity

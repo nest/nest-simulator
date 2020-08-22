@@ -33,11 +33,12 @@ add_subdirectory( mpi_selftests/fail )
 add_subdirectory( mpi_selftests/pass )
 add_subdirectory( mpitests )
 add_subdirectory( musictests )
+add_subdirectory( cpptests )
 
 install( DIRECTORY ${TESTSUBDIRS}
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
-install( PROGRAMS ${PROJECT_BINARY_DIR}/testsuite/do_tests.sh
+install( PROGRAMS do_tests.sh junit_xml.sh run_test.sh summarize_tests.py
     DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
     )

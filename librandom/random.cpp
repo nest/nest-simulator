@@ -34,7 +34,8 @@
 librandom::RngDatum
 librandom::create_rng( const long seed, const RngFactoryDatum& factory )
 {
-  return librandom::RngDatum( factory->create( seed ) );
+  librandom::RngPtr rng_ptr = factory->create( seed );
+  return librandom::RngDatum( rng_ptr );
 }
 
 librandom::RdvDatum
@@ -59,7 +60,6 @@ DictionaryDatum
 librandom::get_status( const RdvDatum& rdv )
 {
   DictionaryDatum dict( new Dictionary );
-  assert( dict.valid() );
 
   rdv->get_status( dict );
 

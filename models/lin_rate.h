@@ -33,64 +33,95 @@
 
 namespace nest
 {
-/* BeginDocumentation
-Name: lin_rate - Linear rate model
 
-Description:
+/* BeginUserDocs: neuron, rate
 
- lin_rate is an implementation of a linear rate model with
- input function input(h) = g * h.
- The model supports multiplicative coupling which can
- be switched on and off via the boolean parameter mult_coupling
- (default=false). In case multiplicative coupling is actived
- the excitatory input of the model is multiplied with the function
- mult_coupling_ex(rate) = g_ex_ * ( theta_ex_ - rate )
- and the inhibitory input is multiplied with the function
- mult_coupling_in(rate) = g_in_ * ( theta_in_ + rate ).
+Short description
++++++++++++++++++
 
- The model supports connections to other rate models with either zero or
- non-zero delay, and uses the secondary_event concept introduced with
- the gap-junction framework.
+Linear rate model
 
-Parameters:
+Description
++++++++++++
 
- The following parameters can be set in the status dictionary.
+lin_rate is an implementation of a rate model with linear input
+function :math:`input(h) = g * h`. It either models a rate neuron with
+input noise (see rate_neuron_ipn), a rate neuron with output noise
+(see rate_neuron_opn) or a rate transformer (see
+rate_transformer_node).
 
- rate                double - Rate (unitless)
- tau                 double - Time constant of rate dynamics in ms.
- lambda              double - Passive decay rate.
- mean                double - Mean of Gaussian white noise.
- std                 double - Standard deviation of Gaussian white noise.
- g                   double - Gain parameter
- mult_coupling       bool   - Switch to enable/disable multiplicative coupling.
- g_ex                double - Linear factor in multiplicative coupling.
- g_in                double - Linear factor in multiplicative coupling.
- theta_ex            double - Shift in multiplicative coupling.
- theta_in            double - Shift in multiplicative coupling.
- rectify_output      bool   - Switch to restrict rate to values >= 0
+Linear rate neurons support multiplicative coupling which can be
+switched on and off via the boolean parameter mult_coupling
+(default=false). In case multiplicative coupling is active, the
+excitatory input of the model is multiplied with the function
+:math:`mult\_coupling\_ex(rate) = g_{ex} * ( \theta_{ex} - rate )` and the
+inhibitory input is multiplied with the function
+:math:`mult\_coupling\_in(rate) = g_{in} * ( \theta_{in} + rate )`.
 
-References:
+The model supports connections to other rate models with either zero
+or non-zero delay, and it uses the secondary_event concept introduced
+with the gap-junction framework.
 
- [1] Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
- Bolten, M., Helias, M. and Diesmann, M. (2017).
- Integration of Continuous-Time Dynamics in a
- Spiking Neural Network Simulator.
- Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
+Linear rate neurons can be created by typing
+nest.Create('lin_rate_ipn') or nest.Create('lin_rate_opn') for input
+noise or output noise, respectively. Linear rate transformers can be
+created by typing nest.Create('rate_transformer_lin').
 
- [2] Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
- Bolten, M., Frommer, A. and Diesmann, M. (2015).
- A unified framework for spiking and gap-junction interactions
- in distributed neuronal network simulations.
- Front. Neuroinform. 9:22. doi: 10.3389/fninf.2015.00022
+Parameters
+++++++++++
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+The following parameters can be set in the status dictionary. Note
+that some of the parameters only apply to rate neurons and not to rate
+transformers.
+===============  ======= ==================================================
+ rate            real    Rate (unitless)
+ tau             ms      Time constant of rate dynamics
+ lambda          real    Passive decay rate
+ mu              real    Mean input
+ sigma           real    Noise parameter
+ g               real    Gain parameter
+ mult_coupling   boolean Switch to enable/disable multiplicative coupling
+ g_ex            real    Linear factor in multiplicative coupling
+ g_in            real    Linear factor in multiplicative coupling
+ theta_ex        real    Shift in multiplicative coupling
+ theta_in        real    Shift in multiplicative coupling
+ rectify_rate    real    Rectfying rate
+ rectify_output  boolean Switch to restrict rate to values >= rectify_rate
+===============  ======= ==================================================
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
+
+References
+++++++++++
+
+.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M, Diesmann
+       M (2017). Integration of continuous-time dynamics in a spiking neural
+       network simulator. Frontiers in Neuroinformatics, 11:34.
+       DOI: https://doi.org/10.3389/fninf.2017.00034
+.. [2] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
+       (2015). A unified framework for spiking and gap-junction interactions
+       in distributed neuronal network simulations.
+       Frontiers Neuroinformatics, 9:22.
+       DOI: https://doi.org/10.3389/fninf.2015.00022
+
+
+Sends
++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Receives
+++++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
-SeeAlso: rate_connection_instantaneous, rate_connection_delayed
-*/
+See also
+++++++++
+
+rate_connection_instantaneous, rate_connection_delayed,
+rate_neuron_ipn, rate_neuron_opn
+
+EndUserDocs */
 
 class nonlinearities_lin_rate
 {
@@ -116,8 +147,8 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum& ); //!< Set values from dicitonary
+  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling
@@ -144,8 +175,7 @@ nonlinearities_lin_rate::mult_coupling_in( double rate )
 
 typedef rate_neuron_ipn< nest::nonlinearities_lin_rate > lin_rate_ipn;
 typedef rate_neuron_opn< nest::nonlinearities_lin_rate > lin_rate_opn;
-typedef rate_transformer_node< nest::nonlinearities_lin_rate >
-  rate_transformer_lin;
+typedef rate_transformer_node< nest::nonlinearities_lin_rate > rate_transformer_lin;
 
 template <>
 void RecordablesMap< lin_rate_ipn >::create();

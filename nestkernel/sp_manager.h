@@ -37,7 +37,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "growth_curve_factory.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -76,7 +76,7 @@ public:
 
   /**
    * Create a new Growth Curve object using the GrowthCurve Factory
-   * @param name which defines the type of GC to be created
+   * @param name which defines the type of NC to be created
    * @return a new Growth Curve object of the type indicated by name
    */
   GrowthCurve* new_growth_curve( Name name );
@@ -88,35 +88,15 @@ public:
   void register_growth_curve( const std::string& name );
 
   /**
-   * Disconnect two nodes. The source node is defined by its global ID.
-   * The target node is defined by the node. The connection is
-   * established on the thread/process that owns the target node.
-   * Identifies if the network is Structural Plasticity enabled or not and then
-   * performs a single disconnect between the two nodes.
-   *
-   * \param s GID of the sending Node.
-   * \param target Pointer to target Node.
-   * \param target_thread Thread that hosts the target node.
-   * \param syn The synapse model to use.
-   */
-  void disconnect_single( index s,
-    Node* target,
-    thread target_thread,
-    DictionaryDatum& syn );
-
-  /**
    * Disconnect two collections of nodes.  The connection is
    * established on the thread/process that owns the target node.
    *
-   * \param sources GID Collection of the source Nodes.
-   * \param targets GID Collection of the target Nodes.
+   * \param sources Node collection of the source Nodes.
+   * \param targets Node collection of the target Nodes.
    * \param connectivityParams connectivity Dictionary
    * \param synapseParams synapse parameters Dictionary
    */
-  void disconnect( GIDCollection&,
-    GIDCollection&,
-    DictionaryDatum&,
-    DictionaryDatum& );
+  void disconnect( NodeCollectionPTR, NodeCollectionPTR, DictionaryDatum&, DictionaryDatum& );
 
   /**
    * Disconnect two nodes.
@@ -124,29 +104,29 @@ public:
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
-   * \param s GID of the sending Node.
+   * \param snode_id node ID of the sending Node.
    * \param target Pointer to target Node.
    * \param target_thread Thread that hosts the target node.
-   * \param syn The synapse model to use.
+   * \param syn_id The synapse model to use.
    */
-  void disconnect( index s, Node* target, thread target_thread, index syn );
+  void disconnect( const index snode_id, Node* target, thread target_thread, const index syn_id );
 
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );
 
   /**
-   * Enable  structural plasticity
+   * Enable structural plasticity
    */
   void enable_structural_plasticity();
 
   /**
-   * Disable  structural plasticity
+   * Disable structural plasticity
    */
   void disable_structural_plasticity();
 
   bool is_structural_plasticity_enabled() const;
 
-  long get_structural_plasticity_update_interval() const;
+  double get_structural_plasticity_update_interval() const;
 
   /**
    * Returns the minimum delay of all SP builders.
@@ -173,11 +153,11 @@ public:
     std::vector< int >& post_vacant_n,
     SPBuilder* sp_conn_builder );
   // Deletion of synapses on the pre synaptic side
-  void delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
+  void delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
     std::vector< int >& pre_deleted_n,
-    index synapse_model,
-    std::string se_pre_name,
-    std::string se_post_name );
+    const index synapse_model,
+    const std::string& se_pre_name,
+    const std::string& se_post_name );
   // Deletion of synapses on the post synaptic side
   void delete_synapses_from_post( std::vector< index >& post_deleted_id,
     std::vector< int >& post_deleted_n,
@@ -185,11 +165,7 @@ public:
     std::string se_pre_name,
     std::string se_post_name );
   // Deletion of synapses
-  void delete_synapse( index source,
-    index target,
-    long syn_id,
-    std::string se_pre_name,
-    std::string se_post_name );
+  void delete_synapse( index source, index target, long syn_id, std::string se_pre_name, std::string se_post_name );
 
   void get_synaptic_elements( std::string se_name,
     std::vector< index >& se_vacant_id,
@@ -197,9 +173,7 @@ public:
     std::vector< index >& se_deleted_id,
     std::vector< int >& se_deleted_n );
 
-  void serialize_id( std::vector< index >& id,
-    std::vector< int >& n,
-    std::vector< index >& res );
+  void serialize_id( std::vector< index >& id, std::vector< int >& n, std::vector< index >& res );
   void global_shuffle( std::vector< index >& v );
   void global_shuffle( std::vector< index >& v, size_t n );
 
@@ -208,7 +182,7 @@ private:
    * Time interval for structural plasticity update (creation/deletion of
    * synapses).
    */
-  long structural_plasticity_update_interval_;
+  double structural_plasticity_update_interval_;
 
   /**
    * Indicates whether the Structrual Plasticity functionality is On (True) of
@@ -217,8 +191,10 @@ private:
   bool structural_plasticity_enabled_;
   std::vector< SPBuilder* > sp_conn_builders_;
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
+
    Name: growthcurvedict - growth curves for Model of Structural Plasticity
+
    Description:
    This dictionary provides indexes for the growth curve factory
    */
@@ -239,8 +215,8 @@ SPManager::get_growthcurvedict()
 inline GrowthCurve*
 SPManager::new_growth_curve( Name name )
 {
-  const long gc_id = ( *growthcurvedict_ )[ name ];
-  return growthcurve_factories_.at( gc_id )->create();
+  const long nc_id = ( *growthcurvedict_ )[ name ];
+  return growthcurve_factories_.at( nc_id )->create();
 }
 
 inline bool
@@ -249,7 +225,7 @@ SPManager::is_structural_plasticity_enabled() const
   return structural_plasticity_enabled_;
 }
 
-inline long
+inline double
 SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;

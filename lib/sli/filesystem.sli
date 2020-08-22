@@ -43,7 +43,7 @@
   end
 } def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: FileNames - return contents of current working directory
  Synopsis: string FileNames -> array
            regex  FileNames -> array
@@ -69,7 +69,7 @@
   [/regextype] /FileNames_r load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: ls - print contents of current working directory
  Synopsis: ls -> -
  Description: Prints the contents of the working directory on stdout.
@@ -90,7 +90,7 @@ def
 
 /ls  {(^[^\\.]) FileNames {=} forall} def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: SetDirectory - Change working directory
  Synopsis: string SetDirectory -> boolean
  Description: Changes the working directory to the given argument,
@@ -112,7 +112,7 @@ def
   [/stringtype] /SetDirectory_ load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: cd - Change working directory
  Synopsis: string cd -> -
  Description: Changes the working directory to the given argument,
@@ -130,7 +130,7 @@ def
 
 /cd {dup SetDirectory not {/cd /UnknownDirectory raiseerror} if pop} def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: pwd - Print working directory
  Synopsis: pwd -> -
  Description: Prints the working directory.
@@ -144,7 +144,7 @@ def
 
 /pwd {Directory =} def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: MoveFile - Rename a file
  Synopsis: string1 string2 MoveFile -> boolean
  Description: Rename a file, e.g. link the file to the new name
@@ -179,7 +179,7 @@ def
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: CopyFile - Copy a file
  Synopsis: (sourcefilename) (targetfilename) CopyFile -> -
  Description: Copy a file.
@@ -196,7 +196,7 @@ def
 def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: DeleteFile - Delete a file
  Synopsis: string DeleteFile -> boolean
  Description: Delete a file defined by it's filename. To be exact, it
@@ -224,7 +224,7 @@ def
   [/stringtype] /DeleteFile_ load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: MakeDirectory - Create a new directory
  Synopsis: string MakeDirectory -> boolean
  Description: MakeDirectory creates the named subdirectory of your
@@ -243,7 +243,7 @@ def
   [/stringtype] /MakeDirectory_ load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: RemoveDirectory - Delete a directory
  Synopsis: string RemoveDirectory -> boolean
  Description: RemoveDirectory deletes the named subdirectory of your
@@ -264,7 +264,7 @@ def
   [/stringtype] /RemoveDirectory_ load addtotrie
 def
 
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: MoveDirectory - Rename a directory
  Synopsis: string1 string2 MoveDirectory -> boolean
  Description: MoveDirectory unlinks old directory name and links to
@@ -293,7 +293,7 @@ def
 def
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
   Name: dirname - strip last component from file name
   Synopsis: string dirname -> string
   Description: Print NAME with its trailing /component removed;

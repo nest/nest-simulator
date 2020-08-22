@@ -163,8 +163,8 @@ class Main():
 
     def get_help_text(self, name):
 
-        nest.sli_run("statusdict /prgdocdir get")
-        docdir = nest.sli_pop()
+        nest.ll_api.sli_run("statusdict /prgdocdir get")
+        docdir = nest.ll_api.sli_pop()
 
         helptext = "No documentation available"
 
@@ -233,11 +233,10 @@ class Main():
         delay = self._builder.get_object("delay").get_value()
         nest.Connect(stimulator, neuron, weight, delay)
 
-        sd = nest.Create("spike_detector", params={"record_to": ["memory"]})
+        sd = nest.Create("spike_detector")
         nest.Connect(neuron, sd)
 
-        vm = nest.Create("voltmeter", params={"record_to": ["memory"],
-                                              "interval": 0.1})
+        vm = nest.Create("voltmeter", params={"interval": 0.1})
         nest.Connect(vm, neuron)
 
         simtime = self._builder.get_object("simtime").get_value()

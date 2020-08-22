@@ -60,14 +60,12 @@ class Dictionary : private TokenMap
     static bool nocase_compare( char c1, char c2 );
 
   public:
-    bool operator()( const std::pair< Name, Token >& lhs,
-      const std::pair< Name, Token >& rhs ) const
+    bool operator()( const std::pair< Name, Token >& lhs, const std::pair< Name, Token >& rhs ) const
     {
       const std::string& ls = lhs.first.toString();
       const std::string& rs = rhs.first.toString();
 
-      return std::lexicographical_compare(
-        ls.begin(), ls.end(), rs.begin(), rs.end(), nocase_compare );
+      return std::lexicographical_compare( ls.begin(), ls.end(), rs.begin(), rs.end(), nocase_compare );
     }
   };
 

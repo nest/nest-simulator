@@ -24,24 +24,32 @@
 #define SYN_ID_DELAY_H
 
 // Includes from nestkernel:
+#include "nest_time.h"
+#include "nest_types.h"
 
 namespace nest
 {
 
 struct SynIdDelay
 {
-  unsigned syn_id : 8;
-  unsigned delay : 24;
+  unsigned int delay : NUM_BITS_DELAY;
+  unsigned int syn_id : NUM_BITS_SYN_ID;
+  bool more_targets : 1;
+  bool disabled : 1;
 
-  SynIdDelay( double d )
+  explicit SynIdDelay( double d )
     : syn_id( invalid_synindex )
+    , more_targets( false )
+    , disabled( false )
   {
     set_delay_ms( d );
   }
 
   SynIdDelay( const SynIdDelay& s )
-    : syn_id( s.syn_id )
-    , delay( s.delay )
+    : delay( s.delay )
+    , syn_id( s.syn_id )
+    , more_targets( s.more_targets )
+    , disabled( s.disabled )
   {
   }
 
@@ -62,7 +70,44 @@ struct SynIdDelay
   {
     delay = Time::delay_ms_to_steps( d );
   }
+
+  void
+  set_source_has_more_targets( const bool more_targets )
+  {
+    this->more_targets = more_targets;
+  }
+
+  bool
+  source_has_more_targets() const
+  {
+    return more_targets;
+  }
+
+  /**
+   * Disables the synapse.
+   *
+   * @see is_disabled
+   */
+  void
+  disable()
+  {
+    disabled = true;
+  }
+
+  /**
+   * Returns a flag denoting if the synapse is disabled.
+   *
+   * @see disable
+   */
+  bool
+  is_disabled() const
+  {
+    return disabled;
+  }
 };
+
+//! check legal size
+using success_syn_id_delay_data_size = StaticAssert< sizeof( SynIdDelay ) == 4 >::success;
 }
 
 #endif

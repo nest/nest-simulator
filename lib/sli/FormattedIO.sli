@@ -29,7 +29,7 @@
 %% The i/o facilities model those of Mathematica.
 %%
 
-/*BeginDocumentation 
+/** @BeginDocumentation 
 Name: ReadModes - dictionary with type specifiers for read functions
 Description:
 The following read modes are available:
@@ -61,7 +61,7 @@ def
                [/anytype]   false   addtotrie
 def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: Read - read an object of a certain type from a stream
 Synopsis: istream [type] Read -> istream [result] true
                               -> istream false
@@ -91,7 +91,7 @@ FirstVersion: Jun 17 2000
   size 0 gt {true} {pop false} ifelse
 } def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: ReadList - read a list of specified format from a stream
 Synopsis: istream [types] ReadList -> [result]
 Parameters: istream : an input stream
@@ -175,7 +175,7 @@ Options
   end
 } def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: SaveDictionary - Save contents of a dictionary to a file.
 Synopsis: dict (fname) SaveDictionary -> -
 Description: SaveDictionary tries to save the contents of the dicitonary
@@ -235,7 +235,7 @@ SeeAlso: RestoreDictionary, MergeDictionary
 %/:out [/ostreamtype /nametype /proceduretype] 
 %/_:out load def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: MergeDictionary - Merge all definitions of a dictionary with the current dicitonary.
 Synopsis: dict MergeDictionary -> -
 SeeAlso: SaveDictionary, RestoreDictionary
@@ -250,7 +250,7 @@ SeeAlso: SaveDictionary, RestoreDictionary
   } forall
 } def
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: RestoreDictionary - Read a dictionary definition from a file.
 Synopsis: (fname) RestoreDictionary -> dict
 SeeAlso: SaveDictionary, MergeDictionary
@@ -265,7 +265,7 @@ SeeAlso: SaveDictionary, MergeDictionary
 } def
 
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: Export - save in a foreign file format 
 Synopsis: 
 (fname) any         Export -> 

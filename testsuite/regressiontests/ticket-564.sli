@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-564 - Regression test for OpenMP-parallel problems on OSX
 
@@ -51,14 +51,12 @@ M_ERROR setverbosity
   {
     pop    
     ResetKernel    
-    0 << /total_num_virtual_procs N_VP >> SetStatus
+    << /total_num_virtual_procs N_VP >> SetKernelStatus
 
-    /net /iaf_psc_alpha [ N ] LayoutNetwork def
-    /nodes net GetGlobalNodes def
-    /local_nodes net GetLocalNodes def
-    nodes local_nodes << /rule /fixed_indegree /indegree C >> Connect
+    /nodes /iaf_psc_alpha N Create def
+    nodes nodes << /rule /fixed_indegree /indegree C >> Connect
 
-    0 /num_connections get dup ==
+    GetKernelStatus /num_connections get dup ==
   } Table
   dup ==
   true exch { ConnExpected eq and } Fold

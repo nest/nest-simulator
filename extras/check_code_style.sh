@@ -86,7 +86,7 @@ i.e. all executions should start like:
     ./extras/check_code_style.sh ...
 
 The setup of the tooling is explained here: 
-    https://nest.github.io/nest-simulator/coding_guidelines_c++
+    https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html
 
 Options:
 
@@ -315,3 +315,6 @@ IGNORE_MSG_PEP8=false
 "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
 "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
 "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
+if [ $? -gt 0 ]; then
+    exit $?
+fi

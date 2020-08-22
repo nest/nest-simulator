@@ -24,7 +24,7 @@ import subprocess as sp
 import unittest
 import nest
 
-HAVE_MPI = nest.sli_func("statusdict/have_mpi ::")
+HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 
 
 class TestConnectAllPatterns(unittest.TestCase):
@@ -47,12 +47,12 @@ class TestConnectAllPatterns(unittest.TestCase):
         failing_tests = []
         for script in scripts:
             test_script = os.path.join(directory, script)
-            command = nest.sli_func("mpirun", 2, "nosetests",
-                                    test_script)
+            command = nest.ll_api.sli_func(
+                "mpirun", 2, "nosetests", test_script)
             command = command.split()
-            process = sp.Popen(command, stdout=sp.PIPE, stderr=sp.PIPE)
-            stdout, stderr = process.communicate()
-            retcode = process.returncode
+            my_env = os.environ.copy()
+            retcode = sp.call(command, env=my_env,
+                              stdout=sp.PIPE, stderr=sp.PIPE)
             if retcode != 0:
                 failing_tests.append(script)
         self.assertTrue(not failing_tests, 'The following tests failed when ' +
@@ -60,6 +60,11 @@ class TestConnectAllPatterns(unittest.TestCase):
                         ", ".join(failing_tests))
 
 
-if __name__ == '__main__':
+def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestConnectAllPatterns)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    return suite
+
+
+if __name__ == '__main__':
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())

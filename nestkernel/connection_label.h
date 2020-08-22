@@ -96,8 +96,7 @@ ConnectionLabel< ConnectionT >::get_status( DictionaryDatum& d ) const
 
 template < typename ConnectionT >
 void
-ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   long lbl;
   if ( updateValue< long >( d, names::synapse_label, lbl ) )

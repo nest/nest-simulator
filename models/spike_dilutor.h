@@ -25,39 +25,60 @@
 
 // Includes from nestkernel:
 #include "connection.h"
+#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "node.h"
 #include "ring_buffer.h"
 #include "stimulating_device.h"
 
 namespace nest
 {
 
-/* BeginDocumentation
-Name: spike_dilutor - repeats incoming spikes with a certain probability.
+/* BeginUserDocs: device, generator
 
-Description:
-  The device repeats incoming spikes with a certain probability.
-  Targets will receive diffenrent spike trains.
+Short description
++++++++++++++++++
+
+Repeat incoming spikes with a certain probability
+
+Device name
++++++++++++
+
+spike_dilutor
+
+Description
++++++++++++
+
+The device repeats incoming spikes with a certain probability.
+Targets will receive diffenrent spike trains.
 
 Remarks:
-  In parallel simulations, a copy of the device is present on each process
-  and spikes are collected only from local sources.
 
-Parameters:
-   The following parameters appear in the element's status dictionary:
-   p_copy double - Copy probability
+In parallel simulations, a copy of the device is present on each process
+and spikes are collected only from local sources.
 
-Sends: SpikeEvent
+Parameters
+++++++++++
 
-Author: Adapted from mip_generator by Kunkel, Oct 2011
-ported to Nest 2.6 by: Setareh, April 2015
+The following parameters appear in the element's status dictionary:
 
-SeeAlso: mip_generator
-*/
+======== ======  ================
+ p_copy  real    Copy probability
+======== ======  ================
 
-class spike_dilutor : public Node
+Sends
++++++
+
+SpikeEvent
+
+See also
+++++++++
+
+mip_generator
+
+EndUserDocs */
+
+class spike_dilutor : public DeviceNode
 {
 
 public:
@@ -73,6 +94,12 @@ public:
   local_receiver() const
   {
     return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
   }
 
   using Node::handles_test_event; // new
@@ -107,8 +134,8 @@ private:
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   struct Buffers_
@@ -124,10 +151,7 @@ private:
 };
 
 inline port
-spike_dilutor::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool )
+spike_dilutor::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
 
   device_.enforce_single_syn_type( syn_id );
@@ -158,7 +182,7 @@ inline void
 spike_dilutor::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

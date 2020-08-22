@@ -192,8 +192,7 @@ public:
     init( &sb );
   }
 
-  explicit ofdstream( const char* s,
-    std::ios_base::openmode mode = std::ios_base::out )
+  explicit ofdstream( const char* s, std::ios_base::openmode mode = std::ios_base::out )
     : std::ostream( 0 )
     , sb()
   {
@@ -250,8 +249,7 @@ public:
     init( &sb );
   }
 
-  explicit ifdstream( const char* s,
-    std::ios_base::openmode mode = std::ios_base::in )
+  explicit ifdstream( const char* s, std::ios_base::openmode mode = std::ios_base::in )
     : std::istream( 0 )
     , sb()
   {

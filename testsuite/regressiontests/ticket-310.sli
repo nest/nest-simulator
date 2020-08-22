@@ -49,11 +49,11 @@
       /model Set
 
       ResetKernel
-      0 << /resolution res >> SetStatus
+      << /resolution res >> SetKernelStatus
       model Create /n Set
 
       % see if we have V_m and V_th, otherwise return true
-      n GetStatus dup /V_m known exch /V_th known and
+      n GetStatus 0 get dup /V_m known exch /V_th known and
       {
         n << /V_m n /V_th get 15.0 add >> SetStatus
         res Simulate

@@ -1,0 +1,84 @@
+/*
+ *  test_multiplicity.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /** @BeginDocumentation
+Name: testsuite::test_multiplicity - Test parallel transmission of spikes with
+                                     multiplicity > 1.
+
+Synopsis: nest_indirect test_multiplicity.sli -> -
+
+Description:
+  Creates two parrot neurons and connects the first one to the second one. The
+  first parrot neuron receives one spike with multiplicity two from a spike
+  generator, which should be communicated as two spikes to the second parrot
+  neuron. Each parrot neuron is connected to a spike detector, which should
+  record two spikes.
+
+Author: Stine Brekke Vennemo, January 2019
+*/
+
+(unittest) run
+/unittest using
+
+skip_if_not_threaded
+
+/total_vps 2 def
+
+[1 2]
+{
+  % set resolution and total/local number of threads
+  <<
+    /total_num_virtual_procs total_vps
+  >> SetKernelStatus
+
+  /p_source /parrot_neuron 1 Create def
+  /p_target /parrot_neuron 1 Create def
+  /sg /spike_generator 1 Create def
+  /sd_source /spike_detector 1 Create def
+  /sd_target /spike_detector 1 Create def
+
+  sg << /spike_times [1.] /spike_multiplicities [2] >> SetStatus
+
+  sg p_source Connect
+  p_source p_target Connect
+  p_source sd_source Connect
+  p_target sd_target Connect
+
+  10. Simulate
+
+  % Both parrots should receive 2 events.  
+  sd_source /n_events get /se Set
+  sd_target /n_events get /te Set
+  [se te]
+}
+{
+  {
+    /mpi_res Set
+    [0 0] /list_sum Set
+    mpi_res
+    {
+      list_sum add /list_sum Set
+    } forall
+    list_sum [2 2] eq
+  } forall
+} distributed_collect_assert_or_die 
+    

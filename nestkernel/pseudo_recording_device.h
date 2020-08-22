@@ -27,9 +27,6 @@
 #include <fstream>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from nestkernel:
 #include "device.h"
 #include "nest_types.h"
@@ -41,7 +38,7 @@
 namespace nest
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
   Name: PseudoRecordingDevice - Common properties of all pseudo-recording
                                 devices.
   Description:
@@ -100,8 +97,7 @@ inline PseudoRecordingDevice::PseudoRecordingDevice()
 {
 }
 
-inline PseudoRecordingDevice::PseudoRecordingDevice(
-  const PseudoRecordingDevice& prd )
+inline PseudoRecordingDevice::PseudoRecordingDevice( const PseudoRecordingDevice& prd )
   : Device( prd )
 {
 }
@@ -111,7 +107,7 @@ PseudoRecordingDevice::is_active( Time const& T ) const
 {
   const long stamp = T.get_steps();
 
-  return get_t_min_() < stamp && stamp <= get_t_max_();
+  return get_t_min_() < stamp and stamp <= get_t_max_();
 }
 
 } // namespace

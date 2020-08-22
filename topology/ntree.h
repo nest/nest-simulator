@@ -27,6 +27,7 @@
 #include <bitset>
 #include <utility>
 #include <vector>
+#include <iterator>
 
 // Includes from topology:
 #include "position.h"
@@ -145,6 +146,11 @@ public:
   class masked_iterator
   {
   public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = std::pair< Position< D >, T >;
+    using pointer = value_type*;
+    using reference = value_type&;
+    using difference_type = long int;
     /**
      * Initialize an invalid iterator.
      */
@@ -161,9 +167,7 @@ public:
      * Initialize an iterator to point to the first leaf node inside the
      * mask within the tree below this Ntree.
      */
-    masked_iterator( Ntree& q,
-      const Mask< D >& mask,
-      const Position< D >& anchor );
+    masked_iterator( Ntree& q, const Mask< D >& mask, const Position< D >& anchor );
 
     value_type& operator*()
     {
@@ -232,12 +236,22 @@ public:
      */
     void next_anchor_();
 
+    bool
+    anchored_position_inside_mask( const Position< D >& position )
+    {
+      // Create anchored position in two steps to avoid creating a new Position object.
+      anchored_position_ = position;
+      anchored_position_ -= anchor_;
+      return mask_->inside( anchored_position_ );
+    }
+
     Ntree* ntree_;
     Ntree* top_;
     Ntree* allin_top_;
     index node_;
     const Mask< D >* mask_;
     Position< D > anchor_;
+    Position< D > anchored_position_;
     std::vector< Position< D > > anchors_;
     index current_anchor_;
   };
@@ -287,8 +301,7 @@ public:
    * @param anchor  position to center mask in.
    * @returns member nodes in ntree inside mask.
    */
-  std::vector< value_type > get_nodes( const Mask< D >& mask,
-    const Position< D >& anchor );
+  std::vector< value_type > get_nodes( const Mask< D >& mask, const Position< D >& anchor );
 
   /**
    * This function returns a node iterator which will traverse the
@@ -344,9 +357,7 @@ protected:
   /**
    * Append this ntree's nodes inside the mask to the vector
    */
-  void append_nodes_( std::vector< value_type >&,
-    const Mask< D >&,
-    const Position< D >& );
+  void append_nodes_( std::vector< value_type >&, const Mask< D >&, const Position< D >& );
 
   /**
    * @returns the subquad number for this position
@@ -391,8 +402,9 @@ Ntree< D, T, max_capacity, max_depth >::~Ntree()
 {
   if ( leaf_ )
   {
+    // if T is a vector class, we do not delete the pointees
     return;
-  } // if T is a vector class, we do not delete the pointees
+  }
 
   for ( size_t n = 0; n < static_cast< size_t >( N ); ++n )
   {
@@ -434,8 +446,7 @@ Ntree< D, T, max_capacity, max_depth >::get_nodes()
 
 template < int D, class T, int max_capacity, int max_depth >
 std::vector< std::pair< Position< D >, T > >
-Ntree< D, T, max_capacity, max_depth >::get_nodes( const Mask< D >& mask,
-  const Position< D >& anchor )
+Ntree< D, T, max_capacity, max_depth >::get_nodes( const Mask< D >& mask, const Position< D >& anchor )
 {
   std::vector< std::pair< Position< D >, T > > result;
   append_nodes_( result, mask, anchor );
@@ -444,16 +455,14 @@ Ntree< D, T, max_capacity, max_depth >::get_nodes( const Mask< D >& mask,
 
 template < int D, class T, int max_capacity, int max_depth >
 typename Ntree< D, T, max_capacity, max_depth >::iterator
-Ntree< D, T, max_capacity, max_depth >::insert(
-  const std::pair< Position< D >, T >& val )
+Ntree< D, T, max_capacity, max_depth >::insert( const std::pair< Position< D >, T >& val )
 {
   return insert( val.first, val.second );
 }
 
 template < int D, class T, int max_capacity, int max_depth >
 typename Ntree< D, T, max_capacity, max_depth >::iterator
-Ntree< D, T, max_capacity, max_depth >::insert( iterator,
-  const std::pair< Position< D >, T >& val )
+Ntree< D, T, max_capacity, max_depth >::insert( iterator, const std::pair< Position< D >, T >& val )
 {
   return insert( val.first, val.second );
 }

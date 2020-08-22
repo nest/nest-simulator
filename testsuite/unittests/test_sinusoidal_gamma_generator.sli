@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_sinusoidal_gamma_generator - test basic properties of sinusoidal gamma generator
 
 Synopsis: (test_sinusoidal_gamma_generator) run -> dies if assertion fails
@@ -120,24 +120,14 @@ M_ERROR setverbosity
 /build_simple_net
 {
   /n Set
-  /pnet /subnet Create def
-  pnet ChangeSubnet
-  /parrot_neuron n Create ;
-  0 ChangeSubnet
-  /parrots pnet GetLocalLeaves def
+  /parrots /parrot_neuron n Create def
   
-  /snet /subnet Create def
-  snet ChangeSubnet  
-  /spike_detector n << /withtime true /withgid false >> Create ;
-  0 ChangeSubnet
-  /sdets snet GetLocalLeaves def
+  /sdets /spike_detector n Create def
 
   /gen /sinusoidal_gamma_generator Create def
-
-  [gen] parrots Connect
-
-  [parrots sdets] { Connect } ScanThread
-
+  
+  gen parrots Connect
+  parrots sdets /one_to_one Connect
   sdets
 } def
  
@@ -169,7 +159,6 @@ M_ERROR setverbosity
 
 } def
 
-
 % Run test for given value for individual spike train and thread number
 % individual(true/false) num_threads nrns_per_thread test4_function -> bool
 /test4_function
@@ -179,7 +168,7 @@ M_ERROR setverbosity
   /individual Set
 
   ResetKernel
-  0 << /local_num_threads num_threads >> SetStatus
+  << /local_num_threads num_threads >> SetKernelStatus
 
   /sinusoidal_gamma_generator 
   << 
@@ -236,16 +225,12 @@ M_ERROR setverbosity
 /build_mm_net
 {
   /n Set
-  /pnet /subnet Create def
-  pnet ChangeSubnet
-  /parrot_neuron n Create ;
-  0 ChangeSubnet
-  /parrots pnet GetLocalLeaves def
+  /parrots /parrot_neuron n Create def
   
   /gen /sinusoidal_gamma_generator Create def
   /mm /multimeter << /record_from [ /rate ] >> Create def
 
-  [gen] parrots Connect
+  gen parrots Connect
   mm gen Connect  
 
   mm
@@ -260,7 +245,7 @@ M_ERROR setverbosity
   /individual Set
 
   ResetKernel
-  0 << /local_num_threads num_threads >> SetStatus
+  << /local_num_threads num_threads >> SetKernelStatus
 
   /sinusoidal_gamma_generator 
   << 
@@ -278,8 +263,8 @@ M_ERROR setverbosity
 
   /ndata tsim cvi 1 sub def
 
-  % times and rates must be arrays of ndata points    
-    mm [/events /times] get length ndata eq
+  % times and rates must be arrays of ndata points
+    mm [/events /times] get pstack length ndata eq
     mm [/events /rate ] get length ndata eq
     and    
 } def

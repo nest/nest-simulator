@@ -26,13 +26,21 @@
 // C++ includes:
 #include <string>
 
+// Includes from nestkernel:
+#include "nest.h"
+#include "nest_impl.h"
+
 // Includes from sli:
 #include "slimodule.h"
 
 namespace nest
 {
 /**
- * Module supplying all models that are included in the NEST release.
+ * Module supplying all models that are included in the NEST release. Sets up
+ * the modeldict with all models included with the NEST distribution.
+ *
+ * First Version: June 2006
+ *
  * @todo Should this be a dynamic module?
  */
 class ModelsModule : public SLIModule

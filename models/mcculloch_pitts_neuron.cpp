@@ -32,9 +32,9 @@ gainfunction_mcculloch_pitts::get( DictionaryDatum& d ) const
 }
 
 void
-gainfunction_mcculloch_pitts::set( const DictionaryDatum& d )
+gainfunction_mcculloch_pitts::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::theta, theta_ );
+  updateValueParam< double >( d, names::theta, theta_, node );
 }
 
 /*

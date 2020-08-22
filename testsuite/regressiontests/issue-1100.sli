@@ -1,0 +1,60 @@
+/*
+ *  issue-1100.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /** @BeginDocumentation
+Name: testsuite::issue-1100
+
+Synopsis: (issue-1100) run -> NEST exits if test fails
+
+Description:
+Creates a parrot neuron, which receives one spike with multiplicity two from a
+spike generator. The parrot neuron should then emit a spike with multiplicity
+two, which should be counted as two spikes by the local spike counter.
+
+Author: Stine Brekke Vennemo
+FirstVersion: January 2019
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+{
+  /parrot /parrot_neuron 1 Create def
+
+  /sg /spike_generator << /spike_times [ 1.0 ]
+                          /spike_multiplicities [ 2 ] >> Create def
+  /sd /spike_detector Create def
+
+  sg parrot Connect
+
+  parrot sd Connect
+
+  10.0 Simulate
+
+  GetKernelStatus /local_spike_counter get
+  2 eq
+} assert_or_die
+
+endusing

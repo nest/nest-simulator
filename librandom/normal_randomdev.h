@@ -26,9 +26,6 @@
 // C++ includes:
 #include <cmath>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from librandom:
 #include "randomdev.h"
 #include "randomgen.h"
@@ -37,7 +34,7 @@
 namespace librandom
 {
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: rdevdict::normal - normal random deviate generator
 Description: Generates normally distributed random numbers.
 
@@ -48,6 +45,7 @@ Parameters:
  sigma - standard deviation (default: 1.0)
 
 SeeAlso: CreateRDV, RandomArray, rdevdict
+
 Author: Hans Ekkehard Plesser
 */
 
@@ -66,8 +64,8 @@ class NormalRandomDev : public RandomDev
 {
 
 public:
-  // accept only lockPTRs for initialization,
-  // otherwise creation of a lock ptr would
+  // accept only shared_ptrs for initialization,
+  // otherwise creation of a shared_ptr would
   // occur as side effect---might be unhealthy
   NormalRandomDev( RngPtr );
   NormalRandomDev(); // threaded

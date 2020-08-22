@@ -21,8 +21,8 @@
  */
 
 
-/* BeginDocumentation
-Name: testsuite::test_iaf_ring - sli script for test of iaf_psc_alpha spike interaction
+/** @BeginDocumentation
+Name: testsuite::test_iaf_ring - test of iaf_psc_alpha spike interaction
 across multiple machines.
 
 Synopsis: nest_indirect test_iaf_ring  --> success
@@ -30,14 +30,14 @@ Synopsis: nest_indirect test_iaf_ring  --> success
 Description:
 
  test_iaf_ring checks if spikes can travel along a chain of neurons
- and whether the result is independent of the number of machines 
+ and whether the result is independent of the number of machines
  involved in the computation.
 
  The unittest function distributed_assert_or_die can only handle the
  output of a single machine. Therefore the script collects the spikes
- of all neurons using a parrot neuron. The script does not check the 
- id of the sender, only the spike timing. A more strict test could be 
- carried out with a unittest function which merges the output of all 
+ of all neurons using a parrot neuron. The script does not check the
+ id of the sender, only the spike timing. A more strict test could be
+ carried out with a unittest function which merges the output of all
  machines.
 
  The correct sequence of spikes including their ids is documented at
@@ -59,46 +59,50 @@ SeeAlso: testsuite::test_iaf_i0, testsuite::test_getrng_neuron
 /h             0.1 def        % time resolution
 /simtime      35.0 def        % simulation time
 /recend    simtime def        % end of recording
-/n               4 def
-/neurons  [n] Range def
+/n               4 def        % number of neurons
 
 [1 2 4]
 {
- ResetKernel
+  ResetKernel
 
- 0 << /resolution h  >> SetStatus
+  << /resolution h  >> SetKernelStatus
 
- /iaf_psc_alpha n Create ;
- 1 << /I_e 1450.0 >>  SetStatus
+  /iaf_psc_alpha n Create /neurons Set
+  neurons [1] Take << /I_e 1450.0 >> SetStatus
 
- neurons 2 1 Partition
-   { arrayload pop 1000.0 delay Connect } forall
+  [ n ] Range 2 1 Partition
+  {
+    arrayload ;
+    1 arraystore neurons exch Take
+    exch
+    1 arraystore neurons exch Take
+    1000.0 delay Connect
+  } forall
 
- /spike_detector  << /withtime true /time_in_steps true >> Create /sd Set
+  /spike_detector << /time_in_steps true >> Create /sd Set
 
- /parrot_neuron Create /pn Set
+  /parrot_neuron Create /pn Set
 
- neurons [pn] Connect
- [pn] [sd] Connect
+  neurons pn Connect
+  pn sd Connect
 
- simtime Simulate
+  simtime Simulate
 
- pn /local get                                 
- { 
-  sd [/events/times] get cva
- } if                                          
+  pn /local get
+  {
+    sd [/events/times] get cva
+  } if
 
-}
-distributed_invariant_assert_or_die
+} distributed_invariant_assert_or_die
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% Expected output of this script. 
-% An intermediate parrot neuron introduces an offset of 10 in the 
+% Expected output of this script.
+% An intermediate parrot neuron introduces an offset of 10 in the
 % spike times corresponding to the default delay of 1ms.
-%  
-% gid     spiketime
+%
+% node_id     spiketime
 % 1       30
 % 1       80
 % 2       111

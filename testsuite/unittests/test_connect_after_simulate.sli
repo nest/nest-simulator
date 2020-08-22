@@ -1,0 +1,128 @@
+/*
+ *  test_connect_after_simulate.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /** @BeginDocumentation
+   Name: testsuite::test_connect_after_simulate - Create another connection after a call to Simulate and check whether it is created correctly
+
+   Synopsis: (test_connect_after_simulate) run
+
+   Description: 
+       Tests that it is possible to create connections between two
+       Simulate calls. 
+       Checks that the number of connections that GetConnection
+       returns and the number of detected spikes increases accordingly
+       when another connection is created.
+
+   FirstVersion: 02/06/2016
+   Author: Susanne Kunkel, Jakob Jordan
+   SeeAlso: Connect
+ */
+
+M_ERROR setverbosity
+
+(unittest) run
+/unittest using
+
+% Pre-condition:
+% Test that GetConnection returns the same connection handels before
+% and after calling Simulate for the case that connections are sorted
+% by source and for the case that they are not sorted
+[ true false ]
+{
+  /sort_connections Set
+
+  ResetKernel
+
+  /neurons /iaf_psc_alpha 10 Create def
+
+  << /sort_connections_by_source sort_connections >> SetKernelStatus
+  neurons neurons << /rule /fixed_indegree /indegree 2 >> << >> Connect
+
+  /connections_before << >> GetConnections def
+  1.0 Simulate
+  /connections_after << >> GetConnections def
+  connections_before connections_after eq assert_or_die
+
+  % switch from sort to no-sort or vice versa
+  % and create more connections and check again
+  << /sort_connections_by_source sort_connections not >> SetKernelStatus
+  neurons neurons << /rule /fixed_indegree /indegree 2 >> << >> Connect
+
+  /connections_before << >> GetConnections def
+  1.0 Simulate
+  /connections_after << >> GetConnections def
+  connections_before connections_after eq assert_or_die
+}
+forall
+
+% Now, the actual test for the sort and no-sort case
+[ true false ]
+{
+  /sort_connections Set
+
+  ResetKernel
+
+  << /sort_connections_by_source sort_connections >> SetKernelStatus
+
+  /neuron /iaf_psc_delta << /I_e 500. >> Create def
+  /parrot /parrot_neuron Create def
+  /dummies /iaf_psc_delta 10 Create def
+  /detector /spike_detector Create def
+
+  neuron parrot Connect
+  dummies dummies << /rule /all_to_all >> << >> Connect
+  parrot detector Connect
+
+  20 Simulate
+
+  << /target parrot >> GetConnections size 1 eq assert_or_die
+  << /target parrot >> GetConnections 0 get cva 4 get 0 eq assert_or_die
+  detector GetStatus 0 get /n_events get 1 eq assert_or_die
+
+  neuron parrot Connect
+
+  << /target parrot >> GetConnections size 2 eq assert_or_die
+  << /target parrot >> GetConnections 0 get cva 4 get 0 eq assert_or_die
+  sort_connections
+  {
+    << /target parrot >> GetConnections 1 get cva 4 get 1 eq assert_or_die
+  }
+  {
+    << /target parrot >> GetConnections 1 get cva 4 get 101 eq assert_or_die
+  }
+  ifelse
+  
+  20 Simulate
+
+  << /target parrot >> GetConnections size 2 eq assert_or_die
+  << /target parrot >> GetConnections 0 get cva 4 get 0 eq assert_or_die
+  sort_connections
+  {
+    << /target parrot >> GetConnections 1 get cva 4 get 1 eq assert_or_die
+  }
+  {
+    << /target parrot >> GetConnections 1 get cva 4 get 101 eq assert_or_die
+  }
+  ifelse
+  detector GetStatus 0 get /n_events get 3 eq assert_or_die
+}
+forall

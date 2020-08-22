@@ -82,7 +82,7 @@ public:
    * @code
    * catch(IllegalOperation &e)
    * {
-   *   i->error("ChangeSubnet","Target node must be a subnet.");
+   *   i->error("SetStatus","Nodes must be a NodeCollection or SynapseCollection.");
    *   i->raiseerror(e.what());
    *   return;
    * }
@@ -186,8 +186,7 @@ public:
   {
   }
 
-  TypeMismatch( const std::string& expectedType,
-    const std::string& providedType )
+  TypeMismatch( const std::string& expectedType, const std::string& providedType )
     : InterpreterError( "TypeMismatch" )
     , expected_( expectedType )
     , provided_( providedType )
@@ -335,8 +334,7 @@ public:
   ~EntryTypeMismatch() throw()
   {
   }
-  EntryTypeMismatch( const std::string& expectedType,
-    const std::string& providedType )
+  EntryTypeMismatch( const std::string& expectedType, const std::string& providedType )
     : DictError( "EntryTypeMismatch" )
     , expected_( expectedType )
     , provided_( providedType )

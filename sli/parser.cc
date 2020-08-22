@@ -187,8 +187,7 @@ bool Parser::operator()( Token& t )
           }
           else // now it must be a procedure
           {
-            LitprocedureDatum* pp =
-              dynamic_cast< LitprocedureDatum* >( pt.datum() );
+            LitprocedureDatum* pp = dynamic_cast< LitprocedureDatum* >( pt.datum() );
             assert( pp != NULL );
             pp->set_executable();
             pp->push_back( t );

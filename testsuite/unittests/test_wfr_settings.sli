@@ -20,7 +20,7 @@
  *
  */
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
 
     Name: testsuite::test_wfr_settings - Tests the possible settings for the waveform relaxation method
 
@@ -50,63 +50,63 @@ ResetKernel
 
 % Check if use_wfr can be set
 {
-  0 << /use_wfr false >> SetStatus
+  << /use_wfr false >> SetKernelStatus
 } pass_or_die
 
 % Check that use_wfr cannot be set after nodes are created
 {
   /iaf_psc_alpha Create
-  0 << /use_wfr true >> SetStatus
+  << /use_wfr true >> SetKernelStatus
 } fail_or_die
 
 ResetKernel
-0 << /use_wfr true >> SetStatus
+<< /use_wfr true >> SetKernelStatus
 
 % Check that wfr_comm_interval cannot be set lower as the resolution
 {
-  0 << /resolution 0.1 >> SetStatus
-  0 << /wfr_comm_interval 0.05 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
+  << /wfr_comm_interval 0.05 >> SetKernelStatus
 } fail_or_die
 
 ResetKernel
 
 % Check that wfr_comm_interval cannot be set if use_wfr = false
 {
-  0 << /use_wfr false >> SetStatus
-  0 << /wfr_comm_interval 0.5 >> SetStatus
+  << /use_wfr false >> SetKernelStatus
+  << /wfr_comm_interval 0.5 >> SetKernelStatus
 } fail_or_die
 
 ResetKernel
-0 << /use_wfr true >> SetStatus
-0 << /wfr_comm_interval 0.5 >> SetStatus
+<< /use_wfr true >> SetKernelStatus
+<< /wfr_comm_interval 0.5 >> SetKernelStatus
 
 % Check that wfr_comm_interval is set to resolution if use_wfr = false is set
-0 << /resolution 0.1
+<< /resolution 0.1
      /use_wfr false
-  >> SetStatus
+  >> SetKernelStatus
 
-0 /wfr_comm_interval get /wfr_comm Set  
+GetKernelStatus /wfr_comm_interval get /wfr_comm Set  
 
 {wfr_comm 0.1 eq}assert_or_die
 
 
 % Check that wfr_comm_interval is updated with resolution if use_wfr = false
-0 << /resolution 0.2 >> SetStatus
+<< /resolution 0.2 >> SetKernelStatus
 
-0 /wfr_comm_interval get /wfr_comm Set  
+GetKernelStatus /wfr_comm_interval get /wfr_comm Set  
 
 {wfr_comm 0.2 eq}assert_or_die
 
 ResetKernel
 
 % Check that wfr_comm_interval is not updated with resolution if use_wfr = true
-0 << /use_wfr true
+<< /use_wfr true
      /wfr_comm_interval 2.0
-  >> SetStatus
+  >> SetKernelStatus
 
-0 << /resolution 0.1 >> SetStatus  
+<< /resolution 0.1 >> SetKernelStatus  
   
-0 /wfr_comm_interval get /wfr_comm Set  
+GetKernelStatus /wfr_comm_interval get /wfr_comm Set  
 
 {wfr_comm 2.0 eq}assert_or_die
 
@@ -118,7 +118,7 @@ ResetKernel
 
 % Check that setting of use_wfr is correctly set in created nodes
 % case use_wfr = true
-0 << /use_wfr true >> SetStatus
+<< /use_wfr true >> SetKernelStatus
 
 /hh_psc_alpha_gap Create /neuron_gap Set
 
@@ -131,7 +131,7 @@ neuron_gap /node_uses_wfr get /wfr Set
 ResetKernel
 
 % case use_wfr = false
-0 << /use_wfr false >> SetStatus
+<< /use_wfr false >> SetKernelStatus
 
 /hh_psc_alpha_gap Create /neuron_gap Set
 

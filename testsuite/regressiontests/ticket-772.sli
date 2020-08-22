@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::ticket-772 - NEST should not crash, if integer values for weight/ delay are used
 
    Synopsis: (ticket-772) run -> NEST exits if test fails
@@ -44,27 +44,25 @@ M_ERROR setverbosity
 
 skip_if_not_threaded
 
-[1 2] /n Set
-
 {
   ResetKernel
   
-  /iaf_psc_alpha 2 Create
-  n [1] << /rule /all_to_all >> << /model /static_synapse /weight 1 /delay 4 >> Connect
+  /iaf_psc_alpha 2 Create /n Set
+  n n 1 Take << /rule /all_to_all >> << /synapse_model /static_synapse /weight 1 /delay 4 >> Connect
 } pass_or_die
 
 {
   ResetKernel
   
-  /iaf_psc_alpha 2 Create
-  n [1] << /rule /all_to_all >> << /model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
+  /iaf_psc_alpha 2 Create /n Set
+  n n 1 Take << /rule /all_to_all >> << /synapse_model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
 } pass_or_die
 
 {
   ResetKernel
   
-  /iaf_psc_alpha 2 Create
-  n n << /rule /one_to_one >> << /model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
+  /iaf_psc_alpha 2 Create /n Set
+  n n << /rule /one_to_one >> << /synapse_model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
 } pass_or_die
 
 endusing

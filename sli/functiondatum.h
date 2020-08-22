@@ -70,8 +70,7 @@ class FunctionDatum : public TypedDatum< &SLIInterpreter::Functiontype >
 
   SLIFunction const& operator=( SLIFunction const& f )
   {
-    std::cerr << "Warning: Definition of FunctionDatum (" << name
-              << ") changed!!\n";
+    std::cerr << "Warning: Definition of FunctionDatum (" << name << ") changed!!\n";
 
     action = &f;
     return f;
@@ -87,9 +86,7 @@ public:
     set_executable();
   }
 
-  FunctionDatum( Name const& n,
-    SLIFunction const* f,
-    const std::string& deprecation_info )
+  FunctionDatum( Name const& n, SLIFunction const* f, const std::string& deprecation_info )
     : TypedDatum< &SLIInterpreter::Functiontype >()
     , name( n )
     , deprecation_info_( deprecation_info )
@@ -109,8 +106,7 @@ public:
     {
       i->message( SLIInterpreter::M_DEPRECATED,
         "SLIInterpreter",
-        ( "SLI function " + name.toString() + " is deprecated in "
-          + deprecation_info_ + "." ).c_str() );
+        ( "SLI function " + name.toString() + " is deprecated in " + deprecation_info_ + "." ).c_str() );
       deprecation_warning_issued_ = true;
     }
 
@@ -139,8 +135,7 @@ public:
   bool
   equals( Datum const* dat ) const
   {
-    const FunctionDatum* fd =
-      dynamic_cast< FunctionDatum* >( const_cast< Datum* >( dat ) );
+    const FunctionDatum* fd = dynamic_cast< FunctionDatum* >( const_cast< Datum* >( dat ) );
     if ( fd == NULL )
     {
       return false;

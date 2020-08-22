@@ -1,0 +1,241 @@
+/*
+ *  test_reg_mask_grid_anchor_02.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+% expectation:
+%   /anchor [ 0 -1 ] : fictional point above upper left corner of mask aligned with source
+%
+%    Sources                      Targets
+%     2  7 12 17 22    	          28 33 38 43 48
+%     3  8 13 18 23		  29 34	39 44 49
+%     4	 9 14 19 24		  30 35	40 45 50
+%     5	10 15 20 25		  31 36	41 46 51
+%     6	11 16 21 26		  32 37	42 47 52
+%
+%    Exemplary connections
+%      2 -> 29 34 39    17 -> 44 49    22 -> 49
+%	    30 35 40	      45 50	     50
+%
+%      5 -> 32 37 42    20 -> 47 52    25 -> 52
+%
+%      6 ->    	        21 ->  	       26 ->
+
+
+/layer << /shape [ 5 5 ]
+          /extent [1.25 1.25]
+          /center [0. 0.]
+          /edge_wrap false
+          /elements /iaf_psc_alpha
+        >> def
+
+/src_layer layer def
+/tgt_layer layer def
+
+/conns << /connection_type (pairwise_bernoulli_on_target)
+          /mask << /grid << /shape [ 3 2 ] >> /anchor [ 0 -1 ] >>
+       >> def
+
+/source_layer_ref
+[
+ [1 -0.5 0.5]
+ [2 -0.5 0.25]
+ [3 -0.5 0]
+ [4 -0.5 -0.25]
+ [5 -0.5 -0.5]
+ [6 -0.25 0.5]
+ [7 -0.25 0.25]
+ [8 -0.25 0]
+ [9 -0.25 -0.25]
+ [10 -0.25 -0.5]
+ [11 0 0.5]
+ [12 0 0.25]
+ [13 0 0]
+ [14 0 -0.25]
+ [15 0 -0.5]
+ [16 0.25 0.5]
+ [17 0.25 0.25]
+ [18 0.25 0]
+ [19 0.25 -0.25]
+ [20 0.25 -0.5]
+ [21 0.5 0.5]
+ [22 0.5 0.25]
+ [23 0.5 0]
+ [24 0.5 -0.25]
+ [25 0.5 -0.5]
+]
+def
+
+/target_layer_ref
+[
+ [26 -0.5 0.5]
+ [27 -0.5 0.25]
+ [28 -0.5 0]
+ [29 -0.5 -0.25]
+ [30 -0.5 -0.5]
+ [31 -0.25 0.5]
+ [32 -0.25 0.25]
+ [33 -0.25 0]
+ [34 -0.25 -0.25]
+ [35 -0.25 -0.5]
+ [36 0 0.5]
+ [37 0 0.25]
+ [38 0 0]
+ [39 0 -0.25]
+ [40 0 -0.5]
+ [41 0.25 0.5]
+ [42 0.25 0.25]
+ [43 0.25 0]
+ [44 0.25 -0.25]
+ [45 0.25 -0.5]
+ [46 0.5 0.5]
+ [47 0.5 0.25]
+ [48 0.5 0]
+ [49 0.5 -0.25]
+ [50 0.5 -0.5]
+]
+def
+
+/conn_ref
+[
+ [1 27 1 1 0 -0.25]
+ [1 28 1 1 0 -0.5]
+ [1 32 1 1 0.25 -0.25]
+ [1 33 1 1 0.25 -0.5]
+ [1 37 1 1 0.5 -0.25]
+ [1 38 1 1 0.5 -0.5]
+ [2 28 1 1 0 -0.25]
+ [2 29 1 1 0 -0.5]
+ [2 33 1 1 0.25 -0.25]
+ [2 34 1 1 0.25 -0.5]
+ [2 38 1 1 0.5 -0.25]
+ [2 39 1 1 0.5 -0.5]
+ [3 29 1 1 0 -0.25]
+ [3 30 1 1 0 -0.5]
+ [3 34 1 1 0.25 -0.25]
+ [3 35 1 1 0.25 -0.5]
+ [3 39 1 1 0.5 -0.25]
+ [3 40 1 1 0.5 -0.5]
+ [4 30 1 1 0 -0.25]
+ [4 35 1 1 0.25 -0.25]
+ [4 40 1 1 0.5 -0.25]
+ [6 32 1 1 0 -0.25]
+ [6 33 1 1 0 -0.5]
+ [6 37 1 1 0.25 -0.25]
+ [6 38 1 1 0.25 -0.5]
+ [6 42 1 1 0.5 -0.25]
+ [6 43 1 1 0.5 -0.5]
+ [7 33 1 1 0 -0.25]
+ [7 34 1 1 0 -0.5]
+ [7 38 1 1 0.25 -0.25]
+ [7 39 1 1 0.25 -0.5]
+ [7 43 1 1 0.5 -0.25]
+ [7 44 1 1 0.5 -0.5]
+ [8 34 1 1 0 -0.25]
+ [8 35 1 1 0 -0.5]
+ [8 39 1 1 0.25 -0.25]
+ [8 40 1 1 0.25 -0.5]
+ [8 44 1 1 0.5 -0.25]
+ [8 45 1 1 0.5 -0.5]
+ [9 35 1 1 0 -0.25]
+ [9 40 1 1 0.25 -0.25]
+ [9 45 1 1 0.5 -0.25]
+ [11 37 1 1 0 -0.25]
+ [11 38 1 1 0 -0.5]
+ [11 42 1 1 0.25 -0.25]
+ [11 43 1 1 0.25 -0.5]
+ [11 47 1 1 0.5 -0.25]
+ [11 48 1 1 0.5 -0.5]
+ [12 38 1 1 0 -0.25]
+ [12 39 1 1 0 -0.5]
+ [12 43 1 1 0.25 -0.25]
+ [12 44 1 1 0.25 -0.5]
+ [12 48 1 1 0.5 -0.25]
+ [12 49 1 1 0.5 -0.5]
+ [13 39 1 1 0 -0.25]
+ [13 40 1 1 0 -0.5]
+ [13 44 1 1 0.25 -0.25]
+ [13 45 1 1 0.25 -0.5]
+ [13 49 1 1 0.5 -0.25]
+ [13 50 1 1 0.5 -0.5]
+ [14 40 1 1 0 -0.25]
+ [14 45 1 1 0.25 -0.25]
+ [14 50 1 1 0.5 -0.25]
+ [16 42 1 1 0 -0.25]
+ [16 43 1 1 0 -0.5]
+ [16 47 1 1 0.25 -0.25]
+ [16 48 1 1 0.25 -0.5]
+ [17 43 1 1 0 -0.25]
+ [17 44 1 1 0 -0.5]
+ [17 48 1 1 0.25 -0.25]
+ [17 49 1 1 0.25 -0.5]
+ [18 44 1 1 0 -0.25]
+ [18 45 1 1 0 -0.5]
+ [18 49 1 1 0.25 -0.25]
+ [18 50 1 1 0.25 -0.5]
+ [19 45 1 1 0 -0.25]
+ [19 50 1 1 0.25 -0.25]
+ [21 47 1 1 0 -0.25]
+ [21 48 1 1 0 -0.5]
+ [22 48 1 1 0 -0.25]
+ [22 49 1 1 0 -0.5]
+ [23 49 1 1 0 -0.25]
+ [23 50 1 1 0 -0.5]
+ [24 50 1 1 0 -0.25]
+]
+def
+
+(unittest) run
+/unittest using
+
+ResetKernel
+
+<< /sort_connections_by_source false >> SetKernelStatus
+
+/sources src_layer CreateLayer def
+/targets tgt_layer CreateLayer def
+
+sources targets conns ConnectLayers
+
+/sources_oss osstream ; def
+/targets_oss osstream ; def
+/sources_conns_oss osstream ; def
+
+sources_oss sources DumpLayerNodes ;
+targets_oss targets DumpLayerNodes ;
+sources_conns_oss sources targets /static_synapse DumpLayerConnections ;
+
+/source_layer_result sources_oss str cst 3 Partition def
+/target_layer_result targets_oss str cst 3 Partition def
+/conn_result sources_conns_oss str cst 6 Partition def
+
+{
+  source_layer_ref source_layer_result eq
+} assert_or_die
+
+{
+  target_layer_ref target_layer_result eq
+} assert_or_die
+
+{
+  conn_ref conn_result eq
+} assert_or_die
+

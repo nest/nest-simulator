@@ -21,11 +21,11 @@
 
 """
 This Python script is part of the NEST Travis CI build and test environment.
-It parses the Travis CI build log file 'build.sh.log' (The name is hard-wired
-in '.travis.yml'.) and creates the 'NEST Travis CI Build Summary'.
+It parses the Travis CI build log file 'travis_build.sh.log' (The name is
+hard-wired in '.travis.yml'.) and creates the 'NEST Travis CI Build Summary'.
 
 NOTE: Please note that the parsing process is coupled to shell script
-      'build.sh' and relies on the message numbers "MSGBLDnnnn'.
+      'travis_build.sh' and relies on the message numbers "MSGBLDnnnn'.
       It does not rely on the messages texts itself except for file names.
 """
 
@@ -419,12 +419,17 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
     True or False.
     Total number of tests.
     Number of tests failed.
+    Number of tests skipped.
+    List of failed tests.
+    Time used to run tests.
     """
 
     in_installcheck_section = False
     in_results_section = False
     total_number_of_tests = None
     number_of_tests_failed = None
+    number_of_tests_skipped = None
+    failed_tests = []
     status_tests = None
     with open(log_filename) as fh:
         for line in fh:
@@ -432,15 +437,21 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
                 in_installcheck_section = True
 
             if in_installcheck_section:
-                if line.strip() == "NEST Testsuite Summary":
+                if line.strip() == "NEST Testsuite Results":
                     in_results_section = True
 
                 if in_results_section:
-                    if "Total number of tests:" in line:
-                        total_number_of_tests = int(line.split(' ')[-1])
-                    if "Failed" in line:
-                        number_of_tests_failed = \
-                            [int(s) for s in line.split() if s.isdigit()][0]
+                    if line.startswith("Total"):
+                        parts = line.split()
+                        total_number_of_tests = int(parts[1])
+                        number_of_tests_skipped = int(parts[2])
+                        num_failures = int(parts[3])
+                        num_errors = int(parts[4])
+                        test_time = float(parts[5])
+                        number_of_tests_failed = num_failures + num_errors
+
+                    if line.strip().startswith('|'):
+                        failed_tests.append(line.strip()[2:])
 
                 if is_message(line, msg_testsuite_end_message):
                     if number_of_tests_failed == 0:
@@ -451,7 +462,8 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
                     # section. Stop reading the log file.
                     break
 
-    return status_tests, total_number_of_tests, number_of_tests_failed
+    return (status_tests, total_number_of_tests, number_of_tests_failed,
+            number_of_tests_skipped, failed_tests, test_time)
 
 
 def convert_bool_value_to_status_string(value):
@@ -594,8 +606,8 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
        summary_format is not None:
 
         # Keys, i.e. file names, are identical in these dictionaries.
-        # If this assertion raises an exception, please check build.sh which
-        # runs the Travis CI build.
+        # If this assertion raises an exception, please check travis_build.sh
+        # which runs the Travis CI build.
         assert (summary_format.keys() == summary_cppcheck.keys())
         assert (summary_format.keys() == summary_vera.keys())
 
@@ -704,6 +716,25 @@ def errors_table(summary):
     return table.table + '\n'
 
 
+def report_failed_tests(failed_tests):
+    """Create a table of tests that have failed.
+
+    Parameters
+    ----------
+    List of failed tests.
+
+    Returns
+    -------
+    Formatted string, empty if no tests failed.
+    """
+
+    if failed_tests:
+        return ('\n\nFailed tests:' +
+                ''.join('\n  ' + ft for ft in failed_tests))
+    else:
+        return ''
+
+
 def printable_summary(list_of_changed_files,
                       status_cmake_configure,
                       status_make,
@@ -720,6 +751,9 @@ def printable_summary(list_of_changed_files,
                       number_of_warnings,
                       number_of_tests_total,
                       number_of_tests_failed,
+                      number_of_tests_skipped,
+                      failed_tests,
+                      test_time,
                       ignore_vera,
                       ignore_cppcheck,
                       ignore_format,
@@ -750,6 +784,9 @@ def printable_summary(list_of_changed_files,
     number_of_warnings:      Number of warnings.
     number_of_tests_total:   Number of tests total.
     number_of_tests_failed:  Number of tests failed.
+    number_of_tests_skipped: Number of tests skipped.
+    failed_tests:            List of failed tests.
+    test_time:               Time required to run testsuite.
     exit_code:               Build exit code: 0 or 1.
 
     Returns
@@ -821,8 +858,12 @@ def printable_summary(list_of_changed_files,
          convert_bool_value_to_status_string(status_make_install)],
         ['Make installcheck',
          convert_bool_value_to_status_string(status_tests) + '\n' +
-         '\nTotal number of tests : ' + str(number_of_tests_total) +
-         '\nNumber of tests failed: ' + str(number_of_tests_failed)],
+         '\nTestsuite runtime      : {:d}s'.format(int(test_time)) +
+         '\nTotal number of tests  : ' + str(number_of_tests_total) +
+         '\nNumber of tests skipped: ' + str(number_of_tests_skipped) +
+         '\nNumber of tests failed : ' + str(number_of_tests_failed) +
+         report_failed_tests(failed_tests)
+         ],
         ['Artifacts :', ''],
         ['Amazon S3 upload',
          convert_bool_value_to_yes_no_string(status_amazon_s3_upload)]
@@ -862,7 +903,9 @@ def build_return_code(status_cmake_configure,
                       ignore_vera,
                       ignore_cppcheck,
                       ignore_format,
-                      ignore_pep8):
+                      ignore_pep8,
+                      skip_code_analysis,
+                      skip_installcheck):
     """Depending in the build results, create a return code.
 
     Parameters
@@ -888,19 +931,23 @@ def build_return_code(status_cmake_configure,
                             fail: True, False
     ignore_pep8:            PEP8 messages will not cause the build to
                             fail: True, False
+    skip_code_analysis:     build ran w/o static code analysis: True, False
+    skip_installcheck:      build ran w/o executing the test suite: True, False
 
     Returns
     -------
     0 (success) or 1.
     """
-    if ((status_cmake_configure) and
-       (status_make) and
-       (status_make_install) and
-       (status_tests) and
-       (ignore_vera or get_num_msgs(summary_vera) == 0) and
-       (ignore_cppcheck or get_num_msgs(summary_cppcheck) == 0) and
-       (ignore_format or get_num_msgs(summary_format) == 0) and
-       (ignore_pep8 or get_num_msgs(summary_pep8) == 0)):
+    if ((status_cmake_configure) and                                                           # noqa
+        (status_make) and                                                                      # noqa
+        (status_make_install) and                                                              # noqa
+        (skip_installcheck or status_tests) and                                                # noqa
+        (skip_code_analysis or ((ignore_vera or get_num_msgs(summary_vera) == 0) and           # noqa
+                                (ignore_cppcheck or get_num_msgs(summary_cppcheck) == 0) and   # noqa
+                                (ignore_format or get_num_msgs(summary_format) == 0) and       # noqa
+                                (ignore_pep8 or get_num_msgs(summary_pep8) == 0))              # noqa
+        )                                                                                      # noqa
+       ):                                                                                      # noqa
 
         return 0
     else:
@@ -917,6 +964,9 @@ if __name__ == '__main__':
     changed_files = \
         list_of_changed_files(log_filename, "MSGBLD0070",
                               "MSGBLD0100", "MSGBLD0095")
+
+    skip_code_analysis = is_message_in_logfile(log_filename, "MSGBLD0225")
+    skip_installcheck = is_message_in_logfile(log_filename, "MSGBLD0305")
 
     # The NEST Travis CI build consists of several steps and sections.
     # Each section is enclosed in a start- and an end-message.
@@ -952,7 +1002,8 @@ if __name__ == '__main__':
                                              "MSGBLD0260")
 
     # Summarize the NEST test suite results.
-    status_tests, number_of_tests_total, number_of_tests_failed = \
+    (status_tests, number_of_tests_total, number_of_tests_failed,
+     number_of_tests_skipped, failed_tests, test_time) = \
         testsuite_results(log_filename, "MSGBLD0290", "MSGBLD0300")
 
     # Determine the build result to tell Travis CI whether the build was
@@ -968,7 +1019,9 @@ if __name__ == '__main__':
                                   ignore_vera,
                                   ignore_cppcheck,
                                   ignore_format,
-                                  ignore_pep8)
+                                  ignore_pep8,
+                                  skip_code_analysis,
+                                  skip_installcheck)
 
     # Only after a successful build, Travis CI will upload the build artifacts
     # to Amazon S3.
@@ -993,6 +1046,9 @@ if __name__ == '__main__':
                             number_of_warnings,
                             number_of_tests_total,
                             number_of_tests_failed,
+                            number_of_tests_skipped,
+                            failed_tests,
+                            test_time,
                             ignore_vera,
                             ignore_cppcheck,
                             ignore_format,

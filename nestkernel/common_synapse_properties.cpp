@@ -24,7 +24,6 @@
 
 // Includes from nestkernel:
 #include "connector_model.h"
-#include "kernel_manager.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "node.h"
@@ -40,7 +39,8 @@ namespace nest
  */
 
 CommonSynapseProperties::CommonSynapseProperties()
-  : weight_recorder_( 0 )
+  : weight_recorder_()
+  , wr_node_id_( 0 )
 {
 }
 
@@ -51,18 +51,28 @@ CommonSynapseProperties::~CommonSynapseProperties()
 void
 CommonSynapseProperties::get_status( DictionaryDatum& d ) const
 {
-  def< long >( d,
-    names::weight_recorder,
-    weight_recorder_ ? weight_recorder_->get_gid() : -1 );
+  if ( weight_recorder_.get() )
+  {
+    def< NodeCollectionDatum >( d, names::weight_recorder, weight_recorder_ );
+  }
+  else
+  {
+    ArrayDatum ad;
+    def< ArrayDatum >( d, names::weight_recorder, ad );
+  }
 }
 
 void
 CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
 {
-  long wrgid;
-  if ( updateValue< long >( d, names::weight_recorder, wrgid ) )
+  const bool update_wr = updateValue< NodeCollectionDatum >( d, names::weight_recorder, weight_recorder_ );
+  if ( update_wr and weight_recorder_->size() > 1 )
   {
-    weight_recorder_ = kernel().node_manager.get_thread_siblings( wrgid );
+    throw BadProperty( "weight_recorder must be a single element NodeCollection" );
+  }
+  else if ( update_wr )
+  {
+    wr_node_id_ = ( *weight_recorder_ )[ 0 ];
   }
 }
 

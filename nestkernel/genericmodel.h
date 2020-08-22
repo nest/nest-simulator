@@ -57,9 +57,9 @@ public:
   Model* clone( const std::string& ) const;
 
   bool has_proxies();
-  bool potential_global_receiver();
   bool one_node_per_process();
   bool is_off_grid();
+  void calibrate_time( const TimeConverter& tc );
   /**
      @note The decision of whether one node can receive a certain
      event was originally in the node. But in the distributed case,
@@ -89,6 +89,8 @@ public:
   Node const& get_prototype() const;
 
   void set_model_id( int );
+
+  int get_model_id();
 
   void deprecation_warning( const std::string& );
 
@@ -125,8 +127,7 @@ private:
 };
 
 template < typename ElementT >
-GenericModel< ElementT >::GenericModel( const std::string& name,
-  const std::string& deprecation_info )
+GenericModel< ElementT >::GenericModel( const std::string& name, const std::string& deprecation_info )
   : Model( name )
   , proto_()
   , deprecation_info_( deprecation_info )
@@ -136,8 +137,7 @@ GenericModel< ElementT >::GenericModel( const std::string& name,
 }
 
 template < typename ElementT >
-GenericModel< ElementT >::GenericModel( const GenericModel& oldmod,
-  const std::string& newname )
+GenericModel< ElementT >::GenericModel( const GenericModel& oldmod, const std::string& newname )
   : Model( newname )
   , proto_( oldmod.proto_ )
   , deprecation_info_( oldmod.deprecation_info_ )
@@ -178,13 +178,6 @@ GenericModel< ElementT >::has_proxies()
 
 template < typename ElementT >
 inline bool
-GenericModel< ElementT >::potential_global_receiver()
-{
-  return proto_.potential_global_receiver();
-}
-
-template < typename ElementT >
-inline bool
 GenericModel< ElementT >::one_node_per_process()
 {
   return proto_.one_node_per_process();
@@ -198,11 +191,15 @@ GenericModel< ElementT >::is_off_grid()
 }
 
 template < typename ElementT >
+inline void
+GenericModel< ElementT >::calibrate_time( const TimeConverter& tc )
+{
+  proto_.calibrate_time( tc );
+}
+
+template < typename ElementT >
 inline port
-GenericModel< ElementT >::send_test_event( Node& target,
-  rport receptor,
-  synindex syn_id,
-  bool dummy_target )
+GenericModel< ElementT >::send_test_event( Node& target, rport receptor, synindex syn_id, bool dummy_target )
 {
   return proto_.send_test_event( target, receptor, syn_id, dummy_target );
 }
@@ -216,8 +213,7 @@ GenericModel< ElementT >::sends_secondary_event( GapJunctionEvent& ge )
 
 template < typename ElementT >
 inline void
-GenericModel< ElementT >::sends_secondary_event(
-  InstantaneousRateConnectionEvent& re )
+GenericModel< ElementT >::sends_secondary_event( InstantaneousRateConnectionEvent& re )
 {
   return proto_.sends_secondary_event( re );
 }
@@ -231,8 +227,7 @@ GenericModel< ElementT >::sends_secondary_event( DiffusionConnectionEvent& de )
 
 template < typename ElementT >
 inline void
-GenericModel< ElementT >::sends_secondary_event(
-  DelayedRateConnectionEvent& re )
+GenericModel< ElementT >::sends_secondary_event( DelayedRateConnectionEvent& re )
 {
   return proto_.sends_secondary_event( re );
 }
@@ -280,5 +275,13 @@ GenericModel< ElementT >::set_model_id( int i )
 {
   proto_.set_model_id( i );
 }
+
+template < typename ElementT >
+int
+GenericModel< ElementT >::get_model_id()
+{
+  return proto_.get_model_id();
 }
+}
+
 #endif

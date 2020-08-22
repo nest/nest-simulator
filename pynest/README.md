@@ -24,17 +24,13 @@ PyNEST to `$(pyexecdir)`, which is often expanded as follows:
 
     $(prefix)/lib{,64}/pythonX.Y/site-packages/nest
 
+Note that since NEST 3.0, support for Python 2 has been dropped. Please use
+Python 3 instead.
 
-To force the usage of a specific Python version pass
-
-    -Dwith-python=2  or  -Dwith-python=3
-
-as an argument to `cmake`.
-
-
-To make the PyNEST module available to the Python interpreter, add the
-PyNEST installation path (without the final '/nest') to the PYTHONPATH
-environment variable.
+To make the PyNEST module available to the Python interpreter, source
+`nest_vars.sh` from the NEST installation directory (`source
+<nest-install-dir>/bin/nest_vars.sh`). This will add the PyNEST installation
+path to the PYTHONPATH environment variable.
 
 For help on a NEST object OBJ in PyNEST, type nest.help(OBJ). To find
 out more about NEST, type nest.helpdesk().

@@ -131,13 +131,13 @@ class TCD(object):
             syn is name of synapse type.
             props is property dictionary of ht_neuron.
             """
-            td = props[syn + '_tau_2']  # decay time
-            tr = props[syn + '_tau_1']  # rise time
+            td = props['tau_decay_' + syn]  # decay time
+            tr = props['tau_rise_' + syn]  # rise time
             # integral over g(t)
-            self._int_g = (props[syn + '_g_peak'] * (td - tr) /
+            self._int_g = (props['g_peak_' + syn] * (td - tr) /
                            ((tr / td) ** (tr / (td - tr)) -
                             (tr / td) ** (td / (td - tr))))
-            self._e_rev = props[syn + '_E_rev']
+            self._e_rev = props['E_rev_' + syn]
 
         def __call__(self, V):
             """

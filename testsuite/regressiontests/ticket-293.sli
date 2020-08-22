@@ -40,7 +40,7 @@
 << >> begin
 
 {
-  0 << /local_num_threads 2 /foo 5 >> SetStatus
+  << /local_num_threads 2 /foo 5 >> SetKernelStatus
 } fail_or_die
 
 end

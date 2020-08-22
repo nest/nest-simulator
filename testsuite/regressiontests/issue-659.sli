@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::issue-659 Check that we get an error if trying to call Run or Cleanup without calling Prepare first.
 

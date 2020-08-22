@@ -47,16 +47,14 @@ class MusicEventHandler : public MUSIC::EventHandlerGlobalIndex
 {
 public:
   MusicEventHandler();
-  MusicEventHandler( std::string portname,
-    double acceptable_latency,
-    int max_buffered );
+  MusicEventHandler( std::string portname, double acceptable_latency, int max_buffered );
 
   virtual ~MusicEventHandler();
 
   /**
    * Register a new node to a specific channel on this port.
    */
-  void register_channel( int channel, nest::Node* mp );
+  void register_channel( size_t channel, nest::Node* mp );
 
   /**
    * Publish the MUSIC port.
@@ -95,9 +93,7 @@ private:
    * one entry per channel. The priority queues used within the vector
    * implement min-heaps stored in vectors.
    */
-  std::vector< std::priority_queue< double,
-    std::vector< double >,
-    std::greater< double > > > eventqueue_;
+  std::vector< std::priority_queue< double, std::vector< double >, std::greater< double > > > eventqueue_;
 };
 
 } // namespace nest

@@ -44,8 +44,7 @@ getValue< long >( const Token& t )
   if ( id == NULL )
   { // we have to create a Datum object to get the name...
     IntegerDatum const d;
-    throw TypeMismatch(
-      d.gettypename().toString(), t.datum()->gettypename().toString() );
+    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
   return id->get();
 }
@@ -57,8 +56,7 @@ setValue< long >( const Token& t, long const& value )
   if ( id == NULL )
   { // we have to create a Datum object to get the name...
     IntegerDatum const d;
-    throw TypeMismatch(
-      d.gettypename().toString(), t.datum()->gettypename().toString() );
+    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
   ( *id ) = value;
 }
@@ -79,8 +77,7 @@ getValue< double >( const Token& t )
   if ( id == NULL )
   { // we have to create a Datum object to get the name...
     DoubleDatum const d;
-    throw TypeMismatch(
-      d.gettypename().toString(), t.datum()->gettypename().toString() );
+    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
   return id->get();
 }
@@ -92,8 +89,7 @@ setValue< double >( const Token& t, double const& value )
   if ( id == NULL )
   { // we have to create a Datum object to get the name...
     DoubleDatum const d;
-    throw TypeMismatch(
-      d.gettypename().toString(), t.datum()->gettypename().toString() );
+    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
   ( *id ) = value;
 }
@@ -105,8 +101,7 @@ getValue< float >( const Token& t )
   if ( id == NULL )
   { // we have to create a Datum object to get the name...
     DoubleDatum const d;
-    throw TypeMismatch(
-      d.gettypename().toString(), t.datum()->gettypename().toString() );
+    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
   return ( float ) id->get();
 }
@@ -119,8 +114,7 @@ setValue< float >( const Token& t, float const& value )
   if ( id == NULL )
   { // we have to create a Datum object to get the name...
     DoubleDatum const d;
-    throw TypeMismatch(
-      d.gettypename().toString(), t.datum()->gettypename().toString() );
+    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
   ( *id ) = ( double ) value;
 }
@@ -140,8 +134,7 @@ getValue< bool >( const Token& t )
   if ( bd == NULL )
   { // we have to create a Datum object to get the name...
     BoolDatum const d( false );
-    throw TypeMismatch(
-      d.gettypename().toString(), t.datum()->gettypename().toString() );
+    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
   return static_cast< bool >( *bd );
   // we should have used i->true_name, bit we don't know the interpreter here.
@@ -154,8 +147,7 @@ setValue< bool >( const Token& t, bool const& value )
   if ( bd == NULL )
   { // we have to create a Datum object to get the name...
     BoolDatum const d( false );
-    throw TypeMismatch(
-      d.gettypename().toString(), t.datum()->gettypename().toString() );
+    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
   *bd = BoolDatum( value );
   // we should have used i->true_name, bit we don't know the interpreter here.
@@ -200,9 +192,8 @@ getValue< std::string >( const Token& t )
       NameDatum const d2( "dummy" );
       LiteralDatum const d3( "dummy" );
       SymbolDatum const d4( "dummy" );
-      throw TypeMismatch( d1.gettypename().toString() + ", "
-          + d2.gettypename().toString() + ", " + d3.gettypename().toString()
-          + ", or " + d4.gettypename().toString(),
+      throw TypeMismatch( d1.gettypename().toString() + ", " + d2.gettypename().toString() + ", "
+          + d3.gettypename().toString() + ", or " + d4.gettypename().toString(),
         t.datum()->gettypename().toString() );
     }
   }
@@ -229,9 +220,8 @@ setValue< std::string >( const Token& t, std::string const& value )
       NameDatum const d2( "dummy" );
       LiteralDatum const d3( "dummy" );
       SymbolDatum const d4( "dummy" );
-      throw TypeMismatch( d1.gettypename().toString() + ", "
-          + d2.gettypename().toString() + ", " + d3.gettypename().toString()
-          + ", or " + d4.gettypename().toString(),
+      throw TypeMismatch( d1.gettypename().toString() + ", " + d2.gettypename().toString() + ", "
+          + d3.gettypename().toString() + ", or " + d4.gettypename().toString(),
         t.datum()->gettypename().toString() );
     }
     else
@@ -251,9 +241,8 @@ setValue< std::string >( const Token& t, std::string const& value )
         NameDatum const d2( "dummy" );
         LiteralDatum const d3( "dummy" );
         SymbolDatum const d4( "dummy" );
-        throw TypeMismatch( d1.gettypename().toString() + ", "
-            + d2.gettypename().toString() + ", " + d3.gettypename().toString()
-            + ", or " + d4.gettypename().toString(),
+        throw TypeMismatch( d1.gettypename().toString() + ", " + d2.gettypename().toString() + ", "
+            + d3.gettypename().toString() + ", or " + d4.gettypename().toString(),
           t.datum()->gettypename().toString() );
       }
     }
@@ -293,22 +282,19 @@ getValue< std::vector< double > >( const Token& t )
   }
 
   // out of options
-  throw TypeMismatch( DoubleVectorDatum().gettypename().toString() + " or "
-      + ArrayDatum().gettypename().toString(),
+  throw TypeMismatch( DoubleVectorDatum().gettypename().toString() + " or " + ArrayDatum().gettypename().toString(),
     t.datum()->gettypename().toString() );
 }
 
 template <>
 void
-setValue< std::vector< double > >( const Token& t,
-  std::vector< double > const& value )
+setValue< std::vector< double > >( const Token& t, std::vector< double > const& value )
 {
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( t.datum() );
   if ( ad == NULL )
   { // we have to create a Datum object to get the name...
     ArrayDatum const d;
-    throw TypeMismatch(
-      d.gettypename().toString(), t.datum()->gettypename().toString() );
+    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
   // ArrayDatum is an AggregateDatum, which means, it is derived from
   // TokenArray. Hence, we can use ad just like a TokenArray:
@@ -353,22 +339,19 @@ getValue< std::vector< long > >( const Token& t )
   }
 
   // out of options
-  throw TypeMismatch( IntVectorDatum().gettypename().toString() + " or "
-      + ArrayDatum().gettypename().toString(),
+  throw TypeMismatch( IntVectorDatum().gettypename().toString() + " or " + ArrayDatum().gettypename().toString(),
     t.datum()->gettypename().toString() );
 }
 
 template <>
 void
-setValue< std::vector< long > >( const Token& t,
-  std::vector< long > const& value )
+setValue< std::vector< long > >( const Token& t, std::vector< long > const& value )
 {
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( t.datum() );
   if ( ad == NULL )
   { // we have to create a Datum object to get the name...
     ArrayDatum const d;
-    throw TypeMismatch(
-      d.gettypename().toString(), t.datum()->gettypename().toString() );
+    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
   // ArrayDatum is an AggregateDatum, which means, it is derived from
   // TokenArray. Hence, we can use ad just like a TokenArray:

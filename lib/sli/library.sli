@@ -22,7 +22,7 @@
 
 systemdict begin
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: namespace - Open a namespace
 
 Synopsis:
@@ -112,7 +112,7 @@ SeeAlso: call, using, endusing
 
   
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: using - Make symbols of a namespace or dictionary available in the current scope.
 
 Synopsis:
@@ -224,7 +224,7 @@ SeeAlso: endusing, namespace, call
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: endusing - Close the scope of a 'using' context.
 
 Synopsis: /namespacename using ...your.code... endusing -> -
@@ -270,7 +270,7 @@ SeeAlso: using, namespace, call
 % ========= Implementation of :: begins here =========
 %           (sorry, this is a length piece of code)
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: :: - execute a symbol from a nested namespace
 
 Synopsis: A/name ::       -> executes A::name (symbol "name" from namespace "A")
@@ -498,7 +498,7 @@ SeeAlso: namespace, call
 
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: initialize_module - Initialize module by executing commandstring
 
 Synopsis:

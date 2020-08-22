@@ -21,7 +21,7 @@
  */
 
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::issue-708
 
 Synopsis: (issue-708) run -> NEST exits if test fails
@@ -58,14 +58,14 @@ skip_if_without_gsl
   vm1 << /interval 1.0 >> SetStatus
   vm2 << /interval 1.0 >> SetStatus
 
-  [neuron_in] [neuron_out1]
+  neuron_in neuron_out1
   << /rule /one_to_one /make_symmetric true >>
-  << /model /syn0 /weight 10.0 >>
+  << /synapse_model /syn0 /weight 10.0 >>
   Connect
 
-  [neuron_in] [neuron_out2]
+  neuron_in neuron_out2
   << /rule /one_to_one /make_symmetric true >>
-  << /model /syn1 /weight 10.0 >>
+  << /synapse_model /syn1 /weight 10.0 >>
   Connect
 
   vm1 neuron_out1 Connect
@@ -75,12 +75,12 @@ skip_if_without_gsl
 
   % check that neuron_out1 received the input
   % -6.960401e+01 is the resting potential
-  vm1 GetStatus /events get /V_m get 8 get
+  vm1 /events get /V_m get 8 get
   -6.960401e+01 gt
 
   % check that neuron_out2 received the input
   % -6.960401e+01 is the resting potential
-  vm2 GetStatus /events get /V_m get 8 get
+  vm2 /events get /V_m get 8 get
   -6.960401e+01 gt
 
   and

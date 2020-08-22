@@ -108,9 +108,7 @@ Name::list( std::ostream& out )
 {
   Name::HandleMap_& map = handleMapInstance_();
   out << "\nHandle Map content:" << std::endl;
-  for ( Name::HandleMap_::const_iterator where = map.begin();
-        where != map.end();
-        ++where )
+  for ( Name::HandleMap_::const_iterator where = map.begin(); where != map.end(); ++where )
   {
     out << ( *where ).first << " -> " << ( *where ).second << std::endl;
   }

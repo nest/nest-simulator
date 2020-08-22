@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::crash_distributed_process_invariant_collect_assert_or_die - self test of distributed_invariant_collect_assert_or_die
 
 Synopsis: nest_indirect distributed_process_invariant_collect_assert_or_die.sli -> -
@@ -51,7 +51,7 @@ SeeAlso: testsuite::fail_distributed_process_invariant_collect_assert_or_die, te
 
  % distribute the range of numbers [1 2 3 4]
  % uniformly over the available jobs
- [1 2 3 4] 4 0 /num_processes get div Partition [Rank 1 add] Part
+ [1 2 3 4] 4 GetKernelStatus /num_processes get div Partition [Rank 1 add] Part
 
 }
 distributed_process_invariant_collect_assert_or_die

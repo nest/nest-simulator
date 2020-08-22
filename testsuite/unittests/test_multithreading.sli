@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_multithreading - sli script for several tests regarding multithreading
 
 Synopsis: (test_multithreading) run
@@ -50,18 +50,17 @@ skip_if_not_threaded
 /threads 4 def
 
 % check if setting the number of threads works
-0 << /local_num_threads threads >> SetStatus
-0 [ /local_num_threads ] get threads eq assert_or_die
+<< /local_num_threads threads >> SetKernelStatus
+GetKernelStatus /local_num_threads get threads eq assert_or_die
 
 % check ResetKernel
 ResetKernel
-0 [ /local_num_threads ] get 1 eq assert_or_die
+GetKernelStatus /local_num_threads get 1 eq assert_or_die
 
 % use 4 threads again
-0 << /local_num_threads threads >> SetStatus
+<< /local_num_threads threads >> SetKernelStatus
 
 % check if modulo node distribution works
-/iaf_psc_alpha 4 Create ;
-[1 2 3 4 ] {
+/iaf_psc_alpha 4 Create {
   dup threads mod exch [ /vp ] get eq assert_or_die
 } forall

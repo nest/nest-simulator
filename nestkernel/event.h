@@ -29,9 +29,6 @@
 #include <algorithm>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_time.h"
@@ -119,9 +116,9 @@ public:
   Node& get_receiver() const;
 
   /**
-   * Return GID of receiving Node.
+   * Return node ID of receiving Node.
    */
-  index get_receiver_gid() const;
+  index get_receiver_node_id() const;
 
   /**
    * Return reference to sending Node.
@@ -134,14 +131,14 @@ public:
   void set_sender( Node& );
 
   /**
-   * Return GID of sending Node.
+   * Return node ID of sending Node.
    */
-  index get_sender_gid() const;
+  index get_sender_node_id() const;
 
   /**
-   * Change GID of sending Node.
+   * Change node ID of sending Node.
    */
-  void set_sender_gid( index );
+  void set_sender_node_id( index );
 
   /**
    * Return time stamp of the event.
@@ -151,7 +148,6 @@ public:
    * If this resolution is not fine enough, the creation time
    * can be corrected by using the time attribute.
    */
-
   Time const& get_stamp() const;
 
   /**
@@ -161,14 +157,14 @@ public:
    * @param t delay.
    */
 
-  void set_delay( delay );
+  void set_delay_steps( delay );
 
   /**
    * Return transmission delay of the event.
    * The delay refers to the time until the event is
    * expected to arrive at the receiver.
    */
-  delay get_delay() const;
+  delay get_delay_steps() const;
 
   /**
    * Relative spike delivery time in steps.
@@ -260,6 +256,16 @@ public:
   virtual void set_diffusion_factor( weight t ){};
 
   /**
+   * Returns true if the pointer to the sender node is valid.
+   */
+  bool sender_is_valid() const;
+
+  /**
+   * Returns true if the pointer to the receiver node is valid.
+   */
+  bool receiver_is_valid() const;
+
+  /**
    * Check integrity of the event.
    * This function returns true, if all data, in particular sender
    * and receiver pointers are correctly set.
@@ -274,16 +280,16 @@ public:
   void set_stamp( Time const& );
 
 protected:
-  index sender_gid_; //!< GID of sender or -1.
-                     /*
-                      * The original formulation used references to Nodes as
-                      * members, however, in order to avoid the reference of reference
-                      * problem, we store sender and receiver as pointers and use
-                      * references in the interface.
-                      * Thus, we can still ensure that the pointers are never NULL.
-                      */
-  Node* sender_;     //!< Pointer to sender or NULL.
-  Node* receiver_;   //!< Pointer to receiver or NULL.
+  index sender_node_id_; //!< node ID of sender or -1.
+                         /*
+                          * The original formulation used references to Nodes as
+                          * members, however, in order to avoid the reference of reference
+                          * problem, we store sender and receiver as pointers and use
+                          * references in the interface.
+                          * Thus, we can still ensure that the pointers are never NULL.
+                          */
+  Node* sender_;         //!< Pointer to sender or NULL.
+  Node* receiver_;       //!< Pointer to receiver or NULL.
 
 
   /**
@@ -361,7 +367,6 @@ public:
   void set_multiplicity( int );
   int get_multiplicity() const;
 
-
 protected:
   int multiplicity_;
 };
@@ -401,22 +406,22 @@ public:
   void operator()();
 
   /**
-   * Return GID of receiving Node.
+   * Return node ID of receiving Node.
    */
-  index get_receiver_gid() const;
+  index get_receiver_node_id() const;
 
   /**
-   * Change GID of receiving Node.
+   * Change node ID of receiving Node.
    */
 
-  void set_receiver_gid( index );
+  void set_receiver_node_id( index );
 
 protected:
-  index receiver_gid_; //!< GID of receiver or -1.
+  index receiver_node_id_; //!< node ID of receiver or 0.
 };
 
 inline WeightRecorderEvent::WeightRecorderEvent()
-  : receiver_gid_( -1 )
+  : receiver_node_id_( 0 )
 {
 }
 
@@ -427,15 +432,15 @@ WeightRecorderEvent::clone() const
 }
 
 inline void
-WeightRecorderEvent::set_receiver_gid( index gid )
+WeightRecorderEvent::set_receiver_node_id( index node_id )
 {
-  receiver_gid_ = gid;
+  receiver_node_id_ = node_id;
 }
 
 inline index
-WeightRecorderEvent::get_receiver_gid( void ) const
+WeightRecorderEvent::get_receiver_node_id( void ) const
 {
-  return receiver_gid_;
+  return receiver_node_id_;
 }
 
 
@@ -616,8 +621,7 @@ inline DataLoggingRequest::DataLoggingRequest()
 {
 }
 
-inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
-  const std::vector< Name >& recs )
+inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< Name >& recs )
   : Event()
   , recording_interval_( rec_int )
   , record_from_( &recs )
@@ -774,9 +778,9 @@ ConductanceEvent::get_conductance() const
  * Event for transmitting arbitrary data.
  * This event type may be used for transmitting arbitrary
  * data between events, e.g., images or their FFTs.
- * A lockptr to the data is transmitted.  The date type
+ * A shared_ptr to the data is transmitted.  The date type
  * is given as a template parameter.
- * @note: Data is passed via a lockptr.
+ * @note: Data is passed via a shared_ptr.
  *        The receiver should copy the data at once, otherwise
  *        it may be modified by the sender.
  *        I hope this scheme is thread-safe, as long as the
@@ -788,11 +792,11 @@ ConductanceEvent::get_conductance() const
 template < typename D >
 class DataEvent : public Event
 {
-  lockPTR< D > data_;
+  std::shared_ptr< D > data_;
 
 public:
   void set_pointer( D& data );
-  lockPTR< D > get_pointer() const;
+  std::shared_ptr< D > get_pointer() const;
 };
 
 template < typename D >
@@ -803,7 +807,7 @@ DataEvent< D >::set_pointer( D& data )
 }
 
 template < typename D >
-inline lockPTR< D >
+inline std::shared_ptr< D >
 DataEvent< D >::get_pointer() const
 {
   return data_;
@@ -848,10 +852,12 @@ public:
 
   //! size of event in units of unsigned int
   virtual size_t size() = 0;
-  virtual std::vector< unsigned int >::iterator& operator<<(
-    std::vector< unsigned int >::iterator& pos ) = 0;
-  virtual std::vector< unsigned int >::iterator& operator>>(
-    std::vector< unsigned int >::iterator& pos ) = 0;
+  virtual std::vector< unsigned int >::iterator& operator<<( std::vector< unsigned int >::iterator& pos ) = 0;
+  virtual std::vector< unsigned int >::iterator& operator>>( std::vector< unsigned int >::iterator& pos ) = 0;
+
+  virtual const std::vector< synindex >& get_supported_syn_ids() const = 0;
+
+  virtual void reset_supported_syn_ids() = 0;
 };
 
 /**
@@ -895,9 +901,7 @@ write_to_comm_buffer( T d, std::vector< unsigned int >::iterator& pos )
 
   for ( size_t i = 0; i < num_uints; i++ )
   {
-    memcpy( &( *( pos + i ) ),
-      c + i * sizeof( unsigned int ),
-      std::min( left_to_copy, sizeof( unsigned int ) ) );
+    memcpy( &( *( pos + i ) ), c + i * sizeof( unsigned int ), std::min( left_to_copy, sizeof( unsigned int ) ) );
     left_to_copy -= sizeof( unsigned int );
   }
 
@@ -924,9 +928,7 @@ read_from_comm_buffer( T& d, std::vector< unsigned int >::iterator& pos )
 
   for ( size_t i = 0; i < num_uints; i++ )
   {
-    memcpy( c + i * sizeof( unsigned int ),
-      &( *( pos + i ) ),
-      std::min( left_to_copy, sizeof( unsigned int ) ) );
+    memcpy( c + i * sizeof( unsigned int ), &( *( pos + i ) ), std::min( left_to_copy, sizeof( unsigned int ) ) );
     left_to_copy -= sizeof( unsigned int );
   }
 
@@ -961,13 +963,27 @@ class DataSecondaryEvent : public SecondaryEvent
 {
 private:
   // we chose std::vector over std::set because we expect this to be short
+  static std::vector< synindex > pristine_supported_syn_ids_;
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
-  typename std::vector< DataType >::iterator coeffarray_as_d_begin_;
-  typename std::vector< DataType >::iterator coeffarray_as_d_end_;
-  std::vector< unsigned int >::iterator coeffarray_as_uints_begin_;
-  std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
+  union CoeffarrayBegin
+  {
+    std::vector< unsigned int >::iterator as_uint;
+    typename std::vector< DataType >::iterator as_d;
+
+    CoeffarrayBegin(){}; // need to provide default constructor due to
+                         // non-trivial constructors of iterators
+  } coeffarray_begin_;
+
+  union CoeffarrayEnd
+  {
+    std::vector< unsigned int >::iterator as_uint;
+    typename std::vector< DataType >::iterator as_d;
+
+    CoeffarrayEnd(){}; // need to provide default constructor due to
+                       // non-trivial constructors of iterators
+  } coeffarray_end_;
 
 public:
   /**
@@ -980,6 +996,7 @@ public:
   set_syn_id( const synindex synid )
   {
     VPManager::assert_single_threaded();
+    pristine_supported_syn_ids_.push_back( synid );
     supported_syn_ids_.push_back( synid );
   }
 
@@ -997,6 +1014,29 @@ public:
     supported_syn_ids_.push_back( synid );
   }
 
+  const std::vector< synindex >&
+  get_supported_syn_ids() const
+  {
+    return supported_syn_ids_;
+  }
+
+  /**
+   * Resets the vector of supported syn ids to those originally
+   * registered via ModelsModule or user defined Modules, i.e.,
+   * removes all syn ids created by CopyModel. This is important to
+   * maintain consistency across ResetKernel, which removes all copied
+   * models.
+   */
+  void
+  reset_supported_syn_ids()
+  {
+    supported_syn_ids_.clear();
+    for ( size_t i = 0; i < pristine_supported_syn_ids_.size(); ++i )
+    {
+      supported_syn_ids_.push_back( pristine_supported_syn_ids_[ i ] );
+    }
+  }
+
   static void
   set_coeff_length( const size_t coeff_length )
   {
@@ -1007,16 +1047,14 @@ public:
   bool
   supports_syn_id( const synindex synid ) const
   {
-    return (
-      std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid )
-      != supported_syn_ids_.end() );
+    return ( std::find( supported_syn_ids_.begin(), supported_syn_ids_.end(), synid ) != supported_syn_ids_.end() );
   }
 
   void
   set_coeffarray( std::vector< DataType >& ca )
   {
-    coeffarray_as_d_begin_ = ca.begin();
-    coeffarray_as_d_end_ = ca.end();
+    coeffarray_begin_.as_d = ca.begin();
+    coeffarray_end_.as_d = ca.end();
     assert( coeff_length_ == ca.size() );
   }
 
@@ -1024,20 +1062,17 @@ public:
    * The following operator is used to read the information of the
    * DataSecondaryEvent from the buffer in EventDeliveryManager::deliver_events
    */
-  std::vector< unsigned int >::iterator& operator<<(
-    std::vector< unsigned int >::iterator& pos )
+  std::vector< unsigned int >::iterator& operator<<( std::vector< unsigned int >::iterator& pos )
   {
     // The synid can be skipped here as it is stored in a static vector
-    pos += number_of_uints_covered< synindex >();
-    read_from_comm_buffer( sender_gid_, pos );
 
     // generating a copy of the coeffarray is too time consuming
     // therefore we save an iterator to the beginning+end of the coeffarray
-    coeffarray_as_uints_begin_ = pos;
+    coeffarray_begin_.as_uint = pos;
 
     pos += coeff_length_ * number_of_uints_covered< DataType >();
 
-    coeffarray_as_uints_end_ = pos;
+    coeffarray_end_.as_uint = pos;
 
     return pos;
   }
@@ -1048,18 +1083,13 @@ public:
    * All DataSecondaryEvents are identified by the synid of the
    * first element in supported_syn_ids_.
    */
-  std::vector< unsigned int >::iterator& operator>>(
-    std::vector< unsigned int >::iterator& pos )
+  std::vector< unsigned int >::iterator& operator>>( std::vector< unsigned int >::iterator& pos )
   {
-    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
-    write_to_comm_buffer( sender_gid_, pos );
-    for ( typename std::vector< DataType >::iterator i = coeffarray_as_d_begin_;
-          i != coeffarray_as_d_end_;
-          i++ )
+    for ( typename std::vector< DataType >::iterator it = coeffarray_begin_.as_d; it != coeffarray_end_.as_d; ++it )
     {
       // we need the static_cast here as the size of a stand-alone variable
       // and a std::vector entry may differ (e.g. for std::vector< bool >)
-      write_to_comm_buffer( static_cast< DataType >( *i ), pos );
+      write_to_comm_buffer( static_cast< DataType >( *it ), pos );
     }
     return pos;
   }
@@ -1077,13 +1107,13 @@ public:
   const std::vector< unsigned int >::iterator&
   begin()
   {
-    return coeffarray_as_uints_begin_;
+    return coeffarray_begin_.as_uint;
   }
 
   const std::vector< unsigned int >::iterator&
   end()
   {
-    return coeffarray_as_uints_end_;
+    return coeffarray_end_.as_uint;
   }
 
   DataType get_coeffvalue( std::vector< unsigned int >::iterator& pos );
@@ -1109,8 +1139,7 @@ public:
  * Event for rate model connections without delay. The event transmits
  * the rate to the connected neurons.
  */
-class InstantaneousRateConnectionEvent
-  : public DataSecondaryEvent< double, InstantaneousRateConnectionEvent >
+class InstantaneousRateConnectionEvent : public DataSecondaryEvent< double, InstantaneousRateConnectionEvent >
 {
 
 public:
@@ -1126,8 +1155,7 @@ public:
  * Event for rate model connections with delay. The event transmits
  * the rate to the connected neurons.
  */
-class DelayedRateConnectionEvent
-  : public DataSecondaryEvent< double, DelayedRateConnectionEvent >
+class DelayedRateConnectionEvent : public DataSecondaryEvent< double, DelayedRateConnectionEvent >
 {
 
 public:
@@ -1143,8 +1171,7 @@ public:
  * Event for diffusion connections (rate model connections for the
  * siegert_neuron). The event transmits the rate to the connected neurons.
  */
-class DiffusionConnectionEvent
-  : public DataSecondaryEvent< double, DiffusionConnectionEvent >
+class DiffusionConnectionEvent : public DataSecondaryEvent< double, DiffusionConnectionEvent >
 {
 private:
   // drift factor of the corresponding connection
@@ -1178,17 +1205,18 @@ public:
 
 template < typename DataType, typename Subclass >
 inline DataType
-DataSecondaryEvent< DataType, Subclass >::get_coeffvalue(
-  std::vector< unsigned int >::iterator& pos )
+DataSecondaryEvent< DataType, Subclass >::get_coeffvalue( std::vector< unsigned int >::iterator& pos )
 {
   DataType elem;
   read_from_comm_buffer( elem, pos );
   return elem;
 }
 
+template < typename Datatype, typename Subclass >
+std::vector< synindex > DataSecondaryEvent< Datatype, Subclass >::pristine_supported_syn_ids_;
+
 template < typename DataType, typename Subclass >
-std::vector< synindex >
-  DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
+std::vector< synindex > DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
 
 template < typename DataType, typename Subclass >
 size_t DataSecondaryEvent< DataType, Subclass >::coeff_length_ = 0;
@@ -1233,9 +1261,21 @@ DiffusionConnectionEvent::get_diffusion_factor() const
 // Inline implementations.
 
 inline bool
+Event::sender_is_valid() const
+{
+  return sender_ != nullptr;
+}
+
+inline bool
+Event::receiver_is_valid() const
+{
+  return receiver_ != nullptr;
+}
+
+inline bool
 Event::is_valid() const
 {
-  return ( ( sender_ != NULL ) && ( receiver_ != NULL ) && ( d_ > 0 ) );
+  return ( sender_is_valid() and receiver_is_valid() and ( d_ > 0 ) );
 }
 
 inline void
@@ -1251,9 +1291,9 @@ Event::set_sender( Node& s )
 }
 
 inline void
-Event::set_sender_gid( index gid )
+Event::set_sender_node_id( index node_id )
 {
-  sender_gid_ = gid;
+  sender_node_id_ = node_id;
 }
 
 inline Node&
@@ -1269,10 +1309,10 @@ Event::get_sender( void ) const
 }
 
 inline index
-Event::get_sender_gid( void ) const
+Event::get_sender_node_id( void ) const
 {
-  assert( sender_gid_ > 0 );
-  return sender_gid_;
+  assert( sender_node_id_ > 0 );
+  return sender_node_id_;
 }
 
 inline weight
@@ -1304,7 +1344,7 @@ Event::set_stamp( Time const& s )
 }
 
 inline delay
-Event::get_delay() const
+Event::get_delay_steps() const
 {
   return d_;
 }
@@ -1320,7 +1360,7 @@ Event::get_rel_delivery_steps( const Time& t ) const
 }
 
 inline void
-Event::set_delay( delay d )
+Event::set_delay_steps( delay d )
 {
   d_ = d;
 }

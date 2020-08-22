@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_sinusoidal_poisson_generator_5 - Test parallel generation of sinusoidally modulate Poissonian trains with single spike train
 
 Synopsis: nest_indirect test_sinusoidal_poisson_generator_5.sli -> -
@@ -57,11 +57,10 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
   /n Set
 
   % set resolution and total/local number of threads
-  0
   <<
-  /resolution  0.1
-  /total_num_virtual_procs total_vps
-  >> SetStatus
+    /resolution  0.1
+    /total_num_virtual_procs total_vps
+  >> SetKernelStatus
 
   /sinusoidal_poisson_generator 
   << 
@@ -71,15 +70,13 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
      /individual_spike_trains individual
   >> SetDefaults
 
-  /parrots [ n ] { ; /parrot_neuron Create } Table def
-  /sdets   [ n ] 
-    { ;   /spike_detector n << /withtime true /withgid false >> Create } 
-    Table def  
-
   /gen /sinusoidal_poisson_generator Create def
+  /parrots /parrot_neuron n Create def
+  /sdets /spike_detector n Create def
 
-  [gen] parrots Connect
-  [parrots sdets] { Connect } ScanThread
+  gen parrots Connect
+  
+  parrots sdets << /rule /one_to_one >> Connect
 
   10. Simulate
 
@@ -97,7 +94,7 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
 
   % get events, replace vectors with SLI arrays
   % keep only non-empty arrays; empty ones are from off-process parrots
-  sdets { [/events /times] get cva } Map { empty not exch ; } Select 
+  sdets { [/events /times] get cva } Map { empty not exch ; } Select
 
   % expect array with two arrays of spike times
   all_equal

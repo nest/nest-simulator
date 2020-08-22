@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_poisson_ps_intervals - checks coefficient of variation
 
 Synopsis: (test_poisson_ps_intervals) run -> CV sufficiently close to 1
@@ -62,11 +62,10 @@ M_ERROR setverbosity
 10000.0 /T Set
 
 
-0 << /resolution 0.1  >> SetStatus
+<< /resolution 0.1  >> SetKernelStatus
 
 
 /spike_detector Create /sp Set
-sp  << /precise_times true >> SetStatus
 
 
 /poisson_generator_ps Create /pn Set

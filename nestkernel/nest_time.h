@@ -302,23 +302,19 @@ public:
   // Time(const Time& t);
 
   Time( tic t )
-    : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t : ( t.t < 0 )
-            ? LIM_NEG_INF.tics
-            : LIM_POS_INF.tics )
+    : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
   {
   }
 
   Time( step t )
-    : tics( ( time_abs( t.t ) < LIM_MAX.steps )
-          ? t.t * Range::TICS_PER_STEP
-          : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
+    : tics( ( time_abs( t.t ) < LIM_MAX.steps ) ? t.t * Range::TICS_PER_STEP : ( t.t < 0 ) ? LIM_NEG_INF.tics
+                                                                                           : LIM_POS_INF.tics )
   {
   }
 
   Time( ms t )
-    : tics( ( time_abs( t.t ) < LIM_MAX.ms )
-          ? static_cast< tic_t >( t.t * Range::TICS_PER_MS + 0.5 )
-          : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
+    : tics( ( time_abs( t.t ) < LIM_MAX.ms ) ? static_cast< tic_t >( t.t * Range::TICS_PER_MS + 0.5 )
+                                             : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
   {
   }
 
@@ -384,7 +380,7 @@ public:
   bool
   is_finite() const
   {
-    return tics != LIM_POS_INF.tics && tics != LIM_NEG_INF.tics;
+    return tics != LIM_POS_INF.tics and tics != LIM_NEG_INF.tics;
   }
 
   bool
@@ -416,7 +412,7 @@ public:
   bool
   is_step() const
   {
-    return tics > 0 && is_grid_time();
+    return tics > 0 and is_grid_time();
   }
 
   bool
@@ -614,11 +610,11 @@ inline Time operator*( const long factor, const Time& t )
 {
   const tic_t n = factor * t.tics;
   // if no overflow:
-  if ( t.tics == 0 || n / t.tics == factor )
+  if ( t.tics == 0 or n / t.tics == factor )
   {
     return Time::tic( n ); // check range
   }
-  if ( ( t.tics > 0 && factor > 0 ) || ( t.tics < 0 && factor < 0 ) )
+  if ( ( t.tics > 0 and factor > 0 ) or ( t.tics < 0 and factor < 0 ) )
   {
     return Time( Time::LIM_POS_INF.tics );
   }
@@ -632,7 +628,7 @@ inline Time operator*( const Time& t, long factor )
 {
   return factor * t;
 }
-} // Namespace
+} // namespace
 
 std::ostream& operator<<( std::ostream&, const nest::Time& );
 

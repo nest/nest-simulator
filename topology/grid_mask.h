@@ -48,9 +48,8 @@ class GridMask : public AbstractMask
 public:
   /**
    * Parameters:
-   * columns - horizontal size in grid coordinates
-   * rows    - vertical size in grid coordinates
-   * layers  - z-size in grid coordinates (for 3D layers)
+   * shape - size in grid coordinates
+             (length 2 for 2D layers or length 3 for 3D layers)
    */
   GridMask( const DictionaryDatum& d );
 
@@ -113,16 +112,15 @@ protected:
 template < int D >
 GridMask< D >::GridMask( const DictionaryDatum& d )
 {
-  int columns = getValue< long >( d, names::columns );
-  int rows = getValue< long >( d, names::rows );
-  if ( D == 3 )
+  std::vector< long > shape = getValue< std::vector< long > >( d, names::shape );
+
+  if ( D == 2 )
   {
-    int layers = getValue< long >( d, names::layers );
-    lower_right_ = Position< D, int >( columns, rows, layers );
+    lower_right_ = Position< D, int >( shape[ 0 ], shape[ 1 ] );
   }
-  else if ( D == 2 )
+  else if ( D == 3 )
   {
-    lower_right_ = Position< D, int >( columns, rows );
+    lower_right_ = Position< D, int >( shape[ 0 ], shape[ 1 ], shape[ 2 ] );
   }
   else
   {
@@ -151,12 +149,18 @@ GridMask< D >::get_dict() const
   DictionaryDatum d( new Dictionary );
   DictionaryDatum maskd( new Dictionary );
   def< DictionaryDatum >( d, get_name(), maskd );
-  def< long >( maskd, names::columns, lower_right_[ 0 ] - upper_left_[ 0 ] );
-  def< long >( maskd, names::rows, lower_right_[ 1 ] - upper_left_[ 1 ] );
-  if ( D >= 3 )
+
+  long shape_x = lower_right_[ 0 ] - upper_left_[ 0 ];
+  long shape_y = lower_right_[ 1 ] - upper_left_[ 1 ];
+  std::vector< long > shape_dim{ shape_x, shape_y };
+
+  if ( D == 3 )
   {
-    def< long >( maskd, names::layers, lower_right_[ 2 ] - upper_left_[ 2 ] );
+    long shape_z = lower_right_[ 2 ] - upper_left_[ 2 ];
+    shape_dim.push_back( shape_z );
   }
+  def< std::vector< long > >( maskd, names::shape, shape_dim );
+
   return d;
 }
 

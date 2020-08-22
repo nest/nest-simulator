@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 /*
    Benchmark 2 of the simulator review
 
@@ -98,9 +100,7 @@
   /detector /spike_detector
   /detector_params
   <<
-   /withtime true
-   /withgid true
-   /to_file true
+   /record_to /ascii
    /label (cuba)
   >>
 

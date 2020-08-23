@@ -60,11 +60,11 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , creates_symmetric_connections_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , synapse_model_id_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
-  , weight_( 0 )
-  , delay_( 0 )
   , param_dicts_()
   , dummy_param_dicts_()
   , parameters_requiring_skipping_()
+  , delay_( 0 )
+  , weight_( 0 )
 {
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above

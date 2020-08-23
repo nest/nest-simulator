@@ -26,6 +26,7 @@
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
+#include "generic_factory.h"
 #include "parameter.h"
 
 // Includes from sli:
@@ -34,10 +35,6 @@
 #include "slimodule.h"
 #include "slitype.h"
 #include "sharedptrdatum.h"
-
-#include "generic_factory.h"
-
-#include "generic_factory.h"
 
 namespace nest
 {
@@ -53,6 +50,9 @@ class Parameter;
 class NestModule : public SLIModule
 {
 public:
+#ifdef HAVE_LIBNEUROSIM
+  static SLIType ConnectionGeneratorType;
+#endif
   static SLIType ConnectionType;
   static SLIType NodeCollectionType;
   static SLIType NodeCollectionIteratorType;
@@ -626,6 +626,23 @@ public:
     void execute( SLIInterpreter* ) const;
   } apply_P_gfunction;
 
+#ifdef HAVE_LIBNEUROSIM    
+  class CGParse_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgparse_sfunction;
+
+  class CGParseFile_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgparsefile_sfunction;
+
+  class CGSelectImplementation_s_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgselectimplementation_s_sfunction;
+#endif
+    
 private:
   static ParameterFactory& parameter_factory_();
 

@@ -210,10 +210,6 @@ private:
   //! indicate that delay should not be set per synapse
   bool default_delay_;
 
-  // null-pointer indicates that default be used
-  ConnParameter* weight_;
-  ConnParameter* delay_;
-
   //! all other parameters, mapping name to value representation
   ConnParameterMap synapse_params_;
 
@@ -236,6 +232,10 @@ private:
 protected:
   //! pointers to connection parameters specified as arrays
   std::vector< ConnParameter* > parameters_requiring_skipping_;
+
+  // null-pointer indicates that default be used
+  ConnParameter* delay_;
+  ConnParameter* weight_;
 };
 
 class OneToOneBuilder : public ConnBuilder

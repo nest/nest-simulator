@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Using CSA for connection setup
-------------------------------------
+"""
+Using CSA for connection setup
+------------------------------
 
 This example sets up a simple network in NEST using the Connection Set
 Algebra (CSA) instead of using the built-in connection routines.
@@ -29,12 +30,12 @@ Using the CSA requires NEST to be compiled with support for
 libneurosim. For details, see [1]_.
 
 See Also
-~~~~~~~~~~
+~~~~~~~~
 
-:doc:`csa_topology_example`
+:doc:`csa_spatial_example`
 
 References
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
        connectivity in neuronal networks from simulator-independent
@@ -49,11 +50,11 @@ References
 import nest
 from nest import voltage_trace
 from nest import visualization
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # Next, we check for the availability of the CSA Python module. If it does
 # not import, we exit with an error message.
-
 
 try:
     import csa
@@ -87,7 +88,9 @@ post = nest.Create("iaf_psc_alpha", 16)
 # weight and delay to positions in the value set associated with the
 # connection set.
 
-nest.CGConnect(pre, post, cs, {"weight": 0, "delay": 1})
+params_map = {"weight": 0, "delay": 1}
+connspec = {"rule": "conngen", "cg": cs, "params_map": params_map}
+nest.Connect(pre, post, connspec)
 
 ###############################################################################
 # To stimulate the network, we create a ``poisson_generator`` and set it up to
@@ -117,4 +120,4 @@ visualization.plot_network(allnodes, "csa_example_graph.png")
 
 nest.Simulate(50.0)
 voltage_trace.from_device(vm)
-voltage_trace.show()
+plt.show()

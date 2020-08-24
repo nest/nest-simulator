@@ -626,7 +626,7 @@ public:
     void execute( SLIInterpreter* ) const;
   } apply_P_gfunction;
 
-#ifdef HAVE_LIBNEUROSIM    
+#ifdef HAVE_LIBNEUROSIM
   class CGParse_sFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
@@ -642,7 +642,7 @@ public:
     void execute( SLIInterpreter* ) const;
   } cgselectimplementation_s_sfunction;
 #endif
-    
+
 private:
   static ParameterFactory& parameter_factory_();
 

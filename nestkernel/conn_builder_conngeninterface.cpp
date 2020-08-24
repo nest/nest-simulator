@@ -39,7 +39,7 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
   , cg_( ConnectionGeneratorDatum() )
   , params_map_()
 {
-  
+
   updateValue< ConnectionGeneratorDatum >( conn_spec, "cg", cg_ );
   if ( cg_->arity() != 0 )
   {
@@ -48,7 +48,6 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
       throw BadProperty( "A params_map has to be given if the ConnectionGenerator has values." );
     }
 
-    //params_map_ = dynamic_cast< Dictionary* >( ( *conn_spec )[ "params_map" ].datum() );
     updateValue< DictionaryDatum >( conn_spec, "params_map", params_map_ );
 
     for ( Dictionary::iterator it = params_map_->begin(); it != params_map_->end(); ++it )
@@ -56,9 +55,6 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
       it->second.set_access_flag();
     }
   }
-    
-  //updateValue< ConnectionGeneratorDatum* >( *conn_spec, "cg", cg_ );
-  //updateValue< DictionaryDatum >( *conn_spec, "params_map", params_map_ );
 }
 
 void
@@ -83,7 +79,7 @@ ConnectionGeneratorBuilder::connect_()
       // created by cg_set_masks() only contains local nodes.
       Node* const target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
       const thread target_thread = target_node->get_thread();
-      single_connect_(( *sources_ )[ source ], *target_node, target_thread, rng );
+      single_connect_( ( *sources_ )[ source ], *target_node, target_thread, rng );
     }
   }
   else if ( num_parameters == 2 )
@@ -240,9 +236,7 @@ ConnectionGeneratorBuilder::cg_set_masks()
  * \returns the right border of the range
  */
 index
-ConnectionGeneratorBuilder::cg_get_right_border( index left,
-  size_t step,
-  const NodeCollectionPTR nodes )
+ConnectionGeneratorBuilder::cg_get_right_border( index left, size_t step, const NodeCollectionPTR nodes )
 {
   // Check if left is already the index of the last element in
   // node IDs. If yes, return left as the right border

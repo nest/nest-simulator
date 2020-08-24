@@ -84,6 +84,7 @@ def geometryFunction(population):
 
     return geometry_function
 
+
 ###############################################################################
 # We create two spatial populations that have 20x20 neurons of type
 # ``iaf_psc_alpha``.

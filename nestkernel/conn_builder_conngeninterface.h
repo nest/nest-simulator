@@ -33,12 +33,12 @@
 
 namespace nest
 {
-  
+
 class ConnectionGeneratorBuilder : public ConnBuilder
 {
   typedef std::vector< ConnectionGenerator::ClosedInterval > RangeSet;
   typedef ConnectionGenerator::ClosedInterval Range;
-  
+
 public:
   ConnectionGeneratorBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
 
@@ -47,7 +47,7 @@ protected:
   void cg_set_masks();
   index cg_get_right_border( index left, size_t step, const NodeCollectionPTR nodes );
   void cg_get_ranges( RangeSet& ranges, const NodeCollectionPTR nodes );
-    
+
 private:
   ConnectionGeneratorDatum cg_;
   DictionaryDatum params_map_;

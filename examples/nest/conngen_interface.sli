@@ -22,19 +22,17 @@
 
 
 /** @BeginDocumentation
-   Name: testsuite::test_conngen_interface - Test runability of all CGConnect variants
+Name: testsuite::test_conngen_interface - Test runability of Connect variant with conngen rule
 
-   Synopsis: (test_conngen_interface) run
+Synopsis: (test_conngen_interface) run
 
-   Description:
+Description:
+Tests if Connect with the *conngen* rule can be run. This test only
+checks if the SLI part of the ConnectionGenerator interface works
+correctly. The PyNEST test is in pynest/nest/tests/test_csa.py.
 
-   Tests if all variants of CGConnect can be run. This test only checks the
-   SLI part of the ConnectionGenerator interface. The PyNEST interface is
-   tested in pynest/nest/tests/test_csa.py.
-
-   FirstVersion: June 2016
-   Author: Jochen Martin Eppler
-   SeeAlso: CGConnect
+FirstVersion: June 2016
+Author: Jochen Martin Eppler
  */
 
 M_ERROR setverbosity
@@ -55,57 +53,11 @@ statusdict/have_libneurosim :: not { /skipped exit_test_gracefully } if
 (</CSA>) join
 CGParse /cg Set
 
+/iaf_psc_alpha 8 Create /pre Set
+/iaf_psc_alpha 8 Create /post Set
 
-% Test if the array variant works
-ResetKernel
-/iaf_psc_alpha 16 Create ;
-cg [  1  2 ] [  3  4 ]                       CGConnect
-cg [  5  6 ] [  7  8 ] << >>                 CGConnect
-cg [  9 10 ] [ 11 12 ]       /static_synapse CGConnect
-cg [ 13 14 ] [ 15 16 ] << >> /static_synapse CGConnect
+pre post << /rule /conngen /cg cg >> Connect
 
-<< /source [  1  2 ] >> GetConnections
-  { GetStatus /target get } Map [  3  4 ] eq assert_or_die
-<< /source [  5  6 ] >> GetConnections
-  { GetStatus /target get } Map [  7  8 ] eq assert_or_die
-<< /source [  9 10 ] >> GetConnections
-  { GetStatus /target get } Map [ 11 12 ] eq assert_or_die
-<< /source [ 13 14 ] >> GetConnections
-  { GetStatus /target get } Map [ 15 16 ] eq assert_or_die
-
-
-% Test if the intvector variant works
-ResetKernel
-/iaf_psc_alpha 16 Create ;
-cg [  1  2 ] cv_iv [  3  4 ] cv_iv                       CGConnect
-cg [  5  6 ] cv_iv [  7  8 ] cv_iv << >>                 CGConnect
-cg [  9 10 ] cv_iv [ 11 12 ] cv_iv       /static_synapse CGConnect
-cg [ 13 14 ] cv_iv [ 15 16 ] cv_iv << >> /static_synapse CGConnect
-
-<< /source [  1  2 ] >> GetConnections
-  { GetStatus /target get } Map [  3  4 ] eq assert_or_die
-<< /source [  5  6 ] >> GetConnections
-  { GetStatus /target get } Map [  7  8 ] eq assert_or_die
-<< /source [  9 10 ] >> GetConnections
-  { GetStatus /target get } Map [ 11 12 ] eq assert_or_die
-<< /source [ 13 14 ] >> GetConnections
-  { GetStatus /target get } Map [ 15 16 ] eq assert_or_die
-
-
-% Test if the nodecollection variant works
-/cvnc /cvnodecollection load def
-ResetKernel
-/iaf_psc_alpha 16 Create ;
-cg [  1  2 ] cvnc [  3  4 ] cvnc                       CGConnect
-cg [  5  6 ] cvnc [  7  8 ] cvnc << >>                 CGConnect
-cg [  9 10 ] cvnc [ 11 12 ] cvnc       /static_synapse CGConnect
-cg [ 13 14 ] cvnc [ 15 16 ] cvnc << >> /static_synapse CGConnect
-
-<< /source [  1  2 ] >> GetConnections
-  { GetStatus /target get } Map [  3  4 ] eq assert_or_die
-<< /source [  5  6 ] >> GetConnections
-  { GetStatus /target get } Map [  7  8 ] eq assert_or_die
-<< /source [  9 10 ] >> GetConnections
-  { GetStatus /target get } Map [ 11 12 ] eq assert_or_die
-<< /source [ 13 14 ] >> GetConnections
-  { GetStatus /target get } Map [ 15 16 ] eq assert_or_die
+<< /source pre >> GetConnections
+{ GetStatus /target get } Map
+post eq assert_or_die

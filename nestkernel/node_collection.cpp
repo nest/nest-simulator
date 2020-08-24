@@ -899,7 +899,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     index primitive_last = 0;
 
     size_t primitive_size = 0;
-    NodeIDTriple first_in_primitive;
+    NodeIDTriple first_in_primitive = *begin();
 
     std::vector< std::string > string_vector;
 

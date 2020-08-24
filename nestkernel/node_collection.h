@@ -334,6 +334,13 @@ public:
   virtual bool is_range() const = 0;
 
   /**
+   * Checks if the NodeCollection has no elements.
+   *
+   * @return true if the NodeCollection is empty, false otherwise
+   */
+  virtual bool empty() const = 0;
+
+  /**
    * Returns index of node with given node ID in NodeCollection.
    *
    * @return Index of node with given node ID; -1 if node not in NodeCollection.
@@ -435,6 +442,7 @@ public:
   NodeCollectionMetadataPTR get_metadata() const override;
 
   bool is_range() const override;
+  bool empty() const override;
 
   long find( const index ) const override;
 
@@ -561,6 +569,7 @@ public:
   NodeCollectionMetadataPTR get_metadata() const override;
 
   bool is_range() const override;
+  bool empty() const override;
 
   long find( const index ) const override;
 };
@@ -783,6 +792,12 @@ NodeCollectionPrimitive::is_range() const
   return true;
 }
 
+inline bool
+NodeCollectionPrimitive::empty() const
+{
+  return last_ == 0;
+}
+
 inline long
 NodeCollectionPrimitive::find( const index neuron_id ) const
 {
@@ -889,6 +904,13 @@ NodeCollectionComposite::get_metadata() const
 inline bool
 NodeCollectionComposite::is_range() const
 {
+  return false;
+}
+
+inline bool
+NodeCollectionComposite::empty() const
+{
+  // Composite NodeCollections can never be empty.
   return false;
 }
 } // namespace nest

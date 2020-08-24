@@ -107,11 +107,11 @@ d = csa.euclidMetric2d(g1, g2)
 cs = csa.cset(csa.random * (csa.gaussian(0.2, 0.5) * d), 10000.0, 1.0)
 
 ###############################################################################
-# We can now connect the populations using the ``CGConnect`` function. It
-# takes the IDs of pre- and postsynaptic neurons (`pop` and `pop2`),
-# the connection set (`cs`) and a dictionary that map the parameters
-# weight and delay to positions in the value set associated with the
-# connection set.
+# We can now connect the populations using the ``Connect`` function
+# with the ``conngen`` rule. It takes the IDs of pre- and postsynaptic
+# neurons (`pop` and `pop2`), the connection set (`cs`) and a
+# dictionary that map the parameters weight and delay to positions in
+# the value set associated with the connection set (``params_map``).
 
 params_map = {"weight": 0, "delay": 1}
 connspec = {"rule": "conngen", "cg": cs, "params_map": params_map}

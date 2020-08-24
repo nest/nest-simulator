@@ -82,11 +82,11 @@ pre = nest.Create("iaf_psc_alpha", 16)
 post = nest.Create("iaf_psc_alpha", 16)
 
 ###############################################################################
-# We can now connect the populations using the ``CGConnect`` function. It takes
-# the IDs of pre- and postsynaptic neurons (``pre`` and ``post``),
-# the connection set (``cs``) and a dictionary that maps the parameters
-# weight and delay to positions in the value set associated with the
-# connection set.
+# We can now connect the populations using the ``Connect`` function
+# with the ``conngen`` rule. It takes the IDs of pre- and postsynaptic
+# neurons (``pre`` and ``post``), the connection set (``cs``) and a
+# dictionary that maps the parameters weight and delay to positions in
+# the value set associated with the connection set (``params_map``).
 
 params_map = {"weight": 0, "delay": 1}
 connspec = {"rule": "conngen", "cg": cs, "params_map": params_map}

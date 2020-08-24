@@ -899,7 +899,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     index primitive_last = 0;
 
     size_t primitive_size = 0;
-    NodeIDTriple gt;
+    NodeIDTriple first_in_primitive;
 
     std::vector< std::string > string_vector;
 
@@ -912,15 +912,15 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
         if ( it != begin() )
         {
           // Need to count the primitive, so can't start at begin()
-          out << "\n" + space << "model=" << kernel().model_manager.get_model( gt.model_id )->get_name()
+          out << "\n" + space << "model=" << kernel().model_manager.get_model( first_in_primitive.model_id )->get_name()
               << ", size=" << primitive_size << ", ";
           if ( primitive_size == 1 )
           {
-            out << "first=" << gt.node_id << ", last=" << gt.node_id << ";";
+            out << "first=" << first_in_primitive.node_id << ", last=" << first_in_primitive.node_id << ";";
           }
           else
           {
-            out << "first=" << gt.node_id << ", last=";
+            out << "first=" << first_in_primitive.node_id << ", last=";
             out << primitive_last;
             if ( step_ > 1 )
             {
@@ -929,7 +929,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
           }
         }
         primitive_size = 1;
-        gt = *it;
+        first_in_primitive = *it;
       }
       else
       {
@@ -940,15 +940,15 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     }
 
     // Need to also print the last primitive
-    out << "\n" + space << "model=" << kernel().model_manager.get_model( gt.model_id )->get_name()
+    out << "\n" + space << "model=" << kernel().model_manager.get_model( first_in_primitive.model_id )->get_name()
         << ", size=" << primitive_size << ", ";
     if ( primitive_size == 1 )
     {
-      out << "first=" << gt.node_id << ", last=" << gt.node_id;
+      out << "first=" << first_in_primitive.node_id << ", last=" << first_in_primitive.node_id;
     }
     else
     {
-      out << "first=" << gt.node_id << ", last=";
+      out << "first=" << first_in_primitive.node_id << ", last=";
       out << primitive_last;
       if ( step_ > 1 )
       {

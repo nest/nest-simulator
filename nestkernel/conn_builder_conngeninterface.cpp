@@ -45,7 +45,7 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
   {
     if ( not conn_spec->known( "params_map" ) )
     {
-      throw BadProperty( "A params_map has to be given if the connection generator has values." );
+      throw BadProperty( "A params_map has to be given if the ConnectionGenerator has values." );
     }
 
     //params_map_ = dynamic_cast< Dictionary* >( ( *conn_spec )[ "params_map" ].datum() );
@@ -125,7 +125,7 @@ ConnectionGeneratorBuilder::connect_()
   }
   else
   {
-    LOG( M_ERROR, "CGConnect", "Either two or no parameters in the ConnectionSet expected." );
+    LOG( M_ERROR, "Connect", "Either two or no parameters in the ConnectionGenerator expected." );
     throw DimensionMismatch();
   }
 }

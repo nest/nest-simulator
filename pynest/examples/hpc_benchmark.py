@@ -323,6 +323,9 @@ def build_network(logger):
     if params['record_spikes']:
         if params['nvp'] != 1:
             local_neurons = nest.GetLocalNodeCollection(E_neurons)
+            # Rebuilding local_neurons to get rid of the stepped composite NodeCollection,
+            # to be able to slice it.
+            local_neurons = nest.NodeCollection(local_neurons.tolist())
         else:
             local_neurons = E_neurons
 

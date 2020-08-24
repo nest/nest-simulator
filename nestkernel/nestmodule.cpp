@@ -1930,7 +1930,7 @@ CGSelectImplementation
 Availability: Only if compiled with libneurosim support
 Author: Jochen Martin Eppler
 FirstVersion: September 2013
-SeeAlso: CGParseFile, CGConnect, CGSelectImplementation
+SeeAlso: CGParseFile, CGSelectImplementation
 */
 void
 NestModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
@@ -1963,7 +1963,7 @@ CGSelectImplementation
 Availability: Only if compiled with libneurosim support
 Author: Jochen Martin Eppler
 FirstVersion: February 2014
-SeeAlso: CGParse, CGConnect, CGSelectImplementation
+SeeAlso: CGParse, CGSelectImplementation
 */
 void
 NestModule::CGParseFile_sFunction::execute( SLIInterpreter* i ) const
@@ -1996,7 +1996,7 @@ an XML tag with the library.
 Availability: Only if compiled with libneurosim support
 Author: Jochen Martin Eppler
 FirstVersion: September 2013
-SeeAlso: CGParse, CGParseFile, CGConnect
+SeeAlso: CGParse, CGParseFile
 */
 void
 NestModule::CGSelectImplementation_s_sFunction::execute( SLIInterpreter* i ) const

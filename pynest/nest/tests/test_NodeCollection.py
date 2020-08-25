@@ -394,6 +394,17 @@ class TestNodeCollection(unittest.TestCase):
         with self.assertRaises(nest.kernel.NESTError):
             nest.NodeCollection([5, 6, 4])
 
+    def test_slice_with_unsorted_raises_raises(self):
+        """Slicing NodeCollection with unsorted list raises error"""
+        n = nest.Create('iaf_psc_alpha', 10)
+
+        with self.assertRaises(nest.kernel.NESTError):
+            n[[6, 5, 4]]
+        with self.assertRaises(nest.kernel.NESTError):
+            n[[5, 4, 6]]
+        with self.assertRaises(nest.kernel.NESTError):
+            n[[5, 6, 4]]
+
     def test_composite_NodeCollection(self):
         """Tests composite NodeCollection with patched node IDs"""
 
@@ -673,7 +684,7 @@ class TestNodeCollection(unittest.TestCase):
         cases = [[1, 2],
                  [2, 5],
                  [0, 2, 5, 7, 9],
-                 (5, 2),
+                 (2, 5),
                  []
                  ]
         fail_cases = [([5, 10, 15], IndexError),  # Index not in NodeCollection

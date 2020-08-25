@@ -165,9 +165,11 @@ NodeCollection::create( const std::vector< index >& node_ids_vector )
   {
     return NodeCollection::create_();
   }
-  auto node_ids = node_ids_vector; // Create a copy to be able to sort
-  std::sort( node_ids.begin(), node_ids.end() );
-  return NodeCollection::create_( node_ids );
+  if ( not std::is_sorted( node_ids_vector.begin(), node_ids_vector.end() ) )
+  {
+    throw BadProperty( "Indices must be sorted in ascending order" );
+  }
+  return NodeCollection::create_( node_ids_vector );
 }
 
 NodeCollectionPTR

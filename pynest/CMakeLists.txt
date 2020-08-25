@@ -82,9 +82,6 @@ if ( HAVE_PYTHON )
     WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
       )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
-  install( FILES ${PROJECT_BINARY_DIR}/pynest/do_tests.py
-      DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
-      )
 
   install( DIRECTORY examples/
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
@@ -108,6 +105,10 @@ if ( HAVE_PYTHON )
 
   install( DIRECTORY nest/spatial_distributions/
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/spatial_distributions
+      )
+
+  install( DIRECTORY nest/server/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/server
       )
 
   find_program( NOSETESTS nosetests )

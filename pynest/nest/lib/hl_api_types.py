@@ -23,7 +23,6 @@
 Classes defining the different PyNEST types
 """
 
-
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
@@ -136,15 +135,13 @@ class NodeCollectionIterator(object):
         self._increment += 1
         return val
 
-    next = __next__  # Python2.x
-
 
 class NodeCollection(object):
     """
     Class for `NodeCollection`.
 
     `NodeCollection` represents the nodes of a network. The class supports
-    iteration, concatination, indexing, slicing, membership, length, convertion to and
+    iteration, concatenation, indexing, slicing, membership, length, conversion to and
     from lists, test for membership, and test for equality. By using the
     membership functions :py:func:`get()` and :py:func:`set()`, you can get and set desired
     parameters.
@@ -185,7 +182,9 @@ class NodeCollection(object):
 
     _datum = None
 
-    def __init__(self, data):
+    def __init__(self, data=None):
+        if data is None:
+            data = []
         if isinstance(data, kernel.SLIDatum):
             if data.dtype != "nodecollectiontype":
                 raise TypeError("Need NodeCollection Datum.")
@@ -203,26 +202,63 @@ class NodeCollection(object):
     def __add__(self, other):
         if not isinstance(other, NodeCollection):
             raise NotImplementedError()
+
         return sli_func('join', self._datum, other._datum)
 
     def __getitem__(self, key):
-
         if isinstance(key, slice):
             if key.start is None:
                 start = 1
             else:
-                start = key.start + 1 if key.start >= 0 else key.start
+                start = key.start + 1 if key.start >= 0 else max(key.start, -1 * self.__len__())
+                if start > self.__len__():
+                    raise IndexError('slice start value outside of the NodeCollection')
             if key.stop is None:
                 stop = self.__len__()
             else:
-                stop = key.stop if key.stop >= 0 else key.stop
+                stop = min(key.stop, self.__len__()) if key.stop >= 0 else key.stop - 1
+                if abs(stop) > self.__len__():
+                    raise IndexError('slice stop value outside of the NodeCollection')
             step = 1 if key.step is None else key.step
+            if step < 1:
+                raise IndexError('slicing step for NodeCollection must be strictly positive')
 
             return sli_func('Take', self._datum, [start, stop, step])
         elif isinstance(key, (int, numpy.integer)):
+            if abs(key + (key >= 0)) > self.__len__():
+                raise IndexError('index value outside of the NodeCollection')
             return sli_func('Take', self._datum, [key + (key >= 0)])
+        elif isinstance(key, (list, tuple)):
+            if len(key) == 0:
+                return NodeCollection([])
+            # Must check if elements are bool first, because bool inherits from int
+            if all(isinstance(x, bool) for x in key):
+                if len(key) != len(self):
+                    raise IndexError('Bool index array must be the same length as NodeCollection')
+                np_key = numpy.array(key, dtype=numpy.bool)
+            # Checking that elements are not instances of bool too, because bool inherits from int
+            elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
+                np_key = numpy.array(key, dtype=numpy.uint64)
+                if len(numpy.unique(np_key)) != len(np_key):
+                    raise ValueError('All node IDs in a NodeCollection have to be unique')
+            else:
+                raise TypeError('Indices must be integers or bools')
+            return take_array_index(self._datum, np_key)
+        elif isinstance(key, numpy.ndarray):
+            if len(key) == 0:
+                return NodeCollection([])
+            if len(key.shape) != 1:
+                raise TypeError('NumPy indices must one-dimensional')
+            is_booltype = numpy.issubdtype(key.dtype, numpy.dtype(bool).type)
+            if not (is_booltype or numpy.issubdtype(key.dtype, numpy.integer)):
+                raise TypeError('NumPy indices must be an array of integers or bools')
+            if is_booltype and len(key) != len(self):
+                raise IndexError('Bool index array must be the same length as NodeCollection')
+            if not is_booltype and len(numpy.unique(key)) != len(key):
+                raise ValueError('All node IDs in a NodeCollection have to be unique')
+            return take_array_index(self._datum, key)
         else:
-            raise IndexError('only integers and slices are valid indices')
+            raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')
 
     def __contains__(self, node_id):
         return sli_func('MemberQ', self._datum, node_id)
@@ -233,11 +269,13 @@ class NodeCollection(object):
 
         if self.__len__() != other.__len__():
             return False
+
         return sli_func('eq', self, other)
 
     def __neq__(self, other):
         if not isinstance(other, NodeCollection):
             raise NotImplementedError()
+
         return not self == other
 
     def __len__(self):
@@ -292,6 +330,10 @@ class NodeCollection(object):
         --------
         set
         """
+
+        if not self:
+            raise ValueError('Cannot get parameter of empty NodeCollection')
+
         # ------------------------- #
         #      Checks of input      #
         # ------------------------- #
@@ -303,6 +345,7 @@ class NodeCollection(object):
                 raise ImportError('Pandas could not be imported')
         else:
             raise TypeError('Got unexpected keyword argument')
+
         pandas_output = output == 'pandas'
 
         if len(params) == 0:
@@ -357,6 +400,8 @@ class NodeCollection(object):
             If the specified parameter does not exist for the nodes.
         """
 
+        if not self:
+            return
         if kwargs and params is None:
             params = kwargs
         elif kwargs and params:
@@ -379,8 +424,7 @@ class NodeCollection(object):
                 params = temp_param
 
         if (isinstance(params, (list, tuple)) and self.__len__() != len(params)):
-            raise TypeError(
-                "status dict must be a dict, or a list of dicts of length len(nodes)")
+            raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(self.__len__()))
 
         sli_func('SetStatus', self._datum, params)
 
@@ -390,7 +434,9 @@ class NodeCollection(object):
         """
         if self.__len__() == 0:
             return []
-        return list(self.get('global_id')) if self.__len__() > 1 else [self.get('global_id')]
+
+        return (list(self.get('global_id')) if len(self) > 1
+                else [self.get('global_id')])
 
     def index(self, node_id):
         """
@@ -407,16 +453,37 @@ class NodeCollection(object):
             If the node ID is not in the `NodeCollection`.
         """
         index = sli_func('Find', self._datum, node_id)
+
         if index == -1:
             raise ValueError('{} is not in NodeCollection'.format(node_id))
+
         return index
 
+    def __bool__(self):
+        """Converts the NodeCollection to a bool. False if it is empty, True otherwise."""
+        return len(self) > 0
+
+    def __array__(self, dtype=None):
+        """Convert the NodeCollection to a NumPy array."""
+        return numpy.array(self.tolist(), dtype=dtype)
+
     def __getattr__(self, attr):
+        if not self:
+            raise AttributeError('Cannot get attribute of empty NodeCollection')
+
         if attr == 'spatial':
             metadata = sli_func('GetMetadata', self._datum)
             val = metadata if metadata else None
             super().__setattr__(attr, val)
             return self.spatial
+
+        # NumPy compatibility check:
+        # raises AttributeError to tell NumPy that interfaces other than
+        # __array__ are not available (otherwise get_parameters would be
+        # queried, KeyError would be raised, and all would crash)
+        if attr.startswith('__array_'):
+            raise AttributeError
+
         return self.get(attr)
 
     def __setattr__(self, attr, value):
@@ -441,8 +508,6 @@ class SynapseCollectionIterator(object):
 
     def __next__(self):
         return SynapseCollection(next(self._iter))
-
-    next = __next__  # Python2.x
 
 
 class SynapseCollection(object):
@@ -676,9 +741,7 @@ class SynapseCollection(object):
 
         if (isinstance(params, (list, tuple)) and
                 self.__len__() != len(params)):
-            raise TypeError(
-                "status dict must be a dict, or a list of dicts of length "
-                "len(nodes)")
+            raise TypeError("status dict must be a dict, or a list of dicts of length {}".format(self.__len__()))
 
         if kwargs and params is None:
             params = kwargs

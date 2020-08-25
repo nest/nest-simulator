@@ -22,6 +22,7 @@ set( nestkernel_sources
     recordables_map.h
     archiving_node.h archiving_node.cpp
     clopath_archiving_node.h clopath_archiving_node.cpp
+    urbanczik_archiving_node.h urbanczik_archiving_node_impl.h
     common_synapse_properties.h common_synapse_properties.cpp
     connection.h
     connection_label.h
@@ -57,6 +58,7 @@ set( nestkernel_sources
     recording_device.h recording_device.cpp
     pseudo_recording_device.h
     ring_buffer.h ring_buffer.cpp
+    slice_ring_buffer.cpp slice_ring_buffer.h
     spikecounter.h spikecounter.cpp
     stimulating_device.h
     target_identifier.h
@@ -107,7 +109,7 @@ if ( HAVE_SIONLIB )
       )
 endif ()
 
-if ( HAVE_MPI )
+if ( HAVE_RECORDINGBACKEND_ARBOR )
   set( nestkernel_sources
     ${nestkernel_sources}
     recording_backend_arbor.h recording_backend_arbor.cpp
@@ -130,8 +132,8 @@ target_include_directories( nestkernel PRIVATE
     )
 
 install( TARGETS nestkernel
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 

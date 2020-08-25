@@ -75,7 +75,7 @@ void lockPTRDatum< std::vector< double >, &SLIInterpreter::DoubleVectortype >::p
 
 /**
  * @remark This type was introduced to pass numeric arrays between
- *         python and nodes. It is *not* meant for general use. The
+ *         Python and nodes. It is *not* meant for general use. The
  *         current implementation is minimal and this was done on
  *         purpose. While it is useful to have numeric arrays at the
  *         level of SLI, this would require the implementation of many
@@ -87,7 +87,7 @@ typedef lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype > IntV
 
 /**
  * @remark This type was introduced to pass numeric arrays between
- *         python and nodes. It is *not* meant for general use. The
+ *         Python and nodes. It is *not* meant for general use. The
  *         current implementation is minimal and this was done on
  *         purpose. While it is useful to have numeric arrays at the
  *         level of SLI, this would require the implementation of many

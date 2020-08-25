@@ -13,10 +13,15 @@ description <music_tutorial_3>` for explanation. Below we will only highlight th
 differences to the C++ API. The full example code is in the
 ``pymusic`` directory in the MUSIC repository.
 
+.. note::
+
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+   and cannot be enabled at the same time.
+
 .. code-block:: python
     :linenos:
 
-    #!/usr/bin/python
+    #!/usr/bin/env python3
     import music
 
     [ ... ]
@@ -38,8 +43,8 @@ differences to the C++ API. The full example code is in the
         tickt = runtime.time()
 
 The sending code is almost completely identical to its C++ counterpart.
-Make sure python is used as interpreter for the code (and make sure this
-file is executable). Import music in the expected way.
+Make sure ``python3`` is used as interpreter for the code (and make sure this
+file is executable). Import ``music`` in the expected way.
 
 Unlike the C++ API, the index is not an object, but simply a label
 indicating global or local indexing. The ``map()`` call
@@ -99,8 +104,6 @@ keyword we mentioned in the previous section is, unsurprisingly,
 C++.
 
 As the ``pymusic`` bindings are still quite new the
-documentation is still lagging behind. This quick introduction should
-nevertheless bee enough for you to get going with the bindings. And
-should you need further help, the authors are only an email away.
-
-
+documentation is still lagging behind. This quick introduction should nevertheless be enough for you
+to get going with the bindings. Feel free to ask our `Mailing List <https://www.nest-initiative.org/mailinglist/>`_
+if you need further help.

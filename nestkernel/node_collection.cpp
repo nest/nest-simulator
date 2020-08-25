@@ -159,6 +159,18 @@ NodeCollection::create( const index node_id )
 }
 
 NodeCollectionPTR
+NodeCollection::create( const std::vector< index >& node_ids_vector )
+{
+  if ( node_ids_vector.size() == 0 )
+  {
+    return NodeCollection::create_();
+  }
+  auto node_ids = node_ids_vector; // Create a copy to be able to sort
+  std::sort( node_ids.begin(), node_ids.end() );
+  return NodeCollection::create_( node_ids );
+}
+
+NodeCollectionPTR
 NodeCollection::create_()
 {
   return NodeCollectionPTR( new NodeCollectionPrimitive( 0, 0, invalid_index ) );
@@ -290,14 +302,35 @@ NodeCollectionPrimitive::to_array() const
 
 NodeCollectionPTR NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
 {
-  if ( ( get_metadata().get() or rhs->get_metadata().get() ) and not( get_metadata() == rhs->get_metadata() ) )
-  {
-    throw BadProperty( "Can only join NodeCollections with same metadata." );
-  }
   if ( not valid() or not rhs->valid() )
   {
     throw KernelException( "InvalidNodeCollection" );
   }
+  if ( rhs->empty() )
+  {
+    return NodeCollectionPTR( new NodeCollectionPrimitive( *this ) );
+  }
+  if ( empty() )
+  {
+    auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
+    if ( rhs_ptr )
+    {
+      // rhs is primitive
+      return std::make_shared< NodeCollectionPrimitive >( *rhs_ptr );
+    }
+    else
+    {
+      // rhs is composite
+      auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
+      assert( rhs_ptr );
+      return std::make_shared< NodeCollectionComposite >( *rhs_ptr );
+    }
+  }
+  if ( ( get_metadata().get() or rhs->get_metadata().get() ) and not( get_metadata() == rhs->get_metadata() ) )
+  {
+    throw BadProperty( "Can only join NodeCollections with same metadata." );
+  }
+
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
 
   if ( rhs_ptr ) // if rhs is Primitive
@@ -396,11 +429,17 @@ NodeCollectionPrimitive::NodeCollectionPrimitive::slice( size_t start, size_t st
 void
 NodeCollectionPrimitive::print_me( std::ostream& out ) const
 {
-  std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
-
-  out << "NodeCollection("
-      << "metadata=" << metadata << ", ";
-  print_primitive( out );
+  out << "NodeCollection(";
+  if ( empty() )
+  {
+    out << "<empty>";
+  }
+  else
+  {
+    std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
+    out << "metadata=" << metadata << ", ";
+    print_primitive( out );
+  }
   out << ")";
 }
 
@@ -546,6 +585,10 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
 
 NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
 {
+  if ( rhs->empty() )
+  {
+    return NodeCollectionPTR( new NodeCollectionComposite( *this ) );
+  }
   if ( get_metadata().get() and not( get_metadata() == rhs->get_metadata() ) )
   {
     throw BadProperty( "can only join NodeCollections with the same metadata" );

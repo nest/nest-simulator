@@ -44,20 +44,22 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs: neuron, rate
 
-Name: rate_transformer_node - Rate neuron that sums up incoming rates
-                and applies a nonlinearity specified via the template.
+Short description
++++++++++++++++++
 
-Description:
+Rate neuron that sums up incoming rates and applies a nonlinearity specified via the template
+
+Description
++++++++++++
 
 Base class for rate transformer model of the form
-@f[
-  X_i(t) = \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) )
 
-@f]
+.. math::
+
+   X_i(t) = \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) )
+
 The rate transformer node simply applies the nonlinearity specified in the
 input-function of the template class to all incoming inputs. The boolean
 parameter linear_summation determines whether the input function is applied to
@@ -78,21 +80,24 @@ Remarks:
   are handled as usual.
 - Delays are honored on incoming and outgoing connections.
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+Receives
+++++++++
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
-Parameters:
+Sends
++++++
 
-Only the parameter
-- linear_summation
-and the parameters from the class Nonlinearities can be set in the
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Parameters
+++++++++++
+
+Only the parameter ``linear_summation`` and the parameters from the class ``Nonlinearities`` can be set in the
 status dictionary.
 
-Author: Mario Senden, Jan Hahne, Jannis Schuecker
+EndUserDocs */
 
-FirstVersion: November 2017
-*/
 template < class TNonlinearities >
 class rate_transformer_node : public Archiving_Node
 {

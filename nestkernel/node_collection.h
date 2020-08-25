@@ -203,6 +203,15 @@ public:
   static NodeCollectionPTR create( const index node_id );
 
   /**
+   * Create a NodeCollection from an array of node IDs. Results in a primitive if the
+   * node IDs are homogeneous and contiguous, or a composite otherwise.
+   *
+   * @param node_ids Array of node IDs from which to create the NodeCollection
+   * @return a NodeCollection pointer to the created NodeCollection
+   */
+  static NodeCollectionPTR create( const std::vector< index >& node_ids );
+
+  /**
    * Check to see if the fingerprint of the NodeCollection matches that of the
    * kernel.
    *
@@ -325,6 +334,13 @@ public:
   virtual bool is_range() const = 0;
 
   /**
+   * Checks if the NodeCollection has no elements.
+   *
+   * @return true if the NodeCollection is empty, false otherwise
+   */
+  virtual bool empty() const = 0;
+
+  /**
    * Returns index of node with given node ID in NodeCollection.
    *
    * @return Index of node with given node ID; -1 if node not in NodeCollection.
@@ -332,7 +348,7 @@ public:
   virtual long find( const index ) const = 0;
 
 private:
-  unsigned long fingerprint_; //!< Unique identity of the kernel that created the //!< NodeCollection
+  unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
   static NodeCollectionPTR create_();
   static NodeCollectionPTR create_( const std::vector< index >& );
 };
@@ -426,6 +442,7 @@ public:
   NodeCollectionMetadataPTR get_metadata() const override;
 
   bool is_range() const override;
+  bool empty() const override;
 
   long find( const index ) const override;
 
@@ -552,6 +569,7 @@ public:
   NodeCollectionMetadataPTR get_metadata() const override;
 
   bool is_range() const override;
+  bool empty() const override;
 
   long find( const index ) const override;
 };
@@ -720,8 +738,10 @@ inline bool NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
 
-  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_
-    and metadata_ == rhs_ptr->metadata_;
+  // Checking that rhs_ptr is valid first, to avoid segfaults. If rhs is a NodeCollectionComposite,
+  // rhs_ptr will be a null pointer.
+  return rhs_ptr != nullptr and first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_
+    and model_id_ == rhs_ptr->model_id_ and metadata_ == rhs_ptr->metadata_;
 }
 
 inline bool NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
@@ -772,6 +792,12 @@ NodeCollectionPrimitive::is_range() const
   return true;
 }
 
+inline bool
+NodeCollectionPrimitive::empty() const
+{
+  return last_ == 0;
+}
+
 inline long
 NodeCollectionPrimitive::find( const index neuron_id ) const
 {
@@ -818,7 +844,9 @@ inline bool NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
 
-  if ( size_ != rhs_ptr->size() || parts_.size() != rhs_ptr->parts_.size() )
+  // Checking if rhs_ptr is invalid first, to avoid segfaults. If rhs is a NodeCollectionPrimitive,
+  // rhs_ptr will be a null pointer.
+  if ( rhs_ptr == nullptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
   {
     return false;
   }
@@ -876,6 +904,13 @@ NodeCollectionComposite::get_metadata() const
 inline bool
 NodeCollectionComposite::is_range() const
 {
+  return false;
+}
+
+inline bool
+NodeCollectionComposite::empty() const
+{
+  // Composite NodeCollections can never be empty.
   return false;
 }
 } // namespace nest

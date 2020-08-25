@@ -284,7 +284,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
   Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
-    throw IllegalConnection( "Topology Connect with pairwise_bernoulli to devices are not possible." );
+    throw IllegalConnection( "Spatial Connect with pairwise_bernoulli to devices is not possible." );
   }
 
 // sharing specs on next line commented out because gcc 4.2 cannot handle them
@@ -360,7 +360,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
   Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
-    throw IllegalConnection( "Topology Connect with fixed_indegree to devices are not possible." );
+    throw IllegalConnection( "Spatial Connect with fixed_indegree to devices is not possible." );
   }
 
   NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
@@ -639,7 +639,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
   Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
-    throw IllegalConnection( "Topology pairwise_bernoulli to devices are not possible." );
+    throw IllegalConnection( "Spatial Connect with fixed_outdegree to devices is not possible." );
   }
 
   NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();

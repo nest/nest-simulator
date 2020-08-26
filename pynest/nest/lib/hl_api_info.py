@@ -271,14 +271,13 @@ def SetStatus(nodes, params, val=None):
     if len(nodes) == 0:
         return
 
-    n0 = nodes[0]
     params_is_dict = isinstance(params, dict)
     set_status_nodes = isinstance(nodes, nest.NodeCollection)
     set_status_local_nodes = set_status_nodes and nodes.get('local')
 
     if (params_is_dict and set_status_local_nodes):
 
-        node_params = n0.get()
+        node_params = nodes[0].get()
         contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
                          key, vals in params.items()]
 

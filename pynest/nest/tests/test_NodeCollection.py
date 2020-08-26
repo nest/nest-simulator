@@ -394,7 +394,7 @@ class TestNodeCollection(unittest.TestCase):
         with self.assertRaises(nest.kernel.NESTError):
             nest.NodeCollection([5, 6, 4])
 
-    def test_slice_with_unsorted_raises_raises(self):
+    def test_slice_with_unsorted_raises(self):
         """Slicing NodeCollection with unsorted list raises error"""
         n = nest.Create('iaf_psc_alpha', 10)
 

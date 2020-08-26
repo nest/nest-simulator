@@ -87,8 +87,9 @@ matrix objects.
 If tau_m is very close to tau_syn_ex or tau_syn_in, the model
 will numerically behave as if tau_m is equal to tau_syn_ex or
 tau_syn_in, respectively, to avoid numerical instabilities.
-For details, please see IAF_neurons_singularity.ipynb in the
-NEST source code (docs/model_details).
+For details, you can check out the `IAF neurons singularity
+<https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_
+notebook in the NEST source code.
 
 iaf_psc_exp can handle current input in two ways: Current input
 through receptor_type 0 are handled as stepwise constant current
@@ -97,6 +98,10 @@ the membrane potential equation. Current input through
 receptor_type 1, in contrast, is filtered through an exponential
 kernel with the time constant of the excitatory synapse,
 tau_syn_ex. For an example application, see [4]_.
+
+For conversion between postsynaptic potentials (PSPs) and PSCs,
+please refer to the ``postsynaptic_potential_to_current`` function in
+:doc:`PyNEST Microcircuit: Helper Functions <../auto_examples/Potjans_2014/helpers>`.
 
 Parameters
 ++++++++++
@@ -107,8 +112,10 @@ The following parameters can be set in the status dictionary.
  E_L          mV      Resting membrane potential
  C_m          pF      Capacity of the membrane
  tau_m        ms      Membrane time constant
- tau_syn_ex   ms      Time constant of postsynaptic excitatory currents
- tau_syn_in   ms      Time constant of postsynaptic inhibitory currents
+ tau_syn_ex   ms      Exponential decay time constant of excitatory synaptic
+                      current kernel
+ tau_syn_in   ms      Exponential decay time constant of inhibitory synaptic
+                      current kernel
  t_ref        ms      Duration of refractory period (V_m = V_reset)
  V_m          mV      Membrane potential in mV
  V_th         mV      Spike threshold in mV
@@ -148,7 +155,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 See also
 ++++++++
 
-iaf_psc_exp_ps
+iaf_cond_exp, iaf_psc_exp_ps
 
 EndUserDocs */
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # generate_help.py
@@ -41,7 +41,7 @@ from helpers import delete_helpdir
 from helpers import help_generation_required
 
 if len(sys.argv) != 3:
-    print("Usage: python generate_help.py <source_dir> <build_dir>")
+    print("Usage: python3 generate_help.py <source_dir> <build_dir>")
     sys.exit(1)
 
 source_dir, build_dir = sys.argv[1:]
@@ -56,10 +56,6 @@ create_helpdirs(helpdir)
 
 allfiles = []
 for dirpath, dirnames, files in os.walk(source_dir):
-    if "MyModule" in dirpath and "MyModule" not in source_dir:
-        # Do not generate help from MyModule unless we are building MyModule
-        continue
-
     for f in files:
         if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")) and \
            not f.startswith(".#"):

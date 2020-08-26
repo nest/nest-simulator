@@ -27,13 +27,16 @@ import numpy
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
+
+from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_needed,
+                                        _connect_spatial, _process_conn_spec,
+                                        _process_spatial_projections, _process_syn_spec)
 from .hl_api_helper import *
-from .hl_api_connection_helpers import (_connect_layers_needed, _connect_spatial,
-                                        _process_conn_spec, _process_spatial_projections, _process_syn_spec)
-from .hl_api_nodes import Create
-from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 from .hl_api_info import GetStatus
+from .hl_api_nodes import Create
+from .hl_api_parallel_computing import NumProcesses
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
+from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
 __all__ = [
     'CGConnect',
@@ -125,9 +128,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     Parameters
     ----------
-    pre : NodeCollection (or np.array)
+    pre : NodeCollection (or array-like object)
         Presynaptic nodes, as object representing the IDs of the nodes
-    post : NodeCollection (or np.array)
+    post : NodeCollection (or array-like object)
         Postsynaptic nodes, as object representing the IDs of the nodes
     conn_spec : str or dict, optional
         Specifies connectivity rule, see below
@@ -143,11 +146,14 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Notes
     -----
     It is possible to connect NumPy arrays of node IDs one-to-one by passing the arrays as `pre` and `post`,
-    with no connection specification, and a synapse specification, `syn_spec`, with at least the synapse model.
+    specifying `'one_to_one'` for `conn_spec`.
+    In that case, the arrays may contain non-unique IDs.
     You may also specify weight, delay, and receptor type for each connection as NumPy arrays in the `syn_spec`
     dictionary.
+    This feature is currently not available when MPI is used; trying to connect arrays with more than one
+    MPI process will raise an error.
 
-    If pre and post have spatial posistions, a `mask` can be specified as a dictionary. The mask define which
+    If pre and post have spatial positions, a `mask` can be specified as a dictionary. The mask define which
     nodes are considered as potential targets for each source node. Connections with spatial nodes can also
     use `nest.spatial_distributions` as parameters, for instance for the probability `p`.
 
@@ -200,78 +206,71 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     ---------
     :ref:`connection_mgnt`
     """
-
-    connect_np_arrays = False
-    if isinstance(pre, numpy.ndarray) or isinstance(post, numpy.ndarray):
-        if not (isinstance(pre, numpy.ndarray) and isinstance(post, numpy.ndarray)):
-            raise TypeError("Sources and targets must either both be NodeCollections, "
-                            "or NumPy arrays with conn_spec=None")
-        elif conn_spec is not None:
-            raise ValueError("When connecting two arrays of node IDs, conn_spec cannot be given")
-        elif not (pre.ndim == 1 and post.ndim == 1):
-            raise ValueError("Sources and targets must be 1-dimensional NumPy arrays")
-        else:
-            connect_np_arrays = True
-            conn_spec = 'one_to_one'
+    use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
 
     # Converting conn_spec to dict, without putting it on the SLI stack.
     processed_conn_spec = _process_conn_spec(conn_spec)
     # If syn_spec is given, its contents are checked, and if needed converted
     # to the right formats.
     processed_syn_spec = _process_syn_spec(
-        syn_spec, processed_conn_spec, len(pre), len(post), connect_np_arrays)
+        syn_spec, processed_conn_spec, len(pre), len(post), use_connect_arrays)
 
     # If pre and post are arrays of node IDs, and conn_spec is unspecified,
     # the node IDs are connected one-to-one.
-    if connect_np_arrays:
+    if use_connect_arrays:
+        if NumProcesses() > 1:
+            raise RuntimeError("Connecting arrays using MPI is currently not supported.")
+
         if return_synapsecollection:
             raise ValueError("SynapseCollection cannot be returned when connecting two arrays of node IDs")
+
         if processed_syn_spec is None:
             raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
                              "be specified and contain at least the synapse model.")
+
         weights = numpy.array(processed_syn_spec['weight']) if 'weight' in processed_syn_spec else None
         delays = numpy.array(processed_syn_spec['delay']) if 'delay' in processed_syn_spec else None
+
         try:
             synapse_model = processed_syn_spec['synapse_model']
         except KeyError:
             raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
                              "contain a synapse model.")
+
         # Split remaining syn_spec entries to key and value arrays
         reduced_processed_syn_spec = {k: processed_syn_spec[k]
                                       for k in set(processed_syn_spec.keys()).difference(
                                           set(('weight', 'delay', 'synapse_model')))}
+
         if len(reduced_processed_syn_spec) > 0:
             syn_param_keys = numpy.array(list(reduced_processed_syn_spec.keys()), dtype=numpy.string_)
             syn_param_values = numpy.zeros([len(reduced_processed_syn_spec), len(pre)])
-            for i, item in enumerate(reduced_processed_syn_spec.items()):
-                key, value = item
+
+            for i, value in enumerate(reduced_processed_syn_spec.values()):
                 syn_param_values[i] = value
         else:
             syn_param_keys = None
             syn_param_values = None
 
         connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
+
         return
 
     sps(pre)
     sps(post)
 
     if not isinstance(pre, NodeCollection):
-        raise TypeError("Not implemented, presynaptic nodes must be a "
-                        "NodeCollection")
+        raise TypeError("Not implemented, presynaptic nodes must be a NodeCollection")
     if not isinstance(post, NodeCollection):
-        raise TypeError("Not implemented, postsynaptic nodes must be a "
-                        "NodeCollection")
+        raise TypeError("Not implemented, postsynaptic nodes must be a NodeCollection")
 
     # In some cases we must connect with ConnectLayers instead.
     if _connect_layers_needed(processed_conn_spec, processed_syn_spec):
         # Check that pre and post are layers
         if pre.spatial is None:
-            raise TypeError(
-                "Presynaptic NodeCollection must have spatial information")
+            raise TypeError("Presynaptic NodeCollection must have spatial information")
         if post.spatial is None:
-            raise TypeError(
-                "Presynaptic NodeCollection must have spatial information")
+            raise TypeError("Presynaptic NodeCollection must have spatial information")
 
         # Create the projection dictionary
         spatial_projections = _process_spatial_projections(
@@ -333,9 +332,7 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
 
     sr("statusdict/have_libneurosim ::")
     if not spp():
-        raise kernel.NESTError(
-            "NEST was not compiled with support for libneurosim: " +
-            "CGConnect is not available.")
+        raise kernel.NESTError("NEST was not compiled with support for libneurosim: CGConnect is not available.")
 
     if parameter_map is None:
         parameter_map = {}
@@ -364,9 +361,7 @@ def CGParse(xml_filename):
 
     sr("statusdict/have_libneurosim ::")
     if not spp():
-        raise kernel.NESTError(
-            "NEST was not compiled with support for libneurosim: " +
-            "CGParse is not available.")
+        raise kernel.NESTError("NEST was not compiled with support for libneurosim: CGParse is not available.")
 
     sps(xml_filename)
     sr("CGParse")
@@ -395,8 +390,7 @@ def CGSelectImplementation(tag, library):
     sr("statusdict/have_libneurosim ::")
     if not spp():
         raise kernel.NESTError(
-            "NEST was not compiled with support for libneurosim: " +
-            "CGSelectImplementation is not available.")
+            "NEST was not compiled with support for libneurosim: CGSelectImplementation is not available.")
 
     sps(tag)
     sps(library)

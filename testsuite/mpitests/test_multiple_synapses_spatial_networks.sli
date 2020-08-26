@@ -39,7 +39,7 @@
 /unittest using
 
 
-[1 2 4 8]
+[1 2 4]
 {  
   [-0.25 0.25 0.25] Range
   { /x Set [0.25 -0.25 -0.25] Range { x exch 2 arraystore } Map } Map 1 Flatten
@@ -64,7 +64,7 @@
   ConnectLayers
   
   /weight_delay_syn [] def
-  << >> GetConnections /conns Set  
+  << >> GetConnections /conns Set
   conns GetStatus
   {     
     [[/weight /delay /synapse_model]] get /wdsm Set

@@ -39,7 +39,7 @@
 /unittest using
 
 
-[1 2 4 8]
+[1 2 4]
 {
   /src /iaf_psc_alpha 4 Create def
   /trgt /iaf_psc_alpha 4 Create def

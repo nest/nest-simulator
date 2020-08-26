@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# Run as python layers.py > layers.log
+# Run as python3 layers.py > layers.log
 
 import matplotlib.pyplot as plt
 import nest
@@ -29,20 +29,20 @@ import numpy as np
 np.random.seed(1234567)
 
 
-def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
+def beautify_layer(layer, fig=plt.gcf(), xlabel=None, ylabel=None,
                    xlim=None, ylim=None, xticks=None, yticks=None, dx=0, dy=0):
     """Assume either x and ylims/ticks given or none"""
-    ctr = l.spatial['center']
-    ext = l.spatial['extent']
+    ctr = layer.spatial['center']
+    ext = layer.spatial['extent']
 
     if xticks is None:
-        if 'shape' in l.spatial:
-            dx = float(ext[0]) / l.spatial['shape'][0]
-            dy = float(ext[1]) / l.spatial['shape'][1]
+        if 'shape' in layer.spatial:
+            dx = float(ext[0]) / layer.spatial['shape'][0]
+            dy = float(ext[1]) / layer.spatial['shape'][1]
             xticks = ctr[0] - ext[0] / 2. + dx / 2. + dx * np.arange(
-                l.spatial['shape'][0])
+                layer.spatial['shape'][0])
             yticks = ctr[1] - ext[1] / 2. + dy / 2. + dy * np.arange(
-                l.spatial['shape'][1])
+                layer.spatial['shape'][1])
 
     if xlim is None:
         xlim = [ctr[0] - ext[0] / 2. - dx / 2., ctr[0] + ext[
@@ -69,12 +69,12 @@ def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
 nest.ResetKernel()
 
 #{ layer1 #}
-l = nest.Create('iaf_psc_alpha',
-                positions=nest.spatial.grid(shape=[5, 5]))
+layer = nest.Create('iaf_psc_alpha',
+                    positions=nest.spatial.grid(shape=[5, 5]))
 #{ end #}
 
-fig = nest.PlotLayer(l, nodesize=50)
-beautify_layer(l, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)')
+fig = nest.PlotLayer(layer, nodesize=50)
+beautify_layer(layer, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)')
 ax = fig.gca()
 tx = []
 for r in range(5):
@@ -92,7 +92,7 @@ for r in range(5):
 
 print("#{ layer1s.log #}")
 #{ layer1s #}
-print(l.spatial)
+print(layer.spatial)
 #{ end #}
 print("#{ end.log #}")
 
@@ -107,14 +107,14 @@ print("#{ end.log #}")
 nest.ResetKernel()
 
 #{ layer2 #}
-l = nest.Create('iaf_psc_alpha',
-                positions=nest.spatial.grid(
-                    shape=[5, 5],
-                    extent=[2.0, 0.5]))
+layer = nest.Create('iaf_psc_alpha',
+                    positions=nest.spatial.grid(
+                        shape=[5, 5],
+                        extent=[2.0, 0.5]))
 #{ end #}
 
-fig = nest.PlotLayer(l, nodesize=50)
-beautify_layer(l, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)')
+fig = nest.PlotLayer(layer, nodesize=50)
+beautify_layer(layer, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)')
 ax = fig.gca()
 tx = []
 
@@ -135,22 +135,22 @@ plt.savefig('../user_manual_figures/layer2.png', bbox_inches='tight',
 nest.ResetKernel()
 
 #{ layer3 #}
-l1 = nest.Create('iaf_psc_alpha',
-                 positions=nest.spatial.grid(shape=[5, 5]))
-l2 = nest.Create('iaf_psc_alpha',
-                 positions=nest.spatial.grid(
-                     shape=[5, 5],
-                     center=[-1., 1.]))
-l3 = nest.Create('iaf_psc_alpha',
-                 positions=nest.spatial.grid(
-                     shape=[5, 5],
-                     center=[1.5, 0.5]))
+layer1 = nest.Create('iaf_psc_alpha',
+                     positions=nest.spatial.grid(shape=[5, 5]))
+layer2 = nest.Create('iaf_psc_alpha',
+                     positions=nest.spatial.grid(
+                         shape=[5, 5],
+                         center=[-1., 1.]))
+layer3 = nest.Create('iaf_psc_alpha',
+                     positions=nest.spatial.grid(
+                         shape=[5, 5],
+                         center=[1.5, 0.5]))
 #{ end #}
 
-fig = nest.PlotLayer(l1, nodesize=50)
-nest.PlotLayer(l2, nodesize=50, nodecolor='g', fig=fig)
-nest.PlotLayer(l3, nodesize=50, nodecolor='r', fig=fig)
-beautify_layer(l1, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)',
+fig = nest.PlotLayer(layer1, nodesize=50)
+nest.PlotLayer(layer2, nodesize=50, nodecolor='g', fig=fig)
+nest.PlotLayer(layer3, nodesize=50, nodecolor='r', fig=fig)
+beautify_layer(layer1, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)',
                xlim=[-1.6, 2.1], ylim=[-0.6, 1.6],
                xticks=np.arange(-1.4, 2.05, 0.2),
                yticks=np.arange(-0.4, 1.45, 0.2))
@@ -164,18 +164,18 @@ nest.ResetKernel()
 #{ layer3a #}
 nx, ny = 5, 3
 d = 0.1
-l = nest.Create('iaf_psc_alpha',
-                positions=nest.spatial.grid(
-                    shape=[nx, ny],
-                    extent=[nx * d, ny * d],
-                    center=[nx * d / 2., 0.]))
+layer = nest.Create('iaf_psc_alpha',
+                    positions=nest.spatial.grid(
+                        shape=[nx, ny],
+                        extent=[nx * d, ny * d],
+                        center=[nx * d / 2., 0.]))
 #{ end #}
 
-fig = nest.PlotLayer(l, nodesize=100)
+fig = nest.PlotLayer(layer, nodesize=100)
 plt.plot(0, 0, 'x', markersize=20, c='k', mew=3)
 plt.plot(nx * d / 2, 0, 'o', markersize=20, c='k', mew=3, mfc='none',
          zorder=100)
-beautify_layer(l, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)',
+beautify_layer(layer, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)',
                xticks=np.arange(0., 0.501, 0.05),
                yticks=np.arange(-0.15, 0.151, 0.05),
                xlim=[-0.05, 0.55], ylim=[-0.2, 0.2])
@@ -189,12 +189,12 @@ nest.ResetKernel()
 #{ layer4 #}
 pos = nest.spatial.free(pos=nest.random.uniform(min=-0.5, max=0.5),
                         num_dimensions=2)
-l = nest.Create('iaf_psc_alpha', 50,
-                positions=pos)
+layer = nest.Create('iaf_psc_alpha', 50,
+                    positions=pos)
 #{ end #}
 
-fig = nest.PlotLayer(l, nodesize=50)
-beautify_layer(l, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)',
+fig = nest.PlotLayer(layer, nodesize=50)
+beautify_layer(layer, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)',
                xlim=[-0.55, 0.55], ylim=[-0.55, 0.55],
                xticks=[-0.5, 0., 0.5], yticks=[-0.5, 0., 0.5])
 
@@ -206,11 +206,11 @@ nest.ResetKernel()
 
 #{ layer4b #}
 pos = nest.spatial.free(pos=[[-0.5, -0.5], [-0.25, -0.25], [0.75, 0.75]])
-l = nest.Create('iaf_psc_alpha', positions=pos)
+layer = nest.Create('iaf_psc_alpha', positions=pos)
 #{ end #}
 
-fig = nest.PlotLayer(l, nodesize=50)
-beautify_layer(l, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)',
+fig = nest.PlotLayer(layer, nodesize=50)
+beautify_layer(layer, fig, xlabel='x-axis (columns)', ylabel='y-axis (rows)',
                xlim=[-0.55, 0.80], ylim=[-0.55, 0.80],
                xticks=[-0.75, -0.5, -0.25, 0., 0.25, 0.5, 0.75, 1.],
                yticks=[-0.75, -0.5, -0.25, 0., 0.25, 0.5, 0.75, 1.])
@@ -224,11 +224,10 @@ nest.ResetKernel()
 #{ layer4_3d #}
 pos = nest.spatial.free(nest.random.uniform(min=-0.5, max=0.5),
                         num_dimensions=3)
-l = nest.Create('iaf_psc_alpha', 200,
-                positions=pos)
+layer = nest.Create('iaf_psc_alpha', 200, positions=pos)
 #{ end #}
 
-fig = nest.PlotLayer(l, nodesize=50)
+fig = nest.PlotLayer(layer, nodesize=50)
 
 plt.savefig('../user_manual_figures/layer4_3d.png', bbox_inches='tight')
 
@@ -238,10 +237,10 @@ nest.ResetKernel()
 
 #{ layer4_3d_b #}
 pos = nest.spatial.grid(shape=[4, 5, 6])
-l = nest.Create('iaf_psc_alpha', positions=pos)
+layer = nest.Create('iaf_psc_alpha', positions=pos)
 #{ end #}
 
-fig = nest.PlotLayer(l, nodesize=50)
+fig = nest.PlotLayer(layer, nodesize=50)
 
 plt.savefig('../user_manual_figures/layer4_3d_b.png', bbox_inches='tight')
 
@@ -250,11 +249,11 @@ plt.savefig('../user_manual_figures/layer4_3d_b.png', bbox_inches='tight')
 nest.ResetKernel()
 
 #{ player #}
-l = nest.Create('iaf_psc_alpha',
-                positions=nest.spatial.grid(
-                    shape=[5, 1],
-                    extent=[5., 1.],
-                    edge_wrap=True))
+layer = nest.Create('iaf_psc_alpha',
+                    positions=nest.spatial.grid(
+                        shape=[5, 1],
+                        extent=[5., 1.],
+                        edge_wrap=True))
 #{ end #}
 
 # fake plot with layer on line and circle
@@ -309,10 +308,10 @@ plt.savefig('../user_manual_figures/player.png', bbox_inches='tight')
 nest.ResetKernel()
 
 #{ layer6 #}
-l1 = nest.Create('iaf_cond_alpha',
-                 positions=nest.spatial.grid(shape=[2, 1]))
-l2 = nest.Create('poisson_generator',
-                 positions=nest.spatial.grid(shape=[2, 1]))
+layer1 = nest.Create('iaf_cond_alpha',
+                     positions=nest.spatial.grid(shape=[2, 1]))
+layer2 = nest.Create('poisson_generator',
+                     positions=nest.spatial.grid(shape=[2, 1]))
 #{ end #}
 
 print("#{ layer6 #}")
@@ -324,17 +323,17 @@ print("#{ end #}")
 nest.ResetKernel()
 
 #{ vislayer #}
-l = nest.Create('iaf_psc_alpha',
-                positions=nest.spatial.grid(shape=[21, 21]))
+layer = nest.Create('iaf_psc_alpha',
+                    positions=nest.spatial.grid(shape=[21, 21]))
 probability_param = nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.15)
 conndict = {'rule': 'pairwise_bernoulli',
             'p': probability_param,
             'mask': {'circular': {'radius': 0.4}}}
-nest.Connect(l, l, conndict)
-fig = nest.PlotLayer(l, nodesize=80)
+nest.Connect(layer, layer, conndict)
+fig = nest.PlotLayer(layer, nodesize=80)
 
-ctr = nest.FindCenterElement(l)
-nest.PlotTargets(ctr, l, fig=fig,
+ctr = nest.FindCenterElement(layer)
+nest.PlotTargets(ctr, layer, fig=fig,
                  mask=conndict['mask'], probability_parameter=probability_param,
                  src_size=250, tgt_color='red', tgt_size=20, mask_color='red',
                  probability_cmap='Greens')

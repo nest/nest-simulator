@@ -58,6 +58,7 @@ set( nestkernel_sources
     recording_device.h recording_device.cpp
     pseudo_recording_device.h
     ring_buffer.h ring_buffer.cpp
+    slice_ring_buffer.cpp slice_ring_buffer.h
     spikecounter.h spikecounter.cpp
     stimulating_device.h
     target_identifier.h

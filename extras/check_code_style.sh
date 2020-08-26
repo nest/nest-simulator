@@ -86,7 +86,7 @@ i.e. all executions should start like:
     ./extras/check_code_style.sh ...
 
 The setup of the tooling is explained here: 
-    https://nest.github.io/nest-simulator/coding_guidelines_c++
+    https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html
 
 Options:
 

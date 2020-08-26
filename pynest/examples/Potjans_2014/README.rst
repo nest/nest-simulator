@@ -48,7 +48,7 @@ To run the simulation, simply use:
 
 .. code-block:: bash
 
-   python run_microcircuit.py
+   python3 run_microcircuit.py
 
 The output will be saved in the ``data`` directory.
 
@@ -58,7 +58,7 @@ The command for running the script with two MPI processes is:
 
 .. code-block:: bash
 
-   mpirun -n 2 python run_microcircuit.py
+   mpirun -n 2 python3 run_microcircuit.py
 
 Note on parameters
 ##################

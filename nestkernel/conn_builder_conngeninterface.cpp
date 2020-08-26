@@ -22,6 +22,8 @@
 
 #include "conn_builder_conngeninterface.h"
 
+#ifdef HAVE_LIBNEUROSIM
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
@@ -337,3 +339,5 @@ ConnectionGeneratorBuilder::cg_get_ranges( RangeSet& ranges, const NodeCollectio
 }
 
 } // namespace nest
+
+#endif /* ifdef HAVE_LIBNEUROSIM */

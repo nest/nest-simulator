@@ -23,6 +23,9 @@
 #ifndef CONN_BUILDER_CONNGENINTERFACE_H
 #define CONN_BUILDER_CONNGENINTERFACE_H
 
+#include "config.h"
+#ifdef HAVE_LIBNEUROSIM
+
 // C++ includes:
 #include <map>
 #include <vector>
@@ -54,5 +57,7 @@ private:
 };
 
 } // namespace nest
+
+#endif /* ifdef HAVE_LIBNEUROSIM */
 
 #endif /* ifdef CONN_BUILDER_CONNGENINTERFACE_H */

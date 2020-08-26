@@ -81,3 +81,20 @@
   } forall
 
 def
+
+
+/CGConnect
+<< /deprecation_warning true >>
+Options
+
+/CGConnect
+{
+  << >> begin
+  /CGConnect /deprecation_warning GetOption true eq
+  {
+    (SLI function CGConnect is deprecated and will be integrated into Connect in NEST 3.0.) M_DEPRECATED message
+    /CGConnect << /deprecation_warning false >> SetOptions
+  } if
+  
+  ::CGConnect
+} bind def

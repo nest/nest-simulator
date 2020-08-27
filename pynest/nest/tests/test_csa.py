@@ -118,7 +118,9 @@ class CSATestCase(unittest.TestCase):
             self.assertEqual(len(conns), 0)
 
     def test_CSA_error_unknown_synapse(self):
-        """Error handling of conngen Connect in case of unknown synapse model"""
+        """
+        Error handling of conngen Connect in case of unknown synapse model
+        """
 
         nest.ResetKernel()
 
@@ -128,13 +130,14 @@ class CSATestCase(unittest.TestCase):
         synspec = {'synapse_model': synmodel}
 
         n_neurons = 4
-        
+
         pop = nest.Create("iaf_psc_alpha", n_neurons)
 
         # We expect conngen Connect to fail with an UnknownSynapseType
         # exception if an unknown synapse model is given
         self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType",
                                nest.Connect, pop, pop, connspec, synspec)
+
 
 def suite():
 

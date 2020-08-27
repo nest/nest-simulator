@@ -100,6 +100,12 @@ nest::MPIManager::set_communicator( MPI_Comm global_comm )
   MPI_Comm_size( comm, &num_processes_ );
   MPI_Comm_rank( comm, &rank_ );
   recv_buffer_size_ = send_buffer_size_ * get_num_processes();
+
+  // use at least 2 * number of processes entries (need at least two
+  // entries per process to use flag of first entry as validity and
+  // last entry to communicate end of communication)
+  kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
+  kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
 }
 
 void
@@ -133,12 +139,6 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
     set_communicator( MPI_COMM_WORLD );
 #endif
   }
-
-  // use at least 2 * number of processes entries (need at least two
-  // entries per process to use flag of first entry as validity and
-  // last entry to communicate end of communication)
-  kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
-  kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
 
   // create off-grid-spike type for MPI communication
   // creating derived datatype

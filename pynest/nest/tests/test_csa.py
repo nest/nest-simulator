@@ -51,67 +51,8 @@ HAVE_LIBNEUROSIM = nest.ll_api.sli_pop()
 class CSATestCase(unittest.TestCase):
     """CSA tests"""
 
-    def test_CSA_OneToOne_tuples(self):
-        """One-to-one connectivity using CGConnect with id tuples"""
-
-        nest.ResetKernel()
-
-        n_neurons = 4
-
-        sources = nest.Create("iaf_psc_alpha", n_neurons)
-        targets = nest.Create("iaf_psc_alpha", n_neurons)
-
-        # Create a plain connection set
-        cg = csa.cset(csa.oneToOne)
-
-        # Connect sources and targets using the connection set
-        # cs. This will internally call the variant of CGConnect that
-        # takes lists
-        nest.CGConnect(sources, targets, cg)
-
-        for i in range(n_neurons):
-            # We expect all connections from sources to have the
-            # correct targets
-            conns = nest.GetStatus(nest.GetConnections(sources[i]))
-            self.assertEqual(len(conns), 1)
-            self.assertEqual(conns[0]["target"], targets[i].get('global_id'))
-
-            # We expect the targets to have no connections at all
-            conns = nest.GetStatus(nest.GetConnections(targets[i]))
-            self.assertEqual(len(conns), 0)
-
-    @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
-    def test_CSA_OneToOne_intvectors(self):
-        """One-to-one connectivity using CGConnect with id intvectors"""
-
-        nest.ResetKernel()
-
-        n_neurons = 4
-
-        sources = nest.Create("iaf_psc_alpha", n_neurons)
-        targets = nest.Create("iaf_psc_alpha", n_neurons)
-
-        # Create a plain connection set
-        cg = csa.cset(csa.oneToOne)
-
-        # Connect sources and targets (both converted to NumPy arrays)
-        # using the connection set cs. This will internally call the
-        # variant of CGConnect that takes intvector instead of lists
-        nest.CGConnect(numpy.array(sources), numpy.array(targets), cg)
-
-        for i in range(n_neurons):
-            # We expect all connections from sources to have the
-            # correct targets
-            conns = nest.GetStatus(nest.GetConnections(sources[i]))
-            self.assertEqual(len(conns), 1)
-            self.assertEqual(conns[0]["target"], targets[i].get('global_id'))
-
-            # We expect the targets to have no connections at all
-            conns = nest.GetStatus(nest.GetConnections(targets[i]))
-            self.assertEqual(len(conns), 0)
-
     def test_CSA_OneToOne_params(self):
-        """One-to-one connectivity using CGConnect with paramters"""
+        """One-to-one connectivity using conngen Connect with paramters"""
 
         nest.ResetKernel()
 
@@ -128,7 +69,9 @@ class CSATestCase(unittest.TestCase):
         # Connect sources and targets using the connection set cs and
         # a parameter map mapping weight to position 0 in the value
         # set and delay to position 1
-        nest.CGConnect(sources, targets, cs, {"weight": 0, "delay": 1})
+        params_map = {"weight": 0, "delay": 1}
+        connspec = {"rule": "conngen", "cg": cs, "params_map": params_map}
+        nest.Connect(pre, post, connspec)
 
         for i in range(n_neurons):
             # We expect all connections from sources to have the
@@ -144,7 +87,7 @@ class CSATestCase(unittest.TestCase):
             self.assertEqual(len(conns), 0)
 
     def test_CSA_OneToOne_synmodel(self):
-        """One-to-one connectivity using CGConnect with synmodel"""
+        """One-to-one connectivity using conngen Connect with synmodel"""
 
         nest.ResetKernel()
 
@@ -158,7 +101,9 @@ class CSATestCase(unittest.TestCase):
         cs = csa.cset(csa.oneToOne)
 
         # Connect with a non-standard synapse model
-        nest.CGConnect(sources, targets, cs, model=synmodel)
+        connspec = {"rule": "conngen", "cg": cs}
+        synspec = {'synapse_model': synmodel}
+        nest.Connect(pre, post, connspec, synspec)
 
         for i in range(n_neurons):
             # We expect all connections to have the correct targets
@@ -172,40 +117,24 @@ class CSATestCase(unittest.TestCase):
             conns = nest.GetStatus(nest.GetConnections(targets[i]))
             self.assertEqual(len(conns), 0)
 
-    def test_CSA_error_unknown_nodes(self):
-        """Error handling of CGConnect in case of unknown nodes"""
-
-        nest.ResetKernel()
-
-        # Create a plain connection set
-        cs = csa.cset(csa.oneToOne)
-
-        nonnodes = [1, 2, 3]
-
-        # We expect CGConnect to fail with an UnknownNode exception if
-        # unknown nodes are given
-        self.assertRaisesRegex(nest.kernel.NESTError, "UnknownNode",
-                               nest.CGConnect, nonnodes, nonnodes, cs)
-
     def test_CSA_error_unknown_synapse(self):
-        """Error handling of CGConnect in case of unknown synapse model"""
+        """Error handling of conngen Connect in case of unknown synapse model"""
 
         nest.ResetKernel()
 
         # Create a plain connection set
         cs = csa.cset(csa.oneToOne)
+        connspec = {"rule": "conngen", "cg": cs}
+        synspec = {'synapse_model': synmodel}
 
         n_neurons = 4
+        
+        pop = nest.Create("iaf_psc_alpha", n_neurons)
 
-        sources = nest.Create("iaf_psc_alpha", n_neurons)
-        targets = nest.Create("iaf_psc_alpha", n_neurons)
-
-        # We expect CGConnect to fail with an UnknownSynapseType
+        # We expect conngen Connect to fail with an UnknownSynapseType
         # exception if an unknown synapse model is given
         self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType",
-                               nest.CGConnect, sources, targets, cs,
-                               model="nonexistent_synapse")
-
+                               nest.Connect, pop, pop, connspec, synspec)
 
 def suite():
 

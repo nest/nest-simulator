@@ -38,6 +38,7 @@ except ImportError:
     HAVE_PANDAS = False
 
 __all__ = [
+    'Colocate',
     'CreateParameter',
     'Mask',
     'NodeCollection',
@@ -770,6 +771,15 @@ class SynapseCollection(object):
 
         sr('2 arraystore')
         sr('Transpose { arrayload pop SetStatus } forall')
+
+
+class Colocate(object):
+    
+    def __init__(self, *args):
+        self.syn_specs = args
+
+    def __len__(self):
+        return len(self.syn_specs)
 
 
 class Mask(object):

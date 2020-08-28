@@ -28,7 +28,7 @@ import numpy as np
 
 from ..ll_api import *
 from .. import pynestkernel as kernel
-from .hl_api_types import Mask, NodeCollection, Parameter
+from .hl_api_types import Colocate, Mask, NodeCollection, Parameter
 from .hl_api_exceptions import NESTErrors
 
 __all__ = [
@@ -135,7 +135,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
             syn_spec["synapse_model"] = "static_synapse"
 
         return syn_spec
-    elif isinstance(syn_spec, list):
+    elif isinstance(syn_spec, Colocate):
         return syn_spec
 
     raise TypeError("syn_spec must be a string or dict")
@@ -158,13 +158,13 @@ def _process_spatial_projections(conn_spec, syn_spec):
     if 'p' in conn_spec:
         projections['kernel'] = projections.pop('p')
     if syn_spec is not None:
-        if isinstance(syn_spec, list):
-            for syn_list in syn_spec:
+        if isinstance(syn_spec, Colocate):
+            for syn_list in syn_spec.syn_specs:
                 for key in syn_list.keys():
                     if key not in allowed_syn_spec_keys:
                         raise ValueError(
                             "'{}' is not allowed in syn_spec when connecting with mask or kernel".format(key))
-            projections.update({'synapse_parameters': syn_spec})
+            projections.update({'synapse_parameters': syn_spec.syn_specs})
         else:
             for key in syn_spec.keys():
                 if key not in allowed_syn_spec_keys:
@@ -214,8 +214,8 @@ def _connect_layers_needed(conn_spec, syn_spec):
         for key, item in syn_spec.items():
             if isinstance(item, Parameter) and item.is_spatial():
                 return True
-    elif isinstance(syn_spec, list):
-        return any([_connect_layers_needed(conn_spec, syn_param) for syn_param in syn_spec])
+    elif isinstance(syn_spec, Colocate):
+        return any([_connect_layers_needed(conn_spec, syn_param) for syn_param in syn_spec.syn_specs])
     # If we get here, there is not need to use ConnectLayers.
     return False
 

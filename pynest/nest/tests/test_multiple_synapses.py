@@ -54,7 +54,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         """Test list of synapses for very simple connection"""
         node = nest.Create('iaf_psc_alpha')
 
-        nest.Connect(node, node, syn_spec=[{'weight': -2.}, {'weight': 3.}])
+        nest.Connect(node, node, syn_spec=nest.Colocate({'weight': -2.}, {'weight': 3.}))
 
         self.assertEqual(2, nest.GetKernelStatus('num_connections'))
 
@@ -65,9 +65,9 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         """Test list of synapses when we use one_to_one as connection rule"""
         num_src = 7
         num_trg = 7
-        syn_spec = [{'synapse_model': 'stdp_synapse', 'weight': -5.},
-                    {'weight': -1.5},
-                    {'synapse_model': 'stdp_synapse', 'weight': 3}]
+        syn_spec = nest.Colocate({'synapse_model': 'stdp_synapse', 'weight': -5.},
+                                 {'weight': -1.5},
+                                 {'synapse_model': 'stdp_synapse', 'weight': 3})
 
         src = nest.Create('iaf_psc_alpha', num_src)
         trgt = nest.Create('iaf_psc_alpha', num_trg)
@@ -97,9 +97,9 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         """Test list of synapses when we use all_to_all as connection rule"""
         num_src = 3
         num_trg = 5
-        syn_spec = [{'weight': -2.},
-                    {'synapse_model': 'stdp_synapse', 'weight': -1.5},
-                    {'weight': 3}]
+        syn_spec = nest.Colocate({'weight': -2.},
+                                 {'synapse_model': 'stdp_synapse', 'weight': -1.5},
+                                 {'weight': 3})
 
         src = nest.Create('iaf_psc_alpha', num_src)
         trgt = nest.Create('iaf_psc_alpha', num_trg)
@@ -133,9 +133,9 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         num_src = 7
         num_trg = 3
         indegree = 2
-        syn_spec = [{'weight': -2.},
-                    {'synapse_model': 'stdp_synapse', 'weight': -1.5},
-                    {'synapse_model': 'stdp_synapse', 'weight': 3}]
+        syn_spec = nest.Colocate({'weight': -2.},
+                                 {'synapse_model': 'stdp_synapse', 'weight': -1.5},
+                                 {'synapse_model': 'stdp_synapse', 'weight': 3})
 
         src = nest.Create('iaf_psc_alpha', num_src)
         trgt = nest.Create('iaf_psc_alpha', num_trg)
@@ -166,8 +166,9 @@ class MultipleSynapsesTestCase(unittest.TestCase):
                                          positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
 
         nest.Connect(spatial_nodes_src, spatial_nodes_trgt, {'rule': 'fixed_indegree', 'indegree': indegree},
-                     [{'weight': -3.},
-                      {'weight': nest.spatial_distributions.exponential(nest.spatial.distance), 'delay': 1.4}])
+                     nest.Colocate({'weight': -3.},
+                                   {'weight': nest.spatial_distributions.exponential(nest.spatial.distance),
+                                    'delay': 1.4}))
 
         conns = nest.GetConnections()
 
@@ -188,9 +189,10 @@ class MultipleSynapsesTestCase(unittest.TestCase):
                                          positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
 
         nest.Connect(spatial_nodes_src, spatial_nodes_trgt, {'rule': 'fixed_outdegree', 'outdegree': outdegree},
-                     [{'weight': -3., 'synapse_model': 'stdp_synapse'},
-                      {'synapse_model': 'tsodyks_synapse'},
-                      {'weight': nest.spatial_distributions.exponential(nest.spatial.distance), 'delay': 1.4}])
+                     nest.Colocate({'weight': -3., 'synapse_model': 'stdp_synapse'},
+                                   {'synapse_model': 'tsodyks_synapse'},
+                                   {'weight': nest.spatial_distributions.exponential(nest.spatial.distance),
+                                    'delay': 1.4}))
 
         conns = nest.GetConnections()
 
@@ -216,9 +218,10 @@ class MultipleSynapsesTestCase(unittest.TestCase):
                                          positions=nest.spatial.free(nest.random.uniform(), num_dimensions=3))
 
         nest.Connect(spatial_nodes_src, spatial_nodes_trgt, {'rule': 'pairwise_bernoulli', 'p': p},
-                     [{'delay': 1.7, 'weight': nest.spatial_distributions.gaussian(nest.spatial.distance)},
-                      {'synapse_model': 'tsodyks_synapse'},
-                      {'weight': -nest.spatial_distributions.gaussian(nest.spatial.distance), 'delay': 1.4}])
+                     nest.Colocate({'delay': 1.7, 'weight': nest.spatial_distributions.gaussian(nest.spatial.distance)},
+                                   {'synapse_model': 'tsodyks_synapse'},
+                                   {'weight': -nest.spatial_distributions.gaussian(nest.spatial.distance),
+                                    'delay': 1.4}))
 
         conns = nest.GetConnections()
         num_conns = len(conns)
@@ -250,8 +253,9 @@ class MultipleSynapsesTestCase(unittest.TestCase):
 
         nest.Connect(spatial_nodes_src, spatial_nodes_trgt,
                      {'rule': 'pairwise_bernoulli', 'p': p, 'use_on_source': False},
-                     [{'delay': 1.7, 'weight': -1.4},
-                      {'delay': nest.spatial_distributions.gaussian(nest.spatial.distance), 'weight': 1.4}])
+                     nest.Colocate({'delay': 1.7, 'weight': -1.4},
+                                   {'delay': nest.spatial_distributions.gaussian(nest.spatial.distance),
+                                    'weight': 1.4}))
 
         conns = nest.GetConnections()
         num_conns = len(conns)

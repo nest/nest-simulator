@@ -215,10 +215,7 @@ def _connect_layers_needed(conn_spec, syn_spec):
             if isinstance(item, Parameter) and item.is_spatial():
                 return True
     elif isinstance(syn_spec, list):
-        for syn_param in syn_spec:
-            for key, item in syn_param.items():
-                if isinstance(item, Parameter) and item.is_spatial():
-                    return True
+        return any([_connect_layers_needed(conn_spec, syn_param) for syn_param in syn_spec])
     # If we get here, there is not need to use ConnectLayers.
     return False
 

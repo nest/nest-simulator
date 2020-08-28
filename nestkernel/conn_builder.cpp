@@ -431,7 +431,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
     throw IllegalConnection( "Cannot use this rule to connect to nodes without proxies (usually devices)." );
   }
 
-  for ( unsigned int indx = 0; indx < synapse_model_id_.size(); ++indx )
+  for ( size_t indx = 0; indx < synapse_model_id_.size(); ++indx )
   {
     if ( param_dicts_[ indx ].empty() ) // indicates we have no synapse params
     {

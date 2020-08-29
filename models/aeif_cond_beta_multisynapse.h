@@ -73,7 +73,7 @@ modeled by a beta function.
 
 It allows an arbitrary number of synaptic
 rise time and decay time constants. Synaptic conductance is modeled by a
-beta function, as described by A. Roth and M.C.W. van Rossum
+beta function, as described by A. Roth and M. C. W. van Rossum
 in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
 Chapter 6.
 

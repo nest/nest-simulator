@@ -41,7 +41,7 @@ Description
 
 The ginzburg_neuron is an implementation of a binary neuron that
 is irregularly updated as Poisson time points. At each update
-point the total synaptic input h into the neuron is summed up,
+point, the total synaptic input h into the neuron is summed up,
 passed through a gain function g whose output is interpreted as
 the probability of the neuron to be in the active (1) state.
 
@@ -55,7 +55,7 @@ The choice :math:`c_1=0, c_2=1, c_3=\beta/2` corresponds to the Glauber
 dynamics [2]_, :math:`g(h) = 1 / (1 + \exp(-\beta (h-\theta)))`.
 The time constant :math:`\tau_m` is defined as the mean
 inter-update-interval that is drawn from an exponential
-distribution with this parameter. Using this neuron to reprodce
+distribution with this parameter. Using this neuron to reproduce
 simulations with asynchronous update [1]_, the time constant needs
 to be chosen as :math:`\tau_m = dt*N`, where dt is the simulation time
 step and N the number of neurons in the original simulation with

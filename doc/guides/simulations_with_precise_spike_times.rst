@@ -64,7 +64,7 @@ generation with ``poisson_generator_ps`` is less efficient than with its
 grid-constrained counterpart ``poisson_generator``.
 
 ``parrot_neuron_ps`` repeats the incoming spikes just as its
-grid-constrained counterpart ``parrot_neuron`` but it is able to
+grid-constrained counterpart ``parrot_neuron``, but it is able to
 represent precise spike times.
 
 ``iaf_psc_delta_ps`` is an integrate-and-fire neuron model with

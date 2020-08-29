@@ -265,7 +265,7 @@ sg_soma_inh = nest.Create('spike_generator',
                           params={'spike_times': spike_times_soma_inp,
                                   'spike_weights': soma_inh_inp(spike_times_soma_inp)})
 
-# excitiatory input to the dendrite
+# excitatory input to the dendrite
 sg_prox = nest.Create('spike_generator', n=n_pg)
 
 # for recording all parameters of the Urbanczik neuron

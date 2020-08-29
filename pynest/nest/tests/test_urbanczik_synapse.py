@@ -150,7 +150,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         # spike generator is connected to a parrot neuron which is connected to the mc neuron
         prrt_nrn = nest.Create('parrot_neuron')
 
-        # excitiatory input to the dendrite
+        # excitatory input to the dendrite
         pre_syn_spike_times = np.array([1.0, 98.0])
         sg_prox = nest.Create('spike_generator', params={
                               'spike_times': pre_syn_spike_times})

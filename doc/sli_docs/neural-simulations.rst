@@ -411,7 +411,7 @@ Devices have a built-in timer which controls the period they are active.
 Outside this interval, a device will remain silent. The timer can be
 configured using the command ``SetStatus``.
 
-By definition, a device is active in the interval \\((t_1,t_2)\) , if we
+By definition, a device is active in the interval \\((t_1,t_2)\) if we
 can observe events \\(E\) with time stamps \\(t_E\) which obey \\(t_1 <=
 t_E < t_2\) for all \\(E\) . In other words, the interval during which
 the device is active corresponds to the range of time-stamps of the

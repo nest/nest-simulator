@@ -45,7 +45,7 @@ except ImportError:
 
 # Attempt to import MPI from mpi4py before NEST. Running the script in a separate process,
 # in case it ends in a segmentation fault.
-cmd = shlex.split('python -c "from mpi4py import MPI; import nest; nest.Simulate(10)"')
+cmd = shlex.split('python3 -c "from mpi4py import MPI; import nest; nest.Simulate(10)"')
 exit_code = subprocess.call(cmd)
 
 if nest.ll_api.sli_func("statusdict/have_music ::"):

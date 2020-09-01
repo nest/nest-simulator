@@ -184,7 +184,6 @@ class JonkeSynapseTest(unittest.TestCase):
             if time_in_simulation_steps in pre_spikes_forced_to_grid:
                 # A presynaptic spike occurred now.
 
-
                 # Adjusting the current time to make it exact.
                 t = _pre_spikes[pre_spikes_forced_to_grid.index(
                     time_in_simulation_steps)]
@@ -205,7 +204,6 @@ class JonkeSynapseTest(unittest.TestCase):
 
             if time_in_simulation_steps in post_spikes_forced_to_grid:
                 # A postsynaptic spike occurred now.
-
 
                 # Adjusting the current time to make it exact.
                 t = _post_spikes[post_spikes_forced_to_grid.index(

@@ -432,6 +432,8 @@ private:
   bool buffer_size_target_data_has_changed_;
   //!< whether size of MPI buffer for communication of spikes was changed
   bool buffer_size_spike_data_has_changed_;
+  //!< whether size of MPI buffer for communication of spikes can be decreased
+  bool decrease_buffer_size_spike_data_;
 
   PerThreadBoolIndicator gather_completed_checker_;
 };

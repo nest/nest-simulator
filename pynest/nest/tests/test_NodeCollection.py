@@ -310,8 +310,7 @@ class TestNodeCollection(unittest.TestCase):
         sliced_stepped = composite[low:high:step]
         inverse_reference = list(range(1, N))
         del inverse_reference[low:high:step]
-        check_membership(sliced_stepped, range(
-            low + 1, high + 1, step), inverse_reference)
+        check_membership(sliced_stepped, range(low + 1, high + 1, step), inverse_reference)
 
     def test_NodeCollection_index(self):
         """NodeCollections index function"""

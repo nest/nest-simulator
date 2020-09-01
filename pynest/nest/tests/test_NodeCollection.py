@@ -87,8 +87,7 @@ class TestNodeCollection(unittest.TestCase):
 
             arr[start:start + n_neurons] = nc
 
-            self.assertEqual(
-                arr[start:start + n_neurons].tolist(), nc.tolist())
+            self.assertEqual(arr[start:start + n_neurons].tolist(), nc.tolist())
 
     def test_equal(self):
         """Equality of NodeCollections"""

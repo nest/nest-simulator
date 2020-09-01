@@ -156,10 +156,9 @@ class JonkeSynapseTest(unittest.TestCase):
         nest.Simulate(self.simulation_duration)
 
         all_spikes = nest.GetStatus(spike_detector, keys='events')[0]
-        pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[
-            0]]
-        post_spikes = all_spikes['times'][all_spikes['senders'] == postsynaptic_neuron.tolist()[
-            0]]
+        pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[0]]
+        post_spikes = all_spikes['times'][all_spikes['senders'] == postsynaptic_neuron.tolist()[0]]
+
         weight = nest.GetStatus(plastic_synapse_of_interest, keys='weight')[0]
         return (pre_spikes, post_spikes, weight)
 

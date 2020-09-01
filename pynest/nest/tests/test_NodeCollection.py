@@ -316,8 +316,7 @@ class TestNodeCollection(unittest.TestCase):
         def check_index_against_list(nc, inverse_ref):
             """Checks NC index against list index, and that elements specified in inverse_ref are not found."""
             for i in nc.tolist():
-                self.assertEqual(
-                    nc.index(i), nc.tolist().index(i), 'i={}'.format(i))
+                self.assertEqual(nc.index(i), nc.tolist().index(i), 'i={}'.format(i))
             for j in inverse_ref:
                 with self.assertRaises(ValueError):
                     nc.index(j)

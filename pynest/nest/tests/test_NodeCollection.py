@@ -520,8 +520,7 @@ class TestNodeCollection(unittest.TestCase):
         self.assertEqual(get_conn_some.get('target'), compare_target)
 
         expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func(
-            'synapsedict')[expected_syn_model]
+        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
 
         compare_list = [3, 1, 0, expected_syn_id, 6]
         conn = [get_conn_some.get('source')[3],

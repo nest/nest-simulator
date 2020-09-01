@@ -186,8 +186,7 @@ class TestNodeCollection(unittest.TestCase):
 
         n_slice_start_stop_outside = n[-13:17]
         n_list_start_stop_outside = n_slice_start_stop_outside.tolist()
-        self.assertEqual(n_list_start_stop_outside, [
-                         1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        self.assertEqual(n_list_start_stop_outside, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
         with self.assertRaises(IndexError):
             n[::-3]

@@ -273,7 +273,7 @@ def SetStatus(nodes, params, val=None):
 
     params_is_dict = isinstance(params, dict)
     set_status_nodes = isinstance(nodes, nest.NodeCollection)
-    set_status_local_nodes = set_status_nodes and nodes.get('local')
+    set_status_local_nodes = set_status_nodes and all(nodes.local)
 
     if (params_is_dict and set_status_local_nodes):
 

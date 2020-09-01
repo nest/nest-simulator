@@ -169,10 +169,8 @@ class JonkeSynapseTest(unittest.TestCase):
         """
         # These are defined just for convenience,
         # STDP is evaluated on exact times nonetheless
-        pre_spikes_forced_to_grid = [
-            int(t / self.resolution) for t in _pre_spikes]
-        post_spikes_forced_to_grid = [
-            int(t / self.resolution) for t in _post_spikes]
+        pre_spikes_forced_to_grid = [int(t / self.resolution) for t in _pre_spikes]
+        post_spikes_forced_to_grid = [int(t / self.resolution) for t in _post_spikes]
 
         t_previous_pre = -1
         t_previous_post = -1

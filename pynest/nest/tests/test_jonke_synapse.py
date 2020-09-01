@@ -26,7 +26,6 @@ Test functionality of the Tetzlaff stdp synapse
 import unittest
 import nest
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 @nest.ll_api.check_stack
@@ -179,7 +178,7 @@ class JonkeSynapseTest(unittest.TestCase):
         t_previous_post = -1
         syn_trace_pre = 0.0
         syn_trace_post = 0.0
-        w = _initial_weight
+        weight = _initial_weight
         n_steps = int(self.simulation_duration / self.resolution)
         for time_in_simulation_steps in range(n_steps):
             if time_in_simulation_steps in pre_spikes_forced_to_grid:
@@ -192,7 +191,7 @@ class JonkeSynapseTest(unittest.TestCase):
 
                 if t_previous_post != -1:
                     # Otherwise, if == -1, there have been no post-spikes yet.
-                    w = self.depress(t_previous_post - t, w, syn_trace_post)
+                    weight = self.depress(t_previous_post - t, weight, syn_trace_post)
 
                 # Memorizing the current pre-spike and the presynaptic trace
                 # to account it further with the next post-spike.
@@ -218,7 +217,7 @@ class JonkeSynapseTest(unittest.TestCase):
 
                 # Evaluating the facilitation rule.
                 if t_previous_pre != -1:  # otherwise nothing to pair with
-                    w = self.facilitate(t_previous_pre - t, w, syn_trace_pre)
+                    weight = self.facilitate(t_previous_pre - t, weight, syn_trace_pre)
 
                 # Memorizing the current post-spike and the postsynaptic trace
                 # to account it further with the next pre-spike.
@@ -230,30 +229,30 @@ class JonkeSynapseTest(unittest.TestCase):
                 )
                 t_previous_post = t
 
-        return w
+        return weight
 
-    def facilitate(self, _delta_t, w, Kplus):
+    def facilitate(self, _delta_t, weight, Kplus):
         if _delta_t == 0:
-            return w
-        w += (
+            return weight
+        weight += (
             self.synapse_constants["lambda"] / np.e *
-            np.exp(1 - w) *
+            np.exp(1 - weight) *
             Kplus * np.exp(_delta_t / self.synapse_constants["tau_plus"])
         )
-        if w > self.synapse_constants["Wmax"]:
-            w = self.synapse_constants["Wmax"]
-        return w
+        if weight > self.synapse_constants["Wmax"]:
+            weight = self.synapse_constants["Wmax"]
+        return weight
 
-    def depress(self, _delta_t, w, Kminus):
+    def depress(self, _delta_t, weight, Kminus):
         if _delta_t == 0:
-            return w
-        w -= (
+            return weight
+        weight -= (
             self.synapse_constants["lambda"] / np.e *
             Kminus * np.exp(_delta_t / self.neuron_parameters["tau_minus"])
         )
-        if w < 0:
-            w = 0
-        return w
+        if weight < 0:
+            weight = 0
+        return weight
 
 
 def suite():

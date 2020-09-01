@@ -183,7 +183,8 @@ class JonkeSynapseTest(unittest.TestCase):
         n_steps = int(self.simulation_duration / self.resolution)
         for time_in_simulation_steps in range(n_steps):
             if time_in_simulation_steps in pre_spikes_forced_to_grid:
-                # A presynaptic spike occured now.
+                # A presynaptic spike occurred now.
+
 
                 # Adjusting the current time to make it exact.
                 t = _pre_spikes[pre_spikes_forced_to_grid.index(

@@ -763,12 +763,10 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
   NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
   DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  DictionaryDatum synapse_params_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-
-  std::vector< DictionaryDatum > synapse_params = { synapse_params_dict };
+  DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
-  kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
+  kernel().connection_manager.connect( sources, targets, connectivity, { synapse_params } );
 
   i->OStack.pop( 4 );
   i->EStack.pop();

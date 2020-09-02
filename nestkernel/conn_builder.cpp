@@ -242,11 +242,11 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     reset_weights_();
     reset_delays_();
 
-    for ( auto it = synapse_params_.begin(); it != synapse_params_.end(); ++it )
+    for ( auto syn_params_it = synapse_params_.begin(); syn_params_it != synapse_params_.end(); ++syn_params_it )
     {
-      for ( auto it_params = it->begin(); it_params != it->end(); ++it_params )
+      for ( auto syn_dict_it = syn_params_it->begin(); syn_dict_it != syn_params_it->end(); ++syn_dict_it )
       {
-        it_params->second->reset();
+        syn_dict_it->second->reset();
       }
     }
   }
@@ -269,11 +269,11 @@ nest::ConnBuilder::~ConnBuilder()
     delete *delay;
   }
 
-  for ( auto it = synapse_params_.begin(); it != synapse_params_.end(); ++it )
+  for ( auto syn_params_it = synapse_params_.begin(); syn_params_it != synapse_params_.end(); ++syn_params_it )
   {
-    for ( auto it_params = it->begin(); it_params != it->end(); ++it_params )
+    for ( auto syn_dict_it = syn_params_it->begin(); syn_dict_it != syn_params_it->end(); ++syn_dict_it )
     {
-      delete it_params->second;
+      delete syn_dict_it->second;
     }
   }
 }
@@ -375,11 +375,11 @@ nest::ConnBuilder::connect()
       reset_weights_();
       reset_delays_();
 
-      for ( auto it = synapse_params_.begin(); it != synapse_params_.end(); ++it )
+      for ( auto syn_params_it = synapse_params_.begin(); syn_params_it != synapse_params_.end(); ++syn_params_it )
       {
-        for ( auto it_params = it->begin(); it_params != it->end(); ++it_params )
+        for ( auto syn_dict_it = syn_params_it->begin(); syn_dict_it != syn_params_it->end(); ++syn_dict_it )
         {
-          it_params->second->reset();
+          syn_dict_it->second->reset();
         }
       }
 

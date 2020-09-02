@@ -751,12 +751,12 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
 
       target_pos_node_id_pairs[ random_id ].first.get_vector( target_pos_vector );
 
-      std::vector< double > weight_vec;
-      std::vector< double > delay_vec;
+      std::vector< double > rng_weight_vec;
+      std::vector< double > rng_delay_vec;
       for ( size_t indx = 0; indx < weight_.size(); ++indx )
       {
-        weight_vec.push_back( weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, target ) );
-        delay_vec.push_back( delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, target ) );
+        rng_weight_vec.push_back( weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, target ) );
+        rng_delay_vec.push_back( delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, target ) );
       }
 
       // We bail out for non-local neurons only now after all possible
@@ -777,8 +777,8 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
           target_thread,
           synapse_model_[ indx ],
           dummy_param_dicts_[ target_thread ],
-          delay_vec[ indx ],
-          weight_vec[ indx ] );
+          rng_delay_vec[ indx ],
+          rng_weight_vec[ indx ] );
       }
     }
   }

@@ -106,15 +106,17 @@ public:
   write( const Name&, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
 
   void enroll_recorder( const Name&, const RecordingDevice&, const DictionaryDatum& );
-  void enroll_input( const Name&, StimulatingDevice&, const DictionaryDatum& );
+  template < typename EmittedEvent > 
+  void enroll_input( const Name&, StimulatingDevice< EmittedEvent >&, const DictionaryDatum& );
 
   void set_recording_value_names( const Name& backend_name,
     const RecordingDevice& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
+  template < typename EmittedEvent >
   void set_input_value_names( const Name& backend_name,
-    const StimulatingDevice& device,
+    const StimulatingDevice< EmittedEvent >& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
@@ -123,7 +125,8 @@ public:
   void get_recording_backend_device_status( const Name&, const RecordingDevice&, DictionaryDatum& );
   void check_input_backend_device_status( const Name&, const DictionaryDatum& );
   void get_stimulating_backend_device_defaults( const Name&, DictionaryDatum& );
-  void get_stimulating_backend_device_status( const Name&, const StimulatingDevice&, DictionaryDatum& );
+  template < typename EmittedEvent >
+  void get_stimulating_backend_device_status( const Name&, const StimulatingDevice< EmittedEvent >&, DictionaryDatum& );
 
 private:
   void set_data_path_prefix_( const DictionaryDatum& );

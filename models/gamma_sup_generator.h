@@ -81,7 +81,7 @@ StimulatingDevice
 
 EndUserDocs */
 
-class gamma_sup_generator : StimulatingDevice< CurrentEvent >
+class gamma_sup_generator : public StimulatingDevice< CurrentEvent >
 {
 
 public:

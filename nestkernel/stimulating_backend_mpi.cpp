@@ -22,11 +22,11 @@
 
 // C++ includes:
 #include <iostream>
+#include <fstream>
 
 // Includes from nestkernel:
 #include "stimulating_backend_mpi.h"
-#include "input_device.h"
-
+#include "kernel_manager.h"
 
 void
 nest::StimulatingBackendMPI::initialize()
@@ -49,9 +49,9 @@ nest::StimulatingBackendMPI::finalize()
 }
 
 void
-nest::StimulatingBackendMPI::enroll( InputDevice& device, const DictionaryDatum& params )
+nest::StimulatingBackendMPI::enroll( StimulatingDevice< EmittedEvent >& device, const DictionaryDatum& params )
 {
-  if ( device.get_type() == InputDevice::SPIKE_GENERATOR or device.get_type() == InputDevice::STEP_CURRENT_GENERATOR )
+  if ( device.get_type() == StimulatingDevice< EmittedEvent >::SPIKE_GENERATOR or device.get_type() == StimulatingDevice< EmittedEvent >::STEP_CURRENT_GENERATOR )
   {
     thread tid = device.get_thread();
     index node_id = device.get_node_id();
@@ -61,7 +61,7 @@ nest::StimulatingBackendMPI::enroll( InputDevice& device, const DictionaryDatum&
     {
       devices_[ tid ].erase( device_it );
     }
-    std::pair< MPI_Comm*, InputDevice* > pair = std::make_pair( nullptr, &device );
+    std::pair< MPI_Comm*, StimulatingDevice< EmittedEvent >* > pair = std::make_pair( nullptr, &device );
     devices_[ tid ].insert( std::make_pair( node_id, pair ) );
   }
   else
@@ -71,7 +71,7 @@ nest::StimulatingBackendMPI::enroll( InputDevice& device, const DictionaryDatum&
 }
 
 void
-nest::StimulatingBackendMPI::disenroll( InputDevice& device )
+nest::StimulatingBackendMPI::disenroll( nest::StimulatingDevice< EmittedEvent >& device )
 {
   thread tid = device.get_thread();
   index node_id = device.get_node_id();
@@ -84,7 +84,7 @@ nest::StimulatingBackendMPI::disenroll( InputDevice& device )
 }
 
 void
-nest::StimulatingBackendMPI::set_value_names( const InputDevice& device,
+nest::StimulatingBackendMPI::set_value_names( const StimulatingDevice< EmittedEvent >& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
@@ -213,7 +213,7 @@ nest::StimulatingBackendMPI::get_device_defaults( DictionaryDatum& params ) cons
 }
 
 void
-nest::StimulatingBackendMPI::get_device_status( const nest::InputDevice& device,
+nest::StimulatingBackendMPI::get_device_status( const nest::StimulatingDevice< EmittedEvent >& device,
   DictionaryDatum& params_dictionary ) const
 {
   // nothing to do
@@ -234,7 +234,7 @@ nest::StimulatingBackendMPI::set_status( const DictionaryDatum& d )
 
 
 void
-nest::StimulatingBackendMPI::get_port( InputDevice* device, std::string* port_name )
+nest::StimulatingBackendMPI::get_port( StimulatingDevice< EmittedEvent >* device, std::string* port_name )
 {
   get_port( device->get_node_id(), device->get_label(), port_name );
 }
@@ -274,7 +274,7 @@ nest::StimulatingBackendMPI::get_port( const index index_node, const std::string
 }
 
 void
-nest::StimulatingBackendMPI::receive_spike_train( const MPI_Comm& comm, InputDevice& device )
+nest::StimulatingBackendMPI::receive_spike_train( const MPI_Comm& comm, StimulatingDevice< EmittedEvent >& device )
 {
   // Send the first message with id of device
   int message[ 1 ];

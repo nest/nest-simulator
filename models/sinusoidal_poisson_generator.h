@@ -105,7 +105,7 @@ poisson_generator, sinusoidal_gamma_generator
 
 EndUserDocs */
 
-class sinusoidal_poisson_generator : StimulatingDevice< SpikeEvent >
+class sinusoidal_poisson_generator : public StimulatingDevice< SpikeEvent >
 {
 
 public:

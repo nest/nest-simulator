@@ -103,7 +103,7 @@ EndUserDocs */
 /*! Class mip_generator generates spike trains as described
     in the MIP model.
 */
-class mip_generator : public DeviceNode, StimulatingDevice< SpikeEvent >
+class mip_generator : public StimulatingDevice< SpikeEvent >
 {
 
 public:

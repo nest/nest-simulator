@@ -337,7 +337,7 @@ nest::spike_generator::init_buffers_()
 void
 nest::spike_generator::calibrate()
 {
-  InputDevice::calibrate( StimulatingBackend::NO_DOUBLE_VALUE_NAMES, StimulatingBackend::NO_LONG_VALUE_NAMES );
+  //InputDevice::calibrate( StimulatingBackend::NO_DOUBLE_VALUE_NAMES, StimulatingBackend::NO_LONG_VALUE_NAMES );
   StimulatingDevice::calibrate();
 }
 
@@ -417,7 +417,7 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
       break;
     }
 
-    if ( StimulatingDevice::is_active( tnext_stamp ) )
+    if ( StimulatingDevice< SpikeEvent >::is_active( tnext_stamp ) )
     {
       SpikeEvent* se;
 
@@ -478,13 +478,11 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   }
   else
   {
-    origin = StimulatingDevice::get_origin();
+    origin = StimulatingDevice< SpikeEvent >::get_origin();
   }
 
   // throws if BadProperty
   ptmp.set( d, S_, origin, kernel().simulation_manager.get_time(), this );
-
-  InputDevice::set_status( d );
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
@@ -495,8 +493,8 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
-nest::InputDevice::Type
-nest::spike_generator::get_type() const
+nest::StimulatingDevice< SpikeEvent >::Type
+get_type()
 {
-  return InputDevice::SPIKE_GENERATOR;
+  return nest::StimulatingDevice< SpikeEvent >::SPIKE_GENERATOR;
 }

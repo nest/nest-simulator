@@ -42,6 +42,7 @@
 #include "recording_backend_ascii.h"
 #include "recording_backend_memory.h"
 #include "recording_backend_screen.h"
+#include "stimulating_backend.h"
 #ifdef HAVE_MPI
 #ifdef HAVE_RECORDINGBACKEND_ARBOR
 #include "recording_backend_arbor.h"
@@ -345,8 +346,9 @@ IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& dev
   }
 }
 
+template < typename EmittedEvent >
 void
-nest::IOManager::enroll_input( const Name& backend_name, StimulatingDevice& device, const DictionaryDatum& params )
+nest::IOManager::enroll_input( const Name& backend_name, StimulatingDevice<EmittedEvent>& device, const DictionaryDatum& params )
 {
   for ( auto& it : stimulating_backends_ )
   {
@@ -371,9 +373,10 @@ IOManager::set_recording_value_names( const Name& backend_name,
   recording_backends_[ backend_name ]->set_value_names( device, double_value_names, long_value_names );
 }
 
+template < typename EmittedEvent >
 void
 IOManager::set_input_value_names( const Name& backend_name,
-  const StimulatingDevice& device,
+  const StimulatingDevice<EmittedEvent>& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
@@ -412,9 +415,10 @@ IOManager::get_stimulating_backend_device_defaults( const Name& backend_name, Di
   stimulating_backends_[ backend_name ]->get_device_defaults( params );
 }
 
+template < typename EmittedEvent >
 void
 IOManager::get_stimulating_backend_device_status( const Name& backend_name,
-  const StimulatingDevice& device,
+  const StimulatingDevice< EmittedEvent >& device,
   DictionaryDatum& d )
 {
   stimulating_backends_[ backend_name ]->get_device_status( device, d );

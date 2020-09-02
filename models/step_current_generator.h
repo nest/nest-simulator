@@ -89,7 +89,7 @@ StimulatingDevice
 
 EndUserDocs */
 
-class step_current_generator : StimulatingDevice< CurrentEvent >
+class step_current_generator : public StimulatingDevice< CurrentEvent >
 {
 
 public:
@@ -127,8 +127,8 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  void update_from_backend( std::vector< double > input_spikes ) override;
-  Type get_type() const override;
+  void update_from_backend( std::vector< double > input_spikes );
+  nest::StimulatingDevice<CurrentEvent>::Type get_type();
 
 private:
   void init_state_( const Node& ) override;
@@ -240,7 +240,6 @@ step_current_generator::handles_test_event( DataLoggingRequest& dlr, rport recep
 inline void
 step_current_generator::get_status( DictionaryDatum& d ) const
 {
-  InputDevice::get_status( d );
   P_.get( d );
   StimulatingDevice< CurrentEvent >::get_status( d );
 
@@ -252,8 +251,6 @@ step_current_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;   // temporary copy in case of errors
   ptmp.set( d, B_, this ); // throws if BadProperty
-
-  InputDevice::set_status( d );
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

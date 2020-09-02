@@ -267,7 +267,7 @@ void
 nest::step_current_generator::calibrate()
 {
   B_.logger_.init();
-  InputDevice::calibrate( StimulatingBackend::NO_DOUBLE_VALUE_NAMES, StimulatingBackend::NO_LONG_VALUE_NAMES );
+  StimulatingDevice< CurrentEvent >::calibrate( StimulatingBackend::NO_DOUBLE_VALUE_NAMES, StimulatingBackend::NO_LONG_VALUE_NAMES );
   StimulatingDevice< CurrentEvent >::calibrate();
 }
 
@@ -364,8 +364,8 @@ nest::step_current_generator::update_from_backend( std::vector< double > time_am
   P_ = ptmp;
 }
 
-nest::InputDevice::Type
-nest::step_current_generator::get_type() const
+nest::StimulatingDevice< nest::CurrentEvent >::Type
+nest::step_current_generator::get_type()
 {
-  return InputDevice::STEP_CURRENT_GENERATOR;
+  return nest::StimulatingDevice< CurrentEvent >::STEP_CURRENT_GENERATOR;
 }

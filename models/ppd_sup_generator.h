@@ -88,7 +88,7 @@ StimulatingDevice
 
 EndUserDocs */
 
-class ppd_sup_generator : StimulatingDevice< CurrentEvent >
+class ppd_sup_generator : public StimulatingDevice< CurrentEvent >
 {
 
 public:

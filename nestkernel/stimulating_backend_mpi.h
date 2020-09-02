@@ -60,6 +60,8 @@ EndDocumentation */
 namespace nest
 {
 
+template < typename EmittedEvent >
+class StimulatingDevice;
 /**
  * A simple input backend MPI implementation
  */
@@ -82,9 +84,9 @@ public:
 
   void finalize() override;
 
-  void enroll( InputDevice& device, const DictionaryDatum& params ) override;
+  void enroll( StimulatingDevice< EmittedEvent >& device, const DictionaryDatum& params );
 
-  void disenroll( InputDevice& device ) override;
+  void disenroll( StimulatingDevice< EmittedEvent >& device );
 
   void cleanup() override;
 
@@ -102,13 +104,13 @@ public:
 
   void check_device_status( const DictionaryDatum& ) const override;
 
-  void set_value_names( const InputDevice& device,
+  void set_value_names( const StimulatingDevice< EmittedEvent >& device,
     const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+    const std::vector< Name >& long_value_names );
 
   void get_device_defaults( DictionaryDatum& ) const override;
 
-  void get_device_status( const InputDevice& device, DictionaryDatum& params_dictionary ) const override;
+  void get_device_status( const StimulatingDevice< EmittedEvent >& device, DictionaryDatum& params_dictionary ) const;
 
 private:
   /**
@@ -116,7 +118,7 @@ private:
    * thread. The map associates the gid of a device on a given thread
    * with it's device. Only the master thread have a valid MPI communicator pointer.
   */
-  typedef std::vector< std::map< index, std::pair< const MPI_Comm*, InputDevice* > > > device_map;
+  using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulatingDevice<EmittedEvent>* > > >;
   device_map devices_;
   /**
    * A map of MPI communicator use by the master thread for the MPI communication.
@@ -125,9 +127,9 @@ private:
   typedef std::map< std::string, std::pair< MPI_Comm*, int > > comm_map;
   comm_map commMap_;
 
-  static void get_port( InputDevice* device, std::string* port_name );
+  static void get_port( StimulatingDevice< EmittedEvent >* device, std::string* port_name );
   static void get_port( index index_node, const std::string& label, std::string* port_name );
-  void receive_spike_train( const MPI_Comm& comm, InputDevice& device );
+  void receive_spike_train( const MPI_Comm& comm, StimulatingDevice< EmittedEvent >& device );
 };
 
 } // namespace

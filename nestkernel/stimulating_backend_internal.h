@@ -60,9 +60,11 @@ public:
   void initialize() override;
   void finalize() override;
 
-  void enroll( InputDevice& device, const DictionaryDatum& params ) override;
+  //template<class T>
+  //void enroll( StimulatingDevice<T>& device, const DictionaryDatum& params );
 
-  void disenroll( InputDevice& device ) override;
+  //template<class T>
+  //void disenroll( StimulatingDevice<T>& device );
 
   void cleanup() override;
 
@@ -79,12 +81,14 @@ public:
   void post_step_hook() override;
 
   void check_device_status( const DictionaryDatum& ) const override;
-  void set_value_names( const InputDevice& device,
+  template<class T>
+  void set_value_names( const StimulatingDevice<T>& device,
     const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+    const std::vector< Name >& long_value_names );
 
   void get_device_defaults( DictionaryDatum& ) const override;
-  void get_device_status( const InputDevice& device, DictionaryDatum& params_dictionary ) const override;
+  template<class T>
+  void get_device_status( const StimulatingDevice<T>& device, DictionaryDatum& params_dictionary ) const;
 
 private:
   /**
@@ -92,8 +96,9 @@ private:
    * thread. The map associates the gid of a device on a given thread
    * with its input devices.
   */
-  typedef std::vector< std::map< int, const InputDevice* > > device_map;
-  device_map devices_;
+  template<class T>
+  using device_map= std::vector< std::map< int, const StimulatingDevice<T> > >;
+  device_map<SpikeEvent> devices_;
 };
 
 } // namespace

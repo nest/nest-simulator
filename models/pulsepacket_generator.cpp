@@ -105,15 +105,13 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
 * ---------------------------------------------------------------- */
 
 nest::pulsepacket_generator::pulsepacket_generator()
-  : Node()
-  , StimulatingDevice< SpikeEvent >()
+  : StimulatingDevice< SpikeEvent >()
   , P_()
 {
 }
 
 nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator& ppg )
-  : Node( ppg )
-  , StimulatingDevice< SpikeEvent >( ppg )
+  : StimulatingDevice< SpikeEvent >( ppg )
   , P_( ppg.P_ )
 {
 }

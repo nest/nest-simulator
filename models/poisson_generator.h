@@ -76,7 +76,7 @@ poisson_generator_ps, Device, parrot_neuron
 
 EndUserDocs */
 
-class poisson_generator : StimulatingDevice< SpikeEvent >
+class poisson_generator : public StimulatingDevice< SpikeEvent >
 {
 
 public:

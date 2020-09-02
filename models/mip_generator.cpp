@@ -100,15 +100,13 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
  * ---------------------------------------------------------------- */
 
 nest::mip_generator::mip_generator()
-  : DeviceNode()
-  , StimulatingDevice< SpikeEvent >()
+  : StimulatingDevice< SpikeEvent >()
   , P_()
 {
 }
 
 nest::mip_generator::mip_generator( const mip_generator& n )
-  : DeviceNode( n )
-  , StimulatingDevice< SpikeEvent >( n )
+  : StimulatingDevice< SpikeEvent >( n )
   , P_( n.P_ ) // also causes deep copy of random nnumber generator
 {
 }

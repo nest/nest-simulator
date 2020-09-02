@@ -86,7 +86,7 @@ spike_generator, StimulatingDevice
 
 EndUserDocs */
 
-class pulsepacket_generator : public Node, StimulatingDevice< SpikeEvent >
+class pulsepacket_generator : public StimulatingDevice< SpikeEvent >
 {
 
 public:

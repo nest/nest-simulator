@@ -26,10 +26,10 @@
 
 // Includes from nestkernel:
 #include "stimulating_backend_internal.h"
-#include "input_device.h"
 
+template<class T>
 void
-nest::StimulatingBackendInternal::enroll( InputDevice& device, const DictionaryDatum& params )
+nest::StimulatingBackendInternal::enroll( nest::StimulatingDevice& device, const DictionaryDatum& params )
 {
   thread tid = device.get_thread();
   index node_id = device.get_node_id();
@@ -42,8 +42,9 @@ nest::StimulatingBackendInternal::enroll( InputDevice& device, const DictionaryD
   devices_[ tid ].insert( std::make_pair( node_id, &device ) );
 }
 
+template<class T>
 void
-nest::StimulatingBackendInternal::disenroll( InputDevice& device )
+nest::StimulatingBackendInternal::disenroll( nest::StimulatingDevice& device )
 {
   thread tid = device.get_thread();
   index node_id = device.get_node_id();
@@ -83,7 +84,7 @@ nest::StimulatingBackendInternal::finalize()
 }
 
 void
-nest::StimulatingBackendInternal::set_value_names( const InputDevice& device,
+nest::StimulatingBackendInternal::set_value_names( const StimulatingDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
@@ -136,7 +137,7 @@ nest::StimulatingBackendInternal::get_device_defaults( DictionaryDatum& params )
 }
 
 void
-nest::StimulatingBackendInternal::get_device_status( const nest::InputDevice& device,
+nest::StimulatingBackendInternal::get_device_status( const nest::StimulatingDevice& device,
   DictionaryDatum& params_dictionary ) const
 {
   // nothing to do

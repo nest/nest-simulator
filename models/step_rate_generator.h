@@ -91,7 +91,7 @@ step_current_generator, Device, StimulatingDevice
 
 EndUserDocs */
 
-class step_rate_generator : StimulatingDevice< DelayedRateConnectionEvent >
+class step_rate_generator : public StimulatingDevice< DelayedRateConnectionEvent >
 {
 
 public:

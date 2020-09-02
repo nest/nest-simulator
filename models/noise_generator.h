@@ -130,7 +130,7 @@ CurrentEvent
 
 EndUserDocs */
 
-class noise_generator : StimulatingDevice< CurrentEvent >
+class noise_generator : public StimulatingDevice< CurrentEvent >
 {
 
 public:

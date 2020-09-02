@@ -34,7 +34,6 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "stimulating_device.h"
-#include "stimulating_device.h"
 
 namespace nest
 {
@@ -198,9 +197,9 @@ public:
   port send_test_event( Node&, rport, synindex, bool ) override;
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
-  void update_from_backend( std::vector< double > input_spikes ) override;
+  void update_from_backend( std::vector< double > input_spikes );
 
-  Type get_type() const override;
+  nest::StimulatingDevice< SpikeEvent >::Type get_type() const;
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -219,7 +218,7 @@ public:
 
   // ------------------------------------------------------------
 
-  struct SpikeState_ : InputDevice::State_
+  struct SpikeState_ : StimulatingDevice::State_
   {
     SpikeState_();
     size_t position_; //!< index of next spike to deliver
@@ -227,7 +226,7 @@ public:
 
   // ------------------------------------------------------------
 
-  struct SpikeParameters_ : InputDevice::Parameters_
+  struct SpikeParameters_ : StimulatingDevice::Parameters_
   {
     //! Spike time stamp as Time, rel to origin_
     std::vector< Time > spike_stamps_;
@@ -307,7 +306,6 @@ spike_generator::send_test_event( Node& target, rport receptor_type, synindex sy
 inline void
 spike_generator::get_status( DictionaryDatum& d ) const
 {
-  InputDevice::get_status( d );
   P_.get( d );
   StimulatingDevice< SpikeEvent >::get_status( d );
 }

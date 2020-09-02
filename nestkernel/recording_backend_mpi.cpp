@@ -28,6 +28,15 @@
 #include "recording_device.h"
 #include "recording_backend_mpi.h"
 
+nest::RecordingBackendMPI::RecordingBackendMPI()
+{
+}
+
+nest::RecordingBackendMPI::~RecordingBackendMPI() throw()
+{
+}
+
+
 void
 nest::RecordingBackendMPI::initialize()
 {

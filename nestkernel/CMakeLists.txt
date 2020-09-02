@@ -129,6 +129,15 @@ if ( HAVE_RECORDINGBACKEND_ARBOR )
   )
 endif ()
 
+if ( HAVE_MPI )
+  set( nestkernel_sources
+    ${nestkernel_sources}
+    recording_backend_mpi.h recording_backend_mpi.cpp
+    stimulating_backend_mpi.h stimulating_backend_mpi.cpp
+  )
+endif ()
+
+
 add_library( nestkernel ${nestkernel_sources} )
 target_link_libraries( nestkernel
     nestutil random sli_lib

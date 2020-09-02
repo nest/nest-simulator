@@ -72,13 +72,13 @@ public:
    * InputBackend constructor
    * The actual initialization is happening in InputBackend::initialize()
    */
-  StimulatingBackendMPI() = default;
+  StimulatingBackendMPI();
 
   /**
    * InputBackend destructor
    * The actual finalization is happening in InputBackend::finalize()
    */
-  ~StimulatingBackendMPI() noexcept override = default;
+  ~StimulatingBackendMPI() noexcept override;
 
   void initialize() override;
 

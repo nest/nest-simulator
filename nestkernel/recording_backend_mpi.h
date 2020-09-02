@@ -64,8 +64,8 @@ namespace nest
 class RecordingBackendMPI : public RecordingBackend
 {
 public:
-  RecordingBackendMPI() = default;
-  ~RecordingBackendMPI() noexcept override = default;
+  RecordingBackendMPI();
+  ~RecordingBackendMPI() throw();
 
   void initialize() override;
   void finalize() override;

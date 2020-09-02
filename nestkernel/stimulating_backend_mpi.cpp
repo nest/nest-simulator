@@ -28,6 +28,15 @@
 #include "stimulating_backend_mpi.h"
 #include "kernel_manager.h"
 
+nest::StimulatingBackendMPI::StimulatingBackendMPI()
+{
+}
+
+nest::StimulatingBackendMPI::~StimulatingBackendMPI()
+{
+}
+
+
 void
 nest::StimulatingBackendMPI::initialize()
 {

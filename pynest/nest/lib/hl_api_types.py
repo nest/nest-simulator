@@ -776,7 +776,7 @@ class SynapseCollection(object):
 class Colocate(object):
     """
     Class for colocate synapse specification.
-    
+
     Wrapper around a list of specifications.
     """
 

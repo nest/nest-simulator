@@ -238,7 +238,7 @@ private:
   void register_parameters_requiring_skipping_( ConnParameter& param );
 
   /**
-   * Resets weight and delay pointers
+   * Reset weight and delay pointers
    */
   void reset_weights_();
   void reset_delays_();

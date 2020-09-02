@@ -116,9 +116,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         ref_trgt = []
         for t in [4, 5, 6, 7, 8]*num_src:
             # there are 3 elements in the syn_spec list
-            ref_trgt.append(t)
-            ref_trgt.append(t)
-            ref_trgt.append(t)
+            ref_trgt.extend([t, t, t])
 
         ref_weight = [-2., -1.5, 3.] * num_src * num_trg
         ref_synapse_modules = ['static_synapse', 'stdp_synapse', 'static_synapse'] * num_src * num_trg
@@ -175,7 +173,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertEqual(num_trgt * indegree * 2, len(conns))
 
         weights = conns.weight
-        self.assertEqual(sorted(weights)[:num_trgt*indegree], [-3]*num_trgt*indegree)
+        self.assertEqual(sorted(weights)[:num_trgt * indegree], [-3] * num_trgt * indegree)
 
     def test_MultipleSynapses_spatial_network_fixedOutdegree(self):
         """test list of synapses for spatial networks with fixed outdegree"""
@@ -199,7 +197,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertEqual(num_src * outdegree * 3, len(conns))
 
         weights = conns.weight
-        self.assertEqual(sorted(weights)[:num_src*outdegree], [-3]*num_src*outdegree)
+        self.assertEqual(sorted(weights)[:num_src * outdegree], [-3] * num_src * outdegree)
 
         ref_synapse_model = (['stdp_synapse'] * num_src * outdegree +
                              ['tsodyks_synapse'] * num_src * outdegree +
@@ -260,7 +258,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         conns = nest.GetConnections()
         num_conns = len(conns)
 
-        self.assertGreater(num_src * num_trgt * p * 3, len(conns))
+        self.assertGreater(num_src * num_trgt * p * 3, num_conns)
 
         delays = [round(d, 1) for d in sorted(conns.delay)[(num_conns // 2):]]
         ref_delays = [1.7] * (num_conns // 2)

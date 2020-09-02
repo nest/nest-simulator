@@ -19,7 +19,7 @@ The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by se
 For efficient sorting algorithms the Boost library <https://www.boost.org/> is used. Since this is an essential factor for the communication of spikes, some simulations are significantly faster when NEST is compile with Boost.
 If you want to use PyNEST, we recommend to install the following along with their development packages:
 
-- `Python 3.5 or higher <http://www.python.org>`_
+- `Python 3.6 or higher <http://www.python.org>`_
 - `NumPy <http://www.scipy.org>`_
 - `SciPy <http://www.scipy.org>`_
 - `Matplotlib 3.0 or higher <http://matplotlib.org>`_

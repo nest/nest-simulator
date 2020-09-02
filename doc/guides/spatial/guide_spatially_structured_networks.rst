@@ -1492,54 +1492,10 @@ Adding masks in a module
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 If using parameters to define a connection boundary is not efficient enough, or
-if you need more flexibility in defining the mask, you have to add a custom
-mask, written in C++, as a part of an extension module. For more information
-on writing an extension module, see the section titled `“Writing an Extension Module”
-<http://nest.github.io/nest-simulator/extension_modules>`__ in the NEST Developer
-Manual. The basic steps required to get started are:
-
-1. From the NEST source directory, copy the directory ``examples/MyModule`` to
-   somewhere outside the NEST source, build or install directories.
-
-   .. code:: bash
-
-      cp -r <path_to_nest_source>/examples/MyModule mm_src
-
-2. Create a build directory for MyModule, e.g. ``mm_bld``, next to
-   the copied source directory:
-
-   .. code:: bash
-
-      mkdir mm_bld
-      cd mm_bld
-
-3. Configure. The configure process uses the script ``nest-config`` to
-   find out where NEST is installed, where the source code resides, and
-   which compiler options were used for compiling NEST. If
-   ``nest-config`` is not in your path, you need to provide it
-   explicitly with ``-Dwith-nest`` as follows:
-
-   .. code:: bash
-
-      cmake -Dwith-nest=${NEST_INSTALL_PREFIX}/bin/nest-config ../mm_src
-
-4. MyModule will be installed under ``NEST_INSTALL_PREFIX``. This
-   ensures that NEST will be able to find the module and initializing SLI
-   files for the module. You should not use the ``-DCMAKE_INSTALL_PREFIX``
-   to select a different installation destination. If you do, you must make
-   sure to use ``addpath`` in SLI before loading the module to let NEST
-   find the SLI initialization file for your module. You also might have
-   to set ``LD_LIBRARY_PATH`` (on Linux) or ``DYLD_LIBRARY_PATH`` (on macOS)``
-   for the module itself to be found.
-
-5. Compile and install.
-
-   .. code:: bash
-
-      make install
-
-   MyModule is then installed to the NEST installation
-   directory, including help files generated from the source code.
+if you need more flexibility in defining the mask, you can add a custom mask,
+written in C++, and add it to NEST via an extension module. For more information
+on writing such modules, see the
+`NEST extension module repository <https://github.com/nest/nest-extension_module>`_.
 
 To add a mask, a subclass of ``nest::Mask<D>`` must be defined, where ``D``
 is the dimension (2 or 3). In this case we will define a 2-dimensional
@@ -1634,7 +1590,7 @@ is done by adding a line to the function ``MyModule::init()`` in the file
 
    nest::TopologyModule::register_mask< EllipticMask >( "elliptic" );
 
-After compiling and installing the module, the mask is available to be
+After compiling and installing your module, the mask is available to be
 used in connections, e.g.
 
 ::

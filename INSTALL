@@ -164,9 +164,9 @@ and its corresponding libraries correctly. To circumvent such a problem followin
   e.g.: Please note `-Dwith-python=ON` is the default.
   cmake -DCMAKE_INSTALL_PREFIX=</install/path> \
         -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-        -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so \
-        -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
-        -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.4m \
+        -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so \
+        -DPYTHON_INCLUDE_DIR=/usr/include/python3.6 \
+        -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.6m \
         </path/to/NEST/src>
 
 Compiling for Apple OSX/macOS
@@ -232,8 +232,8 @@ CMake <3.4 is buggy about finding the matching libraries (for many years).
 Thus, you also have to specify `PYTHON_LIBRARY` and `PYTHON_INCLUDE_DIR`
 if they are not found OR the incorrect libraries are found, e.g.:
 ```
--DPYTHON_LIBRARY=/bgsys/local/python3/3.4.2/lib/libpython3.4m.a
--DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.4.2/include/python3.4m
+-DPYTHON_LIBRARY=/bgsys/local/python3/3.6.10/lib/libpython3.6m.a
+-DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.6.10/include/python3.6m
 ```
 
 A complete `cmake` line for PyNEST could look like this:
@@ -246,8 +246,8 @@ cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
   -Dcythonize-pynest=OFF \
 	  -DCMAKE_C_COMPILER=/bgsys/drivers/ppcfloor/comm/xl/bin/mpixlc_r \
 	  -DCMAKE_CXX_COMPILER=/bgsys/drivers/ppcfloor/comm/xl/bin/mpixlcxx_r \
-	  -DPYTHON_LIBRARY=/bgsys/local/python3/3.4.2/lib/libpython3.4m.a \
-	  -DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.4.2/include/python3.4m \
+	  -DPYTHON_LIBRARY=/bgsys/local/python3/3.6.10/lib/libpython3.6m.a \
+	  -DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.6.10/include/python3.6m \
   -Dwith-ltdl=OFF \
   <nest-src>
 ```
@@ -255,12 +255,12 @@ cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
 Further, for running PyNEST, make sure all Python dependencies are installed and
 environment variables are set properly:
 ```
-module load python3/3.4.2
+module load python3/3.6.10
 
 # adds PyNEST to the PYTHONPATH
 source <nest-install-dir>/bin/nest_vars.sh
 
-# makes HOME and PYTHONPATH available for python
+# makes HOME and PYTHONPATH available for Python
 runjob \
   --exp-env HOME \
   --exp-env PATH \
@@ -268,7 +268,7 @@ runjob \
   --exp-env PYTHONUNBUFFERED \
   --exp-env PYTHONPATH \
   ... \
-  : /bgsys/local/python3/3.4.2/bin/python3.4 script.py
+  : /bgsys/local/python3/3.6.10/bin/python3 script.py
 ```
 
 BlueGene/Q and GCC

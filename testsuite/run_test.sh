@@ -94,9 +94,12 @@ run_test ()
 
     echo "${param_script}" | grep -q '\.sli'
     if test $? -eq 0 ; then
-      command="'${NEST_BINARY}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
+      command="'${NEST}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     else
-      command="'${PYTHON}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
+      # Use plain python3 if the PYTHON variable is unset (i.e. PyNEST
+      # was not enabled)
+      PYTHON_CMD="${PYTHON:-python3}"	
+      command="'${PYTHON_CMD}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     fi
 
     echo "${command}" >> "${TEST_RUNFILE}"

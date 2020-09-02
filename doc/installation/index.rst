@@ -42,9 +42,9 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
        2. Disable the binary package in the repository file created under ``/etc/apt/sources.list.d/`` by commenting
           out the ``deb`` line, while keeping the ``deb-src`` line. It should look similar to this:
-           
+
           .. code-block:: bash
-           
+
               #deb http://ppa.launchpad.net/nest-simulator/nest/ubuntu focal main
               deb-src http://ppa.launchpad.net/nest-simulator/nest/ubuntu focal main
 
@@ -108,7 +108,7 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
            sudo dnf install python3-nest
 
-       Find out more on the NeuroFedora site: https://docs.fedoraproject.org/en-US/neurofedora/nest/.       
+       Find out more on the NeuroFedora site: https://docs.fedoraproject.org/en-US/neurofedora/nest/.
 
    .. tab:: Homebrew (macOS)
 
@@ -122,37 +122,39 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
    .. tab:: Conda (Linux/macOS)
 
-       1. Create your conda environment and install NEST. We recommend
-          that you **create a dedicated environment for NEST**, which
-          should ensure there are no conflicts with previously
-          installed packages.
-
-          .. pull-quote::
-        
-          We strongly recommend that you **install all programs**
-             you'll need, (such as ``ipython`` or ``jupyter-lab``) in
-             the environment (ENVNAME) **at the same time**, by
-             **appending them to the command below**.
-
-             Installing packages later may override previously
-             installed dependencies and potentially break packages!
-             See `managing environments in the Conda documentation
-             <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_
-             for more information.
+       1. Create your conda environment and install NEST. Please check out 
+          our :doc:`conda_tips`.
 
           Without OpenMPI:
 
           .. code-block:: sh
 
-             conda create --name ENVNAME -c conda-forge nest-simulator
+              conda create --name ENVNAME -c conda-forge nest-simulator
 
           With OpenMPI:
 
           .. code-block:: sh
 
-             conda create --name ENVNAME -c conda-forge nest-simulator=*=mpi_openmpi*
+              conda create --name ENVNAME -c conda-forge nest-simulator=*=mpi_openmpi*
 
-          The syntax for this install follows the pattern: ``nest-simulator=<version>=<build_string>``
+          The syntax for this install follows the pattern:
+          ``nest-simulator=<version>=<build_string>``. Build strings can be
+          found by listing the available versions with
+
+          .. code-block:: sh
+
+              conda search -c conda-forge nest-simulator
+
+          or by browsing the `conda forge file list
+          <https://anaconda.org/conda-forge/nest-simulator/files>`_ (note
+          there are multiple pages). For example, to install one of the
+          2.20.x versions with MPI support by OpenMPI, you would use the
+          version specifier ``nest-simulator=2.20.*=*openmpi*``. The Python
+          dependency is automatically resolved if you add to the above
+          command a version specifier for Python, for example ``python=3`` or
+          ``python=3.8``. If the Python version and build identifier are left
+          unspecified, ``conda`` will install the latest version compatible
+          with all requested packages.
 
        2. Activate your environment:
 
@@ -160,12 +162,12 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
              conda activate ENVNAME
 
-	     
+
 In addition to native installations from ready-made packages, we
 provide containerized versions of NEST in several formats:
 
 .. tabs::
-	  
+
    .. tab:: Docker (Linux/macOS)
 
        Docker provides an isolated container to run applications. The
@@ -253,17 +255,13 @@ For example, in the terminal type:
 
     .. code-block:: bash
 
-         python
+         python3
 
 Once in Python you can type:
 
     .. code-block:: python
 
         import nest
-
-.. note::
-
-    If you get ImportError: No module named nest after running ``python``.  Try to run ``python3`` instead.
 
 **or as a stand alone application**::
 

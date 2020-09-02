@@ -774,7 +774,12 @@ class SynapseCollection(object):
 
 
 class Colocate(object):
+    """
+    Class for colocate synapse specification.
     
+    Wrapper around a list of specifications.
+    """
+
     def __init__(self, *args):
         self.syn_specs = args
 

@@ -407,9 +407,13 @@ class NodeCollection(object):
         elif kwargs and params:
             raise TypeError("must either provide params or kwargs, but not both.")
 
-        if isinstance(params, dict) and self[0].get('local'):
+        local_nodes = [self.local] if len(self) == 1 else self.local
 
-            contains_list = [is_iterable(vals) and not is_iterable(self[0].get(key)) for key, vals in params.items()]
+        if isinstance(params, dict) and all(local_nodes):
+
+            node_params = self[0].get()
+            contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
+                             key, vals in params.items()]
 
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
@@ -749,7 +753,9 @@ class SynapseCollection(object):
             raise TypeError("must either provide params or kwargs, but not both.")
 
         if isinstance(params, dict):
-            contains_list = [is_iterable(vals) and not is_iterable(self[0].get(key)) for key, vals in params.items()]
+            node_params = self[0].get()
+            contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
+                             key, vals in params.items()]
 
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]

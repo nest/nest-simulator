@@ -1637,7 +1637,7 @@ class ConnectionPattern(object):
                 for sp in ax.spines.values():
                     # turn off axis lines, make room for frame edge
                     sp.set_color('none')
-            if block.l <= self._axes.l_patches and block.slbl:
+            if block.left <= self._axes.l_patches and block.slbl:
                 ax.set_ylabel(block.slbl,
                               rotation=plotParams.layer_orientation['sender'],
                               fontproperties=plotParams.layer_font)

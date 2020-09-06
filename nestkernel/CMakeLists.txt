@@ -91,6 +91,7 @@ set( nestkernel_sources
     recording_backend_ascii.h recording_backend_ascii.cpp
     recording_backend_memory.h recording_backend_memory.cpp
     recording_backend_screen.h recording_backend_screen.cpp
+    recording_backend_udp.h recording_backend_udp.cpp
     manager_interface.h
     target_table.h target_table.cpp
     target_table_devices.h target_table_devices.cpp target_table_devices_impl.h

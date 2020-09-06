@@ -42,6 +42,7 @@
 #include "recording_backend_ascii.h"
 #include "recording_backend_memory.h"
 #include "recording_backend_screen.h"
+#include "recording_backend_udp.h"
 #ifdef HAVE_RECORDINGBACKEND_ARBOR
 #include "recording_backend_arbor.h"
 #endif
@@ -309,6 +310,7 @@ IOManager::register_recording_backends_()
   recording_backends_.insert( std::make_pair( "ascii", new RecordingBackendASCII() ) );
   recording_backends_.insert( std::make_pair( "memory", new RecordingBackendMemory() ) );
   recording_backends_.insert( std::make_pair( "screen", new RecordingBackendScreen() ) );
+  recording_backends_.insert( std::make_pair( "udp", new RecordingBackendUDP() ) );
 #ifdef HAVE_RECORDINGBACKEND_ARBOR
   recording_backends_.insert( std::make_pair( "arbor", new RecordingBackendArbor() ) );
 #endif

@@ -1486,6 +1486,10 @@ def
     /Distance_a_g load
 def
 
+/Distance [/arraytype]
+    /Distance_a load
+def
+
 /GetLayerStatus [/nodecollectiontype]
     /GetLayerStatus_g load
 def

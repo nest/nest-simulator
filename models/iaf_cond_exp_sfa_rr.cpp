@@ -232,11 +232,11 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::set( const DictionaryDatum& d, Node* nod
 void
 nest::iaf_cond_exp_sfa_rr::State_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] );     // Membrane potential
-  def< double >( d, names::g_ex, y_[ G_EXC ] );  // Membrane potential
-  def< double >( d, names::g_in, y_[ G_INH ] );  // Membrane potential
-  def< double >( d, names::g_sfa, y_[ G_SFA ] ); // Membrane potential
-  def< double >( d, names::g_rr, y_[ G_RR ] );   // Membrane potential
+  def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
+  def< double >( d, names::g_ex, y_[ G_EXC ] );
+  def< double >( d, names::g_in, y_[ G_INH ] );
+  def< double >( d, names::g_sfa, y_[ G_SFA ] );
+  def< double >( d, names::g_rr, y_[ G_RR ] );
 }
 
 void

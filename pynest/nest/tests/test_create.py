@@ -65,7 +65,7 @@ class CreateTestCase(unittest.TestCase):
         nest_errors = nest.kernel.NESTErrors
         params = [(tuple(), TypeError),
                   ({'V_m': [-50]}, IndexError),
-                  ({'V_mm': num_nodes*[-50.]}, KeyError),
+                  ({'V_mm': num_nodes*[-50.]}, nest_errors.DictError),
                   ({'V_m': num_nodes*[-50]}, nest_errors.TypeMismatch),
                   ({'V_m': -50, 'C_m': num_nodes*[20.]}, nest_errors.TypeMismatch),
                   ]

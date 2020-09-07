@@ -109,6 +109,34 @@ get_position( NodeCollectionPTR layer_nc )
   return result;
 }
 
+std::vector< double >
+get_position( const index node_id )
+{
+  Node* node = kernel().node_manager.get_node_or_proxy( node_id );
+
+  if ( not kernel().node_manager.is_local_node_id( node_id ) )
+  {
+    throw KernelException( "GetPosition is currently implemented for local nodes only." );
+  }
+
+  NodeCollectionPTR nc = node->get_nc();
+  NodeCollectionMetadataPTR meta = nc->get_metadata();
+
+  if ( not meta )
+  {
+    // We return NaN if node_id is not spatially distributed
+    std::vector< double > positions = { std::nan( "1" ), std::nan( "1" ) };
+    return positions;
+  }
+
+  AbstractLayerPTR spatial_nc = get_layer( nc );
+  index first_node_id = meta->get_first_node_id();
+
+  auto pos_vec = spatial_nc->get_position_vector( node_id - first_node_id );
+
+  return pos_vec;
+}
+
 ArrayDatum
 displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 {
@@ -222,7 +250,7 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
     index node_id = layer_from_nc->operator[]( 0 );
     if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
-      throw KernelException( "Displacement is currently implemented for local nodes only." );
+      throw KernelException( "Distance is currently implemented for local nodes only." );
     }
     const long lid = node_id - first_node_id;
 
@@ -241,7 +269,7 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
       index node_id = ( *it ).node_id;
       if ( not kernel().node_manager.is_local_node_id( node_id ) )
       {
-        throw KernelException( "Displacement is currently implemented for local nodes only." );
+        throw KernelException( "Distance is currently implemented for local nodes only." );
       }
 
       const long lid = node_id - first_node_id;
@@ -276,7 +304,7 @@ distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
     index node_id = ( *it ).node_id;
     if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
-      throw KernelException( "Displacement is currently implemented for local nodes only." );
+      throw KernelException( "Distance is currently implemented for local nodes only." );
     }
 
     const long lid = node_id - first_node_id;
@@ -291,6 +319,50 @@ distance( NodeCollectionPTR layer_nc, const ArrayDatum point )
     {
       ++counter;
     }
+  }
+  return result;
+}
+
+std::vector< double >
+distance( const ArrayDatum conns )
+{
+  std::vector< double > result;
+
+  size_t num_conns = conns.size();
+  result.reserve( num_conns );
+
+  for ( size_t conn_indx = 0; conn_indx < num_conns; ++conn_indx )
+  {
+    ConnectionDatum conn_id = getValue< ConnectionDatum >( conns.get( conn_indx ) );
+
+    index src = conn_id.get_source_node_id();
+    auto src_position = get_position( src );
+
+    index trgt = conn_id.get_target_node_id();
+
+    if ( not kernel().node_manager.is_local_node_id( trgt ) )
+    {
+      throw KernelException( "Distance is currently implemented for local nodes only." );
+    }
+
+    Node* trgt_node = kernel().node_manager.get_node_or_proxy( trgt );
+
+    NodeCollectionPTR trgt_nc = trgt_node->get_nc();
+    NodeCollectionMetadataPTR meta = trgt_nc->get_metadata();
+
+    // distance is NaN if source, target is not spatially distributed
+    double dist = std::nan( "1" );
+
+    if ( meta )
+    {
+      AbstractLayerPTR spatial_trgt_nc = get_layer( trgt_nc );
+      NodeCollectionMetadataPTR meta = trgt_nc->get_metadata();
+      index first_trgt_node_id = meta->get_first_node_id();
+
+      dist = spatial_trgt_nc->compute_distance( src_position, trgt - first_trgt_node_id );
+    }
+
+    result.push_back( dist );
   }
   return result;
 }

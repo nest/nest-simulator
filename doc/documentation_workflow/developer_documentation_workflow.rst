@@ -75,5 +75,5 @@ index via the command line
 
     The ``helpdesk()`` command does not work if you have compiled
     NEST with MPI support, but you have to enter the address of the helpdesk
-    (``file:///<nest_install_dir>/share/doc/nest/index.html``) manually into the browser.
+    (``file://<nest_install_dir>/share/doc/nest/index.html``) manually into the browser.
     Replace ``<nest_install_dir>`` with the path under which NEST is installed.

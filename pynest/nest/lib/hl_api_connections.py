@@ -416,6 +416,7 @@ def DataConnect(pre, params=None, model="static_synapse"):
 
 
 @check_stack
+@deprecated('', 'CGConnect is deprecated and will be integrated into Connect in NEST 3.0.')
 def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
     """Connect neurons using the Connection Generator Interface.
 
@@ -470,6 +471,7 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
 
 
 @check_stack
+@deprecated('', 'CGParse is deprecated and will be removed in NEST 3.0.')
 def CGParse(xml_filename):
     """Parse an XML file and return the corresponding connection
     generator cg.
@@ -499,6 +501,7 @@ def CGParse(xml_filename):
 
 
 @check_stack
+@deprecated('', 'CGSelectImplementation is deprecated and will be removed in NEST 3.0.')
 def CGSelectImplementation(tag, library):
     """Select a library to provide a parser for XML files and associate
     an XML tag with the library.

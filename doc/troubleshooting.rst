@@ -25,7 +25,7 @@ required dependencies.*
 
     .. code-block:: bash
 
-        cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
+        cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
 
 
 **If the error still persists**, you may have more than one installation of the <package>.  A conflict may occur between different package binaries:
@@ -100,7 +100,7 @@ The terminal will display the version number:
 
     .. code-block:: bash
 
-      cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
+      cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
 
 
 2. When I try to import nest, I get an error in Python that says 'No Module named NEST' or 'ImportError'
@@ -130,7 +130,7 @@ If your Python version is correct and you still have the same error, then try on
 
           .. code-block:: bash
 
-              source </path/to/nest_install_dir>/bin/nest_vars.sh
+              source <nest_install_dir>/bin/nest_vars.sh
 
 
 

@@ -78,11 +78,11 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertEqual(num_src * len(syn_spec), len(conns))
 
         # source id's are 1, 2, 3, 4, 5, 6, 7
-        ref_src = [1] * len(syn_spec) + [2] * len(syn_spec) + [3] * len(syn_spec) + [4] * len(syn_spec) + \
-                  [5] * len(syn_spec) + [6] * len(syn_spec) + [7] * len(syn_spec)
+        ref_src = ([1]*len(syn_spec) + [2]*len(syn_spec) + [3]*len(syn_spec) + [4]*len(syn_spec) +
+                   [5]*len(syn_spec) + [6]*len(syn_spec) + [7]*len(syn_spec))
         # target id's are 8, 9, 10, 11, 12, 13, 14
-        ref_trgt = [8] * len(syn_spec) + [9] * len(syn_spec) + [10] * len(syn_spec) + [11] * len(syn_spec) + \
-                   [12] * len(syn_spec) + [13] * len(syn_spec) + [14] * len(syn_spec)
+        ref_trgt = ([8]*len(syn_spec) + [9]*len(syn_spec) + [10]*len(syn_spec) + [11]*len(syn_spec) +
+                    [12]*len(syn_spec) + [13]*len(syn_spec) + [14]*len(syn_spec))
 
         ref_weight = [-5., -1.5, 3.] * num_src
         ref_synapse_modules = ['stdp_synapse', 'static_synapse', 'stdp_synapse'] * num_src
@@ -110,7 +110,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertEqual(num_src * num_trg * len(syn_spec), len(conns))
 
         # source id's are 1, 2, 3
-        ref_src = [1] * num_trg * len(syn_spec) + [2] * num_trg * len(syn_spec) + [3] * num_trg * len(syn_spec)
+        ref_src = [1]*num_trg*len(syn_spec) + [2]*num_trg*len(syn_spec) + [3]*num_trg*len(syn_spec)
         # target id's are 4, 5, 6, 7, 8
         ref_trgt = []
         for t in [4, 5, 6, 7, 8]*num_src:
@@ -144,9 +144,9 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertEqual(num_trg * indegree * len(syn_spec), len(conns))
 
         ref_trgt = [t for t in trgt.tolist() for _ in range(indegree * len(syn_spec))]
-        ref_sm = (['static_synapse'] * num_trg * indegree +
-                  ['stdp_synapse'] * num_trg * indegree +
-                  ['stdp_synapse'] * num_trg * indegree)
+        ref_sm = (['static_synapse']*num_trg*indegree +
+                  ['stdp_synapse']*num_trg*indegree +
+                  ['stdp_synapse']*num_trg*indegree)
 
         self.assertEqual(sorted(ref_trgt), sorted(conns.target))
         self.assertEqual(sorted(ref_sm), sorted(conns.synapse_model))
@@ -198,13 +198,13 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         weights = conns.weight
         self.assertEqual(sorted(weights)[:num_src * outdegree], [-3] * num_src * outdegree)
 
-        ref_synapse_model = (['stdp_synapse'] * num_src * outdegree +
-                             ['tsodyks_synapse'] * num_src * outdegree +
-                             ['static_synapse'] * num_src * outdegree)
+        ref_synapse_model = (['stdp_synapse']*num_src*outdegree +
+                             ['tsodyks_synapse']*num_src*outdegree +
+                             ['static_synapse']*num_src*outdegree)
         self.assertEqual(sorted(conns.synapse_model), sorted(ref_synapse_model))
 
     def test_MultipleSynapses_spatial_network_bernoulliSource(self):
-        """test list of synapses for 3D spatial networks with pairwice bernoulli on source"""
+        """test list of synapses for 3D spatial networks with pairwise Bernoulli on source"""
         num_src = 7
         num_trgt = 19
         p = 0.6
@@ -226,19 +226,19 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         self.assertLess(num_src * num_trgt * p * 2, len(conns))
 
         delays = [round(d, 1) for d in conns.delay]
-        ref_delays = [1.] * (num_conns // 3) + [1.4] * (num_conns // 3) + [1.7] * (num_conns // 3)
+        ref_delays = [1.]*(num_conns // 3) + [1.4]*(num_conns // 3) + [1.7]*(num_conns // 3)
 
         self.assertEqual(sorted(delays), ref_delays)
 
-        ref_synapse_model = (['tsodyks_synapse'] * (num_conns // 3) +
-                             ['static_synapse'] * (2 * num_conns // 3))
+        ref_synapse_model = (['tsodyks_synapse']*(num_conns // 3) +
+                             ['static_synapse']*(2 * num_conns // 3))
         self.assertEqual(sorted(conns.synapse_model), sorted(ref_synapse_model))
 
         for w in sorted(conns.weight)[:(num_conns // 3)]:
             self.assertLess(w, 0)
 
     def test_MultipleSynapses_spatial_network_bernoulliTarget(self):
-        """test list of synapses for 3D spatial networks with pairwice bernoulli on target"""
+        """test list of synapses for 3D spatial networks with pairwise Bernoulli on target"""
         num_src = 57
         num_trgt = 21
         p = 0.3
@@ -264,7 +264,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
 
         self.assertEqual(sorted(delays), ref_delays)
 
-        ref_weights = [-1.4] * (num_conns // 2) + [1.4] * (num_conns // 2)
+        ref_weights = [-1.4]*(num_conns // 2) + [1.4]*(num_conns // 2)
         self.assertEqual(sorted(conns.weight), ref_weights)
 
 

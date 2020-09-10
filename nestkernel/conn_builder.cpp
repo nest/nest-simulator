@@ -177,11 +177,10 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     // once to avoid re-creating the object over and over again.
     if ( synapse_params_[ indx ].size() > 0 )
     {
-      // std::vector< DictionaryDatum > param_dictionary = {new Dictionary()};
       for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
       {
 
-        param_dicts_[ indx ].push_back( new Dictionary() ); // param_dictionary );
+        param_dicts_[ indx ].push_back( new Dictionary() );
 
         ConnParameterMap::const_iterator it = synapse_params_[ indx ].begin();
         for ( ; it != synapse_params_[ indx ].end(); ++it )

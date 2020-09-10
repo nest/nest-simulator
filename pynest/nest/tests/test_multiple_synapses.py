@@ -24,7 +24,6 @@ Multiple synapses tests
 """
 
 import unittest
-import warnings
 import nest
 
 

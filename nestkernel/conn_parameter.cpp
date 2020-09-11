@@ -39,7 +39,7 @@
 nest::ConnParameter*
 nest::ConnParameter::create( const Token& t, const size_t nthreads )
 {
-  // Code grabbed from TopologyModule::create_parameter()
+  // Code grabbed from NestModule::create_parameter()
   // See there for a more general solution
 
   // single double

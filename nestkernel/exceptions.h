@@ -1210,11 +1210,40 @@ public:
   {
   }
 
-
   std::string message() const;
 
 private:
   const std::string backend_;
 };
-}
+
+class LayerExpected : public KernelException
+{
+public:
+  LayerExpected()
+    : KernelException( "LayerExpected" )
+  {
+  }
+  ~LayerExpected() throw()
+  {
+  }
+
+  std::string message() const;
+};
+
+class LayerNodeExpected : public KernelException
+{
+public:
+  LayerNodeExpected()
+    : KernelException( "LayerNodeExpected" )
+  {
+  }
+  ~LayerNodeExpected() throw()
+  {
+  }
+
+  std::string message() const;
+};
+  
+} // namespace nest
+
 #endif

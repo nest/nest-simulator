@@ -441,3 +441,15 @@ nest::InternalError::message() const
 {
   return msg_;
 }
+
+std::string
+nest::LayerExpected::message() const
+{
+  return std::string();
+}
+
+std::string
+nest::LayerNodeExpected::message() const
+{
+  return std::string();
+}

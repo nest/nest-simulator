@@ -233,7 +233,6 @@ add_subdirectory( sli )
 add_subdirectory( nest )
 add_subdirectory( nestkernel )
 add_subdirectory( testsuite )
-add_subdirectory( topology )
 if ( HAVE_PYTHON )
   add_subdirectory( pynest )
 endif ()
@@ -282,7 +281,6 @@ set( ALL_LIBS
   "-lrandom"
   "-lsli"
   "-lnestkernel"
-  "-ltopology"
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"

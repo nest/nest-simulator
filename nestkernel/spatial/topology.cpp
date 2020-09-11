@@ -33,6 +33,7 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest.h"
+#include "nestmodule.h"
 #include "node.h"
 
 // Includes from sli:
@@ -41,8 +42,6 @@
 // Includes from topology:
 #include "grid_layer.h"
 #include "layer.h"
-#include "topologymodule.h" // LayerException, TopologyModule::create_parameter,
-                            // TopologyModule::create_mask
 
 
 namespace nest
@@ -372,7 +371,7 @@ create_mask( const DictionaryDatum& mask_dict )
 {
   mask_dict->clear_access_flags();
 
-  MaskDatum datum( TopologyModule::create_mask( mask_dict ) );
+  MaskDatum datum( NestModule::create_mask( mask_dict ) );
 
   ALL_ENTRIES_ACCESSED( *mask_dict, "topology::CreateMask", "Unread dictionary entries: " );
 

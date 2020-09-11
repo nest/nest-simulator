@@ -30,6 +30,7 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_names.h"
 #include "nest_types.h"
 
 // Includes from sli:
@@ -39,7 +40,6 @@
 #include "connection_creator.h"
 #include "ntree.h"
 #include "position.h"
-#include "topology_names.h"
 
 namespace nest
 {

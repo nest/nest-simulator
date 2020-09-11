@@ -28,7 +28,9 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "nest_names.h"
 #include "nest_types.h"
+#include "nestmodule.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -36,14 +38,12 @@
 
 // Includes from topology:
 #include "position.h"
-#include "topology_names.h"
-#include "topologymodule.h"
 
 namespace nest
 {
 class AbstractMask;
 
-typedef sharedPtrDatum< AbstractMask, &TopologyModule::MaskType > MaskDatum;
+typedef sharedPtrDatum< AbstractMask, &NestModule::MaskType > MaskDatum;
 
 
 /**

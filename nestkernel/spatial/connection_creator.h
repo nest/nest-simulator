@@ -28,12 +28,12 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_names.h"
+#include "nestmodule.h"
 
 // Includes from topology:
 #include "mask.h"
 #include "position.h"
-#include "topology_names.h"
-#include "topologymodule.h"
 #include "vose.h"
 
 namespace nest

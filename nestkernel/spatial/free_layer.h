@@ -28,13 +28,15 @@
 #include <limits>
 #include <sstream>
 
+// Includes from nestkernel:
+#include "nest_names.h"
+
 // Includes from sli:
 #include "dictutils.h"
 
 // Includes from topology:
 #include "layer.h"
 #include "ntree_impl.h"
-#include "topology_names.h"
 
 namespace nest
 {

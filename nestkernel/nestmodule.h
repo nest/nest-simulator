@@ -45,8 +45,9 @@ namespace nest
 {
 class AbstractLayer;
 class AbstractMask;
-template < int D > class Layer;
-  
+template < int D >
+class Layer;
+
 class Node;
 class Parameter;
 
@@ -134,7 +135,7 @@ public:
    * @returns dynamically allocated new Mask object.
    */
   static AbstractMask* create_mask( const Name& name, const DictionaryDatum& d );
-  
+
   /**
    * @defgroup NestSliInterface SLI Interface functions of the NEST kernel.
    * This group contains the functions that form the SLI interface
@@ -689,7 +690,7 @@ public:
   //
   // SLI functions for spatial networks
   //
-  
+
   class CreateLayer_D_DFunction : public SLIFunction
   {
   public:
@@ -797,7 +798,7 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } selectnodesbymask_g_a_Mfunction;
-  
+
 private:
   static ParameterFactory& parameter_factory_();
   static MaskFactory& mask_factory_();
@@ -811,7 +812,7 @@ NestModule::register_parameter( const Name& name )
 {
   return parameter_factory_().register_subtype< T >( name );
 }
-  
+
 template < class T >
 inline bool
 NestModule::register_mask()

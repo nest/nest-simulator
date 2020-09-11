@@ -1243,7 +1243,7 @@ public:
 
   std::string message() const;
 };
-  
+
 } // namespace nest
 
 #endif

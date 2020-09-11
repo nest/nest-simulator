@@ -305,11 +305,6 @@ create_doughnut( const DictionaryDatum& d )
 }
 
 
-
-
-
-
-  
 /** @BeginDocumentation
    Name: SetStatus - sets the value of properties of a node, connection, random
    deviate generator or object
@@ -2985,7 +2980,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
   i->createcommand( "SelectNodesByMask_g_a_M", &selectnodesbymask_g_a_Mfunction );
 
-  
 
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
@@ -3023,7 +3017,6 @@ NestModule::init( SLIInterpreter* i )
   register_mask< BoxMask< 3 > >( "volume" ); // For compatibility with topo 2.0
   register_mask( "doughnut", create_doughnut );
   register_mask< GridMask< 2 > >();
-  
 }
 
 } // namespace nest

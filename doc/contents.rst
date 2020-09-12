@@ -15,8 +15,8 @@ Table of Contents
    getting_started
    tutorials/index
    guides/index
-   models/index
    examples/index
+   models/index
    ref_material/pynest_apis
    troubleshooting
    getting_help

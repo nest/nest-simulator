@@ -24,7 +24,9 @@
 #define GRID_MASK_H
 
 // Includes from nestkernel:
+#include "nest_names.h"
 #include "nest_types.h"
+#include "nestmodule.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -33,8 +35,6 @@
 // Includes from topology:
 #include "mask.h"
 #include "position.h"
-#include "topology_names.h"
-#include "topologymodule.h"
 
 namespace nest
 {

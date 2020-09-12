@@ -73,17 +73,9 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   // read out synapse-related parameters ----------------------
 
   // synapse-specific parameters
-  // TODO: Can we create this set once and for all?
-  //       Should not be done as static initialization, since
-  //       that might conflict with static initialization of
-  //       Name system.
-  std::set< Name > skip_set;
-  skip_set.insert( names::weight );
-  skip_set.insert( names::delay );
-  skip_set.insert( names::min_delay );
-  skip_set.insert( names::max_delay );
-  skip_set.insert( names::num_connections );
-  skip_set.insert( names::synapse_model );
+  std::set< Name > skip_set = {
+    names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
+  };
 
   default_weight_.resize( syn_spec.size() );
   default_delay_.resize( syn_spec.size() );
@@ -341,8 +333,7 @@ nest::ConnBuilder::connect()
   // classes are fully constructed when the test is executed
   for ( auto syn_model : synapse_model_id_ )
   {
-    if ( kernel().model_manager.connector_requires_symmetric( syn_model )
-      and not( is_symmetric() or make_symmetric_ ) )
+    if ( kernel().model_manager.connector_requires_symmetric( syn_model ) and not( is_symmetric() or make_symmetric_ ) )
     {
       throw BadProperty(
         "Connections with this synapse model can only be created as "
@@ -483,8 +474,8 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
           try
           {
             // change value of dictionary entry without allocating new datum
-            IntegerDatum* id =
-              static_cast< IntegerDatum* >( ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+            IntegerDatum* id = static_cast< IntegerDatum* >(
+              ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
 
             ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
           }
@@ -507,8 +498,8 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
         else
         {
           // change value of dictionary entry without allocating new datum
-          DoubleDatum* dd =
-            static_cast< DoubleDatum* >( ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+          DoubleDatum* dd = static_cast< DoubleDatum* >(
+            ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
           ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
         }
       }

@@ -367,9 +367,9 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 
   conn_spec->clear_access_flags();
 
-  for ( auto syn_params = syn_spec.begin(); syn_params < syn_spec.end(); ++syn_params )
+  for ( auto syn_params : syn_spec )
   {
-    ( *syn_params )->clear_access_flags();
+    syn_params->clear_access_flags();
   }
 
   if ( not conn_spec->known( names::rule ) )
@@ -390,9 +390,9 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
-  for ( auto syn_params = syn_spec.begin(); syn_params < syn_spec.end(); ++syn_params )
+  for ( auto syn_params : syn_spec )
   {
-    ALL_ENTRIES_ACCESSED( **syn_params, "Connect", "Unread dictionary entries in syn_spec: " );
+    ALL_ENTRIES_ACCESSED( *syn_params, "Connect", "Unread dictionary entries in syn_spec: " );
   }
 
   cb->connect();

@@ -121,14 +121,14 @@ class Main():
         neuron_it = None
         stimulator_it = None
 
-        excluded = ["correlation_detector", "parrot_neuron", "parrot_neuron_ps"]
-        models = [x for x in nest.Models("nodes") if x not in excluded ]
+        excl = ["correlation_detector", "parrot_neuron", "parrot_neuron_ps"]
+        models = [x for x in nest.Models("nodes") if x not in excl]
 
         for entry in models:
 
             try:
                 entrytype = nest.GetDefaults(entry)["element_type"]
-            except:
+            except Exception:
                 entrytype = "unknown"
 
             if entrytype == "neuron":

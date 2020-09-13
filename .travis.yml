@@ -102,7 +102,6 @@ addons:
      - libboost-python-dev
      - libboost-program-options-dev
      - libboost-test-dev
-     - python3-mpi4py
 cache:
    directory:
      - $HOME/.cache
@@ -172,7 +171,7 @@ before_install:
          # outdated versions in the Travis package whitelist.
          # terminaltables is required by parse_travis_log.py to create
          # the build summary.
-         pip install cython scipy matplotlib terminaltables junitparser
+         pip install cython scipy matplotlib terminaltables junitparser mpi4py
          pip install numpy==1.16.5
          pip list
      fi

@@ -20,7 +20,7 @@ called *send.py*.
 .. code-block:: python
     :linenos:
 
-    #!/usr/bin/env python
+    #!/usr/bin/env python3
 
     import nest
     nest.SetKernelStatus({"overwrite_files": True})
@@ -65,7 +65,7 @@ For the receiving process script, *receive.py* we do:
 .. code-block:: python
     :linenos:
 
-    #!/usr/bin/env python
+    #!/usr/bin/env python3
 
     import nest
     nest.SetKernelStatus({"overwrite_files": True})
@@ -202,7 +202,7 @@ below:
 .. code-block:: python
     :linenos:
 
-    #!/usr/bin/python
+    #!/usr/bin/python3
 
     import nest
 
@@ -240,7 +240,7 @@ slow.
 A much better approach is to forgo the use of the NEST Poisson
 generator. Generate a Poisson sequence of spike events in the *outside*
 process, and send the spike events directly into the simulation like we
-did in our earlier python example. This is far more effective, and the
+did in our earlier Python example. This is far more effective, and the
 outside process is not limited to the generators implemented in NEST but
 can create any kind of spiking input. In the next section we will take a
 look at how to do this.

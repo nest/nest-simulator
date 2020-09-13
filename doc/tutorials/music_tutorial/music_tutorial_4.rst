@@ -21,7 +21,7 @@ differences to the C++ API. The full example code is in the
 .. code-block:: python
     :linenos:
 
-    #!/usr/bin/python
+    #!/usr/bin/env python3
     import music
 
     [ ... ]
@@ -43,8 +43,8 @@ differences to the C++ API. The full example code is in the
         tickt = runtime.time()
 
 The sending code is almost completely identical to its C++ counterpart.
-Make sure python is used as interpreter for the code (and make sure this
-file is executable). Import music in the expected way.
+Make sure ``python3`` is used as interpreter for the code (and make sure this
+file is executable). Import ``music`` in the expected way.
 
 Unlike the C++ API, the index is not an object, but simply a label
 indicating global or local indexing. The ``map()`` call

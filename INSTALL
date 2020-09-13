@@ -7,11 +7,11 @@ Introduction
 
 NEST is installed with `cmake` (at least v2.8.12). In the simplest case, the commands
 
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
     make
     make install
 
-should build and install NEST to `/install/path`, which should be an absolute
+should build and install NEST to `<nest_install_dir>`, which should be an absolute
 path. Detailed installation  instructions can be found below, including
 instructions for macOS, BlueGene/Q and Fujitsu Sparc64 systems.
 
@@ -162,11 +162,11 @@ and its corresponding libraries correctly. To circumvent such a problem followin
   PYTHON_INCLUDE_DIR2 ... directories
 
   e.g.: Please note `-Dwith-python=ON` is the default.
-  cmake -DCMAKE_INSTALL_PREFIX=</install/path> \
+  cmake -DCMAKE_INSTALL_PREFIX=<nest_install_dir> \
         -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-        -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so \
-        -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
-        -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.4m \
+        -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so \
+        -DPYTHON_INCLUDE_DIR=/usr/include/python3.6 \
+        -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.6m \
         </path/to/NEST/src>
 
 Compiling for Apple OSX/macOS
@@ -180,7 +180,7 @@ way to install all required software is using Homebrew (from http://brew.sh).
 
 will install all required prequisites. You can then configure NEST with
 
-  cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
         -DCMAKE_C_COMPILER=gcc-6\
         -DCMAKE_CXX_COMPILER=g++-6 \
         </path/to/NEST/src>
@@ -195,7 +195,7 @@ NEST provides a cmake tool-chain file for cross compilation for BlueGene/Q. When
 configuring NEST use the following `cmake` line:
 
     cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
-          -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+          -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
           -Dwith-python=OFF \
           -Dstatic-libraries=ON \
           </path/to/NEST/src>
@@ -232,8 +232,8 @@ CMake <3.4 is buggy about finding the matching libraries (for many years).
 Thus, you also have to specify `PYTHON_LIBRARY` and `PYTHON_INCLUDE_DIR`
 if they are not found OR the incorrect libraries are found, e.g.:
 ```
--DPYTHON_LIBRARY=/bgsys/local/python3/3.4.2/lib/libpython3.4m.a
--DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.4.2/include/python3.4m
+-DPYTHON_LIBRARY=/bgsys/local/python3/3.6.10/lib/libpython3.6m.a
+-DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.6.10/include/python3.6m
 ```
 
 A complete `cmake` line for PyNEST could look like this:
@@ -241,13 +241,13 @@ A complete `cmake` line for PyNEST could look like this:
 module load gsl
 
 cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
-  -DCMAKE_INSTALL_PREFIX=</install/path> \
+  -DCMAKE_INSTALL_PREFIX=<nest_install_dir> \
   -Dstatic-libraries=OFF \
   -Dcythonize-pynest=OFF \
 	  -DCMAKE_C_COMPILER=/bgsys/drivers/ppcfloor/comm/xl/bin/mpixlc_r \
 	  -DCMAKE_CXX_COMPILER=/bgsys/drivers/ppcfloor/comm/xl/bin/mpixlcxx_r \
-	  -DPYTHON_LIBRARY=/bgsys/local/python3/3.4.2/lib/libpython3.4m.a \
-	  -DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.4.2/include/python3.4m \
+	  -DPYTHON_LIBRARY=/bgsys/local/python3/3.6.10/lib/libpython3.6m.a \
+	  -DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.6.10/include/python3.6m \
   -Dwith-ltdl=OFF \
   <nest-src>
 ```
@@ -255,12 +255,12 @@ cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
 Further, for running PyNEST, make sure all Python dependencies are installed and
 environment variables are set properly:
 ```
-module load python3/3.4.2
+module load python3/3.6.10
 
 # adds PyNEST to the PYTHONPATH
 source <nest-install-dir>/bin/nest_vars.sh
 
-# makes HOME and PYTHONPATH available for python
+# makes HOME and PYTHONPATH available for Python
 runjob \
   --exp-env HOME \
   --exp-env PATH \
@@ -268,7 +268,7 @@ runjob \
   --exp-env PYTHONUNBUFFERED \
   --exp-env PYTHONPATH \
   ... \
-  : /bgsys/local/python3/3.4.2/bin/python3.4 script.py
+  : /bgsys/local/python3/3.6.10/bin/python3 script.py
 ```
 
 BlueGene/Q and GCC
@@ -332,7 +332,7 @@ On the K Computer:
   To install NEST, use the following `cmake` line:
 
       cmake -DCMAKE_TOOLCHAIN_FILE=Platform/Fujitsu-Sparc64 \
-            -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+            -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
             -Dwith-gsl=/path/to/gsl-2.1.install/ \
             -Dwith-optimize="-Kfast -x1" \
             -Dwith-defines="-DUSE_PMA" \

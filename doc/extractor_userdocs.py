@@ -23,12 +23,13 @@ import re
 from tqdm import tqdm
 from pprint import pformat
 try:
-    from math import comb   # breaks in python<3.8
+    from math import comb   # breaks in Python < 3.8
 except ImportError:
     from math import factorial as fac
 
     def comb(n, k):
         return fac(n) / (fac(k) * fac(n - k))
+
 import os
 import glob
 import json
@@ -110,7 +111,7 @@ def UserDocExtractor(
         for filename in filenames:
             progress.set_postfix(file=os.path.basename(filename)[:15], refresh=False)
             progress.update(1)
-            log.debug("extracting user documentation from %s...", filename)
+            log.warning("extracting user documentation from %s...", filename)
             nfiles_total += 1
             match = None
             with open(os.path.join(basedir, filename), 'r', encoding='utf8') as infile:
@@ -183,7 +184,7 @@ def rewrite_short_description(doc, filename, short_description="Short descriptio
             fixed_title + "\n" + "=" * len(fixed_title) + "\n\n" +
             doc[secend:]
             )
-    raise ValueError("No section '%s' found in %s!", short_description, filename)
+    raise ValueError("No section '%s' found in %s!" % (short_description, filename))
 
 
 def rewrite_see_also(doc, filename, tags, see_also="See also"):
@@ -264,7 +265,7 @@ def rewrite_see_also(doc, filename, tags, see_also="See also"):
                              for tag in tags]) + "\n\n" +
             doc[secend:]
             )
-    raise ValueError("No section '%s' found in %s!", see_also, filename)
+    raise ValueError("No section '%s' found in %s!" % (see_also, filename))
 
 
 def write_rst_files(doc, tags, outdir, outname):

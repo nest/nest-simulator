@@ -37,7 +37,7 @@ Installation instructions here have been tested under macOS 10.14 *Mojave* with 
 
  .. code-block:: sh
 
-        cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+        cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
               -DCMAKE_C_COMPILER=gcc-9 \
               -DCMAKE_CXX_COMPILER=g++-9 \
               </path/to/NEST/src>

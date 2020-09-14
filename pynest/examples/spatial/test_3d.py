@@ -44,13 +44,13 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.scatter(xpos, ypos, zpos, s=15, facecolor='b', edgecolor='none')
 
-# full connections in volume [-0.2,0.2]**3
+# full connections in box volume [-0.2,0.2]**3
 nest.Connect(l1, l1,
              {'rule': 'pairwise_bernoulli',
               'p': 1.,
               'allow_autapses': False,
-              'mask': {'volume': {'lower_left': [-0.2, -0.2, -0.2],
-                                  'upper_right': [0.2, 0.2, 0.2]}}})
+              'mask': {'box': {'lower_left': [-0.2, -0.2, -0.2],
+                               'upper_right': [0.2, 0.2, 0.2]}}})
 
 # show connections from center element
 # sender shown in red, targets in green

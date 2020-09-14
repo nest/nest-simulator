@@ -139,8 +139,7 @@ before_install:
          cd $HOME/build
          echo $PATH
          if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
-             pyenv install --list
-             pyenv global 3.6.10
+             pyenv global `python3 --version | cut -d' ' -f2`
          fi
 
          if [ "$TRAVIS_OS_NAME" = "osx" ]; then

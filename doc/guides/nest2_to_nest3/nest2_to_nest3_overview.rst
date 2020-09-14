@@ -540,10 +540,10 @@ Setting and getting attributes directly
 
     If you use a list to set the parameter, the list needs to be the same length
     as the SynapseCollection.
-    
+
     For :ref:`spatially distributed <topo_changes>` sources and targets, you can access the distance between
     the source-target pairs by calling `distance` on your SynapseCollection.
-    
+
     >>>  synColl.distance
          (0.47140452079103173,
           0.33333333333333337,
@@ -554,7 +554,7 @@ Setting and getting attributes directly
           0.4714045207910317,
           0.33333333333333326,
           0.47140452079103157)
-         
+
 
 .. _conn_s_t_iterator:
 
@@ -1071,7 +1071,7 @@ Topology module
    See the reference section :ref:`topo_ref` in our conversion guide for all changes made to functions
 
 All of the functionality of Topology has been moved to the standard
-functions. In fact, there is no longer a Topology module in PyNEST. The
+functions. In fact, there is no longer a Topology module in NEST. The
 functions for creating spatially arranged neuronal networks are now in the ``nest`` module.
 
 Create spatially distributed nodes
@@ -1301,11 +1301,11 @@ If you have a SynapseCollection with connections from a spatially distributed ne
 *distance* between the source-target pairs by calling ``.distance`` on the SynapseCollection.
 
   ::
-  
+
     s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[3, 1]))
     t_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[1, 3]))
     nest.Connect(s_nodes, t_nodes)
-    
+
     conns = nest.GetConnections()
     dist = conns.distance
 

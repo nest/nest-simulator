@@ -1582,13 +1582,13 @@ implement the latter by testing if all the corners are inside, since our
 elliptic mask is convex. We must also define a function which returns a
 bounding box for the mask, i.e. a box completely surrounding the mask.
 
-The mask class must then be registered with the topology module, and this
+The mask class must then be registered with in NEST. This
 is done by adding a line to the function ``MyModule::init()`` in the file
 ``mymodule.cpp``:
 
 .. code:: c
 
-   nest::TopologyModule::register_mask< EllipticMask >( "elliptic" );
+   nest::NestModule::register_mask< EllipticMask >( "elliptic" );
 
 After compiling and installing your module, the mask is available to be
 used in connections, e.g.

@@ -151,7 +151,9 @@ For more flexibility in how we distribute neurons, we can use free spatial
 placement. We then need to define a Parameter for the placement of the
 neurons, or we can define the positions of the neurons explicitly. Note
 that the extent is calculated from the positions of the nodes, but we can
-also explicitly specify it. See Section 2.2 in NUTM for more details.
+also explicitly specify it. See the *Free layers* section of the
+:doc:`Guide to spatially-structured networks<../../guides/spatial/guide_spatially_structured_networks>`
+for details.
 
 The following snippet produces :numref:`free`:
 

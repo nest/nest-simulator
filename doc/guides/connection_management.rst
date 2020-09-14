@@ -11,7 +11,7 @@ still works, while in `PyNEST <introduction-to-pynest.md>`__, the
 `Connect()` function has been renamed to `OneToOneConnect()`.
 However, simple cases, which are just creating one-to-one connections
 between two lists of nodes are still working with the new command
-without the need to change the code. Note that the topology-module is
+without the need to change the code. Note that the spatial connection is
 not effected by theses changes. The translation between the old and the
 new connect routines is described in `Old Connection
 Routines <connection-management.md#old-connection-routines>`__.
@@ -376,13 +376,12 @@ parameters it needs to be defined in two steps:
 For further information on the distributions see :doc:`Random numbers in
 NEST <random_numbers>`.
 
-Topological Connections
------------------------
+Spatially-structured networks
+-----------------------------
 
-If the connect functions above are not sufficient, the topology provides
-more sophisticated functions. For example, it is possible to create
-receptive field structures and much more! See :doc:`Topological
-Connections <topology/index>` for more information.
+If nodes are created with spatial information, it is possible to create connections with
+attributes based on node positions. See :doc:`Spatially-structured networks <spatial/index>`
+for more information.
 
 .. _receptor-types:
 

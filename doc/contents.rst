@@ -18,7 +18,6 @@ Table of Contents
    guides/index
    models/index
    examples/index
-   topology/index
    ref_material/pynest_apis
    troubleshooting
    getting_help

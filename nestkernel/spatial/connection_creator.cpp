@@ -72,7 +72,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else if ( dit->first == names::mask )
     {
-      mask_ = TopologyModule::create_mask( dit->second );
+      mask_ = NestModule::create_mask( dit->second );
     }
     else if ( dit->first == names::kernel )
     {

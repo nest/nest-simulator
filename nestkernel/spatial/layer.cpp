@@ -24,6 +24,7 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "nest_names.h"
 #include "node_collection.h"
 #include "kernel_manager.h"
 #include "parameter.h"
@@ -39,7 +40,6 @@
 #include "layer_impl.h"
 #include "mask_impl.h"
 #include "topology.h"
-#include "topology_names.h"
 
 namespace nest
 {

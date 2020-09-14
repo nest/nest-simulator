@@ -128,7 +128,7 @@ Conversion to and from lists
     >>>  nrns.tolist()
          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    And you can create a NodeCollection by providing a list, tuple, numpy array or range of node IDs
+    And you can create a NodeCollection by providing a list, tuple, NumPy array or range of node IDs
 
     >>>  print(nest.NodeCollection([2, 3, 4, 8]))
          NodeCollection(metadata=None,
@@ -138,7 +138,8 @@ Conversion to and from lists
          NodeCollection(metadata=None, model=iaf_psc_alpha, size=3, first=1, last=3)
 
     Note however that the nodes have to be already created. If any
-    of the node IDs refer to a non existing node, an error is thrown.
+    of the node IDs refer to a non existing node, an error is thrown. Additionally each node ID can
+    only occur once and the list of node IDs must be sorted in ascending order.
 
 .. _composing:
 

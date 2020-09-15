@@ -753,15 +753,19 @@ inline index NodeCollectionPrimitive::operator[]( const size_t idx ) const
 inline bool NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
+  // Checking that rhs_ptr is valid first, to avoid segfaults. If rhs is a NodeCollectionComposite,
+  // rhs_ptr will be a null pointer.
+  if ( not rhs_ptr )
+  {
+    return false;
+  }
+
   // Not dereferencing rhs_ptr->metadata_ in the equality comparison because we want to avoid overloading
   // operator==() of *metadata_, and to let it handle typechecking.
   const bool eq_metadata = ( not metadata_ and not rhs_ptr->metadata_ )
     or ( metadata_ and rhs_ptr->metadata_ and *metadata_ == rhs_ptr->metadata_ );
 
-  // Checking that rhs_ptr is valid first, to avoid segfaults. If rhs is a NodeCollectionComposite,
-  // rhs_ptr will be a null pointer.
-  return rhs_ptr != nullptr and first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_
-    and model_id_ == rhs_ptr->model_id_ and eq_metadata;
+  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_ and eq_metadata;
 }
 
 inline bool NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const

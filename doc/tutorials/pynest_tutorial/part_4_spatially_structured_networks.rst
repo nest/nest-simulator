@@ -151,7 +151,9 @@ For more flexibility in how we distribute neurons, we can use free spatial
 placement. We then need to define a Parameter for the placement of the
 neurons, or we can define the positions of the neurons explicitly. Note
 that the extent is calculated from the positions of the nodes, but we can
-also explicitly specify it. See Section 2.2 in NUTM for more details.
+also explicitly specify it. See the *Free layers* section of the
+:doc:`../../guides/spatial/guide_spatially_structured_networks`
+for details.
 
 The following snippet produces :numref:`free`:
 
@@ -170,8 +172,9 @@ number of dimensions is deduced by NEST. Also note that when creating the
 nodes, we specify the number of neurons to be created. This is not
 necessary when using an array of positions.
 
-See the table of *Topology-specific NEST Parameters* in NUTM for a selection of NEST
-Parameters that can be used.
+See the table of *Spatially-structured specific NEST parameters* in the
+:doc:`../../guides/spatial/guide_spatially_structured_networks`
+for a selection of NEST Parameters that can be used.
 
 An example of how to create off-grid nodes with a list of positions:
 
@@ -196,12 +199,13 @@ allows us to tune our connectivity profiles by tuning the likelihood of a
 connection, the number of connections, or defining a subset of the nodes
 to connect.
 
-Chapter 3 in NTUM deals comprehensively with all the different
-possibilities, and it’s suggested that you look there for learning about
-the different constraints, as well as reading through the different
-examples listed there. Here are some representative examples for setting
-up a connectivity profile, and the following table lists the parameters
-that can be used.
+The *Connections* section in the
+:doc:`../../guides/spatial/guide_spatially_structured_networks`
+deals comprehensively with all the different possibilities, and it’s suggested
+that you look there for learning about the different constraints, as well
+as reading through the different examples listed there. Here are some
+representative examples for setting up a connectivity profile, and the
+following table lists the parameters that can be used.
 
 .. _cirgauss:
 
@@ -383,10 +387,6 @@ Section 4.1 *Query functions*.
 
 It may also be useful to look at the ``spatial`` property of the
 NodeCollection, which describes the layer properties. Other useful
-functions that may be of help are listed in NTUM Section 4.1.
-
-References
-----------
-
-.. [1] Plesser HE and Enger H.  NEST Topology User Manual,
- https://www.nest-simulator.org/wp-content/uploads/2015/04/Topology_UserManual.pdf
+functions that may be of help are listed in the
+*Inspecting Spatially distributed NodeCollections* section of our
+:doc:`../../guides/spatial/guide_spatially_structured_networks`.

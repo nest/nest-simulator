@@ -1,5 +1,5 @@
 /*
- *  topology.cpp
+ *  spatial.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "topology.h"
+#include "spatial.h"
 
 // C++ includes:
 #include <ostream>
@@ -39,7 +39,7 @@
 // Includes from sli:
 #include "sliexceptions.h"
 
-// Includes from topology:
+// Includes from spatial:
 #include "grid_layer.h"
 #include "layer.h"
 
@@ -75,7 +75,7 @@ create_layer( const DictionaryDatum& layer_dict )
 
   NodeCollectionPTR layer = AbstractLayer::create_layer( layer_dict );
 
-  ALL_ENTRIES_ACCESSED( *layer_dict, "topology::CreateLayer", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *layer_dict, "nest::CreateLayer", "Unread dictionary entries: " );
 
   return layer;
 }
@@ -373,7 +373,7 @@ create_mask( const DictionaryDatum& mask_dict )
 
   MaskDatum datum( NestModule::create_mask( mask_dict ) );
 
-  ALL_ENTRIES_ACCESSED( *mask_dict, "topology::CreateMask", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *mask_dict, "nest::CreateMask", "Unread dictionary entries: " );
 
   return datum;
 }
@@ -416,7 +416,7 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
 
   connection_dict->clear_access_flags();
   ConnectionCreator connector( connection_dict );
-  ALL_ENTRIES_ACCESSED( *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
+  ALL_ENTRIES_ACCESSED( *connection_dict, "nest::CreateLayers", "Unread dictionary entries: " );
 
   source->connect( source_nc, target, target_nc, connector );
 }

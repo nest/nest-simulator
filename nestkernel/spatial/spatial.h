@@ -1,5 +1,5 @@
 /*
- *  topology.h
+ *  spatial.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TOPOLOGY_H
-#define TOPOLOGY_H
+#ifndef SPATIAL_H
+#define SPATIAL_H
 
 // C++ includes:
 #include <vector>
@@ -37,7 +37,7 @@
 #include "iostreamdatum.h"
 #include "token.h"
 
-// Includes from topology:
+// Includes from spatial:
 #include "layer.h"
 #include "mask.h"
 
@@ -46,7 +46,7 @@ namespace nest
 {
 
 /**
- * Class representing metadata for topology layer.
+ * Class containing spatial information to be used as metadata in a NodeCollection.
  */
 class LayerMetadata : public NodeCollectionMetadata
 {
@@ -117,4 +117,4 @@ void dump_layer_connections( const Token& syn_model,
 DictionaryDatum get_layer_status( NodeCollectionPTR layer_nc );
 }
 
-#endif /* TOPOLOGY_H */
+#endif /* SPATIAL_H */

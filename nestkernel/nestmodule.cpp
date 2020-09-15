@@ -53,7 +53,7 @@
 #include "spatial/layer_impl.h"
 #include "spatial/mask.h"
 #include "spatial/mask_impl.h"
-#include "spatial/topology.h"
+#include "spatial/spatial.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -294,7 +294,7 @@ create_doughnut( const DictionaryDatum& d )
   if ( inner >= outer )
   {
     throw BadProperty(
-      "topology::create_doughnut: "
+      "nest::create_doughnut: "
       "inner_radius < outer_radius required." );
   }
 
@@ -2065,7 +2065,7 @@ NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
 //
 
 /** @BeginDocumentation
-  Name: topology::CreateLayer - create a spatial layer of nodes
+  Name: nest::CreateLayer - create nodes with spatial properties
 
   Synopsis:
   dict CreateLayer -> layer
@@ -2073,13 +2073,11 @@ NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
   Parameters:
   dict - dictionary with layer specification
 
-  Description: The Topology module organizes neuronal networks in
-  layers. A layer is a special type of NodeCollection which contains information
-  about the spatial position of its nodes. There are three classes of
-  layers: grid-based layers, in which each element is placed at a
-  location in a regular grid; free layers, in which elements can be
-  placed arbitrarily in space; and random layers, where the elements are
-  distributed randomly throughout a region in space.  Which kind of layer
+  Description: Creates a NodeCollection which contains information
+  about the spatial position of its nodes. Positions can be organized
+  in one of two layer classes: grid-based layers, in which each element
+  is placed at a location in a regular grid, and free layers, in which
+  elements can be placed arbitrarily in space.  Which kind of layer
   this command creates depends on the elements in the supplied
   specification dictionary.
 
@@ -2106,7 +2104,7 @@ NestModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-  Name: topology::GetPosition - retrieve position of input node
+  Name: nest::GetPosition - retrieve position of input node
 
   Synopsis: NodeCollection GetPosition -> [array]
 
@@ -2155,16 +2153,16 @@ NestModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-  Name: topology::Displacement - compute displacement vector
+  Name: nest::Displacement - compute displacement vector
 
   Synopsis: layer from_node_id to_node_id Displacement -> [double vector]
             layer from_pos to_node_id Displacement -> [double vector]
 
   Parameters:
-  layer       - NodeCollection for layer
-  from_node_id    - int, node_id of node in a topology layer
-  from_pos    - double vector, position in layer
-  to_node_id      - int, node_id of node in a topology layer
+  layer           - NodeCollection for layer
+  from_node_id    - int, node_id of node in a spatial NodeCollection
+  from_pos        - double vector, position in layer
+  to_node_id      - int, node_id of node in a spatial NodeCollection
 
   Returns:
   [double vector] - vector pointing from position "from" to position "to"
@@ -2172,7 +2170,7 @@ NestModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
   Description:
   This function returns a vector connecting the position of the "from_node_id"
   node or the explicitly given "from_pos" position and the position of the
-  "to_node_id" node. Nodes must be parts of topology layers.
+  "to_node_id" node. Nodes must be parts of a spatial NodeCollection.
 
   The "from" position is projected into the layer of the "to_node_id" node. If
   this layer has periodic boundary conditions (EdgeWrap is true), then the
@@ -2233,16 +2231,16 @@ NestModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-  Name: topology::Distance - compute distance between nodes
+  Name: nest::Distance - compute distance between nodes
 
   Synopsis: layer from_node_id to_node_id Distance -> double
             layer from_pos to_node_id Distance -> double
 
   Parameters:
   layer       - NodeCollection for layer
-  from_node_id    - int, node_id of node in a topology layer
+  from_node_id    - int, node_id of node in a spatial NodeCollection
   from_pos    - double vector, position in layer
-  to_node_id      - int, node_id of node in a topology layer
+  to_node_id      - int, node_id of node in a spatial NodeCollection
 
   Returns:
   double - distance between nodes or given position and node
@@ -2250,7 +2248,7 @@ NestModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
   Description:
   This function returns the distance between the position of the "from_node_id"
   node or the explicitly given "from_pos" position and the position of the
-  "to_node_id" node. Nodes must be parts of topology layers.
+  "to_node_id" node. Nodes must be parts of a spatial NodeCollection.
 
   The "from" position is projected into the layer of the "to_node_id" node. If
   this layer has periodic boundary conditions (EdgeWrap is true), then the
@@ -2325,7 +2323,7 @@ NestModule::Distance_aFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-  Name: topology::CreateMask - create a spatial mask
+  Name: nest::CreateMask - create a spatial mask
 
   Synopsis:
   << /type dict >> CreateMask -> mask
@@ -2334,11 +2332,11 @@ NestModule::Distance_aFunction::execute( SLIInterpreter* i ) const
   /type - mask type
   dict  - dictionary with mask specifications
 
-  Description: Masks are used when creating connections in the Topology
-  module. A mask describes which area of the pool layer shall be searched
-  for nodes to connect for any given node in the driver layer. This
-  command creates a mask object which may be combined with other mask
-  objects using Boolean operators. The mask is specified in a dictionary.
+  Description: Masks can be used when creating connections between nodes
+  with spatial parameters. A mask describes which area of the pool layer
+  shall be searched for nodes to connect for any given node in the driver
+  layer. This command creates a mask object which may be combined with other
+  mask objects using Boolean operators. The mask is specified in a dictionary.
 
   Author: Håkon Enger
 */
@@ -2357,7 +2355,7 @@ NestModule::CreateMask_DFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-  Name: topology::Inside - test if a point is inside a mask
+  Name: nest::Inside - test if a point is inside a mask
 
   Synopsis:
   point mask Inside -> bool
@@ -2430,7 +2428,7 @@ NestModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-  Name: topology::ConnectLayers - connect two layers
+  Name: nest::ConnectLayers - connect two layers
 
   Synopsis: sourcelayer targetlayer connection_dict
   ConnectLayers -> -
@@ -2602,7 +2600,7 @@ NestModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
 
   Author: Håkon Enger, Kittel Austvoll
 
-  SeeAlso: topology::CreateLayer
+  SeeAlso: nest::CreateLayer
 */
 void
 NestModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
@@ -2621,7 +2619,7 @@ NestModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 
 /** @BeginDocumentation
 
-  Name: topology::GetLayerStatus - return information about layer
+  Name: nest::GetLayerStatus - return information about layer
 
   Synopsis:
   layer GetLayerStatus -> dict
@@ -2647,7 +2645,7 @@ NestModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-  Name: topology::DumpLayerNodes - write information about layer nodes to file
+  Name: nest::DumpLayerNodes - write information about layer nodes to file
 
   Synopsis: ostream layer DumpLayerNodes -> ostream
 
@@ -2673,7 +2671,6 @@ NestModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 
   Examples:
 
-  topology using
   /my_layer << /rows 5 /columns 4 /elements /iaf_psc_alpha >> CreateLayer def
 
   (my_layer_dump.lyr) (w) file
@@ -2682,7 +2679,7 @@ NestModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 
   Author: Kittel Austvoll, Hans Ekkehard Plesser
 
-  SeeAlso: topology::DumpLayerConnections, setprecision, modeldict
+  SeeAlso: nest::DumpLayerConnections, setprecision, modeldict
 */
 void
 NestModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
@@ -2699,7 +2696,7 @@ NestModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 }
 
 /** @BeginDocumentation
-  Name: topology::DumpLayerConnections - prints a list of the connections of the
+  Name: nest::DumpLayerConnections - prints a list of the connections of the
                                          nodes in the layer to file
 
   Synopsis: ostream source_layer synapse_model DumpLayerConnections ->
@@ -2729,13 +2726,11 @@ NestModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 
   Examples:
 
-  topology using
-  ...
   (out.cnn) (w) file layer_node_id /static_synapse PrintLayerConnections close
 
   Author: Kittel Austvoll, Hans Ekkehard Plesser
 
-  SeeAlso: topology::DumpLayerNodes
+  SeeAlso: nest::DumpLayerNodes
 */
 
 void

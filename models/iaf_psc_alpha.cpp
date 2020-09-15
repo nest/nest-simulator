@@ -384,17 +384,17 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 
   const double s = e.get_weight() * e.get_multiplicity();
 
-  RingBuffer ringBuffer; 
+  RingBuffer *ringBuffer; 
   if ( e.get_weight() > 0.0 )
   {
-    ringBuffer = B_.ex_spikes_;
+    ringBuffer = &B_.ex_spikes_;
   }
   else
   {
-    ringBuffer = B_.in_spikes_;
+    ringBuffer = &B_.in_spikes_;
   }    
 
-  ringBuffer.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
+  ringBuffer->add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
 }
 
 void

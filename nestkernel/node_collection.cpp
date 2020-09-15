@@ -121,7 +121,11 @@ NodeCollection::create( const IntVectorDatum& node_idsdatum )
   {
     node_ids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
-  std::sort( node_ids.begin(), node_ids.end() );
+
+  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
+  {
+    throw BadProperty( "Node IDs must be sorted in ascending order" );
+  }
   return NodeCollection::create_( node_ids );
 }
 
@@ -139,7 +143,11 @@ NodeCollection::create( const TokenArray& node_idsarray )
   {
     node_ids.push_back( static_cast< index >( getValue< long >( node_id_token ) ) );
   }
-  std::sort( node_ids.begin(), node_ids.end() );
+
+  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
+  {
+    throw BadProperty( "Node IDs must be sorted in ascending order" );
+  }
   return NodeCollection::create_( node_ids );
 }
 
@@ -157,9 +165,11 @@ NodeCollection::create( const std::vector< index >& node_ids_vector )
   {
     return NodeCollection::create_();
   }
-  auto node_ids = node_ids_vector; // Create a copy to be able to sort
-  std::sort( node_ids.begin(), node_ids.end() );
-  return NodeCollection::create_( node_ids );
+  if ( not std::is_sorted( node_ids_vector.begin(), node_ids_vector.end() ) )
+  {
+    throw BadProperty( "Indices must be sorted in ascending order" );
+  }
+  return NodeCollection::create_( node_ids_vector );
 }
 
 NodeCollectionPTR
@@ -177,7 +187,7 @@ NodeCollection::create_( const std::vector< index >& node_ids )
 
   std::vector< NodeCollectionPrimitive > parts;
 
-  index old_node_id = 0;
+  index old_node_id = current_first;
   for ( auto node_id = ++( node_ids.begin() ); node_id != node_ids.end(); ++node_id )
   {
     if ( *node_id == old_node_id )

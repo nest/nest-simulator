@@ -41,7 +41,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Simulated neuron firing with Poisson processes statistics
+Simulated neuron firing with Poisson process statistics
 
 Description
 +++++++++++

@@ -121,7 +121,11 @@ NodeCollection::create( const IntVectorDatum& node_idsdatum )
   {
     node_ids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
-  std::sort( node_ids.begin(), node_ids.end() );
+
+  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
+  {
+    throw BadProperty( "Node IDs must be sorted in ascending order" );
+  }
   return NodeCollection::create_( node_ids );
 }
 
@@ -139,7 +143,11 @@ NodeCollection::create( const TokenArray& node_idsarray )
   {
     node_ids.push_back( static_cast< index >( getValue< long >( node_id_token ) ) );
   }
-  std::sort( node_ids.begin(), node_ids.end() );
+
+  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
+  {
+    throw BadProperty( "Node IDs must be sorted in ascending order" );
+  }
   return NodeCollection::create_( node_ids );
 }
 
@@ -157,9 +165,11 @@ NodeCollection::create( const std::vector< index >& node_ids_vector )
   {
     return NodeCollection::create_();
   }
-  auto node_ids = node_ids_vector; // Create a copy to be able to sort
-  std::sort( node_ids.begin(), node_ids.end() );
-  return NodeCollection::create_( node_ids );
+  if ( not std::is_sorted( node_ids_vector.begin(), node_ids_vector.end() ) )
+  {
+    throw BadProperty( "Indices must be sorted in ascending order" );
+  }
+  return NodeCollection::create_( node_ids_vector );
 }
 
 NodeCollectionPTR
@@ -177,7 +187,7 @@ NodeCollection::create_( const std::vector< index >& node_ids )
 
   std::vector< NodeCollectionPrimitive > parts;
 
-  index old_node_id = 0;
+  index old_node_id = current_first;
   for ( auto node_id = ++( node_ids.begin() ); node_id != node_ids.end(); ++node_id )
   {
     if ( *node_id == old_node_id )
@@ -294,14 +304,35 @@ NodeCollectionPrimitive::to_array() const
 
 NodeCollectionPTR NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
 {
-  if ( ( get_metadata().get() or rhs->get_metadata().get() ) and not( get_metadata() == rhs->get_metadata() ) )
-  {
-    throw BadProperty( "Can only join NodeCollections with same metadata." );
-  }
   if ( not valid() or not rhs->valid() )
   {
     throw KernelException( "InvalidNodeCollection" );
   }
+  if ( rhs->empty() )
+  {
+    return NodeCollectionPTR( new NodeCollectionPrimitive( *this ) );
+  }
+  if ( empty() )
+  {
+    auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
+    if ( rhs_ptr )
+    {
+      // rhs is primitive
+      return std::make_shared< NodeCollectionPrimitive >( *rhs_ptr );
+    }
+    else
+    {
+      // rhs is composite
+      auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
+      assert( rhs_ptr );
+      return std::make_shared< NodeCollectionComposite >( *rhs_ptr );
+    }
+  }
+  if ( ( get_metadata().get() or rhs->get_metadata().get() ) and not( get_metadata() == rhs->get_metadata() ) )
+  {
+    throw BadProperty( "Can only join NodeCollections with same metadata." );
+  }
+
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
 
   if ( rhs_ptr ) // if rhs is Primitive
@@ -407,11 +438,17 @@ NodeCollectionPrimitive::NodeCollectionPrimitive::slice( size_t start, size_t st
 void
 NodeCollectionPrimitive::print_me( std::ostream& out ) const
 {
-  std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
-
-  out << "NodeCollection("
-      << "metadata=" << metadata << ", ";
-  print_primitive( out );
+  out << "NodeCollection(";
+  if ( empty() )
+  {
+    out << "<empty>";
+  }
+  else
+  {
+    std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
+    out << "metadata=" << metadata << ", ";
+    print_primitive( out );
+  }
   out << ")";
 }
 
@@ -557,6 +594,10 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
 
 NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
 {
+  if ( rhs->empty() )
+  {
+    return NodeCollectionPTR( new NodeCollectionComposite( *this ) );
+  }
   if ( get_metadata().get() and not( get_metadata() == rhs->get_metadata() ) )
   {
     throw BadProperty( "can only join NodeCollections with the same metadata" );

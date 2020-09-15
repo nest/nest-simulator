@@ -56,10 +56,6 @@ create_helpdirs(helpdir)
 
 allfiles = []
 for dirpath, dirnames, files in os.walk(source_dir):
-    if "MyModule" in dirpath and "MyModule" not in source_dir:
-        # Do not generate help from MyModule unless we are building MyModule
-        continue
-
     for f in files:
         if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")) and \
            not f.startswith(".#"):

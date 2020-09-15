@@ -97,9 +97,6 @@ the simulation resolution h. The model can also be used through the
 `PyNN
 interface <http://neuralensemble.org/trac/PyNN/wiki/ContinuousTimeSpiking>`__.
 
-The source code of these models is in the `*precise* module of
-NEST <https://github.com/nest/nest-simulator/tree/master/precise>`__.
-
 Questions and answers about precise neurons
 -------------------------------------------
 

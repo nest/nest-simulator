@@ -24,12 +24,11 @@
 
 language: python
 
-# Using the Sudo-enabled Ubuntu Trusty (14.04 LTS).
+# Using the Sudo-enabled Ubuntu Bionic (18.04 LTS).
 sudo: required
-dist: trusty
+dist: bionic
 
 stages:
-   - Staticcheck
    - MPI-Threading-Python
    - Python-Full-build
    - GCC8Clang7
@@ -39,42 +38,8 @@ stages:
 
 jobs:
   include:
-    - stage: Staticcheck
-      python: 3.4.4
-      env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis and build
-    - stage: MPI-Threading-Python
-      python: 3.4.4
-      env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
-    - stage: MPI-Threading-Python
-      python: 3.4.4
-      env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # only threading 
-    - stage: MPI-Threading-Python
-      python: 3.4.4
-      env: xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # Python & Threading
-    - stage: MPI-Threading-Python
-      python: 3.4.4
-      env: xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # Python & MPI
-    - stage: MPI-Threading-Python
-      python: 3.4.4
-      env: xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # only Python
-    - stage: Python-Full-build
-      python: 3.4.4
-      env: xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # full
-    - stage: Python-Full-build
-      python: 2.7.13
-      env: xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # full
-    - stage: GCC8Clang7
-      language: cpp
-      env: MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
-    - stage: GCC8Clang7
-      language: cpp
-      env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7"
-    - stage: OsX
-      os: osx
-      osx_image: xcode10.2
-      language: generic
-      env: xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
-    
+      python: 3.8.1
+
 #https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
 addons:
    apt:
@@ -89,7 +54,7 @@ addons:
      - cmake
      - libltdl-dev
      - libreadline6-dev
-     - libncurses5-dev 
+     - libncurses5-dev
      - libgsl0-dev
      - python-all-dev
      - ipython
@@ -130,14 +95,14 @@ before_install:
    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew --version; brew update; brew tap brewsci/science; brew tap brewsci/bio; brew install coreutils gsl open-mpi automake autoconf libtool; fi
    - pip install -U pip
    - pip install -U setuptools
-  
+
   # Installing additional packages using pip as they only have
   # outdated versions in the Travis package whitelist.
   # terminaltables is required by parse_travis_log.py to create
   # the build summary.
    - pip install cython scipy matplotlib terminaltables
    - pip install numpy==1.13.3
-    
+
 install:
    - which cython
    - cython --version
@@ -150,7 +115,7 @@ install:
    - cmake --version
    - echo ${CC}
    - echo ${CXX}
-  
+
 before_script:
    # Change directory back to the NEST source code directory.
    - cd $SOURCEDIR
@@ -184,4 +149,3 @@ deploy:
   local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
   upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
   acl: bucket_owner_full_control
-

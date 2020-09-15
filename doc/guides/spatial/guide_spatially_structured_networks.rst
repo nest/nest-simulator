@@ -1582,7 +1582,7 @@ implement the latter by testing if all the corners are inside, since our
 elliptic mask is convex. We must also define a function which returns a
 bounding box for the mask, i.e. a box completely surrounding the mask.
 
-The mask class must then be registered with in NEST. This
+The mask class must then be registered in NEST. This
 is done by adding a line to the function ``MyModule::init()`` in the file
 ``mymodule.cpp``:
 

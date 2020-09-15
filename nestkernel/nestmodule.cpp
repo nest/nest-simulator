@@ -2065,7 +2065,7 @@ NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
 //
 
 /** @BeginDocumentation
-  Name: nest::CreateLayer - create nodes with spatial information
+  Name: nest::CreateLayer - create nodes with spatial properties
 
   Synopsis:
   dict CreateLayer -> layer

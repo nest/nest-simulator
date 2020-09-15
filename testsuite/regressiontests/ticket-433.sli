@@ -51,7 +51,7 @@ M_INFO setverbosity
 %  ampa --- AMPA receptor ID
 %  retina, retina_gen, Tp --- layers
 
-% Connection function using spatial connection function
+% Connection function using spatial parameters
 % receptor_type erroneously placed in dictionary
 /connect_spatial
 {
@@ -66,7 +66,7 @@ M_INFO setverbosity
 }
 bind def
 
-% Connection function using spatial connection function
+% Connection function using spatial parameters
 % receptor_type correctly placed in synapse
 /connect_spatial_syn
 {

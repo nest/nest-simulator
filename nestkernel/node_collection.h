@@ -518,7 +518,7 @@ public:
    *
    * @param primitive Primitive to be converted
    * @param start Offset in the primitive to begin at.
-   * @param stop Offset in the primtive to stop at.
+   * @param stop Offset in the primitive to stop at.
    * @param step Length to step in the primitive.
    */
   NodeCollectionComposite( const NodeCollectionPrimitive&, size_t, size_t, size_t );

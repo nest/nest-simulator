@@ -23,11 +23,7 @@ if ( HAVE_BOOST )
   add_executable( run_all_cpptests run_all.cpp )
   add_dependencies( run_all_cpptests sli nest )
 
-  target_link_libraries( run_all_cpptests ${BOOST_LIBRARIES} nestkernel topology )
-
-  if ( NOT APPLE )
-    set_target_properties( run_all_cpptests PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
-  endif ()
+  target_link_libraries( run_all_cpptests ${BOOST_LIBRARIES} nestkernel )
 
   target_include_directories( run_all_cpptests PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil

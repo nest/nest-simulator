@@ -36,7 +36,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-// Includes from topology:
+// Includes from spatial:
 #include "connection_creator.h"
 #include "ntree.h"
 #include "position.h"

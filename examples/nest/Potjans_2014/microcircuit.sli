@@ -496,7 +496,7 @@ close
             % Connect devices
 
             % Connect to the spike detector
-            % record from a continuous range of IDs (appropriate for networks without topology)
+            % record from a continuous range of IDs (appropriate for networks without spatial information)
             target_nodes n_neurons_rec_spikes target_layer get target_pop get Take
             spike_detector_nodeIDs target_layer get target_pop get
             /all_to_all

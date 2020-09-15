@@ -55,14 +55,11 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
   </a>
   </embed>
 
-**Create complex networks using the Topology Module or the Microcircuit Model:**
+**Create complex networks using the Microcircuit Model:**
 
 .. raw:: html
 
   <embed>
-  <a href="topology/index.html">
-    <img src="_static/img/topology.png" alt="Topology" style="width:150px;height:150px;border:0;">
-  </a>
   <a href="microcircuit/index.html">
     <img src="_images/microcircuit.png" alt="Microcircuit" style="width:150px;height:150px;border:0;">
   </a>
@@ -84,7 +81,7 @@ Where to find what
 
 * :doc:`Example Networks <examples/index>`  demonstrate the use of dozens of the neural network models implemented in NEST.
 
-* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts from :doc:`Parallel Computing <guides/parallel_computing>` to handling :doc:`Gap Junction Simulations <guides/simulations_with_gap_junctions>` and :doc:`setting up a topological network <topology/index>`.
+* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts from :doc:`Parallel Computing <guides/parallel_computing>` to handling :doc:`Gap Junction Simulations <guides/simulations_with_gap_junctions>` and :doc:`setting up a spatially-structured network <guides/spatial/guide_spatially_structured_networks>`.
 
 * :doc:`Reference Material <ref_material/index>` provides a quick look up of definitions, functions and terms.
 
@@ -105,7 +102,7 @@ Interested in contributing?
 Related projects
 ################
 
-Many extensions and open-source tools related to the NEST Simulator are available. In particular, the following packages may be of interest: 
+Many extensions and open-source tools related to the NEST Simulator are available. In particular, the following packages may be of interest:
 
 - `NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>`_ - a web-based GUI application for NEST Simulator
 - `NESTML <https://nestml.readthedocs.io/en/latest/>`_ - a domain specific language to describe neuron models in NEST

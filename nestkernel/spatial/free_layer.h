@@ -34,7 +34,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-// Includes from topology:
+// Includes from spatial:
 #include "layer.h"
 #include "ntree_impl.h"
 

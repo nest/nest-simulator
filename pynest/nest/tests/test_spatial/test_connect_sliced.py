@@ -37,6 +37,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
     grid_pos = nest.spatial.grid([N, 1], extent=[1.05, 0.1], center=[0.5, 0.])
     parameter = nest.logic.conditional(nest.spatial.distance < 0.19, 1.0, 0.0)
     mask = {'rectangular': {'lower_left': [0., 0.], 'upper_right': [1., 1.]}}
+
     reference = np.array([0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0])
     reference_masked = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0])
 

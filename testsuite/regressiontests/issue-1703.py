@@ -30,6 +30,10 @@ import sys
 import subprocess
 import shlex
 
+EXIT_CODE_SUCCESS = 0
+EXIT_CODE_ERROR = 1
+EXIT_CODE_SEGFAULT = -11
+
 EXIT_SUCCESS = 0
 EXIT_SKIPPED = 200
 EXIT_FAILURE = 127
@@ -50,16 +54,16 @@ exit_code = subprocess.call(cmd)
 
 if nest.ll_api.sli_func("statusdict/have_music ::"):
     # Expect error, not segfault
-    if exit_code == 1:
+    if exit_code == EXIT_CODE_ERROR:
         sys.exit(EXIT_SUCCESS)
-    elif exit_code == -11:
+    elif exit_code == EXIT_CODE_SEGFAULT:
         sys.exit(EXIT_SEGFAULT)
     else:
         sys.exit(EXIT_FAILURE)
 else:
-    if exit_code == 0:
+    if exit_code == EXIT_CODE_SUCCESS:
         sys.exit(EXIT_SUCCESS)
-    elif exit_code == -11:
+    elif exit_code == EXIT_CODE_SEGFAULT:
         sys.exit(EXIT_SEGFAULT)
     else:
         sys.exit(EXIT_FAILURE)

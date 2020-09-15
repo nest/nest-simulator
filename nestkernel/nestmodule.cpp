@@ -2159,10 +2159,10 @@ NestModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
             layer from_pos to_node_id Displacement -> [double vector]
 
   Parameters:
-  layer       - NodeCollection for layer
-  from_node_id    - int, node_id of node in a spatial layer
-  from_pos    - double vector, position in layer
-  to_node_id      - int, node_id of node in a spatial layer
+  layer           - NodeCollection for layer
+  from_node_id    - int, node_id of node in a spatial NodeCollection
+  from_pos        - double vector, position in layer
+  to_node_id      - int, node_id of node in a spatial NodeCollection
 
   Returns:
   [double vector] - vector pointing from position "from" to position "to"
@@ -2170,7 +2170,7 @@ NestModule::GetPosition_gFunction::execute( SLIInterpreter* i ) const
   Description:
   This function returns a vector connecting the position of the "from_node_id"
   node or the explicitly given "from_pos" position and the position of the
-  "to_node_id" node. Nodes must be parts of spatial layers.
+  "to_node_id" node. Nodes must be parts of a spatial NodeCollection.
 
   The "from" position is projected into the layer of the "to_node_id" node. If
   this layer has periodic boundary conditions (EdgeWrap is true), then the
@@ -2238,9 +2238,9 @@ NestModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
 
   Parameters:
   layer       - NodeCollection for layer
-  from_node_id    - int, node_id of node in a spatial layer
+  from_node_id    - int, node_id of node in a spatial NodeCollection
   from_pos    - double vector, position in layer
-  to_node_id      - int, node_id of node in a spatial layer
+  to_node_id      - int, node_id of node in a spatial NodeCollection
 
   Returns:
   double - distance between nodes or given position and node
@@ -2248,7 +2248,7 @@ NestModule::Displacement_a_gFunction::execute( SLIInterpreter* i ) const
   Description:
   This function returns the distance between the position of the "from_node_id"
   node or the explicitly given "from_pos" position and the position of the
-  "to_node_id" node. Nodes must be parts of spatial layers.
+  "to_node_id" node. Nodes must be parts of a spatial NodeCollection.
 
   The "from" position is projected into the layer of the "to_node_id" node. If
   this layer has periodic boundary conditions (EdgeWrap is true), then the
@@ -2333,7 +2333,7 @@ NestModule::Distance_aFunction::execute( SLIInterpreter* i ) const
   dict  - dictionary with mask specifications
 
   Description: Masks can be used when creating connections between nodes
-  with spatial information. A mask describes which area of the pool layer
+  with spatial parameters. A mask describes which area of the pool layer
   shall be searched for nodes to connect for any given node in the driver
   layer. This command creates a mask object which may be combined with other
   mask objects using Boolean operators. The mask is specified in a dictionary.

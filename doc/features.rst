@@ -11,6 +11,7 @@ Features
     spike-timing dependent plasticity (STDP).
 
 3.  NEST provides the possibility to create spatially-structured networks.
+    :doc:`Guide to spatially-structured networks<guides/spatial/guide_spatially_structured_networks>`
 
 4.  NEST provides many examples that help you getting started with your
     own simulation project.

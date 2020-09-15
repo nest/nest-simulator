@@ -379,7 +379,7 @@ NEST <random_numbers>`.
 Spatially-structured networks
 -----------------------------
 
-If nodes are created with spatial information, it is possible to create connections with
+If nodes are created with spatial distributions, it is possible to create connections with
 attributes based on node positions. See :doc:`Spatially-structured networks <spatial/index>`
 for more information.
 

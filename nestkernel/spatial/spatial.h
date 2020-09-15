@@ -46,7 +46,7 @@ namespace nest
 {
 
 /**
- * Class representing metadata for layer containing spatial information.
+ * Class containing spatial information to be used as metadata in a NodeCollection.
  */
 class LayerMetadata : public NodeCollectionMetadata
 {

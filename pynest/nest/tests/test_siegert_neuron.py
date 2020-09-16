@@ -68,8 +68,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         nest.Connect(self.poisson_generator, self.iaf_psc_delta,
                      syn_spec={'weight': self.J, 'delay': self.dt})
 
-        self.spike_recorder = nest.Create(
-            "spike_recorder", params={'start': self.start})
+        self.spike_recorder = nest.Create("spike_recorder", params={'start': self.start})
         nest.Connect(
             self.iaf_psc_delta, self.spike_recorder)
 

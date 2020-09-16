@@ -26,6 +26,7 @@ to a segmentation fault when simulating.
 This is a regression test for GitHub issue 1703.
 """
 
+import os
 import sys
 import subprocess
 import shlex
@@ -50,7 +51,8 @@ except ImportError:
 # Attempt to import MPI from mpi4py before NEST. Running the script in a separate process,
 # in case it ends in a segmentation fault.
 cmd = shlex.split('python3 -c "from mpi4py import MPI; import nest; nest.Simulate(10)"')
-exit_code = subprocess.call(cmd)
+my_env = os.environ.copy()
+exit_code = subprocess.call(cmd, env=my_env)
 
 if nest.ll_api.sli_func("statusdict/have_music ::"):
     # Expect error, not segfault

@@ -160,7 +160,6 @@ Function related to spatially distributed nodes
 
 Topology is now integrated into NEST and no longer a separate module.
 
-
 +------------------------------------------------+----------------------------------------------------+
 | NEST 2.x                                       | NEST 3.0                                           |
 +================================================+====================================================+
@@ -265,6 +264,11 @@ Topology is now integrated into NEST and no longer a separate module.
 |                                                | :green:`shape=[100, 100]`, ax=None,                |
 |                                                | :green:`prob_cmap` ='Greens', mask_color='yellow') |
 +------------------------------------------------+----------------------------------------------------+
+| 'mask': {'volume':                             | 'mask': {':green:`box`'                            |
+| {'lower_left': [-2., -1., -1.],                | {'lower_left': [-2., -1., -1.],                    |
+| 'upper_right': [2., 1., 1.]}}                  | 'upper_right': [2., 1., 1.]}}                      |
++------------------------------------------------+----------------------------------------------------+
+
 
 .. _connrules:
 

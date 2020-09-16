@@ -182,7 +182,7 @@ on your machine.
 Multiprocessing
 ----------------
 
-**Using Python's ``multiprocessing`` package with NEST may lead to unpredictable results!**
+**Using Python's ``multiprocessing`` module with NEST may lead to unpredictable results!**
 
 NEST internally parallelizes network construction [1]_ and maintains internal data structures in this process. For
 example, running several ``Connect()`` calls simultaneously can interfere with the internal parallelization and will

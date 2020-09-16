@@ -227,17 +227,17 @@ private:
     double g_L;        //!< Leak Conductance in nS
     double C_m;        //!< Membrane Capacitance in pF
     double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;    //!< Slope faktor in ms.
-    double tau_w;      //!< adaptation time-constant in ms.
-    double a;          //!< Subthreshold adaptation in nS.
+    double Delta_T;    //!< Slope factor in ms
+    double tau_w;      //!< Adaptation time-constant in ms
+    double a;          //!< Subthreshold adaptation in nS
     double b;          //!< Spike-triggered adaptation in pA
-    double V_th;       //!< Spike threshold in mV.
-    double t_ref;      //!< Refractory period in ms.
-    double tau_syn_ex; //!< Excitatory synaptic rise time.
-    double tau_syn_in; //!< Excitatory synaptic rise time.
-    double I_e;        //!< Intrinsic current in pA.
+    double V_th;       //!< Spike threshold in mV
+    double t_ref;      //!< Refractory period in ms
+    double tau_syn_ex; //!< Excitatory synaptic rise time
+    double tau_syn_in; //!< Excitatory synaptic rise time
+    double I_e;        //!< Intrinsic current in pA
 
-    double gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol; //!< Error bound for GSL integrator
 
     Parameters_(); //!< Sets default parameter values
 

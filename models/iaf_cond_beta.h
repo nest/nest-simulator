@@ -68,9 +68,17 @@ Description
 
 iaf_cond_beta is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
-of conductance modelled by an beta function. The beta function
-is normalised such that an event of weight 1.0 results in a peak current of
-1 nS at `t = tau_rise_[ex|in]`.
+of conductance modelled by a beta function. The beta function
+is normalized such that an event of weight 1.0 results in a peak current of
+1 nS at :math:`t = \tau_{rise\_[ex|in]}`.
+
+.. note::
+   Per 2009-04-17, this class has been revised to our newest
+   insights into class design. Please use THIS CLASS as a reference
+   when designing your own models with nonlinear dynamics.
+   One weakness of this class is that it distinguishes between
+   inputs to the two synapses by the sign of the synaptic weight.
+   It would be better to use receptor_types, cf iaf_cond_alpha_mc.
 
 Parameters
 ++++++++++
@@ -87,10 +95,10 @@ The following parameters can be set in the status dictionary.
  E_ex         mV      Excitatory reversal potential
  E_in         mV      Inhibitory reversal potential
  g_L          nS      Leak conductance
- tau_syn_ex   ms      Rise time of the excitatory synaptic alpha function
- tau_decay_ex ms      Rise time of the excitatory synaptic beta function
- tau_syn_in   ms      Rise time of the inhibitory synaptic alpha function
- tau_decay_in ms      Rise time of the inhibitory synaptic beta function
+ tau_rise_ex  ms      Rise time of the excitatory synaptic beta function
+ tau_decay_ex ms      Decay time of the excitatory synaptic beta function
+ tau_rise_in  ms      Rise time of the inhibitory synaptic beta function
+ tau_decay_in ms      Decay time of the inhibitory synaptic beta function
  I_e          pA      Constant input current
 ============= ====== =========================================================
 
@@ -105,17 +113,9 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Remarks:
-
- @note Per 2009-04-17, this class has been revised to our newest
-        insights into class design. Please use THIS CLASS as a reference
-        when designing your own models with nonlinear dynamics.
-        One weakness of this class is that it distinguishes between
-        inputs to the two synapses by the sign of the synaptic weight.
-        It would be better to use receptor_types, cf iaf_cond_alpha_mc.
-
 References
 ++++++++++
+
 .. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
        model for the large, fluctuating synaptic conductance state typical of
        neocortical neurons in vivo. Journal of Computational Neuroscience,

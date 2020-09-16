@@ -161,12 +161,12 @@ public:
   }
 
 private:
-  double weight_; //!< synpatic weight
+  double weight_; //!< Synaptic weight
 
-  double tau_P_;   //!< [ms] time constant for recovery
-  double delta_P_; //!< fractional decrease in pool size per spike
+  double tau_P_;   //!< Time constant for recovery [ms]
+  double delta_P_; //!< Fractional decrease in pool size per spike
 
-  double p_; //!< current pool size
+  double p_; //!< Current pool size
 
   double t_lastspike_; //!< Time point of last spike emitted
 };

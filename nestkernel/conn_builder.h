@@ -26,8 +26,7 @@
 /**
  * Class managing flexible connection creation.
  *
- * This is a very first draft, a very much stripped-down version of the
- * Topology connection_creator.
+ * Created based on the connection_creator used for spatial networks.
  *
  */
 
@@ -127,17 +126,17 @@ protected:
   virtual void
   sp_connect_()
   {
-    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
+    throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
   virtual void
   disconnect_()
   {
-    throw NotImplemented( "This disconnection rule is not implemented" );
+    throw NotImplemented( "This disconnection rule is not implemented." );
   }
   virtual void
   sp_disconnect_()
   {
-    throw NotImplemented( "This connection rule is not implemented for structural plasticity" );
+    throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
   //! Create connection between given nodes, fill parameter values

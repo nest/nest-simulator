@@ -80,11 +80,11 @@ neuron model described in [1]_. The most important properties are:
 - Repolarizing potassium current instead of hard reset.
 - AMPA, NMDA, GABA_A, and GABA_B conductance-based synapses with
   beta-function (difference of exponentials) time course.
-- Voltage-dependent NMDA with instantaneous or two-stage unblocking [1, 2].
+- Voltage-dependent NMDA with instantaneous or two-stage unblocking [1]_, [2]_.
 - Intrinsic currents I_h, I_T, I_Na(p), and I_KNa.
 - Synaptic "minis" are not implemented.
 
-Documentation and Examples:
+Documentation and examples:
 - docs/model_details/HillTononiModels.ipynb
 - pynest/examples/intrinsic_currents_spiking.py
 - pynest/examples/intrinsic_currents_subthreshold.py
@@ -141,7 +141,8 @@ equilibrate                  If given and true, time-dependent activation
                              present values.
 ============================ =================================================
 
-@Note Conductances are unitless in this model and currents are in mV.
+.. note::
+   Conductances are unitless in this model and currents are in mV.
 
 Sends
 +++++

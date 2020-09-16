@@ -69,8 +69,8 @@ Description
 iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
 of conductance modelled by an alpha function. The alpha function
-is normalised such that an event of weight 1.0 results in a peak current of 1 nS
-at :math:`t = tau_{syn}`.
+is normalized such that an event of weight 1.0 results in a peak current of 1 nS
+at :math:`t = \tau_{syn}`.
 
 Parameters
 ++++++++++

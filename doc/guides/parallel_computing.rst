@@ -224,7 +224,7 @@ command should look like this
 
 .. code-block:: bash
 
-    mpirun -np 128 python simulation.py
+    mpirun -np 128 python3 simulation.py
 
 Please refer to the MPI library documentation for details on the usage
 of ``mpirun``.
@@ -295,11 +295,11 @@ but 4 virtual processes in every run:
 .. code-block:: bash
 
     mkdir 4vp_1p; cd 4vp_1p
-    mpirun -np 1 python ../simulation.py
+    mpirun -np 1 python3 ../simulation.py
     cd ..; mkdir 4vp_2p; cd 4vp_2p
-    mpirun -np 2 python ../simulation.py
+    mpirun -np 2 python3 ../simulation.py
     cd ..; mkdir 4vp_4p; cd 4vp_4p
-    mpirun -np 4 python ../simulation.py
+    mpirun -np 4 python3 ../simulation.py
     cd ..
     diff 4vp_1p 4vp_2p
     diff 4vp_1p 4vp_4p

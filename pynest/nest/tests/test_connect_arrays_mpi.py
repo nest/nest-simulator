@@ -35,7 +35,16 @@ HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 MULTIPLE_PROCESSES = nest.NumProcesses() > 1
 
 
+@unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
+@unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
 class ConnectArraysMPICase(unittest.TestCase):
+    """
+    This TestCase uses mpi4py to collect and assert results from all
+    processes, and is supposed to only be run with multiple processes.
+    If running with nosetests or pytest, this TestCase is ignored when
+    run with a single process, and called from TestConnectArraysMPI using
+    multiple processes.
+    """
     non_unique = np.array([1, 1, 3, 5, 4, 5, 9, 7, 2, 8], dtype=np.uint64)
     comm = MPI.COMM_WORLD
 
@@ -108,13 +117,13 @@ class ConnectArraysMPICase(unittest.TestCase):
         self.assert_connections(sources, targets)
 
 
+@unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
+@unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
 class TestConnectArraysMPI(unittest.TestCase):
 
     # With nosetests, only run this test if using a single process
     __test__ = not MULTIPLE_PROCESSES
 
-    @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
-    @unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
     def testWithMPI(self):
         """Connect NumPy arrays with MPI"""
         directory = os.path.dirname(os.path.realpath(__file__))

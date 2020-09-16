@@ -202,12 +202,16 @@ void
 nest::iaf_cond_exp::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
+  def< double >( d, names::g_ex, y_[ G_EXC ] );
+  def< double >( d, names::g_in, y_[ G_INH ] );
 }
 
 void
 nest::iaf_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
+  updateValueParam< double >( d, names::g_ex, y_[ G_EXC ], node );
+  updateValueParam< double >( d, names::g_in, y_[ G_INH ], node );
 }
 
 nest::iaf_cond_exp::Buffers_::Buffers_( iaf_cond_exp& n )

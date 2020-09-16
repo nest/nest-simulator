@@ -190,6 +190,8 @@ void
 nest::iaf_psc_exp_ps::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y2_ + p.E_L_ ); // Membrane potential
+  def< double >( d, names::I_syn_ex, y1_ex_ );  // Excitatory synaptic current
+  def< double >( d, names::I_syn_in, y1_in_ );  // Inhibitory synaptic current
   def< bool >( d, names::is_refractory, is_refractory_ );
 }
 
@@ -204,6 +206,8 @@ nest::iaf_psc_exp_ps::State_::set( const DictionaryDatum& d, const Parameters_& 
   {
     y2_ -= delta_EL;
   }
+  updateValueParam< double >( d, names::I_syn_ex, y1_ex_, node );
+  updateValueParam< double >( d, names::I_syn_in, y1_in_, node );
 }
 
 /* ----------------------------------------------------------------

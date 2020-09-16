@@ -39,9 +39,6 @@
 nest::ConnParameter*
 nest::ConnParameter::create( const Token& t, const size_t nthreads )
 {
-  // Code grabbed from TopologyModule::create_parameter()
-  // See there for a more general solution
-
   // single double
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
   if ( dd )

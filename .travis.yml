@@ -108,7 +108,6 @@ addons:
      - libboost-python-dev
      - libboost-program-options-dev
      - libboost-test-dev
-     - python3-mpi4py
 cache:
    directory:
      - $HOME/.cache
@@ -174,14 +173,14 @@ before_install:
            pip install nose
          else
            # updating pip breaks on osx, must install man-page free nose
-           wget https://arken.nmbu.no/~plesser/nose-1.3.7noman-py3-none-any.whl  
+           wget https://arken.nmbu.no/~plesser/nose-1.3.7noman-py3-none-any.whl
            pip install nose-1.3.7noman-py3-none-any.whl
          fi
          # Installing additional packages using pip as they only have
          # outdated versions in the Travis package whitelist.
          # terminaltables is required by parse_travis_log.py to create
          # the build summary.
-         pip install cython scipy matplotlib terminaltables junitparser
+         pip install cython scipy matplotlib terminaltables junitparser mpi4py
          pip install numpy==1.16.5
          pip list
      fi

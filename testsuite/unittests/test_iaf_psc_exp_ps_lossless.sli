@@ -110,16 +110,16 @@ dc_gen << /amplitude 1000. >> SetStatus
 
 /voltmeter << /time_in_steps true /interval h >> Create /vm Set
 
-/spike_recorder Create /sp_det Set
+/spike_recorder Create /sr Set
 
 
 dc_gen neuron 1.0 h Connect
 vm neuron     1.0 h Connect
-neuron sp_det 1.0 h Connect
+neuron sr     1.0 h Connect
 
 8 Simulate
 
-sp_det /events get /times get First stack    % prints spike time
+sr /events get /times get First stack    % prints spike time
 
 {                                             % reference data
  dup Transpose First /test_times Set         % times of reference 

@@ -153,15 +153,15 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
 
         source = nest.Create('poisson_generator', params={'rate': rate})
         parrots = nest.Create('parrot_neuron_ps', 2)
-        detect = nest.Create('spike_recorder')
+        spike_rec = nest.Create('spike_recorder')
 
         nest.Connect(source, parrots[:1], syn_spec={'delay': delay})
         nest.Connect(parrots[:1], parrots[1:], syn_spec={'delay': delay})
-        nest.Connect(parrots[1:], detect)
+        nest.Connect(parrots[1:], spike_rec)
 
         nest.Simulate(_round_up(t_sim))
 
-        n_spikes = nest.GetStatus(detect)[0]['n_events']
+        n_spikes = nest.GetStatus(spike_rec)[0]['n_events']
         assert n_spikes > spikes_expected - 3 * spikes_std, \
             "parrot_neuron loses spikes."
         assert n_spikes < spikes_expected + 3 * spikes_std, \

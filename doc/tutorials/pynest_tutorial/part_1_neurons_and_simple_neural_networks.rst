@@ -203,7 +203,7 @@ variables by looking at the neuron’s property ``recordables``.
     multimeter = nest.Create("multimeter")
     multimeter.set(record_from=["V_m"])
 
-We now create a ``spikerecorder``, another device that records the
+We now create a ``spike_recorder``, another device that records the
 spiking events produced by a neuron.
 
 ::

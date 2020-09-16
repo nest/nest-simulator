@@ -242,16 +242,16 @@ statusdict/userargs :: size 1 geq
       % but by recording the populations separately,
       % we needn't sort the recordings later
       (Creating excitatory spike recorder.) =
-      /exsd /spike_recorder Create def
-      exsd
+      /exsr /spike_recorder Create def
+      exsr
       <<
         /label (brunel-2-ex-threaded)
         /record_to /ascii
       >> SetStatus
 
       (Creating inhibitory spike recorder.) =
-      /insd /spike_recorder Create def
-      insd
+      /insr /spike_recorder Create def
+      insr
       <<
         /label (brunel-2-in-threaded)
         /record_to /ascii
@@ -287,8 +287,8 @@ statusdict/userargs :: size 1 geq
       % from each population
       (Connecting spike recorders.) =
 
-      E_neurons Nrec Take exsd /all_to_all /static_synapse_hom_w Connect  % pick the first 500 neurons
-      I_neurons Nrec Take insd /all_to_all /static_synapse_hom_w Connect
+      E_neurons Nrec Take exsr /all_to_all /static_synapse_hom_w Connect  % pick the first 500 neurons
+      I_neurons Nrec Take insr /all_to_all /static_synapse_hom_w Connect
 
       toc /BuildCPUTime Set
 
@@ -310,8 +310,8 @@ statusdict/userargs :: size 1 geq
   (Number of Synapses: ) =only GetKernelStatus /num_connections get =
   (       Excitatory : ) =only n_ex_syn =
   (       Inhibitory : ) =only n_in_syn =
-  (Excitatory rate   : ) =only exsd ComputeRate =only ( Hz) =
-  (Inhibitory rate   : ) =only insd ComputeRate =only ( Hz) =
+  (Excitatory rate   : ) =only exsr ComputeRate =only ( Hz) =
+  (Inhibitory rate   : ) =only insr ComputeRate =only ( Hz) =
   (Building time     : ) =only BuildCPUTime =only ( s) =
   (Simulation time   : ) =only SimCPUTime   =only ( s\n) =
 

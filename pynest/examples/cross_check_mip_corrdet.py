@@ -81,7 +81,7 @@ nest.SetKernelStatus({'local_num_threads': 1, 'resolution': h,
 mg = nest.Create('mip_generator')
 mg.set(rate=nu, p_copy=pc)
 
-cd = nest.Create('correlation_recorder')
+cd = nest.Create('correlation_detector')
 cd.set(tau_max=tau_max, delta_tau=delta_tau)
 
 sr = nest.Create('spike_recorder', params={'time_in_steps': True})

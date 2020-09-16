@@ -539,8 +539,8 @@ class SpatialTester(object):
         if variance_num_targets == 0:
             return np.nan, 1.0
         else:
-            sr = math.sqrt(variance_num_targets)
-            z = abs((num_targets - expected_num_targets) / sr)
+            sd = math.sqrt(variance_num_targets)
+            z = abs((num_targets - expected_num_targets) / sd)
             p = 2. * (1. - scipy.stats.norm.cdf(z))
 
         return z, p

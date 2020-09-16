@@ -222,10 +222,10 @@ tic % start timer on construction
   % but by recording the populations separately,
   % we save us a lot of sorting work later
   (Creating excitatory spike recorder.) =
-  /exsd /spike_recorder << /record_to /ascii >> Create def
+  /exsr /spike_recorder << /record_to /ascii >> Create def
 
   (Creating inhibitory spike recorder.) =
-  /insd /spike_recorder << /record_to /ascii >> Create def
+  /insr /spike_recorder << /record_to /ascii >> Create def
 
   % Setting neuron parameters after creation is deprecated in NEST 2.0.
   % You should set parameters using SetDefaults before creating neurons,
@@ -285,10 +285,10 @@ tic % start timer on construction
   (Connecting spike recorders.) =
 
   E_neurons Nrec Take % pick the first 500 neurons
-    exsd Connect
+    exsr Connect
 
   I_neurons Nrec Take % pick the first 500 neurons
-    insd Connect
+    insr Connect
 
   % read out time used for building
 
@@ -306,7 +306,7 @@ toc /SimCPUTime Set
 (\nBrunel Network Simulation) =
 (Number of Neurons : ) =only N =
 (Number of Synapses: ) =only Nsyn =
-(Excitatory rate   : ) =only exsd ComputeRate =only ( Hz) =
-(Inhibitory rate   : ) =only insd ComputeRate =only ( Hz) =
+(Excitatory rate   : ) =only exsr ComputeRate =only ( Hz) =
+(Inhibitory rate   : ) =only insr ComputeRate =only ( Hz) =
 (Building time     : ) =only BuildCPUTime =only ( s) =
 (Simulation time   : ) =only SimCPUTime   =only ( s\n) =

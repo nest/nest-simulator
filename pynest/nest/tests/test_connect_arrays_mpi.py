@@ -119,21 +119,15 @@ class TestConnectArraysMPI(unittest.TestCase):
         """Connect NumPy arrays with MPI"""
         directory = os.path.dirname(os.path.realpath(__file__))
         script = os.path.realpath(__file__)
-        failing_tests = []
-        # for script in scripts:
         test_script = os.path.join(directory, script)
-        command = nest.ll_api.sli_func(
-            "mpirun", 2, "nosetests", test_script)
+        command = nest.ll_api.sli_func("mpirun", 2, "nosetests", test_script)
         command = command.split()
-        my_env = os.environ.copy()
-        retcode = sp.call(command, env=my_env, stdout=sp.PIPE, stderr=sp.PIPE)
-        if retcode != 0:
-            failing_tests.append(script)
 
-        self.assertTrue(not failing_tests, 'The following tests failed when ' +
-                        'executing with "mpirun -np 2 nosetests [script]": ' +
-                        ", ".join(failing_tests))
+        my_env = os.environ.copy()
+        retcode = sp.call(command, env=my_env)
+
+        self.assertEqual(retcode, 0, 'Test failed when run with "mpirun -np 2 nosetests [script]"')
 
 
 if __name__ == '__main__':
-    raise RuntimeError('This test must be run with nosetests')
+    raise RuntimeError('This test must be run with nosetests or pytest')

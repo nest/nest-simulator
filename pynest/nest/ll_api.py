@@ -280,7 +280,7 @@ def set_communicator(comm):
     """Set global communicator for NEST.
 
     Parameters
-    ---------
+    ----------
     comm: MPI.Comm from mpi4py
 
     Raises

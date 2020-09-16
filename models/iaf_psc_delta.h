@@ -82,7 +82,7 @@ Remarks:
 
 The present implementation uses individual variables for the
 components of the state vector and the non-zero matrix elements of
-the propagator.  Because the propagator is a lower triangular matrix,
+the propagator. Because the propagator is a lower triangular matrix,
 no full matrix multiplication needs to be carried out and the
 computation can be done "in place", i.e. no temporary state vector
 object is required.

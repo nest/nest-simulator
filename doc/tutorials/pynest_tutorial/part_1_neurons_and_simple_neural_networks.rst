@@ -59,7 +59,7 @@ simulation kernel is written in C++ to obtain the highest possible performance
 for the simulation.
 
 You can use PyNEST interactively from the Python prompt or from within
-IPython/Jupyther. This is very helpful when you are exploring PyNEST, trying to
+IPython/Jupyter. This is very helpful when you are exploring PyNEST, trying to
 learn a new functionality or debugging a routine. Once out of the
 exploratory mode, you will find it saves a lot of time to write your
 simulations in text files. These can in turn be run from the command

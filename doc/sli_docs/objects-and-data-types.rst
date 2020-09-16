@@ -120,7 +120,7 @@ first index.
 Matched pairs of parentheses may be used inside strings.
 
 Example 5
-~~~~~~~~~~
+~~~~~~~~~
 
 ::
 

@@ -263,14 +263,14 @@ dc_gen nrn_spike 1. 1. Connect
 
 %read out spike response of nrns:
 
-/spike_recorder Create /det_nospike Set
-nrn_nospike det_nospike Connect
+/spike_recorder Create /sr_nospike Set
+nrn_nospike sr_nospike Connect
 
-/spike_recorder Create /det_missingspike Set
-nrn_missingspike det_missingspike Connect
+/spike_recorder Create /sr_missingspike Set
+nrn_missingspike sr_missingspike Connect
 
-/spike_recorder Create /det_spike Set
-nrn_spike det_spike Connect
+/spike_recorder Create /sr_spike Set
+nrn_spike sr_spike Connect
 
 
 2 Simulate
@@ -308,5 +308,4 @@ det_spike /events get /times get cva
 { time_nospike 0 eq } assert_or_die
 { time_missingspike 4.01442 eq } assert_or_die
 { time_spike 4.00659 eq } assert_or_die
-
 

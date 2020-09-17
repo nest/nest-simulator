@@ -1,1 +1,1 @@
-.. include:: ../../pynest/README.md
+.. include:: ../../pynest/README.rst

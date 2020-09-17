@@ -96,7 +96,7 @@ Functions related to connection
 Functions related to subnets
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**The subnet module is removed in NEST 3.0!**
+**The subnet model is removed in NEST 3.0!**
 
 +----------------------------------------+--------------------------------------------+
 | NEST 2.x                               | NEST 3.0                                   |

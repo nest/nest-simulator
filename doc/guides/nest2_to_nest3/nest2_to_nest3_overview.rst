@@ -1316,8 +1316,14 @@ between the source-target pair at *indx*.
 Calling ``.distance`` on a SynapseCollection where either the source or target, or both, are not spatially
 distributed also works, you will receive `nan` whenever one of the nodes is non-spatial.
 
-Improved infrastructure for handling recordings
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Recording from simulations
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `spike_detector` has been renamed to `spike_recorder`. The main
+rationale behind this is that the device is actually not detecting the
+occurence of spikes, but rather only records them. Moreover, the new
+name is more consistent with the naming of other similar devices that
+also end in the suffix `_recorder`.
 
 In NEST 2.x, all recording modalities (i.e. *screen*, *memory*, and
 *files*) were handled by a single C++ class. Due to the many different
@@ -1353,24 +1359,30 @@ The following examples assume that the variable `mm` points to a
 was executed.
 
 
-  +------------------------------------------------------+--------------------------------+
-  | NEST 2.x                                             | NEST 3.0                       |
-  +------------------------------------------------------+--------------------------------+
-  |                                                      |                                |
-  | ::                                                   | ::                             |
-  |                                                      |                                |
-  |     nest.SetStatus(mm, {'record_to': ["file"]})      |     mm.record_to = "ascii"     |
-  |     nest.SetStatus(mm, {'record_to': ["screen"]})    |     mm.record_to = "screen"    |
-  |     nest.SetStatus(mm, {'record_to': ["memory"]})    |     mm.record_to = "memory"    |
-  |                                                      |                                |
-  +------------------------------------------------------+--------------------------------+
-  | ::                                                   | ::                             |
-  |                                                      |                                |
-  |     nest.SetStatus(mm, {'to_file': True})            |     mm.record_to = "ascii"     |
-  |     nest.SetStatus(mm, {'to_screen': True})          |     mm.record_to = "screen"    |
-  |     nest.SetStatus(mm, {'to_memory': True})          |     mm.record_to = "memory"    |
-  |                                                      |                                |
-  +------------------------------------------------------+--------------------------------+
+  +------------------------------------------------------+------------------------------------+
+  | NEST 2.x                                             | NEST 3.0                           |
+  +------------------------------------------------------+------------------------------------+
+  |                                                      |                                    |
+  | ::                                                   | ::                                 |
+  |                                                      |                                    |
+  |     nest.SetStatus(mm, {'record_to': ["file"]})      |     mm.record_to = "ascii"         |
+  |     nest.SetStatus(mm, {'record_to': ["screen"]})    |     mm.record_to = "screen"        |
+  |     nest.SetStatus(mm, {'record_to': ["memory"]})    |     mm.record_to = "memory"        |
+  |                                                      |                                    |
+  +------------------------------------------------------+------------------------------------+
+  | ::                                                   | ::                                 |
+  |                                                      |                                    |
+  |     nest.SetStatus(mm, {'to_file': True})            |     mm.record_to = "ascii"         |
+  |     nest.SetStatus(mm, {'to_screen': True})          |     mm.record_to = "screen"        |
+  |     nest.SetStatus(mm, {'to_memory': True})          |     mm.record_to = "memory"        |
+  |                                                      |                                    |
+  +------------------------------------------------------+------------------------------------+
+  |                                                      |                                    |
+  | ::                                                   | ::                                 |
+  |                                                      |                                    |
+  |     nest.Create('spike_detector')                    |     nest.Create('spike_recorder')  |
+  |                                                      |                                    |
+  +------------------------------------------------------+------------------------------------+
 
 You can retrieve the list of available backends using the following command:
 

@@ -3009,7 +3009,6 @@ NestModule::init( SLIInterpreter* i )
   register_mask< EllipseMask< 3 > >();
   register_mask< BoxMask< 2 > >();
   register_mask< BoxMask< 3 > >();
-  register_mask< BoxMask< 3 > >( "volume" ); // For compatibility with topo 2.0
   register_mask( "doughnut", create_doughnut );
   register_mask< GridMask< 2 > >();
 }

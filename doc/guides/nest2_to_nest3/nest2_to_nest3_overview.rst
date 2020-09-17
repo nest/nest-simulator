@@ -1296,6 +1296,11 @@ probability and delay, and random weights from a normal distribution:
   |                                                                  |                                                                     |
   +------------------------------------------------------------------+---------------------------------------------------------------------+
 
+Masks
+^^^^^
+In NEST 3.0, the mask ``volume`` got removed, as the same mask was already available under the name ``box``.
+The former was only an alias available in NEST for backward compatibility.
+
 Retrieving distance information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 If you have a SynapseCollection with connections from a spatially distributed network, you can retrieve the

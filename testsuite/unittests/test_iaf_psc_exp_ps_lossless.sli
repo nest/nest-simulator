@@ -289,17 +289,17 @@ dc_gen << /amplitude 0. >> SetStatus
 
 % get spike times
 
-det_nospike /events get /times get cva    % array of spike times (this one should be empty)
-  Total                                   % sum of array elements. works also for empty array
+sr_nospike /events get /times get cva    % array of spike times (this one should be empty)
+  Total                                  % sum of array elements. works also for empty array
   6 ToUnitTestPrecision
   /time_nospike Set
 
-det_missingspike /events get /times get cva
+sr_missingspike /events get /times get cva
   Total
   6 ToUnitTestPrecision
   /time_missingspike Set
 
-det_spike /events get /times get cva
+sr_spike /events get /times get cva
   Total
   6 ToUnitTestPrecision
   /time_spike Set
@@ -308,4 +308,3 @@ det_spike /events get /times get cva
 { time_nospike 0 eq } assert_or_die
 { time_missingspike 4.01442 eq } assert_or_die
 { time_spike 4.00659 eq } assert_or_die
-

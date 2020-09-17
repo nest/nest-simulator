@@ -19,7 +19,6 @@
 
 set( nest_sources
     neststartup.cpp neststartup.h
-    sli_neuron.h sli_neuron.cpp
     )
 
 add_executable( nest main.cpp ${nest_sources} )
@@ -102,9 +101,6 @@ install( TARGETS nest nest_lib
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
-
-install( FILES sli/models-init.sli
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
 
 FILTER_HEADERS("${nest_sources}" install_headers )
 install( FILES ${install_headers}

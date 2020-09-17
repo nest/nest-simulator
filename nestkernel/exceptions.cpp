@@ -271,14 +271,6 @@ nest::DistributionError::message() const
 }
 
 std::string
-nest::SimulationError::message() const
-{
-  return std::string(
-    "One or more nodes reported an error. Please check the output preceeding "
-    "this message." );
-}
-
-std::string
 nest::InvalidDefaultResolution::message() const
 {
   std::ostringstream msg;

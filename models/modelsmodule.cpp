@@ -184,13 +184,6 @@ ModelsModule::name( void ) const
   return std::string( "NEST Standard Models Module" ); // Return name of the module
 }
 
-const std::string
-ModelsModule::commandstring( void ) const
-{
-  // TODO: Move models-init.sli to sli_neuron....
-  return std::string( "(models-init) run" );
-}
-
 //-------------------------------------------------------------------------------------
 
 void

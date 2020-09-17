@@ -36,7 +36,7 @@ PyNEST to ``$(pyexecdir)``, which is often expanded as follows:
 
 To make the PyNEST module available to the Python interpreter, source
 ``nest_vars.sh`` from the NEST installation directory (``source
-<nest-install-dir>/bin/nest_vars.sh``). This will add the PyNEST installation
+<nest_install_dir>/bin/nest_vars.sh``). This will add the PyNEST installation
 path to the ``PYTHONPATH`` environment variable.
 
 For help on a NEST object OBJ in PyNEST, type ``nest.help(OBJ)``. To find

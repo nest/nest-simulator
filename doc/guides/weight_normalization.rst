@@ -14,7 +14,7 @@ Keeping this norm constant at a desired target value, say :math:`w_{target}`, is
 
 .. math::
 
-   w_i &\leftarrow w_{target} \frac{w_i}{|\mathbf{w}|_1}
+   w_i \leftarrow w_{target} \frac{w_i}{|\mathbf{w}|_1}
 
 
 Implementation in NEST

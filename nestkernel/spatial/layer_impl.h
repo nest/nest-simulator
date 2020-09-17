@@ -30,7 +30,7 @@
 #include "nest_datums.h"
 #include "booldatum.h"
 
-// Includes from topology:
+// Includes from spatial:
 #include "grid_layer.h"
 #include "grid_mask.h"
 

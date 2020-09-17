@@ -29,7 +29,7 @@
 #include <vector>
 #include <iterator>
 
-// Includes from topology:
+// Includes from spatial:
 #include "position.h"
 
 namespace nest

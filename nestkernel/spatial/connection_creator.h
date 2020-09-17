@@ -31,7 +31,7 @@
 #include "nest_names.h"
 #include "nestmodule.h"
 
-// Includes from topology:
+// Includes from spatial:
 #include "mask.h"
 #include "position.h"
 #include "vose.h"

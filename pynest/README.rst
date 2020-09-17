@@ -1,4 +1,5 @@
-# `pynest` folder
+pynest folder
+=============
 
 This directory contains the source code of PyNEST, the Python bindings
 to the NEST kernel. A detailed explanation of PyNEST can be found in
@@ -17,20 +18,24 @@ and
 PyNEST will be compiled together with NEST by default. If you want to
 disable it, pass
 
-    -Dwith-python=OFF
+.. code-block::
 
-as an argument to `cmake`. By default, `make install` will install
-PyNEST to `$(pyexecdir)`, which is often expanded as follows:
+   -Dwith-python=OFF
 
-    $(prefix)/lib{,64}/pythonX.Y/site-packages/nest
+as an argument to ``cmake``. By default, ``make install`` will install
+PyNEST to ``$(pyexecdir)``, which is often expanded as follows:
+
+.. code-block::
+
+   $(prefix)/lib{,64}/pythonX.Y/site-packages/nest
 
 Note that since NEST 3.0, support for Python 2 has been dropped. Please use
 Python 3 instead.
 
 To make the PyNEST module available to the Python interpreter, source
-`nest_vars.sh` from the NEST installation directory (`source
-<nest-install-dir>/bin/nest_vars.sh`). This will add the PyNEST installation
-path to the PYTHONPATH environment variable.
+``nest_vars.sh`` from the NEST installation directory (``source
+<nest-install-dir>/bin/nest_vars.sh``). This will add the PyNEST installation
+path to the ``PYTHONPATH`` environment variable.
 
-For help on a NEST object OBJ in PyNEST, type nest.help(OBJ). To find
-out more about NEST, type nest.helpdesk().
+For help on a NEST object OBJ in PyNEST, type ``nest.help(OBJ)``. To find
+out more about NEST, type ``nest.helpdesk()``.

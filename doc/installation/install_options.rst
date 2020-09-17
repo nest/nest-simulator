@@ -11,7 +11,7 @@ should build and install NEST to ``/install/path``, which should be an absolute
 path.
 
 Choice of CMake Version
-------------------------
+-----------------------
 
 We recommend to use ``cmake`` v3.4 or later, even though installing NEST with
 ``cmake`` v2.8.12 will in most cases work properly.
@@ -106,7 +106,7 @@ Change compilation behavior::
                                                    Separate multiple defines by ';'. [default OFF]
 
 NO-DOC option
---------------
+-------------
 
 On systems where help extraction is slow, the call to ``make install`` can be replaced
 by ``make install-nodoc`` to skip the generation of help pages and indices. Using this
@@ -115,7 +115,7 @@ production use as it renders the built-in help system useless.
 
 
 Configuring NEST for Distributed Simulation with MPI
---------------------------------------------------------
+----------------------------------------------------
 
   1. Try ``-Dwith-mpi=ON`` as argument for ``cmake``. If it works, fine.
   2. If 1 does not work, or you want to use a non-standard MPI,
@@ -137,7 +137,7 @@ already contains an example implementation that should work with
 
 
 Disabling the Python Bindings (PyNEST)
-----------------------------------------
+--------------------------------------
 
 To disable Python bindings use::
 
@@ -148,7 +148,7 @@ as an argument to ``cmake``.
 Please see also the file :doc:`../../pynest/README.md` in the documentation directory for details.
 
 Python Binding (PyNEST)
---------------------------
+-----------------------
 
 Note that since NEST 3.0, support for Python 2 has been dropped. Please use Python 3 instead.
 
@@ -171,7 +171,7 @@ and its corresponding libraries correctly. To circumvent such a problem followin
         </path/to/NEST/src>
 
 Compiling for Apple OSX/macOS
-=============================
+-----------------------------
 
 NEST can currently not be compiled with the clang/clang++ compilers shipping
 with macOS. Therefore, you first need to install GCC 6.3 or later. The easiest
@@ -203,7 +203,7 @@ line::
 
 
 Compiler-specific options
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 NEST has reasonable default compiler options for the most common compilers.
 

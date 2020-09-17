@@ -4,9 +4,10 @@ Install NEST
 Standard installation
 ---------------------
 
-**These installation instructions should work for most users, who do
+These installation instructions should work for most users who do
 not need custom configurations for their systems. If you want to
-compile NEST from source, see section** :ref:`advanced_install`.
+compile NEST from source, check the :ref:`advanced_install` section
+and :doc:`install_options`.
 
 .. tabs::
 
@@ -122,7 +123,7 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
    .. tab:: Conda (Linux/macOS)
 
-       1. Create your conda environment and install NEST. Please check out 
+       1. Create your conda environment and install NEST. Please refer to
           our :doc:`conda_tips`.
 
           Without OpenMPI:
@@ -334,8 +335,6 @@ these instructions.**
    conda_install
    hpc_install
    livemedia
-   install_options
-
 
 .. note::
 

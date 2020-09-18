@@ -7,7 +7,7 @@ Standard installation
 These installation instructions should work for most users who do
 not need custom configurations for their systems. If you want to
 compile NEST from source, check the :ref:`advanced_install` section
-and :doc:`install_options`.
+and :doc:`compilation_options`.
 
 .. tabs::
 

@@ -360,7 +360,7 @@ if test "${MUSIC}"; then
     for test_name in $(ls ${TESTDIR} | grep '.*\.music$') ; do
         music_file="${TESTDIR}/${test_name}"
 
-        # Collect the list of SLI files from the .music file.
+        # Collect the list of SLI files from the '.music' file.
         sli_files=$(grep '\.sli' ${music_file} | sed -e "s#args=#${TESTDIR}#g")
         sli_files=$(for f in ${sli_files}; do if test -f ${f}; then echo ${f}; fi; done)
         sli_files=${sli_files//$'\n'/ }
@@ -369,7 +369,7 @@ if test "${MUSIC}"; then
         sh_file="${TESTDIR}/$(basename ${music_file} .music).sh"
         if test ! -f "${sh_file}"; then unset sh_file; fi
 
-        # Calculate the total number of processes from the .music file.
+        # Calculate the total number of processes from the '.music' file.
         np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
         command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =")"
 
@@ -378,12 +378,12 @@ if test "${MUSIC}"; then
         echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
         printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 
-        # Copy everything to the tmpdir.
-        # Variables might also be empty. To prevent 'cp' from terminating with an error in such a case,
-        # exit code is suppressed.
+        # Copy everything to 'tmpdir'. 
+        # Variables might also be empty. To prevent 'cp' from terminating in such a case,
+        # the exit code is suppressed.
         cp ${music_file} ${sh_file} ${sli_files} ${tmpdir} 2>/dev/null || :
 
-        # Create the runner script in the tmpdir.
+        # Create the runner script in 'tmpdir'.
         cd "${tmpdir}"
         echo "#!/bin/sh" >  runner.sh
         echo "set +e" >> runner.sh
@@ -395,7 +395,7 @@ if test "${MUSIC}"; then
         fi
         echo "echo \$? > exit_code ; exit 0" >> runner.sh
 
-        # Run the script, measure execution time, and copy all output to the logfile.
+        # Run the script and measure execution time. Copy the output to the logfile.
         chmod 755 runner.sh
         TIME_ELAPSED=$( time_cmd ./runner.sh )
         TIME_TOTAL=$(( ${TIME_TOTAL} + ${TIME_ELAPSED} ))
@@ -405,8 +405,10 @@ if test "${MUSIC}"; then
         # or of the accompanying shell script if present.
         exit_code=$(cat exit_code)
 
-        # Count the total number of tests, the tests skipped and the tests with error.
-        # The values will be stored in the XML report when 'junit_close' is called.
+        # Count the total number of tests, the tests skipped, and the tests with error.
+        # The values will be stored in the XML report at 'junit_close'.
+        # Test failures and diagnostic information are also stored in the xml-report file 
+        # with 'unit_write'.
         JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
         if test -z $(echo ${test_name} | grep failure); then
             if test $exit_code -eq 0; then

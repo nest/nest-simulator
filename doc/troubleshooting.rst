@@ -7,7 +7,8 @@ Please make sure you have:
 
 * Followed the :doc:`installation instructions <installation/index>`
 * Installed the required :ref:`dependencies <standard>`
-* Viewed the :doc:`configuration options <installation/install_options>`
+* Viewed the :doc:`compilation <installation/compilation_options>` and 
+  :doc:`configuration <installation/configuration>` options
 
 You can also check our `Mailing List Archive <https://www.nest-initiative.org/mailinglist/hyperkitty/list/
 users@nest-simulator.org/>`_ and `Stack Overflow <https://stackoverflow.com/questions/tagged/nest-simulator>`_

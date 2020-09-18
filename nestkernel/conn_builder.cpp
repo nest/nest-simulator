@@ -193,31 +193,42 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
   // Structural plasticity parameters
   // Check if both pre and post synaptic element are provided
-  // Currently only possible with structural plasticity with single element syn_spec
-  if ( syn_spec[ 0 ]->known( names::pre_synaptic_element ) and syn_spec[ 0 ]->known( names::post_synaptic_element ) )
+  // Currently only possible to have structural plasticity with single element syn_spec
+  bool have_both_sp_keys = false;
+  bool have_one_sp_key = false;
+  for ( auto syn_params : syn_specs )
   {
-    if ( syn_spec.size() > 1 )
+    if ( not have_both_sp_keys and ( syn_params->known( names::pre_synaptic_element ) and syn_params->known( names::post_synaptic_element ) ) )
     {
-      throw KernelException( "Structural plasticity is only possible with single syn_spec" );
+      have_both_sp_keys = true;
     }
+    if ( not have_one_sp_key and ( syn_params->known( names::pre_synaptic_element ) or syn_params->known( names::post_synaptic_element ) ) )
+    {
+      have_one_sp_key = true;
+    }
+  }
 
-    pre_synaptic_element_name_ = getValue< std::string >( syn_spec[ 0 ], names::pre_synaptic_element );
-    post_synaptic_element_name_ = getValue< std::string >( syn_spec[ 0 ], names::post_synaptic_element );
+  if ( have_both_sp_keys and syn_specs.size() > 1 )
+  {
+    throw KernelException( "Structural plasticity is only possible with single syn_spec" );
+  }
+  else if ( have_both_sp_keys )
+  {
+    pre_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::pre_synaptic_element );
+    post_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::post_synaptic_element );
 
     use_pre_synaptic_element_ = true;
     use_post_synaptic_element_ = true;
   }
+  else if ( have_one_sp_key )
+  {
+    throw BadProperty( "Structural plasticity requires both a pre and post synaptic element." );
+  }
   else
   {
-    if ( syn_spec[ 0 ]->known( names::pre_synaptic_element ) or syn_spec[ 0 ]->known( names::post_synaptic_element ) )
-    {
-      throw BadProperty( "Structural plasticity requires both a pre and post synaptic element." );
-    }
-
     use_pre_synaptic_element_ = false;
     use_post_synaptic_element_ = false;
   }
-
 
   // Create dummy dictionaries, one per thread
   dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );

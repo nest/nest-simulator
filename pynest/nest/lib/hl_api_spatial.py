@@ -551,7 +551,7 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
             source_node_id target_node_id weight delay dx dy [dz]
 
     where (dx, dy [, dz]) is the displacement from source to target node.
-    If targets do not have positions (eg spike detectors outside any layer),
+    If targets do not have positions (eg spike recorders outside any layer),
     NaN is written for each displacement coordinate.
 
     Parameters

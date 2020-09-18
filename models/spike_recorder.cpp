@@ -1,5 +1,5 @@
 /*
- *  spike_detector.cpp
+ *  spike_recorder.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "spike_detector.h"
+#include "spike_recorder.h"
 
 // C++ includes:
 #include <numeric>
@@ -41,36 +41,36 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-nest::spike_detector::spike_detector()
+nest::spike_recorder::spike_recorder()
   : RecordingDevice()
 {
 }
 
-nest::spike_detector::spike_detector( const spike_detector& n )
+nest::spike_recorder::spike_recorder( const spike_recorder& n )
   : RecordingDevice( n )
 {
 }
 
 void
-nest::spike_detector::calibrate()
+nest::spike_recorder::calibrate()
 {
   RecordingDevice::calibrate( RecordingBackend::NO_DOUBLE_VALUE_NAMES, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void
-nest::spike_detector::update( Time const&, const long, const long )
+nest::spike_recorder::update( Time const&, const long, const long )
 {
   // Nothing to do. Writing to the backend happens in handle().
 }
 
 nest::RecordingDevice::Type
-nest::spike_detector::get_type() const
+nest::spike_recorder::get_type() const
 {
-  return RecordingDevice::SPIKE_DETECTOR;
+  return RecordingDevice::SPIKE_RECORDER;
 }
 
 void
-nest::spike_detector::get_status( DictionaryDatum& d ) const
+nest::spike_recorder::get_status( DictionaryDatum& d ) const
 {
   RecordingDevice::get_status( d );
 
@@ -92,13 +92,13 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::spike_detector::set_status( const DictionaryDatum& d )
+nest::spike_recorder::set_status( const DictionaryDatum& d )
 {
   RecordingDevice::set_status( d );
 }
 
 void
-nest::spike_detector::handle( SpikeEvent& e )
+nest::spike_recorder::handle( SpikeEvent& e )
 {
   // accept spikes only if detector was active when spike was emitted
   if ( is_active( e.get_stamp() ) )

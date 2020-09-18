@@ -85,7 +85,7 @@
 
 %%% FUNCTION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Take spike detector, find total number of spikes registered,
+% Take spike recorder, find total number of spikes registered,
 % return average rate per neuron in Hz.
 % NOTE: If you are running with several MPI processes, this
 %       function only gives an approximation to the true rate.
@@ -95,17 +95,17 @@
 {
   << >> begin  % anonymous dictionary for local variables
 
-    /sdet Set
+    /sr Set
 
     % We need to guess how many neurons we record from.
     % This assumes an even distribution of nodes across
     % processes, as well as homogeneous activity in the
     % network. So this is really a hack. NEST needs better
     % support for rate calculations, such as giving the
-    % number of neurons recorded from by each spike detector.
+    % number of neurons recorded from by each spike recorder.
 
     userdict /Nrec get cvd NumProcesses div /nnrn Set
-    sdet /n_events get nnrn userdict /simtime get mul div
+    sr /n_events get nnrn userdict /simtime get mul div
     1000 mul         % convert from mHz to Hz, leave on stack
 
   end
@@ -238,20 +238,20 @@ statusdict/userargs :: size 1 geq
       /expoisson /poisson_generator Create def
       /inpoisson /poisson_generator Create def
 
-      % We could do with only one detector,
+      % We could do with only one recorder,
       % but by recording the populations separately,
       % we needn't sort the recordings later
-      (Creating excitatory spike detector.) =
-      /exsd /spike_detector Create def
-      exsd
+      (Creating excitatory spike recorder.) =
+      /exsr /spike_recorder Create def
+      exsr
       <<
         /label (brunel-2-ex-threaded)
         /record_to /ascii
       >> SetStatus
 
-      (Creating inhibitory spike detector.) =
-      /insd /spike_detector Create def
-      insd
+      (Creating inhibitory spike recorder.) =
+      /insr /spike_recorder Create def
+      insr
       <<
         /label (brunel-2-in-threaded)
         /record_to /ascii
@@ -281,14 +281,14 @@ statusdict/userargs :: size 1 geq
       % I -> I
       I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
-      % Spike detectors are connected to the first Nrec neurons in each
+      % Spike recorders are connected to the first Nrec neurons in each
       % population.  Since neurons are equal and connectivity is homogeneously
       % randomized, this is equivalent to picking Nrec neurons at random
       % from each population
-      (Connecting spike detectors.) =
+      (Connecting spike recorders.) =
 
-      E_neurons Nrec Take exsd /all_to_all /static_synapse_hom_w Connect  % pick the first 500 neurons
-      I_neurons Nrec Take insd /all_to_all /static_synapse_hom_w Connect
+      E_neurons Nrec Take exsr /all_to_all /static_synapse_hom_w Connect  % pick the first 500 neurons
+      I_neurons Nrec Take insr /all_to_all /static_synapse_hom_w Connect
 
       toc /BuildCPUTime Set
 
@@ -310,8 +310,8 @@ statusdict/userargs :: size 1 geq
   (Number of Synapses: ) =only GetKernelStatus /num_connections get =
   (       Excitatory : ) =only n_ex_syn =
   (       Inhibitory : ) =only n_in_syn =
-  (Excitatory rate   : ) =only exsd ComputeRate =only ( Hz) =
-  (Inhibitory rate   : ) =only insd ComputeRate =only ( Hz) =
+  (Excitatory rate   : ) =only exsr ComputeRate =only ( Hz) =
+  (Inhibitory rate   : ) =only insr ComputeRate =only ( Hz) =
   (Building time     : ) =only BuildCPUTime =only ( s) =
   (Simulation time   : ) =only SimCPUTime   =only ( s\n) =
 

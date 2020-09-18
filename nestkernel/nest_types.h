@@ -212,7 +212,7 @@ const long delay_max = LONG_MAX;
  * determine by a bitwise AND operation if sender and receiver are compatible.
  * The check takes place in connection::check_connection().
  *
- * A device, such as the spike-generator or spike_detector,
+ * A device, such as the spike-generator or spike_recorder,
  * that can in a meaningful way be connected to either neuron model
  * can use the wildcard ALL, that will match any connection partner.
  */

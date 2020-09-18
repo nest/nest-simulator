@@ -184,7 +184,7 @@ n_free = nest.Create('iaf_psc_alpha', 1, {'V_th': 1e12})
 pg = nest.Create('poisson_generator', len(rates),
                  [{'rate': float(rate_i)} for rate_i in rates])
 vm = nest.Create('voltmeter', 1, {'interval': .1})
-sd = nest.Create('spike_detector')
+sr = nest.Create('spike_recorder')
 
 ###############################################################################
 # We connect devices and neurons and start the simulation.
@@ -195,7 +195,7 @@ for indx in range(len(pg)):
     nest.Connect(pg[indx], n_free, syn_spec={'weight': J[indx]})
 
 nest.Connect(vm, n_free)
-nest.Connect(n, sd)
+nest.Connect(n, sr)
 
 nest.Simulate(simtime)
 
@@ -210,5 +210,5 @@ print('mean membrane potential (actual / calculated): {0} / {1}'
 print('variance (actual / calculated): {0} / {1}'
       .format(np.var(v_free), sigma2 * 1e6))
 print('firing rate (actual / calculated): {0} / {1}'
-      .format(nest.GetStatus(sd, 'n_events')[0] /
+      .format(nest.GetStatus(sr, 'n_events')[0] /
               (n_neurons * simtime * ms), r))

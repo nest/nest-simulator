@@ -26,7 +26,7 @@ Name: testsuite::test_pulsepacket_generator - Test parallel generation of Poisso
 Synopsis: nest_indirect test_pulsepacket_generator.sli -> -
 
 Description:
-   Creates a precise Poisson generator and sends spikes to spike detector. Assert invariant
+   Creates a precise Poisson generator and sends spikes to spike recorder. Assert invariant
    results for fixed VP number. This is a partial response to #551. May be adapted
    to other generators.
 
@@ -53,16 +53,16 @@ skip_if_not_threaded
     ;
     /pulsepacket_generator << /pulse_times [5.] /activity 5 /sdev 2.0 >> Create
   } Table def
-  /sd /spike_detector Create def
+  /sr /spike_recorder Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
   [ gens pnet ] { Connect } ScanThread
-  pnet { sd Connect } forall
+  pnet { sr Connect } forall
   
   10. Simulate
 
   % get events, replace vectors with SLI arrays    
-  /ev sd /events get def
+  /ev sr /events get def
   ev keys { /k Set ev dup k get cva k exch put } forall
   ev 
 

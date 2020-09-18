@@ -34,7 +34,7 @@ distributed time constants of the PSPs.
 
 When connecting the network customary synapse models are used, which
 allow for querying the number of created synapses. Using spike
-detectors the average firing rates of the neurons in the populations
+recorders the average firing rates of the neurons in the populations
 are established. The building as well as the simulation time of the
 network are recorded.
 
@@ -156,17 +156,17 @@ nest.SetDefaults("poisson_generator", {"rate": p_rate})
 ###############################################################################
 # Creation of the nodes using ``Create``. We store the returned handles in
 # variables for later reference. Here the excitatory and inhibitory, as well
-# as the poisson generator and two spike detectors. The spike detectors will
+# as the poisson generator and two spike recorders. The spike recorders will
 # later be used to record excitatory and inhibitory spikes.
 
 nodes_ex = nest.Create("iaf_psc_exp_multisynapse", NE)
 nodes_in = nest.Create("iaf_psc_exp_multisynapse", NI)
 noise = nest.Create("poisson_generator")
-espikes = nest.Create("spike_detector")
-ispikes = nest.Create("spike_detector")
+espikes = nest.Create("spike_recorder")
+ispikes = nest.Create("spike_recorder")
 
 ################################################################################
-# Configuration of the spike detectors recording excitatory and inhibitory
+# Configuration of the spike recorders recording excitatory and inhibitory
 # spikes by sending parameter dictionaries to ``set``. Setting the property
 # `record_to` to *"ascii"* ensures that the spikes will be recorded to a file,
 # whose name starts with the string assigned to the property `label`.
@@ -216,7 +216,7 @@ nest.Connect(noise, nodes_in, syn_spec=syn_params_ex)
 
 ###############################################################################
 # Connecting the first ``N_rec`` nodes of the excitatory and inhibitory
-# population to the associated spike detectors using excitatory synapses.
+# population to the associated spike recorders using excitatory synapses.
 # Here the same shortcut for the specification of the synapse as defined
 # above is used.
 
@@ -266,7 +266,7 @@ nest.Simulate(simtime)
 endsimulate = time.time()
 
 ###############################################################################
-# Reading out the total number of spikes received from the spike detector
+# Reading out the total number of spikes received from the spike recorder
 # connected to the excitatory population and the inhibitory population.
 
 events_ex = espikes.n_events

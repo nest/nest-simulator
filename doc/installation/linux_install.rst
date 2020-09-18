@@ -165,7 +165,7 @@ The following variables are set in ``nest_vars.sh``:
      - Description
    * - ``PYTHONPATH``
      - Search path for non-standard Python module locations. Will be newly set or prepended to the already existing
-variable if it is already set.
+       variable if it is already set.
    * - ``PATH``
      - Search path for binaries. Will be newly set or prepended to the already existing variable if it is already set.
 

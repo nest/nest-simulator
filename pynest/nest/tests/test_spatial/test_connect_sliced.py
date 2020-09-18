@@ -38,8 +38,11 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
     parameter = nest.logic.conditional(nest.spatial.distance < 0.19, 1.0, 0.0)
     mask = {'rectangular': {'lower_left': [0., 0.], 'upper_right': [1., 1.]}}
 
-    reference = np.array([0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0])
-    reference_masked = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0])
+    reference = np.zeros(N, dtype=np.int64)
+    reference[7:14] = 1
+
+    reference_masked = np.copy(reference)
+    reference_masked[:10] = 0
 
     def setUp(self):
         nest.ResetKernel()

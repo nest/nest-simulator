@@ -51,7 +51,7 @@
 nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
   : sources_( sources )
   , targets_( targets )
   , allow_autapses_( true )
@@ -77,18 +77,18 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
 
-  default_weight_.resize( syn_spec.size() );
-  default_delay_.resize( syn_spec.size() );
-  default_weight_and_delay_.resize( syn_spec.size() );
-  weight_.resize( syn_spec.size() );
-  delay_.resize( syn_spec.size() );
-  synapse_params_.resize( syn_spec.size() );
-  synapse_model_id_.resize( syn_spec.size() );
+  default_weight_.resize( syn_specs.size() );
+  default_delay_.resize( syn_specs.size() );
+  default_weight_and_delay_.resize( syn_specs.size() );
+  weights_.resize( syn_specs.size() );
+  delays_.resize( syn_specs.size() );
+  synapse_params_.resize( syn_specs.size() );
+  synapse_model_id_.resize( syn_specs.size() );
   synapse_model_id_[ 0 ] = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
-  param_dicts_.resize( syn_spec.size() );
+  param_dicts_.resize( syn_specs.size() );
 
   int indx = 0;
-  for ( auto syn_params : syn_spec )
+  for ( auto syn_params : syn_specs )
   {
     if ( not syn_params->known( names::synapse_model ) )
     {
@@ -131,21 +131,21 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
     if ( not default_weight_and_delay_[ indx ] )
     {
-      weight_[ indx ] = syn_params->known( names::weight )
+      weights_[ indx ] = syn_params->known( names::weight )
         ? ConnParameter::create( ( *syn_params )[ names::weight ], kernel().vp_manager.get_num_threads() )
         : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
-      register_parameters_requiring_skipping_( *weight_[ indx ] );
-      delay_[ indx ] = syn_params->known( names::delay )
+      register_parameters_requiring_skipping_( *weights_[ indx ] );
+      delays_[ indx ] = syn_params->known( names::delay )
         ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
         : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
     }
     else if ( default_weight_[ indx ] )
     {
-      delay_[ indx ] = syn_params->known( names::delay )
+      delays_[ indx ] = syn_params->known( names::delay )
         ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
         : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
     }
-    register_parameters_requiring_skipping_( *delay_[ indx ] );
+    register_parameters_requiring_skipping_( *delays_[ indx ] );
 
     for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end();
           ++default_it )
@@ -250,12 +250,12 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
 nest::ConnBuilder::~ConnBuilder()
 {
-  for ( auto weight : weight_ )
+  for ( auto weight : weights_ )
   {
     delete weight;
   }
 
-  for ( auto delay : delay_ )
+  for ( auto delay : delays_ )
   {
     delete delay;
   }
@@ -437,7 +437,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
           target_thread,
           synapse_model_id_[ indx ],
           dummy_param_dicts_[ target_thread ],
-          delay_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+          delays_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
       }
       else if ( default_delay_[ indx ] )
       {
@@ -447,12 +447,12 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
           synapse_model_id_[ indx ],
           dummy_param_dicts_[ target_thread ],
           numerics::nan,
-          weight_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+          weights_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
       }
       else
       {
-        double delay = delay_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-        double weight = weight_[ indx ]->value_double( target_thread, rng, snode_id, &target );
+        double delay = delays_[ indx ]->value_double( target_thread, rng, snode_id, &target );
+        double weight = weights_[ indx ]->value_double( target_thread, rng, snode_id, &target );
         kernel().connection_manager.connect( snode_id,
           &target,
           target_thread,
@@ -516,7 +516,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
           target_thread,
           synapse_model_id_[ indx ],
           param_dicts_[ indx ][ target_thread ],
-          delay_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+          delays_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
       }
       else if ( default_delay_[ indx ] )
       {
@@ -526,12 +526,12 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
           synapse_model_id_[ indx ],
           param_dicts_[ indx ][ target_thread ],
           numerics::nan,
-          weight_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+          weights_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
       }
       else
       {
-        double delay = delay_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-        double weight = weight_[ indx ]->value_double( target_thread, rng, snode_id, &target );
+        double delay = delays_[ indx ]->value_double( target_thread, rng, snode_id, &target );
+        double weight = weights_[ indx ]->value_double( target_thread, rng, snode_id, &target );
         kernel().connection_manager.connect( snode_id,
           &target,
           target_thread,
@@ -573,7 +573,7 @@ nest::ConnBuilder::all_parameters_scalar_() const
 {
   bool all_scalar = true;
 
-  for ( auto weight : weight_ )
+  for ( auto weight : weights_ )
   {
     if ( weight )
     {
@@ -581,7 +581,7 @@ nest::ConnBuilder::all_parameters_scalar_() const
     }
   }
 
-  for ( auto delay : delay_ )
+  for ( auto delay : delays_ )
   {
     if ( delay )
     {
@@ -610,7 +610,7 @@ nest::ConnBuilder::loop_over_targets_() const
 void
 nest::ConnBuilder::reset_weights_()
 {
-  for ( auto weight : weight_ )
+  for ( auto weight : weights_ )
   {
     if ( weight )
     {
@@ -622,7 +622,7 @@ nest::ConnBuilder::reset_weights_()
 void
 nest::ConnBuilder::reset_delays_()
 {
-  for ( auto delay : delay_ )
+  for ( auto delay : delays_ )
   {
     if ( delay )
     {
@@ -634,8 +634,8 @@ nest::ConnBuilder::reset_delays_()
 nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
   const NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_spec )
-  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   // make sure that target and source population have the same size
   if ( sources_->size() != targets_->size() )
@@ -1124,8 +1124,8 @@ nest::AllToAllBuilder::sp_disconnect_()
 nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_spec )
-  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   // check for potential errors
   long n_sources = static_cast< long >( sources_->size() );
@@ -1289,8 +1289,8 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
 nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_spec )
-  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   // check for potential errors
   long n_targets = static_cast< long >( targets_->size() );
@@ -1419,8 +1419,8 @@ nest::FixedOutDegreeBuilder::connect_()
 nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_spec )
-  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
   , N_( ( *conn_spec )[ names::N ] )
 {
 
@@ -1597,8 +1597,8 @@ nest::FixedTotalNumberBuilder::connect_()
 nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_spec )
-  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
   if ( pd )
@@ -1713,8 +1713,8 @@ nest::BernoulliBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, N
 nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_spec )
-  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
   , p_( ( *conn_spec )[ names::p ] )
 {
   // This connector takes care of symmetric connections on its own

@@ -1022,13 +1022,13 @@ def
       % Connect nodes from two sets of NodeCollections using the given connectivity specification
       % and a list of synapse specifications
       [node_idlisttype node_idlisttype /dictionarytype /arraytype] {
-        /synn_spec Set
-        synn_spec
+        /test_syn_specs Set
+        test_syn_specs
         {
           /syn_spec :Connect_complete_dict
           pop
         } forall
-        synn_spec
+        test_syn_specs
         Connect_g_g_D_a
       } bind addtotrie
 

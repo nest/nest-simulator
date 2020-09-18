@@ -215,8 +215,8 @@ private:
   std::vector< bool > default_delay_;
 
   // null-pointer indicates that default be used
-  std::vector< ConnParameter* > weight_;
-  std::vector< ConnParameter* > delay_;
+  std::vector< ConnParameter* > weights_;
+  std::vector< ConnParameter* > delays_;
 
   //! all other parameters, mapping name to value representation
   std::vector< ConnParameterMap > synapse_params_;
@@ -254,7 +254,7 @@ public:
   OneToOneBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_spec );
+    const std::vector< DictionaryDatum >& syn_specs );
 
   bool
   supports_symmetric() const
@@ -281,8 +281,8 @@ public:
   AllToAllBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_spec )
-    : ConnBuilder( sources, targets, conn_spec, syn_spec )
+    const std::vector< DictionaryDatum >& syn_specs )
+    : ConnBuilder( sources, targets, conn_spec, syn_specs )
   {
   }
 

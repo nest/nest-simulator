@@ -46,11 +46,10 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         self.free_nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
         self.grid_nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
 
-    def _assert_histogram(self, sources_or_targets, masked=False):
+    def _assert_histogram(self, sources_or_targets, ref):
         """Create a histogram of input data and assert it against reference values"""
         hist = np.histogram(sources_or_targets, bins=self.N, range=(1, self.N+1))
         counts, _ = hist
-        ref = self.reference_masked if masked else self.reference
         np_testing.assert_array_equal(counts, ref)
 
     def test_connect_sliced_spatial_on_target(self):
@@ -59,7 +58,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
             nest.Connect(nodes[self.middle_node], nodes,
                          conn_spec={'rule': 'pairwise_bernoulli',
                                     'p': self.parameter})
-            self._assert_histogram(nest.GetConnections().target)
+            self._assert_histogram(nest.GetConnections().target, self.reference)
 
     def test_masked_connect_sliced_spatial_on_target(self):
         """Masked connect sliced spatial source population"""
@@ -68,7 +67,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
                          conn_spec={'rule': 'pairwise_bernoulli',
                                     'p': self.parameter,
                                     'mask': self.mask})
-            self._assert_histogram(nest.GetConnections().target, masked=True)
+            self._assert_histogram(nest.GetConnections().target, self.reference_masked)
 
     def test_connect_sliced_spatial_on_source(self):
         """Connect sliced spatial target population"""
@@ -77,7 +76,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
                          conn_spec={'rule': 'pairwise_bernoulli',
                                     'p': self.parameter,
                                     'use_on_source': True})
-            self._assert_histogram(nest.GetConnections().source)
+            self._assert_histogram(nest.GetConnections().source, self.reference)
 
     def test_masked_connect_sliced_spatial_on_source(self):
         """Masked connect sliced spatial target population"""
@@ -87,7 +86,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
                                     'p': self.parameter,
                                     'use_on_source': True,
                                     'mask': self.mask})
-            self._assert_histogram(nest.GetConnections().source, masked=True)
+            self._assert_histogram(nest.GetConnections().source, self.reference_masked)
 
     def test_sliced_spatial_inheritance(self):
         """Sliced spatial inherits attributes"""

@@ -87,9 +87,10 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   synapse_model_id_[ 0 ] = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
   param_dicts_.resize( syn_specs.size() );
 
-  int indx = 0;
-  for ( auto syn_params : syn_specs )
+  for ( size_t indx = 0; indx < syn_specs.size(); ++indx )
   {
+    auto syn_params = syn_specs[indx];
+
     if ( not syn_params->known( names::synapse_model ) )
     {
       throw BadProperty( "Synapse spec must contain synapse model." );
@@ -105,7 +106,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
     // We need to make sure that Connect can process all synapse parameters
     // specified.
-    const ConnectorModel& synapse_model = kernel().model_manager.get_synapse_prototype( synapse_model_id, 0 );
+    const ConnectorModel& synapse_model = kernel().model_manager.get_synapse_prototype( synapse_model_id );
     synapse_model.check_synapse_params( syn_params );
 
     DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
@@ -188,7 +189,6 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
         }
       }
     }
-    ++indx;
   }
 
   // Structural plasticity parameters

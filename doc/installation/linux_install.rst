@@ -13,7 +13,7 @@ probably already installed.
 .. note::
 
    NEST requires CMake 3.12 or higher, but we recommend version 3.16. You can type ``cmake --version`` on the
-commandline to check your current version.
+   commandline to check your current version.
 
 The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended if you use NEST interactively
 **without Python**. Although most Linux distributions have GNU readline installed, you still need to install its

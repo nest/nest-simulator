@@ -178,6 +178,9 @@ def ResetKernel():
 
     sr('ResetKernel')
 
+    from .hl_api_batch_connect import projection_collection
+    projection_collection.reset()
+
 
 @check_stack
 def SetKernelStatus(params):

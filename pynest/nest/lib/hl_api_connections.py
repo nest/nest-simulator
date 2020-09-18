@@ -48,6 +48,22 @@ __all__ = [
 ]
 
 
+class Projection(object):
+    def __init__(self, source, target, allow_autapses, allow_multapses, syn_spec):
+        self.source = source
+        self.target = target
+        self.syn_spec = syn_spec
+
+        # Parse allow_autapses and allow_multapses
+        for param, name in ((allow_autapses, 'allow_autapses'),
+                            (allow_multapses, 'allow_multapses')):
+            if param is not None and type(param) is bool:
+                self.conn_spec[name] = param
+
+    def apply(self):
+        Connect(self.source, self.target, self.conn_spec, self.syn_spec)
+
+
 @check_stack
 def GetConnections(source=None, target=None, synapse_model=None,
                    synapse_label=None):
@@ -117,7 +133,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
 
 @check_stack
-def Connect(pre, post, conn_spec=None, syn_spec=None,
+def Connect(pre, post=None, conn_spec=None, syn_spec=None,
             return_synapsecollection=False):
     """
     Connect `pre` nodes to `post` nodes.
@@ -206,6 +222,15 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     ---------
     :ref:`connection_mgnt`
     """
+    # Connection semantics prototype
+    pre = [pre] if issubclass(type(pre), Projection) else pre
+    pre_is_projections = issubclass(type(pre), (tuple, list)) and all([issubclass(type(x), Projection) for x in pre])
+    if post is None and pre_is_projections:
+        for projection in pre:
+            projection.apply()
+        return
+    # /Connection semantics prototype
+
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
 
     # Converting conn_spec to dict, without putting it on the SLI stack.

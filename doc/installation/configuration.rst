@@ -1,34 +1,37 @@
 Configuration Options
 =====================
 
-NEST can be started by typing
+There are two main ways of configuring NEST at runtime, via the configuration file or command line switches.
+
+NEST configuration file
+-----------------------
+
+Upon importing the NEST Python module or starting the ``nest`` executable from the command line, NEST will create a
+configuration file called ``.nestrc`` in your home directory.
+
+Using this file, you can set a number of options:
+
+* The browser for displaying the helpdesk
+* The pager for showing the built-in help
+* The ``mpirun`` command for :doc:`parallel execution <../guides/parallel_computing>`
+
+In case your MPI Implementation requires special options (e.g. ``--oversubscribe`` to allows the use of more
+processes than compute cores in OpenMPI versions above 3.0), you can add them to the ``mpirun`` command as shown in
+the following example:
 
 ::
 
-   <nest_install_dir>/nest
+    /mpirun
+    [/integertype /stringtype /stringtype]
+    [/numproc     /executable /scriptfile]
+    {
+     () [
+      (mpirun --oversubscribe -np ) numproc cvs ( ) executable ( ) scriptfile
+     ] {join} Fold
+    } Function def
 
-at the command prompt. You should then see something like this:
-
-::
-
-   gewaltig@jasmin-vm:~$ nest
-               -- N E S T 2 beta --
-
-     Copyright 1995-2009 The NEST Initiative
-      Version 1.9-svn Feb  6 2010 00:33:50
-
-   This program is provided AS IS and comes with
-   NO WARRANTY. See the file LICENSE for details.
-
-   Problems or suggestions?
-     Website     : https://www.nest-initiative.org
-     Mailing list: users@nest-simulator.org
-
-   Type 'help' to get more information.
-   Type 'quit' or CTRL-D to quit NEST.
-
-Command line switches
----------------------
+Command line switches for the nest executable
+---------------------------------------------
 
 Type
 
@@ -40,26 +43,29 @@ to find out about NEST’s command-line parameters.
 
 ::
 
-   gewaltig@jasmin-vm:~$ nest --help
-   usage: nest [options] [file ..]
-     -h  --help                print usage and exit
-     -v  --version             print version information and exit.
-
-     -   --batch               read input from a stdin/pipe
-         --userargs=arg1:...   put user defined arguments in statusdict::userargs
-     -d  --debug               start in debug mode (implies --verbosity=ALL)
-         --verbosity=ALL       turn on all messages.
-         --verbosity=DEBUG|STATUS|INFO|WARNING|ERROR|FATAL
-                               show messages of this priority and above.
-         --verbosity=QUIET     turn off all messages.
+  usage: nest [options] [ - | file [file ...] ]
+    file1 file2 ... filen     read SLI code from file1 to filen in ascending order
+                              Quits with exit code 126 on error.
+    -   --batch               read SLI code from stdin/pipe.
+                              Quits with exit code 126 on error.
+    -c cmd                    Execute cmd and exit
+    -h  --help                print usage and exit
+    -v  --version             print version information and exit
+        --userargs=arg1:...   put user defined arguments in statusdict::userargs
+    -d  --debug               start in debug mode (implies --verbosity=ALL)
+        --verbosity=ALL       turn on all messages.
+        --verbosity=DEBUG|STATUS|INFO|WARNING|ERROR|FATAL
+                              show messages of this priority and above.
+        --verbosity=QUIET     turn off all messages.
 
 SLI scripts
 -----------
 
 Scripts can be run by typing:
+
 ::
 
-   <nest_install_dir> <file>
+   <nest_install_dir>/nest <file>
 
 If you are a Vim user and require support for SLI files, please refer to
 our :doc:`../contribute/templates_styleguides/vim_support_sli`.
@@ -95,4 +101,4 @@ The first line first gets the array of user supplied arguments
 literal and the second argument (the number) to an integer. Using
 ``mark`` and ``>>``, the content of the userargs array is added to a
 dictionary, which is stored under the name ``args``. The second line
-just prints the content of the lamda variable.
+just prints the content of the lambda variable.

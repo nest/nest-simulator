@@ -96,6 +96,10 @@ public:
   bool
   get_default_delay() const
   {
+    if ( synapse_model_id_.size() > 1 )
+    {
+      throw KernelException( "Can only retrieve default delay when one synapse per connection is used." );
+    }
     return default_delay_[ 0 ];
   }
 

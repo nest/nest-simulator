@@ -179,6 +179,15 @@ on your machine.
  can yield 20-30% improvement in simulation speed. Finding the optimal thread number for a
  specific situation might require a bit of experimenting.
 
+Multiprocessing
+----------------
+
+**Using Python's ``multiprocessing`` module with NEST may lead to unpredictable results!**
+
+NEST internally parallelizes network construction [1]_ and maintains internal data structures in this process. For
+example, running several ``Connect()`` calls simultaneously can interfere with the internal parallelization and will
+likely lead to unpredictable/wrong results.
+
 .. _distributed_computing:
 
 Using distributed computing
@@ -310,3 +319,9 @@ virtual process (*spike_recorder-6-0.gdf*, *spike_recorder-6-1.gdf*,
 the three data directories shows that they all contain the same spikes,
 which means that the simulation results are indeed the same
 independently of the details of parallelization.
+
+References
+----------
+
+.. [1] Ippen T, Eppler JM, Plesser HE and Diesmann M (2017). Constructing neuronal network models in massively
+       parallel environments. Front. Neuroinform. 11:30. DOI: 10.3389/fninf.2017.00030

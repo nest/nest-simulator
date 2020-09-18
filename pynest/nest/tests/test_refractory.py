@@ -83,7 +83,6 @@ ignore_model = [
     "hh_psc_alpha_gap",          # This one does not support V_reset
     "pp_cond_exp_mc_urbanczik",  # This one does not support V_reset
     "iaf_psc_exp_ps_lossless",   # This one use presice times
-    "sli_neuron",                # This one is not optimal for PyNEST
     "siegert_neuron",            # This one does not connect to voltmeter
     "step_rate_generator"        # No regular neuron model
 ]

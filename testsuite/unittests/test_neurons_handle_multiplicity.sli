@@ -96,11 +96,6 @@ M_ERROR setverbosity
                                               /tau_decay [ 1.0 ] >>
                                   /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>
-   /sli_neuron << /params << /calibrate { /V_m 0.0 def }
-                             /update { /V_m V_m ex_spikes add def } 
-                             /V_m 0.0  % needed so we can read it before calling Simulate
-                          >>
-               >> 
    >>
    def
                                      

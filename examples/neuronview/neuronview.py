@@ -121,11 +121,8 @@ class Main():
         neuron_it = None
         stimulator_it = None
 
-        models = nest.Models("nodes")
-        models = [x for x in models if
-                  x not in ["correlation_detector", "sli_neuron",
-                            "iaf_psc_alpha_norec", "parrot_neuron",
-                            "parrot_neuron_ps"]]
+        excl = ["correlation_detector", "parrot_neuron", "parrot_neuron_ps"]
+        models = [x for x in nest.Models("nodes") if x not in excl]
 
         for entry in models:
 

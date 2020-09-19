@@ -49,6 +49,7 @@ def eprint(*args, **kwargs):
     """Convenience function to print to stderr instead of stdout"""
     print(*args, file=sys.stderr, **kwargs)
 
+
 EXIT_SUCCESS = 0
 EXIT_BAD_HEADER = 20
 EXIT_NO_SOURCE = 126

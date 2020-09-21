@@ -26,8 +26,7 @@
 /**
  * Class managing flexible connection creation.
  *
- * This is a very first draft, a very much stripped-down version of the
- * Topology connection_creator.
+ * Created based on the connection_creator used for spatial networks.
  *
  */
 

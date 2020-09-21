@@ -37,10 +37,10 @@ sim_dict = {
     't_sim': 1000.0,
     # resolution of the simulation (in ms)
     'sim_resolution': 0.1,
-    # list of recording devices, default is 'spike_detector'. A 'voltmeter' can
+    # list of recording devices, default is 'spike_recorder'. A 'voltmeter' can
     # be added to record membrane voltages of the neurons. Nothing will be
     # recorded if an empty list is given.
-    'rec_dev': ['spike_detector'],
+    'rec_dev': ['spike_recorder'],
     # path to save the output data
     'data_path': os.path.join(os.getcwd(), 'data/'),
     # masterseed for NEST and NumPy

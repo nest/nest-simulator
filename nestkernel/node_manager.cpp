@@ -376,6 +376,7 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
     nodes.resize( it - nodes.begin() );
   }
 
+  std::sort( nodes.begin(), nodes.end() ); // ensure nodes are sorted prior to creating the NodeCollection
   IntVectorDatum nodes_datum( nodes );
   NodeCollectionDatum nodecollection( NodeCollection::create( nodes_datum ) );
 

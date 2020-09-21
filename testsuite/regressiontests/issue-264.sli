@@ -68,7 +68,7 @@ M_ERROR setverbosity
   {
     ResetKernel
     << /resolution 1.0 /tics_per_ms 1000 >> SetKernelStatus
-    /spike_detector << item 1.5 >> SetDefaults
+    /spike_recorder << item 1.5 >> SetDefaults
   } fail_or_die
 } forall
 
@@ -88,6 +88,6 @@ M_ERROR setverbosity
   {
     ResetKernel
     << /resolution 1.0 /tics_per_ms 1000 >> SetKernelStatus
-    /spike_detector Create << item 1.5 >> SetStatus
+    /spike_recorder Create << item 1.5 >> SetStatus
   } fail_or_die
 } forall

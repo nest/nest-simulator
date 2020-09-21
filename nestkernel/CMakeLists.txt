@@ -119,12 +119,12 @@ set ( nestkernel_sources
       spatial/ntree.h
       spatial/ntree_impl.h
       spatial/position.h
-      spatial/topology.cpp
-      spatial/topology.h
+      spatial/spatial.cpp
+      spatial/spatial.h
       spatial/vose.cpp
       spatial/vose.h
       )
-  
+
 if ( HAVE_SIONLIB )
   set( nestkernel_sources
        ${nestkernel_sources}

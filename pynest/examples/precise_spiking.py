@@ -77,7 +77,7 @@ resolutions = [0.1, 0.5, 1.0]  # ms
 # resolutions. The neurons use their default parameters and we stimulate them
 # by injecting a current using a ``dc_generator`` device. The membrane
 # potential is recorded by a ``voltmeter``, the spikes are recorded by
-# a ``spike_detector``.  The data is stored in a dictionary for later
+# a ``spike_recorder``.  The data is stored in a dictionary for later
 # use.
 
 
@@ -92,19 +92,19 @@ for h in resolutions:
         neuron = nest.Create(model)
         voltmeter = nest.Create("voltmeter", params={"interval": h})
         dc = nest.Create("dc_generator", params={"amplitude": stim_current})
-        sd = nest.Create("spike_detector")
+        sr = nest.Create("spike_recorder")
 
         nest.Connect(voltmeter, neuron)
         nest.Connect(dc, neuron)
-        nest.Connect(neuron, sd)
+        nest.Connect(neuron, sr)
 
         nest.Simulate(simtime)
 
         vm_status = voltmeter.events
-        sd_status = sd.events
+        sr_status = sr.events
         data[h][model] = {"vm_times": vm_status['times'],
                           "vm_values": vm_status['V_m'],
-                          "spikes": sd_status['times'],
+                          "spikes": sr_status['times'],
                           "V_th": neuron.V_th}
 
 

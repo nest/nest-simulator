@@ -1298,9 +1298,9 @@ Spatially distributed NodeCollections and recording devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Generally, one should not create a layer of recording devices to record from
-another NodeCollection with spatial extent. This is especially true for spike detectors. Instead,
-create a single spike detector and connect all neurons in the spatially
-distributed NodeCollection to that spike detector:
+another NodeCollection with spatial extent. This is especially true for spike recorders. Instead,
+create a single spike recorder and connect all neurons in the spatially
+distributed NodeCollection to that spike recorder:
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn11 #}
@@ -1582,13 +1582,13 @@ implement the latter by testing if all the corners are inside, since our
 elliptic mask is convex. We must also define a function which returns a
 bounding box for the mask, i.e. a box completely surrounding the mask.
 
-The mask class must then be registered with the topology module, and this
+The mask class must then be registered in NEST. This
 is done by adding a line to the function ``MyModule::init()`` in the file
 ``mymodule.cpp``:
 
 .. code:: c
 
-   nest::TopologyModule::register_mask< EllipticMask >( "elliptic" );
+   nest::NestModule::register_mask< EllipticMask >( "elliptic" );
 
 After compiling and installing your module, the mask is available to be
 used in connections, e.g.

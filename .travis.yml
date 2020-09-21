@@ -18,13 +18,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-
 # This is the Travis CI top-level script to setup and run the NEST
 # build and test environment.
 
+
 language: python
 
-# Using the Sudo-enabled Ubuntu Bionic (18.04 LTS).
 sudo: required
 dist: bionic
 
@@ -32,48 +31,43 @@ env:
   global:
     - MAKEFLAGS="-j 2"
 stages:
-   - Staticcheck
-   - MPI-Threading-GSL-Python
-   - Python-Full-build-Clang7-OsX
-   - ARM64
-
-# list of build stages to run. Stages with the same name get run in parallel.
+   - Static-Code-Analysis
+   - Linux-GCC
+   - Linux-Clang
+   - macOS
 
 jobs:
+  # list of build stages to run. Stages with the same name get run in parallel.
   include:
-    - stage: Staticcheck
+    - stage: Static-Code-Analysis
       python: 3.8.2
-      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 xRUN_BUILD_AND_TESTSUITE=0 CACHE_NAME=JOB   # only static code analysis
-    - stage: MPI-Threading-GSL-Python
+      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS
+    - stage: Linux-GCC
       python: 3.8.2
-      env: xTHREADING=1 xMPI=1 xSIONLIB=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB
-    - stage: MPI-Threading-GSL-Python
+      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=MINIMAL
+    - stage: Linux-GCC
       python: 3.8.2
-      env: xTHREADING=0 xMPI=1 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only MPI
-    - stage: MPI-Threading-GSL-Python
+      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=MPI_ONLY
+    - stage: Linux-GCC
       python: 3.8.2
-      env: xTHREADING=1 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # only threading
-    - stage: MPI-Threading-GSL-Python
+      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=OPENMP_ONLY
+    - stage: Linux-GCC
       python: 3.8.2
-      env: xTHREADING=0 xMPI=0 xSIONLIB=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xLIBBOOST=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Only Python
-    - stage: Python-Full-build-Clang7-OsX
-      python: 3.8.2
-      env: xTHREADING=1 xMPI=1 xSIONLIB=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xLIBBOOST=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # full
-    - stage: Python-Full-build-Clang7-OsX
+      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=FULL
+    - stage: Linux-Clang
       language: cpp
-      python: 3.8.2
-      env: MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" xRUN_BUILD_AND_TESTSUITE=1
-    - stage: Python-Full-build-Clang7-OsX
+      python: 3.6.10
+      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=MINIMAL xNEST_BUILD_COMPILER=CLANG xNEST_PYTHON_VERSION=3.6.10
+    - stage: macOS
       os: osx
-      osx_image: xcode12 # Python 3.8.3 running on macOS 10.15.5
+      osx_image: xcode12   # Python 3.8.3 running on macOS 10.15.5
       language: shell      # language 'python' results in errors on macOS
+      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=FULL_NO_EXTERNAL_FEATURES
       cache:
         directories:
           - $HOME/.cache
           - $HOME/.pyenv/versions
           - /usr/local/Homebrew
-      env: xTHREADING=1 xMPI=0 xGSL=1 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=0 xRUN_BUILD_AND_TESTSUITE=1 CACHE_NAME=JOB   # Without MUSIC, MPI and Libneurosim
-#https://docs.travis-ci.com/user/installing-dependencies#Installing-Packages-with-the-APT-Addon
 addons:
    apt:
     sources:
@@ -134,22 +128,18 @@ before_install:
        /usr/bin/c++ --version
      fi
    - |
-     if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
+     if [ "$xNEST_BUILD_TYPE" != "STATIC_CODE_ANALYSIS" ]; then
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
          echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-         echo ${MATRIX_EVAL}
-         eval "${MATRIX_EVAL}"
          cp extras/install_csa-libneurosim.sh $HOME
          cp extras/install_music.sh $HOME
          cp extras/install_sionlib.sh $HOME
          cp extras/install_libboost.sh $HOME
          cd $HOME/build
          echo $PATH
-
-         if [ MATRIX_EVAL="CC=clang-7 && CXX=clang++-7" ]; then
-           pyenv install --list
-           pyenv global 3.6.10
+         if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
+             pyenv global $xNEST_PYTHON_VERSION
          fi
 
          if [ "$TRAVIS_OS_NAME" = "osx" ]; then
@@ -187,7 +177,7 @@ before_install:
 
 install:
    - |
-     if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
+     if [ "$xNEST_BUILD_TYPE" != "STATIC_CODE_ANALYSIS" ]; then
          which cython
          cython --version
          which python
@@ -212,13 +202,13 @@ script:
    - set -o pipefail
    - ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log
    - |
-     if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
+     if [ "$xNEST_BUILD_TYPE" != "STATIC_CODE_ANALYSIS" ]; then
         python extras/parse_travis_log.py travis_build.sh.log ;
      fi
 
 before_deploy:
    - |
-     if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
+     if [ "$xNEST_BUILD_TYPE" != "STATIC_CODE_ANALYSIS" ]; then
          cd $TRAVIS_BUILD_DIR/build
          tar -zcvf reports.tar.gz ./reports
          tar -zcvf docs.tar.gz $TRAVIS_BUILD_DIR/result/share/doc/nest/*.*
@@ -240,7 +230,7 @@ deploy:
   on:
     repo: nest/nest-simulator
     branch: master
-    condition: xRUN_BUILD_AND_TESTSUITE = 1
+    condition: $xNEST_BUILD_TYPE != STATIC_CODE_ANALYSIS
   local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
   upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
   acl: bucket_owner_full_control

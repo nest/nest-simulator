@@ -28,8 +28,8 @@ Synopsis: (ticket-433) run -> NEST exits if test fails
 
 Description:
  ht_neuron accepted incoming connections with invalid receptor type, leading to
- unpredictable errors. Additionally, the topology library did not seem to pass
- on the receptor_type when making connections.
+ unpredictable errors. Additionally, when making connections with nodes with
+ spatial information, the receptor_type did not seem to be passed on.
 
  Reported by Jonathan Williford.
 
@@ -51,9 +51,9 @@ M_INFO setverbosity
 %  ampa --- AMPA receptor ID
 %  retina, retina_gen, Tp --- layers
 
-% Connection function using topology library
+% Connection function using spatial parameters
 % receptor_type erroneously placed in dictionary
-/connect_topo
+/connect_spatial
 {
   retina
   Tp
@@ -66,9 +66,9 @@ M_INFO setverbosity
 }
 bind def
 
-% Connection function using topology library
+% Connection function using spatial parameters
 % receptor_type correctly placed in synapse
-/connect_topo_syn
+/connect_spatial_syn
 {
   /ht_synapse /ht_syn_ampa << /receptor_type ampa >> CopyModel
 
@@ -147,7 +147,7 @@ fail_or_die
 % third test: connect using ConnectLayers
 % this must raise an error, otherwise lacking receptor_type is not detected
 {
-  /connect_topo
+  /connect_spatial
   test_connect
 }
 fail_or_die
@@ -155,7 +155,7 @@ fail_or_die
 % fourth test: connect using ConnectLayers, but with
 % properly configured synapse model
 {
-  /connect_topo_syn
+  /connect_spatial_syn
   test_connect
 }
  pass_or_die

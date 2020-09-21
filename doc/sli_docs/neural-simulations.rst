@@ -464,7 +464,7 @@ Recording devices
 
 All devices which are used to observe the state of other network nodes
 are called recording devices. Examples are ``multimeter`` and
-``spike_detector``.
+``spike_recorder``.
 
 Recording devices have properties which control the amount, the
 format, and the destination of their output. The latter is done by
@@ -484,10 +484,10 @@ important devices are:
 
 * ``voltmeter`` Device to observe membrane potentials.
 * ``multimeter`` Device to observe arbitrary analog quantities.
-* ``spike_detector`` Device to observe spike times.
+* ``spike_recorder`` Device to observe spike times.
 
 Please note that the connection direction for analog recorders (all
-except ``spike_detector`` in above list) is inverted with respect to
+except ``spike_recorder`` in above list) is inverted with respect to
 other recorders, i.e. the recorder has to connected to the neurons in
 this case.
 
@@ -498,9 +498,9 @@ Example 6
 
    SLI ] /iaf_psc_alpha Create /n Set
    SLI ] /voltmeter Create /vm Set
-   SLI ] /spike_detector Create /sd Set
+   SLI ] /spike_recorder Create /sr Set
    SLI ] vm n Connect
-   SLI ] n sd Connect
+   SLI ] n sr Connect
 
 Simulation
 ----------

@@ -154,7 +154,7 @@ SpikeEvent
 See also
 ++++++++
 
-spike_detector
+spike_recorder
 
 EndUserDocs */
 

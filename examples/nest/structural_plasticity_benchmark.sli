@@ -291,9 +291,9 @@
     noise neurons_i << /rule /all_to_all >> << /weight psc_ext /delay delay >> Connect
 
     record_spikes {
-        /spike_detector << /record_to /ascii >> Create /spike_detector Set
-        neurons_e spike_detector Connect
-        neurons_i spike_detector Connect
+        /spike_recorder << /record_to /ascii >> Create /spike_recorder Set
+        neurons_e spike_recorder Connect
+        neurons_i spike_recorder Connect
     } if
 } def
 

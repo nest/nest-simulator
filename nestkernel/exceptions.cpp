@@ -212,7 +212,7 @@ nest::UnexpectedEvent::message() const
     return std::string(
       "Target node cannot handle input event.\n"
       "    A common cause for this is an attempt to connect recording devices incorrectly.\n"
-      "    Note that detectors such as spike detectors must be connected as\n\n"
+      "    Note that recorders such as spike recorders must be connected as\n\n"
       "        nest.Connect(neurons, spike_det)\n\n"
       "    while meters such as voltmeters must be connected as\n\n"
       "        nest.Connect(meter, neurons) " );
@@ -268,14 +268,6 @@ std::string
 nest::DistributionError::message() const
 {
   return std::string();
-}
-
-std::string
-nest::SimulationError::message() const
-{
-  return std::string(
-    "One or more nodes reported an error. Please check the output preceeding "
-    "this message." );
 }
 
 std::string

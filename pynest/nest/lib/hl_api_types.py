@@ -696,7 +696,7 @@ class SynapseCollection(object):
             All parameters, or, if keys is a list of strings, a dictionary with
             lists of corresponding parameters
         type:
-            If keys is a string, the corrsponding parameter(s) is returned
+            If keys is a string, the corresponding parameter(s) is returned
 
 
         Raises
@@ -705,6 +705,43 @@ class SynapseCollection(object):
             If input params are of the wrong form.
         KeyError
             If the specified parameter does not exist for the connections.
+
+        See Also
+        --------
+        set
+
+        Examples
+        --------
+
+        >>>    conns.get()
+               {'delay': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+               'port': [0, 1, 2, 3, 4, 5, 6, 7, 8],
+               'receptor': [0, 0, 0, 0, 0, 0, 0, 0, 0],
+               'sizeof': [32, 32, 32, 32, 32, 32, 32, 32, 32],
+               'source': [1, 1, 1, 2, 2, 2, 3, 3, 3],
+               'synapse_id': [15, 15, 15, 15, 15, 15, 15, 15, 15],
+               'synapse_model': ['static_synapse',
+               'static_synapse',
+               'static_synapse',
+               'static_synapse',
+               'static_synapse',
+               'static_synapse',
+               'static_synapse',
+               'static_synapse',
+               'static_synapse'],
+               'target': [1, 2, 3, 1, 2, 3, 1, 2, 3],
+               'target_thread': [0, 0, 0, 0, 0, 0, 0, 0, 0],
+               'weight': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
+
+        >>>    conns.get('weight')
+               [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
+        >>>    conns[0].get('weight')
+               1.0
+
+        >>>    nodes.get(['source', 'weight'])
+               {'source': [1, 1, 1, 2, 2, 2, 3, 3, 3],
+                'weight': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
         """
         pandas_output = output == 'pandas'
         if pandas_output and not HAVE_PANDAS:

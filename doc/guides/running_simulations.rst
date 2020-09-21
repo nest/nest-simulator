@@ -144,6 +144,7 @@ A more efficient solution doing exactly the same thing is
 
     nest.Prepare()
     for _ in range(20):
+        # don't use nest.SetStatus now! See notes
         nest.Run(10)
         # extract and analyse data
     nest.Cleanup()

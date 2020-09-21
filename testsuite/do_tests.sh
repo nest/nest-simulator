@@ -407,7 +407,7 @@ if test "${MUSIC}"; then
 
         # Count the total number of tests, the tests skipped, and the tests with error.
         # The values will be stored in the XML report at 'junit_close'.
-        # Test failures and diagnostic information are also stored in the xml-report file 
+        # Test failures and diagnostic information are also stored in the xml-report file
         # with 'unit_write'.
         JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
         if test -z $(echo ${test_name} | grep failure); then

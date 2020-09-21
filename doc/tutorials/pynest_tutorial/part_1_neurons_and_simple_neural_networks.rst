@@ -91,7 +91,7 @@ prompted for.
 
     dir(nest)
 
-One such command is ``nest.Models()`` or in ipython ``nest.Models?``, which will return a list of all
+One such command is ``nest.Models()``, which will return a list of all
 the available models you can use. If you want to obtain more information
 about a particular command, you may use Python’s standard help system.
 

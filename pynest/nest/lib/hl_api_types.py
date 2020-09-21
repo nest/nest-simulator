@@ -421,6 +421,10 @@ class NodeCollection(object):
             If the input params are of the wrong form.
         KeyError
             If the specified parameter does not exist for the nodes.
+
+        See Also
+        --------
+        get
         """
 
         if not self:

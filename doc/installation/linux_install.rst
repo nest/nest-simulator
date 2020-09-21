@@ -45,7 +45,7 @@ The following are the basic steps to compile and install NEST from source code. 
 further adjust settings for your system.
 
 * If not already installed on your system, the following packages are recommended (see also the `Dependencies`_
-section)
+  section)
 
 .. code-block:: bash
 
@@ -81,9 +81,7 @@ section)
 
     cd nest-simulator-x.y.z-build
 
-* Configure NEST.
-
-  You may need additional ``cmake`` options and you can find the :doc:`configuration options here <install_options>`.
+* Configure NEST. You may need additional ``cmake`` options (see :doc:`install_options`).
 
 .. code-block:: sh
 
@@ -108,11 +106,11 @@ section)
 NEST should now be successfully installed on your system.
 
 * Before using NEST, make sure that all required environment variables are set correctly. In short, this can be
-established by sourcing the shell script `nest_vars.sh`, which is installed into the path for binaries selected during
-the CMake run. See the section `Environment variables`_ for details.
+  established by sourcing the shell script ``nest_vars.sh``, which is installed into the path for binaries selected
+  during the CMake run. See the section `Environment variables`_ for details.
 
 * See the :doc:`Getting started <../getting_started>` pages to find out how to get going with NEST or check out our
-:doc:`example networks <../auto_examples/index>`.
+  :doc:`example networks <../auto_examples/index>`.
 
 
 What gets installed where

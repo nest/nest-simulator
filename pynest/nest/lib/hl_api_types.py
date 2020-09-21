@@ -329,6 +329,29 @@ class NodeCollection(object):
         See Also
         --------
         set
+
+        Examples
+        --------
+
+        >>>    nodes.get()
+               {'archiver_length': (0, 0, 0),
+               'beta_Ca': (0.001, 0.001, 0.001),
+               'C_m': (250.0, 250.0, 250.0),
+               ...
+               'V_th': (-55.0, -55.0, -55.0),
+               'vp': (0, 0, 0)}
+
+        >>>    nodes.get('V_m')
+               (-70.0, -70.0, -70.0)
+
+        >>>    nodes[0].get('V_m')
+               -70.0
+
+        >>>    nodes.get('V_m', 'C_m')
+               {'V_m': (-70.0, -70.0, -70.0), 'C_m': (250.0, 250.0, 250.0)}
+
+        >>>    voltmeter.get('events', 'senders')
+               array([...], dtype=int64)
         """
 
         if not self:

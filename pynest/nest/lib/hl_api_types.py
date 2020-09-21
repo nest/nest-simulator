@@ -804,6 +804,10 @@ class SynapseCollection(object):
             If input params are of the wrong form.
         KeyError
             If the specified parameter does not exist for the connections.
+
+        See Also
+        --------
+        get
         """
 
         # This was added to ensure that the function is a nop (instead of,

@@ -378,7 +378,7 @@ if test "${MUSIC}"; then
         echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
         printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 
-        # Copy everything to 'tmpdir'. 
+        # Copy everything to 'tmpdir'.
         # Variables might also be empty. To prevent 'cp' from terminating in such a case,
         # the exit code is suppressed.
         cp ${music_file} ${sh_file} ${sli_files} ${tmpdir} 2>/dev/null || :

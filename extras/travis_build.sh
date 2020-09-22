@@ -24,7 +24,7 @@
 # It is invoked by the top-level Travis script '.travis.yml'.
 #
 # NOTE: This shell script is tightly coupled to Python script
-#       'extras/parse_travis_log.py'. 
+#       'extras/parse_travis_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) or the variable name
 #      'file_names' have effects on the build/test-log parsing process.
 
@@ -44,24 +44,20 @@ else
     CONFIGURE_THREADING="-Dwith-openmp=OFF"
 fi
 
-if [ "$xMPI" = "1" ] ; then
-    CONFIGURE_MPI="-Dwith-mpi=ON"
-else
-    CONFIGURE_MPI="-Dwith-mpi=OFF"
-fi
+CONFIGURE_MPI="-Dwith-mpi=ON"
 
-if [ "$xPYTHON" = "1" ] ; then
-   if [ "$TRAVIS_PYTHON_VERSION" == "2.7.13" ]; then
-      CONFIGURE_PYTHON="-DPYTHON-LIBRARY=~/virtualenv/python2.7.13/lib/python2.7 -DPYTHON_INCLUDE_DIR=~/virtualenv/python2.7.13/include/python2.7"
-   elif [ "$TRAVIS_PYTHON_VERSION" == "3.4.4" ]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.4.4/include/python3.4m/"
-   fi
-   if [[ $OSTYPE == darwin* ]]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/lib/libpython2.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python@2/2.7.16/Frameworks/Python.framework/Versions/2.7/include/python2.7"
-   fi
-else
-    CONFIGURE_PYTHON="-Dwith-python=OFF"
-fi
+python -m pip install cython --upgrade
+PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
+echo "Include dir: $PYTHON_INCLUDE_DIR"
+PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
+echo "Pylib base: $PYLIB_BASE"
+PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
+echo "Pylib dir: $PYLIB_DIR"
+PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
+PYTHON_LIBRARY=/opt/python/3.8.1/lib/libpython3.so
+echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
+echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
 
 if [ "$xMUSIC" = "1" ] ; then
     CONFIGURE_MUSIC="-Dwith-music=$HOME/.cache/music.install"
@@ -104,7 +100,7 @@ if [[ $OSTYPE == darwin* ]]; then
 else
     CONFIGURE_BOOST="-Dwith-boost=ON"
 fi
- 
+
 NEST_VPATH=build
 NEST_RESULT=result
 if [ "$(uname -s)" = 'Linux' ]; then
@@ -144,14 +140,14 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
         make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
         cd ..
         echo "MSGBLD0040: CPPCHECK installation completed."
-    
+
         echo "MSGBLD0050: Installing CLANG-FORMAT."
         wget --no-verbose http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
         tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
         # Copy and not move because '.cache' may aleady contain other subdirectories and files.
         cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
         echo "MSGBLD0060: CLANG-FORMAT installation completed."
-    
+
         # Remove these directories, otherwise the copyright-header check will complain.
         rm -rf ./cppcheck
         rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
@@ -161,14 +157,14 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     export PATH=$HOME/.cache/bin:$PATH
 
     echo "MSGBLD0070: Retrieving changed files."
-      # Note: BUG: Extracting the filenames may not work in all cases. 
+      # Note: BUG: Extracting the filenames may not work in all cases.
       #            The commit range might not properly reflect the history.
       #            see https://github.com/travis-ci/travis-ci/issues/2668
     if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
        echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using GitHub API."
        file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
     else
-       echo "MSGBLD0090: Retrieving changed files using git diff."    
+       echo "MSGBLD0090: Retrieving changed files using git diff."
        file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
     fi
 
@@ -186,7 +182,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ]; then
     # Set the command line arguments for the static code analysis script and execute it.
 
     # The names of the static code analysis tools executables.
-    VERA=vera++                   
+    VERA=vera++
     CPPCHECK=cppcheck
     CLANG_FORMAT=clang-format
     PEP8=pep8

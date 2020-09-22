@@ -64,7 +64,7 @@ addons:
      - python-nose
      - libpcre3
      - libpcre3-dev
-     - llvm-3.6-dev
+     - llvm-dev
      - jq
      - pep8
      - libboost-filesystem-dev

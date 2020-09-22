@@ -165,20 +165,21 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
       }
     }
 
+
     // Now create dictionary with dummy values that we will use
     // to pass settings to the synapses created. We create it here
     // once to avoid re-creating the object over and over again.
     if ( synapse_params_[ indx ].size() > 0 )
     {
+      std::set< Name > integer_params = { names::receptor_type, names::music_channel, names::synapse_label };
+
       for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
       {
-
         param_dicts_[ indx ].push_back( new Dictionary() );
 
         for ( auto param : synapse_params_[ indx ] )
         {
-          if ( param.first == names::receptor_type or param.first == names::music_channel
-            or param.first == names::synapse_label )
+          if ( not( integer_params.find( param.first ) == integer_params.end() ) )
           {
             ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
           }

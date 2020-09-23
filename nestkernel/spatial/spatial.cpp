@@ -85,7 +85,7 @@ LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR 
 
   // Set the relationship with the NodeCollection.
   node_collection->set_metadata( layer_meta );
-  nest::get_layer( node_collection )->set_node_collection( node_collection );
+  layer_safe->set_node_collection( node_collection );
   layer_meta->set_first_node_id( node_collection->operator[]( 0 ) );
 
   // Inherit status from current layer, but with new positions.

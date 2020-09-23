@@ -105,7 +105,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
                     self.assertEqual(spatial_attr, sliced_spatial_attr, 'with attr="{}"'.format(attr))
 
     def test_connect_sliced_spatial_range(self):
-        """Connect spatial source population sliced in range"""
+        """Connect spatial population sliced with range"""
         start = 3
         end = 10
         ref = np.copy(self.reference)
@@ -118,7 +118,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
             self._assert_histogram(nest.GetConnections().target, ref)
 
     def test_connect_sliced_spatial_step(self):
-        """Connect spatial source population sliced with step"""
+        """Connect spatial population sliced with step"""
         step = 2
         ref = np.copy(self.reference)
         ref[1::step] = 0

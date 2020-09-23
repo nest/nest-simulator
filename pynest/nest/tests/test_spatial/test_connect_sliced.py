@@ -98,8 +98,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         wrapped_nodes = nest.Create('iaf_psc_alpha', positions=wrapped_pos)
         extent_nodes = nest.Create('iaf_psc_alpha', positions=extent_pos)
         for nodes in [self.free_nodes, self.grid_nodes, wrapped_nodes, extent_nodes]:
-            for i in range(len(nodes)):
-                nodes_sliced = nodes[i]
+            for nodes_sliced in nodes:
                 for attr in ['edge_wrap', 'extent']:
                     spatial_attr = nodes.spatial[attr]
                     sliced_spatial_attr = nodes_sliced.spatial[attr]

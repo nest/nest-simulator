@@ -35,7 +35,6 @@ HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 MULTIPLE_PROCESSES = nest.NumProcesses() > 1
 
 
-@unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
 @unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
 class ConnectArraysMPICase(unittest.TestCase):
     """

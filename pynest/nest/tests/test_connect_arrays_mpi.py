@@ -47,7 +47,7 @@ class ConnectArraysMPICase(unittest.TestCase):
     non_unique = np.array([1, 1, 3, 5, 4, 5, 9, 7, 2, 8], dtype=np.uint64)
     comm = MPI.COMM_WORLD
 
-    # With nosetests, only run these tests if using multiple processes
+    # With pytest or nosetests, only run these tests if using multiple processes
     __test__ = MULTIPLE_PROCESSES
 
     def assert_connections(self, expected_sources, expected_targets, rule):

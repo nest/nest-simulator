@@ -22,9 +22,6 @@
 
 #include "conn_builder.h"
 
-// C++ includes:
-#include <set>
-
 // Includes from libnestutil:
 #include "logging.h"
 
@@ -72,8 +69,8 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
   // read out synapse-related parameters ----------------------
 
-  // synapse-specific parameters
-  std::set< Name > skip_set = {
+  // synapse-specific parameters that should be skipped when we set default synapse parameters
+  std::set< Name > skip_syn_params = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
 
@@ -87,42 +84,16 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   synapse_model_id_[ 0 ] = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
   param_dicts_.resize( syn_specs.size() );
 
+  // loop through vector of synapse dictionaries, and set synapse parameters
   for ( size_t indx = 0; indx < syn_specs.size(); ++indx )
   {
-    auto syn_params = syn_specs[indx];
+    auto syn_params = syn_specs[ indx ];
 
-    if ( not syn_params->known( names::synapse_model ) )
-    {
-      throw BadProperty( "Synapse spec must contain synapse model." );
-    }
-    const std::string syn_name = ( *syn_params )[ names::synapse_model ];
-    if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
-    {
-      throw UnknownSynapseType( syn_name );
-    }
+    set_synapse_model_( syn_params, indx );
 
-    index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( syn_name );
-    synapse_model_id_[ indx ] = synapse_model_id;
+    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ indx ] );
 
-    // We need to make sure that Connect can process all synapse parameters
-    // specified.
-    const ConnectorModel& synapse_model = kernel().model_manager.get_synapse_prototype( synapse_model_id );
-    synapse_model.check_synapse_params( syn_params );
-
-    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
-
-    // All synapse models have the possibility to set the delay (see
-    // SynIdDelay), but some have homogeneous weights, hence it should
-    // be possible to set the delay without the weight.
-    default_weight_[ indx ] = not syn_params->known( names::weight );
-
-    default_delay_[ indx ] = not syn_params->known( names::delay );
-
-    // If neither weight nor delay are given in the dict, we handle this
-    // separately. Important for hom_w synapses, on which weight cannot
-    // be set. However, we use default weight and delay for _all_ types
-    // of synapses.
-    default_weight_and_delay_[ indx ] = ( default_weight_[ indx ] and default_delay_[ indx ] );
+    set_default_weight_or_delay_( syn_params, indx );
 
 #ifdef HAVE_MUSIC
     // We allow music_channel as alias for receptor_type during
@@ -130,106 +101,10 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     ( *syn_defaults )[ names::music_channel ] = 0;
 #endif
 
-    if ( not default_weight_and_delay_[ indx ] )
-    {
-      weights_[ indx ] = syn_params->known( names::weight )
-        ? ConnParameter::create( ( *syn_params )[ names::weight ], kernel().vp_manager.get_num_threads() )
-        : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
-      register_parameters_requiring_skipping_( *weights_[ indx ] );
-      delays_[ indx ] = syn_params->known( names::delay )
-        ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
-        : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
-    }
-    else if ( default_weight_[ indx ] )
-    {
-      delays_[ indx ] = syn_params->known( names::delay )
-        ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
-        : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
-    }
-    register_parameters_requiring_skipping_( *delays_[ indx ] );
-
-    for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end();
-          ++default_it )
-    {
-      const Name param_name = default_it->first;
-      if ( skip_set.find( param_name ) != skip_set.end() )
-      {
-        continue; // weight, delay or not-settable parameter
-      }
-
-      if ( syn_params->known( param_name ) )
-      {
-        synapse_params_[ indx ][ param_name ] =
-          ConnParameter::create( ( *syn_params )[ param_name ], kernel().vp_manager.get_num_threads() );
-        register_parameters_requiring_skipping_( *synapse_params_[ indx ][ param_name ] );
-      }
-    }
-
-
-    // Now create dictionary with dummy values that we will use
-    // to pass settings to the synapses created. We create it here
-    // once to avoid re-creating the object over and over again.
-    if ( synapse_params_[ indx ].size() > 0 )
-    {
-      std::set< Name > integer_params = { names::receptor_type, names::music_channel, names::synapse_label };
-
-      for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-      {
-        param_dicts_[ indx ].push_back( new Dictionary() );
-
-        for ( auto param : synapse_params_[ indx ] )
-        {
-          if ( not( integer_params.find( param.first ) == integer_params.end() ) )
-          {
-            ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
-          }
-          else
-          {
-            ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
-          }
-        }
-      }
-    }
+    set_synapse_params( skip_syn_params, syn_defaults, syn_params, indx );
   }
 
-  // Structural plasticity parameters
-  // Check if both pre and post synaptic element are provided
-  // Currently only possible to have structural plasticity with single element syn_spec
-  bool have_both_sp_keys = false;
-  bool have_one_sp_key = false;
-  for ( auto syn_params : syn_specs )
-  {
-    if ( not have_both_sp_keys and ( syn_params->known( names::pre_synaptic_element ) and syn_params->known( names::post_synaptic_element ) ) )
-    {
-      have_both_sp_keys = true;
-    }
-    if ( not have_one_sp_key and ( syn_params->known( names::pre_synaptic_element ) or syn_params->known( names::post_synaptic_element ) ) )
-    {
-      have_one_sp_key = true;
-    }
-  }
-
-  if ( have_both_sp_keys and syn_specs.size() > 1 )
-  {
-    throw KernelException( "Structural plasticity is only possible with single syn_spec" );
-  }
-  else if ( have_both_sp_keys )
-  {
-    pre_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::pre_synaptic_element );
-    post_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::post_synaptic_element );
-
-    use_pre_synaptic_element_ = true;
-    use_post_synaptic_element_ = true;
-  }
-  else if ( have_one_sp_key )
-  {
-    throw BadProperty( "Structural plasticity requires both a pre and post synaptic element." );
-  }
-  else
-  {
-    use_pre_synaptic_element_ = false;
-    use_post_synaptic_element_ = false;
-  }
+  set_structural_plasticity_parameters( syn_specs );
 
   // Create dummy dictionaries, one per thread
   dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );
@@ -617,6 +492,151 @@ nest::ConnBuilder::loop_over_targets_() const
 {
   return targets_->size() < kernel().node_manager.size() or not targets_->is_range()
     or parameters_requiring_skipping_.size() > 0;
+}
+
+void
+nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t indx )
+{
+  if ( not syn_params->known( names::synapse_model ) )
+  {
+    throw BadProperty( "Synapse spec must contain synapse model." );
+  }
+  const std::string syn_name = ( *syn_params )[ names::synapse_model ];
+  if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
+  {
+    throw UnknownSynapseType( syn_name );
+  }
+
+  index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+  synapse_model_id_[ indx ] = synapse_model_id;
+
+  // We need to make sure that Connect can process all synapse parameters specified.
+  const ConnectorModel& synapse_model = kernel().model_manager.get_synapse_prototype( synapse_model_id );
+  synapse_model.check_synapse_params( syn_params );
+}
+
+void
+nest::ConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx )
+{
+  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ indx ] );
+
+  // All synapse models have the possibility to set the delay (see SynIdDelay), but some have
+  // homogeneous weights, hence it should be possible to set the delay without the weight.
+  default_weight_[ indx ] = not syn_params->known( names::weight );
+
+  default_delay_[ indx ] = not syn_params->known( names::delay );
+
+  // If neither weight nor delay are given in the dict, we handle this separately. Important for
+  // hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
+  // _all_ types of synapses.
+  default_weight_and_delay_[ indx ] = ( default_weight_[ indx ] and default_delay_[ indx ] );
+
+  if ( not default_weight_and_delay_[ indx ] )
+  {
+    weights_[ indx ] = syn_params->known( names::weight )
+      ? ConnParameter::create( ( *syn_params )[ names::weight ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
+    register_parameters_requiring_skipping_( *weights_[ indx ] );
+
+    delays_[ indx ] = syn_params->known( names::delay )
+      ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
+  }
+  else if ( default_weight_[ indx ] )
+  {
+    delays_[ indx ] = syn_params->known( names::delay )
+      ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
+  }
+  register_parameters_requiring_skipping_( *delays_[ indx ] );
+}
+
+void
+nest::ConnBuilder::set_synapse_params( std::set<Name> skip_syn_params, DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx )
+{
+  for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end();
+        ++default_it )
+  {
+    const Name param_name = default_it->first;
+    if ( skip_syn_params.find( param_name ) != skip_syn_params.end() )
+    {
+      continue; // weight, delay or other not-settable parameter
+    }
+
+    if ( syn_params->known( param_name ) )
+    {
+      synapse_params_[ indx ][ param_name ] =
+        ConnParameter::create( ( *syn_params )[ param_name ], kernel().vp_manager.get_num_threads() );
+      register_parameters_requiring_skipping_( *synapse_params_[ indx ][ param_name ] );
+    }
+  }
+
+
+  // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
+  // create it here once to avoid re-creating the object over and over again.
+  if ( synapse_params_[ indx ].size() > 0 )
+  {
+    std::set< Name > integer_params = { names::receptor_type, names::music_channel, names::synapse_label };
+
+    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    {
+      param_dicts_[ indx ].push_back( new Dictionary() );
+
+      for ( auto param : synapse_params_[ indx ] )
+      {
+        if ( not( integer_params.find( param.first ) == integer_params.end() ) )
+        {
+          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
+        }
+        else
+        {
+          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
+        }
+      }
+    }
+  }
+}
+
+void
+nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs )
+{
+  // Check if both pre and post synaptic element are provided. Currently only possible to have
+  // structural plasticity with single element syn_spec.
+  bool have_both_sp_keys = false;
+  bool have_one_sp_key = false;
+  for ( auto syn_params : syn_specs )
+  {
+    if ( not have_both_sp_keys and ( syn_params->known( names::pre_synaptic_element ) and syn_params->known( names::post_synaptic_element ) ) )
+    {
+      have_both_sp_keys = true;
+    }
+    if ( not have_one_sp_key and ( syn_params->known( names::pre_synaptic_element ) or syn_params->known( names::post_synaptic_element ) ) )
+    {
+      have_one_sp_key = true;
+    }
+  }
+
+  if ( have_both_sp_keys and syn_specs.size() > 1 )
+  {
+    throw KernelException( "Structural plasticity is only possible with single syn_spec" );
+  }
+  else if ( have_both_sp_keys )
+  {
+    pre_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::pre_synaptic_element );
+    post_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::post_synaptic_element );
+
+    use_pre_synaptic_element_ = true;
+    use_post_synaptic_element_ = true;
+  }
+  else if ( have_one_sp_key )
+  {
+    throw BadProperty( "Structural plasticity requires both a pre and post synaptic element." );
+  }
+  else
+  {
+    use_pre_synaptic_element_ = false;
+    use_post_synaptic_element_ = false;
+  }
 }
 
 void

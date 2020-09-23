@@ -80,10 +80,8 @@ class ConnectArraysMPICase(unittest.TestCase):
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
         targets = np.arange(1, n+1, dtype=np.uint64)
-        weights = 1.5
-        delays = 1.4
 
-        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays})
+        nest.Connect(sources, targets, syn_spec={'weight': 1.5, 'delay': 1.4})
 
         self.assert_connections(sources, targets, 'all_to_all')
 
@@ -93,9 +91,7 @@ class ConnectArraysMPICase(unittest.TestCase):
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
         targets = self.non_unique
-        weights = np.ones(n)
-        delays = np.ones(n)
-        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
+        nest.Connect(sources, targets, syn_spec={'weight': np.ones(n), 'delay': np.ones(n)},
                      conn_spec='one_to_one')
 
         self.assert_connections(sources, targets, 'one_to_one')
@@ -107,12 +103,12 @@ class ConnectArraysMPICase(unittest.TestCase):
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
         targets = self.non_unique
-        weights = np.ones(len(sources))
-        delays = np.ones(len(sources))
         syn_model = 'static_synapse'
 
         nest.Connect(sources, targets, conn_spec='one_to_one',
-                     syn_spec={'weight': weights, 'delay': delays, 'synapse_model': syn_model})
+                     syn_spec={'weight': np.ones(len(sources)),
+                               'delay': np.ones(len(sources)),
+                               'synapse_model': syn_model})
 
         self.assert_connections(sources, targets, 'one_to_one')
 

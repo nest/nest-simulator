@@ -45,7 +45,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         weight = conns.weight
         syn_model = conns.synapse_model
 
-        sorted_conn_list = [(s, t, w, sm) for s, t, w, sm in sorted(zip(src, trgt, weight, syn_model))]
+        sorted_conn_list = sorted(zip(src, trgt, weight, syn_model))
 
         return sorted_conn_list
 
@@ -77,17 +77,14 @@ class MultipleSynapsesTestCase(unittest.TestCase):
 
         self.assertEqual(num_src * len(syn_spec), len(conns))
 
-        # source id's are 1, 2, 3, 4, 5, 6, 7
-        ref_src = ([1]*len(syn_spec) + [2]*len(syn_spec) + [3]*len(syn_spec) + [4]*len(syn_spec) +
-                   [5]*len(syn_spec) + [6]*len(syn_spec) + [7]*len(syn_spec))
-        # target id's are 8, 9, 10, 11, 12, 13, 14
-        ref_trgt = ([8]*len(syn_spec) + [9]*len(syn_spec) + [10]*len(syn_spec) + [11]*len(syn_spec) +
-                    [12]*len(syn_spec) + [13]*len(syn_spec) + [14]*len(syn_spec))
-
+        # source id's range from 1 to num_src
+        ref_src = [s for s in range(1, num_src + 1) for _ in range(len(syn_spec))]
+        # target id's range from (num_src + 1 to (num_src + num_trgt + 1))
+        ref_trgt = [t for t in range(num_src + 1, num_src + num_trg + 1) for _ in range(len(syn_spec))]
         ref_weight = [-5., -1.5, 3.] * num_src
         ref_synapse_modules = ['stdp_synapse', 'static_synapse', 'stdp_synapse'] * num_src
 
-        ref_conn_list = [(s, t, w, sm) for s, t, w, sm in zip(ref_src, ref_trgt, ref_weight, ref_synapse_modules)]
+        ref_conn_list = list(zip(ref_src, ref_trgt, ref_weight, ref_synapse_modules))
         sorted_conn_list = self.sort_connections(conns)
 
         self.assertEqual(ref_conn_list, sorted_conn_list)
@@ -109,8 +106,8 @@ class MultipleSynapsesTestCase(unittest.TestCase):
 
         self.assertEqual(num_src * num_trg * len(syn_spec), len(conns))
 
-        # source id's are 1, 2, 3
-        ref_src = [1]*num_trg*len(syn_spec) + [2]*num_trg*len(syn_spec) + [3]*num_trg*len(syn_spec)
+        # source id's range from 1 to num_src
+        ref_src = [s for s in range(1, num_src + 1) for _ in range(len(syn_spec)*num_trg)]
         # target id's are 4, 5, 6, 7, 8
         ref_trgt = []
         for t in [4, 5, 6, 7, 8]*num_src:
@@ -120,7 +117,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         ref_weight = [-2., -1.5, 3.] * num_src * num_trg
         ref_synapse_modules = ['static_synapse', 'stdp_synapse', 'static_synapse'] * num_src * num_trg
 
-        ref_conn_list = [(s, t, w, sm) for s, t, w, sm in zip(ref_src, ref_trgt, ref_weight, ref_synapse_modules)]
+        ref_conn_list = list(zip(ref_src, ref_trgt, ref_weight, ref_synapse_modules))
         sorted_conn_list = self.sort_connections(conns)
 
         self.assertEqual(ref_conn_list, sorted_conn_list)
@@ -266,11 +263,11 @@ class MultipleSynapsesTestCase(unittest.TestCase):
 
         ref_weights = [-1.4]*(num_conns // 2) + [1.4]*(num_conns // 2)
         self.assertEqual(sorted(conns.weight), ref_weights)
-    
+
     def test_MultipleSynapses_make_symmetric(self):
         """Test list of synapses when we use one_to_one with make_symmetric as connection rule"""
         num_src = 11
-        num_trg =11
+        num_trg = 11
         num_symmetric = 2
         syn_spec = nest.Colocate({'weight': -1.5},
                                  {'synapse_model': 'stdp_synapse', 'weight': 3})
@@ -295,7 +292,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         ref_weight = [-1.5, 3.] * num_src * num_symmetric
         ref_synapse_modules = ['static_synapse', 'stdp_synapse'] * num_src * num_symmetric
 
-        ref_conn_list = [(pr, po, w, sm) for pr, po, w, sm in zip(ref_pre, ref_post, ref_weight, ref_synapse_modules)]
+        ref_conn_list = list(zip(ref_pre, ref_post, ref_weight, ref_synapse_modules))
         sorted_conn_list = self.sort_connections(conns)
 
         self.assertEqual(ref_conn_list, sorted_conn_list)

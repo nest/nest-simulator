@@ -51,7 +51,7 @@ class ConnectArraysMPICase(unittest.TestCase):
     # With nosetests, only run these tests if using multiple processes
     __test__ = MULTIPLE_PROCESSES
 
-    def assert_connections(self, expected_sources, expected_targets, rule='one_to_one'):
+    def assert_connections(self, expected_sources, expected_targets, rule):
         """Gather connections from all processes and assert against expected connections"""
         conns = nest.GetConnections()
         projections = [[s, t] for s, t in zip(conns.source, conns.target)]
@@ -85,7 +85,7 @@ class ConnectArraysMPICase(unittest.TestCase):
 
         nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays})
 
-        self.assert_connections(sources, targets, rule='all_to_all')
+        self.assert_connections(sources, targets, 'all_to_all')
 
     def test_connect_arrays_nonunique(self):
         """Connecting NumPy arrays with non-unique node IDs with MPI"""
@@ -98,7 +98,7 @@ class ConnectArraysMPICase(unittest.TestCase):
         nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
                      conn_spec='one_to_one')
 
-        self.assert_connections(sources, targets)
+        self.assert_connections(sources, targets, 'one_to_one')
 
     def test_connect_arrays_threaded(self):
         """Connecting NumPy arrays, threaded with MPI"""
@@ -114,7 +114,7 @@ class ConnectArraysMPICase(unittest.TestCase):
         nest.Connect(sources, targets, conn_spec='one_to_one',
                      syn_spec={'weight': weights, 'delay': delays, 'synapse_model': syn_model})
 
-        self.assert_connections(sources, targets)
+        self.assert_connections(sources, targets, 'one_to_one')
 
 
 @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')

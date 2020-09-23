@@ -19,6 +19,18 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+This file contains two TestCases, and must be run from nosetests or pytest.
+It requires NEST to be built with MPI and the Python package mpi4py.
+
+The file can be run in two modes: with a single process, or with multiple MPI
+processes. If run with multiple processes, the ConnectArraysMPICase TestCase
+is run, which tests connecting with arrays when using multiple MPI processes.
+If run with a single process, the TestConnectArraysMPI TestCase is run,
+which runs ConnectArraysMPICase in a subprocess with multiple MPI processes,
+and fails if any of the tests in ConnectArraysMPICase fail.
+"""
+
 import os
 import subprocess as sp
 import unittest
@@ -115,6 +127,11 @@ class ConnectArraysMPICase(unittest.TestCase):
 @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
 @unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
 class TestConnectArraysMPI(unittest.TestCase):
+    """
+    When run with nosetests or pytest, this TestCase runs the ConnectArraysMPICase
+    with multiple MPI processes in a subprocess. The test fails if any of the tests in
+    ConnectArraysMPICase fail.
+    """
 
     # With nosetests, only run this test if using a single process
     __test__ = not MULTIPLE_PROCESSES

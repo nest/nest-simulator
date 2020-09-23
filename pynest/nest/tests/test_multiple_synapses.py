@@ -266,6 +266,39 @@ class MultipleSynapsesTestCase(unittest.TestCase):
 
         ref_weights = [-1.4]*(num_conns // 2) + [1.4]*(num_conns // 2)
         self.assertEqual(sorted(conns.weight), ref_weights)
+    
+    def test_MultipleSynapses_make_symmetric(self):
+        """Test list of synapses when we use one_to_one with make_symmetric as connection rule"""
+        num_src = 11
+        num_trg =11
+        num_symmetric = 2
+        syn_spec = nest.Colocate({'weight': -1.5},
+                                 {'synapse_model': 'stdp_synapse', 'weight': 3})
+
+        src = nest.Create('iaf_psc_alpha', num_src)
+        trgt = nest.Create('iaf_psc_alpha', num_trg)
+
+        nest.Connect(src, trgt, {'rule': 'one_to_one', 'make_symmetric': True}, syn_spec=syn_spec)
+
+        conns = nest.GetConnections()
+
+        self.assertEqual(num_src * len(syn_spec) * num_symmetric, len(conns))
+
+        # pre id's range from (1 to num_src) and (num_src+1 to (num_src + num_trgt)) because of make_symmetric
+        ref_pre = [s for s in range(1, num_src + 1) for _ in range(len(syn_spec))]
+        ref_pre = ref_pre + [t for t in range(num_src + 1, num_src + num_trg + 1) for _ in range(len(syn_spec))]
+
+        # post id's range from (num_src + 1 to (num_src + num_trgt + 1)) and (1 to num_src) because of make_symmetric
+        ref_post = [t for t in range(num_src + 1, num_src + num_trg + 1) for _ in range(len(syn_spec))]
+        ref_post = ref_post + [s for s in range(1, num_src + 1) for _ in range(len(syn_spec))]
+
+        ref_weight = [-1.5, 3.] * num_src * num_symmetric
+        ref_synapse_modules = ['static_synapse', 'stdp_synapse'] * num_src * num_symmetric
+
+        ref_conn_list = [(pr, po, w, sm) for pr, po, w, sm in zip(ref_pre, ref_post, ref_weight, ref_synapse_modules)]
+        sorted_conn_list = self.sort_connections(conns)
+
+        self.assertEqual(ref_conn_list, sorted_conn_list)
 
 
 def suite():

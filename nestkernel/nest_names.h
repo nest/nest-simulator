@@ -532,16 +532,16 @@ extern const Name tics_per_ms;
 extern const Name tics_per_step;
 #ifdef TIMER
 extern const Name time_collocate_spike_data;
-extern const Name time_communicate_prepare;
 extern const Name time_communicate_spike_data;
 extern const Name time_communicate_target_data;
 extern const Name time_deliver_spike_data;
 extern const Name time_gather_spike_data;
 extern const Name time_gather_target_data;
-extern const Name time_simulate;
 extern const Name time_update;
 #endif
+extern const Name time_communicate_prepare;
 extern const Name time_in_steps;
+extern const Name time_simulate;
 extern const Name times;
 extern const Name to_do;
 extern const Name total_num_virtual_procs;

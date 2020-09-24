@@ -91,8 +91,8 @@ nest::SimulationManager::finalize()
 void
 nest::SimulationManager::reset_timers_for_preparation()
 {
-#ifdef TIMER
   sw_communicate_prepare.reset();
+#ifdef TIMER
   sw_gather_target_data.reset();
 #endif
 }
@@ -100,8 +100,8 @@ nest::SimulationManager::reset_timers_for_preparation()
 void
 nest::SimulationManager::reset_timers_for_dynamics()
 {
-#ifdef TIMER
   sw_simulate.reset();
+#ifdef TIMER
   sw_gather_spike_data.reset();
   sw_update.reset();
 #endif
@@ -411,13 +411,13 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
   def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
 
-#ifdef TIMER
   def< double >( d, names::time_simulate, sw_simulate.elapsed() );
+  def< double >( d, names::time_communicate_prepare, sw_communicate_prepare.elapsed() );
+#ifdef TIMER
   def< double >( d, names::time_gather_spike_data, sw_gather_spike_data.elapsed() );
   def< double >( d, names::time_update, sw_update.elapsed() );
-  def< double >( d, names::time_communicate_prepare, sw_communicate_prepare.elapsed() );
   def< double >( d, names::time_gather_target_data, sw_gather_target_data.elapsed() );
-  #endif
+#endif
 }
 
 void
@@ -568,9 +568,8 @@ nest::SimulationManager::run( Time const& t )
 
   // Reset local spike counters within event_delivery_manager
   kernel().event_delivery_manager.reset_counters();
-#ifdef TIMER
+
   sw_simulate.start();
-#endif
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -606,9 +605,8 @@ nest::SimulationManager::run( Time const& t )
   call_update_();
 
   kernel().io_manager.post_run_hook();
-#ifdef TIMER
+
   sw_simulate.stop();
-#endif
 }
 
 void
@@ -706,13 +704,11 @@ nest::SimulationManager::call_update_()
 void
 nest::SimulationManager::update_connection_infrastructure( const thread tid )
 {
-#ifdef TIMER
 #pragma omp barrier
   if ( tid == 0 )
   {
     sw_communicate_prepare.start();
   }
-#endif
 
   kernel().connection_manager.restructure_connection_tables( tid );
   kernel().connection_manager.sort_connections( tid );
@@ -770,13 +766,11 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   }
   kernel().connection_manager.unset_have_connections_changed( tid );
 
-#ifdef TIMER
 #pragma omp barrier
   if ( tid == 0 )
   {
     sw_communicate_prepare.stop();
   }
-#endif
 }
 
 bool

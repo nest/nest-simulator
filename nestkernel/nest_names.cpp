@@ -511,16 +511,16 @@ const Name tics_per_ms( "tics_per_ms" );
 const Name tics_per_step( "tics_per_step" );
 #ifdef TIMER
 const Name time_collocate_spike_data( "time_collocate_spike_data" );
-const Name time_communicate_prepare( "time_communicate_prepare" );
 const Name time_communicate_spike_data( "time_communicate_spike_data" );
 const Name time_communicate_target_data( "time_communicate_target_data" );
 const Name time_deliver_spike_data( "time_deliver_spike_data" );
 const Name time_gather_spike_data( "time_gather_spike_data" );
 const Name time_gather_target_data( "time_gather_target_data" );
-const Name time_simulate( "time_simulate" );
 const Name time_update( "time_update" );
 #endif
+const Name time_communicate_prepare( "time_communicate_prepare" );
 const Name time_in_steps( "time_in_steps" );
+const Name time_simulate( "time_simulate" );
 const Name times( "times" );
 const Name to_do( "to_do" );
 const Name total_num_virtual_procs( "total_num_virtual_procs" );

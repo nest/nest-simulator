@@ -75,6 +75,7 @@ const Name azimuth_angle( "azimuth_angle" );
 const Name b( "b" );
 const Name beta( "beta" );
 const Name beta_Ca( "beta_Ca" );
+const Name biological_time( "biological_time" );
 const Name box( "box" );
 const Name buffer_size( "buffer_size" );
 const Name buffer_size_secondary_events( "buffer_size_secondary_events" );
@@ -508,9 +509,16 @@ const Name threshold_spike( "threshold_spike" );
 const Name threshold_voltage( "threshold_voltage" );
 const Name tics_per_ms( "tics_per_ms" );
 const Name tics_per_step( "tics_per_step" );
-const Name time( "time" );
-const Name time_collocate( "time_collocate" );
-const Name time_communicate( "time_communicate" );
+#ifdef TIMER
+const Name time_collocate_spike_data( "time_collocate_spike_data" );
+const Name time_communicate_spike_data( "time_communicate_spike_data" );
+const Name time_communicate_target_data( "time_communicate_target_data" );
+const Name time_deliver_spike_data( "time_deliver_spike_data" );
+const Name time_gather_spike_data( "time_gather_spike_data" );
+const Name time_gather_target_data( "time_gather_target_data" );
+const Name time_simulate( "time_simulate" );
+const Name time_update( "time_update" );
+#endif
 const Name time_in_steps( "time_in_steps" );
 const Name times( "times" );
 const Name to_do( "to_do" );
@@ -576,17 +584,6 @@ const Name y_1( "y_1" );
 
 const Name z( "z" );
 const Name z_connected( "z_connected" );
-
-#ifdef TIMER
-const Name timer_simulate( "timer_simulate" );
-const Name timer_gather_spike_data( "timer_gather_spike_data" );
-const Name timer_update( "timer_update" );
-const Name timer_gather_target_data( "timer_gather_target_data" );
-const Name timer_collocate_spike_data( "timer_collocate_spike_data" );
-const Name timer_communicate_spike_data( "timer_communicate_spike_data" );
-const Name timer_deliver_spike_data( "timer_deliver_spike_data" );
-const Name timer_communicate_target_data( "timer_communicate_target_data" );
-#endif
 } // namespace names
 
 } // namespace nest

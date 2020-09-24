@@ -96,6 +96,7 @@ extern const Name azimuth_angle;
 extern const Name b;
 extern const Name beta;
 extern const Name beta_Ca;
+extern const Name biological_time;
 extern const Name box;
 extern const Name buffer_size;
 extern const Name buffer_size_secondary_events;
@@ -529,9 +530,16 @@ extern const Name threshold_spike;
 extern const Name threshold_voltage;
 extern const Name tics_per_ms;
 extern const Name tics_per_step;
-extern const Name time;
-extern const Name time_collocate;
-extern const Name time_communicate;
+#ifdef TIMER
+extern const Name time_collocate_spike_data;
+extern const Name time_communicate_spike_data;
+extern const Name time_communicate_target_data;
+extern const Name time_deliver_spike_data;
+extern const Name time_gather_spike_data;
+extern const Name time_gather_target_data;
+extern const Name time_simulate;
+extern const Name time_update;
+#endif
 extern const Name time_in_steps;
 extern const Name times;
 extern const Name to_do;
@@ -597,17 +605,6 @@ extern const Name y_1;
 
 extern const Name z;
 extern const Name z_connected;
-
-#ifdef TIMER
-extern const Name timer_simulate;
-extern const Name timer_gather_spike_data;
-extern const Name timer_update;
-extern const Name timer_gather_target_data;
-extern const Name timer_collocate_spike_data;
-extern const Name timer_communicate_spike_data;
-extern const Name timer_deliver_spike_data;
-extern const Name timer_communicate_target_data;
-#endif
 } // namespace names
 
 } // namespace nest

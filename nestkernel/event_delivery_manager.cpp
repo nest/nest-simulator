@@ -126,8 +126,6 @@ void
 EventDeliveryManager::get_status( DictionaryDatum& dict )
 {
   def< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
-  def< double >( dict, names::time_collocate, time_collocate_ );
-  def< double >( dict, names::time_communicate, time_communicate_ );
   def< unsigned long >(
     dict, names::local_spike_counter, std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 ) );
 }

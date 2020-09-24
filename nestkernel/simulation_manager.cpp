@@ -99,7 +99,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   TimeConverter time_converter;
 
   double time;
-  if ( updateValue< double >( d, names::time, time ) )
+  if ( updateValue< double >( d, names::biological_time, time ) )
   {
     if ( time != 0.0 )
     {
@@ -379,7 +379,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::T_min, Time::min().get_ms() );
   def< double >( d, names::T_max, Time::max().get_ms() );
 
-  def< double >( d, names::time, get_time().get_ms() );
+  def< double >( d, names::biological_time, get_time().get_ms() );
   def< long >( d, names::to_do, to_do_ );
   def< bool >( d, names::print_time, print_time_ );
 
@@ -390,17 +390,17 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
 
 #ifdef TIMER
-  def< double >( d, names::timer_simulate, kernel().simulation_manager.sw_simulate.elapsed() );
-  def< double >( d, names::timer_gather_spike_data, kernel().simulation_manager.sw_gather_spike_data.elapsed() );
-  def< double >( d, names::timer_update, kernel().simulation_manager.sw_update.elapsed() );
-  def< double >( d, names::timer_gather_target_data, kernel().simulation_manager.sw_gather_target_data.elapsed() );
+  def< double >( d, names::time_simulate, kernel().simulation_manager.sw_simulate.elapsed() );
+  def< double >( d, names::time_gather_spike_data, kernel().simulation_manager.sw_gather_spike_data.elapsed() );
+  def< double >( d, names::time_update, kernel().simulation_manager.sw_update.elapsed() );
+  def< double >( d, names::time_gather_target_data, kernel().simulation_manager.sw_gather_target_data.elapsed() );
   def< double >(
-    d, names::timer_collocate_spike_data, kernel().event_delivery_manager.sw_collocate_spike_data.elapsed() );
+    d, names::time_collocate_spike_data, kernel().event_delivery_manager.sw_collocate_spike_data.elapsed() );
   def< double >(
-    d, names::timer_communicate_spike_data, kernel().event_delivery_manager.sw_communicate_spike_data.elapsed() );
-  def< double >( d, names::timer_deliver_spike_data, kernel().event_delivery_manager.sw_deliver_spike_data.elapsed() );
+    d, names::time_communicate_spike_data, kernel().event_delivery_manager.sw_communicate_spike_data.elapsed() );
+  def< double >( d, names::time_deliver_spike_data, kernel().event_delivery_manager.sw_deliver_spike_data.elapsed() );
   def< double >(
-    d, names::timer_communicate_target_data, kernel().event_delivery_manager.sw_communicate_target_data.elapsed() );
+    d, names::time_communicate_target_data, kernel().event_delivery_manager.sw_communicate_target_data.elapsed() );
 #endif
 }
 

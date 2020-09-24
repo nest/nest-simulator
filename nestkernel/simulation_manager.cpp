@@ -71,6 +71,9 @@ nest::SimulationManager::initialize()
   simulating_ = false;
   simulated_ = false;
   inconsistent_state_ = false;
+
+  reset_timers_for_preparation();
+  reset_timers_for_dynamics();
 }
 
 void
@@ -83,6 +86,25 @@ nest::SimulationManager::finalize()
   slice_ = 0;
   from_step_ = 0;
   to_step_ = 0; // consistent with to_do_ = 0
+}
+
+void
+nest::SimulationManager::reset_timers_for_preparation()
+{
+#ifdef TIMER
+  sw_communicate_prepare.reset();
+  sw_gather_target_data.reset();
+#endif
+}
+
+void
+nest::SimulationManager::reset_timers_for_dynamics()
+{
+#ifdef TIMER
+  sw_simulate.reset();
+  sw_gather_spike_data.reset();
+  sw_update.reset();
+#endif
 }
 
 void
@@ -390,18 +412,12 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
 
 #ifdef TIMER
-  def< double >( d, names::time_simulate, kernel().simulation_manager.sw_simulate.elapsed() );
-  def< double >( d, names::time_gather_spike_data, kernel().simulation_manager.sw_gather_spike_data.elapsed() );
-  def< double >( d, names::time_update, kernel().simulation_manager.sw_update.elapsed() );
-  def< double >( d, names::time_gather_target_data, kernel().simulation_manager.sw_gather_target_data.elapsed() );
-  def< double >(
-    d, names::time_collocate_spike_data, kernel().event_delivery_manager.sw_collocate_spike_data.elapsed() );
-  def< double >(
-    d, names::time_communicate_spike_data, kernel().event_delivery_manager.sw_communicate_spike_data.elapsed() );
-  def< double >( d, names::time_deliver_spike_data, kernel().event_delivery_manager.sw_deliver_spike_data.elapsed() );
-  def< double >(
-    d, names::time_communicate_target_data, kernel().event_delivery_manager.sw_communicate_target_data.elapsed() );
-#endif
+  def< double >( d, names::time_simulate, sw_simulate.elapsed() );
+  def< double >( d, names::time_gather_spike_data, sw_gather_spike_data.elapsed() );
+  def< double >( d, names::time_update, sw_update.elapsed() );
+  def< double >( d, names::time_communicate_prepare, sw_communicate_prepare.elapsed() );
+  def< double >( d, names::time_gather_target_data, sw_gather_target_data.elapsed() );
+  #endif
 }
 
 void
@@ -422,6 +438,10 @@ nest::SimulationManager::prepare()
       "Kernel is in inconsistent state after an "
       "earlier error. Please run ResetKernel first." );
   }
+
+  // reset profiling timers
+  reset_timers_for_dynamics();
+  kernel().event_delivery_manager.reset_timers_for_dynamics();
 
   t_real_ = 0;
   t_slice_begin_ = timeval(); // set to timeval{0, 0} as unset flag
@@ -546,13 +566,9 @@ nest::SimulationManager::run( Time const& t )
     return;
   }
 
-  // Reset profiling timers and counters within event_delivery_manager
-  kernel().event_delivery_manager.reset_timers_counters();
+  // Reset local spike counters within event_delivery_manager
+  kernel().event_delivery_manager.reset_counters();
 #ifdef TIMER
-  sw_simulate.reset();
-  sw_gather_spike_data.reset();
-  sw_update.reset();
-
   sw_simulate.start();
 #endif
 
@@ -690,6 +706,14 @@ nest::SimulationManager::call_update_()
 void
 nest::SimulationManager::update_connection_infrastructure( const thread tid )
 {
+#ifdef TIMER
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_communicate_prepare.start();
+  }
+#endif
+
   kernel().connection_manager.restructure_connection_tables( tid );
   kernel().connection_manager.sort_connections( tid );
 
@@ -719,7 +743,6 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 #ifdef TIMER
   if ( tid == 0 )
   {
-    sw_gather_target_data.reset();
     sw_gather_target_data.start();
   }
 #endif
@@ -746,6 +769,14 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     kernel().node_manager.set_have_nodes_changed( false );
   }
   kernel().connection_manager.unset_have_connections_changed( tid );
+
+#ifdef TIMER
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_communicate_prepare.stop();
+  }
+#endif
 }
 
 bool

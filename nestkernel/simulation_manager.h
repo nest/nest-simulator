@@ -157,6 +157,16 @@ public:
   //! Sorts source table and connections and create new target table.
   void update_connection_infrastructure( const thread tid );
 
+  /**
+   * Set time measurements for internal profiling to zero (reg. prep.)
+   */
+  virtual void reset_timers_for_preparation();
+
+  /**
+   * Set time measurements for internal profiling to zero (reg. sim. dyn.)
+   */
+  virtual void reset_timers_for_dynamics();
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -197,6 +207,7 @@ public:
   Stopwatch sw_simulate;
   Stopwatch sw_gather_spike_data;
   Stopwatch sw_update;
+  Stopwatch sw_communicate_prepare;
   Stopwatch sw_gather_target_data;
 #endif
 };

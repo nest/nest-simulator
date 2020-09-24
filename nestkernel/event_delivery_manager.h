@@ -230,12 +230,21 @@ public:
   void init_moduli();
 
   /**
-   * Set cumulative time measurements for collocating buffers
-   * and for communication to zero; set local spike counter to zero.
+   * Set local spike counter to zero.
    */
-  virtual void reset_timers_counters();
+  virtual void reset_counters();
 
-#ifdef TIMER
+  /**
+   * Set time measurements for internal profiling to zero (reg. prep.)
+   */
+  virtual void reset_timers_for_preparation();
+
+  /**
+   * Set time measurements for internal profiling to zero (reg. sim. dyn.)
+   */
+  virtual void reset_timers_for_dynamics();
+
+  #ifdef TIMER
   // public stop watches for benchmarking purposes (intended for internal core developers,
   // not for use in the public API)
 public:

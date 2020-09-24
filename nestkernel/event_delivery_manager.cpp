@@ -78,7 +78,9 @@ EventDeliveryManager::initialize()
 
   init_moduli();
   local_spike_counter_.resize( num_threads, 0 );
-  reset_timers_counters();
+  reset_counters();
+  reset_timers_for_preparation();
+  reset_timers_for_dynamics();
   spike_register_.resize( num_threads );
   off_grid_spike_register_.resize( num_threads );
   gather_completed_checker_.initialize( num_threads, false );
@@ -126,6 +128,16 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
   def< unsigned long >(
     dict, names::local_spike_counter, std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 ) );
+
+  #ifdef TIMER
+  def< double >(
+    dict, names::time_collocate_spike_data, sw_collocate_spike_data.elapsed() );
+  def< double >(
+    dict, names::time_communicate_spike_data, sw_communicate_spike_data.elapsed() );
+  def< double >( dict, names::time_deliver_spike_data, sw_deliver_spike_data.elapsed() );
+  def< double >(
+    dict, names::time_communicate_target_data, sw_communicate_target_data.elapsed() );
+#endif
 }
 
 void
@@ -246,21 +258,30 @@ EventDeliveryManager::update_moduli()
 }
 
 void
-EventDeliveryManager::reset_timers_counters()
+EventDeliveryManager::reset_counters()
 {
   for ( std::vector< unsigned long >::iterator it = local_spike_counter_.begin(); it != local_spike_counter_.end();
         ++it )
   {
     ( *it ) = 0;
   }
+}
 
+void
+EventDeliveryManager::reset_timers_for_preparation()
+{
+#ifdef TIMER
+  sw_communicate_target_data.reset();
+#endif
+}
+
+void
+EventDeliveryManager::reset_timers_for_dynamics()
+{
 #ifdef TIMER
   sw_collocate_spike_data.reset();
   sw_communicate_spike_data.reset();
   sw_deliver_spike_data.reset();
-// sw_communicate_target_data.reset(); // REMARK: We don't do this here because
-// we want to preserve the stored value over
-// several calls to run() in the SimulationManager
 #endif
 }
 

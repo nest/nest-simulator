@@ -92,7 +92,7 @@ void
 nest::SimulationManager::reset_timers_for_preparation()
 {
   sw_communicate_prepare.reset();
-#ifdef TIMER
+#ifdef TIMER_DETAILED
   sw_gather_target_data.reset();
 #endif
 }
@@ -101,7 +101,7 @@ void
 nest::SimulationManager::reset_timers_for_dynamics()
 {
   sw_simulate.reset();
-#ifdef TIMER
+#ifdef TIMER_DETAILED
   sw_gather_spike_data.reset();
   sw_update.reset();
 #endif
@@ -413,7 +413,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
 
   def< double >( d, names::time_simulate, sw_simulate.elapsed() );
   def< double >( d, names::time_communicate_prepare, sw_communicate_prepare.elapsed() );
-#ifdef TIMER
+#ifdef TIMER_DETAILED
   def< double >( d, names::time_gather_spike_data, sw_gather_spike_data.elapsed() );
   def< double >( d, names::time_update, sw_update.elapsed() );
   def< double >( d, names::time_gather_target_data, sw_gather_target_data.elapsed() );
@@ -736,7 +736,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     }
   }
 
-#ifdef TIMER
+#ifdef TIMER_DETAILED
   if ( tid == 0 )
   {
     sw_gather_target_data.start();
@@ -747,7 +747,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   // presynaptic side
   kernel().event_delivery_manager.gather_target_data( tid );
 
-#ifdef TIMER
+#ifdef TIMER_DETAILED
 #pragma omp barrier
   if ( tid == 0 )
   {
@@ -950,7 +950,7 @@ nest::SimulationManager::update_()
       } // of if(wfr_is_used)
         // end of preliminary update
 
-#ifdef TIMER
+#ifdef TIMER_DETAILED
 #pragma omp barrier
       if ( tid == 0 )
       {
@@ -980,7 +980,7 @@ nest::SimulationManager::update_()
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
-#ifdef TIMER
+#ifdef TIMER_DETAILED
       if ( tid == 0 )
       {
         sw_update.stop();
@@ -1006,7 +1006,7 @@ nest::SimulationManager::update_()
       }
 
 #pragma omp barrier
-#ifdef TIMER
+#ifdef TIMER_DETAILED
       if ( tid == 0 )
       {
         sw_gather_spike_data.stop();

@@ -509,7 +509,7 @@ const Name threshold_spike( "threshold_spike" );
 const Name threshold_voltage( "threshold_voltage" );
 const Name tics_per_ms( "tics_per_ms" );
 const Name tics_per_step( "tics_per_step" );
-#ifdef TIMER
+#ifdef TIMER_DETAILED
 const Name time_collocate_spike_data( "time_collocate_spike_data" );
 const Name time_communicate_spike_data( "time_communicate_spike_data" );
 const Name time_communicate_target_data( "time_communicate_target_data" );

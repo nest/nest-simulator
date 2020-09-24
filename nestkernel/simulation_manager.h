@@ -205,7 +205,7 @@ private:
 public:
   Stopwatch sw_simulate;
   Stopwatch sw_communicate_prepare;
-#ifdef TIMER
+#ifdef TIMER_DETAILED
   Stopwatch sw_gather_spike_data;
   Stopwatch sw_update;
   Stopwatch sw_gather_target_data;

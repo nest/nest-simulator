@@ -530,7 +530,7 @@ extern const Name threshold_spike;
 extern const Name threshold_voltage;
 extern const Name tics_per_ms;
 extern const Name tics_per_step;
-#ifdef TIMER
+#ifdef TIMER_DETAILED
 extern const Name time_collocate_spike_data;
 extern const Name time_communicate_spike_data;
 extern const Name time_communicate_target_data;

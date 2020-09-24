@@ -129,14 +129,11 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
   def< unsigned long >(
     dict, names::local_spike_counter, std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 ) );
 
-  #ifdef TIMER
-  def< double >(
-    dict, names::time_collocate_spike_data, sw_collocate_spike_data.elapsed() );
-  def< double >(
-    dict, names::time_communicate_spike_data, sw_communicate_spike_data.elapsed() );
+#ifdef TIMER_DETAILED
+  def< double >( dict, names::time_collocate_spike_data, sw_collocate_spike_data.elapsed() );
+  def< double >( dict, names::time_communicate_spike_data, sw_communicate_spike_data.elapsed() );
   def< double >( dict, names::time_deliver_spike_data, sw_deliver_spike_data.elapsed() );
-  def< double >(
-    dict, names::time_communicate_target_data, sw_communicate_target_data.elapsed() );
+  def< double >( dict, names::time_communicate_target_data, sw_communicate_target_data.elapsed() );
 #endif
 }
 
@@ -270,7 +267,7 @@ EventDeliveryManager::reset_counters()
 void
 EventDeliveryManager::reset_timers_for_preparation()
 {
-#ifdef TIMER
+#ifdef TIMER_DETAILED
   sw_communicate_target_data.reset();
 #endif
 }
@@ -278,7 +275,7 @@ EventDeliveryManager::reset_timers_for_preparation()
 void
 EventDeliveryManager::reset_timers_for_dynamics()
 {
-#ifdef TIMER
+#ifdef TIMER_DETAILED
   sw_collocate_spike_data.reset();
   sw_communicate_spike_data.reset();
   sw_deliver_spike_data.reset();
@@ -350,7 +347,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         buffer_size_spike_data_has_changed_ = false;
       }
     } // of omp single; implicit barrier
-#ifdef TIMER
+#ifdef TIMER_DETAILED
     if ( tid == 0 )
     {
       sw_collocate_spike_data.start();
@@ -389,7 +386,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       // TODO: Discuss, if the barrier above should be better placed after if-clause
     }
 
-#ifdef TIMER
+#ifdef TIMER_DETAILED
 #pragma omp barrier
     if ( tid == 0 )
     {
@@ -415,7 +412,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       }
     } // of omp single; implicit barrier
 
-#ifdef TIMER
+#ifdef TIMER_DETAILED
     if ( tid == 0 )
     {
       sw_communicate_spike_data.stop();
@@ -431,7 +428,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 // done.
 #pragma omp barrier
 
-#ifdef TIMER
+#ifdef TIMER_DETAILED
     if ( tid == 0 )
     {
       sw_deliver_spike_data.stop();
@@ -681,7 +678,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
 #pragma omp barrier
     kernel().connection_manager.clean_source_table( tid );
 
-#ifdef TIMER
+#ifdef TIMER_DETAILED
 #pragma omp barrier
     if ( tid == 0 )
     {
@@ -697,7 +694,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
       kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
     } // of omp single (implicit barrier)
 
-#ifdef TIMER
+#ifdef TIMER_DETAILED
     // "#pragma omp barrier" not necessary because of preceding implicit barrier
     if ( tid == 0 )
     {

@@ -244,7 +244,7 @@ public:
    */
   virtual void reset_timers_for_dynamics();
 
-  #ifdef TIMER
+#ifdef TIMER_DETAILED
   // public stop watches for benchmarking purposes (intended for internal core developers,
   // not for use in the public API)
 public:

@@ -414,18 +414,6 @@ private:
   std::vector< unsigned int > recv_buffer_secondary_events_;
 
   /**
-   * Time that was spent on collocation of MPI buffers during the last call to
-   * simulate.
-   */
-  double time_collocate_;
-
-  /**
-   * Time that was spent on communication of events during the last call to
-   * simulate.
-   */
-  double time_communicate_;
-
-  /**
    * Number of generated spike events (both off- and on-grid) during the last
    * call to simulate.
    */

@@ -54,8 +54,6 @@ EventDeliveryManager::EventDeliveryManager()
   , off_grid_spike_register_()
   , send_buffer_secondary_events_()
   , recv_buffer_secondary_events_()
-  , time_collocate_( 0.0 )
-  , time_communicate_( 0.0 )
   , local_spike_counter_()
   , send_buffer_spike_data_()
   , recv_buffer_spike_data_()
@@ -250,8 +248,6 @@ EventDeliveryManager::update_moduli()
 void
 EventDeliveryManager::reset_timers_counters()
 {
-  time_collocate_ = 0.0;
-  time_communicate_ = 0.0;
   for ( std::vector< unsigned long >::iterator it = local_spike_counter_.begin(); it != local_spike_counter_.end();
         ++it )
   {

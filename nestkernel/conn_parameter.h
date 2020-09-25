@@ -91,6 +91,12 @@ public:
     return false;
   }
 
+  virtual bool
+  provides_long() const
+  {
+    return false;
+  }
+
   virtual void
   reset() const
   {
@@ -160,7 +166,6 @@ public:
     return true;
   }
 
-
 private:
   double value_;
 };
@@ -203,6 +208,12 @@ public:
 
   bool
   is_scalar() const
+  {
+    return true;
+  }
+
+  bool
+  provides_long() const
   {
     return true;
   }
@@ -369,6 +380,12 @@ public:
     return true;
   }
 
+  bool
+  provides_long() const
+  {
+    return true;
+  }
+
   void
   reset() const
   {
@@ -411,8 +428,15 @@ public:
     return false;
   }
 
+  bool
+  provides_long() const
+  {
+    return provides_long_;
+  }
+
 private:
   librandom::RdvPtr rdv_;
+  bool provides_long_;
 };
 
 class ParameterConnParameterWrapper : public ConnParameter
@@ -432,6 +456,12 @@ public:
   is_array() const
   {
     return false;
+  }
+
+  bool
+  provides_long() const
+  {
+    return true;
   }
 
 private:

@@ -310,44 +310,10 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
 
   for ( size_t indx = 0; indx < synapse_model_id_.size(); ++indx )
   {
+    DictionaryDatum param_dict;
     if ( param_dicts_[ indx ].empty() ) // indicates we have no synapse params
     {
-      if ( default_weight_and_delay_[ indx ] )
-      {
-        kernel().connection_manager.connect(
-          snode_id, &target, target_thread, synapse_model_id_[ indx ], dummy_param_dicts_[ target_thread ] );
-      }
-      else if ( default_weight_[ indx ] )
-      {
-        kernel().connection_manager.connect( snode_id,
-          &target,
-          target_thread,
-          synapse_model_id_[ indx ],
-          dummy_param_dicts_[ target_thread ],
-          delays_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
-      }
-      else if ( default_delay_[ indx ] )
-      {
-        kernel().connection_manager.connect( snode_id,
-          &target,
-          target_thread,
-          synapse_model_id_[ indx ],
-          dummy_param_dicts_[ target_thread ],
-          numerics::nan,
-          weights_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
-      }
-      else
-      {
-        double delay = delays_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-        double weight = weights_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-        kernel().connection_manager.connect( snode_id,
-          &target,
-          target_thread,
-          synapse_model_id_[ indx ],
-          dummy_param_dicts_[ target_thread ],
-          delay,
-          weight );
-      }
+      param_dict = dummy_param_dicts_[ target_thread ];
     }
     else
     {
@@ -355,32 +321,12 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
 
       for ( auto synapse_parameter : synapse_params_[ indx ] )
       {
-        if ( synapse_parameter.first == names::receptor_type or synapse_parameter.first == names::music_channel
-          or synapse_parameter.first == names::synapse_label )
+        if ( synapse_parameter.second->provides_long() )
         {
-          try
-          {
-            // change value of dictionary entry without allocating new datum
-            IntegerDatum* id = static_cast< IntegerDatum* >(
-              ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-
-            ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
-          }
-          catch ( KernelException& e )
-          {
-            if ( synapse_parameter.first == names::receptor_type )
-            {
-              throw BadProperty( "Receptor type must be of type integer." );
-            }
-            else if ( synapse_parameter.first == names::music_channel )
-            {
-              throw BadProperty( "Music channel type must be of type integer." );
-            }
-            else if ( synapse_parameter.first == names::synapse_label )
-            {
-              throw BadProperty( "Synapse label must be of type integer." );
-            }
-          }
+          // change value of dictionary entry without allocating new datum
+          IntegerDatum* id = static_cast< IntegerDatum* >(
+            ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+          ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
         }
         else
         {
@@ -390,43 +336,44 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
           ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
         }
       }
+      param_dict = param_dicts_[ indx ][ target_thread ];
+    }
 
-      if ( default_weight_and_delay_[ indx ] )
-      {
-        kernel().connection_manager.connect(
-          snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dicts_[ indx ][ target_thread ] );
-      }
-      else if ( default_weight_[ indx ] )
-      {
-        kernel().connection_manager.connect( snode_id,
-          &target,
-          target_thread,
-          synapse_model_id_[ indx ],
-          param_dicts_[ indx ][ target_thread ],
-          delays_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
-      }
-      else if ( default_delay_[ indx ] )
-      {
-        kernel().connection_manager.connect( snode_id,
-          &target,
-          target_thread,
-          synapse_model_id_[ indx ],
-          param_dicts_[ indx ][ target_thread ],
-          numerics::nan,
-          weights_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
-      }
-      else
-      {
-        double delay = delays_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-        double weight = weights_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-        kernel().connection_manager.connect( snode_id,
-          &target,
-          target_thread,
-          synapse_model_id_[ indx ],
-          param_dicts_[ indx ][ target_thread ],
-          delay,
-          weight );
-      }
+    if ( default_weight_and_delay_[ indx ] )
+    {
+      kernel().connection_manager.connect(
+        snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dict );
+    }
+    else if ( default_weight_[ indx ] )
+    {
+      kernel().connection_manager.connect( snode_id,
+        &target,
+        target_thread,
+        synapse_model_id_[ indx ],
+        param_dict,
+        delays_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+    }
+    else if ( default_delay_[ indx ] )
+    {
+      kernel().connection_manager.connect( snode_id,
+        &target,
+        target_thread,
+        synapse_model_id_[ indx ],
+        param_dict,
+        numerics::nan,
+        weights_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+    }
+    else
+    {
+      const double delay = delays_[ indx ]->value_double( target_thread, rng, snode_id, &target );
+      const double weight = weights_[ indx ]->value_double( target_thread, rng, snode_id, &target );
+      kernel().connection_manager.connect( snode_id,
+        &target,
+        target_thread,
+        synapse_model_id_[ indx ],
+        param_dict,
+        delay,
+        weight );
     }
   }
 }
@@ -571,7 +518,6 @@ nest::ConnBuilder::set_synapse_params( std::set<Name> skip_syn_params, Dictionar
     }
   }
 
-
   // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
   if ( synapse_params_[ indx ].size() > 0 )
@@ -584,8 +530,12 @@ nest::ConnBuilder::set_synapse_params( std::set<Name> skip_syn_params, Dictionar
 
       for ( auto param : synapse_params_[ indx ] )
       {
-        if ( not( integer_params.find( param.first ) == integer_params.end() ) )
+        if ( integer_params.find( param.first ) != integer_params.end() )
         {
+          if ( not param.second->provides_long() )
+          {
+            throw BadParameter( param.first.toString() + " must be given as integer." );
+          }
           ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
         }
         else

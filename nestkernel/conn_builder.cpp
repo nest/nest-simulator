@@ -342,8 +342,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
 
     if ( default_weight_and_delay_[ indx ] )
     {
-      kernel().connection_manager.connect(
-        snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dict );
+      kernel().connection_manager.connect( snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dict );
     }
     else if ( default_weight_[ indx ] )
     {
@@ -368,13 +367,8 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
     {
       const double delay = delays_[ indx ]->value_double( target_thread, rng, snode_id, &target );
       const double weight = weights_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-      kernel().connection_manager.connect( snode_id,
-        &target,
-        target_thread,
-        synapse_model_id_[ indx ],
-        param_dict,
-        delay,
-        weight );
+      kernel().connection_manager.connect(
+        snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dict, delay, weight );
     }
   }
 }
@@ -502,8 +496,7 @@ nest::ConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, siz
 void
 nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx )
 {
-  for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end();
-        ++default_it )
+  for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
   {
     const Name param_name = default_it->first;
     if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
@@ -555,11 +548,13 @@ nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< Dictionary
   bool have_one_sp_key = false;
   for ( auto syn_params : syn_specs )
   {
-    if ( not have_both_sp_keys and ( syn_params->known( names::pre_synaptic_element ) and syn_params->known( names::post_synaptic_element ) ) )
+    if ( not have_both_sp_keys
+      and ( syn_params->known( names::pre_synaptic_element ) and syn_params->known( names::post_synaptic_element ) ) )
     {
       have_both_sp_keys = true;
     }
-    if ( not have_one_sp_key and ( syn_params->known( names::pre_synaptic_element ) or syn_params->known( names::post_synaptic_element ) ) )
+    if ( not have_one_sp_key
+      and ( syn_params->known( names::pre_synaptic_element ) or syn_params->known( names::post_synaptic_element ) ) )
     {
       have_one_sp_key = true;
     }

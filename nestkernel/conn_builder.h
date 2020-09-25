@@ -254,7 +254,7 @@ private:
   void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
   void set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx );
   void set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
-  void set_structural_plasticity_parameters( std::vector<DictionaryDatum> syn_specs );
+  void set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs );
 
   /**
    * Reset weight and delay pointers

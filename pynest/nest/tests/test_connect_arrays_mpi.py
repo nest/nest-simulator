@@ -62,10 +62,12 @@ class ConnectArraysMPICase(unittest.TestCase):
     # With pytest or nosetests, only run these tests if using multiple processes
     __test__ = MULTIPLE_PROCESSES
 
-    def assert_connections(self, expected_sources, expected_targets, rule):
+    def assert_connections(self, expected_sources, expected_targets, expected_weights, expected_delays, rule):
         """Gather connections from all processes and assert against expected connections"""
         conns = nest.GetConnections()
         projections = [[s, t] for s, t in zip(conns.source, conns.target)]
+        weights = conns.weight
+        delays = conns.delay
         if rule == 'one_to_one':
             expected_projections = np.array([[s, t] for s, t in zip(expected_sources, expected_targets)])
         elif rule == 'all_to_all':
@@ -73,14 +75,27 @@ class ConnectArraysMPICase(unittest.TestCase):
         else:
             self.assertFalse(True, 'rule={} is not valid'.format(rule))
 
+        expected_weights = (expected_weights if type(expected_weights) is np.ndarray
+                            else expected_weights*np.ones(len(expected_projections)))
+        expected_delays = (expected_delays if type(expected_delays) is np.ndarray
+                           else expected_delays*np.ones(len(expected_projections)))
+
         recv_projections = self.comm.gather(projections, root=0)
+        recv_weights = self.comm.gather(weights, root=0)
+        recv_delays = self.comm.gather(delays, root=0)
         if self.comm.Get_rank() == 0:
             # Flatten the projection lists to a single list of projections
             recv_projections = np.array([proj for part in recv_projections for proj in part])
+            recv_weights = np.array([w for part in recv_weights for w in part])
+            recv_delays = np.array([proj for part in recv_delays for proj in part])
             # Results must be sorted to make comparison possible
             np.testing.assert_array_equal(np.sort(recv_projections, axis=0), np.sort(expected_projections, axis=0))
+            np.testing.assert_array_almost_equal(np.sort(recv_weights, axis=0), np.sort(expected_weights, axis=0))
+            np.testing.assert_array_almost_equal(np.sort(recv_delays, axis=0), np.sort(expected_delays, axis=0))
         else:
             self.assertIsNone(recv_projections)
+            self.assertIsNone(recv_weights)
+            self.assertIsNone(recv_delays)
 
     def setUp(self):
         nest.ResetKernel()
@@ -91,10 +106,12 @@ class ConnectArraysMPICase(unittest.TestCase):
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
         targets = np.arange(1, n+1, dtype=np.uint64)
+        weight = 1.5
+        delay = 1.4
 
-        nest.Connect(sources, targets, syn_spec={'weight': 1.5, 'delay': 1.4})
+        nest.Connect(sources, targets, syn_spec={'weight': weight, 'delay': delay})
 
-        self.assert_connections(sources, targets, 'all_to_all')
+        self.assert_connections(sources, targets, weight, delay, 'all_to_all')
 
     def test_connect_arrays_nonunique(self):
         """Connecting NumPy arrays with non-unique node IDs with MPI"""
@@ -102,10 +119,12 @@ class ConnectArraysMPICase(unittest.TestCase):
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
         targets = self.non_unique
-        nest.Connect(sources, targets, syn_spec={'weight': np.ones(n), 'delay': np.ones(n)},
+        weights = np.ones(n)
+        delays = np.ones(n)
+        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
                      conn_spec='one_to_one')
 
-        self.assert_connections(sources, targets, 'one_to_one')
+        self.assert_connections(sources, targets, weights, delays, 'one_to_one')
 
     def test_connect_arrays_threaded(self):
         """Connecting NumPy arrays, threaded with MPI"""
@@ -115,13 +134,15 @@ class ConnectArraysMPICase(unittest.TestCase):
         sources = np.arange(1, n+1, dtype=np.uint64)
         targets = self.non_unique
         syn_model = 'static_synapse'
+        weights = np.linspace(0.6, 1.5, len(sources))  # Interval endpoints are carefully selected to get nice values,
+        delays = np.linspace(0.4, 1.3, len(sources))   # that is, a step of 0.1 between values.
 
         nest.Connect(sources, targets, conn_spec='one_to_one',
-                     syn_spec={'weight': np.ones(len(sources)),
-                               'delay': np.ones(len(sources)),
+                     syn_spec={'weight': weights,
+                               'delay': delays,
                                'synapse_model': syn_model})
 
-        self.assert_connections(sources, targets, 'one_to_one')
+        self.assert_connections(sources, targets, weights, delays, 'one_to_one')
 
 
 @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')

@@ -39,14 +39,23 @@
 /unittest using
 
 
+/colocate_synapse_params
+  [<< /weight -3. /delay 1. /synapse_model /static_synapse >>
+   << /weight  4. /delay 3. /synapse_model /static_synapse >>
+   << /weight  2. /delay 1. /synapse_model /stdp_synapse >> ] def
+
+/num_src 4 def
+/num_trgt 4 def
+/num_conns 4 def % we use one_to_one
+
 [1 2 4]
 {
-  /src /iaf_psc_alpha 4 Create def
-  /trgt /iaf_psc_alpha 4 Create def
+  /src /iaf_psc_alpha num_src Create def
+  /trgt /iaf_psc_alpha num_trgt Create def
   
   src trgt
     << /rule /one_to_one >>
-    [<< /weight -3. >> << /synapse_model /stdp_synapse /weight 2. >> << /weight 4 /delay 3. >> ]
+    colocate_synapse_params
     Connect
   
   /weight_delay_syn [] def
@@ -74,19 +83,27 @@
   
   % Create a reference list with the values we expect (values taken from syn_spec list above).
   /reference_list [] def
-  [4 2 mul] Range
+  [num_conns] Range
   {
-    /indx Set
-    indx 2 mod 0 eq
-    {
-      reference_list [4. 3. /static_synapse] join /reference_list Set
-    }
-    {
-      reference_list [-3. 1. /static_synapse] join /reference_list Set 
-    } ifelse
+    % Connection order changed behind the scenes, stdp_synapse connected last. We therefore need to manually
+    % build reference list
+    ;
+    colocate_synapse_params [1] Take dup dup
+      /weight get /w_1 Set
+      /delay get /d_1 Set
+      /synapse_model get /sm_1 Set
+    colocate_synapse_params [2] Take dup dup
+      /weight get /w_2 Set
+      /delay get /d_2 Set
+      /synapse_model get /sm_2 Set
+    reference_list [w_1 d_1 sm_1 w_2 d_2 sm_2] join /reference_list Set
   } forall
   
-  /reference_list reference_list [4] [2. 1. /stdp_synapse] LayoutArray Flatten append Flatten def
+  colocate_synapse_params [3] Take dup dup
+    /weight get /w_3 Set
+    /delay get /d_3 Set
+    /synapse_model get /sm_3 Set
+  /reference_list reference_list [num_conns] [w_3 d_3 sm_3] LayoutArray Flatten append Flatten def
 
   % Go through results from different processes and append them to eachother.
   results 0 get
@@ -98,12 +115,8 @@
       cumulative_res_list exch append /cumulative_res_list Set
     } forall
   } forall
-
-  % check that length of the cumulative result list from the different processes have right length,
-  % we have 4 times 3 connections and 3 elements extracted (weight, delay, synapse_model).
-  cumulative_res_list length 4 3 mul 3 mul eq
   
-  % Also check that the cumulative result list contains all variables we expect.
-  cumulative_res_list reference_list eq and
+  % Check that the cumulative result list contains all variables we expect.
+  cumulative_res_list reference_list eq
 }
 distributed_collect_assert_or_die

@@ -70,9 +70,10 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   // read out synapse-related parameters ----------------------
 
   // synapse-specific parameters that should be skipped when we set default synapse parameters
-  std::set< Name > skip_syn_params = {
+  skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
+  integer_params_ = { names::receptor_type, names::music_channel, names::synapse_label };
 
   default_weight_.resize( syn_specs.size() );
   default_delay_.resize( syn_specs.size() );
@@ -101,7 +102,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     ( *syn_defaults )[ names::music_channel ] = 0;
 #endif
 
-    set_synapse_params( skip_syn_params, syn_defaults, syn_params, indx );
+    set_synapse_params( syn_defaults, syn_params, indx );
   }
 
   set_structural_plasticity_parameters( syn_specs );
@@ -499,13 +500,13 @@ nest::ConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, siz
 }
 
 void
-nest::ConnBuilder::set_synapse_params( std::set<Name> skip_syn_params, DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx )
+nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx )
 {
   for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end();
         ++default_it )
   {
     const Name param_name = default_it->first;
-    if ( skip_syn_params.find( param_name ) != skip_syn_params.end() )
+    if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
     {
       continue; // weight, delay or other not-settable parameter
     }
@@ -522,15 +523,13 @@ nest::ConnBuilder::set_synapse_params( std::set<Name> skip_syn_params, Dictionar
   // create it here once to avoid re-creating the object over and over again.
   if ( synapse_params_[ indx ].size() > 0 )
   {
-    std::set< Name > integer_params = { names::receptor_type, names::music_channel, names::synapse_label };
-
     for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
       param_dicts_[ indx ].push_back( new Dictionary() );
 
       for ( auto param : synapse_params_[ indx ] )
       {
-        if ( integer_params.find( param.first ) != integer_params.end() )
+        if ( integer_params_.find( param.first ) != integer_params_.end() )
         {
           if ( not param.second->provides_long() )
           {

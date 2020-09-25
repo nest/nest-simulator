@@ -233,6 +233,12 @@ private:
   //! create and use the same dictionary as this leads to performance issues.
   std::vector< DictionaryDatum > dummy_param_dicts_;
 
+  //! synapse-specific parameters that should be skipped when we set default synapse parameters
+  std::set< Name > skip_syn_params_;
+
+  //! synapse-specific parameters that must be integers
+  std::set< Name > integer_params_;
+
   /**
    * Collects all array paramters in a vector.
    *
@@ -247,7 +253,7 @@ private:
    */
   void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
   void set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx );
-  void set_synapse_params( std::set<Name> skip_params, DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
+  void set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
   void set_structural_plasticity_parameters( std::vector<DictionaryDatum> syn_specs );
 
   /**

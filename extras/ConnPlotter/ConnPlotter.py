@@ -1484,7 +1484,7 @@ class ConnectionPattern(object):
 
         import matplotlib.pyplot as plt
 
-        # translate new to old paramter names (per v 0.5)
+        # translate new to old parameter names (per v 0.5)
         normalize = globalColors
         if colorLimits:
             normalize = True

@@ -626,10 +626,8 @@ class TestNodeCollection(unittest.TestCase):
         targets = np.array(nest.GetPosition(n))
         for source in n:
             source_x, source_y = nest.GetPosition(source)
-            ref_distances = np.sqrt(
-                (targets[:, 0] - source_x)**2 + (targets[:, 1] - source_y)**2)
-            self.assertEqual(param.apply(
-                source, list(targets)), tuple(ref_distances))
+            ref_distances = np.sqrt((targets[:, 0] - source_x)**2 + (targets[:, 1] - source_y)**2)
+            self.assertEqual(param.apply(source, list(targets)), tuple(ref_distances))
 
         # Raises when passing source with multiple node IDs
         with self.assertRaises(ValueError):

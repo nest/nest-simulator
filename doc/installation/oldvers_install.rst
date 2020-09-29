@@ -93,9 +93,9 @@ Standard configuration
 To install the packages required for the standard installation use the following
 command line::
 
-    sudo apt-get install build-essential autoconf automake libtool libltdl7-dev
-    libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy
-    python-scipy python-matplotlib ipython
+    sudo apt-get install build-essential autoconf automake libtool libltdl7-dev \
+    libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy \
+    python3-scipy python3-matplotlib ipython3
 
 Then configure NEST using::
 

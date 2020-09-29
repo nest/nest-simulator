@@ -22,7 +22,7 @@ Getting help on the command line interface
        # list all functions and attributes
        dir(nest)
 
-       # Get docstring for function in python
+       # Get docstring for function in Python
        help('nest.FunctionName')
 
        # or in ipython
@@ -70,8 +70,8 @@ to display the help pages. The browser is set as an option of
 ``helpdesk``. Please see the file ``~/.nestrc`` for an example setting
 ``firefox`` as browser. Please note that the command ``helpdesk`` does
 not work if you have compiled NEST with MPI support, but you have to
-enter the address of the helpdesk (``file://$PREFIX/share/doc/nest(``)
-manually into the browser. Please replace ``$PREFIX`` with the prefix
+enter the address of the helpdesk (``file://<nest_install_dir>/share/doc/nest(``)
+manually into the browser. Please replace ``<nest_install_dir>`` with the prefix
 you chose during the configuration of NEST. If you did not explicitly
 specify one, it is most likely set to ``/usr`` or ``/usr/local``
 depending on what system you use.

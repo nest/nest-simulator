@@ -13,8 +13,12 @@ Let’s take a look at a pair of programs that send and receive spikes.
 These can be used as inputs or outputs to the NEST models we created
 above with no change to the code. C++ code tends to be somewhat
 longwinded so we only show the relevant parts here. The C++ interface is
-divided into a setup phase and a runtime phase. Let’s look at the setup
-phase first:
+divided into a setup phase and a runtime phase. You can see the setup below. 
+
+.. note::
+
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+   and cannot be enabled at the same time.
 
 .. code-block:: cpp
     :linenos:
@@ -400,7 +404,7 @@ Concatenate them as before, and compare:
     1   87.400         0    0.0874
     2   110.40         1    0.1104
 
-Indeed, we get the expected result. The IDs from the python process on
+Indeed, we get the expected result. The IDs from the ``python`` process on
 the left are the originating neurons; the IDs on the right is the MUSIC
 channel on the receiving side. And of course NEST deals in milliseconds
 while MUSIC uses seconds.
@@ -410,5 +414,4 @@ straightforward user-level input and output applications. But there is a
 lot more to the MUSIC API, especially if you intend to implement it as a
 simulator interface, so you should consult the documentation for more
 details.
-
 

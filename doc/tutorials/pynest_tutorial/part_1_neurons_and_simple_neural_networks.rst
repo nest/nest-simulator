@@ -91,7 +91,7 @@ prompted for.
 
     dir(nest)
 
-One such command is ``nest.Models()`` or in ipython ``nest.Models?``, which will return a list of all
+One such command is ``nest.Models()``, which will return a list of all
 the available models you can use. If you want to obtain more information
 about a particular command, you may use Python’s standard help system.
 
@@ -203,12 +203,12 @@ variables by looking at the neuron’s property ``recordables``.
     multimeter = nest.Create("multimeter")
     multimeter.set(record_from=["V_m"])
 
-We now create a ``spikedetector``, another device that records the
+We now create a ``spike_recorder``, another device that records the
 spiking events produced by a neuron.
 
 ::
 
-    spikedetector = nest.Create("spike_detector")
+    spikerecorder = nest.Create("spike_recorder")
 
 A short note on naming: here we have called the neuron ``neuron``, the
 multimeter ``multimeter`` and so on. Of course, you can assign your
@@ -225,7 +225,7 @@ to form a small network.
 ::
 
     nest.Connect(multimeter, neuron)
-    nest.Connect(neuron, spikedetector)
+    nest.Connect(neuron, spikerecorder)
 
 
 .. _VM-neuron:
@@ -249,7 +249,7 @@ to form a small network.
 
 The order in which the arguments to ``Connect`` are specified reflects
 the flow of events: if the neuron spikes, it sends an event to the spike
-detector. Conversely, the multimeter periodically sends requests to the
+recorder. Conversely, the multimeter periodically sends requests to the
 neuron to ask for its membrane potential at that point in time. This can
 be regarded as a perfect electrode stuck into the neuron.
 
@@ -297,11 +297,11 @@ use of ``matplotlib`` and the ``pyplot`` module.
 The second line opens a figure (with the number 1), and the third line
 actually produces the plot. You can’t see it yet because we have not
 used ``plt.show()``. Before we do that, we proceed analogously to
-obtain and display the spikes from the spike detector.
+obtain and display the spikes from the spike recorder.
 
 ::
 
-    dSD = spikedetector.get("events")
+    dSD = spikerecorder.get("events")
     evs = dSD["senders"]
     ts = dSD["times"]
     plt.figure(2)

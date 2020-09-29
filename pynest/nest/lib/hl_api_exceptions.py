@@ -201,7 +201,6 @@ class NESTErrors(metaclass=NESTMappedException):
         'BadParameter': 'KernelException',
         'DimensionMismatch': 'KernelException',
         'DistributionError': 'KernelException',
-        'SimulationError': 'KernelException',
         'InvalidDefaultResolution': 'KernelException',
         'InvalidTimeInModel': 'KernelException',
         'StepMultipleRequired': 'KernelException',

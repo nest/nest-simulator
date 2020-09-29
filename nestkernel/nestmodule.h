@@ -26,7 +26,12 @@
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
+#include "generic_factory.h"
 #include "parameter.h"
+
+// Includes from spatial:
+#include "spatial/ntree.h"
+#include "spatial/position.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -35,12 +40,14 @@
 #include "slitype.h"
 #include "sharedptrdatum.h"
 
-#include "generic_factory.h"
-
-#include "generic_factory.h"
 
 namespace nest
 {
+class AbstractLayer;
+class AbstractMask;
+template < int D >
+class Layer;
+
 class Node;
 class Parameter;
 
@@ -54,6 +61,7 @@ class NestModule : public SLIModule
 {
 public:
   static SLIType ConnectionType;
+  static SLIType MaskType;
   static SLIType NodeCollectionType;
   static SLIType NodeCollectionIteratorType;
   static SLIType ParameterType;
@@ -74,6 +82,49 @@ public:
 
   template < class T >
   static bool register_parameter( const Name& name );
+
+  using MaskFactory = GenericFactory< AbstractMask >;
+  using MaskCreatorFunction = GenericFactory< AbstractMask >::CreatorFunction;
+
+  /**
+   * Register an AbstractMask subclass as a new mask type. The name will
+   * be found using the function T::get_name()
+   * @returns true if the new type was successfully registered, or false
+   *          if a mask type with the same name already exists.
+   */
+  template < class T >
+  static bool register_mask();
+
+  /**
+   * Register a new mask type with the given name, with a supplied
+   * function to create mask objects of this type.
+   * @param name    name of the new mask type.
+   * @param creator function creating objects of this type. The function
+   *                will be called with the parameter dictionary as
+   *                argument and should return a pointer to a new Mask
+   *                object.
+   * @returns true if the new type was successfully registered, or false
+   *          if a mask type with the same name already exists.
+   */
+  static bool register_mask( const Name& name, MaskCreatorFunction creator );
+
+  /**
+   * Return a Mask object.
+   * @param t Either an existing MaskDatum, or a Dictionary containing
+   *          mask parameters. The dictionary should contain a key with
+   *          the name of the mask type, with a dictionary of parameters
+   *          as value, and optionally an anchor.
+   * @returns Either the MaskDatum given as argument, or a new mask.
+   */
+  static sharedPtrDatum< AbstractMask, &NestModule::MaskType > /*MaskDatum*/ create_mask( const Token& t );
+
+  /**
+   * Create a new Mask object using the mask factory.
+   * @param name Mask type to create.
+   * @param d    Dictionary with parameters specific for this mask type.
+   * @returns dynamically allocated new Mask object.
+   */
+  static AbstractMask* create_mask( const Name& name, const DictionaryDatum& d );
 
   /**
    * @defgroup NestSliInterface SLI Interface functions of the NEST kernel.
@@ -626,8 +677,121 @@ public:
     void execute( SLIInterpreter* ) const;
   } apply_P_gfunction;
 
+  //
+  // SLI functions for spatial networks
+  //
+
+  class CreateLayer_D_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } createlayer_D_Dfunction;
+
+  class GetPosition_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getposition_gfunction;
+
+  class Displacement_g_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } displacement_g_gfunction;
+
+  class Displacement_a_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } displacement_a_gfunction;
+
+  class Distance_g_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } distance_g_gfunction;
+
+  class Distance_a_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } distance_a_gfunction;
+
+  class Distance_aFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } distance_afunction;
+
+  class ConnectLayers_g_g_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } connectlayers_g_g_Dfunction;
+
+  class CreateMask_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } createmask_Dfunction;
+
+  class GetLayerStatus_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getlayerstatus_gfunction;
+
+  class Inside_a_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } inside_a_Mfunction;
+
+  class And_M_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } and_M_Mfunction;
+
+  class Or_M_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } or_M_Mfunction;
+
+  class Sub_M_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } sub_M_Mfunction;
+
+  class DumpLayerNodes_os_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dumplayernodes_os_gfunction;
+
+  class DumpLayerConnections_os_g_g_lFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dumplayerconnections_os_g_g_lfunction;
+
+  class Cvdict_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } cvdict_Mfunction;
+
+  class SelectNodesByMask_g_a_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } selectnodesbymask_g_a_Mfunction;
+
 private:
   static ParameterFactory& parameter_factory_();
+  static MaskFactory& mask_factory_();
 
   //@}
 };
@@ -637,6 +801,25 @@ inline bool
 NestModule::register_parameter( const Name& name )
 {
   return parameter_factory_().register_subtype< T >( name );
+}
+
+template < class T >
+inline bool
+NestModule::register_mask()
+{
+  return mask_factory_().register_subtype< T >( T::get_name() );
+}
+
+inline bool
+NestModule::register_mask( const Name& name, MaskCreatorFunction creator )
+{
+  return mask_factory_().register_subtype( name, creator );
+}
+
+inline AbstractMask*
+NestModule::create_mask( const Name& name, const DictionaryDatum& d )
+{
+  return mask_factory_().create( name, d );
 }
 
 } // namespace

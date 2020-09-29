@@ -38,59 +38,62 @@
 #include "node.h"
 #include "normal_randomdev.h"
 #include "poisson_randomdev.h"
-#include "ring_buffer.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs: neuron, rate
 
-Name: siegert_neuron
+Short description
++++++++++++++++++
 
-Description:
+model for mean-field analysis of spiking networks
+
+Description
++++++++++++
 
 siegert_neuron is an implementation of a rate model with the
 non-linearity given by the gain function of the
 leaky-integrate-and-fire neuron with delta or exponentially decaying
-synapses [2] and [3, their eq. 25]. The model can be used for a
-mean-field analysis of spiking networks.
+synapses [2]_ and [3]_ (their eq. 25). The model can be used for a
+mean-field analysis of spiking networks. A constant mean input can be
+provided to create neurons with a target rate, e.g. to model a constant
+external input.
 
 The model supports connections to other rate models with zero
 delay, and uses the secondary_event concept introduced with the
 gap-junction framework.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
-\verbatim embed:rst
+
 =====  ====== ==============================
  rate  1/s    Rate (1/s)
  tau   ms     Time constant
- mean  real   Additional constant input
+ mean  1/s    Additional constant input
 =====  ====== ==============================
-\endverbatim
 
 The following parameters can be set in the status directory and are
 used in the evaluation of the gain function. Parameters as in
 iaf_psc_exp/delta.
 
-\verbatim embed:rst
-=========  ======  =====================================================
+=========  ======  ================================================
  tau_m     ms      Membrane time constant
  tau_syn   ms      Time constant of postsynaptic currents
  t_ref     ms      Duration of refractory period
  theta     mV      Threshold relative to resting potential
- V_reset   mV      Reset relative to resting membrane potential
-=========  ======  =====================================================
-\endverbatim
+ V_reset   mV      Reset relative to resting potential
+=========  ======  ================================================
 
-References:
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
@@ -106,16 +109,25 @@ References:
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
-\endverbatim
 
-Sends: DiffusionConnectionEvent
 
-Receives: DiffusionConnectionEvent, DataLoggingRequest
+Sends
++++++
 
-Author: Jannis Schuecker, David Dahmen, Jan Hahne
+DiffusionConnectionEvent
 
-SeeAlso: diffusion_connection
-*/
+Receives
+++++++++
+
+DiffusionConnectionEvent, DataLoggingRequest
+
+See also
+++++++++
+
+diffusion_connection
+
+EndUserDocs */
+
 class siegert_neuron : public Archiving_Node
 {
 
@@ -133,8 +145,8 @@ public:
    * Hiding
    */
   using Node::handle;
-  using Node::sends_secondary_event;
   using Node::handles_test_event;
+  using Node::sends_secondary_event;
 
   void handle( DiffusionConnectionEvent& );
   void handle( DataLoggingRequest& );
@@ -191,7 +203,7 @@ private:
     /** Refractory period in ms. */
     double t_ref_;
 
-    /** Constant input in Hz. */
+    /** Constant input in 1/s. */
     double mean_;
 
     /** Threshold in mV. */

@@ -8,7 +8,7 @@ NEST can be started by typing
 
 ::
 
-   <prefix>/bin/nest
+   <nest_install_dir>
 
 at the command prompt. You should then see something like this:
 
@@ -55,6 +55,17 @@ to find out about NEST’s command-line parameters.
          --verbosity=DEBUG|STATUS|INFO|WARNING|ERROR|FATAL
                                show messages of this priority and above.
          --verbosity=QUIET     turn off all messages.
+
+SLI scripts
+-----------
+
+Scripts can be run by typing:
+::
+
+   <nest_install_dir> <file>
+
+If you are a Vim user and require support for SLI files, please refer to
+our :doc:`../contribute/templates_styleguides/vim_support_sli`.
 
 Supplying SLI scripts with parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

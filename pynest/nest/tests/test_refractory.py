@@ -33,23 +33,14 @@ Details
 -------
 Submit the neuron to a constant excitatory current so that it spikes in the
 [0, 50] ms.
-A ``spike_detector`` is used to detect the time at which the neuron spikes and
+A ``spike_recorder`` is used to detect the time at which the neuron spikes and
 a ``voltmeter`` is then used to make sure the voltage is clamped to ``V_reset``
 during exactly ``t_ref``.
 
 For neurons that do not clamp the potential, use a very large current to
-trigger immediate spiking
+trigger immediate spiking.
 
-Untested models
----------------
-* ``gif_pop_psc_exp``
-* ``hh_cond_exp_traub``
-* ``hh_cond_beta_gap_traub``
-* ``hh_psc_alpha``
-* ``hh_psc_alpha_gap``
-* ``iaf_psc_exp_ps_lossless``
-* ``sli_neuron``
-* ``siegert_neuron``
+For untested models please see the ignore_model list.
 """
 
 
@@ -77,18 +68,23 @@ neurons_with_clamping = [
     "aeif_psc_delta_clopath",
 ]
 
+# Multi-compartment models
+mc_models = [
+    "iaf_cond_alpha_mc",
+]
+
 # Models that cannot be tested
 ignore_model = [
-     "gif_pop_psc_exp",          # This one commits spikes at same time
-     "hh_cond_exp_traub",        # This one does not support V_reset
-     "hh_cond_beta_gap_traub",   # This one does not support V_reset
-     "hh_psc_alpha",             # This one does not support V_reset
-     "hh_psc_alpha_clopath",     # This one does not support V_reset
-     "hh_psc_alpha_gap",         # This one does not support V_reset
-     "iaf_psc_exp_ps_lossless",  # This one use presice times
-     "sli_neuron",               # This one is not optimal for PyNEST
-     "siegert_neuron",           # This one does not connect to voltmeter
-     "step_rate_generator"       # No regular neuron model
+    "gif_pop_psc_exp",           # This one commits spikes at same time
+    "hh_cond_exp_traub",         # This one does not support V_reset
+    "hh_cond_beta_gap_traub",    # This one does not support V_reset
+    "hh_psc_alpha",              # This one does not support V_reset
+    "hh_psc_alpha_clopath",      # This one does not support V_reset
+    "hh_psc_alpha_gap",          # This one does not support V_reset
+    "pp_cond_exp_mc_urbanczik",  # This one does not support V_reset
+    "iaf_psc_exp_ps_lossless",   # This one use presice times
+    "siegert_neuron",            # This one does not connect to voltmeter
+    "step_rate_generator"        # No regular neuron model
 ]
 
 tested_models = [m for m in nest.Models("nodes") if (nest.GetDefaults(
@@ -129,7 +125,7 @@ class TestRefractoryCase(unittest.TestCase):
             'grng_seed': msd + N_vp,
             'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
 
-    def compute_reftime(self, model, sd, vm, neuron):
+    def compute_reftime(self, model, sr, vm, neuron):
         '''
         Compute the refractory time of the neuron.
 
@@ -137,8 +133,8 @@ class TestRefractoryCase(unittest.TestCase):
         ----------
         model : str
           Name of the neuronal model.
-        sd : tuple
-            node ID of the spike detector.
+        sr : tuple
+            node ID of the spike recorder.
         vm : tuple
             node ID of the voltmeter.
         neuron : tuple
@@ -149,7 +145,7 @@ class TestRefractoryCase(unittest.TestCase):
         t_ref_sim : double
             Value of the simulated refractory period.
         '''
-        spike_times = nest.GetStatus(sd, "events")[0]["times"]
+        spike_times = nest.GetStatus(sr, "events")[0]["times"]
 
         if model in neurons_interspike:
             # Spike emitted at next timestep so substract resolution
@@ -162,7 +158,7 @@ class TestRefractoryCase(unittest.TestCase):
 
             # Index of the 2nd spike
             idx_max = np.argwhere(times == spike_times[1])[0][0]
-            name_Vm = "V_m.s" if model == "iaf_cond_alpha_mc" else "V_m"
+            name_Vm = "V_m.s" if model in mc_models else "V_m"
             Vs = nest.GetStatus(vm, "events")[0][name_Vm]
 
             # Get the index at which the spike occured
@@ -191,10 +187,10 @@ class TestRefractoryCase(unittest.TestCase):
             nparams = {"t_ref": t_ref}
             neuron = nest.Create(model, params=nparams)
 
-            name_Vm = "V_m.s" if model == "iaf_cond_alpha_mc" else "V_m"
+            name_Vm = "V_m.s" if model in mc_models else "V_m"
             vm_params = {"interval": resolution, "record_from": [name_Vm]}
             vm = nest.Create("voltmeter", params=vm_params)
-            sd = nest.Create("spike_detector")
+            sr = nest.Create("spike_recorder")
             cg = nest.Create("dc_generator", params={"amplitude": 1200.})
 
             # For models that do not clamp V_m, use very large current to
@@ -211,12 +207,12 @@ class TestRefractoryCase(unittest.TestCase):
             # Connect them and simulate
             nest.Connect(vm, neuron)
             nest.Connect(cg, neuron, syn_spec=add_connect_param.get(model, {}))
-            nest.Connect(neuron, sd)
+            nest.Connect(neuron, sr)
 
             nest.Simulate(simtime)
 
             # Get and compare t_ref
-            t_ref_sim = self.compute_reftime(model, sd, vm, neuron)
+            t_ref_sim = self.compute_reftime(model, sr, vm, neuron)
 
             if model in neurons_with_clamping:
                 t_ref_sim = t_ref_sim - nest.GetStatus(neuron, "t_clamp")[0]

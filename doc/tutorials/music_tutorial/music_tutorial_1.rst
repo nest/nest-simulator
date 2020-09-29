@@ -7,6 +7,11 @@ at runtime. It can be used to couple NEST with other simulators, with
 applications for stimulus generation and data analysis and visualization and
 with custom applications that also use the MUSIC interface.
 
+.. note::
+
+   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+   and cannot be enabled at the same time.
+
 Setup of System
 -----------------
 To use MUSIC with NEST, we first need to ensure MUSIC is installed on our system
@@ -56,7 +61,7 @@ and connections between them.
 Neurons are the basic building blocks, and in NEST they are generally
 spiking point neuron models. Devices are supporting units that for
 instance generate inputs to neurons or record data from them. The
-Poisson spike generator, the spike detector recording device, and the
+Poisson spike generator, the spike recorder recording device, and the
 MUSIC input and output proxies are all devices. Neurons and devices are
 collectively called nodes, and are connected using connections.
 

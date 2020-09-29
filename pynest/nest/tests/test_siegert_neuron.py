@@ -68,10 +68,9 @@ class SiegertNeuronTestCase(unittest.TestCase):
         nest.Connect(self.poisson_generator, self.iaf_psc_delta,
                      syn_spec={'weight': self.J, 'delay': self.dt})
 
-        self.spike_detector = nest.Create(
-            "spike_detector", params={'start': self.start})
+        self.spike_recorder = nest.Create("spike_recorder", params={'start': self.start})
         nest.Connect(
-            self.iaf_psc_delta, self.spike_detector)
+            self.iaf_psc_delta, self.spike_recorder)
 
         # set up driven siegert neuron
 
@@ -86,8 +85,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
             'siegert_neuron', params=siegert_params)
 
         self.siegert_drive = nest.Create(
-            'siegert_neuron', 1,
-            params={'mean': self.rate_ex, 'theta': siegert_params['theta']})
+            'siegert_neuron', 1, params={'mean': self.rate_ex})
         J_mu_ex = neuron_status['tau_m'] * 1e-3 * self.J
         J_sigma_ex = neuron_status['tau_m'] * 1e-3 * self.J ** 2
         syn_dict = {'drift_factor': J_mu_ex, 'diffusion_factor':
@@ -115,7 +113,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         rate_prediction = rate[-1]
 
         # get simulated rate of integrate-and-fire neuron
-        rate_iaf = nest.GetStatus(self.spike_detector)[0][
+        rate_iaf = nest.GetStatus(self.spike_recorder)[0][
             "n_events"] / ((self.simtime - self.start) * 1e-3) / self.N
 
         # test rate prediction against simulated rate of

@@ -31,7 +31,7 @@
     
    Author: Stine B. Vennemo
    FirstVersion: June 2017
-   SeeAlso: test_treaded_spike_detector.sli
+   SeeAlso: test_treaded_spike_recorder.sli
 */
 
 (unittest) run

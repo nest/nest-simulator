@@ -754,11 +754,9 @@ INPUT		=	@PROJECT_SOURCE_DIR@/README.md \
 			@PROJECT_SOURCE_DIR@/models \
 			@PROJECT_SOURCE_DIR@/nest \
 			@PROJECT_SOURCE_DIR@/nestkernel \
-			@PROJECT_SOURCE_DIR@/precise \
 			@PROJECT_SOURCE_DIR@/pynest \
 			@PROJECT_SOURCE_DIR@/sli \
-			@PROJECT_SOURCE_DIR@/testsuite \
-			@PROJECT_SOURCE_DIR@/topology
+			@PROJECT_SOURCE_DIR@/testsuite
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

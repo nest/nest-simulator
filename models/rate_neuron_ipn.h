@@ -44,29 +44,35 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs: neuron, rate
 
-Name: rate_neuron_ipn - Base class for rate model with input noise.
+Short description
++++++++++++++++++
 
-Description:
+Base class for rate model with input noise
+
+Description
++++++++++++
 
 Base class for rate model with input noise of the form
-@f[
-\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+
+.. math::
+
+ \tau dX_i(t) = [ - \lambda X_i(t) + \mu
                 + \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt
                 + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)
-@f]
+
 or
-@f[
-\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+
+.. math::
+
+ \tau dX_i(t) = [ - \lambda X_i(t) + \mu
                 + \text{mult_coupling_ex}( X_i(t) ) \cdot \\
                 \phi( \sum w^{ > 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) \\
                 + \text{mult_coupling_in}( X_i(t) ) \cdot \\
                 \phi( \sum w^{ < 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt \\
                 + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)
-@f]
+
 This template class needs to be instantiated with a class
 containing the following functions:
  - input (nonlinearity that is applied to the input, either psi or phi)
@@ -79,19 +85,22 @@ represents phi) or to each input individually (False, input represents psi).
 In case of multiplicative coupling the nonlinearity is applied separately
 to the summed excitatory and inhibitory inputs if linear_summation=True.
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
        DOI: https://doi.org/10.3389/fninf.2017.00034
-\endverbatim
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
 
-SeeAlso: lin_rate, tanh_rate, threshold_lin_rate
- */
+See also
+++++++++
+
+lin_rate, tanh_rate, threshold_lin_rate
+
+EndUserDocs  */
+
 template < class TNonlinearities >
 class rate_neuron_ipn : public Archiving_Node
 {
@@ -169,6 +178,9 @@ private:
     /** Mean input.*/
     double mu_;
 
+    /** Minimum rate.*/
+    double rectify_rate_;
+
     /** Target of non-linearity.
         True (default): Gain function applied to linearly summed input.
         False: Gain function applied to each input before summation.
@@ -176,7 +188,8 @@ private:
     bool linear_summation_;
 
     /** Should the rate be rectified?.
-        True: If the rate is negative it is set to zero after each time step.
+        True: If the rate is smaller than rectify_rate it is set to rectify_rate
+              after each time step.
         False (default): No rectification.
     **/
     bool rectify_output_;

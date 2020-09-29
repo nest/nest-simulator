@@ -105,8 +105,8 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
   /voltmeter Create /vm Set
   vm << /time_in_steps true /interval h >> SetStatus
 
-  /spike_detector Create /sd Set
-  sd << /time_in_steps true >> SetStatus
+  /spike_recorder Create /sr Set
+  sr << /time_in_steps true >> SetStatus
 
 
   /static_synapse 
@@ -119,8 +119,8 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
 
   vm neuron2 Connect
 
-  neuron1 sd Connect
-  neuron2 sd Connect
+  neuron1 sr Connect
+  neuron2 sr Connect
 
   simtime Simulate
 
@@ -156,8 +156,8 @@ end
 % Expected output of this program:
 % 
 % The output send to std::cout is a superposition of the output of  
-% the voltmeter and the spike detector. The voltmeter ist connected 
-% to the postsynaptic neuron and the spike detector to both neurons.
+% the voltmeter and the spike recorder. The voltmeter ist connected 
+% to the postsynaptic neuron and the spike recorder to both neurons.
 %
 % 
 % min_delay (in ms)

@@ -684,15 +684,11 @@ class TestNodeCollection(unittest.TestCase):
                  [False for _ in range(len(n))],
                  [True, False, True, False, True],
                  ]
-        fail_cases = [([True for _ in range(len(n) - 1)], IndexError),  # Too few bools
-                      ([True for _ in range(len(n) + 1)],
-                       IndexError),  # Too many bools
-                      # Too many dimensions
-                      ([[True, False], [True, False]], TypeError),
-                      # Not all indices are bools
-                      ([True, False, 2.5, False, True], TypeError),
-                      # Mixing bools and ints
-                      ([1, False, 1, False, 1], TypeError),
+        fail_cases = [([True for _ in range(len(n)-1)], IndexError),  # Too few bools
+                      ([True for _ in range(len(n)+1)], IndexError),  # Too many bools
+                      ([[True, False], [True, False]], TypeError),  # Too many dimensions
+                      ([True, False, 2.5, False, True], TypeError),  # Not all indices are bools
+                      ([1, False, 1, False, 1], TypeError),  # Mixing bools and ints
                       ]
         if HAVE_NUMPY:
             cases += [np.array(c) for c in cases]

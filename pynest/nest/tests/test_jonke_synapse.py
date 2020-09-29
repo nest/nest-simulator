@@ -66,6 +66,10 @@ class JonkeSynapseTest(unittest.TestCase):
         }
 
     def test_weight_drift(self):
+        """
+        Runs NEST simulation, records the spikes and weight changes.
+        Based on the recorded spikes, the weight changes are confirmed in Python.
+        """
         pre_spikes, post_spikes, weight_by_nest = self.do_the_nest_simulation()
         weight_reproduced_independently = self.reproduce_weight_drift(
             pre_spikes, post_spikes,

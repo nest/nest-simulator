@@ -22,7 +22,7 @@
 
 #include "node_collection.h"
 #include "node.h"
-#include "topology.h"
+#include "spatial.h"
 
 // includes from sli
 #include "sharedptrdatum.h"

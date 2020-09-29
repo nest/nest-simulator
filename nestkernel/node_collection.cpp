@@ -121,7 +121,11 @@ NodeCollection::create( const IntVectorDatum& node_idsdatum )
   {
     node_ids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
-  std::sort( node_ids.begin(), node_ids.end() );
+
+  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
+  {
+    throw BadProperty( "Node IDs must be sorted in ascending order" );
+  }
   return NodeCollection::create_( node_ids );
 }
 
@@ -139,7 +143,11 @@ NodeCollection::create( const TokenArray& node_idsarray )
   {
     node_ids.push_back( static_cast< index >( getValue< long >( node_id_token ) ) );
   }
-  std::sort( node_ids.begin(), node_ids.end() );
+
+  if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
+  {
+    throw BadProperty( "Node IDs must be sorted in ascending order" );
+  }
   return NodeCollection::create_( node_ids );
 }
 
@@ -157,9 +165,11 @@ NodeCollection::create( const std::vector< index >& node_ids_vector )
   {
     return NodeCollection::create_();
   }
-  auto node_ids = node_ids_vector; // Create a copy to be able to sort
-  std::sort( node_ids.begin(), node_ids.end() );
-  return NodeCollection::create_( node_ids );
+  if ( not std::is_sorted( node_ids_vector.begin(), node_ids_vector.end() ) )
+  {
+    throw BadProperty( "Indices must be sorted in ascending order" );
+  }
+  return NodeCollection::create_( node_ids_vector );
 }
 
 NodeCollectionPTR
@@ -177,7 +187,7 @@ NodeCollection::create_( const std::vector< index >& node_ids )
 
   std::vector< NodeCollectionPrimitive > parts;
 
-  index old_node_id = 0;
+  index old_node_id = current_first;
   for ( auto node_id = ++( node_ids.begin() ); node_id != node_ids.end(); ++node_id )
   {
     if ( *node_id == old_node_id )
@@ -899,7 +909,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     index primitive_last = 0;
 
     size_t primitive_size = 0;
-    NodeIDTriple gt;
+    NodeIDTriple first_in_primitive = *begin();
 
     std::vector< std::string > string_vector;
 
@@ -912,15 +922,15 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
         if ( it != begin() )
         {
           // Need to count the primitive, so can't start at begin()
-          out << "\n" + space << "model=" << kernel().model_manager.get_model( gt.model_id )->get_name()
+          out << "\n" + space << "model=" << kernel().model_manager.get_model( first_in_primitive.model_id )->get_name()
               << ", size=" << primitive_size << ", ";
           if ( primitive_size == 1 )
           {
-            out << "first=" << gt.node_id << ", last=" << gt.node_id << ";";
+            out << "first=" << first_in_primitive.node_id << ", last=" << first_in_primitive.node_id << ";";
           }
           else
           {
-            out << "first=" << gt.node_id << ", last=";
+            out << "first=" << first_in_primitive.node_id << ", last=";
             out << primitive_last;
             if ( step_ > 1 )
             {
@@ -929,7 +939,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
           }
         }
         primitive_size = 1;
-        gt = *it;
+        first_in_primitive = *it;
       }
       else
       {
@@ -940,15 +950,15 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     }
 
     // Need to also print the last primitive
-    out << "\n" + space << "model=" << kernel().model_manager.get_model( gt.model_id )->get_name()
+    out << "\n" + space << "model=" << kernel().model_manager.get_model( first_in_primitive.model_id )->get_name()
         << ", size=" << primitive_size << ", ";
     if ( primitive_size == 1 )
     {
-      out << "first=" << gt.node_id << ", last=" << gt.node_id;
+      out << "first=" << first_in_primitive.node_id << ", last=" << first_in_primitive.node_id;
     }
     else
     {
-      out << "first=" << gt.node_id << ", last=";
+      out << "first=" << first_in_primitive.node_id << ", last=";
       out << primitive_last;
       if ( step_ > 1 )
       {

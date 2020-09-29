@@ -1,5 +1,5 @@
 /*
- *  spike_detector.h
+ *  spike_recorder.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SPIKE_DETECTOR_H
-#define SPIKE_DETECTOR_H
+#ifndef SPIKE_RECORDER_H
+#define SPIKE_RECORDER_H
 
 // C++ includes:
 #include <vector>
@@ -43,26 +43,26 @@ Collecting spikes from neurons
 Description
 +++++++++++
 
-The most universal collector device is the ``spike_detector``, which
+The most universal collector device is the ``spike_recorder``, which
 collects and records all *spikes* it receives from neurons that are
-connected to it. Each spike received by the spike detector is
+connected to it. Each spike received by the spike recorder is
 immediately handed over to the selected recording backend for further
 processing.
 
 Any node from which spikes are to be recorded, must be connected to
-the spike detector using the standard ``Connect`` command. The
+the spike recorder using the standard ``Connect`` command. The
 connection ``weights`` and ``delays`` are ignored by the spike
-detector, which means that the spike detector records the time of
+recorder, which means that the spike recorder records the time of
 spike creation rather than that of their arrival.
 
 ::
 
    >>> neurons = nest.Create('iaf_psc_alpha', 5)
-   >>> sd = nest.Create('spike_detector')
-   >>> nest.Connect(neurons, sd)
+   >>> sr = nest.Create('spike_recorder')
+   >>> nest.Connect(neurons, sr)
 
 The call to ``Connect`` will fail if the connection direction is
-reversed (i.e., connecting *sd* to *neurons*).
+reversed (i.e., connecting *sr* to *neurons*).
 
 EndUserDocs */
 
@@ -70,15 +70,15 @@ namespace nest
 {
 
 /**
- * Class spike_detector
+ * Class spike_recorder
  */
 
-class spike_detector : public RecordingDevice
+class spike_recorder : public RecordingDevice
 {
 
 public:
-  spike_detector();
-  spike_detector( const spike_detector& );
+  spike_recorder();
+  spike_recorder( const spike_recorder& );
 
   bool
   has_proxies() const
@@ -123,7 +123,7 @@ private:
 };
 
 inline port
-spike_detector::handles_test_event( SpikeEvent&, rport receptor_type )
+spike_recorder::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -133,11 +133,11 @@ spike_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline SignalType
-spike_detector::receives_signal() const
+spike_recorder::receives_signal() const
 {
   return ALL;
 }
 
 } // namespace
 
-#endif /* #ifndef SPIKE_DETECTOR_H */
+#endif /* #ifndef SPIKE_RECORDER_H */

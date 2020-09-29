@@ -79,18 +79,18 @@ SeeAlso: testsuite::test_iaf_i0, testsuite::test_getrng_neuron
     1000.0 delay Connect
   } forall
 
-  /spike_detector << /time_in_steps true >> Create /sd Set
+  /spike_recorder << /time_in_steps true >> Create /sr Set
 
   /parrot_neuron Create /pn Set
 
   neurons pn Connect
-  pn sd Connect
+  pn sr Connect
 
   simtime Simulate
 
   pn /local get
   {
-    sd [/events/times] get cva
+    sr [/events/times] get cva
   } if
 
 } distributed_invariant_assert_or_die

@@ -25,7 +25,7 @@
 
 #include "ntree.h"
 
-// Includes from topology:
+// Includes from spatial:
 #include "mask.h"
 
 namespace nest

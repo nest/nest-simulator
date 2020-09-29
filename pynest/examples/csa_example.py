@@ -31,7 +31,7 @@ libneurosim. For details, see [1]_.
 See Also
 ~~~~~~~~~~
 
-:doc:`csa_topology_example`
+:doc:`csa_spatial_example`
 
 References
 ~~~~~~~~~~~~

@@ -110,7 +110,7 @@ set( models_sources
     sigmoid_rate_gg_1998.h sigmoid_rate_gg_1998.cpp
     sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp
     sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp
-    spike_detector.h spike_detector.cpp
+    spike_recorder.h spike_recorder.cpp
     spike_generator.h spike_generator.cpp
     spin_detector.h spin_detector.cpp
     static_connection.h

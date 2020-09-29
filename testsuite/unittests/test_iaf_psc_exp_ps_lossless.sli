@@ -110,16 +110,16 @@ dc_gen << /amplitude 1000. >> SetStatus
 
 /voltmeter << /time_in_steps true /interval h >> Create /vm Set
 
-/spike_detector Create /sp_det Set
+/spike_recorder Create /sr Set
 
 
 dc_gen neuron 1.0 h Connect
 vm neuron     1.0 h Connect
-neuron sp_det 1.0 h Connect
+neuron sr     1.0 h Connect
 
 8 Simulate
 
-sp_det /events get /times get First stack    % prints spike time
+sr /events get /times get First stack    % prints spike time
 
 {                                             % reference data
  dup Transpose First /test_times Set         % times of reference 
@@ -136,8 +136,8 @@ sp_det /events get /times get First stack    % prints spike time
 % Expected output of this program:
 %
 % The output send to std::cout is a superposition of the output of
-% the voltmeter and the spike detector. Both, voltmeter and spike
-% detector are connected to the same neuron.
+% the voltmeter and the spike recorder. Both, voltmeter and spike
+% recorder are connected to the same neuron.
 %
 % time (in steps)  voltage (in mV)
 [
@@ -263,14 +263,14 @@ dc_gen nrn_spike 1. 1. Connect
 
 %read out spike response of nrns:
 
-/spike_detector Create /det_nospike Set
-nrn_nospike det_nospike Connect
+/spike_recorder Create /sr_nospike Set
+nrn_nospike sr_nospike Connect
 
-/spike_detector Create /det_missingspike Set
-nrn_missingspike det_missingspike Connect
+/spike_recorder Create /sr_missingspike Set
+nrn_missingspike sr_missingspike Connect
 
-/spike_detector Create /det_spike Set
-nrn_spike det_spike Connect
+/spike_recorder Create /sr_spike Set
+nrn_spike sr_spike Connect
 
 
 2 Simulate
@@ -289,17 +289,17 @@ dc_gen << /amplitude 0. >> SetStatus
 
 % get spike times
 
-det_nospike /events get /times get cva    % array of spike times (this one should be empty)
-  Total                                   % sum of array elements. works also for empty array
+sr_nospike /events get /times get cva    % array of spike times (this one should be empty)
+  Total                                  % sum of array elements. works also for empty array
   6 ToUnitTestPrecision
   /time_nospike Set
 
-det_missingspike /events get /times get cva
+sr_missingspike /events get /times get cva
   Total
   6 ToUnitTestPrecision
   /time_missingspike Set
 
-det_spike /events get /times get cva
+sr_spike /events get /times get cva
   Total
   6 ToUnitTestPrecision
   /time_spike Set
@@ -308,5 +308,3 @@ det_spike /events get /times get cva
 { time_nospike 0 eq } assert_or_die
 { time_missingspike 4.01442 eq } assert_or_die
 { time_spike 4.00659 eq } assert_or_die
-
-

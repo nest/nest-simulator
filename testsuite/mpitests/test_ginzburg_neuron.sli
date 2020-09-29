@@ -26,7 +26,7 @@ Name: testsuite::test_ginzburg_neuron - Test parallel generation of Poissonian t
 Synopsis: nest_indirect test_ginzburg_neuron.sli -> -
 
 Description:
-   Creates ginzburg neurons and sends spikes to spike detector. Assert invariant
+   Creates ginzburg neurons and sends spikes to spike recorder. Assert invariant
    results for fixed VP number. This is a partial response to #551. May be adapted
    to other generators.
 
@@ -54,17 +54,17 @@ skip_if_not_threaded
     ;
     /ginzburg_neuron << /tau_m 1.0 >> Create
   } Table def
-  /sd /spike_detector Create def
+  /sr /spike_recorder Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
   gens { sg exch Connect } forall
   [ gens pnet ] { Connect } ScanThread
-  pnet { sd Connect } forall
+  pnet { sr Connect } forall
   
   20. Simulate
 
   % get events, replace vectors with SLI arrays    
-  /ev sd /events get def
+  /ev sr /events get def
   ev keys { /k Set ev dup k get cva k exch put } forall
   ev 
 } distributed_process_invariant_events_assert_or_die

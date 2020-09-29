@@ -109,7 +109,7 @@
 #include "correlomatrix_detector.h"
 #include "correlospinmatrix_detector.h"
 #include "multimeter.h"
-#include "spike_detector.h"
+#include "spike_recorder.h"
 #include "spin_detector.h"
 #include "volume_transmitter.h"
 #include "weight_recorder.h"
@@ -184,13 +184,6 @@ ModelsModule::name( void ) const
   return std::string( "NEST Standard Models Module" ); // Return name of the module
 }
 
-const std::string
-ModelsModule::commandstring( void ) const
-{
-  // TODO: Move models-init.sli to sli_neuron....
-  return std::string( "(models-init) run" );
-}
-
 //-------------------------------------------------------------------------------------
 
 void
@@ -260,7 +253,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
   kernel().model_manager.register_node_model< spike_dilutor >( "spike_dilutor" );
 
-  kernel().model_manager.register_node_model< spike_detector >( "spike_detector" );
+  kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
   kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
   kernel().model_manager.register_node_model< multimeter >( "multimeter" );

@@ -50,7 +50,7 @@ ResetKernel
      /resolution h
    >> SetKernelStatus
 
-/spike_detector Create /sd Set
+/spike_recorder Create /sr Set
 
 
 /iaf_psc_alpha_ps Create /neuron Set
@@ -60,7 +60,7 @@ ResetKernel
    %     ----------
    %     |
    %     v
-neuron sd Connect
+neuron sr Connect
 
 
 1.0 Simulate

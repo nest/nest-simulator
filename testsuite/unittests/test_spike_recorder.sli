@@ -1,5 +1,5 @@
 /*
- *  test_spike_detector.sli
+ *  test_spike_recorder.sli
  *
  *  This file is part of NEST.
  *
@@ -22,9 +22,9 @@
 
 
 /** @BeginDocumentation
-   Name: testsuite::test_spike_detector - sli script to test spike_detector device
+   Name: testsuite::test_spike_recorder - sli script to test spike_recorder device
 
-   Synopsis: (test_spike_detector) run
+   Synopsis: (test_spike_recorder) run
 
    Description:
  
@@ -57,15 +57,15 @@ sg <<
      /precise_times true    % send spikes with precise offset
    >> SetStatus     
 
-/spike_detector Create /sd Set
+/spike_recorder Create /sr Set
 
-sg sd Connect
+sg sr Connect
 
 % must simulate to 8.0 to record 6.0 spike when using 1.0 resolution
 8.0 Simulate
 
 % get maximum relative error in measure times
-sd [ /events /times ] get cva 
+sr [ /events /times ] get cva 
 spk_tms sub spk_tms div { abs } Map Max
 1e-15 lt
 

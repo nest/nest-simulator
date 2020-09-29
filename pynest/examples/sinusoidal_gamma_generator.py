@@ -62,7 +62,7 @@ nest.SetKernelStatus({'resolution': 0.01})
 # Then we create two instances of the ``sinusoidal_gamma_generator`` with two
 # different orders of the underlying gamma process using ``Create``. Moreover,
 # we create devices to record firing rates (``multimeter``) and spikes
-# (``spike_detector``) and connect them to the generators using ``Connect``.
+# (``spike_recorder``) and connect them to the generators using ``Connect``.
 
 
 g = nest.Create('sinusoidal_gamma_generator', n=2,
@@ -72,7 +72,7 @@ g = nest.Create('sinusoidal_gamma_generator', n=2,
                          'frequency': 10.0, 'phase': 0.0, 'order': 10.0}])
 
 m = nest.Create('multimeter', 2, {'interval': 0.1, 'record_from': ['rate']})
-s = nest.Create('spike_detector', 2)
+s = nest.Create('spike_recorder', 2)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
@@ -81,7 +81,7 @@ nest.Simulate(200)
 
 
 ###############################################################################
-# After simulating, the spikes are extracted from the ``spike_detector`` using
+# After simulating, the spikes are extracted from the ``spike_recorder`` using
 # ``GetStatus`` and plots are created with panels for the PST and ISI histograms.
 
 colors = ['b', 'g']
@@ -117,7 +117,7 @@ nest.SetKernelStatus({'local_num_threads': 4})
 ###############################################################################
 # First, a ``sinusoidal_gamma_generator`` with ``individual_spike_trains`` set to
 # `True` is created and connected to 20 parrot neurons whose spikes are
-# recorded by a spike detector. After simulating, a raster plot of the spikes
+# recorded by a spike recorder. After simulating, a raster plot of the spikes
 # is created.
 
 g = nest.Create('sinusoidal_gamma_generator',
@@ -125,7 +125,7 @@ g = nest.Create('sinusoidal_gamma_generator',
                         'frequency': 10.0, 'phase': 0.0, 'order': 3.,
                         'individual_spike_trains': True})
 p = nest.Create('parrot_neuron', 20)
-s = nest.Create('spike_detector')
+s = nest.Create('spike_recorder')
 
 nest.Connect(g, p)
 nest.Connect(p, s)
@@ -154,7 +154,7 @@ g = nest.Create('sinusoidal_gamma_generator',
                         'frequency': 10.0, 'phase': 0.0, 'order': 3.,
                         'individual_spike_trains': False})
 p = nest.Create('parrot_neuron', 20)
-s = nest.Create('spike_detector')
+s = nest.Create('spike_recorder')
 
 nest.Connect(g, p)
 nest.Connect(p, s)
@@ -181,13 +181,13 @@ def step(t, n, initial, after, seed=1, dt=0.05):
                           "rng_seeds": [256 * seed + 2]})
 
     g = nest.Create('sinusoidal_gamma_generator', n, params=initial)
-    sd = nest.Create('spike_detector')
-    nest.Connect(g, sd)
+    sr = nest.Create('spike_recorder')
+    nest.Connect(g, sr)
     nest.Simulate(t / 2)
     g.set(after)
     nest.Simulate(t / 2)
 
-    return sd.events
+    return sr.events
 
 
 ###############################################################################

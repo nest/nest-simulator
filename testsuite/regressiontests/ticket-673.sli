@@ -45,10 +45,10 @@ M_ERROR setverbosity
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus
   << /I_e 1000. /t_ref tref >> Create /n Set
-  /spike_detector Create /d Set
-  n d Connect
+  /spike_recorder Create /sr Set
+  n sr Connect
   20. Simulate
-  d /events get /times get 1 get
+  sr /events get /times get 1 get
 }
 def
 

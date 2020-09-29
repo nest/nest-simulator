@@ -77,7 +77,7 @@ neuron.I_e = 376.0
 # ``Connect`` has different variants. Plain ``Connect`` just takes the
 # handles of pre- and post-synaptic nodes and uses the default values
 # for weight and delay. Note that the connection direction for the voltmeter is
-# reversed compared to the spike detector, because it observes the
+# reversed compared to the spike recorder, because it observes the
 # neuron instead of receiving events from it. Thus, ``Connect``
 # reflects the direction of signal flow in the simulation kernel
 # rather than the physical process of inserting an electrode into the

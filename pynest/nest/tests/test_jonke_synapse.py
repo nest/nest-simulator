@@ -113,18 +113,10 @@ class JonkeSynapseTest(unittest.TestCase):
         # append some hardcoded spike sequences:
         # pre: 1       5 6 7   9    11 12 13
         # post:  2 3 4       8 9 10    12
-        (
-            hardcoded_pre_times,
-            hardcoded_post_times
-        ) = [
-            [
-                self.simulation_duration - self.hardcoded_trains_length + t
-                for t in train
-            ] for train in (
-                (1, 5, 6, 7, 9, 11, 12, 13),
-                (2, 3, 4, 8, 9, 10, 12)
-            )
-        ]
+        hardcoded_pre_times, hardcoded_post_times = [[self.simulation_duration - self.hardcoded_trains_length + t
+                                                      for t in train]
+                                                     for train in ((1, 5, 6, 7, 9, 11, 12, 13),
+                                                                   (2, 3, 4, 8, 9, 10, 12))]
 
         spike_senders = nest.Create(
             "spike_generator",

@@ -40,7 +40,7 @@ Description:
   7) ensures that multimeter with offset behave correctly after initial simulation
      time longer than offset
 
-Author: Barna Zajzon, 2017-03-10 
+Author: Barna Zajzon, 2017-03-10, Stine B. Vennemo, September 2020
  */
 
 (unittest) run

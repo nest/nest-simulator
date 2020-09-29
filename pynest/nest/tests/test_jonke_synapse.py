@@ -107,7 +107,8 @@ class JonkeSynapseTest(unittest.TestCase):
         # While the random sequences, fairly long, would supposedly
         # reveal small differences in the weight change between NEST
         # and ours, some low-probability events (say, coinciding
-        # spikes) can well not have occured. To generate and
+        # spikes) can well not have occurred. To generate and
+
         # test every possible combination of pre/post precedence, we
         # append some hardcoded spike sequences:
         # pre: 1       5 6 7   9    11 12 13

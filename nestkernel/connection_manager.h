@@ -97,7 +97,7 @@ public:
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_spec );
+    const std::vector< DictionaryDatum >& syn_specs );
 
   /**
    * Create connections.

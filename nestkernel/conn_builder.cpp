@@ -56,6 +56,8 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , make_symmetric_( false )
   , creates_symmetric_connections_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
+  , use_pre_synaptic_element_( false )
+  , use_post_synaptic_element_( false )
   , param_dicts_()
   , dummy_param_dicts_()
   , parameters_requiring_skipping_()
@@ -575,11 +577,6 @@ nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< Dictionary
   else if ( have_one_sp_key )
   {
     throw BadProperty( "Structural plasticity requires both a pre and post synaptic element." );
-  }
-  else
-  {
-    use_pre_synaptic_element_ = false;
-    use_post_synaptic_element_ = false;
   }
 }
 

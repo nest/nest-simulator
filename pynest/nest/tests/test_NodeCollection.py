@@ -538,8 +538,7 @@ class TestNodeCollection(unittest.TestCase):
                         conns['port'][i]]
                        for i in range(len(nest.GetConnections(n[0])))]
 
-        ref = [[1, 1, 0, expected_syn_id, 0], [
-            1, 2, 0, expected_syn_id, 1], [1, 3, 0, expected_syn_id, 2]]
+        ref = [[1, 1, 0, expected_syn_id, 0], [1, 2, 0, expected_syn_id, 1], [1, 3, 0, expected_syn_id, 2]]
         for conn, conn_ref in zip(connections, ref):
             self.assertEqual(conn, conn_ref)
 

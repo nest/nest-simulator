@@ -90,12 +90,15 @@ configure it:
 Standard configuration
 -------------------------
 
-To install the packages required for the standard installation use the following
+To install the packages required for the standard installation, use the following
 command line::
 
     sudo apt-get install build-essential autoconf automake libtool libltdl7-dev \
-    libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy \
+    libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev python3-numpy \
     python3-scipy python3-matplotlib ipython3
+
+This command installs some Python 3 libraries. Python 3 support was added with NEST 2.4; some Python 2 libraries
+are not available anymore in modern Ubuntu.
 
 Then configure NEST using::
 

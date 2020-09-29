@@ -97,8 +97,8 @@ command line::
     libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev python3-numpy \
     python3-scipy python3-matplotlib ipython3
 
-This command installs some Python 3 libraries. Python 3 support was added with NEST 2.4; some Python 2 libraries
-are not available anymore in modern Ubuntu.
+This command installs some Python 3 libraries. Python 3 support was added with
+NEST 2.4; some Python 2 libraries are not available anymore in modern Ubuntu.
 
 Then configure NEST using::
 

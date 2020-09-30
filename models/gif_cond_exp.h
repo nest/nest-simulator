@@ -59,7 +59,7 @@ Description
 +++++++++++
 
 gif_psc_exp is the generalized integrate-and-fire neuron according to
-Mensi et al. (2012) and Pozzorini et al. (2015), with post-synaptic
+Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with post-synaptic
 conductances in the form of truncated exponentials.
 
 This model features both an adaptation current and a dynamic threshold for

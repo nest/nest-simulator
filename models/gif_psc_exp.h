@@ -73,7 +73,7 @@ positive or negative):
 
  \eta_i = \eta_i + q_{\eta_i} \text{ (in case of spike emission).}
 
-Neuron produces spikes STOCHASTICALLY according to a point process with the
+Neuron produces spikes stochastically according to a point process with the
 firing intensity:
 
 .. math::

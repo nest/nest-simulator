@@ -219,26 +219,27 @@ nest.CopyModel("static_synapse", "inhibitory",
                {"weight": J_in, "delay": delay})
 
 # Batch connect (prototype)
-nest.Connect([nest.AllToAll(source=noise,
-                            target=nodes_ex,
-                            syn_spec="excitatory"),
-              nest.AllToAll(source=noise,
-                            target=nodes_in,
-                            syn_spec="excitatory"),
-              nest.AllToAll(source=nodes_ex[:N_rec],
-                            target=espikes,
-                            syn_spec="excitatory"),
-              nest.AllToAll(source=nodes_in[:N_rec],
-                            target=ispikes,
-                            syn_spec="excitatory"),
-              nest.FixedIndegree(source=nodes_ex,
-                                 target=nodes_ex + nodes_in,
-                                 indegree=CE,
-                                 syn_spec="excitatory"),
-              nest.FixedIndegree(source=nodes_in,
-                                 target=nodes_ex + nodes_in,
-                                 indegree=CI,
-                                 syn_spec="inhibitory")])
+nest.projections.Connect_immediately(
+    [nest.projections.AllToAll(source=noise,
+                               target=nodes_ex,
+                               synapse_model="excitatory"),
+     nest.projections.AllToAll(source=noise,
+                               target=nodes_in,
+                               synapse_model="excitatory"),
+     nest.projections.AllToAll(source=nodes_ex[:N_rec],
+                               target=espikes,
+                               synapse_model="excitatory"),
+     nest.projections.AllToAll(source=nodes_in[:N_rec],
+                               target=ispikes,
+                               synapse_model="excitatory"),
+     nest.projections.FixedIndegree(source=nodes_ex,
+                                    target=nodes_ex + nodes_in,
+                                    indegree=CE,
+                                    synapse_model="excitatory"),
+     nest.projections.FixedIndegree(source=nodes_in,
+                                    target=nodes_ex + nodes_in,
+                                    indegree=CI,
+                                    synapse_model="inhibitory")])
 
 ###############################################################################
 # Storage of the time point after the buildup of the network in a variable.

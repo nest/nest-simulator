@@ -37,6 +37,7 @@ from . import random                  # noqa
 from . import math                    # noqa
 from . import spatial_distributions   # noqa
 from . import logic                   # noqa
+from . import projections             # noqa
 from . import spatial                 # noqa needs to be imported last because of documentation generation
 
 try:

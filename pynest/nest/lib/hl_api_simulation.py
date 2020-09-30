@@ -178,7 +178,7 @@ def ResetKernel():
 
     sr('ResetKernel')
 
-    from .hl_api_batch_connect import projection_collection
+    from ..projections.hl_api_projections import projection_collection
     projection_collection.reset()
 
 

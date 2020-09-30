@@ -82,7 +82,8 @@ class NESTErrors(metaclass=NESTMappedException):
 
             Parameters:
             -----------
-            message: full error message to report.
+            message: str
+                full error message to report.
             """
 
             Exception.__init__(self, message)

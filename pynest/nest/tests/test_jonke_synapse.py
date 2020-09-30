@@ -38,32 +38,33 @@ class JonkeSynapseTest(unittest.TestCase):
     and comparing the actual weight change to the expected one.
     """
 
+    resolution = 0.1  # [ms]
+    presynaptic_firing_rate = 20.0  # [Hz]
+    postsynaptic_firing_rate = 20.0  # [Hz]
+    simulation_duration = 1e+4  # [ms]
+    hardcoded_trains_length = 15.  # [ms]
+    synapse_parameters = {
+        "synapse_model": "jonke_synapse",
+        "receptor_type": 1,
+        "delay": self.resolution,
+        # initial weight
+        "weight": 2.0
+    }
+    synapse_constants = {
+        # STDP constants
+        "lambda": 0.1 * np.e,
+        "alpha": 1.0 / np.e,
+        "beta": 0.0,
+        "mu_plus": -1.0,
+        "mu_minus": 0.0,
+        "tau_plus": 36.8,
+        "Wmax": 100.0,
+    }
+    neuron_parameters = {
+        "tau_minus": 33.7
+    }
     def setUp(self):
-        self.resolution = 0.1  # [ms]
-        self.presynaptic_firing_rate = 20.0  # [Hz]
-        self.postsynaptic_firing_rate = 20.0  # [Hz]
-        self.simulation_duration = 1e+4  # [ms]
-        self.hardcoded_trains_length = 15.  # [ms]
-        self.synapse_parameters = {
-            "synapse_model": "jonke_synapse",
-            "receptor_type": 1,
-            "delay": self.resolution,
-            # initial weight
-            "weight": 2.0
-        }
-        self.synapse_constants = {
-            # STDP constants
-            "lambda": 0.1 * np.e,
-            "alpha": 1.0 / np.e,
-            "beta": 0.0,
-            "mu_plus": -1.0,
-            "mu_minus": 0.0,
-            "tau_plus": 36.8,
-            "Wmax": 100.0,
-        }
-        self.neuron_parameters = {
-            "tau_minus": 33.7
-        }
+       pass
 
     def test_weight_drift(self):
         """
@@ -130,14 +131,14 @@ class JonkeSynapseTest(unittest.TestCase):
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]
 
-        # The detector is to save the randomly generated spike trains.
-        spike_detector = nest.Create("spike_detector")
+        # The recorder is to save the randomly generated spike trains.
+        spike_recorder = nest.Create("spike_recorder")
 
         nest.Connect(presynaptic_generator + pre_spike_generator, presynaptic_neuron,
                      syn_spec={"synapse_model": "static_synapse"})
         nest.Connect(postsynaptic_generator + post_spike_generator, postsynaptic_neuron,
                      syn_spec={"synapse_model": "static_synapse"})
-        nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_detector,
+        nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_recorder,
                      syn_spec={"synapse_model": "static_synapse"})
 
         # The synapse of interest itself

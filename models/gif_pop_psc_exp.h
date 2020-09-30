@@ -54,13 +54,13 @@ This model simulates a population of spike-response model neurons with
 multi-timescale adaptation and exponential postsynaptic currents, as
 described in Schwalger et al. (2017) [1]_.
 
-The single neuron model is defined by the hazard function
+The single neuron model is defined by the hazard function:
 
 .. math::
 
  lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ]
 
-After each spike the membrane potential V_m is reset to V_reset. Spike
+After each spike, the membrane potential V_m is reset to V_reset. Spike
 frequency
 adaptation is implemented by a set of exponentially decaying traces, the
 sum of which is E_sfa. Upon a spike, all adaptation traces are incremented

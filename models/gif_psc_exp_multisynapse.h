@@ -60,7 +60,7 @@ differential equation:
 
 where each :math:`\eta_i` is a spike-triggered current (stc), and the neuron
 model can have arbitrary number of them.
-Dynamic of each :math`\eta_i` is described by:
+Dynamic of each :math:`\eta_i` is described by:
 
 .. math::
 
@@ -73,7 +73,7 @@ positive or negative):
 
  \eta_i = \eta_i + q_{\eta_i} \text{ (in case of spike emission).}
 
-Neuron produces spikes STOCHASTICALLY according to a point process with the
+Neuron produces spikes stochastically according to a point process with the
 firing intensity:
 
 .. math::
@@ -86,20 +86,20 @@ where :math:`V_T(t)` is a time-dependent firing threshold:
 
  V_T(t) = V_{T_star} + \gamma_1(t) + \gamma_2(t) + \ldots + \gamma_m(t)
 
-where :math:` \gamma_i` is a kernel of spike-frequency adaptation (sfa), and the
+where :math:`\gamma_i` is a kernel of spike-frequency adaptation (sfa), and the
 neuron model can have arbitrary number of them.
-Dynamic of each :math`\gamma_i` is described by:
+Dynamic of each :math:`\gamma_i` is described by:
 
 .. math::
 
-\tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
+   \tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
 
 .. math::
 
-\gamma_i = \gamma_i + q_{\gamma_i}  \text{ (in case of spike emission).}
+   \gamma_i = \gamma_i + q_{\gamma_i}  \text{ (in case of spike emission).}
 
 
 Note:
@@ -117,7 +117,7 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
   q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} * (1 - \exp( -\tau_{ref} /
    \tau_\eta ))
 
-  The same formula applies for :math:`q_{\gamma}`.
+The same formula applies for :math:`q_{\gamma}`.
 
 On the postsynapic side, there can be arbitrarily many synaptic time constants
 (gif_psc_exp has exactly two: tau_syn_ex and tau_syn_in). This can be reached

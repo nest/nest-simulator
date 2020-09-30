@@ -116,8 +116,7 @@ class TestSynapseCollection(unittest.TestCase):
         all_values = conns.get()
 
         expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func(
-            'synapsedict')[expected_syn_model]
+        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
 
         target_ref = [1, 2, 1, 2]
         dpw_ref = {'delay': [1., 1., 1., 1.],

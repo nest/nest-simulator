@@ -365,7 +365,7 @@ One common approach to reducing the effect of boundaries on simulations
 is to introduce *periodic boundary conditions*, so that the rightmost
 elements on a grid are considered nearest neighbors to the leftmost
 elements, and the topmost to the bottommost. The flat layer becomes the
-surface of a torus.  :numref:`fig_player` illustrates this for a
+surface of a torus. :numref:`fig_player` illustrates this for a
 one-dimensional layer, which turns from a line to a ring upon
 introduction of periodic boundary conditions.
 

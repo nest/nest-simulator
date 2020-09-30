@@ -127,9 +127,9 @@ Spikes between neurons
   exchange mechanism**.
 
 * Neuron update and spike generation in the `source neuron` and spike delivery
-  to the `target neuron` may be handled by **different virtual process**.
+  to the `target neuron` may be handled by **different virtual processes**.
 
-* But the virtual process assigned to the `target_neuron`, always handles the corresponding spike delivery
+* But the virtual process assigned to the `target_neuron` always handles the corresponding spike delivery
   (see property ``vp`` in the status dictionary).
 
 Spikes between neurons and devices

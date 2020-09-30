@@ -28,9 +28,9 @@ the basis of the network used in [1]_.
 In contrast to ``brunel-alpha-numpy.py``, this variant uses NEST's builtin
 connection routines to draw the random connections instead of NumPy.
 
-When connecting the network customary synapse models are used, which
+When connecting the network, customary synapse models are used, which
 allow for querying the number of created synapses. Using spike
-recorders the average firing rates of the neurons in the populations
+recorders, the average firing rates of the neurons in the populations
 are established. The building as well as the simulation time of the
 network are recorded.
 
@@ -112,7 +112,7 @@ eta = 2.0  # external rate relative to threshold rate
 epsilon = 0.1  # connection probability
 
 ###############################################################################
-# Definition of the number of neurons in the network and the number of neuron
+# Definition of the number of neurons in the network and the number of neurons
 # recorded from
 
 order = 2500
@@ -122,7 +122,7 @@ N_neurons = NE + NI   # number of neurons in total
 N_rec = 50      # record from 50 neurons
 
 ###############################################################################
-# Definition of connectivity parameter
+# Definition of connectivity parameters
 
 CE = int(epsilon * NE)  # number of excitatory synapses per neuron
 CI = int(epsilon * NI)  # number of inhibitory synapses per neuron
@@ -130,7 +130,7 @@ C_tot = int(CI + CE)      # total number of synapses per neuron
 
 ###############################################################################
 # Initialization of the parameters of the integrate and fire neuron and the
-# synapses. The parameter of the neuron are stored in a dictionary. The
+# synapses. The parameters of the neuron are stored in a dictionary. The
 # synaptic currents are normalized such that the amplitude of the PSP is J.
 
 tauSyn = 0.5  # synaptic time constant in ms

@@ -951,7 +951,7 @@ statement. Three arguments are required:
 
 ::
 
-    # A heaviside step function with uniformly distributed input values.
+    # A Heaviside step function with uniformly distributed input values.
     nest.logic.conditional(nest.random.uniform(min=-1., max=1.) < 0., 0., 1.)
 
 .. code-block:: ipython

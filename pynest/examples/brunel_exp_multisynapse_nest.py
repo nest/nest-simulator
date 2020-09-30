@@ -28,13 +28,13 @@ the basis of the network used in [1]_.
 The example demonstrate the usage of the multisynapse neuron
 model. Each spike arriving at the neuron triggers an exponential
 PSP. The time constant associated with the PSP is defined in the
-recepter type array tau_syn of each neuron. The receptor types of all
+receptor type array tau_syn of each neuron. The receptor types of all
 connections are uniformally distributed, resulting in uniformally
 distributed time constants of the PSPs.
 
-When connecting the network customary synapse models are used, which
+When connecting the network, customary synapse models are used, which
 allow for querying the number of created synapses. Using spike
-recorders the average firing rates of the neurons in the populations
+recorders, the average firing rates of the neurons in the populations
 are established. The building as well as the simulation time of the
 network are recorded.
 
@@ -84,7 +84,7 @@ eta = 2.0  # external rate relative to threshold rate
 epsilon = 0.1  # connection probability
 
 ###############################################################################
-# Definition of the number of neurons in the network and the number of neuron
+# Definition of the number of neurons in the network and the number of neurons
 # recorded from
 
 order = 2500
@@ -94,7 +94,7 @@ N_neurons = NE + NI   # number of neurons in total
 N_rec = 50      # record from 50 neurons
 
 ###############################################################################
-# Definition of connectivity parameter
+# Definition of connectivity parameters
 
 CE = int(epsilon * NE)  # number of excitatory synapses per neuron
 CI = int(epsilon * NI)  # number of inhibitory synapses per neuron
@@ -102,7 +102,7 @@ C_tot = int(CI + CE)      # total number of synapses per neuron
 
 ###############################################################################
 # Initialization of the parameters of the integrate and fire neuron and the
-# synapses. The parameter of the neuron are stored in a dictionary.
+# synapses. The parameters of the neuron are stored in a dictionary.
 
 tauMem = 20.0  # time constant of membrane potential in ms
 theta = 20.0  # membrane threshold potential in mV
@@ -196,7 +196,7 @@ nest.CopyModel("static_synapse", "inhibitory",
 # (# ``all_to_all``) of ``Connect`` is used. The synaptic properties are
 # pre-defined # in a dictionary and inserted via ``syn_spec``. As synaptic model
 # the pre-defined synapses "excitatory" and "inhibitory" are choosen,
-# thus setting ``weight`` and ``delay``. The recepter type is drawn from a
+# thus setting ``weight`` and ``delay``. The receptor type is drawn from a
 # distribution for each connection, which is specified in the synapse
 # properties by assigning a dictionary to the keyword ``receptor_type``,
 # which includes the specification of the distribution and the associated

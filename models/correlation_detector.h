@@ -56,7 +56,7 @@ inter-spike intervals (raw cross correlation) binned to bins of duration
 /count_histogram.
 In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors, the
-`Kahan summation algorithm <http://en.wikipedia.org/wiki/Kahan_summation_algorithm>`_ 
+`Kahan summation algorithm <http://en.wikipedia.org/wiki/Kahan_summation_algorithm>`_
 is used when calculating the weighted histogram.
 Both are arrays of :math:`2*\tau_{max}/\delta_{\tau}+1` values containing the
 histogram counts in the following way:

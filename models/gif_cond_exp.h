@@ -86,7 +86,7 @@ positive or negative):
 
  \eta_i = \eta_i + q_{\eta_i} \text{ (in case of spike emission).}
 
-Neuron produces spikes STOCHASTICALLY according to a point process with the
+Neuron produces spikes stochastically according to a point process with the
 firing intensity:
 
 .. math::
@@ -117,8 +117,8 @@ positive or negative):
 
 Note:
 
-In the current implementation of the model (as described in [1]_ and
-[2]_), the values of :math:`\eta_i` and :math:`\gamma_i` are affected
+In the current implementation of the model, the values of
+:math:`\eta_i` and :math:`\gamma_i` are affected
 immediately after spike emission. However, `GIF toolbox <http://wiki.epfl.ch/giftoolbox>`_
 which fits the model using experimental data requires a different set of
 :math:`\eta_i` and :math:`\gamma_i`. It applies the jump of

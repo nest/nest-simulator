@@ -46,7 +46,7 @@ Description
 +++++++++++
 
 gif_psc_exp_multisynapse is the generalized integrate-and-fire neuron
-according to Mensi et al. (2012) and Pozzorini et al. (2015), with
+according to Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with
 exponential shaped postsynaptic currents.
 
 This model features both an adaptation current and a dynamic threshold for
@@ -104,8 +104,8 @@ positive or negative):
 
 Note:
 
-In the current implementation of the model (as described in [1]_ and
-[2]_), the values of :math:`\eta_i` and :math:`\gamma_i` are affected
+In the current implementation of the model,
+the values of :math:`\eta_i` and :math:`\gamma_i` are affected
 immediately after spike emission. However, GIF toolbox
 (http://wiki.epfl.ch/giftoolbox) which fits the model using experimental data,
 requires a different set of :math:`\eta_i` and :math:`\gamma_i`. It applies the

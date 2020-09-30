@@ -1247,7 +1247,7 @@ NestModule::ProcessorNameFunction::execute( SLIInterpreter* i ) const
 #ifdef HAVE_MPI
 /** @BeginDocumentation
    Name: abort - Abort all NEST processes gracefully.
-   Paramteres:
+   Parameters:
    exitcode - The exitcode to quit with
    Description:
    This function can be run by the user to end all NEST processes as

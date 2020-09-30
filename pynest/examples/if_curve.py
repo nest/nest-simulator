@@ -137,7 +137,7 @@ transfer = IF_curve(model, params)
 transfer.compute_transfer()
 
 ###############################################################################
-# After the simulation is finished we store the data into a file for
+# After the simulation is finished, we store the data into a file for
 # later analysis.
 
 with shelve.open(model + '_transfer.dat') as dat:

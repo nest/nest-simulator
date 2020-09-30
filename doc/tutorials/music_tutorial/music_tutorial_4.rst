@@ -1,7 +1,7 @@
 The pymusic interface
 ---------------------
 
-MUSIC has recently aqcuired a `plain Python interface <https://github.com/INCF/MUSIC/tree/master/pymusic>`_
+MUSIC has recently acquired a `plain Python interface <https://github.com/INCF/MUSIC/tree/master/pymusic>`_
 to go along with the C++ API. If you just want to connect with a simulation
 rather than adding MUSIC capability to a simulator, this Python interface can
 be a lot more convenient than C++. You have Numpy, Scipy and other high-level
@@ -97,13 +97,13 @@ times and IDs as before. The ``indextype`` is the type of
 the map index for this input and is ``music.Index.LOCAL``
 or ``music.Index.GLOBAL``.
 
-The ``map()`` function keyword for accepatable latency is
+The ``map()`` function keyword for acceptable latency is
 ``accLatency``, and the ``maxBuffered``
 keyword we mentioned in the previous section is, unsurprisingly,
 ``maxBuffered``. The runtime is, again, the same as for
 C++.
 
-As the ``pymusic`` bindings are still quite new the
+As the ``pymusic`` bindings are still quite new, the
 documentation is still lagging behind. This quick introduction should nevertheless be enough for you
 to get going with the bindings. Feel free to ask our `Mailing List <https://www.nest-initiative.org/mailinglist/>`_
 if you need further help.

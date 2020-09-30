@@ -412,6 +412,7 @@ const Name state( "state" );
 const Name std( "std" );
 const Name std_mod( "std_mod" );
 const Name stimulator( "stimulator" );
+const Name step( "step" );
 const Name stop( "stop" );
 const Name structural_plasticity_synapses( "structural_plasticity_synapses" );
 const Name structural_plasticity_update_interval( "structural_plasticity_update_interval" );

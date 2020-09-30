@@ -42,7 +42,7 @@ l1 = nest.Create('iaf_psc_alpha', 1000, positions=pos)
 xpos, ypos, zpos = zip(*nest.GetPosition(l1))
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(xpos, ypos, zpos, s=15, facecolor='b', edgecolor='none')
+ax.scatter(xpos, ypos, zpos, s=15, facecolor='b')
 
 # Gaussian connections in full box volume [-0.75,0.75]**3
 nest.Connect(l1, l1,
@@ -57,7 +57,7 @@ nest.Connect(l1, l1,
 ctr = nest.FindCenterElement(l1)
 xtgt, ytgt, ztgt = zip(*nest.GetTargetPositions(ctr, l1)[0])
 xctr, yctr, zctr = nest.GetPosition(ctr)
-ax.scatter([xctr], [yctr], [zctr], s=40, facecolor='r', edgecolor='none')
+ax.scatter([xctr], [yctr], [zctr], s=40, facecolor='r')
 ax.scatter(xtgt, ytgt, ztgt, s=40, facecolor='g', edgecolor='g')
 
 tgts = nest.GetTargetNodes(ctr, l1)[0]

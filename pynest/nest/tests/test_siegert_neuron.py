@@ -37,7 +37,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
     Details
     -------
     Compares the rate of a Poisson-driven iaf_psc_delta neuron
-    with the prediction from the siegert neuron.
+    with the prediction from the Siegert neuron.
     """
 
     def setUp(self):
@@ -72,7 +72,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         nest.Connect(
             self.iaf_psc_delta, self.spike_recorder)
 
-        # set up driven siegert neuron
+        # set up driven Siegert neuron
 
         neuron_status = nest.GetStatus(self.iaf_psc_delta)[0]
         siegert_params = {'tau_m': neuron_status['tau_m'],
@@ -100,12 +100,12 @@ class SiegertNeuronTestCase(unittest.TestCase):
             self.multimeter, self.siegert_neuron)
 
     def test_RatePrediction(self):
-        """Check the rate prediction of the siegert neuron"""
+        """Check the rate prediction of the Siegert neuron"""
 
         # simulate
         nest.Simulate(self.simtime)
 
-        # get rate prediction from siegert neuron
+        # get rate prediction from Siegert neuron
         events = nest.GetStatus(self.multimeter)[0]["events"]
         senders = events['senders']
         rate = events['rate'][np.where(

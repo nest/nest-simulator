@@ -47,7 +47,7 @@ whose output is either 1 (if input is above) or 0 (if input is below
 threshold theta).
 The time constant tau_m is defined as the
 mean inter-update-interval that is drawn from an exponential
-distribution with this parameter. Using this neuron to reprodce
+distribution with this parameter. Using this neuron to reproduce
 simulations with asynchronous update [1]_, the time constant needs
 to be chosen as tau_m = dt*N, where dt is the simulation time
 step and N the number of neurons in the original simulation with

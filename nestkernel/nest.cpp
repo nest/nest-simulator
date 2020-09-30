@@ -219,7 +219,7 @@ connect_arrays( long* sources,
   index synapse_model_id( kernel().model_manager.get_synapsedict()->lookup( syn_model ) );
 
   // Increments pointers to weight, delay, and receptor type, if they are specified.
-  auto increment_wd = [weights, delays]( decltype( weights ) w, decltype( delays ) d )
+  auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d )
   {
     if ( weights != nullptr )
     {

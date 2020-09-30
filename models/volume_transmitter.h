@@ -64,7 +64,7 @@ in the synapses itself.
 The volume transmitter interacts in a hybrid structure with the neuromodulated
 synapses: In addition to the delivery of the neuromodulatory spikes triggered
 by every pre-synaptic spike, the neuromodulatory spike history is delivered
-in discrete time intervals of a manifold of the minimal synaptic delay.
+at regular time intervals. The interval is equal to the minimal synaptic delay.
 
 The implementation is based on the framework presented in [1]_.
 

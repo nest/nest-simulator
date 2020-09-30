@@ -70,7 +70,7 @@ differential equation:
 
 where each :math:`\eta_i` is a spike-triggered current (stc), and the neuron
 model can have arbitrary number of them.
-Dynamic of each :math`\eta_i` is described by:
+Dynamic of each :math:`\eta_i` is described by:
 
 .. math::
 
@@ -98,7 +98,7 @@ where :math:`V_T(t)` is a time-dependent firing threshold:
 
 where :math:`\gamma_i` is a kernel of spike-frequency adaptation (sfa), and the
 neuron model can have arbitrary number of them.
-Dynamic of each :math`\gamma_i` is described by:
+Dynamic of each :math:`\gamma_i` is described by:
 
 .. math::
 
@@ -113,7 +113,7 @@ positive or negative):
 
 
 Note that in the current implementation of the model,
-the values of :mathi:`\eta_i` and :math:`\gamma_i` are affected immediately
+the values of :math:`\eta_i` and :math:`\gamma_i` are affected immediately
 after spike emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox)
 which fits the model using experimental data, requires a different set of
 :math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`\eta_i` and

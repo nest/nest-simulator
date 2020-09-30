@@ -282,7 +282,7 @@ class TestSynapseCollection(unittest.TestCase):
         conns = nest.GetConnections()
 
         expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func( 'synapsedict')[expected_syn_model]
+        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
 
         conns_val = conns.get(output='pandas')
         pnds_ref = pandas.DataFrame({'delay': 1.,

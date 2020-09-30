@@ -114,7 +114,7 @@ The following parameters can be set in the status dictionary.
  tau_syn_in ms            Time constant for inhibitory synaptic currents
  tau_sfa    list of ms    vector Adaptation time constants
  q_sfa      list of ms    Adaptation kernel amplitudes
- BinoRand   boolean        If True, binomial random numbers are used, otherwise
+ BinoRand   boolean       If True, binomial random numbers are used, otherwise
                           we use Poisson distributed spike counts
 =========== ============= =====================================================
 

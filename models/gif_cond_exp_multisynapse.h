@@ -83,7 +83,7 @@ positive or negative):
 
  \eta_i = \eta_i + q_{\eta_i} \text{ (in case of spike emission).}
 
-Neuron produces spikes STOCHASTICALLY according to a point process with the
+Neuron produces spikes stochastically according to a point process with the
 firing intensity:
 
 .. math::
@@ -112,14 +112,20 @@ positive or negative):
  \gamma_i = \gamma_i + q_{\gamma_i} \text{ (in case of spike emission).}
 
 
-Note that in the current implementation of the model,
+Note:
+
+In the current implementation of the model,
 the values of :math:`\eta_i` and :math:`\gamma_i` are affected immediately
-after spike emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox)
+after spike emission. However, `GIF toolbox <http://wiki.epfl.ch/giftoolbox>`_,
 which fits the model using experimental data, requires a different set of
 :math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`\eta_i` and
 :math:`\gamma_i` after the refractory period. One can easily convert between
 :math:`q_{\eta/\gamma}` of these two approaches:
-:math:`q_{\eta,giftoolbox} = q_{\eta,NEST} * (1 - \exp( -\tau_{ref} / \tau_\eta ))`
+
+.. math::
+
+   q_{\eta,giftoolbox} = q_{\eta,NEST} * (1 - \exp( -\tau_{ref} / \tau_\eta ))
+
 The same formula applies for :math:`q_\gamma`.
 
 On the postsynapic side, there can be arbitrarily many synaptic time constants
@@ -143,7 +149,7 @@ The following parameters can be set in the status dictionary.
  E_L         mV      Leak reversal potential
  g_L         nS      Leak conductance
  I_e         pA      Constant external input current
- ========   ======   ======================================================
+=========   ======   ======================================================
 
 ========= ==============  =====================================================
 **Spike adaptation and firing intensity parameters**
@@ -158,7 +164,7 @@ The following parameters can be set in the status dictionary.
  lambda_0   real              Stochastic intensity at firing threshold V_T i
                               n 1/s.
  V_T_star   mV                Base threshold
- ========= ==============  =====================================================
+========= ==============  =====================================================
 
 =========   =============  ===================================================
 **Synaptic parameters**

@@ -169,6 +169,11 @@ References
         model for the large, fluctuating synaptic conductance state typical of
         neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
 
+See also
+++++++++
+
+gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp
+
 EndUserDocs */
 
 namespace nest

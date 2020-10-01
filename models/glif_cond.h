@@ -62,17 +62,16 @@ This can be reached by specifying separate receptor ports, each for a different
 time constant. The port number has to match the respective "receptor_type" in
 the connectors.
 
-The five GLIF models are
+The five GLIF models are:
 
-GLIF Model 1 - Traditional leaky integrate and fire (LIF) model,
-GLIF Model 2 - Leaky integrate and fire with biologically defined reset rules
-               (LIF_R) model,
-GLIF Model 3 - Leaky integrate and fire with after-spike currents (LIF_ASC) model,
-GLIF Model 4 - Leaky integrate and fire with biologically defined reset rules
-               and after-spike currents (LIF_R_ASC) model,
-GLIF Model 5 - Leaky integrate and fire with biologically defined reset rules,
-               after-spike currents and a voltage dependent threshold
-               (LIF_R_ASC_A) model.
+* **GLIF Model 1** - Traditional leaky integrate and fire (LIF)
+* **GLIF Model 2** - Leaky integrate and fire with biologically defined reset rules
+  (LIF_R)
+* **GLIF Model 3** - Leaky integrate and fire with after-spike currents (LIF_ASC)
+* **GLIF Model 4** - Leaky integrate and fire with biologically defined reset rules
+  and after-spike currents (LIF_R_ASC)
+* **GLIF Model 5** - Leaky integrate and fire with biologically defined reset rules,
+  after-spike currents and a voltage dependent threshold (LIF_R_ASC_A)
 
 Remarks:
 
@@ -80,11 +79,12 @@ GLIF model mechanism setting is based on three parameters
 (spike_dependent_threshold, after_spike_currents, adapting_threshold).
 The settings of these three parameters for the five GLIF models are list below.
 Other combinations of these parameters will not be supported.
-GLIF Model 1 - (False, False, False),
-GLIF Model 2 - (True, False, False),
-GLIF Model 3 - (False, True, False),
-GLIF Model 4 - (True, True, False),
-GLIF Model 5 - (True, True, True).
+
+* **GLIF Model 1** - (False, False, False)
+* **GLIF Model 2** - (True, False, False)
+* **GLIF Model 3** - (False, True, False)
+* **GLIF Model 4** - (True, True, False)
+* **GLIF Model 5** - (True, True, True)
 
 Typical parameter setting of different levels of GLIF models for different cells
 can be found and downloaded in the Allen Cell Type Database (celltypes.brain-map.org).

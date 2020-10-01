@@ -218,9 +218,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     # If pre and post are arrays of node IDs, and conn_spec is unspecified,
     # the node IDs are connected one-to-one.
     if use_connect_arrays:
-        if NumProcesses() > 1:
-            raise RuntimeError("Connecting arrays using MPI is currently not supported.")
-
         if return_synapsecollection:
             raise ValueError("SynapseCollection cannot be returned when connecting two arrays of node IDs")
 

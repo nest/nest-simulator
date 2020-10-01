@@ -58,7 +58,7 @@ The single neuron model is defined by the hazard function:
 
 .. math::
 
- lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ]
+ \lambda_0 * \exp\left(( V_m - E_{sfa} ) / \Delta_V\right)
 
 After each spike, the membrane potential V_m is reset to V_reset. Spike
 frequency

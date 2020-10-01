@@ -46,7 +46,7 @@ class JonkeSynapseTest(unittest.TestCase):
     synapse_parameters = {
         "synapse_model": "jonke_synapse",
         "receptor_type": 1,
-        "delay": self.resolution,
+        "delay": resolution,
         # initial weight
         "weight": 2.0
     }

@@ -57,7 +57,7 @@ class ConnectArraysMPICase(unittest.TestCase):
     multiple processes.
     """
     non_unique = np.array([1, 1, 3, 5, 4, 5, 9, 7, 2, 8], dtype=np.uint64)
-    comm = MPI.COMM_WORLD
+    comm = MPI.COMM_WORLD.Clone()
 
     # With pytest or nosetests, only run these tests if using multiple processes
     __test__ = MULTIPLE_PROCESSES

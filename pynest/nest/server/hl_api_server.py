@@ -200,9 +200,9 @@ def get_restricted_globals():
     """ Get restricted globals for exec function.
     """
     def getitem(obj, index):
-        if obj is not None and type(obj) in (list, tuple, dict):
+        if obj is not None and type(obj) in (list, tuple, dict, nest.NodeCollection):
             return obj[index]
-        raise Exception()
+        raise Exception('Error raised in getting restricted globals. The object {} was not identified.'.format(obj))
 
     restricted_builtins = RestrictedPython.safe_builtins.copy()
     restricted_builtins.update(RestrictedPython.limited_builtins)

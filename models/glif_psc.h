@@ -52,17 +52,16 @@ An arbitrary number of synapses with different time constants can be
 configured by setting the desired time constants as tau_syn array.
 The resulting synapses are addressed through receptor_port 1, 2, 3, ....
 
-The five GLIF models are
+The five GLIF models are:
 
-GLIF Model 1 - Traditional leaky integrate and fire (LIF) model,
-GLIF Model 2 - Leaky integrate and fire with biologically defined reset rules
-               (LIF_R) model,
-GLIF Model 3 - Leaky integrate and fire with after-spike currents (LIF_ASC) model,
-GLIF Model 4 - Leaky integrate and fire with biologically defined reset rules
-               and after-spike currents (LIF_R_ASC) model,
-GLIF Model 5 - Leaky integrate and fire with biologically defined reset rules,
-               after-spike currents and a voltage dependent threshold
-               (LIF_R_ASC_A) model.
+* **GLIF Model 1** - Traditional leaky integrate and fire (LIF)
+* **GLIF Model 2** - Leaky integrate and fire with biologically defined reset rules
+  (LIF_R)
+* **GLIF Model 3** - Leaky integrate and fire with after-spike currents (LIF_ASC)
+* **GLIF Model 4** - Leaky integrate and fire with biologically defined reset rules
+  and after-spike currents (LIF_R_ASC)
+* **GLIF Model 5** - Leaky integrate and fire with biologically defined reset rules,
+  after-spike currents and a voltage dependent threshold (LIF_R_ASC_A)
 
 Parameters
 ++++++++++

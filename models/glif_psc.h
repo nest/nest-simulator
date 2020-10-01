@@ -70,11 +70,15 @@ GLIF model mechanism setting is based on three parameters
 The settings of these three parameters for the five GLIF models are list below.
 Other combinations of these parameters will not be supported.
 
-* **GLIF Model 1** - (False, False, False)
-* **GLIF Model 2** - (True, False, False)
-* **GLIF Model 3** - (False, True, False)
-* **GLIF Model 4** - (True, True, False)
-* **GLIF Model 5** - (True, True, True)
+============= ======= ======= ======
+**Parameter settings**
+------------------------------------
+GLIF Model 1   False   False   False
+GLIF Model 2   True    False   False
+GLIF Model 3   False   True    False
+GLIF Model 4   True    True    False
+GLIF Model 5   True    True    True
+============= ======= ======= ======
 
 Typical parameter setting of different levels of GLIF models for different cells
 can be found and downloaded in the `Allen Cell Type Database

@@ -68,41 +68,65 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-V_m        double - Membrane potential in mV (absolute value).
-V_th       double - Instantaneous threshold in mV.
-g          double - Membrane conductance in nS.
-E_L        double - Resting membrane potential in mV.
-C_m        double - Capacitance of the membrane in pF.
-t_ref      double - Duration of refractory time in ms.
-V_reset    double - Reset potential of the membrane in mV (GLIF 1 or GLIF 3).
-th_spike_add           double - Threshold addition following spike in mV
-                                (delta_theta_s in Equation (6) in [1]).
-th_spike_decay         double - Spike-induced threshold time constant in 1/ms
-                                (bs in Equation (2) in [1]).
-voltage_reset_fraction double - Voltage fraction coefficient following spike
-                                (fv in Equation (5) in [1]).
-voltage_reset_add      double - Voltage addition following spike in mV.
-                                (-delta_V (sign flipped) in Equation (5) in [1])
-asc_init         double vector - Initial values of after-spike currents in pA.
-asc_decay        double vector - After-spike current time constants in 1/ms
-                                 (kj in Equation (3) in [1]).
-asc_amps         double vector - After-spike current amplitudes in pA
-                                 (deltaIj in Equation (7) in [1]).
-asc_r            double vector - Current fraction following spike coefficients
-                                 for fj in Equation (7) in [1].
-th_voltage_index double - Adaptation index of threshold - A 'leak-conductance'
-                          for the voltage-dependent component of the threshold
-                          in 1/ms (av in Equation (4) in [1]).
-th_voltage_decay double - Voltage-induced threshold time constant - Inverse of which
-                          is the time constant of the voltage-dependent component
-                          of the threshold in 1/ms (bv in Equation (4) in [1]).
-tau_syn          double vector - Rise time constants of the synaptic alpha function
-                                 in ms.
-spike_dependent_threshold bool - flag whether the neuron has biologically defined
-                                 reset rules with a spike dependent threshold component.
-after_spike_currents      bool - flag whether the neuron has after spike currents.
-adapting_threshold        bool - flag whether the neuron has a voltage dependent
-                                 threshold component.
+========= ======== ============================================================
+**Membrane parameters**
+-------------------------------------------------------------------------------
+V_m        double   Membrane potential in mV (absolute value)
+V_th       double   Instantaneous threshold in mV
+g          double   Membrane conductance in nS
+E_L        double   Resting membrane potential in mV
+C_m        double   Capacitance of the membrane in pF
+t_ref      double   Duration of refractory time in ms
+V_reset    double   Reset potential of the membrane in mV (GLIF 1 or GLIF 3)
+========= ======== ============================================================
+
+========================= =============== =====================================
+**Spike adaptation and firing intensity parameters**
+-------------------------------------------------------------------------------
+th_spike_add               double         Threshold addition following spike
+                                          in mV (delta_theta_s in Equation (6)
+                                          in [1])
+th_spike_decay             double         Spike-induced threshold time
+                                          constant in 1/ms (bs in Equation (2)
+                                          in [1])
+voltage_reset_fraction     double         Voltage fraction coefficient
+                                          following spike (fv in Equation (5)
+                                          in [1])
+voltage_reset_add          double         Voltage addition following spike in
+                                          mV (-delta_V (sign flipped) in
+                                          Equation (5) in [1])
+asc_init                   double vector  Initial values of after-spike
+                                          currents in pA
+asc_decay                  double vector  After-spike current time constants
+                                          in 1/ms (kj in Equation (3) in [1])
+asc_amps                   double vector  After-spike current amplitudes in
+                                          pA (deltaIj in Equation (7) in [1])
+asc_r                      double vector  Current fraction following spike
+                                          coefficients for fj in Equation (7)
+                                          in [1]
+th_voltage_index           double         Adaptation index of threshold - A
+                                          'leak-conductance' for the
+                                          voltage-dependent component of the
+                                          threshold in 1/ms (av in Equation
+                                          (4) in [1])
+th_voltage_decay           double         Voltage-induced threshold time
+                                          constant - Inverse of which is the
+                                          time constant of the
+                                          voltage-dependent component of the
+                                          threshold in 1/ms (bv in Equation
+                                          (4) in [1])
+tau_syn                    double vector  Rise time constants of the synaptic
+                                          alpha function in ms
+E_rev                      double vector  Reversal potential in mV
+spike_dependent_threshold  bool           flag whether the neuron has
+                                          biologically defined reset rules
+                                          with a spike dependent threshold
+                                          component
+after_spike_currents       bool           flag whether the neuron has after
+                                          spike currents
+adapting_threshold         bool           flag whether the neuron has a
+                                          voltage dependent threshold component
+========================= =============== =====================================
 
 Remarks:
 

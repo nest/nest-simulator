@@ -90,10 +90,10 @@ Typical parameter setting of different levels of GLIF models for different cells
 can be found and downloaded in the Allen Cell Type Database (celltypes.brain-map.org).
 For example, the default parameter setting of this glif_cond neuron model was from
 the parameter values of GLIF Model 5 of Cell 490626718, which can be retrieved from
-https://celltypes.brain-map.org/mouse/experiment/electrophysiology/490626718,
-with units being converted from SI units (i.e., V, S (1/Ohm), F, s, A) to
-NEST used units (i.e., mV, nS (1/GOhm), pF, ms, pA) and values being rounded to
-appropriate digits for simplification.
+the `Allen Brain Atlas <https://celltypes.brain-map.org/mouse/experiment/
+electrophysiology/490626718>`_, with units being converted from SI units
+(i.e., V, S (1/Ohm), F, s, A) to NEST used units (i.e., mV, nS (1/GOhm),
+pF, ms, pA) and values being rounded to appropriate digits for simplification.
 
 For models with spike dependent threshold (i.e., GLIF 2, GLIF 4 and GLIF 5),
 parameter setting of voltage_reset_fraction and voltage_reset_add may lead to the

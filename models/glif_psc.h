@@ -67,8 +67,8 @@ Remarks:
 
 GLIF model mechanism setting is based on three parameters
 (spike_dependent_threshold, after_spike_currents, adapting_threshold).
-The settings of these three parameters for the five GLIF models are list below.
-Other combinations of these parameters will not be supported.
+The settings of these three parameters for the five GLIF models are listed
+below. Other combinations of these parameters will not be supported.
 
 ============= ======= ======= ======
 **Parameter settings**

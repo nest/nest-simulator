@@ -43,10 +43,10 @@ Description
 +++++++++++
 
 glif_psc provides five generalized leaky integrate-and-fire
-(GLIF) models [1] with alpha-function shaped synaptic currents.
+(GLIF) models [1]_ with alpha-function shaped synaptic currents.
 Incoming spike events induce a post-synaptic change of current modeled
-by an alpha function. The alpha function is normalized such that an event of
-weight 1.0 results in a peak current of 1 pA at t = tau_syn. By default,
+by an alpha function [2]_. The alpha function is normalized such that an event
+of weight 1.0 results in a peak current of 1 pA at t = tau_syn. By default,
 glif_psc has a single synapse that is accessible through receptor_port 1.
 An arbitrary number of synapses with different time constants can be
 configured by setting the desired time constants as tau_syn array.
@@ -161,10 +161,13 @@ adapting_threshold         bool           flag whether the neuron has a
 References
 ++++++++++
 
-[1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
-    Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-    Generalized leaky integrate-and-fire models classify multiple neuron types.
-    Nature Communications 9:709.
+..  [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
+        Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
+        Generalized leaky integrate-and-fire models classify multiple neuron
+        types. Nature Communications 9:709.
+..  [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
+        model for the large, fluctuating synaptic conductance state typical of
+        neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
 
 EndUserDocs */
 

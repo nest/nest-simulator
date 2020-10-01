@@ -53,9 +53,9 @@ Description
 +++++++++++
 
 glif_cond provides five generalized leaky integrate
-and fire (GLIF) models [1] with conductance-based synapses.
+and fire (GLIF) models [1]_ with conductance-based synapses.
 Incoming spike events induce a post-synaptic change of conductance modeled
-by an alpha function [2]. The alpha function is normalized such that an event
+by an alpha function [2]_. The alpha function is normalized such that an event
 of weight 1.0 results in a peak conductance change of 1 nS at t = tau_syn. On
 the postsynapic side, there can be arbitrarily many synaptic time constants.
 This can be reached by specifying separate receptor ports, each for a different
@@ -149,12 +149,12 @@ References
 ++++++++++
 
 ..  [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
-      Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-      Generalized leaky integrate-and-fire models classify multiple neuron
-      types. Nature Communications 9:709.
+        Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
+        Generalized leaky integrate-and-fire models classify multiple neuron
+        types. Nature Communications 9:709.
 ..  [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-      model for the large, fluctuating synaptic conductance state typical of
-      neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
+        model for the large, fluctuating synaptic conductance state typical of
+        neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
 
 EndUserDocs */
 

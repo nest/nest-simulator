@@ -25,9 +25,9 @@
 This script simulates an excitatory and an inhibitory population on
 the basis of the network used in [1]_
 
-When connecting the network customary synapse models are used, which
+When connecting the network, customary synapse models are used, which
 allow for querying the number of created synapses. Using spike
-recorders the average firing rates of the neurons in the populations
+recorders, the average firing rates of the neurons in the populations
 are established. The building as well as the simulation time of the
 network are recorded.
 
@@ -73,7 +73,7 @@ eta = 2.0  # external rate relative to threshold rate
 epsilon = 0.1  # connection probability
 
 ###############################################################################
-# Definition of the number of neurons in the network and the number of neuron
+# Definition of the number of neurons in the network and the number of neurons
 # recorded from
 
 order = 2500
@@ -83,7 +83,7 @@ N_neurons = NE + NI  # number of neurons in total
 N_rec = 50  # record from 50 neurons
 
 ###############################################################################
-# Definition of connectivity parameter
+# Definition of connectivity parameters
 
 CE = int(epsilon * NE)  # number of excitatory synapses per neuron
 CI = int(epsilon * NI)  # number of inhibitory synapses per neuron
@@ -91,7 +91,7 @@ C_tot = int(CI + CE)  # total number of synapses per neuron
 
 ###############################################################################
 # Initialization of the parameters of the integrate and fire neuron and the
-# synapses. The parameter of the neuron are stored in a dictionary.
+# synapses. The parameters of the neuron are stored in a dictionary.
 
 tauMem = 20.0  # time constant of membrane potential in ms
 theta = 20.0  # membrane threshold potential in mV
@@ -212,8 +212,8 @@ print("Inhibitory connections")
 
 ###############################################################################
 # Connecting the inhibitory population to all neurons using the pre-defined
-# inhibitory synapse. The connection parameter as well as the synapse
-# paramtere are defined analogously to the connection from the excitatory
+# inhibitory synapse. The connection parameters as well as the synapse
+# parameters are defined analogously to the connection from the excitatory
 # population defined above.
 
 conn_params_in = {'rule': 'fixed_indegree', 'indegree': CI}

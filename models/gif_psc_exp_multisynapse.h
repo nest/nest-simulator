@@ -119,7 +119,7 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
 
   The same formula applies for :math:`q_{\gamma}`.
 
-On the postsynapic side, there can be arbitrarily many synaptic time constants
+On the postsynaptic side, there can be arbitrarily many synaptic time constants
 (gif_psc_exp has exactly two: tau_syn_ex and tau_syn_in). This can be reached
 by specifying separate receptor ports, each for a different time constant. The
 port number has to match the respective "receptor_type" in the connectors.

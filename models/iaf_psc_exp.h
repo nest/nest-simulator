@@ -53,7 +53,7 @@ The threshold crossing is followed by an absolute refractory period (t_ref)
 during which the membrane potential is clamped to the resting potential
 and spiking is prohibited.
 
-The linear subthresold dynamics is integrated by the Exact
+The linear subthreshold dynamics is integrated by the Exact
 Integration scheme [2]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
@@ -73,9 +73,9 @@ Remarks:
 
 The present implementation uses individual variables for the
 components of the state vector and the non-zero matrix elements of
-the propagator.  Because the propagator is a lower triangular matrix
+the propagator. Because the propagator is a lower triangular matrix,
 no full matrix multiplication needs to be carried out and the
-computation can be done "in place" i.e. no temporary state vector
+computation can be done "in place", i.e. no temporary state vector
 object is required.
 
 The template support of recent C++ compilers enables a more succinct

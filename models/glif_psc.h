@@ -93,7 +93,7 @@ being rounded to appropriate digits for simplification.
 For models with spike dependent threshold (i.e., GLIF2, GLIF4 and GLIF5),
 parameter setting of voltage_reset_fraction and voltage_reset_add may lead to the
 situation that voltage is bigger than threshold after reset. In this case, the neuron
-will continue spike until the end of the simulation regardless the stimulated inputs.
+will continue to spike until the end of the simulation regardless the stimulated inputs.
 We recommend the setting of the parameters of these three models to follow the
 condition of (E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
 < (V_th + th_spike_add).

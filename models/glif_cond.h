@@ -97,7 +97,7 @@ glif_cond neuron model was from the parameter values of GLIF Model 5 of Cell
 490626718, which can be retrieved from the `Allen Brain Atlas
 <https://celltypes.brain-map.org/mouse/experiment/electrophysiology/
 490626718>`_, with units being converted from SI units (i.e., V, S (1/Ohm),
-F, s, A) to NEST used units (i.e., mV, nS (1/GOhm), pF, ms, pA) and values 
+F, s, A) to NEST used units (i.e., mV, nS (1/GOhm), pF, ms, pA) and values
 being rounded to appropriate digits for simplification.
 
 For models with spike dependent threshold (i.e., GLIF 2, GLIF 4 and GLIF 5),

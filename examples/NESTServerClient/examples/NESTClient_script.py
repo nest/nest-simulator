@@ -32,7 +32,7 @@ sr = nest.Create("spike_recorder")
 
 # Connect nodes
 nest.Connect(pg, neurons, syn_spec={"weight": 10.})
-nest.Connect(neurons, sr)
+nest.Connect(neurons[::10], sr)
 
 # Simulate
 nest.Simulate(1000.)

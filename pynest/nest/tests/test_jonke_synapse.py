@@ -63,7 +63,7 @@ class JonkeSynapseTest(unittest.TestCase):
     neuron_parameters = {
         "tau_minus": 33.7
     }
-    
+
     def setUp(self):
         pass
 

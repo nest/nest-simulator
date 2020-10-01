@@ -56,6 +56,29 @@ class Projection(object):
     def apply(self):
         nestlib_Connect(self.source, self.target, self.conn_spec, self.syn_spec)
 
+    def clone(self):
+        return copy.copy(self)
+
+    def __getattr__(self, attr):
+        if attr in ['source', 'target', 'conn_spec', 'syn_spec']:
+            return super().__getattribute__(attr)
+        if attr in self.conn_spec:
+            return self.conn_spec[attr]
+        elif attr in self.syn_spec:
+            return self.syn_spec[attr]
+        else:
+            raise AttributeError(f'{attr} is not a connection- or synapse-specification')
+
+    def __setattr__(self, attr, value):
+        if attr in ['source', 'target', 'conn_spec', 'syn_spec']:
+            return super().__setattr__(attr, value)
+        if attr in self.conn_spec:
+            self.conn_spec[attr] = value
+        elif attr in self.syn_spec:
+            self.syn_spec[attr] = value
+        else:
+            raise AttributeError(f'{attr} is not a connection- or synapse-specification')
+
 
 class ProjectionCollection(object):
 

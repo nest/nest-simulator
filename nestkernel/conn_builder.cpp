@@ -93,10 +93,9 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     auto syn_params = syn_specs[ indx ];
 
     set_synapse_model_( syn_params, indx );
+    set_default_weight_or_delay_( syn_params, indx );
 
     DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ indx ] );
-
-    set_default_weight_or_delay_( syn_params, indx );
 
 #ifdef HAVE_MUSIC
     // We allow music_channel as alias for receptor_type during

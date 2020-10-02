@@ -64,9 +64,6 @@ class JonkeSynapseTest(unittest.TestCase):
         "tau_minus": 33.7
     }
 
-    def setUp(self):
-        pass
-
     def test_weight_drift(self):
         """
         Runs NEST simulation, records the spikes and weight changes.

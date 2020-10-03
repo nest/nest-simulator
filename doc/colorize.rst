@@ -1,5 +1,10 @@
+:orphan:
 .. Color profiles for Sphinx.
 .. Has to be used with hacks.css (bitbucket.org/lbesson/web-sphinx/src/master/.static/hacks.css)
+.. In the NEST Doc, the content of hacks.css is included in _static/css/custom.css
+.. Even without explicitly including this file, the color roles herein can be used throughout the documentation
+.. unfortunately, it still gets rendered as a HTML file, but it is not included in any toctree
+
 .. role:: maroon
 .. role:: red
 .. role:: magenta

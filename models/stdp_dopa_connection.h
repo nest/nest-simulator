@@ -202,7 +202,7 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPDopaConnection( const STDPDopaConnection& );
+  STDPDopaConnection( const STDPDopaConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -337,19 +337,6 @@ STDPDopaConnection< targetidentifierT >::STDPDopaConnection()
   , dopa_spikes_idx_( 0 )
   , t_last_update_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-STDPDopaConnection< targetidentifierT >::STDPDopaConnection( const STDPDopaConnection& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , Kplus_( rhs.Kplus_ )
-  , c_( rhs.c_ )
-  , n_( rhs.n_ )
-  , dopa_spikes_idx_( rhs.dopa_spikes_idx_ )
-  , t_last_update_( rhs.t_last_update_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

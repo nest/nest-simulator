@@ -130,12 +130,7 @@ public:
   {
   }
 
-  Connection( const Connection< targetidentifierT >& rhs )
-    : target_( rhs.target_ )
-    , syn_id_delay_( rhs.syn_id_delay_ )
-  {
-  }
-
+  Connection( const Connection< targetidentifierT >& rhs ) = default;
 
   /**
    * Get all properties of this connection and put them into a dictionary.

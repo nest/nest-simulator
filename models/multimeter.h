@@ -182,6 +182,7 @@ private:
 
     Parameters_();
     Parameters_( const Parameters_& );
+    Parameters_& operator=( const Parameters_& );
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum&, const Buffers_&, Node* node );
   };

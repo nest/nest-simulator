@@ -70,6 +70,22 @@ nest::correlomatrix_detector::Parameters_::Parameters_( const Parameters_& p )
   Tstop_.calibrate();
 }
 
+nest::correlomatrix_detector::Parameters_& nest::correlomatrix_detector::Parameters_::operator=( const Parameters_& p )
+{
+  delta_tau_ = p.delta_tau_;
+  tau_max_ = p.tau_max_;
+  Tstart_ = p.Tstart_;
+  Tstop_ = p.Tstop_;
+  N_channels_ = p.N_channels_;
+
+  delta_tau_.calibrate();
+  tau_max_.calibrate();
+  Tstart_.calibrate();
+  Tstop_.calibrate();
+
+  return *this;
+}
+
 nest::correlomatrix_detector::State_::State_()
   : n_events_( 1, 0 )
   , incoming_()

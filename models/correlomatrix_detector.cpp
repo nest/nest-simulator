@@ -195,7 +195,7 @@ nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d, const 
 }
 
 void
-nest::correlomatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool, Node* node )
+nest::correlomatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool, Node* )
 {
 }
 

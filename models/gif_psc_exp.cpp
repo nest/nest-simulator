@@ -220,7 +220,7 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::gif_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::gif_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& ) const
 {
   def< double >( d, names::V_m, V_ );     // Membrane potential
   def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
@@ -228,7 +228,7 @@ nest::gif_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::gif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, Node* node )
+nest::gif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::V_m, V_, node );
 }

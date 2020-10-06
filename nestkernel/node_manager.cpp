@@ -804,7 +804,7 @@ NodeManager::get_status( DictionaryDatum& d )
 }
 
 void
-NodeManager::set_status( const DictionaryDatum& d )
+NodeManager::set_status( const DictionaryDatum& )
 {
 }
 }

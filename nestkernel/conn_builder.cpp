@@ -1851,11 +1851,8 @@ nest::SPBuilder::connect_()
 
 /**
  * In charge of dynamically creating the new synapses
- * @param sources nodes from which synapses can be created
- * @param targets target nodes for the newly created synapses
  */
-void
-nest::SPBuilder::connect_( NodeCollectionPTR sources, NodeCollectionPTR targets )
+void nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
 {
   throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
 }

@@ -350,7 +350,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Nod
 }
 
 void
-nest::gif_cond_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::gif_cond_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
   def< double >( d, names::E_sfa, sfa_ );    // Adaptive threshold potential

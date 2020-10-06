@@ -248,12 +248,12 @@ public:
   /**
    * Set drift_factor of the event (see DiffusionConnectionEvent).
    */
-  virtual void set_drift_factor( weight t ){};
+  virtual void set_drift_factor( weight ){};
 
   /**
    * Set diffusion_factor of the event (see DiffusionConnectionEvent).
    */
-  virtual void set_diffusion_factor( weight t ){};
+  virtual void set_diffusion_factor( weight ){};
 
   /**
    * Returns true if the pointer to the sender node is valid.

@@ -141,7 +141,7 @@ nest::weight_recorder::calibrate()
 }
 
 void
-nest::weight_recorder::update( Time const&, const long from, const long to )
+nest::weight_recorder::update( Time const&, const long, const long )
 {
 }
 

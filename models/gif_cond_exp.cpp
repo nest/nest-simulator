@@ -318,7 +318,7 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::gif_cond_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::gif_cond_exp::State_::get( DictionaryDatum& d, const Parameters_& ) const
 {
   def< double >( d, names::V_m, neuron_state_[ V_M ] ); // Membrane potential
   def< double >( d, names::g_ex, neuron_state_[ G_EXC ] );
@@ -328,7 +328,7 @@ nest::gif_cond_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) cons
 }
 
 void
-nest::gif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, Node* node )
+nest::gif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::V_m, neuron_state_[ V_M ], node );
   updateValueParam< double >( d, names::g_ex, neuron_state_[ G_EXC ], node );

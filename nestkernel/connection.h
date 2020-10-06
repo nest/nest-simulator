@@ -369,7 +369,7 @@ Connection< targetidentifierT >::set_status( const DictionaryDatum& d, Connector
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::check_synapse_params( const DictionaryDatum& d ) const
+Connection< targetidentifierT >::check_synapse_params( const DictionaryDatum& ) const
 {
 }
 

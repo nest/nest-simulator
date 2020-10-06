@@ -479,7 +479,6 @@ aeif_cond_alpha_multisynapse::calibrate()
   }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_counts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
   B_.spikes_.resize( P_.n_receptors() );
   S_.y_.resize(

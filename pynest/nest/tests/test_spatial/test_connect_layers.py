@@ -65,7 +65,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             nest.Connect(self.layer, self.layer, conn_spec)
             num_connections = nest.GetKernelStatus('num_connections')
             n_conns[i] = num_connections - np.sum(n_conns)
-        ref = [scipy.sum(scipy.stats.bernoulli.rvs(p, size=num_pairs)) for _ in range(N)]
+        ref = [np.sum(scipy.stats.bernoulli.rvs(p, size=num_pairs)) for _ in range(N)]
         ks_stat, p_val = scipy.stats.ks_2samp(n_conns, ref)
         print(f'ks_stat={ks_stat}, p_val={p_val}')
         self.assertGreater(p_val, p_val_lim)

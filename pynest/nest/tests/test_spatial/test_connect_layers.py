@@ -159,7 +159,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             },
         }
@@ -178,7 +178,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             },
             'p': 0.5
@@ -193,7 +193,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             }
         }
@@ -212,7 +212,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             },
             'p': 0.5
@@ -227,7 +227,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             }
         }
@@ -243,7 +243,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             }
         }
@@ -261,7 +261,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             },
             'use_on_source': True
@@ -277,7 +277,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             }
         }
@@ -303,7 +303,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             }
         }

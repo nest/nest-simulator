@@ -34,7 +34,7 @@ superposition of post-synaptic potentials in the neuron model to the
 the corresonding analytical solution. To achieve this, spike
 generation of the neuron mode is prevented by setting the spike
 threshold to a very high value. The test employs the parrot neuron for
-precise spike times to provide the neuron model and the spike detector
+precise spike times to provide the neuron model and the spike recorder
 with an identical sequence of spike times. The independence of the
 result from the computations step size is ensured by comparing the
 results for a range of temporal resolutions. Due to this setup the
@@ -157,15 +157,15 @@ def
  model Create /n Set
  n params SetStatus
 
- /spike_detector Create /sd Set
+ /spike_recorder Create /sr Set
 
  pg pn  Connect
- pn sd  Connect
+ pn sr  Connect
  pn n weight delay Connect 
 
  T Simulate
 
- sd [/events /times] get cva potential  /V Set % potential from closed form expression
+ sr [/events /times] get cva potential  /V Set % potential from closed form expression
  n /V_m get                             /Y Set % potential from simulation
 
 

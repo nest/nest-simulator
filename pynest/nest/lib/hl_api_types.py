@@ -23,7 +23,6 @@
 Classes defining the different PyNEST types
 """
 
-
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
@@ -183,7 +182,9 @@ class NodeCollection(object):
 
     _datum = None
 
-    def __init__(self, data):
+    def __init__(self, data=None):
+        if data is None:
+            data = []
         if isinstance(data, kernel.SLIDatum):
             if data.dtype != "nodecollectiontype":
                 raise TypeError("Need NodeCollection Datum.")
@@ -201,10 +202,10 @@ class NodeCollection(object):
     def __add__(self, other):
         if not isinstance(other, NodeCollection):
             raise NotImplementedError()
+
         return sli_func('join', self._datum, other._datum)
 
     def __getitem__(self, key):
-
         if isinstance(key, slice):
             if key.start is None:
                 start = 1
@@ -268,11 +269,13 @@ class NodeCollection(object):
 
         if self.__len__() != other.__len__():
             return False
+
         return sli_func('eq', self, other)
 
     def __neq__(self, other):
         if not isinstance(other, NodeCollection):
             raise NotImplementedError()
+
         return not self == other
 
     def __len__(self):
@@ -327,6 +330,10 @@ class NodeCollection(object):
         --------
         set
         """
+
+        if not self:
+            raise ValueError('Cannot get parameter of empty NodeCollection')
+
         # ------------------------- #
         #      Checks of input      #
         # ------------------------- #
@@ -338,6 +345,7 @@ class NodeCollection(object):
                 raise ImportError('Pandas could not be imported')
         else:
             raise TypeError('Got unexpected keyword argument')
+
         pandas_output = output == 'pandas'
 
         if len(params) == 0:
@@ -392,14 +400,20 @@ class NodeCollection(object):
             If the specified parameter does not exist for the nodes.
         """
 
+        if not self:
+            return
         if kwargs and params is None:
             params = kwargs
         elif kwargs and params:
             raise TypeError("must either provide params or kwargs, but not both.")
 
-        if isinstance(params, dict) and self[0].get('local'):
+        local_nodes = [self.local] if len(self) == 1 else self.local
 
-            contains_list = [is_iterable(vals) and not is_iterable(self[0].get(key)) for key, vals in params.items()]
+        if isinstance(params, dict) and all(local_nodes):
+
+            node_params = self[0].get()
+            contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
+                             key, vals in params.items()]
 
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
@@ -414,8 +428,7 @@ class NodeCollection(object):
                 params = temp_param
 
         if (isinstance(params, (list, tuple)) and self.__len__() != len(params)):
-            raise TypeError(
-                "status dict must be a dict, or a list of dicts of length len(nodes)")
+            raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(self.__len__()))
 
         sli_func('SetStatus', self._datum, params)
 
@@ -425,7 +438,9 @@ class NodeCollection(object):
         """
         if self.__len__() == 0:
             return []
-        return list(self.get('global_id')) if self.__len__() > 1 else [self.get('global_id')]
+
+        return (list(self.get('global_id')) if len(self) > 1
+                else [self.get('global_id')])
 
     def index(self, node_id):
         """
@@ -442,16 +457,37 @@ class NodeCollection(object):
             If the node ID is not in the `NodeCollection`.
         """
         index = sli_func('Find', self._datum, node_id)
+
         if index == -1:
             raise ValueError('{} is not in NodeCollection'.format(node_id))
+
         return index
 
+    def __bool__(self):
+        """Converts the NodeCollection to a bool. False if it is empty, True otherwise."""
+        return len(self) > 0
+
+    def __array__(self, dtype=None):
+        """Convert the NodeCollection to a NumPy array."""
+        return numpy.array(self.tolist(), dtype=dtype)
+
     def __getattr__(self, attr):
+        if not self:
+            raise AttributeError('Cannot get attribute of empty NodeCollection')
+
         if attr == 'spatial':
             metadata = sli_func('GetMetadata', self._datum)
             val = metadata if metadata else None
             super().__setattr__(attr, val)
             return self.spatial
+
+        # NumPy compatibility check:
+        # raises AttributeError to tell NumPy that interfaces other than
+        # __array__ are not available (otherwise get_parameters would be
+        # queried, KeyError would be raised, and all would crash)
+        if attr.startswith('__array_'):
+            raise AttributeError
+
         return self.get(attr)
 
     def __setattr__(self, attr, value):
@@ -579,6 +615,11 @@ class SynapseCollection(object):
         return result
 
     def __getattr__(self, attr):
+        if attr == 'distance':
+            dist = sli_func('Distance', self._datum)
+            super().__setattr__(attr, dist)
+            return self.distance
+
         return self.get(attr)
 
     def __setattr__(self, attr, value):
@@ -709,9 +750,7 @@ class SynapseCollection(object):
 
         if (isinstance(params, (list, tuple)) and
                 self.__len__() != len(params)):
-            raise TypeError(
-                "status dict must be a dict, or a list of dicts of length "
-                "len(nodes)")
+            raise TypeError("status dict must be a dict, or a list of dicts of length {}".format(self.__len__()))
 
         if kwargs and params is None:
             params = kwargs
@@ -719,7 +758,9 @@ class SynapseCollection(object):
             raise TypeError("must either provide params or kwargs, but not both.")
 
         if isinstance(params, dict):
-            contains_list = [is_iterable(vals) and not is_iterable(self[0].get(key)) for key, vals in params.items()]
+            node_params = self[0].get()
+            contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
+                             key, vals in params.items()]
 
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]

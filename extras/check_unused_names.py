@@ -71,7 +71,6 @@ except KeyError:
 # (i.e. filenames without filename extension)
 names_files = [
     "nestkernel/nest_names",
-    "topology/topology_names",
 ]
 
 

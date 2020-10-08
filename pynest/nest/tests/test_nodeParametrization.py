@@ -197,7 +197,7 @@ class TestNodeParametrization(unittest.TestCase):
 
     def test_SetStatus_with_dict_with_bool(self):
         """Test SetStatus with dict with bool"""
-        nodes = nest.Create('spike_detector', 3)
+        nodes = nest.Create('spike_recorder', 3)
         withport_ref = (True, True, True)
         nest.SetStatus(nodes, {'time_in_steps': True})
 
@@ -205,7 +205,7 @@ class TestNodeParametrization(unittest.TestCase):
 
     def test_SetStatus_with_dict_with_list_with_bools(self):
         """Test SetStatus with dict with list of bools"""
-        nodes = nest.Create('spike_detector', 3)
+        nodes = nest.Create('spike_recorder', 3)
         withport_ref = (True, False, True)
         nest.SetStatus(nodes, {'time_in_steps': [True, False, True]})
 
@@ -280,7 +280,7 @@ class TestNodeParametrization(unittest.TestCase):
 
     def test_set_with_dict_with_list_with_bools(self):
         """Test set with dict with list with bool"""
-        nodes = nest.Create('spike_detector', 3)
+        nodes = nest.Create('spike_recorder', 3)
         withport_ref = (True, False, True)
         nodes.set({'time_in_steps': [True, False, True]})
 

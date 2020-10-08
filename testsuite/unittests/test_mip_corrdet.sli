@@ -46,8 +46,8 @@ SeeAlso: mip_generator, correlation_detector
 %
 % Cross check generated with cross_check_test_mip_corrdet.py
 %
-[ 2447 2530 2446 2451 2490 2483 2537 2503 2418 2493 4878 2573
-  2463 2493 2424 2516 2502 2490 2442 2436 2523 ] { cvd } Map /expected_hist Set
+[ 2335 2317 2364 2370 2376 2336 2308 2325 2292
+  2393 4806 2378 2373 2356 2357 2400 2420 2325 2367 2338 2293 ] { cvd } Map /expected_hist Set
 
 /run_test
 {
@@ -82,7 +82,7 @@ userdict begin
     /delta_tau delta_tau
 >> SetStatus
 
-/spike_detector Create dup /sd Set
+/spike_recorder Create dup /sr Set
 << /time_in_steps true >> SetStatus
 
 /parrot_neuron Create /pn1 Set
@@ -91,8 +91,8 @@ userdict begin
 mg pn1 Connect
 mg pn2 Connect
 
-pn1 sd Connect
-pn2 sd Connect
+pn1 sr Connect
+pn2 sr Connect
 
 /static_synapse
 <<

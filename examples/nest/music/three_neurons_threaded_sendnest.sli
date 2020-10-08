@@ -46,12 +46,12 @@ n1 meop /all_to_all << /music_channel 0 >> Connect
 meop << /port_name (spikes_out2) >> SetStatus
 n2 meop /all_to_all << /music_channel 0 >> Connect
 
-/spike_detector Create /sd1 Set
-sd1 << /label (sendnest-n2) /record_to /ascii >> SetStatus
-n2 sd1 Connect
+/spike_recorder Create /sr1 Set
+sr1 << /label (sendnest-n2) /record_to /ascii >> SetStatus
+n2 sr1 Connect
 
-/spike_detector Create /sd2 Set
-sd2 << /label (sendnest-n3) /record_to /ascii >> SetStatus
-n3 sd2 Connect
+/spike_recorder Create /sr2 Set
+sr2 << /label (sendnest-n3) /record_to /ascii >> SetStatus
+n3 sr2 Connect
 
 100 Simulate

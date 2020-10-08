@@ -57,12 +57,12 @@ SeeAlso: gif_psc_exp_multisynapse, testsuite::test_gif_psc_exp
 
 % Revised reference data obtained by running model with NEST3
 % Should be replaced with statistical test.
- 485  /t1_neuron1  Set
- 879  /t2_neuron1  Set
-1249  /t3_neuron1  Set
+ 462  /t1_neuron1  Set
+ 850  /t2_neuron1  Set
+1288  /t3_neuron1  Set
 
-209  /t1_neuron2  Set
-801  /t2_neuron2  Set
+207  /t1_neuron2  Set
+740  /t2_neuron2  Set
 
 /:run_test
 {
@@ -89,19 +89,19 @@ SeeAlso: gif_psc_exp_multisynapse, testsuite::test_gif_psc_exp
   /dc_generator Create /dc_gen Set
   dc_gen <<  /amplitude 170. >> SetStatus
 
-  /spike_detector Create /sd Set
-  sd << /time_in_steps true >> SetStatus
+  /spike_recorder Create /sr Set
+  sr << /time_in_steps true >> SetStatus
 
   dc_gen neuron Connect
 
-  neuron sd Connect
+  neuron sr Connect
 
   sg1 neuron << >> << /receptor_type 1 >> Connect
   sg2 neuron << >> << /receptor_type 2 >> Connect
 
   150.0 Simulate
 
-  sd /events get /times get
+  sr /events get /times get
 } def
 
 % Test 1: wrong parameters (negative lambda)

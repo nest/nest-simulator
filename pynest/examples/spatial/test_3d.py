@@ -42,22 +42,22 @@ l1 = nest.Create('iaf_psc_alpha', 1000, positions=pos)
 xpos, ypos, zpos = zip(*nest.GetPosition(l1))
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(xpos, ypos, zpos, s=15, facecolor='b', edgecolor='none')
+ax.scatter(xpos, ypos, zpos, s=15, facecolor='b')
 
-# full connections in volume [-0.2,0.2]**3
+# full connections in box volume [-0.2,0.2]**3
 nest.Connect(l1, l1,
              {'rule': 'pairwise_bernoulli',
               'p': 1.,
               'allow_autapses': False,
-              'mask': {'volume': {'lower_left': [-0.2, -0.2, -0.2],
-                                  'upper_right': [0.2, 0.2, 0.2]}}})
+              'mask': {'box': {'lower_left': [-0.2, -0.2, -0.2],
+                               'upper_right': [0.2, 0.2, 0.2]}}})
 
 # show connections from center element
 # sender shown in red, targets in green
 ctr = nest.FindCenterElement(l1)
 xtgt, ytgt, ztgt = zip(*nest.GetTargetPositions(ctr, l1)[0])
 xctr, yctr, zctr = nest.GetPosition(ctr)
-ax.scatter([xctr], [yctr], [zctr], s=40, facecolor='r', edgecolor='none')
+ax.scatter([xctr], [yctr], [zctr], s=40, facecolor='r')
 ax.scatter(xtgt, ytgt, ztgt, s=40, facecolor='g', edgecolor='g')
 
 tgts = nest.GetTargetNodes(ctr, l1)[0]

@@ -217,7 +217,7 @@ simulated  in steps of 10 ms.
 
 ::
 
-    #!/usr/bin/python
+    #!/usr/bin/python3
 
     import nest
 
@@ -323,7 +323,7 @@ steps of 10 ms.
 
 ::
 
-    #!/usr/bin/python
+    #!/usr/bin/python3
 
     import nest
 

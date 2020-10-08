@@ -87,7 +87,7 @@ public:
   enum Type
   {
     MULTIMETER,
-    SPIKE_DETECTOR,
+    SPIKE_RECORDER,
     SPIN_DETECTOR,
     WEIGHT_RECORDER
   };

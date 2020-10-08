@@ -38,7 +38,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Synapse type for spike-timing dependent plasticity using homogenous parameters
+Synapse type for spike-timing dependent plasticity using homogeneous parameters
 
 Description
 +++++++++++

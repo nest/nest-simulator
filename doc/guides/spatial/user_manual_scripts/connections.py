@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# create connectivity figures for topology manual
+# create connectivity figures for spatial manual
 
 import nest
 import matplotlib.pyplot as plt
@@ -30,20 +30,20 @@ import numpy as np
 np.random.seed(7654321)
 
 
-def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
+def beautify_layer(layer, fig=plt.gcf(), xlabel=None, ylabel=None,
                    xlim=None, ylim=None, xticks=None, yticks=None, dx=0, dy=0):
     """Assume either x and ylims/ticks given or none"""
-    ctr = l.spatial['center']
-    ext = l.spatial['extent']
+    ctr = layer.spatial['center']
+    ext = layer.spatial['extent']
 
     if xticks is None:
-        if 'shape' in l.spatial:
-            dx = float(ext[0]) / l.spatial['shape'][0]
-            dy = float(ext[1]) / l.spatial['shape'][1]
+        if 'shape' in layer.spatial:
+            dx = float(ext[0]) / layer.spatial['shape'][0]
+            dy = float(ext[1]) / layer.spatial['shape'][1]
             xticks = ctr[0] - ext[0] / 2. + dx / 2. + dx * np.arange(
-                l.spatial['shape'][0])
+                layer.spatial['shape'][0])
             yticks = ctr[1] - ext[1] / 2. + dy / 2. + dy * np.arange(
-                l.spatial['shape'][1])
+                layer.spatial['shape'][1])
 
     if xlim is None:
         xlim = [ctr[0] - ext[0] / 2. - dx / 2., ctr[0] + ext[
@@ -92,20 +92,20 @@ def conn_figure(fig, layer, connd, targets=None, showmask=True, kern=None,
 # Simple connection
 
 #{ conn1 #}
-l = nest.Create('iaf_psc_alpha',
-                positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
+spatial_nodes = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'rectangular': {'lower_left': [-2., -1.],
                                      'upper_right': [2., 1.]}}}
-nest.Connect(l, l, conndict)
+nest.Connect(spatial_nodes, spatial_nodes, conndict)
 #{ end #}
 
 fig = plt.figure()
 fig.add_subplot(121)
-conn_figure(fig, l, conndict,
-            targets=((nest.FindCenterElement(l), 'red'),
-                     (nest.FindNearestElement(l, [4., 5.])[0], 'yellow')))
+conn_figure(fig, spatial_nodes, conndict,
+            targets=((nest.FindCenterElement(spatial_nodes), 'red'),
+                     (nest.FindNearestElement(spatial_nodes, [4., 5.])[0], 'yellow')))
 
 # same another time, with periodic bcs
 lpbc = nest.Create('iaf_psc_alpha',
@@ -127,12 +127,12 @@ plt.savefig('../user_manual_figures/conn1.png', bbox_inches='tight')
 
 def free_mask_fig(fig, loc, cdict):
     nest.ResetKernel()
-    l = nest.Create('iaf_psc_alpha',
-                    positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
-    nest.Connect(l, l, cdict)
+    spatial_nodes = nest.Create('iaf_psc_alpha',
+                                positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
+    nest.Connect(spatial_nodes, spatial_nodes, cdict)
 
     fig.add_subplot(loc)
-    conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2))
+    conn_figure(fig, spatial_nodes, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2))
 
 
 fig = plt.figure()
@@ -263,14 +263,14 @@ def conn_figure_3d(fig, layer, connd, targets=None, showmask=True,
 
 def free_mask_3d_fig(fig, loc, cdict):
     nest.ResetKernel()
-    l = nest.Create('iaf_psc_alpha',
-                    positions=nest.spatial.grid(
-                        shape=[11, 11, 11],
-                        extent=[11., 11., 11.]))
-    nest.Connect(l, l, cdict)
+    spatial_nodes = nest.Create('iaf_psc_alpha',
+                                positions=nest.spatial.grid(
+                                    shape=[11, 11, 11],
+                                    extent=[11., 11., 11.]))
+    nest.Connect(spatial_nodes, spatial_nodes, cdict)
 
     fig.add_subplot(loc, projection='3d')
-    conn_figure_3d(fig, l, cdict, xticks=range(-5, 6, 2),
+    conn_figure_3d(fig, spatial_nodes, cdict, xticks=range(-5, 6, 2),
                    yticks=range(-5, 6, 2))
 
 
@@ -308,13 +308,13 @@ conndict = {'rule': 'pairwise_bernoulli',
 
 def grid_mask_fig(fig, loc, cdict):
     nest.ResetKernel()
-    l = nest.Create('iaf_psc_alpha',
-                    positions=nest.spatial.grid(shape=[11, 11],
-                                                extent=[11., 11.]))
-    nest.Connect(l, l, cdict)
+    spatial_nodes = nest.Create('iaf_psc_alpha',
+                                positions=nest.spatial.grid(shape=[11, 11],
+                                                            extent=[11., 11.]))
+    nest.Connect(spatial_nodes, spatial_nodes, cdict)
 
     fig.add_subplot(loc)
-    conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
+    conn_figure(fig, spatial_nodes, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
                 showmask=False)
 
 
@@ -352,14 +352,14 @@ plt.savefig('../user_manual_figures/conn3.png', bbox_inches='tight')
 
 def kernel_fig(fig, loc, cdict, kern=None):
     nest.ResetKernel()
-    l = nest.Create('iaf_psc_alpha',
-                    positions=nest.spatial.grid(
-                        shape=[11, 11],
-                        extent=[11., 11.]))
-    nest.Connect(l, l, cdict)
+    spatial_nodes = nest.Create('iaf_psc_alpha',
+                                positions=nest.spatial.grid(
+                                    shape=[11, 11],
+                                    extent=[11., 11.]))
+    nest.Connect(spatial_nodes, spatial_nodes, cdict)
 
     fig.add_subplot(loc)
-    conn_figure(fig, l, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
+    conn_figure(fig, spatial_nodes, cdict, xticks=range(-5, 6, 2), yticks=range(-5, 6, 2),
                 kern=kern)
 
 
@@ -409,20 +409,20 @@ def wd_fig(fig, loc, pos, cdict, sdict, what, rpos=None,
            yticks=np.arange(0., 1.1, 0.2), clr='blue',
            label=''):
     nest.ResetKernel()
-    l = nest.Create('iaf_psc_alpha', positions=pos)
-    nest.Connect(l, l, cdict, sdict)
+    spatial_nodes = nest.Create('iaf_psc_alpha', positions=pos)
+    nest.Connect(spatial_nodes, spatial_nodes, cdict, sdict)
 
     ax = fig.add_subplot(loc)
 
     if rpos is None:
-        rn = l[0]  # first node
+        rn = spatial_nodes[0]  # first node
     else:
-        rn = nest.FindNearestElement(l, rpos)
+        rn = nest.FindNearestElement(spatial_nodes, rpos)
 
     conns = nest.GetConnections(rn)
     vals = np.array([c.get(what) for c in conns])
     tgts = [c.get('target') for c in conns]
-    locs = np.array([nest.GetPosition(l[l.index(t)]) for t in tgts])
+    locs = np.array([nest.GetPosition(spatial_nodes[spatial_nodes.index(t)]) for t in tgts])
     ax.plot(locs[:, 0], vals, 'o', mec='none', mfc=clr, label=label)
     ax.set_xlim(xlim)
     ax.set_ylim(ylim)
@@ -514,28 +514,28 @@ parameter = 0.5 + nest.spatial.distance.x + 2. * nest.spatial.distance.y
 #{ end #}
 
 #{ conn_param_design_ex #}
-l = nest.Create('iaf_psc_alpha',
-                positions=nest.spatial.grid(shape=[11, 11],
-                                            extent=[1., 1.]))
-nest.Connect(l, l, {'rule': 'pairwise_bernoulli',
-                    'p': parameter,
-                    'mask': {'circular': {'radius': 0.5}}})
+spatial_nodes = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(shape=[11, 11],
+                                                        extent=[1., 1.]))
+nest.Connect(spatial_nodes, spatial_nodes, {'rule': 'pairwise_bernoulli',
+                                            'p': parameter,
+                                            'mask': {'circular': {'radius': 0.5}}})
 #{ end #}
 
 # --------------------------------
 
 
-def pn_fig(fig, loc, l, cdict,
+def pn_fig(fig, loc, spatial_nodes, cdict,
            xlim=[0., .5], ylim=[0, 3.5], xticks=range(0, 51, 5),
            yticks=np.arange(0., 1.1, 0.2), clr='blue',
            label=''):
-    nest.Connect(l, l, cdict)
+    nest.Connect(spatial_nodes, spatial_nodes, cdict)
 
     ax = fig.add_subplot(loc)
 
-    conns = nest.GetConnections(l)
-    dist = np.array([nest.Distance(l[l.index(s)],
-                                   l[l.index(t)])
+    conns = nest.GetConnections(spatial_nodes)
+    dist = np.array([nest.Distance(spatial_nodes[spatial_nodes.index(s)],
+                                   spatial_nodes[spatial_nodes.index(t)])
                      for s, t in zip(conns.sources(), conns.targets())])
     ax.hist(dist, bins=50, histtype='stepfilled', density=True)
     r = np.arange(0., 0.51, 0.01)
@@ -560,16 +560,16 @@ nest.ResetKernel()
 #{ conn6 #}
 pos = nest.spatial.free(nest.random.uniform(-1., 1.),
                         extent=[2., 2.], edge_wrap=True)
-l = nest.Create('iaf_psc_alpha', 1000, positions=pos)
+spatial_nodes = nest.Create('iaf_psc_alpha', 1000, positions=pos)
 
 cdict = {'rule': 'fixed_outdegree',
          'p': nest.math.max(1. - 2 * nest.spatial.distance, 0.),
          'mask': {'circular': {'radius': 1.0}},
          'outdegree': 50,
          'allow_multapses': True, 'allow_autapses': False}
-nest.Connect(l, l, cdict)
+nest.Connect(spatial_nodes, spatial_nodes, cdict)
 #{ end #}
-pn_fig(fig, 111, l, cdict)
+pn_fig(fig, 111, spatial_nodes, cdict)
 
 plt.savefig('../user_manual_figures/conn6.png', bbox_inches='tight')
 
@@ -581,18 +581,18 @@ nest.CopyModel('static_synapse', 'exc', {'weight': 2.0})
 nest.CopyModel('static_synapse', 'inh', {'weight': -8.0})
 
 pos = nest.spatial.grid(shape=[10, 10])
-l_ex = nest.Create('iaf_psc_alpha', positions=pos)
-l_in = nest.Create('iaf_psc_alpha', positions=pos)
+ex_nodes = nest.Create('iaf_psc_alpha', positions=pos)
+in_nodes = nest.Create('iaf_psc_alpha', positions=pos)
 
-nest.Connect(l_ex, l_in, {'rule': 'pairwise_bernoulli',
-                          'p': 0.8,
-                          'mask': {'circular': {'radius': 0.5}}},
-                         {'synapse_model': 'exc'})
-nest.Connect(l_in, l_ex, {'rule': 'pairwise_bernoulli',
-                          'p': 1.0,
-                          'mask': {'rectangular': {'lower_left': [-0.2, -0.2],
-                                                   'upper_right': [0.2, 0.2]}}},
-                         {'synapse_model': 'inh'})
+nest.Connect(ex_nodes, in_nodes, {'rule': 'pairwise_bernoulli',
+                                  'p': 0.8,
+                                  'mask': {'circular': {'radius': 0.5}}},
+             {'synapse_model': 'exc'})
+nest.Connect(in_nodes, ex_nodes, {'rule': 'pairwise_bernoulli',
+                                  'p': 1.0,
+                                  'mask': {'rectangular': {'lower_left': [-0.2, -0.2],
+                                                           'upper_right': [0.2, 0.2]}}},
+             {'synapse_model': 'inh'})
 #{ end #}
 
 
@@ -617,7 +617,7 @@ nest.Connect(stim, nrn_layer, cdict_stim)
 # ----------------------------
 
 #{ conn10 #}
-rec = nest.Create('spike_detector',
+rec = nest.Create('spike_recorder',
                   positions=nest.spatial.grid(shape=[1, 1]))
 
 cdict_rec = {'rule': 'pairwise_bernoulli',
@@ -632,6 +632,6 @@ nest.Connect(nrn_layer, rec, cdict_rec)
 # ----------------------------
 
 #{ conn11 #}
-rec = nest.Create('spike_detector')
+rec = nest.Create('spike_recorder')
 nest.Connect(nrn_layer, rec)
 #{ end #}

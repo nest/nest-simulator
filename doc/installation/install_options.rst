@@ -3,7 +3,7 @@ Configuration Options
 
 NEST is installed with ``cmake`` (at least v2.8.12). In the simplest case, the commands::
 
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
     make
     make install
 
@@ -163,7 +163,7 @@ and its corresponding libraries correctly. To circumvent such a problem followin
   PYTHON_INCLUDE_DIR2 ... directories
 
  e.g.: Please note ``-Dwith-python=ON`` is the default::
-  cmake -DCMAKE_INSTALL_PREFIX=</install/path> \
+  cmake -DCMAKE_INSTALL_PREFIX=<nest_install_dir> \
         -DPYTHON_EXECUTABLE=/usr/bin/python3 \
         -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so \
         -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
@@ -181,7 +181,7 @@ way to install all required software is using Homebrew (from http://brew.sh)::
 
 will install all required prequisites. You can then configure NEST with ::
 
-  cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
         -DCMAKE_C_COMPILER=gcc-6\
         -DCMAKE_CXX_COMPILER=g++-6 \
         </path/to/NEST/src>

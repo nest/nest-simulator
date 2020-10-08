@@ -62,13 +62,13 @@ skip_if_without_gsl
 % 141.7 ms
 
 % Revised reference data obtained by running model with NEST3
-290  /t1_neuron1  Set
-602  /t2_neuron1  Set
-967  /t3_neuron1  Set
-1394 /t4_neuron1  Set
+274  /t1_neuron1  Set
+571  /t2_neuron1  Set
+988  /t3_neuron1  Set
+1400 /t4_neuron1  Set
 
-167  /t1_neuron2  Set
-461  /t2_neuron2  Set
+165  /t1_neuron2  Set
+438  /t2_neuron2  Set
 
 /:run_test
 {
@@ -96,19 +96,19 @@ skip_if_without_gsl
   /dc_generator Create /dc_gen Set
   dc_gen <<  /amplitude 170. >> SetStatus
 
-  /spike_detector Create /sd Set
-  sd << /time_in_steps true >> SetStatus
+  /spike_recorder Create /sr Set
+  sr << /time_in_steps true >> SetStatus
 
   dc_gen neuron Connect
 
-  neuron sd Connect
+  neuron sr Connect
 
   sg1 neuron << >> << /receptor_type 1 >> Connect
   sg2 neuron << >> << /receptor_type 2 >> Connect
 
   150.0 Simulate
 
-  sd /events get /times get
+  sr /events get /times get
 } def
 
 % Test 1: wrong parameters (negative lambda)

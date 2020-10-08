@@ -51,7 +51,7 @@ M_ERROR setverbosity
 << /resolution 0.1  >> SetKernelStatus
 
 
-/spike_detector Create /sp Set
+/spike_recorder Create /sp Set
 
 
 /poisson_generator_ps Create /pn Set

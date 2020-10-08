@@ -31,7 +31,7 @@ libneurosim. For details, see [1]_.
 See Also
 ~~~~~~~~~~
 
-:doc:`csa_topology_example`
+:doc:`csa_spatial_example`
 
 References
 ~~~~~~~~~~~~
@@ -67,7 +67,7 @@ except ImportError:
     sys.exit(1)
 
 ###############################################################################
-# To set up the connectivity, We create a ``random`` connection set with a
+# To set up the connectivity, we create a ``random`` connection set with a
 # probability of 0.1 and two associated values (10000.0 and 1.0) used as
 # weight and delay, respectively.
 

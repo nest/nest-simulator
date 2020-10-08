@@ -42,7 +42,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Simulate the superimposed spike train of a population of gamma process
+Simulate the superimposed spike train of a population of gamma processes
 
 Description
 +++++++++++
@@ -58,7 +58,7 @@ The following parameters appear in the element's status dictionary:
 ============  ======== =========================================================
  rate         spikes/s Mean firing rate of the component processes,
                        default: 0 spikes/s
- gamma_shape  integer  Shape paramter of component gamma processes, default: 1
+ gamma_shape  integer  Shape parameter of component gamma processes, default: 1
  n_proc       integer  Number of superimposed independent component processes,
                        default: 1
 ============  ======== =========================================================
@@ -154,7 +154,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------

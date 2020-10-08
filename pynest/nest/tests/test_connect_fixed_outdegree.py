@@ -41,7 +41,7 @@ class TestFixedOutDegree(TestParams):
     N_t = 10
     C = 10
     # Critical values and number of iterations of two level test
-    stat_dict = {'alpha2': 0.05, 'n_runs': 300}
+    stat_dict = {'alpha2': 0.05, 'n_runs': 400}
 
     # tested on each mpi process separately
     def testErrorMessages(self):

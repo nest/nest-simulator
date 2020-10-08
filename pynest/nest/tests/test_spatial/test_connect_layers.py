@@ -57,19 +57,31 @@ class ConnectLayersTestCase(unittest.TestCase):
         The connection function is iterated N times, then the distribution of number of created connections are tested
         against a bernoulli distribution using a Kolmogorov-Smirnov test."""
         self.assertEqual(conn_spec['rule'], 'pairwise_bernoulli')
-        N = 500
+        N = 100
+        ks_N = 5
         p_val_lim = 0.1
         ks_stat_lim = 0.2
-        n_conns = np.zeros(N)
-        for i in range(N):
-            nest.Connect(self.layer, self.layer, conn_spec)
-            num_connections = nest.GetKernelStatus('num_connections')
-            n_conns[i] = num_connections - np.sum(n_conns)
-        ref = [np.sum(scipy.stats.bernoulli.rvs(p, size=num_pairs)) for _ in range(N)]
-        ks_stat, p_val = scipy.stats.ks_2samp(n_conns, ref)
-        print(f'ks_stat={ks_stat}, p_val={p_val}')
-        self.assertGreater(p_val, p_val_lim)
-        self.assertLess(ks_stat, ks_stat_lim)
+
+        p_vals = np.zeros(ks_N)
+        ks_stats = np.zeros(ks_N)
+
+        for ks_i in range(ks_N):
+            n_conns = np.zeros(N)
+            ref = np.zeros(N)
+            for i in range(N):
+                nest.Connect(self.layer, self.layer, conn_spec)
+                num_connections = nest.GetKernelStatus('num_connections')
+                n_conns[i] = num_connections - np.sum(n_conns)
+                ref[i] = np.sum(scipy.stats.bernoulli.rvs(p, size=num_pairs))
+            ks_stats[ks_i], p_vals[ks_i] = scipy.stats.ks_2samp(n_conns, ref)
+            print(f'ks_stat={ks_stats[ks_i]}, p_val={p_vals[ks_i]}')
+
+        mean_p_val = np.mean(p_vals)
+        mean_ks_stat = np.mean(ks_stats)
+        print(f'mean_ks_stat={mean_ks_stat}, mean_p_val={mean_p_val}')
+
+        self.assertGreater(mean_p_val, p_val_lim)
+        self.assertLess(mean_ks_stat, ks_stat_lim)
 
     def _assert_connect_layers_autapses(self, autapses, expected_num_autapses):
         """Helper function which asserts that connecting with or without allowing autapses gives

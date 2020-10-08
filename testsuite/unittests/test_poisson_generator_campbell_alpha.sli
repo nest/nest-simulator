@@ -39,7 +39,7 @@ FirstVersion: Mar 2009
 /n_neurons 1500  def % number of neurons to simulate
 /simtime   1000. def % simulation duration (ms)
 /pot       20.   def % desired membrane potential (mV)
-/tolerance 1e-2  def % potential tolerance (mV)
+/tolerance 1.5e-2  def % potential tolerance (mV)
 
 % neuron&synapse parameters (cf. brunel*.sli)
 /tauMem 20.0 def

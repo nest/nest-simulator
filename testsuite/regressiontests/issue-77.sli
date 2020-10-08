@@ -112,11 +112,15 @@ M_ERROR setverbosity
    /iaf_cond_alpha_mc << /receptor_type 1 >>
    /pp_cond_exp_mc_urbanczik << /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>
+   /sli_neuron << /params << /calibrate { }
+                             /update { /spike ex_spikes 10. gt def } 
+                          >>
+               >> 
    >>
    def
 
 
-% {
+{
   % apply to all models of element_type neuron
   modeldict keys {
     /model Set
@@ -202,7 +206,7 @@ M_ERROR setverbosity
   % see if all entries are true
   true exch { and } Fold
 
-% }
-% assert_or_die
+}
+assert_or_die
 
 endusing

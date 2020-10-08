@@ -406,7 +406,7 @@ nest::gif_pop_psc_exp::draw_poisson( const double n_expect_ )
     if ( 1. - ( n_expect_ + 1. ) * std::exp( -n_expect_ ) > V_.min_double_ )
     {
       poisson_distribution::param_type param( n_expect_ );
-      n_t_ = V_.poisson_dist_( V_.rng_ );
+      n_t_ = V_.poisson_dist_( V_.rng_, param );
     }
     else
     {

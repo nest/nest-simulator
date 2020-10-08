@@ -426,7 +426,8 @@ private:
   {
     int RefractoryCounts_;
 
-    double h_;                                //!< simulation time step in ms
+    double h_;                          //!< simulation time step in ms
+    RngPtr rng_;                        //!< random number generator of my own thread
     poisson_distribution poisson_dist_; //!< poisson distribution
   };
 

@@ -564,6 +564,7 @@ nest::pp_cond_exp_mc_urbanczik::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();
 
@@ -650,7 +651,7 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
         if ( P_.t_ref > 0.0 )
         {
           // Draw random number and compare to prob to have a spike
-          if ( get_vp_specific_rng( get_thread() )->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) )
+          if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) )
           {
             n_spikes = 1;
           }
@@ -659,7 +660,7 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
         {
           // Draw Poisson random number of spikes
           poisson_distribution::param_type param( rate * V_.h_ * 1e-3 );
-          n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ), param );
+          n_spikes = V_.poisson_dist_( V_.rng_, param );
         }
 
         if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.

@@ -279,8 +279,8 @@ initialized = False
 def set_communicator(comm):
     """Set global communicator for NEST.
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     comm: MPI.Comm from mpi4py
 
     Raises

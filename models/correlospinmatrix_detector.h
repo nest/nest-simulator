@@ -123,7 +123,7 @@ SpikeEvent
 See also
 ++++++++
 
-correlation_detector, correlomatrix_detector, spike_detector
+correlation_detector, correlomatrix_detector, spike_recorder
 
 EndUserDocs */
 

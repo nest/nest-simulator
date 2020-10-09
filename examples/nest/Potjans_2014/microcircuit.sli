@@ -244,11 +244,11 @@
 % neuron_nodeIDs
 % poisson_nodeIDs
 % dc_generator_nodeIDs
-% spike_detector_nodeIDs
+% spike_recorder_nodeIDs
 % voltmeter_nodeIDs
 % th_neuron_nodeIDs
 % th_poisson_nodeID
-% th_spike_detector_nodeID
+% th_spike_recorder_nodeID
 /CreateNetworkNodes
 {
     /spikes_record_to          save_cortical_spikes {/ascii}{/memory} ifelse def
@@ -258,7 +258,7 @@
     neuron_model model_params SetDefaults
     % arrays of nodeIDs:
     /neuron_nodeIDs         [n_layers n_pops_per_layer] 0 LayoutArray def
-    /spike_detector_nodeIDs [n_layers n_pops_per_layer] 0 LayoutArray def
+    /spike_recorder_nodeIDs [n_layers n_pops_per_layer] 0 LayoutArray def
     /voltmeter_nodeIDs      [n_layers n_pops_per_layer] 0 LayoutArray def
     /poisson_nodeIDs        [n_layers n_pops_per_layer] 0 LayoutArray def
     /dc_generator_nodeIDs   [n_layers n_pops_per_layer] 0 LayoutArray def
@@ -297,10 +297,10 @@
                SetStatus
 	    } forall
 
-            spike_detector_nodeIDs [layer_index population_index] /spike_detector <<
-	       /label spike_detector_label layer_index cvs join (_) join population_index cvs join
+            spike_recorder_nodeIDs [layer_index population_index] /spike_recorder <<
+	       /label spike_recorder_label layer_index cvs join (_) join population_index cvs join
 	       /record_to spikes_record_to
-	    >> Create put /spike_detector_nodeIDs Set
+	    >> Create put /spike_recorder_nodeIDs Set
 
 	    voltmeter_nodeIDs [layer_index population_index] /voltmeter <<
 	       /label voltmeter_label layer_index cvs join (_) join population_index cvs join
@@ -331,10 +331,10 @@
         >> Create /th_poisson_nodeID Set
 
         save_thalamic_spikes {
-            /spike_detector Create <<
-	       /label th_spike_detector_label
+            /spike_recorder Create <<
+	       /label th_spike_recorder_label
 	       /record_to thalamic_spikes_record_to
-	    >> /th_spike_detector_nodeID Set
+	    >> /th_spike_recorder_nodeID Set
         } if
     } if
 } def
@@ -495,10 +495,10 @@ close
 
             % Connect devices
 
-            % Connect to the spike detector
-            % record from a continuous range of IDs (appropriate for networks without topology)
+            % Connect to the spike recorder
+            % record from a continuous range of IDs (appropriate for networks without spatial information)
             target_nodes n_neurons_rec_spikes target_layer get target_pop get Take
-            spike_detector_nodeIDs target_layer get target_pop get
+            spike_recorder_nodeIDs target_layer get target_pop get
             /all_to_all
 	    Connect
 
@@ -533,9 +533,9 @@ close
     } if
 
     record_thalamic_spikes n_thal 0 gt and {
-        % Connect thalamic neurons to spike detector
+        % Connect thalamic neurons to spike recorder
         th_neuron_nodeIDs
-        th_spike_detector_nodeID 1 arraystore
+        th_spike_recorder_nodeID 1 arraystore
         Connect
     } if
 

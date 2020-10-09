@@ -32,10 +32,10 @@ called *send.py*.
     for i, neuron in enumerate(neurons):
         nest.Connect(neuron, music_out, "one_to_one", {'music_channel': i})
 
-    sdetector = nest.Create("spike_detector")
-    sdetector.set(record_to="ascii", label="send")
+    srecorder = nest.Create("spike_recorder")
+    srecorder.set(record_to="ascii", label="send")
 
-    nest.Connect(neurons, sdetector)
+    nest.Connect(neurons, srecorder)
 
     nest.Simulate(1000.0)
 
@@ -55,9 +55,9 @@ different output channel. As we saw earlier, each MUSIC port can have
 any number of channels. Since the proxy is a device, it ignores any
 weight or delay settings here.
 
-Lastly, we create a spike detector, set the parameters (which we could
+Lastly, we create a spike recorder, set the parameters (which we could
 have done directly in the ``Create`` call) and connect the
-neurons to the spike detector so we can see what we’re sending. Then we
+neurons to the spike recorder so we can see what we’re sending. Then we
 simulate for one second.
 
 For the receiving process script, *receive.py* we do:
@@ -78,11 +78,11 @@ For the receiving process script, *receive.py* we do:
 
     parrots = nest.Create("parrot_neuron", 2)
 
-    sdetector = nest.Create("spike_detector")
-    sdetector.set(record_to="ascii", label="receive")
+    srecorder = nest.Create("spike_recorder")
+    srecorder.set(record_to="ascii", label="receive")
 
     nest.Connect(music_in, parrots, 'one_to_one', {"weight":1.0, "delay": 2.0})
-    nest.Connect(parrots, sdetector)
+    nest.Connect(parrots, srecorder)
 
     nest.Simulate(1000.0)
 
@@ -102,9 +102,9 @@ the 2.0 ms we set on line 10 in our case.
 
 On line 12 we create a set of :doc:`parrot neurons <music_tutorial_parrot>`.
 They simply repeat the input they’re given. On lines 14-15 we create and
-configure a spike detector to save our inputs. We connect the input proxies
+configure a spike recorder to save our inputs. We connect the input proxies
 one-to-one with the parrot neurons on line 17, then the parrot neurons to
-the spike detector on line 18. We will discuss the reasons for this in a moment.
+the spike recorder on line 18. We will discuss the reasons for this in a moment.
 Finally we simulate for one second.
 
 Lastly, we have the MUSIC configuration file *python.music*:
@@ -149,7 +149,7 @@ You should get a screenful of information scrolling past, and then be
 left with four new data files, named something like ``send-N-0.spikes``,
 ``send-N-1.spikes``, ``receive-M-0.spikes`` and ``receive-M-1.spikes``. The names
 and suffixes are of course the same that we set in ``send.py`` and
-``receive.py`` above. The first numeral is the node ID of the spike detector
+``receive.py`` above. The first numeral is the node ID of the spike recorder
 that recorded and saved the data, and the final numeral is the rank order of
 each process that generated the file.
 

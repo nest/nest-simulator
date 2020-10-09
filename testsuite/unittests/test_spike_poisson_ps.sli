@@ -41,7 +41,7 @@ means that exactly the same sequence of spike times is generated internally
 in the generator independent of resolution. Rounding errors occur, if at all,
 only when the spike time is split into a multiple of the resolution and the 
 offset. In this calculation, the resolution enters as a fixed multiple of tics.
-The calculation is reversed in the spike detector, when step-multiple and offset
+The calculation is reversed in the spike recorder, when step-multiple and offset
 are recombined. This splitting and recombination apparently gives reproducible 
 results. The only deviation observed was for two spikes at very early times (<0.01 ms) 
 and coarse resolution (0.1 ms); total of 388.533 spikes tested. Therefore I
@@ -70,7 +70,7 @@ M_ERROR setverbosity
 % End of stimulation period
 /stimtime 30.0 def
 
-% We need to ensure that all spikes arrive at the spike detector.
+% We need to ensure that all spikes arrive at the spike recorder.
 % Thus, the simulation time needs to exceed the end of stimulation
 % by at least two multiples of the delay, which is 1 ms by default.
 % We also need to ensure that the simulation time is a multiple of 
@@ -84,17 +84,17 @@ ResetKernel
 << /resolution h >> SetKernelStatus
 
 
-/spike_detector Create /sd Set  
+/spike_recorder Create /sr Set  
  
 
 /poisson_generator_ps Create /pg Set
 pg << /rate 128921.3 /stop stimtime >> SetStatus
 
-pg sd Connect
+pg sr Connect
 
 simtime Simulate 
 
-sd [/events /times] get cva 
+sr [/events /times] get cva 
 } def
 
 

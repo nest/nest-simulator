@@ -58,7 +58,7 @@ during which the neuron is not allowed to fire, even if the membrane
 potential exceeds the threshold. The membrane potential is NOT reset,
 but continuously integrated.
 
-The linear subthresold dynamics is integrated by the Exact
+The linear subthreshold dynamics is integrated by the Exact
 Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
@@ -74,9 +74,9 @@ Remarks:
 
 The present implementation uses individual variables for the
 components of the state vector and the non-zero matrix elements of
-the propagator. Because the propagator is a lower triangular matrix
+the propagator. Because the propagator is a lower triangular matrix,
 no full matrix multiplication needs to be carried out and the
-computation can be done "in place" i.e. no temporary state vector
+computation can be done "in place", i.e. no temporary state vector
 object is required.
 
 Parameters

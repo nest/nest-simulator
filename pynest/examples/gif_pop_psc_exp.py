@@ -159,20 +159,20 @@ for i in range(M):
 
 ###############################################################################
 # To record the instantaneous population rate `Abar(t)` we use a multimeter,
-# and to get the population activity `A_N(t)` we use spike detector:
+# and to get the population activity `A_N(t)` we use spike recorder:
 
 # monitor the output using a multimeter, this only records with dt_rec!
 nest_mm = nest.Create('multimeter')
 nest_mm.set(record_from=['n_events', 'mean'], interval=dt_rec)
 nest.Connect(nest_mm, nest_pops)
 
-# monitor the output using a spike detector
-nest_sd = []
+# monitor the output using a spike recorder
+nest_sr = []
 for i in range(M):
-    nest_sd.append(nest.Create('spike_detector'))
-    nest_sd[i].time_in_steps = True
+    nest_sr.append(nest.Create('spike_recorder'))
+    nest_sr[i].time_in_steps = True
     nest.SetDefaults('static_synapse', {'weight': 1., 'delay': dt})
-    nest.Connect(nest_pops[i], nest_sd[i])
+    nest.Connect(nest_pops[i], nest_sr[i])
 
 ###############################################################################
 # All neurons in a given population will be stimulated with a step input
@@ -214,10 +214,10 @@ for i, nest_i in enumerate(nest_pops):
     min_len = np.min([len(a), len(Abar)])
     Abar[:min_len, i] = a[:min_len]
 
-    data_sd = nest_sd[i].get('events', 'times')
-    data_sd = data_sd * dt - t0
+    data_sr = nest_sr[i].get('events', 'times')
+    data_sr = data_sr * dt - t0
     bins = np.concatenate((t, np.array([t[-1] + dt_rec])))
-    A = np.histogram(data_sd, bins=bins)[0] / float(N[i]) / dt_rec
+    A = np.histogram(data_sr, bins=bins)[0] / float(N[i]) / dt_rec
     A_N[:, i] = A
 
 ###############################################################################
@@ -289,14 +289,14 @@ for i, nest_i in enumerate(nest_pops):
 # mesoscopic population activities `A_N(t)` from the microscopic simulation.
 # We also record the membrane potentials of five example neurons:
 
-# monitor the output using a multimeter and a spike detector
-nest_sd = []
+# monitor the output using a multimeter and a spike recorder
+nest_sr = []
 for i, nest_i in enumerate(nest_pops):
-    nest_sd.append(nest.Create('spike_detector'))
-    nest_sd[i].time_in_steps = True
+    nest_sr.append(nest.Create('spike_recorder'))
+    nest_sr[i].time_in_steps = True
 
     # record all spikes from population to compute population activity
-    nest.Connect(nest_i, nest_sd[i], syn_spec={'weight': 1., 'delay': dt})
+    nest.Connect(nest_i, nest_sr[i], syn_spec={'weight': 1., 'delay': dt})
 
 Nrecord = [5, 0]    # for each population "i" the first Nrecord[i] neurons are recorded
 nest_mm_Vm = []
@@ -342,13 +342,13 @@ A_N = np.ones((t.size, M)) * np.nan
 nest.Simulate(t_end + dt)
 
 ###############################################################################
-# Let's retrieve the data of the spike detector and plot the activity of the
+# Let's retrieve the data of the spike recorder and plot the activity of the
 # excitatory population (in Hz):
 
 for i in range(len(nest_pops)):
-    data_sd = nest_sd[i].get('events', 'times') * dt - t0
+    data_sr = nest_sr[i].get('events', 'times') * dt - t0
     bins = np.concatenate((t, np.array([t[-1] + dt_rec])))
-    A = np.histogram(data_sd, bins=bins)[0] / float(N[i]) / dt_rec
+    A = np.histogram(data_sr, bins=bins)[0] / float(N[i]) / dt_rec
     A_N[:, i] = A * 1000  # in Hz
 
 t = np.arange(dt, t_end + dt, dt_rec)

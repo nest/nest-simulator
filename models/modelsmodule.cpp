@@ -109,7 +109,7 @@
 #include "correlomatrix_detector.h"
 #include "correlospinmatrix_detector.h"
 #include "multimeter.h"
-#include "spike_detector.h"
+#include "spike_recorder.h"
 #include "spin_detector.h"
 #include "volume_transmitter.h"
 #include "weight_recorder.h"
@@ -123,6 +123,7 @@
 #include "diffusion_connection.h"
 #include "gap_junction.h"
 #include "ht_connection.h"
+#include "jonke_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
 #include "rate_connection_delayed.h"
@@ -182,13 +183,6 @@ const std::string
 ModelsModule::name( void ) const
 {
   return std::string( "NEST Standard Models Module" ); // Return name of the module
-}
-
-const std::string
-ModelsModule::commandstring( void ) const
-{
-  // TODO: Move models-init.sli to sli_neuron....
-  return std::string( "(models-init) run" );
 }
 
 //-------------------------------------------------------------------------------------
@@ -260,7 +254,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
   kernel().model_manager.register_node_model< spike_dilutor >( "spike_dilutor" );
 
-  kernel().model_manager.register_node_model< spike_detector >( "spike_detector" );
+  kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
   kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
   kernel().model_manager.register_node_model< multimeter >( "multimeter" );
@@ -318,6 +312,7 @@ ModelsModule::init( SLIInterpreter* )
     "clopath_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING );
   register_connection_model< ContDelayConnection >( "cont_delay_synapse" );
   register_connection_model< HTConnection >( "ht_synapse" );
+  register_connection_model< JonkeConnection >( "jonke_synapse" );
   register_connection_model< Quantal_StpConnection >( "quantal_stp_synapse" );
   register_connection_model< StaticConnection >( "static_synapse" );
   register_connection_model< StaticConnectionHomW >( "static_synapse_hom_w" );

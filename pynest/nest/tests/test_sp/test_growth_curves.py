@@ -288,8 +288,8 @@ class TestGrowthCurve(unittest.TestCase):
 
         # build
         self.pop = nest.Create('iaf_psc_alpha', 10)
-        self.spike_detector = nest.Create('spike_detector')
-        nest.Connect(self.pop, self.spike_detector, 'all_to_all')
+        self.spike_recorder = nest.Create('spike_recorder')
+        nest.Connect(self.pop, self.spike_recorder, 'all_to_all')
         noise = nest.Create('poisson_generator')
         nest.SetStatus(noise, {"rate": 800000.0})
         nest.Connect(noise, self.pop, 'all_to_all')
@@ -312,7 +312,7 @@ class TestGrowthCurve(unittest.TestCase):
                 self.se_nest[n_i][t_i] = synaptic_elements['se']['z']
             nest.Simulate(self.sim_step)
 
-        tmp = nest.GetStatus(self.spike_detector, 'events')[0]
+        tmp = nest.GetStatus(self.spike_recorder, 'events')[0]
         spikes_all = tmp['times']
         senders_all = tmp['senders']
         for n_i, n in enumerate(self.pop):

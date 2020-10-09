@@ -108,10 +108,10 @@ set ( nestkernel_sources
       mask.h mask.cpp mask_impl.h
       ntree.h ntree_impl.h
       position.h
-      topology.h topology.cpp
+      spatial.h spatial.cpp
       vose.h vose.cpp
       )
-  
+
 if ( HAVE_SIONLIB )
   set( nestkernel_sources
        ${nestkernel_sources}

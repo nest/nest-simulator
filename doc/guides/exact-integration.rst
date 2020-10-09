@@ -112,7 +112,7 @@ and
 
 This means that once we have calculated :math:`A`, propagation consists of multiplications only.
 
-Example: The leaky integrate and fire model with alpha-funcition shaped inputs (iaf_psc_alpha)
+Example: The leaky integrate and fire model with alpha-function shaped inputs (iaf_psc_alpha)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The dynamics of the membrane potential :math:`V` is given by:

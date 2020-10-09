@@ -27,11 +27,9 @@
 #include "event.h"
 #include "exceptions.h"
 #include "generic_factory.h"
+#include "ntree.h"
 #include "parameter.h"
-
-// Includes from spatial:
-#include "spatial/ntree.h"
-#include "spatial/position.h"
+#include "position.h"
 
 // Includes from sli:
 #include "dict.h"

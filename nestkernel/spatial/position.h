@@ -465,7 +465,10 @@ inline Position< D, T >::Position( Position&& other )
 template < int D, class T >
 inline Position< D, T >& Position< D, T >::operator=( const std::vector< T >& y )
 {
-  assert( y.size() == D );
+  if ( y.size() != D )
+  {
+    throw BadProperty( String::compose( "Expected a %1-dimensional position.", D ) );
+  }
   std::copy( y.begin(), y.end(), x_.begin() );
 
   return *this;

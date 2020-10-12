@@ -238,8 +238,8 @@ class Network:
         """
         Initializes membrane potentials by sampling from a normal distribution.
 
-        One Python random number generator per virtual process (vp) is used.
-        This results in identical initial conditions if the number of vps,
+        One Python random number generator per virtual process (VP) is used.
+        This results in identical initial conditions if the number of VPs,
         meaning the product of MPI processes and the number of OpenMP threads
         per MPI process, is preserved.
 
@@ -260,13 +260,13 @@ class Network:
         mask = list(nest.GetStatus(neurons, 'local'))
         neurons_loc = np.array(neurons)[mask].tolist()
 
-        # get sequence of vps on this MPI process
+        # get sequence of VPs on this MPI process
         num_threads = nest.GetKernelStatus()['local_num_threads']
         local_vps = nest.GetStatus(neurons_loc[:num_threads], 'vp')
 
         for ivp, vp in enumerate(local_vps):
             # use knowledge that the next neuron of the same MPI process with
-            # the same vp is num_threads away
+            # the same VP is num_threads away
             neurons_vp = neurons_loc[ivp::num_threads]
             nest.SetStatus(neurons_vp, 'V_m',
                 self.pyrngs[vp].normal(V0_mean, V0_sd, len(neurons_vp)))

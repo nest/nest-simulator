@@ -99,7 +99,13 @@ projection_collection = ProjectionCollection()
 
 
 def Connect(projection):
-    projection_collection.add(projection)
+    if issubclass(type(projection), Projection):
+        projection_collection.add(projection)
+    elif issubclass(type(projection), (list, tuple)):
+        for proj in projection:
+            projection_collection.add(proj)
+    else:
+        raise TypeError('"projection" must be a projection or a list of projections')
 
 
 def ConnectImmediately(projections):

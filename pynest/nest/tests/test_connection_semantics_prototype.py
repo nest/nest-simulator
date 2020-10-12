@@ -102,6 +102,20 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
         conns = nest.GetConnections()
         self.assertEqual(len(conns), N*(IN_A + IN_B))
 
+    def test_connect_batch_projection_list(self):
+        """Connect with multiple batched projections as a list"""
+        N = 10
+        IN_A = 2
+        IN_B = 5
+        n = nest.Create('iaf_psc_alpha', N)
+
+        nest.projections.Connect([nest.projections.FixedIndegree(source=n, target=n, indegree=IN_A),
+                                  nest.projections.FixedIndegree(source=n, target=n, indegree=IN_B)])
+        nest.projections.BuildNetwork()
+
+        conns = nest.GetConnections()
+        self.assertEqual(len(conns), N*(IN_A + IN_B))
+
     def test_connect_single_projection(self):
         """Connect with a single projection"""
         n = nest.Create('iaf_psc_alpha', 1)

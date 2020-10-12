@@ -219,7 +219,7 @@ nest.CopyModel("static_synapse", "inhibitory",
                {"weight": J_in, "delay": delay})
 
 # Batch connect (prototype)
-nest.projections.Connect_immediately(
+nest.projections.ConnectImmediately(
     [nest.projections.AllToAll(source=noise,
                                target=nodes_ex,
                                synapse_model="excitatory"),

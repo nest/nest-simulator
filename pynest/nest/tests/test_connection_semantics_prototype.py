@@ -36,7 +36,7 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
 
         projection = nest.projections.OneToOne(source=n, target=n)
         nest.projections.Connect(projection)
-        nest.projections.build_network()
+        nest.projections.BuildNetwork()
 
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 1)
@@ -49,7 +49,7 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
 
         projection = nest.projections.FixedIndegree(source=n, target=n, indegree=5)
         nest.projections.Connect(projection)
-        nest.projections.build_network()
+        nest.projections.BuildNetwork()
 
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 5)
@@ -60,7 +60,7 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
 
         projection = nest.projections.FixedOutdegree(source=n, target=n, outdegree=5)
         nest.projections.Connect(projection)
-        nest.projections.build_network()
+        nest.projections.BuildNetwork()
 
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 5)
@@ -71,7 +71,7 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
 
         projection = nest.projections.FixedTotalNumber(source=n, target=n, N=5)
         nest.projections.Connect(projection)
-        nest.projections.build_network()
+        nest.projections.BuildNetwork()
 
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 5)
@@ -83,7 +83,7 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
 
         projection = nest.projections.PairwiseBernoulli(source=n, target=n, p=p)
         nest.projections.Connect(projection)
-        nest.projections.build_network()
+        nest.projections.BuildNetwork()
 
         conns = nest.GetConnections()
         self.assertEqual(len(conns), p*len(n)*len(n))
@@ -97,7 +97,7 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
 
         nest.projections.Connect(nest.projections.FixedIndegree(source=n, target=n, indegree=IN_A))
         nest.projections.Connect(nest.projections.FixedIndegree(source=n, target=n, indegree=IN_B))
-        nest.projections.build_network()
+        nest.projections.BuildNetwork()
 
         conns = nest.GetConnections()
         self.assertEqual(len(conns), N*(IN_A + IN_B))
@@ -106,7 +106,7 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
         """Connect with a single projection"""
         n = nest.Create('iaf_psc_alpha', 1)
 
-        nest.projections.Connect_immediately(nest.projections.OneToOne(source=n, target=n))
+        nest.projections.ConnectImmediately(nest.projections.OneToOne(source=n, target=n))
 
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 1)
@@ -120,8 +120,8 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
         IN_B = 5
         n = nest.Create('iaf_psc_alpha', N)
 
-        nest.projections.Connect_immediately([nest.projections.FixedIndegree(source=n, target=n, indegree=IN_A),
-                                              nest.projections.FixedIndegree(source=n, target=n, indegree=IN_B)])
+        nest.projections.ConnectImmediately([nest.projections.FixedIndegree(source=n, target=n, indegree=IN_A),
+                                             nest.projections.FixedIndegree(source=n, target=n, indegree=IN_B)])
 
         conns = nest.GetConnections()
         self.assertEqual(len(conns), N*(IN_A + IN_B))

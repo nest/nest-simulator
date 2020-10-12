@@ -28,8 +28,8 @@ from ..lib.hl_api_connections import Connect as nestlib_Connect
 
 __all__ = [
     'Connect',
-    'Connect_immediately',
-    'build_network',
+    'ConnectImmediately',
+    'BuildNetwork',
     'OneToOne',
     'AllToAll',
     'FixedIndegree',
@@ -102,7 +102,7 @@ def Connect(projection):
     projection_collection.add(projection)
 
 
-def Connect_immediately(projections):
+def ConnectImmediately(projections):
     projections = [projections] if issubclass(type(projections), Projection) else projections
     if not (issubclass(type(projections), (tuple, list)) and
             all([issubclass(type(x), Projection) for x in projections])):
@@ -111,7 +111,7 @@ def Connect_immediately(projections):
         projection.apply()
 
 
-def build_network():
+def BuildNetwork():
     for projection in projection_collection.get():
         projection.apply()
 

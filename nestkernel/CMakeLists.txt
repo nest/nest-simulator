@@ -100,29 +100,16 @@ set ( nestkernel_sources
       source_table.h source_table.cpp
       source_table_position.h
       spike_data.h
-      )
-
-set ( nestkernel_sources
-      ${nestkernel_sources}
-      spatial/connection_creator.cpp
-      spatial/connection_creator.h
-      spatial/connection_creator_impl.h
-      spatial/free_layer.h
-      spatial/grid_layer.h
-      spatial/grid_mask.h
-      spatial/layer.cpp
-      spatial/layer.h
-      spatial/layer_impl.h
-      spatial/mask.cpp
-      spatial/mask.h
-      spatial/mask_impl.h
-      spatial/ntree.h
-      spatial/ntree_impl.h
-      spatial/position.h
-      spatial/spatial.cpp
-      spatial/spatial.h
-      spatial/vose.cpp
-      spatial/vose.h
+      connection_creator.h connection_creator.cpp connection_creator_impl.h
+      free_layer.h
+      grid_layer.h
+      grid_mask.h
+      layer.h layer.cpp layer_impl.h
+      mask.h mask.cpp mask_impl.h
+      ntree.h ntree_impl.h
+      position.h
+      spatial.h spatial.cpp
+      vose.h vose.cpp
       )
 
 if ( HAVE_SIONLIB )

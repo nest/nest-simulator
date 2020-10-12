@@ -34,26 +34,24 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
+#include "connection_creator_impl.h"
 #include "connection_manager_impl.h"
+#include "free_layer.h"
 #include "genericmodel.h"
+#include "grid_layer.h"
+#include "grid_mask.h"
 #include "kernel_manager.h"
+#include "layer.h"
+#include "layer_impl.h"
+#include "mask.h"
+#include "mask_impl.h"
 #include "model_manager_impl.h"
 #include "nest.h"
 #include "nest_datums.h"
 #include "nest_types.h"
 #include "node.h"
 #include "sp_manager_impl.h"
-
-// Includes from spatial:
-#include "spatial/connection_creator_impl.h"
-#include "spatial/free_layer.h"
-#include "spatial/grid_layer.h"
-#include "spatial/grid_mask.h"
-#include "spatial/layer.h"
-#include "spatial/layer_impl.h"
-#include "spatial/mask.h"
-#include "spatial/mask_impl.h"
-#include "spatial/spatial.h"
+#include "spatial.h"
 
 // Includes from sli:
 #include "arraydatum.h"

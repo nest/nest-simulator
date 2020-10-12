@@ -162,16 +162,9 @@ class Network:
 
         v0_type_options = ['optimized', 'original']
         if self.net_dict['V0_type'] not in v0_type_options:
-            print(
-                '''
-                '{0}' is not a valid option for 'V0_type',
-                replacing it with '{1}.'
-                Valid options are {2}.
-                '''.format(self.net_dict['V0_type'],
-                           v0_type_options[0],
-                           v0_type_options)
-                )
-            self.net_dict['V0_type'] = v0_type_options[0]
+            raise Exception(
+                'V0_type incorrect. Valid options are ' +
+                (' and ').join(v0_type_options) + '.')
 
         if nest.Rank() == 0:
             print(

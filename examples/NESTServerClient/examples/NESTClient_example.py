@@ -21,7 +21,7 @@
 
 from NESTServerClient import NESTServerClient
 
-print('Showing examples of client for NEST Server')
+print('Running client examples using NEST via NEST Server')
 
 # Load NEST Server client
 nestsc = NESTServerClient()

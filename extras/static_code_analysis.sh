@@ -62,6 +62,7 @@ typeset -i MAX_CPPCHECK_MSG_COUNT=10
 
 # Drop files that should not be checked (space-separated list).
 FILES_TO_IGNORE="libnestutil/compose.hpp libnestutil/randutils.hpp"
+DIRS_TO_IGNORE="libnestutil/Random123 libnestutil/Random123/conventional libnestutil/Random123/features"
 
 # Print a message.
 # The format of the message depends on whether the script is executed on Travis CI or runs local.
@@ -127,6 +128,11 @@ for f in $FILE_NAMES; do
 
   if [[ $FILES_TO_IGNORE =~ .*$f.* ]]; then
     print_msg "MSGBLD0110: " "$f is explicitly ignored."
+    continue
+  fi
+  # Have to add spaces to make space-separation work
+  if [[ " $DIRS_TO_IGNORE " =~ .*[[:space:]]${f%/*}[[:space:]].* ]]; then
+    print_msg "MSGBLD0110: " "$f is in a directory that is explicitly ignored."
     continue
   fi
   if [ ! -f "$f" ]; then

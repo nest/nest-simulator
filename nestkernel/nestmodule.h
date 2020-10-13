@@ -27,11 +27,9 @@
 #include "event.h"
 #include "exceptions.h"
 #include "generic_factory.h"
+#include "ntree.h"
 #include "parameter.h"
-
-// Includes from spatial:
-#include "spatial/ntree.h"
-#include "spatial/position.h"
+#include "position.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -526,18 +524,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } setmaxbuffered_l_ifunction;
 #endif
-
-  class SetStructuralPlasticityStatus_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } setstructuralplasticitystatus_Dfunction;
-
-  class GetStructuralPlasticityStatus_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getstructuralplasticitystatus_function;
 
   class EnableStructuralPlasticity_Function : public SLIFunction
   {

@@ -300,7 +300,7 @@ Compiling for Fujitsu Sparc64
 =============================
 
 On the K Computer:
-  The preinstalled `cmake` version is 2.6, which is to old for NEST. Please install
+  The preinstalled `cmake` version is 2.6, which is too old for NEST. Please install
   a newer version, e.g. like this:
 
       wget https://cmake.org/files/v3.4/cmake-3.4.2.tar.gz

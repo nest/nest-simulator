@@ -83,7 +83,7 @@ class TestNodeCollection(unittest.TestCase):
             self.assertEqual(n_arr.tolist(), nc.tolist())
 
             # incorporation to bigger array
-            arr = np.zeros(2*n_neurons, dtype=int)
+            arr = np.zeros(2 * n_neurons, dtype=int)
 
             start = 2
 
@@ -139,7 +139,7 @@ class TestNodeCollection(unittest.TestCase):
             self.assertEqual(nc.get('global_id'), counter)
             counter += 1
         for i in range(10):
-            nc = nest.NodeCollection([i+1])
+            nc = nest.NodeCollection([i + 1])
             self.assertEqual(nc, nodes[i])
 
     def test_slicing(self):
@@ -284,13 +284,13 @@ class TestNodeCollection(unittest.TestCase):
         # Primitive NodeCollection
         N = 10
         primitive = nest.Create('iaf_psc_alpha', N)
-        check_membership(primitive, range(1, N+1), [])
+        check_membership(primitive, range(1, N + 1), [])
 
         # Composite NodeCollection
         exp_N = 5
         N += exp_N
         composite = primitive + nest.Create('iaf_psc_exp', exp_N)
-        check_membership(composite, range(1, N+1), [])
+        check_membership(composite, range(1, N + 1), [])
 
         # Sliced NodeCollection
         low = 3
@@ -298,20 +298,20 @@ class TestNodeCollection(unittest.TestCase):
         sliced = composite[low:high]
         inverse_reference = list(range(1, N))
         del inverse_reference[low:high]
-        check_membership(sliced, range(low+1, high+1), inverse_reference)
+        check_membership(sliced, range(low + 1, high + 1), inverse_reference)
 
         # NodeCollection with step
         step = 3
         stepped = composite[::step]
         inverse_reference = list(range(1, N))
         del inverse_reference[::step]
-        check_membership(stepped, range(1, N+1, step), inverse_reference)
+        check_membership(stepped, range(1, N + 1, step), inverse_reference)
 
         # Sliced NodeCollection with step
         sliced_stepped = composite[low:high:step]
         inverse_reference = list(range(1, N))
         del inverse_reference[low:high:step]
-        check_membership(sliced_stepped, range(low+1, high+1, step), inverse_reference)
+        check_membership(sliced_stepped, range(low + 1, high + 1, step), inverse_reference)
 
     def test_NodeCollection_index(self):
         """NodeCollections index function"""
@@ -551,7 +551,10 @@ class TestNodeCollection(unittest.TestCase):
         self.assertEqual(get_conn_some.get('source'), compare_source)
         self.assertEqual(get_conn_some.get('target'), compare_target)
 
-        compare_list = [3, 1, 0, 15, 6]
+        expected_syn_model = 'static_synapse'
+        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+
+        compare_list = [3, 1, 0, expected_syn_id, 6]
         conn = [get_conn_some.get('source')[3],
                 get_conn_some.get('target')[3],
                 get_conn_some.get('target_thread')[3],
@@ -568,7 +571,7 @@ class TestNodeCollection(unittest.TestCase):
                         conns['port'][i]]
                        for i in range(len(nest.GetConnections(n[0])))]
 
-        ref = [[1, 1, 0, 15, 0], [1, 2, 0, 15, 1], [1, 3, 0, 15, 2]]
+        ref = [[1, 1, 0, expected_syn_id, 0], [1, 2, 0, expected_syn_id, 1], [1, 3, 0, expected_syn_id, 2]]
         for conn, conn_ref in zip(connections, ref):
             self.assertEqual(conn, conn_ref)
 
@@ -649,7 +652,7 @@ class TestNodeCollection(unittest.TestCase):
         for source in n:
             source_x, source_y = nest.GetPosition(source)
             target_x, target_y = (target[0][0], target[0][1])
-            ref_distance = np.sqrt((target_x - source_x)**2 + (target_y - source_y)**2)
+            ref_distance = np.sqrt((target_x - source_x) ** 2 + (target_y - source_y)**2)
             self.assertEqual(param.apply(source, target), ref_distance)
 
         # Multiple target positions
@@ -670,7 +673,8 @@ class TestNodeCollection(unittest.TestCase):
         with self.assertRaises(TypeError):
             param.apply(source, [1., 2.])  # Not a list of lists
         with self.assertRaises(ValueError):
-            param.apply(source, [[1., 2.], [1., 2., 3.]])  # Not consistent dimensions
+            # Not consistent dimensions
+            param.apply(source, [[1., 2.], [1., 2., 3.]])
 
     def test_Create_accepts_empty_params_dict(self):
         """

@@ -43,8 +43,8 @@ def num_synapses_from_conn_probs(conn_probs, popsize1, popsize2):
 
     Here it is irrelevant which population is source and which target.
 
-    Paramters
-    ---------
+    Parameters
+    ----------
     conn_probs
         Matrix of connection probabilities.
     popsize1

@@ -218,19 +218,19 @@ before_deploy:
      fi
 
 # S3 Deployment (Uploading the Travis CI build artefacts to Amazon S3).
-deploy:
-  provider: s3
-  access_key_id:
-    secure: $ARTIFACTS_KEY
-  secret_access_key:
-    secure: $ARTIFACTS_SECRET
-  bucket: "nest-travis-artefacts"
-  region: eu-central-1
-  skip_cleanup: true
-  on:
-    repo: nest/nest-simulator
-    branch: master
-    condition: $xNEST_BUILD_TYPE != STATIC_CODE_ANALYSIS
-  local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
-  upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
-  acl: bucket_owner_full_control
+#deploy:
+#  provider: s3
+#  access_key_id:
+#    secure: $ARTIFACTS_KEY
+#  secret_access_key:
+#    secure: $ARTIFACTS_SECRET
+#  bucket: "nest-travis-artefacts"
+#  region: eu-central-1
+#  skip_cleanup: true
+#  on:
+#    repo: nest/nest-simulator
+#    branch: master
+#    condition: $xNEST_BUILD_TYPE != STATIC_CODE_ANALYSIS
+#  local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
+#  upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
+#  acl: bucket_owner_full_control

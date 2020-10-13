@@ -119,18 +119,30 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     const Token& tkn = d->lookup( names::positions );
     if ( tkn.is_a< TokenArray >() )
     {
+      // If the positions are created from a layer sliced with step, we need to take that into consideration.
+      // Because the implementation of NodeCollections sliced with step internally keeps the "skipped" nodes,
+      // the positions must include the "skipped" nodes as well for consistency.
+      size_t step = 1;
+      if ( d->known( names::step ) )
+      {
+        step = getValue< long >( d->lookup( names::step ) );
+      }
       TokenArray pos = getValue< TokenArray >( tkn );
-      if ( this->node_collection_->size() != pos.size() )
+      const auto num_nodes = this->node_collection_->size();
+      // Number of positions, excluding the skipped nodes
+      const auto stepped_pos_size = std::floor( pos.size() / ( float ) step ) + ( pos.size() % step > 0 );
+
+      if ( num_nodes != stepped_pos_size )
       {
         std::stringstream expected;
         std::stringstream got;
-        expected << "position array with length " << this->node_collection_->size();
-        got << "position array with length" << pos.size();
+        expected << "position array with length " << num_nodes;
+        got << "position array with length" << stepped_pos_size;
         throw TypeMismatch( expected.str(), got.str() );
       }
 
       positions_.clear();
-      positions_.reserve( this->node_collection_->size() );
+      positions_.reserve( num_nodes );
 
       for ( Token* it = pos.begin(); it != pos.end(); ++it )
       {
@@ -182,30 +194,30 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     {
       throw KernelException( "'positions' must be an array or a DimensionParameter." );
     }
-    if ( d->known( names::extent ) )
+  }
+  if ( d->known( names::extent ) )
+  {
+    this->extent_ = getValue< std::vector< double > >( d, names::extent );
+
+    Position< D > center = ( max_point + this->lower_left_ ) / 2;
+    auto lower_left_point = this->lower_left_; // save lower-left-most point
+    this->lower_left_ = center - this->extent_ / 2;
+
+    // check if all points are inside the specified layer extent
+    auto upper_right_limit = center + this->extent_ / 2;
+    for ( int d = 0; d < D; ++d )
     {
-      this->extent_ = getValue< std::vector< double > >( d, names::extent );
-
-      Position< D > center = ( max_point + this->lower_left_ ) / 2;
-      auto lower_left_point = this->lower_left_; // save lower-left-most point
-      this->lower_left_ = center - this->extent_ / 2;
-
-      // check if all points are inside the specified layer extent
-      auto upper_right_limit = center + this->extent_ / 2;
-      for ( int d = 0; d < D; ++d )
+      if ( lower_left_point[ d ] < this->lower_left_[ d ] or max_point[ d ] > upper_right_limit[ d ] )
       {
-        if ( lower_left_point[ d ] < this->lower_left_[ d ] or max_point[ d ] > upper_right_limit[ d ] )
-        {
-          throw BadProperty( "Node position outside of layer" );
-        }
+        throw BadProperty( "Node position outside of layer" );
       }
     }
-    else
-    {
-      this->extent_ = max_point - this->lower_left_;
-      this->extent_ += epsilon * 2;
-      this->lower_left_ -= epsilon;
-    }
+  }
+  else
+  {
+    this->extent_ = max_point - this->lower_left_;
+    this->extent_ += epsilon * 2;
+    this->lower_left_ -= epsilon;
   }
 }
 

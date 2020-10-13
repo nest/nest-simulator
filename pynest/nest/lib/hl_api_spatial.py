@@ -953,8 +953,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         else:
             ax = fig.gca()
 
-        ax.scatter(xpos, ypos, s=nodesize, facecolor=nodecolor,
-                   edgecolor='none')
+        ax.scatter(xpos, ypos, s=nodesize, facecolor=nodecolor)
         _draw_extent(ax, xctr, yctr, xext, yext)
 
     elif len(ext) == 3:
@@ -1087,12 +1086,9 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
         tgtpos = GetTargetPositions(src_nrn, tgt_layer, syn_type)
         if tgtpos:
             xpos, ypos = zip(*tgtpos[0])
-            ax.scatter(xpos, ypos, s=tgt_size, facecolor=tgt_color,
-                       edgecolor='none')
+            ax.scatter(xpos, ypos, s=tgt_size, facecolor=tgt_color)
 
-        ax.scatter(srcpos[:1], srcpos[1:], s=src_size, facecolor=src_color,
-                   edgecolor='none',
-                   alpha=0.4, zorder=-10)
+        ax.scatter(srcpos[:1], srcpos[1:], s=src_size, facecolor=src_color, alpha=0.4, zorder=-10)
 
         if mask is not None or probability_parameter is not None:
             edges = [xctr - xext, xctr + xext, yctr - yext, yctr + yext]
@@ -1115,12 +1111,9 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
         tgtpos = GetTargetPositions(src_nrn, tgt_layer, syn_type)
         if tgtpos:
             xpos, ypos, zpos = zip(*tgtpos[0])
-            ax.scatter3D(xpos, ypos, zpos, s=tgt_size, facecolor=tgt_color,
-                         edgecolor='none')
+            ax.scatter3D(xpos, ypos, zpos, s=tgt_size, facecolor=tgt_color)
 
-        ax.scatter3D(srcpos[:1], srcpos[1:2], srcpos[2:], s=src_size,
-                     facecolor=src_color, edgecolor='none',
-                     alpha=0.4, zorder=-10)
+        ax.scatter3D(srcpos[:1], srcpos[1:2], srcpos[2:], s=src_size, facecolor=src_color, alpha=0.4, zorder=-10)
 
     plt.draw_if_interactive()
 

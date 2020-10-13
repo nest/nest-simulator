@@ -46,7 +46,7 @@ Description
 +++++++++++
 
 gif_psc_exp_multisynapse is the generalized integrate-and-fire neuron
-according to Mensi et al. (2012) and Pozzorini et al. (2015), with
+according to Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with
 exponential shaped postsynaptic currents.
 
 This model features both an adaptation current and a dynamic threshold for
@@ -60,7 +60,7 @@ differential equation:
 
 where each :math:`\eta_i` is a spike-triggered current (stc), and the neuron
 model can have arbitrary number of them.
-Dynamic of each :math`\eta_i` is described by:
+Dynamic of each :math:`\eta_i` is described by:
 
 .. math::
 
@@ -73,7 +73,7 @@ positive or negative):
 
  \eta_i = \eta_i + q_{\eta_i} \text{ (in case of spike emission).}
 
-Neuron produces spikes STOCHASTICALLY according to a point process with the
+Neuron produces spikes stochastically according to a point process with the
 firing intensity:
 
 .. math::
@@ -84,30 +84,30 @@ where :math:`V_T(t)` is a time-dependent firing threshold:
 
 .. math::
 
- V_T(t) = V_{T_star} + \gamma_1(t) + \gamma_2(t) + \ldots + \gamma_m(t)
+ V_T(t) = V_{T_{star}} + \gamma_1(t) + \gamma_2(t) + \ldots + \gamma_m(t)
 
-where :math:` \gamma_i` is a kernel of spike-frequency adaptation (sfa), and the
+where :math:`\gamma_i` is a kernel of spike-frequency adaptation (sfa), and the
 neuron model can have arbitrary number of them.
-Dynamic of each :math`\gamma_i` is described by:
+Dynamic of each :math:`\gamma_i` is described by:
 
 .. math::
 
-\tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
+   \tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
 
 .. math::
 
-\gamma_i = \gamma_i + q_{\gamma_i}  \text{ (in case of spike emission).}
+   \gamma_i = \gamma_i + q_{\gamma_i}  \text{ (in case of spike emission).}
 
 
 Note:
 
-In the current implementation of the model (as described in [1]_ and
-[2]_), the values of :math:`\eta_i` and :math:`\gamma_i` are affected
-immediately after spike emission. However, GIF toolbox
-(http://wiki.epfl.ch/giftoolbox) which fits the model using experimental data,
+In the current implementation of the model,
+the values of :math:`\eta_i` and :math:`\gamma_i` are affected
+immediately after spike emission. However, `GIF toolbox <http://wiki.epfl.ch/giftoolbox>`,
+which fits the model using experimental data,
 requires a different set of :math:`\eta_i` and :math:`\gamma_i`. It applies the
 jump of :math:`\eta_i` and :math:`\gamma_i` after the refractory period. One can
 easily convert between :math:`q_\eta/\gamma` of these two approaches:
@@ -117,9 +117,9 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
   q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} * (1 - \exp( -\tau_{ref} /
    \tau_\eta ))
 
-  The same formula applies for :math:`q_{\gamma}`.
+The same formula applies for :math:`q_{\gamma}`.
 
-On the postsynapic side, there can be arbitrarily many synaptic time constants
+On the postsynaptic side, there can be arbitrarily many synaptic time constants
 (gif_psc_exp has exactly two: tau_syn_ex and tau_syn_in). This can be reached
 by specifying separate receptor ports, each for a different time constant. The
 port number has to match the respective "receptor_type" in the connectors.

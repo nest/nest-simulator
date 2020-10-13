@@ -167,11 +167,11 @@ spikes = spike_data["times"]
 # We plot the time traces of the membrane potential (in blue) and
 # the overall threshold (in green), and the spikes (as red dots) in one panel;
 # the spike component of threshold (in yellow) and the voltage component of
-# threshold (in black) in another panel; the injected currents(in strong blue),
-# the sum of after spike currents(in cyan) in the third panel; and the synaptic
+# threshold (in black) in another panel; the injected currents (in strong blue),
+# the sum of after spike currents (in cyan) in the third panel; and the synaptic
 # conductances of the two receptors (in blue and orange) in responding to the
 # spike inputs to the neurons in the fourth panel. We plot all these four
-# panels for each level of GLIF model in a seperated figure.
+# panels for each level of GLIF model in a separated figure.
 
 glif_models = ["lif", "lif_r", "lif_asc", "lif_r_asc", "lif_r_asc_a"]
 for i in range(len(glif_models)):

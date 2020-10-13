@@ -62,7 +62,7 @@ spikes are added to the membrane potential at the end of the
 refractory period, dampened according to the interval between
 arrival and end of refractoriness.
 
-The linear subthresold dynamics is integrated by the Exact
+The linear subthreshold dynamics is integrated by the Exact
 Integration scheme [1]_. The neuron dynamics are solved exactly in
 time. Incoming and outgoing spike times are handled precisely [3]_.
 

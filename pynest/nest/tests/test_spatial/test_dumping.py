@@ -40,16 +40,16 @@ class DumpingTestCase(unittest.TestCase):
     def test_DumpNodes(self):
         """Test dumping nodes."""
         nest.ResetKernel()
-        l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(shape=[3, 3],
-                                                    extent=[2., 2.],
-                                                    edge_wrap=True))
+        spatial_nodes = nest.Create('iaf_psc_alpha',
+                                    positions=nest.spatial.grid(shape=[3, 3],
+                                                                extent=[2., 2.],
+                                                                edge_wrap=True))
 
         filename = os.path.join(self.nest_tmpdir(), 'test_DumpNodes.out.lyr')
-        nest.DumpLayerNodes(l, filename)
+        nest.DumpLayerNodes(spatial_nodes, filename)
 
         npa = np.genfromtxt(filename)
-        reference = np.array([[n.get('global_id')] + list(nest.GetPosition(n)) for n in l])
+        reference = np.array([[n.get('global_id')] + list(nest.GetPosition(n)) for n in spatial_nodes])
         self.assertTrue(np.allclose(npa, reference))
         os.remove(filename)
 
@@ -57,14 +57,14 @@ class DumpingTestCase(unittest.TestCase):
         """Test dumping connections."""
         cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
-        l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(shape=[2, 1],
-                                                    extent=[2., 2.],
-                                                    edge_wrap=True))
-        nest.Connect(l, l, cdict)
+        spatial_nodes = nest.Create('iaf_psc_alpha',
+                                    positions=nest.spatial.grid(shape=[2, 1],
+                                                                extent=[2., 2.],
+                                                                edge_wrap=True))
+        nest.Connect(spatial_nodes, spatial_nodes, cdict)
 
         filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
-        nest.DumpLayerConnections(l, l, 'static_synapse', filename)
+        nest.DumpLayerConnections(spatial_nodes, spatial_nodes, 'static_synapse', filename)
         npa = np.genfromtxt(filename)
         reference = np.array([[1.,  1.,  1.,  1.,  0.,  0.],
                               [1.,  2.,  1.,  1., -1.,  0.],
@@ -123,14 +123,14 @@ class DumpingTestCase(unittest.TestCase):
         """Test dumping connections with sliced layer."""
         cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
-        l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(shape=[10, 1],
-                                                    extent=[2., 2.],
-                                                    edge_wrap=True))
-        nest.Connect(l, l, cdict)
+        spatial_nodes = nest.Create('iaf_psc_alpha',
+                                    positions=nest.spatial.grid(shape=[10, 1],
+                                                                extent=[2., 2.],
+                                                                edge_wrap=True))
+        nest.Connect(spatial_nodes, spatial_nodes, cdict)
 
         filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
-        nest.DumpLayerConnections(l[0], l, 'static_synapse', filename)
+        nest.DumpLayerConnections(spatial_nodes[0], spatial_nodes, 'static_synapse', filename)
         npa = np.genfromtxt(filename)
         reference = np.array([[1., 1., 1., 1., 0., 0.],
                               [1., 2., 1., 1., 0.2, 0.],

@@ -49,7 +49,7 @@ Description
 +++++++++++
 
 iaf_psc_exp_multisynapse is a direct extension of iaf_psc_exp.
-On the postsynapic side, there can be arbitrarily many synaptic
+On the postsynaptic side, there can be arbitrarily many synaptic
 time constants (iaf_psc_exp has exactly two: tau_syn_ex and tau_syn_in).
 
 This can be reached by specifying separate receptor ports, each for

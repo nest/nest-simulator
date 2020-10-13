@@ -33,6 +33,27 @@ set( nestutil_sources
     stopwatch.h stopwatch.cpp
     string_utils.h
     vector_util.h
+    Random123/gsl_microrng.h
+    Random123/aes.h
+    Random123/array.h
+    Random123/u01fixedpt.h
+    Random123/philox.h
+    Random123/threefry.h
+    Random123/ars.h
+    Random123/conventional/gsl_cbrng.h
+    Random123/features/open64features.h
+    Random123/features/xlcfeatures.h
+    Random123/features/nvccfeatures.h
+    Random123/features/metalfeatures.h
+    Random123/features/sunprofeatures.h
+    Random123/features/sse.h
+    Random123/features/pgccfeatures.h
+    Random123/features/openclfeatures.h
+    Random123/features/iccfeatures.h
+    Random123/features/compilerfeatures.h
+    Random123/features/clangfeatures.h
+    Random123/features/msvcfeatures.h
+    Random123/features/gccfeatures.h
     )
 
 add_library( nestutil ${nestutil_sources} )

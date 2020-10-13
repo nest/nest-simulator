@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_random_parameter.py
+# test_random123.py
 #
 # This file is part of NEST.
 #

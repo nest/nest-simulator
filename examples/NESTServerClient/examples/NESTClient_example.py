@@ -46,7 +46,7 @@ nestsc.Connect(pg, neurons, syn_spec={'weight': 10.})
 nestsc.Connect(neurons[::10], sr)
 
 # Simulate
-nestsc.Simulate(1000.)
+nestsc.Simulate(1000.0)
 
 # Get events
 n_events = nestsc.GetStatus(sr, 'n_events')[0]

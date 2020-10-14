@@ -23,6 +23,9 @@
 #ifndef NEST_NAMES_H
 #define NEST_NAMES_H
 
+// Generated includes:
+#include "config.h"
+
 // Includes from sli:
 #include "name.h"
 

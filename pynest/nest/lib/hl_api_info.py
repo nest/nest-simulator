@@ -67,8 +67,7 @@ def version():
 
     """
 
-    sr("statusdict [[ /kernelname /version ]] get")
-    return " ".join(spp())
+    return sli_func("statusdict /version get")
 
 
 @check_stack

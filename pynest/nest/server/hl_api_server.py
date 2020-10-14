@@ -191,6 +191,8 @@ def get_or_error(func):
             return func(call, args, kwargs)
         except nest.kernel.NESTError as e:
             abort(Response(getattr(e, 'errormessage'), 400))
+        except TypeError as e:
+            abort(Response(str(e), 400))
         except Exception as e:
             abort(Response(str(e), 400))
     return func_wrapper
@@ -202,7 +204,8 @@ def get_restricted_globals():
     def getitem(obj, index):
         if obj is not None and type(obj) in (list, tuple, dict, nest.NodeCollection):
             return obj[index]
-        raise Exception('Error raised in getting restricted globals. The object {} was not identified.'.format(obj))
+        raise TypeError(
+          'Error raised in getting restricted globals. The object {} was not identified.'.format(obj))
 
     restricted_builtins = RestrictedPython.safe_builtins.copy()
     restricted_builtins.update(RestrictedPython.limited_builtins)

@@ -113,6 +113,8 @@ CGSelectImplementation
 void
 ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute( SLIInterpreter* i ) const
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   i->assert_stack_load( 5 );
 
   ConnectionGeneratorDatum cg = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
@@ -125,6 +127,8 @@ ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute( SLIInterpreter
 
   i->OStack.pop( 5 );
   i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 /** @BeginDocumentation

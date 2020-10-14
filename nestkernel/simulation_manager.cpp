@@ -91,19 +91,19 @@ nest::SimulationManager::finalize()
 void
 nest::SimulationManager::reset_timers_for_preparation()
 {
-  sw_communicate_prepare.reset();
+  sw_communicate_prepare_.reset();
 #ifdef TIMER_DETAILED
-  sw_gather_target_data.reset();
+  sw_gather_target_data_.reset();
 #endif
 }
 
 void
 nest::SimulationManager::reset_timers_for_dynamics()
 {
-  sw_simulate.reset();
+  sw_simulate_.reset();
 #ifdef TIMER_DETAILED
-  sw_gather_spike_data.reset();
-  sw_update.reset();
+  sw_gather_spike_data_.reset();
+  sw_update_.reset();
 #endif
 }
 
@@ -411,12 +411,12 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
   def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
 
-  def< double >( d, names::time_simulate, sw_simulate.elapsed() );
-  def< double >( d, names::time_communicate_prepare, sw_communicate_prepare.elapsed() );
+  def< double >( d, names::time_simulate, sw_simulate_.elapsed() );
+  def< double >( d, names::time_communicate_prepare, sw_communicate_prepare_.elapsed() );
 #ifdef TIMER_DETAILED
-  def< double >( d, names::time_gather_spike_data, sw_gather_spike_data.elapsed() );
-  def< double >( d, names::time_update, sw_update.elapsed() );
-  def< double >( d, names::time_gather_target_data, sw_gather_target_data.elapsed() );
+  def< double >( d, names::time_gather_spike_data, sw_gather_spike_data_.elapsed() );
+  def< double >( d, names::time_update, sw_update_.elapsed() );
+  def< double >( d, names::time_gather_target_data, sw_gather_target_data_.elapsed() );
 #endif
 }
 
@@ -569,7 +569,7 @@ nest::SimulationManager::run( Time const& t )
   // Reset local spike counters within event_delivery_manager
   kernel().event_delivery_manager.reset_counters();
 
-  sw_simulate.start();
+  sw_simulate_.start();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -606,7 +606,7 @@ nest::SimulationManager::run( Time const& t )
 
   kernel().io_manager.post_run_hook();
 
-  sw_simulate.stop();
+  sw_simulate_.stop();
 }
 
 void
@@ -707,7 +707,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 #pragma omp barrier
   if ( tid == 0 )
   {
-    sw_communicate_prepare.start();
+    sw_communicate_prepare_.start();
   }
 
   kernel().connection_manager.restructure_connection_tables( tid );
@@ -739,7 +739,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 #ifdef TIMER_DETAILED
   if ( tid == 0 )
   {
-    sw_gather_target_data.start();
+    sw_gather_target_data_.start();
   }
 #endif
 
@@ -751,7 +751,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 #pragma omp barrier
   if ( tid == 0 )
   {
-    sw_gather_target_data.stop();
+    sw_gather_target_data_.stop();
   }
 #endif
 
@@ -769,7 +769,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 #pragma omp barrier
   if ( tid == 0 )
   {
-    sw_communicate_prepare.stop();
+    sw_communicate_prepare_.stop();
   }
 }
 
@@ -954,7 +954,7 @@ nest::SimulationManager::update_()
 #pragma omp barrier
       if ( tid == 0 )
       {
-        sw_update.start();
+        sw_update_.start();
       }
 #endif
       const SparseNodeArray& thread_local_nodes = kernel().node_manager.get_local_nodes( tid );
@@ -983,8 +983,8 @@ nest::SimulationManager::update_()
 #ifdef TIMER_DETAILED
       if ( tid == 0 )
       {
-        sw_update.stop();
-        sw_gather_spike_data.start();
+        sw_update_.stop();
+        sw_gather_spike_data_.start();
       }
 #endif
 
@@ -1009,7 +1009,7 @@ nest::SimulationManager::update_()
 #ifdef TIMER_DETAILED
       if ( tid == 0 )
       {
-        sw_gather_spike_data.stop();
+        sw_gather_spike_data_.stop();
       }
 #endif
 

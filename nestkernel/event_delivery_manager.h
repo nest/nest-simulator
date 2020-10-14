@@ -244,16 +244,6 @@ public:
    */
   virtual void reset_timers_for_dynamics();
 
-#ifdef TIMER_DETAILED
-  // public stop watches for benchmarking purposes (intended for internal core developers,
-  // not for use in the public API)
-public:
-  Stopwatch sw_collocate_spike_data;
-  Stopwatch sw_communicate_spike_data;
-  Stopwatch sw_deliver_spike_data;
-  Stopwatch sw_communicate_target_data;
-#endif
-
 private:
   template < typename SpikeDataT >
   void gather_spike_data_( const thread tid,
@@ -441,6 +431,15 @@ private:
   bool buffer_size_spike_data_has_changed_;
 
   PerThreadBoolIndicator gather_completed_checker_;
+
+#ifdef TIMER_DETAILED
+  // private stop watches for benchmarking purposes
+  // (intended for internal core developers, not for use in the public API)
+  Stopwatch sw_collocate_spike_data_;
+  Stopwatch sw_communicate_spike_data_;
+  Stopwatch sw_deliver_spike_data_;
+  Stopwatch sw_communicate_target_data_;
+#endif
 };
 
 inline void

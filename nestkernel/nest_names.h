@@ -543,6 +543,7 @@ extern const Name time_gather_target_data;
 extern const Name time_update;
 #endif
 extern const Name time_communicate_prepare;
+extern const Name time_construction_create;
 extern const Name time_in_steps;
 extern const Name time_simulate;
 extern const Name times;

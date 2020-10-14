@@ -71,6 +71,8 @@ NodeManager::initialize()
   local_nodes_.resize( kernel().vp_manager.get_num_threads() );
   num_thread_local_devices_.resize( kernel().vp_manager.get_num_threads(), 0 );
   ensure_valid_thread_local_ids();
+
+  sw_construction_create.reset();
 }
 
 void
@@ -94,6 +96,8 @@ NodeManager::get_status( index idx )
 NodeCollectionPTR
 NodeManager::add_node( index model_id, long n )
 {
+  sw_construction_create.start();
+
   have_nodes_changed_ = true;
 
   if ( model_id >= kernel().model_manager.get_num_node_models() )
@@ -169,6 +173,8 @@ NodeManager::add_node( index model_id, long n )
   // the second dimension matches number of synapse types
   kernel().connection_manager.resize_target_table_devices_to_number_of_neurons();
   kernel().connection_manager.resize_target_table_devices_to_number_of_synapse_types();
+
+  sw_construction_create.stop();
 
   return nc_ptr;
 }
@@ -801,6 +807,7 @@ void
 NodeManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, names::network_size, size() );
+  def< double >( d, names::time_construction_create, sw_construction_create.elapsed() );
 }
 
 void

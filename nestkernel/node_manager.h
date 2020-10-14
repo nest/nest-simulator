@@ -28,6 +28,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "conn_builder.h"
@@ -295,6 +296,10 @@ private:
    */
   void add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
+  // public stop watches for benchmarking purposes (intended for internal core developers,
+  // not for use in the public API)
+public:
+  Stopwatch sw_construction_create;
 
 private:
   /**

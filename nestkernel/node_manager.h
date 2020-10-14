@@ -296,11 +296,6 @@ private:
    */
   void add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
-  // public stop watches for benchmarking purposes (intended for internal core developers,
-  // not for use in the public API)
-public:
-  Stopwatch sw_construction_create;
-
 private:
   /**
    * The network as sparse array of local nodes. One entry per thread,
@@ -323,6 +318,9 @@ private:
 
   //! Store exceptions raised in thread-parallel sections for later handling
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
+
+  // private stop watch for benchmarking purposes
+  Stopwatch sw_construction_create_;
 };
 
 inline index

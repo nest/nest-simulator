@@ -201,15 +201,14 @@ private:
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
 
-public:
-  Stopwatch sw_simulate;
-  Stopwatch sw_communicate_prepare;
+  // private stop watches for benchmarking purposes
+  Stopwatch sw_simulate_;
+  Stopwatch sw_communicate_prepare_;
 #ifdef TIMER_DETAILED
-  // public stop watches for benchmarking purposes (intended for internal core developers,
-  // not for use in the public API)
-  Stopwatch sw_gather_spike_data;
-  Stopwatch sw_update;
-  Stopwatch sw_gather_target_data;
+  // intended for internal core developers, not for use in the public API
+  Stopwatch sw_gather_spike_data_;
+  Stopwatch sw_update_;
+  Stopwatch sw_gather_target_data_;
 #endif
 };
 

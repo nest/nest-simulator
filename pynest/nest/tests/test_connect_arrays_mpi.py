@@ -57,7 +57,11 @@ class ConnectArraysMPICase(unittest.TestCase):
     multiple processes.
     """
     non_unique = np.array([1, 1, 3, 5, 4, 5, 9, 7, 2, 8], dtype=np.uint64)
-    comm = MPI.COMM_WORLD.Clone()
+
+    # We will enter the test class if HAVE_MPI4PY is false (though all tests are then skipped), so we need to only
+    # set the variable if we have mpi4py.
+    if HAVE_MPI4PY:
+        comm = MPI.COMM_WORLD.Clone()
 
     # With pytest or nosetests, only run these tests if using multiple processes
     __test__ = MULTIPLE_PROCESSES

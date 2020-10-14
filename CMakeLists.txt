@@ -40,6 +40,9 @@ option( with-ps-arrays "Use PS array construction semantics. [default=ON]" ON )
 # add user modules
 set( external-modules OFF CACHE STRING "External NEST modules to be linked in, separated by ';'. [default=OFF]" )
 
+# use detailed NEST internal timers
+set( with-detailed-timers OFF CACHE STRING "Enable detailed NEST internal time measurements. Detailed timers can affect the performance. [default=OFF]" )
+
 # connect NEST with external projects
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
@@ -145,6 +148,7 @@ nest_process_with_gsl()
 nest_process_with_python()
 nest_process_with_openmp()
 nest_process_with_mpi()
+nest_process_with_detailed_timers()
 nest_process_with_libneurosim()
 nest_process_with_music()
 nest_process_with_sionlib()
@@ -157,12 +161,6 @@ nest_process_version_suffix()
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
-
-if ( ( DEFINED TIMER_DETAILED ) AND ( TIMER_DETAILED STREQUAL "ON" ) OR ( TIMER_DETAILED EQUAL 1 ) )
-    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DTIMER_DETAILED=${TIMER_DETAILED}" )
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DTIMER_DETAILED=${TIMER_DETAILED}" )
-    unset( TIMER_DETAILED CACHE )
-endif()
 
 # requires HAVE_LIBNEUROSIM
 nest_default_modules()

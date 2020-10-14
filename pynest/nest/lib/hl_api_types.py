@@ -38,7 +38,7 @@ except ImportError:
     HAVE_PANDAS = False
 
 __all__ = [
-    'Colocate',
+    'CollocatedSynapses',
     'CreateParameter',
     'Mask',
     'NodeCollection',
@@ -784,9 +784,9 @@ class SynapseCollection(object):
         sr('Transpose { arrayload pop SetStatus } forall')
 
 
-class Colocate(object):
+class CollocatedSynapses(object):
     """
-    Class for colocate synapse specification.
+    Class for collocated synapse specification.
 
     Wrapper around a list of specifications.
     """

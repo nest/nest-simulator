@@ -39,7 +39,7 @@
 /unittest using
 
 
-/colocate_synapse_params
+/collocated_synapse_params
   [<< /weight -3. /delay 1. /synapse_model /static_synapse >>
    << /weight  4. /delay 3. /synapse_model /static_synapse >>
    << /weight  2. /delay 1. /synapse_model /stdp_synapse >> ] def
@@ -55,7 +55,7 @@
   
   src trgt
     << /rule /one_to_one >>
-    colocate_synapse_params
+    collocated_synapse_params
     Connect
   
   /weight_delay_syn [] def
@@ -88,18 +88,18 @@
     % Connection order changed behind the scenes, stdp_synapse connected last. We therefore need to manually
     % build reference list
     ;
-    colocate_synapse_params [1] Take dup dup
+    collocated_synapse_params [1] Take dup dup
       /weight get /w_1 Set
       /delay get /d_1 Set
       /synapse_model get /sm_1 Set
-    colocate_synapse_params [2] Take dup dup
+    collocated_synapse_params [2] Take dup dup
       /weight get /w_2 Set
       /delay get /d_2 Set
       /synapse_model get /sm_2 Set
     reference_list [w_1 d_1 sm_1 w_2 d_2 sm_2] join /reference_list Set
   } forall
   
-  colocate_synapse_params [3] Take dup dup
+  collocated_synapse_params [3] Take dup dup
     /weight get /w_3 Set
     /delay get /d_3 Set
     /synapse_model get /sm_3 Set

@@ -48,7 +48,7 @@ __all__ = [
     'CGParse',
     'CGSelectImplementation',
     'Cleanup',
-    'Colocate',
+    'CollocatedSynapses',
     'Connect',
     'ConnectionRules',
     'SynapseCollection',

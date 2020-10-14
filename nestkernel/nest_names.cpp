@@ -519,6 +519,7 @@ const Name time_gather_target_data( "time_gather_target_data" );
 const Name time_update( "time_update" );
 #endif
 const Name time_communicate_prepare( "time_communicate_prepare" );
+const Name time_construction_connect( "time_construction_connect" );
 const Name time_construction_create( "time_construction_create" );
 const Name time_in_steps( "time_in_steps" );
 const Name time_simulate( "time_simulate" );

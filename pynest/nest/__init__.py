@@ -44,6 +44,8 @@ try:
 except ImportError:
     pass
 
+__version__ = version()
+
 
 def test():
     """Runs all PyNEST unit tests."""

@@ -58,8 +58,10 @@ class ConnectArraysMPICase(unittest.TestCase):
     """
     non_unique = np.array([1, 1, 3, 5, 4, 5, 9, 7, 2, 8], dtype=np.uint64)
 
-    # We will enter the test class if HAVE_MPI4PY is false (though all tests are then skipped), so we need to only
-    # set the variable if we have mpi4py.
+    # The test class is instantiated by the unittest framework regardless of the value of
+    # HAVE_MPI4PY, even though all tests will be skipped in case it is False. In this
+    # situation, we have to manually prevent calls to MPI in order to avoid errors during
+    # the execution.
     if HAVE_MPI4PY:
         comm = MPI.COMM_WORLD.Clone()
 

@@ -37,6 +37,8 @@ import RestrictedPython
 import os
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
 RESTRICTION_OFF = bool(os.environ.get('NEST_SERVER_RESTRICTION_OFF', False))
+EXCEPTION_ERROR_STATUS = 400
+NEST_ERROR_STATUS = 400
 
 if RESTRICTION_OFF:
     print('*** WARNING: NEST Server is run without a RestrictedPython trusted environment. ***')
@@ -48,6 +50,7 @@ __all__ = [
 
 app = Flask(__name__)
 CORS(app)
+
 
 
 @app.route('/', methods=['GET'])
@@ -89,9 +92,11 @@ def route_exec():
         return jsonify(response)
 
     except nest.kernel.NESTError as e:
-        abort(Response(getattr(e, 'errormessage'), 400))
+        print('NEST error: {}'.format(e))
+        abort(Response(getattr(e, 'errormessage'), NEST_ERROR_STATUS))
     except Exception as e:
-        abort(Response(str(e), 400))
+        print('Error: {}'.format(e))
+        abort(Response(str(e), EXCEPTION_ERROR_STATUS))
 
 
 # --------------------------
@@ -190,11 +195,14 @@ def get_or_error(func):
         try:
             return func(call, args, kwargs)
         except nest.kernel.NESTError as e:
-            abort(Response(getattr(e, 'errormessage'), 400))
+            print('NEST error: {}'.format(e))
+            abort(Response(getattr(e, 'errormessage'), NEST_ERROR_STATUS))
         except TypeError as e:
-            abort(Response(str(e), 400))
+            print('Type error: {}'.format(e))
+            abort(Response(str(e), EXCEPTION_ERROR_STATUS))
         except Exception as e:
-            abort(Response(str(e), 400))
+            print('Error: {}'.format(e))
+            abort(Response(str(e), EXCEPTION_ERROR_STATUS))
     return func_wrapper
 
 

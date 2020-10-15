@@ -312,6 +312,7 @@ echo "MSGBLD0235: Running CMake."
 cd "$NEST_VPATH"
 cmake \
     -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+    -DCMAKE_CXX_FLAGS="-pedantic -Wextra" \
     -Dwith-optimize=ON \
     -Dwith-warning=ON \
     $CONFIGURE_BOOST \

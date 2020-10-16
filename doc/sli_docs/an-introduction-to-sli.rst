@@ -35,6 +35,6 @@ This manual gives a brief overview of the SLI programming language.
 
 1. :doc:`First Steps <first-steps>`
 2. :doc:`Objects and data types <objects-and-data-types>`
-3. :doc:`Programming in SLI <programming-in-sli.md>`
+3. :doc:`Programming in SLI <programming-in-sli>`
 4. :doc:`Using files and keyboard input <using-files-and-keyboard-input>`
 5. :doc:`Neural simulations <neural-simulations>`

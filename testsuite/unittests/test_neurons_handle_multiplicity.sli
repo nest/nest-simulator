@@ -96,11 +96,6 @@ M_ERROR setverbosity
                                               /tau_decay [ 1.0 ] >>
                                   /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>
-   /sli_neuron << /params << /calibrate { /V_m 0.0 def }
-                             /update { /V_m V_m ex_spikes add def } 
-                             /V_m 0.0  % needed so we can read it before calling Simulate
-                          >>
-               >> 
    >>
    def
                                      
@@ -111,13 +106,13 @@ M_ERROR setverbosity
   /sg /spike_generator << /spike_times [ 1.0 2.0 3.0 ] 
                           /spike_multiplicities [ 1 3 2 ] >> Create def
   /pn /parrot_neuron Create def
-  /sd /spike_detector Create def
+  /sr /spike_recorder Create def
   
   sg pn Connect
-  pn sd Connect
+  pn sr Connect
   
   10 Simulate
-  sd /events get /times get cva
+  sr /events get /times get cva
   [ 2.0 3.0 3.0 3.0 4.0 4.0 ]
   eq
 } assert_or_die

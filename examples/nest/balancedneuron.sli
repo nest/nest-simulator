@@ -41,7 +41,7 @@ ResetKernel
  /iaf_psc_alpha     Create /neuron Set % target neuron
  /poisson_generator Create /ex_pop Set % excitatory population
  /poisson_generator Create /in_pop Set % inhibitory population
- /spike_detector    Create /spikes Set % the spike detector device
+ /spike_recorder    Create /spikes Set % the spike recorder device
 
  ex_pop
  <<
@@ -70,7 +70,7 @@ ResetKernel
 
     spikes
     <<
-       /n_events 0 % reset the event counter of the spike detector
+       /n_events 0 % reset the event counter of the spike recorder
     >> SetStatus
 
     M_INFO 1 add (blancedneuron) (Counting spikes for ) t_sim cvs join (ms...) join message

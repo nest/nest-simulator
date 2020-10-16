@@ -59,8 +59,8 @@ M_ERROR setverbosity
       pg neurons Connect
 
       % An additional device is connected as target
-      /sd /spike_detector Create def
-      neurons sd Connect
+      /sr /spike_recorder Create def
+      neurons sr Connect
 
       % We only want the connections where the poisson_generator is source
       /conns << /source pg >> GetConnections def

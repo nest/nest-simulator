@@ -365,7 +365,7 @@ One common approach to reducing the effect of boundaries on simulations
 is to introduce *periodic boundary conditions*, so that the rightmost
 elements on a grid are considered nearest neighbors to the leftmost
 elements, and the topmost to the bottommost. The flat layer becomes the
-surface of a torus.  :numref:`fig_player` illustrates this for a
+surface of a torus. :numref:`fig_player` illustrates this for a
 one-dimensional layer, which turns from a line to a ring upon
 introduction of periodic boundary conditions.
 
@@ -1298,9 +1298,9 @@ Spatially distributed NodeCollections and recording devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Generally, one should not create a layer of recording devices to record from
-another NodeCollection with spatial extent. This is especially true for spike detectors. Instead,
-create a single spike detector and connect all neurons in the spatially
-distributed NodeCollection to that spike detector:
+another NodeCollection with spatial extent. This is especially true for spike recorders. Instead,
+create a single spike recorder and connect all neurons in the spatially
+distributed NodeCollection to that spike recorder:
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn11 #}

@@ -26,7 +26,6 @@ from . import test_conn_builder
 from . import test_disconnect
 from . import test_disconnect_multiple
 from . import test_enable_multithread
-from . import test_get_sp_status
 from . import test_growth_curves
 from . import test_mpitests
 from . import test_sp_manager
@@ -51,7 +50,6 @@ def suite():
     test_suite.addTest(test_disconnect.suite())
     test_suite.addTest(test_disconnect_multiple.suite())
     test_suite.addTest(test_enable_multithread.suite())
-    test_suite.addTest(test_get_sp_status.suite())
     test_suite.addTest(test_growth_curves.suite())
     test_suite.addTest(test_mpitests.suite())
     test_suite.addTest(test_sp_manager.suite())

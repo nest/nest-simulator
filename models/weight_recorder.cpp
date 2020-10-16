@@ -197,8 +197,7 @@ nest::weight_recorder::set_status( const DictionaryDatum& d )
 void
 nest::weight_recorder::handle( WeightRecorderEvent& e )
 {
-  // accept spikes only if detector was active when spike was
-  // emitted
+  // accept spikes only if recorder was active when spike was emitted
   if ( is_active( e.get_stamp() ) )
   {
     // P_senders_ is defined and sender is not in it

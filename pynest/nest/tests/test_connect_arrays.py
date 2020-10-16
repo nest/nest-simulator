@@ -103,6 +103,25 @@ class TestConnectArrays(unittest.TestCase):
         with self.assertRaises(ValueError):
             nest.Connect(sources, targets)
 
+    def test_connect_arrays_different_weights_delays(self):
+        """Connecting NumPy arrays with different weights and delays"""
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = np.arange(1, n+1, dtype=np.uint64)
+        targets = self.non_unique
+        weights = np.linspace(0.6, 1.5, n)
+        delays = np.linspace(0.4, 1.3, n)
+
+        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
+                     conn_spec={'rule': 'one_to_one'})
+
+        conns = nest.GetConnections()
+
+        np.testing.assert_array_equal(conns.source, sources)
+        np.testing.assert_array_equal(conns.target, targets)
+        np.testing.assert_array_almost_equal(conns.weight, weights)
+        np.testing.assert_array_almost_equal(conns.delay, delays)
+
     def test_connect_arrays_threaded(self):
         """Connecting NumPy arrays, threaded"""
         nest.SetKernelStatus({'local_num_threads': 2})

@@ -28,7 +28,7 @@ Synopsis: nest_indirect test_sinusoidal_poisson_generator_6.sli -> -
 Description:
    Creates a sinusoidally modulated Poisson generator emitting an
    individual spike train to each of its targets and sends spikes to spike
-   detectors. Ensures that all targets receive different spike trains.
+   recorders. Ensures that all targets receive different spike trains.
 
 Author:  December 2012, May 2013, Plesser, based on test_poisson_generator.sli
 
@@ -62,8 +62,8 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,5}, test_sinusoidal_poisson
 } def
 
 
-% function building n neuron network with spike detectors
-% num_nrns individual run_simple_net -> [ spike_detectors ]
+% function building n neuron network with spike recorders
+% num_nrns individual run_simple_net -> [ spike_recorders ]
 /run_simple_net
 {
   /individual Set
@@ -85,15 +85,15 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,5}, test_sinusoidal_poisson
 
   /gen /sinusoidal_poisson_generator Create def
   /parrots /parrot_neuron n Create def
-  /sdets /spike_detector n Create def
+  /srs /spike_recorder n Create def
 
   gen parrots Connect
   
-  parrots sdets << /rule /one_to_one >> Connect
+  parrots srs << /rule /one_to_one >> Connect
 
   10. Simulate
 
-  sdets
+  srs
 } def
 
 
@@ -103,11 +103,11 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,5}, test_sinusoidal_poisson
 % be identical 
 [ 2 ]
 {
-  /sdets 16 true run_simple_net def
+  /srs 16 true run_simple_net def
 
   % get events, replace vectors with SLI arrays
   % keep only non-empty arrays; empty ones are from off-process parrots
-  sdets { [/events /times] get cva } Map { empty not exch ; } Select
+  srs { [/events /times] get cva } Map { empty not exch ; } Select
   
   % expect array with two arrays of spike times
   all_different

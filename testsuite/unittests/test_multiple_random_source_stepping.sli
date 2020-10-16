@@ -60,14 +60,14 @@ M_ERROR setverbosity
   ResetKernel
   /pg1 /poisson_generator_ps << /rate 1000. >> Create def
   /pg2 /poisson_generator_ps << /rate 1000. >> Create def
-  /sd1 /spike_detector Create def
-  /sd2 /spike_detector Create def
-  pg1 sd1 Connect
-  pg2 sd2 Connect
+  /sr1 /spike_recorder Create def
+  /sr2 /spike_recorder Create def
+  pg1 sr1 Connect
+  pg2 sr2 Connect
 
   steppings { interval Simulate } repeat
-  sd1 /events get /times get cva
-  sd2 /events get /times get cva
+  sr1 /events get /times get cva
+  sr2 /events get /times get cva
   2 arraystore
 }
 def				   

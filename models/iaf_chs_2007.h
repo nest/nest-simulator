@@ -61,7 +61,7 @@ potential reset and exponential decay. U_reset is the magnitude of the
 reset/after-hyperpolarization and tau_reset is the time constant of
 recovery from this hyperpolarization.
 
-The linear subthresold dynamics is integrated by the Exact
+The linear subthreshold dynamics is integrated by the Exact
 Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.

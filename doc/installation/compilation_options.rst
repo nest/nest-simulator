@@ -132,8 +132,8 @@ Tell NEST about your MPI setup
 If you compiled NEST with support for :doc:`distributed computing <../guides/parallel_computing>` via MPI, you
 have to tell it how your ``mpirun``/``mpiexec`` command works by
 defining the function ``mpirun`` in your ``~/.nestrc`` file. This file
-already contains an example implementation that should work with
-`OpenMPI <http://www.openmpi.org>`__ library.
+already contains an example implementation that should work with the
+`OpenMPI <http://www.openmpi.org>`__ implementation.
 
 For more details, see :doc:`configuration`.
 

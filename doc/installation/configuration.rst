@@ -6,17 +6,17 @@ There are two main ways of configuring NEST at runtime, via the configuration fi
 NEST configuration file
 -----------------------
 
-Upon importing the NEST Python module or starting the ``nest`` executable from the command line, NEST will create a
+Upon importing the NEST Python module or starting the ``nest`` executable from the command line for the first time, NEST will create a
 configuration file called ``.nestrc`` in your home directory.
 
-Using this file, you can set a number of options:
+By adapting this file, you can set a number of options:
 
 * The browser for displaying the helpdesk
-* The pager for showing the built-in help
-* The ``mpirun`` command for :doc:`parallel execution <../guides/parallel_computing>`
+* The pager for showing the built-in help in the terminal
+* The ``mpirun`` command for :doc:`parallel execution <../guides/parallel_computing>` of the testsuite
 
-In case your MPI Implementation requires special options (e.g. ``--oversubscribe`` to allows the use of more
-processes than compute cores in OpenMPI versions above 3.0), you can add them to the ``mpirun`` command as shown in
+In case your MPI Implementation requires special options (e.g. ``--oversubscribe`` to allow the use of more
+processes than available compute cores in OpenMPI versions above 3.0), you can add them to the ``mpirun`` command as shown in
 the following example:
 
 ::
@@ -39,7 +39,7 @@ Type
 
    nest --help
 
-to find out about NEST’s command-line parameters.
+to find out about NEST's command-line parameters.
 
 ::
 
@@ -97,7 +97,7 @@ parameters like this:
 
 The first line first gets the array of user supplied arguments
 (``userargs``) from the ``statusdict`` and breaks each element at the
-“=”-symbol. It then converts the first element (lambda, gamma) to a
+"="-symbol. It then converts the first element (lambda, gamma) to a
 literal and the second argument (the number) to an integer. Using
 ``mark`` and ``>>``, the content of the userargs array is added to a
 dictionary, which is stored under the name ``args``. The second line

@@ -335,9 +335,3 @@ these instructions.**
    hpc_install
    livemedia
    install_options
-
-
-.. note::
-
-    Installation instructions for NEST 2.10 and earlier are provided :doc:`here <oldvers_install>`, but  we strongly encourage all our users to stay
-    up-to-date with most recent version of NEST. We cannot support out-dated versions.

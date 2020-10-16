@@ -55,7 +55,7 @@ plain neuron_params SetStatus
 canon neuron_params SetStatus
 
 /spike_generator     Create /gen Set
-/spike_detector      Create /det Set
+/spike_recorder      Create /rec Set
 
 
 gen << /precise_times false /spike_times [ 1.0 2.0 3.0 4.0 5.0 10.5 12.0 ] >> SetStatus
@@ -71,7 +71,7 @@ gen << /precise_times false /spike_times [ 1.0 2.0 3.0 4.0 5.0 10.5 12.0 ] >> Se
   /nrn Set
 
   gen nrn Connect
-  nrn det Connect
+  nrn rec Connect
 
 } forall
 
@@ -82,7 +82,7 @@ gen << /precise_times false /spike_times [ 1.0 2.0 3.0 4.0 5.0 10.5 12.0 ] >> Se
 Simulate
 
 {
-  det [/events [/senders /times]] get cva Transpose 6 ToUnitTestPrecision dup % we duplicate result and check each order of recorded spikes
+  rec [/events [/senders /times]] get cva Transpose 6 ToUnitTestPrecision dup % we duplicate result and check each order of recorded spikes
   [[2 4.1] [1 4.1]] 6 ToUnitTestPrecision eq exch % exchange result of equality check with events, so we can compare we opposite recording order
   [[1 4.1] [2 4.1]] 6 ToUnitTestPrecision eq
   or % events should match whether event from neuron 1 or neuron 2 was recorded first

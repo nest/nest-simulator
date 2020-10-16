@@ -1,5 +1,5 @@
 /*
- *  test_spike_det_reset.sli
+ *  test_spike_rec_reset.sli
  *
  *  This file is part of NEST.
  *
@@ -22,17 +22,17 @@
 
 
  /** @BeginDocumentation
-Name: testsuite::test_spike_det_reset - test if resetting works on spike_detector
+Name: testsuite::test_spike_rec_reset - test if resetting works on spike_recorder
 
-Synopsis: (test_spike_det_reset) run -> dies if assertion fails
+Synopsis: (test_spike_rec_reset) run -> dies if assertion fails
 
 Description:
-	Feeds spike detector with given set of spikes, checks if they
+	Feeds spike recorder with given set of spikes, checks if they
 	are recorded properly to memory, then resets, then records a
 	few more and checks.
 
 Author: August 2008, Plesser
-SeeAlso: spike_detector
+SeeAlso: spike_recorder
 */
 
 (unittest) run
@@ -44,28 +44,28 @@ SeeAlso: spike_detector
   /spike_generator Create /sg Set
   sg << /precise_times false /spike_times [ 10. 200. 10. ] Range >> SetStatus
 
-  /spike_detector Create /sd Set
+  /spike_recorder Create /sr Set
 
-  sg sd Connect
+  sg sr Connect
 
   /res [] def  % array to collect bool results
 
   105 Simulate  % should record spikes 10..100 -> 10 spikes
-  sd [ /n_events ] get                   10 eq res exch append /res Set
-  sd [ /events /senders ] get cva length 10 eq res exch append /res Set
-  sd [ /events /times   ] get cva length 10 eq res exch append /res Set
+  sr [ /n_events ] get                   10 eq res exch append /res Set
+  sr [ /events /senders ] get cva length 10 eq res exch append /res Set
+  sr [ /events /times   ] get cva length 10 eq res exch append /res Set
 
   % reset
-  sd << /n_events 0 >> SetStatus
-  sd [ /n_events ] get                   0 eq res exch append /res Set
-  sd [ /events /senders ] get cva length 0 eq res exch append /res Set
-  sd [ /events /times   ] get cva length 0 eq res exch append /res Set
+  sr << /n_events 0 >> SetStatus
+  sr [ /n_events ] get                   0 eq res exch append /res Set
+  sr [ /events /senders ] get cva length 0 eq res exch append /res Set
+  sr [ /events /times   ] get cva length 0 eq res exch append /res Set
 
   % simulate more, till 160
   55 Simulate % spikes 110 .. 160 -> 6 spikes
-  sd [ /n_events ] get                   6 eq res exch append /res Set
-  sd [ /events /senders ] get cva length 6 eq res exch append /res Set
-  sd [ /events /times   ] get cva length 6 eq res exch append /res Set
+  sr [ /n_events ] get                   6 eq res exch append /res Set
+  sr [ /events /senders ] get cva length 6 eq res exch append /res Set
+  sr [ /events /times   ] get cva length 6 eq res exch append /res Set
 
   % combine results
   res First res Rest { and } Fold

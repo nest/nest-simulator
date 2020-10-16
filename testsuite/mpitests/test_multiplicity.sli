@@ -30,7 +30,7 @@ Description:
   Creates two parrot neurons and connects the first one to the second one. The
   first parrot neuron receives one spike with multiplicity two from a spike
   generator, which should be communicated as two spikes to the second parrot
-  neuron. Each parrot neuron is connected to a spike detector, which should
+  neuron. Each parrot neuron is connected to a spike recorder, which should
   record two spikes.
 
 Author: Stine Brekke Vennemo, January 2019
@@ -53,21 +53,21 @@ skip_if_not_threaded
   /p_source /parrot_neuron 1 Create def
   /p_target /parrot_neuron 1 Create def
   /sg /spike_generator 1 Create def
-  /sd_source /spike_detector 1 Create def
-  /sd_target /spike_detector 1 Create def
+  /sr_source /spike_recorder 1 Create def
+  /sr_target /spike_recorder 1 Create def
 
   sg << /spike_times [1.] /spike_multiplicities [2] >> SetStatus
 
   sg p_source Connect
   p_source p_target Connect
-  p_source sd_source Connect
-  p_target sd_target Connect
+  p_source sr_source Connect
+  p_target sr_target Connect
 
   10. Simulate
 
   % Both parrots should receive 2 events.  
-  sd_source /n_events get /se Set
-  sd_target /n_events get /te Set
+  sr_source /n_events get /se Set
+  sr_target /n_events get /te Set
   [se te]
 }
 {

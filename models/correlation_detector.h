@@ -55,9 +55,9 @@ inter-spike intervals (raw cross correlation) binned to bins of duration
 :math:`\delta_\tau`. The result can be obtained via GetStatus under the key
 /count_histogram.
 In parallel it records a weighted histogram, where the connection weights
-are used to weight every count. In order to minimize numerical errors the
-Kahan summation algorithm is used when calculating the weighted histogram.
-(http://en.wikipedia.org/wiki/Kahan_summation_algorithm)
+are used to weight every count. In order to minimize numerical errors, the
+`Kahan summation algorithm <http://en.wikipedia.org/wiki/Kahan_summation_algorithm>`_
+is used when calculating the weighted histogram.
 Both are arrays of :math:`2*\tau_{max}/\delta_{\tau}+1` values containing the
 histogram counts in the following way:
 
@@ -114,7 +114,7 @@ histogram            squared  read-only - raw, weighted, cross-correlation
 counts
                      synaptic Unit depends on model
                      weights
-histogram_correction list of  read-only - Correction factors for kahan summation
+histogram_correction list of  read-only - Correction factors for Kahan summation
                      integers algoritm
 n_events             list of  Number of events from source 0 and 1. By setting
                      integers n_events to [0,0], the histogram is cleared.
@@ -154,7 +154,7 @@ SpikeEvent
 See also
 ++++++++
 
-spike_detector
+spike_recorder
 
 EndUserDocs */
 

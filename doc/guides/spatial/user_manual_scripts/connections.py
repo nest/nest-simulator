@@ -30,20 +30,20 @@ import numpy as np
 np.random.seed(7654321)
 
 
-def beautify_layer(l, fig=plt.gcf(), xlabel=None, ylabel=None,
+def beautify_layer(layer, fig=plt.gcf(), xlabel=None, ylabel=None,
                    xlim=None, ylim=None, xticks=None, yticks=None, dx=0, dy=0):
     """Assume either x and ylims/ticks given or none"""
-    ctr = l.spatial['center']
-    ext = l.spatial['extent']
+    ctr = layer.spatial['center']
+    ext = layer.spatial['extent']
 
     if xticks is None:
-        if 'shape' in l.spatial:
-            dx = float(ext[0]) / l.spatial['shape'][0]
-            dy = float(ext[1]) / l.spatial['shape'][1]
+        if 'shape' in layer.spatial:
+            dx = float(ext[0]) / layer.spatial['shape'][0]
+            dy = float(ext[1]) / layer.spatial['shape'][1]
             xticks = ctr[0] - ext[0] / 2. + dx / 2. + dx * np.arange(
-                l.spatial['shape'][0])
+                layer.spatial['shape'][0])
             yticks = ctr[1] - ext[1] / 2. + dy / 2. + dy * np.arange(
-                l.spatial['shape'][1])
+                layer.spatial['shape'][1])
 
     if xlim is None:
         xlim = [ctr[0] - ext[0] / 2. - dx / 2., ctr[0] + ext[
@@ -617,7 +617,7 @@ nest.Connect(stim, nrn_layer, cdict_stim)
 # ----------------------------
 
 #{ conn10 #}
-rec = nest.Create('spike_detector',
+rec = nest.Create('spike_recorder',
                   positions=nest.spatial.grid(shape=[1, 1]))
 
 cdict_rec = {'rule': 'pairwise_bernoulli',
@@ -632,6 +632,6 @@ nest.Connect(nrn_layer, rec, cdict_rec)
 # ----------------------------
 
 #{ conn11 #}
-rec = nest.Create('spike_detector')
+rec = nest.Create('spike_recorder')
 nest.Connect(nrn_layer, rec)
 #{ end #}

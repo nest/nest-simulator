@@ -26,7 +26,7 @@ This synapse model implements synaptic short-term depression and short-term f
 according to [1]_ and [2]_. It solves Eq (2) from [1]_ and modulates U according
 
 This connection merely scales the synaptic weight, based on the spike history
-parameters of the kinetic model. Thus, it is suitable for all types of synapt
+parameters of the kinetic model. Thus, it is suitable for any type of synapse
 that is current or conductance based.
 
 The parameter `A_se` from the publications is represented by the

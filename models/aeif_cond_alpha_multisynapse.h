@@ -59,7 +59,7 @@ constants, and synaptic conductance modeled by an alpha function.
 
 It allows an arbitrary number of synaptic time constants. Synaptic
 conductance is modeled by an alpha function, as described by A. Roth
-and M.C.W. van Rossum in Computational Modeling Methods for
+and M. C. W. van Rossum in Computational Modeling Methods for
 Neuroscientists, MIT Press 2013, Chapter 6.
 
 The time constants are supplied by an array, "tau_syn", and the pertaining

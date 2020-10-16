@@ -50,7 +50,7 @@ Description:
   The resulting SLI code is independent of the resolution and
   generates exactly the same voltage trace at all resolutions.
 
-  No output of the spike detector is visible here because of the short
+  No output of the spike recorder is visible here because of the short
   stimulation period of 2 ms.
 
   The expected output is documented at the end of the script.
@@ -135,12 +135,12 @@ dc_delay max_delay gt
   /voltmeter Create /vm Set
   vm << /time_in_steps true /interval h >> SetStatus
 
-  /spike_detector Create /sd Set 
-  sd << /time_in_steps true >> SetStatus
+  /spike_recorder Create /sr Set 
+  sr << /time_in_steps true >> SetStatus
 
   dc_gen neuron 1.0 dc_delay Connect
   vm neuron Connect
-  neuron sd Connect
+  neuron sr Connect
 
   10 Simulate
 
@@ -174,8 +174,8 @@ dc_delay max_delay gt
 % Expected output of this program:
 % 
 % The output send to std::cout is a superposition of the output of  
-% the voltmeter and the spike detector. Both, voltmeter and spike 
-% detector are connected to the same neuron. 
+% the voltmeter and the spike recorder. Both, voltmeter and spike 
+% recorder are connected to the same neuron. 
 %
 %
 % h=   (in ms)

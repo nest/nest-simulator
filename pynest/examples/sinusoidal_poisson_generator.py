@@ -50,7 +50,7 @@ nest.ResetKernel()   # in case we run the script multiple times from iPython
 ####################################################################################
 # We create two instances of the ``sinusoidal_poisson_generator`` with two
 # different parameter sets using ``Create``. Moreover, we create devices to
-# record firing rates (``multimeter``) and spikes (``spike_detector``) and connect
+# record firing rates (``multimeter``) and spikes (``spike_recorder``) and connect
 # them to the generators using ``Connect``.
 
 
@@ -67,7 +67,7 @@ g = nest.Create('sinusoidal_poisson_generator', n=2,
                          'phase': 90.0}])
 
 m = nest.Create('multimeter', 2, {'interval': 0.1, 'record_from': ['rate']})
-s = nest.Create('spike_detector', 2)
+s = nest.Create('spike_recorder', 2)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
@@ -76,7 +76,7 @@ nest.Simulate(200)
 
 
 ###############################################################################
-# After simulating, the spikes are extracted from the ``spike_detector`` using
+# After simulating, the spikes are extracted from the ``spike_recorder`` using
 # ``GetStatus`` and plots are created with panels for the PST and ISI histograms.
 
 
@@ -113,7 +113,7 @@ nest.SetKernelStatus({'local_num_threads': 4})
 ###############################################################################
 # A ``sinusoidal_poisson_generator`` with  ``individual_spike_trains`` set to
 # `True` is created and connected to 20 parrot neurons whose spikes are
-# recorded by a ``spike_detector``. After simulating, a raster plot of the spikes
+# recorded by a ``spike_recorder``. After simulating, a raster plot of the spikes
 # is created.
 
 
@@ -122,7 +122,7 @@ g = nest.Create('sinusoidal_poisson_generator',
                         'frequency': 10.0, 'phase': 0.0,
                         'individual_spike_trains': True})
 p = nest.Create('parrot_neuron', 20)
-s = nest.Create('spike_detector')
+s = nest.Create('spike_recorder')
 
 nest.Connect(g, p, 'all_to_all')
 nest.Connect(p, s, 'all_to_all')
@@ -151,7 +151,7 @@ g = nest.Create('sinusoidal_poisson_generator',
                         'frequency': 10.0, 'phase': 0.0,
                         'individual_spike_trains': False})
 p = nest.Create('parrot_neuron', 20)
-s = nest.Create('spike_detector')
+s = nest.Create('spike_recorder')
 
 nest.Connect(g, p, 'all_to_all')
 nest.Connect(p, s, 'all_to_all')

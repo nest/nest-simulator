@@ -54,7 +54,7 @@ M_ERROR setverbosity
 {
   ResetKernel
   /iaf_psc_delta 1 Create /n Set
-  /spike_detector 1 Create /d Set
+  /spike_recorder 1 Create /d Set
   n d << /rule /all_to_all >> << /synapse_model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
   << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
 } assert_or_die
@@ -63,7 +63,7 @@ M_ERROR setverbosity
 {
   ResetKernel
   /spike_generator 1 Create /g Set
-  /spike_detector 1 Create /d Set
+  /spike_recorder 1 Create /d Set
   g d << /rule /all_to_all >> << /synapse_model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
   << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
 } assert_or_die

@@ -44,7 +44,7 @@ try:
 except ImportError:
     pass
 
-__version__ = version()
+__version__ = ll_api.sli_func("statusdict /version get")
 
 
 def test():

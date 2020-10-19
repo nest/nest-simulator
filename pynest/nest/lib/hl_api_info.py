@@ -43,7 +43,6 @@ __all__ = [
     'SetStatus',
     'set_verbosity',
     'sysinfo',
-    'version',
 ]
 
 
@@ -54,21 +53,6 @@ def sysinfo():
     """
 
     sr("sysinfo")
-
-
-@check_stack
-def version():
-    """Return the NEST version.
-
-    Returns
-    -------
-    str
-        The version of NEST
-
-    """
-
-    sr("statusdict [[ /kernelname /version ]] get")
-    return " ".join(spp())
 
 
 @check_stack
@@ -139,7 +123,7 @@ def help(obj=None, pager=None, return_text=False):
               "Type 'nest.Models()' to see a list of available models in NEST.\n"
               "Type 'nest.authors()' for information about the makers of NEST.\n"
               "Type 'nest.sysinfo()' to see details on the system configuration.\n"
-              "Type 'nest.version()' for information about the NEST version.\n"
+              "Type 'nest.__version__' for information about the NEST version.\n"
               "\n"
               "For more information visit https://www.nest-simulator.org.")
 

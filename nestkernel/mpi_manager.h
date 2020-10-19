@@ -295,8 +295,9 @@ private:
   // spikes resize on the fly
 
   double growth_factor_buffer_spike_data_;
-  double shrink_factor_buffer_spike_data_;
   double growth_factor_buffer_target_data_;
+
+  double shrink_factor_buffer_spike_data_;
 
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_target_data_per_rank_;

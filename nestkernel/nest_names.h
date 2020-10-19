@@ -388,6 +388,7 @@ extern const Name scale;
 extern const Name sdev;
 extern const Name senders;
 extern const Name shift_now_spikes;
+extern const Name shrink_factor_buffer_spike_data;
 extern const Name sigma;
 extern const Name sigmoid;
 extern const Name sion_chunksize;

@@ -198,6 +198,8 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
 
   updateValue< long >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
   updateValue< long >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
+
+  updateValue< double >( dict, names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
 }
 
 void

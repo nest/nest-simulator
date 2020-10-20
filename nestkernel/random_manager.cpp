@@ -62,6 +62,7 @@ nest::RandomManager::initialize()
 {
   register_rng_type< std::mt19937 >( "mt19937" );
   register_rng_type< std::mt19937_64 >( "mt19937_64" );
+#ifdef HAVE_RANDOM123
   register_rng_type< r123::Engine< r123::Philox4x32 > >( "Philox_32" );
 #if R123_USE_PHILOX_64BIT
   register_rng_type< r123::Engine< r123::Philox4x64 > >( "Philox_64" );
@@ -69,6 +70,7 @@ nest::RandomManager::initialize()
   register_rng_type< r123::Engine< r123::Threefry4x32 > >( "Threefry_32" );
 #if R123_USE_64BIT
   register_rng_type< r123::Engine< r123::Threefry4x64 > >( "Threefry_64" );
+#endif
 #endif
 
   current_rng_type_ = DEFAULT_RNG_TYPE_;

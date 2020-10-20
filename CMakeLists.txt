@@ -175,6 +175,7 @@ nest_check_have_stl_vector_capacity_doubling()
 nest_check_have_xlc_ice_on_using()
 nest_check_have_std_nan()
 nest_check_have_std_isnan()
+nest_check_random123()
 
 ################################################################################
 ##################           Create version string            ##################

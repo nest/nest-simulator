@@ -1,12 +1,12 @@
 Guide to parallel computing
-==============================
+===========================
 
 
 .. contents::
    :local:
 
 What is parallelization?
---------------------------
+------------------------
 
 Parallelization can improve the efficiency of running large-scale simulations by
 taking advantage of multicore/multiprocessor machines, computer clusters or
@@ -33,7 +33,7 @@ documentation on :ref:`Random numbers in NEST <random_numbers>`
 
 
 Virtual processes
---------------------------
+-----------------
 
 We use the concept of local and remote threads, called *virtual processes*.
 A virtual process (VP) is a thread residing in one of NEST's MPI processes.
@@ -51,7 +51,7 @@ counted continuously over all processes.
 
 
 Node distributions
---------------------
+------------------
 
 The distribution of nodes depends on the type of node.
 
@@ -78,7 +78,7 @@ in a scenario with two processes with two threads each.
 
 
 Neuron distribution
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 Neurons are assigned to one of the virtual processes in a round-robin fashion.
 On all other virtual processes, no object is created. Proxies ensure the id
@@ -89,7 +89,7 @@ allocated is given by :math:`id_{vp} = node_id_{node} %N_{vp}`, where :math:`N_
 number of virtual processes in the simulation.
 
 Device Distribution
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 Devices are replicated once on each thread in order to balance the load and
 minimize their interaction. Devices thus do not have proxies on remote virtual
@@ -115,13 +115,13 @@ other parameter of a node using ``SetStatus``.
 
 
 Spike exchange and synapse update
-------------------------------------
+---------------------------------
 
 Spike exchange in NEST takes different routes depending on the type of
 the sending and receiving node. There are two distinct cases.
 
 Spikes between neurons
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 * Spikes between neurons are always exchanged through the **global spike
   exchange mechanism**.
@@ -133,7 +133,7 @@ Spikes between neurons
   (see property ``vp`` in the status dictionary).
 
 Spikes between neurons and devices
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * Spike exchange to or from neurons over connections that either originate
   or terminate at a device (e.g., ``spike_generator -> neuron`` or
@@ -144,7 +144,7 @@ Spikes between neurons and devices
   handled by the virtual process to which the neuron is assigned.
 
 Synaptic plasticity models
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For synapse models supporting plasticity, synapse dynamics in the
 ``Connection`` object are always handled by the virtual process of the
@@ -180,7 +180,7 @@ on your machine.
  specific situation might require a bit of experimenting.
 
 Multiprocessing
-----------------
+---------------
 
 **Using Python's ``multiprocessing`` module with NEST may lead to unpredictable results!**
 
@@ -191,7 +191,7 @@ likely lead to unpredictable/wrong results.
 .. _distributed_computing:
 
 Using distributed computing
-------------------------------
+---------------------------
 
 Build requirements
 ~~~~~~~~~~~~~~~~~~
@@ -209,8 +209,10 @@ To compile NEST for distributed computing, you will need
   unexpected results or even crashes. Please contact the :doc:`NEST community
   <../contribute/index>` if you require support for exotic setups.
 
+.. _configure-for-parallel-computing:
+
 Configure
-~~~~~~~~~~~~
+~~~~~~~~~
 
 If using the :ref:`standard installation <standard>` instructions
 when calling `cmake`, add the option ``-Dwith-mpi=ON``. The build summary
@@ -221,7 +223,7 @@ more information on installing NEST.
 
 
 Run distributed simulations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Distributed simulations **cannot be run interactively**, which means that
 the simulation has to be provided as a script. However, the script can be the same

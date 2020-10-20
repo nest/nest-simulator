@@ -12,6 +12,7 @@ Table of Contents
    guides/nest2_to_nest3/nest2_to_nest3_overview
    Download <download>
    Install <installation/index>
+   Configure <installation/configuration>
    getting_started
    tutorials/index
    guides/index

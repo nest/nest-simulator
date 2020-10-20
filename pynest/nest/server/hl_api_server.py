@@ -52,7 +52,7 @@ CORS(app)
 
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({'nest': nest.version()})
+    return jsonify({'nest': nest.__version__})
 
 
 @app.route('/exec', methods=['GET', 'POST'])

@@ -102,5 +102,4 @@ __all__ = [
     'message',
     'set_verbosity',
     'sysinfo',
-    'version',
 ]

@@ -21,6 +21,10 @@
 
 """
 Tests of random123 generators, using the Kolmogorov-Smirnov test. Adapted from random parameter tests.
+
+If Random123 generators are not supported, i.e. if the test of the generators
+during CMake configuration fails, all tests are skipped. If the system does
+not support 64-bit generators, tests of Philox_64 and Threefry_64 are skipped.
 """
 
 import unittest
@@ -112,22 +116,26 @@ class BaseTestCases:
             self.assertGreater(p_val, p_val_lim)
 
 
+def not_supported_msg(what):
+    return f'{what} is not supported on the current system'
+
+
+@unittest.skipIf('Philox_32' not in nest.GetKernelStatus('rng_types'), not_supported_msg('Random123'))
 class Philox32TestCase(BaseTestCases.Random123TestCase):
     rng_type = 'Philox_32'
 
 
-@unittest.skipIf('Philox_64' not in nest.GetKernelStatus('rng_types'),
-                 'Philox_64 is not supported on the current system')
+@unittest.skipIf('Philox_64' not in nest.GetKernelStatus('rng_types'), not_supported_msg('Philox_64'))
 class Philox64TestCase(BaseTestCases.Random123TestCase):
     rng_type = 'Philox_64'
 
 
+@unittest.skipIf('Threefry_32' not in nest.GetKernelStatus('rng_types'), not_supported_msg('Random123'))
 class Threefry32TestCase(BaseTestCases.Random123TestCase):
     rng_type = 'Threefry_32'
 
 
-@unittest.skipIf('Threefry_64' not in nest.GetKernelStatus('rng_types'),
-                 'Threefry_64 is not supported on the current system')
+@unittest.skipIf('Threefry_64' not in nest.GetKernelStatus('rng_types'), not_supported_msg('Threefry_64'))
 class Threefry64TestCase(BaseTestCases.Random123TestCase):
     rng_type = 'Threefry_64'
 

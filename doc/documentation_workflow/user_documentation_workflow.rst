@@ -24,9 +24,9 @@ release of NEST having its own documentation.
 
 
 .. note::
-   This workflow shows you how to create **user documentation** for NEST. For
-   **developer documentation**, please refer to our :doc:`Developer documentation
-   workflow <developer_documentation_workflow>`.
+   This workflow shows you how to create **user-level documentation** for
+   NEST. For **developer documentation**, please refer to our
+   :doc:`Developer documentation workflow <developer_documentation_workflow>`.
 
 Changing the documentation
 ++++++++++++++++++++++++++

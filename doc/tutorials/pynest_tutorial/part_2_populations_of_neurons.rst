@@ -23,7 +23,7 @@ sections of this primer:
    networks <part_1_neurons_and_simple_neural_networks>`
 -  :doc:`Part 3: Connecting networks with
    synapses <part_3_connecting_networks_with_synapses>`
--  :doc:`Part 4: Topologically structured
+-  :doc:`Part 4: Spatially structured
    networks <part_4_spatially_structured_networks>`
 
 More advanced examples can be found at `Example

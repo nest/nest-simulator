@@ -19,7 +19,7 @@ sections of this primer:
 -  :doc:`Part 1: Neurons and simple neural
    networks <part_1_neurons_and_simple_neural_networks>`
 -  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
--  :doc:`Part 4: Topologically structured
+-  :doc:`Part 4: Spatially structured
    networks <part_4_spatially_structured_networks>`
 
 More advanced examples can be found at `Example

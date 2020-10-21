@@ -33,7 +33,7 @@ Changing the documentation
 ++++++++++++++++++++++++++
 
 If you notice any errors or weaknesses in the documentation, please submit an
-`issue <https://github.com/nest/nest-simulator/issues>`_ in our GitHub
+`Issue <https://github.com/nest/nest-simulator/issues>`_ in our GitHub
 repository.
 
 You can also make changes directly to your forked copy of the `NEST source

@@ -441,6 +441,7 @@ extern const Name synapse_id;
 extern const Name synapse_label;
 extern const Name synapse_model;
 extern const Name synapse_modelid;
+extern const Name synapse_parameters;
 extern const Name synapses_per_driver;
 extern const Name synaptic_elements;
 extern const Name synaptic_elements_param;

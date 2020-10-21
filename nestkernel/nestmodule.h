@@ -335,6 +335,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } connect_g_g_D_Dfunction;
 
+  class Connect_g_g_D_aFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } connect_g_g_D_afunction;
+
   class ResetKernelFunction : public SLIFunction
   {
   public:

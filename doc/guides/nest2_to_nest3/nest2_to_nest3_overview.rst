@@ -566,6 +566,24 @@ Iterator of sources and targets
     >>>  print([s*3 for s in synColl.sources()])
          [3, 3, 6, 6]
 
+.. _collocated_synapses
+
+Collocated synapses
+~~~~~~~~~~~~~~~~~~~
+It is now possible to create connections with several synapses simultaneously. The different synapse dictionaries will
+then be applied to each source-target pair. To create these collocated synapses ``CollocatedSynapses()`` must be used
+as the `syn_spec` argument of ``Connect``, instead of the usual syn_spec *dictionary*. ``CollocatedSynapses()`` takes
+dictionaries as argument.
+
+  ::
+
+    nodes = nest.Create('iaf_psc_alpha', 3)
+    syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
+                                       {'synapse_model': 'stdp_synapse'},
+                                       {'synapse_model': 'stdp_synapse', 'alpha': 3.})
+    nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
+
+
 .. _param_ex:
 
 Parametrization

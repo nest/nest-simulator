@@ -149,7 +149,7 @@ Docs.
 
 This allows you to preview your work on your Read the Docs account. In order
 to see the changes on the official NEST simulator documentation, please submit
-a pull request (see below).
+a pull request.
 
 Creating pull request
 +++++++++++++++++++++

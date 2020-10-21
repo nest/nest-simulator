@@ -28,7 +28,7 @@ You can also make changes directly to your forked copy of the `NEST source code 
 Setting up your environment
 +++++++++++++++++++++++++++
 
-To keep things simple, we have created a conda environment for you. Installing it will enable you to smoothly generate documentation for NEST.
+We have created a Conda environment, which will enable you to generate documentation for NEST.
 
 If you are using Linux and want to install a full development environment:
 

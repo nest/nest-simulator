@@ -144,8 +144,8 @@ Docs.
 
 5. Enter the details of your project in the ``repo`` field and hit ``Create``.
 
-6. `Build your documentation <https://docs.readthedocs.io/en/stable/intro/
-   import-guide.html#building-your-documentation>`_.
+6. `Build <https://docs.readthedocs.io/en/stable/intro/
+   import-guide.html#building-your-documentation>`_ your documentation.
 
 This allows you to preview your work on your Read the Docs account. In order
 to see the changes on the official NEST simulator documentation, please submit

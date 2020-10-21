@@ -43,8 +43,7 @@ workflow below!
 Setting up your environment
 +++++++++++++++++++++++++++
 
-We have created a Conda environment, which will enable you to generate
-documentation for NEST.
+Our conda environment will enable you to generate documentation for NEST.
 
 If you are using Linux and want to install a full development environment:
 

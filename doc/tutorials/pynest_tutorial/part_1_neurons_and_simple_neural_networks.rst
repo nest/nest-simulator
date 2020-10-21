@@ -22,7 +22,7 @@ sections of this primer:
 -  :doc:`Part 3: Connecting networks with
    synapses <part_3_connecting_networks_with_synapses>`
 -  :doc:`Part 4: Topologically structured
-   networks <part_4_topologically_structured_networks>`
+   networks <part_4_spatially_structured_networks>`
 
 More advanced examples can be found at `Example
 Networks <https://www.nest-simulator.org/more-example-networks/>`__, or

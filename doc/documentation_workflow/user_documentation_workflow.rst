@@ -18,6 +18,8 @@ We work with `GitHub <https://www.github.com>`_ as the web-based hosting
 service for Git. Git allows us to keep our versions under control, with each
 release of NEST having its own documentation.
 
+This workflow aims for the concept of **user-correctable documentation**.
+
 .. image:: ../_static/img/documentation_workflow.png
   :width: 500
   :alt: Alternative text

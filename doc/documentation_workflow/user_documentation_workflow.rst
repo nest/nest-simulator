@@ -22,7 +22,6 @@ release of NEST having its own documentation.
   :width: 500
   :alt: Alternative text
 
-
 .. note::
    This workflow shows you how to create **user-level documentation** for
    NEST. For **developer documentation**, please refer to our

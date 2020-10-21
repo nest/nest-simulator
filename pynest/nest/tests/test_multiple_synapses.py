@@ -308,7 +308,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
                                            {'synapse_model': 'stdp_synapse', 'weight': 3, 'receptor_type': 5})
 
         nest.Connect(src, trgt, 'one_to_one', syn_spec=syn_spec)
-        nest.Connect(node, node) # should have receptor 0
+        nest.Connect(node, node)  # should have receptor 0
 
         conns = nest.GetConnections()
         ref_receptor_type = [0] + [2]*num_src + [5]*num_src + [7]*num_src

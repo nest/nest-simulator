@@ -33,6 +33,7 @@ from werkzeug.wrappers import Response
 
 import nest
 import RestrictedPython
+import time
 
 import os
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
@@ -217,7 +218,12 @@ def get_restricted_globals():
     restricted_builtins = RestrictedPython.safe_builtins.copy()
     restricted_builtins.update(RestrictedPython.limited_builtins)
     restricted_builtins.update(RestrictedPython.utility_builtins)
-    restricted_builtins.update(dict(max=max, min=min, sum=sum))
+    restricted_builtins.update(dict(
+        max=max,
+        min=min,
+        sum=sum,
+        time=time,
+    ))
 
     restricted_globals = dict(
         __builtins__=restricted_builtins,
@@ -225,6 +231,8 @@ def get_restricted_globals():
         _getattr_=RestrictedPython.Guards.safer_getattr,
         _getitem_=getitem,
         _getiter_=iter,
+        _unpack_sequence_=RestrictedPython.Guards.guarded_unpack_sequence,
+        _write_=RestrictedPython.Guards.full_write_guard,
     )
 
     # Add modules to restricted globals

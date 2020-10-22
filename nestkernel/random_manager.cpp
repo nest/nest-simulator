@@ -49,6 +49,7 @@ const std::uint32_t nest::RandomManager::THREAD_SPECIFIC_SEEDER_ = 0xb84c9bae;
 nest::RandomManager::RandomManager()
   : current_rng_type_( DEFAULT_RNG_TYPE_ )
   , base_seed_( DEFAULT_BASE_SEED_ )
+  , rank_synced_rng_( nullptr )
 {
 }
 

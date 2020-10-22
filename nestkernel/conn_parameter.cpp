@@ -73,6 +73,7 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
   throw BadProperty( std::string( "Cannot handle parameter type. Received " ) + t.datum()->gettypename().toString() );
 }
 
+
 nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( const ParameterDatum& pd, const size_t )
   : parameter_( pd.get() )
 {

@@ -155,7 +155,7 @@ SPManager::set_status( const DictionaryDatum& d )
   {
     syn_spec = getValue< DictionaryDatum >( syn_specs, i->first );
     // We use a ConnBuilder with dummy values to check the synapse parameters
-    SPBuilder* conn_builder = new SPBuilder( sources, targets, conn_spec, syn_spec );
+    SPBuilder* conn_builder = new SPBuilder( sources, targets, conn_spec, { syn_spec } );
 
     // check that the user defined the min and max delay properly, if the
     // default delay is not used.
@@ -298,7 +298,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
       std::string synModel = getValue< std::string >( syn_spec, names::synapse_model );
       if ( ( *i )->get_synapse_model() == ( index )( kernel().model_manager.get_synapsedict()->lookup( synModel ) ) )
       {
-        cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_spec );
+        cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
         cb->set_post_synaptic_element_name( ( *i )->get_post_synaptic_element_name() );
         cb->set_pre_synaptic_element_name( ( *i )->get_pre_synaptic_element_name() );
       }
@@ -306,7 +306,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   }
   else
   {
-    cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_spec );
+    cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
   }
   assert( cb != 0 );
 

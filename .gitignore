@@ -65,3 +65,5 @@ lib/sli/rcsinfo.sli
 extras/nest_vars.sh
 
 pynest/examples/README
+/examples/matplotlib/fontList.json
+/examples/matplotlib/tex.cache/

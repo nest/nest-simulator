@@ -234,8 +234,8 @@ def simulate(parameters):
     nodes_ex = nest.Create('iaf_psc_alpha', NE, params=neuron_parameters)
     nodes_in = nest.Create('iaf_psc_alpha', NI, params=neuron_parameters)
     noise = nest.Create('poisson_generator', params={'rate': p_rate})
-    espikes = nest.Create('spike_detector', params={'label': 'brunel-py-ex'})
-    ispikes = nest.Create('spike_detector', params={'label': 'brunel-py-in'})
+    espikes = nest.Create('spike_recorder', params={'label': 'brunel-py-ex'})
+    ispikes = nest.Create('spike_recorder', params={'label': 'brunel-py-in'})
 
     nest.CopyModel('static_synapse', 'excitatory',
                    {'weight': J_ex, 'delay': parameters['delay']})

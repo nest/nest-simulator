@@ -187,8 +187,8 @@ sr = nest.Create('spike_recorder')
 # We connect devices and neurons and start the simulation.
 
 nest.Connect(pg, n,
-             syn_spec={'weight': np.tile(J, (n_neurons), 1)), 'delay': 0.1})
-nest.Connect(pg, n_free, syn_spec={'weight': J})
+             syn_spec={'weight': np.tile(J, ((n_neurons), 1)), 'delay': 0.1})
+nest.Connect(pg, n_free, syn_spec={'weight': [J]})
 nest.Connect(vm, n_free)
 nest.Connect(n, sr)
 
@@ -206,4 +206,4 @@ print('mean membrane potential (actual / calculated): {0} / {1}'
 print('variance (actual / calculated): {0} / {1}'
       .format(np.var(v_free[Nskip:]), sigma2 * 1e6))
 print('firing rate (actual / calculated): {0} / {1}'
-      .format(sd.n_events / (n_neurons * simtime * ms), r))
+      .format(sr.n_events / (n_neurons * simtime * ms), r))

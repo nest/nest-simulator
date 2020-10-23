@@ -178,7 +178,7 @@ psp_norm = psp / psp_amp
 # simulation outcome. Therefore we need a time vector (`t_U`) with the correct
 # temporal resolution, which places the excursion of the potential at the
 # correct time.
-psp_norm = numpy.pad(psp_norm, [len(psp_norm) - 1, 1])
+psp_norm = numpy.pad(psp_norm, [len(psp_norm) - 1, 1], mode='constant')
 U = a * psp_amp * numpy.convolve(gauss, psp_norm)
 ulen = len(U)
 t_U = (convolution_resolution * numpy.linspace(-ulen / 2., ulen / 2., ulen) +

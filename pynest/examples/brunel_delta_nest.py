@@ -130,15 +130,15 @@ print("Building network")
 ###############################################################################
 # Creation of the nodes using ``Create``. We store the returned handles in
 # variables for later reference. Here the excitatory and inhibitory, as well
-# as the poisson generator and two spike detectors. The spike detectors will
+# as the poisson generator and two spike recorders. The spike recorders will
 # later be used to record excitatory and inhibitory spikes. Properties of the
 # nodes are specified via ``param``, which expects a dictionary.
 
-nodes_ex = nest.Create("iaf_psc_delta", NE, param=neuron_params)
-nodes_in = nest.Create("iaf_psc_delta", NI, param=neuron_params)
-noise = nest.Create("poisson_generator", param={"rate": p_rate})
-espikes = nest.Create("spike_detector")
-ispikes = nest.Create("spike_detector")
+nodes_ex = nest.Create("iaf_psc_delta", NE, params=neuron_params)
+nodes_in = nest.Create("iaf_psc_delta", NI, params=neuron_params)
+noise = nest.Create("poisson_generator", params={"rate": p_rate})
+espikes = nest.Create("spike_recorder")
+ispikes = nest.Create("spike_recorder")
 
 ###############################################################################
 # Configuration of the spike recorders recording excitatory and inhibitory

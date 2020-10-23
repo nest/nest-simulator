@@ -142,10 +142,10 @@ for source_node_id, target_node_id in connections:
 
 nest.Simulate(simtime)
 
-events = sd.events
+events = sr.events
 times = events['times']
 spikes = events['senders']
-n_spikes = sd.n_events
+n_spikes = sr.n_events
 
 hz_rate = (1000.0 * n_spikes / simtime) / n_neuron
 

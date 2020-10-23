@@ -3,14 +3,14 @@
 # This is the real nest program, which requires NESTIO + ARBOR-NESTIO
 
 from sys import argv
-argv.append('--quiet')      # noqa nopep8 (order of imports matter)
-import sys
+argv.append('--quiet')
+import sys                  # noqa nopep8 (order of imports matter)
 
-# print("Getting comm")
-from mpi4py import MPI
+print("Getting comm")
+from mpi4py import MPI      # noqa nopep8 (order of imports matter)
 comm = MPI.COMM_WORLD.Split(0)  # is nest
 
-# print("Getting nest")
+print("Getting nest")
 import nest                 # noqa nopep8 (order of imports matter)
 
 

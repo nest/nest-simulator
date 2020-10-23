@@ -583,6 +583,35 @@ dictionaries as argument.
                                        {'synapse_model': 'stdp_synapse', 'alpha': 3.})
     nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
 
+    conns = nest.GetConnections()
+    print(conns.alpha)
+
+This will create 9 connections, 3 using `static_synapse` with a `weight` of `4` and `delay` of `1.5`, and 6 using
+the `stdp_synapse`.
+
+  >>> print(nest.GetKernelStatus('num_connections'))
+  9
+
+If you want to connect with different receptor types, you can do the following
+
+  ::
+
+    src = nest.Create('iaf_psc_exp_multisynapse', 5)
+    trgt = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1 + i for i in range(num_trg)]})
+
+    syn_spec = nest.CollocatedSynapses({'weight': 5.0, 'receptor_type': 2},
+                                       {'weight': 1.5, 'receptor_type': 7})
+
+    nest.Connect(src, trgt, 'one_to_one', syn_spec=syn_spec)
+
+    conns = nest.GetConnections()
+    print(conns.get())
+
+You can see how many synapse parameters you have by doing `len()` on your `CollocatedSynapses` object:
+
+  >>> len(syn_spec)
+  2
+
 
 .. _param_ex:
 

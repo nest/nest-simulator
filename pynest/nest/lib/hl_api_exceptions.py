@@ -19,8 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from six import with_metaclass  # For Python 2 compatibility
-
 
 class NESTMappedException(type):
     """Metaclass for exception namespace that dynamically creates exception classes.
@@ -31,45 +29,45 @@ class NESTMappedException(type):
     errorname as well, with a parent of default type (self.default_parent) or
     self.parents[errorname] if defined. """
 
-    def __getattr__(self, errorname):
-        """Creates a class of type "errorname" which is a child of self.default_parent or
-        self.parents[errorname] if one is defined.
+    def __getattr__(cls, errorname):
+        """Creates a class of type "errorname" which is a child of cls.default_parent or
+        cls.parents[errorname] if one is defined.
 
-        This __getattr__ function also stores the class permanently as an attribute of self for
-        re-use where self is actually the class that triggered the getattr (the class that
+        This __getattr__ function also stores the class permanently as an attribute of cls for
+        re-use where cls is actually the class that triggered the getattr (the class that
         NESTMappedException is a metaclass of). """
 
         # Dynamic class construction, first check if we know its parent
-        if errorname in self.parents:
-            parent = getattr(self, self.parents[errorname])
+        if errorname in cls.parents:
+            parent = getattr(cls, cls.parents[errorname])
         else:  # otherwise, get the default (SLIException)
-            parent = self.default_parent
+            parent = cls.default_parent
 
         # and now dynamically construct the new class
         # not NESTMappedException, since that would mean the metaclass would let the new class inherit
         # this __getattr__, allowing unintended dynamic construction of attributes
         newclass = type(
-            self.__name__ + '.' + errorname,
+            cls.__name__ + '.' + errorname,
             (parent,),
             {
-                '__init__': self.init(parent, errorname),
+                '__init__': cls.init(parent, errorname),
                 '__doc__':
                 """Dynamically created exception {} from {}.
 
                 Created for the namespace: {}.
                 Parent exception: {}.
-                """.format(errorname, self.source, self.__name__, parent.__name__)
+                """.format(errorname, cls.source, cls.__name__, parent.__name__)
             }
         )
 
         # Cache for reuse: __getattr__ should now not get called if requested again
-        setattr(self, errorname, newclass)
+        setattr(cls, errorname, newclass)
 
         # And now we return the exception
         return newclass
 
 
-class NESTErrors(with_metaclass(NESTMappedException)):
+class NESTErrors(metaclass=NESTMappedException):
     """Namespace for NEST exceptions, including dynamically created classes from SLI.
 
     Dynamic exception creation is through __getattr__ defined in the metaclass NESTMappedException.
@@ -79,23 +77,23 @@ class NESTErrors(with_metaclass(NESTMappedException)):
         """Base exception class for all NEST exceptions.
         """
 
-        def __init__(self, message, *args, **kwargs):
+        def __init__(self, message):
             """Initializer for NESTError base class.
 
             Parameters:
             -----------
-            message: full error message to report.
-            *args, **kwargs: passed through to Exception base class.
+            message: str
+                full error message to report.
             """
 
-            Exception.__init__(self, message, *args, **kwargs)
+            Exception.__init__(self, message)
             self.message = message
 
     class SLIException(NESTError):
         """Base class for all exceptions coming from sli.
         """
 
-        def __init__(self, commandname, errormessage, errorname='SLIException', *args, **kwargs):
+        def __init__(self, commandname, errormessage, errorname='SLIException'):
             """Initialize function.
 
             Parameters:
@@ -103,10 +101,9 @@ class NESTErrors(with_metaclass(NESTMappedException)):
             errorname: error name from SLI.
             commandname: command name from SLI.
             errormessage: message from SLI.
-            *args, **kwargs: passed through to NESTErrors.NESTError base class.
             """
-            message = "{} in {}{}".format(errorname, commandname, errormessage)
-            NESTErrors.NESTError.__init__(self, message, errorname, commandname, errormessage, *args, **kwargs)
+            message = "{} in SLI function {}{}".format(errorname, commandname, errormessage)
+            NESTErrors.NESTError.__init__(self, message)
 
             self.errorname = errorname
             self.commandname = commandname
@@ -203,7 +200,6 @@ class NESTErrors(with_metaclass(NESTMappedException)):
         'BadParameter': 'KernelException',
         'DimensionMismatch': 'KernelException',
         'DistributionError': 'KernelException',
-        'SimulationError': 'KernelException',
         'InvalidDefaultResolution': 'KernelException',
         'InvalidTimeInModel': 'KernelException',
         'StepMultipleRequired': 'KernelException',

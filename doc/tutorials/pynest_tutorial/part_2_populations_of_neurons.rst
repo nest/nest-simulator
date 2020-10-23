@@ -23,8 +23,8 @@ sections of this primer:
    networks <part_1_neurons_and_simple_neural_networks>`
 -  :doc:`Part 3: Connecting networks with
    synapses <part_3_connecting_networks_with_synapses>`
--  :doc:`Part 4: Topologically structured
-   networks <part_4_topologically_structured_networks>`
+-  :doc:`Part 4: Spatially structured
+   networks <part_4_spatially_structured_networks>`
 
 More advanced examples can be found at `Example
 Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
@@ -140,7 +140,7 @@ distributions. NEST has a number of these parameters which can be used to set th
 node parameters as well as connection parameters like probability, weights and delays.
 The parameters can be combined, and they can be used with some mathematical functions
 provided by NEST. Be aware that the complexity of your parameter might affect
-the performance of your network. 
+the performance of your network.
 
 ::
 
@@ -161,7 +161,6 @@ populations of ten neurons each.
 
 ::
 
-    import pylab
     import nest
     pop1 = nest.Create("iaf_psc_alpha", 10)
     pop1.set({"I_e": 376.0})

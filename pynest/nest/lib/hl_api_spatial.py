@@ -37,7 +37,6 @@ try:
     import matplotlib as mpl
     import matplotlib.path as mpath
     import matplotlib.patches as mpatches
-    import matplotlib.pyplot as plt
     HAVE_MPL = True
 except ImportError:
     HAVE_MPL = False
@@ -552,7 +551,7 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
             source_node_id target_node_id weight delay dx dy [dz]
 
     where (dx, dy [, dz]) is the displacement from source to target node.
-    If targets do not have positions (eg spike detectors outside any layer),
+    If targets do not have positions (eg spike recorders outside any layer),
     NaN is written for each displacement coordinate.
 
     Parameters
@@ -842,11 +841,16 @@ def SelectNodesByMask(layer, anchor, mask_obj):
     node_id_list = sli_func('SelectNodesByMask',
                             layer, anchor, mask_datum)
 
-    return NodeCollection(node_id_list)
+    # When creating a NodeCollection, the input list of nodes IDs must be sorted.
+    return NodeCollection(sorted(node_id_list))
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):
     """Draw extent and set aspect ration, limits"""
+
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
+    import matplotlib.pyplot as plt
 
     # thin gray line indicating extent
     llx, lly = xctr - xext / 2.0, yctr - yext / 2.0
@@ -920,11 +924,15 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
             plt.show()
     """
 
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
+    import matplotlib.pyplot as plt
+
     if not HAVE_MPL:
         raise ImportError('Matplotlib could not be imported')
 
     if not isinstance(layer, NodeCollection):
-        raise TypeError("layer must be a NodeCollection.")
+        raise TypeError('layer must be a NodeCollection.')
 
     # get layer extent
     ext = layer.spatial['extent']
@@ -945,8 +953,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         else:
             ax = fig.gca()
 
-        ax.scatter(xpos, ypos, s=nodesize, facecolor=nodecolor,
-                   edgecolor='none')
+        ax.scatter(xpos, ypos, s=nodesize, facecolor=nodecolor)
         _draw_extent(ax, xctr, yctr, xext, yext)
 
     elif len(ext) == 3:
@@ -1044,8 +1051,12 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
             plt.show()
     """
 
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
+    import matplotlib.pyplot as plt
+
     if not HAVE_MPL:
-        raise ImportError('Matplotlib could not be imported')
+        raise ImportError("Matplotlib could not be imported")
 
     if not isinstance(src_nrn, NodeCollection) or len(src_nrn) != 1:
         raise TypeError("src_nrn must be a single element NodeCollection.")
@@ -1075,12 +1086,9 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
         tgtpos = GetTargetPositions(src_nrn, tgt_layer, syn_type)
         if tgtpos:
             xpos, ypos = zip(*tgtpos[0])
-            ax.scatter(xpos, ypos, s=tgt_size, facecolor=tgt_color,
-                       edgecolor='none')
+            ax.scatter(xpos, ypos, s=tgt_size, facecolor=tgt_color)
 
-        ax.scatter(srcpos[:1], srcpos[1:], s=src_size, facecolor=src_color,
-                   edgecolor='none',
-                   alpha=0.4, zorder=-10)
+        ax.scatter(srcpos[:1], srcpos[1:], s=src_size, facecolor=src_color, alpha=0.4, zorder=-10)
 
         if mask is not None or probability_parameter is not None:
             edges = [xctr - xext, xctr + xext, yctr - yext, yctr + yext]
@@ -1103,12 +1111,9 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
         tgtpos = GetTargetPositions(src_nrn, tgt_layer, syn_type)
         if tgtpos:
             xpos, ypos, zpos = zip(*tgtpos[0])
-            ax.scatter3D(xpos, ypos, zpos, s=tgt_size, facecolor=tgt_color,
-                         edgecolor='none')
+            ax.scatter3D(xpos, ypos, zpos, s=tgt_size, facecolor=tgt_color)
 
-        ax.scatter3D(srcpos[:1], srcpos[1:2], srcpos[2:], s=src_size,
-                     facecolor=src_color, edgecolor='none',
-                     alpha=0.4, zorder=-10)
+        ax.scatter3D(srcpos[:1], srcpos[1:2], srcpos[2:], s=src_size, facecolor=src_color, alpha=0.4, zorder=-10)
 
     plt.draw_if_interactive()
 
@@ -1117,10 +1122,16 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
 
 def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'):
     """Create Matplotlib Patch objects representing the mask"""
+
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
+    import matplotlib.pyplot as plt
+
     edge_color = 'black'
     alpha = 0.2
     line_width = 2
     mask_patches = []
+
     if 'anchor' in mask:
         offs = np.array(mask['anchor'])
     else:
@@ -1246,6 +1257,11 @@ def PlotProbabilityParameter(source, parameter=None, mask=None, edges=[-0.5, 0.5
         A matplotlib axes instance to plot in. If none is given,
         a new one is created.
     """
+
+    # import pyplot here and not at toplevel to avoid preventing users
+    # from changing matplotlib backend after importing nest
+    import matplotlib.pyplot as plt
+
     if not HAVE_MPL:
         raise ImportError('Matplotlib could not be imported')
 

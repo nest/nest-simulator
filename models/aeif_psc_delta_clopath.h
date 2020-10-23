@@ -45,6 +45,7 @@
 
 namespace nest
 {
+
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.
@@ -57,24 +58,22 @@ namespace nest
  */
 extern "C" int aeif_psc_delta_clopath_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup clopath_n
-@ingroup aeif
-@ingroup psc
+/* BeginUserDocs: neuron, adaptive threshold, integrate-and-fire, Clopath plasticity, current-based
 
-Name: aeif_psc_delta_clopath - Exponential integrate-and-fire neuron
-model according to Clopath et al. (2010).
+Short description
++++++++++++++++++
 
-Description:
+Adaptive exponential integrate-and-fire neuron
+
+Description
++++++++++++
 
 aeif_psc_delta_clopath is an implementation of the neuron model as it is used
-in [1]. It is an extension of the aeif_psc_delta model and capable of
+in [1]_. It is an extension of the aeif_psc_delta model and capable of
 connecting to a Clopath synapse.
 
 Note that there are two points that are not mentioned in the paper but
-present in a MATLAB implementation by Claudia Clopath [3]. The first one is the
+present in a MATLAB implementation by Claudia Clopath [3]_. The first one is the
 clamping of the membrane potential to a fixed value after a spike occured to
 mimik a real spike and not just the upswing. This is important since the finite
 duration of the spike influences the evolution of the convolved versions
@@ -82,11 +81,17 @@ duration of the spike influences the evolution of the convolved versions
 synaptic weight. Secondly, there is a delay with which u_bar_[plus/minus] are
 used to compute the change of the synaptic weight.
 
-Parameters:
+Note:
+Neither the clamping nor the delayed processing of u_bar_[plus/minus] are
+mentioned in [1]_. However, they are part of an reference implementation
+by Claudia Clopath et al. that can be found on ModelDB [3]_. The clamping is
+important to mimic a spike which is otherwise not described by the aeif neuron
+model.
+
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
-
-\verbatim embed:rst
 
 =========== ======  ===================================================
 **Dynamic state variables**
@@ -113,7 +118,6 @@ u_bar_bar   mV      Low-pass filtered u_bar_minus
  tau_minus   ms      Time constant of u_bar_minus
  tau_bar_bar ms      Time constant of u_bar_bar
 ============ ======  =================================================
-
 
 ========== ======  ===================================================
 **Spike adaptation parameters**
@@ -142,14 +146,12 @@ delay_u_bars  real    Delay with which u_bar_[plus/minus] are processed
 U_ref_squared real    Reference value for u_bar_bar_^2.
 ============= ======= =======================================================
 
-
 =======  ====== =============================================================
 **Other parameters**
 -----------------------------------------------------------------------------
 t_clamp  ms     Duration of clamping of Membrane potential after a spike
 V_clamp  mV     Value to which the Membrane potential is clamped
-=======  ====== =============================================================
-
+=======  ====== ============================================================
 
 ============= ======= =========================================================
 **Integration parameters**
@@ -158,24 +160,20 @@ gsl_error_tol real    This parameter controls the admissible error of the
                       GSL integrator. Reduce it if NEST complains about
                       numerical instabilities.
 ============= ======= =========================================================
-\endverbatim
 
-Note:
+Sends
++++++
 
-Neither the clamping nor the delayed processing of u_bar_[plus/minus] are
-mentioned in [1]. However, they are part of an reference implementation
-by Claudia Clopath et al. that can be found on ModelDB [3]. The clamping is
-important to mimic a spike which is otherwise not described by the aeif neuron
-model.
+SpikeEvent
 
-Author: Jonas Stapmanns, David Dahmen, Jan Hahne
+Receives
+++++++++
 
-Sends: SpikeEvent
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+References
+++++++++++
 
-References:
-\verbatim embed:rst
 .. [1] Clopath et al. (2010). Connectivity reflects coding: a model of
        voltage-based STDP with homeostasis. Nature Neuroscience 13(3):344-352.
        DOI: https://doi.org/10.1038/nn.2479
@@ -185,9 +183,14 @@ References:
 .. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
        https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file=%2f
        modeldb_package%2fVoTriCode%2faEIF.m
-\endverbatim
-SeeAlso: aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
-*/
+
+See also
+++++++++
+
+aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
+
+EndUserDocs */
+
 class aeif_psc_delta_clopath : public Clopath_Archiving_Node
 {
 
@@ -247,25 +250,26 @@ private:
     double g_L;         //!< Leak Conductance in nS
     double C_m;         //!< Membrane Capacitance in pF
     double E_L;         //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;     //!< Slope faktor in ms
-    double tau_w;       //!< adaptation time-constant in ms
-    double tau_z;       //!< adaptation time-constant in ms
-    double tau_V_th;    //!< adaptive threshold time-constant in ms
-    double V_th_max;    //!< value of V_th afer a spike in mV
-    double V_th_rest;   //!< resting value of V_th in mV
-    double tau_plus;    //!< time constant of u_bar_plus in ms
-    double tau_minus;   //!< time constant of u_bar_minus in ms
-    double tau_bar_bar; //!< time constant of u_bar_bar in ms
-    double a;           //!< Subthreshold adaptation in nS.
+    double Delta_T;     //!< Slope factor in ms
+    double tau_w;       //!< Adaptation time-constant in ms
+    double tau_z;       //!< Adaptation time-constant in ms
+    double tau_V_th;    //!< Adaptive threshold time-constant in ms
+    double V_th_max;    //!< Value of V_th afer a spike in mV
+    double V_th_rest;   //!< Resting value of V_th in mV
+    double tau_plus;    //!< Time constant of u_bar_plus in ms
+    double tau_minus;   //!< Time constant of u_bar_minus in ms
+    double tau_bar_bar; //!< Time constant of u_bar_bar in ms
+    double a;           //!< Subthreshold adaptation in nS
     double b;           //!< Spike-triggered adaptation in pA
     double I_sp;
-    double t_ref; //!< Refractory period in ms.
-    double I_e;   //!< Intrinsic current in pA.
+    double t_ref; //!< Refractory period in ms
+    double I_e;   //!< Intrinsic current in pA
 
-    double gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol; //!< Error bound for GSL integrator
 
-    double t_clamp_; //!< The membrane potential is clamped to V_clamp (in mV)
-    double V_clamp_; //!< for the duration of t_clamp (in ms) after each spike.
+    double t_clamp_; //!< The membrane potential is clamped for the duration of t_clamp (in ms) after each spike
+    double V_clamp_; //!< The membrane potential is clamped to V_clamp (in mV)
+
 
     Parameters_(); //!< Sets default parameter values
 
@@ -462,4 +466,5 @@ aeif_psc_delta_clopath::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
+
 #endif // AEIF_PSC_DELTA_CLOPATH_H

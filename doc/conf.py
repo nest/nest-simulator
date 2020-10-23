@@ -30,12 +30,12 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
-
 import re
-
 import pip
-
 import subprocess
+
+from pathlib import Path
+from shutil import copyfile
 
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
@@ -43,14 +43,13 @@ from mock import Mock as MagicMock
 source_suffix = ['.rst']
 
 # If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
+# add these directories to sys.path here. If the dit rectory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
 doc_path = os.path.abspath(os.path.dirname(__file__))
 root_path = os.path.abspath(doc_path + "/..")
 
 sys.path.insert(0, os.path.abspath(root_path))
-sys.path.insert(0, os.path.abspath(root_path + '/topology'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
 sys.path.insert(0, os.path.abspath(doc_path))
@@ -197,6 +196,16 @@ github_doc_root = ''
 
 intersphinx_mapping = {'https://docs.python.org/': None}
 
+from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
+
+
+def config_inited_handler(app, config):
+    ExtractUserDocs(
+        relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
+        outdir="models/"
+    )
+
+
 nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 'optional'),
                   ('py:class', 's'),
@@ -211,10 +220,14 @@ nitpick_ignore = [('py:class', 'None'),
 
 
 def setup(app):
-    app.add_stylesheet('css/custom.css')
-    app.add_stylesheet('css/pygments.css')
-    app.add_javascript("js/copybutton.js")
-    app.add_javascript("js/custom.js")
+    app.add_css_file('css/custom.css')
+    app.add_css_file('css/pygments.css')
+    app.add_js_file("js/copybutton.js")
+    app.add_js_file("js/custom.js")
+
+    # for events see
+    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
+    app.connect('config-inited', config_inited_handler)
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -269,28 +282,32 @@ texinfo_documents = [
 
 # -- Options for readthedocs ----------------------------------------------
 
-models_with_documentation = (
-    "models/multimeter",
-    "models/spike_detector",
-    "models/weight_recorder",
-    "nestkernel/recording_backend_ascii",
-    "nestkernel/recording_backend_memory",
-    "nestkernel/recording_backend_screen",
-    "nestkernel/recording_backend_sionlib",
-)
+# -- Copy documentation for Microcircuit Model ----------------------------
 
-pattern = r'BeginDocumentation((?:.|\n)*)EndDocumentation'
-for model in models_with_documentation:
-    with open("../%s.h" % model) as f:
-        match = re.search(pattern, f.read())
-        if match:
-            rst_dir = "from_cpp/"
-            if not os.path.exists(rst_dir):
-                os.mkdir(rst_dir)
-            rst_fname = rst_dir + os.path.basename(model) + ".rst"
-            rst_file = open(rst_fname, "w")
-            rst_file.write(match.group(1))
-            rst_file.close()
-            print("Wrote model documentation for model " + model)
-        else:
-            print("No documentation found for model " + model)
+
+def copytreeglob(source, target, glob='*.png'):
+    '''
+    Recursively copy all files selected by `glob` from `source` to `target` path,
+    recreating the sub-folder structure.
+    Parameters
+    ----------
+    source : path, str
+        source folder where to recursively search for glob
+    target : path, str
+        target folder where to recreate the tree of source files
+    glob : str
+        shell-glob specifying which files to copy
+    '''
+    source = Path(source)
+    target = Path(target)
+    for relativename in [x.relative_to(source) for x in source.rglob(glob)]:
+        # manually create directory, since shutil.copyfile() does not support
+        # the `dirs_exist_ok=True` below Python-3.8
+        targetpath = target/relativename.parents[0]
+        if not targetpath.exists():
+            targetpath.mkdir(parents=True)
+        assert targetpath.is_dir(), "Targetpath is obstructed by a non-directory object (maybe a file)"
+        copyfile(source/relativename, target/relativename)
+
+
+copytreeglob("../pynest/examples/Potjans_2014", "examples", '*.png')

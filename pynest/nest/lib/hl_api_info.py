@@ -43,7 +43,6 @@ __all__ = [
     'SetStatus',
     'set_verbosity',
     'sysinfo',
-    'version',
 ]
 
 
@@ -54,21 +53,6 @@ def sysinfo():
     """
 
     sr("sysinfo")
-
-
-@check_stack
-def version():
-    """Return the NEST version.
-
-    Returns
-    -------
-    str
-        The version of NEST
-
-    """
-
-    sr("statusdict [[ /kernelname /version ]] get")
-    return " ".join(spp())
 
 
 @check_stack
@@ -88,19 +72,8 @@ def helpdesk():
 
     """
 
-    if sys.version_info < (2, 7, 8):
-        print("The NEST helpdesk is only available with Python 2.7.8 or "
-              "later. \n")
-        return
-
-    if 'NEST_DOC_DIR' not in os.environ:
-        print(
-            'NEST help needs to know where NEST is installed.'
-            'Please source nest_vars.sh or define NEST_DOC_DIR manually.')
-        return
-
-    helpfile = os.path.join(os.environ['NEST_DOC_DIR'], 'help',
-                            'helpindex.html')
+    nestdocdir = sli_func("statusdict/prgdocdir ::")
+    helpfile = os.path.join(nestdocdir, 'help', 'helpindex.html')
 
     # Under Windows systems webbrowser.open is incomplete
     # See <https://bugs.python.org/issue8232>
@@ -144,19 +117,15 @@ def help(obj=None, pager=None, return_text=False):
             show_help_with_pager(hlpobj, pager)
 
     else:
-        print("Type 'nest.helpdesk()' to access the online documentation "
-              "in a browser.")
-        print("Type 'nest.help(object)' to get help on a NEST object or "
-              "command.\n")
-        print("Type 'nest.Models()' to see a list of available models "
-              "in NEST.")
-        print("Type 'nest.authors()' for information about the makers "
-              "of NEST.")
-        print("Type 'nest.sysinfo()' to see details on the system "
-              "configuration.")
-        print("Type 'nest.version()' for information about the NEST "
-              "version.\n")
-        print("For more information visit https://www.nest-simulator.org.")
+        print("Type 'nest.helpdesk()' to access the online documentation in a browser.\n"
+              "Type 'nest.help(object)' to get help on a NEST object or command.\n"
+              "\n"
+              "Type 'nest.Models()' to see a list of available models in NEST.\n"
+              "Type 'nest.authors()' for information about the makers of NEST.\n"
+              "Type 'nest.sysinfo()' to see details on the system configuration.\n"
+              "Type 'nest.__version__' for information about the NEST version.\n"
+              "\n"
+              "For more information visit https://www.nest-simulator.org.")
 
 
 @check_stack
@@ -286,14 +255,17 @@ def SetStatus(nodes, params, val=None):
     if len(nodes) == 0:
         return
 
-    n0 = nodes[0]
     params_is_dict = isinstance(params, dict)
     set_status_nodes = isinstance(nodes, nest.NodeCollection)
-    set_status_local_nodes = set_status_nodes and n0.get('local')
+    if set_status_nodes:
+        local_nodes = [nodes.local] if len(nodes) == 1 else nodes.local
+        set_status_nodes = set_status_nodes and all(local_nodes)
 
-    if (params_is_dict and set_status_local_nodes):
-        contains_list = [is_iterable(vals) and not is_iterable(n0.get(key))
-                         for key, vals in params.items()]
+    if (params_is_dict and set_status_nodes):
+
+        node_params = nodes[0].get()
+        contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
+                         key, vals in params.items()]
 
         if any(contains_list):
             temp_param = [{} for _ in range(len(nodes))]
@@ -314,9 +286,7 @@ def SetStatus(nodes, params, val=None):
             params = {params: val}
 
     if isinstance(params, (list, tuple)) and len(nodes) != len(params):
-        raise TypeError(
-            "status dict must be a dict, or a list of dicts of length "
-            "len(nodes)")
+        raise TypeError("status dict must be a dict, or a list of dicts of length {}".format(len(nodes)))
 
     if isinstance(nodes, nest.SynapseCollection):
         params = broadcast(params, len(nodes), (dict,), "params")
@@ -376,7 +346,7 @@ def GetStatus(nodes, keys=None, output=''):
         raise TypeError("The first input (nodes) must be NodeCollection or a SynapseCollection with connection handles")
 
     if len(nodes) == 0:
-        return nodes
+        return '[]' if output == 'json' else ()
 
     if keys is None:
         cmd = 'GetStatus'

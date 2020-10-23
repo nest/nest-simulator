@@ -12,7 +12,7 @@ NEST can be compiled without any external packages; such a configuration may be 
 
 To configure NEST for compilation without external packages, use the following  command::
 
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
           -Dwith-python=OFF \
           -Dwith-gsl=OFF \
           -Dwith-readline=OFF \
@@ -29,7 +29,7 @@ NEST provides a cmake tool-chain file for cross compilation for BlueGene/Q. When
 configuring NEST use the following ``cmake`` line::
 
     cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
-          -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+          -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
           -Dwith-python=OFF \
           -Dstatic-libraries=ON \
           </path/to/NEST/src>
@@ -59,23 +59,11 @@ Building PyNEST on BlueGene/Q requires you to compile dynamically, i.e.
     cythonize pynestkernel.pyx
 
 Copy the generated file ``pynestkernel.cpp`` into ``</path/to/NEST/src>/pynest`` on
-BlueGene/Q and point ``-Dwith-python=<...>`` to a valid python version for cross
-compilation, either Python 2::
-
-    -Dwith-python=/bgsys/tools/Python-2.7/bin/hostpython
-
-or (much better) Python 3::
-
-    -Dwith-python=/bgsys/local/python3/3.4.2/bin/python3
+BlueGene/Q.
 
 CMake <3.4 is buggy when it comes to finding the matching libraries (for many years).
 Thus, you also have to specify ``PYTHON_LIBRARY`` and ``PYTHON_INCLUDE_DIR``
 if they are not found OR the incorrect libraries are found, e.g.::
-
- -DPYTHON_LIBRARY=/bgsys/tools/Python-2.7/lib64/libpython2.7.so.1.0
- -DPYTHON_INCLUDE_DIR=/bgsys/tools/Python-2.7/include/python2.7
-
-or (much better)::
 
  -DPYTHON_LIBRARY=/bgsys/local/python3/3.4.2/lib/libpython3.4m.a
  -DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.4.2/include/python3.4m
@@ -85,18 +73,17 @@ A complete ``cmake`` line for PyNEST could look like this::
     module load gsl
 
     cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
-      -DCMAKE_INSTALL_PREFIX=</install/path> \
+      -DCMAKE_INSTALL_PREFIX=<nest_install_dir> \
       -Dstatic-libraries=OFF \
       -Dcythonize-pynest=OFF \
     	  -DCMAKE_C_COMPILER=/bgsys/drivers/ppcfloor/comm/xl/bin/mpixlc_r \
     	  -DCMAKE_CXX_COMPILER=/bgsys/drivers/ppcfloor/comm/xl/bin/mpixlcxx_r \
-    	  -Dwith-python=/bgsys/local/python3/3.4.2/bin/python3 \
     	  -DPYTHON_LIBRARY=/bgsys/local/python3/3.4.2/lib/libpython3.4m.a \
     	  -DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.4.2/include/python3.4m \
       -Dwith-ltdl=OFF \
       <nest-src>
 
-Furthermore, for running PyNEST, make sure all python dependencies are installed and
+Furthermore, for running PyNEST, make sure all Python dependencies are installed and
 environment variables are set properly::
 
     module load python3/3.4.2
@@ -104,7 +91,7 @@ environment variables are set properly::
     # adds PyNEST to the PYTHONPATH
     source <nest-install-dir>/bin/nest_vars.sh
     
-    # makes HOME and PYTHONPATH available for python
+    # makes HOME and PYTHONPATH available for Python
     runjob \
       --exp-env HOME \
       --exp-env PATH \
@@ -174,7 +161,7 @@ On the K Computer:
   To install NEST, use the following ``cmake`` line::
 
       cmake -DCMAKE_TOOLCHAIN_FILE=Platform/Fujitsu-Sparc64 \
-            -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+            -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
             -Dwith-gsl=/path/to/gsl-2.1.install/ \
             -Dwith-optimize="-Kfast" \
             -Dwith-defines="-DUSE_PMA" \

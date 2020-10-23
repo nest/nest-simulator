@@ -154,8 +154,8 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             nest.Connect(post_sg_ps, post_parrot_ps,
                          syn_spec={"delay": delay})
 
-            # create spike detector --- debugging only
-            spikes = nest.Create("spike_detector")
+            # create spike recorder --- debugging only
+            spikes = nest.Create("spike_recorder")
             nest.Connect(
                 pre_parrot + post_parrot +
                 pre_parrot_ps + post_parrot_ps,

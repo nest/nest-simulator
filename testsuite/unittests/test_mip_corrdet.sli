@@ -87,7 +87,7 @@ userdict begin
     /delta_tau delta_tau
 >> SetStatus
 
-/spike_detector Create dup /sd Set
+/spike_recorder Create dup /sr Set
 << /time_in_steps true >> SetStatus
 
 /parrot_neuron Create /pn1 Set
@@ -96,8 +96,8 @@ userdict begin
 mg pn1 Connect
 mg pn2 Connect
 
-pn1 sd Connect
-pn2 sd Connect
+pn1 sr Connect
+pn2 sr Connect
 
 /static_synapse
 <<

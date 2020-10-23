@@ -88,8 +88,8 @@ M_INFO setverbosity
       /voltmeter Create /vm Set
       vm << /time_in_steps true /interval h >> SetStatus
 
-      /spike_detector Create /sd Set
-      sd << /time_in_steps true >> SetStatus
+      /spike_recorder Create /sr Set
+      sr << /time_in_steps true >> SetStatus
 
 
 % testing that  "/delay 1.0" is not needed here
@@ -100,8 +100,8 @@ M_INFO setverbosity
 
       vm neuron2 Connect
 
-      neuron1 sd Connect
-      neuron2 sd Connect
+      neuron1 sr Connect
+      neuron2 sr Connect
 
       simtime Simulate
 
@@ -133,8 +133,8 @@ M_INFO setverbosity
 % Expected output of this program:
 % 
 % The output send to std::cout is a superposition of the output of  
-% the voltmeter and the spike detector. Both, voltmeter and spike 
-% detector are connected to the same neuron. 
+% the voltmeter and the spike recorder. Both, voltmeter and spike 
+% recorder are connected to the same neuron. 
 %
 %
 % h=   (in ms)

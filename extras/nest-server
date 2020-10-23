@@ -1,0 +1,102 @@
+#!/bin/bash
+
+HOST="127.0.0.1"
+PORT=5000
+USER=$USER
+STDOUT=0
+DAEMONIZE=0
+
+usage() {
+  echo "NEST Server"
+  echo "-----------"
+  echo "Usage: nest-server log|status|start|stop|restart [-d] [-o] [-h <HOST>] [-p <PORT>] [-u <UID>]"
+  echo ""
+  echo "Commands:"
+  echo "  log         display the sever log stored in /tmp/nest-server.log"
+  echo "  status      display the status of NEST Server"
+  echo "  start       start a new instance of the server"
+  echo "  stop        stop a server instance running on <HOST>:<PORT>"
+  echo "  restart     restart (i.e. stop and start) a server on <HOST>:<PORT>"
+  echo
+  echo "Options:"
+  echo "  -d          daemonize the server process"
+  echo "  -o          print all output to both the console and to the log"
+  echo "  -h <HOST>   use hostname/IP address <HOST> for the server [default: 127.0.0.1]"
+  echo "  -p <PORT>   use port <PORT> for opening the socket [default: 5000]"
+  echo "  -u <UID>    run the server under the user with ID <UID>" >&2; exit 1
+}
+
+log() {
+  tail -f /tmp/nest-server.log
+}
+
+pid() {
+  pgrep -f "uwsgi --module nest.server:app --http-socket $HOST:$PORT --uid $USER"
+}
+
+ps-aux() {
+  ps aux | grep "[u]wsgi --module nest.server:app"
+}
+
+ps-check() {
+  status | grep "$HOST:$PORT"
+}
+
+ps-cmd() {
+  ps-aux | awk '{ for(i=1;i<=NF;i++) {if ( i >= 11 ) printf $i" "}; printf "\n" }'
+}
+
+start() {
+  echo "NEST Server"
+  echo "-----------"
+
+  if [ "`ps-check`" ]; then
+    echo "NEST Server is already serving at http://$HOST:$PORT."
+  else
+    if [ $STDOUT == 0 ]; then
+      uwsgi --module nest.server:app --http-socket $HOST:$PORT --uid $USER --daemonize "/tmp/nest-server.log"
+      echo "NEST Server is serving at http://$HOST:$PORT."
+      if [ $DAEMONIZE == 0 ]; then
+        read -p "Press any key to stop... "
+        stop
+      fi
+    else
+      uwsgi --module nest.server:app --http-socket $HOST:$PORT --uid $USER
+    fi
+  fi
+}
+
+status() {
+  printf "HTTP-SOCKET\t\tUID\n"
+  ps-cmd | awk '{ for(i=1;i<=NF;i++) {if ( i == 5 || i == 7 ) printf $i"\t\t"}; printf "\n" }'
+}
+
+stop() {
+  if [ `pid` ]; then
+    kill -9 `pid`
+    echo "NEST Server serving at http://$HOST:$PORT has stopped."
+  else
+    echo "NEST Server is not serving at http://$HOST:$PORT."
+  fi
+}
+
+CMD=$1; shift
+while getopts "h:op:u:" opt; do
+    case $opt in
+        d) DAEMONIZE=1 ;;
+        h) HOST=$OPTARG ;;
+        o) STDOUT=1 ;;
+        p) PORT=$OPTARG ;;
+        u) USER=$OPTARG ;;
+    esac
+done
+
+case "$CMD" in
+  log) log ;;
+  pid) pid ;;
+  restart) stop; sleep .5; start ;;
+  start)   start ;;
+  status)  status ;;
+  stop)    stop ;;
+  *) usage ;;
+esac

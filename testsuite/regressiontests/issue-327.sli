@@ -57,7 +57,7 @@ M_ERROR setverbosity
   
   /pn /parrot_neuron_ps Create def
   
-  /sd /spike_detector 
+  /sr /spike_recorder 
     <<
        /time_in_steps true
     >>
@@ -65,11 +65,11 @@ M_ERROR setverbosity
   def
   
   sg pn Connect
-  pn sd Connect
+  pn sr Connect
   
   360000 Simulate
   
-  sd /events get
+  sr /events get
   dup /times get /steps Set
   /offsets get /offs Set
   

@@ -80,7 +80,7 @@ class ThreadTestCase(unittest.TestCase):
 
         threads = (1, 2, 4, 8)
 
-        n_events_sd = []
+        n_events_sr = []
         n_events_vm = []
 
         N = 128
@@ -93,24 +93,24 @@ class ThreadTestCase(unittest.TestCase):
 
             # force a lot of spike events
             n = nest.Create('iaf_psc_alpha', N, {'I_e': 2000.})
-            sd = nest.Create('spike_detector')
+            sr = nest.Create('spike_recorder')
             vm = nest.Create('voltmeter')
 
-            nest.Connect(n, sd)
+            nest.Connect(n, sr)
             nest.Connect(vm, n)
 
             nest.Simulate(Simtime)
 
-            n_events_sd.append(nest.GetStatus(sd, 'n_events')[0])
+            n_events_sr.append(nest.GetStatus(sr, 'n_events')[0])
             n_events_vm.append(nest.GetStatus(vm, 'n_events')[0])
 
         ref_vm = N * (Simtime - 1)
-        ref_sd = n_events_sd[0]
+        ref_sr = n_events_sr[0]
 
         # could be done more elegantly with any(), ravel(),
         # but we dont want to be dependent on numpy et al
         [self.assertEqual(x, ref_vm) for x in n_events_vm]
-        [self.assertEqual(x, ref_sd) for x in n_events_sd]
+        [self.assertEqual(x, ref_sr) for x in n_events_sr]
 
 
 def suite():

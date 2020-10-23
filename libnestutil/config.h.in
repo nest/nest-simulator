@@ -43,6 +43,7 @@
 #define NEST_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@"
 #define NEST_INSTALL_DATADIR "@CMAKE_INSTALL_DATADIR@"
 #define NEST_INSTALL_DOCDIR "@CMAKE_INSTALL_DOCDIR@"
+#define NEST_INSTALL_LIBDIR "@CMAKE_INSTALL_LIBDIR@/nest"
 
 #define NEST_EXITCODE_ABORT @NEST_EXITCODE_ABORT@
 #define NEST_EXITCODE_SEGFAULT @NEST_EXITCODE_SEGFAULT@
@@ -115,6 +116,9 @@
 
 /* MUSIC support enabled? */
 #cmakedefine HAVE_MUSIC 1
+
+/* Recording backend Arbor support enabled? */
+#cmakedefine HAVE_RECORDINGBACKEND_ARBOR 1
 
 /* define if M_E is defined */
 #cmakedefine HAVE_M_E 1

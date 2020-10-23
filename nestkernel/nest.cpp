@@ -186,7 +186,7 @@ void
 connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
-  const DictionaryDatum& synapse_params )
+  const std::vector< DictionaryDatum >& synapse_params )
 {
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 }
@@ -219,7 +219,7 @@ connect_arrays( long* sources,
   index synapse_model_id( kernel().model_manager.get_synapsedict()->lookup( syn_model ) );
 
   // Increments pointers to weight, delay, and receptor type, if they are specified.
-  auto increment_wd = [weights, delays]( decltype( weights ) w, decltype( delays ) d )
+  auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d )
   {
     if ( weights != nullptr )
     {
@@ -544,6 +544,40 @@ apply( const ParameterDatum& param, const DictionaryDatum& positions )
   auto targets_tkn = positions->lookup( names::targets );
   TokenArray target_tkns = getValue< TokenArray >( targets_tkn );
   return param->apply( source_nc, target_tkns );
+}
+
+Datum*
+node_collection_array_index( const Datum* datum, const long* array, unsigned long n )
+{
+  const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
+  assert( node_collection->size() >= n );
+  std::vector< index > node_ids;
+  node_ids.reserve( n );
+
+  for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr )
+  {
+    node_ids.push_back( node_collection->operator[]( *node_ptr ) );
+  }
+  return new NodeCollectionDatum( NodeCollection::create( node_ids ) );
+}
+
+Datum*
+node_collection_array_index( const Datum* datum, const bool* array, unsigned long n )
+{
+  const NodeCollectionDatum node_collection = *dynamic_cast< const NodeCollectionDatum* >( datum );
+  assert( node_collection->size() == n );
+  std::vector< index > node_ids;
+  node_ids.reserve( n );
+
+  auto nc_it = node_collection->begin();
+  for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr, ++nc_it )
+  {
+    if ( *node_ptr )
+    {
+      node_ids.push_back( ( *nc_it ).node_id );
+    }
+  }
+  return new NodeCollectionDatum( NodeCollection::create( node_ids ) );
 }
 
 } // namespace nest

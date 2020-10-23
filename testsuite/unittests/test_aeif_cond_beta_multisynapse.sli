@@ -49,7 +49,7 @@
    An analogous approximation can be derived for small inhibitory inputs.
 
    References
-   A. Roth and M.C.W. van Rossum, Modeling synapses, in Computational
+   A. Roth and M. C. W. van Rossum, Modeling synapses, in Computational
    Modeling Methods for Neuroscientists, MIT Press 2013, Chapter 6, pp. 139-159
 
    SeeAlso:
@@ -192,14 +192,14 @@ d /times get cva /ts Set % get times
     Create
   def
   
-  /sd /spike_detector << /time_in_steps true >> Create def
+  /sr /spike_recorder << /time_in_steps true >> Create def
   /vm /voltmeter << /time_in_steps true /interval res >> Create def
   
-  nrn sd Connect
+  nrn sr Connect
   vm nrn Connect
   
   10 Simulate
-  /stime sd /events get /times get cva 0 get def
+  /stime sr /events get /times get cva 0 get def
   [ vm /events get dup /times get cva exch /V_m get cva ] Transpose dup
   { First stime eq } Select First  % time/voltage at spike
   Last V_reset eq  % V_m == V_reset at spike time
@@ -224,14 +224,14 @@ d /times get cva /ts Set % get times
     Create
   def
   
-  /sd /spike_detector << /time_in_steps true >> Create def
+  /sr /spike_recorder << /time_in_steps true >> Create def
   /vm /voltmeter << /time_in_steps true /interval res >> Create def
   
-  nrn sd Connect
+  nrn sr Connect
   vm nrn Connect
   
   10 Simulate
-  /stime sd /events get /times get cva 0 get def
+  /stime sr /events get /times get cva 0 get def
   [ vm /events get dup /times get cva exch /V_m get cva ] Transpose
   /result Set
   
@@ -268,14 +268,14 @@ d /times get cva /ts Set % get times
     Create
   def
   
-  /sd /spike_detector << /time_in_steps true >> Create def
+  /sr /spike_recorder << /time_in_steps true >> Create def
   /vm /multimeter << /time_in_steps true /interval res /record_from [ /V_m /w ] >> Create def
   
-  nrn sd Connect
+  nrn sr Connect
   vm nrn Connect
   
   50 Simulate
-  /stime sd /events get /times get cva 0 get def
+  /stime sr /events get /times get cva 0 get def
   /mme vm /events get def
   [ mme /times get cva mme /V_m get cva mme /w get cva] Transpose
   /result Set

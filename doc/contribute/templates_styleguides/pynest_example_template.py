@@ -136,7 +136,7 @@ import scipy
 # a list of parameter dictionaries.
 # The rate of the inhibitory Poisson generator is set later.
 # Note that we do not need to set parameters for the neuron and the
-# spike detector, since they have satisfactory defaults.
+# spike recorder, since they have satisfactory defaults.
 
 nest.SetStatus(noise, [{"rate": n_ex * r_ex}, {"rate": n_in * r_in}])
 nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})

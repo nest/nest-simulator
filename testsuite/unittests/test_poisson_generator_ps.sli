@@ -46,11 +46,11 @@ M_ERROR setverbosity
 
 
 /poisson_generator_ps Create /pg Set
-/spike_detector Create /sd1 Set
-/spike_detector Create /sd2 Set
+/spike_recorder Create /sr1 Set
+/spike_recorder Create /sr2 Set
 
-pg sd1 Connect
-pg sd2 Connect
+pg sr1 Connect
+pg sr2 Connect
 
 pg << /rate 100.0 /start 200.0 /stop 500.0 >> SetStatus
 
@@ -61,10 +61,10 @@ pg << /start 1200. /stop 1800. >> SetStatus
 
 1000 Simulate
 
-[sd1 sd2] {[/events /times] get} forall  neq  % spike trains differ
+[sr1 sr2] {[/events /times] get} forall  neq  % spike trains differ
 
 
-[sd1 sd2] 
+[sr1 sr2] 
 {
  [/events /times] get
  cva {dup 500.0 gt exch 1200.0 lt and   } Select [] eq  % there is a gap

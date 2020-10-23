@@ -82,12 +82,12 @@ ResetKernel
   1 Simulate
 } pass_or_die  
 
-% Fifth test: feed spike detector
+% Fifth test: feed spike recorder
 {
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus
   /ppg /pulsepacket_generator Create def
-  /sd  /spike_detector Create def
+  /sr  /spike_recorder Create def
  
   /tstart  75.0 def
   /tstop  225.0 def
@@ -110,11 +110,11 @@ ResetKernel
          /sdev         stddev
       >> SetStatus
 
-  ppg sd Connect
+  ppg sr Connect
 
   300 Simulate
 
-  sd [ /events /times ] get cva /spks Set
+  sr [ /events /times ] get cva /spks Set
 
   % check min and max are inside start .. stop
   tstart spks Min leq

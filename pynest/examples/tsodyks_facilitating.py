@@ -23,7 +23,7 @@
 --------------------------------
 
 This scripts simulates two neurons. One is driven with dc-input and
-connected to the other one with a facilitating tsodyks synapse. The
+connected to the other one with a facilitating Tsodyks synapse. The
 membrane potential trace of the second neuron is recorded.
 
 This example reproduces figure 1B of [1]_

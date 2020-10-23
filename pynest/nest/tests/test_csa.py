@@ -26,8 +26,6 @@ CSA tests
 import unittest
 import nest
 
-from . import compatibility
-
 try:
     import csa
     HAVE_CSA = True
@@ -113,7 +111,7 @@ class CSATestCase(unittest.TestCase):
             self.assertEqual(len(conns), 0)
 
     def test_CSA_OneToOne_params(self):
-        """One-to-one connectivity using CGConnect with paramters"""
+        """One-to-one connectivity using CGConnect with parameters"""
 
         nest.ResetKernel()
 

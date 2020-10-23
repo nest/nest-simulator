@@ -179,19 +179,16 @@ neurondict = {'V_th': V_th,
 nest.SetDefaults('iaf_psc_alpha', neurondict)
 n = nest.Create('iaf_psc_alpha', n_neurons)
 n_free = nest.Create('iaf_psc_alpha', 1, {'V_th': 1e12})
-pg = nest.Create('poisson_generator', len(rates),
-                 [{'rate': float(rate_i)} for rate_i in rates])
+pg = nest.Create('poisson_generator', len(rates), {'rate': rates})
 vm = nest.Create('voltmeter', 1, {'interval': .1})
 sd = nest.Create('spike_detector')
 
 ###############################################################################
 # We connect devices and neurons and start the simulation.
 
-for indx in range(len(pg)):
-    nest.Connect(pg[indx], n,
-                 syn_spec={'weight': float(J[indx]), 'delay': 0.1})
-    nest.Connect(pg[indx], n_free, syn_spec={'weight': J[indx]})
-
+nest.Connect(pg, n,
+             syn_spec={'weight': np.tile(J, (n_neurons), 1)), 'delay': 0.1})
+nest.Connect(pg, n_free, syn_spec={'weight': J})
 nest.Connect(vm, n_free)
 nest.Connect(n, sd)
 

@@ -134,8 +134,7 @@ nest.Simulate(t_sim)
 # a dictionary with entry ``times`` containing timestamps for all
 # recorded data, plus one entry per recorded quantity.
 # All data is contained in the ``events`` entry of the status dictionary
-# returned by the multimeter. Because all NEST function return arrays,
-# we need to pick out element `0` from the result of ``GetStatus``.
+# returned by the multimeter.
 
 data = mm.events
 t = data['times']

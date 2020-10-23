@@ -231,14 +231,11 @@ def simulate(parameters):
     nest.SetKernelStatus({'rng_seeds': [parameters['seed']],
                           'resolution': parameters['dt']})
 
-    nest.SetDefaults('iaf_psc_alpha', neuron_parameters)
-    nest.SetDefaults('poisson_generator', {'rate': p_rate})
-
-    nodes_ex = nest.Create('iaf_psc_alpha', NE)
-    nodes_in = nest.Create('iaf_psc_alpha', NI)
-    noise = nest.Create('poisson_generator')
-    espikes = nest.Create('spike_recorder', params={'label': 'brunel-py-ex'})
-    ispikes = nest.Create('spike_recorder', params={'label': 'brunel-py-in'})
+    nodes_ex = nest.Create('iaf_psc_alpha', NE, params=neuron_parameters)
+    nodes_in = nest.Create('iaf_psc_alpha', NI, params=neuron_parameters)
+    noise = nest.Create('poisson_generator', params={'rate': p_rate})
+    espikes = nest.Create('spike_detector', params={'label': 'brunel-py-ex'})
+    ispikes = nest.Create('spike_detector', params={'label': 'brunel-py-in'})
 
     nest.CopyModel('static_synapse', 'excitatory',
                    {'weight': J_ex, 'delay': parameters['delay']})

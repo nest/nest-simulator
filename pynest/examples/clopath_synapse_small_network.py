@@ -116,7 +116,7 @@ nest.Connect(pop_input, pop_inh, conn_dict_input_to_inh, syn_dict_input_to_inh)
 
 # Create exc->exc connections
 nest.CopyModel('clopath_synapse', 'clopath_exc_to_exc',
-               {'Wmax': 0.75, 'weight_recorder': wr[0]})
+               {'Wmax': 0.75, 'weight_recorder': wr})
 syn_dict_exc_to_exc = {'synapse_model': 'clopath_exc_to_exc', 'weight': 0.25,
                        'delay': delay}
 conn_dict_exc_to_exc = {'rule': 'all_to_all', 'allow_autapses': False}
@@ -157,7 +157,7 @@ for i in range(int(simulation_time/sim_interval)):
 ##############################################################################
 # Plot results
 
-fig1, axA = plt.subplots(1, sharex=False)
+fig, ax = plt.subplots(1, sharex=False)
 
 # Plot synapse weights of the synapses within the excitatory population
 # Sort weights according to sender and reshape
@@ -186,13 +186,13 @@ weight_matrix[tl10[0], tl10[1]] = weights[tl9[0], tl9[1]]
 init_w_matrix = np.ones((10, 10))*0.25
 init_w_matrix -= np.identity(10)*0.25
 
-caxA = axA.imshow(weight_matrix - init_w_matrix)
-cbarB = fig1.colorbar(caxA, ax=axA)
-axA.set_xticks([0, 2, 4, 6, 8])
-axA.set_xticklabels(['1', '3', '5', '7', '9'])
-axA.set_yticks([0, 2, 4, 6, 8])
-axA.set_xticklabels(['1', '3', '5', '7', '9'])
-axA.set_xlabel("to neuron")
-axA.set_ylabel("from neuron")
-axA.set_title("Change of syn weights before and after simulation")
+cax = ax.imshow(weight_matrix - init_w_matrix)
+cbarB = fig.colorbar(cax, ax=ax)
+ax.set_xticks([0, 2, 4, 6, 8])
+ax.set_xticklabels(['1', '3', '5', '7', '9'])
+ax.set_yticks([0, 2, 4, 6, 8])
+ax.set_xticklabels(['1', '3', '5', '7', '9'])
+ax.set_xlabel("to neuron")
+ax.set_ylabel("from neuron")
+ax.set_title("Change of syn weights before and after simulation")
 plt.show()

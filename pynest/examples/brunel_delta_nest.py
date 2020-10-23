@@ -128,26 +128,17 @@ nest.SetKernelStatus({"resolution": dt, "print_time": True,
 print("Building network")
 
 ###############################################################################
-# Configuration of the model ``iaf_psc_delta`` and ``poisson_generator`` using
-# ``SetDefaults``. This function expects the model to be the inserted as a
-# string and the parameter to be specified in a dictionary. All instances of
-# theses models created after this point will have the properties specified
-# in the dictionary by default.
-
-nest.SetDefaults("iaf_psc_delta", neuron_params)
-nest.SetDefaults("poisson_generator", {"rate": p_rate})
-
-###############################################################################
 # Creation of the nodes using ``Create``. We store the returned handles in
 # variables for later reference. Here the excitatory and inhibitory, as well
-# as the poisson generator and two spike recorders. The spike recorders will
-# later be used to record excitatory and inhibitory spikes.
+# as the poisson generator and two spike detectors. The spike detectors will
+# later be used to record excitatory and inhibitory spikes. Properties of the
+# nodes are specified via ``param``, which expects a dictionary.
 
-nodes_ex = nest.Create("iaf_psc_delta", NE)
-nodes_in = nest.Create("iaf_psc_delta", NI)
-noise = nest.Create("poisson_generator")
-espikes = nest.Create("spike_recorder")
-ispikes = nest.Create("spike_recorder")
+nodes_ex = nest.Create("iaf_psc_delta", NE, param=neuron_params)
+nodes_in = nest.Create("iaf_psc_delta", NI, param=neuron_params)
+noise = nest.Create("poisson_generator", param={"rate": p_rate})
+espikes = nest.Create("spike_detector")
+ispikes = nest.Create("spike_detector")
 
 ###############################################################################
 # Configuration of the spike recorders recording excitatory and inhibitory

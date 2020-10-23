@@ -85,8 +85,8 @@ voltmeter = nest.Create("voltmeter")
 spikerecorder = nest.Create("spike_recorder")
 
 ###################################################################################
-# Fourth, the ``poisson_generator`` (`noise`) is configured using ``set``.
-# Note that we need not set parameters for the neuron, the spike recorder, and
+# Fourth, the ``poisson_generator`` (`noise`) is configured.
+# Note that we need not set parameters for the neuron, the spike detector, and
 # the voltmeter, since they have satisfactory defaults.
 
 noise.rate = [n_ex * r_ex, n_in * r_in]

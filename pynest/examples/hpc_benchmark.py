@@ -212,13 +212,11 @@ def build_network(logger):
         'resolution': params['dt'],
         'overwrite_files': True})
 
-    nest.SetDefaults('iaf_psc_alpha', model_params)
-
     nest.message(M_INFO, 'build_network', 'Creating excitatory population.')
-    E_neurons = nest.Create('iaf_psc_alpha', NE)
+    E_neurons = nest.Create('iaf_psc_alpha', NE, params=model_params)
 
     nest.message(M_INFO, 'build_network', 'Creating inhibitory population.')
-    I_neurons = nest.Create('iaf_psc_alpha', NI)
+    I_neurons = nest.Create('iaf_psc_alpha', NI, params=model_params)
 
     if brunel_params['randomize_Vm']:
         nest.message(M_INFO, 'build_network',

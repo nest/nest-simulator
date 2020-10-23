@@ -82,4 +82,4 @@ nest.Simulate(1000.0)
 
 nest.voltage_trace.from_device(voltmeter)
 plt.axis([0, 1000, -85, 0])
-nest.voltage_trace.show()
+plt.show()

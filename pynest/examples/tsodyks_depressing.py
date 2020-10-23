@@ -50,6 +50,7 @@ See Also
 
 import nest
 import nest.voltage_trace
+import matplotlib.pyplot as plt
 from numpy import exp
 
 ###############################################################################
@@ -145,4 +146,4 @@ nest.Connect(neurons[0], neurons[1], syn_spec="syn")
 
 nest.Simulate(Tend)
 nest.voltage_trace.from_device(volts)
-nest.voltage_trace.show()
+plt.show()

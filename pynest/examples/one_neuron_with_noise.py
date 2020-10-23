@@ -39,6 +39,7 @@ records the neuron's membrane potential.
 
 import nest
 import nest.voltage_trace
+import matplotlib.pyplot as plt
 
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
@@ -79,4 +80,4 @@ nest.Simulate(1000.0)
 # time.
 
 nest.voltage_trace.from_device(voltmeter)
-nest.voltage_trace.show()
+plt.show()

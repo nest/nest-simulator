@@ -49,6 +49,7 @@ References
 import nest
 from nest import voltage_trace
 from nest import visualization
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # Next, we check for the availability of the CSA Python module. If it does
@@ -117,4 +118,4 @@ visualization.plot_network(allnodes, "csa_example_graph.png")
 
 nest.Simulate(50.0)
 voltage_trace.from_device(vm)
-voltage_trace.show()
+plt.show()

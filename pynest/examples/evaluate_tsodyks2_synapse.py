@@ -69,6 +69,7 @@ References
 
 import nest
 import nest.voltage_trace
+import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -135,4 +136,4 @@ nest.Simulate(500.0)
 
 nest.voltage_trace.from_device(voltmeter[0])
 nest.voltage_trace.from_device(voltmeter[1])
-nest.voltage_trace.show()
+plt.show()

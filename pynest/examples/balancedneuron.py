@@ -49,6 +49,7 @@ from scipy.optimize import bisect
 
 import nest
 import nest.voltage_trace
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # Additionally, we set the verbosity using ``set_verbosity`` to
@@ -165,4 +166,4 @@ print("Optimal rate for the inhibitory population: %.2f Hz" % in_rate)
 # time.
 
 nest.voltage_trace.from_device(voltmeter)
-nest.voltage_trace.show()
+plt.show()

@@ -3,15 +3,15 @@
 # This is the real nest program, which requires NESTIO + ARBOR-NESTIO
 
 from sys import argv
-argv.append('--quiet')
+argv.append('--quiet')      # noqa nopep8 (order of imports matter)
 import sys
 
-print("Getting comm")
+# print("Getting comm")
 from mpi4py import MPI
 comm = MPI.COMM_WORLD.Split(0)  # is nest
 
-print("Getting nest")
-import nest
+# print("Getting nest")
+import nest                 # noqa nopep8 (order of imports matter)
 
 
 STATUS_DICT = nest.ll_api.sli_func("statusdict")

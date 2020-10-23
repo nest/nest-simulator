@@ -145,9 +145,11 @@ that Python can find the NEST Python module.
 Set ``SHOW_FIGURES`` to ``True`` to activate graphics.
 """
 
+import math
 from pprint import pprint
 import numpy as np
 import matplotlib.pyplot as plt
+import nest
 
 SHOW_FIGURES = False
 
@@ -165,15 +167,9 @@ else:
 # This tutorial gives a brief introduction to the ConnPlotter
 # toolbox. It is by no means complete.
 
-# Load pynest
-import nest
-
 # Make sure we start with a clean slate, even if we re-run the script
 # in the same Python session.
 nest.ResetKernel()
-
-# Import math, we need Pi
-import math
 
 
 ##############################################################################

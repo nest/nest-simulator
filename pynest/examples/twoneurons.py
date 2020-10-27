@@ -22,32 +22,81 @@
 """Two neuron example
 ----------------------------
 
+This script simulates two connected pre and postsynaptic neurons. The presynaptic neuron receives a constant external current
+and records its membrane potential.
 
 See Also
-~~~~~~~~~~
+~~~~~~~~
 
 :doc:`one_neuron`
 
 """
 
+#######################################################################
+# First, we import all necessary modules for simulation, analysis and
+# plotting. Additionally, we set the verbosity to suppress info
+# messages and reset the kernel.
+# Resetting the kernel allows you to execute the script several
+# times in a Python shell without interferences from previous NEST
+# simulations. Thus, without resetting the kernel the network status
+# including connections between nodes, status of neurons, devices and
+# intrinsic time clocks, is kept and influences the next simulations.
 
 import nest
 import nest.voltage_trace
 import matplotlib.pyplot as plt
 
-weight = 20.0
-delay = 1.0
-stim = 1000.0
+nest.set_verbosity("M_WARNING")
+nest.ResetKernel()
 
-neuron1 = nest.Create("iaf_psc_alpha")
-neuron2 = nest.Create("iaf_psc_alpha")
+#######################################################################
+# Second, the nodes (the two neurons and devices) are created using ``Create``.
+# We store the returned handles in variables for later reference.
+# The ``Create`` function also allow you to create multiple nodes
+# e.g. ``nest.Create('iaf_psc_alpha',5)``
+# Also default parameters of the model can be configured using ``Create``
+# by including a list of parameter dictionaries
+# e.g. `nest.Create("iaf_psc_alpha", params=[{'I_e':376.0}])`.
+# In this example we will configure these parameters in an additional
+# step, which is explained in the third section.
+
+neuron_1 = nest.Create("iaf_psc_alpha")
+neuron_2 = nest.Create("iaf_psc_alpha")
 voltmeter = nest.Create("voltmeter")
 
-neuron1.I_e = stim
-nest.Connect(neuron1, neuron2, syn_spec={'weight': weight, 'delay': delay})
-nest.Connect(voltmeter, neuron2)
+#######################################################################
+# Third, we set the external current of neuron 1
 
-nest.Simulate(100.0)
+neuron_1.I_e = 376.0
+
+#######################################################################
+# Fourth, we connect neuron 1 to neuron 2. And, then we connect a voltmeter to the two neurons. The command
+# ``Connect`` has different variants. Plain ``Connect`` just takes the
+# handles of pre- and post-synaptic nodes and uses the default values
+# for weight and delay. Note that the connection direction for the voltmeter is
+# reversed compared to the spike recorder, because it observes the
+# neuron instead of receiving events from it. Thus, ``Connect``
+# reflects the direction of signal flow in the simulation kernel
+# rather than the physical process of inserting an electrode into the
+# neuron. The latter semantics is presently not available in NEST.
+
+weight = 20.0
+delay = 1.0
+
+nest.Connect(neuron_1, neuron_2, syn_spec={'weight': weight, 'delay': delay})
+nest.Connect(voltmeter, neuron_1)
+nest.Connect(voltmeter, neuron_2)
+
+#######################################################################
+# Now we simulate the network using ``Simulate``, which takes the
+# desired simulation time in milliseconds.
+
+nest.Simulate(1000.0)
+
+#######################################################################
+# Finally, we plot the neuron's membrane potential as a function of
+# time and display the plot using pyplot.
 
 nest.voltage_trace.from_device(voltmeter)
 plt.show()
+

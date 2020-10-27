@@ -1440,7 +1440,7 @@ processes:
   |                                             |                                       |
   +---------------------------------------------+---------------------------------------+
 
-Changing the type of random number generator to use is easy now 
+Changing the type of random number generator to use is easy now
 
   +---------------------------------------------+---------------------------------------+
   | NEST 2.x                                    | NEST 3.0                              |
@@ -1458,7 +1458,22 @@ Which random number generator types are available can be checked by
 ::
 
     nest.GetKernelStatus('rng_types')
-    
+
+Counter-Based Random Number Generators
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In addition to the conventional random number generator types, there is added support for
+"counter-based" random number generators (CBRNGs) with the Random123 library. Where
+conventional RNGs use N iterations of a stateful transformation to find the Nth random
+number, the Nth random number of a CBRNG can be obtained by applying a stateless mixing
+function to N.
+
+The Random123 library is included in NEST, and random number generator types like Philox and
+Threefry are automatically made available.
+
+.. note::
+
+   On some systems, or with some compilers, the CBRNGs may not give reliable results. In these
+   cases they are automatically disabled during compilation and will not be available.
 
 
 What's removed?

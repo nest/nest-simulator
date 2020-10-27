@@ -65,10 +65,7 @@ neuron = nest.Create("iaf_psc_alpha")
 voltmeter = nest.Create("voltmeter")
 
 #######################################################################
-# Third, the neuron is configured using `SetStatus()`, which expects
-# a list of node handles and a list of parameter dictionaries.
-# In this example we use `SetStatus()` to configure the constant
-# current input to the neuron.
+# Third, we set the external current of the neuron
 
 neuron.I_e = 376.0
 

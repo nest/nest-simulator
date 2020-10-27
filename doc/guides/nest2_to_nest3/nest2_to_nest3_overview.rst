@@ -572,8 +572,8 @@ Collocated synapses
 ~~~~~~~~~~~~~~~~~~~
 It is now possible to create connections with several synapses simultaneously. The different synapse dictionaries will
 then be applied to each source-target pair. To create these collocated synapses ``CollocatedSynapses()`` must be used
-as the `syn_spec` argument of ``Connect``, instead of the usual syn_spec *dictionary*. ``CollocatedSynapses()`` takes
-dictionaries as argument.
+as the `syn_spec` argument of ``Connect``, instead of the usual syn_spec dictionary argument. ``CollocatedSynapses()``
+takes dictionaries as argument.
 
   ::
 

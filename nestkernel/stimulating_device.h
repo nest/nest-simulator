@@ -29,7 +29,7 @@
 #include "device_node.h"
 #include "stimulating_backend.h"
 #include "nest_types.h"
-//#include "kernel_manager.h"
+#include "kernel_manager.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -37,12 +37,14 @@
 // Includes from libnestutil:
 #include "compose.hpp"
 
+#include <string>
+
 class SpikeEvent;
 class CurrentEvent;
 class EmittedEvent;
 class DoubleDataEvent;
 class DelayedRateConnectionEvent;
-class IOManager;
+//class IOManager;
 
 namespace nest
 {
@@ -122,6 +124,7 @@ public:
   using Device::init_buffers;
   using Node::calibrate;
 
+
   void calibrate( const std::vector< Name >&, const std::vector< Name >& );
   void calibrate();
 
@@ -181,9 +184,10 @@ private:
   
   DictionaryDatum backend_params_;
 };
+} // namespace nest
 
 template < typename EmittedEvent >
-StimulatingDevice< EmittedEvent >::StimulatingDevice()
+nest::StimulatingDevice< EmittedEvent >::StimulatingDevice()
   : Device()
   , DeviceNode()
   , first_syn_id_( invalid_synindex )
@@ -192,7 +196,7 @@ StimulatingDevice< EmittedEvent >::StimulatingDevice()
 }
 
 template < typename EmittedEvent >
-StimulatingDevice< EmittedEvent >::StimulatingDevice( StimulatingDevice< EmittedEvent > const& sd )
+nest::StimulatingDevice< EmittedEvent >::StimulatingDevice( StimulatingDevice< EmittedEvent > const& sd )
   : Device( sd )
   , DeviceNode( sd )
   , first_syn_id_( invalid_synindex ) // a new instance can have no connections
@@ -201,58 +205,60 @@ StimulatingDevice< EmittedEvent >::StimulatingDevice( StimulatingDevice< Emitted
 }
 
 template < typename EmittedEvent >
-typename StimulatingDevice< EmittedEvent >::Type
-StimulatingDevice< EmittedEvent >::get_type() const
+typename nest::StimulatingDevice< EmittedEvent >::Type
+nest::StimulatingDevice< EmittedEvent >::get_type() const
 {
     return StimulatingDevice< EmittedEvent >::Type::UNSPECIFIED;
 }
 
 template < typename EmittedEvent >
 void
-StimulatingDevice< EmittedEvent >::update_from_backend( std::vector< double > input_spikes )
+nest::StimulatingDevice< EmittedEvent >::update_from_backend( std::vector< double > input_spikes )
 {
 }
 
 template < typename EmittedEvent >
 void
-StimulatingDevice< EmittedEvent >::calibrate()
+nest::StimulatingDevice< EmittedEvent >::calibrate()
 {
 }
 
 template < typename EmittedEvent >
 void
-StimulatingDevice< EmittedEvent >::update( Time const&, const long, const long )
+nest::StimulatingDevice< EmittedEvent >::update( Time const&, const long, const long )
 {
 }
 
 template < typename EmittedEvent >
 void
-StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& )
+nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& )
 {
 }
 
 template < typename EmittedEvent >
 void
-StimulatingDevice< EmittedEvent >::set_initialized_()
+nest::StimulatingDevice< EmittedEvent >::set_initialized_()
 {
-  // TODO kernel().io_manager.enroll_input( P_.input_from_, *this, backend_params_ );
+  kernel().io_manager.enroll_input( P_.input_from_, *this, backend_params_ );
 }
 
 template < typename EmittedEvent >
 void
-StimulatingDevice< EmittedEvent >::calibrate( const std::vector< Name >& double_value_names,
+nest::StimulatingDevice< EmittedEvent >::calibrate( const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
   Device::calibrate();
-  // TODO kernel().io_manager.set_input_value_names( P_.input_from_, *this, double_value_names, long_value_names );
+  kernel().io_manager.set_input_value_names( P_.input_from_, *this, double_value_names, long_value_names );
 }
 
 template < typename EmittedEvent >
 const std::string&
-StimulatingDevice< EmittedEvent >::get_label() const
+nest::StimulatingDevice< EmittedEvent >::get_label() const
 {
   return P_.label_;
 }
+
+namespace nest{
 
 // specializations must be declared inside namespace
 template <>
@@ -296,23 +302,7 @@ StimulatingDevice< nest::SpikeEvent >::is_active( const Time& T ) const
   return get_t_min_() < stamp and stamp <= get_t_max_();
 }
 
-/*template < typename EmittedEvent >
-inline void
-StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
-{
-  P_.get( d );
-  S_.get( d );
-  Device::get_status( d );
 }
-
-template < typename EmittedEvent >
-inline void
-StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d ) const
-{
-  P_.set( d );
-  S_.set( d );
-  Device::set_status( d );
-}*/
 
 template < typename EmittedEvent >
 inline void
@@ -374,12 +364,12 @@ nest::StimulatingDevice< EmittedEvent >::Parameters_::set( const DictionaryDatum
   std::string input_from;
   if ( updateValue< std::string >( d, names::input_from, input_from ) )
   {
-    /* TODO
-     * if ( not kernel().io_manager.is_valid_input_backend( input_from ) )
+    
+    if ( not kernel().io_manager.is_valid_input_backend( input_from ) )
     {
       std::string msg = String::compose( "Unknown input backend '%1'", input_from );
       throw BadProperty( msg );
-    }*/
+    }
     input_from_ = input_from;
   }
 }
@@ -430,11 +420,11 @@ template < typename EmittedEvent >
 void
 nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d ) const
 {
-  /* TODO
-   * if ( kernel().simulation_manager.has_been_prepared() )
+  
+  if ( kernel().simulation_manager.has_been_prepared() )
   {
     throw BadProperty( "Input parameters cannot be changed while inside a Prepare/Run/Cleanup context." );
-  }*/
+  }
 
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
@@ -457,7 +447,7 @@ nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d ) 
       }
     }
 
-    // TODO kernel().io_manager.check_input_backend_device_status( ptmp.input_from_, backend_params );
+    kernel().io_manager.check_input_backend_device_status( ptmp.input_from_, backend_params );
 
     // cache all properties accessed by the backend in private member
     backend_params_->clear();
@@ -472,7 +462,7 @@ nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d ) 
   }
   else
   {
-    // TODO kernel().io_manager.enroll_input( ptmp.input_from_, *this, d );
+    kernel().io_manager.enroll_input( ptmp.input_from_, *this, d );
   }
 
   // if we get here, temporaries contain consistent set of properties
@@ -495,7 +485,9 @@ nest::StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
     // first get the defaults from the backend
-    // TODO kernel().io_manager.get_stimulating_backend_device_defaults( P_.input_from_, d );
+    if ( not P_.input_from_.toString().compare(names::internal.toString()) == 0 ){
+        kernel().io_manager.get_stimulating_backend_device_defaults( P_.input_from_, d );
+    }
 
     // then overwrite with cached parameters
     for ( auto& kv_pair : *backend_params_ )
@@ -505,9 +497,11 @@ nest::StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
   }
   else
   {
-    // TODO kernel().io_manager.get_stimulating_backend_device_status( P_.input_from_, *this, d );
+    if ( not P_.input_from_.toString().compare(names::internal.toString()) == 0 ){
+        kernel().io_manager.get_stimulating_backend_device_status( P_.input_from_, *this, d );
+    }
   }
 }
-} // namespace nest
+
 
 #endif

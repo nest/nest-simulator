@@ -346,23 +346,6 @@ IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& dev
   }
 }
 
-template < typename EmittedEvent >
-void
-nest::IOManager::enroll_input( const Name& backend_name, StimulatingDevice<EmittedEvent>& device, const DictionaryDatum& params )
-{
-  for ( auto& it : stimulating_backends_ )
-  {
-    if ( it.first == backend_name )
-    {
-      it.second->enroll( device, params );
-    }
-    else
-    {
-      it.second->disenroll( device );
-    }
-  }
-}
-
 
 void
 IOManager::set_recording_value_names( const Name& backend_name,
@@ -371,16 +354,6 @@ IOManager::set_recording_value_names( const Name& backend_name,
   const std::vector< Name >& long_value_names )
 {
   recording_backends_[ backend_name ]->set_value_names( device, double_value_names, long_value_names );
-}
-
-template < typename EmittedEvent >
-void
-IOManager::set_input_value_names( const Name& backend_name,
-  const StimulatingDevice<EmittedEvent>& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
-{
-  stimulating_backends_[ backend_name ]->set_value_names( device, double_value_names, long_value_names );
 }
 
 void
@@ -413,15 +386,6 @@ void
 IOManager::get_stimulating_backend_device_defaults( const Name& backend_name, DictionaryDatum& params )
 {
   stimulating_backends_[ backend_name ]->get_device_defaults( params );
-}
-
-template < typename EmittedEvent >
-void
-IOManager::get_stimulating_backend_device_status( const Name& backend_name,
-  const StimulatingDevice< EmittedEvent >& device,
-  DictionaryDatum& d )
-{
-  stimulating_backends_[ backend_name ]->get_device_status( device, d );
 }
 
 void

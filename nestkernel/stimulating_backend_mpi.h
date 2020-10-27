@@ -24,6 +24,7 @@
 #define STIMULATING_BACKEND_MPI_H
 
 #include "stimulating_backend.h"
+#include "stimulating_device.h"
 #include "nest_types.h"
 #include "nest_time.h"
 #include <set>
@@ -60,8 +61,8 @@ EndDocumentation */
 namespace nest
 {
 
-template < typename EmittedEvent >
-class StimulatingDevice;
+//template < typename EmittedEvent >
+//class StimulatingDevice;
 /**
  * A simple input backend MPI implementation
  */
@@ -86,7 +87,7 @@ public:
 
   void enroll( StimulatingDevice< EmittedEvent >& device, const DictionaryDatum& params );
 
-  void disenroll( StimulatingDevice< EmittedEvent >& device );
+  void disenroll( const StimulatingDevice< EmittedEvent >& device );
 
   void cleanup() override;
 

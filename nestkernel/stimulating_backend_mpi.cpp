@@ -25,8 +25,9 @@
 #include <fstream>
 
 // Includes from nestkernel:
+#include "stimulating_backend.h"
 #include "stimulating_backend_mpi.h"
-#include "kernel_manager.h"
+//#include "kernel_manager.h"
 
 nest::StimulatingBackendMPI::StimulatingBackendMPI()
 {
@@ -80,7 +81,7 @@ nest::StimulatingBackendMPI::enroll( StimulatingDevice< EmittedEvent >& device, 
 }
 
 void
-nest::StimulatingBackendMPI::disenroll( nest::StimulatingDevice< EmittedEvent >& device )
+nest::StimulatingBackendMPI::disenroll( const nest::StimulatingDevice< EmittedEvent >& device )
 {
   thread tid = device.get_thread();
   index node_id = device.get_node_id();

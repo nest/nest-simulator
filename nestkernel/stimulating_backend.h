@@ -31,18 +31,15 @@
 #include "name.h"
 #include "dictutils.h"
 
-// Includes from nestkernel:
-#include "event.h"
-#include "stimulating_device.h"
 
 namespace nest
 {
 
-//class EmittedEvent;
+class EmittedEvent;
 class Event;
 template < typename EmittedEvent >
 class StimulatingDevice;
-class IOManager;
+
 
 class StimulatingBackend
 {
@@ -92,7 +89,8 @@ public:
   *
   * @ingroup NESTio
   */
-  virtual void enroll( const nest::StimulatingDevice< EmittedEvent >& device, const DictionaryDatum& params ) {};
+  template < typename EmittedEvent >
+  void enroll( const nest::StimulatingDevice< EmittedEvent >&, const DictionaryDatum& ) {};
 
   /**
    * Disenroll an `StimulatingDevice` from the `StimulatingBackend`.
@@ -110,7 +108,8 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void disenroll( nest::StimulatingDevice< EmittedEvent >& device ) {};
+  template < typename EmittedEvent >
+  void disenroll( const nest::StimulatingDevice< EmittedEvent >& ) {};
 
   /**
    * To make the names of input quantities known to the
@@ -125,7 +124,8 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void set_value_names( const nest::StimulatingDevice< EmittedEvent >& device,
+  template < typename EmittedEvent >
+  void set_value_names( const nest::StimulatingDevice< EmittedEvent >& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names ) {};
 
@@ -254,7 +254,8 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void get_device_status( const nest::StimulatingDevice< EmittedEvent >& device, DictionaryDatum& params ) const {};
+  template < typename EmittedEvent >
+  void get_device_status( const nest::StimulatingDevice< EmittedEvent >& device, DictionaryDatum& params ) const {};
 
   virtual void
   set_status( const DictionaryDatum& )
@@ -267,12 +268,12 @@ public:
   }
 
   virtual void
-  set_input_device_status( const StimulatingDevice< EmittedEvent >& device, const DictionaryDatum& d )
+  set_input_device_status( const StimulatingDevice< EmittedEvent >&, const DictionaryDatum&) const
   {
   }
 
   virtual void
-  get_input_device_status( const StimulatingDevice< EmittedEvent >& device, DictionaryDatum& d ) const
+  get_input_device_status( const StimulatingDevice< EmittedEvent >&, DictionaryDatum&) const
   {
   }
 

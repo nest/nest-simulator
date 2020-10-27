@@ -107,7 +107,7 @@ public:
 
   void enroll_recorder( const Name&, const RecordingDevice&, const DictionaryDatum& );
   template < typename EmittedEvent > 
-  void enroll_input( const Name&, StimulatingDevice< EmittedEvent >&, const DictionaryDatum& );
+  void enroll_input( const Name&, const StimulatingDevice< EmittedEvent >&, const DictionaryDatum& );
 
   void set_recording_value_names( const Name& backend_name,
     const RecordingDevice& device,
@@ -115,10 +115,10 @@ public:
     const std::vector< Name >& long_value_names );
 
   template < typename EmittedEvent >
-  void set_input_value_names( const Name& backend_name,
-    const StimulatingDevice< EmittedEvent >& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names );
+  void set_input_value_names( const Name&,
+    const StimulatingDevice< EmittedEvent >&,
+    const std::vector< Name >&,
+    const std::vector< Name >&);
 
   void check_recording_backend_device_status( const Name&, const DictionaryDatum& );
   void get_recording_backend_device_defaults( const Name&, DictionaryDatum& );
@@ -164,6 +164,42 @@ inline bool
 nest::IOManager::overwrite_files() const
 {
   return overwrite_files_;
+}
+
+template < typename EmittedEvent >
+void
+nest::IOManager::get_stimulating_backend_device_status( const Name& backend_name,
+  const StimulatingDevice< EmittedEvent >& device,
+  DictionaryDatum& d )
+{
+  stimulating_backends_[ backend_name ]->get_device_status( device, d );
+}
+
+template < typename EmittedEvent >
+void
+nest::IOManager::set_input_value_names( const Name& backend_name,
+  const StimulatingDevice<EmittedEvent>& device,
+  const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
+{
+  stimulating_backends_[ backend_name ]->set_value_names( device, double_value_names, long_value_names );
+}
+
+template < typename EmittedEvent >
+void
+nest::IOManager::enroll_input( const Name& backend_name, const StimulatingDevice<EmittedEvent>& device, const DictionaryDatum& params )
+{
+  for ( auto& it : stimulating_backends_ )
+  {
+    if ( it.first == backend_name )
+    {
+      it.second->enroll( device, params );
+    }
+    else
+    {
+      it.second->disenroll( device );
+    }
+  }
 }
 
 #endif /* IO_MANAGER_H */

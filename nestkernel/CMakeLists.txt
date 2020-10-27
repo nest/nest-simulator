@@ -113,6 +113,7 @@ set ( nestkernel_sources
       stimulating_backend.h stimulating_backend.cpp
       )
 
+
 if ( HAVE_SIONLIB )
   set( nestkernel_sources
        ${nestkernel_sources}

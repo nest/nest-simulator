@@ -67,7 +67,7 @@ reversed (i.e., connecting *sr* to *neurons*).
 To learn more about recording devices in NEST, please refer to the
 :doc:`../guides/recording_from_simulations` guide.
 
-Parameters
+Properties
 ++++++++++
 
 All recorders have a set of common properties that can be set using

@@ -64,6 +64,9 @@ spike creation rather than that of their arrival.
 The call to ``Connect`` will fail if the connection direction is
 reversed (i.e., connecting *sr* to *neurons*).
 
+To learn more about recording devices in NEST, please refer to the
+:doc:`../guides/recording_from_simulations` guide.
+
 EndUserDocs */
 
 namespace nest

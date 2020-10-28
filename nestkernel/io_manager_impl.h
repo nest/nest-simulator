@@ -42,8 +42,8 @@ void
 IOManager::register_stimulating_backend( Name name )
 {
   RBType* stimulating_backend = new RBType();
-  map< Name, StimulatingBackend* >::iterator it = stimulating_backends_.find(name);
-  if(it != stimulating_backends_.end())
+  map< Name, StimulatingBackend* >::iterator it = stimulating_backends_.find( name );
+  if ( it != stimulating_backends_.end() )
   {
     stimulating_backend->pre_run_hook();
     stimulating_backends_.insert( std::make_pair( name, stimulating_backend ) );

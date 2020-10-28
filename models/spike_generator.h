@@ -173,7 +173,7 @@ Sends
 SpikeEvent
 
 SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
-EndUserDocs 
+EndUserDocs
 */
 class spike_generator : public StimulatingDevice< SpikeEvent >
 {

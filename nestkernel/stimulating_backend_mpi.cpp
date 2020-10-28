@@ -63,7 +63,8 @@ nest::StimulatingBackendMPI::finalize()
 void
 nest::StimulatingBackendMPI::enroll( StimulatingDevice< EmittedEvent >& device, const DictionaryDatum& params )
 {
-  if ( device.get_type() == StimulatingDevice< EmittedEvent >::SPIKE_GENERATOR or device.get_type() == StimulatingDevice< EmittedEvent >::STEP_CURRENT_GENERATOR )
+  if ( device.get_type() == StimulatingDevice< EmittedEvent >::SPIKE_GENERATOR
+    or device.get_type() == StimulatingDevice< EmittedEvent >::STEP_CURRENT_GENERATOR )
   {
     thread tid = device.get_thread();
     index node_id = device.get_node_id();
@@ -107,7 +108,7 @@ nest::StimulatingBackendMPI::set_value_names( const StimulatingDevice< EmittedEv
 void
 nest::StimulatingBackendMPI::prepare()
 {
-  printf("In stimulating backend MPI prepare %b", enrolled_);
+  printf( "In stimulating backend MPI prepare %b", enrolled_ );
   if ( not enrolled_ )
   {
     return;
@@ -162,7 +163,7 @@ nest::StimulatingBackendMPI::prepare()
 void
 nest::StimulatingBackendMPI::pre_run_hook()
 {
-  printf("In stimulating backend MPI pre_run_hook %b", enrolled_);
+  printf( "In stimulating backend MPI pre_run_hook %b", enrolled_ );
 #pragma omp master
   {
     for ( auto& it_comm : commMap_ )

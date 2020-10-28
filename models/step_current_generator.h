@@ -128,7 +128,7 @@ public:
   void set_status( const DictionaryDatum& ) override;
 
   void update_from_backend( std::vector< double > input_spikes );
-  nest::StimulatingDevice<CurrentEvent>::Type get_type();
+  nest::StimulatingDevice< CurrentEvent >::Type get_type();
 
 private:
   void init_state_( const Node& ) override;

@@ -90,7 +90,7 @@ public:
   * @ingroup NESTio
   */
   template < typename EmittedEvent >
-  void enroll( const nest::StimulatingDevice< EmittedEvent >&, const DictionaryDatum& ) {};
+  void enroll( const nest::StimulatingDevice< EmittedEvent >&, const DictionaryDatum& ){};
 
   /**
    * Disenroll an `StimulatingDevice` from the `StimulatingBackend`.
@@ -109,7 +109,7 @@ public:
    * @ingroup NESTio
    */
   template < typename EmittedEvent >
-  void disenroll( const nest::StimulatingDevice< EmittedEvent >& ) {};
+  void disenroll( const nest::StimulatingDevice< EmittedEvent >& ){};
 
   /**
    * To make the names of input quantities known to the
@@ -127,7 +127,7 @@ public:
   template < typename EmittedEvent >
   void set_value_names( const nest::StimulatingDevice< EmittedEvent >& device,
     const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) {};
+    const std::vector< Name >& long_value_names ){};
 
   /**
    * Initialize global backend-specific data structures.
@@ -204,7 +204,8 @@ public:
   {
   }
 
-  virtual void clear( const StimulatingDevice< EmittedEvent >& )
+  virtual void
+  clear( const StimulatingDevice< EmittedEvent >& )
   {
   }
 
@@ -268,23 +269,24 @@ public:
   }
 
   virtual void
-  set_input_device_status( const StimulatingDevice< EmittedEvent >&, const DictionaryDatum&) const
+  set_input_device_status( const StimulatingDevice< EmittedEvent >&, const DictionaryDatum& ) const
   {
   }
 
   virtual void
-  get_input_device_status( const StimulatingDevice< EmittedEvent >&, DictionaryDatum&) const
+  get_input_device_status( const StimulatingDevice< EmittedEvent >&, DictionaryDatum& ) const
   {
   }
 
   static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
   static const std::vector< Name > NO_LONG_VALUE_NAMES;
-
 };
 
 template < typename EmittedEvent >
-void get_device_status( const nest::StimulatingDevice< EmittedEvent >& device, DictionaryDatum& params ) {
-    device.get_status(params);
+void
+get_device_status( const nest::StimulatingDevice< EmittedEvent >& device, DictionaryDatum& params )
+{
+  device.get_status( params );
 }
 
 } // namespace

@@ -27,7 +27,7 @@
 // Includes from nestkernel:
 #include "stimulating_backend_internal.h"
 
-template<class T>
+template < class T >
 void
 nest::StimulatingBackendInternal::enroll( nest::StimulatingDevice& device, const DictionaryDatum& params )
 {
@@ -42,7 +42,7 @@ nest::StimulatingBackendInternal::enroll( nest::StimulatingDevice& device, const
   devices_[ tid ].insert( std::make_pair( node_id, &device ) );
 }
 
-template<class T>
+template < class T >
 void
 nest::StimulatingBackendInternal::disenroll( nest::StimulatingDevice& device )
 {

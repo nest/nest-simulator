@@ -284,7 +284,7 @@ IOManager::post_step_hook()
 
 void
 IOManager::prepare()
-{  
+{
   for ( auto& it : recording_backends_ )
   {
     it.second->prepare();
@@ -382,18 +382,18 @@ IOManager::get_recording_backend_device_status( const Name& backend_name,
 void
 IOManager::check_input_backend_device_status( const Name& backend_name, const DictionaryDatum& params )
 {
-  if(is_valid_stimulating_backend(backend_name))
+  if ( is_valid_stimulating_backend( backend_name ) )
   {
-      stimulating_backends_[ backend_name ]->check_device_status( params );
+    stimulating_backends_[ backend_name ]->check_device_status( params );
   }
 }
 
 void
 IOManager::get_stimulating_backend_device_defaults( const Name& backend_name, DictionaryDatum& params )
 {
-  if(is_valid_stimulating_backend(backend_name))
+  if ( is_valid_stimulating_backend( backend_name ) )
   {
-      stimulating_backends_[ backend_name ]->get_device_defaults( params );
+    stimulating_backends_[ backend_name ]->get_device_defaults( params );
   }
 }
 

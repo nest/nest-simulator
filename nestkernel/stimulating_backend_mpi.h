@@ -61,8 +61,8 @@ EndDocumentation */
 namespace nest
 {
 
-//template < typename EmittedEvent >
-//class StimulatingDevice;
+// template < typename EmittedEvent >
+// class StimulatingDevice;
 /**
  * A simple input backend MPI implementation
  */
@@ -121,7 +121,7 @@ private:
    * thread. The map associates the gid of a device on a given thread
    * with it's device. Only the master thread have a valid MPI communicator pointer.
   */
-  using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulatingDevice<EmittedEvent>* > > >;
+  using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulatingDevice< EmittedEvent >* > > >;
   device_map devices_;
   /**
    * A map of MPI communicator use by the master thread for the MPI communication.

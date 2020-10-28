@@ -337,7 +337,7 @@ nest::spike_generator::init_buffers_()
 void
 nest::spike_generator::calibrate()
 {
-  //InputDevice::calibrate( StimulatingBackend::NO_DOUBLE_VALUE_NAMES, StimulatingBackend::NO_LONG_VALUE_NAMES );
+  // InputDevice::calibrate( StimulatingBackend::NO_DOUBLE_VALUE_NAMES, StimulatingBackend::NO_LONG_VALUE_NAMES );
   StimulatingDevice::calibrate();
 }
 

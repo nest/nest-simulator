@@ -152,8 +152,8 @@ protected:
 
   struct Parameters_
   {
-    std::string label_; //!< A user-defined label for symbolic device names.
-    Name stimulus_source_;   //!< Origin of the stimulating signal.
+    std::string label_;    //!< A user-defined label for symbolic device names.
+    Name stimulus_source_; //!< Origin of the stimulating signal.
 
     Parameters_();
     Parameters_( const Parameters_& );

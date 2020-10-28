@@ -39,12 +39,15 @@ IOManager::register_recording_backend( Name name )
 
 template < class RBType >
 void
-IOManager::register_input_backend( Name name )
+IOManager::register_stimulating_backend( Name name )
 {
-  RBType* input_backend = new RBType();
-  input_backend->pre_run_hook();
-
-  input_backends_.insert( std::make_pair( name, input_backend ) );
+  RBType* stimulating_backend = new RBType();
+  map< Name, StimulatingBackend* >::iterator it = stimulating_backends_.find(name);
+  if(it != stimulating_backends_.end())
+  {
+    stimulating_backend->pre_run_hook();
+    stimulating_backends_.insert( std::make_pair( name, stimulating_backend ) );
+  }
 }
 }
 

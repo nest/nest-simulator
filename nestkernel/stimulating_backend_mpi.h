@@ -114,6 +114,8 @@ public:
   void get_device_status( const StimulatingDevice< EmittedEvent >& device, DictionaryDatum& params_dictionary ) const;
 
 private:
+  bool enrolled_;
+  bool prepared_;
   /**
    * A map for the enrolled devices. We have a vector with one map per local
    * thread. The map associates the gid of a device on a given thread

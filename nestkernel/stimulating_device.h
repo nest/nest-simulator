@@ -117,7 +117,7 @@ public:
    */
   bool is_active( const Time& ) const;
   void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& ) const;
+  void set_status( const DictionaryDatum& );
  
   using Device::init_state; 
   using Device::calibrate;
@@ -146,7 +146,6 @@ public:
   const std::string& get_label() const;
   void update_from_backend( std::vector< double > input_spikes );
   void update( Time const&, const long, const long );
-  void set_status( const DictionaryDatum& );
 
 protected:
     void set_initialized_();
@@ -154,22 +153,19 @@ protected:
   struct Parameters_
   {
     std::string label_;  //!< A user-defined label for symbolic device names.
-    bool time_in_steps_; //!< Flag indicating if time is recorded in steps or ms.
     Name input_from_;    //!< Array of input backends to use.
 
     Parameters_();
     Parameters_( const Parameters_& );
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& ) const;
+    void set( const DictionaryDatum& );
   } P_;
 
   struct State_
   {
-    size_t n_events_;
-
     State_();
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& ) const;
+    void set( const DictionaryDatum& );
   } S_;
 
 private:
@@ -221,17 +217,12 @@ template < typename EmittedEvent >
 void
 nest::StimulatingDevice< EmittedEvent >::calibrate()
 {
+  Device::calibrate();
 }
 
 template < typename EmittedEvent >
 void
 nest::StimulatingDevice< EmittedEvent >::update( Time const&, const long, const long )
-{
-}
-
-template < typename EmittedEvent >
-void
-nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& )
 {
 }
 
@@ -323,7 +314,6 @@ nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type( synindex syn_i
 template < typename EmittedEvent >
 nest::StimulatingDevice< EmittedEvent >::Parameters_::Parameters_()
   : label_()
-  , time_in_steps_( false )
   , input_from_( names::internal )
 {
 }
@@ -331,7 +321,6 @@ nest::StimulatingDevice< EmittedEvent >::Parameters_::Parameters_()
 template < typename EmittedEvent >
 nest::StimulatingDevice< EmittedEvent >::Parameters_::Parameters_( const Parameters_& p )
   : label_( p.label_ )
-  , time_in_steps_( p.time_in_steps_ )
   , input_from_( p.input_from_ )
 {
 }
@@ -341,31 +330,20 @@ void
 nest::StimulatingDevice< EmittedEvent >::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
-  ( *d )[ names::time_in_steps ] = time_in_steps_;
   ( *d )[ names::input_from ] = LiteralDatum( input_from_ );
 }
 
 template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::Parameters_::set( const DictionaryDatum& d ) const
+nest::StimulatingDevice< EmittedEvent >::Parameters_::set( const DictionaryDatum& d ) 
 {
   updateValue< std::string >( d, names::label, label_ );
 
-  bool time_in_steps = time_in_steps_;
-  updateValue< bool >( d, names::time_in_steps, time_in_steps );
-
-  if ( time_in_steps != time_in_steps_ )
-  {
-    throw BadProperty(
-      "Property /time_in_steps cannot be set if recordings exist. "
-      "Please clear the events first by setting /n_events to 0." );
-  }
-  time_in_steps_ = time_in_steps;
   std::string input_from;
   if ( updateValue< std::string >( d, names::input_from, input_from ) )
   {
     
-    if ( not kernel().io_manager.is_valid_input_backend( input_from ) )
+    if ( not kernel().io_manager.is_valid_stimulating_backend( input_from ) )
     {
       std::string msg = String::compose( "Unknown input backend '%1'", input_from );
       throw BadProperty( msg );
@@ -376,7 +354,6 @@ nest::StimulatingDevice< EmittedEvent >::Parameters_::set( const DictionaryDatum
 
 template < typename EmittedEvent >
 nest::StimulatingDevice< EmittedEvent >::State_::State_()
-  : n_events_( 0 )
 {
 }
 
@@ -384,48 +361,24 @@ template < typename EmittedEvent >
 void
 nest::StimulatingDevice< EmittedEvent >::State_::get( DictionaryDatum& d ) const
 {
-  // if we already have the n_events entry, we add to it, otherwise we create it
-  if ( d->known( names::n_events ) )
-  {
-    long n_events = getValue< long >( d, names::n_events );
-    ( *d )[ names::n_events ] = n_events + n_events_;
-  }
-  else
-  {
-    ( *d )[ names::n_events ] = n_events_;
-  }
+
 }
 
 template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::State_::set( const DictionaryDatum& d ) const
+nest::StimulatingDevice< EmittedEvent >::State_::set( const DictionaryDatum& d )
 {
-  size_t n_events = n_events_;
-  if ( updateValue< long >( d, names::n_events, n_events ) )
-  {
-    if ( n_events == 0 )
-    {
-      n_events_ = n_events;
-    }
-    else
-    {
-      throw BadProperty(
-        "Property /n_events can only be set "
-        "to 0 (which clears all stored events)." );
-    }
-  }
 }
 
 template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d ) const
+nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d )
 {
   
   if ( kernel().simulation_manager.has_been_prepared() )
   {
     throw BadProperty( "Input parameters cannot be changed while inside a Prepare/Run/Cleanup context." );
   }
-
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
 
@@ -447,7 +400,9 @@ nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d ) 
       }
     }
 
-    kernel().io_manager.check_input_backend_device_status( ptmp.input_from_, backend_params );
+    if ( not ptmp.input_from_.toString().compare(names::internal.toString()) == 0 ){
+        kernel().io_manager.check_input_backend_device_status( ptmp.input_from_, backend_params );
+    }
 
     // cache all properties accessed by the backend in private member
     backend_params_->clear();
@@ -462,7 +417,9 @@ nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d ) 
   }
   else
   {
-    kernel().io_manager.enroll_input( ptmp.input_from_, *this, d );
+    if ( not ptmp.input_from_.toString().compare(names::internal.toString()) == 0 ){
+        kernel().io_manager.enroll_input( ptmp.input_from_, *this, d );
+    }
   }
 
   // if we get here, temporaries contain consistent set of properties

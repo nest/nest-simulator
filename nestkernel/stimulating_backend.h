@@ -279,7 +279,13 @@ public:
 
   static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
   static const std::vector< Name > NO_LONG_VALUE_NAMES;
+
 };
+
+template < typename EmittedEvent >
+void get_device_status( const nest::StimulatingDevice< EmittedEvent >& device, DictionaryDatum& params ) {
+    device.get_status(params);
+}
 
 } // namespace
 

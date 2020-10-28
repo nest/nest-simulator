@@ -99,6 +99,8 @@ public:
   void get_device_status( const RecordingDevice& device, DictionaryDatum& params_dictionary ) const override;
 
 private:
+  bool enrolled_;
+  bool prepared_;
   /**
    * Buffer for saving events before to send it.
    * The buffer sa 3 dimensions : thread_id, MPI_communicator_index and number of events

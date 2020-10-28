@@ -27,8 +27,11 @@
 // Includes from nestkernel:
 #include "recording_device.h"
 #include "recording_backend_mpi.h"
+#include "exceptions.h"
 
 nest::RecordingBackendMPI::RecordingBackendMPI()
+  : enrolled_( false )
+  , prepared_( false )
 {
 }
 
@@ -81,6 +84,7 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
 
     std::tuple< int, MPI_Comm*, const RecordingDevice* > tuple = std::make_tuple( -1, nullptr, &device );
     devices_[ tid ].insert( std::make_pair( node_id, tuple ) );
+    enrolled_ = true;
   }
   else
   {
@@ -112,6 +116,16 @@ nest::RecordingBackendMPI::set_value_names( const RecordingDevice& device,
 void
 nest::RecordingBackendMPI::prepare()
 {
+  if ( not enrolled_ )
+  {
+    return;
+  }
+
+  if ( prepared_ )
+  {
+    throw BackendPrepared( "RecordingBackendArbor" );
+  }
+  prepared_ = true;
   thread thread_id_master = 0;
 #pragma omp parallel default( none ) shared( thread_id_master, ompi_mpi_comm_world, ompi_mpi_info_null )
   {

@@ -97,10 +97,10 @@ public:
 
   template < class RBT >
   void register_recording_backend( Name );
-  void register_input_backend( Name );
+  void register_stimulating_backend( Name );
 
   bool is_valid_recording_backend( const Name& ) const;
-  bool is_valid_input_backend( const Name& ) const;
+  bool is_valid_stimulating_backend( const Name& ) const;
 
   void
   write( const Name&, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
@@ -131,6 +131,7 @@ public:
 private:
   void set_data_path_prefix_( const DictionaryDatum& );
   void register_recording_backends_();
+  void register_stimulating_backends_();
 
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
@@ -172,7 +173,10 @@ nest::IOManager::get_stimulating_backend_device_status( const Name& backend_name
   const StimulatingDevice< EmittedEvent >& device,
   DictionaryDatum& d )
 {
-  stimulating_backends_[ backend_name ]->get_device_status( device, d );
+  if(is_valid_stimulating_backend(backend_name))
+  {
+      stimulating_backends_[ backend_name ]->get_device_status( device, d );
+  }
 }
 
 template < typename EmittedEvent >
@@ -182,13 +186,21 @@ nest::IOManager::set_input_value_names( const Name& backend_name,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
-  stimulating_backends_[ backend_name ]->set_value_names( device, double_value_names, long_value_names );
+  if(is_valid_stimulating_backend(backend_name))
+  {
+      stimulating_backends_[ backend_name ]->set_value_names( device, double_value_names, long_value_names );
+  }
 }
 
 template < typename EmittedEvent >
 void
 nest::IOManager::enroll_input( const Name& backend_name, const StimulatingDevice<EmittedEvent>& device, const DictionaryDatum& params )
 {
+  if( not is_valid_stimulating_backend(backend_name))
+  {
+    return;
+  }
+      
   for ( auto& it : stimulating_backends_ )
   {
     if ( it.first == backend_name )

@@ -30,6 +30,8 @@
 //#include "kernel_manager.h"
 
 nest::StimulatingBackendMPI::StimulatingBackendMPI()
+  : enrolled_( false )
+  , prepared_( false )
 {
 }
 
@@ -73,10 +75,11 @@ nest::StimulatingBackendMPI::enroll( StimulatingDevice< EmittedEvent >& device, 
     }
     std::pair< MPI_Comm*, StimulatingDevice< EmittedEvent >* > pair = std::make_pair( nullptr, &device );
     devices_[ tid ].insert( std::make_pair( node_id, pair ) );
+    enrolled_ = true;
   }
   else
   {
-    throw BadProperty( "Only spike generators can have input backend 'mpi'." );
+    throw BadProperty( "Currently only spike generators and step current generators can have input backend 'mpi'." );
   }
 }
 
@@ -104,6 +107,18 @@ nest::StimulatingBackendMPI::set_value_names( const StimulatingDevice< EmittedEv
 void
 nest::StimulatingBackendMPI::prepare()
 {
+  printf("In stimulating backend MPI prepare %b", enrolled_);
+  if ( not enrolled_ )
+  {
+    return;
+  }
+
+  if ( prepared_ )
+  {
+    throw BackendPrepared( "RecordingBackendArbor" );
+  }
+  prepared_ = true;
+
   // need to be run only by the master thread : it is the case because it's not run in parallel
   thread thread_id_master = kernel().vp_manager.get_thread_id();
   // Create the connection with MPI
@@ -147,6 +162,7 @@ nest::StimulatingBackendMPI::prepare()
 void
 nest::StimulatingBackendMPI::pre_run_hook()
 {
+  printf("In stimulating backend MPI pre_run_hook %b", enrolled_);
 #pragma omp master
   {
     for ( auto& it_comm : commMap_ )

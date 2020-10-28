@@ -88,7 +88,7 @@ All recorders have a set of common properties that can be set using
  start        A positive floating point number (default: `0.0`) specifying the
               activation time in ms, relative to origin.
  stop         A floating point number (default: `infinity`) specifying the
-              deactication time in ms, relative to origin. The value of stop
+              deactivation time in ms, relative to origin. The value of stop
               must be greater than or equal to start
 ===========  ======================================================================
 

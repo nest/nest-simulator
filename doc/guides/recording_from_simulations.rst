@@ -94,7 +94,7 @@ instance:
 
  stop
    A floating point number (default: `infinity`) specifying the
-   deactication time in ms, relative to `origin`. The value of `stop`
+   deactivation time in ms, relative to `origin`. The value of `stop`
    must be greater than or equal to `start`
 
 Recorders for every-day situations

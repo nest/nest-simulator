@@ -89,7 +89,7 @@ All recorders have a set of common properties that can be set using
               must be greater than or equal to start
 ===========  ======================================================================
 
-To learn more about recording devices in NEST, please refer to the
+To learn more about recording devices and backends in NEST, please refer to the
 :doc:`../guides/recording_from_simulations` guide.
 
 EndUserDocs */

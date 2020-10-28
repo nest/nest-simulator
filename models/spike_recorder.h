@@ -67,6 +67,31 @@ reversed (i.e., connecting *sr* to *neurons*).
 To learn more about recording devices in NEST, please refer to the
 :doc:`../guides/recording_from_simulations` guide.
 
+Parameters
+++++++++++
+
+All recorders have a set of common properties that can be set using
+``SetDefaults`` on the model class or ``SetStatus`` on a device instance:
+
+===========  ======================================================================
+ label        A string (default: `“”`) specifying an arbitrary textual label for
+              the device. Recording backends might use the label to generate
+              device specific identifiers like filenames and such.
+ n_events     The number of events that were collected by the recorder can be
+              read out of the `n_events` entry. The number of events can be
+              reset to 0. Other values cannot be set.
+ origin       A positive floating point number (default : `0.0`) used as the
+              reference time for `start` and `stop`.
+ record_to    A string (default: `“memory”`) containing the name of the recording
+              backend where to write data to. An empty string turns all
+              recording of individual events off.
+ start        A positive floating point number (default: `0.0`) specifying the
+              activation time in ms, relative to origin.
+ stop         A floating point number (default: `infinity`) specifying the
+              deactication time in ms, relative to origin. The value of stop
+              must be greater than or equal to start
+===========  ======================================================================
+
 EndUserDocs */
 
 namespace nest

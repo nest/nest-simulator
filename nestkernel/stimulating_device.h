@@ -144,7 +144,7 @@ public:
 
   Type get_type() const;
   const std::string& get_label() const;
-  void update_from_backend( std::vector< double > input_spikes );
+  void set_data_from_stimulating_backend( std::vector< double > input );
   void update( Time const&, const long, const long );
 
 protected:
@@ -153,7 +153,7 @@ protected:
   struct Parameters_
   {
     std::string label_; //!< A user-defined label for symbolic device names.
-    Name input_from_;   //!< Array of input backends to use.
+    Name stimulus_source_;   //!< Origin of the stimulating signal.
 
     Parameters_();
     Parameters_( const Parameters_& );
@@ -209,7 +209,7 @@ nest::StimulatingDevice< EmittedEvent >::get_type() const
 
 template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::update_from_backend( std::vector< double > input_spikes )
+nest::StimulatingDevice< EmittedEvent >::set_data_from_stimulating_backend( std::vector< double > input_spikes )
 {
 }
 
@@ -230,7 +230,7 @@ template < typename EmittedEvent >
 void
 nest::StimulatingDevice< EmittedEvent >::set_initialized_()
 {
-  kernel().io_manager.enroll_input( P_.input_from_, *this, backend_params_ );
+  kernel().io_manager.enroll_stimulator( P_.stimulus_source_, *this, backend_params_ );
 }
 
 template < typename EmittedEvent >
@@ -239,7 +239,7 @@ nest::StimulatingDevice< EmittedEvent >::calibrate( const std::vector< Name >& d
   const std::vector< Name >& long_value_names )
 {
   Device::calibrate();
-  kernel().io_manager.set_input_value_names( P_.input_from_, *this, double_value_names, long_value_names );
+  kernel().io_manager.set_stimulator_value_names( P_.stimulus_source_, *this, double_value_names, long_value_names );
 }
 
 template < typename EmittedEvent >
@@ -314,14 +314,14 @@ nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type( synindex syn_i
 template < typename EmittedEvent >
 nest::StimulatingDevice< EmittedEvent >::Parameters_::Parameters_()
   : label_()
-  , input_from_( names::internal )
+  , stimulus_source_( names::internal )
 {
 }
 
 template < typename EmittedEvent >
 nest::StimulatingDevice< EmittedEvent >::Parameters_::Parameters_( const Parameters_& p )
   : label_( p.label_ )
-  , input_from_( p.input_from_ )
+  , stimulus_source_( p.stimulus_source_ )
 {
 }
 
@@ -330,7 +330,7 @@ void
 nest::StimulatingDevice< EmittedEvent >::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
-  ( *d )[ names::input_from ] = LiteralDatum( input_from_ );
+  ( *d )[ names::stimulus_source ] = LiteralDatum( stimulus_source_ );
 }
 
 template < typename EmittedEvent >
@@ -339,16 +339,16 @@ nest::StimulatingDevice< EmittedEvent >::Parameters_::set( const DictionaryDatum
 {
   updateValue< std::string >( d, names::label, label_ );
 
-  std::string input_from;
-  if ( updateValue< std::string >( d, names::input_from, input_from ) )
+  std::string stimulus_source;
+  if ( updateValue< std::string >( d, names::stimulus_source, stimulus_source ) )
   {
 
-    if ( not kernel().io_manager.is_valid_stimulating_backend( input_from ) )
+    if ( not kernel().io_manager.is_valid_stimulating_backend( stimulus_source ) )
     {
-      std::string msg = String::compose( "Unknown input backend '%1'", input_from );
+      std::string msg = String::compose( "Unknown input backend '%1'", stimulus_source );
       throw BadProperty( msg );
     }
-    input_from_ = input_from;
+    stimulus_source_ = stimulus_source;
   }
 }
 
@@ -399,9 +399,9 @@ nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d )
       }
     }
 
-    if ( not ptmp.input_from_.toString().compare( names::internal.toString() ) == 0 )
+    if ( not ptmp.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
     {
-      kernel().io_manager.check_input_backend_device_status( ptmp.input_from_, backend_params );
+      kernel().io_manager.check_stimulating_backend_device_status( ptmp.stimulus_source_, backend_params );
     }
 
     // cache all properties accessed by the backend in private member
@@ -417,9 +417,9 @@ nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d )
   }
   else
   {
-    if ( not ptmp.input_from_.toString().compare( names::internal.toString() ) == 0 )
+    if ( not ptmp.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
     {
-      kernel().io_manager.enroll_input( ptmp.input_from_, *this, d );
+      kernel().io_manager.enroll_stimulator( ptmp.stimulus_source_, *this, d );
     }
   }
 
@@ -443,9 +443,9 @@ nest::StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
     // first get the defaults from the backend
-    if ( not P_.input_from_.toString().compare( names::internal.toString() ) == 0 )
+    if ( not P_.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
     {
-      kernel().io_manager.get_stimulating_backend_device_defaults( P_.input_from_, d );
+      kernel().io_manager.get_stimulating_backend_device_defaults( P_.stimulus_source_, d );
     }
 
     // then overwrite with cached parameters
@@ -456,9 +456,9 @@ nest::StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
   }
   else
   {
-    if ( not P_.input_from_.toString().compare( names::internal.toString() ) == 0 )
+    if ( not P_.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
     {
-      kernel().io_manager.get_stimulating_backend_device_status( P_.input_from_, *this, d );
+      kernel().io_manager.get_stimulating_backend_device_status( P_.stimulus_source_, *this, d );
     }
   }
 }

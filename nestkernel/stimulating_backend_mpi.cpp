@@ -318,7 +318,7 @@ nest::StimulatingBackendMPI::receive_spike_train( const MPI_Comm& comm, Stimulat
   // Update the device with the data in all the thread
   for ( auto& thread_device : devices_ )
   {
-    thread_device.find( device.get_node_id() )->second.second->update_from_backend( spikes_list );
+    thread_device.find( device.get_node_id() )->second.second->set_data_from_stimulating_backend( spikes_list );
   }
   delete[] spikes;
   spikes = nullptr;

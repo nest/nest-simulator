@@ -107,7 +107,7 @@ public:
 
   void enroll_recorder( const Name&, const RecordingDevice&, const DictionaryDatum& );
   template < typename EmittedEvent >
-  void enroll_input( const Name&, const StimulatingDevice< EmittedEvent >&, const DictionaryDatum& );
+  void enroll_stimulator( const Name&, const StimulatingDevice< EmittedEvent >&, const DictionaryDatum& );
 
   void set_recording_value_names( const Name& backend_name,
     const RecordingDevice& device,
@@ -115,7 +115,7 @@ public:
     const std::vector< Name >& long_value_names );
 
   template < typename EmittedEvent >
-  void set_input_value_names( const Name&,
+  void set_stimulator_value_names( const Name&,
     const StimulatingDevice< EmittedEvent >&,
     const std::vector< Name >&,
     const std::vector< Name >& );
@@ -123,7 +123,7 @@ public:
   void check_recording_backend_device_status( const Name&, const DictionaryDatum& );
   void get_recording_backend_device_defaults( const Name&, DictionaryDatum& );
   void get_recording_backend_device_status( const Name&, const RecordingDevice&, DictionaryDatum& );
-  void check_input_backend_device_status( const Name&, const DictionaryDatum& );
+  void check_stimulating_backend_device_status( const Name&, const DictionaryDatum& );
   void get_stimulating_backend_device_defaults( const Name&, DictionaryDatum& );
   template < typename EmittedEvent >
   void get_stimulating_backend_device_status( const Name&, const StimulatingDevice< EmittedEvent >&, DictionaryDatum& );
@@ -142,7 +142,7 @@ private:
    */
   std::map< Name, RecordingBackend* > recording_backends_;
   /**
-   * A mapping from names to registered input backends
+   * A mapping from names to registered stimulating backends
    */
   std::map< Name, StimulatingBackend* > stimulating_backends_;
 };
@@ -181,7 +181,7 @@ nest::IOManager::get_stimulating_backend_device_status( const Name& backend_name
 
 template < typename EmittedEvent >
 void
-nest::IOManager::set_input_value_names( const Name& backend_name,
+nest::IOManager::set_stimulator_value_names( const Name& backend_name,
   const StimulatingDevice< EmittedEvent >& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
@@ -194,7 +194,7 @@ nest::IOManager::set_input_value_names( const Name& backend_name,
 
 template < typename EmittedEvent >
 void
-nest::IOManager::enroll_input( const Name& backend_name,
+nest::IOManager::enroll_stimulator( const Name& backend_name,
   const StimulatingDevice< EmittedEvent >& device,
   const DictionaryDatum& params )
 {

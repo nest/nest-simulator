@@ -380,7 +380,7 @@ IOManager::get_recording_backend_device_status( const Name& backend_name,
 }
 
 void
-IOManager::check_input_backend_device_status( const Name& backend_name, const DictionaryDatum& params )
+IOManager::check_stimulating_backend_device_status( const Name& backend_name, const DictionaryDatum& params )
 {
   if ( is_valid_stimulating_backend( backend_name ) )
   {

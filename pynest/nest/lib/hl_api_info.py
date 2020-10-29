@@ -426,7 +426,8 @@ def GetStatus(nodes, keys=None, output=''):
             (3, 1.0))
 
     >>>    nest.GetStatus(conns, ['source', 'delay'], output='json')
-           '[[1, 1.0], [1, 1.0], [1, 1.0], [2, 1.0], [2, 1.0], [2, 1.0], [3, 1.0], [3, 1.0], [3, 1.0]]'
+           '[[1, 1.0], [1, 1.0], [1, 1.0], [2, 1.0], [2, 1.0], [2, 1.0],
+           [3, 1.0], [3, 1.0], [3, 1.0]]'
     """
 
     if not (isinstance(nodes, nest.NodeCollection) or isinstance(nodes, nest.SynapseCollection)):

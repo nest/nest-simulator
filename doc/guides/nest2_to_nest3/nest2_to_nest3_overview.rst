@@ -596,8 +596,8 @@ If you want to connect with different receptor types, you can do the following:
 
   ::
 
-    src = nest.Create('iaf_psc_exp_multisynapse', 5)
-    trgt = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1 + i for i in range(num_trg)]})
+    src = nest.Create('iaf_psc_exp_multisynapse', 7)
+    trgt = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1 + i for i in range(7)]})
 
     syn_spec = nest.CollocatedSynapses({'weight': 5.0, 'receptor_type': 2},
                                        {'weight': 1.5, 'receptor_type': 7})

@@ -804,7 +804,7 @@ class CollocatedSynapses(object):
             conns = nest.GetConnections()
 
             print(conns.alpha)
-            print(len(syn_spec)
+            print(len(syn_spec))
     """
 
     def __init__(self, *args):

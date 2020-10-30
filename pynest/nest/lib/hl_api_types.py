@@ -328,7 +328,9 @@ class NodeCollection(object):
 
         See Also
         --------
-        set
+        :py:func:`set`,
+        :py:func:`GetStatus()<nest.lib.hl_api_info.GetStatus>`,
+        :py:func:`SetStatus()<nest.lib.hl_api_info.SetStatus>`
 
         Examples
         --------
@@ -424,7 +426,9 @@ class NodeCollection(object):
 
         See Also
         --------
-        get
+        :py:func:`get`,
+        :py:func:`SetStatus()<nest.lib.hl_api_info.SetStatus>`,
+        :py:func:`GetStatus()<nest.lib.hl_api_info.GetStatus>`
         """
 
         if not self:

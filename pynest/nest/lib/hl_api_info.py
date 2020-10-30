@@ -257,7 +257,9 @@ def SetStatus(nodes, params, val=None):
 
     See Also
     -------
-    GetStatus
+    :py:func:`GetStatus`,
+    :py:meth:`NodeCollection.get()<nest.lib.hl_api_types.NodeCollection.get>`,
+    :py:meth:`NodeCollection.set()<nest.lib.hl_api_types.NodeCollection.set>`
 
     """
 
@@ -356,7 +358,9 @@ def GetStatus(nodes, keys=None, output=''):
 
     See Also
     --------
-    SetStatus
+    :py:func:`SetStatus`,
+    :py:meth:`NodeCollection.set()<nest.lib.hl_api_types.NodeCollection.set>`,
+    :py:meth:`NodeCollection.get()<nest.lib.hl_api_types.NodeCollection.get>`
 
     Examples
     --------

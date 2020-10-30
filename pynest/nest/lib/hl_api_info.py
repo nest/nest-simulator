@@ -390,25 +390,15 @@ def GetStatus(nodes, keys=None, output=''):
 
     >>>    nest.GetStatus(conns)
            ({'delay': 1.0,
-             'port': 0,
-             'receptor': 0,
-             'sizeof': 32,
+             ...
              'source': 1,
-             'synapse_id': 15,
-             'synapse_model': 'static_synapse',
-             'target': 1,
-             'target_thread': 0,
+             ...
              'weight': 1.0},
             ...
             {'delay': 1.0,
-             'port': 8,
-             'receptor': 0,
-             'sizeof': 32,
+             ...
              'source': 3,
-             'synapse_id': 15,
-             'synapse_model': 'static_synapse',
-             'target': 3,
-             'target_thread': 0,
+             ...
              'weight': 1.0})
 
     >>>    nest.GetStatus(conns, 'weight')
@@ -416,13 +406,7 @@ def GetStatus(nodes, keys=None, output=''):
 
     >>>    nest.GetStatus(conns, ['source', 'delay'])
            ((1, 1.0),
-            (1, 1.0),
-            (1, 1.0),
-            (2, 1.0),
-            (2, 1.0),
-            (2, 1.0),
-            (3, 1.0),
-            (3, 1.0),
+            ...
             (3, 1.0))
 
     >>>    nest.GetStatus(conns, ['source', 'delay'], output='json')

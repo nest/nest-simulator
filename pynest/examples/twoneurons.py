@@ -34,13 +34,7 @@ See Also
 
 #######################################################################
 # First, we import all necessary modules for simulation, analysis and
-# plotting. Additionally, we set the verbosity to suppress info
-# messages and reset the kernel.
-# Resetting the kernel allows you to execute the script several
-# times in a Python shell without interferences from previous NEST
-# simulations. Thus, without resetting the kernel the network status
-# including connections between nodes, status of neurons, devices and
-# intrinsic time clocks, is kept and influences the next simulations.
+# plotting.
 
 import nest
 import nest.voltage_trace
@@ -51,14 +45,6 @@ nest.ResetKernel()
 
 #######################################################################
 # Second, the nodes (the two neurons and devices) are created using ``Create``.
-# We store the returned handles in variables for later reference.
-# The ``Create`` function also allow you to create multiple nodes
-# e.g. ``nest.Create('iaf_psc_alpha',5)``
-# Also default parameters of the model can be configured using ``Create``
-# by including a list of parameter dictionaries
-# e.g. `nest.Create("iaf_psc_alpha", params=[{'I_e':376.0}])`.
-# In this example we will configure these parameters in an additional
-# step, which is explained in the third section.
 
 neuron_1 = nest.Create("iaf_psc_alpha")
 neuron_2 = nest.Create("iaf_psc_alpha")
@@ -70,15 +56,10 @@ voltmeter = nest.Create("voltmeter")
 neuron_1.I_e = 376.0
 
 #######################################################################
-# Fourth, we connect neuron 1 to neuron 2. And, then we connect a voltmeter to the two neurons. The command
-# ``Connect`` has different variants. Plain ``Connect`` just takes the
-# handles of pre- and post-synaptic nodes and uses the default values
-# for weight and delay. Note that the connection direction for the voltmeter is
-# reversed compared to the spike recorder, because it observes the
-# neuron instead of receiving events from it. Thus, ``Connect``
-# reflects the direction of signal flow in the simulation kernel
-# rather than the physical process of inserting an electrode into the
-# neuron. The latter semantics is presently not available in NEST.
+# Fourth, we connect neuron 1 to neuron 2. 
+# And, then we connect a voltmeter to the two neurons. The command
+# To learn more about the previous steps, please check out the
+# :doc:`one neuron example <one_neuron>`.
 
 weight = 20.0
 delay = 1.0
@@ -94,8 +75,8 @@ nest.Connect(voltmeter, neuron_2)
 nest.Simulate(1000.0)
 
 #######################################################################
-# Finally, we plot the neuron's membrane potential as a function of
-# time and display the plot using pyplot.
+# Finally, we plot the neurons's membrane potential as a function of
+# time.
 
 nest.voltage_trace.from_device(voltmeter)
 plt.show()

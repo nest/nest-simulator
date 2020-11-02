@@ -116,7 +116,7 @@ NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only 
 void connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
-  const DictionaryDatum& synapse_params );
+  const std::vector< DictionaryDatum >& synapse_params );
 
 /**
  * @brief Connect arrays of node IDs one-to-one

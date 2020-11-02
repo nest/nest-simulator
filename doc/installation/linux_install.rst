@@ -6,21 +6,32 @@ Ubuntu/Debian Installation
 Dependencies
 ------------
 
-To build NEST, you need a recent version of `CMake <https://cmake.org/install>`_ and `libtool <https://www.gnu.org/software/libtool/libtool.html>`_; the latter should be available for most systems and is probably already installed.
+To build NEST, you need a recent version of `CMake <https://cmake.org/install>`_ and
+`libtool <https://www.gnu.org/software/libtool/libtool.html>`_; the latter should be available for most systems and is
+probably already installed.
 
 .. note::
 
-   NEST requires CMake 3.12 or higher, but we recommend version 3.16. You can type ``cmake --version`` on the commandline to check your current version.
+   NEST requires CMake 3.12 or higher, but we recommend version 3.16. You can type ``cmake --version`` on the
+   commandline to check your current version.
 
-The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended if you use NEST interactively **without Python**. Although most Linux distributions have GNU readline installed, you still need to install its development package if want to use GNU readline with NEST. GNU readline itself depends on `libncurses <http://www.gnu.org/software/ncurses/>`_ (or libtermcap on older systems). Again, the development packages are needed to compile NEST.
+The `GNU readline library <http://www.gnu.org/software/readline/>`_ is recommended if you use NEST interactively
+**without Python**. Although most Linux distributions have GNU readline installed, you still need to install its
+development package if you want to use GNU readline with NEST. GNU readline itself depends on
+`libncurses <http://www.gnu.org/software/ncurses/>`_ (or libtermcap on older systems). Again, the development packages
+are needed to compile NEST.
 
-The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by several neuron models, in particular those with conductance based synapses. If you want these models, please install the GNU Scientific Library along with its development packages.
+The `GNU Scientific Library <http://www.gnu.org/software/gsl/>`_ is needed by several neuron models, in particular
+those with conductance based synapses. If you want these models, please install the GNU Scientific Library along with
+its development packages.
 
-For efficient sorting algorithms the Boost library <https://www.boost.org/> is used. Since this is an essential factor for the communication of spikes, some simulations are significantly faster when NEST is compile with Boost.
+For efficient sorting algorithms the `Boost library <https://www.boost.org/>`_ is used. Since this is an essential
+factor for the communication of spikes, some simulations are significantly faster when NEST is compiled with Boost.
+
 If you want to use PyNEST, we recommend to install the following along with their development packages:
 
 - `Python 3.6 or higher <http://www.python.org>`_
-- `NumPy <http://www.scipy.org>`_
+- `NumPy <http://www.numpy.org>`_
 - `SciPy <http://www.scipy.org>`_
 - `Matplotlib 3.0 or higher <http://matplotlib.org>`_
 - `IPython <http://ipython.org>`_
@@ -29,9 +40,12 @@ If you want to use PyNEST, we recommend to install the following along with thei
 Installation from source
 ------------------------
 
-The following are the basic steps to compile and install NEST from source code. See the :doc:`Configuration Options <install_options>` or the :doc:`High Performance Computing <hpc_install>` instructions to further adjust settings for your system.
+The following are the basic steps to compile and install NEST from source code. See the
+:doc:`Configuration Options <install_options>` or the :doc:`High Performance Computing <hpc_install>` instructions to
+further adjust settings for your system.
 
-* If not already installed on your system, the following packages are recommended (see also the `Dependencies`_ section)
+* If not already installed on your system, the following packages are recommended (see also the `Dependencies`_
+  section)
 
 .. code-block:: bash
 
@@ -67,9 +81,7 @@ The following are the basic steps to compile and install NEST from source code. 
 
     cd nest-simulator-x.y.z-build
 
-* Configure NEST.
-
-  You may need additional ``cmake`` options and you can find the :doc:`configuration options here <install_options>`.
+* Configure NEST. You may need additional ``cmake`` options (see :doc:`install_options`).
 
 .. code-block:: sh
 
@@ -93,15 +105,19 @@ The following are the basic steps to compile and install NEST from source code. 
 
 NEST should now be successfully installed on your system.
 
-* Before using NEST, make sure that all required environment variables are set correctly. In short, this can be established by sourcing the shell script `nest_vars.sh`, which is installed into the path for binaries selected during the CMake run. See the section `Environment variables`_ for details.
+* Before using NEST, make sure that all required environment variables are set correctly. In short, this can be
+  established by sourcing the shell script ``nest_vars.sh``, which is installed into the path for binaries selected
+  during the CMake run. See the section `Environment variables`_ for details.
 
-* See the :doc:`Getting started <../getting_started>` pages to find out how to get going with NEST or check out our :doc:`example networks <../auto_examples/index>`.
+* See the :doc:`Getting started <../getting_started>` pages to find out how to get going with NEST or check out our
+  :doc:`example networks <../auto_examples/index>`.
 
 
 What gets installed where
 -------------------------
 
-By default, everything will be installed to the subdirectories ``<nest_install_dir>/{bin,lib,share}``, where ``/install/path`` is the install path given to ``cmake``:
+By default, everything will be installed to the subdirectories ``<nest_install_dir>/{bin,lib,share}``, where
+``/install/path`` is the install path given to ``cmake``:
 
 - Executables ``<nest_install_dir>/bin``
 - Dynamic libraries ``<nest_install_dir>/lib/``
@@ -112,7 +128,8 @@ By default, everything will be installed to the subdirectories ``<nest_install_d
 - PyNEST examples ``<nest_install_dir>/share/doc/nest/examples/pynest``
 - Extras ``<nest_install_dir>/share/nest/extras/``
 
-If you want to run the ``nest`` executable or use the ``nest`` Python module without providing explicit paths, you have to add the installation directory to your search paths.
+If you want to run the ``nest`` executable or use the ``nest`` Python module without providing explicit paths, you
+have to add the installation directory to your search paths.
 Please refer to the :ref:`next section <environment_variables>` section for this.
 
 
@@ -121,15 +138,20 @@ Please refer to the :ref:`next section <environment_variables>` section for this
 Environment variables
 ---------------------
 
-A number of environment variables are used to specify where the components of a NEST installation are found. In particular when installing to a custom directory, it is typically necessary to explicitly set these variables, so that your operating system can find the NEST binaries, its libraries and custom extension modules.
+A number of environment variables are used to specify where the components of a NEST installation are found. In
+particular when installing to a custom directory, it is typically necessary to explicitly set these variables, so that
+your operating system can find the NEST binaries, its libraries and custom extension modules.
 
-For your convenience, a shell script setting all required environment variables is provided in ``<nest_install_dir>/bin/nest_vars.sh``. Setting the environment variables in your active shell session requires sourcing the script:
+For your convenience, a shell script setting all required environment variables is provided in
+``<nest_install_dir>/bin/nest_vars.sh``. Setting the environment variables in your active shell session requires
+sourcing the script:
 
 .. code-block:: sh
 
    source <nest_install_dir>/bin/nest_vars.sh
 
-You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically whenever you open a new terminal.
+You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically
+whenever you open a new terminal.
 
 The following variables are set in ``nest_vars.sh``:
 
@@ -140,8 +162,11 @@ The following variables are set in ``nest_vars.sh``:
    * - Variable
      - Description
    * - ``PYTHONPATH``
-     - Search path for non-standard Python module locations. Will be newly set or prepended to the already existing variable if it is already set.
+     - Search path for non-standard Python module locations. Will be newly set or prepended to the already existing
+       variable if it is already set.
    * - ``PATH``
      - Search path for binaries. Will be newly set or prepended to the already existing variable if it is already set.
 
-If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to missing or incompatible libraries.
+If your operating system does not find the ``nest`` executable or if Python does not find the ``nest`` module, your
+path variables may not be set correctly. This may also be the case if Python cannot load the ``nest`` module due to
+missing or incompatible libraries.

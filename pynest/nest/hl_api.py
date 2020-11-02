@@ -48,6 +48,7 @@ __all__ = [
     'CGParse',
     'CGSelectImplementation',
     'Cleanup',
+    'CollocatedSynapses',
     'Connect',
     'ConnectionRules',
     'SynapseCollection',
@@ -102,5 +103,4 @@ __all__ = [
     'message',
     'set_verbosity',
     'sysinfo',
-    'version',
 ]

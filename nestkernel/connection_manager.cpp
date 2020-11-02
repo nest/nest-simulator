@@ -335,10 +335,10 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
 {
   const size_t rule_id = connruledict_->lookup( name );
-  return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_spec );
+  return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
 }
 
 void
@@ -354,7 +354,7 @@ void
 nest::ConnectionManager::connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
 {
   if ( sources->empty() )
   {
@@ -366,7 +366,11 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   }
 
   conn_spec->clear_access_flags();
-  syn_spec->clear_access_flags();
+
+  for ( auto syn_params : syn_specs )
+  {
+    syn_params->clear_access_flags();
+  }
 
   if ( not conn_spec->known( names::rule ) )
   {
@@ -381,12 +385,15 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 
   const long rule_id = ( *connruledict_ )[ rule_name ];
 
-  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_spec );
+  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
   assert( cb != 0 );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
-  ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries in syn_spec: " );
+  for ( auto syn_params : syn_specs )
+  {
+    ALL_ENTRIES_ACCESSED( *syn_params, "Connect", "Unread dictionary entries in syn_spec: " );
+  }
 
   cb->connect();
   delete cb;

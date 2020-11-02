@@ -34,26 +34,24 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
+#include "connection_creator_impl.h"
 #include "connection_manager_impl.h"
+#include "free_layer.h"
 #include "genericmodel.h"
+#include "grid_layer.h"
+#include "grid_mask.h"
 #include "kernel_manager.h"
+#include "layer.h"
+#include "layer_impl.h"
+#include "mask.h"
+#include "mask_impl.h"
 #include "model_manager_impl.h"
 #include "nest.h"
 #include "nest_datums.h"
 #include "nest_types.h"
 #include "node.h"
 #include "sp_manager_impl.h"
-
-// Includes from spatial:
-#include "spatial/connection_creator_impl.h"
-#include "spatial/free_layer.h"
-#include "spatial/grid_layer.h"
-#include "spatial/grid_mask.h"
-#include "spatial/layer.h"
-#include "spatial/layer_impl.h"
-#include "spatial/mask.h"
-#include "spatial/mask_impl.h"
-#include "spatial/spatial.h"
+#include "spatial.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -918,6 +916,29 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
   DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  // dictionary access checking is handled by connect
+  kernel().connection_manager.connect( sources, targets, connectivity, { synapse_params } );
+
+  i->OStack.pop( 4 );
+  i->EStack.pop();
+}
+
+void
+NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 4 );
+
+  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
+  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  ArrayDatum synapse_params_arr = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
+  std::vector< DictionaryDatum > synapse_params;
+
+  for ( auto syn_param : synapse_params_arr )
+  {
+    synapse_params.push_back( getValue< DictionaryDatum >( syn_param ) );
+  }
 
   // dictionary access checking is handled by connect
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
@@ -2855,6 +2876,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Apply_P_g", &apply_P_gfunction );
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
+  i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 

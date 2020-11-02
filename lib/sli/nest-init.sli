@@ -1007,15 +1007,29 @@ def
       % Connect nodes from two sets of node IDs using the given connectivity
       % and synapse specifications
       [node_idlisttype node_idlisttype /dictionarytype /dictionarytype] {
-	  /syn_spec :Connect_complete_dict   % fill in missing defaults
-	  exch                  % exchange syn_spec and conn_spec
-	  /conn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                  % exchange syn_spec and conn_spec
-	  4 2 roll              % bring sources and targets to top
-	  cvnodecollection exch  % convert targets to nodecollection
-	  cvnodecollection exch  % convert sources to nodecollection
-	  4 2 roll              % bring sources and targets to bottom
-	  Connect_g_g_D_D
+        /syn_spec :Connect_complete_dict   % fill in missing defaults
+        exch                   % exchange syn_spec and conn_spec
+        /conn_spec :Connect_complete_dict  % fill in missing defaults
+        exch                   % exchange syn_spec and conn_spec
+        4 2 roll               % bring sources and targets to top
+        cvnodecollection exch  % convert targets to nodecollection
+        cvnodecollection exch  % convert sources to nodecollection
+        4 2 roll               % bring sources and targets to bottom
+        Connect_g_g_D_D
+      } bind addtotrie
+      
+      % Variant: sources targets conn_spec syn_vector Connect
+      % Connect nodes from two sets of NodeCollections using the given connectivity specification
+      % and a list of synapse specifications
+      [node_idlisttype node_idlisttype /dictionarytype /arraytype] {
+        /test_syn_specs Set
+        test_syn_specs
+        {
+          /syn_spec :Connect_complete_dict
+          pop
+        } forall
+        test_syn_specs
+        Connect_g_g_D_a
       } bind addtotrie
 
   } forall

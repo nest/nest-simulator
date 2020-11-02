@@ -27,11 +27,9 @@
 #include "event.h"
 #include "exceptions.h"
 #include "generic_factory.h"
+#include "ntree.h"
 #include "parameter.h"
-
-// Includes from spatial:
-#include "spatial/ntree.h"
-#include "spatial/position.h"
+#include "position.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -336,6 +334,12 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } connect_g_g_D_Dfunction;
+
+  class Connect_g_g_D_aFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } connect_g_g_D_afunction;
 
   class ResetKernelFunction : public SLIFunction
   {

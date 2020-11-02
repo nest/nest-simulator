@@ -14,6 +14,7 @@ Here you can find details on a variety of topics in NEST.
     :maxdepth: 1
     :caption: In depth guides to NEST
 
+    nest_server
     connection_management
     conngen_interface
     running_simulations

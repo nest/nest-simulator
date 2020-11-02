@@ -4,17 +4,34 @@ NEST Server
 .. contents::
    :local:
 
-What is the NEST Server?
-------------------------
+What is NEST Server?
+--------------------
+
+NEST Server starts a server interacting with NEST Simulator.
+
+It can be installed on a local machine, on a remote machine (e.g., server,
+cloud, cluster computer, supercomputer) or in a session management (e.g.,
+Docker, Singularity).
+
+What is it good for?
+--------------------
 
 
-What is the purpose of the NEST Server?
----------------------------------------
+Installation
+------------
+
+To install ``NESTServerClient``:
+
+
+Getting started
+---------------
+
+To start ``NESTServerClient``:
 
 
 Limitations and security implications
 -------------------------------------
 
+   
 
-Installing and using the ``NESTServerClient``
----------------------------------------------
+

@@ -28,8 +28,8 @@ NEST Server
 ~~~~~~~~~~~
 
 NEST 3.0 allows you to start a server which interacts with NEST Simulator.
-Please check out the :doc:`NEST Server guide <nest_server>` to learn how to use
-it.
+Please check out the :doc:`NEST Server guide <../nest_server>` to learn how to
+use it.
 
 .. _nodeid:
 

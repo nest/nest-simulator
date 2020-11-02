@@ -1,6 +1,9 @@
 NEST Server
 ===========
 
+.. contents::
+   :local:
+
 What is the NEST Server?
 ------------------------
 

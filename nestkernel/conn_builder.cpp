@@ -75,7 +75,6 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
-  integer_params_ = { names::receptor_type, names::music_channel, names::synapse_label };
 
   default_weight_.resize( syn_specs.size() );
   default_delay_.resize( syn_specs.size() );
@@ -523,12 +522,8 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 
       for ( auto param : synapse_params_[ indx ] )
       {
-        if ( integer_params_.find( param.first ) != integer_params_.end() )
+        if ( param.second->provides_long() )
         {
-          if ( not param.second->provides_long() )
-          {
-            throw BadParameter( param.first.toString() + " must be given as integer." );
-          }
           ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
         }
         else

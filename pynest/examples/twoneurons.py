@@ -56,8 +56,8 @@ voltmeter = nest.Create("voltmeter")
 neuron_1.I_e = 376.0
 
 ###############################################################################
-# Fourth, we connect neuron 1 to neuron 2. 
-# And, then we connect a voltmeter to the two neurons.
+# Fourth, we connect neuron 1 to neuron 2.
+# Then, we connect a voltmeter to the two neurons.
 # To learn more about the previous steps, please check out the
 # :doc:`one neuron example <one_neuron>`.
 
@@ -75,9 +75,8 @@ nest.Connect(voltmeter, neuron_2)
 nest.Simulate(1000.0)
 
 ###############################################################################
-# Finally, we plot the neurons's membrane potential as a function of
+# Finally, we plot the neurons' membrane potential as a function of
 # time.
 
 nest.voltage_trace.from_device(voltmeter)
 plt.show()
-

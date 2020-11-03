@@ -190,28 +190,28 @@ Example:
 Synapse Specification
 ---------------------
 
-The synapse properties can be given as a string or a dictionary. The
-string can be the name of a pre-defined synapse which can be found in
-the synapsedict (see  :ref:`synapse-types`) or a manually defined
-synapse via `CopyModel()`.
+The synapse properties can be given as a string, a ``CollocatedSynapse``
+object, or a dictionary. The string can be the name of a pre-defined
+synapse which can be found in the synapsedict (see  :ref:`synapse-types`)
+or a manually defined synapse via `CopyModel()`.
 
 Example:
 
 ::
 
     n = 10
-    A = Create("iaf_psc_alpha", n)
-    B = Create("iaf_psc_alpha", n)
-    CopyModel("static_synapse","excitatory",{"weight":2.5, "delay":0.5})
-    Connect(A, B, syn_spec="excitatory")
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('iaf_psc_alpha', n)
+    nest.CopyModel('static_synapse','excitatory',{'weight': 2.5, 'delay': 0.5})
+    nest.Connect(A, B, syn_spec='excitatory')
 
 Specifying the synapse properties in a dictionary allows for distributed
-synaptic parameter. In addition to the key ``model`` the dictionary can
+synaptic parameters. In addition to the key ``synapse_model`` the dictionary can
 contain specifications for ``weight``, ``delay``, ``receptor_type`` and
 parameters specific to the chosen synapse model. The specification of
 all parameters is optional. Unspecified parameters will use the default
 values determined by the current synapse model. All parameters can be
-scalars, arrays or distributions (specified as dictionaries). One
+scalars, arrays or distributions (specified as a ``nest.Parameter``). One
 synapse dictionary can contain an arbitrary combination of parameter
 types, as long as they agree with the connection routine (``rule``).
 
@@ -225,43 +225,43 @@ Example:
 
     n = 10
     neuron_dict = {'tau_syn': [0.3, 1.5]}
-    A = Create("iaf_psc_exp_multisynapse", n, neuron_dict)
-    B = Create("iaf_psc_exp_multisynapse", n, neuron_dict)
-    syn_dict ={"model": "static_synapse", "weight":2.5, "delay":0.5, 'receptor_type': 1}
-    Connect(A, B, syn_spec=syn_dict)
+    A = nest.Create('iaf_psc_exp_multisynapse', n, neuron_dict)
+    B = nest.Create('iaf_psc_exp_multisynapse', n, neuron_dict)
+    syn_dict ={'synapse_model': 'static_synapse', 'weight': 2.5, 'delay': 0.5, 'receptor_type': 1}
+    nest.Connect(A, B, syn_spec=syn_dict)
 
 **Array** parameters can be used in conjunction with the rules
-``one_to_one``, ``all_to_all``, ``fixed_indegree`` and
-``fixed_outdegree``. The arrays can be specified as numpy arrays or
-lists. As for the scalar parameters, all parameters but the receptor
+``one_to_one``, ``all_to_all``, ``fixed_indegree``, ``fixed_outdegree``
+and ``fixed_total_number``. The arrays can be specified as numpy arrays or
+lists. As with the scalar parameters, all parameters but the receptor
 types must be specified as arrays of floats. For ``one_to_one`` the
-array must have the same length as the population vector.
+array must have the same length as the population NodeCollection.
 
 Example:
 
 ::
 
-    A = Create("iaf_psc_alpha", 2)
-    B = Create("spike_recorder", 2)
+    A = nest.Create('iaf_psc_alpha', 2)
+    B = nest.Create('spike_recorder', 2)
     conn_dict = {'rule': 'one_to_one'}
     syn_dict = {'weight': [1.2, -3.5]}
-    Connect(A, B, conn_dict, syn_dict)
+    nest.Connect(A, B, conn_dict, syn_dict)
 
 When connecting using ``all_to_all``, the array must be of dimension
-len(post) x len(pre).
+`len(post) x len(pre)`.
 
 Example:
 
 ::
 
-    A = Create("iaf_psc_alpha", 3)
-    B = Create("iaf_psc_alpha", 2)
+    A = nest.Create('iaf_psc_alpha', 3)
+    B = nest.Create('iaf_psc_alpha', 2)
     syn_dict = {'weight': [[1.2, -3.5, 2.5],[0.4, -0.2, 0.7]]}
-    Connect(A, B, syn_spec=syn_dict)
+    nest.Connect(A, B, syn_spec=syn_dict)
 
 For ``fixed_indegree`` the array has to be a two-dimensional NumPy array
-with shape (len(post), indegree), where indegree is the number of
-incoming connections per target neuron, therefore the rows describe the
+or list with shape `(len(post), indegree)`, where indegree is the number of
+incoming connections per target neuron. Therefore, the rows describe the
 target and the columns the connections converging to the target neuron,
 regardless of the identity of the source neurons.
 
@@ -269,15 +269,15 @@ Example:
 
 ::
 
-    A = Create("iaf_psc_alpha", 5)
-    B = Create("iaf_psc_alpha", 3)
+    A = nest.Create('iaf_psc_alpha', 5)
+    B = nest.Create('iaf_psc_alpha', 3)
     conn_dict = {'rule': 'fixed_indegree', 'indegree': 2}
     syn_dict = {'weight': [[1.2, -3.5],[0.4, -0.2],[0.6, 2.2]]}
-    Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
+    nest.Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
 
 For ``fixed_outdegree`` the array has to be a two-dimensional NumPy array
-with shape (len(pre), outdegree), where outdegree is the number of
-outgoing connections per source neuron, therefore the rows describe the
+or list with shape `(len(pre), outdegree)`, where outdegree is the number of
+outgoing connections per source neuron. Therefore, the rows describe the
 source and the columns the connections starting from the source neuron
 regardless of the identity of the target neuron.
 
@@ -285,11 +285,24 @@ Example:
 
 ::
 
-    A = Create("iaf_psc_alpha", 2)
-    B = Create("iaf_psc_alpha", 5)
+    A = nest.Create('iaf_psc_alpha', 2)
+    B = nest.Create('iaf_psc_alpha', 5)
     conn_dict = {'rule': 'fixed_outdegree', 'outdegree': 3}
     syn_dict = {'weight': [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]}
-    Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
+    nest.Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
+
+For ``fixed_total_number`` the array has to be same the length as the
+number of connections ``N``.
+
+Example:
+
+::
+
+    A = nest.Create('iaf_psc_alpha', 3)
+    B = nest.Create('iaf_psc_alpha', 4)
+    conn_dict = {'rule': 'fixed_total_number', 'N': 4}
+    syn_dict = {'weight': [1.2, -3.5, 0.4, -0.2]}
+    nest.Connect(A, B, conn_dict, syn_dict)
 
 
 .. _collocated_synapses:

@@ -83,11 +83,11 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
                     "stop": (self.simulation_duration - self.hardcoded_trains_length)})
 
         # The detector is to save the randomly generated spike trains.
-        spike_detector = nest.Create("spike_recorder")
+        spike_recorder = nest.Create("spike_recorder")
 
         nest.Connect(presynaptic_generator, presynaptic_neuron,
                      syn_spec={"synapse_model": "static_synapse"})
-        nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_detector,
+        nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_recorder,
                      syn_spec={"synapse_model": "static_synapse"})
         # The synapse of interest itself
         wr = nest.Create('weight_recorder', 1)
@@ -98,7 +98,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = spike_detector.events
+        all_spikes = spike_recorder.events
         pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.get('global_id')]
 
         weights = wr.get("events", "weights")

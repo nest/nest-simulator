@@ -786,9 +786,25 @@ class SynapseCollection(object):
 
 class CollocatedSynapses(object):
     """
-    Class for collocated synapse specification.
+    Class for collocated synapse specifications.
 
-    Wrapper around a list of specifications.
+    Wrapper around a list of specifications, used when calling :py:func:`.Connect`.
+
+    Example
+    -------
+
+        ::
+
+            nodes = nest.Create('iaf_psc_alpha', 3)
+            syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
+                                               {'synapse_model': 'stdp_synapse'},
+                                               {'synapse_model': 'stdp_synapse', 'alpha': 3.})
+            nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
+
+            conns = nest.GetConnections()
+
+            print(conns.alpha)
+            print(len(syn_spec))
     """
 
     def __init__(self, *args):

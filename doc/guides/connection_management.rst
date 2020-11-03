@@ -357,75 +357,64 @@ You can see how many synapse parameters you have by doing `len()` on your `Collo
 .. _dist_params:
 
 Distributed parameters
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
-**Distributed** parameters are initialized with yet another dictionary
-specifying the 'distribution' and the distribution-specific parameters,
-whose specification is optional.
+**Distributed** parameters are given as ``nest.Parameter`` objects that represent
+values drawn from random distributions. These distributions can either be based on
+spatial node parameters, on default values, or on constant distribution values
+you provide. It is possible to combine the parameters to create distributions
+tailor made for your needs.
 
-Available distributions are given in the ``rdevdict``, the most common ones
-are:
+The following parameters and functionalities are provided:
 
-Distributions Keys::
+- Random parameters
+- Spatial parameters
+- Spatially distributed parameters
+- Mathematical functions
+- Clipping, redrawing, and conditional parameters
 
- - 'normal', 'mu', 'sigma'
- - 'normal_clipped', 'mu', 'sigma', 'low ', 'high'
- - 'normal_clipped_to_boundary', 'mu', 'sigma', 'low ', 'high'
- - 'lognormal', 'mu',  'sigma'
- - 'lognormal_clipped', 'mu', 'sigma', 'low', 'high'
- - 'lognormal_clipped_to_boundary', 'mu', 'sigma', 'low', 'high'
- - 'uniform', 'low', 'high'
- - 'uniform_int', 'low', 'high'
- - 'binomial', 'n', 'p'
- - 'binomial_clipped', 'n', 'p', 'low', 'high'
- - 'binomial_clipped_to_boundary', 'n', 'p', 'low', 'high'
- - 'gsl_binomial', 'n', 'p'
- - 'exponential', 'lambda'
- - 'exponential_clipped', 'lambda', 'low', 'high'
- - 'exponential_clipped_to_boundary', 'lambda', 'low', 'high'
- - 'gamma', 'order', 'scale'
- - 'gamma_clipped', 'order', 'scale', 'low', 'high'
- - 'gamma_clipped_to_boundary', 'order', 'scale', 'low', 'high'
- - 'poisson', 'lambda'
- - 'poisson_clipped', 'lambda', 'low', 'high'
- - 'poisson_clipped_to_boundary', 'lambda', 'low', 'high'
+For more information, check out the documentation on the different
+:doc:`PyNEST api's <../ref_material/pynest_apis>`, or the section on parametrization
+in our :doc:`nest2_to_nest3/nest2_to_nest3_overview` guide.
 
-Example
+Example:
 
 ::
 
     n = 10
-    A = Create("iaf_psc_alpha", n)
-    B = Create("iaf_psc_alpha", n)
-    syn_dict = {'model': 'stdp_synapse',
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('iaf_psc_alpha', n)
+    syn_dict = {'synapse_model': 'stdp_synapse',
                 'weight': 2.5,
-                'delay': {'distribution': 'uniform', 'low': 0.8, 'high': 2.5},
-                'alpha': {'distribution': 'normal_clipped', 'low': 0.5, 'mu': 5.0, 'sigma': 1.0}
+                'delay': nest.random.uniform(min=0.8, max=2.5),
+                'alpha': nest.math.redraw(nest.random.normal(mean=5.0, std=1.0), min=0.5, max=10000.)
                }
-    Connect(A, B, syn_spec=syn_dict)
+    nest.Connect(A, B, syn_spec=syn_dict)
 
 In this example, the ``all_to_all`` connection rule is applied by
 default, using the `stdp_synapse` model. All synapses are created with
 weight 2.5, a delay uniformly distributed in [0.8, 2.5], while the alpha
-parameters is drawn from a normal distribution with mean 5.0 and std.dev
-1.0; values below 0.5 are excluded by re-drawing any values below 0.5.
-Thus, the actual distribution is a slightly distorted Gaussian.
+parameters are drawn from a normal distribution with mean 5.0 and standard
+deviation 1.0; values below 0.5 are excluded by re-drawing any values
+below 0.5. We have set the ``max`` value of ``nest.math.redraw`` to be a
+large number, so it is in principle never reached. Thus, the actual distribution
+is a slightly distorted Gaussian.
 
 If the synapse is supposed to have a unique name and distributed
-parameters it needs to be defined in two steps:
+parameters, it needs to be defined in two steps:
 
 ::
 
     n = 10
-    A = Create("iaf_psc_alpha", n)
-    B = Create("iaf_psc_alpha", n)
-    CopyModel('stdp_synapse','excitatory',{'weight':2.5})
-    syn_dict = {'model': 'excitatory',
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('iaf_psc_alpha', n)
+    nest.CopyModel('stdp_synapse','excitatory',{'weight':2.5})
+    syn_dict = {'synapse_model': 'excitatory',
                 'weight': 2.5,
-                'delay': {'distribution': 'uniform', 'low': 0.8, 'high': 2.5},
-                'alpha': {'distribution': 'normal_clipped', 'low': 0.5, 'mu': 5.0, 'sigma': 1.0}
+                'delay': nest.random.uniform(min=0.8, max=2.5),
+                'alpha': nest.math.redraw(nest.random.normal(mean=5.0, std=1.0), min=0.5, max=10000.)
                }
-    Connect(A, B, syn_spec=syn_dict)
+    nest.Connect(A, B, syn_spec=syn_dict)
 
 For further information on the distributions see :doc:`Random numbers in
 NEST <random_numbers>`.

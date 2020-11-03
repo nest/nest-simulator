@@ -315,6 +315,10 @@ class MultipleSynapsesTestCase(unittest.TestCase):
 
         self.assertEqual(ref_receptor_type, sorted(conns.receptor))
 
+        node_index = list(conns.source).index(node.global_id)
+        node_receptor = conns.receptor[node_index]
+        self.assertEqual(0, node_receptor)
+
     def test_MultipleSynapses_receptor_type_ht_neuron(self):
         """Test co-location of synapses with different receptor types and ht_neuron"""
         num_src = 9

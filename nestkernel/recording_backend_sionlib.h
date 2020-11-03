@@ -48,7 +48,7 @@ usage scenarios, writing to plain text files (see :ref:`ASCII backend
 <ascii_backend>`) would cause a large overhead because of the huge
 number of generated files and thus be very inefficient. For the
 implementation of writing to binary container files, NEST relies on
-the SIONlib library (http://www.fz-juelich.de/jsc/sionlib). Depending
+the `SIONlib library <http://www.fz-juelich.de/jsc/sionlib>`_. Depending
 on the I/O architecture of the compute cluster or supercomputer and
 the global settings of the `sionlib` recording backend (see below),
 either a single container file or a set of these files is created. In
@@ -111,7 +111,7 @@ Reading the data
 As the binary format of the files produced by the ``sionlib`` backend,
 we provide a custom reader module for Python that makes the files
 available in a convenient way. The source code for this can be found
-in its own repository at https://github.com/nest/nest-sionlib-reader.
+in its own `repository <https://github.com/nest/nest-sionlib-reader>`_.
 
 Recorder-specific parameters
 ++++++++++++++++++++++++++++

@@ -82,7 +82,6 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
             params={"rate": self.presynaptic_firing_rate,
                     "stop": (self.simulation_duration - self.hardcoded_trains_length)})
 
-        # The detector is to save the randomly generated spike trains.
         spike_recorder = nest.Create("spike_recorder")
 
         nest.Connect(presynaptic_generator, presynaptic_neuron,

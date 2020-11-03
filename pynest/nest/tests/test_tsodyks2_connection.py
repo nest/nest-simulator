@@ -45,7 +45,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
             "x": 1.0,
             "tau_rec": 100.,
             "tau_fac": 0.,
-            "weight": 1.  # initial weight
+            "weight": 1.  # maximal possible response (absolute synaptic efficacy)
         }
 
     def test_tsodyk2_synapse(self):
@@ -55,7 +55,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
         pre_spikes, weight_by_nest = self.do_the_nest_simulation()
         weight_reproduced_independently = self.reproduce_weight_drift(
             pre_spikes,
-            self.synapse_parameters["weight"])
+            absolute_weight=self.synapse_parameters["weight"])
 
         assert np.testing.assert_allclose(weight_reproduced_independently, weight_by_nest, atol=1E-12)
 
@@ -104,13 +104,16 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
 
         return (pre_spikes, weights)
 
-    def reproduce_weight_drift(self, _pre_spikes,
-                               _initial_weight):
+    def reproduce_weight_drift(self, _pre_spikes, absolute_weight=1.):
         """
         Returns the total weight change of the synapse
         computed outside of NEST.
         The implementation imitates a step-based simulation: evolving time, we
         trigger a weight update when the time equals one of the spike moments.
+        Parameters
+        ----------
+        absolute_weight : float
+            maximal possible response (absolute synaptic efficacy)
         """
 
         # These are defined just for convenience,
@@ -121,9 +124,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
         w_log = []
 
         t_lastspike = 0.
-        A = 1.
-        w = _initial_weight
-        R_ = 1.
+        R_ = 1.              # fraction of synaptic resources available for transmission in the range [0..1]
         u_ = self.synapse_parameters["U"]
         for time_in_simulation_steps in range(n_steps):
             if time_in_simulation_steps in pre_spikes_forced_to_grid:
@@ -139,7 +140,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
                 else:
                     u_decay = np.exp(-h / self.synapse_parameters["tau_fac"])
 
-                w = R_ * u_ * A
+                w = R_ * u_ * absolute_weight
                 w_log.append(w)
 
                 R_ = 1. + (R_ - R_ * u_ - 1.) * R_decay

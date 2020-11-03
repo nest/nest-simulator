@@ -71,7 +71,7 @@ epsilon = 0.1  # connection probability
 
 ###############################################################################
 # Definition of the number of neurons and connections in the SLIFN, needed
-# for the connection strength in the siegert neuron network
+# for the connection strength in the Siegert neuron network
 
 order = 2500
 NE = 4 * order  # number of excitatory neurons
@@ -81,7 +81,7 @@ CI = int(epsilon * NI)  # number of inhibitory synapses per neuron
 C_tot = int(CI + CE)  # total number of synapses per neuron
 
 ###############################################################################
-# Initialization of the parameters of the siegert neuron and the connection
+# Initialization of the parameters of the Siegert neuron and the connection
 # strength. The parameter are equivalent to the LIF-neurons in the SLIFN.
 
 tauMem = 20.0  # time constant of membrane potential in ms
@@ -152,7 +152,7 @@ multimeter = nest.Create(
     'multimeter', params={'record_from': ['rate'], 'interval': dt})
 
 ###############################################################################
-# Connections between ``siegert neurons`` are realized with the synapse model
+# Connections between ``Siegert neurons`` are realized with the synapse model
 # ``diffusion_connection``. These two parameters reflect the prefactors in
 # front of the rate variable in eq. 27-29 in [1].
 
@@ -189,7 +189,7 @@ nest.Connect(siegert_in, siegert_ex + siegert_in, 'all_to_all', syn_dict)
 nest.Simulate(simtime)
 
 ###################################################################################
-# Analyze the activity data. The asymptotic rate of the siegert neuron
+# Analyze the activity data. The asymptotic rate of the Siegert neuron
 # corresponds to the population- and time-averaged activity in the SLIFN.
 # For the symmetric network setup used here, the excitatory and inhibitory
 # rates are identical. For comparison execute the example ``brunel_delta_nest.py``.

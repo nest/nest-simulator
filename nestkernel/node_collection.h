@@ -69,6 +69,22 @@ public:
   virtual void set_first_node_id( index ) = 0;
   virtual index get_first_node_id() const = 0;
   virtual std::string get_type() const = 0;
+
+  /**
+   * Create a new NodeCollectionMetadata from this NodeCollectionMetadata, sliced to (inclusive) boundaries,
+   * with a step parameter. The slicing of metadata is analogous to the slicing of NodeCollections.
+   *
+   * The sliced metadata is set as the metadata of the specified NodeCollection.
+   * The original metadata is unchanged.
+   *
+   * @param start Index of the metadata to start at
+   * @param stop Index of the metadata to stop at
+   * @param step Number of places between elements to skip
+   * @param node_collection NodeCollection to which the sliced metadata is assigned
+   */
+  virtual void slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection ) = 0;
+
+  virtual bool operator==( const NodeCollectionMetadataPTR ) const = 0;
 };
 
 class NodeIDTriple
@@ -334,6 +350,13 @@ public:
   virtual bool is_range() const = 0;
 
   /**
+   * Checks if the NodeCollection has no elements.
+   *
+   * @return true if the NodeCollection is empty, false otherwise
+   */
+  virtual bool empty() const = 0;
+
+  /**
    * Returns index of node with given node ID in NodeCollection.
    *
    * @return Index of node with given node ID; -1 if node not in NodeCollection.
@@ -435,6 +458,7 @@ public:
   NodeCollectionMetadataPTR get_metadata() const override;
 
   bool is_range() const override;
+  bool empty() const override;
 
   long find( const index ) const override;
 
@@ -494,7 +518,7 @@ public:
    *
    * @param primitive Primitive to be converted
    * @param start Offset in the primitive to begin at.
-   * @param stop Offset in the primtive to stop at.
+   * @param stop Offset in the primitive to stop at.
    * @param step Length to step in the primitive.
    */
   NodeCollectionComposite( const NodeCollectionPrimitive&, size_t, size_t, size_t );
@@ -561,6 +585,7 @@ public:
   NodeCollectionMetadataPTR get_metadata() const override;
 
   bool is_range() const override;
+  bool empty() const override;
 
   long find( const index ) const override;
 };
@@ -728,14 +753,29 @@ inline index NodeCollectionPrimitive::operator[]( const size_t idx ) const
 inline bool NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
+  // Checking that rhs_ptr is valid first, to avoid segfaults. If rhs is a NodeCollectionComposite,
+  // rhs_ptr will be a null pointer.
+  if ( not rhs_ptr )
+  {
+    return false;
+  }
 
-  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_
-    and metadata_ == rhs_ptr->metadata_;
+  // Not dereferencing rhs_ptr->metadata_ in the equality comparison because we want to avoid overloading
+  // operator==() of *metadata_, and to let it handle typechecking.
+  const bool eq_metadata = ( not metadata_ and not rhs_ptr->metadata_ )
+    or ( metadata_ and rhs_ptr->metadata_ and *metadata_ == rhs_ptr->metadata_ );
+
+  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_ and eq_metadata;
 }
 
 inline bool NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
 {
-  return first_ == rhs.first_ and last_ == rhs.last_ and model_id_ == rhs.model_id_ and metadata_ == rhs.metadata_;
+  // Not dereferencing rhs_ptr->metadata_ in the equality comparison because we want to avoid overloading
+  // operator==() of *metadata_, and to let it handle typechecking.
+  const bool eq_metadata =
+    ( not metadata_ and not rhs.metadata_ ) or ( metadata_ and rhs.metadata_ and *metadata_ == rhs.metadata_ );
+
+  return first_ == rhs.first_ and last_ == rhs.last_ and model_id_ == rhs.model_id_ and eq_metadata;
 }
 
 inline NodeCollectionPrimitive::const_iterator
@@ -779,6 +819,12 @@ inline bool
 NodeCollectionPrimitive::is_range() const
 {
   return true;
+}
+
+inline bool
+NodeCollectionPrimitive::empty() const
+{
+  return last_ == 0;
 }
 
 inline long
@@ -827,7 +873,9 @@ inline bool NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
 
-  if ( size_ != rhs_ptr->size() || parts_.size() != rhs_ptr->parts_.size() )
+  // Checking if rhs_ptr is invalid first, to avoid segfaults. If rhs is a NodeCollectionPrimitive,
+  // rhs_ptr will be a null pointer.
+  if ( rhs_ptr == nullptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
   {
     return false;
   }
@@ -885,6 +933,13 @@ NodeCollectionComposite::get_metadata() const
 inline bool
 NodeCollectionComposite::is_range() const
 {
+  return false;
+}
+
+inline bool
+NodeCollectionComposite::empty() const
+{
+  // Composite NodeCollections can never be empty.
   return false;
 }
 } // namespace nest

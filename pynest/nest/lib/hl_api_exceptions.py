@@ -77,23 +77,23 @@ class NESTErrors(metaclass=NESTMappedException):
         """Base exception class for all NEST exceptions.
         """
 
-        def __init__(self, message, *args, **kwargs):
+        def __init__(self, message):
             """Initializer for NESTError base class.
 
             Parameters:
             -----------
-            message: full error message to report.
-            *args, **kwargs: passed through to Exception base class.
+            message: str
+                full error message to report.
             """
 
-            Exception.__init__(self, message, *args, **kwargs)
+            Exception.__init__(self, message)
             self.message = message
 
     class SLIException(NESTError):
         """Base class for all exceptions coming from sli.
         """
 
-        def __init__(self, commandname, errormessage, errorname='SLIException', *args, **kwargs):
+        def __init__(self, commandname, errormessage, errorname='SLIException'):
             """Initialize function.
 
             Parameters:
@@ -101,10 +101,9 @@ class NESTErrors(metaclass=NESTMappedException):
             errorname: error name from SLI.
             commandname: command name from SLI.
             errormessage: message from SLI.
-            *args, **kwargs: passed through to NESTErrors.NESTError base class.
             """
-            message = "{} in {}{}".format(errorname, commandname, errormessage)
-            NESTErrors.NESTError.__init__(self, message, errorname, commandname, errormessage, *args, **kwargs)
+            message = "{} in SLI function {}{}".format(errorname, commandname, errormessage)
+            NESTErrors.NESTError.__init__(self, message)
 
             self.errorname = errorname
             self.commandname = commandname
@@ -201,7 +200,6 @@ class NESTErrors(metaclass=NESTMappedException):
         'BadParameter': 'KernelException',
         'DimensionMismatch': 'KernelException',
         'DistributionError': 'KernelException',
-        'SimulationError': 'KernelException',
         'InvalidDefaultResolution': 'KernelException',
         'InvalidTimeInModel': 'KernelException',
         'StepMultipleRequired': 'KernelException',

@@ -63,21 +63,8 @@
 assert_or_die
 
 % Second test: attempt GetDefaults
-% some models excluded as they cause warnings (sli_neuron) or crashes (see #335)
 {
   ResetKernel
-  /exlist << /sli_neuron false >> def
-
-  modeldict keys 
-  {
-    dup exlist exch known not
-    {
-       % not on exclusion list, key on stack
-       GetDefaults
-       pop
-    }
-    if
-  }
-  forall
+  modeldict keys { GetDefaults pop } forall
 }
 pass_or_die

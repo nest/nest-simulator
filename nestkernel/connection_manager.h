@@ -97,12 +97,12 @@ public:
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_spec );
+    const std::vector< DictionaryDatum >& syn_specs );
 
   /**
    * Create connections.
    */
-  void connect( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  void connect( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
 
   void connect( TokenArray, TokenArray, const DictionaryDatum& );
 

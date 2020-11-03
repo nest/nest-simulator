@@ -69,7 +69,7 @@ skip_if_without_gsl
     /I_e 400.
   >> SetStatus
   
-  /sd /spike_detector Create def
+  /sr /spike_recorder Create def
   
   neuron1 neuron2
   << /rule /one_to_one /make_symmetric true >> 
@@ -86,15 +86,15 @@ skip_if_without_gsl
   << /synapse_model /gap_junction /weight 12.0 >>
   Connect
   
-  neuron1 sd Connect
-  neuron2 sd Connect
-  neuron3 sd Connect
-  neuron4 sd Connect
+  neuron1 sr Connect
+  neuron2 sr Connect
+  neuron3 sr Connect
+  neuron4 sr Connect
   
   50 Simulate
 
   % get events, replace vectors with SLI arrays    
-  /ev sd /events get def
+  /ev sr /events get def
   ev keys { /k Set ev dup k get cva k exch put } forall
   ev 
 

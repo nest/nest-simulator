@@ -36,7 +36,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Synapse type with short term plasticity using homogenous parameters
+Synapse type with short term plasticity using homogeneous parameters
 
 Description
 +++++++++++

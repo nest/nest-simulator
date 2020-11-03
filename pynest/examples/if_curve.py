@@ -91,15 +91,15 @@ class IF_curve():
             nest.SetDefaults(self.model, self.params)
         self.neuron = nest.Create(self.model, self.n_neurons)
         self.noise = nest.Create('noise_generator')
-        self.spike_detector = nest.Create('spike_detector')
+        self.spike_recorder = nest.Create('spike_recorder')
 
     def connect(self):
         #######################################################################
         # We connect the noisy current to the neurons and the neurons to
-        # the spike detectors.
+        # the spike recorders.
 
         nest.Connect(self.noise, self.neuron, 'all_to_all')
-        nest.Connect(self.neuron, self.spike_detector, 'all_to_all')
+        nest.Connect(self.neuron, self.spike_recorder, 'all_to_all')
 
     def output_rate(self, mean, std):
         self.build()
@@ -114,7 +114,7 @@ class IF_curve():
         # We simulate the network and calculate the rate.
 
         nest.Simulate(self.t_sim)
-        rate = self.spike_detector.n_events * 1000. / (1. * self.n_neurons * self.t_sim)
+        rate = self.spike_recorder.n_events * 1000. / (1. * self.n_neurons * self.t_sim)
         return rate
 
     def compute_transfer(self, i_mean=(400.0, 900.0, 50.0),
@@ -137,7 +137,7 @@ transfer = IF_curve(model, params)
 transfer.compute_transfer()
 
 ###############################################################################
-# After the simulation is finished we store the data into a file for
+# After the simulation is finished, we store the data into a file for
 # later analysis.
 
 with shelve.open(model + '_transfer.dat') as dat:

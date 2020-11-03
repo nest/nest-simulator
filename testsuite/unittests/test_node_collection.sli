@@ -135,30 +135,15 @@ pop  % remove argument to failing command above
 
 {
   << >> begin
-  (Check unsorted array can be converted to NodeCollection for existing neurons) M_PROGRESS message
+  (Check converting unsorted array to NodeCollection raises error) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create /dummy Set
   [ 5 3 4 7 ] cvnodecollection
-  cva
-  [ 3 4 5 7 ] eq
-  end
-} assert_or_die
+} fail_or_die
 
-% --------------------------------------------------
-
-{
-  << >> begin
-  (Check unsorted array can be converted to NodeCollection for existing neurons, multiple types) M_PROGRESS message
-  ResetKernel
-
-  /iaf_psc_alpha 10 Create /dummy1 Set
-  /iaf_psc_exp 10 Create /dummy2 Set
-  [ 15 5 3 12 4 7 13 ] cvnodecollection
-  cva
-  [ 3 4 5 7 12 13 15 ] eq
-  end
-} assert_or_die
+% remove argument of failed command
+pop
 
 % --------------------------------------------------
 

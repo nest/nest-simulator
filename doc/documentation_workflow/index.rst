@@ -6,6 +6,6 @@ Select the documentation workflow you would like to view:
 .. toctree::
     :maxdepth: 1
 
-    User documentation<user_documentation_workflow>
+    User-level documentation<user_documentation_workflow>
     Developer documentation<developer_documentation_workflow>
 

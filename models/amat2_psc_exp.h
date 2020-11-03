@@ -59,7 +59,7 @@ during which the neuron is not allowed to fire, even if the membrane
 potential exceeds the threshold. The membrane potential is NOT reset,
 but continuously integrated.
 
-The linear subthresold dynamics is integrated by the Exact
+The linear subthreshold dynamics is integrated by the Exact
 Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.

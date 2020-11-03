@@ -38,6 +38,7 @@ except ImportError:
     HAVE_PANDAS = False
 
 __all__ = [
+    'CollocatedSynapses',
     'CreateParameter',
     'Mask',
     'NodeCollection',
@@ -182,7 +183,9 @@ class NodeCollection(object):
 
     _datum = None
 
-    def __init__(self, data):
+    def __init__(self, data=None):
+        if data is None:
+            data = []
         if isinstance(data, kernel.SLIDatum):
             if data.dtype != "nodecollectiontype":
                 raise TypeError("Need NodeCollection Datum.")
@@ -328,6 +331,10 @@ class NodeCollection(object):
         --------
         set
         """
+
+        if not self:
+            raise ValueError('Cannot get parameter of empty NodeCollection')
+
         # ------------------------- #
         #      Checks of input      #
         # ------------------------- #
@@ -394,14 +401,20 @@ class NodeCollection(object):
             If the specified parameter does not exist for the nodes.
         """
 
+        if not self:
+            return
         if kwargs and params is None:
             params = kwargs
         elif kwargs and params:
             raise TypeError("must either provide params or kwargs, but not both.")
 
-        if isinstance(params, dict) and self[0].get('local'):
+        local_nodes = [self.local] if len(self) == 1 else self.local
 
-            contains_list = [is_iterable(vals) and not is_iterable(self[0].get(key)) for key, vals in params.items()]
+        if isinstance(params, dict) and all(local_nodes):
+
+            node_params = self[0].get()
+            contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
+                             key, vals in params.items()]
 
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
@@ -416,8 +429,7 @@ class NodeCollection(object):
                 params = temp_param
 
         if (isinstance(params, (list, tuple)) and self.__len__() != len(params)):
-            raise TypeError(
-                "status dict must be a dict, or a list of dicts of length len(nodes)")
+            raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(self.__len__()))
 
         sli_func('SetStatus', self._datum, params)
 
@@ -452,11 +464,18 @@ class NodeCollection(object):
 
         return index
 
+    def __bool__(self):
+        """Converts the NodeCollection to a bool. False if it is empty, True otherwise."""
+        return len(self) > 0
+
     def __array__(self, dtype=None):
         """Convert the NodeCollection to a NumPy array."""
         return numpy.array(self.tolist(), dtype=dtype)
 
     def __getattr__(self, attr):
+        if not self:
+            raise AttributeError('Cannot get attribute of empty NodeCollection')
+
         if attr == 'spatial':
             metadata = sli_func('GetMetadata', self._datum)
             val = metadata if metadata else None
@@ -597,6 +616,11 @@ class SynapseCollection(object):
         return result
 
     def __getattr__(self, attr):
+        if attr == 'distance':
+            dist = sli_func('Distance', self._datum)
+            super().__setattr__(attr, dist)
+            return self.distance
+
         return self.get(attr)
 
     def __setattr__(self, attr, value):
@@ -727,9 +751,7 @@ class SynapseCollection(object):
 
         if (isinstance(params, (list, tuple)) and
                 self.__len__() != len(params)):
-            raise TypeError(
-                "status dict must be a dict, or a list of dicts of length "
-                "len(nodes)")
+            raise TypeError("status dict must be a dict, or a list of dicts of length {}".format(self.__len__()))
 
         if kwargs and params is None:
             params = kwargs
@@ -737,7 +759,9 @@ class SynapseCollection(object):
             raise TypeError("must either provide params or kwargs, but not both.")
 
         if isinstance(params, dict):
-            contains_list = [is_iterable(vals) and not is_iterable(self[0].get(key)) for key, vals in params.items()]
+            node_params = self[0].get()
+            contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
+                             key, vals in params.items()]
 
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
@@ -758,6 +782,36 @@ class SynapseCollection(object):
 
         sr('2 arraystore')
         sr('Transpose { arrayload pop SetStatus } forall')
+
+
+class CollocatedSynapses(object):
+    """
+    Class for collocated synapse specifications.
+
+    Wrapper around a list of specifications, used when calling :py:func:`.Connect`.
+
+    Example
+    -------
+
+        ::
+
+            nodes = nest.Create('iaf_psc_alpha', 3)
+            syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
+                                               {'synapse_model': 'stdp_synapse'},
+                                               {'synapse_model': 'stdp_synapse', 'alpha': 3.})
+            nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
+
+            conns = nest.GetConnections()
+
+            print(conns.alpha)
+            print(len(syn_spec))
+    """
+
+    def __init__(self, *args):
+        self.syn_specs = args
+
+    def __len__(self):
+        return len(self.syn_specs)
 
 
 class Mask(object):

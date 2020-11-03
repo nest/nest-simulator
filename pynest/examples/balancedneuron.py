@@ -81,31 +81,31 @@ prec = 0.01      # how close need the excitatory rates be
 neuron = nest.Create("iaf_psc_alpha")
 noise = nest.Create("poisson_generator", 2)
 voltmeter = nest.Create("voltmeter")
-spikedetector = nest.Create("spike_detector")
+spikerecorder = nest.Create("spike_recorder")
 
 ###################################################################################
 # Fourth, the ``poisson_generator`` (`noise`) is configured using ``set``.
-# Note that we need not set parameters for the neuron, the spike detector, and
+# Note that we need not set parameters for the neuron, the spike recorder, and
 # the voltmeter, since they have satisfactory defaults.
 
 noise.rate = [n_ex * r_ex, n_in * r_in]
 
 ###############################################################################
-# Fifth, the ``iaf_psc_alpha`` is connected to the ``spike_detector`` and the
+# Fifth, the ``iaf_psc_alpha`` is connected to the ``spike_recorder`` and the
 # ``voltmeter``, as are the two Poisson generators to the neuron. The command
 # ``Connect`` has different variants. Plain `Connect` just takes the handles of
 # pre- and post-synaptic nodes and uses the default values for weight and
 # delay. It can also be called with a list of weights, as in the connection
 # of the noise below.
 # Note that the connection direction for the ``voltmeter`` is reversed compared
-# to the ``spike_detector``, because it observes the neuron instead of
+# to the ``spike_recorder``, because it observes the neuron instead of
 # receiving events from it. Thus, ``Connect`` reflects the direction of signal
 # flow in the simulation kernel rather than the physical process of inserting
 # an electrode into the neuron. The latter semantics is presently not
 # available in NEST.
 
 
-nest.Connect(neuron, spikedetector)
+nest.Connect(neuron, spikerecorder)
 nest.Connect(voltmeter, neuron)
 nest.Connect(noise, neuron, syn_spec={'weight': [[epsc, ipsc]], 'delay': 1.0})
 
@@ -125,9 +125,9 @@ def output_rate(guess):
     print("Inhibitory rate estimate: %5.2f Hz" % guess)
     rate = float(abs(n_in * guess))
     noise[1].rate = rate
-    spikedetector.n_events = 0
+    spikerecorder.n_events = 0
     nest.Simulate(t_sim)
-    out = spikedetector.n_events * 1000.0 / t_sim
+    out = spikerecorder.n_events * 1000.0 / t_sim
     print("  -> Neuron rate: %6.2f Hz (goal: %4.2f Hz)" % (out, r_ex))
     return out
 
@@ -136,10 +136,10 @@ def output_rate(guess):
 # The function takes the firing rate of the inhibitory neurons as an
 # argument. It scales the rate with the size of the inhibitory population and
 # configures the inhibitory Poisson generator (`noise[1]`) accordingly.
-# Then, the spike counter of the ``spike_detector`` is reset to zero. The
+# Then, the spike counter of the ``spike_recorder`` is reset to zero. The
 # network is simulated using ``Simulate``, which takes the desired simulation
 # time in milliseconds and advances the network state by this amount of time.
-# During simulation, the ``spike_detector`` counts the spikes of the target
+# During simulation, the ``spike_recorder`` counts the spikes of the target
 # neuron and the total number is read out at the end of the simulation
 # period. The return value of ``output_rate()`` is the firing rate of the
 # target neuron in Hz.

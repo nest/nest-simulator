@@ -8,4 +8,4 @@ placed in the standard `modeldict`.
 The code is linked as a static library.
 
 Please do not use this module as an example for your own modules. See
-precise instead.
+https://github.com/nest/nest-extension-module instead.

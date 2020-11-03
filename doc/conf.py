@@ -50,7 +50,6 @@ doc_path = os.path.abspath(os.path.dirname(__file__))
 root_path = os.path.abspath(doc_path + "/..")
 
 sys.path.insert(0, os.path.abspath(root_path))
-sys.path.insert(0, os.path.abspath(root_path + '/topology'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
 sys.path.insert(0, os.path.abspath(doc_path))
@@ -221,8 +220,8 @@ nitpick_ignore = [('py:class', 'None'),
 
 
 def setup(app):
-    app.add_stylesheet('css/custom.css')
-    app.add_stylesheet('css/pygments.css')
+    app.add_css_file('css/custom.css')
+    app.add_css_file('css/pygments.css')
     app.add_js_file("js/copybutton.js")
     app.add_js_file("js/custom.js")
 

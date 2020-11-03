@@ -31,11 +31,12 @@ import nest
 class OneToOneConnectTestCase(unittest.TestCase):
     """Tests of Connect with OneToOne pattern"""
 
+    def setUp(self):
+        nest.ResetKernel()
+
     def test_ConnectPrePost(self):
         """Connect pre to post"""
 
-        # Connect([pre], [post])
-        nest.ResetKernel()
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(pre, post, "one_to_one")
@@ -46,8 +47,6 @@ class OneToOneConnectTestCase(unittest.TestCase):
     def test_ConnectPrePostParams(self):
         """Connect pre to post with a params dict"""
 
-        # Connect([pre], [post], params)
-        nest.ResetKernel()
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(pre, post, "one_to_one", syn_spec={"weight": 2.0})
@@ -55,7 +54,6 @@ class OneToOneConnectTestCase(unittest.TestCase):
         weights = connections.get("weight")
         self.assertEqual(weights, [2.0, 2.0])
 
-        # Connect([pre], [post], [params, params])
         nest.ResetKernel()
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
@@ -68,8 +66,6 @@ class OneToOneConnectTestCase(unittest.TestCase):
     def test_ConnectPrePostWD(self):
         """Connect pre to post with a weight and delay"""
 
-        # Connect([pre], [post], w, d)
-        nest.ResetKernel()
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
@@ -80,7 +76,6 @@ class OneToOneConnectTestCase(unittest.TestCase):
         self.assertEqual(weights, [2.0, 2.0])
         self.assertEqual(delays, [2.0, 2.0])
 
-        # Connect([pre], [post], [w, w], [d, d])
         nest.ResetKernel()
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
@@ -95,22 +90,12 @@ class OneToOneConnectTestCase(unittest.TestCase):
     def test_IllegalConnection(self):
         """Wrong Connections"""
 
-        nest.ResetKernel()
         n = nest.Create('iaf_psc_alpha')
         vm = nest.Create('voltmeter')
+        sr = nest.Create('spike_recorder')
 
-        self.assertRaisesRegex(
-            nest.kernel.NESTError, "IllegalConnection", nest.Connect, n, vm)
-
-    def test_UnexpectedEvent(self):
-        """Unexpected Event"""
-
-        nest.ResetKernel()
-        n = nest.Create('iaf_psc_alpha')
-        sd = nest.Create('spike_detector')
-
-        self.assertRaisesRegex(
-            nest.kernel.NESTError, "UnexpectedEvent", nest.Connect, sd, n)
+        self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.Connect, n, vm)
+        self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.Connect, sr, n)
 
 
 def suite():

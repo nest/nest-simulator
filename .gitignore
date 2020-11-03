@@ -25,13 +25,10 @@ install/
 /libtool
 /nest/nest
 /nest/static_modules.h
-/pynest/do_tests.py
 /pynest/setup.py
 /reports/
 /sli/sli
 /testsuite/do_tests.sh
-/topology/setup.py
-/topology/doc/Topology_UserManual.out
 /doc/doxygen/
 /doc/_build/
 /doc/xml/

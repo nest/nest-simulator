@@ -45,7 +45,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
             "x": 1.0,
             "tau_rec": 100.,
             "tau_fac": 0.,
-            "weight": 1.            # initial weight
+            "weight": 1.  # initial weight
         }
 
     def test_tsodyk2_synapse(self):
@@ -57,7 +57,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
             pre_spikes,
             self.synapse_parameters["weight"])
 
-        assert np.all(np.abs(np.array(weight_reproduced_independently) - np.array(weight_by_nest)) < 1E-12)
+        assert np.testing.assert_allclose(weight_reproduced_independently, weight_by_nest, atol=1E-12)
 
     def do_the_nest_simulation(self):
         """
@@ -83,7 +83,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
                     "stop": (self.simulation_duration - self.hardcoded_trains_length)})
 
         # The detector is to save the randomly generated spike trains.
-        spike_detector = nest.Create("spike_detector")
+        spike_detector = nest.Create("spike_recorder")
 
         nest.Connect(presynaptic_generator, presynaptic_neuron,
                      syn_spec={"synapse_model": "static_synapse"})
@@ -98,10 +98,9 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = nest.GetStatus(spike_detector, keys='events')[0]
-        pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[0]]
+        all_spikes = spike_detector.events
+        pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.get('global_id')]
 
-        times = wr.get("events", "times")
         weights = wr.get("events", "weights")
 
         return (pre_spikes, weights)
@@ -129,8 +128,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
         u_ = self.synapse_parameters["U"]
         for time_in_simulation_steps in range(n_steps):
             if time_in_simulation_steps in pre_spikes_forced_to_grid:
-                # A presynaptic spike occured now.
-
+                # A presynaptic spike occurred now.
                 # Adjusting the current time to make it exact.
                 t_spike = _pre_spikes[pre_spikes_forced_to_grid.index(time_in_simulation_steps)]
 

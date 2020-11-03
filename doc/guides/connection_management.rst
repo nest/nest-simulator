@@ -3,27 +3,16 @@
 Connection Management
 =====================
 
-From NEST 2.4 onwards the old connection routines (i.e.
-`(Random)ConvergentConnect`, `(Random)DivergentConnect` and plain
-`Connect`) are replaced by one unified `Connect` function. In
-`SLI <an-introduction-to-sli.md>`__ ,the old syntax of the function
-still works, while in `PyNEST <introduction-to-pynest.md>`__, the
-`Connect()` function has been renamed to `OneToOneConnect()`.
-However, simple cases, which are just creating one-to-one connections
-between two lists of nodes are still working with the new command
-without the need to change the code. Note that the spatial connection is
-not effected by theses changes. The translation between the old and the
-new connect routines is described in `Old Connection
-Routines <connection-management.md#old-connection-routines>`__.
+In NEST, connections are created with the `Connect()` function. You can
+create connections with different types of connectivity patterns, which
+are defined inside the function under the ``conn_spec`` argument, and the
+key 'rule'. The patterns available are described in
+:ref:`Connection Rules <conn_rules>`. In addition the synapse model can
+be specified within the Connect function and all synaptic parameters can
+be randomly distributed. More information about synapse models and their
+parameters can be found in :ref:`Synapse Specification <synapse_spec>`.
 
-The connectivity pattern is defined inside the `Connect()` function
-under the key 'rule'. The patterns available are described in
-`Connection Rules <connection-management.md#connection-rules>`__. In
-addition the synapse model can be specified within the connect function
-and all synaptic parameters can be randomly distributed.
-
-The `Connect()` function can be called in either of the following
-manners:
+The `Connect()` function can be called in any of the following ways:
 
 ::
 
@@ -31,7 +20,7 @@ manners:
     Connect(pre, post, conn_spec)
     Connect(pre, post, conn_spec, syn_spec)
 
-``pre`` and ``post`` are lists of Global Ids defining the nodes of
+``pre`` and ``post`` are `NodeCollections` of node IDs defining the nodes of
 origin and termination.
 
 ``conn_spec`` can either be a string containing the name of the
@@ -44,18 +33,16 @@ True) and multiple connections between pairs of neurons (``allow_multapses``,
 default: True) can be contained in the dictionary. The validity of the
 switches is confined by the Connect-call. Thus connecting the same set
 of neurons multiple times with the switch 'allow_multapses' set to False, one
-particular connection might be established multiple times. The same
-applies to nodes being specified multiple times in the source or target
-vector. Here 'allow_multapses' set to False will result in one potential
-connection between each occurring node pair.
+particular connection might be established multiple times.
 
 ``syn_spec`` defines the synapse type and its properties. It can be
 given as a string defining the synapse model (default:
-'static_synapse') or as a dictionary. By using the key-word variant
-(``Connect(pre, post, syn_spec=syn_spec_dict)``), the conn_spec can be
+'static_synapse'), as an object defining :ref:`collocated synapses <collocated_synapses>`,
+or as a dictionary. By using the key-word variant
+(``Connect(pre, post, syn_spec=syn_spec_dict)``), the ``conn_spec`` can be
 omitted in the call to connect and 'all_to_all' is assumed as the
 default. The exact usage of the synapse dictionary is described in
-:ref:`synapse-spec`.
+:ref:`synapse_spec`.
 
 .. _conn_rules:
 
@@ -69,38 +56,23 @@ given as strings, for all other rules, a dictionary specifying the rule
 and its parameters, such as in- or out-degrees, is required.
 
 one-to-one
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. image:: ../_static/img/One_to_one.png
      :width: 200px
      :align: center
 
 The ith node in ``pre`` is connected to the ith node in ``post``. The
-node lists pre and post have to be of the same length.
+NodeCollections of pre and post have to be of the same length.
 
 Example:
-
-One-to-one connections
 
 ::
 
     n = 10
-    A = Create("iaf_psc_alpha", n)
-    B = Create("spike_recorder", n)
-    Connect(A, B, 'one_to_one')
-
-This rule can also take two Global IDs A and B instead of integer lists.
-A shortcut is provided if only two nodes are connected with the
-parameters weight and delay such that weight and delay can be given as
-third and fourth argument to the `Connect()` function.
-
-Example:
-
-::
-
-    weight = 1.5
-    delay = 0.5
-    Connect(A[0], B[0], weight, delay)
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('spike_recorder', n)
+    nest.Connect(A, B, 'one_to_one')
 
 all-to-all
 ~~~~~~~~~~
@@ -117,9 +89,9 @@ Example:
 ::
 
     n, m = 10, 12
-    A = Create("iaf_psc_alpha", n)
-    B = Create("iaf_psc_alpha", m)
-    Connect(A, B)
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('iaf_psc_alpha', m)
+    nest.Connect(A, B)
 
 fixed-indegree
 ~~~~~~~~~~~~~~
@@ -136,13 +108,13 @@ Example:
 ::
 
     n, m, N = 10, 12, 2
-    A = Create("iaf_psc_alpha", n)
-    B = Create("iaf_psc_alpha", m)
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('iaf_psc_alpha', m)
     conn_dict = {'rule': 'fixed_indegree', 'indegree': N}
-    Connect(A, B, conn_dict)
+    nest.Connect(A, B, conn_dict)
 
 fixed-outdegree
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 
 .. image:: ../_static/img/Fixed_outdegree.png
@@ -157,10 +129,10 @@ Example:
 ::
 
     n, m, N = 10, 12, 2
-    A = Create("iaf_psc_alpha", n)
-    B = Create("iaf_psc_alpha", m)
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('iaf_psc_alpha', m)
     conn_dict = {'rule': 'fixed_outdegree', 'outdegree': N}
-    Connect(A, B, conn_dict)
+    nest.Connect(A, B, conn_dict)
 
 fixed-total-number
 ~~~~~~~~~~~~~~~~~~
@@ -173,13 +145,13 @@ Example:
 ::
 
     n, m, N = 10, 12, 30
-    A = Create("iaf_psc_alpha", n)
-    B = Create("iaf_psc_alpha", m)
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('iaf_psc_alpha', m)
     conn_dict = {'rule': 'fixed_total_number', 'N': N}
-    Connect(A, B, conn_dict)
+    nest.Connect(A, B, conn_dict)
 
 pairwise-bernoulli
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 For each possible pair of nodes from ``pre`` and ``post``, a connection
 is created with probability ``p``.
@@ -189,15 +161,34 @@ Example:
 ::
 
     n, m, p = 10, 12, 0.2
-    A = Create("iaf_psc_alpha", n)
-    B = Create("iaf_psc_alpha", m)
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('iaf_psc_alpha', m)
     conn_dict = {'rule': 'pairwise_bernoulli', 'p': p}
-    Connect(A, B, conn_dict)
+    nest.Connect(A, B, conn_dict)
+
+symmetric-pairwise-bernoulli
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For each possible pair of nodes from ``pre`` and ``post``, a connection
+is created with probability ``p`` from ``pre`` to ``post``, as well as
+a connection from ``post`` to ``pre`` (two connections in total). To
+use the 'symmetric_pairwise_bernoulli' rule, ``allow_autapses`` must
+be False, and ``make_symmetric`` must be True.
+
+Example:
+
+::
+
+    n, m, p = 10, 12, 0.2 
+    A = nest.Create('iaf_psc_alpha', n) 
+    B = nest.Create('iaf_psc_alpha', m) 
+    conn_dict = {'rule': 'symmetric_pairwise_bernoulli', 'p': p, 'allow_autapses': False, 'make_symmetric': True} 
+    nest.Connect(A, B, conn_dict)
 
 .. _synapse_spec:
 
 Synapse Specification
--------------------------
+---------------------
 
 The synapse properties can be given as a string or a dictionary. The
 string can be the name of a pre-defined synapse which can be found in
@@ -299,6 +290,14 @@ Example:
     conn_dict = {'rule': 'fixed_outdegree', 'outdegree': 3}
     syn_dict = {'weight': [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]}
     Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
+
+
+.. _collocated_synapses:
+
+Collocated Synapses
+~~~~~~~~~~~~~~~~~~~
+
+MORE TO COME HERE!
 
 .. _dist_params:
 

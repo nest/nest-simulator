@@ -436,11 +436,13 @@ post-synaptic node. Receptor types are identified by integer numbers,
 the default receptor type is 0. The meaning of the receptor type depends
 on the model and is documented in the model documentation. To connect to
 a non-standard receptor type, the parameter ``receptor_type`` of the
-additional argument ``params`` is used in the call to the ``Connect``
+``syn_spec`` argument is used in the call to the ``Connect``
 command. To illustrate the concept of receptor types, we give an example
 using standard integrate-and-fire neurons as presynaptic nodes and a
 multi-compartment integrate-and-fire neuron (``iaf_cond_alpha_mc``) as
-post-synaptic node.
+post-synaptic node. As seen in the image and code snippet below, we
+connect the integrate-and-fire neurons to different receptors of the
+multi-compartment integrate-and-fire neuron model.
 
 .. image:: ../_static/img/Receptor_types.png
      :width: 200px
@@ -448,57 +450,120 @@ post-synaptic node.
 
 ::
 
-    A1, A2, A3, A4 = Create("iaf_psc_alpha", 4)
-    B = Create("iaf_cond_alpha_mc")
-    receptors = GetDefaults("iaf_cond_alpha_mc")["receptor_types"]
-    print receptors
+    A1 = nest.Create('iaf_psc_alpha')
+    A2 = nest.Create('iaf_psc_alpha')
+    A3 = nest.Create('iaf_psc_alpha')
+    A4 = nest.Create('iaf_psc_alpha')
+    B = nest.Create('iaf_cond_alpha_mc')
 
-    {'soma_exc': 1,
-     'soma_inh': 2,
-     'soma_curr': 7,
-     'proximal_exc': 3
-     'proximal_inh': 4,
-     'proximal_curr': 8,
-     'distal_exc': 5,
-     'distal_inh': 6,
-     'distal_curr': 9,}
+    receptors = nest.GetDefaults('iaf_cond_alpha_mc')['receptor_types']
+    print(receptors)
+        {'soma_exc': 1,
+         'soma_inh': 2,
+         'soma_curr': 7,
+         'proximal_exc': 3
+         'proximal_inh': 4,
+         'proximal_curr': 8,
+         'distal_exc': 5,
+         'distal_inh': 6,
+         'distal_curr': 9,}
 
-    Connect([A1], B, syn_spec={"receptor_type": receptors["distal_inh"]})
-    Connect([A2], B, syn_spec={"receptor_type": receptors["proximal_inh"]})
-    Connect([A3], B, syn_spec={"receptor_type": receptors["proximal_exc"]})
-    Connect([A4], B, syn_spec={"receptor_type": receptors["soma_inh"]})
+    nest.Connect(A1, B, syn_spec={'receptor_type': receptors['distal_inh']})
+    nest.Connect(A2, B, syn_spec={'receptor_type': receptors['proximal_inh']})
+    nest.Connect(A3, B, syn_spec={'receptor_type': receptors['proximal_exc']})
+    nest.Connect(A4, B, syn_spec={'receptor_type': receptors['soma_inh']})
 
-The code block above connects a standard integrate-and-fire neuron to a
-somatic excitatory receptor of a multi-compartment integrate-and-fire
-neuron model. The result is illustrated in the figure.
 
 .. _synapse-types:
 
 Synapse Types
 -------------
 
-NEST supports multiple synapse types that are specified during
-connection setup. The default synapse type in NEST is
+NEST supports multiple synapse types that can be specified during
+connection setup. The default synapse type in NEST is the
 ``static_synapse``. Its weight does not change over time. To allow
 learning and plasticity, it is possible to use other synapse types that
 implement long-term or short-term plasticity. A list of available types
-is accessible via the command ``Models("synapses")``. The output of this
-command (as of revision 11199) is shown below:
+is accessible via the command ``nest.Models('synapses')``. The output of this
+command (as of commit ``1159664``) is shown below:
 
 ::
 
-    ['cont_delay_synapse',
+    ['bernoulli_synapse',
+     'bernoulli_synapse_hpc',
+     'bernoulli_synapse_lbl',
+     'clopath_synapse',
+     'clopath_synapse_hpc',
+     'clopath_synapse_lbl',
+     'cont_delay_synapse',
+     'cont_delay_synapse_hpc',
+     'cont_delay_synapse_lbl',
+     'diffusion_connection',
+     'diffusion_connection_lbl',
+     'excitatory',
+     'gap_junction',
+     'gap_junction_lbl',
      'ht_synapse',
+     'ht_synapse_hpc',
+     'ht_synapse_lbl',
+     'jonke_synapse',
+     'jonke_synapse_hpc',
+     'jonke_synapse_lbl',
      'quantal_stp_synapse',
+     'quantal_stp_synapse_hpc',
+     'quantal_stp_synapse_lbl',
+     'rate_connection_delayed',
+     'rate_connection_delayed_lbl',
+     'rate_connection_instantaneous',
+     'rate_connection_instantaneous_lbl',
      'static_synapse',
-     'static_synapse_hom_wd',
+     'static_synapse_hom_w',
+     'static_synapse_hom_w_hpc',
+     'static_synapse_hom_w_lbl',
+     'static_synapse_hpc',
+     'static_synapse_lbl',
      'stdp_dopamine_synapse',
+     'stdp_dopamine_synapse_hpc',
+     'stdp_dopamine_synapse_lbl',
      'stdp_facetshw_synapse_hom',
+     'stdp_facetshw_synapse_hom_hpc',
+     'stdp_facetshw_synapse_hom_lbl',
+     'stdp_nn_pre-centered_synapse',
+     'stdp_nn_pre-centered_synapse_hpc',
+     'stdp_nn_pre-centered_synapse_lbl',
+     'stdp_nn_restr_synapse',
+     'stdp_nn_restr_synapse_hpc',
+     'stdp_nn_restr_synapse_lbl',
+     'stdp_nn_symm_synapse',
+     'stdp_nn_symm_synapse_hpc',
+     'stdp_nn_symm_synapse_lbl',
      'stdp_pl_synapse_hom',
+     'stdp_pl_synapse_hom_hpc',
+     'stdp_pl_synapse_hom_lbl',
      'stdp_synapse',
      'stdp_synapse_hom',
+     'stdp_synapse_hom_hpc',
+     'stdp_synapse_hom_lbl',
+     'stdp_synapse_hpc',
+     'stdp_synapse_lbl',
+     'stdp_triplet_synapse',
+     'stdp_triplet_synapse_hpc',
+     'stdp_triplet_synapse_lbl',
      'tsodyks2_synapse',
-     'tsodyks_synapse']
+     'tsodyks2_synapse_hpc',
+     'tsodyks2_synapse_lbl',
+     'tsodyks_synapse',
+     'tsodyks_synapse_hom',
+     'tsodyks_synapse_hom_hpc',
+     'tsodyks_synapse_hom_lbl',
+     'tsodyks_synapse_hpc',
+     'tsodyks_synapse_lbl',
+     'urbanczik_synapse',
+     'urbanczik_synapse_hpc',
+     'urbanczik_synapse_lbl',
+     'vogels_sprekeler_synapse',
+     'vogels_sprekeler_synapse_hpc',
+     'vogels_sprekeler_synapse_lbl']
 
 All synapses store their parameters on a per-connection basis. An
 exception to this scheme are the homogeneous synapse types (identified
@@ -507,34 +572,36 @@ synapses of a type. This means that these are the same for all
 connections. They can be used to save memory.
 
 The default values of a synapse type can be inspected using the command
-`GetDefaults()`, which takes the name of the synapse as an argument,
-and modified with `SetDefaults()`, which takes the name of the synapse
+``nest.GetDefaults()``, which takes the name of the synapse as an argument,
+and modified with ``nest.SetDefaults()``, which takes the name of the synapse
 type and a parameter dictionary as arguments.
 
 ::
 
-    print GetDefaults("static_synapse")
+    print(nest.GetDefaults('static_synapse'))
 
-    {'delay': 1.0,
-    'max_delay': -inf,
-    'min_delay': inf,
-    'num_connections': 0,
-    'num_connectors': 0,
-    'receptor_type': 0,
-    'synapsemodel': 'static_synapse',
-    'weight': 1.0}
+        {'delay': 1.0,
+         'has_delay': True,
+         'num_connections': 0,
+         'receptor_type': 0,
+         'requires_symmetric': False,
+         'sizeof': 32,
+         'synapse_model':
+         'static_synapse',
+         'weight': 1.0,
+         'weight_recorder': ()}
 
-    SetDefaults("static_synapse", {"weight": 2.5})
+    nest.SetDefaults('static_synapse', {'weight': 2.5})
 
 For the creation of custom synapse types from already existing synapse
-types, the command `CopyModel` is used. It has an optional argument
+types, the command ``nest.CopyModel`` is used. It has an optional argument
 ``params`` to directly customize it during the copy operation. Otherwise
 the defaults of the copied model are taken.
 
 ::
 
-    CopyModel("static_synapse", "inhibitory", {"weight": -2.5})
-    Connect(A, B, syn_spec="inhibitory")
+    nest.CopyModel('static_synapse', 'inhibitory', {'weight': -2.5})
+    nest.Connect(A, B, syn_spec='inhibitory')
 
 **Note**: Not all nodes can be connected via all available synapse
 types. The events a synapse type is able to transmit is documented in
@@ -543,58 +610,75 @@ the ``Transmits`` section of the model documentation.
 Inspecting Connections
 ----------------------
 
-``GetConnections(source=None, target=None, synapse_model=None)``: Return
-an array of identifiers for connections that match the given parameters.
-source and target need to be lists of node IDs, model is a string
-representing a synapse model. If GetConnections is called without
-parameters, all connections in the network are returned. If a list of
+``nest.GetConnections(source=None, target=None, synapse_model=None,synapse_label=None)``
+returns a ``SynapseCollection`` object of identifiers for connections
+that match the given parameters. ``source`` and ``target`` need to be
+NodeCollections of node IDs, ``synapse_model`` is a string representing
+a synapse model. You can also give a ``synapse_label`` if you have 
+specified this when connecting. If `GetConnections` is called without
+parameters, all connections in the network are returned. If a NodeCollection of
 source neurons is given, only connections from these pre-synaptic
-neurons are returned. If a list of target neurons is given, only
+neurons are returned. If a NodeCollection of target neurons is given, only
 connections to these post-synaptic neurons are returned. If a synapse
 model is given, only connections with this synapse type are returned.
 Any combination of source, target and model parameters is permitted.
-Each connection id is a 5-tuple or, if available, a NumPy array with the
-following five entries: source-node_id, target-node_id, target-thread,
-synapse-id, port.
 
-The result of `GetConnections` can be given as an argument to the
-`GetStatus` function, which will then return a list with the
+Each connection in the SynapseCollection is represented by the
+following five entries: source-node_id, target-node_id, target-thread,
+synapse-id, and port.
+
+The result of ``nest.GetConnections`` can be given as an argument to the
+``nest.GetStatus`` function, or, better yet, by using the ``get()`` function
+on the SynapseCollection. This will return a dictionary with the
 parameters of the connections:
 
 ::
 
-    n1 = Create("iaf_psc_alpha")
-    n2 = Create("iaf_psc_alpha")
-    Connect(n1, n2)
-    conn = GetConnections(n1)
-    print GetStatus(conn)
+    n1 = nest.Create('iaf_psc_alpha', 2)
+    n2 = nest.Create('iaf_psc_alpha')
+    nest.Connect(n1, n2)
+    conn = nest.GetConnections(n1)
+    print(conn.get())
 
-    [{'synapse_type': 'static_synapse',
-      'target': 2,
-      'weight': 1.0,
-      'delay': 1.0,
-      'source': 1,
-      'receptor': 0}]
+        {'delay': [1.0, 1.0],
+         'port': [0, 1],
+         'receptor': [0, 0],
+         'sizeof': [32, 32],
+         'source': [1, 2],
+         'synapse_id': [18, 18],
+         'synapse_model': ['static_synapse', 'static_synapse'],
+         'target': [3, 3],
+         'target_thread': [0, 0],
+         'weight': [1.0, 1.0]}
+
 
 Modifying existing Connections
 ------------------------------
 
-To modify the connections of an existing connection, one also has to
-obtain handles to the connections with `GetConnections()` first. These
-can then be given as arguments to the `SetStatus()` functions:
+To modify the connections of an existing connection, one has to first
+obtain handles to the connections by calling `GetConnections()`. These
+can then be given as arguments to the ``nest.SetStatus()`` function, or
+by using the ``set()`` function on the SynapseCollection:
 
 ::
 
-    n1 = Create("iaf_psc_alpha")
-    n2 = Create("iaf_psc_alpha")
-    Connect(n1, n2)
-    conn = GetConnections(n1)
-    SetStatus(conn, {"weight": 2.0})
-    print GetStatus(conn)
+    n1 = nest.Create('iaf_psc_alpha')
+    n2 = nest.Create('iaf_psc_alpha')
+    nest.Connect(n1, n2)
+    
+    conn = nest.GetConnections(n1)
+    conn.set(weight=2.0)
+    print(conn.get())
 
-    [{'synapse_type': 'static_synapse',
-      'target': 2,
-      'weight': 2.0,
-      'delay': 1.0,
-      'source': 1,
-      'receptor': 0}]
+        {'delay': 1.0,
+         'port': 0,
+         'receptor': 0,
+         'sizeof': 32,
+         'source': 1,
+         'synapse_id': 18,
+         'synapse_model':
+         'static_synapse',
+         'target': 2,
+         'target_thread': 0,
+         'weight': 2.0}
+

@@ -22,7 +22,7 @@
 """Two neuron example
 ----------------------------
 
-This script simulates two connected pre and postsynaptic neurons. 
+This script simulates two connected pre- and postsynaptic neurons.
 The presynaptic neuron receives a constant external current.
 And, the membrane potential of both neurons are recorded.
 

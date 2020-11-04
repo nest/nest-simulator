@@ -27,7 +27,7 @@ from contextlib import contextmanager
 
 from ..ll_api import *
 from .hl_api_helper import *
-import .hl_api_types import NodeCollection
+from .hl_api_types import NodeCollection
 from typing import Dict, List
 
 __all__ = [

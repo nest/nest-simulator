@@ -567,7 +567,7 @@ def Load(data: Dict) -> Dict:
                 specs.pop("target")
                 Connect([source], [target], syn_spec=specs)
         except Exception as e:
-            print("Error during synapse loading:" + str(e))
+            print("Error during synapse loading: " + str(e))
 
         #we only want the newly created connections, but Connect does not return a SynapseCollection object
         created["synapses"] = GetConnections()

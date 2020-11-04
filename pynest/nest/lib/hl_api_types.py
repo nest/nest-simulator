@@ -26,7 +26,6 @@ Classes defining the different PyNEST types
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
-from .hl_api_simulation import GetKernelStatus
 
 import numpy
 import json
@@ -686,8 +685,7 @@ class SynapseCollection(object):
 
         # Return empty tuple if we have no connections or if we have done a
         # nest.ResetKernel()
-        num_conn = GetKernelStatus('num_connections')
-        if self.__len__() == 0 or num_conn == 0:
+        if self.__len__() == 0 or sli_func('GetKernelStatus /num_connections get') == 0:
             return ()
 
         if keys is None:
@@ -743,10 +741,8 @@ class SynapseCollection(object):
             If the specified parameter does not exist for the connections.
         """
 
-        # This was added to ensure that the function is a nop (instead of,
-        # for instance, raising an exception) when applied to an empty
-        # SynapseCollection, or after having done a nest.ResetKernel().
-        if self.__len__() == 0 or GetKernelStatus()['network_size'] == 0:
+        # Do nothing if we have no connections or if we have done a nest.ResetKernel()
+        if self.__len__() == 0 or sli_func('GetKernelStatus /num_connections get') == 0:
             return
 
         if (isinstance(params, (list, tuple)) and

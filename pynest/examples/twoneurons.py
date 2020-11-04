@@ -35,6 +35,8 @@ See Also
 
 ###############################################################################
 # First, we import all necessary modules for simulation, analysis and plotting.
+# Additionally, we set the verbosity to suppress info 
+# messages and reset the kernel.
 
 import nest
 import nest.voltage_trace

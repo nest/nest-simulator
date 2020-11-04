@@ -31,9 +31,9 @@ be given.
 In addition switches allowing self-connections (``allow_autapses``, default:
 True) and multiple connections between pairs of neurons (``allow_multapses``,
 default: True) can be contained in the dictionary. The validity of the
-switches is confined by the Connect-call. Thus connecting the same set
+switches is confined by the Connect-call. Thus, by connecting the same set
 of neurons multiple times with the switch 'allow_multapses' set to False, one
-particular connection might be established multiple times.
+particular connection might still be established multiple times.
 
 ``syn_spec`` defines the synapse type and its properties. It can be
 given as a string defining the synapse model (default:
@@ -235,7 +235,7 @@ Example:
 and ``fixed_total_number``. The arrays can be specified as numpy arrays or
 lists. As with the scalar parameters, all parameters but the receptor
 types must be specified as arrays of floats. For ``one_to_one`` the
-array must have the same length as the population NodeCollection.
+array must have the same length as the NodeCollections.
 
 Example:
 

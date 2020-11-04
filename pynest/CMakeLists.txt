@@ -63,6 +63,7 @@ if ( HAVE_PYTHON )
       ${PROJECT_SOURCE_DIR}/libnestutil
       ${PROJECT_SOURCE_DIR}/nest
       ${PROJECT_SOURCE_DIR}/nestkernel
+      ${PROJECT_SOURCE_DIR}/nestkernel/spatial
       ${PROJECT_SOURCE_DIR}/librandom
       ${PROJECT_SOURCE_DIR}/sli
       ${SLI_MODULE_INCLUDE_DIRS}
@@ -82,9 +83,6 @@ if ( HAVE_PYTHON )
     WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
       )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
-  install( FILES ${PROJECT_BINARY_DIR}/pynest/do_tests.py
-      DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
-      )
 
   install( DIRECTORY examples/
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest

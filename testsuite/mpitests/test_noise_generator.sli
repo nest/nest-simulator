@@ -26,7 +26,7 @@ Name: testsuite::test_noise_generator - Test parallel noise injection
 Synopsis: nest_indirect test_noise_generator.sli -> -
 
 Description:
-   Creates a Noise generator and sends spikes to spike detector. Assert invariant
+   Creates a Noise generator and sends spikes to spike recorder. Assert invariant
    results for fixed VP number. This is a partial response to #551. May be adapted
    to other generators.
 
@@ -50,16 +50,16 @@ skip_if_not_threaded
   >> SetKernelStatus
 
   /pg /noise_generator << /mean 1000. /std 500. /dt 1.0 >> Create def
-  /sd /spike_detector Create def
+  /sr /spike_recorder Create def
   /pnet [ total_vps ] { ; /iaf_psc_alpha Create } Table def
 
   pnet { pg exch Connect } forall
-  pnet { sd Connect } forall
+  pnet { sr Connect } forall
   
   40. Simulate
 
   % get events, replace vectors with SLI arrays    
-  /ev sd /events get def
+  /ev sr /events get def
   ev keys { /k Set ev dup k get cva k exch put } forall
   ev 
 

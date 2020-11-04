@@ -1007,48 +1007,34 @@ def
       % Connect nodes from two sets of node IDs using the given connectivity
       % and synapse specifications
       [node_idlisttype node_idlisttype /dictionarytype /dictionarytype] {
-	  /syn_spec :Connect_complete_dict   % fill in missing defaults
-	  exch                  % exchange syn_spec and conn_spec
-	  /conn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                  % exchange syn_spec and conn_spec
-	  4 2 roll              % bring sources and targets to top
-	  cvnodecollection exch  % convert targets to nodecollection
-	  cvnodecollection exch  % convert sources to nodecollection
-	  4 2 roll              % bring sources and targets to bottom
-	  Connect_g_g_D_D
+        /syn_spec :Connect_complete_dict   % fill in missing defaults
+        exch                   % exchange syn_spec and conn_spec
+        /conn_spec :Connect_complete_dict  % fill in missing defaults
+        exch                   % exchange syn_spec and conn_spec
+        4 2 roll               % bring sources and targets to top
+        cvnodecollection exch  % convert targets to nodecollection
+        cvnodecollection exch  % convert sources to nodecollection
+        4 2 roll               % bring sources and targets to bottom
+        Connect_g_g_D_D
+      } bind addtotrie
+      
+      % Variant: sources targets conn_spec syn_vector Connect
+      % Connect nodes from two sets of NodeCollections using the given connectivity specification
+      % and a list of synapse specifications
+      [node_idlisttype node_idlisttype /dictionarytype /arraytype] {
+        /test_syn_specs Set
+        test_syn_specs
+        {
+          /syn_spec :Connect_complete_dict
+          pop
+        } forall
+        test_syn_specs
+        Connect_g_g_D_a
       } bind addtotrie
 
   } forall
 
 def
-
-/** @BeginDocumentation
-   Name: Connect_nonunique - Connect all node IDs in one array to all node IDs in another array.
-
-   Synopsis:
-   sources targets syn_spec     Connect_nonunique
-
-   Parameters:
-   sources    array  - the node IDs of the sources
-   targets    array  - the node IDs of the targets
-   syn_spec   dict   - dictionary with synapse model specification (see Options in Connect)
-
-   Description:
-   Connects all sources to all targets. Source and target arrays may
-   have duplicate node IDs.
-
-   SeeAlso: Connect
-
-   Author: Håkon Mørk
-
-   FirstVersion: September 2019
-*/
-/Connect_nonunique [/arraytype /arraytype /dictionarytype]
-{
-  /syn_spec :Connect_complete_dict   % fill in missing defaults
-  Connect_nonunique_ia_ia_D
-} def
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1512,6 +1498,10 @@ def
 
 /Distance [/arraytype /nodecollectiontype]
     /Distance_a_g load
+def
+
+/Distance [/arraytype]
+    /Distance_a load
 def
 
 /GetLayerStatus [/nodecollectiontype]

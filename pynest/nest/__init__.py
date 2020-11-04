@@ -23,6 +23,10 @@
 Initializer of PyNEST.
 """
 
+import sys
+if sys.version_info[0] == 2:
+    raise Exception("Python 2 is not supported anymore, please use Python 3.")
+
 from . import ll_api                  # noqa
 from .ll_api import set_communicator  # noqa
 
@@ -39,6 +43,8 @@ try:
     from . import server              # noqa
 except ImportError:
     pass
+
+__version__ = ll_api.sli_func("statusdict /version get")
 
 
 def test():

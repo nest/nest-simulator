@@ -1,0 +1,53 @@
+/*
+ *  issue-1610.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /** @BeginDocumentation
+Name: testsuite::issue-1610
+
+Synopsis: (issue-1610) run -> NEST exits if test fails
+
+Description:
+Ensure that comparing primitive and composite NodeCollections does not lead to
+a segmentation fault and gives the correct result.
+
+Author: Håkon Mørk
+FirstVersion: June 2020
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+{
+  ResetKernel
+
+  /prim_nc /iaf_psc_alpha 10 Create def
+  /comp_nc /iaf_psc_exp 5 Create /iaf_psc_alpha 5 Create join def
+
+  prim_nc comp_nc eq not
+  comp_nc prim_nc eq not and
+}
+assert_or_die
+
+endusing

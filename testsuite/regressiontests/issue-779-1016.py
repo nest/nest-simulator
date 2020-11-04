@@ -29,18 +29,10 @@ This is a regression test for GitHub issues 779 and 1016.
 from subprocess import check_output, STDOUT
 from os.path import join
 from tempfile import mktemp
-from sys import exit, version_info
+import sys
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 126
-
-
-def decode(arg):
-    if version_info < (3,):
-        return arg
-    else:
-        return arg.decode("utf8")
-
 
 nestscript = mktemp(".sli")
 nestcmd = ["nest", "-d", "--verbosity=ALL", nestscript]
@@ -49,11 +41,11 @@ with open(nestscript, "w") as f:
     f.write("statusdict/argv :: == M_FATAL setverbosity")
 
 raw_output = check_output(nestcmd, stderr=STDOUT)
-output = [x for x in decode(raw_output).split("\n") if x != ""]
+output = [x for x in raw_output.decode("utf-8").split("\n") if x != ""]
 
 expected = "[(" + ") (".join(nestcmd) + ")]"
 
 if output[-1] == expected:
-    exit(EXIT_SUCCESS)
+    sys.exit(EXIT_SUCCESS)
 else:
-    exit(EXIT_FAILURE)
+    sys.exit(EXIT_FAILURE)

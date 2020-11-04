@@ -1,45 +1,44 @@
 #!/usr/bin/env python3
 
-"""NEST Client Performance Testbench.
+"""NEST Server with MPI support
 
 Usage:
-  run_benchmarks.py -h | --help
-  run_benchmarks.py clisrv [--host=HOST] [--port=PORT] [-o FILE] TESTCASE
-  run_benchmarks.py import [-o FILE] TESTCASE
+  nest-server-mpi --help
+  mpirun --oversubscribe -np <np> nest-server-mpi [command] [options]
 
-mpirun --oversubscribe -np 4 nest-server-mpi
-
-Test modes:
-  clisrv   use NEST via the NEST Client/Server API
-  import   use NEST via direct import
+Commands:
+  log         display the sever log stored in /tmp/nest-server.log
+  status      display the status of NEST Server
+  start       start a new instance of the server
+  stop        stop a server instance running on <HOST>:<PORT>
+  restart     restart (i.e. stop and start) a server on <HOST>:<PORT>
 
 Options:
-  -h --help     display usage information and exit
-  --host HOST   the host where the NEST Server runs [default: localhost]
-  --port PORT   the port of the NEST Server [default: 5000]
-  -o FILE, --output FILE   use FILE for the report instead of stdout
+  --help      display usage information and exit
+  -d          daemonize the server process
+  -o          print all output to both the console and to the log
+  -h <HOST>   use hostname/IP address <HOST> for the server [default: 127.0.0.1]
+  -p <PORT>   use port <PORT> for opening the socket [default: 5000]
+  -u <UID>    run the server under the user with ID <UID>
 
 """
 
 from docopt import docopt
-
-if __name__ == '__main__':
-    opt = docopt(__doc__)
-
-
-import nest
-
 from mpi4py import MPI
+
+#if __name__ == '__main__':
+#    opt = docopt(__doc__)
+#
+#print(opt)
 
 import time
 import sys
 
+import nest
 from nest.server import run_mpi_app, serialize, do_exec
-
 
 comm = MPI.COMM_WORLD.Clone()
 rank = comm.Get_rank()
-
 
 if rank == 0:
     print("==> Starting NEST Server Master on rank 0")

@@ -45,7 +45,7 @@ skip_if_not_threaded
 [2 3] % check for 2, 3 processes
 {
 
-/N 10 def          % number of neurons in each subnet
+/N 10 def          % number of neurons in each population
 
 ResetKernel
 
@@ -70,11 +70,11 @@ ResetKernel
 /syn_dict << /synapse_model /static_synapse /weight Warr /delay Darr >> def
 /conn_dict << /rule /all_to_all >> def
 
-sources targets conn_dict syn_dict Connect % connects source to target subnet
+sources targets conn_dict syn_dict Connect % connects source to target
 
 /pass true def % error control flag
 /n_loc 0 def  % used to check n. of neurons belonging to this MPI process
-targets % loop on all neurons of target subnet
+targets % loop through all target neurons
 {
   /neuron2 exch def
 

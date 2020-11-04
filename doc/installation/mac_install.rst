@@ -37,7 +37,7 @@ Installation instructions here have been tested under macOS 10.14 *Mojave* with 
 
  .. code-block:: sh
 
-        cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+        cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
               -DCMAKE_C_COMPILER=gcc-9 \
               -DCMAKE_CXX_COMPILER=g++-9 \
               </path/to/NEST/src>
@@ -88,7 +88,7 @@ Python on Mac
 
 The version of Python shipping with OS X/macOS is rather dated and does not include key packages such as NumPy. Therefore, you need to install Python via a channel that provides scientific packages.
 
-One well-tested source is the `Anaconda <https://www.continuum.io/anaconda-overview>`_ Python distribution for both Python 2 and 3. If you do not want to install the full Anaconda distribution, you can also install `Miniconda <http://conda.pydata.org/miniconda.html>`_ and then install the packages needed by NEST by running::
+One well-tested source is the `Anaconda <https://www.continuum.io/anaconda-overview>`_ Python 3 distribution. If you do not want to install the full Anaconda distribution, you can also install `Miniconda <http://conda.pydata.org/miniconda.html>`_ and only install the packages needed by NEST by running::
 
         conda install numpy scipy matplotlib ipython cython nose
 

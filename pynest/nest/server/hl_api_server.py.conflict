@@ -1,0 +1,526 @@
+# -*- coding: utf-8 -*-
+#
+# hl_api_server.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+<<<<<<< HEAD
+import nest
+
+import array
+import inspect
+import io
+import numpy as np
+import os
+=======
+import importlib
+import inspect
+import io
+>>>>>>> ef42c5f2f8492e37ac27e96ba007a969ffc8df08
+import sys
+
+import flask
+from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
+
+<<<<<<< HEAD
+__all__ = [
+    'app',
+    'do_exec',
+    'run_mpi_app',
+    'serialize'
+=======
+from werkzeug.exceptions import abort
+from werkzeug.wrappers import Response
+
+import nest
+import RestrictedPython
+import time
+
+import os
+MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
+RESTRICTION_OFF = bool(os.environ.get('NEST_SERVER_RESTRICTION_OFF', False))
+EXCEPTION_ERROR_STATUS = 400
+NEST_ERROR_STATUS = 400
+
+if RESTRICTION_OFF:
+    print('*** WARNING: NEST Server is run without a RestrictedPython trusted environment. ***')
+
+
+__all__ = [
+    'app'
+>>>>>>> ef42c5f2f8492e37ac27e96ba007a969ffc8df08
+]
+
+app = Flask(__name__)
+CORS(app)
+
+<<<<<<< HEAD
+mpi_comm = None
+
+
+@app.route('/', methods=['GET'])
+@cross_origin()
+def nest_index():
+    """ Route to fetch metadata of NEST Server.
+    """
+    data = init_data(request)
+    data['response']['version'] = nest.version()
+    data['response']['is_mpi'] = mpi_comm is not None
+    return jsonify(data)
+
+
+def do_exec(data, *args, **kwargs):
+    with Capturing() as stdout:
+        try:
+            source = kwargs.get('source', '')
+            globals_ = {'__builtins__': None}
+            locals_ = {
+                'list': list,
+                'nest': nest,
+                'np': np,
+                'print': print,
+                'set': set,
+                'int': int,
+            }
+            exec(source, globals_, locals_)
+            if 'return' in kwargs:
+                if isinstance(kwargs['return'], list):
+                    return_data = {}
+                    for variable in kwargs['return']:
+                        return_data[variable] = locals_.get(variable, None)
+                else:
+                    return_data = locals_.get(kwargs['return'], None)
+                data['response']['data'] = nest.hl_api.serializable(return_data)
+            data['response']['status'] = 'ok'
+        except Exception as e:
+            print(e)
+            data['response']['data'] = None
+            data['response']['status'] = 'error'
+    data['response']['stdout'] = '\n'.join(stdout)
+=======
+
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({'nest': nest.__version__})
+>>>>>>> ef42c5f2f8492e37ac27e96ba007a969ffc8df08
+
+
+@app.route('/exec', methods=['GET', 'POST'])
+@cross_origin()
+def route_exec():
+    """ Route to execute script in Python.
+    """
+<<<<<<< HEAD
+    data = init_data(request)
+    args, kwargs = get_arguments(request, data)
+    if mpi_comm is not None:
+        print("==> MASTER (exec): sending command bcast")
+        mpi_comm.bcast('exec', root=0)
+        print("==> MASTER (exec): sending data bcast, data={}".format((data, args, kwargs)))
+        mpi_comm.bcast((data, args, kwargs), root=0)
+    do_exec(data, args, kwargs)
+    worker_responses = [None]
+    if mpi_comm is not None:
+        print("==> MASTER (exec): waiting for response gather")
+        worker_responses = mpi_comm.gather(None, root=0)
+    worker_responses[0] = nest.hl_api.serializable(data)
+    print("==> MASTER (call): worker_responses={}".format(worker_responses))
+    # TODO: combine worker_response data in a meaningful way
+
+    return jsonify(data)
+=======
+    try:
+        args, kwargs = get_arguments(request)
+        source_code = kwargs.get('source', '')
+        source_cleaned = clean_code(source_code)
+
+        locals = dict()
+        response = dict()
+        if RESTRICTION_OFF:
+            with Capturing() as stdout:
+                exec(source_cleaned, get_globals(), locals)
+            if len(stdout) > 0:
+                response['stdout'] = '\n'.join(stdout)
+        else:
+            code = RestrictedPython.compile_restricted(source_cleaned, '<inline>', 'exec')
+            exec(code, get_restricted_globals(), locals)
+            if '_print' in locals:
+                response['stdout'] = ''.join(locals['_print'].txt)
+
+        if 'return' in kwargs:
+            if isinstance(kwargs['return'], list):
+                data = dict()
+                for variable in kwargs['return']:
+                    data[variable] = locals.get(variable, None)
+            else:
+                data = locals.get(kwargs['return'], None)
+            response['data'] = nest.hl_api.serializable(data)
+        return jsonify(response)
+
+    except nest.kernel.NESTError as e:
+        print('NEST error: {}'.format(e))
+        abort(Response(getattr(e, 'errormessage'), NEST_ERROR_STATUS))
+    except Exception as e:
+        print('Error: {}'.format(e))
+        abort(Response(str(e), EXCEPTION_ERROR_STATUS))
+>>>>>>> ef42c5f2f8492e37ac27e96ba007a969ffc8df08
+
+
+# --------------------------
+# RESTful API
+# --------------------------
+
+nest_calls = dir(nest)
+nest_calls = list(filter(lambda x: not x.startswith('_'), nest_calls))
+nest_calls.sort()
+
+
+@app.route('/api', methods=['GET'])
+@cross_origin()
+<<<<<<< HEAD
+def nest_api():
+    """ Route to list call functions in NEST.
+    """
+    data = init_data(request)
+    response = api_client(nest_calls, data)
+    return jsonify(response)
+=======
+def route_api():
+    """ Route to list call functions in NEST.
+    """
+    return jsonify(nest_calls)
+>>>>>>> ef42c5f2f8492e37ac27e96ba007a969ffc8df08
+
+
+@app.route('/api/<call>', methods=['GET', 'POST'])
+@cross_origin()
+<<<<<<< HEAD
+def nest_api_call(call):
+    """ Route to call function in NEST.
+    """
+    data = init_data(request, call)
+    args, kwargs = get_arguments(request, data)
+    if call in nest_calls:
+        call = getattr(nest, call)
+        response = api_client(call, data, *args, **kwargs)
+    else:
+        data['response']['msg'] = 'The request cannot be called in NEST.'
+        data['response']['status'] = 'error'
+        response = data
+=======
+def route_api_call(call):
+    """ Route to call function in NEST.
+    """
+    args, kwargs = get_arguments(request)
+    call = getattr(nest, call)
+    response = api_client(call, args, kwargs)
+>>>>>>> ef42c5f2f8492e37ac27e96ba007a969ffc8df08
+    return jsonify(response)
+
+
+# ----------------------
+# Helpers for the server
+# ----------------------
+
+class Capturing(list):
+    """ Monitor stdout contents i.e. print.
+    """
+    def __enter__(self):
+        self._stdout = sys.stdout
+        sys.stdout = self._stringio = io.StringIO()
+        return self
+
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue().splitlines())
+        del self._stringio    # free up some memory
+        sys.stdout = self._stdout
+
+
+<<<<<<< HEAD
+def init_data(request, call=None):
+    """ Create data variable in dictionary for JSON response.
+    """
+    url = request.url_rule.rule.split('/')[1]
+    data = {
+        'request': {
+            'url': url,
+        },
+        'response': {}
+    }
+    if call:
+        data['request']['call'] = call
+    return data
+
+
+def get_arguments(request, data):
+=======
+def clean_code(source):
+    codes = source.split('\n')
+    code_cleaned = filter(lambda code: not (code.startswith('import') or code.startswith('from')), codes)
+    return '\n'.join(code_cleaned)
+
+
+def get_arguments(request):
+>>>>>>> ef42c5f2f8492e37ac27e96ba007a969ffc8df08
+    """ Get arguments from the request.
+    """
+    args, kwargs = [], {}
+    if request.is_json:
+<<<<<<< HEAD
+        json = data['request']['json'] = request.get_json()
+        if isinstance(json, list):
+            args = json
+        elif isinstance(json, dict):
+            args = json.get('args', args)
+            kwargs = json.get('kwargs', json)
+    elif len(request.form) > 0:
+        if 'args' in request.form:
+            args = data['request']['form'] = request.form.getlist('args')
+        else:
+            kwargs = data['request']['form'] = request.form.to_dict()
+    elif (len(request.args) > 0):
+        if 'args' in request.args:
+            args = data['request']['args'] = request.args.getlist('args')
+        else:
+            kwargs = data['request']['args'] = request.args.to_dict()
+    return args, kwargs
+
+
+def get_or_error(func):
+    """ Wrapper to get data or error content.
+    """
+    def func_wrapper(call, data, *args, **kwargs):
+        try:
+            data = func(call, data, *args, **kwargs)
+            if 'data' not in data['response']:
+                return data
+            response = data['response']['data']
+            data['response']['status'] = 'ok'
+        except Exception as e:
+            data['response']['msg'] = str(e)
+            data['response']['status'] = 'error'
+        return data
+    return func_wrapper
+
+
+def NodeCollection(kwargs):
+    """ Get Node Collection as arguments for NEST functions.
+    """
+    keys = ['nodes', 'source', 'target', 'pre', 'post']
+    for key in keys:
+        if key in kwargs:
+            kwargs[key] = nest.NodeCollection(kwargs[key])
+    return kwargs
+
+
+def serialize(call, kwargs):
+    """ Serialize arguments with keywords for call functions in NEST.
+    """
+    kwargs = NodeCollection(kwargs)
+    if call.startswith('Set'):
+        status = {}
+        if call == 'SetDefaults':
+            status = nest.GetDefaults(kwargs['model'])
+        elif call == 'SetKernelStatus':
+            status = nest.GetKernelStatus()
+        elif call == 'SetStructuralPlasticityStatus':
+            status = nest.GetStructuralPlasticityStatus(kwargs['params'])
+        elif call == 'SetStatus':
+=======
+        json = request.get_json()
+        if isinstance(json, list):
+            args = json
+        elif isinstance(json, dict):
+            kwargs = json
+            if 'args' in kwargs:
+                args = kwargs.pop('args')
+    elif len(request.form) > 0:
+        if 'args' in request.form:
+            args = request.form.getlist('args')
+        else:
+            kwargs = request.form.to_dict()
+    elif len(request.args) > 0:
+        if 'args' in request.args:
+            args = request.args.getlist('args')
+        else:
+            kwargs = request.args.to_dict()
+    return list(args), kwargs
+
+
+def get_globals():
+    """ Get globals for exec function.
+    """
+    copied_globals = globals().copy()
+
+    # Add modules to copied globals
+    modules = dict([(module, importlib.import_module(module)) for module in MODULES])
+    copied_globals.update(modules)
+
+    return copied_globals
+
+
+def get_or_error(func):
+    """ Wrapper to get data and status.
+    """
+    def func_wrapper(call, args, kwargs):
+        try:
+            return func(call, args, kwargs)
+        except nest.kernel.NESTError as e:
+            print('NEST error: {}'.format(e))
+            abort(Response(getattr(e, 'errormessage'), NEST_ERROR_STATUS))
+        except TypeError as e:
+            print('Type error: {}'.format(e))
+            abort(Response(str(e), EXCEPTION_ERROR_STATUS))
+        except Exception as e:
+            print('Error: {}'.format(e))
+            abort(Response(str(e), EXCEPTION_ERROR_STATUS))
+    return func_wrapper
+
+
+def get_restricted_globals():
+    """ Get restricted globals for exec function.
+    """
+    def getitem(obj, index):
+        if obj is not None and type(obj) in (list, tuple, dict, nest.NodeCollection):
+            return obj[index]
+        msg = f"Error while getting restricted globals: unidentified object '{obj}'."
+        raise TypeError(msg)
+
+    restricted_builtins = RestrictedPython.safe_builtins.copy()
+    restricted_builtins.update(RestrictedPython.limited_builtins)
+    restricted_builtins.update(RestrictedPython.utility_builtins)
+    restricted_builtins.update(dict(
+        max=max,
+        min=min,
+        sum=sum,
+        time=time,
+    ))
+
+    restricted_globals = dict(
+        __builtins__=restricted_builtins,
+        _print_=RestrictedPython.PrintCollector,
+        _getattr_=RestrictedPython.Guards.safer_getattr,
+        _getitem_=getitem,
+        _getiter_=iter,
+        _unpack_sequence_=RestrictedPython.Guards.guarded_unpack_sequence,
+        _write_=RestrictedPython.Guards.full_write_guard,
+    )
+
+    # Add modules to restricted globals
+    modules = dict([(module, importlib.import_module(module)) for module in MODULES])
+    restricted_globals.update(modules)
+
+    return restricted_globals
+
+
+def NodeCollection(call, args, kwargs):
+    """ Get Node Collection as arguments for NEST functions.
+    """
+    objectnames = ['nodes', 'source', 'target', 'pre', 'post']
+    paramKeys = list(inspect.signature(call).parameters.keys())
+    args = [nest.NodeCollection(arg) if (paramKeys[idx] in objectnames) else arg for (idx, arg) in enumerate(args)]
+    for (key, value) in kwargs.items():
+        if key in objectnames:
+            kwargs[key] = nest.NodeCollection(value)
+    return args, kwargs
+
+
+def serialize(call, args, kwargs):
+    """ Serialize arguments with keywords for call functions in NEST.
+    """
+    args, kwargs = NodeCollection(call, args, kwargs)
+    if call.__name__.startswith('Set'):
+        status = {}
+        if call.__name__ == 'SetDefaults':
+            status = nest.GetDefaults(kwargs['model'])
+        elif call.__name__ == 'SetKernelStatus':
+            status = nest.GetKernelStatus()
+        elif call.__name__ == 'SetStructuralPlasticityStatus':
+            status = nest.GetStructuralPlasticityStatus(kwargs['params'])
+        elif call.__name__ == 'SetStatus':
+>>>>>>> ef42c5f2f8492e37ac27e96ba007a969ffc8df08
+            status = nest.GetStatus(kwargs['nodes'])
+        for key, val in kwargs['params'].items():
+            if key in status:
+                kwargs['params'][key] = type(status[key])(val)
+<<<<<<< HEAD
+    return kwargs
+
+
+@get_or_error
+def api_client(call, data, *args, **kwargs):
+    """ API Client to call function in NEST.
+    """
+    if callable(call):
+        data['request']['call'] = call.__name__
+        if str(kwargs.get('return_doc', 'false')) == 'true':
+            response = call.__doc__
+        elif str(kwargs.get('return_source', 'false')) == 'true':
+            response = inspect.getsource(call)
+        else:
+            if mpi_comm is not None:
+                print("==> MASTER (call): sending command bcast")
+                mpi_comm.bcast('call', root=0)
+                print("==> MASTER (call): sending data bcast, data={}".format((data, args, kwargs)))
+                mpi_comm.bcast((data, args, kwargs), root=0)
+            response = call(*args, **serialize(call.__name__, kwargs))
+            worker_responses = [None]
+            if mpi_comm is not None:
+                print("==> MASTER (call): waiting for response gather")
+                worker_responses = mpi_comm.gather(None, root=0)
+            worker_responses[0] = nest.hl_api.serializable(response)
+            print("==> MASTER (call): worker_responses={}".format(worker_responses))
+            # TODO: combine worker_response in a meaningful way
+    else:
+        data['request']['call'] = call
+        response = call
+    data['response']['data'] = nest.hl_api.serializable(response)
+    return data
+
+
+def run_mpi_app(comm):
+    global mpi_comm
+    mpi_comm = comm
+    # NEST segfaults if someone messes with the number of threads.
+    # Don't do this!
+    app.run(threaded=False)
+=======
+    return args, kwargs
+
+
+@get_or_error
+def api_client(call, args, kwargs):
+    """ API Client to call function in NEST.
+    """
+    if callable(call):
+        if 'inspect' in kwargs:
+            response = {
+                'data': getattr(inspect, kwargs['inspect'])(call)
+            }
+        else:
+            args, kwargs = serialize(call, args, kwargs)
+            response = call(*args, **kwargs)
+    else:
+        response = call
+    return nest.hl_api.serializable(response)
+
+
+if __name__ == "__main__":
+    app.run()
+>>>>>>> ef42c5f2f8492e37ac27e96ba007a969ffc8df08

@@ -29,7 +29,7 @@
 
 #include "recording_backend.h"
 
-/* BeginDocumentation
+/* BeginUserDocs: recording backend
 
 .. _sionlib_backend:
 
@@ -149,7 +149,7 @@ sion_collective
    a large amount of data, collective mode can offer a performance
    advantage.
 
-EndDocumentation */
+EndUserDocs */
 
 namespace nest
 {

@@ -28,9 +28,9 @@ the basis of the network used in [1]_.
 In contrast to ``brunel-alpha-numpy.py``, this variant uses NEST's builtin
 connection routines to draw the random connections instead of NumPy.
 
-When connecting the network customary synapse models are used, which
+When connecting the network, customary synapse models are used, which
 allow for querying the number of created synapses. Using spike
-detectors the average firing rates of the neurons in the populations
+recorders, the average firing rates of the neurons in the populations
 are established. The building as well as the simulation time of the
 network are recorded.
 
@@ -58,6 +58,7 @@ import scipy.special as sp
 
 import nest
 import nest.raster_plot
+import matplotlib.pyplot as plt
 
 
 ###############################################################################
@@ -111,7 +112,7 @@ eta = 2.0  # external rate relative to threshold rate
 epsilon = 0.1  # connection probability
 
 ###############################################################################
-# Definition of the number of neurons in the network and the number of neuron
+# Definition of the number of neurons in the network and the number of neurons
 # recorded from
 
 order = 2500
@@ -121,7 +122,7 @@ N_neurons = NE + NI   # number of neurons in total
 N_rec = 50      # record from 50 neurons
 
 ###############################################################################
-# Definition of connectivity parameter
+# Definition of connectivity parameters
 
 CE = int(epsilon * NE)  # number of excitatory synapses per neuron
 CI = int(epsilon * NI)  # number of inhibitory synapses per neuron
@@ -129,7 +130,7 @@ C_tot = int(CI + CE)      # total number of synapses per neuron
 
 ###############################################################################
 # Initialization of the parameters of the integrate and fire neuron and the
-# synapses. The parameter of the neuron are stored in a dictionary. The
+# synapses. The parameters of the neuron are stored in a dictionary. The
 # synaptic currents are normalized such that the amplitude of the PSP is J.
 
 tauSyn = 0.5  # synaptic time constant in ms
@@ -184,17 +185,17 @@ nest.SetDefaults("poisson_generator", {"rate": p_rate})
 ###############################################################################
 # Creation of the nodes using ``Create``. We store the returned handles in
 # variables for later reference. Here the excitatory and inhibitory, as well
-# as the poisson generator and two spike detectors. The spike detectors will
+# as the poisson generator and two spike recorders. The spike recorders will
 # later be used to record excitatory and inhibitory spikes.
 
 nodes_ex = nest.Create("iaf_psc_alpha", NE)
 nodes_in = nest.Create("iaf_psc_alpha", NI)
 noise = nest.Create("poisson_generator")
-espikes = nest.Create("spike_detector")
-ispikes = nest.Create("spike_detector")
+espikes = nest.Create("spike_recorder")
+ispikes = nest.Create("spike_recorder")
 
 ###############################################################################
-# Configuration of the spike detectors recording excitatory and inhibitory
+# Configuration of the spike recorders recording excitatory and inhibitory
 # spikes by sending parameter dictionaries to ``set``. Setting the property
 # `record_to` to *"ascii"* ensures that the spikes will be recorded to a file,
 # whose name starts with the string assigned to the property `label`.
@@ -230,7 +231,7 @@ nest.Connect(noise, nodes_in, syn_spec="excitatory")
 
 ###############################################################################
 # Connecting the first ``N_rec`` nodes of the excitatory and inhibitory
-# population to the associated spike detectors using excitatory synapses.
+# population to the associated spike recorders using excitatory synapses.
 # Here the same shortcut for the specification of the synapse as defined
 # above is used.
 
@@ -281,7 +282,7 @@ nest.Simulate(simtime)
 endsimulate = time.time()
 
 ###############################################################################
-# Reading out the total number of spikes received from the spike detector
+# Reading out the total number of spikes received from the spike recorder
 # connected to the excitatory population and the inhibitory population.
 
 events_ex = espikes.n_events
@@ -328,4 +329,4 @@ print("Simulation time   : %.2f s" % sim_time)
 # Plot a raster of the excitatory neurons and a histogram.
 
 nest.raster_plot.from_device(espikes, hist=True)
-nest.raster_plot.show()
+plt.show()

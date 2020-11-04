@@ -155,13 +155,13 @@ def
  pg << /rate  rate 1000.0 mul >> SetStatus      % in Hz 
 
 
- /spike_detector Create /sd Set
+ /spike_recorder Create /sr Set
 
- pg sd Connect 
+ pg sr Connect 
 
  T Simulate
 
- sd [/events /times] get cva   % return value is spike train in ms
+ sr [/events /times] get cva   % return value is spike train in ms
 } def 
 
 

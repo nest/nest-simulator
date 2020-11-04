@@ -77,8 +77,8 @@ class GLIFPSCTestCase(unittest.TestCase):
                                         "receptor_type": 1})
 
         # For recording spikes and voltage traces
-        sd = nest.Create('spike_detector')
-        nest.Connect(nrn, sd)
+        sr = nest.Create('spike_recorder')
+        nest.Connect(nrn, sr)
 
         mm = nest.Create("multimeter", params={"record_from": ["V_m"]})
         nest.Connect(mm, nrn)
@@ -87,7 +87,7 @@ class GLIFPSCTestCase(unittest.TestCase):
 
         times = nest.GetStatus(mm, 'events')[0]['times']
         V_m = nest.GetStatus(mm, 'events')[0]['V_m']
-        spikes = nest.GetStatus(sd, 'events')[0]['times']
+        spikes = nest.GetStatus(sr, 'events')[0]['times']
 
         return times, V_m, spikes
 

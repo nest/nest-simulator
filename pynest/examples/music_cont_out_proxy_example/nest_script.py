@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # nest_script.py
@@ -27,6 +27,9 @@ Music example
 This example runs 2 NEST instances and one receiver instance. Neurons on
 the NEST instances are observed by the music_cont_out_proxy and their
 values are forwarded through MUSIC to the receiver.
+
+Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+and cannot be enabled at the same time.
 
 """
 import nest

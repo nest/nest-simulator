@@ -94,7 +94,7 @@ nest::ConnectionManager::initialize()
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
 
-  have_connections_changed_.initialize( num_threads, true );
+  have_connections_changed_.initialize( num_threads, false );
   check_primary_connections_.initialize( num_threads, false );
   check_secondary_connections_.initialize( num_threads, false );
 
@@ -335,10 +335,10 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
 {
   const size_t rule_id = connruledict_->lookup( name );
-  return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_spec );
+  return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
 }
 
 void
@@ -354,10 +354,23 @@ void
 nest::ConnectionManager::connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
 {
+  if ( sources->empty() )
+  {
+    throw IllegalConnection( "Presynaptic nodes cannot be an empty NodeCollection" );
+  }
+  if ( targets->empty() )
+  {
+    throw IllegalConnection( "Postsynaptic nodes cannot be an empty NodeCollection" );
+  }
+
   conn_spec->clear_access_flags();
-  syn_spec->clear_access_flags();
+
+  for ( auto syn_params : syn_specs )
+  {
+    syn_params->clear_access_flags();
+  }
 
   if ( not conn_spec->known( names::rule ) )
   {
@@ -372,12 +385,15 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 
   const long rule_id = ( *connruledict_ )[ rule_name ];
 
-  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_spec );
+  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
   assert( cb != 0 );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
-  ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries in syn_spec: " );
+  for ( auto syn_params : syn_specs )
+  {
+    ALL_ENTRIES_ACCESSED( *syn_params, "Connect", "Unread dictionary entries in syn_spec: " );
+  }
 
   cb->connect();
   delete cb;
@@ -540,6 +556,14 @@ nest::ConnectionManager::connect_( Node& s,
 
   if ( kernel().model_manager.connector_requires_clopath_archiving( syn_id )
     and not dynamic_cast< Clopath_Archiving_Node* >( &r ) )
+  {
+    throw NotImplemented(
+      "This synapse model is not supported by the neuron model of at least one "
+      "connection." );
+  }
+
+  if ( kernel().model_manager.connector_requires_urbanczik_archiving( syn_id )
+    and not r.supports_urbanczik_archiving() )
   {
     throw NotImplemented(
       "This synapse model is not supported by the neuron model of at least one "
@@ -916,8 +940,9 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
       std::vector< index > target_device_node_ids;
       split_to_neuron_device_vectors_( tid, target, target_neuron_node_ids, target_device_node_ids );
 
+      // Getting regular connections, if they exist.
       ConnectorBase* connections = connections_[ tid ][ syn_id ];
-      if ( connections != NULL )
+      if ( connections != nullptr )
       {
         const size_t num_connections_in_thread = connections->size();
         for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
@@ -926,24 +951,20 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
           connections->get_connection_with_specified_targets(
             source_node_id, target_neuron_node_ids, tid, lcid, synapse_label, conns_in_thread );
         }
-
-        for ( std::vector< index >::const_iterator t_node_id = target_neuron_node_ids.begin();
-              t_node_id != target_neuron_node_ids.end();
-              ++t_node_id )
-        {
-          // target_table_devices_ contains connections both to and from
-          // devices. First we get connections from devices.
-          target_table_devices_.get_connections_from_devices_(
-            0, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
-        }
       }
 
-      for ( std::vector< index >::const_iterator t_node_id = target_device_node_ids.begin();
-            t_node_id != target_device_node_ids.end();
-            ++t_node_id )
+      // Getting connections from devices.
+      for ( auto t_node_id : target_neuron_node_ids )
       {
-        // Then, we get connections to devices.
-        target_table_devices_.get_connections_to_devices_( 0, *t_node_id, tid, syn_id, synapse_label, conns_in_thread );
+        target_table_devices_.get_connections_from_devices_(
+          0, t_node_id, tid, syn_id, synapse_label, conns_in_thread );
+      }
+
+      // Getting connections to devices.
+      for ( auto t_device_id : target_device_node_ids )
+      {
+        target_table_devices_.get_connections_to_devices_(
+          0, t_device_id, tid, syn_id, synapse_label, conns_in_thread );
       }
 
       if ( conns_in_thread.size() > 0 )
@@ -1268,7 +1289,7 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
       return CONNECT;
     }
 
-    throw IllegalConnection( "We do not allow connection of a device to a global receiver at the moment" );
+    throw IllegalConnection( "We do not allow connection of a device to a global receiver at the moment." );
   }
 
   return NO_CONNECTION;

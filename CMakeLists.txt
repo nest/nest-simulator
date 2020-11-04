@@ -44,7 +44,7 @@ set( external-modules OFF CACHE STRING "External NEST modules to be linked in, s
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
 set( with-sionlib OFF CACHE STRING "Request the use of SIONlib. Optionally give the directory where SIONlib is installed. [default=OFF]" )
-set( with-boost OFF CACHE STRING "Request compilation with Boost, required for C++ testsuite. Optionally give directory with Boost installation. [default=OFF]" )
+set( with-recordingbackend-arbor OFF CACHE STRING "Request compilation of the recording backend for Arbor. Requires MPI, Python and mpi4py. [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
@@ -56,6 +56,7 @@ set( with-readline ON CACHE STRING "Find a readline library. To set a specific r
 set( with-ltdl ON CACHE STRING "Find a ltdl library. To set a specific ltdl, set install path. [default=ON]" )
 set( with-python ON CACHE STRING "Build PyNEST. To set a specific Python, set install path. [default=ON]" )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx. [default=ON]" ON )
+set( with-boost ON CACHE STRING "Find a Boost library. To set a specific Boost installation, set install path. [default=ON]" )
 
 # Whether to build a 'mostly' static executable and static libraries.
 option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )
@@ -74,9 +75,6 @@ set( with-version-suffix "" CACHE STRING "Set a user defined version suffix. [de
 set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
 option( k-computer "Enable K computer." OFF )
 
-set( disable-timing OFF CACHE BOOL "Disable measurements via Stopwatches. [default OFF]" )
-set( disable-counts ON CACHE BOOL "Disable measurements of call counts. [default ON]" )
-
 set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuron identifier type. 'standard' is recommended for most users. If running on more than 262144 MPI processes or more than 512 threads, change to 'hpc'. [default standard]" )
 
 ################################################################################
@@ -91,22 +89,11 @@ set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative direct
 include( GNUInstallDirs )
 
 ################################################################################
-#################        Do not install into /usr/local        #################
-################################################################################
-
-get_filename_component(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
-# If CMAKE_INSTALL_PREFIX is omitted CMake will set the installation prefix to its default '/usr/local'.
-# This is not desired. A subdirectory is allowed, e.g. 'usr/local/nest'.
-if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
-  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
-endif ()
-
-################################################################################
 ##################           Find utility programs            ##################
 ################################################################################
 
 # needed for pynest test suite
-if ( ${with-python} STREQUAL "ON" OR  ${with-python} STREQUAL "2" OR  ${with-python} STREQUAL "3" )
+if ( ${with-python} STREQUAL "ON" )
   find_program( NOSETESTS NAMES nosetests )
 endif ()
 
@@ -163,6 +150,7 @@ nest_process_with_music()
 nest_process_with_sionlib()
 nest_process_with_mpi4py()
 nest_process_with_boost()
+nest_process_with_recordingbackend_arbor()
 nest_process_target_bits_split()
 nest_process_version_suffix()
 
@@ -200,28 +188,32 @@ message("-- NEST version: ${NEST_VERSION_STRING}")
 ##################         Enable Testing Targets             ##################
 ################################################################################
 enable_testing()
-set( TEST_LOGFILE ${PROJECT_BINARY_DIR}/reports/installcheck.log )
-file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
+set( TEST_OPTS "" )
 
 if ( HAVE_PYTHON )
-  add_custom_target( installcheck
-    COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
-      PYTHON="${PYTHON}"
-      NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
-      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-    COMMENT "Execute NEST's testsuite...."
-  )
-else ()
-  add_custom_target( installcheck
-    COMMAND ${CMAKE_COMMAND} -E env
-      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
-      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-    COMMENT "Execute NEST's testsuite...."
-  )
+  set( TEST_OPTS "${TEST_OPTS};--with-python=${PYTHON}" )
 endif ()
+
+if ( HAVE_MUSIC )
+  set( TEST_OPTS "${TEST_OPTS};--with-music=${MUSIC_EXECUTABLE}" )
+endif ()
+
+add_custom_target( installcheck
+  COMMAND ${CMAKE_COMMAND} -E env
+    ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
+	--prefix=${CMAKE_INSTALL_PREFIX}
+	--report-dir="${PROJECT_BINARY_DIR}/reports"
+	${TEST_OPTS}
+  WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+  COMMENT "Executing NEST's testsuite..."
+)
+
+# N.B. to ensure "make install" is always run before "make installcheck", we
+# would ideally like to add:
+#   add_dependencies( installcheck install )
+# However, an issue in CMake at time of writing (May 2020, see
+# https://gitlab.kitware.com/cmake/cmake/-/issues/8438) precludes us from doing
+# so.
 
 ################################################################################
 ##################        Define Subdirectories here          ##################
@@ -240,9 +232,7 @@ add_subdirectory( models )
 add_subdirectory( sli )
 add_subdirectory( nest )
 add_subdirectory( nestkernel )
-add_subdirectory( precise )
 add_subdirectory( testsuite )
-add_subdirectory( topology )
 if ( HAVE_PYTHON )
   add_subdirectory( pynest )
 endif ()
@@ -291,7 +281,6 @@ set( ALL_LIBS
   "-lrandom"
   "-lsli"
   "-lnestkernel"
-  "-ltopology"
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"
@@ -299,7 +288,8 @@ set( ALL_LIBS
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
-  "${SIONLIB_LIBRARIES}" )
+  "${SIONLIB_LIBRARIES}"
+  "${BOOST_LIBRARIES}" )
 
 if ( with-libraries )
   set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
@@ -314,7 +304,8 @@ set( ALL_INCLUDES_tmp
   "${GSL_INCLUDE_DIRS}"
   "${LIBNEUROSIM_INCLUDE_DIRS}"
   "${MUSIC_INCLUDE_DIRS}"
-  "${MPI_CXX_INCLUDE_PATH}" )
+  "${MPI_CXX_INCLUDE_PATH}"
+  "${BOOST_INCLUDE_DIR}" )
 set( ALL_INCLUDES "" )
 foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
   if ( INC AND NOT INC STREQUAL "" )
@@ -340,16 +331,6 @@ configure_file(
 configure_file(
     "${PROJECT_SOURCE_DIR}/pynest/setup.py.in"
     "${PROJECT_BINARY_DIR}/pynest/setup.py" @ONLY
-)
-
-configure_file(
-    "${PROJECT_SOURCE_DIR}/pynest/do_tests.py.in"
-    "${PROJECT_BINARY_DIR}/pynest/do_tests.py" @ONLY
-)
-
-configure_file(
-    "${PROJECT_SOURCE_DIR}/testsuite/do_tests.sh.in"
-    "${PROJECT_BINARY_DIR}/testsuite/do_tests.sh" @ONLY
 )
 
 configure_file(

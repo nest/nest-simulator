@@ -92,8 +92,8 @@
     /origin 0.0 ms   % origin of time, to calculate start_time [ms]
   >>
 
-  /detector /spike_detector
-  /detector_params
+  /recorder /spike_recorder
+  /recorder_params
   <<
    /record_to /ascii
    /label (hh_coba)

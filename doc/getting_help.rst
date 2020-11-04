@@ -1,16 +1,16 @@
-Getting Help
-=================
+Getting help
+============
 
 
 Have a specific question or problem with NEST?
-------------------------------------------------
+----------------------------------------------
 
 * Check out the :doc:`troubleshooting section <troubleshooting>` for common issues.
 
 If your question is not on there, ask our :doc:`Mailing List <community>`.
 
 Getting help on the command line interface
--------------------------------------------
+------------------------------------------
 
 * The ``helpdesk()`` command will launch the documentation pages on your browser.
   See `Set up the integrated helpdesk`_ to specify the browser of your choice.
@@ -22,7 +22,7 @@ Getting help on the command line interface
        # list all functions and attributes
        dir(nest)
 
-       # Get docstring for function in python
+       # Get docstring for function in Python
        help('nest.FunctionName')
 
        # or in ipython
@@ -35,7 +35,7 @@ Getting help on the command line interface
        nest.help('name')
 
 Model Information
-~~~~~~~~~~~~~~~~~~~
+-----------------
 
 * To get a complete list of the models available in NEST type:
 
@@ -63,15 +63,15 @@ Model Information
 
 
 Set up the integrated helpdesk
---------------------------------
+------------------------------
 
 The command ``helpdesk`` needs to know which browser to launch in order
 to display the help pages. The browser is set as an option of
 ``helpdesk``. Please see the file ``~/.nestrc`` for an example setting
 ``firefox`` as browser. Please note that the command ``helpdesk`` does
 not work if you have compiled NEST with MPI support, but you have to
-enter the address of the helpdesk (``file://$PREFIX/share/doc/nest(``)
-manually into the browser. Please replace ``$PREFIX`` with the prefix
+enter the address of the helpdesk (``file://<nest_install_dir>/share/doc/nest(``)
+manually into the browser. Please replace ``<nest_install_dir>`` with the prefix
 you chose during the configuration of NEST. If you did not explicitly
 specify one, it is most likely set to ``/usr`` or ``/usr/local``
 depending on what system you use.

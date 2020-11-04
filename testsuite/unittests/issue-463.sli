@@ -59,7 +59,7 @@ net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
 
 /Warr1 [] def  % create empty array
 
-net2 % loop on all neurons of target subnet
+net2 % loop through all target neurons
 {
         /neuron2 exch dup cvnodecollection def
         % gets all connections to the target neuron

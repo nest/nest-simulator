@@ -36,7 +36,7 @@ class ConnectArrayFixedOutdegreeTestCase(unittest.TestCase):
     def test_Connect_Array_Fixed_Outdegree(self):
         """Tests of connections with fixed outdegree and parameter arrays"""
 
-        N = 20  # number of neurons in each subnet
+        N = 20  # number of neurons in each population
         K = 5   # number of connections per neuron
 
         ############################################
@@ -44,8 +44,8 @@ class ConnectArrayFixedOutdegreeTestCase(unittest.TestCase):
         ############################################
         nest.ResetKernel()
 
-        net1 = nest.Create('iaf_psc_alpha', N)  # creates source subnet
-        net2 = nest.Create('iaf_psc_alpha', N)  # creates target subnet
+        net1 = nest.Create('iaf_psc_alpha', N)  # creates source population
+        net2 = nest.Create('iaf_psc_alpha', N)  # creates target population
 
         Warr = [[y*K+x for x in range(K)] for y in range(N)]  # weight array
         Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)]  # delay array
@@ -55,10 +55,10 @@ class ConnectArrayFixedOutdegreeTestCase(unittest.TestCase):
                     'weight': Warr, 'delay': Darr}
         conn_dict = {'rule': 'fixed_outdegree', 'outdegree': K}
 
-        # connects source to target subnet
+        # connects source to target
         nest.Connect(net1, net2, conn_spec=conn_dict, syn_spec=syn_dict)
 
-        for i in range(N):  # loop on all neurons of source subnet
+        for i in range(N):  # loop on all source neurons
 
             # gets all connections from the source neuron
             conns = nest.GetConnections(source=net1[i:i+1])

@@ -78,9 +78,9 @@ nest::izhikevich::Parameters_::Parameters_()
 }
 
 nest::izhikevich::State_::State_()
-  : v_( -65.0 ) // membrane potential
-  , u_( 0.0 )   // membrane recovery variable
-  , I_( 0.0 )   // input current
+  : v_( -65.0 )       // membrane potential
+  , u_( 0.2 * -65.0 ) // membrane recovery variable (b * V_m_init)
+  , I_( 0.0 )         // input current
 {
 }
 

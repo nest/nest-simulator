@@ -45,6 +45,7 @@ See Also
 
 import nest
 import nest.voltage_trace
+import matplotlib.pyplot as plt
 
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
@@ -76,7 +77,7 @@ neuron.I_e = 376.0
 # ``Connect`` has different variants. Plain ``Connect`` just takes the
 # handles of pre- and post-synaptic nodes and uses the default values
 # for weight and delay. Note that the connection direction for the voltmeter is
-# reversed compared to the spike detector, because it observes the
+# reversed compared to the spike recorder, because it observes the
 # neuron instead of receiving events from it. Thus, ``Connect``
 # reflects the direction of signal flow in the simulation kernel
 # rather than the physical process of inserting an electrode into the
@@ -92,7 +93,7 @@ nest.Simulate(1000.0)
 
 #######################################################################
 # Finally, we plot the neuron's membrane potential as a function of
-# time.
+# time and display the plot using pyplot.
 
 nest.voltage_trace.from_device(voltmeter)
-nest.voltage_trace.show()
+plt.show()

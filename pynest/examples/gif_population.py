@@ -102,17 +102,17 @@ nest.SetKernelStatus({"resolution": dt})
 
 ###############################################################################
 # Building a population of GIF neurons, a group of Poisson neurons and a
-# spike detector device for capturing spike times of the population.
+# spike recorder device for capturing spike times of the population.
 
 population = nest.Create("gif_psc_exp", N_ex, params=neuron_params)
 
 noise = nest.Create("poisson_generator", N_noise, params={'rate': rate_noise})
 
-spike_det = nest.Create("spike_detector")
+spike_det = nest.Create("spike_recorder")
 
 ###############################################################################
 # Build connections inside the population of GIF neurons population, between
-# Poisson group and the population, and also connecting spike detector to
+# Poisson group and the population, and also connecting spike recorder to
 # the population.
 
 nest.Connect(
@@ -135,4 +135,4 @@ nest.Simulate(simtime)
 
 nest.raster_plot.from_device(spike_det, hist=True)
 plt.title('Population dynamics')
-nest.raster_plot.show()
+plt.show()

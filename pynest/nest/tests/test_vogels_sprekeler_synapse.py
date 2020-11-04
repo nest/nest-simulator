@@ -108,7 +108,7 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
         badPropertyWith("Kplus", {"Kplus": -1.0})
 
     def test_varsZeroAtStart(self):
-        """Check that pre and post-synaptic variables are zero at start."""
+        """Check that pre- and post-synaptic variables are zero at start."""
         self.assertAlmostEqualDetailed(0.0, self.status("Kplus"),
                                        "Kplus should be zero")
 

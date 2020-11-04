@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/env python3
 
 # This is the real nest program, which requires NESTIO + ARBOR-NESTIO
 
@@ -14,6 +14,11 @@ print("Getting nest")
 import nest
 
 
+STATUS_DICT = nest.ll_api.sli_func("statusdict")
+if (not STATUS_DICT["have_recordingbackend_arbor"]):
+    print("Recording backend Arbor available. Exit testscript!")
+    sys.exit(1)
+
 nest.set_communicator(comm)
 nest.SetKernelStatus({'recording_backends': {'arbor': {}}})
 
@@ -25,7 +30,7 @@ pg = nest.Create('poisson_generator', params={'rate': 10.0})
 parrots = nest.Create('parrot_neuron', 100)
 nest.Connect(pg, parrots)
 
-sd2 = nest.Create('spike_detector', params={"record_to": "arbor"})
+sd2 = nest.Create('spike_recorder', params={"record_to": "arbor"})
 nest.Connect(parrots, sd2)
 
 status = nest.GetKernelStatus()

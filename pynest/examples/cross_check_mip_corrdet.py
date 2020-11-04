@@ -84,15 +84,15 @@ mg.set(rate=nu, p_copy=pc)
 cd = nest.Create('correlation_detector')
 cd.set(tau_max=tau_max, delta_tau=delta_tau)
 
-sd = nest.Create('spike_detector', params={'time_in_steps': True})
+sr = nest.Create('spike_recorder', params={'time_in_steps': True})
 
 pn1 = nest.Create('parrot_neuron')
 pn2 = nest.Create('parrot_neuron')
 
 nest.Connect(mg, pn1)
 nest.Connect(mg, pn2)
-nest.Connect(pn1, sd)
-nest.Connect(pn2, sd)
+nest.Connect(pn1, sr)
+nest.Connect(pn2, sr)
 
 nest.SetDefaults('static_synapse', {'weight': 1.0, 'receptor_type': 0})
 nest.Connect(pn1, cd)
@@ -113,7 +113,7 @@ h = 0.1
 tau_max = 100.0  # ms correlation window
 t_bin = 10.0  # ms bin size
 
-spikes = sd.get('events', 'senders')
+spikes = sr.get('events', 'senders')
 
 sp1 = spikes[spikes == 4]
 sp2 = spikes[spikes == 5]

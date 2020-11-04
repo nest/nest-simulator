@@ -45,6 +45,7 @@ References
 
 import nest
 import nest.raster_plot
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # Second, the simulation parameters are assigned to variables.
@@ -71,7 +72,7 @@ neuronparams = {'tau_m': 20.,  # membrane time constant
 # in variables for later reference.
 
 neurons = nest.Create('iaf_psc_alpha', N)
-sd = nest.Create('spike_detector')
+sr = nest.Create('spike_recorder')
 noise = nest.Create('noise_generator')
 drive = nest.Create('ac_generator')
 
@@ -92,11 +93,11 @@ neurons.I_e = [(n * (bias_end - bias_begin) / N + bias_begin)
 
 ###############################################################################
 # Connect alternating current and noise generators as well as
-# `spike_detector`s to neurons
+# `spike_recorder`s to neurons
 
 nest.Connect(drive, neurons)
 nest.Connect(noise, neurons)
-nest.Connect(neurons, sd)
+nest.Connect(neurons, sr)
 
 ###############################################################################
 # Simulate the network for time `T`.
@@ -106,5 +107,5 @@ nest.Simulate(T)
 ###############################################################################
 # Plot the raster plot of the neuronal spiking activity.
 
-nest.raster_plot.from_device(sd, hist=True)
-nest.raster_plot.show()
+nest.raster_plot.from_device(sr, hist=True)
+plt.show()

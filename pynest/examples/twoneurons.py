@@ -23,8 +23,8 @@
 ----------------------------
 
 This script simulates two connected pre- and postsynaptic neurons.
-The presynaptic neuron receives a constant external current.
-And, the membrane potential of both neurons are recorded.
+The presynaptic neuron receives a constant external current,
+and the membrane potential of both neurons are recorded.
 
 See Also
 ~~~~~~~~
@@ -66,7 +66,7 @@ neuron_1.I_e = 376.0
 weight = 20.0
 delay = 1.0
 
-nest.Connect(neuron_1, neuron_2, syn_spec={'weight': weight, 'delay': delay})
+nest.Connect(neuron_1, neuron_2, syn_spec={"weight": weight, "delay": delay})
 nest.Connect(voltmeter, neuron_1)
 nest.Connect(voltmeter, neuron_2)
 

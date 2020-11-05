@@ -36,13 +36,15 @@ import RestrictedPython
 import time
 
 import os
+
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
 RESTRICTION_OFF = bool(os.environ.get('NEST_SERVER_RESTRICTION_OFF', False))
 EXCEPTION_ERROR_STATUS = 400
 NEST_ERROR_STATUS = 400
 
 if RESTRICTION_OFF:
-    print('*** WARNING: NEST Server is run without a RestrictedPython trusted environment. ***')
+    msg = 'NEST Server runs without a RestrictedPython trusted environment.'
+    print(f'***\n*** WARNING: {msg}\n***')
 
 
 __all__ = [
@@ -55,44 +57,43 @@ __all__ = [
 app = Flask(__name__)
 CORS(app)
 
+mpi_comm = None
+
 
 @app.route('/', methods=['GET'])
 def index():
-    return jsonify({'nest': nest.__version__})
+    return jsonify({
+        'nest': nest.__version__,
+        'mpi': mpi_comm is not None,
+    })
 
-
-@app.route('/exec', methods=['GET', 'POST'])
-@cross_origin()
-def route_exec():
-    """ Route to execute script in Python.
-    """
+def do_exec(args, kwargs):
     try:
-        args, kwargs = get_arguments(request)
         source_code = kwargs.get('source', '')
         source_cleaned = clean_code(source_code)
 
-        locals = dict()
+        locals_ = dict()
         response = dict()
         if RESTRICTION_OFF:
             with Capturing() as stdout:
-                exec(source_cleaned, get_globals(), locals)
+                exec(source_cleaned, get_globals(), locals_)
             if len(stdout) > 0:
                 response['stdout'] = '\n'.join(stdout)
         else:
             code = RestrictedPython.compile_restricted(source_cleaned, '<inline>', 'exec')
-            exec(code, get_restricted_globals(), locals)
-            if '_print' in locals:
-                response['stdout'] = ''.join(locals['_print'].txt)
+            exec(code, get_restricted_globals(), locals_)
+            if '_print' in locals_:
+                response['stdout'] = ''.join(locals_['_print'].txt)
 
         if 'return' in kwargs:
             if isinstance(kwargs['return'], list):
                 data = dict()
                 for variable in kwargs['return']:
-                    data[variable] = locals.get(variable, None)
+                    data[variable] = locals_.get(variable, None)
             else:
-                data = locals.get(kwargs['return'], None)
+                data = locals_.get(kwargs['return'], None)
             response['data'] = nest.hl_api.serializable(data)
-        return jsonify(response)
+        return response
 
     except nest.kernel.NESTError as e:
         print('NEST error: {}'.format(e))
@@ -102,6 +103,30 @@ def route_exec():
         abort(Response(str(e), EXCEPTION_ERROR_STATUS))
 
 
+@app.route('/exec', methods=['GET', 'POST'])
+@cross_origin()
+def route_exec():
+    """ Route to execute script in Python.
+    """
+
+    args, kwargs = get_arguments(request)
+    if mpi_comm is not None:
+        print("==> MASTER (exec): sending command bcast")
+        mpi_comm.bcast('exec', root=0)
+        data = (args, kwargs)
+        print("==> MASTER (exec): sending data bcast, data={}".format(data))
+        mpi_comm.bcast(data, root=0)
+        response = do_exec(args, kwargs)
+    worker_responses = [None]
+    if mpi_comm is not None:
+        print("==> MASTER (exec): waiting for response gather")
+        worker_responses = mpi_comm.gather(None, root=0)
+    worker_responses[0] = nest.hl_api.serializable(response)
+    print("==> MASTER (call): worker_responses={}".format(worker_responses))
+    # TODO: combine worker responses in a meaningful way
+    return jsonify(response)
+
+        
 # --------------------------
 # RESTful API
 # --------------------------
@@ -258,7 +283,7 @@ def NodeCollection(call, args, kwargs):
 
 
 def serialize(call, args, kwargs):
-    """ Serialize arguments with keywords for call functions in NEST.
+    """ Serialize arguments with keywords for calling functions in NEST.
     """
     args, kwargs = NodeCollection(call, args, kwargs)
     if call.__name__.startswith('Set'):
@@ -288,10 +313,30 @@ def api_client(call, args, kwargs):
             }
         else:
             args, kwargs = serialize(call, args, kwargs)
+            if mpi_comm is not None:
+                print("==> MASTER (call): sending command bcast")
+                mpi_comm.bcast('call', root=0)
+                data = (call.__name__, args, kwargs)
+                print("==> MASTER (call): sending data bcast, data={}".format(data))
+                mpi_comm.bcast(data, root=0)
             response = call(*args, **kwargs)
+            worker_responses = [None]
+            if mpi_comm is not None:
+                print("==> MASTER (call): waiting for response gather")
+                worker_responses = mpi_comm.gather(None, root=0)
+            worker_responses[0] = nest.hl_api.serializable(response)
+            print("==> MASTER (call): worker_responses={}".format(worker_responses))
+            # TODO: combine worker_response in a meaningful way
     else:
         response = call
     return nest.hl_api.serializable(response)
+
+
+def run_mpi_app(comm):
+    global mpi_comm
+    mpi_comm = comm
+    # NEST segfaults if someone messes with the number of threads, so we don't.
+    app.run(threaded=False)
 
 
 if __name__ == "__main__":

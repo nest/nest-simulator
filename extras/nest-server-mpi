@@ -46,20 +46,21 @@ if rank == 0:
 else:
     print("==> Starting NEST Server Worker on rank {}".format(rank))
     while True:
-
         print("==> WORKER/{}: waiting for command bcast".format(rank))
         command = comm.bcast(None, root=0)
-        print("==> WORKER/{}: waiting for data bcast".format(rank))
-        data, args, kwargs = comm.bcast(None, root=0)
-        print("==> WORKER/{}: received data bcast, data={}".format(rank, data))
+        print("==> WORKER/{} ({}): waiting for data bcast".format(rank, command))
+        data = comm.bcast(None, root=0)
+        print("==> WORKER/{} ({}): received data bcast, data={}".format(rank, command, data))
         if command == 'exec':
-            do_exec(data, args, kwargs) # TODO: handle errors
-            print("==> WORKER/{} (exec): sending reponse gather, data={}".format(rank, data))
-            comm.gather(data, root=0)
+            args, kwargs = data
+            response = do_exec(args, kwargs) # TODO: handle errors
+            print("==> WORKER/{} (exec): sending reponse gather, data={}".format(rank, response))
+            comm.gather(response, root=0)
         if command == 'call':
-            call = getattr(nest, data['request']['call'])
-            data['request']['call'] = call.__name__
-            response = call(*args, **serialize(call.__name__, kwargs)) # TODO: handle errors
-            data['response']['data'] = nest.hl_api.serializable(response)
-            print("==> WORKER/{} (call): sending reponse gather, data={}".format(rank, data))
-            comm.gather(data, root=0)
+            call_name, args, kwargs = data
+            call = getattr(nest, call_name)
+            args, kwargs = serialize(call, args, kwargs)
+            response = call(*args, **kwargs) # TODO: handle errors
+            print("==> WORKER/{} (call): sending reponse gather, data={}".format(rank, response))
+            comm.gather(nest.hl_api.serializable(response), root=0)
+

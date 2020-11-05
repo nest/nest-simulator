@@ -76,7 +76,7 @@ PyNEST examples
    :caption: Connection set algebra examples
 
    ../auto_examples/csa_example
-   ../auto_examples/csa_topology_example
+   ../auto_examples/csa_spatial_example
 
 .. toctree::
    :maxdepth: 1

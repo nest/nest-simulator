@@ -72,7 +72,6 @@ except KeyError:
 names_files = [
     "librandom/librandom_names",
     "nestkernel/nest_names",
-    "topology/topology_names",
 ]
 
 

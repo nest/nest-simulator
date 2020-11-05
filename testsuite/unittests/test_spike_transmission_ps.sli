@@ -24,7 +24,7 @@
 
 Setup:
 - poisson_generator_ps with high rate
-- spike_detector recording precise spike times
+- spike_recorder recording precise spike times
 - connected with default connection, delay 1ms
 
 Test:
@@ -82,7 +82,7 @@ for the kernel.
       >> SetKernelStatus
 
   % build and connect first
-  /spike_detector Create /sp Set  
+  /spike_recorder Create /sp Set  
   /poisson_generator_ps Create /pn Set
  
   % now configure

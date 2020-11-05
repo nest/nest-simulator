@@ -34,8 +34,13 @@ Description:
   2) check if data logger is initialized correctly
   3) ensures offset can only be set before the multimeter is connected to nodes
   4) ensures offset works correctly even if origin, start and stop are modified
+  5) ensures offsets behave correctly when we create a second multimeter after an
+     initial similation
+  6) ensures that offset behave correctly after initial simulation time
+  7) ensures that multimeter with offset behave correctly after initial simulation
+     time longer than offset
 
-Author: Barna Zajzon, 2017-03-10 
+Author: Barna Zajzon, 2017-03-10, Stine B. Vennemo, September 2020
  */
 
 (unittest) run
@@ -48,6 +53,8 @@ Author: Barna Zajzon, 2017-03-10
 % Test 1
 % checks if recorded times are indeed relative to an offset
 {
+  (Test 1) ==
+
   /simtime 15. def % simulation time
   /recoffs 5.  def % offset time --- different from default
   /recint  3.  def % recording interval --- different from default
@@ -80,6 +87,8 @@ assert_or_die
 % Test 2
 % check if data logger is initialized correctly
 {
+  (Test 2) ==
+
   /simtimeinit  10. def % initial simulation time
   /simtime      20. def % second simulation time
   /recoffs      5.  def % offset time --- different from default
@@ -130,6 +139,8 @@ assert_or_die
 % Test 3
 % make sure offset cannot be changed after connecting to a node
 {
+  (Test 3) ==
+
   ResetKernel
   
   % create multimeter and node
@@ -150,6 +161,8 @@ fail_or_die
 % different from their initial values, simulate, check recordings. Then modify origin,
 % simulate again, and check for consistency.
 {
+  (Test 4) ==
+
   /recint  3. def
   /recoffs 5. def
   /start   3. def
@@ -189,6 +202,146 @@ fail_or_die
 
   % compare to extended reference
   times_2 eq
+}
+assert_or_die
+
+% Test 5
+% Ensure offsets behave correctly when we create a second multimeter after an initial similation.
+% Create two multimeters; one before initial simtime, one after. The offset and start time indicates
+% that all samples should be taken from the second simulation, and the recordings from the two
+% multimeters should be equal.
+{
+  (Test 5) ==
+
+  /initsimtime 10. def
+  /simtime     20. def
+  /recoffs      1. def
+  /recint       3. def
+  /recstart    10. def
+  /recstop     30. def
+
+  /resolution 0.1 def
+
+  ResetKernel
+
+  << /resolution resolution >> SetKernelStatus
+
+  % Create neuron
+  /neuron /iaf_psc_exp Create def
+
+  % Create multimeter
+  /mm1 /multimeter Create def
+  mm1 << /record_from [/V_m]
+         /interval recint
+         /offset recoffs
+         /start recstart
+         /stop recstop
+      >> SetStatus
+
+  mm1 neuron << /rule /all_to_all >> << /delay 0.1 >> Connect
+
+  % Init simtime, nothing should be recorded
+  initsimtime Simulate
+
+  % Create second multimeter
+  /mm2 /multimeter Create def
+  mm2 << /record_from [/V_m]
+         /interval recint
+         /offset recoffs
+         /start recstart
+         /stop recstop
+      >> SetStatus
+
+  mm2 neuron << /rule /all_to_all >> << /delay 0.1 >> Connect
+
+  % Simulate, all recordings should be from here
+  simtime Simulate
+
+  /times1 mm1 /events get /times get def
+  /times2 mm2 /events get /times get def
+
+  times1 times2 eq
+}
+assert_or_die
+
+% Test 6
+% Ensure that offset behave correctly after initial simulation time. The sample should
+% occur at 'offset' when initial simulation time is less than offset and we have not recorded
+% any parameters yet.
+{
+  (Test 6) ==
+
+  /initsimtime 110.  def
+  /simtime     250.  def
+  /interval     60.  def
+  /offset      170.3 def
+
+  /resolution 0.1 def
+
+  /reference_solution [offset initsimtime simtime add interval] Range def
+
+  ResetKernel
+
+  << /resolution resolution >> SetKernelStatus
+
+  % Create neuron
+  /neuron /iaf_psc_exp Create def
+
+  initsimtime Simulate
+
+  % Create multimeter
+  /mm /multimeter Create def
+  mm << /record_from [/V_m]
+        /interval interval
+        /offset offset
+      >> SetStatus
+
+  mm neuron << /rule /all_to_all >> << /delay 0.1 >> Connect
+
+  simtime Simulate
+
+  /time mm /events get /times get def
+  time cva reference_solution eq
+}
+assert_or_die
+
+% Test 7
+% Ensure that multimeter with offset behave correctly after initial simulation time longer than offset.
+% First recorded event should be between init simtime and interval.
+{
+  (Test 7) ==
+
+  /initsimtime 250.  def  % initial simulation time longer than offset
+  /simtime     250.  def
+  /interval     60.  def
+  /offset      170.3 def
+
+  /resolution 0.1 def
+
+  /reference_solution [offset interval add interval add initsimtime simtime add interval] Range def
+
+  ResetKernel
+
+  << /resolution resolution >> SetKernelStatus
+
+  % Create neuron
+  /neuron /iaf_psc_exp Create def
+
+  initsimtime Simulate
+
+  % Create multimeter
+  /mm /multimeter Create def
+  mm << /record_from [/V_m]
+        /interval interval
+        /offset offset
+      >> SetStatus
+
+  mm neuron << /rule /all_to_all >> << /delay 0.1 >> Connect
+
+  simtime Simulate
+
+  /time mm /events get /times get def
+  time cva reference_solution eq
 }
 assert_or_die
 

@@ -43,7 +43,10 @@ class ConnectionGeneratorBuilder : public ConnBuilder
   typedef ConnectionGenerator::ClosedInterval Range;
 
 public:
-  ConnectionGeneratorBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const DictionaryDatum& );
+  ConnectionGeneratorBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
 
 protected:
   void connect_();

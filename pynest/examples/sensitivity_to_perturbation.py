@@ -33,7 +33,7 @@ reset appropriately between the trials, we do the following steps:
 - resetting the network
 - resetting the random network generator
 - resetting the internal clock
-- deleting all entries in the spike detector
+- deleting all entries in the spike recorder
 - introducing a hyperpolarisation phase between the trials
   (in order to avoid that spikes remaining in the NEST memory
   after the first simulation are fed into the second simulation)
@@ -168,8 +168,8 @@ for trial in [0, 1]:
                                 'stop': T + fade_out})
     nest.Connect(suppr, allnodes)
 
-    spikedetector = nest.Create("spike_detector")
-    nest.Connect(allnodes, spikedetector)
+    spikerecorder = nest.Create("spike_recorder")
+    nest.Connect(allnodes, spikerecorder)
 
     ###############################################################################
     # We then create the ``spike_generator``, which provides the extra spike
@@ -181,10 +181,10 @@ for trial in [0, 1]:
     ###############################################################################
     # We need to reset the random number generator and the clock of
     # the simulation Kernel. In addition, we ensure that there is no spike left in
-    # the spike detector.
+    # the spike recorder.
 
     nest.SetKernelStatus({"rng_seeds": [seed_NEST], 'time': 0.0})
-    spikedetector.n_events = 0
+    spikerecorder.n_events = 0
 
     # We assign random initial membrane potentials to all neurons
 
@@ -212,8 +212,8 @@ for trial in [0, 1]:
 
     # Storing the data.
 
-    senders += [spikedetector.get('events', 'senders')]
-    spiketimes += [spikedetector.get('events', 'times')]
+    senders += [spikerecorder.get('events', 'senders')]
+    spiketimes += [spikerecorder.get('events', 'times')]
 
 ###############################################################################
 # We plot the spiking activity of the network (first trial in red, second trial

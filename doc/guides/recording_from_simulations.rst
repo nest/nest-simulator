@@ -102,7 +102,7 @@ Recorders for every-day situations
 
 .. include:: ../models/multimeter.rst
 
-.. include:: ../models/spike_detector.rst
+.. include:: ../models/spike_recorder.rst
 
 .. include:: ../models/weight_recorder.rst
 
@@ -127,7 +127,7 @@ call to ``Create`` or by using ``SetStatus`` on the model instance.
 
 ::
 
- sd = nest.Create('spike_detector', params={'record_to': 'ascii'})
+ sr = nest.Create('spike_recorder', params={'record_to': 'ascii'})
 
 Storing data in memory using the `memory` backend is the default for
 all recording devices as this does not require any additional setup of

@@ -627,7 +627,7 @@ endfunction()
 function( NEST_DEFAULT_MODULES )
     # requires HAVE_LIBNEUROSIM set
     # Static modules
-    set( SLI_MODULES models topology )
+    set( SLI_MODULES models )
     set( SLI_MODULES ${SLI_MODULES} PARENT_SCOPE )
 
     set( SLI_MODULE_INCLUDE_DIRS )

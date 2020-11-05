@@ -86,7 +86,7 @@ transformers.
  g                  real    Gain parameter
  alpha              real    Second Threshold
  theta              real    Threshold
- rectify_rate       real    Rectfying rate
+ rectify_rate       real    Rectifying rate
  linear_summation   boolean Specifies type of non-linearity (see above)
  rectify_output     boolean Switch to restrict rate to values >= rectify_rate
 ==================  ======= ==============================================

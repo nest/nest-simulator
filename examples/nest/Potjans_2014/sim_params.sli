@@ -100,9 +100,9 @@
 
 %% Prefixes for recorder file names
 
-/spike_detector_label (spikes_) def
+/spike_recorder_label (spikes_) def
 /voltmeter_label (voltages_) def
-/th_spike_detector_label (th_spikes_) def
+/th_spike_recorder_label (th_spikes_) def
 
 %% Name of the file to which the global IDs of the different
 %% populations are stored

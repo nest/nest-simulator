@@ -320,8 +320,8 @@ private:
   struct State_
   {
     double y0_;    //!< External input current
-    double y1_ex_; //!< Exc. exponetial current
-    double y1_in_; //!< Inh. exponetial current
+    double y1_ex_; //!< Excitatory synaptic current
+    double y1_in_; //!< Inhibitory synaptic current
     double y2_;    //!< Membrane potential (relative to resting potential)
 
     bool is_refractory_;       //!< True while refractory

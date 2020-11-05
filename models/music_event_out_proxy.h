@@ -62,7 +62,7 @@ events is determined during connection setup by using the parameter
 music_channel of the connection. The name of the port is set via
 SetStatus (see Parameters section below).
 
-This model is only available if NEST was compiled with MUSIC
+This model is only available if NEST was compiled with MUSIC.
 
 Parameters
 ++++++++++

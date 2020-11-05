@@ -69,7 +69,7 @@ If you want to put a name on the stack without evaluating it, you need
 to protect it by prepending a shash character (e.g. ``/a``). In this
 case, the name is called a *literal name*.
 
-The command ``def`` is used to create an associoation between a name an
+The command ``def`` is used to create an association between a name an
 an object.
 
 Example 3
@@ -119,8 +119,8 @@ first index.
 
 Matched pairs of parentheses may be used inside strings.
 
-Examples 5
-~~~~~~~~~~
+Example 5
+~~~~~~~~~
 
 ::
 
@@ -132,7 +132,7 @@ Procedures
 
 Procedures are a sequence of SLI commands, enclosed by the delimiters
 ``{`` and ``}``. The delimiters prevent the objects from being executed
-as you enter them. Rather, they will be executed, when you evaluate the
+as you enter them. Instead, they will be executed when you evaluate the
 procedure.
 
 Bound to a name, procedures can be used like any builtin SLI command.

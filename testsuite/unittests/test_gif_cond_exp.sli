@@ -77,18 +77,18 @@ skip_if_without_gsl
   /dc_generator Create /dc_gen Set
   dc_gen <<  /amplitude 170. >> SetStatus
 
-  /spike_detector Create /sd Set
-  sd << /time_in_steps true >> SetStatus
+  /spike_recorder Create /sr Set
+  sr << /time_in_steps true >> SetStatus
 
   dc_gen neuron Connect
 
-  neuron sd Connect
+  neuron sr Connect
 
   sg neuron Connect
 
   150.0 Simulate
 
-  sd /events get /times get
+  sr /events get /times get
 } def
 
 % Test 1: wrong parameters (negative lambda)

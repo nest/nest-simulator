@@ -150,29 +150,29 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         """
         Test get with different input for different sizes of NodeCollections
         """
-        single_sd = nest.Create('spike_detector', 1)
-        multi_sd = nest.Create('spike_detector', 10)
+        single_sr = nest.Create('spike_recorder', 1)
+        multi_sr = nest.Create('spike_recorder', 10)
         empty_array_float = np.array([], dtype=np.float64)
         empty_array_int = np.array([], dtype=np.int64)
 
         # Single node, literal parameter
-        self.assertEqual(single_sd.get('start'), 0.0)
+        self.assertEqual(single_sr.get('start'), 0.0)
 
         # Single node, array parameter
-        self.assertEqual(single_sd.get(['start', 'time_in_steps']),
+        self.assertEqual(single_sr.get(['start', 'time_in_steps']),
                          {'start': 0.0, 'time_in_steps': False})
 
         # Single node, hierarchical with literal parameter
-        np.testing.assert_array_equal(single_sd.get('events', 'times'),
+        np.testing.assert_array_equal(single_sr.get('events', 'times'),
                                       empty_array_float)
 
         # Multiple nodes, hierarchical with literal parameter
-        values = multi_sd.get('events', 'times')
+        values = multi_sr.get('events', 'times')
         for v in values:
             np.testing.assert_array_equal(v, empty_array_float)
 
         # Single node, hierarchical with array parameter
-        values = single_sd.get('events', ['senders', 'times'])
+        values = single_sr.get('events', ['senders', 'times'])
         self.assertEqual(len(values), 2)
         self.assertTrue('senders' in values)
         self.assertTrue('times' in values)
@@ -180,108 +180,108 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         np.testing.assert_array_equal(values['times'], empty_array_float)
 
         # Multiple nodes, hierarchical with array parameter
-        values = multi_sd.get('events', ['senders', 'times'])
+        values = multi_sr.get('events', ['senders', 'times'])
         self.assertEqual(len(values), 2)
         self.assertTrue('senders' in values)
         self.assertTrue('times' in values)
-        self.assertEqual(len(values['senders']), len(multi_sd))
+        self.assertEqual(len(values['senders']), len(multi_sr))
         for v in values['senders']:
             np.testing.assert_array_equal(v, empty_array_int)
         for v in values['times']:
             np.testing.assert_array_equal(v, empty_array_float)
 
         # Single node, no parameter (gets all values)
-        values = single_sd.get()
-        num_values_single_sd = len(values.keys())
+        values = single_sr.get()
+        num_values_single_sr = len(values.keys())
         self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
-        values = multi_sd.get()
-        self.assertEqual(len(values.keys()), num_values_single_sd)
+        values = multi_sr.get()
+        self.assertEqual(len(values.keys()), num_values_single_sr)
         self.assertEqual(values['start'],
-                         tuple(0.0 for i in range(len(multi_sd))))
+                         tuple(0.0 for i in range(len(multi_sr))))
 
     @unittest.skipIf(not HAVE_PANDAS, 'Pandas package is not available')
     def test_get_pandas(self):
         """
         Test that get function with Pandas output works as expected.
         """
-        single_sd = nest.Create('spike_detector', 1)
-        multi_sd = nest.Create('spike_detector', 10)
+        single_sr = nest.Create('spike_recorder', 1)
+        multi_sr = nest.Create('spike_recorder', 10)
         empty_array_float = np.array([], dtype=np.float64)
 
         # Single node, literal parameter
-        pt.assert_frame_equal(single_sd.get('start', output='pandas'),
+        pt.assert_frame_equal(single_sr.get('start', output='pandas'),
                               pandas.DataFrame({'start': [0.0]},
-                                               index=tuple(single_sd.tolist())))
+                                               index=tuple(single_sr.tolist())))
 
         # Multiple nodes, literal parameter
-        pt.assert_frame_equal(multi_sd.get('start', output='pandas'),
+        pt.assert_frame_equal(multi_sr.get('start', output='pandas'),
                               pandas.DataFrame(
                                   {'start': [0.0 for i in range(
-                                      len(multi_sd))]},
-                                  index=tuple(multi_sd.tolist())))
+                                      len(multi_sr))]},
+                                  index=tuple(multi_sr.tolist())))
 
         # Single node, array parameter
-        pt.assert_frame_equal(single_sd.get(['start', 'n_events'],
+        pt.assert_frame_equal(single_sr.get(['start', 'n_events'],
                                             output='pandas'),
                               pandas.DataFrame({'start': [0.0],
                                                 'n_events': [0]},
-                                               index=tuple(single_sd.tolist())))
+                                               index=tuple(single_sr.tolist())))
 
         # Multiple nodes, array parameter
-        ref_dict = {'start': [0.0 for i in range(len(multi_sd))],
+        ref_dict = {'start': [0.0 for i in range(len(multi_sr))],
                     'n_events': [0]}
-        pt.assert_frame_equal(multi_sd.get(['start', 'n_events'],
+        pt.assert_frame_equal(multi_sr.get(['start', 'n_events'],
                                            output='pandas'),
                               pandas.DataFrame(ref_dict,
-                                               index=tuple(multi_sd.tolist())))
+                                               index=tuple(multi_sr.tolist())))
 
         # Single node, hierarchical with literal parameter
-        pt.assert_frame_equal(single_sd.get('events', 'times',
+        pt.assert_frame_equal(single_sr.get('events', 'times',
                                             output='pandas'),
                               pandas.DataFrame({'times': [[]]},
-                                               index=tuple(single_sd.tolist())))
+                                               index=tuple(single_sr.tolist())))
 
         # Multiple nodes, hierarchical with literal parameter
         ref_dict = {'times': [empty_array_float
-                              for i in range(len(multi_sd))]}
-        pt.assert_frame_equal(multi_sd.get('events', 'times',
+                              for i in range(len(multi_sr))]}
+        pt.assert_frame_equal(multi_sr.get('events', 'times',
                                            output='pandas'),
                               pandas.DataFrame(ref_dict,
-                                               index=tuple(multi_sd.tolist())))
+                                               index=tuple(multi_sr.tolist())))
 
         # Single node, hierarchical with array parameter
         ref_df = pandas.DataFrame(
-            {'times': [[]], 'senders': [[]]}, index=tuple(single_sd.tolist()))
+            {'times': [[]], 'senders': [[]]}, index=tuple(single_sr.tolist()))
         ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
-        pt.assert_frame_equal(single_sd.get(
+        pt.assert_frame_equal(single_sr.get(
             'events', ['senders', 'times'], output='pandas'),
             ref_df)
 
         # Multiple nodes, hierarchical with array parameter
-        ref_dict = {'times': [[] for i in range(len(multi_sd))],
-                    'senders': [[] for i in range(len(multi_sd))]}
+        ref_dict = {'times': [[] for i in range(len(multi_sr))],
+                    'senders': [[] for i in range(len(multi_sr))]}
         ref_df = pandas.DataFrame(
             ref_dict,
-            index=tuple(multi_sd.tolist()))
+            index=tuple(multi_sr.tolist()))
         ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
-        sd_df = multi_sd.get('events', ['senders', 'times'], output='pandas')
-        sd_df = sd_df.reindex(sorted(sd_df.columns), axis=1)
-        pt.assert_frame_equal(sd_df,
+        sr_df = multi_sr.get('events', ['senders', 'times'], output='pandas')
+        sr_df = sr_df.reindex(sorted(sr_df.columns), axis=1)
+        pt.assert_frame_equal(sr_df,
                               ref_df)
 
         # Single node, no parameter (gets all values)
-        values = single_sd.get(output='pandas')
-        num_values_single_sd = values.shape[1]
-        self.assertEqual(values['start'][tuple(single_sd.tolist())[0]], 0.0)
+        values = single_sr.get(output='pandas')
+        num_values_single_sr = values.shape[1]
+        self.assertEqual(values['start'][tuple(single_sr.tolist())[0]], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
-        values = multi_sd.get(output='pandas')
-        self.assertEqual(values.shape, (len(multi_sd), num_values_single_sd))
+        values = multi_sr.get(output='pandas')
+        self.assertEqual(values.shape, (len(multi_sr), num_values_single_sr))
         pt.assert_series_equal(values['start'],
                                pandas.Series({key: 0.0
-                                              for key in tuple(multi_sd.tolist())},
+                                              for key in tuple(multi_sr.tolist())},
                                              dtype=np.float64,
                                              name='start'))
 
@@ -289,24 +289,24 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         nodes = nest.Create('iaf_psc_alpha', 10)
         pg = nest.Create('poisson_generator', {'rate': 70000.0})
         nest.Connect(pg, nodes)
-        nest.Connect(nodes, single_sd)
-        nest.Connect(nodes, multi_sd, 'one_to_one')
+        nest.Connect(nodes, single_sr)
+        nest.Connect(nodes, multi_sr, 'one_to_one')
         nest.Simulate(39)
 
         ref_dict = {'times': [[31.8, 36.1, 38.5]],
                     'senders': [[17, 12, 20]]}
-        ref_df = pandas.DataFrame(ref_dict, index=tuple(single_sd.tolist()))
+        ref_df = pandas.DataFrame(ref_dict, index=tuple(single_sr.tolist()))
         ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
-        pt.assert_frame_equal(single_sd.get('events', ['senders', 'times'],
+        pt.assert_frame_equal(single_sr.get('events', ['senders', 'times'],
                                             output='pandas'),
                               ref_df)
 
         ref_dict = {'times': [[36.1], [], [], [], [], [31.8], [], [], [38.5],
                               []],
                     'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
-        ref_df = pandas.DataFrame(ref_dict, index=tuple(multi_sd.tolist()))
+        ref_df = pandas.DataFrame(ref_dict, index=tuple(multi_sr.tolist()))
         ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
-        pt.assert_frame_equal(multi_sd.get('events', ['senders', 'times'],
+        pt.assert_frame_equal(multi_sr.get('events', ['senders', 'times'],
                                            output='pandas'),
                               ref_df)
 
@@ -314,78 +314,78 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         """
         Test that get function with json output works as expected.
         """
-        single_sd = nest.Create('spike_detector', 1)
-        multi_sd = nest.Create('spike_detector', 10)
+        single_sr = nest.Create('spike_recorder', 1)
+        multi_sr = nest.Create('spike_recorder', 10)
 
         # Single node, literal parameter
         self.assertEqual(json.loads(
-            single_sd.get('start', output='json')), 0.0)
+            single_sr.get('start', output='json')), 0.0)
 
         # Multiple nodes, literal parameter
         self.assertEqual(
-            json.loads(multi_sd.get('start', output='json')),
-            len(multi_sd) * [0.0])
+            json.loads(multi_sr.get('start', output='json')),
+            len(multi_sr) * [0.0])
 
         # Single node, array parameter
         ref_dict = {'start': 0.0, 'n_events': 0}
         self.assertEqual(
-            json.loads(single_sd.get(['start', 'n_events'], output='json')),
+            json.loads(single_sr.get(['start', 'n_events'], output='json')),
             ref_dict)
 
         # Multiple nodes, array parameter
-        ref_dict = {'start': len(multi_sd) * [0.0],
-                    'n_events': len(multi_sd) * [0]}
+        ref_dict = {'start': len(multi_sr) * [0.0],
+                    'n_events': len(multi_sr) * [0]}
         self.assertEqual(
-            json.loads(multi_sd.get(['start', 'n_events'], output='json')),
+            json.loads(multi_sr.get(['start', 'n_events'], output='json')),
             ref_dict)
 
         # Single node, hierarchical with literal parameter
-        self.assertEqual(json.loads(single_sd.get(
+        self.assertEqual(json.loads(single_sr.get(
             'events', 'times', output='json')), [])
 
         # Multiple nodes, hierarchical with literal parameter
-        ref_list = len(multi_sd) * [[]]
+        ref_list = len(multi_sr) * [[]]
         self.assertEqual(
-            json.loads(multi_sd.get('events', 'times', output='json')),
+            json.loads(multi_sr.get('events', 'times', output='json')),
             ref_list)
 
         # Single node, hierarchical with array parameter
         ref_dict = {'senders': [], 'times': []}
         self.assertEqual(
-            json.loads(single_sd.get(
+            json.loads(single_sr.get(
                 'events', ['senders', 'times'], output='json')),
             ref_dict)
 
         # Multiple nodes, hierarchical with array parameter
-        ref_dict = {'times': len(multi_sd) * [[]],
-                    'senders': len(multi_sd) * [[]]}
+        ref_dict = {'times': len(multi_sr) * [[]],
+                    'senders': len(multi_sr) * [[]]}
         self.assertEqual(
-            json.loads(multi_sd.get(
+            json.loads(multi_sr.get(
                 'events', ['senders', 'times'], output='json')),
             ref_dict)
 
         # Single node, no parameter (gets all values)
-        values = json.loads(single_sd.get(output='json'))
-        num_values_single_sd = len(values)
+        values = json.loads(single_sr.get(output='json'))
+        num_values_single_sr = len(values)
         self.assertEqual(values['start'], 0.0)
 
         # Multiple nodes, no parameter (gets all values)
-        values = json.loads(multi_sd.get(output='json'))
-        self.assertEqual(len(values), num_values_single_sd)
-        self.assertEqual(values['start'], len(multi_sd) * [0.0])
+        values = json.loads(multi_sr.get(output='json'))
+        self.assertEqual(len(values), num_values_single_sr)
+        self.assertEqual(values['start'], len(multi_sr) * [0.0])
 
         # With data in events
         nodes = nest.Create('iaf_psc_alpha', 10)
         pg = nest.Create('poisson_generator', {'rate': 70000.0})
         nest.Connect(pg, nodes)
-        nest.Connect(nodes, single_sd)
-        nest.Connect(nodes, multi_sd, 'one_to_one')
+        nest.Connect(nodes, single_sr)
+        nest.Connect(nodes, multi_sr, 'one_to_one')
         nest.Simulate(39)
 
         ref_dict = {'times': [31.8, 36.1, 38.5],
                     'senders': [17, 12, 20]}
         self.assertEqual(
-            json.loads(single_sd.get(
+            json.loads(single_sr.get(
                 'events', ['senders', 'times'], output='json')),
             ref_dict)
 
@@ -393,7 +393,7 @@ class TestNodeCollectionGetSet(unittest.TestCase):
                               []],
                     'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
         self.assertEqual(
-            json.loads(multi_sd.get(
+            json.loads(multi_sr.get(
                 'events', ['senders', 'times'], output='json')),
             ref_dict)
 

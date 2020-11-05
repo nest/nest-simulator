@@ -115,6 +115,9 @@ class TestSynapseCollection(unittest.TestCase):
         # Key is None
         all_values = conns.get()
 
+        expected_syn_model = 'static_synapse'
+        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+
         target_ref = [1, 2, 1, 2]
         dpw_ref = {'delay': [1., 1., 1., 1.],
                    'port': [0, 1, 2, 3],
@@ -124,7 +127,10 @@ class TestSynapseCollection(unittest.TestCase):
                    'receptor': [0, 0, 0, 0],
                    'sizeof': [32, 32, 32, 32],
                    'source': [1, 1, 2, 2],
-                   'synapse_id': [15, 15, 15, 15],
+                   'synapse_id': [expected_syn_id,
+                                  expected_syn_id,
+                                  expected_syn_id,
+                                  expected_syn_id],
                    'synapse_model': ['static_synapse',
                                      'static_synapse',
                                      'static_synapse',
@@ -160,7 +166,7 @@ class TestSynapseCollection(unittest.TestCase):
                    'receptor': 0,
                    'sizeof': 32,
                    'source': 1,
-                   'synapse_id': 15,
+                   'synapse_id': expected_syn_id,
                    'synapse_model': 'static_synapse',
                    'target': 1,
                    'target_thread': 0,
@@ -275,13 +281,16 @@ class TestSynapseCollection(unittest.TestCase):
         nest.Connect(nrn, nrn)
         conns = nest.GetConnections()
 
+        expected_syn_model = 'static_synapse'
+        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+
         conns_val = conns.get(output='pandas')
         pnds_ref = pandas.DataFrame({'delay': 1.,
                                      'port': 0,
                                      'receptor': 0,
                                      'sizeof': 32,
                                      'source': 1,
-                                     'synapse_id': 15,
+                                     'synapse_id': expected_syn_id,
                                      'synapse_model': 'static_synapse',
                                      'target': 1,
                                      'target_thread': 0,
@@ -309,7 +318,10 @@ class TestSynapseCollection(unittest.TestCase):
                                      'receptor': [0, 0, 0, 0],
                                      'sizeof': [32, 32, 32, 32],
                                      'source': [1, 1, 2, 2],
-                                     'synapse_id': [15, 15, 15, 15],
+                                     'synapse_id': [expected_syn_id,
+                                                    expected_syn_id,
+                                                    expected_syn_id,
+                                                    expected_syn_id],
                                      'synapse_model': ['static_synapse',
                                                        'static_synapse',
                                                        'static_synapse',

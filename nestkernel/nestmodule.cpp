@@ -918,6 +918,29 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
+  kernel().connection_manager.connect( sources, targets, connectivity, { synapse_params } );
+
+  i->OStack.pop( 4 );
+  i->EStack.pop();
+}
+
+void
+NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 4 );
+
+  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
+  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  ArrayDatum synapse_params_arr = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
+  std::vector< DictionaryDatum > synapse_params;
+
+  for ( auto syn_param : synapse_params_arr )
+  {
+    synapse_params.push_back( getValue< DictionaryDatum >( syn_param ) );
+  }
+
+  // dictionary access checking is handled by connect
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
@@ -2853,6 +2876,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Apply_P_g", &apply_P_gfunction );
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
+  i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 

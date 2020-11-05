@@ -186,7 +186,7 @@ void
 connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
-  const DictionaryDatum& synapse_params )
+  const std::vector< DictionaryDatum >& synapse_params )
 {
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 }

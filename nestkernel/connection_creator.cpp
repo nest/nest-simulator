@@ -32,7 +32,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , number_of_connections_()
   , mask_()
   , kernel_()
-  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
+  , synapse_model_()
   , weight_()
   , delay_()
   , dummy_param_dicts_()
@@ -89,15 +89,66 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
         throw UnknownSynapseType( syn_name );
       }
 
-      synapse_model_ = static_cast< index >( synmodel );
+      synapse_model_ = { static_cast< index >( synmodel ) };
     }
     else if ( dit->first == names::weight )
     {
-      weight_ = NestModule::create_parameter( dit->second );
+      weight_ = { NestModule::create_parameter( dit->second ) };
     }
     else if ( dit->first == names::delay )
     {
-      delay_ = NestModule::create_parameter( dit->second );
+      delay_ = { NestModule::create_parameter( dit->second ) };
+    }
+    else if ( dit->first == names::synapse_parameters )
+    {
+      ArrayDatum* syn_params_dvd = dynamic_cast< ArrayDatum* >( ( dit->second ).datum() );
+      if ( not syn_params_dvd )
+      {
+        throw BadProperty( "synapse_parameters must be list of dictionaries" );
+      }
+      for ( auto synapse_datum = syn_params_dvd->begin(); synapse_datum < syn_params_dvd->end(); ++synapse_datum )
+      {
+        DictionaryDatum* syn_param = dynamic_cast< DictionaryDatum* >( synapse_datum->datum() );
+
+        if ( not( *syn_param )->known( names::synapse_model ) )
+        {
+          ( **syn_param ).insert( names::synapse_model, "static_synapse" );
+        }
+        std::string syn_name = ( **syn_param )[ names::synapse_model ];
+
+        if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
+        {
+          throw UnknownSynapseType( syn_name );
+        }
+        index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+        synapse_model_.push_back( synapse_model_id );
+
+        DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
+        if ( ( *syn_param )->known( names::weight ) )
+        {
+          weight_.push_back( NestModule::create_parameter( ( **syn_param )[ names::weight ] ) );
+        }
+        else
+        {
+          weight_.push_back( NestModule::create_parameter( ( *syn_defaults )[ names::weight ] ) );
+        }
+
+        if ( ( *syn_param )->known( names::delay ) )
+        {
+          delay_.push_back( NestModule::create_parameter( ( **syn_param )[ names::delay ] ) );
+        }
+        else
+        {
+          if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )
+          {
+            delay_.push_back( NestModule::create_parameter( numerics::nan ) );
+          }
+          else
+          {
+            delay_.push_back( NestModule::create_parameter( ( *syn_defaults )[ names::delay ] ) );
+          }
+        }
+      }
     }
     else
     {
@@ -105,21 +156,25 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
   }
 
-  // Set default weight and delay if not given explicitly
-  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_ );
-  if ( not weight_.get() )
+  // Set default synapse_model, weight and delay if not given explicitly
+  if ( synapse_model_.empty() )
   {
-    weight_ = NestModule::create_parameter( ( *syn_defaults )[ names::weight ] );
+    synapse_model_ = { kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) };
   }
-  if ( not delay_.get() )
+  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_[ 0 ] );
+  if ( weight_.empty() )
+  {
+    weight_ = { NestModule::create_parameter( ( *syn_defaults )[ names::weight ] ) };
+  }
+  if ( delay_.empty() )
   {
     if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) )
     {
-      delay_ = NestModule::create_parameter( numerics::nan );
+      delay_ = { NestModule::create_parameter( numerics::nan ) };
     }
     else
     {
-      delay_ = NestModule::create_parameter( ( *syn_defaults )[ names::delay ] );
+      delay_ = { NestModule::create_parameter( ( *syn_defaults )[ names::delay ] ) };
     }
   }
 

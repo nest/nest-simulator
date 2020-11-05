@@ -31,7 +31,7 @@
 
 /* BeginUserDocs: recording backend
 
-.. _sionlib_backend:
+.. _recording_backend_sionlib:
 
 Store data to an efficient binary format
 ########################################
@@ -44,15 +44,16 @@ explained in the :ref:`guide on parallel computing
 
 This backend is especially useful for large-scale simulations running
 in a distributed way on many MPI processes/OpenMP threads. In such
-usage scenarios, writing to plain text files (see :ref:`ASCII backend
-<ascii_backend>`) would cause a large overhead because of the huge
-number of generated files and thus be very inefficient. For the
-implementation of writing to binary container files, NEST relies on
-the `SIONlib library <http://www.fz-juelich.de/jsc/sionlib>`_. Depending
-on the I/O architecture of the compute cluster or supercomputer and
-the global settings of the `sionlib` recording backend (see below),
-either a single container file or a set of these files is created. In
-case of a single file, it is named according to the following pattern:
+usage scenarios, writing to plain text files (see :ref:`recording
+backend for ASCII files <recording_backend_ascii>`) would cause a
+large overhead because of the huge number of generated files and thus
+be very inefficient. For the implementation of writing to binary
+container files, NEST relies on the `SIONlib library
+<http://www.fz-juelich.de/jsc/sionlib>`_. Depending on the I/O
+architecture of the compute cluster or supercomputer and the global
+settings of the `sionlib` recording backend (see below), either a
+single container file or a set of these files is created. In case of a
+single file, it is named according to the following pattern:
 
 ::
 

@@ -218,6 +218,14 @@ If using the :ref:`standard installation <standard>` instructions
 when calling `cmake`, add the option ``-Dwith-mpi=ON``. The build summary
 should report that MPI is linked.
 
+When running large-scale parallel simualations and recording from many
+neurons, writing to ASCII files might become prohibitively slow due to
+the large number of resulting files. By installing the `SIONlib
+library <http://www.fz-juelich.de/jsc/sionlib>`_ and supplying its
+installation path to the ``-Dwith-sionlib=<path>`` option when calling
+`cmake`, you can enable the :ref:`recording backend for binary files
+<recording_backend_sionlib>`, which solves this problem.
+
 Please see the :doc:`Installation instructions <../installation/index>` for
 more information on installing NEST.
 

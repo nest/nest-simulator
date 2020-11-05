@@ -89,12 +89,12 @@ is composed of a series of blocks in the following order:
   by a corresponding entry in the *device info block*
   
 * the *file info block* keeps the file's metadata like version
-  information and such.
+  information and such
 
 * the *device info block* stores the properties and a data layout
-  description for each device that uses the ``sionlib`` backend.
+  description for each device that uses the ``sionlib`` backend
 
-* the *tail block* contains pointers to the *file info block*
+* the *tail block* contains pointers to the *file info block*.
 
 The data layout of the NEST SIONlib file format v2 is shown in the
 following figure.

@@ -108,10 +108,12 @@ following figure.
 Reading the data
 ++++++++++++++++
 
-As the binary format of the files produced by the ``sionlib`` backend,
-we provide a custom reader module for Python that makes the files
-available in a convenient way. The source code for this can be found
-in its own `repository <https://github.com/nest/nest-sionlib-reader>`_.
+As the binary format of the files produced by the ``sionlib`` does not
+conform to any standard, parsing them manually might be a bit
+cumbersome. To ease this task, we provide a reader module for Python
+that makes the files available in a convenient way. The source code
+and further documentation for this module can be found in its own
+repository at `<https://github.com/nest/nest-sionlib-reader>`_.
 
 Recorder-specific parameters
 ++++++++++++++++++++++++++++

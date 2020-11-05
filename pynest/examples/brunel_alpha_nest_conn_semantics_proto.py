@@ -191,8 +191,8 @@ nest.SetDefaults("poisson_generator", {"rate": p_rate})
 nodes_ex = nest.Create("iaf_psc_alpha", NE)
 nodes_in = nest.Create("iaf_psc_alpha", NI)
 noise = nest.Create("poisson_generator")
-espikes = nest.Create("spike_detector")
-ispikes = nest.Create("spike_detector")
+espikes = nest.Create("spike_recorder")
+ispikes = nest.Create("spike_recorder")
 
 ###############################################################################
 # Configuration of the spike detectors recording excitatory and inhibitory

@@ -115,20 +115,20 @@ M_ERROR setverbosity
   
 (passed 3) ==
 
-% function building n neuron network with spike detectors
-% num_nrns build_simple_net -> [ spike_detectors ]
+% function building n neuron network with spike recorders
+% num_nrns build_simple_net -> [ spike_recorders ]
 /build_simple_net
 {
   /n Set
   /parrots /parrot_neuron n Create def
   
-  /sdets /spike_detector n Create def
+  /srs /spike_recorder n Create def
 
   /gen /sinusoidal_gamma_generator Create def
   
   gen parrots Connect
-  parrots sdets /one_to_one Connect
-  sdets
+  parrots srs /one_to_one Connect
+  srs
 } def
  
 % return true if all arrays inside an array are identical
@@ -179,11 +179,11 @@ M_ERROR setverbosity
      /individual_spike_trains individual
   >> SetDefaults
 
-  /sdets num_threads nrns_per_thread mul build_simple_net def
+  /srs num_threads nrns_per_thread mul build_simple_net def
 
   1000. Simulate
 
-  sdets { [/events /times] get cva } Map
+  srs { [/events /times] get cva } Map
   individual
   {
     all_different 

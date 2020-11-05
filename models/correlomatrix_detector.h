@@ -140,7 +140,7 @@ SpikeEvent
 See also
 ++++++++
 
-correlation_detector, spike_detector
+correlation_detector, spike_recorder
 
 EndUserDocs */
 

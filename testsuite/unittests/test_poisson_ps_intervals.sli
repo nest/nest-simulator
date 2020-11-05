@@ -30,7 +30,7 @@ Description:
  The inter spike interval (ISI) distribution of a Poisson process is 
  exponential. The coefficient of variation defined as the standard deviation
  of the intervals normalized by the mean interval is 1. The test checks whether
- the output of the poisson_generator_ps as recorded by the spike_detector is
+ the output of the poisson_generator_ps as recorded by the spike_recorder is
  sufficiently close to 1. Without the property /precise_times the error is larger
  than 0.1 .
 Remarks:
@@ -65,7 +65,7 @@ M_ERROR setverbosity
 << /resolution 0.1  >> SetKernelStatus
 
 
-/spike_detector Create /sp Set
+/spike_recorder Create /sp Set
 
 
 /poisson_generator_ps Create /pn Set

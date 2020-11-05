@@ -150,7 +150,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         # spike generator is connected to a parrot neuron which is connected to the mc neuron
         prrt_nrn = nest.Create('parrot_neuron')
 
-        # excitiatory input to the dendrite
+        # excitatory input to the dendrite
         pre_syn_spike_times = np.array([1.0, 98.0])
         sg_prox = nest.Create('spike_generator', params={
                               'spike_times': pre_syn_spike_times})
@@ -170,7 +170,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         wr = nest.Create('weight_recorder')
 
         # for recording the spiking of the soma
-        sd_soma = nest.Create('spike_detector')
+        sr_soma = nest.Create('spike_recorder')
 
         '''
         create connections
@@ -182,7 +182,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         nest.Connect(sg_soma_exc, nrn,
                      syn_spec={'receptor_type': syns['soma_exc'], 'weight': 10.0*resolution, 'delay': resolution})
         nest.Connect(mm, nrn, syn_spec={'delay': resolution})
-        nest.Connect(nrn, sd_soma, syn_spec={'delay': resolution})
+        nest.Connect(nrn, sr_soma, syn_spec={'delay': resolution})
 
         '''
         simulation
@@ -210,8 +210,8 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         weights = data[0]['events']['weights']
         times = data[0]['events']['times']
 
-        # spike detector
-        data = nest.GetStatus(sd_soma)[0]['events']
+        # spike recorder
+        data = nest.GetStatus(sr_soma)[0]['events']
         spike_times_soma = data['times']
 
         # compute predicted rate

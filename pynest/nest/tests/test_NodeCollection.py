@@ -51,23 +51,25 @@ class TestNodeCollection(unittest.TestCase):
     def test_list_to_NodeCollection(self):
         """Conversion from list to NodeCollection"""
 
+        # Creating NodeCollection from list without creating the nodes first
         node_ids_in = [5, 10, 15, 20]
         with self.assertRaises(nest.kernel.NESTError):
             nc = nest.NodeCollection(node_ids_in)
 
-        n = nest.Create('iaf_psc_alpha', 20)
+        # Creating composite NodeCollection from list
+        nest.Create('iaf_psc_alpha', 20)
         node_ids_in = [5, 10, 15, 20]
         nc = nest.NodeCollection(node_ids_in)
         for node_id, compare in zip(nc, node_ids_in):
-            self.assertEqual(node_id.get('global_id'), compare)
+            self.assertEqual(node_id.global_id, compare)
 
         nest.ResetKernel()
 
-        n = nest.Create('iaf_psc_alpha', 10)
-
-        node_ids_in = [7, 3, 8, 5, 2]
+        # Creating primitive NodeCollection from list
+        nest.Create('iaf_psc_alpha', 10)
+        node_ids_in = list(range(2, 8))
         nc = nest.NodeCollection(node_ids_in)
-        self.assertEqual(nc.tolist(), [2, 3, 5, 7, 8])
+        self.assertEqual(nc.tolist(), node_ids_in)
 
     def test_NodeCollection_to_numpy(self):
         """Conversion from NodeCollection to NumPy array"""
@@ -81,7 +83,7 @@ class TestNodeCollection(unittest.TestCase):
             self.assertEqual(n_arr.tolist(), nc.tolist())
 
             # incorporation to bigger array
-            arr = np.zeros(2*n_neurons, dtype=int)
+            arr = np.zeros(2 * n_neurons, dtype=int)
 
             start = 2
 
@@ -137,7 +139,7 @@ class TestNodeCollection(unittest.TestCase):
             self.assertEqual(nc.get('global_id'), counter)
             counter += 1
         for i in range(10):
-            nc = nest.NodeCollection([i+1])
+            nc = nest.NodeCollection([i + 1])
             self.assertEqual(nc, nodes[i])
 
     def test_slicing(self):
@@ -282,13 +284,13 @@ class TestNodeCollection(unittest.TestCase):
         # Primitive NodeCollection
         N = 10
         primitive = nest.Create('iaf_psc_alpha', N)
-        check_membership(primitive, range(1, N+1), [])
+        check_membership(primitive, range(1, N + 1), [])
 
         # Composite NodeCollection
         exp_N = 5
         N += exp_N
         composite = primitive + nest.Create('iaf_psc_exp', exp_N)
-        check_membership(composite, range(1, N+1), [])
+        check_membership(composite, range(1, N + 1), [])
 
         # Sliced NodeCollection
         low = 3
@@ -296,20 +298,20 @@ class TestNodeCollection(unittest.TestCase):
         sliced = composite[low:high]
         inverse_reference = list(range(1, N))
         del inverse_reference[low:high]
-        check_membership(sliced, range(low+1, high+1), inverse_reference)
+        check_membership(sliced, range(low + 1, high + 1), inverse_reference)
 
         # NodeCollection with step
         step = 3
         stepped = composite[::step]
         inverse_reference = list(range(1, N))
         del inverse_reference[::step]
-        check_membership(stepped, range(1, N+1, step), inverse_reference)
+        check_membership(stepped, range(1, N + 1, step), inverse_reference)
 
         # Sliced NodeCollection with step
         sliced_stepped = composite[low:high:step]
         inverse_reference = list(range(1, N))
         del inverse_reference[low:high:step]
-        check_membership(sliced_stepped, range(low+1, high+1, step), inverse_reference)
+        check_membership(sliced_stepped, range(low + 1, high + 1, step), inverse_reference)
 
     def test_NodeCollection_index(self):
         """NodeCollections index function"""
@@ -371,6 +373,37 @@ class TestNodeCollection(unittest.TestCase):
         c = nest.Create('iaf_psc_delta', 20)
         c = c[3:17:4]
         self.assertEqual(len(c), 4)
+
+    def test_raises_with_nonunique_nodes(self):
+        """Non-unique nodes in NodeCollection raises error"""
+        n = nest.Create('iaf_psc_alpha', 10)
+
+        with self.assertRaises(nest.kernel.NESTError):
+            n[1:3] + n[2:5]
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.NodeCollection([2, 2])
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.NodeCollection([2]) + nest.NodeCollection([1, 2])
+
+    def test_from_list_unsorted_raises(self):
+        """Creating NodeCollection from unsorted list raises error"""
+        nest.Create('iaf_psc_alpha', 10)
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.NodeCollection([5, 4, 6])
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.NodeCollection([5, 6, 4])
+
+    def test_slice_with_unsorted_raises(self):
+        """Slicing NodeCollection with unsorted list raises error"""
+        n = nest.Create('iaf_psc_alpha', 10)
+
+        with self.assertRaises(nest.kernel.NESTError):
+            n[[6, 5, 4]]
+        with self.assertRaises(nest.kernel.NESTError):
+            n[[5, 4, 6]]
+        with self.assertRaises(nest.kernel.NESTError):
+            n[[5, 6, 4]]
 
     def test_composite_NodeCollection(self):
         """Tests composite NodeCollection with patched node IDs"""
@@ -518,7 +551,10 @@ class TestNodeCollection(unittest.TestCase):
         self.assertEqual(get_conn_some.get('source'), compare_source)
         self.assertEqual(get_conn_some.get('target'), compare_target)
 
-        compare_list = [3, 1, 0, 15, 6]
+        expected_syn_model = 'static_synapse'
+        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+
+        compare_list = [3, 1, 0, expected_syn_id, 6]
         conn = [get_conn_some.get('source')[3],
                 get_conn_some.get('target')[3],
                 get_conn_some.get('target_thread')[3],
@@ -535,7 +571,7 @@ class TestNodeCollection(unittest.TestCase):
                         conns['port'][i]]
                        for i in range(len(nest.GetConnections(n[0])))]
 
-        ref = [[1, 1, 0, 15, 0], [1, 2, 0, 15, 1], [1, 3, 0, 15, 2]]
+        ref = [[1, 1, 0, expected_syn_id, 0], [1, 2, 0, expected_syn_id, 1], [1, 3, 0, expected_syn_id, 2]]
         for conn, conn_ref in zip(connections, ref):
             self.assertEqual(conn, conn_ref)
 
@@ -616,7 +652,7 @@ class TestNodeCollection(unittest.TestCase):
         for source in n:
             source_x, source_y = nest.GetPosition(source)
             target_x, target_y = (target[0][0], target[0][1])
-            ref_distance = np.sqrt((target_x - source_x)**2 + (target_y - source_y)**2)
+            ref_distance = np.sqrt((target_x - source_x) ** 2 + (target_y - source_y)**2)
             self.assertEqual(param.apply(source, target), ref_distance)
 
         # Multiple target positions
@@ -637,7 +673,8 @@ class TestNodeCollection(unittest.TestCase):
         with self.assertRaises(TypeError):
             param.apply(source, [1., 2.])  # Not a list of lists
         with self.assertRaises(ValueError):
-            param.apply(source, [[1., 2.], [1., 2., 3.]])  # Not consistent dimensions
+            # Not consistent dimensions
+            param.apply(source, [[1., 2.], [1., 2., 3.]])
 
     def test_Create_accepts_empty_params_dict(self):
         """
@@ -651,7 +688,7 @@ class TestNodeCollection(unittest.TestCase):
         cases = [[1, 2],
                  [2, 5],
                  [0, 2, 5, 7, 9],
-                 (5, 2),
+                 (2, 5),
                  []
                  ]
         fail_cases = [([5, 10, 15], IndexError),  # Index not in NodeCollection

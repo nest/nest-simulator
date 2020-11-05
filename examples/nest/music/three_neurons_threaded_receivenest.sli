@@ -36,12 +36,12 @@ meip2 << /port_name (spikes_in2) /music_channel 0 >> SetStatus
 /iaf_psc_alpha Create /n3 Set
 meip2 n3 /all_to_all << /weight 15000.0 >> Connect
 
-/spike_detector Create /sd1 Set
-sd1 << /label (receivenest-n2) /record_to /ascii >> SetStatus
-n2 sd1 Connect
+/spike_recorder Create /sr1 Set
+sr1 << /label (receivenest-n2) /record_to /ascii >> SetStatus
+n2 sr1 Connect
 
-/spike_detector Create /sd2 Set
-sd2 << /label (receivenest-n3) /record_to /ascii >> SetStatus
-n3 sd2 Connect
+/spike_recorder Create /sr2 Set
+sr2 << /label (receivenest-n3) /record_to /ascii >> SetStatus
+n3 sr2 Connect
 
 100 Simulate

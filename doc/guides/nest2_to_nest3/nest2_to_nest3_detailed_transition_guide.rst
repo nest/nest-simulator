@@ -96,7 +96,7 @@ Functions related to connection
 Functions related to subnets
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**The subnet module is removed in NEST 3.0!**
+**The subnet model is removed in NEST 3.0!**
 
 +----------------------------------------+--------------------------------------------+
 | NEST 2.x                               | NEST 3.0                                   |
@@ -158,8 +158,8 @@ Functions related to setting and getting parameters
 Function related to spatially distributed nodes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Topology is now integrated into NEST and no longer a separate module.
-
+Spatial structure, formerly provided by the Topology module, is now integrated into NEST and is no longer
+a separate module.
 
 +------------------------------------------------+----------------------------------------------------+
 | NEST 2.x                                       | NEST 3.0                                           |
@@ -265,6 +265,11 @@ Topology is now integrated into NEST and no longer a separate module.
 |                                                | :green:`shape=[100, 100]`, ax=None,                |
 |                                                | :green:`prob_cmap` ='Greens', mask_color='yellow') |
 +------------------------------------------------+----------------------------------------------------+
+| 'mask': {'volume':                             | 'mask': {':green:`box`'                            |
+| {'lower_left': [-2., -1., -1.],                | {'lower_left': [-2., -1., -1.],                    |
+| 'upper_right': [2., 1., 1.]}}                  | 'upper_right': [2., 1., 1.]}}                      |
++------------------------------------------------+----------------------------------------------------+
+
 
 .. _connrules:
 

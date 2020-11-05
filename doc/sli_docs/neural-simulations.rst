@@ -385,7 +385,7 @@ Example 3
    --------------------------------------------------
    Total number of entries: 7
 
-To change the paramters of a connection, ``SetStatus`` is used, just
+To change the parameters of a connection, ``SetStatus`` is used, just
 like it is for nodes.
 
 Example 4
@@ -408,10 +408,10 @@ to send specific input to the network, you need a device which delivers
 this input.
 
 Devices have a built-in timer which controls the period they are active.
-Outside this interval, a device will remain siltent. The timer can be
+Outside this interval, a device will remain silent. The timer can be
 configured using the command ``SetStatus``.
 
-By definition a device is active in the interval \\((t_1,t_2)\) , if we
+By definition, a device is active in the interval \\((t_1,t_2)\) if we
 can observe events \\(E\) with time stamps \\(t_E\) which obey \\(t_1 <=
 t_E < t_2\) for all \\(E\) . In other words, the interval during which
 the device is active corresponds to the range of time-stamps of the
@@ -464,14 +464,14 @@ Recording devices
 
 All devices which are used to observe the state of other network nodes
 are called recording devices. Examples are ``multimeter`` and
-``spike_detector``.
+``spike_recorder``.
 
 Recording devices have properties which control the amount, the
 format, and the destination of their output. The latter is done by
 setting their property ``record_to`` to the name of the recording
-backend to use. To dump recorded data to a file, set ``/ascii``, to
-print to the screen, use ``/screen`` and to hold the data in memory,
-set ``/memory``, which is also the default for all devices. Data
+backend to use. To dump recorded data to a file, set ``ascii``, to
+print to the screen, use ``screen`` and to hold the data in memory,
+set ``memory``, which is also the default for all devices. Data
 stored in memory can be retrieved after the simulation using
 ``GetStatus``. To get a list of all available recording backends, run
 
@@ -484,10 +484,10 @@ important devices are:
 
 * ``voltmeter`` Device to observe membrane potentials.
 * ``multimeter`` Device to observe arbitrary analog quantities.
-* ``spike_detector`` Device to observe spike times.
+* ``spike_recorder`` Device to observe spike times.
 
 Please note that the connection direction for analog recorders (all
-except ``spike_detector`` in above list) is inverted with respect to
+except ``spike_recorder`` in above list) is inverted with respect to
 other recorders, i.e. the recorder has to connected to the neurons in
 this case.
 
@@ -498,9 +498,9 @@ Example 6
 
    SLI ] /iaf_psc_alpha Create /n Set
    SLI ] /voltmeter Create /vm Set
-   SLI ] /spike_detector Create /sd Set
+   SLI ] /spike_recorder Create /sr Set
    SLI ] vm n Connect
-   SLI ] n sd Connect
+   SLI ] n sr Connect
 
 Simulation
 ----------

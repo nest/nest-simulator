@@ -242,7 +242,7 @@ Params = {'N': 40,
 #
 # - Hill & Tononi specify their model in terms of the membrane time
 #   constant, while the ``iaf_cond_alpha`` model is based on the
-#   membrane capcitance. Interestingly, conducantces are unitless in
+#   membrane capcitance. Interestingly, conductances are unitless in
 #   the H&T model. We thus can use the time constant directly as
 #   membrane capacitance.
 # - The model includes sodium and potassium leak conductances. We

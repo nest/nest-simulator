@@ -72,7 +72,7 @@ ResetKernel
 /w_max     w_exc 2.0 mul def
 
 
-%%% create poisson generators, neurons and spike detector %%%
+%%% create poisson generators, neurons and spike recorder %%%
 
 /pg_exc /poisson_generator << /rate K_exc nu nu_x add mul >> Create def
 /pg_inh /poisson_generator << /rate K_inh nu mul          >> Create def
@@ -82,8 +82,8 @@ ResetKernel
 /parrot /parrot_neuron Create def
 /neuron /iaf_psc_alpha << /tau_minus tau_minus >> Create def
 
-/sd_pre  /spike_detector Create def
-/sd_post /spike_detector Create def
+/sr_pre  /spike_recorder Create def
+/sr_post /spike_recorder Create def
 
 
 %%% connect %%%
@@ -102,16 +102,16 @@ pg_pre parrot w_exc delay Connect
 
 parrot neuron w_exc delay /stdp_synapse Connect
 
-parrot sd_pre  Connect
-neuron sd_post Connect
+parrot sr_pre  Connect
+neuron sr_post Connect
 
 
 %%% simulate and get data %%%
 
 10000.0 Simulate
 
-/pre_spikes  sd_pre  /events get /times get cva { axonal_delay add } Map def
-/post_spikes sd_post /events get /times get cva { backpr_delay add } Map def
+/pre_spikes  sr_pre  /events get /times get cva { axonal_delay add } Map def
+/post_spikes sr_post /events get /times get cva { backpr_delay add } Map def
 
 /final_weight << /source parrot /target neuron >> GetConnections 0 get /weight get def
 

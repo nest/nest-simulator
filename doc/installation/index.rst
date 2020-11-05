@@ -4,9 +4,10 @@ Install NEST
 Standard installation
 ---------------------
 
-**These installation instructions should work for most users, who do
+These installation instructions should work for most users who do
 not need custom configurations for their systems. If you want to
-compile NEST from source, see section** :ref:`advanced_install`.
+compile NEST from source, check the :ref:`advanced_install` section
+and :doc:`compilation_options`.
 
 .. tabs::
 
@@ -122,7 +123,7 @@ compile NEST from source, see section** :ref:`advanced_install`.
 
    .. tab:: Conda (Linux/macOS)
 
-       1. Create your conda environment and install NEST. Please check out 
+       1. Create your conda environment and install NEST. Please refer to
           our :doc:`conda_tips`.
 
           Without OpenMPI:
@@ -307,7 +308,7 @@ these instructions.**
 
        Download the source code for the  `current release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
 
-       Follow instructions for :doc:`linux_install` and take a look at our :doc:`install_options`.
+       Follow instructions for :doc:`linux_install` and take a look at our :doc:`compilation_options`.
 
 
    .. tab:: GitHub
@@ -335,9 +336,3 @@ these instructions.**
    hpc_install
    livemedia
    install_options
-
-
-.. note::
-
-    Installation instructions for NEST 2.10 and earlier are provided :doc:`here <oldvers_install>`, but  we strongly encourage all our users to stay
-    up-to-date with most recent version of NEST. We cannot support out-dated versions.

@@ -36,7 +36,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-// Includes from topology:
+// Includes from spatial:
 #include "connection_creator.h"
 #include "ntree.h"
 #include "position.h"
@@ -169,6 +169,8 @@ public:
     NodeCollectionPTR node_collection,
     AbstractLayerPTR target_layer,
     const Token& syn_model ) = 0;
+
+  void set_node_collection( NodeCollectionPTR );
 
 protected:
   /**
@@ -509,6 +511,12 @@ protected:
   std::shared_ptr< Ntree< D, index > > ntree_;
   MaskDatum mask_;
 };
+
+inline void
+AbstractLayer::set_node_collection( NodeCollectionPTR node_collection )
+{
+  node_collection_ = node_collection;
+}
 
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,

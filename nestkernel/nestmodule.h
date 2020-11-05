@@ -27,11 +27,9 @@
 #include "event.h"
 #include "exceptions.h"
 #include "generic_factory.h"
+#include "ntree.h"
 #include "parameter.h"
-
-// Includes from spatial:
-#include "spatial/ntree.h"
-#include "spatial/position.h"
+#include "position.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -94,16 +92,6 @@ public:
    */
   template < class T >
   static bool register_mask();
-
-  /**
-   * Register an AbstractMask subclass as a new mask type with the given
-   * name.
-   * @param name name of the new mask type.
-   * @returns true if the new type was successfully registered, or false
-   *          if a mask type with the same name already exists.
-   */
-  template < class T >
-  static bool register_mask( const Name& name );
 
   /**
    * Register a new mask type with the given name, with a supplied
@@ -543,18 +531,6 @@ public:
   } setmaxbuffered_l_ifunction;
 #endif
 
-  class SetStructuralPlasticityStatus_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } setstructuralplasticitystatus_Dfunction;
-
-  class GetStructuralPlasticityStatus_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getstructuralplasticitystatus_function;
-
   class EnableStructuralPlasticity_Function : public SLIFunction
   {
   public:
@@ -824,13 +800,6 @@ inline bool
 NestModule::register_mask()
 {
   return mask_factory_().register_subtype< T >( T::get_name() );
-}
-
-template < class T >
-inline bool
-NestModule::register_mask( const Name& name )
-{
-  return mask_factory_().register_subtype< T >( name );
 }
 
 inline bool

@@ -233,14 +233,14 @@ prrt_nrns_pg = nest.Create('parrot_neuron', n_pg)
 
 nest.Connect(pgs, prrt_nrns_pg, {'rule': 'one_to_one'})
 
-sd = nest.Create('spike_detector', n_pg)
-nest.Connect(prrt_nrns_pg, sd, {'rule': 'one_to_one'})
+sr = nest.Create('spike_recorder', n_pg)
+nest.Connect(prrt_nrns_pg, sr, {'rule': 'one_to_one'})
 
 nest.Simulate(pattern_duration)
-t_sds = []
-for i, ssd in enumerate(nest.GetStatus(sd)):
-    t_sd = ssd['events']['times']
-    t_sds.append(t_sd)
+t_srs = []
+for i, ssr in enumerate(nest.GetStatus(sr)):
+    t_sr = ssr['events']['times']
+    t_srs.append(t_sr)
 
 nest.ResetKernel()
 nest.SetKernelStatus({'resolution': resolution})
@@ -265,7 +265,7 @@ sg_soma_inh = nest.Create('spike_generator',
                           params={'spike_times': spike_times_soma_inp,
                                   'spike_weights': soma_inh_inp(spike_times_soma_inp)})
 
-# excitiatory input to the dendrite
+# excitatory input to the dendrite
 sg_prox = nest.Create('spike_generator', n=n_pg)
 
 # for recording all parameters of the Urbanczik neuron
@@ -276,7 +276,7 @@ mm = nest.Create('multimeter', params={'record_from': rqs, 'interval': 0.1})
 wr = nest.Create('weight_recorder')
 
 # for recording the spiking of the soma
-sd_soma = nest.Create('spike_detector')
+sr_soma = nest.Create('spike_recorder')
 
 '''
 create connections
@@ -290,14 +290,14 @@ nest.Connect(sg_soma_exc, nrn,
              syn_spec={'receptor_type': syns['soma_exc'], 'weight': 10.0*resolution, 'delay': resolution})
 nest.Connect(sg_soma_inh, nrn,
              syn_spec={'receptor_type': syns['soma_inh'], 'weight': 10.0*resolution, 'delay': resolution})
-nest.Connect(nrn, sd_soma)
+nest.Connect(nrn, sr_soma)
 
 '''
 simulation divided into intervals of the pattern duration
 '''
 for i in np.arange(n_rep_total):
     # Set the spike times of the pattern for each spike generator
-    for (sg, t_sp) in zip(sg_prox, t_sds):
+    for (sg, t_sp) in zip(sg_prox, t_srs):
         nest.SetStatus(
             sg, {'spike_times': np.array(t_sp) + i*pattern_duration})
 
@@ -325,8 +325,8 @@ targets = data[0]['events']['targets']
 weights = data[0]['events']['weights']
 times = data[0]['events']['times']
 
-# spike detector
-data = nest.GetStatus(sd_soma)[0]['events']
+# spike recorder
+data = nest.GetStatus(sr_soma)[0]['events']
 spike_times_soma = data['times']
 
 '''

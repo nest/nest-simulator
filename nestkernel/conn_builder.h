@@ -26,14 +26,14 @@
 /**
  * Class managing flexible connection creation.
  *
- * This is a very first draft, a very much stripped-down version of the
- * Topology connection_creator.
+ * Created based on the connection_creator used for spatial networks.
  *
  */
 
 // C++ includes:
 #include <map>
 #include <vector>
+#include <set>
 
 // Includes from librandom:
 #include "gslrandomgen.h"
@@ -96,6 +96,10 @@ public:
   bool
   get_default_delay() const
   {
+    if ( synapse_model_id_.size() > 1 )
+    {
+      throw KernelException( "Can only retrieve default delay when one synapse per connection is used." );
+    }
     return default_delay_[ 0 ];
   }
 
@@ -215,8 +219,8 @@ private:
   std::vector< bool > default_delay_;
 
   // null-pointer indicates that default be used
-  std::vector< ConnParameter* > weight_;
-  std::vector< ConnParameter* > delay_;
+  std::vector< ConnParameter* > weights_;
+  std::vector< ConnParameter* > delays_;
 
   //! all other parameters, mapping name to value representation
   std::vector< ConnParameterMap > synapse_params_;
@@ -228,14 +232,28 @@ private:
   //! create and use the same dictionary as this leads to performance issues.
   std::vector< DictionaryDatum > dummy_param_dicts_;
 
+  //! synapse-specific parameters that should be skipped when we set default synapse parameters
+  std::set< Name > skip_syn_params_;
+
+  //! synapse-specific parameters that must be integers
+  std::set< Name > integer_params_;
+
   /**
-   * Collects all array paramters in a vector.
+   * Collects all array parameters in a vector.
    *
    * If the inserted parameter is an array it will be added to a vector of
    * ConnParameters. This vector will be exploited in some connection
    * routines to ensuring thread-safety.
    */
   void register_parameters_requiring_skipping_( ConnParameter& param );
+
+  /*
+   * Set synapse specific parameters.
+   */
+  void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
+  void set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx );
+  void set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
+  void set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs );
 
   /**
    * Reset weight and delay pointers
@@ -254,7 +272,7 @@ public:
   OneToOneBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_spec );
+    const std::vector< DictionaryDatum >& syn_specs );
 
   bool
   supports_symmetric() const
@@ -281,8 +299,8 @@ public:
   AllToAllBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_spec )
-    : ConnBuilder( sources, targets, conn_spec, syn_spec )
+    const std::vector< DictionaryDatum >& syn_specs )
+    : ConnBuilder( sources, targets, conn_spec, syn_specs )
   {
   }
 

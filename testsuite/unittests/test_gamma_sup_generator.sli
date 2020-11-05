@@ -98,12 +98,12 @@ SeeAlso: gamma_sup_generator, testsuite::test_ppd_sup_generator
     
     psg params SetStatus
     
-    /spike_detector Create /sd Set
+    /spike_recorder Create /sr Set
 
-    psg sd Connect
+    psg sr Connect
     T Simulate
     
-    sd /events get /times get /spikes Set
+    sr /events get /times get /spikes Set
 
     % rate_sim = size(spikes) / (T*1e-3)
     spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
@@ -191,12 +191,12 @@ SeeAlso: gamma_sup_generator, testsuite::test_ppd_sup_generator
     
     psg params SetStatus
     
-    /spike_detector Create /sd Set
+    /spike_recorder Create /sr Set
     
-    psg sd Connect
+    psg sr Connect
     T Simulate
     
-    sd /events get /times get /spikes Set
+    sr /events get /times get /spikes Set
 
     % rate_sim = size(spikes) / (T*1e-3)
     spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
@@ -286,20 +286,20 @@ SeeAlso: gamma_sup_generator, testsuite::test_ppd_sup_generator
     
     psg params SetStatus
     
-    /spike_detector Create /sd1 Set
-    /spike_detector Create /sd2 Set
+    /spike_recorder Create /sr1 Set
+    /spike_recorder Create /sr2 Set
 
-    psg sd1 Connect
-    psg sd2 Connect
+    psg sr1 Connect
+    psg sr2 Connect
     T Simulate
 
     %first we check if the spike trains are different
-    [sd1 sd2] {[/events /times] get} forall  neq  % spike trains differ
+    [sr1 sr2] {[/events /times] get} forall  neq  % spike trains differ
     assert_or_die
     
     %and we also check the rates since we simulated anyway
-    sd1 /events get /times get /spikes1 Set
-    sd2 /events get /times get /spikes2 Set
+    sr1 /events get /times get /spikes1 Set
+    sr2 /events get /times get /spikes2 Set
     
     % rate_sim = size(spikes) / (T*1e-3)
     spikes1 cva size T 1e-3 mul div /rate_sim1 Set /spikes_array1 Set

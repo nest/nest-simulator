@@ -36,7 +36,7 @@
 #include "dictdatum.h"
 #include "dictutils.h"
 
-// Includes from topology:
+// Includes from spatial:
 #include "position.h"
 
 namespace nest
@@ -403,19 +403,19 @@ public:
     if ( major_axis_ <= 0 or minor_axis_ <= 0 or polar_axis_ <= 0 )
     {
       throw BadProperty(
-        "topology::EllipseMask<D>: "
+        "nest::EllipseMask<D>: "
         "All axis > 0 required." );
     }
     if ( major_axis_ < minor_axis_ )
     {
       throw BadProperty(
-        "topology::EllipseMask<D>: "
+        "nest::EllipseMask<D>: "
         "major_axis greater than minor_axis required." );
     }
     if ( D == 2 and not( polar_angle_ == 0.0 ) )
     {
       throw BadProperty(
-        "topology::EllipseMask<D>: "
+        "nest::EllipseMask<D>: "
         "polar_angle not defined in 2D." );
     }
 
@@ -754,7 +754,7 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
   if ( not( lower_left_ < upper_right_ ) )
   {
     throw BadProperty(
-      "topology::BoxMask<D>: "
+      "nest::BoxMask<D>: "
       "Upper right must be strictly to the right and above lower left." );
   }
 
@@ -772,7 +772,7 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
     if ( D == 2 )
     {
       throw BadProperty(
-        "topology::BoxMask<D>: "
+        "nest::BoxMask<D>: "
         "polar_angle not defined in 2D." );
     }
     polar_angle_ = getValue< double >( d, names::polar_angle );
@@ -851,7 +851,7 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
   if ( D == 2 and not( polar_angle_ == 0.0 ) )
   {
     throw BadProperty(
-      "topology::BoxMask<D>: "
+      "nest::BoxMask<D>: "
       "polar_angle not defined in 2D." );
   }
 
@@ -913,7 +913,7 @@ BallMask< D >::BallMask( const DictionaryDatum& d )
   if ( radius_ <= 0 )
   {
     throw BadProperty(
-      "topology::BallMask<D>: "
+      "nest::BallMask<D>: "
       "radius > 0 required." );
   }
 
@@ -945,13 +945,13 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
   if ( major_axis_ <= 0 or minor_axis_ <= 0 )
   {
     throw BadProperty(
-      "topology::EllipseMask<D>: "
+      "nest::EllipseMask<D>: "
       "All axis > 0 required." );
   }
   if ( major_axis_ < minor_axis_ )
   {
     throw BadProperty(
-      "topology::EllipseMask<D>: "
+      "nest::EllipseMask<D>: "
       "major_axis greater than minor_axis required." );
   }
 
@@ -963,7 +963,7 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
     if ( D == 2 )
     {
       throw BadProperty(
-        "topology::EllipseMask<D>: "
+        "nest::EllipseMask<D>: "
         "polar_axis not defined in 2D." );
     }
     polar_axis_ = getValue< double >( d, names::polar_axis );
@@ -971,7 +971,7 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
     if ( polar_axis_ <= 0 )
     {
       throw BadProperty(
-        "topology::EllipseMask<D>: "
+        "nest::EllipseMask<D>: "
         "All axis > 0 required." );
     }
 
@@ -1002,7 +1002,7 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
     if ( D == 2 )
     {
       throw BadProperty(
-        "topology::EllipseMask<D>: "
+        "nest::EllipseMask<D>: "
         "polar_angle not defined in 2D." );
     }
     polar_angle_ = getValue< double >( d, names::polar_angle );

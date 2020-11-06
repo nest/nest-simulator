@@ -2,6 +2,7 @@
 # Install libneurosim
 git clone https://github.com/INCF/libneurosim.git libneurosim.src
 pushd libneurosim.src
+sed -i 's/libneurosim\//neurosim\//g' libpyneurosim/Makefile.am
 ./autogen.sh
 ./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi --with-python=3
 make

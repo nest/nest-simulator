@@ -69,7 +69,7 @@ given as strings, for all other rules, a dictionary specifying the rule
 and its parameters, such as in- or out-degrees, is required.
 
 one-to-one
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. image:: ../_static/img/One_to_one.png
      :width: 200px
@@ -142,7 +142,7 @@ Example:
     Connect(A, B, conn_dict)
 
 fixed-outdegree
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 
 .. image:: ../_static/img/Fixed_outdegree.png
@@ -179,7 +179,7 @@ Example:
     Connect(A, B, conn_dict)
 
 pairwise-bernoulli
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 For each possible pair of nodes from ``pre`` and ``post``, a connection
 is created with probability ``p``.
@@ -194,10 +194,44 @@ Example:
     conn_dict = {'rule': 'pairwise_bernoulli', 'p': p}
     Connect(A, B, conn_dict)
 
+conngen
+~~~~~~~
+
+To allow the generation of connectivity by means of an external
+library, NEST supports the Connection Generator Interface (`Djurfeldt
+et al., 2014 <https://doi.org/10.3389/fninf.2014.00043>`_).
+
+In contrast to the other rules for creating connections, this rule
+relies on a Connection Generator object, in which the connectivity
+pattern is specified in a library-specific way. The Connection
+Generator is then handed to the call to ``Connect`` and evaluated
+internally. For more details, please see the Git repository of
+`libneurosim <https://github.com/INCF/libneurosim>`_.
+
+The following code shows an example for using the `Connection-Set
+Algebra <https://github.com/INCF/csa>`_ in NEST via the Connection
+Generator Interface to create random connectivity between two groups
+of neurons, each having a weight of 10000.0 pA and a delay of 1.0 ms:
+
+::
+
+   sources = nest.Create("iaf_psc_alpha", 100)
+   targets = nest.Create("iaf_psc_alpha", 100)
+
+   # Create the Connection Generator object
+   import csa
+   cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
+
+   # Map weight and delay indices to vaules from cg
+   params_map = {"weight": 0, "delay": 1}
+
+   connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
+   nest.Connect(pre, post, connspec)
+
 .. _synapse_spec:
 
 Synapse Specification
--------------------------
+---------------------
 
 The synapse properties can be given as a string or a dictionary. The
 string can be the name of a pre-defined synapse which can be found in
@@ -303,7 +337,7 @@ Example:
 .. _dist_params:
 
 Distributed parameters
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 **Distributed** parameters are initialized with yet another dictionary
 specifying the 'distribution' and the distribution-specific parameters,

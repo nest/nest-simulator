@@ -71,7 +71,7 @@ class CSATestCase(unittest.TestCase):
         # set and delay to position 1
         params_map = {"weight": 0, "delay": 1}
         connspec = {"rule": "conngen", "cg": cs, "params_map": params_map}
-        nest.Connect(pre, post, connspec)
+        nest.Connect(sources, targets, connspec)
 
         for i in range(n_neurons):
             # We expect all connections from sources to have the
@@ -103,7 +103,7 @@ class CSATestCase(unittest.TestCase):
         # Connect with a non-standard synapse model
         connspec = {"rule": "conngen", "cg": cs}
         synspec = {'synapse_model': synmodel}
-        nest.Connect(pre, post, connspec, synspec)
+        nest.Connect(sources, targets, connspec, synspec)
 
         for i in range(n_neurons):
             # We expect all connections to have the correct targets
@@ -127,7 +127,7 @@ class CSATestCase(unittest.TestCase):
         # Create a plain connection set
         cs = csa.cset(csa.oneToOne)
         connspec = {"rule": "conngen", "cg": cs}
-        synspec = {'synapse_model': synmodel}
+        synspec = {'synapse_model': "fantasy_synapse"}
 
         n_neurons = 4
 

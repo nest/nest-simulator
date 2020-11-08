@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_get_set.py
+# test_dumpload.py
 #
 # This file is part of NEST.
 #
@@ -25,6 +25,7 @@ Dump and Load tests
 
 import unittest
 import nest
+
 
 class DumpLoadTestCase(unittest.TestCase):
 
@@ -62,7 +63,7 @@ class DumpLoadTestCase(unittest.TestCase):
         nest.Connect(a, b)
         thedump = nest.Dump()
         numload0 = nest.GetKernelStatus("network_size")
-        # no reset loadand load twice
+        # no reset load twice
         result = nest.Load(thedump)
         numload1 = nest.GetKernelStatus("network_size")
         self.assertGreater(numload1, numload0)
@@ -91,7 +92,6 @@ class DumpLoadTestCase(unittest.TestCase):
         connsize_after = nest.GetKernelStatus("num_connections")
         self.assertEqual(netsizebefore, netsize_after)
         self.assertEqual(connsize_before, connsize_after)
-
 
 
 # --------------------------------------------------------------------------- #

@@ -263,7 +263,7 @@ nest::gif_psc_exp_multisynapse::Buffers_::Buffers_( const Buffers_&, gif_psc_exp
  * ---------------------------------------------------------------- */
 
 nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -272,7 +272,7 @@ nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse()
 }
 
 nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse( const gif_psc_exp_multisynapse& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -296,7 +296,7 @@ nest::gif_psc_exp_multisynapse::init_buffers_()
   B_.spikes_.clear();   //!< includes resize
   B_.currents_.clear(); //!< includes resize
   B_.logger_.reset();   //!< includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void

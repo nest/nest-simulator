@@ -450,7 +450,7 @@ nest::pp_cond_exp_mc_urbanczik::State_::set( const DictionaryDatum& d, const Par
  * ---------------------------------------------------------------- */
 
 nest::pp_cond_exp_mc_urbanczik::pp_cond_exp_mc_urbanczik()
-  : Urbanczik_Archiving_Node< pp_cond_exp_mc_urbanczik_parameters >()
+  : UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -461,16 +461,16 @@ nest::pp_cond_exp_mc_urbanczik::pp_cond_exp_mc_urbanczik()
   // comp_names_.resize(NCOMP); --- Fixed size, see comment on definition
   comp_names_[ SOMA ] = Name( "soma" );
   comp_names_[ DEND ] = Name( "dendritic" );
-  Urbanczik_Archiving_Node< pp_cond_exp_mc_urbanczik_parameters >::urbanczik_params = &P_.urbanczik_params;
+  UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >::urbanczik_params = &P_.urbanczik_params;
 }
 
 nest::pp_cond_exp_mc_urbanczik::pp_cond_exp_mc_urbanczik( const pp_cond_exp_mc_urbanczik& n )
-  : Urbanczik_Archiving_Node< pp_cond_exp_mc_urbanczik_parameters >( n )
+  : UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
-  Urbanczik_Archiving_Node< pp_cond_exp_mc_urbanczik_parameters >::urbanczik_params = &P_.urbanczik_params;
+  UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >::urbanczik_params = &P_.urbanczik_params;
 }
 
 nest::pp_cond_exp_mc_urbanczik::~pp_cond_exp_mc_urbanczik()
@@ -517,7 +517,7 @@ nest::pp_cond_exp_mc_urbanczik::init_buffers_()
   }
 
   B_.logger_.reset();
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;

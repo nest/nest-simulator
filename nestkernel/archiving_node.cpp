@@ -31,9 +31,9 @@
 namespace nest
 {
 
-// member functions for Archiving_Node
+// member functions for ArchivingNode
 
-nest::Archiving_Node::Archiving_Node()
+nest::ArchivingNode::ArchivingNode()
   : n_incoming_( 0 )
   , Kminus_( 0.0 )
   , Kminus_triplet_( 0.0 )
@@ -46,8 +46,8 @@ nest::Archiving_Node::Archiving_Node()
 {
 }
 
-nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
-  : Structural_Plasticity_Node( n )
+nest::ArchivingNode::ArchivingNode( const ArchivingNode& n )
+  : StructuralPlasticityNode( n )
   , n_incoming_( n.n_incoming_ )
   , Kminus_( n.Kminus_ )
   , Kminus_triplet_( n.Kminus_triplet_ )
@@ -62,7 +62,7 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
 }
 
 void
-Archiving_Node::register_stdp_connection( double t_first_read, double delay )
+ArchivingNode::register_stdp_connection( double t_first_read, double delay )
 {
   // Mark all entries in the deque, which we will not read in future as read by
   // this input input, so that we savely increment the incoming number of
@@ -82,7 +82,7 @@ Archiving_Node::register_stdp_connection( double t_first_read, double delay )
 }
 
 double
-nest::Archiving_Node::get_K_value( double t )
+nest::ArchivingNode::get_K_value( double t )
 {
   // case when the neuron has not yet spiked
   if ( history_.empty() )
@@ -111,7 +111,7 @@ nest::Archiving_Node::get_K_value( double t )
 }
 
 void
-nest::Archiving_Node::get_K_values( double t,
+nest::ArchivingNode::get_K_values( double t,
   double& K_value,
   double& nearest_neighbor_K_value,
   double& K_triplet_value )
@@ -149,7 +149,7 @@ nest::Archiving_Node::get_K_values( double t,
 }
 
 void
-nest::Archiving_Node::get_history( double t1,
+nest::ArchivingNode::get_history( double t1,
   double t2,
   std::deque< histentry >::iterator* start,
   std::deque< histentry >::iterator* finish )
@@ -177,9 +177,9 @@ nest::Archiving_Node::get_history( double t1,
 }
 
 void
-nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
+nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
 {
-  Structural_Plasticity_Node::set_spiketime( t_sp, offset );
+  StructuralPlasticityNode::set_spiketime( t_sp, offset );
 
   const double t_sp_ms = t_sp.get_ms() - offset;
 
@@ -217,7 +217,7 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
 }
 
 void
-nest::Archiving_Node::get_status( DictionaryDatum& d ) const
+nest::ArchivingNode::get_status( DictionaryDatum& d ) const
 {
   def< double >( d, names::t_spike, get_spiketime_ms() );
   def< double >( d, names::tau_minus, tau_minus_ );
@@ -228,11 +228,11 @@ nest::Archiving_Node::get_status( DictionaryDatum& d ) const
 #endif
 
   // add status dict items from the parent class
-  Structural_Plasticity_Node::get_status( d );
+  StructuralPlasticityNode::get_status( d );
 }
 
 void
-nest::Archiving_Node::set_status( const DictionaryDatum& d )
+nest::ArchivingNode::set_status( const DictionaryDatum& d )
 {
   // We need to preserve values in case invalid values are set
   double new_tau_minus = tau_minus_;
@@ -245,7 +245,7 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
-  Structural_Plasticity_Node::set_status( d );
+  StructuralPlasticityNode::set_status( d );
 
   // do the actual update
   tau_minus_ = new_tau_minus;
@@ -263,7 +263,7 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::Archiving_Node::clear_history()
+nest::ArchivingNode::clear_history()
 {
   last_spike_ = -1.0;
   Kminus_ = 0.0;

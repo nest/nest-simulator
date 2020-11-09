@@ -31,7 +31,7 @@
 namespace nest
 {
 
-nest::Structural_Plasticity_Node::Structural_Plasticity_Node()
+nest::StructuralPlasticityNode::StructuralPlasticityNode()
   : Ca_t_( 0.0 )
   , Ca_minus_( 0.0 )
   , tau_Ca_( 10000.0 )
@@ -40,7 +40,7 @@ nest::Structural_Plasticity_Node::Structural_Plasticity_Node()
 {
 }
 
-nest::Structural_Plasticity_Node::Structural_Plasticity_Node( const Structural_Plasticity_Node& n )
+nest::StructuralPlasticityNode::StructuralPlasticityNode( const StructuralPlasticityNode& n )
   : Node( n )
   , Ca_t_( n.Ca_t_ )
   , Ca_minus_( n.Ca_minus_ )
@@ -51,7 +51,7 @@ nest::Structural_Plasticity_Node::Structural_Plasticity_Node( const Structural_P
 }
 
 void
-nest::Structural_Plasticity_Node::get_status( DictionaryDatum& d ) const
+nest::StructuralPlasticityNode::get_status( DictionaryDatum& d ) const
 {
   DictionaryDatum synaptic_elements_d;
   DictionaryDatum synaptic_element_d;
@@ -73,7 +73,7 @@ nest::Structural_Plasticity_Node::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::Structural_Plasticity_Node::set_status( const DictionaryDatum& d )
+nest::StructuralPlasticityNode::set_status( const DictionaryDatum& d )
 {
   // We need to preserve values in case invalid values are set
   double new_tau_Ca = tau_Ca_;
@@ -137,14 +137,14 @@ nest::Structural_Plasticity_Node::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::Structural_Plasticity_Node::clear_history()
+nest::StructuralPlasticityNode::clear_history()
 {
   Ca_minus_ = 0.0;
   Ca_t_ = 0.0;
 }
 
 double
-nest::Structural_Plasticity_Node::get_synaptic_elements( Name n ) const
+nest::StructuralPlasticityNode::get_synaptic_elements( Name n ) const
 {
   std::map< Name, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
@@ -169,7 +169,7 @@ nest::Structural_Plasticity_Node::get_synaptic_elements( Name n ) const
 }
 
 int
-nest::Structural_Plasticity_Node::get_synaptic_elements_vacant( Name n ) const
+nest::StructuralPlasticityNode::get_synaptic_elements_vacant( Name n ) const
 {
   std::map< Name, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
@@ -185,7 +185,7 @@ nest::Structural_Plasticity_Node::get_synaptic_elements_vacant( Name n ) const
 }
 
 int
-nest::Structural_Plasticity_Node::get_synaptic_elements_connected( Name n ) const
+nest::StructuralPlasticityNode::get_synaptic_elements_connected( Name n ) const
 {
   std::map< Name, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
@@ -201,7 +201,7 @@ nest::Structural_Plasticity_Node::get_synaptic_elements_connected( Name n ) cons
 }
 
 std::map< Name, double >
-nest::Structural_Plasticity_Node::get_synaptic_elements() const
+nest::StructuralPlasticityNode::get_synaptic_elements() const
 {
   std::map< Name, double > n_map;
 
@@ -215,7 +215,7 @@ nest::Structural_Plasticity_Node::get_synaptic_elements() const
 }
 
 void
-nest::Structural_Plasticity_Node::update_synaptic_elements( double t )
+nest::StructuralPlasticityNode::update_synaptic_elements( double t )
 {
   assert( t >= Ca_t_ );
 
@@ -231,7 +231,7 @@ nest::Structural_Plasticity_Node::update_synaptic_elements( double t )
 }
 
 void
-nest::Structural_Plasticity_Node::decay_synaptic_elements_vacant()
+nest::StructuralPlasticityNode::decay_synaptic_elements_vacant()
 {
   for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
@@ -242,7 +242,7 @@ nest::Structural_Plasticity_Node::decay_synaptic_elements_vacant()
 }
 
 void
-nest::Structural_Plasticity_Node::connect_synaptic_element( Name name, int n )
+nest::StructuralPlasticityNode::connect_synaptic_element( Name name, int n )
 {
   std::map< Name, SynapticElement >::iterator se_it;
   se_it = synaptic_elements_map_.find( name );
@@ -254,7 +254,7 @@ nest::Structural_Plasticity_Node::connect_synaptic_element( Name name, int n )
 }
 
 void
-nest::Structural_Plasticity_Node::set_spiketime( Time const& t_sp, double offset )
+nest::StructuralPlasticityNode::set_spiketime( Time const& t_sp, double offset )
 {
   const double t_sp_ms = t_sp.get_ms() - offset;
   update_synaptic_elements( t_sp_ms );

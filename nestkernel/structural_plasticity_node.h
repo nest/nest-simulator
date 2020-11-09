@@ -43,25 +43,25 @@ namespace nest
 {
 
 /**
- * \class Structural_Plasticity_Node
+ * \class StructuralPlasticityNode
  * Implements functionality related to structural synaptic plasticity.
  */
-class Structural_Plasticity_Node : public Node
+class StructuralPlasticityNode : public Node
 {
   using Node::get_synaptic_elements;
 
 public:
   /**
-   * \fn Structural_Plasticity_Node()
+   * \fn StructuralPlasticityNode()
    * Constructor.
    */
-  Structural_Plasticity_Node();
+  StructuralPlasticityNode();
 
   /**
-   * \fn Structural_Plasticity_Node()
+   * \fn StructuralPlasticityNode()
    * Copy Constructor.
    */
-  Structural_Plasticity_Node( const Structural_Plasticity_Node& );
+  StructuralPlasticityNode( const StructuralPlasticityNode& );
   /**
 
    * \fn double get_Ca_minus()
@@ -172,13 +172,13 @@ private:
 };
 
 inline double
-Structural_Plasticity_Node::get_tau_Ca() const
+StructuralPlasticityNode::get_tau_Ca() const
 {
   return tau_Ca_;
 }
 
 inline double
-Structural_Plasticity_Node::get_Ca_minus() const
+StructuralPlasticityNode::get_Ca_minus() const
 {
   return Ca_minus_;
 }

@@ -184,7 +184,7 @@ EndUserDocs */
 namespace nest
 {
 
-class glif_psc : public nest::Archiving_Node
+class glif_psc : public nest::ArchivingNode
 {
 public:
   glif_psc();
@@ -421,7 +421,7 @@ glif_psc::get_status( DictionaryDatum& d ) const
   S_.get( d, P_ );
 
   // get information managed by parent class
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ nest::names::recordables ] = recordablesMap_.get_list();
 }
@@ -434,7 +434,7 @@ glif_psc::set_status( const DictionaryDatum& d )
   State_ stmp = S_;                      // temporary copy in case of errors
   stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
 
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

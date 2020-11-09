@@ -47,20 +47,20 @@ namespace nest
  * A node which archives spike history for the purposes of spike-timing
  * dependent plasticity (STDP)
  */
-class Archiving_Node : public Structural_Plasticity_Node
+class ArchivingNode : public StructuralPlasticityNode
 {
 public:
   /**
-   * \fn Archiving_Node()
+   * \fn ArchivingNode()
    * Constructor.
    */
-  Archiving_Node();
+  ArchivingNode();
 
   /**
-   * \fn Archiving_Node()
+   * \fn ArchivingNode()
    * Copy Constructor.
    */
-  Archiving_Node( const Archiving_Node& );
+  ArchivingNode( const ArchivingNode& );
 
   /**
    * \fn double get_K_value(long t)
@@ -177,7 +177,7 @@ private:
 };
 
 inline double
-Archiving_Node::get_spiketime_ms() const
+ArchivingNode::get_spiketime_ms() const
 {
   return last_spike_;
 }

@@ -79,7 +79,7 @@ SpikeEvent
 
 EndUserDocs */
 
-class parrot_neuron_ps : public Archiving_Node
+class parrot_neuron_ps : public ArchivingNode
 {
 public:
   parrot_neuron_ps();

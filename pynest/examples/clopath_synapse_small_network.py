@@ -88,7 +88,7 @@ pop_inh = nest.Create(nrn_model, 3, nrn_params)
 
 pop_input = nest.Create('parrot_neuron', 500)  # helper neurons
 pg = nest.Create('poisson_generator', 500)
-wr = nest.Create('weight_recorder', 1)
+wr = nest.Create('weight_recorder')
 
 ##############################################################################
 # First connect Poisson generators to helper neurons

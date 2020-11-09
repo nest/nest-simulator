@@ -178,9 +178,9 @@ neurondict = {'V_th': V_th,
 
 nest.SetDefaults('iaf_psc_alpha', neurondict)
 n = nest.Create('iaf_psc_alpha', n_neurons)
-n_free = nest.Create('iaf_psc_alpha', 1, {'V_th': 1e12})
+n_free = nest.Create('iaf_psc_alpha', params={'V_th': 1e12})
 pg = nest.Create('poisson_generator', len(rates), {'rate': rates})
-vm = nest.Create('voltmeter', 1, {'interval': .1})
+vm = nest.Create('voltmeter', params={'interval': .1})
 sr = nest.Create('spike_recorder')
 
 ###############################################################################

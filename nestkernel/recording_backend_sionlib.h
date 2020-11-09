@@ -114,7 +114,7 @@ conform to any standard, parsing them manually might be a bit
 cumbersome. To ease this task, we provide a reader module for Python
 that makes the files available in a convenient way. The source code
 and further documentation for this module can be found in its own
-repository at `<https://github.com/nest/nest-sionlib-reader>`_.
+`repository <https://github.com/nest/nest-sionlib-reader>`_.
 
 Recorder-specific parameters
 ++++++++++++++++++++++++++++

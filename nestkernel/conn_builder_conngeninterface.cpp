@@ -72,8 +72,6 @@ ConnectionGeneratorBuilder::connect_()
   const int num_parameters = cg_->arity();
   if ( num_parameters == 0 )
   {
-    weight_ = delay_ = 0;
-
     // connect source to target
     while ( cg_->next( source, target, NULL ) )
     {
@@ -102,21 +100,24 @@ ConnectionGeneratorBuilder::connect_()
       throw BadProperty( "d_idx and w_idx have to be either 0 or 1 and cannot be the same." );
     }
 
-    std::vector< double > params( 2 );
-
-    const thread num_threads = kernel().vp_manager.get_num_threads();
+//    TODO: Check if we have weight or delay in the syn_spec. If we do:
+//    {
+//      throw BadProperty( "weight and delay cannot be specified both in the syn_spec and by the Connection Generator" );
+//    }
 
     // connect source to target with weight and delay
+    std::vector< double > params( 2 );
     while ( cg_->next( source, target, &params[ 0 ] ) )
     {
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contains local nodes.
-      Node* const target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
+      Node* target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
       const thread target_thread = target_node->get_thread();
 
-      delay_ = new ScalarDoubleParameter( params[ d_idx ], num_threads );
-      weight_ = new ScalarDoubleParameter( params[ w_idx ], num_threads );
-      single_connect_( ( *sources_ )[ source ], *target_node, target_thread, rng );
+      DictionaryDatum param_dict = create_param_dict_( ( *sources_ )[ source ], *target_node, target_thread, rng, 0 );
+
+      kernel().connection_manager.connect(
+        ( *sources_ )[ source ], target_node, target_thread, synapse_model_id_[ 0 ], param_dict, params[ d_idx ], params[ w_idx ] );
     }
   }
   else

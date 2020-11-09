@@ -58,12 +58,10 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , use_pre_synaptic_element_( false )
   , use_post_synaptic_element_( false )
-  , synapse_model_id_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
   , param_dicts_()
   , dummy_param_dicts_()
   , parameters_requiring_skipping_()
-  , delay_( 0 )
-  , weight_( 0 )
+  , synapse_model_id_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
 {
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
@@ -305,6 +303,42 @@ nest::ConnBuilder::disconnect()
   }
 }
 
+DictionaryDatum
+nest::ConnBuilder::create_param_dict_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng, index indx )
+{
+  DictionaryDatum param_dict;
+
+  if ( param_dicts_[ indx ].empty() ) // indicates we have no synapse params
+  {
+    param_dict = dummy_param_dicts_[ target_thread ];
+  }
+  else
+  {
+    assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ indx ].size() ) );
+
+    for ( auto synapse_parameter : synapse_params_[ indx ] )
+    {
+      if ( synapse_parameter.second->provides_long() )
+      {
+        // change value of dictionary entry without allocating new datum
+        IntegerDatum* id = static_cast< IntegerDatum* >(
+          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+        ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
+      }
+      else
+      {
+        // change value of dictionary entry without allocating new datum
+        DoubleDatum* dd = static_cast< DoubleDatum* >(
+          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+        ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
+      }
+    }
+    param_dict = param_dicts_[ indx ][ target_thread ];
+  }
+
+  return param_dict;
+}
+
 void
 nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng )
 {
@@ -315,34 +349,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
 
   for ( size_t indx = 0; indx < synapse_model_id_.size(); ++indx )
   {
-    DictionaryDatum param_dict;
-    if ( param_dicts_[ indx ].empty() ) // indicates we have no synapse params
-    {
-      param_dict = dummy_param_dicts_[ target_thread ];
-    }
-    else
-    {
-      assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ indx ].size() ) );
-
-      for ( auto synapse_parameter : synapse_params_[ indx ] )
-      {
-        if ( synapse_parameter.second->provides_long() )
-        {
-          // change value of dictionary entry without allocating new datum
-          IntegerDatum* id = static_cast< IntegerDatum* >(
-            ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-          ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
-        }
-        else
-        {
-          // change value of dictionary entry without allocating new datum
-          DoubleDatum* dd = static_cast< DoubleDatum* >(
-            ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-          ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
-        }
-      }
-      param_dict = param_dicts_[ indx ][ target_thread ];
-    }
+    DictionaryDatum param_dict = create_param_dict_( snode_id, target, target_thread, rng, indx );
 
     if ( default_weight_and_delay_[ indx ] )
     {

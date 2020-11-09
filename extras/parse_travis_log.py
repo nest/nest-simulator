@@ -360,15 +360,15 @@ def makebuild_summary(log_filename, msg_make_section_start,
     number_of_error_msgs = 0
     number_of_warning_msgs = 0
     in_make_section = False
-    if environ['xNEST_BUILD_TYPE'] == 'MINIMAL':
+    if NEST_BUILD_TYPE == 'MINIMAL':
         expected_warnings = 8
-    elif environ['xNEST_BUILD_TYPE'] == 'MPI_ONLY':
+    elif NEST_BUILD_TYPE == 'MPI_ONLY':
         expected_warnings = 263
-    elif environ['xNEST_BUILD_TYPE'] == 'OPENMP_ONLY':
+    elif NEST_BUILD_TYPE == 'OPENMP_ONLY':
         expected_warnings = 8
-    elif environ['xNEST_BUILD_TYPE'] == 'FULL':
+    elif NEST_BUILD_TYPE == 'FULL':
         expected_warnings = 4006
-    elif environ['xNEST_BUILD_TYPE'] == 'FULL_NO_EXTERNAL_FEATURES':
+    elif NEST_BUILD_TYPE == 'FULL_NO_EXTERNAL_FEATURES':
         expected_warnings = 8
     else:
         expected_warnings = 0  # Set to 0 if none of the above build-types, to not crash the script
@@ -971,11 +971,10 @@ def build_return_code(status_cmake_configure,
 
 if __name__ == '__main__':
     from sys import argv, exit
-    from os import environ
     from terminaltables import AsciiTable
     from textwrap import wrap
 
-    this_script_filename, log_filename = argv
+    this_script_filename, log_filename, NEST_BUILD_TYPE = argv
 
     changed_files = \
         list_of_changed_files(log_filename, "MSGBLD0070",

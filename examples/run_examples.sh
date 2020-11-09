@@ -38,7 +38,6 @@ fi
 set -euo pipefail
 IFS=$' \n\t'
 
-
 declare -a EXAMPLES
 if [ "${#}" -eq 0 ]; then
     # Find all examples that have a line containing "autorun=true"
@@ -49,7 +48,7 @@ if [ "${#}" -eq 0 ]; then
     else
         EXAMPLES="$(grep -rl --include=\*\.sli 'autorun=true' examples/)"
     fi
-    EXAMPLES+="$(find ../pynest/examples -name '*.py')"
+    EXAMPLES+=" $(find ../pynest/examples -name '*.py')"
 else
     EXAMPLES+=${@}
 fi
@@ -68,14 +67,14 @@ basedir=$PWD
 
 FAILURES=0
 START=$SECONDS
-for i in $EXAMPLES ; do
+for i in $EXAMPLES; do
 
-    cd $(dirname $i)
+    cd "$(dirname "$i")"
 
-    workdir=$PWD
-    example=$(basename $i)
+    workdir="$PWD"
+    example="$(basename "$i")"
 
-    ext=$(echo $example | cut -d. -f2)
+    ext="$(echo "$example" | cut -d. -f2)"
 
     if [ $ext = sli ] ; then
         runner=nest
@@ -83,10 +82,10 @@ for i in $EXAMPLES ; do
         runner=python3
     fi
 
-    output_dir=$basedir/example_logs/$example
-    logfile=$output_dir/output.log
-    metafile=$output_dir/meta.yaml
-    mkdir -p $output_dir
+    output_dir="$basedir/example_logs/$example"
+    logfile="$output_dir/output.log"
+    metafile="$output_dir/meta.yaml"
+    mkdir -p "$output_dir"
 
     echo ">>> RUNNING: $workdir/$example"
     echo "    LOGFILE: $logfile"
@@ -94,11 +93,13 @@ for i in $EXAMPLES ; do
     echo "  output_dir: '$output_dir'" >>"$metafile"
     echo "  log: '$logfile'" >>"$metafile"
 
-    export NEST_DATA_PATH=$output_dir
+    export NEST_DATA_PATH="$output_dir"
     touch .start_example
     sleep 1
-    /usr/bin/time -f "$time_format" --quiet sh -c "$runner $example >$logfile 2>&1" |& tee -a "$metafile"
+    set +e
+    /usr/bin/time -f "$time_format" --quiet sh -c "'$runner' '$example' >'$logfile' 2>&1" |& tee -a "$metafile"
     ret=$?
+    set -e
 
     outfiles=false
     for file in $(find . -newer .start_example); do
@@ -113,7 +114,7 @@ for i in $EXAMPLES ; do
         echo "    FAILURE!"
         echo "  result: failed" >>"$metafile"
         FAILURES=$(( $FAILURES + 1 ))
-        OUTPUT=$(printf "        %s\n        %s\n" "$OUTPUT" "$workdir/$example")
+        OUTPUT="$(printf "        %s\n        %s\n" "${OUTPUT:-}" "$workdir/$example")"
     else
         echo "    SUCCESS!"
         echo "  result: success" >>"$metafile"
@@ -121,12 +122,15 @@ for i in $EXAMPLES ; do
     echo
 
     unset NEST_DATA_PATH
-    cd $basedir
+    cd "$basedir"
 
 done
 ELAPSED_TIME=$(($SECONDS - $START))
 
-echo ">>> RESULTS: $FAILURES failed /" $(echo $EXAMPLES | wc -w) " total"
+echo ">>> Longest running examples:"
+egrep -o "real: [^,]+" example_logs/*/meta.yaml | sed -e 's/:real://' | sort -k2 -r | head -n 15
+
+echo ">>> RESULTS: $FAILURES failed /" $(echo "$EXAMPLES" | wc -w) " total"
 echo ">>> TOTAL TIME: $(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec."
 
 if [ ! -z ${OUTPUT+x} ] ; then

@@ -16,6 +16,7 @@ Makefile
 
 build/
 install/
+examples/example_logs/
 
 /juqueen/
 /extras/nest-config

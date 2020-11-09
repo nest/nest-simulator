@@ -40,20 +40,20 @@ import matplotlib.pyplot as plt
 
 ###############################################################################
 # Second the function ``build_network`` is defined to build the network and
-# return the handles of the ``spike_detector`` and the ``voltmeter``. The
+# return the handles of the ``spike_recorder`` and the ``voltmeter``. The
 # function takes the simulation resolution as argument
 #
 # The function first resets the simulation kernel and sets the number of
 # threads and the simulation resolution.  The ``iaf_psc_alpha`` neuron is
 # created and the handle is stored in the variable `neuron`. The status of
 # the neuron is changed so it receives an external current. Next a
-# ``voltmeter`` and a ``spike_detector`` are created and their handles stored
-# in the variables `vm` and `sd` respectively.
+# ``voltmeter`` and a ``spike_recorder`` are created and their handles stored
+# in the variables `vm` and `sr` respectively.
 #
-# The voltmeter and spike detector are then connected to the neuron. ``Connect``
+# The voltmeter and spike recorder are then connected to the neuron. ``Connect``
 # takes the device and neuron handles as input. The voltmeter is connected to the
-# neuron and the neuron to the spike detector because the neuron sends spikes
-# to the detector and the voltmeter 'observes' the neuron.
+# neuron and the neuron to the spike recorder because the neuron sends spikes
+# to the recorder and the voltmeter 'observes' the neuron.
 
 
 def build_network(dt):
@@ -65,12 +65,12 @@ def build_network(dt):
     neuron.I_e = 376.0
 
     vm = nest.Create('voltmeter')
-    sd = nest.Create('spike_detector')
+    sr = nest.Create('spike_recorder')
 
     nest.Connect(vm, neuron)
-    nest.Connect(neuron, sd)
+    nest.Connect(neuron, sr)
 
-    return vm, sd
+    return vm, sr
 
 
 ###############################################################################
@@ -79,14 +79,14 @@ def build_network(dt):
 
 for dt in [0.1, 0.5, 1.0]:
     print("Running simulation with dt=%.2f" % dt)
-    vm, sd = build_network(dt)
+    vm, sr = build_network(dt)
 
     nest.Simulate(1000.0)
 
 ###########################################################################
 # The network is simulated using ``Simulate``, which takes the desired
 # simulation time in milliseconds and advances the network state by this
-# amount of time. During simulation, the ``spike_detector`` counts the
+# amount of time. During simulation, the ``spike_recorder`` counts the
 # spikes of the target neuron and the total number is read out at the
 # end of the simulation period.
 #
@@ -101,7 +101,7 @@ for dt in [0.1, 0.5, 1.0]:
 # Using the matplotlib library the voltage trace is plotted over time
 
     plt.plot(times, potentials, label="dt=%.2f" % dt)
-    print("  Number of spikes: {0}".format(sd.n_events))
+    print("  Number of spikes: {0}".format(sr.n_events))
 
 ###########################################################################
 # Finally the axis are labelled and a legend is generated

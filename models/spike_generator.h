@@ -53,7 +53,7 @@ which are given to the spike generator as an array.
 
 Spike times are given in milliseconds, and must be sorted with the
 earliest spike first. All spike times must be strictly in the future.
-Trying to set a spike time in the past or at the current time step,
+Trying to set a spike time in the past or at the current time step
 will cause a NEST error. Setting a spike time of 0.0 will also result
 in an error.
 
@@ -64,8 +64,8 @@ do not coincide with a step are handled (see examples below):
 Multiple occurrences of the same time indicate that more than one
 event is to be generated at this particular time.
 
-Additionally, spike_weights can be set. This also is an array,
-which contains one weight value per spike time. If set, the spikes
+Additionally, spike_weights can be set. This is an array as well.
+It contains one weight value per spike time. If set, the spikes
 are delivered with the respective weight multiplied with the
 weight of the connection. To disable this functionality, the
 spike_weights array can be set to an empty array.

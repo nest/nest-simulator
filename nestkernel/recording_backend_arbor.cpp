@@ -99,7 +99,7 @@ nest::RecordingBackendArbor::finalize()
 void
 nest::RecordingBackendArbor::enroll( const RecordingDevice& device, const DictionaryDatum& )
 {
-  if ( device.get_type() == RecordingDevice::SPIKE_DETECTOR )
+  if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
   {
     const auto tid = device.get_thread();
     const auto node_id = device.get_node_id();
@@ -114,7 +114,7 @@ nest::RecordingBackendArbor::enroll( const RecordingDevice& device, const Dictio
   }
   else
   {
-    throw BadProperty( "Only spike detectors can record to recording backend 'arbor'." );
+    throw BadProperty( "Only spike recorders can record to recording backend 'arbor'." );
   }
   enrolled_ = true;
 }

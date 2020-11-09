@@ -296,8 +296,8 @@ To select fields at a deeper hierarchy level, use ``get(parameter_name, property
 this will return an array. You can also use ``get(parameter_name, [property_name_1, ..., property_name_n])``
 and get a dictionary with arrays.
 
->>>    sd = nest.Create('spike_detector')
->>>    sd.get('events', 'senders')
+>>>    sr = nest.Create('spike_recorder')
+>>>    sr.get('events', 'senders')
        array([], dtype=int64)
 
 Lastly, you can specify the output format (`pandas` and `JSON` for now). The
@@ -565,6 +565,54 @@ Iterator of sources and targets
 
     >>>  print([s*3 for s in synColl.sources()])
          [3, 3, 6, 6]
+
+.. _collocated_synapses
+
+Collocated synapses
+~~~~~~~~~~~~~~~~~~~
+It is now possible to create connections with several synapses simultaneously. The different synapse dictionaries will
+then be applied to each source-target pair. To create these collocated synapses, ``CollocatedSynapses()`` must be used
+as the `syn_spec` argument of ``Connect``, instead of the usual syn_spec dictionary argument. ``CollocatedSynapses()``
+takes dictionaries as arguments.
+
+  ::
+
+    nodes = nest.Create('iaf_psc_alpha', 3)
+    syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
+                                       {'synapse_model': 'stdp_synapse'},
+                                       {'synapse_model': 'stdp_synapse', 'alpha': 3.})
+    nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
+
+    conns = nest.GetConnections()
+    print(conns.alpha)
+
+This will create 9 connections: 3 using `static_synapse` with a `weight` of `4` and `delay` of `1.5`, and 6 using
+the `stdp_synapse`. Of the 6 using `stdp_synapse`, 3 will have the default alpha value, and 3 will have an alpha of
+`3.0`.
+
+  >>> print(nest.GetKernelStatus('num_connections'))
+  9
+
+If you want to connect with different receptor types, you can do the following:
+
+  ::
+
+    src = nest.Create('iaf_psc_exp_multisynapse', 7)
+    trgt = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1 + i for i in range(7)]})
+
+    syn_spec = nest.CollocatedSynapses({'weight': 5.0, 'receptor_type': 2},
+                                       {'weight': 1.5, 'receptor_type': 7})
+
+    nest.Connect(src, trgt, 'one_to_one', syn_spec=syn_spec)
+
+    conns = nest.GetConnections()
+    print(conns.get())
+
+You can see how many synapse parameters you have by doing `len()` on your `CollocatedSynapses` object:
+
+  >>> len(syn_spec)
+  2
+
 
 .. _param_ex:
 
@@ -951,7 +999,7 @@ statement. Three arguments are required:
 
 ::
 
-    # A heaviside step function with uniformly distributed input values.
+    # A Heaviside step function with uniformly distributed input values.
     nest.logic.conditional(nest.random.uniform(min=-1., max=1.) < 0., 0., 1.)
 
 .. code-block:: ipython
@@ -1296,6 +1344,11 @@ probability and delay, and random weights from a normal distribution:
   |                                                                  |                                                                     |
   +------------------------------------------------------------------+---------------------------------------------------------------------+
 
+Masks
+^^^^^
+In NEST 3.0, the mask ``volume`` got removed, as the same mask was already available under the name ``box``.
+The former was only an alias available in NEST for backward compatibility.
+
 Retrieving distance information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 If you have a SynapseCollection with connections from a spatially distributed network, you can retrieve the
@@ -1316,8 +1369,14 @@ between the source-target pair at *indx*.
 Calling ``.distance`` on a SynapseCollection where either the source or target, or both, are not spatially
 distributed also works, you will receive `nan` whenever one of the nodes is non-spatial.
 
-Improved infrastructure for handling recordings
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Recording from simulations
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `spike_detector` has been renamed to `spike_recorder`. The main
+rationale behind this is that the device is actually not detecting the
+occurence of spikes, but rather only records them. Moreover, the new
+name is more consistent with the naming of other similar devices that
+also end in the suffix `_recorder`.
 
 In NEST 2.x, all recording modalities (i.e. *screen*, *memory*, and
 *files*) were handled by a single C++ class. Due to the many different
@@ -1353,24 +1412,30 @@ The following examples assume that the variable `mm` points to a
 was executed.
 
 
-  +------------------------------------------------------+--------------------------------+
-  | NEST 2.x                                             | NEST 3.0                       |
-  +------------------------------------------------------+--------------------------------+
-  |                                                      |                                |
-  | ::                                                   | ::                             |
-  |                                                      |                                |
-  |     nest.SetStatus(mm, {'record_to': ["file"]})      |     mm.record_to = "ascii"     |
-  |     nest.SetStatus(mm, {'record_to': ["screen"]})    |     mm.record_to = "screen"    |
-  |     nest.SetStatus(mm, {'record_to': ["memory"]})    |     mm.record_to = "memory"    |
-  |                                                      |                                |
-  +------------------------------------------------------+--------------------------------+
-  | ::                                                   | ::                             |
-  |                                                      |                                |
-  |     nest.SetStatus(mm, {'to_file': True})            |     mm.record_to = "ascii"     |
-  |     nest.SetStatus(mm, {'to_screen': True})          |     mm.record_to = "screen"    |
-  |     nest.SetStatus(mm, {'to_memory': True})          |     mm.record_to = "memory"    |
-  |                                                      |                                |
-  +------------------------------------------------------+--------------------------------+
+  +------------------------------------------------------+------------------------------------+
+  | NEST 2.x                                             | NEST 3.0                           |
+  +------------------------------------------------------+------------------------------------+
+  |                                                      |                                    |
+  | ::                                                   | ::                                 |
+  |                                                      |                                    |
+  |     nest.SetStatus(mm, {'record_to': ["file"]})      |     mm.record_to = "ascii"         |
+  |     nest.SetStatus(mm, {'record_to': ["screen"]})    |     mm.record_to = "screen"        |
+  |     nest.SetStatus(mm, {'record_to': ["memory"]})    |     mm.record_to = "memory"        |
+  |                                                      |                                    |
+  +------------------------------------------------------+------------------------------------+
+  | ::                                                   | ::                                 |
+  |                                                      |                                    |
+  |     nest.SetStatus(mm, {'to_file': True})            |     mm.record_to = "ascii"         |
+  |     nest.SetStatus(mm, {'to_screen': True})          |     mm.record_to = "screen"        |
+  |     nest.SetStatus(mm, {'to_memory': True})          |     mm.record_to = "memory"        |
+  |                                                      |                                    |
+  +------------------------------------------------------+------------------------------------+
+  |                                                      |                                    |
+  | ::                                                   | ::                                 |
+  |                                                      |                                    |
+  |     nest.Create('spike_detector')                    |     nest.Create('spike_recorder')  |
+  |                                                      |                                    |
+  +------------------------------------------------------+------------------------------------+
 
 You can retrieve the list of available backends using the following command:
 

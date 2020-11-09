@@ -416,7 +416,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 
         if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.
         {
-          // Set dead time interval according to paramters
+          // Set dead time interval according to parameters
           if ( P_.dead_time_random_ )
           {
             S_.r_ = Time( Time::ms( V_.gamma_dev_( V_.rng_ ) / V_.dt_rate_ ) ).get_steps();

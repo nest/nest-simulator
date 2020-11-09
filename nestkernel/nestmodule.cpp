@@ -34,26 +34,24 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
+#include "connection_creator_impl.h"
 #include "connection_manager_impl.h"
+#include "free_layer.h"
 #include "genericmodel.h"
+#include "grid_layer.h"
+#include "grid_mask.h"
 #include "kernel_manager.h"
+#include "layer.h"
+#include "layer_impl.h"
+#include "mask.h"
+#include "mask_impl.h"
 #include "model_manager_impl.h"
 #include "nest.h"
 #include "nest_datums.h"
 #include "nest_types.h"
 #include "node.h"
 #include "sp_manager_impl.h"
-
-// Includes from spatial:
-#include "spatial/connection_creator_impl.h"
-#include "spatial/free_layer.h"
-#include "spatial/grid_layer.h"
-#include "spatial/grid_mask.h"
-#include "spatial/layer.h"
-#include "spatial/layer_impl.h"
-#include "spatial/mask.h"
-#include "spatial/mask_impl.h"
-#include "spatial/spatial.h"
+#include "spatial.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -920,6 +918,29 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by connect
+  kernel().connection_manager.connect( sources, targets, connectivity, { synapse_params } );
+
+  i->OStack.pop( 4 );
+  i->EStack.pop();
+}
+
+void
+NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 4 );
+
+  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
+  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  ArrayDatum synapse_params_arr = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
+  std::vector< DictionaryDatum > synapse_params;
+
+  for ( auto syn_param : synapse_params_arr )
+  {
+    synapse_params.push_back( getValue< DictionaryDatum >( syn_param ) );
+  }
+
+  // dictionary access checking is handled by connect
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
@@ -1247,7 +1268,7 @@ NestModule::ProcessorNameFunction::execute( SLIInterpreter* i ) const
 #ifdef HAVE_MPI
 /** @BeginDocumentation
    Name: abort - Abort all NEST processes gracefully.
-   Paramteres:
+   Parameters:
    exitcode - The exitcode to quit with
    Description:
    This function can be run by the user to end all NEST processes as
@@ -1660,49 +1681,6 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 #endif
-
-/** @BeginDocumentation
-   Name: SetStructuralPlasticityStatus - Set up parameters for structural
-   plasticity.
-
-   Synopsis:
-   Structural plasticity allows the user to treat the nodes as neurons with
-   synaptic elements, allowing new synapses to be created and existing synapses
-   to be deleted during the simulation according to a set of growth and
-   homeostatic rules. This function allows the user to set up various
-   parameters for structural plasticity.
-
-   Parameters:
-   structural_plasticity_dictionary - is a dictionary which states the settings
-   for the structural plasticity functionality
-
-   Author: Mikael Naveau, Sandra Diaz
-   FirstVersion: December 2014
-*/
-void
-NestModule::SetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-  DictionaryDatum structural_plasticity_dictionary = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-
-  kernel().sp_manager.set_status( structural_plasticity_dictionary );
-
-  i->OStack.pop( 1 );
-  i->EStack.pop();
-}
-
-void
-NestModule::GetStructuralPlasticityStatus_DFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-
-  DictionaryDatum current_status = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-  kernel().sp_manager.get_status( current_status );
-
-  i->OStack.pop( 1 );
-  i->OStack.push( current_status );
-  i->EStack.pop();
-}
 
 /**
  * Enable Structural Plasticity within the simulation. This allows
@@ -2715,7 +2693,7 @@ NestModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
   source_node_id target_node_id weight delay displacement[x,y,z]
 
   where displacement are up to three coordinates of the vector from the source
-  to the target node. If targets do not have positions (eg. spike detectors
+  to the target node. If targets do not have positions (eg. spike recorders
   outside any layer), NaN is written for each displacement coordinate.
 
   Remarks:
@@ -2898,6 +2876,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Apply_P_g", &apply_P_gfunction );
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
+  i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 
@@ -2949,8 +2928,6 @@ NestModule::init( SLIInterpreter* i )
 #endif
   i->createcommand( "EnableStructuralPlasticity", &enablestructuralplasticity_function );
   i->createcommand( "DisableStructuralPlasticity", &disablestructuralplasticity_function );
-  i->createcommand( "SetStructuralPlasticityStatus", &setstructuralplasticitystatus_Dfunction );
-  i->createcommand( "GetStructuralPlasticityStatus", &getstructuralplasticitystatus_function );
   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
 
   i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
@@ -3009,7 +2986,6 @@ NestModule::init( SLIInterpreter* i )
   register_mask< EllipseMask< 3 > >();
   register_mask< BoxMask< 2 > >();
   register_mask< BoxMask< 3 > >();
-  register_mask< BoxMask< 3 > >( "volume" ); // For compatibility with topo 2.0
   register_mask( "doughnut", create_doughnut );
   register_mask< GridMask< 2 > >();
 }

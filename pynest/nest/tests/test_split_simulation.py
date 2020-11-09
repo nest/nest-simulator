@@ -35,7 +35,7 @@ class TestSplit(unittest.TestCase):
         def _decorator(self):
             nest.ResetKernel()
             n1 = nest.Create("iaf_psc_alpha", params={"I_e": 376.0})
-            self.spike = nest.Create('spike_detector')
+            self.spike = nest.Create('spike_recorder')
             nest.Connect(n1, self.spike)
             f(self)
             events = self.spike.events

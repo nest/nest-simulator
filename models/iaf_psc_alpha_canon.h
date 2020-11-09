@@ -110,8 +110,8 @@ Remarks
 +++++++
 
 This model transmits precise spike times to target nodes (on-grid spike
-time and offset). If this node is connected to a spike_detector, the
-property "precise_times" of the spike_detector has to be set to true in
+time and offset). If this node is connected to a spike_recorder, the
+property "precise_times" of the spike_recorder has to be set to true in
 order to record the offsets in addition to the on-grid spike times.
 
 The iaf_psc_delta_ps neuron accepts connections transmitting

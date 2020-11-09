@@ -92,10 +92,10 @@ class OneToOneConnectTestCase(unittest.TestCase):
 
         n = nest.Create('iaf_psc_alpha')
         vm = nest.Create('voltmeter')
-        sd = nest.Create('spike_detector')
+        sr = nest.Create('spike_recorder')
 
         self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.Connect, n, vm)
-        self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.Connect, sd, n)
+        self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.Connect, sr, n)
 
 
 def suite():

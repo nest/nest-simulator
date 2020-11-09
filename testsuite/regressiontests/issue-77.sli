@@ -112,10 +112,6 @@ M_ERROR setverbosity
    /iaf_cond_alpha_mc << /receptor_type 1 >>
    /pp_cond_exp_mc_urbanczik << /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>
-   /sli_neuron << /params << /calibrate { }
-                             /update { /spike ex_spikes 10. gt def } 
-                          >>
-               >> 
    >>
    def
                                      
@@ -142,7 +138,7 @@ M_ERROR setverbosity
       
       /pg /poisson_generator << /rate 1e5 >> Create def
       /parrot /parrot_neuron_ps Create def
-      /sd /spike_detector Create def
+      /sr /spike_recorder Create def
       
       pg parrot Connect   % need to connect via parrot since generators cannot connect with
                           % plastic synapses.
@@ -180,11 +176,11 @@ M_ERROR setverbosity
                 >> def
 
       parrot n /one_to_one syn_spec Connect
-      n sd Connect
+      n sr Connect
             
       100 Simulate
 
-      /neuron_spiked sd /n_events get 0 gt def
+      /neuron_spiked sr /n_events get 0 gt def
       /t_spike_set n /t_spike get 0 gt def
       /weight_changed
         << /source parrot >> GetConnections 0 get /weight get  
@@ -193,7 +189,7 @@ M_ERROR setverbosity
       neuron_spiked t_spike_set weight_changed and and
       dup not {
        (FAILED: ) model cvs join == 
-       (  events ) =only sd /n_events get =
+       (  events ) =only sr /n_events get =
        (  tspike ) =only n /t_spike get =
        (  weight ) =only  << /source parrot >> GetConnections 0 get /weight get ==
       } if      

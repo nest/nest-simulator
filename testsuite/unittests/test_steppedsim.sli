@@ -52,13 +52,13 @@ M_ERROR setverbosity
 
   sg nrn 15.0 1.0 Connect
 
-  /spike_detector Create /sd Set
+  /spike_recorder Create /sr Set
 
-  nrn sd Connect
+  nrn sr Connect
 
   simcommand
 
-  sd [/events /times] get cva 
+  sr [/events /times] get cva 
 
 } def 
 

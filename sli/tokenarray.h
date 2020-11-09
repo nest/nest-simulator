@@ -438,7 +438,7 @@ public:
 
   void info( std::ostream& ) const;
 
-  /** Fill vectors with homogenous integer and double arrays */
+  /** Fill vectors with homogeneous integer and double arrays */
 
   void toVector( std::vector< size_t >& ) const;
   void toVector( std::vector< long >& ) const;

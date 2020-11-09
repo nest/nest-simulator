@@ -669,25 +669,6 @@ public:
 };
 
 /**
- * Exception to be thrown if the wrong argument type
- * is given to a function
- * @ingroup KernelExceptions
- */
-class SimulationError : public KernelException
-{
-public:
-  SimulationError()
-    : KernelException( "SimulationError" )
-  {
-  }
-  ~SimulationError() throw()
-  {
-  }
-
-  std::string message() const;
-};
-
-/**
  * Exception to be thrown on prototype construction if Time objects
  * incompatible. This exception is to be thrown by the default constructor of
  * nodes which require that Time objects have properties wrt resolution.

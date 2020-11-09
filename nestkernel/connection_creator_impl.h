@@ -99,13 +99,16 @@ ConnectionCreator::connect_to_target_( Iterator from,
 
     if ( without_kernel or rng->drand() < kernel_->value( rng, source_pos, target_pos, source ) )
     {
-      kernel().connection_manager.connect( iter->second,
-        tgt_ptr,
-        tgt_thread,
-        synapse_model_,
-        dummy_param_dicts_[ tgt_thread ],
-        delay_->value( rng, source_pos, target_pos, source ),
-        weight_->value( rng, source_pos, target_pos, source ) );
+      for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+      {
+        kernel().connection_manager.connect( iter->second,
+          tgt_ptr,
+          tgt_thread,
+          synapse_model_[ indx ],
+          dummy_param_dicts_[ tgt_thread ],
+          delay_[ indx ]->value( rng, source_pos, target_pos, source ),
+          weight_[ indx ]->value( rng, source_pos, target_pos, source ) );
+      }
     }
   }
 }
@@ -454,10 +457,13 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
             continue;
           }
           positions[ random_id ].first.get_vector( source_pos_vector );
-          const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
-          const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
-          kernel().connection_manager.connect(
-            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+          for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+          {
+            const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+            const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+            kernel().connection_manager.connect(
+              source_id, tgt, target_thread, synapse_model_[ indx ], dummy_param_dicts_[ target_thread ], d, w );
+          }
 
           is_selected[ random_id ] = true;
         }
@@ -490,10 +496,13 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
           positions[ random_id ].first.get_vector( source_pos_vector );
           index source_id = positions[ random_id ].second;
-          const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
-          const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
-          kernel().connection_manager.connect(
-            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+          for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+          {
+            const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+            const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+            kernel().connection_manager.connect(
+              source_id, tgt, target_thread, synapse_model_[ indx ], dummy_param_dicts_[ target_thread ], d, w );
+          }
 
           is_selected[ random_id ] = true;
         }
@@ -571,10 +580,13 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
 
           ( *positions )[ random_id ].first.get_vector( source_pos_vector );
-          const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
-          const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
-          kernel().connection_manager.connect(
-            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+          for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+          {
+            const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+            const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+            kernel().connection_manager.connect(
+              source_id, tgt, target_thread, synapse_model_[ indx ], dummy_param_dicts_[ target_thread ], d, w );
+          }
 
           is_selected[ random_id ] = true;
         }
@@ -606,10 +618,13 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
 
           ( *positions )[ random_id ].first.get_vector( source_pos_vector );
-          const double w = weight_->value( rng, source_pos_vector, target_pos_vector, source );
-          const double d = delay_->value( rng, source_pos_vector, target_pos_vector, source );
-          kernel().connection_manager.connect(
-            source_id, tgt, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+          for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+          {
+            const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+            const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+            kernel().connection_manager.connect(
+              source_id, tgt, target_thread, synapse_model_[ indx ], dummy_param_dicts_[ target_thread ], d, w );
+          }
 
           is_selected[ random_id ] = true;
         }
@@ -735,8 +750,14 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       is_selected[ random_id ] = true;
 
       target_pos_node_id_pairs[ random_id ].first.get_vector( target_pos_vector );
-      const double w = weight_->value( rng, source_pos_vector, target_pos_vector, target );
-      const double d = delay_->value( rng, source_pos_vector, target_pos_vector, target );
+
+      std::vector< double > rng_weight_vec;
+      std::vector< double > rng_delay_vec;
+      for ( size_t indx = 0; indx < weight_.size(); ++indx )
+      {
+        rng_weight_vec.push_back( weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, target ) );
+        rng_delay_vec.push_back( delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, target ) );
+      }
 
       // We bail out for non-local neurons only now after all possible
       // random numbers haven been drawn. Bailing out any earlier may lead
@@ -748,8 +769,17 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
 
       Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
       thread target_thread = target_ptr->get_thread();
-      kernel().connection_manager.connect(
-        source_id, target_ptr, target_thread, synapse_model_, dummy_param_dicts_[ target_thread ], d, w );
+
+      for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+      {
+        kernel().connection_manager.connect( source_id,
+          target_ptr,
+          target_thread,
+          synapse_model_[ indx ],
+          dummy_param_dicts_[ target_thread ],
+          rng_delay_vec[ indx ],
+          rng_weight_vec[ indx ] );
+      }
     }
   }
 }

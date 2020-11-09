@@ -27,7 +27,7 @@ from scipy.stats import truncexpon
 try:
     from mpi4py import MPI
     haveMPI4Py = True
-except:
+except ImportError:
     haveMPI4Py = False
 
 

@@ -132,8 +132,8 @@ class TestDists(unittest.TestCase):
     def testExponentialDist(self):
         syn_params = self.syn_dict.copy()
         distribution = 'exponential'
-        l = 1.7
-        syn_params[self.label] = {'distribution': distribution, 'lambda': l}
+        layer = 1.7
+        syn_params[self.label] = {'distribution': distribution, 'lambda': layer}
         self.setUpNetwork(self.conn_dict, syn_params)
         is_dist = hf.check_ks(self.pop1, self.pop2,
                               self.label, self.pval, syn_params[self.label])
@@ -142,11 +142,11 @@ class TestDists(unittest.TestCase):
     def testExponentialClippedDist(self):
         syn_params = self.syn_dict.copy()
         distribution = 'exponential_clipped'
-        l = 1.7
+        layer = 1.7
         xmin = 0.2
         xmax = 2.0
         syn_params[self.label] = {
-            'distribution': distribution, 'lambda': l, 'low': xmin,
+            'distribution': distribution, 'lambda': layer, 'low': xmin,
             'high': xmax
         }
         self.setUpNetwork(self.conn_dict, syn_params)
@@ -214,8 +214,8 @@ class TestDists(unittest.TestCase):
         # TODO: check for small lambda
         syn_params = self.syn_dict.copy()
         distribution = 'poisson'
-        l = 5.1
-        syn_params[self.label] = {'distribution': distribution, 'lambda': l}
+        layer = 5.1
+        syn_params[self.label] = {'distribution': distribution, 'lambda': layer}
         self.setUpNetwork(self.conn_dict, syn_params)
         is_dist = hf.check_ks(self.pop1, self.pop2,
                               self.label, self.pval, syn_params[self.label])
@@ -225,11 +225,11 @@ class TestDists(unittest.TestCase):
         # TODO: check for small lambda
         syn_params = self.syn_dict.copy()
         distribution = 'poisson_clipped'
-        l = 5.1
+        layer = 5.1
         xmin = 2
         xmax = 8
         syn_params[self.label] = {
-            'distribution': distribution, 'lambda': l,
+            'distribution': distribution, 'lambda': layer,
             'low': xmin, 'high': xmax}
         self.setUpNetwork(self.conn_dict, syn_params)
         is_dist = hf.check_ks(self.pop1, self.pop2,

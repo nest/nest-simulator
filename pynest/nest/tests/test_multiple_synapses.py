@@ -292,6 +292,55 @@ class MultipleSynapsesTestCase(unittest.TestCase):
 
         self.assertEqual(ref_conn_list, sorted_conn_list)
 
+    def test_MultipleSynapses_receptor_type(self):
+        """Test co-location of synapses with different receptor types"""
+        num_src = 7
+        num_trg = 7
+
+        src = nest.Create('iaf_psc_exp_multisynapse', num_src)
+        trgt = nest.Create('iaf_psc_exp_multisynapse', num_trg, {'tau_syn': [0.1 + i for i in range(num_trg)]})
+        node = nest.Create('iaf_psc_alpha')
+
+        syn_spec = nest.CollocatedSynapses({'synapse_model': 'stdp_synapse',
+                                            'weight': 5.,
+                                            'receptor_type': 2},
+                                           {'weight': 1.5, 'receptor_type': 7},
+                                           {'synapse_model': 'stdp_synapse', 'weight': 3, 'receptor_type': 5})
+
+        nest.Connect(src, trgt, 'one_to_one', syn_spec=syn_spec)
+        nest.Connect(node, node)  # should have receptor 0
+
+        conns = nest.GetConnections()
+        ref_receptor_type = [0] + [2]*num_src + [5]*num_src + [7]*num_src
+
+        self.assertEqual(ref_receptor_type, sorted(conns.receptor))
+
+        node_index = list(conns.source).index(node.global_id)
+        node_receptor = conns.receptor[node_index]
+        self.assertEqual(0, node_receptor)
+
+    def test_MultipleSynapses_receptor_type_ht_neuron(self):
+        """Test co-location of synapses with different receptor types and ht_neuron"""
+        num_src = 9
+        num_trg = 9
+
+        src = nest.Create('ht_neuron', num_src)
+        trgt = nest.Create('ht_neuron', num_trg)
+
+        syn_spec = nest.CollocatedSynapses({'synapse_model': 'stdp_synapse',
+                                            'weight': 5.,
+                                            'receptor_type': 2},
+                                           {'weight': 1.5, 'receptor_type': 4},
+                                           {'synapse_model': 'stdp_synapse', 'weight': 3, 'receptor_type': 3})
+
+        nest.Connect(src, trgt, 'one_to_one', syn_spec=syn_spec)
+
+        conns = nest.GetConnections()
+        # receptors are 1 less than receptor_type for ht_neuron
+        ref_receptor_type = [1]*num_src + [2]*num_src + [3]*num_src
+
+        self.assertEqual(ref_receptor_type, sorted(conns.receptor))
+
 
 def suite():
     suite = unittest.makeSuite(MultipleSynapsesTestCase, 'test')

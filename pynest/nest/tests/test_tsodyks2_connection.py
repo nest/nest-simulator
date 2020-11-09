@@ -57,7 +57,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
             pre_spikes,
             absolute_weight=self.synapse_parameters["weight"])
 
-        assert np.testing.assert_allclose(weight_reproduced_independently, weight_by_nest, atol=1E-12)
+        np.testing.assert_allclose(weight_reproduced_independently, weight_by_nest, atol=1E-12)
 
     def do_the_nest_simulation(self):
         """

@@ -31,8 +31,6 @@
 namespace nest
 {
 
-// member functions for Structural_Plasticity_Node
-
 nest::Structural_Plasticity_Node::Structural_Plasticity_Node()
   : Ca_t_( 0.0 )
   , Ca_minus_( 0.0 )
@@ -145,10 +143,6 @@ nest::Structural_Plasticity_Node::clear_history()
   Ca_t_ = 0.0;
 }
 
-
-/* ----------------------------------------------------------------
-* Get the number of synaptic_elements
-* ---------------------------------------------------------------- */
 double
 nest::Structural_Plasticity_Node::get_synaptic_elements( Name n ) const
 {

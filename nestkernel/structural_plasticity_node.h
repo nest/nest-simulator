@@ -44,8 +44,7 @@ namespace nest
 
 /**
  * \class Structural_Plasticity_Node
- * a node which archives spike history for the purposes of
- * timing dependent plasticity
+ * Implements functionality related to structural synaptic plasticity.
  */
 class Structural_Plasticity_Node : public Node
 {
@@ -142,29 +141,33 @@ protected:
   void clear_history();
 
 private:
-  double last_spike_;
-
-  /*
-   * Structural plasticity
+  /**
+   * Time of the last update of the Calcium concentration in ms
    */
-
-  // Time of the last update of the Calcium concentration in ms
   double Ca_t_;
 
-  // Value of the calcium concentration [Ca2+] at Ca_t_. Intracellular calcium
-  // concentration has a linear factor to mean electrical activity of 10^2,
-  // this means, for example, that a [Ca2+] of 0.2 is equivalent to a mean
-  // activity of 20Hz.
+  /**
+   * Value of the calcium concentration [Ca2+] at Ca_t_. Intracellular calcium
+   *concentration has a linear factor to mean electrical activity of 10^2,
+   * this means, for example, that a [Ca2+] of 0.2 is equivalent to a mean
+   * activity of 20Hz.
+   */
   double Ca_minus_;
 
-  // Time constant for exponential decay of the intracellular calcium
-  // concentration
+  /**
+   * Time constant for exponential decay of the intracellular calcium
+   * concentration
+   */
   double tau_Ca_;
 
-  // Increase in calcium concentration [Ca2+] for each spike of the neuron
+  /**
+   * Increase in calcium concentration [Ca2+] for each spike of the neuron
+   */
   double beta_Ca_;
 
-  // Map of the synaptic elements
+  /**
+   * Map of the synaptic elements
+   */
   std::map< Name, SynapticElement > synaptic_elements_map_;
 };
 

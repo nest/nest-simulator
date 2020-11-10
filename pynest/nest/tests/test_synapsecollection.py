@@ -361,6 +361,28 @@ class TestSynapseCollection(unittest.TestCase):
         conns.set(weight=10.)
         self.assertEqual(conns.get('weight'), ())
 
+    def test_string(self):
+        """
+        Test the str functionality of SynapseCollection
+        """
+        ref_str = (' source   target   synapse model   weight   delay \n' +
+                   '-------- -------- --------------- -------- -------\n' +
+                   '   1        4     static_synapse    1.0      1.0  \n' +
+                   '   2        4     static_synapse    2.0      1.0  \n' +
+                   '   1        3      stdp_synapse     4.0      1.0  \n' +
+                   '   1        4      stdp_synapse     3.0      1.0  \n' +
+                   '   2        3      stdp_synapse     3.0      1.0  \n' +
+                   '   2        4      stdp_synapse     2.0      1.0  \n')
+
+        s_nodes = nest.Create('iaf_psc_alpha', 2)
+        t_nodes = nest.Create('iaf_psc_alpha', 3)
+
+        nest.Connect(s_nodes, t_nodes[1], syn_spec={'weight': [[1., 2.]]})
+        nest.Connect(s_nodes, t_nodes[:2], syn_spec={'synapse_model': 'stdp_synapse', 'weight': [[4., 3.], [3., 2.]]})
+
+        conns = nest.GetConnections()
+        self.assertEqual(ref_str, str(conns))
+
 
 def suite():
     suite = unittest.makeSuite(TestSynapseCollection, 'test')

@@ -64,6 +64,7 @@ target_link_libraries( nest_lib
     OpenMP::OpenMP_CXX )
 
 target_include_directories( nest PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_BINARY_DIR}/nest
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/libnestutil
@@ -78,6 +79,7 @@ target_compile_definitions( nest PRIVATE
 )
 
 target_include_directories( nest_lib PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_BINARY_DIR}/nest
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil

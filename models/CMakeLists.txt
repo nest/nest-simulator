@@ -144,6 +144,7 @@ add_library( models ${models_sources} )
 target_link_libraries( models nestutil sli_lib nestkernel )
 
 target_include_directories( models PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/sli

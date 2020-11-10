@@ -250,11 +250,11 @@ function( NEST_CHECK_RANDOM123 )
   message( STATUS "Check if Random123 generators work." )
   try_run( RUN_RESULT COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/libnestutil/Random123/tests/kat_cpp.cpp
-      CMAKE_FLAGS -DINCLUDE_DIRECTORIES=${CMAKE_CURRENT_SOURCE_DIR}/libnestutil
+      ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Random123/tests/kat_cpp.cpp
+      CMAKE_FLAGS -DINCLUDE_DIRECTORIES=${CMAKE_CURRENT_SOURCE_DIR}/thirdparty
       COMPILE_OUTPUT_VARIABLE COMPILE_OUTPUT
       RUN_OUTPUT_VARIABLE RUN_OUTPUT
-      ARGS ${CMAKE_CURRENT_SOURCE_DIR}/libnestutil/Random123/tests/kat_vectors
+      ARGS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Random123/tests/kat_vectors
       )
   if ( ${COMPILE_RESULT} AND ${RUN_RESULT} EQUAL 0 )
     set( HAVE_RANDOM123 ON )

@@ -148,7 +148,8 @@ protected:
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
-  DictionaryDatum create_param_dict_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng, index indx );
+  DictionaryDatum
+  create_param_dict_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng, index indx );
 
   //! Create connection between given nodes, fill parameter values
   void single_connect_( index, Node&, thread, librandom::RngPtr& );
@@ -206,8 +207,10 @@ protected:
     return use_pre_synaptic_element_ and use_post_synaptic_element_;
   }
 
-  //! dictionaries to pass to connect function, one per thread for every syn_spec
-  std::vector< std::vector< DictionaryDatum > > param_dicts_;
+  //! pointers to connection parameters specified as arrays
+  std::vector< ConnParameter* > parameters_requiring_skipping_;
+
+  std::vector< index > synapse_model_id_;
 
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
@@ -224,6 +227,9 @@ private:
   // null-pointer indicates that default be used
   std::vector< ConnParameter* > weights_;
   std::vector< ConnParameter* > delays_;
+
+  //! dictionaries to pass to connect function, one per thread for every syn_spec
+  std::vector< std::vector< DictionaryDatum > > param_dicts_;
 
   //! all other parameters, mapping name to value representation
   std::vector< ConnParameterMap > synapse_params_;
@@ -260,12 +266,6 @@ private:
    */
   void reset_weights_();
   void reset_delays_();
-
-protected:
-  //! pointers to connection parameters specified as arrays
-  std::vector< ConnParameter* > parameters_requiring_skipping_;
-
-  std::vector< index > synapse_model_id_;
 };
 
 class OneToOneBuilder : public ConnBuilder

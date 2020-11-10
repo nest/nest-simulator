@@ -58,10 +58,10 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , use_pre_synaptic_element_( false )
   , use_post_synaptic_element_( false )
-  , param_dicts_()
-  , dummy_param_dicts_()
   , parameters_requiring_skipping_()
   , synapse_model_id_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
+  , param_dicts_()
+  , dummy_param_dicts_()
 {
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
@@ -304,7 +304,11 @@ nest::ConnBuilder::disconnect()
 }
 
 DictionaryDatum
-nest::ConnBuilder::create_param_dict_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng, index indx )
+nest::ConnBuilder::create_param_dict_( index snode_id,
+  Node& target,
+  thread target_thread,
+  librandom::RngPtr& rng,
+  index indx )
 {
   DictionaryDatum param_dict;
 

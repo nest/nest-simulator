@@ -59,7 +59,6 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , use_pre_synaptic_element_( false )
   , use_post_synaptic_element_( false )
   , parameters_requiring_skipping_()
-  , synapse_model_id_( kernel().model_manager.get_synapsedict()->lookup( "static_synapse" ) )
   , param_dicts_()
   , dummy_param_dicts_()
 {

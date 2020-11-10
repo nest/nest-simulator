@@ -135,6 +135,7 @@ target_link_libraries( nestkernel
     )
 
 target_include_directories( nestkernel PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/sli

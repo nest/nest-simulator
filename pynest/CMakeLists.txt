@@ -59,6 +59,7 @@ if ( HAVE_PYTHON )
       )
 
   target_include_directories( pynestkernel PRIVATE
+      ${PROJECT_SOURCE_DIR}/thirdparty
       ${PROJECT_BINARY_DIR}/libnestutil
       ${PROJECT_SOURCE_DIR}/libnestutil
       ${PROJECT_SOURCE_DIR}/nest

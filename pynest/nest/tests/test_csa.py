@@ -121,7 +121,7 @@ class CSATestCase(unittest.TestCase):
 
     def test_CSA_error_unknown_synapse(self):
         """
-        Error handling of conngen Connect in case of unknown synapse model
+        Error handling for unknown synapse model in conngen Connect
         """
 
         nest.ResetKernel()
@@ -139,6 +139,35 @@ class CSATestCase(unittest.TestCase):
         # exception if an unknown synapse model is given
         self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType",
                                nest.Connect, pop, pop, connspec, synspec)
+
+
+    def test_CSA_error_weightdelay_in_synspec_and_conngen(self):
+        """
+        Error handling for conflicting weight/delay in conngen Connect
+        """
+
+        nest.ResetKernel()
+
+        cs = csa.cset(csa.oneToOne, 10000.0, 2.0)
+        params_map = {"weight": 0, "delay": 1}
+        connspec = {"rule": "conngen", "cg": cs, "params_map": params_map}
+
+        synspec_w = {'weight': 10.0}
+        synspec_d = {'delay': 10.0}
+        synspec_wd = {'weight': 10.0, 'delay': 10.0}
+
+        n_neurons = 4
+
+        pop = nest.Create("iaf_psc_alpha", n_neurons)
+
+        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
+                               nest.Connect, pop, pop, connspec, synspec_w)
+
+        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
+                               nest.Connect, pop, pop, connspec, synspec_d)
+
+        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
+                               nest.Connect, pop, pop, connspec, synspec_wd)
 
 
 def suite():

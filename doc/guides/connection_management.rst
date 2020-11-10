@@ -5,12 +5,12 @@ Connection Management
 
 In NEST, connections are created with the `Connect()` function. You can
 create connections with different types of connectivity patterns, which
-are defined inside the function under the ``conn_spec`` argument, and the
-key 'rule'. The patterns available are described in
-:ref:`Connection Rules <conn_rules>`. In addition the synapse model can
-be specified within the Connect function and all synaptic parameters can
+are defined inside the function under the ``conn_spec`` argument and the
+key 'rule'. The patterns available are described in the
+:ref:`Connection Rules <conn_rules>` section. In addition, the synapse model can
+be specified within the `Connect()` function, and all synaptic parameters can
 be randomly distributed. More information about synapse models and their
-parameters can be found in :ref:`Synapse Specification <synapse_spec>`.
+parameters can be found in the :ref:`Synapse Specification <synapse_spec>` section.
 
 The `Connect()` function can be called in any of the following ways:
 
@@ -28,7 +28,7 @@ connectivity rule (default: ``all_to_all``) or a dictionary specifying
 the rule and the rule-specific parameters (e.g. ``indegree``), which must
 be given.
 
-In addition switches allowing self-connections (``allow_autapses``, default:
+In addition, switches allowing self-connections (``allow_autapses``, default:
 True) and multiple connections between pairs of neurons (``allow_multapses``,
 default: True) can be contained in the dictionary. The validity of the
 switches is confined by the Connect-call. Thus, by connecting the same set
@@ -38,8 +38,8 @@ particular connection might still be established multiple times.
 ``syn_spec`` defines the synapse type and its properties. It can be
 given as a string defining the synapse model (default:
 'static_synapse'), as an object defining :ref:`collocated synapses <collocated_synapses>`,
-or as a dictionary. By using the key-word variant
-(``Connect(pre, post, syn_spec=syn_spec_dict)``), the ``conn_spec`` can be
+or as a dictionary. By using the keyword variant
+(``Connect(pre, post, syn_spec=syn_spec_dict)``), ``conn_spec`` can be
 omitted in the call to connect and 'all_to_all' is assumed as the
 default. The exact usage of the synapse dictionary is described in
 :ref:`synapse_spec`.
@@ -63,7 +63,7 @@ one-to-one
      :align: center
 
 The ith node in ``pre`` is connected to the ith node in ``post``. The
-NodeCollections of pre and post have to be of the same length.
+NodeCollections of ``pre`` and ``post`` have to be of the same length.
 
 Example:
 
@@ -206,7 +206,7 @@ Example:
     nest.Connect(A, B, syn_spec='excitatory')
 
 Specifying the synapse properties in a dictionary allows for distributed
-synaptic parameters. In addition to the key ``synapse_model`` the dictionary can
+synaptic parameters. In addition to the key ``synapse_model``, the dictionary can
 contain specifications for ``weight``, ``delay``, ``receptor_type`` and
 parameters specific to the chosen synapse model. The specification of
 all parameters is optional. Unspecified parameters will use the default
@@ -291,7 +291,7 @@ Example:
     syn_dict = {'weight': [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]}
     nest.Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
 
-For ``fixed_total_number`` the array has to be same the length as the
+For ``fixed_total_number``, the array has to be same the length as the
 number of connections ``N``.
 
 Example:
@@ -348,7 +348,7 @@ If you want to connect with different :ref:`receptor types <receptor-types>`, yo
     conns = nest.GetConnections()
     print(conns.get())
 
-You can see how many synapse parameters you have by doing `len()` on your `CollocatedSynapses` object:
+You can see how many synapse parameters you have by calling `len()` on your `CollocatedSynapses` object:
 
   >>> len(syn_spec)
   2
@@ -374,7 +374,7 @@ The following parameters and functionalities are provided:
 - Clipping, redrawing, and conditional parameters
 
 For more information, check out the documentation on the different
-:doc:`PyNEST api's <../ref_material/pynest_apis>`, or the section on parametrization
+:doc:`PyNEST APIs <../ref_material/pynest_apis>` or the section on parametrization
 in our :doc:`nest2_to_nest3/nest2_to_nest3_overview` guide.
 
 Example:
@@ -681,4 +681,3 @@ by using the ``set()`` function on the SynapseCollection:
          'target': 2,
          'target_thread': 0,
          'weight': 2.0}
-

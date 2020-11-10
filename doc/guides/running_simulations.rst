@@ -191,12 +191,12 @@ a Poisson spike train using different seeds and output files for each run:
                               'rng_seeds': [100*n + 2]})
         pg = nest.Create('poisson_generator', params={'rate': 1000000.0})
         nrn= nest.Create('iaf_psc_alpha')
-        sd = nest.Create('spike_detector',
+        sr = nest.Create('spike_recorder',
                             params={'label': 'spikes-run{:02d}'.format(n),
                                     'record_to': 'ascii'})
     
         nest.Connect(pg, nrn)
-        nest.Connect(nrn, sd)
+        nest.Connect(nrn, sr)
     
         nest.Simulate(100)
 

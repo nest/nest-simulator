@@ -24,7 +24,7 @@
 # It is invoked by the top-level Travis script '.travis.yml'.
 #
 # NOTE: This shell script is tightly coupled to Python script
-#       'extras/parse_travis_log.py'. 
+#       'extras/parse_travis_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) or the variable name
 #      'file_names' have effects on the build/test-log parsing process.
 
@@ -32,11 +32,189 @@
 # Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
-# Set the NEST CMake-build configuration according to the build matrix in '.travis.yml'.
-if [ "$xTHREADING" = "1" ] ; then
-    CONFIGURE_THREADING="-Dwith-openmp=ON"
+if [[ $OSTYPE = darwin* ]]; then
+    export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
+    export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
+fi
+
+if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
+    export CC=clang-7
+    export CXX=clang++-7
+fi
+
+NEST_VPATH=build
+mkdir -p "$NEST_VPATH/reports"
+
+if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+    echo "+               S T A T I C   C O D E   A N A L Y S I S                       +"
+    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+
+    echo "MSGBLD0010: Initializing VERA++ static code analysis."
+    wget --no-verbose https://bitbucket.org/verateam/vera/downloads/vera++-1.3.0.tar.gz
+    tar -xzf vera++-1.3.0.tar.gz
+    cd vera++-1.3.0
+    cmake -DCMAKE_INSTALL_PREFIX=/usr -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
+    sudo make install
+    cd -
+    rm -fr vera++-1.3.0 vera++-1.3.0.tar.gz
+     # Add the NEST profile to the VERA++ profiles.
+    sudo cp extras/vera++.profile /usr/lib/vera++/profiles/nest
+    echo "MSGBLD0020: VERA++ initialization completed."
+    if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
+        echo "MSGBLD0030: Installing CPPCHECK version 1.69."
+        # Build cppcheck version 1.69
+        git clone https://github.com/danmar/cppcheck.git
+        cd cppcheck
+        git checkout tags/1.69
+        mkdir -p install
+        make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
+        cd -
+        echo "MSGBLD0040: CPPCHECK installation completed."
+
+        echo "MSGBLD0050: Installing CLANG-FORMAT."
+        wget --no-verbose http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+        tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+        # Copy and not move because '.cache' may aleady contain other subdirectories and files.
+        cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
+        echo "MSGBLD0060: CLANG-FORMAT installation completed."
+
+        # Remove these directories, otherwise the copyright-header check will complain.
+        rm -rf cppcheck clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
+    fi
+
+    # Ensure that the cppcheck and clang-format installation can be found.
+    export PATH=$HOME/.cache/bin:$PATH
+
+    echo "MSGBLD0070: Retrieving changed files."
+      # Note: BUG: Extracting the filenames may not work in all cases.
+      #            The commit range might not properly reflect the history.
+      #            see https://github.com/travis-ci/travis-ci/issues/2668
+    if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+       echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using git diff against $TRAVIS_BRANCH."
+       file_names=`git diff --name-only --diff-filter=AM $TRAVIS_BRANCH...HEAD`
+    else
+       echo "MSGBLD0090: Retrieving changed files using git diff in range $TRAVIS_COMMIT_RANGE."
+       file_names=`git diff --name-only $TRAVIS_COMMIT_RANGE`
+    fi
+
+    # Note: uncomment the following line to static check *all* files, not just those that have changed.
+    # Warning: will run for a very long time (will time out on Travis CI instances)
+
+    # file_names=`find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
+
+    for single_file_name in $file_names
+    do
+        echo "MSGBLD0095: File changed: $single_file_name"
+    done
+    echo "MSGBLD0100: Retrieving changed files completed."
+    echo
+
+    # Set the command line arguments for the static code analysis script and execute it.
+
+    # The names of the static code analysis tools executables.
+    VERA=vera++
+    CPPCHECK=cppcheck
+    CLANG_FORMAT=clang-format
+    PEP8=pep8
+
+    # Perform or skip a certain analysis.
+    PERFORM_VERA=true
+    PERFORM_CPPCHECK=true
+    PERFORM_CLANG_FORMAT=true
+    PERFORM_PEP8=true
+
+    # The following command line parameters indicate whether static code analysis error messages
+    # will cause the Travis CI build to fail or are ignored.
+    IGNORE_MSG_VERA=false
+    IGNORE_MSG_CPPCHECK=true
+    IGNORE_MSG_CLANG_FORMAT=false
+    IGNORE_MSG_PEP8=false
+
+    # The script is called within the Travis CI environment and thus can not be run incremental.
+    RUNS_ON_TRAVIS=true
+    INCREMENTAL=false
+
+    chmod +x extras/static_code_analysis.sh
+    ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
+    "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
+    "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
+    "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
+
+    exit $?
+fi
+
+echo
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "MSGBLD0230: Reading build type."
+
+# This defines the base settings of all build options off. The base
+# settings are also used for NEST_BUILD_TYPE=MINIMAL, which is not
+# explicitly checked for below.
+
+xGSL=0
+xLIBBOOST=0
+xLIBNEUROSIM=0
+xLTDL=0
+xMPI=0
+xMUSIC=0
+xOPENMP=0
+xPYTHON=0
+xREADLINE=0
+xSIONLIB=0
+
+if [ "$xNEST_BUILD_TYPE" = "OPENMP_ONLY" ]; then
+    xGSL=1
+    xLIBBOOST=1
+    xLTDL=1
+    xOPENMP=1
+fi
+
+if [ "$xNEST_BUILD_TYPE" = "MPI_ONLY" ]; then
+    xGSL=1
+    xLIBBOOST=1
+    xLTDL=1
+    xMPI=1
+fi
+
+if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
+    xGSL=1
+    xLIBBOOST=1
+    xLIBNEUROSIM=1
+    xLTDL=1
+    xMPI=1
+    xMUSIC=1
+    xOPENMP=1
+    xPYTHON=1
+    xREADLINE=1
+    xSIONLIB=1
+fi
+
+if [ "$xNEST_BUILD_TYPE" = "FULL_NO_EXTERNAL_FEATURES" ]; then
+    xGSL=1
+    xLIBBOOST=1
+    xLIBNEUROSIM=0
+    xLTDL=1
+    xMPI=0
+    xMUSIC=0
+    xOPENMP=1
+    xPYTHON=1
+    xREADLINE=1
+    xSIONLIB=0
+fi
+
+echo "MSGBLD0232: Setting configuration variables."
+
+# Set the NEST CMake-build configuration according to the variables
+# set above based on the ones set in the build stage matrix in
+# '.travis.yml'.
+
+if [ "$xOPENMP" = "1" ] ; then
+    CONFIGURE_OPENMP="-Dwith-openmp=ON"
 else
-    CONFIGURE_THREADING="-Dwith-openmp=OFF"
+    CONFIGURE_OPENMP="-Dwith-openmp=OFF"
 fi
 
 if [ "$xMPI" = "1" ] ; then
@@ -46,16 +224,15 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-   if [ "$TRAVIS_PYTHON_VERSION" = "3.6.10" ]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/opt/python/3.6.10/lib/libpython3.6m.so -DPYTHON_INCLUDE_DIR=/opt/python/3.6.10/include/python3.6m/"
-   fi
-   if [[ $OSTYPE = darwin* ]]; then
-      CONFIGURE_PYTHON="-DPYTHON_LIBRARY=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7.dylib -DPYTHON_INCLUDE_DIR=/usr/local/Cellar/python/3.7.5/Frameworks/Python.framework/Versions/3.7/include//python3.7m/"
-   fi
-   mkdir -p $HOME/.matplotlib
-   cat > $HOME/.matplotlib/matplotlibrc <<EOF 
-   backend : svg
-EOF
+    PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
+    PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
+    PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
+    PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
+    echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
+    echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    mkdir -p $HOME/.matplotlib
+    echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
 fi
@@ -115,147 +292,30 @@ else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
 
-if [[ $OSTYPE = darwin* ]]; then
-    export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
-    export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
+cp extras/nestrc.sli ~/.nestrc
+# Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
+# Not having this in place leads to a "not enough slots available" error.
+if [[ "$OSTYPE" = darwin* ]] ; then
+    sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
 fi
 
-NEST_VPATH=build
 NEST_RESULT=result
 if [ "$(uname -s)" = 'Linux' ]; then
     NEST_RESULT=$(readlink -f $NEST_RESULT)
 else
     NEST_RESULT=$(greadlink -f $NEST_RESULT)
 fi
+mkdir "$NEST_RESULT"
 
-echo $NEST_VPATH
-mkdir "$NEST_VPATH" "$NEST_RESULT"
-mkdir "$NEST_VPATH/reports"
+echo "MSGBLD0235: Running CMake."
 
-if [ "$xSTATIC_ANALYSIS" = "1" ]; then
-    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    echo "+               S T A T I C   C O D E   A N A L Y S I S                       +"
-    echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-
-    echo "MSGBLD0010: Initializing VERA++ static code analysis."
-    wget --no-verbose https://bitbucket.org/verateam/vera/downloads/vera++-1.3.0.tar.gz
-    tar -xzf vera++-1.3.0.tar.gz
-    cd vera++-1.3.0
-    cmake -DCMAKE_INSTALL_PREFIX=/usr -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
-    sudo make install
-    cd ..
-    rm -fr ./vera++-1.3.0
-    rm -f ./vera++-1.3.0.tar.gz
-     # Add the NEST profile to the VERA++ profiles.
-    sudo cp ./extras/vera++.profile /usr/lib/vera++/profiles/nest
-    echo "MSGBLD0020: VERA++ initialization completed."
-    if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
-        echo "MSGBLD0030: Installing CPPCHECK version 1.69."
-        # Build cppcheck version 1.69
-        git clone https://github.com/danmar/cppcheck.git
-        cd cppcheck
-        git checkout tags/1.69
-        mkdir -p install
-        make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
-        cd ..
-        echo "MSGBLD0040: CPPCHECK installation completed."
-    
-        echo "MSGBLD0050: Installing CLANG-FORMAT."
-        wget --no-verbose http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-        tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-        # Copy and not move because '.cache' may aleady contain other subdirectories and files.
-        cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
-        echo "MSGBLD0060: CLANG-FORMAT installation completed."
-    
-        # Remove these directories, otherwise the copyright-header check will complain.
-        rm -rf ./cppcheck
-        rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
-    fi
-
-    # Ensure that the cppcheck and clang-format installation can be found.
-    export PATH=$HOME/.cache/bin:$PATH
-
-    echo "MSGBLD0070: Retrieving changed files."
-      # Note: BUG: Extracting the filenames may not work in all cases. 
-      #            The commit range might not properly reflect the history.
-      #            see https://github.com/travis-ci/travis-ci/issues/2668
-    if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-       echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using git diff against $TRAVIS_BRANCH."
-       file_names=`git diff --name-only --diff-filter=AM $TRAVIS_BRANCH...HEAD`
-    else
-       echo "MSGBLD0090: Retrieving changed files using git diff in range $TRAVIS_COMMIT_RANGE."
-       file_names=`git diff --name-only $TRAVIS_COMMIT_RANGE`
-    fi
-
-    # Note: uncomment the following line to static check *all* files, not just those that have changed.
-    # Warning: will run for a very long time (will time out on Travis CI instances)
-
-    # file_names=`find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
-
-    for single_file_name in $file_names
-    do
-        echo "MSGBLD0095: File changed: $single_file_name"
-    done
-    echo "MSGBLD0100: Retrieving changed files completed."
-    echo
-
-    # Set the command line arguments for the static code analysis script and execute it.
-
-    # The names of the static code analysis tools executables.
-    VERA=vera++
-    CPPCHECK=cppcheck
-    CLANG_FORMAT=clang-format
-    PEP8=pep8
-
-    # Perform or skip a certain analysis.
-    PERFORM_VERA=true
-    PERFORM_CPPCHECK=true
-    PERFORM_CLANG_FORMAT=true
-    PERFORM_PEP8=true
-
-    # The following command line parameters indicate whether static code analysis error messages
-    # will cause the Travis CI build to fail or are ignored.
-    IGNORE_MSG_VERA=false
-    IGNORE_MSG_CPPCHECK=true
-    IGNORE_MSG_CLANG_FORMAT=false
-    IGNORE_MSG_PEP8=false
-
-    # The script is called within the Travis CI environment and thus can not be run incremental.
-    RUNS_ON_TRAVIS=true
-    INCREMENTAL=false
-
-    chmod +x ./extras/static_code_analysis.sh
-    ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
-    "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
-    "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
-    "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
-    if [ $? -gt 0 ]; then
-        exit $?
-    fi
-else
-    echo "MSGBLD0225: Static code analysis skipped due to build configuration."
-fi
-
-if [ "$xRUN_BUILD_AND_TESTSUITE" = "1" ]; then
 cd "$NEST_VPATH"
-cp ../extras/nestrc.sli ~/.nestrc
-# Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
-# Not having this in place leads to a "not enough slots available" error.
-    if [[ "$OSTYPE" = "darwin"* ]] ; then
-    sed -i -e 's/mpirun -np/mpirun --oversubscribe -np/g' ~/.nestrc
-fi
-
-echo
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
-echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-echo "MSGBLD0230: Configuring CMake."
 cmake \
     -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
     -Dwith-optimize=ON \
     -Dwith-warning=ON \
     $CONFIGURE_BOOST \
-    $CONFIGURE_THREADING \
+    $CONFIGURE_OPENMP \
     $CONFIGURE_MPI \
     $CONFIGURE_PYTHON \
     $CONFIGURE_MUSIC \
@@ -303,4 +363,3 @@ if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
 fi
 
 echo "MSGBLD0340: Build completed."
-fi

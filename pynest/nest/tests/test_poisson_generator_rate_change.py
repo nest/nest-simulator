@@ -28,9 +28,9 @@ import numpy as np
 
 class TestPgRateChange(unittest.TestCase):
 
-    def _kstest_first_spiketimes(self, sd, start_t, rate, n_parrots, resolution, p_value_lim):
+    def _kstest_first_spiketimes(self, sr, start_t, rate, n_parrots, resolution, p_value_lim):
         scale_parameter = n_parrots / rate
-        events = nest.GetStatus(sd)[0]['events']
+        events = nest.GetStatus(sr)[0]['events']
         senders = events['senders']
         times = events['times']
         min_times = [np.min(times[np.where(senders == s)])
@@ -53,34 +53,34 @@ class TestPgRateChange(unittest.TestCase):
         rate = 100.
         pg = nest.Create('poisson_generator_ps', params={'rate': rate})
         parrots = nest.Create('parrot_neuron_ps', n_parrots)
-        sd = nest.Create('spike_detector',
+        sr = nest.Create('spike_recorder',
                          params={'start': 0., 'stop': float(sim_time)})
         nest.Connect(pg, parrots, syn_spec={'delay': resolution})
-        nest.Connect(parrots, sd, syn_spec={'delay': resolution})
+        nest.Connect(parrots, sr, syn_spec={'delay': resolution})
 
         # First simulation
         nest.Simulate(sim_time)
-        self._kstest_first_spiketimes(sd, 0., rate, n_parrots, resolution, p_value_lim)
+        self._kstest_first_spiketimes(sr, 0., rate, n_parrots, resolution, p_value_lim)
 
         # Second simulation, with rate = 0
         rate = 0.
         nest.SetStatus(pg, {'rate': rate})
         # We need to skip a timestep to not receive the spikes from the
         # previous simulation run that were sent, but not received.
-        nest.SetStatus(sd, {'n_events': 0,
+        nest.SetStatus(sr, {'n_events': 0,
                             'start': float(sim_time) + resolution,
                             'stop': 2. * sim_time})
         nest.Simulate(sim_time)
-        self.assertEqual(nest.GetStatus(sd)[0]['n_events'], 0)
+        self.assertEqual(nest.GetStatus(sr)[0]['n_events'], 0)
 
         # Third simulation, with rate increased back up to 100
         rate = 100.
         nest.SetStatus(pg, {'rate': rate})
-        nest.SetStatus(sd, {'n_events': 0,
+        nest.SetStatus(sr, {'n_events': 0,
                             'start': 2. * sim_time,
                             'stop': 3. * sim_time})
         nest.Simulate(sim_time)
-        self._kstest_first_spiketimes(sd, 2. * sim_time, rate, n_parrots, resolution, p_value_lim)
+        self._kstest_first_spiketimes(sr, 2. * sim_time, rate, n_parrots, resolution, p_value_lim)
 
 
 def suite():

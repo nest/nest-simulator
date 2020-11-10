@@ -55,12 +55,12 @@ class EventsTestCase(unittest.TestCase):
         nest.ll_api.sr('20 setverbosity')
 
         n = nest.Create('iaf_psc_alpha', params={'I_e': 1000.})
-        sd = nest.Create('spike_detector')
+        sr = nest.Create('spike_recorder')
 
-        nest.Connect(n, sd)
+        nest.Connect(n, sr)
         nest.Simulate(1000)
 
-        d = nest.GetStatus(sd, 'events')[0]
+        d = nest.GetStatus(sr, 'events')[0]
 
         self.assert_(len(d['times']) > 0)
 

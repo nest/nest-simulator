@@ -94,7 +94,7 @@
 
 
     /nrn1 model Create def
-    /sp /spike_detector Create def
+    /sp /spike_recorder Create def
 
     % set threshold so that neuron makes transition to 1
     nrn1 << /theta -10. /tau_m 1. >> SetStatus
@@ -134,7 +134,7 @@ forall
 /mcculloch_pitts_neuron Create /binary Set
 /iaf_psc_alpha Create /spiking Set
 /spike_generator Create /sg Set
-/spike_detector Create /sd Set
+/spike_recorder Create /sr Set
 
 % check if connecting a binary to a spiking neuron throws exception
 {
@@ -150,8 +150,8 @@ forall
 {
     sg spiking Connect
     sg binary Connect
-    spiking sd Connect
-    binary sd Connect
+    spiking sr Connect
+    binary sr Connect
 } pass_or_die
 
 % Check if simulating with two connected binary neurons when keep_source_table

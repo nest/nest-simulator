@@ -75,6 +75,7 @@ PyNEST examples
    :caption: Connection set algebra examples
 
    ../auto_examples/csa_example
+   ../auto_examples/csa_spatial_example
 
 .. toctree::
    :maxdepth: 1
@@ -86,13 +87,7 @@ PyNEST examples
    :maxdepth: 1
    :caption: Microcircuit example
 
-   ../auto_examples/Potjans_2014/example
-   ../auto_examples/Potjans_2014/network
-   ../auto_examples/Potjans_2014/helpers
-   ../auto_examples/Potjans_2014/network_params
-   ../auto_examples/Potjans_2014/stimulus_params
-   ../auto_examples/Potjans_2014/sim_params
-
+   Microcircuit model (based on Potjans and Diesmann, 2014) <pynest_microcircuit>
 
 .. toctree::
    :maxdepth: 1

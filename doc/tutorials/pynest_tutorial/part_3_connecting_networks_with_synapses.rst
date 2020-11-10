@@ -322,7 +322,7 @@ subset of nodes) in a population. To get a subsequence of nodes, use a
 
 ::
 
-    nest.Connect(neuronpop[:Nrec],spikedetector,"all_to_all")
+    nest.Connect(neuronpop[:Nrec],spikerecorder,"all_to_all")
 
 One thing you should not do is to use your knowledge about neuron ids to set up
 loops:

@@ -19,7 +19,6 @@
 
 set( nest_sources
     neststartup.cpp neststartup.h
-    sli_neuron.h sli_neuron.cpp
     )
 
 add_executable( nest main.cpp ${nest_sources} )
@@ -50,6 +49,9 @@ else ()
     set_target_properties( nest_lib
         PROPERTIES
         OUTPUT_NAME nest
+
+        # delay lookup of symbols from libpython when building with MPI4Py
+        LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup"
         )
 endif ()
 
@@ -99,9 +101,6 @@ install( TARGETS nest nest_lib
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
-
-install( FILES sli/models-init.sli
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
 
 FILTER_HEADERS("${nest_sources}" install_headers )
 install( FILES ${install_headers}

@@ -69,9 +69,9 @@ For the receiving SLI file, *receiver.sli*, we have:
     % Create 2 parrot neurons.
     /parrot_neuron NUM_NODES Create /parrot_in Set
 
-    % Create spike detector
-    /spike_detector Create /sdetector Set
-    sdetector << /record_to /ascii
+    % Create spike recorder
+    /spike_recorder Create /sr Set
+    sr << /record_to /ascii
                  /label (output)
     >> SetStatus
 
@@ -89,7 +89,7 @@ For the receiving SLI file, *receiver.sli*, we have:
     % connect music proxies to parrots, one to one
     music_in parrot_in << /rule /one_to_one >> << /delay 2.0 >> Connect
 
-    parrot_in sdetector Connect
+    parrot_in sr Connect
 
     1000.0 Simulate
 

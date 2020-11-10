@@ -17,9 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# NOTE: Remember to update the help-generation section in 
-#       MyModule/CMakeLists.txt
-
 
 if ( NOT CMAKE_CROSSCOMPILING )
 
@@ -59,7 +56,7 @@ if ( NOT CMAKE_CROSSCOMPILING )
 
 endif ()
 
-install( DIRECTORY conngen model_details
+install( DIRECTORY model_details
     DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 
 install( FILES index.html doc_header.txt

@@ -117,11 +117,16 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
   // +1 because the division result is rounded down.
   next_rec_step_ = ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
 
-  // if offset is not 0, adjust next recording step to account for it by
-  // going one interval step back and adding the offset
+  // If offset is not 0, adjust next recording step to account for it by
+  // first setting next recording step to be offset and then iterating until
+  // the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
-    next_rec_step_ = next_rec_step_ - rec_int_steps_ + recording_offset_.get_steps();
+    next_rec_step_ = recording_offset_.get_steps() - 1; // shifted one to left
+    while ( next_rec_step_ <= kernel().simulation_manager.get_time().get_steps() )
+    {
+      next_rec_step_ += rec_int_steps_;
+    }
   }
 
   // number of data points per slice
@@ -318,11 +323,16 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // +1 because the division result is rounded down.
   next_rec_step_ = ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
 
-  // if offset is not 0, adjust next recording step to account for it by
-  // going one interval step back and adding the offset
+  // If offset is not 0, adjust next recording step to account for it by
+  // first setting next recording step to be offset and then iterating until
+  // the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
-    next_rec_step_ = next_rec_step_ - rec_int_steps_ + recording_offset_.get_steps();
+    next_rec_step_ = recording_offset_.get_steps() - 1; // shifted one to left
+    while ( next_rec_step_ <= kernel().simulation_manager.get_time().get_steps() )
+    {
+      next_rec_step_ += rec_int_steps_;
+    }
   }
 
   // number of data points per slice

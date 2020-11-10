@@ -111,9 +111,9 @@ mm = nest.Create('multimeter', params={'record_from': ['rate'],
 
 ###############################################################################
 # Specify synapse and connection dictionaries:
-# Connections originating from excitatory neurons are associatated
+# Connections originating from excitatory neurons are associated
 # with a delay `d` (``rate_connection_delayed``).
-# Connections originating from inhibitory neurons are not associatated
+# Connections originating from inhibitory neurons are not associated
 # with a delay (``rate_connection_instantaneous``).
 
 syn_e = {'weight': w, 'delay': d_e, 'synapse_model': 'rate_connection_delayed'}

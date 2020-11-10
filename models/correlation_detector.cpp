@@ -284,7 +284,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
     // all remaining spike times in the queue are
     //     > spike_i - tau_edge, if sender = 1
 
-    // temporary variables for kahan summation algorithm
+    // temporary variables for Kahan summation algorithm
     double y, t;
 
     // only count events in histogram, if the current event is within the time
@@ -310,7 +310,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
           std::floor( ( tau_edge + sign * ( spike_i - spike_j->timestep_ ) ) / P_.delta_tau_.get_steps() ) );
         assert( bin < S_.histogram_.size() );
         assert( bin < S_.histogram_correction_.size() );
-        // weighted histogram with kahan summation algorithm
+        // weighted histogram with Kahan summation algorithm
         y = e.get_multiplicity() * e.get_weight() * spike_j->weight_ - S_.histogram_correction_[ bin ];
         t = S_.histogram_[ bin ] + y;
         S_.histogram_correction_[ bin ] = ( t - S_.histogram_[ bin ] ) - y;

@@ -43,7 +43,7 @@ Description
 vogels_sprekeler_synapse is a connector to create synapses with symmetric
 spike time dependent plasticity and constant depression (as defined in [1]_).
 The learning rule is symmetric, i.e., the synapse is strengthened
-irrespective of the order of the pre and post-synaptic spikes. Each
+irrespective of the order of the pre- and post-synaptic spikes. Each
 pre-synaptic spike also causes a constant depression of the synaptic weight
 which differentiates this rule from other classical stdp rules.
 

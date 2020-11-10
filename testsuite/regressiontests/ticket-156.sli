@@ -29,10 +29,10 @@
    trains for different targets.
 
    Protocol:
-   1. poisson_generator_ps projects to two spike_detectors
+   1. poisson_generator_ps projects to two spike_recorders
    2. run for different resolutions, record precise spike times is ms
    3. test all spikes are in (start, stop]
-   3. test for different results between spike_detectors
+   3. test for different results between spike_recorders
    4. test for identical results across resolutions
 */
 
@@ -48,7 +48,7 @@
 
 /resolutions [0.01 0.1 0.2 0.5 1.0] def
 
-% ensure all spikes arrive at detector
+% ensure all spikes arrive at recorder
 /simtime ps_params /stop get 2.0 add def  
 
 /check_limits % true if all spikes in (origin+start, origin+stop]
@@ -72,13 +72,13 @@
     /poisson_generator_ps Create /pg Set
     pg ps_params SetStatus
 
-    [ /spike_detector Create
-      /spike_detector Create
-    ] /sds Set
-    sds { pg exch 1.0 1.0 Connect } forall
+    [ /spike_recorder Create
+      /spike_recorder Create
+    ] /srs Set
+    srs { pg exch 1.0 1.0 Connect } forall
 
     simtime Simulate
-    sds { [/events /times] get cva } Map
+    srs { [/events /times] get cva } Map
   end
 } def
 

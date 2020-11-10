@@ -18,13 +18,13 @@ consult the online documentation in PyNEST for details; where
 appropriate, that documentation also points to relevant SLI
 documentation.
 
-This manual describes the spatial functionalities included with NEST 3.0.
+This manual describes the spatial functionalities included with NEST 3.0.
 
 In the next section of this manual, we introduce spatially distributed nodes.
-In Chapter \ :ref:`3 <sec:connections>` we then
+In Chapter \ :ref:`3 <sec:connections>` we then
 describe how to connect spatial nodes with each other, before discussing in
-Chapter \ :ref:`4 <sec:inspection>` how you can inspect and visualize
-spatial networks. Chapter \ :ref:`5 <ch:custom_masks>` deals with creating connection
+Chapter \ :ref:`4 <sec:inspection>` how you can inspect and visualize
+spatial networks. Chapter \ :ref:`5 <ch:custom_masks>` deals with creating connection
 boundaries using parameters, and the more advanced topic of extending the
 functionalities with custom masks provided by C++ classes in an extension module.
 
@@ -107,7 +107,7 @@ The layer is shown in :numref:`fig_layer1`. Note the following properties:
 
 -  The *extent* or size of the layer is :math:`1\times  1`. This is the
    default size for grid-based layers. The extent is marked by the thin
-   square in :numref:`fig_layer1`.
+   square in :numref:`fig_layer1`.
 
 -  The *grid spacing* of the layer is
 
@@ -136,7 +136,7 @@ but the grid spacing may differ in x- and y-direction.
 
 -  Each element of a grid-based NodeCollection has a *row- and column-index* in
    addition to its :math:`(x,y)`-coordinates. Indices are shown in the
-   top and right margin of  :numref:`fig_layer1`. Note that row-indices
+   top and right margin of  :numref:`fig_layer1`. Note that row-indices
    follow matrix convention, i.e., run from top to bottom. Following
    pythonic conventions, indices run from 0.
 
@@ -195,13 +195,13 @@ The following code creates layers centered about :math:`(0,0)`,
 
 The center is given as a two-element list of floats. Changing the
 center does not affect grid indices: For each of the three layers in
- :numref:`fig_layer3`, grid indices run from 0 to 4 through columns and
+ :numref:`fig_layer3`, grid indices run from 0 to 4 through columns and
 rows, respectively, even though elements in these three layers have
 different positions in the global coordinate system.
 
 The ``center`` coordinates should be numbers that can be expressed
 exactly as binary fractions. For more information, see
-Sec. \ :ref:`2.1.2 <sec:setextent>`.
+Sec. \ :ref:`2.1.2 <sec:setextent>`.
 
 .. _sec:fixedlayerexample:
 
@@ -219,7 +219,7 @@ To see how to construct a layer, consider the following example:
 
 -  the extent shall be centered about :math:`y=0`.
 
-From Eq. :numref:`dx_dy_extent`, we see that the extent of the NodeCollection must be
+From Eq. :numref:`dx_dy_extent`, we see that the extent of the NodeCollection must be
 :math:`(n_x d, n_y d)`. We now need to find the coordinates
 :math:`(c_x, c_y)` of the center of the layer. To place the left edge of
 the extent at :math:`x=0`, we must place the center of the layer at
@@ -291,7 +291,7 @@ Note the following points:
 -  All element positions must be *within* the layer’s extent.
    Elements may be placed on the perimeter of the extent as long as no
    periodic boundary conditions are used; see
-   Sec. \ :ref:`2.4 <sec:periodic>`.
+   Sec. \ :ref:`2.4 <sec:periodic>`.
 
 To create a spatially distributed NodeCollection from a list, do the following:
 
@@ -365,7 +365,7 @@ One common approach to reducing the effect of boundaries on simulations
 is to introduce *periodic boundary conditions*, so that the rightmost
 elements on a grid are considered nearest neighbors to the leftmost
 elements, and the topmost to the bottommost. The flat layer becomes the
-surface of a torus.  :numref:`fig_player` illustrates this for a
+surface of a torus. :numref:`fig_player` illustrates this for a
 one-dimensional layer, which turns from a line to a ring upon
 introduction of periodic boundary conditions.
 
@@ -402,7 +402,7 @@ for a layer with periodic boundary conditions; :math:`x_{\text{ext}}`
 and :math:`y_{\text{ext}}` are the components of the extent size.
 
 We will discuss the consequences of periodic boundary conditions more in
-Chapter \ :ref:`3 <sec:connections>`.
+Chapter \ :ref:`3 <sec:connections>`.
 
 .. _sec:subnet:
 
@@ -521,14 +521,14 @@ Distance
 Mask
    The *mask* defines which pool nodes are at all considered as
    potential targets for each driver node. See
-   Sec. \ :ref:`3.3 <sec:conn_masks>` for details.
+   Sec. \ :ref:`3.3 <sec:conn_masks>` for details.
 
 Connection probability or ``p``
    The *connection probability*, specified as ``p`` in the connection
    specifications, is either a value, or a parameter which specifies the
    probability for creating a connection between a driver and a pool node.
    The default probability is :math:`1`, i.e., connections are created with
-   certainty. See Sec. \ :ref:`3.4 <sec:conn_kernels>` for details.
+   certainty. See Sec. \ :ref:`3.4 <sec:conn_kernels>` for details.
 
 Autapse
    An *autapse* is a synapse (connection) from a node onto itself.
@@ -555,7 +555,7 @@ NodeCollections.
 
 In many cases when connecting spatially distributed NodeCollections, a
 mask will be specified. Mask specifications are described in
-Sec. \ :ref:`3.3 <sec:conn_masks>`. Only neurons within the mask are considered as potential sources or
+Sec. \ :ref:`3.3 <sec:conn_masks>`. Only neurons within the mask are considered as potential sources or
 targets. If no mask is given, all neurons in the respective NodeCollection are
 considered sources or targets.
 
@@ -633,7 +633,7 @@ targets.
 If none of the mask types provided in the library meet your need, you may
 define custom masks, either by introducing a cut-off to the connection
 probability using parameters, or by adding more mask types in a NEST extension
-module. This is covered in Chapter \ :ref:`5 <ch:custom_masks>`.
+module. This is covered in Chapter \ :ref:`5 <ch:custom_masks>`.
 
 .. _sec:free_masks:
 
@@ -641,7 +641,7 @@ Masks for 2D layers
 ^^^^^^^^^^^^^^^^^^^
 
 NEST currently provides four types of masks usable for 2-dimensional
-free and grid-based NodeCollections. They are illustrated in  :numref:`fig_conn2_a`.
+free and grid-based NodeCollections. They are illustrated in  :numref:`fig_conn2_a`.
 The masks are
 
 Rectangular
@@ -694,7 +694,7 @@ node, mapped into the pool layer. You can change the location of the
 mask relative to the driver node by specifying an ``'anchor'`` entry in
 the mask dictionary. The anchor is a 2D vector specifying the location
 of the mask center relative to the driver node, as in the following
-examples (cf.  :numref:`fig_conn2_b`).
+examples (cf.  :numref:`fig_conn2_b`).
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn2ro #}
@@ -722,7 +722,7 @@ examples (cf.  :numref:`fig_conn2_b`).
    :math:`(2, -1)`, respectively, using the ``'anchor'`` parameter.
 
 It is, as of NEST 2.16, possible to rotate the :math:`\textbf{rectangular}`
-and :math:`\textbf{elliptical}` masks, see Fig :numref:`fig_conn2_b`. To do so,
+and :math:`\textbf{elliptical}` masks, see Fig :numref:`fig_conn2_b`. To do so,
 add an ``'azimuth_angle'`` entry in the specific mask dictionary. The
 ``azimuth_angle`` is measured in degrees and is the rotational angle
 from the x-axis to the y-axis.
@@ -740,8 +740,8 @@ from the x-axis to the y-axis.
 .. figure:: user_manual_figures/conn2_c.png
    :name: fig:conn2_c
 
-   Rotated rectangular and elliptical mask from  :numref:`fig_conn2_a` and
-    :numref:`fig_conn2_b`, where the rectangular mask is rotated
+   Rotated rectangular and elliptical mask from  :numref:`fig_conn2_a` and
+    :numref:`fig_conn2_b`, where the rectangular mask is rotated
    :math:`120^\circ` and the elliptical mask is rotated
    :math:`45^\circ`.
 
@@ -814,7 +814,7 @@ this example:
     :start-after: #{ conn3 #}
     :end-before: #{ end #}
 
-The resulting connections are shown in  :numref:`fig_conn3`. By default the
+The resulting connections are shown in  :numref:`fig_conn3`. By default the
 top-left corner of a grid mask, i.e., the grid mask element with grid
 index :math:`[0,0]`\  [2]_, is aligned with the driver node. You can
 change this alignment by specifying an *anchor* for the mask:
@@ -829,7 +829,7 @@ You can even place the anchor outside the mask:
     :start-after: #{ conn3x #}
     :end-before: #{ end #}
 
-The resulting connection patterns are shown in  :numref:`fig_conn3`.
+The resulting connection patterns are shown in  :numref:`fig_conn3`.
 
 .. _fig_conn3:
 
@@ -855,7 +855,7 @@ Note the following:
 
 -  The semantics of the ``'anchor'`` property for grid-based masks
    differ significantly for general masks described in
-   Sec. \ :ref:`3.3.1 <sec:free_masks>`. For general masks, the anchor is
+   Sec. \ :ref:`3.3.1 <sec:free_masks>`. For general masks, the anchor is
    the center of the mask relative to the driver node. For grid-based
    nodes, the anchor determines which mask element is aligned with the
    driver element.
@@ -887,7 +887,7 @@ Free probabilistic connections using `pairwise_bernoulli`
 Prescribed number of connections
    can be obtained by using ``fixed_indegree`` or ``fixed_outdegree`` connection rule, and
    specifying the number of connections to create per driver node. See
-   Sec. \ :ref:`3.7 <sec:prescribed_numbers>` for details.
+   Sec. \ :ref:`3.7 <sec:prescribed_numbers>` for details.
 
 A selection of specific NEST parameters pertaining to spatially structured networks are shown in Table
 :ref:`tbl_parameters`.
@@ -980,7 +980,7 @@ parameters drawing values from random distributions.
    Gaussian probability, but all :math:`p<0.5` treated as :math:`p=0`. Bottom
    right: 2D-Gaussian.
 
-Several examples follow. They are illustrated in  :numref:`fig_conn4`.
+Several examples follow. They are illustrated in  :numref:`fig_conn4`.
 
 Constant
    Fixed connection probability:
@@ -1038,7 +1038,7 @@ passed along in a synapse dictionary to the ``Connect`` call.
     nest.Connect(nodes, nodes, conn_dict, syn_dict)
 
 
-Figure :numref:`fig_conn5` illustrates weights and delays generated using these
+Figure :numref:`fig_conn5` illustrates weights and delays generated using these
 parameters. The code examples used to generate the figures are shown below.
 All examples use a spatially distributed NodeCollection
 of 51 nodes placed on a line; the line is centered about :math:`(25,0)`,
@@ -1052,7 +1052,7 @@ Linear example
       :start-after: #{ conn5lin #}
       :end-before: #{ end #}
 
-  Results are shown in the top panel of  :numref:`fig_conn5`. Connection
+  Results are shown in the top panel of  :numref:`fig_conn5`. Connection
   weights and delays are shown for the leftmost neuron as driver. Weights
   drop linearly from :math:`1`. From the node at :math:`(20,0)` on, the
   cutoff sets weights to 0. There are no connections to nodes beyond
@@ -1066,7 +1066,7 @@ Linear example with periodic boundary conditions
       :start-after: #{ conn5linpbc #}
       :end-before: #{ end #}
 
-  Results are shown in the middle panel of  :numref:`fig_conn5`. This example
+  Results are shown in the middle panel of  :numref:`fig_conn5`. This example
   is identical to the previous, except that the (pool) layer has periodic
   boundary conditions. Therefore, the left half of the mask about the node
   at :math:`(0,0)` wraps back to the right half of the layer and that node
@@ -1195,7 +1195,7 @@ Connection generation now proceeds in a different way than before:
    distributed within the mask with the spatial profile given by the
    probability.
 
-4. If you prohibit multapses (cf Sec. \ :ref:`3.1.1 <sec:terminology>`)
+4. If you prohibit multapses (cf Sec. \ :ref:`3.1.1 <sec:terminology>`)
    and prescribe a number of connections greater than the number of pool
    nodes in the mask, ``Connect`` may get stuck in an infinite
    loop and NEST will hang. Keep in mind that the number of nodes within
@@ -1229,7 +1229,7 @@ distance. For the connection probability and parameter values below we have
     = 24 r (1-2r) \qquad \text{for} \quad 0\le r < \frac{1}{2}\;.\qquad
 
 The resulting distribution of distances between connected nodes is shown in
- :numref:`fig_conn6`.
+ :numref:`fig_conn6`.
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn6 #}
@@ -1244,7 +1244,7 @@ The resulting distribution of distances between connected nodes is shown in
    1000 randomly placed nodes, a fixed fan out of 50 connections and a
    connection probability decaying linearly from 1 to 0 at
    :math:`d=0.5`. The red line is the expected distribution from
-   Eq. :numref:`eq_ptheo`.
+   Eq. :numref:`eq_ptheo`.
 
 Functions determining weight and delay as function of
 distance/displacement work in just the same way as before when the
@@ -1286,7 +1286,7 @@ stimulation devices have to be connected as the source layer.
     :end-before: #{ end #}
 
 While recording devices, on the other hand, have to be connected as the target layer (see also
-Sec. \ :ref:`3.11 <sec:rec_dev>`):
+Sec. \ :ref:`3.11 <sec:rec_dev>`):
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn10 #}
@@ -1298,16 +1298,16 @@ Spatially distributed NodeCollections and recording devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Generally, one should not create a layer of recording devices to record from
-another NodeCollection with spatial extent. This is especially true for spike detectors. Instead,
-create a single spike detector and connect all neurons in the spatially
-distributed NodeCollection to that spike detector:
+another NodeCollection with spatial extent. This is especially true for spike recorders. Instead,
+create a single spike recorder and connect all neurons in the spatially
+distributed NodeCollection to that spike recorder:
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn11 #}
     :end-before: #{ end #}
 
 Connecting a layer of neurons to a layer of recording devices as described
-in Sec. \ :ref:`3.10 <sec:dev_subregions>`, is
+in Sec. \ :ref:`3.10 <sec:dev_subregions>`, is
 only possible using the ``pairwise_bernoulli`` rule. Note that voltmeter
 and multimeter do not suffer from this restriction, since they are
 connected as sources, not as targets.
@@ -1492,58 +1492,16 @@ Adding masks in a module
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 If using parameters to define a connection boundary is not efficient enough, or
-if you need more flexibility in defining the mask, you have to add a custom
-mask, written in C++, as a part of an extension module. For more information
-on writing an extension module, see the section titled `“Writing an Extension Module”
-<http://nest.github.io/nest-simulator/extension_modules>`__ in the NEST Developer
-Manual. The basic steps required to get started are:
-
-1. From the NEST source directory, copy the directory ``examples/MyModule`` to
-   somewhere outside the NEST source, build or install directories.
-
-   .. code:: bash
-
-      cp -r <path_to_nest_source>/examples/MyModule mm_src
-
-2. Create a build directory for MyModule, e.g. ``mm_bld``, next to
-   the copied source directory:
-
-   .. code:: bash
-
-      mkdir mm_bld
-      cd mm_bld
-
-3. Configure. The configure process uses the script ``nest-config`` to
-   find out where NEST is installed, where the source code resides, and
-   which compiler options were used for compiling NEST. If
-   ``nest-config`` is not in your path, you need to provide it
-   explicitly with ``-Dwith-nest`` as follows:
-
-   .. code:: bash
-
-      cmake -Dwith-nest=${NEST_INSTALL_DIR}/bin/nest-config ../mm_src
-
-4. MyModule will then be installed to ``${NEST_INSTALL_DIR}``. This
-   ensures that NEST will be able to find initializing SLI files for the
-   module. You should not use the ``--prefix`` to select a different
-   installation destination. If you do, you must make sure to use
-   addpath in SLI before loading the module to ensure that NEST will
-   find the SLI initialization file for your module.
-
-5. Compile and install.
-
-   .. code:: bash
-
-      make install
-
-   MyModule is then installed to the NEST installation
-   directory, including help files generated from the source code.
+if you need more flexibility in defining the mask, you can add a custom mask,
+written in C++, and add it to NEST via an extension module. For more information
+on writing such modules, see the
+`NEST extension module repository <https://github.com/nest/nest-extension_module>`_.
 
 To add a mask, a subclass of ``nest::Mask<D>`` must be defined, where ``D``
 is the dimension (2 or 3). In this case we will define a 2-dimensional
 elliptic mask by creating a class called ``EllipticMask``. Note that
 elliptical masks are already part of NEST see
-Sec. \ :ref:`3.3 <sec:conn_masks>`. That elliptical mask is defined in a
+Sec. \ :ref:`3.3 <sec:conn_masks>`. That elliptical mask is defined in a
 different way than what we will do here though, so this can still be
 used as an introductory example. First, we must include the header
 files for the ``Mask`` parent class:
@@ -1622,17 +1580,17 @@ The overridden methods include a test if a point is inside the mask, and
 for efficiency reasons also a test if a box is fully inside the mask. We
 implement the latter by testing if all the corners are inside, since our
 elliptic mask is convex. We must also define a function which returns a
-bounding box for the mask, i.e. a box completely surrounding the mask.
+bounding box for the mask, i.e. a box completely surrounding the mask.
 
-The mask class must then be registered with the topology module, and this
+The mask class must then be registered in NEST. This
 is done by adding a line to the function ``MyModule::init()`` in the file
 ``mymodule.cpp``:
 
 .. code:: c
 
-   nest::TopologyModule::register_mask< EllipticMask >( "elliptic" );
+   nest::NestModule::register_mask< EllipticMask >( "elliptic" );
 
-After compiling and installing the module, the mask is available to be
+After compiling and installing your module, the mask is available to be
 used in connections, e.g.
 
 ::
@@ -1653,5 +1611,5 @@ References
    `www.nest-simulator.org <www.nest-simulator.org>`__.
 
 .. [2]
-   See Sec. :ref:`2.1.1 <sec:verysimple>` for the distinction between
+   See Sec. :ref:`2.1.1 <sec:verysimple>` for the distinction between
    layer coordinates and grid indices

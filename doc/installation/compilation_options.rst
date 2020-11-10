@@ -48,10 +48,6 @@ Add user modules::
 
 Connect NEST with external projects::
 
-    -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]  Request the use of libneurosim.
-                                                        Optionally give the directory,
-                                                        where libneurosim is installed.
-                                                        [default=OFF]
     -Dwith-music=[OFF|ON|</path/to/music>] Request the use of MUSIC. Optionally
                                            give the directory, where MUSIC is installed.
                                            [default=OFF]
@@ -137,6 +133,21 @@ already contains an example implementation that should work with the
 
 For more details, see :doc:`configuration`.
 
+.. _compile_with_libneurosim:
+
+Support for libneurosim
+-----------------------
+
+In order to allow NEST to create connections using external libraries,
+it provides an interface for the Connection Generator Interface from
+*libneurosim*. To request the use of libneurosim, you have to use the
+follwing switch for the invocation of ``cmake``. It expects either
+*ON* or *OFF* or the directory, where libneurosim is installed::
+
+    -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]
+
+For details on how to use the Connection Generator Interface, see the
+:ref:`guide on connection management <conn_builder_conngen>`.
 
 Disabling the Python Bindings (PyNEST)
 --------------------------------------

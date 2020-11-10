@@ -194,8 +194,15 @@ Example:
     conn_dict = {'rule': 'pairwise_bernoulli', 'p': p}
     Connect(A, B, conn_dict)
 
+.. _conn_builder_conngen:
+    
 conngen
 ~~~~~~~
+
+.. admonition:: Availability
+
+   This connection rule is only available if NEST was compiled with
+   :ref:`support for libneurosim <compile_with_libneurosim>`.
 
 To allow the generation of connectivity by means of an external
 library, NEST supports the Connection Generator Interface (`Djurfeldt

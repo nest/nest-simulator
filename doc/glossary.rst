@@ -59,7 +59,7 @@ Common abbreviations in NEST
 Physical units and variable names used for NEST parameters
 :orphan:
 
--------------------------------------------------------------
+----------------------------------------------------------
 
 .. note::
 
@@ -141,6 +141,5 @@ Physical units and variable names used for NEST parameters
 
  E_K
    Potassium reversal potential in mV.
-
 
 

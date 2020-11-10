@@ -30,6 +30,7 @@ from .hl_api_simulation import GetKernelStatus
 
 import numpy
 import json
+from math import floor, log
 
 try:
     import pandas
@@ -583,36 +584,65 @@ class SynapseCollection(object):
     def __str__(self):
         """
         Printing a `SynapseCollection` returns something of the form:
-            *--------*-------------*
-            | source | 1, 1, 2, 2, |
-            *--------*-------------*
-            | target | 1, 2, 1, 2, |
-            *--------*-------------*
+
+             source   target   synapse model   weight   delay
+            -------- -------- --------------- -------- -------
+               1        3     static_synapse    1.0      1.0
+               1        4     static_synapse    4.0      1.0
+               1        5     static_synapse    3.0      1.0
+               2        3     static_synapse    2.0      1.0
+               2        4     static_synapse    3.0      1.0
+               2        5     static_synapse    2.0      1.0
         """
-        srcs = self.get('source')
-        trgt = self.get('target')
+        params = self.get()
+        srcs = params['source']
+        trgt = params['target']
+        wght = params['weight']
+        dlay = params['delay']
+        s_model = params['synapse_model']
 
         if isinstance(srcs, int):
             srcs = [srcs]
-        if isinstance(trgt, int):
             trgt = [trgt]
+            wght = [wght]
+            dlay = [dlay]
+            s_model = [s_model]
+
+        src_h = 'source'
+        trg_h = 'target'
+        sm_h = 'synapse model'
+        w_h = 'weight'
+        d_h = 'delay'
+
+        max_char_sm = len(max(s_model, key=len))
+        max_char_w = len(max([str(w) for w in wght], key=len))
+        max_char_d = len(max([str(d) for d in dlay], key=len))
+
+        # Find maximum number of characters for each column, used to determine width of column
+        src_len = len(src_h) + 2 if floor(log(max(srcs), 10)) <= len(src_h) + 2 else floor(log(max(srcs), 10))
+        trg_len = len(trg_h) + 2 if floor(log(max(trgt), 10)) <= len(trg_h) + 2 else floor(log(max(trgt), 10))
+        sm_len = len(sm_h) + 2 if max_char_sm <= len(sm_h) + 2 else max_char_sm
+        w_len = len(w_h) + 2 if max_char_w <= len(w_h) + 2 else max_char_w
+        d_len = len(d_h) + 2 if max_char_d <= len(d_h) + 2 else max_char_d
 
         # 35 is arbitrarily chosen.
-        if len(srcs) < 35:
-            source = '| source | ' + ''.join(str(e)+', ' for e in srcs) + '|'
-            target = '| target | ' + ''.join(str(e)+', ' for e in trgt) + '|'
-        else:
-            source = ('| source | ' + ''.join(str(e)+', ' for e in srcs[:15]) +
-                      '... ' + ''.join(str(e)+', ' for e in srcs[-15:]) + '|')
-            target = ('| target | ' + ''.join(str(e)+', ' for e in trgt[:15]) +
-                      '... ' + ''.join(str(e)+', ' for e in trgt[-15:]) + '|')
+        if len(srcs) >= 35:
+            srcs = srcs[:15] + ['.', '.', '.'] + srcs[-15:]
+            trgt = trgt[:15] + ['.', '.', '.'] + trgt[-15:]
+            wght = wght[:15] + ['.', '.', '.'] + wght[-15:]
+            dlay = dlay[:15] + ['.', '.', '.'] + dlay[-15:]
+            s_model = s_model[:15] + ['.', '.', '.'] + s_model[-15:]
 
-        borderline_s = '*--------*' + '-'*(len(source) - 12) + '-*'
-        borderline_t = '*--------*' + '-'*(len(target) - 12) + '-*'
-        borderline_m = max(borderline_s, borderline_t)
+        headers = f"{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}" + '\n'
+        boarders = '-'*src_len + ' ' + '-'*trg_len + ' ' + '-'*sm_len + ' ' + '-'*w_len + ' ' + '-'*d_len + '\n'
+        output = ''.join('{:^{}}'.format(str(s), src_len) +
+                         ' {:^{}}'.format(str(t), trg_len) +  # need to indent because of space between columns
+                         ' {:^{}}'.format(str(sm), sm_len) +
+                         ' {:^{}}'.format(str(w), w_len) +
+                         ' {:^{}}'.format(str(d), d_len) +
+                         '\n' for s, t, sm, w, d in zip(srcs, trgt, s_model, wght, dlay))
+        result = headers + boarders + output
 
-        result = (borderline_s + '\n' + source + '\n' + borderline_m + '\n' +
-                  target + '\n' + borderline_t)
         return result
 
     def __getattr__(self, attr):

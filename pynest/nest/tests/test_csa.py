@@ -93,6 +93,7 @@ class CSATestCase(unittest.TestCase):
 
         n_neurons = 4
         synmodel = "stdp_synapse"
+        tau_plus = 10.0
 
         sources = nest.Create("iaf_psc_alpha", n_neurons)
         targets = nest.Create("iaf_psc_alpha", n_neurons)
@@ -102,7 +103,7 @@ class CSATestCase(unittest.TestCase):
 
         # Connect with a non-standard synapse model
         connspec = {"rule": "conngen", "cg": cs}
-        synspec = {'synapse_model': synmodel}
+        synspec = {'synapse_model': synmodel, "tau_plus": tau_plus}
         nest.Connect(sources, targets, connspec, synspec)
 
         for i in range(n_neurons):
@@ -112,6 +113,7 @@ class CSATestCase(unittest.TestCase):
             self.assertEqual(len(conns), 1)
             self.assertEqual(conns[0]["target"], targets[i].get('global_id'))
             self.assertEqual(conns[0]["synapse_model"], synmodel)
+            self.assertEqual(conns[0]["tau_plus"], tau_plus)
 
             # We expect the targets to have no connections at all
             conns = nest.GetStatus(nest.GetConnections(targets[i]))

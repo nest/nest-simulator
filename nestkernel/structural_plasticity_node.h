@@ -147,10 +147,11 @@ private:
   double Ca_t_;
 
   /**
-   * Value of the calcium concentration [Ca2+] at Ca_t_. Intracellular calcium
-   *concentration has a linear factor to mean electrical activity of 10^2,
-   * this means, for example, that a [Ca2+] of 0.2 is equivalent to a mean
-   * activity of 20Hz.
+   * Value of the calcium concentration [Ca2+] at Ca_t_.
+   *
+   * Intracellular calcium concentration has a linear factor to mean
+   * electrical activity of 10^2, this means, for example, that a [Ca2+] of
+   * 0.2 is equivalent to a mean activity of 20 Hz.
    */
   double Ca_minus_;
 

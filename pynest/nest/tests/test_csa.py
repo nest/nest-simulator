@@ -52,7 +52,7 @@ class CSATestCase(unittest.TestCase):
     """CSA tests"""
 
     def test_CSA_OneToOne_params(self):
-        """One-to-one connectivity using conngen Connect with paramters"""
+        """One-to-one connectivity using conngen Connect with parameters"""
 
         nest.ResetKernel()
 
@@ -64,13 +64,13 @@ class CSATestCase(unittest.TestCase):
         targets = nest.Create("iaf_psc_alpha", n_neurons)
 
         # Create a connection set with values for weight and delay
-        cs = csa.cset(csa.oneToOne, weight, delay)
+        cg = csa.cset(csa.oneToOne, weight, delay)
 
         # Connect sources and targets using the connection set cs and
         # a parameter map mapping weight to position 0 in the value
         # set and delay to position 1
         params_map = {"weight": 0, "delay": 1}
-        connspec = {"rule": "conngen", "cg": cs, "params_map": params_map}
+        connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
         nest.Connect(sources, targets, connspec)
 
         for i in range(n_neurons):
@@ -87,7 +87,7 @@ class CSATestCase(unittest.TestCase):
             self.assertEqual(len(conns), 0)
 
     def test_CSA_OneToOne_synmodel(self):
-        """One-to-one connectivity using conngen Connect with synmodel"""
+        """One-to-one connectivity using conngen Connect and synapse_model"""
 
         nest.ResetKernel()
 
@@ -99,10 +99,10 @@ class CSATestCase(unittest.TestCase):
         targets = nest.Create("iaf_psc_alpha", n_neurons)
 
         # Create a plain connection set
-        cs = csa.cset(csa.oneToOne)
+        cg = csa.cset(csa.oneToOne)
 
         # Connect with a non-standard synapse model
-        connspec = {"rule": "conngen", "cg": cs}
+        connspec = {"rule": "conngen", "cg": cg}
         synspec = {'synapse_model': synmodel, "tau_plus": tau_plus}
         nest.Connect(sources, targets, connspec, synspec)
 
@@ -127,8 +127,8 @@ class CSATestCase(unittest.TestCase):
         nest.ResetKernel()
 
         # Create a plain connection set
-        cs = csa.cset(csa.oneToOne)
-        connspec = {"rule": "conngen", "cg": cs}
+        cg = csa.cset(csa.oneToOne)
+        connspec = {"rule": "conngen", "cg": cg}
         synspec = {'synapse_model': "fantasy_synapse"}
 
         n_neurons = 4
@@ -148,9 +148,9 @@ class CSATestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        cs = csa.cset(csa.oneToOne, 10000.0, 2.0)
+        cg = csa.cset(csa.oneToOne, 10000.0, 2.0)
         params_map = {"weight": 0, "delay": 1}
-        connspec = {"rule": "conngen", "cg": cs, "params_map": params_map}
+        connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
 
         synspec_w = {'weight': 10.0}
         synspec_d = {'delay': 10.0}

@@ -72,7 +72,7 @@ except ImportError:
 # probability of 0.1 and two associated values (10000.0 and 1.0) used as
 # weight and delay, respectively.
 
-cs = csa.cset(csa.random(0.1), 10000.0, 1.0)
+cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
 
 ###############################################################################
 # Using the ``Create`` command from PyNEST, we create the neurons of the pre-
@@ -84,12 +84,12 @@ post = nest.Create("iaf_psc_alpha", 16)
 ###############################################################################
 # We can now connect the populations using the ``Connect`` function
 # with the ``conngen`` rule. It takes the IDs of pre- and postsynaptic
-# neurons (``pre`` and ``post``), the connection set (``cs``) and a
+# neurons (``pre`` and ``post``), the connection set (``cg``) and a
 # dictionary that maps the parameters weight and delay to positions in
 # the value set associated with the connection set (``params_map``).
 
 params_map = {"weight": 0, "delay": 1}
-connspec = {"rule": "conngen", "cg": cs, "params_map": params_map}
+connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
 nest.Connect(pre, post, connspec)
 
 ###############################################################################

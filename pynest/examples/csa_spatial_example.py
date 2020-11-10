@@ -101,21 +101,21 @@ g2 = geometryFunction(pop2)
 d = csa.euclidMetric2d(g1, g2)
 
 ###############################################################################
-# The connection set `cs` describes a Gaussian connectivity profile with
+# The connection set `cg` describes a Gaussian connectivity profile with
 # ``sigma = 0.2`` and cutoff at 0.5, and two values (10000.0 and 1.0) used as
 # ``weight`` and ``delay``, respectively.
 
-cs = csa.cset(csa.random * (csa.gaussian(0.2, 0.5) * d), 10000.0, 1.0)
+cg = csa.cset(csa.random * (csa.gaussian(0.2, 0.5) * d), 10000.0, 1.0)
 
 ###############################################################################
 # We can now connect the populations using the ``Connect`` function
 # with the ``conngen`` rule. It takes the IDs of pre- and postsynaptic
-# neurons (`pop` and `pop2`), the connection set (`cs`) and a
+# neurons (`pop` and `pop2`), the connection set (`cg`) and a
 # dictionary that map the parameters weight and delay to positions in
 # the value set associated with the connection set (``params_map``).
 
 params_map = {"weight": 0, "delay": 1}
-connspec = {"rule": "conngen", "cg": cs, "params_map": params_map}
+connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
 nest.Connect(pop1, pop2, connspec)
 
 ###############################################################################

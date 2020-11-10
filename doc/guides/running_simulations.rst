@@ -11,7 +11,7 @@ resolution* (default 0.1ms) and can be set using ``SetKernelStatus``:
 
 ::
 
-    SetKernelStatus("resolution", 0.1)
+    SetKernelStatus({"resolution": 0.1})
 
 Even though a neuron model can use smaller time steps internally, the
 membrane potential will only be visible to a ``multimeter`` on the
@@ -85,12 +85,11 @@ the easiest way to assert its integrity is to not change its size after
 initialization. Thus, we freeze the delay extrema after the first call
 to ``Simulate``. To still allow adding new connections inbetween calls
 to ``Simulate``, the required boundaries of delays can be set manually
-using ``SetKernelStatus`` (Please note that the delay extrema are set as
-properties of the synapse model):
+using ``SetKernelStatus``:
 
 ::
 
-    SetDefaults("static_synapse", {"min_delay": 0.5, "max_delay": 2.5})
+    SetKernelStatus({"min_delay": 0.5, "max_delay": 2.5})
 
 These settings should be used with care, though: setting the delay
 extrema too wide without need leads to decreased performance due to more

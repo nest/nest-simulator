@@ -566,6 +566,54 @@ Iterator of sources and targets
     >>>  print([s*3 for s in synColl.sources()])
          [3, 3, 6, 6]
 
+.. _collocated_synapses
+
+Collocated synapses
+~~~~~~~~~~~~~~~~~~~
+It is now possible to create connections with several synapses simultaneously. The different synapse dictionaries will
+then be applied to each source-target pair. To create these collocated synapses, ``CollocatedSynapses()`` must be used
+as the `syn_spec` argument of ``Connect``, instead of the usual syn_spec dictionary argument. ``CollocatedSynapses()``
+takes dictionaries as arguments.
+
+  ::
+
+    nodes = nest.Create('iaf_psc_alpha', 3)
+    syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
+                                       {'synapse_model': 'stdp_synapse'},
+                                       {'synapse_model': 'stdp_synapse', 'alpha': 3.})
+    nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
+
+    conns = nest.GetConnections()
+    print(conns.alpha)
+
+This will create 9 connections: 3 using `static_synapse` with a `weight` of `4` and `delay` of `1.5`, and 6 using
+the `stdp_synapse`. Of the 6 using `stdp_synapse`, 3 will have the default alpha value, and 3 will have an alpha of
+`3.0`.
+
+  >>> print(nest.GetKernelStatus('num_connections'))
+  9
+
+If you want to connect with different receptor types, you can do the following:
+
+  ::
+
+    src = nest.Create('iaf_psc_exp_multisynapse', 7)
+    trgt = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1 + i for i in range(7)]})
+
+    syn_spec = nest.CollocatedSynapses({'weight': 5.0, 'receptor_type': 2},
+                                       {'weight': 1.5, 'receptor_type': 7})
+
+    nest.Connect(src, trgt, 'one_to_one', syn_spec=syn_spec)
+
+    conns = nest.GetConnections()
+    print(conns.get())
+
+You can see how many synapse parameters you have by doing `len()` on your `CollocatedSynapses` object:
+
+  >>> len(syn_spec)
+  2
+
+
 .. _param_ex:
 
 Parametrization

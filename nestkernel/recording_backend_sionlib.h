@@ -88,7 +88,7 @@ is composed of a series of blocks in the following order:
 * the *body block* contains the actual data records; the layout of an
   individual record depends on the type of the device and is described
   by a corresponding entry in the *device info block*
-  
+
 * the *file info block* keeps the file's metadata like version
   information and such
 

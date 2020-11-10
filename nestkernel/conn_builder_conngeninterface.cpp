@@ -41,7 +41,6 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
   , cg_( ConnectionGeneratorDatum() )
   , params_map_()
 {
-
   updateValue< ConnectionGeneratorDatum >( conn_spec, "cg", cg_ );
   if ( cg_->arity() != 0 )
   {
@@ -55,6 +54,12 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
     for ( Dictionary::iterator it = params_map_->begin(); it != params_map_->end(); ++it )
     {
       it->second.set_access_flag();
+    }
+
+    if ( syn_specs[ 0 ]->known( names::weight ) or syn_specs[ 0 ]->known( names::delay ) )
+    {
+      throw BadProperty( "Properties weight and delay cannot be specified in syn_spec if the "
+			 "ConnectionGenerator has values." );
     }
   }
 }
@@ -100,11 +105,6 @@ ConnectionGeneratorBuilder::connect_()
       throw BadProperty( "d_idx and w_idx have to be either 0 or 1 and cannot be the same." );
     }
 
-//    TODO: Check if we have weight or delay in the syn_spec. If we do:
-//    {
-//      throw BadProperty( "weight and delay cannot be specified both in the syn_spec and by the Connection Generator" );
-//    }
-
     // connect source to target with weight and delay
     std::vector< double > params( 2 );
     while ( cg_->next( source, target, &params[ 0 ] ) )
@@ -116,8 +116,14 @@ ConnectionGeneratorBuilder::connect_()
 
       DictionaryDatum param_dict = create_param_dict_( ( *sources_ )[ source ], *target_node, target_thread, rng, 0 );
 
-      kernel().connection_manager.connect(
-        ( *sources_ )[ source ], target_node, target_thread, synapse_model_id_[ 0 ], param_dict, params[ d_idx ], params[ w_idx ] );
+      // Use the low-level connect() here, as we need to pass a custom weight and delay
+      kernel().connection_manager.connect( ( *sources_ )[ source ],
+        target_node,
+        target_thread,
+        synapse_model_id_[ 0 ],
+        param_dict,
+        params[ d_idx ],
+        params[ w_idx ] );
     }
   }
   else

@@ -1,10 +1,10 @@
 :orphan:
 
 Glossary
-==============
+========
 
 Common abbreviations in NEST
-------------------------------
+----------------------------
 .. glossary::
 
  iaf

@@ -1,5 +1,5 @@
 /*
- *  conn_builder_conngeninterface.cpp
+ *  conn_builder_conngen.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "conn_builder_conngeninterface.h"
+#include "conn_builder_conngen.h"
 
 #ifdef HAVE_LIBNEUROSIM
 

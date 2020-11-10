@@ -1,5 +1,5 @@
 /*
- *  conn_builder_conngeninterface.h
+ *  conn_builder_conngen.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CONN_BUILDER_CONNGENINTERFACE_H
-#define CONN_BUILDER_CONNGENINTERFACE_H
+#ifndef CONN_BUILDER_CONNGEN_H
+#define CONN_BUILDER_CONNGEN_H
 
 #include "config.h"
 #ifdef HAVE_LIBNEUROSIM
@@ -63,4 +63,4 @@ private:
 
 #endif /* ifdef HAVE_LIBNEUROSIM */
 
-#endif /* ifdef CONN_BUILDER_CONNGENINTERFACE_H */
+#endif /* ifdef CONN_BUILDER_CONNGEN_H */

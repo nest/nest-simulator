@@ -36,7 +36,7 @@ enum class MyFlags : unsigned int
   THIRD_FLAG = 1 << 2,
   FOURTH_FLAG = 1 << 3
 };
-};
+}
 
 template <>
 struct nest::EnableBitMaskOperators< nest::MyFlags >

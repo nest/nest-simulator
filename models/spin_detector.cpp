@@ -55,7 +55,7 @@ nest::spin_detector::spin_detector( const spin_detector& n )
 }
 
 void
-nest::spin_detector::init_state_( const Node& np )
+nest::spin_detector::init_state_( const Node& )
 {
   init_buffers_();
 }

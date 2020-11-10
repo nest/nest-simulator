@@ -58,7 +58,7 @@ ModelManager::ModelManager()
 
 ModelManager::~ModelManager()
 {
-  clear_models_( true );
+  clear_models_();
 
   clear_prototypes_();
 
@@ -429,7 +429,7 @@ ModelManager::connector_requires_urbanczik_archiving( const synindex syn_id ) co
 }
 
 void
-ModelManager::clear_models_( bool called_from_destructor )
+ModelManager::clear_models_()
 {
   // We delete all models, which will also delete all nodes. The
   // built-in models will be recovered from the pristine_models_ in

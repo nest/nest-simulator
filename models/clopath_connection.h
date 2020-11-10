@@ -118,7 +118,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  ClopathConnection( const ClopathConnection& );
+  ClopathConnection( const ClopathConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -266,18 +266,6 @@ ClopathConnection< targetidentifierT >::ClopathConnection()
   , Wmin_( 0.0 )
   , Wmax_( 100.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-ClopathConnection< targetidentifierT >::ClopathConnection( const ClopathConnection< targetidentifierT >& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , x_bar_( rhs.x_bar_ )
-  , tau_x_( rhs.tau_x_ )
-  , Wmin_( rhs.Wmin_ )
-  , Wmax_( rhs.Wmax_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

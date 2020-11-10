@@ -469,13 +469,9 @@ nest::aeif_psc_delta_clopath::calibrate()
   V_.V_peak_ = P_.V_peak_;
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.refractory_counts_ >= 0 );
 
   // implementation of the clamping after a spike
   V_.clamp_counts_ = Time( Time::ms( P_.t_clamp_ ) ).get_steps();
-  // since t_clamp_ >= 0, this can only fail in error
-  assert( V_.clamp_counts_ >= 0 );
 }
 
 /* ----------------------------------------------------------------

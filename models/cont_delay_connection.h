@@ -93,7 +93,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  ContDelayConnection( const ContDelayConnection& );
+  ContDelayConnection( const ContDelayConnection& ) = default;
 
   /**
    * Default Destructor.

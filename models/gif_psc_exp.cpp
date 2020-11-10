@@ -220,7 +220,7 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::gif_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::gif_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& ) const
 {
   def< double >( d, names::V_m, V_ );     // Membrane potential
   def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
@@ -228,7 +228,7 @@ nest::gif_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::gif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, Node* node )
+nest::gif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::V_m, V_, node );
 }
@@ -308,8 +308,6 @@ nest::gif_psc_exp::calibrate()
   V_.P31_ = -numerics::expm1( -h / tau_m );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.RefractoryCounts_ >= 0 );
 
   // initializing adaptation (stc/sfa) variables
   V_.P_sfa_.resize( P_.tau_sfa_.size(), 0.0 );

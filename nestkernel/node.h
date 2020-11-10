@@ -280,7 +280,7 @@ public:
    * This function is called after a change in resolution.
    */
   virtual void
-  calibrate_time( const TimeConverter& tc )
+  calibrate_time( const TimeConverter& )
   {
   }
 

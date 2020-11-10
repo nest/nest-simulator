@@ -147,7 +147,7 @@ To disable Python bindings use::
 
 as an argument to ``cmake``.
 
-Please see also the file :doc:`../../pynest/README.md` in the documentation directory for details.
+Please see the :doc:`README <pynest_readme_link>` for details.
 
 Python Binding (PyNEST)
 -----------------------

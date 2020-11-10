@@ -68,12 +68,6 @@ nest::RecordingDevice::Parameters_::Parameters_()
 {
 }
 
-nest::RecordingDevice::Parameters_::Parameters_( const Parameters_& p )
-  : label_( p.label_ )
-  , record_to_( p.record_to_ )
-{
-}
-
 void
 nest::RecordingDevice::Parameters_::get( DictionaryDatum& d ) const
 {

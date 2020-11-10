@@ -444,7 +444,6 @@ nest::aeif_cond_alpha::calibrate()
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_counts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
 }
 
 /* ----------------------------------------------------------------

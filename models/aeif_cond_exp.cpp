@@ -437,8 +437,6 @@ nest::aeif_cond_exp::calibrate()
   }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.refractory_counts_ >= 0 );
 }
 
 /* ----------------------------------------------------------------

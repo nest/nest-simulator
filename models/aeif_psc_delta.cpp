@@ -405,8 +405,6 @@ nest::aeif_psc_delta::calibrate()
   }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.refractory_counts_ >= 0 );
   // make inverse to speed up division
   V_.Delta_T_inv_ = 1. / P_.Delta_T;
   V_.C_m_inv_ = 1. / P_.C_m;

@@ -53,12 +53,12 @@ Where does data get stored
 By default, the data files produced by NEST are stored in the directory
 from where NEST is called. The location can be changed by changing the
 property ``data_path`` of the root node using
-``nest.SetKernelStatus("data_path", "/path/to/data")``. This property
+``nest.SetKernelStatus({"data_path": "/path/to/data"})``. This property
 can also be set using the environment variable ``NEST_DATA_PATH``.
 Please note that the directory ``/path/to/data`` has to exist. A common
 prefix for all data files can be set using the property ``data_prefix``
 of the root node by calling
-``nest.SetKernelStatus("data_prefix", "prefix")`` or setting the
+``nest.SetKernelStatus({"data_prefix": "prefix"})`` or setting the
 environment variable ``NEST_DATA_PREFIX``.
 
 Neuron models

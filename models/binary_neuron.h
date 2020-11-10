@@ -365,7 +365,7 @@ binary_neuron< TGainfunction >::State_::get( DictionaryDatum& d, const Parameter
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&, const Parameters_&, Node* node )
+binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&, const Parameters_&, Node* )
 {
 }
 

@@ -179,7 +179,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  JonkeConnection( const JonkeConnection& );
+  JonkeConnection( const JonkeConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -352,15 +352,6 @@ JonkeConnection< targetidentifierT >::JonkeConnection()
   , weight_( 1.0 )
   , Kplus_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-JonkeConnection< targetidentifierT >::JonkeConnection( const JonkeConnection< targetidentifierT >& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , Kplus_( rhs.Kplus_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

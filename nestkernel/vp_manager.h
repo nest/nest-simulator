@@ -144,9 +144,7 @@ public:
   thread get_num_assigned_ranks_per_thread() const;
 
   thread get_start_rank_per_thread( const thread tid ) const;
-  thread get_end_rank_per_thread( const thread tid,
-    const thread rank_start,
-    const thread num_assigned_ranks_per_thread ) const;
+  thread get_end_rank_per_thread( const thread rank_start, const thread num_assigned_ranks_per_thread ) const;
 
   /**
    * Returns assigned ranks per thread to fill MPI buffers. Thread tid

@@ -1,3 +1,5 @@
+:orphan:
+
 Objects and data types
 ======================
 

@@ -78,7 +78,8 @@ Time::compute_max()
   const tic_t tmax = std::numeric_limits< tic_t >::max();
 
   tic_t tics;
-  if ( lmax < tmax * Range::TICS_PER_STEP_INV ) // step size is limiting factor
+  if ( lmax
+    < static_cast< tic_t >( static_cast< double >( tmax ) * Range::TICS_PER_STEP_INV ) ) // step size is limiting factor
   {
     tics = Range::TICS_PER_STEP * ( lmax / Range::INF_MARGIN );
   }

@@ -141,7 +141,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode& host, long step )
+nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&, long step )
 {
   if ( num_vars_ < 1 || step < next_rec_step_ )
   {

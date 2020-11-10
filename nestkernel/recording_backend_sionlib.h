@@ -85,17 +85,17 @@ writes the data from all recorders using it to a single container
 file(s). The file(s) contain the data in a custom binary format, which
 is composed of a series of blocks in the following order:
 
-* the *body block* contains the actual data records; the layout of an
+* The *body block* contains the actual data records; the layout of an
   individual record depends on the type of the device and is described
   by a corresponding entry in the *device info block*
-
-* the *file info block* keeps the file's metadata like version
+  
+* The *file info block* keeps the file's metadata, like version
   information and such
 
-* the *device info block* stores the properties and a data layout
+* The *device info block* stores the properties and a data layout
   description for each device that uses the ``sionlib`` backend
 
-* the *tail block* contains pointers to the *file info block*.
+* The *tail block* contains pointers to the *file info block*
 
 The data layout of the NEST SIONlib file format v2 is shown in the
 following figure.
@@ -114,7 +114,7 @@ conform to any standard, parsing them manually might be a bit
 cumbersome. To ease this task, we provide a reader module for Python
 that makes the files available in a convenient way. The source code
 and further documentation for this module can be found in its own
-repository at `<https://github.com/nest/nest-sionlib-reader>`_.
+`repository <https://github.com/nest/nest-sionlib-reader>`_.
 
 Recorder-specific parameters
 ++++++++++++++++++++++++++++

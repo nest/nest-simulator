@@ -43,7 +43,7 @@ benefits of high-performance output operations.
 This backend will open one file per recording device per thread on
 each MPI process. This can cause a high load on the file system in
 large simulations. This backend can become prohibitively inefficient,
-particularly on machines with distributed filesystems.  In case you
+particularly on machines with distributed filesystems. In case you
 experience such scaling problems, the :ref:`recording backend for
 SIONlib <recording_backend_sionlib>` may be a possible alternative.
 

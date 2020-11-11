@@ -36,24 +36,26 @@
 Store data to an efficient binary format
 ########################################
 
-The `sionlib` recording backend writes collected data persistently to
-a binary container file (or to a rather small set of such files). To
-enable it, you have to compile NEST with support for SIONlib as
-explained in the :ref:`guide on parallel computing
-<configure-for-parallel-computing>`.
+.. admonition:: Availability
 
-This backend is especially useful for large-scale simulations running
-in a distributed way on many MPI processes/OpenMP threads. In such
-usage scenarios, writing to plain text files (see :ref:`recording
-backend for ASCII files <recording_backend_ascii>`) would cause a
-large overhead because of the huge number of generated files and thus
-be very inefficient. For the implementation of writing to binary
-container files, NEST relies on the `SIONlib library
-<http://www.fz-juelich.de/jsc/sionlib>`_. Depending on the I/O
+   This recording backend is only available if NEST was compiled with
+   :ref:`support for MPI and SIONlib <compile-with-mpi>`.
+
+The `sionlib` recording backend writes collected data persistently to
+a binary container file (or to a rather small set of such files). This
+is especially useful for large-scale simulations running in a
+distributed way on many MPI processes/OpenMP threads. In such usage
+scenarios, writing to plain text files (see :ref:`recording backend
+for ASCII files <recording_backend_ascii>`) would cause a large
+overhead because of the huge number of generated files and thus be
+very inefficient.
+
+The implementation of the `sionlib` backend is bases on the `SIONlib
+library <http://www.fz-juelich.de/jsc/sionlib>`_. Depending on the I/O
 architecture of the compute cluster or supercomputer and the global
-settings of the `sionlib` recording backend (see below), either a
-single container file or a set of these files is created. In case of a
-single file, it is named according to the following pattern:
+settings of the `sionlib` recording backend, either a single container
+file or a set of these files is created. In case of a single file, it
+is named according to the following pattern:
 
 ::
 

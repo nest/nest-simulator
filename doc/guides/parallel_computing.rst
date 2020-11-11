@@ -193,42 +193,28 @@ likely lead to unpredictable/wrong results.
 Using distributed computing
 ---------------------------
 
+.. _configure-for-parallel-computing:
+
 Build requirements
 ~~~~~~~~~~~~~~~~~~
 
-To compile NEST for distributed computing, you will need
+To compile NEST for distributed computing, you will need a library
+implementation of MPI (e.g. `OpenMPI <https://www.openmpi.org>`__ or
+`MPICH <https://www.mpich.org/>`__) on your system. If you are on a
+cluster or supercomputer, you most likely already have this. In case
+you are using a pre-packaged MPI library, please make sure that you
+also have the MPI development packages installed.
 
- * a library implementation of MPI on your system. If you are on a cluster, you
-   most likely have this already.
- * NEST development packages in the case of pre-packaged MPI library.
+If using the :ref:`standard installation instructions <standard>`, it
+is usually sufficient to add ``-Dwith-mpi=ON`` when calling `cmake`.
+However, more detailed information on this and related flags (e.g. for
+enabling the :ref:`recording backend for recording to binary files
+<recording_backend_sionlib>`) can be found in the :ref:`compilation
+options for distributed computing <compile-with-mpi>`.
 
-.. note::
-
-  Please be advised that NEST should currently only be run in a homogeneous
-  MPI environment. Running in a heterogenenous environment can lead to
-  unexpected results or even crashes. Please contact the :doc:`NEST community
-  <../contribute/index>` if you require support for exotic setups.
-
-.. _configure-for-parallel-computing:
-
-Configure
-~~~~~~~~~
-
-If using the :ref:`standard installation <standard>` instructions
-when calling `cmake`, add the option ``-Dwith-mpi=ON``. The build summary
-should report that MPI is linked.
-
-When running large-scale parallel simualations and recording from many
-neurons, writing to ASCII files might become prohibitively slow due to
-the large number of resulting files. By installing the `SIONlib
-library <http://www.fz-juelich.de/jsc/sionlib>`_ and supplying its
-installation path to the ``-Dwith-sionlib=<path>`` option when calling
-`cmake`, you can enable the :ref:`recording backend for binary files
-<recording_backend_sionlib>`, which solves this problem.
-
-Please see the :doc:`Installation instructions <../installation/index>` for
-more information on installing NEST.
-
+Please also see the :doc:`generic installation instructions
+<../installation/index>`, which has an overview of all options for
+installing NEST.
 
 Run distributed simulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -113,29 +113,44 @@ by ``make install-nodoc`` to skip the generation of help pages and indices. Usin
 option can help developers to speed up development cycles, but is not recommended for
 production use as it renders the built-in help system useless.
 
+.. _compile-with-mpi:
 
 Configuring NEST for Distributed Simulation with MPI
 ----------------------------------------------------
 
-  1. Try ``-Dwith-mpi=ON`` as argument for ``cmake``. If it works, fine.
-  2. If 1 does not work, or you want to use a non-standard MPI,
-     try ``-Dwith-mpi=/path/to/my/mpi``.
-     Directory mpi should contain include, lib, bin subdirectories for MPI.
-  3. If that does not work, but you know the correct compiler wrapper for
-     your machine, try configure ``-DMPI_CXX_COMPILER=myC++_CompilerWrapper
+NEST supports distributed simulations using the Message Passing
+Interface (MPI). Depending on your setup, you have to use one of the
+following steps in order to add support for MPI:
+
+  1. Try ``-Dwith-mpi=ON`` as argument for ``cmake``. If this works,
+     fine.
+  2. If 1. does not work, or you want to use a non-standard MPI, try
+     ``-Dwith-mpi=/path/to/my/mpi``. The directory `mpi` should
+     contain the `include`, `lib` and `bin` subdirectories of the MPI
+     installation.
+  3. If 2. does not work, but you know the correct compiler wrapper
+     for your installation, try to add the following to the invocation
+     of ``cmake``: ``-DMPI_CXX_COMPILER=myC++_CompilerWrapper
      -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON``
-  4. Sorry, you need to fix your MPI installation.
 
-Tell NEST about your MPI setup
-------------------------------
+When running large-scale parallel simualations and recording from many
+neurons, writing to ASCII files might become prohibitively slow due to
+the large number of resulting files. By installing the `SIONlib
+library <http://www.fz-juelich.de/jsc/sionlib>`_ and supplying its
+installation path to the ``-Dwith-sionlib=<path>`` option when calling
+`cmake`, you can enable the :ref:`recording backend for binary files
+<recording_backend_sionlib>`, which solves this problem.
 
-If you compiled NEST with support for :doc:`distributed computing <../guides/parallel_computing>` via MPI, you
-have to tell it how your ``mpirun``/``mpiexec`` command works by
-defining the function ``mpirun`` in your ``~/.nestrc`` file. This file
-already contains an example implementation that should work with the
-`OpenMPI <http://www.openmpi.org>`__ implementation.
+If you compiled NEST with support for MPI and also want to run the
+corresponding tests, you have to tell it about how your
+``mpirun``/``mpiexec`` command works by defining the function
+``mpirun`` in your ``~/.nestrc`` file. The file already contains an
+example implementation that should work with the `OpenMPI
+<http://www.openmpi.org>`__ implementation. For more details, see the
+documentation of the :doc:`configuration`.
 
-For more details, see :doc:`configuration`.
+See the :doc:`../guides/parallel_computing` to learn how to execute
+threaded and distributed simulations with NEST.
 
 
 Disabling the Python Bindings (PyNEST)

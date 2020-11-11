@@ -44,6 +44,16 @@ omitted in the call to connect and 'all_to_all' is assumed as the
 default. The exact usage of the synapse dictionary is described in
 :ref:`synapse_spec`.
 
+After a connection is established it might be beneficial to look up the number of
+connections in the system. This can easily be done with ``GetKernelStatus``:
+
+::
+
+    print(nest.GetKernelStatus('num_connections'))
+
+Have a look at the :ref:`inspecting_connections` section further down to
+get more tips on how to examine the connections.
+
 .. _conn_rules:
 
 Connection Rules
@@ -585,6 +595,9 @@ the defaults of the copied model are taken.
    types. The events a synapse type is able to transmit is documented in
    the ``Transmits`` section of the model documentation.
 
+
+.. _inspecting_connections:
+
 Inspecting Connections
 ----------------------
 
@@ -602,7 +615,7 @@ model is given, only connections with this synapse type are returned.
 Any combination of source, target and model parameters is permitted.
 
 Each connection in the SynapseCollection is represented by the
-following five entries: source-node_id, target-node_id, target-thread,
+following five entries: source node-id, target node-id, target-thread,
 synapse-id, and port.
 
 The result of ``nest.GetConnections`` can be given as an argument to the
@@ -629,6 +642,65 @@ parameters of the connections:
          'target_thread': [0, 0],
          'weight': [1.0, 1.0]}
 
+The ``get()`` function also takes a string or list of strings as argument. You
+can thus retrieve specific parameters if you do not want to inspect the entire
+synapse dictionary:
+
+  >>>  conn.get('weight')
+       [1.0, 1.0]
+
+  >>>  conn.get(['source', 'target'])
+       {'source': [1, 2], 'target': [3, 3]}
+
+Another way of retrieving specific parameters is by getting it directly from
+the SynapseCollection:
+
+    >>>  conn.delay
+         [1.0, 1.0]
+
+For :doc:`spatially distributed networks <spatial/index>`, you can access the distance between
+the source-target pairs by calling `distance` on your SynapseCollection.
+
+>>>  spatial_conn.distance
+     (0.47140452079103173,
+      0.33333333333333337,
+      0.4714045207910317,
+      0.33333333333333337,
+      3.925231146709438e-17,
+      0.33333333333333326,
+      0.4714045207910317,
+      0.33333333333333326,
+      0.47140452079103157)
+
+You can further examine the SynapseCollection by checking the length of the object.
+Or, by printing it, which will return a table of source and target node IDs:
+
+  >>>  len(conn)
+       2
+  >>>  print(conn)
+       *--------*-------*
+       | source | 1, 2, |
+       *--------*-------*
+       | target | 3, 3, |
+       *--------*-------*
+
+A SynapseCollection can be indexed or sliced, if you only want to inspect a
+subset of the collection:
+
+  >>>  print(conn[0:2:2])
+       *--------*----*
+       | source | 1, |
+       *--------*----*
+       | target | 3, |
+       *--------*----*
+
+By iterating the SynapseCollection, a single connection SynapseCollection is returned:
+
+  >>> for c in conn:
+  >>>     print(c.source)                                                                                                                                 
+      1
+      2
+
 
 Modifying existing Connections
 ------------------------------
@@ -646,6 +718,7 @@ by using the ``set()`` function on the SynapseCollection:
     
     conn = nest.GetConnections(n1)
     conn.set(weight=2.0)
+
     print(conn.get())
 
         {'delay': 1.0,
@@ -659,3 +732,29 @@ by using the ``set()`` function on the SynapseCollection:
          'target': 2,
          'target_thread': 0,
          'weight': 2.0}
+
+Updating a single parameter is done by calling ``set(parameter_name=parameter_value)``.
+You can use a single value, a list, or a ``nest.Parameter`` as value. If a single
+value is given, the value is set on all connections, while if you use a list to set
+the parameter, the list needs to be the same length as the SynapseCollection.
+
+  >>>  conn.set(weight=[4.0, 4.5, 5.0, 5.5])
+
+Just as you can retrieve several parameters at once with the ``get()`` function
+above, you can also set several parameters at once, with
+``set(parameter_dictionary)``. You can again use a single value, a list, or a
+``nest.Parameter`` as value. 
+
+  >>>  conn.set({'weight': [1.5, 2.0, 2.5, 3.0], 'delay': 2.0})
+
+You can also directly set parameters of your SynapseCollection:
+
+  >>>  conn.weight = 5.
+  >>>  conn.weight
+       [5.0, 5.0, 5.0, 5.0]
+  >>>  conn.delay = [5.1, 5.2, 5.3, 5.4]
+  >>>  conn.delay
+       [5.1, 5.2, 5.3, 5.4]
+
+Note that some parameters, like `source` and `target`, cannot be set.  The documentation of a specific
+model will point out which parameters can be set and which are read-only.

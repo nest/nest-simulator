@@ -20,27 +20,28 @@
  *
  */
 
-
-/** @BeginDocumentation
-Name: testsuite::test_conngen_interface - Test runability of Connect variant with conngen rule
-
-Synopsis: (test_conngen_interface) run
-
-Description:
-Tests if Connect with the *conngen* rule can be run. This test only
-checks if the SLI part of the ConnectionGenerator interface works
-correctly. The PyNEST test is in pynest/nest/tests/test_csa.py.
-
-FirstVersion: June 2016
-Author: Jochen Martin Eppler
- */
+% 
+% This example shows how to use the Connection Generator Interface of
+% libneurosim ([1]) from the SLI level. It connects two small neuronal
+% populations using a connection pattern specified in the XML notation
+% of the the Connection Set Algebra (CSA, [2]). The example relies on
+% the C++ implementation of the CSA ([3]). At time of writing, this
+% implementation is not publically available and the example itself is
+% thus a bit pointless. It is left here for future reference.
+%
+%
+% References:
+% [1] https://github.com/INCF/libneurosim
+% [2] https://doi.org/10.1147/rd.521.0031
+% [3] https://github.com/INCF/libcsa
+%
 
 M_ERROR setverbosity
 
 (unittest) run
 /unittest using
 
-% Only run the test if NEST was compiled with support for libneurosim
+% Only run if NEST was compiled with support for libneurosim
 statusdict/have_libneurosim :: not { /skipped exit_test_gracefully } if
 
 % Tell the ConnectionGenerator interface, which implementation to use
@@ -53,6 +54,9 @@ statusdict/have_libneurosim :: not { /skipped exit_test_gracefully } if
 (</CSA>) join
 CGParse /cg Set
 
+% Another option to obtain the connectiongeneratortype object would be
+% using CGParseFile to read the specification from a file.
+
 /iaf_psc_alpha 8 Create /pre Set
 /iaf_psc_alpha 8 Create /post Set
 
@@ -60,4 +64,4 @@ pre post << /rule /conngen /cg cg >> Connect
 
 << /source pre >> GetConnections
 { GetStatus /target get } Map
-post eq assert_or_die
+post eq ==

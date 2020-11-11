@@ -131,7 +131,7 @@ iaf_psc_exp_ps
 
 EndUserDocs */
 
-class iaf_psc_exp_ps_lossless : public Archiving_Node
+class iaf_psc_exp_ps_lossless : public ArchivingNode
 {
 public:
   /** Basic constructor.

@@ -211,10 +211,10 @@ nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 's'),
                   ('cpp:identifier', 'CommonSynapseProperties'),
                   ('cpp:identifier', 'Connection<targetidentifierT>'),
-                  ('cpp:identifier', 'Archiving_Node'),
+                  ('cpp:identifier', 'ArchivingNode'),
                   ('cpp:identifier', 'DeviceNode'),
                   ('cpp:identifier', 'Node'),
-                  ('cpp:identifier', 'Clopath_Archiving_Node'),
+                  ('cpp:identifier', 'ClopathArchivingNode'),
                   ('cpp:identifier', 'MessageHandler'),
                   ('cpp:identifer', 'CommonPropertiesHomW')]
 

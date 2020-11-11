@@ -199,13 +199,13 @@ Build requirements
 ~~~~~~~~~~~~~~~~~~
 
 To compile NEST for distributed computing, you will need a library
-implementation of MPI (e.g. `OpenMPI <https://www.openmpi.org>`__ or
+implementation of MPI (e.g. `OpenMPI <https://www.open-mpi.org>`__ or
 `MPICH <https://www.mpich.org/>`__) on your system. If you are on a
 cluster or supercomputer, you most likely already have this. In case
 you are using a pre-packaged MPI library, please make sure that you
 also have the MPI development packages installed.
 
-If using the :ref:`standard installation instructions <standard>`, it
+When using the :ref:`standard installation instructions <standard>`, it
 is usually sufficient to add ``-Dwith-mpi=ON`` when calling `cmake`.
 However, more detailed information on this and related flags (e.g. for
 enabling the :ref:`recording backend for recording to binary files
@@ -213,7 +213,7 @@ enabling the :ref:`recording backend for recording to binary files
 options for distributed computing <compile-with-mpi>`.
 
 Please also see the :doc:`generic installation instructions
-<../installation/index>`, which has an overview of all options for
+<../installation/index>`, where you can find an overview of all options for
 installing NEST.
 
 Run distributed simulations

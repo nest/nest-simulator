@@ -110,7 +110,7 @@ cg = csa.cset(csa.random * (csa.gaussian(0.2, 0.5) * d), 10000.0, 1.0)
 ###############################################################################
 # We can now connect the populations using the ``Connect`` function
 # with the ``conngen`` rule. It takes the IDs of pre- and postsynaptic
-# neurons (`pop` and `pop2`), the connection set (`cg`) and a
+# neurons (`pop1` and `pop2`), the connection set (`cg`) and a
 # dictionary that map the parameters weight and delay to positions in
 # the value set associated with the connection set (``params_map``).
 

@@ -65,8 +65,6 @@ one-to-one
 The ith node in ``pre`` is connected to the ith node in ``post``. The
 NodeCollections of ``pre`` and ``post`` have to be of the same length.
 
-Example:
-
 ::
 
     n = 10
@@ -84,8 +82,6 @@ all-to-all
 Each node in ``pre`` is connected to every node in ``post``. Since
 ``all_to_all`` is the default, 'rule' doesn't need to specified.
 
-Example:
-
 ::
 
     n, m = 10, 12
@@ -102,8 +98,6 @@ fixed-indegree
 
 The nodes in ``pre`` are randomly connected with the nodes in ``post``
 such that each node in ``post`` has a fixed ``indegree``.
-
-Example:
 
 ::
 
@@ -124,8 +118,6 @@ fixed-outdegree
 The nodes in ``pre`` are randomly connected with the nodes in ``post``
 such that each node in ``pre`` has a fixed ``outdegree``.
 
-Example:
-
 ::
 
     n, m, N = 10, 12, 2
@@ -140,8 +132,6 @@ fixed-total-number
 The nodes in ``pre`` are randomly connected with the nodes in ``post``
 such that the total number of connections equals ``N``.
 
-Example:
-
 ::
 
     n, m, N = 10, 12, 30
@@ -155,8 +145,6 @@ pairwise-bernoulli
 
 For each possible pair of nodes from ``pre`` and ``post``, a connection
 is created with probability ``p``.
-
-Example:
 
 ::
 
@@ -174,8 +162,6 @@ is created with probability ``p`` from ``pre`` to ``post``, as well as
 a connection from ``post`` to ``pre`` (two connections in total). To
 use the 'symmetric_pairwise_bernoulli' rule, ``allow_autapses`` must
 be False, and ``make_symmetric`` must be True.
-
-Example:
 
 ::
 
@@ -195,8 +181,6 @@ object, or a dictionary. The string can be the name of a pre-defined
 synapse which can be found in the synapsedict (see  :ref:`synapse-types`)
 or a manually defined synapse via `CopyModel()`.
 
-Example:
-
 ::
 
     n = 10
@@ -215,11 +199,13 @@ scalars, arrays or distributions (specified as a ``nest.Parameter``). One
 synapse dictionary can contain an arbitrary combination of parameter
 types, as long as they agree with the connection routine (``rule``).
 
-**Scalar** parameters must be given as floats except for the
-'receptor_type' which has to be initialized as an integer. For more
-information on the receptor type see :ref:`receptor-types`.
+Scalar
+~~~~~~
 
-Example:
+Scalar parameters must be given as floats except for the
+'receptor_type' which has to be initialized as an integer. For more
+information on the receptor type see :ref:`receptor-types`. When a synapse
+parameter is given as a scalar, the value will be applied to all connections. 
 
 ::
 
@@ -230,14 +216,15 @@ Example:
     syn_dict ={'synapse_model': 'static_synapse', 'weight': 2.5, 'delay': 0.5, 'receptor_type': 1}
     nest.Connect(A, B, syn_spec=syn_dict)
 
-**Array** parameters can be used in conjunction with the rules
+Array
+~~~~~
+
+Array parameters can be used in conjunction with the rules
 ``one_to_one``, ``all_to_all``, ``fixed_indegree``, ``fixed_outdegree``
 and ``fixed_total_number``. The arrays can be specified as numpy arrays or
 lists. As with the scalar parameters, all parameters but the receptor
 types must be specified as arrays of floats. For ``one_to_one`` the
 array must have the same length as the NodeCollections.
-
-Example:
 
 ::
 
@@ -249,8 +236,6 @@ Example:
 
 When connecting using ``all_to_all``, the array must be of dimension
 `len(post) x len(pre)`.
-
-Example:
 
 ::
 
@@ -264,8 +249,6 @@ or list with shape `(len(post), indegree)`, where indegree is the number of
 incoming connections per target neuron. Therefore, the rows describe the
 target and the columns the connections converging to the target neuron,
 regardless of the identity of the source neurons.
-
-Example:
 
 ::
 
@@ -281,8 +264,6 @@ outgoing connections per source neuron. Therefore, the rows describe the
 source and the columns the connections starting from the source neuron
 regardless of the identity of the target neuron.
 
-Example:
-
 ::
 
     A = nest.Create('iaf_psc_alpha', 2)
@@ -294,8 +275,6 @@ Example:
 For ``fixed_total_number``, the array has to be same the length as the
 number of connections ``N``.
 
-Example:
-
 ::
 
     A = nest.Create('iaf_psc_alpha', 3)
@@ -303,6 +282,69 @@ Example:
     conn_dict = {'rule': 'fixed_total_number', 'N': 4}
     syn_dict = {'weight': [1.2, -3.5, 0.4, -0.2]}
     nest.Connect(A, B, conn_dict, syn_dict)
+
+
+.. _dist_params:
+
+Distributed parameters
+~~~~~~~~~~~~~~~~~~~~~~
+
+Distributed parameters are given as ``nest.Parameter`` objects that represent
+values drawn from random distributions. These distributions can either be based on
+spatial node parameters, on default values, or on constant distribution values
+you provide. It is possible to combine the parameters to create distributions
+tailor made for your needs.
+
+The following parameters and functionalities are provided:
+
+- Random parameters
+- Spatial parameters
+- Spatially distributed parameters
+- Mathematical functions
+- Clipping, redrawing, and conditional parameters
+
+For more information, check out the documentation on the different
+:doc:`PyNEST APIs <../ref_material/pynest_apis>` or this section on :ref:`parametrization <param_ex>`.
+
+::
+
+    n = 10
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('iaf_psc_alpha', n)
+    syn_dict = {'synapse_model': 'stdp_synapse',
+                'weight': 2.5,
+                'delay': nest.random.uniform(min=0.8, max=2.5),
+                'alpha': nest.math.redraw(nest.random.normal(mean=5.0, std=1.0), min=0.5, max=10000.)
+               }
+    nest.Connect(A, B, syn_spec=syn_dict)
+
+In this example, the ``all_to_all`` connection rule is applied by
+default, using the `stdp_synapse` model. All synapses are created with
+weight 2.5, a delay uniformly distributed in [0.8, 2.5], while the alpha
+parameters are drawn from a normal distribution with mean 5.0 and standard
+deviation 1.0; values below 0.5 are excluded by re-drawing any values
+below 0.5. We have set the ``max`` value of ``nest.math.redraw`` to be a
+large number, so it is in principle never reached. Thus, the actual distribution
+is a slightly distorted Gaussian.
+
+If the synapse is supposed to have a unique name and distributed
+parameters, it needs to be defined in two steps:
+
+::
+
+    n = 10
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('iaf_psc_alpha', n)
+    nest.CopyModel('stdp_synapse','excitatory',{'weight':2.5})
+    syn_dict = {'synapse_model': 'excitatory',
+                'weight': 2.5,
+                'delay': nest.random.uniform(min=0.8, max=2.5),
+                'alpha': nest.math.redraw(nest.random.normal(mean=5.0, std=1.0), min=0.5, max=10000.)
+               }
+    nest.Connect(A, B, syn_spec=syn_dict)
+
+For further information on the distributions see :doc:`Random numbers in
+NEST <random_numbers>`.
 
 
 .. _collocated_synapses:
@@ -353,71 +395,6 @@ You can see how many synapse parameters you have by calling `len()` on your `Col
   >>> len(syn_spec)
   2
 
-
-.. _dist_params:
-
-Distributed parameters
-~~~~~~~~~~~~~~~~~~~~~~
-
-**Distributed** parameters are given as ``nest.Parameter`` objects that represent
-values drawn from random distributions. These distributions can either be based on
-spatial node parameters, on default values, or on constant distribution values
-you provide. It is possible to combine the parameters to create distributions
-tailor made for your needs.
-
-The following parameters and functionalities are provided:
-
-- Random parameters
-- Spatial parameters
-- Spatially distributed parameters
-- Mathematical functions
-- Clipping, redrawing, and conditional parameters
-
-For more information, check out the documentation on the different
-:doc:`PyNEST APIs <../ref_material/pynest_apis>` or the section on parametrization
-in our :doc:`nest2_to_nest3/nest2_to_nest3_overview` guide.
-
-Example:
-
-::
-
-    n = 10
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', n)
-    syn_dict = {'synapse_model': 'stdp_synapse',
-                'weight': 2.5,
-                'delay': nest.random.uniform(min=0.8, max=2.5),
-                'alpha': nest.math.redraw(nest.random.normal(mean=5.0, std=1.0), min=0.5, max=10000.)
-               }
-    nest.Connect(A, B, syn_spec=syn_dict)
-
-In this example, the ``all_to_all`` connection rule is applied by
-default, using the `stdp_synapse` model. All synapses are created with
-weight 2.5, a delay uniformly distributed in [0.8, 2.5], while the alpha
-parameters are drawn from a normal distribution with mean 5.0 and standard
-deviation 1.0; values below 0.5 are excluded by re-drawing any values
-below 0.5. We have set the ``max`` value of ``nest.math.redraw`` to be a
-large number, so it is in principle never reached. Thus, the actual distribution
-is a slightly distorted Gaussian.
-
-If the synapse is supposed to have a unique name and distributed
-parameters, it needs to be defined in two steps:
-
-::
-
-    n = 10
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', n)
-    nest.CopyModel('stdp_synapse','excitatory',{'weight':2.5})
-    syn_dict = {'synapse_model': 'excitatory',
-                'weight': 2.5,
-                'delay': nest.random.uniform(min=0.8, max=2.5),
-                'alpha': nest.math.redraw(nest.random.normal(mean=5.0, std=1.0), min=0.5, max=10000.)
-               }
-    nest.Connect(A, B, syn_spec=syn_dict)
-
-For further information on the distributions see :doc:`Random numbers in
-NEST <random_numbers>`.
 
 Spatially-structured networks
 -----------------------------
@@ -485,7 +462,8 @@ connection setup. The default synapse type in NEST is the
 learning and plasticity, it is possible to use other synapse types that
 implement long-term or short-term plasticity. A list of available types
 is accessible via the command ``nest.Models('synapses')``. The output of this
-command (as of commit ``1159664``) is shown below:
+command (as of commit `b08590a <https://github.com/nest/nest-simulator/tree/b08590af6d721ab66f8a72dcde053cff00d56512>`_)
+is shown below:
 
 ::
 
@@ -500,7 +478,6 @@ command (as of commit ``1159664``) is shown below:
      'cont_delay_synapse_lbl',
      'diffusion_connection',
      'diffusion_connection_lbl',
-     'excitatory',
      'gap_junction',
      'gap_junction_lbl',
      'ht_synapse',
@@ -603,9 +580,10 @@ the defaults of the copied model are taken.
     nest.CopyModel('static_synapse', 'inhibitory', {'weight': -2.5})
     nest.Connect(A, B, syn_spec='inhibitory')
 
-**Note**: Not all nodes can be connected via all available synapse
-types. The events a synapse type is able to transmit is documented in
-the ``Transmits`` section of the model documentation.
+.. note::
+   Not all nodes can be connected via all available synapse
+   types. The events a synapse type is able to transmit is documented in
+   the ``Transmits`` section of the model documentation.
 
 Inspecting Connections
 ----------------------

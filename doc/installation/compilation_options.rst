@@ -139,7 +139,7 @@ Support for libneurosim
 -----------------------
 
 In order to allow NEST to create connections using external libraries,
-it provides an interface for the Connection Generator Interface from
+it provides support for the Connection Generator Interface from
 *libneurosim*. To request the use of libneurosim, you have to use the
 follwing switch for the invocation of ``cmake``. It expects either
 *ON* or *OFF* or the directory, where libneurosim is installed::

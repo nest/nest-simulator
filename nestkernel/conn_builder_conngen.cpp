@@ -58,8 +58,8 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
 
     if ( syn_specs[ 0 ]->known( names::weight ) or syn_specs[ 0 ]->known( names::delay ) )
     {
-      throw BadProperty( "Properties weight and delay cannot be specified in syn_spec if the "
-			 "ConnectionGenerator has values." );
+      throw BadProperty(
+        "Properties weight and delay cannot be specified in syn_spec if the ConnectionGenerator has values." );
     }
   }
   if ( syn_specs.size() > 1 )

@@ -62,6 +62,10 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
 			 "ConnectionGenerator has values." );
     }
   }
+  if ( syn_specs.size() > 1 )
+  {
+    throw BadProperty( "Connection rule conngen cannot be used with collocated synapses." );
+  }
 }
 
 void

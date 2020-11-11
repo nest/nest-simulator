@@ -28,7 +28,6 @@
 #include <deque>
 
 // Includes from nestkernel:
-#include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"

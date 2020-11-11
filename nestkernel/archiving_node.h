@@ -33,7 +33,6 @@
 #include "nest_types.h"
 #include "node.h"
 #include "structural_plasticity_node.h"
-#include "synaptic_element.h"
 
 // Includes from sli:
 #include "dictdatum.h"

@@ -140,7 +140,6 @@ class CSATestCase(unittest.TestCase):
         self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType",
                                nest.Connect, pop, pop, connspec, synspec)
 
-
     def test_CSA_error_weightdelay_in_synspec_and_conngen(self):
         """
         Error handling for conflicting weight/delay in conngen Connect

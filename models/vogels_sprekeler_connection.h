@@ -95,7 +95,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  VogelsSprekelerConnection( const VogelsSprekelerConnection& );
+  VogelsSprekelerConnection( const VogelsSprekelerConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -255,20 +255,6 @@ VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection()
   , Wmax_( 1.0 )
   , Kplus_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection(
-  const VogelsSprekelerConnection< targetidentifierT >& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , tau_( rhs.tau_ )
-  , alpha_( rhs.alpha_ )
-  , eta_( rhs.eta_ )
-  , Wmax_( rhs.Wmax_ )
-  , Kplus_( rhs.Kplus_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

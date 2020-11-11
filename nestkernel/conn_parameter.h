@@ -79,8 +79,7 @@ public:
    */
   virtual double value_double( thread, librandom::RngPtr&, index, Node* ) const = 0;
   virtual long value_int( thread, librandom::RngPtr&, index, Node* ) const = 0;
-  virtual void
-  skip( thread, size_t n_skip ) const
+  virtual void skip( thread, size_t ) const
   {
   }
   virtual bool is_array() const = 0;

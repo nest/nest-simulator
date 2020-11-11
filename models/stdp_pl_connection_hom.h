@@ -137,7 +137,7 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPPLConnectionHom( const STDPPLConnectionHom& );
+  STDPPLConnectionHom( const STDPPLConnectionHom& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -286,15 +286,6 @@ STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom()
   , weight_( 1.0 )
   , Kplus_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom( const STDPPLConnectionHom& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , Kplus_( rhs.Kplus_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

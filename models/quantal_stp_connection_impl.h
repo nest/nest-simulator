@@ -83,21 +83,6 @@ Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection()
 }
 
 template < typename targetidentifierT >
-Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection( const Quantal_StpConnection& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , U_( rhs.U_ )
-  , u_( rhs.u_ )
-  , tau_rec_( rhs.tau_rec_ )
-  , tau_fac_( rhs.tau_fac_ )
-  , n_( rhs.n_ )
-  , a_( rhs.a_ )
-  , t_lastspike_( rhs.t_lastspike_ )
-{
-}
-
-
-template < typename targetidentifierT >
 void
 Quantal_StpConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {

@@ -165,11 +165,14 @@ xPYTHON=0
 xREADLINE=0
 xSIONLIB=0
 
+CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas"
+
 if [ "$xNEST_BUILD_TYPE" = "OPENMP_ONLY" ]; then
     xGSL=1
     xLIBBOOST=1
     xLTDL=1
     xOPENMP=1
+    CXX_FLAGS="-pedantic -Wextra"
 fi
 
 if [ "$xNEST_BUILD_TYPE" = "MPI_ONLY" ]; then
@@ -190,6 +193,7 @@ if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
     xPYTHON=1
     xREADLINE=1
     xSIONLIB=1
+    CXX_FLAGS="-pedantic -Wextra"
 fi
 
 if [ "$xNEST_BUILD_TYPE" = "FULL_NO_EXTERNAL_FEATURES" ]; then
@@ -312,6 +316,7 @@ echo "MSGBLD0235: Running CMake."
 cd "$NEST_VPATH"
 cmake \
     -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+    -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \
     -Dwith-optimize=ON \
     -Dwith-warning=ON \
     $CONFIGURE_BOOST \

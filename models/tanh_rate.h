@@ -150,13 +150,13 @@ nonlinearities_tanh_rate::input( double h )
 }
 
 inline double
-nonlinearities_tanh_rate::mult_coupling_ex( double rate )
+nonlinearities_tanh_rate::mult_coupling_ex( double )
 {
   return 1.;
 }
 
 inline double
-nonlinearities_tanh_rate::mult_coupling_in( double rate )
+nonlinearities_tanh_rate::mult_coupling_in( double )
 {
   return 1.;
 }

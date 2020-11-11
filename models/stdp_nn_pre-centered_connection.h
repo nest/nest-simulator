@@ -134,7 +134,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPNNPreCenteredConnection( const STDPNNPreCenteredConnection& );
+  STDPNNPreCenteredConnection( const STDPNNPreCenteredConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -310,22 +310,6 @@ STDPNNPreCenteredConnection< targetidentifierT >::STDPNNPreCenteredConnection()
   , Wmax_( 100.0 )
   , Kplus_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-STDPNNPreCenteredConnection< targetidentifierT >::STDPNNPreCenteredConnection(
-  const STDPNNPreCenteredConnection< targetidentifierT >& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , tau_plus_( rhs.tau_plus_ )
-  , lambda_( rhs.lambda_ )
-  , alpha_( rhs.alpha_ )
-  , mu_plus_( rhs.mu_plus_ )
-  , mu_minus_( rhs.mu_minus_ )
-  , Wmax_( rhs.Wmax_ )
-  , Kplus_( rhs.Kplus_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

@@ -377,7 +377,7 @@ aeif_cond_alpha_multisynapse::Buffers_::Buffers_( const Buffers_& b, aeif_cond_a
  * ---------------------------------------------------------------- */
 
 aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -386,7 +386,7 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse()
 }
 
 aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse( const aeif_cond_alpha_multisynapse& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -427,7 +427,7 @@ aeif_cond_alpha_multisynapse::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.logger_.reset();
 
@@ -649,7 +649,7 @@ aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   /*
    * Here is where we must update the recordablesMap_ if new receptors

@@ -51,7 +51,7 @@
 namespace nest
 {
 class Model;
-class Archiving_Node;
+class ArchivingNode;
 class TimeConverter;
 
 

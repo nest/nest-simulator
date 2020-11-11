@@ -364,7 +364,7 @@ nest::glif_psc::Buffers_::Buffers_( const Buffers_&, glif_psc& n )
  * ---------------------------------------------------------------- */
 
 nest::glif_psc::glif_psc()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -373,7 +373,7 @@ nest::glif_psc::glif_psc()
 }
 
 nest::glif_psc::glif_psc( const glif_psc& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )

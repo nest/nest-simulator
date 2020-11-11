@@ -228,7 +228,7 @@ ClopathConnection< targetidentifierT >::send( Event& e, thread t, const CommonSy
   // which increases the access counter for these entries.
   // At registration, all entries' access counters of
   // history[0, ..., t_last_spike - dendritic_delay] have been
-  // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
+  // incremented by ArchivingNode::register_stdp_connection(). See bug #218 for
   // details.
   target->get_LTP_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic activity since last pre-synaptic spike

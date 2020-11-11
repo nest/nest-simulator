@@ -149,7 +149,7 @@ nest::izhikevich::Buffers_::Buffers_( const Buffers_&, izhikevich& n )
  * ---------------------------------------------------------------- */
 
 nest::izhikevich::izhikevich()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -158,7 +158,7 @@ nest::izhikevich::izhikevich()
 }
 
 nest::izhikevich::izhikevich( const izhikevich& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -182,7 +182,7 @@ nest::izhikevich::init_buffers_()
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void

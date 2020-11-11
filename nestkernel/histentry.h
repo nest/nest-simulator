@@ -22,7 +22,7 @@
 
 /**
  * \file histentry.h
- * Part of definition of Archiving_Node which is capable of
+ * Part of definition of ArchivingNode which is capable of
  * recording and managing a spike history.
  * \author Moritz Helias, Abigail Morrison
  * \note moved to separate file to avoid circular inclusion in node.h

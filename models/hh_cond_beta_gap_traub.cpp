@@ -336,7 +336,7 @@ nest::hh_cond_beta_gap_traub::Buffers_::Buffers_( const Buffers_&, hh_cond_beta_
  * ---------------------------------------------------------------- */
 
 nest::hh_cond_beta_gap_traub::hh_cond_beta_gap_traub()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -346,7 +346,7 @@ nest::hh_cond_beta_gap_traub::hh_cond_beta_gap_traub()
 }
 
 nest::hh_cond_beta_gap_traub::hh_cond_beta_gap_traub( const hh_cond_beta_gap_traub& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -408,7 +408,7 @@ nest::hh_cond_beta_gap_traub::init_buffers_()
 
   B_.sumj_g_ij_ = 0.0;
 
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.logger_.reset();
 

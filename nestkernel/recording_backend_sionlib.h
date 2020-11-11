@@ -50,7 +50,7 @@ for ASCII files <recording_backend_ascii>`) would cause a large
 overhead because of the huge number of generated files and thus be
 very inefficient.
 
-The implementation of the `sionlib` backend is bases on the `SIONlib
+The implementation of the `sionlib` backend is based on the `SIONlib
 library <http://www.fz-juelich.de/jsc/sionlib>`_. Depending on the I/O
 architecture of the compute cluster or supercomputer and the global
 settings of the `sionlib` recording backend, either a single container

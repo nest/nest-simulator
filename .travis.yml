@@ -165,7 +165,10 @@ before_install:
            pip install numpy==1.16.5 nose
            pip install cython matplotlib terminaltables
          else  
-           pip3 install numpy==1.16.5 cython matplotlib terminaltables
+           #pip3 install numpy==1.16.5 cython matplotlib terminaltables
+           pip3 install cython matplotlib terminaltables
+           wget https://files.pythonhosted.org/packages/03/21/f72ec478fba7db3a4ab7a57867115a7275e48015adacb33caae2dad96f63/numpy-1.19.4-cp36-cp36m-macosx_10_9_x86_64.whl
+           pip3 install numpy-1.19.4-cp36-cp36m-macosx_10_9_x86_64.whl 
            wget https://arken.nmbu.no/~plesser/nose-1.3.7noman-py3-none-any.whl
            pip3 install nose-1.3.7noman-py3-none-any.whl
          fi  

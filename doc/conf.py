@@ -92,15 +92,8 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'breathe',
     'sphinx_tabs.tabs'
 ]
-
-breathe_projects = {"EXTRACT_MODELS": "./xml/"}
-
-breathe_default_project = "EXTRACT_MODELS"
-
-subprocess.call('doxygen', shell=True)
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 

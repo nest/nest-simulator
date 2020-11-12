@@ -44,7 +44,7 @@ omitted in the call to connect and 'all_to_all' is assumed as the
 default. The exact usage of the synapse dictionary is described in
 :ref:`synapse_spec`.
 
-After a connection is established it might be beneficial to look up the number of
+After a connection is established, it might be beneficial to look up the number of
 connections in the system. This can easily be done with ``GetKernelStatus``:
 
 ::
@@ -642,7 +642,7 @@ parameters of the connections:
          'target_thread': [0, 0],
          'weight': [1.0, 1.0]}
 
-The ``get()`` function also takes a string or list of strings as argument. You
+The ``get()`` function also takes a string or list of strings as arguments. You
 can thus retrieve specific parameters if you do not want to inspect the entire
 synapse dictionary:
 
@@ -672,8 +672,8 @@ the source-target pairs by calling `distance` on your SynapseCollection.
       0.33333333333333326,
       0.47140452079103157)
 
-You can further examine the SynapseCollection by checking the length of the object.
-Or, by printing it, which will return a table of source and target node IDs:
+You can further examine the SynapseCollection by checking the length of the object
+or by printing it, which will return a table of source and target node IDs:
 
   >>>  len(conn)
        2
@@ -735,14 +735,14 @@ by using the ``set()`` function on the SynapseCollection:
 
 Updating a single parameter is done by calling ``set(parameter_name=parameter_value)``.
 You can use a single value, a list, or a ``nest.Parameter`` as value. If a single
-value is given, the value is set on all connections, while if you use a list to set
+value is given, the value is set on all connections. If you use a list to set
 the parameter, the list needs to be the same length as the SynapseCollection.
 
   >>>  conn.set(weight=[4.0, 4.5, 5.0, 5.5])
 
 Just as you can retrieve several parameters at once with the ``get()`` function
-above, you can also set several parameters at once, with
-``set(parameter_dictionary)``. You can again use a single value, a list, or a
+above, you can also set several parameters at once with
+``set(parameter_dictionary)``. Again, you can again use a single value, a list, or a
 ``nest.Parameter`` as value. 
 
   >>>  conn.set({'weight': [1.5, 2.0, 2.5, 3.0], 'delay': 2.0})
@@ -756,5 +756,5 @@ You can also directly set parameters of your SynapseCollection:
   >>>  conn.delay
        [5.1, 5.2, 5.3, 5.4]
 
-Note that some parameters, like `source` and `target`, cannot be set.  The documentation of a specific
+Note that some parameters, like `source` and `target`, cannot be set. The documentation of a specific
 model will point out which parameters can be set and which are read-only.

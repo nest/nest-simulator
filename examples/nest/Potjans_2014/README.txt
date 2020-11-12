@@ -87,13 +87,13 @@ Instructions:
    - Spikes are written to .gdf files containing node IDs of the recorded neurons
      and corresponding spike times in ms. The node IDs are unordered.
      Separate files are written out for each population and virtual process.
-     File names are formed as spike detector label + layer index + population
-     index + spike detector node ID + virtual process + .gdf
+     File names are formed as spike recorder label + layer index + population
+     index + spike recorder node ID + virtual process + .gdf
    - population_node IDs.dat contains the first and last global ID (node ID) of the
      neurons in each population in the order 2/3e, 2/3i, 4e, 4i, 5e, 5i, 6e, 6i
    - Voltages are written to .dat files containing node IDs, times in ms, and the
      corresponding membrane potentials in mV. File names are formed as
-     voltmeter label + layer index + population index + spike detector node ID +
+     voltmeter label + layer index + population index + spike recorder node ID +
      virtual process + .dat
 
    - Run 'spike_analysis.py' with the variable 'datapath' set to the output

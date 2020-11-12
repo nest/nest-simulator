@@ -19,8 +19,8 @@ sections of this primer:
 -  :doc:`Part 1: Neurons and simple neural
    networks <part_1_neurons_and_simple_neural_networks>`
 -  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
--  :doc:`Part 4: Topologically structured
-   networks <part_4_topologically_structured_networks>`
+-  :doc:`Part 4: Spatially structured
+   networks <part_4_spatially_structured_networks>`
 
 More advanced examples can be found at `Example
 Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
@@ -322,7 +322,7 @@ subset of nodes) in a population. To get a subsequence of nodes, use a
 
 ::
 
-    nest.Connect(neuronpop[:Nrec],spikedetector,"all_to_all")
+    nest.Connect(neuronpop[:Nrec],spikerecorder,"all_to_all")
 
 One thing you should not do is to use your knowledge about neuron ids to set up
 loops:

@@ -57,7 +57,7 @@ spikes are added to the membrane potential at the end of the
 refractory period, dampened according to the interval between
 arrival and end of refractoriness.
 
-The linear subthresold dynamics is integrated by the Exact
+The linear subthreshold dynamics is integrated by the Exact
 Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
@@ -82,9 +82,9 @@ Remarks:
 
 The present implementation uses individual variables for the
 components of the state vector and the non-zero matrix elements of
-the propagator.  Because the propagator is a lower triangular matrix
+the propagator. Because the propagator is a lower triangular matrix,
 no full matrix multiplication needs to be carried out and the
-computation can be done "in place" i.e. no temporary state vector
+computation can be done "in place", i.e. no temporary state vector
 object is required.
 
 The template support of recent C++ compilers enables a more succinct
@@ -143,7 +143,7 @@ iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
 EndUserDocs */
 
-class iaf_psc_delta : public Archiving_Node
+class iaf_psc_delta : public ArchivingNode
 {
 
 public:
@@ -362,7 +362,7 @@ iaf_psc_delta::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -378,7 +378,7 @@ iaf_psc_delta::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

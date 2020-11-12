@@ -75,7 +75,7 @@ transformers.
  mu                 real    Mean input
  sigma              real    Noise parameter
  g                  real    Gain parameter
- rectify_rate       real    Rectfying rate
+ rectify_rate       real    Rectifying rate
  linear_summation   boolean Specifies type of non-linearity (see above)
  rectify_output     boolean Switch to restrict rate to values >= rectify_rate
 ==================  ======= ==============================================
@@ -151,13 +151,13 @@ nonlinearities_sigmoid_rate_gg_1998::input( double h )
 }
 
 inline double
-nonlinearities_sigmoid_rate_gg_1998::mult_coupling_ex( double rate )
+nonlinearities_sigmoid_rate_gg_1998::mult_coupling_ex( double )
 {
   return 1.;
 }
 
 inline double
-nonlinearities_sigmoid_rate_gg_1998::mult_coupling_in( double rate )
+nonlinearities_sigmoid_rate_gg_1998::mult_coupling_in( double )
 {
   return 1.;
 }

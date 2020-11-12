@@ -167,7 +167,7 @@ class StructralPlasticityExample:
 # to notice that synaptic elements and connections change on different
 # time scales.
 
-        nest.SetStructuralPlasticityStatus({
+        nest.SetKernelStatus({
             'structural_plasticity_update_interval': self.update_interval,
         })
 
@@ -184,7 +184,7 @@ class StructralPlasticityExample:
         nest.SetDefaults('synapse_ex', {'weight': self.psc_e, 'delay': 1.0})
         nest.CopyModel('static_synapse', 'synapse_in')
         nest.SetDefaults('synapse_in', {'weight': self.psc_i, 'delay': 1.0})
-        nest.SetStructuralPlasticityStatus({
+        nest.SetKernelStatus({
             'structural_plasticity_synapses': {
                 'synapse_ex': {
                     'synapse_model': 'synapse_ex',

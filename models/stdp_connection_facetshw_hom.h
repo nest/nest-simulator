@@ -38,7 +38,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Synapse type for spike-timing dependent plasticity using homogenous parameters
+Synapse type for spike-timing dependent plasticity using homogeneous parameters
 
 Description
 +++++++++++
@@ -239,7 +239,7 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPFACETSHWConnectionHom( const STDPFACETSHWConnectionHom& );
+  STDPFACETSHWConnectionHom( const STDPFACETSHWConnectionHom& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these

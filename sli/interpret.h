@@ -271,8 +271,6 @@ public:
    */
   int execute( int v = 0 );
 
-  //  int execute_protected(void);
-
   /**
    * Run the interpreter with a prepared execution stack.
    * The function returns, if the execution stack has reached the given level.

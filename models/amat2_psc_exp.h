@@ -59,7 +59,7 @@ during which the neuron is not allowed to fire, even if the membrane
 potential exceeds the threshold. The membrane potential is NOT reset,
 but continuously integrated.
 
-The linear subthresold dynamics is integrated by the Exact
+The linear subthreshold dynamics is integrated by the Exact
 Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
@@ -155,7 +155,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 EndUserDocs */
 
-class amat2_psc_exp : public Archiving_Node
+class amat2_psc_exp : public ArchivingNode
 {
 
 public:
@@ -439,7 +439,7 @@ amat2_psc_exp::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -456,7 +456,7 @@ amat2_psc_exp::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

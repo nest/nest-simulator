@@ -32,7 +32,7 @@ whether one simulates the full simulation time without interruption, or splits t
 into many small pieces.
 
 The problem was unrelated to the setting of kernel property  /off_grid_spiking
-and the spike_detector property  /precise_times.
+and the spike_recorder property  /precise_times.
  
 Author: Hans Ekkehard Plesser, 2010-09-30; based on original reproduced code by Alexander Hanuschkin
  */
@@ -58,13 +58,13 @@ M_ERROR setverbosity
    
  pg n 1.0 1.0 Connect
 
- /spike_detector Create /sd Set
+ /spike_recorder Create /sr Set
 
- n sd Connect
+ n sr Connect
 
  simcommand
 
- sd [/events /times] get cva 
+ sr [/events /times] get cva 
 
 } def 
 

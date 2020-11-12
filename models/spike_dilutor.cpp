@@ -47,11 +47,6 @@ nest::spike_dilutor::Parameters_::Parameters_()
 {
 }
 
-nest::spike_dilutor::Parameters_::Parameters_( const Parameters_& p )
-  : p_copy_( p.p_copy_ )
-{
-}
-
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */

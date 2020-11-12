@@ -85,7 +85,7 @@ transformers.
  g_in            real    Linear factor in multiplicative coupling
  theta_ex        real    Shift in multiplicative coupling
  theta_in        real    Shift in multiplicative coupling
- rectify_rate    real    Rectfying rate
+ rectify_rate    real    Rectifying rate
  rectify_output  boolean Switch to restrict rate to values >= rectify_rate
 ===============  ======= ==================================================
 

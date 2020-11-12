@@ -26,7 +26,7 @@ Name: testsuite::test_gamma_sup_generator - Test parallel generation of trains
 Synopsis: nest_indirect test_gamma_sup_generator.sli -> -
 
 Description:
-   Creates a Gamma_Sup generator and sends spikes to spike detector. Assert invariant
+   Creates a Gamma_Sup generator and sends spikes to spike recorder. Assert invariant
    results for fixed VP number. This is a partial response to #551. May be adapted
    to other generators.
 
@@ -50,16 +50,16 @@ skip_if_not_threaded
   >> SetKernelStatus
 
   /pg /gamma_sup_generator << /rate 1000. >> Create def
-  /sd /spike_detector Create def
+  /sr /spike_recorder Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
   pnet { pg exch Connect } forall
-  pnet { sd Connect } forall
+  pnet { sr Connect } forall
   
   10. Simulate
 
   % get events, replace vectors with SLI arrays    
-  /ev sd /events get def
+  /ev sr /events get def
   ev keys { /k Set ev dup k get cva k exch put } forall
   ev 
 

@@ -164,7 +164,7 @@ class Network:
             print('Interval to plot spikes: {} ms'.format(raster_plot_interval))
             helpers.plot_raster(
                 self.data_path,
-                'spike_detector',
+                'spike_recorder',
                 raster_plot_interval[0],
                 raster_plot_interval[1],
                 self.net_dict['N_scaling'])
@@ -172,7 +172,7 @@ class Network:
             print('Interval to compute firing rates: {} ms'.format(
                 firing_rates_interval))
             helpers.firing_rates(
-                self.data_path, 'spike_detector',
+                self.data_path, 'spike_recorder',
                 firing_rates_interval[0], firing_rates_interval[1])
             helpers.boxplot(self.data_path, self.net_dict['populations'])
 
@@ -354,12 +354,12 @@ class Network:
         if nest.Rank() == 0:
             print('Creating recording devices.')
 
-        if 'spike_detector' in self.sim_dict['rec_dev']:
+        if 'spike_recorder' in self.sim_dict['rec_dev']:
             if nest.Rank() == 0:
-                print('  Creating spike detectors.')
+                print('  Creating spike recorders.')
             sd_dict = {'record_to': 'ascii',
-                       'label': os.path.join(self.data_path, 'spike_detector')}
-            self.spike_detectors = nest.Create('spike_detector',
+                       'label': os.path.join(self.data_path, 'spike_recorder')}
+            self.spike_recorders = nest.Create('spike_recorder',
                                                n=self.num_pops,
                                                params=sd_dict)
 
@@ -478,8 +478,8 @@ class Network:
             print('Connecting recording devices.')
 
         for i, target_pop in enumerate(self.pops):
-            if 'spike_detector' in self.sim_dict['rec_dev']:
-                nest.Connect(target_pop, self.spike_detectors[i])
+            if 'spike_recorder' in self.sim_dict['rec_dev']:
+                nest.Connect(target_pop, self.spike_recorders[i])
             if 'voltmeter' in self.sim_dict['rec_dev']:
                 nest.Connect(self.voltmeters[i], target_pop)
 

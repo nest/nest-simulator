@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/env python3
 
 # This is the real nest program, which requires NESTIO + ARBOR-NESTIO
 
@@ -30,7 +30,7 @@ pg = nest.Create('poisson_generator', params={'rate': 10.0})
 parrots = nest.Create('parrot_neuron', 100)
 nest.Connect(pg, parrots)
 
-sd2 = nest.Create('spike_detector', params={"record_to": "arbor"})
+sd2 = nest.Create('spike_recorder', params={"record_to": "arbor"})
 nest.Connect(parrots, sd2)
 
 status = nest.GetKernelStatus()

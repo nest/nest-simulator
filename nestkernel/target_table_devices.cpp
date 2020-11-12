@@ -117,6 +117,10 @@ nest::TargetTableDevices::get_connections_to_devices_( const index requested_sou
   if ( requested_source_node_id != 0 )
   {
     const index lid = kernel().vp_manager.node_id_to_lid( requested_source_node_id );
+    if ( kernel().vp_manager.lid_to_node_id( lid ) != requested_source_node_id )
+    {
+      return;
+    }
     get_connections_to_device_for_lid_( lid, requested_target_node_id, tid, syn_id, synapse_label, conns );
   }
   else

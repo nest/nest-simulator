@@ -103,12 +103,6 @@ true
 SLI ] (NONEXISTING) getenv =
 false
 
-SLI ] (NEST_DATA_DIR) getenv
-SLI [2] { (Using root path: )  =only = }
-SLI [3] { (Warning: $NEST_DATA_DIR undefined) =}
-SLI [4] ifelse
-Using root path: /home/gewaltig/nest/release/release
-
 SLI ] (/home) getenv
 false
 
@@ -209,7 +203,7 @@ SLIStartup::checkenvpath( std::string const& envvar, SLIInterpreter* i, std::str
 SLIStartup::SLIStartup( int argc, char** argv )
   : startupfilename( "sli-init.sli" )
   , slilibpath( "/sli" )
-  , slihomepath( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DATADIR )
+  , slilibdir( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DATADIR )
   , slidocdir( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DOCDIR )
   , sliprefix( NEST_INSTALL_PREFIX )
   , verbosity_( SLIInterpreter::M_INFO ) // default verbosity level
@@ -340,43 +334,13 @@ SLIStartup::init( SLIInterpreter* i )
   i->createcommand( getenv_name, &getenvfunction );
   std::string fname;
 
-  // Check for supplied NEST_DATA_DIR
-  std::string slihomepath_env = checkenvpath( "NEST_DATA_DIR", i, slihomepath );
-  if ( slihomepath_env != "" )
-  {
-    slihomepath = slihomepath_env; // absolute path & directory exists
-    i->message(
-      SLIInterpreter::M_DEBUG, "SLIStartup", String::compose( "Using NEST_DATA_DIR=%1", slihomepath ).c_str() );
-  }
-
-  // check for supplied NEST_DOC_DIR
-  std::string slidocdir_env = checkenvpath( "NEST_DOC_DIR", i, slidocdir );
-  if ( slidocdir_env != "" )
-  {
-    slidocdir = slidocdir_env; // absolute path & directory exists
-    i->message( SLIInterpreter::M_DEBUG, "SLIStartup", String::compose( "Using NEST_DOC_DIR=%1", slidocdir ).c_str() );
-  }
-
-  // check for supplied NEST_INSTALL_DIR
-  std::string sliprefix_env = checkenvpath( "NEST_INSTALL_DIR", i, sliprefix );
-  if ( sliprefix_env != "" )
-  {
-    sliprefix = sliprefix_env; // absolute path & directory exists
-    i->message(
-      SLIInterpreter::M_DEBUG, "SLIStartup", String::compose( "Using NEST_INSTALL_DIR=%1", sliprefix ).c_str() );
-  }
-
   // check for sli-init.sli
-  if ( not checkpath( slihomepath, fname ) )
+  if ( not checkpath( slilibdir, fname ) )
   {
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Your NEST installation seems broken. \n" );
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "I could not find the startup file that" );
-    i->message( SLIInterpreter::M_FATAL,
-      "SLIStartup",
-      std::string( std::string( "should have been in " ) + slihomepath ).c_str() );
+    i->message( SLIInterpreter::M_FATAL, "SLIStartup", ( std::string( "should have been in " ) + slilibdir ).c_str() );
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Please re-build NEST and try again." );
-    i->message( SLIInterpreter::M_FATAL, "SLIStartup", "The file install.html in NEST's doc directory tells you how." );
-
     i->message( SLIInterpreter::M_FATAL, "SLIStartup", "Bye." );
 
     // We cannot call i->terminate() here because the interpreter is not
@@ -401,7 +365,7 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( version_name, Token( new StringDatum( NEST_VERSION_STRING ) ) );
   statusdict->insert( exitcode_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
   statusdict->insert( prgbuilt_name, Token( new StringDatum( String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
-  statusdict->insert( prgdatadir_name, Token( new StringDatum( slihomepath ) ) );
+  statusdict->insert( prgdatadir_name, Token( new StringDatum( slilibdir ) ) );
   statusdict->insert( prgdocdir_name, Token( new StringDatum( slidocdir ) ) );
   statusdict->insert( prefix_name, Token( new StringDatum( sliprefix ) ) );
   statusdict->insert( host_name, Token( new StringDatum( NEST_HOST ) ) );

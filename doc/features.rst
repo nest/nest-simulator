@@ -10,9 +10,8 @@ Features
     plasticity (Tsodyks & Markram) and different variants of
     spike-timing dependent plasticity (STDP).
 
-3.  Nest provides a Topology Module for creating complex networks
-    (`Topology Module User Manual
-    (PDF) <https://www.nest-simulator.org/wp-content/uploads/2014/12/NESTTopologyUserManual.pdf>`__)
+3.  NEST provides the possibility to create spatially-structured networks.
+    (:doc:`Guide to spatially-structured networks<guides/spatial/guide_spatially_structured_networks>`)
 
 4.  NEST provides many examples that help you getting started with your
     own simulation project.
@@ -86,12 +85,12 @@ Synapse models
    2000 <http://neuro.cjb.net/cgi/content/abstract/20/1/RC50>`__)
 -  Neuromodulatory synapses using dopamine
 
-Network models
---------------
+Spatially structured networks
+-----------------------------
 
--  Topology Module for creating complex networks (`Topology Module User
-   Manual
-   (PDF) <https://www.nest-simulator.org/wp-content/uploads/2014/12/NESTTopologyUserManual.pdf>`__)
+-  Node positions in 2D or 3D space
+-  Connection-rules and parameters based on node positions
+-  :doc:`Guide to spatially-structured networks<guides/spatial/guide_spatially_structured_networks>`
 
 Interoperability
 ----------------

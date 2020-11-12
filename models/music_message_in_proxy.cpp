@@ -92,7 +92,7 @@ nest::music_message_in_proxy::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_message_in_proxy::State_::set( const DictionaryDatum&, const Parameters_&, Node* node )
+nest::music_message_in_proxy::State_::set( const DictionaryDatum&, const Parameters_&, Node* )
 {
 }
 

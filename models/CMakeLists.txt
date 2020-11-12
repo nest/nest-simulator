@@ -47,7 +47,7 @@ set( models_sources
     gif_cond_exp_multisynapse.h gif_cond_exp_multisynapse.cpp
     gif_pop_psc_exp.h gif_pop_psc_exp.cpp
     ginzburg_neuron.h ginzburg_neuron.cpp
-    glif_cond.h glif_cond.cpp     
+    glif_cond.h glif_cond.cpp
     glif_psc.h glif_psc.cpp
     hh_cond_exp_traub.h hh_cond_exp_traub.cpp
     hh_cond_beta_gap_traub.h hh_cond_beta_gap_traub.cpp
@@ -57,18 +57,25 @@ set( models_sources
     ht_connection.h
     ht_neuron.h ht_neuron.cpp
     iaf_chs_2007.cpp iaf_chs_2007.h
+    iaf_chxk_2008.cpp iaf_chxk_2008.h 
     iaf_cond_alpha.h iaf_cond_alpha.cpp
     iaf_cond_alpha_mc.h iaf_cond_alpha_mc.cpp
     iaf_cond_beta.h iaf_cond_beta.cpp
     iaf_cond_exp.h iaf_cond_exp.cpp
     iaf_cond_exp_sfa_rr.h iaf_cond_exp_sfa_rr.cpp
     iaf_psc_alpha.h iaf_psc_alpha.cpp
+    iaf_psc_alpha_canon.cpp iaf_psc_alpha_canon.cpp
     iaf_psc_alpha_multisynapse.h iaf_psc_alpha_multisynapse.cpp
+    iaf_psc_alpha_ps.cpp iaf_psc_alpha_ps.h
     iaf_psc_delta.h iaf_psc_delta.cpp
+    iaf_psc_delta_ps.cpp iaf_psc_delta_ps.h
     iaf_psc_exp.h iaf_psc_exp.cpp
     iaf_psc_exp_htum.h iaf_psc_exp_htum.cpp
     iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
+    iaf_psc_exp_ps.cpp iaf_psc_exp_ps.h
+    iaf_psc_exp_ps_lossless.cpp iaf_psc_exp_ps_lossless.h
     izhikevich.h izhikevich.cpp
+    jonke_connection.h
     lin_rate.h lin_rate.cpp
     mat2_psc_exp.h mat2_psc_exp.cpp
     mcculloch_pitts_neuron.h mcculloch_pitts_neuron.cpp
@@ -84,8 +91,10 @@ set( models_sources
     music_message_in_proxy.h music_message_in_proxy.cpp
     noise_generator.h noise_generator.cpp
     parrot_neuron.h parrot_neuron.cpp
+    parrot_neuron_ps.cpp parrot_neuron_ps.h
     inhomogeneous_poisson_generator.h inhomogeneous_poisson_generator.cpp
     poisson_generator.h poisson_generator.cpp
+    poisson_generator_ps.cpp poisson_generator_ps.h
     pp_psc_delta.h pp_psc_delta.cpp
     pp_pop_psc_delta.h pp_pop_psc_delta.cpp
     pp_cond_exp_mc_urbanczik.h pp_cond_exp_mc_urbanczik.cpp
@@ -102,7 +111,7 @@ set( models_sources
     sigmoid_rate_gg_1998.h sigmoid_rate_gg_1998.cpp
     sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp
     sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp
-    spike_detector.h spike_detector.cpp
+    spike_recorder.h spike_recorder.cpp
     spike_generator.h spike_generator.cpp
     spin_detector.h spin_detector.cpp
     static_connection.h

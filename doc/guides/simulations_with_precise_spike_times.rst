@@ -64,7 +64,7 @@ generation with ``poisson_generator_ps`` is less efficient than with its
 grid-constrained counterpart ``poisson_generator``.
 
 ``parrot_neuron_ps`` repeats the incoming spikes just as its
-grid-constrained counterpart ``parrot_neuron`` but it is able to
+grid-constrained counterpart ``parrot_neuron``, but it is able to
 represent precise spike times.
 
 ``iaf_psc_delta_ps`` is an integrate-and-fire neuron model with
@@ -96,9 +96,6 @@ location of an outgoing spike, the achieved precision does not depend on
 the simulation resolution h. The model can also be used through the
 `PyNN
 interface <http://neuralensemble.org/trac/PyNN/wiki/ContinuousTimeSpiking>`__.
-
-The source code of these models is in the `*precise* module of
-NEST <https://github.com/nest/nest-simulator/tree/master/precise>`__.
 
 Questions and answers about precise neurons
 -------------------------------------------

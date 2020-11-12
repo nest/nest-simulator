@@ -43,9 +43,9 @@ SeeAlso:
 {
   ResetKernel
 
-  % Create neurons and spike detector
+  % Create neurons and spike recorder
   /iaf_psc_delta 2 Create /neurons Set
-  /spike_detector 1 Create /sd Set
+  /spike_recorder 1 Create /sr Set
 
   % Get neuron one to continously spike
   neurons [1] Take << /I_e 600. >> SetStatus
@@ -57,8 +57,8 @@ SeeAlso:
   neurons [1] Take neurons [2] Take << /rule /all_to_all >>
     << /weight 0. /synapse_model /stdp_synapse >> Connect
 
-  % Create connection to spike detector
-  neurons [1] Take sd Connect
+  % Create connection to spike recorder
+  neurons [1] Take sr Connect
 } def
 
 % Measure event count without deleting connection (ground truth)
@@ -66,7 +66,7 @@ BuildNetwork
 
 100 Simulate
 
-sd /n_events get /n_events_target Set
+sr /n_events get /n_events_target Set
 
 % Measure event count with deleting connection
 BuildNetwork
@@ -77,5 +77,5 @@ neurons [1] Take neurons [2] Take << /rule /all_to_all >>
 100 Simulate
 
 {
-  sd /n_events get n_events_target eq
+  sr /n_events get n_events_target eq
 } assert_or_die

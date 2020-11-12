@@ -292,22 +292,6 @@ STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom()
 }
 
 template < typename targetidentifierT >
-STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom( const STDPFACETSHWConnectionHom& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , a_causal_( rhs.a_causal_ )
-  , a_acausal_( rhs.a_acausal_ )
-  , a_thresh_th_( rhs.a_thresh_th_ )
-  , a_thresh_tl_( rhs.a_thresh_tl_ )
-  , init_flag_( rhs.init_flag_ )
-  , synapse_id_( rhs.synapse_id_ )
-  , next_readout_time_( rhs.next_readout_time_ )
-  , discrete_weight_( rhs.discrete_weight_ )
-  , t_lastspike_( rhs.t_lastspike_ )
-{
-}
-
-template < typename targetidentifierT >
 void
 STDPFACETSHWConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {

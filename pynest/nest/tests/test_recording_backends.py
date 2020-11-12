@@ -107,22 +107,22 @@ class TestRecordingBackends(unittest.TestCase):
 
         nest.SetDefaults("multimeter", {"record_to": "ascii"})
         rb_defaults_mm = nest.GetDefaults("multimeter")["record_to"]
-        rb_defaults_sd = nest.GetDefaults("spike_detector")["record_to"]
+        rb_defaults_sr = nest.GetDefaults("spike_recorder")["record_to"]
 
         self.assertEqual(rb_defaults_mm, "ascii")
-        self.assertEqual(rb_defaults_sd, "memory")
+        self.assertEqual(rb_defaults_sr, "memory")
 
     def testSetDefaultsRecordingBackendProperties(self):
         """Test setting recording backend defaults."""
 
         nest.ResetKernel()
 
-        sd_defaults = {"record_to": "ascii", "file_extension": "nest"}
-        nest.SetDefaults("spike_detector", sd_defaults)
-        sd_defaults = nest.GetDefaults("spike_detector")
+        sr_defaults = {"record_to": "ascii", "file_extension": "nest"}
+        nest.SetDefaults("spike_recorder", sr_defaults)
+        sr_defaults = nest.GetDefaults("spike_recorder")
 
-        self.assertEqual(sd_defaults["record_to"], "ascii")
-        self.assertEqual(sd_defaults["file_extension"], "nest")
+        self.assertEqual(sr_defaults["record_to"], "ascii")
+        self.assertEqual(sr_defaults["file_extension"], "nest")
 
     def testRecordingBackendDefaultsToInstances(self):
         """Test that backend defaults end up in instances.
@@ -141,10 +141,10 @@ class TestRecordingBackends(unittest.TestCase):
         self.assertEqual(mm_status["record_to"], "ascii")
         self.assertEqual(mm_status["file_extension"], "multimeter")
 
-        nest.SetDefaults("spike_detector", {"record_to": "ascii"})
-        sd_status = nest.Create("spike_detector").get()
-        self.assertEqual(sd_status["record_to"], "ascii")
-        self.assertEqual(sd_status["file_extension"], "dat")
+        nest.SetDefaults("spike_recorder", {"record_to": "ascii"})
+        sr_status = nest.Create("spike_recorder").get()
+        self.assertEqual(sr_status["record_to"], "ascii")
+        self.assertEqual(sr_status["file_extension"], "dat")
 
 
 def suite():

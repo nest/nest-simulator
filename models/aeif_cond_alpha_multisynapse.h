@@ -59,7 +59,7 @@ constants, and synaptic conductance modeled by an alpha function.
 
 It allows an arbitrary number of synaptic time constants. Synaptic
 conductance is modeled by an alpha function, as described by A. Roth
-and M.C.W. van Rossum in Computational Modeling Methods for
+and M. C. W. van Rossum in Computational Modeling Methods for
 Neuroscientists, MIT Press 2013, Chapter 6.
 
 The time constants are supplied by an array, "tau_syn", and the pertaining
@@ -170,7 +170,7 @@ namespace nest
  */
 extern "C" int aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
 
-class aeif_cond_alpha_multisynapse : public Archiving_Node
+class aeif_cond_alpha_multisynapse : public ArchivingNode
 {
 
 public:
@@ -424,7 +424,7 @@ aeif_cond_alpha_multisynapse::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }

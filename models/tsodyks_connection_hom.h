@@ -36,7 +36,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Synapse type with short term plasticity using homogenous parameters
+Synapse type with short term plasticity using homogeneous parameters
 
 Description
 +++++++++++
@@ -87,8 +87,9 @@ an arbitrary postsynaptic effect depending on y(t).
 Parameters
 ++++++++++
 
-========  ======  ======================================================
- U        real    Maximum probability of release [0,1]
+========  ======  ========================================================
+ U        real    Parameter determining the increase in u with each spike
+                  [0,1]
  tau_psc  ms      Time constant of synaptic current
  tau_fac  ms      Time constant for facilitation
  tau_rec  ms      Time constant for depression
@@ -96,7 +97,7 @@ Parameters
                   releasable pool [0,1]
  y        real    Initial fraction of synaptic vesicles in the synaptic
                   cleft [0,1]
-========  ======  ======================================================
+========  ======  ========================================================
 
 Remarks:
 
@@ -172,7 +173,7 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  TsodyksConnectionHom( const TsodyksConnectionHom& );
+  TsodyksConnectionHom( const TsodyksConnectionHom& ) = default;
 
   /**
    * Default Destructor.
@@ -304,16 +305,6 @@ TsodyksConnectionHom< targetidentifierT >::TsodyksConnectionHom()
   , y_( 0.0 )
   , u_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-TsodyksConnectionHom< targetidentifierT >::TsodyksConnectionHom( const TsodyksConnectionHom& rhs )
-  : ConnectionBase( rhs )
-  , x_( rhs.x_ )
-  , y_( rhs.y_ )
-  , u_( rhs.u_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

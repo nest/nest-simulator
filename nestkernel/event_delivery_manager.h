@@ -326,8 +326,7 @@ private:
    * Sets marker in MPI buffer that signals end of communication
    * across MPI ranks.
    */
-  void set_complete_marker_target_data_( const thread tid,
-    const AssignedRanks& assigned_ranks,
+  void set_complete_marker_target_data_( const AssignedRanks& assigned_ranks,
     const SendBufferPosition& send_buffer_position );
 
   /**

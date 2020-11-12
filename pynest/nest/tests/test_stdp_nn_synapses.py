@@ -140,14 +140,14 @@ class STDPNNSynapsesTest(unittest.TestCase):
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]
 
-        # The detector is to save the randomly generated spike trains.
-        spike_detector = nest.Create("spike_detector")
+        # The recorder is to save the randomly generated spike trains.
+        spike_recorder = nest.Create("spike_recorder")
 
         nest.Connect(presynaptic_generator + pre_spike_generator, presynaptic_neuron,
                      syn_spec={"synapse_model": "static_synapse"})
-        nest.Connect(postsynaptic_generator + post_spike_generator, presynaptic_neuron,
+        nest.Connect(postsynaptic_generator + post_spike_generator, postsynaptic_neuron,
                      syn_spec={"synapse_model": "static_synapse"})
-        nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_detector,
+        nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_recorder,
                      syn_spec={"synapse_model": "static_synapse"})
         # The synapse of interest itself
         nest.Connect(presynaptic_neuron, postsynaptic_neuron,
@@ -156,7 +156,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = nest.GetStatus(spike_detector, keys='events')[0]
+        all_spikes = nest.GetStatus(spike_recorder, keys='events')[0]
         pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[0]]
         post_spikes = all_spikes['times'][all_spikes['senders'] == postsynaptic_neuron.tolist()[0]]
         weight = nest.GetStatus(plastic_synapse_of_interest, keys='weight')[0]

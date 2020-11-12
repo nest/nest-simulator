@@ -83,7 +83,7 @@ junit_open ()
         bail_out 'junit_open: file_name not given!'
     fi
 
-    JUNIT_FILE="${TEST_OUTDIR}/$1.xml"
+    JUNIT_FILE="${REPORTDIR}/$1.xml"
     JUNIT_TESTS=0
     JUNIT_SKIPS=0
     JUNIT_FAILURES=0
@@ -95,7 +95,7 @@ junit_open ()
 
     echo '<?xml version="1.0" encoding="UTF-8" ?>' > "${JUNIT_FILE}"
 
-    echo "<testsuite errors=\"0\" failures=XXX name=\"$1\" tests=XXX skip=XXX time=XXX timestamp=\"${timestamp}\">" >> "${JUNIT_FILE}"
+    echo "<testsuite errors=\"0\" failures=XXX name=\"$1\" tests=XXX skipped=XXX time=XXX timestamp=\"${timestamp}\">" >> "${JUNIT_FILE}"
     echo '  <properties>' >> "${JUNIT_FILE}"
     echo "    <property name=\"os.arch\" value=\"${INFO_ARCH}\" />" >> "${JUNIT_FILE}"
     echo "    <property name=\"os.name\" value=\"${INFO_OS}\" />" >> "${JUNIT_FILE}"
@@ -141,7 +141,7 @@ junit_close ()
 
     portable_inplace_sed "${JUNIT_FILE}" "s/time=XXX/time=\"${TIME_TOTAL}\"/"
     portable_inplace_sed "${JUNIT_FILE}" "s/tests=XXX/tests=\"${JUNIT_TESTS}\"/"
-    portable_inplace_sed "${JUNIT_FILE}" "s/skip=XXX/skip=\"${JUNIT_SKIPS}\"/"
+    portable_inplace_sed "${JUNIT_FILE}" "s/skipped=XXX/skipped=\"${JUNIT_SKIPS}\"/"
     portable_inplace_sed "${JUNIT_FILE}" "s/failures=XXX/failures=\"${JUNIT_FAILURES}\"/"
 
     echo '  <system-out><![CDATA[]]></system-out>' >> "${JUNIT_FILE}"

@@ -50,7 +50,6 @@ doc_path = os.path.abspath(os.path.dirname(__file__))
 root_path = os.path.abspath(doc_path + "/..")
 
 sys.path.insert(0, os.path.abspath(root_path))
-sys.path.insert(0, os.path.abspath(root_path + '/topology'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
 sys.path.insert(0, os.path.abspath(doc_path))
@@ -203,7 +202,7 @@ from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 def config_inited_handler(app, config):
     ExtractUserDocs(
         relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
-        outdir="userdocs/"
+        outdir="models/"
     )
 
 
@@ -212,17 +211,17 @@ nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 's'),
                   ('cpp:identifier', 'CommonSynapseProperties'),
                   ('cpp:identifier', 'Connection<targetidentifierT>'),
-                  ('cpp:identifier', 'Archiving_Node'),
+                  ('cpp:identifier', 'ArchivingNode'),
                   ('cpp:identifier', 'DeviceNode'),
                   ('cpp:identifier', 'Node'),
-                  ('cpp:identifier', 'Clopath_Archiving_Node'),
+                  ('cpp:identifier', 'ClopathArchivingNode'),
                   ('cpp:identifier', 'MessageHandler'),
                   ('cpp:identifer', 'CommonPropertiesHomW')]
 
 
 def setup(app):
-    app.add_stylesheet('css/custom.css')
-    app.add_stylesheet('css/pygments.css')
+    app.add_css_file('css/custom.css')
+    app.add_css_file('css/pygments.css')
     app.add_js_file("js/copybutton.js")
     app.add_js_file("js/custom.js")
 

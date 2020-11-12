@@ -1,7 +1,7 @@
-PyNEST microcircuit
-===================
+Cortical microcircuit model
+===========================
 
-This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann [1]_. 
+This is a PyNEST implementation of the cortical microcircuit model by Potjans and Diesmann [1]_.
 
 Here you can inspect all files belonging to this example:
 

@@ -86,3 +86,8 @@ else ()
       COMMAND ${CMAKE_COMMAND} -E echo "Doxygen is not found on your system. Cannot build full documentation."
       )
 endif ()
+
+add_custom_target( html
+    sphinx-build -M html "${PROJECT_SOURCE_DIR}/doc" "${PROJECT_BINARY_DIR}/doc"
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/doc"
+)

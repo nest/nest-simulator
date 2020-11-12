@@ -46,14 +46,14 @@ source_suffix = ['.rst']
 # add these directories to sys.path here. If the dit rectory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-doc_path = os.path.abspath(os.path.dirname(__file__))
-root_path = os.path.abspath(doc_path + "/..")
+build_path = Path(os.environ['OLDPWD'])
+doc_path = Path(__file__).resolve().parent
+root_path = (doc_path / "..").resolve()
 
-sys.path.insert(0, os.path.abspath(root_path))
-sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
-sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
-sys.path.insert(0, os.path.abspath(doc_path))
-
+sys.path.insert(0, str(root_path))
+sys.path.insert(0, str(root_path / 'pynest/'))
+sys.path.insert(0, str(root_path / 'pynest/nest'))
+sys.path.insert(0, str(doc_path))
 
 # -- Mock pynestkernel ----------------------------------------------------
 # The mock_kernel has to be imported after setting the correct sys paths.
@@ -61,9 +61,9 @@ from mock_kernel import convert  # noqa
 
 # create mockfile
 
-excfile = root_path + "/pynest/nest/lib/hl_api_exceptions.py"
-infile = root_path + "/pynest/pynestkernel.pyx"
-outfile = doc_path + "/pynestkernel_mock.py"
+excfile = root_path / "pynest/nest/lib/hl_api_exceptions.py"
+infile = root_path / "pynest/pynestkernel.pyx"
+outfile = doc_path / "pynestkernel_mock.py"
 
 with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as fout:
     mockedmodule = fexc.read() + "\n\n"
@@ -110,9 +110,9 @@ templates_path = ['_templates']
 sphinx_gallery_conf = {
      # 'doc_module': ('sphinx_gallery', 'numpy'),
      # path to your examples scripts
-     'examples_dirs': '../pynest/examples',
+     'examples_dirs': root_path / 'pynest/examples',
      # path where to save gallery generated examples
-     'gallery_dirs': 'auto_examples',
+     'gallery_dirs': build_path / 'doc/auto_examples',
      # 'backreferences_dir': False
      'plot_gallery': 'False'
 }
@@ -201,7 +201,8 @@ from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 
 def config_inited_handler(app, config):
     ExtractUserDocs(
-        relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
+        listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=root_path),
+        basedir=root_path,
         outdir="models/"
     )
 
@@ -310,4 +311,4 @@ def copytreeglob(source, target, glob='*.png'):
         copyfile(source/relativename, target/relativename)
 
 
-copytreeglob("../pynest/examples/Potjans_2014", "examples", '*.png')
+copytreeglob(root_path / "pynest/examples/Potjans_2014", build_path / "examples", '*.png')

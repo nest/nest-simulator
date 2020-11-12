@@ -628,7 +628,7 @@ parameters of the connections:
     n1 = nest.Create('iaf_psc_alpha', 2)
     n2 = nest.Create('iaf_psc_alpha')
     nest.Connect(n1, n2)
-    conn = nest.GetConnections(n1)
+    conn = nest.GetConnections()
     print(conn.get())
 
         {'delay': [1.0, 1.0],
@@ -712,26 +712,25 @@ by using the ``set()`` function on the SynapseCollection:
 
 ::
 
-    n1 = nest.Create('iaf_psc_alpha')
-    n2 = nest.Create('iaf_psc_alpha')
+    n1 = nest.Create('iaf_psc_alpha', 2)
+    n2 = nest.Create('iaf_psc_alpha', 2)
     nest.Connect(n1, n2)
     
-    conn = nest.GetConnections(n1)
+    conn = nest.GetConnections()
     conn.set(weight=2.0)
 
     print(conn.get())
 
-        {'delay': 1.0,
-         'port': 0,
-         'receptor': 0,
-         'sizeof': 32,
-         'source': 1,
-         'synapse_id': 18,
-         'synapse_model':
-         'static_synapse',
-         'target': 2,
-         'target_thread': 0,
-         'weight': 2.0}
+        {'delay': [1.0, 1.0, 1.0, 1.0],
+         'port': [0, 1, 2, 3],
+         'receptor': [0, 0, 0, 0],
+         'sizeof': [32, 32, 32, 32],
+         'source': [1, 1, 2, 2],
+         'synapse_id': [18, 18, 18, 18],
+         'synapse_model': ['static_synapse', 'static_synapse', 'static_synapse', 'static_synapse'],
+         'target': [3, 4, 3, 4],
+         'target_thread': [0, 0, 0, 0],
+         'weight': [2.0, 2.0, 2.0, 2.0]}
 
 Updating a single parameter is done by calling ``set(parameter_name=parameter_value)``.
 You can use a single value, a list, or a ``nest.Parameter`` as value. If a single

@@ -555,3 +555,51 @@ can then be given as arguments to the `SetStatus()` functions:
       'delay': 1.0,
       'source': 1,
       'receptor': 0}]
+
+
+Connecting sparse matrices with array indexing
+----------------------------------------------
+
+One may want to generate connections from a sparse matrix of connection weights.
+With a weight matrix in the form
+
+.. math::
+
+    W = \begin{bmatrix}
+    w_{11} & w_{21} & \cdots & w_{n1} \\
+    w_{12} & w_{22} & \cdots & w_{n2} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    w_{1m} & w_{2m} & \cdots & w_{nm} \\
+    \end{bmatrix},
+
+where :math:`w_{ij}` is the weight of the connection with presynaptic node :math:`i`
+and postsynaptic node :math:`j`. Now assume that some weights are zero. Instead of
+creating connections with zero weight in these cases, we want to not create these
+connections at all.
+
+There is currently no way to create connections from the whole matrix in one go, so we
+will iterate the presynaptic neurons and connect one column at the time. We assume
+that we have :math:`n` presynaptic and :math:`m` postsynaptic nodes in the NodeCollections
+`presynaptic` and `postsynaptic`, respectively. We also assume that we have a weight matrix
+as a two-dimensional NumPy array `W`, with :math:`n` columns and :math:`m` rows.
+
+::
+
+    for i, pre in enumerate(presynaptic):
+        # Extract the weights column.
+        weights = W[:, i]
+
+        # To only connect pairs where the weight is nonzero,
+        # we use array indexing to extract the weights and postsynaptic neurons.
+        nonzero_indices = numpy.where(weights != 0)[0]
+        weights = weights[nonzero_indices]
+        post = postsynaptic[nonzero_indices]
+
+        # Generate an array of node IDs for the column, with length based on the
+        # number of nonzero elements. dtype must be an integer.
+        pre_array = numpy.ones(len(nonzero_indices), dtype=numpy.int64)*pre.get('global_id')
+
+        # nest.Connect() automatically converts post to a NumPy array because pre_array
+        # contains multiple identical node IDs. When also specifying a one_to_one connection rule,
+        # the arrays of node IDs can then be connected.
+        nest.Connect(pre_array, post, conn_spec='one_to_one', syn_spec={'weight': weights})

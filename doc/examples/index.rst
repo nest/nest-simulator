@@ -87,7 +87,7 @@ PyNEST examples
    :maxdepth: 1
    :caption: Cortical microcircuit example
 
-   Microcircuit model (based on Potjans and Diesmann, 2014) <pynest_microcircuit>
+   Cortical microcircuit model (based on Potjans and Diesmann, 2014) <cortical_microcircuit_index>
 
 .. toctree::
    :maxdepth: 1

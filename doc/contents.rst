@@ -34,6 +34,6 @@ Table of Contents
    NEST Initiative <https://www.nest-initiative.org/>
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    license

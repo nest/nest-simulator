@@ -155,10 +155,8 @@ before_install:
            find /usr/local/Cellar/ -name Python\.h
            find /usr/local/Cellar/ -name \*python\*dylib
          fi
-	 
          # Upgrade pip and setuptools
          pip install --upgrade pip setuptools
-	 
          # Installing additional packages using pip as they only have
          # outdated versions in the Travis package whitelist.
          # terminaltables is required by parse_travis_log.py to create

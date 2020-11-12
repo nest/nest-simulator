@@ -1,6 +1,6 @@
 
 # .travis.yaml
-#
+macos-cython-numpy#
 # This file is part of NEST.
 #
 # Copyright (C) 2004 The NEST Initiative
@@ -163,7 +163,7 @@ before_install:
          # the build summary.
          pip install scipy junitparser mpi4py
          if [ "$TRAVIS_OS_NAME" != "osx" ]; then
-	   pip install numpy==1.16.5 nose
+           pip install numpy==1.16.5 nose
            pip install cython matplotlib terminaltables
          else  
            pip3 install numpy cython matplotlib terminaltables

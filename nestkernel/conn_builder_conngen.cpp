@@ -106,7 +106,7 @@ ConnectionGeneratorBuilder::connect_()
     const bool indices_differ = ( w_idx != d_idx );
     if ( not( d_idx_is_0_or_1 and w_idx_is_0_or_1 and indices_differ ) )
     {
-      throw BadProperty( "d_idx and w_idx have to be either 0 or 1 and cannot be the same." );
+      throw BadProperty( "The indices for weight and delay have to be either 0 or 1 and cannot be the same." );
     }
 
     // connect source to target with weight and delay

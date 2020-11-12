@@ -25,7 +25,7 @@
 % libneurosim ([1]) from the SLI level. It connects two small neuronal
 % populations using a connection pattern specified in the XML notation
 % of the the Connection Set Algebra (CSA, [2]). The example relies on
-% the C++ implementation of the CSA ([3]). At time of writing, this
+% the C++ implementation of the CSA ([3]). At the time of writing, this
 % implementation is not publically available and the example itself is
 % thus a bit pointless. It is left here for future reference.
 %

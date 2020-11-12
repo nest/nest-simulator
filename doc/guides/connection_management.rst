@@ -573,12 +573,12 @@ Assume we have a weight matrix on the form:
     \end{bmatrix},
 
 where :math:`w_{ij}` is the weight of the connection with presynaptic node :math:`i`
-and postsynaptic node :math:`j`. Now assume that some weights are zero. Instead of
-creating connections with zero weight in these cases, we want to not create these
+and postsynaptic node :math:`j`. We can assume that some weights are zero. Instead of
+creating connections with zero weight in these cases, we do not want to create these
 connections at all.
 
 There is currently no way to create connections from the whole matrix in one go, so we
-will iterate the presynaptic neurons and connect one column at the time. We assume
+will iterate the presynaptic neurons and connect one column at a time. We assume
 that we have :math:`n` presynaptic and :math:`m` postsynaptic nodes in the NodeCollections
 `presynaptic` and `postsynaptic`, respectively. We also assume that we have a weight matrix
 as a two-dimensional NumPy array `W`, with :math:`n` columns and :math:`m` rows.
@@ -589,7 +589,7 @@ as a two-dimensional NumPy array `W`, with :math:`n` columns and :math:`m` rows.
         # Extract the weights column.
         weights = W[:, i]
 
-        # To only connect pairs where the weight is nonzero,
+        # To only connect pairs with a nonzero weight,
         # we use array indexing to extract the weights and postsynaptic neurons.
         nonzero_indices = numpy.where(weights != 0)[0]
         weights = weights[nonzero_indices]

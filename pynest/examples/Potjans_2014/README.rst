@@ -75,14 +75,14 @@ Recommendations for benchmarking
 
 For benchmark simulations assessing network-construction and state-propagation times, the recommended changes to the default parameters are the following:
 
-``sim_params.py``:
+:doc:`sim_params.py <../auto_examples/Potjans_2014/sim_params>`:
 
 * ``'t_sim': 10000.0``: The biological simulation time should be at least `10` s for measuring the state propagation time.
 * ``'rec_dev': []``: No recording devices.
 * ``'local_num_threads': t``: Adjust the number of threads ``t`` per MPI process as needed for the benchmarks.
 * ``'print_time': False'``: No printing of time progress.
 
-``network_params.py``:
+:doc:`network_params.py <../auto_examples/Potjans_2014/network_params>`:
 
 * ``'N_scaling': 1.``: Full number of neurons.
 * ``'K_scaling': 1.``: Full indegrees.

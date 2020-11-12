@@ -336,7 +336,10 @@ def msg_summary_pep8(log_filename, msg_pep8_section_start,
 
 def makebuild_summary(log_filename, msg_make_section_start,
                       msg_make_section_end):
-    """Read the NEST Travis CI build log file and return the number of build
+    """
+    Parse NEST Travis CI build log and summarize result.
+
+    Read the NEST Travis CI build log file and return the number of build
     error and warning messages as well as dictionaries summarizing their
     occurrences.
 
@@ -348,7 +351,7 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
     Returns
     -------
-    True or False depending on the number of error messages.
+    Build success: True if no errors and limited number of warnings (depends on type).
     Number of error messages.
     Dictionary of file names and the number of errors within these files.
     Number of warning messages.
@@ -360,18 +363,13 @@ def makebuild_summary(log_filename, msg_make_section_start,
     number_of_error_msgs = 0
     number_of_warning_msgs = 0
     in_make_section = False
-    if NEST_BUILD_TYPE == 'MINIMAL':
-        expected_warnings = 8
-    elif NEST_BUILD_TYPE == 'MPI_ONLY':
-        expected_warnings = 265
-    elif NEST_BUILD_TYPE == 'OPENMP_ONLY':
-        expected_warnings = 8
-    elif NEST_BUILD_TYPE == 'FULL':
-        expected_warnings = 4035
-    elif NEST_BUILD_TYPE == 'FULL_NO_EXTERNAL_FEATURES':
+    if NEST_BUILD_TYPE in ['MINIMAL', 'OPENMP_ONLY', 'FULL_NO_EXTERNAL_FEATURES']:
         expected_warnings = 8
     else:
-        expected_warnings = 0  # Set to 0 if none of the above build-types, to not crash the script
+        # When building against external libraries, e.g., OpenMPI or MUSIC, we have
+        # no control over warnings and testing their number is quite meaningless.
+        # We set a limit that is essentially infinity but still integer type.
+        expected_warnings = 10**9
 
     with open(log_filename) as fh:
         for line in fh:
@@ -396,8 +394,9 @@ def makebuild_summary(log_filename, msg_make_section_start,
                     number_of_warning_msgs += 1
 
                 if is_message(line, msg_make_section_end):
-                    # The log file contains only one 'make' section, return.
-                    if number_of_error_msgs == 0 and number_of_warning_msgs == expected_warnings:
+                    # Because the log file contains only one 'make' section,
+                    # we can return here.
+                    if number_of_error_msgs == 0 and number_of_warning_msgs <= expected_warnings:
                         return(True, number_of_error_msgs, error_summary,
                                number_of_warning_msgs, expected_warnings, warning_summary)
                     else:

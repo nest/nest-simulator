@@ -215,6 +215,10 @@ echo "MSGBLD0232: Setting configuration variables."
 # set above based on the ones set in the build stage matrix in
 # '.travis.yml'.
 
+# Compile with warnings by default, but turn off if building against
+# libraries triggering many warnings.
+COMPILE_WITH_WARNINGS="ON"
+
 if [ "$xOPENMP" = "1" ] ; then
     CONFIGURE_OPENMP="-Dwith-openmp=ON"
 else
@@ -223,6 +227,7 @@ fi
 
 if [ "$xMPI" = "1" ] ; then
     CONFIGURE_MPI="-Dwith-mpi=ON"
+    COMPILE_WITH_WARNINGS="OFF"
 else
     CONFIGURE_MPI="-Dwith-mpi=OFF"
 fi
@@ -245,6 +250,7 @@ if [ "$xMUSIC" = "1" ] ; then
     CONFIGURE_MUSIC="-Dwith-music=$HOME/.cache/music.install"
     chmod +x extras/install_music.sh
     ./extras/install_music.sh
+    COMPILE_WITH_WARNINGS="OFF"
 else
     CONFIGURE_MUSIC="-Dwith-music=OFF"
 fi
@@ -292,9 +298,11 @@ if [ "$xLIBNEUROSIM" = "1" ] ; then
     else
         export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
     fi
+    COMPILE_WITH_WARNINGS="OFF"
 else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
+
 
 cp extras/nestrc.sli ~/.nestrc
 # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
@@ -318,7 +326,7 @@ cmake \
     -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
     -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \
     -Dwith-optimize=ON \
-    -Dwith-warning=ON \
+    -Dwith-warning="$COMPILE_WITH_WARNINGS" \
     $CONFIGURE_BOOST \
     $CONFIGURE_OPENMP \
     $CONFIGURE_MPI \

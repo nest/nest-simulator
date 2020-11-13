@@ -225,6 +225,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
             raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
                              "be specified and contain at least the synapse model.")
 
+        # In case of misspelling
         if "weights" in processed_syn_spec:
             raise ValueError("To specify weights, use 'weight' in syn_spec.")
         if "delays" in processed_syn_spec:

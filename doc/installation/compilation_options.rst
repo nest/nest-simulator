@@ -122,16 +122,16 @@ NEST supports distributed simulations using the Message Passing
 Interface (MPI). Depending on your setup, you have to use one of the
 following steps in order to add support for MPI:
 
-  1. Try ``-Dwith-mpi=ON`` as argument for ``cmake``. If this works,
-     fine.
+  1. Try ``-Dwith-mpi=ON`` as argument for ``cmake``.
   2. If 1. does not work, or you want to use a non-standard MPI, try
-     ``-Dwith-mpi=/path/to/my/mpi``. The directory `mpi` should
+     ``-Dwith-mpi=/path/to/my/mpi``. The `mpi` directory should
      contain the `include`, `lib` and `bin` subdirectories of the MPI
      installation.
   3. If 2. does not work, but you know the correct compiler wrapper
-     for your installation, try to add the following to the invocation
-     of ``cmake``: ``-DMPI_CXX_COMPILER=myC++_CompilerWrapper
-     -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON``
+     for your installation, try adding the following to the invocation
+     of ``cmake``::
+         -DMPI_CXX_COMPILER=myC++_CompilerWrapper
+         -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON
 
 When running large-scale parallel simualations and recording from many
 neurons, writing to ASCII files might become prohibitively slow due to
@@ -143,11 +143,11 @@ installation path to the ``-Dwith-sionlib=<path>`` option when calling
 
 If you compiled NEST with support for MPI and also want to run the
 corresponding tests, you have to tell it about how your
-``mpirun``/``mpiexec`` command works by defining the function
-``mpirun`` in your ``~/.nestrc`` file. The file already contains an
+``mpirun``/``mpiexec`` command works by defining the ``mpirun``
+function in your ``~/.nestrc`` file. The file already contains an
 example implementation that should work with the `OpenMPI
 <http://www.openmpi.org>`__ implementation. For more details, see the
-documentation of the :doc:`configuration`.
+documentation on the :doc:`configuration`.
 
 See the :doc:`../guides/parallel_computing` to learn how to execute
 threaded and distributed simulations with NEST.

@@ -83,7 +83,7 @@ Indexing
 
    NodeCollections support array indexing. Array indexing is done by passing a list or tuple of
    indices when indexing. A NodeCollection with the node IDs at the chosen indices is then returned.
-   Note that all indices must be unique because all node IDs in a NodeCollection must be unique.
+   Note that all indices must be strictly ascending and unique because all node IDs in a NodeCollection must be unique.
 
    >>>  print(nrns[[1, 2, 5, 6]])
         NodeCollection(metadata=None,

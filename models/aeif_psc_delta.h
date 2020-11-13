@@ -68,7 +68,7 @@ Description
 +++++++++++
 
 aeif_psc_delta is the adaptive exponential integrate and fire neuron
-according to Brette and Gerstner (2005), with post-synaptic currents
+according to Brette and Gerstner (2005), with postsynaptic currents
 in the form of delta spikes.
 
 This implementation uses the embedded 4th order Runge-Kutta-Fehlberg

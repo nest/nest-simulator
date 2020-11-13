@@ -120,7 +120,7 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
 The same formula applies for :math:`q_{\gamma}`.
 
 
-The shape of post synaptic current is exponential.
+The shape of postsynaptic current is exponential.
 
 Parameters
 ++++++++++

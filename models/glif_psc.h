@@ -44,7 +44,7 @@ Description
 
 glif_psc provides five generalized leaky integrate-and-fire
 (GLIF) models [1]_ with alpha-function shaped synaptic currents.
-Incoming spike events induce a post-synaptic change of current modeled
+Incoming spike events induce a postsynaptic change of current modeled
 by an alpha function [2]_. The alpha function is normalized such that an event
 of weight 1.0 results in a peak current of 1 pA at t = tau_syn. By default,
 glif_psc has a single synapse that is accessible through receptor_port 1.
@@ -273,7 +273,7 @@ private:
     double threshold_spike_;           //!< spike component of threshold in mV
     double threshold_voltage_;         //!< voltage component of threshold in mV
     double I_;                         //!< external current in pA
-    double I_syn_;                     //!< post synaptic current in pA
+    double I_syn_;                     //!< postsynaptic current in pA
     std::vector< double > ASCurrents_; //!< after-spike currents in pA
     double ASCurrents_sum_;            //!< in pA
     int refractory_steps_;             //!< Number of refractory steps remaining
@@ -321,7 +321,7 @@ private:
     std::vector< double > P32_; //!< synaptic/membrane current evolution parameter
 
     /** Amplitude of the synaptic current.
-              This value is chosen such that a post-synaptic current with
+              This value is chosen such that a postsynaptic current with
               weight one has an amplitude of 1 pA.
     */
     std::vector< double > PSCInitialValues_;

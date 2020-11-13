@@ -70,8 +70,8 @@ Description
 hh_psc_alpha is an implementation of a spiking neuron using the Hodgkin-Huxley
 formalism.
 
-1. Post-synaptic currents
-Incoming spike events induce a post-synaptic change of current modelled
+1. Postsynaptic currents
+Incoming spike events induce a postsynaptic change of current modelled
 by an alpha function. The alpha function is normalized such that an event of
 weight 1.0 results in a peak current of 1 pA.
 

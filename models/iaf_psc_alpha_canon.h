@@ -47,7 +47,7 @@ Short description
 +++++++++++++++++
 
 Current-based leaky integrate-and-fire neuron with alpha-shaped
-post-synaptic currents - canonical implementation of precise spike
+postsynaptic currents - canonical implementation of precise spike
 timing version
 
 Description

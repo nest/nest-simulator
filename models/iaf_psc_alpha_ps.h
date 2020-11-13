@@ -47,7 +47,7 @@ Short description
 +++++++++++++++++
 
 Current-based leaky integrate-and-fire neuron with alpha-shaped
-post-synaptic currents using regula falsi method for approximation of
+postsynaptic currents using regula falsi method for approximation of
 threshold crossing
 
 Description

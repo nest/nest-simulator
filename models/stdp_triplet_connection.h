@@ -47,7 +47,7 @@ Notes:
 - Presynaptic traces r_1 and r_2 of [1]_ are stored in the connection as
   Kplus and Kplus_triplet and decay with time-constants tau_plus and
   tau_plus_triplet, respectively.
-- Postsynaptic traces o_1 and o_2 of [1]_ are acquired from the post-synaptic
+- Postsynaptic traces o_1 and o_2 of [1]_ are acquired from the postsynaptic
   neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
   tau_minus and tau_minus_triplet, respectively. These two time-constants
   can be set as properties of the postsynaptic neuron.
@@ -244,20 +244,20 @@ STDPTripletConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   double dendritic_delay = get_delay();
   Node* target = get_target( t );
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
-  // facilitation due to post-synaptic spikes since last pre-synaptic spike
+  // facilitation due to postsynaptic spikes since last pre-synaptic spike
   while ( start != finish )
   {
-    // post-synaptic spike is delayed by dendritic_delay so that
+    // postsynaptic spike is delayed by dendritic_delay so that
     // it is effectively late by that much at the synapse.
     double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
 
     // subtract 1.0 yields the Kminus_triplet value just prior to
-    // the post synaptic spike, implementing the t-epsilon in
+    // the postsynaptic spike, implementing the t-epsilon in
     // Pfister et al, 2006
     double ky = start->Kminus_triplet_ - 1.0;
     ++start;

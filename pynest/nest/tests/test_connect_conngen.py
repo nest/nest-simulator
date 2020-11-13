@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_csa.py
+# test_connect_conngen.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-CSA tests
+Conngen tests
 """
 
 import unittest
@@ -48,10 +48,10 @@ HAVE_LIBNEUROSIM = nest.ll_api.sli_pop()
     not HAVE_LIBNEUROSIM,
     'NEST was built without support for libneurosim'
 )
-class CSATestCase(unittest.TestCase):
-    """CSA tests"""
+class ConngenTestCase(unittest.TestCase):
+    """Conngen tests"""
 
-    def test_CSA_OneToOne_params(self):
+    def test_Conngen_OneToOne_params(self):
         """One-to-one connectivity using conngen Connect with parameters"""
 
         nest.ResetKernel()
@@ -86,7 +86,7 @@ class CSATestCase(unittest.TestCase):
             conns = nest.GetConnections(targets[i])
             self.assertEqual(len(conns), 0)
 
-    def test_CSA_OneToOne_synmodel(self):
+    def test_Conngen_OneToOne_synmodel(self):
         """One-to-one connectivity using conngen Connect and synapse_model"""
 
         nest.ResetKernel()
@@ -119,7 +119,7 @@ class CSATestCase(unittest.TestCase):
             conns = nest.GetConnections(targets[i])
             self.assertEqual(len(conns), 0)
 
-    def test_CSA_error_unknown_synapse(self):
+    def test_Conngen_error_unknown_synapse(self):
         """
         Error handling for unknown synapse model in conngen Connect
         """
@@ -138,7 +138,7 @@ class CSATestCase(unittest.TestCase):
         self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType",
                                nest.Connect, pop, pop, connspec, synspec)
 
-    def test_CSA_error_collocated_synapses(self):
+    def test_Conngen_error_collocated_synapses(self):
         """
         Error handling for collocated synapses in conngen Connect
         """
@@ -155,7 +155,7 @@ class CSATestCase(unittest.TestCase):
         self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
                                nest.Connect, pop, pop, connspec, synspec)
 
-    def test_CSA_error_weight_and_delay_in_synspec_and_conngen(self):
+    def test_Conngen_error_weight_and_delay_in_synspec_and_conngen(self):
         """
         Error handling for conflicting weight/delay in conngen Connect
         """
@@ -186,7 +186,7 @@ class CSATestCase(unittest.TestCase):
 
 def suite():
 
-    suite = unittest.makeSuite(CSATestCase, 'test')
+    suite = unittest.makeSuite(ConngenTestCase, 'test')
     return suite
 
 

@@ -561,7 +561,7 @@ Connecting sparse matrices with array indexing
 ----------------------------------------------
 
 One may want to generate connections from a sparse matrix of connection weights.
-Assume we have a weight matrix on the form:
+Assume we have a weight matrix of the form:
 
 .. math::
 

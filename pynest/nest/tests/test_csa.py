@@ -135,12 +135,27 @@ class CSATestCase(unittest.TestCase):
 
         pop = nest.Create("iaf_psc_alpha", n_neurons)
 
-        # We expect conngen Connect to fail with an UnknownSynapseType
-        # exception if an unknown synapse model is given
         self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType",
                                nest.Connect, pop, pop, connspec, synspec)
 
-    def test_CSA_error_weightdelay_in_synspec_and_conngen(self):
+    def test_CSA_error_collocated_synapses(self):
+        """
+        Error handling for collocated synapses in conngen Connect
+        """
+
+        nest.ResetKernel()
+
+        # Create a plain connection set
+        cg = csa.cset(csa.oneToOne)
+        connspec = {"rule": "conngen", "cg": cg}
+        synspec = nest.CollocatedSynapses({'weight': -2.}, {'weight': 2.})
+
+        pop = nest.Create('iaf_psc_alpha', 3)
+
+        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
+                               nest.Connect, pop, pop, connspec, synspec)
+
+    def test_CSA_error_weight_and_delay_in_synspec_and_conngen(self):
         """
         Error handling for conflicting weight/delay in conngen Connect
         """

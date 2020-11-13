@@ -337,6 +337,25 @@ or a ``nest.Parameter``
 Note that some parameters, like `global_id`, cannot be set. The documentation of a specific model
 will point out which parameters can be set and which are read-only.
 
+
+Dictionary with lists when setting parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+It is now possible to use a dictionary with lists when setting node parameters
+with ``Create()``, ``set()`` or ``SetStatus()``. The values of the lists will 
+be distributed across the nodes. The way to do this previously was to apply a
+lists of dictionaries. Note that this is still possible.
+
+The values in the single dictionary can also be single values, the value will
+then be applied to each node. You can mix and match as you want, the dictionary
+can contain lists and single values at the same time.
+
+::
+
+    parameter_list = {"I_e": [200.0, 150.0], "tau_m": 20.0, "V_m": [-77.0, -66.0]}
+    pop = nest.Create("iaf_psc_alpha", 2, params= {"I_e": [200.0, 150.0], "tau_m": 20.0, "V_m": [-77.0, -66.0]})
+
+    print(pop.get(["I_e", "tau_m", "V_m"]))
+
 .. _connect_arrays:
 
 New functionality for connecting arrays of node IDs

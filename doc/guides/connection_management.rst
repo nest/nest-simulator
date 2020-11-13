@@ -3,6 +3,10 @@
 Connection Management
 =====================
 
+.. contents:: On this page, you'll find
+   :local:
+   :depth: 2
+
 In NEST, connections are created with the `Connect()` function. You can
 create connections with different types of connectivity patterns, which
 are defined inside the function under the ``conn_spec`` argument and the
@@ -209,8 +213,8 @@ scalars, arrays or distributions (specified as a ``nest.Parameter``). One
 synapse dictionary can contain an arbitrary combination of parameter
 types, as long as they agree with the connection routine (``rule``).
 
-Scalar
-~~~~~~
+Scalar parameters
+~~~~~~~~~~~~~~~~~
 
 Scalar parameters must be given as floats except for the
 'receptor_type' which has to be initialized as an integer. For more
@@ -226,8 +230,8 @@ parameter is given as a scalar, the value will be applied to all connections.
     syn_dict ={'synapse_model': 'static_synapse', 'weight': 2.5, 'delay': 0.5, 'receptor_type': 1}
     nest.Connect(A, B, syn_spec=syn_dict)
 
-Array
-~~~~~
+Array parameters
+~~~~~~~~~~~~~~~~
 
 Array parameters can be used in conjunction with the rules
 ``one_to_one``, ``all_to_all``, ``fixed_indegree``, ``fixed_outdegree``
@@ -359,7 +363,7 @@ NEST <random_numbers>`.
 
 .. _collocated_synapses:
 
-Collocated Synapses
+Collocated synapses
 ~~~~~~~~~~~~~~~~~~~
 
 It is also possible to create several connections with different synapses simultaneously. The different synapse dictionaries will
@@ -702,7 +706,7 @@ By iterating the SynapseCollection, a single connection SynapseCollection is ret
       2
 
 
-Modifying existing Connections
+Modifying Existing Connections
 ------------------------------
 
 To modify the connections of an existing connection, one has to first

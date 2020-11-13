@@ -1547,7 +1547,8 @@ Functions
 
 Some functions have also been removed. The removed functions where either related to subnets,
 or they can be replaced by using other functions with indexing into a NodeCollection.
-The removed functions are (see also :doc:`../ref_material/nest2_vs_3` for a full list of functions that have changed):
+The removed functions are (see also :doc:`nest2_to_nest3_detailed_transition_guide`
+for a full list of functions that have changed):
 
 - BeginSubnet
 - ChangeSubnet

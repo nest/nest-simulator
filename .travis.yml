@@ -162,8 +162,8 @@ before_install:
          # the build summary.
          pip install scipy junitparser mpi4py
          if [ "$TRAVIS_OS_NAME" != "osx" ]; then
-           pip install numpy nose
-           pip install cython matplotlib terminaltables
+           pip3 install numpy nose
+           pip3 install cython matplotlib terminaltables
          else
            # Due to the issue with numpy C-extensions, have to stick to a speciic version on OsX	 
            pip3 install numpy==1.19.3

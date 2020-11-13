@@ -205,8 +205,7 @@ conngen
    :ref:`support for libneurosim <compile_with_libneurosim>`.
 
 To allow the generation of connectivity by means of an external
-library, NEST supports the Connection Generator Interface (`Djurfeldt
-et al., 2014 <https://doi.org/10.3389/fninf.2014.00043>`_).
+library, NEST supports the Connection Generator Interface [1]_.
 
 In contrast to the other rules for creating connections, this rule
 relies on a Connection Generator object, in which the connectivity
@@ -596,3 +595,11 @@ can then be given as arguments to the `SetStatus()` functions:
       'delay': 1.0,
       'source': 1,
       'receptor': 0}]
+
+References
+----------
+
+.. [1] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
+       connectivity in neuronal networks from simulator-independent
+       descriptions. Front. Neuroinform.
+       https://doi.org/10.3389/fninf.2014.00043

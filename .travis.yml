@@ -71,7 +71,6 @@ addons:
    apt:
     sources:
      - *BASE_SOURCES
-     - r-packages-bionic
      - ubuntu-toolchain-r-test
     packages:
      - *BASE_PACKAGES

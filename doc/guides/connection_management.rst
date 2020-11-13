@@ -585,6 +585,13 @@ as a two-dimensional NumPy array `W`, with :math:`n` columns and :math:`m` rows.
 
 ::
 
+    W = np.array([[0.5, 0., 1.5],
+                  [1.3, 0.2, 0.],
+                  [0., 1.25, 1.3]])
+
+    presynaptic = nest.Create('iaf_psc_alpha', 3)
+    postsynaptic = nest.Create('iaf_psc_alpha', 3)
+
     for i, pre in enumerate(presynaptic):
         # Extract the weights column.
         weights = W[:, i]
@@ -595,7 +602,7 @@ as a two-dimensional NumPy array `W`, with :math:`n` columns and :math:`m` rows.
         weights = weights[nonzero_indices]
         post = postsynaptic[nonzero_indices]
 
-        # Generate an array of node IDs for the column, with length based on the
+        # Generate an array of node IDs for the column of the weight matrix, with length based on the
         # number of nonzero elements. dtype must be an integer.
         pre_array = numpy.ones(len(nonzero_indices), dtype=numpy.int64)*pre.get('global_id')
 

@@ -259,7 +259,7 @@ nest::iaf_chxk_2008::State_::set( const DictionaryDatum& d, const Parameters_&, 
  * ---------------------------------------------------------------- */
 
 nest::iaf_chxk_2008::iaf_chxk_2008()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -267,7 +267,7 @@ nest::iaf_chxk_2008::iaf_chxk_2008()
 }
 
 nest::iaf_chxk_2008::iaf_chxk_2008( const iaf_chxk_2008& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -305,7 +305,7 @@ nest::iaf_chxk_2008::init_state_( const Node& proto )
 void
 nest::iaf_chxk_2008::init_buffers_()
 {
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.spike_exc_.clear(); // includes resize
   B_.spike_inh_.clear(); // includes resize
@@ -435,7 +435,7 @@ nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to 
         S_.y[ State_::DG_AHP ] += delta_dg;
       }
 
-      // log spike with Archiving_Node
+      // log spike with ArchivingNode
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;

@@ -614,7 +614,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
 
     if ( gather_completed_checker_.all_true() )
     {
-      set_complete_marker_target_data_( tid, assigned_ranks, send_buffer_position );
+      set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
 #pragma omp barrier
     }
     kernel().connection_manager.save_source_table_entry_point( tid );
@@ -724,8 +724,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
 }
 
 void
-nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid,
-  const AssignedRanks& assigned_ranks,
+nest::EventDeliveryManager::set_complete_marker_target_data_( const AssignedRanks& assigned_ranks,
   const SendBufferPosition& send_buffer_position )
 {
   for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )

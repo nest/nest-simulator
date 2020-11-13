@@ -203,7 +203,7 @@ script:
    - ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log
    - |
      if [ "$xNEST_BUILD_TYPE" != "STATIC_CODE_ANALYSIS" ]; then
-        python extras/parse_travis_log.py travis_build.sh.log ;
+        python extras/parse_travis_log.py travis_build.sh.log "$xNEST_BUILD_TYPE" ;
      fi
 
 before_deploy:

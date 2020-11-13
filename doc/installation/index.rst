@@ -208,7 +208,7 @@ provide containerized versions of NEST in several formats:
           generated, as shown below. You can then copy and paste the
           link into your browser.
 
-           .. image:: ../../_static/img/docker_link.png
+           .. image:: ../_static/img/docker_link.png
               :align: center
               :width: 1000px
 
@@ -332,7 +332,6 @@ these instructions.**
 
    linux_install
    mac_install
-   conda_install
    hpc_install
    livemedia
    install_options

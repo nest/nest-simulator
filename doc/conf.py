@@ -19,14 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Readthedocs configuration file
-------------------------------
-
-Use:
-sphinx-build -c ../extras/help_generator -b html . _build/html
-
-"""
 
 import sys
 import os
@@ -48,6 +40,9 @@ source_suffix = ['.rst']
 
 doc_path = Path(__file__).resolve().parent
 root_path = (doc_path / "..").resolve()
+
+print(os.environ)
+sys.exit()
 
 build_path = Path(os.environ['OLDPWD'])
 build_path = root_path if build_path == Path("/") else build_path
@@ -142,7 +137,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'conngen',
+exclude_patterns = ['Thumbs.db', '.DS_Store', 'conngen',
                     'nest_by_example', 'README.md']
 
 # The name of the Pygments (syntax highlighting) style to use.

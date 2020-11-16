@@ -130,10 +130,10 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
     dict, names::local_spike_counter, std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 ) );
 
 #ifdef TIMER_DETAILED
-  def< double >( dict, names::time_collocate_spike_data, sw_collocate_spike_data.elapsed() );
-  def< double >( dict, names::time_communicate_spike_data, sw_communicate_spike_data.elapsed() );
-  def< double >( dict, names::time_deliver_spike_data, sw_deliver_spike_data.elapsed() );
-  def< double >( dict, names::time_communicate_target_data, sw_communicate_target_data.elapsed() );
+  def< double >( dict, names::time_collocate_spike_data, sw_collocate_spike_data_.elapsed() );
+  def< double >( dict, names::time_communicate_spike_data, sw_communicate_spike_data_.elapsed() );
+  def< double >( dict, names::time_deliver_spike_data, sw_deliver_spike_data_.elapsed() );
+  def< double >( dict, names::time_communicate_target_data, sw_communicate_target_data_.elapsed() );
 #endif
 }
 
@@ -268,7 +268,7 @@ void
 EventDeliveryManager::reset_timers_for_preparation()
 {
 #ifdef TIMER_DETAILED
-  sw_communicate_target_data.reset();
+  sw_communicate_target_data_.reset();
 #endif
 }
 
@@ -276,9 +276,9 @@ void
 EventDeliveryManager::reset_timers_for_dynamics()
 {
 #ifdef TIMER_DETAILED
-  sw_collocate_spike_data.reset();
-  sw_communicate_spike_data.reset();
-  sw_deliver_spike_data.reset();
+  sw_collocate_spike_data_.reset();
+  sw_communicate_spike_data_.reset();
+  sw_deliver_spike_data_.reset();
 #endif
 }
 
@@ -350,7 +350,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #ifdef TIMER_DETAILED
     if ( tid == 0 )
     {
-      sw_collocate_spike_data.start();
+      sw_collocate_spike_data_.start();
     }
 #endif
 
@@ -409,8 +409,8 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #ifdef TIMER_DETAILED
     if ( tid == 0 )
     {
-      sw_communicate_spike_data.stop();
-      sw_deliver_spike_data.start();
+      sw_communicate_spike_data_.stop();
+      sw_deliver_spike_data_.start();
     }
 #endif
 
@@ -425,7 +425,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #ifdef TIMER_DETAILED
     if ( tid == 0 )
     {
-      sw_deliver_spike_data.stop();
+      sw_deliver_spike_data_.stop();
     }
 #endif
 
@@ -688,7 +688,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
     // "#pragma omp barrier" not necessary because of preceding implicit barrier
     if ( tid == 0 )
     {
-      sw_communicate_target_data.stop();
+      sw_communicate_target_data_.stop();
     }
 #endif
 

@@ -188,7 +188,9 @@ connect( NodeCollectionPTR sources,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params )
 {
+  kernel().connection_manager.sw_construction_connect.start();
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 void
@@ -201,6 +203,8 @@ connect_arrays( long* sources,
   size_t n,
   std::string syn_model )
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   // Mapping pointers to the first parameter value of each parameter to their respective names.
   std::map< Name, double* > param_pointers;
   if ( p_keys.size() != 0 )
@@ -310,6 +314,8 @@ connect_arrays( long* sources,
       throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
     }
   }
+
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 ArrayDatum

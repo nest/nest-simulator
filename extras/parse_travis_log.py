@@ -361,15 +361,15 @@ def makebuild_summary(log_filename, msg_make_section_start,
     number_of_warning_msgs = 0
     in_make_section = False
     if NEST_BUILD_TYPE == 'MINIMAL':
-        expected_warnings = 8
+        expected_warnings = 4
     elif NEST_BUILD_TYPE == 'MPI_ONLY':
-        expected_warnings = 7
+        expected_warnings = 4
     elif NEST_BUILD_TYPE == 'OPENMP_ONLY':
-        expected_warnings = 8
+        expected_warnings = 4
     elif NEST_BUILD_TYPE == 'FULL':
         expected_warnings = 6
     elif NEST_BUILD_TYPE == 'FULL_NO_EXTERNAL_FEATURES':
-        expected_warnings = 8
+        expected_warnings = 4
     else:
         expected_warnings = 0  # Set to 0 if none of the above build-types, to not crash the script
 

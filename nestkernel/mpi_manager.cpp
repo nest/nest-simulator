@@ -224,13 +224,11 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 }
 
-/**
- * Finish off MPI routines
- */
+#ifdef HAVE_MPI
+
 void
 nest::MPIManager::mpi_finalize( int exitcode )
 {
-#ifdef HAVE_MPI
   MPI_Type_free( &MPI_OFFGRID_SPIKE );
 
   int finalized;
@@ -251,9 +249,16 @@ nest::MPIManager::mpi_finalize( int exitcode )
       mpi_abort( exitcode );
     }
   }
-#endif /* #ifdef HAVE_MPI */
 }
 
+#endif /* #ifdef HAVE_MPI */
+
+void
+nest::MPIManager::mpi_finalize( int )
+{
+}
+
+#endif /* #ifdef HAVE_MPI */
 
 #ifdef HAVE_MPI
 

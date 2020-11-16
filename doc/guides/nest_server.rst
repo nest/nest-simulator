@@ -287,7 +287,7 @@ Here are instructions from different interfaces:
         .. note::
 
             With this approach, we build NEST Server Client which is a Python class.
-            See more info in NEST Server Client section below.
+            See more info in `NEST Server Client`_ section below.
 
     .. tab:: JavaScript
 

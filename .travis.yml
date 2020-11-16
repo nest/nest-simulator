@@ -168,7 +168,9 @@ before_install:
            # Due to the issue with numpy C-extensions, have to stick to a specific version on OsX
            #https://numpy.org/devdocs/user/troubleshooting-importerror.html
            pip3 install numpy==1.19.3
-           pip3 install cython matplotlib terminaltables nose
+           pip3 install cython matplotlib terminaltables
+           pip3 install nose
+           python setup.py install
            #wget https://arken.nmbu.no/~plesser/nose-1.3.7noman-py3-none-any.whl
            #pip3 install nose-1.3.7noman-py3-none-any.whl
          fi  

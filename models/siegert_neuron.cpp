@@ -246,7 +246,7 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   if ( y_r > 0. )
   {
     gsl_integration_qags( &F, y_r, y_th, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
-    integral = 2 * exp( y_th * y_th ) * gsl_sf_dawson( y_th ) - 2 * exp( y_r * y_r ) * gsl_sf_dawson( y_r ) - result;
+    integral = 2. * exp( y_th * y_th ) * gsl_sf_dawson( y_th ) - 2. * exp( y_r * y_r ) * gsl_sf_dawson( y_r ) - result;
   }
   else if ( y_th < 0. )
   {
@@ -256,7 +256,7 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   else
   {
     gsl_integration_qags( &F, y_th, -y_r, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
-    integral = 2 * exp( y_th * y_th ) * gsl_sf_dawson( y_th ) + result;
+    integral = 2. * exp( y_th * y_th ) * gsl_sf_dawson( y_th ) + result;
   }
 
   // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.

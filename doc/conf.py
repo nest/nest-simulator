@@ -50,7 +50,7 @@ doc_path = Path(__file__).resolve().parent
 root_path = (doc_path / "..").resolve()
 
 build_path = Path(os.environ['OLDPWD'])
-build_path = root_path if build_path == "/" else build_path
+build_path = root_path if build_path == Path("/") else build_path
 
 print("build_path", str(build_path))
 print("root_path", str(root_path))

@@ -41,11 +41,9 @@ source_suffix = ['.rst']
 doc_path = Path(__file__).resolve().parent
 root_path = (doc_path / "..").resolve()
 
-print(os.environ)
-sys.exit()
-
 build_path = Path(os.environ['OLDPWD'])
-build_path = root_path if build_path == Path("/") else build_path
+if os.environ['READTHEDOCS'] == 'True':
+    build_path = doc_path
 
 print("build_path", str(build_path))
 print("root_path", str(root_path))
@@ -106,7 +104,7 @@ sphinx_gallery_conf = {
      # path to your examples scripts
      'examples_dirs': root_path / 'pynest/examples',
      # path where to save gallery generated examples
-     'gallery_dirs': build_path / 'doc/auto_examples',
+     'gallery_dirs': build_path / 'auto_examples',
      # 'backreferences_dir': False
      'plot_gallery': 'False'
 }
@@ -305,4 +303,4 @@ def copytreeglob(source, target, glob='*.png'):
         copyfile(source/relativename, target/relativename)
 
 
-copytreeglob(root_path / "pynest/examples/Potjans_2014", build_path / "doc/examples", '*.png')
+copytreeglob(root_path / "pynest/examples/Potjans_2014", build_path / "examples", '*.png')

@@ -38,12 +38,6 @@ namespace nest
 {
 
 template < int D >
-std::shared_ptr< Ntree< D, index > > Layer< D >::cached_ntree_;
-
-template < int D >
-std::vector< std::pair< Position< D >, index > >* Layer< D >::cached_vector_ = 0;
-
-template < int D >
 Position< D >
 Layer< D >::compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const
 {

@@ -512,6 +512,11 @@ protected:
   MaskDatum mask_;
 };
 
+template < int D >
+std::shared_ptr< Ntree< D, index > > Layer< D >::cached_ntree_;
+template < int D >
+std::vector< std::pair< Position< D >, index > >* Layer< D >::cached_vector_ = 0;
+
 inline void
 AbstractLayer::set_node_collection( NodeCollectionPTR node_collection )
 {

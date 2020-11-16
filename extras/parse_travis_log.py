@@ -388,7 +388,9 @@ def makebuild_summary(log_filename, msg_make_section_start,
                     error_summary[file_name] += 1
                     number_of_error_msgs += 1
 
-                if ': warning:' in line:
+                # Only count warnings originating in NEST source files
+                m = re.match("/home/travis/build/nest/nest-simulator.*: warning:", line)
+                if m is not None:
                     file_name = line.split(':')[0]
                     if file_name not in warning_summary:
                         warning_summary[file_name] = 0
@@ -970,6 +972,7 @@ def build_return_code(status_cmake_configure,
 
 
 if __name__ == '__main__':
+    import re
     from sys import argv, exit
     from terminaltables import AsciiTable
     from textwrap import wrap

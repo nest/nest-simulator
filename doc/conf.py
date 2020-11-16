@@ -50,6 +50,10 @@ build_path = Path(os.environ['OLDPWD'])
 doc_path = Path(__file__).resolve().parent
 root_path = (doc_path / "..").resolve()
 
+print("build_path", str(build_path))
+print("root_path", str(root_path))
+print("doc_path", str(doc_path))
+
 sys.path.insert(0, str(root_path))
 sys.path.insert(0, str(root_path / 'pynest/'))
 sys.path.insert(0, str(root_path / 'pynest/nest'))

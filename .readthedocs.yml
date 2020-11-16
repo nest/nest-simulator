@@ -1,0 +1,13 @@
+version: 2
+
+sphinx:
+  builder: html
+  configuration: doc/conf.py
+
+python:
+  version: 3.6
+  install:
+    - requirements: docs/requirements.txt
+
+build:
+  image: latest

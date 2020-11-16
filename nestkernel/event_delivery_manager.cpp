@@ -383,18 +383,12 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       // Needs to be called /after/ set_end_and_invalid_markers_.
       set_complete_marker_spike_data_( assigned_ranks, send_buffer_position, send_buffer );
 #pragma omp barrier
-      // TODO: Discuss, if the barrier above should be better placed after if-clause
     }
 
 #ifdef TIMER_DETAILED
-#pragma omp barrier
     if ( tid == 0 )
     {
       sw_collocate_spike_data.stop();
-
-      // TODO_SDR: Following function call commented out because it causes real runs to hang!
-      // kernel().mpi_manager.synchronize(); // to get an accurate time measurement
-      // across ranks
       sw_communicate_spike_data.start();
     }
 #endif
@@ -679,12 +673,8 @@ EventDeliveryManager::gather_target_data( const thread tid )
     kernel().connection_manager.clean_source_table( tid );
 
 #ifdef TIMER_DETAILED
-#pragma omp barrier
     if ( tid == 0 )
     {
-      // TODO_SDR: Following function call commented out because it causes real runs to hang!
-      // kernel().mpi_manager.synchronize(); // to get an accurate time measurement
-      //                                    // across ranks
       sw_communicate_target_data.start();
     }
 #endif

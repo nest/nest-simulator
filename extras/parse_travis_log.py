@@ -363,11 +363,11 @@ def makebuild_summary(log_filename, msg_make_section_start,
     if NEST_BUILD_TYPE == 'MINIMAL':
         expected_warnings = 8
     elif NEST_BUILD_TYPE == 'MPI_ONLY':
-        expected_warnings = 265
+        expected_warnings = 7
     elif NEST_BUILD_TYPE == 'OPENMP_ONLY':
         expected_warnings = 8
     elif NEST_BUILD_TYPE == 'FULL':
-        expected_warnings = 4035
+        expected_warnings = 6
     elif NEST_BUILD_TYPE == 'FULL_NO_EXTERNAL_FEATURES':
         expected_warnings = 8
     else:

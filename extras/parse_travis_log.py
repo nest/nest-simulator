@@ -374,6 +374,7 @@ def makebuild_summary(log_filename, msg_make_section_start,
         expected_warnings = 0  # Set to 0 if none of the above build-types, to not crash the script
 
     with open(log_filename) as fh:
+        nest_warning_re = re.compile('/home/travis/build/nest/nest-simulator.*: warning:')
         for line in fh:
             if is_message(line, msg_make_section_start):
                 in_make_section = True
@@ -389,8 +390,8 @@ def makebuild_summary(log_filename, msg_make_section_start,
                     number_of_error_msgs += 1
 
                 # Only count warnings originating in NEST source files
-                m = re.match("/home/travis/build/nest/nest-simulator.*: warning:", line)
-                if m is not None:
+                warning_match = nest_warning_re.match(line)
+                if warning_match is not None:
                     file_name = line.split(':')[0]
                     if file_name not in warning_summary:
                         warning_summary[file_name] = 0

@@ -512,6 +512,7 @@ protected:
   MaskDatum mask_;
 };
 
+// Must define these static members here to avoid linker errors and Wundefined-var-template warnings.
 template < int D >
 std::shared_ptr< Ntree< D, index > > Layer< D >::cached_ntree_;
 template < int D >

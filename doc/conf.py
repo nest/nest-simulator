@@ -46,9 +46,11 @@ source_suffix = ['.rst']
 # add these directories to sys.path here. If the dit rectory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-build_path = Path(os.environ['OLDPWD'])
 doc_path = Path(__file__).resolve().parent
 root_path = (doc_path / "..").resolve()
+
+build_path = Path(os.environ['OLDPWD'])
+build_path = root_path if build_path == "/" else build_path
 
 print("build_path", str(build_path))
 print("root_path", str(root_path))
@@ -308,4 +310,4 @@ def copytreeglob(source, target, glob='*.png'):
         copyfile(source/relativename, target/relativename)
 
 
-copytreeglob(root_path / "pynest/examples/Potjans_2014", build_path / "examples", '*.png')
+copytreeglob(root_path / "pynest/examples/Potjans_2014", build_path / "doc/examples", '*.png')

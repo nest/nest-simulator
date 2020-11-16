@@ -548,6 +548,10 @@ API overview of NEST Server Client
 
     Execute a Python Script on NEST Server side.
 
+.. py:method:: NESTServerClient.from_file(filename, return_vars=None)
+
+    Execute a Python Script from file on NEST Server side.
+
 
 Limitations and security implications
 -------------------------------------

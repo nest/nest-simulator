@@ -238,6 +238,7 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   double integral, result, error;
   gsl_function F;
   F.function = &erfcx;
+  F.params = 0;
 
   // Evaluate integral of exp( s^2 ) * ( 1 + erf( s ) ) from y_r to y_th
   // depending on the sign of y_th and y_r. Uses the scaled complementary

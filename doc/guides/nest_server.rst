@@ -398,6 +398,36 @@ Here are instructions from different interfaces:
         You can find the sample source code `here <https://github.com/steffengraber/nest-jsclient>`_.
 
 
+API overview
+------------
+
+localhost:5000
+  Get current version of NEST.
+
+localhost:5000/api
+  List of executable methods of PyNEST.
+
+localhost:5000/api/<call>
+  Execute a **<call>** method of PyNEST.
+
+localhost:5000/api/<call>?inspect=getdoc
+  Get documentation of the **<call>** method.
+
+localhost:5000/api/<call>?inspect=getsource
+  Get code source of the **<call>** method.
+
+localhost:5000/exec
+  Execute Python script.
+  As JSON data, it should contains:
+
+  .. code-block:: JSON
+
+      {
+          "source": "",
+          "return": ""
+      }
+
+
 NEST Server Client
 ------------------
 
@@ -500,6 +530,23 @@ The code can be taken from a typical Python script (e.g. ``simulation_script.py`
     response = nsc.from_file('simulation_script.py', 'n_events')
     n_events = response['data']
     print('Number of events:', n_events)
+
+
+API overview of NEST Server Client
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. py:class:: NESTServerClient
+
+    An object-based client to interact with NEST Server.
+
+.. py:method:: NESTServerClient.<call>(*args, **kwargs)
+
+    Execute a <call> PyNEST method on NEST Server side.
+    The arguments `args` and `kwargs` will be forwarded to a specific <call> PyNEST method.
+
+.. py:method:: NESTServerClient.exec_script(source, return_vars=None)
+
+    Execute a Python Script on NEST Server side.
 
 
 Limitations and security implications

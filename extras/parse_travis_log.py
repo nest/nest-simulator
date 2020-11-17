@@ -390,7 +390,7 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
                 # Only count warnings originating in NEST source files
                 warning_match = nest_warning_re.match(line)
-                if warning_match is not None and line not in known_warnings:
+                if warning_match is not None and line.strip() not in known_warnings:
                     file_name = line.split(':')[0]
                     if file_name not in warning_summary:
                         warning_summary[file_name] = 0

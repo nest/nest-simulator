@@ -61,7 +61,8 @@ struct my_params
 double
 erfcx( double x, void* p )
 {
-  return exp( x * x + gsl_sf_log_erfc( x ) );
+  double scale = *(double *) p;
+  return exp( scale * scale * x * x + gsl_sf_log_erfc( scale * x ) );
 }
 
 namespace nest
@@ -236,9 +237,10 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   double y_r = ( P_.V_reset_ - mu ) / sigma + threshold_shift;
 
   double integral, result, error;
+  double erfcx_scale = 1.0;
   gsl_function F;
   F.function = &erfcx;
-  F.params = 0;
+  F.params = &erfcx_scale;
 
   // Evaluate integral of exp( s^2 ) * ( 1 + erf( s ) ) from y_r to y_th
   // depending on the sign of y_th and y_r. Uses the scaled complementary

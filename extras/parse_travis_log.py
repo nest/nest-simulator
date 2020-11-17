@@ -362,7 +362,7 @@ def makebuild_summary(log_filename, msg_make_section_start,
     in_make_section = False
 
     expected_warnings = 0
-    if NEST_BUILD_TYPE == 'FULL':
+    if build_type == 'FULL':
         expected_warnings = 2  # libneurosim and NEST both define PACKAGE in their config.h files
 
     nest_warning_re = re.compile(f'{build_dir}.*: warning:')
@@ -977,7 +977,7 @@ if __name__ == '__main__':
     from terminaltables import AsciiTable
     from textwrap import wrap
 
-    this_script_filename, log_filename, NEST_BUILD_TYPE, build_dir = argv
+    this_script_filename, log_filename, build_type, build_dir = argv
 
     changed_files = \
         list_of_changed_files(log_filename, "MSGBLD0070",

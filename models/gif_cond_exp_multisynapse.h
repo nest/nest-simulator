@@ -58,7 +58,7 @@ Description
 
 gif_cond_exp_multisynapse is the generalized integrate-and-fire neuron
 according to Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with
-post-synaptic conductances in the form of truncated exponentials.
+postsynaptic conductances in the form of truncated exponentials.
 
 This model features both an adaptation current and a dynamic threshold for
 spike-frequency adaptation. The membrane potential (V) is described by the

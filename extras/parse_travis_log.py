@@ -360,21 +360,20 @@ def makebuild_summary(log_filename, msg_make_section_start,
     number_of_error_msgs = 0
     number_of_warning_msgs = 0
     in_make_section = False
-    if NEST_BUILD_TYPE == 'MINIMAL':
-        expected_warnings = 4
-    elif NEST_BUILD_TYPE == 'MPI_ONLY':
-        expected_warnings = 4
-    elif NEST_BUILD_TYPE == 'OPENMP_ONLY':
-        expected_warnings = 4
-    elif NEST_BUILD_TYPE == 'FULL':
-        expected_warnings = 6
-    elif NEST_BUILD_TYPE == 'FULL_NO_EXTERNAL_FEATURES':
-        expected_warnings = 4
-    else:
-        expected_warnings = 0  # Set to 0 if none of the above build-types, to not crash the script
+
+    expected_warnings = 0
+    if NEST_BUILD_TYPE == 'FULL':
+        expected_warnings = 2  # libneurosim and NEST both define PACKAGE in their config.h files
+
+    nest_warning_re = re.compile(f'{build_dir}.*: warning:')
+    known_warnings = [
+        f'{build_dir}/sli/scanner.cc:642:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:673:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:714:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:741:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+    ]
 
     with open(log_filename) as fh:
-        nest_warning_re = re.compile('/home/travis/build/nest/nest-simulator.*: warning:')
         for line in fh:
             if is_message(line, msg_make_section_start):
                 in_make_section = True
@@ -391,7 +390,7 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
                 # Only count warnings originating in NEST source files
                 warning_match = nest_warning_re.match(line)
-                if warning_match is not None:
+                if warning_match is not None and line not in known_warnings:
                     file_name = line.split(':')[0]
                     if file_name not in warning_summary:
                         warning_summary[file_name] = 0
@@ -978,7 +977,7 @@ if __name__ == '__main__':
     from terminaltables import AsciiTable
     from textwrap import wrap
 
-    this_script_filename, log_filename, NEST_BUILD_TYPE = argv
+    this_script_filename, log_filename, NEST_BUILD_TYPE, build_dir = argv
 
     changed_files = \
         list_of_changed_files(log_filename, "MSGBLD0070",

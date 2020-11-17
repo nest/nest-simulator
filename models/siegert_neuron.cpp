@@ -248,21 +248,24 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   if ( y_r > 0. )
   {
     gsl_integration_qags( &F, y_r, y_th, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
-    integral = 2. * exp( y_th * y_th ) * gsl_sf_dawson( y_th ) - 2. * exp( y_r * y_r ) * gsl_sf_dawson( y_r ) - result;
+    integral = 2. * gsl_sf_dawson( y_th ) - 2. * exp( y_r * y_r - y_th * y_th ) * gsl_sf_dawson( y_r ) - exp( - y_th * y_th ) * result;
+    // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+    return 1e3 * exp( - y_th * y_th ) / ( exp( - y_th * y_th ) * P_.t_ref_ + P_.tau_m_ * std::sqrt( M_PI ) * integral );
   }
   else if ( y_th < 0. )
   {
     gsl_integration_qags( &F, -y_th, -y_r, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
     integral = result;
+    // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+    return 1e3 * 1. / ( P_.t_ref_ + P_.tau_m_ * std::sqrt( M_PI ) * integral );
   }
   else
   {
     gsl_integration_qags( &F, y_th, -y_r, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
-    integral = 2. * exp( y_th * y_th ) * gsl_sf_dawson( y_th ) + result;
+    integral = 2. * gsl_sf_dawson( y_th ) + exp( - y_th * y_th ) * result;
+    // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+    return 1e3 * exp( - y_th * y_th ) / ( exp( - y_th * y_th ) * P_.t_ref_ + P_.tau_m_ * std::sqrt( M_PI ) * integral );
   }
-
-  // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
-  return 1e3 * 1. / ( P_.t_ref_ + P_.tau_m_ * std::sqrt( M_PI ) * integral );
 }
 
 /* ----------------------------------------------------------------

@@ -251,7 +251,7 @@ nest::MPIManager::mpi_finalize( int exitcode )
   }
 }
 
-#endif /* #ifdef HAVE_MPI */
+#else /* #ifdef HAVE_MPI */
 
 void
 nest::MPIManager::mpi_finalize( int )

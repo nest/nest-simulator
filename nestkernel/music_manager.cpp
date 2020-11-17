@@ -110,7 +110,7 @@ MUSICManager::enter_runtime( double h_min_delay )
 #else /* #ifdef HAVE_MUSIC */
 
 void
-MUSICManager::init_music( int*, char** )
+MUSICManager::init_music( int*, char*** )
 {
 }
 

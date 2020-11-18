@@ -109,7 +109,6 @@ ModelManager::initialize()
 
   // create proxy nodes, one for each thread and model and one dummy
   // spike source for each thread.
-
   proxy_nodes_.resize( kernel().vp_manager.get_num_threads() );
   dummy_spike_sources_.resize( kernel().vp_manager.get_num_threads() );
 

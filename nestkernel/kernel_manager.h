@@ -204,6 +204,8 @@ public:
 private:
   std::vector< ManagerInterface* > managers;
   bool initialized_; //!< true if all sub-managers initialized
+
+  bool builtin_models_registered_;
 };
 
 KernelManager& kernel();

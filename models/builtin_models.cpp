@@ -1,5 +1,5 @@
 /*
- *  modelsmodule.cpp
+ *  builtin_models.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,10 +20,12 @@
  *
  */
 
-#include "modelsmodule.h"
+// Includes from models
+#include "builtin_models.h"
 
 // Includes from nestkernel
 #include "genericmodel_impl.h"
+#include "nest_impl.h"
 
 // Generated includes:
 #include "config.h"
@@ -168,27 +170,9 @@
 
 namespace nest
 {
-// At the time when ModelsModule is constructed, the SLI Interpreter
-// must already be initialized. ModelsModule relies on the presence of
-// the following SLI datastructures: Name, Dictionary
-ModelsModule::ModelsModule()
-{
-}
-
-ModelsModule::~ModelsModule()
-{
-}
-
-const std::string
-ModelsModule::name( void ) const
-{
-  return std::string( "NEST Standard Models Module" ); // Return name of the module
-}
-
-//-------------------------------------------------------------------------------------
 
 void
-ModelsModule::init( SLIInterpreter* )
+register_builtin_models()
 {
   // rate models with input noise
   kernel().model_manager.register_node_model< gauss_rate_ipn >( "gauss_rate_ipn" );

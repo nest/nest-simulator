@@ -18,6 +18,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set( models_sources
+    builtin_models.h builtin_models.cpp
     ac_generator.h ac_generator.cpp
     aeif_cond_alpha.h aeif_cond_alpha.cpp
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
@@ -80,7 +81,6 @@ set( models_sources
     mat2_psc_exp.h mat2_psc_exp.cpp
     mcculloch_pitts_neuron.h mcculloch_pitts_neuron.cpp
     mip_generator.h mip_generator.cpp
-    modelsmodule.h modelsmodule.cpp
     multimeter.h multimeter.cpp
     music_cont_in_proxy.h music_cont_in_proxy.cpp
     music_cont_out_proxy.h music_cont_out_proxy.cpp

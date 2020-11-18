@@ -22,6 +22,10 @@
 
 #include "kernel_manager.h"
 
+// Includes from models:
+#include "builtin_models.h"
+
+
 nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = 0;
 
 void
@@ -73,6 +77,7 @@ nest::KernelManager::KernelManager()
       &io_manager,
       &node_manager } )
   , initialized_( false )
+  , builtin_models_registered_( false )
 {
 }
 
@@ -89,6 +94,16 @@ nest::KernelManager::initialize()
   }
 
   ++fingerprint_;
+
+  // The built-in models can only be registered safely *after* all
+  // managers are initialized. The call to register_builtin_models()
+  // thus has to be here, instead of in the ModelManager, where it
+  // would belong logically.
+  if ( not builtin_models_registered_ )
+  {
+    register_builtin_models();
+    builtin_models_registered_ = true;
+  }
 
   initialized_ = true;
 }

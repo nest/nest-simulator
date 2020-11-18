@@ -5,7 +5,14 @@ Continuous Integration
 
 Stringent quality control is particularly important in the context of NEST, a neuronal network simulator with the emphasis on correctness, reproducibility and performance. However, given the limited amount of the available resources, it is wasteful to transfer the responsibility to re-run the test suite for all target platforms on every single code base change to the shoulders of the developers.
 
-In order to address this problem, a `Travis <http://travis-ci.org/>`_ Continuous Integration (CI) service has been set up, which allows for regular testing of changes that are getting into the tree and timely reporting of identified problems. This way, issues will be discovered earlier and the amount of efforts to fix them will be significantly decreased (hopefully). Continuous Integration at NEST Simulator
+In order to address this problem, a `Travis <http://travis-ci.org/>`_ Continuous Integration (CI) service has been set up, which allows for regular testing of changes that are getting into the tree and timely reporting of identified problems. This way, issues will be discovered earlier and the amount of efforts to fix them will be significantly decreased (hopefully).
+
+
+Platforms tested
+----------------
+
+- MacOS on AMD64
+- Ubuntu Linux on AMD64
 
 
 CI stages
@@ -17,21 +24,19 @@ The current CI implementation is defined in `.travis.yml <https://github.com/nes
 
    This first stage checks the code without building or running it.
 
-   - Code formatting (whitespace, etc.) are checked using clang-format. Please note that a specific version of clang-format is used for consistency.
+   - clang-format checks C++ code formatting (whitespace, etc.). Please note that a specific version of clang-format is used for consistency. The maximum line length is set to 120 characters.
 
    - Vera++ and cppcheck are used for more detailed semantic (but still static) code analysis.
 
-   - pycodestyle is used to statically check Python code. A few errors are intentionally ignored, defined in the variable ``PEP8_IGNORES`` in `extras/static_code_analysis.sh <https://github.com/nest/nest-simulator/blob/master/extras/static_code_analysis.sh>`_.
+   - pycodestyle is used to statically check Python code. A few errors are intentionally ignored, defined in the variable ``PEP8_IGNORES`` in `extras/static_code_analysis.sh <https://github.com/nest/nest-simulator/blob/master/extras/static_code_analysis.sh>`_. The maximum line length is again 120 characters.
 
    Errors that occurred in this stage are printed at the end of the log, including a list of affected files.
 
 #. Build of NEST Simulator
 
-   To ensure that changes in the code do not increase the number of compiler warnings generated during the build, warnings are counted and compared to a hardcoded number in the function ``makebuild_summary()`` in `extras/parse_travis_log.py <https://github.com/nest/nest-simulator/blob/master/extras/parse_travis_log.py>`_.
+   To ensure that changes in the code do not increase the number of compiler warnings generated during the build, warnings are counted and compared to a hardcoded number in the function ``makebuild_summary()`` in `extras/parse_travis_log.py <https://github.com/nest/nest-simulator/blob/master/extras/parse_travis_log.py>`_. The number of counted and expected warnings is printed in the "Build report" table printed at the end of the stage. For changes that legitimately increase the number of warnings, these values should be changed as part of the pull request.
 
-   The number of counted and expected warnings is printed in the "Build report" table printed at the end of the stage.
-
-   For changes that legitimately increase the number of warnings, these values should be changed as part of the pull request.
+   The CI builds cover both the gcc and clang compilers.
 
 #. Unit testing
 

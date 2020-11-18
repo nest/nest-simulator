@@ -29,7 +29,7 @@ Synopsis: (test_iaf_psp_normalized) run -> compare response with desired outcome
 Description:
 
 The script computes the peak location of the PSP analytically for a
-neuron model with an alpha-shaped post-synaptic current (PSC) [1]. In case
+neuron model with an alpha-shaped postsynaptic current (PSC) [1]. In case
 the GNU Scientific Library (GSL) is not present the peak location is
 found by searching for the root of the derivative of the PSP. We then
 compute the peak value for a PSC with unit amplitude and show how the
@@ -90,7 +90,7 @@ SeeAlso: testsuite::test_iaf_psp_peak, testsuite::test_iaf_psp, testsuite::test_
 def
 
 
-% derivative of the post-synaptic potential
+% derivative of the postsynaptic potential
 % only required in case the GSL is not available
 /dpsp
  [/t]

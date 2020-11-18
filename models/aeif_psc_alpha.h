@@ -168,7 +168,7 @@ iaf_psc_alpha, aeif_cond_exp
 
 EndUserDocs */
 
-class aeif_psc_alpha : public Archiving_Node
+class aeif_psc_alpha : public ArchivingNode
 {
 
 public:
@@ -411,7 +411,7 @@ aeif_psc_alpha::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -428,7 +428,7 @@ aeif_psc_alpha::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

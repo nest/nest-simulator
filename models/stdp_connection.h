@@ -58,7 +58,7 @@ Parameters
 
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
-                   (tau_minus defined in post-synaptic neuron)
+                   (tau_minus defined in postsynaptic neuron)
  lambda    real    Step size
  alpha     real    Asymmetry parameter (scales depressing increments as
                    alpha*lambda)
@@ -224,7 +224,7 @@ STDPConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynap
   Node* target = get_target( t );
   double dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
 
@@ -234,10 +234,10 @@ STDPConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynap
   // which increases the access counter for these entries.
   // At registration, all entries' access counters of
   // history[0, ..., t_last_spike - dendritic_delay] have been
-  // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
+  // incremented by ArchivingNode::register_stdp_connection(). See bug #218 for
   // details.
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
-  // facilitation due to post-synaptic spikes since last pre-synaptic spike
+  // facilitation due to postsynaptic spikes since last pre-synaptic spike
   double minus_dt;
   while ( start != finish )
   {

@@ -218,7 +218,7 @@ ClopathConnection< targetidentifierT >::send( Event& e, thread t, const CommonSy
   Node* target = get_target( t );
   double dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry_extended >::iterator start;
   std::deque< histentry_extended >::iterator finish;
 
@@ -228,10 +228,10 @@ ClopathConnection< targetidentifierT >::send( Event& e, thread t, const CommonSy
   // which increases the access counter for these entries.
   // At registration, all entries' access counters of
   // history[0, ..., t_last_spike - dendritic_delay] have been
-  // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
+  // incremented by ArchivingNode::register_stdp_connection(). See bug #218 for
   // details.
   target->get_LTP_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
-  // facilitation due to post-synaptic activity since last pre-synaptic spike
+  // facilitation due to postsynaptic activity since last pre-synaptic spike
   while ( start != finish )
   {
     const double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );

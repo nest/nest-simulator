@@ -434,7 +434,7 @@ nest::glif_psc::calibrate()
     V_.abpara_ratio_voltage_ = P_.th_voltage_index_ / P_.th_voltage_decay_;
   }
 
-  // post synapse currents
+  // postsynaptic currents
   V_.P11_.resize( P_.n_receptors_() );
   V_.P21_.resize( P_.n_receptors_() );
   V_.P22_.resize( P_.n_receptors_() );

@@ -43,7 +43,7 @@ Description
 vogels_sprekeler_synapse is a connector to create synapses with symmetric
 spike time dependent plasticity and constant depression (as defined in [1]_).
 The learning rule is symmetric, i.e., the synapse is strengthened
-irrespective of the order of the pre- and post-synaptic spikes. Each
+irrespective of the order of the pre- and postsynaptic spikes. Each
 pre-synaptic spike also causes a constant depression of the synaptic weight
 which differentiates this rule from other classical stdp rules.
 
@@ -203,13 +203,13 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e, thread t, const 
   Node* target = get_target( t );
   double dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
-  // presynaptic neuron j, post synaptic neuron i
-  // Facilitation for each post synaptic spike
+  // presynaptic neuron j, postsynaptic neuron i
+  // Facilitation for each postsynaptic spike
   // Wij = Wij + eta*xj
   double minus_dt;
   while ( start != finish )

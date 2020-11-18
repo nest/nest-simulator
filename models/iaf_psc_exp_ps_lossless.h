@@ -49,7 +49,7 @@ Short description
 +++++++++++++++++
 
 Current-based leaky integrate-and-fire neuron with exponential-shaped
-post-synaptic currents predicting the exact number of spikes using a
+postsynaptic currents predicting the exact number of spikes using a
 state space analysis
 
 Description

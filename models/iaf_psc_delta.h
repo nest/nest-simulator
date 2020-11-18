@@ -40,7 +40,7 @@ Short description
 +++++++++++++++++
 
 Current-based leaky integrate-and-fire neuron model with delta-shaped
-post-synaptic currents
+postsynaptic currents
 
 Description
 +++++++++++

@@ -67,7 +67,7 @@ Description
 +++++++++++
 
 iaf_cond_exp is an implementation of a spiking neuron using IAF dynamics with
-conductance-based synapses. Incoming spike events induce a post-synaptic change
+conductance-based synapses. Incoming spike events induce a postsynaptic change
 of conductance modelled by an exponential function. The exponential function
 is normalized such that an event of weight 1.0 results in a peak conductance of
 1 nS.

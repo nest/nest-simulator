@@ -120,7 +120,7 @@ volts.set(label="voltmeter", interval=1.)
 # Sixth, the ``dc_generator`` is connected to the first neuron
 # (`neurons[0]`) and the ``voltmeter`` is connected to the second neuron
 # (`neurons[1]`). The command ``Connect`` has different variants. Plain
-# ``Connect`` just takes the handles of pre- and post-synaptic nodes and uses
+# ``Connect`` just takes the handles of pre- and postsynaptic nodes and uses
 # the default values for weight and delay. Note that the connection
 # direction for the ``voltmeter`` reflects the signal flow in the simulation
 # kernel, because it observes the neuron instead of receiving events from it.

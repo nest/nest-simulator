@@ -44,7 +44,7 @@ Short description
 +++++++++++++++++
 
 Current-based leaky integrate-and-fire neuron model with delta-shaped
-post-synaptic currents - precise spike timing version
+postsynaptic currents - precise spike timing version
 
 Description
 +++++++++++

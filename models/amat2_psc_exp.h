@@ -313,7 +313,7 @@ private:
   {
 
     /** Amplitude of the synaptic current.
-    This value is chosen such that a post-synaptic potential with
+    This value is chosen such that a postsynaptic potential with
     weight one has an amplitude of 1 mV.
     @note mog - I assume this, not checked.
     */

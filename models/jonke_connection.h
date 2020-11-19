@@ -64,7 +64,7 @@ namespace nest
     mu_minus        double - Set weight dependency of depressing update
     tau_plus        double - Time constant of STDP window, potentiation in ms
     beta            double - Set negative offset for both updates
-    (tau_minus is defined in the post-synaptic neuron.)
+    (tau_minus is defined in the postsynaptic neuron.)
   Transmits: SpikeEvent
   References:
     [1] Nessler, Bernhard, et al. "Bayesian computation emerges in generic
@@ -304,7 +304,7 @@ JonkeConnection< targetidentifierT >::send( Event& e, thread t, const JonkeCommo
   Node* target = get_target( t );
   double dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
 
@@ -317,7 +317,7 @@ JonkeConnection< targetidentifierT >::send( Event& e, thread t, const JonkeCommo
   // incremented by ArchivingNode::register_stdp_connection(). See bug #218 for
   // details.
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
-  // facilitation due to post-synaptic spikes since last pre-synaptic spike
+  // facilitation due to postsynaptic spikes since last pre-synaptic spike
   double minus_dt;
   while ( start != finish )
   {

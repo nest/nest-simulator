@@ -172,7 +172,7 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
 class ParrotNeuronPSSTDPTestCase(unittest.TestCase):
     """
     Check STDP protocol between two parrot_neurons_ps connected by a
-    stdp_synapse. Exact pre- and post-synaptic spike times are set by
+    stdp_synapse. Exact pre- and postsynaptic spike times are set by
     spike_generators connected to each parrot neuron. Additional spikes sent
     through the stdp_synapse are explicitly ignored in the postsynaptic
     parrot_neuron_ps by setting the stdp_synapse to connect to port 1.

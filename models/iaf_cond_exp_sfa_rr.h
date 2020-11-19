@@ -72,7 +72,7 @@ integrate-and-fire dynamics with conductance-based synapses, with additional
 spike-frequency adaptation and relative refractory mechanisms as described in
 [2]_, page 166.
 
-Incoming spike events induce a post-synaptic change of conductance modelled by
+Incoming spike events induce a postsynaptic change of conductance modelled by
 an exponential function. The exponential function is normalized such that an
 event of weight 1.0 results in a peak current of 1 nS.
 

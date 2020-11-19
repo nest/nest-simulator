@@ -81,7 +81,7 @@ nest::MPIManager::MPIManager()
 #ifndef HAVE_MPI
 
 void
-nest::MPIManager::init_mpi( int* argc, char** argv[] )
+nest::MPIManager::init_mpi( int*, char*** )
 {
   // if ! HAVE_MPI, initialize process entries for 1 rank
   // use 2 processes entries (need at least two
@@ -100,6 +100,12 @@ nest::MPIManager::set_communicator( MPI_Comm global_comm )
   MPI_Comm_size( comm, &num_processes_ );
   MPI_Comm_rank( comm, &rank_ );
   recv_buffer_size_ = send_buffer_size_ * get_num_processes();
+
+  // use at least 2 * number of processes entries (need at least two
+  // entries per process to use flag of first entry as validity and
+  // last entry to communicate end of communication)
+  kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
+  kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
 }
 
 void
@@ -113,22 +119,26 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 #ifdef HAVE_MUSIC
     kernel().music_manager.init_music( argc, argv );
     // get a communicator from MUSIC
-    set_communicator( ( MPI_Comm ) kernel().music_manager.communicator() );
+    set_communicator( static_cast< MPI_Comm >( kernel().music_manager.communicator() ) );
 #else  /* #ifdef HAVE_MUSIC */
     int provided_thread_level;
     MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
     set_communicator( MPI_COMM_WORLD );
 #endif /* #ifdef HAVE_MUSIC */
   }
-
-  MPI_Comm_size( comm, &num_processes_ );
-  MPI_Comm_rank( comm, &rank_ );
-
-  // use at least 2 * number of processes entries (need at least two
-  // entries per process to use flag of first entry as validity and
-  // last entry to communicate end of communication)
-  kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
-  kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
+  else
+  {
+#ifdef HAVE_MUSIC
+    LOG( M_ERROR,
+      "MPIManager::init_mpi()",
+      "When compiled with MUSIC, NEST must be initialized before any other modules that call MPI_Init(). "
+      "Calling MPI_Abort()." );
+    comm = MPI_COMM_WORLD;
+    mpi_abort( 1 );
+#else
+    set_communicator( MPI_COMM_WORLD );
+#endif
+  }
 
   // create off-grid-spike type for MPI communication
   // creating derived datatype
@@ -214,13 +224,11 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 }
 
-/**
- * Finish off MPI routines
- */
+#ifdef HAVE_MPI
+
 void
 nest::MPIManager::mpi_finalize( int exitcode )
 {
-#ifdef HAVE_MPI
   MPI_Type_free( &MPI_OFFGRID_SPIKE );
 
   int finalized;
@@ -241,9 +249,16 @@ nest::MPIManager::mpi_finalize( int exitcode )
       mpi_abort( exitcode );
     }
   }
-#endif /* #ifdef HAVE_MPI */
 }
 
+#else /* #ifdef HAVE_MPI */
+
+void
+nest::MPIManager::mpi_finalize( int )
+{
+}
+
+#endif /* #ifdef HAVE_MPI */
 
 #ifdef HAVE_MPI
 
@@ -1025,22 +1040,22 @@ nest::MPIManager::communicate( double send_val, std::vector< double >& recv_buff
 }
 
 void
-nest::MPIManager::communicate( std::vector< long >& send_buffer, std::vector< long >& recv_buffer )
+nest::MPIManager::communicate( std::vector< long >&, std::vector< long >& )
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( double buffer )
+nest::MPIManager::communicate_Allreduce_sum_in_place( double )
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& buffer )
+nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& )
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& buffer )
+nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& )
 {
 }
 
@@ -1051,7 +1066,7 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
 }
 
 void
-nest::MPIManager::communicate_Allreduce_max_in_place( std::vector< long >& buffer )
+nest::MPIManager::communicate_Allreduce_max_in_place( std::vector< long >& )
 {
   // Null operator for ranks == 1
   // Max already is the input

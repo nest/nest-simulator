@@ -11,7 +11,7 @@ still works, while in `PyNEST <introduction-to-pynest.md>`__, the
 `Connect()` function has been renamed to `OneToOneConnect()`.
 However, simple cases, which are just creating one-to-one connections
 between two lists of nodes are still working with the new command
-without the need to change the code. Note that the topology-module is
+without the need to change the code. Note that the spatial connection is
 not effected by theses changes. The translation between the old and the
 new connect routines is described in `Old Connection
 Routines <connection-management.md#old-connection-routines>`__.
@@ -86,7 +86,7 @@ One-to-one connections
 
     n = 10
     A = Create("iaf_psc_alpha", n)
-    B = Create("spike_detector", n)
+    B = Create("spike_recorder", n)
     Connect(A, B, 'one_to_one')
 
 This rule can also take two Global IDs A and B instead of integer lists.
@@ -251,7 +251,7 @@ Example:
 ::
 
     A = Create("iaf_psc_alpha", 2)
-    B = Create("spike_detector", 2)
+    B = Create("spike_recorder", 2)
     conn_dict = {'rule': 'one_to_one'}
     syn_dict = {'weight': [1.2, -3.5]}
     Connect(A, B, conn_dict, syn_dict)
@@ -376,13 +376,12 @@ parameters it needs to be defined in two steps:
 For further information on the distributions see :doc:`Random numbers in
 NEST <random_numbers>`.
 
-Topological Connections
------------------------
+Spatially-structured networks
+-----------------------------
 
-If the connect functions above are not sufficient, the topology provides
-more sophisticated functions. For example, it is possible to create
-receptive field structures and much more! See :doc:`Topological
-Connections <topology/index>` for more information.
+If nodes are created with spatial distributions, it is possible to create connections with
+attributes based on node positions. See :doc:`Spatially-structured networks <spatial/index>`
+for more information.
 
 .. _receptor-types:
 
@@ -390,7 +389,7 @@ Receptor Types
 --------------
 
 Each connection in NEST targets a specific receptor type on the
-post-synaptic node. Receptor types are identified by integer numbers,
+postsynaptic node. Receptor types are identified by integer numbers,
 the default receptor type is 0. The meaning of the receptor type depends
 on the model and is documented in the model documentation. To connect to
 a non-standard receptor type, the parameter ``receptor_type`` of the
@@ -398,7 +397,7 @@ additional argument ``params`` is used in the call to the ``Connect``
 command. To illustrate the concept of receptor types, we give an example
 using standard integrate-and-fire neurons as presynaptic nodes and a
 multi-compartment integrate-and-fire neuron (``iaf_cond_alpha_mc``) as
-post-synaptic node.
+postsynaptic node.
 
 .. image:: ../_static/img/Receptor_types.png
      :width: 200px
@@ -508,7 +507,7 @@ representing a synapse model. If GetConnections is called without
 parameters, all connections in the network are returned. If a list of
 source neurons is given, only connections from these pre-synaptic
 neurons are returned. If a list of target neurons is given, only
-connections to these post-synaptic neurons are returned. If a synapse
+connections to these postsynaptic neurons are returned. If a synapse
 model is given, only connections with this synapse type are returned.
 Any combination of source, target and model parameters is permitted.
 Each connection id is a 5-tuple or, if available, a NumPy array with the

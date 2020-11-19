@@ -146,11 +146,6 @@ nest::SourceTable::clean( const thread tid )
   }
 }
 
-void
-nest::SourceTable::reserve( const thread tid, const synindex syn_id, const size_t count )
-{
-}
-
 nest::index
 nest::SourceTable::get_node_id( const thread tid, const synindex syn_id, const index lcid ) const
 {

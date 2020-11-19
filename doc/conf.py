@@ -30,29 +30,30 @@ sphinx-build -c ../extras/help_generator -b html . _build/html
 
 import sys
 import os
-
 import re
-
 import pip
-
 import subprocess
 
+from pathlib import Path
+from shutil import copyfile
+
 from subprocess import check_output, CalledProcessError
+from mock import Mock as MagicMock
 
 source_suffix = ['.rst']
 
 # If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
+# add these directories to sys.path here. If the dit rectory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
 doc_path = os.path.abspath(os.path.dirname(__file__))
 root_path = os.path.abspath(doc_path + "/..")
 
 sys.path.insert(0, os.path.abspath(root_path))
-sys.path.insert(0, os.path.abspath(root_path + '/topology'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
 sys.path.insert(0, os.path.abspath(doc_path))
+
 
 # -- Mock pynestkernel ----------------------------------------------------
 # The mock_kernel has to be imported after setting the correct sys paths.
@@ -98,6 +99,8 @@ extensions = [
 breathe_projects = {"EXTRACT_MODELS": "./xml/"}
 
 breathe_default_project = "EXTRACT_MODELS"
+
+subprocess.call('doxygen', shell=True)
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 
@@ -196,7 +199,7 @@ from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 def config_inited_handler(app, config):
     ExtractUserDocs(
         relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
-        outdir="userdocs/"
+        outdir="models/"
     )
 
 
@@ -205,17 +208,17 @@ nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 's'),
                   ('cpp:identifier', 'CommonSynapseProperties'),
                   ('cpp:identifier', 'Connection<targetidentifierT>'),
-                  ('cpp:identifier', 'Archiving_Node'),
+                  ('cpp:identifier', 'ArchivingNode'),
                   ('cpp:identifier', 'DeviceNode'),
                   ('cpp:identifier', 'Node'),
-                  ('cpp:identifier', 'Clopath_Archiving_Node'),
+                  ('cpp:identifier', 'ClopathArchivingNode'),
                   ('cpp:identifier', 'MessageHandler'),
                   ('cpp:identifer', 'CommonPropertiesHomW')]
 
 
 def setup(app):
-    app.add_stylesheet('css/custom.css')
-    app.add_stylesheet('css/pygments.css')
+    app.add_css_file('css/custom.css')
+    app.add_css_file('css/pygments.css')
     app.add_js_file("js/copybutton.js")
     app.add_js_file("js/custom.js")
 
@@ -275,3 +278,33 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
+
+# -- Copy documentation for Microcircuit Model ----------------------------
+
+
+def copytreeglob(source, target, glob='*.png'):
+    '''
+    Recursively copy all files selected by `glob` from `source` to `target` path,
+    recreating the sub-folder structure.
+    Parameters
+    ----------
+    source : path, str
+        source folder where to recursively search for glob
+    target : path, str
+        target folder where to recreate the tree of source files
+    glob : str
+        shell-glob specifying which files to copy
+    '''
+    source = Path(source)
+    target = Path(target)
+    for relativename in [x.relative_to(source) for x in source.rglob(glob)]:
+        # manually create directory, since shutil.copyfile() does not support
+        # the `dirs_exist_ok=True` below Python-3.8
+        targetpath = target/relativename.parents[0]
+        if not targetpath.exists():
+            targetpath.mkdir(parents=True)
+        assert targetpath.is_dir(), "Targetpath is obstructed by a non-directory object (maybe a file)"
+        copyfile(source/relativename, target/relativename)
+
+
+copytreeglob("../pynest/examples/Potjans_2014", "examples", '*.png')

@@ -191,7 +191,7 @@ aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 
 EndUserDocs */
 
-class aeif_psc_delta_clopath : public Clopath_Archiving_Node
+class aeif_psc_delta_clopath : public ClopathArchivingNode
 {
 
 public:
@@ -250,25 +250,26 @@ private:
     double g_L;         //!< Leak Conductance in nS
     double C_m;         //!< Membrane Capacitance in pF
     double E_L;         //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;     //!< Slope faktor in ms
-    double tau_w;       //!< adaptation time-constant in ms
-    double tau_z;       //!< adaptation time-constant in ms
-    double tau_V_th;    //!< adaptive threshold time-constant in ms
-    double V_th_max;    //!< value of V_th afer a spike in mV
-    double V_th_rest;   //!< resting value of V_th in mV
-    double tau_plus;    //!< time constant of u_bar_plus in ms
-    double tau_minus;   //!< time constant of u_bar_minus in ms
-    double tau_bar_bar; //!< time constant of u_bar_bar in ms
-    double a;           //!< Subthreshold adaptation in nS.
+    double Delta_T;     //!< Slope factor in ms
+    double tau_w;       //!< Adaptation time-constant in ms
+    double tau_z;       //!< Adaptation time-constant in ms
+    double tau_V_th;    //!< Adaptive threshold time-constant in ms
+    double V_th_max;    //!< Value of V_th afer a spike in mV
+    double V_th_rest;   //!< Resting value of V_th in mV
+    double tau_plus;    //!< Time constant of u_bar_plus in ms
+    double tau_minus;   //!< Time constant of u_bar_minus in ms
+    double tau_bar_bar; //!< Time constant of u_bar_bar in ms
+    double a;           //!< Subthreshold adaptation in nS
     double b;           //!< Spike-triggered adaptation in pA
     double I_sp;
-    double t_ref; //!< Refractory period in ms.
-    double I_e;   //!< Intrinsic current in pA.
+    double t_ref; //!< Refractory period in ms
+    double I_e;   //!< Intrinsic current in pA
 
-    double gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol; //!< Error bound for GSL integrator
 
-    double t_clamp_; //!< The membrane potential is clamped to V_clamp (in mV)
-    double V_clamp_; //!< for the duration of t_clamp (in ms) after each spike.
+    double t_clamp_; //!< The membrane potential is clamped for the duration of t_clamp (in ms) after each spike
+    double V_clamp_; //!< The membrane potential is clamped to V_clamp (in mV)
+
 
     Parameters_(); //!< Sets default parameter values
 
@@ -438,7 +439,7 @@ aeif_psc_delta_clopath::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Clopath_Archiving_Node::get_status( d );
+  ClopathArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -455,7 +456,7 @@ aeif_psc_delta_clopath::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Clopath_Archiving_Node::set_status( d );
+  ClopathArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

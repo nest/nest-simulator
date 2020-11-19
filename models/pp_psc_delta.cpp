@@ -254,7 +254,7 @@ nest::pp_psc_delta::Buffers_::Buffers_( const Buffers_&, pp_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 nest::pp_psc_delta::pp_psc_delta()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -263,7 +263,7 @@ nest::pp_psc_delta::pp_psc_delta()
 }
 
 nest::pp_psc_delta::pp_psc_delta( const pp_psc_delta& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -288,7 +288,7 @@ nest::pp_psc_delta::init_buffers_()
   B_.spikes_.clear();   //!< includes resize
   B_.currents_.clear(); //!< includes resize
   B_.logger_.reset();   //!< includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void
@@ -416,7 +416,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 
         if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.
         {
-          // Set dead time interval according to paramters
+          // Set dead time interval according to parameters
           if ( P_.dead_time_random_ )
           {
             S_.r_ = Time( Time::ms( V_.gamma_dev_( V_.rng_ ) / V_.dt_rate_ ) ).get_steps();

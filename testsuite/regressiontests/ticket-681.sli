@@ -50,14 +50,14 @@ M_ERROR setverbosity
     ResetKernel
     << /local_num_threads 4 /overwrite_files false >> SetKernelStatus
     /iaf_psc_alpha 4 << /I_e 1500.0 >> Create ;
-    /spike_detector << /record_to /ascii >> Create ;
+    /spike_recorder << /record_to /ascii >> Create ;
     [1 2 3 4] [5] Connect
     1000 Simulate
 	
     ResetKernel
     0  << /local_num_threads 4 /overwrite_files false >> SetStatus
     /iaf_psc_alpha 4 << /I_e 1500.0 >> Create ;
-    /spike_detector << /record_to /ascii >> Create ;
+    /spike_recorder << /record_to /ascii >> Create ;
     [1 2 3 4] [5] Connect
     1000 Simulate
 } failbutnocrash_or_die

@@ -27,7 +27,7 @@ Simple example for how to repeat a stimulation protocol
 using the ``origin`` property of devices.
 
 In this example, a ``poisson_generator`` generates a spike train that is
-recorded directly by a ``spike_detector``, using the following paradigm:
+recorded directly by a ``spike_recorder``, using the following paradigm:
 
 1. A single trial last for 1000 ms.
 2. Within each trial, the ``poisson_generator`` is active from 100 ms to 500 ms.
@@ -46,7 +46,7 @@ relative to the ``origin``.
 
 import nest
 import nest.raster_plot
-
+import matplotlib.pyplot as plt
 
 ###############################################################################
 # Second, we set the parameters so the ``poisson_generator`` generates 1000
@@ -83,18 +83,18 @@ pg = nest.Create('poisson_generator',
 
 
 ###############################################################################
-# The ``spike_detector`` is created and the handle stored in `sd`.
+# The ``spike_recorder`` is created and the handle stored in `sr`.
 
 
-sd = nest.Create('spike_detector')
+sr = nest.Create('spike_recorder')
 
 
 ###############################################################################
 # The ``Connect`` function connects the nodes so spikes from pg are collected by
-# the ``spike_detector`` `sd`
+# the ``spike_recorder`` `sr`
 
 
-nest.Connect(pg, sd)
+nest.Connect(pg, sr)
 
 
 ###############################################################################
@@ -115,6 +115,6 @@ for n in range(num_trials):
 # 100 ms into each trial. This is due to sub-optimal automatic placement of
 # histogram bin borders.
 
-nest.raster_plot.from_device(sd, hist=True, hist_binwidth=100.,
+nest.raster_plot.from_device(sr, hist=True, hist_binwidth=100.,
                              title='Repeated stimulation by Poisson generator')
-nest.raster_plot.show()
+plt.show()

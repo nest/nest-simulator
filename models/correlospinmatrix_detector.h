@@ -54,7 +54,7 @@ to record correlations from binary neurons from several binary sources and
 calculates the raw auto and cross correlation binned to bins of duration
 delta_tau. The result can be obtained via GetStatus under the key
 /count_covariance. The result is a tensor of rank 3 of size
-N_channels x N_channels, with each entry \f$ C_{ij} \f$ being a vector of size
+N_channels x N_channels, with each entry :math:`C_{ij}` being a vector of size
 :math:`2*\tau_{max}/\delta_{\tau} + 1` containing the histogram for the
 different
 time lags.
@@ -123,7 +123,7 @@ SpikeEvent
 See also
 ++++++++
 
-correlation_detector, correlomatrix_detector, spike_detector
+correlation_detector, correlomatrix_detector, spike_recorder
 
 EndUserDocs */
 
@@ -221,6 +221,8 @@ private:
 
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
+
+    Parameters_& operator=( const Parameters_& );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 

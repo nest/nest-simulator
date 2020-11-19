@@ -100,9 +100,9 @@ period. Dendritic membrane potentials are not manipulated after a spike.
 
 There is one excitatory and one inhibitory conductance-based synapse
 onto each compartment, with alpha-function time course. The alpha
-function is normalised such that an event of weight 1.0 results in a
-peak current of 1 nS at t = tau_syn. Each compartment can also receive
-current input from a current generator, and an external (rheobase)
+function is normalized such that an event of weight 1.0 results in a
+peak current of 1 nS at :math:`t = \tau_{syn}`. Each compartment can also
+receive current input from a current generator, and an external (rheobase)
 current can be set for each compartment.
 
 Synapses, including those for injection external currents, are addressed through
@@ -168,7 +168,7 @@ iaf_cond_alpha
 
 EndUserDocs */
 
-class iaf_cond_alpha_mc : public Archiving_Node
+class iaf_cond_alpha_mc : public ArchivingNode
 {
 
   // Boilerplate function declarations --------------------------------
@@ -529,7 +529,7 @@ iaf_cond_alpha_mc::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
@@ -566,7 +566,7 @@ iaf_cond_alpha_mc::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -113,7 +113,7 @@ public:
   /**
    * Copy constructor to propagate common properties.
    */
-  Quantal_StpConnection( const Quantal_StpConnection& );
+  Quantal_StpConnection( const Quantal_StpConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these

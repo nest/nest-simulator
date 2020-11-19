@@ -68,14 +68,14 @@ Functions related to connection
 | nest.Connect(list, list, conn_spec          | nest.Connect(:green:`nest.NodeCollection`,    |
 | =None, syn_spec=None, model=None)           | :green:`nest.NodeCollection`, conn_spec=      |
 |                                             | None, syn_spec=None,                          |
-|                                             | :green:`return_SynapseCollection`=False)      |
-|                                             | | *In syn_spec the synapse model*             |
-|                                             | *is given by synapse_model,*                  |
-|                                             | *not model.*                                  |
+|                                             | :green:`return_SynapseCollection`\ =False)    |
+|                                             |                                               |
+|                                             | *In syn_spec the synapse model is given by*   |
+|                                             | *the* synapse_model *key, where before it*    |
+|                                             | *was* model                                   |
 +---------------------------------------------+-----------------------------------------------+
-| nest.DataConnect(pre, params=None,          | *Use* nest.Connect(np.array, np.array,        |
-| model="static_synapse")                     | conn_spec=None, syn_spec=None,                |
-|                                             | return_SynapseCollection=False)               |
+| nest.DataConnect(pre, post)                 | *Use* nest.Connect(np.array, np.array,        |
+|                                             | conn_spec="one_to_one")                       |
 +---------------------------------------------+-----------------------------------------------+
 | nest.CGConnect(list, list, cg,              | nest.CGConnect(:green:`nest.NodeCollection`,  |
 | parameter_map=None, model='static           | :green:`nest.NodeCollection`, cg,             |
@@ -97,7 +97,7 @@ Functions related to connection
 Functions related to subnets
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**The subnet module is removed in NEST 3.0!**
+**The subnet model is removed in NEST 3.0!**
 
 +----------------------------------------+--------------------------------------------+
 | NEST 2.x                               | NEST 3.0                                   |
@@ -159,8 +159,8 @@ Functions related to setting and getting parameters
 Function related to spatially distributed nodes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Topology is now integrated into NEST and no longer a separate module.
-
+Spatial structure, formerly provided by the Topology module, is now integrated into NEST and is no longer
+a separate module.
 
 +------------------------------------------------+----------------------------------------------------+
 | NEST 2.x                                       | NEST 3.0                                           |
@@ -235,7 +235,7 @@ Topology is now integrated into NEST and no longer a separate module.
 | tp.GetTargetPositions(tuple, tuple,            | :green:`nest`.GetTargetPositions(\                 |
 | tgt_model=None, syn_model=None)                | :green:`nest.NodeCollection`,                      |
 | *returns*                                      | :green:`nest.NodeCollection`,                      |
-| tuple of tuple(s) of tuple(s)                  | :green:`synapse_model`=None) *returns* list of     |
+| tuple of tuple(s) of tuple(s)                  | :green:`synapse_model`\ =None) *returns* list of   |
 | of floats                                      | list(s) of tuple(s) of floats                      |
 +------------------------------------------------+----------------------------------------------------+
 | tp.SelectNodesByMask(tuple, anchor,            | :green:`nest`.SelectNodesByMaks(\                  |
@@ -266,6 +266,11 @@ Topology is now integrated into NEST and no longer a separate module.
 |                                                | :green:`shape=[100, 100]`, ax=None,                |
 |                                                | :green:`prob_cmap` ='Greens', mask_color='yellow') |
 +------------------------------------------------+----------------------------------------------------+
+| 'mask': {'volume':                             | 'mask': {':green:`box`'                            |
+| {'lower_left': [-2., -1., -1.],                | {'lower_left': [-2., -1., -1.],                    |
+| 'upper_right': [2., 1., 1.]}}                  | 'upper_right': [2., 1., 1.]}}                      |
++------------------------------------------------+----------------------------------------------------+
+
 
 .. _connrules:
 
@@ -423,7 +428,7 @@ The logic module contains logical expressions between nest.Parameter's.
 .. _distr_param:
 
 :green:`spatial_distributions`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The spatial_distributions module contains random distributions that take a spatial
 parameter as input and applies the distribution on the parameter. They are used
 for spatially distributed nodes.

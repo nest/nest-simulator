@@ -182,7 +182,7 @@ iaf_cond_alpha, aeif_cond_exp
 
 EndUserDocs */
 
-class aeif_cond_alpha : public Archiving_Node
+class aeif_cond_alpha : public ArchivingNode
 {
 
 public:
@@ -243,17 +243,17 @@ private:
     double E_ex;       //!< Excitatory reversal Potential in mV
     double E_in;       //!< Inhibitory reversal Potential in mV
     double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;    //!< Slope faktor in ms.
-    double tau_w;      //!< adaptation time-constant in ms.
-    double a;          //!< Subthreshold adaptation in nS.
+    double Delta_T;    //!< Slope factor in ms
+    double tau_w;      //!< Adaptation time-constant in ms
+    double a;          //!< Subthreshold adaptation in nS
     double b;          //!< Spike-triggered adaptation in pA
-    double V_th;       //!< Spike threshold in mV.
-    double t_ref;      //!< Refractory period in ms.
-    double tau_syn_ex; //!< Excitatory synaptic rise time.
-    double tau_syn_in; //!< Excitatory synaptic rise time.
-    double I_e;        //!< Intrinsic current in pA.
+    double V_th;       //!< Spike threshold in mV
+    double t_ref;      //!< Refractory period in ms
+    double tau_syn_ex; //!< Excitatory synaptic rise time
+    double tau_syn_in; //!< Excitatory synaptic rise time
+    double I_e;        //!< Intrinsic current in pA
 
-    double gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol; //!< Error bound for GSL integrator
 
     Parameters_(); //!< Sets default parameter values
 
@@ -427,7 +427,7 @@ aeif_cond_alpha::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -444,7 +444,7 @@ aeif_cond_alpha::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

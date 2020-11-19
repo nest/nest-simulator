@@ -241,9 +241,6 @@ nest::RNGManager::create_rngs_()
 void
 nest::RNGManager::create_grng_()
 {
-  // create new grng
-  LOG( M_INFO, "Network::create_grng_", "Creating new default global RNG" );
-
 // create default RNG with default seed
 #ifdef HAVE_GSL
   grng_ = librandom::RngPtr( new librandom::GslRandomGen( gsl_rng_knuthran2002, librandom::RandomGen::DefaultSeed ) );

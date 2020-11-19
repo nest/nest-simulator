@@ -75,7 +75,6 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
-  integer_params_ = { names::receptor_type, names::music_channel, names::synapse_label };
 
   default_weight_.resize( syn_specs.size() );
   default_delay_.resize( syn_specs.size() );
@@ -523,12 +522,8 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 
       for ( auto param : synapse_params_[ indx ] )
       {
-        if ( integer_params_.find( param.first ) != integer_params_.end() )
+        if ( param.second->provides_long() )
         {
-          if ( not param.second->provides_long() )
-          {
-            throw BadParameter( param.first.toString() + " must be given as integer." );
-          }
           ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
         }
         else
@@ -543,7 +538,7 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 void
 nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs )
 {
-  // Check if both pre and post synaptic element are provided. Currently only possible to have
+  // Check if both pre and postsynaptic element are provided. Currently only possible to have
   // structural plasticity with single element syn_spec.
   bool have_both_sp_keys = false;
   bool have_one_sp_key = false;
@@ -575,7 +570,7 @@ nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< Dictionary
   }
   else if ( have_one_sp_key )
   {
-    throw BadProperty( "Structural plasticity requires both a pre and post synaptic element." );
+    throw BadProperty( "Structural plasticity requires both a pre and postsynaptic element." );
   }
 }
 
@@ -1844,7 +1839,7 @@ nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   const std::vector< DictionaryDatum >& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
-  // Check that both pre and post synaptic element are provided
+  // Check that both pre and postsynaptic element are provided
   if ( not use_pre_synaptic_element_ or not use_post_synaptic_element_ )
   {
     throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing." );
@@ -1885,11 +1880,8 @@ nest::SPBuilder::connect_()
 
 /**
  * In charge of dynamically creating the new synapses
- * @param sources nodes from which synapses can be created
- * @param targets target nodes for the newly created synapses
  */
-void
-nest::SPBuilder::connect_( NodeCollectionPTR sources, NodeCollectionPTR targets )
+void nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
 {
   throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
 }

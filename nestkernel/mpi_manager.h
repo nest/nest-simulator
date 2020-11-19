@@ -677,7 +677,7 @@ template < class D >
 void
 MPIManager::MPIManager::communicate_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer,
-  const unsigned int send_recv_count )
+  const unsigned int )
 {
   recv_buffer.swap( send_buffer );
 }

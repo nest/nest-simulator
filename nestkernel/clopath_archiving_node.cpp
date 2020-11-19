@@ -31,10 +31,10 @@
 namespace nest
 {
 
-// member functions for Clopath_Archiving_Node
+// member functions for ClopathArchivingNode
 
-nest::Clopath_Archiving_Node::Clopath_Archiving_Node()
-  : Archiving_Node()
+nest::ClopathArchivingNode::ClopathArchivingNode()
+  : ArchivingNode()
   , A_LTD_( 14.0e-5 )
   , A_LTP_( 8.0e-5 )
   , u_ref_squared_( 60.0 )
@@ -47,8 +47,8 @@ nest::Clopath_Archiving_Node::Clopath_Archiving_Node()
 {
 }
 
-nest::Clopath_Archiving_Node::Clopath_Archiving_Node( const Clopath_Archiving_Node& n )
-  : Archiving_Node( n )
+nest::ClopathArchivingNode::ClopathArchivingNode( const ClopathArchivingNode& n )
+  : ArchivingNode( n )
   , A_LTD_( n.A_LTD_ )
   , A_LTP_( n.A_LTP_ )
   , u_ref_squared_( n.u_ref_squared_ )
@@ -62,7 +62,7 @@ nest::Clopath_Archiving_Node::Clopath_Archiving_Node( const Clopath_Archiving_No
 }
 
 void
-nest::Clopath_Archiving_Node::init_clopath_buffers()
+nest::ClopathArchivingNode::init_clopath_buffers()
 {
   // Implementation of the delay of the convolved membrane potentials. This
   // delay is not described in Clopath et al. 2010 but is present in the code
@@ -82,9 +82,9 @@ nest::Clopath_Archiving_Node::init_clopath_buffers()
 }
 
 void
-nest::Clopath_Archiving_Node::get_status( DictionaryDatum& d ) const
+nest::ClopathArchivingNode::get_status( DictionaryDatum& d ) const
 {
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   def< double >( d, names::A_LTD, A_LTD_ );
   def< double >( d, names::A_LTP, A_LTP_ );
@@ -96,9 +96,9 @@ nest::Clopath_Archiving_Node::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::Clopath_Archiving_Node::set_status( const DictionaryDatum& d )
+nest::ClopathArchivingNode::set_status( const DictionaryDatum& d )
 {
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // We need to preserve values in case invalid values are set
   double new_A_LTD = A_LTD_;
@@ -131,7 +131,7 @@ nest::Clopath_Archiving_Node::set_status( const DictionaryDatum& d )
 }
 
 double
-nest::Clopath_Archiving_Node::get_LTD_value( double t )
+nest::ClopathArchivingNode::get_LTD_value( double t )
 {
   std::vector< histentry_extended >::iterator runner;
   if ( ltd_history_.empty() || t < 0.0 )
@@ -156,7 +156,7 @@ nest::Clopath_Archiving_Node::get_LTD_value( double t )
 }
 
 void
-nest::Clopath_Archiving_Node::get_LTP_history( double t1,
+nest::ClopathArchivingNode::get_LTP_history( double t1,
   double t2,
   std::deque< histentry_extended >::iterator* start,
   std::deque< histentry_extended >::iterator* finish )
@@ -188,7 +188,7 @@ nest::Clopath_Archiving_Node::get_LTP_history( double t1,
 }
 
 void
-nest::Clopath_Archiving_Node::write_clopath_history( Time const& t_sp,
+nest::ClopathArchivingNode::write_clopath_history( Time const& t_sp,
   double u,
   double u_bar_plus,
   double u_bar_minus,
@@ -221,7 +221,7 @@ nest::Clopath_Archiving_Node::write_clopath_history( Time const& t_sp,
 }
 
 void
-nest::Clopath_Archiving_Node::write_LTD_history( const double t_ltd_ms, double u_bar_minus, double u_bar_bar )
+nest::ClopathArchivingNode::write_LTD_history( const double t_ltd_ms, double u_bar_minus, double u_bar_bar )
 {
   if ( n_incoming_ )
   {
@@ -233,7 +233,7 @@ nest::Clopath_Archiving_Node::write_LTD_history( const double t_ltd_ms, double u
 }
 
 void
-nest::Clopath_Archiving_Node::write_LTP_history( const double t_ltp_ms, double u, double u_bar_plus )
+nest::ClopathArchivingNode::write_LTP_history( const double t_ltp_ms, double u, double u_bar_plus )
 {
   if ( n_incoming_ )
   {

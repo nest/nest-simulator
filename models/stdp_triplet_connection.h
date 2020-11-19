@@ -47,7 +47,7 @@ Notes:
 - Presynaptic traces r_1 and r_2 of [1]_ are stored in the connection as
   Kplus and Kplus_triplet and decay with time-constants tau_plus and
   tau_plus_triplet, respectively.
-- Postsynaptic traces o_1 and o_2 of [1]_ are acquired from the post-synaptic
+- Postsynaptic traces o_1 and o_2 of [1]_ are acquired from the postsynaptic
   neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
   tau_minus and tau_minus_triplet, respectively. These two time-constants
   can be set as properties of the postsynaptic neuron.
@@ -123,7 +123,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPTripletConnection( const STDPTripletConnection& );
+  STDPTripletConnection( const STDPTripletConnection& ) = default;
 
   /**
    * Default Destructor.
@@ -244,20 +244,20 @@ STDPTripletConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   double dendritic_delay = get_delay();
   Node* target = get_target( t );
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
-  // facilitation due to post-synaptic spikes since last pre-synaptic spike
+  // facilitation due to postsynaptic spikes since last pre-synaptic spike
   while ( start != finish )
   {
-    // post-synaptic spike is delayed by dendritic_delay so that
+    // postsynaptic spike is delayed by dendritic_delay so that
     // it is effectively late by that much at the synapse.
     double minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
 
     // subtract 1.0 yields the Kminus_triplet value just prior to
-    // the post synaptic spike, implementing the t-epsilon in
+    // the postsynaptic spike, implementing the t-epsilon in
     // Pfister et al, 2006
     double ky = start->Kminus_triplet_ - 1.0;
     ++start;
@@ -302,24 +302,6 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection()
   , Kplus_triplet_( 0.0 )
   , Wmax_( 100.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-STDPTripletConnection< targetidentifierT >::STDPTripletConnection(
-  const STDPTripletConnection< targetidentifierT >& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , tau_plus_( rhs.tau_plus_ )
-  , tau_plus_triplet_( rhs.tau_plus_triplet_ )
-  , Aplus_( rhs.Aplus_ )
-  , Aminus_( rhs.Aminus_ )
-  , Aplus_triplet_( rhs.Aplus_triplet_ )
-  , Aminus_triplet_( rhs.Aminus_triplet_ )
-  , Kplus_( rhs.Kplus_ )
-  , Kplus_triplet_( rhs.Kplus_triplet_ )
-  , Wmax_( rhs.Wmax_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

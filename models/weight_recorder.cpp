@@ -62,12 +62,6 @@ nest::weight_recorder::Parameters_::Parameters_()
 {
 }
 
-nest::weight_recorder::Parameters_::Parameters_( const Parameters_& p )
-  : senders_( p.senders_ )
-  , targets_( p.targets_ )
-{
-}
-
 void
 nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 {
@@ -147,7 +141,7 @@ nest::weight_recorder::calibrate()
 }
 
 void
-nest::weight_recorder::update( Time const&, const long from, const long to )
+nest::weight_recorder::update( Time const&, const long, const long )
 {
 }
 

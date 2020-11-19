@@ -82,19 +82,18 @@ MUSICManager::get_status( DictionaryDatum& )
 {
 }
 
+#ifdef HAVE_MUSIC
+
 void
 MUSICManager::init_music( int* argc, char** argv[] )
 {
-#ifdef HAVE_MUSIC
   int provided_thread_level;
   music_setup = new MUSIC::Setup( *argc, *argv, MPI_THREAD_FUNNELED, &provided_thread_level );
-#endif
 }
 
 void
 MUSICManager::enter_runtime( double h_min_delay )
 {
-#ifdef HAVE_MUSIC
   publish_music_in_ports_();
   std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms", h_min_delay );
   LOG( M_INFO, "MUSICManager::enter_runtime", msg );
@@ -106,8 +105,22 @@ MUSICManager::enter_runtime( double h_min_delay )
   {
     music_runtime = new MUSIC::Runtime( music_setup, h_min_delay * 1e-3 );
   }
-#endif
 }
+
+#else /* #ifdef HAVE_MUSIC */
+
+void
+MUSICManager::init_music( int*, char*** )
+{
+}
+
+void
+MUSICManager::enter_runtime( double )
+{
+}
+
+#endif /* #ifdef HAVE_MUSIC */
+
 
 void
 MUSICManager::music_finalize()

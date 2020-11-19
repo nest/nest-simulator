@@ -360,6 +360,19 @@ def makebuild_summary(log_filename, msg_make_section_start,
     number_of_error_msgs = 0
     number_of_warning_msgs = 0
     in_make_section = False
+
+    expected_warnings = 0
+    if build_type == 'FULL':
+        expected_warnings = 2  # libneurosim and NEST both define PACKAGE in their config.h files
+
+    nest_warning_re = re.compile(f'{build_dir}.*: warning:')
+    known_warnings = [
+        f'{build_dir}/sli/scanner.cc:642:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:673:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:714:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:741:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+    ]
+
     with open(log_filename) as fh:
         for line in fh:
             if is_message(line, msg_make_section_start):
@@ -375,7 +388,9 @@ def makebuild_summary(log_filename, msg_make_section_start,
                     error_summary[file_name] += 1
                     number_of_error_msgs += 1
 
-                if ': warning:' in line:
+                # Only count warnings originating in NEST source files
+                warning_match = nest_warning_re.match(line)
+                if warning_match is not None and line.strip() not in known_warnings:
                     file_name = line.split(':')[0]
                     if file_name not in warning_summary:
                         warning_summary[file_name] = 0
@@ -384,12 +399,12 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
                 if is_message(line, msg_make_section_end):
                     # The log file contains only one 'make' section, return.
-                    if number_of_error_msgs == 0:
+                    if number_of_error_msgs == 0 and number_of_warning_msgs == expected_warnings:
                         return(True, number_of_error_msgs, error_summary,
-                               number_of_warning_msgs, warning_summary)
+                               number_of_warning_msgs, expected_warnings, warning_summary)
                     else:
                         return(False, number_of_error_msgs, error_summary,
-                               number_of_warning_msgs, warning_summary)
+                               number_of_warning_msgs, expected_warnings, warning_summary)
 
     if in_make_section:
         # 'make' was not completed.
@@ -749,6 +764,7 @@ def printable_summary(list_of_changed_files,
                       summary_warnings,
                       number_of_errors,
                       number_of_warnings,
+                      expected_warnings,
                       number_of_tests_total,
                       number_of_tests_failed,
                       number_of_tests_skipped,
@@ -782,6 +798,7 @@ def printable_summary(list_of_changed_files,
     summary_warnings:        Dictionary of build warning messages.
     number_of_errors:        Number of errors.
     number_of_warnings:      Number of warnings.
+    expected_warnings:       Number of warnings expected.
     number_of_tests_total:   Number of tests total.
     number_of_tests_failed:  Number of tests failed.
     number_of_tests_skipped: Number of tests skipped.
@@ -853,7 +870,7 @@ def printable_summary(list_of_changed_files,
          convert_bool_value_to_status_string(status_cmake_configure)],
         ['Make', convert_bool_value_to_status_string(status_make) + '\n' +
          '\nErrors  : ' + str(number_of_errors) +
-         '\nWarnings: ' + str(number_of_warnings)],
+         '\nWarnings: ' + str(number_of_warnings) + f' ({expected_warnings} expected)'],
         ['Make install',
          convert_bool_value_to_status_string(status_make_install)],
         ['Make installcheck',
@@ -955,11 +972,12 @@ def build_return_code(status_cmake_configure,
 
 
 if __name__ == '__main__':
+    import re
     from sys import argv, exit
     from terminaltables import AsciiTable
     from textwrap import wrap
 
-    this_script_filename, log_filename = argv
+    this_script_filename, log_filename, build_type, build_dir = argv
 
     changed_files = \
         list_of_changed_files(log_filename, "MSGBLD0070",
@@ -997,7 +1015,7 @@ if __name__ == '__main__':
                                     "MSGBLD0200", "MSGBLD0195")
 
     # Summarize the per file build error messages and warnings.
-    status_make, number_of_errors, summary_errors, number_of_warnings, \
+    status_make, number_of_errors, summary_errors, number_of_warnings, expected_warnings, \
         summary_warnings = makebuild_summary(log_filename, "MSGBLD0250",
                                              "MSGBLD0260")
 
@@ -1044,6 +1062,7 @@ if __name__ == '__main__':
                             summary_warnings,
                             number_of_errors,
                             number_of_warnings,
+                            expected_warnings,
                             number_of_tests_total,
                             number_of_tests_failed,
                             number_of_tests_skipped,

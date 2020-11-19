@@ -48,30 +48,34 @@ Description
 +++++++++++
 
 The volume transmitter is used in combination with neuromodulated
-synaptic plasticty, plasticity that depends not only on the activity
+synaptic plasticity, plasticity that depends not only on the activity
 of the pre- and the postsynaptic neuron but also on a non-local
 neuromodulatory third signal. It collects the spikes from all neurons
-connected to the volume transmitter and delivers the spikes to a
-user-specific subset of synapses.  It is assumed that the
-neuromodulatory signal is a function of the spike times of all spikes
-emitted by the population of neurons connected to the volume
-transmitter.  The neuromodulatory dynamics is calculated in the
-synapses itself. The volume transmitter interacts in a hybrid
-structure with the neuromodulated synapses. In addition to the
-delivery of the neuromodulatory spikes triggered by every pre-synaptic
-spike, the neuromodulatory spike history is delivered in discrete time
-intervals of a manifold of the minimal synaptic delay. In order to
-insure the link between the neuromodulatory synapses and the volume
-transmitter, the volume transmitter is passed as a parameter when a
-neuromodulatory synapse is defined. The implementation is based on the
-framework presented in [1]_.
+connected to the volume transmitter and delivers the spikes to a subset
+of synapses in the network. The user specifies this subset by
+passing the volume transmitter as a parameter when a
+neuromodulatory synapse is defined.
+
+It is assumed that the neuromodulatory signal is a function of the
+spike times of all spikes emitted by the population of neurons connected
+to the volume transmitter. The neuromodulatory dynamics is calculated
+in the synapses itself.
+
+The volume transmitter interacts in a hybrid structure with the neuromodulated
+synapses: In addition to the delivery of the neuromodulatory spikes triggered
+by every pre-synaptic spike, the neuromodulatory spike history is delivered
+at regular time intervals. The interval is equal to ``deliver_interval * d_min``,
+where ``deliver_interval`` is an (integer) entry in the parameter dictionary and
+``d_min`` is the minimal synaptic delay.
+
+The implementation is based on the framework presented in [1]_.
 
 Parameters
 ++++++++++
 
-- deliver_interval - time interval given in d_min time steps, in which
+- deliver_interval - time interval given in d_min time steps in which
                      the volume signal is delivered from the volume
-                     transmitter to the assigned synapses
+                     transmitter to the assigned synapses. Must be integer.
 
 References
 ++++++++++
@@ -97,7 +101,7 @@ EndUserDocs */
 
 class ConnectorBase;
 
-class volume_transmitter : public Archiving_Node
+class volume_transmitter : public ArchivingNode
 {
 
 public:
@@ -196,7 +200,7 @@ inline void
 volume_transmitter::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 }
 
 inline void
@@ -209,7 +213,7 @@ volume_transmitter::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

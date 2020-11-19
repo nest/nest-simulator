@@ -44,6 +44,8 @@ try:
 except ImportError:
     pass
 
+__version__ = ll_api.sli_func("statusdict /version get")
+
 
 def test():
     """Runs all PyNEST unit tests."""

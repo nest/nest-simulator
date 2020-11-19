@@ -83,7 +83,7 @@ transformers.
  g                 real    Gain parameter
  mu                real    Mean of the Gaussian gain function
  sigma             real    Standard deviation of Gaussian gain function
- rectify_rate      real    Rectfying rate
+ rectify_rate      real    Rectifying rate
  linear_summation  boolean Specifies type of non-linearity (see above)
  rectify_output    boolean Switch to restrict rate to values >= rectify_rate
 =================  ======= ==============================================
@@ -159,13 +159,13 @@ nonlinearities_gauss_rate::input( double h )
 }
 
 inline double
-nonlinearities_gauss_rate::mult_coupling_ex( double rate )
+nonlinearities_gauss_rate::mult_coupling_ex( double )
 {
   return 1.;
 }
 
 inline double
-nonlinearities_gauss_rate::mult_coupling_in( double rate )
+nonlinearities_gauss_rate::mult_coupling_in( double )
 {
   return 1.;
 }

@@ -78,7 +78,7 @@ Parameters
 
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
-                   (tau_minus defined in post-synaptic neuron)
+                   (tau_minus defined in postsynaptic neuron)
  lambda    real    Step size
  alpha     real    Asymmetry parameter (scales depressing increments as
                    alpha*lambda)
@@ -129,7 +129,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPNNRestrConnection( const STDPNNRestrConnection& );
+  STDPNNRestrConnection( const STDPNNRestrConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -233,7 +233,7 @@ STDPNNRestrConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   Node* target = get_target( t );
   double dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
 
@@ -243,17 +243,17 @@ STDPNNRestrConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   // which increases the access counter for these entries.
   // At registration, all entries' access counters of
   // history[0, ..., t_last_spike - dendritic_delay] have been
-  // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
+  // incremented by ArchivingNode::register_stdp_connection(). See bug #218 for
   // details.
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
-  // If there were no post-synaptic spikes between the current pre-synaptic one
+  // If there were no postsynaptic spikes between the current pre-synaptic one
   // t_spike and the previous pre-synaptic one t_lastspike_, there are no pairs
   // to account.
   if ( start != finish )
   {
     double minus_dt;
 
-    // facilitation due to the first post-synaptic spike start->t_
+    // facilitation due to the first postsynaptic spike start->t_
     // since the previous pre-synaptic spike t_lastspike_
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
 
@@ -264,7 +264,7 @@ STDPNNRestrConnection< targetidentifierT >::send( Event& e, thread t, const Comm
     weight_ = facilitate_( weight_, std::exp( minus_dt / tau_plus_ ) );
   }
 
-  // depression due to the latest post-synaptic spike finish->t_
+  // depression due to the latest postsynaptic spike finish->t_
   // before the current pre-synaptic spike t_spike
   if ( start != finish )
   {
@@ -301,21 +301,6 @@ STDPNNRestrConnection< targetidentifierT >::STDPNNRestrConnection()
   , mu_minus_( 1.0 )
   , Wmax_( 100.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-STDPNNRestrConnection< targetidentifierT >::STDPNNRestrConnection(
-  const STDPNNRestrConnection< targetidentifierT >& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , tau_plus_( rhs.tau_plus_ )
-  , lambda_( rhs.lambda_ )
-  , alpha_( rhs.alpha_ )
-  , mu_plus_( rhs.mu_plus_ )
-  , mu_minus_( rhs.mu_minus_ )
-  , Wmax_( rhs.Wmax_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

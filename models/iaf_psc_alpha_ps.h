@@ -47,7 +47,7 @@ Short description
 +++++++++++++++++
 
 Current-based leaky integrate-and-fire neuron with alpha-shaped
-post-synaptic currents using regula falsi method for approximation of
+postsynaptic currents using regula falsi method for approximation of
 threshold crossing
 
 Description
@@ -146,7 +146,7 @@ iaf_psc_alpha, iaf_psc_exp_ps
 
 EndUserDocs */
 
-class iaf_psc_alpha_ps : public Archiving_Node
+class iaf_psc_alpha_ps : public ArchivingNode
 {
 public:
   /** Basic constructor.
@@ -496,7 +496,7 @@ iaf_psc_alpha_ps::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -513,7 +513,7 @@ iaf_psc_alpha_ps::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

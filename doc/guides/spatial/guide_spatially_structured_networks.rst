@@ -299,7 +299,7 @@ To create a spatially distributed NodeCollection from a list, do the following:
     :start-after: #{ layer4b #}
     :end-before: #{ end #}
 
-.. _fig_layer4:
+.. _fig_layer4b:
 
 .. figure:: user_manual_figures/layer4b.png
    :name: fig:layer4b
@@ -339,7 +339,7 @@ the shape argument, ``shape=[nx, ny, nz]``:
     :start-after: #{ layer4_3d_b #}
     :end-before: #{ end #}
 
-.. _fig_layer4_3d:
+.. _fig_layer4_3d_b:
 
 .. figure:: user_manual_figures/layer4_3d_b.png
    :name: fig:layer4_3d_b
@@ -365,7 +365,7 @@ One common approach to reducing the effect of boundaries on simulations
 is to introduce *periodic boundary conditions*, so that the rightmost
 elements on a grid are considered nearest neighbors to the leftmost
 elements, and the topmost to the bottommost. The flat layer becomes the
-surface of a torus.  :numref:`fig_player` illustrates this for a
+surface of a torus. :numref:`fig_player` illustrates this for a
 one-dimensional layer, which turns from a line to a ring upon
 introduction of periodic boundary conditions.
 

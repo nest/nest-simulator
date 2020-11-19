@@ -52,15 +52,15 @@ Description
 
 This model simulates a population of spike-response model neurons with
 multi-timescale adaptation and exponential postsynaptic currents, as
-described in [1]_.
+described in Schwalger et al. (2017) [1]_.
 
-The single neuron model is defined by the hazard function
+The single neuron model is defined by the hazard function:
 
 .. math::
 
- lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ]
+ \lambda_0 * \exp\left(( V_m - E_{sfa} ) / \Delta_V\right)
 
-After each spike the membrane potential V_m is reset to V_reset. Spike
+After each spike, the membrane potential V_m is reset to V_reset. Spike
 frequency
 adaptation is implemented by a set of exponentially decaying traces, the
 sum of which is E_sfa. Upon a spike, all adaptation traces are incremented
@@ -80,7 +80,7 @@ communication effort is reduced in simulations.
 
 This model uses a new algorithm to directly simulate the population activity
 (sum of all spikes) of the population of neurons, without explicitly
-representing each single neuron (see [1]_). The computational cost is largely
+representing each single neuron. The computational cost is largely
 independent of the number N of neurons represented. The algorithm used
 here is fundamentally different from and likely much faster than the one
 used in the previously added population model pp_pop_psc_delta.
@@ -114,7 +114,7 @@ The following parameters can be set in the status dictionary.
  tau_syn_in ms            Time constant for inhibitory synaptic currents
  tau_sfa    list of ms    vector Adaptation time constants
  q_sfa      list of ms    Adaptation kernel amplitudes
- BinoRand   boolean        If True, binomial random numbers are used, otherwise
+ BinoRand   boolean       If True, binomial random numbers are used, otherwise
                           we use Poisson distributed spike counts
 =========== ============= =====================================================
 
@@ -451,7 +451,7 @@ gif_pop_psc_exp::get_status( DictionaryDatum& d ) const
   // parent class is called. Since this model derives from Node, and
   // not from ArchivingNode, this call has been disabled here
   // (Node does not have a comparable method).
-  //  Archiving_Node::get_status(d);
+  //  ArchivingNode::get_status(d);
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -472,7 +472,7 @@ gif_pop_psc_exp::set_status( const DictionaryDatum& d )
   // parent class is called. Since this model derives from Node, and
   // not from ArchivingNode, this call has been disabled here
   // (Node does not have a comparable method).
-  //  Archiving_Node::set_status(d);
+  //  ArchivingNode::set_status(d);
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -1007,15 +1007,29 @@ def
       % Connect nodes from two sets of node IDs using the given connectivity
       % and synapse specifications
       [node_idlisttype node_idlisttype /dictionarytype /dictionarytype] {
-	  /syn_spec :Connect_complete_dict   % fill in missing defaults
-	  exch                  % exchange syn_spec and conn_spec
-	  /conn_spec :Connect_complete_dict  % fill in missing defaults
-	  exch                  % exchange syn_spec and conn_spec
-	  4 2 roll              % bring sources and targets to top
-	  cvnodecollection exch  % convert targets to nodecollection
-	  cvnodecollection exch  % convert sources to nodecollection
-	  4 2 roll              % bring sources and targets to bottom
-	  Connect_g_g_D_D
+        /syn_spec :Connect_complete_dict   % fill in missing defaults
+        exch                   % exchange syn_spec and conn_spec
+        /conn_spec :Connect_complete_dict  % fill in missing defaults
+        exch                   % exchange syn_spec and conn_spec
+        4 2 roll               % bring sources and targets to top
+        cvnodecollection exch  % convert targets to nodecollection
+        cvnodecollection exch  % convert sources to nodecollection
+        4 2 roll               % bring sources and targets to bottom
+        Connect_g_g_D_D
+      } bind addtotrie
+      
+      % Variant: sources targets conn_spec syn_vector Connect
+      % Connect nodes from two sets of NodeCollections using the given connectivity specification
+      % and a list of synapse specifications
+      [node_idlisttype node_idlisttype /dictionarytype /arraytype] {
+        /test_syn_specs Set
+        test_syn_specs
+        {
+          /syn_spec :Connect_complete_dict
+          pop
+        } forall
+        test_syn_specs
+        Connect_g_g_D_a
       } bind addtotrie
 
   } forall
@@ -1038,7 +1052,7 @@ def
    A dictionary that may contain the following fields (all are optional):
    /source  - array with node IDs of presynaptic nodes whose connections are sought.
               If not given, all neurons are searched as sources.
-   /target  - array with node IDs of post-synaptic nodes whose connections are sought.
+   /target  - array with node IDs of postsynaptic nodes whose connections are sought.
               If not given, all neurons are searched as targets.
    /synapse_model - literal specifying synapse model
                     If not given, connections of all synapse models are returned.
@@ -1051,7 +1065,7 @@ def
    2. Each array (connection object) has the following elements:
       [source-node_id target-node_id target-thread synapse-model-id port]
    3. The optional dictionary elements /source and /target can be used to filter
-      for specific pre- and post-synaptic neurons, respectively.
+      for specific pre- and postsynaptic neurons, respectively.
    4. The optional parameter /synapse_model can be used to filter for a specific synapse model.
    5. The optional parameter /synapse_label can be used to filter for a specific synapse label.
    6. In a parallel simulation, GetConnections only returns connections with *targets*

@@ -21,14 +21,17 @@
 
 from NESTServerClient import NESTServerClient
 
+print('Running client examples using NEST via NEST Server')
 
-#
-# Use api from NEST Server
-#
-
-
-# API interface for NEST Server
+# Load NEST Server client
 nestsc = NESTServerClient()
+
+#
+# Use NEST Server API
+#
+print('\n')
+print('Execute script code with NEST Server API')
+print('-'*20)
 
 # Reset kernel
 nestsc.ResetKernel()
@@ -40,7 +43,7 @@ sr = nestsc.Create("spike_recorder")
 
 # Connect nodes
 nestsc.Connect(pg, neurons, syn_spec={'weight': 10.})
-nestsc.Connect(neurons, sr)
+nestsc.Connect(neurons[::10], sr)
 
 # Simulate
 nestsc.Simulate(1000.0)
@@ -51,9 +54,11 @@ print('Number of events:', n_events)
 
 
 #
-# Use exec from NEST Server
+# Use NEST Server exec
 #
+print('\n')
+print('Execute script code from file')
+print('-'*20)
 
-
-n_events = nestsc.from_file('NESTClient_script', 'n_events')
+n_events = nestsc.from_file('NESTClient_script.py', 'n_events')['data']
 print('Number of events:', n_events)

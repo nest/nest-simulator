@@ -1,0 +1,122 @@
+/*
+ *  test_multiple_synapses.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/** @BeginDocumentation
+    Name: testsuite::test_multiple_synapses - Test that Connect with list of synapse dictionaries use the 
+                                              correct values when connecting
+
+    Synopsis: (test_multiple_synapses) run -> - 
+
+    Description:
+    test_multiple_synapses.sli checks that when Connect is given a list of synapse dictionaries, the given
+    values are used when we have more than one process.
+    
+    Author: Stine Brekke Vennemo
+    FirstVersion: June 2020
+*/
+
+(unittest) run
+/unittest using
+
+
+/collocated_synapse_params
+  [<< /weight -3. /delay 1. /synapse_model /static_synapse >>
+   << /weight  4. /delay 3. /synapse_model /static_synapse >>
+   << /weight  2. /delay 1. /synapse_model /stdp_synapse >> ] def
+
+/num_src 4 def
+/num_trgt 4 def
+/num_conns 4 def % we use one_to_one
+
+[1 2 4]
+{
+  /src /iaf_psc_alpha num_src Create def
+  /trgt /iaf_psc_alpha num_trgt Create def
+  
+  src trgt
+    << /rule /one_to_one >>
+    collocated_synapse_params
+    Connect
+  
+  /weight_delay_syn [] def
+  << >> GetConnections /conns Set
+  conns GetStatus
+  {
+    dup
+    dup
+    
+    /weight get /w Set
+    /delay get /d Set
+    /synapse_model get /sm Set
+    
+    weight_delay_syn
+      w append
+      d append
+      sm append /weight_delay_syn Set
+  } forall
+  
+  weight_delay_syn
+}
+{  
+  /results Set
+  /cumulative_res_list [] def
+  
+  % Create a reference list with the values we expect (values taken from syn_spec list above).
+  /reference_list [] def
+  [num_conns] Range
+  {
+    % Connection order changed behind the scenes, stdp_synapse connected last. We therefore need to manually
+    % build reference list
+    ;
+    collocated_synapse_params [1] Take dup dup
+      /weight get /w_1 Set
+      /delay get /d_1 Set
+      /synapse_model get /sm_1 Set
+    collocated_synapse_params [2] Take dup dup
+      /weight get /w_2 Set
+      /delay get /d_2 Set
+      /synapse_model get /sm_2 Set
+    reference_list [w_1 d_1 sm_1 w_2 d_2 sm_2] join /reference_list Set
+  } forall
+  
+  collocated_synapse_params [3] Take dup dup
+    /weight get /w_3 Set
+    /delay get /d_3 Set
+    /synapse_model get /sm_3 Set
+  /reference_list reference_list [num_conns] [w_3 d_3 sm_3] LayoutArray Flatten append Flatten def
+
+  % Go through results from different processes and append them to eachother.
+  results 0 get
+  {
+    /mpi_res Set
+    
+    mpi_res
+    {
+      cumulative_res_list exch append /cumulative_res_list Set
+    } forall
+  } forall
+  
+  % Check that the cumulative result list contains all variables we expect.
+  cumulative_res_list reference_list eq
+}
+distributed_collect_assert_or_die

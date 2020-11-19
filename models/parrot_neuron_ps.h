@@ -60,9 +60,9 @@ Remarks:
 Only spikes arriving on connections to port 0 will be repeated.
 Connections onto port 1 will be accepted, but spikes incoming
 through port 1 will be ignored. This allows setting exact pre-
-and post-synaptic spike times for STDP protocols by connecting
+and postsynaptic spike times for STDP protocols by connecting
 two parrot neurons spiking at desired times by, e.g., a
-stdp_synapse onto port 1 on the post-synaptic parrot neuron.
+stdp_synapse onto port 1 on the postsynaptic parrot neuron.
 
 Please note that this node is capable of sending precise spike times
 to target nodes (on-grid spike time plus offset).
@@ -79,7 +79,7 @@ SpikeEvent
 
 EndUserDocs */
 
-class parrot_neuron_ps : public Archiving_Node
+class parrot_neuron_ps : public ArchivingNode
 {
 public:
   parrot_neuron_ps();

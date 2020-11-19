@@ -57,8 +57,8 @@ Description
 +++++++++++
 
 gif_cond_exp_multisynapse is the generalized integrate-and-fire neuron
-according to Mensi et al. (2012) and Pozzorini et al. (2015), with
-post-synaptic conductances in the form of truncated exponentials.
+according to Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with
+postsynaptic conductances in the form of truncated exponentials.
 
 This model features both an adaptation current and a dynamic threshold for
 spike-frequency adaptation. The membrane potential (V) is described by the
@@ -70,7 +70,7 @@ differential equation:
 
 where each :math:`\eta_i` is a spike-triggered current (stc), and the neuron
 model can have arbitrary number of them.
-Dynamic of each :math`\eta_i` is described by:
+Dynamic of each :math:`\eta_i` is described by:
 
 .. math::
 
@@ -83,7 +83,7 @@ positive or negative):
 
  \eta_i = \eta_i + q_{\eta_i} \text{ (in case of spike emission).}
 
-Neuron produces spikes STOCHASTICALLY according to a point process with the
+Neuron produces spikes stochastically according to a point process with the
 firing intensity:
 
 .. math::
@@ -94,11 +94,11 @@ where :math:`V_T(t)` is a time-dependent firing threshold:
 
 .. math::
 
- V_T(t) = V_{T_star} + \gamma_1(t) + \gamma_2(t) + \ldots + \gamma_m(t)
+   V_T(t) = V_{T_{star}} + \gamma_1(t) + \gamma_2(t) + \ldots + \gamma_m(t)
 
 where :math:`\gamma_i` is a kernel of spike-frequency adaptation (sfa), and the
 neuron model can have arbitrary number of them.
-Dynamic of each :math`\gamma_i` is described by:
+Dynamic of each :math:`\gamma_i` is described by:
 
 .. math::
 
@@ -112,17 +112,23 @@ positive or negative):
  \gamma_i = \gamma_i + q_{\gamma_i} \text{ (in case of spike emission).}
 
 
-Note that in the current implementation of the model (as described in [1]_ and
-[2]_) the values of :mathi:`\eta_i` and :math:`\gamma_i` are affected immediately
-after spike emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox)
+Note:
+
+In the current implementation of the model,
+the values of :math:`\eta_i` and :math:`\gamma_i` are affected immediately
+after spike emission. However, `GIF toolbox <http://wiki.epfl.ch/giftoolbox>`_,
 which fits the model using experimental data, requires a different set of
 :math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`\eta_i` and
 :math:`\gamma_i` after the refractory period. One can easily convert between
 :math:`q_{\eta/\gamma}` of these two approaches:
-:math:`q_{\eta,giftoolbox} = q_{\eta,NEST} * (1 - \exp( -\tau_{ref} / \tau_\eta ))`
+
+.. math::
+
+   q_{\eta,giftoolbox} = q_{\eta,NEST} * (1 - \exp( -\tau_{ref} / \tau_\eta ))
+
 The same formula applies for :math:`q_\gamma`.
 
-On the postsynapic side, there can be arbitrarily many synaptic time constants
+On the postsynaptic side, there can be arbitrarily many synaptic time constants
 (gif_psc_exp has exactly two: tau_syn_ex and tau_syn_in). This can be reached
 by specifying separate receptor ports, each for a different time constant. The
 port number has to match the respective "receptor_type" in the connectors.
@@ -143,7 +149,7 @@ The following parameters can be set in the status dictionary.
  E_L         mV      Leak reversal potential
  g_L         nS      Leak conductance
  I_e         pA      Constant external input current
- ========   ======   ======================================================
+=========   ======   ======================================================
 
 ========= ==============  =====================================================
 **Spike adaptation and firing intensity parameters**
@@ -158,7 +164,7 @@ The following parameters can be set in the status dictionary.
  lambda_0   real              Stochastic intensity at firing threshold V_T i
                               n 1/s.
  V_T_star   mV                Base threshold
- ========= ==============  =====================================================
+========= ==============  =====================================================
 
 =========   =============  ===================================================
 **Synaptic parameters**
@@ -206,7 +212,7 @@ pp_psc_delta, gif_cond_exp, iaf_psc_exp_multisynapse, gif_psc_exp_multisynapse
 
 EndUserDocs */
 
-class gif_cond_exp_multisynapse : public Archiving_Node
+class gif_cond_exp_multisynapse : public ArchivingNode
 {
 
 public:
@@ -483,7 +489,7 @@ gif_cond_exp_multisynapse::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -499,7 +505,7 @@ gif_cond_exp_multisynapse::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

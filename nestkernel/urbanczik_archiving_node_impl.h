@@ -31,36 +31,36 @@
 namespace nest
 {
 
-// member functions for Urbanczik_Archiving_Node
+// member functions for UrbanczikArchivingNode
 template < class urbanczik_parameters >
-nest::Urbanczik_Archiving_Node< urbanczik_parameters >::Urbanczik_Archiving_Node()
-  : Archiving_Node()
+nest::UrbanczikArchivingNode< urbanczik_parameters >::UrbanczikArchivingNode()
+  : ArchivingNode()
 {
 }
 
 template < class urbanczik_parameters >
-nest::Urbanczik_Archiving_Node< urbanczik_parameters >::Urbanczik_Archiving_Node( const Urbanczik_Archiving_Node& n )
-  : Archiving_Node( n )
+nest::UrbanczikArchivingNode< urbanczik_parameters >::UrbanczikArchivingNode( const UrbanczikArchivingNode& n )
+  : ArchivingNode( n )
 {
 }
 
 template < class urbanczik_parameters >
 void
-nest::Urbanczik_Archiving_Node< urbanczik_parameters >::get_status( DictionaryDatum& d ) const
+nest::UrbanczikArchivingNode< urbanczik_parameters >::get_status( DictionaryDatum& d ) const
 {
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 }
 
 template < class urbanczik_parameters >
 void
-nest::Urbanczik_Archiving_Node< urbanczik_parameters >::set_status( const DictionaryDatum& d )
+nest::UrbanczikArchivingNode< urbanczik_parameters >::set_status( const DictionaryDatum& d )
 {
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 }
 
 template < class urbanczik_parameters >
 void
-nest::Urbanczik_Archiving_Node< urbanczik_parameters >::get_urbanczik_history( double t1,
+nest::UrbanczikArchivingNode< urbanczik_parameters >::get_urbanczik_history( double t1,
   double t2,
   std::deque< histentry_extended >::iterator* start,
   std::deque< histentry_extended >::iterator* finish,
@@ -94,7 +94,7 @@ nest::Urbanczik_Archiving_Node< urbanczik_parameters >::get_urbanczik_history( d
 
 template < class urbanczik_parameters >
 void
-nest::Urbanczik_Archiving_Node< urbanczik_parameters >::write_urbanczik_history( Time const& t_sp,
+nest::UrbanczikArchivingNode< urbanczik_parameters >::write_urbanczik_history( Time const& t_sp,
   double V_W,
   int n_spikes,
   int comp )

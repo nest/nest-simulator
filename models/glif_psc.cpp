@@ -364,7 +364,7 @@ nest::glif_psc::Buffers_::Buffers_( const Buffers_&, glif_psc& n )
  * ---------------------------------------------------------------- */
 
 nest::glif_psc::glif_psc()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -373,7 +373,7 @@ nest::glif_psc::glif_psc()
 }
 
 nest::glif_psc::glif_psc( const glif_psc& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -434,7 +434,7 @@ nest::glif_psc::calibrate()
     V_.abpara_ratio_voltage_ = P_.th_voltage_index_ / P_.th_voltage_decay_;
   }
 
-  // post synapse currents
+  // postsynaptic currents
   V_.P11_.resize( P_.n_receptors_() );
   V_.P21_.resize( P_.n_receptors_() );
   V_.P22_.resize( P_.n_receptors_() );

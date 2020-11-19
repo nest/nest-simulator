@@ -153,13 +153,13 @@ nest::RecordingBackendScreen::post_step_hook()
 }
 
 void
-nest::RecordingBackendScreen::set_status( const DictionaryDatum& d )
+nest::RecordingBackendScreen::set_status( const DictionaryDatum& )
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendScreen::get_status( DictionaryDatum& d ) const
+nest::RecordingBackendScreen::get_status( DictionaryDatum& ) const
 {
   // nothing to do
 }

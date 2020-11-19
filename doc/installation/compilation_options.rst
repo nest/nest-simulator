@@ -1,5 +1,5 @@
-Configuration Options
-=====================
+Compilation Options
+===================
 
 NEST is installed with ``cmake`` (at least v2.8.12). In the simplest case, the commands::
 
@@ -11,7 +11,7 @@ should build and install NEST to ``/install/path``, which should be an absolute
 path.
 
 Choice of CMake Version
-------------------------
+-----------------------
 
 We recommend to use ``cmake`` v3.4 or later, even though installing NEST with
 ``cmake`` v2.8.12 will in most cases work properly.
@@ -106,38 +106,55 @@ Change compilation behavior::
                                                    Separate multiple defines by ';'. [default OFF]
 
 NO-DOC option
---------------
+-------------
 
 On systems where help extraction is slow, the call to ``make install`` can be replaced
 by ``make install-nodoc`` to skip the generation of help pages and indices. Using this
 option can help developers to speed up development cycles, but is not recommended for
 production use as it renders the built-in help system useless.
 
+.. _compile-with-mpi:
 
 Configuring NEST for Distributed Simulation with MPI
---------------------------------------------------------
+----------------------------------------------------
 
-  1. Try ``-Dwith-mpi=ON`` as argument for ``cmake``. If it works, fine.
-  2. If 1 does not work, or you want to use a non-standard MPI,
-     try ``-Dwith-mpi=/path/to/my/mpi``.
-     Directory mpi should contain include, lib, bin subdirectories for MPI.
-  3. If that does not work, but you know the correct compiler wrapper for
-     your machine, try configure ``-DMPI_CXX_COMPILER=myC++_CompilerWrapper
-     -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON``
-  4. Sorry, you need to fix your MPI installation.
+NEST supports distributed simulations using the Message Passing
+Interface (MPI). Depending on your setup, you have to use one of the
+following steps in order to add support for MPI:
 
-Tell NEST about your MPI setup
-------------------------------
+  1. Try ``-Dwith-mpi=ON`` as argument for ``cmake``.
+  2. If 1. does not work, or you want to use a non-standard MPI, try
+     ``-Dwith-mpi=/path/to/my/mpi``. The `mpi` directory should
+     contain the `include`, `lib` and `bin` subdirectories of the MPI
+     installation.
+  3. If 2. does not work, but you know the correct compiler wrapper
+     for your installation, try adding the following to the invocation
+     of ``cmake``::
+         -DMPI_CXX_COMPILER=myC++_CompilerWrapper
+         -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON
 
-If you compiled NEST with support for distributed computing via MPI, you
-have to tell it how your ``mpirun``/``mpiexec`` command works by
-defining the function mpirun in your ``~/.nestrc`` file. This file
-already contains an example implementation that should work with
-`OpenMPI <http://www.openmpi.org>`__ library.
+When running large-scale parallel simualations and recording from many
+neurons, writing to ASCII files might become prohibitively slow due to
+the large number of resulting files. By installing the `SIONlib
+library <http://www.fz-juelich.de/jsc/sionlib>`_ and supplying its
+installation path to the ``-Dwith-sionlib=<path>`` option when calling
+`cmake`, you can enable the :ref:`recording backend for binary files
+<recording_backend_sionlib>`, which solves this problem.
+
+If you compiled NEST with support for MPI and also want to run the
+corresponding tests, you have to tell it about how your
+``mpirun``/``mpiexec`` command works by defining the ``mpirun``
+function in your ``~/.nestrc`` file. The file already contains an
+example implementation that should work with the `OpenMPI
+<http://www.openmpi.org>`__ implementation. For more details, see the
+documentation on the :doc:`configuration`.
+
+See the :doc:`../guides/parallel_computing` to learn how to execute
+threaded and distributed simulations with NEST.
 
 
 Disabling the Python Bindings (PyNEST)
-----------------------------------------
+--------------------------------------
 
 To disable Python bindings use::
 
@@ -145,10 +162,10 @@ To disable Python bindings use::
 
 as an argument to ``cmake``.
 
-Please see also the file :doc:`../../pynest/README.md` in the documentation directory for details.
+Please see the :doc:`README <pynest_readme_link>` for details.
 
 Python Binding (PyNEST)
---------------------------
+-----------------------
 
 Note that since NEST 3.0, support for Python 2 has been dropped. Please use Python 3 instead.
 
@@ -171,7 +188,7 @@ and its corresponding libraries correctly. To circumvent such a problem followin
         </path/to/NEST/src>
 
 Compiling for Apple OSX/macOS
-=============================
+-----------------------------
 
 NEST can currently not be compiled with the clang/clang++ compilers shipping
 with macOS. Therefore, you first need to install GCC 6.3 or later. The easiest
@@ -203,7 +220,7 @@ line::
 
 
 Compiler-specific options
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 NEST has reasonable default compiler options for the most common compilers.
 

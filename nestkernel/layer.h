@@ -170,6 +170,8 @@ public:
     AbstractLayerPTR target_layer,
     const Token& syn_model ) = 0;
 
+  void set_node_collection( NodeCollectionPTR );
+
 protected:
   /**
    * The NodeCollection to which the layer belongs
@@ -510,6 +512,12 @@ protected:
   MaskDatum mask_;
 };
 
+inline void
+AbstractLayer::set_node_collection( NodeCollectionPTR node_collection )
+{
+  node_collection_ = node_collection;
+}
+
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   const MaskDatum& maskd,
@@ -615,10 +623,6 @@ template < int D >
 inline double
 Layer< D >::compute_distance( const Position< D >& from_pos, const index lid ) const
 {
-  if ( lid < 0 )
-  {
-    throw KernelException( "node ID not in NodeCollection." );
-  }
   return compute_displacement( from_pos, lid ).length();
 }
 
@@ -626,10 +630,6 @@ template < int D >
 inline double
 Layer< D >::compute_distance( const std::vector< double >& from_pos, const index lid ) const
 {
-  if ( lid < 0 )
-  {
-    throw KernelException( "node ID not in NodeCollection." );
-  }
   return compute_displacement( Position< D >( from_pos ), lid ).length();
 }
 

@@ -941,7 +941,7 @@ SLIArrayModule::IMapFunction::backtrace( SLIInterpreter* i, int p ) const
   assert( id != NULL );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count == NULL );
+  assert( count != NULL );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
   assert( pd != NULL );
@@ -1061,7 +1061,7 @@ SLIArrayModule::IMap_ivFunction::backtrace( SLIInterpreter* i, int p ) const
   assert( id != NULL );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count == NULL );
+  assert( count != NULL );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
   assert( pd != NULL );
@@ -1200,7 +1200,7 @@ SLIArrayModule::IMap_dvFunction::backtrace( SLIInterpreter* i, int p ) const
   assert( id != NULL );
 
   IntegerDatum* count = static_cast< IntegerDatum* >( i->EStack.pick( p + 2 ).datum() );
-  assert( count == NULL );
+  assert( count != NULL );
 
   ProcedureDatum const* pd = static_cast< ProcedureDatum* >( i->EStack.pick( p + 1 ).datum() );
   assert( pd != NULL );

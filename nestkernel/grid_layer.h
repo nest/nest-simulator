@@ -401,7 +401,7 @@ std::vector< std::pair< Position< D >, index > >
 GridLayer< D >::get_global_positions_vector( const AbstractMask& mask,
   const Position< D >& anchor,
   bool,
-  NodeCollectionPTR node_collection )
+  NodeCollectionPTR )
 {
   std::vector< std::pair< Position< D >, index > > positions;
 

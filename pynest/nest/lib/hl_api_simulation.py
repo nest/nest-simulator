@@ -33,14 +33,12 @@ __all__ = [
     'DisableStructuralPlasticity',
     'EnableStructuralPlasticity',
     'GetKernelStatus',
-    'GetStructuralPlasticityStatus',
     'Install',
     'Prepare',
     'ResetKernel',
     'Run',
     'RunManager',
     'SetKernelStatus',
-    'SetStructuralPlasticityStatus',
     'Simulate',
 ]
 
@@ -307,7 +305,7 @@ def SetKernelStatus(params):
     structural_plasticity_synapses : dict
         Defines all synapses which are plastic for the structural plasticity
         algorithm. Each entry in the dictionary is composed of a synapse model,
-        the pre synaptic element and the post synaptic element
+        the pre synaptic element and the postsynaptic element
     structural_plasticity_update_interval : int
         Defines the time interval in ms at which the structural plasticity
         manager will make changes in the structure of the network (creation
@@ -437,53 +435,6 @@ def Install(module_name):
     """
 
     return sr("(%s) Install" % module_name)
-
-
-@check_stack
-def SetStructuralPlasticityStatus(params):
-    """Set structural plasticity parameters for the network simulation.
-
-    Parameters
-    ----------
-    params : dict
-        Dictionary of structural plasticity parameters to set
-
-    See Also
-    --------
-    GetStructuralPlasticityStatus
-
-    """
-
-    sps(params)
-    sr('SetStructuralPlasticityStatus')
-
-
-@check_stack
-def GetStructuralPlasticityStatus(keys=None):
-    """Get the current structural plasticity parameters
-
-    Parameters
-    ---------
-    keys : str or list, optional
-        Keys indicating the values of interest to be retrieved by the get call
-
-    See Also
-    --------
-    SetStructuralPlasticityStatus
-
-    """
-
-    sps({})
-    sr('GetStructuralPlasticityStatus')
-    d = spp()
-    if keys is None:
-        return d
-    elif is_literal(keys):
-        return d[keys]
-    elif is_iterable(keys):
-        return tuple(d[k] for k in keys)
-    else:
-        raise TypeError("keys must be either empty, a string or a list")
 
 
 @check_stack

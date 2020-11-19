@@ -79,14 +79,19 @@ public:
    */
   virtual double value_double( thread, librandom::RngPtr&, index, Node* ) const = 0;
   virtual long value_int( thread, librandom::RngPtr&, index, Node* ) const = 0;
-  virtual void
-  skip( thread, size_t n_skip ) const
+  virtual void skip( thread, size_t ) const
   {
   }
   virtual bool is_array() const = 0;
 
   virtual bool
   is_scalar() const
+  {
+    return false;
+  }
+
+  virtual bool
+  provides_long() const
   {
     return false;
   }
@@ -160,7 +165,6 @@ public:
     return true;
   }
 
-
 private:
   double value_;
 };
@@ -203,6 +207,12 @@ public:
 
   bool
   is_scalar() const
+  {
+    return true;
+  }
+
+  bool
+  provides_long() const
   {
     return true;
   }
@@ -369,6 +379,12 @@ public:
     return true;
   }
 
+  bool
+  provides_long() const
+  {
+    return true;
+  }
+
   void
   reset() const
   {
@@ -411,8 +427,15 @@ public:
     return false;
   }
 
+  bool
+  provides_long() const
+  {
+    return provides_long_;
+  }
+
 private:
   librandom::RdvPtr rdv_;
+  bool provides_long_;
 };
 
 class ParameterConnParameterWrapper : public ConnParameter
@@ -432,6 +455,12 @@ public:
   is_array() const
   {
     return false;
+  }
+
+  bool
+  provides_long() const
+  {
+    return true;
   }
 
 private:

@@ -269,12 +269,12 @@ unit of time is seconds, not milliseconds.
         runtime.finalize();
     }
 
-The runtime is short. As before we create a runtime object that consumes
+The runtime is short. As before, we create a runtime object that consumes
 the setup, then we loop until the MUSIC time exceeds our simulation
 time. We call ``runtime.tick()`` each time through the loop
 on line 8 and we process received events after the call to
 ``tick()``. If you had a process with both sending and
-receiving ports you would submit the sending data before the
+receiving ports, you would submit the sending data before the
 ``tick()`` call, and process the receiving data after it in
 the same loop.
 

@@ -166,9 +166,9 @@ private:
   index number_of_connections_;
   std::shared_ptr< AbstractMask > mask_;
   std::shared_ptr< Parameter > kernel_;
-  index synapse_model_;
-  std::shared_ptr< Parameter > weight_;
-  std::shared_ptr< Parameter > delay_;
+  std::vector< index > synapse_model_;
+  std::vector< std::shared_ptr< Parameter > > weight_;
+  std::vector< std::shared_ptr< Parameter > > delay_;
 
   //! Empty dictionary to pass to connect functions, one per thread
   std::vector< DictionaryDatum > dummy_param_dicts_;

@@ -21,7 +21,7 @@
  */
 
  /** @BeginDocumentation
-Name: test_tsodyks_facilitating - sli script for overall test of tsodyks synapse models
+Name: test_tsodyks_facilitating - SLI script for overall test of Tsodyks synapse models
 
 Synopsis:(test_tsodyks_facilitating) run -> compare cout with comments in file
 
@@ -198,4 +198,3 @@ def
 } forall % tsodyks models
 
 endusing % unittest
-

@@ -69,7 +69,7 @@ The following parameters can be set in the status dictionary:
                                       reports an error.
                                       If true, spike times are rounded to the
                                       nearest step if within tic/2 from the
-                                      step,otherwise they are rounded up to the
+                                      step, otherwise they are rounded up to the
                                       *end* of the step. Default: false
 ==================== ================ =========================================
 

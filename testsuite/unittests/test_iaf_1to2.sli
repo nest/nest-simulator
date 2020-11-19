@@ -46,7 +46,7 @@ Description:
  Note that in a neuron model where synaptic events are modeled by a
  truncated exponential the effect of the incoming spike would be
  visible at the time of impact (here, t=4.0 ms). This is because the
- initial condition for the post-synaptic potential (PSP) has a
+ initial condition for the postsynaptic potential (PSP) has a
  non-zero voltage component. For PSPs with finite rise time the
  situation is different. In this case the voltage component of the
  initial condition is zero (see documentation of
@@ -138,7 +138,7 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
 % time                    voltage
 [
 % ...
-[ 25           5           -70]%         <-- Voltage trace of the post-synaptic neuron
+[ 25           5           -70]%         <-- Voltage trace of the postsynaptic neuron
 [ 26    13                 -70]%              (neuron2), at rest until a spike arrives.
 [ 27                       -70]
 [ 28    14                 -70]
@@ -154,7 +154,7 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
 [ 37                       -70]
 [ 38    19                 -70]
 [ 39                       -70]
-[ 40    20     8    4      -70]% <-----------  Spike arrives at the post-synaptic neuron
+[ 40    20     8    4      -70]% <-----------  Spike arrives at the postsynaptic neuron
 [ 41                       -69.9974]%    <-    (neuron2) and changes the state vector of
 [ 42    21                 -69.9899]%      |   the neuron, not visible in voltage because
 [ 43                       -69.9781]%      |   voltage of PSP initial condition is 0.

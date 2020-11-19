@@ -340,13 +340,14 @@ will point out which parameters can be set and which are read-only.
 
 Dictionary with lists when setting parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 It is now possible to use a dictionary with lists when setting node parameters
 with ``Create()``, ``set()`` or ``SetStatus()``. The values of the lists will 
 be distributed across the nodes. The way to do this previously was to apply a
-lists of dictionaries. Note that this is still possible.
+list of dictionaries. This is still possible.
 
-The values in the single dictionary can also be single values, the value will
-then be applied to each node. You can mix and match as you want, the dictionary
+The values in the single dictionary can also be single values; the value will
+then be applied to each node. You can mix and match as you want; the dictionary
 can contain lists and single values at the same time.
 
 ::

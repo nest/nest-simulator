@@ -109,9 +109,9 @@ populations and will also be returned by the function ``Models()``.
 It is also possible to create populations with an inhomogeneous set of
 parameters. You would typically create the complete set of parameters,
 depending on experimental constraints, and then create all the neurons
-in one go. To do this supply a dictionary with lists the same length
+in one go. To do this, supply a dictionary with lists the same length
 as the number of neurons (or synapses) created. The dictionary can also
-contain single values, these will then be applied to each node.
+contain single values, which will then be applied to each node.
 
 ::
 

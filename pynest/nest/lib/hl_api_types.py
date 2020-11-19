@@ -658,13 +658,13 @@ class SynapseCollection(object):
 
         # 35 is arbitrarily chosen.
         if len(srcs) >= 35:
-            srcs = srcs[:15] + ['.', '.', '.'] + srcs[-15:]
-            trgt = trgt[:15] + ['.', '.', '.'] + trgt[-15:]
-            wght = wght[:15] + ['.', '.', '.'] + wght[-15:]
-            dlay = dlay[:15] + ['.', '.', '.'] + dlay[-15:]
-            s_model = s_model[:15] + ['.', '.', '.'] + s_model[-15:]
+            srcs = srcs[:15] + [u'\u22EE '] + srcs[-15:]
+            trgt = trgt[:15] + [u'\u22EE '] + trgt[-15:]
+            wght = wght[:15] + [u'\u22EE '] + wght[-15:]
+            dlay = dlay[:15] + [u'\u22EE '] + dlay[-15:]
+            s_model = s_model[:15] + [u'\u22EE '] + s_model[-15:]
 
-        headers = f"{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}" + '\n'
+        headers = f'{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}' + '\n'
         boarders = '-'*src_len + ' ' + '-'*trg_len + ' ' + '-'*sm_len + ' ' + '-'*w_len + ' ' + '-'*d_len + '\n'
         output = ''.join('{:>{}}'.format(str(s), src_len) +
                          ' {:>{}}'.format(str(t), trg_len) +  # need to indent because of space between columns

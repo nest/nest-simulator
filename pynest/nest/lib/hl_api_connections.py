@@ -60,7 +60,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
         pre-synaptic neurons are returned
     target : NodeCollection, optional
         Target node IDs, only connections to these
-        post-synaptic neurons are returned
+        postsynaptic neurons are returned
     synapse_model : str, optional
         Only connections with this synapse type are returned
     synapse_label : int, optional

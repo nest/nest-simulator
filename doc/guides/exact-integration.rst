@@ -181,7 +181,7 @@ as the linearity of the system permits the initial conditions for all spikes arr
 
 The matrix :math:`e^{Ah}` in the C++ implementation of the model in NEST is constructed `here <https://github.com/nest/nest-simulator/blob/b3fc263e073f46f0732c10efb34fcc90f3b6771c/models/iaf_psc_alpha.cpp#L243>`_.
 
-Every matrix entry is calculated twice. For inhibitory post synaptic inputs (with a time constant :math:`\tau_{syn_{in}}`) and excitatory post synaptic inputs (with a time constant :math:`\tau_{syn_{ex}}`).
+Every matrix entry is calculated twice. For inhibitory postsynaptic inputs (with a time constant :math:`\tau_{syn_{in}}`) and excitatory postsynaptic inputs (with a time constant :math:`\tau_{syn_{ex}}`).
 
 And the update is performed `here <https://github.com/nest/nest-simulator/blob/b3fc263e073f46f0732c10efb34fcc90f3b6771c/models/iaf_psc_alpha.cpp#L305>`_. The first multiplication evolves the external input. The others are the multiplication of the matrix :math:`e^{Ah}` with :math:`y`. (For inhibitory and excitatory inputs)
 

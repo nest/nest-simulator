@@ -194,7 +194,7 @@ UrbanczikConnection< targetidentifierT >::send( Event& e, thread t, const Common
   Node* target = get_target( t );
   double dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry_extended >::iterator start;
   std::deque< histentry_extended >::iterator finish;
 

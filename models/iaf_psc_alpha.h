@@ -47,7 +47,7 @@ Description
 
 iaf_psc_alpha is an implementation of a leaky integrate-and-fire model
 with alpha-function shaped synaptic currents. Thus, synaptic currents
-and the resulting post-synaptic potentials have a finite rise time.
+and the resulting postsynaptic potentials have a finite rise time.
 
 The threshold crossing is followed by an absolute refractory period
 during which the membrane potential is clamped to the resting potential.
@@ -281,7 +281,7 @@ private:
   {
 
     /** Amplitude of the synaptic current.
-        This value is chosen such that a post-synaptic potential with
+        This value is chosen such that a postsynaptic potential with
         weight one has an amplitude of 1 mV.
      */
     double EPSCInitialValue_;

@@ -94,7 +94,7 @@ noise.rate = [n_ex * r_ex, n_in * r_in]
 # Fifth, the ``iaf_psc_alpha`` is connected to the ``spike_recorder`` and the
 # ``voltmeter``, as are the two Poisson generators to the neuron. The command
 # ``Connect`` has different variants. Plain `Connect` just takes the handles of
-# pre- and post-synaptic nodes and uses the default values for weight and
+# pre- and postsynaptic nodes and uses the default values for weight and
 # delay. It can also be called with a list of weights, as in the connection
 # of the noise below.
 # Note that the connection direction for the ``voltmeter`` is reversed compared

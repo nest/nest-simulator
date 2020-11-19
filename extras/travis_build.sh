@@ -23,8 +23,7 @@
 # This shell script is part of the NEST Travis CI build and test environment.
 # It is invoked by the top-level Travis script '.travis.yml'.
 #
-# NOTE: This shell script is tightly coupled to Python script
-#       'extras/parse_travis_log.py'.
+# NOTE: This shell script is tightly coupled to 'extras/parse_travis_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) or the variable name
 #      'file_names' have effects on the build/test-log parsing process.
 
@@ -35,6 +34,8 @@ set -e
 if [[ $OSTYPE = darwin* ]]; then
     export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
+    #Ensure that nosetests path can be found
+    export PATH=/Users/travis/Library/Python/3.9/bin:$PATH
 fi
 
 if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then

@@ -366,7 +366,7 @@ nest::aeif_psc_delta_clopath::Buffers_::Buffers_( const Buffers_&, aeif_psc_delt
  * ---------------------------------------------------------------- */
 
 nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath()
-  : Clopath_Archiving_Node()
+  : ClopathArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -375,7 +375,7 @@ nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath()
 }
 
 nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath( const aeif_psc_delta_clopath& n )
-  : Clopath_Archiving_Node( n )
+  : ClopathArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -415,7 +415,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
-  Clopath_Archiving_Node::clear_history();
+  ClopathArchivingNode::clear_history();
 
   B_.logger_.reset();
 

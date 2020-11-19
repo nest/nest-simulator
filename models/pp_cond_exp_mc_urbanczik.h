@@ -70,7 +70,7 @@ Name: pp_cond_exp_mc_urbanczik_parameters - Helper class for pp_cond_exp_mc_urba
 Description:
 pp_cond_exp_mc_urbanczik_parameters is a helper class for the pp_cond_exp_mc_urbanczik neuron model
 that contains all parameters of the model that are needed to compute the weight changes of a
-connected urbanczik_synapse in the base class Urbanczik_Archiving_Node.
+connected urbanczik_synapse in the base class UrbanczikArchivingNode.
 
 Author: Jonas Stapmanns, David Dahmen, Jan Hahne
 
@@ -79,7 +79,7 @@ SeeAlso: pp_cond_exp_mc_urbanczik
 class pp_cond_exp_mc_urbanczik_parameters
 {
   friend class pp_cond_exp_mc_urbanczik;
-  friend class Urbanczik_Archiving_Node< pp_cond_exp_mc_urbanczik_parameters >;
+  friend class UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >;
 
 private:
   //! Compartments, NCOMP is number
@@ -183,7 +183,7 @@ Author: Jonas Stapmanns, David Dahmen, Jan Hahne
 SeeAlso: urbanczik_synapse
 
 */
-class pp_cond_exp_mc_urbanczik : public Urbanczik_Archiving_Node< pp_cond_exp_mc_urbanczik_parameters >
+class pp_cond_exp_mc_urbanczik : public UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >
 {
 
   // Boilerplate function declarations --------------------------------
@@ -550,7 +550,7 @@ pp_cond_exp_mc_urbanczik::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Urbanczik_Archiving_Node< pp_cond_exp_mc_urbanczik_parameters >::get_status( d );
+  UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
@@ -583,7 +583,7 @@ pp_cond_exp_mc_urbanczik::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Urbanczik_Archiving_Node< pp_cond_exp_mc_urbanczik_parameters >::set_status( d );
+  UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

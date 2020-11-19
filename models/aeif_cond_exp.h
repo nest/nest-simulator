@@ -79,7 +79,7 @@ Description
 +++++++++++
 
 aeif_cond_exp is the adaptive exponential integrate and fire neuron
-according to Brette and Gerstner (2005), with post-synaptic
+according to Brette and Gerstner (2005), with postsynaptic
 conductances in the form of truncated exponentials.
 
 This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
@@ -182,7 +182,7 @@ iaf_cond_exp, aeif_cond_alpha
 
 EndUserDocs */
 
-class aeif_cond_exp : public Archiving_Node
+class aeif_cond_exp : public ArchivingNode
 {
 
 public:
@@ -419,7 +419,7 @@ aeif_cond_exp::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -436,7 +436,7 @@ aeif_cond_exp::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

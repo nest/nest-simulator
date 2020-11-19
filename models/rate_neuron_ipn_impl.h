@@ -187,7 +187,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Buffers_::Buffers_( const Buffers_&, r
 
 template < class TNonlinearities >
 nest::rate_neuron_ipn< TNonlinearities >::rate_neuron_ipn()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -198,7 +198,7 @@ nest::rate_neuron_ipn< TNonlinearities >::rate_neuron_ipn()
 
 template < class TNonlinearities >
 nest::rate_neuron_ipn< TNonlinearities >::rate_neuron_ipn( const rate_neuron_ipn& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , nonlinearities_( n.nonlinearities_ )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -240,7 +240,7 @@ nest::rate_neuron_ipn< TNonlinearities >::init_buffers_()
   }
 
   B_.logger_.reset(); // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 template < class TNonlinearities >

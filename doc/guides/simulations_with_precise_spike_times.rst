@@ -17,7 +17,7 @@ propagator matrix for a time step of fixed size *h* can be employed
 
 Neurons buffer the incoming spikes until they become due, where spikes
 can be lumped together provided that the corresponding synapses have the
-same post-synaptic dynamics. Within a *dmin*-interval, each neuron
+same postsynaptic dynamics. Within a *dmin*-interval, each neuron
 independently proceeds in steps of *h*: it retrieves the inputs that are
 due in the current time step from its spike buffers and updates its
 state variables such as the membrane potential.
@@ -68,12 +68,12 @@ grid-constrained counterpart ``parrot_neuron``, but it is able to
 represent precise spike times.
 
 ``iaf_psc_delta_ps`` is an integrate-and-fire neuron model with
-delta-shaped post-synaptic currents that employs precise spike times;
+delta-shaped postsynaptic currents that employs precise spike times;
 its grid-constrained counterpart is ``iaf_psc_delta``. In this model the
 precise location of an outgoing spike is determined analytically.
 
 ``iaf_psc_alpha_ps`` is an
-integrate-and-fire neuron model with alpha-shaped post-synaptic
+integrate-and-fire neuron model with alpha-shaped postsynaptic
 current that employ precise spike times; The grid-constrained
 counterpart is ``iaf_psc_alpha``. The neuron models have been developed
 in the context of `Morrison et al.
@@ -85,7 +85,7 @@ spikes, which also affects the attained precision (see `Morrison et al.
 (2007) <http://dx.doi.org/10.1162/neco.2007.19.1.47>`__ for details).
 
 ``iaf_psc_exp_ps`` is an integrate-and-fire neuron model with
-exponentially shaped post-synaptic currents that employs precise spike
+exponentially shaped postsynaptic currents that employs precise spike
 times; its grid-constrained counterpart is ``iaf_psc_exp``. It has been
 developed in the context of `Hanuschkin et al.
 (2010) <http://dx.doi.org/10.3389/fninf.2010.00113>`__, which is a

@@ -95,7 +95,7 @@ C = np.vstack((N, N)) * pconn  # numbers of input connections
 # final synaptic weights scaling as 1/C
 J_syn = np.array([[J, -g * J], [J, -g * J]]) * C0 / C
 
-taus1_ = [3., 6.]  # time constants of exc./inh. post-synaptic currents (PSC's)
+taus1_ = [3., 6.]  # time constants of exc./inh. postsynaptic currents (PSC's)
 taus1 = np.array([taus1_ for k in range(M)])
 
 

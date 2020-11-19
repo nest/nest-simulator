@@ -202,7 +202,7 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPDopaConnection( const STDPDopaConnection& );
+  STDPDopaConnection( const STDPDopaConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -337,19 +337,6 @@ STDPDopaConnection< targetidentifierT >::STDPDopaConnection()
   , dopa_spikes_idx_( 0 )
   , t_last_update_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-STDPDopaConnection< targetidentifierT >::STDPDopaConnection( const STDPDopaConnection& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , Kplus_( rhs.Kplus_ )
-  , c_( rhs.c_ )
-  , n_( rhs.n_ )
-  , dopa_spikes_idx_( rhs.dopa_spikes_idx_ )
-  , t_last_update_( rhs.t_last_update_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 
@@ -545,12 +532,12 @@ STDPDopaConnection< targetidentifierT >::send( Event& e, thread t, const STDPDop
   const std::vector< spikecounter >& dopa_spikes = cp.vt_->deliver_spikes();
 
   // get spike history in relevant range (t_last_update, t_spike] from
-  // post-synaptic neuron
+  // postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   target->get_history( t_last_update_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
-  // facilitation due to post-synaptic spikes since last update
+  // facilitation due to postsynaptic spikes since last update
   double t0 = t_last_update_;
   double minus_dt;
   while ( start != finish )

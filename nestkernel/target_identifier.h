@@ -55,11 +55,7 @@ public:
   }
 
 
-  TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t )
-    : target_( t.target_ )
-    , rport_( t.rport_ )
-  {
-  }
+  TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t ) = default;
 
 
   void
@@ -122,10 +118,7 @@ public:
   }
 
 
-  TargetIdentifierIndex( const TargetIdentifierIndex& t )
-    : target_( t.target_ )
-  {
-  }
+  TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
 
 
   void

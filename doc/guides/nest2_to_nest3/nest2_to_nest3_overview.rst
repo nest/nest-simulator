@@ -361,7 +361,7 @@ New functionality for connecting arrays of node IDs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 While you should aim to use NodeCollections to create connections whenever possible,
-there may be cases where you have a predefined set of pairs of pre- and post-synaptic nodes.
+there may be cases where you have a predefined set of pairs of pre- and postsynaptic nodes.
 In those cases, it may be inefficient to convert the individual IDs in the pair to NodeCollections
 to be passed to the ``Connect()`` function, especially if there are thousands or millions of
 pairs to connect.
@@ -412,7 +412,7 @@ as NodeCollections.
 
 .. seealso::
 
-    You can find a :doc:`full example <../examples/SynapseCollection>` in our example network page
+    You can find a :doc:`full example <../../auto_examples/synapsecollection>` in our example network page.
 
 Printing
     Printing a SynapseCollection produces a table of source and target node IDs
@@ -1486,8 +1486,6 @@ All details about the new infrastructure can be found in the guide on
 What's removed?
 ---------------
 
-.. subnet_rm::
-
 Subnets
 ~~~~~~~
 
@@ -1520,8 +1518,6 @@ prints ID ranges and model names of the nodes in the network.
   |                                              |                                       |
   +----------------------------------------------+---------------------------------------+
 
-.. model_rm::
-
 Models
 ~~~~~~
 
@@ -1544,8 +1540,6 @@ be used instead.
 
 Furthermore, the model `iaf_tum_2000` has been renamed to `iaf_psc_exp_htum`. iaf_psc_exp_htum is
 the exact same model as iaf_tum_2000, it has just been renamed to match NEST's naming conventions.
-
-.. function_rm::
 
 Functions
 ~~~~~~~~~

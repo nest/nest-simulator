@@ -4,7 +4,7 @@ High Performance Computer Systems Installation
 Minimal configuration
 -------------------------
 
-NEST can be compiled without any external packages; such a configuration may be useful for initial porting to a new supercomputer. However, this implies several restrictions: 
+NEST can be compiled without any external packages; such a configuration may be useful for initial porting to a new supercomputer. However, this implies several restrictions:
 
 - Some neuron and synapse models will not be available, as they depend on ODE solvers from the GNU Scientific Library.
 - The Python extension will not be available
@@ -52,7 +52,7 @@ as in::
 BlueGene/Q and PyNEST
 ~~~~~~~~~~~~~~~~~~~~~
 
-Building PyNEST on BlueGene/Q requires you to compile dynamically, i.e. 
+Building PyNEST on BlueGene/Q requires you to compile dynamically, i.e.
 ``-Dstatic-libraries=OFF``. Furthermore, you have to cythonize the
 ``pynest/pynestkernel.pyx/.pyx`` on a machine with Cython installed::
 
@@ -87,10 +87,10 @@ Furthermore, for running PyNEST, make sure all Python dependencies are installed
 environment variables are set properly::
 
     module load python3/3.4.2
-    
+
     # adds PyNEST to the PYTHONPATH
     source <nest-install-dir>/bin/nest_vars.sh
-    
+
     # makes HOME and PYTHONPATH available for Python
     runjob \
       --exp-env HOME \
@@ -122,8 +122,8 @@ allocator library as shown in the following example::
            -DCMAKE_INSTALL_PREFIX:PATH=$PWD/install \
            -Dstatic-libraries=ON -Dwith-warning=OFF \
            -DCMAKE_EXE_LINKER_FLAGS="-Wl,--allow-multiple-definition" \
-           -Dwith-libraries=$HOME/tcmalloc/install/lib/libtcmalloc.a 
-     
+           -Dwith-libraries=$HOME/tcmalloc/install/lib/libtcmalloc.a
+
 
 Compiling for Fujitsu Sparc64
 -------------------------------
@@ -171,17 +171,19 @@ On the K Computer:
       make -j4
       make install
 
-  The compilation can take quite some time compiling the file ``models/modelsmodule.cpp``
-  due to generation of many template classes. To speed up the process, you can
-  comment out all synapse models you do not need.
-  The option ``-Kfast`` on the K computer enables many different options::
+  The compilation of the built-in models can take quite some time due
+  to the instantiation of many template classes. To speed up the process,
+  you can comment out all synapse models you do not need. The option
+  ``-Kfast`` on the K computer enables many different options::
 
         -O3 -Kdalign,eval,fast_matmul,fp_contract,fp_relaxed,ilfunc,lib,mfunc,ns,omitfp,prefetch_conditional,rdconv -x-
 
-  Be aware that, with the option ``-Kfast`` an internal compiler error - probably
-  an out of memory situation - can occur. One solution is to disable synapse
-  models that you don't use in ``models/modelsmodule.cpp``. From current observations
-  this might be related to the ``-x-`` option; you can give it a fixed value, e.g
-  ``-x1``, and the compilation succeeds (the impact on performance was not analyzed)::
+  Be aware that, with the option ``-Kfast`` an internal compiler
+  error - probably an out of memory situation - can occur. One
+  solution is to disable synapse models that you don't use in
+  ``models/builtin_models.h``. From current observations this might be
+  related to the ``-x-`` option; you can give it a fixed value, e.g
+  ``-x1``, and the compilation succeeds (the impact on performance was
+  not analyzed)::
 
         -Dwith-optimize="-Kfast -x1"

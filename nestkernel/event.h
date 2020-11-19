@@ -1022,10 +1022,10 @@ public:
 
   /**
    * Resets the vector of supported syn ids to those originally
-   * registered via ModelsModule or user defined Modules, i.e.,
-   * removes all syn ids created by CopyModel. This is important to
-   * maintain consistency across ResetKernel, which removes all copied
-   * models.
+   * registered via the KernelManager::initialize() or from within a
+   * user defined extension modules, i.e. it removes all syn ids
+   * created by CopyModel. This is important to maintain consistency
+   * across ResetKernel, which removes all copied models.
    */
   void
   reset_supported_syn_ids()

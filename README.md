@@ -107,9 +107,9 @@ later.
 
 ## Installing NEST
 
-Generic installation instructions can be found in the
-[INSTALL](https://github.com/nest/nest-simulator/blob/master/INSTALL) file that
-you received in the NEST sources.
+Generic installation instructions can be found in the [NEST
+documentation](https://nest-simulator.org/installation/) on Read the
+Docs.
 
 ## Getting help
 

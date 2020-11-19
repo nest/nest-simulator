@@ -423,7 +423,7 @@ Receptor Types
 --------------
 
 Each connection in NEST targets a specific receptor type on the
-post-synaptic node. Receptor types are identified by integer numbers,
+postsynaptic node. Receptor types are identified by integer numbers,
 the default receptor type is 0. The meaning of the receptor type depends
 on the model and is documented in the model documentation. To connect to
 a non-standard receptor type, the parameter ``receptor_type`` of the
@@ -431,7 +431,7 @@ a non-standard receptor type, the parameter ``receptor_type`` of the
 command. To illustrate the concept of receptor types, we give an example
 using standard integrate-and-fire neurons as presynaptic nodes and a
 multi-compartment integrate-and-fire neuron (``iaf_cond_alpha_mc``) as
-post-synaptic node. As seen in the image and code snippet below, we
+postsynaptic node. As seen in the image and code snippet below, we
 connect the integrate-and-fire neurons to different receptors of the
 multi-compartment integrate-and-fire neuron model.
 
@@ -612,9 +612,9 @@ NodeCollections of node IDs, ``synapse_model`` is a string representing
 a synapse model. You can also give a ``synapse_label`` if you have 
 specified this when connecting. If `GetConnections` is called without
 parameters, all connections in the network are returned. If a NodeCollection of
-source neurons is given, only connections from these pre-synaptic
+source neurons is given, only connections from these presynaptic
 neurons are returned. If a NodeCollection of target neurons is given, only
-connections to these post-synaptic neurons are returned. If a synapse
+connections to these postsynaptic neurons are returned. If a synapse
 model is given, only connections with this synapse type are returned.
 Any combination of source, target and model parameters is permitted.
 

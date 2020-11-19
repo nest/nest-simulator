@@ -17,7 +17,7 @@ Common abbreviations in NEST
    conductance-based
 
  psc
-   post synaptic current (current-based)
+   postsynaptic current (current-based)
 
  hh
    hodgkin huxley

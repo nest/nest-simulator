@@ -326,7 +326,7 @@ nest::hh_psc_alpha_gap::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_gap& n
  * ---------------------------------------------------------------- */
 
 nest::hh_psc_alpha_gap::hh_psc_alpha_gap()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -336,7 +336,7 @@ nest::hh_psc_alpha_gap::hh_psc_alpha_gap()
 }
 
 nest::hh_psc_alpha_gap::hh_psc_alpha_gap( const hh_psc_alpha_gap& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -398,7 +398,7 @@ nest::hh_psc_alpha_gap::init_buffers_()
 
   B_.sumj_g_ij_ = 0.0;
 
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.logger_.reset();
 

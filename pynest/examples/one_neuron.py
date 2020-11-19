@@ -72,7 +72,7 @@ neuron.I_e = 376.0
 ###############################################################################
 # Fourth, the neuron is connected to the voltmeter. The command
 # ``Connect`` has different variants. Plain ``Connect`` just takes the
-# handles of pre- and post-synaptic nodes and uses the default values
+# handles of pre- and postsynaptic nodes and uses the default values
 # for weight and delay. Note that the connection direction for the voltmeter is
 # reversed compared to the spike recorder, because it observes the
 # neuron instead of receiving events from it. Thus, ``Connect``

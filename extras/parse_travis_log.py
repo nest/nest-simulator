@@ -360,18 +360,18 @@ def makebuild_summary(log_filename, msg_make_section_start,
     number_of_error_msgs = 0
     number_of_warning_msgs = 0
     in_make_section = False
-    if NEST_BUILD_TYPE == 'MINIMAL':
-        expected_warnings = 8
-    elif NEST_BUILD_TYPE == 'MPI_ONLY':
-        expected_warnings = 263
-    elif NEST_BUILD_TYPE == 'OPENMP_ONLY':
-        expected_warnings = 8
-    elif NEST_BUILD_TYPE == 'FULL':
-        expected_warnings = 4006
-    elif NEST_BUILD_TYPE == 'FULL_NO_EXTERNAL_FEATURES':
-        expected_warnings = 8
-    else:
-        expected_warnings = 0  # Set to 0 if none of the above build-types, to not crash the script
+
+    expected_warnings = 0
+    if build_type == 'FULL':
+        expected_warnings = 2  # libneurosim and NEST both define PACKAGE in their config.h files
+
+    nest_warning_re = re.compile(f'{build_dir}.*: warning:')
+    known_warnings = [
+        f'{build_dir}/sli/scanner.cc:642:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:673:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:714:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:741:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+    ]
 
     with open(log_filename) as fh:
         for line in fh:
@@ -388,7 +388,9 @@ def makebuild_summary(log_filename, msg_make_section_start,
                     error_summary[file_name] += 1
                     number_of_error_msgs += 1
 
-                if ': warning:' in line:
+                # Only count warnings originating in NEST source files
+                warning_match = nest_warning_re.match(line)
+                if warning_match is not None and line.strip() not in known_warnings:
                     file_name = line.split(':')[0]
                     if file_name not in warning_summary:
                         warning_summary[file_name] = 0
@@ -970,11 +972,12 @@ def build_return_code(status_cmake_configure,
 
 
 if __name__ == '__main__':
+    import re
     from sys import argv, exit
     from terminaltables import AsciiTable
     from textwrap import wrap
 
-    this_script_filename, log_filename, NEST_BUILD_TYPE = argv
+    this_script_filename, log_filename, build_type, build_dir = argv
 
     changed_files = \
         list_of_changed_files(log_filename, "MSGBLD0070",

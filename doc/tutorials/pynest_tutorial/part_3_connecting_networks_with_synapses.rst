@@ -63,9 +63,9 @@ STDP synapses
 For the majority of synapses, all of their parameters are accessible via
 ``GetDefaults()`` and ``SetDefaults()``. Synapse models implementing
 spike-timing dependent plasticity are an exception to this, as their
-dynamics are driven by the post-synaptic spike train as well as the
+dynamics are driven by the postsynaptic spike train as well as the
 pre-synaptic one. As a consequence, the time constant of the depressing
-window of STDP is a parameter of the post-synaptic neuron. It can be set
+window of STDP is a parameter of the postsynaptic neuron. It can be set
 as follows:
 
 ::
@@ -387,7 +387,7 @@ Querying Synapses
    If GetConnections is called without parameters, all connections in
    the network are returned. If a NodeCollection of source neurons is given, only
    connections from these pre-synaptic neurons are returned. If a NodeCollection
-   of target neurons is given, only connections to these post-synaptic
+   of target neurons is given, only connections to these postsynaptic
    neurons are returned. If a synapse model is given, only connections
    with this synapse type are returned. Any combination of source,
    target and synapse\_model parameters is permitted. Each connection id

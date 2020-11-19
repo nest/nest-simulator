@@ -406,7 +406,7 @@ nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( const Buffers_& b, gif_cond
  * ---------------------------------------------------------------- */
 
 nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -415,7 +415,7 @@ nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse()
 }
 
 nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse( const gif_cond_exp_multisynapse& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -461,7 +461,7 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
 
   B_.currents_.clear(); //!< includes resize
   B_.logger_.reset();   //!< includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   const int state_size = 1 + ( State_::STATE_VEC_SIZE - 1 ) * P_.n_receptors();
 

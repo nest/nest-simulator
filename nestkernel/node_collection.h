@@ -422,7 +422,7 @@ public:
    *
    * @param rhs Primitive to copy
    */
-  NodeCollectionPrimitive( const NodeCollectionPrimitive& );
+  NodeCollectionPrimitive( const NodeCollectionPrimitive& ) = default;
 
   /**
    * Create empty NodeCollection.

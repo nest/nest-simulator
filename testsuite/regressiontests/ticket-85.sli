@@ -58,7 +58,7 @@ precise_models
   } pass_or_die
 } forall
 
-% second test: do we get status information from Archiving_Node?
+% second test: do we get status information from ArchivingNode?
 precise_models
 {
   {

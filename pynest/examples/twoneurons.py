@@ -22,32 +22,63 @@
 """Two neuron example
 ----------------------------
 
+This script simulates two connected pre- and postsynaptic neurons.
+The presynaptic neuron receives a constant external current,
+and the membrane potential of both neurons are recorded.
 
 See Also
-~~~~~~~~~~
+~~~~~~~~
 
 :doc:`one_neuron`
 
 """
 
+###############################################################################
+# First, we import all necessary modules for simulation, analysis and plotting.
+# Additionally, we set the verbosity to suppress info messages and reset
+# the kernel.
 
 import nest
 import nest.voltage_trace
 import matplotlib.pyplot as plt
 
-weight = 20.0
-delay = 1.0
-stim = 1000.0
+nest.set_verbosity("M_WARNING")
+nest.ResetKernel()
 
-neuron1 = nest.Create("iaf_psc_alpha")
-neuron2 = nest.Create("iaf_psc_alpha")
+###############################################################################
+# Second, we create the two neurons and the recording device.
+
+neuron_1 = nest.Create("iaf_psc_alpha")
+neuron_2 = nest.Create("iaf_psc_alpha")
 voltmeter = nest.Create("voltmeter")
 
-neuron1.I_e = stim
-nest.Connect(neuron1, neuron2, syn_spec={'weight': weight, 'delay': delay})
-nest.Connect(voltmeter, neuron2)
+###############################################################################
+# Third, we set the external current of neuron 1.
 
-nest.Simulate(100.0)
+neuron_1.I_e = 376.0
+
+###############################################################################
+# Fourth, we connect neuron 1 to neuron 2.
+# Then, we connect a voltmeter to the two neurons.
+# To learn more about the previous steps, please check out the
+# :doc:`one neuron example <one_neuron>`.
+
+weight = 20.0
+delay = 1.0
+
+nest.Connect(neuron_1, neuron_2, syn_spec={"weight": weight, "delay": delay})
+nest.Connect(voltmeter, neuron_1)
+nest.Connect(voltmeter, neuron_2)
+
+###############################################################################
+# Now we simulate the network using ``Simulate``, which takes the
+# desired simulation time in milliseconds.
+
+nest.Simulate(1000.0)
+
+###############################################################################
+# Finally, we plot the neurons' membrane potential as a function of
+# time.
 
 nest.voltage_trace.from_device(voltmeter)
 plt.show()

@@ -170,7 +170,7 @@ nest::music_rate_in_proxy::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::music_rate_in_proxy::update( Time const& origin, const long from, const long to )
+nest::music_rate_in_proxy::update( Time const&, const long, const long )
 {
 }
 

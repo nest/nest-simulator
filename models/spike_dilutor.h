@@ -132,7 +132,7 @@ private:
     double p_copy_; //!< copy probability for each incoming spike
 
     Parameters_(); //!< Sets default parameter values
-    Parameters_( const Parameters_& );
+    Parameters_( const Parameters_& ) = default;
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
     void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary

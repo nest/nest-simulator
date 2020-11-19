@@ -99,7 +99,7 @@ nest.Connect(pg, pre, "all_to_all")
 
 ###############################################################################
 # To measure and record the membrane potentials of the neurons, we create a
-# ``voltmeter`` and connect it to all post-synaptic nodes.
+# ``voltmeter`` and connect it to all postsynaptic nodes.
 
 vm = nest.Create("voltmeter")
 nest.Connect(vm, post, "all_to_all")
@@ -113,7 +113,7 @@ visualization.plot_network(allnodes, "csa_example_graph.png")
 
 ###############################################################################
 # Finally, we simulate the network for 50 ms. The voltage traces of the
-# post-synaptic nodes are plotted.
+# postsynaptic nodes are plotted.
 
 nest.Simulate(50.0)
 voltage_trace.from_device(vm)

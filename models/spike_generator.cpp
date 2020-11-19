@@ -54,17 +54,6 @@ nest::spike_generator::Parameters_::Parameters_()
 {
 }
 
-nest::spike_generator::Parameters_::Parameters_( const Parameters_& op )
-  : spike_stamps_( op.spike_stamps_ )
-  , spike_offsets_( op.spike_offsets_ )
-  , spike_weights_( op.spike_weights_ )
-  , spike_multiplicities_( op.spike_multiplicities_ )
-  , precise_times_( op.precise_times_ )
-  , allow_offgrid_times_( op.allow_offgrid_times_ )
-  , shift_now_spikes_( op.shift_now_spikes_ )
-{
-}
-
 nest::spike_generator::State_::State_()
   : position_( 0 )
 {

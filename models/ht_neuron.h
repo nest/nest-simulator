@@ -172,7 +172,7 @@ ht_connection
 
 EndUserDocs */
 
-class ht_neuron : public Archiving_Node
+class ht_neuron : public ArchivingNode
 {
 public:
   ht_neuron();

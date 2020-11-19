@@ -190,7 +190,7 @@ protected:
   //! buffer for exceptions raised in threads
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
-  // Name of the pre synaptic and post synaptic elements for this connection
+  // Name of the pre synaptic and postsynaptic elements for this connection
   // builder
   Name pre_synaptic_element_name_;
   Name post_synaptic_element_name_;
@@ -234,9 +234,6 @@ private:
 
   //! synapse-specific parameters that should be skipped when we set default synapse parameters
   std::set< Name > skip_syn_params_;
-
-  //! synapse-specific parameters that must be integers
-  std::set< Name > integer_params_;
 
   /**
    * Collects all array parameters in a vector.

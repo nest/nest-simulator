@@ -45,14 +45,6 @@ ContDelayConnection< targetidentifierT >::ContDelayConnection()
 }
 
 template < typename targetidentifierT >
-ContDelayConnection< targetidentifierT >::ContDelayConnection( const ContDelayConnection& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , delay_offset_( rhs.delay_offset_ )
-{
-}
-
-template < typename targetidentifierT >
 void
 ContDelayConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {

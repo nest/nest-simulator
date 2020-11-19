@@ -64,7 +64,7 @@ namespace nest
  * @see ginzburg_neuron, mccullogh_pitts_neuron
  */
 template < class TGainfunction >
-class binary_neuron : public Archiving_Node
+class binary_neuron : public ArchivingNode
 {
 
 public:
@@ -281,7 +281,7 @@ binary_neuron< TGainfunction >::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
   gain_.get( d );
@@ -300,7 +300,7 @@ binary_neuron< TGainfunction >::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
@@ -365,7 +365,7 @@ binary_neuron< TGainfunction >::State_::get( DictionaryDatum& d, const Parameter
 
 template < class TGainfunction >
 void
-binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&, const Parameters_&, Node* node )
+binary_neuron< TGainfunction >::State_::set( const DictionaryDatum&, const Parameters_&, Node* )
 {
 }
 
@@ -388,7 +388,7 @@ binary_neuron< TGainfunction >::Buffers_::Buffers_( const Buffers_&, binary_neur
 
 template < class TGainfunction >
 binary_neuron< TGainfunction >::binary_neuron()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -397,7 +397,7 @@ binary_neuron< TGainfunction >::binary_neuron()
 
 template < class TGainfunction >
 binary_neuron< TGainfunction >::binary_neuron( const binary_neuron& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , gain_( n.gain_ )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -424,7 +424,7 @@ binary_neuron< TGainfunction >::init_buffers_()
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 template < class TGainfunction >

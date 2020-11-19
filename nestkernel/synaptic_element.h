@@ -166,7 +166,7 @@ public:
   void update( double t, double t_minus, double Ca_minus, double tau_Ca );
 
   /**
-  * \fn double get_z_value(Archiving_Node const *a, double t) const
+  * \fn double get_z_value(ArchivingNode const *a, double t) const
   * Get the number of synaptic_element at the time t (in ms)
   * Returns a negative number when synaptic elements must be deleted
   * during the next update

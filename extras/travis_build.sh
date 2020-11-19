@@ -34,6 +34,8 @@ set -e
 if [[ $OSTYPE = darwin* ]]; then
     export CC=$(ls /usr/local/bin/gcc-* | grep '^/usr/local/bin/gcc-\d$')
     export CXX=$(ls /usr/local/bin/g++-* | grep '^/usr/local/bin/g++-\d$')
+    #Ensure that nosetests path can be found
+    export PATH=/Users/travis/Library/Python/3.9/bin:$PATH
 fi
 
 if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then

@@ -31,24 +31,31 @@
 
 /* BeginUserDocs: recording backend
 
-.. _sionlib_backend:
+.. _recording_backend_sionlib:
 
 Store data to an efficient binary format
 ########################################
 
+.. admonition:: Availability
+
+   This recording backend is only available if NEST was compiled with
+   :ref:`support for MPI and SIONlib <compile-with-mpi>`.
+
 The `sionlib` recording backend writes collected data persistently to
 a binary container file (or to a rather small set of such files). This
 is especially useful for large-scale simulations running in a
-distributed way on many MPI processes/OpenMP threads. In this usage
-scenario, writing to plain text files (see :ref:`ASCII backend
-<ascii_backend>`) would cause a large overhead because of the huge
-number of generated files and be very inefficient. For the
-implementation of writing to binary container files, NEST relies on
-the SIONlib library (http://www.fz-juelich.de/jsc/sionlib). Depending
-on the I/O architecture of the computing cluster (supercomputer) and
-the global settings of the `sionlib` recording backend (see below),
-either a single container file or a set of these files is created. In
-case of a single file, it is named according to the following pattern:
+distributed way on many MPI processes/OpenMP threads. In such usage
+scenarios, writing to plain text files (see :ref:`recording backend
+for ASCII files <recording_backend_ascii>`) would cause a large
+overhead because of the huge number of generated files and thus be
+very inefficient.
+
+The implementation of the `sionlib` backend is based on the `SIONlib
+library <http://www.fz-juelich.de/jsc/sionlib>`_. Depending on the I/O
+architecture of the compute cluster or supercomputer and the global
+settings of the `sionlib` recording backend, either a single container
+file or a set of these files is created. In case of a single file, it
+is named according to the following pattern:
 
 ::
 
@@ -75,12 +82,41 @@ filename is composed.
 Data format
 +++++++++++
 
-The container files contain the data in a custom binary format. The
-recorder property ``label`` and all other recorder-specific metadata
-is stored with each recording device. To retrieve the data after the
-simulation, the `nestio reader API` in Python has to be used. SIONlib
-container files are sparse files: They only use up the space on disk
-which is actually filled with data.
+In contrast to other recording backends, the ``sionlib`` backend
+writes the data from all recorders using it to a single container
+file(s). The file(s) contain the data in a custom binary format, which
+is composed of a series of blocks in the following order:
+
+* The *body block* contains the actual data records; the layout of an
+  individual record depends on the type of the device and is described
+  by a corresponding entry in the *device info block*
+
+* The *file info block* keeps the file's metadata, like version
+  information and such
+
+* The *device info block* stores the properties and a data layout
+  description for each device that uses the ``sionlib`` backend
+
+* The *tail block* contains pointers to the *file info block*
+
+The data layout of the NEST SIONlib file format v2 is shown in the
+following figure.
+
+.. figure:: ../_static/img/nest_sionlib_file_format_v2.png
+   :alt: NEST SIONlib binary file format
+
+   NEST SIONlib binary file format.
+
+
+Reading the data
+++++++++++++++++
+
+As the binary format of the files produced by the ``sionlib`` does not
+conform to any standard, parsing them manually might be a bit
+cumbersome. To ease this task, we provide a reader module for Python
+that makes the files available in a convenient way. The source code
+and further documentation for this module can be found in its own
+`repository <https://github.com/nest/nest-sionlib-reader>`_.
 
 Recorder-specific parameters
 ++++++++++++++++++++++++++++

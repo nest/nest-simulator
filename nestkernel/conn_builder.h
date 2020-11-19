@@ -190,7 +190,7 @@ protected:
   //! buffer for exceptions raised in threads
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
-  // Name of the pre synaptic and post synaptic elements for this connection
+  // Name of the pre synaptic and postsynaptic elements for this connection
   // builder
   Name pre_synaptic_element_name_;
   Name post_synaptic_element_name_;

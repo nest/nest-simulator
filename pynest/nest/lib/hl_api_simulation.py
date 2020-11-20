@@ -23,16 +23,16 @@
 Functions for simulation control
 """
 
-from contextlib import contextmanager
-
-from ..ll_api import *
-from .hl_api_helper import *
-from .hl_api_types import NodeCollection
-from .hl_api_info import set_verbosity, get_verbosity, GetStatus
-from .hl_api_connections import GetConnections, Connect
-from .hl_api_nodes import Create
-from typing import Dict, List
 import copy
+from contextlib import contextmanager
+from typing import Dict, List
+
+from .hl_api_connections import GetConnections, Connect
+from .hl_api_helper import *
+from .hl_api_info import set_verbosity, get_verbosity, GetStatus
+from .hl_api_nodes import Create
+from .hl_api_types import NodeCollection
+from ..ll_api import *
 
 __all__ = [
     'Cleanup',
@@ -496,7 +496,8 @@ def Dump(selections: List = ("nodes", "synapses")) -> Dict:
 
     """
 
-    sli_func("({}) M_WARNING message".format("Dumping is currently only supported for a single process."))
+    sli_func("({}) M_WARNING message".format("Dumping is currently only"
+                                             " supported for a single process."))
     dumpdata = dict()
     numnetwork = GetKernelStatus("network_size")
 
@@ -519,8 +520,10 @@ def Load(data: Dict) -> Dict:
     """
     Loads a dictionary obtained by the dump method.
 
-    Repeated loading will add to the network size. To overwrite clear with a call to resetnetwork.
-    To directly overwrite the binary memory state a lower level access needs to be developed in the future.
+    Repeated loading will add to the network size.
+    To overwrite clear with a call to resetnetwork.
+    To directly overwrite the binary memory state a
+    lower level access needs to be developed in the future.
 
     Parameters
     ----------
@@ -538,7 +541,8 @@ def Load(data: Dict) -> Dict:
     Dump : Function to obtain a structured memory dump.
     """
     created = dict()
-    sli_func("({}) M_WARNING message".format("Loading is currently only supported for a single process."))
+    sli_func("({}) M_WARNING message".format("Loading is currently only"
+                                             " supported for a single process."))
     if "nodes" in data:
         dictmissbefore = GetKernelStatus({"dict_miss_is_error"})[0]
         SetKernelStatus({"dict_miss_is_error": False})
@@ -571,7 +575,8 @@ def Load(data: Dict) -> Dict:
         except Exception as e:
             print("Error during synapse loading: " + str(e))
 
-        # we only want the newly created connections, but Connect does not return a SynapseCollection object
+        # we only want the newly created connections,
+        # but Connect does not return a SynapseCollection object
         created["synapses"] = GetConnections()
 
     return created

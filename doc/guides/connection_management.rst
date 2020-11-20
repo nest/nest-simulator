@@ -16,7 +16,7 @@ be specified within the `Connect()` function, and all synaptic parameters can
 be randomly distributed. More information about synapse models and their
 parameters can be found in the :ref:`Synapse Specification <synapse_spec>` section.
 
-The `Connect()` function can be called in any of the following ways:
+The ``Connect()`` function can be called in any of the following ways:
 
 ::
 
@@ -24,7 +24,7 @@ The `Connect()` function can be called in any of the following ways:
     Connect(pre, post, conn_spec)
     Connect(pre, post, conn_spec, syn_spec)
 
-``pre`` and ``post`` are `NodeCollections` of node IDs defining the nodes of
+``pre`` and ``post`` are ``NodeCollections`` defining the nodes of
 origin and termination.
 
 ``conn_spec`` can either be a string containing the name of the
@@ -175,7 +175,7 @@ For each possible pair of nodes from ``pre`` and ``post``, a connection
 is created with probability ``p`` from ``pre`` to ``post``, as well as
 a connection from ``post`` to ``pre`` (two connections in total). To
 use the 'symmetric_pairwise_bernoulli' rule, ``allow_autapses`` must
-be False, and ``make_symmetric`` must be True.
+be `False`, and ``make_symmetric`` must be `True`.
 
 ::
 
@@ -193,7 +193,7 @@ Synapse Specification
 The synapse properties can be given as a string, a ``CollocatedSynapse``
 object, or a dictionary. The string can be the name of a pre-defined
 synapse which can be found in the synapsedict (see  :ref:`synapse-types`)
-or a manually defined synapse via `CopyModel()`.
+or a manually defined synapse via ``CopyModel()``.
 
 ::
 

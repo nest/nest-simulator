@@ -397,16 +397,21 @@ as NodeCollections.
     You can find a :doc:`full example <../../auto_examples/synapsecollection>` in our example network page.
 
 Printing
-    Printing a SynapseCollection produces a table of source and target node IDs
+    Printing a SynapseCollection produces a table source and target node IDs, synapse model, weight and delay.
+    If your SynapseCollection has more than 36 elements, only the first and last 15 connections are displayed.
+    To print all, first set ``print_all = True`` on your SynapseCollection.
 
     >>>  nest.Connect(nodes[:2], nodes[:2])
     >>>  synColl = nest.GetConnections()
     >>>  print(synColl)
-         *--------*-------------*
-         | source | 1, 1, 2, 2, |
-         *--------*-------------*
-         | target | 1, 2, 1, 2, |
-         *--------*-------------*
+          source   target   synapse model   weight   delay 
+         -------- -------- --------------- -------- -------
+               1        1  static_synapse      1.0     1.0
+               1        2  static_synapse      1.0     1.0
+               2        1  static_synapse      1.0     1.0
+               2        2  static_synapse      1.0     1.0
+
+    >>> synColl.print_all = True
 
 .. _conn_indexing:
 
@@ -415,11 +420,9 @@ Indexing
     Indexing returns a single connection SynapseCollection.
 
     >>>  print(synColl[1])
-         *--------*----*
-         | source | 1, |
-         *--------*----*
-         | target | 9, |
-         *--------*----*
+          source   target   synapse model   weight   delay 
+         -------- -------- --------------- -------- -------
+               1        2  static_synapse      1.0     1.0
 
 .. _conn_iterating:
 
@@ -440,11 +443,10 @@ Slicing
     A SynapseCollection can be sliced with ``start:stop:step`` inside brackets
 
     >>>  print(synColl[0:3:2])
-         *--------*-------*
-         | source | 1, 2, |
-         *--------*-------*
-         | target | 1, 1, |
-         *--------*-------*
+         source   target   synapse model   weight   delay 
+        -------- -------- --------------- -------- -------
+              1        1  static_synapse      1.0     1.0
+              2        1  static_synapse      1.0     1.0
 
 .. _conn_size:
 

@@ -221,7 +221,8 @@ synaptic parameters. In addition to the key ``synapse_model``, the dictionary ca
 contain specifications for ``weight``, ``delay``, ``receptor_type`` and
 parameters specific to the chosen synapse model. The specification of
 all parameters is optional. Unspecified parameters will use the default
-values determined by the current synapse model. All parameters can be
+values determined by the current synapse model. These default values can be inspected
+with ``nest.GetDefaults(synapse_model)``. All parameters can be
 scalars, arrays or distributions (specified as a ``nest.Parameter``). One
 synapse dictionary can contain an arbitrary combination of parameter
 types, as long as they agree with the connection routine (``rule``).
@@ -462,11 +463,11 @@ Assume we have a weight matrix of the form:
     w_{12} & w_{22} & \cdots & w_{n2} \\
     \vdots & \vdots & \ddots & \vdots \\
     w_{1m} & w_{2m} & \cdots & w_{nm} \\
-    \end{bmatrix},
+    \end{bmatrix}
 
 where :math:`w_{ij}` is the weight of the connection with presynaptic node :math:`i`
 and postsynaptic node :math:`j`. We can assume that some weights are zero. Instead of
-creating connections with zero weight in these cases, we do not want to create these
+creating connections with zero weight in these cases, we want to not create these
 connections at all.
 
 There is currently no way to create connections from the whole matrix in one go, so we

@@ -7,14 +7,27 @@ Connection Management
    :local:
    :depth: 2
 
-In NEST, connections are created with the `Connect()` function. You can
-create connections with different types of connectivity patterns, which
-are defined inside the function under the ``conn_spec`` argument and the
-key 'rule'. The patterns available are described in the
-:ref:`Connection Rules <conn_rules>` section. In addition, the synapse model can
-be specified within the `Connect()` function, and all synaptic parameters can
-be randomly distributed. More information about synapse models and their
-parameters can be found in the :ref:`Synapse Specification <synapse_spec>` section.
+Connections between populations of neurons and between neurons
+and devices for stimulating and recording are created with the
+``Connect()`` function. Although each connection is internally
+represented as an individual object, you can use a single call to
+``Connect()`` to create many connections at the same time.
+
+Each call to the function will establish the connectivity between
+the pre- and the post-synaptic population with a certain
+pattern. The desired pattern is specified by setting the key
+*rule* in the *connectivity specification* dictionary
+``conn_spec``, alongside with additional rule-specific
+parameters. All available patterns are described in the section
+:ref:`Connection Rules <conn_rules>`.
+
+The synapse model as well as parameters for the individual
+connections are defined in the *synapse specification* dictionary
+``syn_spec``. Parameters like the synaptic weight or delay can be
+either set values or drawn and combined flexibly from random
+distributions. All information about synapse models and their
+parameters can be found in the section :ref:`Synapse
+Specification <synapse_spec>`
 
 The ``Connect()`` function can be called in any of the following ways:
 
@@ -29,27 +42,27 @@ origin and termination.
 
 ``conn_spec`` can either be a string containing the name of the
 connectivity rule (default: ``all_to_all``) or a dictionary specifying
-the rule and the rule-specific parameters (e.g. ``indegree``), which must
-be given.
+the rule name under the key `rule` and any rule-specific parameters, if needed.
 
-In addition, switches allowing self-connections (``allow_autapses``, default:
-True) and multiple connections between pairs of neurons (``allow_multapses``,
-default: True) can be contained in the dictionary. The validity of the
-switches is confined by the Connect-call. Thus, by connecting the same set
-of neurons multiple times with the switch 'allow_multapses' set to False, one
-particular connection might still be established multiple times.
+In addition, the switch ``allow_autapses`` (default: `True`) can be specified to allow 
+self-connections. Likewise, ``allow_multapses`` (default: `True`) specifies if multiple
+connections between the same pair of neurons are allowed. Please note that these
+switches are only confined a single call to ``Connect()``, meaning that calling the
+function multiple times with the same set of neurons might still lead to a situation
+where these criterions are violated, even though the switches are set to `False` in
+each individual call.
 
 ``syn_spec`` defines the synapse type and its properties. It can be
 given as a string defining the synapse model (default:
 'static_synapse'), as an object defining :ref:`collocated synapses <collocated_synapses>`,
-or as a dictionary. By using the keyword variant
+or as a dictionary with detailed synapse properties. By using the keyword variant
 (``Connect(pre, post, syn_spec=syn_spec_dict)``), ``conn_spec`` can be
-omitted in the call to connect and 'all_to_all' is assumed as the
-default. The exact usage of the synapse dictionary is described in
+omitted in the call to ``Connect`` and will take on the default value of 
+'all_to_all'. More advanced uses of the synapse specification are described in
 :ref:`synapse_spec`.
 
 After a connection is established, it might be beneficial to look up the number of
-connections in the system. This can easily be done with ``GetKernelStatus``:
+connections in the network, which can be easily done using ``GetKernelStatus``:
 
 ::
 
@@ -192,7 +205,7 @@ Synapse Specification
 
 The synapse properties can be given as a string, a ``CollocatedSynapse``
 object, or a dictionary. The string can be the name of a pre-defined
-synapse which can be found in the synapsedict (see  :ref:`synapse-types`)
+synapse which can be found in the synapsedict (see :ref:`synapse-types`)
 or a manually defined synapse via ``CopyModel()``.
 
 ::
@@ -217,9 +230,10 @@ Scalar parameters
 ~~~~~~~~~~~~~~~~~
 
 Scalar parameters must be given as floats except for the
-'receptor_type' which has to be initialized as an integer. For more
+`receptor_type` which has to be of type integer. For more
 information on the receptor type see :ref:`receptor-types`. When a synapse
-parameter is given as a scalar, the value will be applied to all connections. 
+parameter is given as a scalar, the value will be applied to all connections
+created with the current ``Connect()`` call.
 
 ::
 
@@ -234,8 +248,8 @@ Array parameters
 ~~~~~~~~~~~~~~~~
 
 Array parameters can be used in conjunction with the rules
-``one_to_one``, ``all_to_all``, ``fixed_indegree``, ``fixed_outdegree``
-and ``fixed_total_number``. The arrays can be specified as numpy arrays or
+``all_to_all``, ``one_to_one``, ``fixed_indegree``, ``fixed_outdegree``
+and ``fixed_total_number``. The arrays can be specified as NumPy arrays or
 lists. As with the scalar parameters, all parameters but the receptor
 types must be specified as arrays of floats. For ``one_to_one`` the
 array must have the same length as the NodeCollections.

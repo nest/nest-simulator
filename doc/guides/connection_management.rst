@@ -82,23 +82,6 @@ rule specification. Only connection rules requiring no parameters can be
 given as strings, for all other rules, a dictionary specifying the rule
 and its parameters, such as in- or out-degrees, is required.
 
-one-to-one
-~~~~~~~~~~
-
-.. image:: ../_static/img/One_to_one.png
-     :width: 200px
-     :align: center
-
-The ith node in ``pre`` is connected to the ith node in ``post``. The
-NodeCollections of ``pre`` and ``post`` have to be of the same length.
-
-::
-
-    n = 10
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('spike_recorder', n)
-    nest.Connect(A, B, 'one_to_one')
-
 all-to-all
 ~~~~~~~~~~
 
@@ -116,7 +99,7 @@ Each node in ``pre`` is connected to every node in ``post``. Since
     B = nest.Create('iaf_psc_alpha', m)
     nest.Connect(A, B)
 
-fixed-indegree
+fixed indegree
 ~~~~~~~~~~~~~~
 
 .. image:: ../_static/img/Fixed_indegree.png
@@ -134,7 +117,7 @@ such that each node in ``post`` has a fixed ``indegree``.
     conn_dict = {'rule': 'fixed_indegree', 'indegree': N}
     nest.Connect(A, B, conn_dict)
 
-fixed-outdegree
+fixed outdegree
 ~~~~~~~~~~~~~~~
 
 
@@ -153,7 +136,7 @@ such that each node in ``pre`` has a fixed ``outdegree``.
     conn_dict = {'rule': 'fixed_outdegree', 'outdegree': N}
     nest.Connect(A, B, conn_dict)
 
-fixed-total-number
+fixed total number
 ~~~~~~~~~~~~~~~~~~
 
 The nodes in ``pre`` are randomly connected with the nodes in ``post``
@@ -167,7 +150,24 @@ such that the total number of connections equals ``N``.
     conn_dict = {'rule': 'fixed_total_number', 'N': N}
     nest.Connect(A, B, conn_dict)
 
-pairwise-bernoulli
+one-to-one
+~~~~~~~~~~
+
+.. image:: ../_static/img/One_to_one.png
+     :width: 200px
+     :align: center
+
+The ith node in ``pre`` is connected to the ith node in ``post``. The
+NodeCollections of ``pre`` and ``post`` have to be of the same length.
+
+::
+
+    n = 10
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('spike_recorder', n)
+    nest.Connect(A, B, 'one_to_one')
+
+pairwise bernoulli
 ~~~~~~~~~~~~~~~~~~
 
 For each possible pair of nodes from ``pre`` and ``post``, a connection
@@ -181,7 +181,7 @@ is created with probability ``p``.
     conn_dict = {'rule': 'pairwise_bernoulli', 'p': p}
     nest.Connect(A, B, conn_dict)
 
-symmetric-pairwise-bernoulli
+symmetric pairwise bernoulli
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For each possible pair of nodes from ``pre`` and ``post``, a connection
@@ -248,19 +248,13 @@ Array parameters
 ~~~~~~~~~~~~~~~~
 
 Array parameters can be used in conjunction with the rules
-``all_to_all``, ``one_to_one``, ``fixed_indegree``, ``fixed_outdegree``
-and ``fixed_total_number``. The arrays can be specified as NumPy arrays or
+``all_to_all``, ``fixed_indegree``, ``fixed_outdegree``, ``fixed_total_number``
+and ``one_to_one``. The arrays can be specified as NumPy arrays or
 lists. As with the scalar parameters, all parameters but the receptor
-types must be specified as arrays of floats. For ``one_to_one`` the
-array must have the same length as the NodeCollections.
+types must be specified as arrays of floats.
 
-::
-
-    A = nest.Create('iaf_psc_alpha', 2)
-    B = nest.Create('spike_recorder', 2)
-    conn_dict = {'rule': 'one_to_one'}
-    syn_dict = {'weight': [1.2, -3.5]}
-    nest.Connect(A, B, conn_dict, syn_dict)
+all-to-all
+^^^^^^^^^^
 
 When connecting using ``all_to_all``, the array must be of dimension
 `len(post) x len(pre)`.
@@ -271,6 +265,9 @@ When connecting using ``all_to_all``, the array must be of dimension
     B = nest.Create('iaf_psc_alpha', 2)
     syn_dict = {'weight': [[1.2, -3.5, 2.5],[0.4, -0.2, 0.7]]}
     nest.Connect(A, B, syn_spec=syn_dict)
+
+fixed indegree
+^^^^^^^^^^^^^^
 
 For ``fixed_indegree`` the array has to be a two-dimensional NumPy array
 or list with shape `(len(post), indegree)`, where indegree is the number of
@@ -286,6 +283,9 @@ regardless of the identity of the source neurons.
     syn_dict = {'weight': [[1.2, -3.5],[0.4, -0.2],[0.6, 2.2]]}
     nest.Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
 
+fixed outdegree
+^^^^^^^^^^^^^^^
+
 For ``fixed_outdegree`` the array has to be a two-dimensional NumPy array
 or list with shape `(len(pre), outdegree)`, where outdegree is the number of
 outgoing connections per source neuron. Therefore, the rows describe the
@@ -300,6 +300,9 @@ regardless of the identity of the target neuron.
     syn_dict = {'weight': [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]}
     nest.Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
 
+fixed total number
+^^^^^^^^^^^^^^^^^^
+
 For ``fixed_total_number``, the array has to be same the length as the
 number of connections ``N``.
 
@@ -309,6 +312,19 @@ number of connections ``N``.
     B = nest.Create('iaf_psc_alpha', 4)
     conn_dict = {'rule': 'fixed_total_number', 'N': 4}
     syn_dict = {'weight': [1.2, -3.5, 0.4, -0.2]}
+    nest.Connect(A, B, conn_dict, syn_dict)
+
+one-to-one
+^^^^^^^^^^
+
+For ``one_to_one`` the array must have the same length as the NodeCollections.
+
+::
+
+    A = nest.Create('iaf_psc_alpha', 2)
+    B = nest.Create('spike_recorder', 2)
+    conn_dict = {'rule': 'one_to_one'}
+    syn_dict = {'weight': [1.2, -3.5]}
     nest.Connect(A, B, conn_dict, syn_dict)
 
 

@@ -47,7 +47,7 @@ the rule name under the key `rule` and any rule-specific parameters, if needed.
 In addition, the switch ``allow_autapses`` (default: `True`) can be specified to allow 
 self-connections. Likewise, ``allow_multapses`` (default: `True`) specifies if multiple
 connections between the same pair of neurons are allowed. Please note that these
-switches are only confined a single call to ``Connect()``, meaning that calling the
+switches are only confined to a single call to ``Connect()``, meaning that calling the
 function multiple times with the same set of neurons might still lead to a situation
 where these criterions are violated, even though the switches are set to `False` in
 each individual call.
@@ -448,8 +448,6 @@ If nodes are created with spatial distributions, it is possible to create connec
 attributes based on node positions. See :doc:`Spatially-structured networks <spatial/index>`
 for more information.
 
-.. _receptor-types:
-
 Connecting sparse matrices with array indexing
 ----------------------------------------------
 
@@ -504,6 +502,8 @@ as a two-dimensional NumPy array `W`, with :math:`n` columns and :math:`m` rows.
         # the arrays of node IDs can then be connected.
         nest.Connect(pre_array, post, conn_spec='one_to_one', syn_spec={'weight': weights})
 
+.. _receptor-types:
+
 Receptor Types
 --------------
 
@@ -548,6 +548,24 @@ multi-compartment integrate-and-fire neuron model.
     nest.Connect(A2, B, syn_spec={'receptor_type': receptors['proximal_inh']})
     nest.Connect(A3, B, syn_spec={'receptor_type': receptors['proximal_exc']})
     nest.Connect(A4, B, syn_spec={'receptor_type': receptors['soma_inh']})
+
+In the example above, we inspect the receptor types of the model by calling
+``nest.GetDefaults('iaf_cond_alpha_mc')['receptor_types']``. This is not always
+possible however. For some models, like `iaf_psc_exp_multisynapse`, you have
+to create the receptors with the time constant ``tau_syn`` when creating the neurons.
+It is therefore not possible to inspect the receptors beforehand. The `trgt` neuron
+below for instance, will have 3 receptors, and we can connect to the different receptors when creating.
+The source neuron, on the other hand which is of the same model, does not have any receptors. You can
+inspect the number of receptors by looking up ``n_synapses`` on the .
+
+  ::
+
+    src = nest.Create('iaf_psc_exp_multisynapse', 7)
+    trgt = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1, 0.2, 0.3]})
+
+    print(trgt.n_synapses)
+
+    nest.Connect(src, trgt, 'one_to_one', syn_spec={'receptor_type': 2})
 
 
 .. _synapse-types:

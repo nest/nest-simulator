@@ -646,15 +646,13 @@ class SynapseCollection(object):
         d_h = 'delay'
 
         max_char_sm = len(max(s_model, key=len))
-        max_char_w = len(max([str(w) for w in wght], key=len))
-        max_char_d = len(max([str(d) for d in dlay], key=len))
 
         # Find maximum number of characters for each column, used to determine width of column
         src_len = len(src_h) + 2 if floor(log(max(srcs), 10)) <= len(src_h) + 2 else floor(log(max(srcs), 10))
         trg_len = len(trg_h) + 2 if floor(log(max(trgt), 10)) <= len(trg_h) + 2 else floor(log(max(trgt), 10))
         sm_len = len(sm_h) + 2 if max_char_sm <= len(sm_h) + 2 else max_char_sm
-        w_len = len(w_h) + 2 if max_char_w <= len(w_h) + 2 else max_char_w
-        d_len = len(d_h) + 2 if max_char_d <= len(d_h) + 2 else max_char_d
+        w_len = len(w_h) + 2
+        d_len = len(d_h) + 2
 
         # 35 is arbitrarily chosen.
         if len(srcs) >= 35:
@@ -666,11 +664,11 @@ class SynapseCollection(object):
 
         headers = f'{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}' + '\n'
         boarders = '-'*src_len + ' ' + '-'*trg_len + ' ' + '-'*sm_len + ' ' + '-'*w_len + ' ' + '-'*d_len + '\n'
-        output = ''.join('{:>{}}'.format(str(s), src_len) +
+        output = ''.join('{:>{}}'.format(str(s), src_len-1) +
                          ' {:>{}}'.format(str(t), trg_len) +  # need to indent because of space between columns
                          ' {:>{}}'.format(str(sm), sm_len) +
-                         ' {:>{}}'.format(str(w), w_len) +
-                         ' {:>{}}'.format(str(d), d_len) +
+                         ' {:>{num}.{deci}}'.format(w, num=w_len, deci=4) +
+                         ' {:>{num}.{deci}}'.format(d, num=d_len, deci=4) +
                          '\n' for s, t, sm, w, d in zip(srcs, trgt, s_model, wght, dlay))
         result = headers + boarders + output
 

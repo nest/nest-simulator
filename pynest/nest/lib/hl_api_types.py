@@ -579,6 +579,8 @@ class SynapseCollection(object):
             # self._datum needs to be a list of Connection datums.
             self._datum = [data]
 
+        self.print_full = False
+
     def __iter__(self):
         return SynapseCollectionIterator(self)
 
@@ -655,7 +657,7 @@ class SynapseCollection(object):
         d_len = len(d_h) + 2
 
         # 35 is arbitrarily chosen.
-        if len(srcs) >= 35:
+        if len(srcs) >= 35 and not self.print_full:
             srcs = srcs[:15] + [u'\u22EE '] + srcs[-15:]
             trgt = trgt[:15] + [u'\u22EE '] + trgt[-15:]
             wght = wght[:15] + [u'\u22EE '] + wght[-15:]
@@ -685,7 +687,7 @@ class SynapseCollection(object):
     def __setattr__(self, attr, value):
         # `_datum` is the only property of SynapseCollection that should not be
         # interpreted as a property of the model
-        if attr == '_datum':
+        if attr == '_datum' or 'print_full':
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})

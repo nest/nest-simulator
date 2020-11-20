@@ -278,6 +278,7 @@ def _process_input_nodes(pre, post, conn_spec):
     if not pre_is_nc or not post_is_nc:
         if len(pre) != len(post):
             raise NESTErrors.ArgumentType(
+                "Connect",
                 "If `pre` or `post` contain non-unique IDs, then they must have the same length.")
 
         # convert to arrays

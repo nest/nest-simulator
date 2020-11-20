@@ -469,6 +469,7 @@ def DisableStructuralPlasticity():
     """
     sr('DisableStructuralPlasticity')
 
+
 @check_stack
 def Dump(selections: List = ("nodes", "synapses")) -> Dict:
     """Returns a dictionary containing the current net in memory for serialization.
@@ -511,7 +512,8 @@ def Dump(selections: List = ("nodes", "synapses")) -> Dict:
     if "synapses" in selections:
         dumpdata["synapses"] = GetStatus(syn_ids)
     return dumpdata
-    
+
+
 @check_stack
 def Load(data: Dict) -> Dict:
     """
@@ -569,8 +571,7 @@ def Load(data: Dict) -> Dict:
         except Exception as e:
             print("Error during synapse loading: " + str(e))
 
-        #we only want the newly created connections, but Connect does not return a SynapseCollection object
+        # we only want the newly created connections, but Connect does not return a SynapseCollection object
         created["synapses"] = GetConnections()
 
     return created
-

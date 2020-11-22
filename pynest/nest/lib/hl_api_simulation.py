@@ -502,7 +502,7 @@ def Dump(selections: List = ("nodes", "synapses")) -> Dict:
     numnetwork = GetKernelStatus("network_size")
 
     # nothing added
-    if numnetwork < 2:
+    if numnetwork == 0:
         return dumpdata
 
     nodes = GetNodes()

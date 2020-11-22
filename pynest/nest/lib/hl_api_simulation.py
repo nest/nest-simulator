@@ -30,7 +30,7 @@ from typing import Dict, List
 from .hl_api_connections import GetConnections, Connect
 from .hl_api_helper import *
 from .hl_api_info import set_verbosity, get_verbosity, GetStatus
-from .hl_api_nodes import Create
+from .hl_api_nodes import Create, GetNodes
 from .hl_api_types import NodeCollection
 from ..ll_api import *
 
@@ -505,7 +505,7 @@ def Dump(selections: List = ("nodes", "synapses")) -> Dict:
     if numnetwork < 2:
         return dumpdata
 
-    nodes = NodeCollection(range(1, numnetwork + 1))
+    nodes = GetNodes()
     if "nodes" in selections:
         dumpdata["nodes"] = GetStatus(nodes)
 

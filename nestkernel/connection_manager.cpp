@@ -555,7 +555,7 @@ nest::ConnectionManager::connect_( Node& s,
   const bool is_primary = kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary();
 
   if ( kernel().model_manager.connector_requires_clopath_archiving( syn_id )
-    and not dynamic_cast< Clopath_Archiving_Node* >( &r ) )
+    and not dynamic_cast< ClopathArchivingNode* >( &r ) )
   {
     throw NotImplemented(
       "This synapse model is not supported by the neuron model of at least one "

@@ -331,7 +331,7 @@ nest::aeif_cond_alpha::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha& n )
  * ---------------------------------------------------------------- */
 
 nest::aeif_cond_alpha::aeif_cond_alpha()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -340,7 +340,7 @@ nest::aeif_cond_alpha::aeif_cond_alpha()
 }
 
 nest::aeif_cond_alpha::aeif_cond_alpha( const aeif_cond_alpha& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -381,7 +381,7 @@ nest::aeif_cond_alpha::init_buffers_()
   B_.spike_exc_.clear(); // includes resize
   B_.spike_inh_.clear(); // includes resize
   B_.currents_.clear();  // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.logger_.reset();
 
@@ -444,7 +444,6 @@ nest::aeif_cond_alpha::calibrate()
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_counts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
 }
 
 /* ----------------------------------------------------------------

@@ -50,7 +50,7 @@ Parameters
 
 =========  ======  ====================================================
  tau_plus  ms      Time constant of STDP window, potentiation
-                   (tau_minus defined in post-synaptic neuron)
+                   (tau_minus defined in postsynaptic neuron)
  lambda    real    Learning rate
  alpha     real    Asymmetry parameter (scales depressing increments as
                    alpha*lambda)
@@ -137,7 +137,7 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPPLConnectionHom( const STDPPLConnectionHom& );
+  STDPPLConnectionHom( const STDPPLConnectionHom& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -249,12 +249,12 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e, thread t, const STDPPL
 
   double dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
-  // facilitation due to post-synaptic spikes since last pre-synaptic spike
+  // facilitation due to postsynaptic spikes since last pre-synaptic spike
   double minus_dt;
   while ( start != finish )
   {
@@ -286,15 +286,6 @@ STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom()
   , weight_( 1.0 )
   , Kplus_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom( const STDPPLConnectionHom& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , Kplus_( rhs.Kplus_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

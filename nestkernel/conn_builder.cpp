@@ -58,9 +58,9 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , use_pre_synaptic_element_( false )
   , use_post_synaptic_element_( false )
+  , parameters_requiring_skipping_()
   , param_dicts_()
   , dummy_param_dicts_()
-  , parameters_requiring_skipping_()
 {
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
@@ -75,7 +75,6 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
-  integer_params_ = { names::receptor_type, names::music_channel, names::synapse_label };
 
   default_weight_.resize( syn_specs.size() );
   default_delay_.resize( syn_specs.size() );
@@ -302,6 +301,46 @@ nest::ConnBuilder::disconnect()
   }
 }
 
+DictionaryDatum
+nest::ConnBuilder::create_param_dict_( index snode_id,
+  Node& target,
+  thread target_thread,
+  librandom::RngPtr& rng,
+  index indx )
+{
+  DictionaryDatum param_dict;
+
+  if ( param_dicts_[ indx ].empty() ) // indicates we have no synapse params
+  {
+    param_dict = dummy_param_dicts_[ target_thread ];
+  }
+  else
+  {
+    assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ indx ].size() ) );
+
+    for ( auto synapse_parameter : synapse_params_[ indx ] )
+    {
+      if ( synapse_parameter.second->provides_long() )
+      {
+        // change value of dictionary entry without allocating new datum
+        IntegerDatum* id = static_cast< IntegerDatum* >(
+          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+        ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
+      }
+      else
+      {
+        // change value of dictionary entry without allocating new datum
+        DoubleDatum* dd = static_cast< DoubleDatum* >(
+          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+        ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
+      }
+    }
+    param_dict = param_dicts_[ indx ][ target_thread ];
+  }
+
+  return param_dict;
+}
+
 void
 nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng )
 {
@@ -312,34 +351,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
 
   for ( size_t indx = 0; indx < synapse_model_id_.size(); ++indx )
   {
-    DictionaryDatum param_dict;
-    if ( param_dicts_[ indx ].empty() ) // indicates we have no synapse params
-    {
-      param_dict = dummy_param_dicts_[ target_thread ];
-    }
-    else
-    {
-      assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ indx ].size() ) );
-
-      for ( auto synapse_parameter : synapse_params_[ indx ] )
-      {
-        if ( synapse_parameter.second->provides_long() )
-        {
-          // change value of dictionary entry without allocating new datum
-          IntegerDatum* id = static_cast< IntegerDatum* >(
-            ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-          ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
-        }
-        else
-        {
-          // change value of dictionary entry without allocating new datum
-          DoubleDatum* dd = static_cast< DoubleDatum* >(
-            ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-          ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
-        }
-      }
-      param_dict = param_dicts_[ indx ][ target_thread ];
-    }
+    DictionaryDatum param_dict = create_param_dict_( snode_id, target, target_thread, rng, indx );
 
     if ( default_weight_and_delay_[ indx ] )
     {
@@ -523,12 +535,8 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 
       for ( auto param : synapse_params_[ indx ] )
       {
-        if ( integer_params_.find( param.first ) != integer_params_.end() )
+        if ( param.second->provides_long() )
         {
-          if ( not param.second->provides_long() )
-          {
-            throw BadParameter( param.first.toString() + " must be given as integer." );
-          }
           ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
         }
         else
@@ -543,7 +551,7 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 void
 nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs )
 {
-  // Check if both pre and post synaptic element are provided. Currently only possible to have
+  // Check if both pre and postsynaptic element are provided. Currently only possible to have
   // structural plasticity with single element syn_spec.
   bool have_both_sp_keys = false;
   bool have_one_sp_key = false;
@@ -575,7 +583,7 @@ nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< Dictionary
   }
   else if ( have_one_sp_key )
   {
-    throw BadProperty( "Structural plasticity requires both a pre and post synaptic element." );
+    throw BadProperty( "Structural plasticity requires both a pre and postsynaptic element." );
   }
 }
 
@@ -1844,7 +1852,7 @@ nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   const std::vector< DictionaryDatum >& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
-  // Check that both pre and post synaptic element are provided
+  // Check that both pre and postsynaptic element are provided
   if ( not use_pre_synaptic_element_ or not use_post_synaptic_element_ )
   {
     throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing." );
@@ -1885,11 +1893,8 @@ nest::SPBuilder::connect_()
 
 /**
  * In charge of dynamically creating the new synapses
- * @param sources nodes from which synapses can be created
- * @param targets target nodes for the newly created synapses
  */
-void
-nest::SPBuilder::connect_( NodeCollectionPTR sources, NodeCollectionPTR targets )
+void nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
 {
   throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
 }

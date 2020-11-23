@@ -219,9 +219,6 @@ add_custom_target( installcheck
 ##################        Define Subdirectories here          ##################
 ################################################################################
 
-if ( HAVE_LIBNEUROSIM )
-  add_subdirectory( conngen )
-endif ()
 add_subdirectory( doc )
 add_subdirectory( examples )
 add_subdirectory( extras )
@@ -313,11 +310,6 @@ foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
   endif ()
 endforeach ()
 set( ALL_INCLUDES "${ALL_INCLUDES} ${SIONLIB_INCLUDE}" )
-
-if ( HAVE_LIBNEUROSIM )
-  set( ALL_LIBS "-lconngen ${ALL_LIBS}" )
-  set( ALL_INCLUDES "-I${PROJECT_SOURCE_DIR}/conngen ${ALL_INCLUDES}" )
-endif ()
 
 ################################################################################
 ##################           File generation here             ##################

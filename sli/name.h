@@ -72,10 +72,8 @@ public:
     : handle_( insert( s ) )
   {
   }
-  Name( const Name& n )
-    : handle_( n.handle_ )
-  {
-  }
+
+  Name( const Name& n ) = default;
 
   /**
    * Return string represented by Name.

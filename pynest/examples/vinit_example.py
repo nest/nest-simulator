@@ -50,7 +50,7 @@ import matplotlib.pyplot as plt
 # ``iaf_cond_exp_sfa_rr`` is an implementation of a spiking neuron with
 # integrate-and-fire dynamics, conductance-based synapses, an additional
 # spike-frequency adaptation and relative refractory mechanisms as described
-# in [1]_. Incoming spike events induce a post-synaptic change of
+# in [1]_. Incoming spike events induce a postsynaptic change of
 # conductance  modeled  by an  exponential  function. ``SetStatus`` allows to
 # assign the initial membrane voltage of the current loop run to the neuron.
 #

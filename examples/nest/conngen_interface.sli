@@ -20,29 +20,28 @@
  *
  */
 
-
-/** @BeginDocumentation
-   Name: testsuite::test_conngen_interface - Test runability of all CGConnect variants
-
-   Synopsis: (test_conngen_interface) run
-
-   Description:
-
-   Tests if all variants of CGConnect can be run. This test only checks the
-   SLI part of the ConnectionGenerator interface. The PyNEST interface is
-   tested in pynest/nest/tests/test_csa.py.
-
-   FirstVersion: June 2016
-   Author: Jochen Martin Eppler
-   SeeAlso: CGConnect
- */
+% 
+% This example shows how to use the Connection Generator Interface of
+% libneurosim ([1]) from the SLI level. It connects two small neuronal
+% populations using a connection pattern specified in the XML notation
+% of the the Connection Set Algebra (CSA, [2]). The example relies on
+% the C++ implementation of the CSA ([3]). At the time of writing, this
+% implementation is not publically available and the example itself is
+% thus a bit pointless. It is left here for future reference.
+%
+%
+% References:
+% [1] https://github.com/INCF/libneurosim
+% [2] https://doi.org/10.1147/rd.521.0031
+% [3] https://github.com/INCF/libcsa
+%
 
 M_ERROR setverbosity
 
 (unittest) run
 /unittest using
 
-% Only run the test if NEST was compiled with support for libneurosim
+% Only run if NEST was compiled with support for libneurosim
 statusdict/have_libneurosim :: not { /skipped exit_test_gracefully } if
 
 % Tell the ConnectionGenerator interface, which implementation to use
@@ -55,57 +54,14 @@ statusdict/have_libneurosim :: not { /skipped exit_test_gracefully } if
 (</CSA>) join
 CGParse /cg Set
 
+% Another option to obtain the connectiongeneratortype object would be
+% using CGParseFile to read the specification from a file.
 
-% Test if the array variant works
-ResetKernel
-/iaf_psc_alpha 16 Create ;
-cg [  1  2 ] [  3  4 ]                       CGConnect
-cg [  5  6 ] [  7  8 ] << >>                 CGConnect
-cg [  9 10 ] [ 11 12 ]       /static_synapse CGConnect
-cg [ 13 14 ] [ 15 16 ] << >> /static_synapse CGConnect
+/iaf_psc_alpha 8 Create /pre Set
+/iaf_psc_alpha 8 Create /post Set
 
-<< /source [  1  2 ] >> GetConnections
-  { GetStatus /target get } Map [  3  4 ] eq assert_or_die
-<< /source [  5  6 ] >> GetConnections
-  { GetStatus /target get } Map [  7  8 ] eq assert_or_die
-<< /source [  9 10 ] >> GetConnections
-  { GetStatus /target get } Map [ 11 12 ] eq assert_or_die
-<< /source [ 13 14 ] >> GetConnections
-  { GetStatus /target get } Map [ 15 16 ] eq assert_or_die
+pre post << /rule /conngen /cg cg >> Connect
 
-
-% Test if the intvector variant works
-ResetKernel
-/iaf_psc_alpha 16 Create ;
-cg [  1  2 ] cv_iv [  3  4 ] cv_iv                       CGConnect
-cg [  5  6 ] cv_iv [  7  8 ] cv_iv << >>                 CGConnect
-cg [  9 10 ] cv_iv [ 11 12 ] cv_iv       /static_synapse CGConnect
-cg [ 13 14 ] cv_iv [ 15 16 ] cv_iv << >> /static_synapse CGConnect
-
-<< /source [  1  2 ] >> GetConnections
-  { GetStatus /target get } Map [  3  4 ] eq assert_or_die
-<< /source [  5  6 ] >> GetConnections
-  { GetStatus /target get } Map [  7  8 ] eq assert_or_die
-<< /source [  9 10 ] >> GetConnections
-  { GetStatus /target get } Map [ 11 12 ] eq assert_or_die
-<< /source [ 13 14 ] >> GetConnections
-  { GetStatus /target get } Map [ 15 16 ] eq assert_or_die
-
-
-% Test if the nodecollection variant works
-/cvnc /cvnodecollection load def
-ResetKernel
-/iaf_psc_alpha 16 Create ;
-cg [  1  2 ] cvnc [  3  4 ] cvnc                       CGConnect
-cg [  5  6 ] cvnc [  7  8 ] cvnc << >>                 CGConnect
-cg [  9 10 ] cvnc [ 11 12 ] cvnc       /static_synapse CGConnect
-cg [ 13 14 ] cvnc [ 15 16 ] cvnc << >> /static_synapse CGConnect
-
-<< /source [  1  2 ] >> GetConnections
-  { GetStatus /target get } Map [  3  4 ] eq assert_or_die
-<< /source [  5  6 ] >> GetConnections
-  { GetStatus /target get } Map [  7  8 ] eq assert_or_die
-<< /source [  9 10 ] >> GetConnections
-  { GetStatus /target get } Map [ 11 12 ] eq assert_or_die
-<< /source [ 13 14 ] >> GetConnections
-  { GetStatus /target get } Map [ 15 16 ] eq assert_or_die
+<< /source pre >> GetConnections
+{ GetStatus /target get } Map
+post eq ==

@@ -175,6 +175,8 @@ private:
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
 
+    Parameters_& operator=( const Parameters_& );
+
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
     void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };

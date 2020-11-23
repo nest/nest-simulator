@@ -1,6 +1,6 @@
 
 # .travis.yaml
-#
+
 # This file is part of NEST.
 #
 # Copyright (C) 2004 The NEST Initiative
@@ -60,7 +60,7 @@ jobs:
       env: CACHE_NAME=JOB xNEST_BUILD_TYPE=MINIMAL xNEST_BUILD_COMPILER=CLANG xNEST_PYTHON_VERSION=3.6.10
     - stage: macOS
       os: osx
-      osx_image: xcode12   # Python 3.8.3 running on macOS 10.15.5
+      osx_image: xcode12.2   # Python 3.9.0 running on macOS 10.15.7
       language: shell      # language 'python' results in errors on macOS
       env: CACHE_NAME=JOB xNEST_BUILD_TYPE=FULL_NO_EXTERNAL_FEATURES
       cache:
@@ -72,9 +72,7 @@ addons:
    apt:
     sources:
      - *BASE_SOURCES
-     - r-packages-bionic
      - ubuntu-toolchain-r-test
-     - llvm-toolchain-bionic-9
     packages:
      - *BASE_PACKAGES
      - gcc-8
@@ -156,22 +154,25 @@ before_install:
            find /usr/local/Cellar/ -name Python\.h
            find /usr/local/Cellar/ -name \*python\*dylib
          fi
-
-         if [ "$TRAVIS_OS_NAME" != "osx" ]; then
-           # Upgrade pip and setuptools
-           pip install --upgrade pip setuptools
-           pip install nose
-         else
-           # updating pip breaks on osx, must install man-page free nose
-           wget https://arken.nmbu.no/~plesser/nose-1.3.7noman-py3-none-any.whl
-           pip install nose-1.3.7noman-py3-none-any.whl
-         fi
+         # Upgrade pip and setuptools
+         pip install --upgrade pip setuptools
          # Installing additional packages using pip as they only have
          # outdated versions in the Travis package whitelist.
          # terminaltables is required by parse_travis_log.py to create
          # the build summary.
-         pip install cython scipy matplotlib terminaltables junitparser mpi4py
-         pip install numpy==1.16.5
+         pip install scipy junitparser mpi4py
+         if [ "$TRAVIS_OS_NAME" != "osx" ]; then
+           pip3 install numpy nose
+           pip3 install cython matplotlib terminaltables
+         else
+           # Due to the issue with numpy C-extensions, have to stick to a specific version on OsX
+           #https://numpy.org/devdocs/user/troubleshooting-importerror.html
+           pip3 install numpy==1.19.3
+           pip3 install cython matplotlib terminaltables
+           # nose must be installed user-only to avoid permissions conflict for man-pages
+           wget https://files.pythonhosted.org/packages/15/d8/dd071918c040f50fa1cf80da16423af51ff8ce4a0f2399b7bf8de45ac3d9/nose-1.3.7-py3-none-any.whl
+           pip3 install --user nose-1.3.7-py3-none-any.whl
+         fi  
          pip list
      fi
 
@@ -203,7 +204,7 @@ script:
    - ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log
    - |
      if [ "$xNEST_BUILD_TYPE" != "STATIC_CODE_ANALYSIS" ]; then
-        python extras/parse_travis_log.py travis_build.sh.log ;
+        python extras/parse_travis_log.py travis_build.sh.log "$xNEST_BUILD_TYPE" "$TRAVIS_BUILD_DIR"
      fi
 
 before_deploy:

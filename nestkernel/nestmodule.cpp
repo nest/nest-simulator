@@ -34,6 +34,7 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
+#include "conn_builder_conngen.h"
 #include "connection_creator_impl.h"
 #include "connection_manager_impl.h"
 #include "free_layer.h"
@@ -65,6 +66,9 @@
 
 namespace nest
 {
+#ifdef HAVE_LIBNEUROSIM
+SLIType NestModule::ConnectionGeneratorType;
+#endif
 SLIType NestModule::ConnectionType;
 SLIType NestModule::MaskType;
 SLIType NestModule::NodeCollectionType;
@@ -2038,6 +2042,108 @@ NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+#ifdef HAVE_LIBNEUROSIM
+
+/** @BeginDocumentation
+Name: CGParse - Call ConnectionGenerator::fromXML() and return a
+ConnectionGenerator
+
+Synopsis:
+xml_string CGParse -> cg
+
+Parameters:
+xml_string - The XML string to parse.
+
+Description:
+Return a ConnectionGenerator created by deserializing the given
+XML string. The library to parse the XML string can be selected using
+CGSelectImplementation
+
+Availability: Only if compiled with libneurosim support
+Author: Jochen Martin Eppler
+FirstVersion: September 2013
+SeeAlso: CGParseFile, CGSelectImplementation
+*/
+void
+NestModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  StringDatum xml = getValue< StringDatum >( i->OStack.pick( 0 ) );
+  ConnectionGeneratorDatum cgd = ConnectionGenerator::fromXML( xml );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( cgd );
+}
+
+/** @BeginDocumentation
+Name: CGParseFile - Call ConnectionGenerator::fromXMLFile() and return a
+ConnectionGenerator
+
+Synopsis:
+xml_filename CGParseFile -> cg
+
+Parameters:
+xml_filename - The XML file to read.
+
+Description:
+Return a ConnectionGenerator created by deserializing the given
+XML file. The library to parse the XML file can be selected using
+CGSelectImplementation
+
+Availability: Only if compiled with libneurosim support
+Author: Jochen Martin Eppler
+FirstVersion: February 2014
+SeeAlso: CGParse, CGSelectImplementation
+*/
+void
+NestModule::CGParseFile_sFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  StringDatum xml = getValue< StringDatum >( i->OStack.pick( 0 ) );
+  ConnectionGeneratorDatum cgd = ConnectionGenerator::fromXMLFile( xml );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( cgd );
+}
+
+/** @BeginDocumentation
+Name: CGSelectImplementation - Call
+ConnectionGenerator::selectCGImplementation()
+
+Synopsis:
+tag library CGParse -> -
+
+Parameters:
+tag     - The XML tag to associate with a library.
+library - The library to provide the parsing for CGParse
+
+Description:
+Select a library to provide a parser for XML files and associate
+an XML tag with the library.
+
+Availability: Only if compiled with libneurosim support
+Author: Jochen Martin Eppler
+FirstVersion: September 2013
+SeeAlso: CGParse, CGParseFile
+*/
+void
+NestModule::CGSelectImplementation_s_sFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+
+  StringDatum library = getValue< StringDatum >( i->OStack.pick( 0 ) );
+  StringDatum tag = getValue< StringDatum >( i->OStack.pick( 1 ) );
+
+  ConnectionGenerator::selectCGImplementation( tag, library );
+
+  i->OStack.pop( 1 );
+  i->EStack.pop();
+}
+
+#endif /* #ifdef HAVE_LIBNEUROSIM */
+
 //
 // SLI functions for spatial networks
 //
@@ -2800,6 +2906,7 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+
 void
 NestModule::init( SLIInterpreter* i )
 {
@@ -2961,6 +3068,9 @@ NestModule::init( SLIInterpreter* i )
   kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
   kernel().connection_manager.register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
   kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+#ifdef HAVE_LIBNEUROSIM
+  kernel().connection_manager.register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
+#endif
 
   // Add MSP growth curves
   kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
@@ -2979,6 +3089,12 @@ NestModule::init( SLIInterpreter* i )
   register_parameter< ExponentialParameter >( "exponential" );
   register_parameter< NodePosParameter >( "position" );
   register_parameter< SpatialDistanceParameter >( "distance" );
+
+#ifdef HAVE_LIBNEUROSIM
+  i->createcommand( "CGParse", &cgparse_sfunction );
+  i->createcommand( "CGParseFile", &cgparsefile_sfunction );
+  i->createcommand( "CGSelectImplementation", &cgselectimplementation_s_sfunction );
+#endif
 
   register_mask< BallMask< 2 > >();
   register_mask< BallMask< 3 > >();

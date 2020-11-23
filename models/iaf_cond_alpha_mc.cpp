@@ -425,7 +425,7 @@ nest::iaf_cond_alpha_mc::State_::set( const DictionaryDatum& d, const Parameters
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_alpha_mc::iaf_cond_alpha_mc()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -440,7 +440,7 @@ nest::iaf_cond_alpha_mc::iaf_cond_alpha_mc()
 }
 
 nest::iaf_cond_alpha_mc::iaf_cond_alpha_mc( const iaf_cond_alpha_mc& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -493,7 +493,7 @@ nest::iaf_cond_alpha_mc::init_buffers_()
   }
 
   B_.logger_.reset();
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;

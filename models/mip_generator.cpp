@@ -59,6 +59,18 @@ nest::mip_generator::Parameters_::Parameters_( const Parameters_& p )
   rng_ = p.rng_->clone( p.mother_seed_ );
 }
 
+nest::mip_generator::Parameters_& nest::mip_generator::Parameters_::operator=( const Parameters_& p )
+{
+
+  rate_ = p.rate_;
+  p_copy_ = p.p_copy_;
+  mother_seed_ = p.mother_seed_;
+  rng_ = p.rng_->clone( p.mother_seed_ );
+
+  return *this;
+}
+
+
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */

@@ -299,7 +299,7 @@ To create a spatially distributed NodeCollection from a list, do the following:
     :start-after: #{ layer4b #}
     :end-before: #{ end #}
 
-.. _fig_layer4:
+.. _fig_layer4b:
 
 .. figure:: user_manual_figures/layer4b.png
    :name: fig:layer4b
@@ -339,7 +339,7 @@ the shape argument, ``shape=[nx, ny, nz]``:
     :start-after: #{ layer4_3d_b #}
     :end-before: #{ end #}
 
-.. _fig_layer4_3d:
+.. _fig_layer4_3d_b:
 
 .. figure:: user_manual_figures/layer4_3d_b.png
    :name: fig:layer4_3d_b

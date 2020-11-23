@@ -67,7 +67,7 @@ Description
 +++++++++++
 
 iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
-conductance-based synapses. Incoming spike events induce a post-synaptic change
+conductance-based synapses. Incoming spike events induce a postsynaptic change
 of conductance modelled by an alpha function. The alpha function
 is normalized such that an event of weight 1.0 results in a peak current of 1 nS
 at :math:`t = \tau_{syn}`.
@@ -139,7 +139,7 @@ iaf_cond_exp, iaf_cond_alpha_mc
 
 EndUserDocs */
 
-class iaf_cond_alpha : public Archiving_Node
+class iaf_cond_alpha : public ArchivingNode
 {
 
   // Boilerplate function declarations --------------------------------
@@ -400,7 +400,7 @@ iaf_cond_alpha::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -417,7 +417,7 @@ iaf_cond_alpha::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -28,12 +28,12 @@ Synopsis: (test_psp_amplitude_consistency) run ->
 
 Description:
 
-This test computes the peak amplitude of the post-synaptic potential
+This test computes the peak amplitude of the postsynaptic potential
 for different neuron models and checks whether their PSP peak
 amplitudes match approximately.
 
 The maximal PSP amplitude is computed for different synaptic time
-constants to ensure that the scaling of the post-synaptic response is
+constants to ensure that the scaling of the postsynaptic response is
 consinstent between models.
 
 Author:  December 2012, Gewaltig

@@ -45,13 +45,7 @@ struct SynIdDelay
     set_delay_ms( d );
   }
 
-  SynIdDelay( const SynIdDelay& s )
-    : delay( s.delay )
-    , syn_id( s.syn_id )
-    , more_targets( s.more_targets )
-    , disabled( s.disabled )
-  {
-  }
+  SynIdDelay( const SynIdDelay& s ) = default;
 
   /**
    * Return the delay of the connection in ms

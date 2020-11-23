@@ -212,7 +212,7 @@ def get_restricted_globals():
     def getitem(obj, index):
         if obj is not None and type(obj) in (list, tuple, dict, nest.NodeCollection):
             return obj[index]
-        msg = f"Error while getting restricted globals: unidentified object '{obj}'."
+        msg = "Error while getting restricted globals: unidentified object '{}'.".format(obj)
         raise TypeError(msg)
 
     restricted_builtins = RestrictedPython.safe_builtins.copy()

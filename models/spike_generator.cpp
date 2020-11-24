@@ -100,9 +100,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t,
-  const Time& origin,
-  const Time& now )
+nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, const Time& origin, const Time& now )
 {
   if ( t == 0.0 && not shift_now_spikes_ )
   {

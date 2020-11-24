@@ -217,6 +217,7 @@ public:
 
   index get_target_node_id( const thread tid, const synindex syn_id, const index lcid ) const;
 
+  bool get_device_connected( thread tid, index lcid ) const;
   /**
    * Triggered by volume transmitter in update.
    * Triggeres updates for all connectors of dopamine synapses that
@@ -778,6 +779,12 @@ inline index
 ConnectionManager::get_target_node_id( const thread tid, const synindex syn_id, const index lcid ) const
 {
   return connections_[ tid ][ syn_id ]->get_target_node_id( tid, lcid );
+}
+
+inline bool
+ConnectionManager::get_device_connected( const thread tid, const index lcid ) const
+{
+  return target_table_devices_.get_devices_connected( tid, lcid );
 }
 
 inline void

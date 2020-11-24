@@ -525,7 +525,6 @@ function( NEST_PROCESS_WITH_LIBNEUROSIM )
       set( HAVE_LIBNEUROSIM ON PARENT_SCOPE )
 
       include_directories( ${LIBNEUROSIM_INCLUDE_DIRS} )
-      # is linked in conngen/CMakeLists.txt
 
       # export found variables to parent scope
       set( LIBNEUROSIM_FOUND "${LIBNEUROSIM_FOUND}" PARENT_SCOPE )
@@ -626,11 +625,8 @@ function( NEST_PROCESS_TARGET_BITS_SPLIT )
 endfunction()
 
 function( NEST_DEFAULT_MODULES )
-    # requires HAVE_LIBNEUROSIM set
+    # Static modules
     set( SLI_MODULES ) # set empty
-    if ( HAVE_LIBNEUROSIM )
-      set( SLI_MODULES ${SLI_MODULES} conngen )
-    endif ()
     set( SLI_MODULES ${SLI_MODULES} PARENT_SCOPE )
 
     set( SLI_MODULE_INCLUDE_DIRS )

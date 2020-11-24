@@ -58,6 +58,9 @@ class Parameter;
 class NestModule : public SLIModule
 {
 public:
+#ifdef HAVE_LIBNEUROSIM
+  static SLIType ConnectionGeneratorType;
+#endif
   static SLIType ConnectionType;
   static SLIType MaskType;
   static SLIType NodeCollectionType;
@@ -668,6 +671,23 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } apply_P_gfunction;
+
+#ifdef HAVE_LIBNEUROSIM
+  class CGParse_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgparse_sfunction;
+
+  class CGParseFile_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgparsefile_sfunction;
+
+  class CGSelectImplementation_s_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgselectimplementation_s_sfunction;
+#endif
 
   //
   // SLI functions for spatial networks

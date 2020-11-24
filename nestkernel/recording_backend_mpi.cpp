@@ -127,7 +127,7 @@ nest::RecordingBackendMPI::prepare()
   }
   prepared_ = true;
   thread thread_id_master = 0;
-#pragma omp parallel default( none ) shared( thread_id_master, ompi_mpi_comm_world, ompi_mpi_info_null )
+#pragma omp parallel default( none ) shared( thread_id_master)
   {
 #pragma omp master
     {

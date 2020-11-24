@@ -42,7 +42,6 @@
 #include "recording_backend_ascii.h"
 #include "recording_backend_memory.h"
 #include "recording_backend_screen.h"
-#include "stimulating_backend.h"
 #ifdef HAVE_RECORDINGBACKEND_ARBOR
 #include "recording_backend_arbor.h"
 #endif
@@ -56,7 +55,6 @@
 
 // Includes from sli:
 #include "dictutils.h"
-#include <typeinfo>
 #include <string>
 
 namespace nest

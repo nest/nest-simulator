@@ -248,9 +248,9 @@ nest::step_current_generator::step_current_generator( const step_current_generat
 void
 nest::step_current_generator::init_state_( const Node& proto )
 {
-  const step_current_generator& pr = downcast< step_current_generator >( proto );
+  const auto& pr = downcast< step_current_generator >( proto );
 
-  // TODO solve intermediate refactor StimulatingDevice< CurrentEvent >::init_state( pr );
+  StimulatingDevice< CurrentEvent >::init_state( pr );
 }
 
 void

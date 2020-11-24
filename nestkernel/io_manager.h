@@ -97,6 +97,7 @@ public:
 
   template < class RBT >
   void register_recording_backend( Name );
+  template < class RBT >
   void register_stimulating_backend( Name );
 
   bool is_valid_recording_backend( const Name& ) const;
@@ -195,23 +196,29 @@ nest::IOManager::set_stimulator_value_names( const Name& backend_name,
 template < typename EmittedEvent >
 void
 nest::IOManager::enroll_stimulator( const Name& backend_name,
-  const StimulatingDevice< EmittedEvent >& device,
-  const DictionaryDatum& params )
+                                    const StimulatingDevice<EmittedEvent>& device,
+                                    const DictionaryDatum& params )
 {
-  if ( not is_valid_stimulating_backend( backend_name ) )
+  if ( not is_valid_stimulating_backend( backend_name ) and backend_name != "internal")
   {
     return;
   }
-
-  for ( auto& it : stimulating_backends_ )
-  {
-    if ( it.first == backend_name )
-    {
-      it.second->enroll( device, params );
-    }
-    else
+  if ( backend_name == "internal"){
+    for ( auto& it : stimulating_backends_ )
     {
       it.second->disenroll( device );
+    }
+  } else {
+    for ( auto& it : stimulating_backends_ )
+    {
+      if(it.first == backend_name )
+      {
+        it.second->enroll( device, params );
+      }
+      else
+      {
+        it.second->disenroll( device );
+      }
     }
   }
 }

@@ -79,7 +79,7 @@ public:
    * InputBackend destructor
    * The actual finalization is happening in InputBackend::finalize()
    */
-  ~StimulatingBackendMPI() noexcept override;
+  ~StimulatingBackendMPI() noexcept override = default;
 
   void initialize() override;
 
@@ -144,7 +144,7 @@ private:
    * @param device_id : the list of ID which need to be updated
    * @return pair( size of data by device, the continuous array with all the data for the device )
    */
-  std::pair< int*, double* > receive_spike_train( const MPI_Comm& comm, std::vector< int >& device_id );
+  static std::pair< int*, double* > receive_spike_train( const MPI_Comm& comm, std::vector< int >& device_id );
   /**
    * Update all the device with the data receiving
    * @param array_index : number of device by thread

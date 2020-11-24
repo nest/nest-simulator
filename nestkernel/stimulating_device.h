@@ -44,7 +44,6 @@ class CurrentEvent;
 class EmittedEvent;
 class DoubleDataEvent;
 class DelayedRateConnectionEvent;
-// class IOManager;
 
 namespace nest
 {
@@ -184,8 +183,8 @@ private:
 
 template < typename EmittedEvent >
 nest::StimulatingDevice< EmittedEvent >::StimulatingDevice()
-  : Device()
-  , DeviceNode()
+  :DeviceNode()
+  , Device()
   , first_syn_id_( invalid_synindex )
   , backend_params_( new Dictionary )
 {
@@ -193,8 +192,8 @@ nest::StimulatingDevice< EmittedEvent >::StimulatingDevice()
 
 template < typename EmittedEvent >
 nest::StimulatingDevice< EmittedEvent >::StimulatingDevice( StimulatingDevice< EmittedEvent > const& sd )
-  : Device( sd )
-  , DeviceNode( sd )
+  :DeviceNode( sd )
+  , Device( sd )
   , first_syn_id_( invalid_synindex ) // a new instance can have no connections
   , backend_params_( new Dictionary )
 {

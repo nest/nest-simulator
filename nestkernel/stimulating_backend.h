@@ -44,13 +44,9 @@ class StimulatingDevice;
 class StimulatingBackend
 {
 public:
-  StimulatingBackend()
-  {
-  }
+  StimulatingBackend() = default;
 
-  virtual ~StimulatingBackend() throw()
-  {
-  }
+  virtual ~StimulatingBackend() noexcept = default;
 
   /**
   * Enroll an `StimulatingDevice` with the `StimulatingBackend`.
@@ -90,7 +86,7 @@ public:
   * @ingroup NESTio
   */
   template < typename EmittedEvent >
-  void enroll( const nest::StimulatingDevice< EmittedEvent >&, const DictionaryDatum& ){};
+   void enroll( const nest::StimulatingDevice< EmittedEvent >&, const DictionaryDatum& ){};
 
   /**
    * Disenroll an `StimulatingDevice` from the `StimulatingBackend`.
@@ -198,11 +194,6 @@ public:
   * @ingroup NESTio
   */
   virtual void cleanup() = 0;
-
-  virtual void
-  post_run_cleanup()
-  {
-  }
 
   virtual void
   clear( const StimulatingDevice< EmittedEvent >& )

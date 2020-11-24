@@ -12,9 +12,10 @@ rm -rf libneurosim.src
 # Install csa
 git clone https://github.com/INCF/csa.git csa.src
 pushd csa.src
-git checkout tags/v0.1.8
+sed -i 's/lpyneurosim/lpy3neurosim/g' configure.ac
+sed -i 's/print __version__/print\(__version__\)/g' Makefile.am
 ./autogen.sh
-./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install
+LDFLAGS=-L$1 ./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install
 make
 make install
 popd

@@ -175,7 +175,7 @@ SpikeEvent
 SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
 EndUserDocs
 */
-class spike_generator : public StimulatingDevice< SpikeEvent >
+class spike_generator : public StimulatingDevice
 {
 
 public:
@@ -199,7 +199,9 @@ public:
   void set_status( const DictionaryDatum& ) override;
   void update_from_backend( std::vector< double > input_spikes );
 
-  nest::StimulatingDevice< SpikeEvent >::Type get_type() const;
+  StimulatingDevice::Type get_type() const {
+    return StimulatingDevice::Type::SPIKE_GENERATOR;
+  };
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -272,7 +274,6 @@ public:
 
   // ------------------------------------------------------------
 
-
 private:
   void init_state_( const Node& ) override;
   void init_buffers_() override;
@@ -307,7 +308,7 @@ inline void
 spike_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  StimulatingDevice< SpikeEvent >::get_status( d );
+  StimulatingDevice::get_status( d );
 }
 
 } // namespace

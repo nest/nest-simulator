@@ -299,14 +299,14 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::spike_generator::spike_generator()
-  : StimulatingDevice< SpikeEvent >()
+  : StimulatingDevice()
   , P_()
   , S_()
 {
 }
 
 nest::spike_generator::spike_generator( const spike_generator& n )
-  : StimulatingDevice< SpikeEvent >( n )
+  : StimulatingDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
 {
@@ -322,14 +322,14 @@ nest::spike_generator::init_state_( const Node& proto )
 {
   const spike_generator& pr = downcast< spike_generator >( proto );
 
-  StimulatingDevice< SpikeEvent >::init_state( pr );
+  StimulatingDevice::init_state( pr );
   S_ = pr.S_;
 }
 
 void
 nest::spike_generator::init_buffers_()
 {
-  StimulatingDevice< SpikeEvent >::init_buffers();
+  StimulatingDevice::init_buffers();
 }
 
 void
@@ -414,7 +414,7 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
       break;
     }
 
-    if ( StimulatingDevice< SpikeEvent >::is_active( tnext_stamp ) )
+    if ( StimulatingDevice::is_active( tnext_stamp ) )
     {
       SpikeEvent* se;
 
@@ -475,7 +475,7 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   }
   else
   {
-    origin = StimulatingDevice< SpikeEvent >::get_origin();
+    origin = StimulatingDevice::get_origin();
   }
 
   // throws if BadProperty
@@ -490,8 +490,8 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
-nest::StimulatingDevice< SpikeEvent >::Type
+nest::StimulatingDevice::Type
 get_type()
 {
-  return nest::StimulatingDevice< SpikeEvent >::SPIKE_GENERATOR;
+  return nest::StimulatingDevice::SPIKE_GENERATOR;
 }

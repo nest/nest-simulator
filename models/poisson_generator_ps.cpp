@@ -92,13 +92,13 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d, Node* no
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator_ps::poisson_generator_ps()
-  : StimulatingDevice< CurrentEvent >()
+  : StimulatingDevice()
   , P_()
 {
 }
 
 nest::poisson_generator_ps::poisson_generator_ps( const poisson_generator_ps& n )
-  : StimulatingDevice< CurrentEvent >( n )
+  : StimulatingDevice( n )
   , P_( n.P_ )
 {
 }
@@ -129,7 +129,7 @@ nest::poisson_generator_ps::init_buffers_()
 void
 nest::poisson_generator_ps::calibrate()
 {
-  StimulatingDevice< CurrentEvent >::calibrate();
+  StimulatingDevice::calibrate();
   if ( P_.rate_ > 0 )
   {
     V_.inv_rate_ms_ = 1000.0 / P_.rate_ - P_.dead_time_;
@@ -159,7 +159,7 @@ nest::poisson_generator_ps::calibrate()
       min_time = std::min( min_time, it->first );
     }
 
-    if ( min_time < StimulatingDevice< CurrentEvent >::get_origin() + StimulatingDevice< CurrentEvent >::get_start() )
+    if ( min_time < StimulatingDevice::get_origin() + StimulatingDevice::get_start() )
     {
       B_.next_spike_.clear(); // will be resized with neg_infs below
     }
@@ -196,9 +196,9 @@ nest::poisson_generator_ps::update( Time const& T, const long from, const long t
    * of the slice.
    */
   V_.t_min_active_ = std::max( T + Time::step( from ),
-    StimulatingDevice< CurrentEvent >::get_origin() + StimulatingDevice< CurrentEvent >::get_start() );
+    StimulatingDevice::get_origin() + StimulatingDevice::get_start() );
   V_.t_max_active_ = std::min( T + Time::step( to ),
-    StimulatingDevice< CurrentEvent >::get_origin() + StimulatingDevice< CurrentEvent >::get_stop() );
+    StimulatingDevice::get_origin() + StimulatingDevice::get_stop() );
 
   // Nothing to do for equality, since left boundary is excluded
   if ( V_.t_min_active_ < V_.t_max_active_ )

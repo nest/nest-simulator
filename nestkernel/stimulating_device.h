@@ -27,7 +27,6 @@
 #include "node.h"
 #include "device.h"
 #include "device_node.h"
-#include "stimulating_backend.h"
 #include "nest_types.h"
 #include "kernel_manager.h"
 
@@ -39,11 +38,6 @@
 
 #include <string>
 
-class SpikeEvent;
-class CurrentEvent;
-class EmittedEvent;
-class DoubleDataEvent;
-class DelayedRateConnectionEvent;
 
 namespace nest
 {
@@ -99,12 +93,11 @@ namespace nest
  *
  * @ingroup Devices
  */
-template < typename EmittedEvent >
 class StimulatingDevice : public DeviceNode, public Device
 {
 public:
   StimulatingDevice();
-  StimulatingDevice( StimulatingDevice< EmittedEvent > const& );
+  StimulatingDevice( StimulatingDevice const& );
   virtual ~StimulatingDevice()
   {
   }
@@ -114,9 +107,9 @@ public:
    * The argument is the value of the simulation time.
    * @see class comment for details.
    */
-  bool is_active( const Time& ) const;
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& );
+  virtual bool is_active( const Time& ) const;
+  virtual void get_status( DictionaryDatum& d ) const;
+  virtual void set_status( const DictionaryDatum& );
 
   using Device::init_state;
   using Device::calibrate;
@@ -124,8 +117,8 @@ public:
   using Node::calibrate;
 
 
-  void calibrate( const std::vector< Name >&, const std::vector< Name >& );
-  void calibrate();
+  virtual void calibrate( const std::vector< Name >&, const std::vector< Name >& );
+  virtual void calibrate();
 
 
   //! Throws IllegalConnection if synapse id differs from initial synapse id
@@ -136,18 +129,22 @@ public:
    */
   enum Type
   {
-    STEP_CURRENT_GENERATOR,
+    CURRENT_GENERATOR, //STEP_CURRENT_GENERATOR
     SPIKE_GENERATOR,
+    DOUBLE_DATA_GENERATOR,
+    DELAYED_RATE_CONNECTION_GENERATOR,
     UNSPECIFIED
   };
 
-  Type get_type() const;
-  const std::string& get_label() const;
-  void set_data_from_stimulating_backend( std::vector< double > input );
-  void update( Time const&, const long, const long );
+  virtual Type get_type() const {
+    return StimulatingDevice::Type::UNSPECIFIED;
+  };
+  virtual const std::string& get_label() const;
+  virtual void set_data_from_stimulating_backend( std::vector< double > input );
+  virtual void update( Time const&, const long, const long );
 
 protected:
-  void set_initialized_();
+  virtual void set_initialized_();
 
   struct Parameters_
   {
@@ -156,15 +153,15 @@ protected:
 
     Parameters_();
     Parameters_( const Parameters_& );
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    virtual void get( DictionaryDatum& ) const;
+    virtual void set( const DictionaryDatum& );
   } P_;
 
   struct State_
   {
     State_();
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    virtual void get( DictionaryDatum& ) const;
+    virtual void set( const DictionaryDatum& );
   } S_;
 
 private:
@@ -181,8 +178,7 @@ private:
 };
 } // namespace nest
 
-template < typename EmittedEvent >
-nest::StimulatingDevice< EmittedEvent >::StimulatingDevice()
+nest::StimulatingDevice::StimulatingDevice()
   :DeviceNode()
   , Device()
   , first_syn_id_( invalid_synindex )
@@ -190,8 +186,7 @@ nest::StimulatingDevice< EmittedEvent >::StimulatingDevice()
 {
 }
 
-template < typename EmittedEvent >
-nest::StimulatingDevice< EmittedEvent >::StimulatingDevice( StimulatingDevice< EmittedEvent > const& sd )
+nest::StimulatingDevice::StimulatingDevice( StimulatingDevice const& sd )
   :DeviceNode( sd )
   , Device( sd )
   , first_syn_id_( invalid_synindex ) // a new instance can have no connections
@@ -199,51 +194,39 @@ nest::StimulatingDevice< EmittedEvent >::StimulatingDevice( StimulatingDevice< E
 {
 }
 
-template < typename EmittedEvent >
-typename nest::StimulatingDevice< EmittedEvent >::Type
-nest::StimulatingDevice< EmittedEvent >::get_type() const
-{
-  return StimulatingDevice< EmittedEvent >::Type::UNSPECIFIED;
-}
 
-template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::set_data_from_stimulating_backend( std::vector< double > input_spikes )
+nest::StimulatingDevice::set_data_from_stimulating_backend( std::vector< double > input_spikes )
 {
 }
 
-template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::calibrate()
+nest::StimulatingDevice::calibrate()
 {
   Device::calibrate();
 }
 
-template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::update( Time const&, const long, const long )
+nest::StimulatingDevice::update( Time const&, const long, const long )
 {
 }
 
-template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::set_initialized_()
+nest::StimulatingDevice::set_initialized_()
 {
   kernel().io_manager.enroll_stimulator( P_.stimulus_source_, *this, backend_params_ );
 }
 
-template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::calibrate( const std::vector< Name >& double_value_names,
+nest::StimulatingDevice::calibrate( const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
   Device::calibrate();
   kernel().io_manager.set_stimulator_value_names( P_.stimulus_source_, *this, double_value_names, long_value_names );
 }
 
-template < typename EmittedEvent >
 const std::string&
-nest::StimulatingDevice< EmittedEvent >::get_label() const
+nest::StimulatingDevice::get_label() const
 {
   return P_.label_;
 }
@@ -251,52 +234,23 @@ nest::StimulatingDevice< EmittedEvent >::get_label() const
 namespace nest
 {
 
-// specializations must be declared inside namespace
-template <>
 inline bool
-StimulatingDevice< nest::CurrentEvent >::is_active( const Time& T ) const
+StimulatingDevice::is_active( const Time& T ) const
 {
-  /* We have t_min_ = origin_ + start_, t_max_ = origin_ + stop_ in steps.
-     We need to check if
-        t_min_ - 1 <= T.get_steps() <= t_max_ - 2
-     This is equivalent to checking
-        t_min_ <= T.get_steps() + 1 < t_max_
-   */
-  const long step = T.get_steps() + 1;
-  return get_t_min_() <= step and step < get_t_max_();
+  long step = T.get_steps();
+  if (get_type() == StimulatingDevice::Type::CURRENT_GENERATOR ||
+   get_type() == StimulatingDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR ||
+   get_type() == StimulatingDevice::Type::DOUBLE_DATA_GENERATOR)
+  {
+     step = T.get_steps() + 1;
+  }
+  return get_t_min_() < step and step <= get_t_max_();
 }
 
-template <>
-inline bool
-StimulatingDevice< nest::DelayedRateConnectionEvent >::is_active( const Time& T ) const
-{
-  // same as for the CurrentEvent
-  const long step = T.get_steps() + 1;
-  return get_t_min_() <= step and step < get_t_max_();
 }
 
-template <>
-inline bool
-StimulatingDevice< nest::DoubleDataEvent >::is_active( const Time& T ) const
-{
-  // same as for the CurrentEvent
-  const long step = T.get_steps() + 1;
-  return get_t_min_() <= step and step < get_t_max_();
-}
-
-template <>
-inline bool
-StimulatingDevice< nest::SpikeEvent >::is_active( const Time& T ) const
-{
-  /* Input is the time stamp of the spike to be emitted. */
-  const long stamp = T.get_steps();
-  return get_t_min_() < stamp and stamp <= get_t_max_();
-}
-}
-
-template < typename EmittedEvent >
 inline void
-nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type( synindex syn_id )
+nest::StimulatingDevice::enforce_single_syn_type( synindex syn_id )
 {
   if ( first_syn_id_ == invalid_synindex )
   {
@@ -310,31 +264,27 @@ nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type( synindex syn_i
   }
 }
 
-template < typename EmittedEvent >
-nest::StimulatingDevice< EmittedEvent >::Parameters_::Parameters_()
+nest::StimulatingDevice::Parameters_::Parameters_()
   : label_()
   , stimulus_source_( names::internal )
 {
 }
 
-template < typename EmittedEvent >
-nest::StimulatingDevice< EmittedEvent >::Parameters_::Parameters_( const Parameters_& p )
+nest::StimulatingDevice::Parameters_::Parameters_( const Parameters_& p )
   : label_( p.label_ )
   , stimulus_source_( p.stimulus_source_ )
 {
 }
 
-template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::Parameters_::get( DictionaryDatum& d ) const
+nest::StimulatingDevice::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
   ( *d )[ names::stimulus_source ] = LiteralDatum( stimulus_source_ );
 }
 
-template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::Parameters_::set( const DictionaryDatum& d )
+nest::StimulatingDevice::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
 
@@ -351,26 +301,22 @@ nest::StimulatingDevice< EmittedEvent >::Parameters_::set( const DictionaryDatum
   }
 }
 
-template < typename EmittedEvent >
-nest::StimulatingDevice< EmittedEvent >::State_::State_()
+nest::StimulatingDevice::State_::State_()
 {
 }
 
-template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::State_::get( DictionaryDatum& d ) const
+nest::StimulatingDevice::State_::get( DictionaryDatum& d ) const
 {
 }
 
-template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::State_::set( const DictionaryDatum& d )
+nest::StimulatingDevice::State_::set( const DictionaryDatum& d )
 {
 }
 
-template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d )
+nest::StimulatingDevice::set_status( const DictionaryDatum& d )
 {
 
   if ( kernel().simulation_manager.has_been_prepared() )
@@ -428,9 +374,8 @@ nest::StimulatingDevice< EmittedEvent >::set_status( const DictionaryDatum& d )
 }
 
 
-template < typename EmittedEvent >
 void
-nest::StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
+nest::StimulatingDevice::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );

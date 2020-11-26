@@ -91,7 +91,7 @@ step_current_generator, Device, StimulatingDevice
 
 EndUserDocs */
 
-class step_rate_generator : public StimulatingDevice< DelayedRateConnectionEvent >
+class step_rate_generator : public StimulatingDevice
 {
 
 public:
@@ -136,6 +136,10 @@ public:
   {
     return names::stimulator;
   }
+
+  StimulatingDevice::Type get_type() const {
+    return StimulatingDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR;
+  };
 
 private:
   void init_state_( const Node& );
@@ -226,7 +230,7 @@ private:
 inline port
 step_rate_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-  StimulatingDevice< DelayedRateConnectionEvent >::enforce_single_syn_type( syn_id );
+  StimulatingDevice::enforce_single_syn_type( syn_id );
 
   DelayedRateConnectionEvent e;
   e.set_sender( *this );
@@ -248,7 +252,7 @@ inline void
 step_rate_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  StimulatingDevice< DelayedRateConnectionEvent >::get_status( d );
+  StimulatingDevice::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -262,7 +266,7 @@ step_rate_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  StimulatingDevice< DelayedRateConnectionEvent >::set_status( d );
+  StimulatingDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

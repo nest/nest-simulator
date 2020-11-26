@@ -24,7 +24,6 @@
 #define STIMULATING_BACKEND_MPI_H
 
 #include "stimulating_backend.h"
-#include "stimulating_device.h"
 #include "nest_types.h"
 #include "nest_time.h"
 #include <set>
@@ -61,8 +60,8 @@ EndDocumentation */
 namespace nest
 {
 
-// template < typename EmittedEvent >
-// class StimulatingDevice;
+//template < typename EmittedEvent >
+//class StimulatingDevice;
 /**
  * A simple input backend MPI implementation
  */
@@ -79,15 +78,15 @@ public:
    * InputBackend destructor
    * The actual finalization is happening in InputBackend::finalize()
    */
-  ~StimulatingBackendMPI() noexcept override = default;
+  ~StimulatingBackendMPI() noexcept override;
 
   void initialize() override;
 
   void finalize() override;
 
-  void enroll( StimulatingDevice< EmittedEvent >& device, const DictionaryDatum& params );
+  void enroll( StimulatingDevice& device, const DictionaryDatum& params );
 
-  void disenroll( const StimulatingDevice< EmittedEvent >& device );
+  void disenroll( StimulatingDevice& device );
 
   void cleanup() override;
 
@@ -105,13 +104,13 @@ public:
 
   void check_device_status( const DictionaryDatum& ) const override;
 
-  void set_value_names( const StimulatingDevice< EmittedEvent >& device,
+  void set_value_names( const StimulatingDevice& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
   void get_device_defaults( DictionaryDatum& ) const override;
 
-  void get_device_status( const StimulatingDevice< EmittedEvent >& device, DictionaryDatum& params_dictionary ) const;
+  void get_device_status( const StimulatingDevice& device, DictionaryDatum& params_dictionary ) const;
 
 private:
   bool enrolled_;
@@ -121,7 +120,7 @@ private:
    * thread. The map associates the gid of a device on a given thread
    * with it's device. Only the master thread have a valid MPI communicator pointer.
   */
-  typedef std::vector< std::map< index, std::pair< const MPI_Comm*, StimulatingDevice< EmittedEvent >* > > > device_map;
+  using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulatingDevice* > > >;
   device_map devices_;
   /**
    * A map of MPI communicator use by the master thread for the MPI communication.
@@ -135,7 +134,7 @@ private:
    * @param device : input device for finding the file with the port
    * @param port_name : result of the port name
    */
-  static void get_port( StimulatingDevice< EmittedEvent >* device, std::string* port_name );
+  static void get_port( StimulatingDevice* device, std::string* port_name );
   static void get_port( index index_node, const std::string& label, std::string* port_name );
   /**
    * MPI communication for receiving the data before each run. This function is use only by the master thread.

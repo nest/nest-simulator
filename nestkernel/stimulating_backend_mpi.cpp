@@ -27,7 +27,8 @@
 // Includes from nestkernel:
 #include "stimulating_backend.h"
 #include "stimulating_backend_mpi.h"
-//#include "kernel_manager.h"
+#include "kernel_manager.h"
+#include "stimulating_device.h"
 
 nest::StimulatingBackendMPI::StimulatingBackendMPI()
   : enrolled_( false )
@@ -61,10 +62,11 @@ nest::StimulatingBackendMPI::finalize()
 }
 
 void
-nest::StimulatingBackendMPI::enroll( StimulatingDevice< EmittedEvent >& device, const DictionaryDatum& params )
+nest::StimulatingBackendMPI::enroll( nest::StimulatingDevice& device, const DictionaryDatum& params )
 {
-  if ( device.get_type() == StimulatingDevice< EmittedEvent >::SPIKE_GENERATOR
-    or device.get_type() == StimulatingDevice< EmittedEvent >::STEP_CURRENT_GENERATOR )
+  printf("Enrolling in backend MPI\n");
+  if ( device.get_type() == StimulatingDevice::SPIKE_GENERATOR
+    or device.get_type() == StimulatingDevice::CURRENT_GENERATOR )
   {
     thread tid = device.get_thread();
     index node_id = device.get_node_id();
@@ -76,8 +78,9 @@ nest::StimulatingBackendMPI::enroll( StimulatingDevice< EmittedEvent >& device, 
       devices_[ tid ].erase( device_it );
     }
     // the MPI communication will be initialise during the prepare function
-    std::pair< MPI_Comm*, StimulatingDevice< EmittedEvent >* > pair = std::make_pair( nullptr, &device );
-    devices_[ tid ].insert( std::make_pair( node_id, pair ) );
+    std::pair< MPI_Comm*, StimulatingDevice* > pair = std::make_pair( nullptr, &device );
+    std::pair< index, std::pair< const MPI_Comm*, StimulatingDevice* > > secondpair = std::make_pair( node_id, pair );
+    devices_[ tid ].insert( secondpair );
     enrolled_ = true;
   }
   else
@@ -86,8 +89,9 @@ nest::StimulatingBackendMPI::enroll( StimulatingDevice< EmittedEvent >& device, 
   }
 }
 
+
 void
-nest::StimulatingBackendMPI::disenroll( const nest::StimulatingDevice< EmittedEvent >& device )
+nest::StimulatingBackendMPI::disenroll( nest::StimulatingDevice& device )
 {
   thread tid = device.get_thread();
   index node_id = device.get_node_id();
@@ -101,7 +105,7 @@ nest::StimulatingBackendMPI::disenroll( const nest::StimulatingDevice< EmittedEv
 }
 
 void
-nest::StimulatingBackendMPI::set_value_names( const StimulatingDevice< EmittedEvent >& device,
+nest::StimulatingBackendMPI::set_value_names( const nest::StimulatingDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
@@ -304,7 +308,7 @@ nest::StimulatingBackendMPI::get_device_defaults( DictionaryDatum& params ) cons
 }
 
 void
-nest::StimulatingBackendMPI::get_device_status( const nest::StimulatingDevice< EmittedEvent >& device,
+nest::StimulatingBackendMPI::get_device_status( const nest::StimulatingDevice& device,
   DictionaryDatum& params_dictionary ) const
 {
   // nothing to do
@@ -323,9 +327,8 @@ nest::StimulatingBackendMPI::set_status( const DictionaryDatum& d )
   // nothing to do
 }
 
-
 void
-nest::StimulatingBackendMPI::get_port( StimulatingDevice< EmittedEvent >* device, std::string* port_name )
+nest::StimulatingBackendMPI::get_port( nest::StimulatingDevice* device, std::string* port_name )
 {
   get_port( device->get_node_id(), device->get_label(), port_name );
 }

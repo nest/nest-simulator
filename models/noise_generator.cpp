@@ -175,7 +175,7 @@ nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_g
  * ---------------------------------------------------------------- */
 
 nest::noise_generator::noise_generator()
-  : StimulatingDevice< CurrentEvent >()
+  : StimulatingDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -188,7 +188,7 @@ nest::noise_generator::noise_generator()
 }
 
 nest::noise_generator::noise_generator( const noise_generator& n )
-  : StimulatingDevice< CurrentEvent >( n )
+  : StimulatingDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -209,13 +209,13 @@ nest::noise_generator::init_state_( const Node& proto )
 {
   const noise_generator& pr = downcast< noise_generator >( proto );
 
-  StimulatingDevice< CurrentEvent >::init_state( pr );
+  StimulatingDevice::init_state( pr );
 }
 
 void
 nest::noise_generator::init_buffers_()
 {
-  StimulatingDevice< CurrentEvent >::init_buffers();
+  StimulatingDevice::init_buffers();
   B_.logger_.reset();
 
   B_.next_step_ = 0;
@@ -228,7 +228,7 @@ nest::noise_generator::calibrate()
 {
   B_.logger_.init();
 
-  StimulatingDevice< CurrentEvent >::calibrate();
+  StimulatingDevice::calibrate();
   if ( P_.num_targets_ != B_.amps_.size() )
   {
     LOG( M_INFO, "noise_generator::calibrate()", "The number of targets has changed, drawing new amplitudes." );
@@ -263,7 +263,7 @@ nest::noise_generator::calibrate()
 nest::port
 nest::noise_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  StimulatingDevice< CurrentEvent >::enforce_single_syn_type( syn_id );
+  StimulatingDevice::enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -301,7 +301,7 @@ nest::noise_generator::update( Time const& origin, const long from, const long t
 
     const long now = start + offs;
 
-    if ( not StimulatingDevice< CurrentEvent >::is_active( Time::step( now ) ) )
+    if ( not StimulatingDevice::is_active( Time::step( now ) ) )
     {
       B_.logger_.record_data( origin.get_steps() + offs );
       continue;

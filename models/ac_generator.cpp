@@ -139,7 +139,7 @@ nest::ac_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
  * ---------------------------------------------------------------- */
 
 nest::ac_generator::ac_generator()
-  : StimulatingDevice< CurrentEvent >()
+  : StimulatingDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -148,7 +148,7 @@ nest::ac_generator::ac_generator()
 }
 
 nest::ac_generator::ac_generator( const ac_generator& n )
-  : StimulatingDevice< CurrentEvent >( n )
+  : StimulatingDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -165,14 +165,14 @@ nest::ac_generator::init_state_( const Node& proto )
 {
   const ac_generator& pr = downcast< ac_generator >( proto );
 
-  StimulatingDevice< CurrentEvent >::init_state( pr );
+  StimulatingDevice::init_state( pr );
   S_ = pr.S_;
 }
 
 void
 nest::ac_generator::init_buffers_()
 {
-  StimulatingDevice< CurrentEvent >::init_buffers();
+  StimulatingDevice::init_buffers();
   B_.logger_.reset();
 }
 
@@ -181,7 +181,7 @@ nest::ac_generator::calibrate()
 {
   B_.logger_.init();
 
-  StimulatingDevice< CurrentEvent >::calibrate();
+  StimulatingDevice::calibrate();
 
   const double h = Time::get_resolution().get_ms();
   const double t = kernel().simulation_manager.get_time().get_ms();
@@ -219,7 +219,7 @@ nest::ac_generator::update( Time const& origin, const long from, const long to )
     S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
 
     S_.I_ = 0.0;
-    if ( StimulatingDevice< CurrentEvent >::is_active( Time::step( start + lag ) ) )
+    if ( StimulatingDevice::is_active( Time::step( start + lag ) ) )
     {
       S_.I_ = S_.y_1_ + P_.offset_;
       ce.set_current( S_.I_ );

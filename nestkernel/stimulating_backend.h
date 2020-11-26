@@ -31,13 +31,8 @@
 #include "name.h"
 #include "dictutils.h"
 
-
 namespace nest
 {
-
-class EmittedEvent;
-class Event;
-template < typename EmittedEvent >
 class StimulatingDevice;
 
 
@@ -85,8 +80,7 @@ public:
   *
   * @ingroup NESTio
   */
-  template < typename EmittedEvent >
-   void enroll( const nest::StimulatingDevice< EmittedEvent >&, const DictionaryDatum& ){};
+  void enroll( nest::StimulatingDevice& device, const DictionaryDatum& dict) {};
 
   /**
    * Disenroll an `StimulatingDevice` from the `StimulatingBackend`.
@@ -104,8 +98,7 @@ public:
    *
    * @ingroup NESTio
    */
-  template < typename EmittedEvent >
-  void disenroll( const nest::StimulatingDevice< EmittedEvent >& ){};
+  void disenroll( nest::StimulatingDevice& device) {};
 
   /**
    * To make the names of input quantities known to the
@@ -120,8 +113,7 @@ public:
    *
    * @ingroup NESTio
    */
-  template < typename EmittedEvent >
-  void set_value_names( const nest::StimulatingDevice< EmittedEvent >& device,
+  void set_value_names( const nest::StimulatingDevice& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names ){};
 
@@ -195,10 +187,10 @@ public:
   */
   virtual void cleanup() = 0;
 
-  virtual void
-  clear( const StimulatingDevice< EmittedEvent >& )
+  void
+  clear( const StimulatingDevice& )
   {
-  }
+  };
 
   /**
   * Check if the given per-device properties are valid and usable by
@@ -246,8 +238,8 @@ public:
    *
    * @ingroup NESTio
    */
-  template < typename EmittedEvent >
-  void get_device_status( const nest::StimulatingDevice< EmittedEvent >& device, DictionaryDatum& params ) const {};
+  virtual void 
+  get_device_status( const nest::StimulatingDevice& device, DictionaryDatum& params ) const = 0;
 
   virtual void
   set_status( const DictionaryDatum& )
@@ -259,26 +251,19 @@ public:
   {
   }
 
-  virtual void
-  set_input_device_status( const StimulatingDevice< EmittedEvent >&, const DictionaryDatum& ) const
+  void
+  set_input_device_status( const StimulatingDevice&, const DictionaryDatum& ) const
   {
   }
 
-  virtual void
-  get_input_device_status( const StimulatingDevice< EmittedEvent >&, DictionaryDatum& ) const
+  void
+  get_input_device_status( const StimulatingDevice&, DictionaryDatum& ) const
   {
   }
 
   static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
   static const std::vector< Name > NO_LONG_VALUE_NAMES;
 };
-
-template < typename EmittedEvent >
-void
-get_device_status( const nest::StimulatingDevice< EmittedEvent >& device, DictionaryDatum& params )
-{
-  device.get_status( params );
-}
 
 } // namespace
 

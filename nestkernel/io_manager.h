@@ -107,17 +107,15 @@ public:
   write( const Name&, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
 
   void enroll_recorder( const Name&, const RecordingDevice&, const DictionaryDatum& );
-  template < typename EmittedEvent >
-  void enroll_stimulator( const Name&, const StimulatingDevice< EmittedEvent >&, const DictionaryDatum& );
+  void enroll_stimulator( const Name&, StimulatingDevice&, const DictionaryDatum& );
 
   void set_recording_value_names( const Name& backend_name,
     const RecordingDevice& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
-  template < typename EmittedEvent >
   void set_stimulator_value_names( const Name&,
-    const StimulatingDevice< EmittedEvent >&,
+    const StimulatingDevice&,
     const std::vector< Name >&,
     const std::vector< Name >& );
 
@@ -126,13 +124,12 @@ public:
   void get_recording_backend_device_status( const Name&, const RecordingDevice&, DictionaryDatum& );
   void check_stimulating_backend_device_status( const Name&, const DictionaryDatum& );
   void get_stimulating_backend_device_defaults( const Name&, DictionaryDatum& );
-  template < typename EmittedEvent >
-  void get_stimulating_backend_device_status( const Name&, const StimulatingDevice< EmittedEvent >&, DictionaryDatum& );
+  void get_stimulating_backend_device_status( const Name&, const StimulatingDevice&, DictionaryDatum& );
 
 private:
   void set_data_path_prefix_( const DictionaryDatum& );
   void register_recording_backends_();
-  void register_stimulating_backends_();
+  void register_stimulating_backends_(); 
 
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
@@ -168,59 +165,6 @@ nest::IOManager::overwrite_files() const
   return overwrite_files_;
 }
 
-template < typename EmittedEvent >
-void
-nest::IOManager::get_stimulating_backend_device_status( const Name& backend_name,
-  const StimulatingDevice< EmittedEvent >& device,
-  DictionaryDatum& d )
-{
-  if ( is_valid_stimulating_backend( backend_name ) )
-  {
-    stimulating_backends_[ backend_name ]->get_device_status( device, d );
-  }
-}
 
-template < typename EmittedEvent >
-void
-nest::IOManager::set_stimulator_value_names( const Name& backend_name,
-  const StimulatingDevice< EmittedEvent >& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
-{
-  if ( is_valid_stimulating_backend( backend_name ) )
-  {
-    stimulating_backends_[ backend_name ]->set_value_names( device, double_value_names, long_value_names );
-  }
-}
-
-template < typename EmittedEvent >
-void
-nest::IOManager::enroll_stimulator( const Name& backend_name,
-                                    const StimulatingDevice<EmittedEvent>& device,
-                                    const DictionaryDatum& params )
-{
-  if ( not is_valid_stimulating_backend( backend_name ) and backend_name != "internal")
-  {
-    return;
-  }
-  if ( backend_name == "internal"){
-    for ( auto& it : stimulating_backends_ )
-    {
-      it.second->disenroll( device );
-    }
-  } else {
-    for ( auto& it : stimulating_backends_ )
-    {
-      if(it.first == backend_name )
-      {
-        it.second->enroll( device, params );
-      }
-      else
-      {
-        it.second->disenroll( device );
-      }
-    }
-  }
-}
 
 #endif /* IO_MANAGER_H */

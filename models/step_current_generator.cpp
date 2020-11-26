@@ -224,7 +224,7 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffer
  * ---------------------------------------------------------------- */
 
 nest::step_current_generator::step_current_generator()
-  : StimulatingDevice< CurrentEvent >()
+  : StimulatingDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -233,7 +233,7 @@ nest::step_current_generator::step_current_generator()
 }
 
 nest::step_current_generator::step_current_generator( const step_current_generator& n )
-  : StimulatingDevice< CurrentEvent >( n )
+  : StimulatingDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -250,13 +250,13 @@ nest::step_current_generator::init_state_( const Node& proto )
 {
   const auto& pr = downcast< step_current_generator >( proto );
 
-  StimulatingDevice< CurrentEvent >::init_state( pr );
+  StimulatingDevice::init_state( pr );
 }
 
 void
 nest::step_current_generator::init_buffers_()
 {
-  StimulatingDevice< CurrentEvent >::init_buffers();
+  StimulatingDevice::init_buffers();
   B_.logger_.reset();
 
   B_.idx_ = 0;
@@ -267,9 +267,9 @@ void
 nest::step_current_generator::calibrate()
 {
   B_.logger_.init();
-  StimulatingDevice< CurrentEvent >::calibrate(
+  StimulatingDevice::calibrate(
     StimulatingBackend::NO_DOUBLE_VALUE_NAMES, StimulatingBackend::NO_LONG_VALUE_NAMES );
-  StimulatingDevice< CurrentEvent >::calibrate();
+  StimulatingDevice::calibrate();
 }
 
 
@@ -311,7 +311,7 @@ nest::step_current_generator::update( Time const& origin, const long from, const
     }
 
     // but send only if active
-    if ( StimulatingDevice< CurrentEvent >::is_active( Time::step( curr_time ) ) )
+    if ( StimulatingDevice::is_active( Time::step( curr_time ) ) )
     {
       CurrentEvent ce;
       ce.set_current( B_.amp_ );
@@ -363,10 +363,4 @@ nest::step_current_generator::update_from_backend( std::vector< double > time_am
 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
-}
-
-nest::StimulatingDevice< nest::CurrentEvent >::Type
-nest::step_current_generator::get_type()
-{
-  return nest::StimulatingDevice< CurrentEvent >::STEP_CURRENT_GENERATOR;
 }

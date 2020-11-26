@@ -190,7 +190,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& 
  * ---------------------------------------------------------------- */
 
 nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
-  : StimulatingDevice< SpikeEvent >()
+  : StimulatingDevice()
   , P_()
   , B_()
   , V_()
@@ -198,7 +198,7 @@ nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
 }
 
 nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator( const inhomogeneous_poisson_generator& n )
-  : StimulatingDevice< SpikeEvent >( n )
+  : StimulatingDevice( n )
   , P_( n.P_ )
   , B_( n.B_ )
   , V_( n.V_ )
@@ -213,13 +213,13 @@ nest::inhomogeneous_poisson_generator::init_state_( const Node& proto )
 {
   const inhomogeneous_poisson_generator& pr = downcast< inhomogeneous_poisson_generator >( proto );
 
-  StimulatingDevice< SpikeEvent > init_state( pr );
+  StimulatingDevice init_state( pr );
 }
 
 void
 nest::inhomogeneous_poisson_generator::init_buffers_()
 {
-  StimulatingDevice< SpikeEvent >::init_buffers();
+  StimulatingDevice::init_buffers();
   B_.idx_ = 0;
   B_.rate_ = 0;
 }
@@ -227,7 +227,7 @@ nest::inhomogeneous_poisson_generator::init_buffers_()
 void
 nest::inhomogeneous_poisson_generator::calibrate()
 {
-  StimulatingDevice< SpikeEvent >::calibrate();
+  StimulatingDevice::calibrate();
   V_.h_ = Time::get_resolution().get_ms();
 }
 
@@ -269,7 +269,7 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin, const long fr
     }
 
     // create spikes
-    if ( B_.rate_ > 0 and StimulatingDevice< SpikeEvent >::is_active( Time::step( curr_time ) ) )
+    if ( B_.rate_ > 0 and StimulatingDevice::is_active( Time::step( curr_time ) ) )
     {
       DSSpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, offs );

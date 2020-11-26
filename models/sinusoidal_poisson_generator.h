@@ -105,7 +105,7 @@ poisson_generator, sinusoidal_gamma_generator
 
 EndUserDocs */
 
-class sinusoidal_poisson_generator : public StimulatingDevice< SpikeEvent >
+class sinusoidal_poisson_generator : public StimulatingDevice
 {
 
 public:
@@ -149,6 +149,10 @@ public:
   {
     return names::stimulator;
   }
+
+  StimulatingDevice::Type get_type() const {
+    return StimulatingDevice::Type::CURRENT_GENERATOR;
+  };
 
 private:
   void init_state_( const Node& );
@@ -252,7 +256,7 @@ private:
 inline port
 sinusoidal_poisson_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  StimulatingDevice< SpikeEvent >::enforce_single_syn_type( syn_id );
+  StimulatingDevice::enforce_single_syn_type( syn_id );
 
   // to ensure correct overloading resolution, we need explicit event types
   // therefore, we need to duplicate the code here
@@ -285,7 +289,7 @@ sinusoidal_poisson_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  StimulatingDevice< SpikeEvent >::get_status( d );
+  StimulatingDevice::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -298,7 +302,7 @@ sinusoidal_poisson_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  StimulatingDevice< SpikeEvent >::set_status( d );
+  StimulatingDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

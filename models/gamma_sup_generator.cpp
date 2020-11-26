@@ -176,13 +176,13 @@ nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* nod
  * ---------------------------------------------------------------- */
 
 nest::gamma_sup_generator::gamma_sup_generator()
-  : StimulatingDevice< CurrentEvent >()
+  : StimulatingDevice()
   , P_()
 {
 }
 
 nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
-  : StimulatingDevice< CurrentEvent >( n )
+  : StimulatingDevice( n )
   , P_( n.P_ )
 {
 }
@@ -197,19 +197,19 @@ nest::gamma_sup_generator::init_state_( const Node& proto )
 {
   const gamma_sup_generator& pr = downcast< gamma_sup_generator >( proto );
 
-  StimulatingDevice< CurrentEvent >::init_state( pr );
+  StimulatingDevice::init_state( pr );
 }
 
 void
 nest::gamma_sup_generator::init_buffers_()
 {
-  StimulatingDevice< CurrentEvent >::init_buffers();
+  StimulatingDevice::init_buffers();
 }
 
 void
 nest::gamma_sup_generator::calibrate()
 {
-  StimulatingDevice< CurrentEvent >::calibrate();
+  StimulatingDevice::calibrate();
 
   double h = Time::get_resolution().get_ms();
 
@@ -246,7 +246,7 @@ nest::gamma_sup_generator::update( Time const& T, const long from, const long to
   {
     Time t = T + Time::step( lag );
 
-    if ( not StimulatingDevice< CurrentEvent >::is_active( t ) )
+    if ( not StimulatingDevice::is_active( t ) )
     {
       continue; // no spike at this lag
     }

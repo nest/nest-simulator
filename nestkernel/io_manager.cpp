@@ -347,6 +347,64 @@ IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& dev
   }
 }
 
+void
+nest::IOManager::enroll_stimulator( const Name& backend_name,
+                                    StimulatingDevice& device,
+                                    const DictionaryDatum& params )
+{
+  
+  if ( not is_valid_stimulating_backend( backend_name ) and backend_name.toString() != "internal")
+  {
+    return;
+  }
+  if ( backend_name.toString() == "internal"){
+    for ( auto& it : stimulating_backends_ )
+    {
+      it.second->disenroll( device );
+    }
+  } 
+  else {
+    for ( auto& it : stimulating_backends_ )
+    {
+      if(it.first == backend_name )
+      {
+        if ( backend_name.toString() == "mpi"){
+          printf("Enrolling %s\n", backend_name.toString().c_str());
+          static_cast<StimulatingBackendMPI*>(it.second)->enroll(device, params );
+          //(it.second)->enroll( device, params );
+        }
+      }
+      else
+      {
+        it.second->disenroll( device );
+      }
+    }
+  }
+}
+
+void
+nest::IOManager::get_stimulating_backend_device_status( const Name& backend_name,
+  const StimulatingDevice& device,
+  DictionaryDatum& d )
+{
+  if ( is_valid_stimulating_backend( backend_name ) )
+  {
+    stimulating_backends_[ backend_name ]->get_device_status( device, d );
+  }
+}
+
+void
+nest::IOManager::set_stimulator_value_names( const Name& backend_name,
+  const StimulatingDevice& device,
+  const std::vector< Name >& double_value_names,
+  const std::vector< Name >& long_value_names )
+{
+  if ( is_valid_stimulating_backend( backend_name ) )
+  {
+    stimulating_backends_[ backend_name ]->set_value_names( device, double_value_names, long_value_names );
+  }
+}
+
 
 void
 IOManager::set_recording_value_names( const Name& backend_name,

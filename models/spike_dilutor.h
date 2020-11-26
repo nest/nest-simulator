@@ -145,7 +145,7 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
+  StimulatingDevice device_;
   Parameters_ P_;
   Buffers_ B_;
 };

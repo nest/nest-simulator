@@ -130,7 +130,7 @@ CurrentEvent
 
 EndUserDocs */
 
-class noise_generator : public StimulatingDevice< CurrentEvent >
+class noise_generator : public StimulatingDevice
 {
 
 public:
@@ -178,6 +178,10 @@ public:
   void set_status( const DictionaryDatum& );
 
   void calibrate_time( const TimeConverter& tc );
+
+  StimulatingDevice::Type get_type() const {
+    return StimulatingDevice::Type::CURRENT_GENERATOR;
+  };
 
 private:
   void init_state_( const Node& );
@@ -303,7 +307,7 @@ noise_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  StimulatingDevice< CurrentEvent >::get_status( d );
+  StimulatingDevice::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -318,7 +322,7 @@ noise_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  StimulatingDevice< CurrentEvent >::set_status( d );
+  StimulatingDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
@@ -336,6 +340,7 @@ noise_generator::calibrate_time( const TimeConverter& tc )
 {
   P_.dt_ = tc.from_old_tics( P_.dt_.get_tics() );
 }
+
 
 } // namespace
 

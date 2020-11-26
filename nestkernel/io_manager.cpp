@@ -348,30 +348,30 @@ IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& dev
 }
 
 void
-nest::IOManager::enroll_stimulator( const Name& backend_name,
-                                    StimulatingDevice& device,
-                                    const DictionaryDatum& params )
+nest::IOManager::enroll_stimulator( const Name& backend_name, StimulatingDevice& device, const DictionaryDatum& params )
 {
-  
-  if ( not is_valid_stimulating_backend( backend_name ) and backend_name.toString() != "internal")
+
+  if ( not is_valid_stimulating_backend( backend_name ) and backend_name.toString() != "internal" )
   {
     return;
   }
-  if ( backend_name.toString() == "internal"){
+  if ( backend_name.toString() == "internal" )
+  {
     for ( auto& it : stimulating_backends_ )
     {
       it.second->disenroll( device );
     }
-  } 
-  else {
+  }
+  else
+  {
     for ( auto& it : stimulating_backends_ )
     {
-      if(it.first == backend_name )
+      if ( it.first == backend_name )
       {
-        if ( backend_name.toString() == "mpi"){
-          printf("Enrolling %s\n", backend_name.toString().c_str());
-          static_cast<StimulatingBackendMPI*>(it.second)->enroll(device, params );
-          //(it.second)->enroll( device, params );
+        if ( backend_name.toString() == "mpi" )
+        {
+          // static_cast< StimulatingBackendMPI* >( it.second )->enroll( device, params );
+          ( it.second )->enroll( device, params );
         }
       }
       else

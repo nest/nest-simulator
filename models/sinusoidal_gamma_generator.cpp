@@ -331,8 +331,7 @@ nest::sinusoidal_gamma_generator::update( Time const& origin, const long from, c
     S_.rate_ = P_.rate_ + P_.amplitude_ * std::sin( P_.om_ * V_.t_ms_ + P_.phi_ );
 
     // t_steps_-1 since t_steps is end of interval, while activity det by start
-    if ( P_.num_trains_ > 0 && S_.rate_ > 0
-      && StimulatingDevice::is_active( Time::step( V_.t_steps_ - 1 ) ) )
+    if ( P_.num_trains_ > 0 && S_.rate_ > 0 && StimulatingDevice::is_active( Time::step( V_.t_steps_ - 1 ) ) )
     {
       if ( P_.individual_spike_trains_ )
       {

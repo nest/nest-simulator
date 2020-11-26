@@ -116,7 +116,9 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
-  StimulatingDevice::Type get_type() const {
+  StimulatingDevice::Type
+  get_type() const override
+  {
     return StimulatingDevice::Type::CURRENT_GENERATOR;
   };
 

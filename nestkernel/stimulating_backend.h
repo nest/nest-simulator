@@ -79,7 +79,7 @@ public:
   *
   * @ingroup NESTio
   */
-  void enroll( StimulatingDevice& device, const DictionaryDatum& dict) {};
+  virtual void enroll( StimulatingDevice& device, const DictionaryDatum& dict ){};
 
   /**
    * Disenroll an `StimulatingDevice` from the `StimulatingBackend`.
@@ -97,7 +97,7 @@ public:
    *
    * @ingroup NESTio
    */
-  void disenroll( StimulatingDevice& device) {};
+  virtual void disenroll( StimulatingDevice& device ){};
 
   /**
    * To make the names of input quantities known to the
@@ -186,10 +186,7 @@ public:
   */
   virtual void cleanup() = 0;
 
-  void
-  clear( const StimulatingDevice& )
-  {
-  };
+  void clear( const StimulatingDevice& ){};
 
   /**
   * Check if the given per-device properties are valid and usable by
@@ -237,8 +234,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void 
-  get_device_status( const StimulatingDevice& device, DictionaryDatum& params ) const = 0;
+  virtual void get_device_status( const StimulatingDevice& device, DictionaryDatum& params ) const = 0;
 
   virtual void
   set_status( const DictionaryDatum& )

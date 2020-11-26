@@ -126,14 +126,17 @@ public:
    */
   enum Type
   {
-    CURRENT_GENERATOR, //STEP_CURRENT_GENERATOR
+    CURRENT_GENERATOR, // STEP_CURRENT_GENERATOR
     SPIKE_GENERATOR,
     DOUBLE_DATA_GENERATOR,
     DELAYED_RATE_CONNECTION_GENERATOR,
     UNSPECIFIED
   };
 
-  Type get_type() const {
+  virtual Type
+  get_type() const
+  {
+    throw KernelException( "WORNG TYPE" );
     return StimulatingDevice::Type::UNSPECIFIED;
   };
   const std::string& get_label() const;
@@ -173,7 +176,6 @@ private:
 
   DictionaryDatum backend_params_;
 };
-
 
 
 } // namespace nest

@@ -179,7 +179,9 @@ public:
 
   void calibrate_time( const TimeConverter& tc );
 
-  StimulatingDevice::Type get_type() const {
+  StimulatingDevice::Type
+  get_type() const override
+  {
     return StimulatingDevice::Type::CURRENT_GENERATOR;
   };
 

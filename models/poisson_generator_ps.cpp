@@ -195,10 +195,9 @@ nest::poisson_generator_ps::update( Time const& T, const long from, const long t
    * The (included) upper boundary is the right edge of the slice, T + to.
    * of the slice.
    */
-  V_.t_min_active_ = std::max( T + Time::step( from ),
-    StimulatingDevice::get_origin() + StimulatingDevice::get_start() );
-  V_.t_max_active_ = std::min( T + Time::step( to ),
-    StimulatingDevice::get_origin() + StimulatingDevice::get_stop() );
+  V_.t_min_active_ =
+    std::max( T + Time::step( from ), StimulatingDevice::get_origin() + StimulatingDevice::get_start() );
+  V_.t_max_active_ = std::min( T + Time::step( to ), StimulatingDevice::get_origin() + StimulatingDevice::get_stop() );
 
   // Nothing to do for equality, since left boundary is excluded
   if ( V_.t_min_active_ < V_.t_max_active_ )

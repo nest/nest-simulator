@@ -199,7 +199,9 @@ public:
   void set_status( const DictionaryDatum& ) override;
   void update_from_backend( std::vector< double > input_spikes );
 
-  StimulatingDevice::Type get_type() const {
+  StimulatingDevice::Type
+  get_type() const override
+  {
     return StimulatingDevice::Type::SPIKE_GENERATOR;
   };
   /**

@@ -64,9 +64,8 @@ nest::StimulatingBackendMPI::finalize()
 void
 nest::StimulatingBackendMPI::enroll( nest::StimulatingDevice& device, const DictionaryDatum& params )
 {
-  printf("Enrolling in backend MPI\n");
-  if ( device.get_type() == StimulatingDevice::SPIKE_GENERATOR
-    or device.get_type() == StimulatingDevice::CURRENT_GENERATOR )
+  if ( device.get_type() == StimulatingDevice::Type::SPIKE_GENERATOR
+    or device.get_type() == StimulatingDevice::Type::CURRENT_GENERATOR )
   {
     thread tid = device.get_thread();
     index node_id = device.get_node_id();

@@ -60,8 +60,8 @@ EndDocumentation */
 namespace nest
 {
 
-//template < typename EmittedEvent >
-//class StimulatingDevice;
+// template < typename EmittedEvent >
+// class StimulatingDevice;
 /**
  * A simple input backend MPI implementation
  */
@@ -84,9 +84,9 @@ public:
 
   void finalize() override;
 
-  void enroll( StimulatingDevice& device, const DictionaryDatum& params );
+  void enroll( StimulatingDevice& device, const DictionaryDatum& params ) override;
 
-  void disenroll( StimulatingDevice& device );
+  void disenroll( StimulatingDevice& device ) override;
 
   void cleanup() override;
 

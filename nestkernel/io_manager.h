@@ -129,7 +129,7 @@ public:
 private:
   void set_data_path_prefix_( const DictionaryDatum& );
   void register_recording_backends_();
-  void register_stimulating_backends_(); 
+  void register_stimulating_backends_();
 
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
@@ -164,7 +164,6 @@ nest::IOManager::overwrite_files() const
 {
   return overwrite_files_;
 }
-
 
 
 #endif /* IO_MANAGER_H */

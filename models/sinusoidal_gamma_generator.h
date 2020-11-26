@@ -213,7 +213,9 @@ public:
     return names::stimulator;
   }
 
-  StimulatingDevice::Type get_type() const {
+  StimulatingDevice::Type
+  get_type() const override
+  {
     return StimulatingDevice::Type::SPIKE_GENERATOR;
   };
 

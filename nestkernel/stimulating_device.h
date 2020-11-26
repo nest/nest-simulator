@@ -24,18 +24,15 @@
 #define STIMULATING_DEVICE_H
 
 // Includes from nestkernel:
-#include "node.h"
 #include "device.h"
 #include "device_node.h"
 #include "nest_types.h"
-#include "kernel_manager.h"
 
 // Includes from sli:
 #include "dictutils.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
-
 #include <string>
 
 
@@ -98,7 +95,7 @@ class StimulatingDevice : public DeviceNode, public Device
 public:
   StimulatingDevice();
   StimulatingDevice( StimulatingDevice const& );
-  virtual ~StimulatingDevice()
+  ~StimulatingDevice()
   {
   }
 
@@ -107,9 +104,9 @@ public:
    * The argument is the value of the simulation time.
    * @see class comment for details.
    */
-  virtual bool is_active( const Time& ) const;
-  virtual void get_status( DictionaryDatum& d ) const;
-  virtual void set_status( const DictionaryDatum& );
+  bool is_active( const Time& ) const;
+  void get_status( DictionaryDatum& d ) const;
+  void set_status( const DictionaryDatum& );
 
   using Device::init_state;
   using Device::calibrate;
@@ -117,8 +114,8 @@ public:
   using Node::calibrate;
 
 
-  virtual void calibrate( const std::vector< Name >&, const std::vector< Name >& );
-  virtual void calibrate();
+  void calibrate( const std::vector< Name >&, const std::vector< Name >& );
+  void calibrate();
 
 
   //! Throws IllegalConnection if synapse id differs from initial synapse id
@@ -136,12 +133,12 @@ public:
     UNSPECIFIED
   };
 
-  virtual Type get_type() const {
+  Type get_type() const {
     return StimulatingDevice::Type::UNSPECIFIED;
   };
-  virtual const std::string& get_label() const;
-  virtual void set_data_from_stimulating_backend( std::vector< double > input );
-  virtual void update( Time const&, const long, const long );
+  const std::string& get_label() const;
+  void set_data_from_stimulating_backend( std::vector< double > input );
+  void update( Time const&, const long, const long );
 
 protected:
   virtual void set_initialized_();
@@ -153,15 +150,15 @@ protected:
 
     Parameters_();
     Parameters_( const Parameters_& );
-    virtual void get( DictionaryDatum& ) const;
-    virtual void set( const DictionaryDatum& );
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum& );
   } P_;
 
   struct State_
   {
     State_();
-    virtual void get( DictionaryDatum& ) const;
-    virtual void set( const DictionaryDatum& );
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum& );
   } S_;
 
 private:
@@ -176,236 +173,10 @@ private:
 
   DictionaryDatum backend_params_;
 };
+
+
+
 } // namespace nest
-
-nest::StimulatingDevice::StimulatingDevice()
-  :DeviceNode()
-  , Device()
-  , first_syn_id_( invalid_synindex )
-  , backend_params_( new Dictionary )
-{
-}
-
-nest::StimulatingDevice::StimulatingDevice( StimulatingDevice const& sd )
-  :DeviceNode( sd )
-  , Device( sd )
-  , first_syn_id_( invalid_synindex ) // a new instance can have no connections
-  , backend_params_( new Dictionary )
-{
-}
-
-
-void
-nest::StimulatingDevice::set_data_from_stimulating_backend( std::vector< double > input_spikes )
-{
-}
-
-void
-nest::StimulatingDevice::calibrate()
-{
-  Device::calibrate();
-}
-
-void
-nest::StimulatingDevice::update( Time const&, const long, const long )
-{
-}
-
-void
-nest::StimulatingDevice::set_initialized_()
-{
-  kernel().io_manager.enroll_stimulator( P_.stimulus_source_, *this, backend_params_ );
-}
-
-void
-nest::StimulatingDevice::calibrate( const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
-{
-  Device::calibrate();
-  kernel().io_manager.set_stimulator_value_names( P_.stimulus_source_, *this, double_value_names, long_value_names );
-}
-
-const std::string&
-nest::StimulatingDevice::get_label() const
-{
-  return P_.label_;
-}
-
-namespace nest
-{
-
-inline bool
-StimulatingDevice::is_active( const Time& T ) const
-{
-  long step = T.get_steps();
-  if (get_type() == StimulatingDevice::Type::CURRENT_GENERATOR ||
-   get_type() == StimulatingDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR ||
-   get_type() == StimulatingDevice::Type::DOUBLE_DATA_GENERATOR)
-  {
-     step = T.get_steps() + 1;
-  }
-  return get_t_min_() < step and step <= get_t_max_();
-}
-
-}
-
-inline void
-nest::StimulatingDevice::enforce_single_syn_type( synindex syn_id )
-{
-  if ( first_syn_id_ == invalid_synindex )
-  {
-    first_syn_id_ = syn_id;
-  }
-  if ( syn_id != first_syn_id_ )
-  {
-    throw IllegalConnection(
-      "All outgoing connections from a device must use the same synapse "
-      "type." );
-  }
-}
-
-nest::StimulatingDevice::Parameters_::Parameters_()
-  : label_()
-  , stimulus_source_( names::internal )
-{
-}
-
-nest::StimulatingDevice::Parameters_::Parameters_( const Parameters_& p )
-  : label_( p.label_ )
-  , stimulus_source_( p.stimulus_source_ )
-{
-}
-
-void
-nest::StimulatingDevice::Parameters_::get( DictionaryDatum& d ) const
-{
-  ( *d )[ names::label ] = label_;
-  ( *d )[ names::stimulus_source ] = LiteralDatum( stimulus_source_ );
-}
-
-void
-nest::StimulatingDevice::Parameters_::set( const DictionaryDatum& d )
-{
-  updateValue< std::string >( d, names::label, label_ );
-
-  std::string stimulus_source;
-  if ( updateValue< std::string >( d, names::stimulus_source, stimulus_source ) )
-  {
-
-    if ( not kernel().io_manager.is_valid_stimulating_backend( stimulus_source ) )
-    {
-      std::string msg = String::compose( "Unknown input backend '%1'", stimulus_source );
-      throw BadProperty( msg );
-    }
-    stimulus_source_ = stimulus_source;
-  }
-}
-
-nest::StimulatingDevice::State_::State_()
-{
-}
-
-void
-nest::StimulatingDevice::State_::get( DictionaryDatum& d ) const
-{
-}
-
-void
-nest::StimulatingDevice::State_::set( const DictionaryDatum& d )
-{
-}
-
-void
-nest::StimulatingDevice::set_status( const DictionaryDatum& d )
-{
-
-  if ( kernel().simulation_manager.has_been_prepared() )
-  {
-    throw BadProperty( "Input parameters cannot be changed while inside a Prepare/Run/Cleanup context." );
-  }
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-
-  State_ stmp = S_; // temporary copy in case of errors
-  stmp.set( d );    // throws if BadProperty
-
-  Device::set_status( d );
-
-  if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
-  {
-    DictionaryDatum backend_params = DictionaryDatum( new Dictionary );
-
-    // copy all properties not previously accessed from d to backend_params
-    for ( auto& kv_pair : *d )
-    {
-      if ( not kv_pair.second.accessed() )
-      {
-        ( *backend_params )[ kv_pair.first ] = kv_pair.second;
-      }
-    }
-
-    if ( not ptmp.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
-    {
-      kernel().io_manager.check_stimulating_backend_device_status( ptmp.stimulus_source_, backend_params );
-    }
-
-    // cache all properties accessed by the backend in private member
-    backend_params_->clear();
-    for ( auto& kv_pair : *backend_params )
-    {
-      if ( kv_pair.second.accessed() )
-      {
-        ( *backend_params_ )[ kv_pair.first ] = kv_pair.second;
-        d->lookup( kv_pair.first ).set_access_flag();
-      }
-    }
-  }
-  else
-  {
-    if ( not ptmp.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
-    {
-      kernel().io_manager.enroll_stimulator( ptmp.stimulus_source_, *this, d );
-    }
-  }
-
-  // if we get here, temporaries contain consistent set of properties
-  P_ = ptmp;
-  S_ = stmp;
-}
-
-
-void
-nest::StimulatingDevice::get_status( DictionaryDatum& d ) const
-{
-  P_.get( d );
-  S_.get( d );
-
-  Device::get_status( d );
-
-  ( *d )[ names::element_type ] = LiteralDatum( names::stimulator );
-
-  if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
-  {
-    // first get the defaults from the backend
-    if ( not P_.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
-    {
-      kernel().io_manager.get_stimulating_backend_device_defaults( P_.stimulus_source_, d );
-    }
-
-    // then overwrite with cached parameters
-    for ( auto& kv_pair : *backend_params_ )
-    {
-      ( *d )[ kv_pair.first ] = kv_pair.second;
-    }
-  }
-  else
-  {
-    if ( not P_.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
-    {
-      kernel().io_manager.get_stimulating_backend_device_status( P_.stimulus_source_, *this, d );
-    }
-  }
-}
 
 
 #endif

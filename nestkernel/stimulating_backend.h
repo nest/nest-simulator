@@ -30,11 +30,10 @@
 #include "dictdatum.h"
 #include "name.h"
 #include "dictutils.h"
+#include "stimulating_device.h"
 
 namespace nest
 {
-class StimulatingDevice;
-
 
 class StimulatingBackend
 {
@@ -80,7 +79,7 @@ public:
   *
   * @ingroup NESTio
   */
-  void enroll( nest::StimulatingDevice& device, const DictionaryDatum& dict) {};
+  void enroll( StimulatingDevice& device, const DictionaryDatum& dict) {};
 
   /**
    * Disenroll an `StimulatingDevice` from the `StimulatingBackend`.
@@ -98,7 +97,7 @@ public:
    *
    * @ingroup NESTio
    */
-  void disenroll( nest::StimulatingDevice& device) {};
+  void disenroll( StimulatingDevice& device) {};
 
   /**
    * To make the names of input quantities known to the
@@ -113,7 +112,7 @@ public:
    *
    * @ingroup NESTio
    */
-  void set_value_names( const nest::StimulatingDevice& device,
+  void set_value_names( const StimulatingDevice& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names ){};
 
@@ -239,7 +238,7 @@ public:
    * @ingroup NESTio
    */
   virtual void 
-  get_device_status( const nest::StimulatingDevice& device, DictionaryDatum& params ) const = 0;
+  get_device_status( const StimulatingDevice& device, DictionaryDatum& params ) const = 0;
 
   virtual void
   set_status( const DictionaryDatum& )

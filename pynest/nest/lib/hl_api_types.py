@@ -745,6 +745,7 @@ class SynapseCollection(object):
         if keys is None:
             cmd = 'GetStatus'
         elif is_literal(keys):
+            #  Extracting the correct values will be done in restructure_data below
             cmd = 'GetStatus'
         elif is_iterable(keys):
             keys_str = " ".join("/{0}".format(x) for x in keys)

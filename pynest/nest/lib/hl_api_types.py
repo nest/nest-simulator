@@ -643,9 +643,9 @@ class SynapseCollection(object):
             except ValueError:
                 # Used when we have many connections and print_full=False
                 return f'{s:>{src_len-1}} {t:>{trg_len}} {sm:>{sm_len}} {w:>{w_len}} {dly:>{d_len}}'
-        
+
         MAX_SIZE_FULL_PRINT = 35  # 35 is arbitrarily chosen.
-        
+
         params = self.get()
         srcs = params['source']
         trgt = params['target']

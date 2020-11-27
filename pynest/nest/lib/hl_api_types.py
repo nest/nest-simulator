@@ -665,6 +665,7 @@ class SynapseCollection(object):
 
         # 35 is arbitrarily chosen.
         if len(srcs) >= 35 and not self.print_full:
+            # u'\u22EE ' is the unicode for vertical ellipsis, used when we have many connections
             srcs = srcs[:15] + [u'\u22EE '] + srcs[-15:]
             trgt = trgt[:15] + [u'\u22EE '] + trgt[-15:]
             wght = wght[:15] + [u'\u22EE '] + wght[-15:]

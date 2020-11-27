@@ -404,12 +404,12 @@ Printing
     >>>  nest.Connect(nodes[:2], nodes[:2])
     >>>  synColl = nest.GetConnections()
     >>>  print(synColl)
-          source   target   synapse model   weight   delay 
+          source   target   synapse model   weight   delay
          -------- -------- --------------- -------- -------
-               1        1  static_synapse      1.0     1.0
-               1        2  static_synapse      1.0     1.0
-               2        1  static_synapse      1.0     1.0
-               2        2  static_synapse      1.0     1.0
+               1        1  static_synapse    1.000   1.000
+               1        2  static_synapse    1.000   1.000
+               2        1  static_synapse    1.000   1.000
+               2        2  static_synapse    1.000   1.000
 
     >>> synColl.print_all = True
 
@@ -420,9 +420,9 @@ Indexing
     Indexing returns a single connection SynapseCollection.
 
     >>>  print(synColl[1])
-          source   target   synapse model   weight   delay 
+          source   target   synapse model   weight   delay
          -------- -------- --------------- -------- -------
-               1        2  static_synapse      1.0     1.0
+               1        2  static_synapse    1.000   1.000
 
 .. _conn_iterating:
 
@@ -443,10 +443,10 @@ Slicing
     A SynapseCollection can be sliced with ``start:stop:step`` inside brackets
 
     >>>  print(synColl[0:3:2])
-         source   target   synapse model   weight   delay 
+         source   target   synapse model   weight   delay
         -------- -------- --------------- -------- -------
-              1        1  static_synapse      1.0     1.0
-              2        1  static_synapse      1.0     1.0
+              1        1  static_synapse    1.000   1.000
+              2        1  static_synapse    1.000   1.000
 
 .. _conn_size:
 

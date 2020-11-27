@@ -618,14 +618,14 @@ class SynapseCollection(object):
         """
         Printing a `SynapseCollection` returns something of the form:
 
-             source   target   synapse model   weight   delay 
+             source   target   synapse model   weight   delay
             -------- -------- --------------- -------- -------
-                  1        4  static_synapse      1.0     1.0
-                  2        4  static_synapse      2.0     1.0
-                  1        3    stdp_synapse      4.0     1.0
-                  1        4    stdp_synapse      3.0     1.0
-                  2        3    stdp_synapse      3.0     1.0
-                  2        4    stdp_synapse      2.0     1.0
+                  1        4  static_synapse    1.000   1.000
+                  2        4  static_synapse    2.000   1.000
+                  1        3    stdp_synapse    4.000   1.000
+                  1        4    stdp_synapse    3.000   1.000
+                  2        3    stdp_synapse    3.000   1.000
+                  2        4    stdp_synapse    2.000   1.000
 
         If your SynapseCollection has more than 36 elements, only the first and last 15 connections are printed. To
         display all, first set `print_full = True`.

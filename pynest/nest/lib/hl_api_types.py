@@ -636,6 +636,8 @@ class SynapseCollection(object):
             conns.print_full = True
             print(conns)
         """
+        MAX_SIZE_FULL_PRINT = 35  # 35 is arbitrarily chosen.
+        
         params = self.get()
         srcs = params['source']
         trgt = params['target']
@@ -664,7 +666,7 @@ class SynapseCollection(object):
         d_len = len(d_h) + 2
 
         # 35 is arbitrarily chosen.
-        if len(srcs) >= 35 and not self.print_full:
+        if len(srcs) >= MAX_SIZE_FULL_PRINT and not self.print_full:
             # u'\u22EE ' is the unicode for vertical ellipsis, used when we have many connections
             srcs = srcs[:15] + [u'\u22EE '] + srcs[-15:]
             trgt = trgt[:15] + [u'\u22EE '] + trgt[-15:]

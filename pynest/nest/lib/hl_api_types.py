@@ -656,12 +656,10 @@ class SynapseCollection(object):
         w_h = 'weight'
         d_h = 'delay'
 
-        max_char_sm = len(max(s_model, key=len))
-
         # Find maximum number of characters for each column, used to determine width of column
         src_len = max(len(src_h) + 2, floor(log(max(srcs), 10)))
-        trg_len = len(trg_h) + 2 if floor(log(max(trgt), 10)) <= len(trg_h) + 2 else floor(log(max(trgt), 10))
-        sm_len = len(sm_h) + 2 if max_char_sm <= len(sm_h) + 2 else max_char_sm
+        trg_len = max(len(trg_h) + 2, floor(log(max(trgt), 10)))
+        sm_len = max(len(sm_h) + 2, len(max(s_model, key=len)))
         w_len = len(w_h) + 2
         d_len = len(d_h) + 2
 

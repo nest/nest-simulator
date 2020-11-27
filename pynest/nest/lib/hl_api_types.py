@@ -659,7 +659,7 @@ class SynapseCollection(object):
         max_char_sm = len(max(s_model, key=len))
 
         # Find maximum number of characters for each column, used to determine width of column
-        src_len = len(src_h) + 2 if floor(log(max(srcs), 10)) <= len(src_h) + 2 else floor(log(max(srcs), 10))
+        src_len = max(len(src_h) + 2, floor(log(max(srcs), 10)))
         trg_len = len(trg_h) + 2 if floor(log(max(trgt), 10)) <= len(trg_h) + 2 else floor(log(max(trgt), 10))
         sm_len = len(sm_h) + 2 if max_char_sm <= len(sm_h) + 2 else max_char_sm
         w_len = len(w_h) + 2

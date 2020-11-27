@@ -636,6 +636,14 @@ class SynapseCollection(object):
             conns.print_full = True
             print(conns)
         """
+
+        def format_row_(s, t, sm, w, dly):
+            try:
+                return f'{s:>{src_len-1}d} {t:>{trg_len}d} {sm:>{sm_len}s} {w:>#{w_len}.{4}g} {dly:>#{d_len}.{4}g}'
+            except ValueError:
+                # Used when we have many connections and print_full=False
+                return f'{s:>{src_len-1}} {t:>{trg_len}} {sm:>{sm_len}} {w:>{w_len}} {dly:>{d_len}}'
+        
         MAX_SIZE_FULL_PRINT = 35  # 35 is arbitrarily chosen.
         
         params = self.get()
@@ -676,12 +684,7 @@ class SynapseCollection(object):
 
         headers = f'{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}' + '\n'
         boarders = '-'*src_len + ' ' + '-'*trg_len + ' ' + '-'*sm_len + ' ' + '-'*w_len + ' ' + '-'*d_len + '\n'
-        output = ''.join('{:>{}}'.format(str(s), src_len-1) +
-                         ' {:>{}}'.format(str(t), trg_len) +  # need to indent because of space between columns
-                         ' {:>{}}'.format(str(sm), sm_len) +
-                         ' {:>{num}.{deci}}'.format(w, num=w_len, deci=4) +
-                         ' {:>{num}.{deci}}'.format(d, num=d_len, deci=4) +
-                         '\n' for s, t, sm, w, d in zip(srcs, trgt, s_model, wght, dlay))
+        output = '\n'.join(format_row_(s, t, sm, w, d) for s, t, sm, w, d in zip(srcs, trgt, s_model, wght, dlay))
         result = headers + boarders + output
 
         return result

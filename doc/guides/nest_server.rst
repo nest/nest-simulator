@@ -625,5 +625,6 @@ Tools that use NEST Server
 --------------------------
 
 A variety of tools use NEST Server, including the
-  - Backend of `NEST Desktop <https://nest-desktop.readthedocs.io>`_ (contact person: Sebastian Spreizer)
-  - Interface for `NeuroRobotics Platform <https://neurorobotics.net/>`_ (contact person: Jochen Martin Eppler)
+
+* backend of `NEST Desktop <https://nest-desktop.readthedocs.io>`_ (contact person: Sebastian Spreizer),
+* interface for `NeuroRobotics Platform <https://neurorobotics.net/>`_ (contact person: Jochen Martin Eppler)

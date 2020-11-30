@@ -176,6 +176,22 @@ class TestSynapseCollection(unittest.TestCase):
         self.assertEqual(dpw, dpw_ref)
         self.assertEqual(all_values, all_ref)
 
+    def test_get_when_several_synapses(self):
+        """
+        Test get on SynapseCollection when we have more than one synapse
+        """
+
+        nrns = nest.Create('iaf_psc_alpha', 4)
+
+        nest.Connect(nrns, nrns, 'one_to_one')
+        nest.Connect(nrns, nrns, 'one_to_one', {'synapse_model': 'stdp_synapse', 'alpha': 2.})
+
+        conns = nest.GetConnections()
+        alpha_ref = [None]*len(nrns) + [2.]*len(nrns)
+
+        self.assertEqual(conns.get('alpha'), alpha_ref)
+        self.assertEqual(conns.get()['alpha'], alpha_ref)
+
     def test_GetConnectionsOnSubset(self):
         """
         Test GetConnections on sliced NodeCollection

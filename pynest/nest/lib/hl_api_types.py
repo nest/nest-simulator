@@ -737,8 +737,7 @@ class SynapseCollection(object):
         if pandas_output and not HAVE_PANDAS:
             raise ImportError('Pandas could not be imported')
 
-        # Return empty tuple if we have no connections or if we have done a
-        # nest.ResetKernel()
+        # Return empty tuple if we have no connections or if we have done a nest.ResetKernel()
         num_conn = GetKernelStatus('num_connections')
         if self.__len__() == 0 or num_conn == 0:
             return ()
@@ -746,7 +745,8 @@ class SynapseCollection(object):
         if keys is None:
             cmd = 'GetStatus'
         elif is_literal(keys):
-            cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
+            #  Extracting the correct values will be done in restructure_data below
+            cmd = 'GetStatus'
         elif is_iterable(keys):
             keys_str = " ".join("/{0}".format(x) for x in keys)
             cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)

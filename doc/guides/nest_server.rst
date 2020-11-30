@@ -11,12 +11,12 @@ It enables users to retrieve data from NEST Simulator on other machines.
 NEST Server was initially developed as a backend for NEST Desktop, a web-based GUI application for NEST Simulator, and
 could be installed via ``pip``.
 The idea was to design a client-server architecture concept for the NEST Desktop ecosystem.
-However, the full operation of NEST Server requires PyNEST, the Python interface to NEST.
-Previously, NEST Server was specially developed for NEST Desktop.
+The full operation of NEST Server requires PyNEST, the Python interface to NEST.
+Historically, NEST Server was developed for NEST Desktop.
 
 With growing interests in a server backend, NEST Server was migrated to the NEST Simulator code.
-From NEST 3.0 onward, NEST Server is integrated in NEST Simulator source code.
-To achieve this goal, the interface of NEST Server is generalized for a board application.
+From NEST 3.0 onward, NEST Server is integrated in the NEST Simulator source code.
+Its interface is thus generalized for a broad application.
 
 Under the hood, the RESTful API of NEST Server forwards command calls to NEST Simulator directly.
 Additionally, NEST Server provides an execution of Python code script with NEST Simulator.
@@ -33,7 +33,7 @@ What is it good for?
 
 NEST Server can be considered as a backend coupling with NEST Simulator.
 This backend can be deployed locally, on a remote machine or in a container.
-The separation of the frontend and the backend ensures the independence of these systems.
+The separation of the frontend and backend ensures the independence of these systems.
 It means that NEST Server can be deployed locally or in an encapsulated container such as Docker Engine.
 
 
@@ -80,7 +80,7 @@ It means that NEST Server will also be installed in the compilation progress of 
 
             docker pull nest-sim/nest:3.0
 
-        2. Check `Docker Hub <https://hub.docker.com/r/nestsim/nest>`_ for more information of NEST container.
+        2. Check `Docker Hub <https://hub.docker.com/r/nestsim/nest>`_ for more information on the NEST container.
 
         3. Run a command in a new container for NEST Server:
 
@@ -103,8 +103,8 @@ It means that NEST Server will also be installed in the compilation progress of 
 Getting started
 ---------------
 
-Upon starting NEST Server is started, you can send requests to it.
-Here are instructions from different interfaces:
+Upon starting NEST Server, you can send requests to it.
+Here are instructions for different interfaces:
 
 .. tabs::
 
@@ -125,7 +125,7 @@ Here are instructions from different interfaces:
         .. note::
 
             Some browsers (e.g., Firefox) cannot display JSON data.
-            Instead, they show syntax error because they cannot parse ``-infinite`` values (e.g. ``V_min`` of ``iaf_psc_alpha``).
+            Instead, they display a syntax error because they cannot parse ``-infinite`` values (e.g. ``V_min`` of ``iaf_psc_alpha``).
             However, you still can view the raw data.
 
         You cannot send POST requests in the web browser.
@@ -506,7 +506,7 @@ The NEST Server Client sends executable scripts to NEST Server with the ``exec_s
 
     You do not need to import modules in code script.
     By default, only PyNEST modules are registered  during the starting progress of NEST Server.
-    In case you want to work with other modules, see the section `Run with Python modules`_ below.
+    In case you want to work with other modules, see the `Run with Python modules`_ section below.
 
 Here, you can see a simple code:
 
@@ -625,5 +625,5 @@ Tools that use NEST Server
 --------------------------
 
 A variety of tools use NEST Server, including the
-  - Backend for `NEST Desktop <https://nest-desktop.readthedocs.io>`_ (contact person: Sebastian Spreizer)
+  - Backend of `NEST Desktop <https://nest-desktop.readthedocs.io>`_ (contact person: Sebastian Spreizer)
   - Interface for `NeuroRobotics Platform <https://neurorobotics.net/>`_ (contact person: Jochen Martin Eppler)

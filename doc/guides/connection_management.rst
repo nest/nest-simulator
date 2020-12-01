@@ -224,17 +224,17 @@ of neurons, each having a weight of 10000.0 pA and a delay of 1.0 ms:
 
 ::
 
-   sources = nest.Create("iaf_psc_alpha", 100)
-   targets = nest.Create("iaf_psc_alpha", 100)
+   sources = nest.Create('iaf_psc_alpha', 100)
+   targets = nest.Create('iaf_psc_alpha', 100)
 
    # Create the Connection Generator object
    import csa
    cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
 
    # Map weight and delay indices to vaules from cg
-   params_map = {"weight": 0, "delay": 1}
+   params_map = {'weight': 0, 'delay': 1}
 
-   connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
+   connspec = {'rule': 'conngen', 'cg': cg, 'params_map': params_map}
    nest.Connect(pre, post, connspec)
 
 .. _synapse_spec:
@@ -820,26 +820,25 @@ the source-target pairs by calling `distance` on your SynapseCollection.
       0.47140452079103157)
 
 You can further examine the SynapseCollection by checking the length of the object
-or by printing it, which will return a table of source and target node IDs:
+or by printing it, which will return a table of source and target node IDs, synapse
+model, weight and delay:
 
   >>>  len(conn)
        2
   >>>  print(conn)
-       *--------*-------*
-       | source | 1, 2, |
-       *--------*-------*
-       | target | 3, 3, |
-       *--------*-------*
+        source   target   synapse model   weight   delay 
+       -------- -------- --------------- -------- -------
+             1        3  static_synapse    1.000   1.000
+             2        3  static_synapse    1.000   1.000
 
 A SynapseCollection can be indexed or sliced, if you only want to inspect a
 subset of the collection:
 
   >>>  print(conn[0:2:2])
-       *--------*----*
-       | source | 1, |
-       *--------*----*
-       | target | 3, |
-       *--------*----*
+        source   target   synapse model   weight   delay 
+       -------- -------- --------------- -------- -------
+             1        3  static_synapse    1.000   1.000
+
 
 By iterating the SynapseCollection, a single connection SynapseCollection is returned:
 

@@ -61,7 +61,7 @@ void
 nest::inhomogeneous_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   const size_t n_rates = rate_times_.size();
-  std::vector< double_t >* times_ms = new std::vector< double_t >();
+  std::vector< double >* times_ms = new std::vector< double >();
   times_ms->reserve( n_rates );
   for ( size_t n = 0; n < n_rates; ++n )
   {
@@ -69,12 +69,12 @@ nest::inhomogeneous_poisson_generator::Parameters_::get( DictionaryDatum& d ) co
   }
 
   ( *d )[ names::rate_times ] = DoubleVectorDatum( times_ms );
-  ( *d )[ names::rate_values ] = DoubleVectorDatum( new std::vector< double_t >( rate_values_ ) );
+  ( *d )[ names::rate_values ] = DoubleVectorDatum( new std::vector< double >( rate_values_ ) );
   ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_times_ );
 }
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_insert( const double_t t )
+nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_insert( const double t )
 {
   Time t_rate;
 
@@ -113,7 +113,7 @@ void
 nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* )
 {
   const bool times = d->known( names::rate_times );
-  const bool rates = updateValue< std::vector< double_t > >( d, names::rate_values, rate_values_ );
+  const bool rates = updateValue< std::vector< double > >( d, names::rate_values, rate_values_ );
 
   // if offgrid flag changes, it must be done so either before any rates are
   // set or when setting new rates (which removes old ones)
@@ -144,7 +144,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& 
     return;
   }
 
-  const std::vector< double_t > d_times = getValue< std::vector< double_t > >( d->lookup( names::rate_times ) );
+  const std::vector< double > d_times = getValue< std::vector< double > >( d->lookup( names::rate_times ) );
 
   if ( d_times.empty() )
   {
@@ -163,7 +163,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& 
   // align them to the grid if necessary and insert them
 
   // handle first rate time, and insert it
-  std::vector< double_t >::const_iterator next = d_times.begin();
+  std::vector< double >::const_iterator next = d_times.begin();
   assert_valid_rate_time_and_insert( *next );
 
   // keep track of previous rate

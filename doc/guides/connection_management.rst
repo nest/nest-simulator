@@ -120,7 +120,6 @@ such that each node in ``post`` has a fixed ``indegree``.
 fixed outdegree
 ~~~~~~~~~~~~~~~
 
-
 .. image:: ../_static/img/Fixed_outdegree.png
      :width: 200px
      :align: center
@@ -197,6 +196,46 @@ be `False`, and ``make_symmetric`` must be `True`.
     B = nest.Create('iaf_psc_alpha', m) 
     conn_dict = {'rule': 'symmetric_pairwise_bernoulli', 'p': p, 'allow_autapses': False, 'make_symmetric': True} 
     nest.Connect(A, B, conn_dict)
+
+.. _conn_builder_conngen:
+    
+conngen
+~~~~~~~
+
+.. admonition:: Availability
+
+   This connection rule is only available if NEST was compiled with
+   :ref:`support for libneurosim <compile_with_libneurosim>`.
+
+To allow the generation of connectivity by means of an external
+library, NEST supports the Connection Generator Interface [1]_.
+
+In contrast to the other rules for creating connections, this rule
+relies on a Connection Generator object, in which the connectivity
+pattern is specified in a library-specific way. The Connection
+Generator is then handed to the call to ``Connect`` and evaluated
+internally. For more details, please see the Git repository of
+`libneurosim <https://github.com/INCF/libneurosim>`_.
+
+The following code shows an example for using the `Connection-Set
+Algebra <https://github.com/INCF/csa>`_ in NEST via the Connection
+Generator Interface to create random connectivity between two groups
+of neurons, each having a weight of 10000.0 pA and a delay of 1.0 ms:
+
+::
+
+   sources = nest.Create("iaf_psc_alpha", 100)
+   targets = nest.Create("iaf_psc_alpha", 100)
+
+   # Create the Connection Generator object
+   import csa
+   cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
+
+   # Map weight and delay indices to vaules from cg
+   params_map = {"weight": 0, "delay": 1}
+
+   connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
+   nest.Connect(pre, post, connspec)
 
 .. _synapse_spec:
 
@@ -555,7 +594,7 @@ possible however. For some models, like `iaf_psc_exp_multisynapse`, you have
 to create the receptors with the time constant ``tau_syn`` when creating the neurons.
 It is therefore not possible to inspect the receptors beforehand. The `trgt` neuron
 below for instance, will have 3 receptors, and we can connect to the different receptors when creating.
-The source neuron, on the other hand which is of the same model, does not have any receptors. You can
+The source neuron on the other hand, which is of the same model, does not have any receptors. You can
 inspect the number of receptors by looking up ``n_synapses`` on the .
 
   ::
@@ -864,3 +903,11 @@ You can also directly set parameters of your SynapseCollection:
 
 Note that some parameters, like `source` and `target`, cannot be set. The documentation of a specific
 model will point out which parameters can be set and which are read-only.
+
+References
+----------
+
+.. [1] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
+       connectivity in neuronal networks from simulator-independent
+       descriptions. Front. Neuroinform.
+       https://doi.org/10.3389/fninf.2014.00043

@@ -591,11 +591,12 @@ multi-compartment integrate-and-fire neuron model.
 In the example above, we inspect the receptor types of the model by calling
 ``nest.GetDefaults('iaf_cond_alpha_mc')['receptor_types']``. This is not always
 possible however. For some models, like `iaf_psc_exp_multisynapse`, you have
-to create the receptors with the time constant ``tau_syn`` when creating the neurons.
-It is therefore not possible to inspect the receptors beforehand. The `trgt` neuron
-below for instance, will have 3 receptors, and we can connect to the different receptors when creating.
-The source neuron on the other hand, which is of the same model, does not have any receptors. You can
-inspect the number of receptors by looking up ``n_synapses`` on the .
+to create the receptors with the time constant ``tau_syn`` when creating the
+neurons. It is therefore not possible to inspect the receptors beforehand. The
+`trgt` neuron below for instance, will have 3 receptors, and we can connect to
+the different receptors when creating. The source neuron on the other hand,
+which is of the same model, does not have any receptors. You can inspect the
+number of receptors by looking up ``n_synapses`` on the `trgt` NodeCollection.
 
   ::
 

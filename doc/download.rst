@@ -6,7 +6,7 @@ Download NEST
 
    For standard situations where you just want to use but not modify
    NEST, you don't have to download the source code.
-   
+
    Distribution packages ease the installation on Debian/Ubuntu,
    Fedora, macOS and Conda.
 

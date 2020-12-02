@@ -229,7 +229,7 @@ these instructions.**
 
    .. tab::  Ubuntu/Debian
 
-       Download the source code for the  `current release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
+       Download the source code for the  `current release <https://github.com/nest/nest-simulator/archive/v2.20.1.tar.gz>`_.
 
        Follow instructions for :doc:`linux_install` and take a look at our :doc:`install_options`.
 

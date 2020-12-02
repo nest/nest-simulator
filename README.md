@@ -113,6 +113,10 @@ you received in the NEST sources.
 
 Please cite NEST if you use it in your work.
 
+If you use NEST 2.20.1, please cite it as **Fardet, Tanguy et al. (2020)
+NEST 2.20.1. Zenodo. 10.5281/zenodo.4018718**. The full citation is available
+in different formats on [Zenodo](https://doi.org/10.5281/zenodo.4018718).
+
 If you use NEST 2.20.0, please cite it as **Fardet, Tanguy et al. (2020)
 NEST 2.20.0. Zenodo. 10.5281/zenodo.3605514**. The full citation is available
 in different formats on [Zenodo](https://doi.org/10.5281/zenodo.3605514).

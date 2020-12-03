@@ -137,24 +137,9 @@ public:
   noise_generator();
   noise_generator( const noise_generator& );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
 
   //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
-
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
+  bool local_receiver() const override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -166,37 +151,34 @@ public:
   using Node::event_hook;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  SignalType sends_signal() const;
+  SignalType sends_signal() const override;
 
-  void handle( DataLoggingRequest& );
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
 
-  StimulatingDevice::Type
-  get_type() const override
-  {
-    return StimulatingDevice::Type::CURRENT_GENERATOR;
-  };
+  StimulatingDevice::Type get_type() const override;
+  void set_data_from_stimulating_backend( std::vector< double > input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
+  void init_state_( const Node& ) override;
+  void init_buffers_() override;
 
   /**
    * Recalculates parameters and forces reinitialization
    * of amplitudes if number of targets has changed.
    */
-  void calibrate();
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
-  void event_hook( DSCurrentEvent& );
+  void update( Time const&, const long, const long ) override;
+  void event_hook( DSCurrentEvent& ) override;
 
   // ------------------------------------------------------------
 
@@ -257,7 +239,7 @@ private:
   {
     long next_step_; //!< time step of next change in current
     AmpVec_ amps_;   //!< amplitudes, one per target
-    Buffers_( noise_generator& );
+    explicit Buffers_( noise_generator& );
     Buffers_( const Buffers_&, noise_generator& );
     UniversalDataLogger< noise_generator > logger_;
   };
@@ -343,6 +325,17 @@ noise_generator::calibrate_time( const TimeConverter& tc )
   P_.dt_ = tc.from_old_tics( P_.dt_.get_tics() );
 }
 
+inline bool
+noise_generator::local_receiver() const
+{
+  return true;
+}
+
+inline StimulatingDevice::Type
+noise_generator::get_type() const
+{
+  return StimulatingDevice::Type::CURRENT_GENERATOR;
+}
 
 } // namespace
 

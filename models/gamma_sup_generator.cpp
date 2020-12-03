@@ -278,3 +278,30 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
     e.get_receiver().handle( e );
   }
 }
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::gamma_sup_generator::set_data_from_stimulating_backend( std::vector< double > input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if (input_param.size() != 4 ){
+      throw BadParameterValue("The size of the data for the ac_generator is incorrect.");
+    } else{
+      DictionaryDatum d = DictionaryDatum( new Dictionary );
+      ( *d )[ names::gamma_shape ] = DoubleDatum( lround(input_param[ 0 ] ) );
+      ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+      ( *d )[ names::n_proc ] = DoubleDatum( lround(input_param[ 2 ] ) );
+      ptmp.set( d, this );
+    }
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
+}

@@ -41,7 +41,6 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -235,4 +234,35 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
       n_spikes = 0;
     }
   }
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::pulsepacket_generator::set_data_from_stimulating_backend( std::vector< double > input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() < 3 )
+    {
+      throw BadParameterValue( "The size of the data for the  pulse_generator is incorrect." );
+    }
+    else
+    {
+      DictionaryDatum d = DictionaryDatum( new Dictionary );
+      ( *d )[ names::activity ] = DoubleDatum( input_param[ 0 ] );
+      ( *d )[ names::sdev ] = DoubleDatum( input_param[ 1 ] );
+      input_param.erase( input_param.begin(), input_param.begin() + 2 );
+      ( *d )[ names::pulse_times ] = DoubleVectorDatum( input_param );
+      ptmp.set( d, *this, this );
+    }
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

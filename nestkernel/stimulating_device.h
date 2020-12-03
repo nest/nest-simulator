@@ -95,18 +95,19 @@ class StimulatingDevice : public DeviceNode, public Device
 public:
   StimulatingDevice();
   StimulatingDevice( StimulatingDevice const& );
-  ~StimulatingDevice()
-  {
-  }
+  ~StimulatingDevice() override = default;;
 
   /**
    * Determine whether device is active.
    * The argument is the value of the simulation time.
    * @see class comment for details.
    */
-  bool is_active( const Time& ) const;
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& );
+  bool is_active( const Time& ) const override;
+  void get_status( DictionaryDatum& d ) const override;
+  void set_status( const DictionaryDatum& ) override;
+
+  bool has_proxies() const override;
+  Name get_element_type() const override;
 
   using Device::init_state;
   using Device::calibrate;
@@ -115,7 +116,7 @@ public:
 
 
   void calibrate( const std::vector< Name >&, const std::vector< Name >& );
-  void calibrate();
+  void calibrate() override;
 
 
   //! Throws IllegalConnection if synapse id differs from initial synapse id
@@ -130,21 +131,19 @@ public:
     SPIKE_GENERATOR,
     DOUBLE_DATA_GENERATOR,
     DELAYED_RATE_CONNECTION_GENERATOR,
-    UNSPECIFIED
   };
 
   virtual Type
   get_type() const
   {
     throw KernelException( "WORNG TYPE" );
-    return StimulatingDevice::Type::UNSPECIFIED;
   };
   const std::string& get_label() const;
-  void set_data_from_stimulating_backend( std::vector< double > input );
-  void update( Time const&, const long, const long );
+  virtual void set_data_from_stimulating_backend( std::vector< double > input ){};
+  void update( Time const&, const long, const long ) override{};
 
 protected:
-  virtual void set_initialized_();
+  void set_initialized_() final;
 
   struct Parameters_
   {
@@ -156,13 +155,6 @@ protected:
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum& );
   } P_;
-
-  struct State_
-  {
-    State_();
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
-  } S_;
 
 private:
   /**
@@ -177,6 +169,17 @@ private:
   DictionaryDatum backend_params_;
 };
 
+inline Name
+StimulatingDevice::get_element_type() const
+{
+  return names::stimulator;
+}
+
+inline bool
+StimulatingDevice::has_proxies() const
+{
+return false;
+}
 
 } // namespace nest
 

@@ -175,7 +175,7 @@ public:
   sinusoidal_gamma_generator();
   sinusoidal_gamma_generator( const sinusoidal_gamma_generator& );
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -186,46 +186,29 @@ public:
   using Node::handles_test_event;
   using Node::event_hook;
 
-  void handle( DataLoggingRequest& );
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   //! Model can be switched between proxies (single spike train) and not
-  bool
-  has_proxies() const
-  {
-    return not P_.individual_spike_trains_;
-  }
+  bool has_proxies() const override;
 
   //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
+  bool local_receiver() const override;
 
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
-
-  StimulatingDevice::Type
-  get_type() const override
-  {
-    return StimulatingDevice::Type::SPIKE_GENERATOR;
-  };
+  StimulatingDevice::Type get_type() const override;
+  void set_data_from_stimulating_backend( std::vector< double > input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
-  void event_hook( DSSpikeEvent& );
+  void init_state_( const Node& ) override;
+  void init_buffers_() override;
+  void calibrate() override;
+  void event_hook( DSSpikeEvent& ) override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   struct Parameters_
   {
@@ -278,9 +261,6 @@ private:
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -401,7 +381,6 @@ inline void
 sinusoidal_gamma_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  S_.get( d );
   StimulatingDevice::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -419,6 +398,26 @@ sinusoidal_gamma_generator::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+//! Model can be switched between proxies (single spike train) and not
+inline bool
+sinusoidal_gamma_generator::has_proxies() const
+{
+  return not P_.individual_spike_trains_;
+}
+
+//! Allow multimeter to connect to local instances
+inline bool
+sinusoidal_gamma_generator::local_receiver() const
+{
+  return true;
+}
+
+inline StimulatingDevice::Type
+sinusoidal_gamma_generator::get_type() const
+{
+  return StimulatingDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace

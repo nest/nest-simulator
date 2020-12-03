@@ -182,28 +182,14 @@ public:
   spike_generator();
   spike_generator( const spike_generator& );
 
-  bool
-  has_proxies() const override
-  {
-    return false;
-  }
-
-  Name
-  get_element_type() const override
-  {
-    return names::stimulator;
-  }
-
   port send_test_event( Node&, rport, synindex, bool ) override;
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
-  void update_from_backend( std::vector< double > input_spikes );
 
-  StimulatingDevice::Type
-  get_type() const override
-  {
-    return StimulatingDevice::Type::SPIKE_GENERATOR;
-  };
+  StimulatingDevice::Type get_type() const override;
+  void set_data_from_stimulating_backend( std::vector< double > input_spikes ) override;
+
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -311,6 +297,42 @@ spike_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   StimulatingDevice::get_status( d );
+}
+
+inline void
+nest::spike_generator::set_status( const DictionaryDatum& d )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // To detect "now" spikes and shift them, we need the origin. In case
+  // it is set in this call, we need to extract it explicitly here.
+  Time origin;
+  double v;
+  if ( updateValue< double >( d, names::origin, v ) )
+  {
+    origin = Time::ms( v );
+  }
+  else
+  {
+    origin = StimulatingDevice::get_origin();
+  }
+
+  // throws if BadProperty
+  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time(), this );
+
+  // We now know that ptmp is consistent. We do not write it back
+  // to P_ before we are also sure that the properties to be set
+  // in the parent class are internally consistent.
+  StimulatingDevice::set_status( d );
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
+}
+
+inline StimulatingDevice::Type
+spike_generator::get_type() const
+{
+  return StimulatingDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace

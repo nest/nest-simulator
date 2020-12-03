@@ -97,49 +97,30 @@ public:
   ac_generator();
   ac_generator( const ac_generator& );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
-
   //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
+  bool local_receiver() const override;
 
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
-
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( DataLoggingRequest& );
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  StimulatingDevice::Type
-  get_type() const override
-  {
-    return StimulatingDevice::Type::CURRENT_GENERATOR;
-  };
+  StimulatingDevice::Type get_type() const override;
+  void set_data_from_stimulating_backend( std::vector< double > input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_( const Node& ) override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
 
   // ------------------------------------------------------------
@@ -186,7 +167,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( ac_generator& );
+    explicit Buffers_( ac_generator& );
     Buffers_( const Buffers_&, ac_generator& );
     UniversalDataLogger< ac_generator > logger_;
   };
@@ -266,6 +247,18 @@ ac_generator::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+inline bool
+ac_generator::local_receiver() const
+{
+  return true;
+}
+
+inline StimulatingDevice::Type
+ac_generator::get_type() const
+{
+  return StimulatingDevice::Type::CURRENT_GENERATOR;
 }
 
 } // namespace

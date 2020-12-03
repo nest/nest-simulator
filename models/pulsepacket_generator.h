@@ -95,36 +95,21 @@ public:
 
   // behaves like normal node, since it must provide identical
   // output to all targets
-  bool
-  has_proxies() const
-  {
-    return true;
-  }
 
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
-
-  StimulatingDevice::Type
-  get_type() const override
-  {
-    return StimulatingDevice::Type::CURRENT_GENERATOR;
-  };
+  StimulatingDevice::Type get_type() const override;
+  void set_data_from_stimulating_backend( std::vector< double > input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_( const Node& ) override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void create_pulse();
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   struct Buffers_;
 
@@ -219,6 +204,11 @@ pulsepacket_generator::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
+inline StimulatingDevice::Type
+pulsepacket_generator::get_type() const
+{
+return StimulatingDevice::Type::CURRENT_GENERATOR;
+}
 
 } // namespace nest
 

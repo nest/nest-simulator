@@ -98,57 +98,34 @@ public:
   step_rate_generator();
   step_rate_generator( const step_rate_generator& );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
-
   // port send_test_event( Node&, rport, synindex, bool );
-  void
-  sends_secondary_event( DelayedRateConnectionEvent& )
-  {
-  }
-
+  void sends_secondary_event( DelayedRateConnectionEvent& ) override {};
 
   using Node::handle;
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  void handle( DataLoggingRequest& );
+  void handle( DataLoggingRequest& ) override;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
+  bool local_receiver() const override;
 
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
-
-  StimulatingDevice::Type
-  get_type() const override
-  {
-    return StimulatingDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR;
-  };
+  StimulatingDevice::Type get_type() const override;
+  void set_data_from_stimulating_backend( std::vector< double > input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_( const Node& ) override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   struct Buffers_;
 
@@ -192,7 +169,6 @@ private:
 
     State_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   };
 
   // ------------------------------------------------------------
@@ -274,6 +250,18 @@ step_rate_generator::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
+//! Allow multimeter to connect to local instances
+inline bool
+step_rate_generator::local_receiver() const
+{
+  return true;
+}
+
+inline StimulatingDevice::Type
+step_rate_generator::get_type() const
+{
+  return StimulatingDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR;
+}
 
 } // namespace
 

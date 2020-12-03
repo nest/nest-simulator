@@ -27,15 +27,10 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from libnestutil:
-#include "dict_util.h"
-
 // Includes from sli:
 #include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -109,9 +104,9 @@ nest::step_rate_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   std::vector< double >* times_ms = new std::vector< double >();
   times_ms->reserve( amp_time_stamps_.size() );
-  for ( std::vector< Time >::const_iterator it = amp_time_stamps_.begin(); it != amp_time_stamps_.end(); ++it )
+  for (auto amp_time_stamp : amp_time_stamps_)
   {
-    times_ms->push_back( it->get_ms() );
+    times_ms->push_back( amp_time_stamp.get_ms() );
   }
   ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ names::amplitude_values ] = DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
@@ -337,4 +332,41 @@ void
 nest::step_rate_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+void
+nest::step_rate_generator::set_data_from_stimulating_backend( std::vector< double > time_amplitude )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  assert( time_amplitude.size() % 2 == 0 );
+
+  // For the input backend
+  if ( not time_amplitude.empty() )
+  {
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    std::vector< double > times_ms;
+    std::vector< double > amplitudes_Hz;
+    const size_t n_step = P_.amp_time_stamps_.size();
+    for ( size_t n = 0; n < n_step; ++n )
+    {
+      times_ms.push_back( P_.amp_time_stamps_[ n ].get_ms() );
+      amplitudes_Hz.push_back( P_.amp_values_[ n ] );
+    }
+    for ( size_t n = 0; n < time_amplitude.size() / 2; n++ )
+    {
+      times_ms.push_back( time_amplitude[ n * 2 ] );
+      amplitudes_Hz.push_back( time_amplitude[ n * 2 + 1 ] );
+    }
+    ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
+    ( *d )[ names::amplitude_values ] = DoubleVectorDatum( amplitudes_Hz );
+
+    ptmp.set( d, B_, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

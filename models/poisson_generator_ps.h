@@ -94,43 +94,24 @@ public:
   poisson_generator_ps();
   poisson_generator_ps( const poisson_generator_ps& );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
-
-  bool
-  is_off_grid() const
-  {
-    return true;
-  }
-
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
+  bool is_off_grid() const override;
 
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
 
-  StimulatingDevice::Type
-  get_type() const override
-  {
-    return StimulatingDevice::Type::CURRENT_GENERATOR;
-  };
+  StimulatingDevice::Type get_type() const override;
+  void set_data_from_stimulating_backend( std::vector< double > input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_( const Node& ) override;
+  void init_buffers_() override;
+  void calibrate() override;
 
   /**
    * Update state.
@@ -141,14 +122,14 @@ private:
    * information.
    * @see event_hook, DSSpikeEvent
    */
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   /**
    * Send out spikes.
    * Called once per target to dispatch actual output spikes.
    * @param contains target information.
    */
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   // ------------------------------------------------------------
 
@@ -277,6 +258,18 @@ poisson_generator_ps::calibrate_time( const TimeConverter& tc )
 {
   V_.t_min_active_ = tc.from_old_tics( V_.t_min_active_.get_tics() );
   V_.t_max_active_ = tc.from_old_tics( V_.t_max_active_.get_tics() );
+}
+
+inline bool
+poisson_generator_ps::is_off_grid() const
+{
+  return true;
+}
+
+inline StimulatingDevice::Type
+poisson_generator_ps::get_type() const
+{
+  return StimulatingDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace

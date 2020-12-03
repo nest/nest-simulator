@@ -318,9 +318,9 @@ nest::noise_generator::update( Time const& origin, const long from, const long t
     if ( now >= B_.next_step_ )
     {
       // compute new currents
-      for ( AmpVec_::iterator it = B_.amps_.begin(); it != B_.amps_.end(); ++it )
+      for (double & amp : B_.amps_)
       {
-        *it = P_.mean_
+        amp = P_.mean_
           + std::sqrt( P_.std_ * P_.std_ + S_.y_1_ * P_.std_mod_ * P_.std_mod_ )
             * V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
       }
@@ -329,9 +329,9 @@ nest::noise_generator::update( Time const& origin, const long from, const long t
     }
 
     // record values
-    for ( AmpVec_::iterator it = B_.amps_.begin(); it != B_.amps_.end(); ++it )
+    for (double & amp : B_.amps_)
     {
-      S_.I_avg_ += *it;
+      S_.I_avg_ += amp;
     }
     S_.I_avg_ /= std::max( 1, int( B_.amps_.size() ) );
     B_.logger_.record_data( origin.get_steps() + offs );
@@ -359,3 +359,35 @@ nest::noise_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::noise_generator::set_data_from_stimulating_backend( std::vector< double > input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.num_targets_ = P_.num_targets_;
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if (input_param.size() != 4 ){
+      throw BadParameterValue("The size of the data for the ac_generator is incorrect.");
+    } else{
+      DictionaryDatum d = DictionaryDatum( new Dictionary );
+      ( *d )[ names::mean ] = DoubleDatum( input_param[ 0 ] );
+      ( *d )[ names::std ] = DoubleDatum( input_param[ 1 ] );
+      ( *d )[ names::std_mod ] = DoubleDatum( input_param[ 2 ] );
+      ( *d )[ names::frequency ] = DoubleDatum( input_param[ 3 ] );
+      ( *d )[ names::phase ] = DoubleDatum( input_param[ 4 ] );
+      ptmp.set( d, *this, this );
+    }
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
+  P_.num_targets_ = ptmp.num_targets_;
+}
+

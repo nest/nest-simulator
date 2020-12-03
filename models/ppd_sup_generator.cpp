@@ -24,7 +24,6 @@
 
 // C++ includes:
 #include <algorithm>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -35,10 +34,8 @@
 #include "kernel_manager.h"
 
 // Includes from sli:
-#include "datum.h"
 #include "dict.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -289,4 +286,33 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
   }
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::ppd_sup_generator::set_data_from_stimulating_backend( std::vector< double > input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if (input_param.size() != 5 ){
+      throw BadParameterValue("The size of the data for the ppd_sup_generator is incorrect.");
+    } else{
+      DictionaryDatum d = DictionaryDatum( new Dictionary );
+      ( *d )[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );
+      ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+      ( *d )[ names::n_proc ] = DoubleDatum( input_param[ 2 ] );
+      ( *d )[ names::frequency ] = DoubleDatum( input_param[ 3 ] );
+      ( *d )[ names::relative_amplitude ] = DoubleDatum( input_param[ 4 ] );
+      ptmp.set( d, this );
+    }
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

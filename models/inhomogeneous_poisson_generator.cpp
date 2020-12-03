@@ -289,3 +289,40 @@ nest::inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
     e.get_receiver().handle( e );
   }
 }
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::inhomogeneous_poisson_generator::set_data_from_stimulating_backend( std::vector< double > rate_time_update )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not rate_time_update.empty() )
+  {
+
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    std::vector< double > times_ms;
+    std::vector< double > rate_values;
+    const size_t n_spikes = P_.rate_times_.size();
+    for ( size_t n = 0; n < n_spikes; ++n )
+    {
+      times_ms.push_back( P_.rate_times_[ n ].get_ms() );
+      rate_values.push_back( P_.rate_values_[ n ] );
+    }
+    for ( size_t n = 0; n < rate_time_update.size() / 2; n++ )
+    {
+      times_ms.push_back( rate_time_update[ n * 2 ] );
+      rate_values.push_back( rate_time_update[ n * 2 + 1 ] );
+    }
+    ( *d )[ names::rate_times ] = DoubleVectorDatum( times_ms );
+    ( *d )[ names::rate_values ] = DoubleVectorDatum( rate_values );
+
+    ptmp.set( d, B_, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
+}

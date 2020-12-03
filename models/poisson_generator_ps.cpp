@@ -34,11 +34,9 @@
 #include "dict_util.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -262,7 +260,6 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   // as long as there are spikes in active period, emit and redraw
   while ( nextspk.first <= V_.t_max_active_ )
   {
-    // std::cerr << nextspk.first << '\t' << nextspk.second << '\n';
     e.set_stamp( nextspk.first );
     e.set_offset( nextspk.second );
     e.get_receiver().handle( e );
@@ -283,5 +280,26 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
       nextspk.second = delta_stamp.get_ms() - new_offset;
     }
   }
-  // std::cerr << "********************************\n";
+}
+
+void
+nest::poisson_generator_ps::set_data_from_stimulating_backend( std::vector< double > input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if (input_param.size() != 2 ){
+      throw BadParameterValue("The size of the data for the poisson_generator_ps is incorrect.");
+    } else{
+      DictionaryDatum d = DictionaryDatum( new Dictionary );
+      ( *d )[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );
+      ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+      ptmp.set( d, this );
+    }
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

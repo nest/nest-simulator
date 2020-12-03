@@ -71,19 +71,9 @@ nest::StimulatingDevice::enforce_single_syn_type( synindex syn_id )
 }
 
 void
-nest::StimulatingDevice::set_data_from_stimulating_backend( std::vector< double > input_spikes )
-{
-}
-
-void
 nest::StimulatingDevice::calibrate()
 {
   Device::calibrate();
-}
-
-void
-nest::StimulatingDevice::update( Time const&, const long, const long )
-{
 }
 
 void
@@ -113,11 +103,7 @@ nest::StimulatingDevice::Parameters_::Parameters_()
 {
 }
 
-nest::StimulatingDevice::Parameters_::Parameters_( const Parameters_& p )
-  : label_( p.label_ )
-  , stimulus_source_( p.stimulus_source_ )
-{
-}
+nest::StimulatingDevice::Parameters_::Parameters_( const Parameters_& p ) = default;
 
 void
 nest::StimulatingDevice::Parameters_::get( DictionaryDatum& d ) const
@@ -144,20 +130,6 @@ nest::StimulatingDevice::Parameters_::set( const DictionaryDatum& d )
   }
 }
 
-nest::StimulatingDevice::State_::State_()
-{
-}
-
-void
-nest::StimulatingDevice::State_::get( DictionaryDatum& d ) const
-{
-}
-
-void
-nest::StimulatingDevice::State_::set( const DictionaryDatum& d )
-{
-}
-
 void
 nest::StimulatingDevice::set_status( const DictionaryDatum& d )
 {
@@ -168,9 +140,6 @@ nest::StimulatingDevice::set_status( const DictionaryDatum& d )
   }
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
-
-  State_ stmp = S_; // temporary copy in case of errors
-  stmp.set( d );    // throws if BadProperty
 
   Device::set_status( d );
 
@@ -187,7 +156,7 @@ nest::StimulatingDevice::set_status( const DictionaryDatum& d )
       }
     }
 
-    if ( not ptmp.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
+    if ( ptmp.stimulus_source_.toString() != names::internal.toString() )
     {
       kernel().io_manager.check_stimulating_backend_device_status( ptmp.stimulus_source_, backend_params );
     }
@@ -205,7 +174,7 @@ nest::StimulatingDevice::set_status( const DictionaryDatum& d )
   }
   else
   {
-    if ( not ptmp.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
+    if ( ptmp.stimulus_source_.toString() != names::internal.toString() )
     {
       kernel().io_manager.enroll_stimulator( ptmp.stimulus_source_, *this, d );
     }
@@ -213,7 +182,6 @@ nest::StimulatingDevice::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
-  S_ = stmp;
 }
 
 
@@ -221,7 +189,6 @@ void
 nest::StimulatingDevice::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  S_.get( d );
 
   Device::get_status( d );
 
@@ -230,7 +197,7 @@ nest::StimulatingDevice::get_status( DictionaryDatum& d ) const
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
     // first get the defaults from the backend
-    if ( not P_.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
+    if ( P_.stimulus_source_.toString() != names::internal.toString() )
     {
       kernel().io_manager.get_stimulating_backend_device_defaults( P_.stimulus_source_, d );
     }
@@ -243,7 +210,7 @@ nest::StimulatingDevice::get_status( DictionaryDatum& d ) const
   }
   else
   {
-    if ( not P_.stimulus_source_.toString().compare( names::internal.toString() ) == 0 )
+    if ( P_.stimulus_source_.toString() != names::internal.toString() )
     {
       kernel().io_manager.get_stimulating_backend_device_status( P_.stimulus_source_, *this, d );
     }

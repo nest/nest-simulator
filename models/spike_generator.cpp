@@ -342,46 +342,6 @@ nest::spike_generator::calibrate()
 /* ----------------------------------------------------------------
  * Other functions
  * ---------------------------------------------------------------- */
-
-void
-nest::spike_generator::update_from_backend( std::vector< double > input_spikes )
-{
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-
-  const Time& origin = StimulatingDevice::get_origin();
-  // For the input backend
-  if ( not input_spikes.empty() )
-  {
-
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    std::vector< double > times_ms;
-    const size_t n_spikes = P_.spike_stamps_.size();
-    for ( size_t n = 0; n < n_spikes; ++n )
-    {
-      times_ms.push_back( P_.spike_stamps_[ n ].get_ms() );
-      if ( ptmp.precise_times_ )
-      {
-        times_ms[ n ] -= ptmp.spike_offsets_[ n ];
-      }
-    }
-    for ( double input_spike : input_spikes )
-    {
-      times_ms.push_back( input_spike );
-      if ( ptmp.precise_times_ )
-      {
-        throw BadProperty( "Option precise_times is not supported in this context\n" );
-      }
-    }
-    ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
-
-    ptmp.set( d, S_, origin, Time::step( times_ms[ times_ms.size() - 1 ] ), this );
-  }
-
-  // if we get here, temporary contains consistent set of properties
-  P_ = ptmp;
-}
-
-
 void
 nest::spike_generator::update( Time const& sliceT0, const long from, const long to )
 {
@@ -459,39 +419,41 @@ nest::spike_generator::event_hook( DSSpikeEvent& e )
   e.get_receiver().handle( e );
 }
 
-// inline
 void
-nest::spike_generator::set_status( const DictionaryDatum& d )
+nest::spike_generator::set_data_from_stimulating_backend( std::vector< double > input_spikes )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
-  // To detect "now" spikes and shift them, we need the origin. In case
-  // it is set in this call, we need to extract it explicitly here.
-  Time origin;
-  double v;
-  if ( updateValue< double >( d, names::origin, v ) )
+  const Time& origin = StimulatingDevice::get_origin();
+  // For the input backend
+  if ( not input_spikes.empty() )
   {
-    origin = Time::ms( v );
-  }
-  else
-  {
-    origin = StimulatingDevice::get_origin();
-  }
 
-  // throws if BadProperty
-  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time(), this );
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    std::vector< double > times_ms;
+    const size_t n_spikes = P_.spike_stamps_.size();
+    for ( size_t n = 0; n < n_spikes; ++n )
+    {
+      times_ms.push_back( P_.spike_stamps_[ n ].get_ms() );
+      if ( ptmp.precise_times_ )
+      {
+        times_ms[ n ] -= ptmp.spike_offsets_[ n ];
+      }
+    }
+    for ( double input_spike : input_spikes )
+    {
+      times_ms.push_back( input_spike );
+      if ( ptmp.precise_times_ )
+      {
+        throw BadProperty( "Option precise_times is not supported in this context\n" );
+      }
+    }
+    ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
 
-  // We now know that ptmp is consistent. We do not write it back
-  // to P_ before we are also sure that the properties to be set
-  // in the parent class are internally consistent.
-  StimulatingDevice::set_status( d );
+    ptmp.set( d, S_, origin, Time::step( times_ms[ times_ms.size() - 1 ] ), this );
+  }
 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
 
-nest::StimulatingDevice::Type
-get_type()
-{
-  return nest::StimulatingDevice::SPIKE_GENERATOR;
-}

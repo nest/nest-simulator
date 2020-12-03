@@ -27,15 +27,10 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from libnestutil:
-#include "dict_util.h"
-
 // Includes from sli:
 #include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -109,9 +104,9 @@ nest::step_current_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   std::vector< double >* times_ms = new std::vector< double >();
   times_ms->reserve( amp_time_stamps_.size() );
-  for ( std::vector< Time >::const_iterator it = amp_time_stamps_.begin(); it != amp_time_stamps_.end(); ++it )
+  for (auto amp_time_stamp : amp_time_stamps_)
   {
-    times_ms->push_back( it->get_ms() );
+    times_ms->push_back( amp_time_stamp.get_ms() );
   }
   ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ names::amplitude_values ] = DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
@@ -331,7 +326,7 @@ nest::step_current_generator::handle( DataLoggingRequest& e )
  * Other functions
  * ---------------------------------------------------------------- */
 void
-nest::step_current_generator::update_from_backend( std::vector< double > time_amplitude )
+nest::step_current_generator::set_data_from_stimulating_backend( std::vector< double > time_amplitude )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

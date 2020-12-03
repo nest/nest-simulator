@@ -96,24 +96,8 @@ public:
   step_current_generator();
   step_current_generator( const step_current_generator& );
 
-  bool
-  has_proxies() const override
-  {
-    return false;
-  }
-
   //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const override
-  {
-    return true;
-  }
-
-  Name
-  get_element_type() const override
-  {
-    return names::stimulator;
-  }
+  bool local_receiver() const override;
 
   port send_test_event( Node&, rport, synindex, bool ) override;
 
@@ -127,13 +111,9 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  void update_from_backend( std::vector< double > input_spikes );
+  void set_data_from_stimulating_backend( std::vector< double > input_spikes ) override;
 
-  StimulatingDevice::Type
-  get_type() const override
-  {
-    return StimulatingDevice::Type::CURRENT_GENERATOR;
-  };
+  StimulatingDevice::Type get_type() const override;
 
 private:
   void init_state_( const Node& ) override;
@@ -184,7 +164,6 @@ private:
 
     State_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   };
 
   // ------------------------------------------------------------
@@ -266,6 +245,18 @@ step_current_generator::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
+//! Allow multimeter to connect to local instances
+inline bool
+step_current_generator::local_receiver() const
+{
+  return true;
+}
+
+inline StimulatingDevice::Type
+step_current_generator::get_type() const
+{
+  return StimulatingDevice::Type::CURRENT_GENERATOR;
+}
 } // namespace
 
 #endif /* #ifndef STEP_CURRENT_GENERATOR_H */

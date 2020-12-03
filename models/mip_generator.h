@@ -121,18 +121,6 @@ public:
    */
   mip_generator( const mip_generator& rhs );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
-
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
-
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -140,28 +128,25 @@ public:
    */
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  StimulatingDevice::Type
-  get_type() const override
-  {
-    return StimulatingDevice::Type::SPIKE_GENERATOR;
-  };
+  StimulatingDevice::Type get_type() const override;
+  void set_data_from_stimulating_backend( std::vector< double > input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_( const Node& ) override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   /**
    * @todo Should use binomial distribution
    */
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   // ------------------------------------------------------------
 
@@ -239,6 +224,12 @@ mip_generator::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+inline StimulatingDevice::Type
+mip_generator::get_type() const
+{
+return StimulatingDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace nest

@@ -216,3 +216,29 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
 
   e.set_multiplicity( n_mother_spikes );
 }
+
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+void
+nest::mip_generator::set_data_from_stimulating_backend( std::vector< double > input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if (input_param.size() != 2 ){
+      throw BadParameterValue("The size of the data for the ac_generator is incorrect.");
+    } else{
+      DictionaryDatum d = DictionaryDatum( new Dictionary );
+      ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );
+      ( *d )[ names::p_copy ] = DoubleDatum( input_param[ 1 ] );
+      ptmp.set( d, this );
+    }
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
+}

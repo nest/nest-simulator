@@ -69,7 +69,12 @@ The model supports connections to other rate models with zero
 delay, and uses the secondary_event concept introduced with the
 gap-junction framework.
 
-TODO: document numerical implementation
+Remarks:
+
+For details on the numerical solution of the Siegert integral, you can
+check out the `Siegert neuron integration
+<https://github.com/nest/nest-simulator/blob/master/doc/model_details/siegert_neuron_integration.ipynb>`_
+notebook in the NEST source code.
 
 Parameters
 ++++++++++

@@ -229,25 +229,31 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   // Effective shift of threshold and reset due to colored noise:
   // alpha = |zeta(1/2)|*sqrt(2) with zeta being the Riemann zeta
   // function (Fourcaud & Brunel, 2002)
-  double alpha = 2.0652531522312172;
+  const double alpha = 2.0652531522312172;
   double threshold_shift = alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
   // Scaled and shifted threshold and reset
   double y_th = ( P_.theta_ - mu ) / sigma + threshold_shift;
   double y_r = ( P_.V_reset_ - mu ) / sigma + threshold_shift;
 
+  // Prepare numerical integration
   double integral, result, error;
+  const size_t max_subintervals = 1000;
   double erfcx_scale = 1.0;
   gsl_function F;
   F.function = &erfcx;
   F.params = &erfcx_scale;
+  // Error tolerances for numerical integration, 1.49e-8 is approximately
+  // machine precision for single-precision floats, i.e. 2^(-26).
+  const double err_abs = 0.0;
+  const double err_rel = 1.49e-8;
 
   // Evaluate integral of exp( s^2 ) * ( 1 + erf( s ) ) from y_r to y_th
   // depending on the sign of y_th and y_r. Uses the scaled complementary
   // error function erfcx( s ) = exp( s^2 ) * erf( s ).
   if ( y_r > 0. )
   {
-    gsl_integration_qags( &F, y_r, y_th, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
+    gsl_integration_qags( &F, y_r, y_th, err_abs, err_rel, max_subintervals, gsl_w_, &result, &error );
     integral = 2. * gsl_sf_dawson( y_th ) - 2. * exp( y_r * y_r - y_th * y_th ) * gsl_sf_dawson( y_r )
       - exp( -y_th * y_th ) * result;
     // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
@@ -255,14 +261,14 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   }
   else if ( y_th < 0. )
   {
-    gsl_integration_qags( &F, -y_th, -y_r, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
+    gsl_integration_qags( &F, -y_th, -y_r, err_abs, err_rel, max_subintervals, gsl_w_, &result, &error );
     integral = result;
     // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
     return 1e3 * 1. / ( P_.t_ref_ + P_.tau_m_ * std::sqrt( M_PI ) * integral );
   }
   else
   {
-    gsl_integration_qags( &F, y_th, -y_r, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
+    gsl_integration_qags( &F, y_th, -y_r, err_abs, err_rel, max_subintervals, gsl_w_, &result, &error );
     integral = 2. * gsl_sf_dawson( y_th ) + exp( -y_th * y_th ) * result;
     // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
     return 1e3 * exp( -y_th * y_th ) / ( exp( -y_th * y_th ) * P_.t_ref_ + P_.tau_m_ * std::sqrt( M_PI ) * integral );

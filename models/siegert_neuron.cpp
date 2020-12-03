@@ -55,14 +55,14 @@ struct my_params
 };
 
 /* ----------------------------------------------------------------
- * Scaled complementary error function erfcx(x) = exp(x^2) * erf(x)
+ * Scaled complementary error function erfcx(x) = exp(x^2) * erfc(x)
  * ---------------------------------------------------------------- */
 
 double
 erfcx( double x, void* p )
 {
   double scale = *( double* ) p;
-  return exp( scale * scale * x * x + gsl_sf_log_erfc( scale * x ) );
+  return exp( scale * scale * x * x + gsl_sf_log_erfc( x ) );
 }
 
 namespace nest

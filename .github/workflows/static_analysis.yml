@@ -18,7 +18,7 @@ jobs:
           architecture: 'x64'
         env: 
           xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS
-        run: python -c "import sys; print(sys.version)"
+        #run: python -c "import sys; print(sys.version)"
         
       - name: Install dependencies
         run: |

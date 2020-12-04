@@ -1,0 +1,31 @@
+name: CI Test
+
+# Controls when the action will run. 
+on: push
+jobs:
+  Static-Check:
+    name: Static-Code-Analysis
+    runs-on: ubuntu-latest
+    env: xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+        # Semantic version range syntax or exact version of a Python version
+          python-version: '3.x'
+        # Optional - x64 or x86 architecture, defaults to x64
+          architecture: 'x64'
+        env: 
+          xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS
+        run: python -c "import sys; print(sys.version)"
+        
+      - name: Install dependencies
+        run: |
+           python -m pip install --upgrade pip setuptools
+           python -m pip install scipy junitparser mpi4py numpy nose cython matplotlib terminaltables
+           pip list
+           g++ --version
+           chmod +x extras/travis_build.sh
+           set -o pipefail
+           ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log

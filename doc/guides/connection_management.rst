@@ -268,7 +268,7 @@ dictionary specifying the synapse parameters in more detail.
     A = nest.Create('iaf_psc_alpha', n)
     B = nest.Create('iaf_psc_alpha', n)
     nest.Connect(A, B, syn_spec='static_synapse')
-    
+
     syn_spec_dict = {'synapse_model': 'stdp_synapse', 'weight': 2.5, 'delay': 0.5})
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
@@ -672,7 +672,7 @@ more detailed information about each of them can be found in the
    Not all nodes can be connected via all available synapse types. The
    events a synapse type is able to transmit is documented in the
    ``Transmits`` section of the model documentation.
-     
+
 All synapses store their parameters on a per-connection basis.
 However, each of the built-in models is registered with the simulation
 kernel in a number of different ways that slightly modify the
@@ -748,7 +748,7 @@ like what was intended, it is oftentimes useful to inspect the
 connections in the network. For this, NEST provides the function
 
 ::
-   
+
   nest.GetConnections(source=None, target=None, synapse_model=None, synapse_label=None)
 
 This function returns a ``SynapseCollection`` object that contains the

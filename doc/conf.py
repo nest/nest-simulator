@@ -42,7 +42,7 @@ doc_path = Path(__file__).resolve().parent
 root_path = (doc_path / "..").resolve()
 
 build_path = Path(os.environ['OLDPWD'])
-if os.environ['READTHEDOCS'] == 'True':
+if os.environ.get('READTHEDOCS', 'False') == 'True':
     build_path = doc_path
 
 print("build_path", str(build_path))

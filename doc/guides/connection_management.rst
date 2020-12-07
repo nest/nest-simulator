@@ -11,21 +11,24 @@ Connections between populations of neurons and between neurons and
 devices for stimulation and recording in NEST are created with the
 ``Connect()`` function. Although each connection is internally
 represented individually, you can use a single call to ``Connect()``
-to create many connections at the same time.
+to create many connections at the same time. In the simplest case, the
+function takes two NodeCollections containing the source and target
+nodes that will be connected in an all-to-all fashion. These two first
+arguments are mandatory.
 
 Each call to the function will establish the connectivity between pre-
 and post-synaptic populations according to a certain pattern or
 rule. The desired pattern is specified by simply stating the rule name
-as third argument to ``Connect()``, or by setting the key *rule* in
-the *connectivity specification* dictionary ``conn_spec``, alongside
+as third argument to ``Connect()``, or by setting the key `rule` in
+the `connectivity specification` dictionary ``conn_spec`` alongside
 additional rule-specific parameters. All available patterns are
 described in the section :ref:`Connection Rules <conn_rules>` below.
 
-To specify the properties for the individual connections, a *synapse
-specification* ``syn_spec`` can be given to ``Connect()``. This can
+To specify the properties for the individual connections, a `synapse
+specification` ``syn_spec`` can be given to ``Connect()``. This can
 also just be a the name of the synapse model to be used, an object
 defining :ref:`collocated synapses <collocated_synapses>`, or a
-dictionary, with the mandatory key *synapse_model* as well as optional
+dictionary, with the mandatory key `synapse_model` as well as optional
 parameters for the connections. The ``syn_spec`` is given as the
 fourth argument to the ``Connect()`` function. Parameters like the
 synaptic weight or delay can be either set values or drawn and
@@ -87,8 +90,8 @@ Connection rules are specified using the ``conn_spec`` parameter of
 rule, or a dictionary containing a rule specification. Only connection
 rules requiring no parameters can be given as strings, for all other
 rules, a dictionary specifying the rule and its parameters is
-required. Examples for such parameters might be in- or out-degrees, or
-a probability for establishing a connection.
+required. Examples for such parameters might be in- and out-degrees,
+or the probability for establishing a connection.
 
 all-to-all
 ~~~~~~~~~~
@@ -106,7 +109,7 @@ specified.
     n, m = 10, 12
     A = nest.Create('iaf_psc_alpha', n)
     B = nest.Create('iaf_psc_alpha', m)
-    nest.Connect(A, B, 'all-to-all')
+    nest.Connect(A, B, 'all_to_all')
     nest.Connect(A, B)  # equivalent
 
 .. _conn_builder_conngen:
@@ -130,18 +133,20 @@ pattern in a library-specific way. The Connection Generator is handed
 to ``Connect()`` under the key `cg` of the connection specification
 dictionary and evaluated internally. If the Connection Generator
 provides values for connection weights and delays, their respective
-indices can be specified under the key `params_map`.
+indices can be specified under the key `params_map`. Alternatively,
+all synapse parameters can be specified using the synapse
+specification argument to ``Connect()``
 
 The following listing shows an example for using the `Connection-Set
 Algebra <https://github.com/INCF/csa>`_ in NEST via the Connection
 Generator Interface and randomly connects 10% of the neurons from
-``pre`` to the neurons in ``post``, each connection having a weight of
+``A`` to the neurons in ``B``, each connection having a weight of
 10000.0 pA and a delay of 1.0 ms:
 
 ::
 
-   pre = nest.Create('iaf_psc_alpha', 100)
-   post = nest.Create('iaf_psc_alpha', 100)
+   A = nest.Create('iaf_psc_alpha', 100)
+   B = nest.Create('iaf_psc_alpha', 100)
 
    # Create the Connection Generator object
    import csa
@@ -150,8 +155,8 @@ Generator Interface and randomly connects 10% of the neurons from
    # Map weight and delay indices to vaules from cg
    params_map = {'weight': 0, 'delay': 1}
 
-   conn_dict = {'rule': 'conngen', 'cg': cg, 'params_map': params_map}
-   nest.Connect(pre, post, conn_dict)
+   conn_spec_dict = {'rule': 'conngen', 'cg': cg, 'params_map': params_map}
+   nest.Connect(A, B, conn_spec_dict)
 
 fixed indegree
 ~~~~~~~~~~~~~~
@@ -168,8 +173,8 @@ that each node in ``B`` has a fixed `indegree` of ``N``.
     n, m, N = 10, 12, 2
     A = nest.Create('iaf_psc_alpha', n)
     B = nest.Create('iaf_psc_alpha', m)
-    conn_dict = {'rule': 'fixed_indegree', 'indegree': N}
-    nest.Connect(A, B, conn_dict)
+    conn_spec_dict = {'rule': 'fixed_indegree', 'indegree': N}
+    nest.Connect(A, B, conn_spec_dict)
 
 fixed outdegree
 ~~~~~~~~~~~~~~~
@@ -186,13 +191,13 @@ that each node in ``A`` has a fixed `outdegree` of ``N``.
     n, m, N = 10, 12, 2
     A = nest.Create('iaf_psc_alpha', n)
     B = nest.Create('iaf_psc_alpha', m)
-    conn_dict = {'rule': 'fixed_outdegree', 'outdegree': N}
-    nest.Connect(A, B, conn_dict)
+    conn_spec_dict = {'rule': 'fixed_outdegree', 'outdegree': N}
+    nest.Connect(A, B, conn_spec_dict)
 
 fixed total number
 ~~~~~~~~~~~~~~~~~~
 
-The nodes in ``pre`` are randomly connected with the nodes in ``post``
+The nodes in ``pre`` are randomly connected with the nodes in ``B``
 such that the total number of connections equals ``N``.
 
 ::
@@ -200,8 +205,8 @@ such that the total number of connections equals ``N``.
     n, m, N = 10, 12, 30
     A = nest.Create('iaf_psc_alpha', n)
     B = nest.Create('iaf_psc_alpha', m)
-    conn_dict = {'rule': 'fixed_total_number', 'N': N}
-    nest.Connect(A, B, conn_dict)
+    conn_spec_dict = {'rule': 'fixed_total_number', 'N': N}
+    nest.Connect(A, B, conn_spec_dict)
 
 one-to-one
 ~~~~~~~~~~
@@ -232,8 +237,8 @@ created with probability ``p``.
     n, m, p = 10, 12, 0.2
     A = nest.Create('iaf_psc_alpha', n)
     B = nest.Create('iaf_psc_alpha', m)
-    conn_dict = {'rule': 'pairwise_bernoulli', 'p': p}
-    nest.Connect(A, B, conn_dict)
+    conn_spec_dict = {'rule': 'pairwise_bernoulli', 'p': p}
+    nest.Connect(A, B, conn_spec_dict)
 
 symmetric pairwise bernoulli
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -241,17 +246,17 @@ symmetric pairwise bernoulli
 For each possible pair of nodes from ``A`` and ``B``, a connection is
 created with probability ``p`` from ``A`` to ``B``, as well as a
 connection from ``B`` to ``A`` (two connections in total). To use the
-'symmetric_pairwise_bernoulli' rule, ``allow_autapses`` must be
-`False`, and ``make_symmetric`` must be `True`.
+this rule, ``allow_autapses`` must be `False`, and ``make_symmetric``
+must be `True`.
 
 ::
 
     n, m, p = 10, 12, 0.2
     A = nest.Create('iaf_psc_alpha', n)
     B = nest.Create('iaf_psc_alpha', m)
-    conn_dict = {'rule': 'symmetric_pairwise_bernoulli', 'p': p,
+    conn_spec_dict = {'rule': 'symmetric_pairwise_bernoulli', 'p': p,
                  'allow_autapses': False, 'make_symmetric': True}
-    nest.Connect(A, B, conn_dict)
+    nest.Connect(A, B, conn_spec_dict)
 
 .. _synapse_spec:
 
@@ -272,15 +277,16 @@ dictionary specifying the synapse parameters in more detail.
     syn_spec_dict = {'synapse_model': 'stdp_synapse', 'weight': 2.5, 'delay': 0.5})
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
-Specifying the synapse properties as a collocated synapses or in a
-single dictionary allows to draw synaptic parameters from random
-distributions and combine such parameters flexibly. In addition to the
-key ``synapse_model``, the dictionary can contain specifications for
-``weight``, ``delay``, ``receptor_type`` (see :ref:`receptor-types`
-for details) and parameters specific to the chosen synapse model. The
-specification of all parameters is optional and unspecified parameters
-will take on the default values of the chosen synapse model. These
-defaults can be inspected using ``nest.GetDefaults(synapse_model)``.
+Specifying the synapse properties in a single dictionary or as
+:ref:`collocated synapses <collocated_synapses>` allows to draw
+synaptic parameters from random distributions and combine such
+parameters flexibly. In addition to the key ``synapse_model``, the
+dictionary can contain specifications for ``weight``, ``delay``,
+``receptor_type`` (see :ref:`receptor-types` for details) and
+parameters specific to the chosen synapse model. The specification of
+all parameters is optional and unspecified parameters will take on the
+default values of the chosen synapse model that can be inspected using
+``nest.GetDefaults(synapse_model)``.
 
 All parameters can be either scalars, arrays or distributions
 (specified as a ``nest.Parameter``). One synapse dictionary can
@@ -317,8 +323,8 @@ specified as arrays of the correct type.
 all-to-all
 ^^^^^^^^^^
 
-When connecting ``all_to_all``, the array parameter must have
-dimension `len(post) x len(pre)`.
+When connecting with rule ``all_to_all``, the array parameter must
+have dimension `len(B) x len(A)`.
 
 ::
 
@@ -331,7 +337,7 @@ fixed indegree
 ^^^^^^^^^^^^^^
 
 For rule ``fixed_indegree`` the array has to be a two-dimensional
-NumPy array or Python list with shape `(len(post), indegree)`, where
+NumPy array or Python list with shape `(len(B), indegree)`, where
 `indegree` is the number of incoming connections per target neuron.
 This means that the rows describe the target, while the columns
 represent the connections converging on the target neuron, regardless
@@ -462,14 +468,28 @@ For further information on the available distributions see
 Collocated synapses
 ~~~~~~~~~~~~~~~~~~~
 
-Sometimes it is useful to create several connections with different
-synapse types simultaneously. To create such `collocated synapses`, an
-object of type ``CollocatedSynapses`` must be used as the ``syn_spec``
-in the call to ``Connect``. The constructor ``CollocatedSynapses()``
-takes synapse specification dictionaries as arguments and the given
-dictionaries will be applied to each source-target pair.
+Some modeling applications require multiple connections between the
+same pairs of nodes. An example of this could be a network, where each
+pre-synaptic neuron connects with a static synapse to a modulatory
+receptor on the post-synaptic neuron and with a plastic synapse to a
+normal NMDA-type receptor.
 
-  ::
+This type of connectivity is especially hard to realize when using
+randomized connection rules, as the chosen pairs that are actually
+connected are only known internally, or have to be retrieved manually
+after the call to ``Connect()`` returns.
+
+To ease the setup of such connectivity patterns, NEST supports a
+concept called `collocated synapses`. This allows to create several
+connections between chosen pairs of neurons (possibly with different
+synapse types or parameters) in a single call to ``nest.Connect()``.
+
+To create collocated synapses, the synapse specification consists of
+an object of type ``CollocatedSynapses``, whose constructor takes
+synapse specification dictionaries as arguments and applies the given
+dictionaries to each source-target pair internally.
+
+::
 
     nodes = nest.Create('iaf_psc_alpha', 3)
     syn_spec = nest.CollocatedSynapses({'weight': 4.0, 'delay': 1.5},
@@ -478,20 +498,23 @@ dictionaries will be applied to each source-target pair.
     nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
     print(nest.GetConnections().alpha)
 
-The example above will create 9 connections in total.
-* 3 use the default model ``static_synapse`` with a `weight` of 4.0
-  and `delay` of 1.5
-* 6 use the model `stdp_synapse`. Of these,
-  * 3 will have the default value for parameter `alpha`
-  * 3 will have an `alpha` of 3.0.
+The example above will create 9 connections in total because there are
+3 neurons times 3 synapse specifications in the ``CollocatedSynapses``
+object.
 
   >>> print(nest.GetKernelStatus('num_connections'))
   9
 
+In more detail, the connections have the following properties:
+
+* 3 are of type ``static_synapse`` with `weight` 4.0 and `delay` 1.5
+* 3 are of type ``stdp_synapse`` with the default value for `alpha`
+* 3 are of type ``stdp_synapse`` with an `alpha` of 3.0.
+
 If you want to connect with different :ref:`receptor types
 <receptor-types>`, you can do the following:
 
-  ::
+::
 
     A = nest.Create('iaf_psc_exp_multisynapse', 7)
     B = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1 + i for i in range(7)]})
@@ -509,17 +532,19 @@ your `CollocatedSynapses` object:
 Spatially-structured networks
 -----------------------------
 
-If nodes are created so that they have a spatial arrangement, it is
-possible to create connections with attributes based on the nodes'
-positions. See :doc:`Spatially-structured networks <spatial/index>`
-for more information about how to create such networks.
+Nodes in NEST can be created so that they have a position in two- or
+three-dimentsional space. To take full advantage of the arrangement of
+nodes, connection parameters can be based on the nodes' positions or
+their spatial relation to each other. See :doc:`Spatially-structured
+networks <spatial/index>` for the full information about how to create
+and connect such networks.
 
 Connecting sparse matrices with array indexing
 ----------------------------------------------
 
 Oftentimes, you will find yourself in a situation, where you want to
-base your connectivity on actual data instead of on rules. A common
-situation here is that you have a (sometimes sparse) connection matrix
+base your connectivity on actual data instead of rules. A common
+scenario is that you have a (sometimes sparse) connection matrix
 coming from an experiment or from a graph algorithm. Let's assume you
 have a weight matrix of the form:
 
@@ -532,16 +557,16 @@ have a weight matrix of the form:
     w_{1m} & w_{2m} & \cdots & w_{nm} \\
     \end{bmatrix}
 
-where :math:`w_{ij}` is the weight of the connection with presynaptic
-node :math:`i` and postsynaptic node :math:`j`. In all generality, we
+where :math:`w_{ij}` is the weight of the connection with pre-synaptic
+node :math:`i` and post-synaptic node :math:`j`. In all generality, we
 can assume that some weights are zero, indicating that there is no
 connection at all.
 
 As there is no support for creating connections from the whole matrix
-directly, we will instead just iterate the presynaptic neurons and
+directly, we will instead just iterate the pre-synaptic neurons and
 connect one column at a time. We assume that there are :math:`n`
-presynaptic nodes in the NodeCollection ``A`` and :math:`m`
-postsynaptic nodes in ``B``. We also assume that we have our weight
+pre-synaptic nodes in the NodeCollection ``A`` and :math:`m`
+post-synaptic nodes in ``B``. We also assume that we have our weight
 matrix given as a two-dimensional NumPy array `W`, with :math:`n`
 columns and :math:`m` rows.
 
@@ -559,7 +584,7 @@ columns and :math:`m` rows.
         weights = W[:, i]
 
         # To only connect pairs with a nonzero weight, we use array
-	# indexing to extract the weights and postsynaptic neurons.
+	# indexing to extract the weights and post-synaptic neurons.
         nonzero_indices = numpy.where(weights != 0)[0]
         weights = weights[nonzero_indices]
         post = B[nonzero_indices]
@@ -589,11 +614,12 @@ synaptic parameters available for each receptor. Please refer to the
 :doc:`model documentation <../models/index_neuron>` for details.
 
 In order to connect a pre-synaptic node to a certain receptor on a
-post-synaptic node, the integer ID of the receptor is given under the
-key ``receptor_type`` in the ``syn_spec`` dictionary when calling
-``Connect()``. If unspecified, the receptor will take on its default
-of 0. If you request a receptor that is not available in the target
-node, this will result in an error.
+post-synaptic node, the integer ID of the target receptor can be
+supplied under the key ``receptor_type`` in the ``syn_spec``
+dictionary during the call to ``Connect()``. If unspecified, the
+receptor will take on its default value of 0. If you request a
+receptor that is not available in the target node, this will result in
+a runtime error.
 
 To illustrate the concept of receptors in more detail, the following
 example shows how to connect several ``iaf_psc_alpha`` neurons to the
@@ -630,20 +656,20 @@ receptors.
     nest.Connect(A3, B, syn_spec={'receptor_type': receptors['proximal_exc']})
     nest.Connect(A4, B, syn_spec={'receptor_type': receptors['soma_inh']})
 
-In the example above, we inspect the receptors of the model by calling
-``nest.GetDefaults('iaf_cond_alpha_mc')['receptor_types']``.  This
-functionality is, however, only available for models with a predefined
-number of receptors, while models with a variable number of receptors
-usually don't provide such an enumeration.
+In the example above, we retrieve a map of available receptors and
+their IDs by extracting the `receptor_types` property from the model
+defaults. This functionality is, however, only available for models
+with a predefined number of receptors, while models with a variable
+number of receptors usually don't provide such an enumeration.
 
 An example for the latter are the `*_multisynapse` neuron models that
 support multiple individual synaptic time constants for the different
-receptors. In these models, the number of available receptors is
-determined by the length of the ``tau_syn`` vector that is supplied to
-the model instance. The following code snippet shows the setup and
-connection of such a model in more detail:
+receptors. In these models, the number of available receptors is not
+predefined, but determined only by the length of the ``tau_syn``
+vector that is supplied to the model instance. The following example
+shows the setup and connection of such a model in more detail:
 
-  ::
+::
 
     A = nest.Create('iaf_psc_alpha')
     B = nest.Create('iaf_psc_exp_multisynapse', params={'tau_syn': [0.1, 0.2, 0.3]})

@@ -104,11 +104,12 @@ public:
    * Assignment constructor.
    */
   Position& operator=( const Position& other ) = default;
+  Position& operator=( const std::vector< T >& y );
 
   /**
    * Move assignment constructor.
    */
-  Position& operator=( const Position&& other );
+  Position& operator=( Position&& other ) = default;
 
   /**
    * @returns an element (coordinate) of the Position
@@ -462,12 +463,14 @@ inline Position< D, T >::Position( Position&& other )
 }
 
 template < int D, class T >
-inline Position< D, T >& Position< D, T >::operator=( const Position&& other )
+inline Position< D, T >& Position< D, T >::operator=( const std::vector< T >& y )
 {
-  if ( this != &other )
+  if ( y.size() != D )
   {
-    x_ = std::move( other.x_ );
+    throw BadProperty( String::compose( "Expected a %1-dimensional position.", D ) );
   }
+  std::copy( y.begin(), y.end(), x_.begin() );
+
   return *this;
 }
 

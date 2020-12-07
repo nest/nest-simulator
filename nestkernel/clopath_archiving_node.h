@@ -40,25 +40,25 @@ namespace nest
 {
 
 /**
- * \class Clopath_Archiving_Node
+ * \class ClopathArchivingNode
  * a archiving node which additionally archives parameters
  * and buffers needed for the Clopath plasticity rule
  */
-class Clopath_Archiving_Node : public Archiving_Node
+class ClopathArchivingNode : public ArchivingNode
 {
 
 public:
   /**
-   * \fn Clopath_Archiving_Node()
+   * \fn ClopathArchivingNode()
    * Constructor.
    */
-  Clopath_Archiving_Node();
+  ClopathArchivingNode();
 
   /**
-   * \fn Clopath_Archiving_Node()
+   * \fn ClopathArchivingNode()
    * Copy Constructor.
    */
-  Clopath_Archiving_Node( const Clopath_Archiving_Node& );
+  ClopathArchivingNode( const ClopathArchivingNode& );
 
   /**
    * \fn double get_LTD_value(long t)
@@ -148,13 +148,13 @@ private:
 };
 
 inline double
-Clopath_Archiving_Node::get_theta_plus() const
+ClopathArchivingNode::get_theta_plus() const
 {
   return theta_plus_;
 }
 
 inline double
-Clopath_Archiving_Node::get_theta_minus() const
+ClopathArchivingNode::get_theta_minus() const
 {
   return theta_minus_;
 }

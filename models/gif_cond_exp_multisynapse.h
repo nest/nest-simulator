@@ -58,7 +58,7 @@ Description
 
 gif_cond_exp_multisynapse is the generalized integrate-and-fire neuron
 according to Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with
-post-synaptic conductances in the form of truncated exponentials.
+postsynaptic conductances in the form of truncated exponentials.
 
 This model features both an adaptation current and a dynamic threshold for
 spike-frequency adaptation. The membrane potential (V) is described by the
@@ -212,7 +212,7 @@ pp_psc_delta, gif_cond_exp, iaf_psc_exp_multisynapse, gif_psc_exp_multisynapse
 
 EndUserDocs */
 
-class gif_cond_exp_multisynapse : public Archiving_Node
+class gif_cond_exp_multisynapse : public ArchivingNode
 {
 
 public:
@@ -489,7 +489,7 @@ gif_cond_exp_multisynapse::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -505,7 +505,7 @@ gif_cond_exp_multisynapse::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

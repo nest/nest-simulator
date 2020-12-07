@@ -44,7 +44,7 @@ Short description
 +++++++++++++++++
 
 Current-based leaky integrate-and-fire neuron model with delta-shaped
-post-synaptic currents - precise spike timing version
+postsynaptic currents - precise spike timing version
 
 Description
 +++++++++++
@@ -156,7 +156,7 @@ iaf_psc_delta, iaf_psc_exp_ps
 
 EndUserDocs */
 
-class iaf_psc_delta_ps : public Archiving_Node
+class iaf_psc_delta_ps : public ArchivingNode
 {
 
 public:
@@ -445,7 +445,7 @@ iaf_psc_delta_ps::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -462,7 +462,7 @@ iaf_psc_delta_ps::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -164,7 +164,7 @@ nest::iaf_chs_2007::Buffers_::Buffers_( const Buffers_&, iaf_chs_2007& n )
  * ---------------------------------------------------------------- */
 
 nest::iaf_chs_2007::iaf_chs_2007()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -173,7 +173,7 @@ nest::iaf_chs_2007::iaf_chs_2007()
 }
 
 nest::iaf_chs_2007::iaf_chs_2007( const iaf_chs_2007& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -205,7 +205,7 @@ nest::iaf_chs_2007::init_buffers_()
   B_.spikes_ex_.clear(); // includes resize
   B_.currents_.clear();  // includes resize
   B_.logger_.reset();
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void

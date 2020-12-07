@@ -68,7 +68,7 @@ Description
 +++++++++++
 
 aeif_psc_exp is the adaptive exponential integrate and fire neuron
-according to Brette and Gerstner (2005), with post-synaptic currents
+according to Brette and Gerstner (2005), with postsynaptic currents
 in the form of truncated exponentials.
 
 This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
@@ -170,7 +170,7 @@ iaf_psc_exp, aeif_cond_exp
 
 EndUserDocs */
 
-class aeif_psc_exp : public Archiving_Node
+class aeif_psc_exp : public ArchivingNode
 {
 
 public:
@@ -405,7 +405,7 @@ aeif_psc_exp::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -422,7 +422,7 @@ aeif_psc_exp::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

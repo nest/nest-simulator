@@ -81,7 +81,7 @@ nest::MPIManager::MPIManager()
 #ifndef HAVE_MPI
 
 void
-nest::MPIManager::init_mpi( int* argc, char** argv[] )
+nest::MPIManager::init_mpi( int*, char*** )
 {
   // if ! HAVE_MPI, initialize process entries for 1 rank
   // use 2 processes entries (need at least two
@@ -224,13 +224,11 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 }
 
-/**
- * Finish off MPI routines
- */
+#ifdef HAVE_MPI
+
 void
 nest::MPIManager::mpi_finalize( int exitcode )
 {
-#ifdef HAVE_MPI
   MPI_Type_free( &MPI_OFFGRID_SPIKE );
 
   int finalized;
@@ -251,9 +249,16 @@ nest::MPIManager::mpi_finalize( int exitcode )
       mpi_abort( exitcode );
     }
   }
-#endif /* #ifdef HAVE_MPI */
 }
 
+#else /* #ifdef HAVE_MPI */
+
+void
+nest::MPIManager::mpi_finalize( int )
+{
+}
+
+#endif /* #ifdef HAVE_MPI */
 
 #ifdef HAVE_MPI
 
@@ -1035,22 +1040,22 @@ nest::MPIManager::communicate( double send_val, std::vector< double >& recv_buff
 }
 
 void
-nest::MPIManager::communicate( std::vector< long >& send_buffer, std::vector< long >& recv_buffer )
+nest::MPIManager::communicate( std::vector< long >&, std::vector< long >& )
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( double buffer )
+nest::MPIManager::communicate_Allreduce_sum_in_place( double )
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& buffer )
+nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& )
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& buffer )
+nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& )
 {
 }
 
@@ -1061,7 +1066,7 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
 }
 
 void
-nest::MPIManager::communicate_Allreduce_max_in_place( std::vector< long >& buffer )
+nest::MPIManager::communicate_Allreduce_max_in_place( std::vector< long >& )
 {
   // Null operator for ranks == 1
   // Max already is the input

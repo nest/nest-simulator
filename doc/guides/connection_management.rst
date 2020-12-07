@@ -69,7 +69,7 @@ given as strings, for all other rules, a dictionary specifying the rule
 and its parameters, such as in- or out-degrees, is required.
 
 one-to-one
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. image:: ../_static/img/One_to_one.png
      :width: 200px
@@ -142,7 +142,7 @@ Example:
     Connect(A, B, conn_dict)
 
 fixed-outdegree
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 
 .. image:: ../_static/img/Fixed_outdegree.png
@@ -179,7 +179,7 @@ Example:
     Connect(A, B, conn_dict)
 
 pairwise-bernoulli
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 For each possible pair of nodes from ``pre`` and ``post``, a connection
 is created with probability ``p``.
@@ -194,10 +194,50 @@ Example:
     conn_dict = {'rule': 'pairwise_bernoulli', 'p': p}
     Connect(A, B, conn_dict)
 
+.. _conn_builder_conngen:
+    
+conngen
+~~~~~~~
+
+.. admonition:: Availability
+
+   This connection rule is only available if NEST was compiled with
+   :ref:`support for libneurosim <compile_with_libneurosim>`.
+
+To allow the generation of connectivity by means of an external
+library, NEST supports the Connection Generator Interface [1]_.
+
+In contrast to the other rules for creating connections, this rule
+relies on a Connection Generator object, in which the connectivity
+pattern is specified in a library-specific way. The Connection
+Generator is then handed to the call to ``Connect`` and evaluated
+internally. For more details, please see the Git repository of
+`libneurosim <https://github.com/INCF/libneurosim>`_.
+
+The following code shows an example for using the `Connection-Set
+Algebra <https://github.com/INCF/csa>`_ in NEST via the Connection
+Generator Interface to create random connectivity between two groups
+of neurons, each having a weight of 10000.0 pA and a delay of 1.0 ms:
+
+::
+
+   sources = nest.Create("iaf_psc_alpha", 100)
+   targets = nest.Create("iaf_psc_alpha", 100)
+
+   # Create the Connection Generator object
+   import csa
+   cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
+
+   # Map weight and delay indices to vaules from cg
+   params_map = {"weight": 0, "delay": 1}
+
+   connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
+   nest.Connect(pre, post, connspec)
+
 .. _synapse_spec:
 
 Synapse Specification
--------------------------
+---------------------
 
 The synapse properties can be given as a string or a dictionary. The
 string can be the name of a pre-defined synapse which can be found in
@@ -303,7 +343,7 @@ Example:
 .. _dist_params:
 
 Distributed parameters
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 **Distributed** parameters are initialized with yet another dictionary
 specifying the 'distribution' and the distribution-specific parameters,
@@ -385,11 +425,65 @@ for more information.
 
 .. _receptor-types:
 
+Connecting sparse matrices with array indexing
+----------------------------------------------
+
+One may want to generate connections from a sparse matrix of connection weights.
+Assume we have a weight matrix of the form:
+
+.. math::
+
+    W = \begin{bmatrix}
+    w_{11} & w_{21} & \cdots & w_{n1} \\
+    w_{12} & w_{22} & \cdots & w_{n2} \\
+    \vdots & \vdots & \ddots & \vdots \\
+    w_{1m} & w_{2m} & \cdots & w_{nm} \\
+    \end{bmatrix},
+
+where :math:`w_{ij}` is the weight of the connection with presynaptic node :math:`i`
+and postsynaptic node :math:`j`. We can assume that some weights are zero. Instead of
+creating connections with zero weight in these cases, we do not want to create these
+connections at all.
+
+There is currently no way to create connections from the whole matrix in one go, so we
+will iterate the presynaptic neurons and connect one column at a time. We assume
+that we have :math:`n` presynaptic and :math:`m` postsynaptic nodes in the NodeCollections
+`presynaptic` and `postsynaptic`, respectively. We also assume that we have a weight matrix
+as a two-dimensional NumPy array `W`, with :math:`n` columns and :math:`m` rows.
+
+::
+
+    W = np.array([[0.5, 0., 1.5],
+                  [1.3, 0.2, 0.],
+                  [0., 1.25, 1.3]])
+
+    presynaptic = nest.Create('iaf_psc_alpha', 3)
+    postsynaptic = nest.Create('iaf_psc_alpha', 3)
+
+    for i, pre in enumerate(presynaptic):
+        # Extract the weights column.
+        weights = W[:, i]
+
+        # To only connect pairs with a nonzero weight,
+        # we use array indexing to extract the weights and postsynaptic neurons.
+        nonzero_indices = numpy.where(weights != 0)[0]
+        weights = weights[nonzero_indices]
+        post = postsynaptic[nonzero_indices]
+
+        # Generate an array of node IDs for the column of the weight matrix, with length based on the
+        # number of nonzero elements. dtype must be an integer.
+        pre_array = numpy.ones(len(nonzero_indices), dtype=numpy.int64)*pre.get('global_id')
+
+        # nest.Connect() automatically converts post to a NumPy array because pre_array
+        # contains multiple identical node IDs. When also specifying a one_to_one connection rule,
+        # the arrays of node IDs can then be connected.
+        nest.Connect(pre_array, post, conn_spec='one_to_one', syn_spec={'weight': weights})
+
 Receptor Types
 --------------
 
 Each connection in NEST targets a specific receptor type on the
-post-synaptic node. Receptor types are identified by integer numbers,
+postsynaptic node. Receptor types are identified by integer numbers,
 the default receptor type is 0. The meaning of the receptor type depends
 on the model and is documented in the model documentation. To connect to
 a non-standard receptor type, the parameter ``receptor_type`` of the
@@ -397,7 +491,7 @@ additional argument ``params`` is used in the call to the ``Connect``
 command. To illustrate the concept of receptor types, we give an example
 using standard integrate-and-fire neurons as presynaptic nodes and a
 multi-compartment integrate-and-fire neuron (``iaf_cond_alpha_mc``) as
-post-synaptic node.
+postsynaptic node.
 
 .. image:: ../_static/img/Receptor_types.png
      :width: 200px
@@ -507,7 +601,7 @@ representing a synapse model. If GetConnections is called without
 parameters, all connections in the network are returned. If a list of
 source neurons is given, only connections from these pre-synaptic
 neurons are returned. If a list of target neurons is given, only
-connections to these post-synaptic neurons are returned. If a synapse
+connections to these postsynaptic neurons are returned. If a synapse
 model is given, only connections with this synapse type are returned.
 Any combination of source, target and model parameters is permitted.
 Each connection id is a 5-tuple or, if available, a NumPy array with the
@@ -555,3 +649,11 @@ can then be given as arguments to the `SetStatus()` functions:
       'delay': 1.0,
       'source': 1,
       'receptor': 0}]
+
+References
+----------
+
+.. [1] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
+       connectivity in neuronal networks from simulator-independent
+       descriptions. Front. Neuroinform.
+       https://doi.org/10.3389/fninf.2014.00043

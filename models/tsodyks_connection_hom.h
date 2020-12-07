@@ -173,7 +173,7 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  TsodyksConnectionHom( const TsodyksConnectionHom& );
+  TsodyksConnectionHom( const TsodyksConnectionHom& ) = default;
 
   /**
    * Default Destructor.
@@ -305,16 +305,6 @@ TsodyksConnectionHom< targetidentifierT >::TsodyksConnectionHom()
   , y_( 0.0 )
   , u_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-TsodyksConnectionHom< targetidentifierT >::TsodyksConnectionHom( const TsodyksConnectionHom& rhs )
-  : ConnectionBase( rhs )
-  , x_( rhs.x_ )
-  , y_( rhs.y_ )
-  , u_( rhs.u_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

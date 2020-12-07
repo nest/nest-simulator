@@ -305,7 +305,7 @@ def SetKernelStatus(params):
     structural_plasticity_synapses : dict
         Defines all synapses which are plastic for the structural plasticity
         algorithm. Each entry in the dictionary is composed of a synapse model,
-        the pre synaptic element and the post synaptic element
+        the pre synaptic element and the postsynaptic element
     structural_plasticity_update_interval : int
         Defines the time interval in ms at which the structural plasticity
         manager will make changes in the structure of the network (creation

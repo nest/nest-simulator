@@ -301,20 +301,14 @@ nest::ConnBuilder::disconnect()
   }
 }
 
-DictionaryDatum
+void
 nest::ConnBuilder::create_param_dict_( index snode_id,
   Node& target,
   thread target_thread,
   librandom::RngPtr& rng,
   index indx )
 {
-  DictionaryDatum param_dict;
-
-  if ( param_dicts_[ indx ].empty() ) // indicates we have no synapse params
-  {
-    param_dict = dummy_param_dicts_[ target_thread ];
-  }
-  else
+  if ( not param_dicts_[ indx ].empty() ) // indicates we have synapse params
   {
     assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ indx ].size() ) );
 
@@ -335,10 +329,8 @@ nest::ConnBuilder::create_param_dict_( index snode_id,
         ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
       }
     }
-    param_dict = param_dicts_[ indx ][ target_thread ];
+    dummy_param_dicts_[ target_thread ] = param_dicts_[ indx ][ target_thread ];
   }
-
-  return param_dict;
 }
 
 void
@@ -351,11 +343,11 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
 
   for ( size_t indx = 0; indx < synapse_model_id_.size(); ++indx )
   {
-    DictionaryDatum param_dict = create_param_dict_( snode_id, target, target_thread, rng, indx );
+    create_param_dict_( snode_id, target, target_thread, rng, indx );
 
     if ( default_weight_and_delay_[ indx ] )
     {
-      kernel().connection_manager.connect( snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dict );
+      kernel().connection_manager.connect( snode_id, &target, target_thread, synapse_model_id_[ indx ], dummy_param_dicts_[ target_thread ] );
     }
     else if ( default_weight_[ indx ] )
     {
@@ -363,7 +355,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
         &target,
         target_thread,
         synapse_model_id_[ indx ],
-        param_dict,
+        dummy_param_dicts_[ target_thread ],
         delays_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
     }
     else if ( default_delay_[ indx ] )
@@ -372,7 +364,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
         &target,
         target_thread,
         synapse_model_id_[ indx ],
-        param_dict,
+        dummy_param_dicts_[ target_thread ],
         numerics::nan,
         weights_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
     }
@@ -381,7 +373,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
       const double delay = delays_[ indx ]->value_double( target_thread, rng, snode_id, &target );
       const double weight = weights_[ indx ]->value_double( target_thread, rng, snode_id, &target );
       kernel().connection_manager.connect(
-        snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dict, delay, weight );
+        snode_id, &target, target_thread, synapse_model_id_[ indx ], dummy_param_dicts_[ target_thread ], delay, weight );
     }
   }
 }

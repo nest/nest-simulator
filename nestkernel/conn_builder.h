@@ -148,7 +148,7 @@ protected:
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
-  DictionaryDatum
+  void
   create_param_dict_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng, index indx );
 
   //! Create connection between given nodes, fill parameter values
@@ -234,8 +234,9 @@ private:
   //! dictionaries to pass to connect function, one per thread for every syn_spec
   std::vector< std::vector< DictionaryDatum > > param_dicts_;
 
-  //! empty dictionary to pass to connect function, one per thread so that the all threads do not
-  //! create and use the same dictionary as this leads to performance issues.
+  //! dictionary to pass to connect function, one per thread so that the all threads do not
+  //! create and use the same dictionary as this leads to performance issues. The dictionary
+  //! can either be empty or filled with synapse parameters.
   std::vector< DictionaryDatum > dummy_param_dicts_;
 
   //! synapse-specific parameters that should be skipped when we set default synapse parameters

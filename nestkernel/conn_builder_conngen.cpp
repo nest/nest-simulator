@@ -118,14 +118,14 @@ ConnectionGeneratorBuilder::connect_()
       Node* target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
       const thread target_thread = target_node->get_thread();
 
-      DictionaryDatum param_dict = create_param_dict_( ( *sources_ )[ source ], *target_node, target_thread, rng, 0 );
+      create_param_dict_( ( *sources_ )[ source ], *target_node, target_thread, rng, 0 );
 
       // Use the low-level connect() here, as we need to pass a custom weight and delay
       kernel().connection_manager.connect( ( *sources_ )[ source ],
         target_node,
         target_thread,
         synapse_model_id_[ 0 ],
-        param_dict,
+        dummy_param_dicts_[ target_thread ],
         params[ d_idx ],
         params[ w_idx ] );
     }

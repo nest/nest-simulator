@@ -6,7 +6,6 @@ jobs:
   Static-Check:
     name: Static-Code-Analysis
     runs-on: ubuntu-latest
-    env: xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.x
@@ -17,7 +16,7 @@ jobs:
         # Optional - x64 or x86 architecture, defaults to x64
           architecture: 'x64'
         env: 
-          xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS
+          xNEST_BUILD_TYPE= STATIC_CODE_ANALYSIS
         #run: python -c "import sys; print(sys.version)"
         
       - name: Install dependencies

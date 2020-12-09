@@ -59,8 +59,8 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , use_pre_synaptic_element_( false )
   , use_post_synaptic_element_( false )
   , parameters_requiring_skipping_()
-  , param_dicts_()
   , dummy_param_dicts_()
+  , param_dicts_()
 {
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
@@ -347,7 +347,8 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
 
     if ( default_weight_and_delay_[ indx ] )
     {
-      kernel().connection_manager.connect( snode_id, &target, target_thread, synapse_model_id_[ indx ], dummy_param_dicts_[ target_thread ] );
+      kernel().connection_manager.connect(
+        snode_id, &target, target_thread, synapse_model_id_[ indx ], dummy_param_dicts_[ target_thread ] );
     }
     else if ( default_weight_[ indx ] )
     {
@@ -372,8 +373,13 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
     {
       const double delay = delays_[ indx ]->value_double( target_thread, rng, snode_id, &target );
       const double weight = weights_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-      kernel().connection_manager.connect(
-        snode_id, &target, target_thread, synapse_model_id_[ indx ], dummy_param_dicts_[ target_thread ], delay, weight );
+      kernel().connection_manager.connect( snode_id,
+        &target,
+        target_thread,
+        synapse_model_id_[ indx ],
+        dummy_param_dicts_[ target_thread ],
+        delay,
+        weight );
     }
   }
 }

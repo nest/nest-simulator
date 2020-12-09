@@ -34,33 +34,39 @@ from mpi4py import MPI
 import time
 import sys
 
-import nest
-from nest.server import run_mpi_app, serialize, do_exec
+import nest, nest.server
+
 
 comm = MPI.COMM_WORLD.Clone()
 rank = comm.Get_rank()
 
+itercnt = 0
+
 if rank == 0:
     print("==> Starting NEST Server Master on rank 0")
-    run_mpi_app(comm)
+    nest.server.set_mpi_comm(comm)
+    nest.server.run_mpi_app()
 else:
-    print("==> Starting NEST Server Worker on rank {}".format(rank))
+    print(f"==> Starting NEST Server Worker on rank {rank}")
+    nest.server.set_mpi_comm(comm)
     while True:
-        print("==> WORKER/{}: waiting for command bcast".format(rank))
+        print("\n========================================\n")
+        print(f"==> WORKER {rank}/{itercnt}: waiting for command bcast")
         command = comm.bcast(None, root=0)
-        print("==> WORKER/{} ({}): waiting for data bcast".format(rank, command))
+        print(f"==> WORKER {rank}/{itercnt} ({command}): received command bcast, waiting for data bcast")
         data = comm.bcast(None, root=0)
-        print("==> WORKER/{} ({}): received data bcast, data={}".format(rank, command, data))
+        print(f"==> WORKER {rank}/{itercnt} ({command}): received data bcast, data={data}")
         if command == 'exec':
             args, kwargs = data
-            response = do_exec(args, kwargs) # TODO: handle errors
-            print("==> WORKER/{} (exec): sending reponse gather, data={}".format(rank, response))
+            response = nest.server.do_exec(args, kwargs) # TODO: handle errors
+            print(f"==> WORKER {rank}/{itercnt} (exec): sending reponse gather, data={response}")
             comm.gather(response, root=0)
         if command == 'call':
             call_name, args, kwargs = data
             call = getattr(nest, call_name)
-            args, kwargs = serialize(call, args, kwargs)
+            #args, kwargs = nest.server.serialize(call, args, kwargs)
             response = call(*args, **kwargs) # TODO: handle errors
-            print("==> WORKER/{} (call): sending reponse gather, data={}".format(rank, response))
+            print(f"==> WORKER {rank}/{itercnt} (call): sending reponse gather, data={response}")
             comm.gather(nest.hl_api.serializable(response), root=0)
+        itercnt += 1
 

@@ -370,7 +370,6 @@ nest::IOManager::enroll_stimulator( const Name& backend_name, StimulatingDevice&
       {
         if ( backend_name.toString() == "mpi" )
         {
-          // static_cast< StimulatingBackendMPI* >( it.second )->enroll( device, params );
           ( it.second )->enroll( device, params );
         }
       }

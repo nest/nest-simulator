@@ -38,8 +38,9 @@ nest::StimulatingDevice::StimulatingDevice( StimulatingDevice const& sd )
   : DeviceNode( sd )
   , Device( sd )
   , first_syn_id_( invalid_synindex ) // a new instance can have no connections
-  , backend_params_( new Dictionary )
+  , backend_params_( sd.backend_params_ )
 {
+  P_=Parameters_(sd.P_);
 }
 
 bool
@@ -174,10 +175,7 @@ nest::StimulatingDevice::set_status( const DictionaryDatum& d )
   }
   else
   {
-    if ( ptmp.stimulus_source_.toString() != names::internal.toString() )
-    {
-      kernel().io_manager.enroll_stimulator( ptmp.stimulus_source_, *this, d );
-    }
+    kernel().io_manager.enroll_stimulator( ptmp.stimulus_source_, *this, d );
   }
 
   // if we get here, temporaries contain consistent set of properties

@@ -42,9 +42,6 @@ import os
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
 RESTRICTION_OFF = bool(os.environ.get('NEST_SERVER_RESTRICTION_OFF', False))
 EXCEPTION_ERROR_STATUS = 400
-NEST_ERROR_STATUS = 400
-
-itercnt = 0
 
 if RESTRICTION_OFF:
     msg = 'NEST Server runs without a RestrictedPython trusted environment.'
@@ -56,7 +53,7 @@ __all__ = [
     'do_exec',
     'set_mpi_comm',
     'run_mpi_app',
-    'serialize',
+    'NodeCollection',
 ]
 
 app = Flask(__name__)
@@ -108,33 +105,66 @@ def do_exec(args, kwargs):
         abort(Response(str(e), EXCEPTION_ERROR_STATUS))
 
 
+def log(call_name, msg):
+    print(f'==> MASTER 0/{time.time():.7f} ({call_name}): {msg}')
+
+
+def do_call(call_name, args=[], kwargs={}):
+    """Call a function of NEST or execute a script within the server.
+
+    If the server is running in MPI-enabled mode, this function will
+    distribute the name of the function to call aa well as args and
+    kwargs to the worker processes using MPI.
+
+    In case the call_name is "exec", this function will execute the
+    script either by plain exec, or in a Restricted Python trusted
+    environment.
+
+    Please note that this function must only be called by the master.
+
+    """
+    global mpi_comm
+
+    if mpi_comm is not None:
+        assert mpi_comm.Get_rank() == 0
+
+    if mpi_comm is not None:
+        log(call_name, 'sending call bcast')
+        mpi_comm.bcast(call_name, root=0)
+        data = (args, kwargs)
+        log(call_name, f'sending data bcast, data={data}')
+        mpi_comm.bcast(data, root=0)
+
+    if call_name == "exec":
+        master_response = do_exec(args, kwargs)
+    else:
+        call = getattr(nest, call_name)
+        args, kwargs = serialize(call_name, args, kwargs)
+        args, kwargs = NodeCollection(call, args, kwargs)
+        log(call_name, f'local call, args={args}, kwargs={kwargs}')
+        master_response = call(*args, **kwargs)
+
+    response = [None]
+    if mpi_comm is not None:
+        log(call_name, 'waiting for response gather')
+        response = mpi_comm.gather(None, root=0)
+        log(call_name, f'received response gather, data={response}')
+    response[0] = nest.hl_api.serializable(master_response)
+
+    return combine(response)
+
+
 @app.route('/exec', methods=['GET', 'POST'])
 @cross_origin()
 def route_exec():
     """ Route to execute script in Python.
     """
 
-    global itercnt
-
     args, kwargs = get_arguments(request)
-    if mpi_comm is not None and mpi_comm.Get_rank() == 0:
-        print(f"==> MASTER 0/{itercnt} (exec): sending command bcast")
-        mpi_comm.bcast('exec', root=0)
-        data = (args, kwargs)
-        print(f"==> MASTER 0/{itercnt} (exec): sending data bcast, data={data}")
-        mpi_comm.bcast(data, root=0)
-    response = do_exec(args, kwargs)
-    worker_responses = [None]
-    if mpi_comm is not None and mpi_comm.Get_rank() == 0:
-        print(f"==> MASTER 0/{itercnt} (exec): waiting for response gather")
-        worker_responses = mpi_comm.gather(None, root=0)
-    worker_responses[0] = nest.hl_api.serializable(response)
-    print(f"==> MASTER 0/{itercnt} (call): received response gather, data={worker_responses}")
-    itercnt += 1
-    # TODO: combine worker responses in a meaningful way
+    response = do_call('exec', args, kwargs)
     return jsonify(response)
 
-        
+
 # --------------------------
 # RESTful API
 # --------------------------
@@ -157,11 +187,9 @@ def route_api():
 def route_api_call(call):
     """ Route to call function in NEST.
     """
+    print("\n========================================\n")
     args, kwargs = get_arguments(request)
-    call = getattr(nest, call)
-    #print("==> TRACE {mpi_comm.Get_rank()} route_api_call, 1")
     response = api_client(call, args, kwargs)
-    #print("==> TRACE {mpi_comm.Get_rank()} route_api_call, 2")
     return jsonify(response)
 
 
@@ -284,87 +312,68 @@ def get_restricted_globals():
 def NodeCollection(call, args, kwargs):
     """ Get Node Collection as arguments for NEST functions.
     """
-    global mpi_comm
-    #print(f"==> TRACE {mpi_comm.Get_rank()} NodeCollection, 1, args={args}, kwargs={kwargs}")
+
     objectnames = ['nodes', 'source', 'target', 'pre', 'post']
     paramKeys = list(inspect.signature(call).parameters.keys())
-    args = [nest.NodeCollection(arg) if (paramKeys[idx] in objectnames) else arg for (idx, arg) in enumerate(args)]
+    args = [nest.NodeCollection(arg) if paramKeys[idx] in objectnames
+            else arg for (idx, arg) in enumerate(args)]
     for (key, value) in kwargs.items():
         if key in objectnames:
             kwargs[key] = nest.NodeCollection(value)
-    #print(f"==> TRACE {mpi_comm.Get_rank()} NodeCollection, 2, args={args}, kwargs={kwargs}")
+
     return args, kwargs
 
 
-def serialize(call, args, kwargs):
-    """ Serialize arguments with keywords for calling functions in NEST.
+def serialize(call_name, args, kwargs):
+    """Serialize arguments with keywords for calling functions in NEST.
+
+    TODO: Explain why we need to run the inverse getter.
+
+    TODO: Find out why the `if "params" in kwargs:` condition is
+    needed in the MPI enabled version, but did not seem to be required
+    in the normal NEST Server.
+
+    When calling the inverse getter function, we only look at the
+    information available on the master, as we're only interested in
+    the keys. We still have to call the getters also on the workers,
+    as not doing so might lead to deadlocks due to unmatched MPI
+    calls, if the getters themselves initiate MPI communication calls
+    internally.
+
     """
-    global mpi_comm
-    #print(f"==> TRACE {mpi_comm.Get_rank()} serialize, 1, args={args}, kwargs={kwargs}")
-    args, kwargs = NodeCollection(call, args, kwargs)
-    #print(f"==> TRACE {mpi_comm.Get_rank()} serialize, 2, args={args}, kwargs={kwargs}")
-    if call.__name__.startswith('Set'):
+
+    if call_name.startswith('Set'):
         status = {}
-        #print(f"==> TRACE {mpi_comm.Get_rank()} serialize, 3")
-        if call.__name__ == 'SetDefaults':
-            status = nest.GetDefaults(kwargs['model'])
-        elif call.__name__ == 'SetKernelStatus':
-            #print(f"==> TRACE {mpi_comm.Get_rank()} serialize, 4")
-            if mpi_comm is not None and mpi_comm.Get_rank() == 0:
-                print(f"==> MASTER 0/{itercnt} (call): sending command bcast")
-                mpi_comm.bcast('call', root=0)
-                data = ("GetKernelStatus", [], {})
-                print(f"==> MASTER 0/{itercnt} (call): sending data bcast, data={data}")
-                mpi_comm.bcast(data, root=0)
-            #print(f"==> TRACE {mpi_comm.Get_rank()} serialize, 5")
-            status = nest.GetKernelStatus()
-            #print(f"==> TRACE {mpi_comm.Get_rank()} serialize, 6")
-            if mpi_comm is not None and mpi_comm.Get_rank() == 0:
-                print(f"==> MASTER 0/{itercnt} (call): waiting for response gather")
-                worker_responses = mpi_comm.gather(None, root=0)
-            #print(f"==> TRACE {mpi_comm.Get_rank()} serialize, 7")
-        elif call.__name__ == 'SetStructuralPlasticityStatus':
-            status = nest.GetStructuralPlasticityStatus(kwargs['params'])
-        elif call.__name__ == 'SetStatus':
-            status = nest.GetStatus(kwargs['nodes'])
+        if call_name == 'SetDefaults':
+            status = do_call('GetDefaults', [kwargs['model']])
+        elif call_name == 'SetKernelStatus':
+            status = do_call('GetKernelStatus')
+        elif call_name == 'SetStructuralPlasticityStatus':
+            status = do_call('GetStructuralPlasticityStatus', [kwargs['params']])
+        elif call_name == 'SetStatus':
+            status = do_call('GetStatus', [kwargs['nodes']])
         if "params" in kwargs:
-            #print(f"==> TRACE {mpi_comm.Get_rank()} serialize, 8")
             for key, val in kwargs['params'].items():
                 if key in status:
                     kwargs['params'][key] = type(status[key])(val)
-    #print(f"==> TRACE {mpi_comm.Get_rank()} serialize, 9, args={args}, kwargs={kwargs}")
     return args, kwargs
 
 
 @get_or_error
-def api_client(call, args, kwargs):
+def api_client(call_name, args, kwargs):
     """ API Client to call function in NEST.
     """
-    global itercnt, mpi_comm
+    global mpi_comm
+
+    call = getattr(nest, call_name)
+
     if callable(call):
         if 'inspect' in kwargs:
             response = {
                 'data': getattr(inspect, kwargs['inspect'])(call)
             }
         else:
-            #print(f"==> TRACE {mpi_comm.Get_rank()} api_client, 1, args={args}, kwargs={kwargs}")
-            args, kwargs = serialize(call, args, kwargs)
-            #print(f"==> TRACE {mpi_comm.Get_rank()} api_client, 2, args={args}, kwargs={kwargs}")
-            if mpi_comm is not None and mpi_comm.Get_rank() == 0:
-                print(f"==> MASTER 0/{itercnt} (call): sending command bcast")
-                mpi_comm.bcast('call', root=0)
-                data = (call.__name__, args, kwargs)
-                print(f"==> MASTER 0/{itercnt} (call): sending data bcast, data={data}")
-                mpi_comm.bcast(data, root=0)
-            response = call(*args, **kwargs)
-            worker_responses = [None]
-            if mpi_comm is not None and mpi_comm.Get_rank() == 0:
-                print(f"==> MASTER 0/{itercnt} (call): waiting for response gather")
-                worker_responses = mpi_comm.gather(None, root=0)
-            worker_responses[0] = nest.hl_api.serializable(response)
-            print(f"==> MASTER 0/{itercnt} (call): received response gather, data={worker_responses}")
-            # TODO: combine worker_response in a meaningful way
-            itercnt += 1
+            response = do_call(call_name, args, kwargs)
     else:
         response = call
     return nest.hl_api.serializable(response)
@@ -379,6 +388,13 @@ def run_mpi_app():
     # NEST segfaults if someone messes with the number of threads, so we don't.
     app.run(threaded=False)
 
+
+def combine(response):
+    """Combine responses from different MPI processes.
+
+    """
+
+    return response[0]
 
 if __name__ == "__main__":
     app.run()

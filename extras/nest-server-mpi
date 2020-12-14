@@ -40,7 +40,9 @@ import nest, nest.server
 comm = MPI.COMM_WORLD.Clone()
 rank = comm.Get_rank()
 
-itercnt = 0
+def log(call_name, msg):
+    global rank
+    print(f'==> WORKER {rank}/{time.time():.7f} ({call_name}): {msg}')
 
 if rank == 0:
     print("==> Starting NEST Server Master on rank 0")
@@ -50,23 +52,18 @@ else:
     print(f"==> Starting NEST Server Worker on rank {rank}")
     nest.server.set_mpi_comm(comm)
     while True:
-        print("\n========================================\n")
-        print(f"==> WORKER {rank}/{itercnt}: waiting for command bcast")
-        command = comm.bcast(None, root=0)
-        print(f"==> WORKER {rank}/{itercnt} ({command}): received command bcast, waiting for data bcast")
+        log('spinwait', 'waiting for call bcast')
+        call_name = comm.bcast(None, root=0)
+        log(call_name, 'received call bcast, waiting for data bcast')
         data = comm.bcast(None, root=0)
-        print(f"==> WORKER {rank}/{itercnt} ({command}): received data bcast, data={data}")
-        if command == 'exec':
-            args, kwargs = data
-            response = nest.server.do_exec(args, kwargs) # TODO: handle errors
-            print(f"==> WORKER {rank}/{itercnt} (exec): sending reponse gather, data={response}")
-            comm.gather(response, root=0)
-        if command == 'call':
-            call_name, args, kwargs = data
+        log(call_name, f'received data bcast, data={data}')
+        args, kwargs = data
+        if call_name == 'exec':
+            response = nest.server.do_exec(args, kwargs)
+        else:
             call = getattr(nest, call_name)
-            #args, kwargs = nest.server.serialize(call, args, kwargs)
-            response = call(*args, **kwargs) # TODO: handle errors
-            print(f"==> WORKER {rank}/{itercnt} (call): sending reponse gather, data={response}")
-            comm.gather(nest.hl_api.serializable(response), root=0)
-        itercnt += 1
-
+            args, kwargs = nest.server.NodeCollection(call, args, kwargs)
+            log(call_name, f'local call, args={args}, kwargs={kwargs}')
+            response = nest.hl_api.serializable(call(*args, **kwargs))
+        log(call_name, f'sending reponse gather, data={response}')
+        comm.gather(response, root=0)

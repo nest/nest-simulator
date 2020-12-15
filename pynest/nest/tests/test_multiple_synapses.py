@@ -166,6 +166,32 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         weights = conns.weight
         self.assertEqual(sorted(weights)[:num_trgt * indegree], [-3]*num_trgt*indegree)
 
+    def test_MultipleSynapses_spatial_network_label(self):
+        """test co-location of synapses for spatial networks with synapse label"""
+        num_src = 11
+        num_trgt = 37
+        indegree = 3
+
+        spatial_nodes_src = nest.Create('iaf_psc_alpha', n=num_src,
+                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+        spatial_nodes_trgt = nest.Create('iaf_psc_alpha', n=num_trgt,
+                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+
+        syn_label_a = 123
+        syn_label_b = 456
+        nest.Connect(spatial_nodes_src, spatial_nodes_trgt, {'rule': 'fixed_indegree', 'indegree': indegree},
+                     nest.CollocatedSynapses({'weight': 3.,
+                                              'synapse_model': 'stdp_synapse_lbl',
+                                              'synapse_label': syn_label_a},
+                                             {'weight': nest.spatial_distributions.exponential(nest.spatial.distance),
+                                              'delay': 1.4,
+                                              'synapse_model': 'stdp_synapse_lbl',
+                                              'synapse_label': syn_label_b}))
+        conns = nest.GetConnections()
+        self.assertEqual(num_trgt * indegree * 2, len(conns))
+        reference = sorted([syn_label_a, syn_label_b]*num_trgt*indegree)
+        self.assertEqual(sorted(conns.get('synapse_label')), reference)
+
     def test_MultipleSynapses_spatial_network_fixedOutdegree(self):
         """test co-location of synapses for spatial networks with fixed outdegree"""
         num_src = 17

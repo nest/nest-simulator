@@ -31,12 +31,12 @@ nest.set_verbosity('M_ERROR')
 
 class ConnectLayersTestCase(unittest.TestCase):
     def setUp(self):
-        dim = [4, 5]
-        extent = [10., 10.]
+        self.dim = [4, 5]
+        self.extent = [10., 10.]
         nest.ResetKernel()
         nest.SetKernelStatus({'grng_seed': 123, 'rng_seeds': [456]})
         self.layer = nest.Create(
-            'iaf_psc_alpha', positions=nest.spatial.grid(dim, extent=extent))
+            'iaf_psc_alpha', positions=nest.spatial.grid(self.dim, extent=self.extent))
 
     def _check_connections(self, conn_spec, expected_num_connections):
         """Helper function which asserts that connecting with the specified conn_spec gives
@@ -366,29 +366,46 @@ class ConnectLayersTestCase(unittest.TestCase):
             self._assert_connect_sliced(layer, sliced_post)
 
     def test_connect_synapse_label(self):
+        indegree = 10
         conn_spec = {
             'rule': 'fixed_indegree',
-            'indegree': 10,
+            'indegree': indegree,
             'p': 1.0,
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
                     'upper_right': [0., 0.]
                 }
-            },
+            }
         }
-        # syn_spec = {}
-        # syn_spec = {'synapse_model': 'stdp_synapse'}
-        syn_spec = {'synapse_model': 'stdp_synapse_lbl', 'synapse_label': 'test_label'}
+        syn_label = 123
+        syn_spec = {'synapse_model': 'stdp_synapse_lbl', 'synapse_label': syn_label}
 
         nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
         conns = nest.GetConnections()
-        print(conns.get('synapse_label'))
-        self.assertEqual(conns.get().keys, {})
-        # conn_weights = np.array(conns.get('weight'))
-        # self.assertTrue(len(np.unique(conn_weights)) > 1)
-        # self.assertTrue((conn_weights >= 0.5).all())
-        # self.assertTrue((conn_weights <= 1.0).all())
+        self.assertEqual(conns.get('synapse_label'), [syn_label]*len(self.layer)*indegree)
+
+    def test_connect_receptor_type(self):
+        multisyn_layer = nest.Create(
+            'iaf_psc_exp_multisynapse', positions=nest.spatial.grid(self.dim, extent=self.extent))
+        indegree = 10
+        conn_spec = {
+            'rule': 'fixed_indegree',
+            'indegree': indegree,
+            'p': 1.0,
+            'mask': {
+                'rectangular': {
+                    'lower_left': [-5., -5.],
+                    'upper_right': [0., 0.]
+                }
+            }
+        }
+        receptor_type = 1
+        syn_spec = {'receptor_type': receptor_type}
+
+        nest.Connect(multisyn_layer, multisyn_layer, conn_spec, syn_spec)
+        conns = nest.GetConnections()
+        self.assertEqual(conns.get('receptor'), [receptor_type]*len(multisyn_layer)*indegree)
 
 
 def suite():

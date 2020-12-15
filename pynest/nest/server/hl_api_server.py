@@ -97,11 +97,9 @@ def do_exec(args, kwargs):
             response['data'] = nest.hl_api.serializable(data)
         return response
 
-    except nest.kernel.NESTError as e:
-        print('NEST error: {}'.format(e))
-        abort(Response(getattr(e, 'errormessage'), NEST_ERROR_STATUS))
     except Exception as e:
-        print('Error: {}'.format(e))
+        for line in traceback.format_exception(*sys.exc_info()):
+            print(line)
         abort(Response(str(e), EXCEPTION_ERROR_STATUS))
 
 
@@ -260,15 +258,9 @@ def get_or_error(func):
     def func_wrapper(call, args, kwargs):
         try:
             return func(call, args, kwargs)
-        except nest.kernel.NESTError as e:
-            print('NEST error: {}'.format(e))
-            abort(Response(getattr(e, 'errormessage'), NEST_ERROR_STATUS))
-        except TypeError as e:
-            print('Type error: {}'.format(e))
-            abort(Response(str(e), EXCEPTION_ERROR_STATUS))
         except Exception as e:
-            print('Error: {}'.format(e))
-            print(f'Error: Last call: {traceback.format_stack()[-2]}')
+            for line in traceback.format_exception(*sys.exc_info()):
+                print(line)
             abort(Response(str(e), EXCEPTION_ERROR_STATUS))
     return func_wrapper
 

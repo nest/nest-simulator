@@ -365,6 +365,31 @@ class ConnectLayersTestCase(unittest.TestCase):
             sliced_post = layers[sliced]
             self._assert_connect_sliced(layer, sliced_post)
 
+    def test_connect_synapse_label(self):
+        conn_spec = {
+            'rule': 'fixed_indegree',
+            'indegree': 10,
+            'p': 1.0,
+            'mask': {
+                'rectangular': {
+                    'lower_left': [-5., -5.],
+                    'upper_right': [0., 0.]
+                }
+            },
+        }
+        # syn_spec = {}
+        # syn_spec = {'synapse_model': 'stdp_synapse'}
+        syn_spec = {'synapse_model': 'stdp_synapse_lbl', 'synapse_label': 'test_label'}
+
+        nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
+        conns = nest.GetConnections()
+        print(conns.get('synapse_label'))
+        self.assertEqual(conns.get().keys, {})
+        # conn_weights = np.array(conns.get('weight'))
+        # self.assertTrue(len(np.unique(conn_weights)) > 1)
+        # self.assertTrue((conn_weights >= 0.5).all())
+        # self.assertTrue((conn_weights <= 1.0).all())
+
 
 def suite():
     suite = unittest.makeSuite(ConnectLayersTestCase, 'test')

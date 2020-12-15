@@ -35,10 +35,16 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , synapse_model_()
   , weight_()
   , delay_()
-  , dummy_param_dicts_()
 {
   Name connection_type;
   long number_of_connections( -1 ); // overwritten by dict entry
+
+  param_dicts_.resize( 1 );
+  param_dicts_[ 0 ].resize( kernel().vp_manager.get_num_threads() );
+#pragma omp parallel
+  {
+    param_dicts_[ 0 ].at( kernel().vp_manager.get_thread_id() ) = new Dictionary();
+  }
 
   for ( Dictionary::iterator dit = dict->begin(); dit != dict->end(); ++dit )
   {
@@ -99,6 +105,22 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     {
       delay_ = { NestModule::create_parameter( dit->second ) };
     }
+    else if ( dit->first == names::synapse_label )
+    {
+#pragma omp parallel
+      {
+        ( *param_dicts_[ 0 ].at( kernel().vp_manager.get_thread_id() ) )[ names::synapse_label ] =
+          getValue< long >( dit->second );
+      }
+    }
+    else if ( dit->first == names::receptor_type )
+    {
+#pragma omp parallel
+      {
+        ( *param_dicts_[ 0 ].at( kernel().vp_manager.get_thread_id() ) )[ names::receptor_type ] =
+          getValue< long >( dit->second );
+      }
+    }
     else if ( dit->first == names::synapse_parameters )
     {
       ArrayDatum* syn_params_dvd = dynamic_cast< ArrayDatum* >( ( dit->second ).datum() );
@@ -106,7 +128,11 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
       {
         throw BadProperty( "synapse_parameters must be list of dictionaries" );
       }
-      for ( auto synapse_datum = syn_params_dvd->begin(); synapse_datum < syn_params_dvd->end(); ++synapse_datum )
+      param_dicts_.clear();
+      param_dicts_.resize( syn_params_dvd->size() );
+      auto param_dict = param_dicts_.begin();
+      for ( auto synapse_datum = syn_params_dvd->begin(); synapse_datum < syn_params_dvd->end();
+            ++synapse_datum, ++param_dict )
       {
         DictionaryDatum* syn_param = dynamic_cast< DictionaryDatum* >( synapse_datum->datum() );
 
@@ -147,6 +173,23 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
           {
             delay_.push_back( NestModule::create_parameter( ( *syn_defaults )[ names::delay ] ) );
           }
+        }
+
+        DictionaryDatum syn_dict = new Dictionary();
+
+        if ( ( *syn_param )->known( names::synapse_label ) )
+        {
+          ( *syn_dict )[ names::synapse_label ] = ( **syn_param )[ names::synapse_label ];
+        }
+        if ( ( *syn_param )->known( names::receptor_type ) )
+        {
+          ( *syn_dict )[ names::receptor_type ] = ( **syn_param )[ names::receptor_type ];
+        }
+
+        ( *param_dict ).resize( kernel().vp_manager.get_num_threads() );
+#pragma omp parallel
+        {
+          ( *param_dict ).at( kernel().vp_manager.get_thread_id() ) = syn_dict;
         }
       }
     }
@@ -205,13 +248,6 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   else
   {
     throw BadProperty( "Unknown connection type." );
-  }
-
-  // Create dummy dictionaries, one per thread
-  dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );
-#pragma omp parallel
-  {
-    dummy_param_dicts_.at( kernel().vp_manager.get_thread_id() ) = new Dictionary();
   }
 }
 

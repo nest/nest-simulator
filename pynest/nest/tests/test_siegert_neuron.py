@@ -105,11 +105,11 @@ class SiegertNeuronTestCase(unittest.TestCase):
         # - for dt_scaling factor see doc/model_details/noise_generator.ipynb
         # - takes var(V) = sigma^2 / 2 into account
         lif_params = self.lif_params
-        pA_to_mV = lif_params["C_m"] / lif_params["tau_m"]
+        mV_to_pA = lif_params["C_m"] / lif_params["tau_m"]
         exp_dt = np.exp(-self.dt/lif_params["tau_m"])
         dt_scaling = np.sqrt((1 + exp_dt) / (1 - exp_dt))
-        mean = pA_to_mV * mu
-        std = pA_to_mV * sigma * dt_scaling / np.sqrt(2)
+        mean = mV_to_pA * mu
+        std = mV_to_pA * sigma * dt_scaling / np.sqrt(2)
         nest.SetStatus(self.noise_generator, {"mean": mean, "std": std})
 
         # set initial membrane voltage distribution with stationary statistics

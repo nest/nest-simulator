@@ -453,7 +453,7 @@ if test "${PYTHON}"; then
     PYNEST_TEST_DIR="$("${PYTHON}" -c "import importlib; print(importlib.util.find_spec('nest').submodule_search_locations[0])")/tests"
     XUNIT_FILE="${REPORTDIR}/07_pynesttests.xml"
     "${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="07_pynesttests" --xunit-file="${XUNIT_FILE}" "${PYNEST_TEST_DIR}" 2>&1 \
-        | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
+        | tee -a "${TEST_LOGFILE}" | sed 's/^/  /'
 else
     echo
     echo "  Not running PyNEST tests because NEST was compiled without Python support."

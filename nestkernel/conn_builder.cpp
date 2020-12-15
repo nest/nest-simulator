@@ -111,7 +111,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
   {
-    dummy_param_dicts_[ kernel().vp_manager.get_thread_id() ] = new Dictionary();
+    dummy_param_dicts_[ kernel().vp_manager.get_thread_id() ] = Dictionary();
   }
 
   // If make_symmetric_ is requested call reset on all parameters in order
@@ -301,14 +301,18 @@ nest::ConnBuilder::disconnect()
   }
 }
 
-void
+Dictionary&
 nest::ConnBuilder::create_param_dict_( index snode_id,
   Node& target,
   thread target_thread,
   librandom::RngPtr& rng,
   index indx )
 {
-  if ( not param_dicts_[ indx ].empty() ) // indicates we have synapse params
+  if ( param_dicts_[ indx ].empty() ) // indicates we have no synapse params
+  {
+    return dummy_param_dicts_[ target_thread ];
+  }
+  else
   {
     assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ indx ].size() ) );
 
@@ -318,18 +322,18 @@ nest::ConnBuilder::create_param_dict_( index snode_id,
       {
         // change value of dictionary entry without allocating new datum
         IntegerDatum* id = static_cast< IntegerDatum* >(
-          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+          ( param_dicts_[ indx ][ target_thread ][ synapse_parameter.first ] ).datum() );
         ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
       }
       else
       {
         // change value of dictionary entry without allocating new datum
         DoubleDatum* dd = static_cast< DoubleDatum* >(
-          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+          ( param_dicts_[ indx ][ target_thread ][ synapse_parameter.first ] ).datum() );
         ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
       }
     }
-    dummy_param_dicts_[ target_thread ] = param_dicts_[ indx ][ target_thread ];
+    return param_dicts_[ indx ][ target_thread ];
   }
 }
 
@@ -343,12 +347,12 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
 
   for ( size_t indx = 0; indx < synapse_model_id_.size(); ++indx )
   {
-    create_param_dict_( snode_id, target, target_thread, rng, indx );
+    Dictionary& param_dict = create_param_dict_( snode_id, target, target_thread, rng, indx );
 
     if ( default_weight_and_delay_[ indx ] )
     {
       kernel().connection_manager.connect(
-        snode_id, &target, target_thread, synapse_model_id_[ indx ], dummy_param_dicts_[ target_thread ] );
+        snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dict );
     }
     else if ( default_weight_[ indx ] )
     {
@@ -356,7 +360,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
         &target,
         target_thread,
         synapse_model_id_[ indx ],
-        dummy_param_dicts_[ target_thread ],
+        param_dict,
         delays_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
     }
     else if ( default_delay_[ indx ] )
@@ -365,7 +369,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
         &target,
         target_thread,
         synapse_model_id_[ indx ],
-        dummy_param_dicts_[ target_thread ],
+        param_dict,
         numerics::nan,
         weights_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
     }
@@ -377,7 +381,7 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
         &target,
         target_thread,
         synapse_model_id_[ indx ],
-        dummy_param_dicts_[ target_thread ],
+        param_dict,
         delay,
         weight );
     }
@@ -529,17 +533,17 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
   {
     for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
-      param_dicts_[ indx ].push_back( new Dictionary() );
+      param_dicts_[ indx ].push_back( Dictionary() );
 
       for ( auto param : synapse_params_[ indx ] )
       {
         if ( param.second->provides_long() )
         {
-          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
+          param_dicts_[ indx ][ tid ][ param.first ] = Token( new IntegerDatum( 0 ) );
         }
         else
         {
-          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
+          param_dicts_[ indx ][ tid ][ param.first ] = Token( new DoubleDatum( 0.0 ) );
         }
       }
     }

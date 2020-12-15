@@ -55,8 +55,12 @@ def Create(model, n=1, params=None, positions=None):
     n : int, optional
         Number of nodes to create
     params : dict or list, optional
-        Parameters for the new nodes. A single dictionary, a list of
-        dictionaries with size n, or a dictionary with lists of values with size n.
+        Parameters for the new nodes. Can be any of the following:
+
+            - A dictionary with either single values or lists of size n.
+              The single values will be applied to all nodes, while the lists will be distributed across
+              the nodes. Both single values and lists can be given at the same time.
+            - A list with n dictionaries, one dictionary for each node.
         Values may be :py:class:`.Parameter` objects. If omitted,
         the model's defaults are used.
     positions: :py:class:`.spatial.grid` or :py:class:`.spatial.free` object, optional

@@ -71,6 +71,7 @@ def index():
         'mpi': mpi_comm is not None,
     })
 
+
 def do_exec(args, kwargs):
     try:
         source_code = kwargs.get('source', '')
@@ -84,7 +85,7 @@ def do_exec(args, kwargs):
             if len(stdout) > 0:
                 response['stdout'] = '\n'.join(stdout)
         else:
-            code = RestrictedPython.compile_restricted(source_cleaned, '<inline>', 'exec')
+            code = RestrictedPython.compile_restricted(source_cleaned, '<inline>', 'exec')  # noqa
             exec(code, get_restricted_globals(), locals_)
             if '_print' in locals_:
                 response['stdout'] = ''.join(locals_['_print'].txt)
@@ -213,7 +214,7 @@ class Capturing(list):
 
 def clean_code(source):
     codes = source.split('\n')
-    code_cleaned = filter(lambda code: not (code.startswith('import') or code.startswith('from')), codes)
+    code_cleaned = filter(lambda code: not (code.startswith('import') or code.startswith('from')), codes)  # noqa
     return '\n'.join(code_cleaned)
 
 
@@ -248,7 +249,8 @@ def get_globals():
     copied_globals = globals().copy()
 
     # Add modules to copied globals
-    modules = dict([(module, importlib.import_module(module)) for module in MODULES])
+    modlist = [(module, importlib.import_module(module)) for module in MODULES]
+    modules = dict(modlist)
     copied_globals.update(modules)
 
     return copied_globals
@@ -271,9 +273,10 @@ def get_restricted_globals():
     """ Get restricted globals for exec function.
     """
     def getitem(obj, index):
-        if obj is not None and type(obj) in (list, tuple, dict, nest.NodeCollection):
+        typelist = (list, tuple, dict, nest.NodeCollection)
+        if obj is not None and type(obj) in typelist:
             return obj[index]
-        msg = f"Error while getting restricted globals: unidentified object '{obj}'."
+        msg = f"Error getting restricted globals: unidentified object '{obj}'."
         raise TypeError(msg)
 
     restricted_builtins = RestrictedPython.safe_builtins.copy()
@@ -297,7 +300,8 @@ def get_restricted_globals():
     )
 
     # Add modules to restricted globals
-    modules = dict([(module, importlib.import_module(module)) for module in MODULES])
+    modlist = [(module, importlib.import_module(module)) for module in MODULES]
+    modules = dict(modlist)
     restricted_globals.update(modules)
 
     return restricted_globals
@@ -343,7 +347,7 @@ def serialize(call_name, args, kwargs):
         elif call_name == 'SetKernelStatus':
             status = do_call('GetKernelStatus')
         elif call_name == 'SetStructuralPlasticityStatus':
-            status = do_call('GetStructuralPlasticityStatus', [kwargs['params']])
+            status = do_call('GetStructuralPlasticityStatus', [kwargs['params']])  # noqa
         elif call_name == 'SetStatus':
             status = do_call('GetStatus', [kwargs['nodes']])
         if "params" in kwargs:
@@ -424,7 +428,8 @@ def combine(call_name, response):
             if all(type(v[0]) is dict for v in response):
                 result = merge_dicts(response)
             else:
-                raise Exception("Cannot combine data because of unknown reason")
+                msg = "Cannot combine data because of unknown reason"
+                raise Exception(msg)
 
     return result
 
@@ -454,7 +459,8 @@ def merge_dicts(response):
         element_type = device_dicts[0]['element_type']
 
         if element_type not in ('neuron', 'recorder', 'stimulator'):
-            raise Exception(f'Cannot combine data of element with type "{element_type}".')
+            msg = f'Cannot combine data of element with type "{element_type}".'
+            raise Exception(msg)
 
         if element_type == 'neuron':
             tmp = list(filter(lambda status: status['local'], device_dicts))
@@ -470,7 +476,8 @@ def merge_dicts(response):
 
             record_to = tmp['record_to']
             if record_to not in ('ascii', 'memory'):
-                raise Exception(f'Cannot combine data of recorders recording to "{record_to}".')
+                msg = f'Cannot combine data when recording to "{record_to}".'
+                raise Exception(msg)
 
             if record_to == 'memory':
                 event_keys = tmp['events'].keys()
@@ -485,11 +492,10 @@ def merge_dicts(response):
                 for device_dict in device_dicts:
                     tmp['filenames'].extend(device_dict['filenames'])
 
+            result.append(tmp)
+
         if element_type == 'stimulator':
             result.append(device_dicts[0])
-
-
-            result.append(tmp)
 
     return result
 

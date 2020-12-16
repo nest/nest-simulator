@@ -37,6 +37,8 @@ import time
 
 import traceback
 
+from copy import deepcopy
+
 import os
 
 MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
@@ -149,7 +151,7 @@ def do_call(call_name, args=[], kwargs={}):
         log(call_name, f'received response gather, data={response}')
     response[0] = nest.hl_api.serializable(master_response)
 
-    return combine(response)
+    return combine(call_name, response)
 
 
 @app.route('/exec', methods=['GET', 'POST'])
@@ -381,12 +383,116 @@ def run_mpi_app():
     app.run(threaded=False)
 
 
-def combine(response):
+def combine(call_name, response):
     """Combine responses from different MPI processes.
+
+    This function combines the responses of all MPI processes and
+    returns a single response object. The type of the result can vary
+    depending on the call of the call that produced it.
+
+    The combination of results is based on a cascade of heuristics
+    based on the call that was issued and individual repsonse data:
+      * if all responses are None, the combined response will also just
+        be None
+      * for some specific calls, the responses are known to be the same
+        from all workers and the combined response is just the first
+        element of the response list
+      * if the response list contains only a single actual response and
+        None otherwise, the combined response will be that one actual
+        response
+      * for calls to GetStatus on recording devices, the combined
+        response will be a merged dictionary in the sense that all
+        fields that contain a single value in the individual responsed
+        are kept as a single values, while lists will be appended in
+        order of appearance; dictionaries in the response are
+        recursively treated in the same way
+      * for calls to GetStatus on neurons, the combined response is just
+        the single dictionary returned by the process on which the
+        neuron is actually allocated
 
     """
 
-    return response[0]
+    if all(v is None for v in response):
+        result = None
+    elif call_name in ('exec', 'Create'):
+        result = response[0]
+    else:
+        result = list(filter(lambda x: x is not None, response))
+        if len(result) == 1:
+            result = result[0]
+        else:
+            if all(type(v[0]) is dict for v in response):
+                result = merge_dicts(response)
+            else:
+                raise Exception("Cannot combine data because of unknown reason")
+
+    return result
+
+
+def merge_dicts(response):
+    """Merge status dictionaries of recorders
+
+    This function runs through a zipped list and performs the
+    following steps:
+      * sum up all n_events fields
+      * if recording to memory: merge the event dictionaries by joining
+        all contained arrays
+      * if recording to ascii: join filenames arrays
+      * take all other values directly from the device on the first
+        process
+
+    """
+
+    result = []
+
+    for device_dicts in zip(*response):
+
+        # TODO: either stip fields like thread, vp, thread_local_id,
+        # and local or make them lists that contain the values from
+        # all dicts.
+
+        element_type = device_dicts[0]['element_type']
+
+        if element_type not in ('neuron', 'recorder', 'stimulator'):
+            raise Exception(f'Cannot combine data of element with type "{element_type}".')
+
+        if element_type == 'neuron':
+            tmp = list(filter(lambda status: status['local'], device_dicts))
+            assert len(tmp) == 1
+            result.append(tmp[0])
+
+        if element_type == 'recorder':
+            tmp = deepcopy(device_dicts[0])
+            tmp['n_events'] = 0
+
+            for device_dict in device_dicts:
+                tmp['n_events'] += device_dict['n_events']
+
+            record_to = tmp['record_to']
+            if record_to not in ('ascii', 'memory'):
+                raise Exception(f'Cannot combine data of recorders recording to "{record_to}".')
+
+            if record_to == 'memory':
+                event_keys = tmp['events'].keys()
+                for key in event_keys:
+                    tmp['events'][key] = []
+                for device_dict in device_dicts:
+                    for key in event_keys:
+                        tmp['events'][key].extend(device_dict['events'][key])
+
+            if record_to == 'ascii':
+                tmp['filenames'] = []
+                for device_dict in device_dicts:
+                    tmp['filenames'].extend(device_dict['filenames'])
+
+        if element_type == 'stimulator':
+            result.append(device_dicts[0])
+
+
+            result.append(tmp)
+
+    return result
+
 
 if __name__ == "__main__":
     app.run()

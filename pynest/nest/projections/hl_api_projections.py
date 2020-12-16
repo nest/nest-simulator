@@ -66,8 +66,6 @@ class Projection(object):
             return super().__getattribute__(attr)
         if attr in self.conn_spec:
             return self.conn_spec[attr]
-        elif attr in self.syn_spec:
-            return self.syn_spec[attr]
         else:
             raise AttributeError(f'{attr} is not a connection- or synapse-specification')
 
@@ -76,8 +74,6 @@ class Projection(object):
             return super().__setattr__(attr, value)
         if attr in self.conn_spec:
             self.conn_spec[attr] = value
-        elif attr in self.syn_spec:
-            self.syn_spec[attr] = value
         else:
             raise AttributeError(f'{attr} is not a connection- or synapse-specification')
 

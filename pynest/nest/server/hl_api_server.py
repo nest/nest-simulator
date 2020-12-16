@@ -378,9 +378,9 @@ def set_mpi_comm(comm):
     mpi_comm = comm
 
 
-def run_mpi_app():
+def run_mpi_app(host="127.0.0.1", port=5000):
     # NEST segfaults if someone messes with the number of threads, so we don't.
-    app.run(threaded=False)
+    app.run(host=host, port=port, threaded=False)
 
 
 def combine(call_name, response):

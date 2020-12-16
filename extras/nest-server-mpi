@@ -1,35 +1,23 @@
 #!/usr/bin/env python3
 
-"""NEST Server with MPI support
+"""NEST Server with MPI support.
 
 Usage:
   nest-server-mpi --help
-  mpirun --oversubscribe -np <np> nest-server-mpi [command] [options]
-
-Commands:
-  log         display the sever log stored in /tmp/nest-server.log
-  status      display the status of NEST Server
-  start       start a new instance of the server
-  stop        stop a server instance running on <HOST>:<PORT>
-  restart     restart (i.e. stop and start) a server on <HOST>:<PORT>
+  mpirun -np N nest-server-mpi [--host HOST] [--port PORT]
 
 Options:
-  --help      display usage information and exit
-  -d          daemonize the server process
-  -o          print all output to both the console and to the log
-  -h <HOST>   use hostname/IP address <HOST> for the server [default: 127.0.0.1]
-  -p <PORT>   use port <PORT> for opening the socket [default: 5000]
-  -u <UID>    run the server under the user with ID <UID>
+  -h --help     display usage information and exit
+  --host HOST   use hostname/IP address HOST for the server [default: 127.0.0.1]
+  --port PORT   use port PORT for opening the socket [default: 5000]
 
 """
 
 from docopt import docopt
 from mpi4py import MPI
 
-#if __name__ == '__main__':
-#    opt = docopt(__doc__)
-#
-#print(opt)
+if __name__ == '__main__':
+    opt = docopt(__doc__)
 
 import time
 import sys
@@ -47,7 +35,7 @@ def log(call_name, msg):
 if rank == 0:
     print("==> Starting NEST Server Master on rank 0")
     nest.server.set_mpi_comm(comm)
-    nest.server.run_mpi_app()
+    nest.server.run_mpi_app(host=opt['--host'], port=opt['--port'])
 else:
     print(f"==> Starting NEST Server Worker on rank {rank}")
     nest.server.set_mpi_comm(comm)

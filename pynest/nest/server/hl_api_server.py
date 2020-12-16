@@ -414,7 +414,7 @@ def combine(call_name, response):
 
     if all(v is None for v in response):
         result = None
-    elif call_name in ('exec', 'Create'):
+    elif call_name in ('exec', 'Create', 'GetDefaults'):
         result = response[0]
     else:
         result = list(filter(lambda x: x is not None, response))

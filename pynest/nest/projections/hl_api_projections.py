@@ -42,10 +42,10 @@ __all__ = [
 class Projection(object):
     conn_spec = {}  # Filled by subclass
 
-    def __init__(self, source, target, allow_autapses, allow_multapses, **kwargs):
+    def __init__(self, source, target, allow_autapses, allow_multapses, syn_spec):
         self.source = source
         self.target = target
-        self.syn_spec = kwargs
+        self.syn_spec = syn_spec
 
         # Parse allow_autapses and allow_multapses
         for param, name in ((allow_autapses, 'allow_autapses'),
@@ -54,7 +54,9 @@ class Projection(object):
                 self.conn_spec[name] = param
 
     def apply(self):
-        nestlib_Connect(self.source, self.target, self.conn_spec, self.syn_spec)
+        # Convert synapsemodel object to dictionary
+        syn_spec = self.syn_spec.to_dict() if self.syn_spec is not None else self.syn_spec
+        nestlib_Connect(self.source, self.target, self.conn_spec, syn_spec)
 
     def clone(self):
         return copy.copy(self)
@@ -123,36 +125,36 @@ def BuildNetwork():
 
 
 class OneToOne(Projection):
-    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, **kwargs):
+    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None):
         self.conn_spec = {'rule': 'one_to_one'}
-        super().__init__(source, target, allow_autapses, allow_multapses, **kwargs)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)
 
 
 class AllToAll(Projection):
-    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, **kwargs):
+    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None):
         self.conn_spec = {'rule': 'all_to_all'}
-        super().__init__(source, target, allow_autapses, allow_multapses, **kwargs)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)
 
 
 class FixedIndegree(Projection):
-    def __init__(self, source, target, indegree, allow_autapses=None, allow_multapses=None, **kwargs):
+    def __init__(self, source, target, indegree, allow_autapses=None, allow_multapses=None, syn_spec=None):
         self.conn_spec = {'rule': 'fixed_indegree', 'indegree': indegree}
-        super().__init__(source, target, allow_autapses, allow_multapses, **kwargs)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)
 
 
 class FixedOutdegree(Projection):
-    def __init__(self, source, target, outdegree, allow_autapses=None, allow_multapses=None, **kwargs):
+    def __init__(self, source, target, outdegree, allow_autapses=None, allow_multapses=None, syn_spec=None):
         self.conn_spec = {'rule': 'fixed_outdegree', 'outdegree': outdegree}
-        super().__init__(source, target, allow_autapses, allow_multapses, **kwargs)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)
 
 
 class FixedTotalNumber(Projection):
-    def __init__(self, source, target, N, allow_autapses=None, allow_multapses=None, **kwargs):
+    def __init__(self, source, target, N, allow_autapses=None, allow_multapses=None, syn_spec=None):
         self.conn_spec = {'rule': 'fixed_total_number', 'N': N}
-        super().__init__(source, target, allow_autapses, allow_multapses, **kwargs)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)
 
 
 class PairwiseBernoulli(Projection):
-    def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, **kwargs):
+    def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None):
         self.conn_spec = {'rule': 'pairwise_bernoulli', 'p': p}
-        super().__init__(source, target, allow_autapses, allow_multapses, **kwargs)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)

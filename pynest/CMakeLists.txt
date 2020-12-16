@@ -116,6 +116,10 @@ if ( HAVE_PYTHON )
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/projections
       )
 
+  install( DIRECTORY nest/synapsemodels/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/synapsemodels
+      )
+
   find_program( NOSETESTS nosetests )
   if ( NOT NOSETESTS STREQUAL "NOSETESTS-NOTFOUND" )
     add_test( NAME PyNEST

@@ -43,10 +43,11 @@ __all__ = [
 class Projection(object):
     conn_spec = {}  # Filled by subclass
 
-    def __init__(self, source, target, allow_autapses, allow_multapses, syn_spec):
+    def __init__(self, source, target, allow_autapses, allow_multapses, syn_spec, **kwargs):
         self.source = source
         self.target = target
         self.syn_spec = syn_spec
+        self.conn_spec.update(kwargs)
 
         # Parse allow_autapses and allow_multapses
         for param, name in ((allow_autapses, 'allow_autapses'),
@@ -122,36 +123,36 @@ def BuildNetwork():
 
 
 class OneToOne(Projection):
-    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None):
+    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'one_to_one'}
-        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class AllToAll(Projection):
-    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None):
+    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'all_to_all'}
-        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class FixedIndegree(Projection):
-    def __init__(self, source, target, indegree, allow_autapses=None, allow_multapses=None, syn_spec=None):
+    def __init__(self, source, target, indegree, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'fixed_indegree', 'indegree': indegree}
-        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class FixedOutdegree(Projection):
-    def __init__(self, source, target, outdegree, allow_autapses=None, allow_multapses=None, syn_spec=None):
+    def __init__(self, source, target, outdegree, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'fixed_outdegree', 'outdegree': outdegree}
-        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class FixedTotalNumber(Projection):
-    def __init__(self, source, target, N, allow_autapses=None, allow_multapses=None, syn_spec=None):
+    def __init__(self, source, target, N, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'fixed_total_number', 'N': N}
-        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class PairwiseBernoulli(Projection):
-    def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None):
+    def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'pairwise_bernoulli', 'p': p}
-        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec)
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)

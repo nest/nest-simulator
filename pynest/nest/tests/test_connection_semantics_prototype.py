@@ -178,6 +178,22 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
         self.assertEqual(len(conns), 2)
         self.assertEqual([-2, 3], conns.weight)
 
+    def test_connect_projection_spatial(self):
+        """Spatial connect with projections"""
+        dim = [4, 5]
+        extent = [10., 10.]
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(dim, extent=extent))
+
+        mask = {'rectangular': {
+                'lower_left': [-5., -5.],
+                'upper_right': [0., 0.]}}
+        projection = nest.projections.FixedIndegree(source=layer, target=layer, indegree=1, mask=mask)
+        nest.projections.Connect(projection)
+        nest.projections.BuildNetwork()
+
+        conns = nest.GetConnections()
+        self.assertEqual(len(conns), 20)
+
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestConnectionSemanticsPrototype)

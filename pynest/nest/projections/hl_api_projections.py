@@ -25,6 +25,7 @@ Connection semantics prototype functions
 
 import copy
 from ..lib.hl_api_connections import Connect as nestlib_Connect
+from ..synapsemodels.hl_api_synapsemodels import SynapseModel
 
 __all__ = [
     'Connect',
@@ -54,8 +55,8 @@ class Projection(object):
                 self.conn_spec[name] = param
 
     def apply(self):
-        # Convert synapsemodel object to dictionary
-        syn_spec = self.syn_spec.to_dict() if self.syn_spec is not None else self.syn_spec
+        # If syn_spec is a SynapseModel object it must be converted to a dictionary
+        syn_spec = self.syn_spec.to_dict() if issubclass(type(self.syn_spec), SynapseModel) else self.syn_spec
         nestlib_Connect(self.source, self.target, self.conn_spec, syn_spec)
 
     def clone(self):

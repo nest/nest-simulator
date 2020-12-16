@@ -27,6 +27,7 @@ from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
 from .hl_api_simulation import GetKernelStatus
+from ..synapsemodels.hl_api_synapsemodels import SynapseModel
 
 import numpy
 import json
@@ -908,7 +909,8 @@ class CollocatedSynapses(object):
     """
 
     def __init__(self, *args):
-        self.syn_specs = args
+        # SynapseModels must be converted to dicts
+        self.syn_specs = [arg.to_dict() if issubclass(type(arg), SynapseModel) else arg for arg in args]
 
     def __len__(self):
         return len(self.syn_specs)

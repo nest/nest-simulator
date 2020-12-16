@@ -164,6 +164,20 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
                 self.assertAlmostEqual(conns.get(key), item)
             self.assertEqual(conns.synapse_model, syn_ref)
 
+    def test_connect_with_collocated_synapses(self):
+        """Connect projection with collocated synapses"""
+        n = nest.Create('iaf_psc_alpha')
+
+        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(weight=-2.),
+                                           nest.synapsemodels.static(weight=3.))
+        projection = nest.projections.OneToOne(source=n, target=n, syn_spec=syn_spec)
+        nest.projections.Connect(projection)
+        nest.projections.BuildNetwork()
+
+        conns = nest.GetConnections()
+        self.assertEqual(len(conns), 2)
+        self.assertEqual([-2, 3], conns.weight)
+
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestConnectionSemanticsPrototype)

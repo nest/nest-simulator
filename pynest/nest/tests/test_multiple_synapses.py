@@ -192,6 +192,33 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         reference = sorted([syn_label_a, syn_label_b]*num_trgt*indegree)
         self.assertEqual(sorted(conns.get('synapse_label')), reference)
 
+    def test_MultipleSynapses_spatial_network_receptor_type(self):
+        """test co-location of synapses for spatial networks with receptor_type"""
+        num_src = 11
+        num_trgt = 37
+        indegree = 3
+        max_receptor_type = 7
+
+        spatial_nodes_src = nest.Create('iaf_psc_exp_multisynapse', num_src,
+                                        {'tau_syn': [0.1 + i for i in range(max_receptor_type)]},
+                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+        spatial_nodes_trgt = nest.Create('iaf_psc_exp_multisynapse', num_trgt,
+                                         {'tau_syn': [0.1 + i for i in range(max_receptor_type)]},
+                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+
+        receptor_type_a = max_receptor_type-3
+        receptor_type_b = max_receptor_type
+        nest.Connect(spatial_nodes_src, spatial_nodes_trgt, {'rule': 'fixed_indegree', 'indegree': indegree},
+                     nest.CollocatedSynapses({'weight': 3.,
+                                              'receptor_type': receptor_type_a},
+                                             {'weight': nest.spatial_distributions.exponential(nest.spatial.distance),
+                                              'delay': 1.4,
+                                              'receptor_type': receptor_type_b}))
+        conns = nest.GetConnections()
+        self.assertEqual(num_trgt * indegree * 2, len(conns))
+        reference = sorted([receptor_type_a, receptor_type_b]*num_trgt*indegree)
+        self.assertEqual(sorted(conns.receptor), reference)
+
     def test_MultipleSynapses_spatial_network_fixedOutdegree(self):
         """test co-location of synapses for spatial networks with fixed outdegree"""
         num_src = 17

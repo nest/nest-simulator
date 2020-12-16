@@ -142,20 +142,26 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
 
     def test_connect_with_synapse_object(self):
         """Connect projection with synapse object"""
-        n = nest.Create('iaf_psc_alpha')
-
         weight = 0.5
         delay = 0.7
 
-        for synapse, syn_ref in [(nest.synapsemodels.static, 'static_synapse')]:
-            syn = synapse(weight=weight, delay=delay)
+        for synapse, args, syn_ref in [(nest.synapsemodels.static, {}, 'static_synapse'),
+                                       (nest.synapsemodels.ht, {'P': 0.8}, 'ht_synapse'),
+                                       (nest.synapsemodels.stdp, {'lambda': 0.02}, 'stdp_synapse')]:
+            nest.ResetKernel()
+            n = nest.Create('iaf_psc_alpha')
+
+            syn = synapse(weight=weight, delay=delay, **args)
             projection = nest.projections.OneToOne(source=n, target=n, syn_spec=syn)
+
             nest.projections.Connect(projection)
             nest.projections.BuildNetwork()
 
             conns = nest.GetConnections()
             self.assertAlmostEqual(conns.weight, weight)
             self.assertAlmostEqual(conns.delay, delay)
+            for key, item in args.items():
+                self.assertAlmostEqual(conns.get(key), item)
             self.assertEqual(conns.synapse_model, syn_ref)
 
 

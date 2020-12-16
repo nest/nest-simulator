@@ -25,6 +25,8 @@ Synapse models
 
 __all__ = [
     'static',
+    'ht',
+    'stdp',
 ]
 
 
@@ -40,3 +42,13 @@ class SynapseModel:
 class static(SynapseModel):
     def __init__(self, **kwargs):
         super().__init__('static_synapse', **kwargs)
+
+
+class ht(SynapseModel):
+    def __init__(self, **kwargs):
+        super().__init__('ht_synapse', **kwargs)
+
+
+class stdp(SynapseModel):
+    def __init__(self, **kwargs):
+        super().__init__('stdp_synapse', **kwargs)

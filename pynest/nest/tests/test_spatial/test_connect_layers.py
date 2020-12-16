@@ -386,8 +386,11 @@ class ConnectLayersTestCase(unittest.TestCase):
         self.assertEqual(conns.get('synapse_label'), [syn_label]*len(self.layer)*indegree)
 
     def test_connect_receptor_type(self):
+        receptor_type = 7
         multisyn_layer = nest.Create(
-            'iaf_psc_exp_multisynapse', positions=nest.spatial.grid(self.dim, extent=self.extent))
+            'iaf_psc_exp_multisynapse',
+            params={'tau_syn': [0.1 + i for i in range(receptor_type)]},
+            positions=nest.spatial.grid(self.dim, extent=self.extent))
         indegree = 10
         conn_spec = {
             'rule': 'fixed_indegree',
@@ -400,7 +403,6 @@ class ConnectLayersTestCase(unittest.TestCase):
                 }
             }
         }
-        receptor_type = 1
         syn_spec = {'receptor_type': receptor_type}
 
         nest.Connect(multisyn_layer, multisyn_layer, conn_spec, syn_spec)

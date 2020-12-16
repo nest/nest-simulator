@@ -206,7 +206,7 @@ nest::iaf_psc_delta_ps::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta_ps& n
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_delta_ps::iaf_psc_delta_ps()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -215,7 +215,7 @@ nest::iaf_psc_delta_ps::iaf_psc_delta_ps()
 }
 
 nest::iaf_psc_delta_ps::iaf_psc_delta_ps( const iaf_psc_delta_ps& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -241,7 +241,7 @@ nest::iaf_psc_delta_ps::init_buffers_()
   B_.currents_.clear();
   B_.logger_.reset();
 
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void

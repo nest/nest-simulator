@@ -98,7 +98,7 @@ nest::MPIManager::get_process_id_of_node_id( const index node_id ) const
 
 
 inline nest::thread
-nest::MPIManager::get_process_id_of_node_id( const index node_id ) const
+nest::MPIManager::get_process_id_of_node_id( const index ) const
 {
   return 0;
 }

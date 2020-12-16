@@ -126,7 +126,7 @@ nest::rate_transformer_node< TNonlinearities >::Buffers_::Buffers_( const Buffer
 
 template < class TNonlinearities >
 nest::rate_transformer_node< TNonlinearities >::rate_transformer_node()
-  : Archiving_Node()
+  : ArchivingNode()
   , S_()
   , B_( *this )
 {
@@ -136,7 +136,7 @@ nest::rate_transformer_node< TNonlinearities >::rate_transformer_node()
 
 template < class TNonlinearities >
 nest::rate_transformer_node< TNonlinearities >::rate_transformer_node( const rate_transformer_node& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , nonlinearities_( n.nonlinearities_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -168,7 +168,7 @@ nest::rate_transformer_node< TNonlinearities >::init_buffers_()
   B_.last_y_values.resize( buffer_size, 0.0 );
 
   B_.logger_.reset(); // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 template < class TNonlinearities >

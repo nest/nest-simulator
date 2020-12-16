@@ -47,7 +47,7 @@ Description:
  Note that in a neuron model where synaptic events are modeled by a
  truncated exponential the effect of the incoming spike would be
  visible at the time of impact (here, t=5.0 ms). This is because the
- initial condition for the post-synaptic potential (PSP) has a
+ initial condition for the postsynaptic potential (PSP) has a
  non-zero voltage component. For PSPs with finite rise time the
  situation is different. In this case the voltage component of the
  initial condition is zero (see documentation of

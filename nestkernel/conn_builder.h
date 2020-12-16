@@ -148,6 +148,9 @@ protected:
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
+  DictionaryDatum
+  create_param_dict_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng, index indx );
+
   //! Create connection between given nodes, fill parameter values
   void single_connect_( index, Node&, thread, librandom::RngPtr& );
   void single_disconnect_( index, Node&, thread );
@@ -190,7 +193,7 @@ protected:
   //! buffer for exceptions raised in threads
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
-  // Name of the pre synaptic and post synaptic elements for this connection
+  // Name of the pre synaptic and postsynaptic elements for this connection
   // builder
   Name pre_synaptic_element_name_;
   Name post_synaptic_element_name_;
@@ -204,10 +207,13 @@ protected:
     return use_pre_synaptic_element_ and use_post_synaptic_element_;
   }
 
-private:
-  typedef std::map< Name, ConnParameter* > ConnParameterMap;
+  //! pointers to connection parameters specified as arrays
+  std::vector< ConnParameter* > parameters_requiring_skipping_;
 
   std::vector< index > synapse_model_id_;
+
+private:
+  typedef std::map< Name, ConnParameter* > ConnParameterMap;
 
   //! indicate that weight and delay should not be set per synapse
   std::vector< bool > default_weight_and_delay_;
@@ -235,9 +241,6 @@ private:
   //! synapse-specific parameters that should be skipped when we set default synapse parameters
   std::set< Name > skip_syn_params_;
 
-  //! synapse-specific parameters that must be integers
-  std::set< Name > integer_params_;
-
   /**
    * Collects all array parameters in a vector.
    *
@@ -260,10 +263,6 @@ private:
    */
   void reset_weights_();
   void reset_delays_();
-
-protected:
-  //! pointers to connection parameters specified as arrays
-  std::vector< ConnParameter* > parameters_requiring_skipping_;
 };
 
 class OneToOneBuilder : public ConnBuilder

@@ -145,7 +145,7 @@ EventDeliveryManager::resize_send_recv_buffers_target_data()
 void
 EventDeliveryManager::resize_send_recv_buffers_spike_data_()
 {
-  if ( kernel().mpi_manager.get_buffer_size_spike_data() > send_buffer_off_grid_spike_data_.size() )
+  if ( kernel().mpi_manager.get_buffer_size_spike_data() > send_buffer_spike_data_.size() )
   {
     send_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
     recv_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );

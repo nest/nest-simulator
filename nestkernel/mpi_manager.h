@@ -560,6 +560,7 @@ inline void
 MPIManager::decrease_buffer_size_spike_data()
 {
   assert( adaptive_spike_buffers_ );
+  // the minimum is set to 4.0 * get_num_processes() to differentiate the initial size
   if ( buffer_size_spike_data_ / shrink_factor_buffer_spike_data_ > 4.0 * get_num_processes() )
   {
     set_buffer_size_spike_data( floor( buffer_size_spike_data_ / shrink_factor_buffer_spike_data_ ) );

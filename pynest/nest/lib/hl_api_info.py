@@ -226,9 +226,9 @@ def SetStatus(nodes, params, val=None):
         of connection handles as returned by
         :py:func:`.GetConnections()`.
     params : str or dict or list
-        Dictionary of parameters or list of dictionaries of parameters
-        of same length as `nodes`. If `val` is given, this has to be
-        the name of a model property as a str.
+        Dictionary of parameters (either lists or single values) or list of dictionaries of parameters
+        of same length as `nodes`. If `val` is given, this has to be a string giving
+        the name of a model property.
     val : int, list, optional
         If given, params has to be the name of a model property.
 

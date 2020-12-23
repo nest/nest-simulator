@@ -56,41 +56,42 @@ Functions related to creation and retrieval of nodes
 Functions related to connection
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-+---------------------------------------------+-----------------------------------------------+
-| NEST 2.x                                    | NEST 3.0                                      |
-+=============================================+===============================================+
-| nest.GetConnections(list=None,              | nest.GetConnections(                          |
-| list=None, synapse_model=None,              | :green:`nest.NodeCollection` =None,           |
-| synapse_label=None)                         | :green:`nest.NodeCollection` =None,           |
-| *returns* numpy.array                       | synapse_model=None, synapse_label=None)       |
-|                                             | *returns* :darkgreen:`nest.SynapseCollection` |
-+---------------------------------------------+-----------------------------------------------+
-| nest.Connect(list, list, conn_spec          | nest.Connect(:green:`nest.NodeCollection`,    |
-| =None, syn_spec=None, model=None)           | :green:`nest.NodeCollection`, conn_spec=      |
-|                                             | None, syn_spec=None,                          |
-|                                             | :green:`return_SynapseCollection`\ =False)    |
-|                                             |                                               |
-|                                             | *In syn_spec the synapse model is given by*   |
-|                                             | *the* synapse_model *key, where before it*    |
-|                                             | *was* model                                   |
-+---------------------------------------------+-----------------------------------------------+
-| nest.DataConnect(pre, post)                 | *Use* nest.Connect(np.array, np.array,        |
-|                                             | conn_spec="one_to_one")                       |
-+---------------------------------------------+-----------------------------------------------+
-| nest.CGConnect(list, list, cg,              | nest.CGConnect(:green:`nest.NodeCollection`,  |
-| parameter_map=None, model='static           | :green:`nest.NodeCollection`, cg,             |
-| _synapse')                                  | parameter_map=None,                           |
-|                                             | :green:`synapse_model` ='static_synapse')     |
-+---------------------------------------------+-----------------------------------------------+
-| nest.DisconnectOneToOne(int, int,           | nest.Disconnect(:green:`nest.NodeCollection`, |
-| syn_spec)                                   | :green:`nest.NodeCollection`,                 |
-|                                             | syn_spec='static_synapse')                    |
-+---------------------------------------------+-----------------------------------------------+
-| nest.Disconnect(list, list, conn_spec=      | nest.Disconnect(:green:`nest.NodeCollection`, |
-| 'one_to_one', syn_spec='static_synapse')    | :green:`nest.NodeCollection`, conn_spec=      |
-|                                             | 'one_to_one', syn_spec='static_synapse')      |
-|                                             |                                               |
-+---------------------------------------------+-----------------------------------------------+
++---------------------------------------------+--------------------------------------------------+
+| NEST 2.x                                    | NEST 3.0                                         |
++=============================================+==================================================+
+| nest.GetConnections(list=None,              | nest.GetConnections(                             |
+| list=None, synapse_model=None,              | :green:`nest.NodeCollection` =None,              |
+| synapse_label=None)                         | :green:`nest.NodeCollection` =None,              |
+| *returns* numpy.array                       | synapse_model=None, synapse_label=None)          |
+|                                             | *returns* :darkgreen:`nest.SynapseCollection`    |
++---------------------------------------------+--------------------------------------------------+
+| nest.Connect(list, list, conn_spec          | nest.Connect(:green:`nest.NodeCollection`,       |
+| =None, syn_spec=None, model=None)           | :green:`nest.NodeCollection`, conn_spec=         |
+|                                             | None, syn_spec=None,                             |
+|                                             | :green:`return_SynapseCollection`\ = False)      |
+|                                             |                                                  |
+|                                             | *In syn_spec the synapse model is given by*      |
+|                                             | *the* synapse_model *key, where before it*       |
+|                                             | *was* model                                      |
++---------------------------------------------+--------------------------------------------------+
+| nest.DataConnect(pre, post)                 | *Use* nest.Connect(np.array, np.array,           |
+|                                             | conn_spec="one_to_one")                          |
++---------------------------------------------+--------------------------------------------------+
+| nest.CGConnect(list, list, cg,              | *Use* nest.Connect(:green:`nest.NodeCollection`, |
+| parameter_map=params_map,                   | :green:`nest.NodeCollection`,                    |
+| model='static_synapse')                     | :green:`{"rule": "conngen", "cg": cg,            |
+|                                             | "params_map": params_map}`,                      |
+|                                             | :green:`synapse_model` ='static_synapse')        |
++---------------------------------------------+--------------------------------------------------+
+| nest.DisconnectOneToOne(int, int,           | nest.Disconnect(:green:`nest.NodeCollection`,    |
+| syn_spec)                                   | :green:`nest.NodeCollection`,                    |
+|                                             | syn_spec='static_synapse')                       |
++---------------------------------------------+--------------------------------------------------+
+| nest.Disconnect(list, list, conn_spec=      | nest.Disconnect(:green:`nest.NodeCollection`,    |
+| 'one_to_one', syn_spec='static_synapse')    | :green:`nest.NodeCollection`, conn_spec=         |
+|                                             | 'one_to_one', syn_spec='static_synapse')         |
+|                                             |                                                  |
++---------------------------------------------+--------------------------------------------------+
 
 .. _subnet_ref:
 

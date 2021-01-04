@@ -506,7 +506,7 @@ nest::glif_cond::Buffers_::Buffers_( const Buffers_& b, glif_cond& n )
  * ---------------------------------------------------------------- */
 
 nest::glif_cond::glif_cond()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -515,7 +515,7 @@ nest::glif_cond::glif_cond()
 }
 
 nest::glif_cond::glif_cond( const glif_cond& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )

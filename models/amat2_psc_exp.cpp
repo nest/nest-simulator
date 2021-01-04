@@ -227,7 +227,7 @@ nest::amat2_psc_exp::Buffers_::Buffers_( const Buffers_&, amat2_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 nest::amat2_psc_exp::amat2_psc_exp()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -236,7 +236,7 @@ nest::amat2_psc_exp::amat2_psc_exp()
 }
 
 nest::amat2_psc_exp::amat2_psc_exp( const amat2_psc_exp& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -257,7 +257,7 @@ nest::amat2_psc_exp::init_state_( const Node& proto )
 void
 nest::amat2_psc_exp::init_buffers_()
 {
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.spikes_ex_.clear(); // includes resize
   B_.spikes_in_.clear(); // includes resize

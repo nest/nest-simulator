@@ -138,12 +138,6 @@ public:
   void finalize();
 
   /**
-   * Reserve memory to avoid expensive reallocation of vectors during
-   * connection creation.
-   */
-  void reserve( const thread tid, const synindex syn_id, const size_t count );
-
-  /**
    * Adds a source to sources_.
    */
   void add_source( const thread tid, const synindex syn_id, const index node_id, const bool is_primary );

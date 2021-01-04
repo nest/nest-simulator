@@ -40,26 +40,26 @@ namespace nest
 {
 
 /**
- * \class Urbanczik_Archiving_Node
+ * \class UrbanczikArchivingNode
  * a archiving node which additionally archives parameters
  * and buffers needed for the Urbanczik-Senn plasticity rule
  */
 template < class urbanczik_parameters >
-class Urbanczik_Archiving_Node : public Archiving_Node
+class UrbanczikArchivingNode : public ArchivingNode
 {
 
 public:
   /**
-   * \fn Urbanczik_Archiving_Node()
+   * \fn UrbanczikArchivingNode()
    * Constructor.
    */
-  Urbanczik_Archiving_Node();
+  UrbanczikArchivingNode();
 
   /**
-   * \fn Urbanczik_Archiving_Node()
+   * \fn UrbanczikArchivingNode()
    * Copy Constructor.
    */
-  Urbanczik_Archiving_Node( const Urbanczik_Archiving_Node& );
+  UrbanczikArchivingNode( const UrbanczikArchivingNode& );
 
   bool
   supports_urbanczik_archiving() const
@@ -128,35 +128,35 @@ private:
 
 template < class urbanczik_parameters >
 inline double
-Urbanczik_Archiving_Node< urbanczik_parameters >::get_C_m( int comp )
+UrbanczikArchivingNode< urbanczik_parameters >::get_C_m( int comp )
 {
   return urbanczik_params->C_m[ comp ];
 }
 
 template < class urbanczik_parameters >
 inline double
-Urbanczik_Archiving_Node< urbanczik_parameters >::get_g_L( int comp )
+UrbanczikArchivingNode< urbanczik_parameters >::get_g_L( int comp )
 {
   return urbanczik_params->g_L[ comp ];
 }
 
 template < class urbanczik_parameters >
 inline double
-Urbanczik_Archiving_Node< urbanczik_parameters >::get_tau_L( int comp )
+UrbanczikArchivingNode< urbanczik_parameters >::get_tau_L( int comp )
 {
   return urbanczik_params->C_m[ comp ] / urbanczik_params->g_L[ comp ];
 }
 
 template < class urbanczik_parameters >
 inline double
-Urbanczik_Archiving_Node< urbanczik_parameters >::get_tau_syn_ex( int comp )
+UrbanczikArchivingNode< urbanczik_parameters >::get_tau_syn_ex( int comp )
 {
   return urbanczik_params->tau_syn_ex[ comp ];
 }
 
 template < class urbanczik_parameters >
 inline double
-Urbanczik_Archiving_Node< urbanczik_parameters >::get_tau_syn_in( int comp )
+UrbanczikArchivingNode< urbanczik_parameters >::get_tau_syn_in( int comp )
 {
   return urbanczik_params->tau_syn_in[ comp ];
 }

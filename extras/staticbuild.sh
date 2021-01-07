@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # staticbuild.sh
 #
 # This file is part of NEST.

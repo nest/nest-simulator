@@ -39,6 +39,7 @@ set ( nestkernel_sources
       exceptions.h exceptions.cpp
       genericmodel.h genericmodel_impl.h
       node_collection.h node_collection.cpp
+      projection_collection.h projection_collection.cpp
       generic_factory.h
       histentry.h histentry.cpp
       model.h model.cpp
@@ -66,7 +67,7 @@ set ( nestkernel_sources
       conn_parameter.h conn_parameter.cpp
       conn_builder.h conn_builder_impl.h conn_builder.cpp
       conn_builder_factory.h
-      conn_builder_conngen.h conn_builder_conngen.cpp    
+      conn_builder_conngen.h conn_builder_conngen.cpp
       music_event_handler.h music_event_handler.cpp
       music_rate_in_handler.h music_rate_in_handler.cpp
       music_manager.cpp music_manager.h

@@ -951,6 +951,18 @@ NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+void
+NestModule::ConnectProjections_aFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  auto projections = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
+  connect_projections( projections );
+
+  i->OStack.pop( 1 );
+  i->EStack.pop();
+}
+
 /** @BeginDocumentation
    Name: MemoryInfo - Report current memory usage.
    Description:
@@ -2984,6 +2996,8 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
   i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
+
+  i->createcommand( "ConnectProjections_a", &connectprojections_aFunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 

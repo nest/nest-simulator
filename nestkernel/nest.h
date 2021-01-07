@@ -143,6 +143,8 @@ void connect_arrays( long* sources,
   size_t n,
   std::string syn_model );
 
+void connect_projections( const ArrayDatum& projections );
+
 ArrayDatum get_connections( const DictionaryDatum& dict );
 
 void simulate( const double& t );

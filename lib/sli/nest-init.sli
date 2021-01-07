@@ -1017,7 +1017,7 @@ def
         4 2 roll               % bring sources and targets to bottom
         Connect_g_g_D_D
       } bind addtotrie
-      
+
       % Variant: sources targets conn_spec syn_vector Connect
       % Connect nodes from two sets of NodeCollections using the given connectivity specification
       % and a list of synapse specifications
@@ -1034,6 +1034,10 @@ def
 
   } forall
 
+def
+
+/connect_projections [/arraytype]
+  /ConnectProjections_a load
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

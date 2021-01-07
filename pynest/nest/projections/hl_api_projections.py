@@ -25,6 +25,9 @@ Connection semantics prototype functions
 
 import copy
 from ..lib.hl_api_connections import Connect as nestlib_Connect
+from ..ll_api import sps, sr
+from ..lib.hl_api_types import CollocatedSynapses
+from ..lib.hl_api_connection_helpers import _process_syn_spec, _process_spatial_projections, _connect_layers_needed
 from ..synapsemodels.hl_api_synapsemodels import SynapseModel
 
 __all__ = [
@@ -62,6 +65,18 @@ class Projection(object):
 
     def clone(self):
         return copy.copy(self)
+
+    def to_list(self):
+        # Projection connection expects syn_spec to be a list of dicts. Because of the different forms syn_spec
+        # can come in, this requires some processing. TODO: Can this be cleaned up?
+        syn_spec = self.syn_spec.to_dict() if issubclass(type(self.syn_spec), SynapseModel) else self.syn_spec
+        syn_spec = _process_syn_spec(syn_spec, self.conn_spec, len(self.source), len(self.target), False)
+
+        if syn_spec is None:
+            syn_spec = {'synapse_model': 'static_synapse'}
+        elif isinstance(syn_spec, dict) and 'synapse_model' not in syn_spec:
+            syn_spec['synapse_model'] = 'static_synapse'
+        return [self.source, self.target, self.conn_spec, syn_spec]
 
     def __getattr__(self, attr):
         if attr in ['source', 'target', 'conn_spec', 'syn_spec']:
@@ -117,9 +132,38 @@ def ConnectImmediately(projections):
         projection.apply()
 
 
-def BuildNetwork():
+def oldBuildNetwork():
     for projection in projection_collection.get():
         projection.apply()
+
+
+def BuildNetwork():
+    # Convert to list of lists
+    projection_list = []
+    for projection in projection_collection.get():
+        projection = projection.to_list()
+        source, target, conn_spec, syn_spec = projection
+        if _connect_layers_needed(conn_spec, syn_spec):
+            # Check that pre and post are layers
+            if source.spatial is None:
+                raise TypeError("Presynaptic NodeCollection must have spatial information")
+            if target.spatial is None:
+                raise TypeError("Postsynaptic NodeCollection must have spatial information")
+
+            # Merge to a single projection dictionary because we have spatial projections,
+            spatial_projections = _process_spatial_projections(conn_spec, syn_spec)
+            projection_list.append([source, target, spatial_projections])
+        else:
+            # Convert syn_spec to list of dicts
+            if isinstance(syn_spec, CollocatedSynapses):
+                syn_spec = syn_spec.syn_specs
+            elif isinstance(syn_spec, dict):
+                syn_spec = [syn_spec]
+            projection_list.append([source, target, conn_spec, syn_spec])
+
+    # Call SLI function
+    sps(projection_list)
+    sr('connect_projections')
 
 
 class OneToOne(Projection):

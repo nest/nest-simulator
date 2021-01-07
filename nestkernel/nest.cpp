@@ -30,6 +30,7 @@
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "parameter.h"
+#include "projection_collection.h"
 
 // Includes from sli:
 #include "sliexceptions.h"
@@ -312,6 +313,13 @@ connect_arrays( long* sources,
       throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
     }
   }
+}
+
+void
+connect_projections( const ArrayDatum& projections )
+{
+  ProjectionCollection projection_collection( projections );
+  projection_collection.connect();
 }
 
 ArrayDatum

@@ -344,6 +344,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } connect_g_g_D_afunction;
 
+  class ConnectProjections_aFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } connectprojections_aFunction;
+
   class ResetKernelFunction : public SLIFunction
   {
   public:

@@ -168,18 +168,22 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
         """Connect projection with collocated synapses"""
         n = nest.Create('iaf_psc_alpha')
 
-        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(weight=-2.),
-                                           nest.synapsemodels.static(weight=3.))
+        weight_a = -2.
+        weight_b = 3.
+
+        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(weight=weight_a),
+                                           nest.synapsemodels.static(weight=weight_b))
         projection = nest.projections.OneToOne(source=n, target=n, syn_spec=syn_spec)
         nest.projections.Connect(projection)
         nest.projections.BuildNetwork()
 
         conns = nest.GetConnections()
-        self.assertEqual(len(conns), 2)
-        self.assertEqual([-2, 3], conns.weight)
+        self.assertEqual(len(conns), len(syn_spec))
+        self.assertEqual([weight_a, weight_b], conns.weight)
 
     def test_connect_projection_spatial(self):
         """Spatial connect with projections"""
+        indegree = 1
         dim = [4, 5]
         extent = [10., 10.]
         layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(dim, extent=extent))
@@ -187,12 +191,38 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
         mask = {'rectangular': {
                 'lower_left': [-5., -5.],
                 'upper_right': [0., 0.]}}
-        projection = nest.projections.FixedIndegree(source=layer, target=layer, indegree=1, mask=mask)
+        projection = nest.projections.FixedIndegree(source=layer, target=layer, indegree=indegree, mask=mask)
         nest.projections.Connect(projection)
         nest.projections.BuildNetwork()
 
         conns = nest.GetConnections()
-        self.assertEqual(len(conns), 20)
+        self.assertEqual(len(conns), len(layer)*indegree)
+
+    def test_connect_projection_spatial_collocated(self):
+        """Spatial connect with projections and collocated synapses"""
+        indegree = 1
+        weight_a = -2.
+        weight_b = 3.
+
+        dim = [4, 5]
+        extent = [10., 10.]
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(dim, extent=extent))
+
+        mask = {'rectangular': {
+                'lower_left': [-5., -5.],
+                'upper_right': [0., 0.]}}
+
+        syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(weight=weight_a),
+                                           nest.synapsemodels.static(weight=weight_b))
+        projection = nest.projections.FixedIndegree(source=layer, target=layer, indegree=indegree, mask=mask,
+                                                    syn_spec=syn_spec)
+        nest.projections.Connect(projection)
+        nest.projections.BuildNetwork()
+
+        weight_ref = sorted([weight_a, weight_b]*len(layer))
+        conns = nest.GetConnections()
+        self.assertEqual(len(conns), len(layer)*len(syn_spec)*indegree)
+        self.assertEqual(sorted(conns.weight), weight_ref)
 
 
 def suite():

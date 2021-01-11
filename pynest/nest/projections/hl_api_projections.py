@@ -33,6 +33,7 @@ from ..synapsemodels.hl_api_synapsemodels import SynapseModel
 __all__ = [
     'Connect',
     'ConnectImmediately',
+    'oldBuildNetwork',
     'BuildNetwork',
     'OneToOne',
     'AllToAll',

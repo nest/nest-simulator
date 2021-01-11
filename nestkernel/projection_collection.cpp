@@ -71,7 +71,7 @@ ProjectionCollection::Projection_::connect() const
   }
   else
   {
-    // Convert synapse parameters to vector
+    // Transform synapse parameters from ArrayDatum to vector
     std::vector< DictionaryDatum > synapse_params( syn_spec.size() );
     std::transform( syn_spec.begin(),
       syn_spec.end(),

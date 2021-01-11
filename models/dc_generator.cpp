@@ -175,7 +175,6 @@ nest::dc_generator::update( Time const& origin, const long from, const long to )
   for ( long offs = from; offs < to; ++offs )
   {
     S_.I_ = 0.0;
-
     if ( StimulatingDevice::is_active( Time::step( start + offs ) ) )
     {
       S_.I_ = P_.amp_;
@@ -190,6 +189,7 @@ nest::dc_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
 void
 nest::dc_generator::set_data_from_stimulating_backend( std::vector< double > input_param )
 {
@@ -200,7 +200,7 @@ nest::dc_generator::set_data_from_stimulating_backend( std::vector< double > inp
   {
     if ( input_param.size() != 1 )
     {
-      throw BadParameterValue( "The size of thz data for the dc_generator is incorrect." );
+      throw BadParameterValue( "The size of the data for the dc_generator is incorrect." );
     }
     else
     {

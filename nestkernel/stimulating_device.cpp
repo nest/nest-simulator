@@ -40,7 +40,7 @@ nest::StimulatingDevice::StimulatingDevice( StimulatingDevice const& sd )
   , first_syn_id_( invalid_synindex ) // a new instance can have no connections
   , backend_params_( sd.backend_params_ )
 {
-  P_=Parameters_(sd.P_);
+  P_ = Parameters_( sd.P_ );
 }
 
 bool
@@ -51,7 +51,7 @@ nest::StimulatingDevice::is_active( const Time& T ) const
     || get_type() == StimulatingDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR
     || get_type() == StimulatingDevice::Type::DOUBLE_DATA_GENERATOR )
   {
-    step = T.get_steps() + 1;
+    step = step + 2;
   }
   return get_t_min_() < step and step <= get_t_max_();
 }

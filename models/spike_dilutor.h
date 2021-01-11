@@ -145,7 +145,14 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice device_;
+  class DilutorStimulatingDevice : public StimulatingDevice
+  {
+    StimulatingDevice::Type
+    get_type() const
+    {
+      return StimulatingDevice::Type::SPIKE_GENERATOR;
+    }
+  } device_;
   Parameters_ P_;
   Buffers_ B_;
 };

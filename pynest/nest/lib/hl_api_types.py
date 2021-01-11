@@ -647,11 +647,18 @@ class SynapseCollection(object):
         MAX_SIZE_FULL_PRINT = 35  # 35 is arbitrarily chosen.
 
         params = self.get()
-        srcs = params['source']
-        trgt = params['target']
-        wght = params['weight']
-        dlay = params['delay']
-        s_model = params['synapse_model']
+        if len(params) == 0:
+            srcs = []
+            trgt = []
+            wght = []
+            dlay = []
+            s_model = []
+        else:
+            srcs = params['source']
+            trgt = params['target']
+            wght = params['weight']
+            dlay = params['delay']
+            s_model = params['synapse_model']
 
         if isinstance(srcs, int):
             srcs = [srcs]
@@ -667,11 +674,18 @@ class SynapseCollection(object):
         d_h = 'delay'
 
         # Find maximum number of characters for each column, used to determine width of column
-        src_len = max(len(src_h) + 2, floor(log(max(srcs), 10)))
-        trg_len = max(len(trg_h) + 2, floor(log(max(trgt), 10)))
-        sm_len = max(len(sm_h) + 2, len(max(s_model, key=len)))
-        w_len = len(w_h) + 2
-        d_len = len(d_h) + 2
+        if len(params) == 0:
+            src_len = len(src_h) + 2
+            trg_len = len(trg_h) + 2
+            sm_len = len(sm_h) + 2
+            w_len = len(w_h) + 2
+            d_len = len(d_h) + 2
+        else:
+            src_len = max(len(src_h) + 2, floor(log(max(srcs), 10)))
+            trg_len = max(len(trg_h) + 2, floor(log(max(trgt), 10)))
+            sm_len = max(len(sm_h) + 2, len(max(s_model, key=len)))
+            w_len = len(w_h) + 2
+            d_len = len(d_h) + 2
 
         # 35 is arbitrarily chosen.
         if len(srcs) >= MAX_SIZE_FULL_PRINT and not self.print_full:
@@ -683,9 +697,9 @@ class SynapseCollection(object):
             s_model = s_model[:15] + [u'\u22EE '] + s_model[-15:]
 
         headers = f'{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}' + '\n'
-        boarders = '-'*src_len + ' ' + '-'*trg_len + ' ' + '-'*sm_len + ' ' + '-'*w_len + ' ' + '-'*d_len + '\n'
+        borders = '-'*src_len + ' ' + '-'*trg_len + ' ' + '-'*sm_len + ' ' + '-'*w_len + ' ' + '-'*d_len + '\n'
         output = '\n'.join(format_row_(s, t, sm, w, d) for s, t, sm, w, d in zip(srcs, trgt, s_model, wght, dlay))
-        result = headers + boarders + output
+        result = headers + borders + output
 
         return result
 

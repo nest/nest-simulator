@@ -399,6 +399,16 @@ class TestSynapseCollection(unittest.TestCase):
         conns = nest.GetConnections()
         self.assertEqual(ref_str, str(conns))
 
+    def test_empty_string(self):
+        """
+        Test the str functionality of empty SynapseCollection
+        """
+        ref_str = (' source   target   synapse model   weight   delay \n' +
+                   '-------- -------- --------------- -------- -------\n')
+
+        conns = nest.GetConnections()
+        self.assertEqual(ref_str, str(conns))
+
 
 def suite():
     suite = unittest.makeSuite(TestSynapseCollection, 'test')

@@ -318,7 +318,7 @@ nest::noise_generator::update( Time const& origin, const long from, const long t
     if ( now >= B_.next_step_ )
     {
       // compute new currents
-      for (double & amp : B_.amps_)
+      for ( double& amp : B_.amps_ )
       {
         amp = P_.mean_
           + std::sqrt( P_.std_ * P_.std_ + S_.y_1_ * P_.std_mod_ * P_.std_mod_ )
@@ -329,7 +329,7 @@ nest::noise_generator::update( Time const& origin, const long from, const long t
     }
 
     // record values
-    for (double & amp : B_.amps_)
+    for ( double& amp : B_.amps_ )
     {
       S_.I_avg_ += amp;
     }
@@ -373,9 +373,12 @@ nest::noise_generator::set_data_from_stimulating_backend( std::vector< double > 
   // For the input backend
   if ( not input_param.empty() )
   {
-    if (input_param.size() != 4 ){
-      throw BadParameterValue("The size of the data for the ac_generator is incorrect.");
-    } else{
+    if ( input_param.size() != 4 )
+    {
+      throw BadParameterValue( "The size of the data for the ac_generator is incorrect." );
+    }
+    else
+    {
       DictionaryDatum d = DictionaryDatum( new Dictionary );
       ( *d )[ names::mean ] = DoubleDatum( input_param[ 0 ] );
       ( *d )[ names::std ] = DoubleDatum( input_param[ 1 ] );
@@ -390,4 +393,3 @@ nest::noise_generator::set_data_from_stimulating_backend( std::vector< double > 
   P_ = ptmp;
   P_.num_targets_ = ptmp.num_targets_;
 }
-

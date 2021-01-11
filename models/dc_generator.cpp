@@ -198,9 +198,12 @@ nest::dc_generator::set_data_from_stimulating_backend( std::vector< double > inp
   // For the input backend
   if ( not input_param.empty() )
   {
-    if (input_param.size() != 1 ){
-      throw BadParameterValue("The size of thz data for the dc_generator is incorrect.");
-    } else{
+    if ( input_param.size() != 1 )
+    {
+      throw BadParameterValue( "The size of thz data for the dc_generator is incorrect." );
+    }
+    else
+    {
       DictionaryDatum d = DictionaryDatum( new Dictionary );
       ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
       ptmp.set( d, this );

@@ -260,7 +260,6 @@ private:
     double rate_; //!< current rate, kept for recording
 
     State_(); //!< Sets default state value
-
   };
 
   // ------------------------------------------------------------

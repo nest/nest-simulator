@@ -259,7 +259,7 @@ gamma_sup_generator::is_off_grid() const
 inline StimulatingDevice::Type
 gamma_sup_generator::get_type() const
 {
-return StimulatingDevice::Type::SPIKE_GENERATOR;
+  return StimulatingDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace

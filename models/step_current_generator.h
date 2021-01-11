@@ -163,7 +163,6 @@ private:
     double I_; //!< Instantaneous current value; used for recording current
 
     State_(); //!< Sets default parameter values
-
   };
 
   // ------------------------------------------------------------

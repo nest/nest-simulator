@@ -95,7 +95,8 @@ class StimulatingDevice : public DeviceNode, public Device
 public:
   StimulatingDevice();
   StimulatingDevice( StimulatingDevice const& );
-  ~StimulatingDevice() override = default;;
+  ~StimulatingDevice() override = default;
+  ;
 
   /**
    * Determine whether device is active.
@@ -178,7 +179,7 @@ StimulatingDevice::get_element_type() const
 inline bool
 StimulatingDevice::has_proxies() const
 {
-return false;
+  return false;
 }
 
 } // namespace nest

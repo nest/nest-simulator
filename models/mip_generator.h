@@ -229,7 +229,7 @@ mip_generator::set_status( const DictionaryDatum& d )
 inline StimulatingDevice::Type
 mip_generator::get_type() const
 {
-return StimulatingDevice::Type::SPIKE_GENERATOR;
+  return StimulatingDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace nest

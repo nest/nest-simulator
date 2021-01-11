@@ -104,7 +104,7 @@ nest::step_rate_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   std::vector< double >* times_ms = new std::vector< double >();
   times_ms->reserve( amp_time_stamps_.size() );
-  for (auto amp_time_stamp : amp_time_stamps_)
+  for ( auto amp_time_stamp : amp_time_stamps_ )
   {
     times_ms->push_back( amp_time_stamp.get_ms() );
   }

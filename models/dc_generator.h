@@ -228,7 +228,7 @@ dc_generator::local_receiver() const
 inline StimulatingDevice::Type
 dc_generator::get_type() const
 {
-return StimulatingDevice::Type::CURRENT_GENERATOR;
+  return StimulatingDevice::Type::CURRENT_GENERATOR;
 }
 
 } // namespace

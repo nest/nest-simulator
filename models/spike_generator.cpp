@@ -456,4 +456,3 @@ nest::spike_generator::set_data_from_stimulating_backend( std::vector< double > 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
-

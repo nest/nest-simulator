@@ -247,9 +247,12 @@ nest::ac_generator::set_data_from_stimulating_backend( std::vector< double > inp
   // For the input backend
   if ( not input_param.empty() )
   {
-    if (input_param.size() != 4 ){
-      throw BadParameterValue("The size of the data for the ac_generator is incorrect.");
-    } else{
+    if ( input_param.size() != 4 )
+    {
+      throw BadParameterValue( "The size of the data for the ac_generator is incorrect." );
+    }
+    else
+    {
       DictionaryDatum d = DictionaryDatum( new Dictionary );
       ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
       ( *d )[ names::offset ] = DoubleDatum( input_param[ 1 ] );

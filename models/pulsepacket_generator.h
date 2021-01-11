@@ -207,7 +207,7 @@ pulsepacket_generator::set_status( const DictionaryDatum& d )
 inline StimulatingDevice::Type
 pulsepacket_generator::get_type() const
 {
-return StimulatingDevice::Type::CURRENT_GENERATOR;
+  return StimulatingDevice::Type::CURRENT_GENERATOR;
 }
 
 } // namespace nest

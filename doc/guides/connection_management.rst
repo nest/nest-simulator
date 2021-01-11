@@ -12,9 +12,8 @@ devices for stimulation and recording in NEST are created with the
 ``Connect()`` function. Although each connection is internally
 represented individually, you can use a single call to ``Connect()``
 to create many connections at the same time. In the simplest case, the
-function takes two NodeCollections containing the source and target
-nodes that will be connected in an all-to-all fashion. These two first
-arguments are mandatory.
+function just takes two NodeCollections containing the source and
+target nodes that will be connected in an all-to-all fashion.
 
 Each call to the function will establish the connectivity between pre-
 and post-synaptic populations according to a certain pattern or
@@ -26,15 +25,15 @@ described in the section :ref:`Connection Rules <conn_rules>` below.
 
 To specify the properties for the individual connections, a `synapse
 specification` ``syn_spec`` can be given to ``Connect()``. This can
-also just be a the name of the synapse model to be used, an object
+also just be the name of the synapse model to be used, an object
 defining :ref:`collocated synapses <collocated_synapses>`, or a
-dictionary, with the mandatory key `synapse_model` as well as optional
-parameters for the connections. The ``syn_spec`` is given as the
-fourth argument to the ``Connect()`` function. Parameters like the
-synaptic weight or delay can be either set values or drawn and
-combined flexibly from random distributions. More information about
-synapse models and their parameters can be found in the section
-:ref:`Synapse Specification <synapse_spec>`.
+dictionary, with optional parameters for the connections.
+
+The ``syn_spec`` is given as the fourth argument to the ``Connect()``
+function. Parameters like the synaptic weight or delay can be either
+set values or drawn and combined flexibly from random distributions.
+More information about synapse models and their parameters can
+be found in the section :ref:`Synapse Specification <synapse_spec>`.
 
 The ``Connect()`` function can be called in any of the following ways:
 
@@ -91,7 +90,8 @@ rule, or a dictionary containing a rule specification. Only connection
 rules requiring no parameters can be given as strings, for all other
 rules, a dictionary specifying the rule and its parameters is
 required. Examples for such parameters might be in- and out-degrees,
-or the probability for establishing a connection.
+or the probability for establishing a connection. A description of
+all connection rules available in NEST is available below.
 
 all-to-all
 ~~~~~~~~~~
@@ -197,7 +197,7 @@ that each node in ``A`` has a fixed `outdegree` of ``N``.
 fixed total number
 ~~~~~~~~~~~~~~~~~~
 
-The nodes in ``pre`` are randomly connected with the nodes in ``B``
+The nodes in ``A`` are randomly connected with the nodes in ``B``
 such that the total number of connections equals ``N``.
 
 ::
@@ -215,7 +215,7 @@ one-to-one
      :width: 200px
      :align: center
 
-The `i`th node in ``A`` is connected to the `i`th node in ``B``. The
+The `i`\ th node in ``A`` is connected to the `i`\ th node in ``B``. The
 NodeCollections of ``A`` and ``B`` have to contain the same number of
 nodes.
 
@@ -255,7 +255,7 @@ must be `True`.
     A = nest.Create('iaf_psc_alpha', n)
     B = nest.Create('iaf_psc_alpha', m)
     conn_spec_dict = {'rule': 'symmetric_pairwise_bernoulli', 'p': p,
-                 'allow_autapses': False, 'make_symmetric': True}
+                      'allow_autapses': False, 'make_symmetric': True}
     nest.Connect(A, B, conn_spec_dict)
 
 .. _synapse_spec:
@@ -288,8 +288,8 @@ all parameters is optional and unspecified parameters will take on the
 default values of the chosen synapse model that can be inspected using
 ``nest.GetDefaults(synapse_model)``.
 
-All parameters can be either scalars, arrays or distributions
-(specified as a ``nest.Parameter``). One synapse dictionary can
+All parameters can be either scalars, arrays or distributions.
+One synapse dictionary can
 contain an arbitrary combination of parameter types, as long as they
 are in agreement with the chosen connection rule.
 
@@ -434,7 +434,7 @@ For more information, check out the documentation on the different
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
 In this example, the default connection rule ``all_to_all`` is used
-and connections will be using the model `stdp_synapse`. All synapses
+and connections will be using synapse model `stdp_synapse`. All synapses
 are created with a static weight of 2.5 and a delay that is uniformly
 distributed in [0.8, 2.5]. The parameter `alpha` is drawn from a
 normal distribution with mean 5.0 and standard deviation 1.0, however,
@@ -476,11 +476,11 @@ normal NMDA-type receptor.
 
 This type of connectivity is especially hard to realize when using
 randomized connection rules, as the chosen pairs that are actually
-connected are only known internally, or have to be retrieved manually
+connected are only known internally, and have to be retrieved manually
 after the call to ``Connect()`` returns.
 
 To ease the setup of such connectivity patterns, NEST supports a
-concept called `collocated synapses`. This allows to create several
+concept called `collocated synapses`. This allows the creation of several
 connections between chosen pairs of neurons (possibly with different
 synapse types or parameters) in a single call to ``nest.Connect()``.
 
@@ -500,7 +500,7 @@ dictionaries to each source-target pair internally.
 
 The example above will create 9 connections in total because there are
 3 neurons times 3 synapse specifications in the ``CollocatedSynapses``
-object.
+object, and the connection rule ``one_to_one`` is used.
 
   >>> print(nest.GetKernelStatus('num_connections'))
   9
@@ -533,7 +533,7 @@ Spatially-structured networks
 -----------------------------
 
 Nodes in NEST can be created so that they have a position in two- or
-three-dimentsional space. To take full advantage of the arrangement of
+three-dimensional space. To take full advantage of the arrangement of
 nodes, connection parameters can be based on the nodes' positions or
 their spatial relation to each other. See :doc:`Spatially-structured
 networks <spatial/index>` for the full information about how to create
@@ -572,8 +572,8 @@ columns and :math:`m` rows.
 
 ::
 
-    W = np.array([[0.5 , 0.0, 1.5],
-                  [1.3 , 0.2, 0.0],
+    W = np.array([[0.5,  0.0, 1.5],
+                  [1.3,  0.2, 0.0],
                   [0.0, 1.25, 1.3]])
 
     A = nest.Create('iaf_psc_alpha', 3)
@@ -674,7 +674,7 @@ shows the setup and connection of such a model in more detail:
     A = nest.Create('iaf_psc_alpha')
     B = nest.Create('iaf_psc_exp_multisynapse', params={'tau_syn': [0.1, 0.2, 0.3]})
 
-    print(B.n_synapses)
+    print(B.n_synapses)   # This will print 3, as we set 3 different tau_syns
 
     nest.Connect(A, B, syn_spec={'receptor_type': 2})
 
@@ -879,7 +879,7 @@ Modifying Existing Connections
 
 To modify the parameters of an existing connection, you first have to
 obtain handles to them using ``nest.GetConnections()``. These handles
-can then be given as arguments to the ``nest.SetStatus()`` function.
+can then be given as arguments to the ``nest.SetStatus()`` function,
 or by using the ``set()`` function on the SynapseCollection directly:
 
 ::
@@ -914,7 +914,7 @@ connections in the SynapseCollection.
 
   >>>  conn.set(weight=[4.0, 4.5, 5.0, 5.5])
 
-Similar to how you can retrieve several parameters at once with the
+Similar to how you retrieve several parameters at once with the
 ``get()`` function explained above, you can also set multiple
 parameters at once using ``set(parameter_dictionary)``. Again, the
 values of the dictionary can be a single value, a list, or a

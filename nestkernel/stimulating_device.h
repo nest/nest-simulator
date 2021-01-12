@@ -96,7 +96,6 @@ public:
   StimulatingDevice();
   StimulatingDevice( StimulatingDevice const& );
   ~StimulatingDevice() override = default;
-  ;
 
   /**
    * Determine whether device is active.

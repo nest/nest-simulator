@@ -255,7 +255,7 @@ TargetTableDevices::get_devices_connected( const thread tid, const index lcid ) 
     {
       std::deque< ConnectionID > conns;
       it_synapse->get_all_connections( lcid, 0, tid, UNLABELED_CONNECTION, conns );
-      if ( !conns.empty() )
+      if ( not conns.empty() )
       {
         return true;
       }

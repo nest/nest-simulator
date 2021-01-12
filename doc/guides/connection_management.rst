@@ -245,7 +245,7 @@ symmetric pairwise bernoulli
 
 For each possible pair of nodes from ``A`` and ``B``, a connection is
 created with probability ``p`` from ``A`` to ``B``, as well as a
-connection from ``B`` to ``A`` (two connections in total). To use the
+connection from ``B`` to ``A`` (two connections in total). To use
 this rule, ``allow_autapses`` must be `False`, and ``make_symmetric``
 must be `True`.
 

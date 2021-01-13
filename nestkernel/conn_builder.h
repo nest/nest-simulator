@@ -212,6 +212,11 @@ protected:
 
   std::vector< index > synapse_model_id_;
 
+  //! dictionary to pass to connect function, one per thread so that the all threads do not
+  //! create and use the same dictionary as this leads to performance issues. The dictionary
+  //! can either be empty or filled with synapse parameters.
+  std::vector< Dictionary > dummy_param_dicts_;
+
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
 

@@ -294,7 +294,7 @@ nest::ConnBuilder::disconnect()
 }
 
 void
-nest::ConnBuilder::update_param_dict_( index snode_id,
+nest::ConnBuilder::create_param_dict_( index snode_id,
   Node& target,
   thread target_thread,
   librandom::RngPtr& rng,
@@ -308,14 +308,14 @@ nest::ConnBuilder::update_param_dict_( index snode_id,
       {
         // change value of dictionary entry without allocating new datum
         IntegerDatum* id = static_cast< IntegerDatum* >(
-          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+          ( param_dicts_[ indx ][ target_thread ][ synapse_parameter.first ] ).datum() );
         ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
       }
       else
       {
         // change value of dictionary entry without allocating new datum
         DoubleDatum* dd = static_cast< DoubleDatum* >(
-          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+          ( param_dicts_[ indx ][ target_thread ][ synapse_parameter.first ] ).datum() );
         ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
       }
     }
@@ -512,17 +512,17 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
   // create it here once to avoid re-creating the object over and over again.
     for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
-      param_dicts_[ indx ].push_back( new Dictionary() );
+      param_dicts_[ indx ].push_back( Dictionary() );
 
       for ( auto param : synapse_params_[ indx ] )
       {
         if ( param.second->provides_long() )
         {
-          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
+          param_dicts_[ indx ][ tid ][ param.first ] = Token( new IntegerDatum( 0 ) );
         }
         else
         {
-          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
+          param_dicts_[ indx ][ tid ][ param.first ] = Token( new DoubleDatum( 0.0 ) );
         }
       }
     }

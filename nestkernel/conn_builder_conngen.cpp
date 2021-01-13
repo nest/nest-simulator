@@ -125,7 +125,7 @@ ConnectionGeneratorBuilder::connect_()
         target_node,
         target_thread,
         synapse_model_id_[ 0 ],
-        param_dicts_[ 0 ][ target head ],
+        param_dicts_[ 0 ][ target_thread ],
         params[ d_idx ],
         params[ w_idx ] );
     }

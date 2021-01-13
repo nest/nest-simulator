@@ -300,25 +300,25 @@ nest::ConnBuilder::update_param_dict_( index snode_id,
   librandom::RngPtr& rng,
   index indx )
 {
-    assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ indx ].size() ) );
+  assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ indx ].size() ) );
 
-    for ( auto synapse_parameter : synapse_params_[ indx ] )
+  for ( auto synapse_parameter : synapse_params_[ indx ] )
+  {
+    if ( synapse_parameter.second->provides_long() )
     {
-      if ( synapse_parameter.second->provides_long() )
-      {
-        // change value of dictionary entry without allocating new datum
-        IntegerDatum* id = static_cast< IntegerDatum* >(
-          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-        ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
-      }
-      else
-      {
-        // change value of dictionary entry without allocating new datum
-        DoubleDatum* dd = static_cast< DoubleDatum* >(
-          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-        ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
-      }
+      // change value of dictionary entry without allocating new datum
+      IntegerDatum* id = static_cast< IntegerDatum* >(
+        ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+      ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
     }
+    else
+    {
+      // change value of dictionary entry without allocating new datum
+      DoubleDatum* dd = static_cast< DoubleDatum* >(
+        ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+      ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
+    }
+  }
 }
 
 void
@@ -331,14 +331,12 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
 
   for ( size_t indx = 0; indx < synapse_model_id_.size(); ++indx )
   {
-    // DictionaryDatum param_dict =
     update_param_dict_( snode_id, target, target_thread, rng, indx );
 
     if ( default_weight_and_delay_[ indx ] )
     {
-      kernel().connection_manager.connect( snode_id, &target, target_thread, synapse_model_id_[ indx ],
-    		  param_dicts_[ indx ][ target_thread ]
- );
+      kernel().connection_manager.connect(
+        snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dicts_[ indx ][ target_thread ] );
     }
     else if ( default_weight_[ indx ] )
     {
@@ -363,8 +361,13 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
     {
       const double delay = delays_[ indx ]->value_double( target_thread, rng, snode_id, &target );
       const double weight = weights_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-      kernel().connection_manager.connect(
-        snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dicts_[ indx ][ target_thread ], delay, weight );
+      kernel().connection_manager.connect( snode_id,
+        &target,
+        target_thread,
+        synapse_model_id_[ indx ],
+        param_dicts_[ indx ][ target_thread ],
+        delay,
+        weight );
     }
   }
 }
@@ -510,22 +513,22 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 
   // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-      param_dicts_[ indx ].push_back( new Dictionary() );
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    param_dicts_[ indx ].push_back( new Dictionary() );
 
-      for ( auto param : synapse_params_[ indx ] )
+    for ( auto param : synapse_params_[ indx ] )
+    {
+      if ( param.second->provides_long() )
       {
-        if ( param.second->provides_long() )
-        {
-          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
-        }
-        else
-        {
-          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
-        }
+        ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
+      }
+      else
+      {
+        ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
       }
     }
+  }
 }
 
 void

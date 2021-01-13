@@ -148,8 +148,7 @@ protected:
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
-  void
-  update_param_dict_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng, index indx );
+  void update_param_dict_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng, index indx );
 
   //! Create connection between given nodes, fill parameter values
   void single_connect_( index, Node&, thread, librandom::RngPtr& );

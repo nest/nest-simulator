@@ -414,8 +414,8 @@ class NodeCollection(object):
         Parameters
         ----------
         params : str or dict or list
-            Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `NodeCollection`.
+            Dictionary of parameters (either lists or single values) or list of dictionaries of parameters
+            of same length as the `NodeCollection`.
         kwargs : keyword argument pairs
             Named arguments of parameters of the elements in the `NodeCollection`.
 
@@ -826,8 +826,8 @@ class SynapseCollection(object):
         Parameters
         ----------
         params : str or dict or list
-            Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `SynapseCollection`.
+            Dictionary of parameters (either lists or single values) or list of dictionaries of parameters
+            of same length as `SynapseCollection`.
         kwargs : keyword argument pairs
             Named arguments of parameters of the elements in the `SynapseCollection`.
 

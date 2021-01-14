@@ -11,7 +11,7 @@ jobs:
             TARGET: x86_64-apple-darwin
             COMPILER: clang
             LINKER: clang
-
+             
           - os: ubuntu-latest
             #TARGET: armv7-unknown-linux-musleabihf
             #COMPILER: arm-linux-gnueabihf-gcc-5
@@ -36,9 +36,6 @@ jobs:
           echo "Again Welcome"
           echo $PATH
           echo $PWD
-          #ls /home/runner/work/nest-simulator/nest-simulator
-          #ls /home/runner/work/nest-simulator/nest-simulator/extras/staticbuild.sh
-          #ls /home/runner/work/nest-simulator/nest-simulator/extras
         shell: bash
       - name: Set up Python 3.x
         uses: actions/setup-python@v2

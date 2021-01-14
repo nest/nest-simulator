@@ -324,7 +324,6 @@ these instructions.**
    .. tab:: HPC systems
 
        :doc:`Instructions for high performance computers <hpc_install>` provides some instructions for certain machines.
-       Please :doc:`contact us <../community>` if you need help with your system.
 
 
 .. toctree::

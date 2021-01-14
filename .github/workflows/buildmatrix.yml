@@ -1,0 +1,52 @@
+name: My Workflow
+
+# Controls when the action will run.
+on: push 
+#on: 
+  #push:
+    #branches:
+      #- githubaction-ci-2
+      #- 'master/*'
+env:
+   message: 'world'
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+   strategy:
+     fail-fast: fasle
+     matrix:
+       os: [ubuntu-latest, macos-latest]
+   runs-on: ${{ matrix.os }}
+  #my_build
+    #runs-on: ubuntu-latest
+    steps:
+       # Steps represent a sequence of tasks that will be executed as part of the job
+      - name: Checkout repo content 
+        #uses: actions/checkout@v2 # checkout the repository content to github runner.
+        uses: actions/checkout@master
+        
+      - name: Say Something
+        run: |
+           echo "Hello ${message}"
+           echo "Again Welcome"
+           echo $PATH
+           echo $PWD
+           #ls /home/runner/work/nest-simulator/nest-simulator
+           #ls /home/runner/work/nest-simulator/nest-simulator/extras/staticbuild.sh
+           #ls /home/runner/work/nest-simulator/nest-simulator/extras
+        shell: bash
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+        #run: echo "Welcome to the NEST static analysis build"
+        env:
+          key: xNEST_BUILD_TYPE= STATIC_CODE_ANALYSIS
+      - name: Install dependencies
+        run: |
+           python -m pip install --upgrade pip setuptools
+           python -m pip install scipy junitparser numpy nose cython matplotlib terminaltables
+           pip list
+           g++ --version
+           set -o pipefail
+           chmod +x extras/staticbuild.sh
+           ./extras/staticbuild.sh

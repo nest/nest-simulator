@@ -69,7 +69,7 @@ nest::RecordingBackendMPI::finalize()
 }
 
 void
-nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& )
 {
   if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
   {
@@ -106,9 +106,8 @@ nest::RecordingBackendMPI::disenroll( const RecordingDevice& device )
 }
 
 void
-nest::RecordingBackendMPI::set_value_names( const RecordingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::RecordingBackendMPI::set_value_names( const RecordingDevice&, const std::vector< Name >&,
+  const std::vector< Name >& )
 {
   // nothing to do
 }
@@ -296,20 +295,19 @@ nest::RecordingBackendMPI::cleanup()
 }
 
 void
-nest::RecordingBackendMPI::check_device_status( const DictionaryDatum& params ) const
+nest::RecordingBackendMPI::check_device_status( const DictionaryDatum& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMPI::get_device_defaults( DictionaryDatum& params ) const
+nest::RecordingBackendMPI::get_device_defaults( DictionaryDatum& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMPI::get_device_status( const nest::RecordingDevice& device,
-  DictionaryDatum& params_dictionary ) const
+nest::RecordingBackendMPI::get_device_status( const nest::RecordingDevice&,  DictionaryDatum& ) const
 {
   // nothing to do
 }
@@ -343,13 +341,13 @@ nest::RecordingBackendMPI::write( const RecordingDevice& device,
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 void
-nest::RecordingBackendMPI::get_status( DictionaryDatum& d ) const
+nest::RecordingBackendMPI::get_status( DictionaryDatum& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendMPI::set_status( const DictionaryDatum& d )
+nest::RecordingBackendMPI::set_status( const DictionaryDatum& )
 {
   // nothing to do
 }

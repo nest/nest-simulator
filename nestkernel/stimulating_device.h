@@ -139,7 +139,7 @@ public:
     throw KernelException( "WORNG TYPE" );
   };
   const std::string& get_label() const;
-  virtual void set_data_from_stimulating_backend( std::vector< double > input ){};
+  virtual void set_data_from_stimulating_backend( std::vector< double > ){};
   void update( Time const&, const long, const long ) override{};
 
 protected:

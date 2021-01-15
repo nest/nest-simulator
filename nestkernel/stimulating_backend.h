@@ -79,7 +79,7 @@ public:
   *
   * @ingroup NESTio
   */
-  virtual void enroll( StimulatingDevice& device, const DictionaryDatum& dict ){};
+  virtual void enroll( StimulatingDevice&, const DictionaryDatum& ){};
 
   /**
    * Disenroll an `StimulatingDevice` from the `StimulatingBackend`.
@@ -97,7 +97,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void disenroll( StimulatingDevice& device ){};
+  virtual void disenroll( StimulatingDevice& ){};
 
   /**
    * To make the names of input quantities known to the
@@ -112,9 +112,9 @@ public:
    *
    * @ingroup NESTio
    */
-  void set_value_names( const StimulatingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ){};
+  void set_value_names( const StimulatingDevice&,
+    const std::vector< Name >&,
+    const std::vector< Name >& ){};
 
   /**
    * Initialize global backend-specific data structures.
@@ -205,7 +205,7 @@ public:
   *
   * @ingroup NESTio
   */
-  virtual void check_device_status( const DictionaryDatum& params ) const = 0;
+  virtual void check_device_status( const DictionaryDatum& ) const = 0;
 
   /**
    * Return the per-device defaults by writing it to the given params
@@ -217,7 +217,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void get_device_defaults( DictionaryDatum& params ) const = 0;
+  virtual void get_device_defaults( DictionaryDatum& ) const = 0;
 
   /**
    * Return the per-device status of the given recording device by
@@ -234,27 +234,15 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void get_device_status( const StimulatingDevice& device, DictionaryDatum& params ) const = 0;
+  virtual void get_device_status( const StimulatingDevice& , DictionaryDatum& ) const = 0;
 
-  virtual void
-  set_status( const DictionaryDatum& )
-  {
-  }
+  virtual void set_status( const DictionaryDatum& ) {};
 
-  virtual void
-  get_status( DictionaryDatum& ) const
-  {
-  }
+  virtual void get_status( DictionaryDatum& ) const {};
 
-  void
-  set_input_device_status( const StimulatingDevice&, const DictionaryDatum& ) const
-  {
-  }
+  void set_input_device_status( const StimulatingDevice&, const DictionaryDatum& ) const {};
 
-  void
-  get_input_device_status( const StimulatingDevice&, DictionaryDatum& ) const
-  {
-  }
+  void get_input_device_status( const StimulatingDevice&, DictionaryDatum& ) const {};
 
   static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
   static const std::vector< Name > NO_LONG_VALUE_NAMES;

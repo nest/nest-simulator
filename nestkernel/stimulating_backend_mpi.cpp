@@ -62,7 +62,7 @@ nest::StimulatingBackendMPI::finalize()
 }
 
 void
-nest::StimulatingBackendMPI::enroll( nest::StimulatingDevice& device, const DictionaryDatum& params )
+nest::StimulatingBackendMPI::enroll( nest::StimulatingDevice& device, const DictionaryDatum& )
 {
   if ( device.get_type() == StimulatingDevice::Type::SPIKE_GENERATOR
     or device.get_type() == StimulatingDevice::Type::CURRENT_GENERATOR )
@@ -104,9 +104,8 @@ nest::StimulatingBackendMPI::disenroll( nest::StimulatingDevice& device )
 }
 
 void
-nest::StimulatingBackendMPI::set_value_names( const nest::StimulatingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
+nest::StimulatingBackendMPI::set_value_names( const nest::StimulatingDevice&, const std::vector< Name >&,
+  const std::vector< Name >& )
 {
   // nothing to do
 }
@@ -295,20 +294,19 @@ nest::StimulatingBackendMPI::cleanup()
 }
 
 void
-nest::StimulatingBackendMPI::check_device_status( const DictionaryDatum& params ) const
+nest::StimulatingBackendMPI::check_device_status( const DictionaryDatum& ) const
 {
   // nothing to do
 }
 
 void
-nest::StimulatingBackendMPI::get_device_defaults( DictionaryDatum& params ) const
+nest::StimulatingBackendMPI::get_device_defaults( DictionaryDatum& ) const
 {
   // nothing to do
 }
 
 void
-nest::StimulatingBackendMPI::get_device_status( const nest::StimulatingDevice& device,
-  DictionaryDatum& params_dictionary ) const
+nest::StimulatingBackendMPI::get_device_status( const nest::StimulatingDevice&, DictionaryDatum& ) const
 {
   // nothing to do
 }
@@ -321,7 +319,7 @@ nest::StimulatingBackendMPI::get_status( lockPTRDatum< Dictionary, &SLIInterpret
 }
 
 void
-nest::StimulatingBackendMPI::set_status( const DictionaryDatum& d )
+nest::StimulatingBackendMPI::set_status( const DictionaryDatum& )
 {
   // nothing to do
 }

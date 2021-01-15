@@ -23,8 +23,8 @@ jobs:
              TARGET: x86_64-unknown-linux-musl
              COMPILER: gcc
              LINKER: gcc
-             xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
-             #xNEST_BUILD_TYPE: "MINIMAL"
+             #xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
+             xNEST_BUILD_TYPE: "MINIMAL"
              
        #- name: MacOS
          #os: [ubuntu-latest, macos-latest]
@@ -54,8 +54,8 @@ jobs:
          with:
            python-version: 3.9
         #run: echo "Welcome to the NEST static analysis build"
-         env:
-           key: xNEST_BUILD_TYPE= STATIC_CODE_ANALYSIS
+         #env:
+           #key: xNEST_BUILD_TYPE= STATIC_CODE_ANALYSIS
        - name: MacOS
          if: runner.os =='macOS'
          run: |
@@ -72,6 +72,9 @@ jobs:
             set -o pipefail
             chmod +x extras/staticbuild.sh
             ./extras/staticbuild.sh
+       - name: MPI
+         run: echo "MPI BUILD"
+         if: env.xNEST_BUILD_TYPE == 'MINIMAL'     
        #- name: Full build
        #  env:
        #    key: xNEST_BUILD_TYPE=FULL

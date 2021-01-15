@@ -106,7 +106,8 @@ nest::RecordingBackendMPI::disenroll( const RecordingDevice& device )
 }
 
 void
-nest::RecordingBackendMPI::set_value_names( const RecordingDevice&, const std::vector< Name >&,
+nest::RecordingBackendMPI::set_value_names( const RecordingDevice&,
+  const std::vector< Name >&,
   const std::vector< Name >& )
 {
   // nothing to do
@@ -308,7 +309,7 @@ nest::RecordingBackendMPI::get_device_defaults( DictionaryDatum& ) const
 }
 
 void
-nest::RecordingBackendMPI::get_device_status( const nest::RecordingDevice&,  DictionaryDatum& ) const
+nest::RecordingBackendMPI::get_device_status( const nest::RecordingDevice&, DictionaryDatum& ) const
 {
   // nothing to do
 }

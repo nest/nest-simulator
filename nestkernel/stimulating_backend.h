@@ -112,9 +112,7 @@ public:
    *
    * @ingroup NESTio
    */
-  void set_value_names( const StimulatingDevice&,
-    const std::vector< Name >&,
-    const std::vector< Name >& ){};
+  void set_value_names( const StimulatingDevice&, const std::vector< Name >&, const std::vector< Name >& ){};
 
   /**
    * Initialize global backend-specific data structures.
@@ -234,9 +232,9 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void get_device_status( const StimulatingDevice& , DictionaryDatum& ) const = 0;
+  virtual void get_device_status( const StimulatingDevice&, DictionaryDatum& ) const = 0;
 
-  virtual void set_status( const DictionaryDatum& ) {};
+  virtual void set_status( const DictionaryDatum& ){};
 
   virtual void get_status( DictionaryDatum& ) const {};
 

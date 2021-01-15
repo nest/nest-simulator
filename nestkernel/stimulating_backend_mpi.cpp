@@ -104,7 +104,8 @@ nest::StimulatingBackendMPI::disenroll( nest::StimulatingDevice& device )
 }
 
 void
-nest::StimulatingBackendMPI::set_value_names( const nest::StimulatingDevice&, const std::vector< Name >&,
+nest::StimulatingBackendMPI::set_value_names( const nest::StimulatingDevice&,
+  const std::vector< Name >&,
   const std::vector< Name >& )
 {
   // nothing to do

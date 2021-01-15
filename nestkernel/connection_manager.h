@@ -187,7 +187,7 @@ public:
    * The function then iterates all entries in source and collects the
    * connection IDs to all neurons in target.
    */
-  ArrayDatum get_connections( const DictionaryDatum& params ) const;
+  ArrayDatum get_connections( const DictionaryDatum& params );
 
   void get_connections( std::deque< ConnectionID >& connectome,
     NodeCollectionPTR source,
@@ -342,6 +342,17 @@ public:
    * communicated to false.
    */
   void unset_have_connections_changed( const thread tid );
+
+  /**
+   * Sets flag indicating whether GetConnections has been called.
+   */
+  void set_has_get_connections_been_called( const thread tid );
+
+  /**
+   * Unsets flag indicating whether GetConnections has been called.
+   */
+  void unset_has_get_connections_been_called( const thread tid );
+
 
   /**
    * Deletes TargetTable and resets processed flags of
@@ -581,6 +592,9 @@ private:
   //! True if new connections have been created since startup or last call to
   //! simulate.
   PerThreadBoolIndicator have_connections_changed_;
+
+  //! True if GetConnections has been called.
+  PerThreadBoolIndicator has_get_connections_been_called_;
 
   //! Whether to sort connections by source node ID.
   bool sort_connections_by_source_;

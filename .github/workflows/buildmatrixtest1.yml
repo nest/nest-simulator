@@ -40,6 +40,7 @@ jobs:
        - name: Checkout repo content 
          #uses: actions/checkout@v2 # checkout the repository content to github runner.
          uses: actions/checkout@master
+         run: echo ${{matrix.TARGET}}
         
        - name: Say Something
          run: |

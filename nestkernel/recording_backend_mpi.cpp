@@ -134,54 +134,56 @@ nest::RecordingBackendMPI::prepare()
       // 1) take all the ports of the connections
       // get port and update the list of devices
       thread_id_master = kernel().vp_manager.get_thread_id();
-      int count_max = 0;
-      for ( auto& it_device : devices_[ thread_id_master ] )
-      {
-        // add the link between MPI communicator and the device (devices can share the same MPI communicator)
-        std::string port_name;
-        get_port( std::get< 2 >( it_device.second ), &port_name );
-        auto comm_it = commMap_.find( port_name );
-        MPI_Comm* comm;
-        int index_mpi;
-        if ( comm_it != commMap_.end() )
-        {
-          comm = std::get< 1 >( comm_it->second );
-          std::get< 2 >( comm_it->second ) += 1;
-          index_mpi = std::get< 0 >( comm_it->second );
-        }
-        else
-        {
-          comm = new MPI_Comm;
-          std::tuple< int, MPI_Comm*, int > comm_count = std::make_tuple( count_max, comm, 1 );
-          commMap_.insert( std::make_pair( port_name, comm_count ) );
-          index_mpi = count_max;
-          count_max += 1;
-        }
-        std::get< 0 >( it_device.second ) = index_mpi;
-        std::get< 1 >( it_device.second ) = comm;
-      }
-
-      // initialize the buffer
-      for ( auto& thread_data : buffer_ )
-      {
-        std::vector< std::vector< std::array< double, 3 > > > data_comm( count_max );
-        thread_data.swap( data_comm );
-      }
-
-      // 2) connect the thread to the MPI process it needs to be connected to
-      for ( auto& it_comm : commMap_ )
-      {
-        MPI_Comm_connect( it_comm.first.data(),
-          MPI_INFO_NULL,
-          0,
-          MPI_COMM_WORLD,
-          std::get< 1 >( it_comm.second ) ); // should use the status for handle error
-        std::ostringstream msg;
-        msg << "Connect to " << it_comm.first.data() << "\n";
-        LOG( M_INFO, "MPI Record connect", msg.str() );
-      }
     }
-#pragma omp barrier
+  }
+  int count_max = 0;
+  for ( auto& it_device : devices_[ thread_id_master ] )
+  {
+    // add the link between MPI communicator and the device (devices can share the same MPI communicator)
+    std::string port_name;
+    get_port( std::get< 2 >( it_device.second ), &port_name );
+    auto comm_it = commMap_.find( port_name );
+    MPI_Comm* comm;
+    int index_mpi;
+    if ( comm_it != commMap_.end() )
+    {
+      comm = std::get< 1 >( comm_it->second );
+      std::get< 2 >( comm_it->second ) += 1;
+      index_mpi = std::get< 0 >( comm_it->second );
+    }
+    else
+    {
+      comm = new MPI_Comm;
+      std::tuple< int, MPI_Comm*, int > comm_count = std::make_tuple( count_max, comm, 1 );
+      commMap_.insert( std::make_pair( port_name, comm_count ) );
+      index_mpi = count_max;
+      count_max += 1;
+    }
+    std::get< 0 >( it_device.second ) = index_mpi;
+    std::get< 1 >( it_device.second ) = comm;
+  }
+
+  // initialize the buffer
+  for ( auto& thread_data : buffer_ )
+  {
+    std::vector< std::vector< std::array< double, 3 > > > data_comm( count_max );
+    thread_data.swap( data_comm );
+  }
+
+  // 2) connect the thread to the MPI process it needs to be connected to
+  for ( auto& it_comm : commMap_ )
+  {
+    MPI_Comm_connect( it_comm.first.data(),
+      MPI_INFO_NULL,
+      0,
+      MPI_COMM_WORLD,
+      std::get< 1 >( it_comm.second ) ); // should use the status for handle error
+    std::ostringstream msg;
+    msg << "Connect to " << it_comm.first.data() << "\n";
+    LOG( M_INFO, "MPI Record connect", msg.str() );
+  }
+#pragma omp parallel default( none ) shared( thread_id_master )
+{
     // Update all the thread
     thread thread_id = kernel().vp_manager.get_thread_id();
     if ( thread_id != thread_id_master )
@@ -193,7 +195,6 @@ nest::RecordingBackendMPI::prepare()
         std::get< 1 >( it_device.second ) = std::get< 1 >( device_data->second );
       }
     }
-#pragma omp barrier
   }
 }
 

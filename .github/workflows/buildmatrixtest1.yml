@@ -51,7 +51,7 @@ jobs:
    runs-on: ubuntu-latest
    steps:
      - name: Sets xNEST_BUILD_TYPE=0
-       run: 'echo ::set-env name=xNEST_BUILD_TYPE::STATIC_CODE_ANALYSIS'
+       run: 'echo ::set-env name=xNEST_BUILD_TYPE::0'
          #env:
            #key: xNEST_BUILD_TYPE= STATIC_CODE_ANALYSIS
          #if:  xNEST_BUILD_TYPE= STATIC_CODE_ANALYSIS
@@ -59,7 +59,7 @@ jobs:
     name: Use the env variable for static check
     runs-on: ubuntu-latest
     needs: set_variable
-    if: env.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYSIS'
+    if: env.xNEST_BUILD_TYPE == '0'
     steps:
       - name: Print xNEST_BUILD_TYPE
         run: |

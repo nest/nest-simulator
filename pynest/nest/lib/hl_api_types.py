@@ -647,18 +647,12 @@ class SynapseCollection(object):
         MAX_SIZE_FULL_PRINT = 35  # 35 is arbitrarily chosen.
 
         params = self.get()
-        if len(params) == 0:
-            srcs = []
-            trgt = []
-            wght = []
-            dlay = []
-            s_model = []
-        else:
-            srcs = params['source']
-            trgt = params['target']
-            wght = params['weight']
-            dlay = params['delay']
-            s_model = params['synapse_model']
+
+        srcs = params['source'] if len(params) != 0 else []
+        trgt = params['target'] if len(params) != 0 else []
+        wght = params['weight'] if len(params) != 0 else []
+        dlay = params['delay'] if len(params) != 0 else []
+        s_model = params['synapse_model'] if len(params) != 0 else []
 
         if isinstance(srcs, int):
             srcs = [srcs]

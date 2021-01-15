@@ -678,14 +678,12 @@ class SynapseCollection(object):
             src_len = len(src_h) + 2
             trg_len = len(trg_h) + 2
             sm_len = len(sm_h) + 2
-            w_len = len(w_h) + 2
-            d_len = len(d_h) + 2
         else:
             src_len = max(len(src_h) + 2, floor(log(max(srcs), 10)))
             trg_len = max(len(trg_h) + 2, floor(log(max(trgt), 10)))
             sm_len = max(len(sm_h) + 2, len(max(s_model, key=len)))
-            w_len = len(w_h) + 2
-            d_len = len(d_h) + 2
+        w_len = len(w_h) + 2
+        d_len = len(d_h) + 2
 
         # 35 is arbitrarily chosen.
         if len(srcs) >= MAX_SIZE_FULL_PRINT and not self.print_full:

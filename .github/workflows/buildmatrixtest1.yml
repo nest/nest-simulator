@@ -49,10 +49,10 @@ jobs:
        - name: Static check
          env:
            key: xNEST_BUILD_TYPE= STATIC_CODE_ANALYSIS
-           if:  xNEST_BUILD_TYPE= STATIC_CODE_ANALYSIS
-           run: |
-             chmod +x extras/staticbuild.sh
-             ./extras/staticbuild.sh
+         if:  xNEST_BUILD_TYPE= STATIC_CODE_ANALYSIS
+         run: |
+            chmod +x extras/staticbuild.sh
+            ./extras/staticbuild.sh
        - name: Full build
          env:
            key: xNEST_BUILD_TYPE=FULL

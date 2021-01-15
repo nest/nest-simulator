@@ -19,7 +19,6 @@ jobs:
              COMPILER: arm-linux-gnueabihf-gcc-5
              LINKER: gcc-5-arm-linux-gnueabihf
              xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
-             
            - os: ubuntu-latest
              TARGET: x86_64-unknown-linux-musl
              COMPILER: gcc
@@ -40,6 +39,7 @@ jobs:
        - name: Checkout repo content 
          #uses: actions/checkout@v2 # checkout the repository content to github runner.
          uses: actions/checkout@master
+       - name: Matrix job  
          run: echo ${{matrix.TARGET}}
         
        - name: Say Something

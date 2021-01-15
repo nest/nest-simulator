@@ -59,7 +59,7 @@ jobs:
     name: Use the env variable for static check
     runs-on: ubuntu-latest
     needs: set_variable
-    if: env.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYS'
+    if: env.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYSIS'
     steps:
       - name: Print xNEST_BUILD_TYPE
         run: |

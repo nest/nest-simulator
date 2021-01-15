@@ -3,16 +3,31 @@ on: push
 jobs:
   build:
      if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+     #runs-on: ubuntu-latest
      strategy:
        fail-fast: false
        matrix:
-         os: [ubuntu-latest, macos-latest]
-     runs-on: ${{ matrix.os }}    
-       
+         include:
+           - static: 0
+             os: ubuntu-latest
+             xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
+           - minimal: 1
+             os: macos-latest
+             xNEST_BUILD_TYPE: "MINIMAL"
+             
+       #- name: MacOS
+         #os: [ubuntu-latest, macos-latest]
+     #runs-on: ${{ matrix.os }}
+     steps:
+       - name: Echo details
+         env:
+           STATIC: $(( matrix.xNEST_BUILD_TYPE}}
+           OS: $(( matrix.os}}
+                  
     #steps:
       #- uses: actions/checkout@v1
       #- run: echo ${{matrix.TARGET}}
-     steps:
+     #steps:
         # Steps represent a sequence of tasks that will be executed as part of the job
        - name: Checkout repo content 
          #uses: actions/checkout@v2 # checkout the repository content to github runner.

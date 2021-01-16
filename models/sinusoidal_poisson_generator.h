@@ -162,7 +162,7 @@ private:
   void calibrate() override;
   void event_hook( DSSpikeEvent& ) override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   struct Parameters_
   {

@@ -183,7 +183,7 @@ inline StimulatingDevice::Type
 poisson_generator::get_type() const
 {
   return StimulatingDevice::Type::SPIKE_GENERATOR;
-};
+}
 
 } // namespace nest
 

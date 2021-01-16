@@ -112,7 +112,7 @@ public:
   sinusoidal_poisson_generator();
   sinusoidal_poisson_generator( const sinusoidal_poisson_generator& );
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -123,29 +123,29 @@ public:
   using Node::handles_test_event;
   using Node::event_hook;
 
-  void handle( DataLoggingRequest& );
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   //! Model can be switched between proxies (single spike train) and not
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return not P_.individual_spike_trains_;
   }
 
   //! Allow multimeter to connect to local instances
   bool
-  local_receiver() const
+  local_receiver() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::stimulator;
   }
@@ -157,10 +157,10 @@ public:
   };
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
-  void event_hook( DSSpikeEvent& );
+  void init_state_( const Node& ) override;
+  void init_buffers_() override;
+  void calibrate() override;
+  void event_hook( DSSpikeEvent& ) override;
 
   void update( Time const&, const long, const long );
 
@@ -221,7 +221,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( sinusoidal_poisson_generator& );
+    explicit Buffers_( sinusoidal_poisson_generator& );
     Buffers_( const Buffers_&, sinusoidal_poisson_generator& );
     UniversalDataLogger< sinusoidal_poisson_generator > logger_;
   };

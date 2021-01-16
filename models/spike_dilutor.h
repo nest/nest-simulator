@@ -86,18 +86,18 @@ public:
   spike_dilutor( const spike_dilutor& rhs );
 
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return false;
   }
   bool
-  local_receiver() const
+  local_receiver() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::stimulator;
   }
@@ -106,21 +106,21 @@ public:
   using Node::handle;
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool );
-  port handles_test_event( SpikeEvent&, rport );
-  void handle( SpikeEvent& );
+  port send_test_event( Node&, rport, synindex, bool ) override;
+  port handles_test_event( SpikeEvent&, rport ) override;
+  void handle( SpikeEvent& ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_( const Node& ) override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   // ------------------------------------------------------------
 
@@ -148,7 +148,7 @@ private:
   class DilutorStimulatingDevice : public StimulatingDevice
   {
     StimulatingDevice::Type
-    get_type() const
+    get_type() const override
     {
       return StimulatingDevice::Type::SPIKE_GENERATOR;
     }

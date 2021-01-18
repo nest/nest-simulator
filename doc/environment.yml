@@ -1,6 +1,6 @@
 name: nest-doc
 dependencies:
-  - python=3.6
+  - python>=3.6
   - pip
   - pip:
     - -r file:requirements.txt

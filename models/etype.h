@@ -41,12 +41,7 @@ private:
 public:
     void init(double g_Na, double e_Na,
               double g_K, double e_K);
-    std::pair< double, double > f_numstep(const double v_comp);
-
-    virtual void reset(){};
-    virtual void update(){};
-    virtual void add_spike(){};
-    virtual std::pair< double, double > f_numstep( const double v_comp ){ return std::make_pair( 0., 0. ); };
+    std::pair< double, double > f_numstep(const double v_comp, const double lag);
 };
 
 }//

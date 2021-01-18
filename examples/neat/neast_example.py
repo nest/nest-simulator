@@ -1,8 +1,11 @@
 import nest
+from neatmodel import createReducedNestModel
+
 import matplotlib.pyplot as plt
 
 from neat import PhysTree, CompartmentFitter, NeuronSimTree
-from neat import createReducedNestModel, createReducedNeuronModel
+from neat import createReducedNeuronModel
+
 
 from datarep import paths
 

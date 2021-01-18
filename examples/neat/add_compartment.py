@@ -23,7 +23,10 @@ dend_params = {
 
 sg = nest.Create('spike_generator', 1, {'spike_times': [1., 5., 50., 500.]})
 
-n_neat = nest.Create('iaf_neat')
+## prototype nestml
+# pynestml.tonest('my_etype.nestml')
+n_neat = nest.Create('iaf_neat_my_etype')
+
 nest.AddCompartment(n_neat, 0, -1, soma_params)
 # nest.AddCompartment(2, 1, 0, dend_params)
 # nest.Connect(sg, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.0, 'delay': 0.5})

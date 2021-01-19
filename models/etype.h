@@ -14,6 +14,20 @@
 #include <time.h>
 
 #include "nest_time.h"
+// Includes from libnestutil:
+#include "dict_util.h"
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 
 namespace nest{
@@ -24,23 +38,26 @@ private:
     /*
     Sodium channel
     */
-    // parameters sodium channel (maximal conductance, reversal potential)
-    double m_gbar_Na, m_e_Na;
     // state variables sodium channel
     double m_m_Na, m_h_Na;
+    // parameters sodium channel (maximal conductance, reversal potential)
+    double m_gbar_Na, m_e_Na;
 
     /*
     Potassium channel
     */
-    // parameters potassium channel (maximal conductance, reversal potential)
-    double m_gbar_K, m_e_K;
     // state variables potassium channels
     double m_m_K;
+    // parameters potassium channel (maximal conductance, reversal potential)
+    double m_gbar_K, m_e_K;
 
 
 public:
-    void init(double g_Na, double e_Na,
-              double g_K, double e_K);
+    // constructor, destructor
+    EType();
+    EType(const DictionaryDatum& compartment_params);
+    ~EType(){};
+
     std::pair< double, double > f_numstep(const double v_comp, const double lag);
 };
 

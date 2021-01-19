@@ -18,6 +18,22 @@
 #include "ring_buffer.h"
 #include "synapses_neat.h"
 #include "ionchannels_neat.h"
+#include "etype.h"
+
+// Includes from libnestutil:
+#include "dict_util.h"
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 namespace nest{
 
@@ -49,6 +65,8 @@ public:
     std::vector< std::shared_ptr< Synapse > > m_syns;
     // vector for ion channels
     std::vector< std::shared_ptr< IonChannel > > m_chans;
+    // etype
+    EType m_etype;
     // buffer for currents
     RingBuffer m_currents;
     // voltage variable
@@ -66,9 +84,9 @@ public:
     int m_n_passed;
 
     // constructor, destructor
+    CompNode(const long node_index, const long parent_index);
     CompNode(const long node_index, const long parent_index,
-	     const double ca, const double gc,
-	     const double gl, const double el);
+	         const DictionaryDatum& compartment_params);
     ~CompNode(){};
 
     // initialization
@@ -78,7 +96,7 @@ public:
     void construct_matrix_element();
     void add_input_current( const long lag);
     void add_synapse_contribution( const long lag );
-    void add_channel_contribution();
+    void add_channel_contribution( const long lag );
 
     // maxtrix inversion
     inline void gather_input( const IODat in );
@@ -146,9 +164,11 @@ public:
     ~CompTree(){};
 
     // initialization functions for tree structure
+    // void add_node( const long node_index, const long parent_index,
+    //        const double ca, const double gc,
+    //        const double gl, const double el);
     void add_node( const long node_index, const long parent_index,
-		   const double ca, const double gc,
-		   const double gl, const double el);
+                   const DictionaryDatum& compartment_params );
     void init();
 
     // getters and setters

@@ -2,9 +2,7 @@
 
 
 // compartment node functions //////////////////////////////////////////////////
-nest::CompNode::CompNode( const long node_index, const long parent_index,
-			  const double ca, const double gc,
-			  const double gl, const double el)
+nest::CompNode::CompNode(const long node_index, const long parent_index)
   : m_xx( 0.0 )
   , m_yy( 0.0 )
   , m_dt( 0.1 )
@@ -12,10 +10,32 @@ nest::CompNode::CompNode( const long node_index, const long parent_index,
   , m_p_index( parent_index )
   , m_parent( nullptr )
   , m_v( 0.0 )
-  , m_ca( ca )
-  , m_gc( gc )
-  , m_gl( gl )
-  , m_el( el )
+  , m_ca( 0.0)
+  , m_gc( 0.0)
+  , m_gl( 0.0 )
+  , m_el( 0.0 )
+  , m_ff( 0.0 )
+  , m_gg( 0.0 )
+  , m_hh( 0.0 )
+  , m_n_passed( 0 )
+{
+  m_syns.resize( 0 );
+  m_chans.resize( 0 );
+  m_etype = EType();
+};
+nest::CompNode::CompNode( const long node_index, const long parent_index,
+			              const DictionaryDatum& compartment_params )
+  : m_xx( 0.0 )
+  , m_yy( 0.0 )
+  , m_dt( 0.1 )
+  , m_index( node_index )
+  , m_p_index( parent_index )
+  , m_parent( nullptr )
+  , m_v( 0.0 )
+  , m_ca( getValue< double >( compartment_params, "C_m" ) )
+  , m_gc( getValue< double >( compartment_params, "g_c" ) )
+  , m_gl( getValue< double >( compartment_params, "g_L" ) )
+  , m_el( getValue< double >( compartment_params, "E_L" ) )
   , m_ff( 0.0 )
   , m_gg( 0.0 )
   , m_hh( 0.0 )
@@ -24,6 +44,14 @@ nest::CompNode::CompNode( const long node_index, const long parent_index,
   // m_children.resize( 0 );
   m_syns.resize( 0 );
   m_chans.resize( 0 );
+
+  m_etype = EType( compartment_params );
+  // m_etype.init(  );
+
+  // const double C_m = getValue< double >( compartment_params, "C_m" );
+  // const double g_c = getValue< double >( compartment_params, "g_c" );
+  // const double g_L = getValue< double >( compartment_params, "g_L" );
+  // const double E_L = getValue< double >( compartment_params, "E_L" );
 };
 
 void nest::CompNode::init()
@@ -89,8 +117,6 @@ void nest::CompNode::add_synapse_contribution( const long lag )
 
     for( auto syn_it = m_syns.begin(); syn_it != m_syns.end(); ++syn_it )
     {
-
-
         (*syn_it)->update(lag);
         gf_syn = (*syn_it)->f_numstep(m_v);
 
@@ -99,25 +125,29 @@ void nest::CompNode::add_synapse_contribution( const long lag )
     }
 }
 
-void nest::CompNode::add_channel_contribution()
+void nest::CompNode::add_channel_contribution( const long lag )
 {
-    std::pair< double, double > gf_chan(0., 0.);
+    // std::pair< double, double > gf_chan(0., 0.);
 
-    for( auto chan_it = m_chans.begin(); chan_it != m_chans.end(); ++chan_it )
-    {
-        (*chan_it)->update();
-        gf_chan = (*chan_it)->f_numstep(m_v);
+    // for( auto chan_it = m_chans.begin(); chan_it != m_chans.end(); ++chan_it )
+    // {
+    //     (*chan_it)->update();
+    //     gf_chan = (*chan_it)->f_numstep(m_v);
 
-        m_gg += gf_chan.first;
-        m_ff += gf_chan.second;
-    }
+    //     m_gg += gf_chan.first;
+    //     m_ff += gf_chan.second;
+    // }
+
+    std::pair< double, double > gf_chan = m_etype.f_numstep(m_v, lag);
+    m_gg += gf_chan.first;
+    m_ff += gf_chan.second;
 }
 ////////////////////////////////////////////////////////////////////////////////
 
 // compartment tree functions //////////////////////////////////////////////////
 
 nest::CompTree::CompTree()
-  : m_root( 0, -1, 1., 1., 1., 1. )
+  : m_root( 0, -1)
   , m_dt( 0.1 )
 {
   m_nodes.resize( 0 );
@@ -130,12 +160,13 @@ root shoud have -1 as parent index. Add root node first. Assumes parent of node
 is already added
 */
 void nest::CompTree::add_node( const long node_index, const long parent_index,
-			       const double ca, const double gc,
-			       const double gl, const double el )
+			                   const DictionaryDatum& compartment_params)
 {
+    // CompNode* node = new CompNode( node_index, parent_index,
+    //                ca, gc,
+    //                gl, el );
     CompNode* node = new CompNode( node_index, parent_index,
-				   ca, gc,
-				   gl, el );
+                				   compartment_params);
 
     if( parent_index >= 0 )
     {
@@ -267,8 +298,8 @@ void nest::CompTree::construct_matrix( const std::vector< double >& i_in, const 
     {
         (*node_it)->construct_matrix_element();
         (*node_it)->add_input_current( lag );
-        (*node_it)->add_synapse_contribution(lag);
-        (*node_it)->add_channel_contribution();
+        (*node_it)->add_synapse_contribution( lag );
+        (*node_it)->add_channel_contribution( lag );
     }
 };
 

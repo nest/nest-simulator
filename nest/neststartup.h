@@ -27,23 +27,14 @@
 #include "config.h"
 
 #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )
-
-// External includes:
 #include <neurosim/pyneurosim.h>
-
-// Includes from conngen:
-#include "conngenmodule.h"
-
-// Includes from sli:
 #include "datum.h"
-
 #define CYTHON_isConnectionGenerator( x ) PNS::isConnectionGenerator( x )
 Datum* CYTHON_unpackConnectionGeneratorDatum( PyObject* );
-
-#else // #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )
+#else
 #define CYTHON_isConnectionGenerator( x ) 0
 #define CYTHON_unpackConnectionGeneratorDatum( x ) NULL
-#endif // #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )
+#endif
 
 class SLIInterpreter;
 

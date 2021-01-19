@@ -293,6 +293,8 @@ connect_arrays( long* sources,
 
         kernel().connection_manager.connect(
           *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
+        ALL_ENTRIES_ACCESSED( *param_dicts[ tid ], "connect_arrays", "Unread dictionary entries: " );
+
         increment_wd( w, d );
       }
     }

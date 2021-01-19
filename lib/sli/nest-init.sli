@@ -436,7 +436,7 @@ def
    Author: Jochen Martin Eppler
    FirstVersion: April 2014
 
-   SeeAlso: cv_iv, Connect, CGConnect
+   SeeAlso: cv_iv, Connect
 */
 
 /cvnodecollection trie

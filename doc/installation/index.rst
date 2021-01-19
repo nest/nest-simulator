@@ -109,7 +109,7 @@ and :doc:`compilation_options`.
 
            sudo dnf install python3-nest
 
-       Find out more on the NeuroFedora site: https://docs.fedoraproject.org/en-US/neurofedora/nest/.
+       Find out more on the NeuroFedora site: https://neuro.fedoraproject.org.
 
    .. tab:: Homebrew (macOS)
 
@@ -324,7 +324,6 @@ these instructions.**
    .. tab:: HPC systems
 
        :doc:`Instructions for high performance computers <hpc_install>` provides some instructions for certain machines.
-       Please :doc:`contact us <../community>` if you need help with your system.
 
 
 .. toctree::

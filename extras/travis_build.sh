@@ -287,7 +287,9 @@ fi
 if [ "$xLIBNEUROSIM" = "1" ] ; then
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
     chmod +x extras/install_csa-libneurosim.sh
-    ./extras/install_csa-libneurosim.sh
+    ./extras/install_csa-libneurosim.sh $PYLIB_DIR
+    PYMAJOR=`python3 -c 'import sys; print("%i.%i" % sys.version_info[:2])'`
+    export PYTHONPATH=$HOME/.cache/csa.install/lib/python$PYMAJOR/site-packages${PYTHONPATH:+:$PYTHONPATH}
     if [[ $OSTYPE == darwin* ]]; then
         export DYLD_LIBRARY_PATH=$HOME/.cache/csa.install/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
     else

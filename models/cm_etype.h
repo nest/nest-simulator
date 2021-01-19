@@ -18,7 +18,7 @@
 #include "dict_util.h"
 #include "numerics.h"
 
-// Includes from nestkernel:
+// 0Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
@@ -58,6 +58,7 @@ public:
     EType(const DictionaryDatum& compartment_params);
     ~EType(){};
 
+    void add_spike(){};
     std::pair< double, double > f_numstep(const double v_comp, const double lag);
 };
 

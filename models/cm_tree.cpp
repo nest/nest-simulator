@@ -1,4 +1,4 @@
-#include "compartment_tree_neat.h"
+#include "cm_tree.h"
 
 
 // compartment node functions //////////////////////////////////////////////////
@@ -20,7 +20,6 @@ nest::CompNode::CompNode(const long node_index, const long parent_index)
   , m_n_passed( 0 )
 {
   m_syns.resize( 0 );
-  m_chans.resize( 0 );
   m_etype = EType();
 };
 nest::CompNode::CompNode( const long node_index, const long parent_index,
@@ -43,10 +42,7 @@ nest::CompNode::CompNode( const long node_index, const long parent_index,
 {
   // m_children.resize( 0 );
   m_syns.resize( 0 );
-  m_chans.resize( 0 );
-
   m_etype = EType( compartment_params );
-  // m_etype.init(  );
 
   // const double C_m = getValue< double >( compartment_params, "C_m" );
   // const double g_c = getValue< double >( compartment_params, "g_c" );
@@ -61,11 +57,6 @@ void nest::CompNode::init()
     for( auto  syn_it = m_syns.begin(); syn_it != m_syns.end(); ++syn_it )
     {
         (*syn_it)->init();
-    }
-
-    for( auto chan_it = m_chans.begin(); chan_it != m_chans.end(); ++chan_it )
-    {
-        (*chan_it)->init();
     }
 
     // initialize the buffer

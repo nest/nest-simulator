@@ -1,4 +1,4 @@
-#include "etype.h"
+#include "cm_etype.h"
 
 
 nest::EType::EType()
@@ -23,21 +23,6 @@ nest::EType::EType(const DictionaryDatum& compartment_params)
     , m_gbar_K( getValue< double >( compartment_params, "g_K" ) )
     , m_e_K( getValue< double >( compartment_params, "e_K" ) )
 {}
-
-// nest::EType::init(const DictionaryDatum& compartment_params)
-// {
-//     /*
-//     Sodium channel
-//     */
-//     m_gbar_Na = getValue< double >( compartment_params, "g_Na" );
-//     m_e_Na    = getValue< double >( compartment_params, "e_Na" );
-
-//     /*
-//     Potassium channel
-//     */
-//     m_gbar_K = getValue< double >( compartment_params, "g_K" );
-//     m_e_K    = getValue< double >( compartment_params, "e_K" );
-// }
 
 std::pair< double, double > nest::EType::f_numstep(const double v_comp, const double lag)
 {

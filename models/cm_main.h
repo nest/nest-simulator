@@ -1,5 +1,5 @@
 /*
- *  iaf_neat.h
+ *  cm_main.h
  *
  *  This file is part of NEST.
  *
@@ -31,8 +31,8 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-#include "compartment_tree_neat.h"
-#include "synapses_neat.h"
+#include "cm_tree.h"
+#include "cm_syns.h"
 
 namespace nest
 {
@@ -48,7 +48,7 @@ receptors.
 Description
 +++++++++++
 
-iaf_neat is an implementation of a leaky-integrator neuron. Users can
+cm_main is an implementation of a leaky-integrator neuron. Users can
 define the structure of the neuron, i.e., soma and dendritic tree by
 adding compartments. Each compartment can be assigned receptors,
 currently modeled by AMPA, GABA or NMDA dynamics. <add info about
@@ -93,12 +93,12 @@ There's nothing like it. ^^
 
 EndUserDocs*/
 
-class iaf_neat : public Archiving_Node
+class cm_main : public Archiving_Node
 {
 
 public:
-  iaf_neat();
-  iaf_neat( const iaf_neat& );
+  cm_main();
+  cm_main( const cm_main& );
 
   using Node::handle;
   using Node::handles_test_event;
@@ -134,9 +134,9 @@ private:
   double get_state_element( size_t elem){return m_c_tree.get_node_voltage(elem);}
 
   // The next classes need to be friends to access the State_ class/member
-  friend class DataAccessFunctor< iaf_neat >;
-  friend class DynamicRecordablesMap< iaf_neat >;
-  friend class DynamicUniversalDataLogger< iaf_neat >;
+  friend class DataAccessFunctor< cm_main >;
+  friend class DynamicRecordablesMap< cm_main >;
+  friend class DynamicUniversalDataLogger< cm_main >;
 
   // ----------------------------------------------------------------
 
@@ -145,14 +145,14 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_neat& );
-    Buffers_( const Buffers_&, iaf_neat& );
+    Buffers_( cm_main& );
+    Buffers_( const Buffers_&, cm_main& );
 
     // buffers and summs up incoming spikes/currents
     // RingBuffer currents_;
 
     //! Logger for all analog data
-    DynamicUniversalDataLogger< iaf_neat > logger_;
+    DynamicUniversalDataLogger< cm_main > logger_;
   };
 
   // ----------------------------------------------------------------
@@ -168,14 +168,14 @@ private:
   /** @} */
 
   //! Mapping of recordables names to access functions
-  DynamicRecordablesMap< iaf_neat > recordablesMap_;
+  DynamicRecordablesMap< cm_main > recordablesMap_;
 
   double V_th_;
 };
 
 
 inline port
-nest::iaf_neat::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::cm_main::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -183,7 +183,7 @@ nest::iaf_neat::send_test_event( Node& target, rport receptor_type, synindex, bo
 }
 
 inline port
-iaf_neat::handles_test_event( SpikeEvent&, rport receptor_type )
+cm_main::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( ( receptor_type < 0 ) or ( receptor_type >= static_cast< port >( syn_receptors.size() ) ) )
   {
@@ -193,7 +193,7 @@ iaf_neat::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-iaf_neat::handles_test_event( CurrentEvent&, rport receptor_type )
+cm_main::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   // if find_node returns nullptr, raise the error
   if ( !m_c_tree.find_node( long(receptor_type), m_c_tree.get_root(), 0 ) )
@@ -204,7 +204,7 @@ iaf_neat::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_neat::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+cm_main::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -214,7 +214,7 @@ iaf_neat::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 }
 
 inline void
-iaf_neat::get_status( DictionaryDatum& d ) const
+cm_main::get_status( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_th, V_th_ );
   Archiving_Node::get_status( d );
@@ -222,7 +222,7 @@ iaf_neat::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-iaf_neat::set_status( const DictionaryDatum& d )
+cm_main::set_status( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_th, V_th_ );
   Archiving_Node::set_status( d );

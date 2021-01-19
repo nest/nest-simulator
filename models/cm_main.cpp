@@ -1,5 +1,5 @@
 /*
- *  iaf_neat.cpp
+ *  cm_main.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,9 +20,9 @@
  *
  */
 
-/* iaf_neat is a neuron where the potential jumps on each spike arrival. */
+/* cm_main is a neuron where the potential jumps on each spike arrival. */
 
-#include "iaf_neat.h"
+#include "cm_main.h"
 
 // C++ includes:
 #include <limits>
@@ -48,16 +48,16 @@ namespace nest
 
 template <>
 void
-DynamicRecordablesMap< iaf_neat >::create( iaf_neat& host)
+DynamicRecordablesMap< cm_main >::create( cm_main& host)
 {
 }
 
-nest::iaf_neat::Buffers_::Buffers_( iaf_neat& n )
+nest::cm_main::Buffers_::Buffers_( cm_main& n )
   : logger_( n )
 {
 }
 
-nest::iaf_neat::Buffers_::Buffers_( const Buffers_&, iaf_neat& n )
+nest::cm_main::Buffers_::Buffers_( const Buffers_&, cm_main& n )
   : logger_( n )
 {
 }
@@ -66,7 +66,7 @@ nest::iaf_neat::Buffers_::Buffers_( const Buffers_&, iaf_neat& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::iaf_neat::iaf_neat()
+nest::cm_main::cm_main()
   : Archiving_Node()
   , B_( *this )
   , V_th_( -55.0 )
@@ -74,7 +74,7 @@ nest::iaf_neat::iaf_neat()
   recordablesMap_.create( *this );
 }
 
-nest::iaf_neat::iaf_neat( const iaf_neat& n )
+nest::cm_main::cm_main( const cm_main& n )
   : Archiving_Node( n )
   , B_( n.B_, *this )
   , V_th_( n.V_th_ )
@@ -86,12 +86,12 @@ nest::iaf_neat::iaf_neat( const iaf_neat& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_neat::init_state_( const Node& proto )
+nest::cm_main::init_state_( const Node& proto )
 {
 }
 
 void
-nest::iaf_neat::init_buffers_()
+nest::cm_main::init_buffers_()
 {
   // B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
@@ -99,7 +99,7 @@ nest::iaf_neat::init_buffers_()
 }
 
 void
-iaf_neat::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
+cm_main::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
 {
 //   const double C_m = getValue< double >( compartment_params, "C_m" );
 //   const double g_c = getValue< double >( compartment_params, "g_c" );
@@ -111,11 +111,11 @@ iaf_neat::add_compartment( const long compartment_idx, const long parent_compart
 
   // to enable recording the voltage of the current compartment
   recordablesMap_.insert( "V_m_" + std::to_string(compartment_idx),
-                          DataAccessFunctor< iaf_neat >( *this, compartment_idx ) );
+                          DataAccessFunctor< cm_main >( *this, compartment_idx ) );
 }
 
 size_t
-iaf_neat::add_receptor( const long compartment_idx, const std::string& type )
+cm_main::add_receptor( const long compartment_idx, const std::string& type )
 {
   std::shared_ptr< Synapse > syn;
   if ( type == "AMPA" )
@@ -149,18 +149,9 @@ iaf_neat::add_receptor( const long compartment_idx, const std::string& type )
 }
 
 void
-nest::iaf_neat::calibrate()
+nest::cm_main::calibrate()
 {
   B_.logger_.init();
-
-  CompNode* root = m_c_tree.get_root();
-
-  std::shared_ptr< IonChannel > chan1(new FakePotassium(15. * root->m_gl));
-  root->m_chans.push_back(chan1);
-
-  std::shared_ptr< IonChannel > chan2(new FakeSodium(40. * root->m_gl));
-  root->m_chans.push_back(chan2);
-
   m_c_tree.init();
 }
 
@@ -169,7 +160,7 @@ nest::iaf_neat::calibrate()
  */
 
 void
-nest::iaf_neat::update( Time const& origin, const long from, const long to )
+nest::cm_main::update( Time const& origin, const long from, const long to )
 {
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
@@ -184,8 +175,7 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
     // threshold crossing
     if ( m_c_tree.get_root()->m_v >= V_th_ && v_0_prev < V_th_ )
     {
-      m_c_tree.get_root()->m_chans[0]->add_spike();
-      m_c_tree.get_root()->m_chans[1]->add_spike();
+      m_c_tree.get_root()->m_etype.add_spike();
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
@@ -199,7 +189,7 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::iaf_neat::handle( SpikeEvent& e )
+nest::cm_main::handle( SpikeEvent& e )
 {
   if ( e.get_weight() < 0 )
   {
@@ -214,7 +204,7 @@ nest::iaf_neat::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_neat::handle( CurrentEvent& e )
+nest::cm_main::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -226,7 +216,7 @@ nest::iaf_neat::handle( CurrentEvent& e )
 }
 
 void
-nest::iaf_neat::handle( DataLoggingRequest& e )
+nest::cm_main::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

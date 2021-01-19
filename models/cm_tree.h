@@ -16,9 +16,10 @@
 
 #include "nest_time.h"
 #include "ring_buffer.h"
-#include "synapses_neat.h"
-#include "ionchannels_neat.h"
-#include "etype.h"
+
+// compartmental model
+#include "cm_syns.h"
+#include "cm_etype.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -63,8 +64,6 @@ public:
     std::vector< CompNode > m_children;
     // vector for synapses
     std::vector< std::shared_ptr< Synapse > > m_syns;
-    // vector for ion channels
-    std::vector< std::shared_ptr< IonChannel > > m_chans;
     // etype
     EType m_etype;
     // buffer for currents

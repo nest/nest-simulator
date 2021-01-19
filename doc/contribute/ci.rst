@@ -5,7 +5,7 @@ Continuous Integration
 
 Stringent quality control is particularly important in the context of NEST, a neuronal network simulator with the emphasis on correctness, reproducibility and performance. However, given the limited amount of the available resources, it is wasteful to transfer the responsibility to re-run the test suite for all target platforms on every single code base change to the shoulders of the developers.
 
-In order to address this problem, a `Travis <http://travis-ci.org/>`_ Continuous Integration (CI) service has been set up, which allows for regular testing of changes that are getting into the tree and timely reporting of identified problems. This way, issues will be discovered earlier and the amount of efforts to fix them will be significantly decreased (hopefully).
+In order to address this problem, a `Travis <http://travis-ci.org/>`_ Continuous Integration (CI) service has been set up, which allows for regular testing of changes that are getting into the tree and timely reporting of identified problems. This way, issues will be discovered earlier and the amount of efforts to fix them significantly decreased.
 
 
 Platforms tested
@@ -28,7 +28,7 @@ The current CI implementation is defined in `.travis.yml <https://github.com/nes
 
    - Vera++ and cppcheck are used for more detailed semantic (but still static) code analysis.
 
-   - pycodestyle is used to statically check Python code. A few errors are intentionally ignored, defined in the variable ``PEP8_IGNORES`` in `extras/static_code_analysis.sh <https://github.com/nest/nest-simulator/blob/master/extras/static_code_analysis.sh>`_. The maximum line length is again 120 characters.
+   - pycodestyle is used to statically check Python code. A few errors are intentionally ignored, defined in the variable ``PEP8_IGNORES`` in `extras/static_code_analysis.sh <https://github.com/nest/nest-simulator/blob/master/extras/static_code_analysis.sh>`_. Again, the maximum line length is 120 characters.
 
    Errors that occurred in this stage are printed at the end of the log, including a list of affected files.
 

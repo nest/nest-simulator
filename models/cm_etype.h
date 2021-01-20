@@ -47,7 +47,7 @@ private:
     Potassium channel
     */
     // state variables potassium channels
-    double m_m_K;
+    double m_n_K;
     // parameters potassium channel (maximal conductance, reversal potential)
     double m_gbar_K, m_e_K;
 

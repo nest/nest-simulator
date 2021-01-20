@@ -99,8 +99,8 @@ The following parameters can be set using the `AddCompartment` function
 
 =========== ======= ===========================================================
  C_m        uF      Capacitance of compartment
- g_c        nS      Coupling conductance with parent compartment
- g_L        nS      Leak conductance of the compartment
+ g_c        uS      Coupling conductance with parent compartment
+ g_L        uS      Leak conductance of the compartment
  e_L        mV      Leak reversal of the compartment
 =========== ======= ===========================================================
 

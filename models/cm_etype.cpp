@@ -43,7 +43,6 @@ std::pair< double, double > nest::EType::f_numstep(const double v_comp, const do
     /*
     Sodium channel
     */
-    double g_Na;
     if (gbar_Na_ > 1e-9)
     {
         // activation and timescale of state variable 'm'
@@ -65,7 +64,7 @@ std::pair< double, double > nest::EType::f_numstep(const double v_comp, const do
         h_Na_ += (1. - p_h_Na) *  h_inf_Na;
 
         // compute the conductance of the sodium channel
-        g_Na = gbar_Na_ * pow(m_Na_, 3) * h_Na_;
+        double g_Na = gbar_Na_ * pow(m_Na_, 3) * h_Na_;
 
         // add to variables for numerical integration
         g_val += g_Na / 2.;
@@ -75,7 +74,6 @@ std::pair< double, double > nest::EType::f_numstep(const double v_comp, const do
     /*
     Potassium channel
     */
-    double g_K;
     if (gbar_K_ > 1e-9)
     {
         // activation and timescale of state variable 'm'
@@ -88,7 +86,7 @@ std::pair< double, double > nest::EType::f_numstep(const double v_comp, const do
         n_K_ += (1. - p_n_K) *  n_inf_K;
 
         // compute the conductance of the potassium channel
-        g_K = gbar_K_ * n_K_;
+        double g_K = gbar_K_ * n_K_;
 
         // add to variables for numerical integration
         g_val += g_K / 2.;

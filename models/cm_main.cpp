@@ -19,32 +19,8 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-/* cm_main is a neuron where the potential jumps on each spike arrival. */
-
 #include "cm_main.h"
 
-// C++ includes:
-// #include <limits>
-
-// Includes from libnestutil:
-// #include "dict_util.h"
-// #include "numerics.h"
-
-// Includes from nestkernel:
-#include "node.h"
-#include "nest_time.h"
-// #include "exceptions.h"
-#include "kernel_manager.h"
-#include "universal_data_logger_impl.h"
-
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-// #include "doubledatum.h"
-// #include "integerdatum.h"
-
-#include "ionchannels_neat.h"
 
 namespace nest
 {

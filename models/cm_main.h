@@ -131,7 +131,7 @@ private:
   std::vector< std::shared_ptr< Synapse > > syn_receptors;
 
   // To record variables with DataAccessFunctor
-  double get_state_element( size_t elem){return m_c_tree.get_node_voltage(elem);}
+  double get_state_element( size_t elem){return m_c_tree.get_compartment_voltage(elem);}
 
   // The next classes need to be friends to access the State_ class/member
   friend class DataAccessFunctor< cm_main >;
@@ -195,8 +195,8 @@ cm_main::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 cm_main::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  // if find_node returns nullptr, raise the error
-  if ( !m_c_tree.find_node( long(receptor_type), m_c_tree.get_root(), 0 ) )
+  // if find_compartment returns nullptr, raise the error
+  if ( !m_c_tree.find_compartment( long(receptor_type), m_c_tree.get_root(), 0 ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

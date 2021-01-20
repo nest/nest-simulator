@@ -13,7 +13,6 @@
 #include <math.h>
 #include <time.h>
 
-
 #include "nest_time.h"
 #include "ring_buffer.h"
 
@@ -36,23 +35,24 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
+
 namespace nest{
 
 
-class CompNode{
+class Compartment{
 private:
     // aggragators for numerical integration
     double m_xx;
     double m_yy;
 
 public:
-    // node_index
+    // compartment_index
     long m_index;
-    // parent node index
+    // parent compartment index
     long m_p_index;
     // tree structure indices
-    CompNode* m_parent;
-    std::vector< CompNode > m_children;
+    Compartment* m_parent;
+    std::vector< Compartment > m_children;
     // vector for synapses
     std::vector< std::shared_ptr< Synapse > > m_syns;
     // etype
@@ -74,10 +74,10 @@ public:
     int m_n_passed;
 
     // constructor, destructor
-    CompNode(const long node_index, const long parent_index);
-    CompNode(const long node_index, const long parent_index,
+    Compartment(const long compartment_index, const long parent_index);
+    Compartment(const long compartment_index, const long parent_index,
 	         const DictionaryDatum& compartment_params);
-    ~CompNode(){};
+    ~Compartment(){};
 
     // initialization
     void init();
@@ -89,16 +89,19 @@ public:
     inline void gather_input( const std::pair< double, double > in );
     inline std::pair< double, double > io();
     inline double calc_v( const double v_in );
-}; // CompNode
+}; // Compartment
 
-inline void nest::CompNode::gather_input( const std::pair< double, double > in)
+
+/*
+Short helper functions for solving the matrix equation. Can hopefully be inlined
+*/
+inline void nest::Compartment::gather_input( const std::pair< double, double > in)
 {
     m_xx += in.first; m_yy += in.second;
 };
-
-inline std::pair< double, double > nest::CompNode::io()
+inline std::pair< double, double > nest::Compartment::io()
 {
-    // include inputs from child nodes
+    // include inputs from child compartments
     m_gg -= m_xx;
     m_ff -= m_yy;
 
@@ -108,8 +111,7 @@ inline std::pair< double, double > nest::CompNode::io()
 
     return std::make_pair(g_val, f_val);
 };
-
-inline double nest::CompNode::calc_v( const double v_in )
+inline double nest::Compartment::calc_v( const double v_in )
 {
     // reset recursion variables
     m_xx = 0.0; m_yy = 0.0;
@@ -126,19 +128,19 @@ private:
     /*
     structural data containers for the compartment model
     */
-    CompNode m_root;
-    std::vector< long > m_node_indices;
-    std::vector< CompNode* > m_nodes;
-    std::vector< CompNode* > m_leafs;
+    Compartment m_root;
+    std::vector< long > m_compartment_indices;
+    std::vector< Compartment* > m_compartments;
+    std::vector< Compartment* > m_leafs;
 
     // recursion functions for matrix inversion
-    void solve_matrix_downsweep(CompNode* node_ptr,
-                                std::vector< CompNode* >::iterator leaf_it);
-    void solve_matrix_upsweep(CompNode* node, double vv);
+    void solve_matrix_downsweep(Compartment* compartment_ptr,
+                                std::vector< Compartment* >::iterator leaf_it);
+    void solve_matrix_upsweep(Compartment* compartment, double vv);
 
     // set functions for initialization
-    void set_nodes();
-    void set_nodes( CompNode* node );
+    void set_compartments();
+    void set_compartments( Compartment* compartment );
     void set_leafs();
 
 public:
@@ -147,19 +149,18 @@ public:
     ~CompTree(){};
 
     // initialization functions for tree structure
-    void add_node( const long node_index, const long parent_index,
+    void add_compartment( const long compartment_index, const long parent_index,
                    const DictionaryDatum& compartment_params );
     void init();
 
-    // get a node pointer from the tree
-    CompNode* find_node( const long node_index );
-    CompNode* find_node( const long node_index, CompNode* node );
-    CompNode* find_node( const long node_index, CompNode* node, const long raise_flag );
-    CompNode* get_root(){ return &m_root; };
+    // get a compartment pointer from the tree
+    Compartment* find_compartment( const long compartment_index );
+    Compartment* find_compartment( const long compartment_index, Compartment* compartment, const long raise_flag );
+    Compartment* get_root(){ return &m_root; };
 
     // get voltage values
     std::vector< double > get_voltage() const;
-    double get_node_voltage( const long node_index );
+    double get_compartment_voltage( const long compartment_index );
 
     // construct the numerical integration matrix and vector
     void construct_matrix( const long lag );

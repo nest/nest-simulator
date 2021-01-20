@@ -101,13 +101,7 @@ nest::cm_main::init_buffers_()
 void
 cm_main::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
 {
-//   const double C_m = getValue< double >( compartment_params, "C_m" );
-//   const double g_c = getValue< double >( compartment_params, "g_c" );
-//   const double g_L = getValue< double >( compartment_params, "g_L" );
-//   const double E_L = getValue< double >( compartment_params, "E_L" );
-
-  // m_c_tree.add_node( compartment_idx, parent_compartment_idx, C_m, g_c, g_L, E_L );
-  m_c_tree.add_node( compartment_idx, parent_compartment_idx, compartment_params);
+  m_c_tree.add_compartment( compartment_idx, parent_compartment_idx, compartment_params);
 
   // to enable recording the voltage of the current compartment
   recordablesMap_.insert( "V_m_" + std::to_string(compartment_idx),
@@ -142,8 +136,8 @@ cm_main::add_receptor( const long compartment_idx, const std::string& type )
   const size_t syn_idx = syn_receptors.size();
   syn_receptors.push_back( syn );
 
-  CompNode* node = m_c_tree.find_node( compartment_idx );
-  node->m_syns.push_back( syn );
+  Compartment* compartment = m_c_tree.find_compartment( compartment_idx );
+  compartment->m_syns.push_back( syn );
 
   return syn_idx;
 }
@@ -211,8 +205,8 @@ nest::cm_main::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  CompNode* node = m_c_tree.find_node( e.get_rport() );
-  node->m_currents.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  Compartment* compartment = m_c_tree.find_compartment( e.get_rport() );
+  compartment->m_currents.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

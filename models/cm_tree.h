@@ -91,7 +91,7 @@ public:
     inline void gather_input( const std::pair< double, double > in );
     inline std::pair< double, double > io();
     inline double calc_v( const double v_in );
-};
+}; // CompNode
 
 inline void nest::CompNode::gather_input( const std::pair< double, double > in)
 {
@@ -134,10 +134,7 @@ private:
     std::vector< CompNode* > m_nodes;
     std::vector< CompNode* > m_leafs;
 
-    // timestep for simulation [ms]
-    double m_dt;
-
-    //recursion function
+    // recursion functions for matrix inversion
     void solve_matrix_downsweep(CompNode* node_ptr,
                                 std::vector< CompNode* >::iterator leaf_it);
     void solve_matrix_upsweep(CompNode* node, double vv);
@@ -157,11 +154,13 @@ public:
                    const DictionaryDatum& compartment_params );
     void init();
 
-    // getters and setters
+    // get a node pointer from the tree
     CompNode* find_node( const long node_index );
     CompNode* find_node( const long node_index, CompNode* node );
     CompNode* find_node( const long node_index, CompNode* node, const long raise_flag );
     CompNode* get_root(){ return &m_root; };
+
+    // get voltage values
     std::vector< double > get_voltage() const;
     double get_node_voltage( const long node_index );
 
@@ -171,9 +170,8 @@ public:
     // solve the matrix equation for next timestep voltage
     void solve_matrix();
 
-    // print functions
+    // print function
     void print_tree() const;
-};
-
+}; // CompTree
 
 } // namespace

@@ -116,7 +116,6 @@ void nest::CompNode::construct_matrix_element( const long lag )
 // compartment tree functions //////////////////////////////////////////////////
 nest::CompTree::CompTree()
   : m_root( 0, -1)
-  , m_dt( 0.1 )
 {
   m_nodes.resize( 0 );
   m_leafs.resize( 0 );
@@ -199,6 +198,10 @@ void nest::CompTree::init()
     }
 }
 
+/*
+Creates a vector of node pointers, organized in the order in which they were
+added by `add_node()`
+*/
 void nest::CompTree::set_nodes()
 {
     m_nodes.clear();
@@ -210,6 +213,9 @@ void nest::CompTree::set_nodes()
 
 }
 
+/*
+Creates a vector of node pointers of nodes that are also leafs of the tree.
+*/
 void nest::CompTree::set_leafs()
 {
     m_leafs.clear();
@@ -223,7 +229,7 @@ void nest::CompTree::set_leafs()
 };
 
 /*
-Get vector of voltage values
+Returns vector of voltage values, indices correspond to nodes in `m_nodes`
 */
 std::vector< double > nest::CompTree::get_voltage() const
 {
@@ -236,7 +242,7 @@ std::vector< double > nest::CompTree::get_voltage() const
 }
 
 /*
-Get voltage of single node voltage, indicated by the node_index
+Return voltage of single node voltage, indicated by the node_index
 */
 double nest::CompTree::get_node_voltage( const long node_index )
 {
@@ -324,6 +330,9 @@ void nest::CompTree::solve_matrix_upsweep( CompNode* node, double vv )
     }
 };
 
+/*
+Print the tree graph
+*/
 void nest::CompTree::print_tree() const
 {
     // loop over all nodes

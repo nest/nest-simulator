@@ -2,6 +2,9 @@
 Welcome to the NEST simulator documentation!
 ********************************************
 
+.. _index_ref:
+
+
 :orange:`Introducing NEST 3.0`
 ------------------------------
 
@@ -12,6 +15,21 @@ NEST 3.0 provides a more intuitive experience with simplified yet versatile hand
 
 
 - Read the :doc:`Detailed transition guide <guides/nest2_to_nest3/nest2_to_nest3_detailed_transition_guide>` for an in-depth comparison between old and new syntax.
+
+----
+
+This will :hoverxref:`show a tooltip <hoverxref:hoverxref>` in the linked words to ``hoverxref``.
+
+This will :hoverxref:`show a floating window <hoverxref>` in the linked words.
+
+.. _my-reference-label:
+
+Section to cross-reference
+--------------------------
+
+This is the text of the section.
+
+It refers to the section itself, see :ref:`my-reference-label`.
 
 ----
 
@@ -146,3 +164,4 @@ Performance Computing and Data Storage in Norway and its predecessors.
 .. image:: _static/img/EBRAINS.svg
   :width: 25 %
   :target: https://ebrains.eu/
+

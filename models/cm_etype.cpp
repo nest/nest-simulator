@@ -24,7 +24,7 @@ nest::EType::EType(const DictionaryDatum& compartment_params)
     , m_e_K( getValue< double >( compartment_params, "e_K" ) )
 {}
 
-std::pair< double, double > nest::EType::f_numstep(const double v_comp, const double lag)
+std::pair< double, double > nest::EType::f_numstep(const double v_comp, const double dt)
 {
     double g_val = 0., i_val = 0.;
 
@@ -43,12 +43,12 @@ std::pair< double, double > nest::EType::f_numstep(const double v_comp, const do
         double tau_h_Na = 0.33898305084745761/((-0.014999999999999999)*(v_comp + 66.0)/(1.0 - exp((v_comp + 66.0)/6.0)) + 0.014999999999999999*(v_comp + 66.0)/(1.0 - exp((-v_comp - 66.0)/6.0)));
 
         // advance state variable 'm' one timestep
-        double p_m_Na = exp(-lag / tau_m_Na);
+        double p_m_Na = exp(-dt / tau_m_Na);
         m_m_Na *= p_m_Na ;
         m_m_Na += (1. - p_m_Na) *  m_inf_Na;
 
         // advance state variable 'h' one timestep
-        double p_h_Na = exp(-lag / tau_h_Na);
+        double p_h_Na = exp(-dt / tau_h_Na);
         m_h_Na *= p_h_Na ;
         m_h_Na += (1. - p_h_Na) *  h_inf_Na;
 
@@ -71,7 +71,7 @@ std::pair< double, double > nest::EType::f_numstep(const double v_comp, const do
         double tau_m_K = 4.0/(exp((-v_comp - 46.560000000000002)/44.140000000000001) + 1.0);
 
         // advance state variable 'm' one timestep
-        double p_m_K = exp(-lag / tau_m_K);
+        double p_m_K = exp(-dt / tau_m_K);
         m_m_K *= p_m_K;
         m_m_K += (1. - p_m_K) *  m_inf_K;
 

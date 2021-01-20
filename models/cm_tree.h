@@ -39,13 +39,6 @@
 namespace nest{
 
 
-struct IODat{
-    // data container to communicate between nodes for inversion
-    double g_val;
-    double f_val;
-};
-
-
 class CompNode{
 private:
     // aggragators for numberical integrations
@@ -92,33 +85,30 @@ public:
     void init();
 
     // matrix construction
-    void construct_matrix_element();
-    void add_input_current( const long lag);
-    void add_synapse_contribution( const long lag );
-    void add_channel_contribution( const long lag );
+    void construct_matrix_element( const long lag );
 
     // maxtrix inversion
-    inline void gather_input( const IODat in );
-    inline IODat io();
+    inline void gather_input( const std::pair< double, double > in );
+    inline std::pair< double, double > io();
     inline double calc_v( const double v_in );
 };
 
-inline void nest::CompNode::gather_input( const IODat in)
+inline void nest::CompNode::gather_input( const std::pair< double, double > in)
 {
-    m_xx += in.g_val; m_yy += in.f_val;
+    m_xx += in.first; m_yy += in.second;
 };
 
-inline nest::IODat nest::CompNode::io()
+inline std::pair< double, double > nest::CompNode::io()
 {
-    IODat out;
-
     // include inputs from child nodes
     m_gg -= m_xx;
     m_ff -= m_yy;
 
-    // output values
-    out.g_val = m_hh * m_hh / m_gg;
-    out.f_val = m_ff * m_hh / m_gg;
+    // // output values
+    // out.first = m_hh * m_hh / m_gg;
+    // out.second = m_ff * m_hh / m_gg;
+
+    std::pair< double, double > out(m_hh * m_hh / m_gg, m_ff * m_hh / m_gg);
 
     return out;
 };
@@ -163,9 +153,6 @@ public:
     ~CompTree(){};
 
     // initialization functions for tree structure
-    // void add_node( const long node_index, const long parent_index,
-    //        const double ca, const double gc,
-    //        const double gl, const double el);
     void add_node( const long node_index, const long parent_index,
                    const DictionaryDatum& compartment_params );
     void init();

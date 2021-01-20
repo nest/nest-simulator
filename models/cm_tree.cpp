@@ -40,14 +40,8 @@ nest::CompNode::CompNode( const long node_index, const long parent_index,
   , m_hh( 0.0 )
   , m_n_passed( 0 )
 {
-  // m_children.resize( 0 );
   m_syns.resize( 0 );
   m_etype = EType( compartment_params );
-
-  // const double C_m = getValue< double >( compartment_params, "C_m" );
-  // const double g_c = getValue< double >( compartment_params, "g_c" );
-  // const double g_L = getValue< double >( compartment_params, "g_L" );
-  // const double E_L = getValue< double >( compartment_params, "E_L" );
 };
 
 void nest::CompNode::init()
@@ -64,9 +58,9 @@ void nest::CompNode::init()
 }
 
 // for matrix construction
-void nest::CompNode::construct_matrix_element()
+void nest::CompNode::construct_matrix_element( const long lag )
 {
-   const double dt = Time::get_resolution().get_ms();
+    const double dt = Time::get_resolution().get_ms();
 
     // matrix diagonal element
     m_gg = m_ca / dt + m_gl / 2.;
@@ -95,15 +89,13 @@ void nest::CompNode::construct_matrix_element()
     {
         m_ff -= (*child_it).m_gc * (m_v - (*child_it).m_v) / 2.;
     }
-}
 
-void nest::CompNode::add_input_current( const long lag )
-{
-    m_ff += m_currents.get_value( lag );
-}
+    // add the channel contribution
+    std::pair< double, double > gf_chan = m_etype.f_numstep(m_v, dt);
+    m_gg += gf_chan.first;
+    m_ff += gf_chan.second;
 
-void nest::CompNode::add_synapse_contribution( const long lag )
-{
+    // add synapse contribution
     std::pair< double, double > gf_syn(0., 0.);
 
     for( auto syn_it = m_syns.begin(); syn_it != m_syns.end(); ++syn_it )
@@ -114,29 +106,14 @@ void nest::CompNode::add_synapse_contribution( const long lag )
         m_gg += gf_syn.first;
         m_ff += gf_syn.second;
     }
-}
 
-void nest::CompNode::add_channel_contribution( const long lag )
-{
-    // std::pair< double, double > gf_chan(0., 0.);
-
-    // for( auto chan_it = m_chans.begin(); chan_it != m_chans.end(); ++chan_it )
-    // {
-    //     (*chan_it)->update();
-    //     gf_chan = (*chan_it)->f_numstep(m_v);
-
-    //     m_gg += gf_chan.first;
-    //     m_ff += gf_chan.second;
-    // }
-
-    std::pair< double, double > gf_chan = m_etype.f_numstep(m_v, lag);
-    m_gg += gf_chan.first;
-    m_ff += gf_chan.second;
+    // add input current
+    m_ff += m_currents.get_value( lag );
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-// compartment tree functions //////////////////////////////////////////////////
 
+// compartment tree functions //////////////////////////////////////////////////
 nest::CompTree::CompTree()
   : m_root( 0, -1)
   , m_dt( 0.1 )
@@ -153,9 +130,6 @@ is already added
 void nest::CompTree::add_node( const long node_index, const long parent_index,
 			                   const DictionaryDatum& compartment_params)
 {
-    // CompNode* node = new CompNode( node_index, parent_index,
-    //                ca, gc,
-    //                gl, el );
     CompNode* node = new CompNode( node_index, parent_index,
                 				   compartment_params);
 
@@ -248,32 +222,36 @@ void nest::CompTree::set_leafs()
     }
 };
 
-// getters and setters
+/*
+Get vector of voltage values
+*/
 std::vector< double > nest::CompTree::get_voltage() const
 {
     std::vector< double > v_comp;
-    for( auto node_it = m_nodes.cbegin();
-	 node_it != m_nodes.cend(); ++node_it )
+    for( auto node_it = m_nodes.cbegin(); node_it != m_nodes.cend(); ++node_it )
     {
       v_comp.push_back( (*node_it)->m_v );
     }
     return v_comp;
 }
 
-// getters and setters
+/*
+Get voltage of single node voltage, indicated by the node_index
+*/
 double nest::CompTree::get_node_voltage( const long node_index )
 {
     const CompNode* node = find_node( node_index );
     return node->m_v;
 }
 
-// construct the matrix equation to be solved
+/*
+Construct the matrix equation to be solved to advance the model one timestep
+*/
 void nest::CompTree::construct_matrix( const long lag )
 {
     std::vector< double > i_in((int)m_nodes.size(), 0.);
     construct_matrix(i_in, lag);
 }
-
 void nest::CompTree::construct_matrix( const std::vector< double >& i_in, const long lag )
 {
     assert( i_in.size() == m_nodes.size() );
@@ -287,14 +265,13 @@ void nest::CompTree::construct_matrix( const std::vector< double >& i_in, const 
     // TODO avoid recomputing unnessecary terms every time-step
     for( auto node_it = m_nodes.begin(); node_it != m_nodes.end(); ++node_it )
     {
-        (*node_it)->construct_matrix_element();
-        (*node_it)->add_input_current( lag );
-        (*node_it)->add_synapse_contribution( lag );
-        (*node_it)->add_channel_contribution( lag );
+        (*node_it)->construct_matrix_element( lag );
     }
 };
 
-// solve matrix with O(n) algorithm
+/*
+Solve matrix with O(n) algorithm
+*/
 void nest::CompTree::solve_matrix()
 {
     std::vector< CompNode* >::iterator leaf_it = m_leafs.begin();
@@ -305,12 +282,11 @@ void nest::CompTree::solve_matrix()
     // do up sweep to set voltages
     solve_matrix_upsweep(&m_root, 0.0);
 };
-
 void nest::CompTree::solve_matrix_downsweep( CompNode* node,
 					     std::vector< CompNode* >::iterator leaf_it )
 {
     // compute the input output transformation at node
-    IODat output = node->io();
+    std::pair< double, double > output = node->io();
 
     // move on to the parent layer
     if( node->m_parent != nullptr )
@@ -337,7 +313,6 @@ void nest::CompTree::solve_matrix_downsweep( CompNode* node,
         }
     }
 };
-
 void nest::CompTree::solve_matrix_upsweep( CompNode* node, double vv )
 {
     // compute node voltage
@@ -364,26 +339,9 @@ void nest::CompTree::print_tree() const
         {
             std::cout << "Parent " << node->m_parent->m_index << " --> ";
             std::cout << "g_c = " << node->m_gc << " uS, ";
-        // std::cout << "Child nodes: " << vec2string(node.m_child_indices) << ", ";
-        // std::cout << "Location indices: " << vec2string(node.m_loc_indices) << " ";
-        // std::cout << "(new: " << vec2string(node.m_newloc_indices) << ")" << endl;
         }
         std::cout << std::endl;
     }
-    // std::cout << "--- leafs ---" << std::endl;
-    // for(int ii=0; ii<int(m_leafs.size()); ++ii){
-    //     CompNode* node = m_leafs[ii];
-    //     std::cout << "    Compartment " << node->m_index << ": ";
-    //     std::cout << "C_m = " << node->m_ca << " nF, ";
-    //     std::cout << "g_L = " << node->m_gl << " uS, ";
-    //     std::cout << "e_L = " << node->m_el << " mV, ";
-    //     if(node->m_parent != nullptr)
-    //     {
-    //         std::cout << "Parent " << node->m_parent->m_index << " --> ";
-    //         std::cout << "g_c = " << node->m_gc << " uS, ";
-    //     }
-        // std::cout << std::endl;
-    // }
     std::cout << std::endl;
 };
 ////////////////////////////////////////////////////////////////////////////////

@@ -51,10 +51,10 @@ define the structure of the neuron, i.e., soma and dendritic tree by
 adding compartments. Each compartment can be assigned receptors,
 currently modeled by AMPA, GABA or NMDA dynamics.
 
-The default model is passive, and has threshold triggered sodium and potassium
-currents at the soma whose conductance waveforms are modeled by a double
-exponential. These currents implement an AP waveform. We are working on the
-inclusion of general ion channel currents through NESTML.
+The default model is passive, but sodium and potassium currents can be added
+by passing non-zero conductances 'g_Na' and 'g_K' with the parameter dictionary
+when adding compartments. We are working on the inclusion of general ion channel
+currents through NESTML.
 
 Usage
 +++++

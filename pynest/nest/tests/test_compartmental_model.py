@@ -607,13 +607,13 @@ class NEASTTestCase(unittest.TestCase):
             'C_m': 1.0,
             'g_c': 0.1,
             'g_L': 0.1,
-            'E_L': -70.0,
+            'e_L': -70.0,
         }
 
-        n_neat_0 = nest.Create('iaf_neat')
+        n_neat_0 = nest.Create('cm_main')
         nest.AddCompartment(n_neat_0, 0, -1, soma_params)
 
-        n_neat_1 = nest.Create('iaf_neat')
+        n_neat_1 = nest.Create('cm_main')
         nest.AddCompartment(n_neat_1, 0, -1, soma_params)
         syn_idx = nest.AddReceptor(n_neat_1, 0, "AMPA")
 
@@ -635,8 +635,8 @@ class NEASTTestCase(unittest.TestCase):
         events_neat_0 = nest.GetStatus(m_neat_0, 'events')[0]
         events_neat_1 = nest.GetStatus(m_neat_1, 'events')[0]
 
-        self.assertTrue(np.any(events_neat_0['V_m_0'] != soma_params['E_L']))
-        self.assertTrue(np.any(events_neat_1['V_m_0'] != soma_params['E_L']))
+        self.assertTrue(np.any(events_neat_0['V_m_0'] != soma_params['e_L']))
+        self.assertTrue(np.any(events_neat_1['V_m_0'] != soma_params['e_L']))
 
 
 def suite():

@@ -42,36 +42,36 @@ namespace nest{
 class Compartment{
 private:
     // aggragators for numerical integration
-    double m_xx;
-    double m_yy;
+    double xx_;
+    double yy_;
 
 public:
-    // compartment_index
-    long m_index;
+    // compartment index
+    long comp_index;
     // parent compartment index
-    long m_p_index;
+    long p_index;
     // tree structure indices
-    Compartment* m_parent;
-    std::vector< Compartment > m_children;
+    Compartment* parent;
+    std::vector< Compartment > children;
     // vector for synapses
-    std::vector< std::shared_ptr< Synapse > > m_syns;
+    std::vector< std::shared_ptr< Synapse > > syns;
     // etype
-    EType m_etype;
+    EType etype;
     // buffer for currents
-    RingBuffer m_currents;
+    RingBuffer currents;
     // voltage variable
-    double m_v;
+    double v_comp;
     // electrical parameters
-    double m_ca; // compartment capacitance [uF]
-    double m_gc; // coupling conductance with parent (meaningless if root) [uS]
-    double m_gl; // leak conductance of compartment [uS]
-    double m_el; // leak current reversal potential [mV]
+    double ca; // compartment capacitance [uF]
+    double gc; // coupling conductance with parent (meaningless if root) [uS]
+    double gl; // leak conductance of compartment [uS]
+    double el; // leak current reversal potential [mV]
     // for numerical integration
-    double m_ff;
-    double m_gg;
-    double m_hh;
-    // passage counter
-    int m_n_passed;
+    double ff;
+    double gg;
+    double hh;
+    // passage counter for recursion
+    int n_passed;
 
     // constructor, destructor
     Compartment(const long compartment_index, const long parent_index);
@@ -98,18 +98,18 @@ Short helper functions for solving the matrix equation. Can hopefully be inlined
 inline void
 nest::Compartment::gather_input( const std::pair< double, double > in)
 {
-    m_xx += in.first; m_yy += in.second;
+    xx_ += in.first; yy_ += in.second;
 };
 inline std::pair< double, double >
 nest::Compartment::io()
 {
     // include inputs from child compartments
-    m_gg -= m_xx;
-    m_ff -= m_yy;
+    gg -= xx_;
+    ff -= yy_;
 
     // output values
-    double g_val( m_hh * m_hh / m_gg );
-    double f_val( m_ff * m_hh / m_gg );
+    double g_val( hh * hh / gg );
+    double f_val( ff * hh / gg );
 
     return std::make_pair(g_val, f_val);
 };
@@ -117,12 +117,12 @@ inline double
 nest::Compartment::calc_v( const double v_in )
 {
     // reset recursion variables
-    m_xx = 0.0; m_yy = 0.0;
+    xx_ = 0.0; yy_ = 0.0;
 
     // compute voltage
-    m_v = (m_ff - v_in * m_hh) / m_gg;
+    v_comp = (ff - v_in * hh) / gg;
 
-    return m_v;
+    return v_comp;
 };
 
 
@@ -131,10 +131,10 @@ private:
     /*
     structural data containers for the compartment model
     */
-    Compartment m_root;
-    std::vector< long > m_compartment_indices;
-    std::vector< Compartment* > m_compartments;
-    std::vector< Compartment* > m_leafs;
+    Compartment root_;
+    std::vector< long > compartment_indices_;
+    std::vector< Compartment* > compartments_;
+    std::vector< Compartment* > leafs_;
 
     // recursion functions for matrix inversion
     void solve_matrix_downsweep(Compartment* compartment_ptr,
@@ -161,7 +161,7 @@ public:
     Compartment* get_compartment( const long compartment_index,
                                   Compartment* compartment,
                                   const long raise_flag );
-    Compartment* get_root(){ return &m_root; };
+    Compartment* get_root(){ return &root_; };
 
     // get voltage values
     std::vector< double > get_voltage() const;

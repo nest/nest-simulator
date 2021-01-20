@@ -3,36 +3,36 @@
 
 nest::EType::EType()
     // sodium channel
-    : m_m_Na(0.0)
-    , m_h_Na(0.0)
-    , m_gbar_Na(0.0)
-    , m_e_Na(0.0)
+    : m_Na_(0.0)
+    , h_Na_(0.0)
+    , gbar_Na_(0.0)
+    , e_Na_(0.0)
     // potassium channel
-    , m_n_K(0.0)
-    , m_gbar_K(0.0)
-    , m_e_K(0.0)
+    , n_K_(0.0)
+    , gbar_K_(0.0)
+    , e_K_(0.0)
 {}
 nest::EType::EType(const DictionaryDatum& compartment_params)
     // sodium channel
-    : m_m_Na(0.0)
-    , m_h_Na(0.0)
-    , m_gbar_Na(0.0)
-    , m_e_Na(50.)
+    : m_Na_(0.0)
+    , h_Na_(0.0)
+    , gbar_Na_(0.0)
+    , e_Na_(50.)
     // potassium channel
-    , m_n_K(0.0)
-    , m_gbar_K(0.0)
-    , m_e_K(-85.)
+    , n_K_(0.0)
+    , gbar_K_(0.0)
+    , e_K_(-85.)
 {
     // update sodium channel parameters
     if( compartment_params->known( "g_Na" ) )
-        m_gbar_Na = getValue< double >( compartment_params, "g_Na" );
+        gbar_Na_ = getValue< double >( compartment_params, "g_Na" );
     if( compartment_params->known( "e_Na" ) )
-        m_e_Na = getValue< double >( compartment_params, "e_Na" );
+        e_Na_ = getValue< double >( compartment_params, "e_Na" );
     // update potassium channel parameters
     if( compartment_params->known( "g_K" ) )
-        m_gbar_K = getValue< double >( compartment_params, "g_K" );
+        gbar_K_ = getValue< double >( compartment_params, "g_K" );
     if( compartment_params->known( "e_K" ) )
-        m_e_K = getValue< double >( compartment_params, "e_K" );
+        e_K_ = getValue< double >( compartment_params, "e_K" );
 
 }
 
@@ -44,7 +44,7 @@ std::pair< double, double > nest::EType::f_numstep(const double v_comp, const do
     Sodium channel
     */
     double g_Na;
-    if (m_gbar_Na > 1e-9)
+    if (gbar_Na_ > 1e-9)
     {
         // activation and timescale of state variable 'm'
         double m_inf_Na = (0.182*v_comp + 6.3723659999999995)/((1.0 - 0.020438532058318047*exp(-0.1111111111111111*v_comp))*((-0.124*v_comp - 4.3416119999999996)/(1.0 - 48.927192870146527*exp(0.1111111111111111*v_comp)) + (0.182*v_comp + 6.3723659999999995)/(1.0 - 0.020438532058318047*exp(-0.1111111111111111*v_comp))));
@@ -56,27 +56,27 @@ std::pair< double, double > nest::EType::f_numstep(const double v_comp, const do
 
         // advance state variable 'm' one timestep
         double p_m_Na = exp(-dt / tau_m_Na);
-        m_m_Na *= p_m_Na ;
-        m_m_Na += (1. - p_m_Na) *  m_inf_Na;
+        m_Na_ *= p_m_Na ;
+        m_Na_ += (1. - p_m_Na) *  m_inf_Na;
 
         // advance state variable 'h' one timestep
         double p_h_Na = exp(-dt / tau_h_Na);
-        m_h_Na *= p_h_Na ;
-        m_h_Na += (1. - p_h_Na) *  h_inf_Na;
+        h_Na_ *= p_h_Na ;
+        h_Na_ += (1. - p_h_Na) *  h_inf_Na;
 
         // compute the conductance of the sodium channel
-        g_Na = m_gbar_Na * pow(m_m_Na, 3) * m_h_Na;
+        g_Na = gbar_Na_ * pow(m_Na_, 3) * h_Na_;
 
         // add to variables for numerical integration
         g_val += g_Na / 2.;
-        i_val += g_Na * ( m_e_Na - v_comp / 2. );
+        i_val += g_Na * ( e_Na_ - v_comp / 2. );
     }
 
     /*
     Potassium channel
     */
     double g_K;
-    if (m_gbar_K > 1e-9)
+    if (gbar_K_ > 1e-9)
     {
         // activation and timescale of state variable 'm'
         double n_inf_K = 0.02*(v_comp - 25.0)/((1.0 - exp((25.0 - v_comp)/9.0))*((-0.002)*(v_comp - 25.0)/(1.0 - exp((v_comp - 25.0)/9.0)) + 0.02*(v_comp - 25.0)/(1.0 - exp((25.0 - v_comp)/9.0))));
@@ -84,15 +84,15 @@ std::pair< double, double > nest::EType::f_numstep(const double v_comp, const do
 
         // advance state variable 'm' one timestep
         double p_n_K = exp(-dt / tau_n_K);
-        m_n_K *= p_n_K;
-        m_n_K += (1. - p_n_K) *  n_inf_K;
+        n_K_ *= p_n_K;
+        n_K_ += (1. - p_n_K) *  n_inf_K;
 
         // compute the conductance of the potassium channel
-        g_K = m_gbar_K * m_n_K;
+        g_K = gbar_K_ * n_K_;
 
         // add to variables for numerical integration
         g_val += g_K / 2.;
-        i_val += g_K * ( m_e_K - v_comp / 2. );
+        i_val += g_K * ( e_K_ - v_comp / 2. );
     }
 
     return std::make_pair(g_val, i_val);

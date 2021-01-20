@@ -39,17 +39,17 @@ private:
     Sodium channel
     */
     // state variables sodium channel
-    double m_m_Na, m_h_Na;
+    double m_Na_, h_Na_;
     // parameters sodium channel (maximal conductance, reversal potential)
-    double m_gbar_Na, m_e_Na;
+    double gbar_Na_, e_Na_;
 
     /*
     Potassium channel
     */
     // state variables potassium channels
-    double m_n_K;
+    double n_K_;
     // parameters potassium channel (maximal conductance, reversal potential)
-    double m_gbar_K, m_e_K;
+    double gbar_K_, e_K_;
 
 
 public:

@@ -4,58 +4,58 @@
 // compartment compartment functions ///////////////////////////////////////////
 nest::Compartment::Compartment( const long compartment_index,
                                 const long parent_index )
-  : m_xx( 0.0 )
-  , m_yy( 0.0 )
-  , m_index( compartment_index )
-  , m_p_index( parent_index )
-  , m_parent( nullptr )
-  , m_v( 0.0 )
-  , m_ca( 0.0)
-  , m_gc( 0.0)
-  , m_gl( 0.0 )
-  , m_el( 0.0 )
-  , m_ff( 0.0 )
-  , m_gg( 0.0 )
-  , m_hh( 0.0 )
-  , m_n_passed( 0 )
+  : xx_( 0.0 )
+  , yy_( 0.0 )
+  , comp_index( compartment_index )
+  , p_index( parent_index )
+  , parent( nullptr )
+  , v_comp( 0.0 )
+  , ca( 0.0)
+  , gc( 0.0)
+  , gl( 0.0 )
+  , el( 0.0 )
+  , ff( 0.0 )
+  , gg( 0.0 )
+  , hh( 0.0 )
+  , n_passed( 0 )
 {
-  m_syns.resize( 0 );
-  m_etype = EType();
+  syns.resize( 0 );
+  etype = EType();
 };
 nest::Compartment::Compartment( const long compartment_index,
                                 const long parent_index,
 			                    const DictionaryDatum& compartment_params )
-  : m_xx( 0.0 )
-  , m_yy( 0.0 )
-  , m_index( compartment_index )
-  , m_p_index( parent_index )
-  , m_parent( nullptr )
-  , m_v( 0.0 )
-  , m_ca( getValue< double >( compartment_params, "C_m" ) )
-  , m_gc( getValue< double >( compartment_params, "g_c" ) )
-  , m_gl( getValue< double >( compartment_params, "g_L" ) )
-  , m_el( getValue< double >( compartment_params, "e_L" ) )
-  , m_ff( 0.0 )
-  , m_gg( 0.0 )
-  , m_hh( 0.0 )
-  , m_n_passed( 0 )
+  : xx_( 0.0 )
+  , yy_( 0.0 )
+  , comp_index( compartment_index )
+  , p_index( parent_index )
+  , parent( nullptr )
+  , v_comp( 0.0 )
+  , ca( getValue< double >( compartment_params, "C_m" ) )
+  , gc( getValue< double >( compartment_params, "g_c" ) )
+  , gl( getValue< double >( compartment_params, "g_L" ) )
+  , el( getValue< double >( compartment_params, "e_L" ) )
+  , ff( 0.0 )
+  , gg( 0.0 )
+  , hh( 0.0 )
+  , n_passed( 0 )
 {
-  m_syns.resize( 0 );
-  m_etype = EType( compartment_params );
+  syns.resize( 0 );
+  etype = EType( compartment_params );
 };
 
 void
 nest::Compartment::init()
 {
-    m_v = m_el;
+    v_comp = el;
 
-    for( auto  syn_it = m_syns.begin(); syn_it != m_syns.end(); ++syn_it )
+    for( auto  syn_it = syns.begin(); syn_it != syns.end(); ++syn_it )
     {
         (*syn_it)->init();
     }
 
     // initialize the buffer
-    m_currents.clear();
+    currents.clear();
 }
 
 // for matrix construction
@@ -65,66 +65,66 @@ nest::Compartment::construct_matrix_element( const long lag )
     const double dt = Time::get_resolution().get_ms();
 
     // matrix diagonal element
-    m_gg = m_ca / dt + m_gl / 2.;
+    gg = ca / dt + gl / 2.;
 
-    if( m_parent != nullptr )
+    if( parent != nullptr )
     {
-        m_gg += m_gc / 2.;
+        gg += gc / 2.;
         // matrix off diagonal element
-        m_hh = -m_gc / 2.;
+        hh = -gc / 2.;
     }
 
-    for( auto child_it = m_children.begin();
-         child_it != m_children.end();
+    for( auto child_it = children.begin();
+         child_it != children.end();
          ++child_it )
     {
-        m_gg += (*child_it).m_gc / 2.;
+        gg += (*child_it).gc / 2.;
     }
 
     // right hand side
-    m_ff += m_ca / dt * m_v - m_gl * (m_v / 2. - m_el);
+    ff += ca / dt * v_comp - gl * (v_comp / 2. - el);
 
-    if( m_parent != nullptr )
+    if( parent != nullptr )
     {
-        m_ff -= m_gc * (m_v - m_parent->m_v) / 2.;
+        ff -= gc * (v_comp - parent->v_comp) / 2.;
     }
 
-    for( auto child_it = m_children.begin();
-         child_it != m_children.end();
+    for( auto child_it = children.begin();
+         child_it != children.end();
          ++child_it )
     {
-        m_ff -= (*child_it).m_gc * (m_v - (*child_it).m_v) / 2.;
+        ff -= (*child_it).gc * (v_comp - (*child_it).v_comp) / 2.;
     }
 
     // add the channel contribution
-    std::pair< double, double > gf_chan = m_etype.f_numstep(m_v, dt);
-    m_gg += gf_chan.first;
-    m_ff += gf_chan.second;
+    std::pair< double, double > gf_chan = etype.f_numstep(v_comp, dt);
+    gg += gf_chan.first;
+    ff += gf_chan.second;
 
     // add synapse contribution
     std::pair< double, double > gf_syn(0., 0.);
 
-    for( auto syn_it = m_syns.begin(); syn_it != m_syns.end(); ++syn_it )
+    for( auto syn_it = syns.begin(); syn_it != syns.end(); ++syn_it )
     {
         (*syn_it)->update(lag);
-        gf_syn = (*syn_it)->f_numstep(m_v);
+        gf_syn = (*syn_it)->f_numstep(v_comp);
 
-        m_gg += gf_syn.first;
-        m_ff += gf_syn.second;
+        gg += gf_syn.first;
+        ff += gf_syn.second;
     }
 
     // add input current
-    m_ff += m_currents.get_value( lag );
+    ff += currents.get_value( lag );
 }
 ////////////////////////////////////////////////////////////////////////////////
 
 
 // compartment tree functions //////////////////////////////////////////////////
 nest::CompTree::CompTree()
-  : m_root( 0, -1)
+  : root_( 0, -1)
 {
-  m_compartments.resize( 0 );
-  m_leafs.resize( 0 );
+  compartments_.resize( 0 );
+  leafs_.resize( 0 );
 }
 
 /*
@@ -143,14 +143,14 @@ nest::CompTree::add_compartment( const long compartment_index,
     if( parent_index >= 0 )
     {
         Compartment* parent = get_compartment( parent_index );
-        parent->m_children.push_back( *compartment );
+        parent->children.push_back( *compartment );
     }
     else
     {
-        m_root = *compartment;
+        root_ = *compartment;
     }
 
-    m_compartment_indices.push_back(compartment_index);
+    compartment_indices_.push_back(compartment_index);
 
     set_compartments();
 };
@@ -174,14 +174,14 @@ nest::CompTree::get_compartment( const long compartment_index,
 {
     Compartment* r_compartment = nullptr;
 
-    if( compartment->m_index == compartment_index )
+    if( compartment->comp_index == compartment_index )
     {
         r_compartment = compartment;
     }
     else
     {
-        auto child_it = compartment->m_children.begin();
-        while( !r_compartment && child_it != compartment->m_children.end() )
+        auto child_it = compartment->children.begin();
+        while( !r_compartment && child_it != compartment->children.end() )
         {
             r_compartment = get_compartment( compartment_index, &(*child_it), 0 );
             ++child_it;
@@ -206,13 +206,13 @@ nest::CompTree::init()
     set_leafs();
 
     // initialize the compartments
-    for( auto compartment_it = m_compartments.begin();
-         compartment_it != m_compartments.end();
+    for( auto compartment_it = compartments_.begin();
+         compartment_it != compartments_.end();
          ++compartment_it )
     {
-        ( *compartment_it )->m_parent = get_compartment(
-                                            ( *compartment_it )->m_p_index,
-                                            &m_root, 0 );
+        ( *compartment_it )->parent = get_compartment(
+                                            ( *compartment_it )->p_index,
+                                            &root_, 0 );
         ( *compartment_it )->init();
     }
 }
@@ -224,13 +224,13 @@ added by `add_compartment()`
 void
 nest::CompTree::set_compartments()
 {
-    m_compartments.clear();
+    compartments_.clear();
 
-    for( auto compartment_idx_it = m_compartment_indices.begin();
-         compartment_idx_it != m_compartment_indices.end();
+    for( auto compartment_idx_it = compartment_indices_.begin();
+         compartment_idx_it != compartment_indices_.end();
          ++compartment_idx_it )
     {
-        m_compartments.push_back( get_compartment( *compartment_idx_it ) );
+        compartments_.push_back( get_compartment( *compartment_idx_it ) );
     }
 
 }
@@ -241,32 +241,32 @@ Creates a vector of compartment pointers of compartments that are also leafs of 
 void
 nest::CompTree::set_leafs()
 {
-    m_leafs.clear();
-    for( auto compartment_it = m_compartments.begin();
-         compartment_it != m_compartments.end();
+    leafs_.clear();
+    for( auto compartment_it = compartments_.begin();
+         compartment_it != compartments_.end();
          ++compartment_it )
     {
-        if( int((*compartment_it)->m_children.size()) == 0 )
+        if( int((*compartment_it)->children.size()) == 0 )
 	{
-            m_leafs.push_back( *compartment_it );
+            leafs_.push_back( *compartment_it );
         }
     }
 };
 
 /*
-Returns vector of voltage values, indices correspond to compartments in `m_compartments`
+Returns vector of voltage values, indices correspond to compartments in `compartments_`
 */
 std::vector< double >
 nest::CompTree::get_voltage() const
 {
-    std::vector< double > v_comp;
-    for( auto compartment_it = m_compartments.cbegin();
-         compartment_it != m_compartments.cend();
+    std::vector< double > v_comps;
+    for( auto compartment_it = compartments_.cbegin();
+         compartment_it != compartments_.cend();
          ++compartment_it )
     {
-        v_comp.push_back( (*compartment_it)->m_v );
+        v_comps.push_back( (*compartment_it)->v_comp );
     }
-    return v_comp;
+    return v_comps;
 }
 
 /*
@@ -276,7 +276,7 @@ double
 nest::CompTree::get_compartment_voltage( const long compartment_index )
 {
     const Compartment* compartment = get_compartment( compartment_index );
-    return compartment->m_v;
+    return compartment->v_comp;
 }
 
 /*
@@ -285,23 +285,23 @@ Construct the matrix equation to be solved to advance the model one timestep
 void
 nest::CompTree::construct_matrix( const long lag )
 {
-    std::vector< double > i_in((int)m_compartments.size(), 0.);
+    std::vector< double > i_in((int)compartments_.size(), 0.);
     construct_matrix(i_in, lag);
 }
 void
 nest::CompTree::construct_matrix( const std::vector< double >& i_in, const long lag )
 {
-    assert( i_in.size() == m_compartments.size() );
+    assert( i_in.size() == compartments_.size() );
 
     // temporary implementation of current input
     for( size_t ii=0; ii != i_in.size(); ++ii )
     {
-        m_compartments[ ii ]->m_ff = i_in[ ii ];
+        compartments_[ ii ]->ff = i_in[ ii ];
     }
 
     // TODO avoid recomputing unnessecary terms every time-step
-    for( auto compartment_it = m_compartments.begin();
-         compartment_it != m_compartments.end();
+    for( auto compartment_it = compartments_.begin();
+         compartment_it != compartments_.end();
          ++compartment_it )
     {
         (*compartment_it)->construct_matrix_element( lag );
@@ -314,13 +314,13 @@ Solve matrix with O(n) algorithm
 void
 nest::CompTree::solve_matrix()
 {
-    std::vector< Compartment* >::iterator leaf_it = m_leafs.begin();
+    std::vector< Compartment* >::iterator leaf_it = leafs_.begin();
 
     // start the down sweep (puts to zero the sub diagonal matrix elements)
-    solve_matrix_downsweep(m_leafs[0], leaf_it);
+    solve_matrix_downsweep(leafs_[0], leaf_it);
 
     // do up sweep to set voltages
-    solve_matrix_upsweep(&m_root, 0.0);
+    solve_matrix_upsweep(&root_, 0.0);
 };
 void
 nest::CompTree::solve_matrix_downsweep( Compartment* compartment,
@@ -330,16 +330,16 @@ nest::CompTree::solve_matrix_downsweep( Compartment* compartment,
     std::pair< double, double > output = compartment->io();
 
     // move on to the parent layer
-    if( compartment->m_parent != nullptr )
+    if( compartment->parent != nullptr )
     {
-        Compartment* parent = compartment->m_parent;
+        Compartment* parent = compartment->parent;
         // gather input from child layers
         parent->gather_input(output);
         // move on to next compartments
-        ++parent->m_n_passed;
-        if(parent->m_n_passed == int(parent->m_children.size()))
+        ++parent->n_passed;
+        if(parent->n_passed == int(parent->children.size()))
 	{
-            parent->m_n_passed = 0;
+            parent->n_passed = 0;
             // move on to next compartment
             solve_matrix_downsweep(parent, leaf_it);
         }
@@ -347,7 +347,7 @@ nest::CompTree::solve_matrix_downsweep( Compartment* compartment,
 	{
             // start at next leaf
             ++leaf_it;
-            if(leaf_it != m_leafs.end())
+            if(leaf_it != leafs_.end())
 	    {
 	      solve_matrix_downsweep(*leaf_it, leaf_it);
 	    }
@@ -360,8 +360,8 @@ nest::CompTree::solve_matrix_upsweep( Compartment* compartment, double vv )
     // compute compartment voltage
     vv = compartment->calc_v(vv);
     // move on to child compartments
-    for( auto child_it = compartment->m_children.begin();
-         child_it != compartment->m_children.end();
+    for( auto child_it = compartment->children.begin();
+         child_it != compartment->children.end();
          ++child_it )
     {
         solve_matrix_upsweep(&(*child_it), vv);
@@ -375,18 +375,18 @@ void
 nest::CompTree::print_tree() const
 {
     // loop over all compartments
-    std::printf(">>> CM tree with %d compartments <<<\n", int(m_compartments.size()));
-    for(int ii=0; ii<int(m_compartments.size()); ++ii)
+    std::printf(">>> CM tree with %d compartments <<<\n", int(compartments_.size()));
+    for(int ii=0; ii<int(compartments_.size()); ++ii)
     {
-        Compartment* compartment = m_compartments[ii];
-        std::cout << "    Compartment " << compartment->m_index << ": ";
-        std::cout << "C_m = " << compartment->m_ca << " nF, ";
-        std::cout << "g_L = " << compartment->m_gl << " uS, ";
-        std::cout << "e_L = " << compartment->m_el << " mV, ";
-        if(compartment->m_parent != nullptr)
+        Compartment* compartment = compartments_[ii];
+        std::cout << "    Compartment " << compartment->comp_index << ": ";
+        std::cout << "C_m = " << compartment->ca << " nF, ";
+        std::cout << "g_L = " << compartment->gl << " uS, ";
+        std::cout << "e_L = " << compartment->el << " mV, ";
+        if(compartment->parent != nullptr)
         {
-            std::cout << "Parent " << compartment->m_parent->m_index << " --> ";
-            std::cout << "g_c = " << compartment->m_gc << " uS, ";
+            std::cout << "Parent " << compartment->parent->comp_index << " --> ";
+            std::cout << "g_c = " << compartment->gc << " uS, ";
         }
         std::cout << std::endl;
     }

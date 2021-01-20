@@ -160,48 +160,21 @@ private:
 
   void update( Time const&, const long, const long );
 
-  CompTree m_c_tree;
-  std::vector< std::shared_ptr< Synapse > > syn_receptors;
+  CompTree c_tree_;
+  std::vector< std::shared_ptr< Synapse > > syn_receptors_;
 
   // To record variables with DataAccessFunctor
-  double get_state_element( size_t elem){return m_c_tree.get_compartment_voltage(elem);}
+  double get_state_element( size_t elem){return c_tree_.get_compartment_voltage(elem);}
 
   // The next classes need to be friends to access the State_ class/member
   friend class DataAccessFunctor< cm_main >;
   friend class DynamicRecordablesMap< cm_main >;
   friend class DynamicUniversalDataLogger< cm_main >;
 
-  // ----------------------------------------------------------------
-
-  /**
-   * Buffers of the model.
-   */
-  struct Buffers_
-  {
-    Buffers_( cm_main& );
-    Buffers_( const Buffers_&, cm_main& );
-
-    // buffers and summs up incoming spikes/currents
-    // RingBuffer currents_;
-
-    //! Logger for all analog data
-    DynamicUniversalDataLogger< cm_main > logger_;
-  };
-
-  // ----------------------------------------------------------------
-
-  /**
-   * @defgroup iaf_psc_alpha_data
-   * Instances of private data structures for the different types
-   * of data pertaining to the model.
-   * @note The order of definitions is important for speed.
-   * @{
-   */
-  Buffers_ B_;
-  /** @} */
-
   //! Mapping of recordables names to access functions
   DynamicRecordablesMap< cm_main > recordablesMap_;
+  //! Logger for all analog data
+  DynamicUniversalDataLogger< cm_main > logger_;
 
   double V_th_;
 };
@@ -229,7 +202,7 @@ inline port
 cm_main::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   // if get_compartment returns nullptr, raise the error
-  if ( !m_c_tree.get_compartment( long(receptor_type), m_c_tree.get_root(), 0 ) )
+  if ( !c_tree_.get_compartment( long(receptor_type), c_tree_.get_root(), 0 ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

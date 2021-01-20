@@ -56,23 +56,13 @@ DynamicRecordablesMap< cm_main >::create( cm_main& host)
 {
 }
 
-nest::cm_main::Buffers_::Buffers_( cm_main& n )
-  : logger_( n )
-{
-}
-
-nest::cm_main::Buffers_::Buffers_( const Buffers_&, cm_main& n )
-  : logger_( n )
-{
-}
-
 /* ----------------------------------------------------------------
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
 nest::cm_main::cm_main()
   : Archiving_Node()
-  , m_c_tree_()
+  , c_tree_()
   , syn_receptors_( 0 )
   , logger_( *this )
   , V_th_( -55.0 )
@@ -82,7 +72,7 @@ nest::cm_main::cm_main()
 
 nest::cm_main::cm_main( const cm_main& n )
   : Archiving_Node( n )
-  , m_c_tree_( n.m_c_tree_ )
+  , c_tree_( n.c_tree_ )
   , syn_receptors_( n.syn_receptors_ )
   , logger_( *this )
   , V_th_( n.V_th_ )
@@ -108,7 +98,7 @@ nest::cm_main::init_buffers_()
 void
 cm_main::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
 {
-  m_c_tree.add_compartment( compartment_idx, parent_compartment_idx, compartment_params);
+  c_tree_.add_compartment( compartment_idx, parent_compartment_idx, compartment_params);
 
   // to enable recording the voltage of the current compartment
   recordablesMap_.insert( "V_m_" + std::to_string(compartment_idx),
@@ -143,8 +133,8 @@ cm_main::add_receptor( const long compartment_idx, const std::string& type )
   const size_t syn_idx = syn_receptors_.size();
   syn_receptors_.push_back( syn );
 
-  Compartment* compartment = m_c_tree.get_compartment( compartment_idx );
-  compartment->m_syns.push_back( syn );
+  Compartment* compartment = c_tree_.get_compartment( compartment_idx );
+  compartment->syns.push_back( syn );
 
   return syn_idx;
 }
@@ -152,8 +142,8 @@ cm_main::add_receptor( const long compartment_idx, const std::string& type )
 void
 nest::cm_main::calibrate()
 {
-  B_.logger_.init();
-  m_c_tree.init();
+  logger_.init();
+  c_tree_.init();
 }
 
 /* ----------------------------------------------------------------
@@ -168,15 +158,15 @@ nest::cm_main::update( Time const& origin, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    const double v_0_prev = m_c_tree_.get_root()->m_v;
+    const double v_0_prev = c_tree_.get_root()->v_comp;
 
-    m_c_tree_.construct_matrix( lag );
-    m_c_tree_.solve_matrix();
+    c_tree_.construct_matrix( lag );
+    c_tree_.solve_matrix();
 
     // threshold crossing
-    if ( m_c_tree_.get_root()->m_v >= V_th_ && v_0_prev < V_th_ )
+    if ( c_tree_.get_root()->v_comp >= V_th_ && v_0_prev < V_th_ )
     {
-      m_c_tree.get_root()->m_etype.add_spike();
+      c_tree_.get_root()->etype.add_spike();
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
@@ -211,8 +201,8 @@ nest::cm_main::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  Compartment* compartment = m_c_tree.get_compartment( e.get_rport() );
-  compartment->m_currents.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  Compartment* compartment = c_tree_.get_compartment( e.get_rport() );
+  compartment->currents.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

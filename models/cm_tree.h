@@ -169,7 +169,6 @@ public:
 
     // construct the numerical integration matrix and vector
     void construct_matrix( const long lag );
-    void construct_matrix( const std::vector< double >& i_in, const long lag );
     // solve the matrix equation for next timestep voltage
     void solve_matrix();
 

@@ -82,7 +82,7 @@ nest::Compartment::construct_matrix_element( const long lag )
     }
 
     // right hand side
-    ff += ca / dt * v_comp - gl * (v_comp / 2. - el);
+    ff = ca / dt * v_comp - gl * (v_comp / 2. - el);
 
     if( parent != nullptr )
     {
@@ -285,21 +285,6 @@ Construct the matrix equation to be solved to advance the model one timestep
 void
 nest::CompTree::construct_matrix( const long lag )
 {
-    std::vector< double > i_in((int)compartments_.size(), 0.);
-    construct_matrix(i_in, lag);
-}
-void
-nest::CompTree::construct_matrix( const std::vector< double >& i_in, const long lag )
-{
-    assert( i_in.size() == compartments_.size() );
-
-    // temporary implementation of current input
-    for( size_t ii=0; ii != i_in.size(); ++ii )
-    {
-        compartments_[ ii ]->ff = i_in[ ii ];
-    }
-
-    // TODO avoid recomputing unnessecary terms every time-step
     for( auto compartment_it = compartments_.begin();
          compartment_it != compartments_.end();
          ++compartment_it )

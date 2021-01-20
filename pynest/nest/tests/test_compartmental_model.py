@@ -4,17 +4,17 @@ import math
 import numpy as np
 
 
-SP =  {'C_m': 1.00, 'g_c': 0.00, 'g_L': 0.100, 'E_L': -70.0}
+SP =  {'C_m': 1.00, 'g_c': 0.00, 'g_L': 0.100, 'e_L': -70.0}
 DP = [
-      {'C_m': 0.10, 'g_c': 0.10, 'g_L': 0.010, 'E_L': -70.0},
-      {'C_m': 0.08, 'g_c': 0.11, 'g_L': 0.007, 'E_L': -70.0},
-      {'C_m': 0.09, 'g_c': 0.07, 'g_L': 0.011, 'E_L': -70.0},
-      {'C_m': 0.15, 'g_c': 0.12, 'g_L': 0.014, 'E_L': -70.0},
-      {'C_m': 0.20, 'g_c': 0.32, 'g_L': 0.022, 'E_L': -55.0},
-      {'C_m': 0.12, 'g_c': 0.12, 'g_L': 0.010, 'E_L': -23.0},
-      {'C_m': 0.32, 'g_c': 0.09, 'g_L': 0.032, 'E_L': -32.0},
-      {'C_m': 0.01, 'g_c': 0.05, 'g_L': 0.001, 'E_L': -88.0},
-      {'C_m': 0.02, 'g_c': 0.03, 'g_L': 0.002, 'E_L': -90.0},
+      {'C_m': 0.10, 'g_c': 0.10, 'g_L': 0.010, 'e_L': -70.0},
+      {'C_m': 0.08, 'g_c': 0.11, 'g_L': 0.007, 'e_L': -70.0},
+      {'C_m': 0.09, 'g_c': 0.07, 'g_L': 0.011, 'e_L': -70.0},
+      {'C_m': 0.15, 'g_c': 0.12, 'g_L': 0.014, 'e_L': -70.0},
+      {'C_m': 0.20, 'g_c': 0.32, 'g_L': 0.022, 'e_L': -55.0},
+      {'C_m': 0.12, 'g_c': 0.12, 'g_L': 0.010, 'e_L': -23.0},
+      {'C_m': 0.32, 'g_c': 0.09, 'g_L': 0.032, 'e_L': -32.0},
+      {'C_m': 0.01, 'g_c': 0.05, 'g_L': 0.001, 'e_L': -88.0},
+      {'C_m': 0.02, 'g_c': 0.03, 'g_L': 0.002, 'e_L': -90.0},
      ]
 
 
@@ -27,7 +27,7 @@ def create_1dend_1comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('iaf_neat')
+    n_neat = nest.Create('cm_main')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
 
@@ -46,10 +46,10 @@ def create_1dend_1comp(dt=0.1):
     aa[1,0] = -DP[0]['g_c'] / 2.;
     aa[1,1] = DP[0]['C_m'] / dt + DP[0]['g_L'] / 2. + DP[0]['g_c'] / 2.
 
-    bb[0] = SP['C_m'] / dt * SP['E_L'] + SP['g_L'] * SP['E_L'] / 2. - \
-            DP[0]['g_c'] * (SP['E_L'] - DP[0]['E_L']) / 2.
-    bb[1] = DP[0]['C_m'] / dt * DP[0]['E_L'] + DP[0]['g_L'] * DP[0]['E_L'] / 2. - \
-            DP[0]['g_c'] * (DP[0]['E_L'] - SP['E_L']) / 2.
+    bb[0] = SP['C_m'] / dt * SP['e_L'] + SP['g_L'] * SP['e_L'] / 2. - \
+            DP[0]['g_c'] * (SP['e_L'] - DP[0]['e_L']) / 2.
+    bb[1] = DP[0]['C_m'] / dt * DP[0]['e_L'] + DP[0]['g_L'] * DP[0]['e_L'] / 2. - \
+            DP[0]['g_c'] * (DP[0]['e_L'] - SP['e_L']) / 2.
 
     # create steady state matrix for attenuation test
     ss = np.zeros((2,2))
@@ -71,7 +71,7 @@ def create_2dend_1comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('iaf_neat')
+    n_neat = nest.Create('cm_main')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
     nest.AddCompartment(n_neat, 0, -1, SP)
@@ -95,13 +95,13 @@ def create_2dend_1comp(dt=0.1):
     aa[2,0] = -DP[1]['g_c'] / 2.;
     aa[2,2] = DP[1]['C_m'] / dt + DP[1]['g_L'] / 2. + DP[1]['g_c'] / 2.
 
-    bb[0] = SP['C_m'] / dt * SP['E_L'] + SP['g_L'] * SP['E_L'] / 2. - \
-            DP[0]['g_c'] * (SP['E_L'] - DP[0]['E_L']) / 2. - \
-            DP[1]['g_c'] * (SP['E_L'] - DP[1]['E_L']) / 2.
-    bb[1] = DP[0]['C_m'] / dt * DP[0]['E_L'] + DP[0]['g_L'] * DP[0]['E_L'] / 2. - \
-            DP[0]['g_c'] * (DP[0]['E_L'] - SP['E_L']) / 2.
-    bb[2] = DP[1]['C_m'] / dt * DP[1]['E_L'] + DP[1]['g_L'] * DP[1]['E_L'] / 2. - \
-            DP[1]['g_c'] * (DP[1]['E_L'] - SP['E_L']) / 2.
+    bb[0] = SP['C_m'] / dt * SP['e_L'] + SP['g_L'] * SP['e_L'] / 2. - \
+            DP[0]['g_c'] * (SP['e_L'] - DP[0]['e_L']) / 2. - \
+            DP[1]['g_c'] * (SP['e_L'] - DP[1]['e_L']) / 2.
+    bb[1] = DP[0]['C_m'] / dt * DP[0]['e_L'] + DP[0]['g_L'] * DP[0]['e_L'] / 2. - \
+            DP[0]['g_c'] * (DP[0]['e_L'] - SP['e_L']) / 2.
+    bb[2] = DP[1]['C_m'] / dt * DP[1]['e_L'] + DP[1]['g_L'] * DP[1]['e_L'] / 2. - \
+            DP[1]['g_c'] * (DP[1]['e_L'] - SP['e_L']) / 2.
 
     # create steady state matrix for attenuation test
     ss = np.zeros((3,3))
@@ -130,7 +130,7 @@ def create_1dend_2comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('iaf_neat')
+    n_neat = nest.Create('cm_main')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
     nest.AddCompartment(n_neat, 0, -1, SP)
@@ -154,13 +154,13 @@ def create_1dend_2comp(dt=0.1):
     aa[2,1] = -DP[1]['g_c'] / 2.;
     aa[2,2] = DP[1]['C_m'] / dt + DP[1]['g_L'] / 2. + DP[1]['g_c'] / 2.
 
-    bb[0] = SP['C_m'] / dt * SP['E_L'] + SP['g_L'] * SP['E_L'] / 2. - \
-            DP[0]['g_c'] * (SP['E_L'] - DP[0]['E_L']) / 2.
-    bb[1] = DP[0]['C_m'] / dt * DP[0]['E_L'] + DP[0]['g_L'] * DP[0]['E_L'] / 2. - \
-            DP[0]['g_c'] * (DP[0]['E_L'] - SP['E_L']) / 2. - \
-            DP[1]['g_c'] * (DP[0]['E_L'] - DP[1]['E_L']) / 2.
-    bb[2] = DP[1]['C_m'] / dt * DP[1]['E_L'] + DP[1]['g_L'] * DP[1]['E_L'] / 2. - \
-            DP[1]['g_c'] * (DP[1]['E_L'] - SP['E_L']) / 2.
+    bb[0] = SP['C_m'] / dt * SP['e_L'] + SP['g_L'] * SP['e_L'] / 2. - \
+            DP[0]['g_c'] * (SP['e_L'] - DP[0]['e_L']) / 2.
+    bb[1] = DP[0]['C_m'] / dt * DP[0]['e_L'] + DP[0]['g_L'] * DP[0]['e_L'] / 2. - \
+            DP[0]['g_c'] * (DP[0]['e_L'] - SP['e_L']) / 2. - \
+            DP[1]['g_c'] * (DP[0]['e_L'] - DP[1]['e_L']) / 2.
+    bb[2] = DP[1]['C_m'] / dt * DP[1]['e_L'] + DP[1]['g_L'] * DP[1]['e_L'] / 2. - \
+            DP[1]['g_c'] * (DP[1]['e_L'] - SP['e_L']) / 2.
 
     # create steady state matrix for attenuation test
     ss = np.zeros((3,3))
@@ -191,7 +191,7 @@ def create_tdend_4comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('iaf_neat')
+    n_neat = nest.Create('cm_main')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
     nest.AddCompartment(n_neat, 0, -1, SP)
@@ -227,19 +227,19 @@ def create_tdend_4comp(dt=0.1):
     aa[4,2] = -DP[3]['g_c'] / 2.;
     aa[4,4] = DP[3]['C_m'] / dt + DP[3]['g_L'] / 2. + DP[3]['g_c'] / 2.
 
-    bb[0] = SP['C_m'] / dt * SP['E_L'] + SP['g_L'] * SP['E_L'] / 2. - \
-            DP[0]['g_c'] * (SP['E_L'] - DP[0]['E_L']) / 2.
-    bb[1] = DP[0]['C_m'] / dt * DP[0]['E_L'] + DP[0]['g_L'] * DP[0]['E_L'] / 2. - \
-            DP[0]['g_c'] * (DP[0]['E_L'] - SP['E_L']) / 2. - \
-            DP[1]['g_c'] * (DP[0]['E_L'] - DP[1]['E_L']) / 2.
-    bb[2] = DP[1]['C_m'] / dt * DP[1]['E_L'] + DP[1]['g_L'] * DP[1]['E_L'] / 2. - \
-            DP[1]['g_c'] * (DP[1]['E_L'] - DP[0]['E_L']) / 2. - \
-            DP[2]['g_c'] * (DP[1]['E_L'] - DP[2]['E_L']) / 2. - \
-            DP[3]['g_c'] * (DP[1]['E_L'] - DP[3]['E_L']) / 2.
-    bb[3] = DP[2]['C_m'] / dt * DP[2]['E_L'] + DP[2]['g_L'] * DP[2]['E_L'] / 2. - \
-            DP[2]['g_c'] * (DP[2]['E_L'] - DP[1]['E_L']) / 2.
-    bb[4] = DP[3]['C_m'] / dt * DP[3]['E_L'] + DP[3]['g_L'] * DP[3]['E_L'] / 2. - \
-            DP[3]['g_c'] * (DP[3]['E_L'] - DP[1]['E_L']) / 2.
+    bb[0] = SP['C_m'] / dt * SP['e_L'] + SP['g_L'] * SP['e_L'] / 2. - \
+            DP[0]['g_c'] * (SP['e_L'] - DP[0]['e_L']) / 2.
+    bb[1] = DP[0]['C_m'] / dt * DP[0]['e_L'] + DP[0]['g_L'] * DP[0]['e_L'] / 2. - \
+            DP[0]['g_c'] * (DP[0]['e_L'] - SP['e_L']) / 2. - \
+            DP[1]['g_c'] * (DP[0]['e_L'] - DP[1]['e_L']) / 2.
+    bb[2] = DP[1]['C_m'] / dt * DP[1]['e_L'] + DP[1]['g_L'] * DP[1]['e_L'] / 2. - \
+            DP[1]['g_c'] * (DP[1]['e_L'] - DP[0]['e_L']) / 2. - \
+            DP[2]['g_c'] * (DP[1]['e_L'] - DP[2]['e_L']) / 2. - \
+            DP[3]['g_c'] * (DP[1]['e_L'] - DP[3]['e_L']) / 2.
+    bb[3] = DP[2]['C_m'] / dt * DP[2]['e_L'] + DP[2]['g_L'] * DP[2]['e_L'] / 2. - \
+            DP[2]['g_c'] * (DP[2]['e_L'] - DP[1]['e_L']) / 2.
+    bb[4] = DP[3]['C_m'] / dt * DP[3]['e_L'] + DP[3]['g_L'] * DP[3]['e_L'] / 2. - \
+            DP[3]['g_c'] * (DP[3]['e_L'] - DP[1]['e_L']) / 2.
 
     # create steady state matrix for attenuation test
     ss = np.zeros((5,5))
@@ -278,7 +278,7 @@ def create_2tdend_4comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('iaf_neat')
+    n_neat = nest.Create('cm_main')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
     nest.AddCompartment(n_neat, 0, -1, SP)
@@ -336,33 +336,33 @@ def create_2tdend_4comp(dt=0.1):
     aa[8,6] = -DP[7]['g_c'] / 2.;
     aa[8,8] = DP[7]['C_m'] / dt + DP[7]['g_L'] / 2. + DP[7]['g_c'] / 2.
 
-    bb[0] = SP['C_m'] / dt * SP['E_L'] + SP['g_L'] * SP['E_L'] / 2. - \
-            DP[0]['g_c'] * (SP['E_L'] - DP[0]['E_L']) / 2. - \
-            DP[4]['g_c'] * (SP['E_L'] - DP[4]['E_L']) / 2.
+    bb[0] = SP['C_m'] / dt * SP['e_L'] + SP['g_L'] * SP['e_L'] / 2. - \
+            DP[0]['g_c'] * (SP['e_L'] - DP[0]['e_L']) / 2. - \
+            DP[4]['g_c'] * (SP['e_L'] - DP[4]['e_L']) / 2.
 
-    bb[1] = DP[0]['C_m'] / dt * DP[0]['E_L'] + DP[0]['g_L'] * DP[0]['E_L'] / 2. - \
-            DP[0]['g_c'] * (DP[0]['E_L'] - SP['E_L']) / 2. - \
-            DP[1]['g_c'] * (DP[0]['E_L'] - DP[1]['E_L']) / 2.
-    bb[2] = DP[1]['C_m'] / dt * DP[1]['E_L'] + DP[1]['g_L'] * DP[1]['E_L'] / 2. - \
-            DP[1]['g_c'] * (DP[1]['E_L'] - DP[0]['E_L']) / 2. - \
-            DP[2]['g_c'] * (DP[1]['E_L'] - DP[2]['E_L']) / 2. - \
-            DP[3]['g_c'] * (DP[1]['E_L'] - DP[3]['E_L']) / 2.
-    bb[3] = DP[2]['C_m'] / dt * DP[2]['E_L'] + DP[2]['g_L'] * DP[2]['E_L'] / 2. - \
-            DP[2]['g_c'] * (DP[2]['E_L'] - DP[1]['E_L']) / 2.
-    bb[4] = DP[3]['C_m'] / dt * DP[3]['E_L'] + DP[3]['g_L'] * DP[3]['E_L'] / 2. - \
-            DP[3]['g_c'] * (DP[3]['E_L'] - DP[1]['E_L']) / 2.
+    bb[1] = DP[0]['C_m'] / dt * DP[0]['e_L'] + DP[0]['g_L'] * DP[0]['e_L'] / 2. - \
+            DP[0]['g_c'] * (DP[0]['e_L'] - SP['e_L']) / 2. - \
+            DP[1]['g_c'] * (DP[0]['e_L'] - DP[1]['e_L']) / 2.
+    bb[2] = DP[1]['C_m'] / dt * DP[1]['e_L'] + DP[1]['g_L'] * DP[1]['e_L'] / 2. - \
+            DP[1]['g_c'] * (DP[1]['e_L'] - DP[0]['e_L']) / 2. - \
+            DP[2]['g_c'] * (DP[1]['e_L'] - DP[2]['e_L']) / 2. - \
+            DP[3]['g_c'] * (DP[1]['e_L'] - DP[3]['e_L']) / 2.
+    bb[3] = DP[2]['C_m'] / dt * DP[2]['e_L'] + DP[2]['g_L'] * DP[2]['e_L'] / 2. - \
+            DP[2]['g_c'] * (DP[2]['e_L'] - DP[1]['e_L']) / 2.
+    bb[4] = DP[3]['C_m'] / dt * DP[3]['e_L'] + DP[3]['g_L'] * DP[3]['e_L'] / 2. - \
+            DP[3]['g_c'] * (DP[3]['e_L'] - DP[1]['e_L']) / 2.
 
-    bb[5] = DP[4]['C_m'] / dt * DP[4]['E_L'] + DP[4]['g_L'] * DP[4]['E_L'] / 2. - \
-            DP[4]['g_c'] * (DP[4]['E_L'] - SP['E_L']) / 2. - \
-            DP[5]['g_c'] * (DP[4]['E_L'] - DP[5]['E_L']) / 2.
-    bb[6] = DP[5]['C_m'] / dt * DP[5]['E_L'] + DP[5]['g_L'] * DP[5]['E_L'] / 2. - \
-            DP[5]['g_c'] * (DP[5]['E_L'] - DP[4]['E_L']) / 2. - \
-            DP[6]['g_c'] * (DP[5]['E_L'] - DP[6]['E_L']) / 2. - \
-            DP[7]['g_c'] * (DP[5]['E_L'] - DP[7]['E_L']) / 2.
-    bb[7] = DP[6]['C_m'] / dt * DP[6]['E_L'] + DP[6]['g_L'] * DP[6]['E_L'] / 2. - \
-            DP[6]['g_c'] * (DP[6]['E_L'] - DP[5]['E_L']) / 2.
-    bb[8] = DP[7]['C_m'] / dt * DP[7]['E_L'] + DP[7]['g_L'] * DP[7]['E_L'] / 2. - \
-            DP[7]['g_c'] * (DP[7]['E_L'] - DP[5]['E_L']) / 2.
+    bb[5] = DP[4]['C_m'] / dt * DP[4]['e_L'] + DP[4]['g_L'] * DP[4]['e_L'] / 2. - \
+            DP[4]['g_c'] * (DP[4]['e_L'] - SP['e_L']) / 2. - \
+            DP[5]['g_c'] * (DP[4]['e_L'] - DP[5]['e_L']) / 2.
+    bb[6] = DP[5]['C_m'] / dt * DP[5]['e_L'] + DP[5]['g_L'] * DP[5]['e_L'] / 2. - \
+            DP[5]['g_c'] * (DP[5]['e_L'] - DP[4]['e_L']) / 2. - \
+            DP[6]['g_c'] * (DP[5]['e_L'] - DP[6]['e_L']) / 2. - \
+            DP[7]['g_c'] * (DP[5]['e_L'] - DP[7]['e_L']) / 2.
+    bb[7] = DP[6]['C_m'] / dt * DP[6]['e_L'] + DP[6]['g_L'] * DP[6]['e_L'] / 2. - \
+            DP[6]['g_c'] * (DP[6]['e_L'] - DP[5]['e_L']) / 2.
+    bb[8] = DP[7]['C_m'] / dt * DP[7]['e_L'] + DP[7]['g_L'] * DP[7]['e_L'] / 2. - \
+            DP[7]['g_c'] * (DP[7]['e_L'] - DP[5]['e_L']) / 2.
 
     # create steady state matrix for attenuation test
     ss = np.zeros((9,9))
@@ -520,7 +520,7 @@ class NEASTTestCase(unittest.TestCase):
         n_comp = gg.shape[0]
 
         gl = np.array([SP['g_L']] + [DP[ii]['g_L'] for ii in range(n_comp-1)])
-        el = np.array([SP['E_L']] + [DP[ii]['E_L'] for ii in range(n_comp-1)])
+        el = np.array([SP['e_L']] + [DP[ii]['e_L'] for ii in range(n_comp-1)])
 
         # add current
         nest.Connect(nest.Create('dc_generator', {'amplitude': 0.}), n_neat,
@@ -558,7 +558,7 @@ class NEASTTestCase(unittest.TestCase):
         n_comp = gg.shape[0]
 
         gl = np.array([SP['g_L']] + [DP[ii]['g_L'] for ii in range(n_comp-1)])
-        el = np.array([SP['E_L']] + [DP[ii]['E_L'] for ii in range(n_comp-1)])
+        el = np.array([SP['e_L']] + [DP[ii]['e_L'] for ii in range(n_comp-1)])
         print(el)
 
         syn_weights = weight * np.arange(1,n_comp+1)

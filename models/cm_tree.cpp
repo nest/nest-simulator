@@ -5,7 +5,6 @@
 nest::CompNode::CompNode(const long node_index, const long parent_index)
   : m_xx( 0.0 )
   , m_yy( 0.0 )
-  , m_dt( 0.1 )
   , m_index( node_index )
   , m_p_index( parent_index )
   , m_parent( nullptr )
@@ -26,7 +25,6 @@ nest::CompNode::CompNode( const long node_index, const long parent_index,
 			              const DictionaryDatum& compartment_params )
   : m_xx( 0.0 )
   , m_yy( 0.0 )
-  , m_dt( 0.1 )
   , m_index( node_index )
   , m_p_index( parent_index )
   , m_parent( nullptr )
@@ -336,7 +334,7 @@ Print the tree graph
 void nest::CompTree::print_tree() const
 {
     // loop over all nodes
-    std::printf(">>> NEAST tree with %d compartments <<<\n", int(m_nodes.size()));
+    std::printf(">>> CM tree with %d compartments <<<\n", int(m_nodes.size()));
     for(int ii=0; ii<int(m_nodes.size()); ++ii)
     {
         CompNode* node = m_nodes[ii];

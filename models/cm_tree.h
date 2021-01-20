@@ -41,11 +41,9 @@ namespace nest{
 
 class CompNode{
 private:
-    // aggragators for numberical integrations
+    // aggragators for numerical integration
     double m_xx;
     double m_yy;
-    // time step
-    double m_dt;
 
 public:
     // node_index
@@ -104,13 +102,11 @@ inline std::pair< double, double > nest::CompNode::io()
     m_gg -= m_xx;
     m_ff -= m_yy;
 
-    // // output values
-    // out.first = m_hh * m_hh / m_gg;
-    // out.second = m_ff * m_hh / m_gg;
+    // output values
+    double g_val( m_hh * m_hh / m_gg );
+    double f_val( m_ff * m_hh / m_gg );
 
-    std::pair< double, double > out(m_hh * m_hh / m_gg, m_ff * m_hh / m_gg);
-
-    return out;
+    return std::make_pair(g_val, f_val);
 };
 
 inline double nest::CompNode::calc_v( const double v_in )
@@ -123,6 +119,7 @@ inline double nest::CompNode::calc_v( const double v_in )
 
     return m_v;
 };
+
 
 class CompTree{
 private:

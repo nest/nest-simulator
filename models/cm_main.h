@@ -42,23 +42,49 @@ namespace nest
 Short description
 +++++++++++++++++
 
-A neuron model with user-defined structure and AMPA, GABA or NMDA
-receptors.
+A neuron model with user-defined dendrite structure.
+Currently, contains AMPA, GABA or NMDA receptors.
 
 Description
 +++++++++++
 
-cm_main is an implementation of a leaky-integrator neuron. Users can
+`cm_main` is an implementation of a compartmental model. Users can
 define the structure of the neuron, i.e., soma and dendritic tree by
 adding compartments. Each compartment can be assigned receptors,
-currently modeled by AMPA, GABA or NMDA dynamics. <add info about
-spiking/refractory implementation><add info about recording>
+currently modeled by AMPA, GABA or NMDA dynamics.
+
+The default model is passive, and has threshold triggered sodium and potassium
+currents at the soma whose conductance waveforms are modeled by a double
+exponential. These currents implement an AP waveform. We are working on the
+inclusion of general ion channel currents through NESTML.
 
 Usage
 +++++
-<add info about adding compartsments, receptors>
-<add info about recording>
-<add info about currents>
+The structure of the dendrite is user defined. Thus after creation of the neuron
+in the standard manner
+
+>>> cm =  nest.Create('cm_main')
+
+users add compartments using the `nest.add_compartment()` function
+
+>>> comp = nest.AddCompartment(cm, [compartment index], [parent index],
+>>>                                [dictionary with compartment params])
+
+After all compartments have been added, users can add receptors
+
+>>> recept = nest.AddReceptor(cm, [compartment index], ['AMPA', 'GABA' or 'AMPA+NMDA'])
+
+Compartment voltages can be recorded. To do so, users create a multimeter in the
+standard manner but specify the to be recorded voltages as
+'V_m_[compartment_index]', i.e.
+
+>>> mm = nest.Create('multimeter', 1, {'record_from': ['V_m_[compartment_index]'], ...})
+
+Current generators can be connected to the model. In this case, the receptor
+type is the [compartment index], i.e.
+
+>>> dc = nest.Create('dc_generator', {...})
+>>> nest.Connect(dc, cm, syn_spec={..., 'receptor_type': [compartment index]}
 
 Parameters
 ++++++++++
@@ -69,7 +95,17 @@ The following parameters can be set in the status dictionary.
  V_th       mV      Spike threshold
 =========== ======= ===========================================================
 
-<add info about setting compartment, receptor parameters>
+The following parameters can be set using the `AddCompartment` function
+
+=========== ======= ===========================================================
+ C_m        uF      Capacitance of compartment
+ g_c        nS      Coupling conductance with parent compartment
+ g_L        nS      Leak conductance of the compartment
+ e_L        mV      Leak reversal of the compartment
+=========== ======= ===========================================================
+
+Receptor types for the moment are hardcoded. The choice is from
+'AMPA', 'GABA' or 'NMDA'.
 
 Sends
 +++++
@@ -89,7 +125,7 @@ References
 See also
 ++++++++
 
-There's nothing like it. ^^
+NEURON simulator ;-D
 
 EndUserDocs*/
 
@@ -195,8 +231,8 @@ cm_main::handles_test_event( SpikeEvent&, rport receptor_type )
 inline port
 cm_main::handles_test_event( CurrentEvent&, rport receptor_type )
 {
-  // if find_compartment returns nullptr, raise the error
-  if ( !m_c_tree.find_compartment( long(receptor_type), m_c_tree.get_root(), 0 ) )
+  // if get_compartment returns nullptr, raise the error
+  if ( !m_c_tree.get_compartment( long(receptor_type), m_c_tree.get_root(), 0 ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

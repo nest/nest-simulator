@@ -136,7 +136,7 @@ cm_main::add_receptor( const long compartment_idx, const std::string& type )
   const size_t syn_idx = syn_receptors.size();
   syn_receptors.push_back( syn );
 
-  Compartment* compartment = m_c_tree.find_compartment( compartment_idx );
+  Compartment* compartment = m_c_tree.get_compartment( compartment_idx );
   compartment->m_syns.push_back( syn );
 
   return syn_idx;
@@ -205,7 +205,7 @@ nest::cm_main::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  Compartment* compartment = m_c_tree.find_compartment( e.get_rport() );
+  Compartment* compartment = m_c_tree.get_compartment( e.get_rport() );
   compartment->m_currents.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 

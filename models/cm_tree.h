@@ -95,11 +95,13 @@ public:
 /*
 Short helper functions for solving the matrix equation. Can hopefully be inlined
 */
-inline void nest::Compartment::gather_input( const std::pair< double, double > in)
+inline void
+nest::Compartment::gather_input( const std::pair< double, double > in)
 {
     m_xx += in.first; m_yy += in.second;
 };
-inline std::pair< double, double > nest::Compartment::io()
+inline std::pair< double, double >
+nest::Compartment::io()
 {
     // include inputs from child compartments
     m_gg -= m_xx;
@@ -111,7 +113,8 @@ inline std::pair< double, double > nest::Compartment::io()
 
     return std::make_pair(g_val, f_val);
 };
-inline double nest::Compartment::calc_v( const double v_in )
+inline double
+nest::Compartment::calc_v( const double v_in )
 {
     // reset recursion variables
     m_xx = 0.0; m_yy = 0.0;
@@ -150,12 +153,14 @@ public:
 
     // initialization functions for tree structure
     void add_compartment( const long compartment_index, const long parent_index,
-                   const DictionaryDatum& compartment_params );
+                          const DictionaryDatum& compartment_params );
     void init();
 
     // get a compartment pointer from the tree
-    Compartment* find_compartment( const long compartment_index );
-    Compartment* find_compartment( const long compartment_index, Compartment* compartment, const long raise_flag );
+    Compartment* get_compartment( const long compartment_index );
+    Compartment* get_compartment( const long compartment_index,
+                                  Compartment* compartment,
+                                  const long raise_flag );
     Compartment* get_root(){ return &m_root; };
 
     // get voltage values

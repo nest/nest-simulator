@@ -43,7 +43,7 @@ Short description
 +++++++++++++++++
 
 A neuron model with user-defined dendrite structure.
-Currently, contains AMPA, GABA or NMDA receptors.
+Currently, AMPA, GABA or AMPA+NMDA receptors.
 
 Description
 +++++++++++

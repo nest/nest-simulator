@@ -1,4 +1,4 @@
-#include "synapses_neat.h"
+#include "cm_syns.h"
 
 
 // spike handling for conductance windows //////////////////////////////////////

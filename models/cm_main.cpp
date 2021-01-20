@@ -1,5 +1,5 @@
 /*
- *  iaf_neat.cpp
+ *  cm_main.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,9 @@
  *
  */
 
-#include "iaf_neat.h"
+/* cm_main is a neuron where the potential jumps on each spike arrival. */
+
+#include "cm_main.h"
 
 // C++ includes:
 // #include <limits>
@@ -50,7 +52,17 @@ namespace nest
 
 template <>
 void
-DynamicRecordablesMap< iaf_neat >::create( iaf_neat& host)
+DynamicRecordablesMap< cm_main >::create( cm_main& host)
+{
+}
+
+nest::cm_main::Buffers_::Buffers_( cm_main& n )
+  : logger_( n )
+{
+}
+
+nest::cm_main::Buffers_::Buffers_( const Buffers_&, cm_main& n )
+  : logger_( n )
 {
 }
 
@@ -58,7 +70,7 @@ DynamicRecordablesMap< iaf_neat >::create( iaf_neat& host)
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::iaf_neat::iaf_neat()
+nest::cm_main::cm_main()
   : Archiving_Node()
   , m_c_tree_()
   , syn_receptors_( 0 )
@@ -68,7 +80,7 @@ nest::iaf_neat::iaf_neat()
   recordablesMap_.create( *this );
 }
 
-nest::iaf_neat::iaf_neat( const iaf_neat& n )
+nest::cm_main::cm_main( const cm_main& n )
   : Archiving_Node( n )
   , m_c_tree_( n.m_c_tree_ )
   , syn_receptors_( n.syn_receptors_ )
@@ -82,33 +94,29 @@ nest::iaf_neat::iaf_neat( const iaf_neat& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_neat::init_state_( const Node& proto )
+nest::cm_main::init_state_( const Node& proto )
 {
 }
 
 void
-nest::iaf_neat::init_buffers_()
+nest::cm_main::init_buffers_()
 {
   logger_.reset();
   Archiving_Node::clear_history();
 }
 
 void
-iaf_neat::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
+cm_main::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
 {
-  const double C_m = getValue< double >( compartment_params, "C_m" );
-  const double g_c = getValue< double >( compartment_params, "g_c" );
-  const double g_L = getValue< double >( compartment_params, "g_L" );
-  const double E_L = getValue< double >( compartment_params, "E_L" );
+  m_c_tree.add_compartment( compartment_idx, parent_compartment_idx, compartment_params);
 
-  m_c_tree_.add_node( compartment_idx, parent_compartment_idx, C_m, g_c, g_L, E_L );
-
-  recordablesMap_.insert( "V_m_" + std::to_string( compartment_idx ),
-                          DataAccessFunctor< iaf_neat >( *this, compartment_idx ) );
+  // to enable recording the voltage of the current compartment
+  recordablesMap_.insert( "V_m_" + std::to_string(compartment_idx),
+                          DataAccessFunctor< cm_main >( *this, compartment_idx ) );
 }
 
 size_t
-iaf_neat::add_receptor( const long compartment_idx, const std::string& type )
+cm_main::add_receptor( const long compartment_idx, const std::string& type )
 {
   std::shared_ptr< Synapse > syn;
   if ( type == "AMPA" )
@@ -135,26 +143,17 @@ iaf_neat::add_receptor( const long compartment_idx, const std::string& type )
   const size_t syn_idx = syn_receptors_.size();
   syn_receptors_.push_back( syn );
 
-  CompNode* const node = m_c_tree_.find_node( compartment_idx );
-  node->m_syns.push_back( syn );
+  Compartment* compartment = m_c_tree.get_compartment( compartment_idx );
+  compartment->m_syns.push_back( syn );
 
   return syn_idx;
 }
 
 void
-nest::iaf_neat::calibrate()
+nest::cm_main::calibrate()
 {
-  logger_.init();
-
-  CompNode* const root = m_c_tree_.get_root();
-
-  std::shared_ptr< IonChannel > fake_potassium( new FakePotassium( 15. * root->m_gl ) );
-  root->m_chans.push_back( fake_potassium );
-
-  std::shared_ptr< IonChannel > fake_sodium( new FakeSodium( 40. * root->m_gl ) );
-  root->m_chans.push_back( fake_sodium );
-
-  m_c_tree_.init();
+  B_.logger_.init();
+  m_c_tree.init();
 }
 
 /* ----------------------------------------------------------------
@@ -162,7 +161,7 @@ nest::iaf_neat::calibrate()
  */
 
 void
-nest::iaf_neat::update( Time const& origin, const long from, const long to )
+nest::cm_main::update( Time const& origin, const long from, const long to )
 {
   assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
@@ -177,8 +176,7 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
     // threshold crossing
     if ( m_c_tree_.get_root()->m_v >= V_th_ && v_0_prev < V_th_ )
     {
-      m_c_tree_.get_root()->m_chans[0]->add_spike();
-      m_c_tree_.get_root()->m_chans[1]->add_spike();
+      m_c_tree.get_root()->m_etype.add_spike();
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
@@ -191,7 +189,7 @@ nest::iaf_neat::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::iaf_neat::handle( SpikeEvent& e )
+nest::cm_main::handle( SpikeEvent& e )
 {
   if ( e.get_weight() < 0 )
   {
@@ -206,19 +204,19 @@ nest::iaf_neat::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_neat::handle( CurrentEvent& e )
+nest::cm_main::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  CompNode* const node = m_c_tree_.find_node( e.get_rport() );
-  node->m_currents.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  Compartment* compartment = m_c_tree.get_compartment( e.get_rport() );
+  compartment->m_currents.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void
-nest::iaf_neat::handle( DataLoggingRequest& e )
+nest::cm_main::handle( DataLoggingRequest& e )
 {
   logger_.handle( e );
 }

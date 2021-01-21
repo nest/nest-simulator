@@ -346,7 +346,7 @@ public:
   /**
    * Sets flag indicating whether GetConnections has been called.
    */
-  void set_has_get_connections_been_called( const thread tid );
+  void set_has_get_connections_been_called( const bool has_get_connections_been_called );
 
   /**
    * Deletes TargetTable and resets processed flags of
@@ -588,7 +588,7 @@ private:
   PerThreadBoolIndicator have_connections_changed_;
 
   //! True if GetConnections has been called.
-  PerThreadBoolIndicator has_get_connections_been_called_;
+  bool has_get_connections_been_called_;
 
   //! Whether to sort connections by source node ID.
   bool sort_connections_by_source_;
@@ -813,6 +813,12 @@ ConnectionManager::set_source_has_more_targets( const thread tid,
   const bool more_targets )
 {
   connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
+}
+
+inline void
+nest::ConnectionManager::set_has_get_connections_been_called( const bool has_get_connections_been_called )
+{
+  has_get_connections_been_called_ = has_get_connections_been_called;
 }
 
 } // namespace nest

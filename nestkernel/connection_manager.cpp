@@ -96,9 +96,10 @@ nest::ConnectionManager::initialize()
   sort_connections_by_source_ = true;
 
   have_connections_changed_.initialize( num_threads, false );
-  has_get_connections_been_called_.initialize( num_threads, false );
   check_primary_connections_.initialize( num_threads, false );
   check_secondary_connections_.initialize( num_threads, false );
+
+  set_has_get_connections_been_called( false );
 
 #pragma omp parallel
   {
@@ -796,7 +797,6 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
     {
       const thread tid = kernel().vp_manager.get_thread_id();
       kernel().simulation_manager.update_connection_infrastructure( tid );
-      set_has_get_connections_been_called( tid );
     }
   }
 
@@ -834,6 +834,8 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
     result.push_back( ConnectionDatum( connectome.front() ) );
     connectome.pop_front();
   }
+
+  set_has_get_connections_been_called( true );
 
   return result;
 }
@@ -1435,12 +1437,12 @@ nest::ConnectionManager::set_have_connections_changed( const thread tid )
   // performance issues on supercomputers.
   if ( have_connections_changed_[ tid ].is_false() )
   {
-    if ( has_get_connections_been_called_[ tid ].is_true() )
+    if ( has_get_connections_been_called_ )
     {
       std::string msg =
         "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
       LOG( M_WARNING, "ConnectionManager", msg );
-      has_get_connections_been_called_[ tid ].set_false();
+      set_has_get_connections_been_called( false );
     }
     have_connections_changed_[ tid ].set_true();
   }
@@ -1455,14 +1457,5 @@ nest::ConnectionManager::unset_have_connections_changed( const thread tid )
   if ( have_connections_changed_[ tid ].is_true() )
   {
     have_connections_changed_[ tid ].set_false();
-  }
-}
-
-void
-nest::ConnectionManager::set_has_get_connections_been_called( const thread tid )
-{
-  if ( has_get_connections_been_called_[ tid ].is_false() )
-  {
-    has_get_connections_been_called_[ tid ].set_true();
   }
 }

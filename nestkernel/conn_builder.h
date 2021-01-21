@@ -148,8 +148,7 @@ protected:
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
-  DictionaryDatum
-  create_param_dict_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng, index indx );
+  void update_param_dict_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng, index indx );
 
   //! Create connection between given nodes, fill parameter values
   void single_connect_( index, Node&, thread, librandom::RngPtr& );
@@ -212,6 +211,9 @@ protected:
 
   std::vector< index > synapse_model_id_;
 
+  //! dictionaries to pass to connect function, one per thread for every syn_spec
+  std::vector< std::vector< DictionaryDatum > > param_dicts_;
+
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
 
@@ -230,13 +232,6 @@ private:
 
   //! all other parameters, mapping name to value representation
   std::vector< ConnParameterMap > synapse_params_;
-
-  //! dictionaries to pass to connect function, one per thread for every syn_spec
-  std::vector< std::vector< DictionaryDatum > > param_dicts_;
-
-  //! empty dictionary to pass to connect function, one per thread so that the all threads do not
-  //! create and use the same dictionary as this leads to performance issues.
-  std::vector< DictionaryDatum > dummy_param_dicts_;
 
   //! synapse-specific parameters that should be skipped when we set default synapse parameters
   std::set< Name > skip_syn_params_;

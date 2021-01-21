@@ -1466,12 +1466,3 @@ nest::ConnectionManager::set_has_get_connections_been_called( const thread tid )
     has_get_connections_been_called_[ tid ].set_true();
   }
 }
-
-void
-nest::ConnectionManager::unset_has_get_connections_been_called( const thread tid )
-{
-  if ( has_get_connections_been_called_[ tid ].is_true() )
-  {
-    has_get_connections_been_called_[ tid ].set_false();
-  }
-}

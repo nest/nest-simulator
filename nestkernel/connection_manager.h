@@ -349,12 +349,6 @@ public:
   void set_has_get_connections_been_called( const thread tid );
 
   /**
-   * Unsets flag indicating whether GetConnections has been called.
-   */
-  void unset_has_get_connections_been_called( const thread tid );
-
-
-  /**
    * Deletes TargetTable and resets processed flags of
    * SourceTable. This function must be called if connections are
    * created after connections have been communicated previously. It

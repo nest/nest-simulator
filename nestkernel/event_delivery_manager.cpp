@@ -388,8 +388,8 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #ifdef TIMER_DETAILED
     if ( tid == 0 )
     {
-      sw_collocate_spike_data.stop();
-      sw_communicate_spike_data.start();
+      sw_collocate_spike_data_.stop();
+      sw_communicate_spike_data_.start();
     }
 #endif
 
@@ -672,25 +672,17 @@ EventDeliveryManager::gather_target_data( const thread tid )
 #pragma omp barrier
     kernel().connection_manager.clean_source_table( tid );
 
-#ifdef TIMER_DETAILED
-    if ( tid == 0 )
-    {
-      sw_communicate_target_data.start();
-    }
-#endif
-
 #pragma omp single
     {
+#ifdef TIMER_DETAILED
+      sw_communicate_target_data_.start();
+#endif
       kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
+#ifdef TIMER_DETAILED
+      sw_communicate_target_data_.stop();
+#endif
     } // of omp single (implicit barrier)
 
-#ifdef TIMER_DETAILED
-    // "#pragma omp barrier" not necessary because of preceding implicit barrier
-    if ( tid == 0 )
-    {
-      sw_communicate_target_data_.stop();
-    }
-#endif
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
     gather_completed_checker_[ tid ].logical_and( distribute_completed );

@@ -62,7 +62,7 @@ jobs:
       os: osx
       osx_image: xcode12.2   # Python 3.9.0 running on macOS 10.15.7
       language: shell      # language 'python' results in errors on macOS
-      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=FULL_NO_EXTERNAL_FEATURES
+      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=MINIMAL
       cache:
         directories:
           - $HOME/.cache

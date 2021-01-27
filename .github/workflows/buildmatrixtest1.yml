@@ -7,7 +7,12 @@ jobs:
      strategy:
        fail-fast: false
        matrix:
-         os: [ubuntu-latest, macos-latest]
+         #os: [ubuntu-latest, macos-latest]
+         os: ["ubuntu-20.04", macos-latest]
+         #cxx: ["g++"]
+         #cc:  ["gcc"]
+         #ver: ["9"]
+         xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
          include:
            - os: macos-latest
              TARGET: x86_64-apple-darwin
@@ -39,8 +44,8 @@ jobs:
        - name: Checkout repo content 
          #uses: actions/checkout@v2 # checkout the repository content to github runner.
          uses: actions/checkout@master
-       - name: Matrix job  
-         run: echo ${{matrix.TARGET}}
+       #- name: Matrix job  
+         #run: echo ${{matrix.TARGET}}
         
        - name: Say Something
          run: |
@@ -72,9 +77,9 @@ jobs:
             set -o pipefail
             chmod +x extras/staticbuild.sh
             ./extras/staticbuild.sh
-       - name: MPI
-         run: echo "MPI BUILD"
-         if: env.xNEST_BUILD_TYPE == 'MINIMAL'     
+       #- name: MPI
+         #run: echo "MPI BUILD"
+         #if: env.xNEST_BUILD_TYPE == 'MINIMAL'     
        #- name: Full build
        #  env:
        #    key: xNEST_BUILD_TYPE=FULL

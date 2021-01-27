@@ -1,4 +1,16 @@
 name: test matrix
+env:
+  xGSL: "0"
+  xLIBBOOST: "0"
+  xLIBNEUROSIM: "0"
+  xLTDL: "0"
+  xMPI: "1"
+  xMUSIC: "0"
+  xOPENMP: "0"
+  xPYTHON: "0"
+  xREADLINE: "0"
+  xSIONLIB: "0"
+  CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
 on: push
 jobs:
   build:
@@ -66,13 +78,16 @@ jobs:
          run: |
             brew install coreutils gsl open-mpi automake autoconf libtool
             brew info python
+       - name: Dependencies Linux
+         if: contains(matrix.os, 'ubuntu')
+         run: |
+           sudo apt-get update
+           sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pep8 libpcre3 libpcre3-dev
+           sudo apt-get install openmpi-bin libopenmpi-dev
        - name: Install dependencies
          #uses: actions/cache@master
          run: |
             #sudo apt-get update && sudo apt-get install libboost-dev-all
-            sudo apt-get update
-            sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pep8 libpcre3 libpcre3-dev
-            sudo apt-get install openmpi-bin libopenmpi-dev
             python -m pip install --upgrade pip setuptools
             python -m pip install scipy junitparser numpy nose cython matplotlib terminaltables
             python -m pip install nose
@@ -81,6 +96,12 @@ jobs:
             set -o pipefail
             chmod +x extras/staticbuild.sh
             ./extras/staticbuild.sh
+            
+       - if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
+         #run: echo "MPI Only Build"
+         with: ${{ env.xMPI }}
+         #run: ./extras/staticbuild.sh
+         
        #- name: MPI
          #run: echo "MPI BUILD"
          #if: env.xNEST_BUILD_TYPE == 'MINIMAL'     

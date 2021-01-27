@@ -27,6 +27,7 @@
 
 #include "dictutils.h"
 #include "nest_datums.h"
+#include "connection_creator.h"
 
 namespace nest
 {
@@ -34,21 +35,39 @@ namespace nest
 class ProjectionCollection
 {
 private:
-  struct Projection_
+  class ConnectionClassWrapper_
   {
-    const bool is_spatial;
-    const NodeCollectionDatum sources;
-    const NodeCollectionDatum targets;
-    const DictionaryDatum conn_spec;
-    const ArrayDatum syn_spec;
+  public:
+    /**
+     * @brief Wrapper to adapt ConnectionCreator to behave like a ConnBuilder.
+     */
+    struct SpatialBuilderWrapper_
+    {
+      SpatialBuilderWrapper_() = delete;
+      SpatialBuilderWrapper_( const NodeCollectionDatum, const NodeCollectionDatum, const DictionaryDatum );
 
-    Projection_( const ArrayDatum& projection, const bool is_spatial );
+      void connect();
 
-    void connect() const;
-    void print_me( std::ostream& stream ) const;
+      const NodeCollectionPTR sources;
+      const NodeCollectionPTR targets;
+      ConnectionCreator spatial_builder;
+    };
+    ConnectionClassWrapper_() = delete;
+    // Regular connections
+    ConnectionClassWrapper_( ConnBuilder* const );
+    // Spatial connections
+    ConnectionClassWrapper_( SpatialBuilderWrapper_* const );
+
+    void connect();
+
+  private:
+    // Regular connections
+    ConnBuilder* const conn_builder_;
+    // Spatial connections
+    SpatialBuilderWrapper_* const spatial_conn_creator_;
   };
 
-  std::vector< Projection_ > projections_;
+  std::vector< ConnectionClassWrapper_ > projections_;
 
 public:
   ProjectionCollection() = delete;
@@ -56,7 +75,13 @@ public:
 
   ~ProjectionCollection() = default;
 
-  void connect() const;
+  void pre_connector_creation_checks( NodeCollectionPTR&,
+    NodeCollectionPTR&,
+    DictionaryDatum&,
+    std::vector< DictionaryDatum >& );
+  void post_connector_creation_checks( DictionaryDatum&, std::vector< DictionaryDatum >& );
+  void post_spatial_connector_creation_checks( DictionaryDatum& );
+  void connect();
 };
 
 

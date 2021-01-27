@@ -37,15 +37,44 @@ ProjectionCollection::ProjectionCollection( const ArrayDatum& projections )
     // Normal projection has 4 elements, spatial projection has 3.
     assert( projection_array.size() == 4 or projection_array.size() == 3 );
     const bool is_spatial = projection_array.size() == 3;
-    projections_.emplace_back( projection_array, is_spatial );
+    auto sources = getValue< NodeCollectionDatum >( projection_array[ 0 ] );
+    auto targets = getValue< NodeCollectionDatum >( projection_array[ 1 ] );
+    auto conn_spec = getValue< DictionaryDatum >( projection_array[ 2 ] );
+    if ( is_spatial )
+    {
+      projections_.emplace_back( new ConnectionClassWrapper_::SpatialBuilderWrapper_( sources, targets, conn_spec ) );
+      // TODO: delete builder in destructor, or put it in smart pointer
+      post_spatial_connector_creation_checks( conn_spec ); // checks of dictionary access flags
+    }
+    else
+    {
+      auto syn_spec = getValue< ArrayDatum >( projection_array[ 3 ] );
+      std::vector< DictionaryDatum > synapse_params( syn_spec.size() );
+      // Convert ArrayDatum of tokens to vector of DictionaryDatums.
+      std::transform( syn_spec.begin(),
+        syn_spec.end(),
+        synapse_params.begin(),
+        // Lambda expression that handles the conversion of each element.
+        []( Token& token ) -> DictionaryDatum
+        {
+          return getValue< DictionaryDatum >( token );
+        } );
+
+      // Need to do the same checks of arguments as in ConnectionManager::connect().
+      pre_connector_creation_checks( sources, targets, conn_spec, synapse_params );
+      const auto rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
+      projections_.emplace_back(
+        kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, synapse_params ) );
+      // TODO: delete builder in destructor, or put it in smart pointer
+      post_connector_creation_checks( conn_spec, synapse_params ); // checks of dictionary access flags
+    }
   }
 }
 
 void
-ProjectionCollection::connect() const
+ProjectionCollection::connect()
 {
-  // TODO: Process projections here
-
+  // TODO: Enter thread parallel region here.
   // Apply projection connections
   for ( auto& projection : projections_ )
   {
@@ -53,53 +82,113 @@ ProjectionCollection::connect() const
   }
 }
 
-ProjectionCollection::Projection_::Projection_( const ArrayDatum& projection, const bool is_spatial )
-  : is_spatial( is_spatial )
-  , sources( getValue< NodeCollectionDatum >( projection[ 0 ] ) )
-  , targets( getValue< NodeCollectionDatum >( projection[ 1 ] ) )
-  , conn_spec( getValue< DictionaryDatum >( projection[ 2 ] ) )
-  , syn_spec( is_spatial ? ArrayDatum() : getValue< ArrayDatum >( projection[ 3 ] ) )
+void
+ProjectionCollection::pre_connector_creation_checks( NodeCollectionPTR& sources,
+  NodeCollectionPTR& targets,
+  DictionaryDatum& conn_spec,
+  std::vector< DictionaryDatum >& syn_specs )
+{
+  // Copied from ConnectionManager::connect()
+
+  if ( sources->empty() )
+  {
+    throw IllegalConnection( "Presynaptic nodes cannot be an empty NodeCollection" );
+  }
+  if ( targets->empty() )
+  {
+    throw IllegalConnection( "Postsynaptic nodes cannot be an empty NodeCollection" );
+  }
+
+  conn_spec->clear_access_flags();
+
+  for ( auto syn_params : syn_specs )
+  {
+    syn_params->clear_access_flags();
+  }
+
+  if ( not conn_spec->known( names::rule ) )
+  {
+    throw BadProperty( "Connectivity spec must contain connectivity rule." );
+  }
+  const Name rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
+
+  if ( not kernel().connection_manager.get_connruledict()->known( rule_name ) )
+  {
+    throw BadProperty( String::compose( "Unknown connectivity rule: %1", rule_name ) );
+  }
+}
+
+void
+ProjectionCollection::post_connector_creation_checks( DictionaryDatum& conn_spec,
+  std::vector< DictionaryDatum >& syn_specs )
+{
+  // Copied from ConnectionManager::connect()
+
+  ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
+  for ( auto syn_params : syn_specs )
+  {
+    ALL_ENTRIES_ACCESSED( *syn_params, "Connect", "Unread dictionary entries in syn_spec: " );
+  }
+}
+void
+ProjectionCollection::post_spatial_connector_creation_checks( DictionaryDatum& connection_dict )
+{
+  // Copied from connect_layers()
+
+  ALL_ENTRIES_ACCESSED( *connection_dict, "nest::CreateLayers", "Unread dictionary entries: " );
+}
+
+
+ProjectionCollection::ConnectionClassWrapper_::ConnectionClassWrapper_( ConnBuilder* const conn_builder )
+  : conn_builder_( conn_builder )
+  , spatial_conn_creator_( nullptr )
+{
+}
+
+ProjectionCollection::ConnectionClassWrapper_::ConnectionClassWrapper_( SpatialBuilderWrapper_* const spatial_builder )
+  : conn_builder_( nullptr )
+  , spatial_conn_creator_( spatial_builder )
 {
 }
 
 void
-ProjectionCollection::Projection_::connect() const
+ProjectionCollection::ConnectionClassWrapper_::connect()
 {
-  if ( is_spatial )
+  if ( conn_builder_ )
   {
-    connect_layers( sources, targets, conn_spec );
+    assert( not spatial_conn_creator_ );
+    conn_builder_->connect();
   }
   else
   {
-    // Transform synapse parameters from ArrayDatum to vector
-    std::vector< DictionaryDatum > synapse_params( syn_spec.size() );
-    std::transform( syn_spec.begin(),
-      syn_spec.end(),
-      synapse_params.begin(),
-      []( Token& token ) -> DictionaryDatum
-      {
-        return getValue< DictionaryDatum >( token );
-      } );
-    kernel().connection_manager.connect( sources, targets, conn_spec, synapse_params );
+    assert( not conn_builder_ );
+    spatial_conn_creator_->connect();
   }
 }
 
-void
-ProjectionCollection::Projection_::print_me( std::ostream& stream ) const
+ProjectionCollection::ConnectionClassWrapper_::SpatialBuilderWrapper_::SpatialBuilderWrapper_(
+  const NodeCollectionDatum sources,
+  const NodeCollectionDatum targets,
+  const DictionaryDatum conn_dict )
+  : sources( sources )
+  , targets( targets )
+  , spatial_builder( ConnectionCreator( conn_dict ) )
 {
-  stream << "Projection:\nSources: ";
-  sources->print_me( stream );
-  stream << "\nTargets: ";
-  targets->print_me( stream );
-  stream << "\n";
-  conn_spec->info( stream );
-  if ( not is_spatial )
+}
+
+void
+ProjectionCollection::ConnectionClassWrapper_::SpatialBuilderWrapper_::connect()
+{
+  const thread num_threads = kernel().vp_manager.get_num_threads();
+  for ( thread tid = 0; tid < num_threads; ++tid )
   {
-    for ( auto& spec : syn_spec )
-    {
-      spec->info( stream );
-    }
+    kernel().connection_manager.set_have_connections_changed( tid );
   }
+
+  AbstractLayerPTR source_layer = get_layer( sources );
+  AbstractLayerPTR target_layer = get_layer( targets );
+
+  source_layer->connect( sources, target_layer, targets, spatial_builder );
 }
 
 } // namespace nest

@@ -35,67 +35,9 @@ temporal aspects of the simulation loop.
    of thread execution, events are not necessarily recorded in
    chronological order.
 
-The time span in which a recorder is actually recording, can be specified
-using the additional properties ``start`` and ``stop``. These define
-activation and inactivation times of the device in ms. An additional
-property ``origin`` is available to shift the recording window by a
-certain amount, which can be useful in simulation protocols with
-repeated simulations. The following rules apply:
-
-- Collectors collect all events with timestamps `T` that fulfill
-
-  ::
-
-     start < T <= stop.
-
-  Events with timestamp `T == start` are not recorded.
 
 
-- Sampling devices sample at times *t = nh* (*h* being the simulation
-  resolution) with
 
-  ::
-
-     start < t <= stop
-     (t-start) mod interval == 0
-
-
-Common recorder properties
---------------------------
-
-All recorders have a set of common properties that can be set using
-``SetDefaults`` on the model class or ``SetStatus`` on a device
-instance:
-
-.. glossary::
-
- label
-   A string (default: `""`) specifying an arbitrary textual label for
-   the device.  Recording backends might use the label to generate
-   device specific identifiers like filenames and such.
-
- n_events
-   The number of events that were collected by the recorder can be
-   read out of the `n_events` entry. The number of events can be reset
-   to 0. Other values cannot be set.
-
- origin
-   A positive floating point number (default : `0.0`) used as the
-   reference time for `start` and `stop`.
-
- record_to
-   A string (default: `"memory"`) containing the name of the recording
-   backend where to write data to. An empty string turns all recording
-   of individual events off.
-
- start
-   A positive floating point number (default: `0.0`) specifying the
-   activation time in ms, relative to `origin`.
-
- stop
-   A floating point number (default: `infinity`) specifying the
-   deactication time in ms, relative to `origin`. The value of `stop`
-   must be greater than or equal to `start`
 
 Recorders for every-day situations
 ----------------------------------

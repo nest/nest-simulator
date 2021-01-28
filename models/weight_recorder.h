@@ -73,6 +73,8 @@ synapses that fulfill the given criteria.
 
    >>> nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
 
+.. include:: ../models/recording_device.rst
+
 EndUserDocs */
 
 namespace nest

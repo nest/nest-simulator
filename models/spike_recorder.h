@@ -66,6 +66,8 @@ spike creation rather than that of their arrival.
 The call to ``Connect`` will fail if the connection direction is
 reversed (i.e., connecting *sr* to *neurons*).
 
+.. include:: ../models/recording_device.rst
+
 EndUserDocs */
 
 namespace nest

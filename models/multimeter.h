@@ -80,8 +80,8 @@ using the ``multimeter`` parameter `interval`. The default value of
    nest.SetStatus(mm, 'interval': 0.1})
 
 The recording interval must be greater than or equal to the
-:doc:`simulation resolution <running_simulations>`, which defaults to
-0.1 ms.
+:ref:`simulation resolution <simulation_resolution>`, which defaults
+to 0.1 ms.
 
 .. warning::
 

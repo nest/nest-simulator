@@ -28,7 +28,7 @@
 
 #include "recording_backend.h"
 
-/* BeginUserDocs: recording backend
+/* BeginUserDocs: NOINDEX
 
 .. _recording_backend_ascii:
 

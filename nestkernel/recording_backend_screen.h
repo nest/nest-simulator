@@ -26,7 +26,7 @@
 #include "recording_backend.h"
 #include <set>
 
-/* BeginUserDocs: recording backend
+/* BeginUserDocs: NOINDEX
 
 .. _recording_backend_screen:
 

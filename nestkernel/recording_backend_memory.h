@@ -28,6 +28,8 @@
 
 /* BeginUserDocs: recording backend
 
+.. _recording_backend_memory:
+
 Store data in main memory
 #########################
 

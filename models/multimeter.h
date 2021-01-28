@@ -40,6 +40,8 @@
 
 /* BeginUserDocs: device, recorder
 
+.. _multimeter:
+
 Short description
 +++++++++++++++++
 

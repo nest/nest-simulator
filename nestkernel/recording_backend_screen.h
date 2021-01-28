@@ -28,6 +28,8 @@
 
 /* BeginUserDocs: recording backend
 
+.. _recording_backend_screen:
+
 Write data to the terminal
 ##########################
 

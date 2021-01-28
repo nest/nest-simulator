@@ -35,7 +35,7 @@ running
 
 ::
 
-    conda env create -f <nest_source_dir>/doc/environment.yml -p conda
+    conda env create -f <nest_source_dir>/doc/environment.yml
     conda activate conda/
 
 Once this complete, you can open `doc/html/index.html` to view the docs.

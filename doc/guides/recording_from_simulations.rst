@@ -13,17 +13,6 @@ screen, or stream it to other applications via the network. The
 different backends and their usage are explained in detail in the
 section about :ref:`Recording Backends <recording_backends>`.
 
-Recording devices can fundamentally be subdivided into two groups:
-
-- **Collectors** collect events sent to them. Neurons are connected to
-  collectors and the collector collects the events emitted by the
-  neurons connected to it.
-
-- **Samplers** actively interrogate their targets at given time
-  intervals. This means that the sampler must be connected to the
-  neuron (not the neuron to the sampler), and that the neuron must
-  support the particular type of sampling.
-
 Recording devices can only reliably record data that was generated
 during the previous simulation time step interval. See the guide about
 :doc:`running simulations <running_simulations>` for details about the
@@ -35,8 +24,16 @@ temporal aspects of the simulation loop.
    of thread execution, events are not necessarily recorded in
    chronological order.
 
+Recording devices can fundamentally be subdivided into two groups:
 
+- **Collectors** collect events sent to them. Neurons are connected to
+  collectors and the collector collects the events emitted by the
+  neurons connected to it.
 
+- **Samplers** actively interrogate their targets at given time
+  intervals. This means that the sampler must be connected to the
+  neuron (not the neuron to the sampler), and that the neuron must
+  support the particular type of sampling.
 
 
 Recorders for every-day situations

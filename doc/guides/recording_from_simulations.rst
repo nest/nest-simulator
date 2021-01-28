@@ -7,11 +7,11 @@ from neurons and synapses.
 
 To determine what happens to recorded data, each recording device can
 specify a *recording backend* in its ``record_to`` property. The
-default backend is *memory*, which just stores the recorded data in
-memory for later retrieval. Other backends write the data to file or
-to the screen. The different backends and their usage is explained in
-detail in the section about :ref:`Recording Backends
-<recording_backends>`.
+default backend is *memory*, which stores the recorded data in memory
+for later retrieval. Other backends write the data to file or to the
+screen, or stream it to other applications via the network. The
+different backends and their usage are explained in detail in the
+section about :ref:`Recording Backends <recording_backends>`.
 
 Recording devices can fundamentally be subdivided into two groups:
 
@@ -111,11 +111,11 @@ Recorders for every-day situations
 Where does data end up?
 -----------------------
 
-After a recording device has sampled or collected data, the *recording backends* are
-responsible for how the data are processed.
+After a recording device has sampled or collected data, the data is
+handed to a dedicated *recording backend*, set for each recorder.
+These are responsible for how the data are processed.
 
-
-Theoretically, recording backends are not restricted in what they do
+Theoretically, recording backends are completely free in what they do
 with the data. The ones included in NEST can collect data in memory,
 display it on the terminal, or write it to files.
 

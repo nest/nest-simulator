@@ -1,4 +1,4 @@
-.. _connection_mgnt:
+.. _connection_management:
 
 Connection Management
 =====================

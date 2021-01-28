@@ -98,7 +98,7 @@ it should record from by using the standard ``Connect`` routine.
     nest.Connect(mm, neurons)
 
 To learn more about possible connection patterns and additional
-options when using ``Connect``, see the guide on :doc:`connection
+options when using ``Connect``, see the guide on :ref:`connection
 management <connection_management>`.
 
 The above call to ``Connect`` would fail if the neurons would not

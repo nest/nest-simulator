@@ -33,8 +33,11 @@
 
 .. _recording_backend_sionlib:
 
-Store data to an efficient binary format
-########################################
+sionlib - Store data to an efficient binary format
+##################################################
+
+Description
++++++++++++
 
 .. admonition:: Availability
 

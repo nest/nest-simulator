@@ -4,7 +4,7 @@ env:
   xLIBBOOST: "0"
   xLIBNEUROSIM: "0"
   xLTDL: "0"
-  xMPI: "1"
+  xMPI: "0"
   xMUSIC: "0"
   xOPENMP: "0"
   xPYTHON: "0"
@@ -99,9 +99,8 @@ jobs:
             
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
          #run: echo "MPI Only Build"
-         with: ${{ env.xMPI }}
-         uses: actions/checkout@master
-         #run: ./extras/staticbuild.sh
+         #with: ${{ env.xMPI }}
+         run: ./extras/staticbuild.sh
          
        #- name: MPI
          #run: echo "MPI BUILD"

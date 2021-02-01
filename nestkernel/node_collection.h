@@ -637,7 +637,10 @@ inline NodeIDTriple nc_const_iterator::operator*() const
     gt.lid = 0;
     for ( const auto& part : composite_collection_->parts_ )
     {
-      if ( part == composite_collection_->parts_[ part_idx_ ] )
+      // Using a stripped-down comparison of Primitives to avoid redundant and potentially expensive comparisons of
+      // metadata.
+      const auto& current_part = composite_collection_->parts_[ part_idx_ ];
+      if ( part.first_ == current_part.first_ and part.last_ == current_part.last_ )
       {
         break;
       }

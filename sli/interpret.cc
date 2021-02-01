@@ -1292,6 +1292,15 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
       }
     } while ( EStack.load() > exitlevel );
   }
+  catch ( std::bad_alloc& e )
+  {
+    message( M_FATAL, "SLIInterpreter", "An out of memory exception occured." );
+    OStack.dump( std::cerr );
+    EStack.dump( std::cerr );
+    message( M_FATAL, "SLIInterpreter", e.what() );
+    exitcode = getValue< long >( *exitcodes, "exception" );
+    terminate( exitcode );
+  }
   catch ( std::exception& e )
   {
     message( M_FATAL, "SLIInterpreter", "A C++ library exception occured." );

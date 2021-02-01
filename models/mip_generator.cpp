@@ -50,6 +50,7 @@ nest::mip_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
+
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */

@@ -270,7 +270,7 @@ public:
 
 private:
   /**  */
-  void clear_models_( bool called_from_destructor = false );
+  void clear_models_();
 
   /**  */
   void clear_prototypes_();

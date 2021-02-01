@@ -744,7 +744,6 @@ WARN_LOGFILE           = doxygen.log
 # Note: If this tag is empty the current directory is searched.
 
 INPUT		=	@PROJECT_SOURCE_DIR@/README.md \
-			@PROJECT_SOURCE_DIR@/conngen \
 			@PROJECT_SOURCE_DIR@/doc \
 			@PROJECT_SOURCE_DIR@/examples \
 			@PROJECT_SOURCE_DIR@/extras \

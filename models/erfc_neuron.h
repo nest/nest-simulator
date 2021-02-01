@@ -128,10 +128,10 @@ class gainfunction_erfc
 {
 private:
   /** threshold of activation function */
-  double_t theta_;
+  double theta_;
 
   /** 1/sqrt(2pi) x inverse of the maximal slope of gain function */
-  double_t sigma_;
+  double sigma_;
 
 public:
   /** sets default parameters */

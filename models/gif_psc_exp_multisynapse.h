@@ -124,7 +124,7 @@ On the postsynaptic side, there can be arbitrarily many synaptic time constants
 by specifying separate receptor ports, each for a different time constant. The
 port number has to match the respective "receptor_type" in the connectors.
 
-The shape of post synaptic current is exponential.
+The shape of postsynaptic current is exponential.
 
 Parameters
 ++++++++++
@@ -195,7 +195,7 @@ pp_psc_delta, gif_psc_exp, gif_cond_exp, gif_cond_exp_multisynapse
 
 EndUserDocs */
 
-class gif_psc_exp_multisynapse : public Archiving_Node
+class gif_psc_exp_multisynapse : public ArchivingNode
 {
 
 public:
@@ -445,7 +445,7 @@ gif_psc_exp_multisynapse::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -461,7 +461,7 @@ gif_psc_exp_multisynapse::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

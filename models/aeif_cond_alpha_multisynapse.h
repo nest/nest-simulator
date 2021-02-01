@@ -170,7 +170,7 @@ namespace nest
  */
 extern "C" int aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
 
-class aeif_cond_alpha_multisynapse : public Archiving_Node
+class aeif_cond_alpha_multisynapse : public ArchivingNode
 {
 
 public:
@@ -424,7 +424,7 @@ aeif_cond_alpha_multisynapse::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }

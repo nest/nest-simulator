@@ -59,6 +59,15 @@ nest::Device::Parameters_::Parameters_( const Parameters_& p )
   stop_.calibrate();
 }
 
+nest::Device::Parameters_& nest::Device::Parameters_::operator=( const Parameters_& p )
+{
+  origin_ = p.origin_;
+  start_ = p.start_;
+  stop_ = p.stop_;
+
+  return *this;
+}
+
 
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions

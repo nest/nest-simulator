@@ -104,7 +104,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  UrbanczikConnection( const UrbanczikConnection& );
+  UrbanczikConnection( const UrbanczikConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -194,7 +194,7 @@ UrbanczikConnection< targetidentifierT >::send( Event& e, thread t, const Common
   Node* target = get_target( t );
   double dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry_extended >::iterator start;
   std::deque< histentry_extended >::iterator finish;
 
@@ -264,23 +264,6 @@ UrbanczikConnection< targetidentifierT >::UrbanczikConnection()
   , tau_L_trace_( 0.0 )
   , tau_s_trace_( 0.0 )
   , t_lastspike_( -1.0 )
-{
-}
-
-template < typename targetidentifierT >
-UrbanczikConnection< targetidentifierT >::UrbanczikConnection( const UrbanczikConnection< targetidentifierT >& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , init_weight_( rhs.init_weight_ )
-  , tau_Delta_( rhs.tau_Delta_ )
-  , eta_( rhs.eta_ )
-  , Wmin_( rhs.Wmin_ )
-  , Wmax_( rhs.Wmax_ )
-  , PI_integral_( rhs.PI_integral_ )
-  , PI_exp_integral_( rhs.PI_exp_integral_ )
-  , tau_L_trace_( rhs.tau_L_trace_ )
-  , tau_s_trace_( rhs.tau_s_trace_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

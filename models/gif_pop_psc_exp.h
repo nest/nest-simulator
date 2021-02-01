@@ -451,7 +451,7 @@ gif_pop_psc_exp::get_status( DictionaryDatum& d ) const
   // parent class is called. Since this model derives from Node, and
   // not from ArchivingNode, this call has been disabled here
   // (Node does not have a comparable method).
-  //  Archiving_Node::get_status(d);
+  //  ArchivingNode::get_status(d);
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -472,7 +472,7 @@ gif_pop_psc_exp::set_status( const DictionaryDatum& d )
   // parent class is called. Since this model derives from Node, and
   // not from ArchivingNode, this call has been disabled here
   // (Node does not have a comparable method).
-  //  Archiving_Node::set_status(d);
+  //  ArchivingNode::set_status(d);
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

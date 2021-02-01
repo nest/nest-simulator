@@ -43,7 +43,6 @@ class SendBufferPosition
 private:
   thread begin_rank_;
   thread end_rank_;
-  thread size_;
   thread max_size_;
   size_t num_spike_data_written_;
   size_t send_recv_count_per_rank_;
@@ -92,7 +91,6 @@ inline SendBufferPosition::SendBufferPosition( const AssignedRanks& assigned_ran
   const unsigned int send_recv_count_per_rank )
   : begin_rank_( assigned_ranks.begin )
   , end_rank_( assigned_ranks.end )
-  , size_( assigned_ranks.size )
   , max_size_( assigned_ranks.max_size )
   , num_spike_data_written_( 0 )
   , send_recv_count_per_rank_( send_recv_count_per_rank )

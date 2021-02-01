@@ -175,6 +175,7 @@ NodePosParameter::get_node_pos_( RngPtr rng, Node* node ) const
   }
   return pos[ dimension_ ];
 }
+
 double
 SpatialDistanceParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,

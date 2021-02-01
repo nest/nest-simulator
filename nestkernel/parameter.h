@@ -57,7 +57,7 @@ public:
    * Creates a Parameter with values specified in a dictionary.
    * @param d dictionary with parameter values
    */
-  Parameter( const DictionaryDatum& d )
+  Parameter( const DictionaryDatum& )
   {
   }
 
@@ -469,7 +469,7 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& ) override
   {
     switch ( synaptic_endpoint_ )
     {

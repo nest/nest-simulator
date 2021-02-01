@@ -191,7 +191,7 @@ aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 
 EndUserDocs */
 
-class aeif_psc_delta_clopath : public Clopath_Archiving_Node
+class aeif_psc_delta_clopath : public ClopathArchivingNode
 {
 
 public:
@@ -439,7 +439,7 @@ aeif_psc_delta_clopath::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Clopath_Archiving_Node::get_status( d );
+  ClopathArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -456,7 +456,7 @@ aeif_psc_delta_clopath::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Clopath_Archiving_Node::set_status( d );
+  ClopathArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

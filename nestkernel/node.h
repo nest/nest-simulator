@@ -51,7 +51,7 @@
 namespace nest
 {
 class Model;
-class Archiving_Node;
+class ArchivingNode;
 class TimeConverter;
 
 
@@ -280,7 +280,7 @@ public:
    * This function is called after a change in resolution.
    */
   virtual void
-  calibrate_time( const TimeConverter& tc )
+  calibrate_time( const TimeConverter& )
   {
   }
 

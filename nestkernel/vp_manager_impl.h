@@ -102,9 +102,7 @@ VPManager::get_start_rank_per_thread( const thread tid ) const
 }
 
 inline thread
-VPManager::get_end_rank_per_thread( const thread tid,
-  const thread rank_start,
-  const thread num_assigned_ranks_per_thread ) const
+VPManager::get_end_rank_per_thread( const thread rank_start, const thread num_assigned_ranks_per_thread ) const
 {
   thread rank_end = rank_start + num_assigned_ranks_per_thread;
 
@@ -131,7 +129,7 @@ VPManager::get_assigned_ranks( const thread tid )
   AssignedRanks assigned_ranks;
   assigned_ranks.begin = get_start_rank_per_thread( tid );
   assigned_ranks.max_size = get_num_assigned_ranks_per_thread();
-  assigned_ranks.end = get_end_rank_per_thread( tid, assigned_ranks.begin, assigned_ranks.max_size );
+  assigned_ranks.end = get_end_rank_per_thread( assigned_ranks.begin, assigned_ranks.max_size );
   assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
   return assigned_ranks;
 }

@@ -73,6 +73,16 @@ functionality into the Python interpreter.
 
     import nest
 
+In case other python packages are required, such as `scikit-learn <http://scikit-learn.org/stable/index.html>`_
+and `SciPy <https://www.scipy.org/>`_, they need to be imported before importing nest.
+
+::
+
+    import sklearn
+    import scipy
+
+    import nest
+
 As with every other module for Python, the available functions can be
 prompted for.
 

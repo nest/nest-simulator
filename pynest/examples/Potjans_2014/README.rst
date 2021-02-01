@@ -1,7 +1,7 @@
-PyNEST microcircuit
-===================
+Cortical microcircuit model
+===========================
 
-This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann [1]_.
+This is a PyNEST implementation of the cortical microcircuit model by Potjans and Diesmann [1]_.
 The network model represents four layers of cortex, L2/3, L4, L5, and L6, each consisting of a population of excitatory neurons and a population of inhibitory neurons.
 
 .. |img1| image:: microcircuit.png
@@ -60,8 +60,8 @@ The command for running the script with two MPI processes is:
 
    mpirun -n 2 python3 run_microcircuit.py
 
-Note on parameters
-##################
+External drive and initial conditions
+#####################################
 
 By default, the simulation uses external Poissonian input to excite all neuronal populations of the microcircuit, i.e., ``poisson_input': True`` in ``network_params.py``.
 If set to ``False``, the Poissonian input is turned off and compensated approximately by calculated direct current (DC) input.

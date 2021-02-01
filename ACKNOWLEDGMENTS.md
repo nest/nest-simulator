@@ -29,6 +29,7 @@ This project has received funding from the European Union’s Horizon 2020
 Framework Programme for Research and Innovation under Specific Grant Agreement
 - No. 720270 (Human Brain Project SGA1) and
 - No. 785907 (Human Brain Project SGA2) and
+- No. 945539 (Human Brain Project SGA3) and
 - No. 754304 (DEEP-EST) and
 - No. 800858 (ICEI).
 

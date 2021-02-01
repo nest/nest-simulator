@@ -587,7 +587,7 @@ private:
   //! simulate.
   PerThreadBoolIndicator have_connections_changed_;
 
-  //! True if GetConnections has been called.
+  //! true if GetConnections has been called.
   bool has_get_connections_been_called_;
 
   //! Whether to sort connections by source node ID.

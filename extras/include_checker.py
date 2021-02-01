@@ -56,9 +56,6 @@ If something is wrong, it will print the suggestion:
     // Generated includes:
     #include "config.h"
 
-    // Includes from conngen:
-    #include "conngenmodule.h"
-
     // Includes from sli:
     #include "datum.h"
 """

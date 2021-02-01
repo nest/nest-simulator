@@ -32,8 +32,8 @@ code updated for NEST 2 but not yet this comment
 
  test_iaf_ps_psp_accuracy.sli checks the voltage response of the precise versions of the iaf_psc_alpha
  model neurons to a single incoming spike. The voltage excursion is
- called post-synaptic potential (PSP). In the model neurons
- the post-synaptic current is described by an alpha-function 
+ called postsynaptic potential (PSP). In the model neurons
+ the postsynaptic current is described by an alpha-function 
  (see [1] and references therein). The resulting PSP has a finite 
  rise-time, with voltage and current beeing zero in the initial 
  condition (see [1]).
@@ -43,7 +43,7 @@ code updated for NEST 2 but not yet this comment
  a model neuron. 
 
  The weight of the connection specifies the peak value (amplitude)
- of the post-synaptic current (PSC) in pA.
+ of the postsynaptic current (PSC) in pA.
 
  The subthreshold dynamics of the model neurons is integrated exactly.
  Therefore, it is suitable to check whether the simulation kernel 

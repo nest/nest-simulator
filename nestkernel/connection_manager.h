@@ -130,8 +130,8 @@ public:
     thread target_thread,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double_t delay = numerics::nan,
-    const double_t weight = numerics::nan );
+    const double delay = numerics::nan,
+    const double weight = numerics::nan );
 
   /**
    * Connect two nodes. The source and target nodes are defined by their

@@ -528,7 +528,17 @@ def restructure_data(result, keys):
     int, list or dict
     """
     if is_literal(keys):
-        final_result = result[0] if len(result) == 1 else list(result)
+        if len(result) != 1:
+            all_keys = sorted({key for result_dict in result for key in result_dict})
+            final_result = []
+
+            for result_dict in result:
+                if keys in result_dict.keys():
+                    final_result.append(result_dict[keys])
+                elif keys in all_keys:
+                    final_result.append(None)
+        else:
+            final_result = result[0][keys]
 
     elif is_iterable(keys):
         final_result = ({key: [val[i] for val in result]
@@ -537,10 +547,19 @@ def restructure_data(result, keys):
                               for i, key in enumerate(keys)})
 
     elif keys is None:
-        final_result = ({key: [result_dict[key] for result_dict in result]
-                         for key in result[0]} if len(result) != 1
-                        else {key: result_dict[key] for result_dict in result
-                              for key in result[0]})
+        if len(result) != 1:
+            all_keys = sorted({key for result_dict in result for key in result_dict})
+            final_result = {}
+
+            for key in all_keys:
+                final_result[key] = []
+                for result_dict in result:
+                    if key in result_dict.keys():
+                        final_result[key].append(result_dict[key])
+                    else:
+                        final_result[key].append(None)
+        else:
+            final_result = {key: result_dict[key] for result_dict in result for key in result[0]}
     return final_result
 
 

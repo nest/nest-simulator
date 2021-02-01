@@ -121,7 +121,7 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  Tsodyks2Connection( const Tsodyks2Connection& );
+  Tsodyks2Connection( const Tsodyks2Connection& ) = default;
 
   /**
    * Default Destructor.
@@ -211,10 +211,6 @@ Tsodyks2Connection< targetidentifierT >::send( Event& e, thread t, const CommonS
   double x_decay = std::exp( -h / tau_rec_ );
   double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
-  // now we compute spike number n+1
-  x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]_
-  u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]_
-
   // We use the current values for the spike number n.
   e.set_receiver( *target );
   e.set_weight( x_ * u_ * weight_ );
@@ -222,6 +218,10 @@ Tsodyks2Connection< targetidentifierT >::send( Event& e, thread t, const CommonS
   e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
+
+  // now we compute spike number n+1
+  x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]_
+  u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]_
 
   t_lastspike_ = t_spike;
 }
@@ -238,20 +238,6 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection()
   , t_lastspike_( 0.0 )
 {
 }
-
-template < typename targetidentifierT >
-Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection( const Tsodyks2Connection& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , U_( rhs.U_ )
-  , u_( rhs.u_ )
-  , x_( rhs.x_ )
-  , tau_rec_( rhs.tau_rec_ )
-  , tau_fac_( rhs.tau_fac_ )
-  , t_lastspike_( rhs.t_lastspike_ )
-{
-}
-
 
 template < typename targetidentifierT >
 void

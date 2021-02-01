@@ -38,7 +38,7 @@ class TestStructuralPlasticityMPI(unittest.TestCase):
 
             for test in mpitests:
                 test = os.path.join(path, test)
-                command = nest.ll_api.sli_func("mpirun", 2, "python", test)
+                command = nest.ll_api.sli_func("mpirun", 2, "nosetests", test)
                 print("Executing test with command: " + command)
                 command = command.split()
                 my_env = os.environ.copy()

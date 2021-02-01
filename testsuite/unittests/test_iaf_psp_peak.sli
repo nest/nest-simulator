@@ -28,11 +28,11 @@ Synopsis: (test_iaf_psp_peak) run -> compare expression with numerics
 
 Description:
 
-Several NEST neuron models have an alpha-shaped post-synaptic current (PSC).
+Several NEST neuron models have an alpha-shaped postsynaptic current (PSC).
 In these models the PSC is normalized to unit amplitude. Thus, a synaptic weight
 w leads to a PSC with amplitude w in units of pA.
-In order to adjust the amplitude of the post-synaptic potential (PSP) of a 
-neuron model with an alpha-shaped post-synaptic current (PSC) to a particular
+In order to adjust the amplitude of the postsynaptic potential (PSP) of a 
+neuron model with an alpha-shaped postsynaptic current (PSC) to a particular
 amplitude we need to first find the location of the maximum tmax of the PSP. 
 Here, this is done in two different ways:
 1. We numerically search for the root of the derivative of the PSP
@@ -87,7 +87,7 @@ M_ERROR setverbosity
  Function
 def
 
-% derivative of the post-synaptic potential
+% derivative of the postsynaptic potential
 /dpsp
  [/t]
  (

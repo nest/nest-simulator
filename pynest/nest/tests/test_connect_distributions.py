@@ -45,13 +45,11 @@ class TestDists(unittest.TestCase):
         nest.ll_api.sr("statusdict/threading :: (no) eq not")
         if not nest.ll_api.spp():
             # no multi-threading
-            nest.SetKernelStatus({'grng_seed': 120,
-                                  'rng_seeds': [576]})
+            nest.SetKernelStatus({'rng_seed': 120})
         else:
             # multi-threading
             nest.SetKernelStatus({'local_num_threads': 2,
-                                  'grng_seed': 120,
-                                  'rng_seeds': [576, 886]})
+                                  'rng_seed': 120})
         pass
 
     def setUpNetwork(self, conn_params=None, syn_dict=None):

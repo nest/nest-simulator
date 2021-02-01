@@ -344,7 +344,7 @@ public:
   void unset_have_connections_changed( const thread tid );
 
   /**
-   * Sets flag indicating whether GetConnections has been called.
+   * Sets flag indicating whether GetConnections has been called since last update of connections.
    */
   void set_has_get_connections_been_called( const bool has_get_connections_been_called );
 

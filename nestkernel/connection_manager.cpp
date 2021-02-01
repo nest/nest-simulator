@@ -1442,6 +1442,7 @@ nest::ConnectionManager::set_have_connections_changed( const thread tid )
       std::string msg =
         "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
       LOG( M_WARNING, "ConnectionManager", msg );
+      // Reset the has_get_connections_been_called_ flag because we have updated connections.
       set_has_get_connections_been_called( false );
     }
     have_connections_changed_[ tid ].set_true();

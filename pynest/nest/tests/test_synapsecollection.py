@@ -403,8 +403,7 @@ class TestSynapseCollection(unittest.TestCase):
         """
         Test the str functionality of empty SynapseCollection
         """
-        ref_str = (' source   target   synapse model   weight   delay \n' +
-                   '-------- -------- --------------- -------- -------\n')
+        ref_str = ('The synapse collection does not contain any connections.')
 
         conns = nest.GetConnections()
         self.assertEqual(ref_str, str(conns))

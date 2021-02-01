@@ -648,11 +648,14 @@ class SynapseCollection(object):
 
         params = self.get()
 
-        srcs = params['source'] if len(params) != 0 else []
-        trgt = params['target'] if len(params) != 0 else []
-        wght = params['weight'] if len(params) != 0 else []
-        dlay = params['delay'] if len(params) != 0 else []
-        s_model = params['synapse_model'] if len(params) != 0 else []
+        if len(params) == 0:
+            return 'The synapse collection does not contain any connections.'
+
+        srcs = params['source']
+        trgt = params['target']
+        wght = params['weight']
+        dlay = params['delay']
+        s_model = params['synapse_model']
 
         if isinstance(srcs, int):
             srcs = [srcs]
@@ -668,14 +671,9 @@ class SynapseCollection(object):
         d_h = 'delay'
 
         # Find maximum number of characters for each column, used to determine width of column
-        if len(params) == 0:
-            src_len = len(src_h) + 2
-            trg_len = len(trg_h) + 2
-            sm_len = len(sm_h) + 2
-        else:
-            src_len = max(len(src_h) + 2, floor(log(max(srcs), 10)))
-            trg_len = max(len(trg_h) + 2, floor(log(max(trgt), 10)))
-            sm_len = max(len(sm_h) + 2, len(max(s_model, key=len)))
+        src_len = max(len(src_h) + 2, floor(log(max(srcs), 10)))
+        trg_len = max(len(trg_h) + 2, floor(log(max(trgt), 10)))
+        sm_len = max(len(sm_h) + 2, len(max(s_model, key=len)))
         w_len = len(w_h) + 2
         d_len = len(d_h) + 2
 

@@ -27,6 +27,8 @@ from contextlib import contextmanager
 
 from ..ll_api import *
 from .hl_api_helper import *
+from .hl_api_parallel_computing import Rank
+
 
 __all__ = [
     'Cleanup',
@@ -234,6 +236,8 @@ def SetKernelStatus(params):
         The local number of threads
     num_processes : int, read only
         The number of MPI processes
+    local_vps : iterable, read only
+        Iterable representing the virtual processes local to the MPI rank
     off_grid_spiking : bool
         Whether to transmit precise spike times in MPI communication
     grng_seed : int
@@ -396,6 +400,13 @@ def GetKernelStatus(keys=None):
 
     sr('GetKernelStatus')
     status_root = spp()
+
+    # Add local VPs as range here based on round-robin logic in VPManager::get_vp().
+    # Adding this here allows for compact range representation without need for 
+    # another SLI datatype. 
+    if keys is None or 'local_vps' == keys or 'local_vps' in keys:
+        status_root['local_vps'] = range(Rank, status_root['total_num_virtual_procs'], 
+                                         status_root['num_processes']) 
 
     if keys is None:
         return status_root

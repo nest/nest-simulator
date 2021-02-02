@@ -26,6 +26,15 @@ Test if Set/GetStatus work properly
 import unittest
 import nest
 
+try:
+    from mpi4py import MPI
+    HAVE_MPI4PY = True
+except ImportError:
+    HAVE_MPI4PY = False
+
+HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
+MULTIPLE_PROCESSES = nest.NumProcesses() > 1
+
 
 @nest.ll_api.check_stack
 class StatusTestCase(unittest.TestCase):
@@ -202,9 +211,43 @@ class StatusTestCase(unittest.TestCase):
                     {'V_reset': 10., 'V_th': 0.}
                 )
 
+@unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
+@nest.ll_api.check_stack
+class LocalVPsTestCase(unittest.TestCase):
+    """
+    Test local_vps field of kernel status.
+    
+    This test ensure that the PyNEST-generated local_vps information
+    agrees with the thread-VP mappings in the kernel.
+    """
+    
+    # The test class is instantiated by the unittest framework regardless of the value of
+    # HAVE_MPI4PY, even though all tests will be skipped in case it is False. In this
+    # situation, we have to manually prevent calls to MPI in order to avoid errors during
+    # the execution.
+    if HAVE_MPI4PY:
+        comm = MPI.COMM_WORLD.Clone()
 
+    # With pytest or nosetests, only run these tests if using multiple processes
+    __test__ = MULTIPLE_PROCESSES
+    
+    def setUp(self):
+        nest.ResetKernel()
+        
+    def test_local_vps(self):
+        local_vps = list(nest.GetKernelStatus('local_vps'))
+
+        # Use thread-vp mapping of neurons to check mapping in kernel
+        nrns = nest.GetLocalNodeCollection(nest.Create('iaf_psc_delta'), 
+                                           2 * nest.NumProcesses())
+        
+        for n in nrns:
+            thrd, vp = n.get(('thread', 'vp'))
+            self.assertEqual(vp, local_vps[thrd])
+        
 def suite():
     suite = unittest.makeSuite(StatusTestCase, 'test')
+    suite.addTest(LocalVPsTestCase)
     return suite
 
 

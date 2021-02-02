@@ -1179,8 +1179,6 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
   source_table_.compute_buffer_pos_for_unique_secondary_sources( tid, buffer_pos_of_source_node_id_syn_id_ );
   secondary_recv_buffer_pos_[ tid ].resize( connections_[ tid ].size() );
 
-  const size_t chunk_size_secondary_events_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
-
   const synindex syn_id_end = connections_[ tid ].size();
   for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {
@@ -1202,8 +1200,8 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
           const index sg_s_id = source_table_.pack_source_node_id_and_syn_id( source_node_id, syn_id );
           const thread source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_node_id );
 
-          positions[ lcid ] =
-            buffer_pos_of_source_node_id_syn_id_[ sg_s_id ] + chunk_size_secondary_events_in_int * source_rank;
+          positions[ lcid ] = buffer_pos_of_source_node_id_syn_id_[ sg_s_id ]
+            + kernel().mpi_manager.get_recv_displacement_secondary_events_in_int( source_rank );
         }
       }
     }
@@ -1361,10 +1359,10 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
   // Read waveform relaxation done marker from last position in every
   // chunk
   bool done = true;
-  const size_t chunk_size_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
   for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
-    done = done and recv_buffer[ ( rank + 1 ) * chunk_size_in_int - 1 ];
+    done =
+      done and recv_buffer[ kernel().mpi_manager.get_done_marker_position_in_secondary_events_recv_buffer( rank ) ];
   }
   return done;
 }

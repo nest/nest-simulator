@@ -123,10 +123,10 @@ jobs:
                        
            #GET CHANGED FILES
            # https://github.com/marketplace/actions/get-changed-files
-  build:
-    runs-on: ${{ matrix.os }}
-    needs: setup
-    steps:                   
+  #build:
+    #runs-on: ${{ matrix.os }}
+    #needs: setup
+    #steps:                   
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'MINIMAL' }}
          #run: echo "Minimal Build"
          run: |

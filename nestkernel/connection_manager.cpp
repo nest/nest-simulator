@@ -67,6 +67,7 @@ nest::ConnectionManager::ConnectionManager()
   , max_delay_( 1 )
   , keep_source_table_( true )
   , have_connections_changed_()
+  , has_get_connections_been_called_( false )
   , sort_connections_by_source_( true )
   , has_primary_connections_( false )
   , check_primary_connections_()
@@ -97,6 +98,8 @@ nest::ConnectionManager::initialize()
   have_connections_changed_.initialize( num_threads, false );
   check_primary_connections_.initialize( num_threads, false );
   check_secondary_connections_.initialize( num_threads, false );
+
+  set_has_get_connections_been_called( false );
 
 #pragma omp parallel
   {
@@ -753,7 +756,7 @@ nest::ConnectionManager::get_num_connections( const synindex syn_id ) const
 }
 
 ArrayDatum
-nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
+nest::ConnectionManager::get_connections( const DictionaryDatum& params )
 {
   std::deque< ConnectionID > connectome;
   const Token& source_t = params->lookup( names::source );
@@ -831,6 +834,8 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
     result.push_back( ConnectionDatum( connectome.front() ) );
     connectome.pop_front();
   }
+
+  set_has_get_connections_been_called( true );
 
   return result;
 }
@@ -1430,9 +1435,14 @@ nest::ConnectionManager::set_have_connections_changed( const thread tid )
   // performance issues on supercomputers.
   if ( have_connections_changed_[ tid ].is_false() )
   {
-    std::string msg =
-      "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
-    LOG( M_WARNING, "ConnectionManager", msg );
+    if ( has_get_connections_been_called_ )
+    {
+      std::string msg =
+        "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
+      LOG( M_WARNING, "ConnectionManager", msg );
+      // Reset the has_get_connections_been_called_ flag because we have updated connections.
+      set_has_get_connections_been_called( false );
+    }
     have_connections_changed_[ tid ].set_true();
   }
 }

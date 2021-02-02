@@ -172,8 +172,9 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   Node* node )
 {
   bool precise_times_changed = updateValueParam< bool >( d, names::precise_times, precise_times_, node );
-  bool shift_now_spikes_changed =  updateValueParam< bool >( d, names::shift_now_spikes, shift_now_spikes_, node );
-  bool allow_offgrid_times_changed = updateValueParam< bool >( d, names::allow_offgrid_times, allow_offgrid_times_, node );
+  bool shift_now_spikes_changed = updateValueParam< bool >( d, names::shift_now_spikes, shift_now_spikes_, node );
+  bool allow_offgrid_times_changed =
+    updateValueParam< bool >( d, names::allow_offgrid_times, allow_offgrid_times_, node );
   bool flags_changed = precise_times_changed or shift_now_spikes_changed or allow_offgrid_times_changed;
   if ( precise_times_ && ( allow_offgrid_times_ || shift_now_spikes_ ) )
   {

@@ -25,12 +25,17 @@ jobs:
          #cc:  ["gcc"]
          #ver: ["9"]
          xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
+         #include: [value1, ...valueN]
          exclude: 
            - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
              os: macos-latest
            - xNEST_BUILD_TYPE: "MPI_ONLY"
              os: macos-latest
-                   
+           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "FULL"
+             os: macos-latest
+                                      
      steps:
                        
        # Steps represent a sequence of tasks that will be executed as part of the job
@@ -78,6 +83,7 @@ jobs:
          #run: echo "MPI Only Build"
          #with: ${{ env.xMPI }}
          run: |
+           echo "xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
                        
@@ -90,6 +96,27 @@ jobs:
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh    
          
+       - if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
+         #run: echo "Minimal Build"
+         run: |
+           echo "xNEST_BUILD_TYPE=MPI_ONLY" >> $GITHUB_ENV
+           chmod +x extras/staticbuild.sh
+           ./extras/staticbuild.sh   
+           
+       - if: ${{ matrix.xNEST_BUILD_TYPE == 'OPENMP_ONLY' }}
+         #run: echo "Minimal Build"
+         run: |
+           echo "xNEST_BUILD_TYPE=OPENMP_ONLY" >> $GITHUB_ENV
+           chmod +x extras/staticbuild.sh
+           ./extras/staticbuild.sh
+           
+       - if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
+         #run: echo "Minimal Build"
+         run: |
+           echo "xNEST_BUILD_TYPE=FULL" >> $GITHUB_ENV
+           chmod +x extras/staticbuild.sh
+           ./extras/staticbuild.sh     
+           
        #- name: MPI
          #run: echo "MPI BUILD"
          #if: env.xNEST_BUILD_TYPE == 'MINIMAL'     

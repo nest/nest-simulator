@@ -375,7 +375,8 @@ nest::noise_generator::set_data_from_stimulating_backend( std::vector< double > 
   {
     if ( input_param.size() != 5 )
     {
-      throw BadParameterValue( "The size of the data for the noise_generator needs to be 5 "
+      throw BadParameterValue(
+        "The size of the data for the noise_generator needs to be 5 "
         "[mean, std, std_mod, frequency, phase]." );
     }
     DictionaryDatum d = DictionaryDatum( new Dictionary );

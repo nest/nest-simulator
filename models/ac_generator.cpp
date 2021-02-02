@@ -251,7 +251,7 @@ nest::ac_generator::set_data_from_stimulating_backend( std::vector< double > inp
     {
       throw BadParameterValue(
         "The size of the data for the ac_generator needs to be 4 "
-        "[ amplitude, offset, frequency, phase].");
+        "[ amplitude, offset, frequency, phase]." );
     }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );

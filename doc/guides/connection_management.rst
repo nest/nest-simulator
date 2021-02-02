@@ -3,19 +3,6 @@
 Connection Management
 =====================
 
-From NEST 2.4 onwards the old connection routines (i.e.
-`(Random)ConvergentConnect`, `(Random)DivergentConnect` and plain
-`Connect`) are replaced by one unified `Connect` function. In
-`SLI <an-introduction-to-sli.md>`__ ,the old syntax of the function
-still works, while in `PyNEST <introduction-to-pynest.md>`__, the
-`Connect()` function has been renamed to `OneToOneConnect()`.
-However, simple cases, which are just creating one-to-one connections
-between two lists of nodes are still working with the new command
-without the need to change the code. Note that the topology-module is
-not effected by theses changes. The translation between the old and the
-new connect routines is described in `Old Connection
-Routines <connection-management.md#old-connection-routines>`__.
-
 The connectivity pattern is defined inside the `Connect()` function
 under the key 'rule'. The patterns available are described in
 `Connection Rules <connection-management.md#connection-rules>`__. In

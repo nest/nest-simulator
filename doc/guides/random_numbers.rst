@@ -29,230 +29,34 @@ control RNGs in NEST.
 
 On this page, we mainly discuss the use of random numbers in parallel
 NEST simulations, but the comments pertain equally to serial simulations
-(N\_vp=1).
+\\(N\_{vp}=1\\).
 
-Random Numbers vs Random Deviates
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This guide provides an overview over how to :ref:`seed and select <seeding>` RNGs,
+how to correctly use Python RNGs to :ref:`randomize the membrane potential <rand_vm>`
+(or other properties) and how to perform :ref:`consistency checks on parallel simulations <testing_rands>`.
+It also provides background information on :ref:`parallel simulation and randomness <basic_para>` 
+and some information on :ref:`SLI-level generators <sli_generators>` which are 
+mostly of historical interest.
 
-NEST distinguishes between random number generators, provided by
-``rngdict`` and random deviate generators provided by ``rdevdict``.
-Random *number* generators only provide double-valued numbers uniformly
-distributed on [0, 1] and uniformly distributed integers in {0, 1, ...,
-N}. Random *deviate* generators, on the other hand, provide random
-numbers drawn from a range of distributions, such as the normal or
-binomial distributions. In most cases, you will be using random deviate
-generators. They are in particular used to initialize properties during
-network construction, as described in the sections :ref:`changes-nest>`
-and :ref:`examples-rng` below.
+.. note::
+   
+   NEST 3.0 will include a significantly revised and more convenient
+   interface to random numbers.
 
-.. _changes-nest:
+.. _seeding:
 
-Changes in random number generation in NEST 2.4
------------------------------------------------
+Seeding and Selecting Random Generators
+---------------------------------------
 
-Random deviate generation has become significantly more powerful in NEST
-2.4, to fully support randomization of connections parameters offered by
-the revised ``Connect`` function, as described in :doc:`Connection
-Management <connection_management>` and illustrated by the
-:ref:`examples-rng` below. We have also made minor
-changes to make to achieve greater similarity between NEST, PyNN, and
-NumPy. For most users, these changes only add new features. Only
-existing scripts using
+In a parallel NEST simulation with \\(N\_{vp}\\) virtual processes, 
+NEST requires \\(N\_{vp}+1\\) random number generators. If you want
+to randomize network parameters from the Python level, you additionally
+need \\(N\_{vp}\\) Python random number generators. 
 
--  ``uniformint``
--  ``normal_clipped``, ``normal_clipped_left``, ``normal_clipped_right``
+See :ref:`Basics of Parallel Simulation in NEST <basic_para>` for background
+information on these requirements and :ref:`Randomizing the membrane potential <rand_vm>`
+for an example of using Python random number generators.
 
-generators from NEST 2.2 need to be adapted as detailed below.
-
-The changes are as follows:
-
--  Uniform integer generator
-
-   -  renamed from ``uniformint`` to ``uniform_int``
-   -  parameters renamed to ``low`` and ``high``
-   -  returns uniformly distributed integers from
-      ``{low, low+1, …, high}``
-
--  Uniform continuous generator
-
-   -  new generator ``uniform``
-   -  parameters ``low`` and ``high``
-   -  generates numbers uniformly distributed in ``[low, high)``
-
--  Full parameter sets for generators
-
-   -  In the past, many random deviate generators returned values for
-      fixed parameters, e.g., the ``normal`` generator could only return
-      zero-mean, unit-variance normal random numbers.
-
-   -  Now, all parameters for each generator can be set, in particular:
-
-      -  normal: mu, sigma
-      -  lognormal: mu, sigma
-      -  exponential: lambda
-      -  gamma: order, scale
-
-   -  Parameter values are checked more systematically for unsuitable
-      values.
-
--  Clipped normal generators
-
-   -  parameter names changed to ``mu`` and ``sigma``
-
-   -  clipping limits now called ``low`` and ``high``
-
-   -  ``_left`` and ``_right`` variants removed: for one-sided clipping,
-      just set the boundary you want to clip at, the other is positive
-      or negative infinity
-
--  Clipped variants for most generators
-
-   -  For most random deviate generators, ``_clipped`` variants exist
-      now.
-
-   -  For all clipped variants, one can set a lower limit (``low``,
-      default: -infinity) and an upper limit (``high``: +infinty).
-
-   -  Clipped variants will then return numbers strictly in
-      ``(low, high)`` for continuous distributions (e.g. normal,
-      exponential) or ``{low, low+1, …, high}`` for discrete
-      distributions (e.g. poisson, binomial). This is achieved by
-      redrawing numbers until an acceptable number is drawn.
-
-   -  Note that the resulting distribution differs from the original one
-      and that drawing may become very slow if ``(low, high)`` contains
-      only very small probability mass. Clipped generator variants
-      should therefore mostly be used to clip tails with very small
-      probability mass when randomizing time constants or delays.
-
--  Clipped-to-boundary variants for most generators
-
-   -  To facilitate reproduction of certain publications, NEST also
-      provides ``_clipped_to_boundary`` variants of most generators.
-
-   -  Clipped-to-boundary variants return the value ``low`` if a number
-      smaller than ``low`` is drawn, and ``high`` if a number larger
-      than ``high`` is drawn.
-
-   -  We believe that these variants should *not* be used for new
-      studies.
-
-Basics of parallel simulation in NEST
--------------------------------------
-
-For details of parallelization in NEST, please see `Parallel
-Computing <parallel-computing.md>`__ and `Plesser et al
-(2007) <http://dx.doi.org/10.1007/978-3-540-74466-5_71>`__. Here, we
-just summarize a few basics.
-
--  NEST can parallelize simulations through *multi-threading*,
-   *distribution* or a combination of the two.
-
--  A distributed simulation is spread across several processes under the
-   control of MPI (Message Passing Interface). Each network node is
-   *local* to exactly one process and complete information about the
-   node is only available to that process. Information about each
-   connection is stored by the process in which the connection target is
-   local and is only available and changeable on that process.
-
--  Multi-threaded simulations run in a single process in a single
-   computer. As a consequence, all nodes in a multi-threaded simulation
-   are local.
-
--  Distribution and multi-threading can be combined by running identical
-   numbers of threads in each process.
-
--  A serial simulation has a single process with a single seed.
-
--  From the NEST user perspective, distributed processes and threads are
-   visible as **virtual processes**. A simulation distributed across
-   \\(M\\) MPI processes with \\(T\\) threads each, has \\(N\_{vp} = M
-   times T\\) virtual processes. It is a basic design principle of NEST
-   that simulations shall generate *identical* results when run with a
-   fixed \\(N\_{VP}\\), no matter how the virutal processes are broken
-   down into MPI processes and threads.
-
--  Useful information can be obtained like this
-
-   import nest nest.NumProcesses() # number of MPI processes nest.Rank()
-   # rank of MPI process executing command
-   nest.GetKernelStatus(['num\_processes']) # same as
-   nest.NumProcesses() nest.GetKernelStatus(['local\_num\_threads']) #
-   number of threads in present process (same for all processes)
-   nest.GetKernelStatus(['total\_num\_virtual\_procs']) # N\_vp = M x T
-
--  When querying neurons, only very limited information is available for
-   neurons on other MPI processes. Thus, before checking for specific
-   information, you need to check if a node is local:
-
-   n = nest.Create('iaf\_psc\_alpha') if nest.GetStatus(n, 'local')[0]:
-   # GetStatus() returns list, pick element print nest.GetStatus(n,
-   'vp') # virtual process "owning" node print nest.GetStatus(n,
-   'thread') # thread in calling process "owning" node
-
-Random numbers in parallel simulations
---------------------------------------
-
-Ideally, all random numbers in a simulation should come from a single
-RNG. This would require shipping truckloads of random numbers from a
-central RNG process to all simulations processes and is thus
-impractical, if not outright prohibitively costly. Therefore, parallel
-simulation requires an RNG on each parallel process. Advances in RNG
-technology give us today a range of RNGs that can be used in parallel,
-with a quite high level of certainty that the resulting parallel streams
-of random numbers are non-overlapping and uncorrelated. While the former
-can be guaranteed, we are not aware of any generator for which the
-latter can be proven.
-
-How many generators in a simulation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In a typical PyNEST simulation running on \\(N\_{vp}\\) virtual
-processes, we will encounter \\(2 N\_{vp} + 1\\) random number
-generators:
-
-| The global NEST RNG
-| This generator is mainly used when creating connections using
-  ``RandomDivergentConnect``.
-
-| One RNG per VP in NEST
-| These generators are used when creating connections using
-  ``RandomConvergentConnect`` and to provide random numbers to nodes
-  generating random output, e.g. the ``poisson_generator``.
-
-| One RNG per VP in Python
-| These generators are used to randomized node properties (e.g., the
-  initial membrane potential) and connection properties (e.g., weights).
-
-The generators on the Python level are not strictly necessary, as one
-could in principle access the per-VP RNGs built into NEST. This would
-require very tedious SLI-coding, though. We therefore recommend at
-present that you use additional RNGs on the Python side.
-
-Why a Global RNG in NEST
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-In some situations, randomized decisions on different virtual processes
-are not independent of each other. The most important case are
-randomized divergent connections. The problem here is as follows. For
-the sake of efficiency, NEST stores all connection information in the
-virtual process (VP) to which the target of a connection resides (target
-process). Thus, all connections are generated by this target process.
-Now consider the task of generating 100 randomized divergent connections
-emanating from a given source neuron while using 4 VPs. Then there
-should be 25 targets on each VP *on average*, but actual numbers will
-fluctuate. If independent processes on all VPs tried to choose target
-neurons, we could never be sure that exactly 100 targets would be chosen
-in total.
-
-NEST thus creates divergent connections using a global RNG. This random
-number generator provides the exact same sequence of random numbers on
-each virtual process. Using this global RNG, each VP chooses 100 targets
-from the entire network, but actually creates connections only for those
-targets that reside on the VP. In practice, the global RNG is
-implemented using one "clone" on each VP; NEST checks occasionally that
-all these clones are synchronized, i.e., indeed generate identical
-sequences.
 
 Seeding the Random Generators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -265,6 +69,31 @@ recommend that you choose a *master seed* ``msd`` and seed the
 by at least \\(2N\_{vp}+1\\) . Otherwise, the same sequence(s) would
 enter in several experiments.
 
+When seeding the random number generators in the NEST kernel, you should
+always seed the global and per-process RNGs.
+
+Seeding the global RNG
+^^^^^^^^^^^^^^^^^^^^^^
+
+The global NEST rng is seeded with a single, positive integer number:
+
+::
+
+    nest.SetKernelStatus({’grng_seed’ : msd})
+    
+``msd`` is the master seed, choose your own!
+
+Seeding the per-process RNGs
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The per-process RNGs are seeded by a list of \\(N\_{vp}\\) positive
+integers:
+
+::
+
+    nest.SetKernelStatus({’rng_seeds’ : range(msd+1, msd+N_vp+1)})
+
+
 Seeding the Python RNGs
 ^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -276,28 +105,10 @@ Python side using
     import numpy
     msd = 123456
     N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
-    pyrngs = [numpy.random.RandomState(s) for s in range(msd, msd+N_vp)]
+    pyrngs = [numpy.random.RandomState(s) for s in range(msd+N_vp+1, msd+2*N_vp+1)]
 
-``msd`` is the master seed, choose your own!
 
-Seeding the global RNG
-^^^^^^^^^^^^^^^^^^^^^^
 
-The global NEST rng is seeded with a single, positive integer number:
-
-::
-
-    nest.SetKernelStatus({’grng_seed’ : msd+N_vp})
-
-Seeding the per-process RNGs
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The per-process RNGs are seeded by a list of \\(N\_{vp}\\) positive
-integers:
-
-::
-
-    nest.SetKernelStatus({’rng_seeds’ : range(msd+N_vp+1, msd+2*N_vp+1)})
 
 Choosing the random generator type
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -364,25 +175,11 @@ The following happens here:
    kernel. This variable is invisible as well.
 
 
-.. _examples-rng:
+.. _rand_vm:
 
-Examples
---------
-
-**NOTE: These examples are not yet updated for NEST 2.4**
-
-No random variables in script
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If no explicit random variables appear in your script, i.e., if
-randomness only enters in your simulation through random stimulus
-generators such as ``poisson_generator`` or randomized connection
-routines such as ``RandomConvergentConnect``, you do not need to worry
-about anything except choosing and setting your random seeds, possibly
-exchanging the random number generators.
 
 Randomizing the membrane potential
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------------
 
 If you want to randomize the membrane potential (or any other property
 of a neuron), you need to take care that each node is updated by the
@@ -408,82 +205,11 @@ all local neurons. The for loop then sets the membrane potential of each
 local neuron drawn from a uniform distribution on \\([-70, -50]\\) using
 the Python-side RNG for the VP to which the neuron belongs.
 
-Randomizing convergent connections
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We continue the above example by creating random convergent connections,
-\\(C\_E\\) connections per target node. In the process, we randomize the
-connection weights:
+.. _testing_rands:
 
-::
-
-    C_E = 10
-    nest.CopyModel("static_synapse", "excitatory")
-    for tgt_gid, tgt_vp in local_nodes:
-        weights = pyrngs[tgt_vp].uniform(0.5, 1.5, C_E)
-        nest.RandomConvergentConnect(nodes, [tgt_gid], C_E,
-                                     weight=list(weights), delay=2.0,
-                                     model="excitatory")
-
-Here we loop over all local nodes considered as target nodes. For each
-target, we create an array of \\(C\_E\\) randomly chosen weights,
-uniform on \\([0.5, 1.5\\. We then call ``RandomConvergentConnect()``
-with this weight list as argument. Note a few details:
-
--  We need to put ``tgt_gid`` into brackets as PyNEST functions always
-   expect lists of GIDs.
-
--  We need to convert the NumPy array ``weights`` to a plain Python
-   list, as most PyNEST functions currently cannot handle array input.
-
--  If we specify ``weight``, we must also provide ``delay``.
-
-You can check the weights selected by
-
-::
-
-    print nest.GetStatus(nest.GetConnections(), ['source', 'target', 'weight'])
-
-which will print a list containing a triple of source GID, target GID
-and weight for each connection in the network. If you want to see only a
-subset of connections, pass source, target, or synapse model to
-``GetConnections()``.
-
-Randomizing divergent connections
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Randomizing the weights (or delays or any other properties) of divergent
-connections is more complicated than for convergent connections, because
-the target for each connection is not known upon the call to
-``RandomDivergentConnect``. We therefore need to first create all
-connections (which we can do with a single call, passing lists of nodes
-and targets), and then need to manipulate all connections. This is not
-only more complicated, but also significantly slower than the example
-above.
-
-::
-
-    nest.CopyModel('static_synapse', 'inhibitory', {'weight': 0.0, 'delay': 3.0})
-    nest.RandomDivergentConnect(nodes, nodes, C_E, model='inhibitory')
-    gid_vp_map = dict(local_nodes)
-    for src in nodes:
-        conns = nest.GetConnections(source=[src], synapse_model='inhibitory')
-        tgts = [conn[1] for conn in conns]
-        rweights = [{'weight': pyrngs[gid_vp_map[tgt]].uniform(-2.5, -0.5)}
-                   for tgt in tgts]
-        nest.SetStatus(conns, rweights)
-
-In this code, we first create all connections with weight 0. We then
-create ``gid_vp_map``, mapping GIDs to VP number for all local nodes.
-For each node considered as source, we then find all outgoing excitatory
-connections from that node and then obtain a flat list of the targets of
-these connections. For each target we then choose a random weight as
-above, using the RNG pertaining to the VP of the target. Finally, we set
-these weights. Note that the code above is **slow**. Future versions of
-NEST will provide better solutions.
-
-Testing scripts randomizing node or connection parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Testing simulations containing randomness
+-----------------------------------------
 
 To ensure that you are consistently using the correct RNG for each node
 or connection, you should run your simulation several times the same
@@ -521,3 +247,198 @@ These commands should not generate any output. Obviously, this test
 checks only a necessary, but by no means sufficient condition for a
 correct simulation. (Oh yes, do make sure that these directories contain
 data! Nothing easier than to pass a diff-test on empty dirs.)
+
+
+
+.. _basic_para:
+
+Basics of parallel simulation in NEST
+-------------------------------------
+
+For details of parallelization in NEST, please see :doc:`Parallel
+Computing <parallel_computing>` and `Plesser et al
+(2007) <http://dx.doi.org/10.1007/978-3-540-74466-5_71>`__. Here, we
+just summarize a few basics.
+
+-  NEST can parallelize simulations through *multi-threading*,
+   *distribution* or a combination of the two.
+
+-  A distributed simulation is spread across several processes under the
+   control of MPI (Message Passing Interface). Each network node is
+   *local* to exactly one process and complete information about the
+   node is only available to that process. Information about each
+   connection is stored by the process in which the connection target is
+   local and is only available and changeable on that process.
+
+-  Multi-threaded simulations run in a single process in a single
+   computer. As a consequence, all nodes in a multi-threaded simulation
+   are local.
+
+-  Distribution and multi-threading can be combined by running identical
+   numbers of threads in each process.
+
+-  A serial simulation has a single process with a single seed.
+
+-  From the NEST user perspective, distributed processes and threads are
+   visible as **virtual processes**. A simulation distributed across
+   \\(M\\) MPI processes with \\(T\\) threads each, has \\(N\_{vp} = M
+   \\times T\\) virtual processes. It is a basic design principle of NEST
+   that simulations shall generate *identical* results when run with a
+   fixed \\(N\_{VP}\\), no matter how the virutal processes are broken
+   down into MPI processes and threads.
+
+-  Useful information can be obtained like this
+
+::
+
+   import nest 
+   nest.NumProcesses() # number of MPI processes 
+   nest.Rank()         # rank of MPI process executing command
+   nest.GetKernelStatus(['local_num_threads']) # number of threads in present process (same for all processes)
+   nest.GetKernelStatus(['total_num_virtual_procs']) # N_vp = M x T
+
+-  When querying neurons, only very limited information is available for
+   neurons on other MPI processes. Thus, before checking for specific
+   information, you need to check if a node is local:
+
+::
+
+   n = nest.Create('iaf_psc_alpha') 
+   if nest.GetStatus(n, 'local')[0]:
+       print(nest.GetStatus(n, 'vp'))     # virtual process "owning" node 
+       print(nest.GetStatus(n, 'thread')) # thread in calling process "owning" node
+
+Random numbers in parallel simulations
+--------------------------------------
+
+Ideally, all random numbers in a simulation should come from a single
+RNG. This would require shipping truckloads of random numbers from a
+central RNG process to all simulations processes and is thus
+impractical, if not outright prohibitively costly. Therefore, parallel
+simulation requires an RNG on each parallel process. Advances in RNG
+technology give us today a range of RNGs that can be used in parallel,
+with a quite high level of certainty that the resulting parallel streams
+of random numbers are non-overlapping and uncorrelated. While the former
+can be guaranteed, we are not aware of any generator for which the
+latter can be proven.
+
+How many generators in a simulation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In a typical PyNEST simulation running on \\(N\_{vp}\\) virtual
+processes, we will encounter \\(2 N\_{vp} + 1\\) random number
+generators:
+
+| The global NEST RNG
+| This generator is mainly used when creating connections using
+  ``fixed_outdegree`` connection rule.
+
+| One RNG per VP in NEST
+| These generators are used when creating connections using
+  most other probabilistic connection rules and to provide random numbers to nodes
+  generating random output, e.g. the ``poisson_generator``.
+
+| One RNG per VP in Python
+| These generators are used to randomized node properties (e.g., the
+  initial membrane potential) and connection properties (e.g., weights).
+
+The generators on the Python level are not strictly necessary, as one
+could in principle access the per-VP RNGs built into NEST. This would
+require very tedious SLI-coding, though. We therefore recommend at
+present that you use additional RNGs on the Python side.
+
+Why a Global RNG in NEST?
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In some situations, randomized decisions on different virtual processes
+are not independent of each other. The most important case are
+randomized divergent connections. The problem here is as follows. For
+the sake of efficiency, NEST stores all connection information in the
+virtual process (VP) to which the target of a connection resides (target
+process). Thus, all connections are generated by this target process.
+Now consider the task of generating 100 randomized divergent connections
+emanating from a given source neuron while using 4 VPs. Then there
+should be 25 targets on each VP *on average*, but actual numbers will
+fluctuate. If independent processes on all VPs tried to choose target
+neurons, we could never be sure that exactly 100 targets would be chosen
+in total.
+
+NEST thus creates divergent connections using a global RNG. This random
+number generator provides the exact same sequence of random numbers on
+each virtual process. Using this global RNG, each VP chooses 100 targets
+from the entire network, but actually creates connections only for those
+targets that reside on the VP. In practice, the global RNG is
+implemented using one "clone" on each VP; NEST checks occasionally that
+all these clones are synchronized, i.e., indeed generate identical
+sequences.
+
+
+.. _sli_generators:
+
+Generators available at the SLI level
+-------------------------------------
+
+This section is of historical interest only. Generators described here
+will no longer be available in NEST 3.0
+
+Random Numbers vs Random Deviates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+NEST distinguishes between random number generators, provided by
+``rngdict`` and random deviate generators provided by ``rdevdict``.
+Random *number* generators only provide double-valued numbers uniformly
+distributed on [0, 1] and uniformly distributed integers in {0, 1, ...,
+N}. Random *deviate* generators, on the other hand, provide random
+numbers drawn from a range of distributions, such as the normal or
+binomial distributions. In most cases, you will be using random deviate
+generators. 
+
+
+Random Deviates 
+~~~~~~~~~~~~~~~
+
+NEST provides the following random deviate generators for use at the SLI
+level:
+
+- binomial
+- exponential
+- gamma
+- lognormal
+- normal
+- poisson
+- uniform
+- uniform_int
+
+
+-  Clipped variants for most generators
+
+   -  For most random deviate generators, ``_clipped`` variants exist
+      now.
+
+   -  For all clipped variants, one can set a lower limit (``low``,
+      default: -infinity) and an upper limit (``high``: +infinty).
+
+   -  Clipped variants will then return numbers strictly in
+      ``(low, high)`` for continuous distributions (e.g. normal,
+      exponential) or ``{low, low+1, …, high}`` for discrete
+      distributions (e.g. poisson, binomial). This is achieved by
+      redrawing numbers until an acceptable number is drawn.
+
+   -  Note that the resulting distribution differs from the original one
+      and that drawing may become very slow if ``(low, high)`` contains
+      only very small probability mass. Clipped generator variants
+      should therefore mostly be used to clip tails with very small
+      probability mass when randomizing time constants or delays.
+
+-  Clipped-to-boundary variants for most generators
+
+   -  To facilitate reproduction of certain publications, NEST also
+      provides ``_clipped_to_boundary`` variants of most generators.
+
+   -  Clipped-to-boundary variants return the value ``low`` if a number
+      smaller than ``low`` is drawn, and ``high`` if a number larger
+      than ``high`` is drawn.
+
+   -  We believe that these variants should *not* be used for new
+      studies.
+

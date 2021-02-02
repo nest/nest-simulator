@@ -58,16 +58,16 @@ jobs:
              cpp_compiler: "clang"
            - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
              os: macos-latest
-             cpp_compiler: "clang" 
+             cpp_compiler: "gcc" 
            - xNEST_BUILD_TYPE: "MPI_ONLY"
-             cpp_compiler: "clang"
+             cpp_compiler: "gcc"
              os: macos-latest
            - xNEST_BUILD_TYPE: "OPENMP_ONLY"
-             cpp_compiler: "clang"
+             cpp_compiler: "gcc"
              os: macos-latest
            - xNEST_BUILD_TYPE: "FULL"
              os: macos-latest
-             cpp_compiler: "clang"
+             cpp_compiler: "gcc"
                                                  
      steps:
                        

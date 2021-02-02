@@ -26,8 +26,8 @@ jobs:
          #ver: ["9"]
          xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
          include: 
-           - os: ubuntu-20.04
-             TARGET: x86_64-unknown-linux-musl
+           - os: "ubuntu-20.04"
+             #TARGET: x86_64-unknown-linux-musl
              COMPILER: clang
              LINKER: clang
          exclude: 

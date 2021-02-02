@@ -419,6 +419,10 @@ nest::spike_generator::event_hook( DSSpikeEvent& e )
   e.get_receiver().handle( e );
 }
 
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
 void
 nest::spike_generator::set_data_from_stimulating_backend( std::vector< double > input_spikes )
 {

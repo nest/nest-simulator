@@ -380,19 +380,16 @@ nest::sinusoidal_gamma_generator::set_data_from_stimulating_backend( std::vector
   {
     if ( input_param.size() != 6 )
     {
-      throw BadParameterValue( "The size of the data for the sinusoidal_gamma_generator is incorrect." );
+      throw BadParameterValue( "The size of the data for the sinusoidal_gamma_generator need to 6 [frequency, phase, order, rate, amplitude, individual_spike_trains]." );
     }
-    else
-    {
-      DictionaryDatum d = DictionaryDatum( new Dictionary );
-      ( *d )[ names::frequency ] = DoubleDatum( input_param[ 0 ] );
-      ( *d )[ names::phase ] = DoubleDatum( input_param[ 1 ] );
-      ( *d )[ names::order ] = DoubleDatum( input_param[ 2 ] );
-      ( *d )[ names::rate ] = DoubleDatum( input_param[ 3 ] );
-      ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 4 ] );
-      ( *d )[ names::individual_spike_trains ] = DoubleDatum( input_param[ 5 ] );
-      ptmp.set( d, *this, this );
-    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::phase ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::order ] = DoubleDatum( input_param[ 2 ] );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 3 ] );
+    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 4 ] );
+    ( *d )[ names::individual_spike_trains ] = DoubleDatum( input_param[ 5 ] );
+    ptmp.set( d, *this, this );
   }
 
   // if we get here, temporary contains consistent set of properties

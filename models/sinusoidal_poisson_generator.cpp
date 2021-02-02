@@ -307,3 +307,32 @@ nest::sinusoidal_poisson_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::sinusoidal_poisson_generator::set_data_from_stimulating_backend( std::vector< double > input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() != 5 )
+    {
+      throw BadParameterValue( "The size of the data for the sinusoidal_gamma_generator need to 5 [rate,frequency, phase, amplitude, individual_spike_trains]." );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::phase ] = DoubleDatum( input_param[ 2 ] );
+    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 3 ] );
+    ( *d )[ names::individual_spike_trains ] = DoubleDatum( input_param[ 4 ] );
+    ptmp.set( d, *this, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
+}

@@ -249,17 +249,15 @@ nest::ac_generator::set_data_from_stimulating_backend( std::vector< double > inp
   {
     if ( input_param.size() != 4 )
     {
-      throw BadParameterValue( "The size of the data for the ac_generator is incorrect." );
+      throw BadParameterValue( "The size of the data for the ac_generator needs to be 4"
+        " [ amplitude, offset, frequency, phase].");
     }
-    else
-    {
-      DictionaryDatum d = DictionaryDatum( new Dictionary );
-      ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
-      ( *d )[ names::offset ] = DoubleDatum( input_param[ 1 ] );
-      ( *d )[ names::frequency ] = DoubleDatum( input_param[ 2 ] );
-      ( *d )[ names::phase ] = DoubleDatum( input_param[ 3 ] );
-      ptmp.set( d, this );
-    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::offset ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 2 ] );
+    ( *d )[ names::phase ] = DoubleDatum( input_param[ 3 ] );
+    ptmp.set( d, this );
   }
 
   // if we get here, temporary contains consistent set of properties

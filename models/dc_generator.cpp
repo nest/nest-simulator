@@ -200,14 +200,11 @@ nest::dc_generator::set_data_from_stimulating_backend( std::vector< double > inp
   {
     if ( input_param.size() != 1 )
     {
-      throw BadParameterValue( "The size of the data for the dc_generator is incorrect." );
+      throw BadParameterValue( "The size of the data for the dc_generator needs to be 1 [amplitude]." );
     }
-    else
-    {
-      DictionaryDatum d = DictionaryDatum( new Dictionary );
-      ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
-      ptmp.set( d, this );
-    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
+    ptmp.set( d, this );
   }
 
   // if we get here, temporary contains consistent set of properties

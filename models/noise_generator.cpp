@@ -373,20 +373,17 @@ nest::noise_generator::set_data_from_stimulating_backend( std::vector< double > 
   // For the input backend
   if ( not input_param.empty() )
   {
-    if ( input_param.size() != 4 )
+    if ( input_param.size() != 5 )
     {
-      throw BadParameterValue( "The size of the data for the ac_generator is incorrect." );
+      throw BadParameterValue( "The size of the data for the noise_generator needs to be 5[mean, std, std_mod, frequency, phase]." );
     }
-    else
-    {
-      DictionaryDatum d = DictionaryDatum( new Dictionary );
-      ( *d )[ names::mean ] = DoubleDatum( input_param[ 0 ] );
-      ( *d )[ names::std ] = DoubleDatum( input_param[ 1 ] );
-      ( *d )[ names::std_mod ] = DoubleDatum( input_param[ 2 ] );
-      ( *d )[ names::frequency ] = DoubleDatum( input_param[ 3 ] );
-      ( *d )[ names::phase ] = DoubleDatum( input_param[ 4 ] );
-      ptmp.set( d, *this, this );
-    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::mean ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::std ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::std_mod ] = DoubleDatum( input_param[ 2 ] );
+    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 3 ] );
+    ( *d )[ names::phase ] = DoubleDatum( input_param[ 4 ] );
+    ptmp.set( d, *this, this );
   }
 
   // if we get here, temporary contains consistent set of properties

@@ -302,18 +302,15 @@ nest::ppd_sup_generator::set_data_from_stimulating_backend( std::vector< double 
   {
     if ( input_param.size() != 5 )
     {
-      throw BadParameterValue( "The size of the data for the ppd_sup_generator is incorrect." );
+      throw BadParameterValue( "The size of the data for the ppd_sup_generator need to be 5[dead_time, rate,n_proc,frequency,relative_amplitude]." );
     }
-    else
-    {
-      DictionaryDatum d = DictionaryDatum( new Dictionary );
-      ( *d )[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );
-      ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
-      ( *d )[ names::n_proc ] = DoubleDatum( input_param[ 2 ] );
-      ( *d )[ names::frequency ] = DoubleDatum( input_param[ 3 ] );
-      ( *d )[ names::relative_amplitude ] = DoubleDatum( input_param[ 4 ] );
-      ptmp.set( d, this );
-    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::n_proc ] = DoubleDatum( input_param[ 2 ] );
+    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 3 ] );
+    ( *d )[ names::relative_amplitude ] = DoubleDatum( input_param[ 4 ] );
+    ptmp.set( d, this );
   }
 
   // if we get here, temporary contains consistent set of properties

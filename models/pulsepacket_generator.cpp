@@ -250,17 +250,14 @@ nest::pulsepacket_generator::set_data_from_stimulating_backend( std::vector< dou
   {
     if ( input_param.size() < 3 )
     {
-      throw BadParameterValue( "The size of the data for the  pulse_generator is incorrect." );
+      throw BadParameterValue( "The size of the data for the pulse_generator needs to higher thant 3 [activity, sdev, all the pulstimes]." );
     }
-    else
-    {
-      DictionaryDatum d = DictionaryDatum( new Dictionary );
-      ( *d )[ names::activity ] = DoubleDatum( input_param[ 0 ] );
-      ( *d )[ names::sdev ] = DoubleDatum( input_param[ 1 ] );
-      input_param.erase( input_param.begin(), input_param.begin() + 2 );
-      ( *d )[ names::pulse_times ] = DoubleVectorDatum( input_param );
-      ptmp.set( d, *this, this );
-    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::activity ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::sdev ] = DoubleDatum( input_param[ 1 ] );
+    input_param.erase( input_param.begin(), input_param.begin() + 2 );
+    ( *d )[ names::pulse_times ] = DoubleVectorDatum( input_param );
+    ptmp.set( d, *this, this );
   }
 
   // if we get here, temporary contains consistent set of properties

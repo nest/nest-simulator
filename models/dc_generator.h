@@ -136,8 +136,6 @@ private:
                //!< Required to handle current values when device is inactive
 
     State_(); //!< Sets default parameter values
-
-    void get( DictionaryDatum& ) const {}; //!< Store current values in dictionary
   };
 
   // ------------------------------------------------------------

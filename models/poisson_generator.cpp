@@ -166,14 +166,11 @@ nest::poisson_generator::set_data_from_stimulating_backend( std::vector< double 
   {
     if ( input_param.size() != 1 )
     {
-      throw BadParameterValue( "The size of the data for the poisson generator is incorrect." );
+      throw BadParameterValue( "The size of the data for the poisson generator needs to be 1[rate]." );
     }
-    else
-    {
-      DictionaryDatum d = DictionaryDatum( new Dictionary );
-      ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );
-      ptmp.set( d, this );
-    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );
+    ptmp.set( d, this );
   }
 
   // if we get here, temporary contains consistent set of properties

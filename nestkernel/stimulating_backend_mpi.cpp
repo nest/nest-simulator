@@ -323,7 +323,7 @@ nest::StimulatingBackendMPI::get_port( const index index_node, const std::string
   }
   else
   {
-    throw MPIFilePortsUnknown( index_node );
+    throw MPIPortsFileUnknown( index_node );
   }
   // add the id of the device to the path
   char add_path[ 150 ];

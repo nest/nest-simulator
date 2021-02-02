@@ -291,18 +291,15 @@ nest::gamma_sup_generator::set_data_from_stimulating_backend( std::vector< doubl
   // For the input backend
   if ( not input_param.empty() )
   {
-    if ( input_param.size() != 4 )
+    if ( input_param.size() != 3 )
     {
-      throw BadParameterValue( "The size of the data for the ac_generator is incorrect." );
+      throw BadParameterValue( "The size of the data for the gamma_sup_generator needs to be 3[gamma_shape, rate, n_proc]." );
     }
-    else
-    {
-      DictionaryDatum d = DictionaryDatum( new Dictionary );
-      ( *d )[ names::gamma_shape ] = DoubleDatum( lround( input_param[ 0 ] ) );
-      ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
-      ( *d )[ names::n_proc ] = DoubleDatum( lround( input_param[ 2 ] ) );
-      ptmp.set( d, this );
-    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::gamma_shape ] = DoubleDatum( lround( input_param[ 0 ] ) );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::n_proc ] = DoubleDatum( lround( input_param[ 2 ] ) );
+    ptmp.set( d, this );
   }
 
   // if we get here, temporary contains consistent set of properties

@@ -176,8 +176,6 @@ private:
 
   struct Variables_
   {
-    // double omega_;   //!< Angelfrequency i rad/s
-    // double phi_rad_; //!< Phase of sine current (0-2Pi rad)
     // The exact integration matrix
     double A_00_;
     double A_01_;

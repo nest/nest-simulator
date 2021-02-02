@@ -380,7 +380,9 @@ nest::sinusoidal_gamma_generator::set_data_from_stimulating_backend( std::vector
   {
     if ( input_param.size() != 6 )
     {
-      throw BadParameterValue( "The size of the data for the sinusoidal_gamma_generator need to 6 [frequency, phase, order, rate, amplitude, individual_spike_trains]." );
+      throw BadParameterValue(
+        "The size of the data for the sinusoidal_gamma_generator needs to 6 "
+        "[frequency, phase, order, rate, amplitude, individual_spike_trains]." );
     }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     ( *d )[ names::frequency ] = DoubleDatum( input_param[ 0 ] );

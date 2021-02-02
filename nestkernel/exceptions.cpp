@@ -378,7 +378,7 @@ nest::MPIPortsFileUnknown::message() const
 {
   std::ostringstream msg;
   msg << "The node with ID " << node_id_ << " requires a label,"
-      <<" which specifies the folder with files containing the MPI ports";
+      << " which specifies the folder with files containing the MPI ports";
   return msg.str();
 }
 #endif

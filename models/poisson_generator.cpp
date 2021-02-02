@@ -166,7 +166,7 @@ nest::poisson_generator::set_data_from_stimulating_backend( std::vector< double 
   {
     if ( input_param.size() != 1 )
     {
-      throw BadParameterValue( "The size of the data for the poisson generator needs to be 1[rate]." );
+      throw BadParameterValue( "The size of the data for the poisson generator needs to be 1 [rate]." );
     }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );

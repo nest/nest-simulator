@@ -250,7 +250,9 @@ nest::pulsepacket_generator::set_data_from_stimulating_backend( std::vector< dou
   {
     if ( input_param.size() < 3 )
     {
-      throw BadParameterValue( "The size of the data for the pulse_generator needs to higher thant 3 [activity, sdev, all the pulstimes]." );
+      throw BadParameterValue(
+        "The size of the data for the pulse_generator needs to be higher than 3 "
+        "[activity, sdev, all the pulse times]." );
     }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     ( *d )[ names::activity ] = DoubleDatum( input_param[ 0 ] );

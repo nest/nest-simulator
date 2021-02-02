@@ -106,7 +106,7 @@ nest::StimulatingBackendMPI::disenroll( nest::StimulatingDevice& device )
 void
 nest::StimulatingBackendMPI::prepare()
 {
-    if ( not enrolled_ )
+  if ( not enrolled_ )
   {
     return;
   }
@@ -344,7 +344,7 @@ std::pair< int*, double* >
 nest::StimulatingBackendMPI::receive_spike_train( const MPI_Comm& comm, std::vector< int >& devices_id )
 {
   // Send size of the list id
-  int size_list = { int(devices_id.size()) };
+  int size_list = { int( devices_id.size() ) };
   MPI_Send( &size_list, 1, MPI_INT, 0, 0, comm );
   if ( size_list != 0 )
   {

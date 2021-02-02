@@ -322,7 +322,9 @@ nest::sinusoidal_poisson_generator::set_data_from_stimulating_backend( std::vect
   {
     if ( input_param.size() != 5 )
     {
-      throw BadParameterValue( "The size of the data for the sinusoidal_gamma_generator need to 5 [rate,frequency, phase, amplitude, individual_spike_trains]." );
+      throw BadParameterValue(
+        "The size of the data for the sinusoidal_gamma_generator needs to 5 "
+        "[rate, frequency, phase, amplitude, individual_spike_trains]." );
     }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );

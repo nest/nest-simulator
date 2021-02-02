@@ -302,7 +302,9 @@ nest::ppd_sup_generator::set_data_from_stimulating_backend( std::vector< double 
   {
     if ( input_param.size() != 5 )
     {
-      throw BadParameterValue( "The size of the data for the ppd_sup_generator need to be 5[dead_time, rate,n_proc,frequency,relative_amplitude]." );
+      throw BadParameterValue(
+        "The size of the data for the ppd_sup_generator needs to be 5 "
+        "[dead_time, rate, n_proc, frequency, relative_amplitude]." );
     }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     ( *d )[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );

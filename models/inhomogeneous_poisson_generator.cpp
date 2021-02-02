@@ -302,7 +302,11 @@ nest::inhomogeneous_poisson_generator::set_data_from_stimulating_backend( std::v
   // For the input backend
   if ( not rate_time_update.empty() )
   {
-
+    if ( rate_time_update.size() % 2 != 0 )
+    {
+      throw BadParameterValue( "The size of the data for the inhomogeneous_poisson_generator needs to be even "
+                               "[ sequence of the couple (time,rate) ] " );
+    }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     std::vector< double > times_ms;
     std::vector< double > rate_values;

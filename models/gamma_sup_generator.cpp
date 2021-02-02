@@ -293,7 +293,8 @@ nest::gamma_sup_generator::set_data_from_stimulating_backend( std::vector< doubl
   {
     if ( input_param.size() != 3 )
     {
-      throw BadParameterValue( "The size of the data for the gamma_sup_generator needs to be 3[gamma_shape, rate, n_proc]." );
+      throw BadParameterValue(
+        "The size of the data for the gamma_sup_generator needs to be 3 [gamma_shape, rate, n_proc]." );
     }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     ( *d )[ names::gamma_shape ] = DoubleDatum( lround( input_param[ 0 ] ) );

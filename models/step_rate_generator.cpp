@@ -347,6 +347,11 @@ nest::step_rate_generator::set_data_from_stimulating_backend( std::vector< doubl
   // For the input backend
   if ( not time_amplitude.empty() )
   {
+    if ( time_amplitude.size() % 2 != 0 )
+    {
+      throw BadParameterValue( "The size of the data for the step_rate_generator needs to be even "
+                               "[ sequence of the couple (time,rate) ] " );
+    }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     std::vector< double > times_ms;
     std::vector< double > amplitudes_Hz;

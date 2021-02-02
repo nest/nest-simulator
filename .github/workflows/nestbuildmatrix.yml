@@ -25,7 +25,12 @@ jobs:
          #cc:  ["gcc"]
          #ver: ["9"]
          xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
-         
+         exclude: 
+           - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "MPI_ONLY"
+             os: macos-latest
+                   
      steps:
                        
        # Steps represent a sequence of tasks that will be executed as part of the job
@@ -54,6 +59,7 @@ jobs:
          if: contains(matrix.os, 'ubuntu')
          run: |
            sudo apt-get update
+           #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
            sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pep8 libpcre3 libpcre3-dev
            sudo apt-get install openmpi-bin libopenmpi-dev
        - name: Install dependencies

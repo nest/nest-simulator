@@ -412,7 +412,6 @@ const Name start( "start" );
 const Name state( "state" );
 const Name std( "std" );
 const Name std_mod( "std_mod" );
-const Name stimulating_backends( "stimulating_backends" );
 const Name stimulator( "stimulator" );
 const Name stimulus_source( "stimulus_source" );
 const Name step( "step" );

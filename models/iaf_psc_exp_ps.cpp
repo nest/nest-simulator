@@ -215,7 +215,7 @@ nest::iaf_psc_exp_ps::State_::set( const DictionaryDatum& d, const Parameters_& 
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_exp_ps::iaf_psc_exp_ps()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -224,7 +224,7 @@ nest::iaf_psc_exp_ps::iaf_psc_exp_ps()
 }
 
 nest::iaf_psc_exp_ps::iaf_psc_exp_ps( const iaf_psc_exp_ps& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -251,7 +251,7 @@ nest::iaf_psc_exp_ps::init_buffers_()
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();
 
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void

@@ -57,7 +57,13 @@ class ConnectArraysMPICase(unittest.TestCase):
     multiple processes.
     """
     non_unique = np.array([1, 1, 3, 5, 4, 5, 9, 7, 2, 8], dtype=np.uint64)
-    comm = MPI.COMM_WORLD.Clone()
+
+    # The test class is instantiated by the unittest framework regardless of the value of
+    # HAVE_MPI4PY, even though all tests will be skipped in case it is False. In this
+    # situation, we have to manually prevent calls to MPI in order to avoid errors during
+    # the execution.
+    if HAVE_MPI4PY:
+        comm = MPI.COMM_WORLD.Clone()
 
     # With pytest or nosetests, only run these tests if using multiple processes
     __test__ = MULTIPLE_PROCESSES

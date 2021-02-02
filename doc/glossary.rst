@@ -1,8 +1,10 @@
+:orphan:
+
 Glossary
-==============
+========
 
 Common abbreviations in NEST
-------------------------------
+----------------------------
 .. glossary::
 
  iaf
@@ -15,7 +17,7 @@ Common abbreviations in NEST
    conductance-based
 
  psc
-   post synaptic current (current-based)
+   postsynaptic current (current-based)
 
  hh
    hodgkin huxley
@@ -57,7 +59,7 @@ Common abbreviations in NEST
    virtual process
 
 Physical units and variable names used for NEST parameters
--------------------------------------------------------------
+----------------------------------------------------------
 
 .. note::
 
@@ -139,6 +141,5 @@ Physical units and variable names used for NEST parameters
 
  E_K
    Potassium reversal potential in mV.
-
 
 

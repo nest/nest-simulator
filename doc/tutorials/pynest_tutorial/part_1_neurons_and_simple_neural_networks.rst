@@ -21,8 +21,8 @@ sections of this primer:
 -  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
 -  :doc:`Part 3: Connecting networks with
    synapses <part_3_connecting_networks_with_synapses>`
--  :doc:`Part 4: Topologically structured
-   networks <part_4_topologically_structured_networks>`
+-  :doc:`Part 4: Spatially structured
+   networks <part_4_spatially_structured_networks>`
 
 More advanced examples can be found at `Example
 Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
@@ -481,8 +481,13 @@ Nodes
 
 -  ``Create(model, n=1, params=None)``
     Create ``n`` instances of type ``model``. Parameters for the new nodes can be given as
-    ``params`` (a single dictionary, or a list of dictionaries with
-    size ``n``). If omitted, the ``model``\ ’s defaults are used.
+    ``params``, which can be any of the following:
+
+      - A dictionary with either single values or lists of size n.
+        The single values will be applied to all nodes, while the lists will be distributed across
+        the nodes. Both single values and lists can be given at the same time.
+      - A list with n dictionaries, one dictionary for each node.
+    If omitted, the ``model``\ ’s defaults are used.
 
 -  ``get(*params, **kwargs)``
     Return a dictionary with parameter values for the NodeCollection it is called
@@ -491,10 +496,10 @@ Nodes
     dictionary contains lists of requested values.
 
 -  ``set(params=None, **kwargs)``
-    Set the parameters on the NodeCollection it is called on to ``params``, which may
-    be a single dictionary, or a list of dictionaries of the same size
-    as the NodeCollection. If ``kwargs`` is given, it has to be names and values of
-    an attribute as keyword=argument pairs. The values
+    Set the parameters on the NodeCollection to ``params``, which may
+    be a single dictionary (with lists or single values as parameters), or a list
+    of dictionaries of the same size as the NodeCollection. If ``kwargs`` is given,
+    it has to be names and values of an attribute as keyword=argument pairs. The values
     can be single values or list of the same size as the NodeCollection.
 
 Connections

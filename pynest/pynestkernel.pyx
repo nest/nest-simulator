@@ -418,6 +418,8 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
         ret = unpackConnectionGeneratorDatum(<PyObject*> obj)
         if ret is NULL:
             raise NESTErrors.PyNESTError("failed to unpack passed connection generator object")
+    elif isinstance(obj, nest.CollocatedSynapses):
+        ret = python_object_to_datum(obj.syn_specs)
     else:
 
         try:

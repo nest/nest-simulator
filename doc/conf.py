@@ -143,7 +143,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'conngen',
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store',
                     'nest_by_example', 'README.md']
 
 # The name of the Pygments (syntax highlighting) style to use.
@@ -211,10 +211,10 @@ nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 's'),
                   ('cpp:identifier', 'CommonSynapseProperties'),
                   ('cpp:identifier', 'Connection<targetidentifierT>'),
-                  ('cpp:identifier', 'Archiving_Node'),
+                  ('cpp:identifier', 'ArchivingNode'),
                   ('cpp:identifier', 'DeviceNode'),
                   ('cpp:identifier', 'Node'),
-                  ('cpp:identifier', 'Clopath_Archiving_Node'),
+                  ('cpp:identifier', 'ClopathArchivingNode'),
                   ('cpp:identifier', 'MessageHandler'),
                   ('cpp:identifer', 'CommonPropertiesHomW')]
 

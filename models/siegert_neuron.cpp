@@ -209,7 +209,7 @@ nest::siegert_neuron::Buffers_::Buffers_( const Buffers_&, siegert_neuron& n )
  * ---------------------------------------------------------------- */
 
 nest::siegert_neuron::siegert_neuron()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -220,7 +220,7 @@ nest::siegert_neuron::siegert_neuron()
 }
 
 nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -367,7 +367,7 @@ nest::siegert_neuron::init_buffers_()
   B_.last_y_values.resize( buffer_size, 0.0 );
 
   B_.logger_.reset(); // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void

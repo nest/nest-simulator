@@ -35,7 +35,7 @@ https://www.nest-simulator.org/simulations-with-precise-spike-times/
 
 This example compares the conventional grid-constrained model and the
 precise version for an integrate-and-fire neuron model with exponential
-post-synaptic currents [2]_.
+postsynaptic currents [2]_.
 
 References
 ~~~~~~~~~~~

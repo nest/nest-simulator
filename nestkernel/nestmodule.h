@@ -27,11 +27,9 @@
 #include "event.h"
 #include "exceptions.h"
 #include "generic_factory.h"
+#include "ntree.h"
 #include "parameter.h"
-
-// Includes from spatial:
-#include "spatial/ntree.h"
-#include "spatial/position.h"
+#include "position.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -60,6 +58,9 @@ class Parameter;
 class NestModule : public SLIModule
 {
 public:
+#ifdef HAVE_LIBNEUROSIM
+  static SLIType ConnectionGeneratorType;
+#endif
   static SLIType ConnectionType;
   static SLIType MaskType;
   static SLIType NodeCollectionType;
@@ -336,6 +337,12 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } connect_g_g_D_Dfunction;
+
+  class Connect_g_g_D_aFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } connect_g_g_D_afunction;
 
   class ResetKernelFunction : public SLIFunction
   {
@@ -664,6 +671,23 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } apply_P_gfunction;
+
+#ifdef HAVE_LIBNEUROSIM
+  class CGParse_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgparse_sfunction;
+
+  class CGParseFile_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgparsefile_sfunction;
+
+  class CGSelectImplementation_s_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgselectimplementation_s_sfunction;
+#endif
 
   //
   // SLI functions for spatial networks

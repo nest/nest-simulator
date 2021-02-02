@@ -28,24 +28,25 @@ NEST populations with spatial data using Connection Set Algebra instead of
 the built-in connection routines.
 
 Using the CSA requires NEST to be compiled with support for
-libneurosim [1]_.
+libneurosim. For details, see [1]_.
 
 See Also
-~~~~~~~~~
+~~~~~~~~
 
 :doc:`csa_example`
 
 References
-~~~~~~~~~~~~
+~~~~~~~~~~
 
-.. [1] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of connectivity in neuronal networks
-       from simulator-independent descriptions. Front. Neuroinform.
-       http://dx.doi.org/10.3389/fninf.2014.00043
+.. [1] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
+       connectivity in neuronal networks from simulator-independent
+       descriptions. Front. Neuroinform.
+       https://doi.org/10.3389/fninf.2014.00043
+
 """
 
 ###############################################################################
 # First, we import all necessary modules.
-
 
 import nest
 import matplotlib.pyplot as plt
@@ -84,8 +85,6 @@ def geometryFunction(population):
     return geometry_function
 
 
-nest.ResetKernel()
-
 ###############################################################################
 # We create two spatial populations that have 20x20 neurons of type
 # ``iaf_psc_alpha``.
@@ -102,20 +101,22 @@ g2 = geometryFunction(pop2)
 d = csa.euclidMetric2d(g1, g2)
 
 ###############################################################################
-# The connection set `cs` describes a Gaussian connectivity profile with
+# The connection set `cg` describes a Gaussian connectivity profile with
 # ``sigma = 0.2`` and cutoff at 0.5, and two values (10000.0 and 1.0) used as
 # ``weight`` and ``delay``, respectively.
 
-cs = csa.cset(csa.random * (csa.gaussian(0.2, 0.5) * d), 10000.0, 1.0)
+cg = csa.cset(csa.random * (csa.gaussian(0.2, 0.5) * d), 10000.0, 1.0)
 
 ###############################################################################
-# We can now connect the populations using the ``CGConnect`` function. It
-# takes the IDs of pre- and postsynaptic neurons (`pop` and `pop2`),
-# the connection set (`cs`) and a dictionary that map the parameters
-# weight and delay to positions in the value set associated with the
-# connection set.
+# We can now connect the populations using the ``Connect`` function
+# with the ``conngen`` rule. It takes the IDs of pre- and postsynaptic
+# neurons (``pop1`` and ``pop2``), the connection set (``cg``) and a
+# dictionary that map the parameters weight and delay to positions in
+# the value set associated with the connection set (``params_map``).
 
-nest.CGConnect(pop1, pop2, cs, {"weight": 0, "delay": 1})
+params_map = {"weight": 0, "delay": 1}
+connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
+nest.Connect(pop1, pop2, connspec)
 
 ###############################################################################
 # Finally, we use the ``PlotTargets`` function to show all targets in `pop2`

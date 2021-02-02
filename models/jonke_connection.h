@@ -64,7 +64,7 @@ namespace nest
     mu_minus        double - Set weight dependency of depressing update
     tau_plus        double - Time constant of STDP window, potentiation in ms
     beta            double - Set negative offset for both updates
-    (tau_minus is defined in the post-synaptic neuron.)
+    (tau_minus is defined in the postsynaptic neuron.)
   Transmits: SpikeEvent
   References:
     [1] Nessler, Bernhard, et al. "Bayesian computation emerges in generic
@@ -179,7 +179,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  JonkeConnection( const JonkeConnection& );
+  JonkeConnection( const JonkeConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -304,7 +304,7 @@ JonkeConnection< targetidentifierT >::send( Event& e, thread t, const JonkeCommo
   Node* target = get_target( t );
   double dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
 
@@ -314,10 +314,10 @@ JonkeConnection< targetidentifierT >::send( Event& e, thread t, const JonkeCommo
   // which increases the access counter for these entries.
   // At registration, all entries' access counters of
   // history[0, ..., t_last_spike - dendritic_delay] have been
-  // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
+  // incremented by ArchivingNode::register_stdp_connection(). See bug #218 for
   // details.
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
-  // facilitation due to post-synaptic spikes since last pre-synaptic spike
+  // facilitation due to postsynaptic spikes since last pre-synaptic spike
   double minus_dt;
   while ( start != finish )
   {
@@ -352,15 +352,6 @@ JonkeConnection< targetidentifierT >::JonkeConnection()
   , weight_( 1.0 )
   , Kplus_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-JonkeConnection< targetidentifierT >::JonkeConnection( const JonkeConnection< targetidentifierT >& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , Kplus_( rhs.Kplus_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

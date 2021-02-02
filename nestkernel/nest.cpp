@@ -186,7 +186,7 @@ void
 connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
-  const DictionaryDatum& synapse_params )
+  const std::vector< DictionaryDatum >& synapse_params )
 {
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 }
@@ -293,6 +293,8 @@ connect_arrays( long* sources,
 
         kernel().connection_manager.connect(
           *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
+        ALL_ENTRIES_ACCESSED( *param_dicts[ tid ], "connect_arrays", "Unread dictionary entries: " );
+
         increment_wd( w, d );
       }
     }

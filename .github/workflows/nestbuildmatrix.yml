@@ -116,6 +116,7 @@ jobs:
          #run: echo "MPI Only Build"
          #with: ${{ env.xMPI }}
          run: |
+           #https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
            echo "xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh

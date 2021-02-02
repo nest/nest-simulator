@@ -280,9 +280,9 @@ the section on :ref:`collocated synapses <collocated_synapses>`.
                      'weight': 2.5, 'delay': 0.5}
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
-If synapse properties are given as a dictionary, this it must include 
-the key ``synapse_model``, and may additionally specify ``weight``, 
-``delay``, and ``receptor_type`` (see :ref:`receptor-types` for details),
+If synapse properties are given as a dictionary, it may include the keys
+``synapse_model`` (default `static_synapse`), ``weight`` (default 1.0), 
+``delay`` (default 1.0), and ``receptor_type`` (default 0, see :ref:`receptor-types` for details),
 as well as parameters specific to the chosen synapse model. The specification of
 all parameters is optional and unspecified parameters will take on the
 default values of the chosen synapse model that can be inspected using

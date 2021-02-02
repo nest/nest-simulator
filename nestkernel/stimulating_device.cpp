@@ -88,7 +88,6 @@ nest::StimulatingDevice::calibrate( const std::vector< Name >& double_value_name
   const std::vector< Name >& long_value_names )
 {
   Device::calibrate();
-  kernel().io_manager.set_stimulator_value_names( P_.stimulus_source_, *this, double_value_names, long_value_names );
 }
 
 const std::string&
@@ -157,11 +156,6 @@ nest::StimulatingDevice::set_status( const DictionaryDatum& d )
       }
     }
 
-    if ( ptmp.stimulus_source_.toString() != names::internal.toString() )
-    {
-      kernel().io_manager.check_stimulating_backend_device_status( ptmp.stimulus_source_, backend_params );
-    }
-
     // cache all properties accessed by the backend in private member
     backend_params_->clear();
     for ( auto& kv_pair : *backend_params )
@@ -194,23 +188,10 @@ nest::StimulatingDevice::get_status( DictionaryDatum& d ) const
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
-    // first get the defaults from the backend
-    if ( P_.stimulus_source_.toString() != names::internal.toString() )
-    {
-      kernel().io_manager.get_stimulating_backend_device_defaults( P_.stimulus_source_, d );
-    }
-
-    // then overwrite with cached parameters
+    // overwrite with cached parameters
     for ( auto& kv_pair : *backend_params_ )
     {
       ( *d )[ kv_pair.first ] = kv_pair.second;
-    }
-  }
-  else
-  {
-    if ( P_.stimulus_source_.toString() != names::internal.toString() )
-    {
-      kernel().io_manager.get_stimulating_backend_device_status( P_.stimulus_source_, *this, d );
     }
   }
 }

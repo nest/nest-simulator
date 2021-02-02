@@ -100,21 +100,6 @@ public:
   virtual void disenroll( StimulatingDevice& ){};
 
   /**
-   * To make the names of input quantities known to the
-   * `StimulatingBackend`, the vectors @p double_value_names and @p
-   * long_value_names can be set appropriately.
-   *
-   * @param device the device to set the value names for
-   * @param double_value_names the names for double values to be recorded
-   * @param long_value_names the names for long values to be recorded
-   *
-   * @see enroll(), disenroll(), write(),
-   *
-   * @ingroup NESTio
-   */
-  void set_value_names( const StimulatingDevice&, const std::vector< Name >&, const std::vector< Name >& ){};
-
-  /**
    * Initialize global backend-specific data structures.
    *
    * This function is called on each backend right at the very beginning of
@@ -185,62 +170,6 @@ public:
   virtual void cleanup() = 0;
 
   void clear( const StimulatingDevice& ){};
-
-  /**
-  * Check if the given per-device properties are valid and usable by
-  * the backend.
-  *
-  * This function is used to validate properties when SetDefaults is
-  * called on a recording device. If the properties are found to be
-  * valid, they will be cached in the recording device and set for
-  * individual instances by means of the call to enroll from the
-  * device's set_initialized_() function. In case the properties are
-  * invalid, this function is expected to throw BadProperty.
-  *
-  * @param params the parameter dictionary to validate
-  *
-  * @see get_device_defaults(), get_device_status()
-  *
-  * @ingroup NESTio
-  */
-  virtual void check_device_status( const DictionaryDatum& ) const = 0;
-
-  /**
-   * Return the per-device defaults by writing it to the given params
-   * dictionary.
-   *
-   * @param params the dictionary to add device-specific backend parameters to
-   *
-   * @see check_device_status(), get_device_status()
-   *
-   * @ingroup NESTio
-   */
-  virtual void get_device_defaults( DictionaryDatum& ) const = 0;
-
-  /**
-   * Return the per-device status of the given recording device by
-   * writing it to the given params dictionary.
-   *
-   * Please note that a corresponding setter function does not exist.
-   * Device-specific backend parameters are given in the call to
-   * enroll.
-   *
-   * @param device the recording device for which the status is returned
-   * @param params the dictionary to add device-specific backend parameters to
-   *
-   * @see enroll(), check_device_status(), get_device_defaults()
-   *
-   * @ingroup NESTio
-   */
-  virtual void get_device_status( const StimulatingDevice&, DictionaryDatum& ) const = 0;
-
-  virtual void set_status( const DictionaryDatum& ){};
-
-  virtual void get_status( DictionaryDatum& ) const {};
-
-  void set_input_device_status( const StimulatingDevice&, const DictionaryDatum& ) const {};
-
-  void get_input_device_status( const StimulatingDevice&, DictionaryDatum& ) const {};
 
   static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
   static const std::vector< Name > NO_LONG_VALUE_NAMES;

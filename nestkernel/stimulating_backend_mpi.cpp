@@ -104,16 +104,18 @@ nest::StimulatingBackendMPI::disenroll( nest::StimulatingDevice& device )
 }
 
 void
-nest::StimulatingBackendMPI::set_value_names( const nest::StimulatingDevice&,
-  const std::vector< Name >&,
-  const std::vector< Name >& )
-{
-  // nothing to do
-}
-
-void
 nest::StimulatingBackendMPI::prepare()
 {
+    if ( not enrolled_ )
+  {
+    return;
+  }
+
+  if ( prepared_ )
+  {
+    throw BackendPrepared( "InputBackendMPI" );
+  }
+
   // need to be run only by the master thread : it is the case because this part is not running in parallel
   thread thread_id_master = kernel().vp_manager.get_thread_id();
   // Create the connection with MPI
@@ -295,37 +297,6 @@ nest::StimulatingBackendMPI::cleanup()
 }
 
 void
-nest::StimulatingBackendMPI::check_device_status( const DictionaryDatum& ) const
-{
-  // nothing to do
-}
-
-void
-nest::StimulatingBackendMPI::get_device_defaults( DictionaryDatum& ) const
-{
-  // nothing to do
-}
-
-void
-nest::StimulatingBackendMPI::get_device_status( const nest::StimulatingDevice&, DictionaryDatum& ) const
-{
-  // nothing to do
-}
-
-
-void
-nest::StimulatingBackendMPI::get_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
-{
-  // nothing to do
-}
-
-void
-nest::StimulatingBackendMPI::set_status( const DictionaryDatum& )
-{
-  // nothing to do
-}
-
-void
 nest::StimulatingBackendMPI::get_port( nest::StimulatingDevice* device, std::string* port_name )
 {
   get_port( device->get_node_id(), device->get_label(), port_name );
@@ -373,18 +344,17 @@ std::pair< int*, double* >
 nest::StimulatingBackendMPI::receive_spike_train( const MPI_Comm& comm, std::vector< int >& devices_id )
 {
   // Send size of the list id
-  int size_list[ 1 ];
-  size_list[ 0 ] = devices_id.size();
+  int size_list = { int(devices_id.size()) };
   MPI_Send( &size_list, 1, MPI_INT, 0, 0, comm );
-  if ( size_list[ 0 ] != 0 )
+  if ( size_list != 0 )
   {
     // Send the list of device ids
-    MPI_Send( &devices_id[ 0 ], size_list[ 0 ], MPI_INT, 0, 0, comm );
+    MPI_Send( &devices_id[ 0 ], size_list, MPI_INT, 0, 0, comm );
     // Receive the size of data
     MPI_Status status_mpi;
     // Receive the size of the data in total and for each devices
-    int* nb_size_data_per_id{ new int[ size_list[ 0 ] + 1 ]{} }; // delete in the function clean_memory_input_data
-    MPI_Recv( nb_size_data_per_id, size_list[ 0 ] + 1, MPI_INT, MPI_ANY_SOURCE, devices_id[ 0 ], comm, &status_mpi );
+    int* nb_size_data_per_id{ new int[ size_list + 1 ]{} }; // delete in the function clean_memory_input_data
+    MPI_Recv( nb_size_data_per_id, size_list + 1, MPI_INT, MPI_ANY_SOURCE, devices_id[ 0 ], comm, &status_mpi );
     // Receive the data
     double* data{ new double[ nb_size_data_per_id[ 0 ] ]{} }; // delete in the function clean_memory_input_data
     MPI_Recv( data, nb_size_data_per_id[ 0 ], MPI_DOUBLE, status_mpi.MPI_SOURCE, devices_id[ 0 ], comm, &status_mpi );

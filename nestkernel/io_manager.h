@@ -114,11 +114,6 @@ public:
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
-  void set_stimulator_value_names( const Name&,
-    const StimulatingDevice&,
-    const std::vector< Name >&,
-    const std::vector< Name >& );
-
   void check_recording_backend_device_status( const Name&, const DictionaryDatum& );
   void get_recording_backend_device_defaults( const Name&, DictionaryDatum& );
   void get_recording_backend_device_status( const Name&, const RecordingDevice&, DictionaryDatum& );

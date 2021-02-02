@@ -123,7 +123,7 @@ nest::RecordingBackendMPI::prepare()
 
   if ( prepared_ )
   {
-    throw BackendPrepared( "RecordingBackendArbor" );
+    throw BackendPrepared( "RecordingBackendMPI" );
   }
   prepared_ = true;
   thread thread_id_master = 0;
@@ -397,9 +397,8 @@ void
 nest::RecordingBackendMPI::send_data( const MPI_Comm* comm, const double data[], const int size )
 {
   // Send the size of data
-  int shape[ 1 ];
-  shape[ 0 ] = size;
+  int shape = { size };
   MPI_Send( &shape, 1, MPI_INT, 0, 0, *comm );
   // Receive the data ( for the moment only spike time )
-  MPI_Send( data, shape[ 0 ], MPI_DOUBLE, 0, 0, *comm );
+  MPI_Send( data, shape, MPI_DOUBLE, 0, 0, *comm );
 }

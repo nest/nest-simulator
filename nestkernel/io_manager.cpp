@@ -201,18 +201,6 @@ IOManager::set_status( const DictionaryDatum& d )
       }
     }
   }
-  DictionaryDatum stimulating_backends;
-  if ( updateValue< DictionaryDatum >( d, names::stimulating_backends, stimulating_backends ) )
-  {
-    for ( auto& iti : stimulating_backends_ )
-    {
-      DictionaryDatum stimulating_backend_status;
-      if ( updateValue< DictionaryDatum >( stimulating_backends, iti.first, stimulating_backend_status ) )
-      {
-        iti.second->set_status( stimulating_backend_status );
-      }
-    }
-  }
 }
 
 void
@@ -230,15 +218,6 @@ IOManager::get_status( DictionaryDatum& d )
     ( *recording_backends )[ it.first ] = recording_backend_status;
   }
   ( *d )[ names::recording_backends ] = recording_backends;
-
-  DictionaryDatum stimulating_backends( new Dictionary );
-  for ( const auto& it : stimulating_backends_ )
-  {
-    DictionaryDatum stimulating_backend_status( new Dictionary );
-    it.second->get_status( stimulating_backend_status );
-    ( *stimulating_backends )[ it.first ] = stimulating_backend_status;
-  }
-  ( *d )[ names::stimulating_backends ] = stimulating_backends;
 }
 
 void
@@ -382,30 +361,6 @@ nest::IOManager::enroll_stimulator( const Name& backend_name, StimulatingDevice&
 }
 
 void
-nest::IOManager::get_stimulating_backend_device_status( const Name& backend_name,
-  const StimulatingDevice& device,
-  DictionaryDatum& d )
-{
-  if ( is_valid_stimulating_backend( backend_name ) )
-  {
-    stimulating_backends_[ backend_name ]->get_device_status( device, d );
-  }
-}
-
-void
-nest::IOManager::set_stimulator_value_names( const Name& backend_name,
-  const StimulatingDevice& device,
-  const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
-{
-  if ( is_valid_stimulating_backend( backend_name ) )
-  {
-    stimulating_backends_[ backend_name ]->set_value_names( device, double_value_names, long_value_names );
-  }
-}
-
-
-void
 IOManager::set_recording_value_names( const Name& backend_name,
   const RecordingDevice& device,
   const std::vector< Name >& double_value_names,
@@ -432,24 +387,6 @@ IOManager::get_recording_backend_device_status( const Name& backend_name,
   DictionaryDatum& d )
 {
   recording_backends_[ backend_name ]->get_device_status( device, d );
-}
-
-void
-IOManager::check_stimulating_backend_device_status( const Name& backend_name, const DictionaryDatum& params )
-{
-  if ( is_valid_stimulating_backend( backend_name ) )
-  {
-    stimulating_backends_[ backend_name ]->check_device_status( params );
-  }
-}
-
-void
-IOManager::get_stimulating_backend_device_defaults( const Name& backend_name, DictionaryDatum& params )
-{
-  if ( is_valid_stimulating_backend( backend_name ) )
-  {
-    stimulating_backends_[ backend_name ]->get_device_defaults( params );
-  }
 }
 
 void

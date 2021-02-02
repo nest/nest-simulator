@@ -38,7 +38,7 @@
 Read data from MPI
 ##################
 
-When an input device is to be updated at the beginning of each step run, the 'mpi' backend
+When an stimulating device is to be updated at the beginning of each step run, the 'mpi' backend
 communicates with an external source via MPI to get the update.
 
 Communication Protocol: (value,number,type,source/destination,tag)
@@ -92,25 +92,11 @@ public:
 
   void prepare() override;
 
-  void set_status( const DictionaryDatum& ) override;
-
-  void get_status( DictionaryDatum& ) const override;
-
   void pre_run_hook() override;
 
   void post_run_hook() override;
 
   void post_step_hook() override;
-
-  void check_device_status( const DictionaryDatum& ) const override;
-
-  void set_value_names( const StimulatingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names );
-
-  void get_device_defaults( DictionaryDatum& ) const override;
-
-  void get_device_status( const StimulatingDevice& device, DictionaryDatum& params_dictionary ) const;
 
 private:
   bool enrolled_;

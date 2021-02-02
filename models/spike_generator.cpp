@@ -171,23 +171,10 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   const Time& now,
   Node* node )
 {
-  bool flags_changed = updateValueParam< bool >( d, names::precise_times, precise_times_, node )
-    or updateValueParam< bool >( d, names::shift_now_spikes, shift_now_spikes_, node )
-    or updateValueParam< bool >( d, names::allow_offgrid_times, allow_offgrid_times_, node );
-
-  if ( d->known( names::allow_offgrid_times ) )
-  {
-    allow_offgrid_times_ = getValue< bool >( d->lookup( names::allow_offgrid_times ) );
-  }
-  if ( d->known( names::precise_times ) )
-  {
-    precise_times_ = getValue< bool >( d->lookup( names::precise_times ) );
-  }
-  if ( d->known( names::shift_now_spikes ) )
-  {
-    shift_now_spikes_ = getValue< bool >( d->lookup( names::shift_now_spikes ) );
-  }
-
+  bool precise_times_changed = updateValueParam< bool >( d, names::precise_times, precise_times_, node );
+  bool shift_now_spikes_changed =  updateValueParam< bool >( d, names::shift_now_spikes, shift_now_spikes_, node );
+  bool allow_offgrid_times_changed = updateValueParam< bool >( d, names::allow_offgrid_times, allow_offgrid_times_, node );
+  bool flags_changed = precise_times_changed or shift_now_spikes_changed or allow_offgrid_times_changed;
   if ( precise_times_ && ( allow_offgrid_times_ || shift_now_spikes_ ) )
   {
     throw BadProperty(

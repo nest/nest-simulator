@@ -24,7 +24,7 @@ jobs:
          #cxx: ["g++"]
          #cc:  ["gcc"]
          #ver: ["9"]
-         cpp_compiler: ["clang"]
+         cpp_compiler: ["gcc", "clang"]
          xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
          include: 
            - os: "ubuntu-20.04"

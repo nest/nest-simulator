@@ -73,7 +73,7 @@ nest.Simulate(200)
 
 
 ###############################################################################
-# After simulating, the spikes are extracted from the ``spike_detector`` and
+# After simulating, the spikes are extracted from the ``spike_recorder`` and
 # plots are created with panels for the PST and ISI histograms.
 
 

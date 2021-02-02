@@ -417,7 +417,7 @@ public:
   bool
   provides_long() const
   {
-    return true;
+    return parameter_->returns_int_only();
   }
 
 private:

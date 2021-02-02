@@ -145,10 +145,10 @@ public:
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
   void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
-  bool operator()( RngPtr rng, double_t h );
+  bool operator()( RngPtr rng, double h );
 };
 
-inline bool gainfunction_erfc::operator()( RngPtr rng, double_t h )
+inline bool gainfunction_erfc::operator()( RngPtr rng, double h )
 {
   return rng->drand() < 0.5 * erfc( -( h - theta_ ) / ( sqrt( 2. ) * sigma_ ) );
 }

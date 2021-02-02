@@ -145,7 +145,6 @@ private:
     double p_copy_; //!< copy probability for each spike in the parent process
 
     Parameters_(); //!< Sets default parameter values
-    Parameters_( const Parameters_& );
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
     void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary

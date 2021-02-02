@@ -73,16 +73,13 @@ public:
    */
   virtual double value( RngPtr rng, Node* node ) = 0;
   virtual double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread )
+  value( RngPtr rng, index, Node*, thread )
   {
     return value( rng, nullptr );
   }
 
   virtual double
-  value( RngPtr rng,
-    const std::vector< double >& source_pos,
-    const std::vector< double >& target_pos,
-    const AbstractLayer& layer )
+  value( RngPtr rng, const std::vector< double >&, const std::vector< double >&, const AbstractLayer& )
   {
     return value( rng, nullptr );
   }
@@ -460,13 +457,13 @@ public:
   }
 
   double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
+  value( RngPtr, index, Node*, thread ) override
   {
     throw KernelException( "Node position parameter can only be used when using ConnectLayers." );
   }
 
   double
-  value( RngPtr rng,
+  value( RngPtr,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& ) override
@@ -518,7 +515,7 @@ public:
   }
 
   double
-  value( RngPtr rng, Node* ) override
+  value( RngPtr, Node* ) override
   {
     throw BadParameterValue( "Spatial distance parameter can only be used when connecting." );
   }
@@ -1625,13 +1622,13 @@ public:
    * The DimensionParameter has no double value, so this method will always throw.
    */
   double
-  value( RngPtr rng, Node* node ) override
+  value( RngPtr, Node* ) override
   {
     throw KernelException( "Cannot get value of DimensionParameter." );
   }
 
   double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
+  value( RngPtr, index, Node*, thread ) override
   {
     throw KernelException( "Cannot get value of DimensionParameter." );
   }

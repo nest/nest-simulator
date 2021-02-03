@@ -41,7 +41,7 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
     You can find a list of all models implemented in NEST in our
     :doc:`model directory <models/index>`.
 
-    Each model is one entity. Check out
+    Each neuron model is one entity. Check out
     `NESTML <https://nestml.readthedocs.io/en/latest/>`_ if you want to combine
     aspects of different models or create a new model.
 

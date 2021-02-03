@@ -83,13 +83,6 @@ nest::StimulatingDevice::set_initialized_()
   kernel().io_manager.enroll_stimulator( P_.stimulus_source_, *this, backend_params_ );
 }
 
-void
-nest::StimulatingDevice::calibrate( const std::vector< Name >& double_value_names,
-  const std::vector< Name >& long_value_names )
-{
-  Device::calibrate();
-}
-
 const std::string&
 nest::StimulatingDevice::get_label() const
 {

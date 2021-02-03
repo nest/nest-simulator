@@ -114,10 +114,7 @@ public:
   using Device::init_buffers;
   using Node::calibrate;
 
-
-  void calibrate( const std::vector< Name >&, const std::vector< Name >& );
   void calibrate() override;
-
 
   //! Throws IllegalConnection if synapse id differs from initial synapse id
   void enforce_single_syn_type( synindex );

@@ -32,6 +32,7 @@
 set -e
 
 echo $GITHUB_ENV
+echo $xNEST_BUILD_TYPE
 if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
     export CC=clang-7
     export CXX=clang++-7

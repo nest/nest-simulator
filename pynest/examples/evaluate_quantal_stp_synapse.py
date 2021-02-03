@@ -168,8 +168,8 @@ nest.Simulate(.1)
 
 ###############################################################################
 # Extract the reference trace.
-vm = numpy.array(voltmeter[1].get('events', 'V_m'))
-vm_reference = numpy.array(voltmeter[0].get('events', 'V_m'))
+vm = voltmeter[1].get('events', 'V_m')
+vm_reference = voltmeter[0].get('events', 'V_m')
 
 vm.shape = (n_trials, 1500)
 vm_reference.shape = (n_trials, 1500)

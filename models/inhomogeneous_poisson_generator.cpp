@@ -298,7 +298,6 @@ void
 nest::inhomogeneous_poisson_generator::set_data_from_stimulating_backend( std::vector< double > rate_time_update )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-
   // For the input backend
   if ( not rate_time_update.empty() )
   {

@@ -55,39 +55,14 @@ struct my_params
 };
 
 /* ----------------------------------------------------------------
- * Integrands for evaluation of siegert formula
+ * Scaled complementary error function erfcx(x) = exp(x^2) * erfc(x)
  * ---------------------------------------------------------------- */
 
 double
-integrand1( double x, void* p )
+erfcx( double x, void* p )
 {
-  struct my_params* params = ( struct my_params* ) p;
-  double y_th = ( params->a );
-  double y_r = ( params->b );
-  if ( x == 0 )
-  {
-    return exp( -y_th * y_th ) * 2 * ( y_th - y_r );
-  }
-  else
-  {
-    return exp( -( x - y_th ) * ( x - y_th ) ) * ( 1. - exp( 2 * ( y_r - y_th ) * x ) ) / x;
-  }
-}
-
-double
-integrand2( double x, void* p )
-{
-  struct my_params* params = ( struct my_params* ) p;
-  double y_th = ( params->a );
-  double y_r = ( params->b );
-  if ( x == 0 )
-  {
-    return 2 * ( y_th - y_r );
-  }
-  else
-  {
-    return ( exp( 2 * y_th * x - x * x ) - exp( 2 * y_r * x - x * x ) ) / x;
-  }
+  double scale = *( double* ) p;
+  return exp( scale * scale * x * x + gsl_sf_log_erfc( x ) );
 }
 
 namespace nest
@@ -235,114 +210,68 @@ nest::siegert_neuron::~siegert_neuron()
 }
 
 /* ----------------------------------------------------------------
- * Siegert function and helpers
+ * Siegert function
  * ---------------------------------------------------------------- */
-
-double
-nest::siegert_neuron::siegert1( double theta_shift, double V_reset_shift, double mu, double sigma )
-{
-  double y_th;
-  y_th = ( theta_shift - mu ) / sigma;
-  double y_r;
-  y_r = ( V_reset_shift - mu ) / sigma;
-
-  double result, error;
-
-  gsl_function F;
-  F.function = &integrand1;
-
-  struct my_params alpha = { y_th, y_r };
-  F.params = &alpha;
-
-  double lower_bound = y_th;
-  double err = 1.;
-  while ( err >= 1e-12 )
-  {
-    err = integrand1( lower_bound, &alpha );
-    if ( err > 1e-12 )
-    {
-      lower_bound /= 2.;
-    }
-  }
-
-  double upper_bound = y_th;
-  err = 1.;
-  while ( err >= 1e-12 )
-  {
-    err = integrand1( upper_bound, &alpha );
-    if ( err > 1e-12 )
-    {
-      upper_bound *= 2.;
-    }
-  }
-
-  gsl_integration_qags( &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
-
-  // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
-  return 1e3 * 1. / ( P_.t_ref_ + exp( y_th * y_th ) * result * P_.tau_m_ );
-}
-
-double
-nest::siegert_neuron::siegert2( double theta_shift, double V_reset_shift, double mu, double sigma )
-{
-  double y_th;
-  y_th = ( theta_shift - mu ) / sigma;
-  double y_r;
-  y_r = ( V_reset_shift - mu ) / sigma;
-
-  double result, error;
-
-  gsl_function F;
-  F.function = &integrand2;
-
-  struct my_params alpha = { y_th, y_r };
-  F.params = &alpha;
-
-  double lower_bound = 0.;
-  double upper_bound = 1.;
-  double err = 1.;
-  while ( err >= 1e-12 )
-  {
-    err = integrand2( upper_bound, &alpha );
-    if ( err > 1e-12 )
-    {
-      upper_bound *= 2.;
-    }
-  }
-
-  gsl_integration_qags( &F, lower_bound, upper_bound, 0.0, 1.49e-8, 1000, gsl_w_, &result, &error );
-
-  // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
-  return 1e3 * 1. / ( P_.t_ref_ + result * P_.tau_m_ );
-}
 
 double
 nest::siegert_neuron::siegert( double mu, double sigma_square )
 {
   double sigma = std::sqrt( sigma_square );
 
-  // Effective shift of threshold and reset due to colored noise:
-  // alpha = |zeta(1/2)|/sqrt(2) with zeta being the Riemann zeta
-  // function (Fourcaud & Brunel, 2002)
-  double alpha = 2.0652531522312172;
-
-  double theta_shift = P_.theta_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
-  double V_r_shift = P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
-
   // Catch cases where neurons get no input.
   // Use (Brunel, 2000) eq. (22) to estimate
   // firing rate to be ~ 1e-16
-  if ( ( theta_shift - mu ) > 6. * sigma )
+  if ( ( P_.theta_ - mu ) > 6. * sigma )
   {
     return 0.;
   }
-  if ( mu <= theta_shift - 0.05 * std::abs( theta_shift ) )
+
+  // Effective shift of threshold and reset due to colored noise:
+  // alpha = |zeta(1/2)|*sqrt(2) with zeta being the Riemann zeta
+  // function (Fourcaud & Brunel, 2002)
+  const double alpha = 2.0652531522312172;
+  double threshold_shift = alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+
+  // Scaled and shifted threshold and reset
+  double y_th = ( P_.theta_ - mu ) / sigma + threshold_shift;
+  double y_r = ( P_.V_reset_ - mu ) / sigma + threshold_shift;
+
+  // Prepare numerical integration
+  double integral, result, error;
+  const size_t max_subintervals = 1000;
+  double erfcx_scale = 1.0;
+  gsl_function F;
+  F.function = &erfcx;
+  F.params = &erfcx_scale;
+  // Error tolerances for numerical integration, 1.49e-8 is approximately
+  // machine precision for single-precision floats, i.e. 2^(-26).
+  const double err_abs = 0.0;
+  const double err_rel = 1.49e-8;
+
+  // Evaluate integral of exp( s^2 ) * ( 1 + erf( s ) ) from y_r to y_th
+  // depending on the sign of y_th and y_r. Uses the scaled complementary
+  // error function erfcx( s ) = exp( s^2 ) * erf( s ).
+  if ( y_r > 0. )
   {
-    return siegert1( theta_shift, V_r_shift, mu, sigma );
+    gsl_integration_qags( &F, y_r, y_th, err_abs, err_rel, max_subintervals, gsl_w_, &result, &error );
+    integral = 2. * gsl_sf_dawson( y_th ) - 2. * exp( y_r * y_r - y_th * y_th ) * gsl_sf_dawson( y_r )
+      - exp( -y_th * y_th ) * result;
+    // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+    return 1e3 * exp( -y_th * y_th ) / ( exp( -y_th * y_th ) * P_.t_ref_ + P_.tau_m_ * std::sqrt( M_PI ) * integral );
+  }
+  else if ( y_th < 0. )
+  {
+    gsl_integration_qags( &F, -y_th, -y_r, err_abs, err_rel, max_subintervals, gsl_w_, &result, &error );
+    integral = result;
+    // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+    return 1e3 * 1. / ( P_.t_ref_ + P_.tau_m_ * std::sqrt( M_PI ) * integral );
   }
   else
   {
-    return siegert2( theta_shift, V_r_shift, mu, sigma );
+    gsl_integration_qags( &F, y_th, -y_r, err_abs, err_rel, max_subintervals, gsl_w_, &result, &error );
+    integral = 2. * gsl_sf_dawson( y_th ) + exp( -y_th * y_th ) * result;
+    // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+    return 1e3 * exp( -y_th * y_th ) / ( exp( -y_th * y_th ) * P_.t_ref_ + P_.tau_m_ * std::sqrt( M_PI ) * integral );
   }
 }
 

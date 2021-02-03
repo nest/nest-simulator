@@ -188,9 +188,7 @@ connect( NodeCollectionPTR sources,
   const DictionaryDatum& connectivity,
   const std::vector< DictionaryDatum >& synapse_params )
 {
-  kernel().connection_manager.sw_construction_connect.start();
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
-  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 void
@@ -203,6 +201,7 @@ connect_arrays( long* sources,
   size_t n,
   std::string syn_model )
 {
+  // only place, where stopwatch sw_construction_connect is needed in addition to nestmodule.cpp
   kernel().connection_manager.sw_construction_connect.start();
 
   // Mapping pointers to the first parameter value of each parameter to their respective names.

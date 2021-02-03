@@ -389,7 +389,7 @@ public:
   void set_stdp_eps( const double stdp_eps );
 
   // public stop watch for benchmarking purposes
-  // start and stop in high-level connect functions in nestmodule.cpp, nest.cpp, conngen.cpp, and spatial.cpp
+  // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
   Stopwatch sw_construction_connect;
 
 private:

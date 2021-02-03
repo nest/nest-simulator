@@ -73,8 +73,8 @@ and synapse models apply randomness during simulation as described in the model 
 
 This section provides a practical introduction into managing random number 
 generators and seeds in NEST, followed by an :ref:`overview of the nest.random module <nest_random>`
-and :ref:`examples of using randomness <random_examples>`.  A separate section provides :ref:`suggestions for additional
-randomization from the Python level <python_rand>`. 
+and :ref:`examples of using randomness <random_examples>`.  A separate section provides
+:ref:`suggestions for additional randomization from the Python level <python_rand>`. 
 
 Programs which are entirely serial typically use a single source of random numbers.
 In parallel simulations, such a single source of random numbers would form an
@@ -103,14 +103,14 @@ This currently gives the following generators:
      'mt19937', 'mt19937_64'
 
 The Philox and Threefry generators are cryptographic generators from Random123, while mt19937
-is the `Mersenne Twister generator <<http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html>`__.
+is the `Mersenne Twister generator <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html>`__.
 Each generator comes in a 32- and a 64-bit implementation. The number of bits has no consequence
 for the quality of randomness, but depending on computer and compiler, one or the other may show
 better performance. More generators may be added in the future. Currently, only a small number of 
 generators is available because we require generators with sufficiently long period as discussed in
 :ref:`Random number internals <random_internals>`.
 
-The default random number generator set in NEST 3 is `mt19937_64`. To choose a different generator,
+The default random number generator set in NEST 3 is ``mt19937_64``. To choose a different generator,
 simply set it
 
 ::
@@ -138,11 +138,11 @@ You can use any number :math:`s` with :math:`1\leq s \leq 2^{31}-1` as seed:
 As long as you use two different seed values, NEST will ensure that all random number streams in a
 simulation are seeded properly; see :ref:`Random number internals <random_internals>` for details.
 
-You can inspect the seed value used with
+You can inspect the RNG type and seed value used with
 
 ::
 
-    nest.SetKernelStatus({'rng_seed': 12345})
+    nest.GetKernelStatus(['rng_type', 'rng_seed'])
     
 Any simulation run with the same seed shall return identical results (provided the same 
 compiler/C++ Standard Library was used).
@@ -153,7 +153,13 @@ compiler/C++ Standard Library was used).
 The NEST random module
 ----------------------
 
-THIS SHOULD PROVIDE A COMPREHENSIVE OVERVIEW OF ALL THAT IS IN THE nest.random MODULE.
+The ``nest.random`` module provides a range of random distributions that
+can be used to specify parameters for neurons, synapses and connection 
+rules. See :ref:`below for examples <random_examples>` on how to use them in 
+practice.
+
+.. automodule:: nest.random.hl_api_random
+    :members:
 
 
 .. _random_examples:
@@ -170,7 +176,10 @@ Randomizing the membrane potential
     nest.Create('iaf_psc_alpha', 10000, {'V_m': nest.random.normal(mean=-60.0, std=10.0)}) 
 
 
-AND MORE EXAMPLES, see NEST 2 to 3 guide
+.. todo :: ADD MORE EXAMPLES
+   
+   See, e.g., the NEST 2 to 3 guide
+   Add some more text to the example above, too
 
 
 .. _python_rand:
@@ -186,16 +195,22 @@ before continuing.
 
 A key principle of parallel simulation in NEST is that a simulation performed with a fixed
 number of virtual processes :math:`N_{\text{vp}} = M \times T` shall produce identical results
-independent of between how many MPI processes $M$ and threads $T$ the virtual processes are 
+independent of between how many MPI processes :math:`M` and threads :math:`T` the virtual processes are 
 divided. To observe this principle also when randomizing from the Python level, it is essential
 to create one Python random number generator per virtual process and use the random number
 generator for the virtual process to which a node belongs (for synapses: the VP of the target
 node).
 
-We consider first an example setting a random membrane potential (but note that this simple randomization
-could and should be done directly in NEST!). We use the `modern random packagei introduced with NumPy 1.17 <https://numpy.org/doc/stable/reference/random/>`__.
+We consider first an example setting a random membrane potential. 
+We use the `modern random package introduced with NumPy 1.17 <https://numpy.org/doc/stable/reference/random/>`__.
 
-.. code-block: ipython
+.. admonition:: Don't do this in Python!
+  
+   The simple randomization below is shown only to provide an illustrative example for
+   randomizing from the Python level. In this case, you should randomized using NEST's
+   built in mechanisms!
+
+.. code-block:: ipython
 
     import numpy as np
     
@@ -203,16 +218,16 @@ could and should be done directly in NEST!). We use the `modern random packagei 
     py_seed = 987654
     
     nest.SetKernelStatus({'total_num_virtual_procs': n_vp})
-    nrns = nest.Create('iaf_psc_alpha', 12)
+    nrns = nest.Create('iaf_psc_alpha', 12)  
     
-    rngs = [np.random.default_rng(py_seed + n) for n in range(n_vp)]
-    
+    rngs = {vp: np.random.default_rng(py_seed+vp) for vp in nest.GetLocalVPs()}
+   
     for n in nest.GetLocalNodeCollection(nrns):
         n.set({'V_m': rngs[n.get('vp')].uniform()})
         
-After creating the neurons, we create `n_vp` random number generators. We then use
-`nest.GetLocalNodeCollection()` to obtain all those neurons that belong to the local 
-MPI rank, since each rank can only access local nodes. We then use `n.get('vp')` to obtain
+After creating the neurons, we create ``n_vp`` random number generators. We then use
+``nest.GetLocalNodeCollection()`` to obtain all those neurons that belong to the local 
+MPI rank, since each rank can only access local nodes. We then use ``n.get('vp')`` to obtain
 the virtual processes responsible for the node and use it to pick out the correct RNG, 
 from which we draw the random membrane potential.
 
@@ -220,26 +235,13 @@ To parameterize a connection, we need to use the random generator for the virtua
 the target neuron. Continuing from the example above, we can randomize the connection weight
 as follows:
 
-.. code-block: ipython
+.. code-block:: ipython
 
-	nest.Connect(nrns, nrns, 'one_to_one')
-	conns = nest.GetConnections()
-	
-	for c in conns:
-	    c.set({'weight': rngs[nest.NodeCollection([s.get('target')]).get('vp')].uniform()})
-
-
-.. admonition:
-   TODO: The above is far too complicated and creates a lot of RNGs we don't need for many
-   MPI processes. If we easily can map VPs to target threads, we could do
+    nest.Connect(nrns, nrns, 'one_to_one')
    
-   rngs = {nest.vp_to_thread(vp): np.random.default_rng(py_seed + vp) for vp in range(n_vp)}
-   
-   for n in nest.GetLocalNodeCollection(nrns):
-        n.set({'V_m': rngs[n.get('thread')].uniform()})
+    for c in nest.GetConnections():
+        c.set({'weight': rngs[c.get('vp')].uniform()})
 
-   for c in conns:
-	    c.set({'weight': rngs[s.get('target')].uniform()})
 
 
 .. _random_internals:
@@ -247,386 +249,161 @@ as follows:
 Random number internals
 -----------------------
 
-TO BE REVISED
+Global and VP-local generators
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For details of parallelization in NEST, please see `Parallel
-Computing <parallel-computing.md>`__ and `Plesser et al
-(2007) <http://dx.doi.org/10.1007/978-3-540-74466-5_71>`__. Here, we
-just summarize a few basics.
+As described above, random numbers are consumed in NEST
+ 
+1. during node creation to randomize node parameters; 
 
--  NEST can parallelize simulations through *multi-threading*,
-   *distribution* or a combination of the two.
+#. during connection creation 
 
--  A distributed simulation is spread across several processes under the
-   control of MPI (Message Passing Interface). Each network node is
-   *local* to exactly one process and complete information about the
-   node is only available to that process. Information about each
-   connection is stored by the process in which the connection target is
-   local and is only available and changeable on that process.
+   a. to select connections to be created, 
+   #. to parameterize connections; 
+   
+#. during simulation 
+  
+   a. to generate stochastic input (randomized spike trains, noisy currents),
+   #. to support stochastic spike generation. 
+   
+In all cases except certain sub-cases of 2.a, randomization is tied to a node, 
+which in turn is assigned to a specific virtual process, either because the node is
+concerned (cases 1, 3) or because the node is the target of a connection
+(case 2). NEST design guarantees that nodes assigned to different VPs
+can be updated independently of each other, and the same holds for
+connections if created or parameterized from a target-node perspective.
+Therefore, for all these purposes, one random number stream per VP is
+required and sufficient to ensure that different VPs can operate
+independently.
 
--  Multi-threaded simulations run in a single process in a single
-   computer. As a consequence, all nodes in a multi-threaded simulation
-   are local.
+The only exception are certain sub-cases of 2.i and 3 which require 
+identical random number streams either per MPI process or per virtual process.
+This pertains in particular to ``fixed_outdegree`` and ``fixed_total_number`` 
+connection rules and the `mip_generator`.
 
--  Distribution and multi-threading can be combined by running identical
-   numbers of threads in each process.
+NEST therefore provides three kinds of random number streams
 
--  A serial simulation has a single process with a single seed.
+1. a rank-synchronized (global) random number stream to be used only by the
+   main thread of each MPI rank; all MPI ranks must draw equally many numbers
+   from this stream and discard those they do not need.
+#. a VP-synchronized (global) random number stream to be used in parallel
+   by all VPs.
+#. one asynchronous random number stream per virtual process.
 
--  From the NEST user perspective, distributed processes and threads are
-   visible as **virtual processes**. A simulation distributed across
-   \\(M\\) MPI processes with \\(T\\) threads each, has \\(N\_{vp} = M
-   times T\\) virtual processes. It is a basic design principle of NEST
-   that simulations shall generate *identical* results when run with a
-   fixed \\(N\_{VP}\\), no matter how the virutal processes are broken
-   down into MPI processes and threads.
+This results in a total of :math:`N_{\text{vp}}+2` random number streams.
+To avoid unnecessary complications in the code using random numbers, 
+serial simulations also use all three kinds. The generators for all streams 
+are of the same type. If the RNG type is changed, the change
+applies to all generators.
 
--  Useful information can be obtained like this
+NEST regularly checks during a simulation that the rank- and VP-synchronized
+random number streams indeed stay in sync. 
 
-   import nest nest.NumProcesses() # number of MPI processes nest.Rank()
-   # rank of MPI process executing command
-   nest.GetKernelStatus(['num\_processes']) # same as
-   nest.NumProcesses() nest.GetKernelStatus(['local\_num\_threads']) #
-   number of threads in present process (same for all processes)
-   nest.GetKernelStatus(['total\_num\_virtual\_procs']) # N\_vp = M x T
 
--  When querying neurons, only very limited information is available for
-   neurons on other MPI processes. Thus, before checking for specific
-   information, you need to check if a node is local:
-
-   n = nest.Create('iaf\_psc\_alpha') if nest.GetStatus(n, 'local')[0]:
-   # GetStatus() returns list, pick element print nest.GetStatus(n,
-   'vp') # virtual process "owning" node print nest.GetStatus(n,
-   'thread') # thread in calling process "owning" node
-
-Random numbers in parallel simulations
---------------------------------------
-
-Ideally, all random numbers in a simulation should come from a single
-RNG. This would require shipping truckloads of random numbers from a
-central RNG process to all simulations processes and is thus
-impractical, if not outright prohibitively costly. Therefore, parallel
-simulation requires an RNG on each parallel process. Advances in RNG
-technology give us today a range of RNGs that can be used in parallel,
-with a quite high level of certainty that the resulting parallel streams
-of random numbers are non-overlapping and uncorrelated. While the former
-can be guaranteed, we are not aware of any generator for which the
-latter can be proven.
-
-How many generators in a simulation
+Quantity of random numbers required
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In a typical PyNEST simulation running on \\(N\_{vp}\\) virtual
-processes, we will encounter \\(2 N\_{vp} + 1\\) random number
-generators:
-
-| The global NEST RNG
-| This generator is mainly used when creating connections using
-  ``RandomDivergentConnect``.
-
-| One RNG per VP in NEST
-| These generators are used when creating connections using
-  ``RandomConvergentConnect`` and to provide random numbers to nodes
-  generating random output, e.g. the ``poisson_generator``.
-
-| One RNG per VP in Python
-| These generators are used to randomized node properties (e.g., the
-  initial membrane potential) and connection properties (e.g., weights).
-
-The generators on the Python level are not strictly necessary, as one
-could in principle access the per-VP RNGs built into NEST. This would
-require very tedious SLI-coding, though. We therefore recommend at
-present that you use additional RNGs on the Python side.
-
-Why a Global RNG in NEST
-^^^^^^^^^^^^^^^^^^^^^^^^
+With a view to future exascale computers, we need to prepare for
+:math:`N_{\text{vp}}=\mathcal{O}(10^7)` random streams. We can 
+estimate the number of random numbers required per stream as follows: 
 
-In some situations, randomized decisions on different virtual processes
-are not independent of each other. The most important case are
-randomized divergent connections. The problem here is as follows. For
-the sake of efficiency, NEST stores all connection information in the
-virtual process (VP) to which the target of a connection resides (target
-process). Thus, all connections are generated by this target process.
-Now consider the task of generating 100 randomized divergent connections
-emanating from a given source neuron while using 4 VPs. Then there
-should be 25 targets on each VP *on average*, but actual numbers will
-fluctuate. If independent processes on all VPs tried to choose target
-neurons, we could never be sure that exactly 100 targets would be chosen
-in total.
+- Based on current practice, we assume :math:`N = 1000` neurons per stream; 
+  this results in a total of :math:`\mathcal{O}(10^{11})` neurons, on the scale 
+  of the human brain and thus a sensible upper limit. 
+- Each neuron receives excitatory and inhibitory Poisson background input, i.e., 
+  two Poisson distributed random numbers per time step per neuron, each of which 
+  typically requires multiple uniform random numbers; we assume for simplicity 
+  two uniform numbers per Poisson number, i.e., four plain random numbers per 
+  time step per neuron. 
+- A time step is 0.1ms and a typical simulation duration 100s simulated time 
+  resulting in :math:`\mathcal{O}(10^6)` time steps.
+- In total, a simulation will consume :math:`\sim 1000 \times 4 \times 10^6 = 4 \times 10^{10}` 
+  random numbers per stream (consumption during network construction will usually be negligible).
+- To allow for a margin of error, we assume that :math:`\mathcal{O}(10^{11})` 
+  random numbers are consumed per stream during a single simulation.
 
-NEST thus creates divergent connections using a global RNG. This random
-number generator provides the exact same sequence of random numbers on
-each virtual process. Using this global RNG, each VP chooses 100 targets
-from the entire network, but actually creates connections only for those
-targets that reside on the VP. In practice, the global RNG is
-implemented using one "clone" on each VP; NEST checks occasionally that
-all these clones are synchronized, i.e., indeed generate identical
-sequences.
 
-Seeding the Random Generators
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Collision risk of parallel random number streams
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Each of the \\(N\_{vp}\\) random generators needs to be seeded with a
-different seed to generate a different random number sequences. We
-recommend that you choose a *master seed* ``msd`` and seed the
-\\(2N\_{vp}+1\\) generators with seeds ``msd``, ``msd+1``, ...,
-``msd+2*N_vp``. Master seeds for for independent experiments must differ
-by at least \\(2N\_{vp}+1\\) . Otherwise, the same sequence(s) would
-enter in several experiments.
+`L’Ecuyer et al (2017) <https://dx.doi.org/10.1016/j.matcom.2016.05.005>`__ provide a
+recent account of random number generation in highly parallel settings.
+The main approach to providing independent random number streams in
+parallel simulations is to use a high-quality random number generator
+with long period and to seed it with a different seed for each stream. They
+then argue that if we have :math:`s` streams of length :math:`l` and a generator
+with period :math:`r`, the probability that two streams seeded with
+different seeds will overlap is given by
 
-Seeding the Python RNGs
-^^^^^^^^^^^^^^^^^^^^^^^
+.. math::
 
-You can create a properly seeded list of \\(N\_{vp}\\) RNGs on the
-Python side using
+   p_{\text{overlap}} \sim s^2\frac{l}{r}\; .
 
-::
+We have
 
-    import numpy
-    msd = 123456
-    N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
-    pyrngs = [numpy.random.RandomState(s) for s in range(msd, msd+N_vp)]
+.. math ::
 
-``msd`` is the master seed, choose your own!
+   s = N_{\text{vp}} = 10^7 \sim 2^{23}\quad\text{and}\quad l = 10^{11} \sim 2^{37}\;,
 
-Seeding the global RNG
-^^^^^^^^^^^^^^^^^^^^^^
+so assuming an RNG period of :math:`r = 2^{128}` we obtain
 
-The global NEST rng is seeded with a single, positive integer number:
+.. math ::
 
-::
+   p_{\text{overlap}} \sim \left(2^{23}\right)^2 \times 2^{37} / 2^{128} = 2^{-45} \sim 3 \times 10^{-14}
 
-    nest.SetKernelStatus({’grng_seed’ : msd+N_vp})
+while for a period of :math:`r = 2^{256}` we obtain
 
-Seeding the per-process RNGs
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. math ::
 
-The per-process RNGs are seeded by a list of \\(N\_{vp}\\) positive
-integers:
+   p_{\text{overlap}} \sim 2^{-173} \sim 10^{-52}\; .
 
-::
+The probability of stream collisions is thus negligibly small, provided
+we use random number generators with a period of at least :math:`2^{128}`.
 
-    nest.SetKernelStatus({’rng_seeds’ : range(msd+N_vp+1, msd+2*N_vp+1)})
+`L’Ecuyer (2012, Ch 3.6) <https://doi.org/10.1007/978-3-642-21551-3_3>`__ points out
+that certain random number generators classes will show too much
+regularity in their output if more than :math:`r^{1/3}` numbers are used (this
+relation is based on exercises in Knuth, TAOCP vol 2, see `L’Ecuyer and
+Simard (2001) <https://doi.org/10.1016/S0378-4754(00)00253-6>`__). While
+it is not certain that that analysis also applies to (short)
+subsequences of the period of an RNG, one might still re-consider the
+analysis above, but using :math:`l^3 \sim 2^{111}` instead of :math:`l` when
+computing :math:`p_{\text{overlap}}`. We then obtain
 
-Choosing the random generator type
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+============================= ===============================
+Period :math:`r`              :math:`p_{\text{overlap}}`
+============================= ===============================
+:math:`2^{128} \sim 10^{38}`  :math:`>> 1`
+:math:`2^{256} \sim 10^{77}`  :math:`2^{-99} \sim 10^{-30}`
+:math:`2^{512} \sim 10^{154}` :math:`2^{-355} \sim 10^{-107}`
+============================= ===============================
 
-Python and NumPy have the `MersenneTwister
-MT19937ar <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html>`__
-random number generator built in. There is no simple way of choosing a
-different generator in NumPy, but as the MT19937ar appears to be a very
-robust generator, this should not cause significant problems.
+Thus, for generators with periods of at least :math:`2^{256}`, we have
+negligible collision probability also under this tightened criterium.
 
-NEST uses by default Knuth's lagged Fibonacci random number generator
-(The Art of Computer Programming, vol 2, 3rd ed, 9th printing or later,
-ch 3.6). If you want to use other generators, you can exchange them as
-described below. If you have built NEST without the GNU Science Library
-(GSL), you will only have the Mersenne Twister MT19937ar and Knuth's
-lagged Fibonacci generator available. Otherwise, you will also have some
-60 generators from the GSL at your disposal (not all of them
-particularly good). You can see the full list of RNGs using
+Among the generators offered by the C++ Standard Library, only the
+Mersenne Twister generator has sufficiently long period, so only this
+generator is included. The generators from the Random123 library are
+cryptographic generators and thus no period.
 
-::
 
-    nest.sli_run('rngdict info')
+Seeding parallel random number streams
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Setting a different global RNG
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In NEST 3, the user provides a single seed :math:`1 \leq S \leq 2^{31}-1` to initialize 
+all :math:`N_{\text{vp}}+2`  random number generators in a parallel simulation. 
+NEST uses a seed sequence  generator to derive seeds for the individual RNGs from 
+the user-provided seed :math:`S`. 
 
-To set a different global RNG in NEST, you have to pass a NEST random
-number generator object to the NEST kernel. This can currently only be
-done by writing some SLI code. The following code replaces the current
-global RNG with MT19937 seeded with 101:
+Since ``std::seed_seq`` from the C++ Standard Library `has weaknesses <https://www.pcg-random.org/posts/cpp-seeding-surprises.html>`__,
+we use `Melissa O'Neill's improved seed sequence generator <https://www.pcg-random.org/posts/simple-portable-cpp-seed-entropy.html>`__.
 
-::
 
-    nest.sli_run('<< /grng rngdict/MT19937 :: 101 CreateRNG >> SetKernelStatus')
 
-The following happens here:
+Further background
+~~~~~~~~~~~~~~~~~~
 
--  ``rngdict/MT19937 ::`` fetches a "factory" for MT19937 from the
-   ``rngdict``
+For more background on the NEST 3 random number generation architecture, 
+see also `NEST Github issue #1440 <https://github.com/nest/nest-simulator/issues/1440>`__.
 
--  ``101 CreateRNG`` uses the factory to create a single MT19937
-   generator with seed 101
 
--  This is generator is then passed to the ``/grng`` status variable of
-   the kernel. This is a "write only" variable that is invisible in
-   ``GetKernelStatus()``.
-
-Setting different per-processes RNGs
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-One always needs to exchange all \\(N\_{vp}\\) per-process RNGs at once.
-This is done by (assuming \\(N\_{vp}=2\\) ):
-
-::
-
-    nest.sli_run('<< /rngs [102 103] { rngdict/MT19937 :: exch CreateRNG } Map >> SetKernelStatus')
-
-The following happens here:
-
--  ``[102 103] { rngdict/MT19937 :: exch CreateRNG } Map`` creates an
-   array of two RNG objects seeded with 102 and 103, respectively.
-
--  This array is then passed to the ``/rngs`` status variable of the
-   kernel. This variable is invisible as well.
-
-
-.. _examples-rng:
-
-Examples
---------
-
-**NOTE: These examples are not yet updated for NEST 2.4**
-
-No random variables in script
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If no explicit random variables appear in your script, i.e., if
-randomness only enters in your simulation through random stimulus
-generators such as ``poisson_generator`` or randomized connection
-routines such as ``RandomConvergentConnect``, you do not need to worry
-about anything except choosing and setting your random seeds, possibly
-exchanging the random number generators.
-
-Randomizing the membrane potential
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If you want to randomize the membrane potential (or any other property
-of a neuron), you need to take care that each node is updated by the
-process on which it is local using the per-VP RNG for the VP to which
-the node belongs. This is achieved by the following code
-
-::
-
-    pyrngs = [numpy.random.RandomState(s) for s in range(msd, msd+N_vp)]
-    nodes   = nest.Create('iaf_psc_delta', 10)
-    node_info   = nest.GetStatus(nodes)
-    local_nodes = [(ni['global_id'], ni['vp']) for ni in node_info if ni['local']]
-    for node_id,vp in local_nodes:
-       nest.SetStatus([node_id], {'V_m': pyrngs[vp].uniform(-70.0, -50.0)})
-
-The first line generates \\([N\_{vp}\\) properly seeded NumPy RNGs as
-discussed above. The next line creates 10 nodes, while the third line
-extracts status information about each node. For local nodes, this will
-be full information, for non-local nodes we only get the following
-fields: ``local``, ``model`` and ``type``. On the fourth line, we create
-a list of tuples, containing global ID and virtual process number for
-all local neurons. The for loop then sets the membrane potential of each
-local neuron drawn from a uniform distribution on \\([-70, -50]\\) using
-the Python-side RNG for the VP to which the neuron belongs.
-
-Randomizing convergent connections
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-We continue the above example by creating random convergent connections,
-\\(C\_E\\) connections per target node. In the process, we randomize the
-connection weights:
-
-::
-
-    C_E = 10
-    nest.CopyModel("static_synapse", "excitatory")
-    for tgt_node_id, tgt_vp in local_nodes:
-        weights = pyrngs[tgt_vp].uniform(0.5, 1.5, C_E)
-        nest.RandomConvergentConnect(nodes, [tgt_node_id], C_E,
-                                     weight=list(weights), delay=2.0,
-                                     model="excitatory")
-
-Here we loop over all local nodes considered as target nodes. For each
-target, we create an array of \\(C\_E\\) randomly chosen weights,
-uniform on \\([0.5, 1.5\\. We then call ``RandomConvergentConnect()``
-with this weight list as argument. Note a few details:
-
--  We need to put ``tgt_node_id`` into brackets as PyNEST functions always
-   expect lists of node IDs.
-
--  We need to convert the NumPy array ``weights`` to a plain Python
-   list, as most PyNEST functions currently cannot handle array input.
-
--  If we specify ``weight``, we must also provide ``delay``.
-
-You can check the weights selected by
-
-::
-
-    print nest.GetStatus(nest.GetConnections(), ['source', 'target', 'weight'])
-
-which will print a list containing a triple of source node ID, target node ID
-and weight for each connection in the network. If you want to see only a
-subset of connections, pass source, target, or synapse model to
-``GetConnections()``.
-
-Randomizing divergent connections
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Randomizing the weights (or delays or any other properties) of divergent
-connections is more complicated than for convergent connections, because
-the target for each connection is not known upon the call to
-``RandomDivergentConnect``. We therefore need to first create all
-connections (which we can do with a single call, passing lists of nodes
-and targets), and then need to manipulate all connections. This is not
-only more complicated, but also significantly slower than the example
-above.
-
-::
-
-    nest.CopyModel('static_synapse', 'inhibitory', {'weight': 0.0, 'delay': 3.0})
-    nest.RandomDivergentConnect(nodes, nodes, C_E, model='inhibitory')
-    node_id_vp_map = dict(local_nodes)
-    for src in nodes:
-        conns = nest.GetConnections(source=[src], synapse_model='inhibitory')
-        tgts = [conn[1] for conn in conns]
-        rweights = [{'weight': pyrngs[node_id_vp_map[tgt]].uniform(-2.5, -0.5)}
-                   for tgt in tgts]
-        nest.SetStatus(conns, rweights)
-
-In this code, we first create all connections with weight 0. We then
-create ``node_id_vp_map``, mapping node IDs to VP number for all local nodes.
-For each node considered as source, we then find all outgoing excitatory
-connections from that node and then obtain a flat list of the targets of
-these connections. For each target we then choose a random weight as
-above, using the RNG pertaining to the VP of the target. Finally, we set
-these weights. Note that the code above is **slow**. Future versions of
-NEST will provide better solutions.
-
-Testing scripts randomizing node or connection parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To ensure that you are consistently using the correct RNG for each node
-or connection, you should run your simulation several times the same
-\\(N\_{vp}\\), but using different numbers of MPI processes. To this
-end, add towards the beginning of your script
-
-::
-
-    nest.SetKernelStatus({"total_num_virtual_procs": 4})
-
-and ensure that spikes are logged to file in the current working
-directory. Then run the simulation with different numbers of MPI
-processes in separate directories
-
-::
-
-     mkdir 41 42 44
-     cd 41
-     mpirun -np 1 python3 test.py
-     cd ../42
-     mpirun -np 2 python3 test.py
-     cd ../44
-     mpirun -np 4 python3 test.py
-     cd ..
-
-These directories should now have identical content, something you can
-check with ``diff``:
-
-::
-
-    diff 41 42
-    diff 41 44
-
-These commands should not generate any output. Obviously, this test
-checks only a necessary, but by no means sufficient condition for a
-correct simulation. (Oh yes, do make sure that these directories contain
-data! Nothing easier than to pass a diff-test on empty dirs.)

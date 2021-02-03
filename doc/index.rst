@@ -69,8 +69,9 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
   </embed>
 
 
-**Need a different model?**
-    Check out how you can :doc:`create you own model <models/create_model>` here.
+**Need a different or combined model?**
+    A model in NEST is one entity. Check out NESTML if you want to combine
+    aspects of different models or create a new model.
 
 **Have a question or issue with NEST?**
     See our :doc:`Getting Help <getting_help>` page.

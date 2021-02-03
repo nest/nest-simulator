@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 #
 # check_forbidden_types.sh
 #
@@ -25,7 +25,7 @@ forbidden_types="double_t"
 used_forbidden_types=""
 
 for t in $forbidden_types; do
-    scan_result=`grep $t -r -o --include '*.[h,cc,cpp]' $NEST_SOURCE | sed 's/:/: /'`
+    scan_result=`grep $t -r -o --include=*.{h,cc,cpp} $NEST_SOURCE | sed 's/:/: /'`
     if [ -n "$scan_result" ]; then
         used_forbidden_types=$used_forbidden_types$'\n'$scan_result
     fi

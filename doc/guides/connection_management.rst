@@ -284,7 +284,7 @@ If synapse properties are given as a dictionary, it may include the keys
 ``synapse_model`` (default `static_synapse`), ``weight`` (default 1.0), 
 ``delay`` (default 1.0), and ``receptor_type`` (default 0, see :ref:`receptor-types` for details),
 as well as parameters specific to the chosen synapse model. The specification of
-all parameters is optional and unspecified parameters will take on the
+all parameters is optional, and unspecified parameters will take on the
 default values of the chosen synapse model that can be inspected using
 ``nest.GetDefaults(synapse_model)``.
 

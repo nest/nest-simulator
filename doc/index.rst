@@ -38,7 +38,8 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
 
 
 **Have an idea of the type of model you need?**
-    Click on one of the images to access our :doc:`model directory <models/index>`:
+
+    You can find a list of all models implemented in NEST in our model directory.
 
 .. raw:: html
 

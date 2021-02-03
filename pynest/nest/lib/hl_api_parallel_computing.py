@@ -116,7 +116,7 @@ def SyncProcesses():
 
     sr("SyncProcesses")
 
-    
+
 @check_stack
 def GetLocalVPs():
     """Return iterable representing the virtual processes local to the MPI rank."""

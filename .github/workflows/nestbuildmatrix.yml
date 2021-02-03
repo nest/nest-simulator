@@ -120,6 +120,8 @@ jobs:
            echo "xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
+         env:
+           xNEST_BUILD_TYPE: STATIC_CODE_ANALYSIS  
                        
            #GET CHANGED FILES
            # https://github.com/marketplace/actions/get-changed-files
@@ -132,7 +134,9 @@ jobs:
          run: |
            echo $GITHUB_ENV
            chmod +x extras/staticbuild.sh
-           ./extras/staticbuild.sh    
+           ./extras/staticbuild.sh
+         env:
+           xNEST_BUILD_TYPE: MINIMAL     
          
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
          #run: echo "Minimal Build"
@@ -140,7 +144,9 @@ jobs:
            echo "xNEST_BUILD_TYPE=MPI_ONLY" >> $GITHUB_ENV
            echo $GITHUB_ENV
            chmod +x extras/staticbuild.sh
-           ./extras/staticbuild.sh   
+           ./extras/staticbuild.sh
+         env:
+           xNEST_BUILD_TYPE: MPI_ONLY
            
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'OPENMP_ONLY' }}
          #run: echo "Minimal Build"
@@ -149,6 +155,8 @@ jobs:
            echo $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
+         env:
+          xNEST_BUILD_TYPE: OPENMP_ONLY 
            
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
          #run: echo "Minimal Build"
@@ -156,7 +164,9 @@ jobs:
            echo "xNEST_BUILD_TYPE=FULL" >> $GITHUB_ENV
            $GITHUB_ENV
            chmod +x extras/staticbuild.sh
-           ./extras/staticbuild.sh     
+           ./extras/staticbuild.sh   
+         env:
+           xNEST_BUILD_TYPE: FULL   
            
        #- name: MPI
          #run: echo "MPI BUILD"

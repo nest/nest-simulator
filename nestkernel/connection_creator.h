@@ -131,6 +131,8 @@ private:
     std::vector< std::pair< Position< D >, index > >* positions_;
   };
 
+  void extract_params_( const DictionaryDatum&, std::vector< DictionaryDatum >& );
+
   template < typename Iterator, int D >
   void connect_to_target_( Iterator from,
     Iterator to,

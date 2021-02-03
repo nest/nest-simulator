@@ -37,9 +37,13 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
     Start here at our :doc:`Getting Started <getting_started>` page
 
 
-**Have an idea of the type of model you need?**
+**Know which model you need?**
     You can find a list of all models implemented in NEST in our
     :doc:`model directory <models/index>`.
+
+    Each model is one entity. Check out
+    `NESTML <https://nestml.readthedocs.io/en/latest/>`_ if you want to combine
+    aspects of different models or create a new model.
 
 .. raw:: html
 
@@ -68,11 +72,6 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
 
   </embed>
 
-
-**Need a different or combined model?**
-    A model in NEST is one entity. Check out
-    `NESTML <https://nestml.readthedocs.io/en/latest/>`_ if you want to combine
-    aspects of different models or create a new model.
 
 **Have a question or issue with NEST?**
     See our :doc:`Getting Help <getting_help>` page.

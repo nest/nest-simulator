@@ -30,25 +30,26 @@ import sys
 class LocalVPsTestCase():
     """
     Test local_vps field of kernel status.
-    
+
     This test ensure that the PyNEST-generated local_vps information
     agrees with the thread-VP mappings in the kernel.
     """
-    
+
     def test_local_vps(self):
         num_procs = nest.NumProcesses()
         n_vp = 3 * num_procs
         nest.SetKernelStatus({'total_num_virtual_procs': n_vp})
 
         local_vps = list(nest.GetLocalVPs())
-        
+
         # Use thread-vp mapping of neurons to check mapping in kernel
         nrns = nest.GetLocalNodeCollection(nest.Create('iaf_psc_delta', 2 * n_vp))
-        
+
         for n in nrns:
             thrd = n.get('thread')
             vp = n.get('vp')
             assert vp == local_vps[thrd]
+
 
 # We can not define the regular suite() and runner() functions here, because
 # it will not show up as failed in the testsuite if it fails. This is

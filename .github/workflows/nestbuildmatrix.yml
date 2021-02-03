@@ -130,6 +130,7 @@ jobs:
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'MINIMAL' }}
          #run: echo "Minimal Build"
          run: |
+           echo $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh    
          
@@ -137,6 +138,7 @@ jobs:
          #run: echo "Minimal Build"
          run: |
            echo "xNEST_BUILD_TYPE=MPI_ONLY" >> $GITHUB_ENV
+           echo $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh   
            
@@ -144,6 +146,7 @@ jobs:
          #run: echo "Minimal Build"
          run: |
            echo "xNEST_BUILD_TYPE=OPENMP_ONLY" >> $GITHUB_ENV
+           echo $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
            
@@ -151,6 +154,7 @@ jobs:
          #run: echo "Minimal Build"
          run: |
            echo "xNEST_BUILD_TYPE=FULL" >> $GITHUB_ENV
+           $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh     
            

@@ -74,7 +74,7 @@ functionality into the Python interpreter.
     import nest
 
 In case other Python packages are required, such as `scikit-learn <http://scikit-learn.org/stable/index.html>`_
-and `SciPy <https://www.scipy.org/>`_, they need to be imported before importing nest.
+and `SciPy <https://www.scipy.org/>`_, they need to be imported *before* importing NEST.
 
 ::
 

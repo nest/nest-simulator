@@ -31,8 +31,7 @@
 # Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
-echo $GITHUB_ENV
-echo $xNEST_BUILD_TYPE
+env
 if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
     export CC=clang-7
     export CXX=clang++-7

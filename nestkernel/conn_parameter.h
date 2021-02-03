@@ -75,8 +75,7 @@ public:
    */
   virtual double value_double( thread, RngPtr, index, Node* ) const = 0;
   virtual long value_int( thread, RngPtr, index, Node* ) const = 0;
-  virtual void
-  skip( thread, size_t n_skip ) const
+  virtual void skip( thread, size_t ) const
   {
   }
   virtual bool is_array() const = 0;
@@ -418,7 +417,7 @@ public:
   bool
   provides_long() const
   {
-    return true;
+    return parameter_->returns_int_only();
   }
 
 private:

@@ -44,13 +44,6 @@ nest::mip_generator::Parameters_::Parameters_()
 {
 }
 
-nest::mip_generator::Parameters_::Parameters_( const Parameters_& p )
-  : rate_( p.rate_ )
-  , p_copy_( p.p_copy_ )
-{
-}
-
-
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */

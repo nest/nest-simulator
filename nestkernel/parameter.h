@@ -73,16 +73,13 @@ public:
    */
   virtual double value( RngPtr rng, Node* node ) = 0;
   virtual double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread )
+  value( RngPtr rng, index, Node*, thread )
   {
     return value( rng, nullptr );
   }
 
   virtual double
-  value( RngPtr rng,
-    const std::vector< double >& source_pos,
-    const std::vector< double >& target_pos,
-    const AbstractLayer& layer )
+  value( RngPtr rng, const std::vector< double >&, const std::vector< double >&, const AbstractLayer& )
   {
     return value( rng, nullptr );
   }
@@ -181,10 +178,18 @@ public:
    */
   bool is_spatial() const;
 
+  /**
+   * Check if the Parameter only returns integer values.
+   * @returns true if the Parameter only returns integers, false otherwise.
+   */
+  bool returns_int_only() const;
+
 protected:
   bool parameter_is_spatial_{ false };
+  bool parameter_returns_int_only_{ false };
 
   Node* node_id_to_node_ptr_( const index, const thread ) const;
+  bool value_is_integer_( const double value ) const;
 };
 
 /**
@@ -209,6 +214,7 @@ public:
     : Parameter( d )
   {
     value_ = getValue< double >( d, "value" );
+    parameter_returns_int_only_ = value_is_integer_( value_ );
   }
 
   ~ConstantParameter() override = default;
@@ -225,7 +231,7 @@ public:
   Parameter*
   clone() const override
   {
-    return new ConstantParameter( value_ );
+    return new ConstantParameter( *this );
   }
 
 private:
@@ -302,6 +308,7 @@ public:
         "nest::UniformIntParameter: "
         "max > 0 required." );
     }
+    parameter_returns_int_only_ = true;
   }
 
   double
@@ -460,13 +467,13 @@ public:
   }
 
   double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
+  value( RngPtr, index, Node*, thread ) override
   {
     throw KernelException( "Node position parameter can only be used when using ConnectLayers." );
   }
 
   double
-  value( RngPtr rng,
+  value( RngPtr,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& ) override
@@ -518,7 +525,7 @@ public:
   }
 
   double
-  value( RngPtr rng, Node* ) override
+  value( RngPtr, Node* ) override
   {
     throw BadParameterValue( "Spatial distance parameter can only be used when connecting." );
   }
@@ -561,6 +568,7 @@ public:
     , parameter2_( m2.clone() )
   {
     parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
+    parameter_returns_int_only_ = parameter1_->returns_int_only() and parameter2_->returns_int_only();
   }
 
   /**
@@ -572,6 +580,7 @@ public:
     , parameter2_( p.parameter2_->clone() )
   {
     parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
+    parameter_returns_int_only_ = parameter1_->returns_int_only() and parameter2_->returns_int_only();
   }
 
   ~ProductParameter() override
@@ -632,6 +641,7 @@ public:
     , parameter2_( m2.clone() )
   {
     parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
+    parameter_returns_int_only_ = parameter1_->returns_int_only() and parameter2_->returns_int_only();
   }
 
   /**
@@ -643,6 +653,7 @@ public:
     , parameter2_( p.parameter2_->clone() )
   {
     parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
+    parameter_returns_int_only_ = parameter1_->returns_int_only() and parameter2_->returns_int_only();
   }
 
   ~QuotientParameter() override
@@ -703,6 +714,7 @@ public:
     , parameter2_( m2.clone() )
   {
     parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
+    parameter_returns_int_only_ = parameter1_->returns_int_only() and parameter2_->returns_int_only();
   }
 
   /**
@@ -714,6 +726,7 @@ public:
     , parameter2_( p.parameter2_->clone() )
   {
     parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
+    parameter_returns_int_only_ = parameter1_->returns_int_only() and parameter2_->returns_int_only();
   }
 
   ~SumParameter() override
@@ -774,6 +787,7 @@ public:
     , parameter2_( m2.clone() )
   {
     parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
+    parameter_returns_int_only_ = parameter1_->returns_int_only() and parameter2_->returns_int_only();
   }
 
   /**
@@ -785,6 +799,7 @@ public:
     , parameter2_( p.parameter2_->clone() )
   {
     parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
+    parameter_returns_int_only_ = parameter1_->returns_int_only() and parameter2_->returns_int_only();
   }
 
   ~DifferenceParameter() override
@@ -844,6 +859,7 @@ public:
     , p_( p.clone() )
   {
     parameter_is_spatial_ = p_->is_spatial();
+    parameter_returns_int_only_ = p_->returns_int_only();
   }
 
   /**
@@ -930,6 +946,7 @@ public:
       throw BadParameter( "Comparator specification has to be in the range 0-5." );
     }
     parameter_is_spatial_ = parameter1_->is_spatial() or parameter2_->is_spatial();
+    parameter_returns_int_only_ = true;
   }
 
   /**
@@ -1027,6 +1044,7 @@ public:
     , if_false_( if_false.clone() )
   {
     parameter_is_spatial_ = condition_->is_spatial() or if_true_->is_spatial() or if_false_->is_spatial();
+    parameter_returns_int_only_ = if_true_->returns_int_only() and if_false_->returns_int_only();
   }
 
   /**
@@ -1039,6 +1057,7 @@ public:
     , if_false_( p.if_false_->clone() )
   {
     parameter_is_spatial_ = condition_->is_spatial() or if_true_->is_spatial() or if_false_->is_spatial();
+    parameter_returns_int_only_ = if_true_->returns_int_only() and if_false_->returns_int_only();
   }
 
   ~ConditionalParameter() override
@@ -1120,6 +1139,7 @@ public:
     , other_value_( other_value )
   {
     parameter_is_spatial_ = p_->is_spatial();
+    parameter_returns_int_only_ = p_->returns_int_only() and value_is_integer_( other_value_ );
   }
 
   /**
@@ -1131,6 +1151,7 @@ public:
     , other_value_( p.other_value_ )
   {
     parameter_is_spatial_ = p_->is_spatial();
+    parameter_returns_int_only_ = p_->returns_int_only() and value_is_integer_( other_value_ );
   }
 
   ~MinParameter() override
@@ -1190,6 +1211,7 @@ public:
     , other_value_( other_value )
   {
     parameter_is_spatial_ = p_->is_spatial();
+    parameter_returns_int_only_ = p_->returns_int_only() and value_is_integer_( other_value_ );
   }
 
   /**
@@ -1201,6 +1223,7 @@ public:
     , other_value_( p.other_value_ )
   {
     parameter_is_spatial_ = p_->is_spatial();
+    parameter_returns_int_only_ = p_->returns_int_only() and value_is_integer_( other_value_ );
   }
 
   ~MaxParameter() override
@@ -1267,6 +1290,7 @@ public:
     , max_redraws_( p.max_redraws_ )
   {
     parameter_is_spatial_ = p_->is_spatial();
+    parameter_returns_int_only_ = p_->returns_int_only();
   }
 
   ~RedrawParameter() override
@@ -1513,6 +1537,7 @@ public:
     , exponent_( exponent )
   {
     parameter_is_spatial_ = p_->is_spatial();
+    parameter_returns_int_only_ = p_->returns_int_only();
   }
 
   /**
@@ -1524,6 +1549,7 @@ public:
     , exponent_( p.exponent_ )
   {
     parameter_is_spatial_ = p_->is_spatial();
+    parameter_returns_int_only_ = p_->returns_int_only();
   }
 
   ~PowParameter() override
@@ -1625,13 +1651,13 @@ public:
    * The DimensionParameter has no double value, so this method will always throw.
    */
   double
-  value( RngPtr rng, Node* node ) override
+  value( RngPtr, Node* ) override
   {
     throw KernelException( "Cannot get value of DimensionParameter." );
   }
 
   double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
+  value( RngPtr, index, Node*, thread ) override
   {
     throw KernelException( "Cannot get value of DimensionParameter." );
   }
@@ -1766,6 +1792,19 @@ inline bool
 Parameter::is_spatial() const
 {
   return parameter_is_spatial_;
+}
+
+
+inline bool
+Parameter::returns_int_only() const
+{
+  return parameter_returns_int_only_;
+}
+
+inline bool
+Parameter::value_is_integer_( const double value ) const
+{
+  return std::fmod( value, static_cast< double >( 1.0 ) ) == 0.0;
 }
 
 } // namespace nest

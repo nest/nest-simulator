@@ -28,7 +28,6 @@ from . import test_connect_all_to_all
 from . import test_connect_array_fixed_indegree
 from . import test_connect_array_fixed_outdegree
 from . import test_connect_conngen
-from . import test_connect_distributions
 from . import test_connect_fixed_indegree
 from . import test_connect_fixed_outdegree
 from . import test_connect_fixed_total_number
@@ -84,7 +83,6 @@ def suite():
     suite.addTest(test_connect_array_fixed_indegree.suite())
     suite.addTest(test_connect_array_fixed_outdegree.suite())
     suite.addTest(test_connect_conngen.suite())
-    suite.addTest(test_connect_distributions.suite())
     suite.addTest(test_connect_fixed_indegree.suite())
     suite.addTest(test_connect_fixed_outdegree.suite())
     suite.addTest(test_connect_fixed_total_number.suite())

@@ -139,7 +139,7 @@ LognormalParameter::value( RngPtr rng, Node* )
 
 
 double
-NodePosParameter::get_node_pos_( RngPtr rng, Node* node ) const
+NodePosParameter::get_node_pos_( RngPtr, Node* node ) const
 {
   if ( not node )
   {
@@ -177,7 +177,7 @@ NodePosParameter::get_node_pos_( RngPtr rng, Node* node ) const
 }
 
 double
-SpatialDistanceParameter::value( RngPtr rng,
+SpatialDistanceParameter::value( RngPtr,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
   const AbstractLayer& layer )

@@ -1,5 +1,7 @@
-Manual Installation on macOS
-===============================
+Building NEST on macOS
+======================
+
+To build NEST on macOS
 
 If you want to use PyNEST, you need to have a version of Python with some science packages installed, see the `section Python on Mac <python-on-mac>`_ for details.
 

@@ -1,35 +1,79 @@
 Tips for installing NEST with conda
 ===================================
 
-This page provides a series of recommendations for installing NEST with
-conda.
+This page provides a series of recommendations for installing pre-built NEST with
+conda or to set up conda environments for building NEST and NEST documentation.
 
-Create a dedicated environment for NEST
----------------------------------------
 
-Create a dedicated environment for NEST, which should ensure there are
-no conflicts with previously installed packages.
+Basic conda setup
+-----------------
 
-Install all programs
---------------------
+Choice of conda base installation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Install all programs you'll need, (such as ``ipython`` or ``jupyter-lab``)
-in the environment (``<envname>``) at the same time, by appending them to
-the ``conda create --name ENVNAME -c conda-forge`` command.
+We test NEST in conda enviroments using Miniconda installations and thus recommend
+that you do the same. The recommendations given here work most likely also with a
+full-sized Anaconda installation, but we have no experience with and will not be
+able to provide support for the latter case.
 
-Installing packages later may override previously installed dependencies 
-and potentially break packages! See `managing environments in the Conda 
-documentation <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_
-for more information.
+You can either install
+
+- Miniconda from `<https://docs.conda.io/en/latest/miniconda.html>`_
+- Miniforge from `<https://github.com/conda-forge/miniforge>`_
+
+For Apple systems with M1 chip, you must at present use Miniforge and 
+select the ``arm64 (Apple Silicon)`` installer to create a conda environment
+supporting native builds of NEST.
+
 
 Keep your base environment empty
---------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Your base environment should be as empty as possible in order to avoid
 conflicts with other environments. Always install packages only in the new
 environments (don't worry about duplicates, conda will link the packages
 if they are used in multiple environments, and not produce disk eating copies).
 
+
+Get familiar with conda environments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Conda environments are a powerful tool. See the `Conda documentation on Managing Environments 
+<https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
+for more information.
+
+To see which environments are installed on your system, use
+
+.. code:: sh
+
+   conda info --envs
+   
+
+Installing NEST with Conda
+--------------------------
+
+We provide pre-built versions of NEST on `Conda Forge <https://anaconda.org/conda-forge/nest-simulator/files>`.
+Follow :ref:`these instructions to install NEST from Conda Forge <conda_forge_install>`.
+
+
+Creating a Conda environment for building NEST
+----------------------------------------------
+
+If you want to compile NEST yourself, you can create an environment containing all necessary 
+software by running from the NEST source directory
+
+.. code:: sh
+
+   conda env create -f extras/conda-environment-nest-simulator.yml
+   
+This will create an environment called ``nest-simulator``. If you would like to give the environment
+a different name, use
+
+.. code:: sh
+
+   conda env create -f extras/conda-environment-nest-simulator.yml -n MYNAME
+   
+   
 Get a good overview
 -------------------
 

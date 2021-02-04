@@ -1,7 +1,7 @@
 Compilation Options
 ===================
 
-NEST is installed with ``cmake`` (at least v2.8.12). In the simplest case, the commands::
+NEST is installed with ``cmake`` (at least v3.12). In the simplest case, the commands::
 
     cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
     make
@@ -10,20 +10,13 @@ NEST is installed with ``cmake`` (at least v2.8.12). In the simplest case, the c
 should build and install NEST to ``/install/path``, which should be an absolute
 path.
 
-Choice of CMake Version
------------------------
-
-We recommend to use ``cmake`` v3.4 or later, even though installing NEST with
-``cmake`` v2.8.12 will in most cases work properly.
-For more detailed information please see below: ``Python Binding (PyNEST)``
 
 Choice of compiler
 ------------------
 
-The default compiler for NEST is GNU gcc/g++. Version 7 or higher is required
-due to the presence of bugs in earlier versions that prevent the compilation
-from succeeding. NEST has also successfully been compiled with Clang 7 and the
-IBM XL C++ compiler.
+We systematically test NEST using the GNU gcc and the Clang compiler suits.
+Compilation with other up-to-date compilers should also work, but we do not
+regularly test against those compilers and can provide only limited support.
 
 To select a specific compiler, please add the following flags to your ``cmake``
 line::
@@ -101,13 +94,6 @@ Change compilation behavior::
     -Dwith-defines=<list;of;defines>               Additional defines, e.g. '-DXYZ=1'.
                                                    Separate multiple defines by ';'. [default OFF]
 
-NO-DOC option
--------------
-
-On systems where help extraction is slow, the call to ``make install`` can be replaced
-by ``make install-nodoc`` to skip the generation of help pages and indices. Using this
-option can help developers to speed up development cycles, but is not recommended for
-production use as it renders the built-in help system useless.
 
 .. _compile-with-mpi:
 
@@ -198,49 +184,23 @@ and its corresponding libraries correctly. To circumvent such a problem followin
         -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.4m \
         </path/to/NEST/src>
 
-Compiling for Apple OSX/macOS
------------------------------
-
-NEST can currently not be compiled with the clang/clang++ compilers shipping
-with macOS. Therefore, you first need to install GCC 6.3 or later. The easiest
-way to install all required software is using Homebrew (from http://brew.sh)::
-
-  brew install gcc cmake gsl open-mpi libtool
-
-will install all required prequisites. You can then configure NEST with ::
-
-  cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
-        -DCMAKE_C_COMPILER=gcc-6\
-        -DCMAKE_CXX_COMPILER=g++-6 \
-        </path/to/NEST/src>
-
-For detailed information on installing NEST under OSX/macOS, please see the
-"macOS" section of https://www.nest-simulator.org/installation.
-
-Choice of compiler
-------------------
-
-Most NEST developers use the GNU gcc/g++ compilers. We also regularly compile NEST using the IBM xlc/xlC compilers. You can find the version of your compiler by, e.g.::
-
-    g++ -v
-
-To select a specific compiler, please add the following flags to your ``cmake``
-line::
-
-    -DCMAKE_C_COMPILER=<C-compiler> -DCMAKE_CXX_COMPILER=<C++-compiler>
 
 
 Compiler-specific options
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 NEST has reasonable default compiler options for the most common compilers.
 
-When compiling with the *Portland* compiler:
-  Use the ``-Kieee`` flag to ensure that computations obey the IEEE754 standard for floating point numerics.
+Intel compiler
+~~~~~~~~~~~~~~
 
-When compiling with the *Intel* compiler:
-  To ensure that computations obey the IEEE754 standard for floating point
-  numerics, the ``-fp-model strict`` flag is used by default, but can be
-  overridden with ::
+To ensure that computations obey the IEEE754 standard for floating point
+numerics, the ``-fp-model strict`` flag is used by default, but can be
+overridden with ::
 
       -Dwith-intel-compiler-flags="<intel-flags>"
+
+Portland compiler
+~~~~~~~~~~~~~~~~
+
+Use the ``-Kieee`` flag to ensure that computations obey the IEEE754 standard for floating point numerics.

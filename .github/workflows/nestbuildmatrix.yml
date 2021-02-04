@@ -145,15 +145,7 @@ jobs:
             #chmod +x extras/staticbuild.sh
             #./extras/staticbuild.sh
             
-       - name: Check config
-         run: |
-           $CC --version
-           $CXX --version
-           python --version
-           mpic++ --show
-           mpicc --show
-           echo $PYTHONPATH   
-            
+                   
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYSIS' }}
          #run: echo "MPI Only Build"
          #with: ${{ env.xMPI }}

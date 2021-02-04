@@ -114,11 +114,8 @@ jobs:
          run: |
            #https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
            echo "xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS" >> $GITHUB_ENV
-           #echo "$HOME/.local/bin" >> $GITHUB_PATH
            export TCL_INCLUDE_PATH=lib/x86_64-linux-gnu
            export TK_INCLUDE_PATH=lib/x86_64-linux-gnu
-           echo "::set-env name=TCL_INCLUDE_PATH::$TCL_INCLUDE_PATH"
-           echo "::set-env name=TK_INCLUDE_PATH::$TK_INCLUDE_PATH"
            echo $TCL_INCLUDE_PATH
            echo $TK_INCLUDE_PATH
            #echo "lib/x86_64-linux-gnu/libtcl.so"  >> $GITHUB_PATH

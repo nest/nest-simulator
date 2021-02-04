@@ -83,7 +83,7 @@ jobs:
        - name: Set up cmake
          uses: jwlawson/actions-setup-cmake@v1.7
          with: 
-           cmake-version: 3.19.2
+           cmake-version: 3.12.4
       
        - name: Say Something
          run: |

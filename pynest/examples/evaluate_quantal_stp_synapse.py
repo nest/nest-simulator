@@ -31,7 +31,7 @@ facilitation according to the quantal release model described by Fuhrmann et
 al. [1]_ and Loebel et al. [2]_.
 
 Each presynaptic spike will stochastically activate a fraction of the
-available release sites.  This fraction is binomialy distributed and the
+available release sites.  This fraction is binomially distributed and the
 release probability per site is governed by the Fuhrmann et al. (2002) model.
 The solution of the differential equations is taken from Maass and Markram
 2002 [3]_.
@@ -185,7 +185,7 @@ plt.plot(vm_ref_mean)
 plt.show()
 
 ###############################################################################
-# Finally, print the mean-suqared error between the trial-average and the
+# Finally, print the mean-squared error between the trial-average and the
 # reference trace. The value should be `< 10^-9`.
 
 print(numpy.mean((vm_ref_mean - vm_mean) ** 2))

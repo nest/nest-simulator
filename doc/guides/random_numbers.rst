@@ -171,16 +171,82 @@ Examples of using randomness
 Randomizing the membrane potential
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+To set the membrane potential at creation, just pass a random distribution as the ``V_m`` value.
+
 ::
 
     nest.Create('iaf_psc_alpha', 10000, {'V_m': nest.random.normal(mean=-60.0, std=10.0)}) 
 
+You may also set the membrane potential after creation.
 
-.. todo :: ADD MORE EXAMPLES
-   
-   See, e.g., the NEST 2 to 3 guide
-   Add some more text to the example above, too
+::
 
+   n = nest.Create('iaf_psc_alpha', 10000)
+   n.V_m = nest.random.normal(mean=-60.0, std=10.0)
+
+Randomizing other node parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Other parameters may be randomized in the same way as the membrane potential.
+
+::
+
+   nest.Create('iaf_psc_alpha', 10000,
+               {'C_m': nest.random.uniform(min=240.0, max=260.0),
+               'I_e': nest.random.uniform(min=0.0, max=5.0)})
+
+Randomizing connection parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Likewise, synapse parameters can be specified using the random distributions.
+
+::
+
+   nest.Connect(n, n, syn_spec={'weight': nest.random.normal(mean=0., std=1.),
+                                'delay': nest.random.uniform(min=0.5, max=1.5)})
+
+Randomizing spatial positions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Spatial positions of neurons may be randomized using the same random distributions.
+Note that we have to specify the number of dimensions we want when specifying a single
+distribution.
+
+::
+
+   nest.Create('iaf_psc_alpha', 1000,
+               positions=nest.spatial.free(nest.random.uniform(min=0.0, max=10.0),
+                                           num_dimensions=2))
+
+We can also specify a separate distribution for each dimension.
+
+::
+
+   nest.Create('iaf_psc_alpha', 1000,
+               positions=nest.spatial.free([nest.random.uniform(min=0.0, max=10.0),
+                                            nest.random.normal(mean=5.0, std=10.0)])
+
+Combining random distributions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Random distributions are NEST parameter objects which support arithmetic with constants.
+
+::
+
+   vm = -50.0 + nest.random.exponential(beta=2.0)
+   nest.Create('iaf_psc_alpha', 100, {'V_m': vm})
+
+They also support arithmetic with other NEST parameters.
+
+::
+
+   n = nest.Create('iaf_psc_alpha', 1000,
+                  positions=nest.spatial.free(nest.random.uniform(min=0.0, max=10.0),
+                                             num_dimensions=2))
+
+   nest.Connect(n, n,
+                conn_spec={'rule': 'fixed_indegree', 'indegree': 1},
+                syn_spec={'delay': nest.spatial.distance + nest.random.normal(mean=1.0, std=0.5)})
 
 .. _python_rand:
 

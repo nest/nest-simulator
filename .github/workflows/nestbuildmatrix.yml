@@ -167,6 +167,7 @@ jobs:
          #run: echo "Minimal Build"
          run: |
            #echo $GITHUB_ENV
+           echo "xNEST_BUILD_TYPE=MINIMAL" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
          env:
@@ -196,7 +197,6 @@ jobs:
          #run: echo "Minimal Build"
          run: |
            echo "xNEST_BUILD_TYPE=FULL" >> $GITHUB_ENV
-           $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh   
          env:

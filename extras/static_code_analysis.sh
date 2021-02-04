@@ -62,7 +62,7 @@ typeset -i MAX_CPPCHECK_MSG_COUNT=10
 
 # Drop files that should not be checked (space-separated list).
 FILES_TO_IGNORE="libnestutil/compose.hpp libnestutil/randutils.hpp"
-DIRS_TO_IGNORE="libnestutil/thirdparty"
+DIRS_TO_IGNORE="thirdparty"
 
 # Print a message.
 # The format of the message depends on whether the script is executed on Travis CI or runs local.

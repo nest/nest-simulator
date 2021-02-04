@@ -184,8 +184,15 @@ ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vect
   }
 
   DictionaryDatum syn_dict = new Dictionary();
-  updateValue< long >( dict_datum, names::synapse_label, ( *syn_dict )[ names::synapse_label ] );
-  updateValue< long >( dict_datum, names::receptor_type, ( *syn_dict )[ names::receptor_type ] );
+  auto copy_long_if_known = [&syn_dict, &dict_datum]( const Name& name ) -> void
+  {
+    if ( dict_datum->known( name ) )
+    {
+      ( *syn_dict )[ name ] = getValue< long >( dict_datum, name );
+    }
+  };
+  copy_long_if_known( names::synapse_label );
+  copy_long_if_known( names::receptor_type );
 
   params.resize( kernel().vp_manager.get_num_threads() );
 #pragma omp parallel

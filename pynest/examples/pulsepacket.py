@@ -227,9 +227,7 @@ vm = nest.Create('voltmeter', params=vm_pars)
 
 ###############################################################################
 # Now, we connect each pulse generator to one neuron via static synapses.
-# We want to keep all properties of the static synapse constant except the
-# synaptic weight. Therefore we change the weight with  the help of the command
-# ``SetDefaults``.
+# We use the default static synapse, with specified weight.
 # The command ``Connect`` connects all kinds of nodes/devices. Since multiple
 # nodes/devices can be connected in different ways e.g., each source connects
 # to all targets, each source connects to a subset of targets or each source
@@ -238,9 +236,8 @@ vm = nest.Create('voltmeter', params=vm_pars)
 # generator (source) to one neuron (target).
 # In addition we also connect the `voltmeter` to the `neurons`.
 
-nest.SetDefaults('static_synapse', {'weight': weight})
-nest.Connect(ppgs, neurons, 'one_to_one')
-nest.Connect(vm, neurons)
+nest.Connect(ppgs, neurons, 'one_to_one', syn_spec={'weight': weight})
+nest.Connect(vm, neurons, syn_spec={'weight': weight})
 
 
 ###############################################################################

@@ -95,11 +95,8 @@ nest.Connect(mg, pn2)
 nest.Connect(pn1, sr)
 nest.Connect(pn2, sr)
 
-nest.SetDefaults('static_synapse', {'weight': 1.0, 'receptor_type': 0})
-nest.Connect(pn1, cd)
-
-nest.SetDefaults('static_synapse', {'weight': 1.0, 'receptor_type': 1})
-nest.Connect(pn2, cd)
+nest.Connect(pn1, cd, syn_spec={'weight': 1.0, 'receptor_type': 0})
+nest.Connect(pn2, cd, syn_spec={'weight': 1.0, 'receptor_type': 1})
 
 nest.Simulate(T)
 

@@ -176,9 +176,8 @@ neurondict = {'V_th': V_th,
 # free membrane potential. In addition we choose a small resolution for
 # recording the membrane to collect good statistics.
 
-nest.SetDefaults('iaf_psc_alpha', neurondict)
-n = nest.Create('iaf_psc_alpha', n_neurons)
-n_free = nest.Create('iaf_psc_alpha', params={'V_th': 1e12})
+n = nest.Create('iaf_psc_alpha', n_neurons, params=neurondict)
+n_free = nest.Create('iaf_psc_alpha', params=dict(neurondict, V_th=1e12))
 pg = nest.Create('poisson_generator', len(rates), {'rate': rates})
 vm = nest.Create('voltmeter', params={'interval': .1})
 sr = nest.Create('spike_recorder')

@@ -248,8 +248,7 @@ nest.SetKernelStatus({'resolution': resolution})
 '''
 neuron and devices
 '''
-nest.SetDefaults(nrn_model, nrn_params)
-nrn = nest.Create(nrn_model)
+nrn = nest.Create(nrn_model, params=nrn_params)
 
 # poisson generators are connected to parrot neurons which are
 # connected to the mc neuron

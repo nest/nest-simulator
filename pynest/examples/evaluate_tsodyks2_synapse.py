@@ -88,11 +88,8 @@ fac_params = {"U": 0.1, "u": 0.1, 'x': 1.0, "tau_fac": 1000.,
 ###############################################################################
 # Now we assign the parameter set to the synapse models.
 
-t1_params = fac_params       # for tsodyks_synapse
-t2_params = t1_params.copy()  # for tsodyks2_synapse
-
-nest.SetDefaults("tsodyks2_synapse", t1_params)
-nest.SetDefaults("tsodyks_synapse", t2_params)
+tsodyks_params = dict(fac_params, synapse_model="tsodyks_synapse")  # for tsodyks_synapse
+tsodyks2_params = dict(fac_params, synapse_model="tsodyks2_synapse")  # for tsodyks2_synapse
 
 ###############################################################################
 # Create three neurons.
@@ -103,8 +100,8 @@ neuron = nest.Create("iaf_psc_exp", 3, params={"tau_syn_ex": 3.})
 # Neuron one produces spikes. Neurons 2 and 3 receive the spikes via the two
 # synapse models.
 
-nest.Connect(neuron[0], neuron[1], syn_spec="tsodyks_synapse")
-nest.Connect(neuron[0], neuron[2], syn_spec="tsodyks2_synapse")
+nest.Connect(neuron[0], neuron[1], syn_spec=tsodyks_params)
+nest.Connect(neuron[0], neuron[2], syn_spec=tsodyks2_params)
 
 ###############################################################################
 # Now create two voltmeters to record the responses.

@@ -12,9 +12,6 @@ jobs:
        matrix:
          #os: [ubuntu-latest, macos-latest]
          os: ["ubuntu-20.04", macos-latest]
-         #cxx: ["g++"]
-         #cc:  ["gcc"]
-         #ver: ["9"]
          cpp_compiler: ["gcc", "clang"]
          xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
          #include: 
@@ -86,7 +83,7 @@ jobs:
          with:
            python-version: 3.9
                      
-       - name: MacOS
+       - name: Dependencies MacOS
          if: runner.os =='macOS'
          run: |
             brew install coreutils gsl open-mpi automake autoconf libtool

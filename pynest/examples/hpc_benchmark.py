@@ -268,7 +268,6 @@ def build_network(logger):
     tic = time.time()
 
     nest.SetDefaults('static_synapse_hpc', {'delay': brunel_params['delay']})
-    nest.CopyModel('static_synapse_hpc', 'syn_std')
     nest.CopyModel('static_synapse_hpc', 'syn_ex',
                    {'weight': JE_pA})
     nest.CopyModel('static_synapse_hpc', 'syn_in',

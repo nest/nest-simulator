@@ -38,21 +38,19 @@ source_suffix = ['.rst']
 # add these directories to sys.path here. If the dit rectory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-doc_path = Path(__file__).resolve().parent
-root_path = (doc_path / "..").resolve()
+source_dir = (Path(__file__).resolve().parent / "..").resolve()
+build_dir = Path(os.environ['OLDPWD'])
 
-build_path = Path(os.environ['OLDPWD'])
 if os.environ.get('READTHEDOCS', 'False') == 'True':
-    build_path = doc_path
+    build_dir = source_dir / "doc"
 
-print("build_path", str(build_path))
-print("root_path", str(root_path))
-print("doc_path", str(doc_path))
+print("build_dir", str(build_dir))
+print("source_dir", str(source_dir))
 
-sys.path.insert(0, str(root_path))
-sys.path.insert(0, str(root_path / 'pynest/'))
-sys.path.insert(0, str(root_path / 'pynest/nest'))
-sys.path.insert(0, str(doc_path))
+sys.path.insert(0, str(source_dir))
+sys.path.insert(0, str(source_dir / 'doc'))
+sys.path.insert(0, str(source_dir / 'pynest/'))
+sys.path.insert(0, str(source_dir / 'pynest/nest'))
 
 # -- Mock pynestkernel ----------------------------------------------------
 # The mock_kernel has to be imported after setting the correct sys paths.
@@ -60,9 +58,9 @@ from mock_kernel import convert  # noqa
 
 # create mockfile
 
-excfile = root_path / "pynest/nest/lib/hl_api_exceptions.py"
-infile = root_path / "pynest/pynestkernel.pyx"
-outfile = doc_path / "pynestkernel_mock.py"
+excfile = source_dir / "pynest/nest/lib/hl_api_exceptions.py"
+infile = source_dir / "pynest/pynestkernel.pyx"
+outfile = source_dir / "doc/pynestkernel_mock.py"
 
 with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as fout:
     mockedmodule = fexc.read() + "\n\n"
@@ -102,9 +100,9 @@ templates_path = ['_templates']
 sphinx_gallery_conf = {
      # 'doc_module': ('sphinx_gallery', 'numpy'),
      # path to your examples scripts
-     'examples_dirs': root_path / 'pynest/examples',
+     'examples_dirs': source_dir / 'pynest/examples',
      # path where to save gallery generated examples
-     'gallery_dirs': build_path / 'auto_examples',
+     'gallery_dirs': build_dir / 'doc/auto_examples',
      # 'backreferences_dir': False
      'plot_gallery': 'False'
 }
@@ -192,9 +190,9 @@ from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 
 def config_inited_handler(app, config):
     ExtractUserDocs(
-        listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=root_path),
-        basedir=root_path,
-        outdir="models/"
+        listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=source_dir),
+        basedir=source_dir,
+        outdir=str(build_dir / "doc/models")
     )
 
 
@@ -302,4 +300,4 @@ def copytreeglob(source, target, glob='*.png'):
         copyfile(source/relativename, target/relativename)
 
 
-copytreeglob(root_path / "pynest/examples/Potjans_2014", build_path / "examples", '*.png')
+copytreeglob(source_dir / "pynest/examples/Potjans_2014", build_dir / "doc/examples", '*.png')

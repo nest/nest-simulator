@@ -21,6 +21,7 @@
  */
 
 #include "connection_creator.h"
+#include "dictutils.h"
 
 namespace nest
 {
@@ -39,33 +40,17 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   Name connection_type;
   long number_of_connections( -1 ); // overwritten by dict entry
 
-  // Lambda function to store bool value to specified variable if it exists in dict.
-  auto store_bool_if_known = [&dict]( bool& target, const Name& name ) -> void
+  updateValue< std::string >( dict, names::connection_type, connection_type );
+  updateValue< bool >( dict, names::allow_autapses, allow_autapses_ );
+  updateValue< bool >( dict, names::allow_multapses, allow_multapses_ );
+  updateValue< bool >( dict, names::allow_oversized_mask, allow_oversized_ );
+
+  if ( updateValue< long >( dict, names::number_of_connections, number_of_connections ) )
   {
-    if ( dict->known( name ) )
-    {
-      target = getValue< bool >( dict, name );
-    }
-  };
-
-  if ( dict->known( names::connection_type ) )
-  {
-    connection_type = getValue< std::string >( dict, names::connection_type );
-  }
-
-  store_bool_if_known( allow_autapses_, names::allow_autapses );
-  store_bool_if_known( allow_multapses_, names::allow_multapses );
-  store_bool_if_known( allow_oversized_, names::allow_oversized_mask );
-
-  if ( dict->known( names::number_of_connections ) )
-  {
-    number_of_connections = getValue< long >( dict, names::number_of_connections );
-
     if ( number_of_connections < 0 )
     {
       throw BadProperty( "Number of connections cannot be less than zero." );
     }
-
     number_of_connections_ = number_of_connections;
   }
   if ( dict->known( names::mask ) )
@@ -199,15 +184,8 @@ ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vect
   }
 
   DictionaryDatum syn_dict = new Dictionary();
-  auto copy_long_if_known = [&syn_dict, &dict_datum]( const Name& name ) -> void
-  {
-    if ( dict_datum->known( name ) )
-    {
-      ( *syn_dict )[ name ] = getValue< long >( dict_datum, name );
-    }
-  };
-  copy_long_if_known( names::synapse_label );
-  copy_long_if_known( names::receptor_type );
+  updateValue< long >( dict_datum, names::synapse_label, ( *syn_dict )[ names::synapse_label ] );
+  updateValue< long >( dict_datum, names::receptor_type, ( *syn_dict )[ names::receptor_type ] );
 
   params.resize( kernel().vp_manager.get_num_threads() );
 #pragma omp parallel

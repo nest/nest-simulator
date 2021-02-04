@@ -121,7 +121,7 @@ print_msg "MSGBLD1060: " "Running sanity check for Name definition and usage"
 unused_names_errors=`python3 extras/check_unused_names.py`
 
 
-# Perfom static code analysis.
+# Perform static code analysis.
 c_files_with_errors=""
 python_files_with_errors=""
 for f in $FILE_NAMES; do

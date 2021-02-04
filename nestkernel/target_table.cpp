@@ -100,7 +100,8 @@ nest::TargetTable::add_target( const thread tid, const thread target_rank, const
   else
   {
     const SecondaryTargetDataFields& secondary_fields = target_data.secondary_data;
-    const size_t send_buffer_pos = secondary_fields.get_send_buffer_pos();
+    const size_t send_buffer_pos = secondary_fields.get_recv_buffer_pos()
+      + kernel().mpi_manager.get_send_displacement_secondary_events_in_int( target_rank );
     const synindex syn_id = secondary_fields.get_syn_id();
 
     assert( syn_id < secondary_send_buffer_pos_[ tid ][ lid ].size() );

@@ -399,6 +399,15 @@ class TestSynapseCollection(unittest.TestCase):
         conns = nest.GetConnections()
         self.assertEqual(ref_str, str(conns))
 
+    def test_empty_string(self):
+        """
+        Test the str functionality of empty SynapseCollection
+        """
+        ref_str = ('The synapse collection does not contain any connections.')
+
+        conns = nest.GetConnections()
+        self.assertEqual(ref_str, str(conns))
+
 
 def suite():
     suite = unittest.makeSuite(TestSynapseCollection, 'test')

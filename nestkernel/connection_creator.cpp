@@ -45,12 +45,14 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   updateValue< bool >( dict, names::allow_multapses, allow_multapses_ );
   updateValue< bool >( dict, names::allow_oversized_mask, allow_oversized_ );
 
+  // Need to store number of connections in a temporary variable to be able to detect negative values.
   if ( updateValue< long >( dict, names::number_of_connections, number_of_connections ) )
   {
     if ( number_of_connections < 0 )
     {
       throw BadProperty( "Number of connections cannot be less than zero." );
     }
+    // We are sure that number of connections isn't negative, so it is safe to store it in a size_t.
     number_of_connections_ = number_of_connections;
   }
   if ( dict->known( names::mask ) )

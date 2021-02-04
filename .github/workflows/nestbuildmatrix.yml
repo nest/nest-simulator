@@ -1,15 +1,5 @@
 name: NEST matrix
 env:
-  #xGSL: "0"
-  #xLIBBOOST: "0"
-  #xLIBNEUROSIM: "0"
-  #xLTDL: "0"
-  #xMPI: "0"
-  #xMUSIC: "0"
-  #xOPENMP: "0"
-  #xPYTHON: "0"
-  #xREADLINE: "0"
-  #xSIONLIB: "0"
   CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
   PYTHONPATH: ${{ github.workspace }}/build/python
 on: push
@@ -27,11 +17,11 @@ jobs:
          #ver: ["9"]
          cpp_compiler: ["gcc", "clang"]
          xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
-         include: 
-           - os: "ubuntu-20.04"
+         #include: 
+           #- os: "ubuntu-20.04"
              #TARGET: x86_64-unknown-linux-musl
-             COMPILER: clang
-             LINKER: clang
+             #COMPILER: clang
+             #LINKER: clang
          exclude: 
            - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
              os: macos-latest
@@ -85,54 +75,31 @@ jobs:
          with: 
            cmake-version: 3.12.4
       
-       - name: Say Something
+       - name: Check path
          run: |
-           echo "Hello ${message}"
-           echo "Again Welcome"
            echo $PATH
            echo $PWD
          shell: bash
+         
        - name: Set up Python 3.x
          uses: actions/setup-python@v2
          with:
            python-version: 3.9
-           
-       #- name: OpenMPI cache
-         #uses: actions/cache@v2
-         #id:   cache-ompi
-         #with:
-            #path: ~/openmpi-4.0.2
-            #key:  ${{ matrix.config.os }}-openmpi-4.0.2-${{ matrix.config.cxx }}
-       #- name: Build OpenMPI
-         #if: ${{ steps.cache-ompi.outputs.cache-hit != 'true' }}
-         #run: |
-           #echo cache-hit='${{ steps.cache-ompi.outputs.cache-hit }}'
-           #cd ~
-           #wget https://download.open-mpi.org/release/open-mpi/v4.0/openmpi-4.0.2.tar.gz
-           #tar -xvf ./openmpi-4.0.2.tar.gz
-           #cd openmpi-4.0.2
-           #./configure --disable-mpi-fortran
-           #make -j4
-       #- name: Install OpenMPI
-         #run: |
-           #echo "Going to install ompi"
-           #cd ~
-           #cd openmpi-4.0.2
-           #sudo make install
-           #cd -
-        
+                     
        - name: MacOS
          if: runner.os =='macOS'
          run: |
             brew install coreutils gsl open-mpi automake autoconf libtool
             brew info python
+            
        - name: Dependencies Linux
          if: contains(matrix.os, 'ubuntu')
          run: |
            sudo apt-get update
            #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
            sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pep8 libpcre3 libpcre3-dev
-           sudo apt-get install openmpi-bin libopenmpi-dev
+           sudo apt-get install openmpi-bin libopenmpi-dev tcl8.6
+           
        - name: Install dependencies
          #uses: actions/cache@master
          run: |
@@ -142,13 +109,8 @@ jobs:
             pip list
             g++ --version
             set -o pipefail
-            #chmod +x extras/staticbuild.sh
-            #./extras/staticbuild.sh
-            
-                   
+                         
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYSIS' }}
-         #run: echo "MPI Only Build"
-         #with: ${{ env.xMPI }}
          run: |
            #https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
            echo "xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS" >> $GITHUB_ENV
@@ -159,14 +121,10 @@ jobs:
                        
            #GET CHANGED FILES
            # https://github.com/marketplace/actions/get-changed-files
-  #build:
-    #runs-on: ${{ matrix.os }}
-    #needs: setup
-    #steps:                   
+                   
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'MINIMAL' }}
-         #run: echo "Minimal Build"
          run: |
-           #echo $GITHUB_ENV
+           echo "Minimal Build"
            echo "xNEST_BUILD_TYPE=MINIMAL" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
@@ -174,40 +132,28 @@ jobs:
            xNEST_BUILD_TYPE: "MINIMAL"     
          
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
-         #run: echo "Minimal Build"
          run: |
+           echo "MPI Only Build"
            echo "xNEST_BUILD_TYPE=MPI_ONLY" >> $GITHUB_ENV
-           #echo $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
          env:
            xNEST_BUILD_TYPE: MPI_ONLY
            
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'OPENMP_ONLY' }}
-         #run: echo "Minimal Build"
          run: |
+           echo "OpenMP Only Build"
            echo "xNEST_BUILD_TYPE=OPENMP_ONLY" >> $GITHUB_ENV
-           echo $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
          env:
           xNEST_BUILD_TYPE: OPENMP_ONLY 
            
        - if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
-         #run: echo "Minimal Build"
          run: |
+           echo "FULL Build"
            echo "xNEST_BUILD_TYPE=FULL" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh   
          env:
-           xNEST_BUILD_TYPE: FULL   
-           
-       #- name: MPI
-         #run: echo "MPI BUILD"
-         #if: env.xNEST_BUILD_TYPE == 'MINIMAL'     
-       #- name: Full build
-       #  env:
-       #    key: xNEST_BUILD_TYPE=FULL
-       #  run: echo "Full build"
-                      
-  
+           xNEST_BUILD_TYPE: FULL           

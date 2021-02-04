@@ -110,10 +110,11 @@ jobs:
             g++ --version
             set -o pipefail
                          
-       - if: ${{ matrix.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYSIS' }}
+       - name: Static Code Analysis
+         if: ${{ matrix.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYSIS' }}
          run: |
            #https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
-           echo "xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS" >> $GITHUB_ENV
+           #echo "xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS" >> $GITHUB_ENV
            echo "TCL_INCLUDE_PATH=lib/x86_64-linux-gnu/" >> $GITHUB_ENV
            echo "TK_INCLUDE_PATH=lib/x86_64-linux-gnu/" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
@@ -124,37 +125,41 @@ jobs:
            #GET CHANGED FILES
            # https://github.com/marketplace/actions/get-changed-files
                    
-       - if: ${{ matrix.xNEST_BUILD_TYPE == 'MINIMAL' }}
+       - name: Minimal Build
+         if: ${{ matrix.xNEST_BUILD_TYPE == 'MINIMAL' }}
          run: |
            echo "Minimal Build"
-           echo "xNEST_BUILD_TYPE=MINIMAL" >> $GITHUB_ENV
+           #echo "xNEST_BUILD_TYPE=MINIMAL" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
          env:
            xNEST_BUILD_TYPE: "MINIMAL"     
          
-       - if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
+       - name: MPI Only
+         if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
          run: |
            echo "MPI Only Build"
-           echo "xNEST_BUILD_TYPE=MPI_ONLY" >> $GITHUB_ENV
+           #echo "xNEST_BUILD_TYPE=MPI_ONLY" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
          env:
            xNEST_BUILD_TYPE: MPI_ONLY
            
-       - if: ${{ matrix.xNEST_BUILD_TYPE == 'OPENMP_ONLY' }}
+       - name: OpenMP Only
+         if: ${{ matrix.xNEST_BUILD_TYPE == 'OPENMP_ONLY' }}
          run: |
            echo "OpenMP Only Build"
-           echo "xNEST_BUILD_TYPE=OPENMP_ONLY" >> $GITHUB_ENV
+           #echo "xNEST_BUILD_TYPE=OPENMP_ONLY" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
          env:
           xNEST_BUILD_TYPE: OPENMP_ONLY 
            
-       - if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
+       - name: Full Build
+         if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
          run: |
            echo "FULL Build"
-           echo "xNEST_BUILD_TYPE=FULL" >> $GITHUB_ENV
+           #echo "xNEST_BUILD_TYPE=FULL" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh   
          env:

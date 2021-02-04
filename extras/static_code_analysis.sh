@@ -60,9 +60,9 @@ PEP8_MAX_LINE_LENGTH=120
 # Constants
 typeset -i MAX_CPPCHECK_MSG_COUNT=10
 
-# Drop files that should not be checked (space-separated list).
-FILES_TO_IGNORE="libnestutil/compose.hpp libnestutil/randutils.hpp"
-DIRS_TO_IGNORE="thirdparty"
+# Find directories that should not be checked. List root dirs in space separated list.
+ROOT_DIRS_TO_IGNORE="thirdparty"
+DIRS_TO_IGNORE=$(for dir in ${ROOT_DIRS_TO_IGNORE}; do find ${dir} -type d; done)
 
 # Print a message.
 # The format of the message depends on whether the script is executed on Travis CI or runs local.
@@ -126,10 +126,6 @@ c_files_with_errors=""
 python_files_with_errors=""
 for f in $FILE_NAMES; do
 
-  if [[ $FILES_TO_IGNORE =~ .*$f.* ]]; then
-    print_msg "MSGBLD0110: " "$f is explicitly ignored."
-    continue
-  fi
   # Have to add spaces to make space-separation work
   if [[ " $DIRS_TO_IGNORE " =~ .*[[:space:]]${f%/*}[[:space:]].* ]]; then
     print_msg "MSGBLD0110: " "$f is in a directory that is explicitly ignored."

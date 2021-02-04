@@ -118,7 +118,7 @@ and exponential input filters) (see [5,6]_).
 This model has been adapted from iaf_psc_delta. The default parameters are
 set to the mean values given in [2]_, which have been matched to spike-train
 recordings. Due to the many features of pp_psc_delta and its versatility,
-parameters should be set carefully and conciously.
+parameters should be set carefully and consciously.
 
 Parameters
 ++++++++++

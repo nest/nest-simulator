@@ -8,7 +8,7 @@ as well as the infrastructure and tools for extracting documentation
 dynamically from the source code and building a unified HTML site
 using Sphinx.
 
-For each of the releases, the fullly built documentation is available
+For each of the releases, the fully built documentation is available
 at https://nest-simulator.readthedocs.io/
 
 Build the user documentation locally
@@ -18,18 +18,24 @@ If you intend to work on the documentation, or if you want to obtain a
 local version of it for other reasons, you can build the documentation
 by simply running
 
+::
+
     make html
 
 in the build directory of NEST (i.e. the directory where you ran
 ``cmake``). To install the dependencies for building the
 documentation, you can either directly run
 
+::
+
     pip install -r <nest_source_dir>/doc/requirements.txt
 
 or alternatively install the dependencies into a conda environment by
 running
 
-    conda env create -f <nest_source_dir>/doc/environment.yml -p conda
+::
+
+    conda env create -f <nest_source_dir>/doc/environment.yml
     conda activate conda/
 
 Once this complete, you can open `doc/html/index.html` to view the docs.

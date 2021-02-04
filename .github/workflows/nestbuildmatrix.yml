@@ -100,7 +100,7 @@ jobs:
        - name: OpenMPI cache
          uses: actions/cache@v2
          id:   cache-ompi
-          with:
+         with:
             path: ~/openmpi-4.0.2
             key:  ${{ matrix.config.os }}-openmpi-4.0.2-${{ matrix.config.cxx }}
        - name: Build OpenMPI

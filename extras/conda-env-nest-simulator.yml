@@ -23,9 +23,6 @@ dependencies:
   - matplotlib
   - pandas
   - pydot
-  - flask
-  - requests
-  - werkzeug
   - pip:
     - junitparser
     - pep8ify

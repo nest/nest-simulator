@@ -1505,8 +1505,8 @@ All details about the new infrastructure can be found in the guide on
 :doc:`recording from simulations <recording_from_simulations>`.
 
 
-Much simpler handling of random number generators
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Simpler handling of random number generators
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All random number generators managed by the NEST kernel are now seeded by
 providing a single seed :math:`s`  with :math:`1\leq s \leq 2^{31}-1`. The
@@ -1528,7 +1528,7 @@ processes:
   |                                             |                                       |
   +---------------------------------------------+---------------------------------------+
 
-Changing the type of random number generator to use is easy now
+Changing the type of random number generator to use is easy now:
 
   +---------------------------------------------+---------------------------------------+
   | NEST 2.x                                    | NEST 3.0                              |
@@ -1541,13 +1541,13 @@ Changing the type of random number generator to use is easy now
   |                                             |                                       |
   +---------------------------------------------+---------------------------------------+
 
-Which random number generator types are available can be checked by
+Which random number generator types are available can be checked by:
 
 ::
 
     nest.GetKernelStatus('rng_types')
 
-Counter-Based Random Number Generators
+Counter-based random number generators
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 In addition to the conventional random number generator types, there is added support for
 "counter-based" random number generators (CBRNGs) with the Random123 library. Where
@@ -1560,8 +1560,8 @@ Threefry are automatically made available.
 
 .. note::
 
-   On some systems, or with some compilers, the CBRNGs may not give reliable results. In these
-   cases they are automatically disabled during compilation and will not be available.
+   On some systems or with some compilers, the CBRNGs may not give reliable results. In these
+   cases, they are automatically disabled during compilation and will not be available.
 
 
 What's removed?

@@ -307,8 +307,8 @@ No Change
 Functions related to random number generators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In NEST 2.x you would have to set a global seed and individual seeds for each virtual process manually.
-In NEST 3.0 you set only a single `rng_seed`, which is used as a base for all other seeds.
+In NEST 2.x, you would have to set a global seed and individual seeds for each virtual process manually.
+In NEST 3.0, you set only a single `rng_seed`, which is used as a base for all other seeds.
 
 +-------------------------------------------------+----------------------------------------------------------------+
 | NEST 2.x                                        | NEST 3.0                                                       |

@@ -188,15 +188,15 @@ def SetKernelStatus(params):
         Dictionary of parameters to set.
 
 
-    Params dictionary
+    **Note**
 
-    Some of the keywords in the kernel status dictionary are internally
-    calculated, and cannot be defined by the user. These are flagged as
-    `read only` in the parameter list. Use GetKernelStatus to access their
-    assigned values.
+    All NEST kernel parameters are described below, grouped by topic.
+    Some of them only provide information about the kernel status and
+    cannot be set by the user. These are marked as *read only* and can
+    be accessed using ``GetKernelStatus``.
 
 
-    Time and resolution
+    **Time and resolution**
 
     Parameters
     ----------
@@ -223,7 +223,21 @@ def SetKernelStatus(params):
         The smallest representable time value
 
 
-    Parallel processing
+    **Random number generators**
+
+    Parameters
+    ----------
+
+    rng_types : list, read only
+        Names of random number generator types available.
+    rng_type : str
+        Name of random number generator type used by NEST.
+    rng_seed : int
+        Seed value used as base for seeding NEST random number generators
+        (:math:`1 \leq s \leq 2^{32}-1`).
+
+
+    **Parallel processing**
 
     Parameters
     ----------
@@ -237,19 +251,8 @@ def SetKernelStatus(params):
     off_grid_spiking : bool
         Whether to transmit precise spike times in MPI communication
 
-    Random number generators
-    ~~~~~~~~~~~~~~~~~~~~~~~~
-    rng_types : list, read only
-        Names of random number generator types available.
-    rng_type : str
-        Name of random number generator type used by kernel
-    rng_seed : int
-        Seed value used as basis of seeding of all random number generators
-        generators managed by the kernel (\f$1 leq s \leq 2^{32}-1\f$).
 
-
-
-    MPI buffers
+    **MPI buffers**
 
     Parameters
     ----------
@@ -277,7 +280,7 @@ def SetKernelStatus(params):
         Maximal size of MPI buffers for communication of connections
 
 
-    Waveform relaxation method (wfr)
+    **Gap junctions and rate models (waveform relaxation method)**
 
     Parameters
     ----------
@@ -294,7 +297,7 @@ def SetKernelStatus(params):
         Interpolation order of polynomial used in wfr iterations
 
 
-    Synapses
+    **Synapses**
 
     Parameters
     ----------
@@ -316,7 +319,7 @@ def SetKernelStatus(params):
         and deletion of plastic synapses)
 
 
-    Output
+    **Output**
 
     Returns
     -------
@@ -341,10 +344,10 @@ def SetKernelStatus(params):
         devices such as poisson_generator.
 
 
-    Miscellaneous
+    **Miscellaneous**
 
-    Other Parameters
-    ----------------
+    Parameters
+    ----------
 
     dict_miss_is_error : bool
         Whether missed dictionary entries are treated as errors

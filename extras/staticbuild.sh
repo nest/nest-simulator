@@ -54,14 +54,14 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
     echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
     CONFIGURE_PYTHON="-DPYTHON_EXECUTABLE=$PYTHON_EXECUTABLE -DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
-    wget --no-verbose https://bitbucket.org/verateam/vera/downloads/vera++-1.3.0.tar.gz
-    tar -xzf vera++-1.3.0.tar.gz
-    cd vera++-1.3.0
+    #wget --no-verbose https://bitbucket.org/verateam/vera/downloads/vera++-1.3.0.tar.gz
+    #tar -xzf vera++-1.3.0.tar.gz
+    #cd vera++-1.3.0
     cmake -LA || true
-    cmake -DCMAKE_INSTALL_PREFIX=/usr $CONFIGURE_PYTHON -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
-    sudo make install
-    cd -
-    rm -fr vera++-1.3.0 vera++-1.3.0.tar.gz
+    #cmake -DCMAKE_INSTALL_PREFIX=/usr $CONFIGURE_PYTHON -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
+    #sudo make install
+    #cd -
+    #rm -fr vera++-1.3.0 vera++-1.3.0.tar.gz
      # Add the NEST profile to the VERA++ profiles.
     sudo cp extras/vera++.profile /usr/lib/vera++/profiles/nest
     echo "MSGBLD0020: VERA++ initialization completed."

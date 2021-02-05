@@ -31,7 +31,7 @@ class LocalVPsTestCase():
     """
     Test local_vps field of kernel status.
 
-    This test ensure that the PyNEST-generated local_vps information
+    This test ensures that the PyNEST-generated local_vps information
     agrees with the thread-VP mappings in the kernel.
     """
 

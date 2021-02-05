@@ -229,10 +229,10 @@ else
 fi
 
 if [ "$xPYTHON" = "1" ] ; then
-    PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
-    PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
-    PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
-    PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
+    export PYTHON_INCLUDE_DIR=`python3 -c "import sysconfig; print(sysconfig.get_path('include'))"`
+    export PYLIB_BASE=lib`basename $PYTHON_INCLUDE_DIR`
+    export PYLIB_DIR=$(dirname `sed 's/include/lib/' <<< $PYTHON_INCLUDE_DIR`)
+    export PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
     echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
     echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
     CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"

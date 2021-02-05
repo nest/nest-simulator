@@ -96,6 +96,7 @@ jobs:
            #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
            sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pep8 libpcre3 libpcre3-dev python2-dev libboost-all-dev
            sudo apt-get install openmpi-bin libopenmpi-dev tcl8.6 tcl8.6-dev tk8.6-dev
+           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
            
        - name: Install dependencies
          #uses: actions/cache@master
@@ -115,9 +116,6 @@ jobs:
          if: ${{ matrix.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYSIS' }}
          run: |
            #https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
-           #echo "xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS" >> $GITHUB_ENV
-           echo "TCL_INCLUDE_PATH=lib/x86_64-linux-gnu/" >> $GITHUB_ENV
-           echo "TK_INCLUDE_PATH=lib/x86_64-linux-gnu/" >> $GITHUB_ENV
            chmod +x extras/staticbuild.sh
            ./extras/staticbuild.sh
          env:

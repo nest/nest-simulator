@@ -125,7 +125,7 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
     return 1. / v_max
 
 ###############################################################################
-# For compatiblity with earlier benchmarks, we require a rise time of
+# For compatibility with earlier benchmarks, we require a rise time of
 # ``t_rise = 1.700759 ms`` and we choose ``tau_syn`` to achieve this for given
 # ``tau_m``. This requires numerical inversion of the expression for ``t_rise``
 # in ``convert_synapse_weight``. We computed this value once and hard-code
@@ -268,7 +268,6 @@ def build_network(logger):
     tic = time.time()
 
     nest.SetDefaults('static_synapse_hpc', {'delay': brunel_params['delay']})
-    nest.CopyModel('static_synapse_hpc', 'syn_std')
     nest.CopyModel('static_synapse_hpc', 'syn_ex',
                    {'weight': JE_pA})
     nest.CopyModel('static_synapse_hpc', 'syn_in',

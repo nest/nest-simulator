@@ -31,7 +31,7 @@ facilitation according to the quantal release model described by Fuhrmann et
 al. [1]_ and Loebel et al. [2]_.
 
 Each presynaptic spike will stochastically activate a fraction of the
-available release sites.  This fraction is binomialy distributed and the
+available release sites.  This fraction is binomially distributed and the
 release probability per site is governed by the Fuhrmann et al. (2002) model.
 The solution of the differential equations is taken from Maass and Markram
 2002 [3]_.
@@ -93,23 +93,23 @@ fac_params = {"U": 0.02, "u": 0.02, "tau_fac": 500.,
 ###############################################################################
 # Then, we assign the parameter set to the synapse models
 
-t1_params = fac_params  # for tsodyks2_synapse
-t2_params = t1_params.copy()  # for quantal_stp_synapse
+tsodyks_params = dict(fac_params, synapse_model="tsodyks2_synapse")  # for tsodyks2_synapse
+quantal_params = fac_params.copy()  # for quantal_stp_synapse
 
-t1_params['x'] = t1_params['U']
-t2_params['n'] = n_syn
+tsodyks_params['x'] = tsodyks_params['U']
+quantal_params['n'] = n_syn
 
 ###############################################################################
 # To make the responses comparable, we have to scale the weight by the
 # number of synapses.
 
-t2_params['weight'] = 1. / n_syn
+quantal_params['weight'] = 1. / n_syn
 
 ###############################################################################
-# Next, we chage the defaults of the various models to our parameters.
+# Next, we change the defaults of the quantal_stdp_synapse model to our parameters,
+# because it doesn't support the setting of parameter n in syn_spec.
 
-nest.SetDefaults("tsodyks2_synapse", t1_params)
-nest.SetDefaults("quantal_stp_synapse", t2_params)
+nest.SetDefaults("quantal_stp_synapse", quantal_params)
 
 ###############################################################################
 # We create three different neurons.
@@ -120,7 +120,7 @@ neuron = nest.Create("iaf_psc_exp", 3, params={"tau_syn_ex": 3.})
 ###############################################################################
 # The connection from neuron 1 to neuron 2 is a deterministic synapse.
 
-nest.Connect(neuron[0], neuron[1], syn_spec="tsodyks2_synapse")
+nest.Connect(neuron[0], neuron[1], syn_spec=tsodyks_params)
 
 ###############################################################################
 # The connection from neuron 1 to neuron 3 has a stochastic
@@ -185,7 +185,7 @@ plt.plot(vm_ref_mean)
 plt.show()
 
 ###############################################################################
-# Finally, print the mean-suqared error between the trial-average and the
+# Finally, print the mean-squared error between the trial-average and the
 # reference trace. The value should be `< 10^-9`.
 
 print(numpy.mean((vm_ref_mean - vm_mean) ** 2))

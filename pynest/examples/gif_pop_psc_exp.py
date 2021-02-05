@@ -171,8 +171,7 @@ nest_sr = []
 for i in range(M):
     nest_sr.append(nest.Create('spike_recorder'))
     nest_sr[i].time_in_steps = True
-    nest.SetDefaults('static_synapse', {'weight': 1., 'delay': dt})
-    nest.Connect(nest_pops[i], nest_sr[i])
+    nest.Connect(nest_pops[i], nest_sr[i], syn_spec={'weight': 1., 'delay': dt})
 
 ###############################################################################
 # All neurons in a given population will be stimulated with a step input
@@ -191,7 +190,7 @@ for i in range(M):
                             origin=t0,
                             stop=t_end)
     pop_ = nest_pops[i]
-    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1.})
+    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1., 'delay': dt})
 
 ###############################################################################
 # We can now start the simulation:
@@ -304,7 +303,7 @@ for i, nest_i in enumerate(nest_pops):
     nest_mm_Vm.append(nest.Create('multimeter'))
     nest_mm_Vm[i].set(record_from=['V_m'], interval=dt_rec)
     if Nrecord[i] != 0:
-        nest.Connect(nest_mm_Vm[i], nest_i[:Nrecord[i]])
+        nest.Connect(nest_mm_Vm[i], nest_i[:Nrecord[i]], syn_spec={'weight': 1., 'delay': dt})
 
 ###############################################################################
 # As before, all neurons in a given population will be stimulated with a
@@ -325,7 +324,7 @@ for i in range(M):
                             stop=t_end)
     # optionally a stopping time may be added by: 'stop': sim_T + t0
     pop_ = nest_pops[i]
-    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1.})
+    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1., 'delay': dt})
 
 ###############################################################################
 # We can now start the microscopic simulation:

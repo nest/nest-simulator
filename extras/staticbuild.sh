@@ -52,11 +52,12 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     export PYTHON_LIBRARY=`find $PYLIB_DIR \( -name $PYLIB_BASE.so -o -name $PYLIB_BASE.dylib \) -print -quit`
     echo "--> Detected PYTHON_LIBRARY=$PYTHON_LIBRARY"
     echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
+    CONFIGURE_PYTHON="-DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
     wget --no-verbose https://bitbucket.org/verateam/vera/downloads/vera++-1.3.0.tar.gz
     tar -xzf vera++-1.3.0.tar.gz
     cd vera++-1.3.0
-    cmake -LA
-    cmake -DCMAKE_INSTALL_PREFIX=/usr -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
+    cmake -LA || true
+    cmake -DCMAKE_INSTALL_PREFIX=/usr $CONFIGURE_PYTHON -DVERA_LUA=OFF -DVERA_USE_SYSTEM_BOOST=ON
     sudo make install
     cd -
     rm -fr vera++-1.3.0 vera++-1.3.0.tar.gz

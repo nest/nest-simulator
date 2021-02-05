@@ -67,10 +67,10 @@ jobs:
        - name: Check Python path
          run: echo $PYTHONPATH
        
-       - name: Set up cmake
-         uses: jwlawson/actions-setup-cmake@v1.7
-         with: 
-           cmake-version: 3.12.4
+       #- name: Set up cmake
+         #uses: jwlawson/actions-setup-cmake@v1.7
+         #with: 
+           #cmake-version: 3.12.4
       
        - name: Check path
          run: |

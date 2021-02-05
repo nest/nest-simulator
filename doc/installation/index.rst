@@ -135,14 +135,14 @@ and :doc:`compilation_options`.
           .. code-block:: sh
 
              conda create --name ENVNAME -c conda-forge nest-simulator
-		  
-		  To install additional packages into the environment, just list them together with ``nest-simulator``.
-		  
+
+          To install additional packages into the environment, just list them together with ``nest-simulator``.
+
           .. code-block:: sh
 
              conda create --name ENVNAME -c conda-forge nest-simulator jupyterlab seaborn
 
-	   #. To see all NEST versions available via conda, either run
+       #. To see all NEST versions available via conda, either run
 
           .. code-block:: sh
 

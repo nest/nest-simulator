@@ -29,7 +29,7 @@
 
 
 # Exit shell if any subcommand or pipline returns a non-zero status.
-set -e
+set -ex
 
 env
 if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then

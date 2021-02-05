@@ -119,6 +119,8 @@ print_msg "MSGBLD1050: " "Running check for copyright headers"
 copyright_check_errors=`python3 extras/check_copyright_headers.py`
 print_msg "MSGBLD1060: " "Running sanity check for Name definition and usage"
 unused_names_errors=`python3 extras/check_unused_names.py`
+print_msg "MSGBLD1070: " "Running check for forbidden type usage"
+forbidden_types_errors=`bash extras/check_forbidden_types.sh`
 
 
 # Perform static code analysis.
@@ -266,6 +268,7 @@ done
 nlines_copyright_check=`echo -e $copyright_check_errors | sed -e 's/^ *//' | wc -l`
 if [ $nlines_copyright_check \> 1 ] || \
    [ "x$unused_names_errors" != "x" ] || \
+   [ -n "$forbidden_types_errors" ] || \
    [ "x$c_files_with_errors" != "x" ] || \
    [ "x$python_files_with_errors" != "x" ]; then
 
@@ -294,6 +297,12 @@ if [ $nlines_copyright_check \> 1 ] || \
   if [ "x$unused_names_errors" != "x" ]; then
       print_msg "MSGBLD0220: " "Files with unused/ill-defined Name objects:"
       echo -e $unused_names_errors | sed -e 's/^ *//'
+      print_msg "" ""
+  fi
+
+  if [ -n "$forbidden_types_errors" ]; then
+      print_msg "MSGBLD0220: " "Files with forbidden types (hint: use types without _t suffix):"
+      echo -e $forbidden_types_errors | sed -e 's/^ *//'
       print_msg "" ""
   fi
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # find_imports.py
@@ -25,20 +26,37 @@ import sys
 import re
 from collections import defaultdict
 
-
 """Script to report all Python modules imported in NEST
 
-Run this script in the NEST source directory to obtain a
-listing of external modules imported by NEST and the part 
-importing them for those not part of the NEST core.
+This script parses the NEST code base to find all external
+modules imported by NEST, i.e., modules not included in the
+Python Standard Library or as part of NEST itself.
+
+For scripts not included by core parts of NEST (PyNEST
+itself, its examples and tests), the script also reports
+which part of the NEST codebase requires the module.
+
+The script scans the directory given by the NEST_SOURCE
+environment variable if defined and the current working
+directory otherwise.
 
 This may be useful to define requirements.
 
 This is still work in progress and may return false positives.
 """
 
-# directory to parse
-source_dir = '.'
+if len(sys.argv) == 1:
+    if 'NEST_SOURCE' in os.environ:
+        source_dir = os.environ['NEST_SOURCE']
+    else:
+        print('I do not know which directory to parse: ')
+        print('No directory given on the command line and NEST_SOURCE undefined.')
+        sys.exit(1)
+elif len(sys.argv) == 2:
+    source_dir = sys.argv[1]
+else:
+    print(f'\nUsage: {sys.argv[0]} [path to scan]\n')
+    sys.exit(2)
 
 # subdirectories to ignore
 exclude_dirs = [
@@ -51,36 +69,36 @@ exclude_dirs = [
 ]
 
 # modules included in Python Standard Library (https://docs.python.org/3/py-modindex.html)
-py_modules = set(['__future__', '__main__', '_thread', 'abc', 'aifc', 'argparse', 'array', 'ast', 
-                  'asynchat', 'asyncio', 'asyncore', 'atexit', 'audioop', 'base64', 'bdb', 'binascii', 
+py_modules = set(['__future__', '__main__', '_thread', 'abc', 'aifc', 'argparse', 'array', 'ast',
+                  'asynchat', 'asyncio', 'asyncore', 'atexit', 'audioop', 'base64', 'bdb', 'binascii',
                   'binhex', 'bisect', 'builtins', 'bz2', 'cProfile', 'calendar', 'cgi', 'cgitb', 'chunk',
-                  'cmath', 'cmd', 'code', 'codecs', 'codeop', 'collections', 'colorsys', 'compileall', 
-                  'concurrent', 'configparser', 'contextlib', 'contextvars', 'copy', 'copyreg', 'crypt', 
-                  'csv', 'ctypes', 'curses', 'dataclasses', 'datetime', 'dbm', 'decimal', 'difflib', 
-                  'dis', 'distutils', 'doctest', 'email', 'encodings', 'ensurepip', 'enum', 'errno', 
-                  'faulthandler', 'fcntl', 'filecmp', 'fileinput', 'fnmatch', 'formatter', 'fractions', 
-                  'ftplib', 'functools', 'gc', 'getopt', 'getpass', 'gettext', 'glob', 'graphlib', 'grp', 
-                  'gzip', 'hashlib', 'heapq', 'hmac', 'html', 'http', 'imaplib', 'imghdr', 'imp', 
-                  'importlib', 'inspect', 'io', 'ipaddress', 'itertools', 'json', 'keyword', 'lib2to3', 
-                  'linecache', 'locale', 'logging', 'lzma', 'mailbox', 'mailcap', 'marshal', 'math', 
-                  'mimetypes', 'mmap', 'modulefinder', 'msilib', 'msvcrt', 'multiprocessing', 'netrc', 
-                  'nis', 'nntplib', 'numbers', 'operator', 'optparse', 'os', 'ossaudiodev', 'parser', 
-                  'pathlib', 'pdb', 'pickle', 'pickletools', 'pipes', 'pkgutil', 'platform', 'plistlib', 
-                  'poplib', 'posix', 'pprint', 'profile', 'pstats', 'pty', 'pwd', 'py_compile', 'pyclbr', 
-                  'pydoc', 'queue', 'quopri', 'random', 're', 'readline', 'reprlib', 'resource', 
-                  'rlcompleter', 'runpy', 'sched', 'secrets', 'select', 'selectors', 'shelve', 'shlex', 
-                  'shutil', 'signal', 'site', 'smtpd', 'smtplib', 'sndhdr', 'socket', 'socketserver', 
-                  'spwd', 'sqlite3', 'ssl', 'stat', 'statistics', 'string', 'stringprep', 'struct', 
-                  'subprocess', 'sunau', 'symbol', 'symtable', 'sys', 'sysconfig', 'syslog', 'tabnanny', 
-                  'tarfile', 'telnetlib', 'tempfile', 'termios', 'test', 'textwrap', 'threading', 'time', 
-                  'timeit', 'tkinter', 'token', 'tokenize', 'trace', 'traceback', 'tracemalloc', 'tty', 
-                  'turtle', 'turtledemo', 'types', 'typing', 'unicodedata', 'unittest', 'urllib', 'uu', 
-                  'uuid', 'venv', 'warnings', 'wave', 'weakref', 'webbrowser', 'winreg', 'winsound', 
-                  'wsgiref', 'xdrlib', 'xml', 'xmlrpc', 'zipapp', 'zipfile', 'zipimport', 'zlib', 
+                  'cmath', 'cmd', 'code', 'codecs', 'codeop', 'collections', 'colorsys', 'compileall',
+                  'concurrent', 'configparser', 'contextlib', 'contextvars', 'copy', 'copyreg', 'crypt',
+                  'csv', 'ctypes', 'curses', 'dataclasses', 'datetime', 'dbm', 'decimal', 'difflib',
+                  'dis', 'distutils', 'doctest', 'email', 'encodings', 'ensurepip', 'enum', 'errno',
+                  'faulthandler', 'fcntl', 'filecmp', 'fileinput', 'fnmatch', 'formatter', 'fractions',
+                  'ftplib', 'functools', 'gc', 'getopt', 'getpass', 'gettext', 'glob', 'graphlib', 'grp',
+                  'gzip', 'hashlib', 'heapq', 'hmac', 'html', 'http', 'imaplib', 'imghdr', 'imp',
+                  'importlib', 'inspect', 'io', 'ipaddress', 'itertools', 'json', 'keyword', 'lib2to3',
+                  'linecache', 'locale', 'logging', 'lzma', 'mailbox', 'mailcap', 'marshal', 'math',
+                  'mimetypes', 'mmap', 'modulefinder', 'msilib', 'msvcrt', 'multiprocessing', 'netrc',
+                  'nis', 'nntplib', 'numbers', 'operator', 'optparse', 'os', 'ossaudiodev', 'parser',
+                  'pathlib', 'pdb', 'pickle', 'pickletools', 'pipes', 'pkgutil', 'platform', 'plistlib',
+                  'poplib', 'posix', 'pprint', 'profile', 'pstats', 'pty', 'pwd', 'py_compile', 'pyclbr',
+                  'pydoc', 'queue', 'quopri', 'random', 're', 'readline', 'reprlib', 'resource',
+                  'rlcompleter', 'runpy', 'sched', 'secrets', 'select', 'selectors', 'shelve', 'shlex',
+                  'shutil', 'signal', 'site', 'smtpd', 'smtplib', 'sndhdr', 'socket', 'socketserver',
+                  'spwd', 'sqlite3', 'ssl', 'stat', 'statistics', 'string', 'stringprep', 'struct',
+                  'subprocess', 'sunau', 'symbol', 'symtable', 'sys', 'sysconfig', 'syslog', 'tabnanny',
+                  'tarfile', 'telnetlib', 'tempfile', 'termios', 'test', 'textwrap', 'threading', 'time',
+                  'timeit', 'tkinter', 'token', 'tokenize', 'trace', 'traceback', 'tracemalloc', 'tty',
+                  'turtle', 'turtledemo', 'types', 'typing', 'unicodedata', 'unittest', 'urllib', 'uu',
+                  'uuid', 'venv', 'warnings', 'wave', 'weakref', 'webbrowser', 'winreg', 'winsound',
+                  'wsgiref', 'xdrlib', 'xml', 'xmlrpc', 'zipapp', 'zipfile', 'zipimport', 'zlib',
                   'zoneinfo'])
 
 # find modules that are defined inside the NEST code base
-pn_modules = set(os.path.splitext(os.path.split(fn)[-1])[0] 
+pn_modules = set(os.path.splitext(os.path.split(fn)[-1])[0]
                  for fn in glob.glob(f'{source_dir}/**/*.py', recursive=True))
 
 # exclude modules from the Python Standard Library and modules defined within NEST
@@ -116,12 +134,10 @@ for dirpath, _, fnames in os.walk(source_dir):
                 if match:
                     modname = match.group(2)
                     if modname not in exclude_modules:
-                        if (any(dirpath.startswith(bd) for bd in base_dirs)
-                            and not dirpath.startswith(server_dir)):
+                        if (any(dirpath.startswith(bd) for bd in base_dirs) and not dirpath.startswith(server_dir)):
                             imports[modname].add('BASE')
                         else:
                             imports[modname].add(dirpath)
-
 
 print('Modules required by NEST base (may include false positives)')
 for module, requester in sorted(imports.items()):

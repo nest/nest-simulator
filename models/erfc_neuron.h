@@ -96,8 +96,8 @@ Parameters
    #. Binary neurons can be driven by current-injecting devices, but
       *not* by spike generators.
 
-   #. Activity of binary neurons can only be recored using a `spin_detector`
-      or `correlospinmatrix_detector`.
+   #. Activity of binary neurons can only be recored using a ``spin_detector``
+      or ``correlospinmatrix_detector``.
 
 
 References
@@ -123,7 +123,6 @@ CurrentEvent
 See also
 ++++++++
 
-mcculloch_pitts_neuron, ginzburg_neuron, spin_detector, correlospinmatrix_detector
 
 EndUserDocs */
 

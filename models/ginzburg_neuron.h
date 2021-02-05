@@ -39,7 +39,7 @@ Binary stochastic neuron with sigmoidal activation function
 Description
 +++++++++++
 
-The `ginzburg_neuron` is an implementation of a binary neuron that
+The ``ginzburg_neuron`` is an implementation of a binary neuron that
 is irregularly updated as Poisson time points. At each update
 point, the total synaptic input h into the neuron is summed up,
 passed through a gain function g whose output is interpreted as
@@ -100,8 +100,8 @@ c_3    1/mV          Slope factor of sigmoidal gain
    #. Binary neurons can be driven by current-injecting devices, but
       *not* by spike generators.
 
-   #. Activity of binary neurons can only be recored using a `spin_detector`
-      or `correlospinmatrix_detector`.
+   #. Activity of binary neurons can only be recored using a ``spin_detector``
+      or ``correlospinmatrix_detector``.
 
 
 References
@@ -127,7 +127,6 @@ CurrentEvent
 See also
 ++++++++
 
-mcculloch_pitts_neuron, erfc_neuron, spin_detector, correlospinmatrix_detector
 
 EndUserDocs */
 

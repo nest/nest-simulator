@@ -185,7 +185,7 @@ def SetKernelStatus(params):
     ----------
 
     params : dict
-        Dictionary of parameters to set. 
+        Dictionary of parameters to set.
 
 
     **Note**
@@ -227,7 +227,7 @@ def SetKernelStatus(params):
 
     Parameters
     ----------
-    
+
     rng_types : list, read only
         Names of random number generator types available.
     rng_type : str

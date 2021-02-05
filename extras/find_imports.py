@@ -111,10 +111,13 @@ base_dirs = {f'{source_dir}/pynest/nest', f'{source_dir}/pynest/examples',
 # server package
 server_dir = f'{source_dir}/pynest/nest/server'
 
-# Match for import lines, picks up only top-level package and ignores relative imports
-# We need the \s* at the beginning because some imports are nested in try-blocks. This
-# can lead to false positives if a comment line or multiline string line begins with
-# "import" or "from".
+# Match for import lines
+#   - Picks up only top-level package and ignores relative imports
+#   - Will only pick up the first module of comma-separated imports (import modA, modB).
+#     As such imports violate PEP8 and do currently not occur in NEST, this is acceptable.
+#   - We need \s* at the start of the regex because some imports are nested in try-blocks. 
+#     This can lead to false positives if a comment line or multiline string line begins with
+#     "import" or "from".
 import_re = re.compile('\s*(import|from)\s+(\w+)')
 
 imports = defaultdict(set)

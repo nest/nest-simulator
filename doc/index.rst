@@ -38,14 +38,9 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
 
 
 **Know which model you need?**
-    You can find a list of all models implemented in NEST in our
-    :doc:`model directory <models/index>`.
-
-    Please note that each neuron or synapse model available in NEST is a single
-    entity. If your research demands a combination of features that are available
-    in `different` models, our built-in models may not be for you. In this case you
-    should check out `NESTML <https://nestml.readthedocs.io/en/latest/>`_ to
-    learn about how to create your own.
+    NEST comes packaged with a large collection of neuron and synaptic plasticity models.
+    You can find a list of all available models in our :doc:`model directory <models/index>`,
+    or select a model category by clicking one of the images:
 
 .. raw:: html
 
@@ -74,6 +69,10 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
 
   </embed>
 
+
+**Need a different model?**
+    To customize or combine features of neuron and synapse models, we recommend
+    using the `NESTML modeling language <https://nestml.readthedocs.io/>`_.
 
 **Have a question or issue with NEST?**
     See our :doc:`Getting Help <getting_help>` page.

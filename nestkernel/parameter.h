@@ -334,6 +334,8 @@ private:
 class NormalParameter : public Parameter
 {
 public:
+  using Parameter::value;
+
   /**
    * Parameters:
    * mean  - mean value

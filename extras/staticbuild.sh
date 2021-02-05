@@ -258,7 +258,8 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 if [ "$xLIBBOOST" = "1" ] ; then
-    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0.install"
+    #CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0.install"
+    CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_71_0.install"
     chmod +x extras/install_libboost.sh
     ./extras/install_libboost.sh
 else

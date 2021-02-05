@@ -28,5 +28,4 @@ dependencies:
   - werkzeug
   - pip:
     - junitparser
- 
-  
+    - pep8ify

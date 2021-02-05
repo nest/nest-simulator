@@ -264,8 +264,10 @@ Synapse Specification
 ---------------------
 
 The synapse properties can be given as just the name of the desired
-synapse model as a string, a ``CollocatedSynapse`` object, or a
-dictionary specifying the synapse parameters in more detail.
+synapse model as a string, as a dictionary specifying synapse model 
+and parameters, or as a ``CollocatedSynapse`` object creating
+multiple synapses for each source-target pair as detailed in 
+the section on :ref:`collocated synapses <collocated_synapses>`.
 
 ::
 
@@ -274,24 +276,26 @@ dictionary specifying the synapse parameters in more detail.
     B = nest.Create('iaf_psc_alpha', n)
     nest.Connect(A, B, syn_spec='static_synapse')
 
-    syn_spec_dict = {'synapse_model': 'stdp_synapse', 'weight': 2.5, 'delay': 0.5})
+    syn_spec_dict = {'synapse_model': 'stdp_synapse', 
+                     'weight': 2.5, 'delay': 0.5}
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
-Specifying the synapse properties in a single dictionary or as
-:ref:`collocated synapses <collocated_synapses>` allows to draw
-synaptic parameters from random distributions and combine such
-parameters flexibly. In addition to the key ``synapse_model``, the
-dictionary can contain specifications for ``weight``, ``delay``,
-``receptor_type`` (see :ref:`receptor-types` for details) and
-parameters specific to the chosen synapse model. The specification of
-all parameters is optional and unspecified parameters will take on the
+If synapse properties are given as a dictionary, it may include the keys
+``synapse_model`` (default `static_synapse`), ``weight`` (default 1.0), 
+``delay`` (default 1.0), and ``receptor_type`` (default 0, see :ref:`receptor-types` for details),
+as well as parameters specific to the chosen synapse model. The specification of
+all parameters is optional, and unspecified parameters will take on the
 default values of the chosen synapse model that can be inspected using
 ``nest.GetDefaults(synapse_model)``.
 
-All parameters can be either scalars, arrays or distributions.
-One synapse dictionary can
-contain an arbitrary combination of parameter types, as long as they
-are in agreement with the chosen connection rule.
+Parameters can be either :ref:`fixed scalar values <scalar_params>`, 
+:ref:`arrays of values <array_params>`, or :ref:`expressions <dist_params>`.  
+
+One synapse dictionary can contain an arbitrary combination of parameter types, 
+as long as they are supported by the chosen connection rule.
+
+
+.. _scalar_params:
 
 Scalar parameters
 ~~~~~~~~~~~~~~~~~
@@ -310,6 +314,8 @@ will be applied to all connections created in the current
     B = nest.Create('iaf_psc_exp_multisynapse', n, neuron_dict)
     syn_spec_dict ={'synapse_model': 'static_synapse', 'weight': 2.5, 'delay': 0.5, 'receptor_type': 1}
     nest.Connect(A, B, syn_spec=syn_spec_dict)
+
+.. _array_params:
 
 Array parameters
 ~~~~~~~~~~~~~~~~
@@ -399,14 +405,15 @@ are nodes in ``A`` and ``B``.
 
 .. _dist_params:
 
-Distributed parameters
-~~~~~~~~~~~~~~~~~~~~~~
+Expressions as parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Distributed parameters are given as ``nest.Parameter`` objects that
-represent values drawn from random distributions. These distributions
-can either be based on spatial node parameters, on default values, or
-on constant distribution values you provide. It is possible to combine
-parameters to create distributions tailor made for your needs.
+``nest.Parameter`` objects support a flexible specification of synapse
+parameters through expressions.  This includes parameters drawn from random 
+distributions and
+depending on spatial properties of source and target neurons. Parameters
+can be combined through mathematical expressions including conditionals,
+providing for a high degree of flexibility.
 
 The following parameters and functionalities are provided:
 
@@ -416,9 +423,9 @@ The following parameters and functionalities are provided:
 - Mathematical functions
 - Clipping, redrawing, and conditional parameters
 
-For more information, check out the documentation on the different
-:doc:`PyNEST APIs <../ref_material/pynest_apis>` or this section on
-:ref:`parametrization <param_ex>`.
+For more information, check out the guide on
+:ref:`parametrization <param_ex>` or the documentation on the 
+different :doc:`PyNEST APIs <../ref_material/pynest_apis>`. 
 
 ::
 
@@ -437,11 +444,9 @@ In this example, the default connection rule ``all_to_all`` is used
 and connections will be using synapse model `stdp_synapse`. All synapses
 are created with a static weight of 2.5 and a delay that is uniformly
 distributed in [0.8, 2.5]. The parameter `alpha` is drawn from a
-normal distribution with mean 5.0 and standard deviation 1.0, however,
-values below 0.5 are excluded by re-drawing if they should occur. By
-setting the ``max`` value of ``nest.math.redraw`` to be a large
-number, we make sure that this value is never hit in reality. Thus,
-the actual distribution is a slightly distorted Gaussian.
+normal distribution with mean 5.0 and standard deviation 1.0; 
+values below 0.5 and above 10000 are excluded by re-drawing if they should occur.  
+Thus, the actual distribution is a slightly distorted Gaussian.
 
 If the synapse type is supposed to have a unique name and still use
 distributed parameters, it needs to be defined in two steps:
@@ -451,7 +456,7 @@ distributed parameters, it needs to be defined in two steps:
     n = 10
     A = nest.Create('iaf_psc_alpha', n)
     B = nest.Create('iaf_psc_alpha', n)
-    nest.CopyModel('stdp_synapse','excitatory',{'weight':2.5})
+    nest.CopyModel('stdp_synapse', 'excitatory', {'weight':2.5})
     syn_dict = {
         'synapse_model': 'excitatory',
         'weight': 2.5,

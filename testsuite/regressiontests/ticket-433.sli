@@ -52,7 +52,7 @@ M_INFO setverbosity
 %  retina, retina_gen, Tp --- layers
 
 % Connection function using spatial parameters
-% receptor_type erroneously placed in dictionary
+% receptor_type passed to ConnectLayers
 /connect_spatial
 {
   retina
@@ -67,7 +67,7 @@ M_INFO setverbosity
 bind def
 
 % Connection function using spatial parameters
-% receptor_type correctly placed in synapse
+% receptor_type placed in synapse
 /connect_spatial_syn
 {
   /ht_synapse /ht_syn_ampa << /receptor_type ampa >> CopyModel
@@ -145,12 +145,12 @@ bind def
 fail_or_die
 
 % third test: connect using ConnectLayers
-% this must raise an error, otherwise lacking receptor_type is not detected
+% receptor_type properly passed
 {
   /connect_spatial
   test_connect
 }
-fail_or_die
+pass_or_die
 
 % fourth test: connect using ConnectLayers, but with
 % properly configured synapse model

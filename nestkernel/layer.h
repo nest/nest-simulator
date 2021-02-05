@@ -623,10 +623,6 @@ template < int D >
 inline double
 Layer< D >::compute_distance( const Position< D >& from_pos, const index lid ) const
 {
-  if ( lid < 0 )
-  {
-    throw KernelException( "node ID not in NodeCollection." );
-  }
   return compute_displacement( from_pos, lid ).length();
 }
 
@@ -634,10 +630,6 @@ template < int D >
 inline double
 Layer< D >::compute_distance( const std::vector< double >& from_pos, const index lid ) const
 {
-  if ( lid < 0 )
-  {
-    throw KernelException( "node ID not in NodeCollection." );
-  }
   return compute_displacement( Position< D >( from_pos ), lid ).length();
 }
 

@@ -274,7 +274,7 @@ nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( const Buffers_&, iaf_cond_exp_sfa
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_exp_sfa_rr::iaf_cond_exp_sfa_rr()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -283,7 +283,7 @@ nest::iaf_cond_exp_sfa_rr::iaf_cond_exp_sfa_rr()
 }
 
 nest::iaf_cond_exp_sfa_rr::iaf_cond_exp_sfa_rr( const iaf_cond_exp_sfa_rr& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -324,7 +324,7 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
   B_.spike_exc_.clear(); // includes resize
   B_.spike_inh_.clear(); // includes resize
   B_.currents_.clear();  // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.logger_.reset();
 

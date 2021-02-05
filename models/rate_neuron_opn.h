@@ -105,7 +105,7 @@ lin_rate, tanh_rate, threshold_lin_rate
 EndUserDocs  */
 
 template < class TNonlinearities >
-class rate_neuron_opn : public Archiving_Node
+class rate_neuron_opn : public ArchivingNode
 {
 
 public:
@@ -354,7 +354,7 @@ rate_neuron_opn< TNonlinearities >::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
   nonlinearities_.get( d );
@@ -373,7 +373,7 @@ rate_neuron_opn< TNonlinearities >::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

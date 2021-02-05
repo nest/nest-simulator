@@ -180,6 +180,4 @@ dictionary to ``SetKernelStatus``.
 
 .. include:: ../models/recording_backend_screen.rst
 
-.. _sionlib_backend:
-
 .. include:: ../models/recording_backend_sionlib.rst

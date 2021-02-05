@@ -274,14 +274,6 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
   model_id_ = first_model_id;
 }
 
-NodeCollectionPrimitive::NodeCollectionPrimitive( const NodeCollectionPrimitive& rhs )
-  : first_( rhs.first_ )
-  , last_( rhs.last_ )
-  , model_id_( rhs.model_id_ )
-  , metadata_( rhs.metadata_ )
-{
-}
-
 NodeCollectionPrimitive::NodeCollectionPrimitive()
   : first_( 0 )
   , last_( 0 )

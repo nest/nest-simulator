@@ -139,7 +139,7 @@ public:
      * Copy constructor from a property object.
      * Needs to be defined properly in order for GenericConnector to work.
      */
-  TsodyksConnection( const TsodyksConnection& );
+  TsodyksConnection( const TsodyksConnection& ) = default;
 
   /**
    * Default Destructor.
@@ -282,21 +282,6 @@ TsodyksConnection< targetidentifierT >::TsodyksConnection()
   , y_( 0.0 )
   , u_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-TsodyksConnection< targetidentifierT >::TsodyksConnection( const TsodyksConnection& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , tau_psc_( rhs.tau_psc_ )
-  , tau_fac_( rhs.tau_fac_ )
-  , tau_rec_( rhs.tau_rec_ )
-  , U_( rhs.U_ )
-  , x_( rhs.x_ )
-  , y_( rhs.y_ )
-  , u_( rhs.u_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

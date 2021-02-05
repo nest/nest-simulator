@@ -60,7 +60,6 @@ nest::MPIManager::MPIManager()
   , use_mpi_( false )
   , buffer_size_target_data_( 1 )
   , buffer_size_spike_data_( 1 )
-  , chunk_size_secondary_events_in_int_( 0 )
   , max_buffer_size_target_data_( 16777216 )
   , max_buffer_size_spike_data_( 8388608 )
   , adaptive_target_buffers_( true )
@@ -81,7 +80,7 @@ nest::MPIManager::MPIManager()
 #ifndef HAVE_MPI
 
 void
-nest::MPIManager::init_mpi( int* argc, char** argv[] )
+nest::MPIManager::init_mpi( int*, char*** )
 {
   // if ! HAVE_MPI, initialize process entries for 1 rank
   // use 2 processes entries (need at least two
@@ -89,6 +88,11 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   // last entry to communicate end of communication)
   kernel().mpi_manager.set_buffer_size_target_data( 2 );
   kernel().mpi_manager.set_buffer_size_spike_data( 2 );
+
+  recv_counts_secondary_events_in_int_per_rank_.resize( 1, 0 );
+  recv_displacements_secondary_events_in_int_per_rank_.resize( 1, 0 );
+  send_counts_secondary_events_in_int_per_rank_.resize( 1, 0 );
+  send_displacements_secondary_events_in_int_per_rank_.resize( 1, 0 );
 }
 
 #else /* HAVE_MPI */
@@ -139,6 +143,11 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
     set_communicator( MPI_COMM_WORLD );
 #endif
   }
+
+  recv_counts_secondary_events_in_int_per_rank_.resize( get_num_processes(), 0 );
+  recv_displacements_secondary_events_in_int_per_rank_.resize( get_num_processes(), 0 );
+  send_counts_secondary_events_in_int_per_rank_.resize( get_num_processes(), 0 );
+  send_displacements_secondary_events_in_int_per_rank_.resize( get_num_processes(), 0 );
 
   // create off-grid-spike type for MPI communication
   // creating derived datatype
@@ -217,20 +226,19 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
   def< size_t >( dict, names::buffer_size_target_data, buffer_size_target_data_ );
   def< size_t >( dict, names::buffer_size_spike_data, buffer_size_spike_data_ );
-  def< size_t >( dict, names::buffer_size_secondary_events, get_buffer_size_secondary_events_in_int() );
+  def< size_t >( dict, names::send_buffer_size_secondary_events, get_send_buffer_size_secondary_events_in_int() );
+  def< size_t >( dict, names::recv_buffer_size_secondary_events, get_recv_buffer_size_secondary_events_in_int() );
   def< size_t >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
   def< size_t >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
   def< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
   def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 }
 
-/**
- * Finish off MPI routines
- */
+#ifdef HAVE_MPI
+
 void
 nest::MPIManager::mpi_finalize( int exitcode )
 {
-#ifdef HAVE_MPI
   MPI_Type_free( &MPI_OFFGRID_SPIKE );
 
   int finalized;
@@ -251,9 +259,16 @@ nest::MPIManager::mpi_finalize( int exitcode )
       mpi_abort( exitcode );
     }
   }
-#endif /* #ifdef HAVE_MPI */
 }
 
+#else /* #ifdef HAVE_MPI */
+
+void
+nest::MPIManager::mpi_finalize( int )
+{
+}
+
+#endif /* #ifdef HAVE_MPI */
 
 #ifdef HAVE_MPI
 
@@ -719,17 +734,35 @@ nest::MPIManager::communicate_Alltoall_( void* send_buffer, void* recv_buffer, c
   MPI_Alltoall( send_buffer, send_recv_count, MPI_UNSIGNED, recv_buffer, send_recv_count, MPI_UNSIGNED, comm );
 }
 
-
 void
-nest::MPIManager::communicate_secondary_events_Alltoall_( void* send_buffer, void* recv_buffer )
+nest::MPIManager::communicate_Alltoallv_( void* send_buffer,
+  const int* send_counts,
+  const int* send_displacements,
+  void* recv_buffer,
+  const int* recv_counts,
+  const int* recv_displacements )
 {
-  MPI_Alltoall( send_buffer,
-    chunk_size_secondary_events_in_int_,
+  MPI_Alltoallv( send_buffer,
+    send_counts,
+    send_displacements,
     MPI_UNSIGNED,
     recv_buffer,
-    chunk_size_secondary_events_in_int_,
+    recv_counts,
+    recv_displacements,
     MPI_UNSIGNED,
     comm );
+}
+
+void
+nest::MPIManager::communicate_recv_counts_secondary_events()
+{
+
+  communicate_Alltoall(
+    recv_counts_secondary_events_in_int_per_rank_, send_counts_secondary_events_in_int_per_rank_, 1 );
+
+  std::partial_sum( send_counts_secondary_events_in_int_per_rank_.begin(),
+    send_counts_secondary_events_in_int_per_rank_.end() - 1,
+    send_displacements_secondary_events_in_int_per_rank_.begin() + 1 );
 }
 
 /**
@@ -1035,22 +1068,22 @@ nest::MPIManager::communicate( double send_val, std::vector< double >& recv_buff
 }
 
 void
-nest::MPIManager::communicate( std::vector< long >& send_buffer, std::vector< long >& recv_buffer )
+nest::MPIManager::communicate( std::vector< long >&, std::vector< long >& )
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( double buffer )
+nest::MPIManager::communicate_Allreduce_sum_in_place( double )
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& buffer )
+nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& )
 {
 }
 
 void
-nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& buffer )
+nest::MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& )
 {
 }
 
@@ -1061,10 +1094,21 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
 }
 
 void
-nest::MPIManager::communicate_Allreduce_max_in_place( std::vector< long >& buffer )
+nest::MPIManager::communicate_Allreduce_max_in_place( std::vector< long >& )
 {
   // Null operator for ranks == 1
   // Max already is the input
+}
+
+void
+nest::MPIManager::communicate_recv_counts_secondary_events()
+{
+  // since we only have one process, the send count is equal to the recv count
+  send_counts_secondary_events_in_int_per_rank_ = recv_counts_secondary_events_in_int_per_rank_;
+
+  // since we only have one process, the send displacement is zero
+  assert( send_displacements_secondary_events_in_int_per_rank_.size() == 1 );
+  send_displacements_secondary_events_in_int_per_rank_[ 0 ] = 0;
 }
 
 #endif /* #ifdef HAVE_MPI */

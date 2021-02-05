@@ -27,6 +27,7 @@ from . import test_connect_all_patterns
 from . import test_connect_all_to_all
 from . import test_connect_array_fixed_indegree
 from . import test_connect_array_fixed_outdegree
+from . import test_connect_conngen
 from . import test_connect_distributions
 from . import test_connect_fixed_indegree
 from . import test_connect_fixed_outdegree
@@ -36,7 +37,6 @@ from . import test_connect_pairwise_bernoulli
 from . import test_connect_parameters
 from . import test_connect_symmetric_pairwise_bernoulli
 from . import test_create
-from . import test_csa
 from . import test_current_recording_generators
 from . import test_erfc_neuron
 from . import test_errors
@@ -83,6 +83,7 @@ def suite():
     suite.addTest(test_connect_all_to_all.suite())
     suite.addTest(test_connect_array_fixed_indegree.suite())
     suite.addTest(test_connect_array_fixed_outdegree.suite())
+    suite.addTest(test_connect_conngen.suite())
     suite.addTest(test_connect_distributions.suite())
     suite.addTest(test_connect_fixed_indegree.suite())
     suite.addTest(test_connect_fixed_outdegree.suite())
@@ -92,7 +93,6 @@ def suite():
     suite.addTest(test_connect_parameters.suite())
     suite.addTest(test_connect_symmetric_pairwise_bernoulli.suite())
     suite.addTest(test_create.suite())
-    suite.addTest(test_csa.suite())
     suite.addTest(test_current_recording_generators.suite())
     suite.addTest(test_erfc_neuron.suite())
     suite.addTest(test_errors.suite())

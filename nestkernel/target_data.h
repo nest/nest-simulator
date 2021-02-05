@@ -116,13 +116,13 @@ TargetDataFields::get_syn_id() const
 class SecondaryTargetDataFields
 {
 private:
-  unsigned int send_buffer_pos_;
+  unsigned int recv_buffer_pos_;
   unsigned char syn_id_;
 
 public:
   // Members must be set explicitly -- no defaults
-  void set_send_buffer_pos( const size_t pos );
-  size_t get_send_buffer_pos() const;
+  void set_recv_buffer_pos( const size_t pos );
+  size_t get_recv_buffer_pos() const;
   void set_syn_id( const synindex syn_id );
   synindex get_syn_id() const;
 };
@@ -131,16 +131,16 @@ public:
 using success_secondary_target_data_fields_size = StaticAssert< sizeof( SecondaryTargetDataFields ) == 8 >::success;
 
 inline void
-SecondaryTargetDataFields::set_send_buffer_pos( const size_t pos )
+SecondaryTargetDataFields::set_recv_buffer_pos( const size_t pos )
 {
   assert( pos < std::numeric_limits< unsigned int >::max() );
-  send_buffer_pos_ = pos;
+  recv_buffer_pos_ = pos;
 }
 
 inline size_t
-SecondaryTargetDataFields::get_send_buffer_pos() const
+SecondaryTargetDataFields::get_recv_buffer_pos() const
 {
-  return send_buffer_pos_;
+  return recv_buffer_pos_;
 }
 
 inline void

@@ -136,7 +136,7 @@ class StructralPlasticityExample:
 
 
 ####################################################################################
-# We initialize variables for the post-synaptic currents of the
+# We initialize variables for the postsynaptic currents of the
 # excitatory, inhibitory, and external synapses. These values were
 # calculated from a PSP amplitude of 1 for excitatory synapses,
 # -1 for inhibitory synapses and 0.11 for external synapses.
@@ -176,7 +176,7 @@ class StructralPlasticityExample:
 # Now we define Structural Plasticity synapses. In this example we create
 # two synapse models, one for excitatory and one for inhibitory synapses.
 # Then we define that excitatory synapses can only be created between a
-# pre-synaptic element called `Axon_ex` and a post synaptic element
+# pre-synaptic element called `Axon_ex` and a postsynaptic element
 # called `Den_ex`. In a similar manner, synaptic elements for inhibitory
 # synapses are defined.
 

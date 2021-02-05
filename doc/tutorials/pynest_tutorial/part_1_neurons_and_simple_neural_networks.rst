@@ -73,14 +73,13 @@ functionality into the Python interpreter.
 
     import nest
 
-It should be noted, however, that certain external packages must be
-imported *before* importing nest. These include `scikit-learn <http://scikit-learn.org/stable/index.html>`_
-and `SciPy <https://www.scipy.org/>`_.
+In case other Python packages are required, such as `scikit-learn <http://scikit-learn.org/stable/index.html>`_
+and `SciPy <https://www.scipy.org/>`_, they need to be imported *before* importing NEST.
 
 ::
 
-    from sklearn.svm import LinearSVC
-    from scipy.special import erf
+    import sklearn
+    import scipy
 
     import nest
 
@@ -481,8 +480,13 @@ Nodes
 
 -  ``Create(model, n=1, params=None)``
     Create ``n`` instances of type ``model``. Parameters for the new nodes can be given as
-    ``params`` (a single dictionary, or a list of dictionaries with
-    size ``n``). If omitted, the ``model``\ ’s defaults are used.
+    ``params``, which can be any of the following:
+
+      - A dictionary with either single values or lists of size n.
+        The single values will be applied to all nodes, while the lists will be distributed across
+        the nodes. Both single values and lists can be given at the same time.
+      - A list with n dictionaries, one dictionary for each node.
+    If omitted, the ``model``\ ’s defaults are used.
 
 -  ``get(*params, **kwargs)``
     Return a dictionary with parameter values for the NodeCollection it is called
@@ -491,10 +495,10 @@ Nodes
     dictionary contains lists of requested values.
 
 -  ``set(params=None, **kwargs)``
-    Set the parameters on the NodeCollection it is called on to ``params``, which may
-    be a single dictionary, or a list of dictionaries of the same size
-    as the NodeCollection. If ``kwargs`` is given, it has to be names and values of
-    an attribute as keyword=argument pairs. The values
+    Set the parameters on the NodeCollection to ``params``, which may
+    be a single dictionary (with lists or single values as parameters), or a list
+    of dictionaries of the same size as the NodeCollection. If ``kwargs`` is given,
+    it has to be names and values of an attribute as keyword=argument pairs. The values
     can be single values or list of the same size as the NodeCollection.
 
 Connections

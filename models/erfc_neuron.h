@@ -128,10 +128,10 @@ class gainfunction_erfc
 {
 private:
   /** threshold of activation function */
-  double_t theta_;
+  double theta_;
 
   /** 1/sqrt(2pi) x inverse of the maximal slope of gain function */
-  double_t sigma_;
+  double sigma_;
 
 public:
   /** sets default parameters */
@@ -145,10 +145,10 @@ public:
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
   void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
-  bool operator()( librandom::RngPtr rng, double_t h );
+  bool operator()( librandom::RngPtr rng, double h );
 };
 
-inline bool gainfunction_erfc::operator()( librandom::RngPtr rng, double_t h )
+inline bool gainfunction_erfc::operator()( librandom::RngPtr rng, double h )
 {
   return rng->drand() < 0.5 * erfc( -( h - theta_ ) / ( sqrt( 2. ) * sigma_ ) );
 }

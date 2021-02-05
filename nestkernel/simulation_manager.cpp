@@ -686,8 +686,10 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   {
 #pragma omp barrier
     kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions( tid );
+#pragma omp barrier
 #pragma omp single
     {
+      kernel().mpi_manager.communicate_recv_counts_secondary_events();
       kernel().event_delivery_manager.configure_secondary_buffers();
     }
   }

@@ -55,7 +55,7 @@ nest.SetKernelStatus({"overwrite_files": True,
 # For illustration, the recordables of the ``iaf_cond_alpha`` neuron model are
 # displayed. This model is an implementation of a spiking neuron using
 # integrate-and-fire dynamics with conductance-based synapses. Incoming spike
-# events induce a post-synaptic change of conductance modeled by an alpha
+# events induce a postsynaptic change of conductance modeled by an alpha
 # function.
 
 print("iaf_cond_alpha recordables: {0}".format(

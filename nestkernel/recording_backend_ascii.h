@@ -30,7 +30,7 @@
 
 /* BeginUserDocs: recording backend
 
-.. _ascii_backend:
+.. _recording_backend_ascii:
 
 Write data to plain text files
 ##############################
@@ -41,11 +41,11 @@ simulations, where the ease of a simple data format outweighs the
 benefits of high-performance output operations.
 
 This backend will open one file per recording device per thread on
-each MPI process. This can cause a high load on the file system
-in large simulations. This backend can become prohibitively inefficient,
-particularly on machines with distributed filesystems.
-In case you experience such scaling problems,  the :ref:`SIONlib
-backend <sionlib_backend>` may be a possible alternative.
+each MPI process. This can cause a high load on the file system in
+large simulations. This backend can become prohibitively inefficient,
+particularly on machines with distributed filesystems. In case you
+experience such scaling problems, the :ref:`recording backend for
+SIONlib <recording_backend_sionlib>` may be a possible alternative.
 
 Filenames of data files are determined according to the following
 pattern:

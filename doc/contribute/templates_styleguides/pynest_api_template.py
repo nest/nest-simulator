@@ -36,16 +36,16 @@
 """
 
 
-def getConnections(source=None, target=None, synape_model=None, synapse_label=None):
-    """Return an array of connection identifiers
+def GetConnections(source=None, target=None, synape_model=None, synapse_label=None):
+    """Return a `SynapseCollection` representing the connection identifiers.
     [[ In a single 'summary line', state what the function does ]]
     [[ All functions should have a docstring with at least a summary line ]]
 
     [[ Below summary line (separated by new line), there should be an extended
        summary section that should be used to clarify functionality.]]
 
-    Any combination of source, target, synapse_model and
-    synapse_label parameters is permitted.
+    Any combination of `source`, `target`, `synapse_model` and
+    `synapse_label` parameters is permitted.
 
     [[ Deprecation warnings should appear directly after the extended summary.
       It should state in what version the object was deprecated, when it will
@@ -61,12 +61,12 @@ def getConnections(source=None, target=None, synape_model=None, synapse_label=No
 
     Parameters
     ----------
-    source : list, optional
-        Source GIDs, only connections from these
+    source : NodeCollection, optional
+        Source node IDs, only connections from these
         pre-synaptic neurons are returned
-    target : list, optional
-        Target GIDs, only connections to these
-        post-synaptic neurons are returned
+    target : NodeCollection, optional
+        Target node IDs, only connections to these
+        postsynaptic neurons are returned
     synapse_model : str, optional
         Only connections with this synapse type are returned
     synapse_label : int, optional
@@ -75,9 +75,9 @@ def getConnections(source=None, target=None, synape_model=None, synapse_label=No
 
     Returns
     -------
-    list:
-        Connections as 5-tuples with entries
-        (source-gid, target-gid, target-thread, synapse-id, port)
+    SynapseCollection:
+        Object representing the source-node_id, target-node_id, target-thread, synapse-id, port of connections, see
+        :py:class:`.SynapseCollection` for more.
 
     Raises
     -------

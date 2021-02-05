@@ -5,7 +5,7 @@ install/
 reports/
 
 # compilation artefacts
-*.cxx
+pynest/pynestkernel.cxx
 *.la
 *.lo
 *.log

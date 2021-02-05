@@ -56,11 +56,11 @@ We provide pre-built versions of NEST on `Conda Forge <https://anaconda.org/cond
 Follow :ref:`these instructions to install NEST from Conda Forge <conda_forge_install>`.
 
 
-Creating a Conda environment for building NEST
-----------------------------------------------
+Creating a Conda environment for running and building NEST
+----------------------------------------------------------
 
 If you want to compile NEST yourself, you can create an environment containing all necessary 
-software by running from the NEST source directory
+software for running and building NEST by executing this from the NEST source directory
 
 .. code:: sh
 

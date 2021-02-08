@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# dump_load_example.py
+# store_restore_network.py
 #
 # This file is part of NEST.
 #
@@ -20,11 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Store and re-load a network simulation
+Store and restore a network simulation
 --------------------------------------
 
-This example shows how to store (dump) user-defined aspects of a
-network to file and how to re-load it again for further simulation.
+This example shows how to store user-defined aspects of a network
+to file and how to later restore the network for further simulation.
 This may be used, e.g., to train weights in a network up to a certain
 point, store those weights and later perform diverse experiments on
 the same network using the stored weights.
@@ -36,11 +36,11 @@ the same network using the stored weights.
    made an new `Simulate()` call on an existing network. Such complete
    checkpointing would be very difficult to implement.
 
-   NEST's explicit approach to storing and loading network state makes
+   NEST's explicit approach to storing and restoring network state makes
    clear to all which aspects of a network are carried from one simulation
    to another and thus contributes to good scientific practice.
 
-   Storing and loading is currently not supported for MPI-parallel simulations.
+   Storing and restoring is currently not supported for MPI-parallel simulations.
 
 """
 
@@ -61,7 +61,7 @@ import pandas as pd
 # Implement network as class.
 #
 # Implementing the network as a class makes network properties available to
-# the initial network builder, the dumper and the loader, thus reducing the
+# the initial network builder, the storer and the restorer, thus reducing the
 # amount of data that needs to be stored.
 
 
@@ -74,7 +74,7 @@ class EINetwork:
     input. Excitatory connections are plastic (STDP). Spike activity of
     the excitatory population is recorded.
 
-    The model is provided as a non-trivial example for dumping and loading.
+    The model is provided as a non-trivial example for storing and restoring.
     """
 
     def __init__(self):
@@ -117,12 +117,13 @@ class EINetwork:
         nest.Connect(self.pg, self.neurons, 'all_to_all', {'weight': self.JE})
         nest.Connect(self.e_neurons, self.sr)
 
-    def dump(self, dump_filename):
+    def store(self, dump_filename):
         """
         Store neuron membrane potential and synaptic weights to given file.
         """
 
         assert nest.NumProcesses() == 1, "Cannot dump MPI parallel"
+        
         ###############################################################################
         # Build dictionary with relevant network information:
         #   - membrane potential for all neurons in each population
@@ -146,9 +147,9 @@ class EINetwork:
         with open(dump_filename, 'wb') as f:
             pickle.dump(network, f, pickle.HIGHEST_PROTOCOL)
 
-    def load(self, dump_filename):
+    def restore(self, dump_filename):
         """
-        Load network data from file and combine with base information to rebuild network.
+        Restore network from data in file combined with base information in the class.
         """
 
         assert nest.NumProcesses() == 1, "Cannot load MPI parallel"
@@ -192,7 +193,7 @@ class EINetwork:
 
 class DemoPlot:
     """
-    Create demonstration figure for effect of storing and loading a network.
+    Create demonstration figure for effect of storing and restoring a network.
 
     The figure shows raster plots for five different runs, a PSTH for the
     initial 1 s simulation and PSTHs for all 1 s continuations, and weight
@@ -237,6 +238,8 @@ class DemoPlot:
 
 if __name__ == '__main__':
 
+    plt.ion()
+    
     T_sim = 1000
 
     dplot = DemoPlot()
@@ -251,8 +254,8 @@ if __name__ == '__main__':
     dplot.add_to_plot(ein.sr, lbl='Initial simuation')
 
     ###############################################################################
-    # Write network state to file with state after 1s.
-    ein.dump('ein_1000.pkl')
+    # Store network state to file with state after 1s.
+    ein.store('ein_1000.pkl')
 
     ###############################################################################
     # Continue simulation by another 1s.
@@ -260,11 +263,11 @@ if __name__ == '__main__':
     dplot.add_to_plot(ein.sr, lbl='Continued simuation', time_shift=T_sim)
 
     ###############################################################################
-    # Clear kernel, reload network from file and simulate for 1s.
+    # Clear kernel, restore network from file and simulate for 1s.
     nest.ResetKernel()
     nest.SetKernelStatus({'local_num_threads': 4})
     ein2 = EINetwork()
-    ein2.load('ein_1000.pkl')
+    ein2.restore('ein_1000.pkl')
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein2.sr, lbl='Reloaded simuation')
 
@@ -274,22 +277,21 @@ if __name__ == '__main__':
     nest.ResetKernel()
     nest.SetKernelStatus({'local_num_threads': 4})
     ein2 = EINetwork()
-    ein2.load('ein_1000.pkl')
+    ein2.restore('ein_1000.pkl')
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein2.sr, lbl='Reloaded simuation (same seed)')
 
     ###############################################################################
-    # Clear, reload and simulate again, but now with different random seed.
+    # Clear, restore and simulate again, but now with different random seed.
     # Details in results shall differ from previous run.
     nest.ResetKernel()
     nest.SetKernelStatus({'local_num_threads': 4, 'rng_seed': 5345234})
     ein2 = EINetwork()
-    ein2.load('ein_1000.pkl')
+    ein2.restore('ein_1000.pkl')
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein2.sr, lbl='Reloaded simulation (different seed)')
 
-    dplot.fig.savefig('dump_load_demo.png')
-    plt.show()
+    dplot.fig.savefig('store_load_demo.png')
 
     input('Press ENTER to close figure!')
 

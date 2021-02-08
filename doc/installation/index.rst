@@ -125,7 +125,7 @@ and :doc:`compilation_options`.
 
    .. tab:: Conda (Linux/macOS)
 
-       1. To keep you conda setup tidy, we recommend that you install NEST into
+       1. To keep your conda setup tidy, we recommend that you install NEST into
           a separate `conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
           together with Python packages that you will use when working with NEST;
           see also our :doc:`conda_tips`.

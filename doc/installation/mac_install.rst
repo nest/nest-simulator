@@ -33,7 +33,13 @@ Preparations
       To build NEST natively on a Mac with Apple's M1 chip, you need to use Miniforge as 
       described in :doc:`conda_tips`.
 
-#. Activate the environment.
+#. Activate the environment with
+
+   .. code:: sh
+   
+      conda acvitate nest-simulator
+      
+   This assumes that you have created the environment with its default name ``nest-simulator``.
 
 #. If you want to build NEST with MPI, you must codesign the ``orterun`` and ``orted`` binaries
 
@@ -83,3 +89,19 @@ Building NEST
    .. code-block:: sh
 
       source <nest_install_dir>/bin/nest_vars.sh
+
+
+Troubleshooting
+---------------
+
+Conda with Intel MKL
+~~~~~~~~~~~~~~~~~~~~
+
+A default installation of Anaconda or Miniconda will install a version of NumPy
+build on the Intel Math Kernel Library (MKL). This library uses a different OpenMP
+library to support threading than included with Apple Clang or GCC. This will lead
+to conflicts if NEST is built with support for threading, which is the default and
+usually desirable. One way to avoid this is to follow the instructions above. An
+alternative is to create a conda environment in which you install ``nomkl`` as *the
+very first package*. This will tell conda to install MKL-free versions of NumPy and
+other linear-algebra intensive packages.

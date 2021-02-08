@@ -43,11 +43,13 @@ the same network using the stored weights.
    Storing and loading is currently not supported for MPI-parallel simulations.
 
 """
+
 ###############################################################################
 # Import necessary modules.
 
 import nest
 import pickle
+
 ###############################################################################
 # These modules are only needed for illustrative plotting.
 
@@ -61,6 +63,7 @@ import pandas as pd
 # Implementing the network as a class makes network properties available to
 # the initial network builder, the dumper and the loader, thus reducing the
 # amount of data that needs to be stored.
+
 
 class EINetwork:
     """
@@ -192,8 +195,8 @@ class DemoPlot:
     Create demonstration figure for effect of storing and loading a network.
 
     The figure shows raster plots for five different runs, a PSTH for the
-    initial 1 s simulation and PSTHs for all 1 s continuations, and weight 
-    historgrams.
+    initial 1 s simulation and PSTHs for all 1 s continuations, and weight
+    histograms.
     """
 
     def __init__(self):

@@ -123,7 +123,7 @@ class EINetwork:
         """
 
         assert nest.NumProcesses() == 1, "Cannot dump MPI parallel"
-        
+
         ###############################################################################
         # Build dictionary with relevant network information:
         #   - membrane potential for all neurons in each population

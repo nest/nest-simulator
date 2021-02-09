@@ -4,7 +4,7 @@ Connection Management
 =====================
 
 The connectivity pattern is defined inside the `Connect()` function
-under the key 'rule'. The patterns available are described in
+under the key 'rule'. The patterns available are described in the
 `Connection Rules <connection-management.md#connection-rules>`__. In
 addition the synapse model can be specified within the connect function
 and all synaptic parameters can be randomly distributed.
@@ -544,4 +544,3 @@ can then be given as arguments to the `SetStatus()` functions:
       'delay': 1.0,
       'source': 1,
       'receptor': 0}]
-

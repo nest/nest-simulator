@@ -64,28 +64,20 @@ nest::StimulatingBackendMPI::finalize()
 void
 nest::StimulatingBackendMPI::enroll( nest::StimulatingDevice& device, const DictionaryDatum& )
 {
-  if ( device.get_type() == StimulatingDevice::Type::SPIKE_GENERATOR
-    or device.get_type() == StimulatingDevice::Type::CURRENT_GENERATOR )
-  {
-    thread tid = device.get_thread();
-    index node_id = device.get_node_id();
+  thread tid = device.get_thread();
+  index node_id = device.get_node_id();
 
-    // for each thread, add the input device if it's not already in the map
-    auto device_it = devices_[ tid ].find( node_id );
-    if ( device_it != devices_[ tid ].end() )
-    {
-      devices_[ tid ].erase( device_it );
-    }
-    // the MPI communication will be initialise during the prepare function
-    std::pair< MPI_Comm*, StimulatingDevice* > pair = std::make_pair( nullptr, &device );
-    std::pair< index, std::pair< const MPI_Comm*, StimulatingDevice* > > secondpair = std::make_pair( node_id, pair );
-    devices_[ tid ].insert( secondpair );
-    enrolled_ = true;
-  }
-  else
+  // for each thread, add the input device if it's not already in the map
+  auto device_it = devices_[ tid ].find( node_id );
+  if ( device_it != devices_[ tid ].end() )
   {
-    throw BadProperty( "Currently only spike generators and step current generators can have input backend 'mpi'." );
+    devices_[ tid ].erase( device_it );
   }
+  // the MPI communication will be initialise during the prepare function
+  std::pair< MPI_Comm*, StimulatingDevice* > pair = std::make_pair( nullptr, &device );
+  std::pair< index, std::pair< const MPI_Comm*, StimulatingDevice* > > secondpair = std::make_pair( node_id, pair );
+  devices_[ tid ].insert( secondpair );
+  enrolled_ = true;
 }
 
 

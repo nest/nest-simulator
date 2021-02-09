@@ -44,6 +44,7 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
+#include "booldatum.h"
 
 namespace nest
 {
@@ -390,7 +391,7 @@ nest::sinusoidal_gamma_generator::set_data_from_stimulating_backend( std::vector
     ( *d )[ names::order ] = DoubleDatum( input_param[ 2 ] );
     ( *d )[ names::rate ] = DoubleDatum( input_param[ 3 ] );
     ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 4 ] );
-    ( *d )[ names::individual_spike_trains ] = DoubleDatum( input_param[ 5 ] );
+    ( *d )[ names::individual_spike_trains ] = BoolDatum( input_param[ 5 ] );
     ptmp.set( d, *this, this );
   }
 

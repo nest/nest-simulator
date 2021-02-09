@@ -43,6 +43,7 @@
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
+#include "booldatum.h"
 
 namespace nest
 {
@@ -331,7 +332,7 @@ nest::sinusoidal_poisson_generator::set_data_from_stimulating_backend( std::vect
     ( *d )[ names::frequency ] = DoubleDatum( input_param[ 1 ] );
     ( *d )[ names::phase ] = DoubleDatum( input_param[ 2 ] );
     ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 3 ] );
-    ( *d )[ names::individual_spike_trains ] = DoubleDatum( input_param[ 4 ] );
+    ( *d )[ names::individual_spike_trains ] = BoolDatum( input_param[ 4 ] );
     ptmp.set( d, *this, this );
   }
 

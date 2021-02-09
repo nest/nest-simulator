@@ -232,7 +232,7 @@ nest::mip_generator::set_data_from_stimulating_backend( std::vector< double > in
     if ( input_param.size() != 2 )
     {
       throw BadParameterValue(
-        "The size of the data for the mpi_generator needs to be 2 "
+        "The size of the data for the mip_generator needs to be 2 "
         "[rate, p_copy]." );
     }
     else

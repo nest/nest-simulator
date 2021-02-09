@@ -31,17 +31,29 @@
 #include <unistd.h>
 #include <mpi.h>
 
-/* BeginDocumentation
+/* BeginUserDocs: recording backend
+
+.. _recording_backend_mpi:
 
 Send data with MPI
 ##################
 
-When a recording device sends data to the ``mpi`` backend, it sends the
-event using MPI. Events are sent with the GID and the time stamp.
+The `mpi` recording backend sends collected data to a remote process
+using MPI.
 
-Communication Protocol: (value,number,type,source/destination,tag)
+This backend will create a new MPI communicator with a remote process
+using information found in a shared file. Both processes
+which want to share data through MPI need to specify the MPI ports
+which will be used for the new communicator.
+
+Communication Protocol:
 +++++++++++++++++++++++
-1) Connection of MPI port include in one file ( path+label+id+.txt )
+The following protocol is used to exchange information between
+both MPI processes. The protocol is described using the
+following format for the MPI messages:
+(value,number,type,source/destination,tag)
+
+1) Connection of MPI port included in the port_file (see below)
 2) Send at each beginning of the run (true, 1, CXX_BOOL, 0, 0)
 3) Receive at each ending of the run (true, 1, CXX_BOOL, 0, 0)
 4) Send shape of the data of the run (shape, 1,I NT, 0, 0)
@@ -49,11 +61,23 @@ Communication Protocol: (value,number,type,source/destination,tag)
 6) Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
 7) Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
 
-@author Lionel Kusch and Sandra Diaz
-@ingroup NESTio
 
-EndDocumentation */
+Data format
++++++++++++
 
+The data which will be exchanged depends on the recording device.
+
+Parameter summary
++++++++++++++++++
+
+.. glossary::
+
+ port_file
+   Shared file with ports with the format path+label+id+.txt
+   Where path = kernel().io_manager.get_data_path() and the
+   label and id are the ones provided for the device.
+
+EndUserDocs */
 
 namespace nest
 {

@@ -66,6 +66,21 @@ The following parameters appear in the element's status dictionary:
                        default: 1
 ============  ======== =========================================================
 
+    ( *d )[ names::gamma_shape ] = DoubleDatum( lround( input_param[ 0 ] ) );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::n_proc ] = DoubleDatum( lround( input_param[ 2 ] ) );
+
+Update from stimulating backend
++++++++++++++++++++++++++
+
+The parameters in this stimulating device can be updated with input
+coming from a stimulating backend. The data structure used for the update
+holds one value for each of the parameters mentioned in the section above.
+The indexing is as follows:
+rate = input_param[ 0 ]
+gamma_shape = input_param[ 1 ]
+n_proc = input_param[ 2 ]
+
 References
 ++++++++++
 

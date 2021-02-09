@@ -73,6 +73,19 @@ The following parameters appear in the element's status dictionary:
  relative_amplitude  real     Relative rate modulation amplitude, default: 0
 ===================  ======== =================================================
 
+Update from stimulating backend
++++++++++++++++++++++++++
+
+The parameters in this stimulating device can be updated with input
+coming from a stimulating backend. The data structure used for the update
+holds one value for each of the parameters mentioned in the section above.
+The indexing is as follows:
+dead_time = input_param[ 0 ]
+rate = input_param[ 1 ]
+n_proc = input_param[ 2 ]
+frequency = input_param[ 3 ]
+relative_amplitude = input_param[ 4 ]
+
 References
 ++++++++++
 

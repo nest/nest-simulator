@@ -127,8 +127,6 @@ if ( HAVE_RECORDINGBACKEND_ARBOR )
   set( nestkernel_sources
     ${nestkernel_sources}
     recording_backend_arbor.h recording_backend_arbor.cpp
-    recording_backend_mpi.h recording_backend_mpi.cpp
-    stimulating_backend_mpi.h stimulating_backend_mpi.cpp
   )
 endif ()
 

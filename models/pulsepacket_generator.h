@@ -74,6 +74,17 @@ Parameters
  sdev         ms      Standard deviation of spike times in each pulse
 ============  ======= =======================================================
 
+Update from stimulating backend
++++++++++++++++++++++++++
+
+The parameters in this stimulating device can be updated with input
+coming from a stimulating backend. The data structure used for the update
+holds one value for each of the parameters mentioned in the section above.
+The indexing is as follows:
+activity = input_param[ 0 ]
+sdev = input_param[ 1 ]
+pulse_times = input_param[ 2 ]
+
 Transmits
 +++++++++
 

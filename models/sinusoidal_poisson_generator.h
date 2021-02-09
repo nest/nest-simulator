@@ -88,6 +88,19 @@ The following parameters can be set in the status dictionary:
  individual_spike_trains boolean See note below, default: true
 ======================== ======= ==============================================
 
+Update from stimulating backend
++++++++++++++++++++++++++
+
+The parameters in this stimulating device can be updated with input
+coming from a stimulating backend. The data structure used for the update
+holds one value for each of the parameters mentioned in the section above.
+The indexing is as follows:
+rate = input_param[ 0 ]
+frequency = input_param[ 1 ]
+phase = input_param[ 2 ]
+amplitude = input_param[ 3 ]
+individual_spike_trains = input_param[ 4 ]
+
 Receives
 ++++++++
 

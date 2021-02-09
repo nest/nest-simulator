@@ -68,6 +68,18 @@ Parameters
 Setting start and stop only windows the current as defined above. It does not shift
 the time axis. See :doc:`stimulating_the_network` for details.
 
+Update from stimulating backend
++++++++++++++++++++++++++
+
+The parameters in this stimulating device can be updated with input
+coming from a stimulating backend. The data structure used for the update
+holds one value for each of the parameters mentioned in the section above.
+The indexing is as follows:
+amplitude = input_param[ 0 ]
+offset = input_param[ 1 ]
+frequency = input_param[ 2 ]
+phase = input_param[ 3 ]
+
 References
 ++++++++++
 

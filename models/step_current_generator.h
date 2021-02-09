@@ -76,6 +76,16 @@ The following parameters can be set in the status dictionary:
  allow_offgrid_times boolean          Default false
 ==================== ===============  ======================================
 
+Update from stimulating backend
++++++++++++++++++++++++++
+
+The parameters in this stimulating device can be updated with input
+coming from a stimulating backend. The data structure used for the update
+holds pairs of values in the form
+[ (amplitude_times, amplitude_values), (amplitude_times, amplitude_values), ... ].
+Thus, the size of the data for the step_rate_generator needs to be even.
+
+
 Sends
 +++++
 

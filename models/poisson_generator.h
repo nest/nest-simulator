@@ -64,6 +64,15 @@ The following parameters appear in the element's status dictionary:
  stop     ms       End of device application with resp. to origin
 =======   ======== =========================================================
 
+Update from stimulating backend
++++++++++++++++++++++++++
+
+The parameters in this stimulating device can be updated with input
+coming from a stimulating backend. The data structure used for the update
+holds one value for the rate.
+The indexing of the data structure is as follows:
+rate = input_param[ 0 ]
+
 Sends
 +++++
 

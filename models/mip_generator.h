@@ -85,6 +85,16 @@ The following parameters appear in the element's status dictionary:
  mother_seed  integer  Seed of RNG of mother process
 ============  ======== ================================================
 
+Update from stimulating backend
++++++++++++++++++++++++++
+
+The parameters in this stimulating device can be updated with input
+coming from a stimulating backend. The data structure used for the update
+holds one value for a subset of the parameters mentioned in the section above.
+The indexing is as follows:
+rate = input_param[ 0 ]
+p_copy = input_param[ 1 ]
+
 Sends
 +++++
 

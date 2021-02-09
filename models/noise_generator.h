@@ -123,6 +123,20 @@ The following parameters can be set in the status dictionary:
  frequency Hz      Frequency of sine modulation
 ========== ======  =========================================================
 
+Update from stimulating backend
++++++++++++++++++++++++++
+
+The parameters in this stimulating device can be updated with input
+coming from a stimulating backend. The data structure used for the update
+holds one value for a subset of the parameters mentioned in the section above.
+The indexing is as follows:
+mean = input_param[ 0 ]
+std = input_param[ 1 ]
+std_mod = input_param[ 2 ]
+phase = input_param[ 3 ]
+frequency = input_param[ 4 ]
+
+
 Sends
 +++++
 

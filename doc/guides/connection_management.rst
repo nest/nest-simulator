@@ -5,7 +5,7 @@ Connection Management
 
 The connectivity pattern is defined inside the `Connect()` function
 under the key 'rule'. The patterns available are described in the
-`Connection Rules <connection-management.md#connection-rules>`__. In
+:ref:`conn_rules` section below. In
 addition the synapse model can be specified within the connect function
 and all synaptic parameters can be randomly distributed.
 

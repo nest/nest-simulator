@@ -47,20 +47,19 @@ if os.environ.get('READTHEDOCS', 'False') == 'True':
 print("build_dir", str(build_dir))
 print("source_dir", str(source_dir))
 
-sys.path.insert(0, str(source_dir))
-sys.path.insert(0, str(source_dir / 'doc'))
-sys.path.insert(0, str(source_dir / 'pynest/'))
-sys.path.insert(0, str(source_dir / 'pynest/nest'))
-
-# -- Mock pynestkernel ----------------------------------------------------
-# The mock_kernel has to be imported after setting the correct sys paths.
-from mock_kernel import convert  # noqa
-
-# create mockfile
+# Create the mockfile for extracting the PyNEST
 
 excfile = source_dir / "pynest/nest/lib/hl_api_exceptions.py"
 infile = source_dir / "pynest/pynestkernel.pyx"
-outfile = source_dir / "doc/pynestkernel_mock.py"
+outfile = build_dir / "doc/userdoc/pynestkernel_mock.py"
+
+sys.path.insert(0, str(source_dir))
+sys.path.insert(0, str(source_dir / 'doc'))
+sys.path.insert(0, str(source_dir / 'pynest'))
+sys.path.insert(0, str(source_dir / 'pynest/nest'))
+sys.path.insert(0, str(build_dir / 'doc/userdoc'))
+
+from mock_kernel import convert  # noqa
 
 with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as fout:
     mockedmodule = fexc.read() + "\n\n"
@@ -69,16 +68,12 @@ with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as
 
     fout.write(mockedmodule)
 
-# The pynestkernel_mock has to be imported after it is created.
-import pynestkernel_mock  # noqa
+import pynestkernel_mock
 
 sys.modules["nest.pynestkernel"] = pynestkernel_mock
 sys.modules["nest.kernel"] = pynestkernel_mock
 
-
 # -- General configuration ------------------------------------------------
-# If your documentation needs a minimal Sphinx version, state it here.
-#
 extensions = [
     'sphinx_gallery.gen_gallery',
     'sphinx.ext.autodoc',
@@ -102,7 +97,7 @@ sphinx_gallery_conf = {
      # path to your examples scripts
      'examples_dirs': source_dir / 'pynest/examples',
      # path where to save gallery generated examples
-     'gallery_dirs': build_dir / 'doc/auto_examples',
+     'gallery_dirs': build_dir / 'doc/userdoc/auto_examples',
      # 'backreferences_dir': False
      'plot_gallery': 'False'
 }
@@ -153,7 +148,7 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
-html_logo = '_static/img/nest_logo.png'
+html_logo = str(build_dir / 'doc/userdoc/static/img/nest_logo.png')
 html_theme_options = {'logo_only': True,
                       'display_version': False}
 
@@ -166,7 +161,7 @@ html_theme_options = {'logo_only': True,
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = [str(build_dir / 'doc/userdoc/static')]
 
 rst_prolog = ".. warning:: \n  This is A PREVIEW for NEST 3.0 and NOT an OFFICIAL RELEASE! \
              Some functionality may not be available and information may be incomplete!"
@@ -192,7 +187,7 @@ def config_inited_handler(app, config):
     ExtractUserDocs(
         listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=source_dir),
         basedir=source_dir,
-        outdir=str(build_dir / "doc/models")
+        outdir=str(build_dir / "doc/userdoc/models")
     )
 
 
@@ -300,4 +295,4 @@ def copytreeglob(source, target, glob='*.png'):
         copyfile(source/relativename, target/relativename)
 
 
-copytreeglob(source_dir / "pynest/examples/Potjans_2014", build_dir / "doc/examples", '*.png')
+copytreeglob(source_dir / "pynest/examples/Potjans_2014", build_dir / "doc/userdoc/examples", '*.png')

@@ -59,9 +59,6 @@ endif ()
 install( DIRECTORY model_details
     DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 
-install( FILES index.html doc_header.txt
-    DESTINATION ${CMAKE_INSTALL_DOCDIR} )
-
 if ( DOXYGEN_FOUND )
   add_custom_target( doc
       COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/normaldoc.conf"
@@ -87,18 +84,16 @@ else ()
       )
 endif ()
 
-add_custom_target( html
-    sphinx-build -M html "${PROJECT_SOURCE_DIR}/doc" "${PROJECT_BINARY_DIR}/doc"
-    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/doc"
+set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc" )
+
+add_custom_target( html 
+  COMMAND [ "${PROJECT_SOURCE_DIR}" != "${PROJECT_BINARY_DIR}" ] && cp -r userdoc "${DOC_BUILD_DIR}" || true
+  COMMAND PYTHONDONTWRITEBYTECODE=1 sphinx-build -b html -c "${PROJECT_SOURCE_DIR}/doc" "${DOC_BUILD_DIR}/userdoc" "${DOC_BUILD_DIR}/userdoc/html"
+  COMMAND cp "${DOC_BUILD_DIR}/userdoc/models/*.rst" "${DOC_BUILD_DIR}/userdoc/html/models"
+  WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/doc"
 )
 
-install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/html"
+install( DIRECTORY "${DOC_BUILD_DIR}/userdoc/html"
   DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
   OPTIONAL
-)
-
-install( DIRECTORY "${PROJECT_SOURCE_DIR}/doc/models/"
-  DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}/html/models"
-  OPTIONAL
-  FILES_MATCHING PATTERN "*.rst"
 )

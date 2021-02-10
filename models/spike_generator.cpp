@@ -416,6 +416,11 @@ nest::spike_generator::set_data_from_stimulating_backend( std::vector< double > 
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
+  if ( ptmp.precise_times_ and not input_spikes.empty() )
+  {
+    throw BadProperty( "Option precise_times is not supported with an stimulating backend\n" );
+  }
+
   const Time& origin = StimulatingDevice::get_origin();
   // For the input backend
   if ( not input_spikes.empty() )
@@ -427,18 +432,10 @@ nest::spike_generator::set_data_from_stimulating_backend( std::vector< double > 
     for ( size_t n = 0; n < n_spikes; ++n )
     {
       times_ms.push_back( P_.spike_stamps_[ n ].get_ms() );
-      if ( ptmp.precise_times_ )
-      {
-        times_ms[ n ] -= ptmp.spike_offsets_[ n ];
-      }
     }
     for ( double input_spike : input_spikes )
     {
       times_ms.push_back( input_spike );
-      if ( ptmp.precise_times_ )
-      {
-        throw BadProperty( "Option precise_times is not supported in this context\n" );
-      }
     }
     ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
 

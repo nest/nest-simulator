@@ -93,7 +93,7 @@ for i in $EXAMPLES; do
     echo "  output_dir: '$output_dir'" >>"$metafile"
     echo "  log: '$logfile'" >>"$metafile"
 
-    export NEST_DATA_PATH="$output_dir"
+    export NEST_DATA_PATH=""  # $output_dir"
     touch .start_example
     sleep 1
     set +e
@@ -128,7 +128,7 @@ done
 ELAPSED_TIME=$(($SECONDS - $START))
 
 echo ">>> Longest running examples:"
-egrep -o "real: [^,]+" example_logs/*/meta.yaml | sed -e 's/:real://' | sort -k2 -r | head -n 15
+egrep -o "real: [^,]+" example_logs/*/meta.yaml | sed -e 's/:real://' | sort -k2 -rg | head -n 15
 
 echo ">>> RESULTS: $FAILURES failed /" $(echo "$EXAMPLES" | wc -w) " total"
 echo ">>> TOTAL TIME: $(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec."

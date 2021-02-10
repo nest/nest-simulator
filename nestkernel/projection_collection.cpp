@@ -74,11 +74,33 @@ ProjectionCollection::ProjectionCollection( const ArrayDatum& projections )
 void
 ProjectionCollection::connect()
 {
-  // TODO: Enter thread parallel region here.
-  // Apply projection connections
-  for ( auto& projection : projections_ )
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
+#pragma omp parallel
   {
-    projection.connect();
+    const auto tid = kernel().vp_manager.get_thread_id();
+    std::cerr << "[thread " << tid << "] ProjectionCollection::connect()\n";
+
+    try
+    {
+      // Apply projection connections
+      for ( auto& projection : projections_ )
+      {
+        projection.connect();
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    if ( exceptions_raised.at( tid ).get() )
+    {
+      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
+    }
   }
 }
 

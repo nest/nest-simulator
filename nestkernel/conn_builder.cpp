@@ -614,79 +614,76 @@ void
 nest::OneToOneBuilder::connect_()
 {
 
-#pragma omp parallel
+  // get thread id
+  const thread tid = kernel().vp_manager.get_thread_id();
+
+  try
   {
-    // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    // allocate pointer to thread specific random generator
+    librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-    try
+    if ( loop_over_targets_() )
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
-
-      if ( loop_over_targets_() )
+      // A more efficient way of doing this might be to use NodeCollection's local_begin(). For this to work we would
+      // need to change some of the logic, sources and targets might not be on the same process etc., so therefore
+      // we are not doing it at the moment. This also applies to other ConnBuilders below.
+      NodeCollection::const_iterator target_it = targets_->begin();
+      NodeCollection::const_iterator source_it = sources_->begin();
+      for ( ; target_it < targets_->end(); ++target_it, ++source_it )
       {
-        // A more efficient way of doing this might be to use NodeCollection's local_begin(). For this to work we would
-        // need to change some of the logic, sources and targets might not be on the same process etc., so therefore
-        // we are not doing it at the moment. This also applies to other ConnBuilders below.
-        NodeCollection::const_iterator target_it = targets_->begin();
-        NodeCollection::const_iterator source_it = sources_->begin();
-        for ( ; target_it < targets_->end(); ++target_it, ++source_it )
+        assert( source_it < sources_->end() );
+
+        const index snode_id = ( *source_it ).node_id;
+        const index tnode_id = ( *target_it ).node_id;
+
+        if ( snode_id == tnode_id and not allow_autapses_ )
         {
-          assert( source_it < sources_->end() );
-
-          const index snode_id = ( *source_it ).node_id;
-          const index tnode_id = ( *target_it ).node_id;
-
-          if ( snode_id == tnode_id and not allow_autapses_ )
-          {
-            continue;
-          }
-
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          if ( target->is_proxy() )
-          {
-            // skip array parameters handled in other virtual processes
-            skip_conn_parameter_( tid );
-            continue;
-          }
-
-          single_connect_( snode_id, *target, tid, rng );
+          continue;
         }
-      }
-      else
-      {
-        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
-        SparseNodeArray::const_iterator n;
-        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+
+        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        if ( target->is_proxy() )
         {
-          Node* target = n->get_node();
-
-          const index tnode_id = n->get_node_id();
-          const int idx = targets_->find( tnode_id );
-          if ( idx < 0 ) // Is local node in target list?
-          {
-            continue;
-          }
-
-          // one-to-one, thus we can use target idx for source as well
-          const index snode_id = ( *sources_ )[ idx ];
-          if ( not allow_autapses_ and snode_id == tnode_id )
-          {
-            // no skipping required / possible,
-            // as we iterate only over local nodes
-            continue;
-          }
-          single_connect_( snode_id, *target, tid, rng );
+          // skip array parameters handled in other virtual processes
+          skip_conn_parameter_( tid );
+          continue;
         }
+
+        single_connect_( snode_id, *target, tid, rng );
       }
     }
-    catch ( std::exception& err )
+    else
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+      SparseNodeArray::const_iterator n;
+      for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+      {
+        Node* target = n->get_node();
+
+        const index tnode_id = n->get_node_id();
+        const int idx = targets_->find( tnode_id );
+        if ( idx < 0 ) // Is local node in target list?
+        {
+          continue;
+        }
+
+        // one-to-one, thus we can use target idx for source as well
+        const index snode_id = ( *sources_ )[ idx ];
+        if ( not allow_autapses_ and snode_id == tnode_id )
+        {
+          // no skipping required / possible,
+          // as we iterate only over local nodes
+          continue;
+        }
+        single_connect_( snode_id, *target, tid, rng );
+      }
     }
+  }
+  catch ( std::exception& err )
+  {
+    // We must create a new exception here, err's lifetime ends at
+    // the end of the catch block.
+    exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
   }
 }
 
@@ -847,56 +844,53 @@ void
 nest::AllToAllBuilder::connect_()
 {
 
-#pragma omp parallel
+  // get thread id
+  const thread tid = kernel().vp_manager.get_thread_id();
+
+  try
   {
-    // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    // allocate pointer to thread specific random generator
+    librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-    try
+    if ( loop_over_targets_() )
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
-
-      if ( loop_over_targets_() )
+      NodeCollection::const_iterator target_it = targets_->begin();
+      for ( ; target_it < targets_->end(); ++target_it )
       {
-        NodeCollection::const_iterator target_it = targets_->begin();
-        for ( ; target_it < targets_->end(); ++target_it )
+        const index tnode_id = ( *target_it ).node_id;
+        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        if ( target->is_proxy() )
         {
-          const index tnode_id = ( *target_it ).node_id;
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          if ( target->is_proxy() )
-          {
-            skip_conn_parameter_( tid, sources_->size() );
-            continue;
-          }
-
-          inner_connect_( tid, rng, target, tnode_id, true );
+          skip_conn_parameter_( tid, sources_->size() );
+          continue;
         }
-      }
-      else
-      {
-        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
-        SparseNodeArray::const_iterator n;
-        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-        {
-          const index tnode_id = n->get_node_id();
 
-          // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
-          {
-            continue;
-          }
-
-          inner_connect_( tid, rng, n->get_node(), tnode_id, false );
-        }
+        inner_connect_( tid, rng, target, tnode_id, true );
       }
     }
-    catch ( std::exception& err )
+    else
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+      SparseNodeArray::const_iterator n;
+      for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+      {
+        const index tnode_id = n->get_node_id();
+
+        // Is the local node in the targets list?
+        if ( targets_->find( tnode_id ) < 0 )
+        {
+          continue;
+        }
+
+        inner_connect_( tid, rng, n->get_node(), tnode_id, false );
+      }
     }
+  }
+  catch ( std::exception& err )
+  {
+    // We must create a new exception here, err's lifetime ends at
+    // the end of the catch block.
+    exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
   }
 }
 
@@ -1146,62 +1140,60 @@ void
 nest::FixedInDegreeBuilder::connect_()
 {
 
-#pragma omp parallel
+  // get thread id
+  const thread tid = kernel().vp_manager.get_thread_id();
+  // std::cerr << "[thread " << tid << "] FixedIndegreeBuilder::connect:()\n";
+
+  // try
+  // {
+  // allocate pointer to thread specific random generator
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+
+  if ( loop_over_targets_() )
   {
-    // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
-
-    try
+    NodeCollection::const_iterator target_it = targets_->begin();
+    for ( ; target_it < targets_->end(); ++target_it )
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+      const index tnode_id = ( *target_it ).node_id;
+      Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
 
-      if ( loop_over_targets_() )
+      const long indegree_value = std::round( indegree_->value( rng, target ) );
+      if ( target->is_proxy() )
       {
-        NodeCollection::const_iterator target_it = targets_->begin();
-        for ( ; target_it < targets_->end(); ++target_it )
-        {
-          const index tnode_id = ( *target_it ).node_id;
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-
-          const long indegree_value = std::round( indegree_->value( rng, target ) );
-          if ( target->is_proxy() )
-          {
-            // skip array parameters handled in other virtual processes
-            skip_conn_parameter_( tid, indegree_value );
-            continue;
-          }
-
-          inner_connect_( tid, rng, target, tnode_id, true, indegree_value );
-        }
+        // skip array parameters handled in other virtual processes
+        skip_conn_parameter_( tid, indegree_value );
+        continue;
       }
-      else
-      {
-        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
-        SparseNodeArray::const_iterator n;
-        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-        {
-          const index tnode_id = n->get_node_id();
 
-          // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
-          {
-            continue;
-          }
-          auto source = n->get_node();
-          const long indegree_value = std::round( indegree_->value( rng, source ) );
-
-          inner_connect_( tid, rng, source, tnode_id, false, indegree_value );
-        }
-      }
-    }
-    catch ( std::exception& err )
-    {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      inner_connect_( tid, rng, target, tnode_id, true, indegree_value );
     }
   }
+  else
+  {
+    const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+    SparseNodeArray::const_iterator n;
+    for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+    {
+      const index tnode_id = n->get_node_id();
+
+      // Is the local node in the targets list?
+      if ( targets_->find( tnode_id ) < 0 )
+      {
+        continue;
+      }
+      auto source = n->get_node();
+      const long indegree_value = std::round( indegree_->value( rng, source ) );
+
+      inner_connect_( tid, rng, source, tnode_id, false, indegree_value );
+    }
+  }
+  // }
+  // catch ( std::exception& err )
+  // {
+  //   // We must create a new exception here, err's lifetime ends at
+  //   // the end of the catch block.
+  //   exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+  // }
 }
 
 void
@@ -1348,36 +1340,25 @@ nest::FixedOutDegreeBuilder::connect_()
       tgt_ids_.push_back( tnode_id );
     }
 
-#pragma omp parallel
+
+    // get thread id
+    const thread tid = kernel().vp_manager.get_thread_id();
+
+    // allocate pointer to thread specific random generator
+    librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+
+    std::vector< index >::const_iterator tnode_id_it = tgt_ids_.begin();
+    for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
     {
-      // get thread id
-      const thread tid = kernel().vp_manager.get_thread_id();
-
-      try
+      Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
+      if ( target->is_proxy() )
       {
-        // allocate pointer to thread specific random generator
-        librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
-
-        std::vector< index >::const_iterator tnode_id_it = tgt_ids_.begin();
-        for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
-        {
-          Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
-          if ( target->is_proxy() )
-          {
-            // skip array parameters handled in other virtual processes
-            skip_conn_parameter_( tid );
-            continue;
-          }
-
-          single_connect_( snode_id, *target, tid, rng );
-        }
+        // skip array parameters handled in other virtual processes
+        skip_conn_parameter_( tid );
+        continue;
       }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
+
+      single_connect_( snode_id, *target, tid, rng );
     }
   }
 }
@@ -1493,70 +1474,67 @@ nest::FixedTotalNumberBuilder::connect_()
     sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
   }
 
-// end code adapted from gsl 1.8
+  // end code adapted from gsl 1.8
 
-#pragma omp parallel
+  // get thread id
+  const thread tid = kernel().vp_manager.get_thread_id();
+
+  // try
+  // {
+  // allocate pointer to thread specific random generator
+  const int vp_id = kernel().vp_manager.thread_to_vp( tid );
+
+  if ( kernel().vp_manager.is_local_vp( vp_id ) )
   {
-    // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-    try
+    // gather local target node IDs
+    std::vector< index > thread_local_targets;
+    thread_local_targets.reserve( number_of_targets_on_vp[ vp_id ] );
+
+    std::vector< index >::const_iterator tnode_id_it = local_targets.begin();
+    for ( ; tnode_id_it != local_targets.end(); ++tnode_id_it )
     {
-      // allocate pointer to thread specific random generator
-      const int vp_id = kernel().vp_manager.thread_to_vp( tid );
-
-      if ( kernel().vp_manager.is_local_vp( vp_id ) )
+      if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == vp_id )
       {
-        librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
-
-        // gather local target node IDs
-        std::vector< index > thread_local_targets;
-        thread_local_targets.reserve( number_of_targets_on_vp[ vp_id ] );
-
-        std::vector< index >::const_iterator tnode_id_it = local_targets.begin();
-        for ( ; tnode_id_it != local_targets.end(); ++tnode_id_it )
-        {
-          if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == vp_id )
-          {
-            thread_local_targets.push_back( *tnode_id_it );
-          }
-        }
-
-        assert( thread_local_targets.size() == number_of_targets_on_vp[ vp_id ] );
-
-        while ( num_conns_on_vp[ vp_id ] > 0 )
-        {
-
-          // draw random numbers for source node from all source neurons
-          const long s_index = rng->ulrand( size_sources );
-          // draw random numbers for target node from
-          // targets_on_vp on this virtual process
-          const long t_index = rng->ulrand( thread_local_targets.size() );
-          // map random number of source node to node ID corresponding to
-          // the source_adr vector
-          const long snode_id = ( *sources_ )[ s_index ];
-          // map random number of target node to node ID using the
-          // targets_on_vp vector
-          const long tnode_id = thread_local_targets[ t_index ];
-
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          const thread target_thread = target->get_thread();
-
-          if ( allow_autapses_ or snode_id != tnode_id )
-          {
-            single_connect_( snode_id, *target, target_thread, rng );
-            num_conns_on_vp[ vp_id ]--;
-          }
-        }
+        thread_local_targets.push_back( *tnode_id_it );
       }
     }
-    catch ( std::exception& err )
+
+    assert( thread_local_targets.size() == number_of_targets_on_vp[ vp_id ] );
+
+    while ( num_conns_on_vp[ vp_id ] > 0 )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+
+      // draw random numbers for source node from all source neurons
+      const long s_index = rng->ulrand( size_sources );
+      // draw random numbers for target node from
+      // targets_on_vp on this virtual process
+      const long t_index = rng->ulrand( thread_local_targets.size() );
+      // map random number of source node to node ID corresponding to
+      // the source_adr vector
+      const long snode_id = ( *sources_ )[ s_index ];
+      // map random number of target node to node ID using the
+      // targets_on_vp vector
+      const long tnode_id = thread_local_targets[ t_index ];
+
+      Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+      const thread target_thread = target->get_thread();
+
+      if ( allow_autapses_ or snode_id != tnode_id )
+      {
+        single_connect_( snode_id, *target, target_thread, rng );
+        num_conns_on_vp[ vp_id ]--;
+      }
     }
   }
+  // }
+  // catch ( std::exception& err )
+  // {
+  //   // We must create a new exception here, err's lifetime ends at
+  //   // the end of the catch block.
+  //   exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+  // }
 }
 
 
@@ -1588,59 +1566,56 @@ nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
 void
 nest::BernoulliBuilder::connect_()
 {
-#pragma omp parallel
+  // get thread id
+  const thread tid = kernel().vp_manager.get_thread_id();
+
+  // try
+  // {
+  // allocate pointer to thread specific random generator
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+
+  if ( loop_over_targets_() )
   {
-    // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
-
-    try
+    NodeCollection::const_iterator target_it = targets_->begin();
+    for ( ; target_it < targets_->end(); ++target_it )
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
-
-      if ( loop_over_targets_() )
+      const index tnode_id = ( *target_it ).node_id;
+      Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+      if ( target->is_proxy() )
       {
-        NodeCollection::const_iterator target_it = targets_->begin();
-        for ( ; target_it < targets_->end(); ++target_it )
-        {
-          const index tnode_id = ( *target_it ).node_id;
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          if ( target->is_proxy() )
-          {
-            // skip array parameters handled in other virtual processes
-            skip_conn_parameter_( tid );
-            continue;
-          }
-
-          inner_connect_( tid, rng, target, tnode_id );
-        }
+        // skip array parameters handled in other virtual processes
+        skip_conn_parameter_( tid );
+        continue;
       }
 
-      else
-      {
-        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
-        SparseNodeArray::const_iterator n;
-        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-        {
-          const index tnode_id = n->get_node_id();
-
-          // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
-          {
-            continue;
-          }
-
-          inner_connect_( tid, rng, n->get_node(), tnode_id );
-        }
-      }
+      inner_connect_( tid, rng, target, tnode_id );
     }
-    catch ( std::exception& err )
+  }
+
+  else
+  {
+    const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+    SparseNodeArray::const_iterator n;
+    for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      const index tnode_id = n->get_node_id();
+
+      // Is the local node in the targets list?
+      if ( targets_->find( tnode_id ) < 0 )
+      {
+        continue;
+      }
+
+      inner_connect_( tid, rng, n->get_node(), tnode_id );
     }
-  } // of omp parallel
+  }
+  // }
+  // catch ( std::exception& err )
+  // {
+  //   // We must create a new exception here, err's lifetime ends at
+  //   // the end of the catch block.
+  //   exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+  // }
 }
 
 void

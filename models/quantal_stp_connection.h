@@ -202,18 +202,6 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   const double p_decay = std::exp( -h / tau_rec_ );
   const double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
-  // Compute release probability
-  u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]_
-
-  // Compute number of sites that recovered during the interval.
-  for ( int depleted = n_ - a_; depleted > 0; --depleted )
-  {
-    if ( kernel().rng_manager.get_rng( t )->drand() < ( 1.0 - p_decay ) )
-    {
-      ++a_;
-    }
-  }
-
   // Compute number of released sites
   int n_release = 0;
   for ( int i = a_; i > 0; --i )
@@ -232,6 +220,18 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e, thread t, const Comm
     e.set_rport( get_rport() );
     e();
     a_ -= n_release;
+  }
+
+  // Compute release probability
+  u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]_
+
+  // Compute number of sites that recovered during the interval.
+  for ( int depleted = n_ - a_; depleted > 0; --depleted )
+  {
+    if ( kernel().rng_manager.get_rng( t )->drand() < ( 1.0 - p_decay ) )
+    {
+      ++a_;
+    }
   }
 
   t_lastspike_ = t_spike;

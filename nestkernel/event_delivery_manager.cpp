@@ -176,9 +176,9 @@ void
 EventDeliveryManager::configure_secondary_buffers()
 {
   send_buffer_secondary_events_.clear();
-  send_buffer_secondary_events_.resize( kernel().mpi_manager.get_buffer_size_secondary_events_in_int() );
+  send_buffer_secondary_events_.resize( kernel().mpi_manager.get_send_buffer_size_secondary_events_in_int() );
   recv_buffer_secondary_events_.clear();
-  recv_buffer_secondary_events_.resize( kernel().mpi_manager.get_buffer_size_secondary_events_in_int() );
+  recv_buffer_secondary_events_.resize( kernel().mpi_manager.get_recv_buffer_size_secondary_events_in_int() );
 }
 
 void
@@ -265,10 +265,10 @@ void
 EventDeliveryManager::write_done_marker_secondary_events_( const bool done )
 {
   // write done marker at last position in every chunk
-  const size_t chunk_size_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
   for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
-    send_buffer_secondary_events_[ ( rank + 1 ) * chunk_size_in_int - 1 ] = done;
+    send_buffer_secondary_events_[ kernel().mpi_manager.get_done_marker_position_in_secondary_events_send_buffer(
+      rank ) ] = done;
   }
 }
 
@@ -276,7 +276,7 @@ void
 EventDeliveryManager::gather_secondary_events( const bool done )
 {
   write_done_marker_secondary_events_( done );
-  kernel().mpi_manager.communicate_secondary_events_Alltoall(
+  kernel().mpi_manager.communicate_secondary_events_Alltoallv(
     send_buffer_secondary_events_, recv_buffer_secondary_events_ );
 }
 

@@ -56,6 +56,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 # connection from inhibitory to excitatory neurons (I->E) as EI (post-pre) and
 # connections from excitatory to inhibitory neurons (E->I) as IE (post-pre).
 
+
 def plot_weight_matrices(E_neurons, I_neurons):
 
     W_EE = np.zeros([len(E_neurons), len(E_neurons)])

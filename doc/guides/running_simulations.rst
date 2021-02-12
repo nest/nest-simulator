@@ -120,11 +120,11 @@ for how to set the delay when creating synapses.
 .. _stepped_simulations:
 
 
-Random numbers: Generators and Seeds
+Random numbers: Generators and seeds
 ------------------------------------
 
 Most NEST simulations will use random numbers, e.g., to generate Poisson
-spike trains, to randomize connectivity or neuronal spike emission. NEST
+spike trains or to randomize connectivity or neuronal spike emissions. NEST
 manages random number generators for all these purposes internally, providing
 separate random number streams for parallel processes automatically.
 
@@ -146,10 +146,10 @@ for a simple loop over different realizations:
         
 Valid random number seeds are numbers from :math:`1` to :math:`2^{31}-1`.
 
-Since random number generators in reality are deterministic algorithms, there
+Since random number generators, in reality, are deterministic algorithms, there
 is a risk that the random number streams provided by NEST contain some structure
 or correlations that "resonate" with a property of a neuronal network model.
-You should therefore *always* validate simulations results by simulating with
+You should therefore *always* validate simulation results by simulating with
 different random number generators. You can see which generators are available
 using
 
@@ -312,4 +312,3 @@ threads or processes):
     ``{"print_time": False}`` to avoid the overhead of the print calls.
     In these cases, the real-time factor can be computed by measuring the
     wall-clock time manually and dividing by the set model time.
-

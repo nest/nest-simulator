@@ -88,14 +88,12 @@ resolutions { single_trial } Map
 (First test) =
 % first test: limits
 res Flatten check_limits
-dup ==
 
 (Second test) =
 % second test: different results between targets
 res {
   arrayload ; neq
 } Map
-dup ==
 
 (Third test) =
 % third test: equality among runs
@@ -104,7 +102,6 @@ res Transpose {
   dup First /ref Set
   Rest true exch { ref sub 0 exch { abs max } Fold 1.0e-15 lt and } Fold
 } Map
-dup ==
 
 % collect
 3 arraystore Flatten

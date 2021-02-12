@@ -1301,6 +1301,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
 void
 nest::FixedOutDegreeBuilder::connect_()
 {
+  // get global rng that is tested for synchronization for all threads
   RngPtr grng = get_rank_synced_rng();
 
   NodeCollection::const_iterator source_it = sources_->begin();

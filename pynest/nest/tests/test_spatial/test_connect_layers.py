@@ -55,12 +55,14 @@ class ConnectLayersTestCase(unittest.TestCase):
     def _check_connections_statistical(self, conn_spec, p, num_pairs):
         """Helper function which asserts that the number of connections created are based on a bernoulli distribution.
         The connection function is iterated N times, then the distribution of number of created connections are tested
-        against a bernoulli distribution using a Kolmogorov-Smirnov test."""
+        against a bernoulli distribution using a Kolmogorov-Smirnov test. This is done ks_N times, to get statistical
+        values. The mean of the KS tests is then compared to the limits. If either of the values are below the specified
+        limits, the test fails."""
         self.assertEqual(conn_spec['rule'], 'pairwise_bernoulli')
-        N = 100
-        ks_N = 5
-        p_val_lim = 0.1
-        ks_stat_lim = 0.2
+        N = 100  # Number of samples per KS test
+        ks_N = 5  # Number of KS tests to perform.
+        p_val_lim = 0.1  # Limit for the p value of the KS test
+        ks_stat_lim = 0.2  # Limit for the KS statistic
 
         p_vals = np.zeros(ks_N)
         ks_stats = np.zeros(ks_N)

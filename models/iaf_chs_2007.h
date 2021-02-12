@@ -252,7 +252,7 @@ private:
     double P22_;
     double P30_;
 
-    normal_distribution normal_dist_; //!< random deviate generator
+    normal_distribution normal_dist_; //!< random distribution
   };
 
   // Access functions for UniversalDataLogger -------------------------------

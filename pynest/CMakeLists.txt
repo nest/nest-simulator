@@ -59,13 +59,13 @@ if ( HAVE_PYTHON )
       )
 
   target_include_directories( pynestkernel PRIVATE
-      ${PROJECT_SOURCE_DIR}/thirdparty
       ${PROJECT_BINARY_DIR}/libnestutil
       ${PROJECT_SOURCE_DIR}/libnestutil
       ${PROJECT_SOURCE_DIR}/nest
       ${PROJECT_SOURCE_DIR}/nestkernel
       ${PROJECT_SOURCE_DIR}/nestkernel/spatial
       ${PROJECT_SOURCE_DIR}/sli
+      ${PROJECT_SOURCE_DIR}/thirdparty
       ${SLI_MODULE_INCLUDE_DIRS}
       ${PYTHON_INCLUDE_DIRS}
       )

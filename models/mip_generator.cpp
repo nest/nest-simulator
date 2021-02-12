@@ -31,9 +31,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 
-//#include "dict.h"
-//#include "dictutils.h"
-
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */

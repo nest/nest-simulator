@@ -304,9 +304,7 @@ public:
     updateValue< long >( d, names::max, max_ );
     if ( max_ <= 0 )
     {
-      throw BadProperty(
-        "nest::UniformIntParameter: "
-        "max > 0 required." );
+      throw BadProperty( "nest::UniformIntParameter: max > 0 required." );
     }
     parameter_returns_int_only_ = true;
   }

@@ -141,9 +141,6 @@ nest::RandomManager::get_status( DictionaryDatum& d )
 void
 nest::RandomManager::set_status( const DictionaryDatum& d )
 {
-  long n_threads;
-  bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
-
   long rng_seed;
   bool rng_seed_updated = updateValue< long >( d, names::rng_seed, rng_seed );
 
@@ -171,6 +168,9 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
 
     current_rng_type_ = rng_type;
   }
+
+  long n_threads;
+  bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
 
   if ( n_threads_updated or rng_seed_updated or rng_type_updated )
   {

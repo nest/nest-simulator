@@ -60,7 +60,7 @@ PEP8_MAX_LINE_LENGTH=120
 # Constants
 typeset -i MAX_CPPCHECK_MSG_COUNT=10
 
-# Find directories that should not be checked. List root dirs in space separated list.
+# Find directories that should not be checked. List root dirs in space-separated list.
 ROOT_DIRS_TO_IGNORE="thirdparty"
 DIRS_TO_IGNORE=$(for dir in ${ROOT_DIRS_TO_IGNORE}; do find ${dir} -type d; done)
 

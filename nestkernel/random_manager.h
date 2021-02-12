@@ -97,7 +97,7 @@ public:
   /**
    * Confirm that rank- and thread-synchronized RNGs are in sync.
    *
-   * @throws KernelException if RNGs are out of sync
+   * @throws KernelException if RNGs are out of sync.
    */
   void check_rng_synchrony() const;
 

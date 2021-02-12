@@ -360,7 +360,7 @@ Dictionary with lists when setting parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is now possible to use a dictionary with lists when setting node parameters
-with ``Create()``, ``set()`` or ``SetStatus()``. The values of the lists will 
+with ``Create()``, ``set()`` or ``SetStatus()``. The values of the lists will
 be distributed across the nodes. The way to do this previously was to apply a
 list of dictionaries. This is still possible.
 

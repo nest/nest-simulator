@@ -164,7 +164,6 @@ public:
   /*
    * Maximum across all ranks
    */
-  // TODO: Consider re-implementing like max_cross_ranks, templatize
   void communicate_Allreduce_max_in_place( std::vector< long >& buffer );
 
   /**
@@ -246,7 +245,7 @@ public:
 
   void synchronize();
 
-  bool any_true( const bool ); // TODO: Should be implemented using MPI_ALLREDUCE
+  bool any_true( const bool );
 
   /**
    * Benchmark communication time of different MPI methods

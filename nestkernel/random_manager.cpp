@@ -181,8 +181,6 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
 void
 nest::RandomManager::check_rng_synchrony() const
 {
-  // TODO: Implement an MPI_ALLREDUCE operator checking for equality, so we don't need min and max.
-
   // Compare more than a single number to avoid false negatives
   const long NUM_ROUNDS = 5;
 

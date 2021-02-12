@@ -475,13 +475,7 @@ close
                     0.0 (inf) cvd redraw
                     put
 
-                    % fill the delay dictionary for Connect
-                    delay_dict /mu delay_th put
-                    delay_dict /sigma delay_th_sd abs put
-
                     % insert the delay dictionary into the synapse dictionary
-                    syn_dict /delay delay_dict put
-
                     syn_dict /delay
                     << /normal << /mean delay_th /std delay_th_sd abs >> >> CreateParameter
                     0.1 (inf) cvd redraw

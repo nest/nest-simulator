@@ -135,7 +135,7 @@ You can use any number :math:`s` with :math:`1\leq s \leq 2^{31}-1` as seed:
 
     nest.SetKernelStatus({'rng_seed': 12345})
 
-As long as you use two different seed values, NEST will ensure that all random number streams in a
+As long as you use different seed values, NEST will ensure that all random number streams in a
 simulation are seeded properly; see :ref:`Random number internals <random_internals>` for details.
 
 You can inspect the RNG type and seed value used with

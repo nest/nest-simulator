@@ -20,12 +20,22 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Initializer of PyNEST.
+Welcome to PyNEST, the Python binding to the NEST simulator!
+
+Type 'nest.helpdesk()' to access the online documentation in a browser.
+Type 'nest.help(object)' to get help on a NEST object.
+
+Type 'nest.Models()' to see a list of available models in NEST.
+Type 'nest.authors()' for information about the makers of NEST.
+Type 'nest.__version__' for information about the NEST version.
+
+For more information visit https://www.nest-simulator.org.
 """
 
 import sys
 if sys.version_info[0] == 2:
-    raise Exception("Python 2 is not supported anymore, please use Python 3.")
+    msg = "Python 2 is no longer supported. Please use Python >= 3.6."
+    raise Exception(msg)
 
 from . import ll_api                  # noqa
 from .ll_api import set_communicator  # noqa
@@ -37,7 +47,9 @@ from . import random                  # noqa
 from . import math                    # noqa
 from . import spatial_distributions   # noqa
 from . import logic                   # noqa
-from . import spatial                 # noqa needs to be imported last because of documentation generation
+
+# spatial needs to be imported last because of documentation generation
+from . import spatial                 # noqa
 
 try:
     from . import server              # noqa

@@ -117,15 +117,7 @@ def help(obj=None, pager=None, return_text=False):
             show_help_with_pager(hlpobj, pager)
 
     else:
-        print("Type 'nest.helpdesk()' to access the online documentation in a browser.\n"
-              "Type 'nest.help(object)' to get help on a NEST object or command.\n"
-              "\n"
-              "Type 'nest.Models()' to see a list of available models in NEST.\n"
-              "Type 'nest.authors()' for information about the makers of NEST.\n"
-              "Type 'nest.sysinfo()' to see details on the system configuration.\n"
-              "Type 'nest.__version__' for information about the NEST version.\n"
-              "\n"
-              "For more information visit https://www.nest-simulator.org.")
+        print(nest.__doc__)
 
 
 @check_stack

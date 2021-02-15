@@ -68,7 +68,7 @@ with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as
 
     fout.write(mockedmodule)
 
-import pynestkernel_mock
+import pynestkernel_mock  # noqa
 
 sys.modules["nest.pynestkernel"] = pynestkernel_mock
 sys.modules["nest.kernel"] = pynestkernel_mock

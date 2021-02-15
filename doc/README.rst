@@ -23,8 +23,18 @@ by simply running
     make html
 
 in the build directory of NEST (i.e. the directory where you ran
-``cmake``). To install the dependencies for building the
-documentation, you can either directly run
+``cmake``). To install the documentation under `<nest_install_dir>``
+along with the rest of NEST, this command can be followed by
+
+::
+
+   make install
+
+Build dependencies
+++++++++++++++++++
+
+To install the dependencies for building the documentation, you can
+either directly run
 
 ::
 
@@ -38,11 +48,8 @@ running
     conda env create -f <nest_source_dir>/doc/environment.yml
     conda activate conda/
 
-Once this complete, you can open `doc/html/index.html` to view the docs.
-
-::
-
-    xdg-open doc/html/index.html
+Once this is complete, you can open `doc/userdoc/html/index.html` in
+your browser to view the docs.
 
 Developer documentation
 -----------------------

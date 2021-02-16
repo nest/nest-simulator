@@ -30,7 +30,9 @@ Description:
 
 The scripts test whether in simulations distributed over different numbers of
 processors the global random number generator gives identical results on all
-jobs and for different numbers of jobs.
+jobs and for different numbers of jobs. To draw numbers, GetValues is used on
+a uniform parameter. This draws from the uniform distribution using the global
+random number generator.
 See #186 for discussion.
 
 Author:  July 2009, Diesmann

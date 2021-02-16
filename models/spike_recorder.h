@@ -68,6 +68,9 @@ reversed (i.e., connecting *sr* to *neurons*).
 
 .. include:: ../models/recording_device.rst
 
+See also
+++++++++
+
 EndUserDocs */
 
 namespace nest

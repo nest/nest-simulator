@@ -272,9 +272,19 @@ We use the `modern random package introduced with NumPy 1.17 <https://numpy.org/
 
 .. admonition:: Don't do this in Python!
 
-   The simple randomization below is shown only to provide an illustrative example for
-   randomizing from the Python level. In this case, you should randomized using NEST's
-   built in mechanisms!
+   The randomization example below is shown only to demonstrate how you in principal could
+   use random values generated at the Python level in a NEST simulation in a way consistent
+   with NEST's approach to random numbers in parallel simulations. You should only need to
+   use this approach under very particular circumstances (e.g., if the distribution you want
+   to use is not available in ``nest.random``).
+
+   The proper way to randomize the membrane potential in NEST with uniform random numbers as
+   in the example below is
+
+   .. code-block:: ipython
+
+       nest.Create('iaf_psc_alpha', 12, params={'V_m': nest.random.uniform()})
+
 
 .. code-block:: ipython
 
@@ -315,8 +325,8 @@ as follows:
 Random number internals
 -----------------------
 
-Global and VP-local generators
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Global and local generators
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As described above, random numbers are consumed in NEST
 
@@ -333,7 +343,7 @@ As described above, random numbers are consumed in NEST
    #. to support stochastic spike generation.
 
 In all cases except certain sub-cases of 2.a, randomization is tied to a node,
-which in turn is assigned to a specific virtual process, either because the node is
+which in turn is assigned to a specific virtual process (VP), either because the node is
 concerned (cases 1, 3) or because the node is the target of a connection
 (case 2). NEST guarantees that nodes assigned to different VPs
 can be updated independently of each other, and the same is true for

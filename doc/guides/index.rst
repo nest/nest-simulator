@@ -7,8 +7,8 @@ Here you can find details on a variety of topics in NEST.
     :maxdepth: 1
     :caption: Transition guides to NEST 3.0
 
-    nest2_to_nest3/nest2_to_nest3_overview
-    nest2_to_nest3/nest2_to_nest3_detailed_transition_guide
+    nest2_to_nest3/index
+    spatial/index
 
 .. toctree::
     :maxdepth: 1

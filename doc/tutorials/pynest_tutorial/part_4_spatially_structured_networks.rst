@@ -375,7 +375,7 @@ was built correctly:
 
 It may also be useful to look at the ``.spatial`` property of the
 NodeCollection, which describes the spatial properties. Other useful
-functions that may be of help are listed in the :doc:`../../guides/nest2_to_nest3/nest2_to_nest3_detailed_transition_guide`.
+functions that may be of help are listed in the :doc:`../../guides/nest2_to_nest3/refguide_nest2_nest3`.
 
 >>>  ex_pop.spatial
      {'center': (0.0, 0.0),

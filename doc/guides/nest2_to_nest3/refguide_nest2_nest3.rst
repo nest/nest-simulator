@@ -1,7 +1,7 @@
-NEST 3.0: Detailed transition guide
-===================================
+Reference guide: NEST 2 vs NEST 3
+==================================
 
-* This transition guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
+* This guide shows changes to functions or their output between PyNEST 2.x and PyNEST 3.0
 
 * Functions not mentioned are unchanged
 
@@ -9,13 +9,13 @@ NEST 3.0: Detailed transition guide
 
 * **Please note that NEST 3.0 no longer supports Python 2**
 
-.. contents:: Here you'll find
+.. contents:: On this page you'll find
    :local:
    :depth: 2
 
 .. seealso::
 
-  To see code examples of the key changes, check out our :doc:`nest2_to_nest3_overview` guide.
+  To see code examples of the key changes, check out our :doc:`nest3_features/index`.
 
 .. _setverbosity:
 
@@ -157,8 +157,8 @@ Functions related to setting and getting parameters
 .. _topo_ref:
 
 
-Function related to spatially distributed nodes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Functions related to spatially distributed nodes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Spatial structure, formerly provided by the Topology module, is now integrated into NEST and is no longer
 a separate module.

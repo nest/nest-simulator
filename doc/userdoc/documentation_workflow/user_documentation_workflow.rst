@@ -1,3 +1,5 @@
+.. _documentation_workflow:
+
 User-level documentation workflow
 #################################
 

@@ -95,9 +95,10 @@ the available models you can use. If you want to obtain more information
 about a particular command, you may use Python’s standard help system.
 
 This will return the help text (docstring) explaining the use of this
-particular function. There is a help system within NEST as well. You can
-open the help pages in a browser using ``nest.helpdesk()`` and you can
-get the help page for a particular object using ``nest.help(object)``.
+particular function. There is a help system within NEST as well. You
+can open the help pages in a browser using ``nest.helpdesk()`` and you
+can get the help page for a particular NEST object (like a synapse or
+neuron model) using ``nest.help(object)``.
 
 Creating Nodes
 --------------

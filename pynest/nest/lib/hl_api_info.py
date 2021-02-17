@@ -66,14 +66,24 @@ def authors():
 
 @check_stack
 def helpdesk():
-    """Open the NEST helpdesk in browser.
+    """Open the NEST documentation index in a browser.
 
-    Use the system default browser.
+    This command opens the NEST documentation index page using the
+    system's default browser.
+
+    Please note that the help pages will only be available if you ran
+    ``make html`` prior to installing NEST. For more details, see
+    :ref:`documentation_workflow`.
 
     """
 
-    nestdocdir = sli_func("statusdict/prgdocdir ::")
-    helpfile = os.path.join(nestdocdir, 'help', 'helpindex.html')
+    docdir = sli_func("statusdict/prgdocdir ::")
+    help_fname = os.path.join(docdir, 'html', 'index.html')
+
+    if not os.path.isfile(help_fname):
+        msg = "Sorry, the help index cannot be opened. "
+        msg += "Did you run 'make html' before running 'make install'?"
+        raise FileNotFoundError(msg)
 
     # Under Windows systems webbrowser.open is incomplete
     # See <https://bugs.python.org/issue8232>
@@ -89,17 +99,20 @@ def helpdesk():
 
 
 @check_stack
-def help(obj=None, pager=None, return_text=False):
-    """Show the help page for the given object using the given pager.
+def help(obj=None, return_text=False):
+    """Display the help page for the given object in a pager.
 
-    The default pager is `more` (See `.nestrc`).
+    If ``return_text`` is omitted or explicitly given as ``False``,
+    this command opens the help text for ``object`` in the default
+    pager using the ``pydoc`` module.
+
+    If ``return_text`` is ``True``, the help text is returned as a
+    string in reStructuredText format instead of displaying it.
 
     Parameters
     ----------
     obj : object, optional
         Object to display help for
-    pager : str, optional
-        Pager to use
     return_text : bool, optional
         Option for returning the help text
 
@@ -109,13 +122,12 @@ def help(obj=None, pager=None, return_text=False):
         The help text of the object if `return_text` is `True`.
 
     """
-    hlpobj = obj
-    if hlpobj is not None:
-        if return_text:
-            return load_help(hlpobj)
-        else:
-            show_help_with_pager(hlpobj, pager)
 
+    if obj is not None:
+        if return_text:
+            return load_help(obj)
+        else:
+            show_help_with_pager(obj)
     else:
         print(nest.__doc__)
 

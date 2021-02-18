@@ -353,7 +353,7 @@ public:
    *
    * The dictionary can include the following entries:
    * mean  - mean value
-   * sigma - standard distribution
+   * sigma - standard deviation
    */
   NormalParameter( const DictionaryDatum& d );
 

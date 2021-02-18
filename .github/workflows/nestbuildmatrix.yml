@@ -1,4 +1,4 @@
-name: NEST matrix
+name: NEST matrix jobs
 env:
   CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
   PYTHONPATH: ${{ github.workspace }}/build/python

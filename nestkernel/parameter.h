@@ -54,7 +54,7 @@ public:
   Parameter() = default;
 
   /**
-   * Creates a Parameter with values specified in a dictionary.
+   * Creates a Parameter with specifications specified in a dictionary.
    * @param d dictionary with parameter values
    */
   Parameter( const DictionaryDatum& )
@@ -200,6 +200,10 @@ class ConstantParameter : public Parameter
 public:
   using Parameter::value;
 
+  /**
+   * Creates a ConstantParameter with a specified value.
+   * @param value parameter value
+   */
   ConstantParameter( double value )
     : Parameter()
     , value_( value )
@@ -207,7 +211,10 @@ public:
   }
 
   /**
-   * Parameters:
+   * Creates a ConstantParameter with the value specified in a dictionary.
+   * @param d dictionary with the parameter value
+   *
+   * The dictionary can include the following entry:
    * value - constant value of this parameter
    */
   ConstantParameter( const DictionaryDatum& d )
@@ -248,7 +255,10 @@ public:
   using Parameter::value;
 
   /**
-   * Parameters:
+   * Creates a UniformParameter with specifications specified in a dictionary.
+   * @param d dictionary with parameter specifications
+   *
+   * The dictionary can include the following entries:
    * min - minimum value
    * max - maximum value
    */
@@ -294,7 +304,10 @@ public:
   using Parameter::value;
 
   /**
-   * Parameters:
+   * Creates a UniformIntParameter with specifications specified in a dictionary.
+   * @param d dictionary with parameter specifications
+   *
+   * The dictionary can include the following entries:
    * max - maximum value
    */
   UniformIntParameter( const DictionaryDatum& d )
@@ -335,7 +348,10 @@ public:
   using Parameter::value;
 
   /**
-   * Parameters:
+   * Creates a NormalParameter with specifications specified in a dictionary.
+   * @param d dictionary with parameter specifications
+   *
+   * The dictionary can include the following entries:
    * mean  - mean value
    * sigma - standard distribution
    */
@@ -364,7 +380,10 @@ public:
   using Parameter::value;
 
   /**
-   * Parameters:
+   * Creates a LognormalParameter with specifications specified in a dictionary.
+   * @param d dictionary with parameter specifications
+   *
+   * The dictionary can include the following entries:
    * mu    - mean value of logarithm
    * sigma - standard distribution of logarithm
    */
@@ -393,7 +412,10 @@ public:
   using Parameter::value;
 
   /**
-   * Parameters:
+   * Creates a ExponentialParameter with specifications specified in a dictionary.
+   * @param d dictionary with parameter specifications
+   *
+   * The dictionary can include the following entries:
    * scale - the scale parameter
    */
   ExponentialParameter( const DictionaryDatum& d )
@@ -427,7 +449,10 @@ class NodePosParameter : public Parameter
 {
 public:
   /**
-   * Parameters:
+   * Creates a NodePosParameter with specifications specified in a dictionary.
+   * @param d dictionary with parameter specifications
+   *
+   * The dictionary can include the following entries:
    * dimension - Dimension from which to get the position value of the node.
    *             0: x, 1: y, 2: z.
    * synaptic_endpoint - If specified, specifies if the position should be taken
@@ -1804,6 +1829,9 @@ Parameter::returns_int_only() const
 inline bool
 Parameter::value_is_integer_( const double value ) const
 {
+  // Here fmod calculates the remainder of the division operation x/y. By using y=1.0,
+  // the remainder is the fractional part of the value. If the fractional part
+  // is zero, the value is an integer.
   return std::fmod( value, static_cast< double >( 1.0 ) ) == 0.0;
 }
 

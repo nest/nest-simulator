@@ -352,7 +352,7 @@ Therefore, for all these purposes, one random number stream per VP is
 required and sufficient to ensure that different VPs can operate
 independently.
 
-The only exception are certain sub-cases of 2.i and 3 which require
+The only exception are certain sub-cases of 2.a and 3 which require
 identical random number streams either per MPI process or per virtual process.
 This pertains in particular to ``fixed_outdegree`` and ``fixed_total_number``
 connection rules and the `mip_generator`.

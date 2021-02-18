@@ -84,9 +84,9 @@ def helpdesk():
         msg = "Sorry, the help index cannot be opened. "
         msg += "Did you run 'make html' before running 'make install'?"
         raise FileNotFoundError(msg)
-    
+
     helpdesk_url = "file://" + help_fname
-    
+
     # Under Windows systems webbrowser.open is incomplete
     # See <https://bugs.python.org/issue8232>
     if sys.platform[:3] == "win":

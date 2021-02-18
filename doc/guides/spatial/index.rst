@@ -9,12 +9,18 @@ Here you can find how to build complex, layered networks in NEST.
   This module is removed in NEST 3.0, and all functionality that was
   formerly provided by the topology module is now in the main ``nest`` module.
 
-.. toctree::
-   :maxdepth: 1
 
-   For a quick overview, checkout a few brief examples <overview_spatial>
-   Compare the NEST 2.X vs NEST 3 syntax for functions related to spatially distrbutred nodes <../nest2_to_nest3/refguide_nest2_nest3>
-   If you're new to spatially-structured networks, check out our tutorial <../../tutorials/pynest_tutorial/part_4_spatially_structured_networks>
-   A comprehensive guide to spatially-structured networks <../spatial/guide_spatially_structured_networks>
-   Spatial example networks <../../examples/index>
+* Here you can find an :doc:`overview of spatially-structured networks <overview_spatial>`
+* Compare the NEST 2.X vs NEST 3 syntax for :ref:`<topo_ref>`
+* If you're new to spatially-structured networks, :doc:`check out our tutorial <../../tutorials/pynest_tutorial/part_4_spatially_structured_networks>`
+* A comprehensive guide to :doc:`spatially-structured networks <guide_spatially_structured_networks>`
+* Spatially arranged :doc:`example networks <../../examples/index>`
+
+.. toctree::
+   :hidden:
+
+   overview_spatial
+   ../../tutorials/pynest_tutorial/part_4_spatially_structured_networks
+   guide_spatially_structured_networks
+   ../../examples/index
 

@@ -1,12 +1,12 @@
 .. _param_ex:
 
 Parametrization
-~~~~~~~~~~~~~~~
+===============
 
 NEST 3.0 introduces *parameter objects*, i.e., objects that represent values
 drawn from a random distribution or values based on various spatial node
 parameters. Parameters can be used to set node status, to create positions
-in space (see :ref:`Topology section <topo_changes>` below), and to define connection
+in space (see :ref:`spatially-structured networks section <topo_changes>` below), and to define connection
 probabilities, weights and delays. The parameters can be combined in
 different ways, and they can be used with some mathematical functions that
 are provided by NEST.

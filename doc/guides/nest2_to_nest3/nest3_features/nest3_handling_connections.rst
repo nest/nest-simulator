@@ -34,7 +34,7 @@ as NodeCollections.
 
 .. seealso::
 
-    You can find a :doc:`full example <../../auto_examples/synapsecollection>` in our example network page.
+    You can find a :doc:`full example <../../../auto_examples/synapsecollection>` in our example network page.
 
 Printing
     Printing a SynapseCollection produces a table source and target node IDs, synapse model, weight and delay.

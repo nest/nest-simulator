@@ -91,4 +91,4 @@ demand, the functionality will be re-added in form of a recording
 backend.
 
 All details about the new infrastructure can be found in the guide on
-:doc:`recording from simulations <recording_from_simulations>`.
+:doc:`recording from simulations <../../recording_from_simulations>`.

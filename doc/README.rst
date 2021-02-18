@@ -16,15 +16,15 @@ Build the user documentation locally
 
 If you intend to work on the documentation, or if you want to obtain a
 local version of it for other reasons, you can build the documentation
-by simply running
+by simply running the following command in the build directory of NEST
+(i.e. the directory where you ran ``cmake``)
 
 ::
 
     make html
 
-in the build directory of NEST (i.e. the directory where you ran
-``cmake``). To install the documentation under `<nest_install_dir>``
-along with the rest of NEST, this command can be followed by
+To install the documentation under `<nest_install_dir>`` along with
+the rest of NEST, this command can be followed by
 
 ::
 

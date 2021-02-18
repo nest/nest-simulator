@@ -85,14 +85,7 @@ def helpdesk():
         msg += "Did you run 'make html' before running 'make install'?"
         raise FileNotFoundError(msg)
 
-    helpdesk_url = "file://" + help_fname
-
-    # Under Windows systems webbrowser.open is incomplete
-    # See <https://bugs.python.org/issue8232>
-    if sys.platform[:3] == "win":
-        os.startfile(helpdesk_url)
-
-    webbrowser.open_new(helpdesk_url)
+    webbrowser.open_new(f"file://{help_fname}")
 
 
 @check_stack

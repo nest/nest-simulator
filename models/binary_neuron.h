@@ -66,7 +66,7 @@ namespace nest
  * binary state of the neuron to the target. The neuron model
  * only sends a spike if a transition of its state occurs. If the
  * state makes an up-transition it sends a spike with multiplicity 2,
- * if a down transition occurs, it sends a spike with multiplicity 1.
+ * if a down-transition occurs, it sends a spike with multiplicity 1.
  * The decoding scheme relies on the feature that spikes with multiplicity
  * larger 1 are delivered consecutively, also in a parallel setting.
  * The creation of double connections between binary neurons will

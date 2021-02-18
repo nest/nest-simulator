@@ -81,7 +81,7 @@ Parameters
 
 .. admonition:: Special requirements for binary neurons
 
-   As a binary neuron, the ``erfc_neuron``, the user must
+   As the ``erfc_neuron`` is a binary neuron, the user must
    ensure that the following requirements are observed. NEST does not
    enforce them. Breaching the requirements can lead to meaningless
    results.

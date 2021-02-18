@@ -63,8 +63,8 @@ The single neuron model is defined by the hazard function
 After each spike, the membrane potential :math:`V_m` is reset to
 :math:`V_{\text{reset}}`. Spike frequency
 adaptation is implemented by a set of exponentially decaying traces, the
-sum of which is :math:`E_{\text{sfa}}`. Upon a spike, all adaptation traces are incremented
-by the respective :math:`q_{\text{sfa}}` each and decay with the respective time constant
+sum of which is :math:`E_{\text{sfa}}`. Upon a spike, each of the adaptation traces is
+incremented by the respective :math:`q_{\text{sfa}}` and decays with the respective time constant
 tau_sfa.
 
 The corresponding single neuron model is available in NEST as ``gif_psc_exp``.
@@ -145,7 +145,7 @@ EndUserDocs */
 /**
  * @note
  * As gif_pop_psc_exp represents many neurons in one node, it may send a lot
- * of spikes. In each time step, it sends at most one spike though, the
+ * of spikes. In each time step, it sends at most one spike, the
  * multiplicity of which is set to the number of emitted spikes. Postsynaptic
  * neurons and devices in NEST understand this as several spikes, but
  * communication effort is reduced in simulations.

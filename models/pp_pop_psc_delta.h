@@ -125,7 +125,7 @@ The parameters correspond to the ones of pp_psc_delta as follows.
 .. admonition:: Deprecated model
 
    ``pp_pop_psc_delta`` is deprecated because a new and presumably much faster
-   population model implementation is now available, see ``gif_pop_psc_exp``.
+   population model implementation is now available (see :doc:`gif_pop_psc_exp <gif_pop_psc_exp>`).
 
 
 References

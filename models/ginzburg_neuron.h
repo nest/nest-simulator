@@ -85,7 +85,7 @@ c_3    1/mV          Slope factor of sigmoidal gain
 
 .. admonition:: Special requirements for binary neurons
 
-   As a binary neuron, the ``ginzburg_neuron``, the user must
+   As the ``ginzburg_neuron`` is a binary neuron, the user must
    ensure that the following requirements are observed. NEST does not
    enforce them. Breaching the requirements can lead to meaningless
    results.

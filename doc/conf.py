@@ -265,34 +265,13 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
-# -- Options for readthedocs ----------------------------------------------
+
+def copy_example_file(src):
+    copyfile(src, build_dir / "doc/userdoc/examples" / src.parts[-1])
+
 
 # -- Copy documentation for Microcircuit Model ----------------------------
-
-
-def copytreeglob(source, target, glob='*.png'):
-    '''
-    Recursively copy all files selected by `glob` from `source` to `target` path,
-    recreating the sub-folder structure.
-    Parameters
-    ----------
-    source : path, str
-        source folder where to recursively search for glob
-    target : path, str
-        target folder where to recreate the tree of source files
-    glob : str
-        shell-glob specifying which files to copy
-    '''
-    source = Path(source)
-    target = Path(target)
-    for relativename in [x.relative_to(source) for x in source.rglob(glob)]:
-        # manually create directory, since shutil.copyfile() does not support
-        # the `dirs_exist_ok=True` below Python-3.8
-        targetpath = target/relativename.parents[0]
-        if not targetpath.exists():
-            targetpath.mkdir(parents=True)
-        assert targetpath.is_dir(), "Targetpath is obstructed by a non-directory object (maybe a file)"
-        copyfile(source/relativename, target/relativename)
-
-
-copytreeglob(source_dir / "pynest/examples/Potjans_2014", build_dir / "doc/userdoc/examples", '*.png')
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/reference_data/box_plot.png")
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/reference_data/raster_plot.png")
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")

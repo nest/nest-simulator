@@ -68,7 +68,7 @@ namespace nest
  * state makes an up-transition it sends a spike with multiplicity 2,
  * if a down transition occurs, it sends a spike with multiplicity 1.
  * The decoding scheme relies on the feature that spikes with multiplicity
- * larger 1 are delivered consecutively, also in a parallel setting.
+ * larger than 1 are delivered consecutively, also in a parallel setting.
  * The creation of double connections between binary neurons will
  * destroy the decoding scheme, as this effectively duplicates
  * every event. Using random connection routines it is therefore

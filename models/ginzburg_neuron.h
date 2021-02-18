@@ -92,7 +92,7 @@ c_3    1/mV          Slope factor of sigmoidal gain
 
    1. Binary neurons must only be connected to other binary neurons.
 
-   #. At most one connection must be created between any pair of
+   #. No more than connection must be created between any pair of
       binary neurons. When using probabilistic connection rules, specify
       ``'allow_autapses': False`` to avoid accidental creation of
       multiple connections between a pair of neurons.

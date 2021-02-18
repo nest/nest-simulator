@@ -1,7 +1,7 @@
 Recording from simulations
 ==========================
 
-The `spike_detector` has been renamed to `spike_recorder`. The main
+The ``spike_detector`` has been renamed to ``spike_recorder``. The main
 rationale behind this is that the device is actually not detecting the
 occurence of spikes, but rather only records them. Moreover, the new
 name is more consistent with the naming of other similar devices that

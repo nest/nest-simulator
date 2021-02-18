@@ -1,5 +1,5 @@
-All about NEST 3
-================
+All about NEST 3.0
+==================
 
 
 .. toctree::

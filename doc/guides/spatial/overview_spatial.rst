@@ -5,8 +5,8 @@ Overview of spatially-structured networks
 
 -  All topology functions are now part of ``nest`` and not
    ``nest.topology``
--  You can use the ``Create`` and ``Connect`` functions for spatial  networks, same as you would for non-spatial
-   network
+-  You can use the ``Create`` and ``Connect`` functions for spatial  networks, the same as you would for non-spatial
+   networks
 -  All former topology functions that used to take a layer ID, now take a NodeCollection
 -  All former topology functions that used to return node/layer IDs now return a NodeCollection
 
@@ -14,9 +14,6 @@ Overview of spatially-structured networks
 
    See the reference section :ref:`topo_ref` in our conversion guide for all changes made to functions
 
-All of the functionality of Topology has been moved to the standard
-functions. In fact, there is no longer a Topology module in NEST. The
-functions for creating spatially arranged neuronal networks are now in the ``nest`` module.
 
 Create spatially distributed nodes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,5 +1,5 @@
-Reference guide: NEST 2 vs NEST 3
-==================================
+Reference guide: NEST 2.x vs NEST 3.0
+=====================================
 
 * This guide shows changes to functions or their output between PyNEST 2.x and PyNEST 3.0
 

@@ -1,5 +1,5 @@
-What's removed from NEST 3?
-===========================
+What's removed from NEST 3.0?
+=============================
 
 Subnets
 ~~~~~~~

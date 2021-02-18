@@ -272,7 +272,7 @@ We use the `modern random package introduced with NumPy 1.17 <https://numpy.org/
 
 .. admonition:: Don't do this in Python!
 
-   The randomization example below is shown only to demonstrate how you in principal could
+   The randomization example below is shown only to demonstrate how you in principle could
    use random values generated at the Python level in a NEST simulation in a way consistent
    with NEST's approach to random numbers in parallel simulations. You should only need to
    use this approach under very particular circumstances (e.g., if the distribution you want

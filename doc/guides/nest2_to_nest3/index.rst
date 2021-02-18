@@ -6,7 +6,7 @@ All about NEST 3
    :maxdepth: 1
 
    Compare old versus new function syntax in our reference guide <refguide_nest2_nest3>
-   Find out what new features NEST 3 has to offer <nest3_features/index>
+   Find out what new features NEST 3.0 has to offer <nest3_features/index>
    Everything you need to know about spatially-structured networks (topology module) <../spatial/index>
    whats_removed
 

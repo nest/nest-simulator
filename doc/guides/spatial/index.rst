@@ -11,7 +11,7 @@ Here you can find how to build complex, layered networks in NEST.
 
 
 * Here you can find an :doc:`overview of spatially-structured networks <overview_spatial>`
-* Compare the NEST 2.X vs NEST 3 syntax for :ref:`<topo_ref>`
+* Compare the NEST 2.X vs NEST 3.0 syntax for :ref:`<topo_ref>`
 * If you're new to spatially-structured networks, :doc:`check out our tutorial <../../tutorials/pynest_tutorial/part_4_spatially_structured_networks>`
 * A comprehensive guide to :doc:`spatially-structured networks <guide_spatially_structured_networks>`
 * Spatially arranged :doc:`example networks <../../examples/index>`

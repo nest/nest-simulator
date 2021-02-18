@@ -1,5 +1,5 @@
-NEST 3 Features
-===============
+NEST 3.0 Features
+=================
 
 .. toctree::
    :maxdepth: 1

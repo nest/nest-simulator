@@ -121,7 +121,7 @@ class GLIFCONDTestCase(unittest.TestCase):
         spikes_expected = [388.04, 612.99, 628.73, 644.47, 660.21, 675.95, 691.69,
                            707.14, 722.88, 738.62, 754.36, 770.1, 785.84, 801.85,
                            817.76, 833.5, 849.24, 864.98, 880.72, 896.46]
-        self.ks_assert_spikes(spikes_expected, spikes_expected)
+        self.ks_assert_spikes(spikes, spikes_expected)
         self.assertAlmostEqual(V_m[0], -78.85)
 
     def test_lif_r(self):

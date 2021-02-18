@@ -169,9 +169,8 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
     current_rng_type_ = rng_type;
   }
 
-  long n_threads;
-  bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
-
+  // If number of threads has been changed, we need to update the RNGs.
+  bool n_threads_updated = d->known( names::local_num_threads );
   if ( n_threads_updated or rng_seed_updated or rng_type_updated )
   {
     reset_rngs_();

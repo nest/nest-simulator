@@ -39,7 +39,7 @@ Binary deterministic neuron with Heaviside activation function
 Description
 +++++++++++
 
-The `mcculloch_pitts_neuron` is an implementation of a binary
+The ``mcculloch_pitts_neuron`` is an implementation of a binary
 neuron that is irregularly updated as Poisson time points [1]_. At
 each update point the total synaptic input h into the neuron is
 summed up, passed through a Heaviside gain function :math:`g(h) = H(h-\theta)`,
@@ -73,7 +73,7 @@ Parameters
 
 .. admonition:: Special requirements for binary neurons
 
-   As a binary neuron, the ``mcculloch_pitts_neuron``, the user must
+   As the ``mcculloch_pitts_neuron`` is a binary neuron, the user must
    ensure that the following requirements are observed. NEST does not
    enforce them. Breaching the requirements can lead to meaningless
    results.

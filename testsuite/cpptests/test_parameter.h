@@ -26,7 +26,6 @@
 // C++ includes
 #include <type_traits> // std::is_floating_point
 
-// The timeout feature of BOOST_AUTO_TEST_CASE is only available starting with Boost version 1.70
 #include <boost/version.hpp>
 
 #define BOOST_TEST_DYN_LINK

@@ -33,8 +33,8 @@ set -ex
 
 env
 if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
-    export CC=clang-7
-    export CXX=clang++-7
+    export CC=clang-11
+    export CXX=clang++-11
 fi
 
 NEST_VPATH=build

@@ -417,16 +417,16 @@ function( NEST_PROCESS_WITH_PYTHON )
         set( PYTHON_LIBRARIES "${PYTHON_LIBRARIES}" PARENT_SCOPE )
 
         if ( cythonize-pynest )
-          find_package( Cython )
+          if ( ${PYTHON_VERSION_STRING} VERSION_GREATER_EQUAL "3.7" )
+            # Need updated Cython because of a change in the C api in Python 3.7
+            find_package( Cython 0.28.3 REQUIRED )
+          else ()
+              # confirmed not working: 0.15.1
+              # confirmed working: 0.19.2+
+              # in between unknown
+            find_package( Cython 0.19.2 REQUIRED )
+          endif ()
           if ( CYTHON_FOUND )
-            # confirmed not working: 0.15.1
-            # confirmed working: 0.19.2+
-            # in between unknown
-            if ( CYTHON_VERSION VERSION_LESS "0.19.2" )
-              message( FATAL_ERROR "Your Cython version is too old. Please install "
-                                   "newer version (0.19.2+)" )
-            endif ()
-
             # export found variables to parent scope
             set( CYTHON_FOUND "${CYTHON_FOUND}" PARENT_SCOPE )
             set( CYTHON_EXECUTABLE "${CYTHON_EXECUTABLE}" PARENT_SCOPE )

@@ -65,7 +65,7 @@ After each spike, the membrane potential :math:`V_m` is reset to
 adaptation is implemented by a set of exponentially decaying traces, the
 sum of which is :math:`E_{\text{sfa}}`. Upon a spike, each of the adaptation traces is
 incremented by the respective :math:`q_{\text{sfa}}` and decays with the respective time constant
-tau_sfa.
+:math:`\tau_{\text{sfa}}`.
 
 The corresponding single neuron model is available in NEST as ``gif_psc_exp``.
 The default parameters, although some are named slightly different, are not

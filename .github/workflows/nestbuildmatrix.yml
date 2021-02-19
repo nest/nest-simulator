@@ -23,12 +23,12 @@ jobs:
            - xNEST_BUILD_TYPE: "OPENMP_ONLY"
              cpp_compiler: "clang"
              os: macos-latest
-           - xNEST_BUILD_TYPE: "FULL"
-             os: macos-latest
-             cpp_compiler: "clang"
            - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
              os: "ubuntu-20.04"
-             cpp_compiler: "clang" 
+             cpp_compiler: "clang"
+	   - xNEST_BUILD_TYPE: "MINIMAL"
+	     cpp_compiler: "clang"
+	     os: "ubuntu-20.04"
            - xNEST_BUILD_TYPE: "MPI_ONLY"
              cpp_compiler: "clang"
              os: "ubuntu-20.04"
@@ -50,6 +50,9 @@ jobs:
            - xNEST_BUILD_TYPE: "FULL"
              os: macos-latest
              cpp_compiler: "gcc"
+	   - xNEST_BUILD_TYPE: "MINIMAL"
+	     os: macos-latest
+	     cpp_compiler: "gcc"
                                                  
      steps:
                        

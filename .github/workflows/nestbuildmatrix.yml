@@ -53,6 +53,9 @@ jobs:
            - xNEST_BUILD_TYPE: "MINIMAL"
              os: macos-latest
              cpp_compiler: "gcc"
+           - xNEST_BUILD_TYPE: "FULL"
+             os: macos-latest
+             cpp_compiler: "clang"
                                                  
      steps:
                        

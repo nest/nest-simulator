@@ -32,6 +32,18 @@ Suppress output on startup
 | nest.ll_api.init(["nest", "--quiet"]) |                                  |
 +---------------------------------------+----------------------------------+
 
+Consistent use of allow_offgrid_times
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++---------------------------------------+---------------------------------------+
+| NEST 2.x                              | NEST 3.0                              |
++=======================================+=======================================+
+| nest.Create("spike_generator",        | nest.Create("spike_generator",        |
+| params={"allow_offgrid_spikes"=True}) | params={":green:`allow_offgrid_times`"|
+|                                       | =True})                               |
+|                                       |                                       |
++---------------------------------------+---------------------------------------+
+
 
 .. _node_ref:
 
@@ -297,6 +309,9 @@ Functions related to simulation
 | nest.ResetNetwork()     | Use nest.ResetKernel() instead             |
 +-------------------------+--------------------------------------------+
 
+   .. note::
+
+     The structural_plasticity_update_interval now has the unit `ms` instead of `number of simulation steps`.
 
 Functions related to models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

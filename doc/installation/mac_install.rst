@@ -44,7 +44,8 @@ Preparations
 #. If you want to build NEST with MPI, you must codesign the ``orterun`` and ``orted`` binaries
 
    a. If you do not yet have a self-signed code-signing certificate, create one as described here:
-      `<https://gcc.gnu.org/onlinedocs/gcc-4.8.1/gnat_ugn_unw/Codesigning-the-Debugger.html>`__.
+      `<https://gcc.gnu.org/onlinedocs/gcc-4.8.1/gnat_ugn_unw/Codesigning-the-Debugger.html>`__
+      (restart appears not necessary any more).
    b. Sign your binaries
 
       .. code:: sh
@@ -72,6 +73,18 @@ Building NEST
    .. code-block:: sh
 
       cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
+
+   If you have libraries required by NEST such as GSL installed with Homebrew and Conda, this
+   can lead to library conflicts (error messages like ``Initializing libomp.dylib, but found
+   libomp.dylib already initialized.``). To ensure that libraries are found first in your conda
+   environment, invoke ``cmake`` like this
+
+   .. code-block:: sh
+
+      CMAKE_PREFIX_PATH=<conda environment path> cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
+
+   You can find the ``<conda enviroment path>`` for the currently active conda environment by running
+   ``conda info`` and looking for the "active env location" entry in the output.
 
 #. Compile, install and verify NEST with
 

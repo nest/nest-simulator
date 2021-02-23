@@ -214,7 +214,7 @@ public:
    * Creates a ConstantParameter with the value specified in a dictionary.
    * @param d dictionary with the parameter value
    *
-   * The dictionary can include the following entry:
+   * The dictionary must include the following entry:
    * value - constant value of this parameter
    */
   ConstantParameter( const DictionaryDatum& d )
@@ -353,7 +353,7 @@ public:
    *
    * The dictionary can include the following entries:
    * mean  - mean value
-   * sigma - standard deviation
+   * std - standard deviation
    */
   NormalParameter( const DictionaryDatum& d );
 
@@ -384,7 +384,7 @@ public:
    * @param d dictionary with parameter specifications
    *
    * The dictionary can include the following entries:
-   * mu    - mean value of logarithm
+   * mean    - mean value of logarithm
    * sigma - standard distribution of logarithm
    */
   LognormalParameter( const DictionaryDatum& d );
@@ -416,7 +416,7 @@ public:
    * @param d dictionary with parameter specifications
    *
    * The dictionary can include the following entries:
-   * scale - the scale parameter
+   * beta - the scale parameter
    */
   ExponentialParameter( const DictionaryDatum& d )
     : Parameter( d )

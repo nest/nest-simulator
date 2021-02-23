@@ -261,8 +261,8 @@ private:
     normal_distribution normal_dist_; //!< normal distribution
 
     long dt_steps_;  //!< update interval in steps
-    double omega_;   //!< Frequency [radian/s]
-    double phi_rad_; //!< Phase of sine current (0-2Pi rad)
+    double omega_;   //!< frequency [radian/s]
+    double phi_rad_; //!< phase of sine current (0-2Pi rad)
 
     // The exact integration matrix
     double A_00_;

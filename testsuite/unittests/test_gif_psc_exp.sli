@@ -44,7 +44,7 @@ SeeAlso: gif_psc_exp, testsuite::test_gif_psc_exp_multisynapse
 (unittest) run
 /unittest using
 
-% Revised reference data obtained by running model with NEST3
+% Revised reference data obtained by running model with NEST 3.0
 % Should be replaced with statistical test.
  462  /t1_neuron1  Set
  850  /t2_neuron1  Set

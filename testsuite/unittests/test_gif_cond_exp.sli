@@ -47,7 +47,7 @@ SeeAlso: gif_cond_exp, testsuite::test_gif_cond_exp_multisynapse
 % This test should only run if we have GSL
 skip_if_without_gsl
 
-% Revised reference data obtained by running model with NEST3
+% Revised reference data obtained by running model with NEST 3.0
 % Should be replaced with statistical test.
  398  /t1_neuron1  Set
  740  /t2_neuron1  Set

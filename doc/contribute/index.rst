@@ -5,10 +5,11 @@ NEST draws its strength from the many people that use and improve it. We
 are happy to consider your contributions (e.g., new models, bug or
 documentation fixes) for addition to the official version of NEST.
 
-Please familiarize yourself with our:
+Please familiarize yourself with
 
 * :doc:`NEST Git workflow <development_workflow>`
 * :doc:`C++ coding style guidelines <coding_guidelines_cpp>`
+* :doc:`Developing NEST with IDEs <nest_with_ides>`
 
 In order to make sure that the NEST Initiative can manage the NEST code base in the long term,
 you need to send us a completed and signed

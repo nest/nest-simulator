@@ -103,7 +103,7 @@ Example:
 
   ::
 
-     nest.SetStatus("spike_generator",
+     nest.Create("spike_generator",
                  params={"spike_times": [1.0, 2.0, 3.0]})
 
   Instructs the spike generator to generate events at 1.0, 2.0, and

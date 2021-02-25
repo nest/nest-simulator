@@ -107,5 +107,3 @@ PyNEST examples
    ../auto_examples/spatial/test_3d
    ../auto_examples/spatial/test_3d_exp
    ../auto_examples/spatial/test_3d_gauss
-
-.. include:: ../.colorize.rst

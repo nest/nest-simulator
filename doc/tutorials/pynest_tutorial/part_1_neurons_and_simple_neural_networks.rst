@@ -73,14 +73,13 @@ functionality into the Python interpreter.
 
     import nest
 
-It should be noted, however, that certain external packages must be
-imported *before* importing nest. These include `scikit-learn <http://scikit-learn.org/stable/index.html>`_
-and `SciPy <https://www.scipy.org/>`_.
+In case other Python packages are required, such as `scikit-learn <http://scikit-learn.org/stable/index.html>`_
+and `SciPy <https://www.scipy.org/>`_, they need to be imported *before* importing NEST.
 
 ::
 
-    from sklearn.svm import LinearSVC
-    from scipy.special import erf
+    import sklearn
+    import scipy
 
     import nest
 

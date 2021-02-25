@@ -37,20 +37,22 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
     Start here at our :doc:`Getting Started <getting_started>` page
 
 
-**Have an idea of the type of model you need?**
-    Click on one of the images to access our :doc:`model directory <models/index>`:
+**Know which model you need?**
+    NEST comes packaged with a large collection of neuron and synaptic plasticity models.
+    You can find a list of all available models in our :doc:`model directory <models/index>`,
+    or select a model category by clicking one of the images:
 
 .. raw:: html
 
  <embed>
 
- <a href="models/neurons.html">
+ <a href="models/index_neuron.html">
     <img src="_static/img/neuron.png" alt="Neuron Models" style="width:150px;height:150px;border:0;">
   </a>
-  <a href="models/synapses.html">
+  <a href="models/index_synapse.html">
     <img src="_static/img/synapse1.png" alt="Synapse Models" style="width:150px;height:150px;border:0;">
   </a>
-  <a href="models/devices.html">
+  <a href="models/index_device.html">
     <img src="_static/img/oscilloscope.png" alt="Devices" style="width:150px;height:150px;border:0;">
   </a>
   </embed>
@@ -60,16 +62,14 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
 .. raw:: html
 
   <embed>
-  <a href="microcircuit/index.html">
+  <a href="examples/cortical_microcircuit_index.html">
     <img src="_images/microcircuit.png" alt="Microcircuit" style="width:150px;height:150px;border:0;">
   </a>
-
-
   </embed>
 
-
 **Need a different model?**
-    Check out how you can :doc:`create you own model <models/create_model>` here.
+    To customize or combine features of neuron and synapse models, we recommend
+    using the `NESTML modeling language <https://nestml.readthedocs.io/>`_.
 
 **Have a question or issue with NEST?**
     See our :doc:`Getting Help <getting_help>` page.

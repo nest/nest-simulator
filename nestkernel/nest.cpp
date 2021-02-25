@@ -215,10 +215,27 @@ connect_arrays( long* sources,
   }
 
   // Dictionary holding additional synapse parameters, passed to the connect call.
-  std::vector< DictionaryDatum > param_dicts( kernel().vp_manager.get_num_threads(), new Dictionary() );
+  std::vector< DictionaryDatum > param_dicts;
+  param_dicts.reserve( kernel().vp_manager.get_num_threads() );
+  for ( thread i = 0; i < kernel().vp_manager.get_num_threads(); ++i )
+  {
+    param_dicts.emplace_back( new Dictionary );
+    for ( auto& param_keys : p_keys )
+    {
+      if ( Name( param_keys ) == names::receptor_type )
+      {
+        ( *param_dicts[ i ] )[ param_keys ] = Token( new IntegerDatum( 0 ) );
+      }
+      else
+      {
+        ( *param_dicts[ i ] )[ param_keys ] = Token( new DoubleDatum( 0.0 ) );
+      }
+    }
+  }
+
   index synapse_model_id( kernel().model_manager.get_synapsedict()->lookup( syn_model ) );
 
-  // Increments pointers to weight, delay, and receptor type, if they are specified.
+  // Increments pointers to weight and delay, if they are specified.
   auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d )
   {
     if ( weights != nullptr )
@@ -230,8 +247,10 @@ connect_arrays( long* sources,
       ++d;
     }
   };
+
   // Vector for storing exceptions raised by threads.
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
+
 #pragma omp parallel
   {
     const auto tid = kernel().vp_manager.get_thread_id();
@@ -243,6 +262,7 @@ connect_arrays( long* sources,
       auto d = delays;
       double weight_buffer = numerics::nan;
       double delay_buffer = numerics::nan;
+
       for ( ; s != sources + n; ++s, ++t )
       {
         if ( 0 >= *s or static_cast< index >( *s ) > kernel().node_manager.size() )
@@ -259,6 +279,7 @@ connect_arrays( long* sources,
           increment_wd( w, d );
           continue;
         }
+
         // If weights or delays are specified, the buffers are replaced with the values.
         // If not, the buffers will be NaN and replaced by a default value by the connect function.
         if ( weights != nullptr )
@@ -273,26 +294,33 @@ connect_arrays( long* sources,
         // Store the key-value pair of each parameter in the Dictionary.
         for ( auto& param_pointer_pair : param_pointers )
         {
+          // Increment the pointer to the parameter value.
+          auto* param = param_pointer_pair.second + *s - *sources;
+
           // Receptor type must be an integer.
           if ( param_pointer_pair.first == names::receptor_type )
           {
-            const auto int_cast_rtype = static_cast< size_t >( *param_pointer_pair.second );
-            if ( int_cast_rtype != *param_pointer_pair.second )
+            const auto int_cast_rtype = static_cast< size_t >( *param );
+
+            if ( int_cast_rtype != *param )
             {
               throw BadParameter( "Receptor types must be integers." );
             }
-            ( *param_dicts[ tid ] )[ param_pointer_pair.first ] = int_cast_rtype;
+
+            // Change value of dictionary entry without allocating new datum.
+            auto id = static_cast< IntegerDatum* >( ( ( *param_dicts[ tid ] )[ param_pointer_pair.first ] ).datum() );
+            ( *id ) = int_cast_rtype;
           }
           else
           {
-            ( *param_dicts[ tid ] )[ param_pointer_pair.first ] = *param_pointer_pair.second;
+            auto dd = static_cast< DoubleDatum* >( ( ( *param_dicts[ tid ] )[ param_pointer_pair.first ] ).datum() );
+            ( *dd ) = *param;
           }
-          // Increment the pointer to the parameter value.
-          ++param_pointer_pair.second;
         }
 
         kernel().connection_manager.connect(
-          *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
+          *s, target_node, tid, synapse_model_id, *param_dicts[ tid ], delay_buffer, weight_buffer );
+
         ALL_ENTRIES_ACCESSED( *param_dicts[ tid ], "connect_arrays", "Unread dictionary entries: " );
 
         increment_wd( w, d );

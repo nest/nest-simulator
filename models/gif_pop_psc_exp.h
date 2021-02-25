@@ -52,42 +52,29 @@ Description
 
 This model simulates a population of spike-response model neurons with
 multi-timescale adaptation and exponential postsynaptic currents, as
-described in Schwalger et al. (2017) [1]_.
+described by Schwalger et al. (2017) [1]_.
 
-The single neuron model is defined by the hazard function:
+The single neuron model is defined by the hazard function
 
 .. math::
 
- \lambda_0 * \exp\left(( V_m - E_{sfa} ) / \Delta_V\right)
+ h(t) = \lambda_0  \exp\frac{V_m(t) - E_{\text{sfa}}(t)}{\Delta_V}
 
-After each spike, the membrane potential V_m is reset to V_reset. Spike
-frequency
+After each spike, the membrane potential :math:`V_m` is reset to
+:math:`V_{\text{reset}}`. Spike frequency
 adaptation is implemented by a set of exponentially decaying traces, the
-sum of which is E_sfa. Upon a spike, all adaptation traces are incremented
-by the respective q_sfa each and decay with the respective time constant
-tau_sfa.
+sum of which is :math:`E_{\text{sfa}}`. Upon a spike, each of the adaptation traces is
+incremented by the respective :math:`q_{\text{sfa}}` and decays with the respective time constant
+:math:`\tau_{\text{sfa}}`.
 
-The corresponding single neuron model is available in NEST as gif_psc_exp.
+The corresponding single neuron model is available in NEST as ``gif_psc_exp``.
 The default parameters, although some are named slightly different, are not
-matched in both models due to historical reasons. See below for the parameter
+matched in both models for historical reasons. See below for the parameter
 translation.
-
-As gif_pop_psc_exp represents many neurons in one node, it may send a lot
-of spikes. In each time step, it sends at most one spike though, the
-multiplicity of which is set to the number of emitted spikes. Postsynaptic
-neurons and devices in NEST understand this as several spikes, but
-communication effort is reduced in simulations.
-
-This model uses a new algorithm to directly simulate the population activity
-(sum of all spikes) of the population of neurons, without explicitly
-representing each single neuron. The computational cost is largely
-independent of the number N of neurons represented. The algorithm used
-here is fundamentally different from and likely much faster than the one
-used in the previously added population model pp_pop_psc_delta.
 
 Connecting two population models corresponds to full connectivity of every
 neuron in each population. An approximation of random connectivity can be
-implemented by connecting populations through a spike_dilutor.
+implemented by connecting populations through a ``spike_dilutor``.
 
 
 Parameters
@@ -124,7 +111,7 @@ The following parameters can be set in the status dictionary.
 -----------------------------------------------------------
 gif_pop_psc_exp  gif_psc_exp  relation
 tau_m            g_L          tau_m = C_m / g_L
-N                ---          use N gif_psc_exp
+N                ---          use N gif_psc_exp neurons
 =============== ============  =============================
 
 
@@ -154,6 +141,22 @@ gif_psc_exp, pp_pop_psc_delta, spike_dilutor
 
 EndUserDocs */
 
+
+/**
+ * @note
+ * As gif_pop_psc_exp represents many neurons in one node, it may send a lot
+ * of spikes. In each time step, it sends at most one spike, the
+ * multiplicity of which is set to the number of emitted spikes. Postsynaptic
+ * neurons and devices in NEST understand this as several spikes, but
+ * communication effort is reduced in simulations.
+ *
+ * This model uses a new algorithm to directly simulate the population activity
+ * (sum of all spikes) of the population of neurons, without explicitly
+ * representing each single neuron. The computational cost is largely
+ * independent of the number N of neurons represented. The algorithm used
+ * here is fundamentally different from and likely much faster than the one
+ * used in the previously added population model pp_pop_psc_delta.
+ */
 class gif_pop_psc_exp : public Node
 {
 

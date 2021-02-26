@@ -223,13 +223,12 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
   kernel().model_manager.register_node_model< iaf_psc_exp_htum >( "iaf_psc_exp_htum" );
   kernel().model_manager.register_node_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
-<<<<<<< HEAD
+
   kernel().model_manager.register_node_model< cm_main >( "cm_main" );
-=======
-  kernel().model_manager.register_node_model< iaf_neat >( "iaf_neat" );
+
   kernel().model_manager.register_node_model< iaf_psc_exp_ps >( "iaf_psc_exp_ps" );
   kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >( "iaf_psc_exp_ps_lossless" );
->>>>>>> master
+
   kernel().model_manager.register_node_model< amat2_psc_exp >( "amat2_psc_exp" );
   kernel().model_manager.register_node_model< mat2_psc_exp >( "mat2_psc_exp" );
   kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );

@@ -134,7 +134,7 @@ NEURON simulator ;-D
 
 EndUserDocs*/
 
-class cm_main : public Archiving_Node
+class cm_main : public ArchivingNode
 {
 
 public:
@@ -230,7 +230,7 @@ inline void
 cm_main::get_status( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_th, V_th_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -238,7 +238,7 @@ inline void
 cm_main::set_status( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_th, V_th_ );
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 }
 
 } // namespace

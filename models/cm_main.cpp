@@ -37,7 +37,7 @@ DynamicRecordablesMap< cm_main >::create( cm_main& host)
  * ---------------------------------------------------------------- */
 
 nest::cm_main::cm_main()
-  : Archiving_Node()
+  : ArchivingNode()
   , c_tree_()
   , syn_receptors_( 0 )
   , logger_( *this )
@@ -47,7 +47,7 @@ nest::cm_main::cm_main()
 }
 
 nest::cm_main::cm_main( const cm_main& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , c_tree_( n.c_tree_ )
   , syn_receptors_( n.syn_receptors_ )
   , logger_( *this )
@@ -68,7 +68,7 @@ void
 nest::cm_main::init_buffers_()
 {
   logger_.reset();
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void

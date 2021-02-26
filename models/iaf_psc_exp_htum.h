@@ -86,12 +86,13 @@ neuron like dynamics interacting by point events is described in
    matrix objects.
 
 .. note::
-   If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-   will numerically behave as if tau_m is equal to tau_syn_ex or
-   tau_syn_in, respectively, to avoid numerical instabilities.
-   For details, please see
-   <https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_
-   in the NEST source code (docs/model_details).
+
+    If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+    will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+    `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+For implementation details see the
+`IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 Parameters
 ++++++++++

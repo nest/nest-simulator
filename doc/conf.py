@@ -93,6 +93,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'breathe',
+    'nbsphinx',
     'sphinx_tabs.tabs'
 ]
 

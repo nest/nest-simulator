@@ -86,6 +86,9 @@ dynamics are integrated using exact integration between events [2]_.
    A further improvement of precise simulation is implemented in
    iaf_psc_exp_ps based on [3]_.
 
+For implementation details see the
+`IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+
 Parameters
 ++++++++++
 

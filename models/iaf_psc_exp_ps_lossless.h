@@ -67,6 +67,9 @@ backwards in time, and see whether it meets the initial state, rather
 than propagating the initial state forward in time and see whether it
 meets the threshold.
 
+For implementation details see the
+`IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+
 Parameters
 ++++++++++
 

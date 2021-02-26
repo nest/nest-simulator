@@ -70,9 +70,9 @@ Description
 hh_psc_alpha is an implementation of a spiking neuron using the Hodgkin-Huxley
 formalism.
 
-1. Post-synaptic currents
-Incoming spike events induce a post-synaptic change of current modelled
-by an alpha function. The alpha function is normalised such that an event of
+1. Postsynaptic currents
+Incoming spike events induce a postsynaptic change of current modelled
+by an alpha function. The alpha function is normalized such that an event of
 weight 1.0 results in a peak current of 1 pA.
 
 
@@ -103,10 +103,11 @@ Act_n     real    Activation variable n
 I_e       pA      External input current
 ========  ======  ============================================================
 
-Problems/Todo:
+Problems/Todo
++++++++++++++
 
-better spike detection
-initial wavelet/spike at simulation onset
+- better spike detection
+- initial wavelet/spike at simulation onset
 
 References
 ++++++++++
@@ -139,7 +140,7 @@ hh_cond_exp_traub
 
 EndUserDocs */
 
-class hh_psc_alpha : public Archiving_Node
+class hh_psc_alpha : public ArchivingNode
 {
 
 public:
@@ -375,7 +376,7 @@ hh_psc_alpha::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -392,7 +393,7 @@ hh_psc_alpha::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

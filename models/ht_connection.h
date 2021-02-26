@@ -98,7 +98,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  HTConnection( const HTConnection& );
+  HTConnection( const HTConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -161,12 +161,12 @@ public:
   }
 
 private:
-  double weight_; //!< synpatic weight
+  double weight_; //!< Synaptic weight
 
-  double tau_P_;   //!< [ms] time constant for recovery
-  double delta_P_; //!< fractional decrease in pool size per spike
+  double tau_P_;   //!< Time constant for recovery [ms]
+  double delta_P_; //!< Fractional decrease in pool size per spike
 
-  double p_; //!< current pool size
+  double p_; //!< Current pool size
 
   double t_lastspike_; //!< Time point of last spike emitted
 };
@@ -207,17 +207,6 @@ HTConnection< targetidentifierT >::HTConnection()
   , delta_P_( 0.125 )
   , p_( 1.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-HTConnection< targetidentifierT >::HTConnection( const HTConnection& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , tau_P_( rhs.tau_P_ )
-  , delta_P_( rhs.delta_P_ )
-  , p_( rhs.p_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

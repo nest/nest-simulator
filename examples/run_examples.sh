@@ -26,7 +26,7 @@ if [ $? != 0 ] ; then
     exit 1
 fi
 
-python -c "import nest" >/dev/null 2>&1
+python3 -c "import nest" >/dev/null 2>&1
 if [ $? != 0 ] ; then
     echo "ERROR: PyNEST is not available. Please make sure PYTHONPATH is set correctly"
     echo "       by sourcing the script nest_vars.sh from your NEST installation."
@@ -67,7 +67,7 @@ for i in $EXAMPLES ; do
     if [ $ext = sli ] ; then
         runner=nest
     elif [ $ext = py ] ; then
-        runner=python
+        runner=python3
     fi
 
     output_dir=$basedir/example_logs/$example

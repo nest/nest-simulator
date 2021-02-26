@@ -177,11 +177,12 @@ private:
   struct Parameters_
   {
     Time interval_;                   //!< recording interval, in ms
-    Time offset_;                     //!< offset relative to which interval is calculated, in ms
+    Time offset_;                     //!< offset relative to 0, in ms
     std::vector< Name > record_from_; //!< which data to record
 
     Parameters_();
     Parameters_( const Parameters_& );
+    Parameters_& operator=( const Parameters_& );
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum&, const Buffers_&, Node* node );
   };

@@ -80,11 +80,7 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  StaticConnection( const StaticConnection& rhs )
-    : ConnectionBase( rhs )
-    , weight_( rhs.weight_ )
-  {
-  }
+  StaticConnection( const StaticConnection& rhs ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these

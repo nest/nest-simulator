@@ -377,6 +377,7 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
     nodes.resize( it - nodes.begin() );
   }
 
+  std::sort( nodes.begin(), nodes.end() ); // ensure nodes are sorted prior to creating the NodeCollection
   IntVectorDatum nodes_datum( nodes );
   NodeCollectionDatum nodecollection( NodeCollection::create( nodes_datum ) );
 
@@ -586,7 +587,7 @@ NodeManager::destruct_nodes_()
   {
     index t = kernel().vp_manager.get_thread_id();
 #else // clang-format off
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
 #endif // clang-format on
 
@@ -648,7 +649,7 @@ NodeManager::prepare_nodes()
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
-    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
 #endif
 
@@ -708,7 +709,7 @@ NodeManager::post_run_cleanup()
   {
     index t = kernel().vp_manager.get_thread_id();
 #else // clang-format off
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
 #endif // clang-format on
     SparseNodeArray::const_iterator n;
@@ -731,7 +732,7 @@ NodeManager::finalize_nodes()
   {
     thread tid = kernel().vp_manager.get_thread_id();
 #else // clang-format off
-  for ( index tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
 #endif // clang-format on
     SparseNodeArray::const_iterator n;
@@ -804,7 +805,7 @@ NodeManager::get_status( DictionaryDatum& d )
 }
 
 void
-NodeManager::set_status( const DictionaryDatum& d )
+NodeManager::set_status( const DictionaryDatum& )
 {
 }
 

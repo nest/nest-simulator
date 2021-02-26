@@ -230,7 +230,7 @@ public:
 
 template < typename HostNode >
 void
-DynamicRecordablesMap< HostNode >::create( HostNode& n )
+DynamicRecordablesMap< HostNode >::create( HostNode& )
 {
   assert( false );
 }

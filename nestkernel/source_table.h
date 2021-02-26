@@ -121,6 +121,7 @@ private:
 
   void populate_target_data_fields_( const SourceTablePosition& current_position,
     const Source& current_source,
+    const thread source_rank,
     TargetData& next_target_data ) const;
 
 public:
@@ -136,12 +137,6 @@ public:
    * Delete data structures.
    */
   void finalize();
-
-  /**
-   * Reserve memory to avoid expensive reallocation of vectors during
-   * connection creation.
-   */
-  void reserve( const thread tid, const synindex syn_id, const size_t count );
 
   /**
    * Adds a source to sources_.

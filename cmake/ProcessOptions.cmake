@@ -525,7 +525,6 @@ function( NEST_PROCESS_WITH_LIBNEUROSIM )
       set( HAVE_LIBNEUROSIM ON PARENT_SCOPE )
 
       include_directories( ${LIBNEUROSIM_INCLUDE_DIRS} )
-      # is linked in conngen/CMakeLists.txt
 
       # export found variables to parent scope
       set( LIBNEUROSIM_FOUND "${LIBNEUROSIM_FOUND}" PARENT_SCOPE )
@@ -596,8 +595,8 @@ function( NEST_PROCESS_WITH_BOOST )
 
     set(Boost_USE_DEBUG_LIBS OFF)  # ignore debug libs
     set(Boost_USE_RELEASE_LIBS ON) # only find release libs
-    # Needs Boost version >=1.58.0 to use Boost sorting
-    find_package( Boost 1.58.0 )
+    # Needs Boost version >=1.62.0 to use Boost sorting, JUNIT logging
+    find_package( Boost 1.62.0 )
     if ( Boost_FOUND )
       # export found variables to parent scope
       set( HAVE_BOOST ON PARENT_SCOPE )
@@ -628,10 +627,7 @@ endfunction()
 function( NEST_DEFAULT_MODULES )
     # requires HAVE_LIBNEUROSIM set
     # Static modules
-    set( SLI_MODULES models precise topology )
-    if ( HAVE_LIBNEUROSIM )
-      set( SLI_MODULES ${SLI_MODULES} conngen )
-    endif ()
+    set( SLI_MODULES models )
     set( SLI_MODULES ${SLI_MODULES} PARENT_SCOPE )
 
     set( SLI_MODULE_INCLUDE_DIRS )

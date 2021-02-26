@@ -58,7 +58,7 @@ precise_models
   } pass_or_die
 } forall
 
-% second test: do we get status information from Archiving_Node?
+% second test: do we get status information from ArchivingNode?
 precise_models
 {
   {
@@ -77,14 +77,14 @@ precise_models
     ResetKernel
     /sg /spike_generator << /spike_times [ 10. ] >> Create def
     /n model Create def
-    /sd /spike_detector Create def
+    /sr /spike_recorder Create def
     
     sg n 10000. 1. Connect
-    n sd Connect
+    n sr Connect
     
     20 Simulate
     
-    sd /events get /times get dup length 1 sub get
+    sr /events get /times get dup length 1 sub get
     n /t_spike get
     eq
   } assert_or_die

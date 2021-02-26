@@ -31,9 +31,9 @@ import textwrap
 import subprocess
 import os
 import re
+import shlex
 import sys
 import numpy
-import json
 
 from string import Template
 
@@ -117,9 +117,8 @@ def show_deprecation_warning(func_name, alt_func_name=None, text=None):
     if func_name in _deprecation_warning:
         if not _deprecation_warning[func_name]['deprecation_issued']:
             if text is None:
-                text = "{0} is deprecated and will be removed in a future \
-                version of NEST.\nPlease use {1} instead!\
-                ".format(func_name, alt_func_name)
+                text = ("{0} is deprecated and will be removed in a future version of NEST.\n"
+                        "Please use {1} instead!").format(func_name, alt_func_name)
                 text = get_wrapped_text(text)
 
             warnings.warn('\n' + text)   # add LF so text starts on new line
@@ -326,9 +325,8 @@ def broadcast(item, length, allowed_types, name="item"):
     elif len(item) == 1:
         return length * item
     elif len(item) != length:
-        raise TypeError("'{0}' must be a single value, a list with " +
-                        "one element or a list with {1} elements.".format(
-                            name, length))
+        raise TypeError(
+            "'{0}' must be a single value, a list with one element or a list with {1} elements.".format(name, length))
     return item
 
 
@@ -444,12 +442,6 @@ def show_help_with_pager(hlpobj, pager=None):
         pager to use, False if you want to display help using print().
     """
 
-    if 'NEST_INSTALL_DIR' not in os.environ:
-        print(
-            'NEST help needs to know where NEST is installed.'
-            'Please source nest_vars.sh or define NEST_INSTALL_DIR manually.')
-        return
-
     # check that help is available
     objf = get_help_filepath(hlpobj)
     if objf is None:
@@ -495,7 +487,8 @@ def show_help_with_pager(hlpobj, pager=None):
         return
 
     try:
-        subprocess.check_call([pager, objf])
+        pagerl = shlex.split(pager)
+        subprocess.check_call(pagerl + [objf])
     except (OSError, IOError, subprocess.CalledProcessError):
         print('Displaying help with pager "{}" failed. '
               'Please define a working parser in file .nestrc '
@@ -503,7 +496,7 @@ def show_help_with_pager(hlpobj, pager=None):
 
 
 def model_deprecation_warning(model):
-    """Checks whether the model is to be removed in a future verstion of NEST.
+    """Checks whether the model is to be removed in a future version of NEST.
     If so, a deprecation warning is issued.
 
     Parameters
@@ -514,10 +507,8 @@ def model_deprecation_warning(model):
 
     if model in _deprecation_warning:
         if not _deprecation_warning[model]['deprecation_issued']:
-            text = "The {0} model is deprecated and will be removed in a \
-            future version of NEST, use {1} instead.\
-            ".format(model, _deprecation_warning[model]['replacement'])
-            text = get_wrapped_text(text)
+            text = ("The {0} model is deprecated and will be removed in a future version of NEST, "
+                    "use {1} instead.").format(model, _deprecation_warning[model]['replacement'])
             show_deprecation_warning(model, text=text)
 
 
@@ -537,7 +528,17 @@ def restructure_data(result, keys):
     int, list or dict
     """
     if is_literal(keys):
-        final_result = result[0] if len(result) == 1 else list(result)
+        if len(result) != 1:
+            all_keys = sorted({key for result_dict in result for key in result_dict})
+            final_result = []
+
+            for result_dict in result:
+                if keys in result_dict.keys():
+                    final_result.append(result_dict[keys])
+                elif keys in all_keys:
+                    final_result.append(None)
+        else:
+            final_result = result[0][keys]
 
     elif is_iterable(keys):
         final_result = ({key: [val[i] for val in result]
@@ -546,10 +547,19 @@ def restructure_data(result, keys):
                               for i, key in enumerate(keys)})
 
     elif keys is None:
-        final_result = ({key: [result_dict[key] for result_dict in result]
-                         for key in result[0]} if len(result) != 1
-                        else {key: result_dict[key] for result_dict in result
-                              for key in result[0]})
+        if len(result) != 1:
+            all_keys = sorted({key for result_dict in result for key in result_dict})
+            final_result = {}
+
+            for key in all_keys:
+                final_result[key] = []
+                for result_dict in result:
+                    if key in result_dict.keys():
+                        final_result[key].append(result_dict[key])
+                    else:
+                        final_result[key].append(None)
+        else:
+            final_result = {key: result_dict[key] for result_dict in result for key in result[0]}
     return final_result
 
 
@@ -623,8 +633,7 @@ def get_parameters_hierarchical_addressing(nc, params):
         if type(value_list) != tuple:
             value_list = (value_list,)
     else:
-        raise TypeError('First argument must be a string, specifying' +
-                        ' path into hierarchical dictionary')
+        raise TypeError('First argument must be a string, specifying path into hierarchical dictionary')
 
     result = restructure_data(value_list, None)
 

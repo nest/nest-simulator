@@ -251,15 +251,15 @@ def build_network(logger):
                              'rate': nu_ext * CE * 1000.})
 
     nest.message(M_INFO, 'build_network',
-                 'Creating excitatory spike detector.')
+                 'Creating excitatory spike recorder.')
 
     if params['record_spikes']:
-        detector_label = os.path.join(
+        recorder_label = os.path.join(
             brunel_params['filestem'],
             'alpha_' + str(stdp_params['alpha']) + '_spikes')
-        E_detector = nest.Create('spike_detector', params={
+        E_recorder = nest.Create('spike_recorder', params={
             'record_to': 'ascii',
-            'label': detector_label
+            'label': recorder_label
         })
 
     BuildNodeTime = time.time() - tic
@@ -323,6 +323,10 @@ def build_network(logger):
     if params['record_spikes']:
         if params['nvp'] != 1:
             local_neurons = nest.GetLocalNodeCollection(E_neurons)
+            # GetLocalNodeCollection returns a stepped composite NodeCollection, which
+            # cannot be sliced. In order to allow slicing it later on, we're creating a
+            # new regular NodeCollection from the plain node IDs.
+            local_neurons = nest.NodeCollection(local_neurons.tolist())
         else:
             local_neurons = E_neurons
 
@@ -334,8 +338,8 @@ def build_network(logger):
                 spikes should be recorded from. Aborting the simulation!""")
             exit(1)
 
-        nest.message(M_INFO, 'build_network', 'Connecting spike detectors.')
-        nest.Connect(local_neurons[:brunel_params['Nrec']], E_detector,
+        nest.message(M_INFO, 'build_network', 'Connecting spike recorders.')
+        nest.Connect(local_neurons[:brunel_params['Nrec']], E_recorder,
                      'all_to_all', 'static_synapse_hpc')
 
     # read out time used for building
@@ -344,7 +348,7 @@ def build_network(logger):
     logger.log(str(BuildEdgeTime) + ' # build_edge_time')
     logger.log(str(memory_thisjob()) + ' # virt_mem_after_edges')
 
-    return E_detector if params['record_spikes'] else None
+    return E_recorder if params['record_spikes'] else None
 
 
 def run_simulation():
@@ -358,7 +362,7 @@ def run_simulation():
 
         logger.log(str(memory_thisjob()) + ' # virt_mem_0')
 
-        sdet = build_network(logger)
+        sr = build_network(logger)
 
         tic = time.time()
 
@@ -379,12 +383,12 @@ def run_simulation():
         logger.log(str(SimCPUTime) + ' # sim_time')
 
         if params['record_spikes']:
-            logger.log(str(compute_rate(sdet)) + ' # average rate')
+            logger.log(str(compute_rate(sr)) + ' # average rate')
 
         print(nest.GetKernelStatus())
 
 
-def compute_rate(sdet):
+def compute_rate(sr):
     """Compute local approximation of average firing rate
 
     This approximation is based on the number of local nodes, number
@@ -393,7 +397,7 @@ def compute_rate(sdet):
 
     """
 
-    n_local_spikes = sdet.n_events
+    n_local_spikes = sr.n_events
     n_local_neurons = brunel_params['Nrec']
     simtime = params['simtime']
     return 1. * n_local_spikes / (n_local_neurons * simtime) * 1e3
@@ -436,7 +440,7 @@ class Logger(object):
 
             self.f = open(fn, 'w')
 
-            return self
+        return self
 
     def log(self, value):
         if nest.Rank() < self.max_rank_log:

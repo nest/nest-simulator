@@ -102,7 +102,7 @@ lin_rate, tanh_rate, threshold_lin_rate
 EndUserDocs  */
 
 template < class TNonlinearities >
-class rate_neuron_ipn : public Archiving_Node
+class rate_neuron_ipn : public ArchivingNode
 {
 
 public:
@@ -178,6 +178,9 @@ private:
     /** Mean input.*/
     double mu_;
 
+    /** Minimum rate.*/
+    double rectify_rate_;
+
     /** Target of non-linearity.
         True (default): Gain function applied to linearly summed input.
         False: Gain function applied to each input before summation.
@@ -185,7 +188,8 @@ private:
     bool linear_summation_;
 
     /** Should the rate be rectified?.
-        True: If the rate is negative it is set to zero after each time step.
+        True: If the rate is smaller than rectify_rate it is set to rectify_rate
+              after each time step.
         False (default): No rectification.
     **/
     bool rectify_output_;
@@ -350,7 +354,7 @@ rate_neuron_ipn< TNonlinearities >::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
   nonlinearities_.get( d );
@@ -369,7 +373,7 @@ rate_neuron_ipn< TNonlinearities >::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

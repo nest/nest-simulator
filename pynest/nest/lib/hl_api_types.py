@@ -23,7 +23,6 @@
 Classes defining the different PyNEST types
 """
 
-
 from ..ll_api import *
 from .. import pynestkernel as kernel
 from .hl_api_helper import *
@@ -31,6 +30,7 @@ from .hl_api_simulation import GetKernelStatus
 
 import numpy
 import json
+from math import floor, log
 
 try:
     import pandas
@@ -39,6 +39,7 @@ except ImportError:
     HAVE_PANDAS = False
 
 __all__ = [
+    'CollocatedSynapses',
     'CreateParameter',
     'Mask',
     'NodeCollection',
@@ -183,7 +184,9 @@ class NodeCollection(object):
 
     _datum = None
 
-    def __init__(self, data):
+    def __init__(self, data=None):
+        if data is None:
+            data = []
         if isinstance(data, kernel.SLIDatum):
             if data.dtype != "nodecollectiontype":
                 raise TypeError("Need NodeCollection Datum.")
@@ -201,10 +204,10 @@ class NodeCollection(object):
     def __add__(self, other):
         if not isinstance(other, NodeCollection):
             raise NotImplementedError()
+
         return sli_func('join', self._datum, other._datum)
 
     def __getitem__(self, key):
-
         if isinstance(key, slice):
             if key.start is None:
                 start = 1
@@ -268,11 +271,13 @@ class NodeCollection(object):
 
         if self.__len__() != other.__len__():
             return False
+
         return sli_func('eq', self, other)
 
     def __neq__(self, other):
         if not isinstance(other, NodeCollection):
             raise NotImplementedError()
+
         return not self == other
 
     def __len__(self):
@@ -325,8 +330,37 @@ class NodeCollection(object):
 
         See Also
         --------
-        set
+        :py:func:`set`,
+        :py:func:`GetStatus()<nest.lib.hl_api_info.GetStatus>`,
+        :py:func:`SetStatus()<nest.lib.hl_api_info.SetStatus>`
+
+        Examples
+        --------
+
+        >>>    nodes.get()
+               {'archiver_length': (0, 0, 0),
+               'beta_Ca': (0.001, 0.001, 0.001),
+               'C_m': (250.0, 250.0, 250.0),
+               ...
+               'V_th': (-55.0, -55.0, -55.0),
+               'vp': (0, 0, 0)}
+
+        >>>    nodes.get('V_m')
+               (-70.0, -70.0, -70.0)
+
+        >>>    nodes[0].get('V_m')
+               -70.0
+
+        >>>    nodes.get('V_m', 'C_m')
+               {'V_m': (-70.0, -70.0, -70.0), 'C_m': (250.0, 250.0, 250.0)}
+
+        >>>    voltmeter.get('events', 'senders')
+               array([...], dtype=int64)
         """
+
+        if not self:
+            raise ValueError('Cannot get parameter of empty NodeCollection')
+
         # ------------------------- #
         #      Checks of input      #
         # ------------------------- #
@@ -338,6 +372,7 @@ class NodeCollection(object):
                 raise ImportError('Pandas could not be imported')
         else:
             raise TypeError('Got unexpected keyword argument')
+
         pandas_output = output == 'pandas'
 
         if len(params) == 0:
@@ -379,8 +414,8 @@ class NodeCollection(object):
         Parameters
         ----------
         params : str or dict or list
-            Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `NodeCollection`.
+            Dictionary of parameters (either lists or single values) or list of dictionaries of parameters
+            of same length as the `NodeCollection`.
         kwargs : keyword argument pairs
             Named arguments of parameters of the elements in the `NodeCollection`.
 
@@ -390,16 +425,28 @@ class NodeCollection(object):
             If the input params are of the wrong form.
         KeyError
             If the specified parameter does not exist for the nodes.
+
+        See Also
+        --------
+        :py:func:`get`,
+        :py:func:`SetStatus()<nest.lib.hl_api_info.SetStatus>`,
+        :py:func:`GetStatus()<nest.lib.hl_api_info.GetStatus>`
         """
 
+        if not self:
+            return
         if kwargs and params is None:
             params = kwargs
         elif kwargs and params:
             raise TypeError("must either provide params or kwargs, but not both.")
 
-        if isinstance(params, dict) and self[0].get('local'):
+        local_nodes = [self.local] if len(self) == 1 else self.local
 
-            contains_list = [is_iterable(vals) and not is_iterable(self[0].get(key)) for key, vals in params.items()]
+        if isinstance(params, dict) and all(local_nodes):
+
+            node_params = self[0].get()
+            contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
+                             key, vals in params.items()]
 
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
@@ -414,8 +461,7 @@ class NodeCollection(object):
                 params = temp_param
 
         if (isinstance(params, (list, tuple)) and self.__len__() != len(params)):
-            raise TypeError(
-                "status dict must be a dict, or a list of dicts of length len(nodes)")
+            raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(self.__len__()))
 
         sli_func('SetStatus', self._datum, params)
 
@@ -425,7 +471,9 @@ class NodeCollection(object):
         """
         if self.__len__() == 0:
             return []
-        return list(self.get('global_id')) if self.__len__() > 1 else [self.get('global_id')]
+
+        return (list(self.get('global_id')) if len(self) > 1
+                else [self.get('global_id')])
 
     def index(self, node_id):
         """
@@ -442,16 +490,37 @@ class NodeCollection(object):
             If the node ID is not in the `NodeCollection`.
         """
         index = sli_func('Find', self._datum, node_id)
+
         if index == -1:
             raise ValueError('{} is not in NodeCollection'.format(node_id))
+
         return index
 
+    def __bool__(self):
+        """Converts the NodeCollection to a bool. False if it is empty, True otherwise."""
+        return len(self) > 0
+
+    def __array__(self, dtype=None):
+        """Convert the NodeCollection to a NumPy array."""
+        return numpy.array(self.tolist(), dtype=dtype)
+
     def __getattr__(self, attr):
+        if not self:
+            raise AttributeError('Cannot get attribute of empty NodeCollection')
+
         if attr == 'spatial':
             metadata = sli_func('GetMetadata', self._datum)
             val = metadata if metadata else None
             super().__setattr__(attr, val)
             return self.spatial
+
+        # NumPy compatibility check:
+        # raises AttributeError to tell NumPy that interfaces other than
+        # __array__ are not available (otherwise get_parameters would be
+        # queried, KeyError would be raised, and all would crash)
+        if attr.startswith('__array_'):
+            raise AttributeError
+
         return self.get(attr)
 
     def __setattr__(self, attr, value):
@@ -510,6 +579,8 @@ class SynapseCollection(object):
             # self._datum needs to be a list of Connection datums.
             self._datum = [data]
 
+        self.print_full = False
+
     def __iter__(self):
         return SynapseCollectionIterator(self)
 
@@ -546,45 +617,94 @@ class SynapseCollection(object):
     def __str__(self):
         """
         Printing a `SynapseCollection` returns something of the form:
-            *--------*-------------*
-            | source | 1, 1, 2, 2, |
-            *--------*-------------*
-            | target | 1, 2, 1, 2, |
-            *--------*-------------*
+
+             source   target   synapse model   weight   delay
+            -------- -------- --------------- -------- -------
+                  1        4  static_synapse    1.000   1.000
+                  2        4  static_synapse    2.000   1.000
+                  1        3    stdp_synapse    4.000   1.000
+                  1        4    stdp_synapse    3.000   1.000
+                  2        3    stdp_synapse    3.000   1.000
+                  2        4    stdp_synapse    2.000   1.000
+
+        If your SynapseCollection has more than 36 elements, only the first and last 15 connections are printed. To
+        display all, first set `print_full = True`.
+
+        ::
+
+            conns = nest.GetConnections()
+            conns.print_full = True
+            print(conns)
         """
-        srcs = self.get('source')
-        trgt = self.get('target')
+
+        def format_row_(s, t, sm, w, dly):
+            try:
+                return f'{s:>{src_len-1}d} {t:>{trg_len}d} {sm:>{sm_len}s} {w:>#{w_len}.{4}g} {dly:>#{d_len}.{4}g}'
+            except ValueError:
+                # Used when we have many connections and print_full=False
+                return f'{s:>{src_len-1}} {t:>{trg_len}} {sm:>{sm_len}} {w:>{w_len}} {dly:>{d_len}}'
+
+        MAX_SIZE_FULL_PRINT = 35  # 35 is arbitrarily chosen.
+
+        params = self.get()
+
+        if len(params) == 0:
+            return 'The synapse collection does not contain any connections.'
+
+        srcs = params['source']
+        trgt = params['target']
+        wght = params['weight']
+        dlay = params['delay']
+        s_model = params['synapse_model']
 
         if isinstance(srcs, int):
             srcs = [srcs]
-        if isinstance(trgt, int):
             trgt = [trgt]
+            wght = [wght]
+            dlay = [dlay]
+            s_model = [s_model]
+
+        src_h = 'source'
+        trg_h = 'target'
+        sm_h = 'synapse model'
+        w_h = 'weight'
+        d_h = 'delay'
+
+        # Find maximum number of characters for each column, used to determine width of column
+        src_len = max(len(src_h) + 2, floor(log(max(srcs), 10)))
+        trg_len = max(len(trg_h) + 2, floor(log(max(trgt), 10)))
+        sm_len = max(len(sm_h) + 2, len(max(s_model, key=len)))
+        w_len = len(w_h) + 2
+        d_len = len(d_h) + 2
 
         # 35 is arbitrarily chosen.
-        if len(srcs) < 35:
-            source = '| source | ' + ''.join(str(e)+', ' for e in srcs) + '|'
-            target = '| target | ' + ''.join(str(e)+', ' for e in trgt) + '|'
-        else:
-            source = ('| source | ' + ''.join(str(e)+', ' for e in srcs[:15]) +
-                      '... ' + ''.join(str(e)+', ' for e in srcs[-15:]) + '|')
-            target = ('| target | ' + ''.join(str(e)+', ' for e in trgt[:15]) +
-                      '... ' + ''.join(str(e)+', ' for e in trgt[-15:]) + '|')
+        if len(srcs) >= MAX_SIZE_FULL_PRINT and not self.print_full:
+            # u'\u22EE ' is the unicode for vertical ellipsis, used when we have many connections
+            srcs = srcs[:15] + [u'\u22EE '] + srcs[-15:]
+            trgt = trgt[:15] + [u'\u22EE '] + trgt[-15:]
+            wght = wght[:15] + [u'\u22EE '] + wght[-15:]
+            dlay = dlay[:15] + [u'\u22EE '] + dlay[-15:]
+            s_model = s_model[:15] + [u'\u22EE '] + s_model[-15:]
 
-        borderline_s = '*--------*' + '-'*(len(source) - 12) + '-*'
-        borderline_t = '*--------*' + '-'*(len(target) - 12) + '-*'
-        borderline_m = max(borderline_s, borderline_t)
+        headers = f'{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}' + '\n'
+        borders = '-'*src_len + ' ' + '-'*trg_len + ' ' + '-'*sm_len + ' ' + '-'*w_len + ' ' + '-'*d_len + '\n'
+        output = '\n'.join(format_row_(s, t, sm, w, d) for s, t, sm, w, d in zip(srcs, trgt, s_model, wght, dlay))
+        result = headers + borders + output
 
-        result = (borderline_s + '\n' + source + '\n' + borderline_m + '\n' +
-                  target + '\n' + borderline_t)
         return result
 
     def __getattr__(self, attr):
+        if attr == 'distance':
+            dist = sli_func('Distance', self._datum)
+            super().__setattr__(attr, dist)
+            return self.distance
+
         return self.get(attr)
 
     def __setattr__(self, attr, value):
         # `_datum` is the only property of SynapseCollection that should not be
         # interpreted as a property of the model
-        if attr == '_datum':
+        if attr == '_datum' or 'print_full':
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})
@@ -628,7 +748,7 @@ class SynapseCollection(object):
             All parameters, or, if keys is a list of strings, a dictionary with
             lists of corresponding parameters
         type:
-            If keys is a string, the corrsponding parameter(s) is returned
+            If keys is a string, the corresponding parameter(s) is returned
 
 
         Raises
@@ -637,13 +757,34 @@ class SynapseCollection(object):
             If input params are of the wrong form.
         KeyError
             If the specified parameter does not exist for the connections.
+
+        See Also
+        --------
+        set
+
+        Examples
+        --------
+
+        >>>    conns.get()
+               {'delay': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                ...
+                'weight': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
+
+        >>>    conns.get('weight')
+               [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
+        >>>    conns[0].get('weight')
+               1.0
+
+        >>>    nodes.get(['source', 'weight'])
+               {'source': [1, 1, 1, 2, 2, 2, 3, 3, 3],
+                'weight': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
         """
         pandas_output = output == 'pandas'
         if pandas_output and not HAVE_PANDAS:
             raise ImportError('Pandas could not be imported')
 
-        # Return empty tuple if we have no connections or if we have done a
-        # nest.ResetKernel()
+        # Return empty tuple if we have no connections or if we have done a nest.ResetKernel()
         num_conn = GetKernelStatus('num_connections')
         if self.__len__() == 0 or num_conn == 0:
             return ()
@@ -651,7 +792,8 @@ class SynapseCollection(object):
         if keys is None:
             cmd = 'GetStatus'
         elif is_literal(keys):
-            cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
+            #  Extracting the correct values will be done in restructure_data below
+            cmd = 'GetStatus'
         elif is_iterable(keys):
             keys_str = " ".join("/{0}".format(x) for x in keys)
             cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
@@ -688,8 +830,8 @@ class SynapseCollection(object):
         Parameters
         ----------
         params : str or dict or list
-            Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `SynapseCollection`.
+            Dictionary of parameters (either lists or single values) or list of dictionaries of parameters
+            of same length as `SynapseCollection`.
         kwargs : keyword argument pairs
             Named arguments of parameters of the elements in the `SynapseCollection`.
 
@@ -699,6 +841,10 @@ class SynapseCollection(object):
             If input params are of the wrong form.
         KeyError
             If the specified parameter does not exist for the connections.
+
+        See Also
+        --------
+        get
         """
 
         # This was added to ensure that the function is a nop (instead of,
@@ -709,9 +855,7 @@ class SynapseCollection(object):
 
         if (isinstance(params, (list, tuple)) and
                 self.__len__() != len(params)):
-            raise TypeError(
-                "status dict must be a dict, or a list of dicts of length "
-                "len(nodes)")
+            raise TypeError("status dict must be a dict, or a list of dicts of length {}".format(self.__len__()))
 
         if kwargs and params is None:
             params = kwargs
@@ -719,7 +863,9 @@ class SynapseCollection(object):
             raise TypeError("must either provide params or kwargs, but not both.")
 
         if isinstance(params, dict):
-            contains_list = [is_iterable(vals) and not is_iterable(self[0].get(key)) for key, vals in params.items()]
+            node_params = self[0].get()
+            contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
+                             key, vals in params.items()]
 
             if any(contains_list):
                 temp_param = [{} for _ in range(self.__len__())]
@@ -740,6 +886,36 @@ class SynapseCollection(object):
 
         sr('2 arraystore')
         sr('Transpose { arrayload pop SetStatus } forall')
+
+
+class CollocatedSynapses(object):
+    """
+    Class for collocated synapse specifications.
+
+    Wrapper around a list of specifications, used when calling :py:func:`.Connect`.
+
+    Example
+    -------
+
+        ::
+
+            nodes = nest.Create('iaf_psc_alpha', 3)
+            syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
+                                               {'synapse_model': 'stdp_synapse'},
+                                               {'synapse_model': 'stdp_synapse', 'alpha': 3.})
+            nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
+
+            conns = nest.GetConnections()
+
+            print(conns.alpha)
+            print(len(syn_spec))
+    """
+
+    def __init__(self, *args):
+        self.syn_specs = args
+
+    def __len__(self):
+        return len(self.syn_specs)
 
 
 class Mask(object):

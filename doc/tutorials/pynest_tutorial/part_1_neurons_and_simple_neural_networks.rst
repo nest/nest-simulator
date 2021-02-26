@@ -21,8 +21,8 @@ sections of this primer:
 -  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
 -  :doc:`Part 3: Connecting networks with
    synapses <part_3_connecting_networks_with_synapses>`
--  :doc:`Part 4: Topologically structured
-   networks <part_4_topologically_structured_networks>`
+-  :doc:`Part 4: Spatially structured
+   networks <part_4_spatially_structured_networks>`
 
 More advanced examples can be found at `Example
 Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
@@ -59,7 +59,7 @@ simulation kernel is written in C++ to obtain the highest possible performance
 for the simulation.
 
 You can use PyNEST interactively from the Python prompt or from within
-ipython. This is very helpful when you are exploring PyNEST, trying to
+IPython/Jupyter. This is very helpful when you are exploring PyNEST, trying to
 learn a new functionality or debugging a routine. Once out of the
 exploratory mode, you will find it saves a lot of time to write your
 simulations in text files. These can in turn be run from the command
@@ -73,14 +73,13 @@ functionality into the Python interpreter.
 
     import nest
 
-It should be noted, however, that certain external packages must be
-imported *before* importing nest. These include `scikit-learn <http://scikit-learn.org/stable/index.html>`_
-and `SciPy <https://www.scipy.org/>`_.
+In case other Python packages are required, such as `scikit-learn <http://scikit-learn.org/stable/index.html>`_
+and `SciPy <https://www.scipy.org/>`_, they need to be imported *before* importing NEST.
 
 ::
 
-    from sklearn.svm import LinearSVC
-    from scipy.special import erf
+    import sklearn
+    import scipy
 
     import nest
 
@@ -91,7 +90,7 @@ prompted for.
 
     dir(nest)
 
-One such command is ``nest.Models()`` or in ipython ``nest.Models?``, which will return a list of all
+One such command is ``nest.Models()``, which will return a list of all
 the available models you can use. If you want to obtain more information
 about a particular command, you may use Python’s standard help system.
 
@@ -115,7 +114,7 @@ desired node type, and optionally the number of nodes to be created and
 the initialising parameters. The function returns a ``NodeCollection`` of handles to
 the new nodes, which you can assign to a variable for later use. A ``NodeCollection`` is a compact
 representation of the node handles, which are integer numbers, called *ids*. Many PyNEST functions expect
-or return a ``NodeCollectoin`` (see `command overview`_). Thus, it is
+or return a ``NodeCollection`` (see `command overview`_). Thus, it is
 easy to apply functions to large sets of nodes with a single function
 call.
 
@@ -203,12 +202,12 @@ variables by looking at the neuron’s property ``recordables``.
     multimeter = nest.Create("multimeter")
     multimeter.set(record_from=["V_m"])
 
-We now create a ``spikedetector``, another device that records the
+We now create a ``spike_recorder``, another device that records the
 spiking events produced by a neuron.
 
 ::
 
-    spikedetector = nest.Create("spike_detector")
+    spikerecorder = nest.Create("spike_recorder")
 
 A short note on naming: here we have called the neuron ``neuron``, the
 multimeter ``multimeter`` and so on. Of course, you can assign your
@@ -225,7 +224,7 @@ to form a small network.
 ::
 
     nest.Connect(multimeter, neuron)
-    nest.Connect(neuron, spikedetector)
+    nest.Connect(neuron, spikerecorder)
 
 
 .. _VM-neuron:
@@ -249,7 +248,7 @@ to form a small network.
 
 The order in which the arguments to ``Connect`` are specified reflects
 the flow of events: if the neuron spikes, it sends an event to the spike
-detector. Conversely, the multimeter periodically sends requests to the
+recorder. Conversely, the multimeter periodically sends requests to the
 neuron to ask for its membrane potential at that point in time. This can
 be regarded as a perfect electrode stuck into the neuron.
 
@@ -297,11 +296,11 @@ use of ``matplotlib`` and the ``pyplot`` module.
 The second line opens a figure (with the number 1), and the third line
 actually produces the plot. You can’t see it yet because we have not
 used ``plt.show()``. Before we do that, we proceed analogously to
-obtain and display the spikes from the spike detector.
+obtain and display the spikes from the spike recorder.
 
 ::
 
-    dSD = spikedetector.get("events")
+    dSD = spikerecorder.get("events")
     evs = dSD["senders"]
     ts = dSD["times"]
     plt.figure(2)
@@ -481,8 +480,13 @@ Nodes
 
 -  ``Create(model, n=1, params=None)``
     Create ``n`` instances of type ``model``. Parameters for the new nodes can be given as
-    ``params`` (a single dictionary, or a list of dictionaries with
-    size ``n``). If omitted, the ``model``\ ’s defaults are used.
+    ``params``, which can be any of the following:
+
+      - A dictionary with either single values or lists of size n.
+        The single values will be applied to all nodes, while the lists will be distributed across
+        the nodes. Both single values and lists can be given at the same time.
+      - A list with n dictionaries, one dictionary for each node.
+    If omitted, the ``model``\ ’s defaults are used.
 
 -  ``get(*params, **kwargs)``
     Return a dictionary with parameter values for the NodeCollection it is called
@@ -491,10 +495,10 @@ Nodes
     dictionary contains lists of requested values.
 
 -  ``set(params=None, **kwargs)``
-    Set the parameters on the NodeCollection it is called on to ``params``, which may
-    be a single dictionary, or a list of dictionaries of the same size
-    as the NodeCollection. If ``kwargs`` is given, it has to be names and values of
-    an attribute as keyword=argument pairs. The values
+    Set the parameters on the NodeCollection to ``params``, which may
+    be a single dictionary (with lists or single values as parameters), or a list
+    of dictionaries of the same size as the NodeCollection. If ``kwargs`` is given,
+    it has to be names and values of an attribute as keyword=argument pairs. The values
     can be single values or list of the same size as the NodeCollection.
 
 Connections

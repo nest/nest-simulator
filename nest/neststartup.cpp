@@ -36,9 +36,6 @@
 // Includes from librandom:
 #include "random_numbers.h"
 
-// Includes from nest:
-#include "sli_neuron.h"
-
 // Includes from nestkernel:
 #include "dynamicloader.h"
 #include "genericmodel_impl.h"
@@ -134,9 +131,6 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
   engine.def( "connruledict", nest::kernel().connection_manager.get_connruledict() );
   engine.def( "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
 
-  // register sli_neuron
-  nest::kernel().model_manager.register_node_model< nest::sli_neuron >( "sli_neuron" );
-
   // now add static modules providing models
   add_static_modules( engine );
 
@@ -195,7 +189,7 @@ CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
   cg = PNS::unpackConnectionGenerator( obj );
   if ( cg != NULL )
   {
-    ret = static_cast< Datum* >( new nest::ConnectionGeneratorDatum( cg ) );
+    ret = static_cast< Datum* >( new ConnectionGeneratorDatum( cg ) );
   }
 
   return ret;

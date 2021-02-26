@@ -269,12 +269,12 @@ unit of time is seconds, not milliseconds.
         runtime.finalize();
     }
 
-The runtime is short. As before we create a runtime object that consumes
+The runtime is short. As before, we create a runtime object that consumes
 the setup, then we loop until the MUSIC time exceeds our simulation
 time. We call ``runtime.tick()`` each time through the loop
 on line 8 and we process received events after the call to
 ``tick()``. If you had a process with both sending and
-receiving ports you would submit the sending data before the
+receiving ports, you would submit the sending data before the
 ``tick()`` call, and process the receiving data after it in
 the same loop.
 
@@ -404,7 +404,7 @@ Concatenate them as before, and compare:
     1   87.400         0    0.0874
     2   110.40         1    0.1104
 
-Indeed, we get the expected result. The IDs from the python process on
+Indeed, we get the expected result. The IDs from the ``python`` process on
 the left are the originating neurons; the IDs on the right is the MUSIC
 channel on the receiving side. And of course NEST deals in milliseconds
 while MUSIC uses seconds.

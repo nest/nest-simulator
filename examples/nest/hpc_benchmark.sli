@@ -268,16 +268,16 @@ brunel_params dup using
   >> SetStatus
 
   M_INFO (BuildNetwork)
-  (Creating excitatory spike detector.) message
+  (Creating excitatory spike recorder.) message
 
   record_spikes
   {
-    /detector_label  filestem (/alpha_) join stdp_params /alpha get cvs join (_spikes) join def
-    /E_detector /spike_detector Create def
-    E_detector
+    /recorder_label  filestem (/alpha_) join stdp_params /alpha get cvs join (_spikes) join def
+    /E_recorder /spike_recorder Create def
+    E_recorder
     <<
        /record_to /ascii
-       /label detector_label
+       /label recorder_label
     >> SetStatus
   } if
 
@@ -344,9 +344,9 @@ brunel_params dup using
     } if
 
     M_INFO (BuildNetwork)
-    (Connecting spike detectors.) message
+    (Connecting spike recorders.) message
 
-    E_neurons Nrec Take E_detector << /rule (all_to_all) >> << /synapse_model /syn_std >> Connect
+    E_neurons Nrec Take E_recorder << /rule (all_to_all) >> << /synapse_model /syn_std >> Connect
   } if  
 
   % read out time used for building
@@ -393,7 +393,7 @@ brunel_params dup using
 
   record_spikes true eq
   {
-    E_detector ComputeRate cvs ( # average rate) join logger /log call
+    E_recorder ComputeRate cvs ( # average rate) join logger /log call
   } if
   
   
@@ -408,7 +408,7 @@ brunel_params dup using
 
 % -----------------------------------------------------------------------------
 
-% Take spike detector, find total number of spikes registered,
+% Take spike recorder, find total number of spikes registered,
 % return average rate per neuron in Hz.
 % NOTE: If you are running with several MPI processes, this
 %       function only gives an approximation to the true rate.
@@ -418,17 +418,17 @@ brunel_params dup using
 {
   << >> begin  % anonymous dictionary for local variables
 
-  /sdet Set
+  /sr Set
 
   % We need to guess how many neurons we record from.
   % This assumes an even distribution of nodes across
   % processes, as well as homogeneous activity in the
   % network. So this is really a hack. NEST needs better
   % support for rate calculations, such as giving the
-  % number of neurons recorded from by each spike detector.
+  % number of neurons recorded from by each spike recorder.
 
   /n_local_neurons Nrec cvd NumProcesses div def
-  sdet /n_events get cvd n_local_neurons simtime mul div
+  sr /n_events get cvd n_local_neurons simtime mul div
   1000 mul         % convert from mHz to Hz, leave on stack
 
   end

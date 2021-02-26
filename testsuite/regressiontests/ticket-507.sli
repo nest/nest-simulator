@@ -22,12 +22,12 @@
 
 /** @BeginDocumentation
 
-Name: testsuite::ticket-507 - Ensure that spike_detector throws exception on SetStatus if off-grid times are set
+Name: testsuite::ticket-507 - Ensure that spike_generator throws exception on SetStatus if precise (off-grid) spike times are set
 
 Synopsis: (ticket-507) run -> NEST exits if test fails
 
 Description:
-Ensure that spike_detector throws exception on SetStatus if off-grid times are set,
+Ensure that spike_generator throws exception on SetStatus if off-grid times are set,
 unless precise_times is set.
  
 Author: Hans Ekkehard Plesser, 2011-03-18

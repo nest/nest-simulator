@@ -73,7 +73,7 @@ hh_cond_beta_gap_traub is an implementation of a modified Hodgkin-Huxley model
 that also supports gap junctions.
 
 This model was specifically developed for a major review of simulators [1]_,
-based on a model of hippocampal pyramidal cells by Traub and Miles[2]_.
+based on a model of hippocampal pyramidal cells by Traub and Miles [2]_.
 The key differences between the current model and the model in [2]_ are:
 
 - This model is a point neuron, not a compartmental model.
@@ -89,19 +89,18 @@ to match those used with NEST 1.9.10 when preparing data for [1]_. Code for all
 simulators covered is available from ModelDB [3]_.
 
 Note:
-In this model, a spike is emitted if
-
- :math:`V_m >= V_T + 30 mV` and `V_m` has fallen during the current time step
+In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and
+:math:`V_m` has fallen during the current time step.
 
 To avoid that this leads to multiple spikes during the falling flank of a
 spike, it is essential to chose a sufficiently long refractory period.
-Traub and Miles used \f$ t_ref = 3 ms \f$ [2, p 118], while we used
-\f$ t_ref = 2 ms \f$ in [2]_.
+Traub and Miles used :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
+:math:`t_{ref} = 2` ms in [2]_.
 
-Post-synaptic currents
-Incoming spike events induce a post-synaptic change of conductance modelled by a
-beta function as outlined in [4,5]. The beta function is normalised such that an
-event of weight 1.0 results in a peak current of 1 nS at \f$ t = tau_rise_xx \f$
+Postsynaptic currents
+Incoming spike events induce a postsynaptic change of conductance modelled by a
+beta function as outlined in [4]_ [5]_. The beta function is normalized such that an
+event of weight 1.0 results in a peak current of 1 nS at :math:`t = \tau_{rise,xx}`
 where xx is ex or in.
 
 Spike Detection
@@ -111,7 +110,7 @@ it is considered a spike.
 
 Gap Junctions
 Gap Junctions are implemented by a gap current of the form
-\f$ g_ij( V_i - V_j) \f$.
+:math:`g_{ij}( V_i - V_j)`.
 
 Parameters
 ++++++++++
@@ -173,7 +172,7 @@ hh_psc_alpha_gap, hh_cond_exp_traub, gap_junction, iaf_cond_beta
 
 EndUserDocs */
 
-class hh_cond_beta_gap_traub : public Archiving_Node
+class hh_cond_beta_gap_traub : public ArchivingNode
 {
 
 public:
@@ -472,7 +471,7 @@ hh_cond_beta_gap_traub::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
@@ -491,7 +490,7 @@ hh_cond_beta_gap_traub::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

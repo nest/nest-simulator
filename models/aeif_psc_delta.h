@@ -68,7 +68,7 @@ Description
 +++++++++++
 
 aeif_psc_delta is the adaptive exponential integrate and fire neuron
-according to Brette and Gerstner (2005), with post-synaptic currents
+according to Brette and Gerstner (2005), with postsynaptic currents
 in the form of delta spikes.
 
 This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
@@ -163,7 +163,7 @@ iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
 
 EndUserDocs */
 
-class aeif_psc_delta : public Archiving_Node
+class aeif_psc_delta : public ArchivingNode
 {
 
 public:
@@ -223,22 +223,21 @@ private:
     double g_L;     //!< Leak Conductance in nS
     double C_m;     //!< Membrane Capacitance in pF
     double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T; //!< Slope faktor in ms.
-    double tau_w;   //!< adaptation time-constant in ms.
-    double a;       //!< Subthreshold adaptation in nS.
+    double Delta_T; //!< Slope factor in ms
+    double tau_w;   //!< Adaptation time-constant in ms
+    double a;       //!< Subthreshold adaptation in nS
     double b;       //!< Spike-triggered adaptation in pA
-    double V_th;    //!< Spike threshold in mV.
-    double t_ref;   //!< Refractory period in ms.
-    double I_e;     //!< Intrinsic current in pA.
+    double V_th;    //!< Spike threshold in mV
+    double t_ref;   //!< Refractory period in ms
+    double I_e;     //!< Intrinsic current in pA
 
-    double gsl_error_tol;  //!< error bound for GSL integrator
-    bool with_refr_input_; //!< spikes arriving during refractory period are
-                           //!< counted
+    double gsl_error_tol;  //!< Error bound for GSL integrator
+    bool with_refr_input_; //!< Spikes arriving during refractory period are counted
 
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 public:
@@ -406,7 +405,7 @@ aeif_psc_delta::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -423,7 +422,7 @@ aeif_psc_delta::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

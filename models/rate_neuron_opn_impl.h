@@ -114,7 +114,7 @@ nest::rate_neuron_opn< TNonlinearities >::Parameters_::set( const DictionaryDatu
   if ( updateValueParam< double >( d, names::mean, mu_, node ) )
   {
     LOG( M_WARNING,
-      "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
+      "rate_neuron_opn< TNonlinearities >::Parameters_::set",
       "The parameter mean has been renamed to mu. Please use the new "
       "name from now on." );
   }
@@ -122,7 +122,7 @@ nest::rate_neuron_opn< TNonlinearities >::Parameters_::set( const DictionaryDatu
   if ( updateValueParam< double >( d, names::std, sigma_, node ) )
   {
     LOG( M_WARNING,
-      "rate_neuron_ipn< TNonlinearities >::Parameters_::set",
+      "rate_neuron_opn< TNonlinearities >::Parameters_::set",
       "The parameter std has been renamed to sigma. Please use the new "
       "name from now on." );
   }
@@ -172,7 +172,7 @@ nest::rate_neuron_opn< TNonlinearities >::Buffers_::Buffers_( const Buffers_&, r
 
 template < class TNonlinearities >
 nest::rate_neuron_opn< TNonlinearities >::rate_neuron_opn()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -183,7 +183,7 @@ nest::rate_neuron_opn< TNonlinearities >::rate_neuron_opn()
 
 template < class TNonlinearities >
 nest::rate_neuron_opn< TNonlinearities >::rate_neuron_opn( const rate_neuron_opn& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -224,7 +224,7 @@ nest::rate_neuron_opn< TNonlinearities >::init_buffers_()
   }
 
   B_.logger_.reset(); // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 template < class TNonlinearities >

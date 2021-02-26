@@ -24,14 +24,14 @@
    Test for Tickets 80 and 175.
 
    This test verifies that:
-   voltmeter and spike_detector record identical signals from iaf_psc_alpha
+   voltmeter and spike_recorder record identical signals from iaf_psc_alpha
    driven by internal dc independent of how simulation time is blocked
    and how elements are placed in script. Additionally, two spike generators,
    placed before and after the recorders, emit the same spike trains that
    are expected from the neurons for the given parameters.
 
    Protocol:
-   1. One iaf_psc_alpha created before voltmeters and spike detectors, one after.
+   1. One iaf_psc_alpha created before voltmeters and spike recorders, one after.
    2. Devices recording from both neurons.
    3. Neurons driven by internal dc current.
    4. Resolution fixed, but simulation time subdivided in different ways.
@@ -52,7 +52,7 @@ M_ERROR setverbosity
   /interval resolution
 >> def
 
-/sd_params <<
+/sr_params <<
   /origin  0.0
   /start   0.0
   /stop  100.0
@@ -70,7 +70,7 @@ M_ERROR setverbosity
 
 /sim_blocks [0.1 0.3 0.5 0.7 1.0 1.3 1.5 1.7 110.0] def
 
-% ensure all spikes arrive at detector
+% ensure all spikes arrive at recorder
 /simtime vm_params /stop get 2.0 add def
 
 /single_trial
@@ -82,17 +82,17 @@ M_ERROR setverbosity
 
     /iaf_psc_alpha iaf_params SetDefaults
     /voltmeter vm_params  SetDefaults
-    /spike_detector sd_params SetDefaults
+    /spike_recorder sr_params SetDefaults
     /spike_generator sg_params SetDefaults
 
     /iaf_psc_alpha Create /n_pre Set
     /spike_generator Create /sg_pre Set
 
-    [ /spike_detector Create
-      /spike_detector Create
-      /spike_detector Create
-      /spike_detector Create
-    ] /sds Set
+    [ /spike_recorder Create
+      /spike_recorder Create
+      /spike_recorder Create
+      /spike_recorder Create
+    ] /srs Set
     [ /voltmeter Create
       /voltmeter Create
     ] /vms Set
@@ -100,7 +100,7 @@ M_ERROR setverbosity
     /iaf_psc_alpha Create /n_post Set
     /spike_generator Create /sg_post Set
 
-    [[n_pre n_post sg_pre sg_post] sds] { Connect true } MapThread ;
+    [[n_pre n_post sg_pre sg_post] srs] { Connect true } MapThread ;
     [vms [n_pre n_post]] { Connect true } MapThread ;
 
     {
@@ -109,7 +109,7 @@ M_ERROR setverbosity
       { exit } if
     } loop
 
-    sds { [/events /times] get cva } Map
+    srs { [/events /times] get cva } Map
     vms { [/events /V_m] get cva } Map
     2 arraystore
   end

@@ -45,11 +45,11 @@ M_ERROR setverbosity
 
   /sg /spike_generator << /spike_times [ 1.0 ]
                           /spike_multiplicities [ 2 ] >> Create def
-  /sd /spike_detector Create def
+  /sr /spike_recorder Create def
 
   sg parrot Connect
 
-  parrot sd Connect
+  parrot sr Connect
 
   10.0 Simulate
 

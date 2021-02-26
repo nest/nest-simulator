@@ -22,12 +22,12 @@
 
 /** @BeginDocumentation
 
-Name: testsuite::ticket-710 - HPC synapses do not work for spike detectors.
+Name: testsuite::ticket-710 - HPC synapses do not work for spike recorders.
 
 Synopsis: (ticket-710) run -> NEST exits if test fails
 
 Description: 
-Ensure that hpc_synapses work for spike detectors. This test creates 1 neuron and 1 spike detector and tries to connect them.
+Ensure that hpc_synapses work for spike recorders. This test creates 1 neuron and 1 spike recorder and tries to connect them.
  
 Author: Susanne Kunkel, Maximilian Schmidt, 2012-04-08
  */
@@ -39,9 +39,9 @@ M_ERROR setverbosity
 
 
 /iaf_psc_alpha Create /neuron Set
-/spike_detector Create /sd Set
+/spike_recorder Create /sr Set
 {
-neuron sd << >> /static_synapse_hpc Connect
+neuron sr << >> /static_synapse_hpc Connect
 } pass_or_die
 
 endusing

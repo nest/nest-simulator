@@ -100,7 +100,7 @@ print(
         time_create) +
     '  Time to presimulate: {:.3f} s\n'.format(
         time_presimulate -
-        time_create) +
+        time_connect) +
     '  Time to simulate:    {:.3f} s\n'.format(
         time_simulate -
         time_presimulate) +

@@ -28,10 +28,10 @@ This script suggest C/CPP include orders that conform to the NEST coding style
 guidelines. Call the script like (from NEST sources):
 
 For one file:
-    python extras/include_checker.py -nest $PWD -f nest/main.cpp
+    python3 extras/include_checker.py -nest $PWD -f nest/main.cpp
 
 For one directory:
-    python extras/include_checker.py -nest $PWD -d nest
+    python3 extras/include_checker.py -nest $PWD -d nest
 
 If everything is OK, or only few includes are in the wrong order, it will print
 something like:
@@ -55,9 +55,6 @@ If something is wrong, it will print the suggestion:
 
     // Generated includes:
     #include "config.h"
-
-    // Includes from conngen:
-    #include "conngenmodule.h"
 
     // Includes from sli:
     #include "datum.h"
@@ -238,6 +235,7 @@ def usage(exitcode):
     print("  " + sys.argv[0] + " -nest <nest-base-dir>" +
                                " (-f <filename> | -d <base-directory>)")
     sys.exit(exitcode)
+
 
 if __name__ == '__main__':
     print_suggestion = True

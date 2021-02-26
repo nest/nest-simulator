@@ -46,9 +46,6 @@ _il.import_libs(__file__, globals(), 'lib', ignore=_ignore_modules)
 __all__ = [
     'AddCompartment',
     'AddReceptor',
-    'CGConnect',
-    'CGParse',
-    'CGSelectImplementation',
     'Cleanup',
     'CollocatedSynapses',
     'Connect',

@@ -72,7 +72,7 @@ Building NEST
 
    .. code-block:: sh
 
-      cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
+      cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_source_dir>
 
    If you have libraries required by NEST such as GSL installed with Homebrew and Conda, this
    can lead to library conflicts (error messages like ``Initializing libomp.dylib, but found
@@ -81,9 +81,9 @@ Building NEST
 
    .. code-block:: sh
 
-      CMAKE_PREFIX_PATH=<conda environment path> cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
+      CMAKE_PREFIX_PATH=<conda_env_dir> cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_install_dir>
 
-   You can find the ``<conda enviroment path>`` for the currently active conda environment by running
+   You can find the ``<conda_env_dir>`` for the currently active conda environment by running
    ``conda info`` and looking for the "active env location" entry in the output.
 
 #. Compile, install, and verify NEST with

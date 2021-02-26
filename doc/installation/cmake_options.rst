@@ -182,7 +182,7 @@ and its corresponding libraries correctly. To circumvent such a problem followin
         -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so \
         -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
         -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.4m \
-        </path/to/NEST/src>
+        <nest_source_dir>
 
 
 

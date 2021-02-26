@@ -3,7 +3,7 @@ CMake Options for NEST
 
 NEST is installed with ``cmake`` (at least v3.12). In the simplest case, the commands::
 
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_source_dir>
     make
     make install
 
@@ -14,9 +14,9 @@ path.
 Choice of compiler
 ------------------
 
-We systematically test NEST using the GNU gcc and the Clang compiler suites.
+We :doc:`systematically test <../contribute/ci>` NEST using the GNU gcc and the Clang compiler suites.
 Compilation with other up-to-date compilers should also work, but we do not
-regularly test against those compilers and can provide only limited support.
+regularly test against those compilers and can thus only provide limited support.
 
 To select a specific compiler, please add the following flags to your ``cmake``
 line::

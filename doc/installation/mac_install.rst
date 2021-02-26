@@ -41,7 +41,7 @@ Preparations
       
    This assumes that you have created the environment with its default name ``nest-simulator``.
 
-#. If you want to build NEST with MPI, you must codesign the ``orterun`` and ``orted`` binaries
+#. If you want to build NEST with MPI, you must digitally sign the ``orterun`` and ``orted`` binaries
 
    a. If you do not yet have a self-signed code-signing certificate, create one as described here:
       `<https://gcc.gnu.org/onlinedocs/gcc-4.8.1/gnat_ugn_unw/Codesigning-the-Debugger.html>`__
@@ -66,7 +66,7 @@ Building NEST
 
 1. Download or clone the NEST sources from `<https://github.com/nest/nest-simulator>`__.
 
-#. Create a build directory outside the NEST sources and move into it.
+#. Create a build directory outside the NEST sources and change into it.
 
 #. Configure NEST by running
 
@@ -94,7 +94,7 @@ Building NEST
       make install
       make installcheck
 
-   To compile NEST with MPI support, add ``-Dwith-mpi=ON`` as ``cmake`` option.
+   To compile NEST with :ref:`MPI support <distributed-computing>`, add ``-Dwith-mpi=ON`` as ``cmake`` option.
    For further CMake options, see :doc:`cmake_options`.
 
 #. To run NEST, configure your environment with

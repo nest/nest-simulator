@@ -13,8 +13,7 @@ Choice of conda base installation
 
 We test NEST in conda environments using Miniconda installations and thus recommend
 that you do the same. The recommendations that we provide here will also likely work with a
-full-sized Anaconda installation, but we have no experience with it and will not be
-able to provide support for the latter case.
+full-sized Anaconda installation, but we can only provide limited support for this.
 
 You can either install
 

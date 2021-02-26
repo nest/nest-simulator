@@ -118,6 +118,8 @@ public:
   difference_type operator-( const iterator& ) const;
   difference_type operator-( const const_iterator& ) const;
 
+  iterator& operator=( const iterator& );
+
   reference operator[]( difference_type n ) const;
 
   bool operator==( const bv_iterator& ) const;
@@ -705,6 +707,17 @@ operator-( const const_iterator& other ) const
   auto this_element_index = block_it_ - block_vector_->blockmap_[ block_index_ ].begin();
   auto other_element_index = other.block_it_ - other.block_vector_->blockmap_[ other.block_index_ ].begin();
   return ( block_index_ - other.block_index_ ) * max_block_size + ( this_element_index - other_element_index );
+}
+
+template < typename value_type_, typename ref_, typename ptr_ >
+inline typename bv_iterator< value_type_, ref_, ptr_ >::iterator& bv_iterator< value_type_, ref_, ptr_ >::operator=(
+  const iterator& other )
+{
+  block_vector_ = other.block_vector_;
+  block_index_ = other.block_index_;
+  block_it_ = other.block_it_;
+  current_block_end_ = other.current_block_end_;
+  return *this;
 }
 
 template < typename value_type_, typename ref_, typename ptr_ >

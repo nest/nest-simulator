@@ -91,8 +91,9 @@ Parameters
 
 The following parameters can be set in the status dictionary:
 
-========  ======  ======================================================
- U        real    Maximum probability of release [0,1]
+========  ======  ========================================================
+ U        real    Parameter determining the increase in u with each spike
+                  [0,1]
  tau_psc  ms      Time constant of synaptic current
  tau_fac  ms      Time constant for facilitation
  tau_rec  ms      Time constant for depression
@@ -100,7 +101,7 @@ The following parameters can be set in the status dictionary:
                   releasable pool [0,1]
  y        real    Initial fraction of synaptic vesicles in the synaptic
                   cleft [0,1]
-========  ======  ======================================================
+========  ======  ========================================================
 
 References
 ++++++++++
@@ -138,7 +139,7 @@ public:
      * Copy constructor from a property object.
      * Needs to be defined properly in order for GenericConnector to work.
      */
-  TsodyksConnection( const TsodyksConnection& );
+  TsodyksConnection( const TsodyksConnection& ) = default;
 
   /**
    * Default Destructor.
@@ -281,21 +282,6 @@ TsodyksConnection< targetidentifierT >::TsodyksConnection()
   , y_( 0.0 )
   , u_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-TsodyksConnection< targetidentifierT >::TsodyksConnection( const TsodyksConnection& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , tau_psc_( rhs.tau_psc_ )
-  , tau_fac_( rhs.tau_fac_ )
-  , tau_rec_( rhs.tau_rec_ )
-  , U_( rhs.U_ )
-  , x_( rhs.x_ )
-  , y_( rhs.y_ )
-  , u_( rhs.u_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

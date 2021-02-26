@@ -39,6 +39,13 @@ from . import spatial_distributions   # noqa
 from . import logic                   # noqa
 from . import spatial                 # noqa needs to be imported last because of documentation generation
 
+try:
+    from . import server              # noqa
+except ImportError:
+    pass
+
+__version__ = ll_api.sli_func("statusdict /version get")
+
 
 def test():
     """Runs all PyNEST unit tests."""

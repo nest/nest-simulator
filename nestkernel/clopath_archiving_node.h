@@ -40,25 +40,25 @@ namespace nest
 {
 
 /**
- * \class Clopath_Archiving_Node
+ * \class ClopathArchivingNode
  * a archiving node which additionally archives parameters
- * needed for the Clopath plasticity rule
+ * and buffers needed for the Clopath plasticity rule
  */
-class Clopath_Archiving_Node : public Archiving_Node
+class ClopathArchivingNode : public ArchivingNode
 {
 
 public:
   /**
-   * \fn Clopath_Archiving_Node()
+   * \fn ClopathArchivingNode()
    * Constructor.
    */
-  Clopath_Archiving_Node();
+  ClopathArchivingNode();
 
   /**
-   * \fn Clopath_Archiving_Node()
+   * \fn ClopathArchivingNode()
    * Copy Constructor.
    */
-  Clopath_Archiving_Node( const Clopath_Archiving_Node& );
+  ClopathArchivingNode( const ClopathArchivingNode& );
 
   /**
    * \fn double get_LTD_value(long t)
@@ -75,8 +75,8 @@ public:
    */
   void get_LTP_history( double t1,
     double t2,
-    std::deque< histentry_cl >::iterator* start,
-    std::deque< histentry_cl >::iterator* finish );
+    std::deque< histentry_extended >::iterator* start,
+    std::deque< histentry_extended >::iterator* finish );
 
   /**
    * \fn double get_theta_plus()
@@ -121,8 +121,8 @@ protected:
   void set_status( const DictionaryDatum& d );
 
 private:
-  std::vector< histentry_cl > ltd_history_;
-  std::deque< histentry_cl > ltp_history_;
+  std::vector< histentry_extended > ltd_history_;
+  std::deque< histentry_extended > ltp_history_;
 
   double A_LTD_;
 
@@ -148,13 +148,13 @@ private:
 };
 
 inline double
-Clopath_Archiving_Node::get_theta_plus() const
+ClopathArchivingNode::get_theta_plus() const
 {
   return theta_plus_;
 }
 
 inline double
-Clopath_Archiving_Node::get_theta_minus() const
+ClopathArchivingNode::get_theta_minus() const
 {
   return theta_minus_;
 }

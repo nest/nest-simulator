@@ -76,10 +76,28 @@ Printing
 .. _indexing:
 
 Indexing
-    Indexing returns a new NodeCollection with a single node
+   Indexing returns a new NodeCollection with a single node
 
    >>>  print(nrns[3])
         NodeCollection(metadata=None, model=iaf_psc_alpha, size=1, first=3)
+
+   NodeCollections support array indexing. Array indexing is done by passing a list or tuple of
+   indices when indexing. A NodeCollection with the node IDs at the chosen indices is then returned.
+   Note that all indices must be strictly ascending and unique because all node IDs in a NodeCollection must be unique.
+
+   >>>  print(nrns[[1, 2, 5, 6]])
+        NodeCollection(metadata=None,
+                       model=iaf_psc_alpha, size=2, first=2, last=3;
+                       model=iaf_psc_alpha, size=2, first=6, last=7)
+
+
+   One may also pass a list or tuple of Booleans, where the returned NodeCollection contains the `True` elements
+   of the list or tuple. The length of the list of tuple of Booleans must be equal to the length of the NodeCollection.
+
+   >>>  print(nrns[[True, True, True, True, False, False, True, True, True, True]])
+        NodeCollection(metadata=None,
+                       model=iaf_psc_alpha, size=4, first=1, last=4;
+                       model=iaf_psc_alpha, size=4, first=7, last=10)
 
 .. _iterating:
 
@@ -128,7 +146,7 @@ Conversion to and from lists
     >>>  nrns.tolist()
          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    And you can create a NodeCollection by providing a list, tuple, numpy array or range of node IDs
+    And you can create a NodeCollection by providing a list, tuple, NumPy array or range of node IDs
 
     >>>  print(nest.NodeCollection([2, 3, 4, 8]))
          NodeCollection(metadata=None,
@@ -138,7 +156,8 @@ Conversion to and from lists
          NodeCollection(metadata=None, model=iaf_psc_alpha, size=3, first=1, last=3)
 
     Note however that the nodes have to be already created. If any
-    of the node IDs refer to a non existing node, an error is thrown.
+    of the node IDs refer to a non existing node, an error is thrown. Additionally each node ID can
+    only occur once and the list of node IDs must be sorted in ascending order.
 
 .. _composing:
 
@@ -295,8 +314,8 @@ To select fields at a deeper hierarchy level, use ``get(parameter_name, property
 this will return an array. You can also use ``get(parameter_name, [property_name_1, ..., property_name_n])``
 and get a dictionary with arrays.
 
->>>    sd = nest.Create('spike_detector')
->>>    sd.get('events', 'senders')
+>>>    sr = nest.Create('spike_recorder')
+>>>    sr.get('events', 'senders')
        array([], dtype=int64)
 
 Lastly, you can specify the output format (`pandas` and `JSON` for now). The
@@ -336,13 +355,33 @@ or a ``nest.Parameter``
 Note that some parameters, like `global_id`, cannot be set. The documentation of a specific model
 will point out which parameters can be set and which are read-only.
 
+
+Dictionary with lists when setting parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It is now possible to use a dictionary with lists when setting node parameters
+with ``Create()``, ``set()`` or ``SetStatus()``. The values of the lists will 
+be distributed across the nodes. The way to do this previously was to apply a
+list of dictionaries. This is still possible.
+
+The values in the single dictionary can also be single values; the value will
+then be applied to each node. You can mix and match as you want; the dictionary
+can contain lists and single values at the same time.
+
+::
+
+    parameter_list = {"I_e": [200.0, 150.0], "tau_m": 20.0, "V_m": [-77.0, -66.0]}
+    pop = nest.Create("iaf_psc_alpha", 2, params= {"I_e": [200.0, 150.0], "tau_m": 20.0, "V_m": [-77.0, -66.0]})
+
+    print(pop.get(["I_e", "tau_m", "V_m"]))
+
 .. _connect_arrays:
 
 New functionality for connecting arrays of node IDs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 While you should aim to use NodeCollections to create connections whenever possible,
-there may be cases where you have a predefined set of pairs of pre- and post-synaptic nodes.
+there may be cases where you have a predefined set of pairs of pre- and postsynaptic nodes.
 In those cases, it may be inefficient to convert the individual IDs in the pair to NodeCollections
 to be passed to the ``Connect()`` function, especially if there are thousands or millions of
 pairs to connect.
@@ -356,18 +395,17 @@ This variant of ``Connect()`` will create connections in a one-to-one fashion.
    # Node IDs in the arrays must address existing nodes, but may occur multiple times.
    sources = np.array([1, 5, 7, 5], dtype=np.uint64)
    targets = np.array([2, 2, 4, 4], dtype=np.uint64)
-   syn_spec = {'synapse_model': 'static_synapse'}
-   nest.Connect(sources, targets, syn_spec=syn_spec)
+   nest.Connect(sources, targets, conn_spec="one_to_one")
 
-The synapse model has to be specified. You can also specify weights, delays, and receptor type
-for each connection as arrays. All arrays have to have lengths equal to those of ``sources`` and ``targets``.
+You can also specify weights, delays, and receptor type for each connection as arrays.
+All arrays have to have lengths equal to those of ``sources`` and ``targets``.
 
 ::
 
    weights = np.array([0.5, 0.5, 2., 2.])
    delays = np.array([1., 1., 2., 2.])
-   syn_spec = {'weight': weights, 'delay': delays, 'synapse_model': 'static_synapse'}
-   nest.Connect(sources, targets, syn_spec=syn_spec)
+   syn_spec = {'weight': weights, 'delay': delays}
+   nest.Connect(sources, targets, conn_spec='one_to_one', syn_spec=syn_spec)
 
 
 .. _SynapseCollection:
@@ -394,19 +432,24 @@ as NodeCollections.
 
 .. seealso::
 
-    You can find a :doc:`full example <../examples/SynapseCollection>` in our example network page
+    You can find a :doc:`full example <../../auto_examples/synapsecollection>` in our example network page.
 
 Printing
-    Printing a SynapseCollection produces a table of source and target node IDs
+    Printing a SynapseCollection produces a table source and target node IDs, synapse model, weight and delay.
+    If your SynapseCollection has more than 36 elements, only the first and last 15 connections are displayed.
+    To print all, first set ``print_all = True`` on your SynapseCollection.
 
     >>>  nest.Connect(nodes[:2], nodes[:2])
     >>>  synColl = nest.GetConnections()
     >>>  print(synColl)
-         *--------*-------------*
-         | source | 1, 1, 2, 2, |
-         *--------*-------------*
-         | target | 1, 2, 1, 2, |
-         *--------*-------------*
+          source   target   synapse model   weight   delay
+         -------- -------- --------------- -------- -------
+               1        1  static_synapse    1.000   1.000
+               1        2  static_synapse    1.000   1.000
+               2        1  static_synapse    1.000   1.000
+               2        2  static_synapse    1.000   1.000
+
+    >>> synColl.print_all = True
 
 .. _conn_indexing:
 
@@ -415,11 +458,9 @@ Indexing
     Indexing returns a single connection SynapseCollection.
 
     >>>  print(synColl[1])
-         *--------*----*
-         | source | 1, |
-         *--------*----*
-         | target | 9, |
-         *--------*----*
+          source   target   synapse model   weight   delay
+         -------- -------- --------------- -------- -------
+               1        2  static_synapse    1.000   1.000
 
 .. _conn_iterating:
 
@@ -440,11 +481,10 @@ Slicing
     A SynapseCollection can be sliced with ``start:stop:step`` inside brackets
 
     >>>  print(synColl[0:3:2])
-         *--------*-------*
-         | source | 1, 2, |
-         *--------*-------*
-         | target | 1, 1, |
-         *--------*-------*
+         source   target   synapse model   weight   delay
+        -------- -------- --------------- -------- -------
+              1        1  static_synapse    1.000   1.000
+              2        1  static_synapse    1.000   1.000
 
 .. _conn_size:
 
@@ -542,6 +582,21 @@ Setting and getting attributes directly
     If you use a list to set the parameter, the list needs to be the same length
     as the SynapseCollection.
 
+    For :ref:`spatially distributed <topo_changes>` sources and targets, you can access the distance between
+    the source-target pairs by calling `distance` on your SynapseCollection.
+
+    >>>  synColl.distance
+         (0.47140452079103173,
+          0.33333333333333337,
+          0.4714045207910317,
+          0.33333333333333337,
+          3.925231146709438e-17,
+          0.33333333333333326,
+          0.4714045207910317,
+          0.33333333333333326,
+          0.47140452079103157)
+
+
 .. _conn_s_t_iterator:
 
 Iterator of sources and targets
@@ -550,6 +605,54 @@ Iterator of sources and targets
 
     >>>  print([s*3 for s in synColl.sources()])
          [3, 3, 6, 6]
+
+.. _collocated_synapses
+
+Collocated synapses
+~~~~~~~~~~~~~~~~~~~
+It is now possible to create connections with several synapses simultaneously. The different synapse dictionaries will
+then be applied to each source-target pair. To create these collocated synapses, ``CollocatedSynapses()`` must be used
+as the `syn_spec` argument of ``Connect``, instead of the usual syn_spec dictionary argument. ``CollocatedSynapses()``
+takes dictionaries as arguments.
+
+  ::
+
+    nodes = nest.Create('iaf_psc_alpha', 3)
+    syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
+                                       {'synapse_model': 'stdp_synapse'},
+                                       {'synapse_model': 'stdp_synapse', 'alpha': 3.})
+    nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
+
+    conns = nest.GetConnections()
+    print(conns.alpha)
+
+This will create 9 connections: 3 using `static_synapse` with a `weight` of `4` and `delay` of `1.5`, and 6 using
+the `stdp_synapse`. Of the 6 using `stdp_synapse`, 3 will have the default alpha value, and 3 will have an alpha of
+`3.0`.
+
+  >>> print(nest.GetKernelStatus('num_connections'))
+  9
+
+If you want to connect with different receptor types, you can do the following:
+
+  ::
+
+    src = nest.Create('iaf_psc_exp_multisynapse', 7)
+    trgt = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1 + i for i in range(7)]})
+
+    syn_spec = nest.CollocatedSynapses({'weight': 5.0, 'receptor_type': 2},
+                                       {'weight': 1.5, 'receptor_type': 7})
+
+    nest.Connect(src, trgt, 'one_to_one', syn_spec=syn_spec)
+
+    conns = nest.GetConnections()
+    print(conns.get())
+
+You can see how many synapse parameters you have by doing `len()` on your `CollocatedSynapses` object:
+
+  >>> len(syn_spec)
+  2
+
 
 .. _param_ex:
 
@@ -936,7 +1039,7 @@ statement. Three arguments are required:
 
 ::
 
-    # A heaviside step function with uniformly distributed input values.
+    # A Heaviside step function with uniformly distributed input values.
     nest.logic.conditional(nest.random.uniform(min=-1., max=1.) < 0., 0., 1.)
 
 .. code-block:: ipython
@@ -1057,7 +1160,7 @@ Topology module
    See the reference section :ref:`topo_ref` in our conversion guide for all changes made to functions
 
 All of the functionality of Topology has been moved to the standard
-functions. In fact, there is no longer a Topology module in PyNEST. The
+functions. In fact, there is no longer a Topology module in NEST. The
 functions for creating spatially arranged neuronal networks are now in the ``nest`` module.
 
 Create spatially distributed nodes
@@ -1140,8 +1243,8 @@ a value based on the nodes' position on the x-axis:
 ::
 
     snodes = nest.Create('iaf_psc_alpha', 10
-                        positions=nest.spatial.free(
-                            nest.random.uniform(min=-10., max=10.), num_dimensions=2))
+                         positions=nest.spatial.free(
+                             nest.random.uniform(min=-10., max=10.), num_dimensions=2))
     snodes.set('V_m', -60. + nest.spatial.pos.x)
 
 
@@ -1281,8 +1384,39 @@ probability and delay, and random weights from a normal distribution:
   |                                                                  |                                                                     |
   +------------------------------------------------------------------+---------------------------------------------------------------------+
 
-Improved infrastructure for handling recordings
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Masks
+^^^^^
+In NEST 3.0, the mask ``volume`` got removed, as the same mask was already available under the name ``box``.
+The former was only an alias available in NEST for backward compatibility.
+
+Retrieving distance information
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If you have a SynapseCollection with connections from a spatially distributed network, you can retrieve the
+*distance* between the source-target pairs by calling ``.distance`` on the SynapseCollection.
+
+  ::
+
+    s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[3, 1]))
+    t_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[1, 3]))
+    nest.Connect(s_nodes, t_nodes)
+
+    conns = nest.GetConnections()
+    dist = conns.distance
+
+``.distance`` will be a tuple of the same length as your SynapseCollection, where ``dist[indx]`` will be the distance
+between the source-target pair at *indx*.
+
+Calling ``.distance`` on a SynapseCollection where either the source or target, or both, are not spatially
+distributed also works, you will receive `nan` whenever one of the nodes is non-spatial.
+
+Recording from simulations
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `spike_detector` has been renamed to `spike_recorder`. The main
+rationale behind this is that the device is actually not detecting the
+occurence of spikes, but rather only records them. Moreover, the new
+name is more consistent with the naming of other similar devices that
+also end in the suffix `_recorder`.
 
 In NEST 2.x, all recording modalities (i.e. *screen*, *memory*, and
 *files*) were handled by a single C++ class. Due to the many different
@@ -1318,24 +1452,30 @@ The following examples assume that the variable `mm` points to a
 was executed.
 
 
-  +------------------------------------------------------+--------------------------------+
-  | NEST 2.x                                             | NEST 3.0                       |
-  +------------------------------------------------------+--------------------------------+
-  |                                                      |                                |
-  | ::                                                   | ::                             |
-  |                                                      |                                |
-  |     nest.SetStatus(mm, {'record_to': ["file"]})      |     mm.record_to = "ascii"     |
-  |     nest.SetStatus(mm, {'record_to': ["screen"]})    |     mm.record_to = "screen"    |
-  |     nest.SetStatus(mm, {'record_to': ["memory"]})    |     mm.record_to = "memory"    |
-  |                                                      |                                |
-  +------------------------------------------------------+--------------------------------+
-  | ::                                                   | ::                             |
-  |                                                      |                                |
-  |     nest.SetStatus(mm, {'to_file': True})            |     mm.record_to = "ascii"     |
-  |     nest.SetStatus(mm, {'to_screen': True})          |     mm.record_to = "screen"    |
-  |     nest.SetStatus(mm, {'to_memory': True})          |     mm.record_to = "memory"    |
-  |                                                      |                                |
-  +------------------------------------------------------+--------------------------------+
+  +------------------------------------------------------+------------------------------------+
+  | NEST 2.x                                             | NEST 3.0                           |
+  +------------------------------------------------------+------------------------------------+
+  |                                                      |                                    |
+  | ::                                                   | ::                                 |
+  |                                                      |                                    |
+  |     nest.SetStatus(mm, {'record_to': ["file"]})      |     mm.record_to = "ascii"         |
+  |     nest.SetStatus(mm, {'record_to': ["screen"]})    |     mm.record_to = "screen"        |
+  |     nest.SetStatus(mm, {'record_to': ["memory"]})    |     mm.record_to = "memory"        |
+  |                                                      |                                    |
+  +------------------------------------------------------+------------------------------------+
+  | ::                                                   | ::                                 |
+  |                                                      |                                    |
+  |     nest.SetStatus(mm, {'to_file': True})            |     mm.record_to = "ascii"         |
+  |     nest.SetStatus(mm, {'to_screen': True})          |     mm.record_to = "screen"        |
+  |     nest.SetStatus(mm, {'to_memory': True})          |     mm.record_to = "memory"        |
+  |                                                      |                                    |
+  +------------------------------------------------------+------------------------------------+
+  |                                                      |                                    |
+  | ::                                                   | ::                                 |
+  |                                                      |                                    |
+  |     nest.Create('spike_detector')                    |     nest.Create('spike_recorder')  |
+  |                                                      |                                    |
+  +------------------------------------------------------+------------------------------------+
 
 You can retrieve the list of available backends using the following command:
 
@@ -1367,8 +1507,6 @@ All details about the new infrastructure can be found in the guide on
 
 What's removed?
 ---------------
-
-.. subnet_rm::
 
 Subnets
 ~~~~~~~
@@ -1402,8 +1540,6 @@ prints ID ranges and model names of the nodes in the network.
   |                                              |                                       |
   +----------------------------------------------+---------------------------------------+
 
-.. model_rm::
-
 Models
 ~~~~~~
 
@@ -1427,14 +1563,13 @@ be used instead.
 Furthermore, the model `iaf_tum_2000` has been renamed to `iaf_psc_exp_htum`. iaf_psc_exp_htum is
 the exact same model as iaf_tum_2000, it has just been renamed to match NEST's naming conventions.
 
-.. function_rm::
-
 Functions
 ~~~~~~~~~
 
 Some functions have also been removed. The removed functions where either related to subnets,
 or they can be replaced by using other functions with indexing into a NodeCollection.
-The removed functions are (see also :doc:`../ref_material/nest2_vs_3` for a full list of functions that have changed):
+The removed functions are (see also :doc:`nest2_to_nest3_detailed_transition_guide`
+for a full list of functions that have changed):
 
 - BeginSubnet
 - ChangeSubnet

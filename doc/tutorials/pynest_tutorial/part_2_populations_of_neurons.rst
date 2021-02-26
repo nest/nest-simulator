@@ -23,8 +23,8 @@ sections of this primer:
    networks <part_1_neurons_and_simple_neural_networks>`
 -  :doc:`Part 3: Connecting networks with
    synapses <part_3_connecting_networks_with_synapses>`
--  :doc:`Part 4: Topologically structured
-   networks <part_4_topologically_structured_networks>`
+-  :doc:`Part 4: Spatially structured
+   networks <part_4_spatially_structured_networks>`
 
 More advanced examples can be found at `Example
 Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
@@ -109,13 +109,16 @@ populations and will also be returned by the function ``Models()``.
 It is also possible to create populations with an inhomogeneous set of
 parameters. You would typically create the complete set of parameters,
 depending on experimental constraints, and then create all the neurons
-in one go. To do this supply a dictionaries with lists of the same length
-as the number of neurons (or synapses) created:
+in one go. To do this, supply a dictionary with lists the same length
+as the number of neurons (or synapses) created. The dictionary can also
+contain single values, which will then be applied to each node.
 
 ::
 
-    parameter_list = {"I_e": [200.0, 150.0], "tau_m": [20.0, 30.0]}
-    epop3 = nest.Create("exc_iaf_psc_alpha", 2, parameter_list)
+    parameter_dict = {"I_e": [200.0, 150.0], "tau_m": 20.0, "V_m": [-77.0, -66.0]}
+    pop3 = nest.Create("iaf_psc_alpha", 2, params=parameter_dict)
+
+    print(pop3.get(["I_e", "tau_m", "V_m"]))
 
 Setting parameters for populations of neurons
 ---------------------------------------------

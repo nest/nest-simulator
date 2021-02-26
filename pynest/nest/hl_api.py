@@ -44,10 +44,8 @@ _il.import_libs(__file__, globals(), 'lib', ignore=_ignore_modules)
 # With '__all__' we provide an explicit index of the package. Without any
 # imported submodules and any redundant functions we could minimize list.
 __all__ = [
-    'CGConnect',
-    'CGParse',
-    'CGSelectImplementation',
     'Cleanup',
+    'CollocatedSynapses',
     'Connect',
     'ConnectionRules',
     'SynapseCollection',
@@ -71,7 +69,6 @@ __all__ = [
     'GetNodes',
     'GetPosition',
     'GetStatus',
-    'GetStructuralPlasticityStatus',
     'GetTargetNodes',
     'GetTargetPositions',
     'NodeCollection',
@@ -95,7 +92,6 @@ __all__ = [
     'SetKernelStatus',
     'SetMaxBuffered',
     'SetStatus',
-    'SetStructuralPlasticityStatus',
     'Simulate',
     'authors',
     'get_verbosity',
@@ -104,5 +100,4 @@ __all__ = [
     'message',
     'set_verbosity',
     'sysinfo',
-    'version',
 ]

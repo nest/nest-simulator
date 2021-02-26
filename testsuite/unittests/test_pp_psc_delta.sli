@@ -64,7 +64,7 @@ Description:
 
 Remarks:
 
-  This test script is based on the python version 
+  This test script is based on the Python version 
   
       test_pp_psc_delta.py
       
@@ -72,7 +72,7 @@ Remarks:
   
       test_iaf_dc_aligned.sli
       
-  as a guideline. The commented code is the original python test code.
+  as a guideline. The commented code is the original Python test code.
   
   Test 5) was added later (2014), when support for several adaptation time 
   constants was added to pp_psc_delta.
@@ -123,12 +123,12 @@ SeeAlso: pp_psc_delta
     
     nrn params SetStatus
     
-    /spike_detector Create /sd Set
+    /spike_recorder Create /sr Set
 
-    nrn sd Connect
+    nrn sr Connect
     T Simulate
     
-    sd /events get /times get /spikes Set
+    sr /events get /times get /spikes Set
 
     % rate_sim = size(spikes) / (T*1e-3)
     spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
@@ -191,12 +191,12 @@ SeeAlso: pp_psc_delta
 
 
 
-    /spike_detector Create /sd Set
+    /spike_recorder Create /sr Set
 
-    nrn sd Connect
+    nrn sr Connect
     T Simulate
 
-    sd /events get /times get /spikes Set
+    sr /events get /times get /spikes Set
 
 
     % rate_sim = size(spikes) / (T*1e-3)
@@ -287,12 +287,12 @@ SeeAlso: pp_psc_delta
     
     nrn params SetStatus
     
-    /spike_detector Create /sd Set
+    /spike_recorder Create /sr Set
     
-    nrn sd Connect
+    nrn sr Connect
     T Simulate
 
-    sd /events get /times get /spikes Set
+    sr /events get /times get /spikes Set
 
     % rate_sim = size(spikes) / (T*1e-3)
     spikes cva size T 1e-3 mul div /rate_sim Set /spikes_array Set
@@ -408,11 +408,11 @@ SeeAlso: pp_psc_delta
     nrn1 params1 SetStatus
     nrn2 params2 SetStatus
 
-    /spike_detector Create /sd1 Set
-    /spike_detector Create /sd2 Set
+    /spike_recorder Create /sr1 Set
+    /spike_recorder Create /sr2 Set
 
-    nrn1 sd1 Connect
-    nrn2 sd2 Connect
+    nrn1 sr1 Connect
+    nrn2 sr2 Connect
 
     <<
       /weight  -1 J_self mul
@@ -424,8 +424,8 @@ SeeAlso: pp_psc_delta
     
     T Simulate
 
-    sd1 /n_events get /n1 Set
-    sd2 /n_events get /n2 Set
+    sr1 /n_events get /n1 Set
+    sr2 /n_events get /n2 Set
 
     n1 cvd n2 cvd div /ratio Set
     1.0 err sub ratio lt

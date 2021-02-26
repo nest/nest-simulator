@@ -40,23 +40,23 @@ M_ERROR setverbosity
 /build_network
 {
   /pp_psc_delta << /tau_sfa 34. /q_sfa 0. >> Create dup /n Set
-  /spike_detector Create dup /sd Set
+  /spike_recorder Create dup /sr Set
   Connect
-  sd
+  sr
 } 
 def
 
 {
   ResetKernel
-  build_network /sd Set
+  build_network /sr Set
   10000 Simulate
-  sd [[/n_events]] get 
+  sr [[/n_events]] get 
   dup (Results 1 x 10000ms: ) =only ==
   
   ResetKernel
-  build_network /sd Set
+  build_network /sr Set
   1000 { 10 Simulate } repeat
-  sd [[/n_events]] get
+  sr [[/n_events]] get
   dup (Results 1000 x 10ms: ) =only ==
 
   eq

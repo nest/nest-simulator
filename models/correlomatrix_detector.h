@@ -140,7 +140,7 @@ SpikeEvent
 See also
 ++++++++
 
-correlation_detector, spike_detector
+correlation_detector, spike_recorder
 
 EndUserDocs */
 
@@ -235,6 +235,8 @@ private:
 
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
+
+    Parameters_& operator=( const Parameters_& );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 

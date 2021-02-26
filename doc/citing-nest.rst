@@ -1,3 +1,5 @@
+:orphan:
+
 Cite NEST
 =========
 
@@ -9,7 +11,9 @@ For the full citation and additional formats follow the doi Zenodo link.
 
 Cite the version you used in your work:
 
-Fardet, Tanguy et al. (2019). **NEST 2.20.0** Zenodo. https://doi.org/10.5281/zenodo.3605514
+Fardet, Tanguy et al. (2020). **NEST 2.20.1** Zenodo. https://doi.org/10.5281/zenodo.4018718
+
+Fardet, Tanguy et al. (2020). **NEST 2.20.0** Zenodo. https://doi.org/10.5281/zenodo.3605514
 
 Jordan, Jakob et al. (2019). **NEST 2.18.0** Zenodo. https://doi.org/10.5281/zenodo.2605422
 

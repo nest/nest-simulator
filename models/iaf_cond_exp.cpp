@@ -202,12 +202,16 @@ void
 nest::iaf_cond_exp::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
+  def< double >( d, names::g_ex, y_[ G_EXC ] );
+  def< double >( d, names::g_in, y_[ G_INH ] );
 }
 
 void
 nest::iaf_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
+  updateValueParam< double >( d, names::g_ex, y_[ G_EXC ], node );
+  updateValueParam< double >( d, names::g_in, y_[ G_INH ], node );
 }
 
 nest::iaf_cond_exp::Buffers_::Buffers_( iaf_cond_exp& n )
@@ -235,7 +239,7 @@ nest::iaf_cond_exp::Buffers_::Buffers_( const Buffers_&, iaf_cond_exp& n )
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_exp::iaf_cond_exp()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -244,7 +248,7 @@ nest::iaf_cond_exp::iaf_cond_exp()
 }
 
 nest::iaf_cond_exp::iaf_cond_exp( const iaf_cond_exp& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -285,7 +289,7 @@ nest::iaf_cond_exp::init_buffers_()
   B_.spike_exc_.clear(); // includes resize
   B_.spike_inh_.clear(); // includes resize
   B_.currents_.clear();  // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.logger_.reset();
 

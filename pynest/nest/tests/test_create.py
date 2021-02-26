@@ -32,10 +32,11 @@ import nest
 class CreateTestCase(unittest.TestCase):
     """Creation tests"""
 
+    def setUp(self):
+        nest.ResetKernel()
+
     def test_ModelCreate(self):
         """Model Creation"""
-
-        nest.ResetKernel()
 
         for model in nest.Models(mtype='nodes'):
             node = nest.Create(model)
@@ -43,8 +44,6 @@ class CreateTestCase(unittest.TestCase):
 
     def test_ModelCreateN(self):
         """Model Creation with N"""
-
-        nest.ResetKernel()
 
         num_nodes = 10
         for model in nest.Models(mtype='nodes'):
@@ -54,24 +53,32 @@ class CreateTestCase(unittest.TestCase):
     def test_ModelCreateNdict(self):
         """Model Creation with N and dict"""
 
-        nest.ResetKernel()
-
         num_nodes = 10
         voltage = 12.0
         n = nest.Create('iaf_psc_alpha', num_nodes, {'V_m': voltage})
 
         self.assertEqual(nest.GetStatus(n, 'V_m'), (voltage, ) * num_nodes)
 
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
-            self.assertRaises(TypeError, nest.Create,
-                              'iaf_psc_alpha', 10, tuple())
-            self.assertTrue(issubclass(w[-1].category, UserWarning))
+    def test_erroneous_param_to_create(self):
+        """Erroneous param to Create raises exception"""
+        num_nodes = 3
+        nest_errors = nest.kernel.NESTErrors
+        params = [(tuple(), TypeError),
+                  ({'V_m': [-50]}, IndexError),
+                  ({'V_mm': num_nodes*[-50.]}, nest_errors.DictError),
+                  ({'V_m': num_nodes*[-50]}, nest_errors.TypeMismatch),
+                  ({'V_m': -50, 'C_m': num_nodes*[20.]}, nest_errors.TypeMismatch),
+                  ]
+
+        for p, err in params:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter('always')
+                self.assertRaises(err, nest.Create, 'iaf_psc_alpha', num_nodes, p)
+                self.assertEqual(len(w), 1, 'warning was not issued')
+                self.assertTrue(issubclass(w[0].category, UserWarning))
 
     def test_ModelDicts(self):
         """IAF Creation with N and dicts"""
-
-        nest.ResetKernel()
 
         num_nodes = 10
         V_m = (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
@@ -81,8 +88,6 @@ class CreateTestCase(unittest.TestCase):
 
     def test_CopyModel(self):
         """CopyModel"""
-
-        nest.ResetKernel()
 
         nest.CopyModel('iaf_psc_alpha', 'new_neuron', {'V_m': 10.0})
         vm = nest.GetDefaults('new_neuron')['V_m']

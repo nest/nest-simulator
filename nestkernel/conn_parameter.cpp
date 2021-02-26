@@ -39,9 +39,6 @@
 nest::ConnParameter*
 nest::ConnParameter::create( const Token& t, const size_t nthreads )
 {
-  // Code grabbed from TopologyModule::create_parameter()
-  // See there for a more general solution
-
   // single double
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
   if ( dd )
@@ -106,6 +103,8 @@ nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec, const s
 
   rdv_ = factory->create();
   rdv_->set_status( rdv_spec );
+
+  provides_long_ = rdv_->has_ldev();
 }
 
 

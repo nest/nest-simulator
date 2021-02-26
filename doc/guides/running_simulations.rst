@@ -11,7 +11,7 @@ resolution* (default 0.1ms) and can be set using ``SetKernelStatus``:
 
 ::
 
-    SetKernelStatus("resolution", 0.1)
+    SetKernelStatus({"resolution": 0.1})
 
 Even though a neuron model can use smaller time steps internally, the
 membrane potential will only be visible to a ``multimeter`` on the
@@ -85,12 +85,11 @@ the easiest way to assert its integrity is to not change its size after
 initialization. Thus, we freeze the delay extrema after the first call
 to ``Simulate``. To still allow adding new connections inbetween calls
 to ``Simulate``, the required boundaries of delays can be set manually
-using ``SetKernelStatus`` (Please note that the delay extrema are set as
-properties of the synapse model):
+using ``SetKernelStatus``:
 
 ::
 
-    SetDefaults("static_synapse", {"min_delay": 0.5, "max_delay": 2.5})
+    SetKernelStatus({"min_delay": 0.5, "max_delay": 2.5})
 
 These settings should be used with care, though: setting the delay
 extrema too wide without need leads to decreased performance due to more
@@ -113,7 +112,7 @@ end of the interval* during which the threshold was crossed.
 
 NEST also has a some models that determine the precise time of the
 threshold crossing during the interval. Please see the documentation on
-:doc:`precise spike time neurons <simulations_with_precise_spike_time>`
+:doc:`precise spike time neurons <simulations_with_precise_spike_times>`
 for details about neuron update in continuous time and the
 :doc:`documentation on connection management <connection_management>`
 for how to set the delay when creating synapses.
@@ -191,12 +190,12 @@ a Poisson spike train using different seeds and output files for each run:
                               'rng_seeds': [100*n + 2]})
         pg = nest.Create('poisson_generator', params={'rate': 1000000.0})
         nrn= nest.Create('iaf_psc_alpha')
-        sd = nest.Create('spike_detector',
+        sr = nest.Create('spike_recorder',
                             params={'label': 'spikes-run{:02d}'.format(n),
                                     'record_to': 'ascii'})
     
         nest.Connect(pg, nrn)
-        nest.Connect(nrn, sd)
+        nest.Connect(nrn, sr)
     
         nest.Simulate(100)
 

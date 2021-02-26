@@ -67,9 +67,9 @@ Description
 +++++++++++
 
 iaf_cond_exp is an implementation of a spiking neuron using IAF dynamics with
-conductance-based synapses. Incoming spike events induce a post-synaptic change
+conductance-based synapses. Incoming spike events induce a postsynaptic change
 of conductance modelled by an exponential function. The exponential function
-is normalised such that an event of weight 1.0 results in a peak conductance of
+is normalized such that an event of weight 1.0 results in a peak conductance of
 1 nS.
 
 Parameters
@@ -87,8 +87,10 @@ The following parameters can be set in the status dictionary.
  E_ex       mV      Excitatory reversal potential
  E_in       mV      Inhibitory reversal potential
  g_L        nS      Leak conductance
- tau_syn_ex ms      Rise time of the excitatory synaptic alpha function
- tau_syn_in ms      Rise time of the inhibitory synaptic alpha function
+ tau_syn_ex ms      Exponential decay time constant of excitatory synaptic
+                    conductance kernel
+ tau_syn_in ms      Exponential decay time constant of inhibitory synaptic
+                    conductance kernel
  I_e        pA      Constant input current
 =========== ======  =======================================================
 
@@ -118,7 +120,7 @@ iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
 EndUserDocs*/
 
-class iaf_cond_exp : public Archiving_Node
+class iaf_cond_exp : public ArchivingNode
 {
 
 public:
@@ -178,8 +180,8 @@ private:
     double E_ex;     //!< Excitatory reversal Potential in mV
     double E_in;     //!< Inhibitory reversal Potential in mV
     double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double tau_synE; //!< Time constant for excitatory synaptic kernel in ms
+    double tau_synI; //!< Time constant for inhibitory synaptic kernel in ms
     double I_e;      //!< Constant Current in pA
 
     Parameters_(); //!< Sets default parameter values
@@ -336,7 +338,7 @@ iaf_cond_exp::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -353,7 +355,7 @@ iaf_cond_exp::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

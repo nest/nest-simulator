@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # generate_helpindex.py
@@ -33,7 +33,7 @@ import sys
 from writers import write_helpindex
 
 if len(sys.argv) != 2:
-    print("Usage: python generate_helpindex.py <help_dir>")
+    print("Usage: python3 generate_helpindex.py <help_dir>")
     sys.exit(1)
 
 help_dir = os.path.join(sys.argv[1], "help")

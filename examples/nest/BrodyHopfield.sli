@@ -53,10 +53,10 @@ ResetKernel
 
 /ac_generator       Create /drive   Set
 /noise_generator    Create /noise   Set
-/spike_detector     Create /sd      Set
+/spike_recorder     Create /sr      Set
 /iaf_psc_alpha   N  Create /neurons Set
 
-sd << /record_to /ascii >> SetStatus
+sr << /record_to /ascii >> SetStatus
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -95,6 +95,6 @@ noise
 
 drive   neurons Connect
 noise   neurons Connect
-neurons sd      Connect
+neurons sr      Connect
 
 T Simulate

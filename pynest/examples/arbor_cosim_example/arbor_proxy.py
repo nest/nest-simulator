@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/env python3
 
 # arbor_proxy.py simulates an Arbor run with MPI spike exchange to external
 # NEST. Reimplementation of the C++ version of Peyser implemented in pure

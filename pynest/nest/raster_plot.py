@@ -165,7 +165,7 @@ def from_file_numpy(fname, **kwargs):
 
 def from_device(detec, **kwargs):
     """
-    Plot raster from a spike detector.
+    Plot raster from a spike recorder.
 
     Parameters
     ----------
@@ -180,8 +180,8 @@ def from_device(detec, **kwargs):
     """
 
     type_id = nest.GetDefaults(detec.get('model'), 'type_id')
-    if not type_id == "spike_detector":
-        raise nest.kernel.NESTError("Please provide a spike_detector.")
+    if not type_id == "spike_recorder":
+        raise nest.kernel.NESTError("Please provide a spike_recorder.")
 
     if detec.get('record_to') == "memory":
 

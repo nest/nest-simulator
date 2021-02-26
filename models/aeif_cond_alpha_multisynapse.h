@@ -59,7 +59,7 @@ constants, and synaptic conductance modeled by an alpha function.
 
 It allows an arbitrary number of synaptic time constants. Synaptic
 conductance is modeled by an alpha function, as described by A. Roth
-and M.C.W. van Rossum in Computational Modeling Methods for
+and M. C. W. van Rossum in Computational Modeling Methods for
 Neuroscientists, MIT Press 2013, Chapter 6.
 
 The time constants are supplied by an array, "tau_syn", and the pertaining
@@ -170,7 +170,7 @@ namespace nest
  */
 extern "C" int aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
 
-class aeif_cond_alpha_multisynapse : public Archiving_Node
+class aeif_cond_alpha_multisynapse : public ArchivingNode
 {
 
 public:
@@ -226,16 +226,16 @@ private:
     double g_L;     //!< Leak Conductance in nS
     double C_m;     //!< Membrane Capacitance in pF
     double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T; //!< Slope faktor in ms.
-    double tau_w;   //!< adaptation time-constant in ms.
-    double a;       //!< Subthreshold adaptation in nS.
+    double Delta_T; //!< Slope factor in ms
+    double tau_w;   //!< Adaptation time-constant in ms
+    double a;       //!< Subthreshold adaptation in nS
     double b;       //!< Spike-triggered adaptation in pA
-    double V_th;    //!< Spike threshold in mV.
+    double V_th;    //!< Spike threshold in mV
 
-    std::vector< double > tau_syn; //!< Synaptic time constants in ms.
-    std::vector< double > E_rev;   //!< reversal potentials in mV
+    std::vector< double > tau_syn; //!< Synaptic time constants in ms
+    std::vector< double > E_rev;   //!< Reversal potentials in mV
 
-    double I_e; //!< Intrinsic current in pA.
+    double I_e; //!< Intrinsic current in pA
 
     double gsl_error_tol; //!< error bound for GSL integrator
 
@@ -424,7 +424,7 @@ aeif_cond_alpha_multisynapse::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }

@@ -87,7 +87,7 @@ public:
   enum Type
   {
     MULTIMETER,
-    SPIKE_DETECTOR,
+    SPIKE_RECORDER,
     SPIN_DETECTOR,
     WEIGHT_RECORDER
   };
@@ -110,7 +110,7 @@ private:
     Name record_to_;    //!< The name of the recording backend to use
 
     Parameters_();
-    Parameters_( const Parameters_& );
+    Parameters_( const Parameters_& ) = default;
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum& );
   } P_;

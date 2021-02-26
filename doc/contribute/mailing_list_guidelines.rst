@@ -1,5 +1,7 @@
+:orphan:
+
 Guidelines for contributing to the mailing list
-=================================================
+===============================================
 
 To ensure community members provide accurate and quick responses to questions on the mailing list,
 please follow the guidelines below:
@@ -39,5 +41,4 @@ knowledge and experience to those seeking advice.
 
 `Access the mailing list here <https://www.nest-initiative.org/mailinglist/>`_
 ------------------------------------------------------------------------------------
-
 

@@ -11,9 +11,9 @@ Basic conda setup
 Choice of conda base installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We test NEST in conda enviroments using Miniconda installations and thus recommend
-that you do the same. The recommendations given here work most likely also with a
-full-sized Anaconda installation, but we have no experience with and will not be
+We test NEST in conda environments using Miniconda installations and thus recommend
+that you do the same. The recommendations that we provide here will also likely work with a
+full-sized Anaconda installation, but we have no experience with it and will not be
 able to provide support for the latter case.
 
 You can either install
@@ -21,9 +21,9 @@ You can either install
 - Miniconda from `<https://docs.conda.io/en/latest/miniconda.html>`_
 - Miniforge from `<https://github.com/conda-forge/miniforge>`_
 
-For Apple systems with M1 chip, you must at present use Miniforge and 
+For Apple systems with an M1 chip, you must at present use Miniforge and 
 select the ``arm64 (Apple Silicon)`` installer to create a conda environment
-supporting native builds of NEST.
+that will support native builds of NEST.
 
 
 Keep your base environment empty
@@ -60,7 +60,7 @@ Creating a Conda environment for running and building NEST
 ----------------------------------------------------------
 
 If you want to compile NEST yourself, you can create an environment containing all necessary 
-software for running and building NEST by executing this from the NEST source directory
+software for running and building NEST by executing the following command from the NEST source directory
 
 .. code:: sh
 

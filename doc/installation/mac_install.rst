@@ -2,7 +2,7 @@ Building NEST on macOS
 ======================
 
 Building NEST on macOS requires some developer tools. There are several sources from
-which you can install them, e.g., Conda, Homebrew or MacPorts. The most important
+which you can install them, e.g., Conda, Homebrew, or MacPorts. The most important
 recommendation for an easy and stable build is *not to mix tools from different sources*.
 This includes your Python installation: Taking Python from Conda and all else from Homebrew
 may work, but can also lead to various complications.
@@ -45,7 +45,7 @@ Preparations
 
    a. If you do not yet have a self-signed code-signing certificate, create one as described here:
       `<https://gcc.gnu.org/onlinedocs/gcc-4.8.1/gnat_ugn_unw/Codesigning-the-Debugger.html>`__
-      (restart appears not necessary any more).
+      (restarting does not appear to be necessary any more).
    b. Sign your binaries
 
       .. code:: sh
@@ -86,7 +86,7 @@ Building NEST
    You can find the ``<conda enviroment path>`` for the currently active conda environment by running
    ``conda info`` and looking for the "active env location" entry in the output.
 
-#. Compile, install and verify NEST with
+#. Compile, install, and verify NEST with
 
    .. code-block:: sh
 
@@ -111,8 +111,8 @@ Conda with Intel MKL
 ~~~~~~~~~~~~~~~~~~~~
 
 A default installation of Anaconda or Miniconda will install a version of NumPy
-build on the Intel Math Kernel Library (MKL). This library uses a different OpenMP
-library to support threading than included with Apple Clang or GCC. This will lead
+built on the Intel Math Kernel Library (MKL). This library uses a different OpenMP
+library to support threading than what's included with Apple Clang or GCC. This will lead
 to conflicts if NEST is built with support for threading, which is the default and
 usually desirable. One way to avoid this is to follow the instructions above. An
 alternative is to create a conda environment in which you install ``nomkl`` as *the

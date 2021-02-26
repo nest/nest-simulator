@@ -14,7 +14,7 @@ path.
 Choice of compiler
 ------------------
 
-We systematically test NEST using the GNU gcc and the Clang compiler suits.
+We systematically test NEST using the GNU gcc and the Clang compiler suites.
 Compilation with other up-to-date compilers should also work, but we do not
 regularly test against those compilers and can provide only limited support.
 

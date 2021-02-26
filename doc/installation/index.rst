@@ -7,7 +7,7 @@ Standard installation
 These installation instructions should work for most users who do
 not need custom configurations for their systems. If you want to
 compile NEST from source, check the :ref:`advanced_install` section
-and :doc:`compilation_options`.
+and :doc:`cmake_options`.
 
 .. tabs::
 
@@ -317,7 +317,7 @@ these instructions.**
 
        Download the source code for the  `current release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
 
-       Follow instructions for :doc:`linux_install` and take a look at our :doc:`compilation_options`.
+       Follow instructions for :doc:`linux_install` and take a look at our :doc:`cmake_options`.
 
 
    .. tab:: GitHub
@@ -342,4 +342,4 @@ these instructions.**
    mac_install
    hpc_install
    livemedia
-   install_options
+   cmake_options

@@ -1,5 +1,5 @@
-Compilation Options
-===================
+CMake Options for NEST
+======================
 
 NEST is installed with ``cmake`` (at least v3.12). In the simplest case, the commands::
 

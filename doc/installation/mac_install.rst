@@ -95,7 +95,7 @@ Building NEST
       make installcheck
 
    To compile NEST with MPI support, add ``-Dwith-mpi=ON`` as ``cmake`` option.
-   For further CMake options, see :doc:`compilation_options`.
+   For further CMake options, see :doc:`cmake_options`.
 
 #. To run NEST, configure your environment with
 

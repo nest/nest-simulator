@@ -61,28 +61,33 @@ Usage
 The structure of the dendrite is user defined. Thus after creation of the neuron
 in the standard manner
 
->>> cm =  nest.Create('cm_main')
+.. code-block:: Python
+    cm =  nest.Create('cm_main')
 
 users add compartments using the `nest.add_compartment()` function
 
->>> comp = nest.AddCompartment(cm, [compartment index], [parent index],
->>>                                [dictionary with compartment params])
+.. code-block:: Python
+    comp = nest.AddCompartment(cm, [compartment index], [parent index],
+                                   [dictionary with compartment params])
 
 After all compartments have been added, users can add receptors
 
->>> recept = nest.AddReceptor(cm, [compartment index], ['AMPA', 'GABA' or 'AMPA+NMDA'])
+.. code-block:: Python
+    recept = nest.AddReceptor(cm, [compartment index], ['AMPA', 'GABA' or 'AMPA+NMDA'])
 
 Compartment voltages can be recorded. To do so, users create a multimeter in the
 standard manner but specify the to be recorded voltages as
 'V_m_[compartment_index]', i.e.
 
->>> mm = nest.Create('multimeter', 1, {'record_from': ['V_m_[compartment_index]'], ...})
+.. code-block:: Python
+    mm = nest.Create('multimeter', 1, {'record_from': ['V_m_[compartment_index]'], ...})
 
 Current generators can be connected to the model. In this case, the receptor
 type is the [compartment index], i.e.
 
->>> dc = nest.Create('dc_generator', {...})
->>> nest.Connect(dc, cm, syn_spec={..., 'receptor_type': [compartment index]}
+.. code-block:: Python
+    dc = nest.Create('dc_generator', {...})
+    nest.Connect(dc, cm, syn_spec={..., 'receptor_type': [compartment index]}
 
 Parameters
 ++++++++++

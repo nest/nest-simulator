@@ -84,13 +84,14 @@ optimization levels. A future version of iaf_psc_exp will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
+.. note::
 
-If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-`tau_syn_in`, respectively, to avoid numerical instabilities.
+  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+  `tau_syn_in`, respectively, to avoid numerical instabilities.
 
-For implementation details see the
-`IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+  For implementation details see the
+  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 iaf_psc_exp can handle current input in two ways: Current input
 through receptor_type 0 are handled as stepwise constant current

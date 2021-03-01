@@ -33,6 +33,8 @@ For making changes to the PyNEST APIs, please see our :doc:`templates_styleguide
 If you are a Vim user and require support for SLI files, please refer to our
 :doc:`templates_styleguides/vim_support_sli`.
 
+An explanation of our continuous integration pipeline can be found under :doc:`ci`.
+
 Contribute a Python example script
 ----------------------------------
 

@@ -5,7 +5,7 @@ NEST draws its strength from the many people that use and improve it. We
 are happy to consider your contributions (e.g., new models, bug or
 documentation fixes) for addition to the official version of NEST.
 
-Please familiarize yourself with
+Please familiarize yourself with our:
 
 * :doc:`NEST Git workflow <development_workflow>`
 * :doc:`C++ coding style guidelines <coding_guidelines_cpp>`
@@ -33,6 +33,8 @@ For making changes to the PyNEST APIs, please see our :doc:`templates_styleguide
 
 If you are a Vim user and require support for SLI files, please refer to our
 :doc:`templates_styleguides/vim_support_sli`.
+
+An explanation of our continuous integration pipeline can be found under :doc:`ci`.
 
 Contribute a Python example script
 ----------------------------------

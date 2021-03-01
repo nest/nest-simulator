@@ -397,7 +397,7 @@ function( NEST_PROCESS_WITH_PYTHON )
     message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting with-python=ON" )
   elseif ( ${with-python} STREQUAL "ON" )
 
-    # Localize the Python interpreter
+    # Localize the Python interpreter and lib/header files
     find_package( Python 3.8 REQUIRED Interpreter Development )
 
     if ( Python_FOUND )

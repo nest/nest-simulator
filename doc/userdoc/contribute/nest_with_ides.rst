@@ -27,8 +27,8 @@ Requirements and limitations
 * Does not support debugging on macOS (because Eclipse does not support lldb)
 * Does not read the NEST `.clang-format` file, so code formatting may
   be incorrect
-* I experimented with better CMake support using ``cmake4eclipse``,
-  but did not figure it out. The instructions below rely on running
+* Does not use the ``cmake4eclipse`` plug-in, because we haven't figure out
+  how to use it with our complex setup. The instructions below rely on running
   ``cmake`` manually in the build directory.
 * Tested with Eclipse 2020-12
 

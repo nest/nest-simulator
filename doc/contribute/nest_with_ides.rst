@@ -2,9 +2,9 @@ Developing NEST with IDEs
 =========================
 
 Integrated development environments can make coding more efficient and fun.
-We provide here some recipes based on practical experience on how to use
-IDEs in NEST development. The information here is not meant to be complete,
-cross-checked or up-to-date, but is provided on a best-effort basis to get
+Here are some recipes based on practical experience on how to use
+IDEs in NEST development. The information is not meant to be complete,
+cross-checked or up-to-date but is provided on a best-effort basis to get
 you started. Kindly contribute your experiences.
 
 Since we generally recommend out-of-source builds, only such are discussed here.
@@ -28,7 +28,7 @@ Requirements and limitations
 * Does not read the NEST `.clang-format` file, so code formatting may
   be incorrect
 * I experimented with better CMake support using ``cmake4eclipse``,
-  but did not figure it out. So instructions below rely on running
+  but did not figure it out. The instructions below rely on running
   ``cmake`` manually in the build directory.
 * Tested with Eclipse 2020-12
 
@@ -39,14 +39,14 @@ Preparations
    Using the Installer ensures that a suitable Java is installed. The instructions
    below are based on choosing the *Eclipse IDE for Scientific Computing*.
 #. From the Eclipse Marketplace, install *PyDev* and *LiClipse Text* extensions.
-#. In Eclipse preferences, under ``General > Security > Secure Storage > Advanced``
+#. In Eclipse preferences, under ``General > Security > Secure Storage > Advanced``,
    you should replace the default password encryption scheme to a more secure level
    than default, e.g. to ``PBE...SHA512...AES_256``.
 
 Setting up the project
 ~~~~~~~~~~~~~~~~~~~~~~
 
-#. Clone NEST onto your computer
+#. :doc:`Clone NEST <development_workflow>` onto your computer
 #. Build NEST manually
 
    a. Create a build directory
@@ -60,23 +60,23 @@ Setting up the project
 #. Right click the project and choose ``Properties`` from the context
    menu
 
-   a. Under ``C/C++ Build/Build Variables`` define ``BUILD_DIR`` and ``CONDA_ENV``,
+   a. Under ``C/C++ Build/Build Variables``, define ``BUILD_DIR`` and ``CONDA_ENV``,
       both of type ``Path``. The first should contain the full path to the build
       directory you created above, the second the full path to your conda 
       environment, usually something like ``.../miniconda3/envs/nest-dev``.
-   #. Under ``C/C++ Build > Builder Settings``
+   #. Under ``C/C++ Build > Builder Settings``,
 
       #. uncheck ``Use default build command``
       #. set ``Build Command`` to ``make -k -j4 all install`` (adjust
 	 number of processes to your situation)
       #. set ``Build Directory`` to ``${BUILD_DIR}``
-   #. Under ``C/C++ Build > Environment`` prepend
+   #. Under ``C/C++ Build > Environment``, prepend
       ``${CONDA_ENV}/bin`` to ``PATH``
-   #. Under ``C/C++ General > Paths and Symbols > Includes`` add the
+   #. Under ``C/C++ General > Paths and Symbols > Includes``, add the
       following two direcories
       * ``${BUILD_DIR}/libnestutil`` (contains ``config.h``)
       * ``${CONDA_ENV}/include`` (all headers from packages provided in conda environment)
-   #. Under ``PyDev - Interpreter/Grammar`` choose the intepreter from
+   #. Under ``PyDev - Interpreter/Grammar``, choose the interpreter from
       your Conda environment (you may need to add it by following the
       ``Click here to configure an interpreter not listed`` link and
       then ``Browse for python/pypy exe`` (this temporarily takes you
@@ -85,8 +85,8 @@ Setting up the project
       configuration, entering in ``C/C++ Application`` the full path
       to the installed ``nest`` executable.
 
-What you can do then
-~~~~~~~~~~~~~~~~~~~~
+Usage
+~~~~~
 
 * Eclipse should now find all includes.
 * It should intepret switches such as ``HAVE_GSL`` and ``HAVE_MPI``

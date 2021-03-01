@@ -7,7 +7,7 @@ Please make sure you have:
 
 * Followed the :doc:`installation instructions <installation/index>`
 * Installed the required :ref:`dependencies <standard>`
-* Viewed the :doc:`compilation <installation/compilation_options>` and 
+* Viewed the :doc:`compilation <installation/compilation_options>` and
   :doc:`configuration <installation/configuration>` options
 
 You can also check our `Mailing List Archive <https://www.nest-initiative.org/mailinglist/hyperkitty/list/
@@ -115,7 +115,7 @@ This error message means something in your environment is not set correctly, dep
 
 1. Check which Python version you are running
 
-   You must use **Python 3** if you installed NEST with
+   You must use **Python 3.8** or newer if you installed NEST with
 
    a. the Ubuntu PPA,
    b. the conda-forge package,
@@ -215,4 +215,3 @@ Can't find an answer to your question?
 
 Please check out our `GitHub issues page <https://github.com/nest/nest-simulator/issues>`_ or search the
 `Mailing list <https://www.nest-simulator.org/mailinglist/hyperkitty/list/users@nest-simulator.org/>`_ for your question. We may have already answered it!
-

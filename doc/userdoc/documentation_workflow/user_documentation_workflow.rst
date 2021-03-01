@@ -55,7 +55,7 @@ either directly run
 
 or alternatively install the dependencies into a conda environment (we
 recommend `miniconda <https://docs.conda.io/en/latest/miniconda>`_ for
-this). After installing coda, you can simply run
+this). After installing conda, you can simply run
 
 .. code-block:: bash
 

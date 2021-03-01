@@ -49,7 +49,7 @@ if ( HAVE_PYTHON )
       set_target_properties( pynestkernel PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
     else ()
       set_target_properties( pynestkernel PROPERTIES LINK_FLAGS "-Wl,--no-as-needed")
-      target_link_libraries( pynestkernel ${PYTHON_LIBRARIES} )
+      target_link_libraries( pynestkernel ${Python_LIBRARIES} )
     endif ()
   endif ()
 
@@ -67,7 +67,7 @@ if ( HAVE_PYTHON )
       ${PROJECT_SOURCE_DIR}/librandom
       ${PROJECT_SOURCE_DIR}/sli
       ${SLI_MODULE_INCLUDE_DIRS}
-      ${PYTHON_INCLUDE_DIRS}
+      ${Python_INCLUDE_DIRS}
       )
 
   target_compile_definitions( pynestkernel PRIVATE

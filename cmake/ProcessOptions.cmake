@@ -398,43 +398,32 @@ function( NEST_PROCESS_WITH_PYTHON )
   elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter
-    find_package( PythonInterp 3.6 REQUIRED )
+    find_package( Python 3.6 REQUIRED Interpreter Development )
 
-    if ( PYTHONINTERP_FOUND )
-      set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
-      set( PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE} PARENT_SCOPE )
-      set( PYTHON ${PYTHON_EXECUTABLE} PARENT_SCOPE )
-      set( PYTHON_VERSION ${PYTHON_VERSION_STRING} PARENT_SCOPE )
+    if ( Python_FOUND )
+      set( HAVE_PYTHON ON PARENT_SCOPE )
 
-      # Localize Python lib/header files and make sure that their version matches
-      # the Python interpreter version !
-      find_package( PythonLibs ${PYTHON_VERSION_STRING} EXACT )
-      if ( PYTHONLIBS_FOUND )
-        set( HAVE_PYTHON ON PARENT_SCOPE )
-        # export found variables to parent scope
-        set( PYTHONLIBS_FOUND "${PYTHONLIBS_FOUND}" PARENT_SCOPE )
-        set( PYTHON_INCLUDE_DIRS "${PYTHON_INCLUDE_DIRS}" PARENT_SCOPE )
-        set( PYTHON_LIBRARIES "${PYTHON_LIBRARIES}" PARENT_SCOPE )
+      # export found variables to parent scope
+      # set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
+      set( Python_FOUND "${Python_FOUND}" PARENT_SCOPE )
+      set( Python_EXECUTABLE ${Python_EXECUTABLE} PARENT_SCOPE )
+      set( PYTHON ${Python_EXECUTABLE} PARENT_SCOPE )
+      set( Python_VERSION ${Python_VERSION} PARENT_SCOPE )
 
-        if ( cythonize-pynest )
-          if ( ${PYTHON_VERSION_STRING} VERSION_GREATER_EQUAL "3.7" )
-            # Need updated Cython because of a change in the C api in Python 3.7
-            find_package( Cython 0.28.3 REQUIRED )
-          else ()
-              # confirmed not working: 0.15.1
-              # confirmed working: 0.19.2+
-              # in between unknown
-            find_package( Cython 0.19.2 REQUIRED )
-          endif ()
-          if ( CYTHON_FOUND )
-            # export found variables to parent scope
-            set( CYTHON_FOUND "${CYTHON_FOUND}" PARENT_SCOPE )
-            set( CYTHON_EXECUTABLE "${CYTHON_EXECUTABLE}" PARENT_SCOPE )
-            set( CYTHON_VERSION "${CYTHON_VERSION}" PARENT_SCOPE )
-          endif ()
+      set( Python_INCLUDE_DIRS "${Python_INCLUDE_DIRS}" PARENT_SCOPE )
+      set( Python_LIBRARIES "${Python_LIBRARIES}" PARENT_SCOPE )
+
+      if ( cythonize-pynest )
+        # Need updated Cython because of a change in the C api in Python 3.7
+        find_package( Cython 0.28.3 REQUIRED )
+        if ( CYTHON_FOUND )
+          # export found variables to parent scope
+          set( CYTHON_FOUND "${CYTHON_FOUND}" PARENT_SCOPE )
+          set( CYTHON_EXECUTABLE "${CYTHON_EXECUTABLE}" PARENT_SCOPE )
+          set( CYTHON_VERSION "${CYTHON_VERSION}" PARENT_SCOPE )
         endif ()
-        set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages" PARENT_SCOPE )
       endif ()
+      set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" PARENT_SCOPE )
     endif ()
   elseif ( ${with-python} STREQUAL "OFF" )
   else ()
@@ -605,7 +594,7 @@ function( NEST_PROCESS_WITH_BOOST )
       set( BOOST_LIBRARIES "${Boost_LIBRARIES}" PARENT_SCOPE )
       set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIRS}" PARENT_SCOPE )
       set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
-      
+
       include_directories( ${Boost_INCLUDE_DIRS} )
     endif ()
   endif ()
@@ -651,16 +640,16 @@ endfunction ()
 
 function( NEST_PROCESS_WITH_RECORDINGBACKEND_ARBOR )
   if (with-recordingbackend-arbor)
-	if (NOT HAVE_MPI)  
+	if (NOT HAVE_MPI)
 	  message( FATAL_ERROR "Recording backend Arbor needs MPI." )
     endif ()
-	
-	if (NOT HAVE_PYTHON) 
+
+	if (NOT HAVE_PYTHON)
 	  message( FATAL_ERROR "Recording backend Arbor needs Python." )
-	endif ()  
-	
-    include( FindPythonModule )	
-    
+	endif ()
+
+    include( FindPythonModule )
+
 	find_python_module(mpi4py)
 	if ( HAVE_MPI4PY )
 	  include_directories( "${PY_MPI4PY}/include" )

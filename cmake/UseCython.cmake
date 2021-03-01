@@ -18,7 +18,7 @@
 #   cython_add_standalone_executable( <executable_name> [MAIN_MODULE src1] <src1> <src2> ... <srcN> )
 #
 # To avoid dependence on Python, set the PYTHON_LIBRARY cache variable to point
-# to a static library.  If a MAIN_MODULE source is specified, 
+# to a static library.  If a MAIN_MODULE source is specified,
 # the "if __name__ == '__main__':" from that module is used as the C main() method
 # for the executable.  If MAIN_MODULE, the source with the same basename as
 # <executable_name> is assumed to be the MAIN_MODULE.
@@ -203,7 +203,7 @@ function( compile_pyx _name generated_file )
     set( version_arg )
   endif ()
 
-  # Include directory arguments. 
+  # Include directory arguments.
   list( REMOVE_DUPLICATES cython_include_directories )
   set( include_directory_arg "" )
   foreach ( _include_dir ${cython_include_directories} )
@@ -248,12 +248,12 @@ function( cython_add_module _name )
     endif ()
   endforeach ()
   compile_pyx( ${_name} generated_file ${pyx_module_sources} )
-  include_directories( ${PYTHON_INCLUDE_DIRS} )
+  include_directories( ${Python_INCLUDE_DIRS} )
   python_add_module( ${_name} ${generated_file} ${other_module_sources} )
   if ( APPLE )
     set_target_properties( ${_name} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
   else ()
-    target_link_libraries( ${_name} ${PYTHON_LIBRARIES} )
+    target_link_libraries( ${_name} ${Python_LIBRARIES} )
   endif ()
 endfunction()
 
@@ -265,7 +265,7 @@ function( cython_add_standalone_executable _name )
   set( other_module_sources "" )
   set( main_module "" )
   cmake_parse_arguments( cython_arguments "" "MAIN_MODULE" "" ${ARGN} )
-  include_directories( ${PYTHON_INCLUDE_DIRS} )
+  include_directories( ${Python_INCLUDE_DIRS} )
   foreach ( _file ${cython_arguments_UNPARSED_ARGUMENTS} )
     if ( ${_file} MATCHES ".*\\.py[x]?$" )
       get_filename_component( _file_we ${_file} NAME_WE )
@@ -291,5 +291,5 @@ function( cython_add_standalone_executable _name )
   set( CYTHON_FLAGS ${CYTHON_FLAGS} --embed )
   compile_pyx( "${main_module_we}_static" generated_file ${main_module} )
   add_executable( ${_name} ${generated_file} ${pyx_module_sources} ${other_module_sources} )
-  target_link_libraries( ${_name} ${PYTHON_LIBRARIES} ${pyx_module_libs} )
+  target_link_libraries( ${_name} ${Python_LIBRARIES} ${pyx_module_libs} )
 endfunction()

@@ -398,7 +398,7 @@ function( NEST_PROCESS_WITH_PYTHON )
   elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter
-    find_package( Python 3.6 REQUIRED Interpreter Development )
+    find_package( Python 3.8 REQUIRED Interpreter Development )
 
     if ( Python_FOUND )
       set( HAVE_PYTHON ON PARENT_SCOPE )

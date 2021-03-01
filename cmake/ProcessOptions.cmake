@@ -404,7 +404,6 @@ function( NEST_PROCESS_WITH_PYTHON )
       set( HAVE_PYTHON ON PARENT_SCOPE )
 
       # export found variables to parent scope
-      # set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
       set( Python_FOUND "${Python_FOUND}" PARENT_SCOPE )
       set( Python_EXECUTABLE ${Python_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON ${Python_EXECUTABLE} PARENT_SCOPE )

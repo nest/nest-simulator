@@ -272,7 +272,7 @@ def copy_example_file(src):
 
 
 # -- Copy documentation for Microcircuit Model ----------------------------
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/reference_data/box_plot.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/reference_data/raster_plot.png")
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")

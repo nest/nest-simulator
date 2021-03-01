@@ -32,10 +32,13 @@ from shutil import copyfile
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
-source_suffix = ['.rst']
-master_doc = 'contents'
 
-source_dir = (Path(__file__).resolve().parent / "..").resolve()
+source_dir = os.environ.get('NESTSRCDIR', False)
+if source_dir:
+    source_dir = Path(source_dir)
+else:
+    source_dir = Path(__file__).resolve().parent.parent.parent.resolve()
+
 doc_build_dir = Path(os.environ['OLDPWD']) / 'doc/userdoc'
 
 if os.environ.get('READTHEDOCS', 'False') == 'True':
@@ -43,6 +46,9 @@ if os.environ.get('READTHEDOCS', 'False') == 'True':
 
 print("doc_build_dir", str(doc_build_dir))
 print("source_dir", str(source_dir))
+
+source_suffix = '.rst'
+master_doc = 'contents'
 
 # Create the mockfile for extracting the PyNEST
 

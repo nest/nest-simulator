@@ -316,10 +316,10 @@ class TestConnectArrays(unittest.TestCase):
 
         nest.SetKernelStatus({'local_num_threads': 4})
 
-        neurons = nest.Create("iaf_psc_exp", 20)
+        neurons = nest.Create("iaf_psc_exp", 10)
         # syn_spec parameters are dependent on source, so we test with source id's not starting with 1
-        source = 10 + np.arange(10)
-        target = 1 + np.arange(10)
+        source = np.array([2, 5, 3, 10, 1, 9, 4, 6, 8, 7])
+        target = 1 + np.random.choice(10, 10, replace=True)
 
         weights = len(source) * [2.]
         alpha = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.11])

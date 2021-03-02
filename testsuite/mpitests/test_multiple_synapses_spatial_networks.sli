@@ -61,7 +61,7 @@ def
 % Set number of sources and targets according to number of positions
 /num_src pos length def
 /num_trgt pos length def
-/num_conns 4 def % we use one_to_one
+/num_conns 4 def % connections per target
 
 % to reduce data to be transported, reduce every value to max three chars
 /:compact_form

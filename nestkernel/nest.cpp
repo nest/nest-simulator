@@ -303,7 +303,7 @@ connect_arrays( long* sources,
           {
             const auto int_cast_rtype = static_cast< size_t >( *param );
 
-            if ( int_cast_rtype - *param > 1e-20 ) // To avoid rounding errors
+            if ( std::abs( *param - int_cast_rtype ) > 1e-20 ) // To avoid rounding errors
             {
               throw BadParameter( "Receptor types must be integers." );
             }

@@ -262,8 +262,9 @@ connect_arrays( long* sources,
       auto d = delays;
       double weight_buffer = numerics::nan;
       double delay_buffer = numerics::nan;
+      int index_counter = 0;
 
-      for ( ; s != sources + n; ++s, ++t )
+      for ( ; s != sources + n; ++s, ++t, ++index_counter )
       {
         if ( 0 >= *s or static_cast< index >( *s ) > kernel().node_manager.size() )
         {
@@ -295,7 +296,7 @@ connect_arrays( long* sources,
         for ( auto& param_pointer_pair : param_pointers )
         {
           // Increment the pointer to the parameter value.
-          auto* param = param_pointer_pair.second + *s - *sources;
+          auto* param = param_pointer_pair.second + index_counter;
 
           // Receptor type must be an integer.
           if ( param_pointer_pair.first == names::receptor_type )

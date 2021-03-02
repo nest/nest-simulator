@@ -19,14 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Readthedocs configuration file
-------------------------------
-
-Use:
-sphinx-build -c ../extras/help_generator -b html . _build/html
-
-"""
 
 import sys
 import os
@@ -40,30 +32,37 @@ from shutil import copyfile
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
-source_suffix = ['.rst']
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the dit rectory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
+source_dir = os.environ.get('NESTSRCDIR', False)
+if source_dir:
+    source_dir = Path(source_dir)
+else:
+    source_dir = Path(__file__).resolve().parent.parent.parent.resolve()
 
-doc_path = os.path.abspath(os.path.dirname(__file__))
-root_path = os.path.abspath(doc_path + "/..")
+doc_build_dir = Path(os.environ['OLDPWD']) / 'doc/userdoc'
 
-sys.path.insert(0, os.path.abspath(root_path))
-sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
-sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
-sys.path.insert(0, os.path.abspath(doc_path))
+if os.environ.get('READTHEDOCS', 'False') == 'True':
+    doc_build_dir = source_dir / 'doc/userdoc'
 
+print("doc_build_dir", str(doc_build_dir))
+print("source_dir", str(source_dir))
 
-# -- Mock pynestkernel ----------------------------------------------------
-# The mock_kernel has to be imported after setting the correct sys paths.
+source_suffix = '.rst'
+master_doc = 'contents'
+
+# Create the mockfile for extracting the PyNEST
+
+excfile = source_dir / "pynest/nest/lib/hl_api_exceptions.py"
+infile = source_dir / "pynest/pynestkernel.pyx"
+outfile = doc_build_dir / "pynestkernel_mock.py"
+
+sys.path.insert(0, str(source_dir))
+sys.path.insert(0, str(source_dir / 'doc'))
+sys.path.insert(0, str(source_dir / 'pynest'))
+sys.path.insert(0, str(source_dir / 'pynest/nest'))
+sys.path.insert(0, str(doc_build_dir))
+
 from mock_kernel import convert  # noqa
-
-# create mockfile
-
-excfile = root_path + "/pynest/nest/lib/hl_api_exceptions.py"
-infile = root_path + "/pynest/pynestkernel.pyx"
-outfile = doc_path + "/pynestkernel_mock.py"
 
 with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as fout:
     mockedmodule = fexc.read() + "\n\n"
@@ -72,16 +71,12 @@ with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as
 
     fout.write(mockedmodule)
 
-# The pynestkernel_mock has to be imported after it is created.
 import pynestkernel_mock  # noqa
 
 sys.modules["nest.pynestkernel"] = pynestkernel_mock
 sys.modules["nest.kernel"] = pynestkernel_mock
 
-
 # -- General configuration ------------------------------------------------
-# If your documentation needs a minimal Sphinx version, state it here.
-#
 extensions = [
     'sphinx_gallery.gen_gallery',
     'sphinx.ext.autodoc',
@@ -92,15 +87,8 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'breathe',
     'sphinx_tabs.tabs'
 ]
-
-breathe_projects = {"EXTRACT_MODELS": "./xml/"}
-
-breathe_default_project = "EXTRACT_MODELS"
-
-subprocess.call('doxygen', shell=True)
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 
@@ -110,14 +98,12 @@ templates_path = ['_templates']
 sphinx_gallery_conf = {
      # 'doc_module': ('sphinx_gallery', 'numpy'),
      # path to your examples scripts
-     'examples_dirs': '../pynest/examples',
+     'examples_dirs': source_dir / 'pynest/examples',
      # path where to save gallery generated examples
-     'gallery_dirs': 'auto_examples',
+     'gallery_dirs': doc_build_dir / 'auto_examples',
      # 'backreferences_dir': False
      'plot_gallery': 'False'
 }
-
-master_doc = 'contents'
 
 # General information about the project.
 project = u'NEST simulator user documentation'
@@ -143,8 +129,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store',
-                    'nest_by_example', 'README.md']
+exclude_patterns = ['Thumbs.db', '.DS_Store', 'nest_by_example', 'README.md']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'manni'
@@ -164,7 +149,7 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
-html_logo = '_static/img/nest_logo.png'
+html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
 html_theme_options = {'logo_only': True,
                       'display_version': False}
 
@@ -177,7 +162,7 @@ html_theme_options = {'logo_only': True,
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = [str(doc_build_dir / 'static')]
 
 rst_prolog = ".. warning:: \n  This is A PREVIEW for NEST 3.0 and NOT an OFFICIAL RELEASE! \
              Some functionality may not be available and information may be incomplete!"
@@ -201,8 +186,9 @@ from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 
 def config_inited_handler(app, config):
     ExtractUserDocs(
-        relative_glob("models/*.h", "nestkernel/*.h", basedir='..'),
-        outdir="models/"
+        listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=source_dir),
+        basedir=source_dir,
+        outdir=str(doc_build_dir / "models")
     )
 
 
@@ -280,34 +266,13 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
-# -- Options for readthedocs ----------------------------------------------
+
+def copy_example_file(src):
+    copyfile(src, doc_build_dir / "examples" / src.parts[-1])
+
 
 # -- Copy documentation for Microcircuit Model ----------------------------
-
-
-def copytreeglob(source, target, glob='*.png'):
-    '''
-    Recursively copy all files selected by `glob` from `source` to `target` path,
-    recreating the sub-folder structure.
-    Parameters
-    ----------
-    source : path, str
-        source folder where to recursively search for glob
-    target : path, str
-        target folder where to recreate the tree of source files
-    glob : str
-        shell-glob specifying which files to copy
-    '''
-    source = Path(source)
-    target = Path(target)
-    for relativename in [x.relative_to(source) for x in source.rglob(glob)]:
-        # manually create directory, since shutil.copyfile() does not support
-        # the `dirs_exist_ok=True` below Python-3.8
-        targetpath = target/relativename.parents[0]
-        if not targetpath.exists():
-            targetpath.mkdir(parents=True)
-        assert targetpath.is_dir(), "Targetpath is obstructed by a non-directory object (maybe a file)"
-        copyfile(source/relativename, target/relativename)
-
-
-copytreeglob("../pynest/examples/Potjans_2014", "examples", '*.png')
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")

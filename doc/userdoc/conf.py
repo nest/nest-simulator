@@ -32,32 +32,35 @@ from shutil import copyfile
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
-source_suffix = ['.rst']
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the dit rectory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
+source_dir = os.environ.get('NESTSRCDIR', False)
+if source_dir:
+    source_dir = Path(source_dir)
+else:
+    source_dir = Path(__file__).resolve().parent.parent.parent.resolve()
 
-source_dir = (Path(__file__).resolve().parent / "..").resolve()
-build_dir = Path(os.environ['OLDPWD'])
+doc_build_dir = Path(os.environ['OLDPWD']) / 'doc/userdoc'
 
 if os.environ.get('READTHEDOCS', 'False') == 'True':
-    build_dir = source_dir / "doc"
+    doc_build_dir = source_dir / 'doc/userdoc'
 
-print("build_dir", str(build_dir))
+print("doc_build_dir", str(doc_build_dir))
 print("source_dir", str(source_dir))
+
+source_suffix = '.rst'
+master_doc = 'contents'
 
 # Create the mockfile for extracting the PyNEST
 
 excfile = source_dir / "pynest/nest/lib/hl_api_exceptions.py"
 infile = source_dir / "pynest/pynestkernel.pyx"
-outfile = build_dir / "doc/userdoc/pynestkernel_mock.py"
+outfile = doc_build_dir / "pynestkernel_mock.py"
 
 sys.path.insert(0, str(source_dir))
 sys.path.insert(0, str(source_dir / 'doc'))
 sys.path.insert(0, str(source_dir / 'pynest'))
 sys.path.insert(0, str(source_dir / 'pynest/nest'))
-sys.path.insert(0, str(build_dir / 'doc/userdoc'))
+sys.path.insert(0, str(doc_build_dir))
 
 from mock_kernel import convert  # noqa
 
@@ -97,12 +100,10 @@ sphinx_gallery_conf = {
      # path to your examples scripts
      'examples_dirs': source_dir / 'pynest/examples',
      # path where to save gallery generated examples
-     'gallery_dirs': build_dir / 'doc/userdoc/auto_examples',
+     'gallery_dirs': doc_build_dir / 'auto_examples',
      # 'backreferences_dir': False
      'plot_gallery': 'False'
 }
-
-master_doc = 'contents'
 
 # General information about the project.
 project = u'NEST simulator user documentation'
@@ -148,7 +149,7 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
-html_logo = str(build_dir / 'doc/userdoc/static/img/nest_logo.png')
+html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
 html_theme_options = {'logo_only': True,
                       'display_version': False}
 
@@ -161,7 +162,7 @@ html_theme_options = {'logo_only': True,
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = [str(build_dir / 'doc/userdoc/static')]
+html_static_path = [str(doc_build_dir / 'static')]
 
 rst_prolog = ".. warning:: \n  This is A PREVIEW for NEST 3.0 and NOT an OFFICIAL RELEASE! \
              Some functionality may not be available and information may be incomplete!"
@@ -187,7 +188,7 @@ def config_inited_handler(app, config):
     ExtractUserDocs(
         listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=source_dir),
         basedir=source_dir,
-        outdir=str(build_dir / "doc/userdoc/models")
+        outdir=str(doc_build_dir / "models")
     )
 
 
@@ -267,11 +268,11 @@ texinfo_documents = [
 
 
 def copy_example_file(src):
-    copyfile(src, build_dir / "doc/userdoc/examples" / src.parts[-1])
+    copyfile(src, doc_build_dir / "examples" / src.parts[-1])
 
 
 # -- Copy documentation for Microcircuit Model ----------------------------
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/reference_data/box_plot.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/reference_data/raster_plot.png")
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
+copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")

@@ -41,7 +41,7 @@ Installation from source
 ------------------------
 
 The following are the basic steps to compile and install NEST from source code. See the
-:doc:`Configuration Options <install_options>` or the :doc:`High Performance Computing <hpc_install>` instructions to
+:doc:`CMake Options <cmake_options>` or the :doc:`High Performance Computing <hpc_install>` instructions to
 further adjust settings for your system.
 
 * If not already installed on your system, the following packages are recommended (see also the `Dependencies`_
@@ -81,7 +81,7 @@ further adjust settings for your system.
 
     cd nest-simulator-x.y.z-build
 
-* Configure NEST. You may need additional ``cmake`` options (see :doc:`install_options`).
+* Configure NEST. You may need additional ``cmake`` options (see :doc:`cmake_options`).
 
 .. code-block:: sh
 

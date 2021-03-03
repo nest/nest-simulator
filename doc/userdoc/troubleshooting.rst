@@ -7,8 +7,7 @@ Please make sure you have:
 
 * Followed the :doc:`installation instructions <installation/index>`
 * Installed the required :ref:`dependencies <standard>`
-* Viewed the :doc:`compilation <installation/compilation_options>` and 
-  :doc:`configuration <installation/configuration>` options
+* Viewed the :doc:`CMake options <installation/cmake_options>`
 
 You can also check our `Mailing List Archive <https://www.nest-initiative.org/mailinglist/hyperkitty/list/
 users@nest-simulator.org/>`_ and `Stack Overflow <https://stackoverflow.com/questions/tagged/nest-simulator>`_
@@ -215,4 +214,3 @@ Can't find an answer to your question?
 
 Please check out our `GitHub issues page <https://github.com/nest/nest-simulator/issues>`_ or search the
 `Mailing list <https://www.nest-simulator.org/mailinglist/hyperkitty/list/users@nest-simulator.org/>`_ for your question. We may have already answered it!
-

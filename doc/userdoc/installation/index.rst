@@ -7,7 +7,7 @@ Standard installation
 These installation instructions should work for most users who do
 not need custom configurations for their systems. If you want to
 compile NEST from source, check the :ref:`advanced_install` section
-and :doc:`compilation_options`.
+and :doc:`cmake_options`.
 
 .. tabs::
 
@@ -113,7 +113,7 @@ and :doc:`compilation_options`.
 
    .. tab:: Homebrew (macOS)
 
-       1. `Install Homebrew <https://brew.sh/>`_ on your Mac.
+       1. `Install Homebrew <https://brew.sh/>`_.
 
        2. Install NEST via:
 
@@ -121,48 +121,57 @@ and :doc:`compilation_options`.
 
            brew install nest
 
+   .. _conda_forge_install:
+
    .. tab:: Conda (Linux/macOS)
 
-       1. Create your conda environment and install NEST. Please refer to
-          our :doc:`conda_tips`.
-
-          Without OpenMPI:
-
-          .. code-block:: sh
-
-              conda create --name ENVNAME -c conda-forge nest-simulator
-
-          With OpenMPI:
+       1. To keep your conda setup tidy, we recommend that you install NEST into
+          a separate `conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
+          together with Python packages that you will use when working with NEST;
+          see also our :doc:`conda_tips`.
+          
+          To install the latest version of NEST in a new environment called ``ENVNAME``, just run
 
           .. code-block:: sh
 
-              conda create --name ENVNAME -c conda-forge nest-simulator=*=mpi_openmpi*
+             conda create --name ENVNAME -c conda-forge nest-simulator
 
-          The syntax for this install follows the pattern:
-          ``nest-simulator=<version>=<build_string>``. Build strings can be
-          found by listing the available versions with
+          To install additional packages into the environment, just list them together with ``nest-simulator``.
 
           .. code-block:: sh
 
-              conda search -c conda-forge nest-simulator
+             conda create --name ENVNAME -c conda-forge nest-simulator jupyterlab seaborn
 
-          or by browsing the `conda forge file list
+       #. To see all NEST versions available via conda, either run
+
+          .. code-block:: sh
+
+             conda search -c conda-forge nest-simulator
+
+          or browse the `conda forge file list
           <https://anaconda.org/conda-forge/nest-simulator/files>`_ (note
-          there are multiple pages). For example, to install one of the
-          2.20.x versions with MPI support by OpenMPI, you would use the
-          version specifier ``nest-simulator=2.20.*=*openmpi*``. The Python
-          dependency is automatically resolved if you add to the above
-          command a version specifier for Python, for example ``python=3`` or
-          ``python=3.8``. If the Python version and build identifier are left
-          unspecified, ``conda`` will install the latest version compatible
-          with all requested packages.
+          there are multiple pages). To install, e.g., NEST 2.18.0, run
+          
+          .. code-block:: sh
 
-       2. Activate your environment:
+             conda create --name nest_2_18_0 -c conda-forge nest-simulator=2.18.0=*
+
+          The syntax for this install follows the pattern: ``nest-simulator=<version>=<build_string>``. 
+
+       #. Activate your environment:
 
           .. code-block:: sh
 
              conda activate ENVNAME
 
+       #. Note the following:
+       
+          - We currently provide NEST with thread-based parallelization on Conda. This should suffice for most 
+            uses on personal computers.
+          - Until dedicated conda builds for Apple's M1 chip (arm64) become available, you should expect relatively
+            poor performance on computers with the M1 chip. You need to :doc:`build NEST yourself <mac_install>` on
+            M1 systems for good performance.
+             
 
 In addition to native installations from ready-made packages, we
 provide containerized versions of NEST in several formats:
@@ -308,7 +317,7 @@ these instructions.**
 
        Download the source code for the  `current release <https://github.com/nest/nest-simulator/archive/v2.20.0.tar.gz>`_.
 
-       Follow instructions for :doc:`linux_install` and take a look at our :doc:`compilation_options`.
+       Follow instructions for :doc:`linux_install` and take a look at our :doc:`cmake_options`.
 
 
    .. tab:: GitHub
@@ -333,4 +342,4 @@ these instructions.**
    mac_install
    hpc_install
    livemedia
-   install_options
+   cmake_options

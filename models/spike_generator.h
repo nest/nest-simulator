@@ -110,6 +110,7 @@ Example:
   3.0 milliseconds, relative to the device-timer origin.
 
 Example:
+
 Assume that NEST works with default resolution (step size) of 0.1 ms
 and default tic length of 0.001 ms. Then, spikes times not falling
 onto the grid will be handled as follows for different option settings:

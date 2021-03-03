@@ -1,5 +1,5 @@
-The NEST style guide
-=====================
+The NEST documentation style guide
+==================================
 
 .. contents::
   :local:
@@ -43,9 +43,7 @@ Use 'you' to indicate the reader and 'we' to indicate yourself (the writer and p
 The language we use
 ~~~~~~~~~~~~~~~~~~~~~~
 
-We follow spelling and grammar rules of American English, using Merriam Webster as our reference.
-
-For additional style questions or concepts not covered here, we recommend the Microsoft Writing Styling Guide.
+We follow spelling and grammar rules of American English.
 
 The markup language we use is reStructuredText. This includes documentation blocks in files written in Python and cpp.
 
@@ -59,10 +57,9 @@ Active voice
 
 Prefer the active voice, where the subject acts on object.
 
-If the object needs emphasis rather than subject, use passive voice. But ensure that you cannot reorganize sentence
-to use active voice.
+If the object needs emphasis rather than subject, use passive voice. But ensure that you cannot improve the sentence
+by using the active voice.
 
-Mix it up! Use both styles.
 
 Types of formatting to use in writing
 --------------------------------------
@@ -71,8 +68,28 @@ We use specific formatting marks to help readers scan through and find what they
 as provide references to important terms.
 
 
+Underlines for headings
+~~~~~~~~~~~~~~~~~~~~~~~
+
+ReStructuredtext uses several types of underline markers for headings. It's important that the length of the
+underline is at least as long as the words in the heading.
+
+In general we try to follow the pattern of
+
+* First heading: ===
+* Second heading: ---
+* Third heading: ~~~
+
+"Double quotes"
+~~~~~~~~~~~~~~~
+
+We use double quotes for strings in code, for example (nest.Create("iaf_psc_alpha")).
+
+Double or single quotes should not be used as an emphasis marker of any text.
+
+
 \``Double back tick\``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The use of double back ticks is to provide an indicator for terms that will become links to reference pages or
 to highlight syntax constructs.
@@ -87,12 +104,6 @@ Use the double back tick for:
   - Paths (e.g, You can find the models in ``nest-simulator/pynest/examples``)
   - Key value pairs (``{key: value}``)
   - Variables with assigned values ``x = 10``
-
-
-.. note::
-
-   We have a script that will  replace the terms with the correct syntax for creating a link to to the appropriate
-   source.
 
 
 \`Single back tick\`
@@ -112,8 +123,6 @@ but use double back ticks when showing a complete example of variable with assig
 
 If you want to emphasize a word or phrase in text, you can use **boldface**.
 
-Do not use underline to emphasize words.
-
 An example:
 
 ::
@@ -127,9 +136,15 @@ Rendered as
  Here we use the ``Create`` function to instantiate our model, in this case ``iaf_psc_alpha``. We can modify
  the parameters `V_m` and set the value to `50.0`.
 
+NumPy style docstrings
+~~~~~~~~~~~~~~~~~~~~~~
+
+In the PyNEST code, we follow the rules for NumPy style docstrings as
+`explained here <https://numpydoc.readthedocs.io/en/latest/format.html>`
+
 
 A brief look into reStructuredText markup
---------------------------------------------------------
+------------------------------------------
 
 .. note::
 
@@ -137,7 +152,7 @@ A brief look into reStructuredText markup
    tables, reference labels, or directives.
 
 How to write code or code snippets in reStructuredText
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 For writing Python code, you can use the double colon

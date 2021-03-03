@@ -39,7 +39,7 @@ Preparations
    Using the Installer ensures that a suitable Java is installed. The instructions
    below are based on choosing the *Eclipse IDE for Scientific Computing*.
 #. From the Eclipse Marketplace, install *PyDev* and *LiClipse Text* extensions.
-#. In Eclipse preferences, under ``General > Security > Secure Storage > Advanced``,
+#. In Eclipse preferences, under ``General > Security > Secure Storage – [Tab] Advanced``,
    you should replace the default password encryption scheme to a more secure level
    than default, e.g. to ``PBE...SHA512...AES_256``.
 
@@ -55,7 +55,7 @@ Setting up the project
 #. In Eclipse
 
    a. choose ``New > Makefile project with existing code``
-   #. select the directory containing the NEST source code
+   #. select the directory containing the NEST source code or enter the path
    #. choose, e.g., the ``Cross GCC Toolchain``
 #. Right click the project and choose ``Properties`` from the context
    menu
@@ -64,7 +64,7 @@ Setting up the project
       both of type ``Path``. The first should contain the full path to the build
       directory you created above, the second the full path to your conda 
       environment, usually something like ``.../miniconda3/envs/nest-dev``.
-   #. Under ``C/C++ Build > Builder Settings``,
+   #. Under ``C/C++ Build – [Tab] Builder Settings``,
 
       #. uncheck ``Use default build command``
       #. set ``Build Command`` to ``make -k -j4 all install`` (adjust
@@ -72,8 +72,9 @@ Setting up the project
       #. set ``Build Directory`` to ``${BUILD_DIR}``
    #. Under ``C/C++ Build > Environment``, prepend
       ``${CONDA_ENV}/bin`` to ``PATH``
-   #. Under ``C/C++ General > Paths and Symbols > Includes``, add the
+   #. Under ``C/C++ General > Paths and Symbols – [Tab] Includes``, add the
       following two direcories
+
       * ``${BUILD_DIR}/libnestutil`` (contains ``config.h``)
       * ``${CONDA_ENV}/include`` (all headers from packages provided in conda environment)
    #. Under ``PyDev - Interpreter/Grammar``, choose the interpreter from

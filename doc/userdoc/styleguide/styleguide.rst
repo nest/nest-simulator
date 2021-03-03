@@ -5,14 +5,14 @@ The NEST documentation style guide
   :local:
 
 General guidelines about writing for NEST
----------------------------------------------
+-----------------------------------------
 
 How to *write good* : a few tips
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Be concise - Use short words and sentences; avoid unnecessary modifiers
 
-- Be consistent - Follow this style guide and relevant templates
+- Be consistent - Follow this styleguide and relevant templates
 
 - Be specific - Avoid vague language; clarity is key
 
@@ -34,14 +34,13 @@ Voice is *how* we talk to people through writing. The voice encompasses substanc
 
 Our voice is
 
-- clear - we write for clarity and simplicity,
 - empathetic - we write thinking of who we are writing for and what their needs are
 - relaxed - we write in natural, informal way rather than an authoritative way
 
 Use 'you' to indicate the reader and 'we' to indicate yourself (the writer and possibly the NEST team).
 
 The language we use
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 
 We follow spelling and grammar rules of American English.
 
@@ -53,7 +52,7 @@ We do, however, use terminology appropriate to NEST and neuroscience when specif
 should be provided for clarity in introductory texts.
 
 Active voice
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~
 
 Prefer the active voice, where the subject acts on object.
 
@@ -74,25 +73,23 @@ Underlines for headings
 ReStructuredtext uses several types of underline markers for headings. It's important that the length of the
 underline is at least as long as the words in the heading.
 
-In general we try to follow the pattern of
+In general, we try to follow the pattern of
 
 * First heading: ===
 * Second heading: ---
 * Third heading: ~~~
+* Fourth heading: ^^^
 
 "Double quotes"
 ~~~~~~~~~~~~~~~
 
 We use double quotes for strings in code, for example (nest.Create("iaf_psc_alpha")).
 
-Double or single quotes should not be used as an emphasis marker of any text.
+Double or single quotes should not be used as an emphasis marker for text.
 
 
 \``Double back tick\``
 ~~~~~~~~~~~~~~~~~~~~~~~
-
-The use of double back ticks is to provide an indicator for terms that will become links to reference pages or
-to highlight syntax constructs.
 
 Use the double back tick for:
 
@@ -100,7 +97,7 @@ Use the double back tick for:
   - objects/functions
   - model names
   - important vocabulary
-  - **complete** function call (e.g., ``nest.Create("iaf_psc_alpha")`` NOT (``("iaf_psc_alpha")`` )
+  - function call (e.g., ``nest.Create("iaf_psc_alpha")`` or  (``Create`` )
   - Paths (e.g, You can find the models in ``nest-simulator/pynest/examples``)
   - Key value pairs (``{key: value}``)
   - Variables with assigned values ``x = 10``
@@ -118,11 +115,6 @@ Use single back ticks for
 
 but use double back ticks when showing a complete example of variable with assigned value (e.g., \``volt = 37.0``
 
-\**Boldface\**
-~~~~~~~~~~~~~~~
-
-If you want to emphasize a word or phrase in text, you can use **boldface**.
-
 An example:
 
 ::
@@ -135,6 +127,11 @@ Rendered as
 
  Here we use the ``Create`` function to instantiate our model, in this case ``iaf_psc_alpha``. We can modify
  the parameters `V_m` and set the value to `50.0`.
+
+\**Boldface\**
+~~~~~~~~~~~~~~~
+
+If you want to emphasize a word or phrase in text, you can use **boldface**.
 
 NumPy style docstrings
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -150,6 +147,7 @@ A brief look into reStructuredText markup
 
    reStructuredText is sensitive to indentation. A single newline should always be between any text and headings,
    tables, reference labels, or directives.
+   If the output format seems incorrect, double check the spaces and newlines of the text.
 
 How to write code or code snippets in reStructuredText
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -204,48 +202,6 @@ Directives
 This is not a complete guide to the directives of reStructuredText. For more options see `Sphinx directives <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html>`_
 or `Docutils section on directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_.
 
-Include images in text
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Include images with the image or, preferably, the figure directive. The figure directive allows captions.
-
-::
-
-    .. image:: triceratops.png
-         :height: 200px
-         :width: 200 px
-         :alt: alternate text
-         :align: center
-
-    .. figure:: triceratops.png
-         :scale: 30 %
-         :align: center
-
-         Here is the descriptive caption. This is a triceratops, a member of the Marginocephalia clade.
-
-         Figures take the same options as images. Note the indentation is the same for the options and text. This text
-         also belongs with the figure, but is not considered part of the caption.
-
-Image rendered as
-
-    .. image:: triceratops.png
-         :height: 200px
-         :width: 200 px
-         :alt: alternate text
-         :align: center
-----
-
-Figure rendered as
-
-.. figure:: triceratops.png
-      :scale: 30 %
-      :align: center
-
-      Here is the descriptive caption. This is a triceratops, a member of the Marginocephalia clade.
-
-      Figures take the same options as images. Note the indentation is the same for the options and text. This text
-      also belongs with the figure, but is not considered part of the caption.
-
 For equations, use LaTeX markup:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -268,7 +224,7 @@ Use admonitions to draw readers attention to a particular point
 
 Possible admonitions types include
 
-"attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning", "admonition"
+"see also", "attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning", "admonition"
 
 If you want a custom admonition use
 
@@ -285,28 +241,14 @@ Rendered as
 
          Here is some text
 
-You can also use the see also note
-
-::
-
-    .. seealso::
-
-       The style can be modifed using custom CSS
-
-Rendered as
-
-    .. seealso::
-
-       The style can be modifed using custom CSS
-
 
 Roles
-~~~~~~~
+~~~~~~
 
 See `the roles section in the Sphinx docs <https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html>`_ for details
 
 For in-text math
-^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 ::
 
@@ -318,7 +260,7 @@ Rendered as
    Now we can see :math:`x=1` for this example.
 
 For referencing rst files in repository
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
 
@@ -335,7 +277,7 @@ Rendered as
    :doc:`custom name <file>`
 
 
-For referencing  sections, figures, or arbitrary places in files
+For referencing sections, figures, or arbitrary places in files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For section headings, you can use either of the two examples below. But to reference figures or arbitrary places in a file,
@@ -369,53 +311,11 @@ Rendered as
         secton_header
         --------------
 
-For terms in glossary
-^^^^^^^^^^^^^^^^^^^^^^
 
-::
+Bibliography style for NEST
+----------------------------
 
-   :term:`word`
-
-Rendered as
-
-   :term:`word`
-
-.. note::
-
-   Glossaries are built with the glossary directive
-   ::
-
-    .. glossary::
-
-       word
-        here is definition
-
-To link to cpp model info
-
-::
-
-   :cpp:class:`Model_name <nest::aeif_cond_alpha>`
-
-Rendered as
-
-   :cpp:class:`Model_name <nest::Model_name>`
-
-For functions to link to api
-
-::
-
-   :py:func:`.Connect`
-
-
-Rendered as
-
-   :py:func:`.Connect`
-
-
-Reference style for NEST
---------------------------
-
-The reST reference style is used throughout documentation so links are autogenerated and a consistent format is used.
+The reStructuredText reference style is used throughout documentation so links are autogenerated and a consistent format is used.
 
 For in-text citations, we use the reST numeric style ``[1]_``.
 
@@ -488,11 +388,11 @@ should be lower case (except proper nouns).
 
 
 Numbers
-~~~~~~~~~
+~~~~~~~~
 
 Numbers should be spelled out if they begin a sentence. In most cases, however, the numeral/ordinal format is preferred.
 
-For additinal mathematical notation, use the math role or directive (see below).
+For additional mathematical notation, use the math role or directive.
 
 We use the period for the decimal point. (`57.45`)
 
@@ -503,7 +403,7 @@ The thousand seperator is the comma except when showing a code example
    We have over 5,000 connections.
    The number of connections is ``x = 5000``
 
-Make sure you use the correct unit (e.g., millivolts for voltage) and the unit's syntax (`V_m`)  (see glossary).
+Make sure you use the correct unit (e.g., millivolts for voltage) and the unit's syntax (`V_m`).
 
 Lists
 ~~~~~~~
@@ -515,6 +415,8 @@ Use bullet lists to improve clarity of long lists (more than 5 items).
 If bullet/ordered list text is a complete sentence, use proper punctuation and end with period.
 
 If bullet/ordered list text is an incomplete sentence, do not end with period.
+
+If bullet/ordered list belongs to a sentence, use commas to seprate each item with the second last time including `and` at end.
 
 
 When writing about people
@@ -548,7 +450,6 @@ Conjunctions (For, And, Nor, But, Or, Yet, So)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can use these to start a sentence if clarity is not impeded.
-(There is **no rule** against doing this).
 
 Avoid using `So`, `However`, at the beginning of sentences.
 

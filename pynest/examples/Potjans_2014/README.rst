@@ -6,9 +6,9 @@ The network model represents four layers of cortex, L2/3, L4, L5, and L6, each c
 
 .. |img1| image:: microcircuit.png
 
-.. |img2| image:: reference_data/raster_plot.png
+.. |img2| image:: raster_plot.png
 
-.. |img3| image:: reference_data/box_plot.png
+.. |img3| image:: box_plot.png
 
 .. table:: 
    :align: center

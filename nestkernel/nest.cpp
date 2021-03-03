@@ -301,16 +301,16 @@ connect_arrays( long* sources,
           // Receptor type must be an integer.
           if ( param_pointer_pair.first == names::receptor_type )
           {
-            const auto int_cast_rtype = static_cast< size_t >( *param );
+            const auto rtype_as_long = static_cast< long >( *param );
 
-            if ( std::abs( *param - int_cast_rtype ) > 1e-20 ) // To avoid rounding errors
+            if ( *param > 1L << 31 or std::abs( *param - rtype_as_long ) > 0 ) // To avoid rounding errors
             {
               throw BadParameter( "Receptor types must be integers." );
             }
 
             // Change value of dictionary entry without allocating new datum.
             auto id = static_cast< IntegerDatum* >( ( ( *param_dicts[ tid ] )[ param_pointer_pair.first ] ).datum() );
-            ( *id ) = int_cast_rtype;
+            ( *id ) = rtype_as_long;
           }
           else
           {

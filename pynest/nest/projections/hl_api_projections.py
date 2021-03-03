@@ -141,6 +141,7 @@ def oldBuildNetwork():
 def BuildNetwork():
     # Convert to list of lists
     projection_list = []
+    print(f'Connecting {len(projection_collection.get())} projections...')
     for projection in projection_collection.get():
         projection = projection.to_list()
         source, target, conn_spec, syn_spec = projection

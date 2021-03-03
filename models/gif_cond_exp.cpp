@@ -31,6 +31,8 @@
 #include <cstdio>
 
 // Includes from libnestutil:
+#include "compose.hpp"
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -41,12 +43,9 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "integerdatum.h"
 #include "doubledatum.h"
+#include "integerdatum.h"
 
-#include "compose.hpp"
-#include "propagator_stability.h"
-#include "event.h"
 
 namespace nest
 {
@@ -229,28 +228,28 @@ nest::gif_cond_exp::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d )
+nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
 
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::E_L, E_L_ );
-  updateValue< double >( d, names::g_L, g_L_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::Delta_V, Delta_V_ );
-  updateValue< double >( d, names::V_T_star, V_T_star_ );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
+  updateValueParam< double >( d, names::g_L, g_L_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  updateValueParam< double >( d, names::Delta_V, Delta_V_, node );
+  updateValueParam< double >( d, names::V_T_star, V_T_star_, node );
 
-  if ( updateValue< double >( d, names::lambda_0, lambda_0_ ) )
+  if ( updateValueParam< double >( d, names::lambda_0, lambda_0_, node ) )
   {
     lambda_0_ /= 1000.0; // convert to 1/ms
   }
 
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::tau_syn_ex, tau_synE_ );
-  updateValue< double >( d, names::tau_syn_in, tau_synI_ );
-  updateValue< double >( d, names::E_ex, E_ex_ );
-  updateValue< double >( d, names::E_in, E_in_ );
-  updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_synE_, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_synI_, node );
+  updateValueParam< double >( d, names::E_ex, E_ex_, node );
+  updateValueParam< double >( d, names::E_in, E_in_, node );
+  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
 
   updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
   updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
@@ -317,17 +316,21 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::gif_cond_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::gif_cond_exp::State_::get( DictionaryDatum& d, const Parameters_& ) const
 {
   def< double >( d, names::V_m, neuron_state_[ V_M ] ); // Membrane potential
-  def< double >( d, names::E_sfa, sfa_ );               // Adaptive threshold potential
-  def< double >( d, names::I_stc, stc_ );               // Spike-triggered current
+  def< double >( d, names::g_ex, neuron_state_[ G_EXC ] );
+  def< double >( d, names::g_in, neuron_state_[ G_INH ] );
+  def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
+  def< double >( d, names::I_stc, stc_ ); // Spike-triggered current
 }
 
 void
-nest::gif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_& p )
+nest::gif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, neuron_state_[ V_M ] );
+  updateValueParam< double >( d, names::V_m, neuron_state_[ V_M ], node );
+  updateValueParam< double >( d, names::g_ex, neuron_state_[ G_EXC ], node );
+  updateValueParam< double >( d, names::g_in, neuron_state_[ G_INH ], node );
 }
 
 nest::gif_cond_exp::Buffers_::Buffers_( gif_cond_exp& n )
@@ -355,7 +358,7 @@ nest::gif_cond_exp::Buffers_::Buffers_( const Buffers_&, gif_cond_exp& n )
  * ---------------------------------------------------------------- */
 
 nest::gif_cond_exp::gif_cond_exp()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -364,7 +367,7 @@ nest::gif_cond_exp::gif_cond_exp()
 }
 
 nest::gif_cond_exp::gif_cond_exp( const gif_cond_exp& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -406,7 +409,7 @@ nest::gif_cond_exp::init_buffers_()
   B_.spike_inh_.clear(); // includes resize
   B_.currents_.clear();  //!< includes resize
   B_.logger_.reset();    //!< includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
@@ -453,8 +456,6 @@ nest::gif_cond_exp::calibrate()
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.RefractoryCounts_ >= 0 );
 
   // initializing adaptation (stc/sfa) variables
   V_.P_sfa_.resize( P_.tau_sfa_.size(), 0.0 );

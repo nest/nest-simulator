@@ -39,7 +39,7 @@ class TestMCNeuron(unittest.TestCase):
     tau_syn_in = 5.0       # proximal inhibitory synaptic time constants
     proximal = {'tau_syn_ex': tau_syn_ex, 'tau_syn_in': tau_syn_in}
     distal = {'C_m': 90.0}  # distal capacitance
-    # paramter for recording time of compartements
+    # parameter for recording time of compartements
     rec_dic_dc_soma = {'start': 250.0, 'stop': 300.0, 'amplitude':  50.0}
     rec_dic_dc_proximal = {'start': 150.0, 'stop': 200.0, 'amplitude': -50.0}
     rec_dic_dc_distal = {'start':  50.0, 'stop': 100.0, 'amplitude': 100.0}
@@ -122,10 +122,10 @@ class TestMCNeuron(unittest.TestCase):
                  'distal_inh']
         nest.Connect(self.mm, self.n)
         for i, l in enumerate(label[:3]):
-            nest.Connect([self.cgs[i]], self.n,
+            nest.Connect(self.cgs[i], self.n,
                          syn_spec={'receptor_type': syns[l]})
         for i, l in enumerate(label[3:]):
-            nest.Connect([self.sgs[i]], self.n,
+            nest.Connect(self.sgs[i], self.n,
                          syn_spec={'receptor_type': syns[l]})
 
     def testNeuron(self):
@@ -158,6 +158,7 @@ class TestMCNeuron(unittest.TestCase):
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestMCNeuron)
     return suite
+
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner(verbosity=2)

@@ -312,7 +312,7 @@ Processes::ForkFunction::execute( SLIInterpreter* i ) const
       //             {
       //               std::cerr << "Parent: Creating and putting child into new
       //               process group ";
-      //               int result = setpgid(pid,pid);
+      //               int result = setpnode_id(pid,pid);
       //               if (result < 0) i->raiseerror(systemerror(i));
       //               Processes::children_group = pid;
       //               std::cerr << Processes::children_group << std::endl;
@@ -322,7 +322,7 @@ Processes::ForkFunction::execute( SLIInterpreter* i ) const
       //               std::cerr << "Parent: Putting child into process group "
       //               <<
       //               Processes::children_group << std::endl;
-      //               int result = setpgid(pid,Processes::children_group);
+      //               int result = setpnode_id(pid,Processes::children_group);
       //               if (result < 0) i->raiseerror(systemerror(i));
       //             }
     }

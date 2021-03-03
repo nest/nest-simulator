@@ -28,6 +28,7 @@
 
 // Includes from nestkernel:
 #include "nest_names.h"
+#include "kernel_manager.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -38,9 +39,6 @@
 nest::ConnParameter*
 nest::ConnParameter::create( const Token& t, const size_t nthreads )
 {
-  // Code grabbed from TopologyModule::create_parameter()
-  // See there for a more general solution
-
   // single double
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
   if ( dd )
@@ -67,6 +65,13 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
   if ( dvd )
   {
     return new ArrayDoubleParameter( **dvd, nthreads );
+  }
+
+  // Parameter
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
+  if ( pd )
+  {
+    return new ParameterConnParameterWrapper( *pd, nthreads );
   }
 
   // array of integer
@@ -98,4 +103,21 @@ nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec, const s
 
   rdv_ = factory->create();
   rdv_->set_status( rdv_spec );
+
+  provides_long_ = rdv_->has_ldev();
+}
+
+
+nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( const ParameterDatum& pd, const size_t )
+  : parameter_( pd.get() )
+{
+}
+
+double
+nest::ParameterConnParameterWrapper::value_double( thread target_thread,
+  librandom::RngPtr& rng,
+  index snode_id,
+  Node* target ) const
+{
+  return parameter_->value( rng, snode_id, target, target_thread );
 }

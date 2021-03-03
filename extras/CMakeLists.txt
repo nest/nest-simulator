@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-install( DIRECTORY bibliography logos
+install( DIRECTORY logos
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
@@ -29,10 +29,15 @@ install( FILES EditorSupport/vim/syntax/sli.vim
     DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/vim/syntax
     )
 
+install( FILES nestrc.sli
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
+    )
+
 install( PROGRAMS
     ${PROJECT_BINARY_DIR}/extras/nest-config
     nest_indirect
     nest_serial
+    nest-server
     ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
     DESTINATION ${CMAKE_INSTALL_BINDIR}
     )

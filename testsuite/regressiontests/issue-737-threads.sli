@@ -44,52 +44,52 @@ skip_if_not_threaded
 % Test multithreaded c in syn_spec for stdp_dopamine_synapse model
 {
   ResetKernel
-  
-  0 << /local_num_threads 4 >> SetStatus
-  
+
+  << /local_num_threads 4 >> SetKernelStatus
+
   /n /iaf_psc_alpha Create def
   /vt /volume_transmitter Create def
   /stdp_dopamine_synapse << /vt vt >> SetDefaults
-  [n] [n] << /rule /one_to_one >> << /model /stdp_dopamine_synapse /c 2.0 >> Connect
+  [n] [n] << /rule /one_to_one >> << /synapse_model /stdp_dopamine_synapse /c 2.0 >> Connect
 
 } fail_or_die
 
 % Test multithreaded n in syn_spec for stdp_dopamine_synapse model
 {
   ResetKernel
-  
-  0 << /local_num_threads 4 >> SetStatus
-  
-  /gid /iaf_psc_alpha Create def
+
+  << /local_num_threads 4 >> SetKernelStatus
+
+  /node_id /iaf_psc_alpha Create def
   /vt /volume_transmitter Create def
   /stdp_dopamine_synapse << /vt vt >> SetDefaults
-  [gid] [gid] << /rule /one_to_one >> << /model /stdp_dopamine_synapse /n 2.0 >> Connect
+  [node_id] [node_id] << /rule /one_to_one >> << /synapse_model /stdp_dopamine_synapse /n 2.0 >> Connect
 
 } fail_or_die
 
 % Test multithreaded c in syn_spec for CopyModel of stdp_dopamine_synapse model
 {
   ResetKernel
-  
-  0 << /local_num_threads 4 >> SetStatus
-  
+
+  << /local_num_threads 4 >> SetKernelStatus
+
   /n /iaf_psc_alpha Create def
   /vt /volume_transmitter Create def
   /stdp_dopamine_synapse /mysyn << /vt vt >> CopyModel
-  [n] [n] << /rule /one_to_one >> << /model /mysyn /c 2.0 >> Connect
+  [n] [n] << /rule /one_to_one >> << /synapse_model /mysyn /c 2.0 >> Connect
 
 } fail_or_die
 
 % Test multithreaded n in syn_spec for CopyModel of stdp_dopamine_synapse model
 {
   ResetKernel
-  
-  0 << /local_num_threads 4 >> SetStatus
-  
-  /gid /iaf_psc_alpha Create def
+
+  << /local_num_threads 4 >> SetKernelStatus
+
+  /node_id /iaf_psc_alpha Create def
   /vt /volume_transmitter Create def
   /stdp_dopamine_synapse /mysyn << /vt vt >> CopyModel
-  [gid] [gid] << /rule /one_to_one >> << /model /mysyn /n 2.0 >> Connect
+  [node_id] [node_id] << /rule /one_to_one >> << /synapse_model /mysyn /n 2.0 >> Connect
 
 } fail_or_die
 

@@ -40,10 +40,10 @@ void
 SPManager::register_growth_curve( const std::string& name )
 {
   assert( not growthcurvedict_->known( name ) );
-  GenericGrowthCurveFactory* gc = new GrowthCurveFactory< GrowthCurve >();
-  assert( gc != 0 );
+  GenericGrowthCurveFactory* nc = new GrowthCurveFactory< GrowthCurve >();
+  assert( nc != 0 );
   const int id = growthcurve_factories_.size();
-  growthcurve_factories_.push_back( gc );
+  growthcurve_factories_.push_back( nc );
   growthcurvedict_->insert( name, id );
 }
 

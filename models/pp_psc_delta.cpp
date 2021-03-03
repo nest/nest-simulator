@@ -20,10 +20,6 @@
  *
  */
 
-/*
- *  Multimeter support by Yury V. Zaytsev.
- */
-
 /* pp_psc_delta is a stochastically spiking neuron where the potential jumps on
  * each spike arrival.
  */
@@ -35,6 +31,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "compose.hpp"
 #include "numerics.h"
 
@@ -146,20 +143,20 @@ nest::pp_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
+nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
 
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::tau_m, tau_m_ );
-  updateValue< double >( d, names::dead_time, dead_time_ );
-  updateValue< bool >( d, names::dead_time_random, dead_time_random_ );
-  updateValue< long >( d, names::dead_time_shape, dead_time_shape_ );
-  updateValue< bool >( d, names::with_reset, with_reset_ );
-  updateValue< double >( d, names::c_1, c_1_ );
-  updateValue< double >( d, names::c_2, c_2_ );
-  updateValue< double >( d, names::c_3, c_3_ );
-  updateValue< double >( d, names::t_ref_remaining, t_ref_remaining_ );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< double >( d, names::dead_time, dead_time_, node );
+  updateValueParam< bool >( d, names::dead_time_random, dead_time_random_, node );
+  updateValueParam< long >( d, names::dead_time_shape, dead_time_shape_, node );
+  updateValueParam< bool >( d, names::with_reset, with_reset_, node );
+  updateValueParam< double >( d, names::c_1, c_1_, node );
+  updateValueParam< double >( d, names::c_2, c_2_, node );
+  updateValueParam< double >( d, names::c_3, c_3_, node );
+  updateValueParam< double >( d, names::t_ref_remaining, t_ref_remaining_, node );
 
   try
   {
@@ -171,8 +168,8 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
     multi_param_ = 0;
     double tau_sfa_temp_;
     double q_sfa_temp_;
-    updateValue< double >( d, names::tau_sfa, tau_sfa_temp_ );
-    updateValue< double >( d, names::q_sfa, q_sfa_temp_ );
+    updateValueParam< double >( d, names::tau_sfa, tau_sfa_temp_, node );
+    updateValueParam< double >( d, names::q_sfa, q_sfa_temp_, node );
     tau_sfa_.push_back( tau_sfa_temp_ );
     q_sfa_.push_back( q_sfa_temp_ );
   }
@@ -234,10 +231,10 @@ nest::pp_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& ) const
 }
 
 void
-nest::pp_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::pp_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, y3_ );
-  updateValue< double >( d, names::E_sfa, q_ );
+  updateValueParam< double >( d, names::V_m, y3_, node );
+  updateValueParam< double >( d, names::E_sfa, q_, node );
   // vectors of the state should be initialized with new parameter set.
   initialized_ = false;
 }
@@ -257,7 +254,7 @@ nest::pp_psc_delta::Buffers_::Buffers_( const Buffers_&, pp_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 nest::pp_psc_delta::pp_psc_delta()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -266,7 +263,7 @@ nest::pp_psc_delta::pp_psc_delta()
 }
 
 nest::pp_psc_delta::pp_psc_delta( const pp_psc_delta& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -291,7 +288,7 @@ nest::pp_psc_delta::init_buffers_()
   B_.spikes_.clear();   //!< includes resize
   B_.currents_.clear(); //!< includes resize
   B_.logger_.reset();   //!< includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void
@@ -419,7 +416,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 
         if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.
         {
-          // Set dead time interval according to paramters
+          // Set dead time interval according to parameters
           if ( P_.dead_time_random_ )
           {
             S_.r_ = Time( Time::ms( V_.gamma_dev_( V_.rng_ ) / V_.dt_rate_ ) ).get_steps();

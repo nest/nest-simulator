@@ -99,6 +99,8 @@ public:
   Target( const Target& target );
   Target( const thread tid, const thread rank, const synindex syn_id, const index lcid );
 
+  Target& operator=( const Target& );
+
   /**
    * Set local connection id.
    */
@@ -172,6 +174,13 @@ inline Target::Target( const Target& target )
   : remote_target_id_( target.remote_target_id_ )
 {
   set_status( TARGET_ID_UNPROCESSED ); // initialize
+}
+
+inline Target& Target::operator=( const Target& other )
+{
+  remote_target_id_ = other.remote_target_id_;
+  set_status( TARGET_ID_UNPROCESSED );
+  return *this;
 }
 
 inline Target::Target( const thread tid, const thread rank, const synindex syn_id, const index lcid )

@@ -26,6 +26,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -135,22 +136,22 @@ nest::gif_psc_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
+nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::E_L, E_L_ );
-  updateValue< double >( d, names::g_L, g_L_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::Delta_V, Delta_V_ );
-  updateValue< double >( d, names::V_T_star, V_T_star_ );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
+  updateValueParam< double >( d, names::g_L, g_L_, node );
+  updateValueParam< double >( d, names::C_m, c_m_, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  updateValueParam< double >( d, names::Delta_V, Delta_V_, node );
+  updateValueParam< double >( d, names::V_T_star, V_T_star_, node );
 
-  if ( updateValue< double >( d, names::lambda_0, lambda_0_ ) )
+  if ( updateValueParam< double >( d, names::lambda_0, lambda_0_, node ) )
   {
     lambda_0_ /= 1000.0; // convert to 1/ms
   }
 
-  updateValue< double >( d, names::t_ref, t_ref_ );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
 
   updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
   updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
@@ -234,7 +235,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::gif_psc_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::gif_psc_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& ) const
 {
   def< double >( d, names::V_m, V_ );     // Membrane potential
   def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
@@ -242,9 +243,9 @@ nest::gif_psc_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameter
 }
 
 void
-nest::gif_psc_exp_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_& p )
+nest::gif_psc_exp_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, V_ );
+  updateValueParam< double >( d, names::V_m, V_, node );
 }
 
 nest::gif_psc_exp_multisynapse::Buffers_::Buffers_( gif_psc_exp_multisynapse& n )
@@ -262,7 +263,7 @@ nest::gif_psc_exp_multisynapse::Buffers_::Buffers_( const Buffers_&, gif_psc_exp
  * ---------------------------------------------------------------- */
 
 nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -271,7 +272,7 @@ nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse()
 }
 
 nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse( const gif_psc_exp_multisynapse& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -295,7 +296,7 @@ nest::gif_psc_exp_multisynapse::init_buffers_()
   B_.spikes_.clear();   //!< includes resize
   B_.currents_.clear(); //!< includes resize
   B_.logger_.reset();   //!< includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void
@@ -313,9 +314,6 @@ nest::gif_psc_exp_multisynapse::calibrate()
   V_.P31_ = -numerics::expm1( -h / tau_m );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.RefractoryCounts_ >= 0 );
-
 
   // initializing adaptation (stc/sfa) variables
   V_.P_sfa_.resize( P_.tau_sfa_.size(), 0.0 );

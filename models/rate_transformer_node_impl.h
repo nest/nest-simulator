@@ -35,6 +35,8 @@
 
 // Includes from libnestutil:
 #include "numerics.h"
+#include "dict_util.h"
+
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -86,9 +88,9 @@ nest::rate_transformer_node< TNonlinearities >::Parameters_::get( DictionaryDatu
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::Parameters_::set( const DictionaryDatum& d )
+nest::rate_transformer_node< TNonlinearities >::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< bool >( d, names::linear_summation, linear_summation_ );
+  updateValueParam< bool >( d, names::linear_summation, linear_summation_, node );
 }
 
 template < class TNonlinearities >
@@ -100,9 +102,9 @@ nest::rate_transformer_node< TNonlinearities >::State_::get( DictionaryDatum& d 
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::State_::set( const DictionaryDatum& d )
+nest::rate_transformer_node< TNonlinearities >::State_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::rate, rate_ ); // Rate
+  updateValueParam< double >( d, names::rate, rate_, node ); // Rate
 }
 
 template < class TNonlinearities >
@@ -124,7 +126,7 @@ nest::rate_transformer_node< TNonlinearities >::Buffers_::Buffers_( const Buffer
 
 template < class TNonlinearities >
 nest::rate_transformer_node< TNonlinearities >::rate_transformer_node()
-  : Archiving_Node()
+  : ArchivingNode()
   , S_()
   , B_( *this )
 {
@@ -134,7 +136,7 @@ nest::rate_transformer_node< TNonlinearities >::rate_transformer_node()
 
 template < class TNonlinearities >
 nest::rate_transformer_node< TNonlinearities >::rate_transformer_node( const rate_transformer_node& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , nonlinearities_( n.nonlinearities_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -166,7 +168,7 @@ nest::rate_transformer_node< TNonlinearities >::init_buffers_()
   B_.last_y_values.resize( buffer_size, 0.0 );
 
   B_.logger_.reset(); // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 template < class TNonlinearities >

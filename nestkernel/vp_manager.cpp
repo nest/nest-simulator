@@ -73,7 +73,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
   bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
   if ( n_threads_updated )
   {
-    if ( kernel().node_manager.size() > 1 )
+    if ( kernel().node_manager.size() > 0 )
     {
       throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
     }
@@ -126,14 +126,14 @@ nest::VPManager::set_status( const DictionaryDatum& d )
       n_threads = 1;
     }
 
-    kernel().change_num_threads( n_threads );
+    kernel().change_number_of_threads( n_threads );
   }
 
   long n_vps = get_num_virtual_processes();
   bool n_vps_updated = updateValue< long >( d, names::total_num_virtual_procs, n_vps );
   if ( n_vps_updated )
   {
-    if ( kernel().node_manager.size() > 1 )
+    if ( kernel().node_manager.size() > 0 )
     {
       throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
     }
@@ -188,7 +188,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
       n_threads = 1;
     }
 
-    kernel().change_num_threads( n_threads );
+    kernel().change_number_of_threads( n_threads );
   }
 }
 

@@ -20,10 +20,6 @@ install( FILES run_examples.sh
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
-install( FILES sli/nestrc.sli
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
-    )
-
 install( DIRECTORY nest/
     DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
     USE_SOURCE_PERMISSIONS

@@ -130,12 +130,7 @@ public:
   {
   }
 
-  Connection( const Connection< targetidentifierT >& rhs )
-    : target_( rhs.target_ )
-    , syn_id_delay_( rhs.syn_id_delay_ )
-  {
-  }
-
+  Connection( const Connection< targetidentifierT >& rhs ) = default;
 
   /**
    * Get all properties of this connection and put them into a dictionary.
@@ -251,24 +246,24 @@ public:
    * Sets a flag in the connection to signal that the following connection has
    * the same source.
    *
-   * @see has_source_subsequent_targets
+   * @see source_has_more_targets
    */
   void
-  set_has_source_subsequent_targets( const bool subsequent_targets )
+  set_source_has_more_targets( const bool more_targets )
   {
-    syn_id_delay_.set_has_source_subsequent_targets( subsequent_targets );
+    syn_id_delay_.set_source_has_more_targets( more_targets );
   }
 
   /**
    * Returns a flag denoting whether the connection has source subsequent
    * targets.
    *
-   * @see set_has_source_subsequent_targets
+   * @see set_source_has_more_targets
    */
   bool
-  has_source_subsequent_targets() const
+  source_has_more_targets() const
   {
-    return syn_id_delay_.has_source_subsequent_targets();
+    return syn_id_delay_.source_has_more_targets();
   }
 
   /**
@@ -345,7 +340,7 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   // each bit in the signal type as a collection of individual flags
   if ( not( source.sends_signal() & target.receives_signal() ) )
   {
-    throw IllegalConnection();
+    throw IllegalConnection( "Source and target neuron are not compatible (e.g., spiking vs binary neuron)." );
   }
 
   target_.set_target( &target );
@@ -374,7 +369,7 @@ Connection< targetidentifierT >::set_status( const DictionaryDatum& d, Connector
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::check_synapse_params( const DictionaryDatum& d ) const
+Connection< targetidentifierT >::check_synapse_params( const DictionaryDatum& ) const
 {
 }
 
@@ -398,10 +393,7 @@ Connection< targetidentifierT >::trigger_update_weight( const thread,
   const double,
   const CommonSynapseProperties& )
 {
-  throw IllegalConnection(
-    "Connection::trigger_update_weight: "
-    "Connection does not support updates that are triggered by the volume "
-    "transmitter." );
+  throw IllegalConnection( "Connection does not support updates that are triggered by a volume transmitter." );
 }
 
 } // namespace nest

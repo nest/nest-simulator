@@ -37,68 +37,62 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup pp
-@ingroup psc
+/* BeginUserDocs: neuron, point process, current-based
 
-Name: pp_pop_psc_delta - Population of point process neurons with leaky
-                         integration of delta-shaped PSCs.
+Short description
++++++++++++++++++
 
-Description:
+Population of point process neurons with leaky integration of delta-shaped PSCs
 
-pp_pop_psc_delta is an effective model of a population of neurons. The
-N component neurons are assumed to be spike response models with escape
+Description
++++++++++++
+
+``pp_pop_psc_delta`` is an effective model of a population of neurons. The
+:math:`N` component neurons are assumed to be spike-response models with escape
 noise, also known as generalized linear models. We follow closely the
-nomenclature of [1]. The component neurons are a special case of
-pp_psc_delta (with purely exponential rate function, no reset and no
-random dead_time). All neurons in the population share the inputs that it
+nomenclature of [1]_. The component neurons are a special case of
+``pp_psc_delta`` (with purely exponential rate function, no reset and no
+random deadtime). All neurons in the population share the inputs that it
 receives, and the output is the pooled spike train.
 
-The instantaneous firing rate of the N component neurons is defined as
+The instantaneous firing rate of the :math:`N` component neurons is defined as
 
-@f[ rate(t) = \rho_0 * \exp( (h(t) - \eta(t))/\delta_u ), @f]
+.. math::
 
-where h(t) is the input potential (synaptic delta currents convolved with
-an exponential kernel with time constant tau_m), eta(t) models the effect
+ r(t) = \rho_0  \exp \frac{h(t) - \eta(t)}{\delta_u}\;,
+
+where :math:`h(t)` is the input potential (synaptic delta currents convolved with
+an exponential kernel with time constant :math:`tau_m`), :math:`\eta(t)` models the effect
 of refractoriness and adaptation (the neuron's own spike train convolved with
-a sum of exponential kernels with time constants tau_eta), and delta_u
+a sum of exponential kernels with time constants :math:`\tau_{\eta}`), and :math:`\delta_u`
 sets the scale of the voltages.
 
-To represent a (homogeneous) population of N inhomogeneous renewal process
+To represent a (homogeneous) population of :math:`N` inhomogeneous renewal process
 neurons, we can keep track of the numbers of neurons that fired a certain
 number of time steps in the past. These neurons will have the same value of
 the hazard function (instantaneous rate), and we draw a binomial random
 number for each of these groups. This algorithm is thus very similar to
-ppd_sup_generator and gamma_sup_generator, see also [2].
+``ppd_sup_generator`` and ``gamma_sup_generator``, see also [2]_.
 
-However, the adapting threshold eta(t) of the neurons generally makes the
+However, the adapting threshold :math:`\eta(t)` of the neurons generally makes the
 neurons non-renewal processes. We employ the quasi-renewal approximation
-[1], to be able to use the above algorithm. For the extension of [1] to
-coupled populations see [3].
+[1]_, to be able to use the above algorithm. For the extension of [1] to
+coupled populations see [3]_.
 
 In effect, in each simulation time step, a binomial random number for each
 of the groups of neurons has to be drawn, independent of the number of
-represented neurons. For large N, it should be much more efficient than
-simulating N individual pp_psc_delta models.
+represented neurons. For large :math:`N`, it should be much more efficient than
+simulating :math:`N` individual ``pp_psc_delta`` models.
 
-pp_pop_psc_delta emits spike events like other neuron models, but no more
-than one per time step. If several component neurons spike in the time step,
-the multiplicity of the spike event is set accordingly. Thus, to monitor
-its output, the multiplicity of the spike events has to be taken into
-account. Alternatively, the internal variable n_events gives the number of
-spikes emitted in a time step, and can be monitored using a multimeter.
-
-EDIT Nov 2016: pp_pop_psc_delta is now deprecated, because a new and
-presumably much faster population model implementation is now available, see
-gif_pop_psc_exp.
+The internal variable ``n_events`` gives the number of
+spikes emitted in a time step, and can be monitored using a ``multimeter``.
 
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
 =========== =============== ===========================================
  N          integer         Number of represented neurons
  tau_m      ms              Membrane time constant
@@ -112,10 +106,9 @@ The following parameters can be set in the status dictionary.
  len_kernel real            Post-spike kernel eta is truncated after
                             max(tau_eta) * len_kernel
 =========== =============== ===========================================
-\endverbatim
 
 The parameters correspond to the ones of pp_psc_delta as follows.
-\verbatim embed:rst
+
 ==================  ============================
  c_1                0.0
  c_2                rho_0
@@ -128,11 +121,16 @@ The parameters correspond to the ones of pp_psc_delta as follows.
  with_reset         False
  t_ref_remaining    0.0
 ==================  ============================
-\endverbatim
 
-References:
+.. admonition:: Deprecated model
 
-\verbatim embed:rst
+   ``pp_pop_psc_delta`` is deprecated because a new and presumably much faster
+   population model implementation is now available (see :doc:`gif_pop_psc_exp <gif_pop_psc_exp>`).
+
+
+References
+++++++++++
+
 .. [1] Naud R, Gerstner W (2012). Coding and decoding with adapting neurons:
        a population approach to the peri-stimulus time histogram.
        PLoS Compututational Biology 8: e1002711.
@@ -145,17 +143,23 @@ References:
        information filtering in coupled populations of spiking neurons with
        adaptation. Physical Review E 90:6, 062704.
        DOI: https://doi.org/10.1103/PhysRevE.90.062704
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-Author: May 2014, Setareh, Deger
+Receives
+++++++++
 
-SeeAlso: gif_pop_psc_exp, pp_psc_delta, ppd_sup_generator,
-gamma_sup_generator
-*/
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+
+EndUserDocs */
+
 class pp_pop_psc_delta : public Node
 {
 
@@ -202,7 +206,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Number of neurons in the population. */
     int N_; // by Hesam
 
@@ -230,9 +233,9 @@ private:
     /** -------------- */
     std::vector< double > val_eta_;
 
-    Parameters_();                      //!< Sets default parameter values
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    Parameters_();                                  //!< Sets default parameter values
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -242,7 +245,6 @@ private:
    */
   struct State_
   {
-
     double y0_;
     double h_;
 
@@ -261,7 +263,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -395,10 +397,10 @@ pp_pop_psc_delta::get_status( DictionaryDatum& d ) const
 inline void
 pp_pop_psc_delta::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

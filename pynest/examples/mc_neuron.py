@@ -42,7 +42,7 @@ Voltage and synaptic conductance traces are shown for all compartments.
 
 
 import nest
-import pylab
+import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -95,18 +95,17 @@ nest.Connect(mm, n)
 # and stop times and the amplitude of the injected current.
 
 cgs = nest.Create('dc_generator', 3)
-nest.SetStatus(cgs,
-               [{'start': 250.0, 'stop': 300.0, 'amplitude': 50.0},   # soma
-                {'start': 150.0, 'stop': 200.0, 'amplitude': -50.0},  # proxim.
-                {'start': 50.0, 'stop': 100.0, 'amplitude': 100.0}])  # distal
+cgs[0].set(start=250.0, stop=300.0, amplitude=50.0)  # soma
+cgs[1].set(start=150.0, stop=200.0, amplitude=-50.0)  # proxim.
+cgs[2].set(start=50.0, stop=100.0, amplitude=100.0)  # distal
 
 ###############################################################################
 # Generators are then connected to the correct compartments. Specification of
 # the ``receptor_type`` uniquely defines the target compartment and receptor.
 
-nest.Connect([cgs[0]], n, syn_spec={'receptor_type': syns['soma_curr']})
-nest.Connect([cgs[1]], n, syn_spec={'receptor_type': syns['proximal_curr']})
-nest.Connect([cgs[2]], n, syn_spec={'receptor_type': syns['distal_curr']})
+nest.Connect(cgs[0], n, syn_spec={'receptor_type': syns['soma_curr']})
+nest.Connect(cgs[1], n, syn_spec={'receptor_type': syns['proximal_curr']})
+nest.Connect(cgs[2], n, syn_spec={'receptor_type': syns['distal_curr']})
 
 ###############################################################################
 # We create one excitatory and one inhibitory spike generator per compartment
@@ -114,24 +113,23 @@ nest.Connect([cgs[2]], n, syn_spec={'receptor_type': syns['distal_curr']})
 # that order, alternating the excitatory and inhibitory spike generators.
 
 sgs = nest.Create('spike_generator', 6)
-nest.SetStatus(sgs,
-               [{'spike_times': [600.0, 620.0]},  # soma excitatory
-                {'spike_times': [610.0, 630.0]},  # soma inhibitory
-                {'spike_times': [500.0, 520.0]},  # proximal excitatory
-                {'spike_times': [510.0, 530.0]},  # proximal inhibitory
-                {'spike_times': [400.0, 420.0]},  # distal excitatory
-                {'spike_times': [410.0, 430.0]}])  # distal inhibitory
+sgs[0].spike_times = [600.0, 620.0]  # soma excitatory
+sgs[1].spike_times = [610.0, 630.0]  # soma inhibitory
+sgs[2].spike_times = [500.0, 520.0]  # proximal excitatory
+sgs[3].spike_times = [510.0, 530.0]  # proximal inhibitory
+sgs[4].spike_times = [400.0, 420.0]  # distal excitatory
+sgs[5].spike_times = [410.0, 430.0]  # distal inhibitory
 
 ###############################################################################
 # Connect generators to correct compartments in the same way as in case of
 # current generator
 
-nest.Connect([sgs[0]], n, syn_spec={'receptor_type': syns['soma_exc']})
-nest.Connect([sgs[1]], n, syn_spec={'receptor_type': syns['soma_inh']})
-nest.Connect([sgs[2]], n, syn_spec={'receptor_type': syns['proximal_exc']})
-nest.Connect([sgs[3]], n, syn_spec={'receptor_type': syns['proximal_inh']})
-nest.Connect([sgs[4]], n, syn_spec={'receptor_type': syns['distal_exc']})
-nest.Connect([sgs[5]], n, syn_spec={'receptor_type': syns['distal_inh']})
+nest.Connect(sgs[0], n, syn_spec={'receptor_type': syns['soma_exc']})
+nest.Connect(sgs[1], n, syn_spec={'receptor_type': syns['soma_inh']})
+nest.Connect(sgs[2], n, syn_spec={'receptor_type': syns['proximal_exc']})
+nest.Connect(sgs[3], n, syn_spec={'receptor_type': syns['proximal_inh']})
+nest.Connect(sgs[4], n, syn_spec={'receptor_type': syns['distal_exc']})
+nest.Connect(sgs[5], n, syn_spec={'receptor_type': syns['distal_inh']})
 
 ###############################################################################
 # Run the simulation for 700 ms.
@@ -141,14 +139,14 @@ nest.Simulate(700)
 ###############################################################################
 # Now we set the intrinsic current of soma to 150 pA to make the neuron spike.
 
-nest.SetStatus(n, {'soma': {'I_e': 150.0}})
+n.set({'soma': {'I_e': 150.}})
 
 ###############################################################################
 # We simulate the network for another 300 ms and retrieve recorded data from
 # the multimeter
 
 nest.Simulate(300)
-rec = nest.GetStatus(mm)[0]['events']
+rec = mm.events
 
 ###############################################################################
 # We create an array with the time points when the quantities were actually
@@ -161,25 +159,26 @@ t = rec['times']
 # membrane potential for soma, proximal, and distal dendrites (`V_m.s`, `V_m.p`
 # and `V_m.d`).
 
-pylab.figure()
-pylab.subplot(211)
-pylab.plot(t, rec['V_m.s'], t, rec['V_m.p'], t, rec['V_m.d'])
-pylab.legend(('Soma', 'Proximal dendrite', 'Distal dendrite'),
-             loc='lower right')
-pylab.axis([0, 1000, -76, -59])
-pylab.ylabel('Membrane potential [mV]')
-pylab.title('Responses of iaf_cond_alpha_mc neuron')
+plt.figure()
+plt.subplot(211)
+plt.plot(t, rec['V_m.s'], t, rec['V_m.p'], t, rec['V_m.d'])
+plt.legend(('Soma', 'Proximal dendrite', 'Distal dendrite'),
+           loc='lower right')
+plt.axis([0, 1000, -76, -59])
+plt.ylabel('Membrane potential [mV]')
+plt.title('Responses of iaf_cond_alpha_mc neuron')
 
 ###############################################################################
 # Finally, we plot the time traces of the synaptic conductance measured in
 # each compartment.
 
-pylab.subplot(212)
-pylab.plot(t, rec['g_ex.s'], 'b-', t, rec['g_ex.p'], 'g-',
-           t, rec['g_ex.d'], 'r-')
-pylab.plot(t, rec['g_in.s'], 'b--', t, rec['g_in.p'], 'g--',
-           t, rec['g_in.d'], 'r--')
-pylab.legend(('g_ex.s', 'g_ex.p', 'g_in.d', 'g_in.s', 'g_in.p', 'g_in.d'))
-pylab.axis([350, 700, 0, 1.15])
-pylab.xlabel('Time [ms]')
-pylab.ylabel('Synaptic conductance [nS]')
+plt.subplot(212)
+plt.plot(t, rec['g_ex.s'], 'b-', t, rec['g_ex.p'], 'g-',
+         t, rec['g_ex.d'], 'r-')
+plt.plot(t, rec['g_in.s'], 'b--', t, rec['g_in.p'], 'g--',
+         t, rec['g_in.d'], 'r--')
+plt.legend(('g_ex.s', 'g_ex.p', 'g_in.d', 'g_in.s', 'g_in.p', 'g_in.d'))
+plt.axis([350, 700, 0, 1.15])
+plt.xlabel('Time [ms]')
+plt.ylabel('Synaptic conductance [nS]')
+plt.show()

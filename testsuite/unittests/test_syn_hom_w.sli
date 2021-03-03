@@ -45,10 +45,10 @@ Author: Moritz Helias, Susanne Kunkel
 
 ResetKernel
 
-0 <<
+<<
        /local_num_threads 1
        /resolution h
-     >> SetStatus
+     >> SetKernelStatus
 
 /spike_generator Create /sg Set
 
@@ -63,10 +63,10 @@ sg <<
 /iaf_psc_alpha Create /neuron Set
 
 /voltmeter Create /vm Set
-vm << /withtime true /to_memory true /time_in_steps true /interval h >> SetStatus
+vm << /time_in_steps true /interval h >> SetStatus
 
-/spike_detector Create /sd Set
-sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
+/spike_recorder Create /sr Set
+sr << /time_in_steps true >> SetStatus
 
 /static_synapse_hom_w
 <<
@@ -74,11 +74,9 @@ sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
     /delay 1.0
 >> SetDefaults
 
-sg neuron /static_synapse_hom_w Connect
-
-vm neuron /static_synapse_hom_w Connect
-
-neuron sd /static_synapse_hom_w Connect
+sg neuron << >> /static_synapse_hom_w Connect
+vm neuron << >> /static_synapse_hom_w Connect
+neuron sr << >> /static_synapse_hom_w Connect
 
 7.0 Simulate
 
@@ -98,8 +96,8 @@ neuron sd /static_synapse_hom_w Connect
 % Expected output of this program:
 % 
 % The output send to std::cout is a superposition of the output of
-% the voltmeter and the spike detector. Both, voltmeter and spike
-% detector are connected to the same neuron.
+% the voltmeter and the spike recorder. Both, voltmeter and spike
+% recorder are connected to the same neuron.
 %
 % time (in steps)  voltage (in mV)
 [

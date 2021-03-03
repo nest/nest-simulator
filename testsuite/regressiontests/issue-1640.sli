@@ -1,0 +1,91 @@
+/*
+ *  issue-1640.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /** @BeginDocumentation
+Name: testsuite::issue-1640
+
+Synopsis: (issue-1640) run -> NEST exits if test fails
+
+Description:
+Ensure that GetConnections does not return erroneous connections
+when devices are connected as both source and target while using multiple threads.
+
+Author: Håkon Mørk
+FirstVersion: August 2020
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+{
+  /all_conns_correct true def
+  [2 4 1] Range
+  {
+    /num_threads Set
+    [1 10 1] Range
+    {
+      /num_neurons Set
+      /expected_num_conns num_neurons def
+
+      ResetKernel
+      << /local_num_threads num_threads >> SetKernelStatus
+
+      /neurons /iaf_psc_alpha num_neurons Create def
+
+      % A poisson_generator is connected as source
+      /pg /poisson_generator Create def
+      pg neurons Connect
+
+      % An additional device is connected as target
+      /sr /spike_recorder Create def
+      neurons sr Connect
+
+      % We only want the connections where the poisson_generator is source
+      /conns << /source pg >> GetConnections def
+
+      % Check that the poisson_generator is the source for all connections
+      /pg_id pg GetStatus 0 get /global_id get def
+      /conn_source_correct true conns {GetStatus /source get pg_id eq and} Fold def
+
+      % Check that number of connections is correct
+      /conn_length_correct conns length expected_num_conns eq def
+
+      /conns_correct conn_source_correct conn_length_correct and def
+      conns_correct all_conns_correct and /all_conns_correct Set
+
+      % Helpful information in case of failure
+      conns_correct not
+      {
+        num_threads cvs ( threads: ) join conns length cvs join
+        ( conns, expected ) join expected_num_conns cvs join =
+      } if
+    } forall
+  } forall
+
+  all_conns_correct
+}
+assert_or_die
+
+endusing

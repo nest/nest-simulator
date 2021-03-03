@@ -7,11 +7,11 @@ Introduction
 
 NEST is installed with `cmake` (at least v2.8.12). In the simplest case, the commands
 
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
     make
     make install
 
-should build and install NEST to `/install/path`, which should be an absolute
+should build and install NEST to `<nest_install_dir>`, which should be an absolute
 path. Detailed installation  instructions can be found below, including
 instructions for macOS, BlueGene/Q and Fujitsu Sparc64 systems.
 
@@ -25,7 +25,7 @@ Choice of CMake Version
 
 We recommend to use `cmake` v3.4 or later, even though installing NEST with
 `cmake` v2.8.12 will in most cases work properly.
-For more detailed information please see below: `Python3 Binding (PyNEST)`
+For more detailed information please see below: `Python Binding (PyNEST)`
 
 Choice of compiler
 ==================
@@ -84,8 +84,7 @@ Set default libraries:
                                                  ltdl, set install path. NEST uses the
                                                  ltdl for dynamic loading of external
                                                  user modules. [default=ON]
-    -Dwith-python=[OFF|ON|2|3]                   Build PyNEST. To set a specific Python
-                                                 version, set 2 or 3. [default=ON]
+    -Dwith-python=[OFF|ON]                       Build PyNEST. [default=ON]
     -Dcythonize-pynest=[OFF|ON]                  Use Cython to cythonize pynestkernel.pyx.
                                                  If OFF, PyNEST has to be build from
                                                  a pre-cythonized pynestkernel.pyx.
@@ -114,6 +113,8 @@ Change compilation behavior:
                                                    paths by ';'. [default OFF]
     -Dwith-defines=<list;of;defines>               Additional defines, e.g. '-DXYZ=1'.
                                                    Separate multiple defines by ';'. [default OFF]
+    -Dwith-sionlib=[OFF|ON|</path/to/sionlib>]     Use SIONlib to compile the corresponding recording
+                                                   backend. [default OFF]
     -Dwith-boost=[OFF|ON]                          Build C++-testsuite using the Boost unittest
                                                    framework.
 
@@ -145,14 +146,10 @@ are impatient, use
 
 as an argument to `cmake`.
 
-Python3 Binding (PyNEST)
-=========================
+Python Binding (PyNEST)
+=======================
 
-To force a Python3-binding in a mixed Python2/3 environment pass
-
-    -Dwith-python=3
-
-as an argument to `cmake`.
+Note that since NEST 3.0, support for Python 2 has been dropped. Please use Python 3 instead.
 
 `cmake` usually autodetects your Python installation.
 In some cases `cmake` might not be able to localize the Python interpreter
@@ -165,11 +162,11 @@ and its corresponding libraries correctly. To circumvent such a problem followin
   PYTHON_INCLUDE_DIR2 ... directories
 
   e.g.: Please note `-Dwith-python=ON` is the default.
-  cmake -DCMAKE_INSTALL_PREFIX=</install/path> \
+  cmake -DCMAKE_INSTALL_PREFIX=<nest_install_dir> \
         -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-        -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so \
-        -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
-        -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.4m \
+        -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.6m.so \
+        -DPYTHON_INCLUDE_DIR=/usr/include/python3.6 \
+        -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.6m \
         </path/to/NEST/src>
 
 Compiling for Apple OSX/macOS
@@ -183,7 +180,7 @@ way to install all required software is using Homebrew (from http://brew.sh).
 
 will install all required prequisites. You can then configure NEST with
 
-  cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
         -DCMAKE_C_COMPILER=gcc-6\
         -DCMAKE_CXX_COMPILER=g++-6 \
         </path/to/NEST/src>
@@ -198,7 +195,7 @@ NEST provides a cmake tool-chain file for cross compilation for BlueGene/Q. When
 configuring NEST use the following `cmake` line:
 
     cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
-          -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+          -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
           -Dwith-python=OFF \
           -Dstatic-libraries=ON \
           </path/to/NEST/src>
@@ -229,25 +226,14 @@ Building PyNEST on BlueGene/Q requires you to compile dynamically, i.e.
     cythonize pynestkernel.pyx
 
 Copy the generated file `pynestkernel.cpp` into `</path/to/NEST/src>/pynest` on
-BlueGene/Q and point `-Dwith-python=<...>` to a valid python version for cross
-compilation:
-
-    -Dwith-python=/bgsys/tools/Python-2.7/bin/hostpython
-or (much better)
-    -Dwith-python=/bgsys/local/python3/3.4.2/bin/python3
+BlueGene/Q.
 
 CMake <3.4 is buggy about finding the matching libraries (for many years).
 Thus, you also have to specify `PYTHON_LIBRARY` and `PYTHON_INCLUDE_DIR`
 if they are not found OR the incorrect libraries are found, e.g.:
-
 ```
--DPYTHON_LIBRARY=/bgsys/tools/Python-2.7/lib64/libpython2.7.so.1.0
--DPYTHON_INCLUDE_DIR=/bgsys/tools/Python-2.7/include/python2.7
-```
-or (much better)
-```
--DPYTHON_LIBRARY=/bgsys/local/python3/3.4.2/lib/libpython3.4m.a
--DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.4.2/include/python3.4m
+-DPYTHON_LIBRARY=/bgsys/local/python3/3.6.10/lib/libpython3.6m.a
+-DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.6.10/include/python3.6m
 ```
 
 A complete `cmake` line for PyNEST could look like this:
@@ -255,27 +241,26 @@ A complete `cmake` line for PyNEST could look like this:
 module load gsl
 
 cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
-  -DCMAKE_INSTALL_PREFIX=</install/path> \
+  -DCMAKE_INSTALL_PREFIX=<nest_install_dir> \
   -Dstatic-libraries=OFF \
   -Dcythonize-pynest=OFF \
 	  -DCMAKE_C_COMPILER=/bgsys/drivers/ppcfloor/comm/xl/bin/mpixlc_r \
 	  -DCMAKE_CXX_COMPILER=/bgsys/drivers/ppcfloor/comm/xl/bin/mpixlcxx_r \
-	  -Dwith-python=/bgsys/local/python3/3.4.2/bin/python3 \
-	  -DPYTHON_LIBRARY=/bgsys/local/python3/3.4.2/lib/libpython3.4m.a \
-	  -DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.4.2/include/python3.4m \
+	  -DPYTHON_LIBRARY=/bgsys/local/python3/3.6.10/lib/libpython3.6m.a \
+	  -DPYTHON_INCLUDE_DIR=/bgsys/local/python3/3.6.10/include/python3.6m \
   -Dwith-ltdl=OFF \
   <nest-src>
 ```
 
-Further, for running PyNEST, make sure all python dependencies are installed and
+Further, for running PyNEST, make sure all Python dependencies are installed and
 environment variables are set properly:
 ```
-module load python3/3.4.2
+module load python3/3.6.10
 
 # adds PyNEST to the PYTHONPATH
 source <nest-install-dir>/bin/nest_vars.sh
 
-# makes HOME and PYTHONPATH available for python
+# makes HOME and PYTHONPATH available for Python
 runjob \
   --exp-env HOME \
   --exp-env PATH \
@@ -283,7 +268,7 @@ runjob \
   --exp-env PYTHONUNBUFFERED \
   --exp-env PYTHONPATH \
   ... \
-  : /bgsys/local/python3/3.4.2/bin/python3.4 script.py
+  : /bgsys/local/python3/3.6.10/bin/python3 script.py
 ```
 
 BlueGene/Q and GCC
@@ -315,7 +300,7 @@ Compiling for Fujitsu Sparc64
 =============================
 
 On the K Computer:
-  The preinstalled `cmake` version is 2.6, which is to old for NEST. Please install
+  The preinstalled `cmake` version is 2.6, which is too old for NEST. Please install
   a newer version, e.g. like this:
 
       wget https://cmake.org/files/v3.4/cmake-3.4.2.tar.gz
@@ -347,7 +332,7 @@ On the K Computer:
   To install NEST, use the following `cmake` line:
 
       cmake -DCMAKE_TOOLCHAIN_FILE=Platform/Fujitsu-Sparc64 \
-            -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+            -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
             -Dwith-gsl=/path/to/gsl-2.1.install/ \
             -Dwith-optimize="-Kfast -x1" \
             -Dwith-defines="-DUSE_PMA" \

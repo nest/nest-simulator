@@ -1,0 +1,229 @@
+/*
+ *  test_weight_delay.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+% this tests checks if weights and delays can be set to
+% arbitrary values within the limits set by resolution
+%
+% It creates a grid with a single row and uses linear functions for weights and delays
+% Expected weights are 1., 0.98, 0.96, 0.94, 0.92, 0.90, 0.88, 0.86, 0.84, 0.82
+% Expected delays with resolution 0.04 are 1.0 0.96 0.96 0.92 0.92 0.88 0.84
+
+/layer << /shape [ 10 1 ]
+          /extent [10. 1.]
+          /center [0. 0.]
+          /edge_wrap true
+          /elements /iaf_psc_alpha
+        >> def
+
+/src_layer layer def
+/tgt_layer layer def
+
+<< /constant << /value 1.0 >> >> CreateParameter
+<< /constant << /value -0.02 >> >> CreateParameter
+<< /distance << >> >> CreateParameter
+mul add /linear_parameter Set
+
+/conns << /connection_type (pairwise_bernoulli_on_target)
+          /mask    << /grid << /shape [ 10 1 ] >> /anchor [ 0 0 ] >>
+          /weight linear_parameter
+          /delay  linear_parameter
+       >> def
+
+% required to make sure that resolution goes into userdict
+userdict begin
+  /resolution 0.04 def
+end
+
+/source_layer_ref
+[
+ [1 -4.5 0]
+ [2 -3.5 0]
+ [3 -2.5 0]
+ [4 -1.5 0]
+ [5 -0.5 0]
+ [6 0.5 0]
+ [7 1.5 0]
+ [8 2.5 0]
+ [9 3.5 0]
+ [10 4.5 0]
+]
+def
+
+/target_layer_ref
+[
+ [11 -4.5 0]
+ [12 -3.5 0]
+ [13 -2.5 0]
+ [14 -1.5 0]
+ [15 -0.5 0]
+ [16 0.5 0]
+ [17 1.5 0]
+ [18 2.5 0]
+ [19 3.5 0]
+ [20 4.5 0]
+]
+def
+
+/conn_ref
+[
+ [1 11 1 1 0 0]
+ [1 12 0.98 1 1 0]
+ [1 13 0.96 0.96 2 0]
+ [1 14 0.94 0.96 3 0]
+ [1 15 0.92 0.92 4 0]
+ [1 16 0.9 0.92 -5 0]
+ [1 17 0.92 0.92 -4 0]
+ [1 18 0.94 0.96 -3 0]
+ [1 19 0.96 0.96 -2 0]
+ [1 20 0.98 1 -1 0]
+ [2 11 0.98 1 -1 0]
+ [2 12 1 1 0 0]
+ [2 13 0.98 1 1 0]
+ [2 14 0.96 0.96 2 0]
+ [2 15 0.94 0.96 3 0]
+ [2 16 0.92 0.92 4 0]
+ [2 17 0.9 0.92 -5 0]
+ [2 18 0.92 0.92 -4 0]
+ [2 19 0.94 0.96 -3 0]
+ [2 20 0.96 0.96 -2 0]
+ [3 11 0.96 0.96 -2 0]
+ [3 12 0.98 1 -1 0]
+ [3 13 1 1 0 0]
+ [3 14 0.98 1 1 0]
+ [3 15 0.96 0.96 2 0]
+ [3 16 0.94 0.96 3 0]
+ [3 17 0.92 0.92 4 0]
+ [3 18 0.9 0.92 -5 0]
+ [3 19 0.92 0.92 -4 0]
+ [3 20 0.94 0.96 -3 0]
+ [4 11 0.94 0.96 -3 0]
+ [4 12 0.96 0.96 -2 0]
+ [4 13 0.98 1 -1 0]
+ [4 14 1 1 0 0]
+ [4 15 0.98 1 1 0]
+ [4 16 0.96 0.96 2 0]
+ [4 17 0.94 0.96 3 0]
+ [4 18 0.92 0.92 4 0]
+ [4 19 0.9 0.92 -5 0]
+ [4 20 0.92 0.92 -4 0]
+ [5 11 0.92 0.92 -4 0]
+ [5 12 0.94 0.96 -3 0]
+ [5 13 0.96 0.96 -2 0]
+ [5 14 0.98 1 -1 0]
+ [5 15 1 1 0 0]
+ [5 16 0.98 1 1 0]
+ [5 17 0.96 0.96 2 0]
+ [5 18 0.94 0.96 3 0]
+ [5 19 0.92 0.92 4 0]
+ [5 20 0.9 0.92 -5 0]
+ [6 11 0.9 0.92 -5 0]
+ [6 12 0.92 0.92 -4 0]
+ [6 13 0.94 0.96 -3 0]
+ [6 14 0.96 0.96 -2 0]
+ [6 15 0.98 1 -1 0]
+ [6 16 1 1 0 0]
+ [6 17 0.98 1 1 0]
+ [6 18 0.96 0.96 2 0]
+ [6 19 0.94 0.96 3 0]
+ [6 20 0.92 0.92 4 0]
+ [7 11 0.92 0.92 4 0]
+ [7 12 0.9 0.92 -5 0]
+ [7 13 0.92 0.92 -4 0]
+ [7 14 0.94 0.96 -3 0]
+ [7 15 0.96 0.96 -2 0]
+ [7 16 0.98 1 -1 0]
+ [7 17 1 1 0 0]
+ [7 18 0.98 1 1 0]
+ [7 19 0.96 0.96 2 0]
+ [7 20 0.94 0.96 3 0]
+ [8 11 0.94 0.96 3 0]
+ [8 12 0.92 0.92 4 0]
+ [8 13 0.9 0.92 -5 0]
+ [8 14 0.92 0.92 -4 0]
+ [8 15 0.94 0.96 -3 0]
+ [8 16 0.96 0.96 -2 0]
+ [8 17 0.98 1 -1 0]
+ [8 18 1 1 0 0]
+ [8 19 0.98 1 1 0]
+ [8 20 0.96 0.96 2 0]
+ [9 11 0.96 0.96 2 0]
+ [9 12 0.94 0.96 3 0]
+ [9 13 0.92 0.92 4 0]
+ [9 14 0.9 0.92 -5 0]
+ [9 15 0.92 0.92 -4 0]
+ [9 16 0.94 0.96 -3 0]
+ [9 17 0.96 0.96 -2 0]
+ [9 18 0.98 1 -1 0]
+ [9 19 1 1 0 0]
+ [9 20 0.98 1 1 0]
+ [10 11 0.98 1 1 0]
+ [10 12 0.96 0.96 2 0]
+ [10 13 0.94 0.96 3 0]
+ [10 14 0.92 0.92 4 0]
+ [10 15 0.9 0.92 -5 0]
+ [10 16 0.92 0.92 -4 0]
+ [10 17 0.94 0.96 -3 0]
+ [10 18 0.96 0.96 -2 0]
+ [10 19 0.98 1 -1 0]
+ [10 20 1 1 0 0]
+]
+def
+
+(unittest) run
+/unittest using
+
+ResetKernel
+
+<< /sort_connections_by_source false >> SetKernelStatus
+
+userdict /resolution known { << /resolution resolution >> SetKernelStatus } if
+
+/sources src_layer CreateLayer def
+/targets tgt_layer CreateLayer def
+
+sources targets conns ConnectLayers
+
+/sources_oss osstream ; def
+/targets_oss osstream ; def
+/sources_conns_oss osstream ; def
+
+sources_oss sources DumpLayerNodes ;
+targets_oss targets DumpLayerNodes ;
+sources_conns_oss sources targets /static_synapse DumpLayerConnections ;
+
+/source_layer_result sources_oss str cst 3 Partition def
+/target_layer_result targets_oss str cst 3 Partition def
+/conn_result sources_conns_oss str cst 6 Partition def
+
+{
+  source_layer_ref source_layer_result eq
+} assert_or_die
+
+{
+  target_layer_ref target_layer_result eq
+} assert_or_die
+
+{
+  conn_ref conn_result eq
+} assert_or_die
+

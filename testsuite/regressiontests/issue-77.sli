@@ -82,6 +82,8 @@ M_ERROR setverbosity
              /music_message_in_proxy      % MUSIC port
              /music_cont_out_proxy        % MUSIC port
              /music_cont_in_proxy         % MUSIC port
+             /music_rate_out_proxy        % MUSIC port
+             /music_rate_in_proxy         % MUSIC port
            ] def    
 
 % The following models require connections to rport 1 or other specific parameters:
@@ -93,6 +95,10 @@ M_ERROR setverbosity
                                   /receptor_type 1 >>
    /gif_cond_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
+   /glif_cond << /params << /tau_syn [ 0.2 ] /E_rev [ 0.0 ] >>
+                                  /receptor_type 1 >>
+   /glif_psc << /params << /tau_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>                                  
    /iaf_psc_alpha_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
    /iaf_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
@@ -104,11 +110,8 @@ M_ERROR setverbosity
                                               /tau_decay [ 1.0 ] >>
                                   /receptor_type 1 >>
    /iaf_cond_alpha_mc << /receptor_type 1 >>
+   /pp_cond_exp_mc_urbanczik << /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>
-   /sli_neuron << /params << /calibrate { }
-                             /update { /spike ex_spikes 10. gt def } 
-                          >>
-               >> 
    >>
    def
                                      
@@ -135,13 +138,13 @@ M_ERROR setverbosity
       
       /pg /poisson_generator << /rate 1e5 >> Create def
       /parrot /parrot_neuron_ps Create def
-      /sd /spike_detector << /withtime false /withgid false >> Create def
+      /sr /spike_recorder Create def
       
       pg parrot Connect   % need to connect via parrot since generators cannot connect with
                           % plastic synapses.
 
       /initial_weight 10.0 def
-      /syn_spec << /model /stdp_synapse
+      /syn_spec << /synapse_model /stdp_synapse
                    /weight
                      extra_params model known
                      {
@@ -170,25 +173,25 @@ M_ERROR setverbosity
                      {
                        0
                      } ifelse
-                >> def  
+                >> def
 
-      [ parrot ] [ n ] /one_to_one syn_spec Connect
-      n sd Connect
+      parrot n /one_to_one syn_spec Connect
+      n sr Connect
             
       100 Simulate
 
-      /neuron_spiked sd /n_events get 0 gt def
+      /neuron_spiked sr /n_events get 0 gt def
       /t_spike_set n /t_spike get 0 gt def
       /weight_changed
-        << /source [ parrot ] >> GetConnections 0 get /weight get  
+        << /source parrot >> GetConnections 0 get /weight get  
         initial_weight neq def 
 
       neuron_spiked t_spike_set weight_changed and and
       dup not {
        (FAILED: ) model cvs join == 
-       (  events ) =only sd /n_events get =
+       (  events ) =only sr /n_events get =
        (  tspike ) =only n /t_spike get =
-       (  weight ) =only  << /source [ parrot ] >> GetConnections 0 get /weight get ==
+       (  weight ) =only  << /source parrot >> GetConnections 0 get /weight get ==
       } if      
     }
     { true }

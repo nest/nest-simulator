@@ -789,6 +789,17 @@ def
 {
   cout exch info_d
 } bind addtotrie
+[/arraytype]
+{
+  /dictarray Set
+  dictarray length 1 eq dictarray 0 get type /dictionarytype eq and
+  {
+    dictarray 0 get cout exch info_d
+  }
+  {
+    (Argument of info must be a single element array containing a dictionary) M_ERROR message
+  } ifelse
+} bind addtotrie
 [/trietype]
 {
   cout 

@@ -31,6 +31,9 @@
 #include "kernel_manager.h"
 #include "spikecounter.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
@@ -57,9 +60,9 @@ nest::volume_transmitter::Parameters_::get( DictionaryDatum& d ) const
   def< long >( d, names::deliver_interval, deliver_interval_ );
 }
 
-void ::nest::volume_transmitter::Parameters_::set( const DictionaryDatum& d )
+void ::nest::volume_transmitter::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< long >( d, names::deliver_interval, deliver_interval_ );
+  updateValueParam< long >( d, names::deliver_interval, deliver_interval_, node );
 }
 
 /* ----------------------------------------------------------------
@@ -67,13 +70,13 @@ void ::nest::volume_transmitter::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::volume_transmitter::volume_transmitter()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
 {
 }
 
 nest::volume_transmitter::volume_transmitter( const volume_transmitter& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
 {
 }
@@ -89,7 +92,7 @@ nest::volume_transmitter::init_buffers_()
   B_.neuromodulatory_spikes_.clear();
   B_.spikecounter_.clear();
   B_.spikecounter_.push_back( spikecounter( 0.0, 0.0 ) ); // insert pseudo last dopa spike at t = 0.0
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void
@@ -124,7 +127,7 @@ nest::volume_transmitter::update( const Time&, const long from, const long to )
 
     if ( not B_.spikecounter_.empty() )
     {
-      kernel().connection_manager.trigger_update_weight( get_gid(), B_.spikecounter_, t_trig );
+      kernel().connection_manager.trigger_update_weight( get_node_id(), B_.spikecounter_, t_trig );
     }
 
     // clear spikecounter

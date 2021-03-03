@@ -55,7 +55,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::STDPFACETSHWHomCommonPrope
   lookuptable_2_.resize( 16 );
 
   // intermediate Guetig (mu=0.4)
-  // with r=4 bits and n=36 SSPs, see [3]
+  // with r=4 bits and n=36 SSPs, see [3]_
   lookuptable_0_.at( 0 ) = 2;
   lookuptable_0_.at( 1 ) = 3;
   lookuptable_0_.at( 2 ) = 4;
@@ -98,7 +98,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::STDPFACETSHWHomCommonPrope
   configbit_0_.resize( 4 );
   configbit_1_.resize( 4 );
 
-  // see [4]
+  // see [4]_
   configbit_0_.at( 0 ) = 0;
   configbit_0_.at( 1 ) = 0;
   configbit_0_.at( 2 ) = 1;
@@ -288,22 +288,6 @@ STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom()
   , next_readout_time_( 0.0 )
   , discrete_weight_( 0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom( const STDPFACETSHWConnectionHom& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , a_causal_( rhs.a_causal_ )
-  , a_acausal_( rhs.a_acausal_ )
-  , a_thresh_th_( rhs.a_thresh_th_ )
-  , a_thresh_tl_( rhs.a_thresh_tl_ )
-  , init_flag_( rhs.init_flag_ )
-  , synapse_id_( rhs.synapse_id_ )
-  , next_readout_time_( rhs.next_readout_time_ )
-  , discrete_weight_( rhs.discrete_weight_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

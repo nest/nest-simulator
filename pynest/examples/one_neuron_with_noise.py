@@ -53,18 +53,13 @@ noise = nest.Create("poisson_generator", 2)
 voltmeter = nest.Create("voltmeter")
 
 ###############################################################################
-# Third, the voltmeter and the Poisson generator are configured using
-# ``SetStatus``, which expects a list of node handles and a list of parameter
-# dictionaries. Note that we do not need to set parameters for the neuron,
-# since it has satisfactory defaults.
-# We set each Poisson generator to 8000 Hz and 15000 Hz, respectively.
-# For the voltmeter, we want to record the global id of the observed nodes and
-# set the ``withgid`` flag of the voltmeter to `True`.
-# We also set its property ``withtime`` so it will also record the points
-# in time at which it samples the membrane voltage.
+# Third, the Poisson generator is configured using ``SetStatus``, which expects
+# a list of node handles and a list of parameter dictionaries. We set the
+# Poisson generators to 8,000 Hz and 15,000 Hz, respectively. Note that we do
+# not need to set parameters for the neuron and the voltmeter, since they have
+# satisfactory defaults.
 
-nest.SetStatus(noise, [{"rate": 80000.0}, {"rate": 15000.0}])
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
+noise.set([{"rate": 80000.0}, {"rate": 15000.0}])
 
 ###############################################################################
 # Fourth, the neuron is connected to the ``poisson_generator`` and to the
@@ -84,3 +79,4 @@ nest.Simulate(1000.0)
 # time.
 
 nest.voltage_trace.from_device(voltmeter)
+nest.voltage_trace.show()

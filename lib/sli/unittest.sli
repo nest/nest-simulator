@@ -230,7 +230,7 @@ Examples:
 /unittest (7391) require
 /unittest using
   { 1 0 div } fail_or_die    
-  { 0 << /resolution 0 >> SetStatus} fail_or_die
+  { << /resolution 0 >> SetKernelStatus} fail_or_die
 endusing
 
 Author: H. E. Plesser
@@ -323,7 +323,7 @@ SeeAlso: unittest::fail_or_die, assert, quit
  (echo ")
  /func load pcvs join
  ( exec" | ) join 
- statusdict /argv get First join
+ (') statusdict /argv get First (') join join join
  ( -) join /command Set
 
 % command ==
@@ -397,7 +397,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
  (echo ")
  /func load pcvs join
  ( exec" | ) join 
- statusdict /argv get First join
+ (') statusdict /argv get First (') join join join
  ( -) join /command Set
 
 % command ==
@@ -495,7 +495,7 @@ SeeAlso: unittest::failbutnocrash_or_die, assert, quit
   (echo ")
   /func load pcvs join
   ( exec" | ) join 
-  statusdict /argv get First join
+  (') statusdict /argv get First (') join join join
   ( -) join /command Set
 
   command 0 shpawn

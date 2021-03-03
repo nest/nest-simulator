@@ -30,8 +30,6 @@ Description:
 1. Record from neuron initially frozen, then thawed, then frozen, then thawed. See
    that correct number of data points collected.
 2. Same as above, simultaneously record from thawed node.
-3. Record from two synchrounsly frozen/thawed nodes in accumulator mode.
-4. Same as above, but one node permanently thawed.
 
 Author: Plesser
 FirstVersion: 2011-02-11
@@ -44,14 +42,14 @@ M_ERROR setverbosity
 
 
 /clear_error
-{ 
+{
   counttomark npop % pop all but mark
   errordict begin /newerror false def end
 } def
 
 % integer_data --- return array with only unique entries in ascending order
 %                  data must be intergers
-%           
+%
 /unique_ascending
 {
   /d << >> def
@@ -73,8 +71,8 @@ def
 }
 def
 
-% times data --- times and data have corresponding entries; entries in 
-%                data with equalt times are summed.
+% times data --- times and data have corresponding entries; entries in
+%                data with equal times are summed.
 /sum_by_times
 {
   /data Set
@@ -92,14 +90,13 @@ def
 % one noded, cycled
 {
   << >> begin
-   /build_net { 
+   /build_net {
      /iaf_psc_alpha << /I_e 50.0 >> SetDefaults
-     /multimeter << /record_from [ /V_m ] /interval 0.5 >> SetDefaults
-     /n  /iaf_psc_alpha Create def  
-     /mm /multimeter Create def
+     /n  /iaf_psc_alpha Create def
+     /mm /multimeter << /record_from [ /V_m ] /interval 0.5 >> Create def
      mm n Connect
    } def
- 
+
    % sim with freeze/thaw
    ResetKernel
    build_net
@@ -118,7 +115,7 @@ def
    build_net
    10. Simulate
    mm /events get /V_m get cva /rV Set
-     
+
    fV rV eq  % both should give same result
 
   end
@@ -128,17 +125,17 @@ def
 % two nodes, one cycled
 {
   << >> begin
-   /build_net { 
+   /build_net {
      /iaf_psc_alpha << /I_e 50.0 >> SetDefaults
-     /multimeter << /record_from [ /V_m ] /interval 0.5 /withgid true 
-                    /time_in_steps true >> SetDefaults
      /nc /iaf_psc_alpha Create def
      /np /iaf_psc_alpha Create def
-     /mm /multimeter Create def  
+     /mm /multimeter << /record_from [ /V_m ]
+                        /interval 0.5
+			/time_in_steps true >> Create def
      mm nc Connect
      mm np Connect
    } def
- 
+
    % sim with freeze/thaw
    ResetKernel
    build_net
@@ -155,134 +152,20 @@ def
    ev /times   get cva /tall Set
    ev /senders get cva /sall Set
    ev /V_m     get cva /Vall Set
-
    % check event times by sender
    sall tall split_data dup
-   np cvs cvlit get [5 190 5] Range eq exch
-   nc cvs cvlit get [55 100 5] Range [155 190 5] Range join eq
+   np 0 get cvs cvlit get [5 190 5] Range eq exch
+   nc 0 get cvs cvlit get [55 100 5] Range [155 190 5] Range join eq
    and
 
    % check event data by sender---frozen data equal to first points in non-frozen
    sall Vall split_data dup
-   nc cvs cvlit get /Vc Set
-   np cvs cvlit get Vc length Take Vc eq
-   and
-  
-  end
-} assert_or_die
-
-
-% third test:
-% several nodes, synchronously thawed and frozen
-{
-  ResetKernel
-  << >> begin
-    /recvars [ /V_m ] def
-    /N 10 def
-
-        /nnet /subnet Create def
-        nnet ChangeSubnet
-  /iaf_psc_alpha N Create ;
-        0 ChangeSubnet
-        /nrns nnet GetGlobalLeaves def
-
-        /multimeter << /record_from recvars /withgid false /withtime true 
-                       /interval 0.7 /start 4.8 /stop 233.1 /time_in_steps true >> SetDefaults
-        /mm /multimeter Create def  
-        /ac /multimeter << /to_memory false /to_accumulator true >> Create def  
-        [mm] nrns Connect
-        [ac] nrns Connect
-
-        /pg /poisson_generator << /rate 1000. >> Create def
-
-        [pg] nrns << /rule /all_to_all >> << /model /static_synapse /weight 1.0 >> Connect
-        [pg] nrns << /rule /all_to_all >> << /model /static_synapse /weight -1.0 >> Connect
-
-        nrns { << /frozen true >> SetStatus } forall
-        20. Simulate
-        nrns { << /frozen false >> SetStatus } forall
-        20. Simulate
-        nrns { << /frozen true >> SetStatus } forall
-        20. Simulate
-        nrns { << /frozen false >> SetStatus } forall
-        20. Simulate
-
-        /detevs mm /events get def
-        /dettimes detevs /times get cva def          
-        /accevs ac /events get def  
-        /acctimes accevs /times get cva def          
-        
-        recvars 
-        { 
-          /var Set
-          % get data from individual recordings
-    detevs var get cva
-          % compute mean for error estimate
-          dup Mean /varmean Set
-          % sum results for equal times
-          dettimes exch sum_by_times
-
-          % data from accumulated recording
-          accevs var get cva
-
-          % test difference relative to mean    
-          sub true exch { varmean div abs 1e-15 lt and } Fold 
-  } Map 
-
-        true exch { and } Fold 
-
-        % check that times are equal  
-        dettimes unique_ascending acctimes eq and  
-
-  end
-} assert_or_die
-
-
-% Fourth test:
-% As second, but run in accumulator mode. This does NOT MAKE SENSE, really ...
-{
-  << >> begin
-   /build_net { 
-     /iaf_psc_alpha << /I_e 0.0 >> SetDefaults
-     /multimeter << /record_from [ /V_m ] /interval 0.5 /withgid false 
-                    /time_in_steps true /record_to [ /accumulator ] >> SetDefaults
-     /nc /iaf_psc_alpha Create def
-     /np /iaf_psc_alpha Create def
-     /mm /multimeter Create def  
-     mm nc Connect
-     mm np Connect
-   } def
- 
-   % sim with freeze/thaw
-   ResetKernel
-   build_net
-   nc << /frozen true >> SetStatus
-   5. Simulate
-   nc << /frozen false >> SetStatus
-   5. Simulate
-   nc << /frozen true >> SetStatus
-   5. Simulate
-   nc << /frozen false >> SetStatus
-   5. Simulate
-
-   mm /events get /ev Set
-   ev /times   get cva [5 190 5] Range eq % should be all time points
-
-   % for voltage, we can't sort by sender, but all points where nc is not frozen
-   % should have double the value from the others
-   ev /V_m get cva /Vall Set
-   /fp [ 1 10] Range [21 30] Range join def
-   /tp [11 20] Range [31 38] Range join def
-   /Vref /iaf_psc_alpha GetDefaults /E_L get def
-   nc /V_m get Vref eq np /V_m get Vref eq and assert % ascertain V_m has not changed
-
-   true fp { Vall exch 1 sub get   Vref     eq and } Fold
-   true tp { Vall exch 1 sub get 2 Vref mul eq and } Fold
-   and
-  
+   nc 0 get cvs cvlit get /Vc Set
+   np 0 get cvs cvlit get Vc length Take Vc eq
    and
 
   end
 } assert_or_die
+
 
 endusing

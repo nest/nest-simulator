@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # receiver_script.py
@@ -23,6 +23,9 @@
 """
 Music example receiver script
 ------------------------------
+
+Please note that MUSIC and the recording backend for Arbor are mutually exclusive
+and cannot be enabled at the same time.
 
 """
 

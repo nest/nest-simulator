@@ -40,9 +40,9 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         self.decay_duration = 5.0
         self.synapse_model = "stdp_triplet_synapse"
         self.syn_spec = {
-            "model": self.synapse_model,
+            "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
-            # set receptor 1 post-synaptically, to not generate extra spikes
+            # set receptor 1 postsynaptically, to not generate extra spikes
             "receptor_type": 1,
             "weight": 5.0,
             "tau_plus": 16.8,
@@ -77,7 +77,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         """Get synapse parameter status."""
         stats = nest.GetConnections(
             self.pre_neuron, synapse_model=self.synapse_model)
-        return nest.GetStatus(stats, [which])[0][0]
+        return stats.get(which) if len(stats) == 1 else stats.get(which)[0]
 
     def decay(self, time, Kplus, Kplus_triplet, Kminus, Kminus_triplet):
         """Decay variables."""
@@ -129,7 +129,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         badPropertyWith("Kplus_triplet", {"Kplus_triplet": -1.0})
 
     def test_varsZeroAtStart(self):
-        """Check that pre and post-synaptic variables are zero at start."""
+        """Check that pre- and postsynaptic variables are zero at start."""
         self.assertAlmostEqualDetailed(
             0.0, self.status("Kplus"), "Kplus should be zero")
         self.assertAlmostEqualDetailed(0.0, self.status(
@@ -175,7 +175,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
     def test_preVarsDecayAfterPostSpike(self):
         """Check that pre-synaptic variables (Kplus, Kplus_triplet) decay
-        after each post-synaptic spike."""
+        after each postsynaptic spike."""
 
         self.generateSpikes(self.pre_neuron, [2.0])
         self.generateSpikes(self.post_neuron, [3.0, 4.0])
@@ -290,6 +290,8 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         self.generateSpikes(self.pre_neuron, [3.0])  # trigger computation
 
         nest.Simulate(20.0)
+        print(limited_weight)
+        print(self.status('weight'))
         self.assertAlmostEqualDetailed(limited_weight, self.status(
             "weight"), "weight should have been limited")
 
@@ -306,9 +308,9 @@ class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
         self.decay_duration = 5.0
         self.synapse_model = "stdp_triplet_synapse"
         self.syn_spec = {
-            "model": self.synapse_model,
+            "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
-            # set receptor 1 post-synaptically, to not generate extra spikes
+            # set receptor 1 postsynaptically, to not generate extra spikes
             "receptor_type": 1,
             "weight": -5.0,
             "tau_plus": 16.8,
@@ -345,6 +347,7 @@ def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
     runner.run(suite_inh())
+
 
 if __name__ == "__main__":
     run()

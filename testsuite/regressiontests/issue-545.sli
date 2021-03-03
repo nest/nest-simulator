@@ -70,7 +70,7 @@ skip_if_not_threaded
 
 {
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /stdp_synapse << /tau_plus 10. >> SetDefaults
   /stdp_synapse GetDefaults /tau_plus get
   10. eq
@@ -79,7 +79,7 @@ assert_or_die
 
 {
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /iaf_psc_alpha << /C_m 10. >> SetDefaults
   /iaf_psc_alpha GetDefaults /C_m get
   10. eq
@@ -88,14 +88,14 @@ assert_or_die
 
 {
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /iaf_psc_alpha << /C_m 10 >> SetDefaults
 }
 fail_or_die
 
 {
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /stdp_synapse << /tau_plus 10 >> SetDefaults
 }
 fail_or_die

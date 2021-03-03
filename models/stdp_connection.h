@@ -39,31 +39,26 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-Name: stdp_synapse - Synapse type for spike-timing dependent
-plasticity.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for spike-timing dependent plasticity
+
+Description
++++++++++++
 
 stdp_synapse is a connector to create synapses with spike time
-dependent plasticity (as defined in [1]). Here the weight dependence
+dependent plasticity (as defined in [1]_). Here the weight dependence
 exponent can be set separately for potentiation and depression.
 
-Examples:
+Parameters
+++++++++++
 
-    multiplicative STDP [2]  mu_plus = mu_minus = 1.0
-    additive STDP       [3]  mu_plus = mu_minus = 0.0
-    Guetig STDP         [1]  mu_plus = mu_minus = [0.0,1.0]
-    van Rossum STDP     [4]  mu_plus = 0.0 mu_minus = 1.0
-
-Parameters:
-\verbatim embed:rst
 ========= =======  ======================================================
  tau_plus  ms      Time constant of STDP window, potentiation
-                   (tau_minus defined in post-synaptic neuron)
+                   (tau_minus defined in postsynaptic neuron)
  lambda    real    Step size
  alpha     real    Asymmetry parameter (scales depressing increments as
                    alpha*lambda)
@@ -71,13 +66,15 @@ Parameters:
  mu_minus  real    Weight dependence exponent, depression
  Wmax      real    Maximum allowed weight
 ========= =======  ======================================================
-\endverbatim
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-References:
+SpikeEvent
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Guetig et al. (2003). Learning input correlations through nonlinear
        temporally asymmetric hebbian plasticity. Journal of Neuroscience,
        23:3697-3714 DOI: https://doi.org/10.1523/JNEUROSCI.23-09-03697.2003
@@ -92,18 +89,17 @@ References:
        from spike timing-dependent plasticity. Journal of Neuroscience,
        20(23):8812-8821.
        DOI: https://doi.org/10.1523/JNEUROSCI.20-23-08812.2000
-\endverbatim
 
-FirstVersion: March 2006
+See also
+++++++++
 
-Author: Moritz Helias, Abigail Morrison
+tsodyks_synapse, static_synapse
 
-Adapted by: Philipp Weidel
+EndUserDocs */
 
-SeeAlso: synapsedict, tsodyks_synapse, static_synapse
-*/
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
 template < typename targetidentifierT >
 class STDPConnection : public Connection< targetidentifierT >
 {
@@ -123,7 +119,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPConnection( const STDPConnection& );
+  STDPConnection( const STDPConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -228,7 +224,7 @@ STDPConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynap
   Node* target = get_target( t );
   double dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
 
@@ -238,10 +234,10 @@ STDPConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynap
   // which increases the access counter for these entries.
   // At registration, all entries' access counters of
   // history[0, ..., t_last_spike - dendritic_delay] have been
-  // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
+  // incremented by ArchivingNode::register_stdp_connection(). See bug #218 for
   // details.
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
-  // facilitation due to post-synaptic spikes since last pre-synaptic spike
+  // facilitation due to postsynaptic spikes since last pre-synaptic spike
   double minus_dt;
   while ( start != finish )
   {
@@ -282,21 +278,6 @@ STDPConnection< targetidentifierT >::STDPConnection()
   , Wmax_( 100.0 )
   , Kplus_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-STDPConnection< targetidentifierT >::STDPConnection( const STDPConnection< targetidentifierT >& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , tau_plus_( rhs.tau_plus_ )
-  , lambda_( rhs.lambda_ )
-  , alpha_( rhs.alpha_ )
-  , mu_plus_( rhs.mu_plus_ )
-  , mu_minus_( rhs.mu_minus_ )
-  , Wmax_( rhs.Wmax_ )
-  , Kplus_( rhs.Kplus_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

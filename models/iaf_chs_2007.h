@@ -38,13 +38,15 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
+/* BeginUserDocs: neuron, integrate-and-fire
 
-Name: iaf_chs_2007 - Spike-response model used in Carandini et al 2007.
+Short description
++++++++++++++++++
 
-Description:
+Spike-response model used in Carandini et al. 2007
+
+Description
++++++++++++
 
 The membrane potential is the sum of stereotyped events: the postsynaptic
 potentials (V_syn), waveforms that include a spike and the subsequent
@@ -59,8 +61,8 @@ potential reset and exponential decay. U_reset is the magnitude of the
 reset/after-hyperpolarization and tau_reset is the time constant of
 recovery from this hyperpolarization.
 
-The linear subthresold dynamics is integrated by the Exact
-Integration scheme [1]. The neuron dynamics is solved on the time
+The linear subthreshold dynamics is integrated by the Exact
+Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -70,11 +72,11 @@ unsuitable for simulation in NEST. The workaround was to prepare the
 noise signal externally prior to simulation. The noise signal,
 if present, has to be at least as long as the simulation.
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
 ========== ============== ==================================================
  tau_epsp  ms             Membrane time constant
  tau_reset ms             Refractory time constant
@@ -83,11 +85,10 @@ The following parameters can be set in the status dictionary.
  U_noise   real           Noise scale, normalized
  noise     list of real   Noise signal
 ========== ============== ==================================================
-\endverbatim
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Carandini M, Horton JC, Sincich LC (2007). Thalamic filtering of retinal
        spike trains by postsynaptic summation. Journal of Vision 7(14):20,1-11.
        DOI: https://doi.org/10.1167/7.14.20
@@ -95,17 +96,20 @@ References:
        systems with applications to neuronal modeling. Biologial Cybernetics
        81:381-402.
        DOI: https://doi.org/10.1007/s004220050570
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, DataLoggingRequest
+SpikeEvent
 
-FirstVersion: May 2012
+Receives
+++++++++
 
-Author: Thomas Heiberg, Birgit Kriener
-*/
-class iaf_chs_2007 : public Archiving_Node
+SpikeEvent, DataLoggingRequest
+
+EndUserDocs */
+
+class iaf_chs_2007 : public ArchivingNode
 {
 
 public:
@@ -161,7 +165,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum& ) const;
-    void set( DictionaryDatum const& );
+    void set( DictionaryDatum const&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -171,7 +175,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Membrane time constant in ms. */
     double tau_epsp_;
 
@@ -208,7 +211,7 @@ private:
      * @note State is passed so that the position can be reset if the
      *       noise_ vector has been filled with new data.
      */
-    void set( const DictionaryDatum&, State_& s );
+    void set( const DictionaryDatum&, State_& s, Node* node );
   };
 
 
@@ -238,7 +241,7 @@ private:
   struct Variables_
   {
     /** Amplitude of the synaptic current.
-        This value is chosen such that a post-synaptic potential with
+        This value is chosen such that a postsynaptic potential with
         weight one has an amplitude of 1 mV.
         @note mog - I assume this, not checked.
     */
@@ -316,7 +319,7 @@ iaf_chs_2007::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -325,15 +328,15 @@ inline void
 iaf_chs_2007::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, S_ );
-  State_ stmp = S_; // temporary copy in case of errors
-  stmp.set( d );    // throws if BadProperty
+  ptmp.set( d, S_, this );
+  State_ stmp = S_;    // temporary copy in case of errors
+  stmp.set( d, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

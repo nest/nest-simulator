@@ -38,23 +38,22 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
+/* BeginUserDocs: device, generator
 
-Name: spike_generator - A device which generates spikes from an array with
-                        spike-times.
+Short description
++++++++++++++++++
 
-Synopsis: spike_generator Create -> gid
+A device which generates spikes from an array with spike-times
 
-Description:
+Description
++++++++++++
 
 A spike generator can be used to generate spikes at specific times
 which are given to the spike generator as an array.
 
 Spike times are given in milliseconds, and must be sorted with the
 earliest spike first. All spike times must be strictly in the future.
-Trying to set a spike time in the past or at the current time step,
+Trying to set a spike time in the past or at the current time step
 will cause a NEST error. Setting a spike time of 0.0 will also result
 in an error.
 
@@ -65,8 +64,8 @@ do not coincide with a step are handled (see examples below):
 Multiple occurrences of the same time indicate that more than one
 event is to be generated at this particular time.
 
-Additionally, spike_weights can be set. This also is an array,
-which contains one weight value per spike time. If set, the spikes
+Additionally, spike_weights can be set. This is an array as well.
+It contains one weight value per spike time. If set, the spikes
 are delivered with the respective weight multiplied with the
 weight of the connection. To disable this functionality, the
 spike_weights array can be set to an empty array.
@@ -129,7 +128,8 @@ onto the grid will be handled as follows for different option settings:
     ---> spikes at step 10, offset 0.0; step 11, offset -0.05;
          step 31, offset -0.0999
 
-    Assume we have simulated 10.0ms and simulation times is thus 10.0 (step 100).
+    Assume we have simulated 10.0ms and simulation times is thus 10.0 (step
+100).
     Then, any spike times set, at this time, must be later than step 100.
 
     /spike_generator << /spike_times [10.0001] >> Create
@@ -142,29 +142,15 @@ onto the grid will be handled as follows for different option settings:
     /spike_generator
       << /spike_times [10.0001 11.0001] /shift_now_spikes true >>
     Create
-    ---> spike at step 101, spike shifted into the future, and spike at step 110,
+    ---> spike at step 101, spike shifted into the future, and spike at step
+110,
          not shifted, since it is in the future anyways
 
+Parameters
+++++++++++
 
-Example:
-
-    spike_generator
-      << /spike_times [1.0 2.0] /spike_weights [5.0 -8.0] >>
-    SetStatus
-
-    Instructs the spike generator to generate an event with weight 5.0
-    at 1.0 ms, and an event with weight -8.0 at 2.0 ms, relative to
-    the device-timer origin.
-
-    spike_generator << /spike_weights [] >> SetStatus
-
-    Instructs the spike generator to generate events at 1.0, 2.0, and
-    3.0 milliseconds, and use the weight of the connection.
-
-Parameters:
 The following properties can be set in the status dictionary.
 
-\verbatim embed:rst
 ===================== ============= ==========================================
  origin               ms            Time origin for device timer
  start                ms            Earliest possible time stamp of a spike to
@@ -180,14 +166,14 @@ The following properties can be set in the status dictionary.
  allow_offgrid_times  boolean       see above
  shift_now_spikes     boolean       see above
 ===================== ============= ==========================================
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Author: Gewaltig, Diesmann, Eppler
+SpikeEvent
 
-SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
-*/
+EndUserDocs */
+
 class spike_generator : public DeviceNode
 {
 
@@ -199,6 +185,12 @@ public:
   has_proxies() const
   {
     return false;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
   }
 
   port send_test_event( Node&, rport, synindex, bool );
@@ -260,10 +252,8 @@ private:
     //! Shift spike times at present to next step
     bool shift_now_spikes_;
 
-    bool deprecation_warning_issued_;
-
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
+    Parameters_();                               //!< Sets default parameter values
+    Parameters_( const Parameters_& ) = default; //!< Recalibrate all times
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
@@ -273,7 +263,7 @@ private:
      *       spike_times_ or spike_weights_ vector has been filled with
      *       new data, or if the origin was reset.
      */
-    void set( const DictionaryDatum&, State_&, const Time&, const Time& );
+    void set( const DictionaryDatum&, State_&, const Time&, const Time&, Node* node );
 
     /**
      * Insert spike time to arrays, throw BadProperty for invalid spike times.

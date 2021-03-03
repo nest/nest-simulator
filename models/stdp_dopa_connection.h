@@ -36,36 +36,27 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-Name: stdp_dopamine_synapse - Synapse type for dopamine-modulated
-                              spike-timing dependent plasticity.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for dopamine-modulated spike-timing dependent plasticity
+
+Description
++++++++++++
 
 stdp_dopamine_synapse is a connection to create synapses with
 dopamine-modulated spike-timing dependent plasticity (used as a
-benchmark model in [1], based on [2]). The dopaminergic signal is a
+benchmark model in [1]_, based on [2]_). The dopaminergic signal is a
 low-pass filtered version of the spike rate of a user-specific pool
 of neurons. The spikes emitted by the pool of dopamine neurons are
 delivered to the synapse via the assigned volume transmitter. The
 dopaminergic dynamics is calculated in the synapse itself.
 
-Examples:
+Parameters
+++++++++++
 
-    /volume_transmitter Create /vol Set
-    /iaf_psc_alpha Create /pre_neuron Set
-    /iaf_psc_alpha Create /post_neuron Set
-    /iaf_psc_alpha Create /neuromod_neuron Set
-    /stdp_dopamine_synapse  << /vt vol >>  SetDefaults
-    neuromod_neuron vol Connect
-    pre_neuron post_neuron /stdp_dopamine_synapse Connect
-
-Parameters:
-
-\verbatim embed:rst
 =========  ======= ======================================================
 **Common properties**
 -------------------------------------------------------------------------
@@ -74,9 +65,28 @@ Parameters:
                    transmitting the spikes to the synapse. A value of
                    -1 indicates that no volume transmitter has been
                    assigned.
- A_plus    real    Amplitude of weight change for facilitation
- A_minus   real    Amplitude of weight change for depression
- tau_plus  ms      STDP time constant for facilitation
+ A_plus    real    Multiplier applied to weight changes caused by
+                   pre-before-post spike pairings. If b (dopamine
+                   baseline concentration) is zero, then A_plus
+                   is simply the multiplier for facilitation (as in the
+                   stdp_synapse model). If b is not zero, then A_plus
+                   will be the multiplier for facilitation only if n - b
+                   is positive, where n is the instantenous dopamine
+                   concentration in the volume transmitter. If n - b is
+                   negative, A_plus will be the multiplier for
+                   depression.
+ A_minus   real    Multiplier applied to weight changes caused by
+                   post-before-pre spike pairings. If b (dopamine
+                   baseline concentration) is zero, then A_minus
+                   is simply the multiplier for depression (as in the
+                   stdp_synapse model). If b is not zero, then A_minus
+                   will be the multiplier for depression only if n - b
+                   is positive, where n is the instantenous dopamine
+                   concentration in the volume transmitter. If n - b is
+                   negative, A_minus will be the multiplier for
+                   facilitation.
+ tau_plus  ms      STDP time constant for weight changes caused by
+                   pre-before-post spike pairings.
  tau_c     ms      Time constant of eligibility trace
  tau_n     ms      Time constant of dopaminergic trace
  b         real    Dopaminergic baseline concentration
@@ -90,15 +100,15 @@ Parameters:
  c  real    Eligibility trace
  n  real    Neuromodulator concentration
 === ======  =====================================
-\endverbatim
 
 Remarks:
+
 The common properties can only be set by SetDefaults and apply to all
 synapses of the model.
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional neural
        circuit simulations with distributed computing of neuromodulated
        plasticity. Frontiers in Computational Neuroscience, 4:141.
@@ -106,18 +116,19 @@ References:
 .. [2] Izhikevich EM (2007). Solving the distal reward problem through linkage
        of STDP and dopamine signaling. Cerebral Cortex, 17(10):2443-2452.
        DOI: https://doi.org/10.1093/cercor/bhl152
-\endverbatim
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-Author: Susanne Kunkel
+SpikeEvent
 
-Remarks:
-- based on an earlier version by Wiebke Potjans
-- major changes to code after code revision in Apr 2013
+See also
+++++++++
 
-SeeAlso: volume_transmitter
-*/
+volume_transmitter
+
+EndUserDocs */
+
 /**
  * Class containing the common properties for all synapses of type dopamine
  * connection.
@@ -143,7 +154,7 @@ public:
 
   Node* get_node();
 
-  long get_vt_gid() const;
+  long get_vt_node_id() const;
 
   volume_transmitter* vt_;
   double A_plus_;
@@ -157,11 +168,11 @@ public:
 };
 
 inline long
-STDPDopaCommonProperties::get_vt_gid() const
+STDPDopaCommonProperties::get_vt_node_id() const
 {
   if ( vt_ != 0 )
   {
-    return vt_->get_gid();
+    return vt_->get_node_id();
   }
   else
   {
@@ -191,7 +202,7 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPDopaConnection( const STDPDopaConnection& );
+  STDPDopaConnection( const STDPDopaConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -326,19 +337,6 @@ STDPDopaConnection< targetidentifierT >::STDPDopaConnection()
   , dopa_spikes_idx_( 0 )
   , t_last_update_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-STDPDopaConnection< targetidentifierT >::STDPDopaConnection( const STDPDopaConnection& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , Kplus_( rhs.Kplus_ )
-  , c_( rhs.c_ )
-  , n_( rhs.n_ )
-  , dopa_spikes_idx_( rhs.dopa_spikes_idx_ )
-  , t_last_update_( rhs.t_last_update_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 
@@ -534,12 +532,12 @@ STDPDopaConnection< targetidentifierT >::send( Event& e, thread t, const STDPDop
   const std::vector< spikecounter >& dopa_spikes = cp.vt_->deliver_spikes();
 
   // get spike history in relevant range (t_last_update, t_spike] from
-  // post-synaptic neuron
+  // postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   target->get_history( t_last_update_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
-  // facilitation due to post-synaptic spikes since last update
+  // facilitation due to postsynaptic spikes since last update
   double t0 = t_last_update_;
   double minus_dt;
   while ( start != finish )

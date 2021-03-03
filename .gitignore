@@ -1,64 +1,55 @@
-# git ignore patterns
 
-libltdl/
-
-pynest/pynestkernel.cpp
-
-*.o
-*.lo
-*.la
-.*
-*.log
-*.pyc
-
-Makefile
-!/doc/Makefile
-
+__pycache__/
 build/
 install/
+reports/
 
-/juqueen/
-/extras/nest-config
-/extras/create_release.sh
-/libnestutil/config.h
+# compilation artefacts
+pynest/pynestkernel.cxx
+*.la
+*.lo
+*.log
+*.o
+*.pyc
+*.so
 /librandom/randomtest
-/libtool
 /nest/nest
-/nest/static_modules.h
-/pynest/do_tests.py
-/pynest/setup.py
-/reports/
 /sli/sli
-/testsuite/do_tests.sh
-/topology/setup.py
-/topology/doc/Topology_UserManual.out
-/doc/doxygen/
-/doc/_build/
 
-*.kdev4
-
-### IPythonNotebook ###
-# Temporary data
-.ipynb_checkpoints/
-TAGS
-
-### tags and cscope
-tags
-cscope.out
-
-### CMAKE stuff
-cmake_install.cmake
-CMakeFiles/
-_CPack_Packages/
+# cmake artefacts
 CMakeCache.txt
-CPackConfig.cmake
-CPackSourceConfig.cmake
+CMakeDoxyfile.in
+CMakeFiles/
+CTestTestfile.cmake
+Makefile
+cmake_install.cmake
+CMakeDoxygenDefaults.cmake
 
 # generated files
-doc/set_rcsinfo.cmake
 doc/fulldoc.conf
 doc/normaldoc.conf
-lib/sli/rcsinfo.sli
+extras/nest-config
 extras/nest_vars.sh
+libnestutil/config.h
+nest/static_modules.h
+pynest/setup.py
 
-pynest/examples/README
+# installation artefacts
+install_manifest.txt
+
+# documentation artefacts
+doc/help/
+doc/auto_examples/
+doc/doctrees/
+doc/html/
+doc/models/
+doc/pynestkernel_mock.py
+examples/microcircuit.png
+examples/reference_data/
+
+# IDEs / editors / Jupyter
+*.kdev4
+.ipynb_checkpoints/
+TAGS
+tags
+cscope.out

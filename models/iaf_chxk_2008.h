@@ -44,40 +44,48 @@
 
 namespace nest
 {
-/**
- * Function computing right-hand side of ODE for GSL solver.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup cond
+/* BeginUserDocs: neuron, integrate-and-fire, conductance-based, precise
 
-Name: iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model
-                      used in Casti et al 2008.
+Short description
++++++++++++++++++
 
-Description:
+Conductance-based leaky integrate-and-fire neuron model supporting
+precise spike times used in Casti et al. 2008
+
+Description
++++++++++++
 
 iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with
-conductance-based synapses [1]. It is modeled after iaf_cond_alpha with the
-addition of after hyper-polarization current instead of a membrane potential
-reset. Incoming spike events induce a post-synaptic change of conductance
-modeled by an alpha function. The alpha function is normalized such that an
-event of weight 1.0 results in a peak current of 1 nS at \f$ t = tau_{syn} \f$.
+conductance-based synapses [1]_. A spike is emitted when the membrane potential
+is crossed from below. After a spike, an afterhyperpolarizing (AHP) conductance
+is activated which repolarizes the neuron over time. Membrane potential is not
+reset explicitly and the model also has no explicit refractory time.
 
-Parameters:
+The AHP conductance and excitatory and inhibitory synaptic input conductances
+follow alpha-function time courses as in the iaf_cond_alpha model.
+
+.. note::
+   In accordance with the original Fortran implementation of the model used
+   in [1]_, the activation time point for the AHP following a spike is
+   determined by linear interpolation within the time step during which the
+   threshold was crossed.
+
+   iaf_chxk_2008 neurons therefore emit spikes with precise spike time
+   information, but they ignore precise spike times when handling synaptic
+   input.
+
+.. note::
+   In the original Fortran implementation underlying [1]_, all previous AHP
+   activation was discarded when a new spike occurred, leading to reduced AHP
+   currents in particular during periods of high spiking activity. Set
+   ``ahp_bug`` to ``true`` to obtain this behavior in the model.
+
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
 ========  ======= ===========================================================
  V_m      mV      Membrane potential
  E_L      mV      Leak reversal potential
@@ -95,25 +103,44 @@ The following parameters can be set in the status dictionary.
  ahp_bug  boolean Defaults to false. If true, behaves like original
                   model implementation
 ========  ======= ===========================================================
-\endverbatim
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Casti A, Hayot F, Xiao Y, Kaplan E (2008) A simple model of retina-LGN
        transmission. Journal of Computational Neuroscience 24:235-252.
        DOI: https://doi.org/10.1007/s10827-007-0053-7
-\endverbatim
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent
+SpikeEvent
 
-Author: Heiberg
+Receives
+++++++++
 
-SeeAlso: iaf_cond_alpha
-*/
-class iaf_chxk_2008 : public Archiving_Node
+SpikeEvent, CurrentEvent
+
+See also
+++++++++
+
+iaf_cond_alpha
+
+EndUserDocs */
+
+/**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
+
+class iaf_chxk_2008 : public ArchivingNode
 {
 
   // Boilerplate function declarations --------------------------------
@@ -137,7 +164,7 @@ public:
   is_off_grid() const
   {
     return true;
-  } // uses off_grid events
+  }
 
   port handles_test_event( SpikeEvent&, rport );
   port handles_test_event( CurrentEvent&, rport );
@@ -187,10 +214,11 @@ private:
     double E_ahp;    //!< AHP potential
     bool ahp_bug;    //!< If true, discard AHP conductance value from previous
                      //!< spikes
-    Parameters_();   //!< Set default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    Parameters_(); //!< Set default parameter values
+
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // State variables class --------------------------------------------
@@ -208,7 +236,6 @@ private:
 public:
   struct State_
   {
-
     //! Symbolic indices to the elements of the state vector y
     enum StateVecElems
     {
@@ -238,7 +265,7 @@ public:
      * Set state from values in dictionary.
      * Requires Parameters_ as argument to, e.g., check bounds.'
      */
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
 private:
@@ -247,8 +274,8 @@ private:
   /**
    * Buffers of the model.
    * Buffers are on par with state variables in terms of persistence,
-   * i.e., initialized only upon first Simulate call after ResetKernel
-   * or ResetNetwork, but are implementation details hidden from the user.
+   * i.e., initialized only upon first Simulate call after ResetKernel, but are
+   * implementation details hidden from the user.
    */
   struct Buffers_
   {
@@ -269,10 +296,9 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
-    // but remain unchanged during calibration. Since it is initialized with
-    // step_, and the resolution cannot change after nodes have been created,
-    // it is safe to place both here.
+    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // cannot change after nodes have been created, it is safe to place both
+    // here.
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
@@ -406,7 +432,7 @@ iaf_chxk_2008::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -414,16 +440,16 @@ iaf_chxk_2008::get_status( DictionaryDatum& d ) const
 inline void
 iaf_chxk_2008::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

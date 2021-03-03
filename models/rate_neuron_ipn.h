@@ -44,29 +44,35 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup rate
+/* BeginUserDocs: neuron, rate
 
-Name: rate_neuron_ipn - Base class for rate model with input noise.
+Short description
++++++++++++++++++
 
-Description:
+Base class for rate model with input noise
+
+Description
++++++++++++
 
 Base class for rate model with input noise of the form
-@f[
-\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+
+.. math::
+
+ \tau dX_i(t) = [ - \lambda X_i(t) + \mu
                 + \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt
                 + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)
-@f]
+
 or
-@f[
-\tau dX_i(t) = [ - \lambda X_i(t) + \mu
+
+.. math::
+
+ \tau dX_i(t) = [ - \lambda X_i(t) + \mu
                 + \text{mult_coupling_ex}( X_i(t) ) \cdot \\
                 \phi( \sum w^{ > 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) \\
                 + \text{mult_coupling_in}( X_i(t) ) \cdot \\
                 \phi( \sum w^{ < 0 }_{ij} \cdot \psi( X_j(t-d_{ij}) ) ) ] dt \\
                 + [ \sqrt{\tau} \cdot \sigma ] dW_{i}(t)
-@f]
+
 This template class needs to be instantiated with a class
 containing the following functions:
  - input (nonlinearity that is applied to the input, either psi or phi)
@@ -79,21 +85,24 @@ represents phi) or to each input individually (False, input represents psi).
 In case of multiplicative coupling the nonlinearity is applied separately
 to the summed excitatory and inhibitory inputs if linear_summation=True.
 
-References:
+References
+++++++++++
 
-\verbatim embed:rst
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
        Diesmann M (2017). Integration of continuous-time dynamics in a
        spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
        DOI: https://doi.org/10.3389/fninf.2017.00034
-\endverbatim
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
 
-SeeAlso: lin_rate, tanh_rate, threshold_lin_rate
- */
+See also
+++++++++
+
+lin_rate, tanh_rate, threshold_lin_rate
+
+EndUserDocs  */
+
 template < class TNonlinearities >
-class rate_neuron_ipn : public Archiving_Node
+class rate_neuron_ipn : public ArchivingNode
 {
 
 public:
@@ -109,6 +118,7 @@ public:
    */
   using Node::handle;
   using Node::sends_secondary_event;
+  using Node::handles_test_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );
@@ -156,7 +166,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Time constant in ms. */
     double tau_;
 
@@ -169,6 +178,9 @@ private:
     /** Mean input.*/
     double mu_;
 
+    /** Minimum rate.*/
+    double rectify_rate_;
+
     /** Target of non-linearity.
         True (default): Gain function applied to linearly summed input.
         False: Gain function applied to each input before summation.
@@ -176,7 +188,8 @@ private:
     bool linear_summation_;
 
     /** Should the rate be rectified?.
-        True: If the rate is negative it is set to zero after each time step.
+        True: If the rate is smaller than rectify_rate it is set to rectify_rate
+              after each time step.
         False (default): No rectification.
     **/
     bool rectify_output_;
@@ -188,7 +201,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -210,7 +223,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -341,7 +354,7 @@ rate_neuron_ipn< TNonlinearities >::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
   nonlinearities_.get( d );
@@ -352,21 +365,21 @@ inline void
 rate_neuron_ipn< TNonlinearities >::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
 
-  nonlinearities_.set( d );
+  nonlinearities_.set( d, this );
 }
 
 } // namespace

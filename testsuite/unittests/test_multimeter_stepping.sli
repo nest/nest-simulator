@@ -61,14 +61,14 @@ M_ERROR setverbosity
   ResetKernel
   model GetDefaults /recordables get /recs Set
   /n model Create def
-  /mm /multimeter << /record_from recs /withtime false /interval 0.1  >> Create def
+  /mm /multimeter << /record_from recs /interval 0.1  >> Create def
 
   mark 
   {
     mm n Connect
     /pg /poisson_generator << /rate 1e4 >> Create def
     pg n Connect
-    /minDelay 0 /min_delay get def
+    /minDelay GetKernelStatus /min_delay get def
     continuous
     { 
       50 minDelay mul Simulate

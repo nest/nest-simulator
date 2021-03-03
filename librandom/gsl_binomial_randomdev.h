@@ -26,9 +26,6 @@
 #ifndef GSL_BINOMIAL_RANDOMDEV_H
 #define GSL_BINOMIAL_RANDOMDEV_H
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from librandom:
 #include "gslrandomgen.h"
 #include "randomdev.h"
@@ -92,8 +89,8 @@ namespace librandom
 class GSL_BinomialRandomDev : public RandomDev
 {
 public:
-  // accept only lockPTRs for initialization,
-  // otherwise creation of a lock ptr would
+  // accept only shared_ptrs for initialization,
+  // otherwise creation of a shared_ptr would
   // occur as side effect---might be unhealthy
   GSL_BinomialRandomDev( RngPtr, double p_s = 0.5, unsigned int n_s = 1 );
   GSL_BinomialRandomDev( double p_s = 0.5, unsigned int n_s = 1 );
@@ -104,9 +101,9 @@ public:
    * p - success probability for single trial
    * n - number of trials
    */
-  void set_p_n( double, unsigned int );
-  void set_p( double );       //!<set p
-  void set_n( unsigned int ); //!<set n
+  void set_p_n( double, size_t );
+  void set_p( double ); //!<set p
+  void set_n( size_t ); //!<set n
 
   /**
    * Import sets of overloaded virtual functions.

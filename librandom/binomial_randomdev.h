@@ -30,9 +30,6 @@
 #include <cmath>
 #include <vector>
 
-// Includes from libnestutil:
-#include "lockptr.h"
-
 // Includes from librandom:
 #include "exp_randomdev.h"
 #include "poisson_randomdev.h"
@@ -99,8 +96,8 @@ namespace librandom
 class BinomialRandomDev : public RandomDev
 {
 public:
-  // accept only lockPTRs for initialization,
-  // otherwise creation of a lock ptr would
+  // accept only shared_ptrs for initialization,
+  // otherwise creation of a shared_ptr would
   // occur as side effect---might be unhealthy
   BinomialRandomDev( RngPtr, double p_s = 0.5, unsigned int n_s = 1 );
   BinomialRandomDev( double p_s = 0.5, unsigned int n_s = 1 );

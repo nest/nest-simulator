@@ -27,6 +27,9 @@
 #include <functional> // for bind2nd
 #include <numeric>
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
@@ -63,6 +66,21 @@ nest::correlation_detector::Parameters_::Parameters_( const Parameters_& p )
   Tstop_.calibrate();
 }
 
+nest::correlation_detector::Parameters_& nest::correlation_detector::Parameters_::operator=( const Parameters_& p )
+{
+  delta_tau_ = p.delta_tau_;
+  tau_max_ = p.tau_max_;
+  Tstart_ = p.Tstart_;
+  Tstop_ = p.Tstop_;
+
+  delta_tau_.calibrate();
+  tau_max_.calibrate();
+  Tstart_.calibrate();
+  Tstop_.calibrate();
+
+  return *this;
+}
+
 nest::correlation_detector::State_::State_()
   : n_events_( 2, 0 )
   , incoming_( 2 )
@@ -96,29 +114,29 @@ nest::correlation_detector::State_::get( DictionaryDatum& d ) const
 }
 
 bool
-nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const correlation_detector& n )
+nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const correlation_detector& n, Node* node )
 {
   bool reset = false;
   double t;
-  if ( updateValue< double >( d, names::delta_tau, t ) )
+  if ( updateValueParam< double >( d, names::delta_tau, t, node ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::tau_max, t ) )
+  if ( updateValueParam< double >( d, names::tau_max, t, node ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::Tstart, t ) )
+  if ( updateValueParam< double >( d, names::Tstart, t, node ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double >( d, names::Tstop, t ) )
+  if ( updateValueParam< double >( d, names::Tstop, t, node ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -138,7 +156,7 @@ nest::correlation_detector::Parameters_::set( const DictionaryDatum& d, const co
 }
 
 void
-nest::correlation_detector::State_::set( const DictionaryDatum& d, const Parameters_& p, bool reset_required )
+nest::correlation_detector::State_::set( const DictionaryDatum& d, const Parameters_& p, bool reset_required, Node* )
 {
   std::vector< long > nev;
   if ( updateValue< std::vector< long > >( d, names::n_events, nev ) )
@@ -278,7 +296,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
     // all remaining spike times in the queue are
     //     > spike_i - tau_edge, if sender = 1
 
-    // temporary variables for kahan summation algorithm
+    // temporary variables for Kahan summation algorithm
     double y, t;
 
     // only count events in histogram, if the current event is within the time
@@ -304,7 +322,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
           std::floor( ( tau_edge + sign * ( spike_i - spike_j->timestep_ ) ) / P_.delta_tau_.get_steps() ) );
         assert( bin < S_.histogram_.size() );
         assert( bin < S_.histogram_correction_.size() );
-        // weighted histogram with kahan summation algorithm
+        // weighted histogram with Kahan summation algorithm
         y = e.get_multiplicity() * e.get_weight() * spike_j->weight_ - S_.histogram_correction_[ bin ];
         t = S_.histogram_[ bin ] + y;
         S_.histogram_correction_[ bin ] = ( t - S_.histogram_[ bin ] ) - y;

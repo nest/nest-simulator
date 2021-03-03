@@ -26,6 +26,8 @@ GetConnections
 import unittest
 import nest
 
+nest.set_verbosity('M_ERROR')
+
 
 @nest.ll_api.check_stack
 class GetConnectionsTestCase(unittest.TestCase):
@@ -52,6 +54,143 @@ class GetConnectionsTestCase(unittest.TestCase):
 
         c4 = nest.GetConnections()
         self.assertEqual(c1, c4)
+
+        weights = (11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0)
+        d1 = tuple({"weight": w} for w in weights)
+
+        c5 = nest.GetConnections(a, a)
+        c5.set(d1)
+        s2 = c5.get('weight')
+        self.assertEqual(s2, list(weights))
+
+        c6 = nest.GetConnections()
+        self.assertEqual(c1, c6)
+
+    def test_GetConnectionsTargetModels(self):
+        """GetConnections iterating models for target"""
+        for model in nest.Models():
+            nest.ResetKernel()
+            alpha = nest.Create('iaf_psc_alpha')
+            try:
+                other = nest.Create(model)
+                nest.Connect(alpha, other)
+            except nest.kernel.NESTError:
+                # If we can't create a node with this model, or connect
+                # to a node of this model, we ignore it.
+                continue
+            for get_conn_args in [{'source': alpha, 'target': other},
+                                  {'source': alpha},
+                                  {'target': other}]:
+                conns = nest.GetConnections(**get_conn_args)
+                self.assertEqual(
+                    len(conns), 1,
+                    'Failed to get connection with target model {} (specifying {})'.format(
+                        model, ', '.join(get_conn_args.keys())))
+
+    def test_GetConnectionsSourceModels(self):
+        """GetConnections iterating models for source"""
+        for model in nest.Models():
+            nest.ResetKernel()
+            alpha = nest.Create('iaf_psc_alpha')
+            try:
+                other = nest.Create(model)
+                nest.Connect(other, alpha)
+            except nest.kernel.NESTError:
+                # If we can't create a node with this model, or connect
+                # to a node of this model, we ignore it.
+                continue
+            for get_conn_args in [{'source': other, 'target': alpha},
+                                  {'source': other},
+                                  {'target': alpha}]:
+                conns = nest.GetConnections(**get_conn_args)
+                self.assertEqual(
+                    len(conns), 1,
+                    'Failed to get connection with source model {} (specifying {})'.format(
+                        model, ', '.join(get_conn_args.keys())))
+
+    def test_GetConnectionsSynapseModel(self):
+        """GetConnections using synapse_model as argument"""
+
+        num_src = 3
+        num_tgt = 5
+
+        for synapse_model in nest.Models('synapses'):
+            nest.ResetKernel()
+
+            src = nest.Create('iaf_psc_alpha', num_src)
+            tgt = nest.Create('iaf_psc_alpha', num_tgt)
+
+            # First create one connection with static_synapse
+            nest.Connect(src[0], tgt[0])
+
+            try:
+                # Connect with specified synapse
+                nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model})
+            except nest.kernel.NESTError:
+                # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
+                continue
+
+            reference_list = [synapse_model] * num_src * num_tgt
+            if synapse_model == 'static_synapse':
+                reference_list += ['static_synapse']
+
+            conns = nest.GetConnections(synapse_model=synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
+
+            # Also test that it works if we specify source/target and synapse_model
+            conns = nest.GetConnections(source=src, target=tgt, synapse_model=synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
+
+            conns = nest.GetConnections(source=src, synapse_model=synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
+
+            conns = nest.GetConnections(target=tgt, synapse_model=synapse_model)
+            self.assertEqual(reference_list, conns.synapse_model)
+
+    def test_GetConnectionsSynapseLabel(self):
+        """GetConnections using synapse_label as argument"""
+
+        labeled_synapse_models = [s for s in nest.Models(mtype='synapses') if s.endswith("_lbl")]
+
+        label = 123
+        num_src = 3
+        num_tgt = 5
+
+        for synapse_model in labeled_synapse_models:
+            nest.ResetKernel()
+
+            src = nest.Create('iaf_psc_alpha', num_src)
+            tgt = nest.Create('iaf_psc_alpha', num_tgt)
+
+            # First create one connection with static_synapse
+            nest.Connect(src[0], tgt[0])
+
+            try:
+                # Connect with specified synapse
+                nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model, "synapse_label": label})
+            except nest.kernel.NESTError:
+                # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
+                continue
+
+            reference_list = [synapse_model] * num_src * num_tgt
+            label_list = [label] * num_src * num_tgt
+
+            # Call GetConnections with specified synapse_label and test that connections with
+            # corresponding model are returned
+            conns = nest.GetConnections(synapse_label=label)
+
+            self.assertEqual(reference_list, conns.synapse_model)
+            self.assertEqual(label_list, conns.synapse_label)
+
+            # Also test that it works if we specify source/target and synapse_label
+            conns = nest.GetConnections(source=src, target=tgt, synapse_label=label)
+            self.assertEqual(reference_list, conns.synapse_model)
+
+            conns = nest.GetConnections(source=src, synapse_label=label)
+            self.assertEqual(reference_list, conns.synapse_model)
+
+            conns = nest.GetConnections(target=tgt, synapse_label=label)
+            self.assertEqual(reference_list, conns.synapse_model)
 
 
 def suite():

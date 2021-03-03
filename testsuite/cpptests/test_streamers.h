@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_SUITE( test_streamers )
 BOOST_AUTO_TEST_CASE( test_int )
 {
   std::ostringstream s;
-  const std::vector<int> x = {2, 3, 4, 5};
+  const std::vector< int > x = { 2, 3, 4, 5 };
 
   s << x;
 

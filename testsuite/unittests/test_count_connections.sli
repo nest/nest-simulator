@@ -52,20 +52,18 @@ M_ERROR setverbosity
 /ConnExpected N C mul def
 
 ResetKernel
-0 << /total_num_virtual_procs N_VP >> SetStatus
-  
-/net /iaf_psc_alpha [ N ] LayoutNetwork def
-/nodes net GetGlobalNodes def
-/local_nodes net GetLocalNodes def
 
-nodes local_nodes << /rule /fixed_indegree /indegree C >> Connect
+<< /total_num_virtual_procs N_VP >> SetKernelStatus
 
-{ 0 /num_connections get ConnExpected eq } assert_or_die
+/nodes /iaf_psc_alpha N Create def 
+
+nodes nodes << /rule /fixed_indegree /indegree C >> Connect
+{ GetKernelStatus /num_connections get ConnExpected eq } assert_or_die
 { /static_synapse GetDefaults /num_connections get ConnExpected eq } assert_or_die
 
-nodes local_nodes << /rule /fixed_indegree /indegree C >> << /model /stdp_synapse >> Connect
+nodes nodes << /rule /fixed_indegree /indegree C >> << /synapse_model /stdp_synapse >> Connect
 
-{ 0 /num_connections get ConnExpected 2 mul eq } assert_or_die
+{ GetKernelStatus /num_connections get ConnExpected 2 mul eq } assert_or_die
 { /stdp_synapse GetDefaults /num_connections get ConnExpected eq } assert_or_die
 
 endusing

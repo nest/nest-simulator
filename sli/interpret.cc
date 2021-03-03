@@ -54,7 +54,6 @@
 #include "iostreamdatum.h"
 #include "namedatum.h"
 #include "parser.h"
-#include "psignal.h"
 #include "scanner.h"
 #include "stringdatum.h"
 #include "tokenutils.h"
@@ -75,6 +74,7 @@ const int SLIInterpreter::M_ALL = 0;
 const int SLIInterpreter::M_DEBUG = 5;
 const int SLIInterpreter::M_STATUS = 7;
 const int SLIInterpreter::M_INFO = 10;
+const int SLIInterpreter::M_PROGRESS = 15;
 const int SLIInterpreter::M_DEPRECATED = 18;
 const int SLIInterpreter::M_WARNING = 20;
 const int SLIInterpreter::M_ERROR = 30;
@@ -85,6 +85,7 @@ const char* const SLIInterpreter::M_ALL_NAME = "";
 const char* const SLIInterpreter::M_DEBUG_NAME = "Debug";
 const char* const SLIInterpreter::M_STATUS_NAME = "Status";
 const char* const SLIInterpreter::M_INFO_NAME = "Info";
+const char* const SLIInterpreter::M_PROGRESS_NAME = "Progress";
 const char* const SLIInterpreter::M_DEPRECATED_NAME = "Deprecated";
 const char* const SLIInterpreter::M_WARNING_NAME = "Warning";
 const char* const SLIInterpreter::M_ERROR_NAME = "Error";
@@ -111,7 +112,6 @@ SLIType SLIInterpreter::XIstreamtype;
 SLIType SLIInterpreter::Ostreamtype;
 SLIType SLIInterpreter::IntVectortype;
 SLIType SLIInterpreter::DoubleVectortype;
-SLIType SLIInterpreter::Iteratortype;
 
 // SLIType SLIInterpreter::IOstreamtype;
 
@@ -135,7 +135,6 @@ const IloopFunction SLIInterpreter::iloopfunction;
 const IrepeatFunction SLIInterpreter::irepeatfunction;
 const IforFunction SLIInterpreter::iforfunction;
 const IforallarrayFunction SLIInterpreter::iforallarrayfunction;
-const IforalliterFunction SLIInterpreter::iforalliterfunction;
 const IforallindexedarrayFunction SLIInterpreter::iforallindexedarrayfunction;
 const IforallindexedstringFunction SLIInterpreter::iforallindexedstringfunction;
 const IforallstringFunction SLIInterpreter::iforallstringfunction;
@@ -143,8 +142,6 @@ const IforallstringFunction SLIInterpreter::iforallstringfunction;
 void
 SLIInterpreter::inittypes( void )
 {
-  Iteratortype.settypename( "iteratortype" );
-  Iteratortype.setdefaultaction( datatypefunction );
   Integertype.settypename( "integertype" );
   Integertype.setdefaultaction( datatypefunction );
   Doubletype.settypename( "doubletype" );
@@ -218,7 +215,6 @@ SLIInterpreter::initbuiltins( void )
   createcommand( irepeat_name, &SLIInterpreter::irepeatfunction );
   createcommand( ifor_name, &SLIInterpreter::iforfunction );
   createcommand( iforallarray_name, &SLIInterpreter::iforallarrayfunction );
-  createcommand( iforalliter_name, &SLIInterpreter::iforalliterfunction );
   createcommand( iforallindexedstring_name, &SLIInterpreter::iforallindexedstringfunction );
   createcommand( iforallindexedarray_name, &SLIInterpreter::iforallindexedarrayfunction );
   createcommand( iforallstring_name, &SLIInterpreter::iforallstringfunction );
@@ -390,7 +386,6 @@ SLIInterpreter::SLIInterpreter( void )
   , irepeat_name( "::repeat" )
   , ifor_name( "::for" )
   , iforallarray_name( "::forall_a" )
-  , iforalliter_name( "::forall_iter" )
   , iforallindexedarray_name( "::forallindexed_a" )
   , iforallindexedstring_name( "::forallindexed_s" )
   , iforallstring_name( "::forall_s" )
@@ -495,27 +490,6 @@ SLIInterpreter::SLIInterpreter( void )
   parse = new Parser( std::cin );
 
   initexternals();
-
-#ifndef HAVE_MPI
-  // Set a signal handler if it is not ignored.
-  // If the SIGINT is ignored, we are most likely running as
-  // a background process.
-  // Here, we use a posix conforming substitute for the
-  // ISO C signal function. It is defined in psignal.{h,cc}
-
-  if ( posix_signal( SIGINT, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
-  {
-    posix_signal( SIGINT, ( Sigfunc* ) SLISignalHandler );
-  }
-  if ( posix_signal( SIGUSR1, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
-  {
-    posix_signal( SIGUSR1, ( Sigfunc* ) SLISignalHandler );
-  }
-  if ( posix_signal( SIGUSR2, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
-  {
-    posix_signal( SIGUSR2, ( Sigfunc* ) SLISignalHandler );
-  }
-#endif
 
   errordict->insert( quitbyerror_name, baselookup( false_name ) );
 }
@@ -829,6 +803,10 @@ SLIInterpreter::message( int level, const char from[], const char text[], const 
       {
         message( std::cout, M_DEPRECATED_NAME, from, text, errorname );
       }
+      else if ( level >= M_PROGRESS )
+      {
+        message( std::cout, M_PROGRESS_NAME, from, text, errorname );
+      }
       else if ( level >= M_INFO )
       {
         message( std::cout, M_INFO_NAME, from, text, errorname );
@@ -1110,14 +1088,6 @@ SLIInterpreter::debug_commandline( Token& next )
       return c;
     }
 
-    if ( SLIsignalflag != 0 )
-    {
-      std::cerr << "Caught Signal Number " << SLIsignalflag << std::endl;
-      SLIsignalflag = 0;
-      tty.clear();
-      continue;
-    }
-
     if ( command == "show" )
     {
       tty >> arg;
@@ -1304,12 +1274,6 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
   assert( statusdict->known( "exitcodes" ) );
   DictionaryDatum exitcodes = getValue< DictionaryDatum >( *statusdict, "exitcodes" );
 
-  if ( SLIsignalflag != 0 )
-  {
-    exitcode = getValue< long >( exitcodes, "unknownerror" );
-    return exitcode;
-  }
-
   try
   {
     do
@@ -1363,27 +1327,16 @@ SLIInterpreter::execute_( size_t exitlevel )
   assert( statusdict->known( "exitcodes" ) );
   DictionaryDatum exitcodes = getValue< DictionaryDatum >( *statusdict, "exitcodes" );
 
-  if ( SLIsignalflag != 0 )
-  {
-    exitcode = getValue< long >( exitcodes, "unknownerror" );
-    return exitcode;
-  }
-
   try
   {
     do
     { // loop1  this double loop to keep the try/catch outside the inner loop
       try
       {
-        while ( not SLIsignalflag and ( EStack.load() > exitlevel ) ) // loop 2
+        while ( EStack.load() > exitlevel ) // loop 2
         {
           ++cycle_count;
           EStack.top()->execute( this );
-        }
-        if ( SLIsignalflag != 0 )
-        {
-          SLIsignalflag = 0;
-          raisesignal( SLIsignalflag );
         }
       }
       catch ( std::exception& exc )

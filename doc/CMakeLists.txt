@@ -17,9 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# NOTE: Remember to update the help-generation section in 
-#       MyModule/CMakeLists.txt
-
 
 if ( NOT CMAKE_CROSSCOMPILING )
 
@@ -29,46 +26,37 @@ if ( NOT CMAKE_CROSSCOMPILING )
   find_package( PythonInterp )
   if ( PYTHONINTERP_FOUND )
 
-    # We skip help generation for Python versions < 2.7.8 due to
-    # problems with implementation of 're' in those.
-    if( ${PYTHON_VERSION_STRING} VERSION_GREATER "2.7.7" )
+    # Extract help from all source files in the source code, put
+    # them in doc/help and generate a local help index in the
+    # build directory containing links to the help files.
+    install( CODE
+      "execute_process(
+         COMMAND ${PYTHON_EXECUTABLE} -B generate_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\"
+         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
+         )"
+      )
 
-        # Extract help from all source files in the source code, put
-        # them in doc/help and generate a local help index in the
-        # build directory containing links to the help files.
-        install( CODE
-          "execute_process(
-             COMMAND ${PYTHON_EXECUTABLE} -B generate_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\"
-             WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
-             )"
-          )
+    # Copy the local doc/help directory to the global installation
+    # directory for documentation.
+    install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
+      DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
+      OPTIONAL
+      )
 
-        # Copy the local doc/help directory to the global installation
-        # directory for documentation.
-        install( DIRECTORY "${PROJECT_BINARY_DIR}/doc/help"
-          DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
-          OPTIONAL
-          )
-
-        # Update the global help index to include all help files in
-        # the global installation directory for documentation.
-        install( CODE
-          "execute_process(
-             COMMAND ${PYTHON_EXECUTABLE} -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
-             WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
-             )"
-          )
-
-    endif ()
+    # Update the global help index to include all help files in
+    # the global installation directory for documentation.
+    install( CODE
+      "execute_process(
+         COMMAND ${PYTHON_EXECUTABLE} -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
+         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
+         )"
+      )
 
   endif ()
 
 endif ()
 
-install( DIRECTORY conngen model_details
-    DESTINATION ${CMAKE_INSTALL_DOCDIR} )
-
-install( FILES index.html quickref.html doc_header.txt
+install( DIRECTORY model_details
     DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 
 if ( DOXYGEN_FOUND )
@@ -95,3 +83,24 @@ else ()
       COMMAND ${CMAKE_COMMAND} -E echo "Doxygen is not found on your system. Cannot build full documentation."
       )
 endif ()
+
+if ( "${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}" )
+  set( OUT_OF_TREE_BUILD "False" )
+else ()
+  set( OUT_OF_TREE_BUILD "True" )
+endif ()
+
+set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc/userdoc" )
+set( DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/userdoc" )
+
+add_custom_target( html
+  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}" || true
+  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && cp -r "${DOC_SOURCE_DIR}" "${DOC_BUILD_DIR}" || true
+  COMMAND NESTSRCDIR=${PROJECT_SOURCE_DIR} sphinx-build -b html "${DOC_BUILD_DIR}" "${DOC_BUILD_DIR}/html"
+  COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
+)
+
+install( DIRECTORY "${DOC_BUILD_DIR}/userdoc/html"
+  DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
+  OPTIONAL
+)

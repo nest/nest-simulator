@@ -44,7 +44,7 @@ SeeAlso: unittest::distributed_assert_or_die
 [1 2 4]                                      
 {                                            
  ResetKernel
- 0 << /grng_seed 12 >> SetStatus  % ResetKernel does not reset global rng
+ << /grng_seed 12 >> SetKernelStatus  % ResetKernel does not reset global rng
 
  GetGlobalRNG /rng Set [ 20 ] { ; rng 100 irand } Table
 

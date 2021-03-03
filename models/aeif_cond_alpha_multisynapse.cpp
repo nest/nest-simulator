@@ -28,6 +28,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -217,16 +218,16 @@ aeif_cond_alpha_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
+aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::V_th, V_th );
-  updateValue< double >( d, names::V_peak, V_peak_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::E_L, E_L );
-  updateValue< double >( d, names::V_reset, V_reset_ );
+  updateValueParam< double >( d, names::V_th, V_th, node );
+  updateValueParam< double >( d, names::V_peak, V_peak_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
+  updateValueParam< double >( d, names::V_reset, V_reset_, node );
 
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::g_L, g_L );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
 
   const size_t old_n_receptors = n_receptors();
   bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev );
@@ -261,14 +262,14 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
     }
   }
 
-  updateValue< double >( d, names::a, a );
-  updateValue< double >( d, names::b, b );
-  updateValue< double >( d, names::Delta_T, Delta_T );
-  updateValue< double >( d, names::tau_w, tau_w );
+  updateValueParam< double >( d, names::a, a, node );
+  updateValueParam< double >( d, names::b, b, node );
+  updateValueParam< double >( d, names::Delta_T, Delta_T, node );
+  updateValueParam< double >( d, names::tau_w, tau_w, node );
 
-  updateValue< double >( d, names::I_e, I_e );
+  updateValueParam< double >( d, names::I_e, I_e, node );
 
-  updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
+  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_peak_ < V_th )
   {
@@ -343,10 +344,10 @@ aeif_cond_alpha_multisynapse::State_::get( DictionaryDatum& d ) const
 }
 
 void
-aeif_cond_alpha_multisynapse::State_::set( const DictionaryDatum& d )
+aeif_cond_alpha_multisynapse::State_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::w, y_[ W ] );
+  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
+  updateValueParam< double >( d, names::w, y_[ W ], node );
 }
 
 aeif_cond_alpha_multisynapse::Buffers_::Buffers_( aeif_cond_alpha_multisynapse& n )
@@ -376,7 +377,7 @@ aeif_cond_alpha_multisynapse::Buffers_::Buffers_( const Buffers_& b, aeif_cond_a
  * ---------------------------------------------------------------- */
 
 aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -385,7 +386,7 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse()
 }
 
 aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse( const aeif_cond_alpha_multisynapse& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -426,7 +427,7 @@ aeif_cond_alpha_multisynapse::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.logger_.reset();
 
@@ -478,7 +479,6 @@ aeif_cond_alpha_multisynapse::calibrate()
   }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_counts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
   B_.spikes_.resize( P_.n_receptors() );
   S_.y_.resize(
@@ -641,15 +641,15 @@ void
 aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   /*
    * Here is where we must update the recordablesMap_ if new receptors

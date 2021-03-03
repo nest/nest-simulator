@@ -26,6 +26,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 #include "propagator_stability.h"
 
@@ -110,15 +111,15 @@ iaf_psc_alpha::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
+iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValue< double >( d, names::E_L, E_L_ );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -127,7 +128,7 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
     V_reset_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  if ( updateValueParam< double >( d, names::V_th, Theta_, node ) )
   {
     Theta_ -= E_L_;
   }
@@ -136,7 +137,7 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
     Theta_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_min, LowerBound_ ) )
+  if ( updateValueParam< double >( d, names::V_min, LowerBound_, node ) )
   {
     LowerBound_ -= E_L_;
   }
@@ -145,12 +146,12 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
     LowerBound_ -= delta_EL;
   }
 
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::C_m, C_ );
-  updateValue< double >( d, names::tau_m, Tau_ );
-  updateValue< double >( d, names::tau_syn_ex, tau_ex_ );
-  updateValue< double >( d, names::tau_syn_in, tau_in_ );
-  updateValue< double >( d, names::t_ref, TauR_ );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::C_m, C_, node );
+  updateValueParam< double >( d, names::tau_m, Tau_, node );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_ex_, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_in_, node );
+  updateValueParam< double >( d, names::t_ref, TauR_, node );
 
   if ( C_ <= 0.0 )
   {
@@ -186,9 +187,9 @@ iaf_psc_alpha::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-iaf_psc_alpha::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+iaf_psc_alpha::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValue< double >( d, names::V_m, y3_ ) )
+  if ( updateValueParam< double >( d, names::V_m, y3_, node ) )
   {
     y3_ -= p.E_L_;
   }
@@ -214,7 +215,7 @@ iaf_psc_alpha::Buffers_::Buffers_( const Buffers_&, iaf_psc_alpha& n )
  * ---------------------------------------------------------------- */
 
 iaf_psc_alpha::iaf_psc_alpha()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -223,7 +224,7 @@ iaf_psc_alpha::iaf_psc_alpha()
 }
 
 iaf_psc_alpha::iaf_psc_alpha( const iaf_psc_alpha& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -250,7 +251,7 @@ iaf_psc_alpha::init_buffers_()
 
   B_.logger_.reset();
 
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void

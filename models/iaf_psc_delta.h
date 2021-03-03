@@ -34,14 +34,16 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup iaf
-@ingroup psc
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-Name: iaf_psc_delta - Leaky integrate-and-fire neuron model.
+Short description
++++++++++++++++++
 
-Description:
+Current-based leaky integrate-and-fire neuron model with delta-shaped
+postsynaptic currents
+
+Description
++++++++++++
 
 iaf_psc_delta is an implementation of a leaky integrate-and-fire model
 where the potential jumps on each spike arrival.
@@ -55,8 +57,8 @@ spikes are added to the membrane potential at the end of the
 refractory period, dampened according to the interval between
 arrival and end of refractoriness.
 
-The linear subthresold dynamics is integrated by the Exact
-Integration scheme [1]. The neuron dynamics is solved on the time
+The linear subthreshold dynamics is integrated by the Exact
+Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -65,7 +67,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1].  A flow chart can be found in [2].
+[1]_.  A flow chart can be found in [2]_.
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step
@@ -80,9 +82,9 @@ Remarks:
 
 The present implementation uses individual variables for the
 components of the state vector and the non-zero matrix elements of
-the propagator.  Because the propagator is a lower triangular matrix
+the propagator. Because the propagator is a lower triangular matrix,
 no full matrix multiplication needs to be carried out and the
-computation can be done "in place" i.e. no temporary state vector
+computation can be done "in place", i.e. no temporary state vector
 object is required.
 
 The template support of recent C++ compilers enables a more succinct
@@ -91,12 +93,11 @@ optimization levels. A future version of iaf_psc_delta will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
-
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary.
 
-\verbatim embed:rst
 ================= ======= ======================================================
  V_m              mV      Membrane potential
  E_L              mV      Resting membrane potential
@@ -110,11 +111,11 @@ The following parameters can be set in the status dictionary.
  refractory_input boolean If true, do not discard input during
                           refractory period. Default: false
 ================= ======= ======================================================
-\endverbatim
 
-References:
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Rotter S,  Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
        modeling. Biologial Cybernetics 81:381-402.
@@ -123,17 +124,26 @@ References:
        space analysis of synchronous spiking in cortical neural
        networks. Neurocomputing 38-40:565-571.
        DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
-\endverbatim
 
-Sends: SpikeEvent
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Sends
++++++
 
-Author:  September 1999, Diesmann, Gewaltig
+SpikeEvent
 
-SeeAlso: iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
-*/
-class iaf_psc_delta : public Archiving_Node
+Receives
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
+
+EndUserDocs */
+
+class iaf_psc_delta : public ArchivingNode
 {
 
 public:
@@ -215,7 +225,7 @@ private:
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum& );
+    double set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -245,7 +255,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double );
+    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -352,23 +362,23 @@ iaf_psc_delta::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
 iaf_psc_delta::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

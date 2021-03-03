@@ -30,53 +30,52 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-Name: vogels_sprekeler_synapse - Synapse type for symmetric spike-timing
-dependent
-plasticity with constant depression.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for symmetric spike-timing dependent plasticity with constant depression
+
+Description
++++++++++++
+
 vogels_sprekeler_synapse is a connector to create synapses with symmetric
-spike time dependent plasticity and constant depression (as defined in [1]).
+spike time dependent plasticity and constant depression (as defined in [1]_).
 The learning rule is symmetric, i.e., the synapse is strengthened
-irrespective of the order of the pre and post-synaptic spikes. Each
+irrespective of the order of the pre- and postsynaptic spikes. Each
 pre-synaptic spike also causes a constant depression of the synaptic weight
 which differentiates this rule from other classical stdp rules.
 
-Parameters:
+Parameters
+++++++++++
 
-\verbatim embed:rst
 ======  ======  =========================================================
  tau    ms      Time constant of STDP window, potentiation
  Wmax   real    Maximum allowed weight
  eta    real    Learning rate
  alpha  real    Constant depression (= 2 * tau * target firing rate in
-                [1])
+                [1]_)
 ======  ======  =========================================================
-\endverbatim
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-References:
+SpikeEvent
 
-\verbatim embed:rst
+References
+++++++++++
+
 .. [1] Vogels et al. (2011). Inhibitory plasticity balances excitation and
        inhibition in sensory pathways and memory networks. Science,
        334(6062):1569-1573. DOI: https://doi.org/10.1126/science.1211095
-\endverbatim
 
-FirstVersion: January 2016
+EndUserDocs */
 
-Author: Ankur Sinha
-
-SeeAlso: synapsedict
-*/
 // connections are templates of target identifier type (used for pointer /
 // target index addressing)
 // derived from generic connection template
+
 template < typename targetidentifierT >
 class VogelsSprekelerConnection : public Connection< targetidentifierT >
 {
@@ -96,7 +95,7 @@ public:
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  VogelsSprekelerConnection( const VogelsSprekelerConnection& );
+  VogelsSprekelerConnection( const VogelsSprekelerConnection& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -204,13 +203,13 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e, thread t, const 
   Node* target = get_target( t );
   double dendritic_delay = get_delay();
 
-  // get spike history in relevant range (t1, t2] from post-synaptic neuron
+  // get spike history in relevant range (t1, t2] from postsynaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
-  // presynaptic neuron j, post synaptic neuron i
-  // Facilitation for each post synaptic spike
+  // presynaptic neuron j, postsynaptic neuron i
+  // Facilitation for each postsynaptic spike
   // Wij = Wij + eta*xj
   double minus_dt;
   while ( start != finish )
@@ -256,20 +255,6 @@ VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection()
   , Wmax_( 1.0 )
   , Kplus_( 0.0 )
   , t_lastspike_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
-VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection(
-  const VogelsSprekelerConnection< targetidentifierT >& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , tau_( rhs.tau_ )
-  , alpha_( rhs.alpha_ )
-  , eta_( rhs.eta_ )
-  , Wmax_( rhs.Wmax_ )
-  , Kplus_( rhs.Kplus_ )
-  , t_lastspike_( rhs.t_lastspike_ )
 {
 }
 

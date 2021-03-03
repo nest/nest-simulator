@@ -38,8 +38,7 @@ namespace nest
 
 
 /* Polymorphic version of update_value.
- * This version is needed, because DataConnect will pass all properties as
- * doubles. This code will take either an int or a double and convert is to an
+ * This code will take either an int or a double and convert is to an
  * int.
  */
 bool
@@ -82,21 +81,6 @@ Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection()
   , t_lastspike_( 0.0 )
 {
 }
-
-template < typename targetidentifierT >
-Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection( const Quantal_StpConnection& rhs )
-  : ConnectionBase( rhs )
-  , weight_( rhs.weight_ )
-  , U_( rhs.U_ )
-  , u_( rhs.u_ )
-  , tau_rec_( rhs.tau_rec_ )
-  , tau_fac_( rhs.tau_fac_ )
-  , n_( rhs.n_ )
-  , a_( rhs.a_ )
-  , t_lastspike_( rhs.t_lastspike_ )
-{
-}
-
 
 template < typename targetidentifierT >
 void

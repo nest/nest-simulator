@@ -37,7 +37,7 @@ four weight matrices are created and plotted.
 # the connectivity matrices
 
 import numpy as np
-import pylab
+import matplotlib.pyplot as plt
 import nest
 import matplotlib.gridspec as gridspec
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -60,70 +60,104 @@ def plot_weight_matrices(E_neurons, I_neurons):
     W_II = np.zeros([len(I_neurons), len(I_neurons)])
 
     a_EE = nest.GetConnections(E_neurons, E_neurons)
-    c_EE = nest.GetStatus(a_EE, keys='weight')
+
+    '''
+    Using `get`, we can extract the value of the connection weight,
+    for all the connections between these populations
+    '''
+    c_EE = a_EE.weight
+
+    '''
+    Repeat the two previous steps for all other connection types
+    '''
     a_EI = nest.GetConnections(I_neurons, E_neurons)
-    c_EI = nest.GetStatus(a_EI, keys='weight')
+    c_EI = a_EI.weight
     a_IE = nest.GetConnections(E_neurons, I_neurons)
-    c_IE = nest.GetStatus(a_IE, keys='weight')
+    c_IE = a_IE.weight
     a_II = nest.GetConnections(I_neurons, I_neurons)
-    c_II = nest.GetStatus(a_II, keys='weight')
+    c_II = a_II.weight
 
-    for idx, n in enumerate(a_EE):
-        W_EE[n[0] - min(E_neurons), n[1] - min(E_neurons)] += c_EE[idx]
-    for idx, n in enumerate(a_EI):
-        W_EI[n[0] - min(I_neurons), n[1] - min(E_neurons)] += c_EI[idx]
-    for idx, n in enumerate(a_IE):
-        W_IE[n[0] - min(E_neurons), n[1] - min(I_neurons)] += c_IE[idx]
-    for idx, n in enumerate(a_II):
-        W_II[n[0] - min(I_neurons), n[1] - min(I_neurons)] += c_II[idx]
+    '''
+    We now iterate through the range of all connections of each type.
+    To populate the corresponding weight matrix, we begin by identifying
+    the source-node_id (by using .source) and the target-node_id.
+    For each node_id, we subtract the minimum node_id within the corresponding
+    population, to assure the matrix indices range from 0 to the size of
+    the population.
 
-    fig = pylab.figure()
+    After determining the matrix indices [i, j], for each connection
+    object, the corresponding weight is added to the entry W[i,j].
+    The procedure is then repeated for all the different connection types.
+    '''
+    a_EE_src = a_EE.source
+    a_EE_trg = a_EE.target
+    a_EI_src = a_EI.source
+    a_EI_trg = a_EI.target
+    a_IE_src = a_IE.source
+    a_IE_trg = a_IE.target
+    a_II_src = a_II.source
+    a_II_trg = a_II.target
+
+    for idx in range(len(a_EE)):
+        W_EE[a_EE_src[idx] - min(E_neurons),
+             a_EE_trg[idx] - min(E_neurons)] += c_EE[idx]
+    for idx in range(len(a_EI)):
+        W_EI[a_EI_src[idx] - min(I_neurons),
+             a_EI_trg[idx] - min(E_neurons)] += c_EI[idx]
+    for idx in range(len(a_IE)):
+        W_IE[a_IE_src[idx] - min(E_neurons),
+             a_IE_trg[idx] - min(I_neurons)] += c_IE[idx]
+    for idx in range(len(a_II)):
+        W_II[a_II_src[idx] - min(I_neurons),
+             a_II_trg[idx] - min(I_neurons)] += c_II[idx]
+
+    fig = plt.figure()
     fig.subtitle('Weight matrices', fontsize=14)
     gs = gridspec.GridSpec(4, 4)
-    ax1 = pylab.subplot(gs[:-1, :-1])
-    ax2 = pylab.subplot(gs[:-1, -1])
-    ax3 = pylab.subplot(gs[-1, :-1])
-    ax4 = pylab.subplot(gs[-1, -1])
+    ax1 = plt.subplot(gs[:-1, :-1])
+    ax2 = plt.subplot(gs[:-1, -1])
+    ax3 = plt.subplot(gs[-1, :-1])
+    ax4 = plt.subplot(gs[-1, -1])
 
     plt1 = ax1.imshow(W_EE, cmap='jet')
 
     divider = make_axes_locatable(ax1)
     cax = divider.append_axes("right", "5%", pad="3%")
-    pylab.colorbar(plt1, cax=cax)
+    plt.colorbar(plt1, cax=cax)
 
     ax1.set_title('W_{EE}')
-    pylab.tight_layout()
+    plt.tight_layout()
 
     plt2 = ax2.imshow(W_IE)
     plt2.set_cmap('jet')
     divider = make_axes_locatable(ax2)
     cax = divider.append_axes("right", "5%", pad="3%")
-    pylab.colorbar(plt2, cax=cax)
+    plt.colorbar(plt2, cax=cax)
     ax2.set_title('W_{EI}')
-    pylab.tight_layout()
+    plt.tight_layout()
 
     plt3 = ax3.imshow(W_EI)
     plt3.set_cmap('jet')
     divider = make_axes_locatable(ax3)
     cax = divider.append_axes("right", "5%", pad="3%")
-    pylab.colorbar(plt3, cax=cax)
+    plt.colorbar(plt3, cax=cax)
     ax3.set_title('W_{IE}')
-    pylab.tight_layout()
+    plt.tight_layout()
 
     plt4 = ax4.imshow(W_II)
     plt4.set_cmap('jet')
     divider = make_axes_locatable(ax4)
     cax = divider.append_axes("right", "5%", pad="3%")
-    pylab.colorbar(plt4, cax=cax)
+    plt.colorbar(plt4, cax=cax)
     ax4.set_title('W_{II}')
-    pylab.tight_layout()
+    plt.tight_layout()
 
 #################################################################################
 # The script iterates through the list of all connections of each type.
-# To populate the corresponding weight matrix, we identify the source-gid
-# (first element of each connection object, `n[0]`) and the target-gid (second
+# To populate the corresponding weight matrix, we identify the source-node_id
+# (first element of each connection object, `n[0]`) and the target-node_id (second
 # element of each connection object, `n[1]`).
-# For each `gid`, we subtract the minimum `gid` within the corresponding
+# For each `node_id`, we subtract the minimum `node_id` within the corresponding
 # population, to assure the matrix indices range from 0 to the size of the
 # population.
 #

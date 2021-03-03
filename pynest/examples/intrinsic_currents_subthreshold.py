@@ -50,7 +50,6 @@ See Also
 # We imported all necessary modules for simulation, analysis and plotting.
 
 import nest
-import numpy as np
 import matplotlib.pyplot as plt
 
 ###############################################################################
@@ -131,10 +130,10 @@ nest.Connect(mm, nrn)
 
 for t_sim_dep, t_sim_hyp in zip(t_dep, t_hyp):
 
-    nest.SetStatus(dc, {'amplitude': I_dep})
+    dc.amplitude = I_dep
     nest.Simulate(t_sim_dep)
 
-    nest.SetStatus(dc, {'amplitude': I_hyp})
+    dc.amplitude = I_hyp
     nest.Simulate(t_sim_hyp)
 
 ###############################################################################
@@ -146,7 +145,7 @@ for t_sim_dep, t_sim_hyp in zip(t_dep, t_hyp):
 # returned by the multimeter. Because all NEST function return arrays,
 # we need to pick out element `0` from the result of ``GetStatus``.
 
-data = nest.GetStatus(mm)[0]['events']
+data = mm.events
 t = data['times']
 
 ###############################################################################
@@ -174,7 +173,8 @@ Vax.set_xlabel('Time [ms]')
 #   the first time point after t=0. All subsequent points are then
 #   automatically shifted by the delay.
 
-delay = nest.GetStatus(nest.GetConnections(dc, nrn))[0]['delay']
+conns = nest.GetConnections(dc, nrn)
+delay = conns.delay
 dt = nest.GetKernelStatus('resolution')
 
 t_dc, I_dc = [0], [0]
@@ -200,6 +200,7 @@ def texify_name(name):
 ###############################################################################
 # Next, we add a right vertical axis and plot the currents with respect to
 # that axis.
+
 
 Iax = Vax.twinx()
 Iax.plot(t_dc, I_dc, 'k-', lw=2, label=texify_name('I_DC'))

@@ -1,0 +1,99 @@
+/*
+ *  topo_mpi_test_pairwise_bernoulli_on_source.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+(unittest) run
+/unittest using
+
+% pairwise_bernoulli_on_source test
+[1 2 4]
+{
+  ResetKernel
+  << /total_num_virtual_procs 4 >> SetKernelStatus
+  /layer_specs << /shape [ 4 4 ] /elements /iaf_psc_alpha /edge_wrap true >> def
+  /l1 layer_specs CreateLayer def
+  /l2 layer_specs CreateLayer def
+
+  << /constant << /value 1.0 >> >> CreateParameter
+  << /constant << /value -0.02 >> >> CreateParameter
+  << /distance << >> >> CreateParameter
+  mul add /linear_parameter Set
+
+  /conns << /connection_type (pairwise_bernoulli_on_source)
+            /mask << /circular << /radius 0.25 >> /anchor [ 0.0 0.0 ] >>
+            /weight linear_parameter
+         >> def
+  l1 l2 conns ConnectLayers
+
+  /ofile tmpnam (_) join Rank 1 add cvs join (_of_) join NumProcesses cvs join def
+  ofile (w) file
+  l1 DumpLayerNodes
+  l2 DumpLayerNodes
+  l1 l2 /static_synapse DumpLayerConnections close
+  ofile
+}
+{
+  /result_files Set
+  result_files ==
+
+  % Use the first result as reference
+  /ref [] def
+  result_files First 0 get dup /ref_filename Set (r) file
+  {
+    getline not
+    {exit} if  % exit loop if EOF
+    ref exch append
+    /ref Set
+  } loop
+  close
+  (Num elements: ) ref length_a cvs join =
+
+  % Compare the reference to the other results
+  /other_results [] def
+  result_files Rest
+  {
+    /result [] def
+    /n_elements 0 def
+    {
+      dup /filename Set
+      (r) file
+      {
+        getline
+        not {exit} if  % exit loop if EOF
+        dup ref exch MemberQ dup /invariant Set
+        not {cvs ( not in ref ) join ref_filename join = exit} if  % break out of loop if element not in reference
+        result exch append
+        /result Set
+        /n_elements n_elements 1 add def
+      } loop
+      close
+      invariant not {exit} if
+    } forall
+    n_elements ref length_a eq not
+    {/invariant false def (Lengths not equal, ) n_elements cvs join ( and ) join  ref length_a cvs join = } if
+    invariant not {exit} if
+    /other_results other_results result append def
+  } forall
+
+  invariant  % true if all runs produce the same elements
+
+} distributed_collect_assert_or_die
+

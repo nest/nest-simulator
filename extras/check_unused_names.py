@@ -40,9 +40,6 @@ errors occured.
 
 """
 
-
-from __future__ import print_function
-
 import os
 import sys
 import re
@@ -75,7 +72,6 @@ except KeyError:
 names_files = [
     "librandom/librandom_names",
     "nestkernel/nest_names",
-    "topology/topology_names",
 ]
 
 

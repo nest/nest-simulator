@@ -35,12 +35,12 @@ gainfunction_ginzburg::get( DictionaryDatum& d ) const
 }
 
 void
-gainfunction_ginzburg::set( const DictionaryDatum& d )
+gainfunction_ginzburg::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::theta, theta_ );
-  updateValue< double >( d, names::c_1, c1_ );
-  updateValue< double >( d, names::c_2, c2_ );
-  updateValue< double >( d, names::c_3, c3_ );
+  updateValueParam< double >( d, names::theta, theta_, node );
+  updateValueParam< double >( d, names::c_1, c1_, node );
+  updateValueParam< double >( d, names::c_2, c2_, node );
+  updateValueParam< double >( d, names::c_3, c3_, node );
 }
 
 /*

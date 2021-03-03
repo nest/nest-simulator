@@ -54,7 +54,7 @@ M_ERROR setverbosity
   /sc_amps sc_times { om mul phi add sin ac mul dc add } Map def
 
   ResetKernel
-  0 << /resolution dt >> SetStatus
+  << /resolution dt >> SetKernelStatus
   /n_ac /iaf_psc_alpha Create def
   /n_sc /iaf_psc_alpha Create def
   

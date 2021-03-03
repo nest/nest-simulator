@@ -38,49 +38,46 @@
 
 namespace nest
 {
-/** @BeginDocumentation
-@ingroup Devices
-@ingroup generator
 
-Name: dc_generator - provides DC input current
+/* BeginUserDocs: device, generator
 
-Description: The DC-Generator provides a constant DC Input
-to the connected node. The unit of the current is pA.
+Short description
++++++++++++++++++
 
-Parameters:
+provides direct current (DC) input
+
+Description
++++++++++++
+
+The dc_generator provides a constant DC input to the connected
+node. The unit of the current is pA.
+
+The dc_generator is rather inefficient, since it needs to send the
+same current information on each time step. If you only need a
+constant bias current into a neuron, you could instead directly set
+the property *I_e*, which is available in many neuron models.
+
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary:
 
-\verbatim embed:rst
 ========== ======  =============================
  amplitude pA      Amplitude of current
 ========== ======  =============================
-\endverbatim
 
+Sends
++++++
 
-Examples:
+CurrentEvent
 
-    SLI
+See also
+++++++++
 
-    The dc current can be altered in the following way:
-    /dc_generator Create /dc_gen Set  % Creates a dc_generator, which is a node
-    dc_gen GetStatus info             % View properties (amplitude is 0)
-    dc_gen << /amplitude 1500. >> SetStatus
-    dc_gen GetStatus info             % amplitude is now 1500.0
+ac_generator, noise_generator, step_current_generator
 
-Remarks:
+EndUserDocs */
 
-The dc_generator is rather inefficient, since it needs to
-send the same current information on each time step. If you
-only need a constant bias current into a neuron, you should
-set it directly in the neuron, e.g., dc_generator.
-
-Sends: CurrentEvent
-
-Author: docu by Sirko Straube
-
-SeeAlso: Device, StimulatingDevice
-*/
 class dc_generator : public DeviceNode
 {
 
@@ -94,6 +91,19 @@ public:
     return false;
   }
 
+  //! Allow multimeter to connect to local instances
+  bool
+  local_receiver() const
+  {
+    return true;
+  }
+
+  Name
+  get_element_type() const
+  {
+    return names::stimulator;
+  }
+
   port send_test_event( Node&, rport, synindex, bool );
 
   using Node::handle;
@@ -105,13 +115,6 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
-
-  //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
 
 private:
   void init_state_( const Node& );
@@ -133,8 +136,8 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -218,7 +221,7 @@ inline void
 dc_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

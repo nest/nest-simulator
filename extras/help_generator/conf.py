@@ -121,7 +121,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'conngen',
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store',
                     'nest_by_example', 'README.md']
 
 # The name of the Pygments (syntax highlighting) style to use.
@@ -160,17 +160,17 @@ html_show_copyright = False
 
 # This way works for ReadTheDocs
 # With this local 'make html' is broken!
-#github_doc_root = ''
-#def setup(app):
-#    app.add_stylesheet('css/my_styles.css')
-#    app.add_config_value('recommonmark_config', {
-#         #'url_resolver': lambda url: github_doc_root + url,
-#         'auto_toc_tree_section': 'Contents',
-#         'enable_inline_math': True,
-#         'enable_auto_doc_ref': False,
-#         'enable_eval_rst': True
-#          }, True)
-#    app.add_transform(AutoStructify)
+# github_doc_root = ''
+# def setup(app):
+#     app.add_stylesheet('css/my_styles.css')
+#     app.add_config_value('recommonmark_config', {
+#          #'url_resolver': lambda url: github_doc_root + url,
+#          'auto_toc_tree_section': 'Contents',
+#          'enable_inline_math': True,
+#          'enable_auto_doc_ref': False,
+#          'enable_eval_rst': True
+#           }, True)
+#     app.add_transform(AutoStructify)
 
 # -- Options for LaTeX output ---------------------------------------------
 

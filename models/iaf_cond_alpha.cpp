@@ -32,6 +32,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -201,24 +202,24 @@ nest::iaf_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_alpha::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_cond_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValue< double >( d, names::V_th, V_th );
-  updateValue< double >( d, names::V_reset, V_reset );
-  updateValue< double >( d, names::t_ref, t_ref );
-  updateValue< double >( d, names::E_L, E_L );
+  updateValueParam< double >( d, names::V_th, V_th, node );
+  updateValueParam< double >( d, names::V_reset, V_reset, node );
+  updateValueParam< double >( d, names::t_ref, t_ref, node );
+  updateValueParam< double >( d, names::E_L, E_L, node );
 
-  updateValue< double >( d, names::E_ex, E_ex );
-  updateValue< double >( d, names::E_in, E_in );
+  updateValueParam< double >( d, names::E_ex, E_ex, node );
+  updateValueParam< double >( d, names::E_in, E_in, node );
 
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::g_L, g_L );
+  updateValueParam< double >( d, names::C_m, C_m, node );
+  updateValueParam< double >( d, names::g_L, g_L, node );
 
-  updateValue< double >( d, names::tau_syn_ex, tau_synE );
-  updateValue< double >( d, names::tau_syn_in, tau_synI );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_synE, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
 
-  updateValue< double >( d, names::I_e, I_e );
+  updateValueParam< double >( d, names::I_e, I_e, node );
   if ( V_reset >= V_th )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -241,12 +242,20 @@ void
 nest::iaf_cond_alpha::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y[ V_M ] ); // Membrane potential
+  def< double >( d, names::g_ex, y[ G_EXC ] );
+  def< double >( d, names::dg_ex, y[ DG_EXC ] );
+  def< double >( d, names::g_in, y[ G_INH ] );
+  def< double >( d, names::dg_in, y[ DG_INH ] );
 }
 
 void
-nest::iaf_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::iaf_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::V_m, y[ V_M ] );
+  updateValueParam< double >( d, names::V_m, y[ V_M ], node );
+  updateValueParam< double >( d, names::g_ex, y[ G_EXC ], node );
+  updateValueParam< double >( d, names::dg_ex, y[ DG_EXC ], node );
+  updateValueParam< double >( d, names::g_in, y[ G_INH ], node );
+  updateValueParam< double >( d, names::dg_in, y[ DG_INH ], node );
 }
 
 
@@ -255,7 +264,7 @@ nest::iaf_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_& 
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_alpha::iaf_cond_alpha()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -264,7 +273,7 @@ nest::iaf_cond_alpha::iaf_cond_alpha()
 }
 
 nest::iaf_cond_alpha::iaf_cond_alpha( const iaf_cond_alpha& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -302,7 +311,7 @@ nest::iaf_cond_alpha::init_state_( const Node& proto )
 void
 nest::iaf_cond_alpha::init_buffers_()
 {
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.spike_exc_.clear(); // includes resize
   B_.spike_inh_.clear(); // includes resize
@@ -419,7 +428,7 @@ nest::iaf_cond_alpha::update( Time const& origin, const long from, const long to
       S_.r = V_.RefractoryCounts;
       S_.y[ State_::V_M ] = P_.V_reset;
 
-      // log spike with Archiving_Node
+      // log spike with ArchivingNode
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
@@ -452,7 +461,7 @@ nest::iaf_cond_alpha::handle( SpikeEvent& e )
   {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
-  } // ensure conductance is positive
+  }
 }
 
 void
@@ -460,7 +469,6 @@ nest::iaf_cond_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }

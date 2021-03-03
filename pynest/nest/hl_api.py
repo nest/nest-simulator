@@ -38,55 +38,60 @@ _ignore_modules = set()
 #   `from .libs.$X import *`
 # for every module in ./libs/$X.py that is left
 _il.import_libs(__file__, globals(), 'lib', ignore=_ignore_modules)
+
 ############################
 
 # With '__all__' we provide an explicit index of the package. Without any
 # imported submodules and any redundant functions we could minimize list.
 __all__ = [
-    'BeginSubnet',  # deprecated
-    'CGConnect',
-    'CGParse',
-    'CGSelectImplementation',
-    'ChangeSubnet',  # deprecated
     'Cleanup',
+    'CollocatedSynapses',
     'Connect',
     'ConnectionRules',
+    'SynapseCollection',
     'CopyModel',
     'Create',
-    'CurrentSubnet',  # deprecated
-    'DataConnect',  # deprecated
+    'CreateMask',
+    'CreateParameter',
     'DisableStructuralPlasticity',
     'Disconnect',
-    'DisconnectOneToOne',
+    'Displacement',
+    'Distance',
+    'DumpLayerConnections',
+    'DumpLayerNodes',
     'EnableStructuralPlasticity',
-    'EndSubnet',  # deprecated
-    'GetChildren',  # deprecated
+    'FindCenterElement',
+    'FindNearestElement',
     'GetConnections',
     'GetDefaults',
     'GetKernelStatus',
-    'GetLeaves',  # deprecated
-    'GetLID',  # deprecated
-    'GetNetwork',  # deprecated
-    'GetNodes',  # deprecated
+    'GetLocalNodeCollection',
+    'GetNodes',
+    'GetPosition',
     'GetStatus',
-    'GetStructuralPlasticityStatus',
+    'GetTargetNodes',
+    'GetTargetPositions',
+    'NodeCollection',
     'Install',
-    'LayoutNetwork',  # deprecated
+    'Mask',
     'Models',
     'NumProcesses',
+    'Parameter',
+    'PlotLayer',
+    'PlotProbabilityParameter',
+    'PlotTargets',
     'Prepare',
-    'PrintNetwork',  # deprecated
+    'PrintNodes',
     'Rank',
     'ResetKernel',
-    'ResetNetwork',  # deprecated
     'Run',
     'RunManager',
+    'SelectNodesByMask',
     'SetAcceptableLatency',
     'SetDefaults',
     'SetKernelStatus',
     'SetMaxBuffered',
     'SetStatus',
-    'SetStructuralPlasticityStatus',
     'Simulate',
     'authors',
     'get_verbosity',
@@ -95,5 +100,4 @@ __all__ = [
     'message',
     'set_verbosity',
     'sysinfo',
-    'version',
 ]

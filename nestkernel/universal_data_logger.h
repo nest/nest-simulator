@@ -165,8 +165,8 @@ public:
 
 private:
   /**
-   * Single data logger, serving one Multimeter.
-   * For each Multimeter connected to a node, one DataLogger_ instance is
+   * Single data logger, serving one multimeter.
+   * For each multimeter connected to a node, one DataLogger_ instance is
    * created. The UniversalDataLogger forwards all requests to the correct
    * DataLogger_ based on the rport of the request.
    */
@@ -175,7 +175,7 @@ private:
   public:
     DataLogger_( const DataLoggingRequest&, const RecordablesMap< HostNode >& );
     index
-    get_mm_gid() const
+    get_mm_node_id() const
     {
       return multimeter_;
     }
@@ -185,7 +185,7 @@ private:
     void init();
 
   private:
-    index multimeter_; //!< GID of multimeter for which the logger works
+    index multimeter_; //!< node ID of multimeter for which the logger works
     size_t num_vars_;  //!< number of variables recorded
 
     Time recording_interval_; //!< interval between two recordings
@@ -236,24 +236,20 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLogging
   // rports.
   if ( req.get_rport() != 0 )
   {
-    throw IllegalConnection(
-      "UniversalDataLogger::connect_logging_device(): "
-      "Connections from multimeter to node must request rport 0." );
+    throw IllegalConnection( "Connections from multimeter to node must request rport 0." );
   }
 
   // ensure that we have not connected this multimeter before
-  const index mm_gid = req.get_sender().get_gid();
+  const index mm_node_id = req.get_sender().get_node_id();
   const size_t n_loggers = data_loggers_.size();
   size_t j = 0;
-  while ( j < n_loggers and data_loggers_[ j ].get_mm_gid() != mm_gid )
+  while ( j < n_loggers and data_loggers_[ j ].get_mm_node_id() != mm_node_id )
   {
     ++j;
   }
   if ( j < n_loggers )
   {
-    throw IllegalConnection(
-      "UniversalDataLogger::connect_logging_device(): "
-      "Each multimeter can only be connected once to a given node." );
+    throw IllegalConnection( "Each multimeter can only be connected once to a given node." );
   }
 
   // we now know that we have no DataLogger_ for the given multimeter, so we
@@ -267,7 +263,7 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLogging
 template < typename HostNode >
 nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequest& req,
   const RecordablesMap< HostNode >& rmap )
-  : multimeter_( req.get_sender().get_gid() )
+  : multimeter_( req.get_sender().get_node_id() )
   , num_vars_( 0 )
   , recording_interval_( Time::neg_inf() )
   , recording_offset_( Time::ms( 0. ) )
@@ -289,9 +285,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggi
       // delete all access information again: the connect either succeeds
       // for all entries in recvars, or it fails, leaving the logger untouched
       node_access_.clear();
-      throw IllegalConnection(
-        "UniversalDataLogger::connect_logging_device(): "
-        "Unknown recordable " + recvars[ j ].toString() );
+      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ].toString() );
     }
 
     node_access_.push_back( rec->second );
@@ -301,9 +295,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggi
 
   if ( num_vars_ > 0 and req.get_recording_interval() < Time::step( 1 ) )
   {
-    throw IllegalConnection(
-      "UniversalDataLogger::connect_logging_device(): "
-      "recording interval must be >= resolution." );
+    throw IllegalConnection( "Recording interval must be >= resolution." );
   }
 
   recording_interval_ = req.get_recording_interval();
@@ -431,8 +423,8 @@ public:
 
 private:
   /**
-   * Single data logger, serving one Multimeter.
-   * For each Multimeter connected to a node, one DataLogger_ instance is
+   * Single data logger, serving one multimeter.
+   * For each multimeter connected to a node, one DataLogger_ instance is
    * created. The UniversalDataLogger forwards all requests to the correct
    * DataLogger_ based on the rport of the request.
    */
@@ -441,7 +433,7 @@ private:
   public:
     DataLogger_( const DataLoggingRequest&, const DynamicRecordablesMap< HostNode >& );
     index
-    get_mm_gid() const
+    get_mm_node_id() const
     {
       return multimeter_;
     }
@@ -451,7 +443,7 @@ private:
     void init();
 
   private:
-    index multimeter_; //!< GID of multimeter for which the logger works
+    index multimeter_; //!< node ID of multimeter for which the logger works
     size_t num_vars_;  //!< number of variables recorded
 
     Time recording_interval_; //!< interval between two recordings
@@ -503,24 +495,20 @@ nest::DynamicUniversalDataLogger< HostNode >::connect_logging_device( const Data
   // rports.
   if ( req.get_rport() != 0 )
   {
-    throw IllegalConnection(
-      "DynamicUniversalDataLogger::connect_logging_device(): "
-      "Connections from multimeter to node must request rport 0." );
+    throw IllegalConnection( "Connections from multimeter to node must request rport 0." );
   }
 
   // ensure that we have not connected this multimeter before
-  const index mm_gid = req.get_sender().get_gid();
+  const index mm_node_id = req.get_sender().get_node_id();
   const size_t n_loggers = data_loggers_.size();
   size_t j = 0;
-  while ( j < n_loggers && data_loggers_[ j ].get_mm_gid() != mm_gid )
+  while ( j < n_loggers && data_loggers_[ j ].get_mm_node_id() != mm_node_id )
   {
     ++j;
   }
   if ( j < n_loggers )
   {
-    throw IllegalConnection(
-      "DynamicUniversalDataLogger::connect_logging_device(): "
-      "Each multimeter can only be connected once to a given node." );
+    throw IllegalConnection( "Each multimeter can only be connected once to a given node." );
   }
 
   // we now know that we have no DataLogger_ for the given multimeter, so we
@@ -534,7 +522,7 @@ nest::DynamicUniversalDataLogger< HostNode >::connect_logging_device( const Data
 template < typename HostNode >
 nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequest& req,
   const DynamicRecordablesMap< HostNode >& rmap )
-  : multimeter_( req.get_sender().get_gid() )
+  : multimeter_( req.get_sender().get_node_id() )
   , num_vars_( 0 )
   , recording_interval_( Time::neg_inf() )
   , recording_offset_( Time::ms( 0. ) )
@@ -556,9 +544,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const Da
       // delete all access information again: the connect either succeeds
       // for all entries in recvars, or it fails, leaving the logger untouched
       node_access_.clear();
-      throw IllegalConnection(
-        "DynamicUniversalDataLogger::connect_logging_device(): "
-        "Unknown recordable " + recvars[ j ].toString() );
+      throw IllegalConnection( "Cannot connect with unknown recordable " + recvars[ j ].toString() );
     }
 
     node_access_.push_back( &( rec->second ) );
@@ -568,9 +554,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const Da
 
   if ( num_vars_ > 0 && req.get_recording_interval() < Time::step( 1 ) )
   {
-    throw IllegalConnection(
-      "DynamicUniversalDataLogger::connect_logging_device(): "
-      "recording interval must be >= resolution." );
+    throw IllegalConnection( "Recording interval must be >= resolution." );
   }
 
   recording_interval_ = req.get_recording_interval();

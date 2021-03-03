@@ -27,6 +27,9 @@
 #include <functional>
 #include <numeric>
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
@@ -66,6 +69,25 @@ nest::correlospinmatrix_detector::Parameters_::Parameters_( const Parameters_& p
   Tstart_.calibrate();
   Tstop_.calibrate();
 }
+
+
+nest::correlospinmatrix_detector::Parameters_& nest::correlospinmatrix_detector::Parameters_::operator=(
+  const Parameters_& p )
+{
+  delta_tau_ = p.delta_tau_;
+  tau_max_ = p.tau_max_;
+  Tstart_ = p.Tstart_;
+  Tstop_ = p.Tstop_;
+  N_channels_ = p.N_channels_;
+
+  delta_tau_.calibrate();
+  tau_max_.calibrate();
+  Tstart_.calibrate();
+  Tstop_.calibrate();
+
+  return *this;
+}
+
 
 nest::correlospinmatrix_detector::State_::State_()
   : incoming_()
@@ -107,13 +129,15 @@ nest::correlospinmatrix_detector::State_::get( DictionaryDatum& d ) const
 }
 
 bool
-nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, const correlospinmatrix_detector& n )
+nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d,
+  const correlospinmatrix_detector& n,
+  Node* node )
 {
   bool reset = false;
   double t;
   long N;
 
-  if ( updateValue< long >( d, names::N_channels, N ) )
+  if ( updateValueParam< long >( d, names::N_channels, N, node ) )
   {
     if ( N < 1 )
     {
@@ -126,7 +150,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, co
     }
   }
 
-  if ( updateValue< double >( d, names::delta_tau, t ) )
+  if ( updateValueParam< double >( d, names::delta_tau, t, node ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
@@ -136,7 +160,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, co
     }
   }
 
-  if ( updateValue< double >( d, names::tau_max, t ) )
+  if ( updateValueParam< double >( d, names::tau_max, t, node ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
@@ -146,7 +170,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, co
     }
   }
 
-  if ( updateValue< double >( d, names::Tstart, t ) )
+  if ( updateValueParam< double >( d, names::Tstart, t, node ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
@@ -156,7 +180,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, co
     }
   }
 
-  if ( updateValue< double >( d, names::Tstop, t ) )
+  if ( updateValueParam< double >( d, names::Tstop, t, node ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -179,7 +203,7 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d, co
 }
 
 void
-nest::correlospinmatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool )
+nest::correlospinmatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool, Node* )
 {
 }
 
@@ -301,7 +325,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
     // A single spike signals a transition to 0 state, two spikes in same time
     // step signal the transition to 1 state.
     //
-    // Remember the global id of the sender of the last spike being received
+    // Remember the node ID of the sender of the last spike being received
     // this assumes that several spikes being sent by the same neuron in the
     // same time step are received consecutively or are conveyed by setting the
     // multiplicity accordingly.
@@ -315,7 +339,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       // events
       if ( curr_i == S_.last_i_ && stamp == S_.t_last_in_spike_ )
       {
-        // received twice the same gid, so transition 0->1
+        // received twice the same node ID, so transition 0->1
         // revise the last event written to the buffer
         S_.curr_state_[ curr_i ] = true;
         S_.last_change_[ curr_i ] = stamp.get_steps();

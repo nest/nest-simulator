@@ -26,7 +26,7 @@ Name: testsuite::test_ppd_sup_generator - Test parallel generation of trains
 Synopsis: nest_indirect test_ppd_sup_generator.sli -> -
 
 Description:
-   Creates a Ppd_Sup generator and sends spikes to spike detector. Assert invariant
+   Creates a Ppd_Sup generator and sends spikes to spike recorder. Assert invariant
    results for fixed VP number. This is a partial response to #551. May be adapted
    to other generators.
 
@@ -44,26 +44,22 @@ skip_if_not_threaded
 [1 2 4]
 {
   % set resolution and total/local number of threads
-  0
   <<
   /resolution  0.1
   /total_num_virtual_procs total_vps
-  >> SetStatus
+  >> SetKernelStatus
 
   /pg /ppd_sup_generator << /rate 1000. >> Create def
-  /sd /spike_detector << /record_to [/memory] 
-                         /withgid true 
-                         /withtime true 
-                      >> Create def
+  /sr /spike_recorder Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
-  [pg] pnet Connect
-  pnet [sd] Connect
+  pnet { pg exch Connect } forall
+  pnet { sr Connect } forall
   
   10. Simulate
 
   % get events, replace vectors with SLI arrays    
-  /ev sd /events get def
+  /ev sr /events get def
   ev keys { /k Set ev dup k get cva k exch put } forall
   ev 
 

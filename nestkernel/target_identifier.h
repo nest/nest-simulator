@@ -55,11 +55,7 @@ public:
   }
 
 
-  TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t )
-    : target_( t.target_ )
-    , rport_( t.rport_ )
-  {
-  }
+  TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t ) = default;
 
 
   void
@@ -69,7 +65,7 @@ public:
     if ( target_ != 0 )
     {
       def< long >( d, names::rport, rport_ );
-      def< long >( d, names::target, target_->get_gid() );
+      def< long >( d, names::target, target_->get_node_id() );
     }
   }
 
@@ -122,10 +118,7 @@ public:
   }
 
 
-  TargetIdentifierIndex( const TargetIdentifierIndex& t )
-    : target_( t.target_ )
-  {
-  }
+  TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
 
 
   void

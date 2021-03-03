@@ -87,7 +87,7 @@ class TestOneToOne(TestParams):
 
     def testInputArrayToStdpSynapse(self):
         params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
-        syn_params = {'model': 'stdp_synapse'}
+        syn_params = {'synapse_model': 'stdp_synapse'}
         values = [np.arange(self.N1, dtype=float) for i in range(6)]
         for i, param in enumerate(params):
             syn_params[param] = values[i]

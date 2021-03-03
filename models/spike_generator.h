@@ -148,7 +148,7 @@ onto the grid will be handled as follows for different option settings:
   ---> spikes at step 10, offset 0.0; step 11, offset -0.05;
          step 31, offset -0.0999
 
-Assume we have simulated 10.0 ms and simulation times is thus 10.0 (step
+Assume we have simulated 10.0 ms and simulation time is thus 10.0 (step
 100). Then, any spike times set at this time must be later than step 100.
 
   ::

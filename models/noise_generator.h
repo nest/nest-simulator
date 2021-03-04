@@ -87,7 +87,7 @@ Remarks:
 
  - The interval between changes, dt, must be a multiple of the time step.
 
- - The effect of this noise current on a neuron depends on DT. Consider
+ - The effect of this noise current on a neuron depends on dt. Consider
    the membrane potential fluctuations evoked when a noise current is
    injected into a neuron. The standard deviation of these fluctuations
    across an ensemble will increase with dt for a given value of std.
@@ -95,16 +95,16 @@ Remarks:
    capacity :math:`C_m`, membrane potential fluctuations Sigma at time
    :math:`t_j+delay` are given by
 
-.. math::
+   .. math::
 
-  \Sigma = std * \tau_m / C_m * \sqrt( (1-x) / (1+x) )  \\
+      \Sigma = std * \tau_m / C_m * \sqrt( (1-x) / (1+x) )  \\
                              \text{where } x = exp(-dt/\tau_m)
 
-for large :math:`t_j`. In the white noise limit, :math:`dt \rightarrow 0`, one has
+   for large :math:`t_j`. In the white noise limit, :math:`dt \rightarrow 0`, one has
 
-.. math::
+   .. math::
 
-  \Sigma \rightarrow std / C_m * \sqrt(dt * \tau / 2).
+      \Sigma \rightarrow std / C_m * \sqrt(dt * \tau / 2).
 
 To obtain comparable results for different values of dt, you must adapt std.
 

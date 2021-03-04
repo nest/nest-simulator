@@ -72,6 +72,7 @@ neuron like dynamics interacting by point events is described in
 [2]_. A flow chart can be found in [3]_.
 
 .. note::
+
    The present implementation uses individual variables for the
    components of the state vector and the non-zero matrix elements of
    the propagator. Because the propagator is a lower triangular matrix,
@@ -91,8 +92,8 @@ neuron like dynamics interacting by point events is described in
     will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
     `tau_syn_in`, respectively, to avoid numerical instabilities.
 
-For implementation details see the
-`IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+    For implementation details see the
+    `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 Parameters
 ++++++++++

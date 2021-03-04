@@ -87,7 +87,7 @@ Remarks:
 
  - The interval between changes, dt, must be a multiple of the time step.
 
- - The effect of this noise current on a neuron depends on DT. Consider
+ - The effect of this noise current on a neuron depends on dt. Consider
    the membrane potential fluctuations evoked when a noise current is
    injected into a neuron. The standard deviation of these fluctuations
    across an ensemble will increase with dt for a given value of std.

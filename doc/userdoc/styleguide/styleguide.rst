@@ -51,6 +51,8 @@ We write in plain (global) English, and avoid slang or jargon that is unnecessar
 We do, however, use terminology appropriate to NEST and neuroscience when specific and exact terms are needed, which is often. But explanations or references
 should be provided for clarity in introductory texts.
 
+If you have further questions about style not addressed here, see ?Microsoft style guide?
+
 Active voice
 ~~~~~~~~~~~~
 
@@ -431,10 +433,10 @@ Instead of "guys" or "girls" use inclusive language such as everyone, all, membe
 Abbreviations and acronyms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Spell out acronyms on first appearance on each page or article it appears
+Spell out acronyms on first appearance on each page or article it appears.
 For example: Random number generator (rng)
 
-If the abbreviation/acronym is well known (e.g., HTML) you do not need to spell it out
+If the abbreviation/acronym is well known (e.g., HTML) you do not need to spell it out.
 
 
 Commas
@@ -444,7 +446,7 @@ Use the oxford comma (apples, bananas, and grapes) for lists. But use a bullet l
 
 Use the comma as separator for thousands (37,000).
 
-To join two sentences into one, you must use a conjuction (and, or , but) along with the comma. Or use the semicolon.
+To join two sentences into one, you must use a conjuction (and, or , but) along with the comma, or use the semicolon.
 
 Conjunctions (For, And, Nor, But, Or, Yet, So)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -456,7 +458,7 @@ Avoid using `So`, `However`, at the beginning of sentences.
 Ampersand
 ~~~~~~~~~~~~
 
-Avoid the ampersand '`&`' and use '`and`' instead unless the ampersand is part of a proper name (e.g. Ben \& Jerry's)
+Avoid the ampersand '`&`' and use '`and`' instead unless the ampersand is part of a proper name (e.g. Ben \& Jerry's).
 
 
 Capitalization

@@ -243,10 +243,10 @@ public:
 
 private:
   /**  */
-  void clear_models_();
+  void clear_node_models_();
 
   /**  */
-  void clear_prototypes_();
+  void clear_connection_models_();
 
   /**  */
   index register_node_model_( Model* model, bool private_model = false );
@@ -296,9 +296,9 @@ private:
    * the model is private. Private models are not entered into the
    * modeldict.
    */
-  std::vector< std::pair< Model*, bool > > pristine_models_;
+  std::vector< std::pair< Model*, bool > > builtin_node_models_;
 
-  std::vector< Model* > models_; //!< List of available models
+  std::vector< Model* > node_models_; //!< List of available models
 
 
   /**
@@ -307,13 +307,13 @@ private:
    * the model is private. Private models are not entered into the
    * modeldict.
    */
-  std::vector< ConnectorModel* > pristine_prototypes_;
+  std::vector< ConnectorModel* > builtin_connection_models_;
 
   /**
    * The list of available synapse prototypes: first dimension one
    * entry per thread, second dimension for each synapse type
    */
-  std::vector< std::vector< ConnectorModel* > > prototypes_;
+  std::vector< std::vector< ConnectorModel* > > connection_models_;
 
   /**
    * prototypes of events
@@ -368,12 +368,12 @@ private:
 inline Model*
 ModelManager::get_model( index m ) const
 {
-  if ( m >= models_.size() or models_[ m ] == 0 )
+  if ( m >= node_models_.size() or node_models_[ m ] == 0 )
   {
     throw UnknownModelID( m );
   }
 
-  return models_[ m ];
+  return node_models_[ m ];
 }
 
 inline Node*
@@ -403,39 +403,39 @@ ModelManager::get_synapsedict()
 inline bool
 ModelManager::has_user_models() const
 {
-  return models_.size() > pristine_models_.size();
+  return node_models_.size() > builtin_node_models_.size();
 }
 
 inline ConnectorModel&
 ModelManager::get_synapse_prototype( synindex syn_id, thread t )
 {
   assert_valid_syn_id( syn_id );
-  return *( prototypes_[ t ][ syn_id ] );
+  return *( connection_models_[ t ][ syn_id ] );
 }
 
 inline const std::vector< ConnectorModel* >&
 ModelManager::get_synapse_prototypes( thread tid )
 {
-  return prototypes_[ tid ];
+  return connection_models_[ tid ];
 }
 
 inline size_t
 ModelManager::get_num_node_models() const
 {
-  return models_.size();
+  return node_models_.size();
 }
 
 inline size_t
 ModelManager::get_num_synapse_prototypes() const
 {
-  assert( prototypes_[ 0 ].size() <= invalid_synindex );
-  return prototypes_[ 0 ].size();
+  assert( connection_models_[ 0 ].size() <= invalid_synindex );
+  return connection_models_[ 0 ].size();
 }
 
 inline void
 ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 {
-  if ( syn_id >= prototypes_[ t ].size() or prototypes_[ t ][ syn_id ] == 0 )
+  if ( syn_id >= connection_models_[ t ].size() or connection_models_[ t ][ syn_id ] == 0 )
   {
     throw UnknownSynapseType( syn_id );
   }
@@ -444,7 +444,7 @@ ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 inline bool
 ModelManager::has_user_prototypes() const
 {
-  return prototypes_[ 0 ].size() > pristine_prototypes_.size();
+  return connection_models_[ 0 ].size() > builtin_connection_models_.size();
 }
 
 inline void

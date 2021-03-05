@@ -43,10 +43,10 @@ namespace nest
 {
 
 ModelManager::ModelManager()
-  : pristine_models_()
-  , models_()
-  , pristine_prototypes_()
-  , prototypes_()
+  : builtin_node_models_()
+  , node_models_()
+  , builtin_connection_models_()
+  , connection_models_()
   , modeldict_( new Dictionary )
   , synapsedict_( new Dictionary )
   , proxynode_model_( 0 )
@@ -58,13 +58,13 @@ ModelManager::ModelManager()
 
 ModelManager::~ModelManager()
 {
-  clear_models_();
+  clear_node_models_();
 
-  clear_prototypes_();
+  clear_connection_models_();
 
   // Now we can delete the clean model prototypes
   std::vector< ConnectorModel* >::iterator i;
-  for ( i = pristine_prototypes_.begin(); i != pristine_prototypes_.end(); ++i )
+  for ( i = builtin_connection_models_.begin(); i != builtin_connection_models_.end(); ++i )
   {
     if ( *i != 0 )
     {
@@ -73,7 +73,7 @@ ModelManager::~ModelManager()
   }
 
   std::vector< std::pair< Model*, bool > >::iterator j;
-  for ( j = pristine_models_.begin(); j != pristine_models_.end(); ++j )
+  for ( j = builtin_node_models_.begin(); j != builtin_node_models_.end(); ++j )
   {
     if ( ( *j ).first != 0 )
     {
@@ -89,19 +89,19 @@ ModelManager::initialize()
   {
     proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
     proxynode_model_->set_type_id( 1 );
-    pristine_models_.push_back( std::pair< Model*, bool >( proxynode_model_, true ) );
+    builtin_node_models_.push_back( std::pair< Model*, bool >( proxynode_model_, true ) );
   }
 
   // Re-create the model list from the clean prototypes
-  for ( index i = 0; i < pristine_models_.size(); ++i )
+  for ( index i = 0; i < builtin_node_models_.size(); ++i )
   {
-    assert( pristine_models_[ i ].first != 0 );
+    assert( builtin_node_models_[ i ].first != 0 );
 
     // set the number of threads for the number of sli pools
-    pristine_models_[ i ].first->set_threads();
-    std::string name = pristine_models_[ i ].first->get_name();
-    models_.push_back( pristine_models_[ i ].first->clone( name ) );
-    if ( not pristine_models_[ i ].second )
+    builtin_node_models_[ i ].first->set_threads();
+    std::string name = builtin_node_models_[ i ].first->get_name();
+    node_models_.push_back( builtin_node_models_[ i ].first->clone( name ) );
+    if ( not builtin_node_models_[ i ].second )
     {
       modeldict_->insert( name, i );
     }
@@ -118,9 +118,9 @@ ModelManager::initialize()
     const thread t = kernel().vp_manager.get_thread_id();
     proxy_nodes_[ t ].clear();
 
-    for ( index i = 0; i < pristine_models_.size(); ++i )
+    for ( index i = 0; i < builtin_node_models_.size(); ++i )
     {
-      const int model_id = pristine_models_[ i ].first->get_model_id();
+      const int model_id = builtin_node_models_[ i ].first->get_model_id();
       proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
     }
 
@@ -132,10 +132,10 @@ ModelManager::initialize()
 
   // one list of prototypes per thread
   std::vector< std::vector< ConnectorModel* > > tmp_proto( kernel().vp_manager.get_num_threads() );
-  prototypes_.swap( tmp_proto );
+  connection_models_.swap( tmp_proto );
 
   // (re-)append all synapse prototypes
-  for ( std::vector< ConnectorModel* >::iterator i = pristine_prototypes_.begin(); i != pristine_prototypes_.end();
+  for ( std::vector< ConnectorModel* >::iterator i = builtin_connection_models_.begin(); i != builtin_connection_models_.end();
         ++i )
   {
     if ( *i != 0 )
@@ -143,9 +143,9 @@ ModelManager::initialize()
       std::string name = ( *i )->get_name();
       for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
       {
-        prototypes_[ t ].push_back( ( *i )->clone( name ) );
+        connection_models_[ t ].push_back( ( *i )->clone( name ) );
       }
-      synapsedict_->insert( name, prototypes_[ 0 ].size() - 1 );
+      synapsedict_->insert( name, connection_models_[ 0 ].size() - 1 );
     }
   }
 }
@@ -153,13 +153,13 @@ ModelManager::initialize()
 void
 ModelManager::finalize()
 {
-  clear_models_();
-  clear_prototypes_();
+  clear_node_models_();
+  clear_connection_models_();
   delete_secondary_events_prototypes();
 
   // We free all Node memory
   std::vector< std::pair< Model*, bool > >::iterator m;
-  for ( m = pristine_models_.begin(); m != pristine_models_.end(); ++m )
+  for ( m = builtin_node_models_.begin(); m != builtin_node_models_.end(); ++m )
   {
     // delete all nodes, because cloning the model may have created instances.
     ( *m ).first->clear();
@@ -213,14 +213,14 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 index
 ModelManager::register_node_model_( Model* model, bool private_model )
 {
-  const index id = models_.size();
+  const index id = node_models_.size();
   model->set_model_id( id );
   model->set_type_id( id );
 
   std::string name = model->get_name();
 
-  pristine_models_.push_back( std::pair< Model*, bool >( model, private_model ) );
-  models_.push_back( model->clone( name ) );
+  builtin_node_models_.push_back( std::pair< Model*, bool >( model, private_model ) );
+  node_models_.push_back( model->clone( name ) );
 
 #pragma omp parallel
   {
@@ -244,9 +244,9 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
   old_model->deprecation_warning( "CopyModel" );
 
   Model* new_model = old_model->clone( new_name.toString() );
-  models_.push_back( new_model );
+  node_models_.push_back( new_model );
 
-  index new_id = models_.size() - 1;
+  index new_id = node_models_.size() - 1;
   modeldict_->insert( new_name, new_id );
 
 #pragma omp parallel
@@ -262,7 +262,7 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
 index
 ModelManager::copy_synapse_model_( index old_id, Name new_name )
 {
-  size_t new_id = prototypes_[ 0 ].size();
+  size_t new_id = connection_models_[ 0 ].size();
 
   if ( new_id == invalid_synindex ) // we wrapped around (=63), maximal id of
                                     // synapse_model = 62, see nest_types.h
@@ -284,8 +284,8 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
 
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    prototypes_[ t ].push_back( get_synapse_prototype( old_id ).clone( new_name.toString() ) );
-    prototypes_[ t ][ new_id ]->set_syn_id( new_id );
+    connection_models_[ t ].push_back( get_synapse_prototype( old_id ).clone( new_name.toString() ) );
+    connection_models_[ t ][ new_id ]->set_syn_id( new_id );
   }
 
   synapsedict_->insert( new_name, new_id );
@@ -347,7 +347,7 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
 
     try
     {
-      prototypes_[ tid ][ model_id ]->set_status( params );
+      connection_models_[ tid ][ model_id ]->set_status( params );
     }
     catch ( std::exception& err )
     {
@@ -374,10 +374,10 @@ int
 ModelManager::get_model_id( const Name name ) const
 {
   const Name model_name( name );
-  for ( int i = 0; i < ( int ) models_.size(); ++i )
+  for ( int i = 0; i < ( int ) node_models_.size(); ++i )
   {
-    assert( models_[ i ] != NULL );
-    if ( model_name == models_[ i ]->get_name() )
+    assert( node_models_[ i ] != NULL );
+    if ( model_name == node_models_[ i ]->get_name() )
     {
       return i;
     }
@@ -396,7 +396,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
     // each call adds to num_connections
-    prototypes_[ t ][ syn_id ]->get_status( dict );
+    connection_models_[ t ][ syn_id ]->get_status( dict );
   }
 
   ( *dict )[ names::num_connections ] = kernel().connection_manager.get_num_connections( syn_id );
@@ -409,7 +409,7 @@ ModelManager::connector_requires_symmetric( const synindex syn_id ) const
 {
   assert_valid_syn_id( syn_id );
 
-  return prototypes_[ 0 ][ syn_id ]->requires_symmetric();
+  return connection_models_[ 0 ][ syn_id ]->requires_symmetric();
 }
 
 bool
@@ -417,7 +417,7 @@ ModelManager::connector_requires_clopath_archiving( const synindex syn_id ) cons
 {
   assert_valid_syn_id( syn_id );
 
-  return prototypes_[ 0 ][ syn_id ]->requires_clopath_archiving();
+  return connection_models_[ 0 ][ syn_id ]->requires_clopath_archiving();
 }
 
 bool
@@ -425,16 +425,16 @@ ModelManager::connector_requires_urbanczik_archiving( const synindex syn_id ) co
 {
   assert_valid_syn_id( syn_id );
 
-  return prototypes_[ 0 ][ syn_id ]->requires_urbanczik_archiving();
+  return connection_models_[ 0 ][ syn_id ]->requires_urbanczik_archiving();
 }
 
 void
-ModelManager::clear_models_()
+ModelManager::clear_node_models_()
 {
   // We delete all models, which will also delete all nodes. The
-  // built-in models will be recovered from the pristine_models_ in
+  // built-in models will be recovered from the builtin_node_models_ in
   // init()
-  for ( std::vector< Model* >::iterator m = models_.begin(); m != models_.end(); ++m )
+  for ( std::vector< Model* >::iterator m = node_models_.begin(); m != node_models_.end(); ++m )
   {
     if ( *m != 0 )
     {
@@ -442,7 +442,7 @@ ModelManager::clear_models_()
     }
   }
 
-  models_.clear();
+  node_models_.clear();
   proxy_nodes_.clear();
   dummy_spike_sources_.clear();
 
@@ -452,9 +452,9 @@ ModelManager::clear_models_()
 }
 
 void
-ModelManager::clear_prototypes_()
+ModelManager::clear_connection_models_()
 {
-  for ( std::vector< std::vector< ConnectorModel* > >::iterator it = prototypes_.begin(); it != prototypes_.end();
+  for ( std::vector< std::vector< ConnectorModel* > >::iterator it = connection_models_.begin(); it != connection_models_.end();
         ++it )
   {
     for ( std::vector< ConnectorModel* >::iterator pt = it->begin(); pt != it->end(); ++pt )
@@ -466,19 +466,19 @@ ModelManager::clear_prototypes_()
     }
     it->clear();
   }
-  prototypes_.clear();
+  connection_models_.clear();
 }
 
 void
 ModelManager::calibrate( const TimeConverter& tc )
 {
-  for ( auto&& model : models_ )
+  for ( auto&& model : node_models_ )
   {
     model->calibrate_time( tc );
   }
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    for ( std::vector< ConnectorModel* >::iterator pt = prototypes_[ t ].begin(); pt != prototypes_[ t ].end(); ++pt )
+    for ( std::vector< ConnectorModel* >::iterator pt = connection_models_[ t ].begin(); pt != connection_models_[ t ].end(); ++pt )
     {
       if ( *pt != 0 )
       {
@@ -518,7 +518,7 @@ ModelManager::memory_info() const
 
   for ( index i = 0; i < get_num_node_models(); ++i )
   {
-    Model* mod = models_[ idx[ i ] ];
+    Model* mod = node_models_[ idx[ i ] ];
     if ( mod->mem_capacity() != 0 )
     {
       std::cout << std::setw( 25 ) << mod->get_name() << std::setw( 13 )
@@ -540,12 +540,12 @@ ModelManager::create_secondary_events_prototypes()
   for ( thread tid = 0; tid < static_cast< thread >( secondary_events_prototypes_.size() ); ++tid )
   {
     secondary_events_prototypes_[ tid ].clear();
-    for ( synindex syn_id = 0; syn_id < prototypes_[ tid ].size(); ++syn_id )
+    for ( synindex syn_id = 0; syn_id < connection_models_[ tid ].size(); ++syn_id )
     {
-      if ( not prototypes_[ tid ][ syn_id ]->is_primary() )
+      if ( not connection_models_[ tid ][ syn_id ]->is_primary() )
       {
         secondary_events_prototypes_[ tid ].insert(
-          std::pair< synindex, SecondaryEvent* >( syn_id, prototypes_[ tid ][ syn_id ]->create_event( 1 )[ 0 ] ) );
+          std::pair< synindex, SecondaryEvent* >( syn_id, connection_models_[ tid ][ syn_id ]->create_event( 1 )[ 0 ] ) );
       }
     }
   }
@@ -564,15 +564,15 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
     throw NamingConflict( msg );
   }
 
-  pristine_prototypes_.push_back( cf );
+  builtin_connection_models_.push_back( cf );
 
-  const synindex syn_id = prototypes_[ 0 ].size();
-  pristine_prototypes_[ syn_id ]->set_syn_id( syn_id );
+  const synindex syn_id = connection_models_[ 0 ].size();
+  builtin_connection_models_[ syn_id ]->set_syn_id( syn_id );
 
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    prototypes_[ t ].push_back( cf->clone( cf->get_name() ) );
-    prototypes_[ t ][ syn_id ]->set_syn_id( syn_id );
+    connection_models_[ t ].push_back( cf->clone( cf->get_name() ) );
+    connection_models_[ t ][ syn_id ]->set_syn_id( syn_id );
   }
 
   synapsedict_->insert( cf->get_name(), syn_id );

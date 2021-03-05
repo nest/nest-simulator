@@ -30,7 +30,7 @@
 * ``nest.help('model_name') displays help for the given model, e.g., ``nest.help('iaf_psc_exp')``
 
 * To get help on functions in the ``nest`` package, use Python's ``help()`` function
-  or IPython's ``?`` to get help, e.g.
+  or IPython's ``?``, e.g.
 
      - ``help(nest.Create)``
      - ``nest.Connect?``

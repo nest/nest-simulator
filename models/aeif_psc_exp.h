@@ -92,6 +92,9 @@ Note that the spike detection threshold V_peak is automatically set to
 :math:`V_th+10` mV to avoid numerical instabilites that may result from
 setting V_peak too high.
 
+For implementation details see the
+`aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+
 Parameters
 ++++++++++
 

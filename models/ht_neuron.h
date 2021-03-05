@@ -84,10 +84,12 @@ neuron model described in [1]_. The most important properties are:
 - Intrinsic currents I_h, I_T, I_Na(p), and I_KNa.
 - Synaptic "minis" are not implemented.
 
-Documentation and examples:
-- docs/model_details/HillTononiModels.ipynb
-- pynest/examples/intrinsic_currents_spiking.py
-- pynest/examples/intrinsic_currents_subthreshold.py
+For implementation details see:
+- `HillTononi_model <../model_details/HillTononiModels.ipynb>`_
+
+For examples, see
+- :doc:`../auto_examples/intrinsic_currents_spiking`
+- :doc:`../auto_examples/intrinsic_currents_subthreshold`
 
 Parameters
 ++++++++++

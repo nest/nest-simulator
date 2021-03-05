@@ -110,38 +110,11 @@ public:
    * @param deprecation_info  If non-empty string, deprecation warning will
    *                          be issued for model with this info to user.
    * @return ID of the new model object.
-   * @see register_private_prototype_model, register_preconf_node_model,
-   * register_prototype_connection
+   * @see register_prototype_connection
    */
   template < class ModelT >
   index
   register_node_model( const Name& name, bool private_model = false, std::string deprecation_info = std::string() );
-
-  /**
-   * Register a pre-configured model prototype with the network.
-   * This function must be called exactly once for each model class to make
-   * it known to the network. The natural place for a call to this function
-   * is in a *module.cpp file.
-   *
-   * Pre-configured models are models based on the same class, as
-   * another model, but have different parameter settings; e.g.,
-   * voltmeter is a pre-configured multimeter.
-   *
-   * @param name of the new node model.
-   * @param private_model if true, don't add model to modeldict.
-   * @param dictionary to use to pre-configure model
-   * @param deprecation_info  If non-empty string, deprecation warning will
-   *                          be issued for model with this info to user.
-   *
-   * @return ID of the new model object.
-   * @see register_private_prototype_model, register_node_model,
-   * register_prototype_connection
-   */
-  template < class ModelT >
-  index register_preconf_node_model( const Name& name,
-    DictionaryDatum& conf,
-    bool private_model = false,
-    std::string deprecation_info = std::string() );
 
   /**
    * Copy an existing model and register it as a new model.

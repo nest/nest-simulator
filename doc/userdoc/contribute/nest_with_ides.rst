@@ -17,7 +17,7 @@ Eclipse
 -------
 
 This recipe describes how to set up Eclipse for editing, building and
-running NEST. The description here was tested on macOS 11.
+running NEST. The description here was tested on macOS 11 and Ubuntu 16.
 
 Requirements and limitations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -82,6 +82,10 @@ Setting up the project
       ``Click here to configure an interpreter not listed`` link and
       then ``Browse for python/pypy exe`` (this temporarily takes you
       to the global Eclipse preferences in a separate window).
+   #. If you do not install PyNEST into a default Python package installation location,
+      then under ``PyDev - PYTHONPATH [Tab] External Libraries`` click ``Add source folder``
+      and select the `lib/pythonX.Y/site-packages` directory in the NEST installation
+      directory.
    #. Under ``Run/Debug Settings``, add a ``New ...`` launch
       configuration, entering in ``C/C++ Application`` the full path
       to the installed ``nest`` executable.

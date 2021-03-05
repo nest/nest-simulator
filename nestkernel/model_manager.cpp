@@ -58,11 +58,7 @@ ModelManager::ModelManager()
 
 ModelManager::~ModelManager()
 {
-  clear_node_models_();
-
   clear_connection_models_();
-
-  // Now we can delete the clean model prototypes
   std::vector< ConnectorModel* >::iterator i;
   for ( i = builtin_connection_models_.begin(); i != builtin_connection_models_.end(); ++i )
   {
@@ -72,6 +68,7 @@ ModelManager::~ModelManager()
     }
   }
 
+  clear_node_models_();
   std::vector< std::pair< Model*, bool > >::iterator j;
   for ( j = builtin_node_models_.begin(); j != builtin_node_models_.end(); ++j )
   {
@@ -92,7 +89,7 @@ ModelManager::initialize()
     builtin_node_models_.push_back( std::pair< Model*, bool >( proxynode_model_, true ) );
   }
 
-  // Re-create the model list from the clean prototypes
+  // Re-create the node model list from the clean prototypes
   for ( index i = 0; i < builtin_node_models_.size(); ++i )
   {
     assert( builtin_node_models_[ i ].first != 0 );

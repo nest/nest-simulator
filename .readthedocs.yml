@@ -5,7 +5,7 @@ sphinx:
   configuration: doc/userdoc/conf.py
 
 conda:
-  environment: doc/environment.yml
+  environment: extras/conda-nest-dev.yml
 
 build:
   image: latest

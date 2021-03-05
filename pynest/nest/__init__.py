@@ -19,20 +19,22 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""PyNEST - Python bindings for the NEST simulator
+"""PyNEST - Python interface for the NEST simulator
 
-Type ``nest.helpdesk()`` to access the online documentation.
-Type ``nest.help(object)`` to get help on a NEST object.
-Type ``nest.__version__`` to get the NEST version.
+* ``nest.helpdesk()`` opens the NEST documentation in your browser.
 
-* see documentation for neuron or synapse models by typing
-  ``nest.help('model_name')``
+* ``nest.__version__`` displays the NEST version.
 
-* see the documentation of a PyNEST API function, by typing
-  something like ``help(nest.Create)``
+* ``nest.Models()`` shows all available neuron, device and synapse models.
 
-* get a list of available models by typing ``nest.Models()``
+* ``nest.help('model_name') displays help for the given model, e.g., ``nest.help('iaf_psc_exp')``
 
+* To get help on functions in the ``nest`` package, use Python's ``help()`` function
+  or IPython's ``?`` to get help, e.g.
+
+     - ``help(nest.Create)``
+     - ``nest.Connect?``
+  
 For more information visit https://www.nest-simulator.org.
 
 """

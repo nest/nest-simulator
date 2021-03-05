@@ -48,6 +48,7 @@ nest::SimulationManager::SimulationManager()
   , from_step_( 0L )
   , to_step_( 0L ) // consistent with to_do_ == 0
   , t_real_( 0L )
+  , prepared_( false )
   , simulating_( false )
   , simulated_( false )
   , inconsistent_state_( false )

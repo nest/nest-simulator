@@ -72,12 +72,14 @@ void ::nest::volume_transmitter::Parameters_::set( const DictionaryDatum& d, Nod
 nest::volume_transmitter::volume_transmitter()
   : ArchivingNode()
   , P_()
+  , local_device_id_( 0 )
 {
 }
 
 nest::volume_transmitter::volume_transmitter( const volume_transmitter& n )
   : ArchivingNode( n )
   , P_( n.P_ )
+  , local_device_id_( n.local_device_id_ )
 {
 }
 

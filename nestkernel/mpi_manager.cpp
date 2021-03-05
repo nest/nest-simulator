@@ -57,6 +57,8 @@ MPI_Datatype MPI_Type< unsigned long >::type = MPI_UNSIGNED_LONG;
 nest::MPIManager::MPIManager()
   : num_processes_( 1 )
   , rank_( 0 )
+  , send_buffer_size_( 0 )
+  , recv_buffer_size_( 0 )
   , use_mpi_( false )
   , buffer_size_target_data_( 1 )
   , buffer_size_spike_data_( 1 )

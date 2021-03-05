@@ -333,17 +333,19 @@ nest::gif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, N
   updateValueParam< double >( d, names::g_in, neuron_state_[ G_INH ], node );
 }
 
-nest::gif_cond_exp::Buffers_::Buffers_( gif_cond_exp& n )
-  : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+nest::gif_cond_exp::Buffers_::Buffers_( gif_cond_exp& n ) // @suppress("Class members should be properly initialized")
+  : logger_( n ),
+    s_( 0 ),
+    c_( 0 ),
+    e_( 0 )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
 }
 
-nest::gif_cond_exp::Buffers_::Buffers_( const Buffers_&, gif_cond_exp& n )
+nest::gif_cond_exp::Buffers_::Buffers_( // @suppress("Class members should be properly initialized")
+  const Buffers_&,
+  gif_cond_exp& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )

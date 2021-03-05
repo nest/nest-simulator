@@ -221,8 +221,6 @@ private:
     double V_peak_;  //!< Spike detection threshold in mV
     double V_reset_; //!< Reset Potential in mV
 
-    double t_ref_; //!< Refractory period in ms
-
     double g_L;     //!< Leak Conductance in nS
     double C_m;     //!< Membrane Capacitance in pF
     double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
@@ -231,7 +229,7 @@ private:
     double a;       //!< Subthreshold adaptation in nS
     double b;       //!< Spike-triggered adaptation in pA
     double V_th;    //!< Spike threshold in mV
-    double t_ref;   //!< Refractory period in ms
+    double t_ref_;  //!< Refractory period in ms
     double I_e;     //!< Intrinsic current in pA
 
     double gsl_error_tol;  //!< Error bound for GSL integrator
@@ -254,9 +252,10 @@ public:
   struct State_
   {
     /** Accumulate spikes arriving during refractory period, discounted for
-        decay until end of refractory period.
-    */
+     *  decay until end of refractory period.
+     */
     double refr_spikes_buffer_;
+
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum

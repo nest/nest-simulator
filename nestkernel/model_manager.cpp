@@ -196,7 +196,7 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
   else if ( not oldsynmodel.empty() )
   {
     index old_id = static_cast< index >( oldsynmodel );
-    new_id = copy_synapse_model_( old_id, new_name );
+    new_id = copy_connection_model_( old_id, new_name );
     set_synapse_defaults_( new_id, params );
   }
   else
@@ -257,17 +257,17 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
 }
 
 index
-ModelManager::copy_synapse_model_( index old_id, Name new_name )
+ModelManager::copy_connection_model_( index old_id, Name new_name )
 {
   size_t new_id = connection_models_[ 0 ].size();
 
   if ( new_id == invalid_synindex ) // we wrapped around (=63), maximal id of
-                                    // synapse_model = 62, see nest_types.h
+                                    // connection_model = 62, see nest_types.h
   {
     const std::string msg =
       "CopyModel cannot generate another synapse. Maximal synapse model count "
       "of " + std::to_string( MAX_SYN_ID ) + " exceeded.";
-    LOG( M_ERROR, "ModelManager::copy_synapse_model_", msg );
+    LOG( M_ERROR, "ModelManager::copy_connection_model_", msg );
     throw KernelException( "Synapse model count exceeded" );
   }
   assert( new_id != invalid_synindex );

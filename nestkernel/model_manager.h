@@ -123,7 +123,7 @@ public:
    * @param new_name name of new model.
    * @param params default parameters of new model.
    * @return model ID of new Model object.
-   * @see copy_node_model_, copy_synapse_model_
+   * @see copy_node_model_, copy_connection_model_
    */
   index copy_model( Name old_name, Name new_name, DictionaryDatum params );
 
@@ -258,7 +258,7 @@ private:
    * @param old_id ID of existing model.
    * @param new_name name of new model.
    * @return model ID of new Model object.
-   * @see copy_model(), copy_synapse_model_()
+   * @see copy_model(), copy_connection_model_()
    */
   index copy_node_model_( index old_id, Name new_name );
 
@@ -269,7 +269,7 @@ private:
    * @return model ID of new Model object.
    * @see copy_model(), copy_node_model_()
    */
-  index copy_synapse_model_( index old_id, Name new_name );
+  index copy_connection_model_( index old_id, Name new_name );
 
   /**
    * Set the default parameters of a model.

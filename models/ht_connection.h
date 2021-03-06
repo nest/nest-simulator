@@ -40,15 +40,19 @@ Description
 +++++++++++
 
 This synapse implements the depression model described in [1, p 1678].
-See docs/model_details/HillTononi.ipynb for details.
 
 Synaptic dynamics are given by
 
-P'(t) = ( 1 - P ) / \tau_P
-P(T+) = (1 - \delta_P) P(T-)    \text{ for T : time of a spike } \\
-P(t=0) = 1
+.. math::
 
-w(t) = w_{max} * P(t)   is the resulting synaptic weight
+    P'(t) = ( 1 - P ) / \tau_P  \\
+    P(T+) = (1 - \delta_P) P(T-)    \text{ for T : time of a spike } \\
+    P(t=0) = 1
+
+:math:`w(t) = w_{max} * P(t)`   is the resulting synaptic weight
+
+For implementation details see:
+`HillTononi_model <../model_details/HillTononiModels.ipynb>`_
 
 Parameters
 ++++++++++

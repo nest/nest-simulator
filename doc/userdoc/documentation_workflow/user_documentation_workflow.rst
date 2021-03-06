@@ -5,18 +5,19 @@ What you need to know
 +++++++++++++++++++++
 
 We use `Sphinx <https://www.sphinx-doc.org/en/master/>`_ to generate
-documentation and `Read the Docs <https://readthedocs.org/>`_ to publish
-it. Sphinx uses reStructuredText. To learn more about the syntax, check out
-this `quick reference
+documentation and `Read the Docs <https://readthedocs.org/>`_ to
+publish it. Sphinx uses reStructuredText as the base format for the
+documentation. To learn more about the syntax, check out this `quick
+reference
 <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_.
 
-The NEST simulator documentation lives alongside its code. It is contained in
-the ``doc`` directory within the `NEST source code repository
-<https://github.com/nest/nest-simulator>`_ on GitHub.
+The NEST simulator documentation lives alongside its code. It is
+contained in the ``doc/userdoc`` directory within the `NEST source
+code repository <https://github.com/nest/nest-simulator>`_ on GitHub.
 
-We work with `GitHub <https://www.github.com>`_ as the web-based hosting
-service for Git. Git allows us to keep our versions under control, with each
-release of NEST having its own documentation.
+We work with `GitHub <https://www.github.com>`_ as a web-based hosting
+service for Git. Git allows us to keep our versions under control,
+with each release of NEST having its own documentation.
 
 This workflow aims for the concept of **user-correctable documentation**.
 
@@ -25,16 +26,17 @@ This workflow aims for the concept of **user-correctable documentation**.
   :alt: Alternative text
 
 .. note::
-   This workflow shows you how to create **user-level documentation** for
-   NEST. For **developer documentation**, please refer to our
-   :doc:`Developer documentation workflow <developer_documentation_workflow>`.
+   This workflow shows you how to create **user-level documentation**
+   for NEST. For the **developer documentation**, please refer to our
+   :doc:`Developer documentation workflow
+   <developer_documentation_workflow>`.
 
 Changing the documentation
 ++++++++++++++++++++++++++
 
-If you notice any errors or weaknesses in the documentation, please submit an
-`Issue <https://github.com/nest/nest-simulator/issues>`_ in our GitHub
-repository.
+If you notice any errors or weaknesses in the documentation, please
+submit an `Issue <https://github.com/nest/nest-simulator/issues>`_ in
+our GitHub repository.
 
 You can also make changes directly to your forked copy of the `NEST source
 code repository <https://github.com/nest/nest-simulator>`_ and create a `pull
@@ -44,28 +46,23 @@ workflow below!
 Setting up your environment
 +++++++++++++++++++++++++++
 
-Our conda environment will enable you to generate documentation for NEST.
-
-If you are using Linux and want to install a full development environment:
-
-1. Install conda (we recommend `miniconda
-   <https://docs.conda.io/en/latest/miniconda.html#>`_).
-
-2. Switch to the ``doc`` folder in the source directory:
+To install the dependencies for building the documentation, you can
+either directly run
 
 .. code-block:: bash
 
-    cd </path/to/nest_source>/doc
+    pip3 install -r <nest_source_dir>/doc/requirements.txt
 
-3. Create and activate the environment:
+or alternatively install the dependencies into a conda environment (we
+recommend `miniconda <https://docs.conda.io/en/latest/miniconda>`_ for
+this). After installing conda, you can simply run
 
 .. code-block:: bash
 
-   conda update -n base -c defaults conda
-   conda env create --file nest_doc_conda_env.yml
-   conda activate nest-doc
+    conda env create -f <nest_source_dir>/doc/environment.yml
+    conda activate nest-doc
 
-4. If you want to deactivate or delete the build environment:
+If you later on want to deactivate or delete the build environment:
 
 .. code-block:: bash
 
@@ -81,26 +78,27 @@ Sphinx.
 Rendering HTML
 ~~~~~~~~~~~~~~
 
-Using Sphinx, you can build documentation locally and preview it offline:
-
-1. Go to the ``doc`` folder in the source directory:
-
-.. code-block:: bash
-
-    cd </path/to/nest_source>/doc
-
-2. Generate HTML files:
+If you intend to work on the documentation, or if you want to obtain a
+local version of it for other reasons, you can build the documentation
+by simply running the following command in the build directory of NEST
+(i.e. the directory where you ran ``cmake``)
 
 .. code-block:: bash
 
-   make html
+    make html
 
-3. Preview files. They are then located in ``./_build/html``:
+To install the documentation under `<nest_install_dir>`` along with
+the rest of NEST, this command can be followed by
 
 .. code-block:: bash
 
-   cd ./_build/html
-   browser filename.html
+   make install
+
+If you want to view the files after installation, you can run
+
+.. code-block:: bash
+
+   browser <nest_install_dir>/share/doc/nest/html/index.html
 
 Editing and creating pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -159,3 +157,27 @@ Once your documentation work is finished, you can create a `pull request
 <https://nest.github.io/nest-simulator/development_workflow#create-a-pull-
 request>`_ to the ``master`` branch of the NEST Source Code Repository. Your
 pull request will be reviewed by the NEST Documentation Team!
+
+Helpdesk
+++++++++
+
+For a list of commands for SLI and C++, you can access the the online
+command index via the command line
+
+::
+
+   import nest
+   nest.helpdesk()
+
+.. note::
+    The ``helpdesk()`` command needs to know which browser to launch
+    in order to display the help pages. The browser is set as an
+    option of helpdesk. Please see the file ``~/.nestrc`` for an
+    example, which sets Firefox as browser.
+
+.. note::
+    The ``helpdesk()`` command does not work if you have compiled NEST
+    with MPI support, but you have to enter the address of the
+    helpdesk (``file://<nest_install_dir>/share/doc/nest/index.html``)
+    manually into the browser.  Replace ``<nest_install_dir>`` with
+    the path under which NEST is installed.

@@ -78,11 +78,6 @@ public:
   Model* get_model_of_node_id( index );
 
   /**
-   * Check whether this model ID has any node IDs assigned to it
-   */
-  bool model_in_use( index i ) const;
-
-  /**
    * Return the contiguous range of IDs of nodes assigned to the same model
    * as the node with the given node ID.
    */

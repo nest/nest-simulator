@@ -156,14 +156,6 @@ ModelManager::get_proxy_node( thread tid, index node_id )
   return proxy;
 }
 
-
-inline bool
-ModelManager::is_model_in_use( index i )
-{
-  return kernel().modelrange_manager.model_in_use( i );
-}
-
-
 } // namespace nest
 
 #endif // #ifndef MODEL_MANAGER_IMPL_H

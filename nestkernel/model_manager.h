@@ -187,18 +187,6 @@ public:
   void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
 
   /**
-   * Check, if there are instances of a given model.
-   * @param i the index of the model to check for.
-   * @return True, if model is instantiated at least once.
-   */
-  bool is_model_in_use( index i );
-
-  /**
-   * Checks, whether connections of the given type were created
-   */
-  bool synapse_prototype_in_use( synindex syn_id );
-
-  /**
    * Asserts validity of synapse index, otherwise throws exception.
    * @throws UnknownSynapseType
    */
@@ -222,8 +210,6 @@ public:
   bool has_user_prototypes() const;
 
   bool are_model_defaults_modified() const;
-
-  const std::vector< ConnectorModel* >& get_prototypes( const thread t ) const;
 
   size_t get_num_node_models() const;
 

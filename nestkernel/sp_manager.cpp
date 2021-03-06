@@ -103,7 +103,7 @@ SPManager::get_status( DictionaryDatum& d )
     def< std::string >( sp_synapse, names::post_synaptic_element, ( *i )->get_post_synaptic_element_name() );
     def< std::string >( sp_synapse,
       names::synapse_model,
-      kernel().model_manager.get_synapse_prototype( ( *i )->get_synapse_model(), 0 ).get_name() );
+      kernel().model_manager.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name() );
     std::stringstream syn_name;
     syn_name << "syn" << ( sp_conn_builders_.end() - i );
     def< DictionaryDatum >( sp_synapses, syn_name.str(), sp_synapse );

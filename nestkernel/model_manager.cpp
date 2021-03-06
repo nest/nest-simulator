@@ -274,14 +274,14 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
 
   // if the copied synapse is a secondary connector model the synid of the copy
   // has to be mapped to the corresponding secondary event type
-  if ( not get_synapse_prototype( old_id ).is_primary() )
+  if ( not get_connection_model( old_id ).is_primary() )
   {
-    ( get_synapse_prototype( old_id ).get_event() )->add_syn_id( new_id );
+    ( get_connection_model( old_id ).get_event() )->add_syn_id( new_id );
   }
 
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    connection_models_[ t ].push_back( get_synapse_prototype( old_id ).clone( new_name.toString() ) );
+    connection_models_[ t ].push_back( get_connection_model( old_id ).clone( new_name.toString() ) );
     connection_models_[ t ][ new_id ]->set_syn_id( new_id );
   }
 

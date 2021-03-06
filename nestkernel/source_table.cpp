@@ -209,7 +209,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
   // targets on the same process, but different threads
   for ( size_t syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
   {
-    if ( not kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary() )
+    if ( not kernel().model_manager.get_connection_model( syn_id, tid ).is_primary() )
     {
       for ( BlockVector< Source >::const_iterator source_cit = sources_[ tid ][ syn_id ].begin();
             source_cit != sources_[ tid ][ syn_id ].end();
@@ -261,7 +261,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
 void
 nest::SourceTable::resize_sources( const thread tid )
 {
-  sources_[ tid ].resize( kernel().model_manager.get_num_synapse_prototypes() );
+  sources_[ tid ].resize( kernel().model_manager.get_num_connection_models() );
 }
 
 bool

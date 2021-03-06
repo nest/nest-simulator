@@ -96,12 +96,12 @@ nest::TargetTableDevices::resize_to_number_of_synapse_types()
     for ( index lid = 0; lid < target_to_devices_[ tid ].size(); ++lid )
     {
       // make sure this device has support for all synapse types
-      target_to_devices_[ tid ][ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+      target_to_devices_[ tid ][ lid ].resize( kernel().model_manager.get_num_connection_models(), NULL );
     }
     for ( index ldid = 0; ldid < target_from_devices_[ tid ].size(); ++ldid )
     {
       // make sure this device has support for all synapse types
-      target_from_devices_[ tid ][ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+      target_from_devices_[ tid ][ ldid ].resize( kernel().model_manager.get_num_connection_models(), NULL );
     }
   } // end omp parallel
 }

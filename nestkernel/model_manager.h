@@ -96,9 +96,9 @@ public:
   //  TODO: make the return type const, after the increment of
   //  num_connections and the min_ and max_delay setting in
   //  ConnectorBase was moved out to the ConnectionManager
-  ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 );
+  ConnectorModel& get_connection_model( synindex syn_id, thread t = 0 );
 
-  const std::vector< ConnectorModel* >& get_synapse_prototypes( thread tid );
+  const std::vector< ConnectorModel* >& get_connection_models( thread tid );
 
   /**
    * Register a node-model prototype.
@@ -227,7 +227,7 @@ public:
 
   size_t get_num_node_models() const;
 
-  size_t get_num_synapse_prototypes() const;
+  size_t get_num_connection_models() const;
 
   /**
    * Print out the memory information for each node model.
@@ -407,14 +407,14 @@ ModelManager::has_user_models() const
 }
 
 inline ConnectorModel&
-ModelManager::get_synapse_prototype( synindex syn_id, thread t )
+ModelManager::get_connection_model( synindex syn_id, thread t )
 {
   assert_valid_syn_id( syn_id );
   return *( connection_models_[ t ][ syn_id ] );
 }
 
 inline const std::vector< ConnectorModel* >&
-ModelManager::get_synapse_prototypes( thread tid )
+ModelManager::get_connection_models( thread tid )
 {
   return connection_models_[ tid ];
 }
@@ -426,7 +426,7 @@ ModelManager::get_num_node_models() const
 }
 
 inline size_t
-ModelManager::get_num_synapse_prototypes() const
+ModelManager::get_num_connection_models() const
 {
   assert( connection_models_[ 0 ].size() <= invalid_synindex );
   return connection_models_[ 0 ].size();

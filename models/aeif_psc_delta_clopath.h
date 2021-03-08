@@ -129,6 +129,8 @@ a          nS      Subthreshold adaptation
 b          pA      Spike-triggered adaptation
 Delta_T    mV      Slope factor
 tau_w      ms      Adaptation time constant
+tau_z      ms      Spike afterpotential current time constant
+I_sp       pA      Depolarizing spike afterpotential current magnitude
 V_peak     mV      Spike detection threshold
 V_th_max   mV      Value of V_th afer a spike
 V_th_rest  mV      Resting value of V_th
@@ -254,9 +256,9 @@ private:
     double C_m;         //!< Membrane Capacitance in pF
     double E_L;         //!< Leak reversal Potential (aka resting potential) in mV
     double Delta_T;     //!< Slope factor in ms
-    double tau_w;       //!< Adaptation time-constant in ms
-    double tau_z;       //!< Adaptation time-constant in ms
-    double tau_V_th;    //!< Adaptive threshold time-constant in ms
+    double tau_w;       //!< Adaptation time constant in ms
+    double tau_z;       //!< Spike afterpotential current time constant in ms
+    double tau_V_th;    //!< Adaptive threshold time constant in ms
     double V_th_max;    //!< Value of V_th afer a spike in mV
     double V_th_rest;   //!< Resting value of V_th in mV
     double tau_plus;    //!< Time constant of u_bar_plus in ms
@@ -264,8 +266,8 @@ private:
     double tau_bar_bar; //!< Time constant of u_bar_bar in ms
     double a;           //!< Subthreshold adaptation in nS
     double b;           //!< Spike-triggered adaptation in pA
-    double I_sp;
-    double I_e;   //!< Intrinsic current in pA
+    double I_sp;        //!< Depolarizing spike afterpotential current in pA
+    double I_e;         //!< Intrinsic current in pA
 
     double gsl_error_tol; //!< Error bound for GSL integrator
 

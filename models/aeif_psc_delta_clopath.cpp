@@ -542,7 +542,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
       if ( S_.y_[ State_::V_M ] >= V_.V_peak_ && S_.clamp_r_ == 0 )
       {
         S_.y_[ State_::V_M ] = P_.V_clamp_;
-        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
+        S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
         S_.y_[ State_::Z ] = P_.I_sp; // depolarizing spike afterpotential current
         S_.y_[ State_::V_TH ] = P_.V_th_max;
 

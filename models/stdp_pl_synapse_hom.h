@@ -83,7 +83,7 @@ EndUserDocs */
 
 /**
  * Class containing the common properties for all synapses of type
- * stdp_synapseHom.
+ * stdp_pl_synapse_hom.
  */
 class STDPPLHomCommonProperties : public CommonSynapseProperties
 {

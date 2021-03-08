@@ -51,15 +51,15 @@ Conda (for detail on conda see :doc:`<../installation/conda_tips>`):
 
 .. code-block:: bash
 
-    conda env create -f <nest_source_dir>/extras/conda-nest-dev.yml
-    conda activate nest-dev
+    conda env create -f <nest_source_dir>/extras/conda-nest-simulator-dev.yml
+    conda activate nest-simulator-dev
 
 If you later on want to deactivate or delete the build environment:
 
 .. code-block:: bash
 
    conda deactivate
-   conda remove --name nest-dev --all
+   conda remove --name nest-simulator-dev --all
 
 If you only want to install a minimal set of packages for building the
 documentation and avoid using Conda, you can use pip:

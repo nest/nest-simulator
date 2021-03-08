@@ -25,11 +25,11 @@
 #
 # NOTE: libneurosim, MUSIC and SIONLib are not included in this environment.
 #
-# The default name of the environment is nest-dev, since it is mainly
+# The default name of the environment is nest-simulator-dev, since it is mainly
 # aimed at NEST developers. You can specify a different name by passing
 # -n my_name to the conda env create command.
 
-name: nest-dev
+name: nest-simulator-dev
 channels:
   - conda-forge
   

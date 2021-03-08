@@ -49,6 +49,7 @@ from . import test_helper_functions
 from . import test_json
 from . import test_labeled_synapses
 from . import test_mc_neuron
+from . import test_mpitests
 from . import test_onetooneconnect
 from . import test_parrot_neuron_ps
 from . import test_parrot_neuron
@@ -105,6 +106,7 @@ def suite():
     suite.addTest(test_json.suite())
     suite.addTest(test_labeled_synapses.suite())
     suite.addTest(test_mc_neuron.suite())
+    suite.addTest(test_mpitests.suite())
     suite.addTest(test_onetooneconnect.suite())
     suite.addTest(test_parrot_neuron_ps.suite())
     suite.addTest(test_parrot_neuron.suite())

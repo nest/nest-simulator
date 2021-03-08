@@ -302,7 +302,7 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d, Node* 
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Ensure that t_ref >= 0" );
+    throw BadProperty( "Refractory time cannot be negative." );
   }
 
   if ( t_clamp_ < 0 )

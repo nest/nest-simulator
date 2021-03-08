@@ -1,5 +1,5 @@
 /*
- *  stdp_connection_facetshw_hom.h
+ *  stdp_synapse_facetshw_hom.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STDP_CONNECTION_FACETSHW_HOM_H
-#define STDP_CONNECTION_FACETSHW_HOM_H
+#ifndef STDP_SYNAPSE_FACETSHW_HOM_H
+#define STDP_SYNAPSE_FACETSHW_HOM_H
 
 // C++ includes:
 #include <cmath>
@@ -52,7 +52,7 @@ of synapses and reduced symmetric nearest-neighbor spike pairing scheme. For
 details see [3]_.
 The modified spike pairing scheme requires the calculation of tau_minus_
 within this synapse and not at the neuron site via Kplus_ like in
-stdp_connection_hom.
+stdp_synapse_hom.
 
 Parameters
 ++++++++++
@@ -153,16 +153,16 @@ EndUserDocs */
 // definition
 
 template < typename targetidentifierT >
-class STDPFACETSHWConnectionHom;
+class stdp_facetshw_synapse_hom;
 
 /**
  * Class containing the common properties for all synapses of type
- * STDPFACETSHWConnectionHom.
+ * stdp_facetshw_synapse_hom.
  */
 template < typename targetidentifierT >
 class STDPFACETSHWHomCommonProperties : public CommonSynapseProperties
 {
-  friend class STDPFACETSHWConnectionHom< targetidentifierT >;
+  friend class stdp_facetshw_synapse_hom< targetidentifierT >;
 
 public:
   /**
@@ -222,7 +222,7 @@ private:
  * parameters are the same for all synapses.
  */
 template < typename targetidentifierT >
-class STDPFACETSHWConnectionHom : public Connection< targetidentifierT >
+class stdp_facetshw_synapse_hom : public Connection< targetidentifierT >
 {
 
 public:
@@ -233,13 +233,13 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  STDPFACETSHWConnectionHom();
+  stdp_facetshw_synapse_hom();
 
   /**
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPFACETSHWConnectionHom( const STDPFACETSHWConnectionHom& ) = default;
+  stdp_facetshw_synapse_hom( const stdp_facetshw_synapse_hom& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -341,7 +341,7 @@ private:
 
 template < typename targetidentifierT >
 inline bool
-STDPFACETSHWConnectionHom< targetidentifierT >::eval_function_( double a_causal,
+stdp_facetshw_synapse_hom< targetidentifierT >::eval_function_( double a_causal,
   double a_acausal,
   double a_thresh_th,
   double a_thresh_tl,
@@ -356,7 +356,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::eval_function_( double a_causal,
 
 template < typename targetidentifierT >
 inline unsigned int
-STDPFACETSHWConnectionHom< targetidentifierT >::weight_to_entry_( double weight, double weight_per_lut_entry )
+stdp_facetshw_synapse_hom< targetidentifierT >::weight_to_entry_( double weight, double weight_per_lut_entry )
 {
   // returns the discrete weight in terms of the look-up table index
   return round( weight / weight_per_lut_entry );
@@ -364,7 +364,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::weight_to_entry_( double weight,
 
 template < typename targetidentifierT >
 inline double
-STDPFACETSHWConnectionHom< targetidentifierT >::entry_to_weight_( unsigned int discrete_weight,
+stdp_facetshw_synapse_hom< targetidentifierT >::entry_to_weight_( unsigned int discrete_weight,
   double weight_per_lut_entry )
 {
   // returns the continuous weight
@@ -373,7 +373,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::entry_to_weight_( unsigned int d
 
 template < typename targetidentifierT >
 inline unsigned int
-STDPFACETSHWConnectionHom< targetidentifierT >::lookup_( unsigned int discrete_weight_, std::vector< long > table )
+stdp_facetshw_synapse_hom< targetidentifierT >::lookup_( unsigned int discrete_weight_, std::vector< long > table )
 {
   // look-up in table
   return table[ discrete_weight_ ];
@@ -387,7 +387,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::lookup_( unsigned int discrete_w
  */
 template < typename targetidentifierT >
 inline void
-STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
+stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
   thread t,
   const STDPFACETSHWHomCommonProperties< targetidentifierT >& cp )
 {
@@ -516,4 +516,4 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
 }
 } // of namespace nest
 
-#endif // of #ifndef STDP_CONNECTION_HOM_H
+#endif // of #ifndef STDP_SYNAPSE_HOM_H

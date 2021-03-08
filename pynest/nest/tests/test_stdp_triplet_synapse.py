@@ -29,7 +29,7 @@ import numpy as np
 
 @nest.ll_api.check_stack
 class STDPTripletConnectionTestCase(unittest.TestCase):
-    """Check stdp_triplet_connection model properties."""
+    """Check stdp_triplet_synapse model properties."""
 
     def setUp(self):
         nest.set_verbosity('M_WARNING')

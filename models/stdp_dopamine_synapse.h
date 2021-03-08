@@ -1,5 +1,5 @@
 /*
- *  stdp_dopa_connection.h
+ *  stdp_dopamine_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STDP_DOPA_CONNECTION_H
-#define STDP_DOPA_CONNECTION_H
+#ifndef STDP_DOPA_SYNAPSE_H
+#define STDP_DOPA_SYNAPSE_H
 
 // Includes from libnestutil:
 #include "numerics.h"
@@ -181,11 +181,11 @@ STDPDopaCommonProperties::get_vt_node_id() const
 }
 
 /**
- * Class representing an STDPDopaConnection with homogeneous parameters,
+ * Class representing an stdp_dopamine_synapse with homogeneous parameters,
  * i.e. parameters are the same for all synapses.
  */
 template < typename targetidentifierT >
-class STDPDopaConnection : public Connection< targetidentifierT >
+class stdp_dopamine_synapse : public Connection< targetidentifierT >
 {
 
 public:
@@ -196,13 +196,13 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  STDPDopaConnection();
+  stdp_dopamine_synapse();
 
   /**
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPDopaConnection( const STDPDopaConnection& ) = default;
+  stdp_dopamine_synapse( const stdp_dopamine_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -324,11 +324,11 @@ private:
 };
 
 //
-// Implementation of class STDPDopaConnection.
+// Implementation of class stdp_dopamine_synapse.
 //
 
 template < typename targetidentifierT >
-STDPDopaConnection< targetidentifierT >::STDPDopaConnection()
+stdp_dopamine_synapse< targetidentifierT >::stdp_dopamine_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , Kplus_( 0.0 )
@@ -342,7 +342,7 @@ STDPDopaConnection< targetidentifierT >::STDPDopaConnection()
 
 template < typename targetidentifierT >
 void
-STDPDopaConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_dopamine_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
 
   // base class properties, different for individual synapse
@@ -356,7 +356,7 @@ STDPDopaConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-STDPDopaConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_dopamine_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
@@ -368,7 +368,7 @@ STDPDopaConnection< targetidentifierT >::set_status( const DictionaryDatum& d, C
 
 template < typename targetidentifierT >
 void
-STDPDopaConnection< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
   if ( syn_spec->known( names::vt ) )
   {
@@ -411,7 +411,7 @@ STDPDopaConnection< targetidentifierT >::check_synapse_params( const DictionaryD
 
 template < typename targetidentifierT >
 inline void
-STDPDopaConnection< targetidentifierT >::update_dopamine_( const std::vector< spikecounter >& dopa_spikes,
+stdp_dopamine_synapse< targetidentifierT >::update_dopamine_( const std::vector< spikecounter >& dopa_spikes,
   const STDPDopaCommonProperties& cp )
 {
   double minus_dt = dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_;
@@ -421,7 +421,7 @@ STDPDopaConnection< targetidentifierT >::update_dopamine_( const std::vector< sp
 
 template < typename targetidentifierT >
 inline void
-STDPDopaConnection< targetidentifierT >::update_weight_( double c0,
+stdp_dopamine_synapse< targetidentifierT >::update_weight_( double c0,
   double n0,
   double minus_dt,
   const STDPDopaCommonProperties& cp )
@@ -443,7 +443,7 @@ STDPDopaConnection< targetidentifierT >::update_weight_( double c0,
 
 template < typename targetidentifierT >
 inline void
-STDPDopaConnection< targetidentifierT >::process_dopa_spikes_( const std::vector< spikecounter >& dopa_spikes,
+stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vector< spikecounter >& dopa_spikes,
   double t0,
   double t1,
   const STDPDopaCommonProperties& cp )
@@ -500,14 +500,14 @@ STDPDopaConnection< targetidentifierT >::process_dopa_spikes_( const std::vector
 
 template < typename targetidentifierT >
 inline void
-STDPDopaConnection< targetidentifierT >::facilitate_( double kplus, const STDPDopaCommonProperties& cp )
+stdp_dopamine_synapse< targetidentifierT >::facilitate_( double kplus, const STDPDopaCommonProperties& cp )
 {
   c_ += cp.A_plus_ * kplus;
 }
 
 template < typename targetidentifierT >
 inline void
-STDPDopaConnection< targetidentifierT >::depress_( double kminus, const STDPDopaCommonProperties& cp )
+stdp_dopamine_synapse< targetidentifierT >::depress_( double kminus, const STDPDopaCommonProperties& cp )
 {
   c_ -= cp.A_minus_ * kminus;
 }
@@ -519,7 +519,7 @@ STDPDopaConnection< targetidentifierT >::depress_( double kminus, const STDPDopa
  */
 template < typename targetidentifierT >
 inline void
-STDPDopaConnection< targetidentifierT >::send( Event& e, thread t, const STDPDopaCommonProperties& cp )
+stdp_dopamine_synapse< targetidentifierT >::send( Event& e, thread t, const STDPDopaCommonProperties& cp )
 {
   Node* target = get_target( t );
 
@@ -571,7 +571,7 @@ STDPDopaConnection< targetidentifierT >::send( Event& e, thread t, const STDPDop
 
 template < typename targetidentifierT >
 inline void
-STDPDopaConnection< targetidentifierT >::trigger_update_weight( thread t,
+stdp_dopamine_synapse< targetidentifierT >::trigger_update_weight( thread t,
   const std::vector< spikecounter >& dopa_spikes,
   const double t_trig,
   const STDPDopaCommonProperties& cp )
@@ -614,4 +614,4 @@ STDPDopaConnection< targetidentifierT >::trigger_update_weight( thread t,
 
 } // of namespace nest
 
-#endif // of #ifndef STDP_DOPA_CONNECTION_H
+#endif // of #ifndef STDP_DOPA_SYNAPSE_H

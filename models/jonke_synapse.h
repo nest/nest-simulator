@@ -1,5 +1,5 @@
 /*
- *  jonke_connection.h
+ *  jonke_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef JONKE_CONNECTION_H
-#define JONKE_CONNECTION_H
+#ifndef JONKE_SYNAPSE_H
+#define JONKE_SYNAPSE_H
 
 // C++ includes:
 #include <cmath>
@@ -161,7 +161,7 @@ JonkeCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 template < typename targetidentifierT >
-class JonkeConnection : public Connection< targetidentifierT >
+class jonke_synapse : public Connection< targetidentifierT >
 {
 
 public:
@@ -172,14 +172,14 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  JonkeConnection();
+  jonke_synapse();
 
 
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  JonkeConnection( const JonkeConnection& ) = default;
+  jonke_synapse( const jonke_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -294,7 +294,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-JonkeConnection< targetidentifierT >::send( Event& e, thread t, const JonkeCommonProperties& cp )
+jonke_synapse< targetidentifierT >::send( Event& e, thread t, const JonkeCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
   const double t_spike = e.get_stamp().get_ms();
@@ -347,7 +347,7 @@ JonkeConnection< targetidentifierT >::send( Event& e, thread t, const JonkeCommo
 
 
 template < typename targetidentifierT >
-JonkeConnection< targetidentifierT >::JonkeConnection()
+jonke_synapse< targetidentifierT >::jonke_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , Kplus_( 0.0 )
@@ -357,7 +357,7 @@ JonkeConnection< targetidentifierT >::JonkeConnection()
 
 template < typename targetidentifierT >
 void
-JonkeConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+jonke_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -366,7 +366,7 @@ JonkeConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-JonkeConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+jonke_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -374,7 +374,7 @@ JonkeConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Conn
 
 template < typename targetidentifierT >
 void
-JonkeConnection< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+jonke_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
   std::string param_arr[] = { "alpha", "beta", "lambda", "mu_plus", "mu_minus", "tau_plus", "Wmax" };
 
@@ -392,4 +392,4 @@ JonkeConnection< targetidentifierT >::check_synapse_params( const DictionaryDatu
 
 } // of namespace nest
 
-#endif // of #ifndef JONKE_CONNECTION_H
+#endif // of #ifndef JONKE_SYNAPSE_H

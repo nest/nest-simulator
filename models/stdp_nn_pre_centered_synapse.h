@@ -1,5 +1,5 @@
 /*
- *  stdp_nn_restr_connection.h
+ *  stdp_nn_pre_centered_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STDP_NN_RESTR_CONNECTION_H
-#define STDP_NN_RESTR_CONNECTION_H
+#ifndef STDP_NN_PRE_CENTERED_SYNAPSE_H
+#define STDP_NN_PRE_CENTERED_SYNAPSE_H
 
 // C++ includes:
 #include <cmath>
@@ -44,23 +44,24 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Synapse type for spike-timing dependent plasticity with restricted
-symmetric nearest-neighbour spike pairing scheme
+Synapse type for spike-timing dependent plasticity with
+presynaptic-centered nearest-neighbour spike pairing scheme
 
 Description
 +++++++++++
 
-stdp_nn_restr_synapse is a connector to create synapses with spike time
-dependent plasticity with the restricted symmetric nearest-neighbour spike
-pairing scheme (fig. 7C in [1]_).
+stdp_nn_pre_centered_synapse is a connector to create synapses with spike
+time dependent plasticity with the presynaptic-centered nearest-neighbour
+spike pairing scheme, as described in [1]_.
 
-When a presynaptic spike occurs, it is taken into account in the depression
-part of the STDP weight change rule with the nearest preceding postsynaptic
-one, but only if the latter occured not earlier than the previous presynaptic
-one. When a postsynaptic spike occurs, it is accounted in the facilitation
-rule with the nearest preceding presynaptic one, but only if the latter
-occured not earlier than the previous postsynaptic one. So, a spike can
-participate neither in two depression pairs nor in two potentiation pairs.
+Each presynaptic spike is taken into account in the STDP weight change rule
+with the nearest preceding postsynaptic one and the nearest succeeding
+postsynaptic one (instead of pairing with all spikes, like in stdp_synapse).
+So, when a presynaptic spike occurs, it is accounted in the depression rule
+with the nearest preceding postsynaptic one; and when a postsynaptic spike
+occurs, it is accounted in the facilitation rule with all preceding
+presynaptic spikes that were not earlier than the previous postsynaptic
+spike. For a clear illustration of this scheme see fig. 7B in [2]_.
 
 The pairs exactly coinciding (so that presynaptic_spike == postsynaptic_spike
 + dendritic_delay), leading to zero delta_t, are discarded. In this case the
@@ -68,10 +69,12 @@ concerned pre/postsynaptic spike is paired with the second latest preceding
 post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
 result in a potentiation pair 20-to-10).
 
-The implementation relies on an additional variable - the postsynaptic
-eligibility trace [1]_ (implemented on the postsynaptic neuron side). It
-decays exponentially with the time constant tau_minus and increases to 1 on
-a post-spike occurrence (instead of increasing by 1 as in stdp_synapse).
+The implementation involves two additional variables - presynaptic and
+postsynaptic traces [2]_. The presynaptic trace decays exponentially over
+time with the time constant tau_plus, increases by 1 on a pre-spike
+occurrence, and is reset to 0 on a post-spike occurrence. The postsynaptic
+trace (implemented on the postsynaptic neuron side) decays with the time
+constant tau_minus and increases to 1 on a post-spike occurrence.
 
 Parameters
 ++++++++++
@@ -95,8 +98,10 @@ SpikeEvent
 References
 ++++++++++
 
+.. [1] Izhikevich E. M., Desai N. S. (2003) Relating STDP to BCM,
+       Neural Comput. 15, 1511--1523
 
-.. [1] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
+.. [2] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
        models of synaptic plasticity based on spike timing,
        Biol. Cybern. 98, 459--478
 
@@ -111,7 +116,7 @@ EndUserDocs */
 // target index addressing) derived from generic connection template
 
 template < typename targetidentifierT >
-class STDPNNRestrConnection : public Connection< targetidentifierT >
+class stdp_nn_pre_centered_synapse : public Connection< targetidentifierT >
 {
 
 public:
@@ -122,14 +127,14 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  STDPNNRestrConnection();
+  stdp_nn_pre_centered_synapse();
 
 
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPNNRestrConnection( const STDPNNRestrConnection& ) = default;
+  stdp_nn_pre_centered_synapse( const stdp_nn_pre_centered_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -210,6 +215,7 @@ private:
   double mu_plus_;
   double mu_minus_;
   double Wmax_;
+  double Kplus_;
 
   double t_lastspike_;
 };
@@ -223,7 +229,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-STDPNNRestrConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+stdp_nn_pre_centered_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   double t_spike = e.get_stamp().get_ms();
@@ -251,32 +257,34 @@ STDPNNRestrConnection< targetidentifierT >::send( Event& e, thread t, const Comm
   // to account.
   if ( start != finish )
   {
-    double minus_dt;
-
     // facilitation due to the first postsynaptic spike start->t_
     // since the previous pre-synaptic spike t_lastspike_
+
+    double minus_dt;
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
 
     // get_history() should make sure that
     // start->t_ > t_lastspike_ - dendritic_delay, i.e. minus_dt < 0
     assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
 
-    weight_ = facilitate_( weight_, std::exp( minus_dt / tau_plus_ ) );
+    weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
+
+    // According to the presynaptic-centered nearest-neighbour scheme,
+    // a postsynaptic spike
+    // (we now know there was at least one between t_lastspike_ and t_spike)
+    // erases the state of the synapse,
+    // and all the preceding presynaptic spikes are forgotten.
+    Kplus_ = 0;
   }
 
   // depression due to the latest postsynaptic spike finish->t_
   // before the current pre-synaptic spike t_spike
-  if ( start != finish )
-  {
-    double nearest_neighbor_Kminus;
-    double value_to_throw_away; // discard Kminus and Kminus_triplet here
-    target->get_K_values( t_spike - dendritic_delay,
-      value_to_throw_away, // discard Kminus
-      nearest_neighbor_Kminus,
-      value_to_throw_away // discard Kminus_triplet
-      );
-    weight_ = depress_( weight_, nearest_neighbor_Kminus );
-  }
+  double nearest_neighbor_Kminus;
+  double value_to_throw_away; // discard Kminus and Kminus_triplet here
+  target->get_K_values( t_spike - dendritic_delay, value_to_throw_away, nearest_neighbor_Kminus, value_to_throw_away );
+  weight_ = depress_( weight_, nearest_neighbor_Kminus );
+
+  Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / tau_plus_ ) + 1.0;
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
@@ -291,7 +299,7 @@ STDPNNRestrConnection< targetidentifierT >::send( Event& e, thread t, const Comm
 
 
 template < typename targetidentifierT >
-STDPNNRestrConnection< targetidentifierT >::STDPNNRestrConnection()
+stdp_nn_pre_centered_synapse< targetidentifierT >::stdp_nn_pre_centered_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , tau_plus_( 20.0 )
@@ -300,13 +308,14 @@ STDPNNRestrConnection< targetidentifierT >::STDPNNRestrConnection()
   , mu_plus_( 1.0 )
   , mu_minus_( 1.0 )
   , Wmax_( 100.0 )
+  , Kplus_( 0.0 )
   , t_lastspike_( 0.0 )
 {
 }
 
 template < typename targetidentifierT >
 void
-STDPNNRestrConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_nn_pre_centered_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -321,7 +330,7 @@ STDPNNRestrConnection< targetidentifierT >::get_status( DictionaryDatum& d ) con
 
 template < typename targetidentifierT >
 void
-STDPNNRestrConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_nn_pre_centered_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -341,4 +350,4 @@ STDPNNRestrConnection< targetidentifierT >::set_status( const DictionaryDatum& d
 
 } // of namespace nest
 
-#endif // of #ifndef STDP_NN_RESTR_CONNECTION_H
+#endif // of #ifndef STDP_NN_PRE_CENTERED_SYNAPSE_H

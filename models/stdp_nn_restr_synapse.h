@@ -1,5 +1,5 @@
 /*
- *  stdp_connection.h
+ *  stdp_nn_restr_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STDP_CONNECTION_H
-#define STDP_CONNECTION_H
+#ifndef STDP_NN_RESTR_SYNAPSE_H
+#define STDP_NN_RESTR_SYNAPSE_H
 
 // C++ includes:
 #include <cmath>
@@ -44,14 +44,34 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Synapse type for spike-timing dependent plasticity
+Synapse type for spike-timing dependent plasticity with restricted
+symmetric nearest-neighbour spike pairing scheme
 
 Description
 +++++++++++
 
-stdp_synapse is a connector to create synapses with spike time
-dependent plasticity (as defined in [1]_). Here the weight dependence
-exponent can be set separately for potentiation and depression.
+stdp_nn_restr_synapse is a connector to create synapses with spike time
+dependent plasticity with the restricted symmetric nearest-neighbour spike
+pairing scheme (fig. 7C in [1]_).
+
+When a presynaptic spike occurs, it is taken into account in the depression
+part of the STDP weight change rule with the nearest preceding postsynaptic
+one, but only if the latter occured not earlier than the previous presynaptic
+one. When a postsynaptic spike occurs, it is accounted in the facilitation
+rule with the nearest preceding presynaptic one, but only if the latter
+occured not earlier than the previous postsynaptic one. So, a spike can
+participate neither in two depression pairs nor in two potentiation pairs.
+
+The pairs exactly coinciding (so that presynaptic_spike == postsynaptic_spike
++ dendritic_delay), leading to zero delta_t, are discarded. In this case the
+concerned pre/postsynaptic spike is paired with the second latest preceding
+post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
+result in a potentiation pair 20-to-10).
+
+The implementation relies on an additional variable - the postsynaptic
+eligibility trace [1]_ (implemented on the postsynaptic neuron side). It
+decays exponentially with the time constant tau_minus and increases to 1 on
+a post-spike occurrence (instead of increasing by 1 as in stdp_synapse).
 
 Parameters
 ++++++++++
@@ -75,25 +95,15 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Guetig et al. (2003). Learning input correlations through nonlinear
-       temporally asymmetric hebbian plasticity. Journal of Neuroscience,
-       23:3697-3714 DOI: https://doi.org/10.1523/JNEUROSCI.23-09-03697.2003
-.. [2] Rubin J, Lee D, Sompolinsky H (2001). Equilibrium
-       properties of temporally asymmetric Hebbian plasticity. Physical Review
-       Letters, 86:364-367. DOI: https://doi.org/10.1103/PhysRevLett.86.364
-.. [3] Song S, Miller KD, Abbott LF (2000). Competitive Hebbian learning
-       through spike-timing-dependent synaptic plasticity. Nature Neuroscience
-       3(9):919-926.
-       DOI: https://doi.org/10.1038/78829
-.. [4] van Rossum MCW, Bi G-Q, Turrigiano GG (2000). Stable Hebbian learning
-       from spike timing-dependent plasticity. Journal of Neuroscience,
-       20(23):8812-8821.
-       DOI: https://doi.org/10.1523/JNEUROSCI.20-23-08812.2000
+
+.. [1] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
+       models of synaptic plasticity based on spike timing,
+       Biol. Cybern. 98, 459--478
 
 See also
 ++++++++
 
-tsodyks_synapse, static_synapse
+stdp_synapse, stdp_nn_symm_synapse
 
 EndUserDocs */
 
@@ -101,7 +111,7 @@ EndUserDocs */
 // target index addressing) derived from generic connection template
 
 template < typename targetidentifierT >
-class STDPConnection : public Connection< targetidentifierT >
+class stdp_nn_restr_synapse : public Connection< targetidentifierT >
 {
 
 public:
@@ -112,14 +122,14 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  STDPConnection();
+  stdp_nn_restr_synapse();
 
 
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPConnection( const STDPConnection& ) = default;
+  stdp_nn_restr_synapse( const stdp_nn_restr_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -200,7 +210,6 @@ private:
   double mu_plus_;
   double mu_minus_;
   double Wmax_;
-  double Kplus_;
 
   double t_lastspike_;
 };
@@ -214,10 +223,10 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-STDPConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+stdp_nn_restr_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
-  const double t_spike = e.get_stamp().get_ms();
+  double t_spike = e.get_stamp().get_ms();
 
   // use accessor functions (inherited from Connection< >) to obtain delay and
   // target
@@ -237,20 +246,37 @@ STDPConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynap
   // incremented by ArchivingNode::register_stdp_connection(). See bug #218 for
   // details.
   target->get_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
-  // facilitation due to postsynaptic spikes since last pre-synaptic spike
-  double minus_dt;
-  while ( start != finish )
+  // If there were no postsynaptic spikes between the current pre-synaptic one
+  // t_spike and the previous pre-synaptic one t_lastspike_, there are no pairs
+  // to account.
+  if ( start != finish )
   {
+    double minus_dt;
+
+    // facilitation due to the first postsynaptic spike start->t_
+    // since the previous pre-synaptic spike t_lastspike_
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
-    ++start;
+
     // get_history() should make sure that
-    // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
+    // start->t_ > t_lastspike_ - dendritic_delay, i.e. minus_dt < 0
     assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
-    weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
+
+    weight_ = facilitate_( weight_, std::exp( minus_dt / tau_plus_ ) );
   }
 
-  const double _K_value = target->get_K_value( t_spike - dendritic_delay );
-  weight_ = depress_( weight_, _K_value );
+  // depression due to the latest postsynaptic spike finish->t_
+  // before the current pre-synaptic spike t_spike
+  if ( start != finish )
+  {
+    double nearest_neighbor_Kminus;
+    double value_to_throw_away; // discard Kminus and Kminus_triplet here
+    target->get_K_values( t_spike - dendritic_delay,
+      value_to_throw_away, // discard Kminus
+      nearest_neighbor_Kminus,
+      value_to_throw_away // discard Kminus_triplet
+      );
+    weight_ = depress_( weight_, nearest_neighbor_Kminus );
+  }
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
@@ -260,14 +286,12 @@ STDPConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynap
   e.set_rport( get_rport() );
   e();
 
-  Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / tau_plus_ ) + 1.0;
-
   t_lastspike_ = t_spike;
 }
 
 
 template < typename targetidentifierT >
-STDPConnection< targetidentifierT >::STDPConnection()
+stdp_nn_restr_synapse< targetidentifierT >::stdp_nn_restr_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , tau_plus_( 20.0 )
@@ -276,14 +300,13 @@ STDPConnection< targetidentifierT >::STDPConnection()
   , mu_plus_( 1.0 )
   , mu_minus_( 1.0 )
   , Wmax_( 100.0 )
-  , Kplus_( 0.0 )
   , t_lastspike_( 0.0 )
 {
 }
 
 template < typename targetidentifierT >
 void
-STDPConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_nn_restr_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -298,7 +321,7 @@ STDPConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_nn_restr_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -309,7 +332,7 @@ STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Conne
   updateValue< double >( d, names::mu_minus, mu_minus_ );
   updateValue< double >( d, names::Wmax, Wmax_ );
 
-  // check if weight_ and Wmax_ has the same sign
+  // check if weight_ and Wmax_ have the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
@@ -318,4 +341,4 @@ STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Conne
 
 } // of namespace nest
 
-#endif // of #ifndef STDP_CONNECTION_H
+#endif // of #ifndef STDP_NN_RESTR_SYNAPSE_H

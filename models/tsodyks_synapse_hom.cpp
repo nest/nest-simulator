@@ -1,5 +1,5 @@
 /*
- *  tsodyks_connection_hom.cpp
+ *  tsodyks_synapse_hom.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "tsodyks_connection_hom.h"
+#include "tsodyks_synapse_hom.h"
 
 // Includes from nestkernel:
 #include "connector_model.h"

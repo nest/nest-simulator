@@ -1,5 +1,5 @@
 /*
- *  tsodyks_connection_hom.h
+ *  tsodyks_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,12 +20,14 @@
  *
  */
 
-#ifndef TSODYKS_CONNECTION_HOM_H
-#define TSODYKS_CONNECTION_HOM_H
+#ifndef TSODYKS_SYNAPSE_H
+#define TSODYKS_SYNAPSE_H
 
+
+// C++ includes:
+#include <cmath>
 
 // Includes from nestkernel:
-#include "common_properties_hom_w.h"
 #include "connection.h"
 
 namespace nest
@@ -36,7 +38,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Synapse type with short term plasticity using homogeneous parameters
+Synapse type with short term plasticity
 
 Description
 +++++++++++
@@ -87,6 +89,8 @@ an arbitrary postsynaptic effect depending on y(t).
 Parameters
 ++++++++++
 
+The following parameters can be set in the status dictionary:
+
 ========  ======  ========================================================
  U        real    Parameter determining the increase in u with each spike
                   [0,1]
@@ -98,12 +102,6 @@ Parameters
  y        real    Initial fraction of synaptic vesicles in the synaptic
                   cleft [0,1]
 ========  ======  ========================================================
-
-Remarks:
-
-The weight and the parameters U, tau_psc, tau_fac, and tau_rec are common to
-all synapses of the model and must be set using SetDefaults on the synapse
-model.
 
 References
 ++++++++++
@@ -120,65 +118,33 @@ SpikeEvent
 See also
 ++++++++
 
-tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w
+stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
 
 EndUserDocs */
 
-/**
- * Class containing the common properties for all synapses of type
- * TsodyksConnectionHom.
- */
-
-class TsodyksHomCommonProperties : public CommonPropertiesHomW
-{
-
-public:
-  /**
-   * Default constructor.
-   * Sets all property values to defaults.
-   */
-  TsodyksHomCommonProperties();
-
-  /**
-   * Get all properties and put them into a dictionary.
-   */
-  void get_status( DictionaryDatum& d ) const;
-
-  /**
-   * Set properties from the values given in dictionary.
-   */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
-
-  double tau_psc_; //!< [ms] time constant of postsyn current
-  double tau_fac_; //!< [ms] time constant for fascilitation
-  double tau_rec_; //!< [ms] time constant for recovery
-  double U_;       //!< asymptotic value of probability of release
-};
-
-
 template < typename targetidentifierT >
-class TsodyksConnectionHom : public Connection< targetidentifierT >
+class tsodyks_synapse : public Connection< targetidentifierT >
 {
 public:
-  typedef TsodyksHomCommonProperties CommonPropertiesType;
+  typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  TsodyksConnectionHom();
+  tsodyks_synapse();
 
   /**
-   * Copy constructor from a property object.
-   * Needs to be defined properly in order for GenericConnector to work.
-   */
-  TsodyksConnectionHom( const TsodyksConnectionHom& ) = default;
+     * Copy constructor from a property object.
+     * Needs to be defined properly in order for GenericConnector to work.
+     */
+  tsodyks_synapse( const tsodyks_synapse& ) = default;
 
   /**
    * Default Destructor.
    */
-  ~TsodyksConnectionHom()
+  ~tsodyks_synapse()
   {
   }
 
@@ -187,6 +153,7 @@ public:
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
+  using ConnectionBase::get_delay;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -205,7 +172,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, const TsodyksHomCommonProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -228,15 +195,17 @@ public:
   }
 
   void
-  set_weight( double )
+  set_weight( double w )
   {
-    throw BadProperty(
-      "Setting of individual weights is not possible! The common weights can "
-      "be changed via "
-      "CopyModel()." );
+    weight_ = w;
   }
 
 private:
+  double weight_;
+  double tau_psc_;     //!< [ms] time constant of postsyn current
+  double tau_fac_;     //!< [ms] time constant for fascilitation
+  double tau_rec_;     //!< [ms] time constant for recovery
+  double U_;           //!< asymptotic value of probability of release
   double x_;           //!< amount of resources in recovered state
   double y_;           //!< amount of resources in active state
   double u_;           //!< actual probability of release
@@ -251,10 +220,13 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-TsodyksConnectionHom< targetidentifierT >::send( Event& e, thread t, const TsodyksHomCommonProperties& cp )
+tsodyks_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
+
+  Node* target = get_target( t );
+
 
   // t_lastspike_ = 0 initially
   // this has no influence on the dynamics, IF y = z = 0 initially
@@ -262,11 +234,11 @@ TsodyksConnectionHom< targetidentifierT >::send( Event& e, thread t, const Tsody
 
   // propagator
   // TODO: use expm1 here instead, where applicable
-  double Puu = ( cp.tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h / cp.tau_fac_ );
-  double Pyy = std::exp( -h / cp.tau_psc_ );
-  double Pzz = std::exp( -h / cp.tau_rec_ );
+  double Puu = ( tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h / tau_fac_ );
+  double Pyy = std::exp( -h / tau_psc_ );
+  double Pzz = std::exp( -h / tau_rec_ );
 
-  double Pxy = ( ( Pzz - 1.0 ) * cp.tau_rec_ - ( Pyy - 1.0 ) * cp.tau_psc_ ) / ( cp.tau_psc_ - cp.tau_rec_ );
+  double Pxy = ( ( Pzz - 1.0 ) * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ ) / ( tau_psc_ - tau_rec_ );
   double Pxz = 1.0 - Pzz;
 
   double z = 1.0 - x_ - y_;
@@ -279,7 +251,7 @@ TsodyksConnectionHom< targetidentifierT >::send( Event& e, thread t, const Tsody
   y_ *= Pyy;
 
   // delta function u
-  u_ += cp.U_ * ( 1.0 - u_ );
+  u_ += U_ * ( 1.0 - u_ );
 
   // postsynaptic current step caused by incoming spike
   double delta_y_tsp = u_ * x_;
@@ -289,8 +261,8 @@ TsodyksConnectionHom< targetidentifierT >::send( Event& e, thread t, const Tsody
   y_ += delta_y_tsp;
 
 
-  e.set_receiver( *get_target( t ) );
-  e.set_weight( delta_y_tsp * cp.get_weight() );
+  e.set_receiver( *target );
+  e.set_weight( delta_y_tsp * weight_ );
   e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
@@ -299,8 +271,13 @@ TsodyksConnectionHom< targetidentifierT >::send( Event& e, thread t, const Tsody
 }
 
 template < typename targetidentifierT >
-TsodyksConnectionHom< targetidentifierT >::TsodyksConnectionHom()
+tsodyks_synapse< targetidentifierT >::tsodyks_synapse()
   : ConnectionBase()
+  , weight_( 1.0 )
+  , tau_psc_( 3.0 )
+  , tau_fac_( 0.0 )
+  , tau_rec_( 800.0 )
+  , U_( 0.5 )
   , x_( 1.0 )
   , y_( 0.0 )
   , u_( 0.0 )
@@ -310,21 +287,28 @@ TsodyksConnectionHom< targetidentifierT >::TsodyksConnectionHom()
 
 template < typename targetidentifierT >
 void
-TsodyksConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
+tsodyks_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
+  def< double >( d, names::weight, weight_ );
 
+  def< double >( d, names::U, U_ );
+  def< double >( d, names::tau_psc, tau_psc_ );
+  def< double >( d, names::tau_rec, tau_rec_ );
+  def< double >( d, names::tau_fac, tau_fac_ );
   def< double >( d, names::x, x_ );
   def< double >( d, names::y, y_ );
   def< double >( d, names::u, u_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-TsodyksConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+tsodyks_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // Handle parameters that may throw an exception first, so we can leave the
-  // synapse untouched in case of invalid parameter values
+  // synapse untouched
+  // in case of invalid parameter values
   double x = x_;
   double y = y_;
   updateValue< double >( d, names::x, x );
@@ -339,10 +323,35 @@ TsodyksConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   y_ = y;
 
   ConnectionBase::set_status( d, cm );
+  updateValue< double >( d, names::weight, weight_ );
+
+  updateValue< double >( d, names::U, U_ );
+  if ( U_ > 1.0 || U_ < 0.0 )
+  {
+    throw BadProperty( "U must be in [0,1]." );
+  }
+
+  updateValue< double >( d, names::tau_psc, tau_psc_ );
+  if ( tau_psc_ <= 0.0 )
+  {
+    throw BadProperty( "tau_psc must be > 0." );
+  }
+
+  updateValue< double >( d, names::tau_rec, tau_rec_ );
+  if ( tau_rec_ <= 0.0 )
+  {
+    throw BadProperty( "tau_rec must be > 0." );
+  }
+
+  updateValue< double >( d, names::tau_fac, tau_fac_ );
+  if ( tau_fac_ < 0.0 )
+  {
+    throw BadProperty( "tau_fac must be >= 0." );
+  }
 
   updateValue< double >( d, names::u, u_ );
 }
 
 } // namespace
 
-#endif // TSODYKS_CONNECTION_HOM_H
+#endif // TSODYKS_SYNAPSE_H

@@ -1,5 +1,5 @@
 /*
- *  quantal_stp_connection_impl.h
+ *  quantal_stp_synapse_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef QUANTAL_STP_CONNECTION_IMPL_H
-#define QUANTAL_STP_CONNECTION_IMPL_H
+#ifndef QUANTAL_STP_SYNAPSE_IMPL_H
+#define QUANTAL_STP_SYNAPSE_IMPL_H
 
-#include "quantal_stp_connection.h"
+#include "quantal_stp_synapse.h"
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -69,7 +69,7 @@ update_value_int( const DictionaryDatum& d, Name propname, int& prop )
 }
 
 template < typename targetidentifierT >
-Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection()
+quantal_stp_synapse< targetidentifierT >::quantal_stp_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , U_( 0.5 )
@@ -84,7 +84,7 @@ Quantal_StpConnection< targetidentifierT >::Quantal_StpConnection()
 
 template < typename targetidentifierT >
 void
-Quantal_StpConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+quantal_stp_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -99,7 +99,7 @@ Quantal_StpConnection< targetidentifierT >::get_status( DictionaryDatum& d ) con
 
 template < typename targetidentifierT >
 void
-Quantal_StpConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+quantal_stp_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -114,7 +114,7 @@ Quantal_StpConnection< targetidentifierT >::set_status( const DictionaryDatum& d
 
 template < typename targetidentifierT >
 void
-Quantal_StpConnection< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+quantal_stp_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
   // Throw error if n or a are set in quantal_stp_synapse, Connect cannot handle
   // them since they are integers.
@@ -134,4 +134,4 @@ Quantal_StpConnection< targetidentifierT >::check_synapse_params( const Dictiona
 
 } // of namespace nest
 
-#endif // #ifndef QUANTAL_STP_CONNECTION_IMPL_H
+#endif // #ifndef QUANTAL_STP_SYNAPSE_IMPL_H

@@ -1,5 +1,5 @@
 /*
- *  bernoulli_connection.h
+ *  bernoulli_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -21,8 +21,8 @@
  */
 
 
-#ifndef BERNOULLI_CONNECTION_H
-#define BERNOULLI_CONNECTION_H
+#ifndef BERNOULLI_SYNAPSE_H
+#define BERNOULLI_SYNAPSE_H
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -89,7 +89,7 @@ static_synapse, static_synapse_hom_w
 EndUserDocs */
 
 template < typename targetidentifierT >
-class BernoulliConnection : public Connection< targetidentifierT >
+class bernoulli_synapse : public Connection< targetidentifierT >
 {
 public:
   // this line determines which common properties to use
@@ -100,7 +100,7 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  BernoulliConnection()
+  bernoulli_synapse()
     : ConnectionBase()
     , weight_( 1.0 )
     , p_transmit_( 1.0 )
@@ -111,7 +111,7 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  BernoulliConnection( const BernoulliConnection& rhs ) = default;
+  bernoulli_synapse( const bernoulli_synapse& rhs ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -190,7 +190,7 @@ private:
 
 template < typename targetidentifierT >
 void
-BernoulliConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+bernoulli_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -200,7 +200,7 @@ BernoulliConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-BernoulliConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+bernoulli_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -214,4 +214,4 @@ BernoulliConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
 
 } // namespace
 
-#endif /* #ifndef BERNOULLI_CONNECTION_H */
+#endif /* #ifndef BERNOULLI_SYNAPSE_H */

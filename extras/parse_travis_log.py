@@ -370,9 +370,9 @@ def makebuild_summary(log_filename, msg_make_section_start,
     nest_warning_re = re.compile(f'{build_dir}.*: warning:')
     known_warnings = [
         f'{build_dir}/sli/scanner.cc:642:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:673:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:714:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:741:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:674:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:716:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:744:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
     ]
 
     with open(log_filename) as fh:

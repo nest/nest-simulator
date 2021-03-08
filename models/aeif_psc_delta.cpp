@@ -274,8 +274,7 @@ nest::aeif_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&,
 }
 
 
-nest::aeif_psc_delta::Buffers_::Buffers_( // @suppress("Class members should be properly initialized")
-  aeif_psc_delta& n )
+nest::aeif_psc_delta::Buffers_::Buffers_( aeif_psc_delta& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -285,9 +284,7 @@ nest::aeif_psc_delta::Buffers_::Buffers_( // @suppress("Class members should be 
   // init_buffers_().
 }
 
-nest::aeif_psc_delta::Buffers_::Buffers_( // @suppress("Class members should be properly initialized")
-  const Buffers_&,
-  aeif_psc_delta& n )
+nest::aeif_psc_delta::Buffers_::Buffers_( const Buffers_&, aeif_psc_delta& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )

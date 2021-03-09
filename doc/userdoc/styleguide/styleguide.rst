@@ -164,7 +164,6 @@ Let us take a brief look into the markup of reStructuredText. You can find the f
 Code and code snippets
 ~~~~~~~~~~~~~~~~~~~~~~
 
-
 For writing Python code, you can use the double colon
 
 
@@ -210,12 +209,13 @@ For input/output examples use the following syntax
 Directives
 ~~~~~~~~~~~
 
-
 This is not a complete guide to the directives of reStructuredText. For more options see `Sphinx directives <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html>`_
 or `Docutils section on directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_.
 
 Equations
 ^^^^^^^^^
+
+For equations, use LaTeX markup:
 
 ::
 
@@ -234,7 +234,7 @@ Rendered as
 Admonitions
 ^^^^^^^^^^^
 
-Possible admonitions types include
+Use admonitions to draw readers attention to a particular point. Possible admonitions types include
 
 "see also", "attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning", "admonition"
 
@@ -262,17 +262,21 @@ See `the roles section in the Sphinx docs <https://www.sphinx-doc.org/en/master/
 In-text math
 ^^^^^^^^^^^^
 
+For in-text math, use
+
 ::
 
    Now we can see :math:`x=1` for this example.
 
-Rendered as
+This will be rendered as
 
 
    Now we can see :math:`x=1` for this example.
 
 Referencing
 ^^^^^^^^^^^
+
+For referencing rst files in repository, use
 
 ::
 
@@ -282,7 +286,7 @@ Referencing
 
    :doc:`custom name <path/file>`
 
-Rendered as
+This will be rendered as
 
    :doc:`file`
 

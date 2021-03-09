@@ -149,8 +149,8 @@ In the PyNEST code, we follow the rules for NumPy style docstrings as
 `explained here <https://numpydoc.readthedocs.io/en/latest/format.html>`
 
 
-A brief look into reStructuredText markup
-------------------------------------------
+reStructuredText markup
+-----------------------
 
 Let us take a brief look into the markup of reStructuredText. You can find the full CheatSheet
 `here <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_.
@@ -161,8 +161,8 @@ Let us take a brief look into the markup of reStructuredText. You can find the f
    tables, reference labels, or directives.
    If the output format seems incorrect, double check the spaces and newlines of the text.
 
-How to write code or code snippets in reStructuredText
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Code and code snippets
+~~~~~~~~~~~~~~~~~~~~~~
 
 
 For writing Python code, you can use the double colon
@@ -214,8 +214,8 @@ Directives
 This is not a complete guide to the directives of reStructuredText. For more options see `Sphinx directives <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html>`_
 or `Docutils section on directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_.
 
-For equations, use LaTeX markup:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Equations
+^^^^^^^^^
 
 ::
 
@@ -231,8 +231,8 @@ Rendered as
             f(x) = \int_{-\infty}^{\infty} \hat f(\xi)\ e^{2 \pi i x \xi}\,d\xi,
 
 
-Use admonitions to draw readers attention to a particular point
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Admonitions
+^^^^^^^^^^^
 
 Possible admonitions types include
 
@@ -259,8 +259,8 @@ Roles
 
 See `the roles section in the Sphinx docs <https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html>`_ for details
 
-For in-text math
-^^^^^^^^^^^^^^^^
+In-text math
+^^^^^^^^^^^^
 
 ::
 
@@ -271,8 +271,8 @@ Rendered as
 
    Now we can see :math:`x=1` for this example.
 
-For referencing rst files in repository
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Referencing
+^^^^^^^^^^^
 
 ::
 
@@ -288,9 +288,6 @@ Rendered as
 
    :doc:`custom name <file>`
 
-
-For referencing sections, figures, or arbitrary places in files
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For section headings, you can use either of the two examples below. But to reference figures or arbitrary places in a file,
 you must include a custom name (second example) in the reference for it to work.

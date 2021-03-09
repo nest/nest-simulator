@@ -109,12 +109,12 @@ arranged with spatial structure to build networks distributed in space
 - we will get to this later in the course. For now we
 will work with the default network structure of NEST.
 
-New nodes are created with the command ``Create``, which takes as arguments the model name of the
+New nodes are created with the command :py:func:`.Create`, which takes as arguments the model name of the
 desired node type, and optionally the number of nodes to be created and
-the initialising parameters. The function returns a ``NodeCollection`` of handles to
-the new nodes, which you can assign to a variable for later use. A ``NodeCollection`` is a compact
+the initialising parameters. The function returns a :py:func:`.NodeCollection` of handles to
+the new nodes, which you can assign to a variable for later use. A :py:func:`.NodeCollection` is a compact
 representation of the node handles, which are integer numbers, called *ids*. Many PyNEST functions expect
-or return a ``NodeCollection`` (see `command overview`_). Thus, it is
+or return a :py:func:`.NodeCollection` (see `command overview`_). Thus, it is
 easy to apply functions to large sets of nodes with a single function
 call.
 
@@ -246,7 +246,7 @@ to form a small network.
    Spikes of the neuron.
 
 
-The order in which the arguments to ``Connect`` are specified reflects
+The order in which the arguments to :py:func:`.Connect` are specified reflects
 the flow of events: if the neuron spikes, it sends an event to the spike
 recorder. Conversely, the multimeter periodically sends requests to the
 neuron to ask for its membrane potential at that point in time. This can
@@ -314,7 +314,7 @@ output should look like :numref:`VM-neuron` and :numref:`spikes-one-neuron`.
 If you want to execute this as a script, just paste all lines into a text
 file named, say, ``one-neuron.py`` . You can then run it from the command
 line by prefixing the file name with ``python``, or from the Python or ipython
-prompt, by prefixing it with ``run``.
+prompt, by prefixing it with :py:func:`.run`.
 
 It is possible to collect information of multiple neurons on a single
 multimeter. This does complicate retrieving the information: the data
@@ -381,7 +381,7 @@ Additionally, the constant input current should be set to 0:
 Each event of the excitatory generator should produce a postsynaptic
 current of 1.2pA amplitude, an inhibitory event of -2.0pA. The synaptic
 weights can be defined in a dictionary, which is passed to the
-``Connect`` function using the keyword ``syn_spec`` (synapse
+:py:func:`.Connect` function using the keyword ``syn_spec`` (synapse
 specifications). In general all parameters determining the synapse can
 be specified in the synapse dictionary, such as ``"weight"``,
 ``"delay"``, the synaptic model (``"synapse_model"``) and parameters specific to
@@ -504,7 +504,7 @@ Nodes
 Connections
 ~~~~~~~~~~~
 
-This is an abbreviated version of the documentation for the ``Connect``
+This is an abbreviated version of the documentation for the :py:func:`.Connect`
 function, please see NEST’s online help for the full version and
 :doc:`Connection Management <../../guides/connection_management>` for an introduction
 and examples.
@@ -542,7 +542,7 @@ Available keys in the synapse dictionary are ``"synapse_model"``, ``"weight"``,
 synapse model. All parameters are optional and if not specified will use
 the default values determined by the current synapse model. ``"synapse_model"``
 determines the synapse type, taken from pre-defined synapse types in
-NEST or manually specified synapses created via ``CopyModel()``. All
+NEST or manually specified synapses created via :py:func:`.CopyModel`. All
 other parameters can be scalars or distributions. In the case of scalar
 parameters, all keys take doubles except for ``"receptor_type"`` which
 has to be initialised with an integer. Distributed parameters are

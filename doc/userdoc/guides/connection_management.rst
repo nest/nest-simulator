@@ -9,8 +9,8 @@ Connection Management
 
 Connections between populations of neurons and between neurons and
 devices for stimulation and recording in NEST are created with the
-``Connect()`` function. Although each connection is internally
-represented individually, you can use a single call to ``Connect()``
+:py:func:`.Connect` function. Although each connection is internally
+represented individually, you can use a single call to :py:func:`.Connect`
 to create many connections at the same time. In the simplest case, the
 function just takes two NodeCollections containing the source and
 target nodes that will be connected in an all-to-all fashion.
@@ -18,24 +18,24 @@ target nodes that will be connected in an all-to-all fashion.
 Each call to the function will establish the connectivity between pre-
 and post-synaptic populations according to a certain pattern or
 rule. The desired pattern is specified by simply stating the rule name
-as third argument to ``Connect()``, or by setting the key `rule` in
+as third argument to :py:func:`.Connect`, or by setting the key `rule` in
 the `connectivity specification` dictionary ``conn_spec`` alongside
 additional rule-specific parameters. All available patterns are
 described in the section :ref:`Connection Rules <conn_rules>` below.
 
 To specify the properties for the individual connections, a `synapse
-specification` ``syn_spec`` can be given to ``Connect()``. This can
+specification` ``syn_spec`` can be given to :py:func:`.Connect`. This can
 also just be the name of the synapse model to be used, an object
 defining :ref:`collocated synapses <collocated_synapses>`, or a
 dictionary, with optional parameters for the connections.
 
-The ``syn_spec`` is given as the fourth argument to the ``Connect()``
+The ``syn_spec`` is given as the fourth argument to the :py:func:`.Connect`
 function. Parameters like the synaptic weight or delay can be either
 set values or drawn and combined flexibly from random distributions.
 More information about synapse models and their parameters can
 be found in the section :ref:`Synapse Specification <synapse_spec>`.
 
-The ``Connect()`` function can be called in any of the following ways:
+The :py:func:`.Connect` function can be called in any of the following ways:
 
 ::
 
@@ -58,7 +58,7 @@ between the same pair of neurons are allowed or not.
 .. note::
 
    The switches ``allow_autapses`` and ``allow_multapses`` are only
-   effective during each single call to ``Connect()``. Calling the
+   effective during each single call to :py:func:`.Connect`. Calling the
    function multiple times with the same set of neurons might still
    lead to violations of these constraints, even though the switches
    were set to `False` in each individual call.
@@ -66,11 +66,11 @@ between the same pair of neurons are allowed or not.
 The synapse specification ``syn_spec`` defaults to the synapse model
 ``static_synapse``. By using the keyword variant (``Connect(pre, post,
 syn_spec=syn_spec_dict)``), ``conn_spec`` can be omitted in the call
-to ``Connect()`` and will just take on the default value.
+to :py:func:`.Connect` and will just take on the default value.
 
 After your connections are established, a quick sanity check is to
 look up the number of connections in the network, which can be easily
-done using ``GetKernelStatus()``:
+done using :py:func:`.GetKernelStatus`:
 
 ::
 
@@ -85,7 +85,7 @@ Connection Rules
 ----------------
 
 Connection rules are specified using the ``conn_spec`` parameter of
-``Connect()``, which can be either just a string naming a connection
+:py:func:`.Connect`, which can be either just a string naming a connection
 rule, or a dictionary containing a rule specification. Only connection
 rules requiring no parameters can be given as strings, for all other
 rules, a dictionary specifying the rule and its parameters is
@@ -130,12 +130,12 @@ more details on this interface, see the Git repository of `libneurosim
 In contrast to the other rules for creating connections, this rule
 relies on a Connection Generator object to describe the connectivity
 pattern in a library-specific way. The Connection Generator is handed
-to ``Connect()`` under the key `cg` of the connection specification
+to :py:func:`.Connect` under the key `cg` of the connection specification
 dictionary and evaluated internally. If the Connection Generator
 provides values for connection weights and delays, their respective
 indices can be specified under the key `params_map`. Alternatively,
 all synapse parameters can be specified using the synapse
-specification argument to ``Connect()``
+specification argument to :py:func:`.Connect`
 
 The following listing shows an example for using the `Connection-Set
 Algebra <https://github.com/INCF/csa>`_ in NEST via the Connection
@@ -304,7 +304,7 @@ Scalar parameters must be given with the correct type. The `weight`
 for instance must be a float, while the `receptor_type` has to be of
 type integer. When a synapse parameter is given as a scalar, the value
 will be applied to all connections created in the current
-``Connect()`` call.
+:py:func:`.Connect` call.
 
 ::
 
@@ -482,7 +482,7 @@ normal NMDA-type receptor.
 This type of connectivity is especially hard to realize when using
 randomized connection rules, as the chosen pairs that are actually
 connected are only known internally, and have to be retrieved manually
-after the call to ``Connect()`` returns.
+after the call to :py:func:`.Connect` returns.
 
 To ease the setup of such connectivity patterns, NEST supports a
 concept called `collocated synapses`. This allows the creation of several
@@ -621,7 +621,7 @@ synaptic parameters available for each receptor. Please refer to the
 In order to connect a pre-synaptic node to a certain receptor on a
 post-synaptic node, the integer ID of the target receptor can be
 supplied under the key ``receptor_type`` in the ``syn_spec``
-dictionary during the call to ``Connect()``. If unspecified, the
+dictionary during the call to :py:func:`.Connect`. If unspecified, the
 receptor will take on its default value of 0. If you request a
 receptor that is not available in the target node, this will result in
 a runtime error.

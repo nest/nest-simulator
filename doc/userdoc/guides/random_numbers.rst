@@ -52,7 +52,7 @@ Changes in random number generation in NEST 2.4
 
 Random deviate generation has become significantly more powerful in NEST
 2.4, to fully support randomization of connections parameters offered by
-the revised ``Connect`` function, as described in :doc:`Connection
+the revised :py:func:`.Connect` function, as described in :doc:`Connection
 Management <connection_management>` and illustrated by the
 :ref:`examples-rng` below. We have also made minor
 changes to make to achieve greater similarity between NEST, PyNN, and
@@ -75,14 +75,14 @@ The changes are as follows:
 
 -  Uniform continuous generator
 
-   -  new generator ``uniform``
+   -  new generator :py:func:`.uniform`
    -  parameters ``low`` and ``high``
    -  generates numbers uniformly distributed in ``[low, high)``
 
 -  Full parameter sets for generators
 
    -  In the past, many random deviate generators returned values for
-      fixed parameters, e.g., the ``normal`` generator could only return
+      fixed parameters, e.g., the :py:func:`.normal` generator could only return
       zero-mean, unit-variance normal random numbers.
 
    -  Now, all parameters for each generator can be set, in particular:
@@ -343,7 +343,7 @@ The following happens here:
 
 -  This is generator is then passed to the ``/grng`` status variable of
    the kernel. This is a "write only" variable that is invisible in
-   ``GetKernelStatus()``.
+   :py:func:`.GetKernelStatus`.
 
 Setting different per-processes RNGs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -447,7 +447,7 @@ You can check the weights selected by
 which will print a list containing a triple of source node ID, target node ID
 and weight for each connection in the network. If you want to see only a
 subset of connections, pass source, target, or synapse model to
-``GetConnections()``.
+:py:func:`.GetConnections`.
 
 Randomizing divergent connections
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

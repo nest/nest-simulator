@@ -141,7 +141,7 @@ Docs.
 
 4. `Import <https://readthedocs.org/dashboard/import/>`_ the project.
 
-5. Enter the details of your project in the ``repo`` field and hit ``Create``.
+5. Enter the details of your project in the ``repo`` field and hit :py:func:`.Create`.
 
 6. `Build <https://docs.readthedocs.io/en/stable/intro/
    import-guide.html#building-your-documentation>`_ your documentation.
@@ -170,13 +170,13 @@ command index via the command line
    nest.helpdesk()
 
 .. note::
-    The ``helpdesk()`` command needs to know which browser to launch
+    The :py:func:`.helpdesk` command needs to know which browser to launch
     in order to display the help pages. The browser is set as an
     option of helpdesk. Please see the file ``~/.nestrc`` for an
     example, which sets Firefox as browser.
 
 .. note::
-    The ``helpdesk()`` command does not work if you have compiled NEST
+    The :py:func:`.helpdesk` command does not work if you have compiled NEST
     with MPI support, but you have to enter the address of the
     helpdesk (``file://<nest_install_dir>/share/doc/nest/index.html``)
     manually into the browser.  Replace ``<nest_install_dir>`` with

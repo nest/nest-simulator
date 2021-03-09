@@ -360,7 +360,7 @@ Dictionary with lists when setting parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is now possible to use a dictionary with lists when setting node parameters
-with ``Create()``, ``set()`` or ``SetStatus()``. The values of the lists will 
+with :py:func:`.Create`, ``set()`` or :py:func:`.SetStatus`. The values of the lists will 
 be distributed across the nodes. The way to do this previously was to apply a
 list of dictionaries. This is still possible.
 
@@ -383,11 +383,11 @@ New functionality for connecting arrays of node IDs
 While you should aim to use NodeCollections to create connections whenever possible,
 there may be cases where you have a predefined set of pairs of pre- and postsynaptic nodes.
 In those cases, it may be inefficient to convert the individual IDs in the pair to NodeCollections
-to be passed to the ``Connect()`` function, especially if there are thousands or millions of
+to be passed to the :py:func:`.Connect` function, especially if there are thousands or millions of
 pairs to connect.
 
-To efficiently create connections in these cases, you can pass NumPy arrays to ``Connect()``.
-This variant of ``Connect()`` will create connections in a one-to-one fashion.
+To efficiently create connections in these cases, you can pass NumPy arrays to :py:func:`.Connect`.
+This variant of :py:func:`.Connect` will create connections in a one-to-one fashion.
 
 ::
 
@@ -414,7 +414,7 @@ New functionality for handling connections (synapses)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Just like a NodeCollection is a container for node IDs, a SynapseCollection is a
-container for connections. In NEST 3, when you call ``GetConnections()`` a
+container for connections. In NEST 3, when you call :py:func:`.GetConnections` a
 SynapseCollection is returned. SynapseCollections support a lot of the same operations
 as NodeCollections.
 
@@ -612,7 +612,7 @@ Collocated synapses
 ~~~~~~~~~~~~~~~~~~~
 It is now possible to create connections with several synapses simultaneously. The different synapse dictionaries will
 then be applied to each source-target pair. To create these collocated synapses, ``CollocatedSynapses()`` must be used
-as the `syn_spec` argument of ``Connect``, instead of the usual syn_spec dictionary argument. ``CollocatedSynapses()``
+as the `syn_spec` argument of :py:func:`.Connect`, instead of the usual syn_spec dictionary argument. ``CollocatedSynapses()``
 takes dictionaries as arguments.
 
   ::
@@ -1009,8 +1009,8 @@ Clipping, redraw, and conditionals
 Note that ``x`` is a ``nest.Parameter``.
 
 The ``nest.math.min()`` and ``nest.math.max()`` functions are used to clip
-a parameter. Essentially they work like the standard ``min()`` and
-``max()`` functions, ``nest.math.min()`` yielding the smallest of two
+a parameter. Essentially they work like the standard :py:func:`.min` and
+:py:func:`.max` functions, ``nest.math.min()`` yielding the smallest of two
 values, and ``nest.math.max()`` yielding the largest of two values.
 
 ::
@@ -1121,17 +1121,17 @@ Model parameters and their functionalities
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Consistently use term synapse_model throughout:
-    As all PyNEST functions that used to take the list returned by ``Create`` now use the NodeCollection
-    returned by ``Create``, there shouldn't be too many changes on the PyNEST level. One important
+    As all PyNEST functions that used to take the list returned by :py:func:`.Create` now use the NodeCollection
+    returned by :py:func:`.Create`, there shouldn't be too many changes on the PyNEST level. One important
     change though, is that we now use ``synapse_model`` throughout to reference the synapse model.
 
-    Most importantly, this will change your ``Connect`` call, where instead of passing the synapse
+    Most importantly, this will change your :py:func:`.Connect` call, where instead of passing the synapse
     model with the ``model`` key, you should now use the ``synapse_model`` key.
 
     >>>  nrns = nest.Create('iaf_psc_alpha', 3)
     >>>  nest.Connect(nrns, nrns, 'one_to_one', syn_spec={'synapse_model': 'stdp_synapse'})
 
-    Simillarly, ``GetDefaults`` used to return an entry called ``synapsemodel``. It now returns and entry
+    Simillarly, :py:func:`.GetDefaults` used to return an entry called ``synapsemodel``. It now returns and entry
     called ``synapse_model``.
 
 Use allow_offgrid_times throughout:
@@ -1150,7 +1150,7 @@ Topology module
 
 -  All topology functions are now part of ``nest`` and not
    ``nest.topology``
--  You can use the ``Create`` and ``Connect`` functions for spatial  networks, same as you would for non-spatial
+-  You can use the :py:func:`.Create` and :py:func:`.Connect` functions for spatial  networks, same as you would for non-spatial
    network
 -  All former topology functions that used to take a layer ID, now take a NodeCollection
 -  All former topology functions that used to return node/layer IDs now return a NodeCollection
@@ -1300,7 +1300,7 @@ Similar to creating nodes with spatial distributions, connecting is now done wit
 standard ``nest.Connect()`` function. Connecting NodeCollections with
 spatial data is no different from connecting NodeCollections without
 metadata. In a layer-connection context, moving to the standard
-``Connect()`` function brings with it some notable changes:
+:py:func:`.Connect` function brings with it some notable changes:
 
 - Convergent and divergent specification of connection is removed, or
   rather renamed. See table below.
@@ -1525,7 +1525,7 @@ Subnets are gone. Instead NodeCollections should be used to organize neurons.
   +---------------------------------------------+---------------------------------------+
 
 Printing the network as a tree of subnets is no longer possible. The
-``PrintNetwork()`` function has been replaced with ``PrintNodes()``, which
+``PrintNetwork()`` function has been replaced with :py:func:`.PrintNodes`, which
 prints ID ranges and model names of the nodes in the network.
 
   +----------------------------------------------+---------------------------------------+

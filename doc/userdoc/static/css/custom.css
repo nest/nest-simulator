@@ -1,3 +1,7 @@
+.wy-breadcrumbs-aside {
+   display: none !important;
+}
+
 .keep-us-sustainable {
    background-color: #272525;
 }

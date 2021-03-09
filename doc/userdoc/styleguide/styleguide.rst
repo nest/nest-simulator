@@ -4,6 +4,12 @@ The NEST documentation style guide
 .. contents::
   :local:
 
+Why do we have a styleguide?
+-----------------------------
+
+The styleguide was created to provide a single reference point for content creation in NEST. This helps ensure content remains clear and consistent.
+The style choices we make here are meant to follow the major trends in technical writing for software.
+
 General guidelines about writing for NEST
 -----------------------------------------
 
@@ -469,13 +475,3 @@ Capitalize first word of heading, but use lower case for the rest.
 Capitalize first word in bullet.
 
 Capitalize proper nouns and follow company policy in naming conventions (e.g., macOS, LaTeX).
-
-
-
-Why do we have a styleguide?
------------------------------
-
-The styleguide was created to provide a single reference point for content creation in NEST. This helps ensure content remains clear and consistent.
-The style choices we make here are meant to follow the major trends in technical writing for software.
-
-

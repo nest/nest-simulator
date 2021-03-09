@@ -442,7 +442,7 @@ Avoid gendered terms (NOT police man BUT police officer).
 
 Instead of "guys" or "girls" use inclusive language such as everyone, all, members, folks.
 
-"They" is an acceptable singular third person pronoun (See www.merriam-webster.com/dictionary/they)
+"They" is an acceptable singular third person pronoun (See `here <www.merriam-webster.com/dictionary/they>`_).
 
 Abbreviations and acronyms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

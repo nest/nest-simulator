@@ -1,17 +1,17 @@
 All about NEST 3.0
 ==================
 
+NEST 3.0 introduces a more direct approach to accessing node properties and handling connections. The changes will allow you to
+perform operations that were not possible in previous versions.
 
 .. toctree::
    :maxdepth: 1
 
-   Compare old versus new function syntax in our reference guide <refguide_nest2_nest3>
    Find out what new features NEST 3.0 has to offer <nest3_features/index>
    Everything you need to know about spatially-structured networks (topology module) <../spatial/index>
+   Compare old versus new function syntax in our reference guide <refguide_nest2_nest3>
    whats_removed
 
-NEST 3.0 introduces a more direct approach to accessing node properties and handling connections. The changes will allow you to
-perform operations that were not possible in previous versions.
 
 .. admonition:: Python 3
 

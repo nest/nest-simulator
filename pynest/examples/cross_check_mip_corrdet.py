@@ -110,7 +110,7 @@ spikes = sr.get('events', 'senders')
 sp1 = spikes[spikes == 4]
 sp2 = spikes[spikes == 5]
 
-# Find crosscorrolation
+# Find crosscorrelation
 cross = corr_spikes_sorted(sp1, sp2, t_bin, tau_max, h)
 
 print("Crosscorrelation:")

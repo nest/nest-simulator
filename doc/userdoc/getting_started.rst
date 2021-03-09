@@ -80,7 +80,7 @@ Need a quieter NEST?
 --------------------
 
 Take a look at the `set_verbosity <https://nest-simulator.readthedocs.io/en/latest/ref_material/pynest_apis.html#nest.lib.hl_api_info.set_verbosity>`_
-documentation, which describes how to display less warning messages.
+documentation, which describes how to display fewer messages on the terminal.
 
 Want to know more?
 ------------------

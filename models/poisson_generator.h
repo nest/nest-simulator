@@ -96,10 +96,7 @@ numbers.
 Therefore, first, as Network::get_network().send sends spikes to all the
 recipients, differentiation has to happen in the hook, second, the
 hook can use the RNG from the thread where the recipient neuron sits,
-which explains the current design of the generator. For details,
-refer to:
-
-http://ken.brainworks.uni-freiburg.de/cgi-bin/mailman/private/nest_developer/2011-January/002977.html
+which explains the current design of the generator.
 
 SeeAlso: poisson_generator_ps, Device, parrot_neuron
 */

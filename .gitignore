@@ -1,14 +1,17 @@
-# git ignore patterns
 
-libltdl/
+__pycache__/
+build/
+_build/
+install/
+reports/
 
-pynest/pynestkernel.cpp
-
-*.o
-*.lo
+# compilation artefacts
+pynest/pynestkernel.cxx
 *.la
-.*
+*.lo
+*.so
 *.log
+*.o
 *.pyc
 
 Makefile
@@ -23,48 +26,56 @@ examples/example_logs/
 /extras/create_release.sh
 /libnestutil/config.h
 /librandom/randomtest
-/libtool
 /nest/nest
-/nest/static_modules.h
-/pynest/setup.py
-/reports/
 /sli/sli
-/testsuite/do_tests.sh
-/doc/doxygen/
-/doc/_build/
-/doc/xml/
-/doc/auto_examples/
 
-*.kdev4
-
-### IPythonNotebook ###
-# Temporary data
-.ipynb_checkpoints/
-TAGS
-
-### tags and cscope
-tags
-cscope.out
-
-### CMAKE stuff
-cmake_install.cmake
-CMakeFiles/
-_CPack_Packages/
+# cmake artefacts
 CMakeCache.txt
-CPackConfig.cmake
-CPackSourceConfig.cmake
+CMakeDoxyfile.in
+CMakeFiles/
+CTestTestfile.cmake
+Makefile
+cmake_install.cmake
+CMakeDoxygenDefaults.cmake
 
 # generated files
-doc/set_rcsinfo.cmake
 doc/fulldoc.conf
 doc/normaldoc.conf
+extras/nest-config
+extras/nest_vars.sh
+libnestutil/config.h
+nest/static_modules.h
+pynest/setup.py
+
+# installation artefacts
+install_manifest.txt
+
+# documentation artefacts
+doc/help/
+doc/auto_examples/
+doc/doctrees/
+doc/html/
 doc/models/
 doc/pynestkernel_mock.py
-doc/from_cpp/
-doc/microcircuit/
-lib/sli/rcsinfo.sli
-extras/nest_vars.sh
 
-pynest/examples/README
+# created when running examples, e.g. by examples/run_examples.py
+examples/microcircuit.png
+examples/reference_data/
 /examples/matplotlib/fontList.json
 /examples/matplotlib/tex.cache/
+
+# macOS
+.DS_Store
+
+# IDEs / editors / Jupyter
+*.kdev4
+.ipynb_checkpoints/
+TAGS
+tags
+cscope.out
+.vscode/
+.idea/
+.settings/
+.project
+.cproject
+.pydevproject

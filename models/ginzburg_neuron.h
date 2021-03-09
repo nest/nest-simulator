@@ -39,26 +39,27 @@ Binary stochastic neuron with sigmoidal activation function
 Description
 +++++++++++
 
-The ginzburg_neuron is an implementation of a binary neuron that
+The ``ginzburg_neuron`` is an implementation of a binary neuron that
 is irregularly updated as Poisson time points. At each update
 point, the total synaptic input h into the neuron is summed up,
 passed through a gain function g whose output is interpreted as
 the probability of the neuron to be in the active (1) state.
 
-The gain function g used here is :math:`g(h) = c_1*h + c_2 * 0.5*(1 +
-\tanh(c_3*(h-\theta)))` (output clipped to [0,1]). This allows to
-obtain affine-linear (:math:`c_1\neq0, c_2\neq0, c_3=0`) or sigmoidal (:math:`c_1=0,
-c_2=1, c_3\neq0`) shaped gain functions. The latter choice
+The gain function used here is :math:`g(h) = c_1 h + c_2 (1 +
+\tanh(c_3 (h-\theta)))/2` (output clipped to :math:`[0, 1]`). This permits
+affine-linear (:math:`c_1\neq0, c_2\neq0, c_3=0`) or sigmoidally shaped
+(:math:`c_1=0, c_2=1, c_3\neq0`) gain functions. The latter choice
 corresponds to the definition in [1]_, giving the name to this
 neuron model.
+
 The choice :math:`c_1=0, c_2=1, c_3=\beta/2` corresponds to the Glauber
 dynamics [2]_, :math:`g(h) = 1 / (1 + \exp(-\beta (h-\theta)))`.
 The time constant :math:`\tau_m` is defined as the mean
 inter-update-interval that is drawn from an exponential
 distribution with this parameter. Using this neuron to reproduce
 simulations with asynchronous update [1]_, the time constant needs
-to be chosen as :math:`\tau_m = dt*N`, where dt is the simulation time
-step and N the number of neurons in the original simulation with
+to be chosen as :math:`\tau_m = dt \times N`, where :math:`dt` is the simulation time
+step and :math:`N` the number of neurons in the original simulation with
 asynchronous update. This ensures that a neuron is updated on
 average every :math:`\tau_m` ms. Since in the original paper [1]_ neurons
 are coupled with zero delay, this implementation follows this
@@ -66,24 +67,9 @@ definition. It uses the update scheme described in [3]_ to
 maintain causality: The incoming events in time step :math:`t_i` are
 taken into account at the beginning of the time step to calculate
 the gain function and to decide upon a transition.  In order to
-obtain delayed coupling with delay d, the user has to specify the
-delay d+h upon connection, where h is the simulation time step.
+obtain delayed coupling with delay :math:`d`, the user has to specify the
+delay :math:`d+h` upon connection, where :math:`h` is the simulation time step.
 
-Remarks:
-
-This neuron has a special use for spike events to convey the
-binary state of the neuron to the target. The neuron model
-only sends a spike if a transition of its state occurs. If the
-state makes an up-transition it sends a spike with multiplicity 2,
-if a down transition occurs, it sends a spike with multiplicity 1.
-The decoding scheme relies on the feature that spikes with multiplicity
-larger 1 are delivered consecutively, also in a parallel setting.
-The creation of double connections between binary neurons will
-destroy the deconding scheme, as this effectively duplicates
-every event. Using random connection routines it is therefore
-advisable to set the property 'allow_multapses' to false.
-The neuron accepts several sources of currents, e.g. from a
-noise_generator.
 
 Parameters
 ++++++++++
@@ -97,11 +83,32 @@ c_2    probability   Prefactor of sigmoidal gain
 c_3    1/mV          Slope factor of sigmoidal gain
 ====== ============= ===========================================================
 
+.. admonition:: Special requirements for binary neurons
+
+   As the ``ginzburg_neuron`` is a binary neuron, the user must
+   ensure that the following requirements are observed. NEST does not
+   enforce them. Breaching the requirements can lead to meaningless
+   results.
+
+   1. Binary neurons must only be connected to other binary neurons.
+
+   #. No more than connection must be created between any pair of
+      binary neurons. When using probabilistic connection rules, specify
+      ``'allow_autapses': False`` to avoid accidental creation of
+      multiple connections between a pair of neurons.
+
+   #. Binary neurons can be driven by current-injecting devices, but
+      *not* by spike generators.
+
+   #. Activity of binary neurons can only be recored using a ``spin_detector``
+      or ``correlospinmatrix_detector``.
+
+
 References
 ++++++++++
 
 .. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
-       neural networks. PRE 50(4) p. 3171
+       neural networks. PRE 50(4) p. 3171.
        DOI: https://doi.org/10.1103/PhysRevE.50.3171
 .. [2] Hertz J, Krogh A, Palmer R (1991). Introduction to the theory of neural
        computation. Addison-Wesley Publishing Conmpany.
@@ -111,20 +118,15 @@ References
        (Eds.), Springer.
        DOI: https://doi.org/10.1007/978-3-540-73159-7_10
 
-Sends
-+++++
-
-SpikeEvent
 
 Receives
 ++++++++
 
-SpikeEvent, PotentialRequest
+CurrentEvent
 
 See also
 ++++++++
 
-pp_psc_delta
 
 EndUserDocs */
 

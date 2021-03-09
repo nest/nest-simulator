@@ -294,6 +294,8 @@ const Name music_channel( "music_channel" );
 const Name N( "N" );
 const Name NMDA( "NMDA" );
 const Name N_channels( "N_channels" );
+const Name N_NaP( "N_NaP" );
+const Name N_T( "N_T" );
 const Name n( "n" );
 const Name n_events( "n_events" );
 const Name n_messages( "n_messages" );

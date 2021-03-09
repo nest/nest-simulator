@@ -431,15 +431,18 @@ If bullet/ordered list text is an incomplete sentence, do not end with period.
 
 If bullet/ordered list belongs to a sentence, use commas to seprate each item with the second last time including `and` at end.
 
+Pronouns
+~~~~~~~~
 
-When writing about people
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Use the pronouns "you" and "we" whenever possible.
+
+Avoid the pronoun "I".
 
 Avoid gendered terms (NOT police man BUT police officer).
 
 Instead of "guys" or "girls" use inclusive language such as everyone, all, members, folks.
 
-"They" is an acceptable singular 3rd person pronoun (See www.merriam-webster.com/dictionary/they)
+"They" is an acceptable singular third person pronoun (See www.merriam-webster.com/dictionary/they)
 
 Abbreviations and acronyms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -30,6 +30,7 @@ from .hl_api_simulation import GetKernelStatus
 
 import numpy
 import json
+from math import floor, log
 
 try:
     import pandas
@@ -413,8 +414,8 @@ class NodeCollection(object):
         Parameters
         ----------
         params : str or dict or list
-            Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `NodeCollection`.
+            Dictionary of parameters (either lists or single values) or list of dictionaries of parameters
+            of same length as the `NodeCollection`.
         kwargs : keyword argument pairs
             Named arguments of parameters of the elements in the `NodeCollection`.
 
@@ -578,6 +579,8 @@ class SynapseCollection(object):
             # self._datum needs to be a list of Connection datums.
             self._datum = [data]
 
+        self.print_full = False
+
     def __iter__(self):
         return SynapseCollectionIterator(self)
 
@@ -614,36 +617,80 @@ class SynapseCollection(object):
     def __str__(self):
         """
         Printing a `SynapseCollection` returns something of the form:
-            *--------*-------------*
-            | source | 1, 1, 2, 2, |
-            *--------*-------------*
-            | target | 1, 2, 1, 2, |
-            *--------*-------------*
+
+             source   target   synapse model   weight   delay
+            -------- -------- --------------- -------- -------
+                  1        4  static_synapse    1.000   1.000
+                  2        4  static_synapse    2.000   1.000
+                  1        3    stdp_synapse    4.000   1.000
+                  1        4    stdp_synapse    3.000   1.000
+                  2        3    stdp_synapse    3.000   1.000
+                  2        4    stdp_synapse    2.000   1.000
+
+        If your SynapseCollection has more than 36 elements, only the first and last 15 connections are printed. To
+        display all, first set `print_full = True`.
+
+        ::
+
+            conns = nest.GetConnections()
+            conns.print_full = True
+            print(conns)
         """
-        srcs = self.get('source')
-        trgt = self.get('target')
+
+        def format_row_(s, t, sm, w, dly):
+            try:
+                return f'{s:>{src_len-1}d} {t:>{trg_len}d} {sm:>{sm_len}s} {w:>#{w_len}.{4}g} {dly:>#{d_len}.{4}g}'
+            except ValueError:
+                # Used when we have many connections and print_full=False
+                return f'{s:>{src_len-1}} {t:>{trg_len}} {sm:>{sm_len}} {w:>{w_len}} {dly:>{d_len}}'
+
+        MAX_SIZE_FULL_PRINT = 35  # 35 is arbitrarily chosen.
+
+        params = self.get()
+
+        if len(params) == 0:
+            return 'The synapse collection does not contain any connections.'
+
+        srcs = params['source']
+        trgt = params['target']
+        wght = params['weight']
+        dlay = params['delay']
+        s_model = params['synapse_model']
 
         if isinstance(srcs, int):
             srcs = [srcs]
-        if isinstance(trgt, int):
             trgt = [trgt]
+            wght = [wght]
+            dlay = [dlay]
+            s_model = [s_model]
+
+        src_h = 'source'
+        trg_h = 'target'
+        sm_h = 'synapse model'
+        w_h = 'weight'
+        d_h = 'delay'
+
+        # Find maximum number of characters for each column, used to determine width of column
+        src_len = max(len(src_h) + 2, floor(log(max(srcs), 10)))
+        trg_len = max(len(trg_h) + 2, floor(log(max(trgt), 10)))
+        sm_len = max(len(sm_h) + 2, len(max(s_model, key=len)))
+        w_len = len(w_h) + 2
+        d_len = len(d_h) + 2
 
         # 35 is arbitrarily chosen.
-        if len(srcs) < 35:
-            source = '| source | ' + ''.join(str(e)+', ' for e in srcs) + '|'
-            target = '| target | ' + ''.join(str(e)+', ' for e in trgt) + '|'
-        else:
-            source = ('| source | ' + ''.join(str(e)+', ' for e in srcs[:15]) +
-                      '... ' + ''.join(str(e)+', ' for e in srcs[-15:]) + '|')
-            target = ('| target | ' + ''.join(str(e)+', ' for e in trgt[:15]) +
-                      '... ' + ''.join(str(e)+', ' for e in trgt[-15:]) + '|')
+        if len(srcs) >= MAX_SIZE_FULL_PRINT and not self.print_full:
+            # u'\u22EE ' is the unicode for vertical ellipsis, used when we have many connections
+            srcs = srcs[:15] + [u'\u22EE '] + srcs[-15:]
+            trgt = trgt[:15] + [u'\u22EE '] + trgt[-15:]
+            wght = wght[:15] + [u'\u22EE '] + wght[-15:]
+            dlay = dlay[:15] + [u'\u22EE '] + dlay[-15:]
+            s_model = s_model[:15] + [u'\u22EE '] + s_model[-15:]
 
-        borderline_s = '*--------*' + '-'*(len(source) - 12) + '-*'
-        borderline_t = '*--------*' + '-'*(len(target) - 12) + '-*'
-        borderline_m = max(borderline_s, borderline_t)
+        headers = f'{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}' + '\n'
+        borders = '-'*src_len + ' ' + '-'*trg_len + ' ' + '-'*sm_len + ' ' + '-'*w_len + ' ' + '-'*d_len + '\n'
+        output = '\n'.join(format_row_(s, t, sm, w, d) for s, t, sm, w, d in zip(srcs, trgt, s_model, wght, dlay))
+        result = headers + borders + output
 
-        result = (borderline_s + '\n' + source + '\n' + borderline_m + '\n' +
-                  target + '\n' + borderline_t)
         return result
 
     def __getattr__(self, attr):
@@ -657,7 +704,7 @@ class SynapseCollection(object):
     def __setattr__(self, attr, value):
         # `_datum` is the only property of SynapseCollection that should not be
         # interpreted as a property of the model
-        if attr == '_datum':
+        if attr == '_datum' or 'print_full':
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})
@@ -737,8 +784,7 @@ class SynapseCollection(object):
         if pandas_output and not HAVE_PANDAS:
             raise ImportError('Pandas could not be imported')
 
-        # Return empty tuple if we have no connections or if we have done a
-        # nest.ResetKernel()
+        # Return empty tuple if we have no connections or if we have done a nest.ResetKernel()
         num_conn = GetKernelStatus('num_connections')
         if self.__len__() == 0 or num_conn == 0:
             return ()
@@ -746,7 +792,8 @@ class SynapseCollection(object):
         if keys is None:
             cmd = 'GetStatus'
         elif is_literal(keys):
-            cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
+            #  Extracting the correct values will be done in restructure_data below
+            cmd = 'GetStatus'
         elif is_iterable(keys):
             keys_str = " ".join("/{0}".format(x) for x in keys)
             cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
@@ -783,8 +830,8 @@ class SynapseCollection(object):
         Parameters
         ----------
         params : str or dict or list
-            Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `SynapseCollection`.
+            Dictionary of parameters (either lists or single values) or list of dictionaries of parameters
+            of same length as `SynapseCollection`.
         kwargs : keyword argument pairs
             Named arguments of parameters of the elements in the `SynapseCollection`.
 

@@ -148,6 +148,8 @@ protected:
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
+  void update_param_dict_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng, index indx );
+
   //! Create connection between given nodes, fill parameter values
   void single_connect_( index, Node&, thread, librandom::RngPtr& );
   void single_disconnect_( index, Node&, thread );
@@ -204,10 +206,16 @@ protected:
     return use_pre_synaptic_element_ and use_post_synaptic_element_;
   }
 
-private:
-  typedef std::map< Name, ConnParameter* > ConnParameterMap;
+  //! pointers to connection parameters specified as arrays
+  std::vector< ConnParameter* > parameters_requiring_skipping_;
 
   std::vector< index > synapse_model_id_;
+
+  //! dictionaries to pass to connect function, one per thread for every syn_spec
+  std::vector< std::vector< DictionaryDatum > > param_dicts_;
+
+private:
+  typedef std::map< Name, ConnParameter* > ConnParameterMap;
 
   //! indicate that weight and delay should not be set per synapse
   std::vector< bool > default_weight_and_delay_;
@@ -224,13 +232,6 @@ private:
 
   //! all other parameters, mapping name to value representation
   std::vector< ConnParameterMap > synapse_params_;
-
-  //! dictionaries to pass to connect function, one per thread for every syn_spec
-  std::vector< std::vector< DictionaryDatum > > param_dicts_;
-
-  //! empty dictionary to pass to connect function, one per thread so that the all threads do not
-  //! create and use the same dictionary as this leads to performance issues.
-  std::vector< DictionaryDatum > dummy_param_dicts_;
 
   //! synapse-specific parameters that should be skipped when we set default synapse parameters
   std::set< Name > skip_syn_params_;
@@ -257,10 +258,6 @@ private:
    */
   void reset_weights_();
   void reset_delays_();
-
-protected:
-  //! pointers to connection parameters specified as arrays
-  std::vector< ConnParameter* > parameters_requiring_skipping_;
 };
 
 class OneToOneBuilder : public ConnBuilder

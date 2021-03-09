@@ -362,8 +362,10 @@ def makebuild_summary(log_filename, msg_make_section_start,
     in_make_section = False
 
     expected_warnings = 0
-    if build_type == 'FULL':
-        expected_warnings = 2  # libneurosim and NEST both define PACKAGE in their config.h files
+
+    # If a certain build_type (e.g. 'MINIMAL' or 'FULL') only builds
+    # with some warnings, this would be a good point to re-set the
+    # expected_warnings variable conditionally for that build_type.
 
     nest_warning_re = re.compile(f'{build_dir}.*: warning:')
     known_warnings = [

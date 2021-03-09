@@ -138,7 +138,7 @@ private:
   struct Parameters_
   {
     std::vector< Time > rate_times_;
-    std::vector< double_t > rate_values_;
+    std::vector< double > rate_values_;
 
     //! Allow and round up rate times not on steps;
     bool allow_offgrid_times_;
@@ -151,15 +151,15 @@ private:
     //!< Set values from dictionary
     void set( const DictionaryDatum&, Buffers_&, Node* );
     //!< Align rate time to grid if necessary and insert it into rate_times_
-    void assert_valid_rate_time_and_insert( const double_t t );
+    void assert_valid_rate_time_and_insert( const double t );
   };
 
   // ------------------------------------------------------------
 
   struct Buffers_
   {
-    size_t idx_;    //!< index of current amplitude
-    double_t rate_; //!< current amplitude
+    size_t idx_;  //!< index of current amplitude
+    double rate_; //!< current amplitude
   };
 
   // ------------------------------------------------------------
@@ -167,7 +167,7 @@ private:
   struct Variables_
   {
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    double_t h_;                              //! time resolution (ms)
+    double h_;                                //! time resolution (ms)
   };
 
   // ------------------------------------------------------------

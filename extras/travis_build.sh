@@ -166,14 +166,14 @@ xPYTHON=0
 xREADLINE=0
 xSIONLIB=0
 
-CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas"
+CXX_FLAGS="-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
 
 if [ "$xNEST_BUILD_TYPE" = "OPENMP_ONLY" ]; then
     xGSL=1
     xLIBBOOST=1
     xLTDL=1
     xOPENMP=1
-    CXX_FLAGS="-pedantic -Wextra"
+    CXX_FLAGS="-pedantic -Wextra -Woverloaded-virtual"
 fi
 
 if [ "$xNEST_BUILD_TYPE" = "MPI_ONLY" ]; then
@@ -194,7 +194,7 @@ if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
     xPYTHON=1
     xREADLINE=1
     xSIONLIB=1
-    CXX_FLAGS="-pedantic -Wextra"
+    CXX_FLAGS="-pedantic -Wextra -Woverloaded-virtual"
 fi
 
 if [ "$xNEST_BUILD_TYPE" = "FULL_NO_EXTERNAL_FEATURES" ]; then
@@ -287,7 +287,9 @@ fi
 if [ "$xLIBNEUROSIM" = "1" ] ; then
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
     chmod +x extras/install_csa-libneurosim.sh
-    ./extras/install_csa-libneurosim.sh
+    ./extras/install_csa-libneurosim.sh $PYLIB_DIR
+    PYMAJOR=`python3 -c 'import sys; print("%i.%i" % sys.version_info[:2])'`
+    export PYTHONPATH=$HOME/.cache/csa.install/lib/python$PYMAJOR/site-packages${PYTHONPATH:+:$PYTHONPATH}
     if [[ $OSTYPE == darwin* ]]; then
         export DYLD_LIBRARY_PATH=$HOME/.cache/csa.install/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}
     else

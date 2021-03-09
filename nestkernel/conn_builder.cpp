@@ -58,9 +58,8 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , use_pre_synaptic_element_( false )
   , use_post_synaptic_element_( false )
-  , param_dicts_()
-  , dummy_param_dicts_()
   , parameters_requiring_skipping_()
+  , param_dicts_()
 {
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
@@ -87,14 +86,14 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   param_dicts_.resize( syn_specs.size() );
 
   // loop through vector of synapse dictionaries, and set synapse parameters
-  for ( size_t indx = 0; indx < syn_specs.size(); ++indx )
+  for ( size_t synapse_indx = 0; synapse_indx < syn_specs.size(); ++synapse_indx )
   {
-    auto syn_params = syn_specs[ indx ];
+    auto syn_params = syn_specs[ synapse_indx ];
 
-    set_synapse_model_( syn_params, indx );
-    set_default_weight_or_delay_( syn_params, indx );
+    set_synapse_model_( syn_params, synapse_indx );
+    set_default_weight_or_delay_( syn_params, synapse_indx );
 
-    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ indx ] );
+    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
 #ifdef HAVE_MUSIC
     // We allow music_channel as alias for receptor_type during
@@ -102,17 +101,10 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     ( *syn_defaults )[ names::music_channel ] = 0;
 #endif
 
-    set_synapse_params( syn_defaults, syn_params, indx );
+    set_synapse_params( syn_defaults, syn_params, synapse_indx );
   }
 
   set_structural_plasticity_parameters( syn_specs );
-
-  // Create dummy dictionaries, one per thread
-  dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );
-#pragma omp parallel
-  {
-    dummy_param_dicts_[ kernel().vp_manager.get_thread_id() ] = new Dictionary();
-  }
 
   // If make_symmetric_ is requested call reset on all parameters in order
   // to check if all parameters support symmetric connections
@@ -302,6 +294,34 @@ nest::ConnBuilder::disconnect()
 }
 
 void
+nest::ConnBuilder::update_param_dict_( index snode_id,
+  Node& target,
+  thread target_thread,
+  librandom::RngPtr& rng,
+  index synapse_indx )
+{
+  assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ synapse_indx ].size() ) );
+
+  for ( auto synapse_parameter : synapse_params_[ synapse_indx ] )
+  {
+    if ( synapse_parameter.second->provides_long() )
+    {
+      // change value of dictionary entry without allocating new datum
+      IntegerDatum* id = static_cast< IntegerDatum* >(
+        ( ( *param_dicts_[ synapse_indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+      ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
+    }
+    else
+    {
+      // change value of dictionary entry without allocating new datum
+      DoubleDatum* dd = static_cast< DoubleDatum* >(
+        ( ( *param_dicts_[ synapse_indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+      ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
+    }
+  }
+}
+
+void
 nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng )
 {
   if ( this->requires_proxies() and not target.has_proxies() )
@@ -309,66 +329,48 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
     throw IllegalConnection( "Cannot use this rule to connect to nodes without proxies (usually devices)." );
   }
 
-  for ( size_t indx = 0; indx < synapse_model_id_.size(); ++indx )
+  for ( size_t synapse_indx = 0; synapse_indx < synapse_params_.size(); ++synapse_indx )
   {
-    DictionaryDatum param_dict;
-    if ( param_dicts_[ indx ].empty() ) // indicates we have no synapse params
-    {
-      param_dict = dummy_param_dicts_[ target_thread ];
-    }
-    else
-    {
-      assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ indx ].size() ) );
+    update_param_dict_( snode_id, target, target_thread, rng, synapse_indx );
 
-      for ( auto synapse_parameter : synapse_params_[ indx ] )
-      {
-        if ( synapse_parameter.second->provides_long() )
-        {
-          // change value of dictionary entry without allocating new datum
-          IntegerDatum* id = static_cast< IntegerDatum* >(
-            ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-          ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
-        }
-        else
-        {
-          // change value of dictionary entry without allocating new datum
-          DoubleDatum* dd = static_cast< DoubleDatum* >(
-            ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-          ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
-        }
-      }
-      param_dict = param_dicts_[ indx ][ target_thread ];
-    }
-
-    if ( default_weight_and_delay_[ indx ] )
-    {
-      kernel().connection_manager.connect( snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dict );
-    }
-    else if ( default_weight_[ indx ] )
+    if ( default_weight_and_delay_[ synapse_indx ] )
     {
       kernel().connection_manager.connect( snode_id,
         &target,
         target_thread,
-        synapse_model_id_[ indx ],
-        param_dict,
-        delays_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+        synapse_model_id_[ synapse_indx ],
+        param_dicts_[ synapse_indx ][ target_thread ] );
     }
-    else if ( default_delay_[ indx ] )
+    else if ( default_weight_[ synapse_indx ] )
     {
       kernel().connection_manager.connect( snode_id,
         &target,
         target_thread,
-        synapse_model_id_[ indx ],
-        param_dict,
+        synapse_model_id_[ synapse_indx ],
+        param_dicts_[ synapse_indx ][ target_thread ],
+        delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+    }
+    else if ( default_delay_[ synapse_indx ] )
+    {
+      kernel().connection_manager.connect( snode_id,
+        &target,
+        target_thread,
+        synapse_model_id_[ synapse_indx ],
+        param_dicts_[ synapse_indx ][ target_thread ],
         numerics::nan,
-        weights_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+        weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
     }
     else
     {
-      const double delay = delays_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-      const double weight = weights_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-      kernel().connection_manager.connect(
-        snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dict, delay, weight );
+      const double delay = delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
+      const double weight = weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
+      kernel().connection_manager.connect( snode_id,
+        &target,
+        target_thread,
+        synapse_model_id_[ synapse_indx ],
+        param_dicts_[ synapse_indx ][ target_thread ],
+        delay,
+        weight );
     }
   }
 }
@@ -437,7 +439,7 @@ nest::ConnBuilder::loop_over_targets_() const
 }
 
 void
-nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t indx )
+nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t synapse_indx )
 {
   if ( not syn_params->known( names::synapse_model ) )
   {
@@ -450,7 +452,7 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t indx )
   }
 
   index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( syn_name );
-  synapse_model_id_[ indx ] = synapse_model_id;
+  synapse_model_id_[ synapse_indx ] = synapse_model_id;
 
   // We need to make sure that Connect can process all synapse parameters specified.
   const ConnectorModel& synapse_model = kernel().model_manager.get_synapse_prototype( synapse_model_id );
@@ -458,43 +460,43 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t indx )
 }
 
 void
-nest::ConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx )
+nest::ConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, size_t synapse_indx )
 {
-  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ indx ] );
+  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
   // All synapse models have the possibility to set the delay (see SynIdDelay), but some have
   // homogeneous weights, hence it should be possible to set the delay without the weight.
-  default_weight_[ indx ] = not syn_params->known( names::weight );
+  default_weight_[ synapse_indx ] = not syn_params->known( names::weight );
 
-  default_delay_[ indx ] = not syn_params->known( names::delay );
+  default_delay_[ synapse_indx ] = not syn_params->known( names::delay );
 
   // If neither weight nor delay are given in the dict, we handle this separately. Important for
   // hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
   // _all_ types of synapses.
-  default_weight_and_delay_[ indx ] = ( default_weight_[ indx ] and default_delay_[ indx ] );
+  default_weight_and_delay_[ synapse_indx ] = ( default_weight_[ synapse_indx ] and default_delay_[ synapse_indx ] );
 
-  if ( not default_weight_and_delay_[ indx ] )
+  if ( not default_weight_and_delay_[ synapse_indx ] )
   {
-    weights_[ indx ] = syn_params->known( names::weight )
+    weights_[ synapse_indx ] = syn_params->known( names::weight )
       ? ConnParameter::create( ( *syn_params )[ names::weight ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
-    register_parameters_requiring_skipping_( *weights_[ indx ] );
+    register_parameters_requiring_skipping_( *weights_[ synapse_indx ] );
 
-    delays_[ indx ] = syn_params->known( names::delay )
+    delays_[ synapse_indx ] = syn_params->known( names::delay )
       ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
-  else if ( default_weight_[ indx ] )
+  else if ( default_weight_[ synapse_indx ] )
   {
-    delays_[ indx ] = syn_params->known( names::delay )
+    delays_[ synapse_indx ] = syn_params->known( names::delay )
       ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
-  register_parameters_requiring_skipping_( *delays_[ indx ] );
+  register_parameters_requiring_skipping_( *delays_[ synapse_indx ] );
 }
 
 void
-nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx )
+nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t synapse_indx )
 {
   for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
   {
@@ -506,30 +508,27 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 
     if ( syn_params->known( param_name ) )
     {
-      synapse_params_[ indx ][ param_name ] =
+      synapse_params_[ synapse_indx ][ param_name ] =
         ConnParameter::create( ( *syn_params )[ param_name ], kernel().vp_manager.get_num_threads() );
-      register_parameters_requiring_skipping_( *synapse_params_[ indx ][ param_name ] );
+      register_parameters_requiring_skipping_( *synapse_params_[ synapse_indx ][ param_name ] );
     }
   }
 
   // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
-  if ( synapse_params_[ indx ].size() > 0 )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-      param_dicts_[ indx ].push_back( new Dictionary() );
+    param_dicts_[ synapse_indx ].push_back( new Dictionary() );
 
-      for ( auto param : synapse_params_[ indx ] )
+    for ( auto param : synapse_params_[ synapse_indx ] )
+    {
+      if ( param.second->provides_long() )
       {
-        if ( param.second->provides_long() )
-        {
-          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
-        }
-        else
-        {
-          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
-        }
+        ( *param_dicts_[ synapse_indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
+      }
+      else
+      {
+        ( *param_dicts_[ synapse_indx ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
       }
     }
   }

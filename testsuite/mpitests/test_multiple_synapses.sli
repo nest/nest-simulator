@@ -48,6 +48,13 @@
 /num_trgt 4 def
 /num_conns 4 def % we use one_to_one
 
+% to reduce data to be transported, reduce every value to max three chars
+/:compact_form
+{
+  { cvs dup length 3 gt { 3 Take } if } Map
+}
+def
+
 [1 2 4]
 {
   /src /iaf_psc_alpha num_src Create def
@@ -75,7 +82,7 @@
       sm append /weight_delay_syn Set
   } forall
   
-  weight_delay_syn
+  weight_delay_syn :compact_form
 }
 {  
   /results Set
@@ -117,6 +124,6 @@
   } forall
   
   % Check that the cumulative result list contains all variables we expect.
-  cumulative_res_list reference_list eq
+  cumulative_res_list reference_list :compact_form eq
 }
 distributed_collect_assert_or_die

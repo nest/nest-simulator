@@ -39,9 +39,6 @@ from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
 __all__ = [
-    'CGConnect',
-    'CGParse',
-    'CGSelectImplementation',
     'Connect',
     'Disconnect',
     'GetConnections',
@@ -225,6 +222,12 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
             raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
                              "be specified and contain at least the synapse model.")
 
+        # In case of misspelling
+        if "weights" in processed_syn_spec:
+            raise ValueError("To specify weights, use 'weight' in syn_spec.")
+        if "delays" in processed_syn_spec:
+            raise ValueError("To specify delays, use 'delay' in syn_spec.")
+
         weights = numpy.array(processed_syn_spec['weight']) if 'weight' in processed_syn_spec else None
         delays = numpy.array(processed_syn_spec['delay']) if 'delay' in processed_syn_spec else None
 
@@ -283,115 +286,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     if return_synapsecollection:
         return GetConnections(pre, post)
-
-
-@check_stack
-def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
-    """Connect neurons using the Connection Generator Interface.
-
-    Potential pre-synaptic neurons are taken from `pre`, potential
-    postsynaptic neurons are taken from `post`. The connection
-    generator `cg` specifies the exact connectivity to be set up. The
-    `parameter_map` can either be None or a dictionary that maps the
-    keys `weight` and `delay` to their integer indices in the value
-    set of the connection generator.
-
-    This function is only available if NEST was compiled with
-    support for libneurosim.
-
-    For further information, see
-
-    * The NEST documentation on using the CG Interface at
-      https://www.nest-simulator.org/connection-generator-interface
-    * The GitHub repository and documentation for libneurosim at
-      https://github.com/INCF/libneurosim/
-    * The publication about the Connection Generator Interface at
-      https://doi.org/10.3389/fninf.2014.00043
-
-    Parameters
-    ----------
-    pre : NodeCollection
-        node IDs of presynaptic nodes
-    post : NodeCollection
-        node IDs of postsynaptic nodes
-    cg : connection generator
-        libneurosim connection generator to use
-    parameter_map : dict, optional
-        Maps names of values such as weight and delay to
-        value set positions
-    model : str, optional
-        Synapse model to use
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    sr("statusdict/have_libneurosim ::")
-    if not spp():
-        raise kernel.NESTError("NEST was not compiled with support for libneurosim: CGConnect is not available.")
-
-    if parameter_map is None:
-        parameter_map = {}
-
-    sli_func('CGConnect', cg, pre, post, parameter_map, '/' + model,
-             litconv=True)
-
-
-@check_stack
-def CGParse(xml_filename):
-    """Parse an XML file and return the corresponding connection
-    generator cg.
-
-    The library to provide the parsing can be selected
-    by :py:func:`.CGSelectImplementation`.
-
-    Parameters
-    ----------
-    xml_filename : str
-        Filename of the xml file to parse.
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    sr("statusdict/have_libneurosim ::")
-    if not spp():
-        raise kernel.NESTError("NEST was not compiled with support for libneurosim: CGParse is not available.")
-
-    sps(xml_filename)
-    sr("CGParse")
-    return spp()
-
-
-@check_stack
-def CGSelectImplementation(tag, library):
-    """Select a library to provide a parser for XML files and associate
-    an XML tag with the library.
-
-    XML files can be read by :py:func:`.CGParse`.
-
-    Parameters
-    ----------
-    tag : str
-        XML tag to associate with the library
-    library : str
-        Library to use to parse XML files
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    sr("statusdict/have_libneurosim ::")
-    if not spp():
-        raise kernel.NESTError(
-            "NEST was not compiled with support for libneurosim: CGSelectImplementation is not available.")
-
-    sps(tag)
-    sps(library)
-    sr("CGSelectImplementation")
 
 
 @check_stack

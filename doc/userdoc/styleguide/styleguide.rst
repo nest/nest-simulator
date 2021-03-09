@@ -152,6 +152,9 @@ In the PyNEST code, we follow the rules for NumPy style docstrings as
 A brief look into reStructuredText markup
 ------------------------------------------
 
+Let us take a brief look into the markup of reStructuredText. You can find the full CheatSheet
+`here <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_.
+
 .. note::
 
    reStructuredText is sensitive to indentation. A single newline should always be between any text and headings,

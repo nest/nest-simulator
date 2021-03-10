@@ -18,18 +18,8 @@ NEST 3.0 provides a more intuitive experience with simplified yet versatile hand
 
 ----
 
-This will :hoverxref:`show a tooltip <hoverxref:hoverxref>` in the linked words to ``hoverxref``.
 
-This will :hoverxref:`show a floating window <hoverxref>` in the linked words.
-
-.. _my-reference-label:
-
-Section to cross-reference
---------------------------
-
-This is the text of the section.
-
-It refers to the section itself, see :ref:`my-reference-label`.
+In the current implementation of :hxt_ref:`aeif`, :hxt_ref:`tau_m` is not specified explicitly. Instead, :hxt_ref:`tau_m` can be calculated by dividing :hxt_ref:`C_m` by :hxt_ref:`g_L`.
 
 ----
 

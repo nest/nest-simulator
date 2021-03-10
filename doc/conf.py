@@ -54,6 +54,7 @@ sys.path.insert(0, os.path.abspath(root_path + '/pynest/'))
 sys.path.insert(0, os.path.abspath(root_path + '/pynest/nest'))
 sys.path.insert(0, os.path.abspath(doc_path))
 
+sys.path.append(os.path.abspath("./_ext"))
 
 # -- Mock pynestkernel ----------------------------------------------------
 # The mock_kernel has to be imported after setting the correct sys paths.
@@ -94,43 +95,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'breathe',
     'sphinx_tabs.tabs',
-    'hoverxref.extension'
+    'HoverXTooltip'
 ]
-
-hoverxref_project = 'nest-simulator-glossary'
-hoverxref_version = 'latest'
-hoverxref_api_host = 'http://localhost:8080'
-
-if os.environ.get('READTHEDOCS') == 'True':
-    # Building on Read the Docs
-    hoverxref_api_host = 'https://readthedocs.org'
-
-    if os.environ.get('PROXIED_API_ENDPOINT') == 'True':
-        # Use the proxied API endpoint
-        hoverxref_api_host = '/_'
-
-if os.environ.get('LOCAL_READTHEDOCS') == 'True':
-    # Building on a local Read the Docs instance
-    hoverxref_api_host = 'http://community.dev.readthedocs.io'
-
-hoverxref_tooltip_maxwidth = 650
-hoverxref_auto_ref = True
-hoverxref_roles = [
-    'confval',
-]
-
-hoverxref_role_types = {
-    'hoverxref': 'tooltip',
-    'ref': 'modal',
-    'confval': 'tooltip',
-    'mod': 'modal',
-    'class': 'modal',
-}
-hoverxref_domains = [
-    'py',
-]
-hoverxref_sphinxtabs = True
-hoverxref_mathjax = True
 
 
 breathe_projects = {"EXTRACT_MODELS": "./xml/"}

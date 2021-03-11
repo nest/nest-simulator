@@ -516,4 +516,4 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
 }
 } // of namespace nest
 
-#endif // of #ifndef STDP_SYNAPSE_HOM_H
+#endif // of #ifndef STDP_SYNAPSE_FACETSHW_HOM_H

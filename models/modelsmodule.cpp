@@ -109,6 +109,7 @@
 #include "correlomatrix_detector.h"
 #include "correlospinmatrix_detector.h"
 #include "multimeter.h"
+#include "spike_dilutor.h"
 #include "spike_recorder.h"
 #include "spin_detector.h"
 #include "volume_transmitter.h"
@@ -128,7 +129,6 @@
 #include "quantal_stp_synapse_impl.h"
 #include "rate_connection_delayed.h"
 #include "rate_connection_instantaneous.h"
-#include "spike_dilutor.h"
 #include "static_synapse.h"
 #include "static_synapse_hom_w.h"
 #include "stdp_synapse.h"
@@ -306,7 +306,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< music_rate_out_proxy >( "music_rate_out_proxy" );
 #endif
 
-  // register all connection models
+  // register all synapse models
   register_connection_model< bernoulli_synapse >( "bernoulli_synapse" );
   register_connection_model< clopath_synapse >(
     "clopath_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING );

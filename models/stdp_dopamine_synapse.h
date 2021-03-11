@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STDP_DOPA_SYNAPSE_H
-#define STDP_DOPA_SYNAPSE_H
+#ifndef STDP_DOPAMINE_SYNAPSE_H
+#define STDP_DOPAMINE_SYNAPSE_H
 
 // Includes from libnestutil:
 #include "numerics.h"
@@ -614,4 +614,4 @@ stdp_dopamine_synapse< targetidentifierT >::trigger_update_weight( thread t,
 
 } // of namespace nest
 
-#endif // of #ifndef STDP_DOPA_SYNAPSE_H
+#endif // of #ifndef STDP_DOPAMINE_SYNAPSE_H

@@ -286,12 +286,8 @@ private:
 
   std::vector< Model* > node_models_; //!< List of available models
 
-
   /**
-   * The list of clean synapse models. The first component of the pair is a
-   * pointer to the actual Model, the second is a flag indicating if
-   * the model is private. Private models are not entered into the
-   * modeldict.
+   * The list of clean synapse models.
    */
   std::vector< ConnectorModel* > builtin_connection_models_;
 

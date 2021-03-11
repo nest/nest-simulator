@@ -39,15 +39,17 @@ M_ERROR setverbosity
 
 /num_procs is_threaded { 4 } { 1 } ifelse def
 
+/base_seed 100 def
+/pseed base_seed [ 1 num_procs ] add Range def
+/gseed pseed [-1] Take 1 add def
+
 % test 1: automatic re-seeding works
 {
-  /base_seed 100 def
-  /pseed base_seed [ 1 num_procs ] add Range def
-  /gseed pseed [-1] Take 1 add def
+  ResetKernel
 
   << /total_num_virtual_procs num_procs >> SetKernelStatus
 
-  GetKernelStatus /rng_seeds get [ num_procs ] Range eq 
+  GetKernelStatus /rng_seeds get [ num_procs ] Range eq
   GetKernelStatus /grng_seed get 0 eq
   and
 } assert_or_die
@@ -56,17 +58,16 @@ M_ERROR setverbosity
 
 % test 2: change proc number first, then re-seed
 {
-  /base_seed 100 def
-  /pseed base_seed [ 1 num_procs ] add Range def
-  /gseed pseed [-1] Take 1 add def
+  ResetKernel
 
-  << /total_num_virtual_procs num_procs >> SetKernelStatus
-  << /rng_seeds pseed 
-     /grng_seed gseed 
-  >>
-  SetKernelStatus
+  << /total_num_virtual_procs num_procs
+  >> SetKernelStatus
 
-  GetKernelStatus /rng_seeds get pseed eq 
+  << /rng_seeds pseed
+     /grng_seed gseed
+  >> SetKernelStatus
+
+  GetKernelStatus /rng_seeds get pseed eq
   GetKernelStatus /grng_seed get gseed eq
   and
 } assert_or_die
@@ -75,17 +76,14 @@ M_ERROR setverbosity
 
 % test 3: set proc number and reseed simultaneously
 {
-  /base_seed 100 def
-  /pseed base_seed [ 1 num_procs ] add Range def
-  /gseed pseed [-1] Take 1 add def
+  ResetKernel
 
-  << /total_num_virtual_procs num_procs 
-       /rng_seeds pseed 
-       /grng_seed gseed 
-  >>
-  SetKernelStatus
+  << /total_num_virtual_procs num_procs
+     /rng_seeds pseed
+     /grng_seed gseed
+  >> SetKernelStatus
 
-  GetKernelStatus /rng_seeds get pseed eq 
+  GetKernelStatus /rng_seeds get pseed eq
   GetKernelStatus /grng_seed get gseed eq
   and
 
@@ -95,16 +93,13 @@ M_ERROR setverbosity
 
 % test 4: seed only grng explicitly
 {
-  /base_seed 100 def
-  /pseed base_seed [ 1 num_procs ] add Range def
-  /gseed pseed [-1] Take 1 add def
+  ResetKernel
 
-  << /total_num_virtual_procs num_procs 
-       /grng_seed gseed 
-  >>
-  SetKernelStatus
+  << /total_num_virtual_procs num_procs
+     /grng_seed gseed
+  >> SetKernelStatus
 
-  GetKernelStatus /rng_seeds get [ num_procs ] Range eq 
+  GetKernelStatus /rng_seeds get [ num_procs ] Range eq
   GetKernelStatus /grng_seed get gseed eq
   and
 
@@ -114,17 +109,14 @@ M_ERROR setverbosity
 
 % test 5: set number of threads, not total number of virtual procs
 {
-  /base_seed 100 def
-  /pseed base_seed [ 1 num_procs ] add Range def
-  /gseed pseed [-1] Take 1 add def
+  ResetKernel
 
-  << /local_num_threads num_procs 
-       /rng_seeds pseed 
-       /grng_seed gseed 
-  >>
-  SetKernelStatus
+  << /local_num_threads num_procs
+     /rng_seeds pseed
+     /grng_seed gseed
+  >> SetKernelStatus
 
-  GetKernelStatus /rng_seeds get pseed eq 
+  GetKernelStatus /rng_seeds get pseed eq
   GetKernelStatus /grng_seed get gseed eq
   and
 

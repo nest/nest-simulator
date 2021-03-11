@@ -277,23 +277,35 @@ private:
   static bool compare_model_by_id_( const int a, const int b );
 
   /**
-   * The list of clean node models. The first component of the pair is a
-   * pointer to the actual Model, the second is a flag indicating if
-   * the model is private. Private models are not entered into the
-   * modeldict.
+   * List of clean built-in node models. The first component of the
+   * pair is a pointer to the actual Model, the second is a flag
+   * indicating if the model is private. Private models are not
+   * entered into the modeldict.
    */
   std::vector< std::pair< Model*, bool > > builtin_node_models_;
 
-  std::vector< Model* > node_models_; //!< List of available models
+  /**
+   * List of usable node models. This list is cleared and repopulated
+   * upon application startup and calls to ResetKernel. It contains
+   * copies of the built-in models, models registered from extension
+   * modules, and models created by calls to CopyModel(). The elements
+   * of this list also keep the user-modified defaults.
+   */
+  std::vector< Model* > node_models_;
 
   /**
-   * The list of clean synapse models.
+   * List of built-in clean connection models.
    */
   std::vector< ConnectorModel* > builtin_connection_models_;
 
   /**
-   * The list of available synapse prototypes: first dimension one
-   * entry per thread, second dimension for each synapse type
+   * The list of usable connection models. The first dimension keeps
+   * one entry per thread, the second dimension has the actual models.
+   * This list is cleared and repopulated upon application startup and
+   * calls to ResetKernel. The inner list contains copies of the
+   * built-in models, models registered from extension modules, and
+   * models created by calls to CopyModel(). The elements of the list
+   * also keep the user-modified defaults.
    */
   std::vector< std::vector< ConnectorModel* > > connection_models_;
 
@@ -301,7 +313,6 @@ private:
    * prototypes of events
    */
   std::vector< Event* > event_prototypes_;
-
   std::vector< ConnectorModel* > secondary_connector_models_;
   std::vector< std::map< synindex, SecondaryEvent* > > secondary_events_prototypes_;
 

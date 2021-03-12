@@ -4,8 +4,8 @@ The NEST documentation style guide
 .. contents::
   :local:
 
-Why do we have a styleguide?
-----------------------------
+Why do we have a style guide?
+-----------------------------
 
 This style guide was created to provide a single reference point for content
 creation in NEST. This helps ensure the NEST user-level documentation remains
@@ -20,7 +20,7 @@ Writing documentation: a few tips
 
 - Be concise - Use short words and sentences; avoid unnecessary modifiers
 
-- Be consistent - Follow this styleguide and relevant templates
+- Be consistent - Follow this style guide and relevant templates
 
 - Be specific - Avoid vague language; clarity is key
 

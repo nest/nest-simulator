@@ -395,6 +395,18 @@ function( NEST_PROCESS_WITH_PYTHON )
     find_package( Python 3.8 REQUIRED Interpreter Development )
 
     if ( Python_FOUND )
+      if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+        execute_process( COMMAND "${Python_EXECUTABLE}" "-c"
+          "import sys, os; print(int(bool(os.environ.get('CONDA_DEFAULT_ENV', False)) or (sys.prefix != sys.base_prefix)))"
+          OUTPUT_VARIABLE Python_InVirtualEnv
+          OUTPUT_STRIP_TRAILING_WHITESPACE )
+        if ( NOT Python_InVirtualEnv AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+          message( FATAL_ERROR "Can't target system Python installations without a CMAKE_INSTALL_PREFIX. Please install NEST only to virtual environments or specify CMAKE_INSTALL_PREFIX.")
+        endif()
+        set ( Python_EnvRoot "${Python_SITELIB}/../../..")
+        set ( CMAKE_INSTALL_PREFIX "${Python_EnvRoot}" CACHE PATH "Default install prefix for the active Python interpreter" FORCE )
+      endif ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+
       set( HAVE_PYTHON ON PARENT_SCOPE )
 
       # export found variables to parent scope

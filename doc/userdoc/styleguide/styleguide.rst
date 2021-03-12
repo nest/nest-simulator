@@ -106,9 +106,10 @@ Double or single quotes should not be used as an emphasis marker for text.
 Use the double back tick for:
 
 
+  - inline code
   - objects/functions
   - model names
-  - important vocabulary
+  - NEST-specific vocabulary
   - function call (e.g., ``nest.Create("iaf_psc_alpha")`` or  (``Create`` )
   - Paths (e.g, You can find the models in ``nest-simulator/pynest/examples``)
   - Key value pairs (``{key: value}``)

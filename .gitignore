@@ -1,6 +1,7 @@
 
 __pycache__/
 build/
+_build/
 install/
 reports/
 
@@ -47,9 +48,18 @@ doc/pynestkernel_mock.py
 examples/microcircuit.png
 examples/reference_data/
 
+# macOS
+.DS_Store
+
 # IDEs / editors / Jupyter
 *.kdev4
 .ipynb_checkpoints/
 TAGS
 tags
 cscope.out
+.vscode/
+.idea/
+.settings/
+.project
+.cproject
+.pydevproject

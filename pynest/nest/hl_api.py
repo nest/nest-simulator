@@ -66,6 +66,7 @@ __all__ = [
     'GetDefaults',
     'GetKernelStatus',
     'GetLocalNodeCollection',
+    'GetLocalVPs',
     'GetNodes',
     'GetPosition',
     'GetStatus',

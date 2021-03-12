@@ -51,34 +51,27 @@ Device to forward rates to remote applications using MUSIC
 Description
 +++++++++++
 
-A music_rate_out_proxy is used to send rates to a remote application that
+A `music_rate_out_proxy` is used to send rates to a remote application that
 also uses MUSIC.
 
-The music_rate_out_proxy represents a complete MUSIC rate output
+The `music_rate_out_proxy` represents a complete MUSIC rate output
 port. The channel on the port to which a source node forwards its
 events is determined during connection setup by using the parameter
-music_channel of the connection. The name of the port is set via
-SetStatus (see Parameters section below).
+`music_channel` of the connection. The name of the port is set via
+``SetStatus`` (see Parameters section below).
 
 Parameters
 ++++++++++
 
 The following properties are available in the status dictionary:
 
-port_name      - The name of the MUSIC output_port to forward events to
-                 (default: rate_out)
-port_width     - The width of the MUSIC input port
-published      - A bool indicating if the port has been already published
-                 with MUSIC
+port_name    - The name of the MUSIC output_port to forward events to (default: `rate_out`)
 
-The parameter port_name can be set using SetStatus.
+port_width   - The width of the MUSIC input port
 
-Examples
-++++++++
+published    - A bool indicating if the port has been already published with MUSIC
 
-/iaf_psc_alpha Create /n Set
-/music_rate_out_proxy Create /meop Set
-n meop << /music_channel 2 >> Connect
+The parameter port_name can be set using ``SetStatus``.
 
 Availability: Only when compiled with MUSIC
 

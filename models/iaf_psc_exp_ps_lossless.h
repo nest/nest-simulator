@@ -67,6 +67,15 @@ backwards in time, and see whether it meets the initial state, rather
 than propagating the initial state forward in time and see whether it
 meets the threshold.
 
+.. note::
+
+  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+  `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+  For implementation details see the
+  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+
 Parameters
 ++++++++++
 

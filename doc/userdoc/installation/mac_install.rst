@@ -1,95 +1,120 @@
-Manual Installation on macOS
-===============================
+Building NEST on macOS
+======================
 
-If you want to use PyNEST, you need to have a version of Python with some science packages installed, see the `section Python on Mac <python-on-mac>`_ for details.
+Building NEST on macOS requires some developer tools. There are several sources from
+which you can install them, e.g., Conda, Homebrew, or MacPorts. The most important
+recommendation for an easy and stable build is *not to mix tools from different sources*.
+This includes your Python installation: Taking Python from Conda and all else from Homebrew
+may work, but can also lead to various complications.
 
-The clang/clang++ compiler that ships with OS X/macOS does not support OpenMP threads and creates code that fails some tests. You therefore need to use **GCC** to compile NEST under OS X/macOS.
+This guide shows how to build NEST with a development environment created with Conda. The main
+advantage of Conda is that you can fully insulate the entire environment in a Conda environment.
+If you want to base your setup on Homebrew or MacPorts, you can still use the ``extras/conda-env-nest-simulator.yml``
+file as a guide to necessary packages.
 
-Installation instructions here have been tested under macOS 10.14 *Mojave* with `Anaconda Python 3 <https://www.continuum.io/anaconda-overview>`_ and all other dependencies installed via `Homebrew <http://brew.sh>`_. They should also work with earlier versions of macOS.
+Preparations
+------------
 
-#.  Install Xcode from the AppStore.
+1. Install the Xcode command line tools by executing the following line in the terminal and 
+   following the instructions in the windows that will pop up:
 
-#.  Install the Xcode command line tools by executing the following line in the terminal and following the instructions in the windows that will pop up:
+   .. code-block:: sh
 
- .. code-block:: sh
+      xcode-select --install
 
-        xcode-select --install
+#. Create a conda environment with necessary tools (see also :doc:`conda_tips`)
 
-#.  Install dependencies via Homebrew:
+   .. code:: sh
 
- .. code-block:: sh
+      conda env create -f extras/conda-environment-nest-simulator.yml
 
-       brew install gcc cmake gsl open-mpi libtool
+   .. note::
 
-#.  Create a directory for building and installing NEST (you should always build NEST outside the source code directory; installing NEST in a "place of its own" makes it easy to remove NEST later).
+      To build NEST natively on a Mac with Apple's M1 chip, you need to use Miniforge as 
+      described in :doc:`conda_tips`.
 
-#.  Extract the NEST tarball as a subdirectory in that directory or clone NEST from GitHub into a subdirectory:
+#. Activate the environment with
 
- .. code-block:: sh
+   .. code:: sh
+   
+      conda acvitate nest-simulator
+      
+   This assumes that you have created the environment with its default name ``nest-simulator``.
 
-        mkdir NEST       # directory for all NEST stuff
-        cd NEST
-        tar zxf nest-simulator-x.y.z.tar.gz
-        mkdir bld
-        cd bld
+#. If you want to build NEST with MPI, you must digitally sign the ``orterun`` and ``orted`` binaries
 
-#.  Configure and build NEST inside the build directory (replacing `gcc-9` and `g++-9` with the GCC  compiler versions you installed with `brew`):
+   a. If you do not yet have a self-signed code-signing certificate, create one as described here:
+      `<https://gcc.gnu.org/onlinedocs/gcc-4.8.1/gnat_ugn_unw/Codesigning-the-Debugger.html>`__
+      (restarting does not appear to be necessary any more).
+   b. Sign your binaries
 
- .. code-block:: sh
+      .. code:: sh
 
-        cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
-              -DCMAKE_C_COMPILER=gcc-9 \
-              -DCMAKE_CXX_COMPILER=g++-9 \
-              </path/to/NEST/src>
+         codesign -f -s "gdb-cert" `which orted`
+         codesign -f -s "gdb-cert" `which orterun`
 
- .. code-block:: sh
+      Instead of the ``which`` command you can also give the full path to the binary inside your conda
+      environment.
+      
+      .. note::
+      
+         You will need to sign the binaries every time you update the OpenMPI package in your environment.
 
-        make -j4         # -j4 builds in parallel using 4 processes
-        make install
-        make installcheck
 
-To compile NEST with MPI support, add ``-Dwith-mpi=ON`` as ``cmake`` option.
+Building NEST
+-------------
+
+1. Download or clone the NEST sources from `<https://github.com/nest/nest-simulator>`__.
+
+#. Create a build directory outside the NEST sources and change into it.
+
+#. Configure NEST by running
+
+   .. code-block:: sh
+
+      cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_source_dir>
+
+   If you have libraries required by NEST such as GSL installed with Homebrew and Conda, this
+   can lead to library conflicts (error messages like ``Initializing libomp.dylib, but found
+   libomp.dylib already initialized.``). To ensure that libraries are found first in your conda
+   environment, invoke ``cmake`` like this
+
+   .. code-block:: sh
+
+      CMAKE_PREFIX_PATH=<conda_env_dir> cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_install_dir>
+
+   You can find the ``<conda_env_dir>`` for the currently active conda environment by running
+   ``conda info`` and looking for the "active env location" entry in the output.
+
+#. Compile, install, and verify NEST with
+
+   .. code-block:: sh
+
+      make -j4         # -j4 builds in parallel using 4 processes
+      make install
+      make installcheck
+
+   To compile NEST with :ref:`MPI support <distributed-computing>`, add ``-Dwith-mpi=ON`` as ``cmake`` option.
+   For further CMake options, see :doc:`cmake_options`.
+
+#. To run NEST, configure your environment with
+
+   .. code-block:: sh
+
+      source <nest_install_dir>/bin/nest_vars.sh
+
 
 Troubleshooting
-.................
+---------------
 
-If compiling NEST as described above fails with an error message like
+Conda with Intel MKL
+~~~~~~~~~~~~~~~~~~~~
 
- .. code-block:: sh
-
-        In file included from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/wait.h:110,
-                         from /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/stdlib.h:66,
-                         from /usr/local/Cellar/gcc/9.2.0/include/c++/9.2.0/cstdlib:75,
-                         from /usr/local/Cellar/gcc/9.2.0/include/c++/9.2.0/bits/stl_algo.h:59,
-                         from /usr/local/Cellar/gcc/9.2.0/include/c++/9.2.0/algorithm:62,
-                         from /Users/plesser/NEST/code/src/sli/dictutils.h:27,
-                         from /Users/plesser/NEST/code/src/sli/dictutils.cc:23:
-        /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/resource.h:443:34: error: expected initializer before '__OSX_AVAILABLE_STARTING'
-          443 | int     getiopolicy_np(int, int) __OSX_AVAILABLE_STARTING(__MAC_10_5, __IPHONE_2_0);
-              |                                  ^~~~~~~~~~~~~~~~~~~~~~~~
-
- you most likely have installed a version of XCode prepared for the next version of macOS. You can attempt to fix this by running
-
-  .. code-block:: sh
-
-          sudo xcode-select -s /Library/Developer/CommandLineTools/
-
-If this does not help, you can reset to the default XCode path using
-
-  .. code-block:: sh
-
-          sudo xcode-select -r
-
-
-
-
-Python on Mac
---------------
-
-The version of Python shipping with OS X/macOS is rather dated and does not include key packages such as NumPy. Therefore, you need to install Python via a channel that provides scientific packages.
-
-One well-tested source is the `Anaconda <https://www.continuum.io/anaconda-overview>`_ Python 3 distribution. If you do not want to install the full Anaconda distribution, you can also install `Miniconda <http://conda.pydata.org/miniconda.html>`_ and only install the packages needed by NEST by running::
-
-        conda install numpy scipy matplotlib ipython cython nose
-
-Alternatively, you should be able to install the necessary Python packages via Homebrew, but this has not been tested.
+A default installation of Anaconda or Miniconda will install a version of NumPy
+built on the Intel Math Kernel Library (MKL). This library uses a different OpenMP
+library to support threading than what's included with Apple Clang or GCC. This will lead
+to conflicts if NEST is built with support for threading, which is the default and
+usually desirable. One way to avoid this is to follow the instructions above. An
+alternative is to create a conda environment in which you install ``nomkl`` as *the
+very first package*. This will tell conda to install MKL-free versions of NumPy and
+other linear-algebra intensive packages.

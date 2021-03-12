@@ -369,8 +369,8 @@ Please ensure your reference follows the following guidelines:
  .. [2] Sander M., et al (2011). Biology of the sauropod dinosaurs: the evolution
         of gigantism. Biological Reviews. 86(1):117-155. https://doi.org/10.1111/j.1469-185X.2010.00137.x
 
-How we write . . .
-------------------
+How we write
+------------
 
 Headings and subheadings
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -379,7 +379,7 @@ Headings and subheadings should describe the purpose of the section.
 
 Begin with a descriptive verb or begin with `How to ...`
 
-Heading should explain the section in a short phrase.
+Headings should explain the section in a short phrase.
 
 Use the verb stem and not the gerund ('ing') form of verbs. Not 'Adding a model', but  'Add a model'.
 
@@ -387,10 +387,8 @@ Avoid section names like `Introduction` or `Part 1`.
 
 One word subheadings are fine, if section is short and the meaning is clear.
 
-Headings and subheadings should always begin with an uppercase letter but all other words
-should be lower case (except proper nouns).
-
-
+Use sentence case for headings and subheadings, i.e., begin with an uppercase
+letter but with all other words in lower case (except proper nouns).
 
 
 +-----------------------------------+----------------+

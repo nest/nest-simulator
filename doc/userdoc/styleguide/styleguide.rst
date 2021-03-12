@@ -7,8 +7,9 @@ The NEST documentation style guide
 Why do we have a styleguide?
 ----------------------------
 
-This style guide was created to provide a single reference point for content creation in NEST. This helps ensure
-the NEST user-level documentation remains clear and consistent. The style choices we make here are meant to follow the
+This style guide was created to provide a single reference point for content
+creation in NEST. This helps ensure the NEST user-level documentation remains
+clear and consistent. The style choices we make here are meant to follow the
 major trends in technical writing for software.
 
 General guidelines about writing for NEST
@@ -23,14 +24,18 @@ Writing documentation: a few tips
 
 - Be specific - Avoid vague language; clarity is key
 
-- Focus your message - Start with what's most important, and keep text relevant within given section
+- Focus your message - Start with what's most important, and keep text relevant
+  within given section
 
-- Write for your reader - Try to understand what your reader needs to know; include context to what you're saying
+- Write for your reader - Try to understand what your reader needs to know;
+  include context to what you're saying
 
-- Provide examples - Show don't tell; if you can use code snippets, screenshots, or figures to illustrate a point, do so!
+- Provide examples - Show don't tell; if you can use code snippets, screenshots,
+  or figures to illustrate a point, do so!
 
-- Avoid terms like simply, just, or easy - your knowledge does not always equal your readers.  Don't make your reader feel bad because they -simply-
-  didn't understand something.
+- Avoid terms like simply, just, or easy - your knowledge does not always equal
+  your readers.  Don't make your reader feel bad because they -simply- didn't
+  understand something.
 
 - Write positively -  Use positive language rather than negative language
 
@@ -40,50 +45,60 @@ information to NEST users who are looking for it.
 Voice
 ~~~~~~
 
-Voice is *how* we talk to people through writing. The voice encompasses substance, style, and tone.
+Voice is *how* we talk to people through writing. The voice encompasses
+substance, style, and tone.
 
 Our voice is
 
-- empathetic - we write thinking of who we are writing for and what their needs are
-- relaxed - we write in natural, conversational way rather than an authoritative way
+- empathetic - we write thinking of who we are writing for and what their needs
+  are
+- relaxed - we write in natural, conversational way rather than an authoritative
+  way
 
-Use 'you' to indicate the reader and 'we' to indicate yourself (the writer and possibly the NEST team).
+Use 'you' to indicate the reader and 'we' to indicate yourself (the writer and
+possibly the NEST team).
 
 The language we use
 ~~~~~~~~~~~~~~~~~~~
 
 We follow spelling and grammar rules of American English.
 
-The markup language we use is reStructuredText. This includes documentation blocks in files written in Python and cpp.
+The markup language we use is reStructuredText. This includes documentation
+blocks in files written in Python and cpp.
 
-We write in plain (global) English, and avoid slang or jargon that is unnecessary.
+We write in plain (global) English, and avoid slang or jargon that is
+unnecessary.
 
-We do, however, use terminology appropriate to NEST and neuroscience when specific and exact terms are needed, which is often. But explanations or references
-should be provided for clarity in introductory texts.
+We do, however, use terminology appropriate to NEST and neuroscience when
+specific and exact terms are needed, which is often. But explanations or
+references should be provided for clarity in introductory texts.
 
-If you have further questions about style not addressed here, see ?Microsoft style guide?
+If you have further questions about style not addressed here, see ?Microsoft
+style guide?
 
 Active voice
 ~~~~~~~~~~~~
 
 Prefer the active voice, where the subject acts on object.
 
-If the object needs emphasis rather than subject, use passive voice. But ensure that you cannot improve the sentence
+If the object needs emphasis rather than subject, use passive voice. But ensure
+that you cannot improve the sentence
 by using the active voice.
 
 
 Types of formatting
 -------------------
 
-We use specific formatting marks to help readers scan through and find what they need, as well
-as provide references to important terms.
+We use specific formatting marks to help readers scan through and find what
+they need, as well as provide references to important terms.
 
 
 Underlines for headings
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-ReStructuredtext uses several types of underline markers for headings. It's important that the length of the
-underline is at least as long as the words in the heading.
+ReStructuredtext uses several types of underline markers for headings. It's
+important that the length of the underline is at least as long as the words
+in the heading.
 
 In general, we try to follow the pattern of
 
@@ -95,7 +110,8 @@ In general, we try to follow the pattern of
 "Double quotes"
 ~~~~~~~~~~~~~~~
 
-We use double quotes for strings in code, for example (nest.Create("iaf_psc_alpha")).
+We use double quotes for strings in code, for example
+(nest.Create("iaf_psc_alpha")).
 
 Double or single quotes should not be used as an emphasis marker for text.
 
@@ -126,19 +142,22 @@ Use single backticks for
 - Variable names
 - Values
 
-but use double backticks when showing a complete example of variable with assigned value (e.g., \``volt = 37.0``
+but use double backticks when showing a complete example of variable with
+assigned value (e.g., \``volt = 37.0``
 
 An example:
 
 ::
 
-   Here we use the ``Create`` function to instantiate our model, in this case ``iaf_psc_alpha``. We can modify
+   Here we use the ``Create`` function to instantiate our model, in this case
+``iaf_psc_alpha``. We can modify
    the parameter `V_m` and set the value to `50.0`.
 
 Rendered as
 
 
- Here we use the ``Create`` function to instantiate our model, in this case ``iaf_psc_alpha``. We can modify
+ Here we use the ``Create`` function to instantiate our model, in this case
+``iaf_psc_alpha``. We can modify
  the parameters `V_m` and set the value to `50.0`.
 
 \**Boldface\**
@@ -156,13 +175,13 @@ In the PyNEST code, we follow the rules for NumPy style docstrings as
 reStructuredText markup
 -----------------------
 
-Let us take a brief look into the markup of reStructuredText. You can find the full CheatSheet
-`here <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_.
+Let us take a brief look into the markup of reStructuredText. You can find
+the full CheatSheet `here <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_.
 
 .. note::
 
-   reStructuredText is sensitive to indentation. A single newline should always be between any text and headings,
-   tables, reference labels, or directives.
+   reStructuredText is sensitive to indentation. A single newline should always
+   be between any text and headings, tables, reference labels, or directives.
    If the output format seems incorrect, double check the spaces and newlines of the text.
 
 Code and code snippets
@@ -185,7 +204,8 @@ Rendered as
            x = i
            print(thing.x)
 
-For other code styles use the code-block directive (you can also use this one for python)
+For other code styles use the code-block directive (you can also use this one
+for python)
 
 
 
@@ -213,8 +233,10 @@ For input/output examples use the following syntax
 Directives
 ~~~~~~~~~~~
 
-This is not a complete guide to the directives of reStructuredText. For more options see `Sphinx directives <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html>`_
-or `Docutils section on directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_.
+This is not a complete guide to the directives of reStructuredText. For more
+options see `Sphinx directives <https://www.sphinx-doc.org/en/master/usage/
+restructuredtext/directives.html>`_ or `Docutils section on directives
+<http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_.
 
 Equations
 ^^^^^^^^^
@@ -238,9 +260,11 @@ Rendered as
 Admonitions
 ^^^^^^^^^^^
 
-Use admonitions to draw readers attention to a particular point. Possible admonitions types include
+Use admonitions to draw readers attention to a particular point. Possible
+admonitions types include
 
-"see also", "attention", "caution", "danger", "error", "hint", "important", "note", "tip", "warning", "admonition"
+"see also", "attention", "caution", "danger", "error", "hint", "important",
+"note", "tip", "warning", "admonition"
 
 If you want a custom admonition use
 
@@ -261,7 +285,8 @@ Rendered as
 Roles
 ~~~~~
 
-See `the roles section in the Sphinx docs <https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html>`_ for details
+See `the roles section in the Sphinx docs <https://www.sphinx-doc.org/en/
+master/usage/restructuredtext/roles.html>`_ for details
 
 In-text math
 ^^^^^^^^^^^^
@@ -297,8 +322,9 @@ This will be rendered as
    :doc:`custom name <file>`
 
 
-For section headings, you can use either of the two examples below. But to reference figures or arbitrary places in a file,
-you must include a custom name (second example) in the reference for it to work.
+For section headings, you can use either of the two examples below. But to
+reference figures or arbitrary places in a file, you must include a custom
+name (second example) in the reference for it to work.
 
 ::
 
@@ -319,7 +345,8 @@ Rendered as
 
 
 .. note::
-    The `ref_name` needs to be above the section you want to reference with the following syntax
+    The `ref_name` needs to be above the section you want to reference with the
+    following syntax
 
     ::
 
@@ -332,7 +359,8 @@ Rendered as
 Bibliography style
 ------------------
 
-The reStructuredText reference style is used throughout documentation so links are autogenerated and a consistent format is used.
+The reStructuredText reference style is used throughout documentation so links
+are autogenerated and a consistent format is used.
 
 For in-text citations, we use the reST numeric style ``[1]_``.
 
@@ -355,7 +383,8 @@ Please ensure your reference follows the following guidelines:
 * Full title of journal
 * Article titles written in sentence case
 * Year follows author(s,), in parentheses
-* Volume, can be optionally followed by issue in parentheses,  a colon separates volume and page range.
+* Volume, can be optionally followed by issue in parentheses,  a colon
+  separates volume and page range.
 * Include a linked DOI, if available
 
 .. code-block:: none
@@ -363,11 +392,12 @@ Please ensure your reference follows the following guidelines:
  References
  -----------
 
- .. [1] Smith J. and Jones M (2009). Title of cool paper. Journal of Awesomeness.
-       3:7-29. <DOI>
+ .. [1] Smith J. and Jones M (2009). Title of cool paper. Journal of
+        Awesomeness. 3:7-29. <DOI>
 
- .. [2] Sander M., et al (2011). Biology of the sauropod dinosaurs: the evolution
-        of gigantism. Biological Reviews. 86(1):117-155. https://doi.org/10.1111/j.1469-185X.2010.00137.x
+ .. [2] Sander M., et al (2011). Biology of the sauropod dinosaurs: the
+        evolution of gigantism. Biological Reviews. 86(1):117-155.
+https://doi.org/10.1111/j.1469-185X.2010.00137.x
 
 How we write
 ------------
@@ -381,7 +411,8 @@ Begin with a descriptive verb or begin with `How to ...`
 
 Headings should explain the section in a short phrase.
 
-Use the verb stem and not the gerund ('ing') form of verbs. Not 'Adding a model', but  'Add a model'.
+Use the verb stem and not the gerund ('ing') form of verbs. Not 'Adding a
+model', but  'Add a model'.
 
 Avoid section names like `Introduction` or `Part 1`.
 
@@ -405,7 +436,8 @@ letter but with all other words in lower case (except proper nouns).
 Numbers
 ~~~~~~~
 
-Numbers should be spelled out if they begin a sentence. In most cases, however, the numeral/ordinal format is preferred.
+Numbers should be spelled out if they begin a sentence. In most cases, however,
+the numeral/ordinal format is preferred.
 
 For additional mathematical notation, use the math role or directive.
 
@@ -418,20 +450,24 @@ The thousand seperator is the comma except when showing a code example
    We have over 5,000 connections.
    The number of connections is ``x = 5000``
 
-Make sure you use the correct unit (e.g., millivolts for voltage) and the unit's syntax (`V_m`).
+Make sure you use the correct unit (e.g., millivolts for voltage) and the
+unit's syntax (`V_m`).
 
 Lists
 ~~~~~
 
-Use ordered lists for step-by-step instructions only. Do not have more that 2 related actions in one step.
+Use ordered lists for step-by-step instructions only. Do not have more that 2
+related actions in one step.
 
 Use bullet lists to improve clarity of long lists (more than 5 items).
 
-If bullet/ordered list text is a complete sentence, use proper punctuation and end with period.
+If bullet/ordered list text is a complete sentence, use proper punctuation and
+end with period.
 
 If bullet/ordered list text is an incomplete sentence, do not end with period.
 
-If bullet/ordered list belongs to a sentence, use commas to seprate each item with the second last time including `and` at end.
+If bullet/ordered list belongs to a sentence, use commas to seprate each item
+with the second last time including `and` at end.
 
 Pronouns
 ~~~~~~~~
@@ -442,9 +478,11 @@ Avoid the pronoun "I".
 
 Avoid gendered terms (NOT police man BUT police officer).
 
-Instead of "guys" or "girls" use inclusive language such as everyone, all, members, folks.
+Instead of "guys" or "girls" use inclusive language such as everyone, all,
+members, folks.
 
-"They" is an acceptable singular third person pronoun (See `here <www.merriam-webster.com/dictionary/they>`_).
+"They" is an acceptable singular third person pronoun
+(See `here <www.merriam-webster.com/dictionary/they>`_).
 
 Abbreviations and acronyms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -452,17 +490,20 @@ Abbreviations and acronyms
 Spell out acronyms on first appearance on each page or article it appears.
 For example: Random number generator (rng)
 
-If the abbreviation/acronym is well known (e.g., HTML) you do not need to spell it out.
+If the abbreviation/acronym is well known (e.g., HTML) you do not need to spell
+it out.
 
 
 Commas
 ~~~~~~
 
-Use the oxford comma (apples, bananas, and grapes) for lists. But use a bullet list if your list is more than 5 items.
+Use the oxford comma (apples, bananas, and grapes) for lists. But use a bullet
+list if your list is more than 5 items.
 
 Use the comma as separator for thousands (37,000).
 
-To join two sentences into one, you must use a conjuction (and, or , but) along with the comma, or use the semicolon.
+To join two sentences into one, you must use a conjuction (and, or , but) along
+with the comma, or use the semicolon.
 
 Conjunctions (For, And, Nor, But, Or, Yet, So)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -474,7 +515,8 @@ Avoid using `So`, `However`, at the beginning of sentences.
 Ampersand
 ~~~~~~~~~
 
-Avoid the ampersand '`&`' and use '`and`' instead unless the ampersand is part of a proper name (e.g. Ben \& Jerry's).
+Avoid the ampersand '`&`' and use '`and`' instead unless the ampersand is part
+of a proper name (e.g. Ben \& Jerry's).
 
 
 Capitalization
@@ -484,4 +526,5 @@ Capitalize first word of heading, but use lower case for the rest.
 
 Capitalize first word in bullet.
 
-Capitalize proper nouns and follow company policy in naming conventions (e.g., macOS, LaTeX).
+Capitalize proper nouns and follow company policy in naming conventions (e.g
+., macOS, LaTeX).

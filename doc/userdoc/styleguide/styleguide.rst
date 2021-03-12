@@ -103,7 +103,7 @@ Double or single quotes should not be used as an emphasis marker for text.
 \``Double backticks\``
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Use the double backticks for:
+Use double backticks for
 
 
   - inline code

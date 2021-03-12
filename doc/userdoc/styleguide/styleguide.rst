@@ -82,8 +82,7 @@ Active voice
 Prefer the active voice, where the subject acts on object.
 
 If the object needs emphasis rather than subject, use passive voice. But ensure
-that you cannot improve the sentence
-by using the active voice.
+that you cannot improve the sentence by using the active voice.
 
 
 Types of formatting
@@ -96,7 +95,7 @@ they need, as well as provide references to important terms.
 Underlines for headings
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-ReStructuredtext uses several types of underline markers for headings. It's
+ReStructuredText uses several types of underline markers for headings. It's
 important that the length of the underline is at least as long as the words
 in the heading.
 
@@ -150,15 +149,15 @@ An example:
 ::
 
    Here we use the ``Create`` function to instantiate our model, in this case
-``iaf_psc_alpha``. We can modify
-   the parameter `V_m` and set the value to `50.0`.
+   ``iaf_psc_alpha``. We can modify the parameter `V_m` and set the value to
+   `50.0`.
 
 Rendered as
 
 
- Here we use the ``Create`` function to instantiate our model, in this case
-``iaf_psc_alpha``. We can modify
- the parameters `V_m` and set the value to `50.0`.
+   Here we use the ``Create`` function to instantiate our model, in this case
+   ``iaf_psc_alpha``. We can modify the parameters `V_m` and set the value to
+   `50.0`.
 
 \**Boldface\**
 ~~~~~~~~~~~~~~
@@ -176,13 +175,15 @@ reStructuredText markup
 -----------------------
 
 Let us take a brief look into the markup of reStructuredText. You can find
-the full CheatSheet `here <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_.
+the full CheatSheet `here <https://thomas-cokelaer.info/tutorials/sphinx/
+rest_syntax.html>`_.
 
 .. note::
 
    reStructuredText is sensitive to indentation. A single newline should always
    be between any text and headings, tables, reference labels, or directives.
-   If the output format seems incorrect, double check the spaces and newlines of the text.
+   If the output format seems incorrect, double check the spaces and newlines
+   of the text.
 
 Code and code snippets
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -286,7 +287,7 @@ Roles
 ~~~~~
 
 See `the roles section in the Sphinx docs <https://www.sphinx-doc.org/en/
-master/usage/restructuredtext/roles.html>`_ for details
+master/usage/restructuredtext/roles.html>`_ for details.
 
 In-text math
 ^^^^^^^^^^^^
@@ -443,7 +444,7 @@ For additional mathematical notation, use the math role or directive.
 
 We use the period for the decimal point. (`57.45`)
 
-The thousand seperator is the comma except when showing a code example
+The thousand separator is the comma except when showing a code example
 
    Example:
 
@@ -466,7 +467,7 @@ end with period.
 
 If bullet/ordered list text is an incomplete sentence, do not end with period.
 
-If bullet/ordered list belongs to a sentence, use commas to seprate each item
+If bullet/ordered list belongs to a sentence, use commas to separate each item
 with the second last time including `and` at end.
 
 Pronouns
@@ -482,7 +483,7 @@ Instead of "guys" or "girls" use inclusive language such as everyone, all,
 members, folks.
 
 "They" is an acceptable singular third person pronoun
-(See `here <www.merriam-webster.com/dictionary/they>`_).
+(see `here <www.merriam-webster.com/dictionary/they>`_).
 
 Abbreviations and acronyms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -502,8 +503,8 @@ list if your list is more than 5 items.
 
 Use the comma as separator for thousands (37,000).
 
-To join two sentences into one, you must use a conjuction (and, or , but) along
-with the comma, or use the semicolon.
+To join two sentences into one, you must use a conjunction (and, or , but)
+along with the comma, or use the semicolon.
 
 Conjunctions (For, And, Nor, But, Or, Yet, So)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -526,5 +527,5 @@ Capitalize first word of heading, but use lower case for the rest.
 
 Capitalize first word in bullet.
 
-Capitalize proper nouns and follow company policy in naming conventions (e.g
-., macOS, LaTeX).
+Capitalize proper nouns and follow company policy in naming conventions
+(e.g., macOS, LaTeX).

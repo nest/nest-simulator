@@ -58,13 +58,24 @@ further adjust settings for your system.
     libltdl-dev \
     libncurses-dev \
     libreadline-dev \
-    python3-all-dev \
-    python3-numpy \
-    python3-scipy \
-    python3-matplotlib \
-    python3-nose \
     openmpi-bin \
     libopenmpi-dev
+
+* When NEST is installed as a Python library, only `virtual environments
+  <https://docs.python.org/3/tutorial/venv.html>`_ are supported. Activate the virtual
+  environment you want to use, or if you don't already have one, create a new virtual
+  environment for NEST:
+
+.. code-block:: bash
+
+    python -m venv nest_env
+    source nest_env/bin/activate
+
+* If not already installed in your Python environment, install the following packages:
+
+.. code-block:: bash
+
+    pip install numpy scipy matplotlib nose
 
 * Unpack the tarball
 
@@ -88,11 +99,7 @@ further adjust settings for your system.
 
 .. code-block:: sh
 
-   cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
-
-.. note::
-
-   ``/install/path`` should be an absolute path
+   cmake </path/to/NEST/src>
 
 .. note::
 
@@ -106,7 +113,7 @@ further adjust settings for your system.
     make install
     make installcheck
 
-NEST should now be successfully installed on your system.
+NEST should now be successfully installed to your Python environment.
 
 * Before using NEST, make sure that all required environment variables are set correctly. In short, this can be
   established by sourcing the shell script ``nest_vars.sh``, which is installed into the path for binaries selected

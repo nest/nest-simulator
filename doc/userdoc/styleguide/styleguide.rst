@@ -398,7 +398,7 @@ Please ensure your reference follows the following guidelines:
 
  .. [2] Sander M., et al (2011). Biology of the sauropod dinosaurs: the
         evolution of gigantism. Biological Reviews. 86(1):117-155.
-https://doi.org/10.1111/j.1469-185X.2010.00137.x
+        https://doi.org/10.1111/j.1469-185X.2010.00137.x
 
 How we write
 ------------

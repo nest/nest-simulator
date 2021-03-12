@@ -34,6 +34,9 @@ How to *write good* : a few tips
 
 - Write positively -  Use positive language rather than negative language
 
+Remember that the primary purpose of the documentation is to provide
+information to NEST users who are looking for it.
+
 Voice
 ~~~~~~
 
@@ -42,7 +45,7 @@ Voice is *how* we talk to people through writing. The voice encompasses substanc
 Our voice is
 
 - empathetic - we write thinking of who we are writing for and what their needs are
-- relaxed - we write in natural, informal way rather than an authoritative way
+- relaxed - we write in natural, conversational way rather than an authoritative way
 
 Use 'you' to indicate the reader and 'we' to indicate yourself (the writer and possibly the NEST team).
 

@@ -50,6 +50,11 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 # number of elements in each population.
 # Since in this example, we have 2 populations (E/I), :math:`2^2` possible
 # synaptic connections exist (EE, EI, IE, II).
+#
+# Note the use of "post-pre" notation when referring to synaptic connections.
+# As a matter of convention in computational neuroscience, we refer to the
+# connection from inhibitory to excitatory neurons (I->E) as EI (post-pre) and
+# connections from excitatory to inhibitory neurons (E->I) as IE (post-pre).
 
 
 def plot_weight_matrices(E_neurons, I_neurons):

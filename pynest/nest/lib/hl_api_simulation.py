@@ -27,6 +27,8 @@ from contextlib import contextmanager
 
 from ..ll_api import *
 from .hl_api_helper import *
+from .hl_api_parallel_computing import Rank
+
 
 __all__ = [
     'Cleanup',

@@ -31,6 +31,7 @@
 #include <cstdio>
 
 // Includes from libnestutil:
+#include "compose.hpp"
 #include "dict_util.h"
 #include "numerics.h"
 
@@ -42,12 +43,9 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "integerdatum.h"
 #include "doubledatum.h"
+#include "integerdatum.h"
 
-#include "compose.hpp"
-#include "propagator_stability.h"
-#include "event.h"
 
 namespace nest
 {

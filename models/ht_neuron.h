@@ -84,10 +84,12 @@ neuron model described in [1]_. The most important properties are:
 - Intrinsic currents I_h, I_T, I_Na(p), and I_KNa.
 - Synaptic "minis" are not implemented.
 
-Documentation and examples:
-- docs/model_details/HillTononiModels.ipynb
-- pynest/examples/intrinsic_currents_spiking.py
-- pynest/examples/intrinsic_currents_subthreshold.py
+For implementation details see:
+- `HillTononi_model <../model_details/HillTononiModels.ipynb>`_
+
+For examples, see
+- :doc:`../auto_examples/intrinsic_currents_spiking`
+- :doc:`../auto_examples/intrinsic_currents_subthreshold`
 
 Parameters
 ++++++++++
@@ -111,8 +113,7 @@ Parameters
  g_NaL          nS      Conductance for sodium leak currents
  E_Na           mV      Reversal potential for Na leak currents
  tau_D_KNa      ms      Relaxation time constant for I_KNa
- receptor_types         Dictionary mapping synapse names to ports on neuron
- model
+ receptor_types         Dictionary mapping synapse names to ports on neuron model
  recordables            List of recordable quantities
 =============== ======= =========================================================
 
@@ -133,6 +134,8 @@ Parameters
 instant_unblock_NMDA         Instantaneous NMDA unblocking (default: false)
 {E_rev,g_peak}_{h,T,NaP,KNa} Reversal potential and peak conductance for
                              intrinsic currents
+{N}_{T,NaP}                  Exponent activation term m_inf, corresponding to
+                             number of activation particles
 equilibrate                  If given and true, time-dependent activation
                              and inactivation state variables (h, m) of
                              intrinsic currents and NMDA channels are set
@@ -168,7 +171,7 @@ References
 See also
 ++++++++
 
-ht_connection
+ht_synapse
 
 EndUserDocs */
 
@@ -288,6 +291,7 @@ private:
     // parameters for intrinsic currents
     double g_peak_NaP;
     double E_rev_NaP; // mV
+    double N_NaP;
 
     double g_peak_KNa;
     double E_rev_KNa; // mV
@@ -295,6 +299,7 @@ private:
 
     double g_peak_T;
     double E_rev_T; // mV
+    double N_T;
 
     double g_peak_h;
     double E_rev_h; // mV

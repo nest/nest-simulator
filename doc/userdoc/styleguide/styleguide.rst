@@ -5,7 +5,7 @@ The NEST documentation style guide
   :local:
 
 Why do we have a styleguide?
------------------------------
+----------------------------
 
 This style guide was created to provide a single reference point for content creation in NEST. This helps ensure
 the NEST user-level documentation remains clear and consistent. The style choices we make here are meant to follow the
@@ -116,7 +116,7 @@ Use the double back tick for:
 
 
 \`Single back tick\`
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 Use single back ticks for
 
@@ -141,7 +141,7 @@ Rendered as
  the parameters `V_m` and set the value to `50.0`.
 
 \**Boldface\**
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 If you want to emphasize a word or phrase in text, you can use **boldface**.
 
@@ -258,7 +258,7 @@ Rendered as
 
 
 Roles
-~~~~~~
+~~~~~
 
 See `the roles section in the Sphinx docs <https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html>`_ for details
 
@@ -369,10 +369,10 @@ Please ensure your reference follows the following guidelines:
         of gigantism. Biological Reviews. 86(1):117-155. https://doi.org/10.1111/j.1469-185X.2010.00137.x
 
 How we write . . .
----------------------
+------------------
 
 Headings and subheadings
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Headings and subheadings should describe the purpose of the section.
 
@@ -404,7 +404,7 @@ should be lower case (except proper nouns).
 
 
 Numbers
-~~~~~~~~
+~~~~~~~
 
 Numbers should be spelled out if they begin a sentence. In most cases, however, the numeral/ordinal format is preferred.
 
@@ -422,7 +422,7 @@ The thousand seperator is the comma except when showing a code example
 Make sure you use the correct unit (e.g., millivolts for voltage) and the unit's syntax (`V_m`).
 
 Lists
-~~~~~~~
+~~~~~
 
 Use ordered lists for step-by-step instructions only. Do not have more that 2 related actions in one step.
 
@@ -457,7 +457,7 @@ If the abbreviation/acronym is well known (e.g., HTML) you do not need to spell 
 
 
 Commas
-~~~~~~~
+~~~~~~
 
 Use the oxford comma (apples, bananas, and grapes) for lists. But use a bullet list if your list is more than 5 items.
 
@@ -466,20 +466,20 @@ Use the comma as separator for thousands (37,000).
 To join two sentences into one, you must use a conjuction (and, or , but) along with the comma, or use the semicolon.
 
 Conjunctions (For, And, Nor, But, Or, Yet, So)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can use these to start a sentence if clarity is not impeded.
 
 Avoid using `So`, `However`, at the beginning of sentences.
 
 Ampersand
-~~~~~~~~~~~~
+~~~~~~~~~
 
 Avoid the ampersand '`&`' and use '`and`' instead unless the ampersand is part of a proper name (e.g. Ben \& Jerry's).
 
 
 Capitalization
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
 
 Capitalize first word of heading, but use lower case for the rest.
 

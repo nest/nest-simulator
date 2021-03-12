@@ -56,6 +56,15 @@ This can be reached by specifying separate receptor ports, each for
 a different time constant. The port number has to match the respective
 "receptor_type" in the connectors.
 
+.. note::
+
+   If `tau_m` is very close to a synaptic time constant, the model
+   will numerically behave as if `tau_m` is equal to the synaptic
+   time constant, to avoid numerical instabilities.
+
+   For implementation details see the
+   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+
 Sends
 +++++
 

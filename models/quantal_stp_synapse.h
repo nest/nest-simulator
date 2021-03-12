@@ -1,5 +1,5 @@
 /*
- *  quantal_stp_connection.h
+ *  quantal_stp_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef QUANTAL_STP_CONNECTION_H
-#define QUANTAL_STP_CONNECTION_H
+#ifndef QUANTAL_STP_SYNAPSE_H
+#define QUANTAL_STP_SYNAPSE_H
 
 // Includes from librandom:
 #include "binomial_randomdev.h"
@@ -99,7 +99,7 @@ tsodyks2_synapse, stdp_synapse, static_synapse
 EndUserDocs */
 
 template < typename targetidentifierT >
-class Quantal_StpConnection : public Connection< targetidentifierT >
+class quantal_stp_synapse : public Connection< targetidentifierT >
 {
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
@@ -109,11 +109,11 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  Quantal_StpConnection();
+  quantal_stp_synapse();
   /**
    * Copy constructor to propagate common properties.
    */
-  Quantal_StpConnection( const Quantal_StpConnection& ) = default;
+  quantal_stp_synapse( const quantal_stp_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -193,7 +193,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-Quantal_StpConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
@@ -239,4 +239,4 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e, thread t, const Comm
 
 } // namespace
 
-#endif // QUANTAL_STP_CONNECTION_H
+#endif // QUANTAL_STP_SYNAPSE_H

@@ -1,5 +1,5 @@
 /*
- *  stdp_connection_facetshw_hom_impl.h
+ *  stdp_synapse_facetshw_hom_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef STDP_CONNECTION_FACETSHW_HOM_IMPL_H
-#define STDP_CONNECTION_FACETSHW_HOM_IMPL_H
+#ifndef STDP_SYNAPSE_FACETSHW_HOM_IMPL_H
+#define STDP_SYNAPSE_FACETSHW_HOM_IMPL_H
 
-#include "stdp_connection_facetshw_hom.h"
+#include "stdp_synapse_facetshw_hom.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -123,9 +123,6 @@ void
 STDPFACETSHWHomCommonProperties< targetidentifierT >::calc_readout_cycle_duration_()
 {
   readout_cycle_duration_ = int( ( no_synapses_ - 1.0 ) / synapses_per_driver_ + 1.0 ) * driver_readout_time_;
-  // std::cout << "stdp_connection_facetshw_hom::debug: readout cycle duration
-  // changed to " <<
-  // readout_cycle_duration_ << std::endl;
 }
 
 template < typename targetidentifierT >
@@ -274,10 +271,10 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const Dictiona
 
 
 //
-// Implementation of class STDPFACETSHWConnectionHom.
+// Implementation of class stdp_facetshw_synapse_hom.
 //
 template < typename targetidentifierT >
-STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom()
+stdp_facetshw_synapse_hom< targetidentifierT >::stdp_facetshw_synapse_hom()
   : weight_( 1.0 )
   , a_causal_( 0.0 )
   , a_acausal_( 0.0 )
@@ -293,7 +290,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom()
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_facetshw_synapse_hom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
@@ -317,7 +314,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d )
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_facetshw_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
@@ -339,4 +336,4 @@ STDPFACETSHWConnectionHom< targetidentifierT >::set_status( const DictionaryDatu
 
 } // of namespace nest
 
-#endif // #ifndef STDP_CONNECTION_FACETSHW_HOM_IMPL_H
+#endif // #ifndef STDP_SYNAPSE_FACETSHW_HOM_IMPL_H

@@ -1,5 +1,5 @@
 /*
- *  cont_delay_connection_impl.h
+ *  cont_delay_synapse_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef CONT_DELAY_CONNECTION_IMPL_H
-#define CONT_DELAY_CONNECTION_IMPL_H
+#ifndef CONT_DELAY_SYNAPSE_IMPL_H
+#define CONT_DELAY_SYNAPSE_IMPL_H
 
-#include "cont_delay_connection.h"
+#include "cont_delay_synapse.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -37,7 +37,7 @@ namespace nest
 {
 
 template < typename targetidentifierT >
-ContDelayConnection< targetidentifierT >::ContDelayConnection()
+cont_delay_synapse< targetidentifierT >::cont_delay_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , delay_offset_( 0.0 )
@@ -46,7 +46,7 @@ ContDelayConnection< targetidentifierT >::ContDelayConnection()
 
 template < typename targetidentifierT >
 void
-ContDelayConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+cont_delay_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
 
@@ -57,7 +57,7 @@ ContDelayConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+cont_delay_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
 
@@ -92,7 +92,7 @@ ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
 
 template < typename targetidentifierT >
 void
-ContDelayConnection< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+cont_delay_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
   if ( syn_spec->known( names::delay ) )
   {
@@ -106,4 +106,4 @@ ContDelayConnection< targetidentifierT >::check_synapse_params( const Dictionary
 
 } // of namespace nest
 
-#endif // #ifndef CONT_DELAY_CONNECTION_IMPL_H
+#endif // #ifndef CONT_DELAY_SYNAPSE_IMPL_H

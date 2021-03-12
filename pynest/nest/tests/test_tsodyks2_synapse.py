@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_tsodyks2_connection.py
+# test_tsodyks2_synapse.py
 #
 # This file is part of NEST.
 #
@@ -25,7 +25,7 @@ import unittest
 
 
 @nest.ll_api.check_stack
-class Tsodyks2ConnectionTest(unittest.TestCase):
+class Tsodyks2SynapseTest(unittest.TestCase):
     """
     Functional test for the "tsodyks2" synapse: compare NEST implementation to
     a reference generated in the method reproduce_weight_drift(), for a
@@ -153,7 +153,7 @@ class Tsodyks2ConnectionTest(unittest.TestCase):
 def suite():
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721
     # using loadTestsFromTestCase instead.
-    suite = unittest.TestLoader().loadTestsFromTestCase(Tsodyks2ConnectionTest)
+    suite = unittest.TestLoader().loadTestsFromTestCase(Tsodyks2SynapseTest)
     return unittest.TestSuite([suite])
 
 

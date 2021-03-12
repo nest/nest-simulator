@@ -1,5 +1,5 @@
 /*
- *  stdp_pl_connection_hom.h
+ *  stdp_pl_synapse_hom.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STDP_PL_CONNECTION_HOM_H
-#define STDP_PL_CONNECTION_HOM_H
+#ifndef STDP_PL_SYNAPSE_HOM_H
+#define STDP_PL_SYNAPSE_HOM_H
 
 // C++ includes:
 #include <cmath>
@@ -83,7 +83,7 @@ EndUserDocs */
 
 /**
  * Class containing the common properties for all synapses of type
- * STDPConnectionHom.
+ * stdp_pl_synapse_hom.
  */
 class STDPPLHomCommonProperties : public CommonSynapseProperties
 {
@@ -119,7 +119,7 @@ public:
  * parameters are the same for all synapses.
  */
 template < typename targetidentifierT >
-class STDPPLConnectionHom : public Connection< targetidentifierT >
+class stdp_pl_synapse_hom : public Connection< targetidentifierT >
 {
 
 public:
@@ -131,13 +131,13 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  STDPPLConnectionHom();
+  stdp_pl_synapse_hom();
 
   /**
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPPLConnectionHom( const STDPPLConnectionHom& ) = default;
+  stdp_pl_synapse_hom( const stdp_pl_synapse_hom& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -227,7 +227,7 @@ private:
 };
 
 //
-// Implementation of class STDPPLConnectionHom.
+// Implementation of class stdp_pl_synapse_hom.
 //
 
 /**
@@ -237,7 +237,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-STDPPLConnectionHom< targetidentifierT >::send( Event& e, thread t, const STDPPLHomCommonProperties& cp )
+stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPPLHomCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
 
@@ -281,7 +281,7 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e, thread t, const STDPPL
 }
 
 template < typename targetidentifierT >
-STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom()
+stdp_pl_synapse_hom< targetidentifierT >::stdp_pl_synapse_hom()
   : ConnectionBase()
   , weight_( 1.0 )
   , Kplus_( 0.0 )
@@ -291,7 +291,7 @@ STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom()
 
 template < typename targetidentifierT >
 void
-STDPPLConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_pl_synapse_hom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
 
   // base class properties, different for individual synapse
@@ -305,7 +305,7 @@ STDPPLConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-STDPPLConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_pl_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
@@ -316,4 +316,4 @@ STDPPLConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d, 
 
 } // of namespace nest
 
-#endif // of #ifndef STDP_PL_CONNECTION_HOM_H
+#endif // of #ifndef STDP_PL_SYNAPSE_HOM_H

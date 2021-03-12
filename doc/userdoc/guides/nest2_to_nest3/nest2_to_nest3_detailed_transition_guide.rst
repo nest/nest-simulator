@@ -310,6 +310,13 @@ Functions related to parallel computing
 No Change
 
 
+Model names
+~~~~~~~~~~~
+
+* The synapse model *stdp_nn_pre-centered_synapse* has been renamed to
+  *stdp_nn_pre_centered_synapse* for consistency with the naming convention.
+
+
 Parameters
 ~~~~~~~~~~
 

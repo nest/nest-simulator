@@ -1,5 +1,5 @@
 /*
- *  stdp_triplet_connection.h
+ *  stdp_triplet_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STDP_TRIPLET_CONNECTION_H
-#define STDP_TRIPLET_CONNECTION_H
+#ifndef STDP_TRIPLET_SYNAPSE_H
+#define STDP_TRIPLET_SYNAPSE_H
 
 // C-header for math.h since copysign() is in C99 but not C++98
 #include <math.h>
@@ -106,7 +106,7 @@ EndUserDocs */
 // derived from generic connection template
 
 template < typename targetidentifierT >
-class STDPTripletConnection : public Connection< targetidentifierT >
+class stdp_triplet_synapse : public Connection< targetidentifierT >
 {
 
 public:
@@ -117,18 +117,18 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  STDPTripletConnection();
+  stdp_triplet_synapse();
 
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPTripletConnection( const STDPTripletConnection& ) = default;
+  stdp_triplet_synapse( const stdp_triplet_synapse& ) = default;
 
   /**
    * Default Destructor.
    */
-  ~STDPTripletConnection()
+  ~stdp_triplet_synapse()
   {
   }
 
@@ -237,7 +237,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-STDPTripletConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+stdp_triplet_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
 
   double t_spike = e.get_stamp().get_ms();
@@ -289,7 +289,7 @@ STDPTripletConnection< targetidentifierT >::send( Event& e, thread t, const Comm
 
 // Defaults come from reference [1]_ data fitting and table 3.
 template < typename targetidentifierT >
-STDPTripletConnection< targetidentifierT >::STDPTripletConnection()
+stdp_triplet_synapse< targetidentifierT >::stdp_triplet_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , tau_plus_( 16.8 )
@@ -307,7 +307,7 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection()
 
 template < typename targetidentifierT >
 void
-STDPTripletConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_triplet_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -324,7 +324,7 @@ STDPTripletConnection< targetidentifierT >::get_status( DictionaryDatum& d ) con
 
 template < typename targetidentifierT >
 void
-STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_triplet_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -357,4 +357,4 @@ STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d
 
 } // of namespace nest
 
-#endif // of #ifndef STDP_TRIPLET_CONNECTION_H
+#endif // of #ifndef STDP_TRIPLET_SYNAPSE_H

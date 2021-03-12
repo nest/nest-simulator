@@ -1,5 +1,5 @@
 /*
- *  stdp_dopa_connection.cpp
+ *  stdp_dopamine_synapse.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "stdp_dopa_connection.h"
+#include "stdp_dopamine_synapse.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"

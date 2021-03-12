@@ -1,5 +1,5 @@
 /*
- *  vogels_sprekeler_connection.h
+ *  vogels_sprekeler_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef VOGELS_SPREKELER_CONNECTION_H
-#define VOGELS_SPREKELER_CONNECTION_H
+#ifndef VOGELS_SPREKELER_SYNAPSE_H
+#define VOGELS_SPREKELER_SYNAPSE_H
 
 // C-header for math.h since copysign() is in C99 but not C++98
 #include <math.h>
@@ -77,7 +77,7 @@ EndUserDocs */
 // derived from generic connection template
 
 template < typename targetidentifierT >
-class VogelsSprekelerConnection : public Connection< targetidentifierT >
+class vogels_sprekeler_synapse : public Connection< targetidentifierT >
 {
 
 public:
@@ -88,14 +88,14 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  VogelsSprekelerConnection();
+  vogels_sprekeler_synapse();
 
 
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  VogelsSprekelerConnection( const VogelsSprekelerConnection& ) = default;
+  vogels_sprekeler_synapse( const vogels_sprekeler_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -192,7 +192,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-VogelsSprekelerConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+vogels_sprekeler_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   double t_spike = e.get_stamp().get_ms();
@@ -246,7 +246,7 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e, thread t, const 
 
 
 template < typename targetidentifierT >
-VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection()
+vogels_sprekeler_synapse< targetidentifierT >::vogels_sprekeler_synapse()
   : ConnectionBase()
   , weight_( 0.5 )
   , tau_( 20.0 )
@@ -260,7 +260,7 @@ VogelsSprekelerConnection< targetidentifierT >::VogelsSprekelerConnection()
 
 template < typename targetidentifierT >
 void
-VogelsSprekelerConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+vogels_sprekeler_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -274,7 +274,7 @@ VogelsSprekelerConnection< targetidentifierT >::get_status( DictionaryDatum& d )
 
 template < typename targetidentifierT >
 void
-VogelsSprekelerConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+vogels_sprekeler_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -298,4 +298,4 @@ VogelsSprekelerConnection< targetidentifierT >::set_status( const DictionaryDatu
 }
 } // of namespace nest
 
-#endif // of #ifndef VOGELS_SPREKELER_CONNECTION_H
+#endif // of #ifndef VOGELS_SPREKELER_SYNAPSE_H

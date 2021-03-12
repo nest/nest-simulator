@@ -1,5 +1,5 @@
 /*
- *  cont_delay_connection.h
+ *  cont_delay_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CONT_DELAY_CONNECTION_H
-#define CONT_DELAY_CONNECTION_H
+#ifndef CONT_DELAY_SYNAPSE_H
+#define CONT_DELAY_SYNAPSE_H
 
 
 // C++ includes:
@@ -52,7 +52,7 @@ combined with off-grid spike times.
 Remarks:
 
 All delays set by the normal NEST Connect function will be rounded, even when
-using cont_delay_connection. To set non-grid delays, you must either
+using cont_delay_synapse. To set non-grid delays, you must either
 
 1) set the delay as synapse default, as in the example above
 2) set the delay for each synapse after the connections have been created,
@@ -76,7 +76,7 @@ static_synapse, iaf_psc_alpha_ps
 EndUserDocs */
 
 template < typename targetidentifierT >
-class ContDelayConnection : public Connection< targetidentifierT >
+class cont_delay_synapse : public Connection< targetidentifierT >
 {
 
 public:
@@ -87,18 +87,18 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  ContDelayConnection();
+  cont_delay_synapse();
 
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  ContDelayConnection( const ContDelayConnection& ) = default;
+  cont_delay_synapse( const cont_delay_synapse& ) = default;
 
   /**
    * Default Destructor.
    */
-  ~ContDelayConnection()
+  ~cont_delay_synapse()
   {
   }
 
@@ -208,7 +208,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-ContDelayConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+cont_delay_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   e.set_receiver( *get_target( t ) );
   e.set_weight( weight_ );
@@ -236,4 +236,4 @@ ContDelayConnection< targetidentifierT >::send( Event& e, thread t, const Common
 
 } // of namespace nest
 
-#endif // of #ifndef CONT_DELAY_CONNECTION_H
+#endif // of #ifndef CONT_DELAY_SYNAPSE_H

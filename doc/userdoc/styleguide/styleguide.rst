@@ -100,10 +100,10 @@ We use double quotes for strings in code, for example (nest.Create("iaf_psc_alph
 Double or single quotes should not be used as an emphasis marker for text.
 
 
-\``Double back tick\``
+\``Double backticks\``
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Use the double back tick for:
+Use the double backticks for:
 
 
   - inline code
@@ -116,17 +116,17 @@ Use the double back tick for:
   - Variables with assigned values ``x = 10``
 
 
-\`Single back tick\`
+\`Single backticks\`
 ~~~~~~~~~~~~~~~~~~~~
 
-Use single back ticks for
+Use single backticks for
 
 - Keys
 - Parameters
 - Variable names
 - Values
 
-but use double back ticks when showing a complete example of variable with assigned value (e.g., \``volt = 37.0``
+but use double backticks when showing a complete example of variable with assigned value (e.g., \``volt = 37.0``
 
 An example:
 

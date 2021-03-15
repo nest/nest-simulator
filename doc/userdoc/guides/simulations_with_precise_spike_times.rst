@@ -23,7 +23,7 @@ due in the current time step from its spike buffers and updates its
 state variables such as the membrane potential.
 
 
-.. figure:: ../_static/img/precise1-300x175.png
+.. figure:: ../static/img/precise1-300x175.png
 
  Propagation of membrane potential in case of grid-constrained spiking.
  Filled dots indicate update of membrane potential; black cross indicates
@@ -41,7 +41,7 @@ represented by an integer time stamp and a double precision offset. As
 the incoming spikes divide the *h*-steps into substeps, a neuron needs
 to update its state variables for each substep.
 
-.. figure:: ../_static/img/precise1-300x175.png
+.. figure:: ../static/img/precise1-300x175.png
 
  Propagation of membrane potential in case of off-grid spiking.
  Dashed red line indicates precise time of threshold crossing.

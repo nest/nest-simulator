@@ -1,6 +1,8 @@
 NEST 3.0 Features
 =================
 
+Here you can discover the new features NEST 3.0 has to offer!
+
 .. toctree::
    :maxdepth: 1
 

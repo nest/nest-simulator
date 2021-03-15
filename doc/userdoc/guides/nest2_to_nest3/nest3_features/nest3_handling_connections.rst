@@ -34,7 +34,8 @@ as NodeCollections.
 
 .. seealso::
 
-    You can find a :doc:`full example <../../../auto_examples/synapsecollection>` in our example network page.
+    You can find a :doc:`full SynapseCollection example <../../../auto_examples/synapsecollection>` in our example
+    network page.
 
 Printing
     Printing a SynapseCollection produces a table with source and target node IDs, synapse model, weight and delay.
@@ -76,6 +77,15 @@ Iteration
          2
          2
 
+.. _conn_s_t_iterator:
+
+Iterator of sources and targets
+    Calling ``SynapseCollection.sources()`` or ``SynapseCollection.targets()`` returns an
+    iterator over the source IDs or target IDs, respectively.
+
+    >>>  print([s*3 for s in synColl.sources()])
+         [3, 3, 6, 6]
+
 
 .. _conn_slicing:
 
@@ -105,6 +115,36 @@ Test of equality
          True
     >>>  synColl[:2] == synColl[2:]
          False
+
+.. _conn_direct_attributes:
+
+Setting and getting attributes directly
+    You can also directly get and set parameters of your SynapseCollection
+
+    >>>  synColl.weight = 5.
+    >>>  synColl.weight
+         [5.0, 5.0, 5.0, 5.0]
+    >>>  synColl.delay = [5.1, 5.2, 5.3, 5.4]
+    >>>  synColl.delay
+         [5.1, 5.2, 5.3, 5.4]
+
+    If you use a list to set the parameter, the list needs to be the same length
+    as the SynapseCollection.
+
+    For :ref:`spatially distributed <topo_changes>` sources and targets, you can access the distance between
+    the source-target pairs by calling `distance` on your SynapseCollection.
+
+    >>>  synColl.distance
+         (0.47140452079103173,
+          0.33333333333333337,
+          0.4714045207910317,
+          0.33333333333333337,
+          3.925231146709438e-17,
+          0.33333333333333326,
+          0.4714045207910317,
+          0.33333333333333326,
+          0.47140452079103157)
+
 
 .. _conn_get:
 
@@ -169,44 +209,6 @@ Setting connection parameters
     Note that some parameters, like `source` and `target`, cannot be set.  The documentation of a specific
     model will point out which parameters can be set and which are read-only.
 
-.. _conn_direct_attributes:
-
-Setting and getting attributes directly
-    You can also directly get and set parameters of your SynapseCollection
-
-    >>>  synColl.weight = 5.
-    >>>  synColl.weight
-         [5.0, 5.0, 5.0, 5.0]
-    >>>  synColl.delay = [5.1, 5.2, 5.3, 5.4]
-    >>>  synColl.delay
-         [5.1, 5.2, 5.3, 5.4]
-
-    If you use a list to set the parameter, the list needs to be the same length
-    as the SynapseCollection.
-
-    For :ref:`spatially distributed <topo_changes>` sources and targets, you can access the distance between
-    the source-target pairs by calling `distance` on your SynapseCollection.
-
-    >>>  synColl.distance
-         (0.47140452079103173,
-          0.33333333333333337,
-          0.4714045207910317,
-          0.33333333333333337,
-          3.925231146709438e-17,
-          0.33333333333333326,
-          0.4714045207910317,
-          0.33333333333333326,
-          0.47140452079103157)
-
-
-.. _conn_s_t_iterator:
-
-Iterator of sources and targets
-    Calling ``SynapseCollection.sources()`` or ``SynapseCollection.targets()`` returns an
-    iterator over the source IDs or target IDs, respectively.
-
-    >>>  print([s*3 for s in synColl.sources()])
-         [3, 3, 6, 6]
 
 .. _collocated_synapses
 
@@ -254,3 +256,35 @@ You can see how many synapse parameters you have by doing `len()` on your `Collo
 
   >>> len(syn_spec)
   2
+
+.. _connect_arrays:
+
+New functionality for connecting arrays of node IDs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+While you should aim to use NodeCollections to create connections whenever possible,
+there may be cases where you have a predefined set of pairs of pre- and postsynaptic nodes.
+In those cases, it may be inefficient to convert the individual IDs in the pair to NodeCollections
+to be passed to the ``Connect()`` function, especially if there are thousands or millions of
+pairs to connect.
+
+To efficiently create connections in these cases, you can pass NumPy arrays to ``Connect()``.
+This variant of ``Connect()`` will create connections in a one-to-one fashion.
+
+::
+
+   nest.Create('iaf_psc_alpha', 10)
+   # Node IDs in the arrays must address existing nodes, but may occur multiple times.
+   sources = np.array([1, 5, 7, 5], dtype=np.uint64)
+   targets = np.array([2, 2, 4, 4], dtype=np.uint64)
+   nest.Connect(sources, targets, conn_spec="one_to_one")
+
+You can also specify weights, delays, and receptor type for each connection as arrays.
+All arrays have to have lengths equal to those of ``sources`` and ``targets``.
+
+::
+
+   weights = np.array([0.5, 0.5, 2., 2.])
+   delays = np.array([1., 1., 2., 2.])
+   syn_spec = {'weight': weights, 'delay': delays}
+   nest.Connect(sources, targets, conn_spec='one_to_one', syn_spec=syn_spec)

@@ -37,7 +37,7 @@ as NodeCollections.
     You can find a :doc:`full example <../../../auto_examples/synapsecollection>` in our example network page.
 
 Printing
-    Printing a SynapseCollection produces a table source and target node IDs, synapse model, weight and delay.
+    Printing a SynapseCollection produces a table with source and target node IDs, synapse model, weight and delay.
     If your SynapseCollection has more than 36 elements, only the first and last 15 connections are displayed.
     To print all, first set ``print_all = True`` on your SynapseCollection.
 
@@ -254,4 +254,3 @@ You can see how many synapse parameters you have by doing `len()` on your `Collo
 
   >>> len(syn_spec)
   2
-

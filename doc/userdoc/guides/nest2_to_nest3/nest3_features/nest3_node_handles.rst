@@ -344,7 +344,6 @@ can contain lists and single values at the same time.
 
 ::
 
-    parameter_list = {"I_e": [200.0, 150.0], "tau_m": 20.0, "V_m": [-77.0, -66.0]}
     pop = nest.Create("iaf_psc_alpha", 2, params= {"I_e": [200.0, 150.0], "tau_m": 20.0, "V_m": [-77.0, -66.0]})
 
     print(pop.get(["I_e", "tau_m", "V_m"]))

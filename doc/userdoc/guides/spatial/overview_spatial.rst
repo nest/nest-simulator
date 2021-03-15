@@ -97,7 +97,7 @@ a value based on the nodes' position on the x-axis:
     snodes = nest.Create('iaf_psc_alpha', 10
                          positions=nest.spatial.free(
                              nest.random.uniform(min=-10., max=10.), num_dimensions=2))
-    snodes.set('V_m', -60. + nest.spatial.pos.x)
+    snodes.V_m=-60. + nest.spatial.pos.x
 
 
 Composite layers:

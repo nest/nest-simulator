@@ -170,7 +170,7 @@ Functions related to setting and getting parameters
 
 
 Functions related to spatially distributed nodes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Spatial structure, formerly provided by the Topology module, is now integrated into NEST and is no longer
 a separate module.

@@ -84,13 +84,20 @@ else ()
       )
 endif ()
 
-set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc" )
+if ( "${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}" )
+  set( OUT_OF_TREE_BUILD "False" )
+else ()
+  set( OUT_OF_TREE_BUILD "True" )
+endif ()
 
-add_custom_target( html 
-  COMMAND [ "${PROJECT_SOURCE_DIR}" != "${PROJECT_BINARY_DIR}" ] && cp -r userdoc "${DOC_BUILD_DIR}" || true
-  COMMAND PYTHONDONTWRITEBYTECODE=1 sphinx-build -b html -c "${PROJECT_SOURCE_DIR}/doc" "${DOC_BUILD_DIR}/userdoc" "${DOC_BUILD_DIR}/userdoc/html"
-  COMMAND cp "${DOC_BUILD_DIR}/userdoc/models/*.rst" "${DOC_BUILD_DIR}/userdoc/html/models"
-  WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/doc"
+set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc/userdoc" )
+set( DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/userdoc" )
+
+add_custom_target( html
+  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}" || true
+  COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && cp -r "${DOC_SOURCE_DIR}" "${DOC_BUILD_DIR}" || true
+  COMMAND NESTSRCDIR=${PROJECT_SOURCE_DIR} sphinx-build -b html "${DOC_BUILD_DIR}" "${DOC_BUILD_DIR}/html"
+  COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
 )
 
 install( DIRECTORY "${DOC_BUILD_DIR}/userdoc/html"

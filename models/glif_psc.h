@@ -98,6 +98,15 @@ We recommend the setting of the parameters of these three models to follow the
 condition of (E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
 < (V_th + th_spike_add).
 
+.. note::
+
+  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+  `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+  For implementation details see the
+  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+
 Parameters
 ++++++++++
 

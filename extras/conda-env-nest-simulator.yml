@@ -1,0 +1,28 @@
+name: nest-simulator
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - ipython
+  - cython
+  - nose
+  - terminaltables
+  - gsl
+  - boost
+  - cmake
+  - cppcheck
+  - pytest
+  - readline
+  - libtool
+  - mpi4py
+  - pip
+  - openmpi
+  - jupyterlab
+  - numpy
+  - scipy
+  - matplotlib
+  - pandas
+  - pydot
+  - pip:
+    - junitparser
+    - pep8ify

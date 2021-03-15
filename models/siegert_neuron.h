@@ -72,8 +72,8 @@ gap-junction framework.
 Remarks:
 
 For details on the numerical solution of the Siegert integral, you can
-check out the `Siegert neuron integration
-<https://github.com/nest/nest-simulator/blob/master/doc/model_details/siegert_neuron_integration.ipynb>`_
+check out the `Siegert_neuron_integration
+<../model_details/siegert_neuron_integration.ipynb>`_
 notebook in the NEST source code.
 
 Parameters

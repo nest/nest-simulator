@@ -282,7 +282,7 @@ fi
 
 # Verify the PEP8 installation.
 if $PERFORM_PEP8; then
-  $PEP8 --ignore="E121" ./extras/parse_travis_log.py || error_exit "Failed to verify the PEP8 installation. Executable: $PEP8"
+  $PEP8 --ignore="E121,E501" ./extras/parse_travis_log.py || error_exit "Failed to verify the PEP8 installation. Executable: $PEP8"
 fi
 
 # Extracting changed files between two commits.

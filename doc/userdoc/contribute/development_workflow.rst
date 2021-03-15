@@ -248,8 +248,7 @@ Editing workflow - commands explained
    C++ and SLI coding guidelines.
 3. Test your changes by building the source code and running the tests.
    (Usually ``cmake``, ``make``, ``make install``, ``make installcheck``. Please see the
-   `INSTALL <https://github.com/nest/nest-simulator/blob/master/INSTALL>`_ file for
-   details.)
+   :doc:`installation section <../installation>` for details.)
 4. Check which files have changed with ``git status``. You'll see a listing like this one:
 
    .. code::
@@ -261,10 +260,6 @@ Editing workflow - commands explained
 
       modified:   README
 
-      Untracked files:
-      (use "git add <file>..." to include in what will be committed)
-
-      INSTALL
       no changes added to commit (use "git add" and/or "git commit -a")
 
 5. Compare the changes with the previous version using ``git diff``.

@@ -9,6 +9,7 @@ Please familiarize yourself with our:
 
 * :doc:`NEST Git workflow <development_workflow>`
 * :doc:`C++ coding style guidelines <coding_guidelines_cpp>`
+* :doc:`Developing NEST with IDEs <nest_with_ides>`
 
 In order to make sure that the NEST Initiative can manage the NEST code base in the long term,
 you need to send us a completed and signed

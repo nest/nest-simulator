@@ -159,7 +159,7 @@ Composing
 .. _testing_equality:
 
 Test of equality
-    You can test if two NodeCollections are equal, i.e. that they contain the same node IDs
+    You can test if two NodeCollections are equal, i.e. that they contain the same node IDs and model(s)
 
     >>>  nrns == nrns_2
          False

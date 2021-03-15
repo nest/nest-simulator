@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AEIF_PSC_delta_H
-#define AEIF_PSC_delta_H
+#ifndef AEIF_PSC_DELTA_H
+#define AEIF_PSC_DELTA_H
 
 // Generated includes:
 #include "config.h"
@@ -231,7 +231,6 @@ private:
     double a;       //!< Subthreshold adaptation in nS
     double b;       //!< Spike-triggered adaptation in pA
     double V_th;    //!< Spike threshold in mV
-    double t_ref;   //!< Refractory period in ms
     double I_e;     //!< Intrinsic current in pA
 
     double gsl_error_tol;  //!< Error bound for GSL integrator
@@ -435,4 +434,4 @@ aeif_psc_delta::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
-#endif // AEIF_PSC_delta_H
+#endif // AEIF_PSC_DELTA_H

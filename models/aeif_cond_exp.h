@@ -251,7 +251,6 @@ private:
     double a;          //!< Subthreshold adaptation in nS
     double b;          //!< Spike-triggered adaptation in pA
     double V_th;       //!< Spike threshold in mV
-    double t_ref;      //!< Refractory period in ms
     double tau_syn_ex; //!< Excitatory synaptic kernel decay time in ms
     double tau_syn_in; //!< Inhibitory synaptic kernel decay time in ms
     double I_e;        //!< Intrinsic current in pA

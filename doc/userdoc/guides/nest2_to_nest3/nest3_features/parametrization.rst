@@ -64,11 +64,11 @@ distribution.
 
     node_ids = n.global_id
     v_m = n.get('V_m')
+
     fig, ax = pyplot.subplots(figsize=(12, 6),
-                           gridspec_kw={'width_ratios':
-                                        [3, 1]},
-                           ncols=2,
-                           sharey=True)
+                              gridspec_kw={'width_ratios':  [3, 1]},
+                              ncols=2,
+                              sharey=True)
     ax[0].plot(node_ids, v_m, '.', alpha=0.5, ms=3.5)
     ax[0].set_xlabel('Node_ID');
     ax[1].hist(v_m, bins=40, orientation='horizontal');

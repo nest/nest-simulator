@@ -244,7 +244,7 @@ parameter:
     positions = nest.spatial.free([[x, 0.] for x in np.linspace(0, 1.0, N)])
     spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
-    parameter = nest.spatial_distributions.exponential(nest.spatial.distance, beta_Ca=0.15)
+    parameter = nest.spatial_distributions.exponential(nest.spatial.distance, beta=0.15)
 
     # Iterate connection to get statistical connection data
     for _ in range(2000):

@@ -338,7 +338,7 @@ with ``Create()``, ``set()`` or ``SetStatus()``. The values of the lists will
 be distributed across the nodes. The way to do this previously was to apply a
 list of dictionaries. This is still possible.
 
-The values in the single dictionary can also be single values; the value will
+The values in the dictionary can also be single values; the value will
 then be applied to each node. You can mix and match as you want; the dictionary
 can contain lists and single values at the same time.
 

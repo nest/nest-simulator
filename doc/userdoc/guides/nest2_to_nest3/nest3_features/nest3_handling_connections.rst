@@ -67,7 +67,7 @@ Indexing
 .. _conn_iterating:
 
 Iteration
-    A SynapseCollection can be iterated, yielding a single connection SynapseCollections.
+    A SynapseCollection can be iterated, yielding a single connection SynapseCollection per iteration.
 
     >>>  for conn in synColl:
     >>>      print(conn.source)

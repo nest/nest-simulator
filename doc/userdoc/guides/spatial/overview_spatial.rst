@@ -64,7 +64,7 @@ where ``spatial_data`` can be one of the following
 Note the following
 
 - For positions generated from NEST parameters, the number of neurons
-  has to be provided in ``nest.Create()``.
+  has to be provided in ``nest.Create()`` with the ``n`` argument.
 - The extent is calculated from the positions of the nodes, but can be
   set explicitly.
 - If possible, NEST tries to deduce the number of dimensions. But if

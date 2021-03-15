@@ -18,7 +18,7 @@ Overview of spatially-structured networks
 Create spatially distributed nodes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Creating spatially distributed nodes is now handled by with the standard ``nest.Create()`` function.
+Creating spatially distributed nodes is now handled with the standard ``nest.Create()`` function.
 Arguments of node creation have also been changed to make creating
 populations with and without spatial information more unified. To create
 nodes with spatial positions, ``nest.Create()`` must be provided with the

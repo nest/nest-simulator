@@ -109,43 +109,43 @@
 #include "correlomatrix_detector.h"
 #include "correlospinmatrix_detector.h"
 #include "multimeter.h"
+#include "spike_dilutor.h"
 #include "spike_recorder.h"
 #include "spin_detector.h"
 #include "volume_transmitter.h"
 #include "weight_recorder.h"
 
 // Prototypes for synapses
-#include "bernoulli_connection.h"
-#include "clopath_connection.h"
+#include "bernoulli_synapse.h"
+#include "clopath_synapse.h"
 #include "common_synapse_properties.h"
-#include "cont_delay_connection.h"
-#include "cont_delay_connection_impl.h"
+#include "cont_delay_synapse.h"
+#include "cont_delay_synapse_impl.h"
 #include "diffusion_connection.h"
 #include "gap_junction.h"
-#include "ht_connection.h"
-#include "jonke_connection.h"
-#include "quantal_stp_connection.h"
-#include "quantal_stp_connection_impl.h"
+#include "ht_synapse.h"
+#include "jonke_synapse.h"
+#include "quantal_stp_synapse.h"
+#include "quantal_stp_synapse_impl.h"
 #include "rate_connection_delayed.h"
 #include "rate_connection_instantaneous.h"
-#include "spike_dilutor.h"
-#include "static_connection.h"
-#include "static_connection_hom_w.h"
-#include "stdp_connection.h"
-#include "stdp_connection_facetshw_hom.h"
-#include "stdp_connection_facetshw_hom_impl.h"
-#include "stdp_connection_hom.h"
-#include "stdp_dopa_connection.h"
-#include "stdp_nn_restr_connection.h"
-#include "stdp_nn_symm_connection.h"
-#include "stdp_nn_pre-centered_connection.h"
-#include "stdp_pl_connection_hom.h"
-#include "stdp_triplet_connection.h"
-#include "tsodyks2_connection.h"
-#include "tsodyks_connection.h"
-#include "tsodyks_connection_hom.h"
-#include "urbanczik_connection.h"
-#include "vogels_sprekeler_connection.h"
+#include "static_synapse.h"
+#include "static_synapse_hom_w.h"
+#include "stdp_synapse.h"
+#include "stdp_synapse_facetshw_hom.h"
+#include "stdp_synapse_facetshw_hom_impl.h"
+#include "stdp_synapse_hom.h"
+#include "stdp_dopamine_synapse.h"
+#include "stdp_nn_restr_synapse.h"
+#include "stdp_nn_symm_synapse.h"
+#include "stdp_nn_pre_centered_synapse.h"
+#include "stdp_pl_synapse_hom.h"
+#include "stdp_triplet_synapse.h"
+#include "tsodyks2_synapse.h"
+#include "tsodyks_synapse.h"
+#include "tsodyks_synapse_hom.h"
+#include "urbanczik_synapse.h"
+#include "vogels_sprekeler_synapse.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -306,31 +306,31 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< music_rate_out_proxy >( "music_rate_out_proxy" );
 #endif
 
-  // register all connection models
-  register_connection_model< BernoulliConnection >( "bernoulli_synapse" );
-  register_connection_model< ClopathConnection >(
+  // register all synapse models
+  register_connection_model< bernoulli_synapse >( "bernoulli_synapse" );
+  register_connection_model< clopath_synapse >(
     "clopath_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING );
-  register_connection_model< ContDelayConnection >( "cont_delay_synapse" );
-  register_connection_model< HTConnection >( "ht_synapse" );
-  register_connection_model< JonkeConnection >( "jonke_synapse" );
-  register_connection_model< Quantal_StpConnection >( "quantal_stp_synapse" );
-  register_connection_model< StaticConnection >( "static_synapse" );
-  register_connection_model< StaticConnectionHomW >( "static_synapse_hom_w" );
-  register_connection_model< STDPConnection >( "stdp_synapse" );
-  register_connection_model< STDPConnectionHom >( "stdp_synapse_hom" );
-  register_connection_model< STDPDopaConnection >( "stdp_dopamine_synapse" );
-  register_connection_model< STDPFACETSHWConnectionHom >( "stdp_facetshw_synapse_hom" );
-  register_connection_model< STDPNNRestrConnection >( "stdp_nn_restr_synapse" );
-  register_connection_model< STDPNNSymmConnection >( "stdp_nn_symm_synapse" );
-  register_connection_model< STDPNNPreCenteredConnection >( "stdp_nn_pre-centered_synapse" );
-  register_connection_model< STDPPLConnectionHom >( "stdp_pl_synapse_hom" );
-  register_connection_model< STDPTripletConnection >( "stdp_triplet_synapse" );
-  register_connection_model< TsodyksConnection >( "tsodyks_synapse" );
-  register_connection_model< TsodyksConnectionHom >( "tsodyks_synapse_hom" );
-  register_connection_model< Tsodyks2Connection >( "tsodyks2_synapse" );
-  register_connection_model< UrbanczikConnection >(
+  register_connection_model< cont_delay_synapse >( "cont_delay_synapse" );
+  register_connection_model< ht_synapse >( "ht_synapse" );
+  register_connection_model< jonke_synapse >( "jonke_synapse" );
+  register_connection_model< quantal_stp_synapse >( "quantal_stp_synapse" );
+  register_connection_model< static_synapse >( "static_synapse" );
+  register_connection_model< static_synapse_hom_w >( "static_synapse_hom_w" );
+  register_connection_model< stdp_synapse >( "stdp_synapse" );
+  register_connection_model< stdp_synapse_hom >( "stdp_synapse_hom" );
+  register_connection_model< stdp_dopamine_synapse >( "stdp_dopamine_synapse" );
+  register_connection_model< stdp_facetshw_synapse_hom >( "stdp_facetshw_synapse_hom" );
+  register_connection_model< stdp_nn_restr_synapse >( "stdp_nn_restr_synapse" );
+  register_connection_model< stdp_nn_symm_synapse >( "stdp_nn_symm_synapse" );
+  register_connection_model< stdp_nn_pre_centered_synapse >( "stdp_nn_pre_centered_synapse" );
+  register_connection_model< stdp_pl_synapse_hom >( "stdp_pl_synapse_hom" );
+  register_connection_model< stdp_triplet_synapse >( "stdp_triplet_synapse" );
+  register_connection_model< tsodyks_synapse >( "tsodyks_synapse" );
+  register_connection_model< tsodyks_synapse_hom >( "tsodyks_synapse_hom" );
+  register_connection_model< tsodyks2_synapse >( "tsodyks2_synapse" );
+  register_connection_model< urbanczik_synapse >(
     "urbanczik_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING );
-  register_connection_model< VogelsSprekelerConnection >( "vogels_sprekeler_synapse" );
+  register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
 
   // register secondary connection models
   register_secondary_connection_model< GapJunction >(

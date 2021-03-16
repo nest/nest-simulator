@@ -25,7 +25,6 @@ This test is called from test_mpitests.py
 
 import nest
 import sys
-import traceback
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 

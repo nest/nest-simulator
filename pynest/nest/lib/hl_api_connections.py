@@ -120,7 +120,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Connect `pre` nodes to `post` nodes.
 
     Nodes in `pre` and `post` are connected using the specified connectivity
-    (`all-to-all` by default) and synapse type (:cpp:class:`static_synapse <nest::StaticConnection>` by default).
+    (`all-to-all` by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
     Details depend on the connectivity rule.
 
     Parameters
@@ -171,7 +171,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     **Synapse specification (syn_spec)**
 
     The synapse model and its properties can be given either as a string
-    identifying a specific synapse model (default: :cpp:class:`static_synapse <nest::StaticConnection>`) or
+    identifying a specific synapse model (default: :cpp:class:`static_synapse <nest::static_synapse>`) or
     as a dictionary specifying the synapse model and its parameters.
 
     Available keys in the synapse specification dictionary are::
@@ -189,7 +189,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     synapse model, this can be one of NEST's built-in synapse models
     or a user-defined model created via :py:func:`.CopyModel`.
 
-    If `synapse_model` is not specified the default model :cpp:class:`static_synapse <nest::StaticConnection>`
+    If `synapse_model` is not specified the default model :cpp:class:`static_synapse <nest::static_synapse>`
     will be used.
 
     Distributed parameters can be defined through NEST's different parametertypes. NEST has various
@@ -293,7 +293,7 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     """Disconnect `pre` neurons from `post` neurons.
 
     Neurons in `pre` and `post` are disconnected using the specified disconnection
-    rule (one-to-one by default) and synapse type (:cpp:class:`static_synapse <nest::StaticConnection>` by default).
+    rule (one-to-one by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
     Details depend on the disconnection rule.
 
     Parameters
@@ -329,7 +329,7 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     `syn_spec` is given as a non-empty dictionary, the 'synapse_model' parameter must be
     present.
 
-    If no synapse model is specified the default model :cpp:class:`static_synapse <nest::StaticConnection>`
+    If no synapse model is specified the default model :cpp:class:`static_synapse <nest::static_synapse>`
     will be used.
 
     Available keys in the synapse dictionary are:

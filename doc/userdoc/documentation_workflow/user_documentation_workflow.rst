@@ -23,7 +23,7 @@ with each release of NEST having its own documentation.
 
 This workflow aims for the concept of **user-correctable documentation**.
 
-.. image:: ../_static/img/documentation_workflow.png
+.. image:: ../../_static/img/documentation_workflow.png
   :width: 500
   :alt: Alternative text
 

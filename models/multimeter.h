@@ -125,6 +125,9 @@ fail if carried out in the wrong direction, i.e., trying to connect the
    A float (default: `1.0`) specifying the interval in ms, at which
    data is collected from the nodes, the multimeter is connected to.
 
+See also
+++++++++
+
 EndUserDocs */
 
 namespace nest

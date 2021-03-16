@@ -75,6 +75,9 @@ synapses that fulfill the given criteria.
 
 .. include:: ../models/recording_device.rst
 
+See also
+++++++++
+
 EndUserDocs */
 
 namespace nest

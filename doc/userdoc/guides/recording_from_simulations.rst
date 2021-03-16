@@ -8,7 +8,7 @@ from neurons and synapses.
 To determine what happens to recorded data, each recording device can
 specify a *recording backend* in its ``record_to`` property. The
 default backend is *memory*, which stores the recorded data in memory
-for later retrieval. Other backends write the data to file or to the
+for later retrieval. Other backends write the data to file, to the
 screen, or stream it to other applications via the network. The
 different backends and their usage are explained in detail in the
 section about :ref:`Recording Backends <recording_backends>`.
@@ -26,8 +26,8 @@ temporal aspects of the simulation loop.
 
 Recording devices can fundamentally be subdivided into two groups:
 
-- **Collectors** collect events sent to them. Neurons are connected to
-  collectors and the collector collects the events emitted by the
+- **Collectors** gather events sent to them. Neurons are connected to
+  collectors and the collector gathers the events emitted by the
   neurons connected to it.
 
 - **Samplers** actively interrogate their targets at given time
@@ -111,7 +111,7 @@ dictionary to ``SetKernelStatus``.
 
     nest.SetKernelStatus({"recording_backends": {'sionlib': {'buffer_size': 512}}})
 
-Following is a list of built-in recording backends that come with
+The following is a list of built-in recording backends that come with
 NEST:
 
 - :ref:`recording_backend_memory`

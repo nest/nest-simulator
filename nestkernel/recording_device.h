@@ -47,7 +47,7 @@ namespace nest
 Recording time window
 +++++++++++++++++++++
 
-The time span during which the recorder actually records, can be
+The time span during which the recorder actively records, can be
 specified using the properties ``start`` and ``stop``. These define
 the activation period of the device in ms. An additional property
 ``origin`` allows to shift the recording window by a certain time,
@@ -94,7 +94,7 @@ Recorder properties
  stop
    A floating point number (default: `infinity`) specifying the
    deactication time in ms, relative to `origin`. The value of `stop`
-   must be greater than or equal to `start`
+   must be greater than or equal to `start`.
 
 EndUserDocs */
 

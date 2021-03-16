@@ -22,9 +22,9 @@
 # limitations under the License.
 #=============================================================================
 
-# Use the Cython executable that lives next to the Python executable
+# Using the Cython executable that lives next to the Python executable
 # if it is a local installation.
-find_package( PythonInterp )
+
 if ( Python_FOUND )
   get_filename_component( _python_path ${Python_EXECUTABLE} PATH )
   find_program( CYTHON_EXECUTABLE

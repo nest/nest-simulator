@@ -194,13 +194,8 @@ function( compile_pyx _name generated_file )
     set( cython_debug_arg "--gdb" )
   endif ()
 
-  if ( "${PYTHONLIBS_VERSION_STRING}" MATCHES "^2." )
-    set( version_arg "-2" )
-  elseif ( "${PYTHONLIBS_VERSION_STRING}" MATCHES "^3." )
-    set( version_arg "-3" )
-  else ()
-    set( version_arg )
-  endif ()
+  # Set version to 3 for Python 3
+  set( version_arg "-3" )
 
   # Include directory arguments.
   list( REMOVE_DUPLICATES cython_include_directories )

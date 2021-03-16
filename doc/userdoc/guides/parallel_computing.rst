@@ -43,7 +43,7 @@ Virtual processes are distributed round-robin (i.e. each VP is allocated equal
 time slices, without any given a priority) onto the MPI processes and
 counted continuously over all processes.
 
-.. figure:: ../_static/img/Process_vp_thread.png
+.. figure:: ../static/img/Process_vp_thread.png
 
  Basic scheme showing how threads (T) and virtual
  processes (VP) reside in MPI processes (P) in NEST
@@ -59,7 +59,7 @@ In the figure below, a node distribution for a small network consisting of ``spi
 four ``iaf_psc_alpha`` neurons, and a ``spike_recorder``
 in a scenario with two processes with two threads each.
 
-.. figure:: ../_static/img/Node_distribution.png
+.. figure:: ../static/img/Node_distribution.png
 
  sg=spike_generator, iaf=iaf_psc_alpha, sr=spike_recorder. Numbers to
  the left and right indicate node IDs.

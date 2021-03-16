@@ -34,7 +34,7 @@
 
      - ``help(nest.Create)``
      - ``nest.Connect?``
-  
+
 For more information visit https://www.nest-simulator.org.
 
 """

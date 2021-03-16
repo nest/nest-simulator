@@ -4,8 +4,10 @@ sphinx:
   builder: html
   configuration: doc/userdoc/conf.py
 
-conda:
-  environment: extras/conda-nest-simulator-dev.yml
+python:
+  version 3.8
+  install:
+    - requirements: extras/nest-simulator-doc-requirements.txt
 
 build:
   image: latest

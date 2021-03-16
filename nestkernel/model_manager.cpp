@@ -59,22 +59,20 @@ ModelManager::ModelManager()
 ModelManager::~ModelManager()
 {
   clear_connection_models_();
-  std::vector< ConnectorModel* >::iterator i;
-  for ( i = builtin_connection_models_.begin(); i != builtin_connection_models_.end(); ++i )
+  for ( auto&& connection_model : builtin_connection_models_ )
   {
-    if ( *i != 0 )
+    if ( connection_model != 0 )
     {
-      delete *i;
+      delete connection_model;
     }
   }
 
   clear_node_models_();
-  std::vector< std::pair< Model*, bool > >::iterator j;
-  for ( j = builtin_node_models_.begin(); j != builtin_node_models_.end(); ++j )
+  for ( auto& node_model : builtin_node_models_ )
   {
-    if ( ( *j ).first != 0 )
+    if ( node_model.first != 0 )
     {
-      delete ( *j ).first;
+      delete node_model.first;
     }
   }
 }
@@ -104,9 +102,8 @@ ModelManager::initialize()
     }
   }
 
-  // create proxy nodes, one for each thread and model and one dummy
+  // Create proxy nodes, one for each thread and model and one dummy
   // spike source for each thread.
-
   proxy_nodes_.resize( kernel().vp_manager.get_num_threads() );
   dummy_spike_sources_.resize( kernel().vp_manager.get_num_threads() );
 
@@ -115,9 +112,9 @@ ModelManager::initialize()
     const thread t = kernel().vp_manager.get_thread_id();
     proxy_nodes_[ t ].clear();
 
-    for ( index i = 0; i < builtin_node_models_.size(); ++i )
+    for ( auto& builtin_node_model : builtin_node_models_ )
     {
-      const int model_id = builtin_node_models_[ i ].first->get_model_id();
+      const int model_id = builtin_node_model.first->get_model_id();
       proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
     }
 
@@ -132,15 +129,14 @@ ModelManager::initialize()
   connection_models_.swap( tmp_proto );
 
   // (re-)append all synapse prototypes
-  for ( std::vector< ConnectorModel* >::iterator i = builtin_connection_models_.begin(); i != builtin_connection_models_.end();
-        ++i )
+  for ( auto&& connection_model : builtin_connection_models_ )
   {
-    if ( *i != 0 )
+    if (connection_model != 0 )
     {
-      std::string name = ( *i )->get_name();
+      std::string name = connection_model->get_name();
       for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
       {
-        connection_models_[ t ].push_back( ( *i )->clone( name ) );
+        connection_models_[ t ].push_back( connection_model->clone( name ) );
       }
       synapsedict_->insert( name, connection_models_[ 0 ].size() - 1 );
     }
@@ -155,11 +151,10 @@ ModelManager::finalize()
   delete_secondary_events_prototypes();
 
   // We free all Node memory
-  std::vector< std::pair< Model*, bool > >::iterator m;
-  for ( m = builtin_node_models_.begin(); m != builtin_node_models_.end(); ++m )
+  for ( auto& node_model : builtin_node_models_ )
   {
     // delete all nodes, because cloning the model may have created instances.
-    ( *m ).first->clear();
+    node_model.first->clear();
   }
 }
 
@@ -373,7 +368,7 @@ ModelManager::get_model_id( const Name name ) const
   const Name model_name( name );
   for ( int i = 0; i < ( int ) node_models_.size(); ++i )
   {
-    assert( node_models_[ i ] != NULL );
+    assert( node_models_[ i ] != 0 );
     if ( model_name == node_models_[ i ]->get_name() )
     {
       return i;
@@ -381,7 +376,6 @@ ModelManager::get_model_id( const Name name ) const
   }
   return -1;
 }
-
 
 DictionaryDatum
 ModelManager::get_connector_defaults( synindex syn_id ) const
@@ -431,11 +425,11 @@ ModelManager::clear_node_models_()
   // We delete all models, which will also delete all nodes. The
   // built-in models will be recovered from the builtin_node_models_ in
   // init()
-  for ( std::vector< Model* >::iterator m = node_models_.begin(); m != node_models_.end(); ++m )
+  for ( auto&& node_model : node_models_ )
   {
-    if ( *m != 0 )
+    if ( node_model != 0 )
     {
-      delete *m;
+      delete node_model;
     }
   }
 
@@ -451,17 +445,16 @@ ModelManager::clear_node_models_()
 void
 ModelManager::clear_connection_models_()
 {
-  for ( std::vector< std::vector< ConnectorModel* > >::iterator it = connection_models_.begin(); it != connection_models_.end();
-        ++it )
+  for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    for ( std::vector< ConnectorModel* >::iterator pt = it->begin(); pt != it->end(); ++pt )
+    for ( auto&& connection_model : connection_models_[ t ] )
     {
-      if ( *pt != 0 )
+      if ( connection_model != 0 )
       {
-        delete *pt;
+        delete connection_model;
       }
     }
-    it->clear();
+    connection_models_[ t ].clear();
   }
   connection_models_.clear();
 }
@@ -475,11 +468,11 @@ ModelManager::calibrate( const TimeConverter& tc )
   }
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    for ( std::vector< ConnectorModel* >::iterator pt = connection_models_[ t ].begin(); pt != connection_models_[ t ].end(); ++pt )
+    for ( auto&& connection_model : connection_models_[ t ] )
     {
-      if ( *pt != 0 )
+      if ( connection_model != 0 )
       {
-        ( *pt )->calibrate( tc );
+        connection_model->calibrate( tc );
       }
     }
   }
@@ -534,15 +527,15 @@ ModelManager::create_secondary_events_prototypes()
   delete_secondary_events_prototypes();
   secondary_events_prototypes_.resize( kernel().vp_manager.get_num_threads() );
 
-  for ( thread tid = 0; tid < static_cast< thread >( secondary_events_prototypes_.size() ); ++tid )
+  for ( thread tid = 0; tid < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++tid )
   {
     secondary_events_prototypes_[ tid ].clear();
     for ( synindex syn_id = 0; syn_id < connection_models_[ tid ].size(); ++syn_id )
     {
       if ( not connection_models_[ tid ][ syn_id ]->is_primary() )
       {
-        secondary_events_prototypes_[ tid ].insert(
-          std::pair< synindex, SecondaryEvent* >( syn_id, connection_models_[ tid ][ syn_id ]->create_event( 1 )[ 0 ] ) );
+        secondary_events_prototypes_[ tid ].insert( std::pair< synindex, SecondaryEvent* >(
+          syn_id, connection_models_[ tid ][ syn_id ]->create_event( 1 )[ 0 ] ) );
       }
     }
   }

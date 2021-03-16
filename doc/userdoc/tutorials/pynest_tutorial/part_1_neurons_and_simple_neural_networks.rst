@@ -34,7 +34,7 @@ PyNEST - an interface to the NEST simulator
 
 .. _Python-Interface:
 
-.. figure:: ../../_static/img/python_interface.png
+.. figure:: ../../static/img/python_interface.png
    :alt: Python Interface
    :width: 600px
 
@@ -230,7 +230,7 @@ to form a small network.
 
 .. _VM-neuron:
 
-.. figure:: ../../_static/img/vm_one_neuron.pdf.png
+.. figure:: ../../static/img/vm_one_neuron.pdf.png
    :alt: Membrane potential of integrate-and-fire neuron with constant input current
    :width: 400px
 
@@ -240,7 +240,7 @@ to form a small network.
 
 .. _spikes-one-neuron:
 
-.. figure:: ../../_static/img/spikes_one_neuron.pdf.png
+.. figure:: ../../static/img/spikes_one_neuron.pdf.png
    :alt: Spikes of the neuron.
    :width: 400px
 
@@ -398,7 +398,7 @@ the synaptic model.
 
 .. _vm_one_neuron_noise:
 
-.. figure:: ../../_static/img/vm_one_neuron_noise.pdf.png
+.. figure:: ../../static/img/vm_one_neuron_noise.pdf.png
    :alt: Membrane potential of integrate-and-fire neuron with Poisson noise as input.
    :width: 400px
 
@@ -408,7 +408,7 @@ the synaptic model.
 
 .. _spikes_one_neuron_noise:
 
-.. figure:: ../../_static/img/spikes_one_neuron_noise.pdf.png
+.. figure:: ../../static/img/spikes_one_neuron_noise.pdf.png
    :alt: Spikes of the neuron with noise.
    :width: 400px
 
@@ -427,7 +427,7 @@ Two connected neurons
 
 .. _vm_psp_two_neurons:
 
-.. figure:: ../../_static/img/vm_psp_two_neurons.pdf-w400.png
+.. figure:: ../../static/img/vm_psp_two_neurons.pdf-w400.png
    :alt: Postsynaptic potentials in neuron2 evoked by the spikes of neuron1
 
    Postsynaptic potentials in neuron2 evoked by the spikes of neuron1

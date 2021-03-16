@@ -71,7 +71,7 @@ Display the voltage graph from the voltmeter:
 
 You should see the following image as the output:
 
-.. image:: _static/img/output_getting_started.png
+.. image:: static/img/output_getting_started.png
    :align: center
 
 **And that's it! You have performed your first neuronal simulation in NEST!**

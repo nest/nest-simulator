@@ -25,6 +25,7 @@ Functions to get information on NEST.
 
 import sys
 import os
+import textwrap
 import webbrowser
 
 from ..ll_api import *
@@ -114,10 +115,17 @@ def help(obj=None, return_text=False):
     """
 
     if obj is not None:
-        if return_text:
-            return load_help(obj)
-        else:
-            show_help_with_pager(obj)
+        try:
+            if return_text:
+                return load_help(obj)
+            else:
+                show_help_with_pager(obj)
+        except FileNotFoundError:
+            print(textwrap.dedent(
+                  f"""
+                   Sorry, there is no help for model '{obj}'.
+                   Use the Python help() function to obtain help on PyNEST functions.""")
+                 )
     else:
         print(nest.__doc__)
 

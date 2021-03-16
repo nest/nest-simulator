@@ -121,11 +121,9 @@ def help(obj=None, return_text=False):
             else:
                 show_help_with_pager(obj)
         except FileNotFoundError:
-            print(textwrap.dedent(
-                  f"""
-                   Sorry, there is no help for model '{obj}'.
-                   Use the Python help() function to obtain help on PyNEST functions.""")
-                  )
+            print(textwrap.dedent(f"""
+                Sorry, there is no help for model '{obj}'.
+                Use the Python help() function to obtain help on PyNEST functions."""))
     else:
         print(nest.__doc__)
 

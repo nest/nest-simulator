@@ -179,7 +179,8 @@ html_show_copyright = False
 # With this local 'make html' is broken!
 github_doc_root = ''
 
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {'nestml': ('https://nestml.readthedocs.io/en/latest/',
+                      None)}
 
 from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 

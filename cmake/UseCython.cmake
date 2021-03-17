@@ -62,6 +62,8 @@
 # limitations under the License.
 #=============================================================================
 
+# Modifications copyright (C) 2004 The NEST Initiative
+
 # Configuration options.
 set( CYTHON_ANNOTATE OFF
     CACHE BOOL "Create an annotated .html file when compiling *.pyx." )

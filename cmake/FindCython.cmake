@@ -22,9 +22,10 @@
 # limitations under the License.
 #=============================================================================
 
+# Modifications copyright (C) 2004 The NEST Initiative
+
 # Using the Cython executable that lives next to the Python executable
 # if it is a local installation.
-
 if ( Python_FOUND )
   get_filename_component( _python_path ${Python_EXECUTABLE} PATH )
   find_program( CYTHON_EXECUTABLE

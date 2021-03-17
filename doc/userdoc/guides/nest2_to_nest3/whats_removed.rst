@@ -65,6 +65,7 @@ The removed functions are (see also :doc:`refguide_nest2_nest3`
 for a full list of functions that have changed):
 
 - BeginSubnet
+- CGConnect
 - ChangeSubnet
 - CurrentSubnet
 - DataConnect

@@ -180,6 +180,8 @@ html_show_copyright = False
 github_doc_root = ''
 
 intersphinx_mapping = {'nestml': ('https://nestml.readthedocs.io/en/latest/',
+                      None), 'pynn': ('http://neuralensemble.org/docs/PyNN/',
+                      None), 'elephant': ('https://elephant.readthedocs.io/en/latest/',
                       None)}
 
 from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa

@@ -66,32 +66,26 @@ or they can be replaced by using other functions with indexing into a NodeCollec
 
 The following functions have been removed:
 
-From subnets
-
-- BeginSubnet
-- ChangeSubnet
-- CurrentSubnet
-- EndSubnet
-- GetChildren
-- GetLayer
-- GetLeaves
-- GetLID
-- GetNetwork
-- LayoutNetwork
-
- See :ref:`subnet_ref`
-
-- ResetNetwork
-
-See :ref:`sim_ref`
-
-- DataConnect
-- DisconnectOneToOne
-
-See :ref:`conn_ref`
-
-- GetElement
-
-See :ref:`topo_ref`
-
-- RestoreNodes (have never existed on PyNEST level, it was just a SLI function)
++----------------------+------------------------------+
+| - BeginSubnet        |                              |
+| - ChangeSubnet       |                              |
+| - CurrentSubnet      |                              |
+| - EndSubnet          |                              |
+| - GetChildren        |                              |
+| - GetLayer           |   See :ref:`subnet_ref`      |
+| - GetLeaves          |                              |
+| - GetLID             |                              |
+| - GetNetwork         |                              |
+| - LayoutNetwork      |                              |
++----------------------+------------------------------+
+| - ResetNetwork       |  See :ref:`sim_ref`          |
++----------------------+------------------------------+
+| - DataConnect        |                              |
+| - DisconnectOneToOne |  See :ref:`conn_ref`         |
++----------------------+------------------------------+
+| - GetElement         |   See :ref:`topo_ref`        |
++----------------------+------------------------------+
+| - RestoreNodes       | (have never existed on PyNEST|
+|                      | level, it was only a SLI     |
+|                      | function)                    |
++----------------------+------------------------------+

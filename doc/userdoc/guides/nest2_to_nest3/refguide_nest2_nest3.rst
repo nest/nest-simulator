@@ -299,6 +299,7 @@ divergent                              pairwise_bernoulli
 divergent *and* num_connections        fixed_outdegree
 ====================================== =================================================
 
+.. _sim_ref:
 
 Functions related to simulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -96,7 +96,7 @@ For examples, see:
 For an example network model using ``ht_neuron`` (based on [1]_), see:
 
 - `Multiarea Hill-Tononi thalamocortical network model
-<https://github.com/ricardomurphy/Multiarea-Hill-Tononi-thalamocortical-network-model>`_
+  <https://github.com/ricardomurphy/Multiarea-Hill-Tononi-thalamocortical-network-model>`_
 
 Parameters
 ++++++++++

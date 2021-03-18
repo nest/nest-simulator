@@ -52,6 +52,8 @@ be used instead.
   +----------------------------------------------+-----------------------------------------------+
   | subnet                                       | no longer needed, use NodeCollection instead  |
   +----------------------------------------------+-----------------------------------------------+
+  | spike_detector                               | spike_recorder                                |
+  +----------------------------------------------+-----------------------------------------------+
 
 Furthermore, the model `iaf_tum_2000` has been renamed to `iaf_psc_exp_htum`. iaf_psc_exp_htum is
 the exact same model as iaf_tum_2000, it has just been renamed to match NEST's naming conventions.
@@ -61,21 +63,35 @@ Functions
 
 Some functions have also been removed. The removed functions where either related to subnets,
 or they can be replaced by using other functions with indexing into a NodeCollection.
-The removed functions are (see also :doc:`refguide_nest2_nest3`
-for a full list of functions that have changed):
+
+The following functions have been removed:
+
+From subnets
 
 - BeginSubnet
 - ChangeSubnet
 - CurrentSubnet
-- DataConnect
-- DisconnectOneToOne
 - EndSubnet
 - GetChildren
-- GetElement
 - GetLayer
 - GetLeaves
 - GetLID
 - GetNetwork
 - LayoutNetwork
+
+ See :ref:`subnet_ref`
+
 - ResetNetwork
+
+See :ref:`sim_ref`
+
+- DataConnect
+- DisconnectOneToOne
+
+See :ref:`conn_ref`
+
+- GetElement
+
+See :ref:`topo_ref`
+
 - RestoreNodes (have never existed on PyNEST level, it was just a SLI function)

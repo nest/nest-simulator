@@ -66,7 +66,7 @@ documentation and avoid using Conda, you can use pip:
 
 .. code-block:: bash
 
-    pip3 install -r <nest_source_dir>/doc/requirements.txt
+    pip3 install -r <nest_source_dir>/extras/nest-simulator-doc-requirements.txt
 
 
 Generating documentation with Sphinx

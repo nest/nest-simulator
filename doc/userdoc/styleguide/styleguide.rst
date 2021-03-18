@@ -355,12 +355,13 @@ Rendered as
         secton_header
         --------------
 
-Linking
-^^^^^^^
+Special links
+^^^^^^^^^^^^^
 
 .. attention::
 
-  The items in this section are still in development and have not been incorporated into nest:master
+  The items in this section are still in development and have not been incorporated into nest:master!
+
 
 To link PyNEST API functions used in-text to the API reference page use the following syntax:
 
@@ -374,7 +375,19 @@ Rendered as
    :py:func:`.Create`
 
 
-To link terms to the glossary page use the <<hover tool tip>> role . . .
+To link terms to the glossary page use the HoverXTooltip role from Mahdi Enan (INM-6)
+
+::
+
+  :hxt_ref:`E_L`
+
+To link to external projects (PyNN, Elephant, nestml), you can treat references as you would in your local project
+with the addition of the intersphinx unique identifer (see also conf.py >  intersphinx_mapping).
+
+::
+
+  :doc:`tuturial for nestml <nestml:tutorials>`
+  :py:func:`pyNN.utility.get_simulator`
 
 Bibliography style
 ------------------

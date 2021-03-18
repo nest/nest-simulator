@@ -1,5 +1,5 @@
 /*
- *  tsodyks2_connection.h
+ *  tsodyks2_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TSODYKS2_CONNECTION_H
-#define TSODYKS2_CONNECTION_H
+#ifndef TSODYKS2_SYNAPSE_H
+#define TSODYKS2_SYNAPSE_H
 
 // C++ includes:
 #include <cmath>
@@ -105,7 +105,7 @@ tsodyks_synapse, stdp_synapse, static_synapse
 EndUserDocs */
 
 template < typename targetidentifierT >
-class Tsodyks2Connection : public Connection< targetidentifierT >
+class tsodyks2_synapse : public Connection< targetidentifierT >
 {
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
@@ -115,18 +115,18 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  Tsodyks2Connection();
+  tsodyks2_synapse();
 
   /**
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  Tsodyks2Connection( const Tsodyks2Connection& ) = default;
+  tsodyks2_synapse( const tsodyks2_synapse& ) = default;
 
   /**
    * Default Destructor.
    */
-  ~Tsodyks2Connection()
+  ~tsodyks2_synapse()
   {
   }
 
@@ -203,7 +203,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-Tsodyks2Connection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+tsodyks2_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   Node* target = get_target( t );
   const double t_spike = e.get_stamp().get_ms();
@@ -227,7 +227,7 @@ Tsodyks2Connection< targetidentifierT >::send( Event& e, thread t, const CommonS
 }
 
 template < typename targetidentifierT >
-Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection()
+tsodyks2_synapse< targetidentifierT >::tsodyks2_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , U_( 0.5 )
@@ -241,7 +241,7 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection()
 
 template < typename targetidentifierT >
 void
-Tsodyks2Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+tsodyks2_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -256,7 +256,7 @@ Tsodyks2Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+tsodyks2_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -290,4 +290,4 @@ Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d, C
 
 } // namespace
 
-#endif // TSODYKS2_CONNECTION_H
+#endif // TSODYKS2_SYNAPSE_H

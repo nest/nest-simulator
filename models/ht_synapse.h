@@ -1,5 +1,5 @@
 /*
- *  ht_connection.h
+ *  ht_synapse.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef HT_CONNECTION_H
-#define HT_CONNECTION_H
+#ifndef HT_SYNAPSE_H
+#define HT_SYNAPSE_H
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -86,7 +86,7 @@ ht_neuron, tsodyks_synapse, stdp_synapse, static_synapse
 EndUserDocs */
 
 template < typename targetidentifierT >
-class HTConnection : public Connection< targetidentifierT >
+class ht_synapse : public Connection< targetidentifierT >
 {
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
@@ -96,13 +96,13 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  HTConnection();
+  ht_synapse();
 
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  HTConnection( const HTConnection& ) = default;
+  ht_synapse( const ht_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -116,7 +116,7 @@ public:
   /**
    * Default Destructor.
    */
-  virtual ~HTConnection()
+  virtual ~ht_synapse()
   {
   }
 
@@ -183,7 +183,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-HTConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+ht_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   // propagation t_lastspike -> t_spike, t_lastspike_ = 0 initially, p_ = 1
   const double t_spike = e.get_stamp().get_ms();
@@ -204,7 +204,7 @@ HTConnection< targetidentifierT >::send( Event& e, thread t, const CommonSynapse
 }
 
 template < typename targetidentifierT >
-HTConnection< targetidentifierT >::HTConnection()
+ht_synapse< targetidentifierT >::ht_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , tau_P_( 500.0 )
@@ -216,7 +216,7 @@ HTConnection< targetidentifierT >::HTConnection()
 
 template < typename targetidentifierT >
 void
-HTConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+ht_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -228,7 +228,7 @@ HTConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-HTConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+ht_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
 
@@ -255,4 +255,4 @@ HTConnection< targetidentifierT >::set_status( const DictionaryDatum& d, Connect
 
 } // namespace
 
-#endif // HT_CONNECTION_H
+#endif // HT_SYNAPSE_H

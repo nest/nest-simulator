@@ -32,37 +32,13 @@ env:
     - MAKEFLAGS="-j 2"
 stages:
    - Static-Code-Analysis
-   - Linux-GCC
-   - Linux-Clang
-   - macOS
-
+   
 jobs:
   # list of build stages to run. Stages with the same name get run in parallel.
   include:
     - stage: Static-Code-Analysis
       python: 3.8.2
       env: CACHE_NAME=JOB xNEST_BUILD_TYPE=STATIC_CODE_ANALYSIS
-    - stage: Linux-GCC
-      python: 3.8.2
-      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=MINIMAL
-    - stage: Linux-GCC
-      python: 3.8.2
-      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=MPI_ONLY
-    - stage: Linux-GCC
-      python: 3.8.2
-      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=OPENMP_ONLY
-    - stage: Linux-GCC
-      python: 3.8.2
-      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=FULL
-    - stage: Linux-Clang
-      language: cpp
-      python: 3.6.10
-      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=MINIMAL xNEST_BUILD_COMPILER=CLANG xNEST_PYTHON_VERSION=3.6.10
-    - stage: macOS
-      os: osx
-      osx_image: xcode12.2   # Python 3.9.0 running on macOS 10.15.7
-      language: shell      # language 'python' results in errors on macOS
-      env: CACHE_NAME=JOB xNEST_BUILD_TYPE=MINIMAL
       cache:
         directories:
           - $HOME/.cache
@@ -140,20 +116,6 @@ before_install:
              pyenv global $xNEST_PYTHON_VERSION
          fi
 
-         if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-           brew --version
-           brew update
-           brew info python
-           export PATH="/usr/local/opt/python/libexec/bin:$PATH"  # To use homebrew's Python
-           brew tap brewsci/science
-           brew tap brewsci/bio
-           brew install coreutils gsl open-mpi automake autoconf libtool
-           brew unlink gcc
-           brew install gcc@8
-           brew link gcc@8
-           find /usr/local/Cellar/ -name Python\.h
-           find /usr/local/Cellar/ -name \*python\*dylib
-         fi
          # Upgrade pip and setuptools
          pip install --upgrade pip setuptools
          # Installing additional packages using pip as they only have
@@ -176,23 +138,7 @@ before_install:
          pip list
      fi
 
-install:
-   - |
-     if [ "$xNEST_BUILD_TYPE" != "STATIC_CODE_ANALYSIS" ]; then
-         which cython
-         cython --version
-         which python
-         python --version
-         which pip
-         pip list
-         which nosetests
-         nosetests --version
-         nosetests --plugins
-         which cmake
-         cmake --version
-         echo ${CC}
-         echo ${CXX}
-     fi
+#install:
 
 before_script:
    # Change directory back to the NEST source code directory.
@@ -202,36 +148,4 @@ before_script:
 script:
    - set -o pipefail
    - ./extras/travis_build.sh 2>&1 | tee travis_build.sh.log
-   - |
-     if [ "$xNEST_BUILD_TYPE" != "STATIC_CODE_ANALYSIS" ]; then
-        python extras/parse_travis_log.py travis_build.sh.log "$xNEST_BUILD_TYPE" "$TRAVIS_BUILD_DIR"
-     fi
-
-before_deploy:
-   - |
-     if [ "$xNEST_BUILD_TYPE" != "STATIC_CODE_ANALYSIS" ]; then
-         cd $TRAVIS_BUILD_DIR/build
-         tar -zcvf reports.tar.gz ./reports
-         tar -zcvf docs.tar.gz $TRAVIS_BUILD_DIR/result/share/doc/nest/*.*
-         mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
-         mv docs.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
-         mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
-     fi
-
-# S3 Deployment (Uploading the Travis CI build artefacts to Amazon S3).
-#deploy:
-#  provider: s3
-#  access_key_id:
-#    secure: $ARTIFACTS_KEY
-#  secret_access_key:
-#    secure: $ARTIFACTS_SECRET
-#  bucket: "nest-travis-artefacts"
-#  region: eu-central-1
-#  skip_cleanup: true
-#  on:
-#    repo: nest/nest-simulator
-#    branch: master
-#    condition: $xNEST_BUILD_TYPE != STATIC_CODE_ANALYSIS
-#  local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
-#  upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
-#  acl: bucket_owner_full_control
+   

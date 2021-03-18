@@ -57,13 +57,13 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             'diffusion_connection_lbl'
         ]
 
-        self.clopath_connections = [
+        self.clopath_synapses = [
             'clopath_synapse',
             'clopath_synapse_lbl',
             'clopath_synapse_hpc'
         ]
 
-        self.urbanczik_connections = [
+        self.urbanczik_synapses = [
             'urbanczik_synapse',
             'urbanczik_synapse_lbl',
             'urbanczik_synapse_hpc'
@@ -83,12 +83,12 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             neurons = nest.Create("siegert_neuron", 5)
 
         # in case of the clopath synapse use a supported model instead
-        if syn_model in self.clopath_connections:
+        if syn_model in self.clopath_synapses:
             neurons = nest.Create("hh_psc_alpha_clopath", 5)
 
         r_type = 0
         # in case of the urbanczik synapse use a supported model instead
-        if syn_model in self.urbanczik_connections:
+        if syn_model in self.urbanczik_synapses:
             neurons = nest.Create("pp_cond_exp_mc_urbanczik", 5)
             syns = nest.GetDefaults("pp_cond_exp_mc_urbanczik")["receptor_types"]
             r_type = syns["soma_exc"]

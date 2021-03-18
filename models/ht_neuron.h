@@ -171,7 +171,7 @@ References
 See also
 ++++++++
 
-ht_connection
+ht_synapse
 
 EndUserDocs */
 

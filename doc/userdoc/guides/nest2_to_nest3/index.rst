@@ -7,9 +7,9 @@ perform operations that were not possible in previous versions.
 .. toctree::
    :maxdepth: 1
 
-   Find out what new features NEST 3.0 has to offer <nest3_features/index>
-   Everything you need to know about spatially-structured networks (topology module) <../spatial/index>
-   Compare old versus new function syntax in our reference guide <refguide_nest2_nest3>
+   New features in NEST 3.0 <nest3_features/index>
+   Spatially-structured networks (topology module) <../spatial/index>
+   Old versus new function syntax <refguide_nest2_nest3>
    whats_removed
 
 

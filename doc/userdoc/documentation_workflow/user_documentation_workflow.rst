@@ -47,7 +47,7 @@ Setting up your environment
 +++++++++++++++++++++++++++
 
 We recommend that you set up a full NEST developer environment using
-Conda (for detail on conda see :doc:`<../installation/conda_tips>`):
+Conda (for details on Conda, see :doc:`../installation/conda_tips`):
 
 .. code-block:: bash
 
@@ -61,7 +61,7 @@ If you later on want to deactivate or delete the build environment:
    conda deactivate
    conda remove --name nest-simulator-dev --all
 
-If you only want to install a minimal set of packages for building the
+If you want to install only a minimal set of packages for building the
 documentation and avoid using Conda, you can use pip:
 
 .. code-block:: bash

@@ -1249,13 +1249,13 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
     // source may be a proxy on tid.
     if ( target->one_node_per_process() )
     {
-      if ( kernel().node_manager.is_local_node( source ))
+      if ( kernel().node_manager.is_local_node( source ) )
       {
         return CONNECT_TO_DEVICE;
       }
       else
       {
-      return NO_CONNECTION;
+        return NO_CONNECTION;
       }
     }
 

@@ -29,7 +29,6 @@ from ..ll_api import *
 from .hl_api_helper import *
 from .hl_api_parallel_computing import Rank
 
-
 __all__ = [
     'Cleanup',
     'DisableStructuralPlasticity',
@@ -84,7 +83,10 @@ def Run(t):
     `Prepare` must be called before `Run` to calibrate the system, and
     `Cleanup` must be called after `Run` to close files, cleanup handles, and
     so on. After `Cleanup`, `Prepare` can and must be called before more `Run`
-    calls. Any calls to `SetStatus` between `Prepare` and `Cleanup` have
+    calls. 
+    
+    Any calls modifying the network, i.e., calls to `Create`, `Connect`,
+    `SetStatus` and `SetKernelStatus` between `Prepare` and `Cleanup` have
     undefined behaviour.
 
     See Also
@@ -139,8 +141,16 @@ def RunManager():
     ::
 
         with RunManager():
-            for i in range(10):
-                Run()
+            for _ in range(10):
+                Run(100)
+                # extract results
+
+    Notes
+    -----
+
+    Any calls modifying the network, i.e., calls to `Create`, `Connect`,
+    `SetStatus` and `SetKernelStatus` between `Prepare` and `Cleanup` have
+    undefined behaviour.
 
     See Also
     --------

@@ -145,8 +145,8 @@ Spikes between neurons and devices
 
 .. note::
 
-  In an MPI-parallel simulation, the spike detector on each MPI process only gets the spikes of
-  neurons simulated on that MPI process
+  In an MPI-parallel simulation, the spike recorder on each MPI process only records the spikes of
+  neurons simulated on that MPI process.
 
 Synaptic plasticity models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

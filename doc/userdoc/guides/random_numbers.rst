@@ -193,7 +193,7 @@ Other parameters may be randomized in the same way as the membrane potential.
 
    nest.Create('iaf_psc_alpha', 10000,
                {'C_m': nest.random.uniform(min=240.0, max=260.0),
-               'I_e': nest.random.uniform(min=0.0, max=5.0)})
+                'I_e': nest.random.uniform(min=0.0, max=5.0)})
 
 Randomizing connection parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -241,8 +241,8 @@ They also support arithmetic with other NEST parameters.
 ::
 
    n = nest.Create('iaf_psc_alpha', 1000,
-                  positions=nest.spatial.free(nest.random.uniform(min=0.0, max=10.0),
-                                             num_dimensions=2))
+                   positions=nest.spatial.free(nest.random.uniform(min=0.0, max=10.0),
+                                               num_dimensions=2))
 
    nest.Connect(n, n,
                 conn_spec={'rule': 'fixed_indegree', 'indegree': 1},

@@ -1,3 +1,5 @@
+.. _documentation_workflow:
+
 User-level documentation workflow
 #################################
 
@@ -21,7 +23,7 @@ with each release of NEST having its own documentation.
 
 This workflow aims for the concept of **user-correctable documentation**.
 
-.. image:: ../_static/img/documentation_workflow.png
+.. image:: ../static/img/documentation_workflow.png
   :width: 500
   :alt: Alternative text
 
@@ -157,27 +159,3 @@ Once your documentation work is finished, you can create a `pull request
 <https://nest.github.io/nest-simulator/development_workflow#create-a-pull-
 request>`_ to the ``master`` branch of the NEST Source Code Repository. Your
 pull request will be reviewed by the NEST Documentation Team!
-
-Helpdesk
-++++++++
-
-For a list of commands for SLI and C++, you can access the the online
-command index via the command line
-
-::
-
-   import nest
-   nest.helpdesk()
-
-.. note::
-    The ``helpdesk()`` command needs to know which browser to launch
-    in order to display the help pages. The browser is set as an
-    option of helpdesk. Please see the file ``~/.nestrc`` for an
-    example, which sets Firefox as browser.
-
-.. note::
-    The ``helpdesk()`` command does not work if you have compiled NEST
-    with MPI support, but you have to enter the address of the
-    helpdesk (``file://<nest_install_dir>/share/doc/nest/index.html``)
-    manually into the browser.  Replace ``<nest_install_dir>`` with
-    the path under which NEST is installed.

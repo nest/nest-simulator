@@ -352,7 +352,7 @@ public:
    * @param d dictionary with parameter specifications
    *
    * The dictionary can include the following entries:
-   * mean  - mean value
+   * mean - mean value
    * std - standard deviation
    */
   NormalParameter( const DictionaryDatum& d );
@@ -384,7 +384,7 @@ public:
    * @param d dictionary with parameter specifications
    *
    * The dictionary can include the following entries:
-   * mean    - mean value of logarithm
+   * mean - mean value of logarithm
    * sigma - standard distribution of logarithm
    */
   LognormalParameter( const DictionaryDatum& d );

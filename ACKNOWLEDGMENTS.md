@@ -26,8 +26,6 @@ from:
   Forschungszentrum Jülich (VSR computation time grant JINB33),
 - the Jülich Aachen Research Alliance (JARA),
 - the Next-Generation Supercomputer Project of MEXT, Japan,
-- the eScience program of the Research Council of Norway under grant 178892/V30
-  (eNeuro),
 - the Helmholtz Association through the Helmholtz Portfolio Theme
   "Supercomputing and Modeling for the Human Brain",
 - the Excellence Initiative of the German federal and state governments,
@@ -35,5 +33,7 @@ from:
   Forschungsgemeinschaft [S.J. van Albada: AL 2041/1-1],
 - the Helmholtz young investigator's group VH-NG-1028 "Theory of multi-scale
   neuronal networks",
-- and compute time provided by UNINETT Sigma2 - the National Infrastructure for
-  High Performance Computing and Data Storage in Norway and its predecessors.
+- compute time provided by UNINETT Sigma2 - the National Infrastructure for
+  High Performance Computing and Data Storage in Norway and its predecessors,
+- the eScience program of the Research Council of Norway under grant 178892/V30
+  (eNeuro).

@@ -80,10 +80,10 @@ Sphinx.
 Rendering HTML
 ~~~~~~~~~~~~~~
 
-If you intend to work on the documentation, or if you want to obtain a
-local version of it for other reasons, you can build the documentation
-by simply running the following command in the :ref:`build directory
-<source-install>` of NEST (i.e. the directory where you ran ``cmake``).
+If you intend to work on the documentation or want to obtain a local version
+of it, you can build the documentation by running the following command in
+the :ref:`build directory <source-install>` of NEST (i.e. the directory where
+you ran ``cmake``).
 
 .. code-block:: bash
 

@@ -15,6 +15,7 @@ numpy
 numpydoc
 path.py
 pathlib
+pygments>=2.6.1
 pytest
 recommonmark
 scipy

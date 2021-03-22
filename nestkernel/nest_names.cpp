@@ -394,6 +394,7 @@ const Name send_buffer_size_secondary_events( "send_buffer_size_secondary_events
 const Name senders( "senders" );
 const Name shape( "shape" );
 const Name shift_now_spikes( "shift_now_spikes" );
+const Name shrink_factor_buffer_spike_data( "shrink_factor_buffer_spike_data" );
 const Name sigma( "sigma" );
 const Name sigmoid( "sigmoid" );
 const Name sion_chunksize( "sion_chunksize" );

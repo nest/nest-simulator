@@ -1,7 +1,7 @@
 Acknowledgments
 ---------------
 
-NEST development has been supported by many organisations, programs and 
+NEST development has been supported by many organisations, programs, and 
 individuals since 1993. The following list of support received is therefore 
 necessarily incomplete.
 
@@ -11,7 +11,7 @@ Framework Programme for Research and Innovation under Specific Grant Agreement:
 - No. 945539 (Human Brain Project SGA3),
 - No. 785907 (Human Brain Project SGA2),
 - No. 720270 (Human Brain Project SGA1),
-- No. 754304 (DEEP-EST),
+- No. 754304 (DEEP-EST), and
 - No. 800858 (ICEI).
 
 The NEST developers gratefully acknowledge the support and funding received 

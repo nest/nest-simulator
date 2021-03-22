@@ -404,7 +404,7 @@ def load_help(obj):
     """
 
     help_fname = get_help_fname(obj)
-    with open(help_fname, 'r', encoding="utf-8") as help_file:
+    with open(help_fname, 'r', encoding='utf-8') as help_file:
         help_text = help_file.read()
     return help_text
 

@@ -7,6 +7,7 @@ necessarily incomplete.
 
 This project has received funding from the European Union’s Horizon 2020 
 Framework Programme for Research and Innovation under Specific Grant Agreement:
+
 - No. 945539 (Human Brain Project SGA3),
 - No. 785907 (Human Brain Project SGA2),
 - No. 720270 (Human Brain Project SGA1),
@@ -15,6 +16,7 @@ Framework Programme for Research and Innovation under Specific Grant Agreement:
 
 The NEST developers gratefully acknowledge the support and funding received 
 from:
+
 - Jülich Aachen Research Alliance (JARA),
 - computing time granted by the JARA-HPC Vergabegremium and provided on the
   JARA-HPC Partition part of the supercomputers JUQUEEN and JURECA at

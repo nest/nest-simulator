@@ -120,7 +120,7 @@ NEST is available under the :doc:`GNU General Public License 2 or later <license
 -  modify and improve NEST according to your needs,
 -  distribute NEST to others under the same license.
 
-.. include::  ../ACKNOWLEDGMENTS.md
+.. include::  ../../ACKNOWLEDGMENTS.md
 
 .. image:: _static/img/HBP.png
   :width: 55 %

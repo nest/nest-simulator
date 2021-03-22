@@ -1,6 +1,12 @@
 Acknowledgments
 ---------------
 
+NEST development has been supported by many organisations, programs and 
+individuals since 1993. The following list of support received is therefore 
+necessarily incomplete.
+
+The NEST developers gratefully acknowledge support and funding received from:
+
 The authors gratefully acknowledge the received support and funding from
 - the European Union 6th and 7th Framework Program under grant agreement no.
   15879 (FACETS),

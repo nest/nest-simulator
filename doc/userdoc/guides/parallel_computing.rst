@@ -104,7 +104,7 @@ are composed according to the following scheme
 
     [model|label]-node_id-vp.[dat|gdf]
 
-The first part is the name of the `model` (e.g. ``voltmeter`` or
+The first part is the name of the `model` (e.g., ``voltmeter`` or
 ``spike_recorder``) or, if set, the `label` of the recording device. Next is
 the node ID of the recording device, followed by the id of the VP
 assigned to the recorder. Spike files have the file extension ``gdf`` and
@@ -142,6 +142,11 @@ Spikes between neurons and devices
 * Spikes are delivered locally within the virtual process from or to a
   replica of the device. In this case, both the pre- and postsynaptic nodes are
   handled by the virtual process to which the neuron is assigned.
+
+.. note::
+
+  In an MPI-parallel simulation, the spike recorder on each MPI process only records the spikes of
+  neurons simulated on that MPI process.
 
 Synaptic plasticity models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -199,7 +204,7 @@ Build requirements
 ~~~~~~~~~~~~~~~~~~
 
 To compile NEST for distributed computing, you will need a library
-implementation of MPI (e.g. `OpenMPI <https://www.open-mpi.org>`__ or
+implementation of MPI (e.g., `OpenMPI <https://www.open-mpi.org>`__ or
 `MPICH <https://www.mpich.org/>`__) on your system. If you are on a
 cluster or supercomputer, you most likely already have this. In case
 you are using a pre-packaged MPI library, please make sure that you
@@ -207,7 +212,7 @@ also have the MPI development packages installed.
 
 When using the :ref:`standard installation instructions <standard>`, it
 is usually sufficient to add ``-Dwith-mpi=ON`` when calling `cmake`.
-However, more detailed information on this and related flags (e.g. for
+However, more detailed information on this and related flags (e.g., for
 enabling the :ref:`recording backend for recording to binary files
 <recording_backend_sionlib>`) can be found in the :ref:`compilation
 options for distributed computing <compile-with-mpi>`.
@@ -238,7 +243,7 @@ MPI related commands
 ~~~~~~~~~~~~~~~~~~~~
 
 Although we generally advise strongly against writing process-aware code
-in simulation scripts (e.g. creating a neuron or device only on one
+in simulation scripts (e.g., creating a neuron or device only on one
 process and such), in special cases it may be necessary to obtain
 information about the MPI application. One example would opening the
 right stimulus file for a specific rank. Therefore, some MPI specific

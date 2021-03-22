@@ -102,7 +102,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         nest.Connect(self.multimeter, self.siegert_neuron)
 
         # set output statistics of noise generator
-        # - for dt_scaling factor see doc/model_details/noise_generator.ipynb
+        # - for dt_scaling factor see doc/userdoc/model_details/noise_generator.ipynb
         # - takes var(V) = sigma^2 / 2 into account
         lif_params = self.lif_params
         mV_to_pA = lif_params["C_m"] / lif_params["tau_m"]

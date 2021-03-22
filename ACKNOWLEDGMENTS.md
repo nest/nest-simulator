@@ -5,16 +5,16 @@ NEST development has been supported by many organisations, programs and
 individuals since 1993. The following list of support received is therefore 
 necessarily incomplete.
 
-The NEST developers gratefully acknowledge support and funding received from 
-the European Union’s Horizon 2020 Framework Programme for Research and 
-Innovation under Specific Grant Agreement:
-- No. 720270 (Human Brain Project SGA1) and
-- No. 785907 (Human Brain Project SGA2) and
+This project has received funding from the European Union’s Horizon 2020 
+Framework Programme for Research and Innovation under Specific Grant Agreement:
 - No. 945539 (Human Brain Project SGA3) and
+- No. 785907 (Human Brain Project SGA2) and
+- No. 720270 (Human Brain Project SGA1) and
 - No. 754304 (DEEP-EST) and
 - No. 800858 (ICEI).
 
-The authors gratefully acknowledge the received support and funding from
+The NEST developers gratefully acknowledge the support and funding received 
+from:
 - the European Union 6th and 7th Framework Program under grant agreement no.
   15879 (FACETS),
 - the European Union 7th Framework Program under grant agreement no. 269921

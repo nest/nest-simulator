@@ -87,7 +87,8 @@ by simply running the following command in the build directory of NEST
 
 .. code-block:: bash
 
-    make html
+   cd nest-simulator-x.y.z-build
+   make html
 
 To install the documentation under `<nest_install_dir>`` along with
 the rest of NEST, this command can be followed by

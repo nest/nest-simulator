@@ -83,8 +83,8 @@ def Run(t):
     `Prepare` must be called before `Run` to calibrate the system, and
     `Cleanup` must be called after `Run` to close files, cleanup handles, and
     so on. After `Cleanup`, `Prepare` can and must be called before more `Run`
-    calls. 
-    
+    calls.
+
     Any calls modifying the network, i.e., calls to `Create`, `Connect`,
     `SetStatus` and `SetKernelStatus` between `Prepare` and `Cleanup` have
     undefined behaviour.

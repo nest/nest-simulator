@@ -84,24 +84,26 @@ If you intend to work on the documentation or want to obtain a local version
 of it, you can build and preview it by running the following commands.
 
 1. Go to the :ref:`build directory <source-install>` of NEST (i.e. the
-directory where you ran ``cmake``):
+directory where you ran ``cmake``)
 
 .. code-block:: bash
 
    cd nest-simulator-x.y.z-build
 
-2. Generate HTML files:
+2. Generate HTML files
 
 .. code-block:: bash
 
    make html
 
-3. Preview files. They are located in ``doc/userdocs/html``:
+3. Preview files. They are located in ``doc/userdocs/html``
+
+.. code-block:: bash
 
    browser doc/userdoc/html/index.html
 
-To install the documentation under `<nest_install_dir>`` along with
-the rest of NEST, this command can be followed by
+To install the documentation under ``<nest_install_dir>`` along with
+the rest of NEST, the ``make html`` command can be followed by
 
 .. code-block:: bash
 

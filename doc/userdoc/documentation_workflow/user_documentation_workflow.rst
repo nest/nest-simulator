@@ -80,8 +80,8 @@ Sphinx.
 Rendering HTML
 ~~~~~~~~~~~~~~
 
-If you intend to work on the documentation or want to obtain a local version
-of it, you can build and preview it by running the following commands.
+You can build and preview the documentation locally by running the following
+commands.
 
 1. Go to the :ref:`build directory <source-install>` of NEST (i.e. the
 directory where you ran ``cmake``)

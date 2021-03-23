@@ -65,6 +65,7 @@ EventDeliveryManager::EventDeliveryManager()
   , recv_buffer_target_data_()
   , buffer_size_target_data_has_changed_( false )
   , buffer_size_spike_data_has_changed_( false )
+  , decrease_buffer_size_spike_data_( true )
   , gather_completed_checker_()
 {
 }
@@ -88,6 +89,7 @@ EventDeliveryManager::initialize()
   off_grid_spiking_ = false;
   buffer_size_target_data_has_changed_ = false;
   buffer_size_spike_data_has_changed_ = false;
+  decrease_buffer_size_spike_data_ = true;
 
 #pragma omp parallel
   {
@@ -143,10 +145,13 @@ EventDeliveryManager::resize_send_recv_buffers_target_data()
 void
 EventDeliveryManager::resize_send_recv_buffers_spike_data_()
 {
-  send_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
-  recv_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
-  send_buffer_off_grid_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
-  recv_buffer_off_grid_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+  if ( kernel().mpi_manager.get_buffer_size_spike_data() > send_buffer_spike_data_.size() )
+  {
+    send_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+    recv_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+    send_buffer_off_grid_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+    recv_buffer_off_grid_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+  }
 }
 
 void
@@ -312,6 +317,9 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
+  // Assume a single gather round
+  decrease_buffer_size_spike_data_ = true;
+
   while ( gather_completed_checker_.any_false() )
   {
     // Assume this is the last gather round and change to false
@@ -384,11 +392,20 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #pragma omp single
       {
         buffer_size_spike_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_spike_data();
+        decrease_buffer_size_spike_data_ = false;
       }
     }
 #pragma omp barrier
 
   } // of while
+
+#pragma omp single
+  {
+    if ( decrease_buffer_size_spike_data_ and kernel().mpi_manager.adaptive_spike_buffers() )
+    {
+      kernel().mpi_manager.decrease_buffer_size_spike_data();
+    }
+  } // of omp single; implicit barrier
 
   reset_spike_register_( tid );
 }

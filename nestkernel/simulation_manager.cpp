@@ -134,66 +134,42 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   double resd = 0.0;
   bool res_updated = updateValue< double >( d, names::resolution, resd );
 
+  // A similar cascade of checks can be found in SimulationManager::set_status().
+  // If you change the wording of the exceptions here, please be so kind to make
+  // corresponding changes there. :-)
   if ( tics_per_ms_updated or res_updated )
   {
     if ( kernel().node_manager.size() > 0 )
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Cannot change time representation after nodes have been created. "
-        "Please call ResetKernel first." );
-      throw KernelException();
+      throw KernelException( "Nodes exist: time representation cannot be changed." );
     }
-    else if ( has_been_simulated() ) // someone may have simulated empty network
+    if ( has_been_simulated() ) // someone may have simulated empty network
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Cannot change time representation after the network has been "
-        "simulated. Please call ResetKernel first." );
-      throw KernelException();
+      throw KernelException( "Network has been simulated: time representation cannot be changed." );
     }
-    else if ( kernel().connection_manager.get_num_connections() != 0 )
+    if ( kernel().model_manager.has_user_models() )
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Cannot change time representation after connections have been "
-        "created. Please call ResetKernel first." );
-      throw KernelException();
+      throw KernelException( "Custom neuron models exist: time representation cannot be changed." );
     }
-    else if ( kernel().model_manager.has_user_models() or kernel().model_manager.has_user_prototypes() )
+    if ( kernel().model_manager.has_user_prototypes() )
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Cannot change time representation when user models have been "
-        "created. Please call ResetKernel first." );
-      throw KernelException();
+      throw KernelException( "Custom synapse models exist: time representation cannot be changed." );
     }
-    else if ( kernel().model_manager.are_model_defaults_modified() )
+    if ( kernel().model_manager.are_model_defaults_modified() )
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Cannot change time representation after model defaults have "
-        "been modified. Please call ResetKernel first." );
-      throw KernelException();
+      throw KernelException( "Model defaults were modified: time representation cannot be changed.");
     }
-    else if ( res_updated and tics_per_ms_updated ) // only allow TICS_PER_MS to
-                                                    // be changed together with
-                                                    // resolution
+
+    // only allow TICS_PER_MS to be changed together with resolution
+    if ( res_updated and tics_per_ms_updated )
     {
       if ( resd < 1.0 / tics_per_ms )
       {
-        LOG( M_ERROR,
-          "SimulationManager::set_status",
-          "Resolution must be greater than or equal to one tic. Value "
-          "unchanged." );
-        throw KernelException();
+        throw KernelException( "Resolution must be greater than or equal to one tic. Value unchanged." );
       }
       else if ( not is_integer( resd * tics_per_ms ) )
       {
-        LOG( M_ERROR,
-          "SimulationManager::set_status",
-          "Resolution must be a multiple of the tic length. Value unchanged." );
-        throw KernelException();
+        throw KernelException( "Resolution must be a multiple of the tic length. Value unchanged." );
       }
       else
       {
@@ -218,18 +194,11 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     {
       if ( resd < Time::get_ms_per_tic() )
       {
-        LOG( M_ERROR,
-          "SimulationManager::set_status",
-          "Resolution must be greater than or equal to one tic. Value "
-          "unchanged." );
-        throw KernelException();
+        throw KernelException( "Resolution must be greater than or equal to one tic. Value unchanged." );
       }
       else if ( not is_integer( resd / Time::get_ms_per_tic() ) )
       {
-        LOG( M_ERROR,
-          "SimulationManager::set_status",
-          "Resolution must be a multiple of the tic length. Value unchanged." );
-        throw KernelException();
+        throw KernelException( "Resolution must be a multiple of the tic length. Value unchanged." );
       }
       else
       {
@@ -251,11 +220,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     }
     else
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "change of tics_per_step requires simultaneous specification of "
-        "resolution." );
-      throw KernelException();
+      throw KernelException( "Change of tics_per_step requires simultaneous specification of resolution." );
     }
   }
 

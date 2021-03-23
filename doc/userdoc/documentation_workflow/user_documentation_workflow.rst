@@ -121,10 +121,10 @@ Editing and creating pages
 To edit existing `reStructuredText <https://thomas-cokelaer.info/tutorials/
 sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
-1. You can edit and/or add ``.rst`` files in the ``doc`` directory using your
+1. You can edit and/or add ``.rst`` files in the ``doc/userdoc`` directory using your
    editor of choice.
 
-2. If you create a new page, open ``contents.rst`` in the ``doc`` directory
+2. If you create a new page, open ``contents.rst`` in the ``doc/userdoc`` directory
    and add the file name under ``.. toctree::``. This will ensure it appears on
    the NEST simulator documentation's table of contents.
 

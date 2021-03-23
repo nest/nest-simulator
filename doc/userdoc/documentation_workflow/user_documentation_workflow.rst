@@ -96,7 +96,7 @@ directory where you ran ``cmake``)
 
    make html
 
-3. Preview files. They are located in ``doc/userdocs/html``
+3. Preview files. They are located in ``doc/userdoc/html``
 
 .. code-block:: bash
 

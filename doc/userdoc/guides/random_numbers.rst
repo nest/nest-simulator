@@ -127,7 +127,7 @@ Seeding the random number generator
 
 NEST uses a built-in default seed if you do not specify one. This means that unless you explicitly
 set the seed, all simulations will be run with the same sequence of random numbers. So *do not forget
-too seed your simulations*!
+to seed your simulations*!
 
 You can use any number :math:`s` with :math:`1\leq s \leq 2^{31}-1` as seed:
 
@@ -261,7 +261,7 @@ before continuing.
 
 A key principle of parallel simulation in NEST is that a simulation performed with a fixed
 number of virtual processes :math:`N_{\text{vp}} = M \times T` shall produce identical results
-independent of the number MPI processes :math:`M` and threads :math:`T` that go into each virtual process.
+independent of the number of MPI processes :math:`M` and threads :math:`T` that go into each virtual process.
 To observe this principle when also randomizing from the Python level, it is essential
 to create one Python random number generator per virtual process and use the random number
 generator for the virtual process to which a node belongs (for synapses: the VP of the target

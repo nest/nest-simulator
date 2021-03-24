@@ -85,9 +85,9 @@ def Run(t):
     so on. After `Cleanup`, `Prepare` can and must be called before more `Run`
     calls.
 
-    Any calls modifying the network, i.e., calls to `Create`, `Connect`,
+    Any calls modifying the network, i.e., calls to `Create`, `Connect`, `Disconnect`,
     `SetStatus` and `SetKernelStatus` between `Prepare` and `Cleanup` have
-    undefined behaviour.
+    undefined behavior.
 
     See Also
     --------
@@ -150,7 +150,7 @@ def RunManager():
 
     Any calls modifying the network, i.e., calls to `Create`, `Connect`,
     `SetStatus` and `SetKernelStatus` between `Prepare` and `Cleanup` have
-    undefined behaviour.
+    undefined behavior.
 
     See Also
     --------

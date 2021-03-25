@@ -34,6 +34,7 @@ import re
 import shlex
 import sys
 import numpy
+import pydoc
 
 from string import Template
 
@@ -43,7 +44,6 @@ from .. import pynestkernel as kernel
 __all__ = [
     'broadcast',
     'deprecated',
-    'get_help_filepath',
     'get_parameters',
     'get_parameters_hierarchical_addressing',
     'get_unistring_type',
@@ -98,7 +98,7 @@ def get_wrapped_text(text, width=80):
     """
 
     lines = text.split("\n")
-    lines = [textwrap.fill(" ".join(l.split()), width=width) for l in lines]
+    lines = [textwrap.fill(" ".join(line.split()), width=width) for line in lines]
     return "\n".join(lines)
 
 
@@ -330,26 +330,18 @@ def broadcast(item, length, allowed_types, name="item"):
     return item
 
 
-def __check_nb():
-    """Return true if called from a Jupyter notebook."""
-    try:
-        return get_ipython().__class__.__name__.startswith('ZMQ')
-    except NameError:
-        return False
-
-
-def __show_help_in_modal_window(objname, hlptxt):
+def __show_help_in_modal_window(obj, help_text):
     """Open modal window with help text
 
     Parameters
     ----------
-    objname :   str
-            filename
-    hlptxt  :   str
-            Full text
+    obj : string
+        The filename of the help file
+    help_text : string
+        Full help_text
     """
 
-    hlptxt = json.dumps(hlptxt)
+    help_text = json.dumps(help_text)
     style = "<style>.modal-body p { display: block;unicode-bidi: embed; " \
             "font-family: monospace; white-space: pre; }</style>"
     s = Template("""
@@ -369,59 +361,80 @@ def __show_help_in_modal_window(objname, hlptxt):
 
     from IPython.display import HTML, Javascript, display
     display(HTML(style))
+    display(Javascript(s.substitute(jstitle=obj, jstext=help_text)))
 
-    display(Javascript(s.substitute(jstitle=objname, jstext=hlptxt)))
 
+def get_help_fname(obj):
+    """Get file name for help object
 
-def get_help_filepath(hlpobj):
-    """Get file path of help object
-
-    Prints message if no help is available for `hlpobj`.
+    Raises FileNotFound if no help is available for ``obj``.
 
     Parameters
     ----------
-    hlpobj : string
+    obj : string
+        Object to get help filename for
+
+    Returns
+    -------
+    string:
+        File name of the help text for obj
+    """
+
+    docdir = sli_func("statusdict/prgdocdir ::")
+    help_fname = os.path.join(docdir, 'html', 'models', f'{obj}.rst')
+
+    if os.path.isfile(help_fname):
+        return help_fname
+    else:
+        raise FileNotFoundError(f"Sorry, there is no help for '{obj}'.")
+
+
+def load_help(obj):
+    """Returns documentation of the given object in RST format
+
+    Parameters
+    ----------
+    obj : string
         Object to display help for
 
     Returns
     -------
     string:
-        Filepath of the help object or None if no help available
+        The documentation of the object or None if no help is available
     """
 
-    helpdir = os.path.join(sli_func("statusdict/prgdocdir ::"), "help")
-    objname = hlpobj + '.hlp'
-    for dirpath, dirnames, files in os.walk(helpdir):
-        for hlp in files:
-            if hlp == objname:
-                objf = os.path.join(dirpath, objname)
-                return objf
-    else:
-        print("Sorry, there is no help for '" + hlpobj + "'.")
-        return None
+    help_fname = get_help_fname(obj)
+    with open(help_fname, 'r', encoding='utf-8') as help_file:
+        help_text = help_file.read()
+    return help_text
 
 
-def load_help(hlpobj):
-    """Returns documentation of the object
+def show_help_with_pager(obj):
+    """Display help text for the given object in the Python pager
+
+    If called from within a Jupyter notebook, display help in a modal
+    window instead of in the pager.
 
     Parameters
     ----------
-    hlpobj : object
-        Object to display help for
+    obj : object
+        Object to display
 
-    Returns
-    -------
-    string:
-        The documentation of the object or None if no help available
     """
 
-    objf = get_help_filepath(hlpobj)
-    if objf:
-        with open(objf, 'r') as fhlp:
-            hlptxt = fhlp.read()
-        return hlptxt
-    else:
-        return None
+    def check_nb():
+        try:
+            return get_ipython().__class__.__name__.startswith('ZMQ')
+        except NameError:
+            return False
+
+    help_text = load_help(obj)
+
+    if check_nb():
+        __show_help_in_modal_window(obj + '.rst', help_text)
+        return
+
+    pydoc.pager(help_text)
 
 
 def __is_executable(path, candidate):
@@ -429,70 +442,6 @@ def __is_executable(path, candidate):
 
     candidate = os.path.join(path, candidate)
     return os.access(candidate, os.X_OK) and os.path.isfile(candidate)
-
-
-def show_help_with_pager(hlpobj, pager=None):
-    """Output of doc in python with pager or print
-
-    Parameters
-    ----------
-    hlpobj : object
-        Object to display
-    pager: str, optional
-        pager to use, False if you want to display help using print().
-    """
-
-    # check that help is available
-    objf = get_help_filepath(hlpobj)
-    if objf is None:
-        return   # message is printed by get_help_filepath()
-
-    if __check_nb():
-        # Display help in notebook
-        # Load the helptext, check the file exists.
-        hlptxt = load_help(hlpobj)
-        if hlptxt:
-            # Opens modal window only in notebook.
-            objname = hlpobj + '.hlp'
-            __show_help_in_modal_window(objname, hlptxt)
-        return
-
-    if not pager and pager is not None:
-        # pager == False: display using print()
-        # Note: we cannot use "pager is False" as Numpy has its own False
-        hlptxt = load_help(hlpobj)
-        if hlptxt:
-            print(hlptxt)
-        return
-
-    # Help is to be displayed by pager
-    # try to find a pager if not explicitly given
-    if pager is None:
-        pager = sli_func('/page /command GetOption')
-
-        # pager == false if .nestrc does not define one
-        if not pager:
-            # Search for pager in path. The following is based on
-            # https://stackoverflow.com/questions/377017
-            for candidate in ['less', 'more', 'cat']:
-                if any(__is_executable(path, candidate)
-                       for path in os.environ['PATH'].split(os.pathsep)):
-                    pager = candidate
-                    break
-
-    # check that we have a pager
-    if not pager:
-        print('NEST help requires a pager program. You can configure '
-              'it in the .nestrc file in your home directory.')
-        return
-
-    try:
-        pagerl = shlex.split(pager)
-        subprocess.check_call(pagerl + [objf])
-    except (OSError, IOError, subprocess.CalledProcessError):
-        print('Displaying help with pager "{}" failed. '
-              'Please define a working parser in file .nestrc '
-              'in your home directory.'.format(pager))
 
 
 def model_deprecation_warning(model):

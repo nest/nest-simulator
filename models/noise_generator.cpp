@@ -104,12 +104,14 @@ nest::noise_generator::State_::State_()
 }
 
 nest::noise_generator::Buffers_::Buffers_( noise_generator& n )
-  : logger_( n )
+  : next_step_( 0 )
+  , logger_( n )
 {
 }
 
-nest::noise_generator::Buffers_::Buffers_( const Buffers_&, noise_generator& n )
-  : logger_( n )
+nest::noise_generator::Buffers_::Buffers_( const Buffers_& b, noise_generator& n )
+  : next_step_( b.next_step_ )
+  , logger_( n )
 {
 }
 

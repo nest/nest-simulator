@@ -28,8 +28,8 @@ import numpy as np
 
 
 @nest.ll_api.check_stack
-class STDPTripletConnectionTestCase(unittest.TestCase):
-    """Check stdp_triplet_connection model properties."""
+class STDPTripletSynapseTestCase(unittest.TestCase):
+    """Check stdp_triplet_synapse model properties."""
 
     def setUp(self):
         nest.set_verbosity('M_WARNING')
@@ -297,7 +297,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
 
 @nest.ll_api.check_stack
-class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
+class STDPTripletInhTestCase(STDPTripletSynapseTestCase):
 
     def setUp(self):
         nest.set_verbosity('M_WARNING')
@@ -340,7 +340,7 @@ def suite_inh():
 
 
 def suite():
-    return unittest.makeSuite(STDPTripletConnectionTestCase, "test")
+    return unittest.makeSuite(STDPTripletSynapseTestCase, "test")
 
 
 def run():

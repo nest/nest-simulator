@@ -96,7 +96,7 @@ all connection rules available in NEST is available below.
 all-to-all
 ~~~~~~~~~~
 
-.. image:: ../_static/img/All_to_all.png
+.. image:: ../static/img/All_to_all.png
      :width: 200px
      :align: center
 
@@ -161,7 +161,7 @@ Generator Interface and randomly connects 10% of the neurons from
 fixed indegree
 ~~~~~~~~~~~~~~
 
-.. image:: ../_static/img/Fixed_indegree.png
+.. image:: ../static/img/Fixed_indegree.png
      :width: 200px
      :align: center
 
@@ -179,7 +179,7 @@ that each node in ``B`` has a fixed `indegree` of ``N``.
 fixed outdegree
 ~~~~~~~~~~~~~~~
 
-.. image:: ../_static/img/Fixed_outdegree.png
+.. image:: ../static/img/Fixed_outdegree.png
      :width: 200px
      :align: center
 
@@ -211,7 +211,7 @@ such that the total number of connections equals ``N``.
 one-to-one
 ~~~~~~~~~~
 
-.. image:: ../_static/img/One_to_one.png
+.. image:: ../static/img/One_to_one.png
      :width: 200px
      :align: center
 
@@ -632,7 +632,7 @@ different compartments of a multi-compartment integrate-and-fire
 neuron (``iaf_cond_alpha_mc``) that are represented by different
 receptors.
 
-.. image:: ../_static/img/Receptor_types.png
+.. image:: ../static/img/Receptor_types.png
      :width: 200px
      :align: center
 

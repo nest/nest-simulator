@@ -1,19 +1,19 @@
 Getting help
 ============
 
-
 Have a specific question or problem with NEST?
 ----------------------------------------------
 
-* Check out the :doc:`troubleshooting section <troubleshooting>` for common issues.
+Check out the :doc:`troubleshooting section <troubleshooting>` for
+common issues.
 
-If your question is not on there, ask our :doc:`Mailing List <community>`.
+If your question is not on there, you are welcome to subscribe to our
+:doc:`Mailing List <community>` and ask.
 
 Getting help on the command line interface
 ------------------------------------------
 
 * The :py:func:`.helpdesk` command will launch the documentation pages on your browser.
-  See `Set up the integrated helpdesk`_ to specify the browser of your choice.
 
 * To access the High-level Python API reference material you can use the commands:
 
@@ -22,17 +22,11 @@ Getting help on the command line interface
        # list all functions and attributes
        dir(nest)
 
-       # Get docstring for function in Python
+       # Get docstring for function in Python ...
        help('nest.FunctionName')
 
-       # or in ipython
+       # ... or in IPython
        nest.FunctionName?
-
-* To access a specific C++ or SLI reference page for an object, command or parameter you can use the command:
-
-    .. code-block:: python
-
-       nest.help('name')
 
 Model Information
 -----------------
@@ -47,32 +41,17 @@ Model Information
 
     .. code-block:: python
 
-       nest.Models(mtype='nodes', sel=None)
+       nest.Models(mtype='nodes')
 
    * To get a list of only synapse models use:
 
     .. code-block:: python
 
-       nest.Models(mtype='synapses', sel=None)
+       nest.Models(mtype='synapses')
 
-* To get details on model parameters and usage use:
+* To get details on model equations and parameters, use:
 
     .. code-block:: python
 
        nest.help('model_name')
-
-
-Set up the integrated helpdesk
-------------------------------
-
-The command :py:func:`.helpdesk` needs to know which browser to launch in order
-to display the help pages. The browser is set as an option of
-:py:func:`.helpdesk`. Please see the file ``~/.nestrc`` for an example setting
-``firefox`` as browser. Please note that the command :py:func:`.helpdesk` does
-not work if you have compiled NEST with MPI support, but you have to
-enter the address of the helpdesk (``file://<nest_install_dir>/share/doc/nest(``)
-manually into the browser. Please replace ``<nest_install_dir>`` with the prefix
-you chose during the configuration of NEST. If you did not explicitly
-specify one, it is most likely set to ``/usr`` or ``/usr/local``
-depending on what system you use.
 

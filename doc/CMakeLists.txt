@@ -56,9 +56,6 @@ if ( NOT CMAKE_CROSSCOMPILING )
 
 endif ()
 
-install( DIRECTORY model_details
-    DESTINATION ${CMAKE_INSTALL_DOCDIR} )
-
 if ( DOXYGEN_FOUND )
   add_custom_target( doc
       COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_BINARY_DIR}/normaldoc.conf"
@@ -100,7 +97,7 @@ add_custom_target( html
   COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
 )
 
-install( DIRECTORY "${DOC_BUILD_DIR}/userdoc/html"
+install( DIRECTORY "${DOC_BUILD_DIR}/html"
   DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
   OPTIONAL
 )

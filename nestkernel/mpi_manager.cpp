@@ -57,6 +57,8 @@ MPI_Datatype MPI_Type< unsigned long >::type = MPI_UNSIGNED_LONG;
 nest::MPIManager::MPIManager()
   : num_processes_( 1 )
   , rank_( 0 )
+  , send_buffer_size_( 0 )
+  , recv_buffer_size_( 0 )
   , use_mpi_( false )
   , buffer_size_target_data_( 1 )
   , buffer_size_spike_data_( 1 )
@@ -66,6 +68,7 @@ nest::MPIManager::MPIManager()
   , adaptive_spike_buffers_( true )
   , growth_factor_buffer_spike_data_( 1.5 )
   , growth_factor_buffer_target_data_( 1.5 )
+  , shrink_factor_buffer_spike_data_( 1.1 )
   , send_recv_count_spike_data_per_rank_( 0 )
   , send_recv_count_target_data_per_rank_( 0 )
 #ifdef HAVE_MPI
@@ -216,6 +219,8 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
 
   updateValue< long >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
   updateValue< long >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
+
+  updateValue< double >( dict, names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
 }
 
 void

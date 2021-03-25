@@ -294,6 +294,8 @@ const Name music_channel( "music_channel" );
 const Name N( "N" );
 const Name NMDA( "NMDA" );
 const Name N_channels( "N_channels" );
+const Name N_NaP( "N_NaP" );
+const Name N_T( "N_T" );
 const Name n( "n" );
 const Name n_events( "n_events" );
 const Name n_messages( "n_messages" );
@@ -392,6 +394,7 @@ const Name send_buffer_size_secondary_events( "send_buffer_size_secondary_events
 const Name senders( "senders" );
 const Name shape( "shape" );
 const Name shift_now_spikes( "shift_now_spikes" );
+const Name shrink_factor_buffer_spike_data( "shrink_factor_buffer_spike_data" );
 const Name sigma( "sigma" );
 const Name sigmoid( "sigmoid" );
 const Name sion_chunksize( "sion_chunksize" );

@@ -20,7 +20,7 @@ How does it work?
 
 Let's start with a basic script to simulate a simple neural network.
 
-* Run Python or a Jupyter Notebook and try out this example simulation in NEST:
+Run Python or a Jupyter Notebook and try out this example simulation in NEST:
 
 Import required packages:
 
@@ -28,6 +28,7 @@ Import required packages:
 
    import nest
    import nest.voltage_trace
+   import matplotlib.pyplot as plt
    nest.ResetKernel()
 
 Create the neuron models you want to simulate:
@@ -47,7 +48,7 @@ Modify properties of the device:
 
 .. code-block:: python
 
-    nest.SetStatus(spikegenerator, {'spike_times': [10.0, 50.0]})
+    spikegenerator.set(spike_times=[10.0, 50.0])
 
 Connect neurons to devices and specify synapse (connection) properties:
 
@@ -67,7 +68,7 @@ Display the voltage graph from the voltmeter:
 .. code-block:: python
 
    nest.voltage_trace.from_device(voltmeter)
-   nest.voltage_trace.show()
+   plt.show()
 
 You should see the following image as the output:
 

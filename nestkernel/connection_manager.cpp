@@ -69,6 +69,7 @@ nest::ConnectionManager::ConnectionManager()
   , have_connections_changed_()
   , has_get_connections_been_called_( false )
   , sort_connections_by_source_( true )
+  , use_compressed_spikes_( true )
   , has_primary_connections_( false )
   , check_primary_connections_()
   , secondary_connections_exist_( false )
@@ -94,6 +95,7 @@ nest::ConnectionManager::initialize()
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
+  compressed_spike_data_.resize( 0 );
 
   have_connections_changed_.initialize( num_threads, false );
   check_primary_connections_.initialize( num_threads, false );
@@ -134,6 +136,7 @@ nest::ConnectionManager::finalize()
   delete_connections_();
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
+  compressed_spike_data_.clear();
 }
 
 void
@@ -159,6 +162,13 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
       "If structural plasticity is enabled, sort_connections_by_source can not "
       "be set to false." );
   }
+
+  updateValue< bool >( d, names::use_compressed_spikes, use_compressed_spikes_ );
+  if ( use_compressed_spikes_ and not sort_connections_by_source_ )
+  {
+    throw KernelException( "Spike compression requires sort_connections_by_source to be true." );
+  }
+
   //  Need to update the saved values if we have changed the delay bounds.
   if ( d->known( names::min_delay ) or d->known( names::max_delay ) )
   {
@@ -183,6 +193,7 @@ nest::ConnectionManager::get_status( DictionaryDatum& dict )
   def< long >( dict, names::num_connections, n );
   def< bool >( dict, names::keep_source_table, keep_source_table_ );
   def< bool >( dict, names::sort_connections_by_source, sort_connections_by_source_ );
+  def< bool >( dict, names::use_compressed_spikes, use_compressed_spikes_ );
 
   def< double >( dict, names::time_construction_connect, sw_construction_connect.elapsed() );
 }
@@ -1460,5 +1471,27 @@ nest::ConnectionManager::unset_have_connections_changed( const thread tid )
   if ( have_connections_changed_[ tid ].is_true() )
   {
     have_connections_changed_[ tid ].set_false();
+  }
+}
+
+
+void
+nest::ConnectionManager::collect_compressed_spike_data( const thread tid )
+{
+  if ( use_compressed_spikes_ )
+  {
+    assert( sort_connections_by_source_ );
+
+#pragma omp single
+    {
+      source_table_.resize_compressible_sources();
+    } // of omp single; implicit barrier
+
+    source_table_.collect_compressible_sources( tid );
+#pragma omp barrier
+#pragma omp single
+    {
+      source_table_.fill_compressed_spike_data( compressed_spike_data_ );
+    } // of omp single; implicit barrier
   }
 }

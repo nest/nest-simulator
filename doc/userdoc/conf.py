@@ -183,7 +183,7 @@ intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
                       'nestml': ('https://nestml.readthedocs.io/en/latest/',
                       None), 'pynn': ('http://neuralensemble.org/docs/PyNN/',
                       None), 'elephant': ('https://elephant.readthedocs.io/en/latest/',
-                      None, 'desktop': ('https://nest-desktop.readthedocs.io/en/latest/',
+                      None), 'desktop': ('https://nest-desktop.readthedocs.io/en/latest/',
                       None)}
 
 from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa

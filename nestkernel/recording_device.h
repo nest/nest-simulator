@@ -47,7 +47,7 @@ namespace nest
 Recording time window
 +++++++++++++++++++++
 
-The time span during which the recorder actively records, can be
+The time span during which the recorder actively records can be
 specified using the properties ``start`` and ``stop``. These define
 the activation period of the device in ms. An additional property
 ``origin`` allows to shift the recording window by a certain time,

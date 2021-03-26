@@ -121,6 +121,8 @@ nest::ConnectionManager::initialize()
   // The following line is executed by all processes, no need to communicate
   // this change in delays.
   min_delay_ = max_delay_ = 1;
+
+  sw_construction_connect.reset();
 }
 
 void
@@ -181,6 +183,8 @@ nest::ConnectionManager::get_status( DictionaryDatum& dict )
   def< long >( dict, names::num_connections, n );
   def< bool >( dict, names::keep_source_table, keep_source_table_ );
   def< bool >( dict, names::sort_connections_by_source, sort_connections_by_source_ );
+
+  def< double >( dict, names::time_construction_connect, sw_construction_connect.elapsed() );
 }
 
 DictionaryDatum

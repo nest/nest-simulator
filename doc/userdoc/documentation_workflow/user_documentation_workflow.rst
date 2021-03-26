@@ -48,28 +48,28 @@ workflow below!
 Setting up your environment
 +++++++++++++++++++++++++++
 
-To install the dependencies for building the documentation, you can
-either directly run
+We recommend that you set up a full NEST developer environment using
+Conda (for details on Conda, see :doc:`../installation/conda_tips`):
 
 .. code-block:: bash
 
-    pip3 install -r <nest_source_dir>/doc/requirements.txt
-
-or alternatively install the dependencies into a conda environment (we
-recommend `miniconda <https://docs.conda.io/en/latest/miniconda>`_ for
-this). After installing conda, you can simply run
-
-.. code-block:: bash
-
-    conda env create -f <nest_source_dir>/doc/environment.yml
-    conda activate nest-doc
+    conda env create -f <nest_source_dir>/extras/conda-nest-simulator-dev.yml
+    conda activate nest-simulator-dev
 
 If you later on want to deactivate or delete the build environment:
 
 .. code-block:: bash
 
    conda deactivate
-   conda remove --name nest-doc --all
+   conda remove --name nest-simulator-dev --all
+
+If you want to install only a minimal set of packages for building the
+documentation and avoid using Conda, you can use pip:
+
+.. code-block:: bash
+
+    pip3 install -r <nest_source_dir>/extras/nest-simulator-doc-requirements.txt
+
 
 Generating documentation with Sphinx
 ++++++++++++++++++++++++++++++++++++

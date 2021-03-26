@@ -126,11 +126,7 @@ Node::get_name() const
 Model&
 Node::get_model_() const
 {
-  if ( model_id_ < 0 )
-  {
-    throw UnknownModelID( model_id_ );
-  }
-
+  assert( model_id_ >= 0 );
   return *kernel().model_manager.get_model( model_id_ );
 }
 

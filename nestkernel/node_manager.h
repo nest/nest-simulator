@@ -80,7 +80,6 @@ public:
    * @param n Number of Nodes to be created. Defaults to 1 if not
    * specified.
    * @returns NodeCollection as lock pointer
-   * @throws nest::UnknownModelID
    */
   NodeCollectionPTR add_node( index m, long n = 1 );
 

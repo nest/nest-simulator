@@ -54,15 +54,6 @@ nest::NewModelNameExists::message() const
 }
 
 std::string
-nest::UnknownModelID::message() const
-{
-  std::ostringstream msg;
-
-  msg << id_ << " is an invalid model ID. Probably modeldict is corrupted.";
-  return msg.str();
-}
-
-std::string
 nest::ModelInUse::message() const
 {
   std::string str = "Model " + modelname_ + " is in use and cannot be unloaded/uninstalled.";

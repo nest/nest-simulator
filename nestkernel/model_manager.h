@@ -361,11 +361,6 @@ private:
 inline Model*
 ModelManager::get_model( index m ) const
 {
-  if ( m >= node_models_.size() or node_models_[ m ] == 0 )
-  {
-    throw UnknownModelID( m );
-  }
-
   return node_models_[ m ];
 }
 

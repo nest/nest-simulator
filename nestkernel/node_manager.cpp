@@ -96,11 +96,6 @@ NodeManager::add_node( index model_id, long n )
 {
   have_nodes_changed_ = true;
 
-  if ( model_id >= kernel().model_manager.get_num_node_models() )
-  {
-    throw UnknownModelID( model_id );
-  }
-
   if ( n < 1 )
   {
     throw BadProperty();

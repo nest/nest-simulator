@@ -43,7 +43,7 @@ The :py:func:`.Connect` function can be called in any of the following ways:
     Connect(pre, post, conn_spec)
     Connect(pre, post, conn_spec, syn_spec)
 
-``pre`` and ``post`` are ``NodeCollections``, defining the nodes of
+``pre`` and ``post`` ``NodeCollections``, defining the nodes of
 origin (`sources`) and termination (`targets`) for the connections to
 be established.
 
@@ -264,9 +264,9 @@ Synapse Specification
 ---------------------
 
 The synapse properties can be given as just the name of the desired
-synapse model as a string, as a dictionary specifying synapse model 
+synapse model as a string, as a dictionary specifying synapse model
 and parameters, or as a ``CollocatedSynapse`` object creating
-multiple synapses for each source-target pair as detailed in 
+multiple synapses for each source-target pair as detailed in
 the section on :ref:`collocated synapses <collocated_synapses>`.
 
 ::
@@ -276,22 +276,22 @@ the section on :ref:`collocated synapses <collocated_synapses>`.
     B = nest.Create('iaf_psc_alpha', n)
     nest.Connect(A, B, syn_spec='static_synapse')
 
-    syn_spec_dict = {'synapse_model': 'stdp_synapse', 
+    syn_spec_dict = {'synapse_model': 'stdp_synapse',
                      'weight': 2.5, 'delay': 0.5}
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
 If synapse properties are given as a dictionary, it may include the keys
-``synapse_model`` (default `static_synapse`), ``weight`` (default 1.0), 
+``synapse_model`` (default `static_synapse`), ``weight`` (default 1.0),
 ``delay`` (default 1.0), and ``receptor_type`` (default 0, see :ref:`receptor-types` for details),
 as well as parameters specific to the chosen synapse model. The specification of
 all parameters is optional, and unspecified parameters will take on the
 default values of the chosen synapse model that can be inspected using
 ``nest.GetDefaults(synapse_model)``.
 
-Parameters can be either :ref:`fixed scalar values <scalar_params>`, 
-:ref:`arrays of values <array_params>`, or :ref:`expressions <dist_params>`.  
+Parameters can be either :ref:`fixed scalar values <scalar_params>`,
+:ref:`arrays of values <array_params>`, or :ref:`expressions <dist_params>`.
 
-One synapse dictionary can contain an arbitrary combination of parameter types, 
+One synapse dictionary can contain an arbitrary combination of parameter types,
 as long as they are supported by the chosen connection rule.
 
 
@@ -409,7 +409,7 @@ Expressions as parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``nest.Parameter`` objects support a flexible specification of synapse
-parameters through expressions.  This includes parameters drawn from random 
+parameters through expressions.  This includes parameters drawn from random
 distributions and
 depending on spatial properties of source and target neurons. Parameters
 can be combined through mathematical expressions including conditionals,
@@ -424,8 +424,8 @@ The following parameters and functionalities are provided:
 - Clipping, redrawing, and conditional parameters
 
 For more information, check out the guide on
-:ref:`parametrization <param_ex>` or the documentation on the 
-different :doc:`PyNEST APIs <../ref_material/pynest_apis>`. 
+:ref:`parametrization <param_ex>` or the documentation on the
+different :doc:`PyNEST APIs <../ref_material/pynest_apis>`.
 
 ::
 
@@ -444,8 +444,8 @@ In this example, the default connection rule ``all_to_all`` is used
 and connections will be using synapse model `stdp_synapse`. All synapses
 are created with a static weight of 2.5 and a delay that is uniformly
 distributed in [0.8, 2.5]. The parameter `alpha` is drawn from a
-normal distribution with mean 5.0 and standard deviation 1.0; 
-values below 0.5 and above 10000 are excluded by re-drawing if they should occur.  
+normal distribution with mean 5.0 and standard deviation 1.0;
+values below 0.5 and above 10000 are excluded by re-drawing if they should occur.
 Thus, the actual distribution is a slightly distorted Gaussian.
 
 If the synapse type is supposed to have a unique name and still use
@@ -796,7 +796,7 @@ of the target, numeric synapse ID, and port.
 
 The result of ``nest.GetConnections()`` can be further processed by
 giving it as an argument to ``nest.GetStatus()``, or, better yet, by
-using the ``get()`` function on the SynapseCollection directly. Both
+using the :py:func:`.get` function on the SynapseCollection directly. Both
 ways will yield a dictionary with the parameters of the connections
 that match the filter criterions given to ``nest.GetConnections()``:
 
@@ -819,7 +819,7 @@ that match the filter criterions given to ``nest.GetConnections()``:
          'target_thread': [0, 0],
          'weight': [1.0, 1.0]}
 
-The ``get()`` function of a SynapseCollection can optionally also take
+The :py:func:`.get` function of a SynapseCollection can optionally also take
 a string or list of strings to only retrieve specific parameters. This
 is useful if you do not want to inspect the entire synapse dictionary:
 
@@ -883,9 +883,9 @@ Modifying Existing Connections
 ------------------------------
 
 To modify the parameters of an existing connection, you first have to
-obtain handles to them using ``nest.GetConnections()``. These handles
-can then be given as arguments to the ``nest.SetStatus()`` function,
-or by using the ``set()`` function on the SynapseCollection directly:
+obtain handles to them using :py:func:`.GetConnections`. These handles
+can then be given as arguments to the :py:func:`.SetStatus` function,
+or by using the :py:func:`.NodeCollection.set` function on the SynapseCollection directly:
 
 ::
 
@@ -910,7 +910,7 @@ or by using the ``set()`` function on the SynapseCollection directly:
          'weight': [2.0, 2.0, 2.0, 2.0]}
 
 To update a single parameter of a connection or a set of connections,
-you can call the ``set()`` function of the SynapseCollection with the
+you can call the :py:func:`.NodeCollection.set` function of the SynapseCollection with the
 keyword argument ``parameter_name``. The value for this argument can
 be a single value, a list, or a ``nest.Parameter``. If a single value
 is given, the value is set on all connections. If you use a list to
@@ -920,7 +920,7 @@ connections in the SynapseCollection.
   >>>  conn.set(weight=[4.0, 4.5, 5.0, 5.5])
 
 Similar to how you retrieve several parameters at once with the
-``get()`` function explained above, you can also set multiple
+:py:func:`.NodeCollection.get` function explained above, you can also set multiple
 parameters at once using ``set(parameter_dictionary)``. Again, the
 values of the dictionary can be a single value, a list, or a
 ``nest.Parameter``.

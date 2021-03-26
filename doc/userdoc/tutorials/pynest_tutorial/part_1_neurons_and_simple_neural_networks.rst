@@ -112,10 +112,10 @@ will work with the default network structure of NEST.
 
 New nodes are created with the command :py:func:`.Create`, which takes as arguments the model name of the
 desired node type, and optionally the number of nodes to be created and
-the initialising parameters. The function returns a :py:func:`.NodeCollection` of handles to
-the new nodes, which you can assign to a variable for later use. A :py:func:`.NodeCollection` is a compact
+the initialising parameters. The function returns a :py:class:`.NodeCollection` of handles to
+the new nodes, which you can assign to a variable for later use. A :py:class:`.NodeCollection` is a compact
 representation of the node handles, which are integer numbers, called *ids*. Many PyNEST functions expect
-or return a :py:func:`.NodeCollection` (see `command overview`_). Thus, it is
+or return a :py:class:`.NodeCollection` (see `command overview`_). Thus, it is
 easy to apply functions to large sets of nodes with a single function
 call.
 
@@ -147,7 +147,7 @@ Many of these properties are not relevant for the dynamics of the
 neuron. To find out what the interesting properties are, look at the
 documentation of the model through the helpdesk. If you already know
 which properties you are interested in, you can specify a key, or a list
-of keys, as an optional argument to ``get``:
+of keys, as an optional argument to :py:func:`.get`:
 
 ::
 
@@ -157,13 +157,13 @@ of keys, as an optional argument to ``get``:
 In the first case we query the value of the constant background current
 ``I_e``; the result is given as a floating point element. In the second
 case, we query the values of the reset potential and threshold of the
-neuron, and receive the result as a dictionary . If ``get`` is
+neuron, and receive the result as a dictionary . If :py:func:`.get` is
 called on a NodeCollection with more than one element, the returned dictionary
 will contain lists with the same number of elements as the number of nodes in
-the NodeCollection. If ``get`` is called with a specific key on a NodeCollection
+the NodeCollection. If :py:func:`.get` is called with a specific key on a NodeCollection
 with several elements, a list the size of the NodeCollection will be returned.
 
-To modify the properties in the dictionary, we use ``set``. In the
+To modify the properties in the dictionary, we use :py:func:`.set`. In the
 following example, the background current is set to 375.0pA, a value
 causing the neuron to spike periodically.
 
@@ -308,7 +308,7 @@ obtain and display the spikes from the spike recorder.
     plt.plot(ts, evs, ".")
     plt.show()
 
-Here we extract the events more concisely by sending the parameter name to ``get``.
+Here we extract the events more concisely by sending the parameter name to :py:func:`.get`.
 This extracts the dictionary element
 with the key ``events`` rather than the whole status dictionary. The
 output should look like :numref:`VM-neuron` and :numref:`spikes-one-neuron`.

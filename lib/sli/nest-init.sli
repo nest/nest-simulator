@@ -1383,74 +1383,7 @@ statusdict /platform get dup (bg/p) eq exch (bg/q) eq or
  /memory_thisjob { :memory_thisjob_bg } def
 } if
 
-
-/** @BeginDocumentation
-Name: SaveModels - Retrieve the state of all models.
-Description:
-*/
-
-/SaveModels
-{
-  << >> begin
-  modeldict cva 2 Partition size /n_models Set
-  n_models 1 add % proxy model is not in modeldict
-  array /models Set
-  {
-    models exch
-    arrayload ; exch
-    put /models Set
- } forall
-
- [
- models
- {
-   dup type /literaltype eq
-   { GetDefaults } { pop } ifelse
- } forall
- ]
- end
-} def
-
-/** @BeginDocumentation
-Name: RestoreModels - Restore saved models from an array of status dictionaries.
-Description:
-*/
-/RestoreModels
-[/arraytype]
-{
- << >> begin
-  /models Set
-  GetKernelStatus /dict_miss_is_error get /dict_err Set
-  << /dict_miss_is_error false >> SetKernelStatus
-  /old_verbosity verbosity def
-  M_ERROR setverbosity
-  /restoremodel
-  {
-    begin
-    model type_id neq
-    {
-      type_id model currentdict CopyModel
-    }
-    {
-      type_id /a2eif_cond_exp_HW neq        % these models
-      type_id /topology_layer_3d neq and    % these models
-      type_id /topology_layer_free neq and  % break when
-      type_id /topology_layer_grid neq and  % their status is changed
-      {  model currentdict SetDefaults } if
-    } ifelse
-    end
-  } def
-  models
-  {
-    restoremodel
-  } forall
-  old_verbosity setverbosity
-  << /dict_miss_is_error dict_err >> SetKernelStatus
-  end
-} def
-
 /cva [/connectiontype] /cva_C load def
-
 
 /abort
 {

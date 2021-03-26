@@ -106,7 +106,6 @@ public:
    * it known in the simulator. The natural place for a call to this function
    * is in a *module.cpp file.
    * @param name of the new node model.
-   * @param private_model if true, don't add model to modeldict.
    * @param deprecation_info  If non-empty string, deprecation warning will
    *                          be issued for model with this info to user.
    * @return ID of the new model object.
@@ -114,7 +113,7 @@ public:
    */
   template < class ModelT >
   index
-  register_node_model( const Name& name, bool private_model = false, std::string deprecation_info = std::string() );
+  register_node_model( const Name& name, std::string deprecation_info = std::string() );
 
   /**
    * Copy an existing model and register it as a new model.
@@ -235,7 +234,7 @@ private:
   void clear_connection_models_();
 
   /**  */
-  index register_node_model_( Model* model, bool private_model = false );
+  index register_node_model_( Model* model );
 
   synindex register_connection_model_( ConnectorModel* );
 
@@ -277,12 +276,9 @@ private:
   static bool compare_model_by_id_( const int a, const int b );
 
   /**
-   * List of clean built-in node models. The first component of the
-   * pair is a pointer to the actual Model, the second is a flag
-   * indicating if the model is private. Private models are not
-   * entered into the modeldict.
+   * List of clean built-in node models.
    */
-  std::vector< std::pair< Model*, bool > > builtin_node_models_;
+  std::vector< Model* > builtin_node_models_;
 
   /**
    * List of usable node models. This list is cleared and repopulated

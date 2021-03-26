@@ -68,11 +68,11 @@ ModelManager::~ModelManager()
   }
 
   clear_node_models_();
-  for ( auto& node_model : builtin_node_models_ )
+  for ( auto&& node_model : builtin_node_models_ )
   {
-    if ( node_model.first != 0 )
+    if ( node_model != 0 )
     {
-      delete node_model.first;
+      delete node_model;
     }
   }
 }
@@ -84,22 +84,17 @@ ModelManager::initialize()
   {
     proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
     proxynode_model_->set_type_id( 1 );
-    builtin_node_models_.push_back( std::pair< Model*, bool >( proxynode_model_, true ) );
+    proxynode_model_->set_threads();
   }
 
   // Re-create the node model list from the clean prototypes
   for ( index i = 0; i < builtin_node_models_.size(); ++i )
   {
-    assert( builtin_node_models_[ i ].first != 0 );
-
     // set the number of threads for the number of sli pools
-    builtin_node_models_[ i ].first->set_threads();
-    std::string name = builtin_node_models_[ i ].first->get_name();
-    node_models_.push_back( builtin_node_models_[ i ].first->clone( name ) );
-    if ( not builtin_node_models_[ i ].second )
-    {
-      modeldict_->insert( name, i );
-    }
+    builtin_node_models_[ i ]->set_threads();
+    std::string name = builtin_node_models_[ i ]->get_name();
+    node_models_.push_back( builtin_node_models_[ i ]->clone( name ) );
+    modeldict_->insert( name, i );
   }
 
   // Create proxy nodes, one for each thread and model and one dummy
@@ -112,14 +107,13 @@ ModelManager::initialize()
     const thread t = kernel().vp_manager.get_thread_id();
     proxy_nodes_[ t ].clear();
 
-    for ( auto& builtin_node_model : builtin_node_models_ )
+    for ( auto&& builtin_node_model : builtin_node_models_ )
     {
-      const int model_id = builtin_node_model.first->get_model_id();
+      const int model_id = builtin_node_model->get_model_id();
       proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
     }
 
-    const int model_id = get_model_id( "proxynode" );
-    dummy_spike_sources_[ t ] = create_proxynode_( t, model_id );
+    dummy_spike_sources_[ t ] = create_proxynode_( t, -1 );
   }
 
   synapsedict_->clear();
@@ -154,7 +148,7 @@ ModelManager::finalize()
   for ( auto& node_model : builtin_node_models_ )
   {
     // delete all nodes, because cloning the model may have created instances.
-    node_model.first->clear();
+    node_model->clear();
   }
 }
 
@@ -203,7 +197,7 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 }
 
 index
-ModelManager::register_node_model_( Model* model, bool private_model )
+ModelManager::register_node_model_( Model* model )
 {
   const index id = node_models_.size();
   model->set_model_id( id );
@@ -211,7 +205,7 @@ ModelManager::register_node_model_( Model* model, bool private_model )
 
   std::string name = model->get_name();
 
-  builtin_node_models_.push_back( std::pair< Model*, bool >( model, private_model ) );
+  builtin_node_models_.push_back( model );
   node_models_.push_back( model->clone( name ) );
 
 #pragma omp parallel
@@ -221,10 +215,7 @@ ModelManager::register_node_model_( Model* model, bool private_model )
     proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
   }
 
-  if ( not private_model )
-  {
-    modeldict_->insert( name, id );
-  }
+  modeldict_->insert( name, id );
 
   return id;
 }
@@ -432,6 +423,9 @@ ModelManager::clear_node_models_()
       delete node_model;
     }
   }
+
+  delete proxynode_model_;
+  proxynode_model_ = 0;
 
   node_models_.clear();
   proxy_nodes_.clear();

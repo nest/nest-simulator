@@ -214,7 +214,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_canon >(
-    "iaf_psc_alpha_canon", /*private_model*/ false, /*deprecation_info*/ "a future version of NEST" );
+    "iaf_psc_alpha_canon", "a future version of NEST" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_ps >( "iaf_psc_alpha_ps" );
   kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );

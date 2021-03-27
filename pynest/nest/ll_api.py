@@ -19,11 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import functools
-import inspect
 """
 Low-level API of PyNEST Module
 """
+
+import functools
+import inspect
 
 import sys
 import os

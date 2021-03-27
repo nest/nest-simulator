@@ -164,14 +164,11 @@ create( const Name& model_name, const index n_nodes )
     throw RangeCheck();
   }
 
-  const Token model = kernel().model_manager.get_modeldict()->lookup( model_name );
-  if ( model.empty() )
+  const int model_id = kernel().model_manager.get_model_id( model_name );
+  if ( model_id == -1 )
   {
     throw UnknownModelName( model_name );
   }
-
-  // create
-  const index model_id = static_cast< index >( model );
 
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
@@ -384,28 +381,21 @@ set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
 DictionaryDatum
 get_model_defaults( const Name& modelname )
 {
-  const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
-
-  DictionaryDatum dict;
-
-  if ( not nodemodel.empty() )
+  const int model_id = kernel().model_manager.get_model_id( modelname );
+  if ( model_id != -1 )
   {
-    const long model_id = static_cast< long >( nodemodel );
-    Model* m = kernel().model_manager.get_model( model_id );
-    dict = m->get_status();
+    return kernel().model_manager.get_model( model_id )->get_status();
   }
-  else if ( not synmodel.empty() )
+
+  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
+  if ( not synmodel.empty() )
   {
     const long synapse_id = static_cast< long >( synmodel );
-    dict = kernel().model_manager.get_connector_defaults( synapse_id );
-  }
-  else
-  {
-    throw UnknownModelName( modelname.toString() );
+    return kernel().model_manager.get_connector_defaults( synapse_id );
   }
 
-  return dict;
+  throw UnknownModelName( modelname.toString() );
+  return DictionaryDatum(); // supress warning about missing return value; never reached
 }
 
 ParameterDatum

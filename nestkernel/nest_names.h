@@ -325,6 +325,7 @@ extern const Name network_size;
 extern const Name neuron;
 extern const Name next_readout_time;
 extern const Name no_synapses;
+extern const Name node_models;
 extern const Name node_uses_wfr;
 extern const Name noise;
 extern const Name noisy_rate;

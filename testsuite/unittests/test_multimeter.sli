@@ -56,7 +56,7 @@ Author: Hans Ekkehard Plesser, 2010-05-05
 /n_data simtime recint div cvi 1 sub def
 
 {
-  modeldict keys
+  GetKernelStatus /node_models get
   {
     /model Set
 

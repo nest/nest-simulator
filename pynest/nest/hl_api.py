@@ -74,7 +74,6 @@ __all__ = [
     'NodeCollection',
     'Install',
     'Mask',
-    'Models',
     'NumProcesses',
     'Parameter',
     'PlotLayer',

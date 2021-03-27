@@ -107,7 +107,7 @@ M_ERROR setverbosity
 % receptors 1 and 2 for all models with recordables
 {
   << >> begin
-    modeldict keys 
+    GetKernelStatus /node_models get
     {
       ResetKernel  
       /model Set

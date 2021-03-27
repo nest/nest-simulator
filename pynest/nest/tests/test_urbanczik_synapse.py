@@ -46,14 +46,12 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
             "pp_cond_exp_mc_urbanczik",
         ]
 
-        # Supported models
         supported_models = [
             "pp_cond_exp_mc_urbanczik",
         ]
 
-        # Compute not supported models
-        not_supported_models = [n for n in nest.Models(mtype='nodes')
-                                if n not in supported_models]
+        node_models = nest.GetKernelStatus('node_models')
+        unsupported_models = [n for n in node_models if n not in supported_models]
 
         # Connect supported models with Urbanczik synapse
         for nm in supported_models:
@@ -70,7 +68,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
                          {"synapse_model": "urbanczik_synapse", "receptor_type": r_type})
 
         # Ensure that connecting not supported models fails
-        for nm in not_supported_models:
+        for nm in unsupported_models:
             nest.ResetKernel()
 
             r_type = 0

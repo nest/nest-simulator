@@ -72,10 +72,10 @@ def
 def
 
 % We perform the tests first for all relevant generators
-/ds_models 
-  [/gamma_sup_generator /mip_generator /noise_generator /poisson_generator 
-   /ppd_sup_generator /sinusoidal_gamma_generator /poisson_generator_ps] 
-  { modeldict exch known } Select   
+/ds_models
+  [/gamma_sup_generator /mip_generator /noise_generator /poisson_generator
+   /ppd_sup_generator /sinusoidal_gamma_generator /poisson_generator_ps]
+  { GetKernelStatus /node_models get exch MemberQ } Select
 def
             
 ResetKernel

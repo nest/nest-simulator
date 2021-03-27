@@ -162,6 +162,13 @@ ModelManager::get_status( DictionaryDatum& dict )
 {
   // syn_ids start at 0, so the maximal number of syn models is MAX_SYN_ID + 1
   def< int >( dict, names::max_num_syn_models, MAX_SYN_ID + 1 );
+
+  ArrayDatum node_models;
+  for ( auto const& element : *modeldict_ )
+  {
+    node_models.push_back( new LiteralDatum( element.first ) );
+  }
+  def< ArrayDatum >( dict, names::node_models, node_models );
 }
 
 index

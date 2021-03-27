@@ -192,11 +192,6 @@ public:
   void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
 
   /**
-   * @return Reference to the model dictionary
-   */
-  DictionaryDatum& get_modeldict();
-
-  /**
    * @return Reference to the synapse dictionary
    */
   DictionaryDatum& get_synapsedict();
@@ -312,33 +307,8 @@ private:
   std::vector< ConnectorModel* > secondary_connector_models_;
   std::vector< std::map< synindex, SecondaryEvent* > > secondary_events_prototypes_;
 
-  /** @BeginDocumentation
-   Name: modeldict - dictionary containing all devices and models of NEST
 
-   Description:
-   'modeldict info' shows the contents of the dictionary
-
-   SeeAlso: info, Device, RecordingDevice
-   */
   DictionaryDatum modeldict_; //!< Dictionary of all models
-
-  /** @BeginDocumentation
-   Name: synapsedict - Dictionary containing all synapse models.
-
-   Description:
-   'synapsedict info' shows the contents of the dictionary
-   Synapse model names ending with '_hpc' provide minimal memory requirements by
-   using thread-local target neuron IDs and fixing the `rport` to 0.
-   Synapse model names ending with '_lbl' allow to assign an individual integer
-   label (`synapse_label`) to created synapses at the cost of increased memory
-   requirements.
-
-   FirstVersion: October 2005
-
-   Author: Jochen Martin Eppler
-
-   SeeAlso: info
-   */
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
 
   Model* proxynode_model_;
@@ -370,12 +340,6 @@ inline bool
 ModelManager::are_model_defaults_modified() const
 {
   return model_defaults_modified_;
-}
-
-inline DictionaryDatum&
-ModelManager::get_modeldict()
-{
-  return modeldict_;
 }
 
 inline DictionaryDatum&

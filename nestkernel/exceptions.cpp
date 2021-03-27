@@ -35,8 +35,7 @@ std::string
 nest::UnknownModelName::message() const
 {
   std::ostringstream msg;
-  msg << "/" << n_.toString() + " is not a known model name. "
-    "Please check the modeldict for a list of available models.";
+  msg << "/" << n_.toString() + " is not a known model name. ";
 #ifndef HAVE_GSL
   msg << " A frequent cause for this error is that NEST was compiled "
          "without the GNU Scientific Library, which is required for "

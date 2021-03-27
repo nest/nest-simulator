@@ -197,7 +197,7 @@ class TestNodeCollection(unittest.TestCase):
         """Multiple NodeCollection calls give right indexing"""
         compare_begin = 1
         compare_end = 11
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.GetKernelStatus('node_models'):
             n = nest.Create(model, 10)
             n_list = n.tolist()
             compare = list(range(compare_begin, compare_end))
@@ -251,7 +251,7 @@ class TestNodeCollection(unittest.TestCase):
 
         n_list = []
         n_models = 0
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.GetKernelStatus('node_models'):
             n = nest.Create(model, 10)
             n_list += n.tolist()
             n_models += 1
@@ -467,11 +467,7 @@ class TestNodeCollection(unittest.TestCase):
 
         n = nest.Create('iaf_psc_alpha')
 
-        nest.ll_api.sli_run("modeldict")
-        model_dict = nest.ll_api.sli_pop()
-
-        models = model_dict.keys()
-
+        models = nest.GetKernelStatus('node_models')
         for model in models:
             n += nest.Create(model)
 

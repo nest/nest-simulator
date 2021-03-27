@@ -31,66 +31,8 @@ __all__ = [
     'ConnectionRules',
     'CopyModel',
     'GetDefaults',
-    'Models',
     'SetDefaults',
 ]
-
-
-@check_stack
-def Models(mtype="all", sel=None):
-    """Return a tuple of model names, sorted by name.
-
-    All available models are neurons, devices and synapses.
-
-    Parameters
-    ----------
-    mtype : str, optional
-        Use ``'mtype='nodes'`` to only see neuron and device models,
-        or ``'type='synapses'`` to only see synapse models.
-    sel : str, optional
-        String used to filter the result list and only return models
-        containing it.
-
-    Returns
-    -------
-    tuple
-        Available model names
-
-    Raises
-    ------
-    ValueError
-        Description
-
-    Notes
-    -----
-    - Synapse model names ending with ``'_hpc'`` provide minimal memory
-      requirements by using thread-local target neuron IDs and fixing
-      the ``'rport'`` to 0.
-    - Synapse model names ending with ``'_lbl'`` allow to assign an individual
-      integer label (``'synapse_label'``) to created synapses at the cost
-      of increased memory requirements.
-
-    """
-
-    if mtype not in ("all", "nodes", "synapses"):
-        raise ValueError("type has to be one of 'all', 'nodes' or 'synapses'")
-
-    models = []
-
-    if mtype in ("all", "nodes"):
-        sr("modeldict")
-        models += spp().keys()
-
-    if mtype in ("all", "synapses"):
-        sr("synapsedict")
-        models += spp().keys()
-
-    if sel is not None:
-        models = [x for x in models if x.find(sel) >= 0]
-
-    models.sort()
-
-    return tuple(models)
 
 
 @check_stack

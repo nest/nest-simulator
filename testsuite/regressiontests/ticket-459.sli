@@ -88,7 +88,7 @@ M_ERROR setverbosity
 def
 
 {
-  modeldict keys { 
+  GetKernelStatus /node_models get {
     dup GetDefaults /E_L known
     { 
       run_test 

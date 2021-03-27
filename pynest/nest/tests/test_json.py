@@ -52,7 +52,7 @@ class StatusTestCase(unittest.TestCase):
     def test_GetStatus_JSON(self):
         """JSON data of GetStatus"""
 
-        for m in nest.Models('nodes'):
+        for m in nest.GetKernelStatus('node_models'):
             nest.ResetKernel()
             n = nest.Create(m)
             d_json = nest.GetStatus(n, output='json')

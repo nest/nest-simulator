@@ -292,7 +292,7 @@ nest::poisson_generator_ps::set_data_from_stimulating_backend( std::vector< doub
   {
     if ( input_param.size() != 2 )
     {
-      throw BadParameterValue( "The size of the data for the poisson_generator_ps need to be 2 [dead time, rate]." );
+      throw BadParameterValue( "The size of the data for the poisson_generator_ps need to be 2 [dead_time, rate]." );
     }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     ( *d )[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );

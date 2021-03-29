@@ -162,7 +162,7 @@ nest::StimulatingBackendMPI::prepare()
     {
       for ( auto& it_device : devices_[ id_thread ] )
       {
-        // add the id of the device if there are a connection with the device.
+        // add the id of the device if there is a connection with the device.
         if ( kernel().connection_manager.get_device_connected(
                id_thread, it_device.second.second->get_local_device_id() ) )
         {

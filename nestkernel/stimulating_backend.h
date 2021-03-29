@@ -160,7 +160,7 @@ public:
   * function.
   *
   * This function is called by `SimulationManager::cleanup()` and allows the
-  * backend to close open files or network connections or take similar action.
+  * backend to close open files, close network connections, etc.
   *
   * @see prepare()
   *

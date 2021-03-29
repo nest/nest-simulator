@@ -201,7 +201,7 @@ nest::StimulatingBackendMPI::prepare()
 void
 nest::StimulatingBackendMPI::pre_run_hook()
 {
-  // create the variable which will contains the receiving data from the communication
+  // create the variable which will contain the receiving data from the communication
   auto data{ new std::pair< int*, double* >[ commMap_.size() ]{} };
   int index = 0;
 #pragma omp master

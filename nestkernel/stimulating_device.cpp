@@ -37,7 +37,7 @@ nest::StimulatingDevice::StimulatingDevice()
 nest::StimulatingDevice::StimulatingDevice( StimulatingDevice const& sd )
   : DeviceNode( sd )
   , Device( sd )
-  , first_syn_id_( invalid_synindex ) // a new instance can have no connections
+  , first_syn_id_( invalid_synindex ) // a new instance can't have any connections
   , backend_params_( sd.backend_params_ )
 {
   P_ = Parameters_( sd.P_ );

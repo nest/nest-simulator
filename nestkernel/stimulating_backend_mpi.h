@@ -131,10 +131,10 @@ private:
    */
   static std::pair< int*, double* > receive_spike_train( const MPI_Comm& comm, std::vector< int >& device_id );
   /**
-   * Update all the device with the data receiving
-   * @param array_index : number of device by thread
-   * @param devices_id : the devices id order by thread
-   * @param data : the data receiving for update all the device
+   * Update all the devices with the data received
+   * @param array_index : number of devices by thread
+   * @param devices_id : the devices' ID ordered by thread
+   * @param data : the data received for updating all the devices
    */
   void update_device( int* array_index, std::vector< int >& devices_id, std::pair< int*, double* > data );
   /**

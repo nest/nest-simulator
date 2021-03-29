@@ -403,7 +403,7 @@ nest::StimulatingBackendMPI::update_device( int* array_index,
 void
 nest::StimulatingBackendMPI::clean_memory_input_data( std::pair< int*, double* >* data )
 {
-  // for all the pair of data free the memory of data and the array with teh size
+  // for all the pairs of data, free the memory of data and the array with the size
   for ( size_t i = 0; i != commMap_.size(); i++ )
   {
     std::pair< int*, double* > pair_data = data[ i ];

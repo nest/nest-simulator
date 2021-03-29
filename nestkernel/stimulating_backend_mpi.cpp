@@ -206,7 +206,7 @@ nest::StimulatingBackendMPI::pre_run_hook()
   int index = 0;
 #pragma omp master
   {
-    // receive all the information from all the MPI connection
+    // receive all the information from all the MPI connections
     for ( auto& it_comm : commMap_ )
     {
       bool value[ 1 ] = { true };

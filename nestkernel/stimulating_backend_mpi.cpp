@@ -409,13 +409,13 @@ nest::StimulatingBackendMPI::clean_memory_input_data( std::pair< int*, double* >
     std::pair< int*, double* > pair_data = data[ i ];
     if ( pair_data.first != nullptr )
     {
-      // clean the memory allocate in the function receive_spike_train
+      // clean the memory allocated in the function receive_spike_train
       delete[] pair_data.first;
       pair_data.first = nullptr;
     }
     if ( pair_data.second != nullptr )
     {
-      // clean the memory allocate in the function receive_spike_train
+      // clean the memory allocated in the function receive_spike_train
       delete[] pair_data.second;
       pair_data.second = nullptr;
     }

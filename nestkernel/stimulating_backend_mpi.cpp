@@ -362,7 +362,7 @@ nest::StimulatingBackendMPI::update_device( int* array_index,
 {
   if ( data.first != nullptr )
   {
-    // if there are some device
+    // if there is some device
     if ( data.first[ 0 ] != 0 )
     {
       // if there are some data

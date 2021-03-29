@@ -103,8 +103,8 @@ private:
   bool prepared_;
   /**
    * A map for the enrolled devices. We have a vector with one map per local
-   * thread. The map associates the gid of a device on a given thread
-   * with it's device. Only the master thread have a valid MPI communicator pointer.
+   * thread. The map associates the node ID of a device on a given thread
+   * with it's device. Only the master thread has a valid MPI communicator pointer.
   */
   using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulatingDevice* > > >;
   device_map devices_;

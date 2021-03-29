@@ -140,7 +140,7 @@ nest::StimulatingBackendMPI::prepare()
       auto vector_id_device = new std::vector< int >; // vector of ID device for the rank
       int* vector_nb_device_th{ new int[ kernel().vp_manager.get_num_threads() ]{} }; // number of device by thread
       std::fill_n( vector_nb_device_th, kernel().vp_manager.get_num_threads(), 0 );
-      // add the id of the device if there are a connection with the device.
+      // add the id of the device if there is a connection with the device.
       if ( kernel().connection_manager.get_device_connected(
              thread_id_master, it_device.second.second->get_local_device_id() ) )
       {

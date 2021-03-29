@@ -796,7 +796,7 @@ of the target, numeric synapse ID, and port.
 
 The result of ``nest.GetConnections()`` can be further processed by
 giving it as an argument to ``nest.GetStatus()``, or, better yet, by
-using the :py:func:`.get` function on the SynapseCollection directly. Both
+using the :py:func:`~nest.lib.hl_api_types.SynapseCollection.get` function on the SynapseCollection directly. Both
 ways will yield a dictionary with the parameters of the connections
 that match the filter criterions given to ``nest.GetConnections()``:
 
@@ -819,7 +819,7 @@ that match the filter criterions given to ``nest.GetConnections()``:
          'target_thread': [0, 0],
          'weight': [1.0, 1.0]}
 
-The :py:func:`.get` function of a SynapseCollection can optionally also take
+The :py:func:`~nest.lib.hl_api_types.SynapseCollection.get` function of a SynapseCollection can optionally also take
 a string or list of strings to only retrieve specific parameters. This
 is useful if you do not want to inspect the entire synapse dictionary:
 
@@ -885,7 +885,7 @@ Modifying Existing Connections
 To modify the parameters of an existing connection, you first have to
 obtain handles to them using :py:func:`.GetConnections`. These handles
 can then be given as arguments to the :py:func:`.SetStatus` function,
-or by using the :py:func:`.NodeCollection.set` function on the SynapseCollection directly:
+or by using the :py:func:`~nest.lib.hl_api_types.SynapseCollection.set` function on the SynapseCollection directly:
 
 ::
 
@@ -910,7 +910,7 @@ or by using the :py:func:`.NodeCollection.set` function on the SynapseCollection
          'weight': [2.0, 2.0, 2.0, 2.0]}
 
 To update a single parameter of a connection or a set of connections,
-you can call the :py:func:`.NodeCollection.set` function of the SynapseCollection with the
+you can call the :py:func:`~nest.lib.hl_api_types.SynapseCollection.set` function of the SynapseCollection with the
 keyword argument ``parameter_name``. The value for this argument can
 be a single value, a list, or a ``nest.Parameter``. If a single value
 is given, the value is set on all connections. If you use a list to
@@ -920,7 +920,7 @@ connections in the SynapseCollection.
   >>>  conn.set(weight=[4.0, 4.5, 5.0, 5.5])
 
 Similar to how you retrieve several parameters at once with the
-:py:func:`.NodeCollection.get` function explained above, you can also set multiple
+:py:func:`~nest.lib.hl_api_types.SynapseCollection.get` function explained above, you can also set multiple
 parameters at once using ``set(parameter_dictionary)``. Again, the
 values of the dictionary can be a single value, a list, or a
 ``nest.Parameter``.

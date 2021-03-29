@@ -180,14 +180,14 @@ querying commands will only return the local connections, i.e. those
 represented on that particular MPI process in a distributed simulation.
 
 Once we have the SynapseCollection of connections, we can extract data from it using
-:py:func:`.get`. In the simplest case, this returns a dictionary of lists,
+:py:func:`~nest.lib.hl_api_types.SynapseCollection.get`. In the simplest case, this returns a dictionary of lists,
 containing the parameters and variables for each
 connection found by :py:func:`.GetConnections`. However, usually we don't want
 all the information from a synapse, just some specific part of it. For
 example, if we want to check that we have connected the network as intended,
 we might want to examine only the parameter ``target`` of each
 connection. We can extract just this information by using the optional
-``keys`` argument of :py:func:`.get`:
+``keys`` argument of :py:func:`~nest.lib.hl_api_types.SynapseCollection.get`:
 
 ::
 

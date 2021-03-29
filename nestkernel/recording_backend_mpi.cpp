@@ -185,7 +185,7 @@ nest::RecordingBackendMPI::prepare()
   }
 #pragma omp parallel default( none ) shared( thread_id_master )
   {
-    // Update all the thread
+    // Update all the threads
     thread thread_id = kernel().vp_manager.get_thread_id();
     if ( thread_id != thread_id_master )
     {

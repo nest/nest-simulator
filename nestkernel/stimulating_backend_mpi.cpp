@@ -219,7 +219,7 @@ nest::StimulatingBackendMPI::pre_run_hook()
   comm_map* communication_map_shared = &commMap_;
 #pragma omp parallel default( none ) shared( data, communication_map_shared )
   {
-    // Each thread update its own devices.
+    // Each thread updates its own devices.
     int index_it = 0;
     for ( auto& it_comm : *communication_map_shared )
     {

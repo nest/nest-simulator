@@ -66,10 +66,6 @@ The following parameters appear in the element's status dictionary:
                        default: 1
 ============  ======== =========================================================
 
-    ( *d )[ names::gamma_shape ] = DoubleDatum( lround( input_param[ 0 ] ) );
-    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
-    ( *d )[ names::n_proc ] = DoubleDatum( lround( input_param[ 2 ] ) );
-
 Update from stimulating backend
 +++++++++++++++++++++++++
 

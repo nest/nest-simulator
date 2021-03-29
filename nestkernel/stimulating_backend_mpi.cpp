@@ -230,7 +230,7 @@ nest::StimulatingBackendMPI::pre_run_hook()
 #pragma omp barrier
 #pragma omp master
   {
-    // Master thread clean all the allocated memory
+    // Master thread cleans all the allocated memory
     clean_memory_input_data( data );
     delete[] data;
     data = nullptr;

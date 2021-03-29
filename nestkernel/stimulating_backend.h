@@ -43,9 +43,9 @@ public:
   virtual ~StimulatingBackend() noexcept = default;
 
   /**
-  * Enroll an `StimulatingDevice` with the `StimulatingBackend`.
+  * Enroll a `StimulatingDevice` with the `StimulatingBackend`.
   *
-  * When this function is called by an `StimulatingDevice` @p device,
+  * When this function is called by a `StimulatingDevice` @p device,
   * the `StimulatingBackend` can set up per-device data structures and
   * properties. Individual device instances can be identified using
   * the `thread` and `node_id` of the @p device.

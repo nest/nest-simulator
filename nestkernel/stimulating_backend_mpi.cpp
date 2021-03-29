@@ -73,7 +73,7 @@ nest::StimulatingBackendMPI::enroll( nest::StimulatingDevice& device, const Dict
   {
     devices_[ tid ].erase( device_it );
   }
-  // the MPI communication will be initialise during the prepare function
+  // the MPI communication will be initialised during the prepare function
   std::pair< MPI_Comm*, StimulatingDevice* > pair = std::make_pair( nullptr, &device );
   std::pair< index, std::pair< const MPI_Comm*, StimulatingDevice* > > secondpair = std::make_pair( node_id, pair );
   devices_[ tid ].insert( secondpair );

@@ -48,8 +48,8 @@ nest::StimulatingDevice::is_active( const Time& T ) const
 {
   long step = T.get_steps();
   if ( get_type() == StimulatingDevice::Type::CURRENT_GENERATOR
-    || get_type() == StimulatingDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR
-    || get_type() == StimulatingDevice::Type::DOUBLE_DATA_GENERATOR )
+    or get_type() == StimulatingDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR
+    or get_type() == StimulatingDevice::Type::DOUBLE_DATA_GENERATOR )
   {
     step = step + 2;
   }

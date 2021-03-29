@@ -174,8 +174,8 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
   assert( to >= from );
   assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
 
-  if ( ( V_.start_center_idx_ == P_.pulse_times_.size() && B_.spiketimes_.empty() )
-    || ( not StimulatingDevice::is_active( T ) ) )
+  if ( ( V_.start_center_idx_ == P_.pulse_times_.size() and B_.spiketimes_.empty() )
+    or ( not StimulatingDevice::is_active( T ) ) )
   {
     return; // nothing left to do
   }

@@ -144,11 +144,10 @@ public:
   virtual void finalize() = 0;
 
   /**
-   * Prepare the backend at begin of the NEST Simulate function.
+   * Prepare the backend at the beginning of the NEST Simulate function.
    *
    * This function is called by `KernelManager::prepare()` and allows the
-   * backend to open files or establish network connections or take similar
-   * action.
+   * backend to open files, establish network connections, etc.
    *
    * @see cleanup()
    *

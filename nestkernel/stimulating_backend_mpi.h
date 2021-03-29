@@ -123,10 +123,10 @@ private:
   static void get_port( StimulatingDevice* device, std::string* port_name );
   static void get_port( index index_node, const std::string& label, std::string* port_name );
   /**
-   * MPI communication for receiving the data before each run. This function is use only by the master thread.
-   * The allocation of this function is clean by the function clean_memory_input_data
+   * MPI communication for receiving the data before each run. This function is used only by the master thread.
+   * The allocation of this function is cleaned by the function clean_memory_input_data
    * @param comm : the MPI communicator for send and receive message
-   * @param device_id : the list of ID which need to be updated
+   * @param device_id : the list of IDs which needs to be updated
    * @return pair( size of data by device, the continuous array with all the data for the device )
    */
   static std::pair< int*, double* > receive_spike_train( const MPI_Comm& comm, std::vector< int >& device_id );

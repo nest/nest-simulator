@@ -177,7 +177,7 @@ nest::StimulatingBackendMPI::prepare()
           else
           {
             // should be impossible
-            throw KernelException( "The MPI port was not define in the master thread" );
+            throw KernelException( "The MPI port was not defined in the master thread" );
           }
         }
       }

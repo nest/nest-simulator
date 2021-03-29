@@ -429,6 +429,7 @@ nest::spike_generator::set_data_from_stimulating_backend( std::vector< double > 
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     std::vector< double > times_ms;
     const size_t n_spikes = P_.spike_stamps_.size();
+    times_ms.reserve( n_spikes + input_spikes.size() );
     for ( size_t n = 0; n < n_spikes; ++n )
     {
       times_ms.push_back( P_.spike_stamps_[ n ].get_ms() );

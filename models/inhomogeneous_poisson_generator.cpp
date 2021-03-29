@@ -316,7 +316,7 @@ nest::inhomogeneous_poisson_generator::set_data_from_stimulating_backend( std::v
       times_ms.push_back( P_.rate_times_[ n ].get_ms() );
       rate_values.push_back( P_.rate_values_[ n ] );
     }
-    for ( size_t n = 0; n < rate_time_update.size() / 2; n++ )
+    for ( size_t n = 0; n < rate_time_update.size() / 2; ++n )
     {
       times_ms.push_back( rate_time_update[ n * 2 ] );
       rate_values.push_back( rate_time_update[ n * 2 + 1 ] );

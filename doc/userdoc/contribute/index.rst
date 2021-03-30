@@ -47,10 +47,22 @@ If you have a Python example network to contribute, please refer to our
 Code review guidelines
 ----------------------
 
-Pull requests must be reviewed and approved by **two reviewers** prior to being merged. Please check
-the **typeset documentation** as part of the review process. To learn how to test the documentation
-locally offline, please check out our
-:doc:`User documentation workflow <../documentation_workflow/user_documentation_workflow>`.
+See :doc:`code_review_guidelines`.
+
+Writing an extension module
+---------------------------
+
+See :doc:`extension_modules`.
+
+Writing neuron models
+---------------------
+
+See :doc:`neuron_models`.
+
+Writing synapse models
+----------------------
+
+See :doc:`synapses_overview` and :doc:`synapse_models`.
 
 Have a question?
 ----------------

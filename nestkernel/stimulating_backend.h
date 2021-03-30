@@ -43,9 +43,9 @@ public:
   virtual ~StimulatingBackend() noexcept = default;
 
   /**
-  * Enroll an `StimulatingDevice` with the `StimulatingBackend`.
+  * Enroll a `StimulatingDevice` with the `StimulatingBackend`.
   *
-  * When this function is called by an `StimulatingDevice` @p device,
+  * When this function is called by a `StimulatingDevice` @p device,
   * the `StimulatingBackend` can set up per-device data structures and
   * properties. Individual device instances can be identified using
   * the `thread` and `node_id` of the @p device.
@@ -144,11 +144,10 @@ public:
   virtual void finalize() = 0;
 
   /**
-   * Prepare the backend at begin of the NEST Simulate function.
+   * Prepare the backend at the beginning of the NEST Simulate function.
    *
    * This function is called by `KernelManager::prepare()` and allows the
-   * backend to open files or establish network connections or take similar
-   * action.
+   * backend to open files, establish network connections, etc.
    *
    * @see cleanup()
    *
@@ -161,7 +160,7 @@ public:
   * function.
   *
   * This function is called by `SimulationManager::cleanup()` and allows the
-  * backend to close open files or network connections or take similar action.
+  * backend to close open files, close network connections, etc.
   *
   * @see prepare()
   *

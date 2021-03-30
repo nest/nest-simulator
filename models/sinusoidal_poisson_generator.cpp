@@ -269,7 +269,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
     }
 
     // create spikes
-    if ( S_.rate_ > 0 && StimulatingDevice::is_active( Time::step( start + lag ) ) )
+    if ( S_.rate_ > 0 and StimulatingDevice::is_active( Time::step( start + lag ) ) )
     {
       if ( P_.individual_spike_trains_ )
       {

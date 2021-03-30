@@ -73,7 +73,7 @@ nest::StimulatingBackendMPI::enroll( nest::StimulatingDevice& device, const Dict
   {
     devices_[ tid ].erase( device_it );
   }
-  // the MPI communication will be initialise during the prepare function
+  // the MPI communication will be initialised during the prepare function
   std::pair< MPI_Comm*, StimulatingDevice* > pair = std::make_pair( nullptr, &device );
   std::pair< index, std::pair< const MPI_Comm*, StimulatingDevice* > > secondpair = std::make_pair( node_id, pair );
   devices_[ tid ].insert( secondpair );
@@ -140,7 +140,7 @@ nest::StimulatingBackendMPI::prepare()
       auto vector_id_device = new std::vector< int >; // vector of ID device for the rank
       int* vector_nb_device_th{ new int[ kernel().vp_manager.get_num_threads() ]{} }; // number of device by thread
       std::fill_n( vector_nb_device_th, kernel().vp_manager.get_num_threads(), 0 );
-      // add the id of the device if there are a connection with the device.
+      // add the id of the device if there is a connection with the device.
       if ( kernel().connection_manager.get_device_connected(
              thread_id_master, it_device.second.second->get_local_device_id() ) )
       {
@@ -162,7 +162,7 @@ nest::StimulatingBackendMPI::prepare()
     {
       for ( auto& it_device : devices_[ id_thread ] )
       {
-        // add the id of the device if there are a connection with the device.
+        // add the id of the device if there is a connection with the device.
         if ( kernel().connection_manager.get_device_connected(
                id_thread, it_device.second.second->get_local_device_id() ) )
         {
@@ -177,7 +177,7 @@ nest::StimulatingBackendMPI::prepare()
           else
           {
             // should be impossible
-            throw KernelException( "The MPI port was not define in the master thread" );
+            throw KernelException( "The MPI port was not defined in the master thread" );
           }
         }
       }
@@ -201,12 +201,12 @@ nest::StimulatingBackendMPI::prepare()
 void
 nest::StimulatingBackendMPI::pre_run_hook()
 {
-  // create the variable which will contains the receiving data from the communication
+  // create the variable which will contain the receiving data from the communication
   auto data{ new std::pair< int*, double* >[ commMap_.size() ]{} };
   int index = 0;
 #pragma omp master
   {
-    // receive all the information from all the MPI connection
+    // receive all the information from all the MPI connections
     for ( auto& it_comm : commMap_ )
     {
       bool value[ 1 ] = { true };
@@ -219,7 +219,7 @@ nest::StimulatingBackendMPI::pre_run_hook()
   comm_map* communication_map_shared = &commMap_;
 #pragma omp parallel default( none ) shared( data, communication_map_shared )
   {
-    // Each thread update its own devices.
+    // Each thread updates its own devices.
     int index_it = 0;
     for ( auto& it_comm : *communication_map_shared )
     {
@@ -230,7 +230,7 @@ nest::StimulatingBackendMPI::pre_run_hook()
 #pragma omp barrier
 #pragma omp master
   {
-    // Master thread clean all the allocated memory
+    // Master thread cleans all the allocated memory
     clean_memory_input_data( data );
     delete[] data;
     data = nullptr;
@@ -362,7 +362,7 @@ nest::StimulatingBackendMPI::update_device( int* array_index,
 {
   if ( data.first != nullptr )
   {
-    // if there are some device
+    // if there is some device
     if ( data.first[ 0 ] != 0 )
     {
       // if there are some data
@@ -403,19 +403,19 @@ nest::StimulatingBackendMPI::update_device( int* array_index,
 void
 nest::StimulatingBackendMPI::clean_memory_input_data( std::pair< int*, double* >* data )
 {
-  // for all the pair of data free the memory of data and the array with teh size
-  for ( size_t i = 0; i != commMap_.size(); i++ )
+  // for all the pairs of data, free the memory of data and the array with the size
+  for ( size_t i = 0; i != commMap_.size(); ++i )
   {
     std::pair< int*, double* > pair_data = data[ i ];
     if ( pair_data.first != nullptr )
     {
-      // clean the memory allocate in the function receive_spike_train
+      // clean the memory allocated in the function receive_spike_train
       delete[] pair_data.first;
       pair_data.first = nullptr;
     }
     if ( pair_data.second != nullptr )
     {
-      // clean the memory allocate in the function receive_spike_train
+      // clean the memory allocated in the function receive_spike_train
       delete[] pair_data.second;
       pair_data.second = nullptr;
     }

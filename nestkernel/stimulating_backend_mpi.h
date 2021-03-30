@@ -103,8 +103,8 @@ private:
   bool prepared_;
   /**
    * A map for the enrolled devices. We have a vector with one map per local
-   * thread. The map associates the gid of a device on a given thread
-   * with it's device. Only the master thread have a valid MPI communicator pointer.
+   * thread. The map associates the node ID of a device on a given thread
+   * with it's device. Only the master thread has a valid MPI communicator pointer.
   */
   using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulatingDevice* > > >;
   device_map devices_;
@@ -123,22 +123,22 @@ private:
   static void get_port( StimulatingDevice* device, std::string* port_name );
   static void get_port( index index_node, const std::string& label, std::string* port_name );
   /**
-   * MPI communication for receiving the data before each run. This function is use only by the master thread.
-   * The allocation of this function is clean by the function clean_memory_input_data
+   * MPI communication for receiving the data before each run. This function is used only by the master thread.
+   * The allocation of this function is cleaned by the function clean_memory_input_data
    * @param comm : the MPI communicator for send and receive message
-   * @param device_id : the list of ID which need to be updated
+   * @param device_id : the list of IDs which needs to be updated
    * @return pair( size of data by device, the continuous array with all the data for the device )
    */
   static std::pair< int*, double* > receive_spike_train( const MPI_Comm& comm, std::vector< int >& device_id );
   /**
-   * Update all the device with the data receiving
-   * @param array_index : number of device by thread
-   * @param devices_id : the devices id order by thread
-   * @param data : the data receiving for update all the device
+   * Update all the devices with the data received
+   * @param array_index : number of devices by thread
+   * @param devices_id : the devices' ID ordered by thread
+   * @param data : the data received for updating all the devices
    */
   void update_device( int* array_index, std::vector< int >& devices_id, std::pair< int*, double* > data );
   /**
-   * clean all the memory allocated for the updating device. The function is use only by the master thread
+   * clean all the memory allocated for the updating device. The function is used only by the master thread
    * @param data
    */
   void clean_memory_input_data( std::pair< int*, double* >* data );

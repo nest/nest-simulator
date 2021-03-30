@@ -429,14 +429,12 @@ nest::spike_generator::set_data_from_stimulating_backend( std::vector< double > 
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     std::vector< double > times_ms;
     const size_t n_spikes = P_.spike_stamps_.size();
+    times_ms.reserve( n_spikes + input_spikes.size() );
     for ( size_t n = 0; n < n_spikes; ++n )
     {
       times_ms.push_back( P_.spike_stamps_[ n ].get_ms() );
     }
-    for ( double input_spike : input_spikes )
-    {
-      times_ms.push_back( input_spike );
-    }
+   std::copy( input_spikes.begin(), input_spikes.end(), std::back_inserter( times_ms ) );
     ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
 
     ptmp.set( d, S_, origin, Time::step( times_ms[ times_ms.size() - 1 ] ), this );

@@ -133,8 +133,8 @@ The indexing is as follows:
 mean = input_param[ 0 ]
 std = input_param[ 1 ]
 std_mod = input_param[ 2 ]
-phase = input_param[ 3 ]
-frequency = input_param[ 4 ]
+frequency = input_param[ 3 ]
+phase = input_param[ 4 ]
 
 
 Sends

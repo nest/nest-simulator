@@ -37,7 +37,7 @@ nest::StimulatingDevice::StimulatingDevice()
 nest::StimulatingDevice::StimulatingDevice( StimulatingDevice const& sd )
   : DeviceNode( sd )
   , Device( sd )
-  , first_syn_id_( invalid_synindex ) // a new instance can have no connections
+  , first_syn_id_( invalid_synindex ) // a new instance can't have any connections
   , backend_params_( sd.backend_params_ )
   , P_( sd.P_ )
 {
@@ -48,8 +48,8 @@ nest::StimulatingDevice::is_active( const Time& T ) const
 {
   long step = T.get_steps();
   if ( get_type() == StimulatingDevice::Type::CURRENT_GENERATOR
-    || get_type() == StimulatingDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR
-    || get_type() == StimulatingDevice::Type::DOUBLE_DATA_GENERATOR )
+    or get_type() == StimulatingDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR
+    or get_type() == StimulatingDevice::Type::DOUBLE_DATA_GENERATOR )
   {
     step = step + 2;
   }

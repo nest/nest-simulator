@@ -66,8 +66,7 @@ nest::StimulatingDevice::enforce_single_syn_type( synindex syn_id )
   if ( syn_id != first_syn_id_ )
   {
     throw IllegalConnection(
-      "All outgoing connections from a device must use the same synapse "
-      "type." );
+      "All outgoing connections from a device must use the same synapse type." );
   }
 }
 

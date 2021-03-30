@@ -109,8 +109,8 @@ private:
   using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulatingDevice* > > >;
   device_map devices_;
   /**
-   * A map of MPI communicator use by the master thread for the MPI communication.
-   * This map contains also the number of the device by MPI communicator.
+   * A map of MPI communicators used by the master thread for the MPI communication.
+   * This map contains also the number of the devices linked to each MPI communicator.
    */
   typedef std::map< std::string, std::tuple< MPI_Comm*, std::vector< int >*, int* > > comm_map;
   comm_map commMap_;

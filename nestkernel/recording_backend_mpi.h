@@ -126,9 +126,9 @@ private:
   bool enrolled_;
   bool prepared_;
   /**
-   * Buffer for saving events before to send it.
-   * The buffer sa 3 dimensions : thread_id, MPI_communicator_index and number of events
-   * elements : id of device, id of neurons, data ( one double )
+   * Buffer for saving events before they are sent.
+   * The buffer has 3 dimensions : thread_id, MPI_communicator_index and number of events
+   * elements. The events elements are described as an array with three components: id of device, id of neurons and data ( one double )
    */
   std::vector< std::vector< std::vector< std::array< double, 3 > > > > buffer_;
   /**
@@ -139,8 +139,8 @@ private:
   typedef std::vector< std::map< index, std::tuple< int, MPI_Comm*, const RecordingDevice* > > > device_map;
   device_map devices_;
   /**
-   * A map of MPI communicator use by the master thread for the MPI communication.
-   * This map contains also the number of the device by MPI communicator.
+   * A map of MPI communicators used by the master thread for the MPI communication.
+   * This map contains also the number devices linked to each MPI communicator.
    */
   typedef std::map< std::string, std::tuple< int, MPI_Comm*, int > > comm_map;
   comm_map commMap_;

@@ -258,7 +258,7 @@ step_rate_generator::set_status( const DictionaryDatum& d )
   P_ = ptmp;
 }
 
-//! Allow multimeter to connect to local instances
+//! Allow step rate generator to connect to local instances
 inline bool
 step_rate_generator::local_receiver() const
 {

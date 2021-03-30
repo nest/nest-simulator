@@ -134,8 +134,9 @@ nest::StimulatingBackendMPI::prepare()
     }
     else
     {
-      // create a new MPI communicator for the MPI process. Only the master thread is using MPI function.
-      // The cause it's the management of the thread is MPI_THREAD_FUNNELED (mpi_manager 119).
+      // create a new MPI communicator to communicate with the external MPI process. 
+      // Only the master thread uses the MPI functions of this new communicator.
+      // This is because the management of threads here is using MPI_THREAD_FUNNELED (see mpi_manager.cpp:119).
       comm = new MPI_Comm;
       auto vector_id_device = new std::vector< int >; // vector of ID device for the rank
       int* vector_nb_device_th{ new int[ kernel().vp_manager.get_num_threads() ]{} }; // number of device by thread

@@ -65,8 +65,7 @@ nest::StimulatingDevice::enforce_single_syn_type( synindex syn_id )
   }
   if ( syn_id != first_syn_id_ )
   {
-    throw IllegalConnection(
-      "All outgoing connections from a device must use the same synapse type." );
+    throw IllegalConnection( "All outgoing connections from a device must use the same synapse type." );
   }
 }
 
@@ -94,8 +93,6 @@ nest::StimulatingDevice::Parameters_::Parameters_()
   , stimulus_source_( names::internal )
 {
 }
-
-nest::StimulatingDevice::Parameters_::Parameters_( const Parameters_& p );
 
 void
 nest::StimulatingDevice::Parameters_::get( DictionaryDatum& d ) const

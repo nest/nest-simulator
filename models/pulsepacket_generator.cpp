@@ -241,7 +241,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
  * ---------------------------------------------------------------- */
 
 void
-nest::pulsepacket_generator::set_data_from_stimulating_backend( std::vector< double > input_param )
+nest::pulsepacket_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

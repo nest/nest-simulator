@@ -284,7 +284,7 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::set_data_from_stimulating_backend( std::vector< double > input_param )
+nest::gamma_sup_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

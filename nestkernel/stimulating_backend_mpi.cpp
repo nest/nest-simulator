@@ -134,7 +134,7 @@ nest::StimulatingBackendMPI::prepare()
     }
     else
     {
-      // create a new MPI communicator to communicate with the external MPI process. 
+      // create a new MPI communicator to communicate with the external MPI process.
       // Only the master thread uses the MPI functions of this new communicator.
       // This is because the management of threads here is using MPI_THREAD_FUNNELED (see mpi_manager.cpp:119).
       comm = new MPI_Comm;

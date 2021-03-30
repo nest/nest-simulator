@@ -128,7 +128,8 @@ private:
   /**
    * Buffer for saving events before they are sent.
    * The buffer has 3 dimensions : thread_id, MPI_communicator_index and number of events
-   * elements. The events elements are described as an array with three components: id of device, id of neurons and data ( one double )
+   * elements. The events elements are described as an array with three components: id of device, id of neurons and data
+   * ( one double )
    */
   std::vector< std::vector< std::vector< std::array< double, 3 > > > > buffer_;
   /**

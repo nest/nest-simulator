@@ -187,7 +187,7 @@ public:
   void set_status( const DictionaryDatum& ) override;
 
   StimulatingDevice::Type get_type() const override;
-  void set_data_from_stimulating_backend( std::vector< double > input_spikes ) override;
+  void set_data_from_stimulating_backend( std::vector< double >& input_spikes ) override;
 
 
   /**
@@ -237,7 +237,7 @@ public:
     //! Shift spike times at present to next step
     bool shift_now_spikes_;
 
-    Parameters_();                     //!< Sets default parameter values
+    Parameters_();                               //!< Sets default parameter values
     Parameters_( const Parameters_& ) = default; //!< Recalibrate all times
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary

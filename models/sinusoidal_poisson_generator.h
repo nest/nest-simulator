@@ -169,7 +169,7 @@ public:
     return StimulatingDevice::Type::CURRENT_GENERATOR;
   };
 
-  void set_data_from_stimulating_backend( std::vector< double > input_param ) override;
+  void set_data_from_stimulating_backend( std::vector< double >& input_param ) override;
 
 private:
   void init_state_( const Node& ) override;

@@ -338,7 +338,7 @@ nest::step_rate_generator::handle( DataLoggingRequest& e )
  * Other functions
  * ---------------------------------------------------------------- */
 void
-nest::step_rate_generator::set_data_from_stimulating_backend( std::vector< double > time_amplitude )
+nest::step_rate_generator::set_data_from_stimulating_backend( std::vector< double >& time_amplitude )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

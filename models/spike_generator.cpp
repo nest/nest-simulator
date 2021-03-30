@@ -52,17 +52,6 @@ nest::spike_generator::Parameters_::Parameters_()
 {
 }
 
-nest::spike_generator::Parameters_::Parameters_( const Parameters_& op )
-  : spike_stamps_( op.spike_stamps_ )
-  , spike_offsets_( op.spike_offsets_ )
-  , spike_weights_( op.spike_weights_ )
-  , spike_multiplicities_( op.spike_multiplicities_ )
-  , precise_times_( op.precise_times_ )
-  , allow_offgrid_times_( op.allow_offgrid_times_ )
-  , shift_now_spikes_( op.shift_now_spikes_ )
-{
-}
-
 nest::spike_generator::State_::State_()
   : position_( 0 )
 {
@@ -412,7 +401,7 @@ nest::spike_generator::event_hook( DSSpikeEvent& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::set_data_from_stimulating_backend( std::vector< double > input_spikes )
+nest::spike_generator::set_data_from_stimulating_backend( std::vector< double >& input_spikes )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
@@ -434,7 +423,7 @@ nest::spike_generator::set_data_from_stimulating_backend( std::vector< double > 
     {
       times_ms.push_back( P_.spike_stamps_[ n ].get_ms() );
     }
-   std::copy( input_spikes.begin(), input_spikes.end(), std::back_inserter( times_ms ) );
+    std::copy( input_spikes.begin(), input_spikes.end(), std::back_inserter( times_ms ) );
     ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
 
     ptmp.set( d, S_, origin, Time::step( times_ms[ times_ms.size() - 1 ] ), this );

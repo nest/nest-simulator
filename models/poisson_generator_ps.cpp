@@ -283,7 +283,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
 }
 
 void
-nest::poisson_generator_ps::set_data_from_stimulating_backend( std::vector< double > input_param )
+nest::poisson_generator_ps::set_data_from_stimulating_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
@@ -303,4 +303,3 @@ nest::poisson_generator_ps::set_data_from_stimulating_backend( std::vector< doub
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
-

@@ -121,7 +121,7 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  void set_data_from_stimulating_backend( std::vector< double > input_spikes ) override;
+  void set_data_from_stimulating_backend( std::vector< double >& input_spikes ) override;
 
   StimulatingDevice::Type get_type() const override;
 

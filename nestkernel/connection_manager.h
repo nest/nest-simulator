@@ -784,7 +784,7 @@ ConnectionManager::get_target_node_id( const thread tid, const synindex syn_id, 
 inline bool
 ConnectionManager::get_device_connected( const thread tid, const index lcid ) const
 {
-  return target_table_devices_.get_devices_connected( tid, lcid );
+  return target_table_devices_.is_device_connected( tid, lcid );
 }
 
 inline void

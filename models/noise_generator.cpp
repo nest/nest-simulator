@@ -365,7 +365,7 @@ nest::noise_generator::handle( DataLoggingRequest& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::noise_generator::set_data_from_stimulating_backend( std::vector< double > input_param )
+nest::noise_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.num_targets_ = P_.num_targets_;

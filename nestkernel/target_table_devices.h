@@ -203,9 +203,9 @@ public:
     const index lcid );
 
   /**
-   * Checks if the device has any connection in this thread
+   * Checks if the device has any connections in this thread
    */
-  bool get_devices_connected( thread tid, index lcid ) const;
+  bool is_device_connected( thread tid, index lcid ) const;
 };
 
 inline void
@@ -247,14 +247,14 @@ TargetTableDevices::send_from_device( const thread tid,
 }
 
 inline bool
-TargetTableDevices::get_devices_connected( const thread tid, const index lcid ) const
+TargetTableDevices::is_device_connected( const thread tid, const index lcid ) const
 {
-  for ( auto& it_synapse : target_from_devices_[ tid ][ lcid ] )
+  for ( auto& synapse : target_from_devices_[ tid ][ lcid ] )
   {
-    if ( it_synapse != nullptr )
+    if ( synapse != nullptr )
     {
       std::deque< ConnectionID > conns;
-      it_synapse->get_all_connections( lcid, 0, tid, UNLABELED_CONNECTION, conns );
+      synapse->get_all_connections( lcid, 0, tid, UNLABELED_CONNECTION, conns );
       if ( not conns.empty() )
       {
         return true;

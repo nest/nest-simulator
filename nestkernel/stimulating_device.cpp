@@ -39,8 +39,8 @@ nest::StimulatingDevice::StimulatingDevice( StimulatingDevice const& sd )
   , Device( sd )
   , first_syn_id_( invalid_synindex ) // a new instance can have no connections
   , backend_params_( sd.backend_params_ )
+  , P_( sd.P_ )
 {
-  P_ = Parameters_( sd.P_ );
 }
 
 bool
@@ -96,7 +96,7 @@ nest::StimulatingDevice::Parameters_::Parameters_()
 {
 }
 
-nest::StimulatingDevice::Parameters_::Parameters_( const Parameters_& p ) = default;
+nest::StimulatingDevice::Parameters_::Parameters_( const Parameters_& p );
 
 void
 nest::StimulatingDevice::Parameters_::get( DictionaryDatum& d ) const

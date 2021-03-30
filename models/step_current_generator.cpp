@@ -344,12 +344,14 @@ nest::step_current_generator::set_data_from_stimulating_backend( std::vector< do
     std::vector< double > times_ms;
     std::vector< double > amplitudes_pA;
     const size_t n_step = P_.amp_time_stamps_.size();
+    times_ms.reserve( n_step + time_amplitude.size() / 2 );
+    amplitudes_pA.reserve( n_step + time_amplitude.size() / 2 );
     for ( size_t n = 0; n < n_step; ++n )
     {
       times_ms.push_back( P_.amp_time_stamps_[ n ].get_ms() );
       amplitudes_pA.push_back( P_.amp_values_[ n ] );
     }
-    for ( size_t n = 0; n < time_amplitude.size() / 2; n++ )
+    for ( size_t n = 0; n < time_amplitude.size() / 2; ++n )
     {
       times_ms.push_back( time_amplitude[ n * 2 ] );
       amplitudes_pA.push_back( time_amplitude[ n * 2 + 1 ] );

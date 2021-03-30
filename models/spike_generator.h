@@ -238,7 +238,7 @@ public:
     bool shift_now_spikes_;
 
     Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
+    Parameters_( const Parameters_& ) = default; //!< Recalibrate all times
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 

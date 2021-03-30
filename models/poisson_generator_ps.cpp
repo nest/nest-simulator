@@ -303,3 +303,4 @@ nest::poisson_generator_ps::set_data_from_stimulating_backend( std::vector< doub
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+

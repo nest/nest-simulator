@@ -148,7 +148,7 @@ protected:
     Name stimulus_source_; //!< Origin of the stimulating signal.
 
     Parameters_();
-    Parameters_( const Parameters_& );
+    Parameters_( const Parameters_& ) = default;
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum& );
   } P_;

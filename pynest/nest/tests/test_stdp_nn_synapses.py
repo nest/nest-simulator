@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script tests the stdp_nn_symm_synapse, stdp_nn_pre-centered_synapse,
+# This script tests the stdp_nn_symm_synapse, stdp_nn_pre_centered_synapse,
 # and stdp_nn_restr_synapse in NEST.
 
 import nest
@@ -195,7 +195,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
                     # with t_previous_pre, thus due to the restricted
                     # pairing scheme we do not account it.
                 if (self.synapse_parameters["synapse_model"] == "stdp_nn_symm_synapse" or
-                        self.synapse_parameters["synapse_model"] == "stdp_nn_pre-centered_synapse"):
+                        self.synapse_parameters["synapse_model"] == "stdp_nn_pre_centered_synapse"):
                     # The current pre-spike is simply paired with the
                     # nearest post-spike.
                     current_nearest_neighbour_pair_is_suitable = True
@@ -232,7 +232,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
                             # restricted pairing scheme we do not account it.
                             w = self.facilitate(t - t_previous_pre, w)
 
-                if self.synapse_parameters["synapse_model"] == "stdp_nn_pre-centered_synapse":
+                if self.synapse_parameters["synapse_model"] == "stdp_nn_pre_centered_synapse":
                     if t_previous_pre != -1:  # if == -1, nothing to pair with
                         # Going through all preceding presynaptic spikes
                         # that are later than the previous post.
@@ -281,7 +281,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
         self.do_nest_simulation_and_compare_to_reproduced_weight("nn_symm")
 
     def test_nn_pre_centered_synapse(self):
-        self.do_nest_simulation_and_compare_to_reproduced_weight("nn_pre-centered")
+        self.do_nest_simulation_and_compare_to_reproduced_weight("nn_pre_centered")
 
     def test_nn_restr_synapse(self):
         self.do_nest_simulation_and_compare_to_reproduced_weight("nn_restr")

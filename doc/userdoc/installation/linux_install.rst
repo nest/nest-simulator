@@ -30,7 +30,8 @@ factor for the communication of spikes, some simulations are significantly faste
 
 If you want to use PyNEST, we recommend to install the following along with their development packages:
 
-- `Python 3.6 or higher <http://www.python.org>`_
+- `Python 3.8 or higher <http://www.python.org>`_
+- `Cython 0.28.3 or higher <https://cython.org>`_
 - `NumPy <http://www.numpy.org>`_
 - `SciPy <http://www.scipy.org>`_
 - `Matplotlib 3.0 or higher <http://matplotlib.org>`_

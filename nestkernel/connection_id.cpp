@@ -46,6 +46,7 @@ ConnectionID::ConnectionID( long source_node_id,
 
 ConnectionID::ConnectionID( long source_node_id, long target_thread, long synapse_modelid, long port )
   : source_node_id_( source_node_id )
+  , target_node_id_( -1 )
   , target_thread_( target_thread )
   , synapse_modelid_( synapse_modelid )
   , port_( port )

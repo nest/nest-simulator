@@ -54,6 +54,7 @@ Description
 +++++++++++
 
 .. note::
+
    This model is deprecated and will be removed in NEST 3.
    Please use ``iaf_psc_alpha_ps`` instead.
 
@@ -80,11 +81,21 @@ performance given an accuracy goal; see [1]_ for details. Subthreshold
 dynamics are integrated using exact integration between events [2]_.
 
 .. note::
+
    Please note that this node is capable of sending precise spike
    times to target nodes (on-grid spike time plus offset).
 
    A further improvement of precise simulation is implemented in
    iaf_psc_exp_ps based on [3]_.
+
+.. note::
+
+   If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+   will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+   `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+   For implementation details see the
+   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 Parameters
 ++++++++++
@@ -117,14 +128,6 @@ order to record the offsets in addition to the on-grid spike times.
 The iaf_psc_delta_ps neuron accepts connections transmitting
 CurrentEvents. These events transmit stepwise-constant currents which
 can only change at on-grid times.
-
-If tau_m is very close to tau_syn, the model will numerically behave as
-if tau_m is equal to tau_syn, to avoid numerical instabilities.
-For details, please check out the `IAF neurons singularity
-<https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_ notebook.
-
-A further improvement of precise simulation is implemented in iaf_psc_exp_ps
-based on [3]_.
 
 For details about exact subthreshold integration, please see
 :doc:`../guides/exact-integration`.

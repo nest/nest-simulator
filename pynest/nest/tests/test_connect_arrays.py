@@ -26,6 +26,8 @@ import nest
 
 nest.set_verbosity('M_WARNING')
 
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+
 
 class TestConnectArrays(unittest.TestCase):
 
@@ -291,6 +293,50 @@ class TestConnectArrays(unittest.TestCase):
         with self.assertRaises(nest.kernel.NESTErrors.UnknownNode):
             nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays,
                                                      'synapse_model': syn_model})
+
+    @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+    def test_connect_arrays_receptor_type(self):
+        """Connecting NumPy arrays with receptor type specified, threaded"""
+
+        nest.SetKernelStatus({'local_num_threads': 2})
+
+        n = 10
+        nest.Create('iaf_psc_alpha', n)
+        sources = np.arange(1, n+1, dtype=np.uint64)
+        targets = self.non_unique
+
+        weights = len(sources) * [2.]
+        nest.Connect(sources, targets, conn_spec='one_to_one', syn_spec={'weight': weights, 'receptor_type': 0})
+
+        self.assertEqual(len(sources) * [0], nest.GetConnections().receptor)
+
+    @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+    def test_connect_arrays_differnt_alpha(self):
+        """Connecting NumPy arrays with different alpha values in a threaded environment"""
+
+        nest.SetKernelStatus({'local_num_threads': 4})
+
+        neurons = nest.Create("iaf_psc_exp", 10)
+        # syn_spec parameters are dependent on source, so we test with source id's not starting with 1
+        source = np.array([2, 5, 3, 10, 1, 9, 4, 6, 8, 7])
+        target = 1 + np.random.choice(10, 10, replace=True)
+
+        weights = len(source) * [2.]
+        alpha = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.11])
+
+        # Need to make sure the correct alpha value is used with the correct source
+        src_alpha_ref = {key: val for key, val in zip(source, alpha)}
+
+        nest.Connect(source, target, conn_spec='one_to_one',
+                     syn_spec={'alpha': alpha, 'receptor_type': 0,
+                               'weight': weights, 'synapse_model': "stdp_synapse"})
+
+        conns = nest.GetConnections()
+        src = conns.source
+        alp = conns.alpha
+        src_alpha = {key: val for key, val in zip(src, alp)}
+
+        self.assertEqual(src_alpha_ref, src_alpha)
 
 
 def suite():

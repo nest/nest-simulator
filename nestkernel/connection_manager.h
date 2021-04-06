@@ -28,6 +28,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "conn_builder.h"
@@ -391,6 +392,10 @@ public:
   double get_stdp_eps() const;
 
   void set_stdp_eps( const double stdp_eps );
+
+  // public stop watch for benchmarking purposes
+  // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
+  Stopwatch sw_construction_connect;
 
 private:
   size_t get_num_target_data( const thread tid ) const;

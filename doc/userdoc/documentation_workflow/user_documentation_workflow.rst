@@ -1,3 +1,5 @@
+.. _documentation_workflow:
+
 User-level documentation workflow
 #################################
 
@@ -21,7 +23,7 @@ with each release of NEST having its own documentation.
 
 This workflow aims for the concept of **user-correctable documentation**.
 
-.. image:: ../_static/img/documentation_workflow.png
+.. image:: ../static/img/documentation_workflow.png
   :width: 500
   :alt: Alternative text
 
@@ -46,28 +48,28 @@ workflow below!
 Setting up your environment
 +++++++++++++++++++++++++++
 
-To install the dependencies for building the documentation, you can
-either directly run
+We recommend that you set up a full NEST developer environment using
+Conda (for details on Conda, see :doc:`../installation/conda_tips`):
 
 .. code-block:: bash
 
-    pip3 install -r <nest_source_dir>/doc/requirements.txt
-
-or alternatively install the dependencies into a conda environment (we
-recommend `miniconda <https://docs.conda.io/en/latest/miniconda>`_ for
-this). After installing conda, you can simply run
-
-.. code-block:: bash
-
-    conda env create -f <nest_source_dir>/doc/environment.yml
-    conda activate nest-doc
+    conda env create -f <nest_source_dir>/extras/conda-nest-simulator-dev.yml
+    conda activate nest-simulator-dev
 
 If you later on want to deactivate or delete the build environment:
 
 .. code-block:: bash
 
    conda deactivate
-   conda remove --name nest-doc --all
+   conda remove --name nest-simulator-dev --all
+
+If you want to install only a minimal set of packages for building the
+documentation and avoid using Conda, you can use pip:
+
+.. code-block:: bash
+
+    pip3 install -r <nest_source_dir>/extras/nest-simulator-doc-requirements.txt
+
 
 Generating documentation with Sphinx
 ++++++++++++++++++++++++++++++++++++
@@ -157,27 +159,3 @@ Once your documentation work is finished, you can create a `pull request
 <https://nest.github.io/nest-simulator/development_workflow#create-a-pull-
 request>`_ to the ``master`` branch of the NEST Source Code Repository. Your
 pull request will be reviewed by the NEST Documentation Team!
-
-Helpdesk
-++++++++
-
-For a list of commands for SLI and C++, you can access the the online
-command index via the command line
-
-::
-
-   import nest
-   nest.helpdesk()
-
-.. note::
-    The ``helpdesk()`` command needs to know which browser to launch
-    in order to display the help pages. The browser is set as an
-    option of helpdesk. Please see the file ``~/.nestrc`` for an
-    example, which sets Firefox as browser.
-
-.. note::
-    The ``helpdesk()`` command does not work if you have compiled NEST
-    with MPI support, but you have to enter the address of the
-    helpdesk (``file://<nest_install_dir>/share/doc/nest/index.html``)
-    manually into the browser.  Replace ``<nest_install_dir>`` with
-    the path under which NEST is installed.

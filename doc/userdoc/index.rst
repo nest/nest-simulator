@@ -2,6 +2,9 @@
 Welcome to the NEST simulator documentation!
 ********************************************
 
+.. _index_ref:
+
+
 :orange:`Introducing NEST 3.0`
 ------------------------------
 
@@ -12,6 +15,11 @@ NEST 3.0 provides a more intuitive experience with simplified yet versatile hand
 
 
 - Read the :doc:`Detailed transition guide <guides/nest2_to_nest3/nest2_to_nest3_detailed_transition_guide>` for an in-depth comparison between old and new syntax.
+
+----
+
+
+In the current implementation of :hxt_ref:`aeif`, :hxt_ref:`tau_m` is not specified explicitly. Instead, :hxt_ref:`tau_m` can be calculated by dividing :hxt_ref:`C_m` by :hxt_ref:`g_L`.
 
 ----
 
@@ -128,3 +136,4 @@ NEST is available under the :doc:`GNU General Public License 2 or later <license
 .. image:: static/img/EBRAINS.svg
   :width: 25 %
   :target: https://ebrains.eu/
+

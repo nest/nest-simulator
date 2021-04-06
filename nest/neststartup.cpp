@@ -127,7 +127,6 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
   // this can make problems with reference counting, if
   // the intepreter decides cleans up memory before NEST is ready
   engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
-  engine.def( "connruledict", nest::kernel().connection_manager.get_connruledict() );
   engine.def( "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
 
   // now add static modules providing models

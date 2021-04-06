@@ -800,7 +800,7 @@ def
    targets    nodecollection  - the node IDs of the targets
    weight     double         - the weight of the connection
    delay      double         - the delay of the connection
-   conn_rule  literal        - the name of the connection rule, see connruledict
+   conn_rule  literal        - the name of the connection rule
    conn_spec  dict           - dictionary with connectivity specification (see Options)
    syn_model  literal        - the name of the synapse model, see synapsedict
    syn_spec   dict           - dictionary with synapse model specification (see Options)
@@ -837,7 +837,10 @@ def
    Parameters for synapses may be fixed single values, arrays or random deviate
    specifications.
 
-   SeeAlso: synapsedict, connruledict, cvnodecollection, GetOptions
+   A list of available connection rules can be obtained from the
+   kernel status dictionary by inspecting the key /connection_rules.
+
+   SeeAlso: synapsedict, cvnodecollection, GetOptions
 
    Author: Hannah Bos, Hans Ekkehard Plesser, Jochen Martin Eppler
 

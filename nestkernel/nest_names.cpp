@@ -94,6 +94,7 @@ const Name comparator( "comparator" );
 const Name configbit_0( "configbit_0" );
 const Name configbit_1( "configbit_1" );
 const Name connection_count( "connection_count" );
+const Name connection_rules( "connection_rules" );
 const Name connection_type( "connection_type" );
 const Name consistent_integration( "consistent_integration" );
 const Name continuous( "continuous" );

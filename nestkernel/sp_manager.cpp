@@ -285,7 +285,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   }
   const std::string rule_name = ( *conn_spec )[ names::rule ];
 
-  if ( not kernel().connection_manager.get_connruledict()->known( rule_name ) )
+  if ( not kernel().connection_manager.valid_connection_rule( rule_name ) )
   {
     throw BadProperty( "Unknown connectivty rule: " + rule_name );
   }

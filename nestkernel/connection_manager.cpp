@@ -181,6 +181,13 @@ nest::ConnectionManager::get_status( DictionaryDatum& dict )
   def< long >( dict, names::num_connections, n );
   def< bool >( dict, names::keep_source_table, keep_source_table_ );
   def< bool >( dict, names::sort_connections_by_source, sort_connections_by_source_ );
+
+  ArrayDatum connection_rules;
+  for ( auto const& element : *connruledict_ )
+  {
+    connection_rules.push_back( new LiteralDatum( element.first ) );
+  }
+  def< ArrayDatum >( dict, names::connection_rules, connection_rules );
 }
 
 DictionaryDatum

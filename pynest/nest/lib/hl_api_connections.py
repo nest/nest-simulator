@@ -123,6 +123,11 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     (`all-to-all` by default) and synapse type (:cpp:class:`static_synapse <nest::StaticConnection>` by default).
     Details depend on the connectivity rule.
 
+    A list of available synapse models can be obtained from the NEST
+    kernel by calling ``nest.GetKernelStatus('synapse_models')``.
+    Similarly, the list of available connection rules can be obtained
+    by calling ``nest.GetKernelStatus('connection_rules')``.
+
     Parameters
     ----------
     pre : NodeCollection (or array-like object)

@@ -47,7 +47,6 @@ __all__ = [
     'Cleanup',
     'CollocatedSynapses',
     'Connect',
-    'ConnectionRules',
     'SynapseCollection',
     'CopyModel',
     'Create',

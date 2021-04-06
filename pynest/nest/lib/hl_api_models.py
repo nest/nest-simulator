@@ -28,26 +28,10 @@ from .hl_api_helper import *
 from .hl_api_types import to_json
 
 __all__ = [
-    'ConnectionRules',
     'CopyModel',
     'GetDefaults',
     'SetDefaults',
 ]
-
-
-@check_stack
-def ConnectionRules():
-    """Return a typle of all available connection rules, sorted by name.
-
-    Returns
-    -------
-    tuple
-        Available connection rules
-
-    """
-
-    sr('connruledict')
-    return tuple(sorted(spp().keys()))
 
 
 @check_stack

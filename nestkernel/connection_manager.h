@@ -82,7 +82,7 @@ public:
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
 
-  DictionaryDatum& get_connruledict();
+  bool valid_connection_rule( std::string );
 
   void compute_target_data_buffer_size();
   void compute_compressed_secondary_recv_buffer_positions( const thread tid );
@@ -560,21 +560,10 @@ private:
    */
   std::vector< std::vector< size_t > > num_connections_;
 
-  /**
-   * @BeginDocumentation
-   * Name: connruledict - dictionary containing all connectivity rules
-   *
-   * Description:
-   * This dictionary provides the connection rules that can be used
-   * in Connect.
-   * 'connruledict info' shows the contents of the dictionary.
-   *
-   * SeeAlso: Connect
-   */
-  DictionaryDatum connruledict_; //!< Dictionary for connection rules.
-
   //! ConnBuilder factories, indexed by connruledict_ elements.
   std::vector< GenericConnBuilderFactory* > connbuilder_factories_;
+
+  DictionaryDatum connruledict_; //!< Dictionary for connection rules.
 
   delay min_delay_; //!< Value of the smallest delay in the network.
 
@@ -610,10 +599,10 @@ private:
   double stdp_eps_;
 };
 
-inline DictionaryDatum&
-ConnectionManager::get_connruledict()
+inline bool
+ConnectionManager::valid_connection_rule( std::string rule_name )
 {
-  return connruledict_;
+  return connruledict_->known( rule_name );
 }
 
 inline delay

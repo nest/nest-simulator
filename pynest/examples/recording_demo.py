@@ -35,13 +35,13 @@ import numpy as np
 
 def setup(record_to, time_in_steps):
     """Set up the network with the given parameters."""
-    
+
     nest.ResetKernel()
     nest.SetKernelStatus({'overwrite_files': True})
 
     pg_params = {'rate': 1000000.}
     sr_params = {'record_to': record_to, 'time_in_steps': time_in_steps}
-    
+
     n = nest.Create('iaf_psc_exp')
     pg = nest.Create('poisson_generator', 1, pg_params)
     sr = nest.Create('spike_recorder', 1, sr_params)
@@ -54,11 +54,12 @@ def setup(record_to, time_in_steps):
 
 def get_data(sr):
     """Get recorded data from the spike_recorder."""
-    
+
     if sr.record_to == 'ascii':
         return np.loadtxt(f'{sr.filenames[0]}', dtype=object)
     if sr.record_to == 'memory':
         return sr.get('events')
+
 
 # Just loop through some recording backends and settings
 for time_in_steps in (True, False):

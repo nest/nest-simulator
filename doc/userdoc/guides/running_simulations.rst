@@ -26,7 +26,7 @@ simulation and allow the efficient use of computer clusters, NEST uses a
 following figure shows the basic loop that is run upon a call to
 ``Simulate``:
 
-.. figure:: ../_static/img/simulation_loop-241x300.png
+.. figure:: ../static/img/simulation_loop-241x300.png
    :alt: Simulation Loop
 
    Simulation Loop
@@ -45,7 +45,7 @@ the largest delay in the network. From this definition follows that no
 node can influence another node during at least a time of *dmin*, i.e.
 the elements are effectively decoupled for this interval.
 
-.. figure:: ../_static/img/time_definitions-300x61.png
+.. figure:: ../static/img/time_definitions-300x61.png
    :alt: Definitions of the minimimum delay and the simulation resolution
 
    Definitions of minimum delay (*dmin*) and simulation resolution (*h*).

@@ -63,14 +63,14 @@ software for running and building NEST by executing the following command from t
 
 .. code:: sh
 
-   conda env create -f extras/conda-environment-nest-simulator.yml
+   conda env create -f extras/conda-nest-simulator-dev.yml
    
 This will create an environment called ``nest-simulator``. If you would like to give the environment
 a different name, use
 
 .. code:: sh
 
-   conda env create -f extras/conda-environment-nest-simulator.yml -n MYNAME
+   conda env create -f extras/conda-nest-simulator-dev.yml -n MYNAME
    
    
 Get a good overview

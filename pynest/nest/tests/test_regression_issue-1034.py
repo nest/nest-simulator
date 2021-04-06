@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# Please see `doc/model_details/test_post_trace.ipynb` for a version of this
+# Please see `doc/userdoc/model_details/test_post_trace.ipynb` for a version of this
 # test that includes more documentation and plotting.
 
 
@@ -35,7 +35,7 @@ class PostTraceTester(object):
     with reference values generated in Python.
 
     For more information, please see the Jupyter notebook in
-    `doc/model_details/test_post_trace.ipynb`.
+    `doc/userdoc/model_details/test_post_trace.ipynb`.
     '''
 
     def __init__(self, pre_spike_times, post_spike_times, delay, resolution,
@@ -104,14 +104,14 @@ class PostTraceTester(object):
         n_steps = int(np.ceil(self.sim_time_ / self.delay_))
         trace_nest = []
         trace_nest_t = []
-        t = nest.GetKernelStatus("time")
+        t = nest.GetKernelStatus("biological_time")
         trace_nest_t.append(t)
         post_tr = nest.GetStatus(post_parrot_ps)[0]['post_trace']
         trace_nest.append(post_tr)
         for step in range(n_steps):
             print("\n[py] simulating for " + str(self.delay_) + " ms")
             nest.Simulate(self.delay_)
-            t = nest.GetKernelStatus("time")
+            t = nest.GetKernelStatus("biological_time")
             nearby_pre_spike = np.any(
                 np.abs(t - np.array(self.pre_spike_times_) - self.delay_) < self.resolution_ / 2.)
             if show_all_nest_trace_samples or nearby_pre_spike:

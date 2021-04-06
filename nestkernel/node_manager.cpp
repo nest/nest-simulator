@@ -59,8 +59,8 @@ NodeManager::NodeManager()
 
 NodeManager::~NodeManager()
 {
-  destruct_nodes_(); // We must destruct nodes properly, since devices may need
-                     // to close files.
+  // We must destruct nodes here, since devices may need to close files.
+  destruct_nodes_();
 }
 
 void

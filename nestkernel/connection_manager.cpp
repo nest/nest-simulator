@@ -384,13 +384,13 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 
   if ( not conn_spec->known( names::rule ) )
   {
-    throw BadProperty( "Connectivity spec must contain connectivity rule." );
+    throw BadProperty( "The connection specification must contain a connection rule." );
   }
   const Name rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
 
   if ( not connruledict_->known( rule_name ) )
   {
-    throw BadProperty( String::compose( "Unknown connectivity rule: %1", rule_name ) );
+    throw BadProperty( String::compose( "Unknown connection rule: %1", rule_name ) );
   }
 
   const long rule_id = ( *connruledict_ )[ rule_name ];

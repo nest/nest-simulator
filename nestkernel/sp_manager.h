@@ -215,5 +215,7 @@ SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;
 }
-}
-#endif /* SP_MANAGER_H */
+
+} // namespace nest
+
+#endif /* #ifndef SP_MANAGER_H */

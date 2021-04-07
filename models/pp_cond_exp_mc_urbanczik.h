@@ -141,20 +141,20 @@ for each compartment are collected in a sub-dictionary; these sub-dictionaries
 are called "soma" and "dendritic", respectively. In the list below,
 these parameters are marked with an asterisk.
 
-============ ======= ==========================================================
- V_m*        mV      Membrane potential
- E_L*        mV      Leak reversal potential
- C_m*        pF      Capacity of the membrane
- E_ex*       mV      Excitatory reversal potential
- E_in*       mV      Inhibitory reversal potential
- g_L*        nS      Leak conductance
- tau_syn_ex* ms      Rise time of the excitatory synaptic alpha function
- tau_syn_in* ms      Rise time of the inhibitory synaptic alpha function
- I_e*        pA      Constant input current
- g_sp        nS      Coupling between soma and dendrite
- g_ps        nS      Coupling between dendrite and soma
- t_ref       ms      Duration of refractory period
-============ ======= ==========================================================
+============   =====   =====================================================
+ V_m*           mV      Membrane potential
+ E_L*           mV      Leak reversal potential
+ C_m*           pF      Capacity of the membrane
+ E_ex*          mV      Excitatory reversal potential
+ E_in*          mV      Inhibitory reversal potential
+ g_L*           nS      Leak conductance
+ tau_syn_ex*    ms      Rise time of the excitatory synaptic alpha function
+ tau_syn_in*    ms      Rise time of the inhibitory synaptic alpha function
+ I_e*           pA      Constant input current
+ g_sp           nS      Coupling between soma and dendrite
+ g_ps           nS      Coupling between dendrite and soma
+ t_ref          ms      Duration of refractory period
+============   =====   =====================================================
 
 Example:
 See pynest/examples/urbanczik_synapse_example.py.

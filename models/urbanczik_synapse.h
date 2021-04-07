@@ -61,12 +61,12 @@ that are capable of doing this archiving. So far, the only compatible model is p
 Parameters
 ++++++++++
 
-=======   ======  ==========================================================
-eta       real    Learning rate
-tau_Delta real    Time constant of low pass filtering of the weight change
-Wmax      real    Maximum allowed weight
-Wmin      real    Minimum allowed weight
-=======   ======  ==========================================================
+=========   ====   =========================================================
+eta         real   Learning rate
+tau_Delta   real   Time constant of low pass filtering of the weight change
+Wmax        real   Maximum allowed weight
+Wmin        real   Minimum allowed weight
+=========   ====   =========================================================
 
 All other parameters are stored in in the neuron models that are compatible with the Urbanczik synapse.
 

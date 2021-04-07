@@ -122,10 +122,11 @@ pp_cond_exp_mc_urbanczik is an implementation of a two-compartment spiking
 point process neuron with conductance-based synapses as it is used
 in [1]_. It is capable of connecting to a Urbanczik synapse.
 
-The model has two compartments: soma and dendrite, labeled as s and p, respectively.
-There is one excitatory and one inhibitory conductance-based synapse onto each compartment.
-Each compartment can also receive current input from a current generator, and an external
-(rheobase) current can be set for each compartment.
+The model has two compartments: soma and dendrite, labeled as s and p,
+respectively. There is one excitatory and one inhibitory conductance-based
+synapse onto each compartment. Each compartment can also receive current input
+from a current generator, and an external (rheobase) current can be set for
+each compartment.
 
 Synapses, including those for injection external currents, are addressed through
 the receptor types given in the receptor_types entry of the state dictionary.
@@ -161,7 +162,8 @@ See pynest/examples/urbanczik_synapse_example.py.
 
 Remarks:
 
-The neuron model uses standard units instead of the unitless quantities used in [1].
+The neuron model uses standard units instead of the unitless quantities used in
+[1]_.
 
 @note All parameters that occur for both compartments
 are stored as C arrays, with index 0 being soma.

@@ -50,13 +50,14 @@ urbanczik_synapse - Synapse type for a plastic synapse after Urbanczik and Senn.
 Description
 +++++++++++
 
-urbanczik_synapse is a connector to create Urbanczik synapses as defined in [1]_
- that can connect suitable
-multicompartment models. In contrast to usual STDP, the change of the synaptic weight does not only depend on the pre-
-and postsynaptic spike timing but also on the postsynaptic dendritic potential.
+urbanczik_synapse is a connector to create Urbanczik synapses as defined in
+[1]_ that can connect suitable multicompartment models. In contrast to usual
+STDP, the change of the synaptic weight does not only depend on the pre- and
+postsynaptic spike timing but also on the postsynaptic dendritic potential.
 
-Urbanczik synapses require archiving of continuous quantities. Therefore they can only be connected to neuron models
-that are capable of doing this archiving. So far, the only compatible model is pp_cond_exp_mc_urbanczik.
+Urbanczik synapses require archiving of continuous quantities. Therefore they
+can only be connected to neuron models that are capable of doing this
+archiving. So far, the only compatible model is pp_cond_exp_mc_urbanczik.
 
 Parameters
 ++++++++++
@@ -68,11 +69,13 @@ Wmax        real   Maximum allowed weight
 Wmin        real   Minimum allowed weight
 =========   ====   =========================================================
 
-All other parameters are stored in in the neuron models that are compatible with the Urbanczik synapse.
+All other parameters are stored in in the neuron models that are compatible
+with the Urbanczik synapse.
 
 Remarks:
 
-So far the implementation of the urbanczik_synapse only supports two-compartment neurons.
+So far the implementation of the urbanczik_synapse only supports
+two-compartment neurons.
 
 Transmits
 +++++++++

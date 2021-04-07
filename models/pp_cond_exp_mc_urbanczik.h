@@ -107,12 +107,7 @@ public:
   double tau_syn_in[ NCOMP ]; //!< Rise time of inhibitory synaptic conductance in ms
 };
 
-
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup pp
-@ingroup cond
-
+/* BeginUserDocs: neuron, point process, conductance-based
 
 Name: pp_cond_exp_mc_urbanczik - Two-compartment point process neuron with conductance-based synapses
 

@@ -40,9 +40,7 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
 Name: urbanczik_synapse - Synapse type for a plastic synapse after Urbanczik and Senn.
 

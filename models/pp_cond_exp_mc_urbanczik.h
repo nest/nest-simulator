@@ -120,7 +120,7 @@ Description
 
 pp_cond_exp_mc_urbanczik is an implementation of a two-compartment spiking
 point process neuron with conductance-based synapses as it is used
-in [1]. It is capable of connecting to a Urbanczik synapse.
+in [1]_. It is capable of connecting to a Urbanczik synapse.
 
 The model has two compartments: soma and dendrite, labeled as s and p, respectively.
 There is one excitatory and one inhibitory conductance-based synapse onto each compartment.

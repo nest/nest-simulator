@@ -109,9 +109,14 @@ public:
 
 /* BeginUserDocs: neuron, point process, conductance-based
 
-Name: pp_cond_exp_mc_urbanczik - Two-compartment point process neuron with conductance-based synapses
+Short description
++++++++++++++++++
 
-Description:
+pp_cond_exp_mc_urbanczik - Two-compartment point process neuron with
+conductance-based synapses
+
+Description
++++++++++++
 
 pp_cond_exp_mc_urbanczik is an implementation of a two-compartment spiking
 point process neuron with conductance-based synapses as it is used
@@ -128,14 +133,13 @@ Note that in contrast to the single-compartment models, all
 synaptic weights must be positive numbers!
 
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary. Parameters
 for each compartment are collected in a sub-dictionary; these sub-dictionaries
 are called "soma" and "dendritic", respectively. In the list below,
 these parameters are marked with an asterisk.
-
-\verbatim embed:rst
 
 ============ ======= ==========================================================
  V_m*        mV      Membrane potential
@@ -151,7 +155,6 @@ these parameters are marked with an asterisk.
  g_ps        nS      Coupling between dendrite and soma
  t_ref       ms      Duration of refractory period
 ============ ======= ==========================================================
-\endverbatim
 
 Example:
 See pynest/examples/urbanczik_synapse_example.py.
@@ -163,19 +166,26 @@ The neuron model uses standard units instead of the unitless quantities used in 
 @note All parameters that occur for both compartments
 are stored as C arrays, with index 0 being soma.
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-References:
+Receives
+++++++++
 
-\verbatim embed:rst
-.. [1] R. Urbanczik, W. Senn (2014). Learning by the Dendritic Prediction of Somatic Spiking. Neuron, 81, 521 - 528.
-\endverbatim
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author: Jonas Stapmanns, David Dahmen, Jan Hahne
+References
+++++++++++
 
-SeeAlso: urbanczik_synapse
+.. [1] R. Urbanczik, W. Senn (2014). Learning by the Dendritic Prediction of
+       Somatic Spiking. Neuron, 81, 521 - 528.
+
+See also
+++++++++
+
+urbanczik_synapse
 
 EndUserDocs */
 

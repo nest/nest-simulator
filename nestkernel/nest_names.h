@@ -237,6 +237,7 @@ extern const Name grid;
 extern const Name grng;
 extern const Name grng_seed;
 extern const Name growth_curve;
+extern const Name growth_curves;
 extern const Name growth_factor_buffer_spike_data;
 extern const Name growth_factor_buffer_target_data;
 extern const Name growth_rate;

@@ -60,8 +60,8 @@ SPManager::SPManager()
   , structural_plasticity_update_interval_( 10000. )
   , structural_plasticity_enabled_( false )
   , sp_conn_builders_()
-  , growthcurvedict_( new Dictionary() )
   , growthcurve_factories_()
+  , growthcurvedict_( new Dictionary() )
 {
 }
 
@@ -110,6 +110,13 @@ SPManager::get_status( DictionaryDatum& d )
   }
 
   def< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
+
+  ArrayDatum growth_curves;
+  for ( auto const& element : *growthcurvedict_ )
+  {
+    growth_curves.push_back( new LiteralDatum( element.first ) );
+  }
+  def< ArrayDatum >( d, names::growth_curves, growth_curves );
 }
 
 /**

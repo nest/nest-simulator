@@ -213,6 +213,7 @@ const Name grid3d( "grid3d" );
 const Name grng( "grng" );
 const Name grng_seed( "grng_seed" );
 const Name growth_curve( "growth_curve" );
+const Name growth_curves( "growth_curves" );
 const Name growth_factor_buffer_spike_data( "growth_factor_buffer_spike_data" );
 const Name growth_factor_buffer_target_data( "growth_factor_buffer_target_data" );
 const Name growth_rate( "growth_rate" );

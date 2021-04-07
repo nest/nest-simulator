@@ -157,16 +157,16 @@ these parameters are marked with an asterisk.
  t_ref          ms      Duration of refractory period
 ============   =====   =====================================================
 
-Example:
-See pynest/examples/urbanczik_synapse_example.py.
+See pynest/examples/urbanczik_synapse_example.py to learn more.
 
 Remarks:
 
 The neuron model uses standard units instead of the unitless quantities used in
 [1]_.
 
-@note All parameters that occur for both compartments
-are stored as C arrays, with index 0 being soma.
+.. note::
+   All parameters that occur for both compartments are stored as C arrays, with
+   index 0 being soma.
 
 Sends
 +++++

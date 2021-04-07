@@ -80,9 +80,12 @@ References:
 Authors: Jonas Stapmanns, David Dahmen, Jan Hahne
 
 SeeAlso: stdp_synapse, clopath_synapse, pp_cond_exp_mc_urbanczik
-*/
+
+EndUserDocs */
+
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
 template < typename targetidentifierT >
 class urbanczik_synapse : public Connection< targetidentifierT >
 {

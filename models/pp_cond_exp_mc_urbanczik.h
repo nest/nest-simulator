@@ -177,7 +177,8 @@ Author: Jonas Stapmanns, David Dahmen, Jan Hahne
 
 SeeAlso: urbanczik_synapse
 
-*/
+EndUserDocs */
+
 class pp_cond_exp_mc_urbanczik : public UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >
 {
 

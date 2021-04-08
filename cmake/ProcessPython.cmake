@@ -17,7 +17,7 @@ function( NEST_PROCESS_WITH_PYTHON )
         if ( NOT Python_InVirtualEnv AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
           message( FATAL_ERROR "Can't target system Python installations without a CMAKE_INSTALL_PREFIX. Please install NEST only to virtual environments or specify CMAKE_INSTALL_PREFIX.")
         endif()
-        set ( Python_EnvRoot "${Python_SITELIB}/../../..")
+        get_filename_component( Python_EnvRoot "${Python_SITELIB}/../../.." ABSOLUTE)
         set ( CMAKE_INSTALL_PREFIX "${Python_EnvRoot}" CACHE PATH "Default install prefix for the active Python interpreter" FORCE )
       endif ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
 

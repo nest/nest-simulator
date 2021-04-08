@@ -87,6 +87,9 @@ set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuro
 # and we want it to be CMAKE_INSTALL_DATAROOTDIR/PROJECT_NAME
 set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative directory, where NEST installs its data (share/nest)" )
 
+# The Python CMake routines are required to determine the GNU install dirs.
+include( ProcessPython )
+nest_process_with_python()
 include( GNUInstallDirs )
 
 ################################################################################
@@ -142,7 +145,6 @@ nest_process_tics_per_step()
 nest_process_with_libltdl()
 nest_process_with_readline()
 nest_process_with_gsl()
-nest_process_with_python()
 nest_process_with_openmp()
 nest_process_with_mpi()
 nest_process_with_detailed_timers()

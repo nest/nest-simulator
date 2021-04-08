@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from setuptools import setup
+from distutils.core import setup
 
 setup(
     name='nest',
@@ -36,6 +36,9 @@ setup(
         'nest.tests': ['test_aeif_data_lsodar.dat'],
     },
     install_requires=['numpy', 'scipy'],
+    extras_require={
+        'test': ['nose', 'matplotlib']
+    },
     classifiers=[
         'Development Status :: 6 - Mature',
         'Programming Language :: Python :: 3.8',

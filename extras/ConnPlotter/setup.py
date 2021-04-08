@@ -21,7 +21,7 @@
 
 # ConnPlotter --- A Tool to Generate Connectivity Pattern Matrices
 
-from setuptools import setup
+from distutils.core import setup
 
 setup(name='ConnPlotter',
       version='0.7a0',

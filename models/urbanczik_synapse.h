@@ -45,7 +45,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-urbanczik_synapse - Synapse type for a plastic synapse after Urbanczik and Senn.
+Synapse type for a plastic synapse after Urbanczik and Senn
 
 Description
 +++++++++++

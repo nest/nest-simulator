@@ -112,8 +112,7 @@ public:
 Short description
 +++++++++++++++++
 
-pp_cond_exp_mc_urbanczik - Two-compartment point process neuron with
-conductance-based synapses
+Two-compartment point process neuron with conductance-based synapses
 
 Description
 +++++++++++

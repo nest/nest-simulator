@@ -33,6 +33,7 @@ PyNEST examples
    ../auto_examples/clopath_synapse_small_network
    ../auto_examples/tsodyks_depressing
    ../auto_examples/tsodyks_facilitating
+   ../auto_examples/urbanczik_synapse_example
 
 
 .. toctree::

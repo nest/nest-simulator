@@ -156,7 +156,7 @@ these parameters are marked with an asterisk.
  t_ref          ms      Duration of refractory period
 ============   =====   =====================================================
 
-See pynest/examples/urbanczik_synapse_example.py to learn more.
+See :doc:`../auto_examples/urbanczik_synapse_example` to learn more.
 
 Remarks:
 

@@ -269,7 +269,6 @@ endfunction()
 # cython_add_module( <name> src1 src2 ... srcN )
 # Build the Cython Python module.
 function( cython_add_module _name )
-  include( FindPythonLibs )
   set( pyx_module_sources "" )
   set( other_module_sources "" )
   foreach ( _file ${ARGN} )

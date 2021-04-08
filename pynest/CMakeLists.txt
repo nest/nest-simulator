@@ -80,6 +80,8 @@ if ( HAVE_PYTHON )
                                        --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
                                        --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
                                        --install-data=${CMAKE_INSTALL_FULL_DATADIR}
+                               install_egg_info
+                                       --install-dir=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
     WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
       )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )

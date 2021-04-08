@@ -21,10 +21,6 @@ function( NEST_PROCESS_WITH_PYTHON )
         set ( CMAKE_INSTALL_PREFIX "${Python_EnvRoot}" CACHE PATH "Default install prefix for the active Python interpreter" FORCE )
       endif ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
 
-      # Create package metadata
-      execute_process( COMMAND "${Python_EXECUTABLE} setup.py install_egg_info --install-dir .")
-      # TODO: Register output to CMake so that it's installed alongside Python module
-
       set( HAVE_PYTHON ON PARENT_SCOPE )
 
       # export found variables to parent scope

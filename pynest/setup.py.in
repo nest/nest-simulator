@@ -35,6 +35,7 @@ setup(
         'nest': ['pynest-init.sli'],
         'nest.tests': ['test_aeif_data_lsodar.dat'],
     },
+    install_requires=['numpy', 'scipy'],
     classifiers=[
         'Development Status :: 6 - Mature',
         'Programming Language :: Python :: 3.8',

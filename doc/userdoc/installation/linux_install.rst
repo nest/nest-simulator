@@ -71,12 +71,6 @@ further adjust settings for your system.
     python -m venv nest_env
     source nest_env/bin/activate
 
-* If not already installed in your Python environment, install the following packages:
-
-.. code-block:: bash
-
-    pip install numpy scipy matplotlib nose
-
 * Unpack the tarball
 
 .. code-block:: sh

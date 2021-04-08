@@ -21,6 +21,7 @@ set( nestutil_sources
     beta_normalization_factor.h
     block_vector.h
     compose.hpp
+    dict_util.h
     enum_bitfield.h
     iterator_pair.h
     lockptr.h

@@ -8,7 +8,7 @@ Usage:
 
 Options:
   -h --help     display usage information and exit
-  --host HOST   use hostname/IP address HOST for the server [default: 127.0.0.1]
+  --host HOST   use hostname/IP address HOST for server [default: 127.0.0.1]
   --port PORT   use port PORT for opening the socket [default: 5000]
 
 """
@@ -22,15 +22,18 @@ if __name__ == '__main__':
 import time
 import sys
 
-import nest, nest.server
+import nest
+import nest.server
 
 
 comm = MPI.COMM_WORLD.Clone()
 rank = comm.Get_rank()
 
+
 def log(call_name, msg):
     global rank
     print(f'==> WORKER {rank}/{time.time():.7f} ({call_name}): {msg}')
+
 
 if rank == 0:
     print("==> Starting NEST Server Master on rank 0")

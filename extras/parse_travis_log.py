@@ -367,12 +367,12 @@ def makebuild_summary(log_filename, msg_make_section_start,
     # with some warnings, this would be a good point to re-set the
     # expected_warnings variable conditionally for that build_type.
 
-    nest_warning_re = re.compile(f'{build_dir}.*: warning:')
+    nest_warning_re = re.compile(f'.* ({build_dir}.*: warning:.*)')
     known_warnings = [
         f'{build_dir}/sli/scanner.cc:642:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:673:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:714:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:741:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:674:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:716:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:744:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
     ]
 
     with open(log_filename) as fh:
@@ -392,12 +392,14 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
                 # Only count warnings originating in NEST source files
                 warning_match = nest_warning_re.match(line)
-                if warning_match is not None and line.strip() not in known_warnings:
-                    file_name = line.split(':')[0]
-                    if file_name not in warning_summary:
-                        warning_summary[file_name] = 0
-                    warning_summary[file_name] += 1
-                    number_of_warning_msgs += 1
+                if warning_match is not None:
+                    warning = warning_match.group(1)
+                    if warning not in known_warnings:
+                        file_name = warning.split(':')[0]
+                        if file_name not in warning_summary:
+                            warning_summary[file_name] = 0
+                        warning_summary[file_name] += 1
+                        number_of_warning_msgs += 1
 
                 if is_message(line, msg_make_section_end):
                     # The log file contains only one 'make' section, return.

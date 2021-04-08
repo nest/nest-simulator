@@ -61,7 +61,22 @@ namespace nest
  * This class is a base class that needs to be instantiated with a gain
  * function.
  *
- * @see ginzburg_neuron, mccullogh_pitts_neuron
+ * @note
+ * This neuron has a special use for spike events to convey the
+ * binary state of the neuron to the target. The neuron model
+ * only sends a spike if a transition of its state occurs. If the
+ * state makes an up-transition it sends a spike with multiplicity 2,
+ * if a down-transition occurs, it sends a spike with multiplicity 1.
+ * The decoding scheme relies on the feature that spikes with multiplicity
+ * larger than 1 are delivered consecutively, also in a parallel setting.
+ * The creation of double connections between binary neurons will
+ * destroy the decoding scheme, as this effectively duplicates
+ * every event. Using random connection routines it is therefore
+ * advisable to set the property 'allow_multapses' to false.
+ * The neuron accepts several sources of currents, e.g. from a
+ * noise_generator.
+ *
+ * @see ginzburg_neuron, mccullogh_pitts_neuron, erfc_neuron
  */
 template < class TGainfunction >
 class binary_neuron : public ArchivingNode
@@ -525,8 +540,8 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   // correct.
 
 
-  long m = e.get_multiplicity();
-  long node_id = e.get_sender_node_id();
+  const long m = e.get_multiplicity();
+  const long node_id = e.get_sender_node_id();
   const Time& t_spike = e.get_stamp();
 
   if ( m == 1 )
@@ -547,8 +562,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
         e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), -e.get_weight() );
     }
   }
-  else // multiplicity != 1
-    if ( m == 2 )
+  else if ( m == 2 )
   {
     // count this event positively, transition 0->1
     B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() );

@@ -43,13 +43,16 @@ if ( NOT CYTHON_EXECUTABLE STREQUAL "CYTHON_EXECUTABLE-NOTFOUND" )
       COMMAND ${CYTHON_EXECUTABLE} --version
       RESULT_VARIABLE RESULT
       OUTPUT_VARIABLE CYTHON_VAR_OUTPUT
-      ERROR_VARIABLE CYTHON_VAR_OUTPUT
+      ERROR_VARIABLE CYTHON_ERR_OUTPUT
       OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if ( RESULT EQUAL 0 )
     string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+(\\.[0-9]+)?).*" "\\1"
                           CYTHON_VERSION "${CYTHON_VAR_OUTPUT}" )
+  else ()
+    message( FATAL_ERROR "Cython error: ${CYTHON_ERR_OUTPUT}\nat ${CYTHON_EXECUTABLE}")
   endif ()
+
 endif ()
 
 include( FindPackageHandleStandardArgs )

@@ -1,0 +1,135 @@
+name: NEST matrix jobs
+env:
+  CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
+  PYTHONPATH: ${{ github.workspace }}/build/python
+on: [push, pull_request]
+jobs:
+  setup:
+     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+     runs-on: ${{ matrix.os }}
+     strategy:
+       fail-fast: false
+       matrix:
+         os: ["ubuntu-20.04", macos-latest]
+         cpp_compiler: ["gcc", "clang"]
+         xNEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
+         exclude: 
+           - xNEST_BUILD_TYPE: "MPI_ONLY"
+             cpp_compiler: "clang"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+             cpp_compiler: "clang"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "MINIMAL"
+             cpp_compiler: "clang"
+             os: "ubuntu-20.04"
+           - xNEST_BUILD_TYPE: "MPI_ONLY"
+             cpp_compiler: "clang"
+             os: "ubuntu-20.04"
+           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+             cpp_compiler: "clang"
+             os: "ubuntu-20.04"
+           - xNEST_BUILD_TYPE: "FULL"
+             os: "ubuntu-20.04"
+             cpp_compiler: "clang"
+           - xNEST_BUILD_TYPE: "MPI_ONLY"
+             cpp_compiler: "gcc"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+             cpp_compiler: "gcc"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "FULL"
+             os: macos-latest
+             cpp_compiler: "gcc"
+           - xNEST_BUILD_TYPE: "MINIMAL"
+             os: macos-latest
+             cpp_compiler: "gcc"
+           - xNEST_BUILD_TYPE: "FULL"
+             os: macos-latest
+             cpp_compiler: "clang"
+                                                 
+     steps:
+                       
+       # Steps represent a sequence of tasks that will be executed as part of the job
+       - name: Checkout repo content 
+         #uses: actions/checkout@v2 # checkout the repository content to github runner.
+         uses: actions/checkout@master
+         
+       - name: Check Python path
+         run: echo $PYTHONPATH
+       
+       - name: Check path
+         run: |
+           echo $PATH
+           echo $PWD
+         shell: bash
+         
+       - name: Set up Python 3.x
+         uses: actions/setup-python@v2
+         with:
+           python-version: 3.9
+                     
+       - name: Dependencies MacOS
+         if: runner.os =='macOS'
+         run: |
+            brew install coreutils gsl open-mpi automake autoconf libtool
+            brew info python
+            
+       - name: Dependencies Linux
+         if: contains(matrix.os, 'ubuntu')
+         run: |
+           sudo apt-get update
+           #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+           sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pep8 libpcre3 libpcre3-dev python2-dev libboost-all-dev
+           sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
+           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
+                      
+       - name: Install dependencies
+         #uses: actions/cache@master
+         run: |
+            python -m pip install --upgrade pip setuptools
+            python -m pip install scipy junitparser numpy nose cython matplotlib terminaltables pandoc
+            python -m pip install nose
+            pip list
+            g++ --version
+            set -o pipefail
+            
+       - name: Update shared library cache
+         if: contains(matrix.os, 'ubuntu')
+         run: sudo ldconfig    
+                         
+       - name: Minimal Build
+         if: ${{ matrix.xNEST_BUILD_TYPE == 'MINIMAL' }}
+         run: |
+           echo "Minimal Build"
+           chmod +x extras/gha_build.sh
+           ./extras/gha_build.sh
+         env:
+           xNEST_BUILD_TYPE: "MINIMAL"     
+         
+       - name: MPI Only
+         if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
+         run: |
+           echo "MPI Only Build"
+           chmod +x extras/gha_build.sh
+           ./extras/gha_build.sh
+         env:
+           xNEST_BUILD_TYPE: MPI_ONLY
+           
+       - name: OpenMP Only
+         if: ${{ matrix.xNEST_BUILD_TYPE == 'OPENMP_ONLY' }}
+         run: |
+           echo "OpenMP Only Build"
+           chmod +x extras/gha_build.sh
+           ./extras/gha_build.sh
+         env:
+          xNEST_BUILD_TYPE: OPENMP_ONLY 
+           
+       - name: Full Build
+         if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
+         run: |
+           echo "FULL Build"
+           chmod +x extras/gha_build.sh
+           ./extras/gha_build.sh   
+         env:
+           xNEST_BUILD_TYPE: FULL

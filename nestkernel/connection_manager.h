@@ -28,6 +28,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "conn_builder.h"
@@ -187,7 +188,7 @@ public:
    * The function then iterates all entries in source and collects the
    * connection IDs to all neurons in target.
    */
-  ArrayDatum get_connections( const DictionaryDatum& params ) const;
+  ArrayDatum get_connections( const DictionaryDatum& params );
 
   void get_connections( std::deque< ConnectionID >& connectome,
     NodeCollectionPTR source,
@@ -344,6 +345,11 @@ public:
   void unset_have_connections_changed( const thread tid );
 
   /**
+   * Sets flag indicating whether GetConnections has been called since last update of connections.
+   */
+  void set_has_get_connections_been_called( const bool has_get_connections_been_called );
+
+  /**
    * Deletes TargetTable and resets processed flags of
    * SourceTable. This function must be called if connections are
    * created after connections have been communicated previously. It
@@ -386,6 +392,10 @@ public:
   double get_stdp_eps() const;
 
   void set_stdp_eps( const double stdp_eps );
+
+  // public stop watch for benchmarking purposes
+  // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
+  Stopwatch sw_construction_connect;
 
 private:
   size_t get_num_target_data( const thread tid ) const;
@@ -581,6 +591,9 @@ private:
   //! True if new connections have been created since startup or last call to
   //! simulate.
   PerThreadBoolIndicator have_connections_changed_;
+
+  //! true if GetConnections has been called.
+  bool has_get_connections_been_called_;
 
   //! Whether to sort connections by source node ID.
   bool sort_connections_by_source_;
@@ -805,6 +818,12 @@ ConnectionManager::set_source_has_more_targets( const thread tid,
   const bool more_targets )
 {
   connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
+}
+
+inline void
+nest::ConnectionManager::set_has_get_connections_been_called( const bool has_get_connections_been_called )
+{
+  has_get_connections_been_called_ = has_get_connections_been_called;
 }
 
 } // namespace nest

@@ -76,38 +76,42 @@ If the modulation is added the current is given by
                               \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
 
 For a detailed discussion of the properties of the noise generator, please see
-the ``noise_generator.ipynb`` notebook included in the NEST source code
-(``docs/model_details``).
+`noise_generator <../model_details/noise_generator.ipynb>`_
+notebook included in the NEST source code.
 
 Remarks:
-- All targets receive different currents.
-- The currents for all targets change at the same points in time.
-- The interval between changes, dt, must be a multiple of the time step.
-- The effect of this noise current on a neuron DEPENDS ON DT. Consider
-  the membrane potential fluctuations evoked when a noise current is
-  injected into a neuron. The standard deviation of these fluctuations
-  across an ensemble will increase with dt for a given value of std.
-  For the leaky integrate-and-fire neuron with time constant :math:`\tau_m` and
-  capacity :math:`C_m`, membrane potential fluctuations Sigma at time
-  :math:`t_j+delay` are given by
 
-.. math::
+ - All targets receive different currents.
 
-  \Sigma = std * \tau_m / C_m * \sqrt( (1-x) / (1+x) )  \\
+ - The currents for all targets change at the same points in time.
+
+ - The interval between changes, dt, must be a multiple of the time step.
+
+ - The effect of this noise current on a neuron depends on dt. Consider
+   the membrane potential fluctuations evoked when a noise current is
+   injected into a neuron. The standard deviation of these fluctuations
+   across an ensemble will increase with dt for a given value of std.
+   For the leaky integrate-and-fire neuron with time constant :math:`\tau_m` and
+   capacity :math:`C_m`, membrane potential fluctuations Sigma at time
+   :math:`t_j+delay` are given by
+
+   .. math::
+
+      \Sigma = std * \tau_m / C_m * \sqrt( (1-x) / (1+x) )  \\
                              \text{where } x = exp(-dt/\tau_m)
 
-  for large :math:`t_j`. In the white noise limit, :math:`dt \rightarrow 0`, one has
+   for large :math:`t_j`. In the white noise limit, :math:`dt \rightarrow 0`, one has
 
-.. math::
+   .. math::
 
-  \Sigma \rightarrow std / C_m * \sqrt(dt * \tau / 2).
+      \Sigma \rightarrow std / C_m * \sqrt(dt * \tau / 2).
 
-  To obtain comparable results for different values of dt, you must
-  adapt std.
-- As the noise generator provides a different current for each of its targets,
-  the current recorded represents the instantaneous average of all the
-  currents computed. When there exists only a single target, this would be
-  equivalent to the actual current provided to that target.
+To obtain comparable results for different values of dt, you must adapt std.
+
+As the noise generator provides a different current for each of its targets,
+the current recorded represents the instantaneous average of all the
+currents computed. When there exists only a single target, this would be
+equivalent to the actual current provided to that target.
 
 Parameters
 ++++++++++

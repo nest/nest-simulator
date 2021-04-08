@@ -24,7 +24,7 @@
 #define PROPAGATOR_STABILITY_H
 
 // Propagators to handle similar tau_m and tau_syn_* time constants.
-// For details, please see doc/model_details/IAF_neurons_singularity.ipynb.
+// For details, please see doc/userdoc/model_details/IAF_neurons_singularity.ipynb.
 double propagator_31( double tau_syn, double tau, double C, double h );
 double propagator_32( double tau_syn, double tau, double C, double h );
 

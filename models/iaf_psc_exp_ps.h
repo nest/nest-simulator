@@ -103,11 +103,14 @@ The iaf_psc_delta_ps neuron accepts connections transmitting
 CurrentEvents. These events transmit stepwise-constant currents which
 can only change at on-grid times.
 
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities.
-For details, please check out the `IAF neurons singularity
-<https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+.. note::
+
+  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+  `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+  For implementation details see the
+  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 For details about exact subthreshold integration, please see
 :doc:`../guides/exact-integration`.

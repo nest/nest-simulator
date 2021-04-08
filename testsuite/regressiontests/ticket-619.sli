@@ -39,7 +39,7 @@ M_ERROR setverbosity
 
 { 
   ResetKernel
-  << /time 0.0 /rng_seeds [ 1 ] >> SetKernelStatus  
+  << /biological_time 0.0 /rng_seeds [ 1 ] >> SetKernelStatus
 } pass_or_die
 
 endusing

@@ -230,10 +230,19 @@ public:
   void init_moduli();
 
   /**
-   * Set cumulative time measurements for collocating buffers
-   * and for communication to zero; set local spike counter to zero.
+   * Set local spike counter to zero.
    */
-  virtual void reset_timers_counters();
+  virtual void reset_counters();
+
+  /**
+   * Set time measurements for internal profiling to zero (reg. prep.)
+   */
+  virtual void reset_timers_for_preparation();
+
+  /**
+   * Set time measurements for internal profiling to zero (reg. sim. dyn.)
+   */
+  virtual void reset_timers_for_dynamics();
 
 private:
   template < typename SpikeDataT >
@@ -403,18 +412,6 @@ private:
   std::vector< unsigned int > recv_buffer_secondary_events_;
 
   /**
-   * Time that was spent on collocation of MPI buffers during the last call to
-   * simulate.
-   */
-  double time_collocate_;
-
-  /**
-   * Time that was spent on communication of events during the last call to
-   * simulate.
-   */
-  double time_communicate_;
-
-  /**
    * Number of generated spike events (both off- and on-grid) during the last
    * call to simulate.
    */
@@ -431,8 +428,19 @@ private:
   bool buffer_size_target_data_has_changed_;
   //!< whether size of MPI buffer for communication of spikes was changed
   bool buffer_size_spike_data_has_changed_;
+  //!< whether size of MPI buffer for communication of spikes can be decreased
+  bool decrease_buffer_size_spike_data_;
 
   PerThreadBoolIndicator gather_completed_checker_;
+
+#ifdef TIMER_DETAILED
+  // private stop watches for benchmarking purposes
+  // (intended for internal core developers, not for use in the public API)
+  Stopwatch sw_collocate_spike_data_;
+  Stopwatch sw_communicate_spike_data_;
+  Stopwatch sw_deliver_spike_data_;
+  Stopwatch sw_communicate_target_data_;
+#endif
 };
 
 inline void

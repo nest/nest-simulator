@@ -132,6 +132,50 @@ the receptor types given in the receptor_types entry of the state dictionary.
 Note that in contrast to the single-compartment models, all
 synaptic weights must be positive numbers!
 
+-------------------------------------------
+Multicompartment models and synaptic delays
+-------------------------------------------
+
+Note that in case of multicompartment models which model the dendrite
+explicitly, the interpretation of the synaptic delay in NEST requires a careful
+consideration. In NEST the delay is at least one simulation time step and it is
+assumed to be located entirely at the postsynaptic side. For point neurons it
+represents the time it takes for an incoming spike to travel along the
+postsynaptic dendrite before it reaches the soma, see panel a). Conversely, if
+the synaptic weight depends on the state of the postsynaptic neuron, the delay
+also represents the time the information on the state propagates back through
+the dendrite to the synapse.
+
+For multicompartment models this amounts to positioning the delay directly
+behind the incoming synapse, i.e. before the first dendritic compartement on the
+postsynaptic side, see panel b). Therefore, the delay specified in the synapse
+model does *not* account for any delay that might be associated with information
+traveling through the explicitly modeled dendritic compartments.
+
+In case of the Urbanczik synapse, the change of the synaptic weight is driven by
+an error signal which is the difference between the firing rate of the soma
+(derived from the somatic spike train :math:`S_\\mathrm{post}`) and the
+dendritic prediction of it (derived from the dendritic membrane potential
+:math:`V`). The original publication [1]_ does not assume any delay in the
+interaction between the soma and the dendritic compartment. Therefore, we
+compute the error signal from the firing rate and the dendritic prediction at
+equal time points. Due to the synaptic delay :math:`d`, the synapse combines a
+delayed version of the error signal with the presynaptic spike train
+(:math:`S_\\mathrm{pre}`), see panel c).
+
+figure:: ../static/img/multicompartment.png
+
+a) Two point neurons (red circles *pre* and *post*) connected via a synapse. In
+NEST the delay is entirely on the postsynaptic side and in case of point neurons
+it is interpeted as the dendritic delay. b) Two two-compartment neuron models
+composed of a somatic (green) and a dendritic (blue) compartment. The soma of
+the presynaptic neuron is connected to the dendrite of the postsynaptic neuron.
+The synaptic delay is located behind the synapse and before the dendrite. c)
+Time trace of the State variables that enter the Urbanczik-Senn rule. Due to the
+synaptic delay :math:`d`, the presynaptic spike train (top) is combined with a
+delayed version of the postsynaptic quantities; the dendritic membrane potential
+(middle) and the somatic spike train (bottom).
+
 
 Parameters
 ++++++++++

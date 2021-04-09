@@ -550,6 +550,9 @@ nest::SimulationManager::run( Time const& t )
 {
   assert_valid_simtime( t );
 
+  simulate_from_ = simulate_to_;
+  simulate_to_ += t;
+
   kernel().io_manager.pre_run_hook();
 
   if ( not prepared_ )

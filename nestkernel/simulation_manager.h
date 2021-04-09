@@ -154,6 +154,9 @@ public:
   // TODO: rename / precisely how defined?
   delay get_to_step() const;
 
+  Time get_simulate_from() const;
+  Time get_simulate_to() const;
+
   //! Sorts source table and connections and create new target table.
   void update_connection_infrastructure( const thread tid );
 
@@ -210,6 +213,9 @@ private:
   Stopwatch sw_update_;
   Stopwatch sw_gather_target_data_;
 #endif
+
+  Time simulate_from_ = Time(Time::ms(0.0));
+  Time simulate_to_ = Time(Time::ms(0.0));
 };
 
 inline Time const&
@@ -283,6 +289,16 @@ inline size_t
 SimulationManager::get_wfr_interpolation_order() const
 {
   return wfr_interpolation_order_;
+}
+
+inline Time
+SimulationManager::get_simulate_from() const {
+  return simulate_from_;
+}
+
+inline Time
+SimulationManager::get_simulate_to() const {
+  return simulate_to_;
 }
 }
 

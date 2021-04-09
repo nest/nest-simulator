@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='nest',
@@ -30,11 +30,6 @@ setup(
     license='GPLv2+',
     packages=['nest', 'nest.tests', 'nest.tests.test_sp',
               'nest.tests.test_spatial', 'nest.lib'],
-    package_dir={'nest': '@PROJECT_SOURCE_DIR@/pynest/nest'},
-    package_data={
-        'nest': ['pynest-init.sli'],
-        'nest.tests': ['test_aeif_data_lsodar.dat'],
-    },
     install_requires=['numpy', 'scipy'],
     extras_require={
         'test': ['nose', 'matplotlib']

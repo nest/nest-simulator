@@ -44,12 +44,7 @@ doc_build_dir = Path(os.environ['OLDPWD']) / 'doc/userdoc'
 if os.environ.get('READTHEDOCS', 'False') == 'True':
     doc_build_dir = source_dir / 'doc/userdoc'
 
-<<<<<<< HEAD:doc/userdoc/conf.py
-print("doc_build_dir", str(doc_build_dir))
-print("source_dir", str(source_dir))
-=======
 sys.path.append(os.path.abspath("./_ext"))
->>>>>>> 7a2898171538e6a53cf65cadb536ca6092cf1d74:doc/conf.py
 
 source_suffix = '.rst'
 master_doc = 'contents'
@@ -91,25 +86,11 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-<<<<<<< HEAD:doc/userdoc/conf.py
     'sphinx_tabs.tabs',
     'nbsphinx'
-]
-
-=======
-    'breathe',
-    'sphinx_tabs.tabs',
     'HoverXTooltip'
 ]
 
-
-breathe_projects = {"EXTRACT_MODELS": "./xml/"}
-
-breathe_default_project = "EXTRACT_MODELS"
-
-subprocess.call('doxygen', shell=True)
-
->>>>>>> 7a2898171538e6a53cf65cadb536ca6092cf1d74:doc/conf.py
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 
 # Add any paths that contain templates here, relative to this directory.

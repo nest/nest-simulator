@@ -49,6 +49,14 @@ library for the analysis of electrophysiological data in the Python programming 
 
 ----
 
+Arbor
+-----
+
+:doc:`Arbor <arbor:index>` is a high-performance library for computational neuroscience simulations with
+multi-compartment, morphologically-detailed cells, from single cell models to very large networks
+
+* :doc:`Get started with Arbor <arbor:tutorial/index>`
+
 Neuromorphic hardware
 ---------------------
 
@@ -62,8 +70,10 @@ real-time operation.
 TheVirtualBrain (TVB)
 ---------------------
 
-`TVB <http://docs.thevirtualbrain.org/>`_ is a framework for the simulation of the dynamics of large-scale brain
+:ref:`TVB <tvb:top_basic>` is a framework for the simulation of the dynamics of large-scale brain
 networks with biologically realistic connectivity.
+
+* :ref:`Get started with TVB <tvb:tutorial_0_gettingstarted>`
 
 NEURON
 ------

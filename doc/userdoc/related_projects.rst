@@ -23,13 +23,13 @@ numeric solver otherwise.
 NEST desktop
 ------------
 
-:doc:`NEST Desktop <desktop:index>` is a web-based GUI application for NEST Simulator.
+:doc:`NEST Desktop <desktop:index>` is a web-based GUI application for the NEST Simulator.
 The app enables the rapid construction, parametrization, and instrumentation of neuronal network models.
 
 * :doc:`Get started with NEST desktop <desktop:user/index>`
 
-PyNN:
------
+PyNN
+----
 
 :doc:`PyNN <pynn:index>` is a simulator-independent language for building neuronal network models.
 
@@ -47,14 +47,28 @@ library for the analysis of electrophysiological data in the Python programming 
 
 * :doc:`Get started with Elephant <elephant:tutorials>`
 
+----
 
-To add?
--------
+Neuromorphic hardware
+---------------------
 
-- spinnaker
-- brainscales
-- ebrains ...
+`SpiNNaker and BrainScales <https://electronicvisions.github.io/hbp>`_ are neuromorphic computing systems, which enable
+energy-efficient, large-scale neuronal network simulations with simplified spiking neuron models.
+The BrainScaleS system is based on physical (analogue) emulations of neuron models and offers highly accelerated
+operation (104 x real time). The SpiNNaker system is based on a digital many-core architecture and provides
+real-time operation.
 
-- add logos?
-- mention HBP / ebrains?
+
+TheVirtualBrain (TVB)
+---------------------
+
+`TVB <http://docs.thevirtualbrain.org/>`_ is a framework for the simulation of the dynamics of large-scale brain
+networks with biologically realistic connectivity.
+
+NEURON
+------
+
+`NEURON <https://neuron.yale.edu/neuron/docs>`_ is a simulator for models of neurons
+and networks of neurons.
+
 

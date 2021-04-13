@@ -57,7 +57,8 @@ postsynaptic spike timing but also on the postsynaptic dendritic potential.
 
 Urbanczik synapses require archiving of continuous quantities. Therefore they
 can only be connected to neuron models that are capable of doing this
-archiving. So far, the only compatible model is pp_cond_exp_mc_urbanczik.
+archiving. So far, the only compatible model is :doc:`pp_cond_exp_mc_urbanczik
+<pp_cond_exp_mc_urbanczik>`.
 
 Parameters
 ++++++++++

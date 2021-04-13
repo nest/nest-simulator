@@ -316,7 +316,7 @@ output should look like :numref:`VM-neuron` and :numref:`spikes-one-neuron`.
 If you want to execute this as a script, just paste all lines into a text
 file named, say, ``one-neuron.py`` . You can then run it from the command
 line by prefixing the file name with ``python``, or from the Python or ipython
-prompt, by prefixing it with :py:func:`.run`.
+prompt, by prefixing it with :py:func:`.Run`.
 
 It is possible to collect information of multiple neurons on a single
 multimeter. This does complicate retrieving the information: the data

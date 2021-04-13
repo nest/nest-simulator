@@ -197,7 +197,7 @@ Physical units and variable names used for NEST parameters
  rheobase
    The minimal current that is required to generate a spike.
 
-reversal potential
+ reversal potential
    The membrane potential at which a neuron causes no net current flow.
 
  time constant
@@ -231,10 +231,12 @@ reversal potential
  stdp
   Spike-timing dependent plasticity
 
-10980 Two-timescale adaptive threshold
-12211 dead time
-12211 refractoriness
-  The time before a new action potential can take place.
+ Two-timescale adaptive threshold
+ 
+ dead time
+ 
+ refractoriness
+   The time before a new action potential can take place.
 
  renewal process
  
@@ -292,6 +294,11 @@ reversal potential
 
  in-degree
  
-
  synaptic efficacy
    The extent to which a presynaptic neuron affects a postsynaptic neuron.
+
+ multimeter
+   A device that allows to record the membrane voltage of a neuron over time.
+
+ events
+   Spikes are encoded as events in nest.

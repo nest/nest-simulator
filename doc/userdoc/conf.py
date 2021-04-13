@@ -87,7 +87,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx_tabs.tabs',
-    'nbsphinx'
+    'nbsphinx',
     'HoverXTooltip'
 ]
 

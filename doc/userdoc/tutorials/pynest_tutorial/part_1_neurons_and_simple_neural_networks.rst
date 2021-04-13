@@ -191,7 +191,7 @@ directly
     neuron.I_e = 376.0
     neuron.I_e
 
-Next we create a ``multimeter``, a *device* we can use to record the
+Next we create a :hxt_ref:`multimeter`, a *device* we can use to record the
 membrane voltage of a neuron over time. The property ``record_from``
 expects a list of the names of the variables we would like to
 record. The variables exposed to the multimeter vary from model to
@@ -211,7 +211,7 @@ spiking events produced by a neuron.
     spikerecorder = nest.Create("spike_recorder")
 
 A short note on naming: here we have called the neuron ``neuron``, the
-multimeter ``multimeter`` and so on. Of course, you can assign your
+multimeter :hxt_ref:`multimeter` and so on. Of course, you can assign your
 created nodes to any variable names you like, but the script is easier
 to read if you choose names that reflect the concepts in your
 simulation.
@@ -275,15 +275,15 @@ the multimeter.
     Vms = dmm["events"]["V_m"]
     ts = dmm["events"]["times"]
 
-In the first line, we obtain a dictionary with status parameters for the ``multimeter``.
-This dictionary contains an entry named ``events`` which holds the
-recorded data. It is itself a dictionary with the entries ``V_m`` and
+In the first line, we obtain a dictionary with status parameters for the :hxt_ref:`multimeter`.
+This dictionary contains an entry named :hxt_ref:`events` which holds the
+recorded data. It is itself a dictionary with the entries :hxt_ref:`V_m` and
 ``times``, which we store separately in ``Vms`` and ``ts``, in the
 second and third line, respectively. If you are having trouble imagining
 dictionaries of dictionaries and what you are extracting from where, try
 first just printing ``dmm`` to the screen to give you a better
 understanding of its structure, and then in the next step extract the
-dictionary ``events``, and so on.
+dictionary :hxt_ref:`events`, and so on.
 
 Now we are ready to display the data in a figure. To this end, we make
 use of ``matplotlib`` and the ``pyplot`` module.
@@ -310,7 +310,7 @@ obtain and display the spikes from the spike recorder.
 
 Here we extract the events more concisely by sending the parameter name to ``get``.
 This extracts the dictionary element
-with the key ``events`` rather than the whole status dictionary. The
+with the key :hxt_ref:`events` rather than the whole status dictionary. The
 output should look like :numref:`VM-neuron` and :numref:`spikes-one-neuron`.
 If you want to execute this as a script, just paste all lines into a text
 file named, say, ``one-neuron.py`` . You can then run it from the command
@@ -340,7 +340,7 @@ now connect this newly created neuron to the multimeter:
 
 Run the simulation and plot the results, they will look incorrect. To
 fix this you must plot the two neuron traces separately. Replace the
-code that extracts the events from the ``multimeter`` with the following
+code that extracts the events from the :hxt_ref:`multimeter` with the following
 lines.
 
 ::

@@ -179,7 +179,7 @@ def get_desc_from_glossary(term):
     """
 
     try:
-        with open('glossary.rst') as f:
+        with open('./userdoc/glossary.rst') as f:
             file_content = f.read()
 
         # generate a list of lines from file content.

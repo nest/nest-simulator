@@ -103,33 +103,37 @@ jobs:
          run: |
            echo "Minimal Build"
            chmod +x extras/gha_build.sh
-           ./extras/gha_build.sh
+           ./extras/gha_build.sh 2>&1 | tee gha_build.sh.log
+           python extras/parse_travis_log.py gha_build.sh.log ${{ github.workspace }}
          env:
-           xNEST_BUILD_TYPE: "MINIMAL"     
-         
+           xNEST_BUILD_TYPE: "MINIMAL"
+
        - name: MPI Only
          if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
          run: |
            echo "MPI Only Build"
            chmod +x extras/gha_build.sh
-           ./extras/gha_build.sh
+           ./extras/gha_build.sh 2>&1 | tee gha_build.sh.log
+           python extras/parse_travis_log.py gha_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: MPI_ONLY
-           
+
        - name: OpenMP Only
          if: ${{ matrix.xNEST_BUILD_TYPE == 'OPENMP_ONLY' }}
          run: |
            echo "OpenMP Only Build"
            chmod +x extras/gha_build.sh
-           ./extras/gha_build.sh
+           ./extras/gha_build.sh 2>&1 | tee gha_build.sh.log
+           python extras/parse_travis_log.py gha_build.sh.log ${{ github.workspace }}
          env:
-          xNEST_BUILD_TYPE: OPENMP_ONLY 
-           
+          xNEST_BUILD_TYPE: OPENMP_ONLY
+
        - name: Full Build
          if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
          run: |
            echo "FULL Build"
            chmod +x extras/gha_build.sh
-           ./extras/gha_build.sh   
+           ./extras/gha_build.sh 2>&1 | tee gha_build.sh.log
+           python extras/parse_travis_log.py gha_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: FULL

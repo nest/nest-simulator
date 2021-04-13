@@ -981,7 +981,7 @@ if __name__ == '__main__':
     from terminaltables import AsciiTable
     from textwrap import wrap
 
-    this_script_filename, log_filename, build_type, build_dir = argv
+    this_script_filename, log_filename, build_dir = argv
 
     changed_files = \
         list_of_changed_files(log_filename, "MSGBLD0070",

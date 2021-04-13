@@ -51,9 +51,10 @@ Description
 +++++++++++
 
 urbanczik_synapse is a connector to create Urbanczik synapses as defined in
-[1]_ that can connect suitable multicompartment models. In contrast to usual
-STDP, the change of the synaptic weight does not only depend on the pre- and
-postsynaptic spike timing but also on the postsynaptic dendritic potential.
+[1]_ that can connect suitable :ref:`multicompartment models
+<multicompartment-models>`. In contrast to usual STDP, the change of the
+synaptic weight does not only depend on the pre- and postsynaptic spike timing
+but also on the postsynaptic dendritic potential.
 
 Urbanczik synapses require archiving of continuous quantities. Therefore they
 can only be connected to neuron models that are capable of doing this

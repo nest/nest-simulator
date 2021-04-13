@@ -133,6 +133,7 @@ the receptor types given in the receptor_types entry of the state dictionary.
 Note that in contrast to the single-compartment models, all
 synaptic weights must be positive numbers!
 
+.. _multicompartment-models:
 
 Multicompartment models and synaptic delays
 +++++++++++++++++++++++++++++++++++++++++++

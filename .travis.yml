@@ -120,7 +120,7 @@ before_install:
          pip install --upgrade pip setuptools
          # Installing additional packages using pip as they only have
          # outdated versions in the Travis package whitelist.
-         # terminaltables is required by parse_travis_log.py to create
+         # terminaltables is required by parse_build_log.py to create
          # the build summary.
          pip install scipy junitparser mpi4py
          if [ "$TRAVIS_OS_NAME" != "osx" ]; then

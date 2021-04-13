@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# parse_travis_log.py
+# parse_build_log.py
 #
 # This file is part of NEST.
 #

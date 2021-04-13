@@ -54,8 +54,6 @@ EventDeliveryManager::EventDeliveryManager()
   , off_grid_spike_register_()
   , send_buffer_secondary_events_()
   , recv_buffer_secondary_events_()
-  , time_collocate_( 0.0 )
-  , time_communicate_( 0.0 )
   , local_spike_counter_()
   , send_buffer_spike_data_()
   , recv_buffer_spike_data_()
@@ -81,7 +79,9 @@ EventDeliveryManager::initialize()
 
   init_moduli();
   local_spike_counter_.resize( num_threads, 0 );
-  reset_timers_counters();
+  reset_counters();
+  reset_timers_for_preparation();
+  reset_timers_for_dynamics();
   spike_register_.resize( num_threads );
   off_grid_spike_register_.resize( num_threads );
   gather_completed_checker_.initialize( num_threads, false );
@@ -128,10 +128,15 @@ void
 EventDeliveryManager::get_status( DictionaryDatum& dict )
 {
   def< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
-  def< double >( dict, names::time_collocate, time_collocate_ );
-  def< double >( dict, names::time_communicate, time_communicate_ );
   def< unsigned long >(
     dict, names::local_spike_counter, std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 ) );
+
+#ifdef TIMER_DETAILED
+  def< double >( dict, names::time_collocate_spike_data, sw_collocate_spike_data_.elapsed() );
+  def< double >( dict, names::time_communicate_spike_data, sw_communicate_spike_data_.elapsed() );
+  def< double >( dict, names::time_deliver_spike_data, sw_deliver_spike_data_.elapsed() );
+  def< double >( dict, names::time_communicate_target_data, sw_communicate_target_data_.elapsed() );
+#endif
 }
 
 void
@@ -255,15 +260,31 @@ EventDeliveryManager::update_moduli()
 }
 
 void
-EventDeliveryManager::reset_timers_counters()
+EventDeliveryManager::reset_counters()
 {
-  time_collocate_ = 0.0;
-  time_communicate_ = 0.0;
   for ( std::vector< unsigned long >::iterator it = local_spike_counter_.begin(); it != local_spike_counter_.end();
         ++it )
   {
     ( *it ) = 0;
   }
+}
+
+void
+EventDeliveryManager::reset_timers_for_preparation()
+{
+#ifdef TIMER_DETAILED
+  sw_communicate_target_data_.reset();
+#endif
+}
+
+void
+EventDeliveryManager::reset_timers_for_dynamics()
+{
+#ifdef TIMER_DETAILED
+  sw_collocate_spike_data_.reset();
+  sw_communicate_spike_data_.reset();
+  sw_deliver_spike_data_.reset();
+#endif
 }
 
 void
@@ -334,6 +355,12 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         buffer_size_spike_data_has_changed_ = false;
       }
     } // of omp single; implicit barrier
+#ifdef TIMER_DETAILED
+    if ( tid == 0 )
+    {
+      sw_collocate_spike_data_.start();
+    }
+#endif
 
     // Need to get new positions in case buffer size has changed
     SendBufferPosition send_buffer_position(
@@ -366,6 +393,14 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #pragma omp barrier
     }
 
+#ifdef TIMER_DETAILED
+    if ( tid == 0 )
+    {
+      sw_collocate_spike_data_.stop();
+      sw_communicate_spike_data_.start();
+    }
+#endif
+
 // Communicate spikes using a single thread.
 #pragma omp single
     {
@@ -379,6 +414,14 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       }
     } // of omp single; implicit barrier
 
+#ifdef TIMER_DETAILED
+    if ( tid == 0 )
+    {
+      sw_communicate_spike_data_.stop();
+      sw_deliver_spike_data_.start();
+    }
+#endif
+
     // Deliver spikes from receive buffer to ring buffers.
     const bool deliver_completed = deliver_events_( tid, recv_buffer );
     gather_completed_checker_[ tid ].logical_and( deliver_completed );
@@ -386,6 +429,14 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 // Exit gather loop if all local threads and remote processes are
 // done.
 #pragma omp barrier
+
+#ifdef TIMER_DETAILED
+    if ( tid == 0 )
+    {
+      sw_deliver_spike_data_.stop();
+    }
+#endif
+
     // Resize mpi buffers, if necessary and allowed.
     if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_spike_buffers() )
     {
@@ -637,10 +688,18 @@ EventDeliveryManager::gather_target_data( const thread tid )
     kernel().connection_manager.save_source_table_entry_point( tid );
 #pragma omp barrier
     kernel().connection_manager.clean_source_table( tid );
+
 #pragma omp single
     {
+#ifdef TIMER_DETAILED
+      sw_communicate_target_data_.start();
+#endif
       kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
-    } // of omp single
+#ifdef TIMER_DETAILED
+      sw_communicate_target_data_.stop();
+#endif
+    } // of omp single (implicit barrier)
+
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
     gather_completed_checker_[ tid ].logical_and( distribute_completed );

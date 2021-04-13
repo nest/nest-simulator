@@ -1,6 +1,5 @@
 Image
 PyYAML>=4.2b1
-breathe
 cmake
 csvkit
 cython

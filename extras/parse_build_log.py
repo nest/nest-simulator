@@ -874,7 +874,7 @@ def printable_summary(list_of_changed_files,
          convert_bool_value_to_status_string(status_cmake_configure)],
         ['Make', convert_bool_value_to_status_string(status_make) + '\n' +
          '\nErrors  : ' + str(number_of_errors) +
-         '\nWarnings: ' + str(number_of_warnings) + f' ({expected_warnings} expected)'],
+         '\nWarnings: ' + str(number_of_warnings)],
         ['Make install',
          convert_bool_value_to_status_string(status_make_install)],
         ['Make installcheck',

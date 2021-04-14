@@ -443,7 +443,7 @@ Headings and subheadings describe the purpose of the section.
 
 Begin with a descriptive verb or begin with `How to ...`
 
-Headings should explain the section in a short phrase.
+Headings explain the section in a short phrase.
 
 Use the verb stem and not the gerund ('ing') form of verbs. Not 'Adding a
 model', but  'Add a model'.

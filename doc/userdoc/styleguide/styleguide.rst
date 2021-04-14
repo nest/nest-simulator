@@ -33,7 +33,7 @@ Writing documentation: a few tips
 - Provide examples - Show, don't tell; if you can use code snippets, screenshots,
   or figures to illustrate a point, do so!
 
-- Avoid terms like simply, just, or easy - your knowledge does not always equal
+- Avoid terms like simply, just, or easy—your knowledge does not always equal
   your readers.  Don't make your reader feel bad because they -simply- didn't
   understand something.
 

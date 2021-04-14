@@ -196,7 +196,7 @@ Rendered as
 
    ::
 
-       python code here
+       # Python code here
 
        x = 1
 

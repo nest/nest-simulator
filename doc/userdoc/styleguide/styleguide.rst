@@ -166,7 +166,7 @@ If you want to emphasize a word or phrase in text, you can use **boldface**.
 NumPy style docstrings
 ~~~~~~~~~~~~~~~~~~~~~~
 
-In the PyNEST code, we follow the rules for NumPy style docstrings as
+In PyNEST code, we follow the rules for NumPy style docstrings as
 `explained here <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
 
 

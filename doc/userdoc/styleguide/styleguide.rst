@@ -73,6 +73,7 @@ specific and exact terms are needed, which is often. But explanations or
 references should be provided for clarity in introductory texts and the glossary.
 
 If you have further questions about style not addressed here, see <<STANDARDIZED STYLE GUIDE>>
+or ask on the mailing list.
 
 Active voice
 ~~~~~~~~~~~~

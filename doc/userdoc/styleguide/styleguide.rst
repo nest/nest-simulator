@@ -260,8 +260,8 @@ Rendered as
 Admonitions
 ^^^^^^^^^^^
 
-Use admonitions to draw readers attention to a particular point. Possible
-admonitions types include
+Use admonitions to draw the reader's attention to a particular point. Possible
+admonition types include
 
 "see also", "attention", "caution", "danger", "error", "hint", "important",
 "note", "tip", "warning", "admonition"

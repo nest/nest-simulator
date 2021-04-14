@@ -70,7 +70,7 @@ We avoid slang or jargon that is unnecessary or could be confusing to readers.
 
 We do, however, use terminology appropriate to NEST and neuroscience when
 specific and exact terms are needed, which is often. But explanations or
-references should be provided for clarity in introductory texts.
+references should be provided for clarity in introductory texts and the glossary.
 
 If you have further questions about style not addressed here, see <<STANDARDIZED STYLE GUIDE>>
 

@@ -124,7 +124,7 @@ Use double backticks for
   - objects/functions
   - model names
   - NEST-specific vocabulary
-  - function call (e.g., ``nest.Create("iaf_psc_alpha")`` or  (``Create`` )
+  - function calls (e.g., ``nest.Create("iaf_psc_alpha")`` or  (``Create`` )
   - Paths (e.g, You can find the models in ``nest-simulator/pynest/examples``)
   - Key value pairs (``{key: value}``)
   - Variables with assigned values ``x = 10``

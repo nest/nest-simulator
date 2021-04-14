@@ -510,7 +510,7 @@ Use the pronouns "you" and "we" whenever possible.
 
 Avoid the pronoun "I".
 
-Avoid gendered terms (NOT police man BUT police officer).
+Avoid gendered terms (use "police officer" instead of "policeman").
 
 Instead of "guys" or "girls" use inclusive language such as everyone, all,
 members, or folks.

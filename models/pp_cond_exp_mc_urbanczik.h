@@ -143,16 +143,17 @@ explicitly, the interpretation of the synaptic delay in NEST requires a careful
 consideration. In NEST, the delay is at least one simulation time step and is
 assumed to be located entirely at the postsynaptic side. For point neurons, it
 represents the time it takes for an incoming spike to travel along the
-postsynaptic dendrite before it reaches the soma, see panel a). Conversely, if
-the synaptic weight depends on the state of the postsynaptic neuron, the delay
-also represents the time the information on the state propagates back through
-the dendrite to the synapse.
+postsynaptic dendrite before it reaches the soma, see :ref:`panel a)
+<fig-multicompartment>`. Conversely, if the synaptic weight depends on the
+state of the postsynaptic neuron, the delay also represents the time the
+information on the state propagates back through the dendrite to the synapse.
 
 For multicompartment models, this amounts to positioning the delay directly
 behind the incoming synapse, i.e., before the first dendritic compartement on
-the postsynaptic side, see panel b). Therefore, the delay specified in the
-synapse model does *not* account for any delay that might be associated with
-information traveling through the explicitly modeled dendritic compartments.
+the postsynaptic side, see :ref:`panel b) <fig-multicompartment>`. Therefore,
+the delay specified in the synapse model does *not* account for any delay that
+might be associated with information traveling through the explicitly modeled
+dendritic compartments.
 
 In case of the Urbanczik synapse, the change of the synaptic weight is driven by
 an error signal which is the difference between the firing rate of the soma
@@ -163,7 +164,9 @@ interaction between the soma and the dendritic compartment. Therefore, we
 compute the error signal from the firing rate and the dendritic prediction at
 equal time points. Due to the synaptic delay :math:`d`, the synapse combines a
 delayed version of the error signal with the presynaptic spike train
-(:math:`S_{pre}`), see panel c).
+(:math:`S_{pre}`), see :ref:`panel c) <fig-multicompartment>`.
+
+.. _fig-multicompartment::
 
 .. figure:: ../static/img/multicompartment.png
    :width: 75 %

@@ -531,7 +531,7 @@ it out.
 Commas
 ~~~~~~
 
-Use the oxford comma (apples, bananas, and grapes) for lists. But use a bullet
+Use the serial comma (apples, bananas, and grapes) for lists. But use a bullet
 list if your list is more than 5 items.
 
 Use the comma as separator for thousands (37,000).

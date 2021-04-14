@@ -522,7 +522,7 @@ Abbreviations and acronyms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Spell out acronyms on first appearance on each page or article it appears.
-For example: Random number generator (rng)
+For example: Random number generator (RNG)
 
 If the abbreviation/acronym is well known (e.g., HTML) you do not need to spell
 it out.

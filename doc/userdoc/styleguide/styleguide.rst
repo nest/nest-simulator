@@ -34,7 +34,7 @@ Writing documentation: a few tips
   or figures to illustrate a point, do so!
 
 - Avoid terms like simply, just, or easy—your knowledge does not always equal
-  your readers.  Don't make your reader feel bad because they -simply- didn't
+  your readers.  Don't make your reader feel bad because they "simply" didn't
   understand something.
 
 - Write positively -  Use positive language rather than negative language

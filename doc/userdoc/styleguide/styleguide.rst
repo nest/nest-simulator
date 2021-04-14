@@ -564,4 +564,4 @@ Capitalize first word of heading, but use lower case for the rest.
 Capitalize first word in bullet.
 
 Capitalize proper nouns and follow company policy in naming conventions
-(e.g., macOS, LaTeX).
+(e.g., macOS, LaTeX, Python, NumPy, NEST).

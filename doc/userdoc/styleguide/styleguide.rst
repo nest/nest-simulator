@@ -482,7 +482,7 @@ The thousand separator is the comma except when showing a code example
    Example:
 
    We have over 5,000 connections.
-   The number of connections is ``x = 5000``
+   The number of connections is ``x = 5001``
 
 Make sure you use the correct unit (e.g., millivolts for voltage) and the
 unit's syntax (`V_m`).

@@ -28,7 +28,7 @@ Writing documentation: a few tips
   within given section
 
 - Write for your reader - Try to understand what your reader needs to know;
-  include context to what you're saying
+  include context to what you're saying. Remember that most NEST users are computational neuroscientists, including students, not software developers!
 
 - Provide examples - Show don't tell; if you can use code snippets, screenshots,
   or figures to illustrate a point, do so!

@@ -94,7 +94,7 @@ Underlines for headings
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ReStructuredText uses several types of underline markers for headings. It's
-important that the length of the underline is at least as long as the words
+important that the length of the underline is exactly as long as the words
 in the heading.
 
 In general, we try to follow the pattern of

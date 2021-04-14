@@ -202,7 +202,7 @@ Rendered as
 
        for i in line:
            x = i
-           print(thing.x)
+           print(x)
 
 For other code styles use the code-block directive (you can also use this one
 for python)

@@ -439,7 +439,7 @@ How we write
 Headings and subheadings
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Headings and subheadings should describe the purpose of the section.
+Headings and subheadings describe the purpose of the section.
 
 Begin with a descriptive verb or begin with `How to ...`
 

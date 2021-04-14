@@ -450,7 +450,7 @@ model', but  'Add a model'.
 
 Avoid section names like `Introduction` or `Part 1`.
 
-One word subheadings are acceptable, if the section is short and the meaning is clear.
+One-word subheadings are acceptable, if the section is short and the meaning is clear.
 
 Use sentence case for headings and subheadings, i.e., begin with an uppercase
 letter but with all other words in lower case (except proper nouns).

@@ -1,4 +1,4 @@
-Code Review Guidelines
+Code review guidelines
 ======================
 
 Using our purely :ref:`pull-request-based workflow <development_workflow>`,
@@ -13,7 +13,7 @@ can be discussed on the :ref:`NEST mailing lists <../community>`.
 
 * In general, the rule is that each pull request needs an OK from the CI
   platform and at least two reviewers to be merged.
-* For changes labelled “not code” or “minor” (e.g. changes in documentation,
+* For changes labeled “not code” or “minor” (e.g., changes in documentation,
   fixes for typos, etc.), the release manager can waive the need for code
   review and just accept the OK from the CI system in order to merge the request.
 * Each pull request needs to be documented by an issue in the `issue

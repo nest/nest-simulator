@@ -14,8 +14,7 @@ the following parameters:
 The source node of a connection is implicitly stored by the position
 in the data structure that is used internally. These parameters are
 implemented in the StaticConnection synapse type, which can be used as
-a base class for more advanced synapse types.  Writing a Connection
-object
+a base class for more advanced synapse types.  
 
 Writing a synapse type is basically very simple. You can directly
 derive your new connection type from StaticConnection, which provides

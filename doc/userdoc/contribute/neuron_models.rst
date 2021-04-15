@@ -56,7 +56,7 @@ model. We want it to do the following:
 * If counter reaches a specific number threshold it should send out a
   spike to each of its target nodes.
 * For more complexity, the number of incoming spikes is multiplied
-  with a constant factor, factor that can be set by the user.It should
+  with a constant factor that can be set by the user.It should
   default to 1.
 
 Considerations for transferring the ideas to code
@@ -67,7 +67,7 @@ the presence of an overloaded version of Node::handle(EventT) for this
 specific type of event. The default implementation in the base class
 will throw UnexpectedEvent for each incoming event.
 
-Updating the Internal State
+Updating the internal state
 ---------------------------
 
 A typical update method of a neuron model will look like this:
@@ -116,7 +116,7 @@ A typical update method of a neuron model will look like this:
 Sending Events
 --------------
 
-During simulation, interactions are realised by events that travel
+During simulation, interactions are realized by events that travel
 from a sending node to the receiving node. Nodes can send and receive
 events. Typically, a node sends only one type of event, while it may
 handle several event types. Events are the only way by which a node
@@ -148,7 +148,7 @@ model should send SpikeEvents, this function would look like this:
      return r.connect_sender(e);
    }
 
-Handling Incoming Events
+Handling incoming events
 ------------------------
 
 See the ``handle()`` functions.
@@ -156,7 +156,7 @@ See the ``handle()`` functions.
 Proxies and local receivers
 ---------------------------
 
-You need to include the following two lines in the declaration og your
+You need to include the following two lines in the declaration of your
 generator class (these lines are correct for a generator providing
 current input to nodes and which shall be recordable by multimeter):
 

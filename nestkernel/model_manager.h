@@ -84,11 +84,6 @@ public:
   Node* get_proxy_node( thread tid, index node_id );
 
   /**
-   *
-   */
-  Node* get_dummy_spike_source( thread );
-
-  /**
    * Return pointer to protoype for given synapse id.
    * @throws UnknownSynapseType
    */
@@ -317,8 +312,6 @@ private:
 
   //! Placeholders for remote nodes, one per thread
   std::vector< std::vector< Node* > > proxy_nodes_;
-  //! Placeholders for spiking remote nodes, one per thread
-  std::vector< Node* > dummy_spike_sources_;
   //! True if any model defaults have been modified
   bool model_defaults_modified_;
 };
@@ -328,12 +321,6 @@ inline Model*
 ModelManager::get_model( index m ) const
 {
   return node_models_[ m ];
-}
-
-inline Node*
-ModelManager::get_dummy_spike_source( thread tid )
-{
-  return dummy_spike_sources_[ tid ];
 }
 
 inline bool

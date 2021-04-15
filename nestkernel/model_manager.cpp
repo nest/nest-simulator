@@ -51,7 +51,6 @@ ModelManager::ModelManager()
   , synapsedict_( new Dictionary )
   , proxynode_model_( 0 )
   , proxy_nodes_()
-  , dummy_spike_sources_()
   , model_defaults_modified_( false )
 {
 }
@@ -97,10 +96,8 @@ ModelManager::initialize()
     modeldict_->insert( name, i );
   }
 
-  // Create proxy nodes, one for each thread and model and one dummy
-  // spike source for each thread.
+  // Create proxy nodes, one for each thread and model
   proxy_nodes_.resize( kernel().vp_manager.get_num_threads() );
-  dummy_spike_sources_.resize( kernel().vp_manager.get_num_threads() );
 
 #pragma omp parallel
   {
@@ -112,8 +109,6 @@ ModelManager::initialize()
       const int model_id = builtin_node_model->get_model_id();
       proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
     }
-
-    dummy_spike_sources_[ t ] = create_proxynode_( t, -1 );
   }
 
   synapsedict_->clear();
@@ -436,7 +431,6 @@ ModelManager::clear_node_models_()
 
   node_models_.clear();
   proxy_nodes_.clear();
-  dummy_spike_sources_.clear();
 
   modeldict_->clear();
 

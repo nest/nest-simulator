@@ -9,7 +9,7 @@ Please familiarize yourself with our:
 
 * :doc:`NEST Git workflow <development_workflow>`
 * :doc:`C++ coding style guidelines <coding_guidelines_cpp>`
-* :doc:`Documentation style guide <../styleguide/styleguide>`
+* :doc:`Documentation style guide <templates_stylguides/styleguide>`
 * :doc:`Developing NEST with IDEs guide <nest_with_ides>`
 
 In order to make sure that the NEST Initiative can manage the NEST code base in the long term,
@@ -24,6 +24,8 @@ If you find an error in the code or documentaton or want to suggest a feature, s
 `an issue on GitHub <https://github.com/nest/nest-simulator/issues>`_.
 
 Make sure to check that your issue has not already been reported there before creating a new one.
+
+.. _edit_nest:
 
 Change code or documentation
 ----------------------------

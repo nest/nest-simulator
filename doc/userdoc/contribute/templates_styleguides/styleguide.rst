@@ -2,7 +2,7 @@ The NEST documentation style guide
 ==================================
 
 .. contents:: On this page, you'll find
-  :local:
+   :local:
 
 Why do we have a style guide?
 -----------------------------
@@ -11,6 +11,19 @@ This style guide was created to provide a single reference point for content
 creation in NEST. This helps ensure the NEST user-level documentation remains
 clear and consistent. The style choices we make here are meant to follow the
 major trends in technical writing for software.
+
+Contribute to the docs
+~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want to add or modify documentation, make sure to read through this guide before writing a contribution.
+
+We have templates for :doc:`Python example scripts <pyapi_template>` and the :doc:`PyNEST API docstrings <example_template>`.
+
+You will also need to know how to build the documentation locally on your machine:
+:doc:`../../documentation_workflow/user_documentation_workflow`.
+
+For additional information, including the Git workflow and making a pull request see :doc:`../index`
+
 
 General guidelines about writing for NEST
 -----------------------------------------
@@ -55,7 +68,8 @@ Our voice is
   are
 - relaxed: we write in natural, conversational way rather than an authoritative
   way
--
+- factual: we write in a neutral style avoiding irony, humor, or cultural references
+
 Use 'you' to indicate the reader and 'we' to indicate yourself (the writer and
 possibly the NEST team).
 
@@ -85,11 +99,315 @@ If the object needs emphasis rather than subject, use passive voice. But ensure
 that you cannot improve the sentence by using the active voice.
 
 
-Types of formatting
--------------------
+reStructuredText markup and formatting
+--------------------------------------
 
-We use specific formatting marks to help readers scan through and find what
-they need, as well as provide references to important terms.
+reStructuredText is a plain text markup language and parser. It is the default language of the Sphinx documentaiton
+generator, which NEST uses for generating documentation.
+
+reStructuredText uses directives, which are blocks of explicit markup used for math, images, code, admonitions and much
+more. The syntax looks like this ``.. directive-name::``. The directive content follows after a blank line and is indented
+relative to the directive start.
+
+In addition to directives, reStructuredText has roles, which insert semantic markup into documents.
+Roles look like this ``:role-name:`content```.
+
+We will only cover a few examples here. You can find more information in the following links.
+
+
+* `reStructuredText User Documentation <https://docutils.sourceforge.io/rst.html#id24>`_
+
+* `reStructuredText Primer <https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`_
+
+* `Sphinx directives <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html>`_
+
+* `Sphinx roles <https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html>`_
+
+
+.. note::
+
+   reStructuredText is sensitive to indentation and new lines.
+
+   * Directives, headings, labels, and tables should be separated from other text by a new line, excluding directive options.
+   * Directive options must be indented to the same level as the directive content.
+   * Text in multiline content should stay aligned with the first line.
+   * If the output format seems incorrect, double check the spaces and newlines
+     of the text.
+
+NumPy style docstrings
+~~~~~~~~~~~~~~~~~~~~~~
+
+In PyNEST code, we follow the rules for NumPy style docstrings as
+`explained here <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
+
+
+Code and code snippets
+~~~~~~~~~~~~~~~~~~~~~~
+
+Code blocks are written using the code-block directive.
+
+Example syntax::
+
+
+    .. code-block:: cpp
+
+        int main()
+            {
+              cout << "Hello, World!"; \\
+              return 0;
+            }
+
+
+Code is rendered as
+
+    .. code-block:: cpp
+
+        int main()
+            {
+             cout << "Hello, World!";
+             return 0;
+            }
+
+
+For Python examples that show input and output use the following syntax
+
+::
+
+   >>> input begins with 3, right-angled brackets
+   output is directly below input without any brackets. A blank line must end the example.
+
+For in-text code use the role :code: or double back ticks.
+
+::
+
+   ``cout << "Hello, World!`` or
+   :code:`cout << "Hello, World!"`
+
+.. _math_style:
+
+Math equations
+~~~~~~~~~~~~~~
+
+The input language for mathematics is LaTeX markup. See `Mathematics into Type
+<http://www.ams.org/arc/styleguide/mit-2.pdf>`_ for a guide to styling LaTeX math.
+
+
+For equations that take a whole line (or more), use the math directive::
+
+    .. math::
+
+        f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi) e^{2 \pi i x \xi} \, d\xi.
+
+Output rendered as
+
+    .. math::
+
+        f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi) e^{2 \pi i x \xi} \, d\xi.
+
+If the equation runs over several lines you can use ``\\`` as a separator at the end of each line.
+You can also align lines in an equation, using the ``&`` where you want equation aligned::
+
+
+    .. math::
+
+         (a + b)^2  &=  (a + b)(a + b) \\
+                    &=  a^2 + 2ab + b^2
+
+For in-text math, use the math role::
+
+   Now we can see :math:`x=1` for this example.
+
+This will be rendered as
+
+   Now we can see :math:`x=1` for this example.
+
+Admonitions
+~~~~~~~~~~~
+
+Admonitions are directives that render as highlighted blocks to draw the reader's attention to a particular point.
+
+Use them sparingly.
+
+
+Use the admonition
+
+* "See also" to reference internal or external links (only in cases where the reference should stand out),
+
+* "Note" to add additional information that the reader needs to be aware of,
+
+* "Warning" to indicate that something might go wrong without the provided information, and
+
+* "Danger" if the situation may cause severe, possibly irreversible, problems.
+
+
+If you want a custom admonition use
+
+::
+
+   .. admonition:: custom label
+
+         Here is some text
+
+Rendered as
+
+
+   .. admonition:: custom label
+
+         Here is some text
+
+
+References
+~~~~~~~~~~
+
+For referencing reStructuredText files in the repository, use the ``:doc:`` role. It requires the relative path to
+the file.
+
+::
+
+   :doc:`path/to/file`
+
+In this case, the link caption will be the title of the given document.
+
+You can specify the text you want to use for the link by doing the following
+
+::
+
+   :doc:`custom label <path/file>`
+
+This will be rendered as
+
+   :doc:`Top header of file`
+
+   :doc:`custom label <file>`
+
+For cross-referencing specific section headings, figures, or other arbitrary places within file, use the ``:ref:`` role.
+
+The ``:ref:`` role requires a reference label that looks like this ``.. _ref-label:``. Each reference label must be unique
+in the documentation. Separate the reference label from the text it is referecing with a new line.
+
+::
+
+   .. _my-ref-label:
+
+   Section to cross-reference
+   --------------------------
+
+   Some content in this section.
+   It includes the cross-referecing role :ref:`my-ref-label`.
+
+
+To reference figures or arbitrary places in a file, you must include a custom
+name in the reference for it to work.
+
+::
+
+    :ref:`custom label <my-arbitrary-place-label>`
+
+
+
+Special links
+~~~~~~~~~~~~~
+
+.. attention::
+
+  The items in this section are still in development and have not been incorporated into nest:master!
+
+Links to functions
+^^^^^^^^^^^^^^^^^^
+
+To link PyNEST API functions used in-text to the API reference page use the following syntax::
+
+   :py:func:`.Create`
+
+Rendered as
+
+   :py:func:`.Create`
+
+If you want to explictly show a complete function call, like ``nest.Create("iaf_psc_apha")``, the link cannot be used.
+Classes, methods etc. can also be linked in this way.
+
+.. note::
+
+   Functions within classes NodeCollection and SynapseCollection require different syntax as follows
+
+   ``:py:func:`~nest.lib.hl_api_types.SynapseCollection.funcname```
+
+   ``:py:func:`~nest.lib.hl_api_types.NodeCollection.funcname```
+
+
+Links to glossary
+^^^^^^^^^^^^^^^^^
+
+To link terms to the glossary page use the HoverXTooltip role :hxt_ref: from Mahdi Enan (INM-6)
+
+::
+
+  :hxt_ref:`E_L`
+
+Links to certain external projects
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To link to external projects related to NEST that also use Sphinx/ReadtheDocs (e.g., PyNN, Elephant, nestml), you can
+reference labels (``:ref:``) or documents (``:doc:``) the same way as in your local project. You only need the addition
+of the intersphinx unique identifer to the reference, which looks like
+this ``:doc:`custom label <unique-identifier:filename>```. (See section in userdoc/conf.py "intersphinx_mapping" to
+see which projects are currently included).
+
+Examples of syntax::
+
+  :doc:`tutorial for nestml <nestml:tutorials>`
+  :py:func:`pyNN.utility.get_simulator`
+
+
+.. note::
+
+   Depending on how a project is documented, you may only be able to use the ``:doc:`` role or the ``:ref:`` role.
+   To find out, you need to look into the objects.inv file, which can be obtained with the following code
+
+   ``python -msphinx.ext.intersphinx https://docs.project.org/objects.inv``
+
+   Objects in objects.inv are categorized into different sections.
+   The std:label refers to objects that use the ``:ref:`` role. And std:doc refers to objects that use the ``:doc:`` role.
+
+Bibliography style
+------------------
+
+The reStructuredText reference style is used throughout documentation so links
+are autogenerated and a consistent format is used.
+
+For in-text citations, we use the reStructuredText numeric style ``[1]_``.
+
+For example:
+
+    The following example is based on Smith [1]_.
+    Sanders et al. [2]_ contains a technically detailed example.
+
+Please ensure your reference follows the following guidelines:
+
+* References with more than five authors use 'et al.'.
+* Surname precedes first name for all authors
+* No comma follows surname
+* Use initials for first name of authors
+* Year follows author(s), in parentheses
+* Full stop after every section of bibliography.
+* No formatting such as italics, bold, or underline.
+* Article titles written in sentence case
+* Full title of journal
+* Volume, can be optionally followed by issue in parentheses, a colon
+  separates volume and page range.
+* Include a linked DOI, if available
+
+.. code-block:: none
+
+ References
+ -----------
+
+ .. [1] Smith J. and Jones M (2009). Title of cool paper. Journal of
+        Awesomeness. 3:7-29. <DOI>
+
+ .. [2] Sander M., et al (2011). Biology of the sauropod dinosaurs: the
+        evolution of gigantism. Biological Reviews. 86(1):117-155.
+        https://doi.org/10.1111/j.1469-185X.2010.00137.x
 
 
 Underlines for headings
@@ -136,7 +454,7 @@ Use double backticks for
 
 Use single backticks for
 
-- Keys
+- Dictionary keys (if no value is provided)
 - Parameters
 - Variable names
 - Values
@@ -162,313 +480,10 @@ Rendered as
 \**Strong emphasis\**
 ~~~~~~~~~~~~~~~~~~~~~
 
-If you want to emphasize a word or phrase in text, you can use **boldface**.
+If you want to emphasize a word or phrase in text, you can use **strong emphasis**.
 
-NumPy style docstrings
-~~~~~~~~~~~~~~~~~~~~~~
-
-In PyNEST code, we follow the rules for NumPy style docstrings as
-`explained here <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
-
-
-reStructuredText markup
------------------------
-
-reStructuredText is a plain text markup language and parser. It is the default language of the Sphinx documentaiton
-generator, which NEST uses for generating documentation.
-
-reStructuredText uses directives, which are blocks of explicit markup used for math, images, code, admonitions and much
-more. Syntax looks like this ``.. directive-name::``. The directive content follows after a blank line and is indented
-relative to the directive start.
-
-In addition to directives, reStructuredText has roles, which insert semantic markup into documents.
-Roles look like this ``:role-name:`content```.
-
-We will only look at a few examples here. You can find more information in the following links.
-
-
-* `reStructuredText User Documentation <https://docutils.sourceforge.io/rst.html#id24>`_
-
-* `reStructuredText Primer <https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`_
-
-* `Sphinx directives <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html>`_
-
-* `Sphinx roles <https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html>`_
-
-
-.. note::
-
-   reStructuredText is sensitive to indentation. A single newline should always
-   be between any text and headings, tables, reference labels, or directives.
-   If the output format seems incorrect, double check the spaces and newlines
-   of the text.
-
-Code and code snippets
-~~~~~~~~~~~~~~~~~~~~~~
-
-Code blocks are written using the code-block directive.
-
-Example syntax::
-
-
-    .. code-block:: cpp
-
-        int main()
-            {
-              cout << "Hello, World!"; \\
-              return 0;
-            }
-
-
-Code is rendered as
-
-    .. code-block:: cpp
-
-        int main()
-            {
-             cout << "Hello, World!";
-             return 0;
-            }
-
-
-For Python examples that show input and output use the following syntax
-
-::
-
-   >>> input begins with 3, right-angled brackets
-   output is directly below input without any brackets. A blank line must end the example.
-
-For in-text code use the role :code: or double back ticks.
-
-::
-
-   :code:`cout << "Hello, World!"` or
-   ``cout << "Hello, World!``
-
-
-
-Math equations
-~~~~~~~~~~~~~~
-
-The input language for mathematics is LaTeX markup. See `Mathematics into Type
-<http://www.ams.org/arc/styleguide/mit-2.pdf>`_ for a guide to styling LaTeX math.
-
-
-For equations that take a whole line (or more), use the math directive::
-
-    .. math::
-
-        f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi) e^{2 \pi i x \xi} \, d\xi.
-
-Output rendered as
-
-    .. math::
-
-        f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi) e^{2 \pi i x \xi} \, d\xi.
-
-If the equation runs over several lines you can use ``\\`` as a separator at the end of each line.
-You can also align lines in an equation, using the ``&`` where you want equation aligned::
-
-    .. math::
-
-         (a + b)^2  &=  (a + b)(a + b) \\
-                    &=  a^2 + 2ab + b^2
-
-For in-text math, use the math role::
-
-   Now we can see :math:`x=1` for this example.
-
-This will be rendered as
-
-   Now we can see :math:`x=1` for this example.
-
-Admonitions
-~~~~~~~~~~~
-
-Admonitions are directives that render as highlighted blocks to draw the reader's attention to a particular point.
-
-Use them sparingly.
-
-
-Use the admonition
-
-* "See also" to reference internal or external links (only in cases where the reference should stand out),
-
-* "Note" to add additional information that the reader needs to be aware of,
-
-* "Warning" to indicate that something might go wrong without the provided information, and
-
-* "Danger" if the situation may cause severe, possibly irreversible, problems.
-
-
-If you want a custom admonition use
-
-::
-
-   .. admonition:: custom name
-
-         Here is some text
-
-Rendered as
-
-
-   .. admonition:: custom name
-
-         Here is some text
-
-
-References
-~~~~~~~~~~
-
-For referencing reStructuredText files in repository, use the :doc: role. It requires the relative path to the file.
-
-::
-
-   :doc:`path/to/file`
-
-In this case, the link caption will be the title of the given document.
-
-You can specify the text you want to use for the link by doing the following
-
-::
-
-   :doc:`custom name <path/file>`
-
-This will be rendered as
-
-   :doc:`Top header of file`
-
-   :doc:`custom name <file>`
-
-For cross-referencing specific section headings, figures, or other arbitrary places within file, use the :ref: role.
-
-The :ref: role requires a reference label that looks like this ``.. _ref-label:``. Each reference label must be unique
-in the documentation.
-
-::
-
-   .. _my-ref-label:
-
-   Section to cross-reference
-   --------------------------
-
-   Some content in this section.
-   It includes the cross-referecing role :ref:`my-ref-label`.
-
-
-To reference figures or arbitrary places in a file, you must include a custom
-name in the reference for it to work.
-
-::
-
-    :ref:`custom name <my-arbitrary-place-label>`
-
-
-
-Special links
-~~~~~~~~~~~~~
-
-.. attention::
-
-  The items in this section are still in development and have not been incorporated into nest:master!
-
-Links to functions
-^^^^^^^^^^^^^^^^^^
-
-To link PyNEST API functions used in-text to the API reference page use the following syntax::
-
-   :py:func:`.Create`
-
-Rendered as
-
-   :py:func:`.Create`
-
-If you want to explictly show a complete function call, like ``nest.Create("iaf_psc_apha")``, the link cannot be used.
-Classes, methods etc. can also be linked in this way.
-
-.. note::
-
-   Functions within classes NodeCollection and SynapseCollection require different syntax as follows
-
-   ``:py:func:`~nest.lib.hl_api_types.SynapseCollection.funcname```
-
-   ``:py:func:`~nest.lib.hl_api_types.NodeCollection.funcname```
-
-
-Links to glossary
-^^^^^^^^^^^^^^^^^
-
-To link terms to the glossary page use the HoverXTooltip role :hxt_ref: from Mahdi Enan (INM-6)
-
-::
-
-  :hxt_ref:`E_L`
-
-Links to certain external projects
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-To link to external projects related to NEST that also use Sphinx/ReadtheDocs (e.g., PyNN, Elephant, nestml), you can treat
-references as you would in your local project. You only need the addition of the intersphinx unique identifer to the
-reference, which looks like this ``:doc:`custom text <unique-identifier:filename>```.
-(See section in userdoc/conf.py "intersphinx_mapping" to see which projects are currently included).
-
-Examples of syntax::
-
-  :doc:`tutorial for nestml <nestml:tutorials>`
-  :py:func:`pyNN.utility.get_simulator`
-
-
-.. note::
-
-   Depending on how a project is built, you may only be able to use the :doc: role or the :ref: role.
-   To find out, you need to look into the objects.inv file, which can be obtained with the following code
-
-   ``python -msphinx.ext.intersphinx https://docs.project.org/objects.inv``
-
-   Objects in objects.inv are categorized into different sections.
-   The std:label refers to objects that use the :ref: role. And std:doc refers to objects that use the :doc: role.
-
-Bibliography style
-------------------
-
-The reStructuredText reference style is used throughout documentation so links
-are autogenerated and a consistent format is used.
-
-For in-text citations, we use the reStructuredText numeric style ``[1]_``.
-
-For example:
-
-.. code-block:: none
-
-    The following example is based on Smith [1]_.
-    [2]_ contains a technically detailed description.
-
-Please ensure your reference follows the following guidelines:
-
-* References with more than 5 authors use 'et al.'.
-* Surname precedes first name for all authors
-* No comma follows surname
-* Use initials for first name of authors
-* Year follows author(s), in parentheses
-* Full stop after every section of bibliography.
-* No formatting such as italics, bold, or underline.
-* Article titles written in sentence case
-* Full title of journal
-* Volume, can be optionally followed by issue in parentheses, a colon
-  separates volume and page range.
-* Include a linked DOI, if available
-
-.. code-block:: none
-
- References
- -----------
-
- .. [1] Smith J. and Jones M (2009). Title of cool paper. Journal of
-        Awesomeness. 3:7-29. <DOI>
-
- .. [2] Sander M., et al (2011). Biology of the sauropod dinosaurs: the
-        evolution of gigantism. Biological Reviews. 86(1):117-155.
-        https://doi.org/10.1111/j.1469-185X.2010.00137.x
+Boldface should only be used in exceptional cases when overlooking the emphasized text could cause problems but
+the text in question is too short to warrant an admonition box.
 
 How we write
 ------------
@@ -507,10 +522,12 @@ letter but with all other words in lower case (except proper nouns).
 Numbers
 ~~~~~~~
 
+Numbers 0-9 should be spelled out, unless they are measurements or coordinates.
+
 Numbers should be spelled out if they begin a sentence. In most cases, however,
 the numeral/ordinal format is preferred.
 
-For additional mathematical notation, use the math role or directive.
+For additional mathematical notation, use the :ref:`math role or directive <math_style>`.
 
 We use the period for the decimal point. (`57.45`)
 
@@ -522,23 +539,26 @@ The thousand separator is the comma except when showing a code example
    The number of connections is ``x = 5001``
 
 Make sure you use the correct unit (e.g., millivolts for voltage) and the
-unit's syntax (`V_m`).
+unit's symbol (`V_m`).
 
 Lists
 ~~~~~
 
-Use ordered lists for step-by-step instructions only. Do not have more that 2
+Use the serial comma in lists.
+
+Use numbered lists for step-by-step instructions only. Do not have more that two
 related actions in one step.
 
-Use bullet lists to improve clarity of long lists (more than 5 items).
+Use bullet lists if the number of items is extensive or each item is a long phrase or sentence.
 
-If bullet/ordered list text is a complete sentence, use proper punctuation and
+If the text of a list forms a complete sentence, use proper punctuation and
 end with period.
 
-If bullet/ordered list text is an incomplete sentence, do not end with period.
+If the text of a list forms an incomplete sentence, do not end with period.
 
-If bullet/ordered list belongs to a sentence, use commas to separate each item
-with the second last time including `and` at end.
+If the entire bullet/numbered list belongs to a sentence, end each item with a comma and the second-last item with ", and".
+If last item is the end of the sentence, end it with a period. Otherwise use the punctuation required to correctly connect
+to the remainder of the sentence.
 
 Pronouns
 ~~~~~~~~
@@ -568,8 +588,7 @@ it out.
 Commas
 ~~~~~~
 
-Use the serial comma (apples, bananas, and grapes) for lists. But use a bullet
-list if your list is more than 5 items.
+Use the serial comma (apples, bananas, and grapes) for lists.
 
 Use the comma as separator for thousands (37,000).
 

@@ -1,4 +1,5 @@
 import re
+import os
 import sys
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
@@ -116,7 +117,7 @@ def hxt_role_ref(pattern):
         desc = get_desc_from_glossary(term)
 
         # link to the glossary term.
-        refuri = ('./glossary.html#{term}'.format(term=term))
+        refuri = (f'{os.getcwd()}/userdoc/html/glossary.html#{term}')
 
         # the tag in which the term and description is defined.
         ref_tag = "<a class='reference external' " \

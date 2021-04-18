@@ -155,7 +155,7 @@ of keys, as an optional argument to ``get``:
     neuron.get(["V_reset", "V_th"])
 
 In the first case we query the value of the constant background current
-``I_e``; the result is given as a floating point element. In the second
+:hxt_ref:`I_e`; the result is given as a floating point element. In the second
 case, we query the values of the reset potential and threshold of the
 neuron, and receive the result as a dictionary . If ``get`` is
 called on a NodeCollection with more than one element, the returned dictionary

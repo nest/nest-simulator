@@ -165,7 +165,7 @@ specifying a given synapse model:
     nest.GetConnections(synapse_model="stdp_synapse")
 
 will return all the connections in the network which are of type
-``stdp_synapse``. The last two cases are slower than the first case, as
+:hxt_ref:`stdp_synapse`. The last two cases are slower than the first case, as
 a full search of all connections has to be performed. The arguments
 ``source``, ``target`` and ``synapse_model`` can be used individually,
 as above, or in any conjunction:
@@ -253,7 +253,7 @@ Repetitive code, copy-and-paste, functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Often you need to repeat a section of code with minor modifications. For
-example, you have two ``multimeter``\ s and you wish to extract the
+example, you have two :hxt_ref:`multimeter`\ s and you wish to extract the
 recorded variable from each of them and then calculate its maximum. The
 temptation is to write the code once, then copy-and-paste it to its new
 location and make any necessary modifications:

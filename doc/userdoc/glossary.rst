@@ -94,14 +94,14 @@ Physical units and variable names used for NEST parameters
  **conductance**
     nanosiemens `nS`
 
-   g_L
-    Leak conductance in nS
+ g_L
+   Leak conductance in nS
 
-   g_K
-    Potassium peak conductance in nS.
+ g_K
+   Potassium peak conductance in nS.
 
-   g_Na
-    Sodium peak conductance in nS.
+ g_Na
+   Sodium peak conductance in nS.
 
  **spike rates**
     spikes/s
@@ -228,8 +228,8 @@ Physical units and variable names used for NEST parameters
 
  facilitation
 
- stdp
-  Spike-timing dependent plasticity
+ stdp_synapse
+  Synapse with spike-timing dependent plasticity.
 
  Two-timescale adaptive threshold
  
@@ -292,7 +292,11 @@ Physical units and variable names used for NEST parameters
 
  intrinsic current
 
- in-degree
+ indegree
+   Amount of connections to post-synaptic cells.
+
+ outdegree
+   Amount of connections from pre-synaptic cells.
  
  synaptic efficacy
    The extent to which a presynaptic neuron affects a postsynaptic neuron.

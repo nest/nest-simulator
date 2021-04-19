@@ -85,9 +85,13 @@ def Run(t):
     so on. After `Cleanup`, `Prepare` can and must be called before more `Run`
     calls.
 
-    Any calls modifying the network, i.e., calls to `Create`, `Connect`, `Disconnect`,
-    `SetStatus` and `SetKernelStatus` between `Prepare` and `Cleanup` have
-    undefined behavior.
+    Be careful about modifying the network or neurons between `Prepare` and `Cleanup`
+    calls, especially do not `Create` and `Connect` neurons or call `SetKernelStatus`.
+    Calling `SetStatus` to change membrane potential `V_m` of neurons or change synaptic
+    weights (but not delays!) will in most cases work as expected, while changing
+    membrane or synaptic times constants **will not work correctly**. If in doubt, assume
+    that changes may cause undefined behavior and check very carefully.
+    
 
     See Also
     --------
@@ -148,9 +152,12 @@ def RunManager():
     Notes
     -----
 
-    Any calls modifying the network, i.e., calls to `Create`, `Connect`,
-    `SetStatus` and `SetKernelStatus` between `Prepare` and `Cleanup` have
-    undefined behavior.
+    Be careful about modifying the network or neurons inside the `RunManager` context,
+    especially do not `Create` and `Connect` neurons or call `SetKernelStatus`. Calling
+    `SetStatus` to change membrane potential `V_m` of neurons or change synaptic weights
+    (but not delays!) will in most cases work as expected, while changing membrane or
+    synaptic times constants **will not work correctly**. If in doubt, assume that changes
+    may cause undefined behavior and check very carefully.
 
     See Also
     --------

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# parse_travis_log.py
+# parse_build_log.py
 #
 # This file is part of NEST.
 #
@@ -20,26 +20,26 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-This Python script is part of the NEST Travis CI build and test environment.
-It parses the Travis CI build log file 'travis_build.sh.log' (The name is
-hard-wired in '.travis.yml'.) and creates the 'NEST Travis CI Build Summary'.
+This Python script is part of the NEST GitHub Actions CI build and test environment.
+It parses the GitHub Actions build log file 'gha_build.sh.log' (The name is
+hard-wired in '.nestbuildmatrix.yml'.) and creates the 'NEST GitHub Actions Build Summary'.
 
 NOTE: Please note that the parsing process is coupled to shell script
-      'travis_build.sh' and relies on the message numbers "MSGBLDnnnn'.
+      'gha_build.sh' and relies on the message numbers "MSGBLDnnnn'.
       It does not rely on the messages texts itself except for file names.
 """
 
 
 def is_message_pair_in_logfile(log_filename, msg_start_of_section,
                                msg_end_of_section):
-    """Read the NEST Travis CI build log file and return 'True' in case both
+    """Read the NEST GitHub Actions build log file and return 'True' in case both
     messages are found in correct order. Return 'False' if only the first
     message was found. Return 'None' in case the first or both messages
     are not contained in the file.
 
     Parameters
     ----------
-    log_filename:         NEST Travis CI build log file name.
+    log_filename:         NEST GitHub Actions build log file name.
     msg_start_of_section: Message number string, e.g. "MSGBLD1234".
     msg_end_of_section:   Message number string, e.g. "MSGBLD1234".
 
@@ -60,12 +60,12 @@ def is_message_pair_in_logfile(log_filename, msg_start_of_section,
 
 
 def is_message_in_logfile(log_filename, msg_number):
-    """Read the NEST Travis CI build log file. Return 'True' if the message is
+    """Read the NEST GitHub Actions build log file. Return 'True' if the message is
     contained in the log file.
 
     Parameters
     ----------
-    log_filename: NEST Travis CI build log file name.
+    log_filename: NEST GitHub Actions build log file name.
     msg_number:   Message number string, e.g. "MSGBLD1234".
 
     Returns
@@ -102,12 +102,12 @@ def is_message(line, msg_number):
 
 def list_of_changed_files(log_filename, msg_changed_files_section_start,
                           msg_changed_files_section_end, msg_changed_files):
-    """Read the NEST Travis CI build log file, find the 'changed files' section
+    """Read the NEST GitHub Actions build log file, find the 'changed files' section
     and return a list of the changed files or an empty list, respectively.
 
     Parameters
     ----------
-    log_filename:                    NEST Travis CI build log file name.
+    log_filename:                    NEST GitHub Actions build log file name.
     msg_changed_files_section_start: Message number string, e.g. "MSGBLD1234".
     msg_changed_files_section_end:   Message number string, e.g. "MSGBLD1234".
     msg_changed_files:               Message number string, e.g. "MSGBLD1234".
@@ -146,13 +146,13 @@ def list_of_changed_files(log_filename, msg_changed_files_section_start,
 
 def msg_summary_vera(log_filename, msg_vera_section_start,
                      msg_vera_section_end, msg_vera):
-    """Read the NEST Travis CI build log file, find the VERA++ sections,
+    """Read the NEST GitHub Actions build log file, find the VERA++ sections,
     extract the VERA messages per file and return a dictionary containing an
     overall summary of the VERA++ code analysis.
 
     Parameters
     ----------
-    log_filename:           NEST Travis CI build log file name.
+    log_filename:           NEST GitHub Actions build log file name.
     msg_vera_section_start: Message number string, e.g. "MSGBLD1234".
     msg_vera_section_end:   Message number string, e.g. "MSGBLD1234".
     msg_vera:               Message number string, e.g. "MSGBLD1234".
@@ -192,13 +192,13 @@ def msg_summary_vera(log_filename, msg_vera_section_start,
 
 def msg_summary_cppcheck(log_filename, msg_cppcheck_section_start,
                          msg_cppcheck_section_end, msg_cppcheck):
-    """Read the NEST Travis CI build log file, find the cppcheck sections,
+    """Read the NEST GitHub Actions build log file, find the cppcheck sections,
     extract the cppcheck messages per file and return a dictionary containing
     an overall summary of the cppcheck code analysis.
 
     Parameters
     ---------
-    log_filename:               NEST Travis CI build log file name.
+    log_filename:               NEST GitHub Actions build log file name.
     msg_cppcheck_section_start: Message number string, e.g. "MSGBLD1234".
     msg_cppcheck_section_end:   Message number string, e.g. "MSGBLD1234".
     msg_cppcheck:               Message number string, e.g. "MSGBLD1234".
@@ -245,13 +245,13 @@ def msg_summary_cppcheck(log_filename, msg_cppcheck_section_start,
 
 def msg_summary_format(log_filename, msg_format_section_start,
                        msg_format_section_end, msg_format):
-    """Read the NEST Travis CI build log file, find the clang-format sections,
+    """Read the NEST GitHub Actions build log file, find the clang-format sections,
     extract the 'diff-messages' per file and return a dictionary containing an
     overall summary of the clang-format code analysis.
 
     Parameters
     ----------
-    log_filename:             NEST Travis CI build log file name.
+    log_filename:             NEST GitHub Actions build log file name.
     msg_format_section_start: Message number string, e.g. "MSGBLD1234".
     msg_format_section_end:   Message number string, e.g. "MSGBLD1234".
     msg_format:               Message number string, e.g. "MSGBLD1234".
@@ -291,13 +291,13 @@ def msg_summary_format(log_filename, msg_format_section_start,
 
 def msg_summary_pep8(log_filename, msg_pep8_section_start,
                      msg_pep8_section_end, msg_pep8):
-    """Read the NEST Travis CI build log file, find the PEP8 sections, extract
+    """Read the NEST GitHub Actions build log file, find the PEP8 sections, extract
     the PEP8 messages per file and return a dictionary containing an overall
     summary.
 
     Parameters:
     ----------
-    log_filename:           NEST Travis CI build log file name.
+    log_filename:           NEST GitHub Actions build log file name.
     msg_pep8_section_start: Message number string, e.g. "MSGBLD1234".
     msg_pep8_section_end:   Message number string, e.g. "MSGBLD1234".
     msg_pep8:               Message number string, e.g. "MSGBLD1234".
@@ -336,13 +336,13 @@ def msg_summary_pep8(log_filename, msg_pep8_section_start,
 
 def makebuild_summary(log_filename, msg_make_section_start,
                       msg_make_section_end):
-    """Read the NEST Travis CI build log file and return the number of build
+    """Read the NEST GitHub Actions build log file and return the number of build
     error and warning messages as well as dictionaries summarizing their
     occurrences.
 
     Parameters
     ----------
-    log_filename:           NEST Travis CI build log file name.
+    log_filename:           NEST GitHub Actions build log file name.
     msg_make_section_start: Message number string, e.g. "MSGBLD1234".
     msg_make_section_end:   Message number string, e.g. "MSGBLD1234".
 
@@ -367,12 +367,12 @@ def makebuild_summary(log_filename, msg_make_section_start,
     # with some warnings, this would be a good point to re-set the
     # expected_warnings variable conditionally for that build_type.
 
-    nest_warning_re = re.compile(f'{build_dir}.*: warning:')
+    nest_warning_re = re.compile(f'.* ({build_dir}.*: warning:.*)')
     known_warnings = [
         f'{build_dir}/sli/scanner.cc:642:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:673:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:714:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:741:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:674:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:716:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:744:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
     ]
 
     with open(log_filename) as fh:
@@ -392,12 +392,14 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
                 # Only count warnings originating in NEST source files
                 warning_match = nest_warning_re.match(line)
-                if warning_match is not None and line.strip() not in known_warnings:
-                    file_name = line.split(':')[0]
-                    if file_name not in warning_summary:
-                        warning_summary[file_name] = 0
-                    warning_summary[file_name] += 1
-                    number_of_warning_msgs += 1
+                if warning_match is not None:
+                    warning = warning_match.group(1)
+                    if warning not in known_warnings:
+                        file_name = warning.split(':')[0]
+                        if file_name not in warning_summary:
+                            warning_summary[file_name] = 0
+                        warning_summary[file_name] += 1
+                        number_of_warning_msgs += 1
 
                 if is_message(line, msg_make_section_end):
                     # The log file contains only one 'make' section, return.
@@ -418,7 +420,7 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
 def testsuite_results(log_filename, msg_testsuite_section_start,
                       msg_testsuite_end_message):
-    """Read the NEST Travis CI build log file, find the 'make-installcheck'
+    """Read the NEST GitHub Actions build log file, find the 'make-installcheck'
     section which runs the NEST test suite. Extract the total number of tests
     and the number of tests failed. Return True if all tests passed
     successfully and False in case one or more tests failed. Additionally the
@@ -427,7 +429,7 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
 
     Parameters
     ----------
-    log_filename:                NEST Travis CI build log file name.
+    log_filename:                NEST GitHub Actions build log file name.
     msg_testsuite_section_start: Message number string, e.g. "MSGBLD1234".
     msg_testsuite_end_message:   Message number string, e.g. "MSGBLD1234".
 
@@ -623,8 +625,8 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
        summary_format is not None:
 
         # Keys, i.e. file names, are identical in these dictionaries.
-        # If this assertion raises an exception, please check travis_build.sh
-        # which runs the Travis CI build.
+        # If this assertion raises an exception, please check gha_build.sh
+        # which runs the GitHub Actions build.
         assert (summary_format.keys() == summary_cppcheck.keys())
         assert (summary_format.keys() == summary_vera.keys())
 
@@ -816,7 +818,7 @@ def printable_summary(list_of_changed_files,
     header = """
     + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
     +                                                                         +
-    +        N E S T   T r a v i s   C I   B u i l d   S u m m a r y          +
+    +    N E S T   G i t H u b   A c t i o n s   B u i l d   S u m m a r y    +
     +                                                                         +
     + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
     \n\n"""
@@ -872,7 +874,7 @@ def printable_summary(list_of_changed_files,
          convert_bool_value_to_status_string(status_cmake_configure)],
         ['Make', convert_bool_value_to_status_string(status_make) + '\n' +
          '\nErrors  : ' + str(number_of_errors) +
-         '\nWarnings: ' + str(number_of_warnings) + f' ({expected_warnings} expected)'],
+         '\nWarnings: ' + str(number_of_warnings)],
         ['Make install',
          convert_bool_value_to_status_string(status_make_install)],
         ['Make installcheck',
@@ -979,7 +981,7 @@ if __name__ == '__main__':
     from terminaltables import AsciiTable
     from textwrap import wrap
 
-    this_script_filename, log_filename, build_type, build_dir = argv
+    this_script_filename, log_filename, build_dir = argv
 
     changed_files = \
         list_of_changed_files(log_filename, "MSGBLD0070",
@@ -988,7 +990,7 @@ if __name__ == '__main__':
     skip_code_analysis = is_message_in_logfile(log_filename, "MSGBLD0225")
     skip_installcheck = is_message_in_logfile(log_filename, "MSGBLD0305")
 
-    # The NEST Travis CI build consists of several steps and sections.
+    # The NEST GitHub Actions build consists of several steps and sections.
     # Each section is enclosed in a start- and an end-message.
     # By checking these message-pairs it can be verified whether a section
     # passed through successfully, failed or was skipped.
@@ -1026,7 +1028,7 @@ if __name__ == '__main__':
      number_of_tests_skipped, failed_tests, test_time) = \
         testsuite_results(log_filename, "MSGBLD0290", "MSGBLD0300")
 
-    # Determine the build result to tell Travis CI whether the build was
+    # Determine the build result to tell GitHub Actions whether the build was
     # successful or not.
     exit_code = build_return_code(status_cmake_configure,
                                   status_make,
@@ -1043,7 +1045,7 @@ if __name__ == '__main__':
                                   skip_code_analysis,
                                   skip_installcheck)
 
-    # Only after a successful build, Travis CI will upload the build artifacts
+    # Only after a successful build, GitHub Actions will upload the build artifacts
     # to Amazon S3.
     status_amazon_s3_upload = \
         (not is_message_in_logfile(log_filename, "MSGBLD0330") and

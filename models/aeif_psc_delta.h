@@ -253,9 +253,10 @@ public:
   struct State_
   {
     /** Accumulate spikes arriving during refractory period, discounted for
-        decay until end of refractory period.
-    */
+     *  decay until end of refractory period.
+     */
     double refr_spikes_buffer_;
+
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum

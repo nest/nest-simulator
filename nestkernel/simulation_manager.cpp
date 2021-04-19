@@ -48,6 +48,7 @@ nest::SimulationManager::SimulationManager()
   , from_step_( 0L )
   , to_step_( 0L ) // consistent with to_do_ == 0
   , t_real_( 0L )
+  , prepared_( false )
   , simulating_( false )
   , simulated_( false )
   , inconsistent_state_( false )
@@ -71,6 +72,9 @@ nest::SimulationManager::initialize()
   simulating_ = false;
   simulated_ = false;
   inconsistent_state_ = false;
+
+  reset_timers_for_preparation();
+  reset_timers_for_dynamics();
 }
 
 void
@@ -83,6 +87,25 @@ nest::SimulationManager::finalize()
   slice_ = 0;
   from_step_ = 0;
   to_step_ = 0; // consistent with to_do_ = 0
+}
+
+void
+nest::SimulationManager::reset_timers_for_preparation()
+{
+  sw_communicate_prepare_.reset();
+#ifdef TIMER_DETAILED
+  sw_gather_target_data_.reset();
+#endif
+}
+
+void
+nest::SimulationManager::reset_timers_for_dynamics()
+{
+  sw_simulate_.reset();
+#ifdef TIMER_DETAILED
+  sw_gather_spike_data_.reset();
+  sw_update_.reset();
+#endif
 }
 
 void
@@ -99,7 +122,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   TimeConverter time_converter;
 
   double time;
-  if ( updateValue< double >( d, names::time, time ) )
+  if ( updateValue< double >( d, names::biological_time, time ) )
   {
     if ( time != 0.0 )
     {
@@ -379,7 +402,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::T_min, Time::min().get_ms() );
   def< double >( d, names::T_max, Time::max().get_ms() );
 
-  def< double >( d, names::time, get_time().get_ms() );
+  def< double >( d, names::biological_time, get_time().get_ms() );
   def< long >( d, names::to_do, to_do_ );
   def< bool >( d, names::print_time, print_time_ );
 
@@ -388,6 +411,14 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::wfr_tol, wfr_tol_ );
   def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
   def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
+
+  def< double >( d, names::time_simulate, sw_simulate_.elapsed() );
+  def< double >( d, names::time_communicate_prepare, sw_communicate_prepare_.elapsed() );
+#ifdef TIMER_DETAILED
+  def< double >( d, names::time_gather_spike_data, sw_gather_spike_data_.elapsed() );
+  def< double >( d, names::time_update, sw_update_.elapsed() );
+  def< double >( d, names::time_gather_target_data, sw_gather_target_data_.elapsed() );
+#endif
 }
 
 void
@@ -408,6 +439,10 @@ nest::SimulationManager::prepare()
       "Kernel is in inconsistent state after an "
       "earlier error. Please run ResetKernel first." );
   }
+
+  // reset profiling timers
+  reset_timers_for_dynamics();
+  kernel().event_delivery_manager.reset_timers_for_dynamics();
 
   t_real_ = 0;
   t_slice_begin_ = timeval(); // set to timeval{0, 0} as unset flag
@@ -532,8 +567,10 @@ nest::SimulationManager::run( Time const& t )
     return;
   }
 
-  // Reset profiling timers and counters within event_delivery_manager
-  kernel().event_delivery_manager.reset_timers_counters();
+  // Reset local spike counters within event_delivery_manager
+  kernel().event_delivery_manager.reset_counters();
+
+  sw_simulate_.start();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -569,6 +606,8 @@ nest::SimulationManager::run( Time const& t )
   call_update_();
 
   kernel().io_manager.post_run_hook();
+
+  sw_simulate_.stop();
 }
 
 void
@@ -666,6 +705,12 @@ nest::SimulationManager::call_update_()
 void
 nest::SimulationManager::update_connection_infrastructure( const thread tid )
 {
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_communicate_prepare_.start();
+  }
+
   kernel().connection_manager.restructure_connection_tables( tid );
   kernel().connection_manager.sort_connections( tid );
 
@@ -694,9 +739,24 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     }
   }
 
+#ifdef TIMER_DETAILED
+  if ( tid == 0 )
+  {
+    sw_gather_target_data_.start();
+  }
+#endif
+
   // communicate connection information from postsynaptic to
   // presynaptic side
   kernel().event_delivery_manager.gather_target_data( tid );
+
+#ifdef TIMER_DETAILED
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_gather_target_data_.stop();
+  }
+#endif
 
   if ( kernel().connection_manager.secondary_connections_exist() )
   {
@@ -708,6 +768,12 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     kernel().node_manager.set_have_nodes_changed( false );
   }
   kernel().connection_manager.unset_have_connections_changed( tid );
+
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_communicate_prepare_.stop();
+  }
 }
 
 bool
@@ -885,9 +951,17 @@ nest::SimulationManager::update_()
         }
 
       } // of if(wfr_is_used)
-      // end of preliminary update
+        // end of preliminary update
 
+#ifdef TIMER_DETAILED
+#pragma omp barrier
+      if ( tid == 0 )
+      {
+        sw_update_.start();
+      }
+#endif
       const SparseNodeArray& thread_local_nodes = kernel().node_manager.get_local_nodes( tid );
+
       for ( SparseNodeArray::const_iterator n = thread_local_nodes.begin(); n != thread_local_nodes.end(); ++n )
       {
         // We update in a parallel region. Therefore, we need to catch
@@ -909,6 +983,14 @@ nest::SimulationManager::update_()
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
+#ifdef TIMER_DETAILED
+      if ( tid == 0 )
+      {
+        sw_update_.stop();
+        sw_gather_spike_data_.start();
+      }
+#endif
+
       // gather and deliver only at end of slice, i.e., end of min_delay step
       if ( to_step_ == kernel().connection_manager.get_min_delay() )
       {
@@ -927,6 +1009,12 @@ nest::SimulationManager::update_()
       }
 
 #pragma omp barrier
+#ifdef TIMER_DETAILED
+      if ( tid == 0 )
+      {
+        sw_gather_spike_data_.stop();
+      }
+#endif
 
 // the following block is executed by the master thread only
 // the other threads are enforced to wait at the end of the block

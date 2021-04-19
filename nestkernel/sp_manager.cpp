@@ -402,10 +402,15 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
   kernel().mpi_manager.communicate( post_vacant_id, post_vacant_id_global, displacements );
   kernel().mpi_manager.communicate( post_vacant_n, post_vacant_n_global, displacements );
 
+  bool synapses_created = false;
   if ( pre_vacant_id_global.size() > 0 and post_vacant_id_global.size() > 0 )
   {
-    create_synapses(
+    synapses_created = create_synapses(
       pre_vacant_id_global, pre_vacant_n_global, post_vacant_id_global, post_vacant_n_global, sp_builder );
+  }
+  if ( synapses_created or post_deleted_id.size() > 0 or pre_deleted_id.size() > 0 )
+  {
+    kernel().connection_manager.set_have_connections_changed( kernel().vp_manager.get_thread_id() );
   }
 }
 
@@ -417,7 +422,7 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
  * @param post_n number of available synaptic elements in the post node
  * @param sp_conn_builder structural plasticity connection builder to use
  */
-void
+bool
 SPManager::create_synapses( std::vector< index >& pre_id,
   std::vector< int >& pre_n,
   std::vector< index >& post_id,
@@ -449,6 +454,8 @@ SPManager::create_synapses( std::vector< index >& pre_id,
 
   // create synapse
   sp_conn_builder->sp_connect( pre_id_rnd, post_id_rnd );
+
+  return ( not pre_id_rnd.empty() );
 }
 
 /**

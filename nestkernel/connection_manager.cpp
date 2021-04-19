@@ -395,10 +395,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
   assert( cb != 0 );
 
-  for ( auto tid = 0 ; tid < kernel().vp_manager.get_num_threads() ; ++tid )
-  {
-    set_have_connections_changed( tid );
-  }
+  set_have_connections_changed( kernel().vp_manager.get_thread_id() );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
@@ -488,8 +485,6 @@ nest::ConnectionManager::connect( const index snode_id,
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
-  set_have_connections_changed( target_thread );
-
   Node* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
 
   ConnectionType connection_type = connection_required( source, target, target_thread );
@@ -520,8 +515,6 @@ nest::ConnectionManager::connect( const index snode_id,
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
   const thread tid = kernel().vp_manager.get_thread_id();
-
-  set_have_connections_changed( tid );
 
   if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
   {

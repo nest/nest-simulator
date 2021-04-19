@@ -91,7 +91,6 @@ def Run(t):
     weights (but not delays!) will in most cases work as expected, while changing
     membrane or synaptic times constants **will not work correctly**. If in doubt, assume
     that changes may cause undefined behavior and check very carefully.
-    
 
     See Also
     --------

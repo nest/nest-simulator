@@ -47,9 +47,10 @@ if ( NOT CYTHON_EXECUTABLE STREQUAL "CYTHON_EXECUTABLE-NOTFOUND" )
       OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if ( RESULT EQUAL 0 )
-    # If `cython --version` output is empty it is likely 
-    # that it printed to stderr instead of stdout.
     if ( "${CYTHON_VAR_OUTPUT}" STREQUAL "" )
+      # If `cython --version` stdout is empty but the
+      # return code is 0 (no error), Cython might have
+      # printed to stderr instead.
       set( CYTHON_VAR_OUTPUT "${CYTHON_ERR_OUTPUT}" )
     endif()
     string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+(\\.[0-9]+)?).*" "\\1"

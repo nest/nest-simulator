@@ -33,7 +33,7 @@ See Also
 
 """
 
-#######################################################################
+###############################################################################
 # First, we import all necessary modules for simulation, analysis and
 # plotting. Additionally, we set the verbosity to suppress info
 # messages and reset the kernel.
@@ -50,7 +50,7 @@ import matplotlib.pyplot as plt
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
 
-#######################################################################
+###############################################################################
 # Second, the nodes (neurons and devices) are created using ``Create``.
 # We store the returned handles in variables for later reference.
 # The ``Create`` function also allow you to create multiple nodes
@@ -64,18 +64,15 @@ nest.ResetKernel()
 neuron = nest.Create("iaf_psc_alpha")
 voltmeter = nest.Create("voltmeter")
 
-#######################################################################
-# Third, the neuron is configured using `SetStatus()`, which expects
-# a list of node handles and a list of parameter dictionaries.
-# In this example we use `SetStatus()` to configure the constant
-# current input to the neuron.
+###############################################################################
+# Third, we set the external current of the neuron.
 
 neuron.I_e = 376.0
 
-#######################################################################
+###############################################################################
 # Fourth, the neuron is connected to the voltmeter. The command
 # ``Connect`` has different variants. Plain ``Connect`` just takes the
-# handles of pre- and post-synaptic nodes and uses the default values
+# handles of pre- and postsynaptic nodes and uses the default values
 # for weight and delay. Note that the connection direction for the voltmeter is
 # reversed compared to the spike recorder, because it observes the
 # neuron instead of receiving events from it. Thus, ``Connect``
@@ -85,13 +82,13 @@ neuron.I_e = 376.0
 
 nest.Connect(voltmeter, neuron)
 
-#######################################################################
+###############################################################################
 # Now we simulate the network using ``Simulate``, which takes the
 # desired simulation time in milliseconds.
 
 nest.Simulate(1000.0)
 
-#######################################################################
+###############################################################################
 # Finally, we plot the neuron's membrane potential as a function of
 # time and display the plot using pyplot.
 

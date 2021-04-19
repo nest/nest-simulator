@@ -120,7 +120,16 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
 The same formula applies for :math:`q_{\gamma}`.
 
 
-The shape of post synaptic current is exponential.
+The shape of postsynaptic current is exponential.
+
+.. note::
+
+  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+  `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+  For implementation details see the
+  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 Parameters
 ++++++++++
@@ -190,7 +199,7 @@ pp_psc_delta, gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse,
 
 EndUserDocs */
 
-class gif_psc_exp : public Archiving_Node
+class gif_psc_exp : public ArchivingNode
 {
 
 public:
@@ -446,7 +455,7 @@ gif_psc_exp::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -462,7 +471,7 @@ gif_psc_exp::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

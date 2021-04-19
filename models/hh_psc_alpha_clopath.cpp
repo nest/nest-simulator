@@ -310,7 +310,7 @@ nest::hh_psc_alpha_clopath::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_cl
  * ---------------------------------------------------------------- */
 
 nest::hh_psc_alpha_clopath::hh_psc_alpha_clopath()
-  : Clopath_Archiving_Node()
+  : ClopathArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -319,7 +319,7 @@ nest::hh_psc_alpha_clopath::hh_psc_alpha_clopath()
 }
 
 nest::hh_psc_alpha_clopath::hh_psc_alpha_clopath( const hh_psc_alpha_clopath& n )
-  : Clopath_Archiving_Node( n )
+  : ClopathArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -360,7 +360,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
   B_.spike_exc_.clear(); // includes resize
   B_.spike_inh_.clear(); // includes resize
   B_.currents_.clear();  // includes resize
-  Clopath_Archiving_Node::clear_history();
+  ClopathArchivingNode::clear_history();
 
   B_.logger_.reset();
 

@@ -118,7 +118,7 @@ and exponential input filters) (see [5,6]_).
 This model has been adapted from iaf_psc_delta. The default parameters are
 set to the mean values given in [2]_, which have been matched to spike-train
 recordings. Due to the many features of pp_psc_delta and its versatility,
-parameters should be set carefully and conciously.
+parameters should be set carefully and consciously.
 
 Parameters
 ++++++++++
@@ -193,7 +193,7 @@ pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
 EndUserDocs */
 
-class pp_psc_delta : public Archiving_Node
+class pp_psc_delta : public ArchivingNode
 {
 
 public:
@@ -435,7 +435,7 @@ pp_psc_delta::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -451,7 +451,7 @@ pp_psc_delta::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

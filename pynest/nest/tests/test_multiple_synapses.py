@@ -166,6 +166,59 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         weights = conns.weight
         self.assertEqual(sorted(weights)[:num_trgt * indegree], [-3]*num_trgt*indegree)
 
+    def test_MultipleSynapses_spatial_network_label(self):
+        """test co-location of synapses for spatial networks with synapse label"""
+        num_src = 11
+        num_trgt = 37
+        indegree = 3
+
+        spatial_nodes_src = nest.Create('iaf_psc_alpha', n=num_src,
+                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+        spatial_nodes_trgt = nest.Create('iaf_psc_alpha', n=num_trgt,
+                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+
+        syn_label_a = 123
+        syn_label_b = 456
+        nest.Connect(spatial_nodes_src, spatial_nodes_trgt, {'rule': 'fixed_indegree', 'indegree': indegree},
+                     nest.CollocatedSynapses({'weight': 3.,
+                                              'synapse_model': 'stdp_synapse_lbl',
+                                              'synapse_label': syn_label_a},
+                                             {'weight': nest.spatial_distributions.exponential(nest.spatial.distance),
+                                              'delay': 1.4,
+                                              'synapse_model': 'stdp_synapse_lbl',
+                                              'synapse_label': syn_label_b}))
+        conns = nest.GetConnections()
+        self.assertEqual(num_trgt * indegree * 2, len(conns))
+        reference = sorted([syn_label_a, syn_label_b]*num_trgt*indegree)
+        self.assertEqual(sorted(conns.get('synapse_label')), reference)
+
+    def test_MultipleSynapses_spatial_network_receptor_type(self):
+        """test co-location of synapses for spatial networks with receptor_type"""
+        num_src = 11
+        num_trgt = 37
+        indegree = 3
+        max_receptor_type = 7
+
+        spatial_nodes_src = nest.Create('iaf_psc_exp_multisynapse', num_src,
+                                        {'tau_syn': [0.1 + i for i in range(max_receptor_type)]},
+                                        positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+        spatial_nodes_trgt = nest.Create('iaf_psc_exp_multisynapse', num_trgt,
+                                         {'tau_syn': [0.1 + i for i in range(max_receptor_type)]},
+                                         positions=nest.spatial.free(nest.random.uniform(), num_dimensions=2))
+
+        receptor_type_a = max_receptor_type-3
+        receptor_type_b = max_receptor_type
+        nest.Connect(spatial_nodes_src, spatial_nodes_trgt, {'rule': 'fixed_indegree', 'indegree': indegree},
+                     nest.CollocatedSynapses({'weight': 3.,
+                                              'receptor_type': receptor_type_a},
+                                             {'weight': nest.spatial_distributions.exponential(nest.spatial.distance),
+                                              'delay': 1.4,
+                                              'receptor_type': receptor_type_b}))
+        conns = nest.GetConnections()
+        self.assertEqual(num_trgt * indegree * 2, len(conns))
+        reference = sorted([receptor_type_a, receptor_type_b]*num_trgt*indegree)
+        self.assertEqual(sorted(conns.receptor), reference)
+
     def test_MultipleSynapses_spatial_network_fixedOutdegree(self):
         """test co-location of synapses for spatial networks with fixed outdegree"""
         num_src = 17
@@ -291,6 +344,55 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         sorted_conn_list = self.sort_connections(conns)
 
         self.assertEqual(ref_conn_list, sorted_conn_list)
+
+    def test_MultipleSynapses_receptor_type(self):
+        """Test co-location of synapses with different receptor types"""
+        num_src = 7
+        num_trg = 7
+
+        src = nest.Create('iaf_psc_exp_multisynapse', num_src)
+        trgt = nest.Create('iaf_psc_exp_multisynapse', num_trg, {'tau_syn': [0.1 + i for i in range(num_trg)]})
+        node = nest.Create('iaf_psc_alpha')
+
+        syn_spec = nest.CollocatedSynapses({'synapse_model': 'stdp_synapse',
+                                            'weight': 5.,
+                                            'receptor_type': 2},
+                                           {'weight': 1.5, 'receptor_type': 7},
+                                           {'synapse_model': 'stdp_synapse', 'weight': 3, 'receptor_type': 5})
+
+        nest.Connect(src, trgt, 'one_to_one', syn_spec=syn_spec)
+        nest.Connect(node, node)  # should have receptor 0
+
+        conns = nest.GetConnections()
+        ref_receptor_type = [0] + [2]*num_src + [5]*num_src + [7]*num_src
+
+        self.assertEqual(ref_receptor_type, sorted(conns.receptor))
+
+        node_index = list(conns.source).index(node.global_id)
+        node_receptor = conns.receptor[node_index]
+        self.assertEqual(0, node_receptor)
+
+    def test_MultipleSynapses_receptor_type_ht_neuron(self):
+        """Test co-location of synapses with different receptor types and ht_neuron"""
+        num_src = 9
+        num_trg = 9
+
+        src = nest.Create('ht_neuron', num_src)
+        trgt = nest.Create('ht_neuron', num_trg)
+
+        syn_spec = nest.CollocatedSynapses({'synapse_model': 'stdp_synapse',
+                                            'weight': 5.,
+                                            'receptor_type': 2},
+                                           {'weight': 1.5, 'receptor_type': 4},
+                                           {'synapse_model': 'stdp_synapse', 'weight': 3, 'receptor_type': 3})
+
+        nest.Connect(src, trgt, 'one_to_one', syn_spec=syn_spec)
+
+        conns = nest.GetConnections()
+        # receptors are 1 less than receptor_type for ht_neuron
+        ref_receptor_type = [1]*num_src + [2]*num_src + [3]*num_src
+
+        self.assertEqual(ref_receptor_type, sorted(conns.receptor))
 
 
 def suite():

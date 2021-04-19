@@ -108,7 +108,7 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   const double INaP_thresh = -55.7;
   const double INaP_slope = 7.7;
   const double m_inf_NaP = 1.0 / ( 1.0 + std::exp( -( V - INaP_thresh ) / INaP_slope ) );
-  node.S_.I_NaP_ = -node.P_.g_peak_NaP * std::pow( m_inf_NaP, 3.0 ) * ( V - node.P_.E_rev_NaP );
+  node.S_.I_NaP_ = -node.P_.g_peak_NaP * std::pow( m_inf_NaP, node.P_.N_NaP ) * ( V - node.P_.E_rev_NaP );
 
   // I_DK
   const double d_half = 0.25;
@@ -116,7 +116,7 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   node.S_.I_KNa_ = -node.P_.g_peak_KNa * m_inf_KNa * ( V - node.P_.E_rev_KNa );
 
   // I_T
-  node.S_.I_T_ = -node.P_.g_peak_T * y[ S::m_IT ] * y[ S::m_IT ] * y[ S::h_IT ] * ( V - node.P_.E_rev_T );
+  node.S_.I_T_ = -node.P_.g_peak_T * std::pow( y[ S::m_IT ], node.P_.N_T ) * y[ S::h_IT ] * ( V - node.P_.E_rev_T );
 
   // I_h
   node.S_.I_h_ = -node.P_.g_peak_h * y[ S::m_Ih ] * ( V - node.P_.E_rev_h );
@@ -257,11 +257,13 @@ nest::ht_neuron::Parameters_::Parameters_()
   , E_rev_GABA_B( -90.0 )     // mV
   , g_peak_NaP( 1.0 )
   , E_rev_NaP( 30.0 ) // mV
+  , N_NaP( 3.0 )
   , g_peak_KNa( 1.0 )
   , E_rev_KNa( -90.0 )  // mV
   , tau_D_KNa( 1250.0 ) // ms
   , g_peak_T( 1.0 )
   , E_rev_T( 0.0 ) // mV
+  , N_T( 2.0 )
   , g_peak_h( 1.0 )
   , E_rev_h( -40.0 ) // mV
   , voltage_clamp( false )
@@ -369,11 +371,13 @@ nest::ht_neuron::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_rev_GABA_B, E_rev_GABA_B );
   def< double >( d, names::g_peak_NaP, g_peak_NaP );
   def< double >( d, names::E_rev_NaP, E_rev_NaP );
+  def< double >( d, names::N_NaP, N_NaP );
   def< double >( d, names::g_peak_KNa, g_peak_KNa );
   def< double >( d, names::E_rev_KNa, E_rev_KNa );
   def< double >( d, names::tau_D_KNa, tau_D_KNa );
   def< double >( d, names::g_peak_T, g_peak_T );
   def< double >( d, names::E_rev_T, E_rev_T );
+  def< double >( d, names::N_T, N_T );
   def< double >( d, names::g_peak_h, g_peak_h );
   def< double >( d, names::E_rev_h, E_rev_h );
   def< bool >( d, names::voltage_clamp, voltage_clamp );
@@ -414,11 +418,13 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::E_rev_GABA_B, E_rev_GABA_B, node );
   updateValueParam< double >( d, names::g_peak_NaP, g_peak_NaP, node );
   updateValueParam< double >( d, names::E_rev_NaP, E_rev_NaP, node );
+  updateValueParam< double >( d, names::N_NaP, N_NaP, node );
   updateValueParam< double >( d, names::g_peak_KNa, g_peak_KNa, node );
   updateValueParam< double >( d, names::E_rev_KNa, E_rev_KNa, node );
   updateValueParam< double >( d, names::tau_D_KNa, tau_D_KNa, node );
   updateValueParam< double >( d, names::g_peak_T, g_peak_T, node );
   updateValueParam< double >( d, names::E_rev_T, E_rev_T, node );
+  updateValueParam< double >( d, names::N_T, N_T, node );
   updateValueParam< double >( d, names::g_peak_h, g_peak_h, node );
   updateValueParam< double >( d, names::E_rev_h, E_rev_h, node );
   updateValueParam< bool >( d, names::voltage_clamp, voltage_clamp, node );
@@ -607,7 +613,7 @@ nest::ht_neuron::Buffers_::Buffers_( const Buffers_&, ht_neuron& n )
  * ---------------------------------------------------------------- */
 
 nest::ht_neuron::ht_neuron()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( *this, P_ )
   , B_( *this )
@@ -616,7 +622,7 @@ nest::ht_neuron::ht_neuron()
 }
 
 nest::ht_neuron::ht_neuron( const ht_neuron& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -664,7 +670,7 @@ nest::ht_neuron::init_buffers_()
 
   B_.logger_.reset();
 
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.integration_step_ = B_.step_;
@@ -737,7 +743,7 @@ nest::ht_neuron::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   DictionaryDatum receptor_type = new Dictionary();
 
@@ -762,7 +768,7 @@ nest::ht_neuron::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

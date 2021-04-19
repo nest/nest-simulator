@@ -158,7 +158,7 @@ public:
     const index synapse_model,
     const std::string& se_pre_name,
     const std::string& se_post_name );
-  // Deletion of synapses on the post synaptic side
+  // Deletion of synapses on the postsynaptic side
   void delete_synapses_from_post( std::vector< index >& post_deleted_id,
     std::vector< int >& post_deleted_n,
     index synapse_model,

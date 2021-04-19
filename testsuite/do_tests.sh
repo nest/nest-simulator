@@ -450,7 +450,7 @@ echo "Phase 7: Running PyNEST tests"
 echo "-----------------------------"
 if test "${PYTHON}"; then
     # Find the path to PyNEST without actually importing it
-    PYNEST_TEST_DIR="$("${PYTHON}" -c "import importlib; print(importlib.util.find_spec('nest').submodule_search_locations[0])")/tests"
+    PYNEST_TEST_DIR="$("${PYTHON}" -c "import importlib.util; print(importlib.util.find_spec('nest').submodule_search_locations[0])")/tests"
     XUNIT_FILE="${REPORTDIR}/07_pynesttests.xml"
     "${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="07_pynesttests" --xunit-file="${XUNIT_FILE}" "${PYNEST_TEST_DIR}" 2>&1 \
         | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'

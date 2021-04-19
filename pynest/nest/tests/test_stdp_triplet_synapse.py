@@ -28,8 +28,8 @@ import numpy as np
 
 
 @nest.ll_api.check_stack
-class STDPTripletConnectionTestCase(unittest.TestCase):
-    """Check stdp_triplet_connection model properties."""
+class STDPTripletSynapseTestCase(unittest.TestCase):
+    """Check stdp_triplet_synapse model properties."""
 
     def setUp(self):
         nest.set_verbosity('M_WARNING')
@@ -42,7 +42,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         self.syn_spec = {
             "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
-            # set receptor 1 post-synaptically, to not generate extra spikes
+            # set receptor 1 postsynaptically, to not generate extra spikes
             "receptor_type": 1,
             "weight": 5.0,
             "tau_plus": 16.8,
@@ -129,7 +129,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         badPropertyWith("Kplus_triplet", {"Kplus_triplet": -1.0})
 
     def test_varsZeroAtStart(self):
-        """Check that pre- and post-synaptic variables are zero at start."""
+        """Check that pre- and postsynaptic variables are zero at start."""
         self.assertAlmostEqualDetailed(
             0.0, self.status("Kplus"), "Kplus should be zero")
         self.assertAlmostEqualDetailed(0.0, self.status(
@@ -175,7 +175,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
     def test_preVarsDecayAfterPostSpike(self):
         """Check that pre-synaptic variables (Kplus, Kplus_triplet) decay
-        after each post-synaptic spike."""
+        after each postsynaptic spike."""
 
         self.generateSpikes(self.pre_neuron, [2.0])
         self.generateSpikes(self.post_neuron, [3.0, 4.0])
@@ -297,7 +297,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
 
 @nest.ll_api.check_stack
-class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
+class STDPTripletInhTestCase(STDPTripletSynapseTestCase):
 
     def setUp(self):
         nest.set_verbosity('M_WARNING')
@@ -310,7 +310,7 @@ class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
         self.syn_spec = {
             "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
-            # set receptor 1 post-synaptically, to not generate extra spikes
+            # set receptor 1 postsynaptically, to not generate extra spikes
             "receptor_type": 1,
             "weight": -5.0,
             "tau_plus": 16.8,
@@ -340,7 +340,7 @@ def suite_inh():
 
 
 def suite():
-    return unittest.makeSuite(STDPTripletConnectionTestCase, "test")
+    return unittest.makeSuite(STDPTripletSynapseTestCase, "test")
 
 
 def run():

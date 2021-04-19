@@ -39,9 +39,6 @@ from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
 __all__ = [
-    'CGConnect',
-    'CGParse',
-    'CGSelectImplementation',
     'Connect',
     'Disconnect',
     'GetConnections',
@@ -63,7 +60,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
         pre-synaptic neurons are returned
     target : NodeCollection, optional
         Target node IDs, only connections to these
-        post-synaptic neurons are returned
+        postsynaptic neurons are returned
     synapse_model : str, optional
         Only connections with this synapse type are returned
     synapse_label : int, optional
@@ -123,7 +120,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Connect `pre` nodes to `post` nodes.
 
     Nodes in `pre` and `post` are connected using the specified connectivity
-    (`all-to-all` by default) and synapse type (:cpp:class:`static_synapse <nest::StaticConnection>` by default).
+    (`all-to-all` by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
     Details depend on the connectivity rule.
 
     Parameters
@@ -174,7 +171,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     **Synapse specification (syn_spec)**
 
     The synapse model and its properties can be given either as a string
-    identifying a specific synapse model (default: :cpp:class:`static_synapse <nest::StaticConnection>`) or
+    identifying a specific synapse model (default: :cpp:class:`static_synapse <nest::static_synapse>`) or
     as a dictionary specifying the synapse model and its parameters.
 
     Available keys in the synapse specification dictionary are::
@@ -192,7 +189,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     synapse model, this can be one of NEST's built-in synapse models
     or a user-defined model created via :py:func:`.CopyModel`.
 
-    If `synapse_model` is not specified the default model :cpp:class:`static_synapse <nest::StaticConnection>`
+    If `synapse_model` is not specified the default model :cpp:class:`static_synapse <nest::static_synapse>`
     will be used.
 
     Distributed parameters can be defined through NEST's different parametertypes. NEST has various
@@ -224,6 +221,12 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
         if processed_syn_spec is None:
             raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
                              "be specified and contain at least the synapse model.")
+
+        # In case of misspelling
+        if "weights" in processed_syn_spec:
+            raise ValueError("To specify weights, use 'weight' in syn_spec.")
+        if "delays" in processed_syn_spec:
+            raise ValueError("To specify delays, use 'delay' in syn_spec.")
 
         weights = numpy.array(processed_syn_spec['weight']) if 'weight' in processed_syn_spec else None
         delays = numpy.array(processed_syn_spec['delay']) if 'delay' in processed_syn_spec else None
@@ -286,120 +289,11 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
 
 @check_stack
-def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
-    """Connect neurons using the Connection Generator Interface.
-
-    Potential pre-synaptic neurons are taken from `pre`, potential
-    post-synaptic neurons are taken from `post`. The connection
-    generator `cg` specifies the exact connectivity to be set up. The
-    `parameter_map` can either be None or a dictionary that maps the
-    keys `weight` and `delay` to their integer indices in the value
-    set of the connection generator.
-
-    This function is only available if NEST was compiled with
-    support for libneurosim.
-
-    For further information, see
-
-    * The NEST documentation on using the CG Interface at
-      https://www.nest-simulator.org/connection-generator-interface
-    * The GitHub repository and documentation for libneurosim at
-      https://github.com/INCF/libneurosim/
-    * The publication about the Connection Generator Interface at
-      https://doi.org/10.3389/fninf.2014.00043
-
-    Parameters
-    ----------
-    pre : NodeCollection
-        node IDs of presynaptic nodes
-    post : NodeCollection
-        node IDs of postsynaptic nodes
-    cg : connection generator
-        libneurosim connection generator to use
-    parameter_map : dict, optional
-        Maps names of values such as weight and delay to
-        value set positions
-    model : str, optional
-        Synapse model to use
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    sr("statusdict/have_libneurosim ::")
-    if not spp():
-        raise kernel.NESTError("NEST was not compiled with support for libneurosim: CGConnect is not available.")
-
-    if parameter_map is None:
-        parameter_map = {}
-
-    sli_func('CGConnect', cg, pre, post, parameter_map, '/' + model,
-             litconv=True)
-
-
-@check_stack
-def CGParse(xml_filename):
-    """Parse an XML file and return the corresponding connection
-    generator cg.
-
-    The library to provide the parsing can be selected
-    by :py:func:`.CGSelectImplementation`.
-
-    Parameters
-    ----------
-    xml_filename : str
-        Filename of the xml file to parse.
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    sr("statusdict/have_libneurosim ::")
-    if not spp():
-        raise kernel.NESTError("NEST was not compiled with support for libneurosim: CGParse is not available.")
-
-    sps(xml_filename)
-    sr("CGParse")
-    return spp()
-
-
-@check_stack
-def CGSelectImplementation(tag, library):
-    """Select a library to provide a parser for XML files and associate
-    an XML tag with the library.
-
-    XML files can be read by :py:func:`.CGParse`.
-
-    Parameters
-    ----------
-    tag : str
-        XML tag to associate with the library
-    library : str
-        Library to use to parse XML files
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    sr("statusdict/have_libneurosim ::")
-    if not spp():
-        raise kernel.NESTError(
-            "NEST was not compiled with support for libneurosim: CGSelectImplementation is not available.")
-
-    sps(tag)
-    sps(library)
-    sr("CGSelectImplementation")
-
-
-@check_stack
 def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     """Disconnect `pre` neurons from `post` neurons.
 
     Neurons in `pre` and `post` are disconnected using the specified disconnection
-    rule (one-to-one by default) and synapse type (:cpp:class:`static_synapse <nest::StaticConnection>` by default).
+    rule (one-to-one by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
     Details depend on the disconnection rule.
 
     Parameters
@@ -435,7 +329,7 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
     `syn_spec` is given as a non-empty dictionary, the 'synapse_model' parameter must be
     present.
 
-    If no synapse model is specified the default model :cpp:class:`static_synapse <nest::StaticConnection>`
+    If no synapse model is specified the default model :cpp:class:`static_synapse <nest::static_synapse>`
     will be used.
 
     Available keys in the synapse dictionary are:

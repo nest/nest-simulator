@@ -245,7 +245,7 @@ public:
   void
   get_synapse_status( const thread tid, const index lcid, DictionaryDatum& dict ) const
   {
-    assert( lcid >= 0 and lcid < C_.size() );
+    assert( lcid < C_.size() );
 
     C_[ lcid ].get_status( dict );
 

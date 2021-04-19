@@ -97,8 +97,8 @@ spike, it is essential to chose a sufficiently long refractory period.
 Traub and Miles used :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
 :math:`t_{ref} = 2` ms in [2]_.
 
-Post-synaptic currents
-Incoming spike events induce a post-synaptic change of conductance modelled by a
+Postsynaptic currents
+Incoming spike events induce a postsynaptic change of conductance modelled by a
 beta function as outlined in [4]_ [5]_. The beta function is normalized such that an
 event of weight 1.0 results in a peak current of 1 nS at :math:`t = \tau_{rise,xx}`
 where xx is ex or in.
@@ -172,7 +172,7 @@ hh_psc_alpha_gap, hh_cond_exp_traub, gap_junction, iaf_cond_beta
 
 EndUserDocs */
 
-class hh_cond_beta_gap_traub : public Archiving_Node
+class hh_cond_beta_gap_traub : public ArchivingNode
 {
 
 public:
@@ -471,7 +471,7 @@ hh_cond_beta_gap_traub::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
@@ -490,7 +490,7 @@ hh_cond_beta_gap_traub::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

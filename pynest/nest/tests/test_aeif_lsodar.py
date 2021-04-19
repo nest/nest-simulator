@@ -33,7 +33,7 @@ import nest
 """
 Comparing the new implementations the aeif models to the reference solution
 obrained using the LSODAR solver (see
-``doc/model_details/aeif_models_implementation.ipynb``). Also asserting that
+``doc/userdoc/model_details/aeif_models_implementation.ipynb``). Also asserting that
 the ``Delta_T == 0.`` solution works by comparing the non-adaptive aeif to the
 iaf model.
 

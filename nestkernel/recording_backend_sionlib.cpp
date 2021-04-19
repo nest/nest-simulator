@@ -71,7 +71,7 @@ nest::RecordingBackendSIONlib::finalize()
 }
 
 void
-nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const DictionaryDatum& )
 {
   const thread t = device.get_thread();
   const thread node_id = device.get_node_id();
@@ -619,7 +619,7 @@ nest::RecordingBackendSIONlib::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib& al, DictionaryDatum& d ) const
+nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&, DictionaryDatum& d ) const
 {
   ( *d )[ names::filename ] = filename_;
   ( *d )[ names::buffer_size ] = buffer_size_;
@@ -629,7 +629,7 @@ nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib& 
 }
 
 void
-nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib& al, const DictionaryDatum& d )
+nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&, const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::filename, filename_ );
   updateValue< long >( d, names::buffer_size, buffer_size_ );

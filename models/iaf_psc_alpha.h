@@ -47,7 +47,7 @@ Description
 
 iaf_psc_alpha is an implementation of a leaky integrate-and-fire model
 with alpha-function shaped synaptic currents. Thus, synaptic currents
-and the resulting post-synaptic potentials have a finite rise time.
+and the resulting postsynaptic potentials have a finite rise time.
 
 The threshold crossing is followed by an absolute refractory period
 during which the membrane potential is clamped to the resting potential.
@@ -88,12 +88,13 @@ relevant measures analytically.
    matrix objects.
 
 .. note::
-   If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-   will numerically behave as if tau_m is equal to tau_syn_ex or
-   tau_syn_in, respectively, to avoid numerical instabilities.
-   For details, please see
-   <https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_
-   in the NEST source code (docs/model_details).
+
+   If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+   will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+   `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+   For implementation details see the
+   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 Parameters
 ++++++++++
@@ -147,7 +148,7 @@ iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
 EndUserDocs */
 
-class iaf_psc_alpha : public Archiving_Node
+class iaf_psc_alpha : public ArchivingNode
 {
 
 public:
@@ -281,7 +282,7 @@ private:
   {
 
     /** Amplitude of the synaptic current.
-        This value is chosen such that a post-synaptic potential with
+        This value is chosen such that a postsynaptic potential with
         weight one has an amplitude of 1 mV.
      */
     double EPSCInitialValue_;
@@ -401,7 +402,7 @@ iaf_psc_alpha::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -418,7 +419,7 @@ iaf_psc_alpha::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

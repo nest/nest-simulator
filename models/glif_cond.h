@@ -54,7 +54,7 @@ Description
 
 glif_cond provides five generalized leaky integrate
 and fire (GLIF) models [1]_ with conductance-based synapses.
-Incoming spike events induce a post-synaptic change of conductance modeled
+Incoming spike events induce a postsynaptic change of conductance modeled
 by an alpha function [2]_. The alpha function is normalized such that an event
 of weight 1.0 results in a peak conductance change of 1 nS at t = tau_syn. On
 the postsynaptic side, there can be arbitrarily many synaptic time constants.
@@ -196,7 +196,7 @@ namespace nest
 
 extern "C" int glif_cond_dynamics( double, const double*, double*, void* );
 
-class glif_cond : public nest::Archiving_Node
+class glif_cond : public nest::ArchivingNode
 {
 public:
   glif_cond();
@@ -479,7 +479,7 @@ glif_cond::get_status( DictionaryDatum& d ) const
   S_.get( d, P_ );
 
   // get information managed by parent class
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ nest::names::recordables ] = recordablesMap_.get_list();
 }
@@ -492,7 +492,7 @@ glif_cond::set_status( const DictionaryDatum& d )
   State_ stmp = S_;                      // temporary copy in case of errors
   stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
 
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   /*
    * Here is where we must update the recordablesMap_ if new receptors

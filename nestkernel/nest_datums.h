@@ -35,6 +35,12 @@
 // Includes from sli:
 #include "aggregatedatum.h"
 #include "sharedptrdatum.h"
+#include "slitype.h"
+
+#ifdef HAVE_LIBNEUROSIM
+#include <neurosim/connection_generator.h>
+typedef sharedPtrDatum< ConnectionGenerator, &nest::NestModule::ConnectionGeneratorType > ConnectionGeneratorDatum;
+#endif
 
 typedef AggregateDatum< nest::ConnectionID, &nest::NestModule::ConnectionType > ConnectionDatum;
 typedef sharedPtrDatum< nest::NodeCollection, &nest::NestModule::NodeCollectionType > NodeCollectionDatum;

@@ -24,6 +24,12 @@ perform operations that were not possible in previous versions.
 What's new?
 -----------
 
+NEST Server
+~~~~~~~~~~~
+
+NEST 3.0 allows you to start a server which interacts with NEST Simulator.
+Please check out the :doc:`NEST Server guide <../nest_server>` to learn more.
+
 .. _nodeid:
 
 New functionality for node handles (neurons and devices)

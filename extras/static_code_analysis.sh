@@ -26,7 +26,7 @@
 # a local static code analysis.
 #
 # NOTE: This shell script is tightly coupled to Python script
-#       'extras/parse_travis_log.py'.
+#       'extras/parse_build_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) have effects on
 #       the build/test-log parsing process.
 #

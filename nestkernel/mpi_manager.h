@@ -161,11 +161,6 @@ public:
   void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
   void communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer );
 
-  /*
-   * Maximum across all ranks
-   */
-  void communicate_Allreduce_max_in_place( std::vector< long >& buffer );
-
   std::string get_processor_name();
 
   bool is_mpi_used();

@@ -237,10 +237,7 @@ sr = nest.Create('spike_recorder', n_pg)
 nest.Connect(prrt_nrns_pg, sr, {'rule': 'one_to_one'})
 
 nest.Simulate(pattern_duration)
-t_srs = []
-for i, ssr in enumerate(nest.GetStatus(sr)):
-    t_sr = ssr['events']['times']
-    t_srs.append(t_sr)
+t_srs = [ssr.get('events', 'times') for ssr in sr]
 
 nest.ResetKernel()
 nest.SetKernelStatus({'resolution': resolution})
@@ -306,27 +303,26 @@ for i in np.arange(n_rep_total):
 read out devices
 '''
 # multimeter
-rec = nest.GetStatus(mm)[0]['events']
-t = rec['times']
-V_s = rec['V_m.s']
-V_d = rec['V_m.p']
+mm_events = mm.events
+t = mm_events['times']
+V_s = mm_events['V_m.s']
+V_d = mm_events['V_m.p']
 V_d_star = V_w_star(V_d, nrn_params)
-g_in = rec['g_in.s']
-g_ex = rec['g_ex.s']
-I_ex = rec['I_ex.p']
-I_in = rec['I_in.p']
+g_in = mm_events['g_in.s']
+g_ex = mm_events['g_ex.s']
+I_ex = mm_events['I_ex.p']
+I_in = mm_events['I_in.p']
 U_M = matching_potential(g_ex, g_in, nrn_params)
 
 # weight recorder
-data = nest.GetStatus(wr)
-senders = data[0]['events']['senders']
-targets = data[0]['events']['targets']
-weights = data[0]['events']['weights']
-times = data[0]['events']['times']
+wr_events = wr.events
+senders = wr_events['senders']
+targets = wr_events['targets']
+weights = wr_events['weights']
+times = wr_events['times']
 
 # spike recorder
-data = nest.GetStatus(sr_soma)[0]['events']
-spike_times_soma = data['times']
+spike_times_soma = sr_soma.get('events', 'times')
 
 '''
 plot results

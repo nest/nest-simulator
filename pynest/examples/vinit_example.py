@@ -60,8 +60,7 @@ import matplotlib.pyplot as plt
 # Then, a simulation with a duration of 75 ms is started with ``Simulate``.
 #
 # When the simulation has finished, the recorded times and membrane voltages
-# are read from the voltmeter via ``GetStatus`` where they can be accessed
-# through the key ``events`` of the status dictionary.
+# are read from the voltmeter via ``get``.
 #
 # Finally, the time course of the membrane voltages is plotted for each of
 # the different inital values.

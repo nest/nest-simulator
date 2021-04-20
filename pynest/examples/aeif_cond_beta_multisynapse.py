@@ -52,9 +52,8 @@ nest.Connect(voltmeter, neuron)
 
 nest.Simulate(1000.0)
 
-dmm = nest.GetStatus(voltmeter)[0]
-Vms = dmm["events"]["V_m"]
-ts = dmm["events"]["times"]
+Vms = voltmeter.get("events", "V_m")
+ts = voltmeter.get("events", "times")
 
 # import pylab
 # pylab.figure(2)

@@ -65,34 +65,11 @@ class STDPSynapseTest(unittest.TestCase):
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):
         if True:
             pre_spikes, post_spikes, t_weight_by_nest, weight_by_nest = self.do_the_nest_simulation()
+            print("For model to be tested:")
+            print("\tpre_spikes = " + str(pre_spikes))
+            print("\tpost_spikes = " + str(post_spikes))
 
-            import matplotlib.pyplot as plt
-
-            fig, ax = plt.subplots(nrows=3)
-            ax1, ax3, ax2 = ax
-
-            n_spikes = len(pre_spikes)
-            for i in range(n_spikes):
-                ax1.plot(2 * [pre_spikes[i]], [0, 1], linewidth=2, color="blue", alpha=.4)
-
-            n_spikes = len(post_spikes)
-            for i in range(n_spikes):
-                ax3.plot(2 * [post_spikes[i]], [0, 1], linewidth=2, color="red", alpha=.4)
-
-            ax2.plot(t_weight_by_nest, weight_by_nest, marker="o", label="nestml")
-            #ax2.plot(t_hist, w_hist_ref, linestyle="--", marker="x", label="ref")
-
-            ax2.set_xlabel("Time [ms]")
-            ax1.set_ylabel("Pre spikes")
-            ax3.set_ylabel("Post spikes")
-            ax2.set_ylabel("w")
-            ax2.legend()
-            for _ax in ax:
-                _ax.grid(which="major", axis="both")
-                _ax.grid(which="minor", axis="x", linestyle=":", alpha=.4)
-                _ax.minorticks_on()
-                _ax.set_xlim(0., self.simulation_duration)
-            fig.savefig("/tmp/nest_stdp_synapse_test" + fname_snip + ".png", dpi=300)
+            self.plot_weight_evolution(pre_spikes, post_spikes, t_weight_by_nest, weight_by_nest, fname_snip=fname_snip, title_snip=self.nest_neuron_model + " (NEST)")
 
             t_weight_reproduced_independently, weight_reproduced_independently = self.reproduce_weight_drift(
                 pre_spikes, post_spikes,
@@ -189,7 +166,7 @@ class STDPSynapseTest(unittest.TestCase):
         all_spikes = nest.GetStatus(spike_recorder, keys='events')[0]
         pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[0]]
         post_spikes = all_spikes['times'][all_spikes['senders'] == postsynaptic_neuron.tolist()[0]]
-        import pdb;pdb.set_trace()
+
         t_hist = nest.GetStatus(wr, "events")[0]["times"]
         weight = nest.GetStatus(wr, "events")[0]["weights"]
 
@@ -254,7 +231,6 @@ class STDPSynapseTest(unittest.TestCase):
 
         while t < self.simulation_duration:
             print("t = " + str(t))
-
 
             idx_next_pre_spike = -1
             if np.where((pre_spikes - t) > 0)[0].size > 0:
@@ -322,38 +298,45 @@ class STDPSynapseTest(unittest.TestCase):
             w_log.append(weight)
             Kpre_log.append(Kpre)
 
-        if True:
-            import matplotlib.pyplot as plt
+        Kpost_log = [Kpost_at_time(t - self.dendritic_delay, post_spikes, init=self.init_weight) for t in t_log]
+        self.plot_weight_evolution(pre_spikes, post_spikes, t_log, w_log, Kpre_log, Kpost_log, fname_snip=fname_snip + "_ref", title_snip="Reference")
+        
+        return t_log, w_log
 
-            fig, ax = plt.subplots(nrows=3)
+    def plot_weight_evolution(self, pre_spikes, post_spikes, t_log, w_log, Kpre_log=None, Kpost_log=None, fname_snip="", title_snip=""):
+        import matplotlib.pyplot as plt
 
-            n_spikes = len(pre_spikes)
-            for i in range(n_spikes):
-                ax[0].plot(2 * [pre_spikes[i]], [0, 1], linewidth=2, color="blue", alpha=.4)
-            ax[0].set_ylabel("Pre spikes")
-            ax0_ = ax[0].twinx()
+        fig, ax = plt.subplots(nrows=3)
+
+        n_spikes = len(pre_spikes)
+        for i in range(n_spikes):
+            ax[0].plot(2 * [pre_spikes[i]], [0, 1], linewidth=2, color="blue", alpha=.4)
+        ax[0].set_ylabel("Pre spikes")
+        ax0_ = ax[0].twinx()
+        if Kpre_log:
             ax0_.plot(t_log, Kpre_log)
 
-            n_spikes = len(post_spikes)
-            for i in range(n_spikes):
-                ax[1].plot(2 * [post_spikes[i]], [0, 1], linewidth=2, color="red", alpha=.4)
-            ax1_ = ax[1].twinx()
-            ax[1].set_ylabel("Post spikes")
-            Kpost_log = [Kpost_at_time(t - self.dendritic_delay, post_spikes, init=self.init_weight) for t in t_log]
+        n_spikes = len(post_spikes)
+        for i in range(n_spikes):
+            ax[1].plot(2 * [post_spikes[i]], [0, 1], linewidth=2, color="red", alpha=.4)
+        ax1_ = ax[1].twinx()
+        ax[1].set_ylabel("Post spikes")
+        if Kpost_log:
             ax1_.plot(t_log, Kpost_log)
 
-            ax[2].plot(t_log, w_log, marker="o", label="nestml")
-            ax[2].set_ylabel("w")
+        ax[2].plot(t_log, w_log, marker="o", label="nestml")
+        ax[2].set_ylabel("w")
 
-            ax[2].set_xlabel("Time [ms]")
-            for _ax in ax:
-                _ax.grid(which="major", axis="both")
-                _ax.grid(which="minor", axis="x", linestyle=":", alpha=.4)
-                _ax.minorticks_on()
-                _ax.set_xlim(0., self.simulation_duration)
-            fig.savefig("/tmp/nest_stdp_synapse_test" + fname_snip + "_ref.png", dpi=300)
+        ax[2].set_xlabel("Time [ms]")
+        for _ax in ax:
+            _ax.grid(which="major", axis="both")
+            _ax.grid(which="minor", axis="x", linestyle=":", alpha=.4)
+            _ax.minorticks_on()
+            _ax.set_xlim(0., self.simulation_duration)
 
-        return t_log, w_log
+        fig.suptitle(title_snip)
+        fig.savefig("/tmp/nest_stdp_synapse_test" + fname_snip + ".png", dpi=300)
+        import pdb;pdb.set_trace()
 
 
     def test_stdp_synapse(self):
@@ -362,8 +345,8 @@ class STDPSynapseTest(unittest.TestCase):
         for self.dendritic_delay in [1., self.resolution]:
             self.init_params()
             for self.nest_neuron_model in ["iaf_psc_exp",
-                                       "iaf_cond_exp"]:
-                                       # "iaf_psc_exp_ps"]:
+                                       "iaf_cond_exp",
+                                       "iaf_psc_exp_ps"]:
                 fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
                 self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
 

@@ -48,9 +48,7 @@ if ( NOT CYTHON_EXECUTABLE STREQUAL "CYTHON_EXECUTABLE-NOTFOUND" )
   )
   if ( RESULT EQUAL 0 )
     if ( "${CYTHON_VAR_OUTPUT}" STREQUAL "" )
-      # If `cython --version` stdout is empty but the
-      # return code is 0 (no error), Cython might have
-      # printed to stderr instead.
+      # In cython v0.29.3 the version string is written to stderr and not to stdout, as one would expect.
       set( CYTHON_VAR_OUTPUT "${CYTHON_ERR_OUTPUT}" )
     endif()
     string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+(\\.[0-9]+)?).*" "\\1"

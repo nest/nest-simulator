@@ -43,7 +43,7 @@ voltmeter = nest.Create('voltmeter')
 delays = [1.0, 300.0, 500.0, 700.0]
 w = [1.0, 1.0, 1.0, 1.0]
 for syn in range(4):
-    nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+    nest.Connect(spike, neuron, syn_spec={'synapse_model': 'static_synapse',
                                           'receptor_type': 1 + syn,
                                           'weight': w[syn],
                                           'delay': delays[syn]})

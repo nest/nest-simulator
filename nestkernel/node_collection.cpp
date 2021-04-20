@@ -298,7 +298,7 @@ NodeCollectionPTR NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) co
 {
   if ( not valid() or not rhs->valid() )
   {
-    throw KernelException( "InvalidNodeCollection" );
+    throw KernelException( "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
   if ( rhs->empty() )
   {
@@ -407,7 +407,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive::slice( size_t start, size_t st
   }
   if ( not valid() )
   {
-    throw KernelException( "InvalidNodeCollection" );
+    throw KernelException( "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
   NodeCollectionPTR sliced_nc;
@@ -596,7 +596,7 @@ NodeCollectionPTR NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) co
   }
   if ( not valid() or not rhs->valid() )
   {
-    throw KernelException( "InvalidNodeCollection" );
+    throw KernelException( "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
   if ( step_ > 1 or stop_part_ != 0 or stop_offset_ != 0 )
   {
@@ -767,7 +767,7 @@ NodeCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
   }
   if ( not valid() )
   {
-    throw KernelException( "InvalidNodeCollection" );
+    throw KernelException( "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
   auto new_composite = NodeCollectionComposite( *this, start, stop, step );

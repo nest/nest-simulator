@@ -19,7 +19,7 @@ If you want to add or modify documentation, make sure to read through this guide
 
 We have templates for :doc:`Python example scripts <pyapi_template>` and the :doc:`PyNEST API docstrings <example_template>`.
 
-You will also need to know how to build the documentation locally on your machine:
+You will also need to know how to build the documentation locally on your machine: See
 :doc:`../../documentation_workflow/user_documentation_workflow`.
 
 For additional information, including the Git workflow and making a pull request see :doc:`../index`
@@ -76,9 +76,9 @@ possibly the NEST team).
 The language we use
 ~~~~~~~~~~~~~~~~~~~
 
-We follow spelling and grammar rules of American English.
+We follow spelling and grammar rules of `American English <https://www.merriam-webster.com/>`_.
 
-The markup language we use is reStructuredText. This includes documentation
+The markup language we use is :ref:`reStructuredText <sec-reST_style>`. This includes documentation
 blocks in files written in Python and cpp.
 
 We avoid slang or jargon that is unnecessary or could be confusing to readers.
@@ -98,14 +98,15 @@ Prefer the active voice, where the subject acts on object.
 If the object needs emphasis rather than subject, use passive voice. But ensure
 that you cannot improve the sentence by using the active voice.
 
+.. _sec-reST_style:
 
 reStructuredText markup and formatting
 --------------------------------------
 
-reStructuredText is a plain text markup language and parser. It is the default language of the Sphinx documentaiton
+reStructuredText is a plain text markup language and parser. It is the default language of the Sphinx documentation
 generator, which NEST uses for generating documentation.
 
-reStructuredText uses directives, which are blocks of explicit markup used for math, images, code, admonitions and much
+reStructuredText uses directives, which are blocks of explicit markup used for math, images, code, admonitions, and much
 more. The syntax looks like this ``.. directive-name::``. The directive content follows after a blank line and is indented
 relative to the directive start.
 
@@ -140,6 +141,7 @@ NumPy style docstrings
 In PyNEST code, we follow the rules for NumPy style docstrings as
 `explained here <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
 
+If you're contributing to the :doc:`PyNEST API <example_template>`, make sure you carefully read the NumPy guide.
 
 Code and code snippets
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -169,16 +171,12 @@ Code is rendered as
             }
 
 
-For Python examples that show input and output use the following syntax
-
-::
+For Python examples that show input and output use the following syntax::
 
    >>> input begins with 3, right-angled brackets
    output is directly below input without any brackets. A blank line must end the example.
 
-For in-text code use the role :code: or double back ticks.
-
-::
+For in-text code use the role :code: or double back ticks::
 
    ``cout << "Hello, World!`` or
    :code:`cout << "Hello, World!"`
@@ -217,7 +215,7 @@ For in-text math, use the math role::
 
    Now we can see :math:`x=1` for this example.
 
-This will be rendered as
+These will be rendered as
 
    Now we can see :math:`x=1` for this example.
 
@@ -240,9 +238,7 @@ Use the admonition
 * "Danger" if the situation may cause severe, possibly irreversible, problems.
 
 
-If you want a custom admonition use
-
-::
+If you want a custom admonition use::
 
    .. admonition:: custom label
 
@@ -259,18 +255,14 @@ Rendered as
 References
 ~~~~~~~~~~
 
-For referencing reStructuredText files in the repository, use the ``:doc:`` role. It requires the relative path to
-the file.
-
-::
+For referencing reStructuredText files within the documentation, use the ``:doc:`` role. It requires the relative path to
+the file::
 
    :doc:`path/to/file`
 
 In this case, the link caption will be the title of the given document.
 
-You can specify the text you want to use for the link by doing the following
-
-::
+You can specify the text you want to use for the link by doing the following::
 
    :doc:`custom label <path/file>`
 
@@ -283,9 +275,7 @@ This will be rendered as
 For cross-referencing specific section headings, figures, or other arbitrary places within file, use the ``:ref:`` role.
 
 The ``:ref:`` role requires a reference label that looks like this ``.. _ref-label:``. Each reference label must be unique
-in the documentation. Separate the reference label from the text it is referecing with a new line.
-
-::
+in the documentation. Separate the reference label from the text it is referecing with a new line::
 
    .. _my-ref-label:
 
@@ -297,9 +287,7 @@ in the documentation. Separate the reference label from the text it is referecin
 
 
 To reference figures or arbitrary places in a file, you must include a custom
-name in the reference for it to work.
-
-::
+label in the reference for it to work::
 
     :ref:`custom label <my-arbitrary-place-label>`
 
@@ -323,8 +311,8 @@ Rendered as
 
    :py:func:`.Create`
 
+Classes, methods etc. can also be linked: ``:py:class:`` ``:py:meth:``.
 If you want to explictly show a complete function call, like ``nest.Create("iaf_psc_apha")``, the link cannot be used.
-Classes, methods etc. can also be linked in this way.
 
 .. note::
 
@@ -338,20 +326,18 @@ Classes, methods etc. can also be linked in this way.
 Links to glossary
 ^^^^^^^^^^^^^^^^^
 
-To link terms to the glossary page use the HoverXTooltip role :hxt_ref: from Mahdi Enan (INM-6)
-
-::
+To link terms to the glossary page use the HoverXTooltip role :hxt_ref: from Mahdi Enan (INM-6)::
 
   :hxt_ref:`E_L`
 
 Links to certain external projects
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To link to external projects related to NEST that also use Sphinx/ReadtheDocs (e.g., PyNN, Elephant, nestml), you can
-reference labels (``:ref:``) or documents (``:doc:``) the same way as in your local project. You only need the addition
-of the intersphinx unique identifer to the reference, which looks like
-this ``:doc:`custom label <unique-identifier:filename>```. (See section in userdoc/conf.py "intersphinx_mapping" to
-see which projects are currently included).
+With the Sphinx extension 'intersphinx', projects that also use Sphinx/ReadtheDocs can be referenced the same way as
+your local project. You can use the reference label role (``:ref:``), document role (``:doc:``), and Python role
+(``:py:func:``, ``:py:class:``). You only need to add the intersphinx unique identifer to the reference, which
+looks like this ``:doc:`custom label <unique-identifier:filename>```. See section in userdoc/conf.py "intersphinx_mapping" to
+see which projects are currently included along with their unique identifier.
 
 Examples of syntax::
 
@@ -372,7 +358,7 @@ Examples of syntax::
 Bibliography style
 ------------------
 
-The reStructuredText reference style is used throughout documentation so links
+The reStructuredText bibliography style is used throughout documentation so links
 are autogenerated and a consistent format is used.
 
 For in-text citations, we use the reStructuredText numeric style ``[1]_``.
@@ -384,18 +370,18 @@ For example:
 
 Please ensure your reference follows the following guidelines:
 
-* References with more than five authors use 'et al.'.
-* Surname precedes first name for all authors
-* No comma follows surname
-* Use initials for first name of authors
-* Year follows author(s), in parentheses
-* Full stop after every section of bibliography.
-* No formatting such as italics, bold, or underline.
-* Article titles written in sentence case
-* Full title of journal
-* Volume, can be optionally followed by issue in parentheses, a colon
-  separates volume and page range.
-* Include a linked DOI, if available
+*  Do not add formatting markup such as italics, bold, or underline.
+*  Use a period after every section of bibliography.
+*  Use et al. for references with more than five authors.
+*  Put surname before first name for all authors.
+*  Do not put commas after surname.
+*  Use inital for first name of all authors.
+*  Put year, in parentheses, after authors.
+*  Write article titles in sentence case.
+*  Write the full title of journal.
+*  Insert a colon between volume and page-range.
+*  Add issue in parentheses after volume (optional).
+*  Include a linked DOI, if available.
 
 .. code-block:: none
 
@@ -427,10 +413,11 @@ In general, we try to follow the pattern of
 "Double quotes"
 ~~~~~~~~~~~~~~~
 
-We use double quotes for strings in code, for example
-(nest.Create("iaf_psc_alpha")).
+We use double quotes for strings in code, for example,  ``nest.Create("iaf_psc_alpha")``. This applies to
+reStructuredText files as well as Python and C++ code. This rule is based on PEP 257, which (only) dictates the use of
+double quotes in triple quoted strings; for consistency, double quotes are used throughout the codebase.
 
-Double or single quotes should not be used as an emphasis marker for text.
+Double or single quotes should not be used to emphasize important concepts in the text.
 
 
 \``Double backticks\``
@@ -462,11 +449,9 @@ Use single backticks for
 but use double backticks when showing a complete example of variable with
 assigned value (e.g., \``volt = 37.0``)
 
-An example:
+An example::
 
-::
-
-   Here we use the ``Create`` function to instantiate our model, in this case
+   Here we use the ``nest.Create()`` function to instantiate our model, in this case
    ``iaf_psc_alpha``. We can modify the parameter `V_m` and set the value to
    `50.0`.
 
@@ -482,7 +467,7 @@ Rendered as
 
 If you want to emphasize a word or phrase in text, you can use **strong emphasis**.
 
-Boldface should only be used in exceptional cases when overlooking the emphasized text could cause problems but
+Boldface should only be used in exceptional cases when overlooking the emphasized text could cause problems, but
 the text in question is too short to warrant an admonition box.
 
 How we write
@@ -539,7 +524,7 @@ The thousand separator is the comma except when showing a code example
    The number of connections is ``x = 5001``
 
 Make sure you use the correct unit (e.g., millivolts for voltage) and the
-unit's symbol (`V_m`).
+unit's symbol (`mV`).
 
 Lists
 ~~~~~
@@ -563,7 +548,7 @@ to the remainder of the sentence.
 Pronouns
 ~~~~~~~~
 
-Use the pronouns "you" and "we" whenever possible.
+Use the pronouns "you" (reader) and "we" (NEST) whenever possible.
 
 Avoid the pronoun "I".
 
@@ -617,7 +602,7 @@ Capitalization
 
 Capitalize first word of heading, but use lower case for the rest.
 
-Capitalize first word in bullet.
+Capitalize first word in bullet/numbered list.
 
 Capitalize proper nouns and follow company policy in naming conventions
 (e.g., macOS, LaTeX, Python, NumPy, NEST).

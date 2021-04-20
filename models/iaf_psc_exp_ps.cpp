@@ -334,8 +334,8 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long from, const long to
       // update membrane potential
       if ( not S_.is_refractory_ )
       {
-        S_.y2_ =
-          V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.y1_ex_ + V_.P21_in_ * S_.y1_in_ + S_.y2_ * V_.exp_tau_m_;
+        S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.y1_ex_ + V_.P21_in_ * S_.y1_in_
+          + std::expm1( -V_.h_ms_ / P_.tau_m_ ) * S_.y2_ + S_.y2_;
 
         // lower bound of membrane potential
         S_.y2_ = ( S_.y2_ < P_.U_min_ ? P_.U_min_ : S_.y2_ );

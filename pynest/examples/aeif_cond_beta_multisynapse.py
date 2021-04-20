@@ -28,6 +28,7 @@ aeif_cond_beta_multisynapse
 
 import nest
 import numpy as np
+import matplotlib.pyplot as plt
 
 neuron = nest.Create('aeif_cond_beta_multisynapse')
 nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b": 80.5})
@@ -55,7 +56,5 @@ nest.Simulate(1000.0)
 Vms = voltmeter.get("events", "V_m")
 ts = voltmeter.get("events", "times")
 
-# import pylab
-# pylab.figure(2)
-# pylab.plot(ts, Vms)
-# pylab.show()
+plt.plot(ts, Vms)
+plt.show()

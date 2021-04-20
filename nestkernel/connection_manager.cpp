@@ -550,7 +550,7 @@ nest::ConnectionManager::connect( const index snode_id,
 }
 
 void
-connect_arrays( long* sources,
+nest::ConnectionManager::connect_arrays( long* sources,
   long* targets,
   double* weights,
   double* delays,
@@ -560,7 +560,7 @@ connect_arrays( long* sources,
   std::string syn_model )
 {
   // only place, where stopwatch sw_construction_connect is needed in addition to nestmodule.cpp
-  kernel().connection_manager.sw_construction_connect.start();
+  sw_construction_connect.start();
 
   // Mapping pointers to the first parameter value of each parameter to their respective names.
   std::map< Name, double* > param_pointers;
@@ -680,7 +680,7 @@ connect_arrays( long* sources,
           }
         }
 
-        kernel().connection_manager.connect(
+        connect(
           *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
 
         ALL_ENTRIES_ACCESSED( *param_dicts[ tid ], "connect_arrays", "Unread dictionary entries: " );
@@ -703,7 +703,7 @@ connect_arrays( long* sources,
     }
   }
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  sw_construction_connect.stop();
 }
 
 void

@@ -120,7 +120,7 @@ Requirements and limitations
 
 * Assumes a suitable compiler (GCC/Clang/etc.) is installed.
 * Assumes CMake version 3.15 or newer is installed.
-* C++ debugging assumes GDB is installed.
+* C++ debugging assumes GDB is installed if on Linux, and Xcode and LLDB is installed if on macOS.
 * Debugging C++ from VS Code is only possible with a SLI script. It is probably possible to launch
   the Python debugger, then attach a C++ debugging instance to that process, but that is left
   as an exercise for the reader.
@@ -182,8 +182,8 @@ Building NEST
 Running and debugging
 ~~~~~~~~~~~~~~~~~~~~~
 
-Writing a Python script and running NEST
-########################################
+Running a NEST Python script
+############################
 
 The steps below give a rough guide to how you can run a NEST Python script. For more detailed
 documentation on working with Python in VS Code, see the
@@ -237,7 +237,7 @@ documentation on C++ debugging in VS Code, see the
 
    * selecting **Add configuration...** from the dropdown menu, or
    * clicking the ``Create a launch.json file`` link, if the ``launch.json`` doesn't exist
-#. Choose the template for ``C/C++ (gdb) launch`` and
+#. Choose the template for ``C/C++ (gdb) launch`` (or ``C/C++ (lldb) launch`` if on macOS) and
 
    * change the entry for ``program`` to ``"${workspaceFolder}/../build/install/bin/nest"``
    * add ``"${file}"`` to the ``args`` list

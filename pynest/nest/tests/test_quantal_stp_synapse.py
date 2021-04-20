@@ -86,7 +86,7 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         nest.Connect(voltmeter[1:], neuron[1:])
 
         for t in range(n_trials):
-            t_net = nest.GetKernelStatus('time')
+            t_net = nest.GetKernelStatus('biological_time')
             nest.SetStatus(source, {'origin': t_net})
             nest.Simulate(t_tot)
 

@@ -414,8 +414,8 @@ class NodeCollection(object):
         Parameters
         ----------
         params : str or dict or list
-            Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `NodeCollection`.
+            Dictionary of parameters (either lists or single values) or list of dictionaries of parameters
+            of same length as the `NodeCollection`.
         kwargs : keyword argument pairs
             Named arguments of parameters of the elements in the `NodeCollection`.
 
@@ -647,6 +647,10 @@ class SynapseCollection(object):
         MAX_SIZE_FULL_PRINT = 35  # 35 is arbitrarily chosen.
 
         params = self.get()
+
+        if len(params) == 0:
+            return 'The synapse collection does not contain any connections.'
+
         srcs = params['source']
         trgt = params['target']
         wght = params['weight']
@@ -683,9 +687,9 @@ class SynapseCollection(object):
             s_model = s_model[:15] + [u'\u22EE '] + s_model[-15:]
 
         headers = f'{src_h:^{src_len}} {trg_h:^{trg_len}} {sm_h:^{sm_len}} {w_h:^{w_len}} {d_h:^{d_len}}' + '\n'
-        boarders = '-'*src_len + ' ' + '-'*trg_len + ' ' + '-'*sm_len + ' ' + '-'*w_len + ' ' + '-'*d_len + '\n'
+        borders = '-'*src_len + ' ' + '-'*trg_len + ' ' + '-'*sm_len + ' ' + '-'*w_len + ' ' + '-'*d_len + '\n'
         output = '\n'.join(format_row_(s, t, sm, w, d) for s, t, sm, w, d in zip(srcs, trgt, s_model, wght, dlay))
-        result = headers + boarders + output
+        result = headers + borders + output
 
         return result
 
@@ -826,8 +830,8 @@ class SynapseCollection(object):
         Parameters
         ----------
         params : str or dict or list
-            Dictionary of parameters or list of dictionaries of parameters of
-            same length as the `SynapseCollection`.
+            Dictionary of parameters (either lists or single values) or list of dictionaries of parameters
+            of same length as `SynapseCollection`.
         kwargs : keyword argument pairs
             Named arguments of parameters of the elements in the `SynapseCollection`.
 

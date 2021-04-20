@@ -131,6 +131,8 @@ private:
     std::vector< std::pair< Position< D >, index > >* positions_;
   };
 
+  void extract_params_( const DictionaryDatum&, std::vector< DictionaryDatum >& );
+
   template < typename Iterator, int D >
   void connect_to_target_( Iterator from,
     Iterator to,
@@ -167,11 +169,9 @@ private:
   std::shared_ptr< AbstractMask > mask_;
   std::shared_ptr< Parameter > kernel_;
   std::vector< index > synapse_model_;
+  std::vector< std::vector< DictionaryDatum > > param_dicts_;
   std::vector< std::shared_ptr< Parameter > > weight_;
   std::vector< std::shared_ptr< Parameter > > delay_;
-
-  //! Empty dictionary to pass to connect functions, one per thread
-  std::vector< DictionaryDatum > dummy_param_dicts_;
 };
 
 } // namespace nest

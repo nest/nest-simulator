@@ -79,7 +79,7 @@ Description
 +++++++++++
 
 aeif_cond_exp is the adaptive exponential integrate and fire neuron
-according to Brette and Gerstner (2005), with post-synaptic
+according to Brette and Gerstner (2005), with postsynaptic
 conductances in the form of truncated exponentials.
 
 This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
@@ -101,6 +101,9 @@ and
 Note that the spike detection threshold V_peak is automatically set to
 :math:`V_th+10 mV` to avoid numerical instabilites that may result from
 setting V_peak too high.
+
+For implementation details see the
+`aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
 Parameters:
 +++++++++++++
@@ -182,7 +185,7 @@ iaf_cond_exp, aeif_cond_alpha
 
 EndUserDocs */
 
-class aeif_cond_exp : public Archiving_Node
+class aeif_cond_exp : public ArchivingNode
 {
 
 public:
@@ -248,7 +251,6 @@ private:
     double a;          //!< Subthreshold adaptation in nS
     double b;          //!< Spike-triggered adaptation in pA
     double V_th;       //!< Spike threshold in mV
-    double t_ref;      //!< Refractory period in ms
     double tau_syn_ex; //!< Excitatory synaptic kernel decay time in ms
     double tau_syn_in; //!< Inhibitory synaptic kernel decay time in ms
     double I_e;        //!< Intrinsic current in pA
@@ -419,7 +421,7 @@ aeif_cond_exp::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -436,7 +438,7 @@ aeif_cond_exp::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

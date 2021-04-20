@@ -63,7 +63,7 @@ nest.ResetKernel()
 
 ###############################################################################
 # First we set the random seed, adjust the kernel settings and create
-# ``hh_psc_alpha_gap`` neurons, ``spike_detector`` and ``poisson_generator``.
+# ``hh_psc_alpha_gap`` neurons, ``spike_recorder`` and ``poisson_generator``.
 
 numpy.random.seed(1)
 
@@ -81,7 +81,7 @@ nest.SetKernelStatus({'resolution': 0.05,
 
 neurons = nest.Create('hh_psc_alpha_gap', n_neuron)
 
-sd = nest.Create("spike_detector")
+sr = nest.Create("spike_recorder")
 pg = nest.Create("poisson_generator", params={'rate': 500.0})
 
 ###############################################################################
@@ -109,10 +109,10 @@ nest.Connect(pg, neurons, 'all_to_all',
                        'delay': delay})
 
 ###############################################################################
-# Then the neurons are connected to the ``spike_detector`` and the initial
+# Then the neurons are connected to the ``spike_recorder`` and the initial
 # membrane potential of each neuron is set randomly between -40 and -80 mV.
 
-nest.Connect(neurons, sd)
+nest.Connect(neurons, sr)
 
 neurons.V_m = nest.random.uniform(min=-80., max=-40.)
 
@@ -142,9 +142,9 @@ for source_node_id, target_node_id in connections:
 
 nest.Simulate(simtime)
 
-times = sd.get('events', 'times')
-spikes = sd.get('events', 'senders')
-n_spikes = sd.n_events
+times = sr.get('events', 'times')
+spikes = sr.get('events', 'senders')
+n_spikes = sr.n_events
 
 hz_rate = (1000.0 * n_spikes / simtime) / n_neuron
 

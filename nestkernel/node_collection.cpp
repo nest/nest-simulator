@@ -274,14 +274,6 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
   model_id_ = first_model_id;
 }
 
-NodeCollectionPrimitive::NodeCollectionPrimitive( const NodeCollectionPrimitive& rhs )
-  : first_( rhs.first_ )
-  , last_( rhs.last_ )
-  , model_id_( rhs.model_id_ )
-  , metadata_( rhs.metadata_ )
-{
-}
-
 NodeCollectionPrimitive::NodeCollectionPrimitive()
   : first_( 0 )
   , last_( 0 )
@@ -418,14 +410,21 @@ NodeCollectionPrimitive::NodeCollectionPrimitive::slice( size_t start, size_t st
     throw KernelException( "InvalidNodeCollection" );
   }
 
+  NodeCollectionPTR sliced_nc;
   if ( step == 1 )
   {
-    return NodeCollectionPTR( new NodeCollectionPrimitive( first_ + start, first_ + stop - 1, model_id_, metadata_ ) );
+    sliced_nc = std::make_shared< NodeCollectionPrimitive >( first_ + start, first_ + stop - 1, model_id_, metadata_ );
   }
   else
   {
-    return NodeCollectionPTR( new NodeCollectionComposite( *this, start, stop, step ) );
+    sliced_nc = std::make_shared< NodeCollectionComposite >( *this, start, stop, step );
   }
+  if ( metadata_ )
+  {
+    metadata_->slice( start, stop, step, sliced_nc );
+  }
+
+  return sliced_nc;
 }
 
 void

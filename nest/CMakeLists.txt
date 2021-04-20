@@ -49,7 +49,7 @@ else ()
     set_target_properties( nest_lib
         PROPERTIES
         OUTPUT_NAME nest
-        
+
         # delay lookup of symbols from libpython when building with MPI4Py
         LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup"
         )
@@ -60,7 +60,7 @@ target_link_libraries( nest
     ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} OpenMP::OpenMP_CXX )
 
 target_link_libraries( nest_lib
-    nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} 
+    nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
     OpenMP::OpenMP_CXX )
 
 target_include_directories( nest PRIVATE
@@ -86,7 +86,7 @@ target_include_directories( nest_lib PRIVATE
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${SLI_MODULE_INCLUDE_DIRS}
-    ${PYTHON_INCLUDE_DIRS}
+    ${Python_INCLUDE_DIRS}
     )
 
 

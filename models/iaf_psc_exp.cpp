@@ -213,7 +213,7 @@ nest::iaf_psc_exp::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_exp::iaf_psc_exp()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -222,7 +222,7 @@ nest::iaf_psc_exp::iaf_psc_exp()
 }
 
 nest::iaf_psc_exp::iaf_psc_exp( const iaf_psc_exp& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -245,7 +245,7 @@ nest::iaf_psc_exp::init_buffers_()
 {
   B_.input_buffer_.clear(); // includes resize
   B_.logger_.reset();
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void

@@ -34,7 +34,7 @@ try:
     tmp_fig = plt.figure()  # make sure we can open a window; DISPLAY may not be set
     plt.close(tmp_fig)
     PLOTTING_POSSIBLE = True
-except:
+except ImportError:
     PLOTTING_POSSIBLE = False
 
 try:
@@ -120,67 +120,67 @@ class VisualizationTestCase(unittest.TestCase):
         nest.voltage_trace.from_file(filename)
         self.voltage_trace_verify(device)
 
-    def spike_detector_data_setup(self, to_file=False):
+    def spike_recorder_data_setup(self, to_file=False):
         nest.ResetKernel()
         pg = nest.Create('poisson_generator', {'rate': 1000.})
-        sd = nest.Create('spike_detector')
+        sr = nest.Create('spike_recorder')
         if to_file:
             parrot = nest.Create('parrot_neuron')
-            sd_to_file = nest.Create('spike_detector')
-            sd_to_file.record_to = 'ascii'
+            sr_to_file = nest.Create('spike_recorder')
+            sr_to_file.record_to = 'ascii'
             nest.Connect(pg, parrot)
-            nest.Connect(parrot, sd)
-            nest.Connect(parrot, sd_to_file)
+            nest.Connect(parrot, sr)
+            nest.Connect(parrot, sr_to_file)
             nest.Simulate(100)
-            return sd, sd_to_file
+            return sr, sr_to_file
         else:
             nest.Simulate(100)
-            return sd
+            return sr
 
-    def spike_detector_raster_verify(self, sd_ref):
+    def spike_recorder_raster_verify(self, sr_ref):
         self.assertIsNotNone(plt._pylab_helpers.Gcf.get_active(), 'No active figure')
         fig = plt.gcf()
         axs = fig.get_axes()
         x_data, y_data = axs[0].lines[0].get_data()
         plt.close(fig)
         # Have to use isclose() because of round-off errors
-        self.assertEqual(x_data.shape, sd_ref.shape)
-        self.assertTrue(all(np.isclose(x_data, sd_ref)))
+        self.assertEqual(x_data.shape, sr_ref.shape)
+        self.assertTrue(all(np.isclose(x_data, sr_ref)))
 
     @unittest.skipIf(not PLOTTING_POSSIBLE, 'Plotting impossible because matplotlib or display missing')
     def test_raster_plot(self):
         """Test raster_plot"""
         import nest.raster_plot as nraster
 
-        sd, sd_to_file = self.spike_detector_data_setup(to_file=True)
-        spikes = sd.get('events')
-        sd_ref = spikes['times']
+        sr, sr_to_file = self.spike_recorder_data_setup(to_file=True)
+        spikes = sr.get('events')
+        sr_ref = spikes['times']
 
         # Test from_device
-        nest.raster_plot.from_device(sd)
-        self.spike_detector_raster_verify(sd_ref)
+        nest.raster_plot.from_device(sr)
+        self.spike_recorder_raster_verify(sr_ref)
 
         # Test from_data
         data = np.zeros([len(spikes['senders']), 2])
         data[:, 0] = spikes['senders']
         data[:, 1] = spikes['times']
         nest.raster_plot.from_data(data)
-        self.spike_detector_raster_verify(sd_ref)
+        self.spike_recorder_raster_verify(sr_ref)
 
         # Test from_file
-        filename = sd_to_file.filenames[0]
+        filename = sr_to_file.filenames[0]
         self.filenames.append(filename)
         nest.raster_plot.from_file(filename)
-        self.spike_detector_raster_verify(sd_ref)
+        self.spike_recorder_raster_verify(sr_ref)
 
         # Test from_file_numpy
         nest.raster_plot.from_file_numpy([filename])
-        self.spike_detector_raster_verify(sd_ref)
+        self.spike_recorder_raster_verify(sr_ref)
 
         if HAVE_PANDAS:
             # Test from_file_pandas
             nest.raster_plot.from_file_pandas([filename])
-            self.spike_detector_raster_verify(sd_ref)
+            self.spike_recorder_raster_verify(sr_ref)
 
         # Test extract_events
         all_extracted = nest.raster_plot.extract_events(data)

@@ -172,7 +172,7 @@ public:
    * different receptor types. Otherwise identical to non-hpc version.
    *
    * When called, this function should be specialised by a class template,
-   * e.g. `BernoulliConnection< targetidentifierT >`
+   * e.g. `bernoulli_synapse< targetidentifierT >`
    *
    * @param name The name under which the ConnectorModel will be registered.
    */
@@ -270,7 +270,7 @@ public:
 
 private:
   /**  */
-  void clear_models_( bool called_from_destructor = false );
+  void clear_models_();
 
   /**  */
   void clear_prototypes_();

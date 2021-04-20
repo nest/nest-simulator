@@ -57,11 +57,11 @@ class PpPscDeltaTestCase(unittest.TestCase):
 
         nest.SetStatus(nrn, params)
 
-        sd = nest.Create('spike_detector')
-        nest.Connect(nrn, sd)
+        sr = nest.Create('spike_recorder')
+        nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sd)[0]['events']['times']
+        spikes = nest.GetStatus(sr)[0]['events']['times']
         rate_sim = len(spikes) / (T * 1e-3)
         rate_ana = 1. / (1. / lam + d * 1e-3)
         ratio = rate_sim / rate_ana
@@ -105,11 +105,11 @@ class PpPscDeltaTestCase(unittest.TestCase):
 
         nest.SetStatus(nrn, params)
 
-        sd = nest.Create('spike_detector')
-        nest.Connect(nrn, sd)
+        sr = nest.Create('spike_recorder')
+        nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sd)[0]['events']['times']
+        spikes = nest.GetStatus(sr)[0]['events']['times']
         rate_sim = len(spikes) / (T * 1e-3)
         rate_ana = 1. / (1. / lam + d * 1e-3)
         ratio = rate_sim / rate_ana
@@ -164,11 +164,11 @@ class PpPscDeltaTestCase(unittest.TestCase):
 
         nest.SetStatus(nrn, params)
 
-        sd = nest.Create('spike_detector')
-        nest.Connect(nrn, sd)
+        sr = nest.Create('spike_recorder')
+        nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sd)[0]['events']['times']
+        spikes = nest.GetStatus(sr)[0]['events']['times']
 
         # This could fail due to bad luck. However, if it passes once,
         # then it should always do so, since the random numbers are

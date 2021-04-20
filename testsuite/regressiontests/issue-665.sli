@@ -98,7 +98,7 @@ assert_or_die
 
 % -----------------------------------------------
 
-% Second set of tests: Neuron layer to single detector
+% Second set of tests: Neuron layer to single recorder
 /layer_to_det_test
 {
   /connspec Set
@@ -111,14 +111,14 @@ assert_or_die
      /shape [ 2 2 ] >>
   CreateLayer def
 
-  /sdl
-  << /elements /spike_detector
+  /srl
+  << /elements /spike_recorder
      /shape [ 1 1 ] >>
   CreateLayer def
 
-  nnl sdl connspec ConnectLayers
+  nnl srl connspec ConnectLayers
 
-  /tgt sdl [1] Take def
+  /tgt srl [1] Take def
   /srcs nnl def
 
   /conns << /target tgt >> GetConnections def

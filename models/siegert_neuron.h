@@ -29,6 +29,8 @@
 
 // C includes:
 #include <gsl/gsl_integration.h>
+#include <gsl/gsl_sf_dawson.h>
+#include <gsl/gsl_sf_erf.h>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -66,6 +68,13 @@ external input.
 The model supports connections to other rate models with zero
 delay, and uses the secondary_event concept introduced with the
 gap-junction framework.
+
+Remarks:
+
+For details on the numerical solution of the Siegert integral, you can
+check out the `Siegert_neuron_integration
+<../model_details/siegert_neuron_integration.ipynb>`_
+notebook in the NEST source code.
 
 Parameters
 ++++++++++
@@ -128,7 +137,7 @@ diffusion_connection
 
 EndUserDocs */
 
-class siegert_neuron : public Archiving_Node
+class siegert_neuron : public ArchivingNode
 {
 
 public:
@@ -175,10 +184,8 @@ private:
   void update( Time const&, const long, const long );
   bool wfr_update( Time const&, const long, const long );
 
-  // siegert functions and helpers
+  // siegert function
   double siegert( double, double );
-  double siegert1( double, double, double, double );
-  double siegert2( double, double, double, double );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< siegert_neuron >;
@@ -332,7 +339,7 @@ siegert_neuron::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -348,7 +355,7 @@ siegert_neuron::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

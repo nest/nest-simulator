@@ -47,13 +47,14 @@ Short description
 +++++++++++++++++
 
 Current-based leaky integrate-and-fire neuron with alpha-shaped
-post-synaptic currents - canonical implementation of precise spike
+postsynaptic currents - canonical implementation of precise spike
 timing version
 
 Description
 +++++++++++
 
 .. note::
+
    This model is deprecated and will be removed in NEST 3.
    Please use ``iaf_psc_alpha_ps`` instead.
 
@@ -80,11 +81,21 @@ performance given an accuracy goal; see [1]_ for details. Subthreshold
 dynamics are integrated using exact integration between events [2]_.
 
 .. note::
+
    Please note that this node is capable of sending precise spike
    times to target nodes (on-grid spike time plus offset).
 
    A further improvement of precise simulation is implemented in
    iaf_psc_exp_ps based on [3]_.
+
+.. note::
+
+   If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+   will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+   `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+   For implementation details see the
+   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 Parameters
 ++++++++++
@@ -110,21 +121,13 @@ Remarks
 +++++++
 
 This model transmits precise spike times to target nodes (on-grid spike
-time and offset). If this node is connected to a spike_detector, the
-property "precise_times" of the spike_detector has to be set to true in
+time and offset). If this node is connected to a spike_recorder, the
+property "precise_times" of the spike_recorder has to be set to true in
 order to record the offsets in addition to the on-grid spike times.
 
 The iaf_psc_delta_ps neuron accepts connections transmitting
 CurrentEvents. These events transmit stepwise-constant currents which
 can only change at on-grid times.
-
-If tau_m is very close to tau_syn, the model will numerically behave as
-if tau_m is equal to tau_syn, to avoid numerical instabilities.
-For details, please check out the `IAF neurons singularity
-<https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_ notebook.
-
-A further improvement of precise simulation is implemented in iaf_psc_exp_ps
-based on [3]_.
 
 For details about exact subthreshold integration, please see
 :doc:`../guides/exact-integration`.
@@ -160,7 +163,7 @@ iaf_psc_alpha_ps, iaf_psc_alpha, iaf_psc_alpha_presc, iaf_psc_exp_ps
 
 EndUserDocs */
 
-class iaf_psc_alpha_canon : public Archiving_Node
+class iaf_psc_alpha_canon : public ArchivingNode
 {
 public:
   /** Basic constructor.
@@ -510,7 +513,7 @@ iaf_psc_alpha_canon::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -527,7 +530,7 @@ iaf_psc_alpha_canon::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

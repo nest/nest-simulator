@@ -107,6 +107,9 @@ and the differential equation for the spike-adaptation current w is:
 
 When the neuron fires a spike, the adaptation current w <- w + b.
 
+For implementation details see the
+`aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+
 Parameters
 ++++++++++
 
@@ -173,7 +176,7 @@ aeif_cond_alpha_multisynapse
 
 EndUserDocs */
 
-class aeif_cond_beta_multisynapse : public Archiving_Node
+class aeif_cond_beta_multisynapse : public ArchivingNode
 {
 
 public:
@@ -428,7 +431,7 @@ aeif_cond_beta_multisynapse::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }

@@ -47,15 +47,15 @@ M_ERROR setverbosity
   
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
   /n  /iaf_psc_delta_ps Create def
-  /sd /spike_detector Create def
+  /sr /spike_recorder Create def
   
   sg n 100. 1.0 /cont_delay_synapse Connect
-  n sd Connect
+  n sr Connect
   
   10 Simulate
   
   % expected output spike times: 3.0, 6.5
-  sd /events get /times get cva [ 3.0 6.5 ] eq
+  sr /events get /times get cva [ 3.0 6.5 ] eq
 }
 assert_or_die
 
@@ -67,16 +67,16 @@ assert_or_die
   
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
   /n  /iaf_psc_delta_ps Create def
-  /sd /spike_detector Create def
+  /sr /spike_recorder Create def
   
   /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
   sg n << >> /cont_delay_synapse Connect
-  n sd Connect
+  n sr Connect
   
   10 Simulate
   
   % expected output spike times: 3.7, 7.2
-  sd /events get /times get cva [ 3.7 7.2 ] eq
+  sr /events get /times get cva [ 3.7 7.2 ] eq
 }
 assert_or_die
 
@@ -88,19 +88,19 @@ assert_or_die
   
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
   /n  /iaf_psc_delta_ps Create def
-  /sd /spike_detector Create def
+  /sr /spike_recorder Create def
   
   sg n 100. 1.0 /cont_delay_synapse Connect
   << /source sg /synapse_model /cont_delay_synapse >> GetConnections
      { << /delay 1.7 >> SetStatus } 
   forall
 
-  n sd Connect
+  n sr Connect
   
   10 Simulate
   
   % expected output spike times: 3.7, 7.2
-  sd /events get /times get cva [ 3.7 7.2 ] eq
+  sr /events get /times get cva [ 3.7 7.2 ] eq
 }
 assert_or_die
 

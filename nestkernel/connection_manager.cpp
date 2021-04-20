@@ -67,6 +67,7 @@ nest::ConnectionManager::ConnectionManager()
   , max_delay_( 1 )
   , keep_source_table_( true )
   , have_connections_changed_()
+  , has_get_connections_been_called_( false )
   , sort_connections_by_source_( true )
   , has_primary_connections_( false )
   , check_primary_connections_()
@@ -98,6 +99,8 @@ nest::ConnectionManager::initialize()
   check_primary_connections_.initialize( num_threads, false );
   check_secondary_connections_.initialize( num_threads, false );
 
+  set_has_get_connections_been_called( false );
+
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
@@ -118,6 +121,8 @@ nest::ConnectionManager::initialize()
   // The following line is executed by all processes, no need to communicate
   // this change in delays.
   min_delay_ = max_delay_ = 1;
+
+  sw_construction_connect.reset();
 }
 
 void
@@ -178,6 +183,8 @@ nest::ConnectionManager::get_status( DictionaryDatum& dict )
   def< long >( dict, names::num_connections, n );
   def< bool >( dict, names::keep_source_table, keep_source_table_ );
   def< bool >( dict, names::sort_connections_by_source, sort_connections_by_source_ );
+
+  def< double >( dict, names::time_construction_connect, sw_construction_connect.elapsed() );
 }
 
 DictionaryDatum
@@ -335,10 +342,10 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
 {
   const size_t rule_id = connruledict_->lookup( name );
-  return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_spec );
+  return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
 }
 
 void
@@ -354,7 +361,7 @@ void
 nest::ConnectionManager::connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
 {
   if ( sources->empty() )
   {
@@ -366,7 +373,11 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   }
 
   conn_spec->clear_access_flags();
-  syn_spec->clear_access_flags();
+
+  for ( auto syn_params : syn_specs )
+  {
+    syn_params->clear_access_flags();
+  }
 
   if ( not conn_spec->known( names::rule ) )
   {
@@ -381,12 +392,15 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 
   const long rule_id = ( *connruledict_ )[ rule_name ];
 
-  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_spec );
+  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
   assert( cb != 0 );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
-  ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries in syn_spec: " );
+  for ( auto syn_params : syn_specs )
+  {
+    ALL_ENTRIES_ACCESSED( *syn_params, "Connect", "Unread dictionary entries in syn_spec: " );
+  }
 
   cb->connect();
   delete cb;
@@ -548,7 +562,7 @@ nest::ConnectionManager::connect_( Node& s,
   const bool is_primary = kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary();
 
   if ( kernel().model_manager.connector_requires_clopath_archiving( syn_id )
-    and not dynamic_cast< Clopath_Archiving_Node* >( &r ) )
+    and not dynamic_cast< ClopathArchivingNode* >( &r ) )
   {
     throw NotImplemented(
       "This synapse model is not supported by the neuron model of at least one "
@@ -746,7 +760,7 @@ nest::ConnectionManager::get_num_connections( const synindex syn_id ) const
 }
 
 ArrayDatum
-nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
+nest::ConnectionManager::get_connections( const DictionaryDatum& params )
 {
   std::deque< ConnectionID > connectome;
   const Token& source_t = params->lookup( names::source );
@@ -824,6 +838,8 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params ) const
     result.push_back( ConnectionDatum( connectome.front() ) );
     connectome.pop_front();
   }
+
+  set_has_get_connections_been_called( true );
 
   return result;
 }
@@ -1172,8 +1188,6 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
   source_table_.compute_buffer_pos_for_unique_secondary_sources( tid, buffer_pos_of_source_node_id_syn_id_ );
   secondary_recv_buffer_pos_[ tid ].resize( connections_[ tid ].size() );
 
-  const size_t chunk_size_secondary_events_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
-
   const synindex syn_id_end = connections_[ tid ].size();
   for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {
@@ -1195,8 +1209,8 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
           const index sg_s_id = source_table_.pack_source_node_id_and_syn_id( source_node_id, syn_id );
           const thread source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_node_id );
 
-          positions[ lcid ] =
-            buffer_pos_of_source_node_id_syn_id_[ sg_s_id ] + chunk_size_secondary_events_in_int * source_rank;
+          positions[ lcid ] = buffer_pos_of_source_node_id_syn_id_[ sg_s_id ]
+            + kernel().mpi_manager.get_recv_displacement_secondary_events_in_int( source_rank );
         }
       }
     }
@@ -1354,10 +1368,10 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
   // Read waveform relaxation done marker from last position in every
   // chunk
   bool done = true;
-  const size_t chunk_size_in_int = kernel().mpi_manager.get_chunk_size_secondary_events_in_int();
   for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
-    done = done and recv_buffer[ ( rank + 1 ) * chunk_size_in_int - 1 ];
+    done =
+      done and recv_buffer[ kernel().mpi_manager.get_done_marker_position_in_secondary_events_recv_buffer( rank ) ];
   }
   return done;
 }
@@ -1425,9 +1439,14 @@ nest::ConnectionManager::set_have_connections_changed( const thread tid )
   // performance issues on supercomputers.
   if ( have_connections_changed_[ tid ].is_false() )
   {
-    std::string msg =
-      "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
-    LOG( M_WARNING, "ConnectionManager", msg );
+    if ( has_get_connections_been_called_ )
+    {
+      std::string msg =
+        "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
+      LOG( M_WARNING, "ConnectionManager", msg );
+      // Reset the has_get_connections_been_called_ flag because we have updated connections.
+      set_has_get_connections_been_called( false );
+    }
     have_connections_changed_[ tid ].set_true();
   }
 }

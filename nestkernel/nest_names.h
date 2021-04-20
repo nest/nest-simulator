@@ -23,6 +23,9 @@
 #ifndef NEST_NAMES_H
 #define NEST_NAMES_H
 
+// Generated includes:
+#include "config.h"
+
 // Includes from sli:
 #include "name.h"
 
@@ -96,9 +99,9 @@ extern const Name azimuth_angle;
 extern const Name b;
 extern const Name beta;
 extern const Name beta_Ca;
+extern const Name biological_time;
 extern const Name box;
 extern const Name buffer_size;
-extern const Name buffer_size_secondary_events;
 extern const Name buffer_size_spike_data;
 extern const Name buffer_size_target_data;
 
@@ -316,6 +319,8 @@ extern const Name music_channel;
 extern const Name N;
 extern const Name NMDA;
 extern const Name N_channels;
+extern const Name N_NaP;
+extern const Name N_T;
 extern const Name n;
 extern const Name n_events;
 extern const Name n_messages;
@@ -393,6 +398,7 @@ extern const Name recording_backends;
 extern const Name rectangular;
 extern const Name rectify_output;
 extern const Name rectify_rate;
+extern const Name recv_buffer_size_secondary_events;
 extern const Name refractory_input;
 extern const Name registered;
 extern const Name relative_amplitude;
@@ -410,8 +416,10 @@ extern const Name S_act_NMDA;
 extern const Name scale;
 extern const Name sdev;
 extern const Name senders;
+extern const Name send_buffer_size_secondary_events;
 extern const Name shape;
 extern const Name shift_now_spikes;
+extern const Name shrink_factor_buffer_spike_data;
 extern const Name sigma;
 extern const Name sigmoid;
 extern const Name sion_chunksize;
@@ -433,6 +441,7 @@ extern const Name state;
 extern const Name std;
 extern const Name std_mod;
 extern const Name stimulator;
+extern const Name step;
 extern const Name stop;
 extern const Name structural_plasticity_synapses;
 extern const Name structural_plasticity_update_interval;
@@ -440,6 +449,7 @@ extern const Name synapse_id;
 extern const Name synapse_label;
 extern const Name synapse_model;
 extern const Name synapse_modelid;
+extern const Name synapse_parameters;
 extern const Name synapses_per_driver;
 extern const Name synaptic_elements;
 extern const Name synaptic_elements_param;
@@ -529,10 +539,20 @@ extern const Name threshold_spike;
 extern const Name threshold_voltage;
 extern const Name tics_per_ms;
 extern const Name tics_per_step;
-extern const Name time;
-extern const Name time_collocate;
-extern const Name time_communicate;
+#ifdef TIMER_DETAILED
+extern const Name time_collocate_spike_data;
+extern const Name time_communicate_spike_data;
+extern const Name time_communicate_target_data;
+extern const Name time_deliver_spike_data;
+extern const Name time_gather_spike_data;
+extern const Name time_gather_target_data;
+extern const Name time_update;
+#endif
+extern const Name time_communicate_prepare;
+extern const Name time_construction_connect;
+extern const Name time_construction_create;
 extern const Name time_in_steps;
+extern const Name time_simulate;
 extern const Name times;
 extern const Name to_do;
 extern const Name total_num_virtual_procs;
@@ -597,7 +617,6 @@ extern const Name y_1;
 
 extern const Name z;
 extern const Name z_connected;
-
 } // namespace names
 
 } // namespace nest

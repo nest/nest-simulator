@@ -50,7 +50,7 @@ ResetKernel
 d SetKernelStatus
 << /resolution h >> SetKernelStatus
 
-/spike_detector Create /sp Set   
+/spike_recorder Create /sp Set   
  
 /poisson_generator_ps Create /pn Set
 pn << /rate 10000.0 >> SetStatus

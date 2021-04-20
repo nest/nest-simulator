@@ -115,7 +115,6 @@ nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode
 nest::aeif_psc_delta::Parameters_::Parameters_()
   : V_peak_( 0.0 )    // mV
   , V_reset_( -60.0 ) // mV
-  , t_ref_( 0.0 )     // ms
   , g_L( 30.0 )       // nS
   , C_m( 281.0 )      // pF
   , E_L( -70.6 )      // mV
@@ -124,6 +123,7 @@ nest::aeif_psc_delta::Parameters_::Parameters_()
   , a( 4.0 )          // nS
   , b( 80.5 )         // pA
   , V_th( -50.4 )     // mV
+  , t_ref_( 0.0 )     // ms
   , I_e( 0.0 )        // pA
   , gsl_error_tol( 1e-6 )
   , with_refr_input_( false )
@@ -131,7 +131,8 @@ nest::aeif_psc_delta::Parameters_::Parameters_()
 }
 
 nest::aeif_psc_delta::State_::State_( const Parameters_& p )
-  : r_( 0 )
+  : refr_spikes_buffer_( 0.0 )
+  , r_( 0 )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
@@ -141,7 +142,8 @@ nest::aeif_psc_delta::State_::State_( const Parameters_& p )
 }
 
 nest::aeif_psc_delta::State_::State_( const State_& s )
-  : r_( s.r_ )
+  : refr_spikes_buffer_( s.refr_spikes_buffer_ )
+  , r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
@@ -241,7 +243,7 @@ nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Ensure that t_ref >= 0" );
+    throw BadProperty( "Refractory time cannot be negative." );
   }
 
   if ( tau_w <= 0 )
@@ -271,6 +273,7 @@ nest::aeif_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&,
   updateValueParam< double >( d, names::w, y_[ W ], node );
 }
 
+
 nest::aeif_psc_delta::Buffers_::Buffers_( aeif_psc_delta& n )
   : logger_( n )
   , s_( 0 )
@@ -296,7 +299,7 @@ nest::aeif_psc_delta::Buffers_::Buffers_( const Buffers_&, aeif_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 nest::aeif_psc_delta::aeif_psc_delta()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -305,7 +308,7 @@ nest::aeif_psc_delta::aeif_psc_delta()
 }
 
 nest::aeif_psc_delta::aeif_psc_delta( const aeif_psc_delta& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -345,7 +348,7 @@ nest::aeif_psc_delta::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 
   B_.logger_.reset();
 
@@ -405,8 +408,6 @@ nest::aeif_psc_delta::calibrate()
   }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.refractory_counts_ >= 0 );
   // make inverse to speed up division
   V_.Delta_T_inv_ = 1. / P_.Delta_T;
   V_.C_m_inv_ = 1. / P_.C_m;

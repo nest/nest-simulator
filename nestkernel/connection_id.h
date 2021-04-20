@@ -33,9 +33,7 @@ namespace nest
 class ConnectionID
 {
 public:
-  ConnectionID()
-  {
-  }
+  ConnectionID();
   ConnectionID( long source_node_id, long target_node_id, long target_thread, long synapse_modelid, long port );
   ConnectionID( long source_node_id, long target_thread, long synapse_modelid, long port );
   ConnectionID( const ConnectionID& );
@@ -57,6 +55,15 @@ protected:
   long synapse_modelid_;
   long port_;
 };
+
+inline ConnectionID::ConnectionID()
+  : source_node_id_( -1 )
+  , target_node_id_( -1 )
+  , target_thread_( -1 )
+  , synapse_modelid_( -1 )
+  , port_( -1 )
+{
+}
 
 inline ConnectionID::ConnectionID( const ConnectionID& cid )
   : source_node_id_( cid.source_node_id_ )

@@ -33,7 +33,7 @@
 % Expected output
 % 
 % The output send to std::cout is a superposition of the output of  
-% the voltmeter and the spike detector. Both, voltmeter and spike 
+% the voltmeter and the spike recorder. Both, voltmeter and spike 
 % detector are connected to the same neuron. 
 %
 % 3-tensor of correlation functions
@@ -63,7 +63,7 @@ def
 /sg3 /spike_generator Create def
 
 /csd /correlospinmatrix_detector Create def
-/sd /spike_detector Create def
+/sr /spike_recorder Create def
 
 csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus
 
@@ -72,7 +72,7 @@ sg2 << /spike_times [15. 15. 20.] >> SetStatus  % binary pulse starting at 15. e
 
 sg1 GetStatus info
 
-sg1 sd << >> << /receptor_type 0 >> Connect
+sg1 sr << >> << /receptor_type 0 >> Connect
 
 % one final event needed so that last down transition will be detected
 sg3 << /spike_times [25.] >> SetStatus

@@ -49,12 +49,21 @@ Description
 +++++++++++
 
 iaf_psc_alpha_multisynapse is a direct extension of iaf_psc_alpha.
-On the postsynapic side, there can be arbitrarily many synaptic
+On the postsynaptic side, there can be arbitrarily many synaptic
 time constants (iaf_psc_alpha has exactly two: tau_syn_ex and tau_syn_in).
 
 This can be reached by specifying separate receptor ports, each for
 a different time constant. The port number has to match the respective
 "receptor_type" in the connectors.
+
+.. note::
+
+   If `tau_m` is very close to a synaptic time constant, the model
+   will numerically behave as if `tau_m` is equal to the synaptic
+   time constant, to avoid numerical instabilities.
+
+   For implementation details see the
+   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 Sends
 +++++
@@ -73,7 +82,7 @@ iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_exp_multisynaps
 
 EndUserDocs */
 
-class iaf_psc_alpha_multisynapse : public Archiving_Node
+class iaf_psc_alpha_multisynapse : public ArchivingNode
 {
 
 public:
@@ -340,7 +349,7 @@ iaf_psc_alpha_multisynapse::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }

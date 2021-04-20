@@ -302,7 +302,7 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d, Node* 
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Ensure that t_ref >= 0" );
+    throw BadProperty( "Refractory time cannot be negative." );
   }
 
   if ( t_clamp_ < 0 )
@@ -366,7 +366,7 @@ nest::aeif_psc_delta_clopath::Buffers_::Buffers_( const Buffers_&, aeif_psc_delt
  * ---------------------------------------------------------------- */
 
 nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath()
-  : Clopath_Archiving_Node()
+  : ClopathArchivingNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -375,7 +375,7 @@ nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath()
 }
 
 nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath( const aeif_psc_delta_clopath& n )
-  : Clopath_Archiving_Node( n )
+  : ClopathArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -415,7 +415,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
-  Clopath_Archiving_Node::clear_history();
+  ClopathArchivingNode::clear_history();
 
   B_.logger_.reset();
 
@@ -469,13 +469,9 @@ nest::aeif_psc_delta_clopath::calibrate()
   V_.V_peak_ = P_.V_peak_;
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.refractory_counts_ >= 0 );
 
   // implementation of the clamping after a spike
   V_.clamp_counts_ = Time( Time::ms( P_.t_clamp_ ) ).get_steps();
-  // since t_clamp_ >= 0, this can only fail in error
-  assert( V_.clamp_counts_ >= 0 );
 }
 
 /* ----------------------------------------------------------------
@@ -546,8 +542,8 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
       if ( S_.y_[ State_::V_M ] >= V_.V_peak_ && S_.clamp_r_ == 0 )
       {
         S_.y_[ State_::V_M ] = P_.V_clamp_;
-        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        S_.y_[ State_::Z ] = P_.I_sp;
+        S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
+        S_.y_[ State_::Z ] = P_.I_sp; // depolarizing spike afterpotential current
         S_.y_[ State_::V_TH ] = P_.V_th_max;
 
         /* Initialize clamping step counter.

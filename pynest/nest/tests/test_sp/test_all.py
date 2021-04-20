@@ -26,20 +26,11 @@ from . import test_conn_builder
 from . import test_disconnect
 from . import test_disconnect_multiple
 from . import test_enable_multithread
-from . import test_get_sp_status
 from . import test_growth_curves
-from . import test_mpitests
 from . import test_sp_manager
 from . import test_synaptic_elements
 from . import test_update_synaptic_elements
 
-
-HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
-if HAVE_MPI:
-    print("Testing with MPI")
-    from subprocess import call
-    import sys
-    import os
 
 __author__ = 'naveau'
 
@@ -51,9 +42,7 @@ def suite():
     test_suite.addTest(test_disconnect.suite())
     test_suite.addTest(test_disconnect_multiple.suite())
     test_suite.addTest(test_enable_multithread.suite())
-    test_suite.addTest(test_get_sp_status.suite())
     test_suite.addTest(test_growth_curves.suite())
-    test_suite.addTest(test_mpitests.suite())
     test_suite.addTest(test_sp_manager.suite())
     test_suite.addTest(test_synaptic_elements.suite())
     test_suite.addTest(test_update_synaptic_elements.suite())

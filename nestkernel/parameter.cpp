@@ -86,7 +86,7 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array ) c
 
 
 double
-NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
+NodePosParameter::get_node_pos_( librandom::RngPtr&, Node* node ) const
 {
   if ( not node )
   {
@@ -123,7 +123,7 @@ NodePosParameter::get_node_pos_( librandom::RngPtr& rng, Node* node ) const
   return pos[ dimension_ ];
 }
 double
-SpatialDistanceParameter::value( librandom::RngPtr& rng,
+SpatialDistanceParameter::value( librandom::RngPtr&,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
   const AbstractLayer& layer ) const

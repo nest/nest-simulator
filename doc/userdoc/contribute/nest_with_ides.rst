@@ -185,7 +185,7 @@ Running and debugging
 Writing a Python script and running NEST
 ########################################
 
-The steps below give a rough guide to how you can write and run a NEST Python script. For more detailed
+The steps below give a rough guide to how you can run a NEST Python script. For more detailed
 documentation on working with Python in VS Code, see the
 `VS Code Python tutorial <https://code.visualstudio.com/docs/python/python-tutorial>`_.
 
@@ -204,7 +204,7 @@ documentation on working with Python in VS Code, see the
 #. Open or create a Python script.
 #. When you open a Python file for the first time, VS Code will ask if you want to install a linter. It is
    recommended to install a linter, for example *Flake8*, to keep the code clean and readable.
-#. Run the script by clicking the triangle (▷) in the top right corner, or right-clicking in the editor and choosing
+#. Run the script by clicking the triangle (▷) at the top right corner, or right-clicking in the editor and choosing
    **Run Python file in Terminal**. A panel should open with a terminal showing the output.
 
 Running a NEST Python script with a Python debugger

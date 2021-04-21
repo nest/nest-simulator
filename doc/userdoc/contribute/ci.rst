@@ -34,7 +34,7 @@ The current CI implementation is defined in `.travis.yml <https://github.com/nes
 
 #. Build of NEST Simulator
 
-   To ensure that changes in the code do not increase the number of compiler warnings generated during the build, warnings are counted and compared to a hardcoded number in the function ``makebuild_summary()`` in `extras/parse_travis_log.py <https://github.com/nest/nest-simulator/blob/master/extras/parse_travis_log.py>`_. The number of counted and expected warnings is printed in the "Build report" table printed at the end of the stage. For changes that legitimately increase the number of warnings, these values should be changed as part of the pull request.
+   To ensure that changes in the code do not increase the number of compiler warnings generated during the build, warnings are counted and compared to a hardcoded number in the function ``makebuild_summary()`` in `extras/parse_build_log.py <https://github.com/nest/nest-simulator/blob/master/extras/parse_build_log.py>`_. The number of counted and expected warnings is printed in the "Build report" table printed at the end of the stage. For changes that legitimately increase the number of warnings, these values should be changed as part of the pull request.
 
    The CI builds cover both the gcc and clang compilers.
 

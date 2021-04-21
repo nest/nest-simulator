@@ -23,7 +23,7 @@
 # This shell script is part of the NEST Travis CI build and test environment.
 # It is invoked by the top-level Travis script '.travis.yml'.
 #
-# NOTE: This shell script is tightly coupled to 'extras/parse_travis_log.py'.
+# NOTE: This shell script is tightly coupled to 'extras/parse_build_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) or the variable name
 #      'file_names' have effects on the build/test-log parsing process.
 

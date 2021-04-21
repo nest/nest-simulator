@@ -38,9 +38,9 @@ and other users.
 Prerequisites
 -------------
 
-1. Download, build and install NEST. NEST should be built outside the source code directory.
+1. Download, build, and install NEST. NEST should be built outside the source code directory.
 1. The NEST source code and installation directory must be accessible for building modules.
-1. Define the environment variable ``NEST_INSTALL_DIR`` to contain the path to which you have installed NEST, e.g. using bash,
+1. Define the environment variable ``NEST_INSTALL_DIR`` to contain the path to which you have installed NEST, e.g., using bash,
 
    .. code-block:: sh
 

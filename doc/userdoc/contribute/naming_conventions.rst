@@ -1,7 +1,7 @@
-Variables and Parameter Names
+Variables and parameter Names
 =============================
 
-Conventions for Parameters
+Conventions for parameters
 --------------------------
 
 1. Do not use capitalization to indicate whether a value in the status dictionary is variable.
@@ -9,7 +9,7 @@ Conventions for Parameters
 1. Where not available, use a notation that is consistent with Dayan & Abbott.
 1. Subscripts are indicated by underscores
 
-Parameters and Symbols
+Parameters and symbols
 ----------------------
 
 +----------------------------------+-------------+
@@ -37,7 +37,7 @@ Parameters and Symbols
 | Potassium reversal potential     | E_K         |
 +----------------------------------+-------------+
 
-Common Suffixes (subscripts)
+Common suffixes (subscripts)
 ----------------------------
 
 +----------------------------------+-------------+

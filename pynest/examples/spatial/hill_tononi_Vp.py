@@ -429,8 +429,8 @@ Vp_h_layers = {}
 Vp_v_layers = {}
 for layer_name, num_layers in name_dict.items():
     for i in range(num_layers):
-        Vp_h_layers['{}_{}'.format(layer_name, i)] = nest.Create(layer_name, positions=layerGrid)
-        Vp_v_layers['{}_{}'.format(layer_name, i)] = nest.Create(layer_name, positions=layerGrid)
+        Vp_h_layers[f'{layer_name}_{i}'] = nest.Create(layer_name, positions=layerGrid)
+        Vp_v_layers[f'{layer_name}_{i}'] = nest.Create(layer_name, positions=layerGrid)
 
 
 ##############################################################################
@@ -653,8 +653,8 @@ print("Connecting: cortico-cortical, same orientation")
 for source, target, conn_spec, syn_spec in ccConnections:
     for src_i in range(name_dict[source]):
         for tgt_i in range(name_dict[target]):
-            source_name = '{}_{}'.format(source, src_i)
-            target_name = '{}_{}'.format(target, tgt_i)
+            source_name = f'{source}_{src_i}'
+            target_name = f'{target}_{tgt_i}'
             nest.Connect(Vp_h_layers[source_name], Vp_h_layers[target_name], conn_spec, syn_spec)
             nest.Connect(Vp_v_layers[source_name], Vp_v_layers[target_name], conn_spec, syn_spec)
 
@@ -663,8 +663,8 @@ print("Connecting: cortico-cortical, other orientation")
 for source, target, conn_spec, syn_spec in ccxConnections:
     for src_i in range(name_dict[source]):
         for tgt_i in range(name_dict[target]):
-            source_name = '{}_{}'.format(source, src_i)
-            target_name = '{}_{}'.format(target, tgt_i)
+            source_name = f'{source}_{src_i}'
+            target_name = f'{target}_{tgt_i}'
             nest.Connect(Vp_h_layers[source_name], Vp_v_layers[target_name], conn_spec, syn_spec)
             nest.Connect(Vp_v_layers[source_name], Vp_h_layers[target_name], conn_spec, syn_spec)
 
@@ -672,14 +672,14 @@ for source, target, conn_spec, syn_spec in ccxConnections:
 print("Connecting: cortico-thalamic")
 for source, conn_spec, syn_spec in ctConnections:
     for src_i in range(name_dict[source]):
-        source_name = '{}_{}'.format(source, src_i)
+        source_name = f'{source}_{src_i}'
         nest.Connect(Vp_h_layers[source_name], TpRelay, conn_spec, syn_spec)
         nest.Connect(Vp_h_layers[source_name], TpInter, conn_spec, syn_spec)
         nest.Connect(Vp_v_layers[source_name], TpRelay, conn_spec, syn_spec)
         nest.Connect(Vp_v_layers[source_name], TpInter, conn_spec, syn_spec)
 
 for src_i in range(name_dict['L56pyr']):
-    source_name = 'L56pyr_{}'.format(src_i)
+    source_name = f'L56pyr_{src_i}'
     nest.Connect(Vp_h_layers[source_name], Rp, corRet, corRet_syn_spec)
     nest.Connect(Vp_v_layers[source_name], Rp, corRet, corRet_syn_spec)
 
@@ -713,7 +713,7 @@ for conn in [{"targets": "L4pyr", "conn_spec": {"p": 0.5}},
     conn_spec = thalCorRect_conn_spec.copy()
     conn_spec.update(conn['conn_spec'])
     for trg_i in range(name_dict[conn['targets']]):
-        target_name = '{}_{}'.format(conn['targets'], trg_i)
+        target_name = f'{conn["targets"]}_{trg_i}'
         nest.Connect(
             TpRelay, Vp_h_layers[target_name], conn_spec, thalCorRect_syn_spec)
 
@@ -727,7 +727,7 @@ for conn in [{"targets": "L4pyr", "conn_spec": {"p": 0.5}},
     conn_spec = thalCorRect_conn_spec.copy()
     conn_spec.update(conn['conn_spec'])
     for trg_i in range(name_dict[conn['targets']]):
-        target_name = '{}_{}'.format(conn['targets'], trg_i)
+        target_name = f'{conn["targets"]}_{trg_i}'
         nest.Connect(
             TpRelay, Vp_v_layers[target_name], conn_spec, thalCorRect_syn_spec)
 
@@ -744,7 +744,7 @@ thalCorDiff_syn_spec = {"synapse_model": "AMPA",
 for conn in [{"targets": "L4pyr"},
              {"targets": "L56pyr"}]:
     for trg_i in range(name_dict[conn['targets']]):
-        target_name = '{}_{}'.format(conn['targets'], trg_i)
+        target_name = f'{conn["targets"]}_{trg_i}'
         nest.Connect(TpRelay, Vp_h_layers[target_name], thalCorDiff_conn_spec, thalCorDiff_syn_spec)
         nest.Connect(TpRelay, Vp_v_layers[target_name], thalCorDiff_conn_spec, thalCorDiff_syn_spec)
 
@@ -936,7 +936,7 @@ for t in np.arange(0, Params['simtime'], Params['sim_interval']):
 
         # update image data and title
         im.set_data(np.reshape(d, (Params['N'], Params['N'])))
-        ax.set_title(name + ', t = %6.1f ms' % nest.GetKernelStatus()['time'])
+        ax.set_title(name + f', t = {nest.GetKernelStatus("biological_time"):6.1f} ms')
 
     # We need to pause because drawing of the figure happens while the main code is sleeping
     plt.pause(0.0001)

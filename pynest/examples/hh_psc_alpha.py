@@ -59,7 +59,7 @@ amplitudes = np.zeros(n_data)
 event_freqs = np.zeros(n_data)
 for i, amp in enumerate(range(dcfrom, dcto, dcstep)):
     neuron.I_e = float(amp)
-    print("Simulating with current I={} pA".format(amp))
+    print(f"Simulating with current I={amp} pA")
     nest.Simulate(1000)  # one second warm-up time for equilibrium state
     sr.n_events = 0  # then reset spike counts
     nest.Simulate(simtime)  # another simulation call to record firing rate

@@ -200,9 +200,6 @@ nest.Simulate(simtime)
 
 v_free = vm.events['V_m']
 Nskip = 500
-print('mean membrane potential (actual / calculated): {0} / {1}'
-      .format(np.mean(v_free[Nskip:]), mu * 1000))
-print('variance (actual / calculated): {0} / {1}'
-      .format(np.var(v_free[Nskip:]), sigma2 * 1e6))
-print('firing rate (actual / calculated): {0} / {1}'
-      .format(sr.n_events / (n_neurons * simtime * ms), r))
+print(f'mean membrane potential (actual / calculated): {np.mean(v_free[Nskip:])} / {mu * 1000}')
+print(f'variance (actual / calculated): {np.var(v_free[Nskip:])} / {sigma2 * 1e6}')
+print(f'firing rate (actual / calculated): {sr.n_events / (n_neurons * simtime * ms)} / {r}')

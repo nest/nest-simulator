@@ -454,13 +454,11 @@ def optimize_network(optimization_parameters, simulation_parameters):
         # analyse the result and compute fitness
         rate, cv, corr = compute_statistics(
             simulation_parameters, espikes, ispikes)
-        fitness = \
-            - optimization_parameters['fitness_weight_rate'] * (
-                rate - optimization_parameters['target_rate']) ** 2 \
-            - optimization_parameters['fitness_weight_cv'] * (
-                cv - optimization_parameters['target_cv']) ** 2 \
-            - optimization_parameters['fitness_weight_corr'] * (
-                corr - optimization_parameters['target_corr']) ** 2
+        fitness = (
+            -optimization_parameters['fitness_weight_rate'] * (rate - optimization_parameters['target_rate'])**2
+            - optimization_parameters['fitness_weight_cv'] * (cv - optimization_parameters['target_cv'])**2
+            - optimization_parameters['fitness_weight_corr'] * (corr - optimization_parameters['target_corr'])**2
+        )
 
         return fitness
 

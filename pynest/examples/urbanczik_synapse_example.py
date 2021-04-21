@@ -93,7 +93,6 @@ def h(U, nrn_params):
     '''
     derivative of the rate function phi
     '''
-    phi_max = nrn_params['phi_max']
     k = nrn_params['rate_slope']
     beta = nrn_params['beta']
     theta = nrn_params['theta']

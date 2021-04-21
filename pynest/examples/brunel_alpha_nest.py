@@ -82,9 +82,9 @@ def ComputePSPnorm(tauMem, CMem, tauSyn):
     t_max = 1.0 / b * (-LambertWm1(-np.exp(-1.0 / a) / a) - 1.0 / a)
 
     # maximum of PSP for current of unit amplitude
-    return (np.exp(1.0) / (tauSyn * CMem * b) *
-            ((np.exp(-t_max / tauMem) - np.exp(-t_max / tauSyn)) / b -
-             t_max * np.exp(-t_max / tauSyn)))
+    return (np.exp(1.0) / (tauSyn * CMem * b)
+            * ((np.exp(-t_max / tauMem) - np.exp(-t_max / tauSyn)) / b
+               - t_max * np.exp(-t_max / tauSyn)))
 
 
 nest.ResetKernel()
@@ -293,8 +293,8 @@ rate_in = events_in / simtime * 1000.0 / N_rec
 # inhibitory synapse model. The numbers are summed up resulting in the total
 # number of synapses.
 
-num_synapses = (nest.GetDefaults("excitatory")["num_connections"] +
-                nest.GetDefaults("inhibitory")["num_connections"])
+num_synapses = (nest.GetDefaults("excitatory")["num_connections"]
+                + nest.GetDefaults("inhibitory")["num_connections"])
 
 ###############################################################################
 # Establishing the time it took to build and simulate the network by taking

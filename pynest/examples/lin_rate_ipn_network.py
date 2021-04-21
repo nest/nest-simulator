@@ -44,9 +44,9 @@ T = 100.0  # Simulation time in ms
 # Definition of the number of neurons
 
 order = 50
-NE = int(4 * order)  # number of excitatory neurons
-NI = int(1 * order)  # number of inhibitory neurons
-N = int(NE+NI)       # total number of neurons
+NE = int(4 * order)    # number of excitatory neurons
+NI = int(1 * order)    # number of inhibitory neurons
+N = int(NE + NI)       # total number of neurons
 
 ###############################################################################
 # Definition of the connections
@@ -127,7 +127,7 @@ nest.Connect(n_i, n_e, conn_e, syn_i)
 ###############################################################################
 # Connect recording device to rate units
 
-nest.Connect(mm, n_e+n_i)
+nest.Connect(mm, n_e + n_i)
 
 ###############################################################################
 # Simulate the network

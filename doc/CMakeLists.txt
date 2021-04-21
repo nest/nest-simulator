@@ -24,14 +24,14 @@ if ( NOT CMAKE_CROSSCOMPILING )
   # there are problems with the following.
   # See https://github.com/nest/nest-simulator/issues/678.
   find_package( PythonInterp )
-  if ( PYTHONINTERP_FOUND )
+  if ( Python_FOUND )
 
     # Extract help from all source files in the source code, put
     # them in doc/help and generate a local help index in the
     # build directory containing links to the help files.
     install( CODE
       "execute_process(
-         COMMAND ${PYTHON_EXECUTABLE} -B generate_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\"
+         COMMAND ${Python_EXECUTABLE} -B generate_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\"
          WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
          )"
       )
@@ -47,7 +47,7 @@ if ( NOT CMAKE_CROSSCOMPILING )
     # the global installation directory for documentation.
     install( CODE
       "execute_process(
-         COMMAND ${PYTHON_EXECUTABLE} -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
+         COMMAND ${Python_EXECUTABLE} -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
          WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
          )"
       )
@@ -55,9 +55,6 @@ if ( NOT CMAKE_CROSSCOMPILING )
   endif ()
 
 endif ()
-
-install( DIRECTORY model_details
-    DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 
 if ( DOXYGEN_FOUND )
   add_custom_target( doc
@@ -100,7 +97,7 @@ add_custom_target( html
   COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
 )
 
-install( DIRECTORY "${DOC_BUILD_DIR}/userdoc/html"
+install( DIRECTORY "${DOC_BUILD_DIR}/html"
   DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
   OPTIONAL
 )

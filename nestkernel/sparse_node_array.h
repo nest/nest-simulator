@@ -60,7 +60,11 @@ class SparseNodeArray
 public:
   struct NodeEntry
   {
-    NodeEntry() = default;
+    NodeEntry()
+      : node_( nullptr )
+      , node_id_( 0 )
+    {
+    }
     NodeEntry( Node&, index );
 
     // Accessor functions here are mostly in place to make things "look nice".

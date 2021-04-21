@@ -71,7 +71,7 @@ Wmax        real   Maximum allowed weight
 Wmin        real   Minimum allowed weight
 =========   ====   =========================================================
 
-All other parameters are stored in in the neuron models that are compatible
+All other parameters are stored in the neuron models that are compatible
 with the Urbanczik synapse.
 
 Remarks:

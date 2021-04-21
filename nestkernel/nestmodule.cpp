@@ -914,6 +914,8 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   i->assert_stack_load( 4 );
 
   NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
@@ -926,11 +928,15 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop( 4 );
   i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 void
 NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   i->assert_stack_load( 4 );
 
   NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
@@ -949,6 +955,8 @@ NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop( 4 );
   i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 /** @BeginDocumentation
@@ -2689,6 +2697,8 @@ NestModule::Sub_M_MFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   i->assert_stack_load( 3 );
 
   const NodeCollectionDatum source = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
@@ -2699,6 +2709,8 @@ NestModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop( 3 );
   i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 /** @BeginDocumentation

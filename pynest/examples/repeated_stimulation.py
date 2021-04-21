@@ -105,7 +105,7 @@ nest.Connect(pg, sr)
 
 
 for n in range(num_trials):
-    pg.origin = nest.GetKernelStatus('time')
+    pg.origin = nest.GetKernelStatus('biological_time')
     nest.Simulate(trial_duration)
 
 

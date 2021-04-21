@@ -162,7 +162,7 @@ nest.Connect(g, p)
 nest.Connect(p, s)
 
 nest.Simulate(200)
-ev = s[0].events
+ev = s.events
 plt.subplot(224)
 plt.plot(ev['times'], ev['senders'] - min(ev['senders']), 'o')
 plt.ylim([-0.5, 19.5])

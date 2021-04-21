@@ -121,7 +121,7 @@ nest.ResetKernel()
 nest.SetKernelStatus({'resolution': dt,
                       'print_time': True,
                       'local_num_threads': 1})
-t0 = nest.GetKernelStatus('time')
+t0 = nest.GetKernelStatus('biological_time')
 
 nest_pops = nest.Create('gif_pop_psc_exp', M)
 
@@ -246,7 +246,7 @@ plt.xlabel('time [ms]')
 nest.ResetKernel()
 nest.SetKernelStatus(
     {'resolution': dt, 'print_time': True, 'local_num_threads': 1})
-t0 = nest.GetKernelStatus('time')
+t0 = nest.GetKernelStatus('biological_time')
 
 nest_pops = []
 for k in range(M):

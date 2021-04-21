@@ -104,8 +104,8 @@ def make_psp(Time, Tau_s, Tau_m, Cm, Weight):
     term1 = (1 / Tau_s - 1 / Tau_m)
     term2 = numpy.exp(-Time / Tau_s)
     term3 = numpy.exp(-Time / Tau_m)
-    PSP = (Weight / Cm * numpy.exp(1) / Tau_s
-           * (((-Time * term2) / term1) + (term3 - term2) / term1 ** 2))
+    PSP = (Weight / Cm * numpy.exp(1) / Tau_s *
+           (((-Time * term2) / term1) + (term3 - term2) / term1 ** 2))
     return PSP * 1e3
 
 
@@ -181,8 +181,8 @@ psp_norm = psp / psp_amp
 psp_norm = numpy.pad(psp_norm, [len(psp_norm) - 1, 1], mode='constant')
 U = a * psp_amp * numpy.convolve(gauss, psp_norm)
 ulen = len(U)
-t_U = (convolution_resolution * numpy.linspace(-ulen / 2., ulen / 2., ulen)
-       + pulsetime + 1.)
+t_U = (convolution_resolution * numpy.linspace(-ulen / 2., ulen / 2., ulen) +
+       pulsetime + 1.)
 
 
 ###############################################################################

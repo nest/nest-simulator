@@ -67,7 +67,9 @@ Datum *const p;   makes p a const pointer to a Datum. Any change to the
 
 /***********************************************************/
 
-/** A type-independent container for C++-types.
+/**
+ * A type-independent container for C++-types
+ * ==========================================
  *
  * Class Token is a wrapper class around Datum pointers and non-Datum
  * objects. In fact, since Datum objects have a memory manager, we should
@@ -75,75 +77,72 @@ Datum *const p;   makes p a const pointer to a Datum. Any change to the
  * Token takes ownership of the Datum pointers and will properly delete
  * them when they are no longer needed. Thus, use one of the following
  * idioms:
- * 
- * @par Construction
  *
- * @code
- * Token t( new IntergerDatum( 5 ) );
- * Token t = 5;
- * Token t = new IntegerDatum( 5 );
- * @endcode
- * 
+ * Construction
+ * ------------
+ *
+ * .. code-block:: C++
+ *    Token t( new IntergerDatum( 5 ) );
+ *    Token t = 5;
+ *    Token t = new IntegerDatum( 5 );
+ *
  * The object constructor `Token(Datum&)` is historic and should not be
  * used anymore.
- * 
- * @par Assignment
- * 
- * @code
- * Token t1 = t;
- * t1.move( t ); // move Datum from t to t1
- * @endcode
- * 
- * `TokenArrays`, `TokenStack`, and `Dictionary` are token
+ *
+ * Assignment
+ * ----------
+ *
+ * .. code-block:: C++
+ *    Token t1 = t;
+ *    t1.move( t ); // move Datum from t to t1
+ *
+ * ``TokenArrays``, ``TokenStack``, and ``Dictionary`` are token
  * containers. Their assignment interface takes
- * 
+ *
  * 1. Datum pointers
  * 2. Token references
- * 
+ *
  * Thus, the recommended assignments are
- * 
- * @code
- * array.push_back( new IntegerDatum( 5 ) );
- * @endcode
- * 
+ *
+ * .. code-block:: C++
+ *    array.push_back( new IntegerDatum( 5 ) );
+ *
  * It directly passes the Datum pointer to the location in the
  * array. Some convenient ways to write assignments are actually
  * inefficient
- * 
- * @par Examples
- * 
- * 1. `a.push_back(5);`
- * 
+ *
+ * Examples
+ * --------
+ *
+ * 1. ``a.push_back(5);``
+ *
  *    This is convenient notation, but is much more expensive, because it is
  *    equivalent to the following code:
- *    .
- *    @code
- *    IntegerDatum tmp1( 5 );
- *    Token tmp2( new IntegerDatum( mp1 ) );
- *    Token tmp3( tmp2 );  // one more Datum copy
- *    a.push_back_move( tmp3 );
- *    @endcode
- * 
+ *
+ *    .. code-block:: C++
+ *       IntegerDatum tmp1( 5 );
+ *       Token tmp2( new IntegerDatum( mp1 ) );
+ *       Token tmp3( tmp2 );  // one more Datum copy
+ *       a.push_back_move( tmp3 );
+ *
  *    Some of this, the compiler can optimize away, but benchmarks showed a
  *    big residual overhead compared to directly assigning the Datum
  *    pointer.
- * 
- * 2. `a.push_back(IntegerDatum(5));`
- * 
+ *
+ * 2. ``a.push_back(IntegerDatum(5));``
+ *
  *    This looks efficient, but in fact it is not, because it is equivalent
  *    to:
- *    .
- *    @code
- *    Token tmp1( new IntegerDatum( IntegerDatum( 5 ) );
- *    a.push_back_move( tmp1 );
- *    @endcode
- * 
- * 3. `a.push_back(t);`
- * 
+ *    .. code-block:: C++
+ *       Token tmp1( new IntegerDatum( IntegerDatum( 5 ) );
+ *       a.push_back_move( tmp1 );
+ *
+ * 3. ``a.push_back(t);``
+ *
  *    Involves one Datum copy
- * 
- * 4. `a.push_back_move(t);`
- * 
+ *
+ * 4. ``a.push_back_move(t);``
+ *
  *    Moves the pointer and leaves a void token behind.
  *
  * @ingroup TokenHandling

@@ -41,7 +41,7 @@ relative to the ``origin``.
 
 
 ###############################################################################
-# First, the modules needed for simulation and analyis are imported.
+# First, the modules needed for simulation and analysis are imported.
 
 
 import nest

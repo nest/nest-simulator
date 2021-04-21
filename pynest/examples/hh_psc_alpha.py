@@ -26,7 +26,7 @@ This example produces a rate-response (FI) curve of the Hodgkin-Huxley
 neuron ``hh_psc_alpha`` in response to a range of different current (DC) stimulations.
 The result is plotted using matplotlib.
 
-Since a DC input affetcs only the neuron's channel dynamics, this routine
+Since a DC input affects only the neuron's channel dynamics, this routine
 does not yet check correctness of synaptic response.
 """
 

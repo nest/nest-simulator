@@ -81,7 +81,7 @@ Philosophy_
    tutorial
 
 Preparations_
-   Neccessary steps to use NEST
+   Necessary steps to use NEST
 
 `Configurable Parameters`_
    Define adjustable network parameters

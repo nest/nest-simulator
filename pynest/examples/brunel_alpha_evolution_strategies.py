@@ -347,7 +347,7 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
     # min_sigma: float
     #     Minimal value for standard deviation of search
     #     distribution. If any dimension has a value smaller than this,
-    #     the search is stoppped.
+    #     the search is stopped.
     # verbosity: bool
     #     Whether to continuously print progress information.
     #

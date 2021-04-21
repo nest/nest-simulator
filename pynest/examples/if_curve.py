@@ -26,7 +26,7 @@ This example illustrates how to measure the I-F curve of a neuron.
 The program creates a small group of neurons and injects a noisy current
 :math:`I(t) = I_mean + I_std*W(t)`
 where :math:`W(t)` is a white noise process.
-The programm systematically drives the current through a series of  values in
+The program systematically drives the current through a series of  values in
 the two-dimensional `(I_mean, I_std)` space and measures the firing rate of
 the neurons.
 

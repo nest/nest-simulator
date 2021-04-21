@@ -119,7 +119,7 @@ for index, (rec_name, rec_wgt) in enumerate(w_recep.items()):
     nest.Connect(p_gens[index], nrn, syn_spec={'receptor_type': receptors[rec_name], 'weight': rec_wgt})
 
 ###############################################################################
-# We then connnect the ``multimeter``. Note that the multimeter is connected to
+# We then connect the ``multimeter``. Note that the multimeter is connected to
 # the neuron, not the other way around.
 
 nest.Connect(mm, nrn)

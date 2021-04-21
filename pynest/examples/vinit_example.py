@@ -63,7 +63,7 @@ import matplotlib.pyplot as plt
 # are read from the voltmeter via ``get``.
 #
 # Finally, the time course of the membrane voltages is plotted for each of
-# the different inital values.
+# the different initial values.
 
 for vinit in numpy.arange(-100, -50, 10, float):
 

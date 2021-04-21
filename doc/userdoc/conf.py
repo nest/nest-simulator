@@ -184,6 +184,7 @@ intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
                       None), 'pynn': ('http://neuralensemble.org/docs/PyNN/',
                       None), 'elephant': ('https://elephant.readthedocs.io/en/latest/',
                       None), 'desktop': ('https://nest-desktop.readthedocs.io/en/latest/',
+                      None), 'neuromorph': ('https://electronicvisions.github.io/hbp-sp9-guidebook/',
                       None), 'arbor': ('https://arbor.readthedocs.io/en/latest/',
                       None), 'tvb': ('http://docs.thevirtualbrain.org/',
                       None)}

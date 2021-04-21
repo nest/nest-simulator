@@ -42,7 +42,7 @@ number of neuromorphic hardware systems.
 Elephant
 --------
 
-:doc:`Elephant (Electrophysiology Analysis Toolkit) <elephant:index>` is an emerging open-source, community centered
+:doc:`Elephant (Electrophysiology Analysis Toolkit) <elephant:index>` is an open-source, community-centered
 library for the analysis of electrophysiological data in the Python programming language.
 
 * :doc:`Get started with Elephant <elephant:tutorials>`
@@ -60,12 +60,14 @@ multi-compartment, morphologically-detailed cells, from single cell models to ve
 Neuromorphic hardware
 ---------------------
 
-`SpiNNaker and BrainScales <https://electronicvisions.github.io/hbp>`_ are neuromorphic computing systems, which enable
+:doc:`SpiNNaker and BrainScaleS <neuromorph:index>` are neuromorphic computing systems, which enable
 energy-efficient, large-scale neuronal network simulations with simplified spiking neuron models.
-The BrainScaleS system is based on physical (analogue) emulations of neuron models and offers highly accelerated
+The BrainScaleS system is based on physical (analog) emulations of neuron models and offers highly accelerated
 operation (104 x real time). The SpiNNaker system is based on a digital many-core architecture and provides
 real-time operation.
 
+* :doc:`Get started with SpiNNaker <neuromorph:mc/mc_index>`
+* :doc:`Get started with BrainScaleS <neuromorph:pm/pm>`
 
 TheVirtualBrain (TVB)
 ---------------------
@@ -75,10 +77,5 @@ networks with biologically realistic connectivity.
 
 * :ref:`Get started with TVB <tvb:tutorial_0_gettingstarted>`
 
-NEURON
-------
-
-`NEURON <https://neuron.yale.edu/neuron/docs>`_ is a simulator for models of neurons
-and networks of neurons.
 
 

@@ -47,10 +47,20 @@ If you have a Python example network to contribute, please refer to our
 Code review guidelines
 ----------------------
 
-Pull requests must be reviewed and approved by **two reviewers** prior to being merged. Please check
-the **typeset documentation** as part of the review process. To learn how to test the documentation
-locally offline, please check out our
-:doc:`User documentation workflow <../documentation_workflow/user_documentation_workflow>`.
+See :doc:`code_review_guidelines`.
+
+Writing an extension module
+---------------------------
+
+See `https://github.com/nest/nest-extension-module`_.
+
+Writing neuron and synapse models
+---------------------------------
+
+We recommend writing new neuron and synapse models in `NESTML <https://nestml.readthedocs.io/>`_. It will generate C++
+code and build a NEST extension module containing the model.
+
+See also `https://github.com/nest/nest-extension-module`_ for details about the generated C++ code.
 
 Have a question?
 ----------------

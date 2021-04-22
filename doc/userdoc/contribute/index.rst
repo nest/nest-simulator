@@ -52,7 +52,7 @@ See :doc:`code_review_guidelines`.
 Writing an extension module
 ---------------------------
 
-See `https://github.com/nest/nest-extension-module`_.
+See https://github.com/nest/nest-extension-module.
 
 Writing neuron and synapse models
 ---------------------------------
@@ -60,7 +60,7 @@ Writing neuron and synapse models
 We recommend writing new neuron and synapse models in `NESTML <https://nestml.readthedocs.io/>`_. It will generate C++
 code and build a NEST extension module containing the model.
 
-See also `https://github.com/nest/nest-extension-module`_ for details about the generated C++ code.
+See also https://github.com/nest/nest-extension-module for details about the generated C++ code.
 
 Have a question?
 ----------------

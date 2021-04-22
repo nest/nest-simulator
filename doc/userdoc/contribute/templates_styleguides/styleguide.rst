@@ -22,7 +22,7 @@ We have templates for :doc:`Python example scripts <pyapi_template>` and the :do
 You will also need to know how to build the documentation locally on your machine: See
 :doc:`../../documentation_workflow/user_documentation_workflow`.
 
-For additional information, including the Git workflow and making a pull request see :doc:`../index`
+For additional information, including the Git workflow and making a pull request see :doc:`../index`.
 
 
 General guidelines about writing for NEST
@@ -70,7 +70,7 @@ Our voice is
   way
 - factual: we write in a neutral style avoiding irony, humor, or cultural references
 
-Use 'you' to indicate the reader and 'we' to indicate yourself (the writer and
+Use "you" to indicate the reader and "we" to indicate yourself (the writer and
 possibly the NEST team).
 
 The language we use
@@ -79,7 +79,7 @@ The language we use
 We follow spelling and grammar rules of `American English <https://www.merriam-webster.com/>`_.
 
 The markup language we use is :ref:`reStructuredText <sec-reST_style>`. This includes documentation
-blocks in files written in Python and cpp.
+blocks in files written in Python and C++.
 
 We avoid slang or jargon that is unnecessary or could be confusing to readers.
 
@@ -113,7 +113,7 @@ relative to the directive start.
 In addition to directives, reStructuredText has roles, which insert semantic markup into documents.
 Roles look like this ``:role-name:`content```.
 
-We will only cover a few examples here. You can find more information in the following links.
+We will only cover a few examples here. You can find more information in the following links:
 
 
 * `reStructuredText User Documentation <https://docutils.sourceforge.io/rst.html#id24>`_
@@ -154,10 +154,10 @@ Example syntax::
     .. code-block:: cpp
 
         int main()
-            {
-              cout << "Hello, World!"; \\
-              return 0;
-            }
+        {
+          std::cout << "Hello, World!";
+          return 0;
+        }
 
 
 Code is rendered as
@@ -165,16 +165,17 @@ Code is rendered as
     .. code-block:: cpp
 
         int main()
-            {
-             cout << "Hello, World!";
-             return 0;
-            }
+        {
+          std::cout << "Hello, World!";
+          return 0;
+        }
 
 
 For Python examples that show input and output use the following syntax::
 
    >>> input begins with 3, right-angled brackets
-   output is directly below input without any brackets. A blank line must end the example.
+   Output is directly below input without any brackets.
+   A blank line must end the example.
 
 For in-text code use the role :code: or double back ticks::
 

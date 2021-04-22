@@ -33,6 +33,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -255,8 +256,6 @@ iaf_psc_alpha::init_buffers_()
 void
 iaf_psc_alpha::calibrate()
 {
-  B_.input_buffer_.resize();
-
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
@@ -321,9 +320,9 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    // get access to the correct input-buffer entry at the very beginning
-    const index input_buffer_idx = kernel().event_delivery_manager.get_modulo( lag );
-    std::array< double, Buffers_::NUM_INPUT_CHANNELS >& new_input = B_.input_buffer_.get_values( input_buffer_idx );
+    // get access to the correct input-buffer slot at the very beginning
+    const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
+    auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
 
     if ( S_.r_ == 0 )
     {
@@ -346,7 +345,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 
     // Apply spikes delivered in this step; spikes arriving at T+1 have
     // an immediate effect on the state of the neuron
-    V_.weighted_spikes_ex_ = new_input[ Buffers_::SYN_EX ];
+    V_.weighted_spikes_ex_ = input[ Buffers_::SYN_EX ];
     S_.dI_ex_ += V_.EPSCInitialValue_ * V_.weighted_spikes_ex_;
 
     // alpha shape EPSCs
@@ -355,7 +354,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 
     // Apply spikes delivered in this step; spikes arriving at T+1 have
     // an immediate effect on the state of the neuron
-    V_.weighted_spikes_in_ = new_input[ Buffers_::SYN_IN ];
+    V_.weighted_spikes_in_ = input[ Buffers_::SYN_IN ];
     S_.dI_in_ += V_.IPSCInitialValue_ * V_.weighted_spikes_in_;
 
     // threshold crossing
@@ -374,12 +373,12 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     }
 
     // set new input current
-    S_.y0_ = new_input[ Buffers_::I0 ];
+    S_.y0_ = input[ Buffers_::I0 ];
 
     // reset input in ring buffer at position lag
     // note: delegating the reset to a function in the MultiValueRingBuffer
     // would entail additional costs
-    for ( auto it = new_input.begin(); it < new_input.end(); ++it )
+    for ( auto it = input.begin(); it < input.end(); ++it )
     {
       ( *it ) = 0.0;
     }
@@ -394,18 +393,18 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const index input_buffer_idx = kernel().event_delivery_manager.get_modulo(
+  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
   const double s = e.get_weight() * e.get_multiplicity();
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.input_buffer_.add_value( input_buffer_idx, Buffers_::SYN_EX, s );
+    B_.input_buffer_.add_value( input_buffer_slot, Buffers_::SYN_EX, s );
   }
   else
   {
-    B_.input_buffer_.add_value( input_buffer_idx, Buffers_::SYN_IN, s );
+    B_.input_buffer_.add_value( input_buffer_slot, Buffers_::SYN_IN, s );
   }
 }
 
@@ -414,13 +413,13 @@ iaf_psc_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const index input_buffer_idx = kernel().event_delivery_manager.get_modulo(
+  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
   const double I = e.get_current();
   const double w = e.get_weight();
 
-  B_.input_buffer_.add_value( input_buffer_idx, Buffers_::I0, w * I );
+  B_.input_buffer_.add_value( input_buffer_slot, Buffers_::I0, w * I );
 }
 
 void

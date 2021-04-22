@@ -29,7 +29,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "recordables_map.h"
-#include "ring_buffer_impl.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -267,7 +267,7 @@ private:
     Buffers_( iaf_psc_alpha& );
     Buffers_( const Buffers_&, iaf_psc_alpha& );
 
-    //! Idices for access to different channels of input_buffer_
+    //! Indices for access to different channels of input_buffer_
     enum
     {
       SYN_IN = 0,
@@ -277,7 +277,7 @@ private:
     };
 
     /** buffers and sums up incoming spikes/currents */
-    MultiValueRingBuffer< NUM_INPUT_CHANNELS > input_buffer_;
+    MultiChannelRingBuffer< NUM_INPUT_CHANNELS > input_buffer_;
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_psc_alpha > logger_;

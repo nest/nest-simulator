@@ -25,54 +25,54 @@
 
 #include "ring_buffer.h"
 
-template < unsigned int num_values >
-nest::MultiValueRingBuffer< num_values >::MultiValueRingBuffer()
+template < unsigned int num_channels >
+nest::MultiChannelRingBuffer< num_channels >::MultiChannelRingBuffer()
   : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay(),
-      std::array< double, num_values >() )
+      std::array< double, num_channels >() )
 {
 }
 
-template < unsigned int num_values >
+template < unsigned int num_channels >
 void
-nest::MultiValueRingBuffer< num_values >::add_value( const long idx0, const long idx1, const double val )
+nest::MultiChannelRingBuffer< num_channels >::add_value( const index slot, const index channel, const double value )
 {
-  buffer_[ idx0 ][ idx1 ] += val;
+  buffer_[ slot ][ channel ] += value;
 }
 
-template < unsigned int num_values >
-std::array< double, num_values >&
-nest::MultiValueRingBuffer< num_values >::get_values( const long idx0 )
+template < unsigned int num_channels >
+std::array< double, num_channels >&
+nest::MultiChannelRingBuffer< num_channels >::get_values_all_channels( const index slot )
 {
-  assert( 0 <= idx0 and ( size_t ) idx0 < buffer_.size() );
-  return buffer_[ idx0 ];
+  assert( 0 <= slot and slot < buffer_.size() );
+  return buffer_[ slot ];
 }
 
-template < unsigned int num_values >
+template < unsigned int num_channels >
 void
-nest::MultiValueRingBuffer< num_values >::resize()
+nest::MultiChannelRingBuffer< num_channels >::resize()
 {
-  size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+  const size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
   if ( buffer_.size() != size )
   {
-    buffer_.resize( size, std::array< double, num_values >() );
+    buffer_.resize( size, std::array< double, num_channels >() );
   }
 }
 
-template < unsigned int num_values >
+template < unsigned int num_channels >
 void
-nest::MultiValueRingBuffer< num_values >::clear()
+nest::MultiChannelRingBuffer< num_channels >::clear()
 {
   resize(); // does nothing if size is fine
   // set all elements to 0.0
-  for ( index idx0 = 0; idx0 < buffer_.size(); ++idx0 )
+  for ( index slot = 0; slot < buffer_.size(); ++slot )
   {
-    memset( &buffer_[ idx0 ][ 0 ], 0, buffer_[ idx0 ].size() * sizeof buffer_[ idx0 ][ 0 ] );
+    memset( &buffer_[ slot ][ 0 ], 0, buffer_[ slot ].size() * sizeof buffer_[ slot ][ 0 ] );
   }
 }
 
-template < unsigned int num_values >
+template < unsigned int num_channels >
 size_t
-nest::MultiValueRingBuffer< num_values >::size() const
+nest::MultiChannelRingBuffer< num_channels >::size() const
 {
   return buffer_.size();
 }

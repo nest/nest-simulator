@@ -354,15 +354,15 @@ ListRingBuffer::get_index_( const delay d ) const
 }
 
 
-template < unsigned int num_values >
-class MultiValueRingBuffer
+template < unsigned int num_channels >
+class MultiChannelRingBuffer
 {
 public:
-  MultiValueRingBuffer();
+  MultiChannelRingBuffer();
 
-  void add_value( const long idx0, const long idx1, const double val );
+  void add_value( const index slot, const index channel, const double value );
 
-  std::array< double, num_values >& get_values( const long idx0 );
+  std::array< double, num_channels >& get_values_all_channels( const index slot );
 
   void clear();
 
@@ -371,8 +371,12 @@ public:
   size_t size() const;
 
 private:
-  //! Buffered data
-  std::vector< std::array< double, num_values > > buffer_;
+  /**
+   * Buffered data stored in a vector of arrays of double values
+   * 1st dimension: ring buffer slot (index into outer vector)
+   * 2nd dimension: channel (index into inner array)
+   */
+  std::vector< std::array< double, num_channels > > buffer_;
 };
 
 } // namespace nest

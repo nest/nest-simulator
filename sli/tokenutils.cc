@@ -77,7 +77,12 @@ getValue< double >( const Token& t )
   if ( id == NULL )
   { // we have to create a Datum object to get the name...
     DoubleDatum const d;
-    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
+    IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
+    if ( id == NULL )
+    {
+      throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
+    }
+    return (double) id->get(); // (*id).get()
   }
   return id->get();
 }

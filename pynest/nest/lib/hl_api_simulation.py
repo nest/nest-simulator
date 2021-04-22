@@ -86,11 +86,11 @@ def Run(t):
     calls.
 
     Be careful about modifying the network or neurons between `Prepare` and `Cleanup`
-    calls, especially do not `Create` and `Connect` neurons or call `SetKernelStatus`.
-    Calling `SetStatus` to change membrane potential `V_m` of neurons or change synaptic
+    calls, especially not to `Create` and `Connect` neurons or call `SetKernelStatus`.
+    Calling `SetStatus` to change membrane potential `V_m` of neurons or synaptic
     weights (but not delays!) will in most cases work as expected, while changing
     membrane or synaptic times constants **will not work correctly**. If in doubt, assume
-    that changes may cause undefined behavior and check very carefully.
+    that changes may cause undefined behavior and check these thoroughly.
 
     See Also
     --------
@@ -152,11 +152,11 @@ def RunManager():
     -----
 
     Be careful about modifying the network or neurons inside the `RunManager` context,
-    especially do not `Create` and `Connect` neurons or call `SetKernelStatus`. Calling
-    `SetStatus` to change membrane potential `V_m` of neurons or change synaptic weights
+    especially not to `Create` and `Connect` neurons or call `SetKernelStatus`. Calling
+    `SetStatus` to change membrane potential `V_m` of neurons or synaptic weights
     (but not delays!) will in most cases work as expected, while changing membrane or
     synaptic times constants **will not work correctly**. If in doubt, assume that changes
-    may cause undefined behavior and check very carefully.
+    may cause undefined behavior and check these thoroughly.
 
     See Also
     --------

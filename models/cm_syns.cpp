@@ -248,7 +248,7 @@ std::pair< double, double > nest::AMPA::f_numstep( const double v_comp, const do
 
   // for numberical integration
   double g_val = - d_i_tot_dv / 2.;
-  double i_val = i_tot - d_i_tot_dv / 2.;
+  double i_val = i_tot - d_i_tot_dv * v_comp / 2.;
 
   return std::make_pair(g_val, i_val);
 }
@@ -300,7 +300,7 @@ std::pair< double, double > nest::GABA::f_numstep( const double v_comp, const do
 
   // for numberical integration
   double g_val = - d_i_tot_dv / 2.;
-  double i_val = i_tot - d_i_tot_dv / 2.;
+  double i_val = i_tot - d_i_tot_dv * v_comp / 2.;
 
   return std::make_pair(g_val, i_val);
 }
@@ -352,7 +352,7 @@ std::pair< double, double > nest::NMDA::f_numstep( const double v_comp, const do
 
   // for numberical integration
   double g_val = - d_i_tot_dv / 2.;
-  double i_val = i_tot + d_i_tot_dv / 2.;
+  double i_val = i_tot - d_i_tot_dv * v_comp / 2.;
 
   return std::make_pair( g_val, i_val );
 }
@@ -407,8 +407,8 @@ std::pair< double, double > nest::AMPA_NMDA::f_numstep( const double v_comp, con
   // add spikes
   double s_val_ = b_spikes_->get_value( lag );
   double s_val = s_val_ * g_norm_AMPA_;
-  g_r_NMDA_ -= s_val;
-  g_d_NMDA_ += s_val;
+  g_r_AMPA_ -= s_val;
+  g_d_AMPA_ += s_val;
   s_val = s_val_ * g_norm_NMDA_;
   g_r_NMDA_ -= s_val;
   g_d_NMDA_ += s_val;
@@ -420,13 +420,13 @@ std::pair< double, double > nest::AMPA_NMDA::f_numstep( const double v_comp, con
   // total current
   double i_tot = ( g_AMPA + NMDA_ratio_ * g_NMDA * NMDAsigmoid( v_comp ) ) * (e_rev_ - v_comp);
   // voltage derivative of total current
-  double d_i_tot_dv = g_AMPA + NMDA_ratio_ *
-                      g_NMDA * ( d_NMDAsigmoid_dv( v_comp ) * (e_rev_ - v_comp) -
-                                  NMDAsigmoid( v_comp ));
+  double d_i_tot_dv = - g_AMPA + NMDA_ratio_ *
+                        g_NMDA * ( d_NMDAsigmoid_dv( v_comp ) * (e_rev_ - v_comp) -
+                                   NMDAsigmoid( v_comp ));
 
   // for numberical integration
   double g_val = - d_i_tot_dv / 2.;
-  double i_val = i_tot + d_i_tot_dv / 2.;
+  double i_val = i_tot - d_i_tot_dv * v_comp / 2.;
 
   return std::make_pair( g_val, i_val );
 }

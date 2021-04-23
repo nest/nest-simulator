@@ -53,7 +53,7 @@ nest.Connect(sg2, cm, syn_spec={
 nest.Connect(sg3, cm, syn_spec={
     'synapse_model': 'static_synapse', 'weight': .3, 'delay': 0.5, 'receptor_type': syn_idx_GABA})
 
-# create a current generator
+# # create a current generator
 dcg = nest.Create('dc_generator', {'amplitude': 1.})
 # connect the current generator to compartment 1
 nest.Connect(dcg, cm, syn_spec={

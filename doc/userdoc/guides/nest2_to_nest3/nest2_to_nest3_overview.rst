@@ -27,8 +27,15 @@ What's new?
 NEST Server
 ~~~~~~~~~~~
 
-NEST 3.0 allows you to start a server which interacts with NEST Simulator.
-Please check out the :doc:`NEST Server guide <../nest_server>` to learn more.
+NEST 3.0 comes with the NEST Server, which allows you to control NEST
+via a RESTful API instead of by directly using PyNEST. This even works
+if NEST is running on a completely different computer, such as a
+powerful workstation or a compute cluster at your lab. Originally
+developed for `NEST Desktop <https://nest-desktop.readthedocs.io/>`_,
+a powerful and convenient web-frontend for NEST, this now also enables
+a number of other exciting new use cases. Please see the :doc:`NEST
+Server documentation <../../nest_server/index>` to learn more about
+how and when this new component can be used.
 
 .. _nodeid:
 

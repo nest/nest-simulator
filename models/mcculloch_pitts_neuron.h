@@ -135,10 +135,10 @@ public:
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
   void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
-  bool operator()( librandom::RngPtr, double h );
+  bool operator()( RngPtr, double h );
 };
 
-inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr, double h )
+inline bool gainfunction_mcculloch_pitts::operator()( RngPtr, double h )
 {
   return h > theta_;
 }

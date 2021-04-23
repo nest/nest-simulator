@@ -253,7 +253,7 @@ EXTENDED_REGEX_PARAM=r
 if $PERFORM_VERA; then
   $VERA ./nest/main.cpp >/dev/null 2>&1 || error_exit "Failed to verify the VERA++ installation. Executable: $VERA"
   $VERA --profile nest ./nest/main.cpp >/dev/null 2>&1 || error_exit \
-  "Failed to verify the VERA++ installation. The profile 'nest' could not be found. See https://nest.github.io/nest-simulator/coding_guidelines_c++#vera-profile-nest"
+  "Failed to verify the VERA++ installation. The profile 'nest' could not be found. See https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html#vera-profile-nest"
 fi
 
 # Verify the CPPCHECK installation. CPPCHECK version 1.69 or later is required.

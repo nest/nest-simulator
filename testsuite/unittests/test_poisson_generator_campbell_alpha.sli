@@ -36,24 +36,24 @@ FirstVersion: Mar 2009
 (unittest) run
 /unittest using
 
-/n_neurons 1000  def % number of neurons to simulate
+/n_neurons 1500  def % number of neurons to simulate
 /simtime   1000. def % simulation duration (ms)
 /pot       20.   def % desired membrane potential (mV)
-/tolerance 1e-2  def % potential tolerance (mV)
+/tolerance 1.5e-2  def % potential tolerance (mV)
 
 % neuron&synapse parameters (cf. brunel*.sli)
-/tauMem 20.0 def  
-/tauSyn  0.5 def  
+/tauMem 20.0 def
+/tauSyn  0.5 def
 /E_L     0.0 def
 
-/J     0.01  def % small psp amplitude 
+/J     0.01  def % small psp amplitude
 /fudge 0.41363506632638 def
 /JE    J tauSyn div fudge mul def
-  
+
 ResetKernel
 
 /p_rate (1000.*pot/(fudge*J*tauMem*exp(1))) CompileMath exec def
-    
+
 /iaf_psc_alpha
     <<
         /tau_m       tauMem
@@ -61,7 +61,7 @@ ResetKernel
 	/tau_syn_in  tauSyn
         /E_L         E_L
         /V_th        999. % no firing
-        /C_m         1.0  
+        /C_m         1.0
     >> SetDefaults
 
 
@@ -72,10 +72,10 @@ ResetKernel
 
 /poisson_generator << /rate p_rate >> SetDefaults
 
-/poisson /poisson_generator Create def   
+/poisson /poisson_generator Create def
 
 poisson neurons << /rule /all_to_all >> << /synapse_model /static_synapse /weight JE >> Connect
-    
+
 simtime Simulate
 
 % check if the membrane potential is equal to desired value (pot)

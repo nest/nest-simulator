@@ -168,7 +168,7 @@ a pull request.
 Creating pull request
 +++++++++++++++++++++
 
-Once your documentation work is finished, you can create a `pull request
-<https://nest.github.io/nest-simulator/development_workflow#create-a-pull-
-request>`_ to the ``master`` branch of the NEST Source Code Repository. Your
-pull request will be reviewed by the NEST Documentation Team!
+Once your documentation work is finished, you can create a
+:doc:`pull request <../contribute/development_workflow` to the ``master``
+branch of the NEST Source Code Repository. Your pull request will be reviewed
+by the NEST Documentation Team!

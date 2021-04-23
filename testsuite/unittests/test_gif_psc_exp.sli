@@ -44,25 +44,24 @@ SeeAlso: gif_psc_exp, testsuite::test_gif_psc_exp_multisynapse
 (unittest) run
 /unittest using
 
-% neuron with default parameters should fire spikes at 43.5, 83.1 and 125.5 ms
-435  /t1_neuron1  Set 
-831  /t2_neuron1  Set
-1255 /t3_neuron1  Set
+% Revised reference data obtained by running model with NEST 3.0
+% Should be replaced with statistical test.
+ 462  /t1_neuron1  Set
+ 850  /t2_neuron1  Set
+1288  /t3_neuron1  Set
 
-% neuron with defined parameters should fire spikes at 20.9 and 79.7 ms
-209  /t1_neuron2  Set 
-797  /t2_neuron2  Set
+207  /t1_neuron2  Set
+740  /t2_neuron2  Set
 
 /:run_test
 {
-  /params Set 
+  /params Set
 
   ResetKernel
-  << 
-      /local_num_threads 1 
+  <<
+      /local_num_threads 1
       /resolution 0.1
-      /grng_seed 1
-      /rng_seeds [1]
+      /rng_seed 1
   >> SetKernelStatus
 
   /gif_psc_exp Create /neuron Set

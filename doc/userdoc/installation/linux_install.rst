@@ -40,8 +40,8 @@ If you want to use PyNEST, we recommend to install the following along with thei
 
 .. _source-install:
 
-Installation from source
-------------------------
+Installation from source in a virtual Python environment
+--------------------------------------------------------
 
 The following are the basic steps to compile and install NEST from source code. See the
 :doc:`CMake Options <cmake_options>` or the :doc:`High Performance Computing <hpc_install>` instructions to
@@ -61,10 +61,9 @@ further adjust settings for your system.
     openmpi-bin \
     libopenmpi-dev
 
-* When NEST is installed as a Python library, only `virtual environments
-  <https://docs.python.org/3/tutorial/venv.html>`_ are supported. Activate the virtual
-  environment you want to use, or if you don't already have one, create a new virtual
-  environment for NEST:
+* When NEST is installed with Python and without ``cmake`` option ``-DCMAKE_INSTALL_PREFIX=<nest_install_dir>``,
+  only `virtual environments <https://docs.python.org/3/tutorial/venv.html>`_ are supported. 
+  Activate the virtual environment you want to use, or if you don't already have one, create a new virtual environment for NEST:
 
 .. code-block:: bash
 
@@ -95,6 +94,76 @@ further adjust settings for your system.
 
    cmake </path/to/NEST/src>
 
+* Compile and install NEST:
+
+.. code-block:: sh
+
+    make
+    make install
+    make installcheck
+
+NEST should now be successfully installed in your active Python environment.
+
+* See the :doc:`Getting started <../getting_started>` pages to find out how to get going with NEST or check out our
+  :doc:`example networks <../auto_examples/index>`.
+
+
+Installation from source without a virtual Python environment
+-------------------------------------------------------------
+
+The following are the basic steps to compile and install NEST from source code. See the
+:doc:`CMake Options <cmake_options>` or the :doc:`High Performance Computing <hpc_install>` instructions to
+further adjust settings for your system.
+
+* If not already installed on your system, the following packages are recommended (see also the `Dependencies`_
+  section)
+
+.. code-block:: bash
+
+    sudo apt install -y \
+    cython \
+    libgsl-dev \
+    libltdl-dev \
+    libncurses-dev \
+    libreadline-dev \
+    python3-all-dev \
+    python3-numpy \
+    python3-scipy \
+    python3-matplotlib \
+    python3-nose \
+    openmpi-bin \
+    libopenmpi-dev
+
+* Unpack the tarball
+
+.. code-block:: sh
+
+    tar -xzvf nest-simulator-x.y.z.tar.gz
+
+* Create a build directory:
+
+.. code-block:: sh
+
+    mkdir nest-simulator-x.y.z-build
+
+* Change to the build directory:
+
+.. code-block:: sh
+
+    cd nest-simulator-x.y.z-build
+
+* Configure NEST. You may need additional ``cmake`` options (see :doc:`cmake_options`). 
+  Installing NEST with Python outside a virtual Python environment requires the
+  ``cmake`` option ``-DCMAKE_INSTALL_PREFIX=<nest_install_dir>``.
+
+.. code-block:: sh
+
+   cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> </path/to/NEST/src>
+
+.. note::
+
+   ``/install/path`` should be an absolute path
+
 .. note::
 
    Python bindings are enabled by default. Add the configuration option ``-Dwith-python=OFF`` to disable them.
@@ -107,7 +176,7 @@ further adjust settings for your system.
     make install
     make installcheck
 
-NEST should now be successfully installed to your Python environment.
+NEST should now be successfully installed on your system.
 
 * Before using NEST, make sure that all required environment variables are set correctly. In short, this can be
   established by sourcing the shell script ``nest_vars.sh``, which is installed into the path for binaries selected

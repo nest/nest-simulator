@@ -9,4 +9,5 @@ Here you can discover the new features NEST 3.0 has to offer!
    nest3_node_handles
    nest3_handling_connections
    parametrization
+   random_number_generators
    recording_simulations

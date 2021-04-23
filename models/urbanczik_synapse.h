@@ -52,7 +52,7 @@ Description
 
 urbanczik_synapse is a connector to create Urbanczik synapses as defined in
 [1]_ that can connect suitable :ref:`multicompartment models
-<multicompartment-models>`. In contrast to usual STDP, the change of the
+<multicompartment-models>`. In contrast to most STDP models, the change of the
 synaptic weight does not only depend on the pre- and postsynaptic spike timing
 but also on the postsynaptic dendritic potential.
 
@@ -87,8 +87,8 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] R. Urbanczik, W. Senn (2014). Learning by the Dendritic Prediction of
-       Somatic Spiking. Neuron, 81, 521 - 528.
+.. [1] Urbanczik R. and Senn W (2014). Learning by the dendritic prediction of
+       somatic spiking. Neuron, 81:521 - 528. https://doi.org/10.1016/j.neuron.2013.11.030
 
 See also
 ++++++++

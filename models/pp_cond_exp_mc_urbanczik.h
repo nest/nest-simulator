@@ -122,7 +122,7 @@ in [1]_. It is capable of connecting to an :doc:`Urbanczik synapse
 
 The model has two compartments: soma and dendrite, labeled as s and p,
 respectively. There is one excitatory and one inhibitory conductance-based
-synapse onto each compartment. Each compartment can also receive current input
+conductance-based synapse. Each compartment can also receive current input
 from a current generator, and an external (rheobase) current can be set for
 each compartment.
 
@@ -136,27 +136,27 @@ synaptic weights must be positive numbers!
 Multicompartment models and synaptic delays
 +++++++++++++++++++++++++++++++++++++++++++
 
-Note that in case of multicompartment models which represent the dendrite
-explicitly, the interpretation of the synaptic delay in NEST requires a careful
+Note that in case of multicompartment models that represent the dendrite
+explicitly, the interpretation of the synaptic delay in NEST requires careful
 consideration. In NEST, the delay is at least one simulation time step and is
 assumed to be located entirely at the postsynaptic side. For point neurons, it
 represents the time it takes for an incoming spike to travel along the
 postsynaptic dendrite before it reaches the soma, see :ref:`panel a)
 <fig-multicompartment>`. Conversely, if the synaptic weight depends on the
-state of the postsynaptic neuron, the delay also represents the time the
-information on the state propagates back through the dendrite to the synapse.
+state of the postsynaptic neuron, the delay also represents the time it takes for the
+information on the state to propagate back through the dendrite to the synapse.
 
 For multicompartment models, this amounts to positioning the delay directly
-behind the incoming synapse, i.e., before the first dendritic compartement on
+behind the incoming synapse, i.e., before the first dendritic compartment on
 the postsynaptic side, see :ref:`panel b) <fig-multicompartment>`. Therefore,
 the delay specified in the synapse model does *not* account for any delay that
 might be associated with information traveling through the explicitly modeled
 dendritic compartments.
 
-In case of the Urbanczik synapse, the change of the synaptic weight is driven by
+In the :ref:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic weight is driven by
 an error signal which is the difference between the firing rate of the soma
 (derived from the somatic spike train :math:`S_{post}`) and the
-dendritic prediction of it (derived from the dendritic membrane potential
+dendritic prediction of the firing rate of the soma (derived from the dendritic membrane potential
 :math:`V`). The original publication [1]_ does not assume any delay in the
 interaction between the soma and the dendritic compartment. Therefore, we
 compute the error signal from the firing rate and the dendritic prediction at
@@ -170,8 +170,8 @@ delayed version of the error signal with the presynaptic spike train
    :width: 75 %
 
    a) Two point neurons (red circles *pre* and *post*) connected via a synapse.
-   In NEST, the delay is entirely on the postsynaptic side and in case of point
-   neurons it is interpeted as the dendritic delay. b) Two two-compartment
+   In NEST, the delay is entirely on the postsynaptic side, and in the case of point
+   neurons, it is interpreted as the dendritic delay. b) Two two-compartment
    neuron models composed of a somatic (green) and a dendritic (blue)
    compartment. The soma of the presynaptic neuron is connected to the dendrite
    of the postsynaptic neuron. The synaptic delay is located behind the synapse

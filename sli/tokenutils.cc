@@ -73,19 +73,23 @@ template <>
 double
 getValue< double >( const Token& t )
 {
-  DoubleDatum* id = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( id == NULL )
-  { // we have to create a Datum object to get the name...
-    DoubleDatum const d;
-    IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
-    if ( id == NULL )
-    {
-      throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
-    }
-    return (double) id->get(); // (*id).get()
+
+  DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
+  if ( dd )
+  {
+    return dd->get();
   }
-  return id->get();
+  IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
+  if ( id )
+  {
+    return ( double ) id->get();
+  }
+
+  // we have to create a Datum object to get the name...
+  DoubleDatum const d;
+  throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
 }
+
 template <>
 void
 setValue< double >( const Token& t, double const& value )
@@ -102,13 +106,20 @@ template <>
 float
 getValue< float >( const Token& t )
 {
-  DoubleDatum* id = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( id == NULL )
-  { // we have to create a Datum object to get the name...
-    DoubleDatum const d;
-    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
+  DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
+  if ( dd )
+  {
+    return ( float ) dd->get();
   }
-  return ( float ) id->get();
+  IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
+  if ( id )
+  {
+    return ( float ) id->get();
+  }
+
+  // we have to create a Datum object to get the name...
+  DoubleDatum const d;
+  throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
 }
 
 template <>
@@ -275,6 +286,14 @@ getValue< std::vector< double > >( const Token& t )
   if ( dvd )
   {
     return **dvd;
+  }
+
+  // try IntVectorDatum next
+  IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( t.datum() );
+  if ( ivd )
+  {
+    std::vector< double > data( ivd->get()->begin(), ivd->get()->end() );
+    return data;
   }
 
   // ok, try ArrayDatum

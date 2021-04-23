@@ -20,7 +20,7 @@
  *
  */
 
-/* 
+/*
     Contains:
     - network parameters
     - single-neuron parameters
@@ -29,7 +29,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%     	Network parameters		%%%        
+%%%     	Network parameters		%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % area of network in mm^2; scales numbers of neurons
@@ -44,7 +44,7 @@
 /layers [(L23) (L4) (L5) (L6)] def
 /populations [(e) (i)] def
 
-/full_scale_n_neurons 
+/full_scale_n_neurons
   [[20683   % layer 2/3 e
     5834 ]  % layer 2/3 i
    [21915   % layer 4 e
@@ -53,7 +53,7 @@
     1065 ]  % layer 5 i
    [14395   % layer 6 e
     2948 ]] % layer 6 i
-def 
+def
 
 % mean EPSP amplitude (mV) for all connections except L4e->L2/3e
 /PSP_e .15 def
@@ -68,7 +68,7 @@ def
 
 % probabilities for >=1 connection between neurons in the given populations
 % columns correspond to source populations; rows to target populations
-% source      2/3e    2/3i    4e      4i      5e      5i      6e      6i       
+% source      2/3e    2/3i    4e      4i      5e      5i      6e      6i
 /conn_probs [[0.1009  0.1689  0.0437  0.0818  0.0323  0.      0.0076  0.    ]
              [0.1346  0.1371  0.0316  0.0515  0.0755  0.      0.0042  0.    ]
              [0.0077  0.0059  0.0497  0.135   0.0067  0.0003  0.0453  0.    ]
@@ -78,24 +78,19 @@ def
              [0.0156  0.0066  0.0211  0.0166  0.0572  0.0197  0.0396  0.2252]
              [0.0364  0.001   0.0034  0.0005  0.0277  0.008   0.0658  0.1443]]
 	     def
-	     
+
 % mean dendritic delays for excitatory and inhibitory transmission (ms)
 /delays [1.5 0.75] def
 % standard deviation relative to mean delays
 /delay_rel_sd 0.5 def
 % connection pattern used in connection calls connecting populations
 /conn_dict << /rule /fixed_total_number >> def
-% weight distribution of connections between populations
-/weight_dict_exc << /distribution /normal_clipped /low 0.0 >> def
-/weight_dict_inh << /distribution /normal_clipped /high 0.0 >> def
-% delay distribution of connections between populations
-/delay_dict << /distribution /normal_clipped /low 0.1 >> def
 % default synapse dictionary
 /syn_dict << /synapse_model /static_synapse >> def
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%          Single-neuron parameters		%%%        
+%%%          Single-neuron parameters		%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /neuron_model /iaf_psc_exp def  % neuron model. For PSP-to-PSC conversion to
@@ -148,11 +143,11 @@ Vm0_type (optimized) eq
                >> def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%           Stimulus parameters		%%%        
+%%%           Stimulus parameters		%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
-% rate of background Poisson input at each external input synapse (spikes/s) 
-/bg_rate 8. def 
+
+% rate of background Poisson input at each external input synapse (spikes/s)
+/bg_rate 8. def
 % DC amplitude at each external input synapse (pA)
 % This is relevant for reproducing Potjans & Diesmann (2012) Fig. 7.
 /dc_amplitude 0. def
@@ -171,7 +166,7 @@ Vm0_type (optimized) eq
 % Set n_thal to 0 to avoid this input.
 % For producing Potjans & Diesmann (2012) Fig. 10, n_thal=902 was used.
 % Note that the thalamic rate here reproduces the simulation results
-% shown in the paper, and differs from the rate given in the text. 
+% shown in the paper, and differs from the rate given in the text.
 /n_thal 0 def          % size of thalamic population
 /th_start 700. def     % onset of thalamic input (ms)
 /th_duration 10. def   % duration of thalamic input (ms)
@@ -180,7 +175,7 @@ Vm0_type (optimized) eq
 
 % connection probabilities for thalamic input
 /C_th [[0.0       % 2/3e
-        0.0   ]   % 2/3i    
+        0.0   ]   % 2/3i
        [0.0983    % 4e
         0.0619]   % 4i
        [0.0       % 5e
@@ -190,7 +185,6 @@ Vm0_type (optimized) eq
       def
 
 % mean delay of thalamic input (ms)
-/delay_th 1.5 def 
+/delay_th 1.5 def
 % standard deviation relative to mean delay of thalamic input
-/delay_th_rel_sd 0.5 def 
-
+/delay_th_rel_sd 0.5 def

@@ -72,10 +72,10 @@ while test $# -gt 0; do
         echo "@CMAKE_CXX_COMPILER@"
         ;;
     --python-executable)
-        echo "@PYTHON_EXECUTABLE@"
+        echo "@Python_EXECUTABLE@"
         ;;
     --python-version)
-        echo "@PYTHON_VERSION@"
+        echo "@Python_VERSION@"
         ;;
 
     --static-libraries)

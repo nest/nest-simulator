@@ -217,7 +217,7 @@ provide containerized versions of NEST in several formats:
           generated, as shown below. You can then copy and paste the
           link into your browser.
 
-           .. image:: ../_static/img/docker_link.png
+           .. image:: ../static/img/docker_link.png
               :align: center
               :width: 1000px
 
@@ -280,7 +280,7 @@ Once in Python you can type:
 
 If installation was successful, you should see the NEST splash screen in the terminal:
 
-.. figure:: ../_static/img/import_nest.png
+.. figure:: ../static/img/import_nest.png
    :scale: 50%
    :alt: import nest
 
@@ -322,7 +322,7 @@ these instructions.**
 
    .. tab:: GitHub
 
-       Get the latest developer version on `GitHub <https://github.com/nest/nest-simulator>`_. Fork NEST into your GitHub repository (see details on `GitHub workflows here <https://nest.github.io/nest-simulator/>`_).
+       Get the latest developer version on `GitHub <https://github.com/nest/nest-simulator>`_. Fork NEST into your GitHub repository (see details on :doc:`GitHub workflows here <../contribute/development_workflow>`).
 
 
    .. tab:: macOS

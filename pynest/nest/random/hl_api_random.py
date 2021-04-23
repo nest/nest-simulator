@@ -26,6 +26,7 @@ __all__ = [
     'lognormal',
     'normal',
     'uniform',
+    'uniform_int',
 ]
 
 
@@ -48,6 +49,25 @@ def uniform(min=0.0, max=1.0):
         Object yielding values drawn from the distribution.
     """
     return CreateParameter('uniform', {'min': min, 'max': max})
+
+
+def uniform_int(max):
+    """
+    Draws integer samples from a uniform distribution.
+
+    Samples are distributed uniformly in [0, max) (includes 0, but excludes max).
+
+    Parameters
+    ----------
+    max : integer
+        Upper boundary of the sample interval.
+
+    Returns
+    -------
+    Parameter:
+        Object yielding values drawn from the distribution.
+    """
+    return CreateParameter('uniform_int', {'max': max})
 
 
 def normal(mean=0.0, std=1.0):

@@ -108,7 +108,7 @@ be located?".
 
 .. _grid:
 
-.. figure:: ../../_static/img/grid.png
+.. figure:: ../../static/img/grid.png
    :alt: Example of on-grid, in which the neurons are positioned as grid.
 
    Example of on-grid, in which the neurons are
@@ -116,7 +116,7 @@ be located?".
 
 .. _free:
 
-.. figure:: ../../_static/img/free.png
+.. figure:: ../../static/img/free.png
    :alt: Example of off-grid, in which the neurons are positioned as grid+jitter.
 
    Example of off-grid, in which the neurons are
@@ -209,7 +209,7 @@ following table lists the parameters that can be used.
 
 .. _cirgauss:
 
-.. figure:: ../../_static/img/sample1_circgauss.png
+.. figure:: ../../static/img/sample1_circgauss.png
    :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
 
    Examples of connectivity for each of the connectivity dictionaries
@@ -217,7 +217,7 @@ following table lists the parameters that can be used.
 
 .. _rectanchor:
 
-.. figure:: ../../_static/img/sample2_rectanchor.png
+.. figure:: ../../static/img/sample2_rectanchor.png
    :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
 
    Examples of connectivity for each of the connectivity dictionaries
@@ -225,7 +225,7 @@ following table lists the parameters that can be used.
 
 .. _doughnutlinear:
 
-.. figure:: ../../_static/img/sample3_doughnutlinear.png
+.. figure:: ../../static/img/sample3_doughnutlinear.png
    :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
 
    Examples of connectivity for each of the connectivity dictionaries
@@ -233,7 +233,7 @@ following table lists the parameters that can be used.
 
 .. _gaussweights:
 
-.. figure:: ../../_static/img/sample4_gaussweights.png
+.. figure:: ../../static/img/sample4_gaussweights.png
    :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
 
    Examples of connectivity for each of the connectivity dictionaries

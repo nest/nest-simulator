@@ -85,11 +85,18 @@ neuron model described in [1]_. The most important properties are:
 - Synaptic "minis" are not implemented.
 
 For implementation details see:
+
 - `HillTononi_model <../model_details/HillTononiModels.ipynb>`_
 
-For examples, see
+For examples, see:
+
 - :doc:`../auto_examples/intrinsic_currents_spiking`
 - :doc:`../auto_examples/intrinsic_currents_subthreshold`
+
+For an example network model using ``ht_neuron`` (based on [1]_), see:
+
+- `Multiarea Hill-Tononi thalamocortical network model
+  <https://github.com/ricardomurphy/Multiarea-Hill-Tononi-thalamocortical-network-model>`_
 
 Parameters
 ++++++++++
@@ -171,7 +178,7 @@ References
 See also
 ++++++++
 
-ht_connection
+ht_synapse
 
 EndUserDocs */
 

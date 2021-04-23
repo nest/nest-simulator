@@ -104,12 +104,14 @@ nest::noise_generator::State_::State_()
 }
 
 nest::noise_generator::Buffers_::Buffers_( noise_generator& n )
-  : logger_( n )
+  : next_step_( 0 )
+  , logger_( n )
 {
 }
 
-nest::noise_generator::Buffers_::Buffers_( const Buffers_&, noise_generator& n )
-  : logger_( n )
+nest::noise_generator::Buffers_::Buffers_( const Buffers_& b, noise_generator& n )
+  : next_step_( b.next_step_ )
+  , logger_( n )
 {
 }
 
@@ -324,7 +326,7 @@ nest::noise_generator::update( Time const& origin, const long from, const long t
       {
         *it = P_.mean_
           + std::sqrt( P_.std_ * P_.std_ + S_.y_1_ * P_.std_mod_ * P_.std_mod_ )
-            * V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
+            * V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
       }
       // use now as reference, in case we woke up from inactive period
       B_.next_step_ = now + V_.dt_steps_;

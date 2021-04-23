@@ -18,6 +18,7 @@ Table of Contents
    guides/index
    examples/index
    models/index
+   nest_server
    ref_material/pynest_apis
    troubleshooting
    getting_help

@@ -19,7 +19,6 @@ nest::Compartment::Compartment( const long compartment_index,
   , hh( 0.0 )
   , n_passed( 0 )
 {
-  // syns.resize( 0 );
   compartment_currents = CompartmentCurrents();
   etype = EType();
 };
@@ -41,7 +40,6 @@ nest::Compartment::Compartment( const long compartment_index,
   , hh( 0.0 )
   , n_passed( 0 )
 {
-  // syns.resize( 0 );
   compartment_currents = CompartmentCurrents();
   etype = EType( compartment_params );
 };

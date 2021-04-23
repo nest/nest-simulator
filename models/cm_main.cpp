@@ -84,34 +84,6 @@ cm_main::add_compartment( const long compartment_idx, const long parent_compartm
 size_t
 cm_main::add_receptor( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params )
 {
-  // std::shared_ptr< Synapse > syn;
-  // if ( type == "AMPA" )
-  // {
-  //   syn = std::shared_ptr< Synapse >( new AMPASyn() );
-  // }
-  // else if ( type == "GABA" )
-  // {
-  //   syn = std::shared_ptr< Synapse >( new GABASyn() );
-  // }
-  // else if ( type == "NMDA" )
-  // {
-  //   syn = std::shared_ptr< Synapse >( new NMDASyn() );
-  // }
-  // else if ( type == "AMPA+NMDA" )
-  // {
-  //   syn = std::shared_ptr< Synapse >( new AMPA_NMDASyn() );
-  // }
-  // else
-  // {
-  //   assert( false );
-  // }
-
-  // const size_t syn_idx = syn_receptors_.size();
-  // syn_receptors_.push_back( syn );
-
-  // Compartment* compartment = c_tree_.get_compartment( compartment_idx );
-  // compartment->syns.push_back( syn );
-
   // create a ringbuffer to collect spikes for the receptor
   std::shared_ptr< RingBuffer > buffer = std::shared_ptr< RingBuffer >( new RingBuffer() );
 
@@ -124,8 +96,6 @@ cm_main::add_receptor( const long compartment_idx, const std::string& type, cons
   compartment->compartment_currents.add_synapse_with_buffer( type, buffer, receptor_params );
 
   return syn_idx;
-
-
 }
 
 void

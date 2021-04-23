@@ -1,17 +1,4 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <list>
-#include <map>
-#include <complex>
-#include <tuple>
-#include <numeric>
-#include <cmath>
-#include <string.h>
 #include <stdlib.h>
-#include <algorithm>
-#include <math.h>
-#include <time.h>
 
 #include "nest_time.h"
 #include "ring_buffer.h"
@@ -54,7 +41,6 @@ public:
     Compartment* parent;
     std::vector< Compartment > children;
     // vector for synapses
-    // std::vector< std::shared_ptr< Synapse > > syns;
     CompartmentCurrents compartment_currents;
 
     // etype

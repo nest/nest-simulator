@@ -82,7 +82,7 @@ public:
   virtual void enroll( StimulatingDevice&, const DictionaryDatum& ){};
 
   /**
-   * Disenroll an `StimulatingDevice` from the `StimulatingBackend`.
+   * Disenroll a `StimulatingDevice` from the `StimulatingBackend`.
    *
    * This function is considered to be the opposite of enroll() in the
    * sense that it cancels the enrollment of a RecordingDevice from a

@@ -33,6 +33,8 @@ try:
 except ImportError:
     HAVE_SCIPY = False
 
+nest.set_verbosity('M_WARNING')
+
 
 @unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
 class RandomParameterTestCase(unittest.TestCase):
@@ -46,6 +48,9 @@ class RandomParameterTestCase(unittest.TestCase):
         d, p_val = scipy.stats.kstest(param_values, cdf, args=cdf_args)
         self.assertGreater(p_val, p_val_lim)
 
+    def setUp(self):
+        nest.ResetKernel()
+
     def test_uniform(self):
         """Test uniform distribution Parameter"""
         w_min = -1.3
@@ -54,6 +59,18 @@ class RandomParameterTestCase(unittest.TestCase):
         cdf = 'uniform'
         cdf_args = (w_min, w_max - w_min)  # Uniform limits in SciPy are given as (loc, loc + scale)
         param = nest.random.uniform(min=w_min, max=w_max)
+
+        self.ks_assert(param, cdf, cdf_args)
+
+    def test_uniform_int(self):
+        """Test uniform_int distribution Parameter"""
+        w_min = 0
+        w_max = 100
+
+        cdf = 'randint'
+        cdf_args = (w_min, w_max)
+        # Parameter distribution is in the range [0, max)
+        param = nest.random.uniform_int(w_max)
 
         self.ks_assert(param, cdf, cdf_args)
 
@@ -91,6 +108,42 @@ class RandomParameterTestCase(unittest.TestCase):
         param = nest.random.exponential(beta=beta)
 
         self.ks_assert(param, cdf, cdf_args)
+
+    def test_conn_parameter(self):
+        """Test uniformly distributed weights"""
+        w_min = -1.3
+        w_max = 2.7
+        p_val_lim = 0.05
+
+        cdf = 'uniform'
+        cdf_args = (w_min, w_max - w_min)  # Uniform limits in SciPy are given as (loc, loc + scale)
+        param = nest.random.uniform(min=w_min, max=w_max)
+
+        nodes = nest.Create('iaf_psc_alpha', 10)
+        nest.Connect(nodes, nodes, syn_spec={'synapse_model': 'static_synapse',
+                                             'weight': param})
+        weights = nest.GetConnections().weight
+
+        d, p_val = scipy.stats.kstest(weights, cdf, args=cdf_args)
+        self.assertGreater(p_val, p_val_lim)
+
+    def test_node_param_parameter(self):
+        """Test uniformly distributed V_m"""
+        w_min = -60.
+        w_max = -50.
+        p_val_lim = 0.05
+
+        cdf = 'uniform'
+        cdf_args = (w_min, w_max - w_min)  # Uniform limits in SciPy are given as (loc, loc + scale)
+        param = nest.random.uniform(min=w_min, max=w_max)
+
+        nodes = nest.Create('iaf_psc_alpha', 10)
+        nodes.V_m = param
+        vm = nodes.V_m
+
+        d, p_val = scipy.stats.kstest(vm, cdf, args=cdf_args)
+
+        self.assertGreater(p_val, p_val_lim)
 
 
 def suite():

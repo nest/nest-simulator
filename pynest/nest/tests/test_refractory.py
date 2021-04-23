@@ -118,12 +118,9 @@ class TestRefractoryCase(unittest.TestCase):
         nest.ResetKernel()
 
         msd = 123456
-        N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
-
         nest.SetKernelStatus({
             'resolution': resolution,
-            'grng_seed': msd + N_vp,
-            'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
+            'rng_seed': msd})
 
     def compute_reftime(self, model, sr, vm, neuron):
         '''

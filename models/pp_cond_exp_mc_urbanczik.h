@@ -40,6 +40,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
@@ -49,9 +50,6 @@
 // Includes from sli:
 #include "dictdatum.h"
 #include "name.h"
-
-// Includes from librandom:
-#include "poisson_randomdev.h"
 
 namespace nest
 {
@@ -486,9 +484,9 @@ private:
   {
     int RefractoryCounts_;
 
-    double h_;                                //!< simulation time step in ms
-    librandom::RngPtr rng_;                   //!< random number generator of my own thread
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
+    double h_;                          //!< simulation time step in ms
+    RngPtr rng_;                        //!< random number generator of my own thread
+    poisson_distribution poisson_dist_; //!< poisson distribution
   };
 
   // Access functions for UniversalDataLogger -------------------------------

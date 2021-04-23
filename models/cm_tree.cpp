@@ -10,10 +10,10 @@ nest::Compartment::Compartment( const long compartment_index,
   , p_index( parent_index )
   , parent( nullptr )
   , v_comp( 0.0 )
-  , ca( 0.0)
-  , gc( 0.0)
-  , gl( 0.0 )
-  , el( 0.0 )
+  , ca( 1.0)
+  , gc( 0.01)
+  , gl( 0.1 )
+  , el( -70.)
   , ff( 0.0 )
   , gg( 0.0 )
   , hh( 0.0 )
@@ -31,7 +31,7 @@ nest::Compartment::Compartment( const long compartment_index,
   , comp_index( compartment_index )
   , p_index( parent_index )
   , parent( nullptr )
-  , v_comp( 0.0 )
+  , v_comp( getValue< double >( compartment_params, "e_L" ) )
   , ca( getValue< double >( compartment_params, "C_m" ) )
   , gc( getValue< double >( compartment_params, "g_c" ) )
   , gl( getValue< double >( compartment_params, "g_L" ) )
@@ -141,10 +141,10 @@ Assumes parent of compartment is already added
 void
 nest::CompTree::add_compartment( const long compartment_index,
                                  const long parent_index,
-			                     const DictionaryDatum& compartment_params)
+			                           const DictionaryDatum& compartment_params )
 {
     Compartment* compartment = new Compartment( compartment_index, parent_index,
-                				   compartment_params);
+                				                        compartment_params );
 
     if( parent_index >= 0 )
     {

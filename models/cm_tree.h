@@ -78,7 +78,7 @@ public:
     // constructor, destructor
     Compartment(const long compartment_index, const long parent_index);
     Compartment(const long compartment_index, const long parent_index,
-	         const DictionaryDatum& compartment_params);
+	            const DictionaryDatum& compartment_params);
     ~Compartment(){};
 
     // initialization

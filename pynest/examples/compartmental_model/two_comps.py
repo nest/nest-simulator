@@ -57,11 +57,11 @@ nest.SetStatus(cm_pas, {'V_th': -50.})
 nest.SetStatus(cm_act, {'V_th': -50.})
 
 # add somatic and dendritic receptor to passive dendrite model
-syn_idx_soma_pas = nest.AddReceptor(cm_pas, 0, "AMPA_NMDA", {})
-syn_idx_dend_pas = nest.AddReceptor(cm_pas, 1, "AMPA_NMDA", {})
+syn_idx_soma_pas = nest.AddReceptor(cm_pas, 0, "AMPA_NMDA")
+syn_idx_dend_pas = nest.AddReceptor(cm_pas, 1, "AMPA_NMDA")
 # add somatic and dendritic receptor to active dendrite model
-syn_idx_soma_act = nest.AddReceptor(cm_act, 0, "AMPA_NMDA", {})
-syn_idx_dend_act = nest.AddReceptor(cm_act, 1, "AMPA_NMDA", {})
+syn_idx_soma_act = nest.AddReceptor(cm_act, 0, "AMPA_NMDA")
+syn_idx_dend_act = nest.AddReceptor(cm_act, 1, "AMPA_NMDA")
 
 # create a two spike generators
 sg_soma = nest.Create('spike_generator', 1, {'spike_times': [10.,13.,16.]})

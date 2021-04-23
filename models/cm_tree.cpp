@@ -19,12 +19,13 @@ nest::Compartment::Compartment( const long compartment_index,
   , hh( 0.0 )
   , n_passed( 0 )
 {
-  syns.resize( 0 );
+  // syns.resize( 0 );
+  compartment_currents = CompartmentCurrents();
   etype = EType();
 };
 nest::Compartment::Compartment( const long compartment_index,
                                 const long parent_index,
-			                    const DictionaryDatum& compartment_params )
+			                          const DictionaryDatum& compartment_params )
   : xx_( 0.0 )
   , yy_( 0.0 )
   , comp_index( compartment_index )
@@ -40,7 +41,8 @@ nest::Compartment::Compartment( const long compartment_index,
   , hh( 0.0 )
   , n_passed( 0 )
 {
-  syns.resize( 0 );
+  // syns.resize( 0 );
+  compartment_currents = CompartmentCurrents();
   etype = EType( compartment_params );
 };
 
@@ -49,10 +51,11 @@ nest::Compartment::init()
 {
     v_comp = el;
 
-    for( auto  syn_it = syns.begin(); syn_it != syns.end(); ++syn_it )
-    {
-        (*syn_it)->init();
-    }
+    // for( auto  syn_it = syns.begin(); syn_it != syns.end(); ++syn_it )
+    // {
+    //     (*syn_it)->init();
+    // }
+    compartment_currents.init();
 
     // initialize the buffer
     currents.clear();
@@ -102,16 +105,19 @@ nest::Compartment::construct_matrix_element( const long lag )
     ff += gf_chan.second;
 
     // add synapse contribution
-    std::pair< double, double > gf_syn(0., 0.);
+    // std::pair< double, double > gf_syn(0., 0.);
 
-    for( auto syn_it = syns.begin(); syn_it != syns.end(); ++syn_it )
-    {
-        (*syn_it)->update(lag);
-        gf_syn = (*syn_it)->f_numstep(v_comp);
+    // for( auto syn_it = syns.begin(); syn_it != syns.end(); ++syn_it )
+    // {
+    //     (*syn_it)->update(lag);
+    //     gf_syn = (*syn_it)->f_numstep(v_comp);
 
-        gg += gf_syn.first;
-        ff += gf_syn.second;
-    }
+    //     gg += gf_syn.first;
+    //     ff += gf_syn.second;
+    // }
+    std::pair< double, double > gi = compartment_currents.f_numstep( v_comp, dt, lag );
+    gg += gi.first;
+    ff += gi.second;
 
     // add input current
     ff += currents.get_value( lag );

@@ -34,11 +34,11 @@ nest.AddCompartment(cm, 2, 0, dend_params)
 nest.SetStatus(cm, {'V_th': -50.})
 
 # add GABA receptor in compartment 0 (soma)
-syn_idx_GABA = nest.AddReceptor(cm, 0, "GABA")
+syn_idx_GABA = nest.AddReceptor(cm, 0, "GABA", {})
 # add AMPA receptor in compartment 1
-syn_idx_AMPA = nest.AddReceptor(cm, 1, "AMPA")
+syn_idx_AMPA = nest.AddReceptor(cm, 1, "AMPA", {})
 # add AMPA+NMDA receptor in compartment 2
-syn_idx_NMDA = nest.AddReceptor(cm, 2, "AMPA+NMDA")
+syn_idx_NMDA = nest.AddReceptor(cm, 2, "AMPA_NMDA", {})
 
 # create three spike generators
 sg1 = nest.Create('spike_generator', 1, {'spike_times': [101., 105., 106.,110., 150.]})

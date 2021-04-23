@@ -907,16 +907,17 @@ NestModule::AddCompartment_lllD_Function::execute( SLIInterpreter* i ) const
 }
 
 void
-NestModule::AddReceptor_lls_Function::execute( SLIInterpreter* i ) const
+NestModule::AddReceptor_llsD_Function::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 3 );
+  i->assert_stack_load( 4 );
 
-  const std::string type = getValue< std::string >( i->OStack.pick( 0 ) );
-  const long compartment_idx = getValue< long >( i->OStack.pick( 1 ) );
-  const index node_id = getValue< long >( i->OStack.pick( 2 ) );
-  const size_t syn_idx = add_receptor( node_id, compartment_idx, type);
+  const DictionaryDatum receptor_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  const std::string type = getValue< std::string >( i->OStack.pick( 1 ) );
+  const long compartment_idx = getValue< long >( i->OStack.pick( 2 ) );
+  const index node_id = getValue< long >( i->OStack.pick( 3 ) );
+  const size_t syn_idx = add_receptor( node_id, compartment_idx, type, receptor_params);
 
-  i->OStack.pop( 3 );
+  i->OStack.pop( 4 );
   i->OStack.push( syn_idx );
   i->EStack.pop();
 }
@@ -2986,7 +2987,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "GetNodes_D_b", &getnodes_D_bfunction );
 
   i->createcommand( "AddCompartment_lllD", &add_compartment_lllD_function );
-  i->createcommand( "AddReceptor_lls", &add_receptor_lls_function );
+  i->createcommand( "AddReceptor_llsD", &add_receptor_llsD_function );
 
   i->createcommand( "mul_P_P", &mul_P_Pfunction );
   i->createcommand( "div_P_P", &div_P_Pfunction );

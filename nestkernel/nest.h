@@ -115,7 +115,7 @@ NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only 
 
 void add_compartment( const index node_id, const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params );
 
-size_t add_receptor( const index node_id, const long compartment_idx, const std::string& type );
+size_t add_receptor( const index node_id, const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params );
 
 void connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,

@@ -731,7 +731,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%     Adding compartments to neat nodes
+%     Adding compartments to compartmental model nodes
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -763,12 +763,13 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%     Adding receptors to neat models
+%     Adding receptors to compartmental models
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/AddReceptor_gls
+/AddReceptor_glsD
 {
+    /receptor_params Set
     /type Set
     /compartment_idx Set
     /node Set
@@ -783,12 +784,13 @@ def
     node_id
     compartment_idx
     type
-    AddReceptor_lls
+    receptor_params
+    AddReceptor_llsD
 } def
 
 /AddReceptor trie
-  [/integertype /integertype /stringtype] /AddReceptor_lls load addtotrie
-  [/nodecollectiontype /integertype /stringtype] /AddReceptor_gls load addtotrie
+  [/integertype /integertype /stringtype /dictionarytype] /AddReceptor_llsD load addtotrie
+  [/nodecollectiontype /integertype /stringtype /dictionarytype] /AddReceptor_glsD load addtotrie
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1079,7 +1081,7 @@ def
         4 2 roll               % bring sources and targets to bottom
         Connect_g_g_D_D
       } bind addtotrie
-      
+
       % Variant: sources targets conn_spec syn_vector Connect
       % Connect nodes from two sets of NodeCollections using the given connectivity specification
       % and a list of synapse specifications

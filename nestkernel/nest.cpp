@@ -132,9 +132,9 @@ add_compartment( const index node_id, const long compartment_idx, const long par
 }
 
 size_t
-add_receptor( const index node_id, const long compartment_idx, const std::string& type )
+add_receptor( const index node_id, const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params  )
 {
-  return kernel().node_manager.add_receptor( node_id, compartment_idx, type );
+  return kernel().node_manager.add_receptor( node_id, compartment_idx, type, receptor_params );
 }
 
 void

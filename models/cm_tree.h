@@ -54,7 +54,9 @@ public:
     Compartment* parent;
     std::vector< Compartment > children;
     // vector for synapses
-    std::vector< std::shared_ptr< Synapse > > syns;
+    // std::vector< std::shared_ptr< Synapse > > syns;
+    CompartmentCurrents compartment_currents;
+
     // etype
     EType etype;
     // buffer for currents

@@ -39,7 +39,7 @@ DynamicRecordablesMap< cm_main >::create( cm_main& host)
 nest::cm_main::cm_main()
   : ArchivingNode()
   , c_tree_()
-  , syn_receptors_( 0 )
+  , syn_buffers_( 0 )
   , logger_( *this )
   , V_th_( -55.0 )
 {
@@ -49,7 +49,7 @@ nest::cm_main::cm_main()
 nest::cm_main::cm_main( const cm_main& n )
   : ArchivingNode( n )
   , c_tree_( n.c_tree_ )
-  , syn_receptors_( n.syn_receptors_ )
+  , syn_buffers_( n.syn_buffers_ )
   , logger_( *this )
   , V_th_( n.V_th_ )
 {
@@ -82,37 +82,50 @@ cm_main::add_compartment( const long compartment_idx, const long parent_compartm
 }
 
 size_t
-cm_main::add_receptor( const long compartment_idx, const std::string& type )
+cm_main::add_receptor( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params )
 {
-  std::shared_ptr< Synapse > syn;
-  if ( type == "AMPA" )
-  {
-    syn = std::shared_ptr< Synapse >( new AMPASyn() );
-  }
-  else if ( type == "GABA" )
-  {
-    syn = std::shared_ptr< Synapse >( new GABASyn() );
-  }
-  else if ( type == "NMDA" )
-  {
-    syn = std::shared_ptr< Synapse >( new NMDASyn() );
-  }
-  else if ( type == "AMPA+NMDA" )
-  {
-    syn = std::shared_ptr< Synapse >( new AMPA_NMDASyn() );
-  }
-  else
-  {
-    assert( false );
-  }
+  // std::shared_ptr< Synapse > syn;
+  // if ( type == "AMPA" )
+  // {
+  //   syn = std::shared_ptr< Synapse >( new AMPASyn() );
+  // }
+  // else if ( type == "GABA" )
+  // {
+  //   syn = std::shared_ptr< Synapse >( new GABASyn() );
+  // }
+  // else if ( type == "NMDA" )
+  // {
+  //   syn = std::shared_ptr< Synapse >( new NMDASyn() );
+  // }
+  // else if ( type == "AMPA+NMDA" )
+  // {
+  //   syn = std::shared_ptr< Synapse >( new AMPA_NMDASyn() );
+  // }
+  // else
+  // {
+  //   assert( false );
+  // }
 
-  const size_t syn_idx = syn_receptors_.size();
-  syn_receptors_.push_back( syn );
+  // const size_t syn_idx = syn_receptors_.size();
+  // syn_receptors_.push_back( syn );
 
+  // Compartment* compartment = c_tree_.get_compartment( compartment_idx );
+  // compartment->syns.push_back( syn );
+
+  // create a ringbuffer to collect spikes for the receptor
+  std::shared_ptr< RingBuffer > buffer = std::shared_ptr< RingBuffer >( new RingBuffer() );
+
+  // add the ringbuffer to the global receptor vector
+  const size_t syn_idx = syn_buffers_.size();
+  syn_buffers_.push_back( buffer );
+
+  // add the synapse to the compartment
   Compartment* compartment = c_tree_.get_compartment( compartment_idx );
-  compartment->syns.push_back( syn );
+  compartment->compartment_currents.add_synapse_with_buffer( type, buffer, receptor_params );
 
   return syn_idx;
+
+
 }
 
 void
@@ -164,9 +177,11 @@ nest::cm_main::handle( SpikeEvent& e )
   }
 
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() >= 0 ) && ( ( size_t ) e.get_rport() < syn_receptors_.size() ) );
+  assert( ( e.get_rport() >= 0 ) && ( ( size_t ) e.get_rport() < syn_buffers_.size() ) );
 
-  syn_receptors_[ e.get_rport() ]->handle(e);
+  syn_buffers_[ e.get_rport() ]->add_value(
+    e.get_rel_delivery_steps(kernel().simulation_manager.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void

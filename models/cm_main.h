@@ -158,7 +158,7 @@ public:
   void set_status( const DictionaryDatum& );
 
   void add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params ) override;
-  size_t add_receptor( const long compartment_idx, const std::string& type ) override;
+  size_t add_receptor( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params ) override;
 
 private:
   void init_state_( const Node& proto );
@@ -168,7 +168,7 @@ private:
   void update( Time const&, const long, const long );
 
   CompTree c_tree_;
-  std::vector< std::shared_ptr< Synapse > > syn_receptors_;
+  std::vector< std::shared_ptr< RingBuffer > > syn_buffers_;
 
   // To record variables with DataAccessFunctor
   double get_state_element( size_t elem){return c_tree_.get_compartment_voltage(elem);}
@@ -198,7 +198,7 @@ nest::cm_main::send_test_event( Node& target, rport receptor_type, synindex, boo
 inline port
 cm_main::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( ( receptor_type < 0 ) or ( receptor_type >= static_cast< port >( syn_receptors_.size() ) ) )
+  if ( ( receptor_type < 0 ) or ( receptor_type >= static_cast< port >( syn_buffers_.size() ) ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

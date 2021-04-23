@@ -59,7 +59,7 @@ public:
     ~EType(){};
 
     void add_spike(){};
-    std::pair< double, double > f_numstep(const double v_comp, const double lag);
+    std::pair< double, double > f_numstep(const double v_comp, const double dt);
 };
 
 }//

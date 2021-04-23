@@ -49,7 +49,7 @@ nest::KernelManager::KernelManager()
   , logging_manager()
   , mpi_manager()
   , vp_manager()
-  , rng_manager()
+  , random_manager()
   , simulation_manager()
   , modelrange_manager()
   , connection_manager()
@@ -62,7 +62,7 @@ nest::KernelManager::KernelManager()
   , managers( { &logging_manager,
       &mpi_manager,
       &vp_manager,
-      &rng_manager,
+      &random_manager,
       &simulation_manager,
       &modelrange_manager,
       &model_manager,
@@ -136,11 +136,11 @@ nest::KernelManager::change_number_of_threads( thread new_num_threads )
   connection_manager.finalize();
   model_manager.finalize();
   modelrange_manager.finalize();
-  rng_manager.finalize();
+  random_manager.finalize();
 
   vp_manager.set_num_threads( new_num_threads );
 
-  rng_manager.initialize();
+  random_manager.initialize();
   modelrange_manager.initialize();
   model_manager.initialize();
   connection_manager.initialize();

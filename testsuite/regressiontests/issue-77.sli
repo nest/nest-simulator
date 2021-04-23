@@ -23,15 +23,15 @@
 /*
  * Regression test for Ticket #77 (GitHub).
  *
- * Ensure that all neuron models register outgoing 
- * spikes with archiving node. The test sends a very 
+ * Ensure that all neuron models register outgoing
+ * spikes with archiving node. The test sends a very
  * high-rate Poisson spike train into the neuron that
  * should make any type of model neuron fire and checks
  * both `t_spike` entry of the neuron (>0 if neuron has
  * spiked) and checks that the connection weight differs
  * from the initial value 1.0.
  *
- * Hans Ekkehard Plesser, 2015-08-14 
+ * Hans Ekkehard Plesser, 2015-08-14
  *
  */
 
@@ -45,17 +45,17 @@ M_ERROR setverbosity
 {
   /sg /spike_generator << /spike_times [ 10.0 ] /precise_times true >> Create  def
   /pn /parrot_neuron_ps Create def
-  
+
   sg pn Connect
   20 Simulate
-  
+
   pn /t_spike get 11.0 eq
 } assert_or_die
-  
+
 
 
 % The following models will not be tested:
-/skip_list [ 
+/skip_list [
              /ginzburg_neuron             % binary neuron
              /mcculloch_pitts_neuron      % binary neuron
              /erfc_neuron                 % binary neuron
@@ -84,7 +84,7 @@ M_ERROR setverbosity
              /music_cont_in_proxy         % MUSIC port
              /music_rate_out_proxy        % MUSIC port
              /music_rate_in_proxy         % MUSIC port
-           ] def    
+           ] def
 
 % The following models require connections to rport 1 or other specific parameters:
 /extra_params <<
@@ -98,29 +98,29 @@ M_ERROR setverbosity
    /glif_cond << /params << /tau_syn [ 0.2 ] /E_rev [ 0.0 ] >>
                                   /receptor_type 1 >>
    /glif_psc << /params << /tau_syn [ 1.0 ] >>
-                                  /receptor_type 1 >>                                  
+                                  /receptor_type 1 >>
    /iaf_psc_alpha_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
    /iaf_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
-   /aeif_cond_alpha_multisynapse << /params << /tau_syn [ 1.0 ] >>
+   /aeif_cond_alpha_multisynapse << /params << /tau_syn [ 2.0 ] >>
                                   /receptor_type 1 >>
-   /aeif_cond_beta_multisynapse << /params << /E_rev [ 0.0 ] 
+   /aeif_cond_beta_multisynapse << /params << /E_rev [ 0.0 ]
                                               /tau_rise [ 1.0 ]
-                                              /tau_decay [ 1.0 ] >>
+                                              /tau_decay [ 2.0 ] >>
                                   /receptor_type 1 >>
    /iaf_cond_alpha_mc << /receptor_type 1 >>
    /pp_cond_exp_mc_urbanczik << /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>
    >>
    def
-                                     
+
 
 {
   % apply to all models of element_type neuron
   modeldict keys {
     /model Set
-    
+
     model skip_list exch MemberQ not
     model GetDefaults /element_type get /neuron eq and
     {
@@ -133,13 +133,13 @@ M_ERROR setverbosity
            extra_params model get /params get
            n exch
            SetStatus
-         } if 
-      } if   
-      
+         } if
+      } if
+
       /pg /poisson_generator << /rate 1e5 >> Create def
       /parrot /parrot_neuron_ps Create def
       /sr /spike_recorder Create def
-      
+
       pg parrot Connect   % need to connect via parrot since generators cannot connect with
                           % plastic synapses.
 
@@ -159,13 +159,13 @@ M_ERROR setverbosity
                      {
                         initial_weight
                      } ifelse
-                   /receptor_type 
+                   /receptor_type
                      extra_params model known
                      {
                        extra_params model get /receptor_type known
                        {
                          extra_params model get /receptor_type get
-                       } 
+                       }
                        {
                          0
                        } ifelse
@@ -177,22 +177,22 @@ M_ERROR setverbosity
 
       parrot n /one_to_one syn_spec Connect
       n sr Connect
-            
+
       100 Simulate
 
       /neuron_spiked sr /n_events get 0 gt def
       /t_spike_set n /t_spike get 0 gt def
       /weight_changed
-        << /source parrot >> GetConnections 0 get /weight get  
-        initial_weight neq def 
+        << /source parrot >> GetConnections 0 get /weight get
+        initial_weight neq def
 
       neuron_spiked t_spike_set weight_changed and and
       dup not {
-       (FAILED: ) model cvs join == 
+       (FAILED: ) model cvs join ==
        (  events ) =only sr /n_events get =
        (  tspike ) =only n /t_spike get =
        (  weight ) =only  << /source parrot >> GetConnections 0 get /weight get ==
-      } if      
+      } if
     }
     { true }
     ifelse
@@ -202,7 +202,7 @@ M_ERROR setverbosity
   % see if all entries are true
   true exch { and } Fold
 
-} 
+}
 assert_or_die
 
 endusing

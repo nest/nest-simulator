@@ -221,7 +221,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   assert( 0 <= prt && static_cast< size_t >( prt ) < B_.next_spike_.size() );
 
   // obtain rng
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
+  RngPtr rng = get_vp_specific_rng( get_thread() );
 
   // introduce nextspk as a shorthand
   Buffers_::SpikeTime& nextspk = B_.next_spike_[ prt ];
@@ -243,13 +243,13 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
 
     if ( P_.dead_time_ > 0 and rng->drand() < P_.dead_time_ * P_.rate_ / 1000.0 )
     {
-      // uniform case: spike occurs with uniform probability in [0, dead_time].
+      // uniform case: spike occurs with uniform probability in [0, dead_time).
       spike_offset = rng->drand() * P_.dead_time_;
     }
     else
     {
       // exponential case: spike occurs with exponential probability in
-      // [dead_time, infinity]
+      // [dead_time, infinity)
       spike_offset = V_.inv_rate_ms_ * V_.exp_dev_( rng ) + P_.dead_time_;
     }
 
@@ -284,5 +284,4 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
       nextspk.second = delta_stamp.get_ms() - new_offset;
     }
   }
-  // std::cerr << "********************************\n";
 }

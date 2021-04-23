@@ -90,8 +90,9 @@ AH 09) =
 
 /delay 0.25 def                 % synaptic delay
 
-%% initialize random number generator
-rngdict /gsl_mt19937 get 2000 CreateRNG /myrng Set  % usage 'myrng drand' for double in in [0, 1)
+%% set random number generator seed and random parameter
+/rng_seed 2000 def
+/V_m_parameter << /uniform << /min V_reset /max V_th >> >> CreateParameter def
 (-DONE-) =
 
 
@@ -159,7 +160,7 @@ modeldict begin
          /resolution h                  % time steps in ms
          /tics_per_ms tics_per_ms       % low-level time resolution
          /off_grid_spiking true         % precise neuron model
-         /rngs [myrng]                  % set rnd seed
+         /rng_seed rng_seed             % set rng seed
          /overwrite_files true          % overwrite previous output
        >> SetKernelStatus
 
@@ -195,13 +196,11 @@ modeldict begin
    1 -1.0 gamma mul ii 1 sub nr cvd div T tau_m div mul mul exp sub mul
    %dup =                               % uncomment to print out value of initial potentials
 
-   %%% Alternatively take just random initial states
-   %   myrng drand
-   %   V_th V_reset sub mul
-   %   V_reset add dup
-   %   =
-
    /V_0 Set
+
+   %%% Alternatively take just random initial states
+   % /V_0 V_m_parameter dup def
+
    ii << /V_m  V_0 >> SetStatus         % set initial potential to each neuron
   } forall
   (-DONE-) =

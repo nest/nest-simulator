@@ -23,7 +23,7 @@
 #ifndef GAUSS_RATE_H
 #define GAUSS_RATE_H
 
-// Includes from c++:
+// C++ includes:
 #include <cmath>
 
 // Includes from models:

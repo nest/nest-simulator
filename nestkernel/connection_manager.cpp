@@ -680,8 +680,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
           }
         }
 
-        connect(
-          *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
+        connect( *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
 
         ALL_ENTRIES_ACCESSED( *param_dicts[ tid ], "connect_arrays", "Unread dictionary entries: " );
 

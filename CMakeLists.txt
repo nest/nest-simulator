@@ -83,14 +83,10 @@ set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuro
 ################################################################################
 
 # In general use the CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir> vars from
-# GNUInstallDirs, but the CMAKE_INSTALL_DATADIR is usually just CMAKE_INSTALL_DATAROOTDIR
+# GNUInstallDirs (included after calling nest_process_with_python()), but the 
+# CMAKE_INSTALL_DATADIR is usually just CMAKE_INSTALL_DATAROOTDIR
 # and we want it to be CMAKE_INSTALL_DATAROOTDIR/PROJECT_NAME
 set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative directory, where NEST installs its data (share/nest)" )
-
-# The Python CMake routines are required to determine the GNU install dirs.
-include( ProcessPython )
-nest_process_with_python()
-include( GNUInstallDirs )
 
 ################################################################################
 ##################           Find utility programs            ##################
@@ -124,11 +120,16 @@ include( DefaultCompilerFlags )
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
 get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
 
-
 # set default compiler flags
 nest_set_default_compiler_flags()
 
 # Process the command line arguments
+# IMPORTANT: Do not change the order of nest_process_with_python() and include( GNUInstallDirs )!
+#            If NEST is built with Python, nest_process_with_python() defaults CMAKE_INSTALL_PREFIX
+#            to the active virtual Python environment. This effects the inclusion
+#            of GNUInstallDirs defining CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir>.
+nest_process_with_python()
+include( GNUInstallDirs )
 nest_process_with_optimize()
 nest_process_with_debug()
 nest_process_with_intel_compiler_flags()

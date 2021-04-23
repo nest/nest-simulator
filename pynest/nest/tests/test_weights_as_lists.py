@@ -131,7 +131,7 @@ class WeightsAsListTestCase(unittest.TestCase):
         conns = nest.GetConnections()
         weights = conns.weight
 
-        self.assertEqual(weights, ref_weights)
+        self.assertEqual(weights.sort(), ref_weights.sort())
 
 
 def suite():

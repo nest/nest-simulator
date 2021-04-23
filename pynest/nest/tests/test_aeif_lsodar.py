@@ -203,11 +203,7 @@ class AEIFTestCase(unittest.TestCase):
         msd = 123456
         self.resol = 0.01
         nest.ResetKernel()
-        N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
-        pyrngs = [np.random.RandomState(s) for s in range(msd, msd + N_vp)]
-        nest.SetKernelStatus({
-            'resolution': self.resol, 'grng_seed': msd + N_vp,
-            'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
+        nest.SetKernelStatus({'resolution': self.resol, 'rng_seed': msd})
 
     def compute_difference(self, multimeters, params, reference, recordables):
         '''

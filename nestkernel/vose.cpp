@@ -90,7 +90,7 @@ Vose::Vose( std::vector< double > dist )
 }
 
 index
-Vose::get_random_id( librandom::RngPtr rng ) const
+Vose::get_random_id( RngPtr rng ) const
 {
   // Choose random number between 0 and n
   double r = rng->drand() * dist_.size();

@@ -135,7 +135,7 @@ private:
   /**
    * A map for the enrolled devices. We have a vector with one map per local
    * thread. The map associates the node ID of a device on a given thread
-   * with its MPI index and device. Only the master thread have the have a valid MPI communicator pointer.
+   * with its MPI index and device. Only the master thread has a valid MPI communicator pointer.
   */
   typedef std::vector< std::map< index, std::tuple< int, MPI_Comm*, const RecordingDevice* > > > device_map;
   device_map devices_;

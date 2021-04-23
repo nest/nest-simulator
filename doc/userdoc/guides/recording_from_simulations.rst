@@ -48,7 +48,7 @@ Recorders for every-day situations
 Where does data end up?
 -----------------------
 
-After a recording device has sampled or collected data, the data is
+After a recording device has collected or sampled data, the data is
 handed to a dedicated *recording backend*, set for each recorder.
 These are responsible for how the data are processed.
 

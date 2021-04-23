@@ -322,7 +322,7 @@ these instructions.**
 
    .. tab:: GitHub
 
-       Get the latest developer version on `GitHub <https://github.com/nest/nest-simulator>`_. Fork NEST into your GitHub repository (see details on `GitHub workflows here <https://nest.github.io/nest-simulator/>`_).
+       Get the latest developer version on `GitHub <https://github.com/nest/nest-simulator>`_. Fork NEST into your GitHub repository (see details on :doc:`GitHub workflows here <../contribute/development_workflow>`).
 
 
    .. tab:: macOS

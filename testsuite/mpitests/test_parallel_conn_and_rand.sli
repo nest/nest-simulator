@@ -24,7 +24,7 @@
    Parallel Connect and Randomize Test Script
 
    This script creates a neuron population to itself, randomizing
-   weight, delay, receptor type and one synaptic parameter. It runs 
+   weight, delay, receptor type and one synaptic parameter. It runs
    with a fixed number of virtual processes, and checks that connections
    are invariant on executing with a varying number of MPI processes.
 
@@ -41,8 +41,8 @@ skip_if_not_threaded
 % define all relevant parameters: changes should be made here
 % all data is place in the userdict dictionary
 
-/num_neurons 10 def   
-%/num_neurons 1000 def   
+/num_neurons 10 def
+%/num_neurons 1000 def
 
 /connspec << /rule /fixed_indegree /indegree 1 >> def
 %/connspec << /rule /fixed_outdegree /outdegree 100 >> def
@@ -60,13 +60,13 @@ skip_if_not_threaded
   M_WARNING setverbosity
 
   % set resolution, total/local number of threads, rng seed
-  << 
-    /resolution  dt 
+  <<
+    /resolution  dt
     /total_num_virtual_procs num_vps
-    /grng_seed 123
+    /rng_seed 123
   >> SetKernelStatus
 
-  (Creating the network.) =  
+  (Creating the network.) =
 
   % setup to allow us to randomize receptor_type
   /tau_syns [0.2 1.0 0.1] Range def
@@ -79,21 +79,21 @@ skip_if_not_threaded
   (Connecting neurons.) =
   population population connspec
   << /synapse_model /stdp_synapse
-     /delay << /distribution /uniform /low 0.5 /high 1.5 >>
-     /weight << /distribution /normal_clipped /low 0.0 /mu 10.0 /sigma 5.0 >>
-     /receptor_type << /distribution /uniform_int /low receptor_min /high receptor_max >>  
-     /alpha << /distribution /uniform /low 0.1 /high 2.3 >> 
-     /tau_plus << /distribution /uniform /low 1.5 /high 5.0 >>
-  >>     
+     /delay << /uniform << /min 0.5 /max 1.5 >> >> CreateParameter
+     /weight << /normal << /mean 10.0 /std 5.0 >> >> CreateParameter 0.0 max
+     /receptor_type << /uniform_int << /max receptor_max 1 add receptor_min sub >> >> CreateParameter
+       << /constant << /value 1.0 >> >> CreateParameter add
+     /alpha << /uniform << /min 0.1 /max 2.3 >> >> CreateParameter
+     /tau_plus << /uniform << /min 1.5 /max 5.0 >> >> CreateParameter
+  >>
   Connect
 
   (Done connecting.) =
-  
+
   /conn_arr 0 array def
-  << /synapse_model /stdp_synapse >> GetConnections 
-  { 
+  << /synapse_model /stdp_synapse >> GetConnections
+  {
     [[/source /target /weight /delay /alpha /tau_plus]] get conn_arr exch append /conn_arr Set
   } forall
   conn_arr
 } distributed_process_invariant_collect_assert_or_die
-

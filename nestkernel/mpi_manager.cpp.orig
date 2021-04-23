@@ -719,6 +719,13 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
   MPI_Allreduce( &send_buffer[ 0 ], &recv_buffer[ 0 ], send_buffer.size(), MPI_Type< double >::type, MPI_SUM, comm );
 }
 
+void
+<<<<<<< HEAD
+nest::MPIManager::communicate_Allreduce_max_in_place( std::vector< long >& buffer )
+{
+  MPI_Allreduce( MPI_IN_PLACE, &buffer[ 0 ], 1, MPI_LONG, MPI_MAX, comm );
+}
+
 double
 nest::MPIManager::min_cross_ranks( double value )
 {
@@ -734,6 +741,8 @@ nest::MPIManager::max_cross_ranks( double value )
 }
 
 void
+=======
+>>>>>>> master
 nest::MPIManager::communicate_Allgather( std::vector< long >& buffer )
 {
   // avoid aliasing, see http://www.mpi-forum.org/docs/mpi-11-html/node10.html
@@ -1087,6 +1096,14 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
   recv_buffer.swap( send_buffer );
 }
 
+void
+<<<<<<< HEAD
+nest::MPIManager::communicate_Allreduce_max_in_place( std::vector< long >& )
+{
+  // Null operator for ranks == 1
+  // Max already is the input
+}
+
 double
 nest::MPIManager::min_cross_ranks( double value )
 {
@@ -1100,6 +1117,8 @@ nest::MPIManager::max_cross_ranks( double value )
 }
 
 void
+=======
+>>>>>>> master
 nest::MPIManager::communicate_recv_counts_secondary_events()
 {
   // since we only have one process, the send count is equal to the recv count

@@ -56,18 +56,18 @@ else ()
 endif ()
 
 target_link_libraries( nest
-    nestutil nestkernel random sli_lib sli_readline
+    nestutil nestkernel sli_lib sli_readline
     ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} OpenMP::OpenMP_CXX )
 
 target_link_libraries( nest_lib
-    nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} 
+    nestutil nestkernel sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
     OpenMP::OpenMP_CXX )
 
 target_include_directories( nest PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_BINARY_DIR}/nest
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${SLI_MODULE_INCLUDE_DIRS}
@@ -79,14 +79,14 @@ target_compile_definitions( nest PRIVATE
 )
 
 target_include_directories( nest_lib PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_BINARY_DIR}/nest
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${SLI_MODULE_INCLUDE_DIRS}
-    ${PYTHON_INCLUDE_DIRS}
+    ${Python_INCLUDE_DIRS}
     )
 
 

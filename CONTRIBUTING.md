@@ -1,11 +1,11 @@
 # Contributing to NEST
 
-The NEST simulator is a scientific tool and as such it is never ready and constantly changing to meet the needs of novel neuroscientific endeavors. Here you find the most important information on how you can contribute to NEST. This document is an excerpt from our [developer space](https://nest.github.io/nest-simulator/), which provides more detailed information.
+The NEST simulator is a scientific tool and as such it is never finished and constantly changing to meet the needs of novel neuroscientific endeavors. Here you find the most important information on how you can contribute to NEST. This document is an excerpt from our [Contributing to NEST documentation](https://nest-simulator.readthedocs.io/en/latest/contribute/index.html), which provides more detailed information.
 
 ## Getting started
 
 * Make sure you have a [GitHub account](https://github.com/signup/free)
-* The development workflow is based purely on pull requests. This [article](https://nest.github.io/nest-simulator/development_workflow) gives information on how to work with git and GitHub if you are new to it.
+* The development workflow is based purely on pull requests. This [article](https://nest-simulator.readthedocs.io/en/latest/contribute/development_workflow.html) gives information on how to work with git and GitHub if you are new to it.
 
 ## Reporting bugs and issues
 
@@ -43,23 +43,22 @@ You can also attach files to issues. Data dumps or example code snippets that he
 * Make commits of logical units.
 * Make sure NEST compiles and has no new warnings.
 * Make sure all tests pass (`make installcheck`).
-* Make sure your code conforms to our [coding guidelines](https://nest.github.io/nest-simulator/coding_guidelines_c++#check-static-analysis-local) (`./extras/check_code_style.sh`)
-
+* Make sure your code conforms to our [coding guidelines](https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html) (`./extras/check_code_style.sh`)
 
 ## Code Review
 
-We review each pull request according to our [code review guidelines](https://nest.github.io/nest-simulator/code_review_guidelines):
+We review each pull request according to our [code review guidelines](https://nest-simulator.readthedocs.io/en/latest/contribute/code_review_guidelines.html):
 
 * In general, the rule is that each pull request needs an OK from the CI platform and at least two reviewers to be merged.
 * For changes labeled "not code" or "minor" (e.g. changes in documentation, fixes for typos, etc.), the release manager can waive the need for code review and just accept the OK from Travis in order to merge the request.
 * New features like SLI or PyNEST functions, neuron or synapse models need to be accompanied by one or more tests written either in SLI or Python. New features for the NEST kernel need a test written in SLI.
 * Each change to the code has to be reflected also in the corresponding examples and documentation.
-* All source code has to conform to the Coding Guidelines for [C++](https://nest.github.io/nest-simulator/coding_guidelines_c++), [SLI](https://nest.github.io/nest-simulator/coding_guidelines_sli) and [PEP8](https://www.python.org/dev/peps/pep-0008/) for Python in order to pass the continuous integration system checks.
+* All source code has to conform to the Coding Guidelines for [C++](https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html) and [PEP8](https://www.python.org/dev/peps/pep-0008/) for Python in order to pass the continuous integration system checks.
 * All commits should be coherent and contain only changes that belong together.
 
 ## Submitting Changes
 
-* Sign the [Contributor License Agreement](https://nest.github.io/nest-simulator/#contributor-license-agreement).
+* Sign the [Contributor License Agreement](https://raw.githubusercontent.com/nest/nest-simulator/master/doc/userdoc/contribute/NEST_Contributor_Agreement.pdf).
 * Push your changes to a topic branch in your fork of the repository.
 * Submit a pull request to the [NEST repository](https://github.com/nest/nest-simulator).
 * If your pull request affects documented issues, [mention](https://github.com/blog/957-introducing-issue-mentions) them in the description. If it is solving an issue, you can [state this explicitly](https://help.github.com/articles/closing-issues-via-commit-messages/).
@@ -68,11 +67,6 @@ We review each pull request according to our [code review guidelines](https://ne
 
 # Additional Resources
 
-* The [NEST Developer Space](https://nest.github.io/nest-simulator/).
-    * Writing [Extension Modules](https://nest.github.io/nest-simulator/extension_modules).
-    * Writing [Neuron and Device Models](https://nest.github.io/nest-simulator/neuron_and_device_models).
-    * Writing [Synapse Models](https://nest.github.io/nest-simulator/synapse_models).
-    * [Updating Models](https://nest.github.io/nest-simulator/model_conversion_3g_4g).
-    * [Dig Deeper](https://nest.github.io/nest-simulator/#dig-deeper) into NEST.
+* Documentation on [Contributing to NEST](https://nest-simulator.readthedocs.io/en/latest/contribute/index.html).
 * The [NEST Simulator homepage](https://www.nest-simulator.org/).
 * The [NEST Initiative homepage](https://www.nest-initiative.org/).

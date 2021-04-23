@@ -26,15 +26,13 @@
 // C++ includes:
 #include <vector>
 
-// Includes from librandom:
-#include "exp_randomdev.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "stimulating_device.h"
 
 namespace nest
@@ -188,8 +186,8 @@ private:
 
   struct Variables_
   {
-    double inv_rate_ms_;              //!< 1000.0 / Parameters_.rate_
-    librandom::ExpRandomDev exp_dev_; //!< random deviate generator
+    double inv_rate_ms_;               //!< 1000.0 / Parameters_.rate_
+    exponential_distribution exp_dev_; //!< random deviate generator
 
     /**
      * @name update-hook communication.

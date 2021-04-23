@@ -54,7 +54,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         self.lif_params = lif_params
 
         # simulation parameters
-        master_seed = 123456
+        rng_seed = 123456
         self.simtime = 600.
         self.dt = 0.01
         self.start = 100.
@@ -64,9 +64,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         nest.ResetKernel()
         N_vp = nest.GetKernelStatus(["total_num_virtual_procs"])[0]
         nest.SetKernelStatus({"resolution": self.dt, "use_wfr": False,
-                              "grng_seed": master_seed,
-                              "rng_seeds": range(master_seed + 1,
-                                                 master_seed + N_vp + 1)})
+                              "rng_seed": rng_seed})
 
     def simulate_fix_input_stats(self, mu, sigma):
         """
@@ -102,7 +100,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         nest.Connect(self.multimeter, self.siegert_neuron)
 
         # set output statistics of noise generator
-        # - for dt_scaling factor see doc/model_details/noise_generator.ipynb
+        # - for dt_scaling factor see doc/userdoc/model_details/noise_generator.ipynb
         # - takes var(V) = sigma^2 / 2 into account
         lif_params = self.lif_params
         mV_to_pA = lif_params["C_m"] / lif_params["tau_m"]

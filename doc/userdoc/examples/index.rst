@@ -93,7 +93,6 @@ PyNEST examples
    :maxdepth: 1
    :caption: Spatially-stuctured networks examples
 
-   ../auto_examples/spatial/hill_tononi_Vp
    ../auto_examples/spatial/conncomp
    ../auto_examples/spatial/conncon_sources
    ../auto_examples/spatial/conncon_targets

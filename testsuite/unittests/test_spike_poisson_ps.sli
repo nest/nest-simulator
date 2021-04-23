@@ -28,29 +28,29 @@ Synopsis: (test_spike_poisson_ps) run -> compare with results at other resolutio
 
 Description:
 
-The difference in spike times is exactly 0.0 between 
-all resolutions. 
+The difference in spike times is exactly 0.0 between
+all resolutions.
  test_spike_poisson_ps_precision.sli
 already verified that spikes are produced and recorded with
 double resolution.
 
 This script will give identical results almost always, even if the resolution
-is not representable as a double. The main reason for this is that the 
+is not representable as a double. The main reason for this is that the
 poisson_generator_ps generates spikes without attention to resolution. This
 means that exactly the same sequence of spike times is generated internally
 in the generator independent of resolution. Rounding errors occur, if at all,
-only when the spike time is split into a multiple of the resolution and the 
+only when the spike time is split into a multiple of the resolution and the
 offset. In this calculation, the resolution enters as a fixed multiple of tics.
 The calculation is reversed in the spike recorder, when step-multiple and offset
-are recombined. This splitting and recombination apparently gives reproducible 
-results. The only deviation observed was for two spikes at very early times (<0.01 ms) 
+are recombined. This splitting and recombination apparently gives reproducible
+results. The only deviation observed was for two spikes at very early times (<0.01 ms)
 and coarse resolution (0.1 ms); total of 388.533 spikes tested. Therefore I
 introduced the check against the 1e-15 relative error limit below.
 
 If this test fails go back to
  test_spike_poisson_ps_precision.sli
 to check whether poisson_generator_ps can emit spike times at
-double precision or whether spike times are limited to the 
+double precision or whether spike times are limited to the
 precision of a tic.
 
 FirstVersion: February 2007
@@ -73,10 +73,10 @@ M_ERROR setverbosity
 % We need to ensure that all spikes arrive at the spike recorder.
 % Thus, the simulation time needs to exceed the end of stimulation
 % by at least two multiples of the delay, which is 1 ms by default.
-% We also need to ensure that the simulation time is a multiple of 
+% We also need to ensure that the simulation time is a multiple of
 % the resolution.
 % To be on the safe side, we add 3 ms and then round up to the
-% nearest multiple of the resolution. 
+% nearest multiple of the resolution.
 /simtime stimtime 3.0 add h div ceil h mul def
 
 ResetKernel
@@ -84,28 +84,28 @@ ResetKernel
 << /resolution h >> SetKernelStatus
 
 
-/spike_recorder Create /sr Set  
- 
+/spike_recorder Create /sr Set
+
 
 /poisson_generator_ps Create /pg Set
 pg << /rate 128921.3 /stop stimtime >> SetStatus
 
 pg sr Connect
 
-simtime Simulate 
+simtime Simulate
 
-sr [/events /times] get cva 
+sr [/events /times] get cva
 } def
 
 
 
 {
   [0.1 0.03 0.02 0.01 0.001]
-  { Transmission } Map 
+  { Transmission } Map
 
   % compute absolute relative error
   dup First /refval Set
   Rest { refval sub refval div { abs } Map } Map
-  Flatten { 1e-15 gt } Select [] eq
+  Flatten { 1e-14 gt } Select [] eq
 }
 assert_or_die

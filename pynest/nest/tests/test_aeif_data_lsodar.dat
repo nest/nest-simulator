@@ -6,7 +6,7 @@
 # This .dat file contains the recordings of the potential and of the adaptation
 # variable of an aeif neuron, simulated using the LSODAR solver, with the
 # implementation detailed in
-# ``doc/model_details/aeif_models_implementation.ipynb``.
+# ``doc/userdoc/model_details/aeif_models_implementation.ipynb``.
 # This data is used as reference for the aeif tests in ``test_aeif_lsodar.py``.
 #
 #        Times                      V_m                       w

@@ -10,12 +10,19 @@ CLANG_FORMAT=${CLANG_FORMAT-clang-format-3.6}
 CLANG_FORMAT_FILE=${CLANG_FORMAT_FILE-.clang-format}
 
 # Drop files that should not be checked
-FILES_TO_IGNORE="libnestutil/compose.hpp librandom/knuthlfg.h librandom/knuthlfg.cpp pynestkernel.cpp"
+FILES_TO_IGNORE="pynestkernel.cpp"
+DIRS_TO_IGNORE="thirdparty"
 
 # Recursively process all C/C++ files in all sub-directories.
 function process_dir {
   dir=$1
   echo "Process directory: $dir"
+
+  if [[ " $DIRS_TO_IGNORE " =~ .*[[:space:]]${dir##*/}[[:space:]].* ]]; then
+    echo "   Directory explicitly ignored."
+    return
+  fi
+
   for f in $dir/*; do
     if [[ -d $f ]]; then
       # Recursively process sub-directories.

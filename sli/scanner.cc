@@ -640,6 +640,7 @@ bool Scanner::operator()( Token& t )
          are separate states. */
       ds.push_back( '.' );
       state = fracdgtst;
+    /* no break */
     case fracdgtst:
       p /= base;
       d += sg * p * digval( c );
@@ -671,6 +672,7 @@ bool Scanner::operator()( Token& t )
     case minusst:
       sg = -1;
       ds.push_back( '-' );
+    /* no break */
     case plusst:
       sgc = c;
       break;
@@ -712,6 +714,7 @@ bool Scanner::operator()( Token& t )
       assert( sgc == '+' || sgc == '-' );
       s.append( 1, sgc );
       state = alphast;
+    /* no break */
     case literalst:
     case stringst:
     case alphast:       // let's optimize this at some point
@@ -739,6 +742,7 @@ bool Scanner::operator()( Token& t )
       break;
     case aheadsgst:
       s.append( 1, sgc );
+    /* no break */
     case aheadalphst:
     {
       if ( c != endoln && c != endof )

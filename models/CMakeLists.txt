@@ -28,10 +28,10 @@ set( models_sources
     aeif_psc_delta.h aeif_psc_delta.cpp
     aeif_psc_delta_clopath.h aeif_psc_delta_clopath.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
-    bernoulli_connection.h
+    bernoulli_synapse.h
     binary_neuron.h
-    clopath_connection.h
-    cont_delay_connection.h cont_delay_connection_impl.h
+    clopath_synapse.h
+    cont_delay_synapse.h cont_delay_synapse_impl.h
     correlation_detector.h correlation_detector.cpp
     correlomatrix_detector.h correlomatrix_detector.cpp
     correlospinmatrix_detector.h correlospinmatrix_detector.cpp
@@ -54,10 +54,10 @@ set( models_sources
     hh_psc_alpha.h hh_psc_alpha.cpp
     hh_psc_alpha_clopath.h hh_psc_alpha_clopath.cpp
     hh_psc_alpha_gap.h hh_psc_alpha_gap.cpp
-    ht_connection.h
+    ht_synapse.h
     ht_neuron.h ht_neuron.cpp
     iaf_chs_2007.cpp iaf_chs_2007.h
-    iaf_chxk_2008.cpp iaf_chxk_2008.h 
+    iaf_chxk_2008.cpp iaf_chxk_2008.h
     iaf_cond_alpha.h iaf_cond_alpha.cpp
     iaf_cond_alpha_mc.h iaf_cond_alpha_mc.cpp
     iaf_cond_beta.h iaf_cond_beta.cpp
@@ -75,7 +75,7 @@ set( models_sources
     iaf_psc_exp_ps.cpp iaf_psc_exp_ps.h
     iaf_psc_exp_ps_lossless.cpp iaf_psc_exp_ps_lossless.h
     izhikevich.h izhikevich.cpp
-    jonke_connection.h
+    jonke_synapse.h
     lin_rate.h lin_rate.cpp
     mat2_psc_exp.h mat2_psc_exp.cpp
     mcculloch_pitts_neuron.h mcculloch_pitts_neuron.cpp
@@ -100,7 +100,7 @@ set( models_sources
     pp_cond_exp_mc_urbanczik.h pp_cond_exp_mc_urbanczik.cpp
     ppd_sup_generator.h ppd_sup_generator.cpp
     pulsepacket_generator.h pulsepacket_generator.cpp
-    quantal_stp_connection.h quantal_stp_connection_impl.h
+    quantal_stp_synapse.h quantal_stp_synapse_impl.h
     rate_connection_delayed.h
     rate_connection_instantaneous.h
     rate_neuron_opn.h rate_neuron_opn_impl.h
@@ -114,39 +114,38 @@ set( models_sources
     spike_recorder.h spike_recorder.cpp
     spike_generator.h spike_generator.cpp
     spin_detector.h spin_detector.cpp
-    static_connection.h
-    static_connection_hom_w.h
-    stdp_connection.h
-    stdp_nn_pre-centered_connection.h
-    stdp_nn_restr_connection.h
-    stdp_nn_symm_connection.h
-    stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom_impl.h
-    stdp_connection_hom.h stdp_connection_hom.cpp
-    stdp_dopa_connection.h stdp_dopa_connection.cpp
-    stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom_impl.h
-    stdp_pl_connection_hom.h stdp_pl_connection_hom.cpp
-    stdp_triplet_connection.h
+    static_synapse.h
+    static_synapse_hom_w.h
+    stdp_dopamine_synapse.h stdp_dopamine_synapse.cpp
+    stdp_nn_pre_centered_synapse.h
+    stdp_nn_restr_synapse.h
+    stdp_nn_symm_synapse.h
+    stdp_pl_synapse_hom.h stdp_pl_synapse_hom.cpp
+    stdp_synapse.h
+    stdp_synapse_facetshw_hom.h stdp_synapse_facetshw_hom_impl.h
+    stdp_synapse_hom.h stdp_synapse_hom.cpp
+    stdp_triplet_synapse.h
     step_current_generator.h step_current_generator.cpp
     step_rate_generator.h step_rate_generator.cpp
     tanh_rate.h tanh_rate.cpp
     threshold_lin_rate.h threshold_lin_rate.cpp
-    tsodyks2_connection.h
-    tsodyks_connection.h
-    tsodyks_connection_hom.h tsodyks_connection_hom.cpp
-    urbanczik_connection.h
+    tsodyks2_synapse.h
+    tsodyks_synapse.h
+    tsodyks_synapse_hom.h tsodyks_synapse_hom.cpp
+    urbanczik_synapse.h
     volume_transmitter.h volume_transmitter.cpp
-    vogels_sprekeler_connection.h
+    vogels_sprekeler_synapse.h
     weight_recorder.h weight_recorder.cpp
     spike_dilutor.h spike_dilutor.cpp
     )
 
 add_library( models ${models_sources} )
-target_link_libraries( models nestutil sli_lib nestkernel random )
+target_link_libraries( models nestutil sli_lib nestkernel )
 
 target_include_directories( models PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     )

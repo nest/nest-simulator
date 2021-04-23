@@ -79,7 +79,11 @@ public:
   using reference = ref_;
   using difference_type = typename BlockVector< value_type >::difference_type;
 
-  bv_iterator() = default;
+  bv_iterator()
+    : block_vector_( nullptr )
+    , block_index_( 0 )
+  {
+  }
 
   /**
    * @brief Creates an iterator pointing to the first element in a BlockVector.

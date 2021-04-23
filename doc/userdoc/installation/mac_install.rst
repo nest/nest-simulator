@@ -9,8 +9,8 @@ may work, but can also lead to various complications.
 
 This guide shows how to build NEST with a development environment created with Conda. The main
 advantage of Conda is that you can fully insulate the entire environment in a Conda environment.
-If you want to base your setup on Homebrew or MacPorts, you can still use the ``extras/conda-env-nest-simulator.yml``
-file as a guide to necessary packages.
+If you want to base your setup on Homebrew or MacPorts, you can still use the 
+``extras/conda-nest-simulator-dev.yml`` file as a guide to necessary packages.
 
 Preparations
 ------------
@@ -26,7 +26,7 @@ Preparations
 
    .. code:: sh
 
-      conda env create -f extras/conda-environment-nest-simulator.yml
+      conda env create -f extras/conda-nest-simulator-dev.yml
 
    .. note::
 

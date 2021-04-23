@@ -21,42 +21,42 @@
  */
 
 /** @BeginDocumentation
-Name: testsuite::test_ppd_sup_generator - sli script for test of ppd_sup_generator output 
+Name: testsuite::test_ppd_sup_generator - sli script for test of ppd_sup_generator output
 
 Synopsis: (test_ppd_sup_generator) run -> compare spike train statistics with expectations
 
 
 Description:
- 
- test_ppd_sup_generator is a collection of tests which require basic 
+
+ test_ppd_sup_generator is a collection of tests which require basic
  functionality of the generator. It tests
  1) if the firing rate of a superposition is close to the preset one.
  2) if the coefficient of variation of a superposition agrees with theory
- 3) if a fixed dead-time is respected absolutely in case of a single generated 
+ 3) if a fixed dead-time is respected absolutely in case of a single generated
     process.
  4) if the coefficient of variation of a single process agrees with theory
  5) if the spike trains generated for two different targets differ
 
- All of these tests are based on random number realizations, which is 
- necessarily so  since the model is stochastic. There is thus a finite 
- probability of test failure, even if everything is fine. The choice of the 
- variable err, which is the allowed relative deviation from the reference value, 
- can be used to make the test more or less strict. Increasing T inside the test 
- functions can also help to get more reliable statistics and a reduced 
+ All of these tests are based on random number realizations, which is
+ necessarily so  since the model is stochastic. There is thus a finite
+ probability of test failure, even if everything is fine. The choice of the
+ variable err, which is the allowed relative deviation from the reference value,
+ can be used to make the test more or less strict. Increasing T inside the test
+ functions can also help to get more reliable statistics and a reduced
  probability of false alarms.
- 
- The values are chosen to have a reasonable execution time. False alarm were 
+
+ The values are chosen to have a reasonable execution time. False alarm were
  never observed yet. Since random numbers are preserved through repetitions of
- the simulations, the test should work for sure as long as the random number 
+ the simulations, the test should work for sure as long as the random number
  generation procedure of nest is not changed. If it is changed, failure of the
  test is still very unlikely.
- 
+
  The intention of this script is to make sure that there are no gross errors in
  the main functions of the ppd_sup_generator. It does not test the sinusoidal
- hazard feature yet. 
+ hazard feature yet.
 
 Remarks:
-  This test script was adapted from test_pp_psc_delta.sli  
+  This test script was adapted from test_pp_psc_delta.sli
 
 
 Author:  June 2011, Moritz Deger
@@ -75,7 +75,8 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
 % 2) check if superposition cv agrees with theory
 
 /check_sup_rate_and_cv
-{    
+{
+  (Sup rate and cv) =
    % test parameters
     25.0 /dead_time Set
     10.0 /rate Set
@@ -85,13 +86,13 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
 
 
     ResetKernel
-    
-    << 
+
+    <<
       /resolution  h
     >> /kernelparams Set
-    
-    kernelparams SetKernelStatus 
-    
+
+    kernelparams SetKernelStatus
+
     /ppd_sup_generator Create /psg Set
 
     <<
@@ -101,14 +102,14 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /frequency 0.
       /relative_amplitude 0.
     >> /params Set
-    
+
     psg params SetStatus
-    
+
     /spike_recorder Create /sr Set
 
     psg sr Connect
     T Simulate
-    
+
     sr /events get /times get /spikes Set
 
     % rate_sim = size(spikes) / (T*1e-3)
@@ -116,16 +117,17 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
 
     % rate_ana = 1./(1./lam + d*1e-3)
     rate n_proc mul /rate_ana Set
-    
+
     % ratio = rate_sim / rate_ana
     rate_sim rate_ana div /ratio Set
-    
+
+    (Ratio test) =
     % this could fail due to bad luck. However, if it passes once, then it should
     % always do so, since the random numbers are reproducible in NEST.
     1.0 err sub ratio lt
     ratio 1.0 err add lt
     and assert_or_die
-    
+
     %isi = []
     %for i in xrange(1,len(spikes)):
     %    isi.append(spikes[i]-spikes[i-1])
@@ -134,7 +136,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
 
 
     %# compute moments of ISI to get mean and variance
-    %isi_m1 = 0. 
+    %isi_m1 = 0.
     %isi_m2 = 0.
     %for t in isi:
     %    isi_m1 += t
@@ -142,7 +144,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
     0. /isi_m1 Set
     0. /isi_m2 Set
     isi { dup isi_m1 add /isi_m1 Set dup mul isi_m2 add /isi_m2 Set} forall
-    
+
     %isi_mean = isi_m1 / len(isi)
     %isi_var = isi_m2/ len(isi) - isi_mean**2
     %cvsq = isi_var/isi_mean**2
@@ -156,12 +158,13 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
     n_proc 1.0 sub 2.0 1.0 dead_time mu div sub  n_proc 1 add pow mul add /cvfact2 Set
     cvfact1 cvfact2 mul /cvsq_theo Set
 
-    cvsq_sim cvsq_theo div /ratio_cvsq Set 
+    (Ratio cvsq test) =
+    cvsq_sim cvsq_theo div /ratio_cvsq Set
     1.0 err sub ratio_cvsq leq
     ratio_cvsq 1.0 err add leq
     and assert_or_die
-    
-    
+
+
 } def
 
 
@@ -169,22 +172,23 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
 %3) check if single process respects dead-time
 
 /check_single_rate_and_dead_time
-{    
+{
+  (Single rate and dead time) =
    % test parameters
-    35.0 /dead_time Set
+    45.0 /dead_time Set
     15.0 /rate Set
     100000.0 /T Set
     1 /n_proc Set
     1.0 /h Set
 
     ResetKernel
-    
-    << 
+
+    <<
       /resolution  h
     >> /kernelparams Set
-    
-    kernelparams SetKernelStatus 
-    
+
+    kernelparams SetKernelStatus
+
     /ppd_sup_generator Create /psg Set
 
     <<
@@ -194,14 +198,14 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /frequency 0.
       /relative_amplitude 0.
     >> /params Set
-    
+
     psg params SetStatus
-    
+
     /spike_recorder Create /sr Set
 
     psg sr Connect
     T Simulate
-    
+
     sr /events get /times get /spikes Set
 
     % rate_sim = size(spikes) / (T*1e-3)
@@ -209,16 +213,17 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
 
     % rate_ana = 1./(1./lam + d*1e-3)
     rate n_proc mul /rate_ana Set
-    
+
     % ratio = rate_sim / rate_ana
     rate_sim rate_ana div /ratio Set
-    
+
+    (Ratio check) =
     % this could fail due to bad luck. However, if it passes once, then it should
     % always do so, since the random numbers are reproducible in NEST.
     1.0 err sub ratio lt
     ratio 1.0 err add lt
     and assert_or_die
-    
+
     %isi = []
     %for i in xrange(1,len(spikes)):
     %    isi.append(spikes[i]-spikes[i-1])
@@ -228,7 +233,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
     isi Rest Min dead_time geq assert_or_die
 
     %# compute moments of ISI to get mean and variance
-    %isi_m1 = 0. 
+    %isi_m1 = 0.
     %isi_m2 = 0.
     %for t in isi:
     %    isi_m1 += t
@@ -236,7 +241,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
     0. /isi_m1 Set
     0. /isi_m2 Set
     isi { dup isi_m1 add /isi_m1 Set dup mul isi_m2 add /isi_m2 Set} forall
-    
+
     %isi_mean = isi_m1 / len(isi)
     %isi_var = isi_m2/ len(isi) - isi_mean**2
     %cvsq = isi_var/isi_mean**2
@@ -248,17 +253,19 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
     1.0 rate div /mu Set
     mu dead_time sub /lam Set
     1.0 lam div mu div 2 pow /cvsq_theo Set
-    
-    cvsq_sim cvsq_theo div /ratio_cvsq Set 
+
+    (Ratio cvsq check) =
+    cvsq_sim cvsq_theo div /ratio_cvsq Set
     1.0 err sub ratio_cvsq leq
     ratio_cvsq 1.0 err add leq
     and assert_or_die
-    
+
 } def
 
 
 /check_different_outputs
    {
+     (Different outputs) =
    % test parameters
     5.0 /dead_time Set
     25.0 /rate Set
@@ -267,13 +274,13 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
     0.01 /h Set
 
     ResetKernel
-    
-    << 
+
+    <<
       /resolution  h
     >> /kernelparams Set
-    
-    kernelparams SetKernelStatus 
-    
+
+    kernelparams SetKernelStatus
+
     /ppd_sup_generator Create /psg Set
 
     <<
@@ -283,9 +290,9 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /frequency 0.
       /relative_amplitude 0.
     >> /params Set
-    
+
     psg params SetStatus
-    
+
     /spike_recorder Create /sr1 Set
     /spike_recorder Create /sr2 Set
 
@@ -293,31 +300,34 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
     psg sr2 Connect
     T Simulate
 
+    (Check spike trains) =
     %first we check if the spike trains are different
     [sr1 sr2] {[/events /times] get} forall  neq  % spike trains differ
     assert_or_die
-    
+
     %and we also check the rates since we simulated anyway
     sr1 /events get /times get /spikes1 Set
     sr2 /events get /times get /spikes2 Set
-    
+
     % rate_sim = size(spikes) / (T*1e-3)
     spikes1 cva size T 1e-3 mul div /rate_sim1 Set /spikes_array1 Set
     spikes2 cva size T 1e-3 mul div /rate_sim2 Set /spikes_array2 Set
 
     % rate_ana = 1./(1./lam + d*1e-3)
     rate n_proc mul /rate_ana Set
-    
+
     % ratio = rate_sim / rate_ana
     rate_sim1 rate_ana div /ratio1 Set
     rate_sim2 rate_ana div /ratio2 Set
-    
+
+    (Check ratio1) =
     % this could fail due to bad luck. However, if it passes once, then it should
     % always do so, since the random numbers are reproducible in NEST.
     1.0 err sub ratio1 lt
     ratio1 1.0 err add lt
     and assert_or_die
-    
+
+    (Check ratio2) =
     1.0 err sub ratio2 lt
     ratio2 1.0 err add lt
     and assert_or_die
@@ -328,4 +338,3 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
 check_sup_rate_and_cv
 check_single_rate_and_dead_time
 check_different_outputs
-

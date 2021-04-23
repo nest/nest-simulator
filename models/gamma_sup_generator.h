@@ -26,15 +26,12 @@
 // C++ includes:
 #include <vector>
 
-// Includes from librandom:
-#include "binomial_randomdev.h"
-#include "poisson_randomdev.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "stimulating_device.h"
 
 namespace nest
@@ -164,16 +161,15 @@ private:
 
   class Internal_states_
   {
-
-    librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    std::vector< unsigned long > occ_;        //!< occupation numbers of internal states
+    binomial_distribution bino_dist_;   //!< binomial distribution
+    poisson_distribution poisson_dist_; //!< poisson distribution
+    std::vector< unsigned long > occ_;  //!< occupation numbers of internal states
 
   public:
     Internal_states_( size_t num_bins,
       unsigned long ini_occ_ref,
-      unsigned long ini_occ_act );                                         //!< initialize occupation numbers
-    unsigned long update( double transition_prob, librandom::RngPtr rng ); //!< update age dist and generate spikes
+      unsigned long ini_occ_act );                              //!< initialize occupation numbers
+    unsigned long update( double transition_prob, RngPtr rng ); //!< update age dist and generate spikes
   };
 
 

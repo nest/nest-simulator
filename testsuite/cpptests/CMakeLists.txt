@@ -28,9 +28,9 @@ if ( HAVE_BOOST )
   target_include_directories( run_all_cpptests PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/sli
+    ${PROJECT_SOURCE_DIR}/thirdparty
     )
 
   install( TARGETS run_all_cpptests RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )

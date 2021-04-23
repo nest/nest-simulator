@@ -153,7 +153,6 @@ public:
    * - @c s  : string
    * - @c l  : literal
    * - @c f  : function
-   * - @c r  : rng
    * - @c is : input stream
    * - @c os : output stream
    * - @c t  : any token
@@ -416,11 +415,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } mpiabort_ifunction;
 #endif
-
-  class GetGlobalRngFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  } getglobalrngfunction;
 
   class Cvdict_CFunction : public SLIFunction
   {

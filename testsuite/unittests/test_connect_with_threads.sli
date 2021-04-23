@@ -23,15 +23,15 @@
 
 /* BeginDocumentation
    Name: testsuite::test_connect_with_threads
-    
+
    Synopsis: (test_connect_with_threads) run -> NEST exits if test fails
-    
+
    Description:
    This test goes through all the connection rules and test connectivity for
-   a range of threads with the given rule. For each rule, we check that 
+   a range of threads with the given rule. For each rule, we check that
    connectivity works when total number of threads ranges from 1 to 25. We should
    have more threads than targets after a while.
-    
+
    Author: Stine B. Vennemo
    FirstVersion: June 2018
    SeeAlso:
@@ -51,22 +51,22 @@ M_ERROR setverbosity
   /num_threads Set
 
   ResetKernel
-  
+
   << /total_num_virtual_procs num_threads >> SetKernelStatus
 
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
-  
+
   % Define connection and synapse dictionaries
   /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /one_to_one >> def
-  
+
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
-  
+
   % Check to see if we have correct number of connections
   /num_conn GetKernelStatus /num_connections get def
-  
+
   10 num_conn eq assert_or_die
 }
 forall
@@ -78,18 +78,18 @@ forall
   /num_threads Set
 
   ResetKernel
-  
+
   << /total_num_virtual_procs num_threads >> SetKernelStatus
-  
+
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
-  
+
   /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /all_to_all >> def
-  
+
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
-  
+
   % Check to see if we have correct number og connections
   /num_conn GetKernelStatus /num_connections get def
   100 num_conn eq assert_or_die
@@ -103,19 +103,19 @@ forall
   /num_threads Set
 
   ResetKernel
-  
+
   << /total_num_virtual_procs num_threads >> SetKernelStatus
-  
+
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
-  
+
   % Define connection and synapse dictionaries
   /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /fixed_indegree /indegree 5 >> def
-  
+
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
-  
+
   % Check to see if we have correct number of connections
   /num_conn GetKernelStatus /num_connections get def
   50 num_conn eq assert_or_die
@@ -129,19 +129,19 @@ forall
   /num_threads Set
 
   ResetKernel
-  
+
   << /total_num_virtual_procs num_threads >> SetKernelStatus
-  
+
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
-  
+
   % Define connection and synapse dictionaries
   /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /fixed_outdegree /outdegree 5 >> def
-  
+
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
-  
+
   % Check to see if we have correct number of connections
   /num_conn GetKernelStatus /num_connections get def
   50 num_conn eq assert_or_die
@@ -155,22 +155,22 @@ forall
   /num_threads Set
 
   ResetKernel
-  
+
   << /total_num_virtual_procs num_threads >> SetKernelStatus
-  
+
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
-  
+
   % Define connection and synapse dictionaries
   /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /fixed_total_number /N 5 >> def
-  
+
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
-  
+
   % Check to see if we have currect number of connections
   /num_conn GetKernelStatus /num_connections get def
-  5 num_conn eq assert_or_die 
+  5 num_conn eq assert_or_die
 }
 forall
 
@@ -181,35 +181,32 @@ forall
   /num_threads Set
 
   ResetKernel
-  
+
   % Need to set seed depending on number of threads
-  /seed_start 100 num_threads mul def
-  /seed_end seed_start num_threads add 1 sub def
-  
-  /seed_array [seed_start seed_end] Range def
-  
-  << 
+  /seed 100 def
+
+  <<
       /total_num_virtual_procs num_threads
-      /rng_seeds seed_array
+      /rng_seed seed
   >> SetKernelStatus
-  
+
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
-  
+
   % Define connection and synapse dictionaries
   /syn_dict << /synapse_model /static_synapse >> def
   /conn_dict << /rule /pairwise_bernoulli /p 0.1 >> def
-  
+
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
-  
+
   /num_conn GetKernelStatus /num_connections get def
-  
+
   % Check to see if number of connections are within convergence interval
   num_conn 10 sub abs /std Set
   num_conn 10 std add leq /less_than Set
   num_conn 10 std sub geq /greater_than Set
-  
+
   less_than greater_than and assert_or_die
 }
 forall

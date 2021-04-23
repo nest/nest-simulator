@@ -198,8 +198,7 @@ for i in range(M):
 
 local_num_threads = 1
 seed = 1
-msd = local_num_threads * seed + 1  # master seed
-nest.SetKernelStatus({'rng_seeds': range(msd, msd + local_num_threads)})
+nest.SetKernelStatus({'rng_seed': seed})
 
 t = np.arange(0., t_end, dt_rec)
 A_N = np.ones((t.size, M)) * np.nan
@@ -332,8 +331,7 @@ for i in range(M):
 
 local_num_threads = 1
 seed = 1
-msd = local_num_threads * seed + 1  # master seed
-nest.SetKernelStatus({'rng_seeds': range(msd, msd + local_num_threads)})
+nest.SetKernelStatus({'rng_seed': seed})
 
 t = np.arange(0., t_end, dt_rec)
 A_N = np.ones((t.size, M)) * np.nan

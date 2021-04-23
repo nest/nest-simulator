@@ -98,11 +98,13 @@ add_executable( sli puresli.cc )
 target_link_libraries( sli sli_lib sli_readline ${GSL_LIBRARIES} OpenMP::OpenMP_CXX )
 
 target_include_directories( sli PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     )
 
 target_include_directories( sli_lib PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     )
@@ -112,6 +114,7 @@ set_target_properties( sli_lib
     )
 
 target_include_directories( sli_readline PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     )

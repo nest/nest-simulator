@@ -19,27 +19,31 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "inhomogeneous_poisson_generator.h"
 
-#include "event_delivery_manager_impl.h"
-#include "kernel_manager.h"
+// C++ includes:
+#include <cmath>
+#include <limits>
 
+// Includes from libnestutil:
+#include "dict_util.h"
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "booldatum.h"
-
-
-#include "exceptions.h"
 #include "integerdatum.h"
 #include "arraydatum.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
 
-#include <cmath>
-#include <limits>
-
-#include "dict_util.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -246,9 +250,6 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin, const long fr
 
   const long t0 = origin.get_steps();
 
-  // random number generator
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
-
   // Skip any times in the past. Since we must send events proactively,
   // idx_ must point to times in the future.
   const long first = t0 + from;
@@ -282,8 +283,8 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin, const long fr
 void
 nest::inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  V_.poisson_dev_.set_lambda( B_.rate_ * V_.h_ );
-  long n_spikes = V_.poisson_dev_.ldev( kernel().rng_manager.get_rng( get_thread() ) );
+  poisson_distribution::param_type param( B_.rate_ * V_.h_ );
+  long n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ), param );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

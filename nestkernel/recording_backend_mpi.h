@@ -141,7 +141,8 @@ private:
   device_map devices_;
   /**
    * A map of MPI communicators used by the master thread for the MPI communication.
-   * This map contains also the number devices linked to each MPI communicator.
+   * The values of the map are tuples containing the index of the MPI communicator, the MPI communicator itself,
+   * and the number of devices linked to that MPI communicator.
    */
   typedef std::map< std::string, std::tuple< int, MPI_Comm*, int > > comm_map;
   comm_map commMap_;

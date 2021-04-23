@@ -1301,6 +1301,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
 void
 nest::FixedOutDegreeBuilder::connect_()
 {
+  // get global rng that is tested for synchronization for all threads
   RngPtr grng = get_rank_synced_rng();
 
   NodeCollection::const_iterator source_it = sources_->begin();
@@ -1447,8 +1448,6 @@ nest::FixedTotalNumberBuilder::connect_()
   // get global rng that is tested for synchronization for all threads
   RngPtr grng = get_rank_synced_rng();
 
-  // HEP: instead of counting upwards, we might count remaining_targets and
-  // remaining_partitions down. why?
   // begin code adapted from gsl 1.8 //
   double sum_dist = 0.0; // corresponds to sum_p
   // norm is equivalent to size_targets

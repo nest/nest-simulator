@@ -172,7 +172,7 @@ public:
    * different receptor types. Otherwise identical to non-hpc version.
    *
    * When called, this function should be specialised by a class template,
-   * e.g. `BernoulliConnection< targetidentifierT >`
+   * e.g. `bernoulli_synapse< targetidentifierT >`
    *
    * @param name The name under which the ConnectorModel will be registered.
    */
@@ -341,11 +341,6 @@ private:
    * entry per thread, second dimension for each synapse type
    */
   std::vector< std::vector< ConnectorModel* > > prototypes_;
-
-  /**
-   * prototypes of events
-   */
-  std::vector< Event* > event_prototypes_;
 
   std::vector< ConnectorModel* > secondary_connector_models_;
   std::vector< std::map< synindex, SecondaryEvent* > > secondary_events_prototypes_;

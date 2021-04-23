@@ -34,8 +34,8 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "nest_types.h"
 #include "dictdatum.h"
+#include "nest_types.h"
 #include "random_generators.h"
 
 namespace nest
@@ -73,7 +73,7 @@ public:
   RngPtr get_rank_synced_rng() const;
 
   /**
-   * Get VP-synchronized random number client.
+   * Get VP-synchronized random number generator.
    *
    * The kernel maintains one instance of a synchronized random number generator
    * for each thread (and thus, across ranks, for each VP). The purpose of these
@@ -82,7 +82,7 @@ public:
    * must use the generators in lock-step to maintain synchrony. Synchronization
    * is checked by MPI exchange at certain points during a simulation.
    *
-   * @param tid Number of thread requesting generator
+   * @param tid ID of thread requesting generator
    **/
   RngPtr get_vp_synced_rng( thread tid ) const;
 
@@ -97,7 +97,7 @@ public:
   /**
    * Confirm that rank- and thread-synchronized RNGs are in sync.
    *
-   * @throws KernelException if RNGs are out of sync
+   * @throws KernelException if RNGs are out of sync.
    */
   void check_rng_synchrony() const;
 

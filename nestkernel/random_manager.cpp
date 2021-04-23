@@ -141,9 +141,6 @@ nest::RandomManager::get_status( DictionaryDatum& d )
 void
 nest::RandomManager::set_status( const DictionaryDatum& d )
 {
-  long n_threads;
-  bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
-
   long rng_seed;
   bool rng_seed_updated = updateValue< long >( d, names::rng_seed, rng_seed );
 
@@ -172,6 +169,8 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
     current_rng_type_ = rng_type;
   }
 
+  // If number of threads has been changed, we need to update the RNGs.
+  bool n_threads_updated = d->known( names::local_num_threads );
   if ( n_threads_updated or rng_seed_updated or rng_type_updated )
   {
     reset_rngs_();
@@ -181,8 +180,6 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
 void
 nest::RandomManager::check_rng_synchrony() const
 {
-  // TODO: Implement an MPI_ALLREDUCE operator checking for equality, so we don't need min and max.
-
   // Compare more than a single number to avoid false negatives
   const long NUM_ROUNDS = 5;
 

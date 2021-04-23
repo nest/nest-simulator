@@ -20,7 +20,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import numpy as np
 import nest
 
 try:
@@ -41,8 +40,6 @@ class GLIFPSCTestCase(unittest.TestCase):
         self.resol = 0.01
         nest.ResetKernel()
         N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
-        pyrngs = [np.random.RandomState(s)
-                  for s in range(msd, msd + N_vp)]
         nest.SetKernelStatus({'resolution': self.resol,
                               'rng_seed': msd})
 

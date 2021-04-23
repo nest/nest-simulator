@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script performs a static code analysis and can be used to verify 
+# This script performs a static code analysis and can be used to verify
 # if a source file fulfills the NEST coding style guidelines.
 # Run ./extras/check_code_style.sh --help for more detailed information.
 
@@ -33,7 +33,7 @@ CPPCHECK=cppcheck                #    CPPCHECK version 1.69 or later is required
 CLANG_FORMAT=clang-format-3.6    #    CLANG-FORMAT version 3.6 and only this version is required !
 PEP8=pep8
 
-PERFORM_VERA=true                # Perform VERA++ analysis. 
+PERFORM_VERA=true                # Perform VERA++ analysis.
 PERFORM_CPPCHECK=false           # Skip CPPCHECK analysis.
 PERFORM_CLANG_FORMAT=true        # Perform CLANG-FORMAT analysis.
 PERFORM_PEP8=true                # Perform PEP8 analysis.
@@ -77,15 +77,15 @@ Usage: ./extras/check_code_style.sh [options ...]
 
 This script processes C/C++ and Python source code files to verify compliance with the NEST
 coding  style  guidelines.  The  checks are performed the same way as in the NEST Travis CI
-build and test environment. If no file is specified, a local 'git diff' is issued to obtain 
-the changed files in the commit range '<git-sha-start>..<git-sha-end>'. By default, this is 
+build and test environment. If no file is specified, a local 'git diff' is issued to obtain
+the changed files in the commit range '<git-sha-start>..<git-sha-end>'. By default, this is
 'master..head'.
 
 The script expects to be run from the base directory of the NEST sources,
 i.e. all executions should start like:
     ./extras/check_code_style.sh ...
 
-The setup of the tooling is explained here: 
+The setup of the tooling is explained here:
     https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html
 
 Options:
@@ -253,7 +253,7 @@ EXTENDED_REGEX_PARAM=r
 if $PERFORM_VERA; then
   $VERA ./nest/main.cpp >/dev/null 2>&1 || error_exit "Failed to verify the VERA++ installation. Executable: $VERA"
   $VERA --profile nest ./nest/main.cpp >/dev/null 2>&1 || error_exit \
-  "Failed to verify the VERA++ installation. The profile 'nest' could not be found. See https://nest.github.io/nest-simulator/coding_guidelines_c++#vera-profile-nest"
+  "Failed to verify the VERA++ installation. The profile 'nest' could not be found. See https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html#vera-profile-nest"
 fi
 
 # Verify the CPPCHECK installation. CPPCHECK version 1.69 or later is required.
@@ -270,7 +270,7 @@ if $PERFORM_CPPCHECK; then
 fi
 
 # Verify the CLANG-FORMAT installation. CLANG-FORMAT version 3.6 and only 3.6 is required.
-# The CLANG-FORMAT versions up to and including 3.5 do not support all configuration options required for NEST. 
+# The CLANG-FORMAT versions up to and including 3.5 do not support all configuration options required for NEST.
 # Version 3.7 introduced a different formatting. NEST relies on the formatting of version 3.6.
 if $PERFORM_CLANG_FORMAT; then
   $CLANG_FORMAT -style=./.clang-format ./nest/main.cpp >/dev/null 2>&1 || error_exit "Failed to verify the CLANG-FORMAT installation. Executable: $CLANG_FORMAT"
@@ -282,7 +282,7 @@ fi
 
 # Verify the PEP8 installation.
 if $PERFORM_PEP8; then
-  $PEP8 --ignore="E121,E501" ./extras/parse_travis_log.py || error_exit "Failed to verify the PEP8 installation. Executable: $PEP8"
+  $PEP8 --ignore="E121,E501" ./extras/parse_build_log.py || error_exit "Failed to verify the PEP8 installation. Executable: $PEP8"
 fi
 
 # Extracting changed files between two commits.

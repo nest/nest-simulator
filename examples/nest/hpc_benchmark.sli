@@ -200,13 +200,9 @@ brunel_params dup using
 
   /iaf_psc_alpha    model_params    SetDefaults
 
-  /iaf_psc_alpha 1 Create  % To get same spike counter as before NEST 3.0
-
   M_INFO (BuildNetwork)
   (Creating excitatory population.) message  % show message
   /E_neurons /iaf_psc_alpha NE Create def
-
-  /iaf_psc_alpha 1 Create  % To get same spike counter as before NEST 3.0
 
   M_INFO (BuildNetwork)
   (Creating inhibitory population.) message  % show message

@@ -32,8 +32,8 @@
 #include "event.h"
 #include "nest.h"
 #include "random_generators.h"
-#include "stimulating_device.h"
 #include "ring_buffer.h"
+#include "stimulating_device.h"
 
 namespace nest
 {

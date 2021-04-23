@@ -75,6 +75,7 @@ const Name azimuth_angle( "azimuth_angle" );
 const Name b( "b" );
 const Name beta( "beta" );
 const Name beta_Ca( "beta_Ca" );
+const Name biological_time( "biological_time" );
 const Name box( "box" );
 const Name buffer_size( "buffer_size" );
 const Name buffer_size_spike_data( "buffer_size_spike_data" );
@@ -289,6 +290,8 @@ const Name music_channel( "music_channel" );
 const Name N( "N" );
 const Name NMDA( "NMDA" );
 const Name N_channels( "N_channels" );
+const Name N_NaP( "N_NaP" );
+const Name N_T( "N_T" );
 const Name n( "n" );
 const Name n_events( "n_events" );
 const Name n_messages( "n_messages" );
@@ -388,6 +391,7 @@ const Name send_buffer_size_secondary_events( "send_buffer_size_secondary_events
 const Name senders( "senders" );
 const Name shape( "shape" );
 const Name shift_now_spikes( "shift_now_spikes" );
+const Name shrink_factor_buffer_spike_data( "shrink_factor_buffer_spike_data" );
 const Name sigma( "sigma" );
 const Name sigmoid( "sigmoid" );
 const Name sion_chunksize( "sion_chunksize" );
@@ -507,10 +511,20 @@ const Name threshold_spike( "threshold_spike" );
 const Name threshold_voltage( "threshold_voltage" );
 const Name tics_per_ms( "tics_per_ms" );
 const Name tics_per_step( "tics_per_step" );
-const Name time( "time" );
-const Name time_collocate( "time_collocate" );
-const Name time_communicate( "time_communicate" );
+#ifdef TIMER_DETAILED
+const Name time_collocate_spike_data( "time_collocate_spike_data" );
+const Name time_communicate_spike_data( "time_communicate_spike_data" );
+const Name time_communicate_target_data( "time_communicate_target_data" );
+const Name time_deliver_spike_data( "time_deliver_spike_data" );
+const Name time_gather_spike_data( "time_gather_spike_data" );
+const Name time_gather_target_data( "time_gather_target_data" );
+const Name time_update( "time_update" );
+#endif
+const Name time_communicate_prepare( "time_communicate_prepare" );
+const Name time_construction_connect( "time_construction_connect" );
+const Name time_construction_create( "time_construction_create" );
 const Name time_in_steps( "time_in_steps" );
+const Name time_simulate( "time_simulate" );
 const Name times( "times" );
 const Name to_do( "to_do" );
 const Name total_num_virtual_procs( "total_num_virtual_procs" );
@@ -575,7 +589,6 @@ const Name y_1( "y_1" );
 
 const Name z( "z" );
 const Name z_connected( "z_connected" );
-
 } // namespace names
 
 } // namespace nest

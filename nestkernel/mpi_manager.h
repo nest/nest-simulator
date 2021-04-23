@@ -161,12 +161,6 @@ public:
   void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
   void communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer );
 
-  /*
-   * Maximum across all ranks
-   */
-  // TODO: Consider re-implementing like max_cross_ranks, templatize
-  void communicate_Allreduce_max_in_place( std::vector< long >& buffer );
-
   /**
    * Minimum across all ranks.
    *
@@ -246,7 +240,7 @@ public:
 
   void synchronize();
 
-  bool any_true( const bool ); // TODO: Should be implemented using MPI_ALLREDUCE
+  bool any_true( const bool );
 
   /**
    * Benchmark communication time of different MPI methods
@@ -274,6 +268,12 @@ public:
    * needs to be increased. Returns whether the size was changed.
    */
   bool increase_buffer_size_spike_data();
+
+  /**
+   * Decreases the size of the MPI buffer for communication of spikes if it
+   * can be decreased.
+   */
+  void decrease_buffer_size_spike_data();
 
   /**
    * Returns whether MPI buffers for communication of connections are adaptive.
@@ -354,6 +354,8 @@ private:
 
   double growth_factor_buffer_spike_data_;
   double growth_factor_buffer_target_data_;
+
+  double shrink_factor_buffer_spike_data_;
 
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_target_data_per_rank_;
@@ -660,6 +662,17 @@ MPIManager::increase_buffer_size_spike_data()
       set_buffer_size_spike_data( max_buffer_size_spike_data_ );
     }
     return true;
+  }
+}
+
+inline void
+MPIManager::decrease_buffer_size_spike_data()
+{
+  assert( adaptive_spike_buffers_ );
+  // the minimum is set to 4.0 * get_num_processes() to differentiate the initial size
+  if ( buffer_size_spike_data_ / shrink_factor_buffer_spike_data_ > 4.0 * get_num_processes() )
+  {
+    set_buffer_size_spike_data( floor( buffer_size_spike_data_ / shrink_factor_buffer_spike_data_ ) );
   }
 }
 

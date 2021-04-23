@@ -59,6 +59,11 @@ class BaseTestCases:
             nest.SetKernelStatus({'rng_type': self.rng_type})
 
         def shortDescription(self):
+            """
+            Generate a description for the test based on the RNG type.
+            This is done to be able to tell the difference between tests
+            of the different RNG types.
+            """
             doc = '{} ({})'.format(self._testMethodDoc, self.rng_type)
             return doc.split("\n")[0].strip()
 

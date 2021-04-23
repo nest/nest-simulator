@@ -36,8 +36,8 @@
 #include "nest_types.h"
 #include "node.h"
 #include "random_generators.h"
-#include "ring_buffer.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest

@@ -694,7 +694,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     std::vector< double > probabilities;
 
     // Find potential targets and probabilities
-    RngPtr rng = get_rank_synced_rng();
+    RngPtr grng = get_rank_synced_rng();
     target_pos_node_id_pairs.resize( std::distance( masked_target.begin( source_pos ), masked_target_end ) );
     std::copy( masked_target.begin( source_pos ), masked_target_end, target_pos_node_id_pairs.begin() );
 
@@ -705,7 +705,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       {
         // TODO: Why is probability calculated in source layer, but weight and delay in target layer?
         target_pos_node_id_pair.first.get_vector( target_pos_vector );
-        probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source ) );
+        probabilities.push_back( kernel_->value( grng, source_pos_vector, target_pos_vector, source ) );
       }
     }
     else
@@ -752,8 +752,8 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       std::vector< double > rng_delay_vec;
       for ( size_t indx = 0; indx < weight_.size(); ++indx )
       {
-        rng_weight_vec.push_back( weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, target ) );
-        rng_delay_vec.push_back( delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, target ) );
+        rng_weight_vec.push_back( weight_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target ) );
+        rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target ) );
       }
 
       // We bail out for non-local neurons only now after all possible

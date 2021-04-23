@@ -60,7 +60,7 @@ nest::gamma_sup_generator::Internal_states_::Internal_states_( size_t num_bins,
 unsigned long
 nest::gamma_sup_generator::Internal_states_::update( double transition_prob, RngPtr rng )
 {
-  std::vector< unsigned long > n_trans; // only set from poisson_dist_ og bino_dist_ or 0, thus >= 0
+  std::vector< unsigned long > n_trans; // only set from poisson_dist_, bino_dist_ or 0, thus >= 0
   n_trans.resize( occ_.size() );
 
   // go through all states and draw number of transitioning components

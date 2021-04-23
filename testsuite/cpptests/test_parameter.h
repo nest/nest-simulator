@@ -26,7 +26,6 @@
 // C++ includes
 #include <type_traits> // std::is_floating_point
 
-// The timeout feature of BOOST_AUTO_TEST_CASE is only available starting with Boost version 1.70
 #include <boost/version.hpp>
 
 #define BOOST_TEST_DYN_LINK
@@ -54,8 +53,7 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
   // Requested region is outside of the parameter limits, so it cannot get an acceptable value.
   ParameterDatum redraw_pd = uniform_pd->redraw( -1.0, -0.5 );
 
-  // We need to go via a factory to avoid compiler confusion
-  // nest::RandomGeneratorFactory< std::mt19937_64 > rf;
+  // We need to go via a factory to avoid compiler confusion. Two somewhat arbitrary sequences are used for seeding.
   nest::RngPtr rng = nest::RandomGeneratorFactory< std::mt19937_64 >().create( { 1234567890, 23423423 } );
 
   BOOST_CHECK_THROW( redraw_pd->value( rng, nullptr ), nest::KernelException );

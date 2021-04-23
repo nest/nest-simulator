@@ -235,8 +235,7 @@ def
 
   M_INFO (BuildNetwork)
   (Configuring neuron parameters.) message
-  allNeurons
-   << /V_m  v_m_parameter >> SetStatus
+  allNeurons << /V_m  v_m_parameter >> SetStatus
 
   % Create custom synapse types with appropriate values for
   % our excitatory and inhibitory connections

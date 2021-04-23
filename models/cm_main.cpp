@@ -125,7 +125,7 @@ nest::cm_main::update( Time const& origin, const long from, const long to )
     // threshold crossing
     if ( c_tree_.get_root()->v_comp >= V_th_ && v_0_prev < V_th_ )
     {
-      c_tree_.get_root()->etype.add_spike();
+      // c_tree_.get_root()->etype.add_spike();
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 

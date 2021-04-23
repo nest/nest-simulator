@@ -20,7 +20,7 @@ nest::Compartment::Compartment( const long compartment_index,
   , n_passed( 0 )
 {
   compartment_currents = CompartmentCurrents();
-  etype = EType();
+  // etype = EType();
 };
 nest::Compartment::Compartment( const long compartment_index,
                                 const long parent_index,
@@ -40,19 +40,14 @@ nest::Compartment::Compartment( const long compartment_index,
   , hh( 0.0 )
   , n_passed( 0 )
 {
-  compartment_currents = CompartmentCurrents();
-  etype = EType( compartment_params );
+  compartment_currents = CompartmentCurrents(compartment_params);
+  // etype = EType( compartment_params );
 };
 
 void
 nest::Compartment::init()
 {
     v_comp = el;
-
-    // for( auto  syn_it = syns.begin(); syn_it != syns.end(); ++syn_it )
-    // {
-    //     (*syn_it)->init();
-    // }
     compartment_currents.init();
 
     // initialize the buffer
@@ -97,22 +92,11 @@ nest::Compartment::construct_matrix_element( const long lag )
         ff -= (*child_it).gc * (v_comp - (*child_it).v_comp) / 2.;
     }
 
-    // add the channel contribution
-    std::pair< double, double > gf_chan = etype.f_numstep(v_comp, dt);
-    gg += gf_chan.first;
-    ff += gf_chan.second;
-
-    // add synapse contribution
-    // std::pair< double, double > gf_syn(0., 0.);
-
-    // for( auto syn_it = syns.begin(); syn_it != syns.end(); ++syn_it )
-    // {
-    //     (*syn_it)->update(lag);
-    //     gf_syn = (*syn_it)->f_numstep(v_comp);
-
-    //     gg += gf_syn.first;
-    //     ff += gf_syn.second;
-    // }
+    // // add the channel contribution
+    // std::pair< double, double > gf_chan = etype.f_numstep(v_comp, dt);
+    // gg += gf_chan.first;
+    // ff += gf_chan.second;
+    // add all currents to compartment
     std::pair< double, double > gi = compartment_currents.f_numstep( v_comp, dt, lag );
     gg += gi.first;
     ff += gi.second;

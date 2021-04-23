@@ -4,8 +4,7 @@
 #include "ring_buffer.h"
 
 // compartmental model
-#include "cm_syns.h"
-#include "cm_etype.h"
+#include "cm_compartmentcurrents.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -44,7 +43,7 @@ public:
     CompartmentCurrents compartment_currents;
 
     // etype
-    EType etype;
+    // EType etype;
     // buffer for currents
     RingBuffer currents;
     // voltage variable

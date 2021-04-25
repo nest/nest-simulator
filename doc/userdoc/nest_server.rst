@@ -66,13 +66,13 @@ Last but not least, the latest version of the `HBP Neurorobotic
 Platform <https://neurorobotics.net/>`_ use the NEST Server to run the
 neuronal simulation as part of closed-loop robotic experiments. As it
 has rather specific requirements on the client side, it uses a custom
-NEST Client instead of the generic one shipped with NEST.
+client for the NEST Server instead of the generic one shipped with NEST.
 
 If you yourself have an interesting situation in which you use NEST
 Server and would like to have it listed here, feel free to `drop us a
 line <https://github.com/nest/nest-simulator/issues>`_.
 
-Installation and execution
+Install and run NEST Server
 --------------------------
 
 NEST Server is included in all source code distributions of NEST and

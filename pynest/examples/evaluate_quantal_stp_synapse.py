@@ -74,7 +74,6 @@ import numpy
 import matplotlib.pyplot as plt
 
 nest.ResetKernel()
-
 ################################################################################
 # On average, the ``quantal_stp_synapse`` converges to the ``tsodyks2_synapse``,
 # so we can compare the two by running multiple trials.
@@ -83,7 +82,6 @@ nest.ResetKernel()
 
 n_syn = 10.0  # number of synapses in a connection
 n_trials = 100  # number of measurement trials
-
 # The pre-synaptic neuron is driven by an injected current for part of each
 # simulation cycle. We define here the parameters for this stimulation cycle.
 
@@ -92,16 +90,14 @@ T_on = 500.0     # [ms] stimulation is on
 T_off = 1000.0   # [ms] stimulation is off
 
 T_cycle = T_on + T_off   # total duration of each stimulation cycle
-
 ###############################################################################
 # Next, we define parameter sets for facilitation and initial weight
 
-fac_params = {"U": 0.02, 
-              "u": 0.02, 
+fac_params = {"U": 0.02,
+              "u": 0.02,
               "tau_fac": 500.,
-              "tau_rec": 200., 
+              "tau_rec": 200.,
               "weight": 1.}
-
 ###############################################################################
 # Then, we assign the parameter set to the synapse models
 
@@ -116,7 +112,6 @@ tsyn_params["x"] = tsyn_params["U"]
 # number of synapses.
 
 qsyn_params["weight"] = 1. / n_syn
-
 ###############################################################################
 # We create three different neurons.
 # Neuron one is the sender, the two other neurons receive the synapses.
@@ -126,7 +121,6 @@ qsyn_params["weight"] = 1. / n_syn
 pre_neuron, tsyn_neuron, qsyn_neuron = nest.Create("iaf_psc_exp",
                                                    params={"tau_syn_ex": 3.},
                                                    n=3)
-
 ###############################################################################
 # We create two voltmeters, one for each of the postsynaptic neurons
 # We start recording only after a first cycle used for equilibration
@@ -134,17 +128,16 @@ pre_neuron, tsyn_neuron, qsyn_neuron = nest.Create("iaf_psc_exp",
 tsyn_voltmeter, qsyn_voltmeter = nest.Create("voltmeter",
                                              params={"start": T_cycle},
                                              n=2)
-
 ###############################################################################
 # Connect one neuron with the deterministic tsodyks2 synapse and the other
 # with the stochastic quantal stp synapse.; connect the voltmeter.
 # Here, **tsyn_params inserts the content of the tsyn_params dict into the
 # dict passed to syn_spec.
 
-nest.Connect(pre_neuron, tsyn_neuron, 
-             syn_spec={"synapse_model": "tsodyks2_synapse", **tsyn_params})
-nest.Connect(pre_neuron, qsyn_neuron, 
-             syn_spec={"synapse_model": "quantal_stp_synapse", **qsyn_params})
+nest.Connect(pre_neuron, tsyn_neuron,
+             syn_spec={"synapse_model": "tsodyks2_synapse", ** tsyn_params})
+nest.Connect(pre_neuron, qsyn_neuron,
+             syn_spec={"synapse_model": "quantal_stp_synapse", ** qsyn_params})
 
 nest.Connect(tsyn_voltmeter, tsyn_neuron)
 nest.Connect(qsyn_voltmeter, qsyn_neuron)
@@ -168,7 +161,7 @@ with nest.RunManager():
         nest.Run(T_off)
 
 ###############################################################################
-# Simulate one additional time step. We need to do this to ensure that the 
+# Simulate one additional time step. We need to do this to ensure that the
 # voltage traces for all trials, including the last, have full length, so we
 # can easily transform them into a matrix below.
 nest.Simulate(nest.GetKernelStatus('resolution'))
@@ -186,13 +179,12 @@ vm_qsyn.shape = (n_trials, steps_per_trial)
 
 t_vm = tsyn_voltmeter.get("events", "times")
 t_trial = t_vm[:steps_per_trial]
-
 ###############################################################################
 # Now compute the mean of all trials and plot against trials and references.
 
 vm_tsyn_mean = vm_tsyn.mean(axis=0)
 vm_qsyn_mean = vm_qsyn.mean(axis=0)
-rms_error = ((vm_tsyn_mean - vm_qsyn_mean)**2).mean()**0.5
+rms_error = ((vm_tsyn_mean - vm_qsyn_mean) ** 2).mean() ** 0.5
 
 plt.plot(t_trial, vm_tsyn_mean, lw=2, label="Tsodyks-2 synapse (deterministic)")
 plt.plot(t_trial, vm_qsyn_mean, lw=2, label="Quantal STP synapse (stochastic)")

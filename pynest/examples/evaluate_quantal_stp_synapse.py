@@ -68,8 +68,8 @@ References
        http://dx.doi.org/10.1016/S0893-6080(01)00144-7
 
 """
+
 import nest
-import nest.voltage_trace
 import numpy
 import matplotlib.pyplot as plt
 
@@ -109,7 +109,7 @@ tsyn_params = fac_params  # for tsodyks2_synapse
 qsyn_params = tsyn_params.copy()  # for quantal_stp_synapse
 
 tsyn_params["x"] = tsyn_params["U"]
-qsyn_params["n"] = n_syn
+#qsyn_params["n"] = n_syn
 
 ###############################################################################
 # To make the responses comparable, we have to scale the weight by the
@@ -125,7 +125,7 @@ qsyn_params["weight"] = 1. / n_syn
 
 pre_neuron, tsyn_neuron, qsyn_neuron = nest.Create("iaf_psc_exp",
                                                    params={"tau_syn_ex": 3.},
-                                                   num=3)
+                                                   n=3)
 
 ###############################################################################
 # We create two voltmeters, one for each of the postsynaptic neurons
@@ -133,18 +133,18 @@ pre_neuron, tsyn_neuron, qsyn_neuron = nest.Create("iaf_psc_exp",
 
 tsyn_voltmeter, qsyn_voltmeter = nest.Create("voltmeter",
                                              params={"start": T_cycle},
-                                             num=2)
+                                             n=2)
 
 ###############################################################################
 # Connect one neuron with the deterministic tsodyks2 synapse and the other
 # with the stochastic quantal stp synapse.; connect the voltmeter.
+# Here, **tsyn_params inserts the content of the tsyn_params dict into the
+# dict passed to syn_spec.
 
 nest.Connect(pre_neuron, tsyn_neuron, 
-             syn_spec={"model": "tsodyks2_synapse",
-                       "params": tsyn_params})
+             syn_spec={"synapse_model": "tsodyks2_synapse", **tsyn_params})
 nest.Connect(pre_neuron, qsyn_neuron, 
-             syn_spec={"model": "quantal_stp_synapse",
-                       "params": qsyn_params})
+             syn_spec={"synapse_model": "quantal_stp_synapse", **qsyn_params})
 
 nest.Connect(tsyn_voltmeter, tsyn_neuron)
 nest.Connect(qsyn_voltmeter, qsyn_neuron)
@@ -168,31 +168,39 @@ with nest.RunManager():
         nest.Run(T_off)
 
 ###############################################################################
-# Simulate one additional time step to ensure voltage data is recorded for 
-# final time step
+# Simulate one additional time step. We need to do this to ensure that the 
+# voltage traces for all trials, including the last, have full length, so we
+# can easily transform them into a matrix below.
 nest.Simulate(nest.GetKernelStatus('resolution'))
 
 ###############################################################################
-# Extract voltage traces and reshape to one column per trial
-vm_tsyn = numpy.array(tsyn_voltmeter.get("events", "V_m"))
-vm_qsyn = numpy.array(qsyn_voltmeter.get("events", "V_m"))
+# Extract voltage traces and reshape to matrix with one column per trial
+# and one row per timee step. NEST returns results as NumPy arrays.
+# We extract times only once and keep only times for a single trial.
+vm_tsyn = tsyn_voltmeter.get("events", "V_m")
+vm_qsyn = qsyn_voltmeter.get("events", "V_m")
 
-steps_per_trial = round(T_cycle / vm_tsyn.get('interval'))
+steps_per_trial = round(T_cycle / tsyn_voltmeter.get("interval"))
 vm_tsyn.shape = (n_trials, steps_per_trial)
 vm_qsyn.shape = (n_trials, steps_per_trial)
+
+t_vm = tsyn_voltmeter.get("events", "times")
+t_trial = t_vm[:steps_per_trial]
 
 ###############################################################################
 # Now compute the mean of all trials and plot against trials and references.
 
-vm_mean = numpy.array([numpy.mean(vm[:, i]) for (i, j) in enumerate(vm[0, :])])
-vm_ref_mean = numpy.array([numpy.mean(vm_reference[:, i])
-                           for (i, j) in enumerate(vm_reference[0, :])])
-plt.plot(vm_mean)
-plt.plot(vm_ref_mean)
+vm_tsyn_mean = vm_tsyn.mean(axis=0)
+vm_qsyn_mean = vm_qsyn.mean(axis=0)
+rms_error = ((vm_tsyn_mean - vm_qsyn_mean)**2).mean()**0.5
+
+plt.plot(t_trial, vm_tsyn_mean, lw=2, label="Tsodyks-2 synapse (deterministic)")
+plt.plot(t_trial, vm_qsyn_mean, lw=2, label="Quantal STP synapse (stochastic)")
+plt.xlabel("Time [ms]")
+plt.ylabel("Membrane potential [mV]")
+plt.title("Comparison of deterministic and stochastic plasicity rules")
+plt.text(0.95, 0.05, f"RMS error: {rms_error:.3g}",
+         horizontalalignment="right", verticalalignment="bottom",
+         transform=plt.gca().transAxes)  # relative coordinates for text placement
+plt.legend()
 plt.show()
-
-###############################################################################
-# Finally, print the mean-suqared error between the trial-average and the
-# reference trace. The value should be `< 10^-9`.
-
-print(numpy.mean((vm_ref_mean - vm_mean) ** 2))

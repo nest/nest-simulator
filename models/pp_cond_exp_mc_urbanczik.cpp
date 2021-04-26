@@ -564,7 +564,7 @@ nest::pp_cond_exp_mc_urbanczik::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();
 
@@ -659,8 +659,8 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
         else
         {
           // Draw Poisson random number of spikes
-          V_.poisson_dev_.set_lambda( rate * V_.h_ * 1e-3 );
-          n_spikes = V_.poisson_dev_.ldev( V_.rng_ );
+          poisson_distribution::param_type param( rate * V_.h_ * 1e-3 );
+          n_spikes = V_.poisson_dist_( V_.rng_, param );
         }
 
         if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.

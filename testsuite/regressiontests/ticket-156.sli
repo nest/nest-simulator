@@ -44,12 +44,12 @@
   /start 1.0
   /stop  2.0
   /rate 12345.0  % expect ~ 12.3 spikes
->> def 
+>> def
 
 /resolutions [0.01 0.1 0.2 0.5 1.0] def
 
 % ensure all spikes arrive at recorder
-/simtime ps_params /stop get 2.0 add def  
+/simtime ps_params /stop get 2.0 add def
 
 /check_limits % true if all spikes in (origin+start, origin+stop]
 {
@@ -68,7 +68,7 @@
     /h Set
     ResetKernel
     << /resolution h >> SetKernelStatus
-  
+
     /poisson_generator_ps Create /pg Set
     pg ps_params SetStatus
 
@@ -85,23 +85,26 @@
 resolutions { single_trial } Map
 /res Set
 
+(First test) =
 % first test: limits
 res Flatten check_limits
 
+(Second test) =
 % second test: different results between targets
-res { 
-  arrayload ; neq 
+res {
+  arrayload ; neq
 } Map
 
+(Third test) =
 % third test: equality among runs
-% Test for spike time equality to within 2.3e-16 ms.
-res Transpose { 
-  dup 0 get /ref Set 
-  Rest true exch { ref sub 0 exch { abs max } Fold 2.3e-16 lt and } Fold
-} Map 
+% Test for spike time equality to within 1.0e-16 ms.
+res Transpose {
+  dup First /ref Set
+  Rest true exch { ref sub 0 exch { abs max } Fold 1.0e-15 lt and } Fold
+} Map
 
-% collect 
-3 arraystore Flatten 
+% collect
+3 arraystore Flatten
 true exch { and } Fold
 
 assert_or_die

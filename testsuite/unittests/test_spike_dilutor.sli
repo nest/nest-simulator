@@ -28,22 +28,27 @@ Synopsis: (test_spike_dilutor) run -> count the average number of spikes repeate
 
 Description:
 100 spikes are given to spike_dilutor and it has to repeat 20% of them (20 spikes) to 10 different spike recorders.
-If the average number of spikes detected by spike recorders equals to 20 (with marginal error 3), the dilutor works fine.
+If the average number of spikes detected by spike recorders is within 5% relative to the expected value, the dilutor works fine.
 
 Author: Hesam Setareh, April 2015
  */
 
 (unittest) run
 /unittest using
- 
+
+/t 5000.0 def
+/p 0.2 def
+/expected t p mul def
+/eps 0.05 def
+
 [
 1.0
 { dup
  exch
  1.0 add
- dup 100.0 eq {exit} if
+ dup t eq {exit} if
 }loop
-] 
+]
 
 /sp_t Set
 
@@ -86,7 +91,7 @@ dilutor sp_det7 Connect
 dilutor sp_det8 Connect
 dilutor sp_det9 Connect
 
-102 Simulate
+t 2 add Simulate
 
 sp_det0 /events get /times get /spikes Set
 spikes size
@@ -140,8 +145,7 @@ add
 10.0
 div
 
-20.0 sub 
-dup 3 lt
-exch
--3 gt
-and assert_or_die 
+dup expected sub abs expected div /relative_error Set
+(relative error: ) relative_error cvs join =
+relative_error eps lt
+assert_or_die

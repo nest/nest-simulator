@@ -35,7 +35,7 @@ except ImportError:
 
 try:
     import pandas
-    import pandas.util.testing as pt
+    import pandas.testing as pt
     HAVE_PANDAS = True
 except ImportError:
     HAVE_PANDAS = False
@@ -291,24 +291,18 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sr)
         nest.Connect(nodes, multi_sr, 'one_to_one')
-        nest.Simulate(39)
+        nest.Simulate(50)
 
-        ref_dict = {'times': [[31.8, 36.1, 38.5]],
-                    'senders': [[17, 12, 20]]}
-        ref_df = pandas.DataFrame(ref_dict, index=tuple(single_sr.tolist()))
-        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
-        pt.assert_frame_equal(single_sr.get('events', ['senders', 'times'],
-                                            output='pandas'),
-                              ref_df)
+        ref_values = single_sr.get('events', ['senders', 'times'])
+        ref_df = pandas.DataFrame({key: [ref_values[key]] for key in ['senders', 'times']},
+                                  index=tuple(single_sr.tolist()))
+        sd_df = single_sr.get('events', ['senders', 'times'], output='pandas')
+        pt.assert_frame_equal(sd_df, ref_df)
 
-        ref_dict = {'times': [[36.1], [], [], [], [], [31.8], [], [], [38.5],
-                              []],
-                    'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
-        ref_df = pandas.DataFrame(ref_dict, index=tuple(multi_sr.tolist()))
-        ref_df = ref_df.reindex(sorted(ref_df.columns), axis=1)
-        pt.assert_frame_equal(multi_sr.get('events', ['senders', 'times'],
-                                           output='pandas'),
-                              ref_df)
+        ref_values = multi_sr.get('events', ['senders', 'times'])
+        ref_df = pandas.DataFrame(ref_values, index=tuple(multi_sr.tolist()))
+        sd_df = multi_sr.get('events', ['senders', 'times'], output='pandas')
+        pt.assert_frame_equal(sd_df, ref_df)
 
     def test_get_JSON(self):
         """
@@ -380,22 +374,24 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         nest.Connect(pg, nodes)
         nest.Connect(nodes, single_sr)
         nest.Connect(nodes, multi_sr, 'one_to_one')
-        nest.Simulate(39)
+        nest.Simulate(50)
 
-        ref_dict = {'times': [31.8, 36.1, 38.5],
-                    'senders': [17, 12, 20]}
-        self.assertEqual(
-            json.loads(single_sr.get(
-                'events', ['senders', 'times'], output='json')),
-            ref_dict)
+        sd_ref = single_sr.get('events', ['senders', 'times'])
+        sd_json = single_sr.get('events', ['senders', 'times'], output='json')
+        sd_dict = json.loads(sd_json)
+        self.assertEqual(len(sd_dict.keys()), 2)
+        self.assertEqual(sorted(sd_dict.keys()), sorted(sd_ref.keys()))
+        for key in ['senders', 'times']:
+            self.assertEqual(list(sd_ref[key]), list(sd_dict[key]))
 
-        ref_dict = {'times': [[36.1], [], [], [], [], [31.8], [], [], [38.5],
-                              []],
-                    'senders': [[12], [], [], [], [], [17], [], [], [20], []]}
-        self.assertEqual(
-            json.loads(multi_sr.get(
-                'events', ['senders', 'times'], output='json')),
-            ref_dict)
+        multi_sr_ref = multi_sr.get('events', ['senders', 'times'])
+        multi_sr_json = multi_sr.get('events', ['senders', 'times'], output='json')
+        multi_sr_dict = json.loads(multi_sr_json)
+        self.assertEqual(len(multi_sr_dict.keys()), 2)
+        self.assertEqual(sorted(multi_sr_dict.keys()), sorted(multi_sr_ref.keys()))
+        for key in ['senders', 'times']:
+            multi_sr_ref_element = [list(element) for element in multi_sr_ref[key]]
+            self.assertEqual(multi_sr_ref_element, multi_sr_dict[key])
 
     def test_set(self):
         """

@@ -74,6 +74,7 @@ import numpy
 import matplotlib.pyplot as plt
 
 nest.ResetKernel()
+
 ################################################################################
 # On average, the ``quantal_stp_synapse`` converges to the ``tsodyks2_synapse``,
 # so we can compare the two by running multiple trials.
@@ -90,6 +91,7 @@ T_on = 500.0     # [ms] stimulation is on
 T_off = 1000.0   # [ms] stimulation is off
 
 T_cycle = T_on + T_off   # total duration of each stimulation cycle
+
 ###############################################################################
 # Next, we define parameter sets for facilitation and initial weight
 
@@ -98,6 +100,7 @@ fac_params = {"U": 0.02,
               "tau_fac": 500.,
               "tau_rec": 200.,
               "weight": 1.}
+
 ###############################################################################
 # Then, we assign the parameter set to the synapse models
 
@@ -105,13 +108,14 @@ tsyn_params = fac_params  # for tsodyks2_synapse
 qsyn_params = tsyn_params.copy()  # for quantal_stp_synapse
 
 tsyn_params["x"] = tsyn_params["U"]
-#qsyn_params["n"] = n_syn
+qsyn_params["n"] = n_syn
 
 ###############################################################################
 # To make the responses comparable, we have to scale the weight by the
 # number of synapses.
 
 qsyn_params["weight"] = 1. / n_syn
+
 ###############################################################################
 # We create three different neurons.
 # Neuron one is the sender, the two other neurons receive the synapses.
@@ -121,6 +125,7 @@ qsyn_params["weight"] = 1. / n_syn
 pre_neuron, tsyn_neuron, qsyn_neuron = nest.Create("iaf_psc_exp",
                                                    params={"tau_syn_ex": 3.},
                                                    n=3)
+
 ###############################################################################
 # We create two voltmeters, one for each of the postsynaptic neurons
 # We start recording only after a first cycle used for equilibration
@@ -128,6 +133,7 @@ pre_neuron, tsyn_neuron, qsyn_neuron = nest.Create("iaf_psc_exp",
 tsyn_voltmeter, qsyn_voltmeter = nest.Create("voltmeter",
                                              params={"start": T_cycle},
                                              n=2)
+
 ###############################################################################
 # Connect one neuron with the deterministic tsodyks2 synapse and the other
 # with the stochastic quantal stp synapse.; connect the voltmeter.
@@ -179,6 +185,7 @@ vm_qsyn.shape = (n_trials, steps_per_trial)
 
 t_vm = tsyn_voltmeter.get("events", "times")
 t_trial = t_vm[:steps_per_trial]
+
 ###############################################################################
 # Now compute the mean of all trials and plot against trials and references.
 

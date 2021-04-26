@@ -25,12 +25,6 @@
 // Includes from libnestutil:
 #include "logging.h"
 
-// Includes from librandom:
-#include "binomial_randomdev.h"
-#include "gsl_binomial_randomdev.h"
-#include "gslrandomgen.h"
-#include "normal_randomdev.h"
-
 // Includes from nestkernel:
 #include "conn_builder_impl.h"
 #include "conn_parameter.h"
@@ -297,7 +291,7 @@ void
 nest::ConnBuilder::update_param_dict_( index snode_id,
   Node& target,
   thread target_thread,
-  librandom::RngPtr& rng,
+  RngPtr rng,
   index synapse_indx )
 {
   assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ synapse_indx ].size() ) );
@@ -322,7 +316,7 @@ nest::ConnBuilder::update_param_dict_( index snode_id,
 }
 
 void
-nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng )
+nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_thread, RngPtr rng )
 {
   if ( this->requires_proxies() and not target.has_proxies() )
   {
@@ -613,14 +607,12 @@ nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
 void
 nest::OneToOneBuilder::connect_()
 {
-
   // get thread id
   const thread tid = kernel().vp_manager.get_thread_id();
 
   try
   {
-    // allocate pointer to thread specific random generator
-    librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+    RngPtr rng = get_vp_specific_rng( tid );
 
     if ( loop_over_targets_() )
     {
@@ -757,8 +749,7 @@ nest::OneToOneBuilder::sp_connect_()
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       NodeCollection::const_iterator target_it = targets_->begin();
       NodeCollection::const_iterator source_it = sources_->begin();
@@ -843,14 +834,12 @@ nest::OneToOneBuilder::sp_disconnect_()
 void
 nest::AllToAllBuilder::connect_()
 {
-
   // get thread id
   const thread tid = kernel().vp_manager.get_thread_id();
 
   try
   {
-    // allocate pointer to thread specific random generator
-    librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+    RngPtr rng = get_vp_specific_rng( tid );
 
     if ( loop_over_targets_() )
     {
@@ -895,7 +884,7 @@ nest::AllToAllBuilder::connect_()
 }
 
 void
-nest::AllToAllBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, Node* target, index tnode_id, bool skip )
+nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id, bool skip )
 {
   const thread target_thread = target->get_thread();
 
@@ -942,8 +931,7 @@ nest::AllToAllBuilder::sp_connect_()
     const thread tid = kernel().vp_manager.get_thread_id();
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
@@ -1142,12 +1130,10 @@ nest::FixedInDegreeBuilder::connect_()
 
   // get thread id
   const thread tid = kernel().vp_manager.get_thread_id();
-  // std::cerr << "[thread " << tid << "] FixedIndegreeBuilder::connect:()\n";
 
   // try
   // {
-  // allocate pointer to thread specific random generator
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+  RngPtr rng = get_vp_specific_rng( tid );
 
   if ( loop_over_targets_() )
   {
@@ -1198,7 +1184,7 @@ nest::FixedInDegreeBuilder::connect_()
 
 void
 nest::FixedInDegreeBuilder::inner_connect_( const int tid,
-  librandom::RngPtr& rng,
+  RngPtr rng,
   Node* target,
   index tnode_id,
   bool skip,
@@ -1304,7 +1290,8 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
 void
 nest::FixedOutDegreeBuilder::connect_()
 {
-  librandom::RngPtr grng = kernel().rng_manager.get_grng();
+  // get global rng that is tested for synchronization for all threads
+  RngPtr grng = get_rank_synced_rng();
 
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
@@ -1340,12 +1327,10 @@ nest::FixedOutDegreeBuilder::connect_()
       tgt_ids_.push_back( tnode_id );
     }
 
-
     // get thread id
     const thread tid = kernel().vp_manager.get_thread_id();
 
-    // allocate pointer to thread specific random generator
-    librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+    RngPtr rng = get_vp_specific_rng( tid );
 
     std::vector< index >::const_iterator tnode_id_it = tgt_ids_.begin();
     for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
@@ -1438,21 +1423,14 @@ nest::FixedTotalNumberBuilder::connect_()
 
   // calculate exact multinomial distribution
   // get global rng that is tested for synchronization for all threads
-  librandom::RngPtr grng = kernel().rng_manager.get_grng();
+  RngPtr grng = get_rank_synced_rng();
 
-  // HEP: instead of counting upwards, we might count remaining_targets and
-  // remaining_partitions down. why?
   // begin code adapted from gsl 1.8 //
   double sum_dist = 0.0; // corresponds to sum_p
   // norm is equivalent to size_targets
   unsigned int sum_partitions = 0; // corresponds to sum_n
-// substituting gsl_ran call
-#ifdef HAVE_GSL
-  librandom::GSL_BinomialRandomDev bino( grng, 0, 0 );
-#else
-  librandom::BinomialRandomDev bino( grng, 0, 0 );
-#endif
 
+  binomial_distribution bino_dist;
   for ( int k = 0; k < M; k++ )
   {
     // If we have distributed all connections on the previous processes we exit the loop. It is important to
@@ -1465,9 +1443,9 @@ nest::FixedTotalNumberBuilder::connect_()
     {
       double num_local_targets = static_cast< double >( number_of_targets_on_vp[ k ] );
       double p_local = num_local_targets / ( size_targets - sum_dist );
-      bino.set_p( p_local );
-      bino.set_n( N_ - sum_partitions );
-      num_conns_on_vp[ k ] = bino.ldev();
+
+      binomial_distribution::param_type param( N_ - sum_partitions, p_local );
+      num_conns_on_vp[ k ] = bino_dist( grng, param );
     }
 
     sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
@@ -1481,12 +1459,11 @@ nest::FixedTotalNumberBuilder::connect_()
 
   // try
   // {
-  // allocate pointer to thread specific random generator
   const int vp_id = kernel().vp_manager.thread_to_vp( tid );
 
   if ( kernel().vp_manager.is_local_vp( vp_id ) )
   {
-    librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+    RngPtr rng = get_vp_specific_rng( tid );
 
     // gather local target node IDs
     std::vector< index > thread_local_targets;
@@ -1571,8 +1548,7 @@ nest::BernoulliBuilder::connect_()
 
   // try
   // {
-  // allocate pointer to thread specific random generator
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+  RngPtr rng = get_vp_specific_rng( tid );
 
   if ( loop_over_targets_() )
   {
@@ -1619,7 +1595,7 @@ nest::BernoulliBuilder::connect_()
 }
 
 void
-nest::BernoulliBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, Node* target, index tnode_id )
+nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id )
 {
   const thread target_thread = target->get_thread();
 
@@ -1686,37 +1662,17 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR so
 void
 nest::SymmetricBernoulliBuilder::connect_()
 {
-  // Allocate a pointer to the global random generator. This is used to create a
-  // random generator for each thread, each using the same seed obtained from
-  // the global rng, making all threads across all processes generate identical
-  // random number streams. This is required to generate symmetric connections:
-  // if we would loop only over local targets, we might miss the symmetric
-  // counterpart to a connection where a local target is chosen as a source.
-  librandom::RngPtr grng = kernel().rng_manager.get_grng();
-  const unsigned long s = grng->ulrand( std::numeric_limits< unsigned int >::max() );
-
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
 
-// Create a random generator for each thread, each using the same seed obtained
-// from the global rng. This ensures that all threads across all processes
-// generate identical random number streams.
-#ifdef HAVE_GSL
-    librandom::RngPtr rng( new librandom::GslRandomGen( gsl_rng_knuthran2002, s ) );
-#else
-    librandom::RngPtr rng = librandom::RandomGen::create_knuthlfg_rng( s );
-#endif
+    // Use RNG generating same number sequence on all threads
+    RngPtr synced_rng = get_vp_synced_rng( tid );
 
     try
     {
-#ifdef HAVE_GSL
-      librandom::GSL_BinomialRandomDev bino( rng, 0, 0 );
-#else
-      librandom::BinomialRandomDev bino( rng, 0, 0 );
-#endif
-      bino.set_p( p_ );
-      bino.set_n( sources_->size() );
+      binomial_distribution bino_dist;
+      binomial_distribution::param_type param( sources_->size(), p_ );
 
       unsigned long indegree;
       index snode_id;
@@ -1732,7 +1688,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         indegree = sources_->size();
         while ( indegree >= sources_->size() )
         {
-          indegree = bino.ldev();
+          indegree = bino_dist( synced_rng, param );
         }
         assert( indegree < sources_->size() );
 
@@ -1751,7 +1707,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         size_t i = 0;
         while ( i < indegree )
         {
-          snode_id = ( *sources_ )[ rng->ulrand( sources_->size() ) ];
+          snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
 
           // Avoid autapses and multapses. Due to symmetric connectivity,
           // multapses might exist if the target neuron with node ID snode_id draws the
@@ -1774,14 +1730,14 @@ nest::SymmetricBernoulliBuilder::connect_()
           if ( target_thread == tid )
           {
             assert( target != NULL );
-            single_connect_( snode_id, *target, target_thread, rng );
+            single_connect_( snode_id, *target, target_thread, synced_rng );
           }
 
           // if source is local: connect
           if ( source_thread == tid )
           {
             assert( source != NULL );
-            single_connect_( ( *tnode_id ).node_id, *source, source_thread, rng );
+            single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
           }
 
           ++i;
@@ -1877,8 +1833,7 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       std::vector< index >::const_iterator tnode_id_it = targets.begin();
       std::vector< index >::const_iterator snode_id_it = sources.begin();

@@ -33,7 +33,7 @@ import nest
 """
 Comparing the new implementations the aeif models to the reference solution
 obrained using the LSODAR solver (see
-``doc/model_details/aeif_models_implementation.ipynb``). Also asserting that
+``doc/userdoc/model_details/aeif_models_implementation.ipynb``). Also asserting that
 the ``Delta_T == 0.`` solution works by comparing the non-adaptive aeif to the
 iaf model.
 
@@ -203,11 +203,7 @@ class AEIFTestCase(unittest.TestCase):
         msd = 123456
         self.resol = 0.01
         nest.ResetKernel()
-        N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
-        pyrngs = [np.random.RandomState(s) for s in range(msd, msd + N_vp)]
-        nest.SetKernelStatus({
-            'resolution': self.resol, 'grng_seed': msd + N_vp,
-            'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
+        nest.SetKernelStatus({'resolution': self.resol, 'rng_seed': msd})
 
     def compute_difference(self, multimeters, params, reference, recordables):
         '''

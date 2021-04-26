@@ -161,10 +161,22 @@ public:
   void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
   void communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer );
 
-  /*
-   * Maximum across all ranks
+  /**
+   * Minimum across all ranks.
+   *
+   * @param value value on calling rank
+   * @return minimum value across all ranks
    */
-  void communicate_Allreduce_max_in_place( std::vector< long >& buffer );
+  double min_cross_ranks( double value );
+
+  /**
+   * Maximum across all ranks.
+   *
+   * @param value value on calling rank
+   * @return maximum value across all ranks
+   */
+  double max_cross_ranks( double value );
+
 
   std::string get_processor_name();
 
@@ -228,7 +240,6 @@ public:
 
   void synchronize();
 
-  bool grng_synchrony( unsigned long );
   bool any_true( const bool );
 
   /**
@@ -257,6 +268,12 @@ public:
    * needs to be increased. Returns whether the size was changed.
    */
   bool increase_buffer_size_spike_data();
+
+  /**
+   * Decreases the size of the MPI buffer for communication of spikes if it
+   * can be decreased.
+   */
+  void decrease_buffer_size_spike_data();
 
   /**
    * Returns whether MPI buffers for communication of connections are adaptive.
@@ -337,6 +354,8 @@ private:
 
   double growth_factor_buffer_spike_data_;
   double growth_factor_buffer_target_data_;
+
+  double shrink_factor_buffer_spike_data_;
 
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_target_data_per_rank_;
@@ -646,6 +665,17 @@ MPIManager::increase_buffer_size_spike_data()
   }
 }
 
+inline void
+MPIManager::decrease_buffer_size_spike_data()
+{
+  assert( adaptive_spike_buffers_ );
+  // the minimum is set to 4.0 * get_num_processes() to differentiate the initial size
+  if ( buffer_size_spike_data_ / shrink_factor_buffer_spike_data_ > 4.0 * get_num_processes() )
+  {
+    set_buffer_size_spike_data( floor( buffer_size_spike_data_ / shrink_factor_buffer_spike_data_ ) );
+  }
+}
+
 inline bool
 MPIManager::adaptive_target_buffers() const
 {
@@ -696,16 +726,6 @@ test_link( int, int )
 inline void
 test_links()
 {
-}
-
-/* replaced u_long with unsigned long since u_long is not known when
- mpi.h is not available. This is a rather ugly fix.
- HEP 2007-03-09
- */
-inline bool
-MPIManager::grng_synchrony( unsigned long )
-{
-  return true;
 }
 
 inline bool

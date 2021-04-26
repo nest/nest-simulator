@@ -56,6 +56,7 @@ set ( nestkernel_sources
       parameter.h parameter.cpp
       per_thread_bool_indicator.h per_thread_bool_indicator.cpp
       proxynode.h proxynode.cpp
+      random_generators.h
       recording_device.h recording_device.cpp
       pseudo_recording_device.h
       ring_buffer.h ring_buffer.cpp
@@ -84,7 +85,7 @@ set ( nestkernel_sources
       connection_manager.h connection_manager_impl.h connection_manager.cpp
       sp_manager.h sp_manager_impl.h sp_manager.cpp
       delay_checker.h delay_checker.cpp
-      rng_manager.h rng_manager.cpp
+      random_manager.h random_manager.cpp
       event_delivery_manager.h event_delivery_manager_impl.h
       event_delivery_manager.cpp
       node_manager.h node_manager.cpp
@@ -131,14 +132,14 @@ endif ()
 
 add_library( nestkernel ${nestkernel_sources} )
 target_link_libraries( nestkernel
-    nestutil random sli_lib
+    nestutil sli_lib
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}
     )
 
 target_include_directories( nestkernel PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/nestkernel/spatial

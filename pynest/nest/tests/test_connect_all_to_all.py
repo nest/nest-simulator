@@ -119,15 +119,14 @@ class TestAllToAll(TestParams):
     # test single threaded for now
     def testRPortDistribution(self):
         n_rport = 10
-        nr_neurons = 20
+        nr_neurons = 100
         hf.nest.ResetKernel()  # To reset local_num_threads
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1 + i for i in range(n_rport)]}
         self.pop1 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
         self.pop2 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
         syn_params = {'synapse_model': 'static_synapse'}
-        syn_params['receptor_type'] = {
-            'distribution': 'uniform_int', 'low': 1, 'high': n_rport}
+        syn_params['receptor_type'] = 1 + hf.nest.random.uniform_int(n_rport)
         hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
         M = hf.get_weighted_connectivity_matrix(
             self.pop1, self.pop2, 'receptor')

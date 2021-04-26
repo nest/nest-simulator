@@ -38,8 +38,6 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "normal_randomdev.h"
-#include "poisson_randomdev.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
@@ -72,8 +70,8 @@ gap-junction framework.
 Remarks:
 
 For details on the numerical solution of the Siegert integral, you can
-check out the `Siegert neuron integration
-<https://github.com/nest/nest-simulator/blob/master/doc/model_details/siegert_neuron_integration.ipynb>`_
+check out the `Siegert_neuron_integration
+<../model_details/siegert_neuron_integration.ipynb>`_
 notebook in the NEST source code.
 
 Parameters

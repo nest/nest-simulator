@@ -150,18 +150,11 @@
        /resolution dt
        /total_num_virtual_procs n_vp
        /overwrite_files overwrite_existing_files
-       /rng_seeds master_seed [0 n_vp 1 sub] add Range % local RNG seeds
-       /grng_seed master_seed n_vp add                 % global RNG seed
+       /rng_seed rng_seed
        output_path (.) neq {
            /data_path output_path
        } if
     >> SetKernelStatus
-
-    /seed_offset master_seed n_vp add def
-    /script_rngs [ n_vp ]
-    { seed_offset add rngdict /gsl_mt19937 get exch CreateRNG } Table def
-    /normal_rdvs script_rngs { rdevdict /normal get CreateRDV } Map def
-
 } def
 
 
@@ -280,18 +273,22 @@
 
             % initialize membrane potentials
             population {
-               dup /vp get /node_vp Set
                Vm0_type (optimized) eq
                {
                    <<
-                      /V_m normal_rdvs node_vp get Random
-                      Vm0_std layer_index get population_index get mul
-                      Vm0_mean layer_index get population_index get add
+                      /V_m
+                      << /normal
+                        <<
+                          /mean Vm0_mean layer_index get population_index get
+                          /std Vm0_std layer_index get population_index get
+                        >>
+                      >> CreateParameter
+
                    >>
                }{
                    <<
-                      /V_m normal_rdvs node_vp get Random
-                      Vm0_std mul Vm0_mean add
+                      /V_m
+                      << /normal << /mean Vm0_mean /std Vm0_std >> >> CreateParameter
                    >>
                } ifelse
                SetStatus
@@ -424,19 +421,22 @@ close
 
                         % fill the weight dictionary for Connect and insert it into the synapse dictionary
                         mean_weight 0 gt {
-                          weight_dict_exc /mu mean_weight put
-                          weight_dict_exc /sigma PSC_sd source_pop get abs put
-                          syn_dict /weight weight_dict_exc put
+                          syn_dict /weight
+                          << /normal << /mean mean_weight /std PSC_sd source_pop get abs >> >> CreateParameter
+                          0.0 (inf) cvd redraw
+                          put
                         }{
-                          weight_dict_inh /mu mean_weight put
-                          weight_dict_inh /sigma PSC_sd source_pop get abs put
-                          syn_dict /weight weight_dict_inh put
+                          syn_dict /weight
+                          << /normal << /mean mean_weight /std PSC_sd source_pop get abs >> >> CreateParameter
+                          (-inf) cvd 0.0 redraw
+                          put
                         } ifelse
 
 			% fill the delay dictionary for Connect and insert it into the synapse dictionary
-                        delay_dict /mu delays source_pop get put
-                        delay_dict /sigma delays_sd source_pop get abs put
-                        syn_dict /delay delay_dict put
+                        syn_dict /delay
+                        << /normal << /mean delays source_pop get /std delays_sd source_pop get abs >> >> CreateParameter
+                        0.1 (inf) cvd redraw
+                        put
 
 			% fill the connectivity dictionary with the number of synapses to be used
                         conn_dict /N n_synapses put
@@ -469,19 +469,17 @@ close
                 cvi /n_synapses Set
 
                 n_synapses 0 gt {
-                    % fill the weight dictionary for Connect
-                    weight_dict_exc /mu PSC_ext put
-                    weight_dict_exc /sigma PSC_th_sd abs put
-
-                    % insert the weight dictionary into the synapse dictionary
-                    syn_dict /weight weight_dict_exc put
-
-                    % fill the delay dictionary for Connect
-                    delay_dict /mu delay_th put
-                    delay_dict /sigma delay_th_sd abs put
+                    % insert the weight Parameter into the synapse dictionary
+                    syn_dict /weight
+                    << /normal << /mean PSC_ext /std PSC_th_sd abs >> >> CreateParameter
+                    0.0 (inf) cvd redraw
+                    put
 
                     % insert the delay dictionary into the synapse dictionary
-                    syn_dict /delay delay_dict put
+                    syn_dict /delay
+                    << /normal << /mean delay_th /std delay_th_sd abs >> >> CreateParameter
+                    0.1 (inf) cvd redraw
+                    put
 
 		    % fill the connectivity dictionary with the number of synapses to be used
                     conn_dict /N n_synapses put

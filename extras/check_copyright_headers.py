@@ -66,6 +66,7 @@ exclude_dirs = [
     '.git',
     'CMakeFiles',
     'result',  # ignore files in $NEST_RESULT of travis-ci builds
+    'thirdparty',
 ]
 
 # match all file names against these regular expressions. if a match
@@ -76,17 +77,6 @@ exclude_file_regex = [re.compile(pattern) for pattern in exclude_file_patterns]
 exclude_files = [
     'doc/copyright_header.cpp',
     'doc/copyright_header.py',
-    'libnestutil/config.h',
-    'hashtable-common.h',
-    'libc_allocator_with_realloc.h',
-    'sparseconfig.h',
-    'sparsetable.h',
-    'template_util.h',
-    'type_traits.h',
-    'knuthlfg.cpp',
-    'knuthlfg.h',
-    'mt19937.cpp',
-    'mt19937.h',
     'nestrc.sli',
     'nest/static_modules.h',
     'pynest/pynestkernel.cpp',

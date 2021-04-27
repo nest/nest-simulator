@@ -395,14 +395,15 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
   assert( cb != 0 );
 
-  set_have_connections_changed( kernel().vp_manager.get_thread_id() );
-
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
   for ( auto syn_params : syn_specs )
   {
     ALL_ENTRIES_ACCESSED( *syn_params, "Connect", "Unread dictionary entries in syn_spec: " );
   }
+
+  // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
+  set_have_connections_changed( kernel().vp_manager.get_thread_id() );
 
   cb->connect();
   delete cb;

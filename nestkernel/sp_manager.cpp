@@ -314,6 +314,8 @@ SPManager::disconnect( NodeCollectionPTR sources,
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries: " );
   ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries: " );
 
+  // Set flag before calling cb->disconnect() in case exception is thrown after some connections have been removed.
+  kernel().connection_manager.set_have_connections_changed( kernel().vp_manager.get_thread_id() );
   cb->disconnect();
 
   delete cb;
@@ -421,6 +423,8 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
  * @param post_id target id
  * @param post_n number of available synaptic elements in the post node
  * @param sp_conn_builder structural plasticity connection builder to use
+ *
+ * @return true if synapses are created
  */
 bool
 SPManager::create_synapses( std::vector< index >& pre_id,
@@ -455,7 +459,7 @@ SPManager::create_synapses( std::vector< index >& pre_id,
   // create synapse
   sp_conn_builder->sp_connect( pre_id_rnd, post_id_rnd );
 
-  return ( not pre_id_rnd.empty() );
+  return not pre_id_rnd.empty();
 }
 
 /**

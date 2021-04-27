@@ -179,6 +179,7 @@ nest_check_have_stl_vector_capacity_doubling()
 nest_check_have_xlc_ice_on_using()
 nest_check_have_std_nan()
 nest_check_have_std_isnan()
+nest_check_random123()
 
 ################################################################################
 ##################           Create version string            ##################
@@ -228,11 +229,11 @@ add_subdirectory( examples )
 add_subdirectory( extras )
 add_subdirectory( lib )
 add_subdirectory( libnestutil )
-add_subdirectory( librandom )
 add_subdirectory( models )
 add_subdirectory( sli )
 add_subdirectory( nest )
 add_subdirectory( nestkernel )
+add_subdirectory( thirdparty )
 add_subdirectory( testsuite )
 if ( HAVE_PYTHON )
   add_subdirectory( pynest )
@@ -279,7 +280,6 @@ endforeach ()
 set( ALL_LIBS
   "-lnestutil"
   "-lnest"
-  "-lrandom"
   "-lsli"
   "-lnestkernel"
   "${OpenMP_CXX_FLAGS}"

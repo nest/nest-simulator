@@ -23,9 +23,6 @@
 #ifndef QUANTAL_STP_SYNAPSE_H
 #define QUANTAL_STP_SYNAPSE_H
 
-// Includes from librandom:
-#include "binomial_randomdev.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 
@@ -206,7 +203,7 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const Common
   int n_release = 0;
   for ( int i = a_; i > 0; --i )
   {
-    if ( kernel().rng_manager.get_rng( t )->drand() < u_ )
+    if ( get_vp_specific_rng( t )->drand() < u_ )
     {
       ++n_release;
     }
@@ -228,7 +225,7 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, thread t, const Common
   // Compute number of sites that recovered during the interval.
   for ( int depleted = n_ - a_; depleted > 0; --depleted )
   {
-    if ( kernel().rng_manager.get_rng( t )->drand() < ( 1.0 - p_decay ) )
+    if ( get_vp_specific_rng( t )->drand() < ( 1.0 - p_decay ) )
     {
       ++a_;
     }

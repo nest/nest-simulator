@@ -146,6 +146,24 @@ public:
   // TODO: Precisely how defined? Rename!
   Time const& get_clock() const;
 
+  /**
+   * Get the number of total cycles in the current run.
+   * Can be used to calculate the simulation time of the current run.
+   */
+  delay get_number_of_cycles_in_run() const;
+
+  /**
+   * Get the start cycle of the current run.
+   * Can be used to calculate the start time of the current run.
+   */
+  delay get_start_cycle_in_run() const;
+
+  /**
+   * Get the number of cycles that the current simulation will have been simulated for.
+   * Can be used to calculate the end time of the simulation (only considering the runs that have be called so far). 
+   */
+  delay get_end_cycle_in_simulation() const;
+
   //! Return start of current time slice, in steps.
   // TODO: rename / precisely how defined?
   delay get_from_step() const;
@@ -247,6 +265,26 @@ inline Time const&
 SimulationManager::get_clock() const
 {
   return clock_;
+}
+
+inline delay 
+SimulationManager::get_number_of_cycles_in_run() const
+{
+  return to_do_total_;
+}
+
+inline delay 
+SimulationManager::get_start_cycle_in_run() const
+{
+  assert( not simulating_ ); //implicit due to using get_time()
+  return get_time().get_steps() - (to_do_total_ - to_do_);
+}
+
+inline delay 
+SimulationManager::get_end_cycle_in_simulation() const
+{
+  assert( not simulating_ ); //implicit due to using get_time()
+  return get_time().get_steps() + to_do_;
 }
 
 inline delay

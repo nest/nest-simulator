@@ -1,7 +1,7 @@
 The NEST documentation style guide
 ==================================
 
-.. contents:: On this page, you'll find
+.. contents:: On this page, you will find
    :local:
    :depth: 1
 
@@ -18,7 +18,7 @@ Contribute to the docs
 
 If you want to add or modify documentation, make sure to read through this guide before writing a contribution.
 
-We have templates for :doc:`Python example scripts <pyapi_template>` and the :doc:`PyNEST API docstrings <example_template>`.
+We have templates for :doc:`Python example scripts <../templates/pyapi_template>` and the :doc:`PyNEST API docstrings <../templates/example_template>`.
 
 You will also need to know how to build the documentation locally on your machine: See
 :doc:`../../documentation_workflow/user_documentation_workflow`.
@@ -35,18 +35,18 @@ A few tips on writing documentation
 
 - Be specific: Avoid vague language; clarity is key.
 
-- Focus your message: Start with what's most important, and keep text relevant
+- Focus your message: Start with what is most important, and keep text relevant
   within given section.
 
 - Write for your reader: Try to understand what your reader needs to know;
-  include context to what you're saying. Remember that most NEST users are computational neuroscientists,
+  include context to what you are saying. Remember that most NEST users are computational neuroscientists,
   including students, not software developers!
 
-- Provide examples: Show, don't tell; if you can use code snippets, screenshots,
+- Provide examples: Show, do not tell; if you can use code snippets, screenshots,
   or figures to illustrate a point, do so!
 
-- Avoid terms like "simply", "just", or "easy": your knowledge does not always equal
-  your readers.  Don't make your reader feel bad because they "simply" didn't
+- Avoid terms like "simply", "just", or "easy": Your knowledge does not always equal
+  your readers.  Do not make your reader feel bad because they "simply" did not
   understand something.
 
 - Write positively: Use positive language rather than negative language.
@@ -83,11 +83,11 @@ substance, style, and tone.
 
 Our voice is
 
-- empathetic: we write thinking of who we are writing for and what their needs
+- empathetic: We write thinking of whom we are writing for and what their needs
   are.
-- relaxed: we write in natural, conversational way rather than an authoritative
+- relaxed: We write in a natural, conversational way rather than an authoritative
   way.
-- factual: we write in a neutral style avoiding irony, humor, or cultural references.
+- factual: We write in a neutral style avoiding irony, humor, or cultural references.
 
 Use "you" to indicate the reader and "we" to indicate yourself (the writer and
 possibly the NEST team).
@@ -101,23 +101,24 @@ Prefer the active voice, where the subject acts on object.
 If the object needs emphasis rather than subject, use passive voice. But ensure
 that you cannot improve the sentence by using the active voice.
 
+
 Headings and subheadings
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Headings and subheadings describe the purpose of the section.
 
-Begin with a descriptive verb or begin with `How to ...`
+Begin with a descriptive verb or begin with "How to ..."
 
 Headings explain the section in a short phrase.
 
-Use the verb stem and not the gerund ('ing') form of verbs. Not "Adding a
-model", but  "Add a model".
+Use the verb stem and not the gerund ("ing") form of the verb. Not "Adding a
+model," but  "Add a model."
 
 Avoid section names like "Introduction" or "Part 1".
 
 One-word subheadings are acceptable, if the section is short and the meaning is clear.
 
-Use sentence case for headings and subheadings, i.e., begin with an uppercase
+Use sentence case for headings and subheadings, that is, begin with an uppercase
 letter but with all other words in lower case (except proper nouns).
 
 
@@ -134,7 +135,7 @@ letter but with all other words in lower case (except proper nouns).
 Sentences and paragraphs
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Avoid using "So" and "However" at the beginning of sentences.
+Avoid using "so" in sentences.
 Try to keep sentences short, or break up long sentences with short ones.
 
 Avoid lengthy paragraphs with more than 5 or 6 sentences.
@@ -147,7 +148,7 @@ Pronouns
 
 Use the pronouns "you" (reader) and "we" (NEST) whenever possible.
 
-Avoid the pronoun "I".
+Avoid the pronoun "I."
 
 Avoid gendered terms (e.g., use "police officer" instead of "policeman").
 
@@ -163,21 +164,21 @@ How to write specific content in NEST
 Numbers
 ~~~~~~~
 
-Numbers 0-9 should be spelled out, unless they are measurements or coordinates.
+Numbers 0–9 should be spelled out, unless they are measurements or coordinates.
 
 Numbers should be spelled out if they begin a sentence. In most cases, however,
 the numeral/ordinal format is preferred.
 
 For additional mathematical notation, use the :ref:`math role or directive <math_style>`.
 
-We use the period for the decimal point. (`57.45`)
+We use the period for the decimal point (`57.45`).
 
-The thousand separator is the comma except when showing a code example
+The thousand separator is the comma except when showing a code example.
 
    Example:
 
    We have over 5,000 connections.
-   The number of connections is ``x = 5001``
+   The number of connections is ``x = 5001``.
 
 Make sure you use the correct unit (e.g., millivolts for voltage) and the
 unit's symbol (`mV`).
@@ -187,7 +188,7 @@ Lists
 
 Use the serial comma in lists.
 
-Use numbered lists for step-by-step instructions only. Do not have more that two
+Use numbered lists for step-by-step instructions only. Do not have more than two
 related actions in one step.
 
 Use bullet lists if the number of items is extensive or each item is a long phrase or sentence.
@@ -197,19 +198,27 @@ end with period.
 
 If the text of a list forms an incomplete sentence, do not end with period.
 
-If the entire bullet/numbered list belongs to a sentence, end each item with a comma and the second-last item with ", and".
-If last item is the end of the sentence, end it with a period. Otherwise use the punctuation required to correctly connect
+If the entire bullet/numbered list belongs to a sentence, end each item with a comma and the second-last item with ", and."
+If the last item is the end of the sentence, end it with a period. Otherwise, use the punctuation required to correctly connect
 to the remainder of the sentence.
 
 
 Abbreviations and acronyms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Spell out acronyms on first appearance on each page or article it appears, for example: Random number generator (RNG)
+Spell out acronyms on first appearance on each page or article it appears, for example: Random number generator (RNG).
 
-If the abbreviation/acronym is well known (e.g., HTML) you do not need to spell
+If the abbreviation/acronym is well known (e.g., HTML), you do not need to spell
 it out.
 
+Use "e.g.," and "i.e.," only in parentheses and figure and table captions; otherwise, use "for example," and "that is,."
+Note the use of comma following the terms.
+
+
+Contractions
+~~~~~~~~~~~~
+
+Avoid contractions. For example, use "do not" instead of "don't".
 
 Commas
 ~~~~~~
@@ -218,13 +227,14 @@ Use the serial comma (apples, bananas, and grapes) for lists.
 
 Use the comma as separator for thousands (37,000).
 
-To join two sentences into one, you must use a conjunction (and, or , but)
+To join two sentences into one, you must use a conjunction (and, or, but)
 along with the comma, or use the semicolon.
+
 
 Ampersand
 ~~~~~~~~~
 
-Avoid the ampersand "`&`" and use "`and`" instead unless the ampersand is part
+Avoid the ampersand "`&`" and use "`and`" instead, unless the ampersand is part
 of a proper name (e.g., Ben \& Jerry's).
 
 The ampersand is a special character and can be used, for example, to :ref:`align multi-line equations <math_style>`.
@@ -233,13 +243,14 @@ The ampersand is a special character and can be used, for example, to :ref:`alig
 Capitalization
 ~~~~~~~~~~~~~~
 
-Capitalize first word of heading, but use lower case for the rest.
+Capitalize the first word of a heading, but use lower case for the rest.
 
 Capitalize first word in bullet/numbered list.
 
 Capitalize proper nouns and follow company policy in naming conventions.
 (e.g., macOS, LaTeX, Python, NumPy, NEST).
 
+Capitalize the first word after a colon.
 
 .. _sec-reST_style:
 
@@ -250,13 +261,13 @@ reStructuredText is a plain text markup language and parser. It is the default l
 generator, which NEST uses for generating documentation.
 
 reStructuredText uses directives, which are blocks of explicit markup used for math, images, code, admonitions, and much
-more. The syntax looks like this ``.. directive-name::``. The directive content follows after a blank line and is indented
-relative to the directive start.
+more. The syntax looks like this ``.. directive-name::``. The directive content follows the directive name after a blank
+line and is indented relative to the directive start.
 
 In addition to directives, reStructuredText has roles, which insert semantic markup into documents.
 Roles look like this ``:role-name:`content```.
 
-We will only cover a few examples here. You can find more information in the following links:
+We will only cover a few examples here. You can find more information at the following links:
 
 
 * `reStructuredText User Documentation <https://docutils.sourceforge.io/rst.html#id24>`_
@@ -282,7 +293,7 @@ We will only cover a few examples here. You can find more information in the fol
 Code and code snippets
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Code blocks are written using the code-block directive.
+Code blocks are written by using the code-block directive.
 
 Example syntax
 
@@ -308,7 +319,7 @@ Code is rendered as
         }
 
 
-For Python examples that show input and output use the following syntax::
+For Python examples that show input and output, use the following syntax::
 
    >>> input begins with 3, right-angled brackets
    Output is directly below input without any brackets.
@@ -341,7 +352,7 @@ Output rendered as
         f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi) e^{2 \pi i x \xi} \, d\xi.
 
 If the equation runs over several lines you can use double backslashes ``\\`` as a separator at the end of each line.
-You can also align lines in an equation, using the ``&`` where you want an equation aligned::
+You can also align lines in an equation by using the ``&`` where you want an equation aligned::
 
 
     .. math::
@@ -376,7 +387,7 @@ Use the admonition
 * "Danger" if the situation may cause severe, possibly irreversible, problems.
 
 
-If you want a custom admonition use::
+If you want a custom admonition, use::
 
    .. admonition:: custom label
 
@@ -410,41 +421,51 @@ This will be rendered as
 
    :doc:`custom label <sample_doc>`
 
-For cross-referencing specific section headings, figures, or other arbitrary places within file, use the ``:ref:`` role.
+For cross-referencing specific section headings, figures, or other arbitrary places within a file, use the ``:ref:`` role.
 
-The ``:ref:`` role requires a reference label that looks like this ``.. _ref-label:``. Each reference label must be unique
-in the documentation. Separate the reference label from the text it is referecing with a new line::
+The ``:ref:`` role requires a reference label that looks like this ``.. _type_ref-label:``.
 
-   .. _my-ref-label:
+::
+
+   .. _sec_my-ref-label:
 
    Section to cross-reference
    --------------------------
 
    Some content in this section.
 
-The ``:ref:`` role for cross-referecing has the following syntax::
+The ``:ref:`` role for cross-referencing has the following syntax::
 
- :ref:`my-ref-label`
-
-Rendered as
-
- :ref:`my-ref-label`
-
-
-To reference figures, equations, or arbitrary places in a file, you must include a custom
-label in the reference for it to work::
-
-    :ref:`custom label <my-arbitrary-place-label>`
+ :ref:`sec_my-ref-label`
 
 Rendered as
 
-    :ref:`custom label <my-arbitrary-place-label>`
+ :ref:`sec_my-ref-label`
+
+
+* Each reference label must be unique in the documentation.
+
+* The label must begin with an underscore "_" for Sphinx to recognize it. But the reference to the label (i.e., ``:ref:`ref-label```)
+  does not include the underscore.
+
+* Use "sec_" (section), "fig_" (figure), "eq_" (equation), "tab_" (table),  at the beginning of each reference label to denote the type of reference.
+
+* Separate the reference label from the text it is referencing with a new line.
+
+* To reference figures, equations, or arbitrary places in a file, you must include a custom
+  label in the reference for it to work::
+
+    :ref:`custom label <eq_my-arbitrary-place-label>`
+
+Rendered as
+
+    :ref:`custom label <eq_my-arbitrary-place-label>`
 
 
 Link to PyNEST API objects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To link PyNEST API functions used in the documentation to the API reference page use the following syntax::
+To link PyNEST API functions used in the documentation to the API reference page, use the following syntax::
 
    :py:func:`.Create`
 
@@ -465,8 +486,8 @@ For example, here is the class syntax ``:py:class:.ClassName`` and the method sy
 
 .. note::
 
-   The methods ``get()`` and ``set()`` can be found in both the class :py:class:`.NodeCollection` and
-   :py:class:`.SynapseCollection` and thus, you must explicitly state which class method you are referring to
+   The methods ``get()`` and ``set()`` can be found in both the classes :py:class:`.NodeCollection` and
+   :py:class:`.SynapseCollection`, and thus, you must explicitly state which class method you are referring to
    with the following syntax:
 
    * ``:py:meth:`.SynapseCollection.get``` rendered as :py:meth:`.SynapseCollection.get` or
@@ -489,7 +510,7 @@ information.
 Link to glossary
 ~~~~~~~~~~~~~~~~
 
-To link terms to the glossary page use the HoverXTooltip role :hxt_ref:. The source code for the extension can be
+To link terms to the glossary page, use the HoverXTooltip role :hxt_ref:. The source code for the extension can be
 `found here
 <https://github.com/INM-6/HoverXTooltip>`_. ::
 
@@ -499,7 +520,7 @@ Link to certain external projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 With the Sphinx extension `intersphinx <https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html>`_,
-projects that also use Sphinx can be referenced the same way as your local project. You can use the reference label
+projects that also use Sphinx can be referenced in the same way as your local project. You can use the reference label
 role (``:ref:``), document role (``:doc:``), and Python role (``:py:func:``, ``:py:class:``). You only need to add the
 intersphinx unique identifer to the reference, which looks like this ``:doc:`custom label <unique-identifier:filename>```.
 See section in userdoc/conf.py "intersphinx_mapping" to see which projects are currently included along with their
@@ -527,11 +548,11 @@ reStructuredText text formatting
 Underlines for headings
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-ReStructuredText uses several types of underline markers for headings. It's
+reStructuredText uses several types of underline markers for headings. It is
 important that the length of the underline is exactly as long as the words
 in the heading.
 
-In general, we try to follow the pattern of
+In general, we try to follow the pattern:
 
 * First heading: ===
 * Second heading: ---
@@ -605,12 +626,12 @@ NumPy style docstrings
 In PyNEST code, we follow the rules for NumPy style docstrings as
 `explained here <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
 
-If you're contributing to the :doc:`PyNEST API <example_template>`, make sure you carefully read the NumPy guide.
+If you are contributing to the :doc:`PyNEST API <example_template>`, make sure you carefully read the NumPy guide.
 
 Bibliography style
 ------------------
 
-The reStructuredText bibliography style is used throughout documentation so links
+The reStructuredText bibliography style is used throughout the documentation so that links
 are autogenerated and a consistent format is used.
 
 For in-text citations, we use the reStructuredText numeric style ``[1]_``.
@@ -620,7 +641,7 @@ For example:
     The following example is based on Smith [1]_.
     Sanders et al. [2]_ contains a technically detailed example.
 
-Please ensure your reference follows the following guidelines:
+Please ensure your reference follows the following guidelines.
 
 *  Do not add formatting markup such as italics, bold, or underline.
 *  Use a period after every section of bibliography.
@@ -643,7 +664,7 @@ Please ensure your reference follows the following guidelines:
  .. [1] Smith J. and Jones M (2009). Title of cool paper. Journal of
         Awesomeness. 3:7-29. <DOI>
 
- .. [2] Sander M., et al (2011). Biology of the sauropod dinosaurs: the
+ .. [2] Sander M., et al (2011). Biology of the sauropod dinosaurs: The
         evolution of gigantism. Biological Reviews. 86(1):117-155.
         https://doi.org/10.1111/j.1469-185X.2010.00137.x
 

@@ -255,6 +255,9 @@ connect_arrays( long* sources,
     }
   };
 
+  // Set flag before entering parallel section in case we have less connections than ranks.
+  kernel().connection_manager.set_have_connections_changed( kernel().vp_manager.get_thread_id() );
+
   // Vector for storing exceptions raised by threads.
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 

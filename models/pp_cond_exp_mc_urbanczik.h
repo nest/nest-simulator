@@ -121,15 +121,18 @@ in [1]_. It is capable of connecting to an :doc:`Urbanczik synapse
 <urbanczik_synapse>`.
 
 The model has two compartments: soma and dendrite, labeled as s and p,
-respectively. There is one excitatory and one inhibitory conductance-based
-conductance-based synapse. Each compartment can also receive current input
-from a current generator, and an external (rheobase) current can be set for
-each compartment.
+respectively. Each compartment can receive spike events and current input
+from a current generator. Additionally, an external (rheobase) current can be
+set for each compartment.
 
 Synapses, including those for injection external currents, are addressed through
 the receptor types given in the receptor_types entry of the state dictionary.
 Note that in contrast to the single-compartment models, all
-synaptic weights must be positive numbers!
+synaptic weights must be positive numbers! The distinction between excitatory
+and inhibitory synapses is made explicitly by specifying the receptor type of
+the synapse. For example, receptor_type=dendritic_exc results in an excitatory
+input and receptor_type=dendritic_inh results in an inhibitory input to the
+dendritic compartment.
 
 .. _multicompartment-models:
 
@@ -143,26 +146,28 @@ assumed to be located entirely at the postsynaptic side. For point neurons, it
 represents the time it takes for an incoming spike to travel along the
 postsynaptic dendrite before it reaches the soma, see :ref:`panel a)
 <fig-multicompartment>`. Conversely, if the synaptic weight depends on the
-state of the postsynaptic neuron, the delay also represents the time it takes for the
-information on the state to propagate back through the dendrite to the synapse.
+state of the postsynaptic neuron, the delay also represents the time it takes
+for the information on the state to propagate back through the dendrite to the
+synapse.
 
-For multicompartment models, this amounts to positioning the delay directly
-behind the incoming synapse, i.e., before the first dendritic compartment on
-the postsynaptic side, see :ref:`panel b) <fig-multicompartment>`. Therefore,
-the delay specified in the synapse model does *not* account for any delay that
-might be associated with information traveling through the explicitly modeled
+For multicompartment models in NEST, this means the delay is positioned directly
+behind the incoming synapse, i.e., before the first dendritic compartment on the
+postsynaptic side, see :ref:`panel b) <fig-multicompartment>`. Therefore, the
+delay specified in the synapse model does *not* account for any delay that might
+be associated with information traveling through the explicitly modeled
 dendritic compartments.
 
-In the :ref:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic weight is driven by
-an error signal which is the difference between the firing rate of the soma
-(derived from the somatic spike train :math:`S_{post}`) and the
-dendritic prediction of the firing rate of the soma (derived from the dendritic membrane potential
-:math:`V`). The original publication [1]_ does not assume any delay in the
-interaction between the soma and the dendritic compartment. Therefore, we
-compute the error signal from the firing rate and the dendritic prediction at
-equal time points. Due to the synaptic delay :math:`d`, the synapse combines a
-delayed version of the error signal with the presynaptic spike train
-(:math:`S_{pre}`), see :ref:`panel c) <fig-multicompartment>`.
+In the :ref:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic
+weight is driven by an error signal which is the difference between the firing
+rate of the soma (derived from the somatic spike train :math:`S_{post}`) and the
+dendritic prediction of the firing rate of the soma (derived from the dendritic
+membrane potential :math:`V`). The original publication [1]_ does not assume any
+delay in the interaction between the soma and the dendritic compartment.
+Therefore, we evaluate the firing rate and the dendritic prediction at equal
+time points to calculate the error signal at that time point. Due to the
+synaptic delay :math:`d`, the synapse combines a delayed version of the error
+signal with the presynaptic spike train (:math:`S_{pre}`), see :ref:`panel c)
+<fig-multicompartment>`.
 
 .. _fig-multicompartment::
 

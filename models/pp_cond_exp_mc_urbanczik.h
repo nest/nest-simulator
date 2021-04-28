@@ -151,14 +151,14 @@ for the information on the state to propagate back through the dendrite to the
 synapse.
 
 For multicompartment models in NEST, this means the delay is positioned directly
-behind the incoming synapse, i.e., before the first dendritic compartment on the
+behind the incoming synapse, that is, before the first dendritic compartment on the
 postsynaptic side, see :ref:`panel b) <fig-multicompartment>`. Therefore, the
 delay specified in the synapse model does *not* account for any delay that might
 be associated with information traveling through the explicitly modeled
 dendritic compartments.
 
 In the :ref:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic
-weight is driven by an error signal which is the difference between the firing
+weight is driven by an error signal, which is the difference between the firing
 rate of the soma (derived from the somatic spike train :math:`S_{post}`) and the
 dendritic prediction of the firing rate of the soma (derived from the dendritic
 membrane potential :math:`V`). The original publication [1]_ does not assume any

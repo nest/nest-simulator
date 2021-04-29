@@ -214,8 +214,8 @@ See :doc:`../auto_examples/urbanczik_synapse_example` to learn more.
 
 Remarks:
 
-The neuron model uses standard units instead of the unitless quantities used in
-[1]_.
+The neuron model uses standard units of NEST instead of the unitless quantities
+used in [1]_.
 
 .. note::
    All parameters that occur for both compartments are stored as C arrays, with

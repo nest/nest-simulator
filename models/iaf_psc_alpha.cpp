@@ -320,10 +320,6 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    // get access to the correct input-buffer slot at the very beginning
-    const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
-    auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
-
     if ( S_.r_ == 0 )
     {
       // neuron not refractory
@@ -342,6 +338,10 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     // alpha shape EPSCs
     S_.I_ex_ = V_.P21_ex_ * S_.dI_ex_ + V_.P22_ex_ * S_.I_ex_;
     S_.dI_ex_ *= V_.P11_ex_;
+
+    // get access to the correct input-buffer slot
+    const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
+    auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
 
     // Apply spikes delivered in this step; spikes arriving at T+1 have
     // an immediate effect on the state of the neuron

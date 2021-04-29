@@ -339,7 +339,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     S_.I_ex_ = V_.P21_ex_ * S_.dI_ex_ + V_.P22_ex_ * S_.I_ex_;
     S_.dI_ex_ *= V_.P11_ex_;
 
-    // get access to the correct input-buffer slot
+    // get read/write access to the correct input-buffer slot
     const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
     auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
 
@@ -375,13 +375,8 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     // set new input current
     S_.y0_ = input[ Buffers_::I0 ];
 
-    // reset input in ring buffer at position lag
-    // note: delegating the reset to a function in the MultiValueRingBuffer
-    // would entail additional costs
-    for ( auto it = input.begin(); it < input.end(); ++it )
-    {
-      ( *it ) = 0.0;
-    }
+    // reset all values in the currently processed input-buffer slot
+    input.fill( 0.0 );
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

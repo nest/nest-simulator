@@ -207,9 +207,10 @@ def AddCompartment(node, compartment_idx, parent_compartment_idx, compartment_pa
     sps(compartment_params)
     sr("AddCompartment")
 
-def AddReceptor(node, compartment_idx, type):
+def AddReceptor(node, compartment_idx, type, receptor_params={}):
     sps(node)
     sps(compartment_idx)
     sps(type)
+    sps(receptor_params)
     sr("AddReceptor")
     return spp()

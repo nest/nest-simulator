@@ -188,6 +188,7 @@ intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
                       None), 'neuromorph': ('https://electronicvisions.github.io/hbp-sp9-guidebook/',
                       None), 'arbor': ('https://arbor.readthedocs.io/en/latest/',
                       None), 'tvb': ('http://docs.thevirtualbrain.org/',
+                      None), 'extmod': ('https://nest-extension-module.readthedocs.io/en/latest/',
                       None)}
 
 from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa

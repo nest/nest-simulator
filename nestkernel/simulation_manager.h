@@ -160,7 +160,7 @@ public:
 
   /**
    * Get the number of cycles that the current simulation will have been simulated for.
-   * Can be used to calculate the end time of the simulation (only considering the runs that have be called so far). 
+   * Can be used to calculate the end time of the simulation (only considering the runs that have be called so far).
    */
   delay get_end_cycle_in_simulation() const;
 
@@ -267,23 +267,23 @@ SimulationManager::get_clock() const
   return clock_;
 }
 
-inline delay 
+inline delay
 SimulationManager::get_number_of_cycles_in_run() const
 {
   return to_do_total_;
 }
 
-inline delay 
+inline delay
 SimulationManager::get_start_cycle_in_run() const
 {
-  assert( not simulating_ ); //implicit due to using get_time()
-  return get_time().get_steps() - (to_do_total_ - to_do_);
+  assert( not simulating_ ); // implicit due to using get_time()
+  return get_time().get_steps() - ( to_do_total_ - to_do_ );
 }
 
-inline delay 
+inline delay
 SimulationManager::get_end_cycle_in_simulation() const
 {
-  assert( not simulating_ ); //implicit due to using get_time()
+  assert( not simulating_ ); // implicit due to using get_time()
   return get_time().get_steps() + to_do_;
 }
 

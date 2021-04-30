@@ -268,20 +268,20 @@ SimulationManager::get_clock() const
 }
 
 inline delay
-SimulationManager::get_number_of_cycles_in_run() const
+SimulationManager::get_number_of_steps_in_run() const
 {
   return to_do_total_;
 }
 
 inline delay
-SimulationManager::get_start_cycle_in_run() const
+SimulationManager::get_start_step_in_run() const
 {
   assert( not simulating_ ); // implicit due to using get_time()
   return get_time().get_steps() - ( to_do_total_ - to_do_ );
 }
 
 inline delay
-SimulationManager::get_end_cycle_in_simulation() const
+SimulationManager::get_end_step_in_simulation() const
 {
   assert( not simulating_ ); // implicit due to using get_time()
   return get_time().get_steps() + to_do_;

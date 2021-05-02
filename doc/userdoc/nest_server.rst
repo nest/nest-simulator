@@ -17,8 +17,8 @@ through HTTP requests and responses transmitted over a TCP/IP
 connection.
 
 The main advantage of using NEST in this way is that it decouples the
-*simulation backend* in form of the NEST simulation kernel from the
-*frontend*, i.e. the code that controls the simulation. In such a
+*simulation backend* in the form of the NEST simulation kernel from the
+*frontend*, i.e., the code that controls the simulation. In such a
 scenario, only the backend (the *server*) depends on NEST, while the
 frontend could really be anything that can talk HTTP. Under the hood,
 NEST Server forwards the commands it receives to PyNEST, and sends
@@ -30,7 +30,7 @@ frontend for NEST. With growing interest in a more general server
 backend for NEST, the functionality of the original NEST Server was
 extended to accommodate for this broader range of application.
 Starting with NEST 3.0, the NEST Server was integrated into the main
-source code repository of NEST to make it avaiable to everyone in a
+source code repository of NEST to make it available to everyone in a
 convenient way.
 
 
@@ -42,17 +42,17 @@ Use cases for NEST Server
     :alt: NEST Server concept
     :width: 240px
 
-NEST Server can be considered a language agnostic interface to NEST
-that can be deployed either locally, or on a remote machine. To give
+NEST Server can be considered a language independent interface to NEST
+that can be deployed either locally or on a remote machine. To give
 you a better idea of what NEST Server is good for, here are some of
 its main use cases.
 
 One scenario in which NEST Server comes in handy, is if you want to
-normally work on your laptop, but run your NEST simulations on a
-machine with higher performance or more memory, for instance a big
+work on your laptop, but run your NEST simulations on a
+machine with higher performance or more memory, for instance, a big
 workstation or computer cluster at your lab. For this, you would
-deploy NEST Server on the remote machine and use the provided
-:ref:`NEST Server Client <nest_server_client>` locally, or write your
+deploy NEST Server on the remote machine, and use the provided
+:ref:`NEST Server Client <nest_server_client>` locally or write your
 own client using one of the recipes provided in the :ref:`section on
 advanced applications <nest_server_advanced>`.
 
@@ -66,18 +66,18 @@ Last but not least, the latest version of the `HBP Neurorobotic
 Platform <https://neurorobotics.net/>`_ use the NEST Server to run the
 neuronal simulation as part of closed-loop robotic experiments. As it
 has rather specific requirements on the client side, it uses a custom
-NEST Client instead of the generic one shipped with NEST.
+client for the NEST Server instead of the generic one shipped with NEST.
 
 If you yourself have an interesting situation in which you use NEST
 Server and would like to have it listed here, feel free to `drop us a
 line <https://github.com/nest/nest-simulator/issues>`_.
 
-Installation and execution
+Install and run NEST Server
 --------------------------
 
 NEST Server is included in all source code distributions of NEST and
-consequently also available in derived packages and our virtual
-machine and Docker images.
+consequently, also available in derived packages, our virtual
+machine, and Docker images.
 
 For native installations, the requirements can be simply installed via
 ``pip``::
@@ -85,7 +85,7 @@ For native installations, the requirements can be simply installed via
   pip3 install RestrictedPython uwsgi flask flask-cors
 
 or by installing the full NEST development environment in case you
-prefer using `conda`::
+prefer using ``conda``::
 
   conda env create -f extras/conda-nest-simulator-dev.yml
   conda acvitate nest-simulator
@@ -94,7 +94,7 @@ As an alternative to a native installation, NEST Server is available
 from the NEST Docker image. Please check out the corresponding
 :ref:`installation instructions <docker_vm_install>` for more details.
 
-Executing NEST Server
+Run NEST Server
 ~~~~~~~~~~~~~~~~~~~~~
 
 All NEST Server operations are managed using the ``nest-server``
@@ -126,14 +126,14 @@ of the other arguments is as follows:
 -u <uid>
     Run the server under the user with ID <user>
 
-Running with MPI
+Run with MPI
 ~~~~~~~~~~~~~~~~
 
 If NEST was compiled with support for :ref:`distributed computing via
 MPI <distributed_computing>`, it will usually execute the exact same
 simulation script on each of the MPI processes. With NEST Server, this
 would normally mean that one NEST Server instance would be spawned for
-each rank in a multi-process NEST simulation To prevent this from
+each rank in a multi-process NEST simulation. To prevent this from
 happening, we provide a special version of the NEST Server command for
 use with MPI. It can be run as follows::
 
@@ -147,7 +147,7 @@ which execute them, collect all result data, and send it back to the
 master. The master then receives and combines all worker responses,
 and replies to the caller of the NEST Server API.
 
-The response data in such a distributed scenarion looks almost
+The response data in such a distributed scenario looks almost
 completely the same as one coming from the serial version of the NEST
 Server. The only difference may be that information pertaining to
 process-local data structures is being replaced by generic values.
@@ -231,7 +231,7 @@ NEST Server Client.
             n_events = nsc.GetStatus(sr, 'n_events')[0]
             print('Number of events:', n_events)
 
-Executing scripts
+Run scripts
 ~~~~~~~~~~~~~~~~~
 
 The NEST Server Client is able to send complete simulation scripts to
@@ -367,7 +367,7 @@ API access from Python
 
 If you prefer Python over `curl`, you can use the ``requests`` module,
 which provides a convenient API for communicating with RESTful APIs.
-On most systems this is already installed, or can be easily installed
+On most systems this is already installed or can be easily installed
 using `pip`. Extensive documentation is available on the pages about
 `HTTP for Humans <https://requests.readthedocs.io/en/master/>`_.
 
@@ -414,8 +414,8 @@ Python modules from within scripts you execute using that route.
 
 .. _additional_python_modules:
 
-We know that additional Python modules are a natural part of life and
-most menaingful simulation scripts won't work without them. Therefore,
+We know that additional Python modules will be necessary in most cases, and
+most simulation scripts won't work without them. Therefore,
 the restrictions described above can be lifted. However, each such
 exception should be carefully evaluated on a case-by-case basis.
 
@@ -453,7 +453,7 @@ not have been set.
         nest-server start
 
     Please be aware that running NEST Server like this bears a high
-    risk of arbitrary remote code execution and this mode of operation
+    risk of arbitrary remote code execution, and this mode of operation
     should only be used in exceptional cases. We also can't provide
     any support for problems arising from such a use of NEST Server.
 
@@ -462,13 +462,13 @@ not have been set.
 Advanced topics
 ---------------
 
-Executing scripts in NEST Server using `curl`
+Run scripts in NEST Server using `curl`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As shown above, you can send custom simulation code to
 ``localhost:5000/exec``. On the command line, this approach might be a
 bit more challenging in case your script does not fit on a single
-line. For such situation, we recommend using a JSON file as inut for
+line. For such situations, we recommend using a JSON file as input for
 ``curl``:
 
 .. code-block:: json
@@ -487,7 +487,7 @@ command:
     curl -H "Content-Type: application/json" -d @simulation_script.json http://localhost:5000/exec
 
 
-Interacting with NEST Server using JavaScript
+Interact with NEST Server using JavaScript
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As the NEST Server is built on modern web technologies, it is a
@@ -602,12 +602,12 @@ Now, we can send a custom Python script to NEST Server:
 
 .. note::
 
-    An full HTML client for NEST Server based on the ideas outlined
+    A full HTML client for NEST Server based on the ideas outlined
     above is available in the `nest-jsclient repository
     <https://github.com/steffengraber/nest-jsclient>`_ on the GitHub
     account of Steffen Graber.
 
-Controlling NEST from Bash
+Control NEST from Bash
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For POST requests to the NEST API Server, we recommend to use a Bash function:
@@ -626,7 +626,7 @@ For POST requests to the NEST API Server, we recommend to use a Bash function:
         fi
     }
 
-Now, we can send API requests to NEST Server using function ``nest-server-api`` function:
+Now, we can send API requests to NEST Server using the ``nest-server-api`` function:
 
 .. code-block:: sh
 

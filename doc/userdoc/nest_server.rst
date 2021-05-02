@@ -159,9 +159,10 @@ The NEST Server Client
 
 The easiest way to interact with the NEST Server is the `NEST Server
 Client` provided in ``examples/NESTServerClient`` in the source
-distribution of NEST. It can be installed by simply running the
-``setup.py`` script contained therein. NEST itself does not have to be
-installed for using the NEST Server Client.
+distribution of NEST. It can be either used directly by simply staring
+a Python session in that directory, or installed by running ``python3
+setup.py install`` therein. NEST itself does not have to be installed
+in ordert to use the NEST Server Client.
 
 Using a dynamic function mapping mechanism, the NEST Server Client
 supports the same functions as PyNEST does. However, instead of

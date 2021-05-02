@@ -12,9 +12,8 @@ NEST Server enables users to interact with the NEST simulation engine
 via a RESTful API. Using this approach, you can perform the same basic
 operations as with :doc:`PyNEST <ref_material/pynest_apis>`, but
 instead of doing so by directly importing the ``nest`` module, all
-commands as well as their arguments and result data are channeled
-through HTTP requests and responses transmitted over a TCP/IP
-connection.
+commands, including their arguments and result data, are channeled
+through HTTP requests and responses over a TCP/IP connection.
 
 The main advantage of using NEST in this way is that it decouples the
 *simulation backend* in the form of the NEST simulation kernel from the
@@ -116,7 +115,7 @@ Possible commands are `start`, `stop`, `status`, or `log`. The meaning
 of the other arguments is as follows:
 
 -d
-    Daemonize the server process
+    Run nest-server in the background (i.e., daemonize it)
 -o
     Print all output to both the console and the logger
 -h <host>

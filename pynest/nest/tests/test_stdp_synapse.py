@@ -78,19 +78,25 @@ class STDPSynapseTest(unittest.TestCase):
                 self.init_weight,
                 fname_snip=fname_snip)
 
-            # ``weight_by_nest`` containts only weight values at pre spike times, ``weight_reproduced_independently`` contains the weight at pre *and* post times: check that weights are equal only for pre spike times
+            # ``weight_by_nest`` containts only weight values at pre spike times, ``weight_reproduced_independently``
+            # contains the weight at pre *and* post times: check that weights are equal only for pre spike times
             assert len(weight_by_nest) > 0
             for idx_pre_spike_nest, t_pre_spike_nest in enumerate(t_weight_by_nest):
-                idx_pre_spike_reproduced_independently = np.argmin((t_pre_spike_nest - t_weight_reproduced_independently)**2)
-                np.testing.assert_allclose(t_pre_spike_nest, t_weight_reproduced_independently[idx_pre_spike_reproduced_independently])
+                idx_pre_spike_reproduced_independently = \
+                    np.argmin((t_pre_spike_nest - t_weight_reproduced_independently)**2)
+                np.testing.assert_allclose(t_pre_spike_nest,
+                                           t_weight_reproduced_independently[idx_pre_spike_reproduced_independently])
                 print("testing equal t = " + str(t_pre_spike_nest))
                 print("\tweight_by_nest = " + str(weight_by_nest[idx_pre_spike_nest]))
-                print("\tweight_reproduced_independently = " + str(weight_reproduced_independently[idx_pre_spike_reproduced_independently]))
-                np.testing.assert_allclose(weight_by_nest[idx_pre_spike_nest], weight_reproduced_independently[idx_pre_spike_reproduced_independently])
+                print("\tweight_reproduced_independently = " + str(
+                      weight_reproduced_independently[idx_pre_spike_reproduced_independently]))
+                np.testing.assert_allclose(weight_by_nest[idx_pre_spike_nest],
+                                           weight_reproduced_independently[idx_pre_spike_reproduced_independently])
 
     def do_the_nest_simulation(self):
         """
-        This function is where calls to NEST reside. Returns the generated pre- and post spike sequences and the resulting weight established by STDP.
+        This function is where calls to NEST reside. Returns the generated pre- and post spike sequences and the
+        resulting weight established by STDP.
         """
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
@@ -175,14 +181,18 @@ class STDPSynapseTest(unittest.TestCase):
     def reproduce_weight_drift(self, pre_spikes, post_spikes, initial_weight, fname_snip=""):
 
         def facilitate(w, Kpre, Wmax_=1.):
-            norm_w = (w / self.synapse_parameters["Wmax"]) + (self.synapse_parameters["lambda"] * pow(1 - (w / self.synapse_parameters["Wmax"]), self.synapse_parameters["mu_plus"]) * Kpre)
+            norm_w = (w / self.synapse_parameters["Wmax"]) + (
+                self.synapse_parameters["lambda"] * pow(
+                    1 - (w / self.synapse_parameters["Wmax"]), self.synapse_parameters["mu_plus"]) * Kpre)
             if norm_w < 1.0:
                 return norm_w * self.synapse_parameters["Wmax"]
             else:
                 return self.synapse_parameters["Wmax"]
 
         def depress(w, Kpost):
-            norm_w = (w / self.synapse_parameters["Wmax"]) - (self.synapse_parameters["alpha"] * self.synapse_parameters["lambda"] * pow(w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"]) * Kpost)
+            norm_w = (w / self.synapse_parameters["Wmax"]) - (
+                self.synapse_parameters["alpha"] * self.synapse_parameters["lambda"] * pow(
+                    w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"]) * Kpost)
             if norm_w > 0.0:
                 return norm_w * self.synapse_parameters["Wmax"]
             else:
@@ -291,11 +301,13 @@ class STDPSynapseTest(unittest.TestCase):
             Kpre_log.append(Kpre)
 
         Kpost_log = [Kpost_at_time(t - self.dendritic_delay, post_spikes, init=self.init_weight) for t in t_log]
-        self.plot_weight_evolution(pre_spikes, post_spikes, t_log, w_log, Kpre_log, Kpost_log, fname_snip=fname_snip + "_ref", title_snip="Reference")
+        self.plot_weight_evolution(pre_spikes, post_spikes, t_log, w_log, Kpre_log, Kpost_log,
+                                   fname_snip=fname_snip + "_ref", title_snip="Reference")
 
         return t_log, w_log
 
-    def plot_weight_evolution(self, pre_spikes, post_spikes, t_log, w_log, Kpre_log=None, Kpost_log=None, fname_snip="", title_snip=""):
+    def plot_weight_evolution(self, pre_spikes, post_spikes, t_log, w_log, Kpre_log=None, Kpost_log=None,
+                              fname_snip="", title_snip=""):
         import matplotlib.pyplot as plt
 
         fig, ax = plt.subplots(nrows=3)

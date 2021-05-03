@@ -164,8 +164,7 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             # create spike recorder --- debugging only
             spikes = nest.Create("spike_recorder")
             nest.Connect(
-                pre_parrot + post_parrot +
-                pre_parrot_ps + post_parrot_ps,
+                pre_parrot + post_parrot + pre_parrot_ps + post_parrot_ps,
                 spikes
             )
 
@@ -209,7 +208,8 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             ax[0].plot(post_weights["parrot_ps"], marker="o", label="parrot_ps")
             ax[0].set_ylabel("final weight")
             ax[0].set_xticklabels([])
-            ax[1].semilogy(np.abs(np.array(post_weights["parrot"]) - np.array(post_weights["parrot_ps"])), marker="o", label="error")
+            ax[1].semilogy(np.abs(np.array(post_weights["parrot"]) - np.array(post_weights["parrot_ps"])),
+                           marker="o", label="error")
             ax[1].set_xticks([i for i in range(len(deltas))])
             ax[1].set_xticklabels(["{0:.1E}".format(d) for d in deltas])
             ax[1].set_xlabel("timestep [ms]")
@@ -224,7 +224,8 @@ class StdpSpikeMultiplicity(unittest.TestCase):
     def _test_stdp_multiplicity(self, pre_post_shift, max_abs_err=1E-6):
         """Check that for smaller and smaller timestep, weights obtained from parrot and precise parrot converge.
 
-        Enforce a maximum allowed absolute error ``max_abs_err`` between the final weights for the smallest timestep tested.
+        Enforce a maximum allowed absolute error ``max_abs_err`` between the final weights for the smallest timestep
+        tested.
 
         Enforce that the error should strictly decrease with smaller timestep."""
 
@@ -243,7 +244,6 @@ class StdpSpikeMultiplicity(unittest.TestCase):
         See also: _test_stdp_multiplicity()."""
         self._test_stdp_multiplicity(pre_post_shift=10.)    # test potentiation
         self._test_stdp_multiplicity(pre_post_shift=-10.)   # test depression
-
 
 
 def suite():

@@ -376,7 +376,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     S_.y0_ = input[ Buffers_::I0 ];
 
     // reset all values in the currently processed input-buffer slot
-    input.fill( 0.0 );
+    B_.input_buffer_.reset_values_all_channels( input_buffer_slot );
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

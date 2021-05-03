@@ -365,7 +365,7 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
     S_.i_1_ = input[ Buffers_::I1 ];
 
     // reset all values in the currently processed input-buffer slot
-    input.fill( 0.0 );
+    B_.input_buffer_.reset_values_all_channels( input_buffer_slot );
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

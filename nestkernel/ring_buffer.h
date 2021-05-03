@@ -363,6 +363,7 @@ public:
   void add_value( const index slot, const index channel, const double value );
 
   std::array< double, num_channels >& get_values_all_channels( const index slot );
+  void reset_values_all_channels( const index slot );
 
   void clear();
 
@@ -378,6 +379,14 @@ private:
    */
   std::vector< std::array< double, num_channels > > buffer_;
 };
+
+template < unsigned int num_channels >
+inline void
+MultiChannelRingBuffer< num_channels >::reset_values_all_channels( const index slot )
+{
+  assert( 0 <= slot and slot < buffer_.size() );
+  memset( &buffer_[ slot ][ 0 ], 0, buffer_[ slot ].size() * sizeof buffer_[ slot ][ 0 ] );
+}
 
 } // namespace nest
 

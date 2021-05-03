@@ -26,6 +26,13 @@ import unittest
 import math
 import numpy as np
 
+try:
+    import matplotlib as mpl
+    import matplotlib.pyplot as plt
+    DEBUG_PLOTS = True
+except Exception:
+    DEBUG_PLOTS = False
+
 
 @nest.ll_api.check_stack
 class StdpSpikeMultiplicity(unittest.TestCase):
@@ -194,33 +201,49 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             post_weights['parrot'].append(w_post)
             post_weights['parrot_ps'].append(w_post_ps)
 
+        if DEBUG_PLOTS:
+            import datetime
+            fig, ax = plt.subplots(nrows=2)
+            fig.suptitle("Final obtained weights")
+            ax[0].plot(post_weights["parrot"], marker="o", label="parrot")
+            ax[0].plot(post_weights["parrot_ps"], marker="o", label="parrot_ps")
+            ax[0].set_ylabel("final weight")
+            ax[0].set_xticklabels([])
+            ax[1].semilogy(np.abs(np.array(post_weights["parrot"]) - np.array(post_weights["parrot_ps"])), marker="o", label="error")
+            ax[1].set_xticks([i for i in range(len(deltas))])
+            ax[1].set_xticklabels(["{0:.1E}".format(d) for d in deltas])
+            ax[1].set_xlabel("timestep [ms]")
+            for _ax in ax:
+                _ax.grid(True)
+                _ax.legend()
+            plt.savefig("/tmp/test_stdp_multiplicity" + str(datetime.datetime.utcnow()) + ".png")
+        print(post_weights)
         return post_weights
 
-    def test_ParrotNeuronSTDPProtocolPotentiation(self):
-        """Check weight convergence on potentiation."""
+    # XXX: TODO: use ``@pytest.mark.parametrize`` for this
+    def _test_stdp_multiplicity(self, pre_post_shift, max_abs_err=1E-6):
+        """Check that for smaller and smaller timestep, weights obtained from parrot and precise parrot converge.
 
-        post_weights = self.run_protocol(pre_post_shift=10.0)
+        Enforce a maximum allowed absolute error ``max_abs_err`` between the final weights for the smallest timestep tested.
+
+        Enforce that the error should strictly decrease with smaller timestep."""
+
+        post_weights = self.run_protocol(pre_post_shift=pre_post_shift)
         w_plain = np.array(post_weights['parrot'])
         w_precise = np.array(post_weights['parrot_ps'])
 
-        assert all(w_plain == w_plain[0]), 'Plain weights differ'
-        dw = w_precise - w_plain
-        dwrel = dw[1:] / dw[:-1]
-        assert all(np.round(dwrel, decimals=3) ==
-                   0.5), 'Precise weights do not converge.'
+        assert all(w_plain == w_plain[0]), 'Plain weights should be independent of timestep, but differ!'
+        abs_err = np.abs(w_precise - w_plain)
+        assert abs_err[-1] < max_abs_err
+        assert np.all(np.diff(abs_err) < 1), 'Error should decrease with smaller timestep!'
 
-    def test_ParrotNeuronSTDPProtocolDepression(self):
-        """Check weight convergence on depression."""
+    def test_stdp_multiplicity(self):
+        """Check weight convergence on potentiation and depression.
 
-        post_weights = self.run_protocol(pre_post_shift=-10.0)
-        w_plain = np.array(post_weights['parrot'])
-        w_precise = np.array(post_weights['parrot_ps'])
+        See also: _test_stdp_multiplicity()."""
+        self._test_stdp_multiplicity(pre_post_shift=10.)    # test potentiation
+        self._test_stdp_multiplicity(pre_post_shift=-10.)   # test depression
 
-        assert all(w_plain == w_plain[0]), 'Plain weights differ'
-        dw = w_precise - w_plain
-        dwrel = dw[1:] / dw[:-1]
-        assert all(np.round(dwrel, decimals=3) ==
-                   0.5), 'Precise weights do not converge.'
 
 
 def suite():

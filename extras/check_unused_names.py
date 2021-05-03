@@ -70,7 +70,6 @@ except KeyError:
 # Base names of files that contain const Name definitions
 # (i.e. filenames without filename extension)
 names_files = [
-    "librandom/librandom_names",
     "nestkernel/nest_names",
 ]
 

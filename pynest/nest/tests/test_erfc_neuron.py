@@ -79,12 +79,13 @@ class ErfcNeuronTheoryTestCase(unittest.TestCase):
         self.theta = np.linspace(-6, 6, 15)
         self.neuron = None
         self.detector = None
-        self.T = 30000.
+        self.T = 50000.
 
     def build_and_connect_nodes(self, sigma, theta):
         """ sets up an erfc neuron and spin detector. """
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
+        nest.SetKernelStatus({'rng_seed': 1})
 
         self.neuron = nest.Create('erfc_neuron', 1,
                                   {'sigma': sigma, 'theta': theta})

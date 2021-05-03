@@ -29,12 +29,15 @@
 
 #include "recording_backend.h"
 
-/* BeginUserDocs: recording backend
+/* BeginUserDocs: NOINDEX
 
 .. _recording_backend_sionlib:
 
-Store data to an efficient binary format
-########################################
+sionlib - Store data to an efficient binary format
+##################################################
+
+Description
++++++++++++
 
 .. admonition:: Availability
 

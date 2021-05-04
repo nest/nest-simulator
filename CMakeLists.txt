@@ -40,6 +40,9 @@ option( with-ps-arrays "Use PS array construction semantics. [default=ON]" ON )
 # add user modules
 set( external-modules OFF CACHE STRING "External NEST modules to be linked in, separated by ';'. [default=OFF]" )
 
+# use detailed NEST internal timers
+set( with-detailed-timers OFF CACHE STRING "Enable detailed NEST internal time measurements. Detailed timers can affect the performance. [default=OFF]" )
+
 # connect NEST with external projects
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
@@ -145,6 +148,7 @@ nest_process_with_gsl()
 nest_process_with_python()
 nest_process_with_openmp()
 nest_process_with_mpi()
+nest_process_with_detailed_timers()
 nest_process_with_libneurosim()
 nest_process_with_music()
 nest_process_with_sionlib()
@@ -175,6 +179,7 @@ nest_check_have_stl_vector_capacity_doubling()
 nest_check_have_xlc_ice_on_using()
 nest_check_have_std_nan()
 nest_check_have_std_isnan()
+nest_check_random123()
 
 ################################################################################
 ##################           Create version string            ##################
@@ -224,11 +229,11 @@ add_subdirectory( examples )
 add_subdirectory( extras )
 add_subdirectory( lib )
 add_subdirectory( libnestutil )
-add_subdirectory( librandom )
 add_subdirectory( models )
 add_subdirectory( sli )
 add_subdirectory( nest )
 add_subdirectory( nestkernel )
+add_subdirectory( thirdparty )
 add_subdirectory( testsuite )
 if ( HAVE_PYTHON )
   add_subdirectory( pynest )
@@ -275,7 +280,6 @@ endforeach ()
 set( ALL_LIBS
   "-lnestutil"
   "-lnest"
-  "-lrandom"
   "-lsli"
   "-lnestkernel"
   "${OpenMP_CXX_FLAGS}"

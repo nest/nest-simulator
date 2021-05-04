@@ -20,7 +20,7 @@ How does it work?
 
 Let's start with a basic script to simulate a simple neural network.
 
-* Run Python or a Jupyter Notebook and try out this example simulation in NEST:
+Run Python or a Jupyter Notebook and try out this example simulation in NEST:
 
 Import required packages:
 
@@ -28,6 +28,7 @@ Import required packages:
 
    import nest
    import nest.voltage_trace
+   import matplotlib.pyplot as plt
    nest.ResetKernel()
 
 Create the neuron models you want to simulate:
@@ -47,7 +48,7 @@ Modify properties of the device:
 
 .. code-block:: python
 
-    nest.SetStatus(spikegenerator, {'spike_times': [10.0, 50.0]})
+    spikegenerator.set(spike_times=[10.0, 50.0])
 
 Connect neurons to devices and specify synapse (connection) properties:
 
@@ -67,15 +68,20 @@ Display the voltage graph from the voltmeter:
 .. code-block:: python
 
    nest.voltage_trace.from_device(voltmeter)
-   nest.voltage_trace.show()
+   plt.show()
 
 You should see the following image as the output:
 
-.. image:: _static/img/output_getting_started.png
+.. image:: static/img/output_getting_started.png
    :align: center
 
 **And that's it! You have performed your first neuronal simulation in NEST!**
 
+Need a quieter NEST?
+--------------------
+
+Take a look at the `set_verbosity <https://nest-simulator.readthedocs.io/en/latest/ref_material/pynest_apis.html#nest.lib.hl_api_info.set_verbosity>`_
+documentation, which describes how to display fewer messages on the terminal.
 
 Want to know more?
 ------------------

@@ -9,6 +9,7 @@ PyNEST examples
    ../auto_examples/one_neuron_with_noise
    ../auto_examples/twoneurons
    ../auto_examples/balancedneuron
+   ../auto_examples/recording_demo
    ../auto_examples/BrodyHopfield
    ../auto_examples/CampbellSiegert
    ../auto_examples/hh_psc_alpha
@@ -93,7 +94,6 @@ PyNEST examples
    :maxdepth: 1
    :caption: Spatially arranged networks examples
 
-   ../auto_examples/spatial/hill_tononi_Vp
    ../auto_examples/spatial/conncomp
    ../auto_examples/spatial/conncon_sources
    ../auto_examples/spatial/conncon_targets

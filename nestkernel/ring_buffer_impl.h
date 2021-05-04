@@ -34,21 +34,6 @@ nest::MultiChannelRingBuffer< num_channels >::MultiChannelRingBuffer()
 
 template < unsigned int num_channels >
 void
-nest::MultiChannelRingBuffer< num_channels >::add_value( const index slot, const index channel, const double value )
-{
-  buffer_[ slot ][ channel ] += value;
-}
-
-template < unsigned int num_channels >
-const std::array< double, num_channels >&
-nest::MultiChannelRingBuffer< num_channels >::get_values_all_channels( const index slot ) const
-{
-  assert( 0 <= slot and slot < buffer_.size() );
-  return buffer_[ slot ];
-}
-
-template < unsigned int num_channels >
-void
 nest::MultiChannelRingBuffer< num_channels >::resize()
 {
   const size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
@@ -68,13 +53,6 @@ nest::MultiChannelRingBuffer< num_channels >::clear()
   {
     buffer_[ slot ].fill( 0.0 );
   }
-}
-
-template < unsigned int num_channels >
-size_t
-nest::MultiChannelRingBuffer< num_channels >::size() const
-{
-  return buffer_.size();
 }
 
 #endif

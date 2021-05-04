@@ -388,6 +388,28 @@ MultiChannelRingBuffer< num_channels >::reset_values_all_channels( const index s
   buffer_[ slot ].fill( 0.0 );
 }
 
+template < unsigned int num_channels >
+inline void
+MultiChannelRingBuffer< num_channels >::add_value( const index slot, const index channel, const double value )
+{
+  buffer_[ slot ][ channel ] += value;
+}
+
+template < unsigned int num_channels >
+inline const std::array< double, num_channels >&
+MultiChannelRingBuffer< num_channels >::get_values_all_channels( const index slot ) const
+{
+  assert( 0 <= slot and slot < buffer_.size() );
+  return buffer_[ slot ];
+}
+
+template < unsigned int num_channels >
+inline size_t
+MultiChannelRingBuffer< num_channels >::size() const
+{
+  return buffer_.size();
+}
+
 } // namespace nest
 
 

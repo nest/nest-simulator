@@ -40,8 +40,8 @@ nest::MultiChannelRingBuffer< num_channels >::add_value( const index slot, const
 }
 
 template < unsigned int num_channels >
-std::array< double, num_channels >&
-nest::MultiChannelRingBuffer< num_channels >::get_values_all_channels( const index slot )
+const std::array< double, num_channels >&
+nest::MultiChannelRingBuffer< num_channels >::get_values_all_channels( const index slot ) const
 {
   assert( 0 <= slot and slot < buffer_.size() );
   return buffer_[ slot ];

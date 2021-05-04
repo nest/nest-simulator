@@ -339,7 +339,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     S_.I_ex_ = V_.P21_ex_ * S_.dI_ex_ + V_.P22_ex_ * S_.I_ex_;
     S_.dI_ex_ *= V_.P11_ex_;
 
-    // get read/write access to the correct input-buffer slot
+    // get read access to the correct input-buffer slot
     const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
     auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
 

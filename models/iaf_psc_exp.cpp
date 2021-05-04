@@ -335,7 +335,7 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
     // add evolution of presynaptic input current
     S_.i_syn_ex_ += ( 1. - V_.P11ex_ ) * S_.i_1_;
 
-    // get read/write access to the correct input-buffer slot
+    // get read access to the correct input-buffer slot
     const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
     auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
 

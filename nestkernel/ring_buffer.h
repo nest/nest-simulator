@@ -362,7 +362,7 @@ public:
 
   void add_value( const index slot, const index channel, const double value );
 
-  std::array< double, num_channels >& get_values_all_channels( const index slot );
+  const std::array< double, num_channels >& get_values_all_channels( const index slot ) const;
   void reset_values_all_channels( const index slot );
 
   void clear();

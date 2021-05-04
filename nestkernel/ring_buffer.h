@@ -385,7 +385,7 @@ inline void
 MultiChannelRingBuffer< num_channels >::reset_values_all_channels( const index slot )
 {
   assert( 0 <= slot and slot < buffer_.size() );
-  memset( &buffer_[ slot ][ 0 ], 0, buffer_[ slot ].size() * sizeof buffer_[ slot ][ 0 ] );
+  buffer_[ slot ].fill( 0.0 );
 }
 
 } // namespace nest

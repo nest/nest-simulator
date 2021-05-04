@@ -66,7 +66,7 @@ nest::MultiChannelRingBuffer< num_channels >::clear()
   // set all elements to 0.0
   for ( index slot = 0; slot < buffer_.size(); ++slot )
   {
-    memset( &buffer_[ slot ][ 0 ], 0, buffer_[ slot ].size() * sizeof buffer_[ slot ][ 0 ] );
+    buffer_[ slot ].fill( 0.0 );
   }
 }
 

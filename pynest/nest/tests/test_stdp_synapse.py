@@ -91,9 +91,9 @@ class STDPSynapseTest(unittest.TestCase):
             idx_pre_spike_reproduced_independently = \
                 np.argmin((t_pre_spike_nest - t_weight_reproduced_independently)**2)
             np.testing.assert_allclose(t_pre_spike_nest,
-                                        t_weight_reproduced_independently[idx_pre_spike_reproduced_independently])
+                                       t_weight_reproduced_independently[idx_pre_spike_reproduced_independently])
             np.testing.assert_allclose(weight_by_nest[idx_pre_spike_nest],
-                                        weight_reproduced_independently[idx_pre_spike_reproduced_independently])
+                                       weight_reproduced_independently[idx_pre_spike_reproduced_independently])
 
     def do_the_nest_simulation(self):
         """
@@ -332,6 +332,7 @@ class STDPSynapseTest(unittest.TestCase):
 
         fig.suptitle(title_snip)
         fig.savefig("/tmp/nest_stdp_synapse_test" + fname_snip + ".png", dpi=300)
+        plt.close(fig)
 
     def test_stdp_synapse(self):
         self.dendritic_delay = float('nan')

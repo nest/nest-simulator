@@ -217,6 +217,7 @@ class StdpSpikeMultiplicity(unittest.TestCase):
                 _ax.grid(True)
                 _ax.legend()
             plt.savefig("/tmp/test_stdp_multiplicity" + str(datetime.datetime.utcnow()) + ".png")
+            plt.close(fig)
         print(post_weights)
         return post_weights
 

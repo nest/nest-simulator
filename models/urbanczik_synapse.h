@@ -56,7 +56,7 @@ urbanczik_synapse is a connector to create Urbanczik synapses as defined in
 depends on the postsynaptic dendritic potential, in addition to the pre- and
 postsynaptic spike timing.
 
-Urbanczik synapses require the archiving of the dendritic membrane potential 
+Urbanczik synapses require the archiving of the dendritic membrane potential
 which is continuous in time. Therefore they can only be connected to neuron
 models that are capable of doing this archiving. So far, the only compatible
 model is :doc:`pp_cond_exp_mc_urbanczik <pp_cond_exp_mc_urbanczik>`.
@@ -234,7 +234,7 @@ urbanczik_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSy
       ( tau_L_trace_ * exp( minus_delta_t_up / tau_L ) - tau_s_trace_ * exp( minus_delta_t_up / tau_s ) ) * start->dw_;
     PI_integral_ += PI;
     dPI_exp_integral += exp( minus_t_down / tau_Delta_ ) * PI;
-    start++;
+    ++start;
   }
 
   PI_exp_integral_ = ( exp( ( t_lastspike_ - t_spike ) / tau_Delta_ ) * PI_exp_integral_ + dPI_exp_integral );

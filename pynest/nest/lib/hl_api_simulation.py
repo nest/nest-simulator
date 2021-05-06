@@ -319,6 +319,11 @@ def SetKernelStatus(params):
         Defines the time interval in ms at which the structural plasticity
         manager will make changes in the structure of the network (creation
         and deletion of plastic synapses)
+    use_compressed_spikes : bool
+        Whether to use spike compression; if a neuron has targets on
+        multiple threads of a process, this switch makes sure that only
+        a single packet is sent to the process instead of one packet per
+        target thread; requires sort_connections_by_source = true
 
 
     **Output**

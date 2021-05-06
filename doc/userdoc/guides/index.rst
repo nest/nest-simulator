@@ -31,3 +31,4 @@ Here you can find details on a variety of topics in NEST.
     :caption: Model Details
 
     exact-integration
+    Multicompartment models and synaptic delays <../models/pp_cond_exp_mc_urbanczik>

@@ -337,8 +337,7 @@ nest::step_current_generator::set_data_from_stimulating_backend( std::vector< do
     if ( time_amplitude.size() % 2 != 0 )
     {
       throw BadParameterValue(
-        "The size of the data for the step_current_generator needs to be even "
-        "[ sequence of the couple (time,amplitude) ] " );
+        "The size of the data for the step_current_generator needs to be even [(time,amplitude) pairs] " );
     }
     DictionaryDatum d = DictionaryDatum( new Dictionary );
     std::vector< double > times_ms;

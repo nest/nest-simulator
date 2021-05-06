@@ -37,11 +37,11 @@ IOManager::register_recording_backend( Name name )
   recording_backends_.insert( std::make_pair( name, recording_backend ) );
 }
 
-template < class RBType >
+template < class SBType >
 void
 IOManager::register_stimulating_backend( Name name )
 {
-  RBType* stimulating_backend = new RBType();
+  SBType* stimulating_backend = new SBType();
   auto it = stimulating_backends_.find( name );
   if ( it == stimulating_backends_.end() )
   {

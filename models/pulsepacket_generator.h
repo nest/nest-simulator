@@ -75,7 +75,7 @@ Parameters
 ============  ======= =======================================================
 
 Update from stimulating backend
-+++++++++++++++++++++++++
++++++++++++++++++++++++++++++++
 
 The parameters in this stimulating device can be updated with input
 coming from a stimulating backend. The data structure used for the update

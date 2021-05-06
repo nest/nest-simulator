@@ -150,4 +150,9 @@ DiffusionConnectionEvent::operator()()
   receiver_->handle( *this );
 }
 
+void SICEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
 } // namespace nest

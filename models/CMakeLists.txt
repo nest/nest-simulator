@@ -20,6 +20,7 @@
 set(models_sources
     ac_generator.h ac_generator.cpp
     aeif_cond_alpha.h aeif_cond_alpha.cpp
+    aeif_cond_alpha_astro.h aeif_cond_alpha_astro.cpp
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
     aeif_cond_beta_multisynapse.h aeif_cond_beta_multisynapse.cpp
     aeif_cond_exp.h aeif_cond_exp.cpp
@@ -28,6 +29,7 @@ set(models_sources
     aeif_psc_delta.h aeif_psc_delta.cpp
     aeif_psc_delta_clopath.h aeif_psc_delta_clopath.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
+    astrocyte.h astrocyte.cpp
     bernoulli_synapse.h
     binary_neuron.h
     cm_default.h cm_default.cpp
@@ -107,6 +109,7 @@ set(models_sources
     rate_neuron_opn.h rate_neuron_opn_impl.h
     rate_neuron_ipn.h rate_neuron_ipn_impl.h
     rate_transformer_node.h rate_transformer_node_impl.h
+    sic_connection.h
     siegert_neuron.h siegert_neuron.cpp
     sigmoid_rate.h sigmoid_rate.cpp
     sigmoid_rate_gg_1998.h sigmoid_rate_gg_1998.cpp

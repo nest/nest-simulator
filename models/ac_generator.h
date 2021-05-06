@@ -69,7 +69,7 @@ Setting start and stop only windows the current as defined above. It does not sh
 the time axis. See :doc:`stimulating_the_network` for details.
 
 Update from stimulating backend
-+++++++++++++++++++++++++
++++++++++++++++++++++++++++++++
 
 The parameters in this stimulating device can be updated with input
 coming from a stimulating backend. The data structure used for the update

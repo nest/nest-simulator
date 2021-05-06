@@ -380,14 +380,10 @@ nest::iaf_psc_exp::handle( SpikeEvent& e )
   const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
-  if ( e.get_weight() >= 0.0 )
-  {
-    B_.input_buffer_.add_value( input_buffer_slot, Buffers_::SYN_EX, e.get_weight() * e.get_multiplicity() );
-  }
-  else
-  {
-    B_.input_buffer_.add_value( input_buffer_slot, Buffers_::SYN_IN, e.get_weight() * e.get_multiplicity() );
-  }
+  const double s = e.get_weight() * e.get_multiplicity();
+
+  // separate buffer channels for excitatory and inhibitory inputs
+  B_.input_buffer_.add_value( input_buffer_slot, s > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, s );
 }
 
 void

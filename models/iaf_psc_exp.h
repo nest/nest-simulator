@@ -305,7 +305,7 @@ private:
     };
 
     /** buffers and sums up incoming spikes/currents */
-    MultiChannelRingBuffer< NUM_INPUT_CHANNELS > input_buffer_;
+    MultiChannelInputBuffer< NUM_INPUT_CHANNELS > input_buffer_;
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_psc_exp > logger_;

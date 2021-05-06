@@ -355,10 +355,10 @@ ListRingBuffer::get_index_( const delay d ) const
 
 
 template < unsigned int num_channels >
-class MultiChannelRingBuffer
+class MultiChannelInputBuffer
 {
 public:
-  MultiChannelRingBuffer();
+  MultiChannelInputBuffer();
 
   void add_value( const index slot, const index channel, const double value );
 
@@ -382,7 +382,7 @@ private:
 
 template < unsigned int num_channels >
 inline void
-MultiChannelRingBuffer< num_channels >::reset_values_all_channels( const index slot )
+MultiChannelInputBuffer< num_channels >::reset_values_all_channels( const index slot )
 {
   assert( 0 <= slot and slot < buffer_.size() );
   buffer_[ slot ].fill( 0.0 );
@@ -390,14 +390,14 @@ MultiChannelRingBuffer< num_channels >::reset_values_all_channels( const index s
 
 template < unsigned int num_channels >
 inline void
-MultiChannelRingBuffer< num_channels >::add_value( const index slot, const index channel, const double value )
+MultiChannelInputBuffer< num_channels >::add_value( const index slot, const index channel, const double value )
 {
   buffer_[ slot ][ channel ] += value;
 }
 
 template < unsigned int num_channels >
 inline const std::array< double, num_channels >&
-MultiChannelRingBuffer< num_channels >::get_values_all_channels( const index slot ) const
+MultiChannelInputBuffer< num_channels >::get_values_all_channels( const index slot ) const
 {
   assert( 0 <= slot and slot < buffer_.size() );
   return buffer_[ slot ];
@@ -405,7 +405,7 @@ MultiChannelRingBuffer< num_channels >::get_values_all_channels( const index slo
 
 template < unsigned int num_channels >
 inline size_t
-MultiChannelRingBuffer< num_channels >::size() const
+MultiChannelInputBuffer< num_channels >::size() const
 {
   return buffer_.size();
 }

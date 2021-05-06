@@ -393,14 +393,8 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 
   const double s = e.get_weight() * e.get_multiplicity();
 
-  if ( e.get_weight() > 0.0 )
-  {
-    B_.input_buffer_.add_value( input_buffer_slot, Buffers_::SYN_EX, s );
-  }
-  else
-  {
-    B_.input_buffer_.add_value( input_buffer_slot, Buffers_::SYN_IN, s );
-  }
+  // separate buffer channels for excitatory and inhibitory inputs
+  B_.input_buffer_.add_value( input_buffer_slot, s > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, s );
 }
 
 void

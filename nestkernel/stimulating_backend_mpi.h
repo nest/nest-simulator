@@ -33,35 +33,74 @@
 #include <unistd.h>
 #include <mpi.h>
 
-/* BeginDocumentation
+/* BeginUserDocs: stimulating backend
 
-Read data from MPI
-##################
+.. _stimulating_backend_mpi:
 
-When an stimulating device is to be updated at the beginning of each step run, the 'mpi' backend
-communicates with an external source via MPI to get the update.
+Collect data from MPI communication for updating device
+#######################################################
 
-Communication Protocol: (value,number,type,source/destination,tag)
-+++++++++++++++++++++++
-1) Connection of MPI port include in one file ( path+label+id+.txt )
-2) Send at each beginning run of Nest (true, 1, CXX_BOOL, 0, 0)
-3) Send the id of the device to update (id_device, 1, INT, 0, 0)
-3) Receive shape of the data (shape, 1, INT, 0, 0)
-4) Receive the data for updating the device (data, shape, DOUBLE, 0, 0)
-5) Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
-6) Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
+.. admonition:: Availability
+
+   This stimulating backend is only available if NEST was compiled with
+   :ref:`support for MPI <compile-with-mpi>`.
+
+The `MPI` stimulating backend collects data from MPI channels and
+updates stimulating device just before each run. This is usefull for 
+co-simulation or for receiving data from an external software.
+
+The creation of this MPI communication is based on the function 
+'MPI_Comm_connect' and 'MPI_Comm_disconnect'. The port name is 
+getting from a file for each device with this backend.
+The name of the file need to be named according to the following 
+pattern:
+
+::
+
+   data_path/label/id_device.txt
+
+The properties ``data_path`` and ``data_prefix`` are global kernel properties.
+This path is only used during the ``Prepare`` call. There is not
+functionnality for changing connection during the ``Run``.
+If you want to change the connections during the simulation, you need first 
+to close the previous one by using calling ``Cleanup`` of the simulator.
+
+
+Communication Protocol
+++++++++++++++++++++++
+
+pattern for message exchange: (value, number, type, source/destination, tag)
+
+1) ``Prepare``  : Connection of MPI port include in one file (see below)
+2) ``Run`` begin: Send start run (true, 1, CXX_BOOL, 0, 0)
+3) ``Run`` begin: Send the id of the device to update (id_device, 1, INT, 0, 0)
+3) ``Run`` begin: Receive shape of the data (shape, 1, INT, 0, 0)
+4) ``Run`` begin: Receive the data for updating the device (data, shape, DOUBLE, 0, 0)
+5) ``Run`` end  : Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
+6) ``Cleanup``  : Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
+
+Data format
++++++++++++
+
+The format of the data is depend of the stimulating device. 
+
+Parameter summary
++++++++++++++++++
+.. glossary::
+
+ label
+    Path from the data_path where the file which contains the port description are.
 
 
 @author Lionel Kusch and Sandra Diaz
 @ingroup NESTio
 
-EndDocumentation */
+EndUserDocs */
 
 namespace nest
 {
 
-// template < typename EmittedEvent >
-// class StimulatingDevice;
+
 /**
  * A simple input backend MPI implementation
  */

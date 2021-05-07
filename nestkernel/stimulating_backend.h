@@ -85,13 +85,13 @@ public:
    * Disenroll a `StimulatingDevice` from the `StimulatingBackend`.
    *
    * This function is considered to be the opposite of enroll() in the
-   * sense that it cancels the enrollment of a RecordingDevice from a
-   * RecordingBackend by deleting all device specific data. When
-   * setting a new recording backend for a recording device, this
+   * sense that it cancels the enrollment of a StimulatinDevice from a
+   * StimulatingBackend by deleting all device specific data. When
+   * setting a new stimulating backend for a stimulating device, this
    * function is called for each backend the device is not enrolled
    * with.
    *
-   * @param device the RecordingDevice to be disenrolled
+   * @param device the StimulatingDevice to be disenrolled
    *
    * @see enroll()
    *
@@ -103,9 +103,11 @@ public:
    * Initialize global backend-specific data structures.
    *
    * This function is called on each backend right at the very beginning of
-   * `SimulationManager::run()`. It can be used for initializations which have
-   * to be repeated at the beginning of every single call to run in a
+   * `SimulationManager::run()`. It used for getting the data in order to update
+   * the stimulating devices. The update of the device are amde only if it's 
+   * necessary. It's repeated at the beginning of every single call to run in a
    * prepare-run-run-...-run-run-cleanup sequence.
+   * 
    *
    * @see post_run_hook()
    *
@@ -117,9 +119,7 @@ public:
    * Clean up the backend at the end of a Run.
    *
    * This is called right before `SimulationManager::run()` terminates. It
-   * allows the backend to flush open files, write remaining data to the
-   * screen, or perform similar operations that make sure that the user
-   * has access to all data from the previous simulation run.
+   * allows the backend to indicate that the run ending.
    *
    * @see pre_run_hook()
    *
@@ -130,9 +130,9 @@ public:
   /**
    * Do work required at the end of each simulation step.
    *
-   * This is called at the very end of each simulation step. It can for example
-   * be used to carry out writing to files in a synchronized way, all threads
-   * on all MPI processes performing it at the same time.
+   * This is called at the very end of each simulation step.
+   * This function is not used for the moment because it implies a complexe 
+   * thinking about sycnhronization of incomming data and the simulation.
    *
    * @see pre_run_hook()
    *

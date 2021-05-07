@@ -54,6 +54,7 @@ import pickle
 # These modules are only needed for illustrative plotting.
 
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
 import numpy as np
 import pandas as pd
 import textwrap
@@ -206,9 +207,10 @@ class DemoPlot:
         self._colors = [c["color"] for c in plt.rcParams["axes.prop_cycle"]]
         self._next_line = 0
 
-        self.fig = plt.figure(figsize=(12, 7), constrained_layout=False)
+        plt.rcParams.update({'font.size': 10})
+        self.fig = plt.figure(figsize=(10, 7), constrained_layout=False)
 
-        gs = self.fig.add_gridspec(nrows=4, ncols=2)
+        gs = gridspec.GridSpec(4, 2, bottom=0.08, top=0.9, left=0.07, right=0.98, wspace=0.2, hspace=0.4)
         self.rasters = ([self.fig.add_subplot(gs[0, 0])] +
                         [self.fig.add_subplot(gs[n, 1]) for n in range(4)])
         self.weights = self.fig.add_subplot(gs[1, 0])
@@ -230,8 +232,9 @@ class DemoPlot:
               starting point as the green and red cases, but with different seed.
             - Bottom left: Weight distributions for same cases as raster plots; red and
               green curves overlap fully (brown)."""),
-                          transform=self.comment.transAxes, fontsize='x-small',
+                          transform=self.comment.transAxes, fontsize=8,
                           verticalalignment='top')
+
 
     def add_to_plot(self, net, n_max=100, t_min=0, t_max=1000, lbl=""):
         spks = pd.DataFrame.from_dict(net.sr.get("events"))
@@ -240,7 +243,7 @@ class DemoPlot:
         self.rasters[self._next_line].plot(spks.times, spks.senders, ".",
                                            color=self._colors[self._next_line])
         self.rasters[self._next_line].set_xlim(t_min, t_max)
-        self.rasters[self._next_line].set_title(lbl, fontsize="small")
+        self.rasters[self._next_line].set_title(lbl)
         if 1 < self._next_line < 4:
             self.rasters[self._next_line].set_xticklabels([])
         elif self._next_line == 4:
@@ -256,9 +259,9 @@ class DemoPlot:
                           alpha=0.7, lw=3)
 
         if self._next_line == 0:
-            self.weights.set_title("Synaptic weights", fontsize="small")
-            self.weights.set_ylabel("p(w)", fontsize="small")
-            self.weights.set_xlabel("Weight w [mV]", fontsize="small")
+            self.rasters[0].set_ylabel("neuron id")
+            self.weights.set_ylabel("p(w)")
+            self.weights.set_xlabel("Weight w [mV]")
 
         plt.draw()
         plt.pause(1e-3)  # allow figure window to draw figure

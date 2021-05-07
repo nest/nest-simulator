@@ -112,7 +112,7 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       vose.h vose.cpp
-      stimulating_backend.h stimulating_backend.cpp
+      stimulating_backend.h
       )
 
 

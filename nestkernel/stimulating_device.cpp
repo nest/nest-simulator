@@ -90,7 +90,7 @@ nest::StimulatingDevice::get_label() const
 
 nest::StimulatingDevice::Parameters_::Parameters_()
   : label_()
-  , stimulus_source_( names::internal )
+  , stimulus_source_( Name() )
 {
 }
 

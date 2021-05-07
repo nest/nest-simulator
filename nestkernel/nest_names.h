@@ -267,7 +267,6 @@ extern const Name inner_radius;
 extern const Name instant_unblock_NMDA;
 extern const Name instantiations;
 extern const Name interval;
-extern const Name internal;
 extern const Name is_refractory;
 
 extern const Name Kplus;

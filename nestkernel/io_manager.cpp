@@ -330,11 +330,11 @@ void
 nest::IOManager::enroll_stimulator( const Name& backend_name, StimulatingDevice& device, const DictionaryDatum& params )
 {
 
-  if ( not is_valid_stimulating_backend( backend_name ) and backend_name.toString() != "internal" )
+  if ( not is_valid_stimulating_backend( backend_name ) and not backend_name.toString().empty() )
   {
     return;
   }
-  if ( backend_name.toString() == "internal" )
+  if ( backend_name.toString().empty() )
   {
     for ( auto& it : stimulating_backends_ )
     {
@@ -347,10 +347,7 @@ nest::IOManager::enroll_stimulator( const Name& backend_name, StimulatingDevice&
     {
       if ( it.first == backend_name )
       {
-        if ( backend_name.toString() == "mpi" )
-        {
-          ( it.second )->enroll( device, params );
-        }
+        ( it.second )->enroll( device, params );
       }
       else
       {

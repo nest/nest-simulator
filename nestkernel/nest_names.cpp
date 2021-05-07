@@ -246,7 +246,6 @@ const Name inner_radius( "inner_radius" );
 const Name instant_unblock_NMDA( "instant_unblock_NMDA" );
 const Name instantiations( "instantiations" );
 const Name interval( "interval" );
-const Name internal( "internal" );
 const Name is_refractory( "is_refractory" );
 
 const Name Kplus( "Kplus" );

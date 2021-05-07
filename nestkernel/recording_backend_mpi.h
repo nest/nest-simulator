@@ -38,13 +38,30 @@
 Send data with MPI
 ##################
 
+.. admonition:: Availability
+
+   This stimulating backend is only available if NEST was compiled with
+   :ref:`support for MPI <compile-with-mpi>`.
+
 The `mpi` recording backend sends collected data to a remote process
 using MPI.
 
-This backend will create a new MPI communicator with a remote process
-using information found in a shared file. Both processes
-which want to share data through MPI need to specify the MPI ports
-which will be used for the new communicator.
+This backend will create a new MPI communicator external MPI_Comm_World
+The creation of the MPI communication is based on the function
+'MPI_Comm_connect' and 'MPI_Comm_disconnect'. The port name is
+getting from a file for each device with this backend.
+The name of the file need to be named according to the following
+pattern:
+
+::
+
+   data_path/label/id_device.txt
+
+The properties ``data_path`` and ``data_prefix`` are global kernel properties.
+This path is only used during the ``Prepare`` call. There is not
+functionality for changing connection during the ``Run``.
+If you want to change the connections during the simulation, you need first
+to close the previous one by using calling ``Cleanup`` of the simulator.
 
 Communication Protocol:
 +++++++++++++++++++++++
@@ -53,30 +70,31 @@ both MPI processes. The protocol is described using the
 following format for the MPI messages:
 (value,number,type,source/destination,tag)
 
-1) Connection of MPI port included in the port_file (see below)
-2) Send at each beginning of the run (true, 1, CXX_BOOL, 0, 0)
-3) Receive at each ending of the run (true, 1, CXX_BOOL, 0, 0)
-4) Send shape of the data of the run (shape, 1,I NT, 0, 0)
-5) Send data of the data of the run (data, shape, DOUBLE, 0, 0)
-6) Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
-7) Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
-
+1) ``Prepare``  : Connection of MPI port included in the port_file (see below)
+2) ``Run`` begin: Send at each beginning of the run (true, 1, CXX_BOOL, 0, 0)
+3) ``Run`` end  : Receive at each ending of the run (true, 1, CXX_BOOL, 0, 0)
+4) ``Run`` end  : Send shape of the data of the run (shape, 1,INT, 0, 0)
+5) ``Run`` end  : Send data of the data of the run (data, shape, DOUBLE, 0, 0)
+6) ``Run`` end  : Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
+7) ``Cleanup``  : Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
 
 Data format
 +++++++++++
 
-The data which will be exchanged depends on the recording device.
+The format of the sending data is an array of (id device, id node, time is ms).
 
 Parameter summary
 +++++++++++++++++
 
 .. glossary::
 
- port_file
+ label
    Shared file with ports with the format path+label+id+.txt
    Where path = kernel().io_manager.get_data_path() and the
    label and id are the ones provided for the device.
 
+@author Lionel Kusch and Sandra Diaz
+@ingroup NESTio
 EndUserDocs */
 
 namespace nest

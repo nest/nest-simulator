@@ -45,8 +45,8 @@ Collect data from MPI communication for updating device
    This stimulating backend is only available if NEST was compiled with
    :ref:`support for MPI <compile-with-mpi>`.
 
-The `MPI` stimulating backend collects data from MPI channels and
-updates stimulating device just before each run. This is usefull for 
+The `mpi` stimulating backend collects data from MPI channels and
+updates stimulating device just before each run. This is useful for
 co-simulation or for receiving data from an external software.
 
 The creation of this MPI communication is based on the function 
@@ -61,15 +61,17 @@ pattern:
 
 The properties ``data_path`` and ``data_prefix`` are global kernel properties.
 This path is only used during the ``Prepare`` call. There is not
-functionnality for changing connection during the ``Run``.
+functionality for changing connection during the ``Run``.
 If you want to change the connections during the simulation, you need first 
 to close the previous one by using calling ``Cleanup`` of the simulator.
 
 
 Communication Protocol
 ++++++++++++++++++++++
-
-pattern for message exchange: (value, number, type, source/destination, tag)
+The following protocol is used to exchange information between
+both MPI processes. The protocol is described using the
+following format for the MPI messages:
+(value, number, type, source/destination, tag)
 
 1) ``Prepare``  : Connection of MPI port include in one file (see below)
 2) ``Run`` begin: Send start run (true, 1, CXX_BOOL, 0, 0)
@@ -89,8 +91,9 @@ Parameter summary
 .. glossary::
 
  label
-    Path from the data_path where the file which contains the port description are.
-
+   Shared file with ports with the format path+label+id+.txt
+   Where path = kernel().io_manager.get_data_path() and the
+   label and id are the ones provided for the device.
 
 @author Lionel Kusch and Sandra Diaz
 @ingroup NESTio

@@ -35,6 +35,40 @@
 namespace nest
 {
 
+/**
+ * Abstract bass class for all NESTio stimulating backends
+ *
+ * This class provides the interface for NESTio stimulating backends
+ *  with which 'StimulatingDevice`s can be enrolled for stimulating and
+ *  which they can use to receive data for updating their stimulus at
+ *  the beginning of each run.
+ *
+ * Built-in stimulating backends are registered in the constructor of
+ * IOManager by inserting an instance of each of them into a std::map
+ * under the name of the backend. The default backend, the one using
+ * memory, are not registered in this map.
+ *
+ * A user level call to Simulate internally executes the sequence
+ * Prepare → Run → Cleanup.  During Prepare, the prepare() function of
+ * each backend is called by the IOManager. This gives the backend an
+ * opportunity to prepare itself for being ready to receive the data.
+ *
+ * The user level function Run drives the simulation main loop by
+ * updating all the stimulating device. At its beginning it calls
+ * pre_run_hook() on each stimulating backend via the IOManager.
+ * This function is use to receive or read data and update the
+ * stimulating devices. At the end of each run, it calls post_run_hook()
+ * on each stimulating backend vi IOManager.
+ *
+ * During the simulation, stimulating backend do nothing. This solution
+ * was chosen for avoiding complex synchronization. It can be modify in
+ * the future.
+ *
+ * @author Sandra Diaz
+ *
+ * @ingroup NESTio
+*/
+
 class StimulatingBackend
 {
 public:
@@ -51,9 +85,7 @@ public:
   * the `thread` and `node_id` of the @p device.
   *
   * This function is called from the set_initialized_() function of
-  * the @p device and their set_status() function. The companion
-  * function @p set_value_names() is called from Node::pre_run_hook()
-  * and makes the names of values to be recorded known.
+  * the @p device and their set_status() function.
   *
   * A backend needs to be able to cope with multiple calls to this
   * function, as multiple calls to set_status() may occur on the @p
@@ -61,7 +93,7 @@ public:
   * the parameters in @p params have to be set, but no further
   * actions are needed.
   *
-  * Each recording backend must ensure that enrollment (including all
+  * Each stimulating backend must ensure that enrollment (including all
   * settings made by the user) is persistent over multiple calls to
   * Prepare, while the enrollment of all devices should end with a
   * call to finalize().
@@ -74,8 +106,7 @@ public:
   * @param device the StimulatingDevice to be enrolled
   * @param params device-specific backend parameters
   *
-  * @see set_value_names(), disenroll(), write(),
-  * @author Sandra Diaz
+  * @see disenroll()
   *
   * @ingroup NESTio
   */
@@ -170,8 +201,6 @@ public:
 
   void clear( const StimulatingDevice& ){};
 
-  static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
-  static const std::vector< Name > NO_LONG_VALUE_NAMES;
 };
 
 } // namespace

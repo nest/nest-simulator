@@ -15,4 +15,4 @@ Some content in this section.
 
 .. math::
 
-    e = mc^2
+    E = mc^2

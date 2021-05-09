@@ -109,10 +109,8 @@ Headings and subheadings describe the purpose of the section.
 
 Begin with a descriptive verb or begin with "How to ..."
 
-Headings explain the section in a short phrase.
-
-Use the verb stem and not the gerund ("ing") form of the verb. Not "Adding a
-model," but  "Add a model."
+Use the verb stem and not the gerund ("ing") form of the verb. Use "Add a
+model" instead of  "Adding a model."
 
 Avoid section names like "Introduction" or "Part 1".
 
@@ -146,7 +144,7 @@ Keep in mind that texts should be skimmable.
 Pronouns
 ~~~~~~~~
 
-Use the pronouns "you" (reader) and "we" (NEST) whenever possible.
+Use the pronouns "you" to indicate the reader and "we" to indicate NEST and its members.
 
 Avoid the pronoun "I."
 
@@ -181,15 +179,14 @@ The thousand separator is the comma except when showing a code example.
    The number of connections is ``x = 5001``.
 
 Make sure you use the correct unit (e.g., millivolts for voltage) and the
-unit's symbol (`mV`).
+unit's symbol (mV).
 
 Lists
 ~~~~~
 
 Use the serial comma in lists.
 
-Use numbered lists for step-by-step instructions only. Do not have more than two
-related actions in one step.
+Use numbered lists for step-by-step instructions only. Ensure that each step contains only one or two actions.
 
 Use bullet lists if the number of items is extensive or each item is a long phrase or sentence.
 
@@ -368,6 +365,8 @@ These will be rendered as
 
    Now we can see :math:`x=1` for this example.
 
+.. _sec_admonition:
+
 Admonitions
 ~~~~~~~~~~~
 
@@ -448,7 +447,7 @@ Rendered as
 * The label must begin with an underscore "_" for Sphinx to recognize it. But the reference to the label (i.e., ``:ref:`ref-label```)
   does not include the underscore.
 
-* Use "sec_" (section), "fig_" (figure), "eq_" (equation), "tab_" (table),  at the beginning of each reference label to denote the type of reference.
+* Use "sec\_" (section), "fig\_" (figure), "eq\_" (equation), "tab\_" (table),  at the beginning of each reference label to denote the type of reference.
 
 * Separate the reference label from the text it is referencing with a new line.
 
@@ -481,7 +480,7 @@ For example, here is the class syntax ``:py:class:.ClassName`` and the method sy
 .. note::
 
    Note the object name is prefixed with a dot.
-   This is required for Sphinx to find the PyNEST object.
+   This is required for Sphinx to find the PyNEST object, unless the object is defined in the same file you are including the link.
 
 
 .. note::
@@ -511,10 +510,12 @@ Link to glossary
 ~~~~~~~~~~~~~~~~
 
 To link terms to the glossary page, use the HoverXTooltip role :hxt_ref:. The source code for the extension can be
-`found here
-<https://github.com/INM-6/HoverXTooltip>`_. ::
+`found here <https://github.com/INM-6/HoverXTooltip>`_. ::
 
   :hxt_ref:`E_L`
+
+Terms must be linked once per section, on first appearance in that section. Subsequent appearances of a term in the section
+should not have any formatting markup.
 
 Link to certain external projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -522,7 +523,7 @@ Link to certain external projects
 With the Sphinx extension `intersphinx <https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html>`_,
 projects that also use Sphinx can be referenced in the same way as your local project. You can use the reference label
 role (``:ref:``), document role (``:doc:``), and Python role (``:py:func:``, ``:py:class:``). You only need to add the
-intersphinx unique identifer to the reference, which looks like this ``:doc:`custom label <unique-identifier:filename>```.
+intersphinx *unique identifer* to the reference, which looks like this ``:doc:`custom label <unique-identifier:filename>```.
 See section in userdoc/conf.py "intersphinx_mapping" to see which projects are currently included along with their
 unique identifier.
 
@@ -568,65 +569,43 @@ double quotes in triple quoted strings; for consistency, double quotes are used 
 
 Double or single quotes should not be used to emphasize important concepts in the text.
 
+.. _sec_dbltick:
 
 \``Double backticks\``
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Use double backticks for
+Use double backticks for all code and command related terms, such as function call examples, paths, variables, and parameters.
+In addition, meta and special characters (such as the ampersand ``&``) should also be written in double backticks.
+
+For example::
+
+    ``nest.Create("iaf_psc_alpha")``
+
+    ``/path/to/source/file.rst``
+
+    "The key ``rule`` in the connectivity specification dictionary ``conn_spec`` . . . "
 
 
-  - inline code
-  - objects/functions
-  - model names
-  - NEST-specific vocabulary
-  - function calls (e.g., ``nest.Create("iaf_psc_alpha")``
-  - Paths (e.g, You can find the models in ``nest-simulator/pynest/examples``)
-  - Key value pairs (``{key: value}``)
-  - Variables with assigned values ``x = 10``
+\**Strong emphasis\** vs \*emphasis\*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Avoid using strong emphasis (boldface) in texts. If you want text to stand out use an appropriate :ref:`admonition <sec_admonition>`.
 
-\`Single backticks\`
-~~~~~~~~~~~~~~~~~~~~
-
-Use single backticks for
-
-- Dictionary keys (if no value is provided)
-- Parameters
-- Variable names
-- Values
-
-but use double backticks when showing a complete example of variable with
-assigned value (e.g., \``volt = 37.0``)
-
-An example::
-
-   Here we use the ``nest.Create()`` function to instantiate our model, in this case
-   ``iaf_psc_alpha``. We can modify the parameter `V_m` and set the value to
-   `50.0`.
-
-Rendered as
-
-
-   Here we use the ``nest.Create()`` function to instantiate our model, in this case
-   ``iaf_psc_alpha``. We can modify the parameters `V_m` and set the value to
-   `50.0`.
-
-\**Strong emphasis\**
-~~~~~~~~~~~~~~~~~~~~~
-
-If you want to emphasize a word or phrase in text, you can use **strong emphasis**.
-
-Boldface should only be used in exceptional cases when overlooking the emphasized text could cause problems, but
-the text in question is too short to warrant an admonition box.
+Use the plain emphasis (italics) to signify context differences *within* a text.
 
 
 NumPy style docstrings
 ----------------------
 
-In PyNEST code, we follow the rules for NumPy style docstrings as
-`explained here <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
+In PyNEST code, we follow most of the rules for NumPy style docstrings as
+`explained in the NumPy style guide <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
 
-If you are contributing to the :doc:`PyNEST API <example_template>`, make sure you carefully read the NumPy guide.
+However, we use different formatting marks than what is stated in their guide. See section on
+:ref:`double back ticks <sec_dbltick>`.
+
+If you are contributing to the :doc:`PyNEST API <example_template>`, make sure you carefully read the NumPy guide, along
+with this one.
+
 
 Bibliography style
 ------------------

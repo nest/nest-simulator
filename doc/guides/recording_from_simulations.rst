@@ -159,6 +159,7 @@ properties can be obtained from the kernel's status dictionary.
    nest.GetKernelStatus("recording_backends")
    {u'ascii': {},
     u'memory': {},
+    u'mpi': {},
     u'screen': {},
     u'sionlib': {u'buffer_size': 1024,
      u'filename': u'',
@@ -175,6 +176,8 @@ dictionary to ``SetKernelStatus``.
     nest.SetKernelStatus({"recording_backends": {'sionlib': {'buffer_size': 512}}})
 
 .. include:: ../models/recording_backend_memory.rst
+
+.. include:: ../models/recording_backend_mpi.rst
 
 .. include:: ../models/recording_backend_ascii.rst
 

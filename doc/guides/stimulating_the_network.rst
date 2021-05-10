@@ -22,6 +22,31 @@ stimulating devices (origin is just a global offset):
   recorded at the earliest at time start+h. The last interval during
   which the current affects the target's dynamics is (stop-h, stop].
 
-   
+Common recorder properties
+--------------------------
+.. glossary::
+
+ stimulus_source
+   A string (default: `""`) containing the name of the stimulating
+   backend, where to get the data for updating the stimulating device.
+   By default the device uses only its parameters for updating this stimulus.
+
+ label
+   A string (default: `""`) specifying an arbitrary textual label for
+   the device.
+   The `mpi` use this label to localize the file which contains port description.
+
+How to update stimulating devices with MPI communication?
+---------------------------------------------------------
+
+The stimulating device can be updated between each run of Nest.
+Actually, only `mpi` communication can replace the default one for updating the parameters
+of the stimulating devices. This backend use the label of the device to find the port description for the connection
+with the external software.
+The format of data receiving by Nest for updating the stimulating devices depend on the type of devices. For more
+information, you should look at the documentation of each device.
+
+.. include:: ../models/stimulating_backend_mpi.rst
+
 .. doxygengroup:: generator
    :content-only:

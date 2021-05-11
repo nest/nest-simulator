@@ -87,7 +87,7 @@ or by installing the full NEST development environment in case you
 prefer using ``conda``::
 
   conda env create -f extras/conda-nest-simulator-dev.yml
-  conda acvitate nest-simulator
+  conda activate nest-simulator
 
 As an alternative to a native installation, NEST Server is available
 from the NEST Docker image. Please check out the corresponding

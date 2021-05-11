@@ -195,7 +195,7 @@ end with period.
 
 If the text of a list forms an incomplete sentence, do not end with period.
 
-If the entire bullet/numbered list belongs to a sentence, end each item with a comma and the second-last item with ", and."
+If the entire bullet/numbered list belongs to a sentence, end each item with a comma and the second-last item with ", and".
 If the last item is the end of the sentence, end it with a period. Otherwise, use the punctuation required to correctly connect
 to the remainder of the sentence.
 
@@ -278,9 +278,9 @@ We will only cover a few examples here. You can find more information at the fol
 
 .. note::
 
-   reStructuredText is sensitive to indentation and new lines.
+   reStructuredText is sensitive to indentation and newlines.
 
-   * Directives, headings, labels, and tables should be separated from other text by a new line, excluding directive options.
+   * Directives, headings, labels, and tables should be separated from other text by a newline, excluding directive options.
    * Directive options must be indented to the same level as the directive content.
    * Text in multiline content should stay aligned with the first line.
    * If the output format seems incorrect, double check the spaces and newlines
@@ -449,7 +449,7 @@ Rendered as
 
 * Use "sec\_" (section), "fig\_" (figure), "eq\_" (equation), "tab\_" (table),  at the beginning of each reference label to denote the type of reference.
 
-* Separate the reference label from the text it is referencing with a new line.
+* Separate the reference label from the text it is referencing with a newline.
 
 * To reference figures, equations, or arbitrary places in a file, you must include a custom
   label in the reference for it to work::
@@ -479,7 +479,7 @@ For example, here is the class syntax ``:py:class:.ClassName`` and the method sy
 
 .. note::
 
-   Note the object name is prefixed with a dot.
+   The object name is prefixed with a dot.
    This is required for Sphinx to find the PyNEST object, unless the object is defined in the same file you are including the link.
 
 
@@ -555,10 +555,10 @@ in the heading.
 
 In general, we try to follow the pattern:
 
-* First heading: ===
-* Second heading: ---
-* Third heading: ~~~
-* Fourth heading: ^^^
+* First heading: ``===``
+* Second heading: ``---``
+* Third heading: ``~~~``
+* Fourth heading: ``^^^``
 
 "Double quotes"
 ~~~~~~~~~~~~~~~
@@ -647,3 +647,25 @@ Please ensure your reference follows the following guidelines.
         evolution of gigantism. Biological Reviews. 86(1):117-155.
         https://doi.org/10.1111/j.1469-185X.2010.00137.x
 
+
+Links to external resources
+---------------------------
+
+* `American English dictionary <https://www.merriam-webster.com/>`_.
+
+* `the Microsoft style guide <https://docs.microsoft.com/en-us/style-guide/welcome/>`_
+
+* `reStructuredText docutils documentation <https://docutils.sourceforge.io/rst.html#id24>`_
+
+* `reStructuredText Sphinx documentation <https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`_
+
+* `LaTeX math styling <http://www.ams.org/arc/styleguide/mit-2.pdf>`_
+
+* `Sphinx documentation on referencing Python objects
+  <https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#cross-referencing-python-objects>`_
+
+* `HoverxTooltip source code <https://github.com/INM-6/HoverXTooltip>`_
+
+* `Intersphinx documentation <https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html>`_
+
+* `NumPy style guide <https://numpydoc.readthedocs.io/en/latest/format.html>`_

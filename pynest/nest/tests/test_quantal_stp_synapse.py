@@ -46,11 +46,11 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         t1_params = fac_params       # for tsodyks2_synapse
         t2_params = t1_params.copy()  # for furhmann_synapse
 
-        t2_params['n'] = n_syn
-        t2_params['weight'] = 1. / n_syn
+        t2_params["n"] = n_syn
+        t2_params["weight"] = 1. / n_syn
+        t2_params["synapse_model"] = "quantal_stp_synapse"
 
         nest.SetDefaults("tsodyks2_synapse", t1_params)
-        nest.SetDefaults("quantal_stp_synapse", t2_params)
         nest.SetDefaults("iaf_psc_exp", {"tau_syn_ex": 3., 'tau_m': 70.})
 
         source = nest.Create('spike_generator')
@@ -71,7 +71,7 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         # See #478.
         nest.Connect(source, parrot)
         nest.Connect(parrot, neuron[:1], syn_spec="tsodyks2_synapse")
-        nest.Connect(parrot, neuron[1:], syn_spec="quantal_stp_synapse")
+        nest.Connect(parrot, neuron[1:], syn_spec=t2_params)
 
         voltmeter = nest.Create("voltmeter", 2)
 

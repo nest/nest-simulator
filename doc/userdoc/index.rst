@@ -9,8 +9,10 @@ NEST 3.0 provides a more intuitive experience with simplified yet versatile hand
 
 You can find all the information in our section :doc:`guides/nest2_to_nest3/index`.
 
-**Note that some of your simulations may need to be updated to run in NEST 3.0!**
-See our :doc:`reference guide <guides/nest2_to_nest3/refguide_nest2_nest3>` comparing NEST 2.x versus NEST 3.0 syntax.
+.. note::
+
+  Note that some of your simulation scripts may need to be updated to run in NEST 3.0!
+  See our :doc:`reference guide <guides/nest2_to_nest3/refguide_nest2_nest3>` comparing NEST 2.x versus NEST 3.0 syntax.
 
 
 

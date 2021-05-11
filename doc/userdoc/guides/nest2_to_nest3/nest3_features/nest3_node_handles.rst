@@ -100,7 +100,7 @@ Slicing
 
     >>>  print(nrns[2:9:3])
          NodeCollection(metadata=None,
-                       model=iaf_psc_alpha, size=2, first=3, last=9, step=3)
+                        model=iaf_psc_alpha, size=2, first=3, last=9, step=3)
 
 
 .. _get_size:

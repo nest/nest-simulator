@@ -208,7 +208,7 @@ Spell out acronyms on first appearance on each page or article it appears, for e
 If the abbreviation/acronym is well known (e.g., HTML), you do not need to spell
 it out.
 
-Use "e.g.," and "i.e.," only in parentheses and figure and table captions; otherwise, use "for example," and "that is,."
+Use "e.g.," and "i.e.," only in parentheses and figure and table captions; otherwise, use "for example," and "that is,".
 Note the use of comma following the terms.
 
 
@@ -651,7 +651,7 @@ Please ensure your reference follows the following guidelines.
 Links to external resources
 ---------------------------
 
-* `American English dictionary <https://www.merriam-webster.com/>`_.
+* `American English dictionary <https://www.merriam-webster.com/>`_
 
 * `the Microsoft style guide <https://docs.microsoft.com/en-us/style-guide/welcome/>`_
 

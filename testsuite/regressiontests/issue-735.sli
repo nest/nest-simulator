@@ -66,7 +66,7 @@ M_ERROR setverbosity
   
   param_on_connect
   {
-    [ n ] [ n ] 
+    n n
     << /rule /one_to_one >> 
     << /synapse_model syn_model /weight 2.0 pname 1.0 >>
     Connect

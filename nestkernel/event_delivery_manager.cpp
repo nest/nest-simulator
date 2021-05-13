@@ -510,7 +510,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
         else
         {
           send_buffer[ send_buffer_position.idx( rank ) ].set(
-            ( *iiit ).get_tid(), ( *iiit ).get_syn_id(), ( *iiit ).get_lcid(), lag, ( *iiit ).get_offset() );
+            ( *iiit ).get_tid(), ( *iiit ).get_syn_id(), ( *iiit ).get_lcid(), lag, ( *iiit ).get_stamp().get_offset() );
           ( *iiit ).set_status( TARGET_ID_PROCESSED ); // mark entry for removal
           send_buffer_position.increase( rank );
         }
@@ -621,7 +621,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i ];
 
       se.set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
-      se.set_offset( spike_data.get_offset() );
+      se.set_offset( spike_data.get_stamp().get_offset() );
 
       if ( not kernel().connection_manager.use_compressed_spikes() )
       {

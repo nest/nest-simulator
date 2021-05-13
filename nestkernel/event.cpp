@@ -45,11 +45,15 @@ Event::Event()
   , d_( 1 )
   , stamp_( Time::step( 0 ) )
   , stamp_steps_( 0 )
-  , offset_( 0.0 )
   , w_( 0.0 )
 {
 }
 
+index
+Event::get_receiver_node_id() const
+{
+  return receiver_->get_node_id();
+}
 
 void SpikeEvent::operator()()
 {
@@ -120,10 +124,4 @@ void DiffusionConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
-}
-
-nest::index
-nest::Event::get_receiver_node_id( void ) const
-{
-  return receiver_->get_node_id();
 }

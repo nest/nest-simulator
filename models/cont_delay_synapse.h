@@ -213,7 +213,7 @@ cont_delay_synapse< targetidentifierT >::send( Event& e, thread t, const CommonS
   e.set_receiver( *get_target( t ) );
   e.set_weight( weight_ );
   e.set_rport( get_rport() );
-  double orig_event_offset = e.get_offset();
+  double orig_event_offset = e.get_stamp().get_offset();
   double total_offset = orig_event_offset + delay_offset_;
   // As far as i have seen, offsets are outside of tics regime provided
   // by the Time-class to allow more precise spike-times, hence comparing

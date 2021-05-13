@@ -133,7 +133,7 @@ EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const lon
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
-      off_grid_spike_register_[ tid ][ assigned_tid ][ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );
+      off_grid_spike_register_[ tid ][ assigned_tid ][ lag ].push_back( OffGridTarget( *it, e.get_stamp().get_offset() ) );
     }
   }
 }

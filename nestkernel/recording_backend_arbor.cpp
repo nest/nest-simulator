@@ -250,7 +250,7 @@ nest::RecordingBackendArbor::write( const RecordingDevice& device,
 
   const unsigned sender_node_id = event.get_sender_node_id();
   const auto step_time = event.get_stamp().get_ms();
-  const auto offset = event.get_offset();
+  const auto offset = event.get_stamp().get_offset();
   const auto time = static_cast< float >( step_time - offset );
 
   buffer.push_back( { { num_arbor_cells_ + sender_node_id, 0 }, time } );

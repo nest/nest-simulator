@@ -527,7 +527,7 @@ iaf_psc_delta_ps::handle( SpikeEvent& e )
   const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
   B_.events_.add_spike( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
-    e.get_offset(),
+    e.get_stamp().get_offset(),
     e.get_weight() * e.get_multiplicity() );
 }
 

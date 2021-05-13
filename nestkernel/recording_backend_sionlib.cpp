@@ -456,7 +456,7 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
 
   const sion_uint64 sender_node_id = static_cast< sion_uint64 >( event.get_sender_node_id() );
   const sion_int64 step = static_cast< sion_int64 >( event.get_stamp().get_steps() );
-  const double offset = event.get_offset();
+  const double offset = event.get_stamp().get_offset();
 
   if ( P_.sion_collective_ )
   {

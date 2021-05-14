@@ -481,13 +481,11 @@ Ntree< D, T, max_capacity, max_depth >::insert( Position< D > pos, const T& node
   if ( leaf_ )
   {
 
-#ifdef NDEBUG
     for ( int i = 0; i < D; ++i )
     {
       assert( ( pos - lower_left_ )[ i ] > -std::numeric_limits< double >::epsilon()
         && ( lower_left_ + extent_ - pos )[ i ] > -std::numeric_limits< double >::epsilon() );
     }
-#endif
 
     nodes_.push_back( std::pair< Position< D >, T >( pos, node ) );
 

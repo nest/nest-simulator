@@ -152,7 +152,7 @@ hz_rate = (1000.0 * n_spikes / simtime) / n_neuron
 
 plt.figure(1)
 plt.plot(times, spikes, 'o')
-plt.title('Average spike rate (Hz): %.2f' % hz_rate)
+plt.title(f'Average spike rate (Hz): {hz_rate:.2f}')
 plt.xlabel('time (ms)')
 plt.ylabel('neuron no')
 plt.show()

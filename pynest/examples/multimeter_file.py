@@ -72,7 +72,7 @@ print("iaf_cond_alpha recordables: {0}".format(
 #    (`V_reset`, in mV) are specified.
 #  * For the ``multimeter``, the time interval for recording (`interval`, in
 #    ms) and the measures to record (membrane potential `V_m` in mV and
-#    excitatory and inhibitoy synaptic conductances `g_ex` and`g_in` in nS)
+#    excitatory and inhibitory synaptic conductances `g_ex` and`g_in` in nS)
 #    are set.
 #
 #  In addition, more parameters can be modified for writing to file:

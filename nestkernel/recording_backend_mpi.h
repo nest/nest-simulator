@@ -46,12 +46,12 @@ Send data with MPI
 The `mpi` recording backend sends collected data to a remote process
 using MPI.
 
-This backend will create a new MPI communicator external MPI_Comm_World
-The creation of the MPI communication is based on the function
-'MPI_Comm_connect' and 'MPI_Comm_disconnect'. The port name is
-getting from a file for each device with this backend.
-The name of the file need to be named according to the following
-pattern:
+This backend will create a new MPI communicator (different from
+MPI_Comm_World, which is used by NEST itself).  The creation of the
+MPI communication is based on the functions 'MPI_Comm_connect' and
+'MPI_Comm_disconnect'. The port name is read from a file for each
+device with this backend. The file needs to be named according to the
+following pattern:
 
 ::
 

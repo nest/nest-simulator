@@ -19,14 +19,15 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""IF curve example
-----------------------
+"""
+IF curve example
+----------------
 
 This example illustrates how to measure the I-F curve of a neuron.
 The program creates a small group of neurons and injects a noisy current
 :math:`I(t) = I_mean + I_std*W(t)`
 where :math:`W(t)` is a white noise process.
-The programm systematically drives the current through a series of  values in
+The program systematically drives the current through a series of  values in
 the two-dimensional `(I_mean, I_std)` space and measures the firing rate of
 the neurons.
 
@@ -69,7 +70,7 @@ class IF_curve():
     n_neurons = 100       # Number of neurons
     n_threads = 4         # Nubmer of threads to run the simulation
 
-    def __init__(self, model, params=False):
+    def __init__(self, model, params=None):
         self.model = model
         self.params = params
         self.build()
@@ -84,12 +85,9 @@ class IF_curve():
         nest.SetKernelStatus({'local_num_threads': self.n_threads})
 
         #######################################################################
-        # We set the default parameters of the neuron model to those
-        # defined above and create neurons and devices.
+        # We create neurons and devices with specified parameters.
 
-        if self.params:
-            nest.SetDefaults(self.model, self.params)
-        self.neuron = nest.Create(self.model, self.n_neurons)
+        self.neuron = nest.Create(self.model, self.n_neurons, self.params)
         self.noise = nest.Create('noise_generator')
         self.spike_recorder = nest.Create('spike_recorder')
 

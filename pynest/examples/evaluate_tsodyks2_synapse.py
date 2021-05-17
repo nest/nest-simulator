@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Example of the tsodyks2_synapse in NEST
----------------------------------------------
+"""
+Example of the tsodyks2_synapse in NEST
+---------------------------------------
 
 This synapse model implements synaptic short-term depression and short-term f
 according to [1]_ and [2]_. It solves Eq (2) from [1]_ and modulates U according
@@ -34,7 +35,7 @@ synaptic weight. The variable `x` in the synapse properties is the
 factor that scales the synaptic weight.
 
 Parameters
-~~~~~~~~~~~
+~~~~~~~~~~
 
 The following parameters can be set in the status dictionary:
 
@@ -45,7 +46,7 @@ The following parameters can be set in the status dictionary:
 * tau_fac     - time constant for facilitation in ms, default=0 (off)
 
 Notes
-~~~~~~~
+~~~~~
 
 Under identical conditions, the ``tsodyks2_synapse`` produces slightly lower
 peak amplitudes than the ``tsodyks_synapse``. However, the qualitative behavior
@@ -54,7 +55,7 @@ is identical.
 This compares the two synapse models.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Tsodyks MV, and Markram H. (1997). The neural code between
        neocortical depends on neurotransmitter release probability. PNAS,

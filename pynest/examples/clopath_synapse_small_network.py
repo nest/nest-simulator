@@ -21,7 +21,7 @@
 
 """
 Clopath Rule: Bidirectional connections
------------------------------------------
+---------------------------------------
 
 This script simulates a small network of ten excitatory and three
 inhibitory ``aeif_psc_delta_clopath`` neurons. The neurons are randomly connected
@@ -34,7 +34,7 @@ This setup demonstrates that the Clopath synapse is able to establish
 bidirectional connections. The example is adapted from [1]_ (cf. fig. 5).
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Clopath C, Büsing L, Vasilaki E, Gerstner W (2010). Connectivity reflects coding:
        a model of voltage-based STDP with homeostasis.

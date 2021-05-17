@@ -22,7 +22,7 @@
 
 """
 Random balanced network HPC benchmark
---------------------------------------
+-------------------------------------
 
 This script produces a balanced random network of `scale*11250` neurons in
 which the excitatory-excitatory neurons exhibit STDP with
@@ -35,7 +35,7 @@ and independent of network size (indegree=11250).
 This is the standard network investigated in [1]_, [2]_, [3]_.
 
 A note on scaling
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 This benchmark was originally developed for very large-scale simulations on
 supercomputers with more than 1 million neurons in the network and
@@ -61,7 +61,7 @@ that the firing rate reported at the end of the benchmark is below 10 spikes
 per second.
 
 References
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent
        plasticity in balanced random networks. Neural Comput 19(6):1437-67

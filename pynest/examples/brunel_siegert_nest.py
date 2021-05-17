@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Mean-field theory for random balanced network
----------------------------------------------------
+"""
+Mean-field theory for random balanced network
+---------------------------------------------
 
 This script performs a mean-field analysis of the spiking network of
 excitatory and an inhibitory population of leaky-integrate-and-fire neurons
@@ -35,7 +36,7 @@ dynamics (eq.30), are the prediction for the population and
 time-averaged from the spiking simulation.
 
 References
-~~~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M,
        Helias M and Diesmann M. (2017).  Integration of continuous-time

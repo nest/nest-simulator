@@ -32,7 +32,7 @@ pulse-packet and the number of trials.
 
 
 References
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Diesmann M. 2002. Dissertation. Conditions for stable propagation of
        synchronous spiking in cortical neural networks: Single neuron dynamics

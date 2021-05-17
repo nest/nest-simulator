@@ -21,7 +21,8 @@
 
 """
 Structural Plasticity example
-----------------------------------
+-----------------------------
+
 This example shows a simple network of two populations where structural
 plasticity is used. The network has 1000 neurons, 80% excitatory and
 20% inhibitory. The simulation starts without any connectivity. A set of
@@ -34,7 +35,8 @@ At the end of the simulation, a plot of the evolution of the connectivity
 in the network and the average calcium concentration in the neurons is created.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
+
 .. [1] Butz, M., and van Ooyen, A. (2013). A simple rule for dendritic spine and axonal bouton formation can
        account for cortical reorganization after focal retinal lesions. PLoS Comput. Biol. 9 (10), e1003259.
 

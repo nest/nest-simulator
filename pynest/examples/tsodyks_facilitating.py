@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Tsodyks facilitating example
---------------------------------
+"""
+Tsodyks facilitating example
+----------------------------
 
 This scripts simulates two neurons. One is driven with dc-input and
 connected to the other one with a facilitating Tsodyks synapse. The
@@ -33,13 +34,13 @@ parameter ``U`` causes a slow saturation of the synaptic efficacy
 (Eq. 2.2), enabling a facilitating behavior.
 
 References
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Tsodyks M, Pawelzik K, Markram H (1998). Neural networks with dynamic synapses. Neural
        computation, http://dx.doi.org/10.1162/089976698300017502
 
 See Also
-~~~~~~~~~~
+~~~~~~~~
 
 :doc:`tsodyks_depressing`
 """

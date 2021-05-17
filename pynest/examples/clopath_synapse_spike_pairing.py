@@ -21,7 +21,7 @@
 
 """
 Clopath Rule: Spike pairing experiment
-----------------------------------------
+--------------------------------------
 
 This script simulates one ``aeif_psc_delta_clopath`` neuron that is connected with
 a Clopath connection [1]_. The synapse receives pairs of a pre- and a postsynaptic
@@ -31,7 +31,7 @@ pairs. This experiment is repeated five times with different rates of the
 sequence of the spike pairs: 10Hz, 20Hz, 30Hz, 40Hz, and 50Hz.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Clopath C, Büsing L, Vasilaki E, Gerstner W (2010). Connectivity reflects coding:
        a model of voltage-based STDP with homeostasis.

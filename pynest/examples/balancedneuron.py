@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Balanced neuron example
------------------------------
+"""
+Balanced neuron example
+-----------------------
 
 This script simulates a neuron driven by an excitatory and an
 inhibitory population of neurons firing Poisson spike trains. The aim
@@ -33,7 +34,7 @@ simulating the network repeatedly.
 This example is also shown in the article [1]_
 
 References
-~~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Eppler JM, Helias M, Mulller E, Diesmann M, Gewaltig MO (2009). PyNEST: A convenient interface to the NEST
        simulator, Front. Neuroinform.

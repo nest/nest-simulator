@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Gap Junctions: Two neuron example
---------------------------------------
+"""
+Gap Junctions: Two neuron example
+---------------------------------
 
 This script simulates two Hodgkin-Huxley neurons of type ``hh_psc_alpha_gap``
 connected by a gap junction. Both neurons receive a constant current of

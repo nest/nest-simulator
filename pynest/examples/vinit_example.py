@@ -19,14 +19,15 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Initial membrane voltage
-----------------------------
+"""
+Initial membrane voltage
+------------------------
 
 Plot several runs of the ``iaf_cond_exp_sfa_rr`` neuron without input for various
 initial values of the membrane potential.
 
 References
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Dayan, P. and Abbott, L.F. (2001) Theoretical neuroscience,
        MIT Press, page 166

@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Example using Hodgkin-Huxley neuron
-----------------------------------------
+"""
+Example using Hodgkin-Huxley neuron
+-----------------------------------
 
 This example produces a rate-response (FI) curve of the Hodgkin-Huxley
 neuron ``hh_psc_alpha`` in response to a range of different current (DC) stimulations.

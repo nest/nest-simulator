@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Use evolution strategies to find parameters for a random balanced network (alpha synapses)
------------------------------------------------------------------------------------------------------
+"""
+Use evolution strategies to find parameters for a random balanced network (alpha synapses)
+------------------------------------------------------------------------------------------
 
 This script uses an optimization algorithm to find the appropriate
 parameter values for the external drive "eta" and the relative ratio

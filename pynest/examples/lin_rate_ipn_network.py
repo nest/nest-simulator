@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Network of linear rate neurons
------------------------------------
+"""
+Network of linear rate neurons
+------------------------------
 
 This script simulates an excitatory and an inhibitory population
 of ``lin_rate_ipn`` neurons with delayed excitatory and instantaneous

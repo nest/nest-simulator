@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Numerical phase-plane analysis of the Hodgkin-Huxley neuron
-----------------------------------------------------------------
+"""
+Numerical phase-plane analysis of the Hodgkin-Huxley neuron
+-----------------------------------------------------------
 
 hh_phaseplane makes a numerical phase-plane analysis of the Hodgkin-Huxley
 neuron (``hh_psc_alpha``). Dynamics is investigated in the V-n space (see remark
@@ -28,7 +29,7 @@ below). A constant DC can be specified  and its influence on the nullclines
 can be studied.
 
 Remark
-~~~~~~~~
+~~~~~~
 
 To make the two-dimensional analysis possible, the (four-dimensional)
 Hodgkin-Huxley formalism needs to be artificially reduced to two dimensions,

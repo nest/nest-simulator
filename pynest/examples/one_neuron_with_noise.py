@@ -21,7 +21,7 @@
 
 """
 One neuron with noise
-----------------------
+---------------------
 
 This script simulates a neuron with input from the ``poisson_generator``, and
 records the neuron's membrane potential.

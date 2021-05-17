@@ -20,8 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-"""Intrinsic currents spiking
--------------------------------
+"""
+Intrinsic currents spiking
+--------------------------
 
 This example illustrates a neuron receiving spiking input through
 several different receptors (AMPA, NMDA, GABA_A, GABA_B), provoking
@@ -34,14 +35,14 @@ which are connected to the AMPA, NMDA, GABA_A, and GABA_B receptors,
 respectively.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Hill and Tononi (2005) Modeling sleep and wakefulness in the
        thalamocortical system. J Neurophysiol 93:1671
        http://dx.doi.org/10.1152/jn.00915.2004.
 
 See Also
-~~~~~~~~~~
+~~~~~~~~
 
 :doc:`intrinsic_currents_subthreshold`
 

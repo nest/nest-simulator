@@ -20,8 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""Population rate model of generalized integrate-and-fire neurons
---------------------------------------------------------------------
+"""
+Population rate model of generalized integrate-and-fire neurons
+---------------------------------------------------------------
 
 This script simulates a finite network of generalized integrate-and-fire
 (GIF) neurons directly on the mesoscopic population level using the effective
@@ -35,7 +36,7 @@ description of the corresponding microscopic network based on the
 NEST model ``gif_psc_exp``.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Schwalger T, Degert M, Gerstner W (2017). Towards a theory of cortical columns: From spiking
        neurons to interacting neural populations of finite size. PLoS Comput Biol.

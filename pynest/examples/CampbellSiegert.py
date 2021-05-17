@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Campbell & Siegert approximation example
-----------------------------------------------
+"""
+Campbell & Siegert approximation example
+----------------------------------------
 
 Example script that applies Campbell's theorem and Siegert's rate
 approximation to and integrate-and-fire neuron.
@@ -32,8 +33,8 @@ simulation using the ``iaf_psc_alpha`` model
 
 
 
-References:
-~~~~~~~~~~~~
+References
+~~~~~~~~~~
 
  .. [1] Papoulis A (1991). Probability, Random Variables, and
         Stochastic Processes, McGraw-Hill
@@ -41,7 +42,7 @@ References:
         Phys Rev 81: 617-623
 
 Authors
-~~~~~~~~
+~~~~~~~
 
 S. Schrader, Siegert implentation by T. Tetzlaff
 """

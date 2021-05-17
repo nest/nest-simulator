@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Intrinsic currents subthreshold
-------------------------------------
+"""
+Intrinsic currents subthreshold
+-------------------------------
 
 This example illustrates how to record from a model with multiple
 intrinsic currents and visualize the results. This is illustrated
@@ -33,14 +34,14 @@ between depolarizing and hyperpolarizing. Hyperpolarization
 intervals become increasingly longer.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Hill and Tononi (2005) Modeling Sleep and Wakefulness in the
        Thalamocortical System J Neurophysiol 93:1671
        http://dx.doi.org/10.1152/jn.00915.2004.
 
 See Also
-~~~~~~~~~~
+~~~~~~~~
 
 :doc:`intrinsic_currents_spiking`
 

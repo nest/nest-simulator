@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Random balanced network (alpha synapses) connected with NEST
-------------------------------------------------------------------
+"""
+Random balanced network (alpha synapses) connected with NEST
+------------------------------------------------------------
 
 This script simulates an excitatory and an inhibitory population on
 the basis of the network used in [1]_.
@@ -35,14 +36,14 @@ are established. The building as well as the simulation time of the
 network are recorded.
 
 References
-~~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Brunel N (2000). Dynamics of sparsely connected networks of excitatory and
        inhibitory spiking neurons. Journal of Computational Neuroscience 8,
        183-208.
 
 See Also
-~~~~~~~~~~~~
+~~~~~~~~
 
 :doc:`brunel_alpha_numpy`
 

@@ -19,7 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""IAF Neuron example
+"""
+IAF neuron example
 ------------------
 
 A DC current is injected into the neuron using a current generator

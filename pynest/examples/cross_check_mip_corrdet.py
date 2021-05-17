@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Auto- and crosscorrelation functions for spike trains
------------------------------------------------------------
+"""
+Auto- and crosscorrelation functions for spike trains
+-----------------------------------------------------
 
 A time bin of size `tbin` is centered around the time difference it
 represents. If the correlation function is calculated for `tau` in

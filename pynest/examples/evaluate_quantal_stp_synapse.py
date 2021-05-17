@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Example for the quantal_stp_synapse
------------------------------------------
+"""
+Example for the quantal_stp_synapse
+-----------------------------------
 
 The ``quantal_stp_synapse`` is a stochastic version of the Tsodys-Markram model
 for synaptic short term plasticity (STP).
@@ -40,7 +41,7 @@ The connection weight is interpreted as the maximal weight that can be
 obtained if all n release sites are activated.
 
 Parameters
-~~~~~~~~~~~~~
+~~~~~~~~~~
 
 The following parameters can be set in the status dictionary:
 
@@ -54,7 +55,7 @@ The following parameters can be set in the status dictionary:
 
 
 References
-~~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Fuhrmann G, Segev I, Markram H, and Tsodyks MV. (2002). Coding of
        temporal information by activity-dependent synapses. Journal of

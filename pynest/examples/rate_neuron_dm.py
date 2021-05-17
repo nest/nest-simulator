@@ -96,7 +96,7 @@ fig = plt.figure(facecolor=face, edgecolor=edge, figsize=fig_size)
 dt = 1e-3
 sigma = [0.0, 0.1, 0.2]
 dE = [0.0, 0.004, 0.008]
-T = numpy.linspace(0, 200, 200 / dt - 1)
+T = numpy.linspace(0, 200, int(200/dt) - 1)
 for i in range(9):
     c = i % 3
     r = int(i / 3)

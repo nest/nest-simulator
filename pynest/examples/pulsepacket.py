@@ -141,7 +141,7 @@ sig = Sdev
 mu = 0.0
 x = numpy.arange(-4 * sig, 4 * sig, Convolution_resolution)
 term1 = 1 / (sig * numpy.sqrt(2 * numpy.pi))
-term2 = numpy.exp(-(x - mu) ** 2 / (sig ** 2 * 2))
+term2 = numpy.exp(-(x - mu)**2 / (sig**2 * 2))
 gauss = term1 * term2 * Convolution_resolution
 
 

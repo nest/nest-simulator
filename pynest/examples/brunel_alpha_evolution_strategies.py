@@ -248,14 +248,10 @@ def simulate(parameters):
 
     if parameters['N_rec'] > NE:
         raise ValueError(
-            'Requested recording from {} neurons, \
-            but only {} in excitatory population'.format(
-                parameters['N_rec'], NE))
+            f'Requested recording from {parameters["N_rec"]} neurons, but only {NE} in excitatory population')
     if parameters['N_rec'] > NI:
         raise ValueError(
-            'Requested recording from {} neurons, \
-            but only {} in inhibitory population'.format(
-                parameters['N_rec'], NI))
+            f'Requested recording from {parameters["N_rec"]} neurons, but only {NI} in inhibitory population')
     nest.Connect(nodes_ex[:parameters['N_rec']], espikes)
     nest.Connect(nodes_in[:parameters['N_rec']], ispikes)
 
@@ -352,7 +348,7 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
     # min_sigma: float
     #     Minimal value for standard deviation of search
     #     distribution. If any dimension has a value smaller than this,
-    #     the search is stoppped.
+    #     the search is stopped.
     # verbosity: bool
     #     Whether to continuously print progress information.
     #
@@ -397,11 +393,10 @@ def optimize(func, mu, sigma, learning_rate_mu=None, learning_rate_sigma=None,
         # print status if enabled
         if verbosity > 0:
             print(
-                '# Generation {:d} | fitness {:.3f} | mu {} | sigma {}'.format(
-                    generation, np.mean(fitness),
-                    ', '.join(str(np.round(mu_i, 3)) for mu_i in mu),
-                    ', '.join(str(np.round(sigma_i, 3)) for sigma_i in sigma)
-                ))
+                f'# Generation {generation:d} | fitness {np.mean(fitness):.3f} | '
+                f'mu {", ".join(str(np.round(mu_i, 3)) for mu_i in mu)} | '
+                f'sigma {", ".join(str(np.round(sigma_i, 3)) for sigma_i in sigma)}'
+            )
 
         # apply fitness shaping if enabled
         if fitness_shaping:
@@ -460,13 +455,11 @@ def optimize_network(optimization_parameters, simulation_parameters):
         # analyse the result and compute fitness
         rate, cv, corr = compute_statistics(
             simulation_parameters, espikes, ispikes)
-        fitness = \
-            - optimization_parameters['fitness_weight_rate'] * (
-                rate - optimization_parameters['target_rate']) ** 2 \
-            - optimization_parameters['fitness_weight_cv'] * (
-                cv - optimization_parameters['target_cv']) ** 2 \
-            - optimization_parameters['fitness_weight_corr'] * (
-                corr - optimization_parameters['target_corr']) ** 2
+        fitness = (
+            -optimization_parameters['fitness_weight_rate'] * (rate - optimization_parameters['target_rate'])**2 -
+            optimization_parameters['fitness_weight_cv'] * (cv - optimization_parameters['target_cv'])**2 -
+            optimization_parameters['fitness_weight_corr'] * (corr - optimization_parameters['target_corr'])**2
+        )
 
         return fitness
 

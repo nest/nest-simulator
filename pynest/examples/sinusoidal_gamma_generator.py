@@ -162,7 +162,7 @@ nest.Connect(g, p)
 nest.Connect(p, s)
 
 nest.Simulate(200)
-ev = s[0].events
+ev = s.events
 plt.subplot(224)
 plt.plot(ev['times'], ev['senders'] - min(ev['senders']), 'o')
 plt.ylim([-0.5, 19.5])
@@ -270,13 +270,10 @@ spikes = step(t, n,
               seed=123, dt=dt)
 plot_hist(spikes)
 exp = np.zeros(int(steps))
-exp[:int(steps / 2)] = (40. +
-                        40. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                               t / 1000. * np.pi * 10. /
-                                               (steps / 2))))
-exp[int(steps / 2):] = (40. + 20. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                                     t / 1000. * np.pi * 10. /
-                                                     (steps / 2)) + offset))
+exp[:int(steps / 2)] = (40. + 40. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2))))
+exp[int(steps / 2):] = (40. + 20. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2)) + offset))
 plt.plot(exp, 'r')
 plt.title('Rate Modulation: 40 -> 20')
 
@@ -296,12 +293,10 @@ spikes = step(t, n,
               seed=123, dt=dt)
 plot_hist(spikes)
 exp = np.zeros(int(steps))
-exp[:int(steps / 2)] = (20. + 20. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                                     t / 1000. * np.pi * 10. /
-                                                     (steps / 2))))
-exp[int(steps / 2):] = (50. + 50. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                                     t / 1000. * np.pi * 10. /
-                                                     (steps / 2)) + offset))
+exp[:int(steps / 2)] = (20. + 20. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2))))
+exp[int(steps / 2):] = (50. + 50. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2)) + offset))
 plt.plot(exp, 'r')
 plt.title('DC Rate and Rate Modulation: 20 -> 50')
 plt.ylabel('Spikes per second')
@@ -322,9 +317,8 @@ spikes = step(t, n,
 plot_hist(spikes)
 exp = np.zeros(int(steps))
 exp[:int(steps / 2)] = 40. * np.ones(int(steps / 2))
-exp[int(steps / 2):] = (40. + 40. * np.sin(np.arange(0, t / 1000. * np.pi * 20,
-                                                     t / 1000. * np.pi * 20. /
-                                                     (steps / 2))))
+exp[int(steps / 2):] = (40. + 40. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 20, t / 1000. * np.pi * 20. / (steps / 2))))
 plt.plot(exp, 'r')
 plt.title('Rate Modulation: 0 -> 40')
 plt.xlabel('Time [ms]')
@@ -346,13 +340,10 @@ spikes = step(t, n,
 plot_hist(spikes)
 exp = np.zeros(int(steps))
 
-exp[:int(steps / 2)] = (60. + 60. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                                     t / 1000. * np.pi * 10. /
-                                                     (steps / 2))))
-exp[int(steps / 2):] = (60. + 60. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                                     t / 1000. * np.pi * 10. /
-                                                     (steps / 2)) +
-                                           offset + np.pi))
+exp[:int(steps / 2)] = (60. + 60. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2))))
+exp[int(steps / 2):] = (60. + 60. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2)) + offset + np.pi))
 plt.plot(exp, 'r')
 plt.title('Modulation Phase: 0 -> Pi')
 plt.xlabel('Time [ms]')

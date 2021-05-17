@@ -54,10 +54,10 @@ nest.ResetKernel()
 
 
 syns = nest.GetDefaults('iaf_cond_alpha_mc')['receptor_types']
-print("iaf_cond_alpha_mc receptor_types: {0}".format(syns))
+print(f"iaf_cond_alpha_mc receptor_types: {syns}")
 
 rqs = nest.GetDefaults('iaf_cond_alpha_mc')['recordables']
-print("iaf_cond_alpha_mc recordables   : {0}".format(rqs))
+print(f"iaf_cond_alpha_mc recordables   : {rqs}")
 
 ###############################################################################
 # The simulation parameters are assigned to variables.

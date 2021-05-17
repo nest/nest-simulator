@@ -263,14 +263,14 @@ sim_time = endsimulate - endbuild
 # Printing the network properties, firing rates and building times.
 
 print("Brunel network simulation (Python)")
-print("Number of neurons : {0}".format(N_neurons))
-print("Number of synapses: {0}".format(num_synapses))
-print("       Exitatory  : {0}".format(int(CE * N_neurons) + N_neurons))
-print("       Inhibitory : {0}".format(int(CI * N_neurons)))
-print("Excitatory rate   : %.2f Hz" % rate_ex)
-print("Inhibitory rate   : %.2f Hz" % rate_in)
-print("Building time     : %.2f s" % build_time)
-print("Simulation time   : %.2f s" % sim_time)
+print(f"Number of neurons : {N_neurons}")
+print(f"Number of synapses: {num_synapses}")
+print(f"       Exitatory  : {int(CE * N_neurons) + N_neurons}")
+print(f"       Inhibitory : {int(CI * N_neurons)}")
+print(f"Excitatory rate   : {rate_ex:.2f} Hz")
+print(f"Inhibitory rate   : {rate_in:.2f} Hz")
+print(f"Building time     : {build_time:.2f} s")
+print(f"Simulation time   : {sim_time:.2f} s")
 
 ###############################################################################
 # Plot a raster of the excitatory neurons and a histogram.

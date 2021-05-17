@@ -27,6 +27,7 @@ aeif_cond_beta_multisynapse
 
 import nest
 import numpy as np
+import matplotlib.pyplot as plt
 
 neuron = nest.Create('aeif_cond_beta_multisynapse')
 nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b": 80.5})
@@ -42,7 +43,7 @@ voltmeter = nest.Create('voltmeter')
 delays = [1.0, 300.0, 500.0, 700.0]
 w = [1.0, 1.0, 1.0, 1.0]
 for syn in range(4):
-    nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+    nest.Connect(spike, neuron, syn_spec={'synapse_model': 'static_synapse',
                                           'receptor_type': 1 + syn,
                                           'weight': w[syn],
                                           'delay': delays[syn]})
@@ -51,11 +52,8 @@ nest.Connect(voltmeter, neuron)
 
 nest.Simulate(1000.0)
 
-dmm = nest.GetStatus(voltmeter)[0]
-Vms = dmm["events"]["V_m"]
-ts = dmm["events"]["times"]
+Vms = voltmeter.get("events", "V_m")
+ts = voltmeter.get("events", "times")
 
-# import pylab
-# pylab.figure(2)
-# pylab.plot(ts, Vms)
-# pylab.show()
+plt.plot(ts, Vms)
+plt.show()

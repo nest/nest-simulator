@@ -166,8 +166,8 @@ exc_conns_senders = np.array(exc_conns.source)
 exc_conns_targets = np.array(exc_conns.target)
 exc_conns_weights = np.array(exc_conns.weight)
 idx_array = np.argsort(exc_conns_senders)
-targets = np.reshape(exc_conns_targets[idx_array], (10, 10-1))
-weights = np.reshape(exc_conns_weights[idx_array], (10, 10-1))
+targets = np.reshape(exc_conns_targets[idx_array], (10, 10 - 1))
+weights = np.reshape(exc_conns_weights[idx_array], (10, 10 - 1))
 
 # Sort according to target
 for i, (trgs, ws) in enumerate(zip(targets, weights)):

@@ -148,7 +148,7 @@ print("Building network")
 # variables for later reference. Here the excitatory and inhibitory, as well
 # as the poisson generator and two spike recorders. The spike recorders will
 # later be used to record excitatory and inhibitory spikes. Properties of the
-# nodes are specified via ``param``, which expects a dictionary.
+# nodes are specified via ``params``, which expects a dictionary.
 
 nodes_ex = nest.Create("iaf_psc_exp_multisynapse", NE, params=neuron_params)
 nodes_in = nest.Create("iaf_psc_exp_multisynapse", NI, params=neuron_params)

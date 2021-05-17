@@ -55,13 +55,13 @@ following pattern:
 
 ::
 
-   data_path/label/id_device.txt
+   {data_path}/{data_prefix}{label}/{id_device}.txt
 
-The properties ``data_path`` and ``data_prefix`` are global kernel properties.
-This path is only used during the ``Prepare`` call. There is not
-functionality for changing connection during the ``Run``.
-If you want to change the connections during the simulation, you need first
-to close the previous one by using calling ``Cleanup`` of the simulator.
+The ``data_path`` and ``data_prefix`` are global kernel properties,
+while `label` is a property of the device in question and `id_device`
+its node ID.
+This path can only be set outside of a `Run` contexts (i.e.
+after ``Prepare()` has been called, but ``Cleanup()`` has not).
 
 Communication Protocol:
 +++++++++++++++++++++++

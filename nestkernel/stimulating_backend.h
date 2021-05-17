@@ -158,15 +158,12 @@ public:
    */
   virtual void post_run_hook() = 0;
 
-  /**
-   * In order to do work required at the end of each simulation step,
-   * one could implement the function post_step_hook().
-   * This would be called at the very end of each simulation step.
-   * This function is not used for the moment because it is tightly coupled
-   * to a formal definition of the sycnhronization between incomming data
-   *  and the simulation.
-   *
-   */
+  // In order to allow a derived backend do work at the end of each simulation step, this base
+  // class could define the function post_step_hook() right about here.
+  // However, this function would be called at the very end of each simulation step and require
+  // a very tight synchronization between incoming data and the simulation control itself. As the
+  // requirements for this are currently not formally defined due to the lack of a suitable use-case,
+  // we decided to omit the function from the interface until such a use-case arises.
 
   virtual void initialize() = 0;
   virtual void finalize() = 0;

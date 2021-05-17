@@ -57,7 +57,7 @@ pattern:
 
 ::
 
-   data_path/label/id_device.txt
+   {data_path}/{data_prefix}{label}/{id_device}.txt
 
 The ``data_path`` and ``data_prefix`` are global kernel properties,
 while `label` is a property of the device in question and `id_device`

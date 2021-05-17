@@ -150,7 +150,7 @@ public:
    * Clean up the backend at the end of a Run.
    *
    * This is called right before `SimulationManager::run()` terminates. It
-   * allows the backend to indicate that the run ending.
+   * allows the backend to indicate that the run is ending.
    *
    * @see pre_run_hook()
    *

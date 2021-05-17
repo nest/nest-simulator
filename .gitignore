@@ -15,15 +15,12 @@ pynest/pynestkernel.cxx
 *.pyc
 
 Makefile
-!/doc/Makefile
 
 build/
 install/
 examples/example_logs/
 
-/juqueen/
 /extras/nest-config
-/extras/create_release.sh
 /libnestutil/config.h
 /librandom/randomtest
 /nest/nest

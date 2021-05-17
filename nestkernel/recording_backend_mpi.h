@@ -68,7 +68,7 @@ Communication Protocol:
 The following protocol is used to exchange information between
 both MPI processes. The protocol is described using the
 following format for the MPI messages:
-(value,number,type,source/destination,tag)
+(value, number, type, source/destination, tag)
 
 1) ``Prepare``  : Connection of MPI port included in the port_file (see below)
 2) ``Run`` begin: Send at each beginning of the run (true, 1, CXX_BOOL, 0, 0)

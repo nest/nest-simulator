@@ -253,10 +253,6 @@ IOManager::post_step_hook()
   {
     it.second->post_step_hook();
   }
-  for ( auto& it : stimulating_backends_ )
-  {
-    it.second->post_step_hook();
-  }
 }
 
 void

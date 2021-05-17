@@ -273,7 +273,7 @@ the NEST Server Client.
     By default, the NEST Server only imports the PyNEST module during
     startup for security reasons. In case you require additional
     Python modules for your simulation script, please see the section
-    on :ref:`using Python modules <additional_python_modules>` below.
+    on :ref:`security and modules <nest_server_security>` below.
 
 
 NEST Server Client API
@@ -394,45 +394,40 @@ Create neurons in NEST and return a list of IDs for the new nodes::
   neurons = requests.post('http://localhost:5000/api/Create', json={"model": "iaf_psc_alpha", "n": 100}).json()
   print(neurons)
 
+.. _nest_server_security:
+
 Security considerations
 -----------------------
 
 As explained above, the ``/exec`` route of the NEST Server API allows
-you to run custom Python scripts within the NEST Server. In order to
-protect the execution environment from malicious code and keep the
-server secure, we execute user supplied scripts in a `RestrictedPython
+you to run custom Python scripts within the NEST Server context. This
+can greatly simplify your workflow in situations where you already
+have the simulation description in form of a Python script. On the
+technical side, however, this route obviously exposes a potential risk
+for the remote execution of malicious code.
+
+In order to protect the execution environment from such security
+breaches, we execute all user supplied code in a `RestrictedPython
 <https://restrictedpython.readthedocs.io/en/latest/>`_ trusted
-environment, which limits access to the host system. The most
-practical limitation of this is that you cannot import arbitrary
-Python modules from within scripts you execute using that route.
+environment. The most practical consequence of this is that your
+scripts are not permitted to import additional Python modules, unless
+they are explicitly safelisted during the start-up of NEST Server.
 
-.. note::
+To mark modules as safe for execution within NEST Server and make them
+available to code from user supplied scripts run through the ``/exec``
+route, a comma separated list of Python module names can be assigned
+to the environment variable ``NEST_SERVER_MODULES`` prior to starting
+the NEST Server.
 
-    The ``/api/<call>`` routes of the RESTful API are not affected by
-    the restricted environment, as they cannot be used for executing
-    code directly.
-
-.. _additional_python_modules:
-
-We know that additional Python modules will be necessary in most cases, and
-most simulation scripts won't work without them. Therefore,
-the restrictions described above can be lifted. However, each such
-exception should be carefully evaluated on a case-by-case basis.
-
-In order to add additional modules to the execution environment for
-the ``/exec`` route, you can add them to the environment variable
-``NEST_SERVER_MODULES`` before starting the NEST Server. For instance,
-if your script requires NumPy, the command line for starting up the
-server would look like this:
+For instance, if your script requires NumPy in addition to PyNEST, the
+command line for starting up the server would look like this:
 
 .. code-block:: sh
 
-    export NEST_SERVER_MODULES=nest,numpy
+    export NEST_SERVER_MODULES="nest,numpy"
     nest-server start
 
-After this, the creation of a NumPy array and returning it as list
-would succeed, while it would fail if the environment variable would
-not have been set.
+After this, NumPy can be used from within scripts in the regular way:
 
 .. code-block:: Python
 
@@ -443,9 +438,13 @@ not have been set.
 
 .. danger::
 
-    We are aware that some code might just not work (well) in a
+    Each modification to the default security settings of NEST Server
+    should be carefully evaluated on a case-by-case basis.
+
+    We are aware that some simulation code might not work (well) in a
     RestrictedPython environment. To support such codes, the security
-    features of NEST Server can be completely disabled using
+    features of NEST Server can be completely disabled by starting it
+    in the following way:
 
     .. code-block:: sh
 

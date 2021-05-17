@@ -94,10 +94,6 @@ Parameter summary
    Shared file with ports with the format path+label+id+.txt
    Where path = kernel().io_manager.get_data_path() and the
    label and id are the ones provided for the device.
-
-@author Lionel Kusch and Sandra Diaz
-@ingroup NESTio
-
 EndUserDocs */
 
 namespace nest

@@ -61,8 +61,8 @@ namespace nest
  * on each stimulating backend via IOManager.
  *
  * During the simulation, stimulating backends do nothing. This solution
- * was chosen for avoiding complex synchronization. It can be modify in
- * the future.
+ * was chosen to avoid complex synchronization, but can be changed in the future
+ * if the need shall arise.
  *
  * @author Sandra Diaz
  *

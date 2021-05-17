@@ -25,12 +25,6 @@
 // Includes from libnestutil:
 #include "logging.h"
 
-// Includes from librandom:
-#include "binomial_randomdev.h"
-#include "gsl_binomial_randomdev.h"
-#include "gslrandomgen.h"
-#include "normal_randomdev.h"
-
 // Includes from nestkernel:
 #include "conn_builder_impl.h"
 #include "conn_parameter.h"
@@ -60,7 +54,6 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , use_post_synaptic_element_( false )
   , parameters_requiring_skipping_()
   , param_dicts_()
-  , dummy_param_dicts_()
 {
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
@@ -87,14 +80,14 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   param_dicts_.resize( syn_specs.size() );
 
   // loop through vector of synapse dictionaries, and set synapse parameters
-  for ( size_t indx = 0; indx < syn_specs.size(); ++indx )
+  for ( size_t synapse_indx = 0; synapse_indx < syn_specs.size(); ++synapse_indx )
   {
-    auto syn_params = syn_specs[ indx ];
+    auto syn_params = syn_specs[ synapse_indx ];
 
-    set_synapse_model_( syn_params, indx );
-    set_default_weight_or_delay_( syn_params, indx );
+    set_synapse_model_( syn_params, synapse_indx );
+    set_default_weight_or_delay_( syn_params, synapse_indx );
 
-    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ indx ] );
+    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
 #ifdef HAVE_MUSIC
     // We allow music_channel as alias for receptor_type during
@@ -102,17 +95,10 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     ( *syn_defaults )[ names::music_channel ] = 0;
 #endif
 
-    set_synapse_params( syn_defaults, syn_params, indx );
+    set_synapse_params( syn_defaults, syn_params, synapse_indx );
   }
 
   set_structural_plasticity_parameters( syn_specs );
-
-  // Create dummy dictionaries, one per thread
-  dummy_param_dicts_.resize( kernel().vp_manager.get_num_threads() );
-#pragma omp parallel
-  {
-    dummy_param_dicts_[ kernel().vp_manager.get_thread_id() ] = new Dictionary();
-  }
 
   // If make_symmetric_ is requested call reset on all parameters in order
   // to check if all parameters support symmetric connections
@@ -301,87 +287,84 @@ nest::ConnBuilder::disconnect()
   }
 }
 
-DictionaryDatum
-nest::ConnBuilder::create_param_dict_( index snode_id,
+void
+nest::ConnBuilder::update_param_dict_( index snode_id,
   Node& target,
   thread target_thread,
-  librandom::RngPtr& rng,
-  index indx )
+  RngPtr rng,
+  index synapse_indx )
 {
-  DictionaryDatum param_dict;
+  assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ synapse_indx ].size() ) );
 
-  if ( param_dicts_[ indx ].empty() ) // indicates we have no synapse params
+  for ( auto synapse_parameter : synapse_params_[ synapse_indx ] )
   {
-    param_dict = dummy_param_dicts_[ target_thread ];
-  }
-  else
-  {
-    assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ indx ].size() ) );
-
-    for ( auto synapse_parameter : synapse_params_[ indx ] )
+    if ( synapse_parameter.second->provides_long() )
     {
-      if ( synapse_parameter.second->provides_long() )
-      {
-        // change value of dictionary entry without allocating new datum
-        IntegerDatum* id = static_cast< IntegerDatum* >(
-          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-        ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
-      }
-      else
-      {
-        // change value of dictionary entry without allocating new datum
-        DoubleDatum* dd = static_cast< DoubleDatum* >(
-          ( ( *param_dicts_[ indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
-        ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
-      }
+      // change value of dictionary entry without allocating new datum
+      IntegerDatum* id = static_cast< IntegerDatum* >(
+        ( ( *param_dicts_[ synapse_indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+      ( *id ) = synapse_parameter.second->value_int( target_thread, rng, snode_id, &target );
     }
-    param_dict = param_dicts_[ indx ][ target_thread ];
+    else
+    {
+      // change value of dictionary entry without allocating new datum
+      DoubleDatum* dd = static_cast< DoubleDatum* >(
+        ( ( *param_dicts_[ synapse_indx ][ target_thread ] )[ synapse_parameter.first ] ).datum() );
+      ( *dd ) = synapse_parameter.second->value_double( target_thread, rng, snode_id, &target );
+    }
   }
-
-  return param_dict;
 }
 
 void
-nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_thread, librandom::RngPtr& rng )
+nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_thread, RngPtr rng )
 {
   if ( this->requires_proxies() and not target.has_proxies() )
   {
     throw IllegalConnection( "Cannot use this rule to connect to nodes without proxies (usually devices)." );
   }
 
-  for ( size_t indx = 0; indx < synapse_model_id_.size(); ++indx )
+  for ( size_t synapse_indx = 0; synapse_indx < synapse_params_.size(); ++synapse_indx )
   {
-    DictionaryDatum param_dict = create_param_dict_( snode_id, target, target_thread, rng, indx );
+    update_param_dict_( snode_id, target, target_thread, rng, synapse_indx );
 
-    if ( default_weight_and_delay_[ indx ] )
-    {
-      kernel().connection_manager.connect( snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dict );
-    }
-    else if ( default_weight_[ indx ] )
+    if ( default_weight_and_delay_[ synapse_indx ] )
     {
       kernel().connection_manager.connect( snode_id,
         &target,
         target_thread,
-        synapse_model_id_[ indx ],
-        param_dict,
-        delays_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+        synapse_model_id_[ synapse_indx ],
+        param_dicts_[ synapse_indx ][ target_thread ] );
     }
-    else if ( default_delay_[ indx ] )
+    else if ( default_weight_[ synapse_indx ] )
     {
       kernel().connection_manager.connect( snode_id,
         &target,
         target_thread,
-        synapse_model_id_[ indx ],
-        param_dict,
+        synapse_model_id_[ synapse_indx ],
+        param_dicts_[ synapse_indx ][ target_thread ],
+        delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+    }
+    else if ( default_delay_[ synapse_indx ] )
+    {
+      kernel().connection_manager.connect( snode_id,
+        &target,
+        target_thread,
+        synapse_model_id_[ synapse_indx ],
+        param_dicts_[ synapse_indx ][ target_thread ],
         numerics::nan,
-        weights_[ indx ]->value_double( target_thread, rng, snode_id, &target ) );
+        weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
     }
     else
     {
-      const double delay = delays_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-      const double weight = weights_[ indx ]->value_double( target_thread, rng, snode_id, &target );
-      kernel().connection_manager.connect(
-        snode_id, &target, target_thread, synapse_model_id_[ indx ], param_dict, delay, weight );
+      const double delay = delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
+      const double weight = weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target );
+      kernel().connection_manager.connect( snode_id,
+        &target,
+        target_thread,
+        synapse_model_id_[ synapse_indx ],
+        param_dicts_[ synapse_indx ][ target_thread ],
+        delay,
+        weight );
     }
   }
 }
@@ -450,7 +433,7 @@ nest::ConnBuilder::loop_over_targets_() const
 }
 
 void
-nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t indx )
+nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t synapse_indx )
 {
   if ( not syn_params->known( names::synapse_model ) )
   {
@@ -463,7 +446,7 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t indx )
   }
 
   index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( syn_name );
-  synapse_model_id_[ indx ] = synapse_model_id;
+  synapse_model_id_[ synapse_indx ] = synapse_model_id;
 
   // We need to make sure that Connect can process all synapse parameters specified.
   const ConnectorModel& synapse_model = kernel().model_manager.get_synapse_prototype( synapse_model_id );
@@ -471,43 +454,43 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t indx )
 }
 
 void
-nest::ConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx )
+nest::ConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, size_t synapse_indx )
 {
-  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ indx ] );
+  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
   // All synapse models have the possibility to set the delay (see SynIdDelay), but some have
   // homogeneous weights, hence it should be possible to set the delay without the weight.
-  default_weight_[ indx ] = not syn_params->known( names::weight );
+  default_weight_[ synapse_indx ] = not syn_params->known( names::weight );
 
-  default_delay_[ indx ] = not syn_params->known( names::delay );
+  default_delay_[ synapse_indx ] = not syn_params->known( names::delay );
 
   // If neither weight nor delay are given in the dict, we handle this separately. Important for
   // hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
   // _all_ types of synapses.
-  default_weight_and_delay_[ indx ] = ( default_weight_[ indx ] and default_delay_[ indx ] );
+  default_weight_and_delay_[ synapse_indx ] = ( default_weight_[ synapse_indx ] and default_delay_[ synapse_indx ] );
 
-  if ( not default_weight_and_delay_[ indx ] )
+  if ( not default_weight_and_delay_[ synapse_indx ] )
   {
-    weights_[ indx ] = syn_params->known( names::weight )
+    weights_[ synapse_indx ] = syn_params->known( names::weight )
       ? ConnParameter::create( ( *syn_params )[ names::weight ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
-    register_parameters_requiring_skipping_( *weights_[ indx ] );
+    register_parameters_requiring_skipping_( *weights_[ synapse_indx ] );
 
-    delays_[ indx ] = syn_params->known( names::delay )
+    delays_[ synapse_indx ] = syn_params->known( names::delay )
       ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
-  else if ( default_weight_[ indx ] )
+  else if ( default_weight_[ synapse_indx ] )
   {
-    delays_[ indx ] = syn_params->known( names::delay )
+    delays_[ synapse_indx ] = syn_params->known( names::delay )
       ? ConnParameter::create( ( *syn_params )[ names::delay ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
-  register_parameters_requiring_skipping_( *delays_[ indx ] );
+  register_parameters_requiring_skipping_( *delays_[ synapse_indx ] );
 }
 
 void
-nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx )
+nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t synapse_indx )
 {
   for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
   {
@@ -519,30 +502,27 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 
     if ( syn_params->known( param_name ) )
     {
-      synapse_params_[ indx ][ param_name ] =
+      synapse_params_[ synapse_indx ][ param_name ] =
         ConnParameter::create( ( *syn_params )[ param_name ], kernel().vp_manager.get_num_threads() );
-      register_parameters_requiring_skipping_( *synapse_params_[ indx ][ param_name ] );
+      register_parameters_requiring_skipping_( *synapse_params_[ synapse_indx ][ param_name ] );
     }
   }
 
   // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
-  if ( synapse_params_[ indx ].size() > 0 )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-      param_dicts_[ indx ].push_back( new Dictionary() );
+    param_dicts_[ synapse_indx ].push_back( new Dictionary() );
 
-      for ( auto param : synapse_params_[ indx ] )
+    for ( auto param : synapse_params_[ synapse_indx ] )
+    {
+      if ( param.second->provides_long() )
       {
-        if ( param.second->provides_long() )
-        {
-          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
-        }
-        else
-        {
-          ( *param_dicts_[ indx ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
-        }
+        ( *param_dicts_[ synapse_indx ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
+      }
+      else
+      {
+        ( *param_dicts_[ synapse_indx ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
       }
     }
   }
@@ -635,8 +615,7 @@ nest::OneToOneBuilder::connect_()
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -774,8 +753,7 @@ nest::OneToOneBuilder::sp_connect_()
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       NodeCollection::const_iterator target_it = targets_->begin();
       NodeCollection::const_iterator source_it = sources_->begin();
@@ -868,8 +846,7 @@ nest::AllToAllBuilder::connect_()
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -915,7 +892,7 @@ nest::AllToAllBuilder::connect_()
 }
 
 void
-nest::AllToAllBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, Node* target, index tnode_id, bool skip )
+nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id, bool skip )
 {
   const thread target_thread = target->get_thread();
 
@@ -962,8 +939,7 @@ nest::AllToAllBuilder::sp_connect_()
     const thread tid = kernel().vp_manager.get_thread_id();
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
@@ -1167,8 +1143,7 @@ nest::FixedInDegreeBuilder::connect_()
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -1220,7 +1195,7 @@ nest::FixedInDegreeBuilder::connect_()
 
 void
 nest::FixedInDegreeBuilder::inner_connect_( const int tid,
-  librandom::RngPtr& rng,
+  RngPtr rng,
   Node* target,
   index tnode_id,
   bool skip,
@@ -1326,7 +1301,8 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
 void
 nest::FixedOutDegreeBuilder::connect_()
 {
-  librandom::RngPtr grng = kernel().rng_manager.get_grng();
+  // get global rng that is tested for synchronization for all threads
+  RngPtr grng = get_rank_synced_rng();
 
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
@@ -1369,8 +1345,7 @@ nest::FixedOutDegreeBuilder::connect_()
 
       try
       {
-        // allocate pointer to thread specific random generator
-        librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+        RngPtr rng = get_vp_specific_rng( tid );
 
         std::vector< index >::const_iterator tnode_id_it = tgt_ids_.begin();
         for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
@@ -1471,21 +1446,14 @@ nest::FixedTotalNumberBuilder::connect_()
 
   // calculate exact multinomial distribution
   // get global rng that is tested for synchronization for all threads
-  librandom::RngPtr grng = kernel().rng_manager.get_grng();
+  RngPtr grng = get_rank_synced_rng();
 
-  // HEP: instead of counting upwards, we might count remaining_targets and
-  // remaining_partitions down. why?
   // begin code adapted from gsl 1.8 //
   double sum_dist = 0.0; // corresponds to sum_p
   // norm is equivalent to size_targets
   unsigned int sum_partitions = 0; // corresponds to sum_n
-// substituting gsl_ran call
-#ifdef HAVE_GSL
-  librandom::GSL_BinomialRandomDev bino( grng, 0, 0 );
-#else
-  librandom::BinomialRandomDev bino( grng, 0, 0 );
-#endif
 
+  binomial_distribution bino_dist;
   for ( int k = 0; k < M; k++ )
   {
     // If we have distributed all connections on the previous processes we exit the loop. It is important to
@@ -1498,9 +1466,9 @@ nest::FixedTotalNumberBuilder::connect_()
     {
       double num_local_targets = static_cast< double >( number_of_targets_on_vp[ k ] );
       double p_local = num_local_targets / ( size_targets - sum_dist );
-      bino.set_p( p_local );
-      bino.set_n( N_ - sum_partitions );
-      num_conns_on_vp[ k ] = bino.ldev();
+
+      binomial_distribution::param_type param( N_ - sum_partitions, p_local );
+      num_conns_on_vp[ k ] = bino_dist( grng, param );
     }
 
     sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
@@ -1516,12 +1484,11 @@ nest::FixedTotalNumberBuilder::connect_()
 
     try
     {
-      // allocate pointer to thread specific random generator
       const int vp_id = kernel().vp_manager.thread_to_vp( tid );
 
       if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {
-        librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+        RngPtr rng = get_vp_specific_rng( tid );
 
         // gather local target node IDs
         std::vector< index > thread_local_targets;
@@ -1609,8 +1576,7 @@ nest::BernoulliBuilder::connect_()
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       if ( loop_over_targets_() )
       {
@@ -1658,7 +1624,7 @@ nest::BernoulliBuilder::connect_()
 }
 
 void
-nest::BernoulliBuilder::inner_connect_( const int tid, librandom::RngPtr& rng, Node* target, index tnode_id )
+nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id )
 {
   const thread target_thread = target->get_thread();
 
@@ -1725,37 +1691,17 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR so
 void
 nest::SymmetricBernoulliBuilder::connect_()
 {
-  // Allocate a pointer to the global random generator. This is used to create a
-  // random generator for each thread, each using the same seed obtained from
-  // the global rng, making all threads across all processes generate identical
-  // random number streams. This is required to generate symmetric connections:
-  // if we would loop only over local targets, we might miss the symmetric
-  // counterpart to a connection where a local target is chosen as a source.
-  librandom::RngPtr grng = kernel().rng_manager.get_grng();
-  const unsigned long s = grng->ulrand( std::numeric_limits< unsigned int >::max() );
-
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
 
-// Create a random generator for each thread, each using the same seed obtained
-// from the global rng. This ensures that all threads across all processes
-// generate identical random number streams.
-#ifdef HAVE_GSL
-    librandom::RngPtr rng( new librandom::GslRandomGen( gsl_rng_knuthran2002, s ) );
-#else
-    librandom::RngPtr rng = librandom::RandomGen::create_knuthlfg_rng( s );
-#endif
+    // Use RNG generating same number sequence on all threads
+    RngPtr synced_rng = get_vp_synced_rng( tid );
 
     try
     {
-#ifdef HAVE_GSL
-      librandom::GSL_BinomialRandomDev bino( rng, 0, 0 );
-#else
-      librandom::BinomialRandomDev bino( rng, 0, 0 );
-#endif
-      bino.set_p( p_ );
-      bino.set_n( sources_->size() );
+      binomial_distribution bino_dist;
+      binomial_distribution::param_type param( sources_->size(), p_ );
 
       unsigned long indegree;
       index snode_id;
@@ -1771,7 +1717,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         indegree = sources_->size();
         while ( indegree >= sources_->size() )
         {
-          indegree = bino.ldev();
+          indegree = bino_dist( synced_rng, param );
         }
         assert( indegree < sources_->size() );
 
@@ -1790,7 +1736,7 @@ nest::SymmetricBernoulliBuilder::connect_()
         size_t i = 0;
         while ( i < indegree )
         {
-          snode_id = ( *sources_ )[ rng->ulrand( sources_->size() ) ];
+          snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
 
           // Avoid autapses and multapses. Due to symmetric connectivity,
           // multapses might exist if the target neuron with node ID snode_id draws the
@@ -1813,14 +1759,14 @@ nest::SymmetricBernoulliBuilder::connect_()
           if ( target_thread == tid )
           {
             assert( target != NULL );
-            single_connect_( snode_id, *target, target_thread, rng );
+            single_connect_( snode_id, *target, target_thread, synced_rng );
           }
 
           // if source is local: connect
           if ( source_thread == tid )
           {
             assert( source != NULL );
-            single_connect_( ( *tnode_id ).node_id, *source, source_thread, rng );
+            single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
           }
 
           ++i;
@@ -1916,8 +1862,7 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
 
     try
     {
-      // allocate pointer to thread specific random generator
-      librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
 
       std::vector< index >::const_iterator tnode_id_it = targets.begin();
       std::vector< index >::const_iterator snode_id_it = sources.begin();

@@ -18,7 +18,7 @@
 #   cython_add_standalone_executable( <executable_name> [MAIN_MODULE src1] <src1> <src2> ... <srcN> )
 #
 # To avoid dependence on Python, set the PYTHON_LIBRARY cache variable to point
-# to a static library.  If a MAIN_MODULE source is specified, 
+# to a static library.  If a MAIN_MODULE source is specified,
 # the "if __name__ == '__main__':" from that module is used as the C main() method
 # for the executable.  If MAIN_MODULE, the source with the same basename as
 # <executable_name> is assumed to be the MAIN_MODULE.
@@ -62,6 +62,8 @@
 # limitations under the License.
 #=============================================================================
 
+# Modifications copyright (C) 2004 The NEST Initiative
+
 # Configuration options.
 set( CYTHON_ANNOTATE OFF
     CACHE BOOL "Create an annotated .html file when compiling *.pyx." )
@@ -71,8 +73,42 @@ set( CYTHON_FLAGS "" CACHE STRING
     "Extra flags to the cython compiler." )
 mark_as_advanced( CYTHON_ANNOTATE CYTHON_NO_DOCSTRINGS CYTHON_FLAGS )
 
-find_package( Cython REQUIRED )
-find_package( PythonLibs REQUIRED )
+# The following function is vendored from the deprecated file FindPythonLibs.cmake.
+# PYTHON_ADD_MODULE(<name> src1 src2 ... srcN) is used to build modules for python.
+# PYTHON_WRITE_MODULES_HEADER(<filename>) writes a header file you can include
+# in your sources to initialize the static python modules
+function(PYTHON_ADD_MODULE _NAME )
+  get_property(_TARGET_SUPPORTS_SHARED_LIBS
+    GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS)
+  option(PYTHON_ENABLE_MODULE_${_NAME} "Add module ${_NAME}" TRUE)
+  option(PYTHON_MODULE_${_NAME}_BUILD_SHARED
+    "Add module ${_NAME} shared" ${_TARGET_SUPPORTS_SHARED_LIBS})
+
+  # Mark these options as advanced
+  mark_as_advanced(PYTHON_ENABLE_MODULE_${_NAME}
+    PYTHON_MODULE_${_NAME}_BUILD_SHARED)
+
+  if(PYTHON_ENABLE_MODULE_${_NAME})
+    if(PYTHON_MODULE_${_NAME}_BUILD_SHARED)
+      set(PY_MODULE_TYPE MODULE)
+    else()
+      set(PY_MODULE_TYPE STATIC)
+      set_property(GLOBAL  APPEND  PROPERTY  PY_STATIC_MODULES_LIST ${_NAME})
+    endif()
+
+    set_property(GLOBAL  APPEND  PROPERTY  PY_MODULES_LIST ${_NAME})
+    add_library(${_NAME} ${PY_MODULE_TYPE} ${ARGN})
+#    target_link_libraries(${_NAME} ${PYTHON_LIBRARIES})
+
+    if(PYTHON_MODULE_${_NAME}_BUILD_SHARED)
+      set_target_properties(${_NAME} PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}")
+      if(WIN32 AND NOT CYGWIN)
+        set_target_properties(${_NAME} PROPERTIES SUFFIX ".pyd")
+      endif()
+    endif()
+
+  endif()
+endfunction()
 
 set( CYTHON_CXX_EXTENSION "cxx" )
 set( CYTHON_C_EXTENSION "c" )
@@ -195,15 +231,10 @@ function( compile_pyx _name generated_file )
     set( cython_debug_arg "--gdb" )
   endif ()
 
-  if ( "${PYTHONLIBS_VERSION_STRING}" MATCHES "^2." )
-    set( version_arg "-2" )
-  elseif ( "${PYTHONLIBS_VERSION_STRING}" MATCHES "^3." )
-    set( version_arg "-3" )
-  else ()
-    set( version_arg )
-  endif ()
+  # Set version to 3 for Python 3
+  set( version_arg "-3" )
 
-  # Include directory arguments. 
+  # Include directory arguments.
   list( REMOVE_DUPLICATES cython_include_directories )
   set( include_directory_arg "" )
   foreach ( _include_dir ${cython_include_directories} )
@@ -248,12 +279,12 @@ function( cython_add_module _name )
     endif ()
   endforeach ()
   compile_pyx( ${_name} generated_file ${pyx_module_sources} )
-  include_directories( ${PYTHON_INCLUDE_DIRS} )
+  include_directories( ${Python_INCLUDE_DIRS} )
   python_add_module( ${_name} ${generated_file} ${other_module_sources} )
   if ( APPLE )
     set_target_properties( ${_name} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
   else ()
-    target_link_libraries( ${_name} ${PYTHON_LIBRARIES} )
+    target_link_libraries( ${_name} ${Python_LIBRARIES} )
   endif ()
 endfunction()
 
@@ -265,7 +296,7 @@ function( cython_add_standalone_executable _name )
   set( other_module_sources "" )
   set( main_module "" )
   cmake_parse_arguments( cython_arguments "" "MAIN_MODULE" "" ${ARGN} )
-  include_directories( ${PYTHON_INCLUDE_DIRS} )
+  include_directories( ${Python_INCLUDE_DIRS} )
   foreach ( _file ${cython_arguments_UNPARSED_ARGUMENTS} )
     if ( ${_file} MATCHES ".*\\.py[x]?$" )
       get_filename_component( _file_we ${_file} NAME_WE )
@@ -291,5 +322,5 @@ function( cython_add_standalone_executable _name )
   set( CYTHON_FLAGS ${CYTHON_FLAGS} --embed )
   compile_pyx( "${main_module_we}_static" generated_file ${main_module} )
   add_executable( ${_name} ${generated_file} ${pyx_module_sources} ${other_module_sources} )
-  target_link_libraries( ${_name} ${PYTHON_LIBRARIES} ${pyx_module_libs} )
+  target_link_libraries( ${_name} ${Python_LIBRARIES} ${pyx_module_libs} )
 endfunction()

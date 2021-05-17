@@ -31,6 +31,7 @@
 #include <cstdio>
 
 // Includes from libnestutil:
+#include "compose.hpp"
 #include "dict_util.h"
 #include "numerics.h"
 
@@ -42,12 +43,9 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "integerdatum.h"
 #include "doubledatum.h"
+#include "integerdatum.h"
 
-#include "compose.hpp"
-#include "propagator_stability.h"
-#include "event.h"
 
 namespace nest
 {
@@ -455,7 +453,7 @@ nest::gif_cond_exp::calibrate()
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 

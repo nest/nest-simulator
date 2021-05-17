@@ -28,6 +28,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "conn_builder.h"
@@ -39,6 +40,7 @@
 #include "nest_types.h"
 #include "per_thread_bool_indicator.h"
 #include "source_table.h"
+#include "spike_data.h"
 #include "target_table.h"
 #include "target_table_devices.h"
 
@@ -86,6 +88,8 @@ public:
 
   void compute_target_data_buffer_size();
   void compute_compressed_secondary_recv_buffer_positions( const thread tid );
+  void collect_compressed_spike_data( const thread tid );
+  void clear_compressed_spike_data_map( const thread tid );
 
   /**
    * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
@@ -130,8 +134,8 @@ public:
     thread target_thread,
     const synindex syn_id,
     const DictionaryDatum& params,
-    const double_t delay = numerics::nan,
-    const double_t weight = numerics::nan );
+    const double delay = numerics::nan,
+    const double weight = numerics::nan );
 
   /**
    * Connect two nodes. The source and target nodes are defined by their
@@ -144,6 +148,15 @@ public:
    * \param syn_id The synapse model to use.
    */
   bool connect( const index snode_id, const index target, const DictionaryDatum& params, const synindex syn_id );
+
+  void connect_arrays( long* sources,
+    long* targets,
+    double* weights,
+    double* delays,
+    std::vector< std::string >& p_keys,
+    double* p_values,
+    size_t n,
+    std::string syn_model );
 
   index find_connection( const thread tid, const synindex syn_id, const index snode_id, const index tnode_id );
 
@@ -187,7 +200,7 @@ public:
    * The function then iterates all entries in source and collects the
    * connection IDs to all neurons in target.
    */
-  ArrayDatum get_connections( const DictionaryDatum& params ) const;
+  ArrayDatum get_connections( const DictionaryDatum& params );
 
   void get_connections( std::deque< ConnectionID >& connectome,
     NodeCollectionPTR source,
@@ -315,6 +328,8 @@ public:
    */
   bool get_sort_connections_by_source() const;
 
+  bool use_compressed_spikes() const;
+
   /**
    * Sorts connections in the presynaptic infrastructure by increasing
    * source node ID.
@@ -343,6 +358,11 @@ public:
    * communicated to false.
    */
   void unset_have_connections_changed( const thread tid );
+
+  /**
+   * Sets flag indicating whether GetConnections has been called since last update of connections.
+   */
+  void set_has_get_connections_been_called( const bool has_get_connections_been_called );
 
   /**
    * Deletes TargetTable and resets processed flags of
@@ -387,6 +407,12 @@ public:
   double get_stdp_eps() const;
 
   void set_stdp_eps( const double stdp_eps );
+
+  // public stop watch for benchmarking purposes
+  // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
+  Stopwatch sw_construction_connect;
+
+  const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const index idx );
 
 private:
   size_t get_num_target_data( const thread tid ) const;
@@ -532,6 +558,13 @@ private:
   SourceTable source_table_;
 
   /**
+   * A structure to hold "unpacked" spikes on the postsynaptic side if
+   * spike compression is enabled. Internally arranged in a 3d
+   * structure: synapses|sources|spike data
+   */
+  std::vector< std::vector< std::vector< SpikeData > > > compressed_spike_data_;
+
+  /**
    * Stores absolute position in receive buffer of secondary events.
    * structure: threads|synapses|position
    */
@@ -583,8 +616,19 @@ private:
   //! simulate.
   PerThreadBoolIndicator have_connections_changed_;
 
+  //! true if GetConnections has been called.
+  bool has_get_connections_been_called_;
+
   //! Whether to sort connections by source node ID.
   bool sort_connections_by_source_;
+
+  //! Whether to use spike compression; if a neuron has targets on
+  //! multiple threads of a process, this switch makes sure that only
+  //! a single packet is sent to the process instead of one packet per
+  //! target thread; requires sort_connections_by_source_ = true; for
+  //! more details see the discussion and sketch in
+  //! https://github.com/nest/nest-simulator/pull/1338
+  bool use_compressed_spikes_;
 
   //! Whether primary connections (spikes) exist.
   bool has_primary_connections_;
@@ -769,6 +813,12 @@ ConnectionManager::get_sort_connections_by_source() const
   return sort_connections_by_source_;
 }
 
+inline bool
+ConnectionManager::use_compressed_spikes() const
+{
+  return use_compressed_spikes_;
+}
+
 inline double
 ConnectionManager::get_stdp_eps() const
 {
@@ -812,6 +862,24 @@ ConnectionManager::set_source_has_more_targets( const thread tid,
   const bool more_targets )
 {
   connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
+}
+
+inline void
+nest::ConnectionManager::set_has_get_connections_been_called( const bool has_get_connections_been_called )
+{
+  has_get_connections_been_called_ = has_get_connections_been_called;
+}
+
+inline const std::vector< SpikeData >&
+ConnectionManager::get_compressed_spike_data( const synindex syn_id, const index idx )
+{
+  return compressed_spike_data_.at( syn_id ).at( idx );
+}
+
+inline void
+ConnectionManager::clear_compressed_spike_data_map( const thread tid )
+{
+  source_table_.clear_compressed_spike_data_map( tid );
 }
 
 } // namespace nest

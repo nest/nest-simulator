@@ -50,20 +50,20 @@ updates stimulating device just before each run. This is useful for
 co-simulation or for receiving data from an external software.
 
 The creation of this MPI communication is based on the functions
-'MPI_Comm_connect' and 'MPI_Comm_disconnect'. The port name is 
+'MPI_Comm_connect' and 'MPI_Comm_disconnect'. The port name is
 read from a file for each device with this backend.
-The name of the file needs to be specified according to the following 
+The name of the file needs to be specified according to the following
 pattern:
 
 ::
 
    data_path/label/id_device.txt
 
-The properties ``data_path`` and ``data_prefix`` are global kernel properties.
-This path is only used during the ``Prepare`` call. There is not
-functionality for changing connection during the ``Run``.
-If you want to change the connections during the simulation, you need first 
-to close the previous one by using calling ``Cleanup`` of the simulator.
+The ``data_path`` and ``data_prefix`` are global kernel properties,
+while `label` is a property of the device in question and `id_device`
+its node ID.
+This path can only be set outside of a `Run` contexts (i.e.
+after ``Prepare()` has been called, but ``Cleanup()`` has not).
 
 
 Communication Protocol
@@ -84,7 +84,7 @@ following format for the MPI messages:
 Data format
 +++++++++++
 
-The format of the data is depend of the stimulating device. 
+The format of the data is depend of the stimulating device.
 
 Parameter summary
 +++++++++++++++++
@@ -133,8 +133,6 @@ public:
   void pre_run_hook() override;
 
   void post_run_hook() override;
-
-  void post_step_hook() override;
 
 private:
   bool enrolled_;

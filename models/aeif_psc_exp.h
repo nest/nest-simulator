@@ -92,6 +92,9 @@ Note that the spike detection threshold V_peak is automatically set to
 :math:`V_th+10` mV to avoid numerical instabilites that may result from
 setting V_peak too high.
 
+For implementation details see the
+`aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+
 Parameters
 ++++++++++
 
@@ -234,7 +237,6 @@ private:
     double a;          //!< Subthreshold adaptation in nS
     double b;          //!< Spike-triggered adaptation in pA
     double V_th;       //!< Spike threshold in mV
-    double t_ref;      //!< Refractory period in ms
     double tau_syn_ex; //!< Excitatory synaptic kernel decay time in ms
     double tau_syn_in; //!< Inhibitory synaptic kernel decay time in ms
     double I_e;        //!< Intrinsic current in pA

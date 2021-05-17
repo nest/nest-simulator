@@ -372,6 +372,9 @@ def rst_index(hierarchy, current_tags=[], underlines='=-~', top=True):
             underlines = underlines[1:]
 
     for tags, items in sorted(hierarchy.items()):
+
+        if "NOINDEX" in tags:
+            continue
         if isinstance(tags, str):
             title = tags
         else:

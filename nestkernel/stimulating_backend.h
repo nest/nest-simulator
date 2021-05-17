@@ -138,7 +138,7 @@ public:
    * the stimulating devices. The update of the device are made only if
    * necessary and repeated at the beginning of every single call to run in a
    * prepare-run-run-...-run-run-cleanup sequence.
-   * 
+   *
    *
    * @see post_run_hook()
    *
@@ -159,17 +159,14 @@ public:
   virtual void post_run_hook() = 0;
 
   /**
-   * Do work required at the end of each simulation step.
+   * In order to do work required at the end of each simulation step,
+   * one could implement the function post_step_hook().
+   * This would be called at the very end of each simulation step.
+   * This function is not used for the moment because it is tightly coupled
+   * to a formal definition of the sycnhronization between incomming data
+   *  and the simulation.
    *
-   * This is called at the very end of each simulation step.
-   * This function is not used for the moment because it implies a complexe 
-   * thinking about sycnhronization of incomming data and the simulation.
-   *
-   * @see pre_run_hook()
-   *
-   * @ingroup NESTio
    */
-  virtual void post_step_hook() = 0;
 
   virtual void initialize() = 0;
   virtual void finalize() = 0;
@@ -200,7 +197,6 @@ public:
   virtual void cleanup() = 0;
 
   void clear( const StimulatingDevice& ){};
-
 };
 
 } // namespace

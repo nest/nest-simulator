@@ -26,17 +26,24 @@ import unittest
 import nest
 import numpy as np
 
+
+try:
+    import scipy.stats
+    HAVE_SCIPY = True
+except ImportError:
+    HAVE_SCIPY = False
+
 nest.set_verbosity('M_ERROR')
 
 
 class ConnectLayersTestCase(unittest.TestCase):
     def setUp(self):
-        dim = [4, 5]
-        extent = [10., 10.]
+        self.dim = [4, 5]
+        self.extent = [10., 10.]
         nest.ResetKernel()
-        nest.SetKernelStatus({'grng_seed': 123, 'rng_seeds': [456]})
+        nest.SetKernelStatus({'rng_seed': 123})
         self.layer = nest.Create(
-            'iaf_psc_alpha', positions=nest.spatial.grid(dim, extent=extent))
+            'iaf_psc_alpha', positions=nest.spatial.grid(self.dim, extent=self.extent))
 
     def _check_connections(self, conn_spec, expected_num_connections):
         """Helper function which asserts that connecting with the specified conn_spec gives
@@ -44,6 +51,39 @@ class ConnectLayersTestCase(unittest.TestCase):
         nest.Connect(self.layer, self.layer, conn_spec)
         conns = nest.GetConnections()
         self.assertEqual(len(conns), expected_num_connections)
+
+    def _check_connections_statistical(self, conn_spec, p, num_pairs):
+        """Helper function which asserts that the number of connections created are based on a bernoulli distribution.
+        The connection function is iterated N times, then the distribution of number of created connections are tested
+        against a bernoulli distribution using a Kolmogorov-Smirnov test. This is done ks_N times, to get statistical
+        values. The mean of the KS tests is then compared to the limits. If either of the values are below the specified
+        limits, the test fails."""
+        self.assertEqual(conn_spec['rule'], 'pairwise_bernoulli')
+        N = 100  # Number of samples per KS test
+        ks_N = 5  # Number of KS tests to perform.
+        p_val_lim = 0.1  # Limit for the p value of the KS test
+        ks_stat_lim = 0.2  # Limit for the KS statistic
+
+        p_vals = np.zeros(ks_N)
+        ks_stats = np.zeros(ks_N)
+
+        for ks_i in range(ks_N):
+            n_conns = np.zeros(N)
+            ref = np.zeros(N)
+            for i in range(N):
+                nest.Connect(self.layer, self.layer, conn_spec)
+                num_connections = nest.GetKernelStatus('num_connections')
+                n_conns[i] = num_connections - np.sum(n_conns)
+                ref[i] = np.sum(scipy.stats.bernoulli.rvs(p, size=num_pairs))
+            ks_stats[ks_i], p_vals[ks_i] = scipy.stats.ks_2samp(n_conns, ref)
+            print(f'ks_stat={ks_stats[ks_i]}, p_val={p_vals[ks_i]}')
+
+        mean_p_val = np.mean(p_vals)
+        mean_ks_stat = np.mean(ks_stats)
+        print(f'mean_ks_stat={mean_ks_stat}, mean_p_val={mean_p_val}')
+
+        self.assertGreater(mean_p_val, p_val_lim)
+        self.assertLess(mean_ks_stat, ks_stat_lim)
 
     def _assert_connect_layers_autapses(self, autapses, expected_num_autapses):
         """Helper function which asserts that connecting with or without allowing autapses gives
@@ -133,7 +173,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             },
         }
@@ -152,7 +192,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             },
             'p': 0.5
@@ -167,7 +207,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             }
         }
@@ -186,7 +226,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             },
             'p': 0.5
@@ -201,42 +241,46 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             }
         }
         self._check_connections(conn_spec, 108)
 
+    @unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
     def test_connect_layers_bernoulli_kernel_mask(self):
         """Connecting layers with pairwise_bernoulli, kernel and mask"""
+        p = 0.5
         conn_spec = {
             'rule': 'pairwise_bernoulli',
-            'p': 0.5,
+            'p': p,
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             }
         }
-        self._check_connections(conn_spec, 52)
+        self._check_connections_statistical(conn_spec, p, 108)
 
+    @unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
     def test_connect_layers_bernoulli_kernel_mask_source(self):
         """
         Connecting layers with pairwise_bernoulli, kernel and mask on source
         """
+        p = 0.5
         conn_spec = {
             'rule': 'pairwise_bernoulli',
-            'p': 0.5,
+            'p': p,
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             },
             'use_on_source': True
         }
-        self._check_connections(conn_spec, 52)
+        self._check_connections_statistical(conn_spec, p, 108)
 
     def test_connect_nonlayers_mask(self):
         """Throw when connecting non-layer NodeCollections with mask."""
@@ -247,7 +291,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             }
         }
@@ -273,7 +317,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             'mask': {
                 'rectangular': {
                     'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
+                    'upper_right': [0.1, 0.1]
                 }
             }
         }
@@ -364,6 +408,50 @@ class ConnectLayersTestCase(unittest.TestCase):
             layer = layers['layer']
             sliced_post = layers[sliced]
             self._assert_connect_sliced(layer, sliced_post)
+
+    def test_connect_synapse_label(self):
+        indegree = 10
+        conn_spec = {
+            'rule': 'fixed_indegree',
+            'indegree': indegree,
+            'p': 1.0,
+            'mask': {
+                'rectangular': {
+                    'lower_left': [-5., -5.],
+                    'upper_right': [0., 0.]
+                }
+            }
+        }
+        syn_label = 123
+        syn_spec = {'synapse_model': 'stdp_synapse_lbl', 'synapse_label': syn_label}
+
+        nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
+        conns = nest.GetConnections()
+        self.assertEqual(conns.get('synapse_label'), [syn_label]*len(self.layer)*indegree)
+
+    def test_connect_receptor_type(self):
+        receptor_type = 7
+        multisyn_layer = nest.Create(
+            'iaf_psc_exp_multisynapse',
+            params={'tau_syn': [0.1 + i for i in range(receptor_type)]},
+            positions=nest.spatial.grid(self.dim, extent=self.extent))
+        indegree = 10
+        conn_spec = {
+            'rule': 'fixed_indegree',
+            'indegree': indegree,
+            'p': 1.0,
+            'mask': {
+                'rectangular': {
+                    'lower_left': [-5., -5.],
+                    'upper_right': [0., 0.]
+                }
+            }
+        }
+        syn_spec = {'receptor_type': receptor_type}
+
+        nest.Connect(multisyn_layer, multisyn_layer, conn_spec, syn_spec)
+        conns = nest.GetConnections()
+        self.assertEqual(conns.get('receptor'), [receptor_type]*len(multisyn_layer)*indegree)
 
 
 def suite():

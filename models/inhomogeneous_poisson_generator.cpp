@@ -19,27 +19,31 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "inhomogeneous_poisson_generator.h"
 
-#include "event_delivery_manager_impl.h"
-#include "kernel_manager.h"
+// C++ includes:
+#include <cmath>
+#include <limits>
 
+// Includes from libnestutil:
+#include "dict_util.h"
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "booldatum.h"
-
-
-#include "exceptions.h"
 #include "integerdatum.h"
 #include "arraydatum.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
 
-#include <cmath>
-#include <limits>
-
-#include "dict_util.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -61,7 +65,7 @@ void
 nest::inhomogeneous_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   const size_t n_rates = rate_times_.size();
-  std::vector< double_t >* times_ms = new std::vector< double_t >();
+  std::vector< double >* times_ms = new std::vector< double >();
   times_ms->reserve( n_rates );
   for ( size_t n = 0; n < n_rates; ++n )
   {
@@ -69,12 +73,12 @@ nest::inhomogeneous_poisson_generator::Parameters_::get( DictionaryDatum& d ) co
   }
 
   ( *d )[ names::rate_times ] = DoubleVectorDatum( times_ms );
-  ( *d )[ names::rate_values ] = DoubleVectorDatum( new std::vector< double_t >( rate_values_ ) );
+  ( *d )[ names::rate_values ] = DoubleVectorDatum( new std::vector< double >( rate_values_ ) );
   ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_times_ );
 }
 
 void
-nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_insert( const double_t t )
+nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_insert( const double t )
 {
   Time t_rate;
 
@@ -113,7 +117,7 @@ void
 nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* )
 {
   const bool times = d->known( names::rate_times );
-  const bool rates = updateValue< std::vector< double_t > >( d, names::rate_values, rate_values_ );
+  const bool rates = updateValue< std::vector< double > >( d, names::rate_values, rate_values_ );
 
   // if offgrid flag changes, it must be done so either before any rates are
   // set or when setting new rates (which removes old ones)
@@ -144,7 +148,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& 
     return;
   }
 
-  const std::vector< double_t > d_times = getValue< std::vector< double_t > >( d->lookup( names::rate_times ) );
+  const std::vector< double > d_times = getValue< std::vector< double > >( d->lookup( names::rate_times ) );
 
   if ( d_times.empty() )
   {
@@ -163,7 +167,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& 
   // align them to the grid if necessary and insert them
 
   // handle first rate time, and insert it
-  std::vector< double_t >::const_iterator next = d_times.begin();
+  std::vector< double >::const_iterator next = d_times.begin();
   assert_valid_rate_time_and_insert( *next );
 
   // keep track of previous rate
@@ -244,9 +248,6 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin, const long fr
 
   const long t0 = origin.get_steps();
 
-  // random number generator
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
-
   // Skip any times in the past. Since we must send events proactively,
   // idx_ must point to times in the future.
   const long first = t0 + from;
@@ -280,8 +281,8 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin, const long fr
 void
 nest::inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  V_.poisson_dev_.set_lambda( B_.rate_ * V_.h_ );
-  long n_spikes = V_.poisson_dev_.ldev( kernel().rng_manager.get_rng( get_thread() ) );
+  poisson_distribution::param_type param( B_.rate_ * V_.h_ );
+  long n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ), param );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

@@ -23,14 +23,12 @@
 #ifndef POISSON_GENERATOR_H
 #define POISSON_GENERATOR_H
 
-// Includes from librandom:
-#include "poisson_randomdev.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "stimulating_device.h"
 
 namespace nest
@@ -138,7 +136,7 @@ private:
 
   struct Variables_
   {
-    librandom::PoissonRandomDev poisson_dev_; //!< Random deviate generator
+    poisson_distribution poisson_dist_; //!< poisson distribution
   };
 
   // ------------------------------------------------------------

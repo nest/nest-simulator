@@ -105,7 +105,7 @@ nest::StimulatingBackendMPI::prepare()
 
   if ( prepared_ )
   {
-    throw BackendPrepared( "InputBackendMPI" );
+    throw BackendPrepared( "StimulatingBackendMPI" );
   }
 
   // need to be run only by the master thread : it is the case because this part is not running in parallel
@@ -237,12 +237,6 @@ nest::StimulatingBackendMPI::pre_run_hook()
     data = nullptr;
   }
 #pragma omp barrier
-}
-
-void
-nest::StimulatingBackendMPI::post_step_hook()
-{
-  // nothing to do
 }
 
 void

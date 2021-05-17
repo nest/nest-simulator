@@ -1,0 +1,13 @@
+version: 2
+
+sphinx:
+  builder: html
+  configuration: doc/userdoc/conf.py
+
+python:
+   version: 3.8
+   install:
+   - requirements: extras/nest-simulator-doc-requirements.txt
+
+build:
+  image: latest

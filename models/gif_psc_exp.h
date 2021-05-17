@@ -122,6 +122,15 @@ The same formula applies for :math:`q_{\gamma}`.
 
 The shape of postsynaptic current is exponential.
 
+.. note::
+
+  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+  `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+  For implementation details see the
+  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+
 Parameters
 ++++++++++
 
@@ -342,7 +351,7 @@ private:
     std::vector< double > P_sfa_; // decay terms of spike-triggered current elements
     std::vector< double > P_stc_; // decay terms of adaptive threshold elements
 
-    librandom::RngPtr rng_; // random number generator of my own thread
+    RngPtr rng_; // random number generator of my own thread
 
     unsigned int RefractoryCounts_;
   };

@@ -26,8 +26,8 @@
 # a local static code analysis.
 #
 # NOTE: This shell script is tightly coupled to Python script
-#       'extras/parse_travis_log.py'. 
-#       Any changes to message numbers (MSGBLDnnnn) have effects on 
+#       'extras/parse_build_log.py'.
+#       Any changes to message numbers (MSGBLDnnnn) have effects on
 #       the build/test-log parsing process.
 #
 
@@ -60,8 +60,9 @@ PEP8_MAX_LINE_LENGTH=120
 # Constants
 typeset -i MAX_CPPCHECK_MSG_COUNT=10
 
-# Drop files that should not be checked (space-separated list).
-FILES_TO_IGNORE="libnestutil/compose.hpp librandom/knuthlfg.h librandom/knuthlfg.cpp"
+# Find directories that should not be checked. List root dirs in space-separated list.
+ROOT_DIRS_TO_IGNORE="thirdparty"
+DIRS_TO_IGNORE=$(for dir in ${ROOT_DIRS_TO_IGNORE}; do find ${dir} -type d; done)
 
 # Print a message.
 # The format of the message depends on whether the script is executed on Travis CI or runs local.
@@ -118,17 +119,20 @@ print_msg "MSGBLD1050: " "Running check for copyright headers"
 copyright_check_errors=`python3 extras/check_copyright_headers.py`
 print_msg "MSGBLD1060: " "Running sanity check for Name definition and usage"
 unused_names_errors=`python3 extras/check_unused_names.py`
+print_msg "MSGBLD1070: " "Running check for forbidden type usage"
+forbidden_types_errors=`bash extras/check_forbidden_types.sh`
 
 
-# Perfom static code analysis.
+# Perform static code analysis.
 c_files_with_errors=""
 python_files_with_errors=""
 for f in $FILE_NAMES; do
 
-  if [[ $FILES_TO_IGNORE =~ .*$f.* ]]; then
-    print_msg "MSGBLD0110: " "$f is explicitly ignored."
+  # Have to add spaces to make space-separation work
+  if [[ " $DIRS_TO_IGNORE " =~ .*[[:space:]]${f%/*}[[:space:]].* ]]; then
+    print_msg "MSGBLD0110: " "$f is in a directory that is explicitly ignored."
     continue
-  fi   
+  fi
   if [ ! -f "$f" ]; then
     print_msg "MSGBLD0110: " "$f is not a file or does not exist anymore."
     continue
@@ -185,7 +189,7 @@ for f in $FILE_NAMES; do
             print_msg "MSGBLD0155: " "[CPPC] $line"
             if $RUNS_ON_TRAVIS; then
               msg_count+=1
-              if [ ${msg_count} -ge ${MAX_CPPCHECK_MSG_COUNT} ]; then 
+              if [ ${msg_count} -ge ${MAX_CPPCHECK_MSG_COUNT} ]; then
                 print_msg "MSGBLD0156: " "[CPPC] MAX_CPPCHECK_MSG_COUNT (${MAX_CPPCHECK_MSG_COUNT}) reached for file: $f"
                 break
               fi
@@ -264,6 +268,7 @@ done
 nlines_copyright_check=`echo -e $copyright_check_errors | sed -e 's/^ *//' | wc -l`
 if [ $nlines_copyright_check \> 1 ] || \
    [ "x$unused_names_errors" != "x" ] || \
+   [ -n "$forbidden_types_errors" ] || \
    [ "x$c_files_with_errors" != "x" ] || \
    [ "x$python_files_with_errors" != "x" ]; then
 
@@ -292,7 +297,13 @@ if [ $nlines_copyright_check \> 1 ] || \
   if [ "x$unused_names_errors" != "x" ]; then
       print_msg "MSGBLD0220: " "Files with unused/ill-defined Name objects:"
       echo -e $unused_names_errors | sed -e 's/^ *//'
-      print_msg "" ""     
+      print_msg "" ""
+  fi
+
+  if [ -n "$forbidden_types_errors" ]; then
+      print_msg "MSGBLD0220: " "Files with forbidden types (hint: use types without _t suffix):"
+      echo -e $forbidden_types_errors | sed -e 's/^ *//'
+      print_msg "" ""
   fi
 
   if [ "x$python_files_with_errors" != "x" ]; then
@@ -305,7 +316,7 @@ if [ $nlines_copyright_check \> 1 ] || \
       print_msg "" ""
     fi
   fi
-  
+
   if ! $RUNS_ON_TRAVIS; then
       print_msg "" "For detailed problem descriptions, consult the tagged messages above."
       print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY], [NAME] and [PEP8]."
@@ -316,5 +327,5 @@ else
   print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
   print_msg "MSGBLD0220: " "+               STATIC CODE ANALYSIS TERMINATED SUCCESSFULLY !                +"
   print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-  print_msg "" ""  
+  print_msg "" ""
 fi

@@ -29,6 +29,8 @@
 
 // C includes:
 #include <gsl/gsl_integration.h>
+#include <gsl/gsl_sf_dawson.h>
+#include <gsl/gsl_sf_erf.h>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -36,8 +38,6 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "normal_randomdev.h"
-#include "poisson_randomdev.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
@@ -66,6 +66,13 @@ external input.
 The model supports connections to other rate models with zero
 delay, and uses the secondary_event concept introduced with the
 gap-junction framework.
+
+Remarks:
+
+For details on the numerical solution of the Siegert integral, you can
+check out the `Siegert_neuron_integration
+<../model_details/siegert_neuron_integration.ipynb>`_
+notebook in the NEST source code.
 
 Parameters
 ++++++++++
@@ -175,10 +182,8 @@ private:
   void update( Time const&, const long, const long );
   bool wfr_update( Time const&, const long, const long );
 
-  // siegert functions and helpers
+  // siegert function
   double siegert( double, double );
-  double siegert1( double, double, double, double );
-  double siegert2( double, double, double, double );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< siegert_neuron >;

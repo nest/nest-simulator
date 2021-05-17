@@ -125,7 +125,7 @@ nest.Simulate(100.)
 # in the `record_from` property of the multimeter.
 
 data = numpy.loadtxt(m.filenames[0], skiprows=3)
-sender, t, v_m, g_in, g_ex = data.T
+sender, t, v_m, g_ex, g_in = data.T
 
 ###############################################################################
 # Finally, the time courses of the membrane voltage and the synaptic

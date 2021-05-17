@@ -136,7 +136,7 @@ public:
    * This function is called on each backend right at the very beginning of
    * `SimulationManager::run()`. It used for getting the data in order to update
    * the stimulating devices. The update of the device are made only if
-   * necessary. It's repeated at the beginning of every single call to run in a
+   * necessary and repeated at the beginning of every single call to run in a
    * prepare-run-run-...-run-run-cleanup sequence.
    * 
    *

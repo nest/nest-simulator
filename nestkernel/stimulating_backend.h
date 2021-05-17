@@ -60,7 +60,7 @@ namespace nest
  * stimulating devices. At the end of each run, it calls post_run_hook()
  * on each stimulating backend via IOManager.
  *
- * During the simulation, stimulating backend do nothing. This solution
+ * During the simulation, stimulating backends do nothing. This solution
  * was chosen for avoiding complex synchronization. It can be modify in
  * the future.
  *

@@ -40,51 +40,66 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-@ingroup Synapses
-@ingroup stdp
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
 
-Name: urbanczik_synapse - Synapse type for a plastic synapse after Urbanczik and Senn.
+Short description
++++++++++++++++++
 
-Description:
+Synapse type for a plastic synapse after Urbanczik and Senn
 
-urbanczik_synapse is a connector to create Urbanczik synapses as defined in [1] that can connect suitable
-multicompartment models. In contrast to usual STDP, the change of the synaptic weight does not only depend on the pre-
-and postsynaptic spike timing but also on the postsynaptic dendritic potential.
+Description
++++++++++++
 
-Urbanczik synapses require archiving of continuous quantities. Therefore they can only be connected to neuron models
-that are capable of doing this archiving. So far, the only compatible model is pp_cond_exp_mc_urbanczik.
+urbanczik_synapse is a connector to create Urbanczik synapses as defined in
+[1]_ that can connect suitable :ref:`multicompartment models
+<multicompartment-models>`. In contrast to most STDP models, the synaptic weight
+depends on the postsynaptic dendritic potential, in addition to the pre- and
+postsynaptic spike timing.
 
-Parameters:
+Urbanczik synapses require the archiving of the dendritic membrane potential
+which is continuous in time. Therefore they can only be connected to neuron
+models that are capable of doing this archiving. So far, the only compatible
+model is :doc:`pp_cond_exp_mc_urbanczik <pp_cond_exp_mc_urbanczik>`.
 
-\verbatim embed:rst
-=======   ======  ==========================================================
-eta       real    Learning rate
-tau_Delta real    Time constant of low pass filtering of the weight change
-Wmax      real    Maximum allowed weight
-Wmin      real    Minimum allowed weight
-=======   ======  ==========================================================
-\endverbatim
+Parameters
+++++++++++
 
-All other parameters are stored in in the neuron models that are compatible with the Urbanczik synapse.
+=========   ====   =========================================================
+eta         real   Learning rate
+tau_Delta   real   Time constant of low pass filtering of the weight change
+Wmax        real   Maximum allowed weight
+Wmin        real   Minimum allowed weight
+=========   ====   =========================================================
+
+All other parameters are stored in the neuron models that are compatible
+with the Urbanczik synapse.
 
 Remarks:
 
-So far the implementation of the urbanczik_synapse only supports two-compartment neurons.
+So far the implementation of the urbanczik_synapse only supports
+two-compartment neurons.
 
-Transmits: SpikeEvent
+Transmits
++++++++++
 
-References:
+SpikeEvent
 
-\verbatim embed:rst
-.. [1] R. Urbanczik, W. Senn (2014). Learning by the Dendritic Prediction of Somatic Spiking. Neuron, 81, 521 - 528.
-\endverbatim
-Authors: Jonas Stapmanns, David Dahmen, Jan Hahne
+References
+++++++++++
 
-SeeAlso: stdp_synapse, clopath_synapse, pp_cond_exp_mc_urbanczik
-*/
+.. [1] Urbanczik R. and Senn W (2014). Learning by the dendritic prediction of
+       somatic spiking. Neuron, 81:521 - 528. https://doi.org/10.1016/j.neuron.2013.11.030
+
+See also
+++++++++
+
+stdp_synapse, clopath_synapse, pp_cond_exp_mc_urbanczik
+
+EndUserDocs */
+
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
 template < typename targetidentifierT >
 class urbanczik_synapse : public Connection< targetidentifierT >
 {
@@ -219,7 +234,7 @@ urbanczik_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSy
       ( tau_L_trace_ * exp( minus_delta_t_up / tau_L ) - tau_s_trace_ * exp( minus_delta_t_up / tau_s ) ) * start->dw_;
     PI_integral_ += PI;
     dPI_exp_integral += exp( minus_t_down / tau_Delta_ ) * PI;
-    start++;
+    ++start;
   }
 
   PI_exp_integral_ = ( exp( ( t_lastspike_ - t_spike ) / tau_Delta_ ) * PI_exp_integral_ + dPI_exp_integral );

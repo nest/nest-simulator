@@ -100,7 +100,7 @@ public:
   *
   * A common implementation of this function will create an entry in
   * a thread-local map, associating the device's node ID with the
-  * device-specific backend properties and an output facility of some
+  * device-specific backend properties and an input facility of some
   * kind.
   *
   * @param device the StimulatingDevice to be enrolled

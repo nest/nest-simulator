@@ -56,7 +56,7 @@ namespace nest
  * The user level function Run drives the simulation main loop by
  * updating all the stimulating device. At its beginning it calls
  * pre_run_hook() on each stimulating backend via the IOManager.
- * This function is use to receive or read data and update the
+ * This function is used to receive or read data and update the
  * stimulating devices. At the end of each run, it calls post_run_hook()
  * on each stimulating backend via IOManager.
  *

@@ -264,7 +264,7 @@ private:
 
   struct Variables_
   {
-    normal_distribution normal_dist_;       //!< normal distribution
+    normal_distribution normal_dist_; //!< normal distribution
 
     long dt_steps_;  //!< update interval in steps
     double omega_;   //!< frequency [radian/s]

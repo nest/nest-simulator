@@ -402,19 +402,19 @@ Security considerations
 As explained above, the ``/exec`` route of the NEST Server API allows
 you to run custom Python scripts within the NEST Server context. This
 can greatly simplify your workflow in situations where you already
-have the simulation description in form of a Python script. On the
-technical side, however, this route obviously exposes a potential risk
+have the simulation description in the form of a Python script. On the
+technical side, however, this route exposes a potential risk
 for the remote execution of malicious code.
 
 In order to protect the execution environment from such security
 breaches, we execute all user supplied code in a `RestrictedPython
 <https://restrictedpython.readthedocs.io/en/latest/>`_ trusted
-environment. The most practical consequence of this is that your
-scripts are not permitted to import additional Python modules, unless
+environment. Consequently, this environment blocks
+your scripts from importing additional Python modules, unless
 they are explicitly safelisted during the start-up of NEST Server.
 
 To mark modules as safe for execution within NEST Server and make them
-available to code from user supplied scripts run through the ``/exec``
+available to code from user supplied scripts that run through the ``/exec``
 route, a comma separated list of Python module names can be assigned
 to the environment variable ``NEST_SERVER_MODULES`` prior to starting
 the NEST Server.
@@ -453,7 +453,7 @@ After this, NumPy can be used from within scripts in the regular way:
 
     Please be aware that running NEST Server like this bears a high
     risk of arbitrary remote code execution, and this mode of operation
-    should only be used in exceptional cases. We also can't provide
+    should only be used in exceptional cases. We cannot provide
     any support for problems arising from such a use of NEST Server.
 
 .. _nest_server_advanced:
@@ -466,7 +466,7 @@ Run scripts in NEST Server using `curl`
 
 As shown above, you can send custom simulation code to
 ``localhost:5000/exec``. On the command line, this approach might be a
-bit more challenging in case your script does not fit on a single
+bit more challenging in the case your script does not fit on a single
 line. For such situations, we recommend using a JSON file as input for
 ``curl``:
 
@@ -489,8 +489,8 @@ command:
 Interact with NEST Server using JavaScript
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As the NEST Server is built on modern web technologies, it is a
-somewhat obvious desire to create a frontend to it in the form of a
+As the NEST Server is built on modern web technologies, it may be
+desirable to create a frontend to it in the form of a
 website. In this context, JavaScript is the natural choice for the
 client-side language as it is widely supported by all web browsers and
 provides libraries for handling HTTP requests and responses out of the

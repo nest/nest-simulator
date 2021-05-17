@@ -264,7 +264,6 @@ private:
 
   struct Variables_
   {
-    librandom::NormalRandomDev normal_dev_; //!< random deviate generator
     normal_distribution normal_dist_;       //!< normal distribution
 
     long dt_steps_;  //!< update interval in steps

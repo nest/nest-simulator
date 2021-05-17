@@ -49,10 +49,10 @@ The `mpi` stimulating backend collects data from MPI channels and
 updates stimulating device just before each run. This is useful for
 co-simulation or for receiving data from an external software.
 
-The creation of this MPI communication is based on the function 
+The creation of this MPI communication is based on the functions
 'MPI_Comm_connect' and 'MPI_Comm_disconnect'. The port name is 
-getting from a file for each device with this backend.
-The name of the file need to be named according to the following 
+read from a file for each device with this backend.
+The name of the file needs to be specified according to the following 
 pattern:
 
 ::

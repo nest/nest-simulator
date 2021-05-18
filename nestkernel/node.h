@@ -915,12 +915,12 @@ private:
    */
   int model_id_;
 
-  thread thread_;            //!< thread node is assigned to
-  thread vp_;                //!< virtual process node is assigned to
-  bool frozen_;              //!< node shall not be updated if true
+  thread thread_;                  //!< thread node is assigned to
+  thread vp_;                      //!< virtual process node is assigned to
+  bool frozen_;                    //!< node shall not be updated if true
   bool state_buffers_initialized_; //!< Buffers have been initialized
-  bool node_uses_wfr_;       //!< node uses waveform relaxation method
-  bool initialized_;         //!< set true once a node is fully initialized
+  bool node_uses_wfr_;             //!< node uses waveform relaxation method
+  bool initialized_;               //!< set true once a node is fully initialized
 
   NodeCollectionPTR nc_ptr_;
 };

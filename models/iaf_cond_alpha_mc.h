@@ -77,8 +77,8 @@ FULLY TESTED. USE AT YOUR OWN PERIL!
 
 iaf_cond_alpha_mc is an implementation of a multi-compartment spiking
 neuron using IAF dynamics with conductance-based synapses. It serves
-mainly to illustrate the implementation of multicompartment models in
-NEST.
+mainly to illustrate the implementation of ref:`multicompartment models
+<multicompartment-models>` in NEST.
 
 The model has three compartments: soma, proximal and distal dendrite,
 labeled as s, p, and d, respectively. Compartments are connected through

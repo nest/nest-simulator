@@ -562,6 +562,7 @@ extern const Name u_bar_minus;
 extern const Name u_bar_plus;
 extern const Name u_ref_squared;
 extern const Name upper_right;
+extern const Name use_compressed_spikes;
 extern const Name use_wfr;
 
 extern const Name V_T;

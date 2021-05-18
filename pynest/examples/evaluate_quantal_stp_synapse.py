@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Example for the quantal_stp_synapse
------------------------------------------
+"""
+Example for the quantal_stp_synapse
+-----------------------------------
 
 The ``quantal_stp_synapse`` is a stochastic version of the Tsodys-Markram model
 for synaptic short term plasticity (STP).
@@ -31,7 +32,7 @@ facilitation according to the quantal release model described by Fuhrmann et
 al. [1]_ and Loebel et al. [2]_.
 
 Each presynaptic spike will stochastically activate a fraction of the
-available release sites.  This fraction is binomialy distributed and the
+available release sites.  This fraction is binomially distributed and the
 release probability per site is governed by the Fuhrmann et al. (2002) model.
 The solution of the differential equations is taken from Maass and Markram
 2002 [3]_.
@@ -40,7 +41,7 @@ The connection weight is interpreted as the maximal weight that can be
 obtained if all n release sites are activated.
 
 Parameters
-~~~~~~~~~~~~~
+~~~~~~~~~~
 
 The following parameters can be set in the status dictionary:
 
@@ -54,7 +55,7 @@ The following parameters can be set in the status dictionary:
 
 
 References
-~~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Fuhrmann G, Segev I, Markram H, and Tsodyks MV. (2002). Coding of
        temporal information by activity-dependent synapses. Journal of
@@ -141,9 +142,9 @@ tsyn_voltmeter, qsyn_voltmeter = nest.Create("voltmeter",
 # dict passed to ``syn_spec``.
 
 nest.Connect(pre_neuron, tsyn_neuron,
-             syn_spec={"synapse_model": "tsodyks2_synapse", ** tsyn_params})
+             syn_spec={"synapse_model": "tsodyks2_synapse", **tsyn_params})
 nest.Connect(pre_neuron, qsyn_neuron,
-             syn_spec={"synapse_model": "quantal_stp_synapse", ** qsyn_params})
+             syn_spec={"synapse_model": "quantal_stp_synapse", **qsyn_params})
 
 nest.Connect(tsyn_voltmeter, tsyn_neuron)
 nest.Connect(qsyn_voltmeter, qsyn_neuron)

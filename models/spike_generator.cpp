@@ -303,7 +303,6 @@ nest::spike_generator::init_state_( const Node& proto )
   const spike_generator& pr = downcast< spike_generator >( proto );
 
   device_.init_state( pr.device_ );
-  S_ = pr.S_;
 }
 
 void

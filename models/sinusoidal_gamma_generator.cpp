@@ -246,7 +246,6 @@ nest::sinusoidal_gamma_generator::init_state_( const Node& proto )
   const sinusoidal_gamma_generator& pr = downcast< sinusoidal_gamma_generator >( proto );
 
   device_.init_state( pr.device_ );
-  S_ = pr.S_;
 }
 
 void

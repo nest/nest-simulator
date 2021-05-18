@@ -83,7 +83,7 @@ nest.ResetKernel()
 
 n_syn = 10.0  # number of synapses in a connection
 n_trials = 100  # number of measurement trials
-# The pre-synaptic neuron is driven by an injected current for part of each
+# The pre-synaptic neuron is driven by an injected current for a part of each
 # simulation cycle. We define here the parameters for this stimulation cycle.
 
 I_stim = 376.0   # [pA] stimulation current
@@ -93,7 +93,7 @@ T_off = 1000.0   # [ms] stimulation is off
 T_cycle = T_on + T_off   # total duration of each stimulation cycle
 
 ###############################################################################
-# Next, we define parameter sets for facilitation and initial weight
+# Next, we define parameter sets for facilitation and initial weight.
 
 fac_params = {"U": 0.02,
               "u": 0.02,
@@ -127,18 +127,18 @@ pre_neuron, tsyn_neuron, qsyn_neuron = nest.Create("iaf_psc_exp",
                                                    n=3)
 
 ###############################################################################
-# We create two voltmeters, one for each of the postsynaptic neurons
-# We start recording only after a first cycle used for equilibration
+# We create two voltmeters, one for each of the postsynaptic neurons.
+# We start recording only after a first cycle, which is used for equilibration.
 
 tsyn_voltmeter, qsyn_voltmeter = nest.Create("voltmeter",
                                              params={"start": T_cycle},
                                              n=2)
 
 ###############################################################################
-# Connect one neuron with the deterministic tsodyks2 synapse and the other
-# with the stochastic quantal stp synapse.; connect the voltmeter.
-# Here, **tsyn_params inserts the content of the tsyn_params dict into the
-# dict passed to syn_spec.
+# Connect one neuron with the deterministic tsodyks2 synapse and the other neuron
+# with the stochastic quantal stp synapse; then, connect a voltmeter to each neuron.
+# Here, ``**tsyn_params`` inserts the content of the ``tsyn_params`` dict into the
+# dict passed to ``syn_spec``.
 
 nest.Connect(pre_neuron, tsyn_neuron,
              syn_spec={"synapse_model": "tsodyks2_synapse", ** tsyn_params})
@@ -152,10 +152,10 @@ nest.Connect(qsyn_voltmeter, qsyn_neuron)
 # This loop runs over the `n_trials` trials and performs a standard protocol
 # of a high-rate response, followed by a pause and then a recovery response.
 #
-# We actually run over n_trials + 1 rounds, since the first trial is for
+# We actually run over ``n_trials + 1`` rounds, since the first trial is for
 # equilibration and is not recorded (see voltmeter parameters above).
 #
-# We use the NEST `:class:.RunManager` to improve performance and call `:func:.Run`
+# We use the NEST ``:class:.RunManager`` to improve performance and call ``:func:.Run``
 # inside for each part of the simulation.
 
 with nest.RunManager():
@@ -167,14 +167,14 @@ with nest.RunManager():
         nest.Run(T_off)
 
 ###############################################################################
-# Simulate one additional time step. We need to do this to ensure that the
-# voltage traces for all trials, including the last, have full length, so we
+# Simulate one additional time step. This ensures that the
+# voltage traces for all trials, including the last, have the full length, so we
 # can easily transform them into a matrix below.
 nest.Simulate(nest.GetKernelStatus('resolution'))
 
 ###############################################################################
-# Extract voltage traces and reshape to matrix with one column per trial
-# and one row per timee step. NEST returns results as NumPy arrays.
+# Extract voltage traces and reshape the matrix with one column per trial
+# and one row per time step. NEST returns results as NumPy arrays.
 # We extract times only once and keep only times for a single trial.
 vm_tsyn = tsyn_voltmeter.get("events", "V_m")
 vm_qsyn = qsyn_voltmeter.get("events", "V_m")

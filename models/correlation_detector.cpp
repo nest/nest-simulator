@@ -235,8 +235,6 @@ nest::correlation_detector::init_state_( const Node& proto )
   const correlation_detector& pr = downcast< correlation_detector >( proto );
 
   device_.init_state( pr.device_ );
-  S_ = pr.S_;
-  set_state_buffers_initialized( false ); // force recreation of buffers
 }
 
 void

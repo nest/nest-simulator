@@ -277,8 +277,6 @@ nest::correlospinmatrix_detector::init_state_( const Node& proto )
   const correlospinmatrix_detector& pr = downcast< correlospinmatrix_detector >( proto );
 
   device_.init_state( pr.device_ );
-  S_ = pr.S_;
-  set_state_buffers_initialized( false ); // force recreation of buffers
 }
 
 void

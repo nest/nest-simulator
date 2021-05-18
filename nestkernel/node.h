@@ -818,19 +818,6 @@ public:
    */
   index get_thread_lid() const;
 
-  //! True if state and buffers have been initialized.
-  bool
-  state_buffers_initialized() const
-  {
-    return state_buffers_initialized_;
-  }
-
-  void
-  set_state_buffers_initialized( bool initialized )
-  {
-    state_buffers_initialized_ = initialized;
-  }
-
   /**
    * Sets the local device id.
    * Throws an error if used on a non-device node.

@@ -18,11 +18,6 @@ NEST 3.0 provides a more intuitive experience with simplified yet versatile hand
 
 ----
 
-
-In the current implementation of :hxt_ref:`aeif`, :hxt_ref:`tau_m` is not specified explicitly. Instead, :hxt_ref:`tau_m` can be calculated by dividing :hxt_ref:`C_m` by :hxt_ref:`g_L`.
-
-----
-
 If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
 
 +------------------------------------+---------------------------------------+

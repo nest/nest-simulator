@@ -74,16 +74,20 @@ import nest
 import numpy
 import matplotlib.pyplot as plt
 
-nest.ResetKernel()
-
 ################################################################################
 # On average, the ``quantal_stp_synapse`` converges to the ``tsodyks2_synapse``,
 # so we can compare the two by running multiple trials.
 #
-# First we define the number of trials as well as the number of release sites.
+# First we define simulation time step and random seed
+
+resolution = 0.1  # [ms]
+seed = 12345
+
+# We define the number of trials as well as the number of release sites.
 
 n_syn = 10.0  # number of synapses in a connection
 n_trials = 100  # number of measurement trials
+
 # The pre-synaptic neuron is driven by an injected current for a part of each
 # simulation cycle. We define here the parameters for this stimulation cycle.
 
@@ -118,6 +122,13 @@ qsyn_params["n"] = n_syn
 qsyn_params["weight"] = 1. / n_syn
 
 ###############################################################################
+# We reset NEST to have a well-defined starting point
+# and set some kernel parameters.
+nest.ResetKernel()
+nest.SetKernelStatus({"resolution": resolution,
+                      "rng_seed": seed})
+
+###############################################################################
 # We create three different neurons.
 # Neuron one is the sender, the two other neurons receive the synapses.
 # We exploit Python's unpacking mechanism to assign the neurons to named
@@ -132,7 +143,8 @@ pre_neuron, tsyn_neuron, qsyn_neuron = nest.Create("iaf_psc_exp",
 # We start recording only after a first cycle, which is used for equilibration.
 
 tsyn_voltmeter, qsyn_voltmeter = nest.Create("voltmeter",
-                                             params={"start": T_cycle},
+                                             params={"start": T_cycle,
+                                                     "interval": resolution},
                                              n=2)
 
 ###############################################################################
@@ -143,8 +155,12 @@ tsyn_voltmeter, qsyn_voltmeter = nest.Create("voltmeter",
 
 nest.Connect(pre_neuron, tsyn_neuron,
              syn_spec={"synapse_model": "tsodyks2_synapse", **tsyn_params})
-nest.Connect(pre_neuron, qsyn_neuron,
-             syn_spec={"synapse_model": "quantal_stp_synapse", **qsyn_params})
+
+# For technical reasons, we currently must set the parameters of the
+# quantal_stp_synapse via default values. This will change in a future version
+# of NEST.
+nest.SetDefaults("quantal_stp_synapse", qsyn_params)
+nest.Connect(pre_neuron, qsyn_neuron, syn_spec={"synapse_model": "quantal_stp_synapse"})
 
 nest.Connect(tsyn_voltmeter, tsyn_neuron)
 nest.Connect(qsyn_voltmeter, qsyn_neuron)
@@ -194,8 +210,10 @@ vm_tsyn_mean = vm_tsyn.mean(axis=0)
 vm_qsyn_mean = vm_qsyn.mean(axis=0)
 rms_error = ((vm_tsyn_mean - vm_qsyn_mean) ** 2).mean() ** 0.5
 
-plt.plot(t_trial, vm_tsyn_mean, lw=2, label="Tsodyks-2 synapse (deterministic)")
-plt.plot(t_trial, vm_qsyn_mean, lw=2, label="Quantal STP synapse (stochastic)")
+plt.plot(t_trial, vm_tsyn_mean, lw=2, alpha=0.7,
+         label="Tsodyks-2 synapse (deterministic)")
+plt.plot(t_trial, vm_qsyn_mean, lw=2, alpha=0.7,
+         label="Quantal STP synapse (stochastic)")
 plt.xlabel("Time [ms]")
 plt.ylabel("Membrane potential [mV]")
 plt.title("Comparison of deterministic and stochastic plasicity rules")

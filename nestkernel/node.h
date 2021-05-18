@@ -238,33 +238,29 @@ public:
   void set_node_uses_wfr( const bool );
 
   /**
-   * Set state variables to the default values for the model.
+   * Set state variables to the default values for the model and initialize
+   * buffers of the node.
+   *
    * Dynamic variables are all observable state variables of a node
-   * that change during Node::update().
-   * After calling init_state(), the state variables
-   * should have the same values that they had after the node was
-   * created. In practice, they will be initialized to the values
-   * of the prototype node (model).
-   * @note If the parameters of the model have been changed since the node
-   *       was created, the node will be initialized to the present values
-   *       set in the model.
-   * @note This function is the public interface to the private function
-   *       Node::init_state_(const Node&) that must be implemented by
-   *       derived classes.
-   */
-  void init_state();
-
-  /**
-   * Initialize buffers of a node.
-   * This function initializes the Buffers of a Node, e.g., ring buffers
-   * for incoming events, buffers for logging potentials.
-   * This function is called before Simulate is called for the first time
+   * that change during Node::update(). After calling init(), the state
+   * variables should have the same values that they had after the node
+   * was created. In practice, they will be initialized to the values
+   * of the prototype node (model), unless the parameters of the model
+   * have been changed since the node was created. The node will then be
+   * initialized to the present values set in the model.
+   *
+   * The function also initializes the Buffers of a Node, e.g., ring buffers
+   * for incoming events, or buffers for logging potentials.
+   * init() is called before Simulate is called for the first time
    * on a node, but not upon resumption of a simulation.
-   * This is a wrapper function, which calls the overloaded
-   * Node::init_buffers_() worker only if the buffers of the node have not been
-   * initialized yet.
+   *
+   * This is a wrapper function, which calls the overloaded functions
+   * Node::init_state_(const Node&) and Node::init_buffers_()
+   * only if the state and buffers of the node have not been
+   * initialized yet. The private functions must be implemented by the
+   * derived classes if they are needed.
    */
-  void init_buffers();
+  void init();
 
   /**
    * Re-calculate dependent parameters of the node.
@@ -822,17 +818,17 @@ public:
    */
   index get_thread_lid() const;
 
-  //! True if buffers have been initialized.
+  //! True if state and buffers have been initialized.
   bool
-  buffers_initialized() const
+  state_buffers_initialized() const
   {
-    return buffers_initialized_;
+    return state_buffers_initialized_;
   }
 
   void
-  set_buffers_initialized( bool initialized )
+  set_state_buffers_initialized( bool initialized )
   {
-    buffers_initialized_ = initialized;
+    state_buffers_initialized_ = initialized;
   }
 
   /**
@@ -935,7 +931,7 @@ private:
   thread thread_;            //!< thread node is assigned to
   thread vp_;                //!< virtual process node is assigned to
   bool frozen_;              //!< node shall not be updated if true
-  bool buffers_initialized_; //!< Buffers have been initialized
+  bool state_buffers_initialized_; //!< Buffers have been initialized
   bool node_uses_wfr_;       //!< node uses waveform relaxation method
   bool initialized_;         //!< set true once a node is fully initialized
 

@@ -46,7 +46,7 @@ Node::Node()
   , thread_( 0 )
   , vp_( invalid_thread_ )
   , frozen_( false )
-  , buffers_initialized_( false )
+  , state_buffers_initialized_( false )
   , node_uses_wfr_( false )
 {
 }
@@ -60,7 +60,7 @@ Node::Node( const Node& n )
   , vp_( n.vp_ )
   , frozen_( n.frozen_ )
   // copy must always initialized its own buffers
-  , buffers_initialized_( false )
+  , state_buffers_initialized_( false )
   , node_uses_wfr_( n.node_uses_wfr_ )
 {
 }
@@ -70,29 +70,25 @@ Node::~Node()
 }
 
 void
-Node::init_state()
-{
-  Model const* const model = kernel().model_manager.get_model( model_id_ );
-  assert( model );
-  init_state_( model->get_prototype() );
-}
-
-void
 Node::init_state_( Node const& )
 {
 }
 
 void
-Node::init_buffers()
+Node::init()
 {
-  if ( buffers_initialized_ )
+  if ( state_buffers_initialized_ )
   {
     return;
   }
 
+  Model const* const model = kernel().model_manager.get_model( model_id_ );
+  assert( model );
+  init_state_( model->get_prototype() );
+
   init_buffers_();
 
-  buffers_initialized_ = true;
+  state_buffers_initialized_ = true;
 }
 
 void

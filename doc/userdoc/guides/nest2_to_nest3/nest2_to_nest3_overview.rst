@@ -1065,6 +1065,29 @@ statement. Three arguments are required:
 .. image:: ../../static/img/NEST3_26_0.png
 
 
+.. _compare_ex:
+
+Compare parameters
+^^^^^^^^^^^^^^^^^^
+
+In the ``nest.logic.conditional()`` function above we used a comparison between a
+``nest.Parameter`` and a value. It is also possible to compare one ``nest.Parameter``
+with another, and all comparison operators are supported. The result of such comparisons
+is a new ``nest.Parameter``, which evaluates to either 1 or 0 for true and false,
+respectively. Because the ``nest.Parameter`` evaluates to 1 or 0, you may,
+in suitable cases, forgo the ``nest.logic.conditional()`` function and directly use the
+result from a comparison.
+
+::
+
+    # As an example, take a step function where the resulting value is
+    # 0.5 for positive values, and zero for negative.
+    nest.logic.conditional(nest.random.uniform(min=-1., max=1.) > 0., 0.5, 0.)
+
+    # This comparison can be used directly without the nest.logic.conditional() function.
+    0.5*(nest.random.uniform(min=-1., max=1.) > 0.)
+
+
 .. _combine_ex:
 
 Combine parameters

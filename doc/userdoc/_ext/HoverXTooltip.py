@@ -117,7 +117,7 @@ def hxt_role_ref(pattern):
         desc = get_desc_from_glossary(term)
 
         # link to the glossary term.
-        refuri = (f'{os.getcwd()}/userdoc/html/glossary.html#{term}')
+        refuri = (f'{os.getcwd()}/userdoc/html/glossary.html#term-{term}')
 
         # the tag in which the term and description is defined.
         ref_tag = "<a class='reference external' " \

@@ -89,7 +89,7 @@ connection routine.
     nest.Connect(epop1, epop2, conn_dict, syn_dict)
 
 If no synapse model is given, connections are made using the model
-``static_synapse``.
+:hxt_ref:`static_synapse`.
 
 Distributing synapse parameters
 -------------------------------
@@ -175,7 +175,7 @@ as above, or in any conjunction:
     nest.GetConnections(epop1, epop2, "stdp_synapse")
 
 will return all the connections that the neurons in ``epop1`` have to
-neurons in ``epop2`` of type ``stdp_synapse``. Note that all these
+neurons in ``epop2`` of type :hxt_ref:`stdp_synapse`. Note that all these
 querying commands will only return the local connections, i.e. those
 represented on that particular MPI process in a distributed simulation.
 

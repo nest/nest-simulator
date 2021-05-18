@@ -213,14 +213,6 @@ nest::rate_neuron_ipn< TNonlinearities >::rate_neuron_ipn( const rate_neuron_ipn
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TNonlinearities >::init_state_( const Node& proto )
-{
-  const rate_neuron_ipn& pr = downcast< rate_neuron_ipn >( proto );
-  S_ = pr.S_;
-}
-
-template < class TNonlinearities >
-void
 nest::rate_neuron_ipn< TNonlinearities >::init_buffers_()
 {
   B_.delayed_rates_ex_.clear(); // includes resize

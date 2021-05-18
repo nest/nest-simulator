@@ -114,7 +114,6 @@ public:
 
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -421,14 +420,6 @@ binary_neuron< TGainfunction >::binary_neuron( const binary_neuron& n )
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-template < class TGainfunction >
-void
-binary_neuron< TGainfunction >::init_state_( const Node& proto )
-{
-  const binary_neuron& pr = downcast< binary_neuron >( proto );
-  S_ = pr.S_;
-}
 
 template < class TGainfunction >
 void

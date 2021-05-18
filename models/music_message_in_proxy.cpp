@@ -121,14 +121,6 @@ nest::music_message_in_proxy::music_message_in_proxy( const music_message_in_pro
  * ---------------------------------------------------------------- */
 
 void
-nest::music_message_in_proxy::init_state_( const Node& proto )
-{
-  const music_message_in_proxy& pr = downcast< music_message_in_proxy >( proto );
-
-  S_ = pr.S_;
-}
-
-void
 nest::music_message_in_proxy::init_buffers_()
 {
 }

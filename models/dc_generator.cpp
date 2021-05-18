@@ -136,15 +136,6 @@ nest::dc_generator::dc_generator( const dc_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::dc_generator::init_state_( const Node& proto )
-{
-  const dc_generator& pr = downcast< dc_generator >( proto );
-
-  device_.init_state( pr.device_ );
-  S_ = pr.S_;
-}
-
-void
 nest::dc_generator::init_buffers_()
 {
   device_.init_buffers();

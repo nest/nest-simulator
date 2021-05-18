@@ -275,13 +275,6 @@ iaf_psc_alpha_multisynapse::iaf_psc_alpha_multisynapse( const iaf_psc_alpha_mult
  * ---------------------------------------------------------------- */
 
 void
-iaf_psc_alpha_multisynapse::init_state_( const Node& proto )
-{
-  const iaf_psc_alpha_multisynapse& pr = downcast< iaf_psc_alpha_multisynapse >( proto );
-  S_ = pr.S_;
-}
-
-void
 iaf_psc_alpha_multisynapse::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize

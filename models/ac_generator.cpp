@@ -163,15 +163,6 @@ nest::ac_generator::ac_generator( const ac_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::ac_generator::init_state_( const Node& proto )
-{
-  const ac_generator& pr = downcast< ac_generator >( proto );
-
-  device_.init_state( pr.device_ );
-  S_ = pr.S_;
-}
-
-void
 nest::ac_generator::init_buffers_()
 {
   device_.init_buffers();

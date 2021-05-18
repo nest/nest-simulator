@@ -179,7 +179,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   double get_normalisation_factor( double, double );
   void calibrate();
@@ -256,7 +255,6 @@ public:
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
-    State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 

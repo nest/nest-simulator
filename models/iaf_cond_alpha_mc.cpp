@@ -277,17 +277,6 @@ nest::iaf_cond_alpha_mc::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_alpha_mc::State_& nest::iaf_cond_alpha_mc::State_::operator=( const State_& s )
-{
-  assert( this != &s ); // would be bad logical error in program
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
-    y_[ i ] = s.y_[ i ];
-  }
-  r_ = s.r_;
-  return *this;
-}
-
 nest::iaf_cond_alpha_mc::Buffers_::Buffers_( iaf_cond_alpha_mc& n )
   : logger_( n )
   , s_( 0 )
@@ -467,13 +456,6 @@ nest::iaf_cond_alpha_mc::~iaf_cond_alpha_mc()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::iaf_cond_alpha_mc::init_state_( const Node& proto )
-{
-  const iaf_cond_alpha_mc& pr = downcast< iaf_cond_alpha_mc >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::iaf_cond_alpha_mc::init_buffers_()

@@ -238,27 +238,12 @@ public:
   void set_node_uses_wfr( const bool );
 
   /**
-   * Set state variables to the default values for the model and initialize
-   * buffers of the node.
+   * Initialize node prior to first simulation after node has been created.
    *
-   * Dynamic variables are all observable state variables of a node
-   * that change during Node::update(). After calling init(), the state
-   * variables should have the same values that they had after the node
-   * was created. In practice, they will be initialized to the values
-   * of the prototype node (model), unless the parameters of the model
-   * have been changed since the node was created. The node will then be
-   * initialized to the present values set in the model.
-   *
-   * The function also initializes the Buffers of a Node, e.g., ring buffers
-   * for incoming events, or buffers for logging potentials.
-   * init() is called before Simulate is called for the first time
-   * on a node, but not upon resumption of a simulation.
-   *
-   * This is a wrapper function, which calls the overloaded functions
-   * Node::init_state_(const Node&) and Node::init_buffers_()
-   * only if the state and buffers of the node have not been
-   * initialized yet. The private functions must be implemented by the
-   * derived classes if they are needed.
+   * init() allows the node to configure internal data structures prior to
+   * being simulated. The method has an effect only the first time it is
+   * called on a given node, otherwise it returns immediately. init() calls
+   * virtual functions init_state_() and init_buffers_().
    */
   void init();
 
@@ -854,23 +839,19 @@ private:
 
 protected:
   /**
-   * Private function to initialize the state of a node to model defaults.
-   * This function, which must be overloaded by all derived classes, provides
-   * the implementation for initializing the state of a node to the model
-   * defaults; the state is the set of observable dynamic variables.
-   * @param Reference to model prototype object.
-   * @see Node::init_state()
-   * @note To provide a reasonable behavior during the transition to the new
-   *       scheme, init_state_() has a default implementation calling
-   *       init_dynamic_state_().
+   * Configure state variables depending on runtime information.
+   *
+   * Overload this method if the node needs to adapt state variables prior to
+   * first simulation to runtime information, e.g., the number of incoming
+   * connections.
    */
   virtual void init_state_( Node const& );
 
   /**
-   * Private function to initialize the buffers of a node.
-   * This function, which must be overloaded by all derived classes, provides
-   * the implementation for initializing the buffers of a node.
-   * @see Node::init_buffers()
+   * Configure persistent internal data structures.
+   *
+   * Let node configure persistent internal data structures, such as input
+   * buffers or ODE solvers, to runtime information prior to first simulation.
    */
   virtual void init_buffers_();
 

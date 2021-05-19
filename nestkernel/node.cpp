@@ -70,7 +70,7 @@ Node::~Node()
 }
 
 void
-Node::init_state_( Node const& )
+Node::init_state_()
 {
 }
 
@@ -82,10 +82,7 @@ Node::init()
     return;
   }
 
-  Model const* const model = kernel().model_manager.get_model( model_id_ );
-  assert( model );
-  init_state_( model->get_prototype() );
-
+  init_state_();
   init_buffers_();
 
   initialized_ = true;

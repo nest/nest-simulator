@@ -209,11 +209,9 @@ nest::noise_generator::noise_generator( const noise_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::noise_generator::init_state_( const Node& proto )
+nest::noise_generator::init_state_()
 {
-  const noise_generator& pr = downcast< noise_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void

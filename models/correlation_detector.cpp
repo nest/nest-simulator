@@ -230,11 +230,9 @@ nest::correlation_detector::correlation_detector( const correlation_detector& n 
  * ---------------------------------------------------------------- */
 
 void
-nest::correlation_detector::init_state_( const Node& proto )
+nest::correlation_detector::init_state_()
 {
-  const correlation_detector& pr = downcast< correlation_detector >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void

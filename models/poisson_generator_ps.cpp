@@ -111,11 +111,9 @@ nest::poisson_generator_ps::poisson_generator_ps( const poisson_generator_ps& n 
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator_ps::init_state_( const Node& proto )
+nest::poisson_generator_ps::init_state_()
 {
-  const poisson_generator_ps& pr = downcast< poisson_generator_ps >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void

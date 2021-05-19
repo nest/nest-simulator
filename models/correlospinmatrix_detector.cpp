@@ -272,11 +272,9 @@ nest::correlospinmatrix_detector::correlospinmatrix_detector( const correlospinm
  * ---------------------------------------------------------------- */
 
 void
-nest::correlospinmatrix_detector::init_state_( const Node& proto )
+nest::correlospinmatrix_detector::init_state_()
 {
-  const correlospinmatrix_detector& pr = downcast< correlospinmatrix_detector >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void

@@ -182,7 +182,7 @@ public:
   void calibrate_time( const TimeConverter& tc );
 
 private:
-  void init_state_( const Node& );
+  void init_state_();
   void init_buffers_();
 
   /**

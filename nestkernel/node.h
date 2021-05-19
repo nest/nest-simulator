@@ -845,7 +845,7 @@ protected:
    * first simulation to runtime information, e.g., the number of incoming
    * connections.
    */
-  virtual void init_state_( Node const& );
+  virtual void init_state_();
 
   /**
    * Configure persistent internal data structures.

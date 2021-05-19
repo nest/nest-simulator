@@ -298,11 +298,9 @@ nest::spike_generator::spike_generator( const spike_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::init_state_( const Node& proto )
+nest::spike_generator::init_state_()
 {
-  const spike_generator& pr = downcast< spike_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void

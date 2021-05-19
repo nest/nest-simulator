@@ -196,11 +196,9 @@ nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator( const sinusoid
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_poisson_generator::init_state_( const Node& proto )
+nest::sinusoidal_poisson_generator::init_state_()
 {
-  const sinusoidal_poisson_generator& pr = downcast< sinusoidal_poisson_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void

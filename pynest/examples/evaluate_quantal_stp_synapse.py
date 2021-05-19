@@ -122,7 +122,7 @@ qsyn_params["n"] = n_sites
 qsyn_params["weight"] = 1. / n_sites
 
 ###############################################################################
-# We reset NEST to have a well-defined starting point, 
+# We reset NEST to have a well-defined starting point,
 # make NEST less verbose, and set some kernel parameters.
 nest.ResetKernel()
 nest.set_verbosity("M_ERROR")
@@ -186,7 +186,7 @@ with nest.RunManager():
 
         pre_neuron.I_e = 0.0
         nest.Run(T_off)
-        
+
         if t % 10 == 0:
             print(".", end="", flush=True)
 print()

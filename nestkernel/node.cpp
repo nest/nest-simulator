@@ -46,7 +46,7 @@ Node::Node()
   , thread_( 0 )
   , vp_( invalid_thread_ )
   , frozen_( false )
-  , state_buffers_initialized_( false )
+  , initialized_( false )
   , node_uses_wfr_( false )
 {
 }
@@ -60,7 +60,7 @@ Node::Node( const Node& n )
   , vp_( n.vp_ )
   , frozen_( n.frozen_ )
   // copy must always initialized its own buffers
-  , state_buffers_initialized_( false )
+  , initialized_( false )
   , node_uses_wfr_( n.node_uses_wfr_ )
 {
 }
@@ -77,7 +77,7 @@ Node::init_state_( Node const& )
 void
 Node::init()
 {
-  if ( state_buffers_initialized_ )
+  if ( initialized_ )
   {
     return;
   }
@@ -88,7 +88,7 @@ Node::init()
 
   init_buffers_();
 
-  state_buffers_initialized_ = true;
+  initialized_ = true;
 }
 
 void
@@ -100,7 +100,6 @@ void
 Node::set_initialized()
 {
   set_initialized_();
-  initialized_ = true;
 }
 
 void

@@ -134,6 +134,11 @@ nest::dc_generator::dc_generator( const dc_generator& n )
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
+void
+nest::dc_generator::init_state_()
+{
+  device_.init_state();
+}
 
 void
 nest::dc_generator::init_buffers_()

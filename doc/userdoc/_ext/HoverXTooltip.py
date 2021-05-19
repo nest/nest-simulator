@@ -120,7 +120,7 @@ def hxt_role_ref(pattern):
 
         # use this for local builds.
         # refuri = (f'{os.getcwd()}/userdoc/html/glossary.html#term-{term}')
-        refuri = (f'/glossary.html#term-{term}')
+        refuri = (f'glossary.html#term-{term}')
 
         # the tag in which the term and description is defined.
         ref_tag = "<a class='reference external' " \

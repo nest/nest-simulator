@@ -117,7 +117,7 @@ qsyn_params["n"] = n_sites
 
 ###############################################################################
 # To make the responses comparable, we have to scale the weight by the
-# number of synapses.
+# number of release sites.
 
 qsyn_params["weight"] = 1. / n_sites
 

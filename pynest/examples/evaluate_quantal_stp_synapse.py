@@ -85,8 +85,8 @@ seed = 12345
 
 # We define the number of trials as well as the number of release sites.
 
-n_syn = 10.0  # number of synapses in a connection
-n_trials = 100  # number of measurement trials
+n_sites = 10.0  # number of synaptic release sites
+n_trials = 500  # number of measurement trials
 
 # The pre-synaptic neuron is driven by an injected current for a part of each
 # simulation cycle. We define here the parameters for this stimulation cycle.
@@ -113,18 +113,19 @@ tsyn_params = fac_params  # for tsodyks2_synapse
 qsyn_params = tsyn_params.copy()  # for quantal_stp_synapse
 
 tsyn_params["x"] = tsyn_params["U"]
-qsyn_params["n"] = n_syn
+qsyn_params["n"] = n_sites
 
 ###############################################################################
 # To make the responses comparable, we have to scale the weight by the
 # number of synapses.
 
-qsyn_params["weight"] = 1. / n_syn
+qsyn_params["weight"] = 1. / n_sites
 
 ###############################################################################
-# We reset NEST to have a well-defined starting point
-# and set some kernel parameters.
+# We reset NEST to have a well-defined starting point, 
+# make NEST less verbose, and set some kernel parameters.
 nest.ResetKernel()
+nest.set_verbosity("M_ERROR")
 nest.SetKernelStatus({"resolution": resolution,
                       "rng_seed": seed})
 
@@ -174,7 +175,10 @@ nest.Connect(qsyn_voltmeter, qsyn_neuron)
 #
 # We use the NEST ``:class:.RunManager`` to improve performance and call ``:func:.Run``
 # inside for each part of the simulation.
+#
+# We print a line of breadcrumbs to indicate progress.
 
+print(f"Simulating {n_trials} times ", end="", flush=True)
 with nest.RunManager():
     for t in range(n_trials + 1):
         pre_neuron.I_e = I_stim
@@ -182,6 +186,10 @@ with nest.RunManager():
 
         pre_neuron.I_e = 0.0
         nest.Run(T_off)
+        
+        if t % 10 == 0:
+            print(".", end="", flush=True)
+print()
 
 ###############################################################################
 # Simulate one additional time step. This ensures that the

@@ -191,8 +191,8 @@ private:
 
   Time clock_;                     //!< SimulationManager clock, updated once per slice
   delay slice_;                    //!< current update slice
-  delay to_do_;                    //!< number of pending cycles.
-  delay to_do_total_;              //!< number of requested cycles in current simulation.
+  delay to_do_;                    //!< number of pending steps.
+  delay to_do_total_;              //!< number of requested steps in current simulation.
   delay from_step_;                //!< update clock_+from_step<=T<clock_+to_step_
   delay to_step_;                  //!< update clock_+from_step<=T<clock_+to_step_
   timeval t_slice_begin_;          //!< Wall-clock time at the begin of a time slice

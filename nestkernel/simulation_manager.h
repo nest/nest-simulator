@@ -147,22 +147,19 @@ public:
   Time const& get_clock() const;
 
   /**
-   * Get the number of total cycles in the current run.
-   * Can be used to calculate the simulation time of the current run.
+   * Get the simulation duration in the current call to run().
    */
-  delay get_number_of_steps_in_run() const;
+  Time run_duration() const;
 
   /**
-   * Get the start cycle of the current run.
-   * Can be used to calculate the start time of the current run.
+   * Get the start time of the current call to run().
    */
-  delay get_start_step_in_run() const;
+  Time run_start_time() const;
 
   /**
-   * Get the number of cycles that the current simulation will have been simulated for.
-   * Can be used to calculate the end time of the simulation (only considering the runs that have be called so far).
+   * Get the simulation's time at the end of the current call to run().
    */
-  delay get_end_step_in_simulation() const;
+  Time run_end_time() const;
 
   //! Return start of current time slice, in steps.
   // TODO: rename / precisely how defined?
@@ -267,24 +264,24 @@ SimulationManager::get_clock() const
   return clock_;
 }
 
-inline delay
-SimulationManager::get_number_of_steps_in_run() const
+inline Time
+SimulationManager::run_duration() const
 {
-  return to_do_total_;
+  return to_do_total_ * Time::get_resolution();
 }
 
-inline delay
-SimulationManager::get_start_step_in_run() const
+inline Time
+SimulationManager::run_start_time() const
 {
   assert( not simulating_ ); // implicit due to using get_time()
-  return get_time().get_steps() - ( to_do_total_ - to_do_ );
+  return get_time() - ( to_do_total_ - to_do_ ) * Time::get_resolution();
 }
 
-inline delay
-SimulationManager::get_end_step_in_simulation() const
+inline Time
+SimulationManager::run_end_time() const
 {
   assert( not simulating_ ); // implicit due to using get_time()
-  return get_time().get_steps() + to_do_;
+  return ( get_time().get_steps() + to_do_ ) * Time::get_resolution();
 }
 
 inline delay

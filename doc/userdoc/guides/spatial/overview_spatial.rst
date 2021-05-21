@@ -18,10 +18,9 @@ Overview of spatially-structured networks
 Create spatially distributed nodes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Creating spatially distributed nodes is now handled with the standard ``nest.Create()`` function.
-Arguments of node creation have also been changed to make creating
-populations with and without spatial information more unified. To create
-nodes with spatial positions, ``nest.Create()`` must be provided with the
+Spatially distributed nodes can now be created using the standard ``nest.Create()`` function.
+The arguments of this function have been changed to unify the creation of populations with and without spatial
+information. To create nodes with spatial positions, ``nest.Create()`` must be provided with the
 ``positions`` argument
 
 ::
@@ -83,7 +82,7 @@ are rather NodeCollections with metadata. These NodeCollections behave as normal
 NodeCollections with two exceptions:
 
 - They cannot be merged, as concatenating NodeCollections with metadata is
-  not allowed.
+  not supported.
 - When setting the status of nodes and connecting spatially distributed NodeCollections you can
   use spatial information as parameters.
 
@@ -148,7 +147,7 @@ to a list with lists, and this is what you will get when calling ``.spatial``.
 Connect spatially distributed nodes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Similar to creating nodes with spatial distributions, connecting is now done with the
+Similar to creating nodes with spatial distributions, such nodes are now connected using the
 standard ``nest.Connect()`` function. Connecting NodeCollections with
 spatial data is no different from connecting NodeCollections without
 metadata. In a layer-connection context, moving to the standard
@@ -169,7 +168,7 @@ metadata. In a layer-connection context, moving to the standard
   ``use_on_source`` here refers to whether the mask and connection probability
   should be applied to the source neuron or the target neuron.
   This is only required for ``pairwise_bernoulli``, as ``fixed_indegree``
-  and ``fixed_outdegree`` implicitly states if we are using the source or
+  and ``fixed_outdegree`` implicitly only apply to either the source or
   target nodes.
 
 - The connection probability specification ``kernel``  is renamed to ``p``
@@ -239,7 +238,7 @@ probability and delay, and random weights from a normal distribution:
 Masks
 ^^^^^
 In NEST 3.0, the mask ``volume`` got removed, as the same mask was already available under the name ``box``.
-The former was only an alias available in NEST for backward compatibility.
+The former was only an alias available for backward compatibility.
 
 Retrieving distance information
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -259,4 +258,4 @@ If you have a SynapseCollection with connections from a spatially distributed ne
 between the source-target pair at *indx*.
 
 Calling ``.distance`` on a SynapseCollection where either the source or target, or both, are not spatially
-distributed also works, you will receive `nan` whenever one of the nodes is non-spatial.
+distributed also works, and you will receive `nan` whenever one of the nodes is non-spatial.

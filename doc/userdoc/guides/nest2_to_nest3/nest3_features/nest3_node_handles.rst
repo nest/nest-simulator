@@ -21,20 +21,20 @@ NodeCollection supports the following functionality:
 -  Access to node properties with :ref:`get() <get_param>` and  :ref:`set() <set_param>` or by using :ref:`direct attributes <direct_attributes>`
 -  :ref:`Parametrization <param_ex>`  with spatial, random, distributions, math, and logic parameters
 
-  +---------------------------------------------+----------------------------------------------+
-  | NEST 2.x                                    | NEST 3.0                                     |
-  +=============================================+==============================================+
-  |                                             |                                              |
-  | ::                                          | ::                                           |
-  |                                             |                                              |
-  |     # A list of 10 GIDs is returned         |     # A NodeCollection object is returned    |
-  |     nrns = nest.Create('iaf_psc_alpha', 10) |     nrns = nest.Create('iaf_psc_alpha', 10)  |
-  |                                             |                                              |
-  |     # Use lists as arguments in Connect     |     # Use NodeCollection objects as          |
-  |     nest.Connect(nrns, nrns)                |     # arguments in Connect                   |
-  |                                             |     nest.Connect(nrns, nrns)                 |
-  |                                             |                                              |
-  +---------------------------------------------+----------------------------------------------+
+  +-----------------------------------------------+------------------------------------------------+
+  | NEST 2.x                                      | NEST 3.0                                       |
+  +===============================================+================================================+
+  |                                               |                                                |
+  | ::                                            | ::                                             |
+  |                                               |                                                |
+  |     # A list of 10 GIDs is returned           |     # A NodeCollection object is returned      |
+  |     neurons = nest.Create('iaf_psc_alpha', 10)|     neurons = nest.Create('iaf_psc_alpha', 10) |
+  |                                               |                                                |
+  |     # Use lists as arguments in Connect       |     # Use NodeCollection objects as            |
+  |     nest.Connect(neurons, neurons)            |     # arguments in Connect                     |
+  |                                               |     nest.Connect(neurons, neurons)             |
+  |                                               |                                                |
+  +-----------------------------------------------+------------------------------------------------+
 
 .. _nodeID_support:
 
@@ -43,8 +43,8 @@ NodeCollections support the following operations:
 Printing
    A compact representation of information about the NodeCollection can be printed
 
-   >>>  nrns = nest.Create('iaf_psc_alpha', 10)
-   >>>  print(nrns)
+   >>>  neurons = nest.Create('iaf_psc_alpha', 10)
+   >>>  print(neurons)
         NodeCollection(metadata=None, model=iaf_psc_alpha, size=10, first=1, last=10)
 
 .. _indexing:
@@ -52,14 +52,14 @@ Printing
 Indexing
    Indexing returns a new NodeCollection with a single node
 
-   >>>  print(nrns[3])
+   >>>  print(neurons[3])
         NodeCollection(metadata=None, model=iaf_psc_alpha, size=1, first=3)
 
    NodeCollections support array indexing. Array indexing is done by passing a list or tuple of
    indices when indexing. A NodeCollection with the node IDs at the chosen indices is then returned.
    Note that all indices must be strictly ascending and unique because all node IDs in a NodeCollection must be unique.
 
-   >>>  print(nrns[[1, 2, 5, 6]])
+   >>>  print(neurons[[1, 2, 5, 6]])
         NodeCollection(metadata=None,
                        model=iaf_psc_alpha, size=2, first=2, last=3;
                        model=iaf_psc_alpha, size=2, first=6, last=7)
@@ -68,7 +68,7 @@ Indexing
    One may also pass a list or tuple of Booleans, where the returned NodeCollection contains the `True` elements
    of the list or tuple. The length of the list of tuple of Booleans must be equal to the length of the NodeCollection.
 
-   >>>  print(nrns[[True, True, True, True, False, False, True, True, True, True]])
+   >>>  print(neurons[[True, True, True, True, False, False, True, True, True, True]])
         NodeCollection(metadata=None,
                        model=iaf_psc_alpha, size=4, first=1, last=4;
                        model=iaf_psc_alpha, size=4, first=7, last=10)
@@ -78,7 +78,7 @@ Indexing
 Iteration
     You can iterate the nodes in a NodeCollection and receive a single element NodeCollection
 
-     >>>   for node in nrns:
+     >>>   for node in neurons:
      >>>       print(node.global_id)
            1
            2
@@ -97,8 +97,7 @@ Slicing
     A NodeCollection can be sliced in the same way one would slice a list,
     with ``start:stop:step`` inside brackets
 
-
-    >>>  print(nrns[2:9:3])
+    >>>  print(neurons[2:9:3])
          NodeCollection(metadata=None,
                         model=iaf_psc_alpha, size=2, first=3, last=9, step=3)
 
@@ -108,7 +107,7 @@ Slicing
 Getting the size
     You can easily get the number of nodes in the NodeCollection with
 
-   >>>  len(nrns)
+   >>>  len(neurons)
         10
 
 .. _converting_lists:
@@ -116,8 +115,7 @@ Getting the size
 Conversion to and from lists
     NodeCollections can be converted to lists of node IDs
 
-
-    >>>  nrns.tolist()
+    >>>  neurons.tolist()
          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
     And you can create a NodeCollection by providing a list, tuple, NumPy array or range of node IDs
@@ -139,16 +137,15 @@ Composing
     When composing two NodeCollections, NEST tries to concatenate the
     two into a single NodeCollection.
 
-
-    >>>  nrns = nest.Create('iaf_psc_alpha', 10)
-    >>>  nrns_2 = nest.Create('iaf_psc_alpha', 3)
-    >>>  print(nrns + nrns_2)
+    >>>  neurons = nest.Create('iaf_psc_alpha', 10)
+    >>>  neurons_2 = nest.Create('iaf_psc_alpha', 3)
+    >>>  print(neurons + neurons_2)
          NodeCollection(metadata=None, model=iaf_psc_alpha, size=13, first=1, last=13)
 
     If the node IDs are not continuous or the models are different, a composite will be created:
 
-    >>>  nrns_3 = nest.Create('iaf_psc_delta', 3)
-    >>>  print(nrns + nrns_3)
+    >>>  neurons_3 = nest.Create('iaf_psc_delta', 3)
+    >>>  print(neurons + neurons_3)
          NodeCollection(metadata=None,
                         model=iaf_psc_alpha, size=10, first=1, last=10;
                         model=iaf_psc_delta, size=3, first=14, last=16)
@@ -161,9 +158,9 @@ Composing
 Test of equality
     You can test if two NodeCollections are equal, i.e. that they contain the same node IDs and model(s)
 
-    >>>  nrns == nrns_2
+    >>>  neurons == neurons_2
          False
-    >>>  nrns_2 == nest.NodeCollection([11, 12, 13])
+    >>>  neurons_2 == nest.NodeCollection([11, 12, 13])
          True
 
 .. _testing_membership:
@@ -171,9 +168,9 @@ Test of equality
 Test of membership
     You can test if a NodeCollection contains a certain ID
 
-    >>>  2 in nrns
+    >>>  2 in neurons
          True
-    >>>  11 in nrns
+    >>>  11 in neurons
          False
 
 .. _direct_attributes:
@@ -181,11 +178,11 @@ Test of membership
 Direct attributes
     You can directly get and set parameters of your NodeCollection
 
-    >>> nrns.V_m = [-70., -60., -50., -40., -30., -20., -10., -20., -30., -40.]
-    >>> nrns.V_m
+    >>> neurons.V_m = [-70., -60., -50., -40., -30., -20., -10., -20., -30., -40.]
+    >>> neurons.V_m
         (-70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, -20.0, -30.0, -40.0)
-    >>> nrns.C_m = 111.
-    >>> nrns.C_m
+    >>> neurons.C_m = 111.
+    >>> neurons.C_m
         (111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0)
 
     If your nodes are spatially distributed (see :ref:`spatially distributed nodes <topo_changes>`),
@@ -293,7 +290,7 @@ and get a dictionary with arrays.
 >>>    sr.get('events', 'senders')
        array([], dtype=int64)
 
-Lastly, you can specify the output format (`pandas` and `JSON` for now). The
+Lastly, you can specify the output format (Pandas dataframes [`pandas`] and `JSON` [`json`] for now). The
 output format can be specified for all the different ``get()`` versions above.
 
 >>>    nodes[0].get(['V_m', 'V_reset'], output='json')

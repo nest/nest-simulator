@@ -29,12 +29,12 @@ as NodeCollections.
     >>>  nrns = nest.Create('iaf_psc_alpha', 3)
     >>>  nest.Connect(nrns, nrns, 'one_to_one', syn_spec={'synapse_model': 'stdp_synapse'})
 
-  Simillarly, ``GetDefaults`` used to return an entry called ``synapsemodel``. It now returns and entry
-  called ``synapse_model``.
+  Similarly, the dictionary ``GetDefaults`` returns an entry called ``synapsemodel``, which is now called
+  ``synapse_model``.
 
 .. seealso::
 
-    You can find a :doc:`full SynapseCollection example <../../../auto_examples/synapsecollection>` in our example
+    You can find a :doc:`full SynapseCollection example <../../../auto_examples/synapsecollection>` on our example
     network page.
 
 Printing
@@ -43,8 +43,8 @@ Printing
     To print all, first set ``print_all = True`` on your SynapseCollection.
 
     >>>  nest.Connect(nodes[:2], nodes[:2])
-    >>>  synColl = nest.GetConnections()
-    >>>  print(synColl)
+    >>>  synapses = nest.GetConnections()
+    >>>  print(synapses)
           source   target   synapse model   weight   delay
          -------- -------- --------------- -------- -------
                1        1  static_synapse    1.000   1.000
@@ -52,7 +52,7 @@ Printing
                2        1  static_synapse    1.000   1.000
                2        2  static_synapse    1.000   1.000
 
-    >>> synColl.print_all = True
+    >>> synapses.print_all = True
 
 .. _conn_indexing:
 
@@ -60,7 +60,7 @@ Printing
 Indexing
     Indexing returns a single connection SynapseCollection.
 
-    >>>  print(synColl[1])
+    >>>  print(synapses[1])
           source   target   synapse model   weight   delay
          -------- -------- --------------- -------- -------
                1        2  static_synapse    1.000   1.000
@@ -70,7 +70,7 @@ Indexing
 Iteration
     A SynapseCollection can be iterated, yielding a single connection SynapseCollection per iteration.
 
-    >>>  for conn in synColl:
+    >>>  for conn in synapses:
     >>>      print(conn.source)
          1
          1
@@ -83,8 +83,8 @@ Iterator of sources and targets
     Calling ``SynapseCollection.sources()`` or ``SynapseCollection.targets()`` returns an
     iterator over the source IDs or target IDs, respectively.
 
-    >>>  print([s*3 for s in synColl.sources()])
-         [3, 3, 6, 6]
+    >>>  print([s for s in synapses.sources()])
+         [1, 1, 2, 2]
 
 
 .. _conn_slicing:
@@ -92,7 +92,7 @@ Iterator of sources and targets
 Slicing
     A SynapseCollection can be sliced with ``start:stop:step`` inside brackets
 
-    >>>  print(synColl[0:3:2])
+    >>>  print(synapses[0:3:2])
          source   target   synapse model   weight   delay
         -------- -------- --------------- -------- -------
               1        1  static_synapse    1.000   1.000
@@ -103,7 +103,7 @@ Slicing
 Getting the size
     We can get the number of connections in the SynapseCollection with
 
-    >>>  len(synColl)
+    >>>  len(synapses)
          4
 
 .. _conn_testing_equality:
@@ -111,9 +111,9 @@ Getting the size
 Test of equality
     Two SynapseCollections can be tested for equality, i.e. that they contain the same connections.
 
-    >>>  synColl == synColl
+    >>>  synapses == synapses
          True
-    >>>  synColl[:2] == synColl[2:]
+    >>>  synapses[:2] == synapses[2:]
          False
 
 .. _conn_direct_attributes:
@@ -121,11 +121,11 @@ Test of equality
 Setting and getting attributes directly
     You can also directly get and set parameters of your SynapseCollection
 
-    >>>  synColl.weight = 5.
-    >>>  synColl.weight
+    >>>  synapses.weight = 5.0
+    >>>  synapses.weight
          [5.0, 5.0, 5.0, 5.0]
-    >>>  synColl.delay = [5.1, 5.2, 5.3, 5.4]
-    >>>  synColl.delay
+    >>>  synapses.delay = [5.1, 5.2, 5.3, 5.4]
+    >>>  synapses.delay
          [5.1, 5.2, 5.3, 5.4]
 
     If you use a list to set the parameter, the list needs to be the same length
@@ -134,7 +134,7 @@ Setting and getting attributes directly
     For :ref:`spatially distributed <topo_changes>` sources and targets, you can access the distance between
     the source-target pairs by calling `distance` on your SynapseCollection.
 
-    >>>  synColl.distance
+    >>>  synapses.distance
          (0.47140452079103173,
           0.33333333333333337,
           0.4714045207910317,
@@ -154,20 +154,17 @@ Getting connection parameters
     apply here. The returned values also follow the same rules.
 
     If you call ``get()`` without any arguments, a dictionary with all parameters is
-    returned as a list if the number of connections is bigger than 1 and a single integer if
-    number of connections is equal to 1.
+    returned. If there is only a single connection in the SynapseCollection, the dictionary contains plain values,
+    whereas if there is more than one connection, the dictionary contains lists of values.
 
-    >>>  synColl.get()
+    >>>  synapses.get()
          {'delay': [1.0, 1.0, 1.0, 1.0],
           'port': [0, 1, 2, 3],
           'receptor': [0, 0, 0, 0],
           'sizeof': [32, 32, 32, 32],
           'source': [1, 1, 2, 2],
           'synapse_id': [0, 0, 0, 0],
-          'synapse_model': ['static_synapse',
-           'static_synapse',
-           'static_synapse',
-           'static_synapse'],
+          'synapse_model': ['static_synapse','static_synapse','static_synapse','static_synapse'],
           'target': [1, 2, 1, 2],
           'target_thread': [0, 0, 0, 0],
           'weight': [1.0, 1.0, 1.0, 1.0]}
@@ -176,15 +173,15 @@ Getting connection parameters
     ``get([parameter_name_1, ... , parameter_name_n])`` returns a dictionary with
     the values.
 
-    >>>  synColl.get('weight')
+    >>>  synapses.get('weight')
          [1.0, 1.0, 1.0, 1.0]
 
-    >>>  synColl[2].get(['source', 'target'])
+    >>>  synapses[2].get(['source', 'target'])
          {'source': 2, 'target': 1}
 
     It is also possible to select an alternative output format with the
-    ``output`` keyword. Currently it is possible to get the output in a
-    json format, or a Pandas format (if Pandas is installed).
+    ``output`` keyword. Currently, it is possible to get the output as
+    JSON or as a Pandas dataframe (if Pandas is installed).
 
 .. _conn_set:
 
@@ -197,14 +194,14 @@ Setting connection parameters
     You can use a single value, a list, or a ``nest.Parameter`` as values. If a single value is given,
     the value is set on all connections.
 
-    >>>  synColl.set({'weight': [1.5, 2.0, 2.5, 3.0], 'delay': 2.0})
+    >>>  synapses.set({'weight': [1.5, 2.0, 2.5, 3.0], 'delay': 2.0})
 
     Updating a single parameter is done by calling ``set(parameter_name=parameter_value)``.
     Again you can use a single value, a list, or a ``nest.Parameter`` as value.
 
-    >>>  synColl.set(weight=3.7)
+    >>>  synapses.set(weight=3.7)
 
-    >>>  synColl.set(weight=[4.0, 4.5, 5.0, 5.5])
+    >>>  synapses.set(weight=[4.0, 4.5, 5.0, 5.5])
 
     Note that some parameters, like `source` and `target`, cannot be set.  The documentation of a specific
     model will point out which parameters can be set and which are read-only.
@@ -216,8 +213,8 @@ Collocated synapses
 ~~~~~~~~~~~~~~~~~~~
 It is now possible to create connections with several synapses simultaneously. The different synapse dictionaries will
 then be applied to each source-target pair. To create these collocated synapses, ``CollocatedSynapses()`` must be used
-as the `syn_spec` argument of ``Connect``, instead of the usual syn_spec dictionary argument. ``CollocatedSynapses()``
-takes dictionaries as arguments.
+as the `syn_spec` argument of ``Connect``, instead of the usual syn_spec dictionary argument. The constructor
+``CollocatedSynapses()`` takes dictionaries as arguments.
 
   ::
 
@@ -252,7 +249,7 @@ If you want to connect with different receptor types, you can do the following:
     conns = nest.GetConnections()
     print(conns.get())
 
-You can see how many synapse parameters you have by doing `len()` on your `CollocatedSynapses` object:
+You can see how many synapse parameters you have by calling `len()` on your `CollocatedSynapses` object:
 
   >>> len(syn_spec)
   2

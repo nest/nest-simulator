@@ -4,7 +4,7 @@ What's removed from NEST 3.0?
 Subnets
 ~~~~~~~
 
-Subnets are gone. Instead NodeCollections should be used to organize neurons.
+Subnets are gone. Instead NodeCollections should be used to group and organize neurons.
 
   +---------------------------------------------+---------------------------------------+
   | NEST 2.x                                    | NEST 3.0                              |
@@ -82,6 +82,7 @@ The following functions have been removed:
 +----------------------+------------------------------+
 | - DataConnect        |                              |
 | - DisconnectOneToOne |  See :ref:`conn_ref`         |
+| - CGConnect          |                              |
 +----------------------+------------------------------+
 | - GetElement         |   See :ref:`topo_ref`        |
 +----------------------+------------------------------+

@@ -5,7 +5,7 @@ The ``spike_detector`` has been renamed to ``spike_recorder``. The main
 rationale behind this is that the device is actually not detecting the
 occurence of spikes, but rather only records them. Moreover, the new
 name is more consistent with the naming of other similar devices that
-also end in the suffix `_recorder`.
+also end in `_recorder`.
 
 In NEST 2.x, all recording modalities (i.e. *screen*, *memory*, and
 *files*) were handled by a single C++ class. Due to the many different
@@ -74,8 +74,8 @@ You can retrieve the list of available backends using the following command:
 
 Previously, the content and formatting of any output created by a
 recording device could be configured in a fine-grained fashion using
-flags like `withgid`, `withtime`, `withweight`, `withport` and so
-on. In many cases, this, however, lead to a confusing variety of
+flags like `withgid`, `withtime`, `withweight`, `withport`, among others.
+In many cases, this, however, lead to a confusing variety of
 possible interpretations of data columns for the resulting output.
 
 As storage space is usually not a concern nowadays, the new

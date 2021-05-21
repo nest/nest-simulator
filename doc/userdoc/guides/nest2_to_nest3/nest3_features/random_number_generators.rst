@@ -4,7 +4,7 @@ Simpler handling of random number generators
 All random number generators managed by the NEST kernel are now seeded by
 providing a single seed :math:`s`  with :math:`1\leq s \leq 2^{31}-1`. The
 kernel automatically seeds the random number streams on the various parallel
-processes:
+threads and processes:
 
   +---------------------------------------------+---------------------------------------+
   | NEST 2.x                                    | NEST 3.0                              |
@@ -52,7 +52,7 @@ number, the Nth random number of a CBRNG can be obtained by applying a stateless
 function to N.
 
 The Random123 library is included in NEST, and random number generator types like Philox and
-Threefry are automatically made available.
+Threefry are available out of the box.
 
 .. note::
 

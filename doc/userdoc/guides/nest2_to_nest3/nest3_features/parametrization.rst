@@ -53,7 +53,7 @@ and connection parameters, as well as positions for spatially distributed nodes.
   |                                                  | lognormal distribution.                    |
   +--------------------------------------------------+--------------------------------------------+
 
-For every value to be generated, samples are drawn from a distribution. The distribution uses
+For every value to be generated, samples are drawn from a distribution. The distributions use
 NEST's random number generator, and are therefore thread-safe. Note that
 arguments can be passed to each of the distributions above to control the parameters of the
 distribution.
@@ -123,7 +123,7 @@ use ``nest.spatial.grid()`` or ``nest.spatial.free``.
 .. image:: ../../../static/img/NEST3_24_0.png
   :width: 500px
 
-After you have created your spatially distributed nodes, you can use `spatial` property to set
+After you have created your spatially distributed nodes, you can use  the `spatial` property to set
 node or connection parameters.
 
   +----------------------------------+-------------------------------------------------------------------------+
@@ -160,7 +160,7 @@ node or connection parameters.
 
   These parameters represent positions of neurons or distances between two
   neurons. To set node parameters, only the node position can be used. The
-  others can only be used when connecting.
+  others can be used when connecting.
 
 
   .. code-block:: ipython
@@ -324,13 +324,13 @@ Clipping, redraw, and conditionals
   | ::                                                 |                                                     |
   |                                                    |                                                     |
   |     nest.math.min(x, value)                        | If a value from the Parameter is above a threshold, |
-  |                                                    | the value is replaced with the value of the         |
+  |                                                    | x, the value is replaced with the value of the      |
   |                                                    | threshold.                                          |
   +----------------------------------------------------+-----------------------------------------------------+
   | ::                                                 |                                                     |
   |                                                    |                                                     |
-  |     nest.math.max(x, value)                        | If a value from the parameter is beneath a          |
-  |                                                    | threshold, the value is replaced with the value of  |
+  |     nest.math.max(x, value)                        | If a value from the parameter is below a threshold, |
+  |                                                    | x, the value is replaced with the value of          |
   |                                                    | the threshold.                                      |
   +----------------------------------------------------+-----------------------------------------------------+
   | ::                                                 |                                                     |
@@ -351,21 +351,21 @@ Note that ``x`` is a ``nest.Parameter``.
 
 The ``nest.math.min()`` and ``nest.math.max()`` functions are used to clip
 a parameter. Essentially they work like the standard ``min()`` and
-``max()`` functions, ``nest.math.min()`` yielding the smallest of two
-values, and ``nest.math.max()`` yielding the largest of two values.
+``max()`` functions, ``nest.math.min()`` yielding the smaller of two
+values, and ``nest.math.max()`` yielding the larger of two values.
 
 ::
 
     # This yields values between 0.0 and 0.5, where values from the
-    # distribution that are above 0.5 gets set to 0.5.
+    # distribution that are above 0.5 get set to 0.5.
     nest.math.min(nest.random.uniform(), 0.5)
 
     # This yields values between 0.5 and 1.0, where values from the
-    # distribution that are below 0.5 gets set to 0.5.
+    # distribution that are below 0.5 get set to 0.5.
     nest.math.max(nest.random.uniform(), 0.5)
 
     # This yields values between 0.2 and 0.7, where values from the
-    # distribution that are smaller than 0.2 or larger than 0.7 gets
+    # distribution that are smaller than 0.2 or larger than 0.7 get
     # redrawn from the distribution.
     nest.math.redraw(nest.random.uniform(), min=0.2, max=0.7)
 
@@ -373,9 +373,9 @@ The ``nest.logic.conditional()`` function works like an ``if``/``else``
 statement. Three arguments are required:
 
 - The first argument is a condition.
-- The second argument is the resulting value or parameter evalued if the
+- The second argument is the resulting value or parameter evaluated if the
   condition evaluates to true.
-- The third argument is the resulting value or parameter evalued if the
+- The third argument is the resulting value or parameter evaluated if the
   condition evaluates to false.
 
 ::

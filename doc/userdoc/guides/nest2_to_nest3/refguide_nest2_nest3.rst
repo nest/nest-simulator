@@ -312,7 +312,7 @@ Functions related to simulation
 
    .. note::
 
-     The structural_plasticity_update_interval now has the unit `ms` instead of `number of simulation steps`.
+     The structural_plasticity_update_interval now reports time in ms instead of number of simulation steps.
 
 Functions related to models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

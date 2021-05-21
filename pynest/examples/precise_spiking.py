@@ -38,7 +38,7 @@ precise version for an integrate-and-fire neuron model with exponential
 postsynaptic currents [2]_.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Morrison A, Straube S, Plesser HE, Diesmann M. 2007. Exact subthreshold
        integration with continuous spike times in discrete-time neural network

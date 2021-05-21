@@ -21,7 +21,8 @@
 
 """
 Structural Plasticity example
-----------------------------------
+-----------------------------
+
 This example shows a simple network of two populations where structural
 plasticity is used. The network has 1000 neurons, 80% excitatory and
 20% inhibitory. The simulation starts without any connectivity. A set of
@@ -34,7 +35,8 @@ At the end of the simulation, a plot of the evolution of the connectivity
 in the network and the average calcium concentration in the neurons is created.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
+
 .. [1] Butz, M., and van Ooyen, A. (2013). A simple rule for dendritic spine and axonal bouton formation can
        account for cortical reorganization after focal retinal lesions. PLoS Comput. Biol. 9 (10), e1003259.
 
@@ -243,13 +245,11 @@ class StructralPlasticityExample:
         nest.Connect(noise, self.nodes_i, 'all_to_all',
                      {'weight': self.psc_ext, 'delay': 1.0})
 
-
-####################################################################################
-# In order to save the amount of average calcium concentration in each
-# population through time we create the function ``record_ca``. Here we use the
-# ``GetStatus`` function to retrieve the value of `Ca` for every neuron in the
-# network and then store the average.
-
+    ####################################################################################
+    # In order to save the amount of average calcium concentration in each
+    # population through time we create the function ``record_ca``. Here we use
+    # the value of `Ca` for every neuron in the network and then
+    # store the average.
     def record_ca(self):
         ca_e = self.nodes_e.Ca,  # Calcium concentration
         self.mean_ca_e.append(numpy.mean(ca_e))
@@ -257,15 +257,12 @@ class StructralPlasticityExample:
         ca_i = self.nodes_i.Ca,  # Calcium concentration
         self.mean_ca_i.append(numpy.mean(ca_i))
 
-
-####################################################################################
-# In order to save the state of the connectivity in the network through time
-# we create the function ``record_connectivity``. Here we use the ``GetStatus``
-# function to retrieve the number of connected pre-synaptic elements of each
-# neuron. The total amount of excitatory connections is equal to the total
-# amount of connected excitatory pre-synaptic elements. The same applies for
-# inhibitory connections.
-
+    ####################################################################################
+    # In order to save the state of the connectivity in the network through time
+    # we create the function ``record_connectivity``. Here we retrieve the number
+    # of connected pre-synaptic elements of each neuron. The total amount of
+    # excitatory connections is equal to the total amount of connected excitatory
+    # pre-synaptic elements. The same applies for inhibitory connections.
     def record_connectivity(self):
         syn_elems_e = self.nodes_e.synaptic_elements
         syn_elems_i = self.nodes_i.synaptic_elements
@@ -274,11 +271,9 @@ class StructralPlasticityExample:
         self.total_connections_i.append(sum(neuron['Axon_in']['z_connected']
                                             for neuron in syn_elems_i))
 
-
-####################################################################################
-# We define a function to plot the recorded values
-# at the end of the simulation.
-
+    ####################################################################################
+    # We define a function to plot the recorded values
+    # at the end of the simulation.
     def plot_data(self):
         fig, ax1 = plt.subplots()
         ax1.axhline(self.growth_curve_e_e['eps'],
@@ -303,14 +298,12 @@ class StructralPlasticityExample:
         ax2.legend(loc=4)
         plt.savefig('StructuralPlasticityExample.eps', format='eps')
 
-
-####################################################################################
-# It is time to specify how we want to perform the simulation. In this
-# function we first enable structural plasticity in the network and then we
-# simulate in steps. On each step we record the calcium concentration and the
-# connectivity. At the end of the simulation, the plot of connections and
-# calcium concentration through time is generated.
-
+    ####################################################################################
+    # It is time to specify how we want to perform the simulation. In this
+    # function we first enable structural plasticity in the network and then we
+    # simulate in steps. On each step we record the calcium concentration and the
+    # connectivity. At the end of the simulation, the plot of connections and
+    # calcium concentration through time is generated.
     def simulate(self):
         if nest.NumProcesses() > 1:
             sys.exit("For simplicity, this example only works " +
@@ -333,7 +326,6 @@ class StructralPlasticityExample:
 # connect the external input and then simulate. Please note that as we are
 # simulating 200 biological seconds in this example, it will take a few minutes
 # to complete.
-
 if __name__ == '__main__':
     example = StructralPlasticityExample()
     # Prepare simulation

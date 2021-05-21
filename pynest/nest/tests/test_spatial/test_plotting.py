@@ -33,7 +33,7 @@ try:
     tmp_fig = plt.figure()  # make sure we can open a window; DISPLAY may not be set
     plt.close(tmp_fig)
     PLOTTING_POSSIBLE = True
-except:
+except ImportError:
     PLOTTING_POSSIBLE = False
 
 
@@ -43,14 +43,14 @@ class PlottingTestCase(unittest.TestCase):
     def test_PlotLayer(self):
         """Test plotting layer."""
         nest.ResetKernel()
-        l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(shape=[3, 3],
-                                                    extent=[2., 2.],
-                                                    edge_wrap=True))
-        nest.PlotLayer(l)
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(shape=[3, 3],
+                                                        extent=[2., 2.],
+                                                        edge_wrap=True))
+        nest.PlotLayer(layer)
 
         plotted_datapoints = plt.gca().collections[-1].get_offsets().data
-        reference_datapoints = nest.GetPosition(l)
+        reference_datapoints = nest.GetPosition(layer)
         self.assertTrue(np.allclose(plotted_datapoints, reference_datapoints))
 
     def test_PlotTargets(self):
@@ -61,26 +61,26 @@ class PlottingTestCase(unittest.TestCase):
                  'mask': mask}
         sdict = {'synapse_model': 'stdp_synapse'}
         nest.ResetKernel()
-        l = nest.Create('iaf_psc_alpha',
-                        positions=nest.spatial.grid(shape=[3, 3],
-                                                    extent=[2., 2.],
-                                                    edge_wrap=True))
+        layer = nest.Create('iaf_psc_alpha',
+                            positions=nest.spatial.grid(shape=[3, 3],
+                                                        extent=[2., 2.],
+                                                        edge_wrap=True))
 
-        # connect l -> l
-        nest.Connect(l, l, cdict, sdict)
+        # connect layer -> layer
+        nest.Connect(layer, layer, cdict, sdict)
 
-        ctr = nest.FindCenterElement(l)
-        fig = nest.PlotTargets(ctr, l)
+        ctr = nest.FindCenterElement(layer)
+        fig = nest.PlotTargets(ctr, layer)
         fig.gca().set_title('Plain call')
 
         plotted_datapoints = plt.gca().collections[0].get_offsets().data
         eps = 0.01
-        pos = np.array(nest.GetPosition(l))
+        pos = np.array(nest.GetPosition(layer))
         pos_xmask = pos[np.where(pos[:, 0] > -eps)]
         reference_datapoints = pos_xmask[np.where(pos_xmask[:, 1] < eps)][::-1]
         self.assertTrue(np.array_equal(np.sort(plotted_datapoints, axis=0), np.sort(reference_datapoints, axis=0)))
 
-        fig = nest.PlotTargets(ctr, l, mask=mask)
+        fig = nest.PlotTargets(ctr, layer, mask=mask)
         ax = fig.gca()
         ax.set_title('Call with mask')
         self.assertGreaterEqual(len(ax.patches), 1)
@@ -94,8 +94,8 @@ class PlottingTestCase(unittest.TestCase):
         def probability_calculation(distance):
             return 1 - 1.5*distance
 
-        l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([10, 10], edge_wrap=False))
-        source = l[25]
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([10, 10], edge_wrap=False))
+        source = layer[25]
         source_pos = np.array(nest.GetPosition(source))
         source_x, source_y = source_pos
 
@@ -124,10 +124,10 @@ class PlottingTestCase(unittest.TestCase):
         plot_shape = [10, 10]
         plot_edges = [-0.5, 0.5, -0.5, 0.5]
 
-        l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([10, 10], edge_wrap=False))
+        layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([10, 10], edge_wrap=False))
         parameter = 1 - 1.5*nest.spatial.distance
 
-        source = l[25]
+        source = layer[25]
         masks = [{'circular': {'radius': 0.4}},
                  {'doughnut': {'inner_radius': 0.2, 'outer_radius': 0.45}},
                  {'rectangular': {'lower_left': [-.3, -.3], 'upper_right': [0.3, 0.3]}},

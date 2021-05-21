@@ -40,7 +40,7 @@ class BasicsTestCase(unittest.TestCase):
         shape = [5, 4]
         nest.ResetKernel()
         layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=shape))
-        self.assertEqual(len(layer), shape[0] * shape[1])
+        self.assertEqual(len(layer), shape[0]*shape[1])
 
     def test_create_layer_with_param(self):
         """Creating a layer with parameters."""
@@ -292,10 +292,10 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(n, layer[4:5])
 
         # new layer
-        l2 = nest.Create('iaf_psc_alpha',
-                         positions=nest.spatial.grid(shape=[3, 3], extent=(2., 2.)))
-        n = nest.FindCenterElement(l2)
-        self.assertEqual(n, l2[4:5])
+        layer2 = nest.Create('iaf_psc_alpha',
+                             positions=nest.spatial.grid(shape=[3, 3], extent=(2., 2.)))
+        n = nest.FindCenterElement(layer2)
+        self.assertEqual(n, layer2[4:5])
 
     def test_GetTargetNodes(self):
         """Interface check for finding targets."""

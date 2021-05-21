@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Example of the tsodyks2_synapse in NEST
----------------------------------------------
+"""
+Example of the tsodyks2_synapse in NEST
+---------------------------------------
 
 This synapse model implements synaptic short-term depression and short-term f
 according to [1]_ and [2]_. It solves Eq (2) from [1]_ and modulates U according
@@ -34,7 +35,7 @@ synaptic weight. The variable `x` in the synapse properties is the
 factor that scales the synaptic weight.
 
 Parameters
-~~~~~~~~~~~
+~~~~~~~~~~
 
 The following parameters can be set in the status dictionary:
 
@@ -45,7 +46,7 @@ The following parameters can be set in the status dictionary:
 * tau_fac     - time constant for facilitation in ms, default=0 (off)
 
 Notes
-~~~~~~~
+~~~~~
 
 Under identical conditions, the ``tsodyks2_synapse`` produces slightly lower
 peak amplitudes than the ``tsodyks_synapse``. However, the qualitative behavior
@@ -54,7 +55,7 @@ is identical.
 This compares the two synapse models.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Tsodyks MV, and Markram H. (1997). The neural code between
        neocortical depends on neurotransmitter release probability. PNAS,
@@ -69,6 +70,7 @@ References
 
 import nest
 import nest.voltage_trace
+import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -87,24 +89,20 @@ fac_params = {"U": 0.1, "u": 0.1, 'x': 1.0, "tau_fac": 1000.,
 ###############################################################################
 # Now we assign the parameter set to the synapse models.
 
-t1_params = fac_params       # for tsodyks_synapse
-t2_params = t1_params.copy()  # for tsodyks2_synapse
-
-nest.SetDefaults("tsodyks2_synapse", t1_params)
-nest.SetDefaults("tsodyks_synapse", t2_params)
-nest.SetDefaults("iaf_psc_exp", {"tau_syn_ex": 3.})
+tsodyks_params = dict(fac_params, synapse_model="tsodyks_synapse")  # for tsodyks_synapse
+tsodyks2_params = dict(fac_params, synapse_model="tsodyks2_synapse")  # for tsodyks2_synapse
 
 ###############################################################################
 # Create three neurons.
 
-neuron = nest.Create("iaf_psc_exp", 3)
+neuron = nest.Create("iaf_psc_exp", 3, params={"tau_syn_ex": 3.})
 
 ###############################################################################
 # Neuron one produces spikes. Neurons 2 and 3 receive the spikes via the two
 # synapse models.
 
-nest.Connect(neuron[0], neuron[1], syn_spec="tsodyks_synapse")
-nest.Connect(neuron[0], neuron[2], syn_spec="tsodyks2_synapse")
+nest.Connect(neuron[0], neuron[1], syn_spec=tsodyks_params)
+nest.Connect(neuron[0], neuron[2], syn_spec=tsodyks2_params)
 
 ###############################################################################
 # Now create two voltmeters to record the responses.
@@ -135,4 +133,4 @@ nest.Simulate(500.0)
 
 nest.voltage_trace.from_device(voltmeter[0])
 nest.voltage_trace.from_device(voltmeter[1])
-nest.voltage_trace.show()
+plt.show()

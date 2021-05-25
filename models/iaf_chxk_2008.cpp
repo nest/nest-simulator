@@ -143,7 +143,7 @@ nest::iaf_chxk_2008::State_::State_( const Parameters_& p )
   : r( 0 )
 {
   y[ V_M ] = p.E_L; // initialize to reversal potential
-  for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
+  for ( size_t i = DG_EXC ; i < STATE_VEC_SIZE ; ++i )
   {
     y[ i ] = 0;
   }

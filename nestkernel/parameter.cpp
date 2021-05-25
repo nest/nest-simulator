@@ -20,6 +20,8 @@
  *
  */
 
+#include <cmath>
+
 #include "node_collection.h"
 #include "node.h"
 #include "spatial.h"
@@ -271,6 +273,94 @@ RedrawParameter::value( RngPtr rng,
   } while ( value < min_ or value > max_ );
 
   return value;
+}
+
+
+ExpDistParameter::ExpDistParameter( const DictionaryDatum& d )
+  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  , beta_( getValue< double >( d, "beta" ) )
+{
+  parameter_is_spatial_ = true;
+}
+
+double
+ExpDistParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer )
+{
+  return std::exp( -p_->value( rng, source_pos, target_pos, layer ) / beta_ );
+}
+
+GaussianParameter::GaussianParameter( const DictionaryDatum& d )
+  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  , mean_( getValue< double >( d, "mean" ) )
+  , std_( getValue< double >( d, "std" ) )
+  , two_std2_( 2 * std_ * std_ )
+{
+  parameter_is_spatial_ = true;
+}
+
+double
+GaussianParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer )
+{
+  const auto x = p_->value( rng, source_pos, target_pos, layer );
+  return std::exp( -( ( x - mean_ ) * ( x - mean_ ) ) / two_std2_ );
+}
+
+
+Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
+  : px_( getValue< ParameterDatum >( d, "x" )->clone() )
+  , py_( getValue< ParameterDatum >( d, "y" )->clone() )
+  , mean_x_( getValue< double >( d, "mean_x" ) )
+  , mean_y_( getValue< double >( d, "mean_y" ) )
+  , std_x_( getValue< double >( d, "std_x" ) )
+  , std_y_( getValue< double >( d, "std_y" ) )
+  , rho_( getValue< double >( d, "rho" ) )
+  , std_x2_( std_x_ * std_x_ )
+  , std_y2_( std_y_ * std_y_ )
+  , std_xy_( std_x_ * std_y_ )
+  , two_sub_2rho2_( 2. * ( 1. - rho_ * rho_ ) )
+{
+  parameter_is_spatial_ = true;
+}
+
+double
+Gaussian2DParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer )
+{
+  const auto x = px_->value( rng, source_pos, target_pos, layer );
+  const auto y = py_->value( rng, source_pos, target_pos, layer );
+  const auto x_sub_mean_x = x - mean_x_;
+  const auto y_sub_mean_y = y - mean_y_;
+  return std::exp( -( x_sub_mean_x * x_sub_mean_x / std_x2_ + y_sub_mean_y * y_sub_mean_y / std_y2_
+                     - 2. * rho_ * x_sub_mean_x * y_sub_mean_y / std_xy_ ) / two_sub_2rho2_ );
+}
+
+
+GammaParameter::GammaParameter( const DictionaryDatum& d )
+  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  , kappa_( getValue< double >( d, "kappa" ) )
+  , theta_( getValue< double >( d, "theta" ) )
+  , inv_theta_( 1.0 / theta_ )
+  , delta_( std::pow( inv_theta_, kappa_ ) / std::tgamma( kappa_ ) )
+{
+  parameter_is_spatial_ = true;
+}
+
+double
+GammaParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer )
+{
+  const auto x = p_->value( rng, source_pos, target_pos, layer );
+  return std::pow( x, kappa_ - 1. ) * std::exp( -1. * inv_theta_ * x ) * delta_;
 }
 
 } /* namespace nest */

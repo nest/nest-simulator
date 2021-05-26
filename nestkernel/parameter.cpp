@@ -281,6 +281,12 @@ ExpDistParameter::ExpDistParameter( const DictionaryDatum& d )
   , inv_beta_( 1.0 / getValue< double >( d, "beta" ) )
 {
   parameter_is_spatial_ = true;
+
+  const auto beta = getValue< double >( d, "beta" );
+  if ( beta <= 0 )
+  {
+    throw BadProperty( "beta > 0 required for exponential distribution parameter, got beta=" + std::to_string( beta ) );
+  }
 }
 
 double
@@ -298,6 +304,12 @@ GaussianParameter::GaussianParameter( const DictionaryDatum& d )
   , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
 {
   parameter_is_spatial_ = true;
+
+  const auto std = getValue< double >( d, "std" );
+  if ( std <= 0 )
+  {
+    throw BadProperty( "std > 0 required for gaussian distribution parameter, got std=" + std::to_string( std ) );
+  }
 }
 
 double
@@ -325,6 +337,25 @@ Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
                                          * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_y" ) ) )
 {
   parameter_is_spatial_ = true;
+
+  const auto rho = getValue< double >( d, "rho" );
+  const auto std_x = getValue< double >( d, "std_x" );
+  const auto std_y = getValue< double >( d, "std_y" );
+  if ( rho >= 1 or rho <= -1 )
+  {
+    throw BadProperty(
+      "-1 < rho < 1 required for gaussian2d distribution parameter, got rho=" + std::to_string( rho ) );
+  }
+  if ( std_x <= 0 )
+  {
+    throw BadProperty(
+      "std_x > 0 required for gaussian2d distribution parameter, got std_x=" + std::to_string( std_x ) );
+  }
+  if ( std_y <= 0 )
+  {
+    throw BadProperty(
+      "std_y > 0 required for gaussian2d distribution parameter, got std_y=" + std::to_string( std_y ) );
+  }
 }
 
 double
@@ -346,6 +377,16 @@ GammaParameter::GammaParameter( const DictionaryDatum& d )
   , delta_( std::pow( inv_theta_, kappa_ ) / std::tgamma( kappa_ ) )
 {
   parameter_is_spatial_ = true;
+
+  if ( kappa_ <= 0 )
+  {
+    throw BadProperty( "kappa > 0 required for gamma distribution parameter, got kappa=" + std::to_string( kappa_ ) );
+  }
+  const auto theta = getValue< double >( d, "theta" );
+  if ( theta <= 0 )
+  {
+    throw BadProperty( "theta > 0 required for gamma distribution parameter, got theta=" + std::to_string( theta ) );
+  }
 }
 
 double

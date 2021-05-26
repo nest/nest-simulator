@@ -219,19 +219,30 @@ class DemoPlot:
         self.fig.suptitle("Storing and reloading a network simulation")
         self.comment.set_axis_off()
         self.comment.text(0, 1, textwrap.dedent("""
-            - Top row: Initial simulation (blue) and its continuation (orange).
-            - Status (V_m, weights) stored at end of Initial simulation.
-            - Right top: Continued simulation" (orange) shows the result of simply calling
-              Simulate() again an running for another 1s. In this case, all active PSCs
-              and all spikes in transition and spike history are preserved.
-            - Reloaded simulations (green, red) preserve only the membrane potential
-              V_m and the synaptic weights.The two simulations show
-              *identical* results because they run from the same starting point with the
-              same random number seeds.
-            - Reloaded simulation (different seed) (purple) starts from same
-              starting point as the green and red cases, but with different seed.
-            - Bottom left: Weight distributions for same cases as raster plots; red and
-              green curves overlap fully (brown)."""),
+            Storing, loading and continuing a simulation of a balanced E-I network
+            with STDP in excitatory synapses.
+
+            Top left: Raster plot of initial simulation for 1000ms (blue). Network state
+            (connections, membrane potential, synaptic weights) is stored at the end of
+            the initial simulation; synaptic currents are *not* stored.
+
+            Top right: Immediate continuation of the initial simulation from t=1000ms
+            to t=2000ms (orange) by calling Simulate(1000) again after storing the network.
+            This continues based on the full network state, including synaptic
+            currents and spikes in transit.
+
+            Second row, right: Simulating for 1000ms after loading the stored network
+            into a clean kernel (green). Time runs from 0ms and only connectivity, V_m and
+            synaptic weights are restored. Dynamics differ somewhat from continuation.
+
+            Third row, right: Same as in second row with identical random seed (red),
+            resulting in identical spike patterns.
+
+            Forth row, right: Simulating for 1000ms from same stored network state as
+            above but with different random seed yields differen spike patterns (purple).
+
+            Above: Distribution of excitatory synaptic weights at end of each sample
+            simulation. Green and red curves are identical and overlay to form brown curve."""),
                           transform=self.comment.transAxes, fontsize=8,
                           verticalalignment='top')
 
@@ -331,7 +342,7 @@ if __name__ == "__main__":
     # Details in results shall differ from previous run.
     print("\n*** Reloading and resuming simulation (different seed) ***")
     nest.ResetKernel()
-    nest.SetKernelStatus({"local_num_threads": 4, "rng_seed": 5345234})
+    nest.SetKernelStatus({"local_num_threads": 4, "rng_seed": 987654321})
     ein2 = EINetwork()
     ein2.restore("ein_1000.pkl")
     nest.Simulate(T_sim)

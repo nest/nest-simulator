@@ -647,7 +647,8 @@ public:
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  Parameter* const parameter1_;
+  Parameter* const parameter2_;
 };
 
 /**
@@ -720,7 +721,8 @@ public:
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  Parameter* const parameter1_;
+  Parameter* const parameter2_;
 };
 
 /**
@@ -793,7 +795,8 @@ public:
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  Parameter* const parameter1_;
+  Parameter* const parameter2_;
 };
 
 /**
@@ -866,7 +869,8 @@ public:
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  Parameter* const parameter1_;
+  Parameter* const parameter2_;
 };
 
 /**
@@ -933,7 +937,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
 };
 
 
@@ -1024,7 +1028,8 @@ public:
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  Parameter* const parameter1_;
+  Parameter* const parameter2_;
 
 private:
   bool
@@ -1144,7 +1149,9 @@ public:
   }
 
 protected:
-  Parameter* condition_, *if_true_, *if_false_;
+  Parameter* const condition_;
+  Parameter* const if_true_;
+  Parameter* const if_false_;
 };
 
 
@@ -1215,7 +1222,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
   double other_value_;
 };
 
@@ -1287,7 +1294,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
   double other_value_;
 };
 
@@ -1340,7 +1347,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
   double min_;
   double max_;
   const size_t max_redraws_;
@@ -1409,7 +1416,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
 };
 
 
@@ -1476,7 +1483,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
 };
 
 /**
@@ -1542,7 +1549,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
 };
 
 
@@ -1613,7 +1620,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
   const double exponent_;
 };
 
@@ -1636,6 +1643,7 @@ public:
     : num_dimensions_( 2 )
     , px_( px.clone() )
     , py_( py.clone() )
+    , pz_( nullptr )
   {
     parameter_is_spatial_ = true;
   }
@@ -1718,9 +1726,9 @@ public:
 
 protected:
   int num_dimensions_;
-  Parameter* px_;
-  Parameter* py_;
-  Parameter* pz_;
+  Parameter* const px_;
+  Parameter* const py_;
+  Parameter* const pz_;
 };
 
 
@@ -1782,7 +1790,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
   const double inv_beta_;
 };
 
@@ -1846,7 +1854,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
   const double mean_;
   const double inv_two_std2_;
 };
@@ -1915,8 +1923,8 @@ public:
   }
 
 protected:
-  Parameter* px_;
-  Parameter* py_;
+  Parameter* const px_;
+  Parameter* const py_;
   const double mean_x_;
   const double mean_y_;
   const double x_term_const_;
@@ -1985,7 +1993,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
   const double kappa_;
   const double inv_theta_;
   const double delta_;

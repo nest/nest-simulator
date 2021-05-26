@@ -246,7 +246,6 @@ class DemoPlot:
                           transform=self.comment.transAxes, fontsize=8,
                           verticalalignment='top')
 
-
     def add_to_plot(self, net, n_max=100, t_min=0, t_max=1000, lbl=""):
         spks = pd.DataFrame.from_dict(net.sr.get("events"))
         spks = spks.loc[(spks.senders < n_max) & (t_min < spks.times) & (spks.times < t_max)]

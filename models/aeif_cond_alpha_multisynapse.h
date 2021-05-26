@@ -261,8 +261,7 @@ private:
 
   /**
    * State variables of the model.
-   * @note Copy constructor and assignment operator required because
-   *       of C-style arrays.
+   * @note Copy constructor required because of C-style arrays.
    */
   struct State_
   {

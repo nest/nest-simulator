@@ -229,8 +229,7 @@ private:
    * dynamics and the refractory count. The state vector must be a
    * C-style array to be compatible with GSL ODE solvers.
    *
-   * @note Copy constructor and assignment operator are required because
-   *       of the C-style array.
+   * @note Copy constructor required because  of the C-style array.
    */
 public:
   struct State_

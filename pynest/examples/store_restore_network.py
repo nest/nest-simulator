@@ -33,10 +33,10 @@ the same network using the stored weights.
 
    NEST does not support support storing the complete state of a simulation
    in a way that would allow one to continue a simulation as if one had
-   made an new `Simulate()` call on an existing network. Such complete
+   made a new ``Simulate()`` call on an existing network. Such complete
    checkpointing would be very difficult to implement.
 
-   NEST"s explicit approach to storing and restoring network state makes
+   NEST's explicit approach to storing and restoring network state makes
    clear to all which aspects of a network are carried from one simulation
    to another and thus contributes to good scientific practice.
 
@@ -129,7 +129,6 @@ class EINetwork:
         ###############################################################################
         # Build dictionary with relevant network information:
         #   - membrane potential for all neurons in each population
-        #   - excitatory and inhibitory synaptic currents
         #   - source, target and weight of all connections
         # Dictionary entries are Pandas Dataframes.
         #
@@ -224,12 +223,11 @@ class DemoPlot:
 
             Top left: Raster plot of initial simulation for 1000ms (blue). Network state
             (connections, membrane potential, synaptic weights) is stored at the end of
-            the initial simulation; synaptic currents are *not* stored.
+            the initial simulation.
 
             Top right: Immediate continuation of the initial simulation from t=1000ms
             to t=2000ms (orange) by calling Simulate(1000) again after storing the network.
-            This continues based on the full network state, including synaptic
-            currents and spikes in transit.
+            This continues based on the full network state, including spikes in transit.
 
             Second row, right: Simulating for 1000ms after loading the stored network
             into a clean kernel (green). Time runs from 0ms and only connectivity, V_m and

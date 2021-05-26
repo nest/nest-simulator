@@ -348,31 +348,3 @@ if __name__ == "__main__":
     dplot.fig.savefig("store_restore_network.png")
 
     input("Press ENTER to close figure!")
-
-    # NOTE: Comments below need updating after discussion about model to be used.
-
-    ###############################################################################
-    # In the resulting figure, note the following
-    #
-    # - The raster plot in the top left and PSTH in the top right show the initial
-    #   simulation. All other simulations are based on the state at the end of this
-    #   simulation.
-    # - The "Continued simulation" (orange) shows the result of simply calling
-    #   Simulate() again an running for another 1s. In this case, all active PSCs
-    #   and all spikes in transition are preserved, as is the spike history for
-    #   STDP evaluation.
-    # - The "Reloaded simulation"s (green, red) preserve only the membrane potential
-    #   V_m and the synaptic weights from the initial simulation. The effect of not
-    #   preserving active PSCs and spikes in transition is clearly visible by the
-    #   lack of activity at the beginning of the simulation. The two simulations show
-    #   *identical* results because they run from the same starting point with the
-    #   same random number seeds.
-    # - The "Reloaded simulation (different seed)" (purple) starts from the same
-    #   starting point as the green and red cases, but the different random seed
-    #   causes different spike times.
-    # - Weight distributions are shown to the bottom left. One clearly sees that
-    #   weights have evolved from the distribution after 1s (blue), and that the
-    #   weights of the continued (orange) and reloaded (green, red, purple) simulations
-    #   differ slightly.
-    # - In the PSTH and weight histograms, the green and red curves overlap fully
-    #   forming a brown curve.

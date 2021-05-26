@@ -1743,7 +1743,7 @@ public:
   ExpDistParameter( const ExpDistParameter& p )
     : Parameter( p )
     , p_( p.p_->clone() )
-    , beta_( p.beta_ )
+    , inv_beta_( p.inv_beta_ )
   {
     parameter_is_spatial_ = true;
   }
@@ -1780,7 +1780,7 @@ public:
 
 protected:
   Parameter* p_;
-  const double beta_;
+  const double inv_beta_;
 };
 
 
@@ -1804,8 +1804,7 @@ public:
     : Parameter( p )
     , p_( p.p_->clone() )
     , mean_( p.mean_ )
-    , std_( p.std_ )
-    , two_std2_( p.two_std2_ )
+    , inv_two_std2_( p.inv_two_std2_ )
   {
     parameter_is_spatial_ = true;
   }
@@ -1843,8 +1842,7 @@ public:
 protected:
   Parameter* p_;
   const double mean_;
-  const double std_;
-  const double two_std2_;
+  const double inv_two_std2_;
 };
 
 
@@ -1870,13 +1868,9 @@ public:
     , py_( p.py_->clone() )
     , mean_x_( p.mean_x_ )
     , mean_y_( p.mean_y_ )
-    , std_x_( p.std_x_ )
-    , std_y_( p.std_y_ )
-    , rho_( p.rho_ )
-    , std_x2_( p.std_x2_ )
-    , std_y2_( p.std_y2_ )
-    , std_xy_( p.std_xy_ )
-    , two_sub_2rho2_( p.two_sub_2rho2_ )
+    , x_term_const_( p.x_term_const_ )
+    , y_term_const_( p.y_term_const_ )
+    , xy_term_const_( p.xy_term_const_ )
   {
     parameter_is_spatial_ = true;
   }
@@ -1917,13 +1911,9 @@ protected:
   Parameter* py_;
   const double mean_x_;
   const double mean_y_;
-  const double std_x_;
-  const double std_y_;
-  const double rho_;
-  const double std_x2_;
-  const double std_y2_;
-  const double std_xy_;
-  const double two_sub_2rho2_;
+  const double x_term_const_;
+  const double y_term_const_;
+  const double xy_term_const_;
 };
 
 

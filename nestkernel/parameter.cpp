@@ -278,7 +278,7 @@ RedrawParameter::value( RngPtr rng,
 
 ExpDistParameter::ExpDistParameter( const DictionaryDatum& d )
   : p_( getValue< ParameterDatum >( d, "x" )->clone() )
-  , beta_( getValue< double >( d, "beta" ) )
+  , inv_beta_( 1.0 / getValue< double >( d, "beta" ) )
 {
   parameter_is_spatial_ = true;
 }
@@ -289,14 +289,13 @@ ExpDistParameter::value( RngPtr rng,
   const std::vector< double >& target_pos,
   const AbstractLayer& layer )
 {
-  return std::exp( -p_->value( rng, source_pos, target_pos, layer ) / beta_ );
+  return std::exp( -p_->value( rng, source_pos, target_pos, layer ) * inv_beta_ );
 }
 
 GaussianParameter::GaussianParameter( const DictionaryDatum& d )
   : p_( getValue< ParameterDatum >( d, "x" )->clone() )
   , mean_( getValue< double >( d, "mean" ) )
-  , std_( getValue< double >( d, "std" ) )
-  , two_std2_( 2 * std_ * std_ )
+  , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
 {
   parameter_is_spatial_ = true;
 }
@@ -307,8 +306,8 @@ GaussianParameter::value( RngPtr rng,
   const std::vector< double >& target_pos,
   const AbstractLayer& layer )
 {
-  const auto x = p_->value( rng, source_pos, target_pos, layer );
-  return std::exp( -( ( x - mean_ ) * ( x - mean_ ) ) / two_std2_ );
+  const auto dx = p_->value( rng, source_pos, target_pos, layer ) - mean_;
+  return std::exp( -dx * dx * inv_two_std2_ );
 }
 
 
@@ -317,13 +316,13 @@ Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
   , py_( getValue< ParameterDatum >( d, "y" )->clone() )
   , mean_x_( getValue< double >( d, "mean_x" ) )
   , mean_y_( getValue< double >( d, "mean_y" ) )
-  , std_x_( getValue< double >( d, "std_x" ) )
-  , std_y_( getValue< double >( d, "std_y" ) )
-  , rho_( getValue< double >( d, "rho" ) )
-  , std_x2_( std_x_ * std_x_ )
-  , std_y2_( std_y_ * std_y_ )
-  , std_xy_( std_x_ * std_y_ )
-  , two_sub_2rho2_( 2. * ( 1. - rho_ * rho_ ) )
+  , x_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
+                          * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_x" ) ) )
+  , y_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
+                          * getValue< double >( d, "std_y" ) * getValue< double >( d, "std_y" ) ) )
+  , xy_term_const_(
+      getValue< double >( d, "rho" ) / ( ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
+                                         * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_y" ) ) )
 {
   parameter_is_spatial_ = true;
 }
@@ -334,12 +333,9 @@ Gaussian2DParameter::value( RngPtr rng,
   const std::vector< double >& target_pos,
   const AbstractLayer& layer )
 {
-  const auto x = px_->value( rng, source_pos, target_pos, layer );
-  const auto y = py_->value( rng, source_pos, target_pos, layer );
-  const auto x_sub_mean_x = x - mean_x_;
-  const auto y_sub_mean_y = y - mean_y_;
-  return std::exp( -( x_sub_mean_x * x_sub_mean_x / std_x2_ + y_sub_mean_y * y_sub_mean_y / std_y2_
-                     - 2. * rho_ * x_sub_mean_x * y_sub_mean_y / std_xy_ ) / two_sub_2rho2_ );
+  const auto dx = px_->value( rng, source_pos, target_pos, layer ) - mean_x_;
+  const auto dy = py_->value( rng, source_pos, target_pos, layer ) - mean_y_;
+  return std::exp( -dx * dx * x_term_const_ - dy * dy * y_term_const_ + dx * dy * xy_term_const_ );
 }
 
 

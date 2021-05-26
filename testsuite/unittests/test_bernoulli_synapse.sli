@@ -105,9 +105,9 @@ forall
 /parrot_neuron Create /post Set
 
 {
-  [pre] [post] << /rule /all_to_all >> << /synapse_model /bernoulli_synapse /p_transmit -0.1 >> Connect
+  pre post << /rule /all_to_all >> << /synapse_model /bernoulli_synapse /p_transmit -0.1 >> Connect
 } fail_or_die
 
 {
-  [pre] [post] << /rule /all_to_all >> << /synapse_model /bernoulli_synapse /p_transmit 1.1 >> Connect
+  pre post << /rule /all_to_all >> << /synapse_model /bernoulli_synapse /p_transmit 1.1 >> Connect
 } fail_or_die

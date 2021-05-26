@@ -62,7 +62,7 @@ print("iaf_cond_alpha recordables: {0}".format(
       nest.GetDefaults("iaf_cond_alpha")["recordables"]))
 
 ###############################################################################
-# A neuron, a multimeter as recording device and two spike generators for
+# A neuron, a multimeter as recording device, and two spike generators for
 # excitatory and inhibitory stimulation are instantiated. The command ``Create``
 # expects a model type and, optionally, the desired number of nodes and a
 # dictionary of parameters to overwrite the default values of the model.
@@ -72,7 +72,7 @@ print("iaf_cond_alpha recordables: {0}".format(
 #    (`V_reset`, in mV) are specified.
 #  * For the ``multimeter``, the time interval for recording (`interval`, in
 #    ms) and the measures to record (membrane potential `V_m` in mV and
-#    excitatory and inhibitoy synaptic conductances `g_ex` and`g_in` in nS)
+#    excitatory and inhibitory synaptic conductances `g_ex` and`g_in` in nS)
 #    are set.
 #
 #  In addition, more parameters can be modified for writing to file:
@@ -101,7 +101,7 @@ s_in = nest.Create("spike_generator",
                    params={"spike_times": numpy.array([15.0, 25.0, 55.0])})
 
 ###############################################################################
-# Next, We connect the spike generators to the neuron with ``Connect``. Synapse
+# Next, we connect the spike generators to the neuron with ``Connect``. Synapse
 # specifications can be provided in a dictionary. In this example of a
 # conductance-based neuron, the synaptic weight ``weight`` is given in nS.
 # Note that the values are  positive for excitatory stimulation and negative
@@ -120,12 +120,12 @@ nest.Simulate(100.)
 # After the simulation, the recordings are obtained from the file the
 # multimeter wrote to, accessed with the `filenames` property of the
 # multimeter. After three header rows, the data is formatted in columns. The
-# first column is the ID of the sender node. The second column is the ID time
+# first column is the ID of the sender node. The second column is the time
 # of the recording, in ms. Subsequent rows are values of properties specified
 # in the `record_from` property of the multimeter.
 
 data = numpy.loadtxt(m.filenames[0], skiprows=3)
-sender, t, v_m, g_in, g_ex = data.T
+sender, t, v_m, g_ex, g_in = data.T
 
 ###############################################################################
 # Finally, the time courses of the membrane voltage and the synaptic

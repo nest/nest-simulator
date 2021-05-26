@@ -82,7 +82,7 @@ M_ERROR setverbosity
 % Check that delay cannot be set for gap-junction connections
 {
   setup
-  neuron_gap  neuron_gap
+  neuron_gap neuron_gap
   << /rule /one_to_one /make_symmetric true >> 
   << /synapse_model /gap_junction /delay 2.0 >>
   Connect
@@ -97,14 +97,6 @@ M_ERROR setverbosity
 } fail_or_die
 
 % Check that illegal gap-junction connections cannot be created
-{
-  setup
-  neuron_gap 0 get neuron_gap 0 get
-  << /rule /one_to_one /make_symmetric true >> 
-  << /synapse_model /gap_junction >>
-  Connect
-} fail_or_die
-
 {
   setup
   neuron_no_gap neuron_no_gap

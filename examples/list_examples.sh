@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/bin/bash
 #
-# nest_script.py
+# list_examples.sh
 #
 # This file is part of NEST.
 #
@@ -20,27 +19,21 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Music example
---------------
+# set bash strict mode
+set -euo pipefail
+IFS=$' \n\t'
 
-This example runs 2 NEST instances and one receiver instance. Neurons on
-the NEST instances are observed by the music_cont_out_proxy and their
-values are forwarded through MUSIC to the receiver.
+echo ">>> Longest running examples:"
+egrep -o "real: [^,]+" example_logs/*/meta.yaml | sed -e 's/:real://' | sort -k2 -r | head -n 20 || true;
 
-Please note that MUSIC and the recording backend for Arbor are mutually exclusive
-and cannot be enabled at the same time.
-
-"""
-import nest
-
-proxy = nest.Create('music_cont_out_proxy', 1)
-proxy.port_name = 'out'
-proxy.set(record_from=["V_m"], interval=0.1)
-
-neuron_grp = nest.Create('iaf_cond_exp', 2)
-proxy.targets = neuron_grp
-neuron_grp[0].I_e = 300.
-neuron_grp[1].I_e = 600.
-
-nest.Simulate(200)
+echo ">>> multiple run statistics"
+for x in example_logs/*/meta.yaml; do
+	name="$(basename "$(dirname "$x")")"
+	res="$(grep "result:" "$x" | sort | uniq -c | tr "\n" "\t" | sed -e 's/failed/\x1b[1;31m\0\x1b[0m/g' -e 's/success/\x1b[1;32m\0\x1b[0m/g')"
+	warn=""
+	if grep "fail" <<<"$res" >/dev/null && grep "success" <<<"$res" >/dev/null; then
+		warn='\033[01;33m'
+	fi
+	echo -e "$res\t$warn$name\033[0m"
+done
+echo "<<< done"

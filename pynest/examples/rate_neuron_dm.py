@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Rate neuron decision making
-------------------------------------
+"""
+Rate neuron decision making
+---------------------------
 
 A binary decision is implemented in the form of two rate neurons
 engaging in mutual inhibition.
@@ -95,7 +96,7 @@ fig = plt.figure(facecolor=face, edgecolor=edge, figsize=fig_size)
 dt = 1e-3
 sigma = [0.0, 0.1, 0.2]
 dE = [0.0, 0.004, 0.008]
-T = numpy.linspace(0, 200, 200 / dt - 1)
+T = numpy.linspace(0, 200, int(200/dt) - 1)
 for i in range(9):
     c = i % 3
     r = int(i / 3)

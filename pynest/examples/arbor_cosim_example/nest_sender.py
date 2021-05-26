@@ -4,14 +4,14 @@
 
 from sys import argv
 argv.append('--quiet')
-import sys
+import sys                  # noqa nopep8 (order of imports matter)
 
 print("Getting comm")
-from mpi4py import MPI
+from mpi4py import MPI      # noqa nopep8 (order of imports matter)
 comm = MPI.COMM_WORLD.Split(0)  # is nest
 
 print("Getting nest")
-import nest
+import nest                 # noqa nopep8 (order of imports matter)
 
 
 STATUS_DICT = nest.ll_api.sli_func("statusdict")

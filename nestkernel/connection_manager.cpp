@@ -66,7 +66,7 @@ nest::ConnectionManager::ConnectionManager()
   , min_delay_( 1 )
   , max_delay_( 1 )
   , keep_source_table_( true )
-  , have_connections_changed_()
+  , have_connections_changed_( false )
   , has_get_connections_been_called_( false )
   , sort_connections_by_source_( true )
   , has_primary_connections_( false )
@@ -94,8 +94,8 @@ nest::ConnectionManager::initialize()
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
+  have_connections_changed_ = false;
 
-  have_connections_changed_.initialize( num_threads, false );
   check_primary_connections_.initialize( num_threads, false );
   check_secondary_connections_.initialize( num_threads, false );
 
@@ -403,7 +403,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   }
 
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
-  set_have_connections_changed( kernel().vp_manager.get_thread_id() );
+  set_have_connections_changed();
 
   cb->connect();
   delete cb;
@@ -609,7 +609,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
   };
 
   // Set flag before entering parallel section in case we have less connections than ranks.
-  set_have_connections_changed( kernel().vp_manager.get_thread_id() );
+  set_have_connections_changed();
 
   // Vector for storing exceptions raised by threads.
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
@@ -837,7 +837,7 @@ nest::ConnectionManager::disconnect( const thread tid,
   const index snode_id,
   const index tnode_id )
 {
-  set_have_connections_changed( tid );
+  set_have_connections_changed();
 
   assert( syn_id != invalid_synindex );
 
@@ -1590,33 +1590,24 @@ nest::ConnectionManager::check_secondary_connections_exist()
 }
 
 void
-nest::ConnectionManager::set_have_connections_changed( const thread tid )
+nest::ConnectionManager::set_have_connections_changed()
 {
-  // Need to check if have_connections_changed_ has already been set, because if
-  // we have a lot of threads and they all try to set the variable at once we get
-  // performance issues on supercomputers.
-  if ( have_connections_changed_[ tid ].is_false() )
+  assert( kernel().vp_manager.get_thread_id() == 0 );
+
+  if ( has_get_connections_been_called_ )
   {
-    if ( has_get_connections_been_called_ )
-    {
-      std::string msg =
-        "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
-      LOG( M_WARNING, "ConnectionManager", msg );
-      // Reset the has_get_connections_been_called_ flag because we have updated connections.
-      set_has_get_connections_been_called( false );
-    }
-    have_connections_changed_[ tid ].set_true();
+    std::string msg =
+      "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
+    LOG( M_WARNING, "ConnectionManager", msg );
+    // Reset the has_get_connections_been_called_ flag because we have updated connections.
+    set_has_get_connections_been_called( false );
   }
+
+  have_connections_changed_ = true;
 }
 
 void
-nest::ConnectionManager::unset_have_connections_changed( const thread tid )
+nest::ConnectionManager::unset_have_connections_changed()
 {
-  // Need to check if have_connections_changed_ has already been set, because if
-  // we have a lot of threads and they all try to set the variable at once we get
-  // performance issues on supercomputers.
-  if ( have_connections_changed_[ tid ].is_true() )
-  {
-    have_connections_changed_[ tid ].set_false();
-  }
+  have_connections_changed_ = false;
 }

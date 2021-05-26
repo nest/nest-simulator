@@ -345,13 +345,13 @@ public:
    * Sets flag indicating whether connection information needs to be
    * communicated to true.
    */
-  void set_have_connections_changed( const thread tid );
+  void set_have_connections_changed();
 
   /**
    * Sets flag indicating whether connection information needs to be
    * communicated to false.
    */
-  void unset_have_connections_changed( const thread tid );
+  void unset_have_connections_changed();
 
   /**
    * Sets flag indicating whether GetConnections has been called since last update of connections.
@@ -599,7 +599,7 @@ private:
 
   //! True if new connections have been created since startup or last call to
   //! simulate.
-  PerThreadBoolIndicator have_connections_changed_;
+  bool have_connections_changed_;
 
   //! true if GetConnections has been called.
   bool has_get_connections_been_called_;
@@ -729,7 +729,7 @@ ConnectionManager::get_remote_targets_of_local_node( const thread tid, const ind
 inline bool
 ConnectionManager::have_connections_changed() const
 {
-  return have_connections_changed_.any_true();
+  return have_connections_changed_;
 }
 
 inline void

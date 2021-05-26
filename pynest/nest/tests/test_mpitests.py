@@ -54,7 +54,7 @@ class TestMPIDependentTests(unittest.TestCase):
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(
-        TestStructuralPlasticityMPI)
+        TestMPIDependentTests)
     return suite
 
 

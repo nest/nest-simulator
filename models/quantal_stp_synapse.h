@@ -133,11 +133,6 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   /**
-   * Throws exception if n or a are given in syn_spec.
-   */
-  void check_synapse_params( const DictionaryDatum& d ) const;
-
-  /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).

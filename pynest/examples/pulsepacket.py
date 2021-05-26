@@ -32,7 +32,7 @@ pulse-packet and the number of trials.
 
 
 References
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Diesmann M. 2002. Dissertation. Conditions for stable propagation of
        synchronous spiking in cortical neural networks: Single neuron dynamics
@@ -141,7 +141,7 @@ sig = Sdev
 mu = 0.0
 x = numpy.arange(-4 * sig, 4 * sig, Convolution_resolution)
 term1 = 1 / (sig * numpy.sqrt(2 * numpy.pi))
-term2 = numpy.exp(-(x - mu) ** 2 / (sig ** 2 * 2))
+term2 = numpy.exp(-(x - mu)**2 / (sig**2 * 2))
 gauss = term1 * term2 * Convolution_resolution
 
 
@@ -178,7 +178,7 @@ psp_norm = psp / psp_amp
 # simulation outcome. Therefore we need a time vector (`t_U`) with the correct
 # temporal resolution, which places the excursion of the potential at the
 # correct time.
-psp_norm = numpy.pad(psp_norm, [len(psp_norm) - 1, 1])
+psp_norm = numpy.pad(psp_norm, [len(psp_norm) - 1, 1], mode='constant')
 U = a * psp_amp * numpy.convolve(gauss, psp_norm)
 ulen = len(U)
 t_U = (convolution_resolution * numpy.linspace(-ulen / 2., ulen / 2., ulen) +
@@ -222,14 +222,12 @@ ppg_pars = {
 }
 ppgs = nest.Create('pulsepacket_generator', n_neurons, ppg_pars)
 vm_pars = {'interval': sampling_resolution}
-vm = nest.Create('voltmeter', 1, vm_pars)
+vm = nest.Create('voltmeter', params=vm_pars)
 
 
 ###############################################################################
 # Now, we connect each pulse generator to one neuron via static synapses.
-# We want to keep all properties of the static synapse constant except the
-# synaptic weight. Therefore we change the weight with  the help of the command
-# ``SetDefaults``.
+# We use the default static synapse, with specified weight.
 # The command ``Connect`` connects all kinds of nodes/devices. Since multiple
 # nodes/devices can be connected in different ways e.g., each source connects
 # to all targets, each source connects to a subset of targets or each source
@@ -238,9 +236,8 @@ vm = nest.Create('voltmeter', 1, vm_pars)
 # generator (source) to one neuron (target).
 # In addition we also connect the `voltmeter` to the `neurons`.
 
-nest.SetDefaults('static_synapse', {'weight': weight})
-nest.Connect(ppgs, neurons, 'one_to_one')
-nest.Connect(vm, neurons)
+nest.Connect(ppgs, neurons, 'one_to_one', syn_spec={'weight': weight})
+nest.Connect(vm, neurons, syn_spec={'weight': weight})
 
 
 ###############################################################################

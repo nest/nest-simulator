@@ -688,6 +688,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 
   kernel().connection_manager.restructure_connection_tables( tid );
   kernel().connection_manager.sort_connections( tid );
+  kernel().connection_manager.collect_compressed_spike_data( tid );
 
 #pragma omp barrier // wait for all threads to finish sorting
 
@@ -736,6 +737,12 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   if ( kernel().connection_manager.secondary_connections_exist() )
   {
     kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
+  }
+
+#pragma omp barrier
+  if ( kernel().connection_manager.use_compressed_spikes() )
+  {
+    kernel().connection_manager.clear_compressed_spike_data_map( tid );
   }
 
 #pragma omp single

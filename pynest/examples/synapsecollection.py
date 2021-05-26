@@ -20,6 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+Synapse Collection usage example
+--------------------------------
+
 Example script to show some of the possibilities of the SynapseCollection class. We
 connect neurons, and get the SynapseCollection with a GetConnections call. To get
 a better understanding of the connections, we plot the weights between the
@@ -35,7 +38,7 @@ def makeMatrix(sources, targets, weights):
     """
     Returns a matrix with the weights between the source and target node_ids.
     """
-    aa = np.zeros((max(sources)+1, max(targets)+1))
+    aa = np.zeros((max(sources) + 1, max(targets) + 1))
 
     for src, trg, wght in zip(sources, targets, weights):
         aa[src, trg] += wght
@@ -49,9 +52,9 @@ def plotMatrix(srcs, tgts, weights, title, pos):
     """
     plt.subplot(pos)
     plt.matshow(makeMatrix(srcs, tgts, weights), fignum=False)
-    plt.xlim([min(tgts)-0.5, max(tgts)+0.5])
+    plt.xlim([min(tgts) - 0.5, max(tgts) + 0.5])
     plt.xlabel('target')
-    plt.ylim([max(srcs)+0.5, min(srcs)-0.5])
+    plt.ylim([max(srcs) + 0.5, min(srcs) - 0.5])
     plt.ylabel('source')
     plt.title(title)
     plt.colorbar(fraction=0.046, pad=0.04)
@@ -83,7 +86,7 @@ plotMatrix(srcs, tgts, weights, 'Uniform weight', 121)
 Add some weights to the connections, and plot the updated weight matrix.
 """
 # We can set data of the connections with a simple set() call.
-w = [{'weight': x*1.0} for x in range(1, 11)]
+w = [{'weight': x * 1.0} for x in range(1, 11)]
 conns.set(w)
 weights = conns.weight
 
@@ -165,7 +168,7 @@ plotMatrix(srcs, tgts, weights, 'Connections with stdp_synapse', 223)
 # Get SynapseCollection consisting of the fixed_total_number connections, but set
 # weight before plotting
 conns = nest.GetConnections(nrns[5:10], nrns[:5])
-w = [{'weight': x*1.0} for x in range(1, 6)]
+w = [{'weight': x * 1.0} for x in range(1, 6)]
 conns.set(w)
 g = conns.get(['source', 'target', 'weight'])
 srcs = g['source']

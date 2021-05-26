@@ -494,7 +494,7 @@ public:
   double
   value( RngPtr, index, Node*, thread ) override
   {
-    throw KernelException( "Node position parameter can only be used when using ConnectLayers." );
+    throw KernelException( "Node position parameter can only be used when connecting spatially distributed nodes." );
   }
 
   double
@@ -558,7 +558,7 @@ public:
   double
   value( RngPtr, index, Node*, thread ) override
   {
-    throw KernelException( "Spatial distance parameter can only be used when using ConnectLayers." );
+    throw KernelException( "Spatial distance parameter can only be used when connecting spatially distributed nodes." );
   }
 
   double value( RngPtr rng,
@@ -1726,6 +1726,7 @@ protected:
 
 /**
  * Parameter class representing an exponential distribution applied on a parameter.
+ * Can only be used when connecting spatially distributed nodes.
  */
 class ExpDistParameter : public Parameter
 {
@@ -1765,8 +1766,10 @@ public:
   double
   value( RngPtr, index, Node*, thread ) override
   {
-    throw KernelException( "Exponential distribution parameter can only be used when using ConnectLayers." );
+    throw KernelException(
+      "Exponential distribution parameter can only be used when connecting spatially distributed nodes." );
   }
+
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -1786,6 +1789,7 @@ protected:
 
 /**
  * Parameter class representing a gaussian distribution applied on a parameter.
+ * Can only be used when connecting spatially distributed nodes.
  */
 class GaussianParameter : public Parameter
 {
@@ -1826,8 +1830,10 @@ public:
   double
   value( RngPtr, index, Node*, thread ) override
   {
-    throw KernelException( "Gaussian distribution parameter can only be used when using ConnectLayers." );
+    throw KernelException(
+      "Gaussian distribution parameter can only be used when connecting spatially distributed nodes." );
   }
+
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -1848,6 +1854,7 @@ protected:
 
 /**
  * Parameter class representing a gaussian distribution in two dimensions applied on a parameter.
+ * Can only be used when connecting spatially distributed nodes.
  */
 class Gaussian2DParameter : public Parameter
 {
@@ -1893,8 +1900,9 @@ public:
   double
   value( RngPtr, index, Node*, thread ) override
   {
-    throw KernelException( "Gaussian 2D parameter can only be used when using ConnectLayers." );
+    throw KernelException( "Gaussian 2D parameter can only be used when connecting spatially distributed nodes." );
   }
+
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -1919,6 +1927,7 @@ protected:
 
 /**
  * Parameter class representing a gamma distribution applied on a parameter.
+ * Can only be used when connecting spatially distributed nodes.
  */
 class GammaParameter : public Parameter
 {
@@ -1961,8 +1970,10 @@ public:
   double
   value( RngPtr, index, Node*, thread ) override
   {
-    throw KernelException( "Gamma distribution parameter can only be used when using ConnectLayers." );
+    throw KernelException(
+      "Gamma distribution parameter can only be used when connecting spatially distributed nodes." );
   }
+
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,

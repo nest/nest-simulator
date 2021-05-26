@@ -163,7 +163,6 @@ class TestParams(unittest.TestCase):
     def testQuantalStpSynapse(self):
         # params a and n are not tested since Connect cannot handle
         # integer parameter yet
-        # Connect will throw an error is a or n are set in syn_spec
         params = ['U', 'tau_fac', 'tau_rec', 'u', 'a', 'n']
         values = [0.679, 8.45, 746.2, 0.498, 10, 5]
         syn_params = {'synapse_model': 'quantal_stp_synapse'}

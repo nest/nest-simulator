@@ -1946,7 +1946,6 @@ public:
     : Parameter( p )
     , p_( p.p_->clone() )
     , kappa_( p.kappa_ )
-    , theta_( p.theta_ )
     , inv_theta_( p.inv_theta_ )
     , delta_( p.delta_ )
   {
@@ -1988,7 +1987,6 @@ public:
 protected:
   Parameter* p_;
   const double kappa_;
-  const double theta_;
   const double inv_theta_;
   const double delta_;
 };

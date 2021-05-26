@@ -342,8 +342,7 @@ Gaussian2DParameter::value( RngPtr rng,
 GammaParameter::GammaParameter( const DictionaryDatum& d )
   : p_( getValue< ParameterDatum >( d, "x" )->clone() )
   , kappa_( getValue< double >( d, "kappa" ) )
-  , theta_( getValue< double >( d, "theta" ) )
-  , inv_theta_( 1.0 / theta_ )
+  , inv_theta_( 1.0 / getValue< double >( d, "theta" ) )
   , delta_( std::pow( inv_theta_, kappa_ ) / std::tgamma( kappa_ ) )
 {
   parameter_is_spatial_ = true;

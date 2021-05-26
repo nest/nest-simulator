@@ -41,7 +41,9 @@ else:
 
 doc_build_dir = Path(os.environ['OLDPWD']) / 'doc/userdoc'
 
-if os.environ.get('READTHEDOCS', 'False') == 'True':
+read_the_docs_build = os.environ.get('READTHEDOCS') == 'True'
+
+if read_the_docs_build:
     doc_build_dir = source_dir / 'doc/userdoc'
 
 print("doc_build_dir", str(doc_build_dir))

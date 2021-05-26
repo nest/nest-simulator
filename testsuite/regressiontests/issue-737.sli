@@ -59,44 +59,6 @@ M_ERROR setverbosity
 
 } fail_or_die
 
-% Test n in syn_spec for quantal_stp_synapse model
-{
-  ResetKernel
-
-  /node_id /iaf_psc_alpha Create def
-  node_id node_id << /rule /one_to_one >> << /synapse_model /quantal_stp_synapse /n 4.0 >> Connect
-
-} fail_or_die
-
-% Test n in syn_spec for CopyModel of quantal_stp_synapse model
-{
-  ResetKernel
-
-  /node_id /iaf_psc_alpha Create def
-  /quantal_stp_synapse /mysyn CopyModel
-  node_id node_id << /rule /one_to_one >> << /synapse_model /mysyn /n 4.0 >> Connect
-
-} fail_or_die
-
-% Test a in syn_spec for quantal_stp_synapse  model
-{
-  ResetKernel
-
-  /n /iaf_psc_alpha Create def
-  n n << /rule /one_to_one >> << /synapse_model /quantal_stp_synapse /a 2.0 >> Connect
-
-} fail_or_die
-
-% Test a in syn_spec for CopyModel of quantal_stp_synapse  model
-{
-  ResetKernel
-
-  /n /iaf_psc_alpha Create def
-  /quantal_stp_synapse /mysyn CopyModel
-  n n << /rule /one_to_one >> << /synapse_model /mysyn /a 2.0 >> Connect
-
-} fail_or_die
-
 % Test vt in syn_spec for stdp_dopamine_synapse model
 {
   ResetKernel

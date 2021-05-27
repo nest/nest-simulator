@@ -151,12 +151,11 @@ def RunManager():
     Notes
     -----
 
-    ```suggestion
     Be careful about modifying the network or neurons inside the `RunManager` context.
     In particular, do not call `Create`, `Connect`, or `SetKernelStatus`. Calling `SetStatus`
     to change membrane potential `V_m` of neurons or synaptic weights (but not delays!)
     will in most cases work as expected, while changing membrane or synaptic times
-    constants **will not work correctly**. If in doubt, assume that changes may cause
+    constants will not work correctly. If in doubt, assume that changes may cause
     undefined behavior and check these thoroughly.
 
     See Also

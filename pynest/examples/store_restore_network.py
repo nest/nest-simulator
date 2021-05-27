@@ -31,7 +31,7 @@ the same network using the stored weights.
 
 .. admonition:: Only user-specified aspects are stored
 
-   NEST does not support support storing the complete state of a simulation
+   NEST does not support storing the complete state of a simulation
    in a way that would allow one to continue a simulation as if one had
    made a new ``Simulate()`` call on an existing network. Such complete
    checkpointing would be very difficult to implement.
@@ -134,7 +134,7 @@ class EINetwork:
         #
         # Strictly speaking, we would not need to store the weight of the inhibitory
         # synapses since they are fixed, but we do so out of symmetry and to make it
-        # easier to add plasticity for inihibitory connections later.
+        # easier to add plasticity for inhibitory connections later.
 
         network = {}
         network["n_vp"] = nest.GetKernelStatus("total_num_virtual_procs")
@@ -236,8 +236,8 @@ class DemoPlot:
             Third row, right: Same as in second row with identical random seed (red),
             resulting in identical spike patterns.
 
-            Forth row, right: Simulating for 1000ms from same stored network state as
-            above but with different random seed yields differen spike patterns (purple).
+            Fourth row, right: Simulating for 1000ms from same stored network state as
+            above but with different random seed yields different spike patterns (purple).
 
             Above: Distribution of excitatory synaptic weights at end of each sample
             simulation. Green and red curves are identical and overlay to form brown curve."""),
@@ -299,7 +299,7 @@ if __name__ == "__main__":
     print("*** Initial simulation ***")
     ein.build()
     nest.Simulate(T_sim)
-    dplot.add_to_plot(ein, lbl="Initial simuation")
+    dplot.add_to_plot(ein, lbl="Initial simulation")
 
     ###############################################################################
     # Store network state to file with state after 1s.
@@ -311,7 +311,7 @@ if __name__ == "__main__":
     # Continue simulation by another 1s.
     print("\n*** Continuing simulation ***")
     nest.Simulate(T_sim)
-    dplot.add_to_plot(ein, lbl="Continued simuation", t_min=T_sim, t_max=2*T_sim)
+    dplot.add_to_plot(ein, lbl="Continued simulation", t_min=T_sim, t_max=2*T_sim)
 
     ###############################################################################
     # Clear kernel, restore network from file and simulate for 1s.
@@ -321,7 +321,7 @@ if __name__ == "__main__":
     ein2 = EINetwork()
     ein2.restore("ein_1000.pkl")
     nest.Simulate(T_sim)
-    dplot.add_to_plot(ein2, lbl="Reloaded simuation")
+    dplot.add_to_plot(ein2, lbl="Reloaded simulation")
 
     ###############################################################################
     # Repeat previous step. This shall result in *exactly* the same results as
@@ -332,7 +332,7 @@ if __name__ == "__main__":
     ein2 = EINetwork()
     ein2.restore("ein_1000.pkl")
     nest.Simulate(T_sim)
-    dplot.add_to_plot(ein2, lbl="Reloaded simuation (same seed)")
+    dplot.add_to_plot(ein2, lbl="Reloaded simulation (same seed)")
 
     ###############################################################################
     # Clear, restore and simulate again, but now with different random seed.

@@ -119,7 +119,7 @@ public:
 
 private:
   void
-  init_state_( const Node& )
+  init_state_()
   {
   }
   void

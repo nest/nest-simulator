@@ -214,7 +214,6 @@ private:
    * only through a Node*.
    */
   //@{
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 

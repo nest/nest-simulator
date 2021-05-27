@@ -385,13 +385,6 @@ nest::glif_psc::glif_psc( const glif_psc& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::glif_psc::init_state_( const Node& proto )
-{
-  const glif_psc& pr = downcast< glif_psc >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::glif_psc::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize

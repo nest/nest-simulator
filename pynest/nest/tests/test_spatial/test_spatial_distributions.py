@@ -133,7 +133,7 @@ class SpatialTester(object):
             'gaussian': {'p_center': 1., 'sigma': self._L / 4.,
                          'mean': 0., 'c': 0.},
             'gaussian2d': {'p_center': 1., 'sigma_x': self._L / 4., 'sigma_y': self._L / 4.,
-                           'mean_x': 0., 'mean_y': 0., 'rho': 0., 'c': 0.},
+                           'mean_x': 0.5, 'mean_y': 0.7, 'rho': 0.5, 'c': 0.},
             'gamma': {'kappa': 3., 'theta': self._L / 4.}}
         self._params = default_params[spatial_distribution]
         if distribution_params is not None:

@@ -205,14 +205,13 @@ SpatialDistanceParameter::value( RngPtr,
   }
 }
 
-RedrawParameter::RedrawParameter( const Parameter& p, const double min, const double max )
-  : Parameter( p )
-  , p_( p.clone() )
+RedrawParameter::RedrawParameter( const std::shared_ptr< Parameter > p, const double min, const double max )
+  : Parameter( p->is_spatial() )
+  , p_( p )
   , min_( min )
   , max_( max )
   , max_redraws_( 1000 )
 {
-  parameter_is_spatial_ = p_->is_spatial();
   if ( min > max )
   {
     throw BadParameterValue( "min <= max required." );
@@ -277,11 +276,10 @@ RedrawParameter::value( RngPtr rng,
 
 
 ExpDistParameter::ExpDistParameter( const DictionaryDatum& d )
-  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  : Parameter( true )
+  , p_( getValue< ParameterDatum >( d, "x" ) )
   , inv_beta_( 1.0 / getValue< double >( d, "beta" ) )
 {
-  parameter_is_spatial_ = true;
-
   const auto beta = getValue< double >( d, "beta" );
   if ( beta <= 0 )
   {
@@ -299,12 +297,11 @@ ExpDistParameter::value( RngPtr rng,
 }
 
 GaussianParameter::GaussianParameter( const DictionaryDatum& d )
-  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  : Parameter( true )
+  , p_( getValue< ParameterDatum >( d, "x" ) )
   , mean_( getValue< double >( d, "mean" ) )
   , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
 {
-  parameter_is_spatial_ = true;
-
   const auto std = getValue< double >( d, "std" );
   if ( std <= 0 )
   {
@@ -324,8 +321,9 @@ GaussianParameter::value( RngPtr rng,
 
 
 Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
-  : px_( getValue< ParameterDatum >( d, "x" )->clone() )
-  , py_( getValue< ParameterDatum >( d, "y" )->clone() )
+  : Parameter( true )
+  , px_( getValue< ParameterDatum >( d, "x" ) )
+  , py_( getValue< ParameterDatum >( d, "y" ) )
   , mean_x_( getValue< double >( d, "mean_x" ) )
   , mean_y_( getValue< double >( d, "mean_y" ) )
   , x_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
@@ -336,8 +334,6 @@ Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
       getValue< double >( d, "rho" ) / ( ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
                                          * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_y" ) ) )
 {
-  parameter_is_spatial_ = true;
-
   const auto rho = getValue< double >( d, "rho" );
   const auto std_x = getValue< double >( d, "std_x" );
   const auto std_y = getValue< double >( d, "std_y" );
@@ -371,13 +367,12 @@ Gaussian2DParameter::value( RngPtr rng,
 
 
 GammaParameter::GammaParameter( const DictionaryDatum& d )
-  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  : Parameter( true )
+  , p_( getValue< ParameterDatum >( d, "x" ) )
   , kappa_( getValue< double >( d, "kappa" ) )
   , inv_theta_( 1.0 / getValue< double >( d, "theta" ) )
   , delta_( std::pow( inv_theta_, kappa_ ) / std::tgamma( kappa_ ) )
 {
-  parameter_is_spatial_ = true;
-
   if ( kappa_ <= 0 )
   {
     throw BadProperty( "kappa > 0 required for gamma distribution parameter, got kappa=" + std::to_string( kappa_ ) );
@@ -397,6 +392,103 @@ GammaParameter::value( RngPtr rng,
 {
   const auto x = p_->value( rng, source_pos, target_pos, layer );
   return std::pow( x, kappa_ - 1. ) * std::exp( -1. * inv_theta_ * x ) * delta_;
+}
+
+
+std::shared_ptr< Parameter >
+multiply_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+{
+  return std::shared_ptr< Parameter >( new ProductParameter( first, second ) );
+}
+
+std::shared_ptr< Parameter >
+divide_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+{
+  return std::shared_ptr< Parameter >( new QuotientParameter( first, second ) );
+}
+
+std::shared_ptr< Parameter >
+add_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+{
+  return std::shared_ptr< Parameter >( new SumParameter( first, second ) );
+}
+
+std::shared_ptr< Parameter >
+subtract_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+{
+  return std::shared_ptr< Parameter >( new DifferenceParameter( first, second ) );
+}
+
+std::shared_ptr< Parameter >
+compare_parameter( const std::shared_ptr< Parameter > first,
+  const std::shared_ptr< Parameter > second,
+  const DictionaryDatum& d )
+{
+  return std::shared_ptr< Parameter >( new ComparingParameter( first, second, d ) );
+}
+
+std::shared_ptr< Parameter >
+conditional_parameter( const std::shared_ptr< Parameter > condition,
+  const std::shared_ptr< Parameter > if_true,
+  const std::shared_ptr< Parameter > if_false )
+{
+  return std::shared_ptr< Parameter >( new ConditionalParameter( condition, if_true, if_false ) );
+}
+
+std::shared_ptr< Parameter >
+min_parameter( const std::shared_ptr< Parameter > parameter, const double other )
+{
+  return std::shared_ptr< Parameter >( new MinParameter( parameter, other ) );
+}
+
+std::shared_ptr< Parameter >
+max_parameter( const std::shared_ptr< Parameter > parameter, const double other )
+{
+  return std::shared_ptr< Parameter >( new MaxParameter( parameter, other ) );
+}
+
+std::shared_ptr< Parameter >
+redraw_parameter( const std::shared_ptr< Parameter > parameter, const double min, const double max )
+{
+  return std::shared_ptr< Parameter >( new RedrawParameter( parameter, min, max ) );
+}
+
+std::shared_ptr< Parameter >
+exp_parameter( const std::shared_ptr< Parameter > parameter )
+{
+  return std::shared_ptr< Parameter >( new ExpParameter( parameter ) );
+}
+
+std::shared_ptr< Parameter >
+sin_parameter( const std::shared_ptr< Parameter > parameter )
+{
+  return std::shared_ptr< Parameter >( new SinParameter( parameter ) );
+}
+
+std::shared_ptr< Parameter >
+cos_parameter( const std::shared_ptr< Parameter > parameter )
+{
+  return std::shared_ptr< Parameter >( new CosParameter( parameter ) );
+}
+
+std::shared_ptr< Parameter >
+pow_parameter( const std::shared_ptr< Parameter > parameter, const double exponent )
+{
+  return std::shared_ptr< Parameter >( new PowParameter( parameter, exponent ) );
+}
+
+std::shared_ptr< Parameter >
+dimension_parameter( const std::shared_ptr< Parameter > x_parameter, const std::shared_ptr< Parameter > y_parameter )
+{
+  return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter ) );
+}
+
+std::shared_ptr< Parameter >
+dimension_parameter( const std::shared_ptr< Parameter > x_parameter,
+  const std::shared_ptr< Parameter > y_parameter,
+  const std::shared_ptr< Parameter > z_parameter )
+{
+  return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
 }
 
 } /* namespace nest */

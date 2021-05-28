@@ -226,7 +226,6 @@ private:
     SUP_SPIKE_RECEPTOR
   };
 
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -361,8 +360,6 @@ public:
     State_( const ht_neuron&, const Parameters_& p );
     State_( const State_& s );
     ~State_();
-
-    State_& operator=( const State_& s );
 
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum&, const ht_neuron&, Node* node );

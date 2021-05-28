@@ -124,7 +124,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
 

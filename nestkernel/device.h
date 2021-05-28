@@ -69,7 +69,7 @@ public:
 
   /** Reset dynamic state to that of model. */
   virtual void
-  init_state( const Device& )
+  init_state()
   {
   }
 

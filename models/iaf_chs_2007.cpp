@@ -185,21 +185,6 @@ nest::iaf_chs_2007::iaf_chs_2007( const iaf_chs_2007& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chs_2007::init_node_( const Node& proto )
-{
-  const iaf_chs_2007& pr = downcast< iaf_chs_2007 >( proto );
-  P_ = pr.P_;
-  S_ = pr.S_;
-}
-
-void
-nest::iaf_chs_2007::init_state_( const Node& proto )
-{
-  const iaf_chs_2007& pr = downcast< iaf_chs_2007 >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::iaf_chs_2007::init_buffers_()
 {
   B_.spikes_ex_.clear(); // includes resize

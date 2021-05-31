@@ -1074,9 +1074,8 @@ In the ``nest.logic.conditional()`` function above we used a comparison between 
 ``nest.Parameter`` and a value. It is also possible to compare one ``nest.Parameter``
 with another, and all comparison operators are supported. The result of such comparisons
 is a new ``nest.Parameter``, which evaluates to either 1 or 0 for true and false,
-respectively. Because the ``nest.Parameter`` evaluates to 1 or 0, you may,
-in suitable cases, forgo the ``nest.logic.conditional()`` function and directly use the
-result from a comparison.
+respectively. The resulting comparison ``nest.Parameter`` can be used in a ``nest.logic.conditional()``,
+but also without it if the desired result is zero where the comparison is false.
 
 ::
 

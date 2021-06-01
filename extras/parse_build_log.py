@@ -412,10 +412,10 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
     if in_make_section:
         # 'make' was not completed.
-        return False, None, None, None, None
+        return False, None, None, None, None, None
     else:
         # There is no 'make' section at all.
-        return None, None, None, None, None
+        return None, None, None, None, None, None
 
 
 def testsuite_results(log_filename, msg_testsuite_section_start,

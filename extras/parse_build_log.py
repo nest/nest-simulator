@@ -367,7 +367,7 @@ def makebuild_summary(log_filename, msg_make_section_start,
     # with some warnings, this would be a good point to re-set the
     # expected_warnings variable conditionally for that build_type.
 
-    nest_warning_re = re.compile(f'.* ({build_dir}.*: warning:.*)')
+    nest_warning_re = re.compile(f'.*({build_dir}.*: warning:.*)')
     known_warnings = [
         f'{build_dir}/sli/scanner.cc:642:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
         f'{build_dir}/sli/scanner.cc:674:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',

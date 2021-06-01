@@ -373,6 +373,18 @@ def makebuild_summary(log_filename, msg_make_section_start,
         f'{build_dir}/sli/scanner.cc:674:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
         f'{build_dir}/sli/scanner.cc:716:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
         f'{build_dir}/sli/scanner.cc:744:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        (f'{build_dir}/thirdparty/Random123/conventional/Engine.hpp:140:15: warning: implicitly-declared'
+         ' ‘r123::Engine<r123::Threefry4x64_R<20> >& r123::Engine<r123::Threefry4x64_R<20> >::operator='
+         '(const r123::Engine<r123::Threefry4x64_R<20> >&)’ is deprecated [-Wdeprecated-copy]'),
+        (f'{build_dir}/thirdparty/Random123/conventional/Engine.hpp:140:15: warning: implicitly-declared'
+         ' ‘r123::Engine<r123::Threefry4x32_R<20> >& r123::Engine<r123::Threefry4x32_R<20> >::operator='
+         '(const r123::Engine<r123::Threefry4x32_R<20> >&)’ is deprecated [-Wdeprecated-copy]'),
+        (f'{build_dir}/thirdparty/Random123/conventional/Engine.hpp:140:15: warning: implicitly-declared'
+         ' ‘r123::Engine<r123::Philox4x64_R<10> >& r123::Engine<r123::Philox4x64_R<10> >::operator='
+         '(const r123::Engine<r123::Philox4x64_R<10> >&)’ is deprecated [-Wdeprecated-copy]'),
+        (f'{build_dir}/thirdparty/Random123/conventional/Engine.hpp:140:15: warning: implicitly-declared'
+         ' ‘r123::Engine<r123::Philox4x32_R<10> >& r123::Engine<r123::Philox4x32_R<10> >::operator='
+         '(const r123::Engine<r123::Philox4x32_R<10> >&)’ is deprecated [-Wdeprecated-copy]'),
     ]
 
     with open(log_filename) as fh:

@@ -248,13 +248,6 @@ nest::amat2_psc_exp::amat2_psc_exp( const amat2_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::amat2_psc_exp::init_state_( const Node& proto )
-{
-  const amat2_psc_exp& pr = downcast< amat2_psc_exp >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::amat2_psc_exp::init_buffers_()
 {
   ArchivingNode::clear_history();

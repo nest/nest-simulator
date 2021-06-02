@@ -235,13 +235,6 @@ nest::iaf_psc_exp::iaf_psc_exp( const iaf_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_exp::init_state_( const Node& proto )
-{
-  const iaf_psc_exp& pr = downcast< iaf_psc_exp >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::iaf_psc_exp::init_buffers_()
 {
   B_.input_buffer_.clear(); // includes resize

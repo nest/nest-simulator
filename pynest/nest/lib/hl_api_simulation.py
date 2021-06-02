@@ -29,7 +29,6 @@ from ..ll_api import *
 from .hl_api_helper import *
 from .hl_api_parallel_computing import Rank
 
-
 __all__ = [
     'Cleanup',
     'DisableStructuralPlasticity',
@@ -84,8 +83,14 @@ def Run(t):
     `Prepare` must be called before `Run` to calibrate the system, and
     `Cleanup` must be called after `Run` to close files, cleanup handles, and
     so on. After `Cleanup`, `Prepare` can and must be called before more `Run`
-    calls. Any calls to `SetStatus` between `Prepare` and `Cleanup` have
-    undefined behaviour.
+    calls.
+
+    Be careful about modifying the network or neurons between `Prepare` and `Cleanup`
+    calls. In particular, do not call `Create`, `Connect`, or `SetKernelStatus`.
+    Calling `SetStatus` to change membrane potential `V_m` of neurons or synaptic
+    weights (but not delays!) will in most cases work as expected, while changing
+    membrane or synaptic times constants will not work correctly. If in doubt, assume
+    that changes may cause undefined behavior and check these thoroughly.
 
     See Also
     --------
@@ -139,8 +144,19 @@ def RunManager():
     ::
 
         with RunManager():
-            for i in range(10):
-                Run()
+            for _ in range(10):
+                Run(100)
+                # extract results
+
+    Notes
+    -----
+
+    Be careful about modifying the network or neurons inside the `RunManager` context.
+    In particular, do not call `Create`, `Connect`, or `SetKernelStatus`. Calling `SetStatus`
+    to change membrane potential `V_m` of neurons or synaptic weights (but not delays!)
+    will in most cases work as expected, while changing membrane or synaptic times
+    constants will not work correctly. If in doubt, assume that changes may cause
+    undefined behavior and check these thoroughly.
 
     See Also
     --------

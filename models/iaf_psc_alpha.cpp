@@ -237,13 +237,6 @@ iaf_psc_alpha::iaf_psc_alpha( const iaf_psc_alpha& n )
  * ---------------------------------------------------------------- */
 
 void
-iaf_psc_alpha::init_state_( const Node& proto )
-{
-  const iaf_psc_alpha& pr = downcast< iaf_psc_alpha >( proto );
-  S_ = pr.S_;
-}
-
-void
 iaf_psc_alpha::init_buffers_()
 {
   B_.input_buffer_.clear(); // includes resize

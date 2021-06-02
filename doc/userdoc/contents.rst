@@ -9,7 +9,7 @@ Table of Contents
    :maxdepth: 1
    :caption: User Documentation
 
-   guides/nest2_to_nest3/nest2_to_nest3_overview
+   guides/nest2_to_nest3/index
    Download <download>
    Install <installation/index>
    Configure <installation/configuration>
@@ -18,6 +18,7 @@ Table of Contents
    guides/index
    examples/index
    models/index
+   nest_server
    ref_material/pynest_apis
    troubleshooting
    getting_help

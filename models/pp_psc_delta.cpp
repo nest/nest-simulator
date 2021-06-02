@@ -275,10 +275,8 @@ nest::pp_psc_delta::pp_psc_delta( const pp_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_psc_delta::init_state_( const Node& proto )
+nest::pp_psc_delta::init_state_()
 {
-  const pp_psc_delta& pr = downcast< pp_psc_delta >( proto );
-  S_ = pr.S_;
   S_.r_ = Time( Time::ms( P_.t_ref_remaining_ ) ).get_steps();
 }
 

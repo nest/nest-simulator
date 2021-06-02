@@ -195,11 +195,9 @@ nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::init_state_( const Node& proto )
+nest::gamma_sup_generator::init_state_()
 {
-  const gamma_sup_generator& pr = downcast< gamma_sup_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void

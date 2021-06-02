@@ -152,7 +152,6 @@ public:
   void calibrate_time( const TimeConverter& tc );
 
 protected:
-  void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
   void finalize();

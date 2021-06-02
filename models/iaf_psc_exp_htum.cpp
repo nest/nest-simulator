@@ -220,13 +220,6 @@ nest::iaf_psc_exp_htum::iaf_psc_exp_htum( const iaf_psc_exp_htum& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_exp_htum::init_state_( const Node& proto )
-{
-  const iaf_psc_exp_htum& pr = downcast< iaf_psc_exp_htum >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::iaf_psc_exp_htum::init_buffers_()
 {
   B_.spikes_ex_.clear(); // includes resize

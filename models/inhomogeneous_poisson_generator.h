@@ -124,7 +124,7 @@ public:
 
 
 private:
-  void init_state_( const Node& ) override;
+  void init_state_() override;
   void init_buffers_() override;
   void calibrate() override;
 

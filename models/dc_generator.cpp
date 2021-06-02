@@ -132,14 +132,10 @@ nest::dc_generator::dc_generator( const dc_generator& n )
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
 void
-nest::dc_generator::init_state_( const Node& proto )
+nest::dc_generator::init_state_()
 {
-  const dc_generator& pr = downcast< dc_generator >( proto );
-
-  StimulatingDevice::init_state( pr );
-  S_ = pr.S_;
+  StimulatingDevice::init_state();
 }
 
 void

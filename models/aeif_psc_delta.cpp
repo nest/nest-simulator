@@ -151,18 +151,6 @@ nest::aeif_psc_delta::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=( const State_& s )
-{
-  assert( this != &s ); // would be bad logical error in program
-
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
-    y_[ i ] = s.y_[ i ];
-  }
-  r_ = s.r_;
-  return *this;
-}
-
 /* ----------------------------------------------------------------
  * Paramater and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
@@ -335,13 +323,6 @@ nest::aeif_psc_delta::~aeif_psc_delta()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::aeif_psc_delta::init_state_( const Node& proto )
-{
-  const aeif_psc_delta& pr = downcast< aeif_psc_delta >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::aeif_psc_delta::init_buffers_()

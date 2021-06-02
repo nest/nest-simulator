@@ -88,11 +88,9 @@ nest::poisson_generator::poisson_generator( const poisson_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::init_state_( const Node& proto )
+nest::poisson_generator::init_state_()
 {
-  const poisson_generator& pr = downcast< poisson_generator >( proto );
-
-  StimulatingDevice::init_state( pr );
+  StimulatingDevice::init_state();
 }
 
 void

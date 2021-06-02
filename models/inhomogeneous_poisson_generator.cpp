@@ -213,11 +213,9 @@ nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator( const in
  * Node initialization functions
  * ---------------------------------------------------------------- */
 void
-nest::inhomogeneous_poisson_generator::init_state_( const Node& proto )
+nest::inhomogeneous_poisson_generator::init_state_()
 {
-  const inhomogeneous_poisson_generator& pr = downcast< inhomogeneous_poisson_generator >( proto );
-
-  StimulatingDevice init_state( pr );
+  StimulatingDevice::init_state();
 }
 
 void

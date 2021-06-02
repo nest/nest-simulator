@@ -117,11 +117,9 @@ nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator&
  * ---------------------------------------------------------------- */
 
 void
-nest::pulsepacket_generator::init_state_( const Node& proto )
+nest::pulsepacket_generator::init_state_()
 {
-  const pulsepacket_generator& pr = downcast< pulsepacket_generator >( proto );
-
-  StimulatingDevice::init_state( pr );
+  StimulatingDevice::init_state();
 }
 
 void

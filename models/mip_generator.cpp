@@ -90,11 +90,9 @@ nest::mip_generator::mip_generator( const mip_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::mip_generator::init_state_( const Node& proto )
+nest::mip_generator::init_state_()
 {
-  const mip_generator& pr = downcast< mip_generator >( proto );
-
-  StimulatingDevice::init_state( pr );
+  StimulatingDevice::init_state();
 }
 
 void

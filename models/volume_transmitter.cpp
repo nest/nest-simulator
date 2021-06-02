@@ -84,11 +84,6 @@ nest::volume_transmitter::volume_transmitter( const volume_transmitter& n )
 }
 
 void
-nest::volume_transmitter::init_state_( const Node& )
-{
-}
-
-void
 nest::volume_transmitter::init_buffers_()
 {
   B_.neuromodulatory_spikes_.clear();

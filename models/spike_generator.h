@@ -236,6 +236,13 @@ public:
     return ALL;
   }
 
+private:
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
+
+  void update( Time const&, const long, const long ) override;
+
   // ------------------------------------------------------------
 
   struct State_
@@ -291,13 +298,6 @@ public:
   };
 
   // ------------------------------------------------------------
-
-private:
-  void init_state_( const Node& ) override;
-  void init_buffers_() override;
-  void calibrate() override;
-
-  void update( Time const&, long, long ) override;
 
   Parameters_ P_;
   State_ S_;

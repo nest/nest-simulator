@@ -214,7 +214,7 @@ public:
   void set_data_from_stimulating_backend( std::vector< double >& input_param ) override;
 
 private:
-  void init_state_( const Node& ) override;
+  void init_state_() override;
   void init_buffers_() override;
   void calibrate() override;
   void event_hook( DSSpikeEvent& ) override;

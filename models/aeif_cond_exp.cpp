@@ -166,17 +166,6 @@ nest::aeif_cond_exp::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_cond_exp::State_& nest::aeif_cond_exp::State_::operator=( const State_& s )
-{
-  assert( this != &s ); // would be bad logical error in program
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
-    y_[ i ] = s.y_[ i ];
-  }
-  r_ = s.r_;
-  return *this;
-}
-
 /* ----------------------------------------------------------------
  * Paramater and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
@@ -362,13 +351,6 @@ nest::aeif_cond_exp::~aeif_cond_exp()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::aeif_cond_exp::init_state_( const Node& proto )
-{
-  const aeif_cond_exp& pr = downcast< aeif_cond_exp >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::aeif_cond_exp::init_buffers_()

@@ -33,9 +33,10 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
     def test_QuantalSTPSynapse(self):
         """Compare quantal_stp_synapse with its deterministic equivalent"""
         nest.ResetKernel()
+        nest.SetKernelStatus({"rng_seed": 1})
         nest.set_verbosity(100)
         n_syn = 12  # number of synapses in a connection
-        n_trials = 50  # number of measurement trials
+        n_trials = 100  # number of measurement trials
 
         # parameter set for facilitation
         fac_params = {"U": 0.03, "u": 0.03,
@@ -45,32 +46,24 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         t1_params = fac_params       # for tsodyks2_synapse
         t2_params = t1_params.copy()  # for furhmann_synapse
 
-        t2_params['n'] = n_syn
-        t2_params['weight'] = 1. / n_syn
+        t1_params["synapse_model"] = "tsodyks2_synapse"
 
-        nest.SetDefaults("tsodyks2_synapse", t1_params)
-        nest.SetDefaults("quantal_stp_synapse", t2_params)
-        nest.SetDefaults("iaf_psc_exp", {"tau_syn_ex": 3., 'tau_m': 70.})
+        t2_params["n"] = n_syn
+        t2_params["weight"] = 1. / n_syn
+        t2_params["synapse_model"] = "quantal_stp_synapse"
 
-        source = nest.Create('spike_generator')
-        nest.SetStatus(
-            source,
-            {
-                'spike_times': [
-                    30., 60., 90., 120., 150., 180., 210., 240.,
-                    270., 300., 330., 360., 390., 900.]
-            }
-        )
+        source = nest.Create("spike_generator")
+        source.spike_times = [30., 60., 90., 120., 150., 180., 210., 240., 270., 300., 330., 360., 390., 900.]
 
-        parrot = nest.Create('parrot_neuron')
-        neuron = nest.Create("iaf_psc_exp", 2)
+        parrot = nest.Create("parrot_neuron")
+        neuron = nest.Create("iaf_psc_exp", 2, params={"tau_syn_ex": 3., "tau_m": 70.})
 
         # We must send spikes via parrot because devices cannot
         # connect through plastic synapses
         # See #478.
         nest.Connect(source, parrot)
-        nest.Connect(parrot, neuron[:1], syn_spec="tsodyks2_synapse")
-        nest.Connect(parrot, neuron[1:], syn_spec="quantal_stp_synapse")
+        nest.Connect(parrot, neuron[:1], syn_spec=t1_params)
+        nest.Connect(parrot, neuron[1:], syn_spec=t2_params)
 
         voltmeter = nest.Create("voltmeter", 2)
 
@@ -86,15 +79,14 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         nest.Connect(voltmeter[1:], neuron[1:])
 
         for t in range(n_trials):
-            t_net = nest.GetKernelStatus('biological_time')
-            nest.SetStatus(source, {'origin': t_net})
+            t_net = nest.GetKernelStatus("biological_time")
+            nest.SetStatus(source, {"origin": t_net})
             nest.Simulate(t_tot)
 
         nest.Simulate(.1)  # flush the last voltmeter events from the queue
 
-        vm = numpy.array(nest.GetStatus(voltmeter[1], 'events')[0]['V_m'])
-        vm_reference = numpy.array(nest.GetStatus(voltmeter[0],
-                                                  'events')[0]['V_m'])
+        vm = numpy.array(voltmeter[1].events["V_m"])
+        vm_reference = numpy.array(voltmeter[0].events["V_m"])
 
         assert(len(vm) % n_trials == 0)
         n_steps = int(len(vm) / n_trials)
@@ -105,12 +97,12 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         vm_ref_mean = numpy.mean(vm_reference, axis=0)
 
         error = numpy.sqrt((vm_ref_mean - vm_mean)**2)
-        self.assertTrue(numpy.max(error) < 4.0e-4)
+        self.assertLess(numpy.max(error), 4.0e-4)
 
 
 def suite():
 
-    suite = unittest.makeSuite(QuantalSTPSynapseTestCase, 'test')
+    suite = unittest.makeSuite(QuantalSTPSynapseTestCase, "test")
     return suite
 
 

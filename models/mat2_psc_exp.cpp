@@ -227,13 +227,6 @@ nest::mat2_psc_exp::mat2_psc_exp( const mat2_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::mat2_psc_exp::init_state_( const Node& proto )
-{
-  const mat2_psc_exp& pr = downcast< mat2_psc_exp >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::mat2_psc_exp::init_buffers_()
 {
   ArchivingNode::clear_history();

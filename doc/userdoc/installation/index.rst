@@ -129,7 +129,7 @@ and :doc:`cmake_options`.
           a separate `conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
           together with Python packages that you will use when working with NEST;
           see also our :doc:`conda_tips`.
-          
+
           To install the latest version of NEST in a new environment called ``ENVNAME``, just run
 
           .. code-block:: sh
@@ -151,12 +151,12 @@ and :doc:`cmake_options`.
           or browse the `conda forge file list
           <https://anaconda.org/conda-forge/nest-simulator/files>`_ (note
           there are multiple pages). To install, e.g., NEST 2.18.0, run
-          
+
           .. code-block:: sh
 
              conda create --name nest_2_18_0 -c conda-forge nest-simulator=2.18.0=*
 
-          The syntax for this install follows the pattern: ``nest-simulator=<version>=<build_string>``. 
+          The syntax for this install follows the pattern: ``nest-simulator=<version>=<build_string>``.
 
        #. Activate your environment:
 
@@ -165,13 +165,15 @@ and :doc:`cmake_options`.
              conda activate ENVNAME
 
        #. Note the following:
-       
-          - We currently provide NEST with thread-based parallelization on Conda. This should suffice for most 
+
+          - We currently provide NEST with thread-based parallelization on Conda. This should suffice for most
             uses on personal computers.
           - Until dedicated conda builds for Apple's M1 chip (arm64) become available, you should expect relatively
             poor performance on computers with the M1 chip. You need to :doc:`build NEST yourself <mac_install>` on
             M1 systems for good performance.
-             
+
+
+.. _docker_vm_install:
 
 In addition to native installations from ready-made packages, we
 provide containerized versions of NEST in several formats:
@@ -286,10 +288,9 @@ If installation was successful, you should see the NEST splash screen in the ter
 
 
 **Installation is now complete!**
+**:doc:`Now we can start creating simulations! <../getting_started>`**
 
-
-:doc:`Now we can start creating simulations! <../getting_started>`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----
 
 If installation didn't work, see the :doc:`troubleshooting section <../troubleshooting>`.
 
@@ -322,7 +323,7 @@ these instructions.**
 
    .. tab:: GitHub
 
-       Get the latest developer version on `GitHub <https://github.com/nest/nest-simulator>`_. Fork NEST into your GitHub repository (see details on `GitHub workflows here <https://nest.github.io/nest-simulator/>`_).
+       Get the latest developer version on `GitHub <https://github.com/nest/nest-simulator>`_. Fork NEST into your GitHub repository (see details on :doc:`GitHub workflows here <../contribute/development_workflow>`).
 
 
    .. tab:: macOS

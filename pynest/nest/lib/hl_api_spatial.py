@@ -1126,6 +1126,7 @@ def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'
     # import pyplot here and not at toplevel to avoid preventing users
     # from changing matplotlib backend after importing nest
     import matplotlib.pyplot as plt
+    import matplotlib as mtpl
 
     edge_color = 'black'
     alpha = 0.2
@@ -1180,27 +1181,32 @@ def _create_mask_patches(mask, periodic, extent, source_pos, face_color='yellow'
     elif 'rectangular' in mask:
         ll = np.array(mask['rectangular']['lower_left'])
         ur = np.array(mask['rectangular']['upper_right'])
+        width = ur[0] - ll[0]
+        height = ur[1] - ll[1]
         pos = source_pos + ll + offs
+        cntr = [pos[0] + width/2, pos[1] + height/2]
 
         if 'azimuth_angle' in mask['rectangular']:
             angle = mask['rectangular']['azimuth_angle']
-            angle_rad = angle * np.pi / 180
-            cs = np.cos([angle_rad])[0]
-            sn = np.sin([angle_rad])[0]
-            pos = [pos[0] * cs - pos[1] * sn,
-                   pos[0] * sn + pos[1] * cs]
         else:
             angle = 0.0
 
-        patch = plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1], angle=angle,
+        patch = plt.Rectangle(pos, width, height,
                               fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
+        # Need to rotate about center
+        trnsf = mtpl.transforms.Affine2D().rotate_deg_around(cntr[0], cntr[1], angle) + plt.gca().transData
+        patch.set_transform(trnsf)
         mask_patches.append(patch)
 
         if periodic:
             for pos in _shifted_positions(source_pos + ll + offs, extent):
-                patch = plt.Rectangle(pos, ur[0] - ll[0], ur[1] - ll[1],
-                                      angle=angle, fc=face_color,
-                                      ec=edge_color, alpha=alpha, lw=line_width)
+                patch = plt.Rectangle(pos, width, height,
+                                      fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
+
+                cntr = [pos[0] + width/2, pos[1] + height/2]
+                # Need to rotate about center
+                trnsf = mtpl.transforms.Affine2D().rotate_deg_around(cntr[0], cntr[1], angle) + plt.gca().transData
+                patch.set_transform(trnsf)
                 mask_patches.append(patch)
     elif 'elliptical' in mask:
         width = mask['elliptical']['major_axis']

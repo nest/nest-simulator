@@ -243,7 +243,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -349,7 +348,6 @@ private:
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
-    State_& operator=( const State_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
     void set( const DictionaryDatum&, const Parameters_&, Node* );
@@ -393,10 +391,9 @@ private:
    */
   struct Variables_
   {
-    std::vector< double > P_sfa_; // decay terms of spike-triggered current elements
-    std::vector< double > P_stc_; // decay terms of adaptive threshold elements
-
-    librandom::RngPtr rng_; // random number generator of my own thread
+    std::vector< double > P_sfa_; //!< decay terms of spike-triggered current elements
+    std::vector< double > P_stc_; //!< decay terms of adaptive threshold elements
+    RngPtr rng_;                  //!< random number generator of my own thread
 
     unsigned int RefractoryCounts_;
   };

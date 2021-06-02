@@ -102,7 +102,7 @@ stop() {
 }
 
 CMD=$1; shift
-while getopts "h:op:P:u:" opt; do
+while getopts "dh:op:P:u:" opt; do
     case $opt in
         d) DAEMONIZE=1 ;;
         h) HOST=$OPTARG ;;

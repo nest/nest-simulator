@@ -241,12 +241,9 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator( const sinusoidal_g
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_gamma_generator::init_state_( const Node& proto )
+nest::sinusoidal_gamma_generator::init_state_()
 {
-  const sinusoidal_gamma_generator& pr = downcast< sinusoidal_gamma_generator >( proto );
-
-  device_.init_state( pr.device_ );
-  S_ = pr.S_;
+  device_.init_state();
 }
 
 void
@@ -289,7 +286,7 @@ nest::sinusoidal_gamma_generator::calibrate()
   device_.calibrate();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 
   const double t_ms = kernel().simulation_manager.get_time().get_ms();
 

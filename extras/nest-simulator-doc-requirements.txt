@@ -23,6 +23,7 @@ sphinx>=2
 sphinx_autobuild
 sphinx_gallery
 sphinx_rtd_theme
+jinja2<3
 statsmodels
 tqdm
 yamllint

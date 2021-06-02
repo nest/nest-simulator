@@ -38,8 +38,6 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "normal_randomdev.h"
-#include "poisson_randomdev.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
@@ -172,7 +170,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 

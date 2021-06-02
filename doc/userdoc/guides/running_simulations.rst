@@ -1,8 +1,8 @@
-Running simulations
-===================
+How to run simulations
+======================
 
-Introduction
-------------
+Time-driven and event-driven approaches
+---------------------------------------
 
 To drive the simulation, neurons and devices (*nodes*) are updated in a
 time-driven fashion by calling a member function on each of them in a
@@ -34,6 +34,8 @@ following figure shows the basic loop that is run upon a call to
 The simulation loop. Light gray boxes denote thread parallel parts, dark
 gray boxes denote MPI parallel parts. U(St) is the update operator that
 propagates the internal state of a neuron or device.
+
+.. _simulation_resolution:
 
 Simulation resolution and update interval
 -----------------------------------------
@@ -70,8 +72,8 @@ during connection setup. Their actual values can be retrieved using
 
     GetKernelStatus("min_delay")   # (A corresponding entry exists for max_delay)
 
-Setting *dmin* and *dmax* manually
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Set *dmin* and *dmax* manually
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In linear simulation scripts that build a network, simulate it, carry
 out some post-processing and exit, the user does not have to worry about
@@ -119,8 +121,71 @@ for how to set the delay when creating synapses.
 
 .. _stepped_simulations:
 
-Splitting a simulation into multiple intervals
-----------------------------------------------
+
+Random numbers: Generators and seeds
+------------------------------------
+
+Most NEST simulations will use random numbers, e.g., to generate Poisson
+spike trains or to randomize connectivity or neuronal spike emissions. NEST
+manages random number generators for all these purposes internally, providing
+separate random number streams for parallel processes automatically.
+
+By default, NEST will use a fixed default seed to initialize all random
+number streams, so running the same NEST simulation script twice will give
+identical results. To sample the statistical variation of model dynamics,
+you need to set different random seeds. The following example shows this
+for a simple loop over different realizations:
+
+::
+
+    for n in range(5):
+        nest.ResetKernel()
+        nest.SetKernelStatus({'rng_seed': n+1})   # seed > 0 required
+
+        # build network
+        # simulate network
+        # collect data
+
+Valid random number seeds are numbers from :math:`1` to :math:`2^{31}-1`.
+
+Since random number generators, in reality, are deterministic algorithms, there
+is a risk that the random number streams provided by NEST contain some structure
+or correlations that "resonate" with a property of a neuronal network model.
+You should therefore *always* validate simulation results by simulating with
+different random number generators. You can see which generators are available
+using
+
+::
+
+    nest.GetKernelStatus('rng_types')
+
+To select any of the random number generator types available, use one of the
+following
+
+::
+
+    nest.SetKernelStatus({'rng_type': 'mt19937'})
+    nest.SetKernelStatus({'rng_type': 'mt19937', 'rng_seed': 12234})
+
+In the first case, the `rng_seed` set previously (or the default seed) is used,
+otherwise the seed specified.
+
+
+Random numbers may depend on compiler used
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+NEST uses the random number capabilities provided by the C++11 standard library.
+Different implementations of this library use different algorithms to generate,
+e.g., Poissonian- or Gaussian-distributed random numbers. Therefore, *precise simulation
+results will depend on which implementation of the C++11 standard library you
+used to compile NEST*. To our knowledge, three different implementations exist at
+present, provided respectively by GCC, Clang and Microsoft.
+
+
+
+
+Split a simulation into multiple intervals
+------------------------------------------
 
 In some cases, it may be useful to run a simulation in shorter intervals
 to extract information while the simulation is running. The simplest way
@@ -131,12 +196,12 @@ of doing this is to simply loop over ``Simulate()`` calls:
     for _ in range(20):
         nest.Simulate(10)
         # extract and analyse data
-        
+
 would run a simulation in 20 rounds of 10 ms. With this solution, NEST takes
-a number of preparatory and cleanup steps for each ``Simulate()`` call. 
-This makes the solution robust and entirely reliable, but comes with a 
+a number of preparatory and cleanup steps for each ``Simulate()`` call.
+This makes the solution robust and entirely reliable, but comes with a
 performance cost.
- 
+
 A more efficient solution doing exactly the same thing is
 
 ::
@@ -146,7 +211,7 @@ A more efficient solution doing exactly the same thing is
         nest.Run(10)
         # extract and analyse data
     nest.Cleanup()
-     
+
 For convenience, the ``RunManager()`` context manager can handle preparation
 and cleanup for you:
 
@@ -158,9 +223,9 @@ and cleanup for you:
             # extract and analyse data
 
 .. note::
-   - If you do not use ``RunManager()``, you must call ``Prepare()``, 
+   - If you do not use ``RunManager()``, you must call ``Prepare()``,
      ``Run()`` and ``Cleanup()`` in that order.
-   - You can call ``Run()`` any number of times inside a ``RunManager()`` 
+   - You can call ``Run()`` any number of times inside a ``RunManager()``
      context or between ``Prepare()`` and ``Cleanup()`` calls.
    - Calling ``SetStatus()`` inside a ``RunManager()`` context or
      between ``Prepare()`` and ``Cleanup()`` will **lead to unpredictable
@@ -175,9 +240,9 @@ The only reliable way to perform two simulations of a network from exactly
 the same starting point is to restart NEST or to call `ResetKernel()` and
 then to build the network anew. If your simulations are rather large and
 you are working on a computer with a job queueing system, it may be most
-efficient to submit individual jobs or a job array to smiulate network 
-instances in parallel; don't forget to use different 
-:doc:`random seeds <random_numbers>`! 
+efficient to submit individual jobs or a job array to simulate network
+instances in parallel; don't forget to use different
+:doc:`random seeds <random_numbers>`!
 
 The following example performs simulations of a single neuron driven by
 a Poisson spike train using different seeds and output files for each run:
@@ -186,17 +251,16 @@ a Poisson spike train using different seeds and output files for each run:
 
     for n in range(10):
         nest.ResetKernel()
-        nest.SetKernelStatus({'grng_seed': 100*n + 1,
-                              'rng_seeds': [100*n + 2]})
+        nest.SetKernelStatus({'rng_seed': n + 1})  # seed > 0 required
         pg = nest.Create('poisson_generator', params={'rate': 1000000.0})
         nrn= nest.Create('iaf_psc_alpha')
         sr = nest.Create('spike_recorder',
                             params={'label': 'spikes-run{:02d}'.format(n),
                                     'record_to': 'ascii'})
-    
+
         nest.Connect(pg, nrn)
         nest.Connect(nrn, sr)
-    
+
         nest.Simulate(100)
 
 Monitoring elapsed time
@@ -249,4 +313,3 @@ threads or processes):
     ``{"print_time": False}`` to avoid the overhead of the print calls.
     In these cases, the real-time factor can be computed by measuring the
     wall-clock time manually and dividing by the set model time.
-

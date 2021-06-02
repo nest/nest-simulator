@@ -713,7 +713,7 @@ nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
   for ( unsigned int i = 0; i < n; i++ )
   {
     N = v.size();
-    rnd = kernel().rng_manager.get_grng()->ulrand( N );
+    rnd = get_rank_synced_rng()->ulrand( N );
     tmp = v[ rnd ];
     v2.push_back( tmp );
     rndi = v.begin();

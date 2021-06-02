@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+
+"""NEST Server with MPI support.
+
+Usage:
+  nest-server-mpi --help
+  mpirun -np N nest-server-mpi [--host HOST] [--port PORT]
+
+Options:
+  -h --help     display usage information and exit
+  --host HOST   use hostname/IP address HOST for server [default: 127.0.0.1]
+  --port PORT   use port PORT for opening the socket [default: 5000]
+
+"""
+
+from docopt import docopt
+from mpi4py import MPI
+
+if __name__ == '__main__':
+    opt = docopt(__doc__)
+
+import time
+import sys
+
+import nest
+import nest.server
+
+
+comm = MPI.COMM_WORLD.Clone()
+rank = comm.Get_rank()
+
+
+def log(call_name, msg):
+    global rank
+    print(f'==> WORKER {rank}/{time.time():.7f} ({call_name}): {msg}')
+
+
+if rank == 0:
+    print("==> Starting NEST Server Master on rank 0")
+    nest.server.set_mpi_comm(comm)
+    nest.server.run_mpi_app(host=opt['--host'], port=opt['--port'])
+else:
+    print(f"==> Starting NEST Server Worker on rank {rank}")
+    nest.server.set_mpi_comm(comm)
+    while True:
+        log('spinwait', 'waiting for call bcast')
+        call_name = comm.bcast(None, root=0)
+        log(call_name, 'received call bcast, waiting for data bcast')
+        data = comm.bcast(None, root=0)
+        log(call_name, f'received data bcast, data={data}')
+        args, kwargs = data
+        if call_name == 'exec':
+            response = nest.server.do_exec(args, kwargs)
+        else:
+            call = getattr(nest, call_name)
+            args, kwargs = nest.server.NodeCollection(call, args, kwargs)
+            log(call_name, f'local call, args={args}, kwargs={kwargs}')
+            response = nest.hl_api.serializable(call(*args, **kwargs))
+        log(call_name, f'sending reponse gather, data={response}')
+        comm.gather(response, root=0)

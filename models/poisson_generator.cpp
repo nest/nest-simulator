@@ -90,11 +90,9 @@ nest::poisson_generator::poisson_generator( const poisson_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::init_state_( const Node& proto )
+nest::poisson_generator::init_state_()
 {
-  const poisson_generator& pr = downcast< poisson_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void
@@ -109,7 +107,8 @@ nest::poisson_generator::calibrate()
   device_.calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
-  V_.poisson_dev_.set_lambda( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
+  poisson_distribution::param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
+  V_.poisson_dist_.param( param );
 }
 
 
@@ -143,9 +142,7 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
 void
 nest::poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  // Be careful of storing the rng as its own variable. Creation of sharedPTRs
-  // lead to overhead.
-  long n_spikes = V_.poisson_dev_.ldev( kernel().rng_manager.get_rng( get_thread() ) );
+  long n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

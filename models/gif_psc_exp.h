@@ -228,7 +228,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -351,7 +350,7 @@ private:
     std::vector< double > P_sfa_; // decay terms of spike-triggered current elements
     std::vector< double > P_stc_; // decay terms of adaptive threshold elements
 
-    librandom::RngPtr rng_; // random number generator of my own thread
+    RngPtr rng_; // random number generator of my own thread
 
     unsigned int RefractoryCounts_;
   };

@@ -39,10 +39,11 @@ if source_dir:
 else:
     source_dir = Path(__file__).resolve().parent.parent.parent.resolve()
 
-doc_build_dir = Path(os.environ['OLDPWD']) / 'doc/userdoc'
 
-if os.environ.get('READTHEDOCS', 'False') == 'True':
-    doc_build_dir = source_dir / 'doc/userdoc'
+if os.environ.get("READTHEDOCS") == "True":
+    doc_build_dir = source_dir / "doc/userdoc"
+else:
+    doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/userdoc"
 
 print("doc_build_dir", str(doc_build_dir))
 print("source_dir", str(source_dir))

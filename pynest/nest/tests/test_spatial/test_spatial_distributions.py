@@ -121,6 +121,7 @@ class SpatialTester(object):
             'linear': self._linear,
             'exponential': self._exponential,
             'gaussian': self._gauss,
+            'gaussian2d': self._gauss2d,
             'gamma': self._gamma}
         self._distribution = spatial_distributions[spatial_distribution]
 
@@ -131,6 +132,8 @@ class SpatialTester(object):
                             (math.sqrt(2) * math.log((.1 - 0) / 1))},
             'gaussian': {'p_center': 1., 'sigma': self._L / 4.,
                          'mean': 0., 'c': 0.},
+            'gaussian2d': {'p_center': 1., 'sigma_x': self._L / 4., 'sigma_y': self._L / 4.,
+                           'mean_x': 0.5, 'mean_y': 0.7, 'rho': 0.5, 'c': 0.},
             'gamma': {'kappa': 3., 'theta': self._L / 4.}}
         self._params = default_params[spatial_distribution]
         if distribution_params is not None:
@@ -165,6 +168,15 @@ class SpatialTester(object):
                 nest.spatial.distance,
                 mean=self._params['mean'],
                 std=self._params['sigma'])
+        elif spatial_distribution == 'gaussian2d':
+            distribution = self._params['c'] + nest.spatial_distributions.gaussian2D(
+                nest.spatial.distance,
+                nest.spatial.distance,
+                mean_x=self._params['mean_x'],
+                mean_y=self._params['mean_y'],
+                std_x=self._params['sigma_x'],
+                std_y=self._params['sigma_y'],
+                rho=self._params['rho'])
         elif spatial_distribution == 'gamma':
             distribution = nest.spatial_distributions.gamma(
                 nest.spatial.distance,
@@ -184,6 +196,9 @@ class SpatialTester(object):
         # Constants for spatial distribution functions
         if spatial_distribution == 'gaussian':
             self.two_sigma2 = 2. * self._params['sigma']**2
+        if spatial_distribution == 'gaussian2d':
+            self.sigmax2 = self._params['sigma_x']**2
+            self.sigmay2 = self._params['sigma_y']**2
         elif spatial_distribution == 'gamma':
             self.kappa_m_1 = self._params['kappa'] - 1
             self.gamma_kappa_mul_theta_pow_kappa = (scipy.special.gamma(self._params['kappa']) *
@@ -223,6 +238,16 @@ class SpatialTester(object):
                 self._params['p_center'] *
                 math.exp(-(D - self._params['mean']) ** 2 / self.two_sigma2))
 
+    def _gauss2d(self, D):
+        """Gaussian2D spatial distribution"""
+        x_term = (D - self._params['mean_x'])**2 / self.sigmax2
+        y_term = (D - self._params['mean_y'])**2 / self.sigmay2
+        xy_term = (D - self._params['mean_x']) * (D - self._params['mean_y']) / \
+            (self._params['sigma_x']*self._params['sigma_y'])
+        return (self._params['c'] +
+                self._params['p_center'] *
+                math.exp(- (x_term + y_term - 2*self._params['rho']*xy_term)/(2*(1-self._params['rho']**2))))
+
     def _gamma(self, D):
         """Gamma spatial distribution"""
         return (D**self.kappa_m_1 /
@@ -252,8 +277,7 @@ class SpatialTester(object):
             seed = rnd.randint(10 ** 10)
         seed = 3 * seed  # Reduces probability of overlapping seed values.
         rnd.seed(seed)
-        nest.SetKernelStatus({'rng_seeds': [seed + 1],
-                              'grng_seed': seed + 2})
+        nest.SetKernelStatus({'rng_seed': seed})
 
     def _build(self):
         """Create populations."""
@@ -586,6 +610,15 @@ class TestSpatial2D(unittest.TestCase):
         self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(distribution))
         self.assertGreater(p_Z, P_MIN, '{} failed Z-test'.format(distribution))
 
+    def test_gaussian2d(self):
+        distribution = 'gaussian2d'
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+                             spatial_distribution=distribution)
+        _, p_ks = test.ks_test()
+        _, p_Z = test.z_test()
+        self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(distribution))
+        self.assertGreater(p_Z, P_MIN, '{} failed Z-test'.format(distribution))
+
     def test_gamma(self):
         distribution = 'gamma'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
@@ -630,6 +663,15 @@ class TestSpatial2DOBC(unittest.TestCase):
 
     def test_gaussian(self):
         distribution = 'gaussian'
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
+                             spatial_distribution=distribution, open_bc=True)
+        _, p_ks = test.ks_test()
+        _, p_Z = test.z_test()
+        self.assertGreater(p_ks, P_MIN, '{} failed KS-test'.format(distribution))
+        self.assertGreater(p_Z, P_MIN, '{} failed Z-test'.format(distribution))
+
+    def test_gaussian2d(self):
+        distribution = 'gaussian2d'
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000,
                              spatial_distribution=distribution, open_bc=True)
         _, p_ks = test.ks_test()

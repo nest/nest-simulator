@@ -152,7 +152,6 @@ public:
   const std::vector< spikecounter >& deliver_spikes();
 
 private:
-  void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
 

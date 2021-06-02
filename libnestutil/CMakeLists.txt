@@ -20,7 +20,7 @@
 set( nestutil_sources
     beta_normalization_factor.h
     block_vector.h
-    compose.hpp
+    dict_util.h
     enum_bitfield.h
     iterator_pair.h
     lockptr.h
@@ -28,8 +28,10 @@ set( nestutil_sources
     logging.h
     numerics.h numerics.cpp
     propagator_stability.h propagator_stability.cpp
+    regula_falsi.h
     sort.h
     stopwatch.h stopwatch.cpp
+    streamers.h
     string_utils.h
     vector_util.h
     )

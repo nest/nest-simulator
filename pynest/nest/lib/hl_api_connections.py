@@ -201,7 +201,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
     See Also
     ---------
-    :ref:`connection_mgnt`
+    :ref:`connection_management`
     """
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
 

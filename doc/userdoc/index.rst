@@ -7,11 +7,14 @@ Welcome to the NEST simulator documentation!
 
 NEST 3.0 provides a more intuitive experience with simplified yet versatile handling and manipulation of nodes and connections.
 
+You can find all the information in our section :doc:`guides/nest2_to_nest3/index`.
 
-- Visit our :doc:`What's new? <guides/nest2_to_nest3/nest2_to_nest3_overview>` guide to get an overview of NEST 3.0 and the new functionality.
+.. note::
+
+  Note that some of your simulation scripts may need to be updated to run in NEST 3.0!
+  See our :doc:`reference guide <guides/nest2_to_nest3/refguide_nest2_nest3>` comparing NEST 2.x versus NEST 3.0 syntax.
 
 
-- Read the :doc:`Detailed transition guide <guides/nest2_to_nest3/nest2_to_nest3_detailed_transition_guide>` for an in-depth comparison between old and new syntax.
 
 ----
 
@@ -75,7 +78,7 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
     See our :doc:`Getting Help <getting_help>` page.
 
 Where to find what
-##################
+------------------
 
 * :doc:`Tutorials <tutorials/index>` show you step by step instructions using NEST. If you haven't used NEST before, the PyNEST tutorial is a good place to start.
 
@@ -86,21 +89,21 @@ Where to find what
 * :doc:`Reference Material <ref_material/index>` provides a quick look up of definitions, functions and terms.
 
 Interested in contributing?
-###########################
+---------------------------
 
 * Have you used NEST in an article or presentation? :doc:`Let us know <community>` and we will add it to our list of `publications <https://www.nest-simulator.org/publications/>`_.
   Find out how to :doc:`cite NEST <citing-nest>` in your work.
 
 * If you have any comments or suggestions, please share them on our :doc:`Mailing List <community>`.
 
-* Want to contribute code? Visit out our `Developer Space <https://nest.github.io/nest-simulator/>`_ to get started!
+* Want to contribute code? Visit out our :doc:`Contributing <contribute/index>` pages to get started!
 
 * Interested in creating or editing documentation? Check out our :doc:`Documentation workflows <documentation_workflow/index>`.
 
 * For more info about our larger community and the history of NEST check out the `NEST Initiative <https://www.nest-initiative.org>`_ website
 
 Related projects
-################
+----------------
 
 Many extensions and open-source tools related to the NEST Simulator are available. In particular, the following packages may be of interest:
 
@@ -112,7 +115,7 @@ Many extensions and open-source tools related to the NEST Simulator are availabl
 You can find more projects by the community, for example by searching GitHub for the topics `"nest-simulator" <https://github.com/topics/nest-simulator>`_ or `"nest-module" <https://github.com/topics/nest-module/>`_.
 
 License
-#######
+-------
 
 NEST is available under the :doc:`GNU General Public License 2 or later <license>`. This means that you can
 

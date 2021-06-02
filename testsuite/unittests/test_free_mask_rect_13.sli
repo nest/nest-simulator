@@ -355,7 +355,7 @@ def
 
 ResetKernel
 
-<< /sort_connections_by_source false >> SetKernelStatus
+<< /sort_connections_by_source false /use_compressed_spikes false >> SetKernelStatus
 
 /sources src_layer CreateLayer def
 /targets tgt_layer CreateLayer def

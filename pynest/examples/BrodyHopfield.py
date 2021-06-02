@@ -20,8 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""Spike synchronization through subthreshold oscillation
-------------------------------------------------------------
+"""
+Spike synchronization through subthreshold oscillation
+------------------------------------------------------
 
 This script reproduces the spike synchronization behavior
 of integrate-and-fire neurons in response to a subthreshold
@@ -33,11 +34,12 @@ depend on the input current given. The result is then plotted using
 matplotlib. All parameters are taken from the above paper.
 
 References
-~~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Brody CD and Hopfield JJ (2003). Simple networks for
        spike-timing-based computation, with application to olfactory
        processing. Neuron 37, 843-852.
+
 """
 
 #################################################################################

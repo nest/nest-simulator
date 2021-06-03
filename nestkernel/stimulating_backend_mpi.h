@@ -37,7 +37,7 @@
 
 .. _stimulating_backend_mpi:
 
-Collect data from MPI communication for updating device
+mpi - Collect data from MPI communication for updating device
 #######################################################
 
 .. admonition:: Availability
@@ -50,7 +50,7 @@ updates stimulating device just before each run. This is useful for
 co-simulation or for receiving data from an external software.
 
 The creation of this MPI communication is based on the functions
-'MPI_Comm_connect' and 'MPI_Comm_disconnect'. The port name is
+`MPI_Comm_connect` and `MPI_Comm_disconnect`. The port name is
 read from a file for each device with this backend.
 The name of the file needs to be specified according to the following
 pattern:
@@ -62,8 +62,8 @@ pattern:
 The ``data_path`` and ``data_prefix`` are global kernel properties,
 while `label` is a property of the device in question and `id_device`
 its node ID.
-This path can only be set outside of a `Run` contexts (i.e.
-after ``Prepare()` has been called, but ``Cleanup()`` has not).
+This path can only be set outside of a ``Run`` contexts (i.e.
+after ``Prepare()`` has been called, but ``Cleanup()`` has not).
 
 
 Communication Protocol
@@ -73,13 +73,13 @@ both MPI processes. The protocol is described using the
 following format for the MPI messages:
 (value, number, type, source/destination, tag)
 
-1) ``Prepare``  : Connection of MPI port include in one file (see below)
-2) ``Run`` begin: Send start run (true, 1, CXX_BOOL, 0, 0)
-3) ``Run`` begin: Send the id of the device to update (id_device, 1, INT, 0, 0)
-3) ``Run`` begin: Receive shape of the data (shape, 1, INT, 0, 0)
-4) ``Run`` begin: Receive the data for updating the device (data, shape, DOUBLE, 0, 0)
-5) ``Run`` end  : Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
-6) ``Cleanup``  : Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
+1) ``Prepare``   : Connection of MPI port include in one file (see below)
+2) ``Run`` begin : Send start run (true, 1, CXX_BOOL, 0, 0)
+3) ``Run`` begin : Send the id of the device to update (id_device, 1, INT, 0, 0)
+4) ``Run`` begin : Receive shape of the data (shape, 1, INT, 0, 0)
+5) ``Run`` begin : Receive the data for updating the device (data, shape, DOUBLE, 0, 0)
+6) ``Run`` end   : Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
+7) ``Cleanup``   : Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
 
 Data format
 +++++++++++
@@ -101,7 +101,14 @@ namespace nest
 
 
 /**
- * A simple input backend MPI implementation
+ * A simple input backend MPI implementation.
+ *
+ * Protocol of communication:
+ * \image html MPI_backend_protocol_of_communication.svg
+ * State machine of Nest:
+ * \image html MPI_backend_state_Nest.svg
+ * Example of state machine for the communication with Nest:
+ * \image html MPI_backend_example_state_machine_communication_with_Nest.svg
  */
 class StimulatingBackendMPI : public StimulatingBackend
 {

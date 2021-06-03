@@ -35,7 +35,7 @@
 
 .. _recording_backend_mpi:
 
-Send data with MPI
+mpi - Send data with MPI
 ##################
 
 .. admonition:: Availability
@@ -47,9 +47,9 @@ The `mpi` recording backend sends collected data to a remote process
 using MPI.
 
 This backend will create a new MPI communicator (different from
-MPI_Comm_World, which is used by NEST itself).  The creation of the
-MPI communication is based on the functions 'MPI_Comm_connect' and
-'MPI_Comm_disconnect'. The port name is read from a file for each
+`MPI_Comm_World`, which is used by NEST itself). The creation of the
+MPI communication is based on the functions `MPI_Comm_connect` and
+`MPI_Comm_disconnect`. The port name is read from a file for each
 device with this backend. The file needs to be named according to the
 following pattern:
 
@@ -61,7 +61,7 @@ The ``data_path`` and ``data_prefix`` are global kernel properties,
 while `label` is a property of the device in question and `id_device`
 its node ID.
 This path can only be set outside of a `Run` contexts (i.e.
-after ``Prepare()` has been called, but ``Cleanup()`` has not).
+after ``Prepare()`` has been called, but ``Cleanup()`` has not).
 
 Communication Protocol:
 +++++++++++++++++++++++
@@ -99,6 +99,12 @@ namespace nest
 
 /**
  * A recording backend for sending information with MPI.
+ * Protocol of communication:
+ * \image html MPI_backend_protocol_of_communication.svg
+ * State machine of Nest:
+ * \image html MPI_backend_state_Nest.svg
+ * Example of state machine for the communication with Nest:
+ * \image html MPI_backend_example_state_machine_communication_with_Nest.svg
  */
 class RecordingBackendMPI : public RecordingBackend
 {

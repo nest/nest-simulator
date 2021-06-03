@@ -49,4 +49,5 @@ For more information, please look at the documentation of each device.
 
 For more information on the internal protocol used by the 'mpi' backend for stimulating devices please
 refer to:
+
 - :ref:`stimulating_backend_mpi`

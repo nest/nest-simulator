@@ -411,21 +411,21 @@ statement. Three arguments are required:
 Compare parameters
 ^^^^^^^^^^^^^^^^^^
 
-In the ``nest.logic.conditional()`` function above we used a comparison between a
-``nest.Parameter`` and a value. It is also possible to compare one ``nest.Parameter``
-with another, and all comparison operators are supported. The result of such comparisons
+In the ``nest.logic.conditional()`` function above, we compared a
+``nest.Parameter`` with a value. It is also possible to compare one ``nest.Parameter``
+with another. All comparison operators are supported. The result of such comparisons
 is a new ``nest.Parameter``, which evaluates to either 1 or 0 for true and false,
-respectively. The resulting comparison ``nest.Parameter`` can be used in a ``nest.logic.conditional()``,
-but also without it if the desired result is zero where the comparison is false.
+respectively. The resulting comparison ``nest.Parameter`` can be used in a ``nest.logic.conditional()``.
+You can omit the ``nest.logic.conditional()`` if the desired result is zero when the comparison is false.
 
 ::
 
     # As an example, take a step function where the resulting value is
-    # 0.5 for positive values, and zero for negative.
-    nest.logic.conditional(nest.random.uniform(min=-1., max=1.) > 0., 0.5, 0.)
+    # 0.5 for positive values and 0 for negative values.
+    nest.logic.conditional(nest.random.uniform(min=-1., max=1.) > 0.0, 0.5, 0.0)
 
-    # This comparison can be used directly without the nest.logic.conditional() function.
-    0.5*(nest.random.uniform(min=-1., max=1.) > 0.)
+    # This comparison can be used without the nest.logic.conditional() function.
+    0.5*(nest.random.uniform(min=-1., max=1.) > 0.0)
 
 
 .. _combine_ex:

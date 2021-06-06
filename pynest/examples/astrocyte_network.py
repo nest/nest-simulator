@@ -15,12 +15,10 @@ def main():
     """
 
     n_exc_neurons = 100
-    connectivity = 0.2
+    connectivity_n2n, connectivity_a2n = 0.2, 0.001
     # TODO: Weight is set high to allow a small network to spike. What is realistic?
-    synapse_weight = 10.0
-    sic_weight = 2.11
-    fraction_glu_to_astro = 0.3
-    fraction_glu_to_postsyn = 0.7
+    synapse_weight, sic_weight = 10.0, 2.11
+    fraction_glu_to_astro, fraction_glu_to_postsyn = 0.3, 0.7
     neuron_model = "aeif_cond_alpha_astro"
     astrocyte_model = "astrocyte"
     synapse_model = "tsodyks_synapse"
@@ -29,15 +27,17 @@ def main():
     # TODO: Is it too large? Some examples show 80 000
     poisson_rate = 20000.0 # Hz
     simulation_duration = 10000 # ms
+    one_to_many = True
 
-    # Create a connectivity matrix, could be randomly created but
-    # use a simple one for now
-    # connections = np.array([[0, 0], [1, 0]])
-    connections = np.random.rand(n_exc_neurons, n_exc_neurons) < connectivity
-    # convert from booleans
-    connections = connections.astype(np.int64)
-    # don't want neurons connecting to itself
-    np.fill_diagonal(connections, 0)
+    # connection specs
+    syn_spec_n2n = {
+        "synapse_model": synapse_model,
+        "weight": synapse_weight * fraction_glu_to_postsyn
+    }
+    syn_spec_a2n = {
+        "synapse_model": astro_out_connection,
+        "weight": sic_weight
+    }
 
     # create populations
     # TODO: we assume same number of neurons and astrocytes in this network. Make flexible?
@@ -47,37 +47,50 @@ def main():
     print(neuronpop)
     print(astropop)
 
-    # Connect cells so that a row of the connection matrix
-    # indicates where this neuron receives connections.
-    # Connect the astrocyte population accordingly.
-    for i_row in range(connections.shape[0]):
-        pre_syn_ids = np.flatnonzero(connections[i_row, :])
-        for i in pre_syn_ids:
-            # Connect neurons
-            nest.Connect(
-                neuronpop[i], # pre
-                neuronpop[i_row], # post stays constant in this loop
-                syn_spec={
-                    "synapse_model": synapse_model,
-                    "weight": synapse_weight * fraction_glu_to_postsyn,
-                },
-            )
-            # Connect the astrocyte to the same presynaptic neuron
-            nest.Connect(
-                neuronpop[i],
-                astropop[i_row],
-                syn_spec={
-                    "synapse_model": synapse_model,
-                    "weight": synapse_weight * fraction_glu_to_astro,
-                },
-            )
-        # Connect also the SIC
-        # TODO: this works as long as there is one astro per neuron
+    # connect neurons
+    nest.Connect(
+        neuronpop, neuronpop,
+        syn_spec=syn_spec_n2n,
+        conn_spec={
+            "rule": "pairwise_bernoulli",
+            "p": connectivity_n2n,
+            "allow_autapses": False
+        }
+    )
+
+    # connect astrocyte->neuron
+    nest.Connect(
+        astropop, neuronpop,
+        syn_spec=syn_spec_a2n,
+        conn_spec={'rule': 'one_to_one'}
+    )
+    if one_to_many: # multiple astrocyte->neuron connections
         nest.Connect(
-            astropop[i_row],
-            neuronpop[i_row], # post synaptic neuron is same as above
-            syn_spec={"synapse_model": astro_out_connection, "weight": sic_weight},
+            astropop, neuronpop,
+            syn_spec=syn_spec_a2n,
+            conn_spec={'rule': 'pairwise_bernoulli', 'p': connectivity_a2n}
         )
+
+    # connect neuron->astrocyte
+    conns = nest.GetConnections(neuronpop, neuronpop)   # read the neuron-neuron connections
+    neuron_list = neuronpop.tolist()    # read the neuron ids
+    for i, conn in enumerate(conns): # connect according to neuron-neuron connections
+        nest.Connect(
+            [conn.source], astropop[neuron_list.index(conn.target)],
+            syn_spec={
+                "synapse_model": synapse_model,
+                "weight": synapse_weight * fraction_glu_to_astro,
+                }
+        )
+
+    # verify connections
+    conns_n2n = nest.GetConnections(neuronpop, neuronpop)
+    conns_n2a = nest.GetConnections(neuronpop, astropop)
+    conns_arr = np.array([
+        conns_n2n.source, conns_n2n.target,
+        conns_n2a.source, conns_n2a.target]).T
+    np.savetxt('conns.csv', conns_arr, fmt='%d', delimiter=',',
+        header='pre,post,pre,astro', comments='')
 
     # Add input to neurons and recording devices
     input_gen = nest.Create("poisson_generator", params={"rate": poisson_rate})

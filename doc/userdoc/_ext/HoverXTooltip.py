@@ -119,7 +119,8 @@ def hxt_role_ref(pattern):
         # link to the glossary term.
 
         # use this for local builds.
-        # refuri = (f'{os.getcwd()}/userdoc/html/glossary.html#term-{term}')
+        refuri = (f'{os.getcwd()}/userdoc/html/glossary.html#term-{term}')
+        
         refuri = (f'glossary.html#term-{term}')
 
         # the tag in which the term and description is defined.
@@ -207,6 +208,16 @@ def get_desc_from_glossary(term):
 
 
 def setup(app):
+    from pprint import pprint
+
+    for name in dir():
+        print(f">>>>>>>> VARIABLE {name} = ", end="")
+        pprint(vars()[name])
+
+    for name in dir(app):
+        print(">>>> APP ")
+        pprint(getattr(app, name))
+
     """Adds the necessary routines to Sphinx.
 
     Args:

@@ -236,9 +236,6 @@ Physical units and variable names used for NEST parameters
 
  static_synapse
    Synapse with a fixed weight.
-
- dead time
-   a synonym for refractory period.
  
  refractoriness
    The time before a new action potential can take place.

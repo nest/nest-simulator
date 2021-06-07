@@ -396,8 +396,8 @@ Ntree< D, T, max_capacity, max_depth >::subquad_( const Position< D >& pos )
     // Comparing against an epsilon value in case there are round-off errors.
     // Using a negative epsilon value because the round-off error may go both ways
     // and the difference we check against may therefore be +/- 10^-16.
-    r += ( 1 << i )
-      * ( ( ( lower_left_[ i ] + extent_[ i ] / 2 ) - pos[ i ] ) > -std::numeric_limits< double >::epsilon() ? 0 : 1 );
+    const bool in_left_half = ( ( lower_left_[ i ] + extent_[ i ] / 2 ) - pos[ i ] ) > -std::numeric_limits< double >::epsilon();
+    r += ( 1 << i ) * ( in_left_half ? 0 : 1 );
   }
 
   return r;
@@ -490,7 +490,7 @@ Ntree< D, T, max_capacity, max_depth >::insert( Position< D > pos, const T& node
       // Using a negative epsilon value because the round-off error may go both ways
       // and the difference we check against may therefore be +/- 10^-16.
       assert( ( pos - lower_left_ )[ i ] > -std::numeric_limits< double >::epsilon()
-        && ( lower_left_ + extent_ - pos )[ i ] > -std::numeric_limits< double >::epsilon() );
+        and ( lower_left_ + extent_ - pos )[ i ] > -std::numeric_limits< double >::epsilon() );
     }
 
     nodes_.push_back( std::pair< Position< D >, T >( pos, node ) );

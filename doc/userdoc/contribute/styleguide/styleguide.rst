@@ -506,43 +506,6 @@ See `the Sphinx documentation on referencing Python objects
 information.
 
 
-Link to glossary
-~~~~~~~~~~~~~~~~
-
-To link terms to the glossary page, use the HoverXTooltip role :hxt_ref:. The source code for the extension can be
-`found here <https://github.com/INM-6/HoverXTooltip>`_. ::
-
-  :hxt_ref:`E_L`
-
-Terms must be linked once per section, on first appearance in that section. Subsequent appearances of a term in the section
-should not have any formatting markup.
-
-Link to certain external projects
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-With the Sphinx extension `intersphinx <https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html>`_,
-projects that also use Sphinx can be referenced in the same way as your local project. You can use the reference label
-role (``:ref:``), document role (``:doc:``), and Python role (``:py:func:``, ``:py:class:``). You only need to add the
-intersphinx *unique identifer* to the reference, which looks like this ``:doc:`custom label <unique-identifier:filename>```.
-See section in userdoc/conf.py "intersphinx_mapping" to see which projects are currently included along with their
-unique identifier.
-
-Examples of syntax::
-
-  :doc:`tutorial for nestml <nestml:tutorials>`
-  :py:func:`pyNN.utility.get_simulator`
-
-
-.. note::
-
-   Depending on how a project is documented, you may only be able to use the ``:doc:`` role or the ``:ref:`` role.
-   To find out, you need to look into the objects.inv file, which can be obtained with the following code
-
-   ``python -msphinx.ext.intersphinx https://docs.project.org/objects.inv``
-
-   Objects in objects.inv are categorized into different sections.
-   The std:label refers to objects that use the ``:ref:`` role. And std:doc refers to objects that use the ``:doc:`` role.
-
 reStructuredText text formatting
 --------------------------------
 

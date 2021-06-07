@@ -147,13 +147,12 @@ public:
   {
     SpikeEvent e_spike = static_cast< SpikeEvent& >( e );
 
-    librandom::RngPtr rng = kernel().rng_manager.get_rng( t );
     const unsigned long n_spikes_in = e_spike.get_multiplicity();
     unsigned long n_spikes_out = 0;
 
     for ( unsigned long n = 0; n < n_spikes_in; ++n )
     {
-      if ( rng->drand() < p_transmit_ )
+      if ( get_vp_specific_rng( t )->drand() < p_transmit_ )
       {
         ++n_spikes_out;
       }

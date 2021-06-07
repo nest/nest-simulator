@@ -248,11 +248,9 @@ nest::step_current_generator::step_current_generator( const step_current_generat
  * ---------------------------------------------------------------- */
 
 void
-nest::step_current_generator::init_state_( const Node& proto )
+nest::step_current_generator::init_state_()
 {
-  const step_current_generator& pr = downcast< step_current_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void

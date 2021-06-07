@@ -7,22 +7,11 @@ from neurons and synapses.
 
 To determine what happens to recorded data, each recording device can
 specify a *recording backend* in its ``record_to`` property. The
-default backend is *memory*, which just stores the recorded data in
-memory for later retrieval. Other backends write the data to file or
-to the screen. The different backends and their usage is explained in
-detail in the section about :ref:`Recording Backends
-<recording_backends>`.
-
-Recording devices can fundamentally be subdivided into two groups:
-
-- **Collectors** collect events sent to them. Neurons are connected to
-  collectors and the collector collects the events emitted by the
-  neurons connected to it.
-
-- **Samplers** actively interrogate their targets at given time
-  intervals. This means that the sampler must be connected to the
-  neuron (not the neuron to the sampler), and that the neuron must
-  support the particular type of sampling.
+default backend is *memory*, which stores the recorded data in memory
+for later retrieval. Other backends write the data to file, to the
+screen, or stream it to other applications via the network. The
+different backends and their usage are explained in detail in the
+section about :ref:`Recording Backends <recording_backends>`.
 
 Recording devices can only reliably record data that was generated
 during the previous simulation time step interval. See the guide about
@@ -35,87 +24,36 @@ temporal aspects of the simulation loop.
    of thread execution, events are not necessarily recorded in
    chronological order.
 
-The time span in which a recorder is actually recording, can be specified
-using the additional properties ``start`` and ``stop``. These define
-activation and inactivation times of the device in ms. An additional
-property ``origin`` is available to shift the recording window by a
-certain amount, which can be useful in simulation protocols with
-repeated simulations. The following rules apply:
 
-- Collectors collect all events with timestamps `T` that fulfill
+Recording devices can fundamentally be subdivided into two groups:
 
-  ::
+- **Collectors** gather events sent to them. Neurons are connected to
+  collectors and the collector gathers the events emitted by the
+  neurons connected to it.
 
-     start < T <= stop.
+- **Samplers** actively interrogate their targets at given time
+  intervals. This means that the sampler must be connected to the
+  neuron (not the neuron to the sampler), and that the neuron must
+  support the particular type of sampling.
 
-  Events with timestamp `T == start` are not recorded.
-
-
-- Sampling devices sample at times *t = nh* (*h* being the simulation
-  resolution) with
-
-  ::
-
-     start < t <= stop
-     (t-start) mod interval == 0
-
-
-Common recorder properties
---------------------------
-
-All recorders have a set of common properties that can be set using
-:py:func:`.SetDefaults` on the model class or :py:func:`.SetStatus` on a device
-instance:
-
-.. glossary::
-
- label
-   A string (default: `""`) specifying an arbitrary textual label for
-   the device.  Recording backends might use the label to generate
-   device specific identifiers like filenames and such.
-
- n_events
-   The number of events that were collected by the recorder can be
-   read out of the `n_events` entry. The number of events can be reset
-   to 0. Other values cannot be set.
-
- origin
-   A positive floating point number (default : `0.0`) used as the
-   reference time for `start` and `stop`.
-
- record_to
-   A string (default: `"memory"`) containing the name of the recording
-   backend where to write data to. An empty string turns all recording
-   of individual events off.
-
- start
-   A positive floating point number (default: `0.0`) specifying the
-   activation time in ms, relative to `origin`.
-
- stop
-   A floating point number (default: `infinity`) specifying the
-   deactication time in ms, relative to `origin`. The value of `stop`
-   must be greater than or equal to `start`
 
 Recorders for every-day situations
 ----------------------------------
 
-.. include:: ../models/multimeter.rst
-
-.. include:: ../models/spike_recorder.rst
-
-.. include:: ../models/weight_recorder.rst
+- :ref:`multimeter`
+- :ref:`spike_recorder`
+- :ref:`weight_recorder`
 
 .. _recording_backends:
 
 Where does data end up?
 -----------------------
 
-After a recording device has sampled or collected data, the *recording backends* are
-responsible for how the data are processed.
+After a recording device has collected or sampled data, the data is
+handed to a dedicated *recording backend*, set for each recorder.
+These are responsible for how the data are processed.
 
-
-Theoretically, recording backends are not restricted in what they do
+Theoretically, recording backends are completely free in what they do
 with the data. The ones included in NEST can collect data in memory,
 display it on the terminal, or write it to files.
 
@@ -174,10 +112,10 @@ dictionary to :py:func:`.SetKernelStatus`.
 
     nest.SetKernelStatus({"recording_backends": {'sionlib': {'buffer_size': 512}}})
 
-.. include:: ../models/recording_backend_memory.rst
+The following is a list of built-in recording backends that come with
+NEST:
 
-.. include:: ../models/recording_backend_ascii.rst
-
-.. include:: ../models/recording_backend_screen.rst
-
-.. include:: ../models/recording_backend_sionlib.rst
+- :ref:`recording_backend_memory`
+- :ref:`recording_backend_ascii`
+- :ref:`recording_backend_screen`
+- :ref:`recording_backend_sionlib`

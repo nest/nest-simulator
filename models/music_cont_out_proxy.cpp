@@ -24,7 +24,7 @@
 
 #ifdef HAVE_MUSIC
 
-// Includes from C++:
+// C++ includes:
 #include <numeric>
 #include <string>
 
@@ -202,11 +202,6 @@ nest::music_cont_out_proxy::music_cont_out_proxy( const music_cont_out_proxy& n 
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_ )
-{
-}
-
-void
-nest::music_cont_out_proxy::init_state_( const Node& /* np */ )
 {
 }
 

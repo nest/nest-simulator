@@ -63,17 +63,17 @@ M_ERROR setverbosity
     /syn_model /stdp_dopamine_synapse def
   }
   ifelse
-  
+
   param_on_connect
   {
-    [ n ] [ n ] 
-    << /rule /one_to_one >> 
+    n n
+    << /rule /one_to_one >>
     << /synapse_model syn_model /weight 2.0 pname 1.0 >>
     Connect
   }
   {
     n n syn_model Connect
-    << >> GetConnections 0 get 
+    << >> GetConnections 0 get
     << pname 1.0 /weight 2.0 >> SetStatus
   }
   ifelse

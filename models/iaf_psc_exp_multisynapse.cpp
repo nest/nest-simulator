@@ -262,13 +262,6 @@ iaf_psc_exp_multisynapse::iaf_psc_exp_multisynapse( const iaf_psc_exp_multisynap
  * ---------------------------------------------------------------- */
 
 void
-iaf_psc_exp_multisynapse::init_state_( const Node& proto )
-{
-  const iaf_psc_exp_multisynapse& pr = downcast< iaf_psc_exp_multisynapse >( proto );
-  S_ = pr.S_;
-}
-
-void
 iaf_psc_exp_multisynapse::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize

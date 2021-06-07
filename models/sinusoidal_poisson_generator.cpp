@@ -196,12 +196,9 @@ nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator( const sinusoid
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_poisson_generator::init_state_( const Node& proto )
+nest::sinusoidal_poisson_generator::init_state_()
 {
-  const sinusoidal_poisson_generator& pr = downcast< sinusoidal_poisson_generator >( proto );
-
-  device_.init_state( pr.device_ );
-  S_ = pr.S_;
+  device_.init_state();
 }
 
 void
@@ -242,7 +239,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
   const long start = origin.get_steps();
 
   // random number generator
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
+  RngPtr rng = get_vp_specific_rng( get_thread() );
 
   // We iterate the dynamics even when the device is turned off,
   // but do not issue spikes while it is off. In this way, the
@@ -277,8 +274,8 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
       }
       else
       {
-        V_.poisson_dev_.set_lambda( S_.rate_ * V_.h_ );
-        long n_spikes = V_.poisson_dev_.ldev( rng );
+        poisson_distribution::param_type param( S_.rate_ * V_.h_ );
+        long n_spikes = V_.poisson_dist_( rng, param );
         SpikeEvent se;
         se.set_multiplicity( n_spikes );
         kernel().event_delivery_manager.send( *this, se, lag );
@@ -292,8 +289,8 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
 void
 nest::sinusoidal_poisson_generator::event_hook( DSSpikeEvent& e )
 {
-  V_.poisson_dev_.set_lambda( S_.rate_ * V_.h_ );
-  long n_spikes = V_.poisson_dev_.ldev( kernel().rng_manager.get_rng( get_thread() ) );
+  poisson_distribution::param_type param( S_.rate_ * V_.h_ );
+  long n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ), param );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

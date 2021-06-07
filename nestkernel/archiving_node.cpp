@@ -42,6 +42,7 @@ nest::ArchivingNode::ArchivingNode()
   , tau_minus_triplet_( 110.0 )
   , tau_minus_triplet_inv_( 1. / tau_minus_triplet_ )
   , max_delay_( 0 )
+  , trace_( 0.0 )
   , last_spike_( -1.0 )
 {
 }

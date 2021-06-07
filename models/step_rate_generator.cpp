@@ -248,11 +248,9 @@ nest::step_rate_generator::step_rate_generator( const step_rate_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::step_rate_generator::init_state_( const Node& proto )
+nest::step_rate_generator::init_state_()
 {
-  const step_rate_generator& pr = downcast< step_rate_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void

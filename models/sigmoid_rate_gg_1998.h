@@ -23,7 +23,7 @@
 #ifndef SIGMOID_RATE_GG_1998_H
 #define SIGMOID_RATE_GG_1998_H
 
-// Includes from c++:
+// C++ includes:
 #include <cmath>
 
 // Includes from models:

@@ -26,11 +26,11 @@ Name: testsuite::ticket-681 - Ensure that NEST handles errors during node prepar
 
 Synopsis: (ticket-681) run -> NEST exits if test fails
 
-Description: 
+Description:
 Ensures that NEST handles errors during calibration gracefully.
 
 This test will be run only if NEST is compiled without MPI but with Threads.
- 
+
 Author: Hans E Plesser, 2014-11-25, based on reproducer for #536.
  */
 
@@ -40,7 +40,7 @@ Author: Hans E Plesser, 2014-11-25, based on reproducer for #536.
 skip_if_not_threaded
 
 % preparatory work for proper test code in case NEST is complied with MPI support
-% For now we just ignore this test, this will later be replaced 
+% For now we just ignore this test, this will later be replaced
 % by a restart of NEST with a serial binary.
 skip_if_have_mpi
 
@@ -49,15 +49,15 @@ M_ERROR setverbosity
 {
     ResetKernel
     << /local_num_threads 4 /overwrite_files false >> SetKernelStatus
-    /iaf_psc_alpha 4 << /I_e 1500.0 >> Create ;
-    /spike_recorder << /record_to /ascii >> Create ;
-    [1 2 3 4] [5] Connect
+    /n /iaf_psc_alpha 4 << /I_e 1500.0 >> Create def
+    /sr /spike_recorder << /record_to /ascii >> Create def
+    n sr Connect
     1000 Simulate
-	
+
     ResetKernel
     0  << /local_num_threads 4 /overwrite_files false >> SetStatus
-    /iaf_psc_alpha 4 << /I_e 1500.0 >> Create ;
-    /spike_recorder << /record_to /ascii >> Create ;
-    [1 2 3 4] [5] Connect
+    /n /iaf_psc_alpha 4 << /I_e 1500.0 >> Create def
+    /sr /spike_recorder << /record_to /ascii >> Create def
+    n sr Connect
     1000 Simulate
 } failbutnocrash_or_die

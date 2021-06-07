@@ -191,11 +191,9 @@ nest::ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::init_state_( const Node& proto )
+nest::ppd_sup_generator::init_state_()
 {
-  const ppd_sup_generator& pr = downcast< ppd_sup_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void

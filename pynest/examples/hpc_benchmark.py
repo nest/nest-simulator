@@ -22,7 +22,7 @@
 
 """
 Random balanced network HPC benchmark
---------------------------------------
+-------------------------------------
 
 This script produces a balanced random network of `scale*11250` neurons in
 which the excitatory-excitatory neurons exhibit STDP with
@@ -35,7 +35,7 @@ and independent of network size (indegree=11250).
 This is the standard network investigated in [1]_, [2]_, [3]_.
 
 A note on scaling
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 This benchmark was originally developed for very large-scale simulations on
 supercomputers with more than 1 million neurons in the network and
@@ -61,7 +61,7 @@ that the firing rate reported at the end of the benchmark is below 10 spikes
 per second.
 
 References
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent
        plasticity in balanced random networks. Neural Comput 19(6):1437-67
@@ -125,7 +125,7 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
     return 1. / v_max
 
 ###############################################################################
-# For compatiblity with earlier benchmarks, we require a rise time of
+# For compatibility with earlier benchmarks, we require a rise time of
 # ``t_rise = 1.700759 ms`` and we choose ``tau_syn`` to achieve this for given
 # ``tau_m``. This requires numerical inversion of the expression for ``t_rise``
 # in ``convert_synapse_weight``. We computed this value once and hard-code
@@ -212,13 +212,11 @@ def build_network(logger):
         'resolution': params['dt'],
         'overwrite_files': True})
 
-    nest.SetDefaults('iaf_psc_alpha', model_params)
-
     nest.message(M_INFO, 'build_network', 'Creating excitatory population.')
-    E_neurons = nest.Create('iaf_psc_alpha', NE)
+    E_neurons = nest.Create('iaf_psc_alpha', NE, params=model_params)
 
     nest.message(M_INFO, 'build_network', 'Creating inhibitory population.')
-    I_neurons = nest.Create('iaf_psc_alpha', NI)
+    I_neurons = nest.Create('iaf_psc_alpha', NI, params=model_params)
 
     if brunel_params['randomize_Vm']:
         nest.message(M_INFO, 'build_network',
@@ -270,7 +268,6 @@ def build_network(logger):
     tic = time.time()
 
     nest.SetDefaults('static_synapse_hpc', {'delay': brunel_params['delay']})
-    nest.CopyModel('static_synapse_hpc', 'syn_std')
     nest.CopyModel('static_synapse_hpc', 'syn_ex',
                    {'weight': JE_pA})
     nest.CopyModel('static_synapse_hpc', 'syn_in',

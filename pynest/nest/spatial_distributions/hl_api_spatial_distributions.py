@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 from ..math import exp
+from ..lib.hl_api_types import CreateParameter
 
 try:
     import scipy.special
@@ -52,7 +53,10 @@ def exponential(x, beta=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return exp(-x/beta)
+    return CreateParameter('exp_distribution', {
+        'x': x,
+        'beta': beta,
+    })
 
 
 def gaussian(x, mean=0.0, std=1.0):
@@ -73,7 +77,11 @@ def gaussian(x, mean=0.0, std=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return exp(-(x-mean)**2/(2*std**2))
+    return CreateParameter('gaussian', {
+        'x': x,
+        'mean': mean,
+        'std': std,
+    })
 
 
 def gaussian2D(x, y, mean_x=0.0, mean_y=0.0, std_x=1.0, std_y=1.0, rho=0.0):
@@ -102,10 +110,15 @@ def gaussian2D(x, y, mean_x=0.0, mean_y=0.0, std_x=1.0, std_y=1.0, rho=0.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    x_term = (x - mean_x)**2/std_x**2
-    y_term = (y - mean_y)**2/std_y**2
-    xy_term = (x - mean_x)*(y - mean_y)/(std_x*std_y)
-    return exp(- (x_term + y_term - 2*rho*xy_term)/(2*(1-rho**2)))
+    return CreateParameter('gaussian2d', {
+        'x': x,
+        'y': y,
+        'mean_x': mean_x,
+        'mean_y': mean_y,
+        'std_x': std_x,
+        'std_y': std_y,
+        'rho': rho,
+    })
 
 
 def gamma(x, kappa=1.0, theta=1.0):
@@ -128,7 +141,8 @@ def gamma(x, kappa=1.0, theta=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    if not HAVE_SCIPY:
-        raise ImportError('gamma distribution requires scipy')
-    return (x**(kappa - 1) * exp(- x / theta) /
-            (theta**kappa * scipy.special.gamma(kappa)))
+    return CreateParameter('gamma', {
+        'x': x,
+        'kappa': kappa,
+        'theta': theta
+    })

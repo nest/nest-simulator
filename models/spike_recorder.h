@@ -35,6 +35,8 @@
 
 /* BeginUserDocs: device, recorder, spike
 
+.. _spike_recorder:
+
 Short description
 +++++++++++++++++
 
@@ -63,6 +65,11 @@ spike creation rather than that of their arrival.
 
 The call to ``Connect`` will fail if the connection direction is
 reversed (i.e., connecting *sr* to *neurons*).
+
+.. include:: ../models/recording_device.rst
+
+See also
+++++++++
 
 EndUserDocs */
 

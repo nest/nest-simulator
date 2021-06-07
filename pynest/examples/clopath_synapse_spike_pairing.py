@@ -21,7 +21,7 @@
 
 """
 Clopath Rule: Spike pairing experiment
-----------------------------------------
+--------------------------------------
 
 This script simulates one ``aeif_psc_delta_clopath`` neuron that is connected with
 a Clopath connection [1]_. The synapse receives pairs of a pre- and a postsynaptic
@@ -31,7 +31,7 @@ pairs. This experiment is repeated five times with different rates of the
 sequence of the spike pairs: 10Hz, 20Hz, 30Hz, 40Hz, and 50Hz.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Clopath C, Büsing L, Vasilaki E, Gerstner W (2010). Connectivity reflects coding:
        a model of voltage-based STDP with homeostasis.
@@ -103,7 +103,7 @@ resolution = 0.1
 ##############################################################################
 # Loop over pairs of spike trains
 
-for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
+for s_t_pre, s_t_post in zip(spike_times_pre, spike_times_post):
     nest.ResetKernel()
     nest.SetKernelStatus({"resolution": resolution})
 
@@ -115,20 +115,17 @@ for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
     prrt_nrn = nest.Create("parrot_neuron", 1)
 
     # Create and connect spike generators
-    spike_gen_pre = nest.Create("spike_generator", 1, {
-                                "spike_times": s_t_pre})
+    spike_gen_pre = nest.Create("spike_generator", {"spike_times": s_t_pre})
 
     nest.Connect(spike_gen_pre, prrt_nrn,
                  syn_spec={"delay": resolution})
 
-    spike_gen_post = nest.Create("spike_generator", 1, {
-                                 "spike_times": s_t_post})
+    spike_gen_post = nest.Create("spike_generator", {"spike_times": s_t_post})
 
-    nest.Connect(spike_gen_post, nrn, syn_spec={
-                 "delay": resolution, "weight": 80.0})
+    nest.Connect(spike_gen_post, nrn, syn_spec={"delay": resolution, "weight": 80.0})
 
     # Create weight recorder
-    wr = nest.Create('weight_recorder', 1)
+    wr = nest.Create('weight_recorder')
 
     # Create Clopath connection with weight recorder
     nest.CopyModel("clopath_synapse", "clopath_synapse_rec",
@@ -150,14 +147,14 @@ syn_weights = np.array(syn_weights)
 syn_weights = 100.0*15.0*(syn_weights - init_w)/init_w + 100.0
 
 # Plot results
-fig1, axA = plt.subplots(1, sharex=False)
-axA.plot([10., 20., 30., 40., 50.], syn_weights[5:], color='b', lw=2.5, ls='-',
-         label="pre-post pairing")
-axA.plot([10., 20., 30., 40., 50.], syn_weights[:5], color='g', lw=2.5, ls='-',
-         label="post-pre pairing")
-axA.set_ylabel("normalized weight change")
-axA.set_xlabel("rho (Hz)")
-axA.legend()
-axA.set_title("synaptic weight")
+fig, ax = plt.subplots(1, sharex=False)
+ax.plot([10., 20., 30., 40., 50.], syn_weights[5:], color='b', lw=2.5, ls='-',
+        label="pre-post pairing")
+ax.plot([10., 20., 30., 40., 50.], syn_weights[:5], color='g', lw=2.5, ls='-',
+        label="post-pre pairing")
+ax.set_ylabel("normalized weight change")
+ax.set_xlabel("rho (Hz)")
+ax.legend()
+ax.set_title("synaptic weight")
 
 plt.show()

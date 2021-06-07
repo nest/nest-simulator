@@ -171,7 +171,7 @@ public:
   void calibrate_time( const TimeConverter& tc );
 
 private:
-  void init_state_( Node const& );
+  void init_state_();
   void init_buffers_();
   void calibrate();
 

@@ -284,13 +284,6 @@ nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse( const gif_psc_exp_mult
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_psc_exp_multisynapse::init_state_( const Node& proto )
-{
-  const gif_psc_exp_multisynapse& pr = downcast< gif_psc_exp_multisynapse >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::gif_psc_exp_multisynapse::init_buffers_()
 {
   B_.spikes_.clear();   //!< includes resize

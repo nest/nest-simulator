@@ -125,13 +125,6 @@ nest::music_event_out_proxy::~music_event_out_proxy()
 }
 
 void
-nest::music_event_out_proxy::init_state_( const Node& /* np */ )
-{
-  // const music_event_out_proxy& sd = dynamic_cast<const
-  // music_event_out_proxy&>(np);
-}
-
-void
 nest::music_event_out_proxy::init_buffers_()
 {
 }

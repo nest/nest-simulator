@@ -54,7 +54,7 @@ M_ERROR setverbosity
 
   /neurons /iaf_psc_alpha 10 Create def
 
-  << /sort_connections_by_source sort_connections >> SetKernelStatus
+  << /sort_connections_by_source sort_connections /use_compressed_spikes sort_connections >> SetKernelStatus
   neurons neurons << /rule /fixed_indegree /indegree 2 >> << >> Connect
 
   /connections_before << >> GetConnections def
@@ -64,7 +64,7 @@ M_ERROR setverbosity
 
   % switch from sort to no-sort or vice versa
   % and create more connections and check again
-  << /sort_connections_by_source sort_connections not >> SetKernelStatus
+  << /sort_connections_by_source sort_connections not /use_compressed_spikes sort_connections not >> SetKernelStatus
   neurons neurons << /rule /fixed_indegree /indegree 2 >> << >> Connect
 
   /connections_before << >> GetConnections def
@@ -81,7 +81,7 @@ forall
 
   ResetKernel
 
-  << /sort_connections_by_source sort_connections >> SetKernelStatus
+  << /sort_connections_by_source sort_connections /use_compressed_spikes sort_connections >> SetKernelStatus
 
   /neuron /iaf_psc_delta << /I_e 500. >> Create def
   /parrot /parrot_neuron Create def

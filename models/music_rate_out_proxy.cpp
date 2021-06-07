@@ -134,11 +134,6 @@ nest::music_rate_out_proxy::~music_rate_out_proxy()
 }
 
 void
-nest::music_rate_out_proxy::init_state_( const Node& /* np */ )
-{
-}
-
-void
 nest::music_rate_out_proxy::init_buffers_()
 {
 }

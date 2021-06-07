@@ -26,10 +26,15 @@
 #include "recording_backend.h"
 #include <set>
 
-/* BeginUserDocs: recording backend
+/* BeginUserDocs: NOINDEX
 
-Write data to the terminal
-##########################
+.. _recording_backend_screen:
+
+screen - Write data to the terminal
+###################################
+
+Description
++++++++++++
 
 When initially conceiving and debugging simulations, it can be useful
 to check recordings in a more ad hoc fashion. The recording backend

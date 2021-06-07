@@ -167,17 +167,6 @@ nest::aeif_cond_alpha::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_cond_alpha::State_& nest::aeif_cond_alpha::State_::operator=( const State_& s )
-{
-  assert( this != &s ); // would be bad logical error in program
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
-    y_[ i ] = s.y_[ i ];
-  }
-  r_ = s.r_;
-  return *this;
-}
-
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
@@ -367,13 +356,6 @@ nest::aeif_cond_alpha::~aeif_cond_alpha()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::aeif_cond_alpha::init_state_( const Node& proto )
-{
-  const aeif_cond_alpha& pr = downcast< aeif_cond_alpha >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::aeif_cond_alpha::init_buffers_()

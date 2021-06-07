@@ -389,18 +389,6 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
   return std::move( nodecollection );
 }
 
-void
-NodeManager::init_state( index node_id )
-{
-  Node* n = get_node_or_proxy( node_id );
-  if ( n == 0 )
-  {
-    throw UnknownNode( node_id );
-  }
-
-  n->init_state();
-}
-
 bool
 NodeManager::is_local_node( Node* n ) const
 {
@@ -633,7 +621,7 @@ NodeManager::prepare_node_( Node* n )
 {
   // Frozen nodes are initialized and calibrated, so that they
   // have ring buffers and can accept incoming spikes.
-  n->init_buffers();
+  n->init();
   n->calibrate();
 }
 

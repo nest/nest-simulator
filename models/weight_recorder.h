@@ -36,6 +36,8 @@
 
 /* BeginUserDocs: device, recorder
 
+.. _weight_recorder:
+
 Short description
 +++++++++++++++++
 
@@ -70,6 +72,11 @@ synapses that fulfill the given criteria.
    >>> post = nest.Create("iaf_psc_alpha", 10)
 
    >>> nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
+
+.. include:: ../models/recording_device.rst
+
+See also
+++++++++
 
 EndUserDocs */
 

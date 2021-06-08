@@ -22,7 +22,7 @@
 from setuptools import setup
 
 setup(
-    name='nest',
+    name='nest-simulator',
     version='@NEST_VERSION@@githash@',
     description='Python bindings for NEST',
     author='The NEST Initiative',

@@ -85,11 +85,11 @@ namespace nest
 
 /**
  * A recording backend for sending information with MPI.
- * Protocol of communication:
+ * Communication protocol diagram:
  * \image html MPI_backend_protocol_of_communication.svg
- * State machine of NEST:
+ * General state machine diagram of NEST communication with the MPI backend:
  * \image html MPI_backend_state_Nest.svg
- * Example of state machine for the communication with NEST:
+ * Example of state machine diagram for the communication with NEST:
  * \image html MPI_backend_example_state_machine_communication_with_Nest.svg
  */
 class RecordingBackendMPI : public RecordingBackend

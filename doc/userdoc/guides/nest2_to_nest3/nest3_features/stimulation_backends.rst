@@ -23,10 +23,14 @@ MPI recording backend.
 Changes
 ^^^^^^^
 
-Add the new parameter `stimulus_source`, for selecting backend in stimulating
-device, if it's not the default one.
-Add the parameter `label` for the MPI stimulating backend, allow to selection
-the file for the MPI connection.
+Added the new parameter `stimulus_source`, which can be used to select the
+right backend for the stimulating device. By default, all stimulating devices
+generate their own stimulating signals. If a backend, such as the `MPI` one
+is selected, then the values for producing the stimulating signals are 
+collected using the backend data input channel.
+Added the parameter `label` for the MPI stimulating backend. This parameter
+allows the user to select the file used for storing configuration details of 
+the MPI connection.
 
 All details about the new infrastructure can be found in the guide on
 :doc:`stimulating the network <../../stimulate_the_network.rst>`.

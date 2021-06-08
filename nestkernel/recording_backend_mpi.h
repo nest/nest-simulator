@@ -132,7 +132,7 @@ public:
 private:
   bool enrolled_;
   bool prepared_;
-  
+
   /**
    * Buffer for saving events before they are sent. The buffer has 3
    * dimensions: thread_id, MPI_communicator_index and number of
@@ -141,7 +141,7 @@ private:
    * double )
    */
   std::vector< std::vector< std::vector< std::array< double, 3 > > > > buffer_;
-  
+
   /**
    * A map for the enrolled devices. We have a vector with one map per
    * local thread. The map associates the node ID of a device on a
@@ -150,7 +150,7 @@ private:
   */
   typedef std::vector< std::map< index, std::tuple< int, MPI_Comm*, const RecordingDevice* > > > device_map;
   device_map devices_;
-  
+
   /**
    * A map of MPI communicators used by the master thread for the MPI
    * communication.  The values of the map are tuples containing the

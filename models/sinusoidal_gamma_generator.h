@@ -80,10 +80,10 @@ will send the same spike train to all of its targets.
 
 .. include:: ../models/stimulating_device.rst
 
-rate 
+rate
     Mean firing rate, default: 0 spikes/s
 
-amplitude    
+amplitude
     Firing rate modulation amplitude, default: 0 s^-1
 
 frequency

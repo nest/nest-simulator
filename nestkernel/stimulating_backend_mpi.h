@@ -100,7 +100,6 @@ namespace nest
 class StimulatingBackendMPI : public StimulatingBackend
 {
 public:
-
   /**
    * InputBackend constructor
    * The actual initialization is happening in InputBackend::initialize()

@@ -79,7 +79,7 @@ n_events
     The number of events collected or sampled since the last reset of
     `n_events`. By setting `n_events` to 0, all events recorded so far
     will be discarded from memory.
- 
+
 time_in_steps
     A Boolean (default: *false*) specifying whether to store time in
     steps, i.e., in integer multiples of the simulation resolution

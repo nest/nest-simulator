@@ -50,7 +50,7 @@ set as times in ms.
 - For spike-emitting devices, only spikes with times `t` that fulfill
   `start` < `t` <= `stop` are emitted. Spikes that have timestamp of
   `t` = `start` are not emitted.
-  
+
 - For current-emitting devices, the current is activated and
   deactivated such that the current first affects the target dynamics
   during the update step (start, start+h], i.e., an effect can be
@@ -92,7 +92,7 @@ stop
     must be greater than or equal to `start`.
 
 EndUserDocs */
-  
+
 /**
  * Base class for common properties of Stimulating Devices.
  *

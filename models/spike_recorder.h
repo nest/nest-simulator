@@ -35,8 +35,6 @@
 
 /* BeginUserDocs: device, recorder, spike
 
-.. _spike_recorder:
-
 Short description
 +++++++++++++++++
 

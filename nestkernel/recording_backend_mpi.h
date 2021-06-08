@@ -33,10 +33,8 @@
 
 /* BeginUserDocs: recording backend
 
-.. _recording_backend_mpi:
-
-mpi - Send data with MPI
-##################
+Recording backend `mpi` - Send data with MPI
+############################################
 
 .. admonition:: Availability
 
@@ -46,29 +44,25 @@ mpi - Send data with MPI
 The `mpi` recording backend sends collected data to a remote process
 using MPI.
 
-This backend will create a new MPI communicator (different from
-`MPI_Comm_World`, which is used by NEST itself). The creation of the
-MPI communication is based on the functions `MPI_Comm_connect` and
-`MPI_Comm_disconnect`. The port name is read from a file for each
-device with this backend. The file needs to be named according to the
-following pattern:
+The name of the MPI port to send data to is read from a file for each
+device configured to use this backend. The file needs to be named
+according to the following pattern:
 
 ::
 
-   {data_path}/{data_prefix}{label}/{id_device}.txt
+   {data_path}/{data_prefix}{label}/{node_id}.txt
 
 The ``data_path`` and ``data_prefix`` are global kernel properties,
-while `label` is a property of the device in question and `id_device`
-its node ID.
-This path can only be set outside of a `Run` contexts (i.e.
-after ``Prepare()`` has been called, but ``Cleanup()`` has not).
+while `label` is a property of the device in question and `node_id`
+its node ID. This path can only be set outside of a `Run` context
+(i.e. after ``Prepare()`` has been called, but ``Cleanup()`` has not).
 
-Communication Protocol:
-+++++++++++++++++++++++
-The following protocol is used to exchange information between
-both MPI processes. The protocol is described using the
-following format for the MPI messages:
-(value, number, type, source/destination, tag)
+Communication Protocol
+++++++++++++++++++++++
+
+The following protocol is used to exchange information between both
+MPI processes. The protocol is described using the following format
+for the MPI messages: (value, number, type, source/destination, tag)
 
 1) ``Prepare``  : Connection of MPI port included in the port_file (see below)
 2) ``Run`` begin: Send at each beginning of the run (true, 1, CXX_BOOL, 0, 0)
@@ -81,17 +75,9 @@ following format for the MPI messages:
 Data format
 +++++++++++
 
-The format of the sending data is an array of (id device, id node, time is ms).
+The format of the data sent is an array consisting of (id device, id node, time
+is ms).
 
-Parameter summary
-+++++++++++++++++
-
-.. glossary::
-
- label
-   Shared file with ports with the format path+label+id+.txt
-   Where path = kernel().io_manager.get_data_path() and the
-   label and id are the ones provided for the device.
 EndUserDocs */
 
 namespace nest
@@ -101,9 +87,9 @@ namespace nest
  * A recording backend for sending information with MPI.
  * Communication protocol diagram:
  * \image html MPI_backend_protocol_of_communication.svg
- * General state machine diagram of Nest communication with the MPI backend:
+ * General state machine diagram of NEST communication with the MPI backend:
  * \image html MPI_backend_state_Nest.svg
- * Example of state machine diagram for the communication with Nest:
+ * Example of state machine diagram for the communication with NEST:
  * \image html MPI_backend_example_state_machine_communication_with_Nest.svg
  */
 class RecordingBackendMPI : public RecordingBackend
@@ -146,24 +132,30 @@ public:
 private:
   bool enrolled_;
   bool prepared_;
+
   /**
-   * Buffer for saving events before they are sent.
-   * The buffer has 3 dimensions : thread_id, MPI_communicator_index and number of events
-   * elements. The events elements are described as an array with three components: id of device, id of neurons and data
-   * ( one double )
+   * Buffer for saving events before they are sent. The buffer has 3
+   * dimensions: thread_id, MPI_communicator_index and number of
+   * events elements. The events elements are described as an array
+   * with three components: id of device, id of neurons and data ( one
+   * double )
    */
   std::vector< std::vector< std::vector< std::array< double, 3 > > > > buffer_;
+
   /**
-   * A map for the enrolled devices. We have a vector with one map per local
-   * thread. The map associates the node ID of a device on a given thread
-   * with its MPI index and device. Only the master thread has a valid MPI communicator pointer.
+   * A map for the enrolled devices. We have a vector with one map per
+   * local thread. The map associates the node ID of a device on a
+   * given thread with its MPI index and device. Only the master
+   * thread has a valid MPI communicator pointer.
   */
   typedef std::vector< std::map< index, std::tuple< int, MPI_Comm*, const RecordingDevice* > > > device_map;
   device_map devices_;
+
   /**
-   * A map of MPI communicators used by the master thread for the MPI communication.
-   * The values of the map are tuples containing the index of the MPI communicator, the MPI communicator itself,
-   * and the number of devices linked to that MPI communicator.
+   * A map of MPI communicators used by the master thread for the MPI
+   * communication.  The values of the map are tuples containing the
+   * index of the MPI communicator, the MPI communicator itself, and
+   * the number of devices linked to that MPI communicator.
    */
   typedef std::map< std::string, std::tuple< int, MPI_Comm*, int > > comm_map;
   comm_map commMap_;

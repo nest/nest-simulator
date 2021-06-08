@@ -1,7 +1,16 @@
-Stimulation from simulations
-============================
+Stimulation backends
+====================
 
-The architecture of Nest has been modified to include a backend for
+In previous versions of NEST, each stimulation device stored an
+internal representation of the data it needed for generating the
+stimuli for connected nodes.
+
+In NEST 3.0, the interface for stimulation devices has been extended
+by a means to get this data from an external source instead of setting
+it directly from your PyNEST script. Such an external source could be
+another simulator, or a generic signal generator toolkit.
+
+Technically, this new feature is implemented through stimulation backends that can be based on NEST has been extended by an architecture to select of Nest has been modified to include a backend for
 stimulating devices. This modification is inspired by the backend for
 recording devices. (:doc:`recording from simulations <recording_simulations>`)
 
@@ -24,5 +33,5 @@ allows the user to select the file used for storing configuration details of
 the MPI connection.
 
 All details about the new infrastructure can be found in the guide on
-:doc:`stimulating a network <../../stimulating_the_network.rst>`.
+:doc:`stimulating the network <../../stimulate_the_network.rst>`.
 

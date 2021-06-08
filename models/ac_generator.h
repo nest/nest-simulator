@@ -46,39 +46,44 @@ current is given by
 
 .. math::
 
-        I(t) = offset + amplitude * \sin ( om * t + \phi )
+        I(t) = \mathrm{offset} + \mathrm{amplitude} \cdot \sin ( \omega t + \phi )
 
 where
 
 .. math::
 
-    om  = 2 * \pi * frequency \\
-    \phi = phase / 180 * \pi
+    \omega  = 2 \pi \cdot \mathrm{frequency} \\
+    \phi = \frac{\mathrm{phase}}{180} \cdot \pi
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-==========   ======   ====================================
- amplitude   pA       Amplitude of sine current
- offset      pA       Constant amplitude offset
- frequency   Hz       Frequency
- phase       degree   Phase of sine current (0-360 deg)
-==========   ======   ====================================
+amplitude
+    Amplitude of sine current (pA)
 
-Setting start and stop only windows the current as defined above. It does not shift
-the time axis. See :doc:`stimulating_the_network` for details.
+offset
+    Constant amplitude offset (pA)
 
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+frequency
+    Frequency (Hz)
+
+phase
+    Phase of sine current (0-360 deg)
+
+Setting `start` and `stop` only windows the current as defined above. It
+does not shift the time axis.
+
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds one value for each of the parameters mentioned in the section above.
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
-amplitude = input_param[ 0 ]
-offset = input_param[ 1 ]
-frequency = input_param[ 2 ]
-phase = input_param[ 3 ]
+
+ 0. amplitude
+ 1. offset
+ 2. frequency
+ 3. phase
 
 References
 ++++++++++

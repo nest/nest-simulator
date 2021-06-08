@@ -44,7 +44,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-provides direct current (DC) input
+Provide a direct current (DC) input
 
 Description
 +++++++++++
@@ -57,23 +57,20 @@ same current information on each time step. If you only need a
 constant bias current into a neuron, you could instead directly set
 the property *I_e*, which is available in many neuron models.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following parameters can be set in the status dictionary:
+amplitude
+    Amplitude of current (pA)
 
-========== ======  =============================
- amplitude pA      Amplitude of current
-========== ======  =============================
-
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds one value for each of the parameters mentioned in the section above.
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
-amplitude = input_param[ 0 ]
+
+ 0. amplitude
 
 Sends
 +++++

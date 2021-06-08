@@ -44,7 +44,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Device to generate Gaussian white noise current
+Generate a Gaussian white noise current
 
 Description
 +++++++++++
@@ -77,7 +77,8 @@ For a detailed discussion of the properties of the noise generator, please see
 `noise_generator <../model_details/noise_generator.ipynb>`_
 notebook included in the NEST source code.
 
-Remarks:
+Remarks
++++++++
 
  - All targets receive different currents.
 
@@ -111,38 +112,49 @@ the current recorded represents the instantaneous average of all the
 currents computed. When there exists only a single target, this would be
 equivalent to the actual current provided to that target.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following parameters can be set in the status dictionary:
+mean
+    The mean value of the noise current (pA)
 
-========== ======  =========================================================
- mean      pA      Mean value of the noise current
- std       pA      Standard deviation of noise current
- dt        ms      Interval between changes in current, default 1.0ms
- std_mod   pA      Modulated standard deviation of noise current
- phase     real    Phase of sine modulation (0-360 deg)
- frequency Hz      Frequency of sine modulation
-========== ======  =========================================================
+std
+    The standard deviation of noise current (pA)
 
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+dt
+    The interval between changes in current in ms (default: 1.0)
+
+std_mod
+    The modulated standard deviation of noise current (pA)
+
+phase
+    The phase of sine modulation (0-360 deg)
+
+frequency
+    The frequency of the sine modulation
+
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds one value for a subset of the parameters mentioned in the section above.
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
-mean = input_param[ 0 ]
-std = input_param[ 1 ]
-std_mod = input_param[ 2 ]
-frequency = input_param[ 3 ]
-phase = input_param[ 4 ]
 
+ 0. mean
+ 1. std
+ 2. std_mod
+ 3. frequency
+ 4. phase
 
 Sends
 +++++
 
 CurrentEvent
+
+See also
+++++++++
+
+step_current_generator
 
 EndUserDocs */
 

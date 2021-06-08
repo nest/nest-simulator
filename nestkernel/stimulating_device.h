@@ -37,9 +37,61 @@
 // From standard library:
 #include <string>
 
-
 namespace nest
 {
+
+/* BeginUserDocs: NOINDEX
+
+All stimulating devices share the parameters ``start`` and ``stop``,
+which control the stimulation period. The property ``origin`` is a
+global offset that shifts the stimulation period. All three values are
+set as times in ms.
+
+- For spike-emitting devices, only spikes with times `t` that fulfill
+  `start` < `t` <= `stop` are emitted. Spikes that have timestamp of
+  `t` = `start` are not emitted.
+
+- For current-emitting devices, the current is activated and
+  deactivated such that the current first affects the target dynamics
+  during the update step (start, start+h], i.e., an effect can be
+  recorded at the earliest at time start+h. The last interval during
+  which the current affects the target's dynamics is (stop-h, stop].
+
+The property ``stimulus_source`` defaults to an empty string. It can
+be set to the name of a stimulating backend, in which case it will
+take its parameters from the configured backend instead of from the
+internally stored values. More details on available backends and their
+properties can be found in the :ref:`guide to stimulating the network
+<stimulating_backends>`.
+
+Parameters
+++++++++++
+
+label
+    A string (default: `""`) specifying an arbitrary textual label for
+    the device. Stimulating backends might use the label to generate
+    device specific identifiers like filenames and such.
+
+origin
+    A positive floating point number (default : `0.0`) used as the
+    reference time in ms for `start` and `stop`.
+
+start
+    A positive floating point number (default: `0.0`) specifying the
+    activation time in ms, relative to `origin`.
+
+stimulus_source
+    A string (default: `""`) specifying the name of the stimulating
+    backend from which to get the data for updating the stimulus
+    parameters of the device. By default the device uses its
+    internally stored parameters for updating the stimulus.
+
+stop
+    A floating point number (default: `infinity`) specifying the
+    deactivation time in ms, relative to `origin`. The value of `stop`
+    must be greater than or equal to `start`.
+
+EndUserDocs */
 
 /**
  * Base class for common properties of Stimulating Devices.

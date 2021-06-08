@@ -50,29 +50,28 @@ Description
 The gamma_sup_generator generator simulates the pooled spike train of a
 population of neurons firing independently with gamma process statistics.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following parameters appear in the element's status dictionary:
+rate
+    Mean firing rate of the component processes, default: 0 spikes/s
 
-============  ======== =========================================================
- rate         spikes/s Mean firing rate of the component processes,
-                       default: 0 spikes/s
- gamma_shape  integer  Shape parameter of component gamma processes, default: 1
- n_proc       integer  Number of superimposed independent component processes,
-                       default: 1
-============  ======== =========================================================
+gamma_shape
+    Shape parameter of component gamma processes, default: 1
 
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+n_proc
+    Number of superimposed independent component processes, default: 1
+
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds one value for each of the parameters mentioned in the section above.
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
-rate = input_param[ 0 ]
-gamma_shape = input_param[ 1 ]
-n_proc = input_param[ 2 ]
+
+ 0. rate
+ 1. gamma_shape
+ 2. n_proc
 
 References
 ++++++++++
@@ -84,8 +83,7 @@ References
 See also
 ++++++++
 
-ppd_sup_generator, poisson_generator_ps, spike_generator, Device,
-StimulatingDevice
+ppd_sup_generator, poisson_generator_ps, spike_generator
 
 EndUserDocs */
 

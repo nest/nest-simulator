@@ -137,7 +137,7 @@ def make_colormap(color):
 
     try:
         r, g, b = mc.colorConverter.to_rgb(color)
-    except:
+    except Exception:
         raise ValueError('Illegal color specification: %s' % color.__repr__)
 
     cm = mc.LinearSegmentedColormap(color.__str__(),

@@ -17,13 +17,17 @@ modular infrastructure for handling recordings: each modality is now
 taken care of by a specific recording backend and each recorder can
 use one of them to handle its data.
 
-NEST 3.0 supports the same recording backends for all modalities
-as in NEST 2.x. If compiled with support for `SIONlib
-<http://www.fz-juelich.de/jsc/sionlib>`_, an additional backend for
-writing binary files in parallel becomes available. This is especially
-useful on large clusters and supercomputers. If compiled with support
-for `MPI`, an additional backend for data exchange using MPI communication
-becomes available. This is useful in the case of co-simulation.
+NEST 3.0 provides individual recording backends for all modalities
+that were supported in NEST 2.x. Depending on the features selected
+during the configuration of NEST, additional backend become available:
+Support for `SIONlib <http://www.fz-juelich.de/jsc/sionlib>`_ leads to
+the inclusion of a backend for writing binary files in parallel on
+large clusters and supercomputers. If MPI is enabled, a special data
+exchange backend is built, which is useful in co-simulation scenarios.
+
+See the guide on :doc:`recording from simulations
+<../../record_from_simulations>` for details on potentially
+available recording backends.
 
 Changes
 ^^^^^^^
@@ -93,4 +97,4 @@ demand, the functionality will be re-added in form of a recording
 backend.
 
 All details about the new infrastructure can be found in the guide on
-:doc:`recording from simulations <../../recording_from_simulations>`.
+:doc:`recording from simulations <../../record_from_simulations>`.

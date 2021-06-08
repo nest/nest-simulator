@@ -352,6 +352,7 @@ def makebuild_summary(log_filename, msg_make_section_start,
     Number of error messages.
     Dictionary of file names and the number of errors within these files.
     Number of warning messages.
+    Number of expected warning messages.
     Dictionary of file names and the number of warnings within these file.
     """
 
@@ -367,12 +368,24 @@ def makebuild_summary(log_filename, msg_make_section_start,
     # with some warnings, this would be a good point to re-set the
     # expected_warnings variable conditionally for that build_type.
 
-    nest_warning_re = re.compile(f'.* ({build_dir}.*: warning:.*)')
+    nest_warning_re = re.compile(f'.*({build_dir}.*: warning:.*)')
     known_warnings = [
         f'{build_dir}/sli/scanner.cc:642:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
         f'{build_dir}/sli/scanner.cc:674:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
         f'{build_dir}/sli/scanner.cc:716:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
         f'{build_dir}/sli/scanner.cc:744:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        (f'{build_dir}/thirdparty/Random123/conventional/Engine.hpp:140:15: warning: implicitly-declared'
+         ' ‘r123::Engine<r123::Threefry4x64_R<20> >& r123::Engine<r123::Threefry4x64_R<20> >::operator='
+         '(const r123::Engine<r123::Threefry4x64_R<20> >&)’ is deprecated [-Wdeprecated-copy]'),
+        (f'{build_dir}/thirdparty/Random123/conventional/Engine.hpp:140:15: warning: implicitly-declared'
+         ' ‘r123::Engine<r123::Threefry4x32_R<20> >& r123::Engine<r123::Threefry4x32_R<20> >::operator='
+         '(const r123::Engine<r123::Threefry4x32_R<20> >&)’ is deprecated [-Wdeprecated-copy]'),
+        (f'{build_dir}/thirdparty/Random123/conventional/Engine.hpp:140:15: warning: implicitly-declared'
+         ' ‘r123::Engine<r123::Philox4x64_R<10> >& r123::Engine<r123::Philox4x64_R<10> >::operator='
+         '(const r123::Engine<r123::Philox4x64_R<10> >&)’ is deprecated [-Wdeprecated-copy]'),
+        (f'{build_dir}/thirdparty/Random123/conventional/Engine.hpp:140:15: warning: implicitly-declared'
+         ' ‘r123::Engine<r123::Philox4x32_R<10> >& r123::Engine<r123::Philox4x32_R<10> >::operator='
+         '(const r123::Engine<r123::Philox4x32_R<10> >&)’ is deprecated [-Wdeprecated-copy]'),
     ]
 
     with open(log_filename) as fh:
@@ -412,10 +425,12 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
     if in_make_section:
         # 'make' was not completed.
-        return False, None, None, None, None
+        # See the docstring for explanation on the return values.
+        return False, None, None, None, None, None
     else:
         # There is no 'make' section at all.
-        return None, None, None, None, None
+        # See the docstring for explanation on the return values.
+        return None, None, None, None, None, None
 
 
 def testsuite_results(log_filename, msg_testsuite_section_start,

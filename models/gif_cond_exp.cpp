@@ -164,6 +164,31 @@ nest::gif_cond_exp::State_::State_( const State_& s )
   }
 }
 
+nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=( const State_& s )
+{
+  I_stim_ = s.I_stim_;
+  sfa_ = s.sfa_;
+  stc_ = s.stc_;
+  r_ref_ = s.r_ref_;
+
+  sfa_elems_.resize( s.sfa_elems_.size(), 0.0 );
+  for ( size_t i = 0; i < sfa_elems_.size(); ++i )
+  {
+    sfa_elems_[ i ] = s.sfa_elems_[ i ];
+  }
+
+  stc_elems_.resize( s.stc_elems_.size(), 0.0 );
+  for ( size_t i = 0; i < stc_elems_.size(); ++i )
+  {
+    stc_elems_[ i ] = s.stc_elems_[ i ];
+  }
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
+    neuron_state_[ i ] = s.neuron_state_[ i ];
+  }
+  return *this;
+}
+
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */

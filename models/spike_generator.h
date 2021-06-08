@@ -43,7 +43,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-A device which generates spikes from an array with spike-times
+Generate spikes from an array with spike-times
 
 Description
 +++++++++++
@@ -176,33 +176,43 @@ Assume we have simulated 10.0 ms and simulation time is thus 10.0 (step
   ---> spike at step 101, spike shifted into the future, and spike at step
         110, not shifted, since it is in the future anyways
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following properties can be set in the status dictionary.
+spike_times
+    List of spike times in ms
 
-===================== ============= ==========================================
- origin               ms            Time origin for device timer
- start                ms            Earliest possible time stamp of a spike to
-                                    be emitted
- stop                 ms            Earliest time stamp of a potential spike
-                                    event that is not emitted
- spike_times          ms            Spike-times
- spike_weights        synaptic      Corresponding spike-weights, the unit
-                      weights       depends on the receiver
- spike_multiplicities integer       Multiplicities of spikes, same length
-                                    as spike_times; mostly for debugging
- precise_times        boolean       see above
- allow_offgrid_times  boolean       see above
- shift_now_spikes     boolean       see above
-===================== ============= ==========================================
+spike_weights
+    Corresponding spike-weights, the unit depends on the receiver
+
+spike_multiplicities
+    Multiplicities of spikes, same length as spike_times; mostly for debugging
+
+precise_times
+    See above
+
+allow_offgrid_times
+    See above
+
+shift_now_spikes
+    See above
+
+Set spike times from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The spike times for this stimulating device can be updated with input
+coming from a stimulating backend. The data structure used for the
+update holds just an array of spike times in ms.
 
 Sends
 +++++
 
 SpikeEvent
 
-SeeAlso: Device, StimulatingDevice, testsuite::test_spike_generator
+See also
+++++++++
+
+poisson_generator
+
 EndUserDocs
 */
 class spike_generator : public StimulatingDevice
@@ -365,6 +375,6 @@ spike_generator::get_type() const
   return StimulatingDevice::Type::SPIKE_GENERATOR;
 }
 
-} // namespace
+} // namespace nest
 
 #endif /* #ifndef SPIKE_GENERATOR_H */

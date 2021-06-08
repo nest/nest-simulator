@@ -352,6 +352,7 @@ def makebuild_summary(log_filename, msg_make_section_start,
     Number of error messages.
     Dictionary of file names and the number of errors within these files.
     Number of warning messages.
+    Number of expected warning messages.
     Dictionary of file names and the number of warnings within these file.
     """
 
@@ -424,9 +425,11 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
     if in_make_section:
         # 'make' was not completed.
+        # See the docstring for explanation on the return values.
         return False, None, None, None, None, None
     else:
         # There is no 'make' section at all.
+        # See the docstring for explanation on the return values.
         return None, None, None, None, None, None
 
 

@@ -22,7 +22,7 @@ as in NEST 2.x. If compiled with support for `SIONlib
 <http://www.fz-juelich.de/jsc/sionlib>`_, an additional backend for
 writing binary files in parallel becomes available. This is especially
 useful on large clusters and supercomputers. If compiled with support
-for `MPI`, an additional backend for exchange data with MPI communication
+for `MPI`, an additional backend for data exchange using MPI communication
 becomes available. This is useful in the case of co-simulation.
 
 Changes

@@ -103,11 +103,11 @@ namespace nest
 /**
  * A simple input backend MPI implementation.
  *
- * Protocol of communication:
+ * Communication protocol diagram:
  * \image html MPI_backend_protocol_of_communication.svg
- * State machine of Nest:
+ * General state machine diagram of Nest:
  * \image html MPI_backend_state_Nest.svg
- * Example of state machine for the communication with Nest:
+ * Example of state machine diagram for the communication with Nest:
  * \image html MPI_backend_example_state_machine_communication_with_Nest.svg
  */
 class StimulatingBackendMPI : public StimulatingBackend

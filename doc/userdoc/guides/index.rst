@@ -16,8 +16,8 @@ Here you can find details on a variety of topics in NEST.
 
     connection_management
     running_simulations
-    stimulating_the_network
-    recording_from_simulations
+    stimulate_the_network
+    record_from_simulations
     parallel_computing
     random_numbers
     spatial/guide_spatially_structured_networks

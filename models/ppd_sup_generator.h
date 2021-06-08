@@ -54,34 +54,36 @@ time statistics.
 The rate parameter can also be sine-modulated. The generator does not
 initialize to equilibrium in this case, initial transients might occur.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following parameters appear in the element's status dictionary:
+rate
+    Mean firing rate of the component processes, default: 0 spikes/s
 
-===================  ======== =================================================
- rate                spikes/s Mean firing rate of the component processes,
-                              default: 0 spikes/s
- dead_time           ms       Minimal time between two spikes of the component
-                              processes, default: 0 ms
- n_proc              integer  Number of superimposed independent component
-                              processes, default: 1
- frequency           Hz       Rate modulation frequency, default: 0 Hz
- relative_amplitude  real     Relative rate modulation amplitude, default: 0
-===================  ======== =================================================
+dead_time
+    Minimal time between two spikes of the component processes, default: 0 ms
 
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+n_proc
+    Number of superimposed independent component processes, default: 1
+
+frequency
+    Rate modulation frequency, default: 0 Hz
+
+relative_amplitude
+    Relative rate modulation amplitude, default: 0
+
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds one value for each of the parameters mentioned in the section above.
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
-dead_time = input_param[ 0 ]
-rate = input_param[ 1 ]
-n_proc = input_param[ 2 ]
-frequency = input_param[ 3 ]
-relative_amplitude = input_param[ 4 ]
+
+ 0. dead_time
+ 1. rate
+ 2. n_proc
+ 3. frequency
+ 4. relative_amplitude
 
 References
 ++++++++++
@@ -93,8 +95,7 @@ References
 See also
 ++++++++
 
-gamma_sup_generator, poisson_generator_ps, spike_generator, Device,
-StimulatingDevice
+gamma_sup_generator, poisson_generator_ps, spike_generator
 
 EndUserDocs */
 

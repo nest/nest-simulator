@@ -40,7 +40,6 @@ namespace nest
 
 /* BeginUserDocs: device, generator, precise
 
-
 Short description
 +++++++++++++++++
 
@@ -60,33 +59,29 @@ i.e. they are not constrained to the simulation time grid.
    same synapse model. Failure to do so will only be detected at
    runtime.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following parameters appear in the element's status dictionary:
+rate
+    Mean firing rate (spikes/s)
 
-==========   ======== =========================================================
- rate        spikes/s Mean firing rate
- dead_time   ms       Minimal time between two spikes
- origin      ms       Time origin for device timer
- start       ms       Begin of device application with resp. to origin
- stop        ms       End of device application with resp. to origin
-==========   ======== =========================================================
+dead_time
+    Minimal time between two spikes (ms)
 
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds one value for a subset of the parameters mentioned in the section above.
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
-dead_time = input_param[ 0 ]
-rate = input_param[ 1 ]
+
+ 0. dead_time
+ 1. rate
 
 Sends
 +++++
 
-``SpikeEvent``
+SpikeEvent
 
 See also
 ++++++++

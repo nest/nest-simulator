@@ -39,37 +39,31 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Simulated neuron firing with Poisson process statistics
+Generate spikes with Poisson process statistics
 
 Description
 +++++++++++
 
 The poisson_generator simulates a neuron that is firing with Poisson
 statistics, i.e. exponentially distributed interspike intervals. It will
-generate a _unique_ spike train for each of it's targets. If you do not want
+generate a `unique` spike train for each of it's targets. If you do not want
 this behavior and need the same spike train for all targets, you have to use a
-parrot neuron between the poisson generator and the targets.
+``parrot_neuron`` between the poisson generator and the targets.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following parameters appear in the element's status dictionary:
+rate
+  Mean firing rate (spikes/s)
 
-=======   ======== =========================================================
- rate     spikes/s Mean firing rate
- origin   ms       Time origin for device timer
- start    ms       Begin of device application with resp. to origin
- stop     ms       End of device application with resp. to origin
-=======   ======== =========================================================
-
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds one value for the rate.
-The indexing of the data structure is as follows:
-rate = input_param[ 0 ]
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
+The indexing is as follows:
+
+ 0. rate
 
 Sends
 +++++
@@ -79,7 +73,7 @@ SpikeEvent
 See also
 ++++++++
 
-poisson_generator_ps, Device, parrot_neuron
+poisson_generator_ps
 
 EndUserDocs */
 

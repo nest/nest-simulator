@@ -54,33 +54,31 @@ is changed at the specified times. The unit of the instantaneous rate
 is spikes/s. By default, each target of the generator will receive
 a different spike train.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following parameters can be set in the status dictionary:
+rate_times
+    Times at which rate changes (list of ms)
 
-==================== ================ =========================================
- rate_times          list of ms       Times at which rate changes
- rate_values         list of spikes/s Rate of Poisson spike train
- allow_offgrid_times boolean          If false, spike times will be rounded to
-                                      the nearest step if they are less than
-                                      tic/2 from the step, otherwise NEST
-                                      reports an error.
-                                      If true, spike times are rounded to the
-                                      nearest step if within tic/2 from the
-                                      step, otherwise they are rounded up to the
-                                      *end* of the step. Default: false
-==================== ================ =========================================
+rate_values
+    Rate of Poisson spike train (list of spikes/s)
 
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+allow_offgrid_times
+    If false, spike times will be rounded to the nearest step if they
+    are less than tic/2 from the step, otherwise NEST reports an
+    error.  If true, spike times are rounded to the nearest step if
+    within tic/2 from the step, otherwise they are rounded up to the
+    *end* of the step. Default: false
+
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds one value for a subset of the parameters mentioned in the section above.
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
-rate_times = input_param[ 0 ]
-rate_values = input_param[ 1 ]
+
+ 0. rate_times
+ 1. rate_values
 
 Receives
 ++++++++
@@ -95,8 +93,7 @@ SpikeEvent
 See also
 ++++++++
 
-sinusoidal_poisson_generator, step_current_generator, Device,
-StimulatingDevice
+sinusoidal_poisson_generator, step_current_generator
 
 EndUserDocs */
 

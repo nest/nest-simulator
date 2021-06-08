@@ -54,7 +54,8 @@ a given number of spikes with normal distributed random displacements
 from the center time of the pulse.
 It resembles the output of synfire groups of neurons.
 
-Remarks:
+Remarks
++++++++
 
 - All targets receive identical spike trains.
 - New pulse packets are generated when activity or sdev are changed.
@@ -63,35 +64,38 @@ Remarks:
 - Both standard deviation and number of spikes may be set at any time.
   Pulses are then re-generated with the new values.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-============  ======= =======================================================
- pulse_times  ms      Times of the centers of pulses
- activity     integer Number of spikes per pulse
- sdev         ms      Standard deviation of spike times in each pulse
-============  ======= =======================================================
+pulse_times
+    Times of the centers of pulses (ms)
 
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+activity
+    Number of spikes per pulse
+
+sdev
+    Standard deviation of spike times in each pulse (ms)
+
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds one value for each of the parameters mentioned in the section above.
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
-activity = input_param[ 0 ]
-sdev = input_param[ 1 ]
-pulse_times = input_param[ 2 ]
 
-Transmits
-+++++++++
+ 0. activity
+ 1. sdev
+ 2. pulse_times
+
+Sends
++++++
 
 SpikeEvent
 
 See also
 ++++++++
 
-spike_generator, StimulatingDevice
+spike_generator
 
 EndUserDocs */
 

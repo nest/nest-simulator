@@ -39,7 +39,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-create spike trains as described by the MIP model
+Create spike trains as described by the MIP model
 
 Description
 +++++++++++
@@ -52,8 +52,6 @@ connected to receives a distinct child process as input, whose rate is p*r.
 The value of the pairwise correlation coefficient of two child processes
 created by a MIP process equals p.
 
-Remarks:
-
 The MIP generator may emit more than one spike through a child process
 during a single time step, especially at high rates.  If this happens,
 the generator does not actually send out n spikes.  Instead, it emits
@@ -63,25 +61,24 @@ have their own copy of a MIP generator. By using the same mother_seed
 it is ensured that the mother process is identical for each of the
 generators.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following parameters appear in the element's status dictionary:
+rate
+    Mean firing rate of the parent process, spikes/s
 
-============  ======== ================================================
- rate         spikes/s Mean firing rate of the parent process
- p_copy       real     Copy probability
-============  ======== ================================================
+p_copy
+    Copy probability
 
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds one value for a subset of the parameters mentioned in the section above.
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
-rate = input_param[ 0 ]
-p_copy = input_param[ 1 ]
+
+ 0. rate
+ 1. p_copy
 
 Sends
 +++++
@@ -95,6 +92,11 @@ References
        ensembles and the response of simple model neurons. Neural Computation
        15:67-101.
        DOI: https://doi.org/10.1162/089976603321043702
+
+See also
+++++++++
+
+poisson_generator
 
 EndUserDocs */
 

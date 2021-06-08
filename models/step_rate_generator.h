@@ -61,31 +61,32 @@ NEST reports an error. If true, times are rounded to the nearest grid
 point if within tic/2 from the grid point, otherwise they are rounded
 up to the *end* of the grid point.
 
-Note:
-
 Times of amplitude changes must be strictly increasing after conversion
 to simulation time steps. The option allow_offgrid_times may be
 useful, e.g., if you are using randomized times for rate changes
 which typically would not fall onto simulation time steps.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following parameters can be set in the status dictionary:
+amplitude_times
+    Times at which current changes (list of ms)
 
-==================== ===============  ======================================
- amplitude_times     list of ms       Times at which current changes
- amplitude_values    list of pA       Amplitudes of step current current
- allow_offgrid_times boolean          Default false
-==================== ===============  ======================================
+amplitude_values
+    Amplitudes of step current current (list of pA)
 
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+allow_offgrid_times
+    Default false
+
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds pairs of values in the form
-[ (amplitude_times, amplitude_values), (amplitude_times, amplitude_values), ... ].
+coming from a stimulating backend.
+
+The data structure used for the update holds pairs of values in the form
+
+ [ (amplitude_times, amplitude_values), (amplitude_times, amplitude_values), ... ].
+
 Thus, the size of the data for the step_rate_generator needs to be even.
 
 Sends
@@ -96,7 +97,7 @@ DelayedRateConnectionEvent
 See also
 ++++++++
 
-step_current_generator, Device, StimulatingDevice
+step_current_generator
 
 EndUserDocs */
 

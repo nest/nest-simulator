@@ -35,10 +35,8 @@
 
 /* BeginUserDocs: stimulating backend
 
-.. _stimulating_backend_mpi:
-
-mpi - Collect data from MPI communication for updating device
-#######################################################
+Stimulating backend `mpi` - Receive stimulation parameters via MPI
+##################################################################
 
 .. admonition:: Availability
 
@@ -46,36 +44,33 @@ mpi - Collect data from MPI communication for updating device
    :ref:`support for MPI <compile-with-mpi>`.
 
 The `mpi` stimulating backend collects data from MPI channels and
-updates stimulating device just before each run. This is useful for
-co-simulation or for receiving data from an external software.
+updates stimulating devices just before each run. This is useful for
+co-simulation or for receiving stimuli from external software.
 
-The creation of this MPI communication is based on the functions
-`MPI_Comm_connect` and `MPI_Comm_disconnect`. The port name is
-read from a file for each device with this backend.
-The name of the file needs to be specified according to the following
-pattern:
+The name of the MPI port to receive data on is read from a file for
+each device configured to use this backend.  The file needs to be
+named according to the following pattern:
 
 ::
 
-   {data_path}/{data_prefix}{label}/{id_device}.txt
+   {data_path}/{data_prefix}{label}/{node_id}.txt
 
 The ``data_path`` and ``data_prefix`` are global kernel properties,
-while `label` is a property of the device in question and `id_device`
-its node ID.
-This path can only be set outside of a ``Run`` contexts (i.e.
-after ``Prepare()`` has been called, but ``Cleanup()`` has not).
-
+while `label` is a property of the device in question and `node_id`
+its node ID. This path can only be set outside of a ``Run`` context
+(i.e.  after ``Prepare()`` has been called, but ``Cleanup()`` has
+not).
 
 Communication Protocol
 ++++++++++++++++++++++
-The following protocol is used to exchange information between
-both MPI processes. The protocol is described using the
-following format for the MPI messages:
-(value, number, type, source/destination, tag)
+
+The following protocol is used to exchange information between both
+MPI processes. The protocol is described using the following format
+for the MPI messages: (value, number, type, source/destination, tag)
 
 1) ``Prepare``   : Connection of MPI port include in one file (see below)
 2) ``Run`` begin : Send start run (true, 1, CXX_BOOL, 0, 0)
-3) ``Run`` begin : Send the id of the device to update (id_device, 1, INT, 0, 0)
+3) ``Run`` begin : Send the id of the device to update (node_id, 1, INT, 0, 0)
 4) ``Run`` begin : Receive shape of the data (shape, 1, INT, 0, 0)
 5) ``Run`` begin : Receive the data for updating the device (data, shape, DOUBLE, 0, 0)
 6) ``Run`` end   : Send at each ending of the run (true, 1, CXX_BOOL, 0, 1)
@@ -84,21 +79,13 @@ following format for the MPI messages:
 Data format
 +++++++++++
 
-The format of the data is depend of the stimulating device.
+The format of the data depends on the exact type of stimulating
+device.
 
-Parameter summary
-+++++++++++++++++
-.. glossary::
-
- label
-   Shared file with ports with the format path+label+id+.txt
-   Where path = kernel().io_manager.get_data_path() and the
-   label and id are the ones provided for the device.
 EndUserDocs */
 
 namespace nest
 {
-
 
 /**
  * A simple input backend MPI implementation.
@@ -113,6 +100,7 @@ namespace nest
 class StimulatingBackendMPI : public StimulatingBackend
 {
 public:
+
   /**
    * InputBackend constructor
    * The actual initialization is happening in InputBackend::initialize()

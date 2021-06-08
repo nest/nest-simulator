@@ -41,18 +41,11 @@ Short description
 
 Repeat incoming spikes with a certain probability
 
-Device name
-+++++++++++
-
-spike_dilutor
-
 Description
 +++++++++++
 
 The device repeats incoming spikes with a certain probability.
 Targets will receive diffenrent spike trains.
-
-Remarks:
 
 In parallel simulations, a copy of the device is present on each process
 and spikes are collected only from local sources.
@@ -60,11 +53,8 @@ and spikes are collected only from local sources.
 Parameters
 ++++++++++
 
-The following parameters appear in the element's status dictionary:
-
-======== ======  ================
- p_copy  real    Copy probability
-======== ======  ================
+p_copy
+    Copy probability
 
 Sends
 +++++

@@ -40,7 +40,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Generates sinusoidally modulated Poisson spike trains
+Generate sinusoidally modulated Poisson spike trains
 
 Description
 +++++++++++
@@ -56,7 +56,9 @@ The instantaneous rate of the process is given by
   f(t) = max(0, rate + amplitude \sin ( 2 \pi frequency t + phase
      * \pi/180 )) >= 0
 
-Remarks:
+Remarks
++++++++
+
 - If amplitude > rate, firing rate is cut off at zero. In this case, the mean
   firing rate will be less than rate.
 - The state of the generator is reset on calibration.
@@ -71,33 +73,36 @@ Remarks:
   SetDefaults or CopyModel before a generator node is created, the generator
   will send the same spike train to all of its targets.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following parameters can be set in the status dictionary:
+rate
+    Mean firing rate in spikes/second, default: 0 s^-1
 
-======================== ======= ==============================================
- rate                    real    Mean firing rate in spikes/second,
-                                 default: 0 s^-1
- amplitude               real    Firing rate modulation amplitude in
-                                 spikes/second, default: 0 s^-1
- frequency               Hz      Modulation frequency, default: 0 Hz
- phase                   real    Modulation phase in degree [0-360], default: 0
- individual_spike_trains boolean See note below, default: true
-======================== ======= ==============================================
+amplitude
+    Firing rate modulation amplitude in spikes/second, default: 0 s^-1
 
-Update from stimulating backend
-+++++++++++++++++++++++++++++++
+frequency
+    Modulation frequency, default: 0 Hz
+
+phase
+    Modulation phase in degree [0-360], default: 0
+
+individual_spike_trains
+    See note above, default: true
+
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the update
-holds one value for each of the parameters mentioned in the section above.
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
-rate = input_param[ 0 ]
-frequency = input_param[ 1 ]
-phase = input_param[ 2 ]
-amplitude = input_param[ 3 ]
-individual_spike_trains = input_param[ 4 ]
+
+ 0. rate
+ 1. frequency
+ 2. phase
+ 3. amplitude
+ 4. individual_spike_trains
 
 Receives
 ++++++++

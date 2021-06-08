@@ -311,7 +311,7 @@ Functions related to simulation
 +-------------------------------+-------------------------------------------------------+
 | nest.GetKernelStatus('time'), | nest.GetKernelStatus(':green:`biological_time`'),     |
 | nest.SetKernelStatus('time')  | nest.SetKernelStatus(':green:`biological_time`')      |
-+-------------------------------+--------------------------------------------------------+
++-------------------------------+-------------------------------------------------------+
 
    .. note::
 

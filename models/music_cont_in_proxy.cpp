@@ -48,11 +48,6 @@ nest::music_cont_in_proxy::Parameters_::Parameters_()
 {
 }
 
-nest::music_cont_in_proxy::Parameters_::Parameters_( const Parameters_& op )
-  : port_name_( op.port_name_ )
-{
-}
-
 nest::music_cont_in_proxy::State_::State_()
   : published_( false )
   , port_width_( -1 )

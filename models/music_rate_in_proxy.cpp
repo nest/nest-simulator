@@ -49,12 +49,6 @@ nest::music_rate_in_proxy::Parameters_::Parameters_()
 {
 }
 
-nest::music_rate_in_proxy::Parameters_::Parameters_( const Parameters_& op )
-  : port_name_( op.port_name_ )
-  , channel_( op.channel_ )
-{
-}
-
 nest::music_rate_in_proxy::State_::State_()
   : registered_( false )
 {

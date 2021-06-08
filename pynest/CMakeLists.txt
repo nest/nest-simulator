@@ -84,6 +84,9 @@ if ( HAVE_PYTHON )
             --install-dir=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
           WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}\"
       )
+      # Use Python's standard library `pkg_resources` module to find
+      # the install requirements of `nest` as specified in `setup.py`.
+      # Then feed them into the stdin pipe of `pip install`.
       execute_process(
           COMMAND ${PYTHON} -c \"import pkg_resources as pkg; print('\\\\n'.join(str(r) for r in pkg.get_distribution('nest').requires()))\"
           COMMAND ${PYTHON} -m pip install -r /dev/stdin

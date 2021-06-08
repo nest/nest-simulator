@@ -151,6 +151,16 @@ nest::iaf_cond_beta::State_::State_( const State_& s )
   }
 }
 
+nest::iaf_cond_beta::State_& nest::iaf_cond_beta::State_::operator=( const State_& s )
+{
+  r = s.r;
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
+    y[ i ] = s.y[ i ];
+  }
+  return *this;
+}
+
 nest::iaf_cond_beta::Buffers_::Buffers_( iaf_cond_beta& n )
   : logger_( n )
   , s_( 0 )

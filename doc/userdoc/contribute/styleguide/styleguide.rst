@@ -57,12 +57,12 @@ information to NEST users who are looking for it.
 The language we use
 -------------------
 
-We follow spelling and grammar rules of `American English <https://www.merriam-webster.com/>`_.
+* We follow spelling and grammar rules of `American English <https://www.merriam-webster.com/>`_.
 
-The markup language we use is :ref:`reStructuredText <sec-reST_style>`. This includes documentation
-blocks in files written in Python and C++.
+* The markup language we use is :ref:`reStructuredText <sec-reST_style>`. This includes documentation
+  blocks in files written in Python and C++.
 
-We avoid slang or jargon that is unnecessary or could be confusing to readers.
+* We avoid slang or jargon that is unnecessary or could be confusing to readers.
 
 We do, however, use terminology appropriate to NEST and neuroscience when
 specific and exact terms are needed, which is often. But explanations or
@@ -83,11 +83,11 @@ substance, style, and tone.
 
 Our voice is
 
-- empathetic: We write thinking of whom we are writing for and what their needs
+* empathetic: We write thinking of whom we are writing for and what their needs
   are.
-- relaxed: We write in a natural, conversational way rather than an authoritative
+* relaxed: We write in a natural, conversational way rather than an authoritative
   way.
-- factual: We write in a neutral style avoiding irony, humor, or cultural references.
+* factual: We write in a neutral style avoiding irony, humor, or cultural references.
 
 Use "you" to indicate the reader and "we" to indicate yourself (the writer and
 possibly the NEST team).
@@ -96,28 +96,28 @@ possibly the NEST team).
 Active voice
 ~~~~~~~~~~~~
 
-Prefer the active voice, where the subject acts on object.
+* Prefer the active voice, where the subject acts on object.
 
-If the object needs emphasis rather than subject, use passive voice. But ensure
-that you cannot improve the sentence by using the active voice.
+* If the object needs emphasis rather than the subject, use passive voice. But ensure
+  that you cannot improve the sentence by using the active voice.
 
 
 Headings and subheadings
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Headings and subheadings describe the purpose of the section.
+* Headings and subheadings describe the purpose of the section.
 
-Begin with a descriptive verb or begin with "How to ..."
+* Begin with a descriptive verb or begin with "How to ..."
 
-Use the verb stem and not the gerund ("ing") form of the verb. Use "Add a
-model" instead of  "Adding a model."
+* Use the verb stem and not the gerund ("ing") form of the verb. Use "Add a
+  model" instead of  "Adding a model."
 
-Avoid section names like "Introduction" or "Part 1".
+* Avoid section names like "Introduction" or "Part 1".
 
-One-word subheadings are acceptable, if the section is short and the meaning is clear.
+* One-word subheadings are acceptable, if the section is short and the meaning is clear.
 
-Use sentence case for headings and subheadings, that is, begin with an uppercase
-letter but with all other words in lower case (except proper nouns).
+* Use sentence case for headings and subheadings, that is, begin with an uppercase
+  letter but with all other words in lower case (except proper nouns).
 
 
 +-----------------------------------+----------------+
@@ -133,28 +133,29 @@ letter but with all other words in lower case (except proper nouns).
 Sentences and paragraphs
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Avoid using "so" in sentences.
-Try to keep sentences short, or break up long sentences with short ones.
+* Avoid using "so" in sentences.
 
-Avoid lengthy paragraphs with more than 5 or 6 sentences.
-If writing multiple paragraphs, they should be broken up by example code, figures, or bullet lists.
+* Try to keep sentences short, or break up long sentences with short ones.
 
-Keep in mind that texts should be skimmable.
+* Avoid lengthy paragraphs with more than 5 or 6 sentences.
+  If writing multiple paragraphs, they should be broken up by example code, figures, or bullet lists.
+
+* Keep in mind that texts should be skimmable.
 
 Pronouns
 ~~~~~~~~
 
-Use the pronouns "you" to indicate the reader and "we" to indicate NEST and its members.
+* Use the pronouns "you" to indicate the reader and "we" to indicate NEST and its members.
 
-Avoid the pronoun "I."
+* Avoid the pronoun "I."
 
-Avoid gendered terms (e.g., use "police officer" instead of "policeman").
+* Avoid gendered terms (e.g., use "police officer" instead of "policeman").
 
-Instead of "guys" or "girls" use inclusive language such as everyone, all,
-members, or folks.
+* Instead of "guys" or "girls" use inclusive language such as everyone, all,
+  members, or folks.
 
-"They" is an acceptable singular third person pronoun
-(see `the dictionary definition here <https://www.merriam-webster.com/dictionary/they>`_).
+* "They" is an acceptable singular third person pronoun
+  (see `the dictionary definition here <https://www.merriam-webster.com/dictionary/they>`_).
 
 How to write specific content in NEST
 -------------------------------------
@@ -162,92 +163,93 @@ How to write specific content in NEST
 Numbers
 ~~~~~~~
 
-Numbers 0–9 should be spelled out, unless they are measurements or coordinates.
+* Numbers 0–9 should be spelled out, unless they are measurements or coordinates.
 
-Numbers should be spelled out if they begin a sentence. In most cases, however,
-the numeral/ordinal format is preferred.
+* Numbers should be spelled out if they begin a sentence. In most cases, however,
+  the numeral/ordinal format is preferred.
 
-For additional mathematical notation, use the :ref:`math role or directive <math_style>`.
+* We use the period for the decimal point (`57.45`).
 
-We use the period for the decimal point (`57.45`).
-
-The thousand separator is the comma except when showing a code example.
+* The thousand separator is the comma except when showing a code example.
 
    Example:
 
    We have over 5,000 connections.
    The number of connections is ``x = 5001``.
 
-Make sure you use the correct unit (e.g., millivolts for voltage) and the
-unit's symbol (mV).
+* Make sure you use the correct unit (e.g., millivolts for voltage) and the
+  unit's symbol (mV).
+
+* For additional mathematical notation, use the :ref:`math role or directive <math_style>`.
 
 Lists
 ~~~~~
 
-Use the serial comma in lists.
+* Use the serial comma in lists.
 
-Use numbered lists for step-by-step instructions only. Ensure that each step contains only one or two actions.
+* Use numbered lists for step-by-step instructions only. Ensure that each step contains only one or two actions.
 
-Use bullet lists if the number of items is extensive or each item is a long phrase or sentence.
+* Use bullet lists if the number of items is extensive or each item is a long phrase or sentence.
 
-If the text of a list forms a complete sentence, use proper punctuation and
-end with period.
+* If the text of a list forms a complete sentence, use proper punctuation and
+  end with period.
 
-If the text of a list forms an incomplete sentence, do not end with period.
+* If the text of a list forms an incomplete sentence, do not end with period.
 
-If the entire bullet/numbered list belongs to a sentence, end each item with a comma and the second-last item with ", and".
-If the last item is the end of the sentence, end it with a period. Otherwise, use the punctuation required to correctly connect
-to the remainder of the sentence.
+* If the entire bullet/numbered list belongs to a sentence, end each item with a comma and the second-last item with ", and".
+
+* If the last item is the end of the sentence, end it with a period. Otherwise, use the punctuation required to correctly connect
+  to the remainder of the sentence.
 
 
 Abbreviations and acronyms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Spell out acronyms on first appearance on each page or article it appears, for example: Random number generator (RNG).
+* Spell out acronyms on first appearance on each page or article it appears, for example: Random number generator (RNG).
 
-If the abbreviation/acronym is well known (e.g., HTML), you do not need to spell
-it out.
+* If the abbreviation/acronym is well known (e.g., HTML), you do not need to spell
+  it out.
 
-Use "e.g.," and "i.e.," only in parentheses and figure and table captions; otherwise, use "for example," and "that is,".
-Note the use of comma following the terms.
+* Use "e.g.," and "i.e.," only in parentheses and figure and table captions; otherwise, use "for example," and "that is,".
+  Note the use of comma following the terms.
 
 
 Contractions
 ~~~~~~~~~~~~
 
-Avoid contractions. For example, use "do not" instead of "don't".
+* Avoid contractions. For example, use "do not" instead of "don't".
 
 Commas
 ~~~~~~
 
-Use the serial comma (apples, bananas, and grapes) for lists.
+* Use the serial comma (apples, bananas, and grapes) for lists.
 
-Use the comma as separator for thousands (37,000).
+* Use the comma as separator for thousands (37,000).
 
-To join two sentences into one, you must use a conjunction (and, or, but)
-along with the comma, or use the semicolon.
+* To join two sentences into one, you must use a conjunction (and, or, but)
+  along with the comma, or use the semicolon.
 
 
 Ampersand
 ~~~~~~~~~
 
-Avoid the ampersand "`&`" and use "`and`" instead, unless the ampersand is part
-of a proper name (e.g., Ben \& Jerry's).
+* Avoid the ampersand "`&`" and use "`and`" instead, unless the ampersand is part
+  of a proper name (e.g., Ben \& Jerry's).
 
-The ampersand is a special character and can be used, for example, to :ref:`align multi-line equations <math_style>`.
+* The ampersand is a special character and can be used, for example, to :ref:`align multi-line equations <math_style>`.
 
 
 Capitalization
 ~~~~~~~~~~~~~~
 
-Capitalize the first word of a heading, but use lower case for the rest.
+* Capitalize the first word of a heading, but use lower case for the rest.
 
-Capitalize first word in bullet/numbered list.
+* Capitalize first word in bullet/numbered list.
 
-Capitalize proper nouns and follow company policy in naming conventions.
-(e.g., macOS, LaTeX, Python, NumPy, NEST).
+* Capitalize proper nouns and follow company policy in naming conventions.
+  (e.g., macOS, LaTeX, Python, NumPy, NEST).
 
-Capitalize the first word after a colon.
+* Capitalize the first word after a colon.
 
 .. _sec-reST_style:
 
@@ -357,11 +359,18 @@ You can also align lines in an equation by using the ``&`` where you want an equ
          (a + b)^2  &=  (a + b)(a + b) \\
                     &=  a^2 + 2ab + b^2
 
+Rendered as
+
+    .. math::
+
+         (a + b)^2  &=  (a + b)(a + b) \\
+                    &=  a^2 + 2ab + b^2
+
 For in-text math, use the math role::
 
    Now we can see :math:`x=1` for this example.
 
-These will be rendered as
+Rendered as
 
    Now we can see :math:`x=1` for this example.
 
@@ -386,16 +395,18 @@ Use the admonition
 * "Danger" if the situation may cause severe, possibly irreversible, problems.
 
 
-If you want a custom admonition, use::
+If you want a custom admonition, use:
 
-   .. admonition:: custom label
+.. code-block:: none
 
-         Here is some text
+   .. admonition:: Custom label
+
+      Here is some text
 
 Rendered as
 
 
-   .. admonition:: custom label
+   .. admonition:: Custom label
 
          Here is some text
 
@@ -552,22 +563,22 @@ For example::
 \**Strong emphasis\** vs \*emphasis\*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Avoid using strong emphasis (boldface) in texts. If you want text to stand out use an appropriate :ref:`admonition <sec_admonition>`.
+* Avoid using strong emphasis (boldface) in texts. If you want text to stand out use an appropriate :ref:`admonition <sec_admonition>`.
 
-Use the plain emphasis (italics) to signify context differences *within* a text.
+* Use the plain emphasis (italics) to signify context differences *within* a text.
 
 
 NumPy style docstrings
 ----------------------
 
-In PyNEST code, we follow most of the rules for NumPy style docstrings as
-`explained in the NumPy style guide <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
+* In PyNEST code, we follow most of the rules for NumPy style docstrings as
+  `explained in the NumPy style guide <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
 
-However, we use different formatting marks than what is stated in their guide. See section on
-:ref:`double back ticks <sec_dbltick>`.
+* However, we use different formatting marks than what is stated in their guide. See section on
+  :ref:`double back ticks <sec_dbltick>`.
 
-If you are contributing to the :doc:`PyNEST API <example_template>`, make sure you carefully read the NumPy guide, along
-with this one.
+* If you are contributing to the :doc:`PyNEST API <example_template>`, make sure you carefully read the NumPy guide, along
+  with this one.
 
 
 Bibliography style
@@ -578,9 +589,10 @@ are autogenerated and a consistent format is used.
 
 For in-text citations, we use the reStructuredText numeric style ``[1]_``.
 
-For example:
+Rendered as
 
     The following example is based on Smith [1]_.
+
     Sanders et al. [2]_ contains a technically detailed example.
 
 Please ensure your reference follows the following guidelines.
@@ -598,6 +610,8 @@ Please ensure your reference follows the following guidelines.
 *  Add issue in parentheses after volume (optional).
 *  Include a linked DOI, if available.
 
+Example of the reStructuredText syntax:
+
 .. code-block:: none
 
  References
@@ -609,6 +623,16 @@ Please ensure your reference follows the following guidelines.
  .. [2] Sander M., et al (2011). Biology of the sauropod dinosaurs: The
         evolution of gigantism. Biological Reviews. 86(1):117-155.
         https://doi.org/10.1111/j.1469-185X.2010.00137.x
+
+
+Rendered as
+
+.. [1] Smith J. and Jones M (2009). Title of cool paper. Journal of
+       Awesomeness. 3:7-29. <DOI>
+
+.. [2] Sander M., et al (2011). Biology of the sauropod dinosaurs: The
+       evolution of gigantism. Biological Reviews. 86(1):117-155.
+       https://doi.org/10.1111/j.1469-185X.2010.00137.x
 
 
 Links to external resources
@@ -626,9 +650,5 @@ Links to external resources
 
 * `Sphinx documentation on referencing Python objects
   <https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#cross-referencing-python-objects>`_
-
-* `HoverxTooltip source code <https://github.com/INM-6/HoverXTooltip>`_
-
-* `Intersphinx documentation <https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html>`_
 
 * `NumPy style guide <https://numpydoc.readthedocs.io/en/latest/format.html>`_

@@ -324,7 +324,7 @@ For Python examples that show input and output, use the following syntax::
    Output is directly below input without any brackets.
    A blank line must end the example.
 
-For in-text code use the role :code: or double back ticks::
+For in-text code use the role :code: or double backticks::
 
    ``cout << "Hello, World!`` or
    :code:`cout << "Hello, World!"`
@@ -435,7 +435,7 @@ For cross-referencing specific section headings, figures, or other arbitrary pla
 
 The ``:ref:`` role requires a reference label that looks like this ``.. _type_ref-label:``.
 
-::
+.. code-block:: none
 
    .. _sec_my-ref-label:
 
@@ -546,7 +546,7 @@ Double or single quotes should not be used to emphasize important concepts in th
 .. _sec_dbltick:
 
 \``Double backticks\``
-~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 Use double backticks for all code and command related terms, such as function call examples, paths, variables, and parameters.
 In addition, meta and special characters (such as the ampersand ``&``) should also be written in double backticks.
@@ -561,7 +561,7 @@ For example::
 
 
 \**Strong emphasis\** vs \*emphasis\*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * Avoid using strong emphasis (boldface) in texts. If you want text to stand out use an appropriate :ref:`admonition <sec_admonition>`.
 
@@ -575,7 +575,7 @@ NumPy style docstrings
   `explained in the NumPy style guide <https://numpydoc.readthedocs.io/en/latest/format.html>`_.
 
 * However, we use different formatting marks than what is stated in their guide. See section on
-  :ref:`double back ticks <sec_dbltick>`.
+  :ref:`double backticks <sec_dbltick>`.
 
 * If you are contributing to the :doc:`PyNEST API <example_template>`, make sure you carefully read the NumPy guide, along
   with this one.
@@ -640,7 +640,7 @@ Links to external resources
 
 * `American English dictionary <https://www.merriam-webster.com/>`_
 
-* `the Microsoft style guide <https://docs.microsoft.com/en-us/style-guide/welcome/>`_
+* `The Microsoft style guide <https://docs.microsoft.com/en-us/style-guide/welcome/>`_
 
 * `reStructuredText docutils documentation <https://docutils.sourceforge.io/rst.html#id24>`_
 

@@ -304,14 +304,15 @@ divergent *and* num_connections        fixed_outdegree
 Functions related to simulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-+-------------------------------+-------------------------------------------------------+
-| NEST 2.x                      | NEST 3.0                                              |
-+===============================+=======================================================+
-| nest.ResetNetwork()           | Use nest.ResetKernel() instead                        |
-+-------------------------------+-------------------------------------------------------+
-| nest.GetKernelStatus('time'), | nest.GetKernelStatus(':green:`biological_time`'),     |
-| nest.SetKernelStatus('time')  | nest.SetKernelStatus(':green:`biological_time`')      |
-+-------------------------------+-------------------------------------------------------+
++-------------------------------------+--------------------------------------------------------+
+| NEST 2.x                            | NEST 3.0                                               |
++=====================================+========================================================+
+| nest.ResetNetwork()                 | Use nest.ResetKernel() instead                         |
++-------------------------------------+--------------------------------------------------------+
+| nest.GetKernelStatus('time'),       | nest.GetKernelStatus(':green:`biological_time`'),      |
+| nest.SetKernelStatus({'time': 0.})  | nest.SetKernelStatus({':green:`biological_time`': 0.}) |
++-------------------------------------+--------------------------------------------------------+
+
 
    .. note::
 

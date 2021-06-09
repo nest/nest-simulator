@@ -34,8 +34,6 @@ set( NEST_USER_EMAIL "users@nest-simulator.org" )
 # set NEST defaults
 set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time. [default 1000.0]" )
 set( tics_per_step "100" CACHE STRING "Specify resolution. [default 100]" )
-set( connector_cutoff "3" CACHE STRING "Specify when to truncate the recursive instantiation of the connector. [default 3]" )
-option( with-ps-arrays "Use PS array construction semantics. [default=ON]" ON )
 
 # add user modules
 set( external-modules OFF CACHE STRING "External NEST modules to be linked in, separated by ';'. [default=OFF]" )

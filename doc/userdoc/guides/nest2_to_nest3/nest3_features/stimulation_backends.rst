@@ -16,7 +16,7 @@ recording devices. (:doc:`recording from simulations <recording_simulations>`)
 
 With Nest 3.0, we change the terminology of input device to stimulation device.
 Nest 3.0 supports one stimulation backend, `MPI communication`. This backend is
-available only when the Nest is compiled with `MPI` support. This is useful in
+available only when the NEST is compiled with MPI support. This is useful in
 case of co-simulation and allows a closed loop simulation if it's coupled with the
 MPI recording backend.
 
@@ -32,4 +32,3 @@ channel.
 
 All details about the new infrastructure can be found in the guide on
 :doc:`stimulating the network <../../stimulate_the_network.rst>`.
-

@@ -169,13 +169,13 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node 
  * ---------------------------------------------------------------- */
 
 nest::ppd_sup_generator::ppd_sup_generator()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
 {
 }
 
 nest::ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
-  : StimulatingDevice( n )
+  : StimulationDevice( n )
   , P_( n.P_ )
 {
 }
@@ -188,19 +188,19 @@ nest::ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
 void
 nest::ppd_sup_generator::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::ppd_sup_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulationDevice::init_buffers();
 }
 
 void
 nest::ppd_sup_generator::calibrate()
 {
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
 
   double h = Time::get_resolution().get_ms();
 
@@ -243,7 +243,7 @@ nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
   {
     Time t = T + Time::step( lag );
 
-    if ( not StimulatingDevice::is_active( t ) )
+    if ( not StimulationDevice::is_active( t ) )
     {
       continue; // no spike at this lag
     }
@@ -291,7 +291,7 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
+nest::ppd_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

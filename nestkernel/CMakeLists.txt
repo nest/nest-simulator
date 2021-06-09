@@ -61,7 +61,7 @@ set ( nestkernel_sources
       ring_buffer.h ring_buffer_impl.h ring_buffer.cpp
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
-      stimulating_device.h stimulating_device.cpp
+      stimulation_device.h stimulation_device.cpp
       target_identifier.h
       sparse_node_array.h sparse_node_array.cpp
       conn_parameter.h conn_parameter.cpp
@@ -113,7 +113,7 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       vose.h vose.cpp
-      stimulating_backend.h
+      stimulation_backend.h
       )
 
 
@@ -135,7 +135,7 @@ if ( HAVE_MPI )
   set( nestkernel_sources
     ${nestkernel_sources}
     recording_backend_mpi.h recording_backend_mpi.cpp
-    stimulating_backend_mpi.h stimulating_backend_mpi.cpp
+    stimulation_backend_mpi.h stimulation_backend_mpi.cpp
   )
 endif ()
 

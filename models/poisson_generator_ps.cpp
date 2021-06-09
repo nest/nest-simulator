@@ -90,13 +90,13 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d, Node* no
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator_ps::poisson_generator_ps()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
 {
 }
 
 nest::poisson_generator_ps::poisson_generator_ps( const poisson_generator_ps& n )
-  : StimulatingDevice( n )
+  : StimulationDevice( n )
   , P_( n.P_ )
 {
 }
@@ -109,7 +109,7 @@ nest::poisson_generator_ps::poisson_generator_ps( const poisson_generator_ps& n 
 void
 nest::poisson_generator_ps::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
@@ -125,7 +125,7 @@ nest::poisson_generator_ps::init_buffers_()
 void
 nest::poisson_generator_ps::calibrate()
 {
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
   if ( P_.rate_ > 0 )
   {
     V_.inv_rate_ms_ = 1000.0 / P_.rate_ - P_.dead_time_;
@@ -155,7 +155,7 @@ nest::poisson_generator_ps::calibrate()
       min_time = std::min( min_time, it->first );
     }
 
-    if ( min_time < StimulatingDevice::get_origin() + StimulatingDevice::get_start() )
+    if ( min_time < StimulationDevice::get_origin() + StimulationDevice::get_start() )
     {
       B_.next_spike_.clear(); // will be resized with neg_infs below
     }
@@ -192,8 +192,8 @@ nest::poisson_generator_ps::update( Time const& T, const long from, const long t
    * of the slice.
    */
   V_.t_min_active_ =
-    std::max( T + Time::step( from ), StimulatingDevice::get_origin() + StimulatingDevice::get_start() );
-  V_.t_max_active_ = std::min( T + Time::step( to ), StimulatingDevice::get_origin() + StimulatingDevice::get_stop() );
+    std::max( T + Time::step( from ), StimulationDevice::get_origin() + StimulationDevice::get_start() );
+  V_.t_max_active_ = std::min( T + Time::step( to ), StimulationDevice::get_origin() + StimulationDevice::get_stop() );
 
   // Nothing to do for equality, since left boundary is excluded
   if ( V_.t_min_active_ < V_.t_max_active_ )
@@ -281,7 +281,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
 }
 
 void
-nest::poisson_generator_ps::set_data_from_stimulating_backend( std::vector< double >& input_param )
+nest::poisson_generator_ps::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

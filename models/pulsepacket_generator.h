@@ -33,7 +33,7 @@
 #include "nest_types.h"
 #include "node.h"
 #include "random_generators.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -64,7 +64,7 @@ Remarks
 - Both standard deviation and number of spikes may be set at any time.
   Pulses are then re-generated with the new values.
 
-.. include:: ../models/stimulating_device.rst
+.. include:: ../models/stimulation_device.rst
 
 pulse_times
     Times of the centers of pulses (ms)
@@ -75,11 +75,11 @@ activity
 sdev
     Standard deviation of spike times in each pulse (ms)
 
-Set parameters from a stimulating backend
+Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
 update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
 
@@ -99,7 +99,7 @@ spike_generator
 
 EndUserDocs */
 
-class pulsepacket_generator : public StimulatingDevice
+class pulsepacket_generator : public StimulationDevice
 {
 
 public:
@@ -114,8 +114,8 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  StimulatingDevice::Type get_type() const override;
-  void set_data_from_stimulating_backend( std::vector< double >& input_param ) override;
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
   void init_state_() override;
@@ -186,7 +186,7 @@ private:
 inline port
 pulsepacket_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-  StimulatingDevice::enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   SpikeEvent e;
   e.set_sender( *this );
@@ -198,7 +198,7 @@ inline void
 pulsepacket_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  StimulatingDevice::get_status( d );
+  StimulationDevice::get_status( d );
 }
 
 inline void
@@ -210,16 +210,16 @@ pulsepacket_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  StimulatingDevice::set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
 }
 
-inline StimulatingDevice::Type
+inline StimulationDevice::Type
 pulsepacket_generator::get_type() const
 {
-  return StimulatingDevice::Type::CURRENT_GENERATOR;
+  return StimulationDevice::Type::CURRENT_GENERATOR;
 }
 
 } // namespace nest

@@ -177,7 +177,7 @@ nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_g
  * ---------------------------------------------------------------- */
 
 nest::noise_generator::noise_generator()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -190,7 +190,7 @@ nest::noise_generator::noise_generator()
 }
 
 nest::noise_generator::noise_generator( const noise_generator& n )
-  : StimulatingDevice( n )
+  : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -209,13 +209,13 @@ nest::noise_generator::noise_generator( const noise_generator& n )
 void
 nest::noise_generator::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::noise_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulationDevice::init_buffers();
   B_.logger_.reset();
 
   B_.next_step_ = 0;
@@ -228,7 +228,7 @@ nest::noise_generator::calibrate()
 {
   B_.logger_.init();
 
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
   if ( P_.num_targets_ != B_.amps_.size() )
   {
     LOG( M_INFO, "noise_generator::calibrate()", "The number of targets has changed, drawing new amplitudes." );
@@ -263,7 +263,7 @@ nest::noise_generator::calibrate()
 nest::port
 nest::noise_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  StimulatingDevice::enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -301,7 +301,7 @@ nest::noise_generator::update( Time const& origin, const long from, const long t
 
     const long now = start + offs;
 
-    if ( not StimulatingDevice::is_active( Time::step( now ) ) )
+    if ( not StimulationDevice::is_active( Time::step( now ) ) )
     {
       B_.logger_.record_data( origin.get_steps() + offs );
       continue;
@@ -365,7 +365,7 @@ nest::noise_generator::handle( DataLoggingRequest& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::noise_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
+nest::noise_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.num_targets_ = P_.num_targets_;

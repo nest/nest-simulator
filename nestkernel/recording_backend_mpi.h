@@ -38,7 +38,7 @@ Recording backend `mpi` - Send data with MPI
 
 .. admonition:: Availability
 
-   This stimulating backend is only available if NEST was compiled with
+   This stimulation backend is only available if NEST was compiled with
    :ref:`support for MPI <compile-with-mpi>`.
 
 The `mpi` recording backend sends collected data to a remote process

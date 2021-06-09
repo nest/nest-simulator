@@ -112,7 +112,7 @@ nest::dc_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
  * ---------------------------------------------------------------- */
 
 nest::dc_generator::dc_generator()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -121,7 +121,7 @@ nest::dc_generator::dc_generator()
 }
 
 nest::dc_generator::dc_generator( const dc_generator& n )
-  : StimulatingDevice( n )
+  : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -135,13 +135,13 @@ nest::dc_generator::dc_generator( const dc_generator& n )
 void
 nest::dc_generator::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::dc_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulationDevice::init_buffers();
   B_.logger_.reset();
 }
 
@@ -150,7 +150,7 @@ nest::dc_generator::calibrate()
 {
   B_.logger_.init();
 
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
 }
 
 
@@ -171,7 +171,7 @@ nest::dc_generator::update( Time const& origin, const long from, const long to )
   for ( long offs = from; offs < to; ++offs )
   {
     S_.I_ = 0.0;
-    if ( StimulatingDevice::is_active( Time::step( start + offs ) ) )
+    if ( StimulationDevice::is_active( Time::step( start + offs ) ) )
     {
       S_.I_ = P_.amp_;
       kernel().event_delivery_manager.send( *this, ce, offs );
@@ -187,7 +187,7 @@ nest::dc_generator::handle( DataLoggingRequest& e )
 }
 
 void
-nest::dc_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
+nest::dc_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

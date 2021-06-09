@@ -47,7 +47,7 @@
 #endif
 #ifdef HAVE_MPI
 #include "recording_backend_mpi.h"
-#include "stimulating_backend_mpi.h"
+#include "stimulation_backend_mpi.h"
 #endif
 #ifdef HAVE_SIONLIB
 #include "recording_backend_sionlib.h"
@@ -64,7 +64,7 @@ IOManager::IOManager()
   : overwrite_files_( false )
 {
   register_recording_backends_();
-  register_stimulating_backends_();
+  register_stimulation_backends_();
 }
 
 IOManager::~IOManager()
@@ -73,7 +73,7 @@ IOManager::~IOManager()
   {
     delete it.second;
   }
-  for ( auto& it : stimulating_backends_ )
+  for ( auto& it : stimulation_backends_ )
   {
     delete it.second;
   }
@@ -149,7 +149,7 @@ IOManager::initialize()
   {
     it.second->initialize();
   }
-  for ( const auto& it : stimulating_backends_ )
+  for ( const auto& it : stimulation_backends_ )
   {
     it.second->initialize();
   }
@@ -162,7 +162,7 @@ IOManager::finalize()
   {
     it.second->finalize();
   }
-  for ( const auto& it : stimulating_backends_ )
+  for ( const auto& it : stimulation_backends_ )
   {
     it.second->finalize();
   }
@@ -175,7 +175,7 @@ void IOManager::change_num_threads( thread )
     it.second->finalize();
     it.second->initialize();
   }
-  for ( const auto& it : stimulating_backends_ )
+  for ( const auto& it : stimulation_backends_ )
   {
     it.second->finalize();
     it.second->initialize();
@@ -227,7 +227,7 @@ IOManager::pre_run_hook()
   {
     it.second->pre_run_hook();
   }
-  for ( auto& it : stimulating_backends_ )
+  for ( auto& it : stimulation_backends_ )
   {
     it.second->pre_run_hook();
   }
@@ -240,7 +240,7 @@ IOManager::post_run_hook()
   {
     it.second->post_run_hook();
   }
-  for ( auto& it : stimulating_backends_ )
+  for ( auto& it : stimulation_backends_ )
   {
     it.second->post_run_hook();
   }
@@ -262,7 +262,7 @@ IOManager::prepare()
   {
     it.second->prepare();
   }
-  for ( auto& it : stimulating_backends_ )
+  for ( auto& it : stimulation_backends_ )
   {
     it.second->prepare();
   }
@@ -275,7 +275,7 @@ IOManager::cleanup()
   {
     it.second->cleanup();
   }
-  for ( auto& it : stimulating_backends_ )
+  for ( auto& it : stimulation_backends_ )
   {
     it.second->cleanup();
   }
@@ -290,10 +290,10 @@ IOManager::is_valid_recording_backend( const Name& backend_name ) const
 }
 
 bool
-IOManager::is_valid_stimulating_backend( const Name& backend_name ) const
+IOManager::is_valid_stimulation_backend( const Name& backend_name ) const
 {
-  auto backend = stimulating_backends_.find( backend_name );
-  return backend != stimulating_backends_.end();
+  auto backend = stimulation_backends_.find( backend_name );
+  return backend != stimulation_backends_.end();
 }
 
 void
@@ -323,23 +323,23 @@ IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& dev
 }
 
 void
-nest::IOManager::enroll_stimulator( const Name& backend_name, StimulatingDevice& device, const DictionaryDatum& params )
+nest::IOManager::enroll_stimulator( const Name& backend_name, StimulationDevice& device, const DictionaryDatum& params )
 {
 
-  if ( not is_valid_stimulating_backend( backend_name ) and not backend_name.toString().empty() )
+  if ( not is_valid_stimulation_backend( backend_name ) and not backend_name.toString().empty() )
   {
     return;
   }
   if ( backend_name.toString().empty() )
   {
-    for ( auto& it : stimulating_backends_ )
+    for ( auto& it : stimulation_backends_ )
     {
       it.second->disenroll( device );
     }
   }
   else
   {
-    for ( auto& it : stimulating_backends_ )
+    for ( auto& it : stimulation_backends_ )
     {
       if ( it.first == backend_name )
       {
@@ -400,10 +400,10 @@ IOManager::register_recording_backends_()
 }
 
 void
-IOManager::register_stimulating_backends_()
+IOManager::register_stimulation_backends_()
 {
 #ifdef HAVE_MPI
-  stimulating_backends_.insert( std::make_pair( "mpi", new StimulatingBackendMPI() ) );
+  stimulation_backends_.insert( std::make_pair( "mpi", new StimulationBackendMPI() ) );
 #endif
 }
 

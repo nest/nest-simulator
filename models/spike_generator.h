@@ -33,7 +33,7 @@
 #include "event.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -176,7 +176,7 @@ Assume we have simulated 10.0 ms and simulation time is thus 10.0 (step
   ---> spike at step 101, spike shifted into the future, and spike at step
         110, not shifted, since it is in the future anyways
 
-.. include:: ../models/stimulating_device.rst
+.. include:: ../models/stimulation_device.rst
 
 spike_times
     List of spike times in ms
@@ -196,11 +196,11 @@ allow_offgrid_times
 shift_now_spikes
     See above
 
-Set spike times from a stimulating backend
+Set spike times from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The spike times for this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the
+The spike times for this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
 update holds just an array of spike times in ms.
 
 Sends
@@ -215,7 +215,7 @@ poisson_generator
 
 EndUserDocs
 */
-class spike_generator : public StimulatingDevice
+class spike_generator : public StimulationDevice
 {
 
 public:
@@ -226,8 +226,8 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  StimulatingDevice::Type get_type() const override;
-  void set_data_from_stimulating_backend( std::vector< double >& input_spikes ) override;
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_spikes ) override;
 
 
   /**
@@ -336,7 +336,7 @@ inline void
 spike_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  StimulatingDevice::get_status( d );
+  StimulationDevice::get_status( d );
 }
 
 inline void
@@ -354,7 +354,7 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   }
   else
   {
-    origin = StimulatingDevice::get_origin();
+    origin = StimulationDevice::get_origin();
   }
 
   // throws if BadProperty
@@ -363,16 +363,16 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  StimulatingDevice::set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
 
-inline StimulatingDevice::Type
+inline StimulationDevice::Type
 spike_generator::get_type() const
 {
-  return StimulatingDevice::Type::SPIKE_GENERATOR;
+  return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace nest

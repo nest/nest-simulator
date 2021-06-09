@@ -33,7 +33,7 @@
 #include "nest.h"
 #include "random_generators.h"
 #include "ring_buffer.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -54,7 +54,7 @@ is changed at the specified times. The unit of the instantaneous rate
 is spikes/s. By default, each target of the generator will receive
 a different spike train.
 
-.. include:: ../models/stimulating_device.rst
+.. include:: ../models/stimulation_device.rst
 
 rate_times
     Times at which rate changes (list of ms)
@@ -69,11 +69,11 @@ allow_offgrid_times
     within tic/2 from the step, otherwise they are rounded up to the
     *end* of the step. Default: false
 
-Set parameters from a stimulating backend
+Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
 update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
 
@@ -97,7 +97,7 @@ sinusoidal_poisson_generator, step_current_generator
 
 EndUserDocs */
 
-class inhomogeneous_poisson_generator : public StimulatingDevice
+class inhomogeneous_poisson_generator : public StimulationDevice
 {
 
 public:
@@ -116,8 +116,8 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  StimulatingDevice::Type get_type() const override;
-  void set_data_from_stimulating_backend( std::vector< double >& input_param ) override;
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 
 private:
@@ -181,7 +181,7 @@ inhomogeneous_poisson_generator::send_test_event( Node& target,
   synindex syn_id,
   bool dummy_target )
 {
-  StimulatingDevice::enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   // to ensure correct overloading resolution, we need explicit event types
   // therefore, we need to duplicate the code here
@@ -204,7 +204,7 @@ inline void
 inhomogeneous_poisson_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  StimulatingDevice::get_status( d );
+  StimulationDevice::get_status( d );
 }
 
 inline void
@@ -216,16 +216,16 @@ inhomogeneous_poisson_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  StimulatingDevice::set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
 }
 
-inline StimulatingDevice::Type
+inline StimulationDevice::Type
 inhomogeneous_poisson_generator::get_type() const
 {
-  return StimulatingDevice::Type::SPIKE_GENERATOR;
+  return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace

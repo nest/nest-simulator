@@ -1,5 +1,5 @@
 /*
- *  stimulating_backend_mpi.cpp
+ *  stimulation_backend_mpi.cpp
  *
  *  This file is part of NEST.
  *
@@ -25,24 +25,24 @@
 #include <fstream>
 
 // Includes from nestkernel:
-#include "stimulating_backend.h"
-#include "stimulating_backend_mpi.h"
+#include "stimulation_backend.h"
+#include "stimulation_backend_mpi.h"
 #include "kernel_manager.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
-nest::StimulatingBackendMPI::StimulatingBackendMPI()
+nest::StimulationBackendMPI::StimulationBackendMPI()
   : enrolled_( false )
   , prepared_( false )
 {
 }
 
-nest::StimulatingBackendMPI::~StimulatingBackendMPI()
+nest::StimulationBackendMPI::~StimulationBackendMPI()
 {
 }
 
 
 void
-nest::StimulatingBackendMPI::initialize()
+nest::StimulationBackendMPI::initialize()
 {
   auto nthreads = kernel().vp_manager.get_num_threads();
   device_map devices( nthreads );
@@ -50,7 +50,7 @@ nest::StimulatingBackendMPI::initialize()
 }
 
 void
-nest::StimulatingBackendMPI::finalize()
+nest::StimulationBackendMPI::finalize()
 {
   // clear vector of map
   for ( auto& it_device : devices_ )
@@ -62,7 +62,7 @@ nest::StimulatingBackendMPI::finalize()
 }
 
 void
-nest::StimulatingBackendMPI::enroll( nest::StimulatingDevice& device, const DictionaryDatum& )
+nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const DictionaryDatum& )
 {
   thread tid = device.get_thread();
   index node_id = device.get_node_id();
@@ -74,15 +74,15 @@ nest::StimulatingBackendMPI::enroll( nest::StimulatingDevice& device, const Dict
     devices_[ tid ].erase( device_it );
   }
   // the MPI communication will be initialised during the prepare function
-  std::pair< MPI_Comm*, StimulatingDevice* > pair = std::make_pair( nullptr, &device );
-  std::pair< index, std::pair< const MPI_Comm*, StimulatingDevice* > > secondpair = std::make_pair( node_id, pair );
+  std::pair< MPI_Comm*, StimulationDevice* > pair = std::make_pair( nullptr, &device );
+  std::pair< index, std::pair< const MPI_Comm*, StimulationDevice* > > secondpair = std::make_pair( node_id, pair );
   devices_[ tid ].insert( secondpair );
   enrolled_ = true;
 }
 
 
 void
-nest::StimulatingBackendMPI::disenroll( nest::StimulatingDevice& device )
+nest::StimulationBackendMPI::disenroll( nest::StimulationDevice& device )
 {
   thread tid = device.get_thread();
   index node_id = device.get_node_id();
@@ -96,7 +96,7 @@ nest::StimulatingBackendMPI::disenroll( nest::StimulatingDevice& device )
 }
 
 void
-nest::StimulatingBackendMPI::prepare()
+nest::StimulationBackendMPI::prepare()
 {
   if ( not enrolled_ )
   {
@@ -105,7 +105,7 @@ nest::StimulatingBackendMPI::prepare()
 
   if ( prepared_ )
   {
-    throw BackendPrepared( "StimulatingBackendMPI" );
+    throw BackendPrepared( "StimulationBackendMPI" );
   }
 
   // need to be run only by the master thread : it is the case because this part is not running in parallel
@@ -200,7 +200,7 @@ nest::StimulatingBackendMPI::prepare()
 }
 
 void
-nest::StimulatingBackendMPI::pre_run_hook()
+nest::StimulationBackendMPI::pre_run_hook()
 {
   // create the variable which will contain the receiving data from the communication
   auto data{ new std::pair< int*, double* >[ commMap_.size() ]{} };
@@ -240,7 +240,7 @@ nest::StimulatingBackendMPI::pre_run_hook()
 }
 
 void
-nest::StimulatingBackendMPI::post_run_hook()
+nest::StimulationBackendMPI::post_run_hook()
 {
 #pragma omp master
   {
@@ -255,7 +255,7 @@ nest::StimulatingBackendMPI::post_run_hook()
 }
 
 void
-nest::StimulatingBackendMPI::cleanup()
+nest::StimulationBackendMPI::cleanup()
 {
 // Disconnect all the MPI connection and send information about this disconnection
 // Clean all the elements in the map
@@ -284,13 +284,13 @@ nest::StimulatingBackendMPI::cleanup()
 }
 
 void
-nest::StimulatingBackendMPI::get_port( nest::StimulatingDevice* device, std::string* port_name )
+nest::StimulationBackendMPI::get_port( nest::StimulationDevice* device, std::string* port_name )
 {
   get_port( device->get_node_id(), device->get_label(), port_name );
 }
 
 void
-nest::StimulatingBackendMPI::get_port( const index index_node, const std::string& label, std::string* port_name )
+nest::StimulationBackendMPI::get_port( const index index_node, const std::string& label, std::string* port_name )
 {
   // path of the file : path+label+id+.txt
   // (file contains only one line with name of the port)
@@ -326,7 +326,7 @@ nest::StimulatingBackendMPI::get_port( const index index_node, const std::string
 }
 
 std::pair< int*, double* >
-nest::StimulatingBackendMPI::receive_spike_train( const MPI_Comm& comm, std::vector< int >& devices_id )
+nest::StimulationBackendMPI::receive_spike_train( const MPI_Comm& comm, std::vector< int >& devices_id )
 {
   // Send size of the list id
   int size_list = { int( devices_id.size() ) };
@@ -351,7 +351,7 @@ nest::StimulatingBackendMPI::receive_spike_train( const MPI_Comm& comm, std::vec
 }
 
 void
-nest::StimulatingBackendMPI::update_device( int* array_index,
+nest::StimulationBackendMPI::update_device( int* array_index,
   std::vector< int >& devices_id,
   std::pair< int*, double* > data )
 {
@@ -384,7 +384,7 @@ nest::StimulatingBackendMPI::update_device( int* array_index,
             &data.second[ index_data ], &data.second[ index_data + data.first[ index_id_device + 1 ] ] );
 
           // Update the device with the data in the current thread
-          devices_[ thread_id ].find( id )->second.second->set_data_from_stimulating_backend( data_for_device );
+          devices_[ thread_id ].find( id )->second.second->set_data_from_stimulation_backend( data_for_device );
 
           // update the index of the data and the index_id_device
           index_data += data.first[ index_id_device + 1 ];
@@ -396,7 +396,7 @@ nest::StimulatingBackendMPI::update_device( int* array_index,
 }
 
 void
-nest::StimulatingBackendMPI::clean_memory_input_data( std::pair< int*, double* >* data )
+nest::StimulationBackendMPI::clean_memory_input_data( std::pair< int*, double* >* data )
 {
   // for all the pairs of data, free the memory of data and the array with the size
   for ( size_t i = 0; i != commMap_.size(); ++i )

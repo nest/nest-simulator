@@ -1,5 +1,5 @@
 /*
- *  stimulating_device.cpp
+ *  stimulation_device.cpp
  *
  *  This file is part of NEST.
  *
@@ -22,11 +22,11 @@
 
 
 // Includes from nestkernel:
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 #include "kernel_manager.h"
 
 
-nest::StimulatingDevice::StimulatingDevice()
+nest::StimulationDevice::StimulationDevice()
   : DeviceNode()
   , Device()
   , first_syn_id_( invalid_synindex )
@@ -34,7 +34,7 @@ nest::StimulatingDevice::StimulatingDevice()
 {
 }
 
-nest::StimulatingDevice::StimulatingDevice( StimulatingDevice const& sd )
+nest::StimulationDevice::StimulationDevice( StimulationDevice const& sd )
   : DeviceNode( sd )
   , Device( sd )
   , P_( sd.P_ )
@@ -44,12 +44,12 @@ nest::StimulatingDevice::StimulatingDevice( StimulatingDevice const& sd )
 }
 
 bool
-nest::StimulatingDevice::is_active( const Time& T ) const
+nest::StimulationDevice::is_active( const Time& T ) const
 {
   long step = T.get_steps();
-  if ( get_type() == StimulatingDevice::Type::CURRENT_GENERATOR
-    or get_type() == StimulatingDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR
-    or get_type() == StimulatingDevice::Type::DOUBLE_DATA_GENERATOR )
+  if ( get_type() == StimulationDevice::Type::CURRENT_GENERATOR
+    or get_type() == StimulationDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR
+    or get_type() == StimulationDevice::Type::DOUBLE_DATA_GENERATOR )
   {
     step = step + 2;
   }
@@ -57,7 +57,7 @@ nest::StimulatingDevice::is_active( const Time& T ) const
 }
 
 void
-nest::StimulatingDevice::enforce_single_syn_type( synindex syn_id )
+nest::StimulationDevice::enforce_single_syn_type( synindex syn_id )
 {
   if ( first_syn_id_ == invalid_synindex )
   {
@@ -70,39 +70,39 @@ nest::StimulatingDevice::enforce_single_syn_type( synindex syn_id )
 }
 
 void
-nest::StimulatingDevice::calibrate()
+nest::StimulationDevice::calibrate()
 {
   Device::calibrate();
 }
 
 void
-nest::StimulatingDevice::set_initialized_()
+nest::StimulationDevice::set_initialized_()
 {
   kernel().io_manager.enroll_stimulator( P_.stimulus_source_, *this, backend_params_ );
 }
 
 const std::string&
-nest::StimulatingDevice::get_label() const
+nest::StimulationDevice::get_label() const
 {
   return P_.label_;
 }
 
 
-nest::StimulatingDevice::Parameters_::Parameters_()
+nest::StimulationDevice::Parameters_::Parameters_()
   : label_()
   , stimulus_source_( Name() )
 {
 }
 
 void
-nest::StimulatingDevice::Parameters_::get( DictionaryDatum& d ) const
+nest::StimulationDevice::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
   ( *d )[ names::stimulus_source ] = LiteralDatum( stimulus_source_ );
 }
 
 void
-nest::StimulatingDevice::Parameters_::set( const DictionaryDatum& d )
+nest::StimulationDevice::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
 
@@ -110,7 +110,7 @@ nest::StimulatingDevice::Parameters_::set( const DictionaryDatum& d )
   if ( updateValue< std::string >( d, names::stimulus_source, stimulus_source ) )
   {
 
-    if ( not kernel().io_manager.is_valid_stimulating_backend( stimulus_source ) )
+    if ( not kernel().io_manager.is_valid_stimulation_backend( stimulus_source ) )
     {
       std::string msg = String::compose( "Unknown input backend '%1'", stimulus_source );
       throw BadProperty( msg );
@@ -120,7 +120,7 @@ nest::StimulatingDevice::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::StimulatingDevice::set_status( const DictionaryDatum& d )
+nest::StimulationDevice::set_status( const DictionaryDatum& d )
 {
 
   if ( kernel().simulation_manager.has_been_prepared() )
@@ -167,7 +167,7 @@ nest::StimulatingDevice::set_status( const DictionaryDatum& d )
 
 
 void
-nest::StimulatingDevice::get_status( DictionaryDatum& d ) const
+nest::StimulationDevice::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
 

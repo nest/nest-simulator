@@ -219,7 +219,7 @@ nest::step_rate_generator::Parameters_::set( const DictionaryDatum& d, Buffers_&
  * ---------------------------------------------------------------- */
 
 nest::step_rate_generator::step_rate_generator()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -228,7 +228,7 @@ nest::step_rate_generator::step_rate_generator()
 }
 
 nest::step_rate_generator::step_rate_generator( const step_rate_generator& n )
-  : StimulatingDevice( n )
+  : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -243,13 +243,13 @@ nest::step_rate_generator::step_rate_generator( const step_rate_generator& n )
 void
 nest::step_rate_generator::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::step_rate_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulationDevice::init_buffers();
   B_.logger_.reset();
 
   B_.idx_ = 0;
@@ -261,7 +261,7 @@ nest::step_rate_generator::calibrate()
 {
   B_.logger_.init();
 
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
 }
 
 
@@ -308,7 +308,7 @@ nest::step_rate_generator::update( Time const& origin, const long from, const lo
     }
 
     // but send only if active
-    if ( StimulatingDevice::is_active( Time::step( curr_time ) ) )
+    if ( StimulationDevice::is_active( Time::step( curr_time ) ) )
     {
       S_.rate_ = B_.amp_;
       new_rates[ offs ] = B_.amp_;
@@ -336,7 +336,7 @@ nest::step_rate_generator::handle( DataLoggingRequest& e )
  * Other functions
  * ---------------------------------------------------------------- */
 void
-nest::step_rate_generator::set_data_from_stimulating_backend( std::vector< double >& time_amplitude )
+nest::step_rate_generator::set_data_from_stimulation_backend( std::vector< double >& time_amplitude )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

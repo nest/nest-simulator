@@ -29,7 +29,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "random_generators.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -61,7 +61,7 @@ have their own copy of a MIP generator. By using the same mother_seed
 it is ensured that the mother process is identical for each of the
 generators.
 
-.. include:: ../models/stimulating_device.rst
+.. include:: ../models/stimulation_device.rst
 
 rate
     Mean firing rate of the parent process, spikes/s
@@ -69,11 +69,11 @@ rate
 p_copy
     Copy probability
 
-Set parameters from a stimulating backend
+Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
 update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
 
@@ -103,7 +103,7 @@ EndUserDocs */
 /*! Class mip_generator generates spike trains as described
     in the MIP model.
 */
-class mip_generator : public StimulatingDevice
+class mip_generator : public StimulationDevice
 {
 
 public:
@@ -122,8 +122,8 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  StimulatingDevice::Type get_type() const override;
-  void set_data_from_stimulating_backend( std::vector< double >& input_param ) override;
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
   void init_state_() override;
@@ -169,7 +169,7 @@ private:
 inline port
 mip_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  StimulatingDevice::enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -189,7 +189,7 @@ inline void
 mip_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  StimulatingDevice::get_status( d );
+  StimulationDevice::get_status( d );
 }
 
 inline void
@@ -201,16 +201,16 @@ mip_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  StimulatingDevice::set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
 }
 
-inline StimulatingDevice::Type
+inline StimulationDevice::Type
 mip_generator::get_type() const
 {
-  return StimulatingDevice::Type::SPIKE_GENERATOR;
+  return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace nest

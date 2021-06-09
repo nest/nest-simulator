@@ -29,7 +29,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "random_generators.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -73,7 +73,7 @@ Remarks
   SetDefaults or CopyModel before a generator node is created, the generator
   will send the same spike train to all of its targets.
 
-.. include:: ../models/stimulating_device.rst
+.. include:: ../models/stimulation_device.rst
 
 rate
     Mean firing rate in spikes/second, default: 0 s^-1
@@ -90,11 +90,11 @@ phase
 individual_spike_trains
     See note above, default: true
 
-Set parameters from a stimulating backend
+Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
 update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
 
@@ -121,7 +121,7 @@ poisson_generator, sinusoidal_gamma_generator
 
 EndUserDocs */
 
-class sinusoidal_poisson_generator : public StimulatingDevice
+class sinusoidal_poisson_generator : public StimulationDevice
 {
 
 public:
@@ -166,13 +166,13 @@ public:
     return names::stimulator;
   }
 
-  StimulatingDevice::Type
+  StimulationDevice::Type
   get_type() const override
   {
-    return StimulatingDevice::Type::CURRENT_GENERATOR;
+    return StimulationDevice::Type::CURRENT_GENERATOR;
   };
 
-  void set_data_from_stimulating_backend( std::vector< double >& input_param ) override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
   void init_state_() override;
@@ -274,7 +274,7 @@ private:
 inline port
 sinusoidal_poisson_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  StimulatingDevice::enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   // to ensure correct overloading resolution, we need explicit event types
   // therefore, we need to duplicate the code here
@@ -307,7 +307,7 @@ sinusoidal_poisson_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  StimulatingDevice::get_status( d );
+  StimulationDevice::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -320,7 +320,7 @@ sinusoidal_poisson_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  StimulatingDevice::set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

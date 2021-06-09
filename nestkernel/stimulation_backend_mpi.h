@@ -1,5 +1,5 @@
 /*
- *  stimulating_backend_mpi.h
+ *  stimulation_backend_mpi.h
  *
  *  This file is part of NEST.
  *
@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef STIMULATING_BACKEND_MPI_H
-#define STIMULATING_BACKEND_MPI_H
+#ifndef STIMULATION_BACKEND_MPI_H
+#define STIMULATION_BACKEND_MPI_H
 
-#include "stimulating_backend.h"
+#include "stimulation_backend.h"
 #include "nest_types.h"
 #include "nest_time.h"
 #include <set>
@@ -33,18 +33,18 @@
 #include <unistd.h>
 #include <mpi.h>
 
-/* BeginUserDocs: stimulating backend
+/* BeginUserDocs: stimulation backend
 
-Stimulating backend `mpi` - Receive stimulation parameters via MPI
+Stimulation backend `mpi` - Receive stimulation parameters via MPI
 ##################################################################
 
 .. admonition:: Availability
 
-   This stimulating backend is only available if NEST was compiled with
+   This stimulation backend is only available if NEST was compiled with
    :ref:`support for MPI <compile-with-mpi>`.
 
-The `mpi` stimulating backend collects data from MPI channels and
-updates stimulating devices just before each run. This is useful for
+The `mpi` stimulation backend collects data from MPI channels and
+updates stimulation devices just before each run. This is useful for
 co-simulation or for receiving stimuli from external software.
 
 The name of the MPI port to receive data on is read from a file for
@@ -79,7 +79,7 @@ for the MPI messages: (value, number, type, source/destination, tag)
 Data format
 +++++++++++
 
-The format of the data depends on the exact type of stimulating
+The format of the data depends on the exact type of stimulation
 device.
 
 EndUserDocs */
@@ -97,28 +97,28 @@ namespace nest
  * Example of state machine diagram for the communication with NEST:
  * \image html MPI_backend_example_state_machine_communication_with_Nest.svg
  */
-class StimulatingBackendMPI : public StimulatingBackend
+class StimulationBackendMPI : public StimulationBackend
 {
 public:
   /**
    * InputBackend constructor
    * The actual initialization is happening in InputBackend::initialize()
    */
-  StimulatingBackendMPI();
+  StimulationBackendMPI();
 
   /**
    * InputBackend destructor
    * The actual finalization is happening in InputBackend::finalize()
    */
-  ~StimulatingBackendMPI() noexcept override;
+  ~StimulationBackendMPI() noexcept override;
 
   void initialize() override;
 
   void finalize() override;
 
-  void enroll( StimulatingDevice& device, const DictionaryDatum& params ) override;
+  void enroll( StimulationDevice& device, const DictionaryDatum& params ) override;
 
-  void disenroll( StimulatingDevice& device ) override;
+  void disenroll( StimulationDevice& device ) override;
 
   void cleanup() override;
 
@@ -136,7 +136,7 @@ private:
    * thread. The map associates the node ID of a device on a given thread
    * with its device. Only the master thread has a valid MPI communicator pointer.
   */
-  using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulatingDevice* > > >;
+  using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulationDevice* > > >;
   device_map devices_;
   /**
    * A map of MPI communicators used by the master thread for the MPI communication.
@@ -150,7 +150,7 @@ private:
    * @param device : input device for finding the file with the port
    * @param port_name : result of the port name
    */
-  static void get_port( StimulatingDevice* device, std::string* port_name );
+  static void get_port( StimulationDevice* device, std::string* port_name );
   static void get_port( index index_node, const std::string& label, std::string* port_name );
   /**
    * MPI communication for receiving the data before each run. This function is used only by the master thread.
@@ -176,4 +176,4 @@ private:
 
 } // namespace
 
-#endif // STIMULATING_BACKEND_MPI_H
+#endif // STIMULATION_BACKEND_MPI_H

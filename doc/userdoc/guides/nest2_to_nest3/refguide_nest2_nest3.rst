@@ -313,7 +313,6 @@ Functions related to simulation
 | nest.SetKernelStatus({'time': 0.})  | nest.SetKernelStatus({':green:`biological_time`': 0.}) |
 +-------------------------------------+--------------------------------------------------------+
 
-
    .. note::
 
      The structural_plasticity_update_interval now reports time in ms instead of number of simulation steps.

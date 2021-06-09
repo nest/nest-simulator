@@ -36,6 +36,19 @@ IOManager::register_recording_backend( Name name )
 
   recording_backends_.insert( std::make_pair( name, recording_backend ) );
 }
+
+template < class SBType >
+void
+IOManager::register_stimulating_backend( Name name )
+{
+  SBType* stimulating_backend = new SBType();
+  auto it = stimulating_backends_.find( name );
+  if ( it == stimulating_backends_.end() )
+  {
+    stimulating_backend->pre_run_hook();
+    stimulating_backends_.insert( std::make_pair( name, stimulating_backend ) );
+  }
+}
 }
 
 #endif /* #ifndef IO_MANAGER_IMPL_H */

@@ -34,11 +34,9 @@
 #include "dict_util.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -92,15 +90,13 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d, Node* no
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator_ps::poisson_generator_ps()
-  : DeviceNode()
-  , device_()
+  : StimulatingDevice()
   , P_()
 {
 }
 
 nest::poisson_generator_ps::poisson_generator_ps( const poisson_generator_ps& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+  : StimulatingDevice( n )
   , P_( n.P_ )
 {
 }
@@ -113,13 +109,13 @@ nest::poisson_generator_ps::poisson_generator_ps( const poisson_generator_ps& n 
 void
 nest::poisson_generator_ps::init_state_()
 {
-  device_.init_state();
+  StimulatingDevice::init_state();
 }
 
 void
 nest::poisson_generator_ps::init_buffers_()
 {
-  device_.init_buffers();
+  nest::Device::init_buffers();
 
   // forget all about past, but do not discard connection information
   B_.next_spike_.clear();
@@ -129,7 +125,7 @@ nest::poisson_generator_ps::init_buffers_()
 void
 nest::poisson_generator_ps::calibrate()
 {
-  device_.calibrate();
+  StimulatingDevice::calibrate();
   if ( P_.rate_ > 0 )
   {
     V_.inv_rate_ms_ = 1000.0 / P_.rate_ - P_.dead_time_;
@@ -159,7 +155,7 @@ nest::poisson_generator_ps::calibrate()
       min_time = std::min( min_time, it->first );
     }
 
-    if ( min_time < device_.get_origin() + device_.get_start() )
+    if ( min_time < StimulatingDevice::get_origin() + StimulatingDevice::get_start() )
     {
       B_.next_spike_.clear(); // will be resized with neg_infs below
     }
@@ -195,8 +191,9 @@ nest::poisson_generator_ps::update( Time const& T, const long from, const long t
    * The (included) upper boundary is the right edge of the slice, T + to.
    * of the slice.
    */
-  V_.t_min_active_ = std::max( T + Time::step( from ), device_.get_origin() + device_.get_start() );
-  V_.t_max_active_ = std::min( T + Time::step( to ), device_.get_origin() + device_.get_stop() );
+  V_.t_min_active_ =
+    std::max( T + Time::step( from ), StimulatingDevice::get_origin() + StimulatingDevice::get_start() );
+  V_.t_max_active_ = std::min( T + Time::step( to ), StimulatingDevice::get_origin() + StimulatingDevice::get_stop() );
 
   // Nothing to do for equality, since left boundary is excluded
   if ( V_.t_min_active_ < V_.t_max_active_ )
@@ -261,7 +258,6 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   // as long as there are spikes in active period, emit and redraw
   while ( nextspk.first <= V_.t_max_active_ )
   {
-    // std::cerr << nextspk.first << '\t' << nextspk.second << '\n';
     e.set_stamp( nextspk.first );
     e.set_offset( nextspk.second );
     e.get_receiver().handle( e );
@@ -282,4 +278,26 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
       nextspk.second = delta_stamp.get_ms() - new_offset;
     }
   }
+}
+
+void
+nest::poisson_generator_ps::set_data_from_stimulating_backend( std::vector< double >& input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() != 2 )
+    {
+      throw BadParameterValue( "The size of the data for the poisson_generator_ps need to be 2 [dead_time, rate]." );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+    ptmp.set( d, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

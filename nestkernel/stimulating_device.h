@@ -25,17 +25,73 @@
 
 // Includes from nestkernel:
 #include "device.h"
+#include "device_node.h"
+#include "nest_types.h"
 
 // Includes from sli:
 #include "dictutils.h"
 
-class SpikeEvent;
-class CurrentEvent;
-class DoubleDataEvent;
-class DelayedRateConnectionEvent;
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// From standard library:
+#include <string>
 
 namespace nest
 {
+
+/* BeginUserDocs: NOINDEX
+
+All stimulating devices share the parameters ``start`` and ``stop``,
+which control the stimulation period. The property ``origin`` is a
+global offset that shifts the stimulation period. All three values are
+set as times in ms.
+
+- For spike-emitting devices, only spikes with times `t` that fulfill
+  `start` < `t` <= `stop` are emitted. Spikes that have timestamp of
+  `t` = `start` are not emitted.
+
+- For current-emitting devices, the current is activated and
+  deactivated such that the current first affects the target dynamics
+  during the update step (start, start+h], i.e., an effect can be
+  recorded at the earliest at time start+h. The last interval during
+  which the current affects the target's dynamics is (stop-h, stop].
+
+The property ``stimulus_source`` defaults to an empty string. It can
+be set to the name of a stimulating backend, in which case it will
+take its parameters from the configured backend instead of from the
+internally stored values. More details on available backends and their
+properties can be found in the :ref:`guide to stimulating the network
+<stimulating_backends>`.
+
+Parameters
+++++++++++
+
+label
+    A string (default: `""`) specifying an arbitrary textual label for
+    the device. Stimulating backends might use the label to generate
+    device specific identifiers like filenames and such.
+
+origin
+    A positive floating point number (default : `0.0`) used as the
+    reference time in ms for `start` and `stop`.
+
+start
+    A positive floating point number (default: `0.0`) specifying the
+    activation time in ms, relative to `origin`.
+
+stimulus_source
+    A string (default: `""`) specifying the name of the stimulating
+    backend from which to get the data for updating the stimulus
+    parameters of the device. By default the device uses its
+    internally stored parameters for updating the stimulus.
+
+stop
+    A floating point number (default: `infinity`) specifying the
+    deactivation time in ms, relative to `origin`. The value of `stop`
+    must be greater than or equal to `start`.
+
+EndUserDocs */
 
 /**
  * Base class for common properties of Stimulating Devices.
@@ -88,26 +144,68 @@ namespace nest
  *
  * @ingroup Devices
  */
-template < typename EmittedEvent >
-class StimulatingDevice : public Device
+class StimulatingDevice : public DeviceNode, public Device
 {
 public:
   StimulatingDevice();
-  StimulatingDevice( StimulatingDevice< EmittedEvent > const& );
-  virtual ~StimulatingDevice()
-  {
-  }
+  StimulatingDevice( StimulatingDevice const& );
+  ~StimulatingDevice() override = default;
 
   /**
    * Determine whether device is active.
    * The argument is the value of the simulation time.
    * @see class comment for details.
    */
-  bool is_active( const Time& ) const;
-  void get_status( DictionaryDatum& d ) const;
+  bool is_active( const Time& ) const override;
+  void get_status( DictionaryDatum& d ) const override;
+  void set_status( const DictionaryDatum& ) override;
+
+  bool has_proxies() const override;
+  Name get_element_type() const override;
+
+  using Device::init_state;
+  using Device::calibrate;
+  using Device::init_buffers;
+  using Node::calibrate;
+
+  void calibrate() override;
 
   //! Throws IllegalConnection if synapse id differs from initial synapse id
   void enforce_single_syn_type( synindex );
+
+  /**
+   * Device type.
+   */
+  enum Type
+  {
+    CURRENT_GENERATOR,
+    SPIKE_GENERATOR,
+    DOUBLE_DATA_GENERATOR,
+    DELAYED_RATE_CONNECTION_GENERATOR,
+  };
+
+  virtual Type
+  get_type() const
+  {
+    throw KernelException( "WORNG TYPE" );
+  };
+  const std::string& get_label() const;
+  virtual void set_data_from_stimulating_backend( std::vector< double >& ){};
+  void update( Time const&, const long, const long ) override{};
+
+protected:
+  void set_initialized_() final;
+
+  struct Parameters_
+  {
+    std::string label_;    //!< A user-defined label for symbolic device names.
+    Name stimulus_source_; //!< Origin of the stimulating signal.
+
+    Parameters_();
+    Parameters_( const Parameters_& ) = default;
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum& );
+  } P_;
 
 private:
   /**
@@ -118,86 +216,23 @@ private:
    * stored here, even though it is an implementation detail.
    */
   synindex first_syn_id_;
+
+  DictionaryDatum backend_params_;
 };
 
-template < typename EmittedEvent >
-StimulatingDevice< EmittedEvent >::StimulatingDevice()
-  : Device()
-  , first_syn_id_( invalid_synindex )
+inline Name
+StimulatingDevice::get_element_type() const
 {
+  return names::stimulator;
 }
 
-template < typename EmittedEvent >
-StimulatingDevice< EmittedEvent >::StimulatingDevice( StimulatingDevice< EmittedEvent > const& sd )
-  : Device( sd )
-  , first_syn_id_( invalid_synindex ) // a new instance can have no connections
-{
-}
-
-// specializations must be declared inside namespace
-template <>
 inline bool
-StimulatingDevice< nest::CurrentEvent >::is_active( const Time& T ) const
+StimulatingDevice::has_proxies() const
 {
-  /* We have t_min_ = origin_ + start_, t_max_ = origin_ + stop_ in steps.
-     We need to check if
-        t_min_ - 1 <= T.get_steps() <= t_max_ - 2
-     This is equivalent to checking
-        t_min_ <= T.get_steps() + 1 < t_max_
-   */
-  const long step = T.get_steps() + 1;
-  return get_t_min_() <= step and step < get_t_max_();
+  return false;
 }
 
-template <>
-inline bool
-StimulatingDevice< nest::DelayedRateConnectionEvent >::is_active( const Time& T ) const
-{
-  // same as for the CurrentEvent
-  const long step = T.get_steps() + 1;
-  return get_t_min_() <= step and step < get_t_max_();
-}
-
-template <>
-inline bool
-StimulatingDevice< nest::DoubleDataEvent >::is_active( const Time& T ) const
-{
-  // same as for the CurrentEvent
-  const long step = T.get_steps() + 1;
-  return get_t_min_() <= step and step < get_t_max_();
-}
-
-template <>
-inline bool
-StimulatingDevice< nest::SpikeEvent >::is_active( const Time& T ) const
-{
-  /* Input is the time stamp of the spike to be emitted. */
-  const long stamp = T.get_steps();
-  return get_t_min_() < stamp and stamp <= get_t_max_();
-}
-
-template < typename EmittedEvent >
-inline void
-StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
-{
-  Device::get_status( d );
-}
-
-template < typename EmittedEvent >
-inline void
-nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type( synindex syn_id )
-{
-  if ( first_syn_id_ == invalid_synindex )
-  {
-    first_syn_id_ = syn_id;
-  }
-  if ( syn_id != first_syn_id_ )
-  {
-    throw IllegalConnection(
-      "All outgoing connections from a device must use the same synapse "
-      "type." );
-  }
-}
 } // namespace nest
+
 
 #endif

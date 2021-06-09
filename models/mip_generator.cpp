@@ -74,16 +74,14 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
  * ---------------------------------------------------------------- */
 
 nest::mip_generator::mip_generator()
-  : DeviceNode()
-  , device_()
+  : StimulatingDevice()
   , P_()
 {
 }
 
 nest::mip_generator::mip_generator( const mip_generator& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
-  , P_( n.P_ )
+  : StimulatingDevice( n )
+  , P_( n.P_ ) // also causes deep copy of random nnumber generator
 {
 }
 
@@ -94,19 +92,19 @@ nest::mip_generator::mip_generator( const mip_generator& n )
 void
 nest::mip_generator::init_state_()
 {
-  device_.init_state();
+  StimulatingDevice::init_state();
 }
 
 void
 nest::mip_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice::init_buffers();
 }
 
 void
 nest::mip_generator::calibrate()
 {
-  device_.calibrate();
+  StimulatingDevice::calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
   poisson_distribution::param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
@@ -126,7 +124,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( not device_.is_active( T ) or P_.rate_ <= 0 )
+    if ( not StimulatingDevice::is_active( T ) || P_.rate_ <= 0 )
     {
       return; // no spikes to be generated
     }
@@ -176,4 +174,33 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
   }
 
   e.set_multiplicity( n_parent_spikes );
+}
+
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+void
+nest::mip_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() != 2 )
+    {
+      throw BadParameterValue( "The size of the data for the mip_generator needs to be 2 [rate, p_copy]." );
+    }
+    else
+    {
+      DictionaryDatum d = DictionaryDatum( new Dictionary );
+      ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );
+      ( *d )[ names::p_copy ] = DoubleDatum( input_param[ 1 ] );
+      ptmp.set( d, this );
+    }
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

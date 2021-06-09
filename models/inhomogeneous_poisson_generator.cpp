@@ -194,8 +194,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::set( const DictionaryDatum& 
  * ---------------------------------------------------------------- */
 
 nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
-  : DeviceNode()
-  , device_()
+  : StimulatingDevice()
   , P_()
   , B_()
   , V_()
@@ -203,8 +202,7 @@ nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator()
 }
 
 nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator( const inhomogeneous_poisson_generator& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+  : StimulatingDevice( n )
   , P_( n.P_ )
   , B_( n.B_ )
   , V_( n.V_ )
@@ -217,13 +215,13 @@ nest::inhomogeneous_poisson_generator::inhomogeneous_poisson_generator( const in
 void
 nest::inhomogeneous_poisson_generator::init_state_()
 {
-  device_.init_state();
+  StimulatingDevice::init_state();
 }
 
 void
 nest::inhomogeneous_poisson_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice::init_buffers();
   B_.idx_ = 0;
   B_.rate_ = 0;
 }
@@ -231,7 +229,7 @@ nest::inhomogeneous_poisson_generator::init_buffers_()
 void
 nest::inhomogeneous_poisson_generator::calibrate()
 {
-  device_.calibrate();
+  StimulatingDevice::calibrate();
   V_.h_ = Time::get_resolution().get_ms();
 }
 
@@ -270,7 +268,7 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin, const long fr
     }
 
     // create spikes
-    if ( B_.rate_ > 0 and device_.is_active( Time::step( curr_time ) ) )
+    if ( B_.rate_ > 0 and StimulatingDevice::is_active( Time::step( curr_time ) ) )
     {
       DSSpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, offs );
@@ -289,4 +287,44 @@ nest::inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
   }
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::inhomogeneous_poisson_generator::set_data_from_stimulating_backend( std::vector< double >& rate_time_update )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  // For the input backend
+  if ( not rate_time_update.empty() )
+  {
+    if ( rate_time_update.size() % 2 != 0 )
+    {
+      throw BadParameterValue(
+        "The size of the data for the inhomogeneous_poisson_generator needs to be even [(time,rate) pairs]" );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    std::vector< double > times_ms;
+    std::vector< double > rate_values;
+    const size_t n_spikes = P_.rate_times_.size();
+    for ( size_t n = 0; n < n_spikes; ++n )
+    {
+      times_ms.push_back( P_.rate_times_[ n ].get_ms() );
+      rate_values.push_back( P_.rate_values_[ n ] );
+    }
+    for ( size_t n = 0; n < rate_time_update.size() / 2; ++n )
+    {
+      times_ms.push_back( rate_time_update[ n * 2 ] );
+      rate_values.push_back( rate_time_update[ n * 2 + 1 ] );
+    }
+    ( *d )[ names::rate_times ] = DoubleVectorDatum( times_ms );
+    ( *d )[ names::rate_values ] = DoubleVectorDatum( rate_values );
+
+    ptmp.set( d, B_, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

@@ -40,7 +40,6 @@ namespace nest
 
 /* BeginUserDocs: device, generator, precise
 
-
 Short description
 +++++++++++++++++
 
@@ -60,23 +59,29 @@ i.e. they are not constrained to the simulation time grid.
    same synapse model. Failure to do so will only be detected at
    runtime.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulating_device.rst
 
-The following parameters appear in the element's status dictionary:
+rate
+    Mean firing rate (spikes/s)
 
-==========   ======== =========================================================
- rate        spikes/s Mean firing rate
- dead_time   ms       Minimal time between two spikes
- origin      ms       Time origin for device timer
- start       ms       Begin of device application with resp. to origin
- stop        ms       End of device application with resp. to origin
-==========   ======== =========================================================
+dead_time
+    Minimal time between two spikes (ms)
+
+Set parameters from a stimulating backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The parameters in this stimulating device can be updated with input
+coming from a stimulating backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
+The indexing is as follows:
+
+ 0. dead_time
+ 1. rate
 
 Sends
 +++++
 
-``SpikeEvent``
+SpikeEvent
 
 See also
 ++++++++
@@ -85,44 +90,31 @@ poisson_generator, parrot_neuron_ps
 
 EndUserDocs */
 
-class poisson_generator_ps : public DeviceNode
+class poisson_generator_ps : public StimulatingDevice
 {
 
 public:
   poisson_generator_ps();
   poisson_generator_ps( const poisson_generator_ps& );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
-
-  bool
-  is_off_grid() const
-  {
-    return true;
-  }
-
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
+  bool is_off_grid() const override;
 
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
+
+  StimulatingDevice::Type get_type() const override;
+  void set_data_from_stimulating_backend( std::vector< double >& input_param ) override;
 
 private:
-  void init_state_();
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
 
   /**
    * Update state.
@@ -133,14 +125,14 @@ private:
    * information.
    * @see event_hook, DSSpikeEvent
    */
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   /**
    * Send out spikes.
    * Called once per target to dispatch actual output spikes.
    * @param contains target information.
    */
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   // ------------------------------------------------------------
 
@@ -206,7 +198,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< CurrentEvent > device_;
   Parameters_ P_;
   Variables_ V_;
   Buffers_ B_;
@@ -215,7 +206,7 @@ private:
 inline port
 poisson_generator_ps::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulatingDevice::enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -240,7 +231,7 @@ inline void
 poisson_generator_ps::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulatingDevice::get_status( d );
 }
 
 inline void
@@ -259,7 +250,7 @@ poisson_generator_ps::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulatingDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
@@ -270,6 +261,18 @@ poisson_generator_ps::calibrate_time( const TimeConverter& tc )
 {
   V_.t_min_active_ = tc.from_old_tics( V_.t_min_active_.get_tics() );
   V_.t_max_active_ = tc.from_old_tics( V_.t_max_active_.get_tics() );
+}
+
+inline bool
+poisson_generator_ps::is_off_grid() const
+{
+  return true;
+}
+
+inline StimulatingDevice::Type
+poisson_generator_ps::get_type() const
+{
+  return StimulatingDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace

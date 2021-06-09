@@ -38,7 +38,6 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -102,15 +101,13 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
 * ---------------------------------------------------------------- */
 
 nest::pulsepacket_generator::pulsepacket_generator()
-  : Node()
-  , device_()
+  : StimulatingDevice()
   , P_()
 {
 }
 
 nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator& ppg )
-  : Node( ppg )
-  , device_( ppg.device_ )
+  : StimulatingDevice( ppg )
   , P_( ppg.P_ )
 {
 }
@@ -122,19 +119,19 @@ nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator&
 void
 nest::pulsepacket_generator::init_state_()
 {
-  device_.init_state();
+  StimulatingDevice::init_state();
 }
 
 void
 nest::pulsepacket_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulatingDevice::init_buffers();
 }
 
 void
 nest::pulsepacket_generator::calibrate()
 {
-  device_.calibrate();
+  StimulatingDevice::calibrate();
   assert( V_.start_center_idx_ <= V_.stop_center_idx_ );
 
   if ( P_.sdev_ > 0.0 )
@@ -172,7 +169,8 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
   assert( to >= from );
   assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
 
-  if ( ( V_.start_center_idx_ == P_.pulse_times_.size() && B_.spiketimes_.empty() ) || ( not device_.is_active( T ) ) )
+  if ( ( V_.start_center_idx_ == P_.pulse_times_.size() and B_.spiketimes_.empty() )
+    or ( not StimulatingDevice::is_active( T ) ) )
   {
     return; // nothing left to do
   }
@@ -230,4 +228,34 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
       n_spikes = 0;
     }
   }
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::pulsepacket_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() < 3 )
+    {
+      throw BadParameterValue(
+        "The size of the data for the pulse_generator needs to be higher than 3 "
+        "[activity, sdev, all the pulse times]." );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::activity ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::sdev ] = DoubleDatum( input_param[ 1 ] );
+    input_param.erase( input_param.begin(), input_param.begin() + 2 );
+    ( *d )[ names::pulse_times ] = DoubleVectorDatum( input_param );
+    ptmp.set( d, *this, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

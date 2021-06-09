@@ -71,6 +71,18 @@ nest::SimulationManager::initialize()
   simulated_ = false;
   exit_on_user_signal_ = false;
   inconsistent_state_ = false;
+  // reset_timers_for_dynamics();
+}
+
+void
+nest::SimulationManager::reset_timers_for_dynamics()
+{
+  sw_simulate_.reset();
+#ifdef TIMER_DETAILED
+  sw_deliver_spike_data_.reset();
+  sw_gather_spike_data_.reset();
+  sw_update_.reset();
+#endif
 }
 
 void
@@ -371,6 +383,13 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::wfr_tol, wfr_tol_ );
   def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
   def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
+
+  def< double >( d, names::time_simulate, sw_simulate_.elapsed() );
+#ifdef TIMER_DETAILED
+  def< double >( d, names::time_deliver_spike_data, sw_deliver_spike_data_.elapsed() );
+  def< double >( d, names::time_gather_spike_data, sw_gather_spike_data_.elapsed() );
+  def< double >( d, names::time_update, sw_update_.elapsed() );
+#endif
 }
 
 void
@@ -384,6 +403,10 @@ nest::SimulationManager::prepare()
       "Kernel is in inconsistent state after an "
       "earlier error. Please run ResetKernel first." );
   }
+
+  // reset profiling timers
+  reset_timers_for_dynamics();
+  kernel().event_delivery_manager.reset_timers_for_dynamics();
 
   t_real_ = 0;
   t_slice_begin_ = timeval(); // set to timeval{0, 0} as unset flag
@@ -496,7 +519,9 @@ nest::SimulationManager::run( Time const& t )
   }
 
   // Reset profiling timers and counters within event_delivery_manager
-  kernel().event_delivery_manager.reset_timers_counters();
+  kernel().event_delivery_manager.reset_counters();
+
+  sw_simulate_.start();
 
   // Check whether waveform relaxation is used on any MPI process
   kernel().node_manager.check_wfr_use();
@@ -537,6 +562,8 @@ nest::SimulationManager::run( Time const& t )
   call_update_();
 
   kernel().node_manager.post_run_cleanup();
+
+  sw_simulate_.stop();
 }
 
 void
@@ -693,7 +720,23 @@ nest::SimulationManager::update_()
 
       if ( from_step_ == 0 ) // deliver only at beginning of slice
       {
+#ifdef TIMER_DETAILED
+        if ( thrd == 0 )
+        {
+          sw_deliver_spike_data_.start();
+          sw_gather_spike_data_.start();
+        }
+#endif
+
         kernel().event_delivery_manager.deliver_events( thrd );
+
+#ifdef TIMER_DETAILED
+        if ( thrd == 0 )
+        {
+          sw_deliver_spike_data_.stop();
+          sw_gather_spike_data_.stop();
+        }
+#endif
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
 // be done after deliver_events_() since it calls
@@ -811,6 +854,13 @@ nest::SimulationManager::update_()
       } // of if(wfr_is_used)
       // end of preliminary update
 
+#ifdef TIMER_DETAILED
+#pragma omp barrier
+      if ( thrd == 0 )
+      {
+        sw_update_.start();
+      }
+#endif
       const std::vector< Node* >& thread_local_nodes =
         kernel().node_manager.get_nodes_on_thread( thrd );
       for (
@@ -837,6 +887,12 @@ nest::SimulationManager::update_()
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
+#ifdef TIMER_DETAILED
+      if ( thrd == 0 )
+      {
+        sw_update_.stop();
+      }
+#endif
 
 // the following block is executed by the master thread only
 // the other threads are enforced to wait at the end of the block
@@ -853,11 +909,17 @@ nest::SimulationManager::update_()
           }
         }
 
+#ifdef TIMER_DETAILED
+        sw_gather_spike_data_.start();
+#endif
         // gather only at end of slice
         if ( to_step_ == kernel().connection_manager.get_min_delay() )
         {
           kernel().event_delivery_manager.gather_events( true );
         }
+#ifdef TIMER_DETAILED
+        sw_gather_spike_data_.stop();
+#endif
 
         advance_time_();
 

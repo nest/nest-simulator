@@ -190,4 +190,7 @@
 /* Use PS array construction semantics */
 #cmakedefine PS_ARRAYS 1
 
+/* Whether to enable detailed NEST internal timers */
+#cmakedefine TIMER_DETAILED 1
+
 #endif // #ifndef CONFIG_H

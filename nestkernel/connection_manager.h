@@ -30,6 +30,7 @@
 // Includes from libnestutil:
 #include "manager_interface.h"
 #include "sparsetable.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "connection_id.h"
@@ -293,6 +294,10 @@ public:
    * Returns the delay checker for the current thread.
    */
   DelayChecker& get_delay_checker();
+
+  // public stop watch for benchmarking purposes
+  // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
+  Stopwatch sw_construction_connect;
 
 private:
   /**

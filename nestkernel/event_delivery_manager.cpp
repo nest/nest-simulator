@@ -51,8 +51,6 @@ EventDeliveryManager::EventDeliveryManager()
   , global_offgrid_spikes_()
   , displacements_()
   , comm_marker_( 0 )
-  , time_collocate_( 0.0 )
-  , time_communicate_( 0.0 )
   , local_spike_counter_( 0U )
 {
 }
@@ -72,7 +70,8 @@ EventDeliveryManager::initialize()
   // ensures that ResetKernel resets off_grid_spiking_
   off_grid_spiking_ = false;
   init_moduli();
-  reset_timers_counters();
+  reset_counters();
+  reset_timers_for_dynamics();
 }
 
 void
@@ -95,10 +94,13 @@ void
 EventDeliveryManager::get_status( DictionaryDatum& dict )
 {
   def< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
-  def< double >( dict, names::time_collocate, time_collocate_ );
-  def< double >( dict, names::time_communicate, time_communicate_ );
   def< unsigned long >(
     dict, names::local_spike_counter, local_spike_counter_ );
+
+#ifdef TIMER_DETAILED
+  def< double >( dict, names::time_collocate_spike_data, sw_collocate_spike_data_.elapsed() );
+  def< double >( dict, names::time_communicate_spike_data, sw_communicate_spike_data_.elapsed() );
+#endif
 }
 
 void
@@ -263,11 +265,18 @@ EventDeliveryManager::update_moduli()
 }
 
 void
-EventDeliveryManager::reset_timers_counters()
+EventDeliveryManager::reset_counters()
 {
-  time_collocate_ = 0.0;
-  time_communicate_ = 0.0;
   local_spike_counter_ = 0U;
+}
+
+void
+EventDeliveryManager::reset_timers_for_dynamics()
+{
+#ifdef TIMER_DETAILED
+  sw_collocate_spike_data_.reset();
+  sw_communicate_spike_data_.reset();
+#endif
 }
 
 void
@@ -657,17 +666,19 @@ EventDeliveryManager::gather_events( bool done )
 {
   // IMPORTANT: Ensure that gather_events(..) is called from a single thread and
   //            NOT from a parallel OpenMP region!!!
+  //            Thus no check for tid is needed, it's anyway single treaded.
 
-  // Stop watch for time measurements within this function
-  static Stopwatch stw_local;
+#ifdef TIMER_DETAILED
+    sw_collocate_spike_data_.start();
+#endif
 
-  stw_local.reset();
-  stw_local.start();
   collocate_buffers_( done );
-  stw_local.stop();
-  time_collocate_ += stw_local.elapsed();
-  stw_local.reset();
-  stw_local.start();
+
+#ifdef TIMER_DETAILED
+    sw_collocate_spike_data_.stop();
+    sw_communicate_spike_data_.start();
+#endif
+
   if ( off_grid_spiking_ )
   {
     kernel().mpi_manager.communicate(
@@ -678,7 +689,9 @@ EventDeliveryManager::gather_events( bool done )
     kernel().mpi_manager.communicate(
       local_grid_spikes_, global_grid_spikes_, displacements_ );
   }
-  stw_local.stop();
-  time_communicate_ += stw_local.elapsed();
+
+#ifdef TIMER_DETAILED
+    sw_communicate_spike_data_.stop();
+#endif
 }
 }

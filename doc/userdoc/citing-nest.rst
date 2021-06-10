@@ -11,6 +11,8 @@ For the full citation and additional formats follow the doi Zenodo link.
 
 Cite the version you used in your work:
 
+Hahne, Jan et al. (2021). **NEST 3.0** Zenodo. https://doi.org/10.5281/zenodo.4739103
+
 Fardet, Tanguy et al. (2020). **NEST 2.20.1** Zenodo. https://doi.org/10.5281/zenodo.4018718
 
 Fardet, Tanguy et al. (2020). **NEST 2.20.0** Zenodo. https://doi.org/10.5281/zenodo.3605514
@@ -19,13 +21,13 @@ Jordan, Jakob et al. (2019). **NEST 2.18.0** Zenodo. https://doi.org/10.5281/zen
 
 Linssen, Charl et al. (2018). **NEST 2.16.0** Zenodo. https://doi.org/10.5281/zenodo.1400175
 
-Peyser, Alexander et al. (2017). **NEST 2.14.0** Zenodo. https://dx.doi.org/10.5281/zenodo.882971
+Peyser, Alexander et al. (2017). **NEST 2.14.0** Zenodo. https://doi.org/10.5281/zenodo.882971
 
-Kunkel, Susanne et al. (2017). **NEST 2.12.0** Zenodo. https://dx.doi.org/10.5281/zenodo.259534
+Kunkel, Susanne et al. (2017). **NEST 2.12.0** Zenodo. https://doi.org/10.5281/zenodo.259534
 
-Bos, Hannah et al. (2015). **NEST 2.10.0** Zenodo. https://dx.doi.org/10.5281/zenodo.44222
+Bos, Hannah et al. (2015). **NEST 2.10.0** Zenodo. https://doi.org/10.5281/zenodo.44222
 
-Eppler, Jochen Martin et al. (2015). **NEST 2.8.0** Zenodo. https://dx.doi.org/10.5281/zenodo.32969
+Eppler, Jochen Martin et al. (2015). **NEST 2.8.0** Zenodo. https://doi.org/10.5281/zenodo.32969
 
 For all versions below NEST 2.8.0 and for citing NEST without referring
 to a specific version, please use: `Gewaltig M-O & Diesmann M (2007) NEST (Neural Simulation Tool) Scholarpedia

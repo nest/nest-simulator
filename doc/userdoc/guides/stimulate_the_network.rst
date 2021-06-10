@@ -28,7 +28,7 @@ frequencies.
 As an alternative to storing device data directly, an external data
 source can be configured by setting the property `stimulus_source` to
 a specific recording backend. Such an external source could be another
-simulator, or a generic signal generator toolkit. The stimulating
+simulator, or a generic signal generator toolkit. The stimulation
 backend can be updated between each call to ``Run()``.
 
 The format of the data that has to be received by NEST for updating

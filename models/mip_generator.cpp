@@ -74,13 +74,13 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
  * ---------------------------------------------------------------- */
 
 nest::mip_generator::mip_generator()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
 {
 }
 
 nest::mip_generator::mip_generator( const mip_generator& n )
-  : StimulatingDevice( n )
+  : StimulationDevice( n )
   , P_( n.P_ ) // also causes deep copy of random nnumber generator
 {
 }
@@ -92,19 +92,19 @@ nest::mip_generator::mip_generator( const mip_generator& n )
 void
 nest::mip_generator::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::mip_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulationDevice::init_buffers();
 }
 
 void
 nest::mip_generator::calibrate()
 {
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
   poisson_distribution::param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
@@ -124,7 +124,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( not StimulatingDevice::is_active( T ) || P_.rate_ <= 0 )
+    if ( not StimulationDevice::is_active( T ) || P_.rate_ <= 0 )
     {
       return; // no spikes to be generated
     }
@@ -181,7 +181,7 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
  * Other functions
  * ---------------------------------------------------------------- */
 void
-nest::mip_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
+nest::mip_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

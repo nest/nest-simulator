@@ -219,7 +219,7 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffer
  * ---------------------------------------------------------------- */
 
 nest::step_current_generator::step_current_generator()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -228,7 +228,7 @@ nest::step_current_generator::step_current_generator()
 }
 
 nest::step_current_generator::step_current_generator( const step_current_generator& n )
-  : StimulatingDevice( n )
+  : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -243,13 +243,13 @@ nest::step_current_generator::step_current_generator( const step_current_generat
 void
 nest::step_current_generator::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::step_current_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulationDevice::init_buffers();
   B_.logger_.reset();
 
   B_.idx_ = 0;
@@ -260,7 +260,7 @@ void
 nest::step_current_generator::calibrate()
 {
   B_.logger_.init();
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
 }
 
 
@@ -302,7 +302,7 @@ nest::step_current_generator::update( Time const& origin, const long from, const
     }
 
     // but send only if active
-    if ( StimulatingDevice::is_active( Time::step( curr_time ) ) )
+    if ( StimulationDevice::is_active( Time::step( curr_time ) ) )
     {
       CurrentEvent ce;
       ce.set_current( B_.amp_ );
@@ -323,7 +323,7 @@ nest::step_current_generator::handle( DataLoggingRequest& e )
  * Other functions
  * ---------------------------------------------------------------- */
 void
-nest::step_current_generator::set_data_from_stimulating_backend( std::vector< double >& time_amplitude )
+nest::step_current_generator::set_data_from_stimulation_backend( std::vector< double >& time_amplitude )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

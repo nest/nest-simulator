@@ -276,14 +276,14 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::spike_generator::spike_generator()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
   , S_()
 {
 }
 
 nest::spike_generator::spike_generator( const spike_generator& n )
-  : StimulatingDevice( n )
+  : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
 {
@@ -297,19 +297,19 @@ nest::spike_generator::spike_generator( const spike_generator& n )
 void
 nest::spike_generator::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::spike_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulationDevice::init_buffers();
 }
 
 void
 nest::spike_generator::calibrate()
 {
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
 }
 
 
@@ -330,7 +330,7 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
 
   const Time tstart = sliceT0 + Time::step( from );
   const Time tstop = sliceT0 + Time::step( to );
-  const Time& origin = StimulatingDevice::get_origin();
+  const Time& origin = StimulationDevice::get_origin();
 
   // We fire all spikes with time stamps up to including sliceT0 + to
   while ( S_.position_ < P_.spike_stamps_.size() )
@@ -348,7 +348,7 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
       break;
     }
 
-    if ( StimulatingDevice::is_active( tnext_stamp ) )
+    if ( StimulationDevice::is_active( tnext_stamp ) )
     {
       SpikeEvent* se;
 
@@ -398,16 +398,16 @@ nest::spike_generator::event_hook( DSSpikeEvent& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::set_data_from_stimulating_backend( std::vector< double >& input_spikes )
+nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >& input_spikes )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
   if ( ptmp.precise_times_ and not input_spikes.empty() )
   {
-    throw BadProperty( "Option precise_times is not supported with an stimulating backend\n" );
+    throw BadProperty( "Option precise_times is not supported with an stimulation backend\n" );
   }
 
-  const Time& origin = StimulatingDevice::get_origin();
+  const Time& origin = StimulationDevice::get_origin();
   // For the input backend
   if ( not input_spikes.empty() )
   {

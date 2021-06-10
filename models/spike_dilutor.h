@@ -29,7 +29,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -135,12 +135,12 @@ private:
 
   // ------------------------------------------------------------
 
-  class DilutorStimulatingDevice : public StimulatingDevice
+  class DilutorStimulationDevice : public StimulationDevice
   {
-    StimulatingDevice::Type
+    StimulationDevice::Type
     get_type() const override
     {
-      return StimulatingDevice::Type::SPIKE_GENERATOR;
+      return StimulationDevice::Type::SPIKE_GENERATOR;
     }
   } device_;
   Parameters_ P_;

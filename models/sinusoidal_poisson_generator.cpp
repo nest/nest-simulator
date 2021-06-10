@@ -176,7 +176,7 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -185,7 +185,7 @@ nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator()
 }
 
 nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator( const sinusoidal_poisson_generator& n )
-  : StimulatingDevice( n )
+  : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -199,13 +199,13 @@ nest::sinusoidal_poisson_generator::sinusoidal_poisson_generator( const sinusoid
 void
 nest::sinusoidal_poisson_generator::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::sinusoidal_poisson_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulationDevice::init_buffers();
   B_.logger_.reset();
 }
 
@@ -215,7 +215,7 @@ nest::sinusoidal_poisson_generator::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
 
   // time resolution
   V_.h_ = Time::get_resolution().get_ms();
@@ -266,7 +266,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin, const long from,
     }
 
     // create spikes
-    if ( S_.rate_ > 0 and StimulatingDevice::is_active( Time::step( start + lag ) ) )
+    if ( S_.rate_ > 0 and StimulationDevice::is_active( Time::step( start + lag ) ) )
     {
       if ( P_.individual_spike_trains_ )
       {
@@ -311,7 +311,7 @@ nest::sinusoidal_poisson_generator::handle( DataLoggingRequest& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_poisson_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
+nest::sinusoidal_poisson_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

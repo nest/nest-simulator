@@ -101,13 +101,13 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
 * ---------------------------------------------------------------- */
 
 nest::pulsepacket_generator::pulsepacket_generator()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
 {
 }
 
 nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator& ppg )
-  : StimulatingDevice( ppg )
+  : StimulationDevice( ppg )
   , P_( ppg.P_ )
 {
 }
@@ -119,19 +119,19 @@ nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator&
 void
 nest::pulsepacket_generator::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::pulsepacket_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulationDevice::init_buffers();
 }
 
 void
 nest::pulsepacket_generator::calibrate()
 {
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
   assert( V_.start_center_idx_ <= V_.stop_center_idx_ );
 
   if ( P_.sdev_ > 0.0 )
@@ -170,7 +170,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
   assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
 
   if ( ( V_.start_center_idx_ == P_.pulse_times_.size() and B_.spiketimes_.empty() )
-    or ( not StimulatingDevice::is_active( T ) ) )
+    or ( not StimulationDevice::is_active( T ) ) )
   {
     return; // nothing left to do
   }
@@ -235,7 +235,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
  * ---------------------------------------------------------------- */
 
 void
-nest::pulsepacket_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
+nest::pulsepacket_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

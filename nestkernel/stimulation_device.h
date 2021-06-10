@@ -1,5 +1,5 @@
 /*
- *  stimulating_device.h
+ *  stimulation_device.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STIMULATING_DEVICE_H
-#define STIMULATING_DEVICE_H
+#ifndef STIMULATION_DEVICE_H
+#define STIMULATION_DEVICE_H
 
 // Includes from nestkernel:
 #include "device.h"
@@ -42,7 +42,7 @@ namespace nest
 
 /* BeginUserDocs: NOINDEX
 
-All stimulating devices share the parameters ``start`` and ``stop``,
+All stimulation devices share the parameters ``start`` and ``stop``,
 which control the stimulation period. The property ``origin`` is a
 global offset that shifts the stimulation period. All three values are
 set as times in ms.
@@ -58,18 +58,18 @@ set as times in ms.
   which the current affects the target's dynamics is (stop-h, stop].
 
 The property ``stimulus_source`` defaults to an empty string. It can
-be set to the name of a stimulating backend, in which case it will
+be set to the name of a stimulation backend, in which case it will
 take its parameters from the configured backend instead of from the
 internally stored values. More details on available backends and their
 properties can be found in the :ref:`guide to stimulating the network
-<stimulating_backends>`.
+<sec_stimulation_backends>`.
 
 Parameters
 ++++++++++
 
 label
     A string (default: `""`) specifying an arbitrary textual label for
-    the device. Stimulating backends might use the label to generate
+    the device. Stimulation backends might use the label to generate
     device specific identifiers like filenames and such.
 
 origin
@@ -81,7 +81,7 @@ start
     activation time in ms, relative to `origin`.
 
 stimulus_source
-    A string (default: `""`) specifying the name of the stimulating
+    A string (default: `""`) specifying the name of the stimulation
     backend from which to get the data for updating the stimulus
     parameters of the device. By default the device uses its
     internally stored parameters for updating the stimulus.
@@ -94,13 +94,13 @@ stop
 EndUserDocs */
 
 /**
- * Base class for common properties of Stimulating Devices.
+ * Base class for common properties of StimulationDevices.
  *
- * Stimulating devices are all devices injecting currents, spike trains
+ * Stimulation devices are all devices injecting currents, spike trains
  * or other signals into a network. They provide only output and do not
  * receive any input.
  *
- * Stimulating devices come in (at least) two varieties: those providing
+ * Stimulation devices come in (at least) two varieties: those providing
  * analog signals (CurrentEvent) and thos providing spike trains (SpikeEvent).
  * Device activation needs to be handled differently in both cases. The general
  * principle is that of the left-open, right-closed interval (start, stop].
@@ -115,28 +115,28 @@ EndUserDocs */
  * at time a, i.e., by the deliver_events() call prior to the update for
  * (a, a+h].
  *
- * Since stimulating devices are connected to their targets with a delay of one
- * time step, this means that analog stimulating devices need to emit the event
+ * Since stimulation devices are connected to their targets with a delay of one
+ * time step, this means that analog stimulation devices need to emit the event
  * during the update step for the interval (a-h, a]. Thus, the device needs
  * to be PRO-ACTIVE.
  *
- * Further, activity of stimulating devices is determined on the basis of
+ * Further, activity of stimulation devices is determined on the basis of
  * simulation time, not event time stamps. This means that the first simulation
  * time step during which the device must emit events is the step for which
  * the global clock has time a-h. If stimulation is to end by time b, this means
  * that the last event should be emitted during the time step for which the
  * global clock has time b-2h.
  *
- * @note Any stimulating devices transmitting analog signals must NOT HAVE
+ * @note Any stimulation devices transmitting analog signals must NOT HAVE
  * PROXIES.
  *
  * @note The distinction between analog and spike emitting devices is
- *       implemented by making StimulatingDevice a template class with the type
+ *       implemented by making StimulationDevice a template class with the type
  *       of the Event sent as template parameter. Member is_active() is not
  *       implemented in general and is available only for those cases for which
  *       it is explicitly specialized.
  *
- * @note StimulatingDevice inherits protected from Device, so that
+ * @note StimulationDevice inherits protected from Device, so that
  *       implementations of is_active() can access t_min and t_max.
  *
  * @todo The timing of analog devices is correct only if they are transmitted
@@ -144,12 +144,12 @@ EndUserDocs */
  *
  * @ingroup Devices
  */
-class StimulatingDevice : public DeviceNode, public Device
+class StimulationDevice : public DeviceNode, public Device
 {
 public:
-  StimulatingDevice();
-  StimulatingDevice( StimulatingDevice const& );
-  ~StimulatingDevice() override = default;
+  StimulationDevice();
+  StimulationDevice( StimulationDevice const& );
+  ~StimulationDevice() override = default;
 
   /**
    * Determine whether device is active.
@@ -190,7 +190,7 @@ public:
     throw KernelException( "WORNG TYPE" );
   };
   const std::string& get_label() const;
-  virtual void set_data_from_stimulating_backend( std::vector< double >& ){};
+  virtual void set_data_from_stimulation_backend( std::vector< double >& ){};
   void update( Time const&, const long, const long ) override{};
 
 protected:
@@ -199,7 +199,7 @@ protected:
   struct Parameters_
   {
     std::string label_;    //!< A user-defined label for symbolic device names.
-    Name stimulus_source_; //!< Origin of the stimulating signal.
+    Name stimulus_source_; //!< Origin of the stimulation signal.
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
@@ -221,13 +221,13 @@ private:
 };
 
 inline Name
-StimulatingDevice::get_element_type() const
+StimulationDevice::get_element_type() const
 {
   return names::stimulator;
 }
 
 inline bool
-StimulatingDevice::has_proxies() const
+StimulationDevice::has_proxies() const
 {
   return false;
 }

@@ -28,7 +28,7 @@
 #include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 #include "universal_data_logger.h"
 
 /* BeginUserDocs: device, generator
@@ -55,7 +55,7 @@ where
     \omega  = 2 \pi \cdot \mathrm{frequency} \\
     \phi = \frac{\mathrm{phase}}{180} \cdot \pi
 
-.. include:: ../models/stimulating_device.rst
+.. include:: ../models/stimulation_device.rst
 
 amplitude
     Amplitude of sine current (pA)
@@ -72,11 +72,11 @@ phase
 Setting `start` and `stop` only windows the current as defined above. It
 does not shift the time axis.
 
-Set parameters from a stimulating backend
+Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
 update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
 
@@ -100,14 +100,14 @@ CurrentEvent
 See also
 ++++++++
 
-dc_generator, noise_generator, step_current_generator, StimulatingDevice,
+dc_generator, noise_generator, step_current_generator, StimulationDevice,
 Device
 
 EndUserDocs */
 
 namespace nest
 {
-class ac_generator : public StimulatingDevice
+class ac_generator : public StimulationDevice
 {
 
 public:
@@ -129,8 +129,8 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  StimulatingDevice::Type get_type() const override;
-  void set_data_from_stimulating_backend( std::vector< double >& input_param ) override;
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
   void init_state_() override;
@@ -218,7 +218,7 @@ private:
 inline port
 ac_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-  StimulatingDevice::enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   CurrentEvent e;
   e.set_sender( *this );
@@ -241,7 +241,7 @@ ac_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  StimulatingDevice::get_status( d );
+  StimulationDevice::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -257,7 +257,7 @@ ac_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  StimulatingDevice::set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
@@ -269,10 +269,10 @@ ac_generator::local_receiver() const
   return true;
 }
 
-inline StimulatingDevice::Type
+inline StimulationDevice::Type
 ac_generator::get_type() const
 {
-  return StimulatingDevice::Type::CURRENT_GENERATOR;
+  return StimulationDevice::Type::CURRENT_GENERATOR;
 }
 
 } // namespace

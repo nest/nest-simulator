@@ -1,7 +1,7 @@
 Stimulate the network
 =====================
 
-*Stimulating devices* (also called *stimulators* or *generators*)
+*Stimulation devices* (also called *stimulators* or *generators*)
 inject signals into a network. The most common devices for injecting
 analog signals (mostly currents) are:
 
@@ -23,17 +23,17 @@ stimuli for connected nodes. Such data might be explicit lists of
 values, or parametric values as for instance amplitudes and
 frequencies.
 
-.. _stimulating_backends:
+.. _sec_stimulation_backends:
 
 As an alternative to storing device data directly, an external data
 source can be configured by setting the property `stimulus_source` to
 a specific recording backend. Such an external source could be another
-simulator, or a generic signal generator toolkit. The stimulating
+simulator, or a generic signal generator toolkit. The stimulation
 backend can be updated between each call to ``Run()``.
 
 The format of the data that has to be received by NEST for updating
-the stimulating devices depends on the exact type of device. Please
+the stimulation devices depends on the exact type of device. Please
 refer to the documentation of the device for details. Below is a list
-of available stimulating backends:
+of available stimulation backends:
 
-- :doc:`../models/stimulating_backend_mpi`
+- :doc:`../models/stimulation_backend_mpi`

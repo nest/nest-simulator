@@ -33,7 +33,7 @@
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "random_generators.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -112,7 +112,7 @@ the current recorded represents the instantaneous average of all the
 currents computed. When there exists only a single target, this would be
 equivalent to the actual current provided to that target.
 
-.. include:: ../models/stimulating_device.rst
+.. include:: ../models/stimulation_device.rst
 
 mean
     The mean value of the noise current (pA)
@@ -132,11 +132,11 @@ phase
 frequency
     The frequency of the sine modulation
 
-Set parameters from a stimulating backend
+Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The parameters in this stimulating device can be updated with input
-coming from a stimulating backend. The data structure used for the
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
 update holds one value for each of the parameters mentioned above.
 The indexing is as follows:
 
@@ -158,7 +158,7 @@ step_current_generator
 
 EndUserDocs */
 
-class noise_generator : public StimulatingDevice
+class noise_generator : public StimulationDevice
 {
 
 public:
@@ -192,8 +192,8 @@ public:
 
   void calibrate_time( const TimeConverter& tc ) override;
 
-  StimulatingDevice::Type get_type() const override;
-  void set_data_from_stimulating_backend( std::vector< double >& input_param ) override;
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
   void init_state_() override;
@@ -320,7 +320,7 @@ noise_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  StimulatingDevice::get_status( d );
+  StimulationDevice::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -335,7 +335,7 @@ noise_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  StimulatingDevice::set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
@@ -360,10 +360,10 @@ noise_generator::local_receiver() const
   return true;
 }
 
-inline StimulatingDevice::Type
+inline StimulationDevice::Type
 noise_generator::get_type() const
 {
-  return StimulatingDevice::Type::CURRENT_GENERATOR;
+  return StimulationDevice::Type::CURRENT_GENERATOR;
 }
 
 } // namespace

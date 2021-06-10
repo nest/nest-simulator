@@ -1,5 +1,5 @@
 /*
- *  stimulating_backend.h
+ *  stimulation_backend.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STIMULATING_BACKEND_H
-#define STIMULATING_BACKEND_H
+#ifndef STIMULATION_BACKEND_H
+#define STIMULATION_BACKEND_H
 
 // C++ includes:
 #include <vector>
@@ -30,20 +30,20 @@
 #include "dictdatum.h"
 #include "name.h"
 #include "dictutils.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
 
 /**
- * Abstract bass class for all NESTio stimulating backends
+ * Abstract bass class for all NESTio stimulation backends
  *
- * This class provides the interface for NESTio stimulating backends
- *  with which 'StimulatingDevice`s can be enrolled for stimulating and
- *  which they can use to receive data for updating their stimulus at
- *  the beginning of each run.
+ * This class provides the interface for NESTio stimulation backends
+ * with which StimulationDevices can be enrolled for receiving
+ * stimulation data that they can use to updating their parameters at
+ * the beginning of each run.
  *
- * Built-in stimulating backends are registered in the constructor of
+ * Built-in stimulation backends are registered in the constructor of
  * IOManager by inserting an instance of each of them into a std::map
  * under the name of the backend. The default backend, the one using
  * memory, are not registered in this map.
@@ -54,13 +54,13 @@ namespace nest
  * opportunity to prepare itself for being ready to receive the data.
  *
  * The user level function Run drives the simulation main loop by
- * updating all the stimulating device. At its beginning it calls
- * pre_run_hook() on each stimulating backend via the IOManager.
+ * updating all the stimulation device. At its beginning it calls
+ * pre_run_hook() on each stimulation backend via the IOManager.
  * This function is used to receive or read data and update the
- * stimulating devices. At the end of each run, it calls post_run_hook()
- * on each stimulating backend via IOManager.
+ * stimulation devices. At the end of each run, it calls post_run_hook()
+ * on each stimulation backend via IOManager.
  *
- * During the simulation, stimulating backends do nothing. This solution
+ * During the simulation, stimulation backends do nothing. This solution
  * was chosen to avoid complex synchronization, but can be changed in the future
  * if the need shall arise.
  *
@@ -69,18 +69,18 @@ namespace nest
  * @ingroup NESTio
 */
 
-class StimulatingBackend
+class StimulationBackend
 {
 public:
-  StimulatingBackend() = default;
+  StimulationBackend() = default;
 
-  virtual ~StimulatingBackend() noexcept = default;
+  virtual ~StimulationBackend() noexcept = default;
 
   /**
-  * Enroll a `StimulatingDevice` with the `StimulatingBackend`.
+  * Enroll a `StimulationDevice` with the `StimulationBackend`.
   *
-  * When this function is called by a `StimulatingDevice` @p device,
-  * the `StimulatingBackend` can set up per-device data structures and
+  * When this function is called by a `StimulationDevice` @p device,
+  * the `StimulationBackend` can set up per-device data structures and
   * properties. Individual device instances can be identified using
   * the `thread` and `node_id` of the @p device.
   *
@@ -93,7 +93,7 @@ public:
   * the parameters in @p params have to be set, but no further
   * actions are needed.
   *
-  * Each stimulating backend must ensure that enrollment (including all
+  * Each stimulation backend must ensure that enrollment (including all
   * settings made by the user) is persistent over multiple calls to
   * Prepare, while the enrollment of all devices should end with a
   * call to finalize().
@@ -103,39 +103,39 @@ public:
   * device-specific backend properties and an input facility of some
   * kind.
   *
-  * @param device the StimulatingDevice to be enrolled
+  * @param device the StimulationDevice to be enrolled
   * @param params device-specific backend parameters
   *
   * @see disenroll()
   *
   * @ingroup NESTio
   */
-  virtual void enroll( StimulatingDevice&, const DictionaryDatum& ){};
+  virtual void enroll( StimulationDevice&, const DictionaryDatum& ){};
 
   /**
-   * Disenroll a `StimulatingDevice` from the `StimulatingBackend`.
+   * Disenroll a `StimulationDevice` from the `StimulationBackend`.
    *
    * This function is considered to be the opposite of enroll() in the
    * sense that it cancels the enrollment of a StimulatinDevice from a
-   * StimulatingBackend by deleting all device specific data. When
-   * setting a new stimulating backend for a stimulating device, this
+   * StimulationBackend by deleting all device specific data. When
+   * setting a new stimulation backend for a stimulation device, this
    * function is called for each backend the device is not enrolled
    * with.
    *
-   * @param device the StimulatingDevice to be disenrolled
+   * @param device the StimulationDevice to be disenrolled
    *
    * @see enroll()
    *
    * @ingroup NESTio
    */
-  virtual void disenroll( StimulatingDevice& ){};
+  virtual void disenroll( StimulationDevice& ){};
 
   /**
    * Initialize global backend-specific data structures.
    *
    * This function is called on each backend right at the very beginning of
    * `SimulationManager::run()`. It used for getting the data in order to update
-   * the stimulating devices. The update of the device are made only if
+   * the stimulation devices. The update of the device are made only if
    * necessary and repeated at the beginning of every single call to run in a
    * prepare-run-run-...-run-run-cleanup sequence.
    *
@@ -193,9 +193,9 @@ public:
   */
   virtual void cleanup() = 0;
 
-  void clear( const StimulatingDevice& ){};
+  void clear( const StimulationDevice& ){};
 };
 
 } // namespace
 
-#endif // STIMULATING_BACKEND_H
+#endif // STIMULATION_BACKEND_H

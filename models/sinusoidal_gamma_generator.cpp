@@ -211,7 +211,7 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -220,7 +220,7 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
 }
 
 nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator( const sinusoidal_gamma_generator& n )
-  : StimulatingDevice( n )
+  : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -234,13 +234,13 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator( const sinusoidal_g
 void
 nest::sinusoidal_gamma_generator::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::sinusoidal_gamma_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulationDevice::init_buffers();
   B_.logger_.reset();
 
   std::vector< double >( P_.num_trains_, kernel().simulation_manager.get_time().get_ms() ).swap( B_.t0_ms_ );
@@ -274,7 +274,7 @@ nest::sinusoidal_gamma_generator::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
 
   V_.h_ = Time::get_resolution().get_ms();
   V_.rng_ = get_vp_specific_rng( get_thread() );
@@ -321,7 +321,7 @@ nest::sinusoidal_gamma_generator::update( Time const& origin, const long from, c
     S_.rate_ = P_.rate_ + P_.amplitude_ * std::sin( P_.om_ * V_.t_ms_ + P_.phi_ );
 
     // t_steps_-1 since t_steps is end of interval, while activity det by start
-    if ( P_.num_trains_ > 0 and S_.rate_ > 0 and StimulatingDevice::is_active( Time::step( V_.t_steps_ - 1 ) ) )
+    if ( P_.num_trains_ > 0 and S_.rate_ > 0 and StimulationDevice::is_active( Time::step( V_.t_steps_ - 1 ) ) )
     {
       if ( P_.individual_spike_trains_ )
       {
@@ -369,7 +369,7 @@ nest::sinusoidal_gamma_generator::handle( DataLoggingRequest& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_gamma_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
+nest::sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

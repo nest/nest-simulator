@@ -176,13 +176,13 @@ nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* nod
  * ---------------------------------------------------------------- */
 
 nest::gamma_sup_generator::gamma_sup_generator()
-  : StimulatingDevice()
+  : StimulationDevice()
   , P_()
 {
 }
 
 nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
-  : StimulatingDevice( n )
+  : StimulationDevice( n )
   , P_( n.P_ )
 {
 }
@@ -195,19 +195,19 @@ nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
 void
 nest::gamma_sup_generator::init_state_()
 {
-  StimulatingDevice::init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::gamma_sup_generator::init_buffers_()
 {
-  StimulatingDevice::init_buffers();
+  StimulationDevice::init_buffers();
 }
 
 void
 nest::gamma_sup_generator::calibrate()
 {
-  StimulatingDevice::calibrate();
+  StimulationDevice::calibrate();
 
   double h = Time::get_resolution().get_ms();
 
@@ -244,7 +244,7 @@ nest::gamma_sup_generator::update( Time const& T, const long from, const long to
   {
     Time t = T + Time::step( lag );
 
-    if ( not StimulatingDevice::is_active( t ) )
+    if ( not StimulationDevice::is_active( t ) )
     {
       continue; // no spike at this lag
     }
@@ -280,7 +280,7 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::set_data_from_stimulating_backend( std::vector< double >& input_param )
+nest::gamma_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

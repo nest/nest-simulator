@@ -1,26 +1,19 @@
 Download NEST
 =============
 
-.. admonition:: Try NEST 3.0
-
- NEST 3.0 is not yet officially released but if you want to check out the new features, you can clone the
- source code from `the nest-3 branch on GitHub <https://github.com/nest/nest-simulator/tree/nest-3>`_.
- Then follow the instructions to compile from source in :doc:`installation/linux_install` or :doc:`installation/mac_install`.
-
-.. pull-quote::
-
-      For standard situations where you just want to use but not modify
-      NEST, you don't have to download the source code.
-
-      Distribution packages ease the installation on Debian/Ubuntu,
-      Fedora, macOS and Conda.
-
-      See our :doc:`installation instructions <installation/index>` to
-      find the right option for you.
-
 Here you'll find the lastest versions of the source code and virtual machine (VM) images for download.
 If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
 
+.. Note::
+
+ In standard situations where you just want to use but not modify
+ NEST, you don't have to download the source code.
+
+ Distribution packages ease the installation on Debian/Ubuntu,
+ Fedora, macOS and Conda.
+
+ See our :doc:`installation instructions <installation/index>` to
+ find the right option for you.
 
 Download the source code
 ------------------------

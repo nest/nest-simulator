@@ -62,7 +62,7 @@ be set to the name of a stimulation backend, in which case it will
 take its parameters from the configured backend instead of from the
 internally stored values. More details on available backends and their
 properties can be found in the :ref:`guide to stimulating the network
-<stimulation_backends>`.
+<sec_stimulation_backends>`.
 
 Parameters
 ++++++++++

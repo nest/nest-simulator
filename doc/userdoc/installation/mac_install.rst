@@ -9,13 +9,13 @@ may work, but can also lead to various complications.
 
 This guide shows how to build NEST with a development environment created with Conda. The main
 advantage of Conda is that you can fully insulate the entire environment in a Conda environment.
-If you want to base your setup on Homebrew or MacPorts, you can still use the 
+If you want to base your setup on Homebrew or MacPorts, you can still use the
 ``extras/conda-nest-simulator-dev.yml`` file as a guide to necessary packages.
 
 Preparations
 ------------
 
-1. Install the Xcode command line tools by executing the following line in the terminal and 
+1. Install the Xcode command line tools by executing the following line in the terminal and
    following the instructions in the windows that will pop up:
 
    .. code-block:: sh
@@ -30,15 +30,15 @@ Preparations
 
    .. note::
 
-      To build NEST natively on a Mac with Apple's M1 chip, you need to use Miniforge as 
+      To build NEST natively on a Mac with Apple's M1 chip, you need to use Miniforge as
       described in :doc:`conda_tips`.
 
 #. Activate the environment with
 
    .. code:: sh
-   
+
       conda acvitate nest-simulator
-      
+
    This assumes that you have created the environment with its default name ``nest-simulator``.
 
 #. If you want to build NEST with MPI, you must digitally sign the ``orterun`` and ``orted`` binaries
@@ -55,9 +55,9 @@ Preparations
 
       Instead of the ``which`` command you can also give the full path to the binary inside your conda
       environment.
-      
+
       .. note::
-      
+
          You will need to sign the binaries every time you update the OpenMPI package in your environment.
 
 
@@ -81,10 +81,13 @@ Building NEST
 
    .. code-block:: sh
 
-      CMAKE_PREFIX_PATH=<conda_env_dir> cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_install_dir>
+      CMAKE_PREFIX_PATH=<conda_env_dir> cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> <nest_source_dir>
 
    You can find the ``<conda_env_dir>`` for the currently active conda environment by running
    ``conda info`` and looking for the "active env location" entry in the output.
+
+   To compile NEST with :ref:`MPI support <distributed-computing>`, add ``-Dwith-mpi=ON`` as ``cmake`` option.
+   For further CMake options, see :doc:`cmake_options`.
 
 #. Compile, install, and verify NEST with
 
@@ -94,14 +97,37 @@ Building NEST
       make install
       make installcheck
 
-   To compile NEST with :ref:`MPI support <distributed-computing>`, add ``-Dwith-mpi=ON`` as ``cmake`` option.
-   For further CMake options, see :doc:`cmake_options`.
-
 #. To run NEST, configure your environment with
 
    .. code-block:: sh
 
       source <nest_install_dir>/bin/nest_vars.sh
+
+Installing into a virtual environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can install NEST to the default location for Python packages inside a virtual environment
+by activating the virtual environment before building NEST, by modifying the instructions above
+as follows:
+
+1. Create the virtual environment if it does not exist yet (replace ``nest_env`` by a name of your choice)
+
+   .. code-block:: bash
+      python -m venv nest_env
+#. Activate the environment
+
+   .. code-block:: bash
+      source nest_env/bin/activate
+#. Navigate to your NEST build directory
+
+#. Configure NEST by running
+
+   .. code-block:: sh
+      CMAKE_PREFIX_PATH=<conda_env_dir> cmake <nest_source_dir>
+#. Build and install NEST as described above
+
+If you follow this approach, you do not need to source ``nest_vars.sh``, as the Python package
+for NEST is installed in a default location.
 
 
 Troubleshooting

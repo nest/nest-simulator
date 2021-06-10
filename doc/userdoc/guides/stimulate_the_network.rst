@@ -23,7 +23,7 @@ stimuli for connected nodes. Such data might be explicit lists of
 values, or parametric values as for instance amplitudes and
 frequencies.
 
-.. _stimulation_backends:
+.. _sec_stimulation_backends:
 
 As an alternative to storing device data directly, an external data
 source can be configured by setting the property `stimulus_source` to

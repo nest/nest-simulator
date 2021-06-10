@@ -4,6 +4,9 @@ build/
 _build/
 install/
 reports/
+dist/
+data/
+*.egg-info/
 
 # compilation artefacts
 pynest/pynestkernel.cxx

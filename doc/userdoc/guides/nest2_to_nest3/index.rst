@@ -5,7 +5,7 @@ With the release of NEST 3.0, we introduce a ton of new features to improve how 
 
 NEST 3.0 introduces a more direct approach to accessing :doc:`neuron and device properties <nest3_features/nest3_node_handles>`
 and to :doc:`interacting with synapses <nest3_features/nest3_handling_connections>`. You can now read and write properties of
-nodes and connections with the functions ``get()`` and ``set()`` or by direct member access (e.g. ``v = neuron.V_m``). 
+nodes and connections with the functions ``get()`` and ``set()`` or by direct member access (e.g., ``v = neuron.V_m``). 
 :doc:`Parameter objects <nest3_features/parametrization>` make mathematical and probabilistic functions available to pick
 neuron properties, create spatial positions, define connection probabilities, and much more. In addition, it is now way
 easier to perform operations such as slicing, iterating, and tests for equality on collections of neurons and synapses.

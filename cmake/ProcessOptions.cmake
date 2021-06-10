@@ -307,12 +307,6 @@ function( NEST_PROCESS_TICS_PER_STEP )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_WITH_PS_ARRAY )
-  if ( with-ps-arrays )
-    set( PS_ARRAYS ON PARENT_SCOPE )
-  endif ()
-endfunction()
-
 # Depending on the user options, we search for required libraries and include dirs.
 
 function( NEST_PROCESS_WITH_LIBLTDL )

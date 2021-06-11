@@ -1,0 +1,31 @@
+name: NEST Python package
+on: [push, pull_request]
+jobs:
+  setup:
+     runs-on: ubuntu-20.04
+     steps:
+       - name: Checkout repo content
+         uses: actions/checkout@master
+
+       - name: Set up Python 3.x
+         uses: actions/setup-python@v2
+         with:
+           python-version: 3.9
+
+       - name: Minimal CMake dependencies Linux
+         run: |
+           sudo apt-get update
+           sudo apt-get install libgsl-dev libltdl-dev libncurses-dev libreadline-dev
+       - name: Install dependencies
+         run: |
+            python -m pip install --upgrade pip setuptools
+            python -m pip install cython
+
+       - name: Create source distribution
+         run: ./extras/pypkg.sh
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: python-distribution
+          path: dist

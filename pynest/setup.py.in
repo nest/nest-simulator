@@ -25,16 +25,32 @@ import os
 import sys
 import subprocess
 
+opt = dict()
+flags = dict(
+    mpi="Dwith-MPI",
+)
 
 class install_command(install):
+    user_options = install.user_options + [
+        ('mpi=', None, 'enable MPI support. (OFF|ON|</path/to/mpi> [default=OFF])'),
+    ]
+
     def initialize_options(self):
         install.initialize_options(self)
+        self.mpi = None
 
     def finalize_options(self):
         install.finalize_options(self)
+        opt["mpi"] = self.mpi
 
     def run(self):
         env = os.environ.copy()
+        cmake_flags = []
+        for option, flag in flags.items():
+            value = opt.get(option, None)
+            if value is not None:
+                cmake_flags.append(f"-{flag}={value}")
+
         # Since we're sneaking CMake in during the install command, the `install_requires`
         # dependencies aren't installed yet at this point, so we install Cython ourselves.
         subprocess.check_call(f"{sys.executable} -m pip install --upgrade cython", env=env, shell=True)

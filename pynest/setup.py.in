@@ -20,19 +20,41 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup
+from setuptools.command.install import install
+import os
+import sys
+import subprocess
+
+
+class install_command(install):
+    def initialize_options(self):
+        install.initialize_options(self)
+
+    def finalize_options(self):
+        install.finalize_options(self)
+
+    def run(self):
+        env = os.environ.copy()
+        subprocess.check_call(f"alias python='{sys.executable}'; cmake data; make install -j", env=env, shell=True)
+        install.run(self)
+
 
 setup(
     name='nest-simulator',
     version='@NEST_VERSION@@githash@',
     description='Python bindings for NEST',
     author='The NEST Initiative',
+    author_email='info@nest-initiative.org',
     url='https://www.nest-simulator.org',
     license='GPLv2+',
     packages=['nest', 'nest.tests', 'nest.tests.test_sp',
               'nest.tests.test_spatial', 'nest.lib'],
-    install_requires=['numpy', 'scipy'],
+    install_requires=['cython>=0.29.23', 'numpy'],
     extras_require={
         'test': ['nose', 'matplotlib']
+    },
+    cmdclass={
+        'install': install_command,
     },
     classifiers=[
         'Development Status :: 6 - Mature',

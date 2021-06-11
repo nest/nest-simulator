@@ -51,6 +51,9 @@ class TestArborBackend(unittest.TestCase):
     @unittest.skipIf(not HAVE_MPI4PY, "mpi4py is not available")
     @unittest.skipIf(not HAVE_ARBOR, "NEST was compiled without Arbor backend")
     def test_arbor_backend(self):
+        """
+        Transmitting spikes with Arbor backend
+        """
         path = os.path.dirname(__file__)
         nest_side = os.path.join(path, "arbor_backend_nest_side.py")
         arbor_side = os.path.join(path, "arbor_backend_arbor_side.py")

@@ -14,7 +14,7 @@ cmake .. -DCMAKE_INSTALL_PREFIX=$PWD/product
 mv pynest/setup.py ..
 cd ..
 # Extract the nest Python files
-cp pynest/* .
+cp -r pynest/* .
 # Use `setup.py` to package the data folder and nest code folder into a source
 # distribution.
 python setup.py sdist

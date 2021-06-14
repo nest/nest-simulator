@@ -12,8 +12,17 @@ jobs:
        matrix:
          os: ["ubuntu-20.04", macos-latest]
          cpp_compiler: ["gcc", "clang"]
-         xNEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
+         xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
          exclude:
+           - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
+             os: macos-latest
+             cpp_compiler: "clang"
+           - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
+             os: "ubuntu-20.04"
+             cpp_compiler: "clang"
+           - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
+             os: macos-latest
+             cpp_compiler: "gcc"
            - xNEST_BUILD_TYPE: "MPI_ONLY"
              cpp_compiler: "clang"
              os: macos-latest
@@ -69,6 +78,14 @@ jobs:
          with:
            python-version: 3.9
 
+       - name: Changed Files
+         uses: actions/checkout@v2
+         with:
+           fetch-depth: 0
+       - run: |
+           echo "CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
+           echo "${{env.CHANGED_FILES}}"
+
        - name: Dependencies MacOS
          if: runner.os =='macOS'
          run: |
@@ -83,6 +100,7 @@ jobs:
            sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pep8 libpcre3 libpcre3-dev python2-dev libboost-all-dev
            sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
            sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
+           sudo apt-get install vera++
 
        - name: Install dependencies
          #uses: actions/cache@master
@@ -97,6 +115,17 @@ jobs:
        - name: Update shared library cache
          if: contains(matrix.os, 'ubuntu')
          run: sudo ldconfig
+
+       - name: Static Code Analysis
+         if: ${{ matrix.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYSIS' }}
+         run: |
+           chmod +x extras/gha_build.sh
+           ./extras/gha_build.sh
+         env:
+           xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
+           #CHANGED_FILES: ${CHANGED_FILES}
+           CHANGED_FILES: ${{env.CHANGED_FILES}}
+           #GET CHANGED FILES: https://github.com/marketplace/actions/get-changed-files
 
        - name: Minimal Build
          if: ${{ matrix.xNEST_BUILD_TYPE == 'MINIMAL' }}

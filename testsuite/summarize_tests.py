@@ -33,12 +33,15 @@ import os
 import sys
 
 
+assert int(jp.version.split('.')[0]) >= 2, 'junitparser version must be >= 2'
+
+
 def parse_result_file(fname):
 
     results = jp.JUnitXml.fromfile(fname)
-
+    assert all(len(case.result) == 1 for case in results if case.result), 'Case result has unexpected length > 1'
     failed_tests = ['.'.join((case.classname, case.name)) for case in results
-                    if case.result and not isinstance(case.result, jp.junitparser.Skipped)]
+                    if case.result and not isinstance(case.result[0], jp.junitparser.Skipped)]
 
     return {'Tests': results.tests,
             'Skipped': results.skipped,

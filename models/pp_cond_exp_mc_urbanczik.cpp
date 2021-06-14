@@ -293,12 +293,11 @@ nest::pp_cond_exp_mc_urbanczik::State_::State_( const State_& s )
 
 nest::pp_cond_exp_mc_urbanczik::State_& nest::pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
+  r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
   return *this;
 }
 
@@ -493,13 +492,6 @@ nest::pp_cond_exp_mc_urbanczik::~pp_cond_exp_mc_urbanczik()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::pp_cond_exp_mc_urbanczik::init_state_( const Node& proto )
-{
-  const pp_cond_exp_mc_urbanczik& pr = downcast< pp_cond_exp_mc_urbanczik >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::pp_cond_exp_mc_urbanczik::init_buffers_()

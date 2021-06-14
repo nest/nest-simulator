@@ -57,7 +57,7 @@ M_ERROR setverbosity
 {
   /item Set
   
-  % stimulating device
+  % stimulation device
   {
     ResetKernel
     << /resolution 1.0 /tics_per_ms 1000 >> SetKernelStatus
@@ -77,7 +77,7 @@ M_ERROR setverbosity
 {
   /item Set
   
-  % stimulating device
+  % stimulation device
   {
     ResetKernel
     << /resolution 1.0 /tics_per_ms 1000 >> SetKernelStatus

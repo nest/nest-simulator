@@ -269,14 +269,6 @@ nest::gif_psc_exp::gif_psc_exp( const gif_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_psc_exp::init_state_( const Node& proto )
-{
-  const gif_psc_exp& pr = downcast< gif_psc_exp >( proto );
-  S_ = pr.S_;
-  // sfa_elems_ and stc_elems_ are initialized in calibrate()
-}
-
-void
 nest::gif_psc_exp::init_buffers_()
 {
   B_.spikes_ex_.clear(); // includes resize

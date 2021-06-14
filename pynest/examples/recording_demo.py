@@ -19,12 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Recording examples
+"""
+Recording examples
 ------------------
 
 This script demonstrates how to select different recording backends
 and read the result data back in. The simulated network itself is
-rather boring with only a single poisson generater stimulating a
+rather boring with only a single poisson generator stimulating a
 single neuron, so we get some data.
 
 """

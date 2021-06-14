@@ -6,7 +6,19 @@
    background-color: #272525;
 }
 
-t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
+.rst-content code, .rst-content tt, code {
+    border: none;
+    font-size: 85%;
+    background: None;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+  t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal { 
+    color: #111;
+
+}
+.rst-content tt.xref, a .rst-content tt, .rst-content tt.xref, .rst-content code.xref { 
     color: #f63;
 }
 
@@ -304,4 +316,3 @@ html body div.wy-table-responsive .footnote td {
       padding: .4045em 5.663em !important;
   }
 } */
-

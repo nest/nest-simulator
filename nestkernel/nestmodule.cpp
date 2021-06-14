@@ -490,7 +490,8 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   if ( not nc->valid() )
   {
-    throw KernelException( "InvalidNodeCollection" );
+    throw KernelException(
+      "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
   size_t nc_size = nc->size();
@@ -574,7 +575,8 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   if ( not nc->valid() )
   {
-    throw KernelException( "InvalidNodeCollection" );
+    throw KernelException(
+      "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
   NodeCollectionMetadataPTR meta = nc->get_metadata();
@@ -3057,6 +3059,10 @@ NestModule::init( SLIInterpreter* i )
   register_parameter< ExponentialParameter >( "exponential" );
   register_parameter< NodePosParameter >( "position" );
   register_parameter< SpatialDistanceParameter >( "distance" );
+  register_parameter< GaussianParameter >( "gaussian" );
+  register_parameter< Gaussian2DParameter >( "gaussian2d" );
+  register_parameter< GammaParameter >( "gamma" );
+  register_parameter< ExpDistParameter >( "exp_distribution" );
 
 #ifdef HAVE_LIBNEUROSIM
   i->createcommand( "CGParse", &cgparse_sfunction );

@@ -183,36 +183,6 @@ nest::glif_cond::State_::State_( const Parameters_& p )
   y_[ V_M ] = 0.0; // initialize to membrane potential
 }
 
-nest::glif_cond::State_::State_( const State_& s )
-{
-  threshold_ = s.threshold_;
-  threshold_spike_ = s.threshold_spike_;
-  threshold_voltage_ = s.threshold_voltage_;
-  ASCurrents_ = s.ASCurrents_;
-  ASCurrents_sum_ = s.ASCurrents_sum_;
-  refractory_steps_ = s.refractory_steps_;
-  y_ = s.y_;
-}
-
-nest::glif_cond::State_& nest::glif_cond::State_::operator=( const State_& s )
-{
-
-  if ( this == &s ) // avoid assignment to self
-  {
-    return *this;
-  }
-
-  threshold_ = s.threshold_;
-  threshold_spike_ = s.threshold_spike_;
-  threshold_voltage_ = s.threshold_voltage_;
-  ASCurrents_ = s.ASCurrents_;
-  refractory_steps_ = s.refractory_steps_;
-  y_ = s.y_;
-
-  return *this;
-}
-
-
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
@@ -544,13 +514,6 @@ nest::glif_cond::~glif_cond()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::glif_cond::init_state_( const Node& proto )
-{
-  const glif_cond& pr = downcast< glif_cond >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::glif_cond::init_buffers_()

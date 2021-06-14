@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Campbell & Siegert approximation example
-----------------------------------------------
+"""
+Campbell & Siegert approximation example
+----------------------------------------
 
 Example script that applies Campbell's theorem and Siegert's rate
 approximation to and integrate-and-fire neuron.
@@ -32,8 +33,8 @@ simulation using the ``iaf_psc_alpha`` model
 
 
 
-References:
-~~~~~~~~~~~~
+References
+~~~~~~~~~~
 
  .. [1] Papoulis A (1991). Probability, Random Variables, and
         Stochastic Processes, McGraw-Hill
@@ -41,7 +42,7 @@ References:
         Phys Rev 81: 617-623
 
 Authors
-~~~~~~~~
+~~~~~~~
 
 S. Schrader, Siegert implentation by T. Tetzlaff
 """
@@ -105,8 +106,6 @@ for rate, weight in zip(rates, weights):
         tau_syn = tau_syn_ex
     else:
         tau_syn = tau_syn_in
-
-    t_psp = np.arange(0., 10. * (tau_m * ms + tau_syn * ms), 0.0001)
 
     # We define the form of a single PSP, which allows us to match the
     # maximal value to or chosen weight.
@@ -178,22 +177,18 @@ neurondict = {'V_th': V_th,
 # free membrane potential. In addition we choose a small resolution for
 # recording the membrane to collect good statistics.
 
-nest.SetDefaults('iaf_psc_alpha', neurondict)
-n = nest.Create('iaf_psc_alpha', n_neurons)
-n_free = nest.Create('iaf_psc_alpha', 1, {'V_th': 1e12})
-pg = nest.Create('poisson_generator', len(rates),
-                 [{'rate': float(rate_i)} for rate_i in rates])
-vm = nest.Create('voltmeter', 1, {'interval': .1})
+n = nest.Create('iaf_psc_alpha', n_neurons, params=neurondict)
+n_free = nest.Create('iaf_psc_alpha', params=dict(neurondict, V_th=1e12))
+pg = nest.Create('poisson_generator', len(rates), {'rate': rates})
+vm = nest.Create('voltmeter', params={'interval': .1})
 sr = nest.Create('spike_recorder')
 
 ###############################################################################
 # We connect devices and neurons and start the simulation.
 
-for indx in range(len(pg)):
-    nest.Connect(pg[indx], n,
-                 syn_spec={'weight': float(J[indx]), 'delay': 0.1})
-    nest.Connect(pg[indx], n_free, syn_spec={'weight': J[indx]})
-
+pg_n_synspec = {'weight': np.tile(J, ((n_neurons), 1)), 'delay': 0.1}
+nest.Connect(pg, n, syn_spec=pg_n_synspec)
+nest.Connect(pg, n_free, syn_spec={'weight': [J]})
 nest.Connect(vm, n_free)
 nest.Connect(n, sr)
 
@@ -204,11 +199,8 @@ nest.Simulate(simtime)
 # omitted so initial transients do not perturb our results. We then print the
 # results from theory and simulation.
 
-v_free = vm.get('events', 'V_m')[500:-1]
-print('mean membrane potential (actual / calculated): {0} / {1}'
-      .format(np.mean(v_free), mu * 1000))
-print('variance (actual / calculated): {0} / {1}'
-      .format(np.var(v_free), sigma2 * 1e6))
-print('firing rate (actual / calculated): {0} / {1}'
-      .format(nest.GetStatus(sr, 'n_events')[0] /
-              (n_neurons * simtime * ms), r))
+v_free = vm.events['V_m']
+Nskip = 500
+print(f'mean membrane potential (actual / calculated): {np.mean(v_free[Nskip:])} / {mu * 1000}')
+print(f'variance (actual / calculated): {np.var(v_free[Nskip:])} / {sigma2 * 1e6}')
+print(f'firing rate (actual / calculated): {sr.n_events / (n_neurons * simtime * ms)} / {r}')

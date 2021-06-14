@@ -34,6 +34,7 @@ PyNEST examples
    ../auto_examples/clopath_synapse_small_network
    ../auto_examples/tsodyks_depressing
    ../auto_examples/tsodyks_facilitating
+   ../auto_examples/urbanczik_synapse_example
 
 
 .. toctree::
@@ -92,7 +93,7 @@ PyNEST examples
 
 .. toctree::
    :maxdepth: 1
-   :caption: Spatially arranged networks examples
+   :caption: Spatially-stuctured networks examples
 
    ../auto_examples/spatial/conncomp
    ../auto_examples/spatial/conncon_sources

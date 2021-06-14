@@ -279,13 +279,6 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
  * ---------------------------------------------------------------- */
 
 void
-nest::siegert_neuron::init_state_( const Node& proto )
-{
-  const siegert_neuron& pr = downcast< siegert_neuron >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::siegert_neuron::init_buffers_()
 {
   // resize buffers

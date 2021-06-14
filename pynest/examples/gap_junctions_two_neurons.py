@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Gap Junctions: Two neuron example
---------------------------------------
+"""
+Gap Junctions: Two neuron example
+---------------------------------
 
 This script simulates two Hodgkin-Huxley neurons of type ``hh_psc_alpha_gap``
 connected by a gap junction. Both neurons receive a constant current of
@@ -49,8 +50,8 @@ vm = nest.Create('voltmeter', params={'interval': 0.1})
 # Then we set the constant current input, modify the inital membrane
 # potential of one of the neurons and connect the neurons to the ``voltmeter``.
 
-nest.SetStatus(neuron, {'I_e': 100.})
-nest.SetStatus(neuron[0], {'V_m': -10.})
+neuron.I_e = 100.
+neuron[0].V_m = -10.
 
 nest.Connect(vm, neuron, 'all_to_all')
 
@@ -70,15 +71,13 @@ nest.Connect(neuron, neuron,
 
 nest.Simulate(351.)
 
-senders = nest.GetStatus(vm, 'events')[0]['senders']
-times = nest.GetStatus(vm, 'events')[0]['times']
-V = nest.GetStatus(vm, 'events')[0]['V_m']
+senders = vm.events['senders']
+times = vm.events['times']
+v_m_values = vm.events['V_m']
 
 plt.figure(1)
-plt.plot(times[numpy.where(senders == 1)],
-         V[numpy.where(senders == 1)], 'r-')
-plt.plot(times[numpy.where(senders == 2)],
-         V[numpy.where(senders == 2)], 'g-')
+plt.plot(times[numpy.where(senders == 1)], v_m_values[numpy.where(senders == 1)], 'r-')
+plt.plot(times[numpy.where(senders == 2)], v_m_values[numpy.where(senders == 2)], 'g-')
 plt.xlabel('time (ms)')
 plt.ylabel('membrane potential (mV)')
 plt.show()

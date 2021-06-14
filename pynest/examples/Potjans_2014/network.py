@@ -81,7 +81,7 @@ class Network:
     def create(self):
         """ Creates all network nodes.
 
-        Neuronal populations and recording and stimulating devices are created.
+        Neuronal populations and recording and stimulation devices are created.
 
         """
         self.__create_neuronal_populations()
@@ -98,7 +98,7 @@ class Network:
         """ Connects the network.
 
         Recurrent connections among neurons of the neuronal populations are
-        established, and recording and stimulating devices are connected.
+        established, and recording and stimulation devices are connected.
 
         The ``self.__connect_*()`` functions use ``nest.Connect()`` calls which
         set up the postsynaptic connectivity.

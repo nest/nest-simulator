@@ -300,20 +300,19 @@ nest::RecordingBackendArbor::collect_and_exchange_spikes_()
 }
 
 void
-nest::RecordingBackendArbor::check_device_status( const DictionaryDatum& params ) const
+nest::RecordingBackendArbor::check_device_status( const DictionaryDatum& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendArbor::get_device_defaults( DictionaryDatum& params ) const
+nest::RecordingBackendArbor::get_device_defaults( DictionaryDatum& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendArbor::get_device_status( const nest::RecordingDevice& device,
-  DictionaryDatum& params_dictionary ) const
+nest::RecordingBackendArbor::get_device_status( const nest::RecordingDevice&, DictionaryDatum& ) const
 {
   // nothing to do
 }
@@ -327,12 +326,12 @@ nest::RecordingBackendArbor::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingBackendArbor::Parameters_::get( const RecordingBackendArbor& al, DictionaryDatum& d ) const
+nest::RecordingBackendArbor::Parameters_::get( const RecordingBackendArbor&, DictionaryDatum& ) const
 {
 }
 
 void
-nest::RecordingBackendArbor::Parameters_::set( const RecordingBackendArbor& al, const DictionaryDatum& d )
+nest::RecordingBackendArbor::Parameters_::set( const RecordingBackendArbor&, const DictionaryDatum& )
 {
 }
 

@@ -38,7 +38,7 @@ def parse_result_file(fname):
     results = jp.JUnitXml.fromfile(fname)
 
     failed_tests = ['.'.join((case.classname, case.name)) for case in results
-                    if case.result and not isinstance(case.result, jp.junitparser.Skipped)]
+                    if case.result and not isinstance(case.result[0], jp.junitparser.Skipped)]
 
     return {'Tests': results.tests,
             'Skipped': results.skipped,

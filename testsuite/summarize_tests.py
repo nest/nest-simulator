@@ -33,6 +33,9 @@ import os
 import sys
 
 
+assert int(jp.version.split('.')[0]) >= 2, 'junitparser version must be >= 2'
+
+
 def parse_result_file(fname):
 
     results = jp.JUnitXml.fromfile(fname)

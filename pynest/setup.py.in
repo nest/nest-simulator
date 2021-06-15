@@ -33,15 +33,18 @@ flags = dict(
 class install_command(install):
     user_options = install.user_options + [
         ('mpi=', None, 'enable MPI support. (OFF|ON|</path/to/mpi> [default=OFF])'),
+        ('jobs=', None, 'Amount of CMake jobs. All available cores by default.'),
     ]
 
     def initialize_options(self):
         install.initialize_options(self)
         self.mpi = None
+        self.jobs = None
 
     def finalize_options(self):
         install.finalize_options(self)
         opt["mpi"] = self.mpi
+        opt["j"] = self.jobs or ""
 
     def run(self):
         env = os.environ.copy()
@@ -57,7 +60,8 @@ class install_command(install):
         # Alias `python` to the current executable to make sure we install to the right
         # interpreter, then run the CMake install procedure on the packaged data folder.
         py_alias = f"alias python='{sys.executable}'"
-        cmake = "cmake data " + " ".join(cmake_flags) + "; make install -j"
+        j = opt.get("j", "")
+        cmake = "cmake data " + " ".join(cmake_flags) + "; make install -j " + j
         subprocess.check_call(f"{py_alias}; {cmake}", env=env, shell=True)
         # Continue on with install procedure
         install.run(self)

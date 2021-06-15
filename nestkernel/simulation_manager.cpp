@@ -71,7 +71,6 @@ nest::SimulationManager::initialize()
   simulated_ = false;
   exit_on_user_signal_ = false;
   inconsistent_state_ = false;
-  // reset_timers_for_dynamics();
 }
 
 void

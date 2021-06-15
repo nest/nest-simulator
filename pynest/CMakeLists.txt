@@ -112,10 +112,6 @@ if ( HAVE_PYTHON )
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/server
       )
 
-  install( DIRECTORY nest/projections/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/projections
-      )
-
   install( DIRECTORY nest/synapsemodels/
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/synapsemodels
       )

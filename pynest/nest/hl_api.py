@@ -44,9 +44,12 @@ _il.import_libs(__file__, globals(), 'lib', ignore=_ignore_modules)
 # With '__all__' we provide an explicit index of the package. Without any
 # imported submodules and any redundant functions we could minimize list.
 __all__ = [
+    'AllToAll',
+    'BuildNetwork',
     'Cleanup',
     'CollocatedSynapses',
     'Connect',
+    'ConnectImmediately',
     'ConnectionRules',
     'SynapseCollection',
     'CopyModel',
@@ -62,6 +65,9 @@ __all__ = [
     'EnableStructuralPlasticity',
     'FindCenterElement',
     'FindNearestElement',
+    'FixedIndegree',
+    'FixedOutdegree',
+    'FixedTotalNumber',
     'GetConnections',
     'GetDefaults',
     'GetKernelStatus',
@@ -77,6 +83,8 @@ __all__ = [
     'Mask',
     'Models',
     'NumProcesses',
+    'OneToOne',
+    'PairwiseBernoulli',
     'Parameter',
     'PlotLayer',
     'PlotProbabilityParameter',

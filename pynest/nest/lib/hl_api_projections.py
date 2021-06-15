@@ -24,10 +24,10 @@ Connection semantics prototype functions
 """
 
 import copy
-from ..lib.hl_api_connections import Connect as nestlib_Connect
+from .hl_api_connections import OldConnect as nestlib_Connect
 from ..ll_api import sps, sr
-from ..lib.hl_api_types import CollocatedSynapses
-from ..lib.hl_api_connection_helpers import _process_syn_spec, _process_spatial_projections, _connect_layers_needed
+from .hl_api_types import CollocatedSynapses
+from .hl_api_connection_helpers import _process_syn_spec, _process_spatial_projections, _connect_layers_needed
 from ..synapsemodels.hl_api_synapsemodels import SynapseModel
 
 __all__ = [

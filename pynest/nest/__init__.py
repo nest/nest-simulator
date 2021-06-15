@@ -54,7 +54,6 @@ from . import random                  # noqa
 from . import math                    # noqa
 from . import spatial_distributions   # noqa
 from . import logic                   # noqa
-from . import projections             # noqa
 from . import synapsemodels           # noqa
 
 # spatial needs to be imported last because of documentation generation

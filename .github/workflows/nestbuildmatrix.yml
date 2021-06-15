@@ -123,7 +123,6 @@ jobs:
            ./extras/gha_build.sh
          env:
            xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
-           #CHANGED_FILES: ${CHANGED_FILES}
            CHANGED_FILES: ${{env.CHANGED_FILES}}
            #GET CHANGED FILES: https://github.com/marketplace/actions/get-changed-files
 
@@ -166,3 +165,4 @@ jobs:
            python extras/parse_build_log.py gha_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: FULL
+	   

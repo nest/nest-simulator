@@ -297,7 +297,7 @@ public:
 
   // public stop watch for benchmarking purposes
   // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
-  Stopwatch sw_construction_connect;
+  Stopwatch sw_construction_connect; //!< Stopwatch measuring connection time
 
 private:
   /**

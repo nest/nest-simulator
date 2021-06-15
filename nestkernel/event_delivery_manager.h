@@ -333,8 +333,8 @@ private:
 #ifdef TIMER_DETAILED
   // private stop watches for benchmarking purposes
   // (intended for internal core developers, not for use in the public API)
-  Stopwatch sw_collocate_spike_data_;
-  Stopwatch sw_communicate_spike_data_;
+  Stopwatch sw_collocate_spike_data_;   //!< Stopwatch measuring collocation time
+  Stopwatch sw_communicate_spike_data_; //!< Stopwatch measuring communication time
 #endif
 };
 

@@ -311,7 +311,7 @@ private:
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
 
   // private stop watch for benchmarking purposes
-  Stopwatch sw_construction_create_;
+  Stopwatch sw_construction_create_; //!< Stopwatch measuring node creation time
 };
 
 inline index

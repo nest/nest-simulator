@@ -479,8 +479,6 @@ const Name tics_per_step( "tics_per_step" );
 const Name time_in_steps( "time_in_steps" );
 const Name time_simulate( "time_simulate" );
 const Name time( "time" );
-const Name time_collocate( "time_collocate" );
-const Name time_communicate( "time_communicate" );
 const Name times( "times" );
 const Name to_accumulator( "to_accumulator" );
 const Name to_do( "to_do" );

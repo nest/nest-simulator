@@ -56,7 +56,9 @@ class install_command(install):
         subprocess.check_call(f"{sys.executable} -m pip install --upgrade cython", env=env, shell=True)
         # Alias `python` to the current executable to make sure we install to the right
         # interpreter, then run the CMake install procedure on the packaged data folder.
-        subprocess.check_call(f"alias python='{sys.executable}'; cmake data; make install -j", env=env, shell=True)
+        py_alias = f"alias python='{sys.executable}'"
+        cmake = "cmake data " + " ".join(cmake_flags) + "; make install -j"
+        subprocess.check_call(f"{py_alias}; {cmake}", env=env, shell=True)
         # Continue on with install procedure
         install.run(self)
 

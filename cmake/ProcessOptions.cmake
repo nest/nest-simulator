@@ -410,14 +410,12 @@ function( NEST_PROCESS_WITH_PYTHON )
         set ( CMAKE_INSTALL_PREFIX "${Python_EnvRoot}" CACHE PATH "Default install prefix for the active Python interpreter" FORCE )
       endif ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
 
-      set( HAVE_PYTHON ON PARENT_SCOPE )
-
       # export found variables to parent scope
+      set( HAVE_PYTHON ON PARENT_SCOPE )
       set( Python_FOUND "${Python_FOUND}" PARENT_SCOPE )
       set( Python_EXECUTABLE ${Python_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON ${Python_EXECUTABLE} PARENT_SCOPE )
       set( Python_VERSION ${Python_VERSION} PARENT_SCOPE )
-
       set( Python_INCLUDE_DIRS "${Python_INCLUDE_DIRS}" PARENT_SCOPE )
       set( Python_LIBRARIES "${Python_LIBRARIES}" PARENT_SCOPE )
 
@@ -431,7 +429,6 @@ function( NEST_PROCESS_WITH_PYTHON )
           set( CYTHON_VERSION "${CYTHON_VERSION}" PARENT_SCOPE )
         endif ()
       endif ()
-      set( PYEXECDIR "${Python_SITELIB}" PARENT_SCOPE )
     endif ()
   elseif ( ${with-python} STREQUAL "OFF" )
   else ()

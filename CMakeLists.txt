@@ -83,7 +83,7 @@ set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuro
 ################################################################################
 
 # In general use the CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir> vars from
-# GNUInstallDirs (included after calling nest_process_with_python()), but the 
+# GNUInstallDirs (included after calling nest_process_with_python()), but the
 # CMAKE_INSTALL_DATADIR is usually just CMAKE_INSTALL_DATAROOTDIR
 # and we want it to be CMAKE_INSTALL_DATAROOTDIR/PROJECT_NAME
 set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative directory, where NEST installs its data (share/nest)" )
@@ -130,7 +130,7 @@ nest_set_default_compiler_flags()
 #            of GNUInstallDirs defining CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir>.
 nest_process_with_python()
 include( GNUInstallDirs )
-set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" )
+set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION}/site-packages" )
 nest_process_with_optimize()
 nest_process_with_debug()
 nest_process_with_intel_compiler_flags()

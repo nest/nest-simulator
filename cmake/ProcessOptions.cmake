@@ -438,6 +438,12 @@ function( NEST_PROCESS_WITH_PYTHON )
   endif ()
 endfunction()
 
+function( NEST_POST_PROCESS_WITH_PYTHON )
+  if ( Python_FOUND )
+    set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" PARENT_SCOPE )
+  endif()
+endfunction()
+
 function( NEST_PROCESS_WITH_OPENMP )
   # Find OPENMP
   if ( with-openmp )

@@ -28,6 +28,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "nest_time.h"
@@ -154,6 +155,11 @@ public:
   // TODO: rename / precisely how defined?
   delay get_to_step() const;
 
+  /**
+   * Set time measurements for internal profiling to zero (reg. sim. dyn.)
+   */
+  virtual void reset_timers_for_dynamics();
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -187,6 +193,15 @@ private:
                             //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
+
+  Stopwatch sw_simulate_; //!< Stopwatch measuring simulation phase
+#ifdef TIMER_DETAILED
+  // private stop watches for benchmarking purposes
+  // (intended for internal core developers, not for use in the public API)
+  Stopwatch sw_deliver_spike_data_; //!< Stopwatch measuring spike delivery
+  Stopwatch sw_gather_spike_data_;  //!< Stopwatch measuring gathering of spike data
+  Stopwatch sw_update_;             //!< Stopwatch measuring update
+#endif
 };
 
 inline Time const&

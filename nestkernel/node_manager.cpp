@@ -124,6 +124,8 @@ NodeManager::initialize()
   // explicitly force construction of nodes_vec_ to ensure consistent state
   nodes_vec_network_size_ = 0;
   ensure_valid_thread_local_ids();
+
+  sw_construction_create_.reset();
 }
 
 void
@@ -185,6 +187,8 @@ NodeManager::get_status( index idx )
 
 index NodeManager::add_node( index mod, long n ) // no_p
 {
+  sw_construction_create_.start();
+
   assert( current_ != 0 );
   assert( root_ != 0 );
 
@@ -476,6 +480,8 @@ index NodeManager::add_node( index mod, long n ) // no_p
       "NOTE: Mixing precise-spiking and normal neuron models may "
       "lead to inconsistent results." );
   }
+
+  sw_construction_create_.stop();
 
   return max_gid - 1;
 }
@@ -985,6 +991,7 @@ void
 NodeManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, names::network_size, size() );
+  def< double >( d, names::time_construction_create, sw_construction_create_.elapsed() );
 
   std::map< long, size_t > sna_cts = local_nodes_.get_step_ctr();
   DictionaryDatum cdict( new Dictionary );

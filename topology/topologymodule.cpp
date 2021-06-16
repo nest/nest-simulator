@@ -983,6 +983,7 @@ TopologyModule::GetGlobalChildren_i_M_aFunction::execute(
 void
 TopologyModule::ConnectLayers_i_i_DFunction::execute( SLIInterpreter* i ) const
 {
+  kernel().connection_manager.sw_construction_connect.start();
   i->assert_stack_load( 3 );
 
   index source_gid = getValue< long >( i->OStack.pick( 2 ) );
@@ -994,6 +995,7 @@ TopologyModule::ConnectLayers_i_i_DFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop( 3 );
   i->EStack.pop();
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 

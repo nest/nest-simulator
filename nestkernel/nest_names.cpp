@@ -466,11 +466,19 @@ const Name theta_eq( "theta_eq" );
 const Name thread( "thread" );
 const Name thread_local_id( "thread_local_id" );
 const Name tics_per_ms( "tics_per_ms" );
+#ifdef TIMER_DETAILED
+const Name time_collocate_spike_data( "time_collocate_spike_data" );
+const Name time_communicate_spike_data( "time_communicate_spike_data" );
+const Name time_deliver_spike_data( "time_deliver_spike_data" );
+const Name time_gather_spike_data( "time_gather_spike_data" );
+const Name time_update( "time_update" );
+#endif
+const Name time_construction_connect( "time_construction_connect" );
+const Name time_construction_create( "time_construction_create" );
 const Name tics_per_step( "tics_per_step" );
 const Name time_in_steps( "time_in_steps" );
+const Name time_simulate( "time_simulate" );
 const Name time( "time" );
-const Name time_collocate( "time_collocate" );
-const Name time_communicate( "time_communicate" );
 const Name times( "times" );
 const Name to_accumulator( "to_accumulator" );
 const Name to_do( "to_do" );

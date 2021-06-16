@@ -866,6 +866,7 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 {
+  kernel().connection_manager.sw_construction_connect.start();
   i->assert_stack_load( 3 );
 
   if ( kernel().vp_manager.get_num_threads() > 1 )
@@ -893,6 +894,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop( 3 );
   i->EStack.pop();
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 /* BeginDocumentation
@@ -930,6 +932,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
 {
+  kernel().connection_manager.sw_construction_connect.start();
   i->assert_stack_load( 1 );
 
   if ( kernel().vp_manager.get_num_threads() > 1 )
@@ -942,6 +945,7 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
   kernel().connection_manager.data_connect_connectome( connectome );
   i->OStack.pop();
   i->EStack.pop();
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 /* BeginDocumentation

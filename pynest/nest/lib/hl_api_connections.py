@@ -39,7 +39,7 @@ from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
 __all__ = [
-    'Connect',
+    'OldConnect',
     'Disconnect',
     'GetConnections',
 ]
@@ -114,7 +114,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
 
 @check_stack
-def Connect(pre, post=None, conn_spec=None, syn_spec=None,
+def OldConnect(pre, post=None, conn_spec=None, syn_spec=None,
             return_synapsecollection=False):
     """
     Connect `pre` nodes to `post` nodes.

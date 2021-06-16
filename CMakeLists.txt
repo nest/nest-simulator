@@ -130,7 +130,7 @@ nest_set_default_compiler_flags()
 #            of GNUInstallDirs defining CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir>.
 nest_process_with_python()
 include( GNUInstallDirs )
-set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION}/site-packages" )
+set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" )
 nest_process_with_optimize()
 nest_process_with_debug()
 nest_process_with_intel_compiler_flags()

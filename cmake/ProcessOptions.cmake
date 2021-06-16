@@ -416,6 +416,8 @@ function( NEST_PROCESS_WITH_PYTHON )
       set( Python_EXECUTABLE ${Python_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON ${Python_EXECUTABLE} PARENT_SCOPE )
       set( Python_VERSION ${Python_VERSION} PARENT_SCOPE )
+      set( Python_VERSION_MAJOR ${Python_VERSION_MAJOR} PARENT_SCOPE )
+      set( Python_VERSION_MINOR ${Python_VERSION_MINOR} PARENT_SCOPE )
       set( Python_INCLUDE_DIRS "${Python_INCLUDE_DIRS}" PARENT_SCOPE )
       set( Python_LIBRARIES "${Python_LIBRARIES}" PARENT_SCOPE )
 

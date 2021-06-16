@@ -399,12 +399,12 @@ function( NEST_PROCESS_WITH_PYTHON )
         execute_process( COMMAND "${Python_EXECUTABLE}" "-c"
           "import sys, os; print(int(bool(os.environ.get('CONDA_DEFAULT_ENV', False)) or (sys.prefix != sys.base_prefix)))"
           OUTPUT_VARIABLE Python_InVirtualEnv OUTPUT_STRIP_TRAILING_WHITESPACE )
-          
+
         if ( NOT Python_InVirtualEnv AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
           message( FATAL_ERROR "No virtual Python environment found and no installation prefix specified. "
             "Please either build and install NEST in a virtual Python environment or specify CMake option -DCMAKE_INSTALL_PREFIX=<nest_install_dir>.")
         endif()
-      
+
         # Setting CMAKE_INSTALL_PREFIX effects the inclusion of GNUInstallDirs defining CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir>
         get_filename_component( Python_EnvRoot "${Python_SITELIB}/../../.." ABSOLUTE)
         set ( CMAKE_INSTALL_PREFIX "${Python_EnvRoot}" CACHE PATH "Default install prefix for the active Python interpreter" FORCE )
@@ -431,7 +431,7 @@ function( NEST_PROCESS_WITH_PYTHON )
           set( CYTHON_VERSION "${CYTHON_VERSION}" PARENT_SCOPE )
         endif ()
       endif ()
-      set( PYEXECDIR "lib/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" PARENT_SCOPE )
+      set( PYEXECDIR "${Python_SITELIB}" PARENT_SCOPE )
     endif ()
   elseif ( ${with-python} STREQUAL "OFF" )
   else ()

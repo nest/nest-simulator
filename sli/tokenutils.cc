@@ -288,15 +288,6 @@ getValue< std::vector< double > >( const Token& t )
     return **dvd;
   }
 
-  // try IntVectorDatum next
-  IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( t.datum() );
-  if ( ivd )
-  {
-    std::vector< double > data( ivd->get()->begin(), ivd->get()->end() );
-    return data;
-  }
-
-  // ok, try ArrayDatum
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( t.datum() );
   if ( ad )
   {

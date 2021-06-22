@@ -41,7 +41,6 @@ nest::Compartment::Compartment( const long compartment_index,
   , n_passed( 0 )
 {
   compartment_currents = CompartmentCurrents(compartment_params);
-  // etype = EType( compartment_params );
 };
 
 void
@@ -52,6 +51,18 @@ nest::Compartment::init()
 
     // initialize the buffer
     currents.clear();
+}
+
+std::map< std::string, double* >
+nest::Compartment::get_recordables()
+{
+    std::map< std::string, double* > recordables =
+        compartment_currents.get_recordables();
+
+    recordables.insert(recordables.begin(), recordables.end());
+    recordables["v_comp"] = &v_comp;
+
+    return recordables;
 }
 
 // for matrix construction
@@ -92,10 +103,6 @@ nest::Compartment::construct_matrix_element( const long lag )
         ff -= (*child_it).gc * (v_comp - (*child_it).v_comp) / 2.;
     }
 
-    // // add the channel contribution
-    // std::pair< double, double > gf_chan = etype.f_numstep(v_comp, dt);
-    // gg += gf_chan.first;
-    // ff += gf_chan.second;
     // add all currents to compartment
     std::pair< double, double > gi = compartment_currents.f_numstep( v_comp, dt, lag );
     gg += gi.first;

@@ -68,6 +68,7 @@ public:
 
     // initialization
     void init();
+    std::map< std::string, double* > get_recordables();
 
     // matrix construction
     void construct_matrix_element( const long lag );

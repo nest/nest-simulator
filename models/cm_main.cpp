@@ -42,8 +42,10 @@ nest::cm_main::cm_main()
   , syn_buffers_( 0 )
   , logger_( *this )
   , V_th_( -55.0 )
+  , recordables_counter( 0 )
 {
   recordablesMap_.create( *this );
+  recordables_values.resize( 0 );
 }
 
 nest::cm_main::cm_main( const cm_main& n )
@@ -52,7 +54,9 @@ nest::cm_main::cm_main( const cm_main& n )
   , syn_buffers_( n.syn_buffers_ )
   , logger_( *this )
   , V_th_( n.V_th_ )
+  , recordables_counter( 0 )
 {
+  recordables_values.resize( 0 );
 }
 
 /* ----------------------------------------------------------------
@@ -74,16 +78,140 @@ nest::cm_main::init_buffers_()
 void
 cm_main::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
 {
+
+  int kk = 0;
+  std::cout << std::endl;
+  std::cout << "add_compartment 0" << std::endl;
+  for (auto rec_it = recordables_values.begin(); rec_it != recordables_values.end(); rec_it++)
+  {
+    std::cout << "recordables[" << kk << "] = " << recordables_names[kk] << ": " << *rec_it << "->" << **rec_it << std::endl;
+    kk++;
+  }
+
+
+  if (compartment_idx > 1){
+    std::cout << "add_compartment 0.5" << std::endl;
+
+    Compartment* ccc = c_tree_.get_compartment( 0 );
+    std::map< std::string, double* > rrr = ccc->get_recordables();
+
+    for (auto rec_it = rrr.begin(); rec_it != rrr.end(); rec_it++)
+    {
+      std::cout << "recordable " << rec_it->first << " = " << rec_it->second << "->" << *rec_it->second << std::endl;
+    }
+    Compartment* cccc = c_tree_.get_compartment( 1 );
+    std::map< std::string, double* > rrrr = cccc->get_recordables();
+
+    for (auto rec_it = rrrr.begin(); rec_it != rrrr.end(); rec_it++)
+    {
+      std::cout << "recordable " << rec_it->first << " = " << rec_it->second << "->" << *rec_it->second << std::endl;
+    }
+  }
+
   c_tree_.add_compartment( compartment_idx, parent_compartment_idx, compartment_params);
 
-  // to enable recording the voltage of the current compartment
-  recordablesMap_.insert( "V_m_" + std::to_string(compartment_idx),
-                          DataAccessFunctor< cm_main >( *this, compartment_idx ) );
+
+  if (compartment_idx > 1){
+    std::cout << "add_compartment 1.5" << std::endl;
+
+    Compartment* ccc = c_tree_.get_compartment( 0 );
+    std::map< std::string, double* > rrr = ccc->get_recordables();
+
+    for (auto rec_it = rrr.begin(); rec_it != rrr.end(); rec_it++)
+    {
+      std::cout << "recordable " << rec_it->first << " = " << rec_it->second << "->" << *rec_it->second << std::endl;
+    }
+    Compartment* cccc = c_tree_.get_compartment( 1 );
+    std::map< std::string, double* > rrrr = cccc->get_recordables();
+
+    for (auto rec_it = rrrr.begin(); rec_it != rrrr.end(); rec_it++)
+    {
+      std::cout << "recordable " << rec_it->first << " = " << rec_it->second << "->" << *rec_it->second << std::endl;
+    }
+  }
+
+
+  kk = 0;
+  std::cout << "add_compartment 1" << std::endl;
+  for (auto rec_it = recordables_values.begin(); rec_it != recordables_values.end(); rec_it++)
+  {
+    std::cout << "recordables[" << kk << "] = " << recordables_names[kk] << ": " << *rec_it << "->" << **rec_it << std::endl;
+    kk++;
+  }
+
+  // get the map of all recordables (i.e. all state variables) of the compartment
+  Compartment* compartment = c_tree_.get_compartment( compartment_idx );
+  std::map< std::string, double* > recordables = compartment->get_recordables();
+
+
+  kk = 0;
+  std::cout << "add_compartment 2" << std::endl;
+  for (auto rec_it = recordables_values.begin(); rec_it != recordables_values.end(); rec_it++)
+  {
+    std::cout << "recordables[" << kk << "] = " << recordables_names[kk] << ": " << *rec_it << "->" << **rec_it << std::endl;
+    kk++;
+  }
+
+  if (compartment_idx > 1){
+    std::cout << "add_compartment 2.5" << std::endl;
+
+    Compartment* ccc = c_tree_.get_compartment( 0 );
+    std::map< std::string, double* > rrr = ccc->get_recordables();
+
+    for (auto rec_it = rrr.begin(); rec_it != rrr.end(); rec_it++)
+    {
+      std::cout << "recordable " << rec_it->first << " = " << rec_it->second << "->" << *rec_it->second << std::endl;
+    }
+    Compartment* cccc = c_tree_.get_compartment( 1 );
+    std::map< std::string, double* > rrrr = cccc->get_recordables();
+
+    for (auto rec_it = rrrr.begin(); rec_it != rrrr.end(); rec_it++)
+    {
+      std::cout << "recordable " << rec_it->first << " = " << rec_it->second << "->" << *rec_it->second << std::endl;
+    }
+  }
+
+  for (auto rec_it = recordables.begin(); rec_it != recordables.end(); rec_it++)
+  {
+
+
+    // std::cout << "recordable " << rec_it->first << " = " << rec_it->second << "->" << *rec_it->second << std::endl;
+
+    // add the recordable value (i.e. pointer to the state variable) to the vector
+    recordables_names.push_back( rec_it->first );
+    recordables_values.push_back( rec_it->second );
+    // add the recordable to the recordable_name -> recordable_index map
+    recordablesMap_.insert( rec_it->first + std::to_string(compartment_idx),
+                            DataAccessFunctor< cm_main >( *this, recordables_counter ) );
+
+    recordables_counter++;
+  }
+
+
+  kk = 0;
+  std::cout << "add_compartment 3" << std::endl;
+  for (auto rec_it = recordables_values.begin(); rec_it != recordables_values.end(); rec_it++)
+  {
+    std::cout << "recordables[" << kk << "] = " << recordables_names[kk] << ": " << *rec_it << "->" << **rec_it << std::endl;
+    kk++;
+  }
+
 }
 
 size_t
 cm_main::add_receptor( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params )
 {
+
+
+  int kk = 0;
+  std::cout << std::endl;
+  std::cout << "add_receptor 1" << std::endl;
+  for (auto rec_it = recordables_values.begin(); rec_it != recordables_values.end(); rec_it++)
+  {
+    std::cout << "recordables[" << kk << "] = " << recordables_names[kk] << ": " << *rec_it << "->" << **rec_it << std::endl;
+    kk++;
+  }
+
   // create a ringbuffer to collect spikes for the receptor
   std::shared_ptr< RingBuffer > buffer = std::shared_ptr< RingBuffer >( new RingBuffer() );
 
@@ -91,9 +219,34 @@ cm_main::add_receptor( const long compartment_idx, const std::string& type, cons
   const size_t syn_idx = syn_buffers_.size();
   syn_buffers_.push_back( buffer );
 
-  // add the synapse to the compartment
+  // add the receptor to the compartment
   Compartment* compartment = c_tree_.get_compartment( compartment_idx );
-  compartment->compartment_currents.add_synapse_with_buffer( type, buffer, receptor_params );
+  std::map< std::string, double* > recordables =
+          compartment->compartment_currents.add_synapse_with_buffer( type, buffer, receptor_params );
+
+  // add the recordables for the receptor
+  for (auto rec_it = recordables.begin(); rec_it != recordables.end(); rec_it++)
+  {
+    std::cout << "recordable " << rec_it->first << " = " << rec_it->second << "->" << *rec_it->second << std::endl;
+
+    // add the recordable value (i.e. pointer to the state variable) to the vector
+    recordables_names.push_back( rec_it->first );
+    recordables_values.push_back( rec_it->second );
+    // add the recordable to the recordable_name -> recordable_index map
+    recordablesMap_.insert( rec_it->first + std::to_string(syn_idx),
+                            DataAccessFunctor< cm_main >( *this, recordables_counter ) );
+
+    recordables_counter++;
+  }
+
+
+  kk = 0;
+  std::cout << "add_receptor 2" << std::endl;
+  for (auto rec_it = recordables_values.begin(); rec_it != recordables_values.end(); rec_it++)
+  {
+    std::cout << "recordables[" << kk << "] = " << recordables_names[kk] << ": " << *rec_it << "->" << **rec_it << std::endl;
+    kk++;
+  }
 
   return syn_idx;
 }
@@ -101,8 +254,25 @@ cm_main::add_receptor( const long compartment_idx, const std::string& type, cons
 void
 nest::cm_main::calibrate()
 {
+
+  int kk = 0;
+  std::cout << "calibrate 1" << std::endl;
+  for (auto rec_it = recordables_values.begin(); rec_it != recordables_values.end(); rec_it++)
+  {
+    std::cout << "recordables[" << kk << "] = " << recordables_names[kk] << ": " << *rec_it << "->" << **rec_it << std::endl;
+    kk++;
+  }
+
   logger_.init();
   c_tree_.init();
+
+  kk = 0;
+  std::cout << "calibrate 2" << std::endl;
+  for (auto rec_it = recordables_values.begin(); rec_it != recordables_values.end(); rec_it++)
+  {
+    std::cout << "recordables[" << kk << "] = " << recordables_names[kk] << ": " << *rec_it << "->" << **rec_it << std::endl;
+    kk++;
+  }
 }
 
 /* ----------------------------------------------------------------

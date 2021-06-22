@@ -53,23 +53,24 @@ nest.Connect(sg2, cm, syn_spec={
 nest.Connect(sg3, cm, syn_spec={
     'synapse_model': 'static_synapse', 'weight': .3, 'delay': 0.5, 'receptor_type': syn_idx_GABA})
 
-# # create a current generator
-dcg = nest.Create('dc_generator', {'amplitude': 1.})
-# connect the current generator to compartment 1
-nest.Connect(dcg, cm, syn_spec={
-    'synapse_model': 'static_synapse', 'weight': 1., 'delay': 0.1, 'receptor_type': 1})
+# # # create a current generator
+# dcg = nest.Create('dc_generator', {'amplitude': 1.})
+# # connect the current generator to compartment 1
+# nest.Connect(dcg, cm, syn_spec={
+#     'synapse_model': 'static_synapse', 'weight': 1., 'delay': 0.1, 'receptor_type': 1})
 
 # create a multimeter to measure the three voltages
-mm = nest.Create('multimeter', 1, {'record_from': ['V_m_0', 'V_m_1', 'V_m_2'], 'interval': .1})
+mm = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp2'], 'interval': .1})
 # connect the multimeter to the compartmental model
 nest.Connect(mm, cm)
 
-nest.Simulate(400.)
+# nest.Simulate(400.)
+nest.Simulate(.2)
 res = nest.GetStatus(mm, 'events')[0]
 
-plt.plot(res['times'], res['V_m_0'], c='b', label='V_m_0')
-plt.plot(res['times'], res['V_m_1'], c='r', label='V_m_1')
-plt.plot(res['times'], res['V_m_2'], c='g', label='V_m_2')
+plt.plot(res['times'], res['v_comp0'], c='b', label='v_comp0')
+plt.plot(res['times'], res['v_comp1'], c='r', label='v_comp1')
+plt.plot(res['times'], res['v_comp2'], c='g', label='v_comp2')
 plt.legend()
 
-plt.show()
+# plt.show()

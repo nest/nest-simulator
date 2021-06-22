@@ -22,6 +22,15 @@ nest::Na::Na(const DictionaryDatum& channel_params)
         e_Na_ = getValue< double >( channel_params, "e_Na" );
 }
 
+
+std::map< std::string, double* > nest::Na::get_recordables()
+{
+  std::map< std::string, double* > recordables = {{"m_Na_", &m_Na_},
+                                                  {"h_Na_", &h_Na_}};
+  return recordables;
+}
+
+
 std::pair< double, double > nest::Na::f_numstep( const double v_comp, const double dt)
 {
   double g_val = 0., i_val = 0.;
@@ -78,6 +87,14 @@ nest::K::K( const DictionaryDatum& channel_params )
         e_K_ = getValue< double >( channel_params, "e_K" );
 }
 
+
+
+std::map< std::string, double* > nest::K::get_recordables()
+{
+  std::map< std::string, double* > recordables = {{"n_K_", &n_K_}};
+  return recordables;
+}
+
 std::pair< double, double > nest::K::f_numstep( const double v_comp, const double dt)
 {
   double g_val = 0., i_val = 0.;
@@ -127,6 +144,13 @@ nest::AMPA::AMPA( std::shared_ptr< RingBuffer >  b_spikes, const DictionaryDatum
   b_spikes_ = b_spikes;
 }
 
+std::map< std::string, double* > nest::AMPA::get_recordables()
+{
+  std::map< std::string, double* > recordables = {{"g_r_AMPA_", &g_r_AMPA_},
+                                                  {"g_d_AMPA_", &g_d_AMPA_}};
+  return recordables;
+}
+
 std::pair< double, double > nest::AMPA::f_numstep( const double v_comp, const double dt, const long lag )
 {
   // construct propagators
@@ -134,15 +158,15 @@ std::pair< double, double > nest::AMPA::f_numstep( const double v_comp, const do
   double prop_d = std::exp( -dt / tau_d_ );
 
   // update conductance
-  g_r_ *= prop_r; g_d_ *= prop_d;
+  g_r_AMPA_ *= prop_r; g_d_AMPA_ *= prop_d;
 
   // add spikes
   double s_val = b_spikes_->get_value( lag ) * g_norm_;
-  g_r_ -= s_val;
-  g_d_ += s_val;
+  g_r_AMPA_ -= s_val;
+  g_d_AMPA_ += s_val;
 
   // compute synaptic conductance
-  double g_AMPA = g_r_ + g_d_;
+  double g_AMPA = g_r_AMPA_ + g_d_AMPA_;
 
   // total current
   double i_tot = g_AMPA * ( e_rev_ - v_comp );
@@ -179,6 +203,14 @@ nest::GABA::GABA( std::shared_ptr< RingBuffer >  b_spikes, const DictionaryDatum
   b_spikes_ = b_spikes;
 }
 
+
+std::map< std::string, double* > nest::GABA::get_recordables()
+{
+  std::map< std::string, double* > recordables = {{"g_r_GABA_", &g_r_GABA_},
+                                                  {"g_d_GABA_", &g_d_GABA_}};
+  return recordables;
+}
+
 std::pair< double, double > nest::GABA::f_numstep( const double v_comp, const double dt, const long lag )
 {
   // construct propagators
@@ -186,15 +218,15 @@ std::pair< double, double > nest::GABA::f_numstep( const double v_comp, const do
   double prop_d = std::exp( -dt / tau_d_ );
 
   // update conductance
-  g_r_ *= prop_r; g_d_ *= prop_d;
+  g_r_GABA_ *= prop_r; g_d_GABA_ *= prop_d;
 
   // add spikes
   double s_val = b_spikes_->get_value( lag ) * g_norm_;
-  g_r_ -= s_val;
-  g_d_ += s_val;
+  g_r_GABA_ -= s_val;
+  g_d_GABA_ += s_val;
 
   // compute synaptic conductance
-  double g_GABA = g_r_ + g_d_;
+  double g_GABA = g_r_GABA_ + g_d_GABA_;
 
   // total current
   double i_tot = g_GABA * ( e_rev_ - v_comp );
@@ -231,21 +263,29 @@ nest::NMDA::NMDA( std::shared_ptr< RingBuffer >  b_spikes, const DictionaryDatum
   b_spikes_ = b_spikes;
 }
 
+
+std::map< std::string, double* > nest::NMDA::get_recordables()
+{
+  std::map< std::string, double* > recordables = {{"g_r_NMDA_", &g_r_NMDA_},
+                                                  {"g_d_NMDA_", &g_d_NMDA_}};
+  return recordables;
+}
+
 std::pair< double, double > nest::NMDA::f_numstep( const double v_comp, const double dt, const long lag )
 {
   double prop_r = std::exp( -dt / tau_r_ );
   double prop_d = std::exp( -dt / tau_d_ );
 
   // update conductance
-  g_r_ *= prop_r; g_d_ *= prop_d;
+  g_r_NMDA_ *= prop_r; g_d_NMDA_ *= prop_d;
 
   // add spikes
   double s_val = b_spikes_->get_value( lag ) * g_norm_;
-  g_r_ -= s_val;
-  g_d_ += s_val;
+  g_r_NMDA_ -= s_val;
+  g_d_NMDA_ += s_val;
 
   // compute conductance window
-  double g_NMDA = g_r_ + g_d_;
+  double g_NMDA = g_r_NMDA_ + g_d_NMDA_;
 
   // total current
   double i_tot = g_NMDA * NMDAsigmoid( v_comp ) * (e_rev_ - v_comp);
@@ -296,6 +336,15 @@ nest::AMPA_NMDA::AMPA_NMDA( std::shared_ptr< RingBuffer >  b_spikes, const Dicti
   b_spikes_ = b_spikes;
 }
 
+std::map< std::string, double* > nest::AMPA_NMDA::get_recordables()
+{
+  std::map< std::string, double* > recordables = {{"g_r_AN_AMPA_", &g_r_AN_AMPA_},
+                                                  {"g_d_AN_AMPA_", &g_d_AN_AMPA_},
+                                                  {"g_r_AN_NMDA_", &g_r_AN_NMDA_},
+                                                  {"g_d_AN_NMDA_", &g_d_AN_NMDA_}};
+  return recordables;
+}
+
 std::pair< double, double > nest::AMPA_NMDA::f_numstep( const double v_comp, const double dt, const long lag )
 {
   double prop_r_AMPA = std::exp( -dt / tau_r_AMPA_ );
@@ -304,21 +353,21 @@ std::pair< double, double > nest::AMPA_NMDA::f_numstep( const double v_comp, con
   double prop_d_NMDA = std::exp( -dt / tau_d_NMDA_ );
 
   // update conductance
-  g_r_AMPA_ *= prop_r_AMPA; g_d_AMPA_ *= prop_d_AMPA;
-  g_r_NMDA_ *= prop_r_NMDA; g_d_NMDA_ *= prop_d_NMDA;
+  g_r_AN_AMPA_ *= prop_r_AMPA; g_d_AN_AMPA_ *= prop_d_AMPA;
+  g_r_AN_NMDA_ *= prop_r_NMDA; g_d_AN_NMDA_ *= prop_d_NMDA;
 
   // add spikes
   double s_val_ = b_spikes_->get_value( lag );
   double s_val = s_val_ * g_norm_AMPA_;
-  g_r_AMPA_ -= s_val;
-  g_d_AMPA_ += s_val;
+  g_r_AN_AMPA_ -= s_val;
+  g_d_AN_AMPA_ += s_val;
   s_val = s_val_ * g_norm_NMDA_;
-  g_r_NMDA_ -= s_val;
-  g_d_NMDA_ += s_val;
+  g_r_AN_NMDA_ -= s_val;
+  g_d_AN_NMDA_ += s_val;
 
   // compute conductance window
-  double g_AMPA = g_r_AMPA_ + g_d_AMPA_;
-  double g_NMDA = g_r_NMDA_ + g_d_NMDA_;
+  double g_AMPA = g_r_AN_AMPA_ + g_d_AN_AMPA_;
+  double g_NMDA = g_r_AN_NMDA_ + g_d_AN_NMDA_;
 
   // total current
   double i_tot = ( g_AMPA + NMDA_ratio_ * g_NMDA * NMDAsigmoid( v_comp ) ) * (e_rev_ - v_comp);

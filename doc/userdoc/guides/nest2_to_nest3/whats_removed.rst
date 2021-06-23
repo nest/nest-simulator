@@ -18,7 +18,7 @@ Subnets are gone. Instead NodeCollections should be used to group and organize n
   +---------------------------------------------+---------------------------------------+
 
 Printing the network as a tree of subnets is no longer possible. The
-``PrintNetwork()`` function has been replaced with ``PrintNodes()``, which
+``PrintNetwork()`` function has been replaced with :py:func:`.PrintNodes`, which
 prints ID ranges and model names of the nodes in the network.
 
   +----------------------------------------------+---------------------------------------+
@@ -55,7 +55,7 @@ be used instead.
   | spike_detector                               | spike_recorder                                |
   +----------------------------------------------+-----------------------------------------------+
 
-Furthermore, the model `iaf_tum_2000` has been renamed to `iaf_psc_exp_htum`. iaf_psc_exp_htum is
+Furthermore, the model ``iaf_tum_2000`` has been renamed to ``iaf_psc_exp_htum``. iaf_psc_exp_htum is
 the exact same model as iaf_tum_2000, it has just been renamed to match NEST's naming conventions.
 
 Functions

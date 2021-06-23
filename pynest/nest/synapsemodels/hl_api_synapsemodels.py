@@ -49,16 +49,28 @@ __all__ = [
     'tsodyks_hom',
     'urbanczik',
     'vogels_sprekeler',
+    'SynapseModel'
 ]
 
 
 class SynapseModel:
-    def __init__(self, model, **kwargs):
-        self.model = model
+    def __init__(self, synapse_model, **kwargs):
+        self.synapse_model = synapse_model
         self.specs = kwargs
 
     def to_dict(self):
-        return dict(self.specs, synapse_model=self.model)
+        return dict(self.specs, synapse_model=self.synapse_model)
+
+    def __getattr__(self, attr):
+        return super().__getattribute__(attr)
+
+    def __setattr__(self, attr, value):
+        if attr in ['synapse_model', 'specs']:
+            return super().__setattr__(attr, value)
+        else: self.specs[attr] = value
+    
+    def __str__(self):
+        return f'synapse_model: {self.synapse_model}, specs: {self.specs}'
 
 
 class bernoulli(SynapseModel):
@@ -93,7 +105,7 @@ class ht(SynapseModel):
 
 class quantal_stp(SynapseModel):
     def __init__(self, **kwargs):
-        super().__init__('qunatal_stp_synapse', **kwargs)
+        super().__init__('quantal_stp_synapse', **kwargs)
 
 
 class rate_connection_delayed(SynapseModel):
@@ -148,7 +160,7 @@ class stdp(SynapseModel):
 
 class stdp_facetshw_hom(SynapseModel):
     def __init__(self, **kwargs):
-        super().__init__('stdp_synapse_facetshw_hom', **kwargs)
+        super().__init__('stdp_facetshw_synapse_hom', **kwargs)
 
 
 class stdp_hom(SynapseModel):

@@ -275,7 +275,8 @@ class AEIFTestCase(unittest.TestCase):
         for model, mm in iter(multimeters.items()):
             nest.SetStatus(mm, {"interval": self.resol,
                                 "record_from": ["V_m", "w"]})
-            nest.Connect(mm, neurons[model])
+            projection = nest.AllToAll(mm, neurons[model])
+            nest.Connect(projection)
         nest.Simulate(simtime)
 
         # relative differences: interpolate LSODAR to match NEST times
@@ -309,22 +310,26 @@ class AEIFTestCase(unittest.TestCase):
                        "psc_exp": ["V_m", "I_syn_ex"],
                        "psc_alpha": ["V_m", "I_syn_ex"],
                        "psc_delta": ["V_m"]}
-        nest.Connect(pg, pn)
+        projection = nest.AllToAll(pg, pn)
+        nest.Connect(projection)
         for model, mm in iter(multimeters.items()):
             syn_type = di_syn_types[model]
             key = syn_type[:syn_type.index('_')]
             nest.SetStatus(mm, {"interval": self.resol,
                                 "record_from": recordables[syn_type]})
-            nest.Connect(mm, neurons[model])
+            projection = nest.AllToAll(mm, neurons[model])
+            nest.Connect(projection)
             weight = 80. if key == "psc" else 1.
-            nest.Connect(pn, neurons[model], syn_spec={'weight': weight})
+            projection = nest.AllToAll(pn, neurons[model], syn_spec=nest.synapsemodels.static(weight=weight))
+            nest.Connect(projection)
         for syn_type, mm in iter(ref_mm.items()):
             key = syn_type[:syn_type.index('_')]
             nest.SetStatus(mm, {"interval": self.resol,
                                 "record_from": recordables[syn_type]})
-            nest.Connect(mm, refs[syn_type])
+            nest.Connect(nest.AllToAll(mm, refs[syn_type]))
             weight = 80. if key == "psc" else 1.
-            nest.Connect(pn, refs[syn_type], syn_spec={'weight': weight})
+            projection = nest.AllToAll(pn, refs[syn_type], syn_spec=nest.synapsemodels.static(weight=weight))
+            nest.Connect(projection)
         nest.Simulate(simtime)
 
         # compute the relative differences and assert tolerance
@@ -361,13 +366,13 @@ class AEIFTestCase(unittest.TestCase):
             syn_type = di_syn_types[model]
             nest.SetStatus(mm, {"interval": self.resol,
                                 "record_from": ["V_m"]})
-            nest.Connect(mm, neurons[model])
-            nest.Connect(dcg, neurons[model])
+            nest.Connect(nest.AllToAll(mm, neurons[model]))
+            nest.Connect(nest.AllToAll(dcg, neurons[model]))
         for syn_type, mm in iter(ref_mm.items()):
             nest.SetStatus(mm, {"interval": self.resol,
                                 "record_from": ["V_m"]})
-            nest.Connect(mm, refs[syn_type])
-            nest.Connect(dcg, refs[syn_type])
+            nest.Connect(nest.AllToAll(mm, refs[syn_type]))
+            nest.Connect(nest.AllToAll(dcg, refs[syn_type]))
         nest.Simulate(simtime)
 
         # compute the relative differences and assert tolerance

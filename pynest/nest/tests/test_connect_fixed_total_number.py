@@ -29,14 +29,14 @@ from .test_connect_parameters import TestParams
 
 class TestFixedTotalNumber(TestParams):
 
-    # specify connection pattern and specific params
-    rule = 'fixed_total_number'
-    conn_dict = {'rule': rule}
     # sizes of source-, target-population and outdegree for connection test
     N1 = 50
     N2 = 70
     Nconn = 100
-    conn_dict['N'] = Nconn
+
+    # specify connection pattern and specific params
+    conn_dict = hf.nest.FixedTotalNumber(source=None, target=None, N=Nconn)
+
     # sizes of source-, target-population and total number of connections for
     # statistical test
     N_s = 20
@@ -48,18 +48,20 @@ class TestFixedTotalNumber(TestParams):
     # tested on each mpi process separately
     def testErrorMessages(self):
         got_error = False
-        conn_params = self.conn_dict.copy()
-        conn_params['allow_autapses'] = True
-        conn_params['allow_multapses'] = False
-        conn_params['N'] = self.N1 * self.N2 + 1
+        conn_params = self.conn_dict.clone()
+        conn_params.allow_autapses = True
+        conn_params.allow_multapses = False
+        conn_params.N = self.N1 * self.N2 + 1
         try:
             self.setUpNetwork(conn_params)
         except hf.nest.kernel.NESTError:
             got_error = True
+        self.conn_dict.N = self.Nconn
+        conn_params.allow_multapses = True
         self.assertTrue(got_error)
 
     def testTotalNumberOfConnections(self):
-        conn_params = self.conn_dict.copy()
+        conn_params = self.conn_dict.clone()
         self.setUpNetwork(conn_params)
         total_conn = len(hf.nest.GetConnections(self.pop1, self.pop2))
         hf.mpi_assert(total_conn, self.Nconn, self)
@@ -70,17 +72,17 @@ class TestFixedTotalNumber(TestParams):
         hf.mpi_assert(M, M_none, self)
 
     def testStatistics(self):
-        conn_params = self.conn_dict.copy()
-        conn_params['allow_autapses'] = True
-        conn_params['allow_multapses'] = True
-        conn_params['N'] = self.N
+        conn_params = self.conn_dict.clone()
+        conn_params.allow_autapses = True
+        conn_params.allow_multapses = True
+        conn_params.N = self.N
         for fan in ['in', 'out']:
             expected = hf.get_expected_degrees_totalNumber(
                 self.N, fan, self.N_s, self.N_t)
             pvalues = []
             for i in range(self.stat_dict['n_runs']):
                 hf.reset_seed(i + 1, self.nr_threads)
-                self.setUpNetwork(conn_dict=conn_params,
+                self.setUpNetwork(projections=conn_params,
                                   N1=self.N_s, N2=self.N_t)
                 degrees = hf.get_degrees(fan, self.pop1, self.pop2)
                 degrees = hf.gather_data(degrees)
@@ -95,14 +97,16 @@ class TestFixedTotalNumber(TestParams):
             self.assertGreater(p, self.stat_dict['alpha2'])
 
     def testAutapsesTrue(self):
-        conn_params = self.conn_dict.copy()
+        conn_params = self.conn_dict.clone()
         N = 3
 
         # test that autapses exist
-        conn_params['N'] = N * N * N
-        conn_params['allow_autapses'] = True
+        conn_params.N = N * N * N
+        conn_params.allow_autapses = True
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        hf.nest.Connect(pop, pop, conn_params)
+        conn_params.source = pop
+        conn_params.target = pop
+        hf.nest.Connect(conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         M = hf.gather_data(M)
@@ -110,14 +114,16 @@ class TestFixedTotalNumber(TestParams):
             self.assertTrue(np.sum(np.diag(M)) > N)
 
     def testAutapsesFalse(self):
-        conn_params = self.conn_dict.copy()
+        conn_params = self.conn_dict.clone()
         N = 3
 
         # test that autapses were excluded
-        conn_params['N'] = N * (N - 1)
-        conn_params['allow_autapses'] = False
+        conn_params.N = N * (N - 1)
+        conn_params.allow_autapses = False
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        hf.nest.Connect(pop, pop, conn_params)
+        conn_params.source = pop
+        conn_params.target = pop
+        hf.nest.Connect(conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.zeros(N), self)

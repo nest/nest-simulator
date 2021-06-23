@@ -316,6 +316,7 @@ junit_close
 echo
 echo "Phase 5: Running MPI tests"
 echo "--------------------------"
+if false; then
 if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue; then
     junit_open '05_mpitests'
 
@@ -343,6 +344,8 @@ if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue; then
 else
   echo "  Not running MPI tests because NEST was compiled without support"
   echo "  for distributed computing. See the file README.md for details."
+fi
+
 fi
 
 echo

@@ -50,13 +50,11 @@ class ConnectArrayFixedIndegreeTestCase(unittest.TestCase):
         Warr = [[y*K+x for x in range(K)] for y in range(N)]  # weight array
         Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)]  # delay array
 
-        # synapses and connection dictionaries
-        syn_dict = {'synapse_model': 'static_synapse',
-                    'weight': Warr, 'delay': Darr}
-        conn_dict = {'rule': 'fixed_indegree', 'indegree': K}
+        # synapses
+        syn_spec = nest.synapsemodels.static(weight=Warr, delay=Darr)
 
         # connects source to target
-        nest.Connect(net1, net2, conn_spec=conn_dict, syn_spec=syn_dict)
+        nest.Connect(nest.FixedIndegree(net1, net2, indegree=K, syn_spec=syn_spec))
 
         for i in range(N):  # loop on all target neurons
 

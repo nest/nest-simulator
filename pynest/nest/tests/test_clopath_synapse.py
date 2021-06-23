@@ -52,8 +52,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
 
             n = nest.Create(nm, 2)
 
-            nest.Connect(n, n, {"rule": "all_to_all"},
-                         {"synapse_model": "clopath_synapse"})
+            nest.Connect(nest.AllToAll(n, n, syn_spec=nest.synapsemodels.clopath()))
+            nest.BuildNetwork()
 
         # Compute not supported models
         not_supported_models = [n for n in nest.Models(mtype='nodes')
@@ -67,8 +67,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
 
             # try to connect with clopath_rule
             with self.assertRaises(nest.kernel.NESTError):
-                nest.Connect(n, n, {"rule": "all_to_all"},
-                             {"synapse_model": "clopath_synapse"})
+                nest.ConnectImmediately(nest.AllToAll(n, n, syn_spec=nest.synapsemodels.clopath()))
+
 
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
@@ -142,8 +142,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
                 spike_gen_pre = nest.Create("spike_generator", 1, {
                                             "spike_times": s_t_pre})
 
-                nest.Connect(spike_gen_pre, prrt_nrn,
-                             syn_spec={"delay": resolution})
+                nest.Connect(nest.AllToAll(spike_gen_pre, prrt_nrn,
+                                           syn_spec=nest.synapsemodels.static(delay=resolution)))
 
                 if(nrn_model == "aeif_psc_delta_clopath"):
                     conn_weight = 80.0
@@ -154,8 +154,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
                 spike_gen_post = nest.Create("spike_generator", 1, {
                     "spike_times": s_t_post})
 
-                nest.Connect(spike_gen_post, nrn, syn_spec={
-                    "delay": resolution, "weight": conn_weight})
+                nest.Connect(nest.AllToAll(spike_gen_post, nrn,
+                                           syn_spec=nest.synapsemodels.static(delay=resolution, weight=conn_weight)))
 
                 # Create weight recorder
                 wr = nest.Create('weight_recorder', 1)
@@ -206,19 +206,14 @@ class ClopathSynapseTestCase(unittest.TestCase):
         mm = nest.Create('multimeter', params={
                          'record_from': ['V_m'], 'interval': 1.0})
 
-        nest.Connect(sg, prrt_nrn)
-        nest.Connect(mm, nrns)
+        nest.Connect(nest.AllToAll(sg, prrt_nrn))
+        nest.Connect(nest.AllToAll(mm, nrns))
 
         # Connect one neuron with static connection
-        conn_dict = {'rule': 'all_to_all'}
-        static_syn_dict = {'synapse_model': 'static_synapse',
-                           'weight': 2.0, 'delay': 1.0}
-        nest.Connect(prrt_nrn, nrns[0:1], conn_dict, static_syn_dict)
+        nest.Connect(nest.AllToAll(prrt_nrn, nrns[0], syn_spec=nest.synapsemodels.static(weight=2.0, delay=1.0)))
 
         # Connect one neuron with Clopath stdp connection
-        cl_stdp_syn_dict = {'synapse_model': 'clopath_synapse',
-                            'weight': 2.0, 'delay': 1.0}
-        nest.Connect(prrt_nrn, nrns[1:2], conn_dict, cl_stdp_syn_dict)
+        nest.Connect(nest.AllToAll(prrt_nrn, nrns[1], syn_spec=nest.synapsemodels.clopath(weight=2.0, delay=1.0)))
 
         # Simulation
         nest.Simulate(20.)

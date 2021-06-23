@@ -32,12 +32,12 @@
 name: nest-simulator-dev
 channels:
   - conda-forge
-  
+
 dependencies:
   # Basics ------------------
   - python >= 3.8
   - pip
-  
+
   # Building NEST -----------
   - cmake >= 3.12
   - cython
@@ -78,6 +78,7 @@ dependencies:
   - sphinx-tabs
   - sphinx >= 2
   - sphinx_rtd_theme
+  - jinja2 < 3
   - tqdm
   - yamllint
 
@@ -91,7 +92,7 @@ dependencies:
   # PIP dependencies -- do not delete
   - pip:
     # For testsuite
-    - junitparser
+    - junitparser >= 2
     # For documentation
     - example
     - Image

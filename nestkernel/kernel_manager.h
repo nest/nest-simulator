@@ -33,7 +33,7 @@
 #include "mpi_manager.h"
 #include "music_manager.h"
 #include "node_manager.h"
-#include "rng_manager.h"
+#include "random_manager.h"
 #include "simulation_manager.h"
 #include "sp_manager.h"
 #include "vp_manager.h"
@@ -70,22 +70,11 @@
  off_grid_spiking              booltype    - Whether to transmit precise spike times in MPI
                                              communication (read only)
 
- Connector configuration
- initial_connector_capacity    integertype - When a connector is first created, it starts with this
-                                             capacity (if >= connector_cutoff)
- large_connector_limit         integertype - Capacity doubling is used up to this limit
- large_connector_growth_factor doubletype  - Capacity growth factor to use beyond the limit
-
  Random number generators
- grng_seed                     integertype - Seed for global random number generator used
-                                             synchronously by all virtual processes to
-                                             create, e.g., fixed fan-out connections
-                                             (write only).
- rng_seeds                     arraytype   - Seeds for the per-virtual-process random
-                                             number generators used for most purposes.
-                                             Array with one integer per virtual process,
-                                             all must be unique and differ from
-                                             grng_seed (write only).
+ rng_types                     arraytype   - Names of random number generator types available (read only)
+ rng_type                      stringtype  - Name of random number generator type used by kernel
+ rng_seed                      integertype - Seed value used as basis of seeding of all random number
+                                             generators managed by the kernel (\f$1 leq s \leq 2^{32}-1\f$).
 
  Output
  data_path                     stringtype  - A path, where all data is written to
@@ -190,7 +179,7 @@ public:
   LoggingManager logging_manager;
   MPIManager mpi_manager;
   VPManager vp_manager;
-  RNGManager rng_manager;
+  RandomManager random_manager;
   SimulationManager simulation_manager;
   ModelRangeManager modelrange_manager;
   ConnectionManager connection_manager;

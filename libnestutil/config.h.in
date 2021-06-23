@@ -57,9 +57,6 @@
 /* tics per step in simulation */
 #define CONFIG_TICS_PER_STEP @tics_per_step@
 
-/* when to truncate the recursive instantiation of the connector */
-#define CONFIG_CONNECTOR_CUTOFF @connector_cutoff@
-
 /* Define to 1 if you have a 32 bit architecture */
 #cmakedefine HAVE_32BIT_ARCH 1
 
@@ -177,14 +174,14 @@
 /* Configuring for K */
 #cmakedefine IS_K 1
 
-/* Use PS array construction semantics */
-#cmakedefine PS_ARRAYS 1
-
 /* Is SIONlib available? */
 #cmakedefine HAVE_SIONLIB 1
 
 /* Is mpi4py available? */
 #cmakedefine HAVE_MPI4PY 1
+
+/* Do Random123 generators work? */
+#cmakedefine HAVE_RANDOM123 1
 
 /* Bit counts for Target members */
 #define TARGET_BITS_SPLIT @TARGET_BITS_SPLIT@

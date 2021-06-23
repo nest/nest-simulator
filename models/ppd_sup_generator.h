@@ -26,16 +26,13 @@
 // C++ includes:
 #include <vector>
 
-// Includes from librandom:
-#include "binomial_randomdev.h"
-#include "poisson_randomdev.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "stimulating_device.h"
+#include "random_generators.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -57,21 +54,36 @@ time statistics.
 The rate parameter can also be sine-modulated. The generator does not
 initialize to equilibrium in this case, initial transients might occur.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulation_device.rst
 
-The following parameters appear in the element's status dictionary:
+rate
+    Mean firing rate of the component processes, default: 0 spikes/s
 
-===================  ======== =================================================
- rate                spikes/s Mean firing rate of the component processes,
-                              default: 0 spikes/s
- dead_time           ms       Minimal time between two spikes of the component
-                              processes, default: 0 ms
- n_proc              integer  Number of superimposed independent component
-                              processes, default: 1
- frequency           Hz       Rate modulation frequency, default: 0 Hz
- relative_amplitude  real     Relative rate modulation amplitude, default: 0
-===================  ======== =================================================
+dead_time
+    Minimal time between two spikes of the component processes, default: 0 ms
+
+n_proc
+    Number of superimposed independent component processes, default: 1
+
+frequency
+    Rate modulation frequency, default: 0 Hz
+
+relative_amplitude
+    Relative rate modulation amplitude, default: 0
+
+Set parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
+The indexing is as follows:
+
+ 0. dead_time
+ 1. rate
+ 2. n_proc
+ 3. frequency
+ 4. relative_amplitude
 
 References
 ++++++++++
@@ -87,30 +99,14 @@ gamma_sup_generator, poisson_generator_ps, spike_generator
 
 EndUserDocs */
 
-class ppd_sup_generator : public DeviceNode
+class ppd_sup_generator : public StimulationDevice
 {
 
 public:
   ppd_sup_generator();
   ppd_sup_generator( const ppd_sup_generator& );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
-
-  bool
-  is_off_grid() const
-  {
-    return false;
-  }
-
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
+  bool is_off_grid() const override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -119,15 +115,18 @@ public:
    */
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
+
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
 
   /**
    * Update state.
@@ -138,14 +137,14 @@ private:
    * information.
    * @see event_hook, DSSpikeEvent
    */
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   /**
    * Send out spikes.
    * Called once per target to dispatch actual output spikes.
    * @param contains target information.
    */
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   // ------------------------------------------------------------
 
@@ -179,20 +178,18 @@ private:
 
   class Age_distribution_
   {
-
-    librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    //! occupation numbers of ages below dead time
-    std::vector< unsigned long > occ_refractory_;
-    unsigned long occ_active_; //!< summed occupation number of ages above dead time
-    size_t activate_;          //!< rotating pointer
+    binomial_distribution bino_dist_;             //!< binomial distribution
+    poisson_distribution poisson_dist_;           //!< poisson distribution
+    std::vector< unsigned long > occ_refractory_; //!< occupation numbers of ages below dead time
+    unsigned long occ_active_;                    //!< summed occupation number of ages above dead time
+    size_t activate_;                             //!< rotating pointer
 
   public:
     //! initialize age dist
     Age_distribution_( size_t num_age_bins, unsigned long ini_occ_ref, unsigned long ini_occ_act );
 
     //! update age dist and generate spikes
-    unsigned long update( double hazard_rate, librandom::RngPtr rng );
+    unsigned long update( double hazard_rate, RngPtr rng );
   };
 
 
@@ -231,7 +228,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< CurrentEvent > device_;
   Parameters_ P_;
   Variables_ V_;
   Buffers_ B_;
@@ -240,7 +236,7 @@ private:
 inline port
 ppd_sup_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -265,7 +261,7 @@ inline void
 ppd_sup_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulationDevice::get_status( d );
 }
 
 inline void
@@ -277,10 +273,22 @@ ppd_sup_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+inline bool
+ppd_sup_generator::is_off_grid() const
+{
+  return false;
+}
+
+inline StimulationDevice::Type
+ppd_sup_generator::get_type() const
+{
+  return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace

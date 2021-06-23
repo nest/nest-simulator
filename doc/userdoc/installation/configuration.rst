@@ -68,7 +68,7 @@ Scripts can be run by typing:
    <nest_install_dir>/nest <file>
 
 If you are a Vim user and require support for SLI files, please refer to
-our :doc:`../contribute/templates_styleguides/vim_support_sli`.
+our :doc:`../contribute/styleguide/vim_support_sli`.
 
 Supplying SLI scripts with parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

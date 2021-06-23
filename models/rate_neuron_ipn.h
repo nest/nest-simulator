@@ -35,8 +35,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "normal_randomdev.h"
-#include "poisson_randomdev.h"
+#include "random_generators.h"
 #include "ring_buffer.h"
 #include "recordables_map.h"
 #include "universal_data_logger.h"
@@ -141,7 +140,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -259,7 +257,6 @@ private:
    */
   struct Variables_
   {
-
     // propagators
     double P1_;
     double P2_;
@@ -267,9 +264,7 @@ private:
     // propagator for noise
     double input_noise_factor_;
 
-    librandom::RngPtr rng_;
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    librandom::NormalRandomDev normal_dev_;   //!< random deviate generator
+    normal_distribution normal_dist_; //!< normal distribution
   };
 
   //! Read out the rate

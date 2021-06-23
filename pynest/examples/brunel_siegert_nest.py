@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Mean-field theory for random balanced network
----------------------------------------------------
+"""
+Mean-field theory for random balanced network
+---------------------------------------------
 
 This script performs a mean-field analysis of the spiking network of
 excitatory and an inhibitory population of leaky-integrate-and-fire neurons
@@ -35,7 +36,7 @@ dynamics (eq.30), are the prediction for the population and
 time-averaged from the spiking simulation.
 
 References
-~~~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M,
        Helias M and Diesmann M. (2017).  Integration of continuous-time
@@ -124,17 +125,12 @@ nest.SetKernelStatus({"resolution": dt, "print_time": True,
 print("Building network")
 
 ###############################################################################
-# Configuration of the model ``siegert_neuron`` using ``SetDefaults``.
-
-nest.SetDefaults("siegert_neuron", neuron_params)
-
-###############################################################################
 # Creation of the nodes using ``Create``. One rate neuron represents the
 # excitatory population of LIF-neurons in the SLIFN and one the inhibitory
 # population assuming homogeneity of the populations.
 
-siegert_ex = nest.Create("siegert_neuron", 1)
-siegert_in = nest.Create("siegert_neuron", 1)
+siegert_ex = nest.Create("siegert_neuron", params=neuron_params)
+siegert_in = nest.Create("siegert_neuron", params=neuron_params)
 
 ###############################################################################
 # The Poisson drive in the SLIFN is replaced by a driving rate neuron,
@@ -142,7 +138,7 @@ siegert_in = nest.Create("siegert_neuron", 1)
 # neuron is controlled by setting ``mean`` to the rate of the corresponding
 # poisson generator in the SLIFN.
 
-siegert_drive = nest.Create('siegert_neuron', 1, params={'mean': p_rate})
+siegert_drive = nest.Create('siegert_neuron', params={'mean': p_rate})
 
 ###############################################################################
 # To record from the rate neurons a multimeter is created and the parameter
@@ -198,5 +194,5 @@ data = multimeter.events
 rates_ex = data['rate'][numpy.where(data['senders'] == siegert_ex.global_id)]
 rates_in = data['rate'][numpy.where(data['senders'] == siegert_in.global_id)]
 times = data['times'][numpy.where(data['senders'] == siegert_in.global_id)]
-print("Excitatory rate   : %.2f Hz" % rates_ex[-1])
-print("Inhibitory rate   : %.2f Hz" % rates_in[-1])
+print(f"Excitatory rate   : {rates_ex[-1]:.2f} Hz")
+print(f"Inhibitory rate   : {rates_in[-1]:.2f} Hz")

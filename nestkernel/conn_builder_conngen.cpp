@@ -74,7 +74,7 @@ ConnectionGeneratorBuilder::connect_()
   cg_set_masks();
   cg_->start();
 
-  librandom::RngPtr rng = kernel().rng_manager.get_grng();
+  RngPtr rng = get_rank_synced_rng();
 
   int source;
   int target;

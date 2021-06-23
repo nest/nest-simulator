@@ -136,7 +136,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "SimulationManager::set_status",
         "Simulation time reset to t=0.0. Resetting the simulation time is not "
         "fully supported in NEST at present. Some spikes may be lost, and "
-        "stimulating devices may behave unexpectedly. PLEASE REVIEW YOUR "
+        "stimulation devices may behave unexpectedly. PLEASE REVIEW YOUR "
         "SIMULATION OUTPUT CAREFULLY!" );
 
       clock_ = Time::step( 0 );
@@ -453,21 +453,6 @@ nest::SimulationManager::prepare()
   kernel().connection_manager.update_delay_extrema_();
   kernel().event_delivery_manager.init_moduli();
 
-  // Check for synchrony of global rngs over processes.
-  // We need to do this ahead of any simulation in case random numbers
-  // have been consumed on the SLI level.
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    if ( not kernel().mpi_manager.grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
-    {
-      LOG( M_ERROR,
-        "SimulationManager::prepare",
-        "Global Random Number Generators are not synchronized prior to "
-        "simulation." );
-      throw KernelException();
-    }
-  }
-
   // if at the beginning of a simulation, set up spike buffers
   if ( not simulated_ )
   {
@@ -550,6 +535,7 @@ nest::SimulationManager::run( Time const& t )
 {
   assert_valid_simtime( t );
 
+  kernel().random_manager.check_rng_synchrony();
   kernel().io_manager.pre_run_hook();
 
   if ( not prepared_ )
@@ -606,6 +592,7 @@ nest::SimulationManager::run( Time const& t )
   call_update_();
 
   kernel().io_manager.post_run_hook();
+  kernel().random_manager.check_rng_synchrony();
 
   sw_simulate_.stop();
 }
@@ -624,18 +611,6 @@ nest::SimulationManager::cleanup()
   {
     prepared_ = false;
     return;
-  }
-
-  // Check for synchronicity of global rngs over processes
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    if ( not kernel().mpi_manager.grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
-    {
-      throw KernelException(
-        "In SimulationManager::cleanup(): "
-        "Global Random Number Generators are not "
-        "in sync at end of simulation." );
-    }
   }
 
   kernel().node_manager.finalize_nodes();
@@ -713,6 +688,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 
   kernel().connection_manager.restructure_connection_tables( tid );
   kernel().connection_manager.sort_connections( tid );
+  kernel().connection_manager.collect_compressed_spike_data( tid );
 
 #pragma omp barrier // wait for all threads to finish sorting
 
@@ -761,6 +737,12 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   if ( kernel().connection_manager.secondary_connections_exist() )
   {
     kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
+  }
+
+#pragma omp barrier
+  if ( kernel().connection_manager.use_compressed_spikes() )
+  {
+    kernel().connection_manager.clear_compressed_spike_data_map( tid );
   }
 
 #pragma omp single

@@ -275,10 +275,8 @@ nest::pp_psc_delta::pp_psc_delta( const pp_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_psc_delta::init_state_( const Node& proto )
+nest::pp_psc_delta::init_state_()
 {
-  const pp_psc_delta& pr = downcast< pp_psc_delta >( proto );
-  S_ = pr.S_;
   S_.r_ = Time( Time::ms( P_.t_ref_remaining_ ) ).get_steps();
 }
 
@@ -298,7 +296,7 @@ nest::pp_psc_delta::calibrate()
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 
   V_.P33_ = std::exp( -V_.h_ / P_.tau_m_ );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
@@ -343,7 +341,8 @@ nest::pp_psc_delta::calibrate()
   {
     // Choose dead time rate parameter such that mean equals dead_time
     V_.dt_rate_ = P_.dead_time_shape_ / P_.dead_time_;
-    V_.gamma_dev_.set_order( P_.dead_time_shape_ );
+    gamma_distribution::param_type param( P_.dead_time_shape_ );
+    V_.gamma_dist_.param( param );
   }
 
   else
@@ -410,8 +409,8 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
         else
         {
           // Draw Poisson random number of spikes
-          V_.poisson_dev_.set_lambda( rate * V_.h_ * 1e-3 );
-          n_spikes = V_.poisson_dev_.ldev( V_.rng_ );
+          poisson_distribution::param_type param( rate * V_.h_ * 1e-3 );
+          n_spikes = V_.poisson_dist_( V_.rng_, param );
         }
 
         if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.
@@ -419,7 +418,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
           // Set dead time interval according to parameters
           if ( P_.dead_time_random_ )
           {
-            S_.r_ = Time( Time::ms( V_.gamma_dev_( V_.rng_ ) / V_.dt_rate_ ) ).get_steps();
+            S_.r_ = Time( Time::ms( V_.gamma_dist_( V_.rng_ ) / V_.dt_rate_ ) ).get_steps();
           }
           else
           {

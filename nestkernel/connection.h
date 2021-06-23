@@ -87,11 +87,7 @@ class ConnTestDummyNodeBase : public Node
   {
   }
   void
-  init_node_( const nest::Node& )
-  {
-  }
-  void
-  init_state_( const nest::Node& )
+  init_state_()
   {
   }
   void

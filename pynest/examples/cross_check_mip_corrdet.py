@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Auto- and crosscorrelation functions for spike trains
------------------------------------------------------------
+"""
+Auto- and crosscorrelation functions for spike trains
+-----------------------------------------------------
 
 A time bin of size `tbin` is centered around the time difference it
 represents. If the correlation function is calculated for `tau` in
@@ -69,13 +70,13 @@ nest.ResetKernel()
 h = 0.1             # Computation step size in ms
 T = 100000.0        # Total duration
 delta_tau = 10.0
-tau_max = 100.0
+tau_max = 100.0  # ms correlation window
+t_bin = 10.0  # ms bin size
 pc = 0.5
 nu = 100.0
 
-# grng_seed is 0 because test data was produced for seed = 0
 nest.SetKernelStatus({'local_num_threads': 1, 'resolution': h,
-                      'overwrite_files': True, 'grng_seed': 0})
+                      'overwrite_files': True, 'rng_seed': 12345})
 
 # Set up network, connect and simulate
 mg = nest.Create('mip_generator')
@@ -94,31 +95,22 @@ nest.Connect(mg, pn2)
 nest.Connect(pn1, sr)
 nest.Connect(pn2, sr)
 
-nest.SetDefaults('static_synapse', {'weight': 1.0, 'receptor_type': 0})
-nest.Connect(pn1, cd)
-
-nest.SetDefaults('static_synapse', {'weight': 1.0, 'receptor_type': 1})
-nest.Connect(pn2, cd)
+nest.Connect(pn1, cd, syn_spec={'weight': 1.0, 'receptor_type': 0})
+nest.Connect(pn2, cd, syn_spec={'weight': 1.0, 'receptor_type': 1})
 
 nest.Simulate(T)
 
-n_events = cd.get('n_events')
-n1 = n_events[0]
-n2 = n_events[1]
+n_events_1, n_events_2 = cd.n_events
 
-lmbd1 = (n1 / (T - tau_max)) * 1000.0
-lmbd2 = (n2 / (T - tau_max)) * 1000.0
-
-h = 0.1
-tau_max = 100.0  # ms correlation window
-t_bin = 10.0  # ms bin size
+lmbd1 = (n_events_1 / (T - tau_max)) * 1000.0
+lmbd2 = (n_events_2 / (T - tau_max)) * 1000.0
 
 spikes = sr.get('events', 'senders')
 
 sp1 = spikes[spikes == 4]
 sp2 = spikes[spikes == 5]
 
-# Find crosscorrolation
+# Find crosscorrelation
 cross = corr_spikes_sorted(sp1, sp2, t_bin, tau_max, h)
 
 print("Crosscorrelation:")

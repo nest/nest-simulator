@@ -176,15 +176,13 @@ nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* nod
  * ---------------------------------------------------------------- */
 
 nest::gamma_sup_generator::gamma_sup_generator()
-  : DeviceNode()
-  , device_()
+  : StimulationDevice()
   , P_()
 {
 }
 
 nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+  : StimulationDevice( n )
   , P_( n.P_ )
 {
 }
@@ -197,19 +195,19 @@ nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
 void
 nest::gamma_sup_generator::init_state_()
 {
-  device_.init_state();
+  StimulationDevice::init_state();
 }
 
 void
 nest::gamma_sup_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulationDevice::init_buffers();
 }
 
 void
 nest::gamma_sup_generator::calibrate()
 {
-  device_.calibrate();
+  StimulationDevice::calibrate();
 
   double h = Time::get_resolution().get_ms();
 
@@ -246,7 +244,7 @@ nest::gamma_sup_generator::update( Time const& T, const long from, const long to
   {
     Time t = T + Time::step( lag );
 
-    if ( not device_.is_active( t ) )
+    if ( not StimulationDevice::is_active( t ) )
     {
       continue; // no spike at this lag
     }
@@ -275,4 +273,32 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
   }
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::gamma_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() != 3 )
+    {
+      throw BadParameterValue(
+        "The size of the data for the gamma_sup_generator needs to be 3 [gamma_shape, rate, n_proc]." );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::gamma_shape ] = DoubleDatum( lround( input_param[ 0 ] ) );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::n_proc ] = DoubleDatum( lround( input_param[ 2 ] ) );
+    ptmp.set( d, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

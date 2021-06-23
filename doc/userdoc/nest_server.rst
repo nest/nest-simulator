@@ -109,7 +109,7 @@ container::
 The generic invocation command line for the ``nest-server`` command
 looks as follows::
 
-  nest-server <command> [-d] [-o] [-h <host>] [-p <port>] [-u <user>]
+  nest-server <command> [-d] [-o] [-h <host>] [-p <port>] [-P <plugin>] [-u <user>]
 
 Possible commands are `start`, `stop`, `status`, or `log`. The meaning
 of the other arguments is as follows:
@@ -122,6 +122,8 @@ of the other arguments is as follows:
     Use hostname/IP address <host> for the server [default: 127.0.0.1]
 -p <port>
     Use port <port> for opening the socket [default: 5000]
+-P <plugin>
+    Use the uWSGI plugin <plugin> when running the server
 -u <uid>
     Run the server under the user with ID <user>
 

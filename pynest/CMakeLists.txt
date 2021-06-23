@@ -74,42 +74,28 @@ if ( HAVE_PYTHON )
       -D_IS_PYNEST
       )
 
-  install( CODE "execute_process(
-    COMMAND ${PYTHON} setup.py build --build-base=${CMAKE_CURRENT_BINARY_DIR}/build
-                               install --prefix=${CMAKE_INSTALL_PREFIX}
-                                       --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
-                                       --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
-                                       --install-data=${CMAKE_INSTALL_FULL_DATADIR}
-    WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
-      )
+  install(DIRECTORY  nest/
+      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
+  )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
+  install( CODE "
+      execute_process(
+          COMMAND ${PYTHON} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install_egg_info
+            --install-dir=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
+          WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}\"
+      )
+      # Use Python's standard library `pkg_resources` module to find
+      # the install requirements of `nest` as specified in `setup.py`.
+      # Then feed them into the stdin pipe of `pip install`.
+      execute_process(
+          COMMAND ${PYTHON} -c \"import pkg_resources as pkg; print('\\\\n'.join(str(r) for r in pkg.get_distribution('nest').requires()))\"
+          COMMAND ${PYTHON} -m pip install -r /dev/stdin
+      )
+      "
+  )
 
   install( DIRECTORY examples/
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest
-      )
-
-  install( DIRECTORY nest/random/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/random
-      )
-
-  install( DIRECTORY nest/spatial/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/spatial
-      )
-
-  install( DIRECTORY nest/math/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/math
-      )
-
-  install( DIRECTORY nest/logic/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/logic
-      )
-
-  install( DIRECTORY nest/spatial_distributions/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/spatial_distributions
-      )
-
-  install( DIRECTORY nest/server/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest/server
       )
 
   find_program( NOSETESTS nosetests )

@@ -437,7 +437,7 @@ In general, the following must hold:
 1. *stop* >= *start*
 2. If *stop =* start\ *, the device is inactive.*
 
-Stimulating Devices
+Stimulation devices
 ~~~~~~~~~~~~~~~~~~~
 
 A range of devices is available for the stimulation of neurons. The most

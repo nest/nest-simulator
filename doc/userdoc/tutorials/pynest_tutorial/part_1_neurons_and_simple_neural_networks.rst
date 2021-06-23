@@ -9,7 +9,7 @@ neuronal networks. When you have worked through this material, you will
 know how to:
 
 -  start PyNEST
--  create neurons and stimulating/recording devices
+-  create neurons and stimulation or recording devices
 -  query and set their parameters
 -  connect them to each other or to devices
 -  simulate the network

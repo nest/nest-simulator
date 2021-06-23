@@ -341,6 +341,8 @@ private:
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
 
+    State_& operator=( const State_& );
+
     void get( DictionaryDatum&, const Parameters_& ) const;
     void set( const DictionaryDatum&, const Parameters_&, Node* );
   };

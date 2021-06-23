@@ -1,5 +1,5 @@
-Recording from simulations
-==========================
+Record from simulations
+=======================
 
 *Recording devices* (or *recorders*, in short) are used to sample or
 collect observable quantities like potentials, conductances, or spikes
@@ -40,9 +40,9 @@ Recording devices can fundamentally be subdivided into two groups:
 Recorders for every-day situations
 ----------------------------------
 
-- :ref:`multimeter`
-- :ref:`spike_recorder`
-- :ref:`weight_recorder`
+- :doc:`../models/multimeter`
+- :doc:`../models/spike_recorder`
+- :doc:`../models/weight_recorder`
 
 .. _recording_backends:
 
@@ -97,6 +97,7 @@ properties can be obtained from the kernel's status dictionary.
    nest.GetKernelStatus("recording_backends")
    {u'ascii': {},
     u'memory': {},
+    u'mpi': {},
     u'screen': {},
     u'sionlib': {u'buffer_size': 1024,
      u'filename': u'',
@@ -115,7 +116,8 @@ dictionary to :py:func:`.SetKernelStatus`.
 The following is a list of built-in recording backends that come with
 NEST:
 
-- :ref:`recording_backend_memory`
-- :ref:`recording_backend_ascii`
-- :ref:`recording_backend_screen`
-- :ref:`recording_backend_sionlib`
+- :doc:`../models/recording_backend_memory`
+- :doc:`../models/recording_backend_ascii`
+- :doc:`../models/recording_backend_screen`
+- :doc:`../models/recording_backend_sionlib`
+- :doc:`../models/recording_backend_mpi`

@@ -12,12 +12,13 @@ Here you can find details on a variety of topics in NEST.
 
 .. toctree::
     :maxdepth: 1
-    :caption: In depth guides to NEST
+    :caption: In-depth guides to NEST
 
+    built-in_timers
     connection_management
     running_simulations
-    stimulating_the_network
-    recording_from_simulations
+    stimulate_the_network
+    record_from_simulations
     parallel_computing
     random_numbers
     spatial/guide_spatially_structured_networks

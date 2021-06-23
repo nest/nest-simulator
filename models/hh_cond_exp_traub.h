@@ -252,6 +252,8 @@ public:
     State_( const Parameters_& p );
     State_( const State_& s );
 
+    State_& operator=( const State_& );
+
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum&, const Parameters_&, Node* );
   };

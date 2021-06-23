@@ -135,6 +135,8 @@ sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
 5. Re-render documentation as described above.
 
+You can find our full :doc:`documentation style guide <../contribute/styleguide/styleguide>` here.
+
 Previewing on Read the Docs (optional)
 ++++++++++++++++++++++++++++++++++++++
 

@@ -359,6 +359,9 @@ public:
 
     State_( const ht_neuron&, const Parameters_& p );
     State_( const State_& s );
+
+    State_& operator=( const State_& s );
+
     ~State_();
 
     void get( DictionaryDatum& ) const;

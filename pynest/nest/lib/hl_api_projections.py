@@ -24,7 +24,6 @@ Connection semantics prototype functions
 """
 
 import copy
-from .hl_api_connections import OldConnect as nestlib_Connect
 from ..ll_api import sps, sr
 from .hl_api_types import CollocatedSynapses
 from .hl_api_connection_helpers import _process_syn_spec, _process_spatial_projections, _connect_layers_needed
@@ -33,7 +32,6 @@ from ..synapsemodels.hl_api_synapsemodels import SynapseModel
 __all__ = [
     'Connect',
     'ConnectImmediately',
-    'oldBuildNetwork',
     'BuildNetwork',
     'OneToOne',
     'AllToAll',
@@ -41,6 +39,7 @@ __all__ = [
     'FixedOutdegree',
     'FixedTotalNumber',
     'PairwiseBernoulli',
+    'SymmetricPairwiseBernoulli'
 ]
 
 
@@ -90,10 +89,12 @@ class Projection(object):
     def __setattr__(self, attr, value):
         if attr in ['source', 'target', 'conn_spec', 'syn_spec']:
             return super().__setattr__(attr, value)
-        if attr in self.conn_spec:
-            self.conn_spec[attr] = value
         else:
-            raise AttributeError(f'{attr} is not a connection- or synapse-specification')
+            self.conn_spec[attr] = value
+    
+    def __str__(self):
+        output = f'source: {self.source} \ntarget: {self.target} \nconn_spec: {self.conn_spec} \nsyn_spec: {self.syn_spec}'
+        return output
 
 
 class ProjectionCollection(object):
@@ -133,11 +134,6 @@ def ConnectImmediately(projections):
         projection.apply()
 
 
-def oldBuildNetwork():
-    for projection in projection_collection.get():
-        projection.apply()
-
-
 def BuildNetwork():
     # Convert to list of lists
     projection_list = []
@@ -166,6 +162,9 @@ def BuildNetwork():
     # Call SLI function
     sps(projection_list)
     sr('connect_projections')
+
+    # reset all projections
+    projection_collection.reset()
 
 
 class OneToOne(Projection):
@@ -201,4 +200,9 @@ class FixedTotalNumber(Projection):
 class PairwiseBernoulli(Projection):
     def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'pairwise_bernoulli', 'p': p}
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
+
+class SymmetricPairwiseBernoulli(Projection):
+    def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
+        self.conn_spec = {'rule': 'symmetric_pairwise_bernoulli', 'p': p}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)

@@ -58,7 +58,9 @@ def Simulate(t):
     RunManager
 
     """
+    from .hl_api_projections import BuildNetwork  # need to clean up all the imports
 
+    BuildNetwork()
     sps(float(t))
     sr('ms Simulate')
 

@@ -35,6 +35,7 @@ from .hl_api_helper import *
 from .hl_api_info import GetStatus
 from .hl_api_nodes import Create
 from .hl_api_parallel_computing import NumProcesses
+from .hl_api_projections import BuildNetwork
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
@@ -83,6 +84,8 @@ def GetConnections(source=None, target=None, synapse_model=None,
     """
 
     params = {}
+    
+    BuildNetwork()
 
     if source is not None:
         if isinstance(source, NodeCollection):

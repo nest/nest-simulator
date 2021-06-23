@@ -102,6 +102,7 @@ __all__ = [
     'SetMaxBuffered',
     'SetStatus',
     'Simulate',
+    'SymmetricPairwiseBernoulli',
     'authors',
     'get_verbosity',
     'help',

@@ -50,11 +50,6 @@ nest::music_rate_out_proxy::Parameters_::Parameters_()
 {
 }
 
-nest::music_rate_out_proxy::Parameters_::Parameters_( const Parameters_& op )
-  : port_name_( op.port_name_ )
-{
-}
-
 nest::music_rate_out_proxy::State_::State_()
   : published_( false )
   , port_width_( -1 )
@@ -131,11 +126,6 @@ nest::music_rate_out_proxy::~music_rate_out_proxy()
   {
     delete V_.MP_;
   }
-}
-
-void
-nest::music_rate_out_proxy::init_state_( const Node& /* np */ )
-{
 }
 
 void

@@ -28,12 +28,13 @@
 
 #include "recording_backend.h"
 
-/* BeginUserDocs: recording backend
+/* BeginUserDocs: NOINDEX
 
-.. _recording_backend_ascii:
+Recording backend `ascii` - Write data to plain text files
+##########################################################
 
-Write data to plain text files
-##############################
+Description
++++++++++++
 
 The `ascii` recording backend writes collected data persistently to a
 plain text ASCII file. It can be used for small to medium sized
@@ -44,7 +45,7 @@ This backend will open one file per recording device per thread on
 each MPI process. This can cause a high load on the file system in
 large simulations. This backend can become prohibitively inefficient,
 particularly on machines with distributed filesystems. In case you
-experience such scaling problems, the :ref:`recording backend for
+experience such scaling problems, the :doc:`recording backend for
 SIONlib <recording_backend_sionlib>` may be a possible alternative.
 
 Filenames of data files are determined according to the following
@@ -107,31 +108,29 @@ point offset in ms from the next integer grid point.
 Parameter summary
 +++++++++++++++++
 
-.. glossary::
+file_extension
+    A string (default: *"dat"*) that specifies the file name extension,
+    without leading dot. The generic default was chosen, because the
+    exact type of data cannot be known a priori.
 
- file_extension
-   A string (default: *"dat"*) that specifies the file name extension,
-   without leading dot. The generic default was chosen, because the
-   exact type of data cannot be known a priori.
+filenames
+    A list of the filenames where data is recorded to. This list has one
+    entry per local thread and is a read-only property.
 
- filenames
-   A list of the filenames where data is recorded to. This list has one
-   entry per local thread and is a read-only property.
+label
+    A string (default: *""*) that replaces the model name component in
+    the filename if it is set.
 
- label
-   A string (default: *""*) that replaces the model name component in
-   the filename if it is set.
+precision
+    An integer (default: *3*) that controls the number of decimal places
+    used to write decimal numbers to the output file.
 
- precision
-   An integer (default: *3*) that controls the number of decimal places
-   used to write decimal numbers to the output file.
-
- time_in_steps
-   A Boolean (default: *false*) specifying whether to write time in
-   steps, i.e., in integer multiples of the simulation resolution plus
-   a floating point number for the negative offset from the next grid
-   point in ms, or just the simulation time in ms. This property
-   cannot be set after Simulate has been called.
+time_in_steps
+    A Boolean (default: *false*) specifying whether to write time in
+    steps, i.e., in integer multiples of the simulation resolution plus
+    a floating point number for the negative offset from the next grid
+    point in ms, or just the simulation time in ms. This property
+    cannot be set after Simulate has been called.
 
 EndUserDocs */
 

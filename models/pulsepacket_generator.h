@@ -27,15 +27,13 @@
 #include <deque>
 #include <vector>
 
-// Includes from librandom:
-#include "normal_randomdev.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "stimulating_device.h"
+#include "random_generators.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -56,7 +54,8 @@ a given number of spikes with normal distributed random displacements
 from the center time of the pulse.
 It resembles the output of synfire groups of neurons.
 
-Remarks:
+Remarks
++++++++
 
 - All targets receive identical spike trains.
 - New pulse packets are generated when activity or sdev are changed.
@@ -65,17 +64,31 @@ Remarks:
 - Both standard deviation and number of spikes may be set at any time.
   Pulses are then re-generated with the new values.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulation_device.rst
 
-============  ======= =======================================================
- pulse_times  ms      Times of the centers of pulses
- activity     integer Number of spikes per pulse
- sdev         ms      Standard deviation of spike times in each pulse
-============  ======= =======================================================
+pulse_times
+    Times of the centers of pulses (ms)
 
-Transmits
-+++++++++
+activity
+    Number of spikes per pulse
+
+sdev
+    Standard deviation of spike times in each pulse (ms)
+
+Set parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
+The indexing is as follows:
+
+ 0. activity
+ 1. sdev
+ 2. pulse_times
+
+Sends
++++++
 
 SpikeEvent
 
@@ -86,7 +99,7 @@ spike_generator
 
 EndUserDocs */
 
-class pulsepacket_generator : public Node
+class pulsepacket_generator : public StimulationDevice
 {
 
 public:
@@ -95,30 +108,21 @@ public:
 
   // behaves like normal node, since it must provide identical
   // output to all targets
-  bool
-  has_proxies() const
-  {
-    return true;
-  }
 
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void create_pulse();
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   struct Buffers_;
 
@@ -155,8 +159,7 @@ private:
 
   struct Variables_
   {
-
-    librandom::NormalRandomDev norm_dev_; //!< random deviate generator
+    normal_distribution normal_dist_; //!< normal distribution
 
     /** Indices into sorted vector of sorted pulse-center times
      *  (P_.pulse_times_). Spike times to be sent are calculated from
@@ -175,8 +178,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
-
   Parameters_ P_;
   Buffers_ B_;
   Variables_ V_;
@@ -185,7 +186,7 @@ private:
 inline port
 pulsepacket_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   SpikeEvent e;
   e.set_sender( *this );
@@ -197,7 +198,7 @@ inline void
 pulsepacket_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulationDevice::get_status( d );
 }
 
 inline void
@@ -209,10 +210,16 @@ pulsepacket_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+inline StimulationDevice::Type
+pulsepacket_generator::get_type() const
+{
+  return StimulationDevice::Type::CURRENT_GENERATOR;
 }
 
 } // namespace nest

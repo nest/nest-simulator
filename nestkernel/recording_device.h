@@ -42,6 +42,60 @@
 namespace nest
 {
 
+/* BeginUserDocs: NOINDEX
+
+Recording time window
++++++++++++++++++++++
+
+The time span during which the recorder actively records can be
+specified using the properties ``start`` and ``stop``. These define
+the recording period of the device in ms. An additional property
+``origin`` allows to shift the recording window by a certain time,
+which can be useful in experimental protocols with :ref:`repeated
+simulations <stepped_simulations>`. Please note that events with
+timestamp `t = start` are not recorded.
+
+Data handling
++++++++++++++
+
+All recorded data is handed over to the recording backend, selected
+via the ``record_to`` property. More details on available backends and
+their properties can be found in the :ref:`guide to recording from
+simulations <recording_backends>`.
+
+Recorder properties
++++++++++++++++++++
+
+label
+    A string (default: `""`) specifying an arbitrary textual label for
+    the device.  Recording backends might use the label to generate
+    device specific identifiers like filenames and such.
+
+n_events
+    The number of events that were collected by the recorder can be
+    read out of the `n_events` entry. The number of events can be reset
+    to 0. Other values cannot be set.
+
+origin
+    A positive floating point number (default : `0.0`) used as the
+    reference time in ms for `start` and `stop`.
+
+record_to
+    A string (default: `"memory"`) containing the name of the recording
+    backend where to write data to. An empty string turns all recording
+    of individual events off.
+
+start
+    A positive floating point number (default: `0.0`) specifying the
+    activation time in ms, relative to `origin`.
+
+stop
+    A floating point number (default: `infinity`) specifying the
+    deactivation time in ms, relative to `origin`. The value of `stop`
+    must be greater than or equal to `start`.
+
+EndUserDocs */
+
 /**
  * Base class for all recording devices.
  *

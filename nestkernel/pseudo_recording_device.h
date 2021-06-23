@@ -53,7 +53,7 @@ namespace nest
   /stop   - Inactivation time, relative to origin.
   /origin - Reference time for start and stop.
 
-  SeeAlso: Device, StimulatingDevice, RecordingDevice
+  SeeAlso: Device, StimulationDevice, RecordingDevice
 */
 
 

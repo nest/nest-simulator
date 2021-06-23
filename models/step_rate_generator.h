@@ -33,7 +33,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -61,23 +61,33 @@ NEST reports an error. If true, times are rounded to the nearest grid
 point if within tic/2 from the grid point, otherwise they are rounded
 up to the *end* of the grid point.
 
-Note:
-
 Times of amplitude changes must be strictly increasing after conversion
 to simulation time steps. The option allow_offgrid_times may be
 useful, e.g., if you are using randomized times for rate changes
 which typically would not fall onto simulation time steps.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulation_device.rst
 
-The following parameters can be set in the status dictionary:
+amplitude_times
+    Times at which current changes (list of ms)
 
-==================== ===============  ======================================
- amplitude_times     list of ms       Times at which current changes
- amplitude_values    list of pA       Amplitudes of step current current
- allow_offgrid_times boolean          Default false
-==================== ===============  ======================================
+amplitude_values
+    Amplitudes of step current current (list of pA)
+
+allow_offgrid_times
+    Default false
+
+Set parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend.
+
+The data structure used for the update holds pairs of values in the form
+
+ [ (amplitude_times, amplitude_values), (amplitude_times, amplitude_values), ... ].
+
+Thus, the size of the data for the step_rate_generator needs to be even.
 
 Sends
 +++++
@@ -91,58 +101,41 @@ step_current_generator
 
 EndUserDocs */
 
-class step_rate_generator : public DeviceNode
+class step_rate_generator : public StimulationDevice
 {
 
 public:
   step_rate_generator();
   step_rate_generator( const step_rate_generator& );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
-
   // port send_test_event( Node&, rport, synindex, bool );
-  void
-  sends_secondary_event( DelayedRateConnectionEvent& )
-  {
-  }
-
+  void sends_secondary_event( DelayedRateConnectionEvent& ) override{};
 
   using Node::handle;
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  void handle( DataLoggingRequest& );
+  void handle( DataLoggingRequest& ) override;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
+  bool local_receiver() const override;
 
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   struct Buffers_;
 
@@ -185,8 +178,6 @@ private:
     double rate_; //!< Instantaneous rate value; used for recording current
 
     State_(); //!< Sets default parameter values
-
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   };
 
   // ------------------------------------------------------------
@@ -217,7 +208,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< DelayedRateConnectionEvent > device_;
   static RecordablesMap< step_rate_generator > recordablesMap_;
   Parameters_ P_;
   State_ S_;
@@ -227,7 +217,7 @@ private:
 inline port
 step_rate_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   DelayedRateConnectionEvent e;
   e.set_sender( *this );
@@ -249,7 +239,7 @@ inline void
 step_rate_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulationDevice::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -263,12 +253,24 @@ step_rate_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
 }
 
+//! Allow step rate generator to connect to local instances
+inline bool
+step_rate_generator::local_receiver() const
+{
+  return true;
+}
+
+inline StimulationDevice::Type
+step_rate_generator::get_type() const
+{
+  return StimulationDevice::Type::DELAYED_RATE_CONNECTION_GENERATOR;
+}
 
 } // namespace
 

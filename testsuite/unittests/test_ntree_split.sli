@@ -1,0 +1,96 @@
+/*
+ *  test_ntree_split.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+Name: testsuite::test_ntree_split - test cornercases when splitting ntree
+
+Synopsis: (test_ntree_split) run
+
+
+Description:
+
+ This testscript connects spatial populations where the positions of nodes
+ are defined such that they cause roundoff errors when the ntree is split.
+*/
+
+M_PROGRESS setverbosity
+
+(unittest) run
+/unittest using
+
+{
+  << >> begin
+  ResetKernel
+
+  % Generate positions. The parameters pre_n_x and r should be defined such
+  % that we get roundoff errors. pre_n_x must be larger than 100 to make the
+  % ntree split.
+  /pre_n_x 110 def
+  /r 0.45 def
+  /positions [] def
+  /low_xy 0 r sub def
+  /high_xy r def
+  /dx high_xy low_xy sub pre_n_x 1 sub div def
+  /x_vals [low_xy high_xy dx] Range def
+  /y 0.0 def
+  /z 0.0 def
+
+  x_vals
+  {
+    /x Set
+    /positions positions [ x y z ] append def
+  } forall
+
+  % Create a source layer based on the positions generated.
+  <<
+    /positions positions
+    /elements /iaf_psc_alpha
+    /edge_wrap true
+  >>
+  CreateLayer /pre Set
+
+  % Create a target layer with a single position.
+  <<
+    /positions [ [ 1.0 0.0 0.0 ] ]
+    /elements /iaf_psc_alpha
+    /edge_wrap true
+  >>
+  CreateLayer /post Set
+
+  % We must specify a mask to make it generate a MaskedLayer, which splits the ntree.
+  /mask << /box << /lower_left [ -0.5 -0.5 -0.5 ]
+                   /upper_right [ 0.5 0.5 0.5 ] >> >> def
+
+  pre post
+  <<
+    /connection_type /pairwise_bernoulli_on_target
+    % Probability intentionally set to zero because we don't have to actually create the connections in this test.
+    /kernel 0.0
+    /mask mask
+    /allow_oversized_mask true
+  >>
+  ConnectLayers
+
+  end
+} pass_or_die
+
+end % using

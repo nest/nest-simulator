@@ -49,12 +49,6 @@ nest::music_rate_in_proxy::Parameters_::Parameters_()
 {
 }
 
-nest::music_rate_in_proxy::Parameters_::Parameters_( const Parameters_& op )
-  : port_name_( op.port_name_ )
-  , channel_( op.channel_ )
-{
-}
-
 nest::music_rate_in_proxy::State_::State_()
   : registered_( false )
 {
@@ -119,14 +113,6 @@ nest::music_rate_in_proxy::music_rate_in_proxy( const music_rate_in_proxy& n )
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::music_rate_in_proxy::init_state_( const Node& proto )
-{
-  const music_rate_in_proxy& pr = downcast< music_rate_in_proxy >( proto );
-
-  S_ = pr.S_;
-}
 
 void
 nest::music_rate_in_proxy::init_buffers_()

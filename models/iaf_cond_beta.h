@@ -179,7 +179,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   double get_normalisation_factor( double, double );
   void calibrate();
@@ -231,8 +230,7 @@ private:
    * dynamics and the refractory count. The state vector must be a
    * C-style array to be compatible with GSL ODE solvers.
    *
-   * @note Copy constructor and assignment operator are required because
-   *       of the C-style array.
+   * @note Copy constructor required because of the C-style array.
    */
 public:
   struct State_
@@ -256,6 +254,7 @@ public:
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
+
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary

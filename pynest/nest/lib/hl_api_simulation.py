@@ -29,7 +29,6 @@ from ..ll_api import *
 from .hl_api_helper import *
 from .hl_api_parallel_computing import Rank
 
-
 __all__ = [
     'Cleanup',
     'DisableStructuralPlasticity',
@@ -84,8 +83,14 @@ def Run(t):
     `Prepare` must be called before `Run` to calibrate the system, and
     `Cleanup` must be called after `Run` to close files, cleanup handles, and
     so on. After `Cleanup`, `Prepare` can and must be called before more `Run`
-    calls. Any calls to `SetStatus` between `Prepare` and `Cleanup` have
-    undefined behaviour.
+    calls.
+
+    Be careful about modifying the network or neurons between `Prepare` and `Cleanup`
+    calls. In particular, do not call `Create`, `Connect`, or `SetKernelStatus`.
+    Calling `SetStatus` to change membrane potential `V_m` of neurons or synaptic
+    weights (but not delays!) will in most cases work as expected, while changing
+    membrane or synaptic times constants will not work correctly. If in doubt, assume
+    that changes may cause undefined behavior and check these thoroughly.
 
     See Also
     --------
@@ -139,8 +144,19 @@ def RunManager():
     ::
 
         with RunManager():
-            for i in range(10):
-                Run()
+            for _ in range(10):
+                Run(100)
+                # extract results
+
+    Notes
+    -----
+
+    Be careful about modifying the network or neurons inside the `RunManager` context.
+    In particular, do not call `Create`, `Connect`, or `SetKernelStatus`. Calling `SetStatus`
+    to change membrane potential `V_m` of neurons or synaptic weights (but not delays!)
+    will in most cases work as expected, while changing membrane or synaptic times
+    constants will not work correctly. If in doubt, assume that changes may cause
+    undefined behavior and check these thoroughly.
 
     See Also
     --------
@@ -190,15 +206,15 @@ def SetKernelStatus(params):
         Dictionary of parameters to set.
 
 
-    Params dictionary
+    **Note**
 
-    Some of the keywords in the kernel status dictionary are internally
-    calculated, and cannot be defined by the user. These are flagged as
-    `read only` in the parameter list. Use GetKernelStatus to access their
-    assigned values.
+    All NEST kernel parameters are described below, grouped by topic.
+    Some of them only provide information about the kernel status and
+    cannot be set by the user. These are marked as *read only* and can
+    be accessed using ``GetKernelStatus``.
 
 
-    Time and resolution
+    **Time and resolution**
 
     Parameters
     ----------
@@ -225,7 +241,21 @@ def SetKernelStatus(params):
         The smallest representable time value
 
 
-    Parallel processing
+    **Random number generators**
+
+    Parameters
+    ----------
+
+    rng_types : list, read only
+        Names of random number generator types available.
+    rng_type : str
+        Name of random number generator type used by NEST.
+    rng_seed : int
+        Seed value used as base for seeding NEST random number generators
+        (:math:`1 \leq s \leq 2^{32}-1`).
+
+
+    **Parallel processing**
 
     Parameters
     ----------
@@ -238,16 +268,9 @@ def SetKernelStatus(params):
         The number of MPI processes
     off_grid_spiking : bool
         Whether to transmit precise spike times in MPI communication
-    grng_seed : int
-        Seed for global random number generator used synchronously by all
-        virtual processes to create, e.g., fixed fan-out connections.
-    rng_seeds : array
-        Seeds for the per-virtual-process random number generators used for
-        most purposes. Array with one integer per virtual process, all must
-        be unique and differ from grng_seed.
 
 
-    MPI buffers
+    **MPI buffers**
 
     Parameters
     ----------
@@ -275,7 +298,7 @@ def SetKernelStatus(params):
         Maximal size of MPI buffers for communication of connections
 
 
-    Waveform relaxation method (wfr)
+    **Gap junctions and rate models (waveform relaxation method)**
 
     Parameters
     ----------
@@ -292,7 +315,7 @@ def SetKernelStatus(params):
         Interpolation order of polynomial used in wfr iterations
 
 
-    Synapses
+    **Synapses**
 
     Parameters
     ----------
@@ -312,9 +335,14 @@ def SetKernelStatus(params):
         Defines the time interval in ms at which the structural plasticity
         manager will make changes in the structure of the network (creation
         and deletion of plastic synapses)
+    use_compressed_spikes : bool
+        Whether to use spike compression; if a neuron has targets on
+        multiple threads of a process, this switch makes sure that only
+        a single packet is sent to the process instead of one packet per
+        target thread; requires sort_connections_by_source = true
 
 
-    Output
+    **Output**
 
     Returns
     -------
@@ -333,16 +361,15 @@ def SetKernelStatus(params):
     num_connections : int, read only, local only
         The number of connections in the network
     local_spike_counter : int, read only
-        Number of spikes fired by neurons on a given MPI rank since NEST was
-        started or the last ResetKernel. Only spikes from "normal" neurons
-        (neuron models with proxies) are counted, not spikes generated by
-        devices such as poisson_generator.
+        Number of spikes fired by neurons on a given MPI rank during the most
+        recent call to :py:func:`.Simulate`. Only spikes from "normal" neurons
+        are counted, not spikes generated by devices such as ``poisson_generator``.
 
 
-    Miscellaneous
+    **Miscellaneous**
 
-    Other Parameters
-    ----------------
+    Parameters
+    ----------
 
     dict_miss_is_error : bool
         Whether missed dictionary entries are treated as errors

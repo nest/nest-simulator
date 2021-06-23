@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-NEST_CMD=`which nest`
+NEST_CMD="$(which nest)"
 if [ $? != 0 ] ; then
     echo "ERROR: command 'nest' not found. Please make sure PATH is set correctly"
     echo "       by sourcing the script nest_vars.sh from your NEST installation."
@@ -33,36 +33,48 @@ if [ $? != 0 ] ; then
     exit 1
 fi
 
-FAILURES=0
 
+# set bash strict mode
+set -euo pipefail
+IFS=$' \n\t'
 
-# Find all examples that have a line containing "autorun=true"
-# The examples can be found in subdirectory nest and in the 
-# examples installation path.
-if [ -d "nest/" ] ; then
-    EXAMPLES=$(grep -rl --include=\*\.sli 'autorun=true' nest/)
+declare -a EXAMPLES
+if [ "${#}" -eq 0 ]; then
+    # Find all examples that have a line containing "autorun=true"
+    # The examples can be found in subdirectory nest and in the 
+    # examples installation path.
+    if [ -d "nest/" ] ; then
+        EXAMPLES="$(grep -rl --include=\*\.sli 'autorun=true' nest/)"
+    else
+        EXAMPLES="$(grep -rl --include=\*\.sli 'autorun=true' examples/)"
+    fi
+    EXAMPLES+=" $(find ../pynest/examples -name '*.py')"
 else
-    EXAMPLES=$(grep -rl --include=\*\.sli 'autorun=true' examples/)
+    EXAMPLES+=${@}
 fi
 
-if test -n "$SKIP_LIST"; then
-    EXAMPLES=$(echo $EXAMPLES | tr ' ' '\n' | grep -vE $SKIP)
+if [ ! -z "${SKIP_LIST+x}" ]; then
+    EXAMPLES=$(echo $EXAMPLES | tr ' ' '\n' | grep -vE $SKIP_LIST)
 fi
 
-time_format="    TIME:    real: %E, user: %U, sys: %S\n\
-    MEMORY:  total: %K, max rss: %M"
+# turn off plotting to the screen and waiting for input
+export MPLCONFIGDIR="$(pwd)/matplotlib/"
+
+time_format="  time: {real: %E, user: %U, system: %S}\n\
+  memory: {total: %K, max_rss: %M}"
 
 basedir=$PWD
 
+FAILURES=0
 START=$SECONDS
-for i in $EXAMPLES ; do
+for i in $EXAMPLES; do
 
-    cd $(dirname $i)
+    cd "$(dirname "$i")"
 
-    workdir=$PWD
-    example=$(basename $i)
+    workdir="$PWD"
+    example="$(basename "$i")"
 
-    ext=$(echo $example | cut -d. -f2)
+    ext="$(echo "$example" | cut -d. -f2)"
 
     if [ $ext = sli ] ; then
         runner=nest
@@ -70,35 +82,58 @@ for i in $EXAMPLES ; do
         runner=python3
     fi
 
-    output_dir=$basedir/example_logs/$example
-    logfile=$output_dir/output.log
-    mkdir -p $output_dir
-    
+    output_dir="$basedir/example_logs/$example"
+    logfile="$output_dir/output.log"
+    metafile="$output_dir/meta.yaml"
+    mkdir -p "$output_dir"
+
     echo ">>> RUNNING: $workdir/$example"
     echo "    LOGFILE: $logfile"
+    echo "- script: '$workdir/$example'" >>"$metafile"
+    echo "  output_dir: '$output_dir'" >>"$metafile"
+    echo "  log: '$logfile'" >>"$metafile"
 
-    export NEST_DATA_PATH=$output_dir
-    /usr/bin/time -f "$time_format" --quiet sh -c "$runner $example >$logfile 2>&1"
+    export NEST_DATA_PATH=""  # $output_dir"
+    touch .start_example
+    sleep 1
+    set +e
+    /usr/bin/time -f "$time_format" --quiet sh -c "'$runner' '$example' >'$logfile' 2>&1" |& tee -a "$metafile"
+    ret=$?
+    set -e
 
-    if [ $? != 0 ] ; then
+    outfiles=false
+    for file in $(find . -newer .start_example); do
+        if ! $outfiles; then
+            echo "  output_files:" >>"$metafile"
+            outfiles=true
+        fi
+        echo "  - '$file'" >>"$metafile"
+    done
+    echo "  return_code: $ret" >>"$metafile"
+    if [ $ret != 0 ] ; then
         echo "    FAILURE!"
+        echo "  result: failed" >>"$metafile"
         FAILURES=$(( $FAILURES + 1 ))
-        OUTPUT=$(printf "        %s\n        %s\n" "$OUTPUT" "$workdir/$example")
+        OUTPUT="$(printf "        %s\n        %s\n" "${OUTPUT:-}" "$workdir/$example")"
     else
         echo "    SUCCESS!"
+        echo "  result: success" >>"$metafile"
     fi
     echo
 
     unset NEST_DATA_PATH
-    cd $basedir
+    cd "$basedir"
 
 done
 ELAPSED_TIME=$(($SECONDS - $START))
 
-echo ">>> RESULTS: $FAILURES failed /" $(echo $EXAMPLES | wc -w) " total"
+echo ">>> Longest running examples:"
+egrep -o "real: [^,]+" example_logs/*/meta.yaml | sed -e 's/:real://' | sort -k2 -rg | head -n 15
+
+echo ">>> RESULTS: $FAILURES failed /" $(echo "$EXAMPLES" | wc -w) " total"
 echo ">>> TOTAL TIME: $(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec."
 
-if [ "x$OUTPUT" != "x" ] ; then
+if [ ! -z ${OUTPUT+x} ] ; then
     echo ">>> Failed examples:"
     echo "$OUTPUT"
     echo ""

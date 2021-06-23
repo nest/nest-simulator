@@ -20,10 +20,16 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import numpy as np
 import nest
 
+try:
+    import scipy.stats
+    HAVE_SCIPY = True
+except ImportError:
+    HAVE_SCIPY = False
 
+
+@unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
 class GLIFPSCTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -34,12 +40,8 @@ class GLIFPSCTestCase(unittest.TestCase):
         self.resol = 0.01
         nest.ResetKernel()
         N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
-        pyrngs = [np.random.RandomState(s)
-                  for s in range(msd, msd + N_vp)]
         nest.SetKernelStatus({'resolution': self.resol,
-                              'grng_seed': msd + N_vp,
-                              'rng_seeds': range(msd + N_vp + 1,
-                                                 msd + 2 * N_vp + 1)})
+                              'rng_seed': msd})
 
     def simulate_w_stim(self, model_params):
         """
@@ -91,6 +93,17 @@ class GLIFPSCTestCase(unittest.TestCase):
 
         return times, V_m, spikes
 
+    def ks_assert_spikes(self, spikes, reference_spikes):
+        """
+        Runs a two-sided Kolmogorov-Smirnov statistic test on a set of spikes against a set of reference spikes.
+        """
+        p_value_lim = 0.9
+        d_lim = 0.2
+        d, p_value = scipy.stats.ks_2samp(spikes, reference_spikes)
+        print(f'd={d}, p_value={p_value}')
+        self.assertGreater(p_value, p_value_lim)
+        self.assertLess(d, d_lim)
+
     def test_lif(self):
         """
         Check LIF model
@@ -103,14 +116,14 @@ class GLIFPSCTestCase(unittest.TestCase):
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_params)
-        spikes_expected = [270.15, 347.02, 375.91, 418.80,
-                           612.99, 628.73, 644.47, 660.21,
-                           675.95, 691.69, 706.30, 722.00,
-                           737.74, 753.48, 769.22, 784.96,
-                           800.70, 816.72, 832.46, 848.20,
-                           863.94, 879.68, 895.42]
-        assert(np.allclose(spikes, spikes_expected, atol=1.0e-3))
-        assert(np.isclose(V_m[0], -78.85))
+        spikes_expected = [394.67, 424.25, 483.25, 612.99, 628.73,
+                           644.47, 660.21, 675.95, 691.69, 706.3,
+                           722., 737.74, 753.48, 769.22, 784.96,
+                           800.7, 816.72, 832.46, 848.2, 863.94,
+                           879.68, 895.42]
+
+        self.ks_assert_spikes(spikes, spikes_expected)
+        self.assertAlmostEqual(V_m[0], -78.85)
 
     def test_lif_r(self):
         """
@@ -123,16 +136,14 @@ class GLIFPSCTestCase(unittest.TestCase):
             "V_m": -78.85
         }
         times, V_m, spikes = self.simulate_w_stim(lif_r_params)
-        expected_spikes = [270.15, 347.17, 375.92, 419.84,
-                           613.21, 620.95, 629.14, 637.77,
-                           646.84, 656.34, 666.25, 676.55,
-                           687.22, 698.23, 707.60, 719.23,
-                           731.16, 743.30, 755.61, 768.07,
-                           780.65, 793.34, 809.49, 822.12,
-                           834.82, 847.61, 860.47, 873.38,
-                           886.34, 899.34]
-        assert(np.allclose(spikes, expected_spikes, atol=1.0e-3))
-        assert(np.isclose(V_m[0], -78.85))
+        expected_spikes = [394.67, 400.67, 424.51, 484.48, 613.4, 621.31, 629.67,
+                           638.47, 647.7,  657.36, 667.42, 677.87, 688.67, 699.8,
+                           709.84, 721.58, 733.57, 745.76, 758.11, 770.6, 783.21,
+                           795.92, 811.36, 824.05, 836.81, 849.64, 862.54, 875.49,
+                           888.48]
+
+        self.ks_assert_spikes(spikes, expected_spikes)
+        self.assertAlmostEqual(V_m[0], -78.85)
 
     def test_lif_asc(self):
         """
@@ -146,10 +157,10 @@ class GLIFPSCTestCase(unittest.TestCase):
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_asc_params)
-        expected_spikes = [270.15, 347.67, 378.24, 615.03, 648.82,
-                           686.12, 726.58, 771.84, 823.78, 878.94]
-        assert(np.allclose(spikes, expected_spikes, atol=1.0e-3))
-        assert(np.isclose(V_m[0], -78.85))
+        expected_spikes = [394.67, 484.81, 614.85, 648.28, 685.18, 725.06, 769.76, 821.69, 876.09]
+
+        self.ks_assert_spikes(spikes, expected_spikes)
+        self.assertAlmostEqual(V_m[0], -78.85)
 
     def test_lif_r_asc(self):
         """
@@ -163,10 +174,9 @@ class GLIFPSCTestCase(unittest.TestCase):
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_r_asc_params)
-        expected_spikes = [270.15, 347.81, 378.32, 615.22, 649.75,
-                           689.61, 735.16, 787.96, 848.19]
-        assert(np.allclose(spikes, expected_spikes, atol=1.0e-3))
-        assert(np.isclose(V_m[0], -78.85))
+        expected_spikes = [394.67, 485.07, 615.16, 649.52, 689.1, 734.18, 786.34, 845.85]
+        self.ks_assert_spikes(spikes, expected_spikes)
+        self.assertAlmostEqual(V_m[0], -78.85)
 
     def test_lif_r_asc_a(self):
         """
@@ -180,9 +190,10 @@ class GLIFPSCTestCase(unittest.TestCase):
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_r_asc_a_params)
-        expected_spikes = [271.40, 348.73, 379.26, 617.30, 662.40,
-                           705.92, 821.03]
-        assert(np.allclose(spikes, expected_spikes, atol=1.0e-3))
+        expected_spikes = [395.44, 615.27, 653.77, 701.42, 768.22, 859.82]
+
+        self.ks_assert_spikes(spikes, expected_spikes)
+        self.assertAlmostEqual(V_m[0], -78.85)
 
 
 def suite():

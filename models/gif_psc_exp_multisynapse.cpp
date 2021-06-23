@@ -284,13 +284,6 @@ nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse( const gif_psc_exp_mult
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_psc_exp_multisynapse::init_state_( const Node& proto )
-{
-  const gif_psc_exp_multisynapse& pr = downcast< gif_psc_exp_multisynapse >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::gif_psc_exp_multisynapse::init_buffers_()
 {
   B_.spikes_.clear();   //!< includes resize
@@ -305,7 +298,7 @@ nest::gif_psc_exp_multisynapse::calibrate()
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 
   const double tau_m = P_.c_m_ / P_.g_L_;
 

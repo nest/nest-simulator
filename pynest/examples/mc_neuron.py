@@ -54,31 +54,30 @@ nest.ResetKernel()
 
 
 syns = nest.GetDefaults('iaf_cond_alpha_mc')['receptor_types']
-print("iaf_cond_alpha_mc receptor_types: {0}".format(syns))
+print(f"iaf_cond_alpha_mc receptor_types: {syns}")
 
 rqs = nest.GetDefaults('iaf_cond_alpha_mc')['recordables']
-print("iaf_cond_alpha_mc recordables   : {0}".format(rqs))
+print(f"iaf_cond_alpha_mc recordables   : {rqs}")
 
 ###############################################################################
 # The simulation parameters are assigned to variables.
 
-nest.SetDefaults('iaf_cond_alpha_mc',
-                 {'V_th': -60.0,  # threshold potential
-                  'V_reset': -65.0,  # reset potential
-                  't_ref': 10.0,  # refractory period
-                  'g_sp': 5.0,  # somato-proximal coupling conductance
-                  'soma': {'g_L': 12.0},  # somatic leak conductance
-                  # proximal excitatory and inhibitory synaptic time constants
-                  'proximal': {'tau_syn_ex': 1.0,
-                               'tau_syn_in': 5.0},
-                  'distal': {'C_m': 90.0}  # distal capacitance
-                  })
+params = {'V_th': -60.0,  # threshold potential
+          'V_reset': -65.0,  # reset potential
+          't_ref': 10.0,  # refractory period
+          'g_sp': 5.0,  # somato-proximal coupling conductance
+          'soma': {'g_L': 12.0},  # somatic leak conductance
+          # proximal excitatory and inhibitory synaptic time constants
+          'proximal': {'tau_syn_ex': 1.0,
+                       'tau_syn_in': 5.0},
+          'distal': {'C_m': 90.0}  # distal capacitance
+          }
 
 ###############################################################################
 # The nodes are created using ``Create``. We store the returned handles
 # in variables for later reference.
 
-n = nest.Create('iaf_cond_alpha_mc')
+n = nest.Create('iaf_cond_alpha_mc', params=params)
 
 ###############################################################################
 # A ``multimeter`` is created and connected to the neurons. The parameters
@@ -139,7 +138,7 @@ nest.Simulate(700)
 ###############################################################################
 # Now we set the intrinsic current of soma to 150 pA to make the neuron spike.
 
-n.set({'soma': {'I_e': 150.}})
+n.soma = {'I_e': 150.}
 
 ###############################################################################
 # We simulate the network for another 300 ms and retrieve recorded data from

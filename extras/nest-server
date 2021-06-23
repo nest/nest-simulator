@@ -2,6 +2,7 @@
 
 HOST="127.0.0.1"
 PORT=5000
+PLUGIN=""
 USER=$USER
 STDOUT=0
 DAEMONIZE=0
@@ -9,7 +10,7 @@ DAEMONIZE=0
 usage() {
   echo "NEST Server"
   echo "-----------"
-  echo "Usage: nest-server log|status|start|stop|restart [-d] [-o] [-h <HOST>] [-p <PORT>] [-u <UID>]"
+  echo "Usage: nest-server log|status|start|stop|restart [-d] [-o] [-h <HOST>] [-p <PORT>] [-P <PLUGIN>] [-u <UID>]"
   echo ""
   echo "Commands:"
   echo "  log         display the sever log stored in /tmp/nest-server.log"
@@ -23,6 +24,7 @@ usage() {
   echo "  -o          print all output to both the console and to the log"
   echo "  -h <HOST>   use hostname/IP address <HOST> for the server [default: 127.0.0.1]"
   echo "  -p <PORT>   use port <PORT> for opening the socket [default: 5000]"
+  echo "  -P <PLUGIN> use the specified uWSGI plugin"
   echo "  -u <UID>    run the server under the user with ID <UID>" >&2; exit 1
 }
 
@@ -30,8 +32,17 @@ log() {
   tail -f /tmp/nest-server.log
 }
 
+set-plugin_opt() {
+  PLUGIN_OPT=""
+  if [ -n "$PLUGIN" ]; then
+    # One trailing space is added to make pid() correct.
+    PLUGIN_OPT="--plugin $PLUGIN "
+  fi
+}
+
 pid() {
-  pgrep -f "uwsgi --module nest.server:app --http-socket $HOST:$PORT --uid $USER"
+  set-plugin_opt
+  pgrep -f "uwsgi $PLUGIN_OPT--module nest.server:app --http-socket $HOST:$PORT --uid $USER"
 }
 
 ps-aux() {
@@ -53,15 +64,25 @@ start() {
   if [ "`ps-check`" ]; then
     echo "NEST Server is already serving at http://$HOST:$PORT."
   else
+    set-plugin_opt
     if [ $STDOUT == 0 ]; then
-      uwsgi --module nest.server:app --http-socket $HOST:$PORT --uid $USER --daemonize "/tmp/nest-server.log"
+      uwsgi \
+        $PLUGIN_OPT \
+        --module nest.server:app \
+        --http-socket $HOST:$PORT \
+        --uid $USER \
+        --daemonize "/tmp/nest-server.log"
       echo "NEST Server is serving at http://$HOST:$PORT."
       if [ $DAEMONIZE == 0 ]; then
         read -p "Press any key to stop... "
         stop
       fi
     else
-      uwsgi --module nest.server:app --http-socket $HOST:$PORT --uid $USER
+      uwsgi \
+        --plugin python3 \
+        --module nest.server:app \
+        --http-socket $HOST:$PORT \
+        --uid $USER
     fi
   fi
 }
@@ -81,12 +102,13 @@ stop() {
 }
 
 CMD=$1; shift
-while getopts "h:op:u:" opt; do
+while getopts "dh:op:P:u:" opt; do
     case $opt in
         d) DAEMONIZE=1 ;;
         h) HOST=$OPTARG ;;
         o) STDOUT=1 ;;
         p) PORT=$OPTARG ;;
+        P) PLUGIN=$OPTARG ;;
         u) USER=$OPTARG ;;
     esac
 done

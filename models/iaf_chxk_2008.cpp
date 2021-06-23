@@ -143,7 +143,7 @@ nest::iaf_chxk_2008::State_::State_( const Parameters_& p )
   : r( 0 )
 {
   y[ V_M ] = p.E_L; // initialize to reversal potential
-  for ( size_t i = 2; i < STATE_VEC_SIZE; ++i )
+  for ( size_t i = DG_EXC; i < STATE_VEC_SIZE; ++i )
   {
     y[ i ] = 0;
   }
@@ -160,16 +160,11 @@ nest::iaf_chxk_2008::State_::State_( const State_& s )
 
 nest::iaf_chxk_2008::State_& nest::iaf_chxk_2008::State_::operator=( const State_& s )
 {
-  if ( this == &s ) // avoid assignment to self
-  {
-    return *this;
-  }
+  r = s.r;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y[ i ] = s.y[ i ];
   }
-
-  r = s.r;
   return *this;
 }
 
@@ -294,13 +289,6 @@ nest::iaf_chxk_2008::~iaf_chxk_2008()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::iaf_chxk_2008::init_state_( const Node& proto )
-{
-  const iaf_chxk_2008& pr = downcast< iaf_chxk_2008 >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::iaf_chxk_2008::init_buffers_()

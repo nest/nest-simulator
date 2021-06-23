@@ -38,6 +38,7 @@ install( PROGRAMS
     nest_indirect
     nest_serial
     nest-server
+    nest-server-mpi
     ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
     DESTINATION ${CMAKE_INSTALL_BINDIR}
     )

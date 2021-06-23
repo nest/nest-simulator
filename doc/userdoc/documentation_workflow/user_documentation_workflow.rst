@@ -80,17 +80,30 @@ Sphinx.
 Rendering HTML
 ~~~~~~~~~~~~~~
 
-If you intend to work on the documentation, or if you want to obtain a
-local version of it for other reasons, you can build the documentation
-by simply running the following command in the build directory of NEST
-(i.e. the directory where you ran ``cmake``)
+You can build and preview the documentation locally by running the following
+commands.
+
+1. Go to the :ref:`build directory <source-install>` of NEST (i.e., the
+directory where you ran ``cmake``)
 
 .. code-block:: bash
 
-    make html
+   cd nest-simulator-x.y.z-build
 
-To install the documentation under `<nest_install_dir>`` along with
-the rest of NEST, this command can be followed by
+2. Generate HTML files
+
+.. code-block:: bash
+
+   make html
+
+3. Preview files. They are located in ``doc/userdoc/html``
+
+.. code-block:: bash
+
+   browser doc/userdoc/html/index.html
+
+To install the documentation under ``<nest_install_dir>`` along with
+the rest of NEST, the ``make html`` command can be followed by
 
 .. code-block:: bash
 
@@ -108,10 +121,10 @@ Editing and creating pages
 To edit existing `reStructuredText <https://thomas-cokelaer.info/tutorials/
 sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
-1. You can edit and/or add ``.rst`` files in the ``doc`` directory using your
+1. You can edit and/or add ``.rst`` files in the ``doc/userdoc`` directory using your
    editor of choice.
 
-2. If you create a new page, open ``contents.rst`` in the ``doc`` directory
+2. If you create a new page, open ``contents.rst`` in the ``doc/userdoc`` directory
    and add the file name under ``.. toctree::``. This will ensure it appears on
    the NEST simulator documentation's table of contents.
 
@@ -121,6 +134,8 @@ sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 4. Save your changes.
 
 5. Re-render documentation as described above.
+
+You can find our full :doc:`documentation style guide <../contribute/styleguide/styleguide>` here.
 
 Previewing on Read the Docs (optional)
 ++++++++++++++++++++++++++++++++++++++
@@ -155,7 +170,7 @@ a pull request.
 Creating pull request
 +++++++++++++++++++++
 
-Once your documentation work is finished, you can create a `pull request
-<https://nest.github.io/nest-simulator/development_workflow#create-a-pull-
-request>`_ to the ``master`` branch of the NEST Source Code Repository. Your
-pull request will be reviewed by the NEST Documentation Team!
+Once your documentation work is finished, you can create a
+:doc:`pull request <../contribute/development_workflow` to the ``master``
+branch of the NEST Source Code Repository. Your pull request will be reviewed
+by the NEST Documentation Team!

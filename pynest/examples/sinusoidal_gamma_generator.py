@@ -65,14 +65,16 @@ nest.SetKernelStatus({'resolution': 0.01})
 # (``spike_recorder``) and connect them to the generators using ``Connect``.
 
 
-g = nest.Create('sinusoidal_gamma_generator', n=2,
-                params=[{'rate': 10000.0, 'amplitude': 5000.0,
-                         'frequency': 10.0, 'phase': 0.0, 'order': 2.0},
-                        {'rate': 10000.0, 'amplitude': 5000.0,
-                         'frequency': 10.0, 'phase': 0.0, 'order': 10.0}])
+num_nodes = 2
+g = nest.Create('sinusoidal_gamma_generator', n=num_nodes,
+                params={'rate': 10000.0,
+                        'amplitude': 5000.0,
+                        'frequency': 10.0,
+                        'phase': 0.0,
+                        'order': [2.0, 10.0]})   # note the syntax for different order parameter of the two nodes
 
-m = nest.Create('multimeter', 2, {'interval': 0.1, 'record_from': ['rate']})
-s = nest.Create('spike_recorder', 2)
+m = nest.Create('multimeter', num_nodes, {'interval': 0.1, 'record_from': ['rate']})
+s = nest.Create('spike_recorder', num_nodes)
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
@@ -81,27 +83,27 @@ nest.Simulate(200)
 
 
 ###############################################################################
-# After simulating, the spikes are extracted from the ``spike_recorder`` using
-# ``GetStatus`` and plots are created with panels for the PST and ISI histograms.
+# After simulating, the spikes are extracted from the ``spike_recorder`` and
+# plots are created with panels for the PST and ISI histograms.
 
 colors = ['b', 'g']
 
-for j in range(2):
+for j in range(num_nodes):
 
     ev = m[j].events
     t = ev['times']
     r = ev['rate']
 
-    sp = nest.GetStatus(s[j])[0]['events']['times']
+    spike_times = s[j].events['times']
     plt.subplot(221)
-    h, e = np.histogram(sp, bins=np.arange(0., 201., 5.))
+    h, e = np.histogram(spike_times, bins=np.arange(0., 201., 5.))
     plt.plot(t, r, color=colors[j])
     plt.step(e[:-1], h * 1000 / 5., color=colors[j], where='post')
     plt.title('PST histogram and firing rates')
     plt.ylabel('Spikes per second')
 
     plt.subplot(223)
-    plt.hist(np.diff(sp), bins=np.arange(0., 0.505, 0.01),
+    plt.hist(np.diff(spike_times), bins=np.arange(0., 0.505, 0.01),
              histtype='step', color=colors[j])
     plt.title('ISI histogram')
 
@@ -160,7 +162,7 @@ nest.Connect(g, p)
 nest.Connect(p, s)
 
 nest.Simulate(200)
-ev = s[0].events
+ev = s.events
 plt.subplot(224)
 plt.plot(ev['times'], ev['senders'] - min(ev['senders']), 'o')
 plt.ylim([-0.5, 19.5])
@@ -177,8 +179,7 @@ plt.title('One spike train for all targets')
 def step(t, n, initial, after, seed=1, dt=0.05):
 
     nest.ResetKernel()
-    nest.SetKernelStatus({"resolution": dt, "grng_seed": 256 * seed + 1,
-                          "rng_seeds": [256 * seed + 2]})
+    nest.SetKernelStatus({"resolution": dt, "rng_seed": seed})
 
     g = nest.Create('sinusoidal_gamma_generator', n, params=initial)
     sr = nest.Create('spike_recorder')
@@ -269,13 +270,10 @@ spikes = step(t, n,
               seed=123, dt=dt)
 plot_hist(spikes)
 exp = np.zeros(int(steps))
-exp[:int(steps / 2)] = (40. +
-                        40. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                               t / 1000. * np.pi * 10. /
-                                               (steps / 2))))
-exp[int(steps / 2):] = (40. + 20. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                                     t / 1000. * np.pi * 10. /
-                                                     (steps / 2)) + offset))
+exp[:int(steps / 2)] = (40. + 40. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2))))
+exp[int(steps / 2):] = (40. + 20. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2)) + offset))
 plt.plot(exp, 'r')
 plt.title('Rate Modulation: 40 -> 20')
 
@@ -295,12 +293,10 @@ spikes = step(t, n,
               seed=123, dt=dt)
 plot_hist(spikes)
 exp = np.zeros(int(steps))
-exp[:int(steps / 2)] = (20. + 20. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                                     t / 1000. * np.pi * 10. /
-                                                     (steps / 2))))
-exp[int(steps / 2):] = (50. + 50. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                                     t / 1000. * np.pi * 10. /
-                                                     (steps / 2)) + offset))
+exp[:int(steps / 2)] = (20. + 20. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2))))
+exp[int(steps / 2):] = (50. + 50. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2)) + offset))
 plt.plot(exp, 'r')
 plt.title('DC Rate and Rate Modulation: 20 -> 50')
 plt.ylabel('Spikes per second')
@@ -321,9 +317,8 @@ spikes = step(t, n,
 plot_hist(spikes)
 exp = np.zeros(int(steps))
 exp[:int(steps / 2)] = 40. * np.ones(int(steps / 2))
-exp[int(steps / 2):] = (40. + 40. * np.sin(np.arange(0, t / 1000. * np.pi * 20,
-                                                     t / 1000. * np.pi * 20. /
-                                                     (steps / 2))))
+exp[int(steps / 2):] = (40. + 40. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 20, t / 1000. * np.pi * 20. / (steps / 2))))
 plt.plot(exp, 'r')
 plt.title('Rate Modulation: 0 -> 40')
 plt.xlabel('Time [ms]')
@@ -345,13 +340,10 @@ spikes = step(t, n,
 plot_hist(spikes)
 exp = np.zeros(int(steps))
 
-exp[:int(steps / 2)] = (60. + 60. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                                     t / 1000. * np.pi * 10. /
-                                                     (steps / 2))))
-exp[int(steps / 2):] = (60. + 60. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
-                                                     t / 1000. * np.pi * 10. /
-                                                     (steps / 2)) +
-                                           offset + np.pi))
+exp[:int(steps / 2)] = (60. + 60. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2))))
+exp[int(steps / 2):] = (60. + 60. * np.sin(np.arange(
+    0, t / 1000. * np.pi * 10, t / 1000. * np.pi * 10. / (steps / 2)) + offset + np.pi))
 plt.plot(exp, 'r')
 plt.title('Modulation Phase: 0 -> Pi')
 plt.xlabel('Time [ms]')

@@ -23,15 +23,13 @@
 #ifndef MIP_GENERATOR_H
 #define MIP_GENERATOR_H
 
-// Includes from librandom:
-#include "poisson_randomdev.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "stimulating_device.h"
+#include "random_generators.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -41,20 +39,18 @@ namespace nest
 Short description
 +++++++++++++++++
 
-create spike trains as described by the MIP model
+Create spike trains as described by the MIP model
 
 Description
 +++++++++++
 
 The mip_generator generates correlated spike trains using an Multiple
 Interaction Process (MIP) as described in [1]_. Underlying principle is a
-Poisson mother process with rate r, the spikes of which are copied into the
+Poisson parent process with rate r, the spikes of which are copied into the
 child processes with a certain probability p. Every node the mip_generator is
 connected to receives a distinct child process as input, whose rate is p*r.
 The value of the pairwise correlation coefficient of two child processes
 created by a MIP process equals p.
-
-Remarks:
 
 The MIP generator may emit more than one spike through a child process
 during a single time step, especially at high rates.  If this happens,
@@ -65,25 +61,24 @@ have their own copy of a MIP generator. By using the same mother_seed
 it is ensured that the mother process is identical for each of the
 generators.
 
-IMPORTANT: The mother_seed of mpi_generator must be different from any
-           seeds used for the global or thread-specific RNGs set in
-           the kernel.
+.. include:: ../models/stimulation_device.rst
 
-TODO: Better handling of private random number generator, see #143.
-      Most important: If RNG is changed in prototype by SetDefaults,
-      then this is
+rate
+    Mean firing rate of the parent process, spikes/s
 
-Parameters
-++++++++++
+p_copy
+    Copy probability
 
-The following parameters appear in the element's status dictionary:
+Set parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-============  ======== ================================================
- rate         spikes/s Mean firing rate of the mother process
- p_copy       real     Copy probability
- mother_rng   rng      Random number generator of mother process
- mother_seed  integer  Seed of RNG of mother process
-============  ======== ================================================
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
+The indexing is as follows:
+
+ 0. rate
+ 1. p_copy
 
 Sends
 +++++
@@ -98,40 +93,22 @@ References
        15:67-101.
        DOI: https://doi.org/10.1162/089976603321043702
 
+See also
+++++++++
+
+poisson_generator
+
 EndUserDocs */
 
 /*! Class mip_generator generates spike trains as described
     in the MIP model.
 */
-class mip_generator : public DeviceNode
+class mip_generator : public StimulationDevice
 {
 
 public:
-  /**
-   * The generator is threaded, so the RNG to use is determined
-   * at run-time, depending on thread. An additional RNG is used
-   * for the mother process.
-   */
   mip_generator();
-
-  /**
-   * Copy constructor. Called, when a new instance is created.
-   * Needs to be overrwritten to initialize the random generator
-   * for the mother process.
-   */
   mip_generator( const mip_generator& rhs );
-
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
-
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
 
   /**
    * Import sets of overloaded virtual functions.
@@ -140,42 +117,37 @@ public:
    */
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
+
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   /**
    * @todo Should use binomial distribution
    */
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   // ------------------------------------------------------------
 
   /**
    * Store independent parameters of the model.
-   * Mother RNG is a parameter since it can be changed. Not entirely in
-   * keeping with persistence rules, since it changes state during
-   * updates. Should go once we have proper global RNG scheme.
    */
   struct Parameters_
   {
-    double rate_;               //!< process rate in Hz
-    double p_copy_;             //!< copy probability for each spike in the mother process
-    unsigned long mother_seed_; //!< seed of the mother process
-    librandom::RngPtr rng_;     //!< random number generator for mother process
+    double rate_;   //!< process rate in Hz
+    double p_copy_; //!< copy probability for each spike in the parent process
 
     Parameters_(); //!< Sets default parameter values
-    Parameters_( const Parameters_& );
-
-    Parameters_& operator=( const Parameters_& );
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
     void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
@@ -185,12 +157,11 @@ private:
 
   struct Variables_
   {
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
+    poisson_distribution poisson_dist_; //!< poisson_distribution
   };
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
   Parameters_ P_;
   Variables_ V_;
 };
@@ -198,7 +169,7 @@ private:
 inline port
 mip_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -218,7 +189,7 @@ inline void
 mip_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulationDevice::get_status( d );
 }
 
 inline void
@@ -230,10 +201,16 @@ mip_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+inline StimulationDevice::Type
+mip_generator::get_type() const
+{
+  return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace nest

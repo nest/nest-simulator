@@ -32,7 +32,6 @@ Change NEST behavior::
 
     -Dtics_per_ms=[number]     Specify elementary unit of time. [default 1000.0]
     -Dtics_per_step=[number]   Specify resolution. [default 100]
-    -Dwith-ps-arrays=[OFF|ON]  Use PS array construction semantics. [default=ON]
 
 Add user modules::
 

@@ -1031,7 +1031,7 @@ Weights and delays
 Parameters, such as those presented in Table :ref:`tbl_parameters`, can
 also be used to specify distance-dependent or randomized weights and
 delays for the connections created by :py:func:`.Connect`. Weight and delays are in NEST
-passed along in a synapse dictionary to the :py:func:`.Connect` call.
+passed along in a synapse dictionary to the ``Connect()`` call.
 
 ::
 
@@ -1197,7 +1197,7 @@ Connection generation now proceeds in a different way than before:
 
 4. If you prohibit multapses (cf Sec. \ :ref:`3.1.1 <sec:terminology>`)
    and prescribe a number of connections greater than the number of pool
-   nodes in the mask, :py:func:`.Connect` may get stuck in an infinite
+   nodes in the mask, ``Connect()`` may get stuck in an infinite
    loop and NEST will hang. Keep in mind that the number of nodes within
    the mask may vary considerably for free layers with randomly placed
    nodes.

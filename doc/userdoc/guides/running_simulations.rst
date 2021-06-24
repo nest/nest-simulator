@@ -85,8 +85,8 @@ buffers is preserved over the simulations.
 As mentioned above, the size of that buffer depends on *dmin+dmax* and
 the easiest way to assert its integrity is to not change its size after
 initialization. Thus, we freeze the delay extrema after the first call
-to :py:func:`.Simulate`. To still allow adding new connections inbetween calls
-to :py:func:`.Simulate`, the required boundaries of delays can be set manually
+to ``Simulate()``. To still allow adding new connections inbetween calls
+to ``Simulate()``, the required boundaries of delays can be set manually
 using :py:func:`.SetKernelStatus`:
 
 ::
@@ -167,7 +167,7 @@ following
     nest.SetKernelStatus({'rng_type': 'mt19937'})
     nest.SetKernelStatus({'rng_type': 'mt19937', 'rng_seed': 12234})
 
-In the first case, the `rng_seed` set previously (or the default seed) is used,
+In the first case, the ``rng_seed`` set previously (or the default seed) is used,
 otherwise the seed specified.
 
 
@@ -198,7 +198,7 @@ of doing this is to simply loop over :py:func:`.Simulate` calls:
         # extract and analyse data
 
 would run a simulation in 20 rounds of 10 ms. With this solution, NEST takes
-a number of preparatory and cleanup steps for each :py:func:`.Simulate` call.
+a number of preparatory and cleanup steps for each ``Simulate()`` call.
 This makes the solution robust and entirely reliable, but comes with a
 performance cost.
 
@@ -292,7 +292,7 @@ the :py:func:`.Simulate` call):
 If the real-time factor is larger than `1` as in the example above, the
 simulation runs slower than the wall-clock time.
 
-In case a simulation script contains multiple :py:func:`.Simulate` calls,
+In case a simulation script contains multiple ``Simulate()`` calls,
 the percentage simulation time is reset to `0%` at the beginning of each call,
 but the absolute model time and the real-time factor account for the total
 elapsed times.

@@ -128,7 +128,7 @@ the nodes. Or, we might not want to set the same parameter for all nodes
 in the NodeCollection. A classic example of this is when some parameter should
 be drawn from a random distribution. As previously stated, you can use a dictionary
 of lists to set different values for each node, :py:func:`.Create`,
-:py:func:`~nest.lib.NodeCollection.set`
+:py:meth:`~.NodeCollection.set`
 and :py:func:`.SetStatus` all take this option. If you have a lot of nodes in your NodeCollection,
 list comprehension is the way to go:
 

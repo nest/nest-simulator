@@ -147,7 +147,7 @@ Many of these properties are not relevant for the dynamics of the
 neuron. To find out what the interesting properties are, look at the
 documentation of the model through the helpdesk. If you already know
 which properties you are interested in, you can specify a key, or a list
-of keys, as an optional argument to :py:func:`~nest.lib.hl_api_types.NodeCollection.get`:
+of keys, as an optional argument to :py:meth:`~.NodeCollection.get`:
 
 ::
 
@@ -157,14 +157,14 @@ of keys, as an optional argument to :py:func:`~nest.lib.hl_api_types.NodeCollect
 In the first case we query the value of the constant background current
 ``I_e``; the result is given as a floating point element. In the second
 case, we query the values of the reset potential and threshold of the
-neuron, and receive the result as a dictionary . If :py:func:`~nest.lib.hl_api_types.NodeCollection.get` is
+neuron, and receive the result as a dictionary . If :py:meth:`~.NodeCollection.get` is
 called on a NodeCollection with more than one element, the returned dictionary
 will contain lists with the same number of elements as the number of nodes in
-the NodeCollection. If :py:func:`~nest.lib.hl_api_types.NodeCollection.get` is
+the NodeCollection. If ``get()`` is
 called with a specific key on a NodeCollection with several elements, a list
 the size of the NodeCollection will be returned.
 
-To modify the properties in the dictionary, we use :py:func:`~nest.lib.hl_apu_types.NodeCollection.set`. In the
+To modify the properties in the dictionary, we use :py:meth:`~.NodeCollection.set`. In the
 following example, the background current is set to 375.0pA, a value
 causing the neuron to spike periodically.
 
@@ -310,7 +310,7 @@ obtain and display the spikes from the spike recorder.
     plt.show()
 
 Here we extract the events more concisely by sending the parameter name to
-:py:func:`~nest.lib.hl_api_types.NodeCollection.get`. This extracts the dictionary element
+:py:meth:`~.NodeCollection.get`. This extracts the dictionary element
 with the key ``events`` rather than the whole status dictionary. The
 output should look like :numref:`VM-neuron` and :numref:`spikes-one-neuron`.
 If you want to execute this as a script, just paste all lines into a text

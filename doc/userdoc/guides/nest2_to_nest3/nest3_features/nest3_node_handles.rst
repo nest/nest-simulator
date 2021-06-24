@@ -333,7 +333,7 @@ Dictionary with lists when setting parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is now possible to use a dictionary with lists when setting node parameters
-with :py:func:`.Create`, :py:func:`~.NodeCollection.set` or :py:func:`.SetStatus`. The values of the lists will
+with :py:func:`.Create`, :py:meth:`~.NodeCollection.set` or :py:func:`.SetStatus`. The values of the lists will
 be distributed across the nodes. The way to do this previously was to apply a
 list of dictionaries. This is still possible.
 

@@ -307,12 +307,6 @@ function( NEST_PROCESS_TICS_PER_STEP )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_WITH_PS_ARRAY )
-  if ( with-ps-arrays )
-    set( PS_ARRAYS ON PARENT_SCOPE )
-  endif ()
-endfunction()
-
 # Depending on the user options, we search for required libraries and include dirs.
 
 function( NEST_PROCESS_WITH_LIBLTDL )
@@ -394,52 +388,60 @@ function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
   if ( ${with-python} STREQUAL "2" )
-    message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting with-python=ON" )
+    message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting CMake option -Dwith-python=ON." )
   elseif ( ${with-python} STREQUAL "ON" )
 
-    # Localize the Python interpreter
-    find_package( PythonInterp 3 REQUIRED )
+    # Localize the Python interpreter and lib/header files
+    find_package( Python 3.8 REQUIRED Interpreter Development )
 
-    if ( PYTHONINTERP_FOUND )
-      set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
-      set( PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE} PARENT_SCOPE )
-      set( PYTHON ${PYTHON_EXECUTABLE} PARENT_SCOPE )
-      set( PYTHON_VERSION ${PYTHON_VERSION_STRING} PARENT_SCOPE )
+    if ( Python_FOUND )
+      if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+        execute_process( COMMAND "${Python_EXECUTABLE}" "-c"
+          "import sys, os; print(int(bool(os.environ.get('CONDA_DEFAULT_ENV', False)) or (sys.prefix != sys.base_prefix)))"
+          OUTPUT_VARIABLE Python_InVirtualEnv OUTPUT_STRIP_TRAILING_WHITESPACE )
 
-      # Localize Python lib/header files and make sure that their version matches
-      # the Python interpreter version !
-      find_package( PythonLibs ${PYTHON_VERSION_STRING} EXACT )
-      if ( PYTHONLIBS_FOUND )
-        set( HAVE_PYTHON ON PARENT_SCOPE )
-        # export found variables to parent scope
-        set( PYTHONLIBS_FOUND "${PYTHONLIBS_FOUND}" PARENT_SCOPE )
-        set( PYTHON_INCLUDE_DIRS "${PYTHON_INCLUDE_DIRS}" PARENT_SCOPE )
-        set( PYTHON_LIBRARIES "${PYTHON_LIBRARIES}" PARENT_SCOPE )
+        if ( NOT Python_InVirtualEnv AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+          message( FATAL_ERROR "No virtual Python environment found and no installation prefix specified. "
+            "Please either build and install NEST in a virtual Python environment or specify CMake option -DCMAKE_INSTALL_PREFIX=<nest_install_dir>.")
+        endif()
 
-        if ( cythonize-pynest )
-          find_package( Cython )
-          if ( CYTHON_FOUND )
-            # confirmed not working: 0.15.1
-            # confirmed working: 0.19.2+
-            # in between unknown
-            if ( CYTHON_VERSION VERSION_LESS "0.19.2" )
-              message( FATAL_ERROR "Your Cython version is too old. Please install "
-                                   "newer version (0.19.2+)" )
-            endif ()
+        # Setting CMAKE_INSTALL_PREFIX effects the inclusion of GNUInstallDirs defining CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir>
+        get_filename_component( Python_EnvRoot "${Python_SITELIB}/../../.." ABSOLUTE)
+        set ( CMAKE_INSTALL_PREFIX "${Python_EnvRoot}" CACHE PATH "Default install prefix for the active Python interpreter" FORCE )
+      endif ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
 
-            # export found variables to parent scope
-            set( CYTHON_FOUND "${CYTHON_FOUND}" PARENT_SCOPE )
-            set( CYTHON_EXECUTABLE "${CYTHON_EXECUTABLE}" PARENT_SCOPE )
-            set( CYTHON_VERSION "${CYTHON_VERSION}" PARENT_SCOPE )
-          endif ()
+      # export found variables to parent scope
+      set( HAVE_PYTHON ON PARENT_SCOPE )
+      set( Python_FOUND "${Python_FOUND}" PARENT_SCOPE )
+      set( Python_EXECUTABLE ${Python_EXECUTABLE} PARENT_SCOPE )
+      set( PYTHON ${Python_EXECUTABLE} PARENT_SCOPE )
+      set( Python_VERSION ${Python_VERSION} PARENT_SCOPE )
+      set( Python_VERSION_MAJOR ${Python_VERSION_MAJOR} PARENT_SCOPE )
+      set( Python_VERSION_MINOR ${Python_VERSION_MINOR} PARENT_SCOPE )
+      set( Python_INCLUDE_DIRS "${Python_INCLUDE_DIRS}" PARENT_SCOPE )
+      set( Python_LIBRARIES "${Python_LIBRARIES}" PARENT_SCOPE )
+
+      if ( cythonize-pynest )
+        # Need updated Cython because of a change in the C api in Python 3.7
+        find_package( Cython 0.28.3 REQUIRED )
+        if ( CYTHON_FOUND )
+          # export found variables to parent scope
+          set( CYTHON_FOUND "${CYTHON_FOUND}" PARENT_SCOPE )
+          set( CYTHON_EXECUTABLE "${CYTHON_EXECUTABLE}" PARENT_SCOPE )
+          set( CYTHON_VERSION "${CYTHON_VERSION}" PARENT_SCOPE )
         endif ()
-        set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages" PARENT_SCOPE )
       endif ()
     endif ()
   elseif ( ${with-python} STREQUAL "OFF" )
   else ()
     message( FATAL_ERROR "Invalid option: -Dwith-python=" ${with-python} )
   endif ()
+endfunction()
+
+function( NEST_POST_PROCESS_WITH_PYTHON )
+  if ( Python_FOUND )
+    set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" PARENT_SCOPE )
+  endif()
 endfunction()
 
 function( NEST_PROCESS_WITH_OPENMP )
@@ -508,6 +510,13 @@ function( NEST_PROCESS_WITH_MPI )
       set( MPIEXEC_PREFLAGS "${MPIEXEC_PREFLAGS}" PARENT_SCOPE )
       set( MPIEXEC_POSTFLAGS "${MPIEXEC_POSTFLAGS}" PARENT_SCOPE )
     endif ()
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_WITH_DETAILED_TIMERS )
+  set( TIMER_DETAILED OFF PARENT_SCOPE )
+  if ( ${with-detailed-timers} STREQUAL "ON" )
+    set( TIMER_DETAILED ON PARENT_SCOPE )
   endif ()
 endfunction()
 
@@ -596,7 +605,8 @@ function( NEST_PROCESS_WITH_BOOST )
     set(Boost_USE_DEBUG_LIBS OFF)  # ignore debug libs
     set(Boost_USE_RELEASE_LIBS ON) # only find release libs
     # Needs Boost version >=1.62.0 to use Boost sorting, JUNIT logging
-    find_package( Boost 1.62.0 )
+    # Require Boost version >=1.69.0 due to change in Boost sort
+    find_package( Boost 1.69.0 )
     if ( Boost_FOUND )
       # export found variables to parent scope
       set( HAVE_BOOST ON PARENT_SCOPE )
@@ -605,7 +615,7 @@ function( NEST_PROCESS_WITH_BOOST )
       set( BOOST_LIBRARIES "${Boost_LIBRARIES}" PARENT_SCOPE )
       set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIRS}" PARENT_SCOPE )
       set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
-      
+
       include_directories( ${Boost_INCLUDE_DIRS} )
     endif ()
   endif ()
@@ -651,16 +661,16 @@ endfunction ()
 
 function( NEST_PROCESS_WITH_RECORDINGBACKEND_ARBOR )
   if (with-recordingbackend-arbor)
-	if (NOT HAVE_MPI)  
+	if (NOT HAVE_MPI)
 	  message( FATAL_ERROR "Recording backend Arbor needs MPI." )
     endif ()
-	
-	if (NOT HAVE_PYTHON) 
+
+	if (NOT HAVE_PYTHON)
 	  message( FATAL_ERROR "Recording backend Arbor needs Python." )
-	endif ()  
-	
-    include( FindPythonModule )	
-    
+	endif ()
+
+    include( FindPythonModule )
+
 	find_python_module(mpi4py)
 	if ( HAVE_MPI4PY )
 	  include_directories( "${PY_MPI4PY}/include" )

@@ -23,14 +23,12 @@
 #ifndef IAF_CHS_2007_H
 #define IAF_CHS_2007_H
 
-// Includes from librandom:
-#include "normal_randomdev.h"
-
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
@@ -136,8 +134,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_node_( const Node& proto );
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -254,7 +250,7 @@ private:
     double P22_;
     double P30_;
 
-    librandom::NormalRandomDev normal_dev_; //!< random deviate generator
+    normal_distribution normal_dist_; //!< random distribution
   };
 
   // Access functions for UniversalDataLogger -------------------------------

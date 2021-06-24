@@ -37,6 +37,7 @@
 #include "per_thread_bool_indicator.h"
 #include "source.h"
 #include "source_table_position.h"
+#include "spike_data.h"
 
 // Includes from libnestutil
 #include "block_vector.h"
@@ -119,10 +120,35 @@ private:
   bool previous_entry_has_same_source_( const SourceTablePosition& current_position,
     const Source& current_source ) const;
 
-  void populate_target_data_fields_( const SourceTablePosition& current_position,
+  /**
+   * Fills the fields of a TargetData during construction of *
+   * presynaptic connection infrastructure.
+   */
+  bool populate_target_data_fields_( const SourceTablePosition& current_position,
     const Source& current_source,
     const thread source_rank,
     TargetData& next_target_data ) const;
+
+  /**
+   * A structure to temporarily hold information about all process
+   * local targets will be addressed by incoming spikes. Data from
+   * this structure is transferred to the compressed_spike_data_
+   * structure of ConnectionManager during construction of the
+   * postsynaptic connection infrastructure. Arranged as a two
+   * dimensional vector (thread|synapse) with an inner map (source
+   * node id -> spike data).
+   */
+  std::vector< std::vector< std::map< index, SpikeData > > > compressible_sources_;
+
+  /**
+   * A structure to temporarily store locations of "unpacked spikes"
+   * in the compressed_spike_data_ structure of
+   * ConnectionManager. Data from this structure is transferred to the
+   * presynaptic side during construction of the presynaptic
+   * connection infrastructure. Arranged as a two dimensional vector
+   * (thread|synapse) with an inner map (source node id -> index).
+   */
+  std::vector< std::vector< std::map< index, size_t > > > compressed_spike_data_map_;
 
 public:
   SourceTable();
@@ -269,6 +295,15 @@ public:
    * long number.
    */
   index pack_source_node_id_and_syn_id( const index source_node_id, const synindex syn_id ) const;
+
+  void resize_compressible_sources();
+
+  // creates maps of sources with more than one thread-local target
+  void collect_compressible_sources( const thread tid );
+  // fills the compressed_spike_data structure in ConnectionManager
+  void fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
+
+  void clear_compressed_spike_data_map( const thread tid );
 };
 
 inline void
@@ -455,6 +490,15 @@ SourceTable::pack_source_node_id_and_syn_id( const index source_node_id, const s
   // syn_id is maximally 256, so shifting node ID by 8 bits and storing
   // syn_id in the lowest 8 leads to a unique number
   return ( source_node_id << 8 ) + syn_id;
+}
+
+inline void
+SourceTable::clear_compressed_spike_data_map( const thread tid )
+{
+  for ( synindex syn_id = 0; syn_id < compressed_spike_data_map_[ tid ].size(); ++syn_id )
+  {
+    compressed_spike_data_map_[ tid ][ syn_id ].clear();
+  }
 }
 
 } // namespace nest

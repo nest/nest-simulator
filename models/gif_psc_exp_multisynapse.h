@@ -126,6 +126,15 @@ port number has to match the respective "receptor_type" in the connectors.
 
 The shape of postsynaptic current is exponential.
 
+.. note::
+
+   If `tau_m` is very close to a synaptic time constant, the model
+   will numerically behave as if `tau_m` is equal to the synaptic
+   time constant, to avoid numerical instabilities.
+
+   For implementation details see the
+   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+
 Parameters
 ++++++++++
 
@@ -224,7 +233,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -352,7 +360,7 @@ private:
     std::vector< double > P11_syn_; // decay terms of synaptic currents
     std::vector< double > P21_syn_; // coefficients for solving membrane potential equation
 
-    librandom::RngPtr rng_; // random number generator of my own thread
+    RngPtr rng_; // random number generator of my own thread
 
     unsigned int RefractoryCounts_;
   };

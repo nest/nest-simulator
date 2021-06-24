@@ -105,7 +105,7 @@ M_ERROR setverbosity
 
     {
       T Simulate
-      GetKernelStatus /time get simtime geq
+      GetKernelStatus /biological_time get simtime geq
       { exit } if
     } loop
 

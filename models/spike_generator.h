@@ -33,7 +33,7 @@
 #include "event.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -43,7 +43,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-A device which generates spikes from an array with spike-times
+Generate spikes from an array with spike-times
 
 Description
 +++++++++++
@@ -64,13 +64,13 @@ do not coincide with a step are handled (see examples below):
 Multiple occurrences of the same time indicate that more than one
 event is to be generated at this particular time.
 
-Additionally, spike_weights can be set. This is an array as well.
+Additionally, `spike_weights` can be set. This is an array as well.
 It contains one weight value per spike time. If set, the spikes
 are delivered with the respective weight multiplied with the
 weight of the connection. To disable this functionality, the
 spike_weights array can be set to an empty array.
 
-    /precise_times   default: false
+    `precise_times`  default: false
 
 If false, spike times will be rounded to simulation steps, i.e., multiples
 of the resolution. The rounding is controlled by the two other flags.
@@ -79,14 +79,14 @@ combination of step and offset. This should only be used if all neurons
 receiving the spike train can handle precise timing information. In this
 case, the other two options are ignored.
 
-    /allow_offgrid_times   default: false
+    `allow_offgrid_times`   default: false
 
 If false, spike times will be rounded to the nearest step if they are
 less than tic/2 from the step, otherwise NEST reports an error.
 If true, spike times are rounded to the nearest step if within tic/2
 from the step, otherwise they are rounded up to the *end* of the step.
 
-    /shift_now_spikes   default: false
+    `shift_now_spikes`   default: false
 
 This option is mainly for use by the PyNN-NEST interface.
 If false, spike times rounded down to the current point in time will
@@ -94,108 +94,141 @@ be considered in the past and ignored.
 If true, spike times that are rounded down to the current time step
 are shifted one time step into the future.
 
-Note that GetStatus will report the spike times that the spike_generator
+Note that ``GetStatus`` will report the spike times that the spike_generator
 will actually use, i.e., for grid-based simulation the spike times rounded
-to the appropriate point on the time grid. This means that GetStatus may
-return different /spike_times values at different resolutions.
+to the appropriate point on the time grid. This means that ``GetStatus`` may
+return different `spike_times` values at different resolutions.
 
 Example:
 
-    spike_generator << /spike_times [1.0 2.0 3.0] >> SetStatus
+  ::
 
-    Instructs the spike generator to generate events at 1.0, 2.0, and
-    3.0 milliseconds, relative to the device-timer origin.
+     nest.Create("spike_generator",
+                 params={"spike_times": [1.0, 2.0, 3.0]})
+
+  Instructs the spike generator to generate events at 1.0, 2.0, and
+  3.0 milliseconds, relative to the device-timer origin.
 
 Example:
 
-Assume that NEST works with default resolution (step size) of 0.1ms
-and default tic length of 0.001ms. Then, spikes times not falling
+Assume that NEST works with default resolution (step size) of 0.1 ms
+and default tic length of 0.001 ms. Then, spikes times not falling
 onto the grid will be handled as follows for different option settings:
 
-    /spike_generator << /spike_times [1.0 1.9999 3.0001] >> Create
-    ---> spikes at steps 10 (==1.0ms), 20 (==2.0ms) and 30 (==3.0ms)
+  ::
 
-    /spike_generator << /spike_times [1.0 1.05 3.0001] >> Create
-    ---> error, spike time 1.05 not within tic/2 of step
+    nest.Create("spike_generator",
+               params={"spike_times": [1.0, 1.9999, 3.0001]})
 
-    /spike_generator << /spike_times [1.0 1.05 3.0001]
-                        /allow_offgrid_times true >> Create
-    ---> spikes at steps 10, 11 (mid-step time rounded up),
+  ---> spikes at steps 10 (==1.0 ms), 20 (==2.0 ms) and 30 (==3.0 ms)
+
+  ::
+
+    nest.Create("spike_generator",
+               params={"spike_times": [1.0, 1.05, 3.0001]})
+
+  ---> **Error!** Spike time 1.05 not within tic/2 of step
+
+
+  ::
+
+    nest.Create("spike_generator",
+               params={"spike_times": [1.0, 1.05, 3.0001],
+               "allow_offgrid_times": True})
+
+  ---> spikes at steps 10, 11 (mid-step time rounded up),
          30 (time within tic/2 of step moved to step)
 
-    /spike_generator << /spike_times [1.0 1.05 3.0001]
-                        /precise_times true >> Create
-    ---> spikes at step 10, offset 0.0; step 11, offset -0.05;
+  ::
+
+    nest.Create("spike_generator",
+               params={"spike_times": [1.0, 1.05, 3.0001],
+               "precise_times": True})
+
+  ---> spikes at step 10, offset 0.0; step 11, offset -0.05;
          step 31, offset -0.0999
 
-    Assume we have simulated 10.0ms and simulation times is thus 10.0 (step
-100).
-    Then, any spike times set, at this time, must be later than step 100.
+Assume we have simulated 10.0 ms and simulation time is thus 10.0 (step
+100). Then, any spike times set at this time must be later than step 100.
 
-    /spike_generator << /spike_times [10.0001] >> Create
-    ---> spike time is within tic/2 of step 100, rounded down to 100 thus
-         not in the future, spike will not be emitted
+  ::
 
-    /spike_generator << /spike_times [10.0001] /precise_times true >> Create
-    ---> spike at step 101, offset -0.0999 is in the future
+    nest.Create("spike_generator",
+               params={"spike_times": [10.0001]})
 
-    /spike_generator
-      << /spike_times [10.0001 11.0001] /shift_now_spikes true >>
-    Create
-    ---> spike at step 101, spike shifted into the future, and spike at step
-110,
-         not shifted, since it is in the future anyways
+  ---> spike time is within tic/2 of step 100, rounded down to 100 thus
+         not in the future; **spike will not be emitted**
 
-Parameters
-++++++++++
+  ::
 
-The following properties can be set in the status dictionary.
+    nest.Create("spike_generator",
+               params={"spike_times": [10.0001],
+               "precise_times": True})
 
-===================== ============= ==========================================
- origin               ms            Time origin for device timer
- start                ms            Earliest possible time stamp of a spike to
-                                    be emitted
- stop                 ms            Earliest time stamp of a potential spike
-                                    event that is not emitted
- spike_times          ms            Spike-times
- spike_weights        synaptic      Corresponding spike-weights, the unit
-                      weights       depends on the receiver
- spike_multiplicities integer       Multiplicities of spikes, same length
-                                    as spike_times; mostly for debugging
- precise_times        boolean       see above
- allow_offgrid_times  boolean       see above
- shift_now_spikes     boolean       see above
-===================== ============= ==========================================
+  ---> spike at step 101, offset -0.0999 is in the future
+
+  ::
+
+    nest.Create("spike_generator",
+               params={"spike_times": [10.0001, 11.0001],
+               "shift_now_spikes": True})
+
+  ---> spike at step 101, spike shifted into the future, and spike at step
+        110, not shifted, since it is in the future anyways
+
+.. include:: ../models/stimulation_device.rst
+
+spike_times
+    List of spike times in ms
+
+spike_weights
+    Corresponding spike-weights, the unit depends on the receiver
+
+spike_multiplicities
+    Multiplicities of spikes, same length as spike_times; mostly for debugging
+
+precise_times
+    See above
+
+allow_offgrid_times
+    See above
+
+shift_now_spikes
+    See above
+
+Set spike times from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The spike times for this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
+update holds just an array of spike times in ms.
 
 Sends
 +++++
 
 SpikeEvent
 
-EndUserDocs */
+See also
+++++++++
 
-class spike_generator : public DeviceNode
+poisson_generator
+
+EndUserDocs
+*/
+class spike_generator : public StimulationDevice
 {
 
 public:
   spike_generator();
   spike_generator( const spike_generator& );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
+  port send_test_event( Node&, rport, synindex, bool ) override;
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_spikes ) override;
 
-  port send_test_event( Node&, rport, synindex, bool );
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -205,28 +238,27 @@ public:
   using Node::event_hook;
   using Node::sends_signal;
 
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   SignalType
-  sends_signal() const
+  sends_signal() const override
   {
     return ALL;
   }
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // ------------------------------------------------------------
 
   struct State_
   {
+    State_();
     size_t position_; //!< index of next spike to deliver
-
-    State_(); //!< Sets default state value
   };
 
   // ------------------------------------------------------------
@@ -277,8 +309,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
-
   Parameters_ P_;
   State_ S_;
 };
@@ -286,7 +316,7 @@ private:
 inline port
 spike_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -306,9 +336,45 @@ inline void
 spike_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulationDevice::get_status( d );
 }
 
-} // namespace
+inline void
+nest::spike_generator::set_status( const DictionaryDatum& d )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // To detect "now" spikes and shift them, we need the origin. In case
+  // it is set in this call, we need to extract it explicitly here.
+  Time origin;
+  double v;
+  if ( updateValue< double >( d, names::origin, v ) )
+  {
+    origin = Time::ms( v );
+  }
+  else
+  {
+    origin = StimulationDevice::get_origin();
+  }
+
+  // throws if BadProperty
+  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time(), this );
+
+  // We now know that ptmp is consistent. We do not write it back
+  // to P_ before we are also sure that the properties to be set
+  // in the parent class are internally consistent.
+  StimulationDevice::set_status( d );
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
+}
+
+inline StimulationDevice::Type
+spike_generator::get_type() const
+{
+  return StimulationDevice::Type::SPIKE_GENERATOR;
+}
+
+} // namespace nest
 
 #endif /* #ifndef SPIKE_GENERATOR_H */

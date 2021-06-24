@@ -50,6 +50,11 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 # number of elements in each population.
 # Since in this example, we have 2 populations (E/I), :math:`2^2` possible
 # synaptic connections exist (EE, EI, IE, II).
+#
+# Note the use of "post-pre" notation when referring to synaptic connections.
+# As a matter of convention in computational neuroscience, we refer to the
+# connection from inhibitory to excitatory neurons (I->E) as EI (post-pre) and
+# connections from excitatory to inhibitory neurons (E->I) as IE (post-pre).
 
 
 def plot_weight_matrices(E_neurons, I_neurons):
@@ -61,15 +66,11 @@ def plot_weight_matrices(E_neurons, I_neurons):
 
     a_EE = nest.GetConnections(E_neurons, E_neurons)
 
-    '''
-    Using `get`, we can extract the value of the connection weight,
-    for all the connections between these populations
-    '''
+    # Using `get`, we can extract the value of the connection weight,
+    # for all the connections between these populations
     c_EE = a_EE.weight
 
-    '''
-    Repeat the two previous steps for all other connection types
-    '''
+    # Repeat the two previous steps for all other connection types
     a_EI = nest.GetConnections(I_neurons, E_neurons)
     c_EI = a_EI.weight
     a_IE = nest.GetConnections(E_neurons, I_neurons)
@@ -77,18 +78,16 @@ def plot_weight_matrices(E_neurons, I_neurons):
     a_II = nest.GetConnections(I_neurons, I_neurons)
     c_II = a_II.weight
 
-    '''
-    We now iterate through the range of all connections of each type.
-    To populate the corresponding weight matrix, we begin by identifying
-    the source-node_id (by using .source) and the target-node_id.
-    For each node_id, we subtract the minimum node_id within the corresponding
-    population, to assure the matrix indices range from 0 to the size of
-    the population.
+    # We now iterate through the range of all connections of each type.
+    # To populate the corresponding weight matrix, we begin by identifying
+    # the source-node_id (by using .source) and the target-node_id.
+    # For each node_id, we subtract the minimum node_id within the corresponding
+    # population, to assure the matrix indices range from 0 to the size of
+    # the population.
 
-    After determining the matrix indices [i, j], for each connection
-    object, the corresponding weight is added to the entry W[i,j].
-    The procedure is then repeated for all the different connection types.
-    '''
+    # After determining the matrix indices [i, j], for each connection
+    # object, the corresponding weight is added to the entry W[i,j].
+    # The procedure is then repeated for all the different connection types.
     a_EE_src = a_EE.source
     a_EE_trg = a_EE.target
     a_EI_src = a_EI.source

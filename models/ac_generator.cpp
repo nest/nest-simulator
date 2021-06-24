@@ -139,8 +139,7 @@ nest::ac_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
  * ---------------------------------------------------------------- */
 
 nest::ac_generator::ac_generator()
-  : DeviceNode()
-  , device_()
+  : StimulationDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -149,8 +148,7 @@ nest::ac_generator::ac_generator()
 }
 
 nest::ac_generator::ac_generator( const ac_generator& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+  : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -163,18 +161,15 @@ nest::ac_generator::ac_generator( const ac_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::ac_generator::init_state_( const Node& proto )
+nest::ac_generator::init_state_()
 {
-  const ac_generator& pr = downcast< ac_generator >( proto );
-
-  device_.init_state( pr.device_ );
-  S_ = pr.S_;
+  StimulationDevice::init_state();
 }
 
 void
 nest::ac_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulationDevice::init_buffers();
   B_.logger_.reset();
 }
 
@@ -183,7 +178,7 @@ nest::ac_generator::calibrate()
 {
   B_.logger_.init();
 
-  device_.calibrate();
+  StimulationDevice::calibrate();
 
   const double h = Time::get_resolution().get_ms();
   const double t = kernel().simulation_manager.get_time().get_ms();
@@ -221,7 +216,7 @@ nest::ac_generator::update( Time const& origin, const long from, const long to )
     S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
 
     S_.I_ = 0.0;
-    if ( device_.is_active( Time::step( start + lag ) ) )
+    if ( StimulationDevice::is_active( Time::step( start + lag ) ) )
     {
       S_.I_ = S_.y_1_ + P_.offset_;
       ce.set_current( S_.I_ );
@@ -235,4 +230,33 @@ void
 nest::ac_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::ac_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() != 4 )
+    {
+      throw BadParameterValue(
+        "The size of the data for the ac_generator needs to be 4 [amplitude, offset, frequency, phase]." );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::offset ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 2 ] );
+    ( *d )[ names::phase ] = DoubleDatum( input_param[ 3 ] );
+    ptmp.set( d, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

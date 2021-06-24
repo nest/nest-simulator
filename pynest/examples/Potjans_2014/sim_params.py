@@ -43,8 +43,8 @@ sim_dict = {
     'rec_dev': ['spike_recorder'],
     # path to save the output data
     'data_path': os.path.join(os.getcwd(), 'data/'),
-    # masterseed for NEST and NumPy
-    'master_seed': 55,
+    # Seed for NEST
+    'rng_seed': 55,
     # number of threads per MPI process
     'local_num_threads': 1,
     # recording interval of the membrane potential (in ms)

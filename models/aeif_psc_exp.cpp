@@ -162,12 +162,11 @@ nest::aeif_psc_exp::State_::State_( const State_& s )
 
 nest::aeif_psc_exp::State_& nest::aeif_psc_exp::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
+  r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
   return *this;
 }
 
@@ -255,7 +254,7 @@ nest::aeif_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Ensure that t_ref >= 0" );
+    throw BadProperty( "Refractory time cannot be negative." );
   }
 
   if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
@@ -352,13 +351,6 @@ nest::aeif_psc_exp::~aeif_psc_exp()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::aeif_psc_exp::init_state_( const Node& proto )
-{
-  const aeif_psc_exp& pr = downcast< aeif_psc_exp >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::aeif_psc_exp::init_buffers_()

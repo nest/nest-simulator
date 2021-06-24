@@ -104,14 +104,9 @@ bool Parser::operator()( Token& t )
       }
       else if ( t.contains( s->BeginArraySymbol ) )
       {
-#ifdef PS_ARRAYS
         Token cb( new NameDatum( "[" ) );
         t.move( cb );
         result = tokencontinue;
-#else
-        ParseStack.push( new ArrayDatum() );
-        result = scancontinue;
-#endif
       }
       else if ( t.contains( s->EndProcedureSymbol ) )
       {
@@ -135,29 +130,9 @@ bool Parser::operator()( Token& t )
       }
       else if ( t.contains( s->EndArraySymbol ) )
       {
-#ifdef PS_ARRAYS
         Token ob( new NameDatum( "]" ) );
         t.move( ob );
         result = tokencontinue;
-#else
-        if ( not ParseStack.empty() )
-        {
-          ParseStack.pop_move( pt );
-          if ( pt->isoftype( SLIInterpreter::Arraytype ) )
-          {
-            t.move( pt ); // array completed
-            result = tokencontinue;
-          }
-          else
-          {
-            result = endprocexpected;
-          }
-        }
-        else
-        {
-          result = noopenarray;
-        }
-#endif
       }
       else if ( t.contains( s->EndSymbol ) )
       {

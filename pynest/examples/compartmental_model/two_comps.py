@@ -78,7 +78,7 @@ nest.Connect(sg_soma, cm_act, syn_spec={
 nest.Connect(sg_dend, cm_act, syn_spec={
     'synapse_model': 'static_synapse', 'weight': 2., 'delay': 0.5, 'receptor_type': syn_idx_dend_act})
 
-# create multimeters to record compartment voltages
+# create multimeters to record compartment voltages and various state variables
 rec_list = ['v_comp0', 'v_comp1',
             'm_Na_0', 'h_Na_0', 'n_K_0', 'm_Na_1', 'h_Na_1', 'n_K_1',
             'g_r_AN_AMPA_1', 'g_d_AN_AMPA_1', 'g_r_AN_NMDA_1', 'g_d_AN_NMDA_1']
@@ -90,6 +90,7 @@ nest.Connect(mm_act, cm_act)
 
 # simulate the models
 nest.Simulate(160.)
+# nest.Simulate(.2)
 res_pas = nest.GetStatus(mm_pas, 'events')[0]
 res_act = nest.GetStatus(mm_act, 'events')[0]
 

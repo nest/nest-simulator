@@ -64,8 +64,8 @@ mm = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp
 # connect the multimeter to the compartmental model
 nest.Connect(mm, cm)
 
-# nest.Simulate(400.)
-nest.Simulate(.2)
+nest.Simulate(400.)
+# nest.Simulate(.2)
 res = nest.GetStatus(mm, 'events')[0]
 
 plt.plot(res['times'], res['v_comp0'], c='b', label='v_comp0')
@@ -73,4 +73,4 @@ plt.plot(res['times'], res['v_comp1'], c='r', label='v_comp1')
 plt.plot(res['times'], res['v_comp2'], c='g', label='v_comp2')
 plt.legend()
 
-# plt.show()
+plt.show()

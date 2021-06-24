@@ -111,7 +111,7 @@ nest::cm_main::init_pointers_()
 
   /*
   Get the map of all recordables (i.e. all state variables of the model):
-  --> keys are state variables name suffixed by the compartment index for
+  --> keys are state variable names suffixed by the compartment index for
       voltage (e.g. "v_comp1") or by the synapse index for receptor currents
   --> values are pointers to the specific state variables
   */
@@ -141,7 +141,6 @@ nest::cm_main::init_pointers_()
 
 }
 
-
 void
 nest::cm_main::calibrate()
 {
@@ -154,7 +153,6 @@ nest::cm_main::calibrate()
 /* ----------------------------------------------------------------
  * Update and spike handling functions
  */
-
 void
 nest::cm_main::update( Time const& origin, const long from, const long to )
 {
@@ -163,7 +161,6 @@ nest::cm_main::update( Time const& origin, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    init_pointers_();
     const double v_0_prev = c_tree_.get_root()->v_comp;
 
     c_tree_.construct_matrix( lag );

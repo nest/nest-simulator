@@ -20,7 +20,6 @@ nest::Compartment::Compartment( const long compartment_index,
   , n_passed( 0 )
 {
   compartment_currents = CompartmentCurrents();
-  // etype = EType();
 };
 nest::Compartment::Compartment( const long compartment_index,
                                 const long parent_index,
@@ -57,10 +56,10 @@ std::map< std::string, double* >
 nest::Compartment::get_recordables()
 {
     std::map< std::string, double* > recordables =
-        compartment_currents.get_recordables();
+        compartment_currents.get_recordables(comp_index);
 
     recordables.insert(recordables.begin(), recordables.end());
-    recordables["v_comp"] = &v_comp;
+    recordables["v_comp" + std::to_string(comp_index)] = &v_comp;
 
     return recordables;
 }
@@ -153,6 +152,8 @@ nest::CompTree::add_compartment( const long compartment_index,
 /*
 Get the compartment corresponding to the provided index in the tree.
 
+This function gets the compartments by a recursive search through the tree.
+
 The overloaded functions looks only in the subtree of the provided compartment,
 and also has the option to throw an error if no compartment corresponding to
 `compartment_index` is found in the tree
@@ -193,25 +194,33 @@ nest::CompTree::get_compartment( const long compartment_index,
     return r_compartment;
 }
 
-// initialization functions
+/*
+Initialize all tree structure pointers
+*/
 void
-nest::CompTree::init()
+nest::CompTree::init_pointers()
 {
-    set_compartments();
-    set_leafs();
-
-    // initialize the compartments
-    for( auto compartment_it = compartments_.begin();
-         compartment_it != compartments_.end();
-         ++compartment_it )
-    {
-        ( *compartment_it )->parent = get_compartment(
-                                            ( *compartment_it )->p_index,
-                                            &root_, 0 );
-        ( *compartment_it )->init();
-    }
+  set_parents();
+  set_compartments();
+  set_leafs();
 }
-
+/*
+For each compartments, sets its pointer towards its parent compartment
+*/
+void
+nest::CompTree::set_parents()
+{
+  for( auto compartment_idx_it = compartment_indices_.begin();
+       compartment_idx_it != compartment_indices_.end();
+       ++compartment_idx_it )
+  {
+    Compartment* comp_ptr   = get_compartment( *compartment_idx_it );
+    // will be nullptr if root
+    Compartment* parent_ptr = get_compartment( comp_ptr->p_index,
+                                               &root_, 0 );
+    comp_ptr->parent = parent_ptr;
+  }
+}
 /*
 Creates a vector of compartment pointers, organized in the order in which they were
 added by `add_compartment()`
@@ -229,7 +238,6 @@ nest::CompTree::set_compartments()
     }
 
 }
-
 /*
 Creates a vector of compartment pointers of compartments that are also leafs of the tree.
 */
@@ -242,11 +250,49 @@ nest::CompTree::set_leafs()
          ++compartment_it )
     {
         if( int((*compartment_it)->children.size()) == 0 )
-	{
+  {
             leafs_.push_back( *compartment_it );
         }
     }
 };
+
+/*
+Returns a map of variable names and pointers to the recordables
+*/
+std::map< std::string, double* >
+nest::CompTree::get_recordables()
+{
+  std::map< std::string, double* > recordables;
+
+  /*
+  add recordables for all compartments, suffixed by compartment_idx,
+  to "recordables"
+  */
+  for( auto compartment_it = compartments_.begin();
+     compartment_it != compartments_.end();
+     ++compartment_it )
+  {
+    std::map< std::string, double* > recordables_comp =
+                                          ( *compartment_it )->get_recordables();
+    recordables.insert(recordables_comp.begin(), recordables_comp.end());
+  }
+  return recordables;
+}
+
+/*
+Initialize state variables
+*/
+void
+nest::CompTree::init()
+{
+  // initialize the compartments
+  for( auto compartment_it = compartments_.begin();
+       compartment_it != compartments_.end();
+       ++compartment_it )
+  {
+    ( *compartment_it )->init();
+  }
+}
 
 /*
 Returns vector of voltage values, indices correspond to compartments in `compartments_`

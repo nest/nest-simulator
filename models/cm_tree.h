@@ -42,8 +42,6 @@ public:
     // vector for synapses
     CompartmentCurrents compartment_currents;
 
-    // etype
-    // EType etype;
     // buffer for currents
     RingBuffer currents;
     // voltage variable
@@ -129,9 +127,9 @@ private:
                                 std::vector< Compartment* >::iterator leaf_it);
     void solve_matrix_upsweep(Compartment* compartment, double vv);
 
-    // set functions for initialization
+    // functions for pointer initialization
+    void set_parents();
     void set_compartments();
-    void set_compartments( Compartment* compartment );
     void set_leafs();
 
 public:
@@ -143,6 +141,8 @@ public:
     void add_compartment( const long compartment_index, const long parent_index,
                           const DictionaryDatum& compartment_params );
     void init();
+    void init_pointers();
+    std::map< std::string, double* > get_recordables();
 
     // get a compartment pointer from the tree
     Compartment* get_compartment( const long compartment_index );

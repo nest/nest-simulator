@@ -163,6 +163,8 @@ public:
 private:
   void init_state_( const Node& proto );
   void init_buffers_();
+  void init_pointers_();
+
   void calibrate();
 
   void update( Time const&, const long, const long );
@@ -172,17 +174,7 @@ private:
 
   // To record variables with DataAccessFunctor
   // double get_state_element( size_t elem){return c_tree_.get_compartment_voltage(elem);}
-  double get_state_element( size_t elem ){
-
-  std::cout << "get_state_element" << std::endl;
-  int kk = 0;
-  for (auto rec_it = recordables_values.begin(); rec_it != recordables_values.end(); rec_it++)
-  {
-    std::cout << "recordables[" << kk << "] = " << recordables_names[kk] << ": " << *rec_it << "->" << **rec_it << std::endl;
-    kk++;
-  }
-
-    return *recordables_values[elem]; };
+  double get_state_element( size_t elem ){ return *recordables_values[elem]; };
 
   // The next classes need to be friends to access the State_ class/member
   friend class DataAccessFunctor< cm_main >;
@@ -194,7 +186,6 @@ private:
   the vector 'recordables_values' stores pointers to all state variables
   present in the model
   */
-  int recordables_counter;
   std::vector< std::string > recordables_names;
   std::vector< double* > recordables_values;
 
@@ -257,27 +248,8 @@ cm_main::get_status( DictionaryDatum& d ) const
 inline void
 cm_main::set_status( const DictionaryDatum& d )
 {
-
-  int kk = 0;
-  std::cout << std::endl;
-  std::cout << "set_status 1" << std::endl;
-  for (auto rec_it = recordables_values.begin(); rec_it != recordables_values.end(); rec_it++)
-  {
-    std::cout << "recordables[" << kk << "] = " << recordables_names[kk] << ": " << *rec_it << "->" << **rec_it << std::endl;
-    kk++;
-  }
-
   updateValue< double >( d, names::V_th, V_th_ );
   ArchivingNode::set_status( d );
-
-  kk = 0;
-  std::cout << std::endl;
-  std::cout << "set_status 2" << std::endl;
-  for (auto rec_it = recordables_values.begin(); rec_it != recordables_values.end(); rec_it++)
-  {
-    std::cout << "recordables[" << kk << "] = " << recordables_names[kk] << ": " << *rec_it << "->" << **rec_it << std::endl;
-    kk++;
-  }
 }
 
 } // namespace

@@ -6,6 +6,35 @@
    background-color: #272525;
 }
 
+code.descclassname {
+    display: none;
+}
+html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list) > dt {
+    background: none;
+
+}
+
+html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) > dt {
+    display: table;
+    margin: 6px 0;
+        margin-top: 6px;
+    font-size: large;
+    line-height: normal;
+    background: none;
+    color: #717171;
+    border-top: none;
+    border-left: solid;
+    padding: 6px;
+    position: relative;
+}
+
+.rst-content dl:not(.docutils) dl dt {
+    border-left: none;
+    color: #333;
+    background: none;
+}
+
+
 .rst-content code, .rst-content tt, code {
     border: none;
     font-size: 85%;
@@ -14,7 +43,7 @@
     padding-right: 2px;
 }
 
-  t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal { 
+t.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal { 
     color: #111;
 
 }
@@ -110,10 +139,6 @@ a:hover {
     text-decoration: underline;
 }
 
-code.descclassname {
-    display: none;
-}
-
 .rst-content dl:not(.docutils) dt  em[class^='property']{
      display:none;
 }
@@ -131,18 +156,23 @@ code.descclassname {
 }
 
 .rst-content .admonition-title {
-    background: #ffae18;
-
+    background: #333333;
 }
 
+.rst-content .danger .admonition-title {
+    background: #ff3333;
+}
+.rst-content .note .admonition-title {
+    background: #ff9933;
+}
+.rst-content .seealso .admonition-title {
+    background: #ff9933;
+}
+.rst-content .warning .admonition-title {
+    background: #ff6633;
+}
 .wy-plain-list-disc, .rst-content .section ul, .rst-content .toctree-wrapper ul, article ul {
     margin-bottom: 12px;
-}
-
-.rst-content dl:not(.docutils) dt {
-    background: #ff663336;
-    border-top: solid 3px #ff6633;
-    color: black;
 }
 
 .rst-content .pull-quote {

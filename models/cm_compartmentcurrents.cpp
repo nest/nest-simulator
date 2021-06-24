@@ -30,14 +30,6 @@ nest::Na::append_recordables(std::map< std::string, double* >* recordables,
   ( *recordables )["h_Na_" + std::to_string(compartment_idx)] = &h_Na_;
 }
 
-// std::map< std::string, double* > nest::Na::get_recordables()
-// {
-//   std::map< std::string, double* > recordables = {{"m_Na_", &m_Na_},
-//                                                   {"h_Na_", &h_Na_}};
-//   return recordables;
-// }
-
-
 std::pair< double, double > nest::Na::f_numstep( const double v_comp, const double dt)
 {
   double g_val = 0., i_val = 0.;
@@ -102,11 +94,6 @@ nest::K::append_recordables(std::map< std::string, double* >* recordables,
 {
   ( *recordables )["n_K_" + std::to_string(compartment_idx)] = &n_K_;
 }
-// std::map< std::string, double* > nest::K::get_recordables()
-// {
-//   std::map< std::string, double* > recordables = {{"n_K_", &n_K_}};
-//   return recordables;
-// }
 
 std::pair< double, double > nest::K::f_numstep( const double v_comp, const double dt)
 {
@@ -165,12 +152,6 @@ nest::AMPA::append_recordables(std::map< std::string, double* >* recordables)
   ( *recordables )["g_r_AMPA_" + std::to_string(syn_idx)] = &g_r_AMPA_;
   ( *recordables )["g_d_AMPA_" + std::to_string(syn_idx)] = &g_d_AMPA_;
 }
-// std::map< std::string, double* > nest::AMPA::get_recordables()
-// {
-//   std::map< std::string, double* > recordables = {{"g_r_AMPA_", &g_r_AMPA_},
-//                                                   {"g_d_AMPA_", &g_d_AMPA_}};
-//   return recordables;
-// }
 
 std::pair< double, double > nest::AMPA::f_numstep( const double v_comp, const double dt, const long lag )
 {
@@ -232,12 +213,6 @@ nest::GABA::append_recordables(std::map< std::string, double* >* recordables)
   ( *recordables )["g_r_GABA_" + std::to_string(syn_idx)] = &g_r_GABA_;
   ( *recordables )["g_d_GABA_" + std::to_string(syn_idx)] = &g_d_GABA_;
 }
-// std::map< std::string, double* > nest::GABA::get_recordables()
-// {
-//   std::map< std::string, double* > recordables = {{"g_r_GABA_", &g_r_GABA_},
-//                                                   {"g_d_GABA_", &g_d_GABA_}};
-//   return recordables;
-// }
 
 std::pair< double, double > nest::GABA::f_numstep( const double v_comp, const double dt, const long lag )
 {
@@ -299,12 +274,6 @@ nest::NMDA::append_recordables(std::map< std::string, double* >* recordables)
   ( *recordables )["g_r_NMDA_" + std::to_string(syn_idx)] = &g_r_NMDA_;
   ( *recordables )["g_d_NMDA_" + std::to_string(syn_idx)] = &g_d_NMDA_;
 }
-// std::map< std::string, double* > nest::NMDA::get_recordables()
-// {
-//   std::map< std::string, double* > recordables = {{"g_r_NMDA_", &g_r_NMDA_},
-//                                                   {"g_d_NMDA_", &g_d_NMDA_}};
-//   return recordables;
-// }
 
 std::pair< double, double > nest::NMDA::f_numstep( const double v_comp, const double dt, const long lag )
 {
@@ -381,14 +350,6 @@ nest::AMPA_NMDA::append_recordables(std::map< std::string, double* >* recordable
   ( *recordables )["g_r_AN_NMDA_" + std::to_string(syn_idx)] = &g_r_AN_NMDA_;
   ( *recordables )["g_d_AN_NMDA_" + std::to_string(syn_idx)] = &g_d_AN_NMDA_;
 }
-// std::map< std::string, double* > nest::AMPA_NMDA::get_recordables()
-// {
-//   std::map< std::string, double* > recordables = {{"g_r_AN_AMPA_", &g_r_AN_AMPA_},
-//                                                   {"g_d_AN_AMPA_", &g_d_AN_AMPA_},
-//                                                   {"g_r_AN_NMDA_", &g_r_AN_NMDA_},
-//                                                   {"g_d_AN_NMDA_", &g_d_AN_NMDA_}};
-//   return recordables;
-// }
 
 std::pair< double, double > nest::AMPA_NMDA::f_numstep( const double v_comp, const double dt, const long lag )
 {

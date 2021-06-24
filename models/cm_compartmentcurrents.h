@@ -315,22 +315,22 @@ public:
     std::map< std::string, double* > recordables;
 
     // recordables sodium channel
-    Na_chan_.append_recordables(&recordables, compartment_idx);
+    Na_chan_.append_recordables( &recordables, compartment_idx );
     // recordables potassium channel
-    K_chan_.append_recordables(&recordables, compartment_idx);
+    K_chan_.append_recordables( &recordables, compartment_idx );
 
     // recordables AMPA synapses
     for( auto syn_it = AMPA_syns_.begin(); syn_it != AMPA_syns_.end(); syn_it++)
-      syn_it->append_recordables(&recordables);
+      syn_it->append_recordables( &recordables );
     // recordables GABA synapses
     for( auto syn_it = GABA_syns_.begin(); syn_it != GABA_syns_.end(); syn_it++)
-      syn_it->append_recordables(&recordables);
+      syn_it->append_recordables( &recordables );
     // recordables AMPA synapses
     for( auto syn_it = NMDA_syns_.begin(); syn_it != NMDA_syns_.end(); syn_it++)
-      syn_it->append_recordables(&recordables);
+      syn_it->append_recordables( &recordables );
     // recordables AMPA_NMDA synapses
     for( auto syn_it = AMPA_NMDA_syns_.begin(); syn_it != AMPA_NMDA_syns_.end(); syn_it++)
-      syn_it->append_recordables(&recordables);
+      syn_it->append_recordables( &recordables );
 
     return recordables;
   };

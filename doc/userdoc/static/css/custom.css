@@ -6,7 +6,7 @@
    background-color: #272525;
 }
 
-.rst-content dl:not(.docutils) code.descclassname {
+.rst-content dl:not(.docutils) code.descclassname, .rst-content dl:not(.docutils) tt.descclassname {
     display: none;
 }
 

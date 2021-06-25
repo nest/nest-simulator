@@ -9,31 +9,7 @@
 .rst-content dl:not(.docutils) code.descclassname {
     display: none;
 }
-/*html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list) > dt {
-    background: none;
 
-}
-html.writer-html4 .rst-content dl:not(.docutils) dl:not(.field-list) > dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list) > dt {
-	margin-bottom: 6px;
-	border: none;
-	border-left: 3px solid #ccc;
-	background: none;
-	color: #555;
-}
-
-html.writer-html4 .rst-content dl:not(.docutils) > dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) > dt {
-	display: table;
-	margin: 6px 0;
-	font-size: medium;
-	line-height: normal;
-	background: none;
-	color: #717171;
-	border-left: solid 3px;
-	border-top: none;
-	padding: 6px;
-	position: relative;
-}
-*/
 .rst-content dl:not(.docutils) dt {
 	display: table;
 	margin: 6px 0;

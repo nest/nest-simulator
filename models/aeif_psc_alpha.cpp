@@ -161,6 +161,16 @@ nest::aeif_psc_alpha::State_::State_( const State_& s )
   }
 }
 
+nest::aeif_psc_alpha::State_& nest::aeif_psc_alpha::State_::operator=( const State_& s )
+{
+  r_ = s.r_;
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
+    y_[ i ] = s.y_[ i ];
+  }
+  return *this;
+}
+
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */

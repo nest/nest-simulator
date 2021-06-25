@@ -112,7 +112,7 @@ def showTextTable(connPattern, fileTrunk):
         for suffix in ('.tex', '-crop.pdf', '.png', '.aux', '.log'):
             if os.path.exists(fileTrunk + suffix):
                 os.remove(fileTrunk + suffix)
-    except:
+    except Exception:
         raise Exception('Could not create PDF Table.')
 
 

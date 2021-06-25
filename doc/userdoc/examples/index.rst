@@ -93,7 +93,7 @@ PyNEST examples
 
 .. toctree::
    :maxdepth: 1
-   :caption: Spatially arranged networks examples
+   :caption: Spatially-stuctured networks examples
 
    ../auto_examples/spatial/conncomp
    ../auto_examples/spatial/conncon_sources

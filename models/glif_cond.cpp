@@ -183,17 +183,6 @@ nest::glif_cond::State_::State_( const Parameters_& p )
   y_[ V_M ] = 0.0; // initialize to membrane potential
 }
 
-nest::glif_cond::State_::State_( const State_& s )
-{
-  threshold_ = s.threshold_;
-  threshold_spike_ = s.threshold_spike_;
-  threshold_voltage_ = s.threshold_voltage_;
-  ASCurrents_ = s.ASCurrents_;
-  ASCurrents_sum_ = s.ASCurrents_sum_;
-  refractory_steps_ = s.refractory_steps_;
-  y_ = s.y_;
-}
-
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */

@@ -20,6 +20,8 @@
  *
  */
 
+#include <cmath>
+
 #include "node_collection.h"
 #include "node.h"
 #include "spatial.h"
@@ -271,6 +273,130 @@ RedrawParameter::value( RngPtr rng,
   } while ( value < min_ or value > max_ );
 
   return value;
+}
+
+
+ExpDistParameter::ExpDistParameter( const DictionaryDatum& d )
+  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  , inv_beta_( 1.0 / getValue< double >( d, "beta" ) )
+{
+  parameter_is_spatial_ = true;
+
+  const auto beta = getValue< double >( d, "beta" );
+  if ( beta <= 0 )
+  {
+    throw BadProperty( "beta > 0 required for exponential distribution parameter, got beta=" + std::to_string( beta ) );
+  }
+}
+
+double
+ExpDistParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer )
+{
+  return std::exp( -p_->value( rng, source_pos, target_pos, layer ) * inv_beta_ );
+}
+
+GaussianParameter::GaussianParameter( const DictionaryDatum& d )
+  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  , mean_( getValue< double >( d, "mean" ) )
+  , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
+{
+  parameter_is_spatial_ = true;
+
+  const auto std = getValue< double >( d, "std" );
+  if ( std <= 0 )
+  {
+    throw BadProperty( "std > 0 required for gaussian distribution parameter, got std=" + std::to_string( std ) );
+  }
+}
+
+double
+GaussianParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer )
+{
+  const auto dx = p_->value( rng, source_pos, target_pos, layer ) - mean_;
+  return std::exp( -dx * dx * inv_two_std2_ );
+}
+
+
+Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
+  : px_( getValue< ParameterDatum >( d, "x" )->clone() )
+  , py_( getValue< ParameterDatum >( d, "y" )->clone() )
+  , mean_x_( getValue< double >( d, "mean_x" ) )
+  , mean_y_( getValue< double >( d, "mean_y" ) )
+  , x_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
+                          * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_x" ) ) )
+  , y_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
+                          * getValue< double >( d, "std_y" ) * getValue< double >( d, "std_y" ) ) )
+  , xy_term_const_(
+      getValue< double >( d, "rho" ) / ( ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
+                                         * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_y" ) ) )
+{
+  parameter_is_spatial_ = true;
+
+  const auto rho = getValue< double >( d, "rho" );
+  const auto std_x = getValue< double >( d, "std_x" );
+  const auto std_y = getValue< double >( d, "std_y" );
+  if ( rho >= 1 or rho <= -1 )
+  {
+    throw BadProperty(
+      "-1 < rho < 1 required for gaussian2d distribution parameter, got rho=" + std::to_string( rho ) );
+  }
+  if ( std_x <= 0 )
+  {
+    throw BadProperty(
+      "std_x > 0 required for gaussian2d distribution parameter, got std_x=" + std::to_string( std_x ) );
+  }
+  if ( std_y <= 0 )
+  {
+    throw BadProperty(
+      "std_y > 0 required for gaussian2d distribution parameter, got std_y=" + std::to_string( std_y ) );
+  }
+}
+
+double
+Gaussian2DParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer )
+{
+  const auto dx = px_->value( rng, source_pos, target_pos, layer ) - mean_x_;
+  const auto dy = py_->value( rng, source_pos, target_pos, layer ) - mean_y_;
+  return std::exp( -dx * dx * x_term_const_ - dy * dy * y_term_const_ + dx * dy * xy_term_const_ );
+}
+
+
+GammaParameter::GammaParameter( const DictionaryDatum& d )
+  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  , kappa_( getValue< double >( d, "kappa" ) )
+  , inv_theta_( 1.0 / getValue< double >( d, "theta" ) )
+  , delta_( std::pow( inv_theta_, kappa_ ) / std::tgamma( kappa_ ) )
+{
+  parameter_is_spatial_ = true;
+
+  if ( kappa_ <= 0 )
+  {
+    throw BadProperty( "kappa > 0 required for gamma distribution parameter, got kappa=" + std::to_string( kappa_ ) );
+  }
+  const auto theta = getValue< double >( d, "theta" );
+  if ( theta <= 0 )
+  {
+    throw BadProperty( "theta > 0 required for gamma distribution parameter, got theta=" + std::to_string( theta ) );
+  }
+}
+
+double
+GammaParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer )
+{
+  const auto x = p_->value( rng, source_pos, target_pos, layer );
+  return std::pow( x, kappa_ - 1. ) * std::exp( -1. * inv_theta_ * x ) * delta_;
 }
 
 } /* namespace nest */

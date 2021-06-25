@@ -145,27 +145,6 @@ nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
   y_[ V_M ] = p.E_L_;
 }
 
-nest::gif_cond_exp_multisynapse::State_::State_( const State_& s )
-  : I_stim_( s.I_stim_ )
-  , sfa_( s.sfa_ )
-  , stc_( s.stc_ )
-  , r_ref_( s.r_ref_ )
-{
-  sfa_elems_.resize( s.sfa_elems_.size(), 0.0 );
-  for ( size_t i = 0; i < sfa_elems_.size(); ++i )
-  {
-    sfa_elems_[ i ] = s.sfa_elems_[ i ];
-  }
-
-  stc_elems_.resize( s.stc_elems_.size(), 0.0 );
-  for ( size_t i = 0; i < stc_elems_.size(); ++i )
-  {
-    stc_elems_[ i ] = s.stc_elems_[ i ];
-  }
-
-  y_ = s.y_;
-}
-
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */

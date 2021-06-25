@@ -1,8 +1,8 @@
-Running simulations
-===================
+How to run simulations
+======================
 
-Introduction
-------------
+Time-driven and event-driven approaches
+---------------------------------------
 
 To drive the simulation, neurons and devices (*nodes*) are updated in a
 time-driven fashion by calling a member function on each of them in a
@@ -72,8 +72,8 @@ during connection setup. Their actual values can be retrieved using
 
     GetKernelStatus("min_delay")   # (A corresponding entry exists for max_delay)
 
-Setting *dmin* and *dmax* manually
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Set *dmin* and *dmax* manually
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In linear simulation scripts that build a network, simulate it, carry
 out some post-processing and exit, the user does not have to worry about
@@ -184,9 +184,8 @@ present, provided respectively by GCC, Clang and Microsoft.
 
 
 
-
-Splitting a simulation into multiple intervals
-----------------------------------------------
+Split a simulation into multiple intervals
+------------------------------------------
 
 In some cases, it may be useful to run a simulation in shorter intervals
 to extract information while the simulation is running. The simplest way

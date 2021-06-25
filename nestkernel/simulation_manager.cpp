@@ -136,7 +136,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "SimulationManager::set_status",
         "Simulation time reset to t=0.0. Resetting the simulation time is not "
         "fully supported in NEST at present. Some spikes may be lost, and "
-        "stimulating devices may behave unexpectedly. PLEASE REVIEW YOUR "
+        "stimulation devices may behave unexpectedly. PLEASE REVIEW YOUR "
         "SIMULATION OUTPUT CAREFULLY!" );
 
       clock_ = Time::step( 0 );

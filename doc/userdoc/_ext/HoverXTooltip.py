@@ -119,9 +119,12 @@ def hxt_role_ref(pattern):
         # link to the glossary term.
 
         # use this for local builds.
+        base_url = inliner.document.attributes['source'].split('/doc/', 1)[0]
+
         refuri = (f'{os.getcwd()}/userdoc/html/glossary.html#term-{term}')
         
-        refuri = (f'/glossary.html#term-{term}')
+        refuri = (f'{base_url}/gloassary#term-{term}')
+        print('>>>>ref', refuri)
 
         # the tag in which the term and description is defined.
         ref_tag = "<a class='reference external' " \

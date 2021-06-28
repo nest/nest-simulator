@@ -120,7 +120,7 @@ def hxt_role_ref(pattern):
 
         # use this for local builds.
         base_url = inliner.document.attributes['source']
-        if 'userdoc' in baseurl:
+        if 'userdoc' in base_url:
             base_url = base_url.split('userdoc')[0] + 'userdoc/html'
         else:
             base_url.split('checkouts')[2] + 'html'

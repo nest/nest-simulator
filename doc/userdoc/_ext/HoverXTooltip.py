@@ -125,7 +125,7 @@ def hxt_role_ref(pattern):
 
         branch_name = base_url.split('/doc/')[0].split('/')[-1]
 
-        refuri = (f'/{language}/{branch_name}/glossary.html#term-{term}')
+        refuri = (f'/{language}/glossary.html#term-{term}')
 
         # the tag in which the term and description is defined.
         ref_tag = "<a class='reference external' " \

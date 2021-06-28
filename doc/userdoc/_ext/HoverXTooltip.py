@@ -135,7 +135,7 @@ def hxt_role_ref(pattern):
                   "data-placement='top' title='{desc}'>" \
                   "{term}</span>" \
                   "</a>" \
-                  .format(refuri=refuri, desc=desc, term=term)
+                  .format(refuri='test', desc=desc, term=term)
 
         # the docutils object that holds the tag as html code.
         ref_node = nodes.raw(text=ref_tag, format='html')

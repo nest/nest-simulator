@@ -120,7 +120,10 @@ def hxt_role_ref(pattern):
 
         # use this for local builds.
         base_url = inliner.document.attributes['source']
-        base_url = base_url.split('userdoc')[0] + 'userdoc/html'
+        if 'userdoc' in baseurl:
+            base_url = base_url.split('userdoc')[0] + 'userdoc/html'
+        else:
+            base_url.split('checkouts')[2] + 'html'
 
         # refuri = (f'{os.getcwd()}/userdoc/html/glossary.html#term-{term}')
         

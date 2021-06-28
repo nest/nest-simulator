@@ -125,17 +125,17 @@ def hxt_role_ref(pattern):
 
         branch_name = base_url.split('/doc/')[0].split('/')[-1]
 
-        # refuri = (f'/{language}/glossary.html#term-{term}')
+        refuri = (f'/{language}/{branch_name}/glossary.html#term-{term}')
 
         # the tag in which the term and description is defined.
         ref_tag = "<a class='reference external' " \
-                  "href='test'>" \
+                  "href='{refuri}'>" \
                   "<span class='hoverxtool hoverxtool_highlighter' " \
                   "data-toggle='tooltip' " \
                   "data-placement='top' title='{desc}'>" \
                   "{term}</span>" \
                   "</a>" \
-                  .format(refuri='test', desc=desc, term=term)
+                  .format(refuri=refuri, desc=desc, term=term)
 
         # the docutils object that holds the tag as html code.
         ref_node = nodes.raw(text=ref_tag, format='html')

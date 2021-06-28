@@ -122,9 +122,7 @@ def hxt_role_ref(pattern):
 
         # use this for local builds.
         base_url = inliner.document.attributes['source']
-
         branch_name = base_url.split('/doc/')[0].split('/')[-1]
-
         refuri = (f'/en/{branch_name}/glossary.html#term-{term}')
 
         # the tag in which the term and description is defined.

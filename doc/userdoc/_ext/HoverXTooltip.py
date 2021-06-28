@@ -4,6 +4,8 @@ import sys
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 
+from conf import language
+
 
 class HoverXTooltipDirective(Directive):
     """Directive to add a tooltip.
@@ -120,14 +122,12 @@ def hxt_role_ref(pattern):
 
         # use this for local builds.
         base_url = inliner.document.attributes['source']
-        if 'userdoc' in base_url:
-            base_url = base_url.split('userdoc')[0] + 'userdoc/html'
-        else:
-            base_url.split('checkouts')[2] + 'html'
+
+        branch_name = base_url.split('/doc/')[0].split('/')[-1]
 
         # refuri = (f'{os.getcwd()}/userdoc/html/glossary.html#term-{term}')
         
-        refuri = (f'{base_url}/glossary.html#term-{term}')
+        refuri = (f'{language}/{branch_name}/glossary.html#term-{term}')
         print('>>>>ref', refuri)
 
         # the tag in which the term and description is defined.

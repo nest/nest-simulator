@@ -153,17 +153,18 @@ a:hover {
 }
 
 .rst-content .danger .admonition-title {
-    background: #ff3333;
+    background: #ff1133;
 }
-.rst-content .note .admonition-title {
-    background: #ff9933;
+
+.rst-content .seealso .admonition-title, .rst-content .note .admonition-title {
+    background: #ffbb33;
 }
-.rst-content .seealso .admonition-title {
-    background: #ff9933;
-}
+
 .rst-content .warning .admonition-title {
     background: #ff6633;
+
 }
+
 .wy-plain-list-disc, .rst-content .section ul, .rst-content .toctree-wrapper ul, article ul {
     margin-bottom: 12px;
 }
@@ -180,7 +181,7 @@ a:hover {
 }
 
 .rst-content .admonition {
-    background: #e0e0e0;
+    background: #e9e9e9;
 
 }
 

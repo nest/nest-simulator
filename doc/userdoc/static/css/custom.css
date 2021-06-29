@@ -1,23 +1,22 @@
 .wy-breadcrumbs-aside {
-   display: none !important;
+    display: none !important;
 }
 
 .keep-us-sustainable {
-   background-color: #272525;
+    background-color: #272525;
 }
 
-.rst-content dl:not(.docutils) code.descclassname, .rst-content dl:not(.docutils) tt.descclassname {
+.rst-content dl:not(.docutils) [class^="sig-prename descclassname"] {
     display: none;
 }
 
-.rst-content dl:not(.docutils) dt {
-	display: table;
+.rst-content dl:not(.docutils) dt, .rst-content dl:not(.docutils) dt[class^="sig sig-object py"] {
 	margin: 6px 0;
 	font-size: medium;
 	line-height: normal;
-	background: none;
-	color: #717171;
-	border-left: solid 3px;
+	background: #ff663329;
+	color: #272727;
+	border-left: solid 3px #ff663385;
 	border-top: none;
 	padding: 6px;
 	position: relative;

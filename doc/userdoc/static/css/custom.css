@@ -10,7 +10,15 @@
     display: none;
 }
 
-.rst-content dl:not(.docutils) dt, .rst-content dl:not(.docutils) dt[class^="sig sig-object py"] {
+.rst-content dl:not(.docutils) dt {
+    color: #272727;
+    background: none;
+    border-left: none;
+    border-top: none;
+
+}
+
+.rst-content dl:not(.docutils) dt[class^="sig sig-object py"] {
 	margin: 6px 0;
 	font-size: medium;
 	line-height: normal;
@@ -24,7 +32,7 @@
 
 .rst-content dl:not(.docutils) dl dt {
     border-left: none;
-    color: #333;
+    color: #272727;
     background: none;
 }
 
@@ -174,10 +182,6 @@ a:hover {
     padding: 0.5em;
     border: 1px solid #ff6633;
     border-radius: 5px;
-}
-
-.rst-content kbd {
-    background-color: lightgray;
 }
 
 .rst-content .admonition {

@@ -138,7 +138,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
     elif isinstance(syn_spec, CollocatedSynapses):
         return syn_spec
 
-    raise TypeError("syn_spec must be a string or dict")
+    raise TypeError("syn_spec must be a subclass of SynapseModel")
 
 
 def _process_spatial_projections(conn_spec, syn_spec):

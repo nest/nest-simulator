@@ -27,6 +27,7 @@ __all__ = [
     'bernoulli',
     'clopath',
     'cont_delay',
+    'copy_synapse_class',
     'diffusion',
     'gap_junction',
     'ht',
@@ -71,6 +72,16 @@ class SynapseModel:
     
     def __str__(self):
         return f'synapse_model: {self.synapse_model}, specs: {self.specs}'
+
+
+def copy_synapse_class(model,kwargs):
+    def model_init(self, model, kwargs):
+        SynapseModel.__init__(self, model, **kwargs)
+
+    NewSynapse = type(model, (SynapseModel,), {"__init__": model_init})
+
+    synapse = NewSynapse(model, kwargs)
+    return synapse
 
 
 class bernoulli(SynapseModel):

@@ -26,6 +26,7 @@ Functions for model handling
 from ..ll_api import *
 from .hl_api_helper import *
 from .hl_api_types import to_json
+from ..synapsemodels.hl_api_synapsemodels import copy_synapse_class
 
 __all__ = [
     'ConnectionRules',
@@ -211,3 +212,6 @@ def CopyModel(existing, new, params=None):
         sr("/%s /%s 3 2 roll CopyModel" % (existing, new))
     else:
         sr("/%s /%s CopyModel" % (existing, new))
+
+    if existing in Models(mtype="synapses"):
+        return copy_synapse_class(new, params)

@@ -10,7 +10,9 @@ Here you can find further information about some of these projects.
 NESTML
 ------
 
-:doc:`NESTML <nestml:index>` is a domain-specific language that supports the specification of neuron
+:doc:`NESTML <nestml:index>` allows you to modify and create models for NEST in a simplified format.
+
+It is a domain-specific language that supports the specification of neuron and synapse
 models in a precise and concise syntax, based on the syntax of Python. Model equations can either be given as a simple
 string of mathematical notation or as an algorithm written in the built-in procedural language. The equations are
 analyzed by the associated toolchain, written in Python, to compute an exact solution if possible or use an appropriate
@@ -18,7 +20,7 @@ numeric solver otherwise.
 
 * :doc:`Get started with NESTML <nestml:tutorials/tutorials_list>`
 
-* :doc:`List of models <nestml:models_library/index>`
+* :doc:`List of available models <nestml:models_library/index>`
 
 NEST desktop
 ------------

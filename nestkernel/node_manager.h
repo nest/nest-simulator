@@ -28,6 +28,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "conn_builder.h"
@@ -309,6 +310,9 @@ private:
 
   bool have_nodes_changed_; //!< true if new nodes have been created
                             //!< since startup or last call to simulate
+
+
+  Stopwatch sw_construction_create_; //!< private stop watch for benchmarking purposes
 };
 
 inline index

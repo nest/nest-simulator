@@ -800,6 +800,8 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   i->assert_stack_load( 4 );
 
   GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
@@ -812,6 +814,8 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop( 4 );
   i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 /** @BeginDocumentation
@@ -849,6 +853,8 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   i->assert_stack_load( 3 );
 
   if ( kernel().vp_manager.get_num_threads() > 1 )
@@ -873,6 +879,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop( 3 );
   i->EStack.pop();
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 /** @BeginDocumentation
@@ -910,6 +917,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
 {
+  kernel().connection_manager.sw_construction_connect.start();
   i->assert_stack_load( 1 );
 
   if ( kernel().vp_manager.get_num_threads() > 1 )
@@ -922,6 +930,8 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
   kernel().connection_manager.data_connect_connectome( connectome );
   i->OStack.pop();
   i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 /** @BeginDocumentation
@@ -1511,6 +1521,8 @@ NestModule::Cvgidcollection_iaFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::Cvgidcollection_ivFunction::execute( SLIInterpreter* i ) const
 {
+  kernel().connection_manager.sw_construction_connect.start();
+
   i->assert_stack_load( 1 );
 
   IntVectorDatum gids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
@@ -1519,6 +1531,8 @@ NestModule::Cvgidcollection_ivFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
   i->OStack.push( gidcoll );
   i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
 }
 
 void

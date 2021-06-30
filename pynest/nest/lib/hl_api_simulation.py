@@ -385,10 +385,12 @@ def SetKernelStatus(params):
     # Read docstring
     lines = SetKernelStatus.__doc__.split('\n')
 
+    # Get the lines describing parameters, excluding the first one
+    param_lines = [line for line in lines if ' : ' in line][1:]
+
     # Test if the provided parameters are valid and whether they can be set
-    keys = list(params.keys())
-    for key in keys:
-        keyline = [line for line in lines if key + ' : ' in line]
+    for key in params.keys():
+        keyline = [line for line in param_lines if key + ' : ' in line]
         if len(keyline) == 0:
             # If the parameter is not in the docstring
             raise KeyError(f'`{key}` is not a valid kernel parameter, '

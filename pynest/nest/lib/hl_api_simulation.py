@@ -266,7 +266,7 @@ def SetKernelStatus(params):
         The local number of threads
     num_processes : int, read only
         The number of MPI processes
-    off_grid_spiking : bool
+    off_grid_spiking : bool, read only
         Whether to transmit precise spike times in MPI communication
 
 

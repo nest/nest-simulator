@@ -391,13 +391,13 @@ def SetKernelStatus(params):
         keyline = [line for line in lines if key + ' : ' in line]
         if len(keyline) == 0:
             # If the parameter is not in the docstring
-            raise ValueError(f'`{key}` is not a valid kernel parameter, '
-                             'valid parameters are listed in '
-                             'SetKernelStatus.__doc__')
+            raise KeyError(f'`{key}` is not a valid kernel parameter, '
+                           'valid parameters are listed in '
+                           'SetKernelStatus.__doc__')
         if 'read only' in keyline[0]:
             # If the parameter is tagged as read only
-            raise ValueError(f'`{key}` is a read only parameter and it cannot '
-                             'be defined using SetKernelStatus')
+            raise KeyError(f'`{key}` is a read only parameter and cannot '
+                           'be defined using SetKernelStatus')
 
     sps(params)
     sr('SetKernelStatus')

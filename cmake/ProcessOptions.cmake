@@ -307,12 +307,6 @@ function( NEST_PROCESS_TICS_PER_STEP )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_WITH_PS_ARRAY )
-  if ( with-ps-arrays )
-    set( PS_ARRAYS ON PARENT_SCOPE )
-  endif ()
-endfunction()
-
 # Depending on the user options, we search for required libraries and include dirs.
 
 function( NEST_PROCESS_WITH_LIBLTDL )
@@ -394,21 +388,36 @@ function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
   if ( ${with-python} STREQUAL "2" )
-    message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting with-python=ON" )
+    message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting CMake option -Dwith-python=ON." )
   elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter and lib/header files
     find_package( Python 3.8 REQUIRED Interpreter Development )
 
     if ( Python_FOUND )
-      set( HAVE_PYTHON ON PARENT_SCOPE )
+      if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+        execute_process( COMMAND "${Python_EXECUTABLE}" "-c"
+          "import sys, os; print(int(bool(os.environ.get('CONDA_DEFAULT_ENV', False)) or (sys.prefix != sys.base_prefix)))"
+          OUTPUT_VARIABLE Python_InVirtualEnv OUTPUT_STRIP_TRAILING_WHITESPACE )
+
+        if ( NOT Python_InVirtualEnv AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+          message( FATAL_ERROR "No virtual Python environment found and no installation prefix specified. "
+            "Please either build and install NEST in a virtual Python environment or specify CMake option -DCMAKE_INSTALL_PREFIX=<nest_install_dir>.")
+        endif()
+
+        # Setting CMAKE_INSTALL_PREFIX effects the inclusion of GNUInstallDirs defining CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir>
+        get_filename_component( Python_EnvRoot "${Python_SITELIB}/../../.." ABSOLUTE)
+        set ( CMAKE_INSTALL_PREFIX "${Python_EnvRoot}" CACHE PATH "Default install prefix for the active Python interpreter" FORCE )
+      endif ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
 
       # export found variables to parent scope
+      set( HAVE_PYTHON ON PARENT_SCOPE )
       set( Python_FOUND "${Python_FOUND}" PARENT_SCOPE )
       set( Python_EXECUTABLE ${Python_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON ${Python_EXECUTABLE} PARENT_SCOPE )
       set( Python_VERSION ${Python_VERSION} PARENT_SCOPE )
-
+      set( Python_VERSION_MAJOR ${Python_VERSION_MAJOR} PARENT_SCOPE )
+      set( Python_VERSION_MINOR ${Python_VERSION_MINOR} PARENT_SCOPE )
       set( Python_INCLUDE_DIRS "${Python_INCLUDE_DIRS}" PARENT_SCOPE )
       set( Python_LIBRARIES "${Python_LIBRARIES}" PARENT_SCOPE )
 
@@ -422,12 +431,17 @@ function( NEST_PROCESS_WITH_PYTHON )
           set( CYTHON_VERSION "${CYTHON_VERSION}" PARENT_SCOPE )
         endif ()
       endif ()
-      set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" PARENT_SCOPE )
     endif ()
   elseif ( ${with-python} STREQUAL "OFF" )
   else ()
     message( FATAL_ERROR "Invalid option: -Dwith-python=" ${with-python} )
   endif ()
+endfunction()
+
+function( NEST_POST_PROCESS_WITH_PYTHON )
+  if ( Python_FOUND )
+    set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" PARENT_SCOPE )
+  endif()
 endfunction()
 
 function( NEST_PROCESS_WITH_OPENMP )

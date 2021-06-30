@@ -174,12 +174,6 @@ aeif_cond_beta_multisynapse::State_::State_( const Parameters_& p )
   y_[ 0 ] = p.E_L;
 }
 
-aeif_cond_beta_multisynapse::State_::State_( const State_& s )
-  : r_( s.r_ )
-{
-  y_ = s.y_;
-}
-
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */

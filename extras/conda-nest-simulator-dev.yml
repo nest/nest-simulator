@@ -92,7 +92,7 @@ dependencies:
   # PIP dependencies -- do not delete
   - pip:
     # For testsuite
-    - junitparser
+    - junitparser >= 2
     # For documentation
     - example
     - Image

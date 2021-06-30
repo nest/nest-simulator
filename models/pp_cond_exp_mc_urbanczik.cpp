@@ -291,6 +291,16 @@ nest::pp_cond_exp_mc_urbanczik::State_::State_( const State_& s )
   }
 }
 
+nest::pp_cond_exp_mc_urbanczik::State_& nest::pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
+{
+  r_ = s.r_;
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
+    y_[ i ] = s.y_[ i ];
+  }
+  return *this;
+}
+
 nest::pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( pp_cond_exp_mc_urbanczik& n )
   : logger_( n )
   , s_( 0 )

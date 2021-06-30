@@ -146,6 +146,21 @@ public:
   // TODO: Precisely how defined? Rename!
   Time const& get_clock() const;
 
+  /**
+   * Get the simulation duration in the current call to run().
+   */
+  Time run_duration() const;
+
+  /**
+   * Get the start time of the current call to run().
+   */
+  Time run_start_time() const;
+
+  /**
+   * Get the simulation's time at the end of the current call to run().
+   */
+  Time run_end_time() const;
+
   //! Return start of current time slice, in steps.
   // TODO: rename / precisely how defined?
   delay get_from_step() const;
@@ -176,8 +191,8 @@ private:
 
   Time clock_;                     //!< SimulationManager clock, updated once per slice
   delay slice_;                    //!< current update slice
-  delay to_do_;                    //!< number of pending cycles.
-  delay to_do_total_;              //!< number of requested cycles in current simulation.
+  delay to_do_;                    //!< number of pending steps
+  delay to_do_total_;              //!< number of requested steps in current simulation
   delay from_step_;                //!< update clock_+from_step<=T<clock_+to_step_
   delay to_step_;                  //!< update clock_+from_step<=T<clock_+to_step_
   timeval t_slice_begin_;          //!< Wall-clock time at the begin of a time slice
@@ -247,6 +262,26 @@ inline Time const&
 SimulationManager::get_clock() const
 {
   return clock_;
+}
+
+inline Time
+SimulationManager::run_duration() const
+{
+  return to_do_total_ * Time::get_resolution();
+}
+
+inline Time
+SimulationManager::run_start_time() const
+{
+  assert( not simulating_ ); // implicit due to using get_time()
+  return get_time() - ( to_do_total_ - to_do_ ) * Time::get_resolution();
+}
+
+inline Time
+SimulationManager::run_end_time() const
+{
+  assert( not simulating_ ); // implicit due to using get_time()
+  return ( get_time().get_steps() + to_do_ ) * Time::get_resolution();
 }
 
 inline delay

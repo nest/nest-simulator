@@ -571,8 +571,6 @@ const Name w( "w" );
 const Name weight( "weight" );
 const Name weight_per_lut_entry( "weight_per_lut_entry" );
 const Name weight_recorder( "weight_recorder" );
-const Name weighted_spikes_ex( "weighted_spikes_ex" );
-const Name weighted_spikes_in( "weighted_spikes_in" );
 const Name weights( "weights" );
 const Name wfr_comm_interval( "wfr_comm_interval" );
 const Name wfr_interpolation_order( "wfr_interpolation_order" );

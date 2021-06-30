@@ -30,7 +30,6 @@ microcircuit.
 from matplotlib.patches import Polygon
 import matplotlib.pyplot as plt
 import os
-import sys
 import numpy as np
 if 'DISPLAY' not in os.environ:
     import matplotlib
@@ -293,7 +292,8 @@ def firing_rates(path, name, begin, end):
         # zeros are included
         all_mean_rates.append(np.mean(rate_per_neuron))
         all_std_rates.append(np.std(rate_per_neuron))
-    print('Mean rates: {} spikes/s'.format(np.around(all_mean_rates, decimals=3)))
+    print('Mean rates: {} spikes/s'.format(np.around(all_mean_rates,
+                                                     decimals=3)))
     print('Standard deviation of rates: {} spikes/s'.format(
         np.around(all_std_rates, decimals=3)))
 

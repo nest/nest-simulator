@@ -40,6 +40,11 @@ The following packages are optional, but recommended to run the unit tests:
 - `nosetest 1.3.7 or higher <https://nose.readthedocs.io>`_
 - `Matplotlib 3.0 or higher <http://matplotlib.org>`_
 
+For NEST server, the followinga additional packages are necessary:
+
+- `Flask <https://flask.palletsprojects.com/>`_
+- `Werkzeug <https://werkzeug.palletsprojects.com/>`_
+- `RestrictedPython <https://restrictedpython.readthedocs.io/>`_
 
 .. _source-install:
 

@@ -32,7 +32,8 @@ setup(
               'nest.tests.test_spatial', 'nest.lib'],
     install_requires=['numpy', 'scipy'],
     extras_require={
-        'test': ['nose', 'matplotlib']
+        'test': ['nose', 'matplotlib'],
+        'server': ['flask', 'werkzeug', 'RestrictedPython']
     },
     classifiers=[
         'Development Status :: 6 - Mature',

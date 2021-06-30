@@ -382,6 +382,22 @@ def SetKernelStatus(params):
     GetKernelStatus
 
     """
+    # Read docstring
+    lines = SetKernelStatus.__doc__.split('\n')
+
+    # Test if the provided parameters are valid and whether they can be set
+    keys = list(params.keys())
+    for key in keys:
+        keyline = [line for line in lines if key + ' : ' in line]
+        if len(keyline) == 0:
+            # If the parameter is not in the docstring
+            raise ValueError(f'`{key}` is not a valid kernel parameter, '
+                             'valid parameters are listed in '
+                             'SetKernelStatus.__doc__')
+        if 'read only' in keyline[0]:
+            # If the parameter is tagged as read only
+            raise ValueError(f'`{key}` is a read only parameter and it cannot '
+                             'be defined using SetKernelStatus')
 
     sps(params)
     sr('SetKernelStatus')

@@ -126,9 +126,10 @@ class TestParams(unittest.TestCase):
         self.assertTrue(ports[0] == rtype)
 
     def testSynapseSetting(self):
-        hf.nest.CopyModel("static_synapse", 'test_syn', {'receptor_type': 0})
+        test_syn = hf.nest.CopyModel("static_synapse", 'test_syn', {'receptor_type': 0})
         syn_params = {'synapse_model': 'test_syn'}
-        self.setUpNetwork(self.conn_dict, syn_params)
+        self.conn_dict.syn_spec = test_syn
+        self.setUpNetwork(self.conn_dict)
         conns = hf.nest.GetConnections(self.pop1, self.pop2)
         syns = conns.get('synapse_model')
         self.assertTrue(hf.all_equal(syns))

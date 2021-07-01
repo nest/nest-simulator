@@ -40,7 +40,7 @@ class EventsTestCase(unittest.TestCase):
         n = nest.Create('iaf_psc_alpha')
         vm = nest.Create('voltmeter', params={'interval': 1.})
 
-        nest.Connect(vm, n)
+        nest.Connect(nest.AllToAll(vm, n))
         nest.Simulate(10)
 
         d = nest.GetStatus(vm, 'events')[0]
@@ -57,7 +57,7 @@ class EventsTestCase(unittest.TestCase):
         n = nest.Create('iaf_psc_alpha', params={'I_e': 1000.})
         sr = nest.Create('spike_recorder')
 
-        nest.Connect(n, sr)
+        nest.Connect(nest.AllToAll(n, sr))
         nest.Simulate(1000)
 
         d = nest.GetStatus(sr, 'events')[0]

@@ -59,14 +59,14 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
                                       'origin': self.t_origin,
                                       'start': self.t_start,
                                       'stop': self.t_stop})
-        nest.Connect(self.ac, self.neuron)
+        nest.Connect(nest.AllToAll(self.ac, self.neuron))
 
         self.dc = nest.Create('dc_generator', 1,
                               params={'amplitude': self.i_amp,
                                       'origin': self.t_origin,
                                       'start': self.t_start,
                                       'stop': self.t_stop})
-        nest.Connect(self.dc, self.neuron)
+        nest.Connect(nest.AllToAll(self.dc, self.neuron))
 
         times = [self.t_start, self.t_next]
         currents = [self.i_amp / 4, self.i_amp / 2]
@@ -74,7 +74,7 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
                   'origin': self.t_origin, 'start': self.t_start,
                   'stop': self.t_stop}
         self.step = nest.Create("step_current_generator", 1, params)
-        nest.Connect(self.step, self.neuron)
+        nest.Connect(nest.AllToAll(self.step, self.neuron))
 
         self.noise = nest.Create('noise_generator', 1,
                                  params={'mean': self.i_amp, 'std': 0.0,
@@ -83,7 +83,8 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
                                          'origin': self.t_origin,
                                          'start': self.t_start,
                                          'stop': self.t_stop})
-        nest.Connect(self.noise, self.neuron)
+        nest.Connect(nest.AllToAll(self.noise, self.neuron))
+        nest.BuildNetwork()
 
     def test_GetRecordables(self):
         """Check get recordables"""
@@ -108,25 +109,20 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
         """Check the length and contents of recorded current vectors"""
 
         # setting up multimeters
-        m_Vm = nest.Create('multimeter',
-                           params={'record_from': ['V_m'], 'interval': 0.1})
-        nest.Connect(m_Vm, self.neuron)
+        m_Vm = nest.Create('multimeter', params={'record_from': ['V_m'], 'interval': 0.1})
+        nest.Connect(nest.AllToAll(m_Vm, self.neuron))
 
-        m_ac = nest.Create('multimeter',
-                           params={'record_from': ['I'], 'interval': 0.1})
-        nest.Connect(m_ac, self.ac)
+        m_ac = nest.Create('multimeter', params={'record_from': ['I'], 'interval': 0.1})
+        nest.Connect(nest.AllToAll(m_ac, self.ac))
 
-        m_dc = nest.Create('multimeter',
-                           params={'record_from': ['I'], 'interval': 0.1})
-        nest.Connect(m_dc, self.dc)
+        m_dc = nest.Create('multimeter', params={'record_from': ['I'], 'interval': 0.1})
+        nest.Connect(nest.AllToAll(m_dc, self.dc))
 
-        m_step = nest.Create('multimeter',
-                             params={'record_from': ['I'], 'interval': 0.1})
-        nest.Connect(m_step, self.step)
+        m_step = nest.Create('multimeter', params={'record_from': ['I'], 'interval': 0.1})
+        nest.Connect(nest.AllToAll(m_step, self.step))
 
-        m_noise = nest.Create('multimeter',
-                              params={'record_from': ['I'], 'interval': 0.1})
-        nest.Connect(m_noise, self.noise)
+        m_noise = nest.Create('multimeter', params={'record_from': ['I'], 'interval': 0.1})
+        nest.Connect(nest.AllToAll(m_noise, self.noise))
 
         # run simulation
         nest.Simulate(50)

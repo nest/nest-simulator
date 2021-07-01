@@ -71,19 +71,20 @@ class GLIFPSCTestCase(unittest.TestCase):
                                  "start": 200., "stop": 500.})
         pn = nest.Create("parrot_neuron")
 
-        nest.Connect(espikes, nrn, syn_spec={"receptor_type": 1})
-        nest.Connect(ispikes, nrn, syn_spec={"receptor_type": 1})
-        nest.Connect(cg, nrn, syn_spec={"weight": 3.0})
-        nest.Connect(pg, pn)
-        nest.Connect(pn, nrn, syn_spec={"weight": 35.0,
-                                        "receptor_type": 1})
+        nest.Connect(nest.AllToAll(espikes, nrn, syn_spec=nest.synapsemodels.static(receptor_type=1)))
+        nest.Connect(nest.AllToAll(ispikes, nrn, syn_spec=nest.synapsemodels.static(receptor_type=1)))
+        nest.Connect(nest.AllToAll(cg, nrn, syn_spec=nest.synapsemodels.static(weight=3.0)))
+        nest.Connect(nest.AllToAll(pg, pn))
+        nest.Connect(nest.AllToAll(pn, nrn, syn_spec=nest.synapsemodels.static(weight=35.0, receptor_type=1)))
 
         # For recording spikes and voltage traces
         sr = nest.Create('spike_recorder')
-        nest.Connect(nrn, sr)
+        nest.Connect(nest.AllToAll(nrn, sr))
 
         mm = nest.Create("multimeter", params={"record_from": ["V_m"]})
-        nest.Connect(mm, nrn)
+        nest.Connect(nest.AllToAll(mm, nrn))
+
+        nest.BuildNetwork()
 
         nest.Simulate(1000.0)
 

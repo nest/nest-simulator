@@ -90,7 +90,8 @@ class ErfcNeuronTheoryTestCase(unittest.TestCase):
         self.neuron = nest.Create('erfc_neuron', 1,
                                   {'sigma': sigma, 'theta': theta})
         self.detector = nest.Create('spin_detector', 1)
-        nest.Connect(self.neuron, self.detector)
+        nest.Connect(nest.AllToAll(self.neuron, self.detector))
+        nest.BuildNetwork()
 
     def test_activation_function(self):
         """

@@ -288,9 +288,9 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         # With data in events
         nodes = nest.Create('iaf_psc_alpha', 10)
         pg = nest.Create('poisson_generator', {'rate': 70000.0})
-        nest.Connect(pg, nodes)
-        nest.Connect(nodes, single_sr)
-        nest.Connect(nodes, multi_sr, 'one_to_one')
+        nest.Connect(nest.AllToAll(pg, nodes))
+        nest.Connect(nest.AllToAll(nodes, single_sr))
+        nest.Connect(nest.OneToOne(nodes, multi_sr))
         nest.Simulate(50)
 
         ref_values = single_sr.get('events', ['senders', 'times'])
@@ -371,9 +371,9 @@ class TestNodeCollectionGetSet(unittest.TestCase):
         # With data in events
         nodes = nest.Create('iaf_psc_alpha', 10)
         pg = nest.Create('poisson_generator', {'rate': 70000.0})
-        nest.Connect(pg, nodes)
-        nest.Connect(nodes, single_sr)
-        nest.Connect(nodes, multi_sr, 'one_to_one')
+        nest.Connect(nest.AllToAll(pg, nodes))
+        nest.Connect(nest.AllToAll(nodes, single_sr))
+        nest.Connect(nest.OneToOne(nodes, multi_sr))
         nest.Simulate(50)
 
         sd_ref = single_sr.get('events', ['senders', 'times'])

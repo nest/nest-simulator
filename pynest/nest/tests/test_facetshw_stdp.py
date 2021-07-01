@@ -93,10 +93,11 @@ class FacetsTestCase(unittest.TestCase):
             self.assertTrue(
                 all(np.atleast_1d(synapseDictGet[key] == synapseDict[key])))
 
-        nest.Connect(stim, neuronA)
-        nest.Connect(neuronA, neuronB, syn_spec={
-            'weight': float(startWeight) / 15.0 * Wmax,
-            'delay': delay, 'synapse_model': modelName})
+        nest.Connect(nest.AllToAll(stim, neuronA))
+        syn_spec = nest.synapsemodels.SynapseModel(synapse_model=modelName,
+                                                   weight=float(startWeight) / 15.0 * Wmax,
+                                                   delay=delay)
+        nest.Connect(nest.AllToAll(neuronA, neuronB, syn_spec=syn_spec))
 
         nest.Simulate(50.0)
         weightTrace = []

@@ -268,10 +268,8 @@ def build_network(logger):
     tic = time.time()
 
     nest.SetDefaults('static_synapse_hpc', {'delay': brunel_params['delay']})
-    nest.CopyModel('static_synapse_hpc', 'syn_ex',
-                   {'weight': JE_pA})
-    nest.CopyModel('static_synapse_hpc', 'syn_in',
-                   {'weight': brunel_params['g'] * JE_pA})
+    syn_ex = nest.CopyModel('static_synapse_hpc', 'syn_ex', {'weight': JE_pA})
+    syn_in = nest.CopyModel('static_synapse_hpc', 'syn_in', {'weight': brunel_params['g'] * JE_pA})
 
     stdp_params['weight'] = JE_pA
     nest.SetDefaults('stdp_pl_synapse_hom_hpc', stdp_params)
@@ -280,42 +278,32 @@ def build_network(logger):
 
     # Connect Poisson generator to neuron
 
-    nest.Connect(E_stimulus, E_neurons, {'rule': 'all_to_all'},
-                 {'synapse_model': 'syn_ex'})
-    nest.Connect(E_stimulus, I_neurons, {'rule': 'all_to_all'},
-                 {'synapse_model': 'syn_ex'})
+    nest.Connect(nest.AllToAll(E_stimulus, E_neurons, syn_spec=syn_ex))
+    nest.Connect(nest.AllToAll(E_stimulus, I_neurons, syn_spec=syn_ex))
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> excitatory population.')
 
-    nest.Connect(E_neurons, E_neurons,
-                 {'rule': 'fixed_indegree', 'indegree': CE,
-                  'allow_autapses': False, 'allow_multapses': True},
-                 {'synapse_model': 'stdp_pl_synapse_hom_hpc'})
+    nest.Connect(nest.FixedIndegree(E_neurons, E_neurons, indegree=CE, allow_autapses=False, allow_multapses=True,
+                                    syn_spec=nest.synapsemodels.stdp_pl_hom_hpc()))
 
     nest.message(M_INFO, 'build_network',
                  'Connecting inhibitory -> excitatory population.')
 
-    nest.Connect(I_neurons, E_neurons,
-                 {'rule': 'fixed_indegree', 'indegree': CI,
-                  'allow_autapses': False, 'allow_multapses': True},
-                 {'synapse_model': 'syn_in'})
+    nest.Connect(nest.FixedIndegree(I_neurons, E_neurons, indegree=CI, allow_autapses=False, allow_multapses=True,
+                                    syn_spec=syn_in))
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> inhibitory population.')
 
-    nest.Connect(E_neurons, I_neurons,
-                 {'rule': 'fixed_indegree', 'indegree': CE,
-                  'allow_autapses': False, 'allow_multapses': True},
-                 {'synapse_model': 'syn_ex'})
+    nest.Connect(nest.FixedIndegree(E_neurons, I_neurons, indegree=CE, allow_autapses=False, allow_multapses=True,
+                                    syn_spec=syn_ex))
 
     nest.message(M_INFO, 'build_network',
                  'Connecting inhibitory -> inhibitory population.')
 
-    nest.Connect(I_neurons, I_neurons,
-                 {'rule': 'fixed_indegree', 'indegree': CI,
-                  'allow_autapses': False, 'allow_multapses': True},
-                 {'synapse_model': 'syn_in'})
+    nest.Connect(nest.FixedIndegree(I_neurons, I_neurons, indegree=CI, allow_autapses=False, allow_multapses=True,
+                                    syn_spec=syn_in))
 
     if params['record_spikes']:
         if params['nvp'] != 1:
@@ -336,8 +324,10 @@ def build_network(logger):
             exit(1)
 
         nest.message(M_INFO, 'build_network', 'Connecting spike recorders.')
-        nest.Connect(local_neurons[:brunel_params['Nrec']], E_recorder,
-                     'all_to_all', 'static_synapse_hpc')
+        nest.Connect(nest.AllToAll(local_neurons[:brunel_params['Nrec']], E_recorder,
+                                   syn_spec=nest.synapsemodels.static_hpc()))
+
+    nest.BuildNetwork()
 
     # read out time used for building
     BuildEdgeTime = time.time() - tic

@@ -97,8 +97,9 @@ class CreateTestCase(unittest.TestCase):
         vm = nest.GetStatus(n[0])[0]['V_m']
         self.assertEqual(vm, 10.0)
 
-        nest.CopyModel('static_synapse', 'new_synapse', {'weight': 10.})
-        nest.Connect(n[0], n[1], syn_spec='new_synapse')
+        new_syn = nest.CopyModel('static_synapse', 'new_synapse', {'weight': 10.})
+        nest.Connect(nest.AllToAll(n[0], n[1], syn_spec=new_syn))
+        nest.BuildNetwork()
         w = nest.GetDefaults('new_synapse')['weight']
         self.assertEqual(w, 10.0)
 

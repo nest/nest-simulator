@@ -31,16 +31,19 @@ __all__ = [
     'diffusion',
     'gap_junction',
     'ht',
+    'jonke',
     'quantal_stp',
     'rate_connection_delayed',
     'rate_connection_instantaneous',
     'static',
     'static_hom_w',
+    'static_hpc',
     'stdp_dopamine',
     'stdp_nn_pre_centered',
     'stdp_nn_restr',
     'stdp_nn_symm',
     'stdp_pl_hom',
+    'stdp_pl_hom_hpc',
     'stdp',
     'stdp_facetshw_hom',
     'stdp_hom',
@@ -114,6 +117,11 @@ class ht(SynapseModel):
         super().__init__('ht_synapse', **kwargs)
 
 
+class jonke(SynapseModel):
+    def __init__(self, **kwargs):
+        super().__init__('jonke_synapse', **kwargs)
+
+
 class quantal_stp(SynapseModel):
     def __init__(self, **kwargs):
         super().__init__('quantal_stp_synapse', **kwargs)
@@ -139,6 +147,11 @@ class static_hom_w(SynapseModel):
         super().__init__('static_synapse_hom_w', **kwargs)
 
 
+class static_hpc(SynapseModel):
+    def __init__(self, **kwargs):
+        super().__init__('static_synapse_hpc', **kwargs)
+
+
 class stdp_dopamine(SynapseModel):
     def __init__(self, **kwargs):
         super().__init__('stdp_dopamine_synapse', **kwargs)
@@ -162,6 +175,11 @@ class stdp_nn_symm(SynapseModel):
 class stdp_pl_hom(SynapseModel):
     def __init__(self, **kwargs):
         super().__init__('stdp_pl_synapse_hom', **kwargs)
+
+
+class stdp_pl_hom_hpc(SynapseModel):
+    def __init__(self, **kwargs):
+        super().__init__('stdp_pl_synapse_hom_hpc', **kwargs)
 
 
 class stdp(SynapseModel):

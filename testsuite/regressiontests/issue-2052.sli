@@ -1,0 +1,64 @@
+/*
+ *  issue-2052.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /** @BeginDocumentation
+Name: testsuite::issue-2052
+
+Synopsis: (issue-2052) run -> NEST exits if test fails
+
+Description:
+Ensure that spike_dilutor works correctly with multiple threads.
+
+Author: Hans Ekkehard Plesser
+FirstVersion: July 2021
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+{
+  /spks [ 1.0 ] def
+  /nspks spks length def
+
+  << /local_num_threads 4 >> SetKernelStatus
+  
+  /sg /spike_generator << /spike_times spks >> Create def
+  /p1 /parrot_neuron Create def
+  /dl /spike_dilutor << /p_copy 1.0 >> Create def
+  /p2 /parrot_neuron Create def
+  /sr /spike_recorder Create def
+  
+  sg p1 Connect
+  p1 dl Connect
+  dl p2 Connect
+  p2 sr Connect
+  
+  5 Simulate
+  
+  sr /n_events get nspks eq  
+}
+assert_or_die
+
+endusing

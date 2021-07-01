@@ -387,7 +387,7 @@ def SetKernelStatus(params):
     # Resolve if missing entries should raise errors
     raise_errors = params.get('dict_miss_is_error')
     if raise_errors is None:
-        raise_errors = nest.GetKernelStatus('dict_miss_is_error')
+        raise_errors = GetKernelStatus('dict_miss_is_error')
 
     # Check validity of passed parameters
     keys = list(params.keys())
@@ -416,13 +416,15 @@ def SetKernelStatus(params):
 
 
 # Parse the `SetKernelStatus` docstring to obtain all valid and readonly params
-lines = SetKernelStatus.__doc__.split('\n')
-# Get the lines describing parameters, stop parsing lines at `Output`
-param_lines = iter((line.strip() for line in lines if ' : ' in line).__next__, "**Output**")
-# Excluding the first parameter `params` belonging to the function signature.
+doc_lines = SetKernelStatus.__doc__.split('\n')
+# Get all docstring lines up to the `Output` block.
+lines = iter((line.strip() for line in doc_lines).__next__, "**Output**")
+# Get the lines describing parameters
+param_lines = (line for line in lines if ' : ' in line)
+# Exclude the first parameter `params`.
 next(param_lines)
 _sks_params = {ln.split(" :")[0]: "read only" in ln for ln in param_lines}
-del lines, param_lines
+del doc_lines, lines, param_lines
 
 
 @check_stack

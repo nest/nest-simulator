@@ -24,6 +24,7 @@ Functions for simulation control
 """
 
 from contextlib import contextmanager
+import warnings
 
 from ..ll_api import *
 from .hl_api_helper import *
@@ -383,17 +384,33 @@ def SetKernelStatus(params):
     GetKernelStatus
 
     """
-    for key in params.keys():
+    # Resolve if missing entries should raise errors
+    raise_errors = params.get('dict_miss_is_error')
+    if raise_errors is None:
+        raise_errors = nest.GetKernelStatus('dict_miss_is_error')
+
+    # Check validity of passed parameters
+    keys = list(params.keys())
+    for key in keys:
         readonly = _sks_params.get(key)
+        msg = None
         if readonly is None:
             # If the parameter is not in the docstring
-            raise KeyError(f'`{key}` is not a valid kernel parameter, '
-                           'valid parameters are: '
-                           ', '.join(f"'{p}'" for p in _sks_params.keys()))
+            msg = f'`{key}` is not a valid kernel parameter, ' + \
+                  'valid parameters are: ' + \
+                  ', '.join(f"'{p}'" for p in _sks_params.keys())
         elif readonly:
             # If the parameter is tagged as read only
-            raise KeyError(f'`{key}` is a read only parameter and cannot '
-                           'be defined using SetKernelStatus')
+            msg = f'`{key}` is a read only parameter and cannot ' + \
+                  'be defined using SetKernelStatus'
+        # Raise error or warn the user
+        if msg is not None:
+            if raise_errors:
+                raise KeyError(msg)
+            else:
+                warnings.warn(msg + f' \n`{key}` has been ignored')
+                del params[key]
+
     sps(params)
     sr('SetKernelStatus')
 

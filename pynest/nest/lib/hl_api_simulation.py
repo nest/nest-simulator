@@ -60,6 +60,7 @@ def Simulate(t):
     """
     from .hl_api_projections import BuildNetwork  # need to clean up all the imports
 
+    # TODO: Should be a flag checking if this is done
     BuildNetwork()
     sps(float(t))
     sr('ms Simulate')

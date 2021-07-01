@@ -57,7 +57,7 @@ void
 nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< double >( d, names::p_copy, p_copy_, node );
-  if ( p_copy_ < 0 || p_copy_ > 1 )
+  if ( p_copy_ < 0 or p_copy_ > 1 )
   {
     throw BadProperty( "Copy probability must be in [0, 1]." );
   }
@@ -121,12 +121,18 @@ nest::spike_dilutor::update( Time const& T, const long from, const long to )
       return; // no spikes to be repeated
     }
 
+#pragma omp critical
+    std::cerr << "Thread " << kernel().vp_manager.get_thread_id() << " node " << get_node_id() << " update " << std::endl;
+
     // generate spikes of mother process for each time slice
-    unsigned long n_mother_spikes = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
+    const unsigned long n_mother_spikes = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
 
     if ( n_mother_spikes )
     {
       DSSpikeEvent se;
+
+#pragma omp critical
+      std::cerr << "Thread " << kernel().vp_manager.get_thread_id() << " node " << get_node_id() << " sending " << std::endl;
 
       se.set_multiplicity( n_mother_spikes );
       kernel().event_delivery_manager.send( *this, se, lag );
@@ -137,16 +143,17 @@ nest::spike_dilutor::update( Time const& T, const long from, const long to )
 void
 nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 {
-  // note: event_hook() receives a reference of the spike event that
-  // was originally created in the update function. there we set
-  // the multiplicty to store the number of mother spikes. the *same*
+  // Note: event_hook() receives a reference of the spike event that
+  // was originally created in the update function. There we set
+  // the multiplicity to store the number of mother spikes. The *same*
   // reference will be delivered multiple times to the event hook,
-  // once for every receiver. when calling handle() of the receiver
-  // above, we need to change the multiplicty to the number of copied
+  // once for every receiver. When calling handle() of the receiver
+  // above, we need to change the multiplicity to the number of copied
   // child process spikes, so afterwards it needs to be reset to correctly
   // store the number of mother spikes again during the next call of
   // event_hook().
-  // reichert
+
+  std::cerr << get_node_id() << " event hook " << std::endl;
 
   unsigned long n_mother_spikes = e.get_multiplicity();
   unsigned long n_spikes = 0;
@@ -161,7 +168,10 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 
   if ( n_spikes > 0 )
   {
-    e.set_multiplicity( n_spikes );
+#pragma omp critical
+    std::cerr << get_node_id() << " hook sending to " << e.get_receiver().get_node_id() << std::endl;
+
+	e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
   }
 
@@ -171,6 +181,8 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 void
 nest::spike_dilutor::handle( SpikeEvent& e )
 {
+#pragma omp critical
+  std::cerr << "Thread " << kernel().vp_manager.get_thread_id() << " node " << get_node_id() << " handle receiving from " << e.get_sender().get_node_id() << std::endl;
   B_.n_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     static_cast< double >( e.get_multiplicity() ) );
 }

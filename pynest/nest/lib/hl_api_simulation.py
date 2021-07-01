@@ -423,7 +423,7 @@ param_lines = (line for line in doc_lines if ' : ' in line)
 # Exclude the first parameter `params`.
 next(param_lines)
 _sks_params = {ln.split(" :")[0]: "read only" in ln for ln in param_lines}
-del doc_lines, lines, param_lines
+del doc_lines, param_lines
 
 
 @check_stack

@@ -48,7 +48,8 @@ class Vose
    */
   struct BiasedCoin
   {
-    index heads, tails;
+    index heads;
+    index tails;
     double probability; ///< Probability for heads
     BiasedCoin()
       : heads( 0 )
@@ -65,7 +66,7 @@ public:
    * Constructor taking a probability distribution.
    * @param dist - probability distribution.
    */
-  Vose( std::vector< double > dist );
+  Vose( const std::vector< double >& dist );
 
   /**
    * @returns a randomly selected index with the given distribution

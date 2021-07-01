@@ -400,11 +400,11 @@ def SetKernelStatus(params):
 
 # Parse the `SetKernelStatus` docstring to obtain all valid and readonly params
 lines = SetKernelStatus.__doc__.split('\n')
-# Get the lines describing parameters
-param_lines = (line for line in lines if ' : ' in line)
+# Get the lines describing parameters, stop parsing lines at `Output`
+param_lines = iter((line.strip() for line in lines if ' : ' in line).__next__, "**Output**")
 # Excluding the first parameter `params` belonging to the function signature.
 next(param_lines)
-_sks_params = {ln.split(":")[0].strip(): "read only" in ln for ln in param_lines}
+_sks_params = {ln.split(" :")[0]: "read only" in ln for ln in param_lines}
 del lines, param_lines
 
 

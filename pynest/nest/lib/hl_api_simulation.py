@@ -403,7 +403,7 @@ lines = SetKernelStatus.__doc__.split('\n')
 param_lines = (line for line in lines if ' : ' in line)
 # Excluding the first parameter `params` belonging to the function signature.
 next(param_lines)
-_sks_params = {ln.split(":")[0].strip(): "readonly" in ln for ln in param_lines}
+_sks_params = {ln.split(":")[0].strip(): "read only" in ln for ln in param_lines}
 del lines, param_lines
 
 

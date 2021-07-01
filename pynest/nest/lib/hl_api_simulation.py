@@ -406,7 +406,7 @@ def SetKernelStatus(params):
         # Raise error or warn the user
         if msg is not None:
             if raise_errors:
-                raise KeyError(msg)
+                raise ValueError(msg)
             else:
                 warnings.warn(msg + f' \n`{key}` has been ignored')
                 del params[key]

@@ -211,8 +211,7 @@ class Network:
             DC_amp = np.zeros(self.num_pops)
         else:
             if nest.Rank() == 0:
-                warnings.warn('DC input created to compensate missing Poisson'
-                              'input.\n')
+                warnings.warn('DC input created to compensate missing Poisson input.\n')
             DC_amp = helpers.dc_input_compensating_poisson(
                 self.net_dict['bg_rate'], self.net_dict['K_ext'],
                 self.net_dict['neuron_params']['tau_syn'],

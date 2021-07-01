@@ -382,27 +382,29 @@ def SetKernelStatus(params):
     GetKernelStatus
 
     """
-    # Read docstring
-    lines = SetKernelStatus.__doc__.split('\n')
-
-    # Get the lines describing parameters, excluding the first one
-    param_lines = [line for line in lines if ' : ' in line][1:]
-
-    # Test if the provided parameters are valid and whether they can be set
     for key in params.keys():
-        keyline = [line for line in param_lines if key + ' : ' in line]
-        if len(keyline) == 0:
+        readonly = _sks_params.get(key)
+        if readonly is None:
             # If the parameter is not in the docstring
             raise KeyError(f'`{key}` is not a valid kernel parameter, '
-                           'valid parameters are listed in '
-                           'SetKernelStatus.__doc__')
-        if 'read only' in keyline[0]:
+                           'valid parameters are: '
+                           ', '.join(f"'{p}'" for p in _sks_params.keys()))
+        elif readonly:
             # If the parameter is tagged as read only
             raise KeyError(f'`{key}` is a read only parameter and cannot '
                            'be defined using SetKernelStatus')
-
     sps(params)
     sr('SetKernelStatus')
+
+
+# Parse the `SetKernelStatus` docstring to obtain all valid and readonly params
+lines = SetKernelStatus.__doc__.split('\n')
+# Get the lines describing parameters
+param_lines = (line for line in lines if ' : ' in line)
+# Excluding the first parameter `params` belonging to the function signature.
+next(param_lines)
+_sks_params = {ln.split(":")[0].strip(): "read only" in ln for ln in param_lines}
+del lines, param_lines
 
 
 @check_stack

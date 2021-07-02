@@ -375,7 +375,7 @@ def SetKernelStatus(params):
         Whether missed dictionary entries are treated as errors
     keep_source_table : bool
         Whether to keep source table after connection setup is complete
-    max_update_time: double, read only
+    min_update_time: double, read only
         Shortest wall-clock time measured so far for a full update step [seconds].
     max_update_time: double, read only
         Longest wall-clock time measured so far for a full update step [seconds].

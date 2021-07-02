@@ -117,10 +117,9 @@ be located?".
 .. _free:
 
 .. figure:: ../../static/img/free.png
-   :alt: Example of off-grid, in which the neurons are positioned as grid+jitter.
+   :alt: Example of a free layer, in which the neurons are positioned in a random uniform manner.
 
-   Example of off-grid, in which the neurons are
-   positioned as grid+jitter.
+   Example of a free layer, in which the neurons are positioned in a random uniform manner.
 
 
 1 - On-grid
@@ -131,7 +130,7 @@ where *m* is the number of rows and *n* is the number of columns. It might be
 easier to think of shape as shape=[nx, ny], where nx is number of elements in
 x-direction and ny is number of directions in y-direction.
 The size (*extent*) of the layer has a default size of 1 x 1, but this you can also set yourself.
-The grid spacing i is determined from *m*, *n* and *extent*, and *n*\ x\ *m* elements
+The grid spacing *i* is determined from *m*, *n* and *extent*, and  *n* x *m* elements
 are arranged symmetrically. Note that we can also specify a center to
 the grid, else the default offset is the origin.
 
@@ -144,7 +143,7 @@ The following snippet produces :numref:`grid`:
                                   )
     nest.Create('iaf_psc_alpha', positions=positions)
 
-2 - Off grid
+2 - Off-grid
 ~~~~~~~~~~~~
 
 For more flexibility in how we distribute neurons, we can use free spatial
@@ -160,7 +159,7 @@ The following snippet produces :numref:`free`:
 ::
 
     positions = nest.spatial.free(
-        nest.random.uniform(min=-0.3, max=0.3),  # using random positions in a uniform distribution
+        nest.random.uniform(min=-0.5, max=0.5),  # using random positions in a uniform distribution
         num_dimensions=2  # have to specify number of dimensions
     )
     s_nodes = nest.Create('iaf_psc_alpha', 100, positions=positions)
@@ -176,11 +175,16 @@ See the table of *Spatially-structured specific NEST parameters* in the
 :doc:`../../guides/spatial/guide_spatially_structured_networks`
 for a selection of NEST Parameters that can be used.
 
-An example of how to create off-grid nodes with a list of positions:
+The following is an example of how to create off-grid nodes with a list of positions. It will create
+nodes with a grid+jitter structure.
 
 ::
 
-    positions = nest.spatial.free([[-0.5, -0.5], [0.0, 0.0], [0.5, 0.5]])
+    xs = np.arange(-0.5, 0.501, 0.1)
+    poss = [[x, y] for y in xs for x in xs]
+    poss = [[p[0] + np.random.uniform(-0.03, 0.03), p[1] + np.random.uniform(-0.03, 0.03)] for p in poss]
+
+    positions = nest.spatial.free(poss)
     s_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
 

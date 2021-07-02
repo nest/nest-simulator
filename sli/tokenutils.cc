@@ -102,38 +102,6 @@ setValue< double >( const Token& t, double const& value )
   }
   ( *id ) = value;
 }
-template <>
-float
-getValue< float >( const Token& t )
-{
-  DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( dd )
-  {
-    return ( float ) dd->get();
-  }
-  IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
-  if ( id )
-  {
-    return ( float ) id->get();
-  }
-
-  // we have to create a Datum object to get the name...
-  DoubleDatum const d;
-  throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
-}
-
-template <>
-void
-setValue< float >( const Token& t, float const& value )
-{
-  DoubleDatum* id = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( id == NULL )
-  { // we have to create a Datum object to get the name...
-    DoubleDatum const d;
-    throw TypeMismatch( d.gettypename().toString(), t.datum()->gettypename().toString() );
-  }
-  ( *id ) = ( double ) value;
-}
 
 template <>
 Token

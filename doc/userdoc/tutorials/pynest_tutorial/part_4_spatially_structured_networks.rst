@@ -180,9 +180,9 @@ nodes with a grid+jitter structure.
 
 ::
 
-    xs = np.arange(-0.5,.501,0.1)
-    poss = [[x,y] for y in xs for x in xs]
-    poss = [[p[0]+np.random.uniform(-0.03,0.03),p[1]+np.random.uniform(-0.03,0.03)] for p in poss]
+    xs = np.arange(-0.5, 0.501, 0.1)
+    poss = [[x, y] for y in xs for x in xs]
+    poss = [[p[0] + np.random.uniform(-0.03, 0.03), p[1] + np.random.uniform(-0.03, 0.03)] for p in poss]
 
     positions = nest.spatial.free(poss)
     s_nodes = nest.Create('iaf_psc_alpha', positions=positions)

@@ -56,7 +56,7 @@ class StatusTestCase(unittest.TestCase):
         nest.SetKernelStatus({})
         nest.SetKernelStatus({'resolution': 0.2})
 
-        self.assertRaises(ValueError, nest.SetKernelStatus,
+        self.assertRaises(nest.kernel.NESTErrors.DictError, nest.SetKernelStatus,
                           {'nonexistent_status_key': 0})
 
     def test_GetDefaults(self):

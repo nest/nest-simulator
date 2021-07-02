@@ -4,9 +4,11 @@ on:
   push:
     branches: [ master ]
 
+
 jobs:
   sync_to_ebrains:
     runs-on: ubuntu-latest
+    if: "$GITHUB_ACTOR == nest"
     steps:
       - name: sycnmaster
         uses: wei/git-sync@v3

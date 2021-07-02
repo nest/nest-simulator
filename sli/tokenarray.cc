@@ -134,7 +134,7 @@ TokenArray::toVector( std::vector< double >& a ) const
     }
     else if ( IntegerDatum* targetid = dynamic_cast< IntegerDatum* >( idx->datum() ) )
     {
-      a.push_back( ( double ) targetid->get() );
+      a.push_back( static_cast< double >( targetid->get() ) );
     }
     else
     {

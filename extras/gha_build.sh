@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# This shell script is part of the NEST Travis CI build and test environment.
-# It is invoked by the top-level Travis script '.travis.yml'.
+# This shell script is part of the NEST Github Actions CI build and test environment.
+# It is invoked by the top-level Github Actions script '.github/workflows/nestbuildmatrix.yml'.
 #
 # NOTE: This shell script is tightly coupled to 'extras/parse_build_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) or the variable name
@@ -84,19 +84,9 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
 
     echo "MSGBLD0070: Retrieving changed files."
     file_names=$CHANGED_FILES
-      # Note: BUG: Extracting the filenames may not work in all cases.
-      #            The commit range might not properly reflect the history.
-      #            see https://github.com/travis-ci/travis-ci/issues/2668
-    #if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-       #echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using git diff against $TRAVIS_BRANCH."
-       #file_names=`git diff --name-only --diff-filter=AM $TRAVIS_BRANCH...HEAD`
-    #else
-       #echo "MSGBLD0090: Retrieving changed files using git diff in range $TRAVIS_COMMIT_RANGE."
-       #file_names=`git diff --name-only $TRAVIS_COMMIT_RANGE`
-    #fi
 
     # Note: uncomment the following line to static check *all* files, not just those that have changed.
-    # Warning: will run for a very long time (will time out on Travis CI instances)
+    # Warning: will run for a very long time
 
     # file_names=`find . -name "*.h" -o -name "*.c" -o -name "*.cc" -o -name "*.hpp" -o -name "*.cpp" -o -name "*.py"`
 
@@ -113,30 +103,30 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     VERA=vera++
     CPPCHECK=cppcheck
     CLANG_FORMAT=clang-format
-    PEP8=pep8
+    PYCODESTYLE=pycodestyle
 
     # Perform or skip a certain analysis.
     PERFORM_VERA=true
     PERFORM_CPPCHECK=true
     PERFORM_CLANG_FORMAT=true
-    PERFORM_PEP8=true
+    PERFORM_PYCODESTYLE=true
 
     # The following command line parameters indicate whether static code analysis error messages
-    # will cause the Travis CI build to fail or are ignored.
+    # will cause the Github Actions CI build to fail or are ignored.
     IGNORE_MSG_VERA=false
     IGNORE_MSG_CPPCHECK=true
     IGNORE_MSG_CLANG_FORMAT=false
-    IGNORE_MSG_PEP8=false
+    IGNORE_MSG_PYCODESTYLE=false
 
-    # The script is called within the Travis CI environment and thus can not be run incremental.
-    #RUNS_ON_TRAVIS=true
+    # The script is called within the Github Actions CI environment and thus can not be run incremental.
+    RUNS_ON_GITHUB_ACTIONS=true
     INCREMENTAL=false
 
     chmod +x extras/static_code_analysis.sh
-    ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
-    "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
-    "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
-    "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
+    ./extras/static_code_analysis.sh "$RUNS_ON_GITHUB_ACTIONS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
+    "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PYCODESTYLE" \
+    "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PYCODESTYLE" \
+    "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE"
 
     exit $?
 fi
@@ -210,7 +200,7 @@ echo "MSGBLD0232: Setting configuration variables."
 
 # Set the NEST CMake-build configuration according to the variables
 # set above based on the ones set in the build stage matrix in
-# '.travis.yml'.
+# '.github/workflows/nestbuildmatrix.yml'.
 
 if [ "$xOPENMP" = "1" ] ; then
     CONFIGURE_OPENMP="-Dwith-openmp=ON"
@@ -342,12 +332,4 @@ echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + 
 echo "MSGBLD0290: Running make installcheck."
 make installcheck
 echo "MSGBLD0300: Make installcheck completed."
-if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-  echo "MSGBLD0310: This build was triggered by a pull request."
-  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
-fi
-if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
-  echo "MSGBLD0320: This build was from a forked repository and not from nest/nest-simulator."
-  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
-fi
 echo "MSGBLD0340: Build completed."

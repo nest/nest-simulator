@@ -8,7 +8,7 @@ on:
 jobs:
   sync_to_ebrains:
     runs-on: ubuntu-latest
-    if: "$GITHUB_ACTOR == nest"
+    if: GITHUB_REPOSITORY == "nest/nest-simulator"
     steps:
       - name: sycnmaster
         uses: wei/git-sync@v3

@@ -4,11 +4,10 @@ on:
   push:
     branches: [ master ]
 
-
 jobs:
   sync_to_ebrains:
     runs-on: ubuntu-latest
-    if: GITHUB_REPOSITORY == "nest/nest-simulator"
+    if: ${{ github.repository_owner == "nest" }}
     steps:
       - name: sycnmaster
         uses: wei/git-sync@v3

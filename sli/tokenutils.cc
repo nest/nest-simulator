@@ -82,7 +82,7 @@ getValue< double >( const Token& t )
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
   if ( id )
   {
-    return ( double ) id->get();
+    return static_cast< double >( id->get() );
   }
 
   // we have to create a Datum object to get the name...

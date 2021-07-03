@@ -36,7 +36,7 @@ PYCODESTYLE=pycodestyle
 PERFORM_VERA=true                # Perform VERA++ analysis.
 PERFORM_CPPCHECK=false           # Skip CPPCHECK analysis.
 PERFORM_CLANG_FORMAT=true        # Perform CLANG-FORMAT analysis.
-PERFORM_PYCODESTYLE=true                # Perform PYCODESTYLE analysis.
+PERFORM_PYCODESTYLE=true         # Perform PYCODESTYLE analysis.
 
 INCREMENTAL=false                # Do not prompt the user before each file analysis.
 
@@ -117,7 +117,7 @@ Options:
                                            This corresponds to the version installed in
                                            the NEST Github Actions CI build and test environment.
 
-    --pycodestyle=exe                       The name of the pycodestyle executable.
+    --pycodestyle=exe                The name of the pycodestyle executable.
                                      Default: --pycodestyle=pycodestyle
 
     --perform-vera=on/off            Turn on/off VERA++ analysis.
@@ -129,7 +129,7 @@ Options:
     --perform-clang-format=on/off    Turn on/off CLANG-FORMAT analysis.
                                      Default: --perform-clang-format=on
 
-    --perform-pycodestyle=on/off            Turn on/off pycodestyle analysis.
+    --perform-pycodestyle=on/off     Turn on/off pycodestyle analysis.
                                      Default: --perform-pycodestyle=on
 EOF
 echo
@@ -282,7 +282,7 @@ fi
 
 # Verify the PYCODESTYLE installation.
 if $PERFORM_PYCODESTYLE; then
-  $PYCODESTYLE --ignore="E121,E501" ./extras/parse_build_log.py || error_exit "Failed to verify the PYCODESTYLE installation. Executable: $PYCODESTYLE"
+  $PYCODESTYLE --ignore="E121,E501,W504" ./extras/parse_build_log.py || error_exit "Failed to verify the PYCODESTYLE installation. Executable: $PYCODESTYLE"
 fi
 
 # Extracting changed files between two commits.

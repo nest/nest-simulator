@@ -421,7 +421,8 @@ def combine(call_name, response):
         return None
 
     # return the master response if all responses are known to be the same
-    if call_name in ('exec', 'Create', 'GetDefaults', 'GetKernelStatus'):
+    if call_name in ('exec', 'Create', 'GetDefaults', 'GetKernelStatus',
+                     'SetKernelStatus', 'SetStatus'):
         return response[0]
 
     # return a single response if there is only one which is not None

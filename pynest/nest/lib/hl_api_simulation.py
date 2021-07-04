@@ -198,7 +198,7 @@ def ResetKernel():
 
 @check_stack
 def SetKernelStatus(params):
-    """Set parameters for the simulation kernel.
+    r"""Set parameters for the simulation kernel.
 
     Parameters
     ----------

@@ -103,13 +103,13 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     VERA=vera++
     CPPCHECK=cppcheck
     CLANG_FORMAT=clang-format
-    PYCODESTYLE=pycodestyle
+    PEP8=pycodestyle
 
     # Perform or skip a certain analysis.
     PERFORM_VERA=true
     PERFORM_CPPCHECK=true
     PERFORM_CLANG_FORMAT=true
-    PERFORM_PYCODESTYLE=true
+    PERFORM_PEP8=true
 
     # The following command line parameters indicate whether static code analysis error messages
     # will cause the Github Actions CI build to fail or are ignored.
@@ -124,8 +124,8 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
 
     chmod +x extras/static_code_analysis.sh
     ./extras/static_code_analysis.sh "$RUNS_ON_GITHUB_ACTIONS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
-    "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PYCODESTYLE" \
-    "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PYCODESTYLE" \
+    "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
+    "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
     "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE"
 
     exit $?

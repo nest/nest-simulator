@@ -39,15 +39,15 @@ NEST_VPATH=${4}               # The high level NEST build path.
 VERA=${5}                     # Name of the VERA++ executable.
 CPPCHECK=${6}                 # Name of the CPPCHECK executable.
 CLANG_FORMAT=${7}             # Name of the CLANG-FORMAT executable.
-PYCODESTYLE=${8}              # Name of the PYCODESTYLE executable.
+PEP8=${8}                     # Name of the PEP8 executable.
 PERFORM_VERA=${9}             # true or false, indicating whether VERA++ analysis is performed or not.
 PERFORM_CPPCHECK=${10}        # true or false, indicating whether CPPCHECK analysis is performed or not.
 PERFORM_CLANG_FORMAT=${11}    # true or false, indicating whether CLANG-FORMAT analysis is performed or not.
-PERFORM_PYCODESTYLE=${12}     # true or false, indicating whether PYCODESTYLE analysis is performed or not.
+PERFORM_PEP8=${12}            # true or false, indicating whether PEP8 analysis is performed or not.
 IGNORE_MSG_VERA=${13}         # true or false, indicating whether VERA++ messages should accout for the build result.
 IGNORE_MSG_CPPCHECK=${14}     # true or false, indicating whether CPPCHECK messages should accout for the build result.
 IGNORE_MSG_CLANG_FORMAT=${15} # true or false, indicating whether CLANG-FORMAT messages should accout for the build result.
-IGNORE_MSG_PYCODESTYLE=${16}  # true or false, indicating whether PYCODESTYLE messages should accout for the build result.
+IGNORE_MSG_PYCODESTYLE=${16}  # true or false, indicating whether pycodestyle messages should accout for the build result.
 
 # PYCODESTYLE rules to ignore.
 PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704"
@@ -90,8 +90,8 @@ if $PERFORM_CLANG_FORMAT; then
   CLANG_FORMAT_VERS=`$CLANG_FORMAT --version`
   print_msg "MSGBLD0105: " "CLANG-FORMAT : $CLANG_FORMAT_VERS"
 fi
-if $PERFORM_PYCODESTYLE; then
-  PYCODESTYLE_VERS=`$PYCODESTYLE --version`
+if $PERFORM_PEP8; then
+  PYCODESTYLE_VERS=`$PEP8 --version`
   print_msg "MSGBLD0105: " "PYCODESTYLE         : $PYCODESTYLE_VERS"
 fi
 print_msg "" ""
@@ -232,8 +232,8 @@ for f in $FILE_NAMES; do
 
     *.py )
       # PYCODESTYLE
-      if $PERFORM_PYCODESTYLE; then
-        print_msg "MSGBLD0190: " "Running PYCODESTYLE .......: $f"
+      if $PERFORM_PEP8; then
+        print_msg "MSGBLD0190: " "Running PEP8 .......: $f"
         case $f in
           *user_manual_scripts*)
             IGNORES=$PYCODESTYLE_IGNORES_TOPO_MANUAL
@@ -245,7 +245,7 @@ for f in $FILE_NAMES; do
             IGNORES=$PYCODESTYLE_IGNORES
             ;;
         esac
-        if ! pycodestyle_result=`$PYCODESTYLE --max-line-length=$PYCODESTYLE_MAX_LINE_LENGTH --ignore=$IGNORES $f` ; then
+        if ! pycodestyle_result=`$PEP8 --max-line-length=$PYCODESTYLE_MAX_LINE_LENGTH --ignore=$IGNORES $f` ; then
           printf '%s\n' "$pycodestyle_result" | while IFS= read -r line
           do
             print_msg "MSGBLD0195: " "[PYCODESTYLE] $line"

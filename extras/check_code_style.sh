@@ -31,12 +31,12 @@ GIT_END_SHA=HEAD                 # '<master>..<HEAD>' are processed.
 VERA=vera++                      # The names of the static code analysis tools executables.
 CPPCHECK=cppcheck                #    CPPCHECK version 1.69 or later is required !
 CLANG_FORMAT=clang-format-3.6    #    CLANG-FORMAT version 3.6 and only this version is required !
-PYCODESTYLE=pycodestyle
+PEP8=pycodestyle
 
 PERFORM_VERA=true                # Perform VERA++ analysis.
 PERFORM_CPPCHECK=false           # Skip CPPCHECK analysis.
 PERFORM_CLANG_FORMAT=true        # Perform CLANG-FORMAT analysis.
-PERFORM_PYCODESTYLE=true         # Perform PYCODESTYLE analysis.
+PERFORM_PEP8=true                # Perform PEP8 analysis.
 
 INCREMENTAL=false                # Do not prompt the user before each file analysis.
 
@@ -117,8 +117,8 @@ Options:
                                            This corresponds to the version installed in
                                            the NEST Github Actions CI build and test environment.
 
-    --pycodestyle=exe                The name of the pycodestyle executable.
-                                     Default: --pycodestyle=pycodestyle
+    --pep8=exe                       The name of the pep8 executable.
+                                     Default: --pep8=pycodestyle
 
     --perform-vera=on/off            Turn on/off VERA++ analysis.
                                      Default: --perform-vera=on
@@ -129,8 +129,8 @@ Options:
     --perform-clang-format=on/off    Turn on/off CLANG-FORMAT analysis.
                                      Default: --perform-clang-format=on
 
-    --perform-pycodestyle=on/off     Turn on/off pycodestyle analysis.
-                                     Default: --perform-pycodestyle=on
+    --perform-pep8=on/off            Turn on/off pep8 analysis.
+                                     Default: --perform-pep8=on
 EOF
 echo
 }
@@ -174,8 +174,8 @@ while test $# -gt 0 ; do
       --clang-format=*)
           CLANG_FORMAT="$( echo "$1" | sed 's/^--clang-format=//' )"
           ;;
-      --pycodestyle=*)
-          PYCODESTYLE="$( echo "$1" | sed 's/^--pycodestyle=//' )"
+      --pep8=*)
+          PEP8="$( echo "$1" | sed 's/^--pep8=//' )"
           ;;
       --perform-vera=*)
           value="$( echo "$1" | sed 's/^--perform-vera=//' )"
@@ -219,14 +219,14 @@ while test $# -gt 0 ; do
             ;;
           esac
           ;;
-      --perform-pycodestyle=*)
-          value="$( echo "$1" | sed 's/^--perform-pycodestyle=//' )"
+      --perform-pep8=*)
+          value="$( echo "$1" | sed 's/^--perform-pep8=//' )"
           case "$value" in
             on)
-                PERFORM_PYCODESTYLE=true
+                PERFORM_PEP8=true
             ;;
             off)
-                PERFORM_PYCODESTYLE=false
+                PERFORM_PEP8=false
             ;;
             *)
                 error_unknown_option "$1"
@@ -240,7 +240,7 @@ while test $# -gt 0 ; do
   shift
 done
 
-if ! $PERFORM_VERA && ! $PERFORM_CPPCHECK && ! $PERFORM_CLANG_FORMAT && ! $PERFORM_PYCODESTYLE; then
+if ! $PERFORM_VERA && ! $PERFORM_CPPCHECK && ! $PERFORM_CLANG_FORMAT && ! $PERFORM_PEP8; then
   error_no_analysis
 fi
 
@@ -280,9 +280,9 @@ if $PERFORM_CLANG_FORMAT; then
   fi
 fi
 
-# Verify the PYCODESTYLE installation.
-if $PERFORM_PYCODESTYLE; then
-  $PYCODESTYLE --ignore="E121,E501,W504" ./extras/parse_build_log.py || error_exit "Failed to verify the PYCODESTYLE installation. Executable: $PYCODESTYLE"
+# Verify the pycodestyle installation.
+if $PERFORM_PEP8; then
+  $PEP8 --ignore="E121,E501,W504" ./extras/parse_build_log.py || error_exit "Failed to verify the pycodestyle installation. Executable: $PEP8"
 fi
 
 # Extracting changed files between two commits.
@@ -312,8 +312,8 @@ IGNORE_MSG_CLANG_FORMAT=false
 IGNORE_MSG_PYCODESTYLE=false
 
 ./extras/static_code_analysis.sh "$RUNS_ON_GITHUB_ACTIONS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
-"$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PYCODESTYLE" \
-"$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PYCODESTYLE" \
+"$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
+"$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
 "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE"
 if [ $? -gt 0 ]; then
     exit $?

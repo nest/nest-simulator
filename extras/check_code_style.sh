@@ -117,7 +117,7 @@ Options:
                                            This corresponds to the version installed in
                                            the NEST Github Actions CI build and test environment.
 
-    --pep8=exe                       The name of the pep8 executable.
+    --pep8=exe                       The name of the PEP8 executable.
                                      Default: --pep8=pycodestyle
 
     --perform-vera=on/off            Turn on/off VERA++ analysis.
@@ -129,7 +129,7 @@ Options:
     --perform-clang-format=on/off    Turn on/off CLANG-FORMAT analysis.
                                      Default: --perform-clang-format=on
 
-    --perform-pep8=on/off            Turn on/off pep8 analysis.
+    --perform-pep8=on/off            Turn on/off PEP8 analysis.
                                      Default: --perform-pep8=on
 EOF
 echo

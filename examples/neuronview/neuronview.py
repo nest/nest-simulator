@@ -78,7 +78,7 @@ class Main():
 
     def update_figure(self, spikes, potentials):
 
-        if nest.GetKernelStatus("time") != 0.0:
+        if nest.GetKernelStatus('biological_time') != 0.0:
             self._figure.clear()
 
             gs = gridspec.GridSpec(2, 1, height_ratios=[1, 4])

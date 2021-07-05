@@ -201,7 +201,7 @@ spiketimes = []
 for trial in [0, 1]:
     nest.ResetNetwork()
     nest.SetStatus([0], [{"rng_seeds": [seed_NEST]}])
-    nest.SetStatus([0], {'time': 0.0})
+    nest.SetStatus([0], {'biological_time': 0.0})
     nest.SetStatus(spikedetector, {'n_events': 0})
 
     # We assign random initial membrane potentials to all neurons

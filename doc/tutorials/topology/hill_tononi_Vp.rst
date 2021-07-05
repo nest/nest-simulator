@@ -864,7 +864,7 @@ functions, see documentation.
                          extent=(0, Params['N'] + 1, 0, Params['N'] + 1),
                          vmin=vmn[sp - 1], vmax=vmx[sp - 1])
             pylab.colorbar()
-            pylab.title(name + ', t = %6.1f ms' % nest.GetKernelStatus()['time'])
+            pylab.title(name + ', t = %6.1f ms' % nest.GetKernelStatus()['biological_time'])
 
         pylab.draw()  # force drawing inside loop
         pylab.show()  # required by ``pyreport``

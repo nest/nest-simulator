@@ -31,6 +31,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "nest_time.h"
@@ -160,6 +161,16 @@ public:
   //! Sorts source table and connections and create new target table.
   void update_connection_infrastructure( const thread tid );
 
+  /**
+   * Set time measurements for internal profiling to zero (reg. prep.)
+   */
+  virtual void reset_timers_for_preparation();
+
+  /**
+   * Set time measurements for internal profiling to zero (reg. sim. dyn.)
+   */
+  virtual void reset_timers_for_dynamics();
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -195,6 +206,16 @@ private:
                                    //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
+
+  // private stop watches for benchmarking purposes
+  Stopwatch sw_simulate_;            //!< private stop watch for benchmarking purposes
+  Stopwatch sw_communicate_prepare_; //!< private stop watch for benchmarking purposes
+#ifdef TIMER_DETAILED
+  // intended for internal core developers, not for use in the public API
+  Stopwatch sw_gather_spike_data_;  //!< private detailed stop watch for benchmarking purposes
+  Stopwatch sw_update_;             //!< private detailed stop watch for benchmarking purposes
+  Stopwatch sw_gather_target_data_; //!< private detailed stop watch for benchmarking purposes
+#endif
 };
 
 inline Time const&

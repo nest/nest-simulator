@@ -111,7 +111,7 @@ M_ERROR setverbosity
 
     { 
       T Simulate
-      0 [ /time ] get simtime geq
+      0 [ /biological_time ] get simtime geq
       { exit } if
     } loop
 

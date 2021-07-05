@@ -501,6 +501,13 @@ function( NEST_PROCESS_WITH_MPI )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_DETAILED_TIMERS )
+  set( TIMER_DETAILED OFF PARENT_SCOPE )
+  if ( ${with-detailed-timers} STREQUAL "ON" )
+    set( TIMER_DETAILED ON PARENT_SCOPE )
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_WITH_LIBNEUROSIM )
   # Find libneurosim
   set( HAVE_LIBNEUROSIM OFF PARENT_SCOPE )

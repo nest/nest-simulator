@@ -92,7 +92,7 @@ if $PERFORM_CLANG_FORMAT; then
 fi
 if $PERFORM_PEP8; then
   PYCODESTYLE_VERS=`$PEP8 --version`
-  print_msg "MSGBLD0105: " "PYCODESTYLE         : $PYCODESTYLE_VERS"
+  print_msg "MSGBLD0105: " "PEP8         : $PYCODESTYLE_VERS"
 fi
 print_msg "" ""
 
@@ -248,13 +248,13 @@ for f in $FILE_NAMES; do
         if ! pycodestyle_result=`$PEP8 --max-line-length=$PYCODESTYLE_MAX_LINE_LENGTH --ignore=$IGNORES $f` ; then
           printf '%s\n' "$pycodestyle_result" | while IFS= read -r line
           do
-            print_msg "MSGBLD0195: " "[PYCODESTYLE] $line"
+            print_msg "MSGBLD0195: " "[PEP8] $line"
           done
           # Add the file to the list of files with format errors.
           python_files_with_errors="$python_files_with_errors $f"
         fi
         if $RUNS_ON_GITHUB_ACTIONS; then
-          print_msg "MSGBLD0200: " "PYCODESTYLE check for file $f completed."
+          print_msg "MSGBLD0200: " "PEP8 check for file $f completed."
         fi
       fi
       ;;
@@ -319,7 +319,7 @@ if [ $nlines_copyright_check \> 1 ] || \
 
   if ! $RUNS_ON_GITHUB_ACTIONS; then
       print_msg "" "For detailed problem descriptions, consult the tagged messages above."
-      print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY], [NAME] and [PYCODESTYLE]."
+      print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY], [NAME] and [PEP8]."
   fi
   exit 1
 else

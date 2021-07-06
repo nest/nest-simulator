@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ci.sh
+# ci_build.sh
 #
 # This file is part of NEST.
 #

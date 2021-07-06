@@ -120,8 +120,8 @@ jobs:
        - name: Static Code Analysis
          if: ${{ matrix.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYSIS' }}
          run: |
-           chmod +x extras/ci.sh
-           ./extras/ci.sh
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh
          env:
            xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
            CHANGED_FILES: ${{env.CHANGED_FILES}}
@@ -131,9 +131,9 @@ jobs:
          if: ${{ matrix.xNEST_BUILD_TYPE == 'MINIMAL' }}
          run: |
            echo "Minimal Build"
-           chmod +x extras/ci.sh
-           ./extras/ci.sh 2>&1 | tee ci.sh.log
-           python extras/parse_build_log.py ci.sh.log ${{ github.workspace }}
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
+           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: "MINIMAL"
 
@@ -141,9 +141,9 @@ jobs:
          if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
          run: |
            echo "MPI Only Build"
-           chmod +x extras/ci.sh
-           ./extras/ci.sh 2>&1 | tee ci.sh.log
-           python extras/parse_build_log.py ci.sh.log ${{ github.workspace }}
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
+           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: MPI_ONLY
 
@@ -151,9 +151,9 @@ jobs:
          if: ${{ matrix.xNEST_BUILD_TYPE == 'OPENMP_ONLY' }}
          run: |
            echo "OpenMP Only Build"
-           chmod +x extras/ci.sh
-           ./extras/ci.sh 2>&1 | tee ci.sh.log
-           python extras/parse_build_log.py ci.sh.log ${{ github.workspace }}
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
+           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
           xNEST_BUILD_TYPE: OPENMP_ONLY
 
@@ -161,9 +161,9 @@ jobs:
          if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
          run: |
            echo "FULL Build"
-           chmod +x extras/ci.sh
-           ./extras/ci.sh 2>&1 | tee ci.sh.log
-           python extras/parse_build_log.py ci.sh.log ${{ github.workspace }}
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
+           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: FULL
            

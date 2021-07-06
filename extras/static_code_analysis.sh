@@ -21,7 +21,7 @@
 
 
 # This shell script is part of the NEST CI build and test environment.
-# It performs the static code analysis and is invoked by 'ci.sh'.
+# It performs the static code analysis and is invoked by 'ci_build.sh'.
 # The script is also executed when running 'check_code_style.sh' for
 # a local static code analysis.
 #

@@ -22,6 +22,15 @@ numeric solver otherwise.
 
 * :doc:`List of available models <nestml:models_library/index>`
 
+
+NEST extension module
+---------------------
+
+:doc:`The NEST extension module <extmod:index>` allows you to extend the functionality of NEST
+without messing with the source code of NEST itself. It makes sharing custom extensions with other researchers easy.
+
+* :doc:`Get started with the extension module <extmod:extension_modules>`
+
 NEST desktop
 ------------
 
@@ -65,7 +74,7 @@ Neuromorphic hardware
 :doc:`SpiNNaker and BrainScaleS <neuromorph:index>` are neuromorphic computing systems, which enable
 energy-efficient, large-scale neuronal network simulations with simplified spiking neuron models.
 The BrainScaleS system is based on physical (analog) emulations of neuron models and offers highly accelerated
-operation (104 x real time). The SpiNNaker system is based on a digital many-core architecture and provides
+operation (:math:`10^4` x real time). The SpiNNaker system is based on a digital many-core architecture and provides
 real-time operation.
 
 * :doc:`Get started with SpiNNaker <neuromorph:mc/mc_index>`
@@ -78,6 +87,5 @@ TheVirtualBrain (TVB)
 networks with biologically realistic connectivity.
 
 * :ref:`Get started with TVB <tvb:tutorial_0_gettingstarted>`
-
 
 

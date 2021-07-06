@@ -48,9 +48,9 @@ IGNORE_MSG_VERA=${13}         # true or false, indicating whether VERA++ message
 IGNORE_MSG_CPPCHECK=${14}     # true or false, indicating whether CPPCHECK messages should accout for the build result.
 IGNORE_MSG_CLANG_FORMAT=${15} # true or false, indicating whether CLANG-FORMAT messages should accout for the build result.
 IGNORE_MSG_PYCODESTYLE=${16}  # true or false, indicating whether pycodestyle messages should accout for the build result.
+PYCODESTYLE_IGNORES=${17}     # The list of pycodestyle error and warning codes to ignore.
 
 # PYCODESTYLE rules to ignore.
-PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704"
 PYCODESTYLE_IGNORES_EXAMPLES="${PYCODESTYLE_IGNORES},E402"
 PYCODESTYLE_IGNORES_TOPO_MANUAL="${PYCODESTYLE_IGNORES_EXAMPLES},E265"
 

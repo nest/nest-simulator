@@ -40,6 +40,8 @@ PERFORM_PEP8=true                # Perform PEP8 analysis.
 
 INCREMENTAL=false                # Do not prompt the user before each file analysis.
 
+PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"    # A list of pycodestyle error and warning codes to ignore.
+
 # Exit script on 'Unknown option' condition.
 # error_unknown_option "option"
 error_unknown_option() {
@@ -282,7 +284,7 @@ fi
 
 # Verify the pycodestyle installation.
 if $PERFORM_PEP8; then
-  $PEP8 --ignore="E121,E501,W504" ./extras/parse_build_log.py || error_exit "Failed to verify the pycodestyle installation. Executable: $PEP8"
+  $PEP8 --ignore=$PYCODESTYLE_IGNORES ./extras/parse_build_log.py || error_exit "Failed to verify the pycodestyle installation. Executable: $PEP8"
 fi
 
 # Extracting changed files between two commits.
@@ -314,7 +316,7 @@ IGNORE_MSG_PYCODESTYLE=false
 ./extras/static_code_analysis.sh "$RUNS_ON_GITHUB_ACTIONS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
 "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
 "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
-"$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE"
+"$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" "$PYCODESTYLE_IGNORES"
 if [ $? -gt 0 ]; then
     exit $?
 fi

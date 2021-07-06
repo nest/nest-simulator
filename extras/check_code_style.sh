@@ -78,7 +78,7 @@ print_usage() {
 Usage: ./extras/check_code_style.sh [options ...]
 
 This script processes C/C++ and Python source code files to verify compliance with the NEST
-coding  style  guidelines.  The  checks are performed the same way as in the NEST Github Actions CI
+coding  style  guidelines.  The  checks are performed the same way as in the NEST CI
 build and test environment. If no file is specified, a local 'git diff' is issued to obtain
 the changed files in the commit range '<git-sha-start>..<git-sha-end>'. By default, this is
 'master..head'.
@@ -111,13 +111,13 @@ Options:
                                      Default: --cppcheck=cppcheck
                                      Note: CPPCHECK version 1.69 or later is required.
                                            This corresponds to the version installed in
-                                           the NEST Github Actions CI build and test environment.
+                                           the NEST CI build and test environment.
 
     --clang-format=exe               The name of the CLANG-FORMAT executable.
                                      Default: --clang-format=clang-format-3.6
                                      Note: CLANG-FORMAT version 3.6 is required.
                                            This corresponds to the version installed in
-                                           the NEST Github Actions CI build and test environment.
+                                           the NEST CI build and test environment.
 
     --pep8=exe                       The name of the PEP8 executable.
                                      Default: --pep8=pycodestyle
@@ -305,15 +305,15 @@ if [ ! -x ./extras/static_code_analysis.sh ]; then
 fi
 
 
-RUNS_ON_GITHUB_ACTIONS=false
+RUNS_ON_CI=false
 
 unset NEST_VPATH               # These command line arguments are placeholders and not required here.
 IGNORE_MSG_VERA=false          # They are needed when running the static code analysis script within
-IGNORE_MSG_CPPCHECK=false      # the Github Actions CI build environment.
+IGNORE_MSG_CPPCHECK=false      # the CI build environment.
 IGNORE_MSG_CLANG_FORMAT=false
 IGNORE_MSG_PYCODESTYLE=false
 
-./extras/static_code_analysis.sh "$RUNS_ON_GITHUB_ACTIONS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
+./extras/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
 "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
 "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
 "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" "$PYCODESTYLE_IGNORES"

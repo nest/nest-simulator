@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# This shell script is part of the NEST Github Actions CI build and test environment.
+# This shell script is part of the NEST CI build and test environment.
 # It performs the static code analysis and is invoked by 'ci.sh'.
 # The script is also executed when running 'check_code_style.sh' for
 # a local static code analysis.
@@ -32,7 +32,7 @@
 #
 
 # Command line parameters.
-RUNS_ON_GITHUB_ACTIONS=${1}   # true or false, indicating whether the script is executed on Github Actions CI or runs local.
+RUNS_ON_CI=${1}               # true or false, indicating whether the script is executed on the CI or not.
 INCREMENTAL=${2}              # true or false, user needs to confirm before checking a source file.
 FILE_NAMES=${3}               # The list of files or a single file to be checked.
 NEST_VPATH=${4}               # The high level NEST build path.
@@ -65,10 +65,10 @@ ROOT_DIRS_TO_IGNORE="thirdparty"
 DIRS_TO_IGNORE=$(for dir in ${ROOT_DIRS_TO_IGNORE}; do find ${dir} -type d; done)
 
 # Print a message.
-# The format of the message depends on whether the script is executed on Github Actions CI or runs local.
+# The format of the message depends on whether the script is executed on CI or not.
 # print_msg "string1" "string2"
 print_msg() {
-  if $RUNS_ON_GITHUB_ACTIONS; then
+  if $RUNS_ON_CI; then
     echo "$1$2"
   else
     echo "$2"
@@ -97,8 +97,8 @@ fi
 print_msg "" ""
 
 # The following messages report on the command line arguments IGNORE_MSG_xxx which indicate whether
-# static code analysis error messages will cause the GithubActions CI build to fail or are ignored.
-if $RUNS_ON_GITHUB_ACTIONS; then
+# static code analysis error messages will cause the CI build to fail or are ignored.
+if $RUNS_ON_CI; then
   if $IGNORE_MSG_VERA; then
     print_msg "MSGBLD1010: " "IGNORE_MSG_VERA is set. VERA++ messages will not cause the build to fail."
   fi
@@ -108,7 +108,7 @@ if $RUNS_ON_GITHUB_ACTIONS; then
   if $IGNORE_MSG_CLANG_FORMAT; then
     print_msg "MSGBLD1030: " "IGNORE_MSG_CLANG_FORMAT is set. CLANG_FORMAT messages will not cause the build to fail."
   fi
-  if $RUNS_ON_GITHUB_ACTIONS && $IGNORE_MSG_PYCODESTYLE; then
+  if $RUNS_ON_CI && $IGNORE_MSG_PYCODESTYLE; then
     print_msg "MSGBLD1040: " "IGNORE_MSG_PYCODESTYLE is set. PYCODESTYLE messages will not cause the build to fail."
   fi
 fi
@@ -137,12 +137,12 @@ for f in $FILE_NAMES; do
     print_msg "MSGBLD0110: " "$f is not a file or does not exist anymore."
     continue
   fi
-  if ! $RUNS_ON_GITHUB_ACTIONS && $INCREMENTAL; then
+  if ! $RUNS_ON_CI && $INCREMENTAL; then
     print_msg "" ""
     print_msg "" "Press [Enter] to continue.  (Static code analysis for file $f.)"
     read continue
   fi
-  if $RUNS_ON_GITHUB_ACTIONS; then
+  if $RUNS_ON_CI; then
     print_msg "MSGBLD0120: " "Perform static code analysis for file $f."
   fi
 
@@ -152,7 +152,7 @@ for f in $FILE_NAMES; do
       cppcheck_failed=false
       clang_format_failed=false
 
-      if $RUNS_ON_GITHUB_ACTIONS; then
+      if $RUNS_ON_CI; then
         f_base=$NEST_VPATH/reports/`basename $f`
       else
         f_base=`basename $f`
@@ -170,7 +170,7 @@ for f in $FILE_NAMES; do
           done
         fi
         rm ${f_base}_vera.txt
-        if $RUNS_ON_GITHUB_ACTIONS; then
+        if $RUNS_ON_CI; then
           print_msg "MSGBLD0140: " "VERA++ for file $f completed."
         fi
       fi
@@ -187,7 +187,7 @@ for f in $FILE_NAMES; do
           cat ${f_base}_cppcheck.txt | while read line
           do
             print_msg "MSGBLD0155: " "[CPPC] $line"
-            if $RUNS_ON_GITHUB_ACTIONS; then
+            if $RUNS_ON_CI; then
               msg_count+=1
               if [ ${msg_count} -ge ${MAX_CPPCHECK_MSG_COUNT} ]; then
                 print_msg "MSGBLD0156: " "[CPPC] MAX_CPPCHECK_MSG_COUNT (${MAX_CPPCHECK_MSG_COUNT}) reached for file: $f"
@@ -197,7 +197,7 @@ for f in $FILE_NAMES; do
           done
         fi
         rm ${f_base}_cppcheck.txt
-        if $RUNS_ON_GITHUB_ACTIONS; then
+        if $RUNS_ON_CI; then
           print_msg "MSGBLD0160: " "CPPCHECK for file $f completed."
         fi
       fi
@@ -219,7 +219,7 @@ for f in $FILE_NAMES; do
         fi
         rm $file_formatted
         rm $file_diff
-        if $RUNS_ON_GITHUB_ACTIONS; then
+        if $RUNS_ON_CI; then
           print_msg "MSGBLD0180: " "CLANG-FORMAT for file $f completed."
         fi
       fi
@@ -253,7 +253,7 @@ for f in $FILE_NAMES; do
           # Add the file to the list of files with format errors.
           python_files_with_errors="$python_files_with_errors $f"
         fi
-        if $RUNS_ON_GITHUB_ACTIONS; then
+        if $RUNS_ON_CI; then
           print_msg "MSGBLD0200: " "PEP8 check for file $f completed."
         fi
       fi
@@ -282,7 +282,7 @@ if [ $nlines_copyright_check \> 1 ] || \
     for f in $c_files_with_errors; do
       print_msg "MSGBLD0220: " "... $f"
     done
-    if ! $RUNS_ON_GITHUB_ACTIONS; then
+    if ! $RUNS_ON_CI; then
       print_msg "" "Run $CLANG_FORMAT -i <filename> for autocorrection."
       print_msg "" ""
     fi
@@ -311,13 +311,13 @@ if [ $nlines_copyright_check \> 1 ] || \
     for f in $python_files_with_errors; do
       print_msg "MSGBLD0220: " "... $f"
     done
-    if ! $RUNS_ON_GITHUB_ACTIONS; then
+    if ! $RUNS_ON_CI; then
       print_msg "" "Run pep8ify -w <filename> for autocorrection."
       print_msg "" ""
     fi
   fi
 
-  if ! $RUNS_ON_GITHUB_ACTIONS; then
+  if ! $RUNS_ON_CI; then
       print_msg "" "For detailed problem descriptions, consult the tagged messages above."
       print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY], [NAME] and [PEP8]."
   fi

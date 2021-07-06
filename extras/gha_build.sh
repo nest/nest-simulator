@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# This shell script is part of the NEST Github Actions CI build and test environment.
+# This shell script is part of the NEST CI build and test environment.
 # It is invoked by the top-level Github Actions script '.github/workflows/nestbuildmatrix.yml'.
 #
 # NOTE: This shell script is tightly coupled to 'extras/parse_build_log.py'.
@@ -112,18 +112,18 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     PERFORM_PEP8=true
 
     # The following command line parameters indicate whether static code analysis error messages
-    # will cause the Github Actions CI build to fail or are ignored.
+    # will cause the CI build to fail or are ignored.
     IGNORE_MSG_VERA=false
     IGNORE_MSG_CPPCHECK=true
     IGNORE_MSG_CLANG_FORMAT=false
     IGNORE_MSG_PYCODESTYLE=false
 
-    # The script is called within the Github Actions CI environment and thus can not be run incremental.
-    RUNS_ON_GITHUB_ACTIONS=true
+    # The script is called within the CI environment and thus can not be run incremental.
+    RUNS_ON_CI=true
     INCREMENTAL=false
 
     chmod +x extras/static_code_analysis.sh
-    ./extras/static_code_analysis.sh "$RUNS_ON_GITHUB_ACTIONS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
+    ./extras/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
     "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
     "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
     "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE"

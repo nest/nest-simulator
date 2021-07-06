@@ -145,12 +145,11 @@ def do_call(call_name, args=[], kwargs={}):
         log(call_name, f'local call, args={args}, kwargs={kwargs}')
         master_response = call(*args, **kwargs)
 
-    response = [None]
+    response = [nest.hl_api.serializable(master_response)]
     if mpi_comm is not None:
         log(call_name, 'waiting for response gather')
-        response = mpi_comm.gather(None, root=0)
+        response = mpi_comm.gather(response[0], root=0)
         log(call_name, f'received response gather, data={response}')
-    response[0] = nest.hl_api.serializable(master_response)
 
     return combine(call_name, response)
 
@@ -340,7 +339,7 @@ def serialize(call_name, args, kwargs):
 
     """
 
-    if call_name.startswith('Set'):
+    if call_name.startswith('Set') and kwargs:
         status = {}
         if call_name == 'SetDefaults':
             status = do_call('GetDefaults', [kwargs['model']])
@@ -398,9 +397,9 @@ def combine(call_name, response):
     based on the call that was issued and individual repsonse data:
       * if all responses are None, the combined response will also just
         be None
-      * for some specific calls, the responses are known to be the same
-        from all workers and the combined response is just the first
-        element of the response list
+      * for some specific calls, the responses are known to be the
+        same from the master and all workers. In this case, the
+        combined response is just the master response
       * if the response list contains only a single actual response and
         None otherwise, the combined response will be that one actual
         response
@@ -413,25 +412,35 @@ def combine(call_name, response):
       * for calls to GetStatus on neurons, the combined response is just
         the single dictionary returned by the process on which the
         neuron is actually allocated
+      * if the response contains one list per process, the combined
+        response will be those lists concatenated and flattened.
 
     """
 
     if all(v is None for v in response):
-        result = None
-    elif call_name in ('exec', 'Create', 'GetDefaults'):
-        result = response[0]
-    else:
-        result = list(filter(lambda x: x is not None, response))
-        if len(result) == 1:
-            result = result[0]
-        else:
-            if all(type(v[0]) is dict for v in response):
-                result = merge_dicts(response)
-            else:
-                msg = "Cannot combine data because of unknown reason"
-                raise Exception(msg)
+        return None
 
-    return result
+    # return the master response if all responses are known to be the same
+    if call_name in ('exec', 'Create', 'GetDefaults', 'GetKernelStatus',
+                     'SetKernelStatus', 'SetStatus'):
+        return response[0]
+
+    # return a single response if there is only one which is not None
+    filtered_response = list(filter(lambda x: x is not None, response))
+    if len(filtered_response) == 1:
+        return filtered_response[0]
+    
+    # return a single merged dictionary if there are many of them 
+    if all(type(v[0]) is dict for v in response):
+        return merge_dicts(response)
+
+    # return a flattened list if the response only consists of lists
+    if all(type(v) is list for v in response):
+        return [item for lst in response for item in lst]
+
+    print(f"##\n## DATA COMBINATION ERROR: response={response}\n##\n")
+    msg = "Cannot combine data because of unknown reason"
+    raise Exception(msg)
 
 
 def merge_dicts(response):

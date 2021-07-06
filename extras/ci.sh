@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# gha_build.sh
+# ci.sh
 #
 # This file is part of NEST.
 #

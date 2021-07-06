@@ -21,7 +21,7 @@
 
 
 # This shell script is part of the NEST Github Actions CI build and test environment.
-# It performs the static code analysis and is invoked by 'gha_build.sh'.
+# It performs the static code analysis and is invoked by 'ci.sh'.
 # The script is also executed when running 'check_code_style.sh' for
 # a local static code analysis.
 #

@@ -107,8 +107,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             symm = nest.GetDefaults(syn, 'requires_symmetric')
 
             # set a label during connection
-            nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"synapse_model": syn, "synapse_label": 123, "receptor_type": r_type})
+            syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn, synapse_label=123, receptor_type=r_type)
+            nest.Connect(nest.OneToOne(a, a, make_symmetric=symm, syn_spec=syn_spec))
             c = nest.GetConnections(a, a)
             self.assertTrue(
                 all([x == 123 for x in c.get('synapse_label')])
@@ -126,8 +126,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             symm = nest.GetDefaults(syn, 'requires_symmetric')
 
             # set no label during connection
-            nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"synapse_model": syn, "receptor_type": r_type})
+            syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn, receptor_type=r_type)
+            nest.Connect(nest.OneToOne(a, a, make_symmetric=symm, syn_spec=syn_spec))
             c = nest.GetConnections(a, a)
             # still unlabeled
             self.assertTrue(
@@ -153,8 +153,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
             # set a label during SetDefaults
             nest.SetDefaults(syn, {'synapse_label': 123})
-            nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"synapse_model": syn, "receptor_type": r_type})
+            syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn, receptor_type=r_type)
+            nest.Connect(nest.OneToOne(a, a, make_symmetric=symm, syn_spec=syn_spec))
             c = nest.GetConnections(a, a)
             self.assertTrue(
                 all([x == 123 for x in c.get('synapse_label')])
@@ -177,11 +177,11 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 synapse_type = "rate_connection_instantaneous"
             if syn in self.siegert_connections:
                 synapse_type = "diffusion_connection"
-            nest.Connect(a, a, {"rule": "one_to_one"},
-                         {"synapse_model": synapse_type, "receptor_type": r_type})
+            syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn, receptor_type=r_type)
+            nest.Connect(nest.OneToOne(a, a, make_symmetric=symm, syn_spec=syn_spec))
             # set a label during connection
-            nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"synapse_model": syn, "synapse_label": 123, "receptor_type": r_type})
+            syn_spec_lab = nest.synapsemodels.SynapseModel(synapse_model=syn, synapse_label=123, receptor_type=r_type)
+            nest.Connect(nest.OneToOne(a, a, make_symmetric=symm, syn_spec=syn_spec_lab))
             c = nest.GetConnections(a, a, synapse_label=123)
             self.assertTrue(
                 all([x == 123 for x in c.get('synapse_label')])
@@ -203,13 +203,14 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
             # try set on connect
             with self.assertRaises(nest.kernel.NESTError):
-                nest.Connect(a, a, {"rule": "one_to_one",
-                                    "make_symmetric": symm},
-                             {"synapse_model": syn, "synapse_label": 123})
+                syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn, synapse_label=123, receptor_type=r_type)
+                nest.Connect(nest.OneToOne(a, a, make_symmetric=symm, syn_spec=syn_spec))
+                nest.BuildNetwork()
 
             # plain connection
-            nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
-                         {"synapse_model": syn, "receptor_type": r_type})
+            syn_spec_no_label = nest.synapsemodels.SynapseModel(synapse_model=syn, receptor_type=r_type)
+            nest.Connect(nest.OneToOne(a, a, make_symmetric=symm, syn_spec=syn_spec_no_label))
+            nest.BuildNetwork()
             # try set on SetStatus
             c = nest.GetConnections(a, a)
 

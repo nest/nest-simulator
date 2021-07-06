@@ -80,13 +80,13 @@ __all__ = [
     'stdp_nn_symm_lbl',
     'stdp_pl_hom',
     'stdp_pl_hom_hpc',
-    'stdp_pl_hom_lbl'
+    'stdp_pl_hom_lbl',
     'stdp_triplet',
     'stdp_triplet_hpc',
     'stdp_triplet_lbl',
     'tsodyks2',
     'tsodyks2_hpc',
-    'tsodyks2_lbl'
+    'tsodyks2_lbl',
     'tsodyks',
     'tsodyks_hom',
     'tsodyks_hom_hpc',

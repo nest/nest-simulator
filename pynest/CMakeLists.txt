@@ -88,7 +88,7 @@ if ( HAVE_PYTHON )
       # the install requirements of `nest` as specified in `setup.py`.
       # Then feed them into the stdin pipe of `pip install`.
       execute_process(
-          COMMAND ${PYTHON} -c \"import pkg_resources as pkg; print('\\\\n'.join(str(r) for r in pkg.get_distribution('nest').requires()))\"
+          COMMAND ${PYTHON} -c \"import pkg_resources as pkg; print('\\\\n'.join(str(r) for r in pkg.get_distribution('nest-simulator').requires()))\"
           COMMAND ${PYTHON} -m pip install -r /dev/stdin
       )
       "

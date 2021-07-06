@@ -220,25 +220,25 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    resolution : float, default 0.1
+    resolution : float, default: 0.1
         The resolution of the simulation (in ms)
     time : float
         The current simulation time (in ms)
-    to_do : int, read only, default 0
+    to_do : int, read only, default: 0
         The number of steps yet to be simulated
-    max_delay : float, default 0.1
+    max_delay : float, default: 0.1
         The maximum delay in the network
-    min_delay : float, default 0.1
+    min_delay : float, default: 0.1
         The minimum delay in the network
-    ms_per_tic : float, default 0.001
+    ms_per_tic : float, default: 0.001
         The number of milliseconds per tic
-    tics_per_ms : float, default 1000.0
+    tics_per_ms : float, default: 1000.0
         The number of tics per millisecond
-    tics_per_step : int, default 100
+    tics_per_step : int, default: 100
         The number of tics per simulation time step
-    T_max : float, read only, default 1152921504606846.8
+    T_max : float, read only, default: 1152921504606846.8
         The largest representable time value
-    T_min : float, read only, default -1152921504606846.8
+    T_min : float, read only, default: -1152921504606846.8
         The smallest representable time value
 
 
@@ -250,9 +250,9 @@ def SetKernelStatus(params):
     rng_types : list, read only
         Names of random number generator types available.
         Types: "Philox_32", "Philox_64", "Threefry_32", "Threefry_64", "mt19937", "mt19937_64"
-    rng_type : str, default mt19937_64
+    rng_type : str, default: mt19937_64
         Name of random number generator type used by NEST.
-    rng_seed : int, default 143202461
+    rng_seed : int, default: 143202461
         Seed value used as base for seeding NEST random number generators
         (:math:`1 \leq s \leq 2^{32}-1`).
 
@@ -262,13 +262,13 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    total_num_virtual_procs : int, default 1
+    total_num_virtual_procs : int, default: 1
         The total number of virtual processes
-    local_num_threads : int, default 1
+    local_num_threads : int, default: 1
         The local number of threads
-    num_processes : int, read only, default 1
+    num_processes : int, read only, default: 1
         The number of MPI processes
-    off_grid_spiking : bool, read only, default False
+    off_grid_spiking : bool, read only, default: False
         Whether to transmit precise spike times in MPI communication
 
 
@@ -277,26 +277,26 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    adaptive_spike_buffers  : bool, default True
+    adaptive_spike_buffers  : bool, default: True
         Whether MPI buffers for communication of spikes resize on the fly
-    adaptive_target_buffers : bool, default True
+    adaptive_target_buffers : bool, default: True
         Whether MPI buffers for communication of connections resize on the fly
     buffer_size_secondary_events : int, read only
         Size of MPI buffers for communicating secondary events (in bytes, per
         MPI rank, for developers)
-    buffer_size_spike_data : int, default 2
+    buffer_size_spike_data : int, default: 2
         Total size of MPI buffer for communication of spikes
-    buffer_size_target_data : int, default 2
+    buffer_size_target_data : int, default: 2
         Total size of MPI buffer for communication of connections
-    growth_factor_buffer_spike_data : float, default 1.5
+    growth_factor_buffer_spike_data : float, default: 1.5
         If MPI buffers for communication of spikes resize on the fly, grow
         them by this factor each round
-    growth_factor_buffer_target_data : float, default 1.5
+    growth_factor_buffer_target_data : float, default: 1.5
         If MPI buffers for communication of connections resize on the fly, grow
         them by this factor each round
-    max_buffer_size_spike_data : int, default 8388608
+    max_buffer_size_spike_data : int, default: 8388608
         Maximal size of MPI buffers for communication of spikes.
-    max_buffer_size_target_data : int, default 16777216
+    max_buffer_size_target_data : int, default: 16777216
         Maximal size of MPI buffers for communication of connections
 
 
@@ -305,15 +305,15 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    use_wfr : bool, default True
+    use_wfr : bool, default: True
         Whether to use waveform relaxation method
-    wfr_comm_interval : float, default 1.0
+    wfr_comm_interval : float, default: 1.0
         Desired waveform relaxation communication interval
-    wfr_tol : float, default 0.0001
+    wfr_tol : float, default: 0.0001
         Convergence tolerance of waveform relaxation method
-    wfr_max_iterations : int, default 15
+    wfr_max_iterations : int, default: 15
         Maximal number of iterations used for waveform relaxation
-    wfr_interpolation_order : int, default 3
+    wfr_interpolation_order : int, default: 3
         Interpolation order of polynomial used in wfr iterations
 
 
@@ -322,9 +322,9 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    max_num_syn_models : int, read only, default 512
+    max_num_syn_models : int, read only, default: 512
         Maximal number of synapse models supported
-    sort_connections_by_source : bool, default True
+    sort_connections_by_source : bool, default: True
         Whether to sort connections by their source; increases construction
         time of presynaptic data structures, decreases simulation time if the
         average number of outgoing connections per neuron is smaller than the
@@ -333,11 +333,11 @@ def SetKernelStatus(params):
         Defines all synapses which are plastic for the structural plasticity
         algorithm. Each entry in the dictionary is composed of a synapse model,
         the pre synaptic element and the postsynaptic element
-    structural_plasticity_update_interval : int, default 10000.0
+    structural_plasticity_update_interval : int, default: 10000.0
         Defines the time interval in ms at which the structural plasticity
         manager will make changes in the structure of the network (creation
         and deletion of plastic synapses)
-    use_compressed_spikes : bool, default True
+    use_compressed_spikes : bool, default: True
         Whether to use spike compression; if a neuron has targets on
         multiple threads of a process, this switch makes sure that only
         a single packet is sent to the process instead of one packet per
@@ -354,15 +354,15 @@ def SetKernelStatus(params):
         directory)
     data_prefix : str
         A common prefix for all data files
-    overwrite_files : bool, default False
+    overwrite_files : bool, default: False
         Whether to overwrite existing data files
-    print_time : bool, default False
+    print_time : bool, default: False
         Whether to print progress information during the simulation
-    network_size : int, read only, default 0
+    network_size : int, read only, default: 0
         The number of nodes in the network
-    num_connections : int, read only, local only, default 0
+    num_connections : int, read only, local only, default: 0
         The number of connections in the network
-    local_spike_counter : int, read only, default 0
+    local_spike_counter : int, read only, default: 0
         Number of spikes fired by neurons on a given MPI rank during the most
         recent call to :py:func:`.Simulate`. Only spikes from "normal" neurons
         are counted, not spikes generated by devices such as ``poisson_generator``.
@@ -376,9 +376,9 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    dict_miss_is_error : bool, default True
+    dict_miss_is_error : bool, default: True
         Whether missed dictionary entries are treated as errors
-    keep_source_table : bool, default True
+    keep_source_table : bool, default: True
         Whether to keep source table after connection setup is complete
     min_update_time: double, read only
         Shortest wall-clock time measured so far for a full update step [seconds].

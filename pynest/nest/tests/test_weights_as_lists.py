@@ -43,9 +43,8 @@ class WeightsAsListTestCase(unittest.TestCase):
         # weight has to be a list with dimension (n_sources x 1) when one_to_one is used
         ref_weights = [1.2, -3.5, 0.4]
 
-        conn_dict = {'rule': 'one_to_one'}
-        syn_dict = {'weight': ref_weights}
-        nest.Connect(src, tgt, conn_dict, syn_dict)
+        syn_spec = nest.synapsemodels.static(weight=ref_weights)
+        nest.Connect(nest.OneToOne(src, tgt, syn_spec=syn_spec))
 
         conns = nest.GetConnections()
         weights = conns.weight
@@ -61,9 +60,8 @@ class WeightsAsListTestCase(unittest.TestCase):
         # weight has to be a list of lists with dimension (n_target x n_sources) when all_to_all is used
         ref_weights = [[1.2, -3.5, 2.5], [0.4, -0.2, 0.7]]
 
-        conn_dict = {'rule': 'all_to_all'}
-        syn_dict = {'weight': ref_weights}
-        nest.Connect(src, tgt, conn_dict, syn_dict)
+        syn_spec = nest.synapsemodels.static(weight=ref_weights)
+        nest.Connect(nest.AllToAll(src, tgt, syn_spec=syn_spec))
 
         conns = nest.GetConnections()
         weights = conns.weight
@@ -82,9 +80,8 @@ class WeightsAsListTestCase(unittest.TestCase):
         # weight has to be a list of lists with dimension (n_target x indegree) when fixed_indegree is used
         ref_weights = [[1.2, -3.5], [0.4, -0.2], [0.6, 2.2]]
 
-        conn_dict = {'rule': 'fixed_indegree', 'indegree': 2}
-        syn_dict = {'weight': ref_weights}
-        nest.Connect(src, tgt, conn_dict, syn_dict)
+        syn_spec = nest.synapsemodels.static(weight=ref_weights)
+        nest.Connect(nest.FixedIndegree(src, tgt, indegree=2, syn_spec=syn_spec))
 
         conns = nest.GetConnections()
         weights = conns.weight
@@ -104,8 +101,8 @@ class WeightsAsListTestCase(unittest.TestCase):
         ref_weights = [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]
 
         conn_dict = {'rule': 'fixed_outdegree', 'outdegree': 3}
-        syn_dict = {'weight': ref_weights}
-        nest.Connect(src, tgt, conn_dict, syn_dict)
+        syn_spec = nest.synapsemodels.static(weight=ref_weights)
+        nest.Connect(nest.FixedOutdegree(src, tgt, outdegree=3, syn_spec=syn_spec))
 
         conns = nest.GetConnections()
         weights = conns.weight
@@ -120,13 +117,12 @@ class WeightsAsListTestCase(unittest.TestCase):
 
         src = nest.Create('iaf_psc_alpha', 3)
         tgt = nest.Create('iaf_psc_delta', 4)
-        conn_dict = {'rule': 'fixed_total_number', 'N': 4}
 
         # weight has to be a list with dimension (n_conns x 1) when fixed_total_number is used
         ref_weights = [1.2, -3.5, 0.4, -0.2]
 
-        syn_dict = {'weight': ref_weights}
-        nest.Connect(src, tgt, conn_dict, syn_dict)
+        syn_spec = nest.synapsemodels.static(weight=ref_weights)
+        nest.Connect(nest.FixedTotalNumber(src, tgt, N=4, syn_spec=syn_spec))
 
         conns = nest.GetConnections()
         weights = conns.weight

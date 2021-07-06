@@ -73,7 +73,8 @@ class VisualizationTestCase(unittest.TestCase):
         nest.ResetKernel()
         sources = nest.Create('iaf_psc_alpha', 10)
         targets = nest.Create('iaf_psc_alpha', 10)
-        nest.Connect(sources, targets)
+        nest.Connect(nest.AllToAll(sources, targets))
+        nest.BuildNetwork()
 
         filename = os.path.join(self.nest_tmpdir(), 'network_plot.png')
         self.filenames.append(filename)
@@ -100,8 +101,8 @@ class VisualizationTestCase(unittest.TestCase):
         nodes = nest.Create('iaf_psc_alpha', 2)
         pg = nest.Create('poisson_generator', 1, {'rate': 1000.})
         device = nest.Create('voltmeter')
-        nest.Connect(pg, nodes)
-        nest.Connect(device, nodes)
+        nest.Connect(nest.AllToAll(pg, nodes))
+        nest.Connect(nest.AllToAll(device, nodes))
         nest.Simulate(100)
 
         # Test with data from device
@@ -128,9 +129,9 @@ class VisualizationTestCase(unittest.TestCase):
             parrot = nest.Create('parrot_neuron')
             sr_to_file = nest.Create('spike_recorder')
             sr_to_file.record_to = 'ascii'
-            nest.Connect(pg, parrot)
-            nest.Connect(parrot, sr)
-            nest.Connect(parrot, sr_to_file)
+            nest.Connect(nest.AllToAll(pg, parrot))
+            nest.Connect(nest.AllToAll(parrot, sr))
+            nest.Connect(nest.AllToAll(parrot, sr_to_file))
             nest.Simulate(100)
             return sr, sr_to_file
         else:

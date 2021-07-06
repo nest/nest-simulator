@@ -44,14 +44,14 @@ class ParrotNeuronTestCase(unittest.TestCase):
         self.spikes = nest.Create("spike_recorder")
 
         # record source and parrot spikes
-        nest.Connect(self.source, self.spikes)
-        nest.Connect(self.parrot, self.spikes)
+        nest.Connect(nest.AllToAll(self.source, self.spikes))
+        nest.Connect(nest.AllToAll(self.parrot, self.spikes))
 
     def test_ParrotNeuronRepeatSpike(self):
         """Check parrot_neuron repeats spikes on port 0"""
 
         # connect with arbitrary delay
-        nest.Connect(self.source, self.parrot, syn_spec={"delay": self.delay})
+        nest.Connect(nest.AllToAll(self.source, self.parrot, syn_spec=nest.synapsemodels.static(delay=self.delay)))
         nest.Simulate(self.spike_time + 2 * self.delay)
 
         # get spike from parrot neuron
@@ -68,8 +68,8 @@ class ParrotNeuronTestCase(unittest.TestCase):
         """Check parrot_neuron ignores spikes on port 1"""
 
         # connect with arbitrary delay to port 1
-        nest.Connect(self.source, self.parrot,
-                     syn_spec={"receptor_type": 1, "delay": self.delay})
+        nest.Connect(nest.AllToAll(self.source, self.parrot,
+                                   syn_spec=nest.synapsemodels.static(receptor_type=1, delay=self.delay)))
         nest.Simulate(self.spike_time + 2. * self.delay)
 
         # get spike from parrot neuron, assert it was ignored
@@ -88,8 +88,8 @@ class ParrotNeuronTestCase(unittest.TestCase):
         """
 
         # connect twice
-        nest.Connect(self.source, self.parrot, syn_spec={"delay": self.delay})
-        nest.Connect(self.source, self.parrot, syn_spec={"delay": self.delay})
+        nest.Connect(nest.AllToAll(self.source, self.parrot, syn_spec=nest.synapsemodels.static(delay=self.delay)))
+        nest.Connect(nest.AllToAll(self.source, self.parrot, syn_spec=nest.synapsemodels.static(delay=self.delay)))
         nest.Simulate(self.spike_time + 2. * self.delay)
 
         # get spikes from parrot neuron, assert two were transmitted
@@ -141,9 +141,9 @@ class ParrotNeuronPoissonTestCase(unittest.TestCase):
         parrots = nest.Create('parrot_neuron', 2)
         spike_rec = nest.Create('spike_recorder')
 
-        nest.Connect(source, parrots[:1], syn_spec={'delay': delay})
-        nest.Connect(parrots[:1], parrots[1:], syn_spec={'delay': delay})
-        nest.Connect(parrots[1:], spike_rec)
+        nest.Connect(nest.AllToAll(source, parrots[:1], syn_spec=nest.synapsemodels.static(delay=delay)))
+        nest.Connect(nest.AllToAll(parrots[:1], parrots[1:], syn_spec=nest.synapsemodels.static(delay=delay)))
+        nest.Connect(nest.AllToAll(parrots[1:], spike_rec))
 
         nest.Simulate(t_sim)
 
@@ -190,27 +190,22 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
         pre_parrot = nest.Create("parrot_neuron", 1)
         post_parrot = nest.Create("parrot_neuron", 1)
 
-        nest.Connect(pre_spikes, pre_parrot, syn_spec={"delay": delay})
-        nest.Connect(post_spikes, post_parrot, syn_spec={"delay": delay})
+        nest.Connect(nest.AllToAll(pre_spikes, pre_parrot, syn_spec=nest.synapsemodels.static(delay=delay)))
+        nest.Connect(nest.AllToAll(post_spikes, post_parrot, syn_spec=nest.synapsemodels.static(delay=delay)))
 
         # create spike recorder
         spikes = nest.Create("spike_recorder")
-        nest.Connect(pre_parrot, spikes)
-        nest.Connect(post_parrot, spikes)
+        nest.Connect(nest.AllToAll(pre_parrot, spikes))
+        nest.Connect(nest.AllToAll(post_parrot, spikes))
 
         # connect both parrot neurons with a stdp synapse onto port 1
         # thereby spikes transmitted through the stdp connection are
         # not repeated postsynaptically.
-        syn_spec = {
-            "synapse_model": "stdp_synapse",
+        syn_spec = nest.synapsemodels.stdp(
             # set receptor 1 postsynaptically, to not generate extra spikes
-            "receptor_type": 1,
-        }
-        conn_spec = {
-            "rule": "one_to_one",
-        }
-        nest.Connect(pre_parrot, post_parrot,
-                     syn_spec=syn_spec, conn_spec=conn_spec)
+            receptor_type=1,
+        )
+        nest.Connect(nest.OneToOne(pre_parrot, post_parrot, syn_spec=syn_spec))
 
         # get STDP synapse and weight before protocol
         syn = nest.GetConnections(

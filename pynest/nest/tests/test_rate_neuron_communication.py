@@ -89,40 +89,27 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
             self.rate_neuron_2 + self.rate_neuron_3 + self.rate_neuron_4 + \
             self.rate_neuron_5
 
-        nest.Connect(
-            self.multimeter, self.neurons, 'all_to_all', {'delay': 10.})
-        nest.Connect(
-            self.multimeter, self.parrot_neuron, 'all_to_all', {'delay': 10.})
+        nest.Connect(nest.AllToAll(self.multimeter, self.neurons, syn_spec=nest.synapsemodels.static(delay=10.)))
+        nest.Connect(nest.AllToAll(self.multimeter, self.parrot_neuron, syn_spec=nest.synapsemodels.static(delay=10.)))
 
-        nest.Connect(self.rate_neuron_drive, self.rate_neuron_1,
-                     'all_to_all', {'synapse_model': 'rate_connection_delayed',
-                                    'delay': self.delay,
-                                    'weight': self.weight})
+        nest.Connect(nest.AllToAll(self.rate_neuron_drive, self.rate_neuron_1,
+                                   syn_spec=nest.synapsemodels.rate_connection_delayed(delay=self.delay,
+                                                                                       weight=self.weight)))
 
-        nest.Connect(self.rate_neuron_drive, self.rate_neuron_2,
-                     'all_to_all',
-                     {'synapse_model': 'rate_connection_instantaneous',
-                      'weight': self.weight})
+        nest.Connect(nest.AllToAll(self.rate_neuron_drive, self.rate_neuron_2,
+                                   syn_spec=nest.synapsemodels.rate_connection_instantaneous(weight=self.weight)))
 
-        nest.Connect(self.rate_neuron_drive, self.rate_neuron_3,
-                     'all_to_all',
-                     {'synapse_model': 'rate_connection_instantaneous',
-                      'weight': self.weight})
+        nest.Connect(nest.AllToAll(self.rate_neuron_drive, self.rate_neuron_3,
+                                   syn_spec=nest.synapsemodels.rate_connection_instantaneous(weight=self.weight)))
 
-        nest.Connect(self.rate_neuron_drive, self.rate_neuron_4,
-                     'all_to_all',
-                     {'synapse_model': 'rate_connection_instantaneous',
-                      'weight': self.weight})
+        nest.Connect(nest.AllToAll(self.rate_neuron_drive, self.rate_neuron_4,
+                                   syn_spec=nest.synapsemodels.rate_connection_instantaneous(weight=self.weight)))
 
-        nest.Connect(self.rate_neuron_negative_drive, self.rate_neuron_5,
-                     'all_to_all',
-                     {'synapse_model': 'rate_connection_instantaneous',
-                      'weight': self.weight})
+        nest.Connect(nest.AllToAll(self.rate_neuron_negative_drive, self.rate_neuron_5,
+                                   syn_spec=nest.synapsemodels.rate_connection_instantaneous(weight=self.weight)))
 
-        nest.Connect(self.rate_neuron_drive, self.parrot_neuron,
-                     'all_to_all',
-                     {'synapse_model': 'rate_connection_instantaneous',
-                      'weight': self.weight})
+        nest.Connect(nest.AllToAll(self.rate_neuron_drive, self.parrot_neuron,
+                                   syn_spec=nest.synapsemodels.rate_connection_instantaneous(weight=self.weight)))
 
     def test_RateNeuronDelay(self):
         """Check the delay of the connection"""

@@ -66,8 +66,8 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
 
             n = nest.Create(nm, 2)
 
-            nest.Connect(n, n, {"rule": "all_to_all"},
-                         {"synapse_model": "urbanczik_synapse", "receptor_type": r_type})
+            nest.Connect(nest.AllToAll(n, n, syn_spec=nest.synapsemodels.urbanczik(receptor_type=r_type)))
+            nest.BuildNetwork()
 
         # Ensure that connecting not supported models fails
         for nm in not_supported_models:
@@ -82,8 +82,8 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
 
             # try to connect with urbanczik synapse
             with self.assertRaises(nest.kernel.NESTError):
-                nest.Connect(n, n, {"rule": "all_to_all"},
-                             {"synapse_model": "urbanczik_synapse", "receptor_type": r_type})
+                nest.Connect(nest.AllToAll(n, n, syn_spec=nest.synapsemodels.urbanczik(receptor_type=r_type)))
+                nest.BuildNetwork()
 
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
@@ -175,14 +175,16 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         '''
         create connections
         '''
-        nest.Connect(sg_prox, prrt_nrn, syn_spec={'delay': resolution})
+        nest.Connect(nest.AllToAll(sg_prox, prrt_nrn, syn_spec=nest.synapsemodels.static(delay=resolution)))
         nest.CopyModel('urbanczik_synapse', 'urbanczik_synapse_wr',
                        {'weight_recorder': wr[0]})
-        nest.Connect(prrt_nrn, nrn, syn_spec=syn_params)
-        nest.Connect(sg_soma_exc, nrn,
-                     syn_spec={'receptor_type': syns['soma_exc'], 'weight': 10.0*resolution, 'delay': resolution})
-        nest.Connect(mm, nrn, syn_spec={'delay': resolution})
-        nest.Connect(nrn, sr_soma, syn_spec={'delay': resolution})
+        nest.Connect(nest.AllToAll(prrt_nrn, nrn, syn_spec=nest.synapsemodels.SynapseModel(**syn_params)))
+        nest.Connect(nest.AllToAll(sg_soma_exc, nrn,
+                                   syn_spec=nest.synapsemodels.static(receptor_type=syns['soma_exc'],
+                                                                      weight=10.0*resolution,
+                                                                      delay=resolution)))
+        nest.Connect(nest.AllToAll(mm, nrn, syn_spec=nest.synapsemodels.static(delay=resolution)))
+        nest.Connect(nest.AllToAll(nrn, sr_soma, syn_spec=nest.synapsemodels.static(delay=resolution)))
 
         '''
         simulation

@@ -58,7 +58,7 @@ class PpPscDeltaTestCase(unittest.TestCase):
         nest.SetStatus(nrn, params)
 
         sr = nest.Create('spike_recorder')
-        nest.Connect(nrn, sr)
+        nest.Connect(nest.AllToAll(nrn, sr))
         nest.Simulate(T)
 
         spikes = nest.GetStatus(sr)[0]['events']['times']
@@ -106,7 +106,7 @@ class PpPscDeltaTestCase(unittest.TestCase):
         nest.SetStatus(nrn, params)
 
         sr = nest.Create('spike_recorder')
-        nest.Connect(nrn, sr)
+        nest.Connect(nest.AllToAll(nrn, sr))
         nest.Simulate(T)
 
         spikes = nest.GetStatus(sr)[0]['events']['times']
@@ -165,7 +165,7 @@ class PpPscDeltaTestCase(unittest.TestCase):
         nest.SetStatus(nrn, params)
 
         sr = nest.Create('spike_recorder')
-        nest.Connect(nrn, sr)
+        nest.Connect(nest.AllToAll(nrn, sr))
         nest.Simulate(T)
 
         spikes = nest.GetStatus(sr)[0]['events']['times']

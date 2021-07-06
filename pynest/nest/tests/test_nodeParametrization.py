@@ -324,7 +324,7 @@ class TestNodeParametrization(unittest.TestCase):
         """Test parameter in syn_spec"""
         n = nest.Create('iaf_psc_alpha', 2)
         p = nest.hl_api.CreateParameter('constant', {'value': 2.0})
-        nest.Connect(n, n, syn_spec={'weight': p})
+        nest.Connect(nest.AllToAll(n, n, syn_spec=nest.synapsemodels.static(weight=p)))
         conns = nest.GetConnections()
         weights = conns.get('weight')
         for w in weights:
@@ -334,20 +334,19 @@ class TestNodeParametrization(unittest.TestCase):
         """Test parameter in conn_spec"""
         p = nest.hl_api.CreateParameter('constant', {'value': 1.0})
         p2 = nest.hl_api.CreateParameter('constant', {'value': 2.0})
-        rule_specs = {
-            'pairwise_bernoulli': [['p', p], ],
-            'fixed_outdegree': [['outdegree', p2], ],
-            'fixed_indegree': [['indegree', p2], ]
-        }
-        for rule, specs_list in rule_specs.items():
-            for specs in specs_list:
-                nest.ResetKernel()
-                n = nest.Create('iaf_psc_alpha', 2)
-                param, p = specs
-                nest.Connect(n, n, conn_spec={'rule': rule,
-                                              param: p})
-                self.assertEqual(nest.GetKernelStatus()['num_connections'], 4,
-                                 'Error with {}'.format(rule))
+        rules = [
+            nest.PairwiseBernoulli(None, None, p=p),
+            nest.FixedOutdegree(None, None, outdegree=p2),
+            nest.FixedIndegree(None, None, indegree=p2)
+        ]
+        for rule in rules:
+            nest.ResetKernel()
+            n = nest.Create('iaf_psc_alpha', 2)
+            rule.source = n
+            rule.target = n
+            nest.Connect(rule)
+            nest.BuildNetwork()
+            self.assertEqual(nest.GetKernelStatus()['num_connections'], 4, 'Error with {}'.format(rule))
 
     def test_node_pos_parameter(self):
         """Test node-position parameter"""
@@ -383,12 +382,11 @@ class TestNodeParametrization(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(positions))
 
-        conn_spec = {
-            'rule': 'fixed_outdegree',
-            'outdegree': 5,
-            'p': 1.0
-        }
-        nest.Connect(layer, layer, conn_spec=conn_spec, syn_spec={'weight': nest.spatial.distance})
+        projection = nest.FixedOutdegree(layer, layer,
+                                         outdegree=5,
+                                         p=1.0,
+                                         syn_spec=nest.synapsemodels.static(weight=nest.spatial.distance))
+        nest.Connect(projection)
         conns = nest.GetConnections()
         conn_status = conns.get()
 
@@ -415,11 +413,10 @@ class TestNodeParametrization(unittest.TestCase):
                                        nest.spatial.distance.y,
                                        nest.spatial.distance.z]):
             nest.ResetKernel()
-            layer = nest.Create('iaf_psc_alpha',
-                                positions=nest.spatial.free(positions))
-            nest.Connect(layer, layer,
-                         conn_spec={'rule': 'pairwise_bernoulli', 'p': 1.},
-                         syn_spec={'weight': parameter})
+            layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.free(positions))
+            nest.Connect(nest.PairwiseBernoulli(layer, layer,
+                                                p=1.,
+                                                syn_spec=nest.synapsemodels.static(weight=parameter)))
             conns = nest.GetConnections()
             conn_status = conns.get()
 
@@ -441,14 +438,14 @@ class TestNodeParametrization(unittest.TestCase):
                             positions=nest.spatial.free(positions))
 
         with self.assertRaises(nest.kernel.NESTError):
-            nest.Connect(layer, layer,
-                         syn_spec={'weight':
-                                   nest.spatial.distance.z})
+            nest.Connect(nest.AllToAll(layer, layer,
+                                       syn_spec=nest.synapsemodels.static(weight=nest.spatial.distance.z)))
+            nest.BuildNetwork()
 
         with self.assertRaises(nest.kernel.NESTError):
-            nest.Connect(layer, layer,
-                         syn_spec={'weight':
-                                   nest.spatial.distance.n(-1)})
+            nest.Connect(nest.AllToAll(layer, layer,
+                                       syn_spec=nest.synapsemodels.static(weight=nest.spatial.distance.n(-1))))
+            nest.BuildNetwork()
 
     def test_src_tgt_position_parameter(self):
         """Test source and target position parameter"""
@@ -464,10 +461,9 @@ class TestNodeParametrization(unittest.TestCase):
             layer = nest.Create('iaf_psc_alpha',
                                 positions=nest.spatial.free(positions))
             # Scale up delay because of limited number of digits.
-            nest.Connect(layer, layer,
-                         conn_spec={'rule': 'pairwise_bernoulli', 'p': 1.},
-                         syn_spec={'weight': source_positions[i],
-                                   'delay': 100*target_positions[i]})
+            nest.Connect(nest.PairwiseBernoulli(layer, layer, p=1.,
+                         syn_spec=nest.synapsemodels.static(weight=source_positions[i],
+                                                            delay=100*target_positions[i])))
             conns = nest.GetConnections()
             conn_status = conns.get()
 
@@ -489,20 +485,23 @@ class TestNodeParametrization(unittest.TestCase):
                             positions=nest.spatial.free(positions))
 
         with self.assertRaises(nest.kernel.NESTError):
-            nest.Connect(layer, layer, syn_spec={
-                'weight': nest.spatial.source_pos.z})
+            nest.Connect(nest.AllToAll(layer, layer,
+                                       syn_spec=nest.synapsemodels.static(weight=nest.spatial.source_pos.z)))
+            nest.BuildNetwork()
 
         with self.assertRaises(nest.kernel.NESTError):
-            nest.Connect(layer, layer, syn_spec={
-                'weight': nest.spatial.source_pos.n(-1)})
+            nest.Connect(nest.AllToAll(layer, layer,
+                                       syn_spec=nest.synapsemodels.static(weight=nest.spatial.source_pos.n(-1))))
+            nest.BuildNetwork()
 
         with self.assertRaises(nest.kernel.NESTError):
-            nest.Connect(layer, layer, syn_spec={
-                'weight': nest.spatial.target_pos.z})
+            nest.Connect(nest.AllToAll(layer, layer,
+                                       syn_spec=nest.synapsemodels.static(weight=nest.spatial.target_pos.z)))
+            nest.BuildNetwork()
 
         with self.assertRaises(nest.kernel.NESTError):
-            nest.Connect(layer, layer, syn_spec={
-                'weight': nest.spatial.target_pos.n(-1)})
+            nest.Connect(nest.AllToAll(layer, layer,
+                                       syn_spec=nest.synapsemodels.static(weight=nest.spatial.target_pos.n(-1))))
 
     def test_exp_parameter(self):
         """Test exponential of a parameter"""

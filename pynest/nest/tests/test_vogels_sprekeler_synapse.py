@@ -40,29 +40,27 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
         self.dendritic_delay = 1.0
         self.decay_duration = 5.0
         self.synapse_model = "vogels_sprekeler_synapse"
-        self.syn_spec = {
-            "synapse_model": self.synapse_model,
-            "delay": self.dendritic_delay,
-            "weight": 5.0,
-            "eta": 0.001,
-            "alpha": 0.1,
-            "tau": 20.,
-            "Kplus": 0.0,
-            "Wmax": 15.,
-        }
+        self.syn_spec = nest.synapsemodels.vogels_sprekeler(
+            delay=self.dendritic_delay,
+            weight=5.0,
+            eta=0.001,
+            alpha=0.1,
+            tau=20.,
+            Kplus=0.0,
+            Wmax=15.,
+        )
 
         # setup basic circuit
         self.pre_neuron = nest.Create("parrot_neuron")
         self.post_neuron = nest.Create("parrot_neuron")
-        nest.Connect(self.pre_neuron, self.post_neuron,
-                     syn_spec=self.syn_spec)
+        nest.Connect(nest.AllToAll(self.pre_neuron, self.post_neuron, syn_spec=self.syn_spec))
 
     def generateSpikes(self, neuron, times):
         """Trigger spike to given neuron at specified times."""
         delay = self.dendritic_delay
         gen = nest.Create("spike_generator", 1,
                           {"spike_times": [t-delay for t in times]})
-        nest.Connect(gen, neuron, syn_spec={"delay": delay})
+        nest.Connect(nest.AllToAll(gen, neuron, syn_spec=nest.synapsemodels.static(delay=delay)))
 
     def status(self, which):
         """Get synapse parameter status."""
@@ -72,18 +70,18 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
 
     def decay(self, time, Kvalue):
         """Decay variables."""
-        Kvalue *= exp(- time / self.syn_spec["tau"])
+        Kvalue *= exp(- time / self.syn_spec.specs["tau"])
         return Kvalue
 
     def facilitate(self, w, Kplus):
         """Facilitate weight."""
-        new_w = w + (self.syn_spec['eta'] * Kplus)
+        new_w = w + (self.syn_spec.specs['eta'] * Kplus)
         return new_w if (new_w / self.status('Wmax') < 1.0) else \
             self.syn_spec['Wmax']
 
     def depress(self, w):
         """Depress weight."""
-        new_w = w - (self.syn_spec['alpha'] * self.syn_spec['eta'])
+        new_w = w - (self.syn_spec.specs['alpha'] * self.syn_spec.specs['eta'])
         return new_w if (new_w / self.status('Wmax') > 0.0) else 0
 
     def assertAlmostEqualDetailed(self, expected, given, message):
@@ -96,10 +94,10 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
     def test_badPropertiesSetupsThrowExceptions(self):
         """Check that exceptions are thrown when setting bad parameters."""
         def setupProperty(property):
-            bad_syn_spec = self.syn_spec.copy()
-            bad_syn_spec.update(property)
-            nest.Connect(self.pre_neuron, self.post_neuron,
-                         syn_spec=bad_syn_spec)
+            bad_syn_spec = self.syn_spec
+            bad_syn_spec.specs.update(property)
+            nest.Connect(nest.AllToAll(self.pre_neuron, self.post_neuron, syn_spec=bad_syn_spec))
+            nest.BuildNetwork()
 
         def badPropertyWith(content, parameters):
             self.assertRaisesRegexp(nest.kernel.NESTError, "BadProperty(.+)" +

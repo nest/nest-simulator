@@ -63,22 +63,17 @@ class RateCopyModelTestCase(unittest.TestCase):
                 'interval': dt})
 
         # create new connection
-        nest.CopyModel('rate_connection_instantaneous', 'rate_connection_new')
+        rate_new = nest.CopyModel('rate_connection_instantaneous', 'rate_connection_new', {'weight': weight})
 
         # record rates and connect neurons
         neurons = rate_neuron_1 + rate_neuron_2
 
-        nest.Connect(
-            multimeter, neurons, 'all_to_all', {'delay': 10.})
+        nest.Connect(nest.AllToAll(multimeter, neurons, syn_spec=nest.synapsemodels.static(delay=10.)))
 
-        nest.Connect(rate_neuron_drive, rate_neuron_1,
-                     'all_to_all',
-                     {'synapse_model': 'rate_connection_instantaneous',
-                      'weight': weight})
+        nest.Connect(nest.AllToAll(rate_neuron_drive, rate_neuron_1,
+                                   syn_spec=nest.synapsemodels.rate_connection_instantaneous(weight=weight)))
 
-        nest.Connect(rate_neuron_drive, rate_neuron_2,
-                     'all_to_all', {'synapse_model': 'rate_connection_new',
-                                    'weight': weight})
+        nest.Connect(nest.AllToAll(rate_neuron_drive, rate_neuron_2, syn_spec=rate_new))
 
         # simulate
         nest.Simulate(simtime)

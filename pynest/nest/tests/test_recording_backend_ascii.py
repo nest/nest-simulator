@@ -38,13 +38,14 @@ class TestRecordingBackendASCII(unittest.TestCase):
         except FileNotFoundError:
             pass
 
-        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+        nest.Connect(nest.AllToAll(mm, nest.Create("iaf_psc_alpha")))
         nest.Simulate(100)
 
         nest.ResetKernel()
 
         mm = nest.Create("multimeter", params=mm_params)
-        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+        nest.Connect(nest.AllToAll(mm, nest.Create("iaf_psc_alpha")))
+        nest.BuildNetwork()
 
         with self.assertRaises(nest.kernel.NESTErrors.IOError):
             nest.Simulate(100)
@@ -117,7 +118,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
 
         mm = nest.Create("multimeter", params={"record_to": "ascii"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})
-        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+        nest.Connect(nest.AllToAll(mm, nest.Create("iaf_psc_alpha")))
 
         nest.Simulate(15)
 
@@ -146,7 +147,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
 
         mm = nest.Create("multimeter", params={"record_to": "ascii"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})
-        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+        nest.Connect(nest.AllToAll(mm, nest.Create("iaf_psc_alpha")))
 
         nest.Simulate(15)
         self.assertEqual(mm.get("n_events"), 140)
@@ -162,7 +163,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
 
         mm = nest.Create("multimeter", params={"record_to": "ascii"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})
-        nest.Connect(mm, nest.Create("iaf_psc_alpha", 2))
+        nest.Connect(nest.AllToAll(mm, nest.Create("iaf_psc_alpha", 2)))
 
         nest.Simulate(15)
         self.assertEqual(mm.get("n_events"), 280)
@@ -178,7 +179,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
 
         mm = nest.Create("multimeter", params={"record_to": "ascii"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})
-        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+        nest.Connect(nest.AllToAll(mm, nest.Create("iaf_psc_alpha")))
 
         nest.Simulate(15)
 
@@ -205,7 +206,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
         self.assertFalse(mm.get("time_in_steps"))
 
         mm.set({"record_from": ["V_m"], "time_in_steps": True})
-        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+        nest.Connect(nest.AllToAll(mm, nest.Create("iaf_psc_alpha")))
 
         nest.Simulate(15)
 

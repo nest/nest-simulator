@@ -34,8 +34,8 @@ __all__ = [
     'cont_delay_hpc',
     'cont_delay_lbl',
     'copy_synapse_class',
-    'diffusion',
-    'diffusion_lbl',
+    'diffusion_connection',
+    'diffusion_connection_lbl',
     'gap_junction',
     'gap_junction_lbl',
     'ht',
@@ -178,12 +178,12 @@ class cont_delay_lbl(SynapseModel):
         super().__init__('cont_delay_synapse_lbl', **kwargs)
 
 
-class diffusion(SynapseModel):
+class diffusion_connection(SynapseModel):
     def __init__(self, **kwargs):
         super().__init__('diffusion_connection', **kwargs)
 
 
-class diffusion_lbl(SynapseModel):
+class diffusion_connection_lbl(SynapseModel):
     def __init__(self, **kwargs):
         super().__init__('diffusion_connection_lbl', **kwargs)
 

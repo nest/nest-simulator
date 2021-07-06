@@ -485,18 +485,21 @@ class TestNodeCollection(unittest.TestCase):
         """Connect works with NodeCollections"""
 
         n = nest.Create('iaf_psc_exp', 10)
-        nest.Connect(n, n, {'rule': 'one_to_one'})
+        nest.Connect(nest.OneToOne(n, n))
+        nest.BuildNetwork()
         connections = nest.GetKernelStatus('num_connections')
         self.assertEqual(connections, 10)
 
         for nc in n:
-            nest.Connect(nc, nc)
+            nest.Connect(nest.AllToAll(nc, nc))
+        nest.BuildNetwork()
         self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
 
         nest.ResetKernel()
 
         n = nest.Create('iaf_psc_alpha', 2)
-        nest.Connect(n[0], n[1])
+        nest.Connect(nest.AllToAll(n[0], n[1]))
+        nest.BuildNetwork()
         self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
 
     def test_SetStatus_and_GetStatus(self):
@@ -538,7 +541,7 @@ class TestNodeCollection(unittest.TestCase):
         """
 
         n = nest.Create('iaf_psc_alpha', 3)
-        nest.Connect(n, n)
+        nest.Connect(nest.AllToAll(n, n))
 
         get_conn = nest.GetConnections()
         get_conn_all = nest.GetConnections(n, n)
@@ -581,7 +584,7 @@ class TestNodeCollection(unittest.TestCase):
         """
 
         nodes = nest.Create('iaf_psc_alpha', 11)
-        nest.Connect(nodes, nodes)
+        nest.Connect(nest.AllToAll(nodes, nodes))
 
         conns = nest.GetConnections(nodes[1:9:3])
         source = conns.get('source')
@@ -595,7 +598,7 @@ class TestNodeCollection(unittest.TestCase):
         """
 
         n = nest.Create('iaf_psc_alpha', 3)
-        nest.Connect(n, n)
+        nest.Connect(nest.AllToAll(n, n))
 
         with self.assertRaises(TypeError):
             nest.GetConnections([0, 1])
@@ -745,13 +748,16 @@ class TestNodeCollection(unittest.TestCase):
         for empty_nc in [nest.NodeCollection(), nest.NodeCollection([])]:
 
             with self.assertRaises(nest.kernel.NESTErrors.IllegalConnection):
-                nest.Connect(nodes, empty_nc)
+                nest.Connect(nest.AllToAll(nodes, empty_nc))
+                nest.BuildNetwork()
 
             with self.assertRaises(nest.kernel.NESTErrors.IllegalConnection):
-                nest.Connect(empty_nc, nodes)
+                nest.Connect(nest.AllToAll(empty_nc, nodes))
+                nest.BuildNetwork()
 
             with self.assertRaises(nest.kernel.NESTErrors.IllegalConnection):
-                nest.Connect(empty_nc, empty_nc)
+                nest.Connect(nest.AllToAll(empty_nc, empty_nc))
+                nest.BuildNetwork()
 
             with self.assertRaises(ValueError):
                 empty_nc.get()
@@ -770,7 +776,8 @@ class TestNodeCollection(unittest.TestCase):
 
         nodes_a = nest.NodeCollection()
         nodes_a += nest.Create('iaf_psc_alpha', n)
-        nest.Connect(nodes_a, nodes_a)
+        nest.Connect(nest.AllToAll(nodes_a, nodes_a))
+        nest.BuildNetwork()
         self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
         self.assertTrue(nodes_a)
         self.assertIsNotNone(nodes_a.get())
@@ -781,7 +788,8 @@ class TestNodeCollection(unittest.TestCase):
 
         nodes_b = nest.Create('iaf_psc_alpha', n)
         nodes_b += nest.NodeCollection([])
-        nest.Connect(nodes_b, nodes_b)
+        nest.Connect(nest.AllToAll(nodes_b, nodes_b))
+        nest.BuildNetwork()
         self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
         self.assertTrue(nodes_b)
         self.assertIsNotNone(nodes_b.get())

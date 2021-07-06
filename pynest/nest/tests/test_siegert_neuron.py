@@ -77,8 +77,8 @@ class SiegertNeuronTestCase(unittest.TestCase):
                                            params={"dt": self.dt})
         self.spike_recorder = nest.Create("spike_recorder",
                                           params={"start": self.start})
-        nest.Connect(self.noise_generator, self.iaf_psc_delta)
-        nest.Connect(self.iaf_psc_delta, self.spike_recorder)
+        nest.Connect(nest.AllToAll(self.noise_generator, self.iaf_psc_delta))
+        nest.Connect(nest.AllToAll(self.iaf_psc_delta, self.spike_recorder))
 
         # create and connect driven Siegert neuron
         lif_params = self.lif_params
@@ -93,11 +93,9 @@ class SiegertNeuronTestCase(unittest.TestCase):
         self.multimeter = nest.Create("multimeter",
                                       params={"record_from": ["rate"],
                                               "interval": self.dt})
-        syn_dict = {"drift_factor": mu, "diffusion_factor": sigma**2,
-                    "synapse_model": "diffusion_connection"}
-        nest.Connect(self.siegert_drive, self.siegert_neuron,
-                     syn_spec=syn_dict)
-        nest.Connect(self.multimeter, self.siegert_neuron)
+        syn_spec = nest.synapsemodels.diffusion_connection(drift_factor=mu, diffusion_factor=sigma**2)
+        nest.Connect(nest.AllToAll(self.siegert_drive, self.siegert_neuron, syn_spec=syn_spec))
+        nest.Connect(nest.AllToAll(self.multimeter, self.siegert_neuron))
 
         # set output statistics of noise generator
         # - for dt_scaling factor see doc/userdoc/model_details/noise_generator.ipynb

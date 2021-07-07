@@ -34,7 +34,7 @@ def create_1dend_1comp(dt=0.1):
     nest.AddCompartment(n_neat, 0, -1, SP)
     nest.AddCompartment(n_neat, 1, 0, DP[0])
 
-    m_neat = nest.Create('multimeter', 1, {'record_from': ['V_m_0', 'V_m_1'], 'interval': .1})
+    m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1'], 'interval': .1})
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
@@ -78,7 +78,7 @@ def create_2dend_1comp(dt=0.1):
     nest.AddCompartment(n_neat, 1, 0, DP[0])
     nest.AddCompartment(n_neat, 2, 0, DP[1])
 
-    m_neat = nest.Create('multimeter', 1, {'record_from': ['V_m_0', 'V_m_1', 'V_m_2'], 'interval': .1})
+    m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp2'], 'interval': .1})
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
@@ -137,7 +137,7 @@ def create_1dend_2comp(dt=0.1):
     nest.AddCompartment(n_neat, 1, 0, DP[0])
     nest.AddCompartment(n_neat, 2, 1, DP[1])
 
-    m_neat = nest.Create('multimeter', 1, {'record_from': ['V_m_0', 'V_m_1', 'V_m_2'], 'interval': .1})
+    m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp2'], 'interval': .1})
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
@@ -201,7 +201,7 @@ def create_tdend_4comp(dt=0.1):
     nest.AddCompartment(n_neat, 4, 2, DP[3])
 
     m_neat = nest.Create('multimeter', 1,
-                         {'record_from': ['V_m_%d'%ii for ii in range(5)],
+                         {'record_from': ['v_comp%d'%ii for ii in range(5)],
                                           'interval': .1})
     nest.Connect(m_neat, n_neat)
 
@@ -294,7 +294,7 @@ def create_2tdend_4comp(dt=0.1):
     nest.AddCompartment(n_neat, 8, 6, DP[7])
 
     m_neat = nest.Create('multimeter', 1,
-                         {'record_from': ['V_m_%d'%ii for ii in range(9)],
+                         {'record_from': ['v_comp%d'%ii for ii in range(9)],
                                           'interval': .1})
     nest.Connect(m_neat, n_neat)
 
@@ -429,7 +429,7 @@ class NEASTTestCase(unittest.TestCase):
         # run the NEST model for 2 timesteps (input arrives only on second step)
         nest.Simulate(3.*dt)
         events_neat = nest.GetStatus(m_neat, 'events')[0]
-        v_neat = np.array([events_neat['V_m_%d'%ii][-1] for ii in range(n_comp)])
+        v_neat = np.array([events_neat['v_comp%d'%ii][-1] for ii in range(n_comp)])
 
         # construct numpy solution
         v_sol = np.linalg.solve(aa, bb)
@@ -469,7 +469,7 @@ class NEASTTestCase(unittest.TestCase):
         # run the NEST model for 1 timestep
         nest.Simulate(2.*dt)
         events_neat = nest.GetStatus(m_neat, 'events')[0]
-        v_neat = np.array([events_neat['V_m_%d'%ii][0] for ii in range(n_comp)])
+        v_neat = np.array([events_neat['v_comp%d'%ii][0] for ii in range(n_comp)])
 
         # construct numpy solution
         v_sol = np.linalg.solve(aa, bb)
@@ -496,8 +496,8 @@ class NEASTTestCase(unittest.TestCase):
             # run the NEST model
             nest.Simulate(t_max)
             events_neat = nest.GetStatus(m_neat, 'events')[0]
-            v_neat = np.array([events_neat['V_m_%d'%ii][-1] - \
-                               events_neat['V_m_%d'%ii][int(t_max/(2.*dt))-1] \
+            v_neat = np.array([events_neat['v_comp%d'%ii][-1] - \
+                               events_neat['v_comp%d'%ii][int(t_max/(2.*dt))-1] \
                                for ii in range(n_comp)])
 
             att_neat = v_neat / v_neat[ii]
@@ -530,7 +530,7 @@ class NEASTTestCase(unittest.TestCase):
         # run the NEST model
         nest.Simulate(t_max)
         events_neat = nest.GetStatus(m_neat, 'events')[0]
-        v_neat = np.array([events_neat['V_m_%d'%ii][-1] for ii in range(n_comp)])
+        v_neat = np.array([events_neat['v_comp%d'%ii][-1] for ii in range(n_comp)])
 
         # explicit solution for steady state voltage
         v_sol = np.linalg.solve(-gg, gl*el)
@@ -579,7 +579,7 @@ class NEASTTestCase(unittest.TestCase):
         # run the NEST model
         nest.Simulate(t_max)
         events_neat = nest.GetStatus(m_neat, 'events')[0]
-        v_neat = np.array([events_neat['V_m_%d'%ii][-1] for ii in range(n_comp)])
+        v_neat = np.array([events_neat['v_comp%d'%ii][-1] for ii in range(n_comp)])
 
         # explicit solution for steady state voltage
         v_sol = np.linalg.solve(-gg + np.diag(gs), gl*el)
@@ -624,10 +624,10 @@ class NEASTTestCase(unittest.TestCase):
         nest.Connect(dc, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                              'receptor_type': 0})
 
-        m_neat_0 = nest.Create('multimeter', 1, {'record_from': ['V_m_0'], 'interval': dt})
+        m_neat_0 = nest.Create('multimeter', 1, {'record_from': ['v_comp0'], 'interval': dt})
         nest.Connect(m_neat_0, n_neat_0)
 
-        m_neat_1 = nest.Create('multimeter', 1, {'record_from': ['V_m_0'], 'interval': dt})
+        m_neat_1 = nest.Create('multimeter', 1, {'record_from': ['v_comp0'], 'interval': dt})
         nest.Connect(m_neat_1, n_neat_1)
 
         nest.Simulate(100.)
@@ -635,8 +635,8 @@ class NEASTTestCase(unittest.TestCase):
         events_neat_0 = nest.GetStatus(m_neat_0, 'events')[0]
         events_neat_1 = nest.GetStatus(m_neat_1, 'events')[0]
 
-        self.assertTrue(np.any(events_neat_0['V_m_0'] != soma_params['e_L']))
-        self.assertTrue(np.any(events_neat_1['V_m_0'] != soma_params['e_L']))
+        self.assertTrue(np.any(events_neat_0['v_comp0'] != soma_params['e_L']))
+        self.assertTrue(np.any(events_neat_1['v_comp0'] != soma_params['e_L']))
 
 
 def suite():

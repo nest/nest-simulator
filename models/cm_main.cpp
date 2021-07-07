@@ -44,6 +44,7 @@ nest::cm_main::cm_main()
   , V_th_( -55.0 )
 {
   recordablesMap_.create( *this );
+  recordables_values.resize( 0 );
 }
 
 nest::cm_main::cm_main( const cm_main& n )
@@ -53,6 +54,7 @@ nest::cm_main::cm_main( const cm_main& n )
   , logger_( *this )
   , V_th_( n.V_th_ )
 {
+  recordables_values.resize( 0 );
 }
 
 /* ----------------------------------------------------------------
@@ -76,9 +78,7 @@ cm_main::add_compartment( const long compartment_idx, const long parent_compartm
 {
   c_tree_.add_compartment( compartment_idx, parent_compartment_idx, compartment_params);
 
-  // to enable recording the voltage of the current compartment
-  recordablesMap_.insert( "V_m_" + std::to_string(compartment_idx),
-                          DataAccessFunctor< cm_main >( *this, compartment_idx ) );
+  init_pointers_();
 }
 
 size_t
@@ -91,24 +91,68 @@ cm_main::add_receptor( const long compartment_idx, const std::string& type, cons
   const size_t syn_idx = syn_buffers_.size();
   syn_buffers_.push_back( buffer );
 
-  // add the synapse to the compartment
+  // add the receptor to the compartment
   Compartment* compartment = c_tree_.get_compartment( compartment_idx );
-  compartment->compartment_currents.add_synapse_with_buffer( type, buffer, receptor_params );
+  compartment->compartment_currents.add_synapse_with_buffer( type, buffer, syn_idx, receptor_params );
+
+  init_pointers_();
 
   return syn_idx;
+}
+
+
+void
+nest::cm_main::init_pointers_()
+{
+  /*
+  initialize the pointers within the compartment tree
+  */
+  c_tree_.init_pointers();
+
+  /*
+  Get the map of all recordables (i.e. all state variables of the model):
+  --> keys are state variable names suffixed by the compartment index for
+      voltage (e.g. "v_comp1") or by the synapse index for receptor currents
+  --> values are pointers to the specific state variables
+  */
+  std::map< std::string, double* > recordables = c_tree_.get_recordables();
+
+  for (auto rec_it = recordables.begin(); rec_it != recordables.end(); rec_it++)
+  {
+    // check if name is already in recordables map
+    auto recname_it = find(recordables_names.begin(), recordables_names.end(), rec_it->first);
+    if( recname_it == recordables_names.end() )
+    {
+      // recordable name is not yet in map, we need to add it
+      recordables_names.push_back( rec_it->first );
+      recordables_values.push_back( rec_it->second );
+      const long rec_idx = recordables_values.size() - 1;
+      // add the recordable to the recordable_name -> recordable_index map
+      recordablesMap_.insert( rec_it->first,
+                              DataAccessFunctor< cm_main >( *this, rec_idx ) );
+    }
+    else
+    {
+      // recordable name is in map, we update the pointer to the recordable
+      long index = recname_it - recordables_names.begin();
+      recordables_values[index] = rec_it->second;
+    }
+  }
+
 }
 
 void
 nest::cm_main::calibrate()
 {
   logger_.init();
+
+  init_pointers_();
   c_tree_.init();
 }
 
 /* ----------------------------------------------------------------
  * Update and spike handling functions
  */
-
 void
 nest::cm_main::update( Time const& origin, const long from, const long to )
 {
@@ -125,8 +169,6 @@ nest::cm_main::update( Time const& origin, const long from, const long to )
     // threshold crossing
     if ( c_tree_.get_root()->v_comp >= V_th_ && v_0_prev < V_th_ )
     {
-      // c_tree_.get_root()->etype.add_spike();
-
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;

@@ -24,6 +24,8 @@ public:
 
   // initialization
   void init(){m_Na_ = 0.0; h_Na_ = 0.0;};
+  void append_recordables(std::map< std::string, double* >* recordables,
+                          const long compartment_idx);
 
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt );
@@ -45,6 +47,8 @@ public:
 
   // initialization
   void init(){n_K_ = 0.0;};
+  void append_recordables(std::map< std::string, double* >* recordables,
+                          const long compartment_idx);
 
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt );
@@ -53,6 +57,8 @@ public:
 
 class AMPA{
 private:
+  // global synapse index
+  long syn_idx = 0;
   // user defined parameters
   double e_rev_ = 0.0; // mV
   double tau_r_ = 0.2, tau_d_ = 3.; // ms
@@ -61,22 +67,23 @@ private:
   double g_norm_ = 1.0;
 
   // state variables
-  double g_r_ = 0., g_d_ = 0.;
+  double g_r_AMPA_ = 0., g_d_AMPA_ = 0.;
 
   // spike buffer
   std::shared_ptr< RingBuffer >  b_spikes_;
 
 public:
   // constructor, destructor
-  AMPA(std::shared_ptr< RingBuffer >  b_spikes, const DictionaryDatum& receptor_params);
+  AMPA(std::shared_ptr< RingBuffer >  b_spikes, const long syn_index, const DictionaryDatum& receptor_params);
   ~AMPA(){};
 
   // initialization of the state variables
   void init()
   {
-    g_r_ = 0.; g_d_ = 0.;
+    g_r_AMPA_ = 0.; g_d_AMPA_ = 0.;
     b_spikes_->clear();
   };
+  void append_recordables(std::map< std::string, double* >* recordables);
 
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
@@ -85,6 +92,8 @@ public:
 
 class GABA{
 private:
+  // global synapse index
+  long syn_idx = 0;
   // user defined parameters
   double e_rev_ = 0.0; // mV
   double tau_r_ = 0.2, tau_d_ = 10.; // ms
@@ -93,22 +102,26 @@ private:
   double g_norm_ = 1.0;
 
   // state variables
-  double g_r_ = 0., g_d_ = 0.;
+  double g_r_GABA_ = 0., g_d_GABA_ = 0.;
 
   // spike buffer
   std::shared_ptr< RingBuffer > b_spikes_;
 
 public:
   // constructor, destructor
-  GABA(std::shared_ptr< RingBuffer >  b_spikes, const DictionaryDatum& receptor_params);
+  GABA(std::shared_ptr< RingBuffer >  b_spikes, const long syn_index, const DictionaryDatum& receptor_params);
   ~GABA(){};
 
   // initialization of the state variables
   void init()
   {
-    g_r_ = 0.; g_d_ = 0.;
+    g_r_GABA_ = 0.; g_d_GABA_ = 0.;
     b_spikes_->clear();
   };
+  void append_recordables(std::map< std::string, double* >* recordables);
+
+  std::map< std::string, double* > get_recordables();
+  long get_global_idx(){ return syn_idx; };
 
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
@@ -117,6 +130,8 @@ public:
 
 class NMDA{
 private:
+  // global synapse index
+  long syn_idx = 0;
   // user defined parameters
   double e_rev_ = 0.0; // mV
   double tau_r_ = 0.2, tau_d_ = 43.; // ms
@@ -125,21 +140,25 @@ private:
   double g_norm_ = 1.0;
 
   // state variables
-  double g_r_ = 0., g_d_ = 0.;
+  double g_r_NMDA_ = 0., g_d_NMDA_ = 0.;
 
   // spike buffer
   std::shared_ptr< RingBuffer >  b_spikes_;
 
 public:
   // constructor, destructor
-  NMDA(std::shared_ptr< RingBuffer >  b_spikes, const DictionaryDatum& receptor_params);
+  NMDA(std::shared_ptr< RingBuffer > b_spikes, const long syn_index, const DictionaryDatum& receptor_params);
   ~NMDA(){};
 
   // initialization of the state variables
   void init(){
-    g_r_ = 0.; g_d_ = 0.;
+    g_r_NMDA_ = 0.; g_d_NMDA_ = 0.;
     b_spikes_->clear();
   };
+  void append_recordables(std::map< std::string, double* >* recordables);
+
+  std::map< std::string, double* > get_recordables();
+  long get_global_idx(){ return syn_idx; };
 
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
@@ -158,6 +177,8 @@ public:
 
 class AMPA_NMDA{
 private:
+  // global synapse index
+  long syn_idx = 0;
   // user defined parameters
   double e_rev_ = 0.0; // mV
   double tau_r_AMPA_ = 0.2, tau_d_AMPA_ = 43.; // ms
@@ -169,24 +190,25 @@ private:
   double g_norm_NMDA_ = 1.0;
 
   // state variables
-  double g_r_AMPA_ = 0., g_d_AMPA_ = 0.;
-  double g_r_NMDA_ = 0., g_d_NMDA_ = 0.;
+  double g_r_AN_AMPA_ = 0., g_d_AN_AMPA_ = 0.;
+  double g_r_AN_NMDA_ = 0., g_d_AN_NMDA_ = 0.;
 
   // spike buffer
   std::shared_ptr< RingBuffer >  b_spikes_;
 
 public:
   // constructor, destructor
-  AMPA_NMDA(std::shared_ptr< RingBuffer >  b_spikes, const DictionaryDatum& receptor_params);
+  AMPA_NMDA(std::shared_ptr< RingBuffer >  b_spikes, const long syn_index, const DictionaryDatum& receptor_params);
   ~AMPA_NMDA(){};
 
   // initialization of the state variables
   void init()
   {
-    g_r_AMPA_ = 0.; g_d_AMPA_ = 0.;
-    g_r_NMDA_ = 0.; g_d_NMDA_ = 0.;
+    g_r_AN_AMPA_ = 0.; g_d_AN_AMPA_ = 0.;
+    g_r_AN_NMDA_ = 0.; g_d_AN_NMDA_ = 0.;
     b_spikes_->clear();
   };
+  void append_recordables(std::map< std::string, double* >* recordables);
 
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
@@ -259,32 +281,58 @@ public:
     }
   }
 
-  void add_synapse_with_buffer( const std::string& type, std::shared_ptr< RingBuffer > b_spikes, const DictionaryDatum& receptor_params )
+  void add_synapse_with_buffer( const std::string& type, std::shared_ptr< RingBuffer > b_spikes, const long syn_idx, const DictionaryDatum& receptor_params )
   {
     if ( type == "AMPA" )
     {
-      AMPA syn( b_spikes, receptor_params );
+      AMPA syn( b_spikes, syn_idx, receptor_params );
       AMPA_syns_.push_back( syn );
     }
     else if ( type == "GABA" )
     {
-      GABA syn( b_spikes, receptor_params );
+      GABA syn( b_spikes, syn_idx, receptor_params );
       GABA_syns_.push_back( syn );
     }
     else if ( type == "NMDA" )
     {
-      NMDA syn( b_spikes, receptor_params );
+      NMDA syn( b_spikes, syn_idx, receptor_params );
       NMDA_syns_.push_back( syn );
     }
     else if ( type == "AMPA_NMDA" )
     {
-      AMPA_NMDA syn( b_spikes, receptor_params );
+      AMPA_NMDA syn( b_spikes, syn_idx, receptor_params );
       AMPA_NMDA_syns_.push_back( syn );
     }
     else
     {
       assert( false );
     }
+  };
+
+  std::map< std::string, double* > get_recordables( const long compartment_idx )
+  {
+
+    std::map< std::string, double* > recordables;
+
+    // recordables sodium channel
+    Na_chan_.append_recordables( &recordables, compartment_idx );
+    // recordables potassium channel
+    K_chan_.append_recordables( &recordables, compartment_idx );
+
+    // recordables AMPA synapses
+    for( auto syn_it = AMPA_syns_.begin(); syn_it != AMPA_syns_.end(); syn_it++)
+      syn_it->append_recordables( &recordables );
+    // recordables GABA synapses
+    for( auto syn_it = GABA_syns_.begin(); syn_it != GABA_syns_.end(); syn_it++)
+      syn_it->append_recordables( &recordables );
+    // recordables AMPA synapses
+    for( auto syn_it = NMDA_syns_.begin(); syn_it != NMDA_syns_.end(); syn_it++)
+      syn_it->append_recordables( &recordables );
+    // recordables AMPA_NMDA synapses
+    for( auto syn_it = AMPA_NMDA_syns_.begin(); syn_it != AMPA_NMDA_syns_.end(); syn_it++)
+      syn_it->append_recordables( &recordables );
+
+    return recordables;
   };
 
   std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag )

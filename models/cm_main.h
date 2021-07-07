@@ -163,6 +163,8 @@ public:
 private:
   void init_state_( const Node& proto );
   void init_buffers_();
+  void init_pointers_();
+
   void calibrate();
 
   void update( Time const&, const long, const long );
@@ -171,12 +173,21 @@ private:
   std::vector< std::shared_ptr< RingBuffer > > syn_buffers_;
 
   // To record variables with DataAccessFunctor
-  double get_state_element( size_t elem){return c_tree_.get_compartment_voltage(elem);}
+  // double get_state_element( size_t elem){return c_tree_.get_compartment_voltage(elem);}
+  double get_state_element( size_t elem ){ return *recordables_values[elem]; };
 
   // The next classes need to be friends to access the State_ class/member
   friend class DataAccessFunctor< cm_main >;
   friend class DynamicRecordablesMap< cm_main >;
   friend class DynamicUniversalDataLogger< cm_main >;
+
+  /*
+  internal ordering of all recordables in a vector
+  the vector 'recordables_values' stores pointers to all state variables
+  present in the model
+  */
+  std::vector< std::string > recordables_names;
+  std::vector< double* > recordables_values;
 
   //! Mapping of recordables names to access functions
   DynamicRecordablesMap< cm_main > recordablesMap_;

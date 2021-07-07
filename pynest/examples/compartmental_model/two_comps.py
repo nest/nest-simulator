@@ -16,9 +16,9 @@ soma_params = {
     'g_L': 8.924572508, # nS
     'e_L': -75.0,
     # E-type specific
-    'g_Na': 4608.698576715, # nS
+    'gbar_Na': 4608.698576715, # nS
     'e_Na': 60.,
-    'g_K': 956.112772900, # nS
+    'gbar_K': 956.112772900, # nS
     'e_K': -90.
 }
 dend_params_passive = {
@@ -37,9 +37,9 @@ dend_params_active = {
     'g_L': 0.192992878, # nS
     'e_L': -70.0, # mV
     # E-type specific
-    'g_Na': 17.203212493, # nS
+    'gbar_Na': 17.203212493, # nS
     'e_Na': 60., # mV
-    'g_K': 11.887347450, # nS
+    'gbar_K': 11.887347450, # nS
     'e_K': -90. # mV
 }
 
@@ -78,34 +78,73 @@ nest.Connect(sg_soma, cm_act, syn_spec={
 nest.Connect(sg_dend, cm_act, syn_spec={
     'synapse_model': 'static_synapse', 'weight': 2., 'delay': 0.5, 'receptor_type': syn_idx_dend_act})
 
-# create multimeters to record compartment voltages
-mm_pas = nest.Create('multimeter', 1, {'record_from': ['V_m_0', 'V_m_1'], 'interval': .1})
-mm_act = nest.Create('multimeter', 1, {'record_from': ['V_m_0', 'V_m_1'], 'interval': .1})
+# create multimeters to record compartment voltages and various state variables
+rec_list = ['v_comp0', 'v_comp1',
+            'm_Na_0', 'h_Na_0', 'n_K_0', 'm_Na_1', 'h_Na_1', 'n_K_1',
+            'g_r_AN_AMPA_1', 'g_d_AN_AMPA_1', 'g_r_AN_NMDA_1', 'g_d_AN_NMDA_1']
+mm_pas = nest.Create('multimeter', 1, {'record_from': rec_list, 'interval': .1})
+mm_act = nest.Create('multimeter', 1, {'record_from': rec_list, 'interval': .1})
 # connect the multimeters to the respective neurons
 nest.Connect(mm_pas, cm_pas)
 nest.Connect(mm_act, cm_act)
 
 # simulate the models
 nest.Simulate(160.)
+# nest.Simulate(.2)
 res_pas = nest.GetStatus(mm_pas, 'events')[0]
 res_act = nest.GetStatus(mm_act, 'events')[0]
 
 plt.figure('voltage')
 # plot voltage for somatic compartment
 ax_soma = plt.subplot(121)
-ax_soma.plot(res_pas['times'], res_pas['V_m_0'], c='b', label='passive dend')
-ax_soma.plot(res_act['times'], res_act['V_m_0'], c='r', label='active dend')
+ax_soma.plot(res_pas['times'], res_pas['v_comp0'], c='b', label='passive dend')
+ax_soma.plot(res_act['times'], res_act['v_comp0'], c='r', label='active dend')
 ax_soma.set_xlabel(r'$t$ (ms)')
 ax_soma.set_ylabel(r'$v_{soma}$ (mV)')
 ax_soma.set_ylim((-90.,40.))
 ax_soma.legend(loc=0)
 # plot voltage for dendritic compartment
 ax_dend = plt.subplot(122)
-ax_dend.plot(res_pas['times'], res_pas['V_m_1'], c='b', label='passive dend')
-ax_dend.plot(res_act['times'], res_act['V_m_1'], c='r', label='active dend')
+ax_dend.plot(res_pas['times'], res_pas['v_comp1'], c='b', label='passive dend')
+ax_dend.plot(res_act['times'], res_act['v_comp1'], c='r', label='active dend')
 ax_dend.set_xlabel(r'$t$ (ms)')
 ax_dend.set_ylabel(r'$v_{dend}$ (mV)')
 ax_dend.set_ylim((-90.,40.))
+ax_dend.legend(loc=0)
+
+plt.figure('channel state variables')
+# plot traces for somatic compartment
+ax_soma = plt.subplot(121)
+ax_soma.plot(res_pas['times'], res_pas['m_Na_0'], c='b', label='m_Na passive dend')
+ax_soma.plot(res_pas['times'], res_pas['h_Na_0'], c='r', label='h_Na passive dend')
+ax_soma.plot(res_pas['times'], res_pas['n_K_0'], c='g', label='n_K passive dend')
+ax_soma.plot(res_act['times'], res_act['m_Na_0'], c='b', ls='--', lw=2., label='m_Na active dend')
+ax_soma.plot(res_act['times'], res_act['h_Na_0'], c='r', ls='--', lw=2., label='h_Na active dend')
+ax_soma.plot(res_act['times'], res_act['n_K_0'], c='g', ls='--', lw=2., label='n_K active dend')
+ax_soma.set_xlabel(r'$t$ (ms)')
+ax_soma.set_ylabel(r'svar')
+ax_soma.set_ylim((0.,1.))
+ax_soma.legend(loc=0)
+# plot voltage for dendritic compartment
+ax_dend = plt.subplot(122)
+ax_dend.plot(res_pas['times'], res_pas['m_Na_1'], c='b', label='m_Na passive dend')
+ax_dend.plot(res_pas['times'], res_pas['h_Na_1'], c='r', label='h_Na passive dend')
+ax_dend.plot(res_pas['times'], res_pas['n_K_1'], c='g', label='n_K passive dend')
+ax_dend.plot(res_act['times'], res_act['m_Na_1'], c='b', ls='--', lw=2., label='m_Na active dend')
+ax_dend.plot(res_act['times'], res_act['h_Na_1'], c='r', ls='--', lw=2., label='h_Na active dend')
+ax_dend.plot(res_act['times'], res_act['n_K_1'], c='g', ls='--', lw=2., label='n_K active dend')
+ax_dend.set_xlabel(r'$t$ (ms)')
+ax_dend.set_ylabel(r'svar')
+ax_dend.set_ylim((0.,1.))
+ax_dend.legend(loc=0)
+
+plt.figure('dendritic synapse conductances')
+# plot traces for dendritic compartment
+ax_dend = plt.gca()
+ax_dend.plot(res_pas['times'], res_pas['g_r_AN_AMPA_1'] + res_pas['g_d_AN_AMPA_1'], c='b', label='AMPA passive dend')
+ax_dend.plot(res_pas['times'], res_pas['g_r_AN_NMDA_1'] + res_pas['g_d_AN_NMDA_1'], c='r', label='NMDA passive dend')
+ax_dend.plot(res_act['times'], res_act['g_r_AN_AMPA_1'] + res_act['g_d_AN_AMPA_1'], c='b', ls='--', lw=2., label='AMPA active dend')
+ax_dend.plot(res_act['times'], res_act['g_r_AN_NMDA_1'] + res_act['g_d_AN_NMDA_1'], c='r', ls='--', lw=2., label='NMDA active dend')
 ax_dend.legend(loc=0)
 
 plt.tight_layout()

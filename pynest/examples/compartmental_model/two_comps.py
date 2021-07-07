@@ -16,9 +16,9 @@ soma_params = {
     'g_L': 8.924572508, # nS
     'e_L': -75.0,
     # E-type specific
-    'g_Na': 4608.698576715, # nS
+    'gbar_Na': 4608.698576715, # nS
     'e_Na': 60.,
-    'g_K': 956.112772900, # nS
+    'gbar_K': 956.112772900, # nS
     'e_K': -90.
 }
 dend_params_passive = {
@@ -37,9 +37,9 @@ dend_params_active = {
     'g_L': 0.192992878, # nS
     'e_L': -70.0, # mV
     # E-type specific
-    'g_Na': 17.203212493, # nS
+    'gbar_Na': 17.203212493, # nS
     'e_Na': 60., # mV
-    'g_K': 11.887347450, # nS
+    'gbar_K': 11.887347450, # nS
     'e_K': -90. # mV
 }
 

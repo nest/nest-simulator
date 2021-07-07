@@ -16,8 +16,8 @@ nest::Na::Na(const DictionaryDatum& channel_params)
     , e_Na_(50.)
 {
     // update sodium channel parameters
-    if( channel_params->known( "g_Na" ) )
-        gbar_Na_ = getValue< double >( channel_params, "g_Na" );
+    if( channel_params->known( "gbar_Na" ) )
+        gbar_Na_ = getValue< double >( channel_params, "gbar_Na" );
     if( channel_params->known( "e_Na" ) )
         e_Na_ = getValue< double >( channel_params, "e_Na" );
 }
@@ -80,8 +80,8 @@ nest::K::K( const DictionaryDatum& channel_params )
     , e_K_(-85.)
 {
     // update sodium channel parameters
-    if( channel_params->known( "g_K" ) )
-        gbar_K_ = getValue< double >( channel_params, "g_K" );
+    if( channel_params->known( "gbar_K" ) )
+        gbar_K_ = getValue< double >( channel_params, "gbar_K" );
     if( channel_params->known( "e_Na" ) )
         e_K_ = getValue< double >( channel_params, "e_K" );
 }

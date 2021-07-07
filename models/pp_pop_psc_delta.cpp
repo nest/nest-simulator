@@ -221,13 +221,6 @@ nest::pp_pop_psc_delta::pp_pop_psc_delta( const pp_pop_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_pop_psc_delta::init_state_( const Node& proto )
-{
-  const pp_pop_psc_delta& pr = downcast< pp_pop_psc_delta >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::pp_pop_psc_delta::init_buffers_()
 {
   B_.spikes_.clear();   //!< includes resize
@@ -253,7 +246,7 @@ nest::pp_pop_psc_delta::calibrate()
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
   V_.min_double_ = std::numeric_limits< double >::min();
 
   double tau_eta_max = -1; // finding max of tau_eta_
@@ -384,9 +377,9 @@ nest::pp_pop_psc_delta::update( Time const& origin, const long from, const long 
 
         if ( p_argument > V_.min_double_ )
         {
-          V_.binom_dev_.set_p_n(
-            p_argument, S_.age_occupations_[ ( S_.p_age_occupations_ + i ) % S_.age_occupations_.size() ] );
-          S_.n_spikes_ages_[ i ] = V_.binom_dev_.ldev( V_.rng_ );
+          const auto n = S_.age_occupations_[ ( S_.p_age_occupations_ + i ) % S_.age_occupations_.size() ];
+          binomial_distribution::param_type param( n, p_argument );
+          S_.n_spikes_ages_[ i ] = V_.bino_dist_( V_.rng_, param );
         }
         else
         {

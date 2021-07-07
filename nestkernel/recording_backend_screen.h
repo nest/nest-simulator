@@ -26,10 +26,13 @@
 #include "recording_backend.h"
 #include <set>
 
-/* BeginUserDocs: recording backend
+/* BeginUserDocs: NOINDEX
 
-Write data to the terminal
-##########################
+Recording backend `screen` - Write data to the terminal
+#######################################################
+
+Description
++++++++++++
 
 When initially conceiving and debugging simulations, it can be useful
 to check recordings in a more ad hoc fashion. The recording backend
@@ -57,16 +60,14 @@ floating point offset in ms from the next grid point.
 Parameter summary
 +++++++++++++++++
 
-.. glossary::
+precision
+   controls the number of decimal places used to write decimal numbers
+   to the terminal.
 
- precision
-  controls the number of decimal places used to write decimal numbers
-  to the terminal.
-
- time_in_step
-  A boolean (default: false) specifying whether to print time in
-  steps, i.e., in integer multiples of the resolution and an offset,
-  rather than just in ms.
+time_in_step
+   A boolean (default: false) specifying whether to print time in
+   steps, i.e., in integer multiples of the resolution and an offset,
+   rather than just in ms.
 
 EndUserDocs */
 

@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Example for the quantal_stp_synapse
------------------------------------------
+"""
+Example for the quantal_stp_synapse
+-----------------------------------
 
 The ``quantal_stp_synapse`` is a stochastic version of the Tsodys-Markram model
 for synaptic short term plasticity (STP).
@@ -31,7 +32,7 @@ facilitation according to the quantal release model described by Fuhrmann et
 al. [1]_ and Loebel et al. [2]_.
 
 Each presynaptic spike will stochastically activate a fraction of the
-available release sites.  This fraction is binomialy distributed and the
+available release sites.  This fraction is binomially distributed and the
 release probability per site is governed by the Fuhrmann et al. (2002) model.
 The solution of the differential equations is taken from Maass and Markram
 2002 [3]_.
@@ -40,7 +41,7 @@ The connection weight is interpreted as the maximal weight that can be
 obtained if all n release sites are activated.
 
 Parameters
-~~~~~~~~~~~~~
+~~~~~~~~~~
 
 The following parameters can be set in the status dictionary:
 
@@ -54,7 +55,7 @@ The following parameters can be set in the status dictionary:
 
 
 References
-~~~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Fuhrmann G, Segev I, Markram H, and Tsodyks MV. (2002). Coding of
        temporal information by activity-dependent synapses. Journal of
@@ -68,125 +69,164 @@ References
        http://dx.doi.org/10.1016/S0893-6080(01)00144-7
 
 """
+
 import nest
-import nest.voltage_trace
 import numpy
 import matplotlib.pyplot as plt
-
-nest.ResetKernel()
 
 ################################################################################
 # On average, the ``quantal_stp_synapse`` converges to the ``tsodyks2_synapse``,
 # so we can compare the two by running multiple trials.
 #
-# First we define the number of trials as well as the number of release sites.
+# First we define simulation time step and random seed
 
-n_syn = 10.0  # number of synapses in a connection
-n_trials = 100  # number of measurement trials
+resolution = 0.1  # [ms]
+seed = 12345
+
+# We define the number of trials as well as the number of release sites.
+
+n_sites = 10.0  # number of synaptic release sites
+n_trials = 500  # number of measurement trials
+
+# The pre-synaptic neuron is driven by an injected current for a part of each
+# simulation cycle. We define here the parameters for this stimulation cycle.
+
+I_stim = 376.0   # [pA] stimulation current
+T_on = 500.0     # [ms] stimulation is on
+T_off = 1000.0   # [ms] stimulation is off
+
+T_cycle = T_on + T_off   # total duration of each stimulation cycle
 
 ###############################################################################
-# Next, we define parameter sets for facilitation
+# Next, we define parameter sets for facilitation and initial weight.
 
-fac_params = {"U": 0.02, "u": 0.02, "tau_fac": 500.,
-              "tau_rec": 200., "weight": 1.}
+fac_params = {"U": 0.02,
+              "u": 0.02,
+              "tau_fac": 500.,
+              "tau_rec": 200.,
+              "weight": 1.}
 
 ###############################################################################
 # Then, we assign the parameter set to the synapse models
 
-t1_params = fac_params  # for tsodyks2_synapse
-t2_params = t1_params.copy()  # for quantal_stp_synapse
+tsyn_params = fac_params  # for tsodyks2_synapse
+qsyn_params = tsyn_params.copy()  # for quantal_stp_synapse
 
-t1_params['x'] = t1_params['U']
-t2_params['n'] = n_syn
+tsyn_params["x"] = tsyn_params["U"]
+qsyn_params["n"] = n_sites
 
 ###############################################################################
 # To make the responses comparable, we have to scale the weight by the
-# number of synapses.
+# number of release sites.
 
-t2_params['weight'] = 1. / n_syn
+qsyn_params["weight"] = 1. / n_sites
 
 ###############################################################################
-# Next, we chage the defaults of the various models to our parameters.
-
-nest.SetDefaults("tsodyks2_synapse", t1_params)
-nest.SetDefaults("quantal_stp_synapse", t2_params)
-nest.SetDefaults("iaf_psc_exp", {"tau_syn_ex": 3.})
+# We reset NEST to have a well-defined starting point,
+# make NEST less verbose, and set some kernel parameters.
+nest.ResetKernel()
+nest.set_verbosity("M_ERROR")
+nest.SetKernelStatus({"resolution": resolution,
+                      "rng_seed": seed})
 
 ###############################################################################
 # We create three different neurons.
 # Neuron one is the sender, the two other neurons receive the synapses.
+# We exploit Python's unpacking mechanism to assign the neurons to named
+# variables directly.
 
-neuron = nest.Create("iaf_psc_exp", 3)
-
-###############################################################################
-# The connection from neuron 1 to neuron 2 is a deterministic synapse.
-
-nest.Connect(neuron[0], neuron[1], syn_spec="tsodyks2_synapse")
-
-###############################################################################
-# The connection from neuron 1 to neuron 3 has a stochastic
-# ``quantal_stp_synapse``.
-
-nest.Connect(neuron[0], neuron[2], syn_spec="quantal_stp_synapse")
+pre_neuron, tsyn_neuron, qsyn_neuron = nest.Create("iaf_psc_exp",
+                                                   params={"tau_syn_ex": 3.},
+                                                   n=3)
 
 ###############################################################################
-# The voltmeter will show us the synaptic responses in neurons 2 and 3.
+# We create two voltmeters, one for each of the postsynaptic neurons.
+# We start recording only after a first cycle, which is used for equilibration.
 
-voltmeter = nest.Create("voltmeter", 2)
-
-###############################################################################
-# One dry run to bring all synapses into their rest state.
-# The default initialization does not achieve this. In large network
-# simulations this problem does not show, but in small simulations like
-# this, we would see it.
-
-neuron[0].I_e = 376.0
-
-nest.Simulate(500.0)
-neuron[0].I_e = 0.0
-nest.Simulate(1000.0)
+tsyn_voltmeter, qsyn_voltmeter = nest.Create("voltmeter",
+                                             params={"start": T_cycle,
+                                                     "interval": resolution},
+                                             n=2)
 
 ###############################################################################
-# Only now do we connect the ``voltmeter`` to the neurons.
+# Connect one neuron with the deterministic tsodyks2 synapse and the other neuron
+# with the stochastic quantal stp synapse; then, connect a voltmeter to each neuron.
+# Here, ``**tsyn_params`` inserts the content of the ``tsyn_params`` dict into the
+# dict passed to ``syn_spec``.
 
-nest.Connect(voltmeter[0], neuron[1])
-nest.Connect(voltmeter[1], neuron[2])
+nest.Connect(pre_neuron, tsyn_neuron,
+             syn_spec={"synapse_model": "tsodyks2_synapse", **tsyn_params})
+
+# For technical reasons, we currently must set the parameters of the
+# quantal_stp_synapse via default values. This will change in a future version
+# of NEST.
+nest.SetDefaults("quantal_stp_synapse", qsyn_params)
+nest.Connect(pre_neuron, qsyn_neuron, syn_spec={"synapse_model": "quantal_stp_synapse"})
+
+nest.Connect(tsyn_voltmeter, tsyn_neuron)
+nest.Connect(qsyn_voltmeter, qsyn_neuron)
 
 ###############################################################################
 # This loop runs over the `n_trials` trials and performs a standard protocol
 # of a high-rate response, followed by a pause and then a recovery response.
+#
+# We actually run over ``n_trials + 1`` rounds, since the first trial is for
+# equilibration and is not recorded (see voltmeter parameters above).
+#
+# We use the NEST ``:class:.RunManager`` to improve performance and call ``:func:.Run``
+# inside for each part of the simulation.
+#
+# We print a line of breadcrumbs to indicate progress.
 
-for t in range(n_trials):
-    neuron[0].I_e = 376.0
-    nest.Simulate(500.0)
-    neuron[0].I_e = 0.0
-    nest.Simulate(1000.0)
+print(f"Simulating {n_trials} times ", end="", flush=True)
+with nest.RunManager():
+    for t in range(n_trials + 1):
+        pre_neuron.I_e = I_stim
+        nest.Run(T_on)
+
+        pre_neuron.I_e = 0.0
+        nest.Run(T_off)
+
+        if t % 10 == 0:
+            print(".", end="", flush=True)
+print()
 
 ###############################################################################
-# Flush the last voltmeter events from the queue by simulating one time-step.
-
-nest.Simulate(.1)
+# Simulate one additional time step. This ensures that the
+# voltage traces for all trials, including the last, have the full length, so we
+# can easily transform them into a matrix below.
+nest.Simulate(nest.GetKernelStatus('resolution'))
 
 ###############################################################################
-# Extract the reference trace.
-vm = numpy.array(voltmeter[1].get('events', 'V_m'))
-vm_reference = numpy.array(voltmeter[0].get('events', 'V_m'))
+# Extract voltage traces and reshape the matrix with one column per trial
+# and one row per time step. NEST returns results as NumPy arrays.
+# We extract times only once and keep only times for a single trial.
+vm_tsyn = tsyn_voltmeter.get("events", "V_m")
+vm_qsyn = qsyn_voltmeter.get("events", "V_m")
 
-vm.shape = (n_trials, 1500)
-vm_reference.shape = (n_trials, 1500)
+steps_per_trial = round(T_cycle / tsyn_voltmeter.get("interval"))
+vm_tsyn.shape = (n_trials, steps_per_trial)
+vm_qsyn.shape = (n_trials, steps_per_trial)
+
+t_vm = tsyn_voltmeter.get("events", "times")
+t_trial = t_vm[:steps_per_trial]
 
 ###############################################################################
 # Now compute the mean of all trials and plot against trials and references.
 
-vm_mean = numpy.array([numpy.mean(vm[:, i]) for (i, j) in enumerate(vm[0, :])])
-vm_ref_mean = numpy.array([numpy.mean(vm_reference[:, i])
-                           for (i, j) in enumerate(vm_reference[0, :])])
-plt.plot(vm_mean)
-plt.plot(vm_ref_mean)
+vm_tsyn_mean = vm_tsyn.mean(axis=0)
+vm_qsyn_mean = vm_qsyn.mean(axis=0)
+rms_error = ((vm_tsyn_mean - vm_qsyn_mean) ** 2).mean() ** 0.5
+
+plt.plot(t_trial, vm_tsyn_mean, lw=2, alpha=0.7,
+         label="Tsodyks-2 synapse (deterministic)")
+plt.plot(t_trial, vm_qsyn_mean, lw=2, alpha=0.7,
+         label="Quantal STP synapse (stochastic)")
+plt.xlabel("Time [ms]")
+plt.ylabel("Membrane potential [mV]")
+plt.title("Comparison of deterministic and stochastic plasicity rules")
+plt.text(0.95, 0.05, f"RMS error: {rms_error:.3g}",
+         horizontalalignment="right", verticalalignment="bottom",
+         transform=plt.gca().transAxes)  # relative coordinates for text placement
+plt.legend()
 plt.show()
-
-###############################################################################
-# Finally, print the mean-suqared error between the trial-average and the
-# reference trace. The value should be `< 10^-9`.
-
-print(numpy.mean((vm_ref_mean - vm_mean) ** 2))

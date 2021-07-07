@@ -84,12 +84,14 @@ optimization levels. A future version of iaf_psc_exp will probably
 address the problem of efficient usage of appropriate vector and
 matrix objects.
 
-If tau_m is very close to tau_syn_ex or tau_syn_in, the model
-will numerically behave as if tau_m is equal to tau_syn_ex or
-tau_syn_in, respectively, to avoid numerical instabilities.
-For details, you can check out the `IAF neurons singularity
-<https://github.com/nest/nest-simulator/blob/master/doc/model_details/IAF_neurons_singularity.ipynb>`_
-notebook in the NEST source code.
+.. note::
+
+  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
+  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
+  `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+  For implementation details see the
+  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 iaf_psc_exp can handle current input in two ways: Current input
 through receptor_type 0 are handled as stepwise constant current
@@ -188,7 +190,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -292,10 +293,18 @@ private:
     Buffers_( iaf_psc_exp& );
     Buffers_( const Buffers_&, iaf_psc_exp& );
 
+    //! Indices for access to different channels of input_buffer_
+    enum
+    {
+      SYN_IN = 0,
+      SYN_EX,
+      I0,
+      I1,
+      NUM_INPUT_CHANNELS
+    };
+
     /** buffers and sums up incoming spikes/currents */
-    RingBuffer spikes_ex_;
-    RingBuffer spikes_in_;
-    std::vector< RingBuffer > currents_;
+    MultiChannelInputBuffer< NUM_INPUT_CHANNELS > input_buffer_;
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_psc_exp > logger_;
@@ -328,7 +337,7 @@ private:
 
     int RefractoryCounts_;
 
-    librandom::RngPtr rng_; //!< random number generator of my own thread
+    RngPtr rng_; //!< random number generator of my own thread
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -338,18 +347,6 @@ private:
   get_V_m_() const
   {
     return S_.V_m_ + P_.E_L_;
-  }
-
-  inline double
-  get_weighted_spikes_ex_() const
-  {
-    return V_.weighted_spikes_ex_;
-  }
-
-  inline double
-  get_weighted_spikes_in_() const
-  {
-    return V_.weighted_spikes_in_;
   }
 
   inline double

@@ -269,14 +269,6 @@ nest::gif_psc_exp::gif_psc_exp( const gif_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_psc_exp::init_state_( const Node& proto )
-{
-  const gif_psc_exp& pr = downcast< gif_psc_exp >( proto );
-  S_ = pr.S_;
-  // sfa_elems_ and stc_elems_ are initialized in calibrate()
-}
-
-void
 nest::gif_psc_exp::init_buffers_()
 {
   B_.spikes_ex_.clear(); // includes resize
@@ -292,7 +284,7 @@ nest::gif_psc_exp::calibrate()
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 
   V_.P11ex_ = std::exp( -h / P_.tau_ex_ );
   V_.P11in_ = std::exp( -h / P_.tau_in_ );

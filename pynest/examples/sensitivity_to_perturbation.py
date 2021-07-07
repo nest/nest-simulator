@@ -24,7 +24,7 @@ Sensitivity to perturbation
 ---------------------------
 
 This script simulates a network in two successive trials, which are identical
-except for one extra input spike in the second realisation (a small
+except for one extra input spike in the second realization (a small
 perturbation). The network consists of recurrent, randomly connected excitatory
 and inhibitory neurons. Its activity is driven by an external Poisson input
 provided to all neurons independently. In order to ensure that the network is
@@ -34,7 +34,7 @@ reset appropriately between the trials, we do the following steps:
 - resetting the random network generator
 - resetting the internal clock
 - deleting all entries in the spike recorder
-- introducing a hyperpolarisation phase between the trials
+- introducing a hyperpolarization phase between the trials
   (in order to avoid that spikes remaining in the NEST memory
   after the first simulation are fed into the second simulation)
 
@@ -113,7 +113,7 @@ T = 1000.                 # simulation time per trial (ms)
 fade_out = 2. * delay     # fade out time (ms)
 dt = 0.01                 # simulation time resolution (ms)
 seed_NEST = 30            # seed of random number generator in Nest
-seed_numpy = 30           # seed of random number generator in numpy
+seed_numpy = 30           # seed of random number generator in NumPy
 
 senders = []
 spiketimes = []
@@ -153,10 +153,10 @@ for trial in [0, 1]:
     # Afterwards we create a ``poisson_generator`` that provides spikes (the external
     # input) to the neurons until time ``T`` is reached.
     # Afterwards a ``dc_generator``, which is also connected to the whole population,
-    # provides a stong hyperpolarisation step for a short time period ``fade_out``.
+    # provides a strong hyperpolarization step for a short time period ``fade_out``.
     #
     # The ``fade_out`` period has to last at least twice as long as the simulation
-    # resolution to supress the neurons from firing.
+    # resolution to suppress the neurons from firing.
 
     ext = nest.Create("poisson_generator",
                       params={'rate': rate_ext, 'stop': T})
@@ -183,7 +183,7 @@ for trial in [0, 1]:
     # the simulation Kernel. In addition, we ensure that there is no spike left in
     # the spike recorder.
 
-    nest.SetKernelStatus({"rng_seeds": [seed_NEST], 'time': 0.0})
+    nest.SetKernelStatus({"rng_seed": seed_NEST, 'biological_time': 0.0})
     spikerecorder.n_events = 0
 
     # We assign random initial membrane potentials to all neurons

@@ -26,6 +26,7 @@
 #include <sys/time.h>
 
 // C++ includes:
+#include <limits>
 #include <vector>
 
 // Includes from libnestutil:
@@ -48,6 +49,7 @@ nest::SimulationManager::SimulationManager()
   , from_step_( 0L )
   , to_step_( 0L ) // consistent with to_do_ == 0
   , t_real_( 0L )
+  , prepared_( false )
   , simulating_( false )
   , simulated_( false )
   , inconsistent_state_( false )
@@ -57,6 +59,9 @@ nest::SimulationManager::SimulationManager()
   , wfr_tol_( 0.0001 )
   , wfr_max_iterations_( 15 )
   , wfr_interpolation_order_( 3 )
+  , update_time_limit_( std::numeric_limits< double >::infinity() )
+  , min_update_time_( std::numeric_limits< double >::infinity() )
+  , max_update_time_( -std::numeric_limits< double >::infinity() )
 {
 }
 
@@ -71,6 +76,9 @@ nest::SimulationManager::initialize()
   simulating_ = false;
   simulated_ = false;
   inconsistent_state_ = false;
+
+  reset_timers_for_preparation();
+  reset_timers_for_dynamics();
 }
 
 void
@@ -83,6 +91,25 @@ nest::SimulationManager::finalize()
   slice_ = 0;
   from_step_ = 0;
   to_step_ = 0; // consistent with to_do_ = 0
+}
+
+void
+nest::SimulationManager::reset_timers_for_preparation()
+{
+  sw_communicate_prepare_.reset();
+#ifdef TIMER_DETAILED
+  sw_gather_target_data_.reset();
+#endif
+}
+
+void
+nest::SimulationManager::reset_timers_for_dynamics()
+{
+  sw_simulate_.reset();
+#ifdef TIMER_DETAILED
+  sw_gather_spike_data_.reset();
+  sw_update_.reset();
+#endif
 }
 
 void
@@ -99,7 +126,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   TimeConverter time_converter;
 
   double time;
-  if ( updateValue< double >( d, names::time, time ) )
+  if ( updateValue< double >( d, names::biological_time, time ) )
   {
     if ( time != 0.0 )
     {
@@ -113,7 +140,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "SimulationManager::set_status",
         "Simulation time reset to t=0.0. Resetting the simulation time is not "
         "fully supported in NEST at present. Some spikes may be lost, and "
-        "stimulating devices may behave unexpectedly. PLEASE REVIEW YOUR "
+        "stimulation devices may behave unexpectedly. PLEASE REVIEW YOUR "
         "SIMULATION OUTPUT CAREFULLY!" );
 
       clock_ = Time::step( 0 );
@@ -329,6 +356,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     if ( tol < 0.0 )
     {
       LOG( M_ERROR, "SimulationManager::set_status", "Tolerance must be zero or positive" );
+      throw KernelException();
     }
     else
     {
@@ -346,6 +374,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "SimulationManager::set_status",
         "Maximal number of iterations  for the waveform relaxation must be "
         "positive. To disable waveform relaxation set use_wfr instead." );
+      throw KernelException();
     }
     else
     {
@@ -360,11 +389,25 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     if ( ( interp_order < 0 ) or ( interp_order == 2 ) or ( interp_order > 3 ) )
     {
       LOG( M_ERROR, "SimulationManager::set_status", "Interpolation order must be 0, 1, or 3." );
+      throw KernelException();
     }
     else
     {
       wfr_interpolation_order_ = interp_order;
     }
+  }
+
+  // update time limit
+  double t_new = 0.0;
+  if ( updateValue< double >( d, names::update_time_limit, t_new ) )
+  {
+    if ( t_new <= 0 )
+    {
+      LOG( M_ERROR, "SimulationManager::set_status", "update_time_limit > 0 required." );
+      throw KernelException();
+    }
+
+    update_time_limit_ = t_new;
   }
 }
 
@@ -379,7 +422,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::T_min, Time::min().get_ms() );
   def< double >( d, names::T_max, Time::max().get_ms() );
 
-  def< double >( d, names::time, get_time().get_ms() );
+  def< double >( d, names::biological_time, get_time().get_ms() );
   def< long >( d, names::to_do, to_do_ );
   def< bool >( d, names::print_time, print_time_ );
 
@@ -388,6 +431,18 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::wfr_tol, wfr_tol_ );
   def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
   def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
+
+  def< double >( d, names::update_time_limit, update_time_limit_ );
+  def< double >( d, names::min_update_time, min_update_time_ );
+  def< double >( d, names::max_update_time, max_update_time_ );
+
+  def< double >( d, names::time_simulate, sw_simulate_.elapsed() );
+  def< double >( d, names::time_communicate_prepare, sw_communicate_prepare_.elapsed() );
+#ifdef TIMER_DETAILED
+  def< double >( d, names::time_gather_spike_data, sw_gather_spike_data_.elapsed() );
+  def< double >( d, names::time_update, sw_update_.elapsed() );
+  def< double >( d, names::time_gather_target_data, sw_gather_target_data_.elapsed() );
+#endif
 }
 
 void
@@ -409,6 +464,10 @@ nest::SimulationManager::prepare()
       "earlier error. Please run ResetKernel first." );
   }
 
+  // reset profiling timers
+  reset_timers_for_dynamics();
+  kernel().event_delivery_manager.reset_timers_for_dynamics();
+
   t_real_ = 0;
   t_slice_begin_ = timeval(); // set to timeval{0, 0} as unset flag
   t_slice_end_ = timeval();   // set to timeval{0, 0} as unset flag
@@ -417,21 +476,6 @@ nest::SimulationManager::prepare()
   // this call sets the member variables
   kernel().connection_manager.update_delay_extrema_();
   kernel().event_delivery_manager.init_moduli();
-
-  // Check for synchrony of global rngs over processes.
-  // We need to do this ahead of any simulation in case random numbers
-  // have been consumed on the SLI level.
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    if ( not kernel().mpi_manager.grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
-    {
-      LOG( M_ERROR,
-        "SimulationManager::prepare",
-        "Global Random Number Generators are not synchronized prior to "
-        "simulation." );
-      throw KernelException();
-    }
-  }
 
   // if at the beginning of a simulation, set up spike buffers
   if ( not simulated_ )
@@ -515,6 +559,7 @@ nest::SimulationManager::run( Time const& t )
 {
   assert_valid_simtime( t );
 
+  kernel().random_manager.check_rng_synchrony();
   kernel().io_manager.pre_run_hook();
 
   if ( not prepared_ )
@@ -532,8 +577,10 @@ nest::SimulationManager::run( Time const& t )
     return;
   }
 
-  // Reset profiling timers and counters within event_delivery_manager
-  kernel().event_delivery_manager.reset_timers_counters();
+  // Reset local spike counters within event_delivery_manager
+  kernel().event_delivery_manager.reset_counters();
+
+  sw_simulate_.start();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -569,6 +616,9 @@ nest::SimulationManager::run( Time const& t )
   call_update_();
 
   kernel().io_manager.post_run_hook();
+  kernel().random_manager.check_rng_synchrony();
+
+  sw_simulate_.stop();
 }
 
 void
@@ -585,18 +635,6 @@ nest::SimulationManager::cleanup()
   {
     prepared_ = false;
     return;
-  }
-
-  // Check for synchronicity of global rngs over processes
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    if ( not kernel().mpi_manager.grng_synchrony( kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
-    {
-      throw KernelException(
-        "In SimulationManager::cleanup(): "
-        "Global Random Number Generators are not "
-        "in sync at end of simulation." );
-    }
   }
 
   kernel().node_manager.finalize_nodes();
@@ -666,8 +704,15 @@ nest::SimulationManager::call_update_()
 void
 nest::SimulationManager::update_connection_infrastructure( const thread tid )
 {
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_communicate_prepare_.start();
+  }
+
   kernel().connection_manager.restructure_connection_tables( tid );
   kernel().connection_manager.sort_connections( tid );
+  kernel().connection_manager.collect_compressed_spike_data( tid );
 
 #pragma omp barrier // wait for all threads to finish sorting
 
@@ -694,13 +739,34 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     }
   }
 
+#ifdef TIMER_DETAILED
+  if ( tid == 0 )
+  {
+    sw_gather_target_data_.start();
+  }
+#endif
+
   // communicate connection information from postsynaptic to
   // presynaptic side
   kernel().event_delivery_manager.gather_target_data( tid );
 
+#ifdef TIMER_DETAILED
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_gather_target_data_.stop();
+  }
+#endif
+
   if ( kernel().connection_manager.secondary_connections_exist() )
   {
     kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
+  }
+
+#pragma omp barrier
+  if ( kernel().connection_manager.use_compressed_spikes() )
+  {
+    kernel().connection_manager.clear_compressed_spike_data_map( tid );
   }
 
 #pragma omp single
@@ -708,6 +774,12 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     kernel().node_manager.set_have_nodes_changed( false );
   }
   kernel().connection_manager.unset_have_connections_changed( tid );
+
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_communicate_prepare_.stop();
+  }
 }
 
 bool
@@ -723,6 +795,9 @@ nest::SimulationManager::update_()
   std::vector< bool > done;
   bool done_all = true;
   delay old_to_step;
+
+  double start_current_update = sw_simulate_.elapsed();
+  bool update_time_limit_exceeded = false;
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 // parallel section begins
@@ -885,9 +960,17 @@ nest::SimulationManager::update_()
         }
 
       } // of if(wfr_is_used)
-      // end of preliminary update
+        // end of preliminary update
 
+#ifdef TIMER_DETAILED
+#pragma omp barrier
+      if ( tid == 0 )
+      {
+        sw_update_.start();
+      }
+#endif
       const SparseNodeArray& thread_local_nodes = kernel().node_manager.get_local_nodes( tid );
+
       for ( SparseNodeArray::const_iterator n = thread_local_nodes.begin(); n != thread_local_nodes.end(); ++n )
       {
         // We update in a parallel region. Therefore, we need to catch
@@ -909,6 +992,14 @@ nest::SimulationManager::update_()
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
+#ifdef TIMER_DETAILED
+      if ( tid == 0 )
+      {
+        sw_update_.stop();
+        sw_gather_spike_data_.start();
+      }
+#endif
+
       // gather and deliver only at end of slice, i.e., end of min_delay step
       if ( to_step_ == kernel().connection_manager.get_min_delay() )
       {
@@ -927,6 +1018,12 @@ nest::SimulationManager::update_()
       }
 
 #pragma omp barrier
+#ifdef TIMER_DETAILED
+      if ( tid == 0 )
+      {
+        sw_gather_spike_data_.stop();
+      }
+#endif
 
 // the following block is executed by the master thread only
 // the other threads are enforced to wait at the end of the block
@@ -939,13 +1036,29 @@ nest::SimulationManager::update_()
           gettimeofday( &t_slice_end_, NULL );
           print_progress_();
         }
+
+        // We cannot throw exception inside master, would not get caught.
+        const double end_current_update = sw_simulate_.elapsed();
+        const double update_time = end_current_update - start_current_update;
+        update_time_limit_exceeded = update_time > update_time_limit_;
+        min_update_time_ = std::min( min_update_time_, update_time );
+        max_update_time_ = std::max( max_update_time_, update_time );
+        start_current_update = end_current_update;
       }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
       kernel().io_manager.post_step_hook();
 // enforce synchronization after post-step activities of the recording backends
 #pragma omp barrier
-    } while ( to_do_ > 0 and not exceptions_raised.at( tid ) );
+      const double end_current_update = sw_simulate_.elapsed();
+      if ( end_current_update - start_current_update > update_time_limit_ )
+      {
+        LOG( M_ERROR, "SimulationManager::update", "Update time limit exceeded." );
+        throw KernelException();
+      }
+      start_current_update = end_current_update;
+
+    } while ( to_do_ > 0 and not update_time_limit_exceeded and not exceptions_raised.at( tid ) );
 
     // End of the slice, we update the number of synaptic elements
     for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
@@ -955,7 +1068,14 @@ nest::SimulationManager::update_()
       Node* node = i->get_node();
       node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     }
+
   } // of omp parallel
+
+  if ( update_time_limit_exceeded )
+  {
+    LOG( M_ERROR, "SimulationManager::update", "Update time limit exceeded." );
+    throw KernelException();
+  }
 
   // check if any exceptions have been raised
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )

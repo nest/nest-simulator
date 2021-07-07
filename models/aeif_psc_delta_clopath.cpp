@@ -188,14 +188,12 @@ nest::aeif_psc_delta_clopath::State_::State_( const State_& s )
 
 nest::aeif_psc_delta_clopath::State_& nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
-
+  r_ = s.r_;
+  clamp_r_ = s.clamp_r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
-  clamp_r_ = s.clamp_r_;
   return *this;
 }
 
@@ -302,7 +300,7 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const DictionaryDatum& d, Node* 
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Ensure that t_ref >= 0" );
+    throw BadProperty( "Refractory time cannot be negative." );
   }
 
   if ( t_clamp_ < 0 )
@@ -402,13 +400,6 @@ nest::aeif_psc_delta_clopath::~aeif_psc_delta_clopath()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::aeif_psc_delta_clopath::init_state_( const Node& proto )
-{
-  const aeif_psc_delta_clopath& pr = downcast< aeif_psc_delta_clopath >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::aeif_psc_delta_clopath::init_buffers_()
@@ -542,8 +533,8 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
       if ( S_.y_[ State_::V_M ] >= V_.V_peak_ && S_.clamp_r_ == 0 )
       {
         S_.y_[ State_::V_M ] = P_.V_clamp_;
-        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        S_.y_[ State_::Z ] = P_.I_sp;
+        S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
+        S_.y_[ State_::Z ] = P_.I_sp; // depolarizing spike afterpotential current
         S_.y_[ State_::V_TH ] = P_.V_th_max;
 
         /* Initialize clamping step counter.

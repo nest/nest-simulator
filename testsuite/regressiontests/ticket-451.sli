@@ -39,56 +39,57 @@ Author: Hans Ekkehard Plesser, 2010-09-20
 
 M_INFO setverbosity
 
-/iaf_psc_alpha 3 Create ;
+/nodes /iaf_psc_alpha 3 Create def
+/first nodes [1 1] Take def
 
 {
-[1 2 3] [1] << /rule /fixed_indegree /indegree 4 /allow_multapses false /allow_autapses true >> Connect
+nodes first << /rule /fixed_indegree /indegree 4 /allow_multapses false /allow_autapses true >> Connect
 } fail_or_die
 
 {
-[1 2 3] [1] << /rule /fixed_indegree /indegree 3 /allow_multapses false /allow_autapses true >> Connect
+nodes first << /rule /fixed_indegree /indegree 3 /allow_multapses false /allow_autapses true >> Connect
 } pass_or_die
 
 {
-[1 2 3] [1] << /rule /fixed_indegree /indegree 2 /allow_multapses false /allow_autapses true >> Connect
+nodes first << /rule /fixed_indegree /indegree 2 /allow_multapses false /allow_autapses true >> Connect
 } pass_or_die
 
 {
-[1 2 3] [1] << /rule /fixed_indegree /indegree 4 /allow_multapses false /allow_autapses false >> Connect
+nodes first << /rule /fixed_indegree /indegree 4 /allow_multapses false /allow_autapses false >> Connect
 } fail_or_die
 
 {
-[1 2 3] [1] << /rule /fixed_indegree /indegree 2 /allow_multapses false /allow_autapses false >> Connect
+nodes first << /rule /fixed_indegree /indegree 2 /allow_multapses false /allow_autapses false >> Connect
 } pass_or_die
 
 {
-[1 2 3] [1] << /rule /fixed_indegree /indegree 1 /allow_multapses true /allow_autapses true >> Connect
+nodes first << /rule /fixed_indegree /indegree 1 /allow_multapses true /allow_autapses true >> Connect
 } pass_or_die
 
 % ---------------------
 
 {
-[1] [1 2 3] << /rule /fixed_outdegree /outdegree 4 /allow_multapses false /allow_autapses true >> Connect
+first nodes << /rule /fixed_outdegree /outdegree 4 /allow_multapses false /allow_autapses true >> Connect
 } fail_or_die
 
 {
-[1] [1 2 3] << /rule /fixed_outdegree /outdegree 3 /allow_multapses false /allow_autapses true >> Connect
+first nodes << /rule /fixed_outdegree /outdegree 3 /allow_multapses false /allow_autapses true >> Connect
 } pass_or_die
 
 {
-[1] [1 2 3] << /rule /fixed_outdegree /outdegree 2 /allow_multapses false /allow_autapses true >> Connect
+first nodes << /rule /fixed_outdegree /outdegree 2 /allow_multapses false /allow_autapses true >> Connect
 } pass_or_die
 
 {
-[1] [1 2 3] << /rule /fixed_outdegree /outdegree 4 /allow_multapses false /allow_autapses false >> Connect
+first nodes << /rule /fixed_outdegree /outdegree 4 /allow_multapses false /allow_autapses false >> Connect
 } fail_or_die
 
 {
-[1] [1 2 3] << /rule /fixed_outdegree /outdegree 2 /allow_multapses false /allow_autapses false >> Connect
+first nodes << /rule /fixed_outdegree /outdegree 2 /allow_multapses false /allow_autapses false >> Connect
 } pass_or_die
 
 {
-[1] [1 2 3] << /rule /fixed_outdegree /outdegree 1 /allow_multapses true /allow_autapses false >> Connect
+first nodes << /rule /fixed_outdegree /outdegree 1 /allow_multapses true /allow_autapses false >> Connect
 } pass_or_die
 
 endusing

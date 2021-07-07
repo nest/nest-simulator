@@ -41,7 +41,7 @@
 %        >> def
 
 /model /mip_generator def
-/params << /rate 100.0 /p_copy 0.5 /mother_seed 123456 >> def
+/params << /rate 100.0 /p_copy 0.5 >> def
 
 /run_model {
    

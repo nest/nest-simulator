@@ -749,7 +749,6 @@ INPUT		=	@PROJECT_SOURCE_DIR@/README.md \
 			@PROJECT_SOURCE_DIR@/extras \
 			@PROJECT_SOURCE_DIR@/lib \
 			@PROJECT_SOURCE_DIR@/libnestutil \
-			@PROJECT_SOURCE_DIR@/librandom \
 			@PROJECT_SOURCE_DIR@/models \
 			@PROJECT_SOURCE_DIR@/nest \
 			@PROJECT_SOURCE_DIR@/nestkernel \
@@ -846,7 +845,7 @@ EXAMPLE_RECURSIVE      = NO
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             =
+IMAGE_PATH             =  @PROJECT_SOURCE_DIR@/doc/devdoc/static/img/
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program

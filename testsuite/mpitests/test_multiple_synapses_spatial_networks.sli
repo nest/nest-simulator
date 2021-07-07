@@ -38,20 +38,37 @@
 (unittest) run
 /unittest using
 
-
 /collocated_synapse_params
   [<< /weight -3. /delay 1.0 /synapse_model /static_synapse >>
    << /weight  3. /delay 1.3 /synapse_model /static_synapse >>
-   << /weight  2. /delay 1.9 /synapse_model /stdp_synapse >> ] def
+   << /weight  2. /delay 1.9 /synapse_model /stdp_synapse >> ]
+def
 
-[-0.25 0.25 0.25] Range
-  { /x Set [0.25 -0.25 -0.25] Range { x exch 2 arraystore } Map } Map 1 Flatten
-  /pos Set
+/pos
+  [-0.25 0.25 0.25] Range
+  {
+    /x Set
+    [0.25 -0.25 -0.25] Range
+    {
+      x exch 2 arraystore
+    }
+    Map
+  }
+  Map
+  1 Flatten
+def
 
-% There are 9 positions in positions vector, so 9 neurons per source and target
-/num_src 9 def
-/num_trgt 9 def
-/num_conns 4 def % we use one_to_one
+% Set number of sources and targets according to number of positions
+/num_src pos length def
+/num_trgt pos length def
+/num_conns 4 def % connections per target
+
+% to reduce data to be transported, reduce every value to max three chars
+/:compact_form
+{
+  { cvs dup length 3 gt { 3 Take } if } Map
+}
+def
 
 [1 2 4]
 {  
@@ -79,8 +96,8 @@
 
     weight_delay_syn wdsm append Flatten /weight_delay_syn Set
   } forall
-  
-  weight_delay_syn
+
+  weight_delay_syn :compact_form
 }
 {
   /results Set
@@ -122,6 +139,7 @@
   } forall
 
   % Also check that the cumulative result list contains all variables we expect.
-  cumulative_res_list reference_list eq
+  cumulative_res_list reference_list :compact_form eq
 }
 distributed_collect_assert_or_die
+

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AEIF_PSC_delta_H
-#define AEIF_PSC_delta_H
+#ifndef AEIF_PSC_DELTA_H
+#define AEIF_PSC_DELTA_H
 
 // Generated includes:
 #include "config.h"
@@ -94,6 +94,9 @@ and
 Here delta is the dirac delta function and k indexes incoming
 spikes. This is implemented such that V_m will be incremented/decremented by
 the value of J after a spike.
+
+For implementation details see the
+`aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
 Parameters
 ++++++++++
@@ -193,7 +196,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
   void update( const Time&, const long, const long );
@@ -228,7 +230,6 @@ private:
     double a;       //!< Subthreshold adaptation in nS
     double b;       //!< Spike-triggered adaptation in pA
     double V_th;    //!< Spike threshold in mV
-    double t_ref;   //!< Refractory period in ms
     double I_e;     //!< Intrinsic current in pA
 
     double gsl_error_tol;  //!< Error bound for GSL integrator
@@ -245,15 +246,15 @@ public:
 
   /**
    * State variables of the model.
-   * @note Copy constructor and assignment operator required because
-   *       of C-style array.
+   * @note Copy constructor required because of C-style array.
    */
   struct State_
   {
     /** Accumulate spikes arriving during refractory period, discounted for
-        decay until end of refractory period.
-    */
+     *  decay until end of refractory period.
+     */
     double refr_spikes_buffer_;
+
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum
@@ -273,6 +274,7 @@ public:
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
+
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
@@ -432,4 +434,4 @@ aeif_psc_delta::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
-#endif // AEIF_PSC_delta_H
+#endif // AEIF_PSC_DELTA_H

@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Testing the adapting exponential integrate and fire model in NEST (Brette and Gerstner Fig 3D)
-----------------------------------------------------------------------------------------------------
+"""
+Testing the adapting exponential integrate and fire model in NEST (Brette and Gerstner Fig 3D)
+----------------------------------------------------------------------------------------------
 
 This example tests the adaptive integrate and fire model (AdEx) according to
 Brette and Gerstner [1]_ reproduces Figure 3D of the paper.
@@ -30,10 +31,11 @@ To be consistent with the other parameters in the equations, `b` must be
 converted to `pA` (pico Ampere).
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Brette R and Gerstner W (2005). Adaptive exponential integrate-and-fire model as an effective
        description of neuronal activity J. Neurophysiology. https://doi.org/10.1152/jn.00686.2005
+
 """
 
 import nest
@@ -82,4 +84,4 @@ nest.Simulate(1000.0)
 
 nest.voltage_trace.from_device(voltmeter)
 plt.axis([0, 1000, -85, 0])
-nest.voltage_trace.show()
+plt.show()

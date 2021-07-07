@@ -197,14 +197,6 @@ nest::rate_neuron_opn< TNonlinearities >::rate_neuron_opn( const rate_neuron_opn
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_opn< TNonlinearities >::init_state_( const Node& proto )
-{
-  const rate_neuron_opn& pr = downcast< rate_neuron_opn >( proto );
-  S_ = pr.S_;
-}
-
-template < class TNonlinearities >
-void
 nest::rate_neuron_opn< TNonlinearities >::init_buffers_()
 {
   B_.delayed_rates_ex_.clear(); // includes resize
@@ -220,7 +212,7 @@ nest::rate_neuron_opn< TNonlinearities >::init_buffers_()
   // initialize random numbers
   for ( unsigned int i = 0; i < buffer_size; i++ )
   {
-    B_.random_numbers[ i ] = V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
+    B_.random_numbers[ i ] = V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
   }
 
   B_.logger_.reset(); // includes resize
@@ -238,7 +230,9 @@ nest::rate_neuron_opn< TNonlinearities >::calibrate()
   // propagators
   V_.P1_ = std::exp( -h / P_.tau_ );
   V_.P2_ = -numerics::expm1( -h / P_.tau_ );
-  V_.output_noise_factor_ = std::sqrt( P_.tau_ / h ); // Gaussian white noise approximated by piecewise constant value
+
+  // Gaussian white noise approximated by piecewise constant value
+  V_.output_noise_factor_ = std::sqrt( P_.tau_ / h );
 }
 
 /* ----------------------------------------------------------------
@@ -357,7 +351,7 @@ nest::rate_neuron_opn< TNonlinearities >::update_( Time const& origin,
     B_.random_numbers.resize( buffer_size, numerics::nan );
     for ( unsigned int i = 0; i < buffer_size; i++ )
     {
-      B_.random_numbers[ i ] = V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
+      B_.random_numbers[ i ] = V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
     }
   }
 

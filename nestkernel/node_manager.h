@@ -28,6 +28,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "conn_builder.h"
@@ -99,12 +100,6 @@ public:
    * @returns NodeCollection as lock pointer
    */
   NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
-
-  /**
-   * Set the state (observable dynamic variables) of a node to model defaults.
-   * @see Node::init_state()
-   */
-  void init_state( index );
 
   /**
    * Return total number of network nodes.
@@ -295,7 +290,6 @@ private:
    */
   void add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
-
 private:
   /**
    * The network as sparse array of local nodes. One entry per thread,
@@ -318,6 +312,9 @@ private:
 
   //! Store exceptions raised in thread-parallel sections for later handling
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
+
+  // private stop watch for benchmarking purposes
+  Stopwatch sw_construction_create_;
 };
 
 inline index

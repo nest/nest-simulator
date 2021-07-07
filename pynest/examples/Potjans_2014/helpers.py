@@ -63,7 +63,7 @@ def num_synapses_from_conn_probs(conn_probs, popsize1, popsize2):
 
 
 def postsynaptic_potential_to_current(C_m, tau_m, tau_syn):
-    """ Computes a factor to convert postsynaptic potentials to currents.
+    r""" Computes a factor to convert postsynaptic potentials to currents.
 
     The time course of the postsynaptic potential ``v`` is computed as
     :math: `v(t)=(i*h)(t)`
@@ -391,8 +391,8 @@ def __gather_metadata(path, name):
     # load node IDs
     node_idfile = open(path + 'population_nodeids.dat', 'r')
     node_ids = []
-    for l in node_idfile:
-        node_ids.append(l.split())
+    for node_id in node_idfile:
+        node_ids.append(node_id.split())
     node_ids = np.array(node_ids, dtype='i4')
     return sd_files, sd_names, node_ids
 

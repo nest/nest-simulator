@@ -227,40 +227,40 @@ class PlotParams(object):
             return self._left
 
         @left.setter
-        def left(self, l):
-            self._left = float(l)
+        def left(self, left):
+            self._left = float(left)
 
         @property
         def right(self):
             return self._right
 
         @right.setter
-        def right(self, r):
-            self._right = float(r)
+        def right(self, right):
+            self._right = float(right)
 
         @property
         def top(self):
             return self._top
 
         @top.setter
-        def top(self, t):
-            self._top = float(t)
+        def top(self, top):
+            self._top = float(top)
 
         @property
         def bottom(self):
             return self._bottom
 
         @bottom.setter
-        def bottom(self, b):
-            self._bottom = float(b)
+        def bottom(self, bottom):
+            self._bottom = float(bottom)
 
         @property
         def colbar(self):
             return self._colbar
 
         @colbar.setter
-        def colbar(self, b):
-            self._colbar = float(b)
+        def colbar(self, colbar):
+            self._colbar = float(colbar)
 
     def __init__(self):
         """Set default values"""
@@ -678,7 +678,7 @@ class ConnectionPattern(object):
 
             # get source and target layer
             self.slayer, self.tlayer = conninfo[:2]
-            lnames = [l.name for l in layers]
+            lnames = [layer.name for layer in layers]
 
             if self.slayer not in lnames:
                 raise Exception('Unknown source layer "%s".' % self.slayer)
@@ -688,8 +688,8 @@ class ConnectionPattern(object):
             # if target layer is singular (extent==(0,0)),
             # we do not create a full object
             self.singular = False
-            for l in layers:
-                if l.name == self.tlayer and l.singular:
+            for layer in layers:
+                if layer.name == self.tlayer and layer.singular:
                     self.singular = True
                     return
 
@@ -1073,7 +1073,7 @@ class ConnectionPattern(object):
         synsep = 0.5 / 20. * patchmax  # distance between synapse types
 
         # find maximal extents of individual patches, horizontal and vertical
-        maxext = max(_flattened([l.ext for l in self._layers]))
+        maxext = max(_flattened([layer.ext for layer in self._layers]))
 
         patchscale = patchmax / float(maxext)  # determines patch size
 
@@ -1368,10 +1368,10 @@ class ConnectionPattern(object):
                    will be sorted in diagram in order of increasing numbers.
         """
         # extract layers to dict mapping name to extent
-        self._layers = [self._LayerProps(l[0], l[3]) for l in lList]
+        self._layers = [self._LayerProps(layer[0], layer[3]) for layer in lList]
 
         # ensure layer names are unique
-        lnames = [l.name for l in self._layers]
+        lnames = [layer.name for layer in self._layers]
         if len(lnames) != len(set(lnames)):
             raise ValueError('Layer names must be unique.')
 

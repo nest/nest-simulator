@@ -105,14 +105,7 @@ Interested in contributing?
 Related projects
 ----------------
 
-Many extensions and open-source tools related to the NEST Simulator are available. In particular, the following packages may be of interest:
-
-- `NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>`_ - a web-based GUI application for NEST Simulator
-- `NESTML <https://nestml.readthedocs.io/en/latest/>`_ - a domain specific language to describe neuron models in NEST
-- `PyNN <http://neuralensemble.org/PyNN/>`_ - a simulator-independent language for building neuronal network models
-- `Elephant <http://neuralensemble.org/elephant/>`_ - a package for the analysis of neurophysiological data, using Neo data structures
-
-You can find more projects by the community, for example by searching GitHub for the topics `"nest-simulator" <https://github.com/topics/nest-simulator>`_ or `"nest-module" <https://github.com/topics/nest-module/>`_.
+* :doc:`Discover related projects here <related_projects>`
 
 License
 -------

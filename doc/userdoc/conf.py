@@ -182,7 +182,16 @@ html_show_copyright = False
 # With this local 'make html' is broken!
 github_doc_root = ''
 
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
+                      'nestml': ('https://nestml.readthedocs.io/en/latest/',
+                      None), 'pynn': ('http://neuralensemble.org/docs/PyNN/',
+                      None), 'elephant': ('https://elephant.readthedocs.io/en/latest/',
+                      None), 'desktop': ('https://nest-desktop.readthedocs.io/en/latest/',
+                      None), 'neuromorph': ('https://electronicvisions.github.io/hbp-sp9-guidebook/',
+                      None), 'arbor': ('https://arbor.readthedocs.io/en/latest/',
+                      None), 'tvb': ('http://docs.thevirtualbrain.org/',
+                      None), 'extmod': ('https://nest-extension-module.readthedocs.io/en/latest/',
+                      None)}
 
 from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 

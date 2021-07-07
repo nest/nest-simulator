@@ -4,6 +4,10 @@ import sys
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 
+# from bs4 import BeautifulSoup
+
+from conf import doc_build_dir
+
 
 class HoverXTooltipDirective(Directive):
     """Directive to add a tooltip.
@@ -172,6 +176,38 @@ class Memoize:
         return self.memo[args]
 
 
+# @Memoize
+# def get_desc_from_glossary(term):
+#     """Parses glossary.rst file.
+
+#     Args:
+#         term (str): the term in the glossary list.
+
+#     Returns:
+#         str: the description of the term in the glossary list.
+#     """
+
+#     try:
+#         with open('/home/enan/dev/nest-simulator/hoverxtooltip_plugin/build/doc/userdoc/html/glossary.html') as f:
+#             file_content = f.read()
+
+#         soup = BeautifulSoup(file_content, 'html.parser')
+
+#         dl = soup.find("dl", {"class": "glossary"})
+#         dt = dl.findAll('dt')
+#         keys = [e.text.strip() for e in dt]
+
+#         dd = dl.findAll('dd')
+#         values = [e.text.strip() for e in dd]
+
+#         glossary_dict = dict(zip(keys, values))
+#         print("myglossary")
+#         print(glossary_dict)
+#         return glossary_dict[term]
+
+#     except Exception as e:
+#         return f'Description Unavailable: {e}'
+
 @Memoize
 def get_desc_from_glossary(term):
     """Parses glossary.rst file.
@@ -184,7 +220,7 @@ def get_desc_from_glossary(term):
     """
 
     try:
-        with open('./userdoc/glossary.rst') as f:
+        with open(str(doc_build_dir) + '/glossary.rst') as f:
             file_content = f.read()
 
         # generate a list of lines from file content.
@@ -208,16 +244,6 @@ def get_desc_from_glossary(term):
 
 
 def setup(app):
-    from pprint import pprint
-
-    for name in dir():
-        print(f">>>>>>>> VARIABLE {name} = ", end="")
-        pprint(vars()[name])
-
-    for name in dir(app):
-        print(">>>> APP ")
-        pprint(getattr(app, name))
-
     """Adds the necessary routines to Sphinx.
 
     Args:

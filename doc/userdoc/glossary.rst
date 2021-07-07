@@ -60,15 +60,6 @@ Common abbreviations in NEST
  vp
    virtual process
 
-Physical units and variable names used for NEST parameters
-----------------------------------------------------------
-
-.. note::
-
-   all parameters listed here are defined as `type double` in NEST.
-
-.. glossary::
-
  **time**
    milliseconds `ms`
 

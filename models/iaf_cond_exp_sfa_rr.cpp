@@ -149,12 +149,11 @@ nest::iaf_cond_exp_sfa_rr::State_::State_( const State_& s )
 
 nest::iaf_cond_exp_sfa_rr::State_& nest::iaf_cond_exp_sfa_rr::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
+  r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
   return *this;
 }
 
@@ -310,13 +309,6 @@ nest::iaf_cond_exp_sfa_rr::~iaf_cond_exp_sfa_rr()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::iaf_cond_exp_sfa_rr::init_state_( const Node& proto )
-{
-  const iaf_cond_exp_sfa_rr& pr = downcast< iaf_cond_exp_sfa_rr >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::iaf_cond_exp_sfa_rr::init_buffers_()

@@ -188,12 +188,11 @@ nest::hh_psc_alpha_clopath::State_::State_( const State_& s )
 
 nest::hh_psc_alpha_clopath::State_& nest::hh_psc_alpha_clopath::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
+  r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
   return *this;
 }
 
@@ -346,13 +345,6 @@ nest::hh_psc_alpha_clopath::~hh_psc_alpha_clopath()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::hh_psc_alpha_clopath::init_state_( const Node& proto )
-{
-  const hh_psc_alpha_clopath& pr = downcast< hh_psc_alpha_clopath >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::hh_psc_alpha_clopath::init_buffers_()

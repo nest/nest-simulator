@@ -384,7 +384,7 @@ template < unsigned int num_channels >
 inline void
 MultiChannelInputBuffer< num_channels >::reset_values_all_channels( const index slot )
 {
-  assert( 0 <= slot and slot < buffer_.size() );
+  assert( slot < buffer_.size() );
   buffer_[ slot ].fill( 0.0 );
 }
 
@@ -399,7 +399,7 @@ template < unsigned int num_channels >
 inline const std::array< double, num_channels >&
 MultiChannelInputBuffer< num_channels >::get_values_all_channels( const index slot ) const
 {
-  assert( 0 <= slot and slot < buffer_.size() );
+  assert( slot < buffer_.size() );
   return buffer_[ slot ];
 }
 

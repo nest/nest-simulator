@@ -102,12 +102,6 @@ public:
   NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
   /**
-   * Set the state (observable dynamic variables) of a node to model defaults.
-   * @see Node::init_state()
-   */
-  void init_state( index );
-
-  /**
    * Return total number of network nodes.
    */
   index size() const;

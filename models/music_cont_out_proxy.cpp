@@ -206,11 +206,6 @@ nest::music_cont_out_proxy::music_cont_out_proxy( const music_cont_out_proxy& n 
 }
 
 void
-nest::music_cont_out_proxy::init_state_( const Node& /* np */ )
-{
-}
-
-void
 nest::music_cont_out_proxy::init_buffers_()
 {
   B_.data_.clear();

@@ -33,7 +33,7 @@
 #include "event.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -43,7 +43,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-A device which generates spikes from an array with spike-times
+Generate spikes from an array with spike-times
 
 Description
 +++++++++++
@@ -176,56 +176,59 @@ Assume we have simulated 10.0 ms and simulation time is thus 10.0 (step
   ---> spike at step 101, spike shifted into the future, and spike at step
         110, not shifted, since it is in the future anyways
 
-Parameters
-++++++++++
+.. include:: ../models/stimulation_device.rst
 
-The following properties can be set in the status dictionary.
+spike_times
+    List of spike times in ms
 
-===================== ============= ==========================================
- origin               ms            Time origin for device timer
- start                ms            Earliest possible time stamp of a spike to
-                                    be emitted
- stop                 ms            Earliest time stamp of a potential spike
-                                    event that is not emitted
- spike_times          ms            Spike-times
- spike_weights        synaptic      Corresponding spike-weights, the unit
-                      weights       depends on the receiver
- spike_multiplicities integer       Multiplicities of spikes, same length
-                                    as spike_times; mostly for debugging
- precise_times        boolean       see above
- allow_offgrid_times  boolean       see above
- shift_now_spikes     boolean       see above
-===================== ============= ==========================================
+spike_weights
+    Corresponding spike-weights, the unit depends on the receiver
+
+spike_multiplicities
+    Multiplicities of spikes, same length as spike_times; mostly for debugging
+
+precise_times
+    See above
+
+allow_offgrid_times
+    See above
+
+shift_now_spikes
+    See above
+
+Set spike times from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The spike times for this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
+update holds just an array of spike times in ms.
 
 Sends
 +++++
 
 SpikeEvent
 
-EndUserDocs */
+See also
+++++++++
 
-class spike_generator : public DeviceNode
+poisson_generator
+
+EndUserDocs
+*/
+class spike_generator : public StimulationDevice
 {
 
 public:
   spike_generator();
   spike_generator( const spike_generator& );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
+  port send_test_event( Node&, rport, synindex, bool ) override;
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_spikes ) override;
 
-  port send_test_event( Node&, rport, synindex, bool );
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -235,28 +238,27 @@ public:
   using Node::event_hook;
   using Node::sends_signal;
 
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   SignalType
-  sends_signal() const
+  sends_signal() const override
   {
     return ALL;
   }
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // ------------------------------------------------------------
 
   struct State_
   {
+    State_();
     size_t position_; //!< index of next spike to deliver
-
-    State_(); //!< Sets default state value
   };
 
   // ------------------------------------------------------------
@@ -307,8 +309,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
-
   Parameters_ P_;
   State_ S_;
 };
@@ -316,7 +316,7 @@ private:
 inline port
 spike_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -336,9 +336,45 @@ inline void
 spike_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulationDevice::get_status( d );
 }
 
-} // namespace
+inline void
+nest::spike_generator::set_status( const DictionaryDatum& d )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // To detect "now" spikes and shift them, we need the origin. In case
+  // it is set in this call, we need to extract it explicitly here.
+  Time origin;
+  double v;
+  if ( updateValue< double >( d, names::origin, v ) )
+  {
+    origin = Time::ms( v );
+  }
+  else
+  {
+    origin = StimulationDevice::get_origin();
+  }
+
+  // throws if BadProperty
+  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time(), this );
+
+  // We now know that ptmp is consistent. We do not write it back
+  // to P_ before we are also sure that the properties to be set
+  // in the parent class are internally consistent.
+  StimulationDevice::set_status( d );
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
+}
+
+inline StimulationDevice::Type
+spike_generator::get_type() const
+{
+  return StimulationDevice::Type::SPIKE_GENERATOR;
+}
+
+} // namespace nest
 
 #endif /* #ifndef SPIKE_GENERATOR_H */

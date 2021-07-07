@@ -1,7 +1,7 @@
-NEST 3.0: Detailed transition guide
-===================================
+Reference guide: NEST 2.x vs NEST 3.0
+=====================================
 
-* This transition guide provides the changes to functions or their output between PyNEST 2.x and PyNEST 3.0
+* This guide shows changes to functions or their output between PyNEST 2.x and PyNEST 3.0
 
 * Functions not mentioned are unchanged
 
@@ -9,13 +9,13 @@ NEST 3.0: Detailed transition guide
 
 * **Please note that NEST 3.0 no longer supports Python 2**
 
-.. contents:: Here you'll find
+.. contents:: On this page you'll find
    :local:
    :depth: 2
 
 .. seealso::
 
-  To see code examples of the key changes, check out our :doc:`nest2_to_nest3_overview` guide.
+  To see code examples of the key changes, check out our :doc:`nest3_features/index`.
 
 .. _setverbosity:
 
@@ -31,6 +31,18 @@ Suppress output on startup
 |                                       |                                  |
 | nest.ll_api.init(["nest", "--quiet"]) |                                  |
 +---------------------------------------+----------------------------------+
+
+Consistent use of allow_offgrid_times
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++---------------------------------------+---------------------------------------+
+| NEST 2.x                              | NEST 3.0                              |
++=======================================+=======================================+
+| nest.Create("spike_generator",        | nest.Create("spike_generator",        |
+| params={"allow_offgrid_spikes"=True}) | params={":green:`allow_offgrid_times`"|
+|                                       | =True})                               |
+|                                       |                                       |
++---------------------------------------+---------------------------------------+
 
 
 .. _node_ref:
@@ -157,8 +169,8 @@ Functions related to setting and getting parameters
 .. _topo_ref:
 
 
-Function related to spatially distributed nodes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Functions related to spatially distributed nodes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Spatial structure, formerly provided by the Topology module, is now integrated into NEST and is no longer
 a separate module.
@@ -287,16 +299,23 @@ divergent                              pairwise_bernoulli
 divergent *and* num_connections        fixed_outdegree
 ====================================== =================================================
 
+.. _sim_ref:
 
 Functions related to simulation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-+-------------------------+--------------------------------------------+
-| NEST 2.x                | NEST 3.0                                   |
-+=========================+============================================+
-| nest.ResetNetwork()     | Use nest.ResetKernel() instead             |
-+-------------------------+--------------------------------------------+
++-------------------------------------+--------------------------------------------------------+
+| NEST 2.x                            | NEST 3.0                                               |
++=====================================+========================================================+
+| nest.ResetNetwork()                 | Use nest.ResetKernel() instead                         |
++-------------------------------------+--------------------------------------------------------+
+| nest.GetKernelStatus('time'),       | nest.GetKernelStatus(':green:`biological_time`'),      |
+| nest.SetKernelStatus({'time': 0.})  | nest.SetKernelStatus({':green:`biological_time`': 0.}) |
++-------------------------------------+--------------------------------------------------------+
 
+   .. note::
+
+     The structural_plasticity_update_interval now reports time in ms instead of number of simulation steps.
 
 Functions related to models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

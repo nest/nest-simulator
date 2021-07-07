@@ -106,11 +106,6 @@ public:
   }
 
 private:
-  void
-  init_state_( Node const& )
-  {
-  } // no state
-
   void init_buffers_();
 
   void

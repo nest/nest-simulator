@@ -203,7 +203,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
   void update( const Time&, const long, const long );
@@ -254,8 +253,7 @@ public:
 
   /**
    * State variables of the model.
-   * @note Copy constructor and assignment operator required because
-   *       of C-style array.
+   * @note Copy constructor required because of C-style array.
    */
   struct State_
   {
@@ -280,6 +278,7 @@ public:
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
+
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;

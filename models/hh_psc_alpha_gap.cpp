@@ -212,12 +212,11 @@ nest::hh_psc_alpha_gap::State_::State_( const State_& s )
 
 nest::hh_psc_alpha_gap::State_& nest::hh_psc_alpha_gap::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
+  r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
   return *this;
 }
 
@@ -364,13 +363,6 @@ nest::hh_psc_alpha_gap::~hh_psc_alpha_gap()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::hh_psc_alpha_gap::init_state_( const Node& proto )
-{
-  const hh_psc_alpha_gap& pr = downcast< hh_psc_alpha_gap >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::hh_psc_alpha_gap::init_buffers_()

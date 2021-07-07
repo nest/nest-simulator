@@ -190,7 +190,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -348,18 +347,6 @@ private:
   get_V_m_() const
   {
     return S_.V_m_ + P_.E_L_;
-  }
-
-  inline double
-  get_weighted_spikes_ex_() const
-  {
-    return V_.weighted_spikes_ex_;
-  }
-
-  inline double
-  get_weighted_spikes_in_() const
-  {
-    return V_.weighted_spikes_in_;
   }
 
   inline double

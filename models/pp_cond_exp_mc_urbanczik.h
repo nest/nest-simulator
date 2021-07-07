@@ -40,6 +40,7 @@
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
@@ -49,9 +50,6 @@
 // Includes from sli:
 #include "dictdatum.h"
 #include "name.h"
-
-// Includes from librandom:
-#include "poisson_randomdev.h"
 
 namespace nest
 {
@@ -107,82 +105,145 @@ public:
   double tau_syn_in[ NCOMP ]; //!< Rise time of inhibitory synaptic conductance in ms
 };
 
+/* BeginUserDocs: neuron, point process, conductance-based
 
-/** @BeginDocumentation
-@ingroup Neurons
-@ingroup pp
-@ingroup cond
+Short description
++++++++++++++++++
 
+Two-compartment point process neuron with conductance-based synapses
 
-Name: pp_cond_exp_mc_urbanczik - Two-compartment point process neuron with conductance-based synapses
-
-Description:
+Description
++++++++++++
 
 pp_cond_exp_mc_urbanczik is an implementation of a two-compartment spiking
 point process neuron with conductance-based synapses as it is used
-in [1]. It is capable of connecting to a Urbanczik synapse.
+in [1]_. It is capable of connecting to an :doc:`Urbanczik synapse
+<urbanczik_synapse>`.
 
-The model has two compartments: soma and dendrite, labeled as s and p, respectively.
-There is one excitatory and one inhibitory conductance-based synapse onto each compartment.
-Each compartment can also receive current input from a current generator, and an external
-(rheobase) current can be set for each compartment.
+The model has two compartments: soma and dendrite, labeled as s and p,
+respectively. Each compartment can receive spike events and current input
+from a current generator. Additionally, an external (rheobase) current can be
+set for each compartment.
 
 Synapses, including those for injection external currents, are addressed through
 the receptor types given in the receptor_types entry of the state dictionary.
 Note that in contrast to the single-compartment models, all
-synaptic weights must be positive numbers!
+synaptic weights must be positive numbers! The distinction between excitatory
+and inhibitory synapses is made explicitly by specifying the receptor type of
+the synapse. For example, receptor_type=dendritic_exc results in an excitatory
+input and receptor_type=dendritic_inh results in an inhibitory input to the
+dendritic compartment.
+
+.. _multicompartment-models:
+
+Multicompartment models and synaptic delays
++++++++++++++++++++++++++++++++++++++++++++
+
+Note that in case of multicompartment models that represent the dendrite
+explicitly, the interpretation of the synaptic delay in NEST requires careful
+consideration. In NEST, the delay is at least one simulation time step and is
+assumed to be located entirely at the postsynaptic side. For point neurons, it
+represents the time it takes for an incoming spike to travel along the
+postsynaptic dendrite before it reaches the soma, see :ref:`panel a)
+<fig-multicompartment>`. Conversely, if the synaptic weight depends on the
+state of the postsynaptic neuron, the delay also represents the time it takes
+for the information on the state to propagate back through the dendrite to the
+synapse.
+
+For multicompartment models in NEST, this means the delay is positioned directly
+behind the incoming synapse, that is, before the first dendritic compartment on the
+postsynaptic side, see :ref:`panel b) <fig-multicompartment>`. Therefore, the
+delay specified in the synapse model does *not* account for any delay that might
+be associated with information traveling through the explicitly modeled
+dendritic compartments.
+
+In the :ref:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic
+weight is driven by an error signal, which is the difference between the firing
+rate of the soma (derived from the somatic spike train :math:`S_{post}`) and the
+dendritic prediction of the firing rate of the soma (derived from the dendritic
+membrane potential :math:`V`). The original publication [1]_ does not assume any
+delay in the interaction between the soma and the dendritic compartment.
+Therefore, we evaluate the firing rate and the dendritic prediction at equal
+time points to calculate the error signal at that time point. Due to the
+synaptic delay :math:`d`, the synapse combines a delayed version of the error
+signal with the presynaptic spike train (:math:`S_{pre}`), see :ref:`panel c)
+<fig-multicompartment>`.
+
+.. _fig-multicompartment::
+
+.. figure:: ../static/img/multicompartment.png
+   :width: 75 %
+
+   a) Two point neurons (red circles *pre* and *post*) connected via a synapse.
+   In NEST, the delay is entirely on the postsynaptic side, and in the case of point
+   neurons, it is interpreted as the dendritic delay. b) Two two-compartment
+   neuron models composed of a somatic (green) and a dendritic (blue)
+   compartment. The soma of the presynaptic neuron is connected to the dendrite
+   of the postsynaptic neuron. The synaptic delay is located behind the synapse
+   and before the dendrite. c) Time trace of the State variables that enter the
+   Urbanczik-Senn rule. Due to the synaptic delay :math:`d`, the presynaptic
+   spike train (top) is combined with a delayed version of the postsynaptic
+   quantities; the dendritic membrane potential (middle) and the somatic spike
+   train (bottom).
 
 
-Parameters:
+Parameters
+++++++++++
 
 The following parameters can be set in the status dictionary. Parameters
 for each compartment are collected in a sub-dictionary; these sub-dictionaries
 are called "soma" and "dendritic", respectively. In the list below,
 these parameters are marked with an asterisk.
 
-\verbatim embed:rst
+============   =====   =====================================================
+ V_m*           mV      Membrane potential
+ E_L*           mV      Leak reversal potential
+ C_m*           pF      Capacity of the membrane
+ E_ex*          mV      Excitatory reversal potential
+ E_in*          mV      Inhibitory reversal potential
+ g_L*           nS      Leak conductance
+ tau_syn_ex*    ms      Rise time of the excitatory synaptic alpha function
+ tau_syn_in*    ms      Rise time of the inhibitory synaptic alpha function
+ I_e*           pA      Constant input current
+ g_sp           nS      Coupling between soma and dendrite
+ g_ps           nS      Coupling between dendrite and soma
+ t_ref          ms      Duration of refractory period
+============   =====   =====================================================
 
-============ ======= ==========================================================
- V_m*        mV      Membrane potential
- E_L*        mV      Leak reversal potential
- C_m*        pF      Capacity of the membrane
- E_ex*       mV      Excitatory reversal potential
- E_in*       mV      Inhibitory reversal potential
- g_L*        nS      Leak conductance
- tau_syn_ex* ms      Rise time of the excitatory synaptic alpha function
- tau_syn_in* ms      Rise time of the inhibitory synaptic alpha function
- I_e*        pA      Constant input current
- g_sp        nS      Coupling between soma and dendrite
- g_ps        nS      Coupling between dendrite and soma
- t_ref       ms      Duration of refractory period
-============ ======= ==========================================================
-\endverbatim
-
-Example:
-See pynest/examples/urbanczik_synapse_example.py.
+See :doc:`../auto_examples/urbanczik_synapse_example` to learn more.
 
 Remarks:
 
-The neuron model uses standard units instead of the unitless quantities used in [1].
+The neuron model uses standard units of NEST instead of the unitless quantities
+used in [1]_.
 
-@note All parameters that occur for both compartments
-are stored as C arrays, with index 0 being soma.
+.. note::
+   All parameters that occur for both compartments are stored as C arrays, with
+   index 0 being soma.
 
-Sends: SpikeEvent
+Sends
++++++
 
-Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent
 
-References:
+Receives
+++++++++
 
-\verbatim embed:rst
-.. [1] R. Urbanczik, W. Senn (2014). Learning by the Dendritic Prediction of Somatic Spiking. Neuron, 81, 521 - 528.
-\endverbatim
+SpikeEvent, CurrentEvent, DataLoggingRequest
 
-Author: Jonas Stapmanns, David Dahmen, Jan Hahne
+References
+++++++++++
 
-SeeAlso: urbanczik_synapse
+.. [1] R. Urbanczik, W. Senn (2014). Learning by the Dendritic Prediction of
+       Somatic Spiking. Neuron, 81, 521 - 528.
 
-*/
+See also
+++++++++
+
+urbanczik_synapse
+
+EndUserDocs */
+
 class pp_cond_exp_mc_urbanczik : public UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >
 {
 
@@ -215,7 +276,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
   void update( Time const&, const long, const long );
@@ -323,8 +383,7 @@ private:
 
   /**
    * State variables of the model.
-   * @note Copy constructor and assignment operator required because
-   *       of C-style array.
+   * @note Copy constructor required because of C-style array.
    */
 public:
   struct State_
@@ -355,6 +414,7 @@ public:
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
+
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
@@ -428,9 +488,9 @@ private:
   {
     int RefractoryCounts_;
 
-    double h_;                                //!< simulation time step in ms
-    librandom::RngPtr rng_;                   //!< random number generator of my own thread
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
+    double h_;                          //!< simulation time step in ms
+    RngPtr rng_;                        //!< random number generator of my own thread
+    poisson_distribution poisson_dist_; //!< poisson distribution
   };
 
   // Access functions for UniversalDataLogger -------------------------------

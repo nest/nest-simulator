@@ -45,12 +45,17 @@
 #ifdef HAVE_RECORDINGBACKEND_ARBOR
 #include "recording_backend_arbor.h"
 #endif
+#ifdef HAVE_MPI
+#include "recording_backend_mpi.h"
+#include "stimulation_backend_mpi.h"
+#endif
 #ifdef HAVE_SIONLIB
 #include "recording_backend_sionlib.h"
 #endif
 
 // Includes from sli:
 #include "dictutils.h"
+#include <string>
 
 namespace nest
 {
@@ -59,11 +64,16 @@ IOManager::IOManager()
   : overwrite_files_( false )
 {
   register_recording_backends_();
+  register_stimulation_backends_();
 }
 
 IOManager::~IOManager()
 {
   for ( auto& it : recording_backends_ )
+  {
+    delete it.second;
+  }
+  for ( auto& it : stimulation_backends_ )
   {
     delete it.second;
   }
@@ -139,6 +149,10 @@ IOManager::initialize()
   {
     it.second->initialize();
   }
+  for ( const auto& it : stimulation_backends_ )
+  {
+    it.second->initialize();
+  }
 }
 
 void
@@ -148,11 +162,20 @@ IOManager::finalize()
   {
     it.second->finalize();
   }
+  for ( const auto& it : stimulation_backends_ )
+  {
+    it.second->finalize();
+  }
 }
 
 void IOManager::change_num_threads( thread )
 {
   for ( const auto& it : recording_backends_ )
+  {
+    it.second->finalize();
+    it.second->initialize();
+  }
+  for ( const auto& it : stimulation_backends_ )
   {
     it.second->finalize();
     it.second->initialize();
@@ -204,12 +227,20 @@ IOManager::pre_run_hook()
   {
     it.second->pre_run_hook();
   }
+  for ( auto& it : stimulation_backends_ )
+  {
+    it.second->pre_run_hook();
+  }
 }
 
 void
 IOManager::post_run_hook()
 {
   for ( auto& it : recording_backends_ )
+  {
+    it.second->post_run_hook();
+  }
+  for ( auto& it : stimulation_backends_ )
   {
     it.second->post_run_hook();
   }
@@ -231,6 +262,10 @@ IOManager::prepare()
   {
     it.second->prepare();
   }
+  for ( auto& it : stimulation_backends_ )
+  {
+    it.second->prepare();
+  }
 }
 
 void
@@ -240,18 +275,29 @@ IOManager::cleanup()
   {
     it.second->cleanup();
   }
+  for ( auto& it : stimulation_backends_ )
+  {
+    it.second->cleanup();
+  }
 }
 
 bool
-IOManager::is_valid_recording_backend( Name backend_name ) const
+IOManager::is_valid_recording_backend( const Name& backend_name ) const
 {
   std::map< Name, RecordingBackend* >::const_iterator backend;
   backend = recording_backends_.find( backend_name );
   return backend != recording_backends_.end();
 }
 
+bool
+IOManager::is_valid_stimulation_backend( const Name& backend_name ) const
+{
+  auto backend = stimulation_backends_.find( backend_name );
+  return backend != stimulation_backends_.end();
+}
+
 void
-IOManager::write( Name backend_name,
+IOManager::write( const Name& backend_name,
   const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& double_values,
@@ -261,7 +307,7 @@ IOManager::write( Name backend_name,
 }
 
 void
-IOManager::enroll_recorder( Name backend_name, const RecordingDevice& device, const DictionaryDatum& params )
+IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& device, const DictionaryDatum& params )
 {
   for ( auto& it : recording_backends_ )
   {
@@ -277,7 +323,38 @@ IOManager::enroll_recorder( Name backend_name, const RecordingDevice& device, co
 }
 
 void
-IOManager::set_recording_value_names( Name backend_name,
+nest::IOManager::enroll_stimulator( const Name& backend_name, StimulationDevice& device, const DictionaryDatum& params )
+{
+
+  if ( not is_valid_stimulation_backend( backend_name ) and not backend_name.toString().empty() )
+  {
+    return;
+  }
+  if ( backend_name.toString().empty() )
+  {
+    for ( auto& it : stimulation_backends_ )
+    {
+      it.second->disenroll( device );
+    }
+  }
+  else
+  {
+    for ( auto& it : stimulation_backends_ )
+    {
+      if ( it.first == backend_name )
+      {
+        ( it.second )->enroll( device, params );
+      }
+      else
+      {
+        it.second->disenroll( device );
+      }
+    }
+  }
+}
+
+void
+IOManager::set_recording_value_names( const Name& backend_name,
   const RecordingDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
@@ -286,19 +363,21 @@ IOManager::set_recording_value_names( Name backend_name,
 }
 
 void
-IOManager::check_recording_backend_device_status( Name backend_name, const DictionaryDatum& params )
+IOManager::check_recording_backend_device_status( const Name& backend_name, const DictionaryDatum& params )
 {
   recording_backends_[ backend_name ]->check_device_status( params );
 }
 
 void
-IOManager::get_recording_backend_device_defaults( Name backend_name, DictionaryDatum& params )
+IOManager::get_recording_backend_device_defaults( const Name& backend_name, DictionaryDatum& params )
 {
   recording_backends_[ backend_name ]->get_device_defaults( params );
 }
 
 void
-IOManager::get_recording_backend_device_status( Name backend_name, const RecordingDevice& device, DictionaryDatum& d )
+IOManager::get_recording_backend_device_status( const Name& backend_name,
+  const RecordingDevice& device,
+  DictionaryDatum& d )
 {
   recording_backends_[ backend_name ]->get_device_status( device, d );
 }
@@ -312,8 +391,19 @@ IOManager::register_recording_backends_()
 #ifdef HAVE_RECORDINGBACKEND_ARBOR
   recording_backends_.insert( std::make_pair( "arbor", new RecordingBackendArbor() ) );
 #endif
+#ifdef HAVE_MPI
+  recording_backends_.insert( std::make_pair( "mpi", new RecordingBackendMPI() ) );
+#endif
 #ifdef HAVE_SIONLIB
   recording_backends_.insert( std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
+#endif
+}
+
+void
+IOManager::register_stimulation_backends_()
+{
+#ifdef HAVE_MPI
+  stimulation_backends_.insert( std::make_pair( "mpi", new StimulationBackendMPI() ) );
 #endif
 }
 

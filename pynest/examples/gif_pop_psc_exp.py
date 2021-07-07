@@ -20,8 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""Population rate model of generalized integrate-and-fire neurons
---------------------------------------------------------------------
+"""
+Population rate model of generalized integrate-and-fire neurons
+---------------------------------------------------------------
 
 This script simulates a finite network of generalized integrate-and-fire
 (GIF) neurons directly on the mesoscopic population level using the effective
@@ -35,7 +36,7 @@ description of the corresponding microscopic network based on the
 NEST model ``gif_psc_exp``.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Schwalger T, Degert M, Gerstner W (2017). Towards a theory of cortical columns: From spiking
        neurons to interacting neural populations of finite size. PLoS Comput Biol.
@@ -121,7 +122,7 @@ nest.ResetKernel()
 nest.SetKernelStatus({'resolution': dt,
                       'print_time': True,
                       'local_num_threads': 1})
-t0 = nest.GetKernelStatus('time')
+t0 = nest.GetKernelStatus('biological_time')
 
 nest_pops = nest.Create('gif_pop_psc_exp', M)
 
@@ -171,8 +172,7 @@ nest_sr = []
 for i in range(M):
     nest_sr.append(nest.Create('spike_recorder'))
     nest_sr[i].time_in_steps = True
-    nest.SetDefaults('static_synapse', {'weight': 1., 'delay': dt})
-    nest.Connect(nest_pops[i], nest_sr[i])
+    nest.Connect(nest_pops[i], nest_sr[i], syn_spec={'weight': 1., 'delay': dt})
 
 ###############################################################################
 # All neurons in a given population will be stimulated with a step input
@@ -191,15 +191,14 @@ for i in range(M):
                             origin=t0,
                             stop=t_end)
     pop_ = nest_pops[i]
-    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1.})
+    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1., 'delay': dt})
 
 ###############################################################################
 # We can now start the simulation:
 
 local_num_threads = 1
 seed = 1
-msd = local_num_threads * seed + 1  # master seed
-nest.SetKernelStatus({'rng_seeds': range(msd, msd + local_num_threads)})
+nest.SetKernelStatus({'rng_seed': seed})
 
 t = np.arange(0., t_end, dt_rec)
 A_N = np.ones((t.size, M)) * np.nan
@@ -247,7 +246,7 @@ plt.xlabel('time [ms]')
 nest.ResetKernel()
 nest.SetKernelStatus(
     {'resolution': dt, 'print_time': True, 'local_num_threads': 1})
-t0 = nest.GetKernelStatus('time')
+t0 = nest.GetKernelStatus('biological_time')
 
 nest_pops = []
 for k in range(M):
@@ -304,7 +303,7 @@ for i, nest_i in enumerate(nest_pops):
     nest_mm_Vm.append(nest.Create('multimeter'))
     nest_mm_Vm[i].set(record_from=['V_m'], interval=dt_rec)
     if Nrecord[i] != 0:
-        nest.Connect(nest_mm_Vm[i], nest_i[:Nrecord[i]])
+        nest.Connect(nest_mm_Vm[i], nest_i[:Nrecord[i]], syn_spec={'weight': 1., 'delay': dt})
 
 ###############################################################################
 # As before, all neurons in a given population will be stimulated with a
@@ -325,15 +324,14 @@ for i in range(M):
                             stop=t_end)
     # optionally a stopping time may be added by: 'stop': sim_T + t0
     pop_ = nest_pops[i]
-    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1.})
+    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1., 'delay': dt})
 
 ###############################################################################
 # We can now start the microscopic simulation:
 
 local_num_threads = 1
 seed = 1
-msd = local_num_threads * seed + 1  # master seed
-nest.SetKernelStatus({'rng_seeds': range(msd, msd + local_num_threads)})
+nest.SetKernelStatus({'rng_seed': seed})
 
 t = np.arange(0., t_end, dt_rec)
 A_N = np.ones((t.size, M)) * np.nan

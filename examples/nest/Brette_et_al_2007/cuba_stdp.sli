@@ -147,19 +147,12 @@ stdp_params
 >> join
 
 % create one single random number generator
-rngdict /knuthlfg get 238 CreateRNG /myrng Set
+% set random number generator seed
+<< /rng_seed 238 >> SetKernelStatus
 
 % normal distribution to draw several quantities from
-myrng rdevdict /normal_clipped get CreateRDV /normal_dv Set
-normal_dv
-<<
- /mu  mean_potential
- /sigma sigma_potential
- /high model_params /V_th get
->> SetStatus
-
-
-
+/normal_param << /normal << /mean mean_potential /std sigma_potential >> >> CreateParameter def
+/v_m_parameter normal_param (-inf) cvd model_params /V_th get redraw def
 
 
 %%% FUNCTION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -242,10 +235,7 @@ def
 
   M_INFO (BuildNetwork)
   (Configuring neuron parameters.) message
-  allNeurons
-  {
-   << /V_m  normal_dv Random cvd >> SetStatus
-  } forall
+  allNeurons << /V_m  v_m_parameter >> SetStatus
 
   % Create custom synapse types with appropriate values for
   % our excitatory and inhibitory connections
@@ -271,7 +261,8 @@ def
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> excitatory population.) message
-  E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model synapse_model /weight << /distribution /normal /mu JE /sigma sigma_w >> >> Connect
+  /weight_dist << /normal << /mean JE /std sigma_w >> >> CreateParameter def
+  E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model synapse_model /weight weight_dist >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> inhibitory population.) message

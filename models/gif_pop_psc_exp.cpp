@@ -262,13 +262,6 @@ nest::gif_pop_psc_exp::gif_pop_psc_exp( const gif_pop_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_pop_psc_exp::init_state_( const Node& proto )
-{
-  const gif_pop_psc_exp& pr = downcast< gif_pop_psc_exp >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::gif_pop_psc_exp::init_buffers_()
 {
   B_.ex_spikes_.clear(); //!< includes resize
@@ -294,7 +287,7 @@ nest::gif_pop_psc_exp::calibrate()
   B_.logger_.init();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
   V_.min_double_ = std::numeric_limits< double >::min();
   V_.R_ = P_.tau_m_ / P_.c_m_; // membrane resistance
 
@@ -405,8 +398,8 @@ nest::gif_pop_psc_exp::draw_poisson( const double n_expect_ )
     // we draw a Bernoulli random number instead of Poisson.
     if ( 1. - ( n_expect_ + 1. ) * std::exp( -n_expect_ ) > V_.min_double_ )
     {
-      V_.poisson_dev_.set_lambda( n_expect_ );
-      n_t_ = V_.poisson_dev_.ldev( V_.rng_ );
+      poisson_distribution::param_type param( n_expect_ );
+      n_t_ = V_.poisson_dist_( V_.rng_, param );
     }
     else
     {
@@ -448,9 +441,10 @@ nest::gif_pop_psc_exp::draw_binomial( const double n_expect_ )
   }
   else
   {
-    V_.bino_dev_.set_p_n( p_bino_, P_.N_ );
+    binomial_distribution::param_type param( P_.N_, p_bino_ );
+    return V_.bino_dist_( V_.rng_, param );
   }
-  return V_.bino_dev_.ldev( V_.rng_ );
+  return V_.bino_dist_( V_.rng_ );
 }
 
 

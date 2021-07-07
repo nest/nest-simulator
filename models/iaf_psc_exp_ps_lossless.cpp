@@ -264,14 +264,6 @@ nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless( const iaf_psc_exp_ps_los
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_exp_ps_lossless::init_state_( const Node& proto )
-{
-  const iaf_psc_exp_ps_lossless& pr = downcast< iaf_psc_exp_ps_lossless >( proto );
-
-  S_ = pr.S_;
-}
-
-void
 nest::iaf_psc_exp_ps_lossless::init_buffers_()
 {
   B_.events_.resize();

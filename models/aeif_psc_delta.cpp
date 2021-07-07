@@ -131,7 +131,8 @@ nest::aeif_psc_delta::Parameters_::Parameters_()
 }
 
 nest::aeif_psc_delta::State_::State_( const Parameters_& p )
-  : r_( 0 )
+  : refr_spikes_buffer_( 0.0 )
+  , r_( 0 )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
@@ -141,7 +142,8 @@ nest::aeif_psc_delta::State_::State_( const Parameters_& p )
 }
 
 nest::aeif_psc_delta::State_::State_( const State_& s )
-  : r_( s.r_ )
+  : refr_spikes_buffer_( s.refr_spikes_buffer_ )
+  , r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
@@ -151,13 +153,12 @@ nest::aeif_psc_delta::State_::State_( const State_& s )
 
 nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
-
+  refr_spikes_buffer_ = s.refr_spikes_buffer_;
+  r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
   return *this;
 }
 
@@ -241,7 +242,7 @@ nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Ensure that t_ref >= 0" );
+    throw BadProperty( "Refractory time cannot be negative." );
   }
 
   if ( tau_w <= 0 )
@@ -270,6 +271,7 @@ nest::aeif_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&,
   updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
   updateValueParam< double >( d, names::w, y_[ W ], node );
 }
+
 
 nest::aeif_psc_delta::Buffers_::Buffers_( aeif_psc_delta& n )
   : logger_( n )
@@ -332,13 +334,6 @@ nest::aeif_psc_delta::~aeif_psc_delta()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::aeif_psc_delta::init_state_( const Node& proto )
-{
-  const aeif_psc_delta& pr = downcast< aeif_psc_delta >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::aeif_psc_delta::init_buffers_()

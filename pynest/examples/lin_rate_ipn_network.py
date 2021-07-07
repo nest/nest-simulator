@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Network of linear rate neurons
------------------------------------
+"""
+Network of linear rate neurons
+------------------------------
 
 This script simulates an excitatory and an inhibitory population
 of ``lin_rate_ipn`` neurons with delayed excitatory and instantaneous
@@ -44,9 +45,9 @@ T = 100.0  # Simulation time in ms
 # Definition of the number of neurons
 
 order = 50
-NE = int(4 * order)  # number of excitatory neurons
-NI = int(1 * order)  # number of inhibitory neurons
-N = int(NE+NI)       # total number of neurons
+NE = int(4 * order)    # number of excitatory neurons
+NI = int(1 * order)    # number of inhibitory neurons
+N = int(NE + NI)       # total number of neurons
 
 ###############################################################################
 # Definition of the connections
@@ -91,15 +92,10 @@ nest.SetKernelStatus({"resolution": dt, "use_wfr": False,
 print("Building network")
 
 ###############################################################################
-# Configuration of the neuron model using ``SetDefaults``.
-
-nest.SetDefaults(neuron_model, neuron_params)
-
-###############################################################################
 # Creation of the nodes using ``Create``.
 
-n_e = nest.Create(neuron_model, NE)
-n_i = nest.Create(neuron_model, NI)
+n_e = nest.Create(neuron_model, NE, neuron_params)
+n_i = nest.Create(neuron_model, NI, neuron_params)
 
 
 ################################################################################
@@ -132,7 +128,7 @@ nest.Connect(n_i, n_e, conn_e, syn_i)
 ###############################################################################
 # Connect recording device to rate units
 
-nest.Connect(mm, n_e+n_i)
+nest.Connect(mm, n_e + n_i)
 
 ###############################################################################
 # Simulate the network
@@ -143,9 +139,18 @@ nest.Simulate(T)
 # Plot rates of one excitatory and one inhibitory neuron
 
 data = mm.events
-rate_ex = data['rate'][numpy.where(data['senders'] == n_e[0].global_id)]
-rate_in = data['rate'][numpy.where(data['senders'] == n_i[0].global_id)]
-times = data['times'][numpy.where(data['senders'] == n_e[0].global_id)]
+senders = data['senders']
+rate = data['rate']
+times = data['times']
+
+ne_0_id = n_e[0].global_id
+ni_0_id = n_i[0].global_id
+where_sender_is_ne_0 = numpy.where(senders == ne_0_id)
+where_sender_is_ni_0 = numpy.where(senders == ni_0_id)
+
+rate_ex = rate[where_sender_is_ne_0]
+rate_in = rate[where_sender_is_ni_0]
+times = times[where_sender_is_ne_0]
 
 plt.figure()
 plt.plot(times, rate_ex, label='excitatory')

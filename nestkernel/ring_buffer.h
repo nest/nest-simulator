@@ -24,6 +24,7 @@
 #define RING_BUFFER_H
 
 // C++ includes:
+#include <array>
 #include <list>
 #include <vector>
 
@@ -351,7 +352,65 @@ ListRingBuffer::get_index_( const delay d ) const
   assert( ( size_t ) idx < buffer_.size() );
   return idx;
 }
+
+
+template < unsigned int num_channels >
+class MultiChannelInputBuffer
+{
+public:
+  MultiChannelInputBuffer();
+
+  void add_value( const index slot, const index channel, const double value );
+
+  const std::array< double, num_channels >& get_values_all_channels( const index slot ) const;
+  void reset_values_all_channels( const index slot );
+
+  void clear();
+
+  void resize();
+
+  size_t size() const;
+
+private:
+  /**
+   * Buffered data stored in a vector of arrays of double values
+   * 1st dimension: ring buffer slot (index into outer vector)
+   * 2nd dimension: channel (index into inner array)
+   */
+  std::vector< std::array< double, num_channels > > buffer_;
+};
+
+template < unsigned int num_channels >
+inline void
+MultiChannelInputBuffer< num_channels >::reset_values_all_channels( const index slot )
+{
+  assert( slot < buffer_.size() );
+  buffer_[ slot ].fill( 0.0 );
 }
+
+template < unsigned int num_channels >
+inline void
+MultiChannelInputBuffer< num_channels >::add_value( const index slot, const index channel, const double value )
+{
+  buffer_[ slot ][ channel ] += value;
+}
+
+template < unsigned int num_channels >
+inline const std::array< double, num_channels >&
+MultiChannelInputBuffer< num_channels >::get_values_all_channels( const index slot ) const
+{
+  assert( slot < buffer_.size() );
+  return buffer_[ slot ];
+}
+
+template < unsigned int num_channels >
+inline size_t
+MultiChannelInputBuffer< num_channels >::size() const
+{
+  return buffer_.size();
+}
+
+} // namespace nest
 
 
 #endif

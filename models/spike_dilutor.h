@@ -29,7 +29,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -41,18 +41,11 @@ Short description
 
 Repeat incoming spikes with a certain probability
 
-Device name
-+++++++++++
-
-spike_dilutor
-
 Description
 +++++++++++
 
 The device repeats incoming spikes with a certain probability.
 Targets will receive diffenrent spike trains.
-
-Remarks:
 
 In parallel simulations, a copy of the device is present on each process
 and spikes are collected only from local sources.
@@ -60,11 +53,8 @@ and spikes are collected only from local sources.
 Parameters
 ++++++++++
 
-The following parameters appear in the element's status dictionary:
-
-======== ======  ================
- p_copy  real    Copy probability
-======== ======  ================
+p_copy
+    Copy probability
 
 Sends
 +++++
@@ -86,18 +76,18 @@ public:
   spike_dilutor( const spike_dilutor& rhs );
 
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return false;
   }
   bool
-  local_receiver() const
+  local_receiver() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::stimulator;
   }
@@ -106,21 +96,21 @@ public:
   using Node::handle;
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool );
-  port handles_test_event( SpikeEvent&, rport );
-  void handle( SpikeEvent& );
+  port send_test_event( Node&, rport, synindex, bool ) override;
+  port handles_test_event( SpikeEvent&, rport ) override;
+  void handle( SpikeEvent& ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   // ------------------------------------------------------------
 
@@ -145,7 +135,14 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
+  class DilutorStimulationDevice : public StimulationDevice
+  {
+    StimulationDevice::Type
+    get_type() const override
+    {
+      return StimulationDevice::Type::SPIKE_GENERATOR;
+    }
+  } device_;
   Parameters_ P_;
   Buffers_ B_;
 };

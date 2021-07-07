@@ -26,7 +26,7 @@
 # a local static code analysis.
 #
 # NOTE: This shell script is tightly coupled to Python script
-#       'extras/parse_travis_log.py'.
+#       'extras/parse_build_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) have effects on
 #       the build/test-log parsing process.
 #
@@ -60,8 +60,9 @@ PEP8_MAX_LINE_LENGTH=120
 # Constants
 typeset -i MAX_CPPCHECK_MSG_COUNT=10
 
-# Drop files that should not be checked (space-separated list).
-FILES_TO_IGNORE="libnestutil/compose.hpp librandom/knuthlfg.h librandom/knuthlfg.cpp"
+# Find directories that should not be checked. List root dirs in space-separated list.
+ROOT_DIRS_TO_IGNORE="thirdparty"
+DIRS_TO_IGNORE=$(for dir in ${ROOT_DIRS_TO_IGNORE}; do find ${dir} -type d; done)
 
 # Print a message.
 # The format of the message depends on whether the script is executed on Travis CI or runs local.
@@ -122,13 +123,14 @@ print_msg "MSGBLD1070: " "Running check for forbidden type usage"
 forbidden_types_errors=`bash extras/check_forbidden_types.sh`
 
 
-# Perfom static code analysis.
+# Perform static code analysis.
 c_files_with_errors=""
 python_files_with_errors=""
 for f in $FILE_NAMES; do
 
-  if [[ $FILES_TO_IGNORE =~ .*$f.* ]]; then
-    print_msg "MSGBLD0110: " "$f is explicitly ignored."
+  # Have to add spaces to make space-separation work
+  if [[ " $DIRS_TO_IGNORE " =~ .*[[:space:]]${f%/*}[[:space:]].* ]]; then
+    print_msg "MSGBLD0110: " "$f is in a directory that is explicitly ignored."
     continue
   fi
   if [ ! -f "$f" ]; then

@@ -27,7 +27,7 @@ Name: testsuite::issue-1242
 Synopsis: (issue-1242) run -> NEST exits if test fails
 
 Description:
-Tests that a connection from a node without proxies to 
+Tests that a connection from a node without proxies to
 a node without proxies that has global targets throws an error
 (instead of failing silently or resulting in inconsistent results).
 
@@ -46,7 +46,7 @@ M_ERROR setverbosity
 
   /spike_generator Create /sg Set
   /volume_transmitter Create /vt Set
-  [sg] [vt] Connect
+  sg vt Connect
 }
 fail_or_die
 

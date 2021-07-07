@@ -2194,9 +2194,7 @@ init_slicontrol( SLIInterpreter* i )
   i->def( i->false_name, BoolDatum( false ) );
   i->def( i->mark_name, LiteralDatum( i->mark_name ) );
   i->def( Name( "<<" ), LiteralDatum( i->mark_name ) );
-#ifdef PS_ARRAYS
   i->def( Name( "[" ), LiteralDatum( i->mark_name ) );
-#endif
   i->def( i->istopped_name, BoolDatum( false ) );
 
   i->def( i->newerror_name, BoolDatum( false ) );

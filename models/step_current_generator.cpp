@@ -27,15 +27,10 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from libnestutil:
-#include "dict_util.h"
-
 // Includes from sli:
 #include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -109,9 +104,9 @@ nest::step_current_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   std::vector< double >* times_ms = new std::vector< double >();
   times_ms->reserve( amp_time_stamps_.size() );
-  for ( std::vector< Time >::const_iterator it = amp_time_stamps_.begin(); it != amp_time_stamps_.end(); ++it )
+  for ( auto amp_time_stamp : amp_time_stamps_ )
   {
-    times_ms->push_back( it->get_ms() );
+    times_ms->push_back( amp_time_stamp.get_ms() );
   }
   ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ names::amplitude_values ] = DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
@@ -224,8 +219,7 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffer
  * ---------------------------------------------------------------- */
 
 nest::step_current_generator::step_current_generator()
-  : DeviceNode()
-  , device_()
+  : StimulationDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -234,8 +228,7 @@ nest::step_current_generator::step_current_generator()
 }
 
 nest::step_current_generator::step_current_generator( const step_current_generator& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+  : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -248,17 +241,15 @@ nest::step_current_generator::step_current_generator( const step_current_generat
  * ---------------------------------------------------------------- */
 
 void
-nest::step_current_generator::init_state_( const Node& proto )
+nest::step_current_generator::init_state_()
 {
-  const step_current_generator& pr = downcast< step_current_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  StimulationDevice::init_state();
 }
 
 void
 nest::step_current_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulationDevice::init_buffers();
   B_.logger_.reset();
 
   B_.idx_ = 0;
@@ -269,8 +260,7 @@ void
 nest::step_current_generator::calibrate()
 {
   B_.logger_.init();
-
-  device_.calibrate();
+  StimulationDevice::calibrate();
 }
 
 
@@ -312,7 +302,7 @@ nest::step_current_generator::update( Time const& origin, const long from, const
     }
 
     // but send only if active
-    if ( device_.is_active( Time::step( curr_time ) ) )
+    if ( StimulationDevice::is_active( Time::step( curr_time ) ) )
     {
       CurrentEvent ce;
       ce.set_current( B_.amp_ );
@@ -327,4 +317,48 @@ void
 nest::step_current_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+void
+nest::step_current_generator::set_data_from_stimulation_backend( std::vector< double >& time_amplitude )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  assert( time_amplitude.size() % 2 == 0 );
+
+  // For the input backend
+  if ( not time_amplitude.empty() )
+  {
+    if ( time_amplitude.size() % 2 != 0 )
+    {
+      throw BadParameterValue(
+        "The size of the data for the step_current_generator needs to be even [(time,amplitude) pairs] " );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    std::vector< double > times_ms;
+    std::vector< double > amplitudes_pA;
+    const size_t n_step = P_.amp_time_stamps_.size();
+    times_ms.reserve( n_step + time_amplitude.size() / 2 );
+    amplitudes_pA.reserve( n_step + time_amplitude.size() / 2 );
+    for ( size_t n = 0; n < n_step; ++n )
+    {
+      times_ms.push_back( P_.amp_time_stamps_[ n ].get_ms() );
+      amplitudes_pA.push_back( P_.amp_values_[ n ] );
+    }
+    for ( size_t n = 0; n < time_amplitude.size() / 2; ++n )
+    {
+      times_ms.push_back( time_amplitude[ n * 2 ] );
+      amplitudes_pA.push_back( time_amplitude[ n * 2 + 1 ] );
+    }
+    ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
+    ( *d )[ names::amplitude_values ] = DoubleVectorDatum( amplitudes_pA );
+
+    ptmp.set( d, B_, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

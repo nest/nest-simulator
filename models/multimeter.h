@@ -78,8 +78,8 @@ using the ``multimeter`` parameter `interval`. The default value of
    nest.SetStatus(mm, 'interval': 0.1})
 
 The recording interval must be greater than or equal to the
-:doc:`simulation resolution <running_simulations>`, which defaults to
-0.1 ms.
+:ref:`simulation resolution <simulation_resolution>`, which defaults
+to 0.1 ms.
 
 .. warning::
 
@@ -96,7 +96,7 @@ it should record from by using the standard ``Connect`` routine.
     nest.Connect(mm, neurons)
 
 To learn more about possible connection patterns and additional
-options when using ``Connect``, see the guide on :doc:`connection
+options when using ``Connect``, see the guide on :ref:`connection
 management <connection_management>`.
 
 The above call to ``Connect`` would fail if the neurons would not
@@ -109,6 +109,20 @@ fail if carried out in the wrong direction, i.e., trying to connect the
    A pre-configured  ``multimeter`` is available under the name ``voltmeter``.  Its
    ``record_from`` property is already set to record the variable ``V_m``
    from the neurons it is connected to.
+
+.. include:: ../models/recording_device.rst
+
+record_from
+    A list (default: `[]`) of parameters and state variables to sample
+    from the nodes, the multimeter is connected to. Potential
+    recordables are given in the corresponding model documentation.
+
+interval
+    A float (default: `1.0`) specifying the interval in ms, at which
+    data is collected from the nodes, the multimeter is connected to.
+
+See also
+++++++++
 
 EndUserDocs */
 

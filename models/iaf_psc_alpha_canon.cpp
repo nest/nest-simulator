@@ -252,13 +252,6 @@ nest::iaf_psc_alpha_canon::iaf_psc_alpha_canon( const iaf_psc_alpha_canon& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_alpha_canon::init_state_( const Node& proto )
-{
-  const iaf_psc_alpha_canon& pr = downcast< iaf_psc_alpha_canon >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::iaf_psc_alpha_canon::init_buffers_()
 {
   B_.events_.resize();

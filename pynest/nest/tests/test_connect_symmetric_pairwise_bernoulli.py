@@ -40,7 +40,7 @@ class TestSymmetricPairwiseBernoulli(TestParams):
     conn_dict = {'rule': rule, 'p': p, 'allow_multapses': True,
                  'allow_autapses': False, 'make_symmetric': True}
     # Critical values and number of iterations of two level test
-    stat_dict = {'alpha2': 0.05, 'n_runs': 20}
+    stat_dict = {'alpha2': 0.05, 'n_runs': 300}
 
     def testStatistics(self):
         for fan in ['in', 'out']:
@@ -49,7 +49,7 @@ class TestSymmetricPairwiseBernoulli(TestParams):
 
             pvalues = []
             for i in range(self.stat_dict['n_runs']):
-                hf.reset_seed(i, self.nr_threads)
+                hf.reset_seed(i+1, self.nr_threads)
                 self.setUpNetwork(conn_dict=self.conn_dict,
                                   N1=self.N_s, N2=self.N_t)
                 degrees = hf.get_degrees(fan, self.pop1, self.pop2)
@@ -62,7 +62,7 @@ class TestSymmetricPairwiseBernoulli(TestParams):
                 hf.mpi_barrier()
             if degrees is not None:
                 ks, p = scipy.stats.kstest(pvalues, 'uniform')
-                self.assertTrue(p > self.stat_dict['alpha2'])
+                self.assertGreater(p, self.stat_dict['alpha2'])
 
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()

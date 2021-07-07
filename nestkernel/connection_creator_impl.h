@@ -28,9 +28,6 @@
 // C++ includes:
 #include <vector>
 
-// Includes from librandom:
-#include "binomial_randomdev.h"
-
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "nest.h"
@@ -80,7 +77,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
   thread tgt_thread,
   const Layer< D >& source )
 {
-  librandom::RngPtr rng = get_vp_rng( tgt_thread );
+  RngPtr rng = get_vp_specific_rng( tgt_thread );
 
   // We create a source pos vector here that can be updated with the
   // source position. This is done to avoid creating and destroying
@@ -392,7 +389,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
 
       thread target_thread = tgt->get_thread();
-      librandom::RngPtr rng = get_vp_rng( target_thread );
+      RngPtr rng = get_vp_specific_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
       // We create a source pos vector here that can be updated with the
@@ -521,7 +518,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       index target_id = ( *tgt_it ).node_id;
       Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
       thread target_thread = tgt->get_thread();
-      librandom::RngPtr rng = get_vp_rng( target_thread );
+      RngPtr rng = get_vp_specific_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
       std::vector< double > source_pos_vector( D );
@@ -697,7 +694,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     std::vector< double > probabilities;
 
     // Find potential targets and probabilities
-    librandom::RngPtr rng = get_global_rng();
+    RngPtr grng = get_rank_synced_rng();
     target_pos_node_id_pairs.resize( std::distance( masked_target.begin( source_pos ), masked_target_end ) );
     std::copy( masked_target.begin( source_pos ), masked_target_end, target_pos_node_id_pairs.begin() );
 
@@ -708,7 +705,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       {
         // TODO: Why is probability calculated in source layer, but weight and delay in target layer?
         target_pos_node_id_pair.first.get_vector( target_pos_vector );
-        probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source ) );
+        probabilities.push_back( kernel_->value( grng, source_pos_vector, target_pos_vector, source ) );
       }
     }
     else
@@ -734,7 +731,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     // Draw `number_of_connections_` targets
     for ( long i = 0; i < ( long ) number_of_connections_; ++i )
     {
-      index random_id = lottery.get_random_id( get_global_rng() );
+      index random_id = lottery.get_random_id( get_rank_synced_rng() );
       if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
       {
         --i;
@@ -755,8 +752,8 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       std::vector< double > rng_delay_vec;
       for ( size_t indx = 0; indx < weight_.size(); ++indx )
       {
-        rng_weight_vec.push_back( weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, target ) );
-        rng_delay_vec.push_back( delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, target ) );
+        rng_weight_vec.push_back( weight_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target ) );
+        rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target ) );
       }
 
       // We bail out for non-local neurons only now after all possible

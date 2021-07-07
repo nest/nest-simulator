@@ -24,9 +24,11 @@ Functions for simulation control
 """
 
 from contextlib import contextmanager
+import warnings
 
 from ..ll_api import *
 from .hl_api_helper import *
+from .hl_api_parallel_computing import Rank
 
 __all__ = [
     'Cleanup',
@@ -82,8 +84,14 @@ def Run(t):
     `Prepare` must be called before `Run` to calibrate the system, and
     `Cleanup` must be called after `Run` to close files, cleanup handles, and
     so on. After `Cleanup`, `Prepare` can and must be called before more `Run`
-    calls. Any calls to `SetStatus` between `Prepare` and `Cleanup` have
-    undefined behaviour.
+    calls.
+
+    Be careful about modifying the network or neurons between `Prepare` and `Cleanup`
+    calls. In particular, do not call `Create`, `Connect`, or `SetKernelStatus`.
+    Calling `SetStatus` to change membrane potential `V_m` of neurons or synaptic
+    weights (but not delays!) will in most cases work as expected, while changing
+    membrane or synaptic times constants will not work correctly. If in doubt, assume
+    that changes may cause undefined behavior and check these thoroughly.
 
     See Also
     --------
@@ -137,8 +145,19 @@ def RunManager():
     ::
 
         with RunManager():
-            for i in range(10):
-                Run()
+            for _ in range(10):
+                Run(100)
+                # extract results
+
+    Notes
+    -----
+
+    Be careful about modifying the network or neurons inside the `RunManager` context.
+    In particular, do not call `Create`, `Connect`, or `SetKernelStatus`. Calling `SetStatus`
+    to change membrane potential `V_m` of neurons or synaptic weights (but not delays!)
+    will in most cases work as expected, while changing membrane or synaptic times
+    constants will not work correctly. If in doubt, assume that changes may cause
+    undefined behavior and check these thoroughly.
 
     See Also
     --------
@@ -179,7 +198,7 @@ def ResetKernel():
 
 @check_stack
 def SetKernelStatus(params):
-    """Set parameters for the simulation kernel.
+    r"""Set parameters for the simulation kernel.
 
     Parameters
     ----------
@@ -188,15 +207,15 @@ def SetKernelStatus(params):
         Dictionary of parameters to set.
 
 
-    Params dictionary
+    **Note**
 
-    Some of the keywords in the kernel status dictionary are internally
-    calculated, and cannot be defined by the user. These are flagged as
-    `read only` in the parameter list. Use GetKernelStatus to access their
-    assigned values.
+    All NEST kernel parameters are described below, grouped by topic.
+    Some of them only provide information about the kernel status and
+    cannot be set by the user. These are marked as *read only* and can
+    be accessed using ``GetKernelStatus``.
 
 
-    Time and resolution
+    **Time and resolution**
 
     Parameters
     ----------
@@ -223,7 +242,21 @@ def SetKernelStatus(params):
         The smallest representable time value
 
 
-    Parallel processing
+    **Random number generators**
+
+    Parameters
+    ----------
+
+    rng_types : list, read only
+        Names of random number generator types available.
+    rng_type : str
+        Name of random number generator type used by NEST.
+    rng_seed : int
+        Seed value used as base for seeding NEST random number generators
+        (:math:`1 \leq s \leq 2^{32}-1`).
+
+
+    **Parallel processing**
 
     Parameters
     ----------
@@ -234,18 +267,11 @@ def SetKernelStatus(params):
         The local number of threads
     num_processes : int, read only
         The number of MPI processes
-    off_grid_spiking : bool
+    off_grid_spiking : bool, read only
         Whether to transmit precise spike times in MPI communication
-    grng_seed : int
-        Seed for global random number generator used synchronously by all
-        virtual processes to create, e.g., fixed fan-out connections.
-    rng_seeds : array
-        Seeds for the per-virtual-process random number generators used for
-        most purposes. Array with one integer per virtual process, all must
-        be unique and differ from grng_seed.
 
 
-    MPI buffers
+    **MPI buffers**
 
     Parameters
     ----------
@@ -273,7 +299,7 @@ def SetKernelStatus(params):
         Maximal size of MPI buffers for communication of connections
 
 
-    Waveform relaxation method (wfr)
+    **Gap junctions and rate models (waveform relaxation method)**
 
     Parameters
     ----------
@@ -290,7 +316,7 @@ def SetKernelStatus(params):
         Interpolation order of polynomial used in wfr iterations
 
 
-    Synapses
+    **Synapses**
 
     Parameters
     ----------
@@ -310,11 +336,16 @@ def SetKernelStatus(params):
         Defines the time interval in ms at which the structural plasticity
         manager will make changes in the structure of the network (creation
         and deletion of plastic synapses)
+    use_compressed_spikes : bool
+        Whether to use spike compression; if a neuron has targets on
+        multiple threads of a process, this switch makes sure that only
+        a single packet is sent to the process instead of one packet per
+        target thread; requires sort_connections_by_source = true
 
 
-    Output
+    **Output**
 
-    Returns
+    Parameters
     -------
 
     data_path : str
@@ -331,21 +362,31 @@ def SetKernelStatus(params):
     num_connections : int, read only, local only
         The number of connections in the network
     local_spike_counter : int, read only
-        Number of spikes fired by neurons on a given MPI rank since NEST was
-        started or the last ResetKernel. Only spikes from "normal" neurons
-        (neuron models with proxies) are counted, not spikes generated by
-        devices such as poisson_generator.
+        Number of spikes fired by neurons on a given MPI rank during the most
+        recent call to :py:func:`.Simulate`. Only spikes from "normal" neurons
+        are counted, not spikes generated by devices such as ``poisson_generator``.
+    recording_backends : list of str
+        List of available backends for recording devices
 
 
-    Miscellaneous
+    **Miscellaneous**
 
-    Other Parameters
-    ----------------
+    Parameters
+    ----------
 
     dict_miss_is_error : bool
         Whether missed dictionary entries are treated as errors
     keep_source_table : bool
         Whether to keep source table after connection setup is complete
+    min_update_time: double, read only
+        Shortest wall-clock time measured so far for a full update step [seconds].
+    max_update_time: double, read only
+        Longest wall-clock time measured so far for a full update step [seconds].
+    update_time_limit: double
+        Maximum wall-clock time for one full update step in seconds, default +inf.
+        This can be used to terminate simulations that slow down significantly.
+        Simulations may still get stuck if the slowdown occurs within a single update
+        step.
 
     See Also
     --------
@@ -353,9 +394,45 @@ def SetKernelStatus(params):
     GetKernelStatus
 
     """
+    # Resolve if missing entries should raise errors
+    raise_errors = params.get('dict_miss_is_error')
+    if raise_errors is None:
+        raise_errors = GetKernelStatus('dict_miss_is_error')
+
+    # Check validity of passed parameters
+    keys = list(params.keys())
+    for key in keys:
+        readonly = _sks_params.get(key)
+        msg = None
+        if readonly is None:
+            # If the parameter is not in the docstring
+            msg = f'`{key}` is not a valid kernel parameter, ' + \
+                  'valid parameters are: ' + \
+                  ', '.join(f"'{p}'" for p in _sks_params.keys())
+        elif readonly:
+            # If the parameter is tagged as read only
+            msg = f'`{key}` is a read only parameter and cannot ' + \
+                  'be defined using SetKernelStatus'
+        # Raise error or warn the user
+        if msg is not None:
+            if raise_errors:
+                raise ValueError(msg)
+            else:
+                warnings.warn(msg + f' \n`{key}` has been ignored')
+                del params[key]
 
     sps(params)
     sr('SetKernelStatus')
+
+
+# Parse the `SetKernelStatus` docstring to obtain all valid and readonly params
+doc_lines = SetKernelStatus.__doc__.split('\n')
+# Get the lines describing parameters
+param_lines = (line.strip() for line in doc_lines if ' : ' in line)
+# Exclude the first parameter `params`.
+next(param_lines)
+_sks_params = {ln.split(" :")[0]: "read only" in ln for ln in param_lines}
+del doc_lines, param_lines
 
 
 @check_stack

@@ -55,18 +55,19 @@ set ( nestkernel_sources
       parameter.h parameter.cpp
       per_thread_bool_indicator.h per_thread_bool_indicator.cpp
       proxynode.h proxynode.cpp
+      random_generators.h
       recording_device.h recording_device.cpp
       pseudo_recording_device.h
-      ring_buffer.h ring_buffer.cpp
+      ring_buffer.h ring_buffer_impl.h ring_buffer.cpp
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
-      stimulating_device.h
+      stimulation_device.h stimulation_device.cpp
       target_identifier.h
       sparse_node_array.h sparse_node_array.cpp
       conn_parameter.h conn_parameter.cpp
       conn_builder.h conn_builder_impl.h conn_builder.cpp
       conn_builder_factory.h
-      conn_builder_conngen.h conn_builder_conngen.cpp    
+      conn_builder_conngen.h conn_builder_conngen.cpp
       music_event_handler.h music_event_handler.cpp
       music_rate_in_handler.h music_rate_in_handler.cpp
       music_manager.cpp music_manager.h
@@ -83,7 +84,7 @@ set ( nestkernel_sources
       connection_manager.h connection_manager_impl.h connection_manager.cpp
       sp_manager.h sp_manager_impl.h sp_manager.cpp
       delay_checker.h delay_checker.cpp
-      rng_manager.h rng_manager.cpp
+      random_manager.h random_manager.cpp
       event_delivery_manager.h event_delivery_manager_impl.h
       event_delivery_manager.cpp
       node_manager.h node_manager.cpp
@@ -112,7 +113,9 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       vose.h vose.cpp
+      stimulation_backend.h
       )
+
 
 if ( HAVE_SIONLIB )
   set( nestkernel_sources
@@ -123,21 +126,30 @@ endif ()
 
 if ( HAVE_RECORDINGBACKEND_ARBOR )
   set( nestkernel_sources
-       ${nestkernel_sources}
-       recording_backend_arbor.h recording_backend_arbor.cpp
-       )
+    ${nestkernel_sources}
+    recording_backend_arbor.h recording_backend_arbor.cpp
+  )
 endif ()
+
+if ( HAVE_MPI )
+  set( nestkernel_sources
+    ${nestkernel_sources}
+    recording_backend_mpi.h recording_backend_mpi.cpp
+    stimulation_backend_mpi.h stimulation_backend_mpi.cpp
+  )
+endif ()
+
 
 add_library( nestkernel ${nestkernel_sources} )
 target_link_libraries( nestkernel
-    nestutil random sli_lib
+    nestutil sli_lib
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}
     )
 
 target_include_directories( nestkernel PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/nestkernel/spatial

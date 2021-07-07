@@ -21,7 +21,7 @@
 
 """
 One neuron with noise
-----------------------
+---------------------
 
 This script simulates a neuron with input from the ``poisson_generator``, and
 records the neuron's membrane potential.
@@ -39,6 +39,7 @@ records the neuron's membrane potential.
 
 import nest
 import nest.voltage_trace
+import matplotlib.pyplot as plt
 
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
@@ -59,7 +60,8 @@ voltmeter = nest.Create("voltmeter")
 # not need to set parameters for the neuron and the voltmeter, since they have
 # satisfactory defaults.
 
-noise.set([{"rate": 80000.0}, {"rate": 15000.0}])
+noise[0].rate = 80000.0
+noise[1].rate = 15000.0
 
 ###############################################################################
 # Fourth, the neuron is connected to the ``poisson_generator`` and to the
@@ -79,4 +81,4 @@ nest.Simulate(1000.0)
 # time.
 
 nest.voltage_trace.from_device(voltmeter)
-nest.voltage_trace.show()
+plt.show()

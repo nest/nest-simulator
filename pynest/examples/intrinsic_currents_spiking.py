@@ -20,8 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-"""Intrinsic currents spiking
--------------------------------
+"""
+Intrinsic currents spiking
+--------------------------
 
 This example illustrates a neuron receiving spiking input through
 several different receptors (AMPA, NMDA, GABA_A, GABA_B), provoking
@@ -34,14 +35,14 @@ which are connected to the AMPA, NMDA, GABA_A, and GABA_B receptors,
 respectively.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Hill and Tononi (2005) Modeling sleep and wakefulness in the
        thalamocortical system. J Neurophysiol 93:1671
        http://dx.doi.org/10.1152/jn.00915.2004.
 
 See Also
-~~~~~~~~~~
+~~~~~~~~
 
 :doc:`intrinsic_currents_subthreshold`
 
@@ -119,7 +120,7 @@ for index, (rec_name, rec_wgt) in enumerate(w_recep.items()):
     nest.Connect(p_gens[index], nrn, syn_spec={'receptor_type': receptors[rec_name], 'weight': rec_wgt})
 
 ###############################################################################
-# We then connnect the ``multimeter``. Note that the multimeter is connected to
+# We then connect the ``multimeter``. Note that the multimeter is connected to
 # the neuron, not the other way around.
 
 nest.Connect(mm, nrn)
@@ -134,8 +135,7 @@ nest.Simulate(t_sim)
 # a dictionary with entry ``times`` containing timestamps for all
 # recorded data, plus one entry per recorded quantity.
 # All data is contained in the ``events`` entry of the status dictionary
-# returned by the multimeter. Because all NEST function return arrays,
-# we need to pick out element `0` from the result of ``GetStatus``.
+# returned by the multimeter.
 
 data = mm.events
 t = data['times']

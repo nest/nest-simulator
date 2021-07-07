@@ -23,14 +23,12 @@
 #ifndef PP_POP_PSC_DELTA_H
 #define PP_POP_PSC_DELTA_H
 
-// Includes from librandom:
-#include "binomial_randomdev.h"
-
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
@@ -189,7 +187,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -291,8 +288,6 @@ private:
    */
   struct Variables_
   {
-
-
     double P30_;
     double P33_;
 
@@ -303,11 +298,8 @@ private:
     double h_; //!< simulation time step in ms
     double min_double_;
 
-
-    librandom::RngPtr rng_; // random number generator of my own thread
-
-    librandom::BinomialRandomDev binom_dev_; // binomial random generator
-
+    RngPtr rng_;                      // random number generator of my own thread
+    binomial_distribution bino_dist_; // binomial distribution
 
     int DeadTimeCounts_;
   };

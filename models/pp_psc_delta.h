@@ -23,15 +23,12 @@
 #ifndef PP_PSC_DELTA_H
 #define PP_PSC_DELTA_H
 
-// Includes from librandom:
-#include "gamma_randomdev.h"
-#include "poisson_randomdev.h"
-
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
@@ -223,7 +220,7 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
+  void init_state_();
   void init_buffers_();
   void calibrate();
 
@@ -348,9 +345,9 @@ private:
     double h_;       //!< simulation time step in ms
     double dt_rate_; //!< rate parameter of dead time distribution
 
-    librandom::RngPtr rng_;                   //!< random number generator of my own thread
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    librandom::GammaRandomDev gamma_dev_;     //!< random deviate generator
+    RngPtr rng_;                        //!< random number generator of my own thread
+    gamma_distribution gamma_dist_;     //!< gamma distribution
+    poisson_distribution poisson_dist_; //!< poisson distribution
 
     int DeadTimeCounts_;
   };

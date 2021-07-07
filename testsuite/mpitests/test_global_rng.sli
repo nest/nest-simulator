@@ -24,13 +24,15 @@
 /** @BeginDocumentation
 Name: testsuite::test_global_rng - check whether global rng gives consistent results
 
-Synopsis: nest_indirect test_global_rng.sli -> compare results for different numbers of jobs 
+Synopsis: nest_indirect test_global_rng.sli -> compare results for different numbers of jobs
 
 Description:
 
-The scripts test whether in simulations distributed over different numbers of 
-processors the global random number generator gives identical results on all 
-jobs and for different numbers of jobs.
+The scripts test whether in simulations distributed over different numbers of
+processors the global random number generator gives identical results on all
+jobs and for different numbers of jobs. To draw numbers, GetValues is used on
+a uniform parameter. This draws from the uniform distribution using the global
+random number generator.
 See #186 for discussion.
 
 Author:  July 2009, Diesmann
@@ -40,18 +42,20 @@ SeeAlso: unittest::distributed_assert_or_die
 (unittest) run
 /unittest using
 
+M_ERROR setverbosity
 
-[1 2 4]                                      
-{                                            
+[1 2 4]
+{
  ResetKernel
- << /grng_seed 12 >> SetKernelStatus  % ResetKernel does not reset global rng
+ << /rng_seed 12 >> SetKernelStatus  % ResetKernel does not reset rng
 
- GetGlobalRNG /rng Set [ 20 ] { ; rng 100 irand } Table
+ << /uniform << /min 0.0 /max 1.0  >> >> CreateParameter /p Set
+
+ % GetValue uses the global rng internally
+ [ 5 ] { ; p GetValue } Table
 
 }
-distributed_rank_invariant_collect_assert_or_die   
+distributed_rank_invariant_collect_assert_or_die
                             % a variant of this function will have an extra argument
-                            % which specifies the test carried out to compare the 
+                            % which specifies the test carried out to compare the
                             % simulation results (not implemented 090716 MD)
-
-

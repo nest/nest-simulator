@@ -52,7 +52,7 @@ PYCODESTYLE_IGNORES=${17}     # The list of pycodestyle error and warning codes 
 
 # PYCODESTYLE rules to ignore.
 PYCODESTYLE_IGNORES_EXAMPLES="${PYCODESTYLE_IGNORES},E402"
-PYCODESTYLE_IGNORES_TOPO_MANUAL="${PYCODESTYLE_IGNORES_EXAMPLES},E265"
+PYCODESTYLE_IGNORES_USER_MANUAL="${PYCODESTYLE_IGNORES_EXAMPLES},E265"
 
 # PYCODESTYLE rules.
 PYCODESTYLE_MAX_LINE_LENGTH=120
@@ -236,7 +236,7 @@ for f in $FILE_NAMES; do
         print_msg "MSGBLD0190: " "Running PEP8 .......: $f"
         case $f in
           *user_manual_scripts*)
-            IGNORES=$PYCODESTYLE_IGNORES_TOPO_MANUAL
+            IGNORES=$PYCODESTYLE_IGNORES_USER_MANUAL
             ;;
           *examples*)
             IGNORES=$PYCODESTYLE_IGNORES_EXAMPLES

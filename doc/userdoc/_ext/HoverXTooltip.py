@@ -120,12 +120,15 @@ def hxt_role_ref(pattern):
         term = pattern % (text,)
         desc = get_desc_from_glossary(term)
 
-        # link to the glossary term.
-
-        # use this for local builds.
         base_url = inliner.document.attributes['source']
-        branch_name = base_url.split('/doc/')[0].split('/')[-1]
-        refuri = (f'/en/{branch_name}/glossary.html#term-{term}')
+
+        # for rtd builds
+        if os.environ.get("READTHEDOCS") == "True":
+            branch_name = base_url.split('/doc/')[0].split('/')[-1]
+            refuri = (f'/en/{branch_name}/glossary.html#term-{term}')
+        # for local builds
+        else:
+            refuri = base_url.split('userdoc')[0] + f'userdoc/html/glossary.html#term-{term}'
 
         # the tag in which the term and description is defined.
         ref_tag = "<a class='reference external' " \

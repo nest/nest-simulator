@@ -23,9 +23,11 @@ set( TESTSUBDIRS
     regressiontests
     mpitests
     mpi_selftests
-    musictests )
+    musictests
+    cpptests
+    pytests
+    )
 
-# add sli tests
 add_subdirectory( selftests )
 add_subdirectory( unittests )
 add_subdirectory( regressiontests )

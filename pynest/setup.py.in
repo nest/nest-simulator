@@ -28,12 +28,8 @@ setup(
     author='The NEST Initiative',
     url='https://www.nest-simulator.org',
     license='GPLv2+',
-    packages=['nest', 'nest.tests', 'nest.tests.test_sp',
-              'nest.tests.test_spatial', 'nest.lib'],
+    packages=['nest', 'nest.lib'],
     install_requires=['numpy', 'scipy'],
-    extras_require={
-        'test': ['nose', 'matplotlib']
-    },
     classifiers=[
         'Development Status :: 6 - Mature',
         'Programming Language :: Python :: 3.8',

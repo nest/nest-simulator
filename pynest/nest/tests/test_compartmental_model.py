@@ -679,35 +679,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
-# if __name__ == "__main__":
-#     ntc = NEASTTestCase()
-    # ntc.test_inversion(model_name='1dend_1comp')
-    # ntc.test_inversion(model_name='2dend_1comp')
-    # ntc.test_inversion(model_name='1dend_2comp')
-    # ntc.test_inversion(model_name='tdend_4comp')
-    # ntc.test_inversion(model_name='2tdend_4comp')
-
-    # ntc.test_all_inversion()
-
-    # ntc.test_no_inp_inversion(model_name='2tdend_4comp')
-
-    # ntc.test_attenuation(model_name='1dend_1comp')
-    # ntc.test_attenuation(model_name='2dend_1comp')
-    # ntc.test_attenuation(model_name='1dend_2comp')
-    # ntc.test_attenuation(model_name='tdend_4comp')
-    # ntc.test_attenuation(model_name='2tdend_4comp')
-
-    # ntc.test_all_attenuation()
-
-    # ntc.test_equilibrium()
-
-    # ntc.test_conductance_input()
-
-    # ntc.test_conductance_input(model_name='1dend_1comp')
-    # ntc.test_conductance_input(model_name='2dend_1comp')
-    # ntc.test_conductance_input(model_name='1dend_2comp')
-    # ntc.test_conductance_input(model_name='tdend_4comp')
-    # ntc.test_conductance_input(model_name='2tdend_4comp')
-
-    # ntc.test_all_conductance_input()

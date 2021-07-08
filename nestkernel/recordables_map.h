@@ -35,7 +35,6 @@
 // Includes from sli:
 #include "arraydatum.h"
 #include "name.h"
-#include "namedatum.h"
 
 namespace nest
 {

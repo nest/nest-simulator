@@ -32,15 +32,15 @@ nest.SetKernelStatus(dict(resolution=.1))
 
 soma_params = {
     # passive parameters
-    'C_m': 89.245535, # pF
-    'g_c': 0.0, # soma has no parameters
-    'g_L': 8.924572508, # nS
-    'e_L': -75.0,
-    # E-type specific
-    'gbar_Na': 4608.698576715, # nS
-    'e_Na': 60.,
-    'gbar_K': 956.112772900, # nS
-    'e_K': -90.
+    'C_m': 89.245535,           # [pF] Capacitance
+    'g_c': 0.0,                 # soma has no parent
+    'g_L': 8.924572508,         # [nS] Leak conductance
+    'e_L': -75.0,               # [mV] leak reversal
+    # ion channel params
+    'gbar_Na': 4608.698576715,  # [nS] Na maximal conductance
+    'e_Na': 60.,                # [mV] Na reversal
+    'gbar_K': 956.112772900,    # [nS] K maximal conductance
+    'e_K': -90.                 # [mV] K reversal
 }
 dend_params_passive = {
     # passive parameters
@@ -53,15 +53,15 @@ dend_params_passive = {
 }
 dend_params_active = {
     # passive parameters
-    'C_m': 1.929929, # pF
-    'g_c': 1.255439494, # nS
-    'g_L': 0.192992878, # nS
-    'e_L': -70.0, # mV
-    # E-type specific
-    'gbar_Na': 17.203212493, # nS
-    'e_Na': 60., # mV
-    'gbar_K': 11.887347450, # nS
-    'e_K': -90. # mV
+    'C_m': 1.929929,            # [pF] Capacitance
+    'g_c': 1.255439494,         # [nS] Coupling conductance to parent (soma here)
+    'g_L': 0.192992878,         # [nS] Leak conductance
+    'e_L': -70.0,               # [mV] leak reversal
+    # ion channel params
+    'gbar_Na': 17.203212493,    # [nS] Na maximal conductance
+    'e_Na': 60.,                # [mV] Na reversal
+    'gbar_K': 11.887347450,     # [nS] K maximal conductance
+    'e_K': -90.                 # [mV] K reversal
 }
 
 # create a neuron model with a passive dendritic compartment

@@ -33,16 +33,16 @@ nest.SetKernelStatus(dict(resolution=.1))
 
 # somatic and dendritic parameters
 soma_params = {
-    'C_m': 10.0,
-    'g_c': 0.0,
-    'g_L': 1.,
-    'e_L': -70.0
+    'C_m': 10.0,    # [pF] Capacitance
+    'g_c': 0.0,     # soma has no parent
+    'g_L': 1.,      # [nS] Leak conductance
+    'e_L': -70.0    # [mV] leak reversal
 }
 dend_params = {
-    'C_m': 0.1,
-    'g_c': 0.1,
-    'g_L': 0.1,
-    'e_L': -70.0
+    'C_m': 0.1,     # [pF] Capacitance
+    'g_c': 0.1,     # [nS] Coupling conductance to parent (soma here)
+    'g_L': 0.1,     # [nS] Leak conductance
+    'e_L': -70.0    # [mV] leak reversal
 }
 
 # create a model with three compartments

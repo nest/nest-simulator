@@ -84,8 +84,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
     """
 
     params = {}
-    
-    # TODO: Should be a flag checking if this is done
+
     BuildNetwork()
 
     if source is not None:

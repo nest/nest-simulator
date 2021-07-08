@@ -101,6 +101,7 @@ class ProjectionCollection(object):
 
     def __init__(self):
         self.reset()
+        self.network_built = False
 
     def reset(self):
         self._batch_projections = []
@@ -123,6 +124,8 @@ def Connect(projection):
             projection_collection.add(proj)
     else:
         raise TypeError('"projection" must be a projection or a list of projections')
+    if projection_collection.network_built:
+        projection_collection.network_built = False
 
 
 def ConnectImmediately(projections):
@@ -135,36 +138,38 @@ def ConnectImmediately(projections):
 
 
 def BuildNetwork():
-    # Convert to list of lists
-    projection_list = []
-    print(f'Connecting {len(projection_collection.get())} projections...')
-    for projection in projection_collection.get():
-        projection = projection.to_list()
-        source, target, conn_spec, syn_spec = projection
-        if _connect_layers_needed(conn_spec, syn_spec):
-            # Check that pre and post are layers
-            if source.spatial is None:
-                raise TypeError("Presynaptic NodeCollection must have spatial information")
-            if target.spatial is None:
-                raise TypeError("Postsynaptic NodeCollection must have spatial information")
-
-            # Merge to a single projection dictionary because we have spatial projections,
-            spatial_projections = _process_spatial_projections(conn_spec, syn_spec)
-            projection_list.append([source, target, spatial_projections])
-        else:
-            # Convert syn_spec to list of dicts
-            if isinstance(syn_spec, CollocatedSynapses):
-                syn_spec = syn_spec.syn_specs
-            elif isinstance(syn_spec, dict):
-                syn_spec = [syn_spec]
-            projection_list.append([source, target, conn_spec, syn_spec])
-
-    # Call SLI function
-    sps(projection_list)
-    sr('connect_projections')
-
-    # reset all projections
-    projection_collection.reset()
+    if not projection_collection.network_built:
+        # Convert to list of lists
+        projection_list = []
+        print(f'Connecting {len(projection_collection.get())} projections...')
+        for projection in projection_collection.get():
+            projection = projection.to_list()
+            source, target, conn_spec, syn_spec = projection
+            if _connect_layers_needed(conn_spec, syn_spec):
+                # Check that pre and post are layers
+                if source.spatial is None:
+                    raise TypeError("Presynaptic NodeCollection must have spatial information")
+                if target.spatial is None:
+                    raise TypeError("Postsynaptic NodeCollection must have spatial information")
+    
+                # Merge to a single projection dictionary because we have spatial projections,
+                spatial_projections = _process_spatial_projections(conn_spec, syn_spec)
+                projection_list.append([source, target, spatial_projections])
+            else:
+                # Convert syn_spec to list of dicts
+                if isinstance(syn_spec, CollocatedSynapses):
+                    syn_spec = syn_spec.syn_specs
+                elif isinstance(syn_spec, dict):
+                    syn_spec = [syn_spec]
+                projection_list.append([source, target, conn_spec, syn_spec])
+    
+        # Call SLI function
+        sps(projection_list)
+        sr('connect_projections')
+    
+        # reset all projections
+        projection_collection.reset()
+        projection_collection.network_built = True
 
 
 class OneToOne(Projection):

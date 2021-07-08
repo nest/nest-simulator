@@ -429,8 +429,8 @@ def combine(call_name, response):
     filtered_response = list(filter(lambda x: x is not None, response))
     if len(filtered_response) == 1:
         return filtered_response[0]
-    
-    # return a single merged dictionary if there are many of them 
+
+    # return a single merged dictionary if there are many of them
     if all(type(v[0]) is dict for v in response):
         return merge_dicts(response)
 

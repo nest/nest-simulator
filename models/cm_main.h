@@ -138,7 +138,7 @@ References
 
 Data-driven reduction of dendritic morphologies with preserved dendro-somatic responses
 WAM Wybo, J Jordan, B Ellenberger, UM Mengual, T Nevian, W Senn
-Elife 10, e60936
+Elife 10, `e60936 <https://elifesciences.org/articles/60936>`_
 
 See also
 ++++++++

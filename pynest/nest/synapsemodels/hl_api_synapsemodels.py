@@ -123,12 +123,14 @@ class SynapseModel:
         return f'synapse_model: {self.synapse_model}, specs: {self.specs}'
 
 
-def copy_synapse_class(model,kwargs):
+def copy_synapse_class(model, kwargs):
     def model_init(self, model, kwargs):
         SynapseModel.__init__(self, model, **kwargs)
 
     NewSynapse = type(model, (SynapseModel,), {"__init__": model_init})
 
+    if kwargs == None:
+        kwargs = {}
     synapse = NewSynapse(model, kwargs)
     return synapse
 

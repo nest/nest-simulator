@@ -31,32 +31,32 @@ class TestSPBuilder(unittest.TestCase):
         nest.ResetKernel()
 
     def test_synapse_initialisation_one_to_one(self):
-        syn_model = 'static_synapse'
-        syn_dict = {'synapse_model': syn_model, 'pre_synaptic_element': 'SE1',
-                    'post_synaptic_element': 'SE2'}
         neurons = nest.Create('iaf_psc_alpha', 2, {
             'synaptic_elements': {
                 'SE1': {'z': 0.0, 'growth_rate': 0.0},
                 'SE2': {'z': 0.0, 'growth_rate': 0.0}
             }
         })
-        nest.Connect(neurons, neurons, "one_to_one", syn_dict)
+        nest.Connect(nest.OneToOne(neurons, neurons,
+                                   syn_spec=nest.synapsemodels.static(pre_synaptic_element='SE1',
+                                                                      post_synaptic_element='SE2')))
+        nest.BuildNetwork()
         status_list = nest.GetStatus(neurons, 'synaptic_elements')
         for status in status_list:
             self.assertEqual(1, status['SE1']['z_connected'])
             self.assertEqual(1, status['SE2']['z_connected'])
 
     def test_synapse_initialisation_all_to_all(self):
-        syn_model = 'static_synapse'
-        syn_dict = {'synapse_model': syn_model, 'pre_synaptic_element': 'SE1',
-                    'post_synaptic_element': 'SE2'}
         neurons = nest.Create('iaf_psc_alpha', 2, {
             'synaptic_elements': {
                 'SE1': {'z': 0.0, 'growth_rate': 0.0},
                 'SE2': {'z': 0.0, 'growth_rate': 0.0}
             }
         })
-        nest.Connect(neurons, neurons, "all_to_all", syn_dict)
+        nest.Connect(nest.AllToAll(neurons, neurons,
+                                   syn_spec=nest.synapsemodels.static(pre_synaptic_element='SE1',
+                                                                      post_synaptic_element='SE2')))
+        nest.BuildNetwork()
         status_list = nest.GetStatus(neurons, 'synaptic_elements')
         for status in status_list:
             self.assertEqual(2, status['SE1']['z_connected'])
@@ -72,14 +72,23 @@ class TestSPBuilder(unittest.TestCase):
                 'SE2': {'z': 0.0, 'growth_rate': 0.0}
             }
         })
-        for conn_dict in [
-            {'rule': 'fixed_indegree', 'indegree': 1},
-            {'rule': 'fixed_outdegree', 'outdegree': 1},
-            {'rule': 'fixed_total_number', 'N': 1},
-            {'rule': 'pairwise_bernoulli', 'p': 0.5},
+        for projection in [
+            nest.FixedIndegree(neurons, neurons, indegree=1,
+                               syn_spec=nest.synapsemodels.static(pre_synaptic_element='SE1',
+                                                                  post_synaptic_element='SE2')),
+            nest.FixedOutdegree(neurons, neurons, outdegree=1,
+                                syn_spec=nest.synapsemodels.static(pre_synaptic_element='SE1',
+                                                                   post_synaptic_element='SE2')),
+            nest.FixedTotalNumber(neurons, neurons, N=1,
+                                  syn_spec=nest.synapsemodels.static(pre_synaptic_element='SE1',
+                                                                     post_synaptic_element='SE2')),
+            nest.PairwiseBernoulli(neurons, neurons, p=0.5,
+                                   syn_spec=nest.synapsemodels.static(pre_synaptic_element='SE1',
+                                                                      post_synaptic_element='SE2')),
         ]:
             try:
-                nest.Connect(neurons, neurons, conn_dict, syn_dict)
+                nest.Connect(projection)
+                nest.BuildNetwork()
             except nest.kernel.NESTError as e:
                 self.assertRegexpMatches(
                     str(e), 'This connection rule is not implemented ' +

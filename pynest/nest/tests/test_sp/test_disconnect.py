@@ -79,39 +79,36 @@ class TestDisconnectSingle(unittest.TestCase):
                     }
                 )
                 neurons = nest.Create('iaf_psc_alpha', 4)
-                syn_dict = {'synapse_model': syn_model}
+                syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn_model)
 
-                nest.Connect(neurons[0], neurons[2], "one_to_one", syn_dict)
-                nest.Connect(neurons[1], neurons[3], "one_to_one", syn_dict)
+                nest.Connect(nest.OneToOne(neurons[0], neurons[2], syn_spec=syn_spec))
+                nest.Connect(nest.OneToOne(neurons[1], neurons[3], syn_spec=syn_spec))
 
                 # Delete existent connection
-                conns = nest.GetConnections(
-                    neurons[0], neurons[2], syn_model)
+                conns = nest.GetConnections(neurons[0], neurons[2], syn_model)
                 if mpi_test:
                     print("rim with mpi")
                     conns = self.comm.allgather(conns.get('source'))
                     conns = list(filter(None, conns))
                 assert len(conns) == 1
 
-                nest.Disconnect(neurons[0], neurons[2], syn_spec=syn_dict)
+                nest.Disconnect(neurons[0], neurons[2], syn_spec=syn_spec.to_dict())
 
-                conns = nest.GetConnections(
-                    neurons[0], neurons[2], syn_model)
+                conns = nest.GetConnections(neurons[0], neurons[2], syn_model)
                 if mpi_test:
                     conns = self.comm.allgather(conns.get('source'))
                     conns = list(filter(None, conns))
                 assert len(conns) == 0
 
                 # Assert that one can not delete a non existent connection
-                conns1 = nest.GetConnections(
-                    neurons[:1], neurons[1:2], syn_model)
+                conns1 = nest.GetConnections(neurons[:1], neurons[1:2], syn_model)
                 if mpi_test:
                     conns1 = self.comm.allgather(conns1.get('source'))
                     conns1 = list(filter(None, conns1))
                 assert len(conns1) == 0
 
                 try:
-                    nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
+                    nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_spec.to_dict())
                     assert False
                 except nest.kernel.NESTError:
                     print("Synapse deletion ok: " + syn_model)

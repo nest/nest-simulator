@@ -1662,93 +1662,81 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR so
 void
 nest::SymmetricBernoulliBuilder::connect_()
 {
-#pragma omp parallel
+  const thread tid = kernel().vp_manager.get_thread_id();
+
+  // Use RNG generating same number sequence on all threads
+  RngPtr synced_rng = get_vp_synced_rng( tid );
+
+  binomial_distribution bino_dist;
+  binomial_distribution::param_type param( sources_->size(), p_ );
+
+  unsigned long indegree;
+  index snode_id;
+  std::set< index > previous_snode_ids;
+  Node* target;
+  thread target_thread;
+  Node* source;
+  thread source_thread;
+
+  for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
-
-    // Use RNG generating same number sequence on all threads
-    RngPtr synced_rng = get_vp_synced_rng( tid );
-
-    try
+    // sample indegree according to truncated Binomial distribution
+    indegree = sources_->size();
+    while ( indegree >= sources_->size() )
     {
-      binomial_distribution bino_dist;
-      binomial_distribution::param_type param( sources_->size(), p_ );
-
-      unsigned long indegree;
-      index snode_id;
-      std::set< index > previous_snode_ids;
-      Node* target;
-      thread target_thread;
-      Node* source;
-      thread source_thread;
-
-      for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
-      {
-        // sample indegree according to truncated Binomial distribution
-        indegree = sources_->size();
-        while ( indegree >= sources_->size() )
-        {
-          indegree = bino_dist( synced_rng, param );
-        }
-        assert( indegree < sources_->size() );
-
-        target = kernel().node_manager.get_node_or_proxy( ( *tnode_id ).node_id, tid );
-        target_thread = tid;
-
-        // check whether the target is on this thread
-        if ( target->is_proxy() )
-        {
-          target_thread = invalid_thread_;
-        }
-
-        previous_snode_ids.clear();
-
-        // choose indegree number of sources randomly from all sources
-        size_t i = 0;
-        while ( i < indegree )
-        {
-          snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
-
-          // Avoid autapses and multapses. Due to symmetric connectivity,
-          // multapses might exist if the target neuron with node ID snode_id draws the
-          // source with node ID tnode_id while choosing sources itself.
-          if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
-          {
-            continue;
-          }
-          previous_snode_ids.insert( snode_id );
-
-          source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
-          source_thread = tid;
-
-          if ( source->is_proxy() )
-          {
-            source_thread = invalid_thread_;
-          }
-
-          // if target is local: connect
-          if ( target_thread == tid )
-          {
-            assert( target != NULL );
-            single_connect_( snode_id, *target, target_thread, synced_rng );
-          }
-
-          // if source is local: connect
-          if ( source_thread == tid )
-          {
-            assert( source != NULL );
-            single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
-          }
-
-          ++i;
-        }
-      }
+      indegree = bino_dist( synced_rng, param );
     }
-    catch ( std::exception& err )
+    assert( indegree < sources_->size() );
+
+    target = kernel().node_manager.get_node_or_proxy( ( *tnode_id ).node_id, tid );
+    target_thread = tid;
+
+    // check whether the target is on this thread
+    if ( target->is_proxy() )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      target_thread = invalid_thread_;
+    }
+
+    previous_snode_ids.clear();
+
+    // choose indegree number of sources randomly from all sources
+    size_t i = 0;
+    while ( i < indegree )
+    {
+      snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
+
+      // Avoid autapses and multapses. Due to symmetric connectivity,
+      // multapses might exist if the target neuron with node ID snode_id draws the
+      // source with node ID tnode_id while choosing sources itself.
+      if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
+      {
+        continue;
+      }
+      previous_snode_ids.insert( snode_id );
+
+      source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
+      source_thread = tid;
+
+      if ( source->is_proxy() )
+      {
+        source_thread = invalid_thread_;
+      }
+
+      // if target is local: connect
+      if ( target_thread == tid )
+      {
+        assert( target != NULL );
+        single_connect_( snode_id, *target, target_thread, synced_rng );
+      }
+
+      // if source is local: connect
+      if ( source_thread == tid )
+      {
+        assert( source != NULL );
+        single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
+      }
+
+      ++i;
     }
   }
 }

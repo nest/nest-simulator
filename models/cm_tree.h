@@ -1,5 +1,5 @@
 /*
- *  cm_main.h
+ *  cm_tree.h
  *
  *  This file is part of NEST.
  *

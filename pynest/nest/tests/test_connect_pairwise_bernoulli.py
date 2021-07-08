@@ -24,7 +24,7 @@ import numpy as np
 import unittest
 import scipy.stats
 from . import test_connect_helpers as hf
-from .test_connect_parameters import TestParams
+from . test_connect_parameters import TestParams
 
 
 class TestPairwiseBernoulli(TestParams):
@@ -32,7 +32,7 @@ class TestPairwiseBernoulli(TestParams):
     # specify connection pattern and specific params
     rule = 'pairwise_bernoulli'
     p = 0.5
-    conn_dict = {'rule': rule, 'p': p}
+    conn_dict = hf.nest.PairwiseBernoulli(None, None, p=p)
     # sizes of source-, target-population and connection probability for
     # statistical test
     N_s = 50
@@ -48,8 +48,8 @@ class TestPairwiseBernoulli(TestParams):
             pvalues = []
             for i in range(self.stat_dict['n_runs']):
                 hf.reset_seed(i+1, self.nr_threads)
-                self.setUpNetwork(conn_dict=self.conn_dict,
-                                  N1=self.N_s, N2=self.N_t)
+                projection = hf.nest.PairwiseBernoulli(None, None, p=self.p)
+                self.setUpNetwork(projections=projection, N1=self.N_s, N2=self.N_t)
                 degrees = hf.get_degrees(fan, self.pop1, self.pop2)
                 degrees = hf.gather_data(degrees)
                 # degrees = self.comm.gather(degrees, root=0)
@@ -63,29 +63,23 @@ class TestPairwiseBernoulli(TestParams):
                 self.assertTrue(p > self.stat_dict['alpha2'])
 
     def testAutapsesTrue(self):
-        conn_params = self.conn_dict.copy()
-        N = 10
-        conn_params['allow_multapses'] = False
-
         # test that autapses exist
-        conn_params['p'] = 1.
-        conn_params['allow_autapses'] = True
+        N = 10
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        hf.nest.Connect(pop, pop, conn_params)
+        conn_params = hf.nest.PairwiseBernoulli(pop, pop, p=1., allow_multapses=False, allow_autapses=True)
+        hf.nest.Connect(conn_params)
+
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.ones(N), self)
 
     def testAutapsesFalse(self):
-        conn_params = self.conn_dict.copy()
-        N = 10
-        conn_params['allow_multapses'] = False
-
         # test that autapses were excluded
-        conn_params['p'] = 1.
-        conn_params['allow_autapses'] = False
+        N = 10
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        hf.nest.Connect(pop, pop, conn_params)
+        conn_params = hf.nest.PairwiseBernoulli(pop, pop, p=1., allow_multapses=False, allow_autapses=False)
+        hf.nest.Connect(conn_params)
+
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.zeros(N), self)

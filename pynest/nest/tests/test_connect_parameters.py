@@ -36,7 +36,7 @@ class TestParams(unittest.TestCase):
     # by the classes
     # testing one specific rule.
     # specify connection pattern
-    #conn_dict = hf.nest.OneToOne(source=None, target=None)
+    conn_dict = hf.nest.OneToOne(source=None, target=None)
     # sizes of populations
     N1 = 6
     N2 = 6

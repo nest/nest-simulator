@@ -25,7 +25,7 @@ import numpy as np
 import unittest
 import scipy.stats
 from . import test_connect_helpers as hf
-from .test_connect_parameters import TestParams
+from . test_connect_parameters import TestParams
 
 
 class TestSymmetricPairwiseBernoulli(TestParams):
@@ -38,10 +38,11 @@ class TestSymmetricPairwiseBernoulli(TestParams):
     p = 0.5
     conn_dict = hf.nest.SymmetricPairwiseBernoulli(source=None, target=None, p=p, allow_multapses=True,
                                                    allow_autapses=False, make_symmetric=True)
+    rule = 'symmetric_pairwise_bernoulli'
     # Critical values and number of iterations of two level test
     stat_dict = {'alpha2': 0.05, 'n_runs': 300}
 
-    """def testStatistics(self):
+    def testStatistics(self):
         for fan in ['in', 'out']:
             expected = hf.get_expected_degrees_bernoulli(
                 self.p, fan, self.N_s, self.N_t)
@@ -49,7 +50,7 @@ class TestSymmetricPairwiseBernoulli(TestParams):
             pvalues = []
             for i in range(self.stat_dict['n_runs']):
                 hf.reset_seed(i+1, self.nr_threads)
-                self.setUpNetwork(conn_dict=self.conn_dict,
+                self.setUpNetwork(projections=self.conn_dict,
                                   N1=self.N_s, N2=self.N_t)
                 degrees = hf.get_degrees(fan, self.pop1, self.pop2)
                 degrees = hf.gather_data(degrees)
@@ -64,57 +65,41 @@ class TestSymmetricPairwiseBernoulli(TestParams):
                 self.assertGreater(p, self.stat_dict['alpha2'])
 
     def testAutapsesTrue(self):
-        conn_params = hf.nest.SymmetricPairwiseBernoulli(source=None, target=None, p=p, allow_multapses=True,
-                                                         allow_autapses=False, make_symmetric=True)
-        conn_params.allow_autapses = True
-        N = 10
-
         # test that autapses are not permitted
+        N = 10
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.SymmetricPairwiseBernoulli(pop, pop, p=self.p, allow_multapses=True,
+                                                         allow_autapses=True, make_symmetric=True)
         with self.assertRaises(hf.nest.kernel.NESTError):
             hf.nest.Connect(conn_params)
             hf.nest.BuildNetwork()
 
     def testAutapsesFalse(self):
-        conn_params = hf.nest.SymmetricPairwiseBernoulli(source=None, target=None, p=p, allow_multapses=True,
-                                                         allow_autapses=False, make_symmetric=True)
-        N = 10
-
         # test that autapses were excluded
-        conn_params.p = 1. - 1. / N
-        conn_params.allow_autapses = False
+        N = 10
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.SymmetricPairwiseBernoulli(pop, pop, p=self.p, allow_multapses=True,
+                                                         allow_autapses=False, make_symmetric=True)
         hf.nest.Connect(conn_params)
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.zeros(N), self)
 
     def testMultapses(self):
-        conn_params = hf.nest.SymmetricPairwiseBernoulli(source=None, target=None, p=p, allow_multapses=True,
-                                                         allow_autapses=False, make_symmetric=True)
-        conn_params.allow_multapses = False
-        N = 10
-
         # test that multapses must be permitted
-        hf.nest.ResetKernel()
+        N = 10
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.SymmetricPairwiseBernoulli(pop, pop, p=self.p, allow_multapses=False,
+                                                         allow_autapses=False, make_symmetric=True)
         with self.assertRaises(hf.nest.kernel.NESTError):
             hf.nest.Connect(conn_params)
             hf.nest.BuildNetwork()
 
         # test that multapses can only arise from symmetric
         # connectivity
-        conn_params.p = 1. - 1. / N
-        conn_params.allow_multapses = True
         hf.nest.ResetKernel()
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.SymmetricPairwiseBernoulli(pop, pop, p=self.p, allow_multapses=True,
+                                                         allow_autapses=False, make_symmetric=True)
         hf.nest.Connect(conn_params)
 
         conn_dict = collections.defaultdict(int)
@@ -124,25 +109,20 @@ class TestSymmetricPairwiseBernoulli(TestParams):
             self.assertTrue(conn_dict[s_t_key] <= 2)
 
     def testMakeSymmetric(self):
-        conn_params = hf.nest.SymmetricPairwiseBernoulli(source=None, target=None, p=p, allow_multapses=True,
-                                                         allow_autapses=False, make_symmetric=True)
-        N = 100
-
         # test that make_symmetric must be enabled
-        conn_params.make_symmetric = False
-        hf.nest.ResetKernel()
+        N = 100
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.SymmetricPairwiseBernoulli(pop, pop, p=self.p, allow_multapses=True,
+                                                         allow_autapses=False, make_symmetric=False)
         with self.assertRaises(hf.nest.kernel.NESTError):
             hf.nest.Connect(conn_params)
+            hf.nest.BuildNetwork()
 
         # test that all connections are symmetric
-        conn_params.make_symmetric = True
         hf.nest.ResetKernel()
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.SymmetricPairwiseBernoulli(pop, pop, p=self.p, allow_multapses=True,
+                                                         allow_autapses=False, make_symmetric=True)
         hf.nest.Connect(conn_params)
 
         conns = set()
@@ -151,7 +131,7 @@ class TestSymmetricPairwiseBernoulli(TestParams):
             conns.add(s_t_key)
 
         for s_t_key in zip(conn.sources(), conn.targets()):
-            self.assertTrue(s_t_key[::-1] in conns)"""
+            self.assertTrue(s_t_key[::-1] in conns)
 
 
 def suite():

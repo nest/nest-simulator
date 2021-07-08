@@ -190,15 +190,34 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
   // retrieve global positions, either for masked or unmasked pool
   PoolWrapper_< D > pool;
+
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 #pragma omp critical
   {
-    if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
+    const auto tid = kernel().vp_manager.get_thread_id();
+    try
     {
-      pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, source_nc ) );
+      if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
+      {
+        pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, source_nc ) );
+      }
+      else
+      {
+        pool.define( source.get_global_positions_vector( source_nc ) );
+      }
     }
-    else
+    catch ( std::exception& err )
     {
-      pool.define( source.get_global_positions_vector( source_nc ) );
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    if ( exceptions_raised.at( tid ).get() )
+    {
+      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
     }
   }
 
@@ -245,17 +264,36 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
   //     connection conditionally
 
   PoolWrapper_< D > pool;
+
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 #pragma omp critical
   {
-    if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
+    const auto tid = kernel().vp_manager.get_thread_id();
+    try
     {
-      // By supplying the target layer to the MaskedLayer constructor, the
-      // mask is mirrored so it may be applied to the source layer instead
-      pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, target, source_nc ) );
+      if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
+      {
+        // By supplying the target layer to the MaskedLayer constructor, the
+        // mask is mirrored so it may be applied to the source layer instead
+        pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, target, source_nc ) );
+      }
+      else
+      {
+        pool.define( source.get_global_positions_vector( source_nc ) );
+      }
     }
-    else
+    catch ( std::exception& err )
     {
-      pool.define( source.get_global_positions_vector( source_nc ) );
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    if ( exceptions_raised.at( tid ).get() )
+    {
+      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
     }
   }
 

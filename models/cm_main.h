@@ -77,10 +77,12 @@ After all compartments have been added, users can add receptors
 
 Compartment voltages can be recorded. To do so, users create a multimeter in the
 standard manner but specify the to be recorded voltages as
-'V_m_[compartment_index]', i.e.
+'v_comp{compartment_index}'. Ion channels state variables can be recorded as well,
+using the syntax '{state_variable_name}{compartment_index}'. For receptor state
+variables, use the receptor index '{state_variable_name}{receptor_index}' i.e.
 
 .. code-block:: Python
-    mm = nest.Create('multimeter', 1, {'record_from': ['V_m_[compartment_index]'], ...})
+    mm = nest.Create('multimeter', 1, {'record_from': ['v_comp{compartment_index]'}, ...})
 
 Current generators can be connected to the model. In this case, the receptor
 type is the [compartment index], i.e.
@@ -107,8 +109,19 @@ The following parameters can be set using the `AddCompartment` function
  e_L        mV      Leak reversal of the compartment
 =========== ======= ===========================================================
 
-Receptor types for the moment are hardcoded. The choice is from
-'AMPA', 'GABA' or 'NMDA'.
+Ion channels and receptor types for the default model are hardcoded.
+For ion channels, there is a Na-channel and a K-channel. Parameters can be set
+by specifying the following entries in the `AddCompartment` dictionary argument:
+
+=========== ======= ===========================================================
+ gbar_Na    uS      Maximal conductance Na channel
+ e_Na       mV      Reversal Na channel
+ gbar_K     uS      Maximal conductance K channel
+ e_K        mV      Reversal K channel
+=========== ======= ===========================================================
+
+For receptors, the choice is from 'AMPA', 'GABA' or 'NMDA' or 'AMPA_NMDA'.
+Ion channels and receptor types can be customized with NESTML.
 
 Sends
 +++++

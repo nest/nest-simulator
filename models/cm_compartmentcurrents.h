@@ -31,12 +31,12 @@ namespace nest
 
 class Na{
 private:
-  // user-defined parameters sodium channel (maximal conductance, reversal potential)
-  double gbar_Na_ = 0.0;
-  double e_Na_ = 0.0;
   // state variables sodium channel
   double m_Na_ = 0.0;
   double h_Na_ = 0.0;
+  // user-defined parameters sodium channel (maximal conductance, reversal potential)
+  double gbar_Na_ = 0.0;
+  double e_Na_ = 0.0;
 
 public:
   Na();
@@ -55,11 +55,11 @@ public:
 
 class K{
 private:
+  // state variables potassium channel
+  double n_K_ = 0.0;
   // user-defined parameters potassium channel (maximal conductance, reversal potential)
   double gbar_K_ = 0.0;
   double e_K_ = 0.0;
-  // state variables potassium channel
-  double n_K_ = 0.0;
 
 public:
   K();

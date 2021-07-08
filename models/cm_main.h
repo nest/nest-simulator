@@ -170,7 +170,16 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  /*
+  Function to a compartment to the tree, so that the new compartment has the
+  compartment specified by ``parent_compartment_idx`` as parent. The parent
+  has to be in the tree, otherwise an error will be raised.
+  */
   void add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params ) override;
+  /*
+  Function to a add a receptor to a compartment. Returns the index of the
+  receptor in the receptor stack.
+  */
   size_t add_receptor( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params ) override;
 
 private:
@@ -186,7 +195,6 @@ private:
   std::vector< std::shared_ptr< RingBuffer > > syn_buffers_;
 
   // To record variables with DataAccessFunctor
-  // double get_state_element( size_t elem){return c_tree_.get_compartment_voltage(elem);}
   double get_state_element( size_t elem ){ return *recordables_values[elem]; };
 
   // The next classes need to be friends to access the State_ class/member

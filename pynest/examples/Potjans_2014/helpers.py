@@ -237,8 +237,8 @@ def plot_raster(path, name, begin, end, N_scaling):
     last_node_id = node_ids[-1, -1]
     mod_node_ids = np.abs(node_ids - last_node_id) + 1
 
-    label_pos = [(mod_node_ids[i, 0] + mod_node_ids[i + 1, 1]) /
-                 2. for i in np.arange(0, 8, 2)]
+    label_pos = [(mod_node_ids[i, 0] + mod_node_ids[i + 1, 1]) / 2.
+                 for i in np.arange(0, 8, 2)]
 
     stp = 1
     if N_scaling > 0.1:

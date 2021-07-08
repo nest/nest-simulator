@@ -300,10 +300,6 @@ class BasicsTestCase(unittest.TestCase):
     def test_GetTargetNodes(self):
         """Interface check for finding targets."""
 
-        cdict = {'rule': 'pairwise_bernoulli',
-                 'p': 1.,
-                 'mask': {'grid': {'shape': [2, 2]}}}
-        sdict = {'synapse_model': 'stdp_synapse'}
         nest.ResetKernel()
         nest.SetKernelStatus({'sort_connections_by_source': False, 'use_compressed_spikes': False})
 
@@ -313,7 +309,10 @@ class BasicsTestCase(unittest.TestCase):
                                                         edge_wrap=True))
 
         # connect layer -> layer
-        nest.Connect(layer, layer, cdict, sdict)
+        projection = nest.PairwiseBernoulli(layer, layer, p=1., mask={'grid': {'shape': [2, 2]}},
+                                            syn_spec=nest.synapsemodels.stdp())
+        nest.Connect(projection)
+        nest.BuildNetwork()
 
         t = nest.GetTargetNodes(layer[0], layer)
         self.assertEqual(len(t), 1)
@@ -348,17 +347,15 @@ class BasicsTestCase(unittest.TestCase):
     def test_GetTargetPositions(self):
         """Test that GetTargetPosition works as expected"""
 
-        cdict = {'rule': 'pairwise_bernoulli',
-                 'p': 1.}
-        sdict = {'synapse_model': 'stdp_synapse'}
-
         nest.SetKernelStatus({'sort_connections_by_source': False, 'use_compressed_spikes': False})
 
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(shape=[1, 1],
                                                         extent=(1., 1.),
                                                         edge_wrap=False))
-        nest.Connect(layer, layer, cdict, sdict)
+        projection = nest.PairwiseBernoulli(layer, layer, p=1., syn_spec=nest.synapsemodels.stdp())
+        nest.Connect(projection)
+        nest.BuildNetwork()
 
         # Simple test with one node ID in the layer, should be placed in the origin
         p = nest.GetTargetPositions(layer, layer)
@@ -376,7 +373,9 @@ class BasicsTestCase(unittest.TestCase):
                             positions=nest.spatial.grid(shape=shape,
                                                         extent=[x_extent, y_extent],
                                                         edge_wrap=False))
-        nest.Connect(layer, layer, cdict, sdict)
+        projection = nest.PairwiseBernoulli(layer, layer, p=1., syn_spec=nest.synapsemodels.stdp())
+        nest.Connect(projection)
+        nest.BuildNetwork()
 
         p = nest.GetTargetPositions(layer[:1], layer)
         self.assertEqual(len(p), 1)
@@ -409,7 +408,9 @@ class BasicsTestCase(unittest.TestCase):
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.free(positions,
                                                         edge_wrap=False))
-        nest.Connect(layer, layer, cdict, sdict)
+        projection = nest.PairwiseBernoulli(layer, layer, p=1., syn_spec=nest.synapsemodels.stdp())
+        nest.Connect(projection)
+        nest.BuildNetwork()
 
         p = nest.GetTargetPositions(layer[:1], layer)
 

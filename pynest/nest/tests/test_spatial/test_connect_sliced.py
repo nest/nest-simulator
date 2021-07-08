@@ -58,37 +58,30 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
     def test_connect_sliced_spatial_on_target(self):
         """Connect sliced spatial source population"""
         for nodes in [self.free_nodes, self.grid_nodes]:
-            nest.Connect(nodes[self.middle_node], nodes,
-                         conn_spec={'rule': 'pairwise_bernoulli',
-                                    'p': self.parameter})
+            projections = nest.PairwiseBernoulli(nodes[self.middle_node], nodes, p=self.parameter)
+            nest.Connect(projections)
             self._assert_histogram(nest.GetConnections().target, self.reference)
 
     def test_masked_connect_sliced_spatial_on_target(self):
         """Masked connect sliced spatial source population"""
         for nodes in [self.free_nodes, self.grid_nodes]:
-            nest.Connect(nodes[self.middle_node], nodes,
-                         conn_spec={'rule': 'pairwise_bernoulli',
-                                    'p': self.parameter,
-                                    'mask': self.mask})
+            projections = nest.PairwiseBernoulli(nodes[self.middle_node], nodes, p=self.parameter, mask=self.mask)
+            nest.Connect(projections)
             self._assert_histogram(nest.GetConnections().target, self.reference_masked)
 
     def test_connect_sliced_spatial_on_source(self):
         """Connect sliced spatial target population"""
         for nodes in [self.free_nodes, self.grid_nodes]:
-            nest.Connect(nodes, nodes[self.middle_node],
-                         conn_spec={'rule': 'pairwise_bernoulli',
-                                    'p': self.parameter,
-                                    'use_on_source': True})
+            projections = nest.PairwiseBernoulli(nodes, nodes[self.middle_node], p=self.parameter, use_on_source=True)
+            nest.Connect(projections)
             self._assert_histogram(nest.GetConnections().source, self.reference)
 
     def test_masked_connect_sliced_spatial_on_source(self):
         """Masked connect sliced spatial target population"""
         for nodes in [self.free_nodes, self.grid_nodes]:
-            nest.Connect(nodes, nodes[self.middle_node],
-                         conn_spec={'rule': 'pairwise_bernoulli',
-                                    'p': self.parameter,
-                                    'use_on_source': True,
-                                    'mask': self.mask})
+            projections = nest.PairwiseBernoulli(nodes, nodes[self.middle_node], p=self.parameter, use_on_source=True,
+                                                 mask=self.mask)
+            nest.Connect(projections)
             self._assert_histogram(nest.GetConnections().source, self.reference_masked)
 
     def test_sliced_spatial_inheritance(self):
@@ -112,9 +105,8 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         ref[:start] = 0
         ref[end:] = 0
         for nodes in [self.free_nodes, self.grid_nodes]:
-            nest.Connect(nodes[self.middle_node], nodes[start:end],
-                         conn_spec={'rule': 'pairwise_bernoulli',
-                                    'p': self.parameter})
+            projections = nest.PairwiseBernoulli(nodes[self.middle_node], nodes[start:end], p=self.parameter)
+            nest.Connect(projections)
             self._assert_histogram(nest.GetConnections().target, ref)
 
     def test_connect_sliced_spatial_step(self):
@@ -123,9 +115,8 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         ref = np.copy(self.reference)
         ref[1::step] = 0
         for nodes in [self.free_nodes, self.grid_nodes]:
-            nest.Connect(nodes[self.middle_node], nodes[::step],
-                         conn_spec={'rule': 'pairwise_bernoulli',
-                                    'p': self.parameter})
+            projections = nest.PairwiseBernoulli(nodes[self.middle_node], nodes[::step], p=self.parameter)
+            nest.Connect(projections)
             self._assert_histogram(nest.GetConnections().target, ref)
 
 

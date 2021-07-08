@@ -62,7 +62,7 @@ class SynapseCollectionDistance(unittest.TestCase):
 
         s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[3, 3]))
 
-        nest.Connect(s_nodes, s_nodes, {'rule': 'one_to_one'})
+        nest.Connect(nest.OneToOne(s_nodes, s_nodes))
         conns = nest.GetConnections()
         dist = conns.distance
 
@@ -74,7 +74,7 @@ class SynapseCollectionDistance(unittest.TestCase):
         s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[3, 1]))
         t_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[1, 3]))
 
-        nest.Connect(s_nodes, t_nodes)
+        nest.Connect(nest.AllToAll(s_nodes, t_nodes))
         conns = nest.GetConnections()
         dist = conns.distance
 
@@ -89,7 +89,7 @@ class SynapseCollectionDistance(unittest.TestCase):
         s_nodes = nest.Create('iaf_psc_alpha', n=5, positions=positions)
         t_nodes = nest.Create('iaf_psc_alpha', n=7, positions=positions)
 
-        nest.Connect(s_nodes, t_nodes, {'rule': 'pairwise_bernoulli', 'p': 0.7})
+        nest.Connect(nest.PairwiseBernoulli(s_nodes, t_nodes, p=0.7))
         conns = nest.GetConnections()
         dist = conns.distance
 
@@ -104,7 +104,7 @@ class SynapseCollectionDistance(unittest.TestCase):
         s_nodes = nest.Create('iaf_psc_alpha', n=8, positions=positions)
         t_nodes = nest.Create('iaf_psc_alpha', n=11, positions=positions)
 
-        nest.Connect(s_nodes, t_nodes)
+        nest.Connect(nest.AllToAll(s_nodes, t_nodes))
         conns = nest.GetConnections()
         dist = conns.distance
 
@@ -118,7 +118,7 @@ class SynapseCollectionDistance(unittest.TestCase):
         s_nodes = nest.Create('iaf_psc_alpha', 3)
         t_nodes = nest.Create('iaf_psc_alpha', 2)
 
-        nest.Connect(s_nodes, t_nodes)
+        nest.Connect(nest.AllToAll(s_nodes, t_nodes))
         conns = nest.GetConnections()
         dist = conns.distance
 
@@ -139,8 +139,8 @@ class SynapseCollectionDistance(unittest.TestCase):
         s_nodes_spatial = nest.Create('iaf_psc_alpha', n=6, positions=positions)
         t_nodes_spatial = nest.Create('iaf_psc_alpha', n=7, positions=positions)
 
-        nest.Connect(s_nodes_nonspatial, t_nodes_nonspatial)
-        nest.Connect(s_nodes_spatial, t_nodes_spatial)
+        nest.Connect(nest.AllToAll(s_nodes_nonspatial, t_nodes_nonspatial))
+        nest.Connect(nest.AllToAll(s_nodes_spatial, t_nodes_spatial))
         conns = nest.GetConnections()
         dist = conns.distance
 
@@ -162,7 +162,7 @@ class SynapseCollectionDistance(unittest.TestCase):
         positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
         t_nodes_spatial = nest.Create('iaf_psc_alpha', n=num_tnodes, positions=positions)
 
-        nest.Connect(s_nodes_nonspatial, t_nodes_spatial)
+        nest.Connect(nest.AllToAll(s_nodes_nonspatial, t_nodes_spatial))
         conns = nest.GetConnections()
         dist = conns.distance
 

@@ -183,9 +183,7 @@ class SpatialTester(object):
                 kappa=self._params['kappa'],
                 theta=self._params['theta'])
 
-        self._conndict = {'rule': 'pairwise_bernoulli',
-                          'p': distribution,
-                          'mask': maskdict}
+        self._projection = nest.PairwiseBernoulli(None, None, p=distribution, mask=maskdict)
 
     def _calculate_constants(self, spatial_distribution):
         """Calculate constant variables used when calculating distributions and probability density functions
@@ -316,7 +314,9 @@ class SpatialTester(object):
     def _connect(self):
         """Connect populations."""
 
-        nest.Connect(self._ls, self._lt, self._conndict)
+        self._projection.source = self._ls
+        self._projection.target = self._lt
+        nest.Connect(self._projection)
 
     def _all_distances(self):
         """Return distances to all nodes in target population."""

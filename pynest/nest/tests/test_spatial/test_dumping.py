@@ -55,13 +55,13 @@ class DumpingTestCase(unittest.TestCase):
 
     def test_DumpConns(self):
         """Test dumping connections."""
-        cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
         spatial_nodes = nest.Create('iaf_psc_alpha',
                                     positions=nest.spatial.grid(shape=[2, 1],
                                                                 extent=[2., 2.],
                                                                 edge_wrap=True))
-        nest.Connect(spatial_nodes, spatial_nodes, cdict)
+        nest.Connect(nest.PairwiseBernoulli(spatial_nodes, spatial_nodes, p=1.))
+        nest.BuildNetwork()
 
         filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
         nest.DumpLayerConnections(spatial_nodes, spatial_nodes, 'static_synapse', filename)
@@ -75,14 +75,14 @@ class DumpingTestCase(unittest.TestCase):
 
     def test_DumpConns_diff(self):
         """Test dump connections between different layers."""
-        cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
         pos = nest.spatial.grid(shape=[1, 1],
                                 extent=[2., 2.],
                                 edge_wrap=True)
         l1 = nest.Create('iaf_psc_alpha', positions=pos)
         l2 = nest.Create('iaf_psc_alpha', positions=pos)
-        nest.Connect(l1, l2, cdict)
+        nest.Connect(nest.PairwiseBernoulli(l1, l2, p=1.))
+        nest.BuildNetwork()
 
         print('Num. connections: ', nest.GetKernelStatus('num_connections'))
 
@@ -96,7 +96,6 @@ class DumpingTestCase(unittest.TestCase):
 
     def test_DumpConns_syn(self):
         """Test dump connections with specific synapse."""
-        cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
         pos = nest.spatial.grid(shape=[1, 1],
                                 extent=[2., 2.],
@@ -104,10 +103,11 @@ class DumpingTestCase(unittest.TestCase):
         l1 = nest.Create('iaf_psc_alpha', positions=pos)
         l2 = nest.Create('iaf_psc_alpha', positions=pos)
         l3 = nest.Create('iaf_psc_alpha', positions=pos)
-        nest.Connect(l1, l2, cdict)
+        nest.Connect(nest.PairwiseBernoulli(l2, l3, p=1.))
 
         syn_model = 'stdp_synapse'
-        nest.Connect(l2, l3, cdict, {'synapse_model': syn_model})
+        nest.Connect(nest.PairwiseBernoulli(l2, l3, p=1., syn_spec=nest.synapsemodels.stdp()))
+        nest.BuildNetwork()
 
         print('Num. connections: ', nest.GetKernelStatus('num_connections'))
 
@@ -121,13 +121,13 @@ class DumpingTestCase(unittest.TestCase):
 
     def test_DumpConns_sliced(self):
         """Test dumping connections with sliced layer."""
-        cdict = {'rule': 'pairwise_bernoulli', 'p': 1.}
         nest.ResetKernel()
         spatial_nodes = nest.Create('iaf_psc_alpha',
                                     positions=nest.spatial.grid(shape=[10, 1],
                                                                 extent=[2., 2.],
                                                                 edge_wrap=True))
-        nest.Connect(spatial_nodes, spatial_nodes, cdict)
+        nest.Connect(nest.PairwiseBernoulli(spatial_nodes, spatial_nodes, p=1.))
+        nest.BuildNetwork()
 
         filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
         nest.DumpLayerConnections(spatial_nodes[0], spatial_nodes, 'static_synapse', filename)

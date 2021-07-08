@@ -57,9 +57,7 @@ class PlottingTestCase(unittest.TestCase):
         """Test plotting targets."""
         delta = 0.05
         mask = {'rectangular': {'lower_left': [-delta, -2/3 - delta], 'upper_right': [2/3 + delta, delta]}}
-        cdict = {'rule': 'pairwise_bernoulli', 'p': 1.,
-                 'mask': mask}
-        sdict = {'synapse_model': 'stdp_synapse'}
+
         nest.ResetKernel()
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(shape=[3, 3],
@@ -67,7 +65,9 @@ class PlottingTestCase(unittest.TestCase):
                                                         edge_wrap=True))
 
         # connect layer -> layer
-        nest.Connect(layer, layer, cdict, sdict)
+        projection = nest.PairwiseBernoulli(layer, layer, p=1., mask=mask, syn_spec=nest.synapsemodels.stdp())
+        nest.Connect(projection)
+        nest.BuildNetwork()
 
         ctr = nest.FindCenterElement(layer)
         fig = nest.PlotTargets(ctr, layer)

@@ -28,7 +28,7 @@ The current CI implementation is defined in `.travis.yml <https://github.com/nes
 
    - Vera++ and cppcheck are used for more detailed semantic (but still static) code analysis.
 
-   - pycodestyle is used to statically check Python code. A few errors are intentionally ignored, defined in the variable ``PEP8_IGNORES`` in `extras/static_code_analysis.sh <https://github.com/nest/nest-simulator/blob/master/extras/static_code_analysis.sh>`_. Again, the maximum line length is 120 characters.
+   - pycodestyle is used to statically check Python code. A few errors are intentionally ignored, defined in the variable ``PYCODESTYLE_IGNORES`` in `extras/static_code_analysis.sh <https://github.com/nest/nest-simulator/blob/master/extras/static_code_analysis.sh>`_. Again, the maximum line length is 120 characters.
 
    Errors that occurred in this stage are printed at the end of the log, including a list of affected files.
 

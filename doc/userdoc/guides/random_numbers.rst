@@ -318,8 +318,6 @@ as follows:
     for c in nest.GetConnections():
         c.set({'weight': rngs[c.get('vp')].uniform()})
 
-
-
 .. _random_internals:
 
 Random number internals

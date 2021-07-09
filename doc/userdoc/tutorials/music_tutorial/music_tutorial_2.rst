@@ -56,7 +56,7 @@ any number of channels. Since the proxy is a device, it ignores any
 weight or delay settings here.
 
 Lastly, we create a spike recorder, set the parameters (which we could
-have done directly in the ``Create`` call) and connect the
+have done directly in the :py:func:`.Create` call) and connect the
 neurons to the spike recorder so we can see what we’re sending. Then we
 simulate for one second.
 

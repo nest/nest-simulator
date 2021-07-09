@@ -43,8 +43,8 @@ between three types of specificity:
 -  Projection specificity – which cells do they project to, and how?
 
 In the previous sections, we saw that we can create deterministic or
-randomly selected connections between networks using ``Connect()``. Likewise, it is
-also possible to use ``Create()`` and ``Connect()`` to create network
+randomly selected connections between networks using :py:func:`.Connect`. Likewise, it is
+also possible to use :py:func:`.Create` and :py:func:`.Connect` to create network
 models that incorporate spatial location and spatial connectivity
 profiles.
 
@@ -97,7 +97,7 @@ where ``positions`` will define the locations of the elements.
 
 The ``node_model`` is the model type of the neuron, which can either be an
 existing model in the ``NEST`` collection, or one that we've previously
-defined using ``CopyModel()``.
+defined using :py:func:`.CopyModel`.
 
 We next have to decide whether the nodes should be placed in a
 **grid-based** or **free** (off-grid) fashion, which is equivalent to

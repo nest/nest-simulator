@@ -33,7 +33,7 @@ This would look something like:
            w_normed = w / sum(abs(w))  # L1-norm
            conn.weight = w_target * w_normed
 
-To apply normalization only to a certain synapse type, ``GetConnections()`` can be restricted to return only synapses of that type by specifying the model name, for example ``GetConnections(..., synapse_model="stdp_synapse")``.
+To apply normalization only to a certain synapse type, :py:func:`.GetConnections` can be restricted to return only synapses of that type by specifying the model name, for example ``GetConnections(..., synapse_model="stdp_synapse")``.
 
 To be formally correct, weight normalization should be done at each simulation timestep, but weights typically evolve on a much longer timescale than the timestep that the network is simulated at, so this would be very inefficient. Depending on how fast your weights change, you may want to perform a weight normalization, say, every 100 ms of simulated time, or every 1 s (or even less frequently). The duration of this interval can be chosen based on how far the norm is allowed to drift from :math:`w_{target}`: longer intervals allow for more drift. The magnitude of the drift can be calculated at the end of each interval, by subtracting the norm from its target, before writing back the normed vector to the NEST connection objects.
 

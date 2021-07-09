@@ -151,7 +151,7 @@ Similar to creating nodes with spatial distributions, such nodes are now connect
 standard ``nest.Connect()`` function. Connecting NodeCollections with
 spatial data is no different from connecting NodeCollections without
 metadata. In a layer-connection context, moving to the standard
-``Connect()`` function brings with it some notable changes:
+:py:func:`.Connect` function brings with it some notable changes:
 
 - Convergent and divergent specification of connection is removed, or
   rather renamed. See table below.

@@ -65,7 +65,7 @@ Indexing
                        model=iaf_psc_alpha, size=2, first=6, last=7)
 
 
-   One may also pass a list or tuple of Booleans, where the returned NodeCollection contains the `True` elements
+   One may also pass a list or tuple of Booleans, where the returned NodeCollection contains the ``True`` elements
    of the list or tuple. The length of the list of tuple of Booleans must be equal to the length of the NodeCollection.
 
    >>>  print(neurons[[True, True, True, True, False, False, True, True, True, True]])
@@ -201,7 +201,7 @@ Direct attributes
 Get the node status
 ~~~~~~~~~~~~~~~~~~~
 
-``get()`` returns the parameters in the collection. You can call ``get()`` in
+:py:meth:`~.NodeCollection.get` returns the parameters in the collection. You can call ``get()`` in
 several ways.
 
 To get all parameters in the collection, use ``get()`` without any function arguments.
@@ -248,7 +248,7 @@ This returns a dictionary with tuples. If the NodeCollection is a single-element
 To get specific parameters in the collection, use
 ``get([parameter_name_1, parameter_name_2, ... , parameter_name_n])``.
 
-Get the parameters `V_m` and `V_reset` of all nodes
+Get the parameters ``V_m`` and ``V_reset`` of all nodes
 
 >>>    nodes = nest.Create('iaf_psc_alpha', 10, {'V_m': -55.})
 >>>    nodes.get(['V_m', 'V_reset'])
@@ -298,9 +298,9 @@ output format can be specified for all the different ``get()`` versions above.
 Set node properties
 ~~~~~~~~~~~~~~~~~~~
 
-``set()`` sets the values of a parameter by iterating over each node.
+:py:meth:`~.NodeCollection.set` sets the values of a parameter by iterating over each node.
 
-As with ``get()``, you can set parameters in different ways.
+As with :py:meth:`~.NodeCollection.get`, you can set parameters in different ways.
 
 To set several parameters at once, use ``nodes.set(parameter_dict)``, where the
 keys of the parameter_dict are the parameter names. The values could be a list
@@ -321,7 +321,7 @@ or a ``nest.Parameter``
  nodes[:3].set(t_ref=[3.0, 4.0, 5.0])
  nodes.set(t_ref=nest.random.uniform())
 
-Note that some parameters, like `global_id`, cannot be set. The documentation of a specific model
+Note that some parameters, like ``global_id``, cannot be set. The documentation of a specific model
 will point out which parameters can be set and which are read-only.
 
 
@@ -329,7 +329,7 @@ Dictionary with lists when setting parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is now possible to use a dictionary with lists when setting node parameters
-with ``Create()``, ``set()`` or ``SetStatus()``. The values of the lists will
+with :py:func:`.Create`, :py:meth:`~.NodeCollection.set` or :py:func:`.SetStatus`. The values of the lists will
 be distributed across the nodes. The way to do this previously was to apply a
 list of dictionaries. This is still possible.
 

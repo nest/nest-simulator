@@ -13,11 +13,9 @@ If your question is not on there, you are welcome to subscribe to our
 Getting help on the command line interface
 ------------------------------------------
 
-* The ``helpdesk()`` command will launch the documentation pages on
-  your browser.
-  
-* To access the High-level Python API reference material you can use
-  the commands:
+* The :py:func:`.helpdesk` command will launch the documentation pages on your browser.
+
+* To access the High-level Python API reference material you can use the commands:
 
     .. code-block:: python
 
@@ -56,3 +54,4 @@ Model Information
     .. code-block:: python
 
        nest.help('model_name')
+

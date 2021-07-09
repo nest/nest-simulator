@@ -28,7 +28,7 @@
 
 namespace nest
 {
-Vose::Vose( std::vector< double > dist )
+Vose::Vose( const std::vector< double >& dist )
 {
   assert( not dist.empty() );
 
@@ -38,30 +38,34 @@ Vose::Vose( std::vector< double > dist )
 
   // We accept distributions that do not sum to 1.
   double sum = 0.0;
-  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end(); ++it )
+  for ( std::vector< double >::const_iterator it = dist.begin(); it != dist.end(); ++it )
   {
     sum += *it;
   }
+
   // Partition distribution into small (<=1/n) and large (>1/n) probabilities
   std::vector< BiasedCoin >::iterator small = dist_.begin();
   std::vector< BiasedCoin >::iterator large = dist_.end();
 
   index i = 0;
 
-  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end(); ++it )
+  const double pivot = sum / n;
+  const double scale = 1.0 / pivot;
+
+  for ( std::vector< double >::const_iterator it = dist.begin(); it != dist.end(); ++it )
   {
-    if ( *it <= sum / n )
+    if ( *it <= pivot )
     {
-      *small++ = BiasedCoin( i++, 0, ( *it ) * n / sum );
+      *small++ = BiasedCoin( i++, 0, ( *it ) * scale );
     }
     else
     {
-      *--large = BiasedCoin( i++, 0, ( *it ) * n / sum );
+      *--large = BiasedCoin( i++, 0, ( *it ) * scale );
     }
   }
 
   // Generate aliases
-  for ( small = dist_.begin(); ( small != large ) && ( large != dist_.end() ); ++small )
+  for ( small = dist_.begin(); ( small != large ) and ( large != dist_.end() ); ++small )
   {
 
     small->tails = large->heads; // 'tails' is the alias

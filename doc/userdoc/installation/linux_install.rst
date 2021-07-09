@@ -28,15 +28,23 @@ its development packages.
 For efficient sorting algorithms the `Boost library <https://www.boost.org/>`_ is used. Since this is an essential
 factor for the communication of spikes, some simulations are significantly faster when NEST is compiled with Boost.
 
-If you want to use PyNEST, we recommend to install the following along with their development packages:
+If you want to use PyNEST, `Python 3.8 or higher <http://www.python.org>`_ is required, as well as the following
+Python packages:
 
-- `Python 3.8 or higher <http://www.python.org>`_
 - `Cython 0.28.3 or higher <https://cython.org>`_
 - `NumPy <http://www.numpy.org>`_
 - `SciPy <http://www.scipy.org>`_
-- `Matplotlib 3.0 or higher <http://matplotlib.org>`_
-- `IPython <http://ipython.org>`_
 
+The following packages are optional, but recommended to run the unit tests:
+
+- `nosetest 1.3.7 or higher <https://nose.readthedocs.io>`_
+- `Matplotlib 3.0 or higher <http://matplotlib.org>`_
+
+For NEST server, the followinga additional packages are necessary:
+
+- `Flask <https://flask.palletsprojects.com/>`_
+- `Werkzeug <https://werkzeug.palletsprojects.com/>`_
+- `RestrictedPython <https://restrictedpython.readthedocs.io/>`_
 
 .. _source-install:
 

@@ -303,11 +303,11 @@ nest::RecordingBackendASCII::DeviceData::write( const Event& event,
 
   if ( time_in_steps_ )
   {
-    file_ << event.get_stamp().get_steps() << "\t" << event.get_offset();
+    file_ << event.get_stamp().get_steps() << "\t" << event.get_stamp().get_offset();
   }
   else
   {
-    file_ << ( event.get_stamp().get_ms() - event.get_offset() );
+    file_ << ( event.get_stamp().get_ms() );
   }
 
   for ( auto& val : double_values )

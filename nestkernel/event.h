@@ -106,14 +106,14 @@ public:
   virtual void operator()() = 0;
 
   /**
-   * Change pointer to receiving Node.
-   */
-  void set_receiver( Node& );
-
-  /**
    * Return reference to receiving Node.
    */
   Node& get_receiver() const;
+
+  /**
+   * Change pointer to receiving Node.
+   */
+  void set_receiver( Node& );
 
   /**
    * Return node ID of receiving Node.
@@ -143,21 +143,15 @@ public:
   /**
    * Return time stamp of the event.
    * The stamp denotes the time when the event was created.
-   * The resolution of Stamp is limited by the time base of the
-   * simulation kernel (@see class nest::Time).
-   * If this resolution is not fine enough, the creation time
-   * can be corrected by using the time attribute.
    */
   Time const& get_stamp() const;
 
   /**
-   * Set the transmission delay of the event.
-   * The delay refers to the time until the event is
-   * expected to arrive at the receiver.
-   * @param t delay.
+   * Set the time stamp of the event.
+   * The time stamp refers to the time when the event
+   * was created.
    */
-
-  void set_delay_steps( delay );
+  void set_stamp( Time const& );
 
   /**
    * Return transmission delay of the event.
@@ -165,6 +159,14 @@ public:
    * expected to arrive at the receiver.
    */
   delay get_delay_steps() const;
+
+  /**
+   * Set the transmission delay of the event.
+   * The delay refers to the time until the event is
+   * expected to arrive at the receiver.
+   * @param d delay
+   */
+  void set_delay_steps( delay d );
 
   /**
    * Relative spike delivery time in steps.
@@ -189,14 +191,6 @@ public:
   port get_port() const;
 
   /**
-   * Return the receiver port number of the event.
-   * This function returns the number of the r-port over which the
-   * Event was sent.
-   * @note A return value of 0 indicates that the r-port is not used.
-   */
-  rport get_rport() const;
-
-  /**
    * Set the port number.
    * Each event carries the number of the port over which the event
    * is sent. When a connection is established, it receives a unique
@@ -207,33 +201,22 @@ public:
   void set_port( port p );
 
   /**
+   * Return the receiver port number of the event.
+   * This function returns the number of the r-port over which the
+   * Event was sent.
+   * @note A return value of 0 indicates that the r-port is not used.
+   */
+  rport get_rport() const;
+
+  /**
    * Set the receiver port number (r-port).
    * When a connection is established, the receiving Node may issue
-   * a port number (r-port) to distinguish the incomin
+   * a port number (r-port) to distinguish the incoming
    * connection. By the default, the r-port is not used and its port
    * number defaults to zero.
    * @param p Receiver port number of the connection, or 0 if unused.
    */
   void set_rport( rport p );
-
-  /**
-   * Return the creation time offset of the Event.
-   * Each Event carries the exact time of creation. This
-   * time need not coincide with an integral multiple of the
-   * temporal resolution. Rather, Events may be created at any point
-   * in time.
-   */
-  double get_offset() const;
-
-  /**
-   * Set the creation time of the Event.
-   * Each Event carries the exact time of creation in realtime. This
-   * time need not coincide with an integral multiple of the
-   * temporal resolution. Rather, Events may be created at any point
-   * in time.
-   * @param t Creation time in realtime. t has to be in [0, h).
-   */
-  void set_offset( double t );
 
   /**
    * Return the weight.
@@ -271,13 +254,6 @@ public:
    * and receiver pointers are correctly set.
    */
   bool is_valid() const;
-
-  /**
-   * Set the time stamp of the event.
-   * The time stamp refers to the time when the event
-   * was created.
-   */
-  void set_stamp( Time const& );
 
 protected:
   index sender_node_id_; //!< node ID of sender or -1.
@@ -335,15 +311,6 @@ protected:
    * by a const function (get_rel_delivery_steps).
    */
   mutable long stamp_steps_;
-
-  /**
-   * Offset for precise spike times.
-   * offset_ specifies a correction to the creation time.
-   * If the resolution of stamp is not sufficiently precise,
-   * this attribute can be used to correct the creation time.
-   * offset_ has to be in [0, h).
-   */
-  double offset_;
 
   /**
    * Weight of the connection.
@@ -1363,18 +1330,6 @@ inline void
 Event::set_delay_steps( delay d )
 {
   d_ = d;
-}
-
-inline double
-Event::get_offset() const
-{
-  return offset_;
-}
-
-inline void
-Event::set_offset( double t )
-{
-  offset_ = t;
 }
 
 inline port

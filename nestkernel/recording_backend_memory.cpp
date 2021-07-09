@@ -197,11 +197,11 @@ nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
   if ( time_in_steps_ )
   {
     times_steps_.push_back( event.get_stamp().get_steps() );
-    times_offset_.push_back( event.get_offset() );
+    times_offset_.push_back( event.get_stamp().get_offset() );
   }
   else
   {
-    times_ms_.push_back( event.get_stamp().get_ms() - event.get_offset() );
+    times_ms_.push_back( event.get_stamp().get_ms() );
   }
 
   for ( size_t i = 0; i < double_values.size(); ++i )

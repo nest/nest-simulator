@@ -172,11 +172,27 @@ public:
   static tic_t compute_max();
 
   /////////////////////////////////////////////////////////////
-  // The data: longest integer for tics
+  // The data
   /////////////////////////////////////////////////////////////
 
 protected:
+  /**
+   * Longest integer for tics.
+   * The resolution of tic_t is limited by the time base of the
+   * simulation kernel.
+   * If this resolution is not fine enough, the creation time
+   * can be corrected by using the offset_ attribute.
+   */
   tic_t tics;
+
+  /**
+   * Offset for precise spike times.
+   * offset_ specifies a correction to the creation time.
+   * If the resolution of stamp is not sufficiently precise,
+   * this attribute can be used to correct the creation time.
+   * offset_ has to be in [0, h).
+   */
+  double offset_;
 
   /////////////////////////////////////////////////////////////
   // Friend declaration for units and binary operators
@@ -198,6 +214,29 @@ protected:
   friend Time operator*( const long factor, const Time& t );
   friend Time operator*( const Time& t, long factor );
   friend std::ostream&(::operator<<)( std::ostream&, const Time& );
+
+  /////////////////////////////////////////////////////////////
+  // Offset
+  /////////////////////////////////////////////////////////////
+
+  /**
+   * Return the creation time offset of the Event.
+   * Each Event carries the exact time of creation. This
+   * time need not coincide with an integral multiple of the
+   * temporal resolution. Rather, Events may be created at any point
+   * in time.
+   */
+  double get_offset() const;
+
+  /**
+   * Set the creation time of the Event.
+   * Each Event carries the exact time of creation in realtime. This
+   * time need not coincide with an integral multiple of the
+   * temporal resolution. Rather, Events may be created at any point
+   * in time.
+   * @param t Creation time in realtime. t has to be in [0, h).
+   */
+  void set_offset( double t );
 
   /////////////////////////////////////////////////////////////
   // Limits for time, including infinity definitions
@@ -295,7 +334,8 @@ protected:
 
 public:
   Time()
-    : tics( 0 ){};
+    : tics( 0 )
+    , offset_( 0. ) {};
 
   // Default copy constructor: assumes legal time object
   // Defined by compiler.
@@ -514,7 +554,7 @@ public:
     {
       return LIM_NEG_INF_ms;
     }
-    return Range::MS_PER_TIC * tics;
+    return Range::MS_PER_TIC * tics - offset_;
   }
 
   delay
@@ -627,6 +667,18 @@ inline Time operator*( const long factor, const Time& t )
 inline Time operator*( const Time& t, long factor )
 {
   return factor * t;
+}
+
+inline double
+Time::get_offset() const
+{
+  return offset_;
+}
+
+inline void
+Time::set_offset( double t )
+{
+  offset_ = t;
 }
 } // namespace
 

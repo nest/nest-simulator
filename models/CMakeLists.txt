@@ -72,6 +72,9 @@ set( models_sources
     iaf_psc_exp.h iaf_psc_exp.cpp
     iaf_psc_exp_htum.h iaf_psc_exp_htum.cpp
     iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
+    cm_main.h cm_main.cpp
+    cm_tree.h cm_tree.cpp
+    cm_compartmentcurrents.h cm_compartmentcurrents.cpp
     iaf_psc_exp_ps.cpp iaf_psc_exp_ps.h
     iaf_psc_exp_ps_lossless.cpp iaf_psc_exp_ps_lossless.h
     izhikevich.h izhikevich.cpp

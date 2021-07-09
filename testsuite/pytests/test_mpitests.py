@@ -20,36 +20,51 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import nest
 import os
-from subprocess import call
+from subprocess import call, check_output
 
-HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
+have_mpi_cmd = ["sli", "-c", "statusdict/have_mpi :: =only"]
+HAVE_MPI = check_output(have_mpi_cmd) == b'true'
+
+try:
+    from mpi4py import MPI
+    HAVE_MPI4PY = True
+except ImportError:
+    HAVE_MPI4PY = False
 
 
 class TestMPIDependentTests(unittest.TestCase):
 
     @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
+    @unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
     def testsWithMPI(self):
-        if HAVE_MPI:
-            failing_tests = []
-            mpitests = [('mpitest_get_local_vps.py', 4),
-                        ('test_sp/mpitest_issue_578_sp.py', 2)]
-            path = os.path.dirname(__file__)
+        failing_tests = []
+        path = os.path.dirname(os.path.realpath(__file__))
+        mpitests = [
+            ('mpitest_get_local_vps.py', 4),
+            ('test_sp/mpitest_issue_578_sp.py', 2),
+            ("test_connect_all_to_all.py", 2),
+            ("test_connect_one_to_one.py", 2),
+            ("test_connect_fixed_indegree.py", 2),
+            ("test_connect_fixed_outdegree.py", 2),
+            ("test_connect_fixed_total_number.py", 2),
+            ("test_connect_pairwise_bernoulli.py", 2),
+        ]
 
-            for test, num_procs in mpitests:
-                test = os.path.join(path, test)
-                command = nest.ll_api.sli_func("mpirun", num_procs, "nosetests", test)
-                print("Executing test with command: " + command)
-                command = command.split()
-                my_env = os.environ.copy()
-                returncode = call(command, env=my_env)
-                if returncode != 0:  # call returns 0 for passing tests
-                    failing_tests.append((test, num_procs))
+        for test, num_procs in mpitests:
+            test = os.path.join(path, test)
+            mpirun_cmd = ["sli", "-c", f"{num_procs} (nosetests) ({test}) mpirun =only"]
+            command = check_output(mpirun_cmd).decode("utf-8")
+            print("Executing test with command: " + command)
+            command = command.split()
+            my_env = os.environ.copy()
+            returncode = call(command, env=my_env)
+            if returncode != 0:  # call returns 0 for passing tests
+                failing_tests.append((test, num_procs))
 
-            self.assertTrue(not failing_tests, 'The following tests failed ' +
-                            'when executing with "mpirun -np N nosetests ' +
-                            '[script]": {}'.format(failing_tests))
+        self.assertTrue(not failing_tests, 'The following tests failed ' +
+                        'when executing with "mpirun -np N nosetests ' +
+                        '[script]": {}'.format(failing_tests))
 
 
 def suite():

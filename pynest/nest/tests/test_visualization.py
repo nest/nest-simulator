@@ -95,7 +95,7 @@ class VisualizationTestCase(unittest.TestCase):
     @unittest.skipIf(not PLOTTING_POSSIBLE, 'Plotting impossible because matplotlib or display missing')
     def test_voltage_trace_from_device(self):
         """Test voltage_trace from device"""
-        import nest.voltage_trace as nvtrace
+        import nest.voltage_trace
         nest.ResetKernel()
         nodes = nest.Create('iaf_psc_alpha', 2)
         pg = nest.Create('poisson_generator', 1, {'rate': 1000.})
@@ -105,10 +105,11 @@ class VisualizationTestCase(unittest.TestCase):
         nest.Simulate(100)
 
         # Test with data from device
+        plt.close("all")
         nest.voltage_trace.from_device(device)
         self.voltage_trace_verify(device)
 
-        # Test with fata from file
+        # Test with data from file
         vm = device.get('events')
         data = np.zeros([len(vm['senders']), 3])
         data[:, 0] = vm['senders']
@@ -117,6 +118,8 @@ class VisualizationTestCase(unittest.TestCase):
         filename = os.path.join(self.nest_tmpdir(), 'voltage_trace.txt')
         self.filenames.append(filename)
         np.savetxt(filename, data)
+
+        plt.close("all")
         nest.voltage_trace.from_file(filename)
         self.voltage_trace_verify(device)
 
@@ -150,7 +153,7 @@ class VisualizationTestCase(unittest.TestCase):
     @unittest.skipIf(not PLOTTING_POSSIBLE, 'Plotting impossible because matplotlib or display missing')
     def test_raster_plot(self):
         """Test raster_plot"""
-        import nest.raster_plot as nraster
+        import nest.raster_plot
 
         sr, sr_to_file = self.spike_recorder_data_setup(to_file=True)
         spikes = sr.get('events')

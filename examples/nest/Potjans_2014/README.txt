@@ -39,12 +39,11 @@ Files:
 	Simulation script
 
 	- run_microcircuit.sh
-	Bash script. Creates sim_script.sh and submits it to the queue
+	Bash script. Runs the simulation in the current machine, HPC might be needed.
 
 	- spike_analysis.py
 	Python script for basic analysis
 
-The bash script is designed for a cluster with a queuing system that uses qsub.
 The actual simulation script 'microcircuit.sli' does not need to be changed.
 
 

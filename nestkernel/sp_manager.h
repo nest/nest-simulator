@@ -147,7 +147,7 @@ public:
   delay builder_max_delay() const;
 
   // Creation of synapses
-  void create_synapses( std::vector< index >& pre_vacant_id,
+  bool create_synapses( std::vector< index >& pre_vacant_id,
     std::vector< int >& pre_vacant_n,
     std::vector< index >& post_vacant_id,
     std::vector< int >& post_vacant_n,

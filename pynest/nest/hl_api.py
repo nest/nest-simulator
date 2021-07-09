@@ -51,7 +51,7 @@ __all__ = [
     'Connect',
     'ConnectImmediately',
     'ConnectionRules',
-    'SynapseCollection',
+    'Conngen',
     'CopyModel',
     'Create',
     'CreateMask',
@@ -103,6 +103,7 @@ __all__ = [
     'SetStatus',
     'Simulate',
     'SymmetricPairwiseBernoulli',
+    'SynapseCollection',
     'authors',
     'get_verbosity',
     'help',
@@ -110,4 +111,5 @@ __all__ = [
     'message',
     'set_verbosity',
     'sysinfo',
+    'reset_projection_collection',
 ]

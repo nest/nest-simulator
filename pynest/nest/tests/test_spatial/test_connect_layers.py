@@ -250,6 +250,8 @@ class ConnectLayersTestCase(unittest.TestCase):
             nest.Connect(projection)
             nest.BuildNetwork()
         self.assertEqual(nest.GetKernelStatus('num_connections'), 0)
+
+        nest.reset_projection_collection()
         projection.conn_spec['allow_oversized_mask'] = True
         nest.Connect(projection)
         nest.BuildNetwork()

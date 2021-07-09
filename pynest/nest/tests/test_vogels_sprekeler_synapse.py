@@ -94,7 +94,8 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
     def test_badPropertiesSetupsThrowExceptions(self):
         """Check that exceptions are thrown when setting bad parameters."""
         def setupProperty(property):
-            bad_syn_spec = self.syn_spec
+            nest.reset_projection_collection()
+            bad_syn_spec = self.syn_spec.clone()
             bad_syn_spec.specs.update(property)
             nest.Connect(nest.AllToAll(self.pre_neuron, self.post_neuron, syn_spec=bad_syn_spec))
             nest.BuildNetwork()

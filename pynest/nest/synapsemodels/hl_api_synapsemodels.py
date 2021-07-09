@@ -23,6 +23,8 @@
 Synapse models
 """
 
+import copy
+
 __all__ = [
     'bernoulli',
     'bernoulli_hpc',
@@ -118,7 +120,10 @@ class SynapseModel:
         if attr in ['synapse_model', 'specs']:
             return super().__setattr__(attr, value)
         else: self.specs[attr] = value
-    
+
+    def clone(self):
+        return copy.deepcopy(self)
+
     def __str__(self):
         return f'synapse_model: {self.synapse_model}, specs: {self.specs}'
 

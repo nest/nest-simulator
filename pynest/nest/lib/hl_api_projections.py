@@ -32,6 +32,7 @@ from ..synapsemodels.hl_api_synapsemodels import SynapseModel
 __all__ = [
     'Connect',
     'ConnectImmediately',
+    'Conngen',
     'BuildNetwork',
     'OneToOne',
     'AllToAll',
@@ -39,7 +40,8 @@ __all__ = [
     'FixedOutdegree',
     'FixedTotalNumber',
     'PairwiseBernoulli',
-    'SymmetricPairwiseBernoulli'
+    'SymmetricPairwiseBernoulli',
+    'reset_projection_collection',
 ]
 
 
@@ -151,7 +153,7 @@ def BuildNetwork():
                     raise TypeError("Presynaptic NodeCollection must have spatial information")
                 if target.spatial is None:
                     raise TypeError("Postsynaptic NodeCollection must have spatial information")
-    
+
                 # Merge to a single projection dictionary because we have spatial projections,
                 spatial_projections = _process_spatial_projections(conn_spec, syn_spec)
                 projection_list.append([source, target, spatial_projections])
@@ -162,14 +164,20 @@ def BuildNetwork():
                 elif isinstance(syn_spec, dict):
                     syn_spec = [syn_spec]
                 projection_list.append([source, target, conn_spec, syn_spec])
-    
+
         # Call SLI function
         sps(projection_list)
+        print(projection_list)
         sr('connect_projections')
-    
+
         # reset all projections
         projection_collection.reset()
         projection_collection.network_built = True
+
+
+def reset_projection_collection():
+    projection_collection.reset()
+    projection_collection.network_built = False
 
 
 class OneToOne(Projection):
@@ -210,4 +218,10 @@ class PairwiseBernoulli(Projection):
 class SymmetricPairwiseBernoulli(Projection):
     def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'symmetric_pairwise_bernoulli', 'p': p}
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
+
+
+class Conngen(Projection):
+    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, cg=None, **kwargs):
+        self.conn_spec = {'rule': 'conngen', 'cg': cg}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)

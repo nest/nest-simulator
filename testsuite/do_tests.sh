@@ -120,7 +120,7 @@ if test -d "${REPORTDIR}"; then
 fi
 mkdir "${REPORTDIR}"
 
-TEST_BASEDIR="${PREFIX}/share/doc/nest"
+TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"

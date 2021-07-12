@@ -128,6 +128,8 @@ TEST_RUNFILE="${REPORTDIR}/runtest.sh"
 
 NEST="nest_serial"
 
+HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
+
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
 if test "$(uname -s)" = "Darwin"; then
     TEST_CRSTATE="$( defaults read com.apple.CrashReporter DialogType )"
@@ -154,6 +156,11 @@ if test "${PYTHON}"; then
     NOSE_VERSION="$("${NOSE}" --version | cut -d' ' -f3)"
     echo "  Nose executable .... $NOSE (version $NOSE_VERSION)"
     echo "  PYTHONPATH ......... `print_paths ${PYTHONPATH:-}`"
+fi
+if test "${HAVE_MPI}" = "true"; then
+    echo "  Running MPI tests .. yes"
+else
+    echo "  Running MPI tests .. no (compiled without MPI support)"
 fi
 if test "${MUSIC}"; then
     MUSIC_VERSION="$("${MUSIC}" --version | head -n1 | cut -d' ' -f2)"
@@ -316,7 +323,7 @@ junit_close
 echo
 echo "Phase 5: Running MPI tests"
 echo "--------------------------"
-if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue; then
+if test "${HAVE_MPI}" = "true"; then
     junit_open '05_mpitests'
 
     NEST="nest_indirect"
@@ -450,9 +457,22 @@ echo "Phase 7: Running PyNEST tests"
 echo "-----------------------------"
 if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests/"
-    XUNIT_FILE="${REPORTDIR}/07_pynesttests.xml"
-    "${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="07_pynesttests" --xunit-file="${XUNIT_FILE}" "${PYNEST_TEST_DIR}" 2>&1 \
-        | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
+    XUNIT_NAME="07_pynesttests"
+    XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
+    "${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="${XUNIT_NAME}" \
+		--xunit-file="${XUNIT_FILE}" --exclude=test_mpitests\.py "${PYNEST_TEST_DIR}" 2>&1 \
+        | tee -a "${TEST_LOGFILE}" | grep --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
+
+    if test "${HAVE_MPI}" = "true"; then
+	echo
+	echo "  Running PyNEST tests with MPI (no output will be produced)"
+	XUNIT_NAME="${XUNIT_NAME}_mpi"
+	XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
+	"${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="${XUNIT_NAME}" \
+		    --xunit-file="${XUNIT_FILE}" "${PYNEST_TEST_DIR}/test_mpitests.py" \
+		    2>&1 | tee -a "${TEST_LOGFILE}" >/dev/null
+	            # "&>FILE" or ">FILE 2>&1" did not silence above line. Why?!
+    fi
 else
     echo
     echo "  Not running PyNEST tests because NEST was compiled without Python support."

@@ -31,7 +31,7 @@ nestsc = NESTServerClient()
 #
 print('\n')
 print('Execute script code with NEST Server API')
-print('-'*20)
+print('-' * 20)
 
 # Reset kernel
 nestsc.ResetKernel()
@@ -58,7 +58,7 @@ print('Number of events:', n_events)
 #
 print('\n')
 print('Execute script code from file')
-print('-'*20)
+print('-' * 20)
 
 n_events = nestsc.from_file('NESTClient_script.py', 'n_events')['data']
 print('Number of events:', n_events)

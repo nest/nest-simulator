@@ -64,17 +64,3 @@ except ImportError:
     pass
 
 __version__ = ll_api.sli_func("statusdict /version get")
-
-
-def test():
-    """Runs all PyNEST unit tests."""
-    from . import tests
-    import unittest
-
-    debug = ll_api.get_debug()
-    ll_api.set_debug(True)
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(tests.suite())
-
-    ll_api.set_debug(debug)

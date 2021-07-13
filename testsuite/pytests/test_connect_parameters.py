@@ -27,7 +27,7 @@ The tests for all rules will run these tests separately.
 
 import unittest
 import numpy as np
-from . import test_connect_helpers as hf
+import test_connect_helpers as hf
 
 
 class TestParams(unittest.TestCase):

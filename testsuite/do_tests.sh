@@ -471,7 +471,7 @@ if test "${PYTHON}"; then
 	"${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="${XUNIT_NAME}" \
 		    --xunit-file="${XUNIT_FILE}" "${PYNEST_TEST_DIR}/test_mpitests.py" \
 		    2>&1 | tee -a "${TEST_LOGFILE}" >/dev/null
-	            # "&>FILE" or ">FILE 2>&1" did not silence above line. Why?!
+	            # "&>FILE" or ">>FILE 2>&1" don't silence the line above. Why?!
     fi
 else
     echo

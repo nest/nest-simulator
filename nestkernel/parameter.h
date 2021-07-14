@@ -73,11 +73,6 @@ public:
    * @returns the value of the parameter.
    */
   virtual double value( RngPtr rng, Node* node ) = 0;
-  virtual double
-  value( RngPtr rng, index, Node*, thread )
-  {
-    return value( rng, nullptr );
-  }
 
   virtual double
   value( RngPtr rng, const std::vector< double >&, const std::vector< double >&, const AbstractLayer& )
@@ -107,7 +102,6 @@ protected:
   bool parameter_is_spatial_{ false };
   bool parameter_returns_int_only_{ false };
 
-  Node* node_id_to_node_ptr_( const index, const thread ) const;
   bool value_is_integer_( const double value ) const;
 };
 
@@ -359,19 +353,17 @@ public:
   }
 
   double
-  value( RngPtr rng, Node* node ) override
+  value( RngPtr, Node* node ) override
   {
     if ( synaptic_endpoint_ != 0 )
     {
       throw BadParameterValue( "Source or target position parameter can only be used when connecting." );
     }
-    return get_node_pos_( rng, node );
-  }
-
-  double
-  value( RngPtr, index, Node*, thread ) override
-  {
-    throw KernelException( "Node position parameter can only be used when connecting spatially distributed nodes." );
+    if ( node == nullptr )
+    {
+      throw KernelException( "Node position parameter can only be used when connecting spatially distributed nodes." );
+    }
+    return get_node_pos_( node );
   }
 
   double
@@ -398,7 +390,7 @@ private:
   int dimension_;
   int synaptic_endpoint_;
 
-  double get_node_pos_( RngPtr rng, Node* node ) const;
+  double get_node_pos_( Node* node ) const;
 };
 
 
@@ -423,12 +415,6 @@ public:
   value( RngPtr, Node* ) override
   {
     throw BadParameterValue( "Spatial distance parameter can only be used when connecting." );
-  }
-
-  double
-  value( RngPtr, index, Node*, thread ) override
-  {
-    throw KernelException( "Spatial distance parameter can only be used when connecting spatially distributed nodes." );
   }
 
   double value( RngPtr rng,
@@ -475,13 +461,6 @@ public:
   value( RngPtr rng, Node* node ) override
   {
     return parameter1_->value( rng, node ) * parameter2_->value( rng, node );
-  }
-
-  double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    return parameter1_->value( rng, snode_id, target, target_thread )
-      * parameter2_->value( rng, snode_id, target, target_thread );
   }
 
   double
@@ -536,13 +515,6 @@ public:
   }
 
   double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    return parameter1_->value( rng, snode_id, target, target_thread )
-      / parameter2_->value( rng, snode_id, target, target_thread );
-  }
-
-  double
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -594,13 +566,6 @@ public:
   }
 
   double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    return parameter1_->value( rng, snode_id, target, target_thread )
-      + parameter2_->value( rng, snode_id, target, target_thread );
-  }
-
-  double
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -649,13 +614,6 @@ public:
   value( RngPtr rng, Node* node ) override
   {
     return parameter1_->value( rng, node ) - parameter2_->value( rng, node );
-  }
-
-  double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    return parameter1_->value( rng, snode_id, target, target_thread )
-      - parameter2_->value( rng, snode_id, target, target_thread );
   }
 
   double
@@ -726,13 +684,6 @@ public:
   value( RngPtr rng, Node* node ) override
   {
     return compare_( parameter1_->value( rng, node ), parameter2_->value( rng, node ) );
-  }
-
-  double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    return compare_( parameter1_->value( rng, snode_id, target, target_thread ),
-      parameter2_->value( rng, snode_id, target, target_thread ) );
   }
 
   double
@@ -824,19 +775,6 @@ public:
   }
 
   double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    if ( condition_->value( rng, snode_id, target, target_thread ) )
-    {
-      return if_true_->value( rng, snode_id, target, target_thread );
-    }
-    else
-    {
-      return if_false_->value( rng, snode_id, target, target_thread );
-    }
-  }
-
-  double
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -897,12 +835,6 @@ public:
   }
 
   double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    return std::min( p_->value( rng, snode_id, target, target_thread ), other_value_ );
-  }
-
-  double
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -954,12 +886,6 @@ public:
   }
 
   double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    return std::max( p_->value( rng, snode_id, target, target_thread ), other_value_ );
-  }
-
-  double
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -1002,7 +928,6 @@ public:
    * @returns the value of the parameter.
    */
   double value( RngPtr rng, Node* node ) override;
-  double value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override;
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -1048,12 +973,6 @@ public:
   value( RngPtr rng, Node* node ) override
   {
     return std::exp( p_->value( rng, node ) );
-  }
-
-  double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    return std::exp( p_->value( rng, snode_id, target, target_thread ) );
   }
 
   double
@@ -1105,12 +1024,6 @@ public:
   }
 
   double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    return std::sin( p_->value( rng, snode_id, target, target_thread ) );
-  }
-
-  double
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -1155,12 +1068,6 @@ public:
   value( RngPtr rng, Node* node ) override
   {
     return std::cos( p_->value( rng, node ) );
-  }
-
-  double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    return std::cos( p_->value( rng, snode_id, target, target_thread ) );
   }
 
   double
@@ -1211,12 +1118,6 @@ public:
   value( RngPtr rng, Node* node ) override
   {
     return std::pow( p_->value( rng, node ), exponent_ );
-  }
-
-  double
-  value( RngPtr rng, index snode_id, Node* target, thread target_thread ) override
-  {
-    return std::pow( p_->value( rng, snode_id, target, target_thread ), exponent_ );
   }
 
   double
@@ -1289,12 +1190,6 @@ public:
     throw KernelException( "Cannot get value of DimensionParameter." );
   }
 
-  double
-  value( RngPtr, index, Node*, thread ) override
-  {
-    throw KernelException( "Cannot get value of DimensionParameter." );
-  }
-
   /**
    * Generates a position with values for each dimension generated from their respective parameters.
    * @returns The position, given as an array.
@@ -1360,13 +1255,6 @@ public:
     throw BadParameterValue( "Exponential distribution parameter can only be used when connecting." );
   }
 
-  double
-  value( RngPtr, index, Node*, thread ) override
-  {
-    throw KernelException(
-      "Exponential distribution parameter can only be used when connecting spatially distributed nodes." );
-  }
-
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -1410,13 +1298,6 @@ public:
   value( RngPtr, Node* ) override
   {
     throw BadParameterValue( "Gaussian distribution parameter can only be used when connecting." );
-  }
-
-  double
-  value( RngPtr, index, Node*, thread ) override
-  {
-    throw KernelException(
-      "Gaussian distribution parameter can only be used when connecting spatially distributed nodes." );
   }
 
   double value( RngPtr rng,
@@ -1469,12 +1350,6 @@ public:
     throw BadParameterValue( "Gaussian 2D parameter can only be used when connecting." );
   }
 
-  double
-  value( RngPtr, index, Node*, thread ) override
-  {
-    throw KernelException( "Gaussian 2D parameter can only be used when connecting spatially distributed nodes." );
-  }
-
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
@@ -1524,13 +1399,6 @@ public:
   value( RngPtr, Node* ) override
   {
     throw BadParameterValue( "Gamma distribution parameter can only be used when connecting." );
-  }
-
-  double
-  value( RngPtr, index, Node*, thread ) override
-  {
-    throw KernelException(
-      "Gamma distribution parameter can only be used when connecting spatially distributed nodes." );
   }
 
   double value( RngPtr rng,

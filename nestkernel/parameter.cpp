@@ -35,11 +35,6 @@ template class sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType
 
 namespace nest
 {
-Node*
-Parameter::node_id_to_node_ptr_( const index node_id, const thread t ) const
-{
-  return kernel().node_manager.get_node_or_proxy( node_id, t );
-}
 
 std::vector< double >
 Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
@@ -135,7 +130,7 @@ LognormalParameter::value( RngPtr rng, Node* )
 
 
 double
-NodePosParameter::get_node_pos_( RngPtr, Node* node ) const
+NodePosParameter::get_node_pos_( Node* node ) const
 {
   if ( not node )
   {
@@ -232,22 +227,6 @@ RedrawParameter::value( RngPtr rng, Node* node )
       throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
     }
     value = p_->value( rng, node );
-  } while ( value < min_ or value > max_ );
-  return value;
-}
-
-double
-RedrawParameter::value( RngPtr rng, index snode_id, Node* target, thread target_thread )
-{
-  double value;
-  size_t num_redraws = 0;
-  do
-  {
-    if ( num_redraws++ == max_redraws_ )
-    {
-      throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
-    }
-    value = p_->value( rng, snode_id, target, target_thread );
   } while ( value < min_ or value > max_ );
   return value;
 }

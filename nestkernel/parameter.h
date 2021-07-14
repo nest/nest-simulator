@@ -49,7 +49,9 @@ class Parameter
 {
 public:
   /**
-   * Creates a Parameter with default values.
+   * Creates a Parameter, with optionally specified attributes.
+   * @param is_spatial true if the Parameter contains spatial elements
+   * @param returns_int_only true if the value of the parameter can only be an integer
    */
   Parameter( bool is_spatial = false, bool returns_int_only = false )
     : is_spatial_( is_spatial )
@@ -69,16 +71,28 @@ public:
 
   /**
    * Generates a value based on parameter specifications and arguments.
-   * Note that not all parameters support all overloaded versions.
+   * Used when getting a parameter value based on random values or node attributes,
+   * like position. Note that not all parameters support all overloaded versions.
+   * @param rng pointer to the random number generator
+   * @param node pointer to the node, used when the node position is relevant
    * @returns the value of the parameter.
    */
   virtual double value( RngPtr rng, Node* node ) = 0;
 
-  virtual double
-  value( RngPtr rng, const std::vector< double >&, const std::vector< double >&, const AbstractLayer& )
-  {
-    return value( rng, nullptr );
-  }
+  /**
+   * Generates a value based on parameter specifications and arguments.
+   * Used when connecting spatial nodes. Note that not all parameters
+   * support all overloaded versions.
+   * @param rng pointer to the random number generator
+   * @param source_pos position of the source node
+   * @param target_pos position of the target node
+   * @param layer spatial layer
+   * @returns the value of the parameter.
+   */
+  virtual double value( RngPtr rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const AbstractLayer& layer );
 
   /**
    * Applies a parameter on a single-node ID NodeCollection and given array of positions.
@@ -1413,6 +1427,11 @@ protected:
   const double delta_;
 };
 
+inline double
+Parameter::value( RngPtr rng, const std::vector< double >&, const std::vector< double >&, const AbstractLayer& )
+{
+  return value( rng, nullptr );
+}
 
 inline bool
 Parameter::is_spatial() const

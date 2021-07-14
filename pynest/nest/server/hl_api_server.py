@@ -140,7 +140,6 @@ def do_call(call_name, args=[], kwargs={}):
         master_response = do_exec(args, kwargs)
     else:
         call = getattr(nest, call_name)
-        args, kwargs = serialize(call_name, args, kwargs)
         args, kwargs = NodeCollection(call, args, kwargs)
         log(call_name, f'local call, args={args}, kwargs={kwargs}')
         master_response = call(*args, **kwargs)
@@ -321,41 +320,6 @@ def NodeCollection(call, args, kwargs):
     return args, kwargs
 
 
-def serialize(call_name, args, kwargs):
-    """Serialize arguments with keywords for calling functions in NEST.
-
-    TODO: Explain why we need to run the inverse getter.
-
-    TODO: Find out why the `if "params" in kwargs:` condition is
-    needed in the MPI enabled version, but did not seem to be required
-    in the normal NEST Server.
-
-    When calling the inverse getter function, we only look at the
-    information available on the master, as we're only interested in
-    the keys. We still have to call the getters also on the workers,
-    as not doing so might lead to deadlocks due to unmatched MPI
-    calls, if the getters themselves initiate MPI communication calls
-    internally.
-
-    """
-
-    if call_name.startswith('Set') and kwargs:
-        status = {}
-        if call_name == 'SetDefaults':
-            status = do_call('GetDefaults', [kwargs['model']])
-        elif call_name == 'SetKernelStatus':
-            status = do_call('GetKernelStatus')
-        elif call_name == 'SetStructuralPlasticityStatus':
-            status = do_call('GetStructuralPlasticityStatus', [kwargs['params']])  # noqa
-        elif call_name == 'SetStatus':
-            status = do_call('GetStatus', [kwargs['nodes']])
-        if "params" in kwargs:
-            for key, val in kwargs['params'].items():
-                if key in status:
-                    kwargs['params'][key] = type(status[key])(val)
-    return args, kwargs
-
-
 @get_or_error
 def api_client(call_name, args, kwargs):
     """ API Client to call function in NEST.
@@ -429,8 +393,8 @@ def combine(call_name, response):
     filtered_response = list(filter(lambda x: x is not None, response))
     if len(filtered_response) == 1:
         return filtered_response[0]
-    
-    # return a single merged dictionary if there are many of them 
+
+    # return a single merged dictionary if there are many of them
     if all(type(v[0]) is dict for v in response):
         return merge_dicts(response)
 

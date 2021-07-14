@@ -102,12 +102,12 @@ def do_exec(args, kwargs):
 
     except Exception as e:
         for line in traceback.format_exception(*sys.exc_info()):
-            print(line)
+            print(line, flush=True)
         abort(Response(str(e), EXCEPTION_ERROR_STATUS))
 
 
 def log(call_name, msg):
-    print(f'==> MASTER 0/{time.time():.7f} ({call_name}): {msg}')
+    print(f'==> MASTER 0/{time.time():.7f} ({call_name}): {msg}', flush=True)
 
 
 def do_call(call_name, args=[], kwargs={}):
@@ -263,7 +263,7 @@ def get_or_error(func):
             return func(call, args, kwargs)
         except Exception as e:
             for line in traceback.format_exception(*sys.exc_info()):
-                print(line)
+                print(line, flush=True)
             abort(Response(str(e), EXCEPTION_ERROR_STATUS))
     return func_wrapper
 
@@ -438,7 +438,7 @@ def combine(call_name, response):
     if all(type(v) is list for v in response):
         return [item for lst in response for item in lst]
 
-    print(f"##\n## DATA COMBINATION ERROR: response={response}\n##\n")
+    print(f"##\n## DATA COMBINATION ERROR: response={response}\n##\n", flush=True)
     msg = "Cannot combine data because of unknown reason"
     raise Exception(msg)
 

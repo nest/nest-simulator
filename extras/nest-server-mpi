@@ -32,15 +32,15 @@ rank = comm.Get_rank()
 
 def log(call_name, msg):
     global rank
-    print(f'==> WORKER {rank}/{time.time():.7f} ({call_name}): {msg}')
+    print(f'==> WORKER {rank}/{time.time():.7f} ({call_name}): {msg}', flush=True)
 
 
 if rank == 0:
-    print("==> Starting NEST Server Master on rank 0")
+    print("==> Starting NEST Server Master on rank 0", flush=True)
     nest.server.set_mpi_comm(comm)
     nest.server.run_mpi_app(host=opt['--host'], port=opt['--port'])
 else:
-    print(f"==> Starting NEST Server Worker on rank {rank}")
+    print(f"==> Starting NEST Server Worker on rank {rank}", flush=True)
     nest.server.set_mpi_comm(comm)
     while True:
         log('spinwait', 'waiting for call bcast')

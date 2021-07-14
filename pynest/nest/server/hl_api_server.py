@@ -187,8 +187,11 @@ def route_api():
 def route_api_call(call):
     """ Route to call function in NEST.
     """
-    print("\n========================================\n")
+    print("\n========================================\n", flush=True)
     args, kwargs = get_arguments(request)
+    if mpi_comm is not None:
+        print(f"MPI RANK {mpi_comm.Get_rank()}: ", end="", flush=True)
+    print(f"Call to route /api/{call}, args={args}, kwargs={kwargs}", flush=True)
     response = api_client(call, args, kwargs)
     return jsonify(response)
 

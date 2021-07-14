@@ -87,8 +87,7 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
 }
 
 NormalParameter::NormalParameter( const DictionaryDatum& d )
-  : Parameter( d )
-  , mean_( 0.0 )
+  : mean_( 0.0 )
   , std_( 1.0 )
 {
   updateValue< double >( d, names::mean, mean_ );
@@ -112,8 +111,7 @@ NormalParameter::value( RngPtr rng, Node* )
 
 
 LognormalParameter::LognormalParameter( const DictionaryDatum& d )
-  : Parameter( d )
-  , mean_( 0.0 )
+  : mean_( 0.0 )
   , std_( 1.0 )
 {
   updateValue< double >( d, names::mean, mean_ );

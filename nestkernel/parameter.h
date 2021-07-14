@@ -58,14 +58,6 @@ public:
   }
 
   /**
-   * Creates a Parameter with specifications specified in a dictionary.
-   * @param d dictionary with parameter values
-   */
-  Parameter( const DictionaryDatum& )
-  {
-  }
-
-  /**
    * Copy constructor
    */
   Parameter( const Parameter& p ) = default;
@@ -132,8 +124,7 @@ public:
    * @param value parameter value
    */
   ConstantParameter( double value )
-    : Parameter()
-    , value_( value )
+    : value_( value )
   {
   }
 
@@ -145,7 +136,6 @@ public:
    * value - constant value of this parameter
    */
   ConstantParameter( const DictionaryDatum& d )
-    : Parameter( d )
   {
     value_ = getValue< double >( d, "value" );
     parameter_returns_int_only_ = value_is_integer_( value_ );
@@ -184,8 +174,7 @@ public:
    * max - maximum value
    */
   UniformParameter( const DictionaryDatum& d )
-    : Parameter( d )
-    , lower_( 0.0 )
+    : lower_( 0.0 )
     , range_( 1.0 )
   {
     updateValue< double >( d, names::min, lower_ );
@@ -226,7 +215,7 @@ public:
    * max - maximum value
    */
   UniformIntParameter( const DictionaryDatum& d )
-    : Parameter( d )
+    : Parameter( false, true )
     , max_( 1.0 )
   {
     updateValue< long >( d, names::max, max_ );
@@ -234,7 +223,6 @@ public:
     {
       throw BadProperty( "nest::UniformIntParameter: max > 0 required." );
     }
-    parameter_returns_int_only_ = true;
   }
 
   double
@@ -316,8 +304,7 @@ public:
    * beta - the scale parameter
    */
   ExponentialParameter( const DictionaryDatum& d )
-    : Parameter( d )
-    , beta_( 1.0 )
+    : beta_( 1.0 )
   {
     updateValue< double >( d, names::beta, beta_ );
   }

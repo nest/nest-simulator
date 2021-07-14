@@ -52,8 +52,8 @@ public:
    * Creates a Parameter with default values.
    */
   Parameter( bool is_spatial = false, bool returns_int_only = false )
-    : parameter_is_spatial_( is_spatial )
-    , parameter_returns_int_only_( returns_int_only )
+    : is_spatial_( is_spatial )
+    , returns_int_only_( returns_int_only )
   {
   }
 
@@ -99,8 +99,8 @@ public:
   bool returns_int_only() const;
 
 protected:
-  bool parameter_is_spatial_{ false };
-  bool parameter_returns_int_only_{ false };
+  bool is_spatial_{ false };
+  bool returns_int_only_{ false };
 
   bool value_is_integer_( const double value ) const;
 };
@@ -132,7 +132,7 @@ public:
   ConstantParameter( const DictionaryDatum& d )
   {
     value_ = getValue< double >( d, "value" );
-    parameter_returns_int_only_ = value_is_integer_( value_ );
+    returns_int_only_ = value_is_integer_( value_ );
   }
 
   ~ConstantParameter() override = default;
@@ -812,7 +812,7 @@ public:
     , p_( p )
     , other_value_( other_value )
   {
-    assert( parameter_is_spatial_ == p->is_spatial() );
+    assert( is_spatial_ == p->is_spatial() );
   }
 
   /**
@@ -1243,7 +1243,7 @@ public:
     , p_( p.p_ )
     , inv_beta_( p.inv_beta_ )
   {
-    assert( parameter_is_spatial_ == p.is_spatial() );
+    assert( is_spatial_ == p.is_spatial() );
   }
 
   /**
@@ -1417,13 +1417,13 @@ protected:
 inline bool
 Parameter::is_spatial() const
 {
-  return parameter_is_spatial_;
+  return is_spatial_;
 }
 
 inline bool
 Parameter::returns_int_only() const
 {
-  return parameter_returns_int_only_;
+  return returns_int_only_;
 }
 
 inline bool

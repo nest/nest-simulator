@@ -2,6 +2,9 @@
 Welcome to the NEST simulator documentation!
 ********************************************
 
+.. _index_ref:
+
+
 :orange:`Introducing NEST 3.0`
 ------------------------------
 
@@ -13,7 +16,6 @@ You can find all the information in our section :doc:`guides/nest2_to_nest3/inde
 
   Note that some of your simulation scripts may need to be updated to run in NEST 3.0!
   See our :doc:`reference guide <guides/nest2_to_nest3/refguide_nest2_nest3>` comparing NEST 2.x versus NEST 3.0 syntax.
-
 
 
 ----
@@ -124,3 +126,4 @@ NEST is available under the :doc:`GNU General Public License 2 or later <license
 .. image:: static/img/EBRAINS.svg
   :width: 25 %
   :target: https://ebrains.eu/
+

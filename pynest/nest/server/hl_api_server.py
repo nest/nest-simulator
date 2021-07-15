@@ -225,7 +225,9 @@ def get_arguments(request):
     args, kwargs = [], {}
     if request.is_json:
         json = request.get_json()
-        if isinstance(json, list):
+        if isinstance(json, str) and len(json) > 0:
+            args = [json]
+        elif isinstance(json, list):
             args = json
         elif isinstance(json, dict):
             kwargs = json

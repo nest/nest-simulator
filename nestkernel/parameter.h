@@ -822,7 +822,7 @@ public:
    * object.
    */
   MinParameter( std::shared_ptr< Parameter > p, const double other_value )
-    : Parameter( p->is_spatial(), p->returns_int_only() and value_is_integer_( other_value_ ) )
+    : Parameter( p->is_spatial(), p->returns_int_only() and value_is_integer_( other_value ) )
     , p_( p )
     , other_value_( other_value )
   {
@@ -874,7 +874,7 @@ public:
    * object.
    */
   MaxParameter( std::shared_ptr< Parameter > p, const double other_value )
-    : Parameter( p->is_spatial(), p->returns_int_only() and value_is_integer_( other_value_ ) )
+    : Parameter( p->is_spatial(), p->returns_int_only() and value_is_integer_( other_value ) )
     , p_( p )
     , other_value_( other_value )
   {

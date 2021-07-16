@@ -1,0 +1,42 @@
+name: NEST Python package
+on: [push, pull_request]
+jobs:
+  setup:
+     runs-on: ubuntu-20.04
+     steps:
+       - name: Checkout repo content
+         uses: actions/checkout@master
+
+       - name: Set up Python 3.x
+         uses: actions/setup-python@v2
+         with:
+           python-version: 3.9
+
+       - name: Minimal CMake dependencies Linux
+         run: |
+           sudo apt-get update
+           sudo apt-get install libgsl-dev libltdl-dev libncurses-dev libreadline-dev
+       - name: Install dependencies
+         run: |
+            python -m pip install --upgrade pip setuptools
+            python -m pip install cython
+
+       - name: Create source distribution
+         run: |
+           # Copy the repository in a data folder, to be packaged by setuptools
+           rsync -av --progress . ./data --exclude data --exclude .git --exclude .github --exclude dist --exclude build
+           # Run CMake to generate the `setup.py` build file
+           mkdir build && cd build
+           cmake .. -DCMAKE_INSTALL_PREFIX=$PWD/product
+           # Extract setup.py
+           mv pynest/setup.py ..
+           cd ..
+           # Extract the nest Python files
+           cp -r pynest/* .
+           # Use `setup.py` to package the data folder and nest code folder into a source distribution.
+           python setup.py sdist
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: python-distribution
+          path: dist

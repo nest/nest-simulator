@@ -1646,7 +1646,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
     {
       continue;
     }
-    if ( rng->drand() >= p_->value( rng, snode_id, target, target_thread ) )
+    if ( rng->drand() >= p_->value( rng, target ) )
     {
       continue;
     }

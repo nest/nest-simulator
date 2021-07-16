@@ -80,10 +80,7 @@ nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( const Parame
 }
 
 double
-nest::ParameterConnParameterWrapper::value_double( thread target_thread,
-  RngPtr rng,
-  index snode_id,
-  Node* target ) const
+nest::ParameterConnParameterWrapper::value_double( thread, RngPtr rng, index, Node* target ) const
 {
-  return parameter_->value( rng, snode_id, target, target_thread );
+  return parameter_->value( rng, target );
 }

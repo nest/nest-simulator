@@ -48,6 +48,7 @@
 #include "nest_datums.h"
 #include "nest_types.h"
 #include "node.h"
+#include "parameter.h"
 #include "sp_manager_impl.h"
 #include "spatial.h"
 

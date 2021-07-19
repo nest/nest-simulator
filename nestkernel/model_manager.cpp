@@ -530,7 +530,7 @@ ModelManager::create_secondary_events_prototypes()
       if ( not connection_models_[ tid ][ syn_id ]->is_primary() )
       {
         secondary_events_prototypes_[ tid ].insert( std::pair< synindex, SecondaryEvent* >(
-          syn_id, connection_models_[ tid ][ syn_id ]->create_event( 1 )[ 0 ] ) );
+          syn_id, connection_models_[ tid ][ syn_id ]->create_event() ) );
       }
     }
   }

@@ -200,8 +200,6 @@ public:
 
   bool are_model_defaults_modified() const;
 
-  size_t get_num_node_models() const;
-
   size_t get_num_connection_models() const;
 
   /**
@@ -348,12 +346,6 @@ inline const std::vector< ConnectorModel* >&
 ModelManager::get_connection_models( thread tid )
 {
   return connection_models_[ tid ];
-}
-
-inline size_t
-ModelManager::get_num_node_models() const
-{
-  return node_models_.size();
 }
 
 inline size_t

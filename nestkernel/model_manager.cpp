@@ -485,9 +485,9 @@ ModelManager::memory_info() const
 {
 
   std::cout.setf( std::ios::left );
-  std::vector< index > idx( get_num_node_models() );
+  std::vector< index > idx( node_models_.size() );
 
-  for ( index i = 0; i < get_num_node_models(); ++i )
+  for ( index i = 0; i < node_models_.size(); ++i )
   {
     idx[ i ] = i;
   }
@@ -501,7 +501,7 @@ ModelManager::memory_info() const
             << std::endl;
   std::cout << sep << std::endl;
 
-  for ( index i = 0; i < get_num_node_models(); ++i )
+  for ( index i = 0; i < node_models_.size(); ++i )
   {
     Model* mod = node_models_[ idx[ i ] ];
     if ( mod->mem_capacity() != 0 )

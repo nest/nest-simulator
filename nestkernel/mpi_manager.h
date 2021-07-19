@@ -161,10 +161,22 @@ public:
   void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
   void communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer );
 
-  /*
-   * Maximum across all ranks
+  /**
+   * Minimum across all ranks.
+   *
+   * @param value value on calling rank
+   * @return minimum value across all ranks
    */
-  void communicate_Allreduce_max_in_place( std::vector< long >& buffer );
+  double min_cross_ranks( double value );
+
+  /**
+   * Maximum across all ranks.
+   *
+   * @param value value on calling rank
+   * @return maximum value across all ranks
+   */
+  double max_cross_ranks( double value );
+
 
   std::string get_processor_name();
 
@@ -228,7 +240,6 @@ public:
 
   void synchronize();
 
-  bool grng_synchrony( unsigned long );
   bool any_true( const bool );
 
   /**
@@ -715,16 +726,6 @@ test_link( int, int )
 inline void
 test_links()
 {
-}
-
-/* replaced u_long with unsigned long since u_long is not known when
- mpi.h is not available. This is a rather ugly fix.
- HEP 2007-03-09
- */
-inline bool
-MPIManager::grng_synchrony( unsigned long )
-{
-  return true;
 }
 
 inline bool

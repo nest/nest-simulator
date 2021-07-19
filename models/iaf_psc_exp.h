@@ -330,7 +330,7 @@ private:
 
     int RefractoryCounts_;
 
-    librandom::RngPtr rng_; //!< random number generator of my own thread
+    RngPtr rng_; //!< random number generator of my own thread
   };
 
   // Access functions for UniversalDataLogger -------------------------------

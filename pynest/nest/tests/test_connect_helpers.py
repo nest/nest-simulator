@@ -27,7 +27,7 @@ from scipy.stats import truncexpon
 try:
     from mpi4py import MPI
     haveMPI4Py = True
-except:
+except ImportError:
     haveMPI4Py = False
 
 
@@ -52,6 +52,15 @@ def gather_data(data_array):
             return None
     else:
         return data_array
+
+
+def bcast_data(data):
+    """
+    Broadcasts data from the root MPI node to all other nodes.
+    """
+    if haveMPI4Py:
+        data = MPI.COMM_WORLD.bcast(data, root=0)
+    return data
 
 
 def is_array(data):
@@ -284,11 +293,7 @@ def reset_seed(seed, nr_threads):
     '''
 
     nest.ResetKernel()
-    nest.SetKernelStatus({'local_num_threads': nr_threads})
-    nr_procs = nest.GetKernelStatus()['total_num_virtual_procs']
-    seeds = [((nr_procs + 1) * seed + k) for k in range(nr_procs)]
-    nest.SetKernelStatus({'rng_seeds': seeds,
-                          'grng_seed': nr_procs * (seed + 1) + seed})
+    nest.SetKernelStatus({'local_num_threads': nr_threads, 'rng_seed': seed})
 
 # copied from Masterthesis, Daniel Hjertholm
 
@@ -332,176 +337,3 @@ def chi_squared_check(degrees, expected, distribution=None):
     else:
         # ddof: adjustment to the degrees of freedom. df = k-1-ddof
         return scipy.stats.chisquare(np.array(degrees), np.array(expected))
-
-# copied from Masterthesis, Daniel Hjertholm
-
-
-def two_level_check(n_runs, degrees, expected, verbose=True):
-    '''
-    Create a network and run chi-squared GOF test n_runs times.
-    Test whether resulting p-values are uniformly distributed
-    on [0, 1] using the Kolmogorov-Smirnov GOF test.
-
-    Parameters
-    ----------
-        n_runs    : Number of times to repeat chi-squared test.
-        start_seed: First PRNG seed value.
-        control   : Boolean value. If True, _generate_multinomial_degrees
-                    will be used instead of _get_degrees.
-        verbose   : Boolean value, determining whether to print progress.
-
-    Return values
-    -------------
-        KS statistic.
-        p-value from KS test.
-    '''
-
-    pvalues = []
-
-    for i in range(n_runs):
-        if verbose:
-            print("Running test %d of %d." % (i + 1, n_runs))
-        chi, p = chi_squared_check(degrees, expected)
-        pvalues.append(p)
-
-    ks, p = scipy.stats.kstest(pvalues, 'uniform')
-
-    return ks, p
-
-# copied from Masterthesis, Daniel Hjertholm
-
-
-def adaptive_check(stat_dict, degrees, expected):
-    '''
-    Create a single network using fixed in/outdegrees
-    and run a chi-squared GOF test on the connection distribution.
-    If the result is extreme (high or low), run a two-level test.
-
-    Parameters
-    ----------
-        test  : Instance of RCC_tester or RDC_tester class.
-        n_runs: If chi-square test fails, test is repeated n_runs times,
-                and the KS test is used to analyze results.
-
-    Return values
-    -------------
-        boolean value. True if test was passed, False otherwise.
-    '''
-
-    chi, p = chi_squared_check(degrees, expected)
-
-    if stat_dict['alpha1_low'] < p < stat_dict['alpha1_up']:
-        return True
-    else:
-        ks, p = two_level_check(stat_dict['n_runs'], degrees, expected)
-        return True if p > stat_dict['alpha2'] else False
-
-
-def get_clipped_cdf(params):
-
-    def clipped_cdf(x):
-        if params['distribution'] == 'lognormal_clipped':
-            cdf_low = scipy.stats.lognorm.cdf(
-                params['low'], params['sigma'], 0, np.exp(params['mu']))
-            cdf_x = scipy.stats.lognorm.cdf(
-                x, params['sigma'], 0, np.exp(params['mu']))
-            cdf_high = scipy.stats.lognorm.cdf(
-                params['high'], params['sigma'], 0, np.exp(params['mu']))
-        elif params['distribution'] == 'exponential_clipped':
-            cdf_low = scipy.stats.expon.cdf(
-                params['low'], 0, 1. / params['lambda'])
-            cdf_x = scipy.stats.expon.cdf(x, 0, 1. / params['lambda'])
-            cdf_high = scipy.stats.expon.cdf(
-                params['high'], 0, 1. / params['lambda'])
-        elif params['distribution'] == 'gamma_clipped':
-            cdf_low = scipy.stats.gamma.cdf(
-                params['low'], params['order'], 0, params['scale'])
-            cdf_x = scipy.stats.gamma.cdf(
-                x, params['order'], 0, params['scale'])
-            cdf_high = scipy.stats.gamma.cdf(
-                params['high'], params['order'], 0, params['scale'])
-        else:
-            raise ValueError("Clipped {} distribution not supported.".format(
-                params['distribution']))
-
-        cdf = (cdf_x - cdf_low) / (cdf_high - cdf_low)
-        cdf[cdf < 0] = 0
-        cdf[cdf > 1] = 1
-
-        return cdf
-
-    return clipped_cdf
-
-
-def get_expected_freqs(params, x, N):
-
-    if params['distribution'] == 'uniform_int':
-        expected = scipy.stats.randint.pmf(
-            x, params['low'], params['high'] + 1) * N
-    elif (params['distribution'] == 'binomial' or
-          params['distribution'] == 'binomial_clipped'):
-        expected = scipy.stats.binom.pmf(x, params['n'], params['p']) * N
-    elif params['distribution'] == 'poisson':
-        expected = scipy.stats.poisson.pmf(x, params['lambda']) * N
-    elif params['distribution'] == 'poisson_clipped':
-        x = np.arange(
-            scipy.stats.poisson.ppf(1e-8, params['lambda']),
-            scipy.stats.poisson.ppf(0.9999, params['lambda'])
-        )
-        expected = scipy.stats.poisson.pmf(x, params['lambda'])
-        expected = expected[np.where(x <= params['high'])]
-        x = x[np.where(x <= params['high'])]
-        expected = expected[np.where(x >= params['low'])]
-        expected = expected / np.sum(expected) * N
-
-    return expected
-
-
-def check_ks(pop1, pop2, label, alpha, params):
-    clipped_dists = ['exponential_clipped',
-                     'gamma_clipped', 'lognormal_clipped']
-    discrete_dists = ['binomial', 'poisson', 'uniform_int',
-                      'binomial_clipped', 'poisson_clipped']
-    M = get_weighted_connectivity_matrix(pop1, pop2, label)
-    M = M.flatten()
-
-    if params['distribution'] in discrete_dists:
-        frequencies = scipy.stats.itemfreq(M)
-        expected = get_expected_freqs(params, frequencies[:, 0], len(M))
-        chi, p = scipy.stats.chisquare(frequencies[:, 1], expected)
-    elif params['distribution'] in clipped_dists:
-        D, p = scipy.stats.kstest(M, get_clipped_cdf(
-            params), alternative='two-sided')
-    else:
-        if params['distribution'] == 'normal':
-            distrib = scipy.stats.norm
-            args = params['mu'], params['sigma']
-        elif params['distribution'] == 'normal_clipped':
-            distrib = scipy.stats.truncnorm
-            args = (
-                (params['low'] - params['mu']) /
-                params['sigma'] if 'low' in params else -np.inf,
-                (params['high'] - params['mu']) /
-                params['sigma'] if 'high' in params else -np.inf,
-                params['mu'],
-                params['sigma']
-            )
-        elif params['distribution'] == 'exponential':
-            distrib = scipy.stats.expon
-            args = 0, 1. / params['lambda']
-        elif params['distribution'] == 'gamma':
-            distrib = scipy.stats.gamma
-            args = params['order'], 0, params['scale']
-        elif params['distribution'] == 'lognormal':
-            distrib = scipy.stats.lognorm
-            args = params['sigma'], 0, np.exp(params['mu'])
-        elif params['distribution'] == 'uniform':
-            distrib = scipy.stats.uniform
-            args = params['low'], params['high'] - params['low']
-        else:
-            raise ValueError("{} distribution not supported.".format(
-                params['distribution']))
-        D, p = scipy.stats.kstest(
-            M, distrib.cdf, args=args, alternative='two-sided')
-
-    return p > alpha

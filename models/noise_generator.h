@@ -26,15 +26,13 @@
 // C++ includes:
 #include <vector>
 
-// Includes from librandom:
-#include "normal_randomdev.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
+#include "random_generators.h"
 #include "stimulating_device.h"
 #include "universal_data_logger.h"
 
@@ -264,10 +262,11 @@ private:
 
   struct Variables_
   {
-    long dt_steps_;                         //!< update interval in steps
-    librandom::NormalRandomDev normal_dev_; //!< random deviate generator
-    double omega_;                          //!< Angelfrequency i rad/s
-    double phi_rad_;                        //!< Phase of sine current (0-2Pi rad)
+    normal_distribution normal_dist_; //!< normal distribution
+
+    long dt_steps_;  //!< update interval in steps
+    double omega_;   //!< frequency [radian/s]
+    double phi_rad_; //!< phase of sine current (0-2Pi rad)
 
     // The exact integration matrix
     double A_00_;

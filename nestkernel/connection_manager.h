@@ -146,6 +146,15 @@ public:
    */
   bool connect( const index snode_id, const index target, const DictionaryDatum& params, const synindex syn_id );
 
+  void connect_arrays( long* sources,
+    long* targets,
+    double* weights,
+    double* delays,
+    std::vector< std::string >& p_keys,
+    double* p_values,
+    size_t n,
+    std::string syn_model );
+
   index find_connection( const thread tid, const synindex syn_id, const index snode_id, const index tnode_id );
 
   void disconnect( const thread tid, const synindex syn_id, const index snode_id, const index tnode_id );

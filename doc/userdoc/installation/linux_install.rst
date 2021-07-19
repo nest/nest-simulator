@@ -38,6 +38,8 @@ If you want to use PyNEST, we recommend to install the following along with thei
 - `IPython <http://ipython.org>`_
 
 
+.. _source-install:
+
 Installation from source
 ------------------------
 

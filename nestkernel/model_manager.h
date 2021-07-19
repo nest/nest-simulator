@@ -295,10 +295,6 @@ private:
    */
   std::vector< std::vector< ConnectorModel* > > connection_models_;
 
-  /**
-   * prototypes of events
-   */
-  std::vector< Event* > event_prototypes_;
   std::vector< ConnectorModel* > secondary_connector_models_;
   std::vector< std::map< synindex, SecondaryEvent* > > secondary_events_prototypes_;
 

@@ -23,18 +23,17 @@
 #ifndef INHOMOGENEOUS_POISSON_GENERATOR_H
 #define INHOMOGENEOUS_POISSON_GENERATOR_H
 
-#include "poisson_randomdev.h"
+// C++ includes:
+#include <vector>
 
+// Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
-#include "nest_types.h"
-#include "stimulating_device.h"
-
-#include <vector>
 #include "nest.h"
+#include "random_generators.h"
 #include "ring_buffer.h"
-
+#include "stimulating_device.h"
 
 namespace nest
 {
@@ -166,8 +165,8 @@ private:
 
   struct Variables_
   {
-    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    double h_;                                //! time resolution (ms)
+    poisson_distribution poisson_dist_; //!< poisson distribution
+    double h_;                          //! time resolution (ms)
   };
 
   // ------------------------------------------------------------

@@ -456,7 +456,7 @@ nest::SourceTable::resize_compressible_sources()
   {
     compressible_sources_[ tid ].clear();
     compressible_sources_[ tid ].resize(
-      kernel().model_manager.get_num_synapse_prototypes(), std::map< index, SpikeData >() );
+      kernel().model_manager.get_num_connection_models(), std::map< index, SpikeData >() );
   }
 }
 
@@ -489,13 +489,13 @@ nest::SourceTable::fill_compressed_spike_data(
   std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
 {
   compressed_spike_data.clear();
-  compressed_spike_data.resize( kernel().model_manager.get_num_synapse_prototypes() );
+  compressed_spike_data.resize( kernel().model_manager.get_num_connection_models() );
 
   for ( thread tid = 0; tid < static_cast< thread >( compressible_sources_.size() ); ++tid )
   {
     compressed_spike_data_map_[ tid ].clear();
     compressed_spike_data_map_[ tid ].resize(
-      kernel().model_manager.get_num_synapse_prototypes(), std::map< index, size_t >() );
+      kernel().model_manager.get_num_connection_models(), std::map< index, size_t >() );
   }
 
   // pseudo-random thread selector to balance memory usage across

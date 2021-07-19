@@ -475,9 +475,8 @@ stored in memory can be retrieved after the simulation using
 
    SLI ] GetKernelStatus /recording_backends get keys ==
 
-Device models are stored alongside the neuron models and can be
-retrieved by calling ``GetKernelStatus /node_models get`. The most
-important devices are:
+The list of available device models can be retrieved by calling
+``GetKernelStatus /node_models get`. The most important devices are:
 
 * ``voltmeter`` Device to observe membrane potentials.
 * ``multimeter`` Device to observe arbitrary analog quantities.

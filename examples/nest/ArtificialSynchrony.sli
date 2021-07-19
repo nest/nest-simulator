@@ -218,6 +218,7 @@ userdict begin
 
   % neurons detec 1.0 h Connect         % connect spike_recorder
   volt neurons 1.0 h Connect            % connect voltmeter
+
   10000 Simulate                        % simulate for 10s
 
   ResetKernel

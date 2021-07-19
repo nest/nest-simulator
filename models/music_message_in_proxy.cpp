@@ -49,13 +49,6 @@ nest::music_message_in_proxy::Parameters_::Parameters_()
 {
 }
 
-nest::music_message_in_proxy::Parameters_::Parameters_( const Parameters_& op )
-  : port_name_( op.port_name_ )
-  , acceptable_latency_( op.acceptable_latency_ )
-
-{
-}
-
 nest::music_message_in_proxy::State_::State_()
   : published_( false )
   , port_width_( -1 )
@@ -119,14 +112,6 @@ nest::music_message_in_proxy::music_message_in_proxy( const music_message_in_pro
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::music_message_in_proxy::init_state_( const Node& proto )
-{
-  const music_message_in_proxy& pr = downcast< music_message_in_proxy >( proto );
-
-  S_ = pr.S_;
-}
 
 void
 nest::music_message_in_proxy::init_buffers_()

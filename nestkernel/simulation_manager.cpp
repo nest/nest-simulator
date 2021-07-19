@@ -26,6 +26,7 @@
 #include <sys/time.h>
 
 // C++ includes:
+#include <limits>
 #include <vector>
 
 // Includes from libnestutil:
@@ -58,6 +59,9 @@ nest::SimulationManager::SimulationManager()
   , wfr_tol_( 0.0001 )
   , wfr_max_iterations_( 15 )
   , wfr_interpolation_order_( 3 )
+  , update_time_limit_( std::numeric_limits< double >::infinity() )
+  , min_update_time_( std::numeric_limits< double >::infinity() )
+  , max_update_time_( -std::numeric_limits< double >::infinity() )
 {
 }
 
@@ -136,7 +140,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "SimulationManager::set_status",
         "Simulation time reset to t=0.0. Resetting the simulation time is not "
         "fully supported in NEST at present. Some spikes may be lost, and "
-        "stimulating devices may behave unexpectedly. PLEASE REVIEW YOUR "
+        "stimulation devices may behave unexpectedly. PLEASE REVIEW YOUR "
         "SIMULATION OUTPUT CAREFULLY!" );
 
       clock_ = Time::step( 0 );
@@ -317,6 +321,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     if ( tol < 0.0 )
     {
       LOG( M_ERROR, "SimulationManager::set_status", "Tolerance must be zero or positive" );
+      throw KernelException();
     }
     else
     {
@@ -334,6 +339,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "SimulationManager::set_status",
         "Maximal number of iterations  for the waveform relaxation must be "
         "positive. To disable waveform relaxation set use_wfr instead." );
+      throw KernelException();
     }
     else
     {
@@ -348,11 +354,25 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     if ( ( interp_order < 0 ) or ( interp_order == 2 ) or ( interp_order > 3 ) )
     {
       LOG( M_ERROR, "SimulationManager::set_status", "Interpolation order must be 0, 1, or 3." );
+      throw KernelException();
     }
     else
     {
       wfr_interpolation_order_ = interp_order;
     }
+  }
+
+  // update time limit
+  double t_new = 0.0;
+  if ( updateValue< double >( d, names::update_time_limit, t_new ) )
+  {
+    if ( t_new <= 0 )
+    {
+      LOG( M_ERROR, "SimulationManager::set_status", "update_time_limit > 0 required." );
+      throw KernelException();
+    }
+
+    update_time_limit_ = t_new;
   }
 }
 
@@ -376,6 +396,10 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::wfr_tol, wfr_tol_ );
   def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
   def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
+
+  def< double >( d, names::update_time_limit, update_time_limit_ );
+  def< double >( d, names::min_update_time, min_update_time_ );
+  def< double >( d, names::max_update_time, max_update_time_ );
 
   def< double >( d, names::time_simulate, sw_simulate_.elapsed() );
   def< double >( d, names::time_communicate_prepare, sw_communicate_prepare_.elapsed() );
@@ -653,6 +677,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 
   kernel().connection_manager.restructure_connection_tables( tid );
   kernel().connection_manager.sort_connections( tid );
+  kernel().connection_manager.collect_compressed_spike_data( tid );
 
 #pragma omp barrier // wait for all threads to finish sorting
 
@@ -703,6 +728,12 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
   }
 
+#pragma omp barrier
+  if ( kernel().connection_manager.use_compressed_spikes() )
+  {
+    kernel().connection_manager.clear_compressed_spike_data_map( tid );
+  }
+
 #pragma omp single
   {
     kernel().node_manager.set_have_nodes_changed( false );
@@ -729,6 +760,9 @@ nest::SimulationManager::update_()
   std::vector< bool > done;
   bool done_all = true;
   delay old_to_step;
+
+  double start_current_update = sw_simulate_.elapsed();
+  bool update_time_limit_exceeded = false;
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 // parallel section begins
@@ -967,13 +1001,29 @@ nest::SimulationManager::update_()
           gettimeofday( &t_slice_end_, NULL );
           print_progress_();
         }
+
+        // We cannot throw exception inside master, would not get caught.
+        const double end_current_update = sw_simulate_.elapsed();
+        const double update_time = end_current_update - start_current_update;
+        update_time_limit_exceeded = update_time > update_time_limit_;
+        min_update_time_ = std::min( min_update_time_, update_time );
+        max_update_time_ = std::max( max_update_time_, update_time );
+        start_current_update = end_current_update;
       }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
       kernel().io_manager.post_step_hook();
 // enforce synchronization after post-step activities of the recording backends
 #pragma omp barrier
-    } while ( to_do_ > 0 and not exceptions_raised.at( tid ) );
+      const double end_current_update = sw_simulate_.elapsed();
+      if ( end_current_update - start_current_update > update_time_limit_ )
+      {
+        LOG( M_ERROR, "SimulationManager::update", "Update time limit exceeded." );
+        throw KernelException();
+      }
+      start_current_update = end_current_update;
+
+    } while ( to_do_ > 0 and not update_time_limit_exceeded and not exceptions_raised.at( tid ) );
 
     // End of the slice, we update the number of synaptic elements
     for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
@@ -983,7 +1033,14 @@ nest::SimulationManager::update_()
       Node* node = i->get_node();
       node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     }
+
   } // of omp parallel
+
+  if ( update_time_limit_exceeded )
+  {
+    LOG( M_ERROR, "SimulationManager::update", "Update time limit exceeded." );
+    throw KernelException();
+  }
 
   // check if any exceptions have been raised
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )

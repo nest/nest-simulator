@@ -120,7 +120,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& );
   void init_buffers_();
   void calibrate();
 
@@ -137,8 +136,7 @@ private:
     std::string port_name_; //!< the name of MUSIC port to connect to
     int channel_;           //!< the MUSIC channel of the port
 
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
+    Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;
 

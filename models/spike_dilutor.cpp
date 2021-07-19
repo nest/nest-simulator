@@ -86,11 +86,9 @@ nest::spike_dilutor::spike_dilutor( const spike_dilutor& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_dilutor::init_state_( const Node& proto )
+nest::spike_dilutor::init_state_()
 {
-  const spike_dilutor& pr = downcast< spike_dilutor >( proto );
-
-  device_.init_state( pr.device_ );
+  device_.init_state();
 }
 
 void

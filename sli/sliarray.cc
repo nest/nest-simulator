@@ -556,7 +556,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
 
   try
   {
-    std::vector< double > vd;
+    std::vector< long > vd;
     td.toVector( vd );
     std::sort( vd.begin(), vd.end() );
     i->OStack.pop();
@@ -571,7 +571,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
 
   try
   {
-    std::vector< long > vd;
+    std::vector< double > vd;
     td.toVector( vd );
     std::sort( vd.begin(), vd.end() );
     i->OStack.pop();
@@ -4199,9 +4199,7 @@ SLIArrayModule::init( SLIInterpreter* i )
   i->createcommand( "arraystore", &arraystorefunction );
   i->createcommand( "arraycreate", &arraycreatefunction );
 
-#ifdef PS_ARRAYS
   i->createcommand( "]", &arraycreatefunction );
-#endif
 
   i->createcommand( "valid_a", &validfunction );
   i->createcommand( "area", &areafunction );

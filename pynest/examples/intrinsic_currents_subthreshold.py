@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Intrinsic currents subthreshold
-------------------------------------
+"""
+Intrinsic currents subthreshold
+-------------------------------
 
 This example illustrates how to record from a model with multiple
 intrinsic currents and visualize the results. This is illustrated
@@ -33,14 +34,14 @@ between depolarizing and hyperpolarizing. Hyperpolarization
 intervals become increasingly longer.
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Hill and Tononi (2005) Modeling Sleep and Wakefulness in the
        Thalamocortical System J Neurophysiol 93:1671
        http://dx.doi.org/10.1152/jn.00915.2004.
 
 See Also
-~~~~~~~~~~
+~~~~~~~~
 
 :doc:`intrinsic_currents_spiking`
 
@@ -142,8 +143,7 @@ for t_sim_dep, t_sim_hyp in zip(t_dep, t_hyp):
 # data, plus one entry per recorded quantity.
 #
 # All data is contained in the ``events`` entry of the status dictionary
-# returned by the multimeter. Because all NEST function return arrays,
-# we need to pick out element `0` from the result of ``GetStatus``.
+# returned by the multimeter.
 
 data = mm.events
 t = data['times']
@@ -181,7 +181,9 @@ t_dc, I_dc = [0], [0]
 
 for td, th in zip(t_dep, t_hyp):
     t_prev = t_dc[-1]
-    t_start_dep = t_prev + dt if t_prev > 0 else t_prev + dt + delay
+    t_start_dep = t_prev + dt
+    if t_prev == 0:
+        t_start_dep += delay
     t_end_dep = t_start_dep + td
     t_start_hyp = t_end_dep + dt
     t_end_hyp = t_start_hyp + th

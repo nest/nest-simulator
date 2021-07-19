@@ -21,7 +21,7 @@
 
 """
 Clopath Rule: Bidirectional connections
------------------------------------------
+---------------------------------------
 
 This script simulates a small network of ten excitatory and three
 inhibitory ``aeif_psc_delta_clopath`` neurons. The neurons are randomly connected
@@ -34,7 +34,7 @@ This setup demonstrates that the Clopath synapse is able to establish
 bidirectional connections. The example is adapted from [1]_ (cf. fig. 5).
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Clopath C, Büsing L, Vasilaki E, Gerstner W (2010). Connectivity reflects coding:
        a model of voltage-based STDP with homeostasis.
@@ -88,7 +88,7 @@ pop_inh = nest.Create(nrn_model, 3, nrn_params)
 
 pop_input = nest.Create('parrot_neuron', 500)  # helper neurons
 pg = nest.Create('poisson_generator', 500)
-wr = nest.Create('weight_recorder', 1)
+wr = nest.Create('weight_recorder')
 
 ##############################################################################
 # First connect Poisson generators to helper neurons
@@ -116,7 +116,7 @@ nest.Connect(pop_input, pop_inh, conn_dict_input_to_inh, syn_dict_input_to_inh)
 
 # Create exc->exc connections
 nest.CopyModel('clopath_synapse', 'clopath_exc_to_exc',
-               {'Wmax': 0.75, 'weight_recorder': wr[0]})
+               {'Wmax': 0.75, 'weight_recorder': wr})
 syn_dict_exc_to_exc = {'synapse_model': 'clopath_exc_to_exc', 'weight': 0.25,
                        'delay': delay}
 conn_dict_exc_to_exc = {'rule': 'all_to_all', 'allow_autapses': False}
@@ -157,7 +157,7 @@ for i in range(int(simulation_time/sim_interval)):
 ##############################################################################
 # Plot results
 
-fig1, axA = plt.subplots(1, sharex=False)
+fig, ax = plt.subplots(1, sharex=False)
 
 # Plot synapse weights of the synapses within the excitatory population
 # Sort weights according to sender and reshape
@@ -166,8 +166,8 @@ exc_conns_senders = np.array(exc_conns.source)
 exc_conns_targets = np.array(exc_conns.target)
 exc_conns_weights = np.array(exc_conns.weight)
 idx_array = np.argsort(exc_conns_senders)
-targets = np.reshape(exc_conns_targets[idx_array], (10, 10-1))
-weights = np.reshape(exc_conns_weights[idx_array], (10, 10-1))
+targets = np.reshape(exc_conns_targets[idx_array], (10, 10 - 1))
+weights = np.reshape(exc_conns_weights[idx_array], (10, 10 - 1))
 
 # Sort according to target
 for i, (trgs, ws) in enumerate(zip(targets, weights)):
@@ -186,13 +186,13 @@ weight_matrix[tl10[0], tl10[1]] = weights[tl9[0], tl9[1]]
 init_w_matrix = np.ones((10, 10))*0.25
 init_w_matrix -= np.identity(10)*0.25
 
-caxA = axA.imshow(weight_matrix - init_w_matrix)
-cbarB = fig1.colorbar(caxA, ax=axA)
-axA.set_xticks([0, 2, 4, 6, 8])
-axA.set_xticklabels(['1', '3', '5', '7', '9'])
-axA.set_yticks([0, 2, 4, 6, 8])
-axA.set_xticklabels(['1', '3', '5', '7', '9'])
-axA.set_xlabel("to neuron")
-axA.set_ylabel("from neuron")
-axA.set_title("Change of syn weights before and after simulation")
+cax = ax.imshow(weight_matrix - init_w_matrix)
+cbarB = fig.colorbar(cax, ax=ax)
+ax.set_xticks([0, 2, 4, 6, 8])
+ax.set_xticklabels(['1', '3', '5', '7', '9'])
+ax.set_yticks([0, 2, 4, 6, 8])
+ax.set_xticklabels(['1', '3', '5', '7', '9'])
+ax.set_xlabel("to neuron")
+ax.set_ylabel("from neuron")
+ax.set_title("Change of syn weights before and after simulation")
 plt.show()

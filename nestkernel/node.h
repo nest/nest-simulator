@@ -238,33 +238,14 @@ public:
   void set_node_uses_wfr( const bool );
 
   /**
-   * Set state variables to the default values for the model.
-   * Dynamic variables are all observable state variables of a node
-   * that change during Node::update().
-   * After calling init_state(), the state variables
-   * should have the same values that they had after the node was
-   * created. In practice, they will be initialized to the values
-   * of the prototype node (model).
-   * @note If the parameters of the model have been changed since the node
-   *       was created, the node will be initialized to the present values
-   *       set in the model.
-   * @note This function is the public interface to the private function
-   *       Node::init_state_(const Node&) that must be implemented by
-   *       derived classes.
+   * Initialize node prior to first simulation after node has been created.
+   *
+   * init() allows the node to configure internal data structures prior to
+   * being simulated. The method has an effect only the first time it is
+   * called on a given node, otherwise it returns immediately. init() calls
+   * virtual functions init_state_() and init_buffers_().
    */
-  void init_state();
-
-  /**
-   * Initialize buffers of a node.
-   * This function initializes the Buffers of a Node, e.g., ring buffers
-   * for incoming events, buffers for logging potentials.
-   * This function is called before Simulate is called for the first time
-   * on a node, but not upon resumption of a simulation.
-   * This is a wrapper function, which calls the overloaded
-   * Node::init_buffers_() worker only if the buffers of the node have not been
-   * initialized yet.
-   */
-  void init_buffers();
+  void init();
 
   /**
    * Re-calculate dependent parameters of the node.
@@ -822,19 +803,6 @@ public:
    */
   index get_thread_lid() const;
 
-  //! True if buffers have been initialized.
-  bool
-  buffers_initialized() const
-  {
-    return buffers_initialized_;
-  }
-
-  void
-  set_buffers_initialized( bool initialized )
-  {
-    buffers_initialized_ = initialized;
-  }
-
   /**
    * Sets the local device id.
    * Throws an error if used on a non-device node.
@@ -871,23 +839,19 @@ private:
 
 protected:
   /**
-   * Private function to initialize the state of a node to model defaults.
-   * This function, which must be overloaded by all derived classes, provides
-   * the implementation for initializing the state of a node to the model
-   * defaults; the state is the set of observable dynamic variables.
-   * @param Reference to model prototype object.
-   * @see Node::init_state()
-   * @note To provide a reasonable behavior during the transition to the new
-   *       scheme, init_state_() has a default implementation calling
-   *       init_dynamic_state_().
+   * Configure state variables depending on runtime information.
+   *
+   * Overload this method if the node needs to adapt state variables prior to
+   * first simulation to runtime information, e.g., the number of incoming
+   * connections.
    */
-  virtual void init_state_( Node const& );
+  virtual void init_state_();
 
   /**
-   * Private function to initialize the buffers of a node.
-   * This function, which must be overloaded by all derived classes, provides
-   * the implementation for initializing the buffers of a node.
-   * @see Node::init_buffers()
+   * Configure persistent internal data structures.
+   *
+   * Let node configure persistent internal data structures, such as input
+   * buffers or ODE solvers, to runtime information prior to first simulation.
    */
   virtual void init_buffers_();
 
@@ -932,12 +896,11 @@ private:
    */
   int model_id_;
 
-  thread thread_;            //!< thread node is assigned to
-  thread vp_;                //!< virtual process node is assigned to
-  bool frozen_;              //!< node shall not be updated if true
-  bool buffers_initialized_; //!< Buffers have been initialized
-  bool node_uses_wfr_;       //!< node uses waveform relaxation method
-  bool initialized_;         //!< set true once a node is fully initialized
+  thread thread_;      //!< thread node is assigned to
+  thread vp_;          //!< virtual process node is assigned to
+  bool frozen_;        //!< node shall not be updated if true
+  bool initialized_;   //!< state and buffers have been initialized
+  bool node_uses_wfr_; //!< node uses waveform relaxation method
 
   NodeCollectionPTR nc_ptr_;
 };

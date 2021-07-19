@@ -37,7 +37,7 @@
 
 
 def GetConnections(source=None, target=None, synape_model=None, synapse_label=None):
-    """Return a `SynapseCollection` representing the connection identifiers.
+    r"""Return a `SynapseCollection` representing the connection identifiers.
     [[ In a single 'summary line', state what the function does ]]
     [[ All functions should have a docstring with at least a summary line ]]
 

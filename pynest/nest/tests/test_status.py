@@ -56,9 +56,8 @@ class StatusTestCase(unittest.TestCase):
         nest.SetKernelStatus({})
         nest.SetKernelStatus({'resolution': 0.2})
 
-        self.assertRaisesRegex(
-            nest.kernel.NESTError, "DictError",
-            nest.SetKernelStatus, {'nonexistent_status_key': 0})
+        self.assertRaises(ValueError, nest.SetKernelStatus,
+                          {'nonexistent_status_key': 0})
 
     def test_GetDefaults(self):
         """GetDefaults"""

@@ -221,13 +221,6 @@ nest::iaf_psc_delta::iaf_psc_delta( const iaf_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_delta::init_state_( const Node& proto )
-{
-  const iaf_psc_delta& pr = downcast< iaf_psc_delta >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::iaf_psc_delta::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize

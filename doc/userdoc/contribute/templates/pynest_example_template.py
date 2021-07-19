@@ -18,7 +18,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-"""Template demonstrating how to create examples for PyNEST
+
+r"""Template demonstrating how to create examples for PyNEST
 ----------------------------------------------------------------
 [[ Titles should be one line and state what the example does.
   It should begin with a verb in the present tense and include type of model

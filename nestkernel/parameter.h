@@ -494,7 +494,7 @@ public:
   double
   value( RngPtr, index, Node*, thread ) override
   {
-    throw KernelException( "Node position parameter can only be used when using ConnectLayers." );
+    throw KernelException( "Node position parameter can only be used when connecting spatially distributed nodes." );
   }
 
   double
@@ -558,7 +558,7 @@ public:
   double
   value( RngPtr, index, Node*, thread ) override
   {
-    throw KernelException( "Spatial distance parameter can only be used when using ConnectLayers." );
+    throw KernelException( "Spatial distance parameter can only be used when connecting spatially distributed nodes." );
   }
 
   double value( RngPtr rng,
@@ -647,7 +647,8 @@ public:
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  Parameter* const parameter1_;
+  Parameter* const parameter2_;
 };
 
 /**
@@ -720,7 +721,8 @@ public:
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  Parameter* const parameter1_;
+  Parameter* const parameter2_;
 };
 
 /**
@@ -793,7 +795,8 @@ public:
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  Parameter* const parameter1_;
+  Parameter* const parameter2_;
 };
 
 /**
@@ -866,7 +869,8 @@ public:
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  Parameter* const parameter1_;
+  Parameter* const parameter2_;
 };
 
 /**
@@ -933,7 +937,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
 };
 
 
@@ -1024,7 +1028,8 @@ public:
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  Parameter* const parameter1_;
+  Parameter* const parameter2_;
 
 private:
   bool
@@ -1144,7 +1149,9 @@ public:
   }
 
 protected:
-  Parameter* condition_, *if_true_, *if_false_;
+  Parameter* const condition_;
+  Parameter* const if_true_;
+  Parameter* const if_false_;
 };
 
 
@@ -1215,7 +1222,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
   double other_value_;
 };
 
@@ -1287,7 +1294,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
   double other_value_;
 };
 
@@ -1340,7 +1347,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
   double min_;
   double max_;
   const size_t max_redraws_;
@@ -1409,7 +1416,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
 };
 
 
@@ -1476,7 +1483,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
 };
 
 /**
@@ -1542,7 +1549,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
 };
 
 
@@ -1613,7 +1620,7 @@ public:
   }
 
 protected:
-  Parameter* p_;
+  Parameter* const p_;
   const double exponent_;
 };
 
@@ -1636,6 +1643,7 @@ public:
     : num_dimensions_( 2 )
     , px_( px.clone() )
     , py_( py.clone() )
+    , pz_( nullptr )
   {
     parameter_is_spatial_ = true;
   }
@@ -1718,9 +1726,277 @@ public:
 
 protected:
   int num_dimensions_;
-  Parameter* px_;
-  Parameter* py_;
-  Parameter* pz_;
+  Parameter* const px_;
+  Parameter* const py_;
+  Parameter* const pz_;
+};
+
+
+/**
+ * Parameter class representing an exponential distribution applied on a parameter.
+ * Can only be used when connecting spatially distributed nodes.
+ */
+class ExpDistParameter : public Parameter
+{
+public:
+  using Parameter::value;
+
+  /**
+   * Construct the parameter from a dictionary of arguments.
+   */
+  ExpDistParameter( const DictionaryDatum& d );
+
+  /**
+   * Copy constructor.
+   */
+  ExpDistParameter( const ExpDistParameter& p )
+    : Parameter( p )
+    , p_( p.p_->clone() )
+    , inv_beta_( p.inv_beta_ )
+  {
+    parameter_is_spatial_ = true;
+  }
+
+  ~ExpDistParameter() override
+  {
+    delete p_;
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( RngPtr, Node* ) override
+  {
+    throw BadParameterValue( "Exponential distribution parameter can only be used when connecting." );
+  }
+
+  double
+  value( RngPtr, index, Node*, thread ) override
+  {
+    throw KernelException(
+      "Exponential distribution parameter can only be used when connecting spatially distributed nodes." );
+  }
+
+  double value( RngPtr rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const AbstractLayer& layer ) override;
+
+  Parameter*
+  clone() const override
+  {
+    return new ExpDistParameter( *this );
+  }
+
+protected:
+  Parameter* const p_;
+  const double inv_beta_;
+};
+
+
+/**
+ * Parameter class representing a gaussian distribution applied on a parameter.
+ * Can only be used when connecting spatially distributed nodes.
+ */
+class GaussianParameter : public Parameter
+{
+public:
+  using Parameter::value;
+
+  /**
+   * Construct the parameter from a dictionary of arguments.
+   */
+  GaussianParameter( const DictionaryDatum& d );
+
+  /**
+   * Copy constructor.
+   */
+  GaussianParameter( const GaussianParameter& p )
+    : Parameter( p )
+    , p_( p.p_->clone() )
+    , mean_( p.mean_ )
+    , inv_two_std2_( p.inv_two_std2_ )
+  {
+    parameter_is_spatial_ = true;
+  }
+
+  ~GaussianParameter() override
+  {
+    delete p_;
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( RngPtr, Node* ) override
+  {
+    throw BadParameterValue( "Gaussian distribution parameter can only be used when connecting." );
+  }
+
+  double
+  value( RngPtr, index, Node*, thread ) override
+  {
+    throw KernelException(
+      "Gaussian distribution parameter can only be used when connecting spatially distributed nodes." );
+  }
+
+  double value( RngPtr rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const AbstractLayer& layer ) override;
+
+  Parameter*
+  clone() const override
+  {
+    return new GaussianParameter( *this );
+  }
+
+protected:
+  Parameter* const p_;
+  const double mean_;
+  const double inv_two_std2_;
+};
+
+
+/**
+ * Parameter class representing a gaussian distribution in two dimensions applied on a parameter.
+ * Can only be used when connecting spatially distributed nodes.
+ */
+class Gaussian2DParameter : public Parameter
+{
+public:
+  using Parameter::value;
+
+  /**
+   * Construct the parameter from a dictionary of arguments.
+   */
+  Gaussian2DParameter( const DictionaryDatum& d );
+
+  /**
+   * Copy constructor.
+   */
+  Gaussian2DParameter( const Gaussian2DParameter& p )
+    : Parameter( p )
+    , px_( p.px_->clone() )
+    , py_( p.py_->clone() )
+    , mean_x_( p.mean_x_ )
+    , mean_y_( p.mean_y_ )
+    , x_term_const_( p.x_term_const_ )
+    , y_term_const_( p.y_term_const_ )
+    , xy_term_const_( p.xy_term_const_ )
+  {
+    parameter_is_spatial_ = true;
+  }
+
+  ~Gaussian2DParameter() override
+  {
+    delete px_;
+    delete py_;
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( RngPtr, Node* ) override
+  {
+    throw BadParameterValue( "Gaussian 2D parameter can only be used when connecting." );
+  }
+
+  double
+  value( RngPtr, index, Node*, thread ) override
+  {
+    throw KernelException( "Gaussian 2D parameter can only be used when connecting spatially distributed nodes." );
+  }
+
+  double value( RngPtr rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const AbstractLayer& layer ) override;
+
+  Parameter*
+  clone() const override
+  {
+    return new Gaussian2DParameter( *this );
+  }
+
+protected:
+  Parameter* const px_;
+  Parameter* const py_;
+  const double mean_x_;
+  const double mean_y_;
+  const double x_term_const_;
+  const double y_term_const_;
+  const double xy_term_const_;
+};
+
+
+/**
+ * Parameter class representing a gamma distribution applied on a parameter.
+ * Can only be used when connecting spatially distributed nodes.
+ */
+class GammaParameter : public Parameter
+{
+public:
+  using Parameter::value;
+
+  /**
+   * Construct the parameter from a dictionary of arguments.
+   */
+  GammaParameter( const DictionaryDatum& d );
+
+  /**
+   * Copy constructor.
+   */
+  GammaParameter( const GammaParameter& p )
+    : Parameter( p )
+    , p_( p.p_->clone() )
+    , kappa_( p.kappa_ )
+    , inv_theta_( p.inv_theta_ )
+    , delta_( p.delta_ )
+  {
+    parameter_is_spatial_ = true;
+  }
+
+  ~GammaParameter() override
+  {
+    delete p_;
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( RngPtr, Node* ) override
+  {
+    throw BadParameterValue( "Gamma distribution parameter can only be used when connecting." );
+  }
+
+  double
+  value( RngPtr, index, Node*, thread ) override
+  {
+    throw KernelException(
+      "Gamma distribution parameter can only be used when connecting spatially distributed nodes." );
+  }
+
+  double value( RngPtr rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const AbstractLayer& layer ) override;
+
+  Parameter*
+  clone() const override
+  {
+    return new GammaParameter( *this );
+  }
+
+protected:
+  Parameter* const p_;
+  const double kappa_;
+  const double inv_theta_;
+  const double delta_;
 };
 
 

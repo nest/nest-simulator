@@ -71,15 +71,13 @@ nest::poisson_generator::Parameters_::set( const DictionaryDatum& d, Node* node 
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator::poisson_generator()
-  : DeviceNode()
-  , device_()
+  : StimulationDevice()
   , P_()
 {
 }
 
 nest::poisson_generator::poisson_generator( const poisson_generator& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+  : StimulationDevice( n )
   , P_( n.P_ )
 {
 }
@@ -90,23 +88,21 @@ nest::poisson_generator::poisson_generator( const poisson_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::init_state_( const Node& proto )
+nest::poisson_generator::init_state_()
 {
-  const poisson_generator& pr = downcast< poisson_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  StimulationDevice::init_state();
 }
 
 void
 nest::poisson_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulationDevice::init_buffers();
 }
 
 void
 nest::poisson_generator::calibrate()
 {
-  device_.calibrate();
+  StimulationDevice::calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
   poisson_distribution::param_type param( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
@@ -131,7 +127,7 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( not device_.is_active( T + Time::step( lag ) ) )
+    if ( not StimulationDevice::is_active( T + Time::step( lag ) ) )
     {
       continue; // no spike at this lag
     }
@@ -151,4 +147,29 @@ nest::poisson_generator::event_hook( DSSpikeEvent& e )
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
   }
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::poisson_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() != 1 )
+    {
+      throw BadParameterValue( "The size of the data for the poisson generator needs to be 1 [rate]." );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );
+    ptmp.set( d, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

@@ -38,7 +38,7 @@ namespace nest
 
 
 /* Polymorphic version of update_value.
- * This code will take either an int or a double and convert is to an
+ * This code will take either an int or a double and convert it to an
  * int.
  */
 bool
@@ -110,26 +110,6 @@ quantal_stp_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, 
   updateValue< double >( d, names::tau_fac, tau_fac_ );
   update_value_int( d, names::n, n_ );
   update_value_int( d, names::a, a_ );
-}
-
-template < typename targetidentifierT >
-void
-quantal_stp_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
-{
-  // Throw error if n or a are set in quantal_stp_synapse, Connect cannot handle
-  // them since they are integers.
-  if ( syn_spec->known( names::n ) )
-  {
-    throw NotImplemented(
-      "Connect doesn't support the setting of parameter "
-      "n in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
-  }
-  if ( syn_spec->known( names::a ) )
-  {
-    throw NotImplemented(
-      "Connect doesn't support the setting of parameter "
-      "a in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
-  }
 }
 
 } // of namespace nest

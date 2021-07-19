@@ -22,7 +22,7 @@
 
 /** @BeginDocumentation
 
-Name: testsuite::ticket-737 Ensure that stimulating devices can only be connected with a single synapse type
+Name: testsuite::ticket-737 Ensure that stimulation devices can only be connected with a single synapse type
 
 Synopsis: (ticket-737) run -> NEST exits if test fails
 

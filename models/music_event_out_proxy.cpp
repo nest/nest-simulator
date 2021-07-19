@@ -50,11 +50,6 @@ nest::music_event_out_proxy::Parameters_::Parameters_()
 {
 }
 
-nest::music_event_out_proxy::Parameters_::Parameters_( const Parameters_& op )
-  : port_name_( op.port_name_ )
-{
-}
-
 nest::music_event_out_proxy::State_::State_()
   : published_( false )
   , port_width_( -1 )
@@ -122,13 +117,6 @@ nest::music_event_out_proxy::~music_event_out_proxy()
     delete V_.MP_;
     delete V_.music_perm_ind_;
   }
-}
-
-void
-nest::music_event_out_proxy::init_state_( const Node& /* np */ )
-{
-  // const music_event_out_proxy& sd = dynamic_cast<const
-  // music_event_out_proxy&>(np);
 }
 
 void

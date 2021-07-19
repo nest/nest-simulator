@@ -217,9 +217,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  //! Reset state of neuron.
-  void init_state_( const Node& proto );
-
   //! Reset internal buffers of neuron.
   void init_buffers_();
 

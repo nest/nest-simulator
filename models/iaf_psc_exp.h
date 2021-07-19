@@ -190,7 +190,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -294,10 +293,18 @@ private:
     Buffers_( iaf_psc_exp& );
     Buffers_( const Buffers_&, iaf_psc_exp& );
 
+    //! Indices for access to different channels of input_buffer_
+    enum
+    {
+      SYN_IN = 0,
+      SYN_EX,
+      I0,
+      I1,
+      NUM_INPUT_CHANNELS
+    };
+
     /** buffers and sums up incoming spikes/currents */
-    RingBuffer spikes_ex_;
-    RingBuffer spikes_in_;
-    std::vector< RingBuffer > currents_;
+    MultiChannelInputBuffer< NUM_INPUT_CHANNELS > input_buffer_;
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_psc_exp > logger_;
@@ -340,18 +347,6 @@ private:
   get_V_m_() const
   {
     return S_.V_m_ + P_.E_L_;
-  }
-
-  inline double
-  get_weighted_spikes_ex_() const
-  {
-    return V_.weighted_spikes_ex_;
-  }
-
-  inline double
-  get_weighted_spikes_in_() const
-  {
-    return V_.weighted_spikes_in_;
   }
 
   inline double

@@ -174,21 +174,6 @@ aeif_cond_alpha_multisynapse::State_::State_( const Parameters_& p )
   y_[ 0 ] = p.E_L;
 }
 
-aeif_cond_alpha_multisynapse::State_::State_( const State_& s )
-  : r_( s.r_ )
-{
-  y_ = s.y_;
-}
-
-aeif_cond_alpha_multisynapse::State_& aeif_cond_alpha_multisynapse::State_::operator=( const State_& s )
-{
-  assert( this != &s ); // would be bad logical error in program
-
-  y_ = s.y_;
-  r_ = s.r_;
-  return *this;
-}
-
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
@@ -414,13 +399,6 @@ aeif_cond_alpha_multisynapse::~aeif_cond_alpha_multisynapse()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-aeif_cond_alpha_multisynapse::init_state_( const Node& proto )
-{
-  const aeif_cond_alpha_multisynapse& pr = downcast< aeif_cond_alpha_multisynapse >( proto );
-  S_ = pr.S_;
-}
 
 void
 aeif_cond_alpha_multisynapse::init_buffers_()

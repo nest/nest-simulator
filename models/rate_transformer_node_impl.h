@@ -150,14 +150,6 @@ nest::rate_transformer_node< TNonlinearities >::rate_transformer_node( const rat
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::init_state_( const Node& proto )
-{
-  const rate_transformer_node& pr = downcast< rate_transformer_node >( proto );
-  S_ = pr.S_;
-}
-
-template < class TNonlinearities >
-void
 nest::rate_transformer_node< TNonlinearities >::init_buffers_()
 {
   B_.delayed_rates_.clear(); // includes resize

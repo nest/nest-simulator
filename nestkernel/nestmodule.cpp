@@ -223,27 +223,6 @@ NestModule::create_mask( const Token& t )
       // For grid layers only, it is also possible to provide an array of longs.
       try
       {
-
-        std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
-        AbstractMask* amask;
-
-        switch ( anchor.size() )
-        {
-        case 2:
-          amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
-          break;
-        case 3:
-          amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
-          break;
-        default:
-          throw BadProperty( "Anchor must be 2- or 3-dimensional." );
-        }
-
-        delete mask;
-        mask = amask;
-      }
-      catch ( TypeMismatch& e )
-      {
         std::vector< long > anchor = getValue< std::vector< long > >( anchor_token );
 
         switch ( anchor.size() )
@@ -271,6 +250,26 @@ NestModule::create_mask( const Token& t )
           }
           break;
         }
+      }
+      catch ( TypeMismatch& e )
+      {
+        std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
+        AbstractMask* amask;
+
+        switch ( anchor.size() )
+        {
+        case 2:
+          amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
+          break;
+        case 3:
+          amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
+          break;
+        default:
+          throw BadProperty( "Anchor must be 2- or 3-dimensional." );
+        }
+
+        delete mask;
+        mask = amask;
       }
     }
 
@@ -490,7 +489,8 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   if ( not nc->valid() )
   {
-    throw KernelException( "InvalidNodeCollection" );
+    throw KernelException(
+      "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
   size_t nc_size = nc->size();
@@ -574,7 +574,8 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   if ( not nc->valid() )
   {
-    throw KernelException( "InvalidNodeCollection" );
+    throw KernelException(
+      "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
   NodeCollectionMetadataPTR meta = nc->get_metadata();
@@ -3052,6 +3053,10 @@ NestModule::init( SLIInterpreter* i )
   register_parameter< ExponentialParameter >( "exponential" );
   register_parameter< NodePosParameter >( "position" );
   register_parameter< SpatialDistanceParameter >( "distance" );
+  register_parameter< GaussianParameter >( "gaussian" );
+  register_parameter< Gaussian2DParameter >( "gaussian2d" );
+  register_parameter< GammaParameter >( "gamma" );
+  register_parameter< ExpDistParameter >( "exp_distribution" );
 
 #ifdef HAVE_LIBNEUROSIM
   i->createcommand( "CGParse", &cgparse_sfunction );

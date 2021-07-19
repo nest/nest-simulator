@@ -188,14 +188,12 @@ nest::aeif_psc_delta_clopath::State_::State_( const State_& s )
 
 nest::aeif_psc_delta_clopath::State_& nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
-
+  r_ = s.r_;
+  clamp_r_ = s.clamp_r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
-  clamp_r_ = s.clamp_r_;
   return *this;
 }
 
@@ -402,13 +400,6 @@ nest::aeif_psc_delta_clopath::~aeif_psc_delta_clopath()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::aeif_psc_delta_clopath::init_state_( const Node& proto )
-{
-  const aeif_psc_delta_clopath& pr = downcast< aeif_psc_delta_clopath >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::aeif_psc_delta_clopath::init_buffers_()

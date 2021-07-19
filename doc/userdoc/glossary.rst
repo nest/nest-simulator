@@ -1,5 +1,7 @@
 :orphan:
 
+.. _sec_glossary:
+
 Glossary
 ========
 

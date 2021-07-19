@@ -309,22 +309,15 @@ nest::ht_neuron::State_::State_( const State_& s )
 
 nest::ht_neuron::State_& nest::ht_neuron::State_::operator=( const State_& s )
 {
-  if ( this == &s )
-  {
-    return *this;
-  }
-
   ref_steps_ = s.ref_steps_;
   I_NaP_ = s.I_NaP_;
   I_KNa_ = s.I_KNa_;
   I_T_ = s.I_T_;
   I_h_ = s.I_h_;
-
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-
   return *this;
 }
 
@@ -649,13 +642,6 @@ nest::ht_neuron::~ht_neuron()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::ht_neuron::init_state_( const Node& proto )
-{
-  const ht_neuron& pr = downcast< ht_neuron >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::ht_neuron::init_buffers_()

@@ -24,7 +24,6 @@
 
 // C++ includes:
 #include <algorithm>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -35,10 +34,8 @@
 #include "kernel_manager.h"
 
 // Includes from sli:
-#include "datum.h"
 #include "dict.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -172,15 +169,13 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node 
  * ---------------------------------------------------------------- */
 
 nest::ppd_sup_generator::ppd_sup_generator()
-  : DeviceNode()
-  , device_()
+  : StimulationDevice()
   , P_()
 {
 }
 
 nest::ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+  : StimulationDevice( n )
   , P_( n.P_ )
 {
 }
@@ -191,23 +186,21 @@ nest::ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::init_state_( const Node& proto )
+nest::ppd_sup_generator::init_state_()
 {
-  const ppd_sup_generator& pr = downcast< ppd_sup_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  StimulationDevice::init_state();
 }
 
 void
 nest::ppd_sup_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulationDevice::init_buffers();
 }
 
 void
 nest::ppd_sup_generator::calibrate()
 {
-  device_.calibrate();
+  StimulationDevice::calibrate();
 
   double h = Time::get_resolution().get_ms();
 
@@ -250,7 +243,7 @@ nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
   {
     Time t = T + Time::step( lag );
 
-    if ( not device_.is_active( t ) )
+    if ( not StimulationDevice::is_active( t ) )
     {
       continue; // no spike at this lag
     }
@@ -291,4 +284,35 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
   }
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::ppd_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() != 5 )
+    {
+      throw BadParameterValue(
+        "The size of the data for the ppd_sup_generator needs to be 5 "
+        "[dead_time, rate, n_proc, frequency, relative_amplitude]." );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::n_proc ] = DoubleDatum( input_param[ 2 ] );
+    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 3 ] );
+    ( *d )[ names::relative_amplitude ] = DoubleDatum( input_param[ 4 ] );
+    ptmp.set( d, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

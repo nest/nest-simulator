@@ -39,10 +39,11 @@ if source_dir:
 else:
     source_dir = Path(__file__).resolve().parent.parent.parent.resolve()
 
-doc_build_dir = Path(os.environ['OLDPWD']) / 'doc/userdoc'
 
-if os.environ.get('READTHEDOCS', 'False') == 'True':
-    doc_build_dir = source_dir / 'doc/userdoc'
+if os.environ.get("READTHEDOCS") == "True":
+    doc_build_dir = source_dir / "doc/userdoc"
+else:
+    doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/userdoc"
 
 print("doc_build_dir", str(doc_build_dir))
 print("source_dir", str(source_dir))
@@ -165,8 +166,9 @@ html_theme_options = {'logo_only': True,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = [str(doc_build_dir / 'static')]
 
-rst_prolog = ".. warning:: \n  This is A PREVIEW for NEST 3.0 and NOT an OFFICIAL RELEASE! \
-             Some functionality may not be available and information may be incomplete!"
+rst_prolog = ".. warning:: \n   This version of the documentation is NOT an official release. \
+             You are looking at 'latest', which is in active and ongoing development. \
+             You can change versions on the bottom left of the screen."
 rst_epilog = ""
 # -- Options for HTMLHelp output ------------------------------------------
 
@@ -180,7 +182,16 @@ html_show_copyright = False
 # With this local 'make html' is broken!
 github_doc_root = ''
 
-intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
+                      'nestml': ('https://nestml.readthedocs.io/en/latest/',
+                      None), 'pynn': ('http://neuralensemble.org/docs/PyNN/',
+                      None), 'elephant': ('https://elephant.readthedocs.io/en/latest/',
+                      None), 'desktop': ('https://nest-desktop.readthedocs.io/en/latest/',
+                      None), 'neuromorph': ('https://electronicvisions.github.io/hbp-sp9-guidebook/',
+                      None), 'arbor': ('https://arbor.readthedocs.io/en/latest/',
+                      None), 'tvb': ('http://docs.thevirtualbrain.org/',
+                      None), 'extmod': ('https://nest-extension-module.readthedocs.io/en/latest/',
+                      None)}
 
 from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 

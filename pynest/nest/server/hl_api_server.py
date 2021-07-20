@@ -115,14 +115,16 @@ def do_call(call_name, args=[], kwargs={}):
     """Call a PYNEST function or execute a script within the server.
 
     If the server is run serially (i.e., without MPI), this function
-    will execute a script via do_exec() if call_name is "exec", or
-    call a PyNEST API function if call_name is the name of such one.
+    will do one of two things: if call_name is "exec", it will execute
+    the script given in args via do_exec(). If call_name is the name
+    of a PyNEST API function, it will call that function with args and
+    kwargs as function arguments.
 
-    If the server is run in MPI-enabled mode, this function will first
-    communicate the call type (i.e., "exec" or API call) and the args
-    and kwargs to all worker processes. Only then will it execute the call
-    in the way described above for the serial case. After the call, the
-    worker responses are collected, combined, and returned to the caller.
+    If the server is run with MPI, this function will communicate the
+    call type ("exec" or API call) and the args and kwargs to all
+    worker processes before executing the call in the same way as
+    described above for the serial case. After the call, the worker
+    responses are collected, combined and returned to the caller.
 
     Please note that this function must only be called on the master
     process (i.e., the task with rank 0) in a distributed scenario.
@@ -352,20 +354,25 @@ def set_mpi_comm(comm):
 
 
 def run_mpi_app(host="127.0.0.1", port=5000):
-    # NEST segfaults if someone messes with the number of threads from
-    # the outside, so we don't.
+    # NEST crashes with a segmentation fault if the number of threads
+    # is changed from the outside. Calling run() with threaded=False
+    # prevents Flask from performing such changes
     app.run(host=host, port=port, threaded=False)
 
 
 def combine(call_name, response):
     """Combine responses from different MPI processes.
 
-    If this function is run in a serial context, that is, without MPI,
-    it returns the only response immediately.
+    In a distributed scenario, each MPI process creates its own share
+    of the response from the data available locally. To present a
+    coherent view on the reponse data for the caller, this data has to
+    be combined.
 
-    In a distributed scenario, this function combines the responses of
-    all MPI processes and returns a single response object. The type
-    of the result can vary depending on the call that produced it.
+    If this function is run serially (i.e., without MPI), it just
+    returns the response data from the only process immediately.
+
+    The type of the returned result can vary depending on the call
+    that produced it.
 
     The combination of results is based on a cascade of heuristics
     based on the call that was issued and individual repsonse data:

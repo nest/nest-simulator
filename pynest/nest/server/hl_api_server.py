@@ -120,12 +120,12 @@ def do_call(call_name, args=[], kwargs={}):
 
     If the server is run in MPI-enabled mode, this function will first
     communicate the call type (i.e., "exec" or API call) and the args
-    and kwargs to all worker processes and only then execute the call
+    and kwargs to all worker processes. Only then will it execute the call
     in the way described above for the serial case. After the call, the
-    worker responses are collected, combined and returned to the caller.
+    worker responses are collected, combined, and returned to the caller.
 
     Please note that this function must only be called on the master
-    process (i.e. the task with rank 0) in a distributed scenario.
+    process (i.e., the task with rank 0) in a distributed scenario.
 
     """
 
@@ -360,13 +360,12 @@ def run_mpi_app(host="127.0.0.1", port=5000):
 def combine(call_name, response):
     """Combine responses from different MPI processes.
 
-    If this function is run in a serial context, i.e., without MPI,
+    If this function is run in a serial context, that is, without MPI,
     it returns the only response immediately.
 
     In a distributed scenario, this function combines the responses of
     all MPI processes and returns a single response object. The type
-    of the result can vary depending on the call of the call that
-    produced it.
+    of the result can vary depending on the call that produced it.
 
     The combination of results is based on a cascade of heuristics
     based on the call that was issued and individual repsonse data:
@@ -416,7 +415,7 @@ def combine(call_name, response):
     if all(type(v) is list for v in response):
         return [item for lst in response for item in lst]
 
-    print(f"##\n## DATA COMBINATION ERROR: response={response}\n##\n", flush=True)
+    log("combine_data", f"ERROR: cannot combine response={response}")
     msg = "Cannot combine data because of unknown reason"
     raise Exception(msg)
 

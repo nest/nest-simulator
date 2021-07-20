@@ -115,16 +115,16 @@ def do_call(call_name, args=[], kwargs={}):
     """Call a PYNEST function or execute a script within the server.
 
     If the server is run serially (i.e., without MPI), this function
-    will do one of two things: if call_name is "exec", it will execute
+    will do one of two things: If call_name is "exec", it will execute
     the script given in args via do_exec(). If call_name is the name
-    of a PyNEST API function, it will call that function with args and
-    kwargs as function arguments.
+    of a PyNEST API function, it will call that function and pass args
+    and kwargs to it.
 
-    If the server is run with MPI, this function will communicate the
-    call type ("exec" or API call) and the args and kwargs to all
-    worker processes before executing the call in the same way as
-    described above for the serial case. After the call, the worker
-    responses are collected, combined and returned to the caller.
+    If the server is run with MPI, this function will first communicate
+    the call type ("exec" or API call) and the args and kwargs to all
+    worker processes. Only then will it execute the call in the same
+    way as described above for the serial case. After the call, all
+    worker responses are collected, combined and returned.
 
     Please note that this function must only be called on the master
     process (i.e., the task with rank 0) in a distributed scenario.
@@ -190,7 +190,7 @@ def route_api():
 def route_api_call(call):
     """ Route to call function in NEST.
     """
-    print("\n========================================\n", flush=True)
+    print(f"\n{'='*40}\n", flush=True)
     args, kwargs = get_arguments(request)
     log("route_api_call", f"call={call}, args={args}, kwargs={kwargs}")
     response = api_client(call, args, kwargs)
@@ -313,7 +313,7 @@ def get_restricted_globals():
 
 
 def nestify(call_name, args, kwargs):
-    """Get the nest call and transform arguments.
+    """Get the NEST API call and convert arguments if neccessary.
     """
 
     call = getattr(nest, call_name)
@@ -356,7 +356,7 @@ def set_mpi_comm(comm):
 def run_mpi_app(host="127.0.0.1", port=5000):
     # NEST crashes with a segmentation fault if the number of threads
     # is changed from the outside. Calling run() with threaded=False
-    # prevents Flask from performing such changes
+    # prevents Flask from performing such changes.
     app.run(host=host, port=port, threaded=False)
 
 
@@ -422,7 +422,7 @@ def combine(call_name, response):
     if all(type(v) is list for v in response):
         return [item for lst in response for item in lst]
 
-    log("combine_data", f"ERROR: cannot combine response={response}")
+    log("combine()", f"ERROR: cannot combine response={response}")
     msg = "Cannot combine data because of unknown reason"
     raise Exception(msg)
 

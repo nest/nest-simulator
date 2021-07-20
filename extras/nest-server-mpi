@@ -62,8 +62,9 @@ else:
 
             # The following exception handler is useful if an error
             # occurs simulataneously on all processes. If only a
-            # subset of processes throw, a deadlock due to mismatching
-            # MPI communication calls is inevitable on the next call.
+            # subset of processes raises an exception, a deadlock due
+            # to mismatching MPI communication calls is inevitable on
+            # the next call.
             try:
                 response = call(*args, **kwargs)
             except Exception:

@@ -65,10 +65,12 @@ nest::ArchivingNode::ArchivingNode( const ArchivingNode& n )
 void
 ArchivingNode::register_stdp_connection( double t_first_read, double delay )
 {
-  // Mark all entries in the deque, which we will not read in future as read by
-  // this input input, so that we savely increment the incoming number of
-  // connections afterwards without leaving spikes in the history.
-  // For details see bug #218. MH 08-04-22
+  /*
+   * Mark all entries in the deque, which we will not read in future as read by
+   * this input input, so that we savely increment the incoming number of
+   * connections afterwards without leaving spikes in the history.
+   * For details see bug #218. MH 08-04-22
+   */
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
         runner != history_.end() and ( t_first_read - runner->t_ > -1.0 * kernel().connection_manager.get_stdp_eps() );
@@ -186,12 +188,14 @@ nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
 
   if ( n_incoming_ )
   {
-    // prune all spikes from history which are no longer needed
-    // only remove a spike if:
-    // - its access counter indicates it has been read out by all connected
-    //   STDP synapses, and
-    // - there is another, later spike, that is strictly more than
-    //   (max_delay_ + eps) away from the new spike (at t_sp_ms)
+    /*
+     * prune all spikes from history which are no longer needed
+     * only remove a spike if:
+     * - its access counter indicates it has been read out by all connected
+     *   STDP synapses, and
+     * - there is another, later spike, that is strictly more than
+     *   (max_delay_ + eps) away from the new spike (at t_sp_ms)
+     */
     while ( history_.size() > 1 )
     {
       const double next_t_sp = history_[ 1 ].t_;

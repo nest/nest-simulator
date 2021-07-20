@@ -21,16 +21,15 @@
  */
 
 /*
-   This file is part of NEST.
-
-   dynamicloader.cpp -- Implements the class DynamicLoaderModule
-   to allow for dymanically loaded modules for extending the kernel.
-
-   Author(s):
-   Moritz Helias
-
-   First Version: November 2005
-*/
+ *
+ *   dynamicloader.cpp -- Implements the class DynamicLoaderModule
+ *   to allow for dymanically loaded modules for extending the kernel.
+ *
+ *   Author(s):
+ *   Moritz Helias
+ *
+ *   First Version: November 2005
+ */
 
 #include "dynamicloader.h"
 
@@ -67,7 +66,7 @@ struct sDynModule
   }
 
   // operator!= must be implemented explicitly, not all compilers
-  // generate it automatically from operator==
+  //  generate it automatically from operator==
   bool operator!=( const sDynModule& rhs ) const
   {
     return not( *this == rhs );
@@ -85,11 +84,12 @@ DynamicLoaderModule::getLinkedModules()
 }
 
 
-/*! At the time when DynamicLoaderModule is constructed, the SLI Interpreter
-  and NestModule must be already constructed and initialized.
-  DynamicLoaderModule relies on the presence of
-  the following SLI datastructures: Name, Dictionary.
-*/
+/**
+ * At the time when DynamicLoaderModule is constructed, the SLI Interpreter
+ *   and NestModule must be already constructed and initialized.
+ *   DynamicLoaderModule relies on the presence of
+ *   the following SLI datastructures: Name, Dictionary.
+ */
 DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
   : loadmodule_function( dyn_modules )
 {
@@ -126,9 +126,11 @@ DynamicLoaderModule::commandstring( void ) const
 }
 
 
-// auxiliary function to check name of module via its pointer
-// we cannot use a & for the second argument, as std::bind2nd() then
-// becomes confused, at least with g++ 4.0.1.
+/*
+ * auxiliary function to check name of module via its pointer
+ * we cannot use a & for the second argument, as std::bind2nd() then
+ * becomes confused, at least with g++ 4.0.1.
+ */
 bool
 has_name( SLIModule const* const m, const std::string n )
 {
@@ -136,12 +138,13 @@ has_name( SLIModule const* const m, const std::string n )
 }
 
 
-/** @BeginDocumentation
-  Name: Install - Load a dynamic module to extend the functionality.
-
-  Description:
-
-  Synopsis: (module_name) Install -> handle
+/**
+ * @BeginDocumentation
+ * Name: Install - Load a dynamic module to extend the functionality.
+ *
+ * Description:
+ *
+ * Synopsis: (module_name) Install -> handle
 */
 DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( vecDynModules& dyn_modules )
   : dyn_modules_( dyn_modules )
@@ -166,9 +169,10 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
     throw DynamicModuleManagementError( "Module name must not be empty." );
   }
 
-  // check if module already loaded
-  // this check can happen here, since we are comparing dynamically loaded
-  // modules based on the name given to the Install command
+  /* check if module already loaded
+   *  this check can happen here, since we are comparing dynamically loaded
+   *  modules based on the name given to the Install command
+   */
   if ( std::find( dyn_modules_.begin(), dyn_modules_.end(), new_module ) != dyn_modules_.end() )
   {
     throw DynamicModuleManagementError( "Module '" + new_module.name + "' is loaded already." );
@@ -204,9 +208,11 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
             + std::string(errstr) + "'.");
   }
 
-  // check if module is linked in. This test is based on the module name
-  // returned by DynModule::name(), since we have no file names for linked
-  // modules. We can only perform it after we have loaded the module.
+  /*
+   * check if module is linked in. This test is based on the module name
+   * returned by DynModule::name(), since we have no file names for linked
+   * modules. We can only perform it after we have loaded the module.
+   */
   if ( std::find_if( DynamicLoaderModule::getLinkedModules().begin(),
          DynamicLoaderModule::getLinkedModules().end(),
          std::bind( has_name, std::placeholders::_1, pModule->name() ) )
@@ -226,10 +232,10 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   }
   catch ( std::exception& e )
   {
-    // We should uninstall the partially installed module here, but
-    // this must wait for #152.
-    // For now, we just close the module file and rethrow the exception.
-
+    /* We should uninstall the partially installed module here, but
+     * this must wait for #152.
+     * For now, we just close the module file and rethrow the exception.
+     */
     lt_dlclose( hModule );
     lt_dlerror(); // remove any error caused by lt_dlclose()
     throw;        // no arg re-throws entire exception, see Stroustrup 14.3.1

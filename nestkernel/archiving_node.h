@@ -42,52 +42,35 @@
 namespace nest
 {
 
-/**
- * A node which archives spike history for the purposes of spike-timing
- * dependent plasticity (STDP)
- */
+ //! A node which archives spike history for the purposes of spike-timing
+ //! dependent plasticity (STDP)
 class ArchivingNode : public StructuralPlasticityNode
 {
 public:
-  /**
-   * \fn ArchivingNode()
-   * Constructor.
-   */
+
+  //! Constructor
   ArchivingNode();
 
-  /**
-   * \fn ArchivingNode()
-   * Copy Constructor.
-   */
+  //! Copy Constructor
   ArchivingNode( const ArchivingNode& );
 
   /**
-   * \fn double get_K_value(long t)
-   * return the Kminus (synaptic trace) value at t (in ms). When the trace is
+   * Return the Kminus (synaptic trace) value at t (in ms). When the trace is
    * requested at the exact same time that the neuron emits a spike, the trace
    * value as it was just before the spike is returned.
    */
   double get_K_value( double t );
 
   /**
-   * \fn void get_K_values( double t,
-   *   double& Kminus,
-   *   double& nearest_neighbor_Kminus,
-   *   double& Kminus_triplet )
-   * write the Kminus (eligibility trace for STDP),
+   * Write the Kminus (eligibility trace for STDP),
    * nearest_neighbour_Kminus (eligibility trace for nearest-neighbour STDP:
-   *   like Kminus, but increased to 1, rather than by 1, on a spike
-   *   occurrence),
-   * and Kminus_triplet
-   * values at t (in ms) to the provided locations.
+   * like Kminus, but increased to 1, rather than by 1, on a spike
+   * occurrence), and Kminus_triplet values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
   void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet );
 
   /**
-   * \fn void get_K_values( double t,
-   *   double& Kminus,
-   *   double& Kminus_triplet )
    * The legacy version of the function, kept for compatibility
    * after changing the function signature in PR #865.
    * @throws UnexpectedEvent
@@ -99,19 +82,11 @@ public:
     get_K_values( t, Kminus, nearest_neighbor_Kminus_to_discard, Kminus_triplet );
   }
 
-  /**
-   * \fn double get_K_triplet_value(std::deque<histentry>::iterator &iter)
-   * return the triplet Kminus value for the associated iterator.
-   */
+  //! Return the triplet Kminus value for the associated iterator.
   double get_K_triplet_value( const std::deque< histentry >::iterator& iter );
 
-  /**
-   * \fn void get_history(long t1, long t2,
-   * std::deque<Archiver::histentry>::iterator* start,
-   * std::deque<Archiver::histentry>::iterator* finish)
-   * return the spike times (in steps) of spikes which occurred in the range
-   * (t1,t2].
-   */
+  //! * Return the spike times (in steps) of spikes which occurred in the range
+  //! * [t1,t2].
   void get_history( double t1,
     double t2,
     std::deque< histentry >::iterator* start,
@@ -129,27 +104,21 @@ public:
   void set_status( const DictionaryDatum& d );
 
 protected:
-  /**
-   * \fn void set_spiketime(Time const & t_sp, double offset)
-   * record spike history
-   */
+
+  //! Record spike history
   void set_spiketime( Time const& t_sp, double offset = 0.0 );
 
-  /**
-   * \fn double get_spiketime()
-   * return most recent spike time in ms
-   */
+  //! Return most recent spike time in ms
   inline double get_spiketime_ms() const;
 
-  /**
-   * \fn void clear_history()
-   * clear spike history
-   */
+  //! Clear spike history
   void clear_history();
 
-  // number of incoming connections from stdp connectors.
-  // needed to determine, if every incoming connection has
-  // read the spikehistory for a given point in time
+  /*
+   * number of incoming connections from stdp connectors.
+   *  needed to determine, if every incoming connection has
+   *  read the spikehistory for a given point in time
+   */
   size_t n_incoming_;
 
 private:

@@ -67,6 +67,8 @@ public:
   /**
    * Connect sources to targets according to specifications in dictionary.
    *
+   * Now we can connect with or without structural plasticity
+   *
    * To create a connection, call
    *
    *   cb.connect();
@@ -74,10 +76,12 @@ public:
    * where conn_spec_dict speficies connection type and its parameters.
    */
   virtual void connect();
+
+  //! Now we can delete synapses with or without structural plasticity
   virtual void disconnect();
 
-  //! parameters: sources, targets, specifications
-  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
+  ConnBuilder( NodeCollectionPTR sources, NodeCollectionPTR targets, const DictionaryDatum& conn_spec, 
+      const std::vector< DictionaryDatum >& syn_specs );
   virtual ~ConnBuilder();
 
   index
@@ -105,7 +109,19 @@ public:
 
   bool all_parameters_scalar_() const;
 
-  bool change_connected_synaptic_elements( index, index, const int, int );
+/**
+ * Updates the number of connected synaptic elements in the
+ * target and the source.
+ * Returns 0 if the target is either on another
+ * MPI machine or another thread. Returns 1 otherwise.
+ *
+ * @param snode_id id of the source
+ * @param tnode_id id of the target
+ * @param tid thread id
+ * @param update amount of connected synaptic elements to update
+ * @return
+ */
+  bool change_connected_synaptic_elements( index snode_id, index tnode_id, const int thread tid, int update );
 
   virtual bool
   supports_symmetric() const
@@ -130,15 +146,18 @@ protected:
   //! Implements the actual connection algorithm
   virtual void connect_() = 0;
   virtual void
-  sp_connect_()
+
+   sp_connect_()
   {
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
+
   virtual void
   disconnect_()
   {
     throw NotImplemented( "This disconnection rule is not implemented." );
   }
+
   virtual void
   sp_disconnect_()
   {
@@ -242,17 +261,13 @@ private:
    */
   void register_parameters_requiring_skipping_( ConnParameter& param );
 
-  /*
-   * Set synapse specific parameters.
-   */
+  //! Set synapse specific parameters.
   void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
   void set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx );
   void set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
   void set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs );
 
-  /**
-   * Reset weight and delay pointers
-   */
+  //! Reset weight and delay pointers
   void reset_weights_();
   void reset_delays_();
 };
@@ -279,8 +294,27 @@ public:
 
 protected:
   void connect_();
+
+  /**
+   * Solves the connection of two nodes on a OneToOne basis with
+   * structural plasticity. This means this method is used by the
+   * structural plasticity manager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_connect_();
+
+  /**
+   * Solves the disconnection of two nodes on a OneToOne basis without
+   * structural plasticity. This means this method can be manually called
+   * by the user to delete existing synapses.
+   */
   void disconnect_();
+  /**
+   * Solves the disconnection of two nodes on a OneToOne basis with
+   * structural plasticity. This means this method is used by the
+   * structural plasticity manager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_disconnect_();
 };
 
@@ -309,8 +343,27 @@ public:
 
 protected:
   void connect_();
+
+  /**
+  * Solves the connection of two nodes on a AllToAll basis with
+  * structural plasticity. This means this method is used by the
+  * structural plasticity manager based on the homostatic rules defined
+  * for the synaptic elements on each node.
+  */
   void sp_connect_();
+
+  /**
+   * Solves the disconnection of two nodes on a AllToAll basis without
+   * structural plasticity. This means this method can be manually called
+   * by the user to delete existing synapses.
+   */
   void disconnect_();
+  /**
+   * Solves the disconnection of two nodes on a AllToAll basis with
+   * structural plasticity. This means this method is used by the
+   * structural plasticity manager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_disconnect_();
 
 private:
@@ -404,6 +457,15 @@ private:
 class SPBuilder : public ConnBuilder
 {
 public:
+  /**
+   * The SPBuilder is in charge of the creation of synapses during the simulation
+   * under the control of the structural plasticity manager
+   * @param net the network
+   * @param sources the source nodes on which synapses can be created/deleted
+   * @param targets the target nodes on which synapses can be created/deleted
+   * @param conn_spec connectivity specs
+   * @param syn_spec synapse specs
+   */
   SPBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
@@ -427,9 +489,7 @@ public:
    */
   void update_delay( delay& d ) const;
 
-  /**
-   *  @note Only for internal use by SPManager.
-   */
+  //!  @note Only for internal use by SPManager.
   void sp_connect( const std::vector< index >& sources, const std::vector< index >& targets );
 
 protected:

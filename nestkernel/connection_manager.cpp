@@ -80,12 +80,14 @@ nest::ConnectionManager::ConnectionManager()
 
 nest::ConnectionManager::~ConnectionManager()
 {
-  // Memory leak on purpose!
-  // The ConnectionManager is deleted, when the network is deleted, and
-  // this happens only, when main() is finished and we give the allocated memory
-  // back to the system anyway. Hence, why bother cleaning up our highly
-  // scattered connection infrastructure? They do not have any open files, which
-  // need to be closed or similar.
+  /*
+   * Memory leak on purpose!
+   * The ConnectionManager is deleted, when the network is deleted, and
+   * this happens only, when main() is finished and we give the allocated memory
+   * back to the system anyway. Hence, why bother cleaning up our highly
+   * scattered connection infrastructure? They do not have any open files, which
+   * need to be closed or similar.
+   */
 }
 
 void
@@ -1036,9 +1038,11 @@ nest::ConnectionManager::split_to_neuron_device_vectors_( const thread tid,
   {
     const index node_id = ( *t_id ).node_id;
     const auto node = kernel().node_manager.get_node_or_proxy( node_id, tid );
-    // Normal neuron nodes have proxies. Globally receiving devices, e.g. volume transmitter, don't have a local
-    // receiver, but are connected in the same way as normal neuron nodes. Therefore they have to be treated as such
-    // here.
+    /*
+     * Normal neuron nodes have proxies. Globally receiving devices, e.g. volume transmitter, don't have a local
+     * receiver, but are connected in the same way as normal neuron nodes. Therefore they have to be treated as such
+     * here.
+     */
     if ( node->has_proxies() or not node->local_receiver() )
     {
       neuron_node_ids.push_back( node_id );
@@ -1314,9 +1318,11 @@ nest::ConnectionManager::sort_connections( const thread tid )
 void
 nest::ConnectionManager::compute_target_data_buffer_size()
 {
-  // Determine number of target data on this rank. Since each thread
-  // has its own data structures, we need to count connections on every
-  // thread separately to compute the total number of sources.
+  /*
+   * Determine number of target data on this rank. Since each thread
+   * has its own data structures, we need to count connections on every
+   * thread separately to compute the total number of sources.
+   */
   size_t num_target_data = 0;
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
@@ -1394,10 +1400,12 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
   assert( kernel().vp_manager.is_local_vp( target_vp ) );
   assert( kernel().vp_manager.vp_to_thread( target_vp ) == tid );
 
-  // Connections to nodes with proxies (neurons or devices with
-  // proxies) which are local to tid have always to be
-  // established, independently of where and what type the source node
-  // is.
+  /*
+   * Connections to nodes with proxies (neurons or devices with
+   * proxies) which are local to tid have always to be
+   * established, independently of where and what type the source node
+   * is.
+   */
   if ( target->has_proxies() )
   {
     if ( source->has_proxies() )
@@ -1414,18 +1422,22 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
   // thread-local nodes.
   if ( target->local_receiver() )
   {
-    // Connections to nodes with one node per process (MUSIC proxies
-    // or similar devices) have to be established by the thread of the
-    // target if the source is on the local process even though the
-    // source may be a proxy on tid.
+    /*
+     * Connections to nodes with one node per process (MUSIC proxies
+     * or similar devices) have to be established by the thread of the
+     * target if the source is on the local process even though the
+     * source may be a proxy on tid.
+     */
     if ( target->one_node_per_process() and source->has_proxies() )
     {
       return CONNECT_TO_DEVICE;
     }
 
-    // Connections from nodes with proxies (neurons or devices with
-    // proxies) to devices are only created if source is not a proxy
-    // and source and target are both on thread tid
+    /*
+     * Connections from nodes with proxies (neurons or devices with
+     * proxies) to devices are only created if source is not a proxy
+     * and source and target are both on thread tid
+     */
     const thread source_thread = source->get_thread();
     const bool source_is_proxy = source->is_proxy();
     if ( source->has_proxies() and source_thread == tid and not source_is_proxy )
@@ -1433,9 +1445,11 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
       return CONNECT_TO_DEVICE;
     }
 
-    // Connections from devices to devices are established only on the
-    // vp that is suggested for the target node. In this case, we also
-    // set the pointer to the source node on the target's thread.
+    /*
+     * Connections from devices to devices are established only on the
+     * vp that is suggested for the target node. In this case, we also
+     * set the pointer to the source node on the target's thread.
+     */
     if ( not source->has_proxies() )
     {
       const index target_node_id = target->get_node_id();
@@ -1452,9 +1466,11 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
     }
   }
 
-  // Globally receiving nodes (e.g. the volume transmitter) have to be
-  // connected regardless of where the source is. However, we
-  // currently prohibit connections from devices to global receivers.
+  /*
+   * Globally receiving nodes (e.g. the volume transmitter) have to be
+   * connected regardless of where the source is. However, we
+   * currently prohibit connections from devices to global receivers.
+   */
   else
   {
     if ( source->has_proxies() )
@@ -1601,9 +1617,11 @@ nest::ConnectionManager::check_secondary_connections_exist()
 void
 nest::ConnectionManager::set_have_connections_changed( const thread tid )
 {
-  // Need to check if have_connections_changed_ has already been set, because if
-  // we have a lot of threads and they all try to set the variable at once we get
-  // performance issues on supercomputers.
+  /*
+   * Need to check if have_connections_changed_ has already been set, because if
+   * we have a lot of threads and they all try to set the variable at once we get
+   * performance issues on supercomputers.
+   */
   if ( have_connections_changed_[ tid ].is_false() )
   {
     if ( has_get_connections_been_called_ )
@@ -1621,9 +1639,11 @@ nest::ConnectionManager::set_have_connections_changed( const thread tid )
 void
 nest::ConnectionManager::unset_have_connections_changed( const thread tid )
 {
-  // Need to check if have_connections_changed_ has already been set, because if
-  // we have a lot of threads and they all try to set the variable at once we get
-  // performance issues on supercomputers.
+  /*
+   * Need to check if have_connections_changed_ has already been set, because if
+   * we have a lot of threads and they all try to set the variable at once we get
+   * performance issues on supercomputers.
+   */
   if ( have_connections_changed_[ tid ].is_true() )
   {
     have_connections_changed_[ tid ].set_false();

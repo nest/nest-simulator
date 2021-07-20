@@ -55,9 +55,10 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , parameters_requiring_skipping_()
   , param_dicts_()
 {
-  // read out rule-related parameters -------------------------
-  //  - /rule has been taken care of above
-  //  - rule-specific params are handled by subclass c'tor
+  /* read out rule-related parameters -------------------------
+   * - /rule has been taken care of above
+   * - rule-specific params are handled by subclass c'tor
+   */
   updateValue< bool >( conn_spec, names::allow_autapses, allow_autapses_ );
   updateValue< bool >( conn_spec, names::allow_multapses, allow_multapses_ );
   updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
@@ -143,18 +144,6 @@ nest::ConnBuilder::~ConnBuilder()
   }
 }
 
-/**
- * Updates the number of connected synaptic elements in the
- * target and the source.
- * Returns 0 if the target is either on another
- * MPI machine or another thread. Returns 1 otherwise.
- *
- * @param snode_id id of the source
- * @param tnode_id id of the target
- * @param tid thread id
- * @param update amount of connected synaptic elements to update
- * @return
- */
 bool
 nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tnode_id, const thread tid, int update )
 {
@@ -197,9 +186,6 @@ nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tno
   return local;
 }
 
-/**
- * Now we can connect with or without structural plasticity
- */
 void
 nest::ConnBuilder::connect()
 {
@@ -262,9 +248,6 @@ nest::ConnBuilder::connect()
   }
 }
 
-/**
- * Now we can delete synapses with or without structural plasticity
- */
 void
 nest::ConnBuilder::disconnect()
 {
@@ -464,9 +447,11 @@ nest::ConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, siz
 
   default_delay_[ synapse_indx ] = not syn_params->known( names::delay );
 
-  // If neither weight nor delay are given in the dict, we handle this separately. Important for
-  // hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
-  // _all_ types of synapses.
+  /*
+   * If neither weight nor delay are given in the dict, we handle this separately. Important for
+   * hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
+   * _all_ types of synapses.
+   */
   default_weight_and_delay_[ synapse_indx ] = ( default_weight_[ synapse_indx ] and default_delay_[ synapse_indx ] );
 
   if ( not default_weight_and_delay_[ synapse_indx ] )
@@ -619,9 +604,11 @@ nest::OneToOneBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        // A more efficient way of doing this might be to use NodeCollection's local_begin(). For this to work we would
-        // need to change some of the logic, sources and targets might not be on the same process etc., so therefore
-        // we are not doing it at the moment. This also applies to other ConnBuilders below.
+        /*
+         * A more efficient way of doing this might be to use NodeCollection's local_begin(). For this to work we would
+         * need to change some of the logic, sources and targets might not be on the same process etc., so therefore
+         * we are not doing it at the moment. This also applies to other ConnBuilders below.
+         */
         NodeCollection::const_iterator target_it = targets_->begin();
         NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; target_it < targets_->end(); ++target_it, ++source_it )
@@ -683,11 +670,6 @@ nest::OneToOneBuilder::connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a OneToOne basis without
- * structural plasticity. This means this method can be manually called
- * by the user to delete existing synapses.
- */
 void
 nest::OneToOneBuilder::disconnect_()
 {
@@ -736,12 +718,6 @@ nest::OneToOneBuilder::disconnect_()
   }
 }
 
-/**
- * Solves the connection of two nodes on a OneToOne basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::OneToOneBuilder::sp_connect_()
 {
@@ -789,12 +765,6 @@ nest::OneToOneBuilder::sp_connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a OneToOne basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::OneToOneBuilder::sp_disconnect_()
 {
@@ -924,12 +894,6 @@ nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, 
   }
 }
 
-/**
- * Solves the connection of two nodes on a AllToAll basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::AllToAllBuilder::sp_connect_()
 {
@@ -976,11 +940,6 @@ nest::AllToAllBuilder::sp_connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a AllToAll basis without
- * structural plasticity. This means this method can be manually called
- * by the user to delete existing synapses.
- */
 void
 nest::AllToAllBuilder::disconnect_()
 {
@@ -1031,12 +990,6 @@ nest::AllToAllBuilder::disconnect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a AllToAll basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::AllToAllBuilder::sp_disconnect_()
 {
@@ -1783,15 +1736,6 @@ nest::SymmetricBernoulliBuilder::connect_()
 }
 
 
-/**
- * The SPBuilder is in charge of the creation of synapses during the simulation
- * under the control of the structural plasticity manager
- * @param net the network
- * @param sources the source nodes on which synapses can be created/deleted
- * @param targets the target nodes on which synapses can be created/deleted
- * @param conn_spec connectivity specs
- * @param syn_spec synapse specs
- */
 nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
@@ -1837,9 +1781,6 @@ nest::SPBuilder::connect_()
   throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
 }
 
-/**
- * In charge of dynamically creating the new synapses
- */
 void nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
 {
   throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );

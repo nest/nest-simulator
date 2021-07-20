@@ -39,77 +39,44 @@
 namespace nest
 {
 
-/**
- * \class ClopathArchivingNode
- * a archiving node which additionally archives parameters
- * and buffers needed for the Clopath plasticity rule
- */
+ //! An archiving node which additionally archives parameters
+ //! and buffers needed for the Clopath plasticity rule
 class ClopathArchivingNode : public ArchivingNode
 {
 
 public:
-  /**
-   * \fn ClopathArchivingNode()
-   * Constructor.
-   */
+  //! Constructor.
   ClopathArchivingNode();
 
-  /**
-   * \fn ClopathArchivingNode()
-   * Copy Constructor.
-   */
+  //! Copy Constructor.
   ClopathArchivingNode( const ClopathArchivingNode& );
 
-  /**
-   * \fn double get_LTD_value(long t)
-   * Returns value in LTD history at time t
-   */
+  //! Returns value in LTD history at time t
   double get_LTD_value( double t );
 
-  /**
-   * \fn void get_LTP_history(long t1, long t2,
-   * std::deque<Archiver::histentry>::iterator* start,
-   * std::deque<Archiver::histentry>::iterator* finish)
-   * Sets pointer start (finish) to the first (last) entry in LTP_history
-   * whose time argument is between t1 and t2
-   */
+  //! Sets pointer start (finish) to the first (last) entry in LTP_history
+  //! whose time argument is between t1 and t2
   void get_LTP_history( double t1,
     double t2,
     std::deque< histentry_extended >::iterator* start,
     std::deque< histentry_extended >::iterator* finish );
 
-  /**
-   * \fn double get_theta_plus()
-   * Returns threshold theta_plus_
-   */
+  //! Returns threshold theta_plus_
   double get_theta_plus() const;
 
-  /**
-   * \fn double get_theta_minus()
-   * Returns threshold theta_minus_
-   */
+  //! Returns threshold theta_minus_
   double get_theta_minus() const;
 
 protected:
-  /**
-   * \fn void write_LTD_history( Time const& t_sp,
-   * double u_bar_minus, double u_bar_bar )
-   * Creates a new entry in the LTD history and deletes old entries that
-   * are not needed any more.
-   */
+  //! Creates a new entry in the LTD history and deletes old entries that
+  //! are not needed any more.
   void write_LTD_history( const double t_ltd_ms, double u_bar_minus, double u_bar_bar );
 
-  /**
-   * \fn void write_LTP_history( const double t_ltp_ms, double u,
-   * double u_bar_plus )
-   * Creates a new entry in the LTP history and delets old entries that
-   * are not needed any more.
-   */
+  //! Creates a new entry in the LTP history and delets old entries that
+  //! are not needed any more.
   void write_LTP_history( const double t_ltp_ms, double u, double u_bar_plus );
 
   /**
-   * \fn void write_clopath_history( Time const& t_sp,
-   * double u, double u_bar_plus, double u_bar_minus, double u_bar_bar )
    * Writes and reads the delayed_u_bar_[plus/minus] buffers and
    * calls write_LTD_history and write_LTP_history if
    * the corresponding Heaviside functions yield 1.

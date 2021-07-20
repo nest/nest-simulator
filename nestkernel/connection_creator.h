@@ -105,6 +105,7 @@ public:
   void connect( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
 private:
+
   /**
    * Wrapper for masked and unmasked pools.
    *
@@ -131,7 +132,7 @@ private:
     std::vector< std::pair< Position< D >, index > >* positions_;
   };
 
-  void extract_params_( const DictionaryDatum&, std::vector< DictionaryDatum >& );
+  void extract_params_( const DictionaryDatum& dict_datum, std::vector< DictionaryDatum >& params );
 
   template < typename Iterator, int D >
   void connect_to_target_( Iterator from,

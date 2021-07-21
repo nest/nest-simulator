@@ -23,6 +23,9 @@
 #ifndef NEST_NAMES_H
 #define NEST_NAMES_H
 
+// Generated includes:
+#include "config.h"
+
 // Includes from sli:
 #include "name.h"
 
@@ -534,10 +537,18 @@ extern const Name thread_local_id;         //!< Thead-local ID of node,
                                            //!< see Kunkel et al 2014, Sec 3.3.2
 extern const Name tics_per_ms;             //!< Simulation-related
 extern const Name tics_per_step;           //!< Simulation-related
+#ifdef TIMER_DETAILED
+extern const Name time_collocate_spike_data;
+extern const Name time_communicate_spike_data;
+extern const Name time_deliver_spike_data;
+extern const Name time_gather_spike_data;
+extern const Name time_update;
+#endif
+extern const Name time_construction_connect;
+extern const Name time_construction_create;
 extern const Name time_in_steps;           //!< Recorder parameter
+extern const Name time_simulate;
 extern const Name time;                    //!< Simulation-related
-extern const Name time_collocate;          //!< Used by event_delivery_manager
-extern const Name time_communicate;        //!< Used by event_delivery_manager
 extern const Name times;                   //!< Recorder parameter
 extern const Name to_accumulator;          //!< Recorder parameter
 extern const Name to_do;                   //!< Simulation-related

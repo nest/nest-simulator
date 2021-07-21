@@ -103,6 +103,8 @@ nest::ConnectionManager::initialize()
   // this change in delays.
   min_delay_ = max_delay_ = 1;
 
+  sw_construction_connect.reset();
+
 #ifdef _OPENMP
 #ifdef USE_PMA
 // initialize the memory pools
@@ -153,6 +155,8 @@ nest::ConnectionManager::get_status( DictionaryDatum& d )
 
   size_t n = get_num_connections();
   def< long >( d, names::num_connections, n );
+
+  def< double >( d, names::time_construction_connect, sw_construction_connect.elapsed() );
 }
 
 DictionaryDatum

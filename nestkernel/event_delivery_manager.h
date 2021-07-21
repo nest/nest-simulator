@@ -215,10 +215,14 @@ public:
   void init_moduli();
 
   /**
-   * Set cumulative time measurements for collocating buffers
-   * and for communication to zero; set local spike counter to zero.
+   * Set local spike counter to zero.
    */
-  virtual void reset_timers_counters();
+  virtual void reset_counters();
+
+  /**
+   * Set time measurements for internal profiling to zero (reg. sim. dyn.)
+   */
+  virtual void reset_timers_for_dynamics();
 
 private:
   /**
@@ -321,22 +325,17 @@ private:
   const unsigned int comm_marker_;
 
   /**
-   * Time that was spent on collocation of MPI buffers during the last call to
-   * simulate.
-   */
-  double time_collocate_;
-
-  /**
-   * Time that was spent on communication of events during the last call to
-   * simulate.
-   */
-  double time_communicate_;
-
-  /**
    * Number of generated spike events (both off- and on-grid) during the last
    * call to simulate.
    */
   unsigned long local_spike_counter_;
+
+#ifdef TIMER_DETAILED
+  // private stop watches for benchmarking purposes
+  // (intended for internal core developers, not for use in the public API)
+  Stopwatch sw_collocate_spike_data_;   //!< Stopwatch measuring collocation time
+  Stopwatch sw_communicate_spike_data_; //!< Stopwatch measuring communication time
+#endif
 };
 
 

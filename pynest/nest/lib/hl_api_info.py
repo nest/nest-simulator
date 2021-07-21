@@ -202,7 +202,7 @@ def set_verbosity(level):
 
     Parameters
     ----------
-    level : str
+    level : str, default: 'M_INFO'
         Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', 'M_DEPRECATED',
         'M_INFO' or 'M_ALL'.
     """

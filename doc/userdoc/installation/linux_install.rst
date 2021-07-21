@@ -131,6 +131,7 @@ further adjust settings for your system.
     python3-scipy \
     python3-matplotlib \
     python3-nose \
+    python3-junitparser \
     openmpi-bin \
     libopenmpi-dev
 

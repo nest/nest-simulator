@@ -158,7 +158,7 @@ Docs.
 
 4. `Import <https://readthedocs.org/dashboard/import/>`_ the project.
 
-5. Enter the details of your project in the ``repo`` field and hit :py:func:`.Create`.
+5. Enter the details of your project in the ``repo`` field and hit ``Create``.
 
 6. `Build <https://docs.readthedocs.io/en/stable/intro/
    import-guide.html#building-your-documentation>`_ your documentation.

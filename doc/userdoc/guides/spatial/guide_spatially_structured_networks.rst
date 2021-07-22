@@ -876,7 +876,7 @@ NEST then generates a connection according to this probability.
 Probabilistic connections between layers can be generated in two different
 ways:
 
-Free probabilistic connections using `pairwise_bernoulli`
+Free probabilistic connections using ``pairwise_bernoulli``
    In this case, :py:func:`.Connect` considers each driver node :math:`D` in turn.
    For each :math:`D`, it evaluates the parameter value for each pool node
    :math:`P` within the mask and creates a connection according to the

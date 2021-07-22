@@ -40,6 +40,7 @@ class TestMPIDependentTests(unittest.TestCase):
     def testsWithMPI(self):
         failing_tests = []
         path = os.path.dirname(os.path.realpath(__file__))
+        # all MPI tests as a list of pairs (filename, n_proc)
         mpitests = [
             ('mpitest_get_local_vps.py', 4),
             ('test_sp/mpitest_issue_578_sp.py', 2),

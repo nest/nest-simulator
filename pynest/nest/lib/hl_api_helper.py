@@ -73,6 +73,14 @@ _deprecation_warning = {'deprecated_model': {'deprecation_issued': False,
                                                 'replacement': 'iaf_psc_alpha_ps'}}
 
 
+def is_documented_by(original):
+    """Copy the docstring from one function to another."""
+    def wrapper(target):
+        target.__doc__ = original.__doc__
+        return target
+    return wrapper
+
+
 def format_Warning(message, category, filename, lineno, line=None):
     """Formats deprecation warning."""
 

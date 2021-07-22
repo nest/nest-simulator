@@ -393,7 +393,7 @@ def SetKernelStatus(params):
     See Also
     --------
 
-    GetKernelStatus
+    get, GetKernelStatus
 
     """
     # Resolve if missing entries should raise errors
@@ -469,7 +469,7 @@ def GetKernelStatus(keys=None):
 
     See Also
     --------
-    SetKernelStatus
+    set, SetKernelStatus
 
     """
 

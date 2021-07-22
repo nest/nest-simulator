@@ -44,26 +44,40 @@ if sys.version_info[0] == 2:
     msg = "Python 2 is no longer supported. Please use Python >= 3.6."
     raise Exception(msg)
 
-from . import ll_api                  # noqa
-from .ll_api import set_communicator  # noqa
+from . import ll_api                             # noqa
+from .ll_api import set_communicator             # noqa
 
-from . import pynestkernel as kernel  # noqa
-from .hl_api import *                 # noqa
+from . import pynestkernel as kernel             # noqa
+from .hl_api import *                            # noqa
 
-from . import random                  # noqa
-from . import math                    # noqa
-from . import spatial_distributions   # noqa
-from . import logic                   # noqa
+from . import random                             # noqa
+from . import math                               # noqa
+from . import spatial_distributions              # noqa
+from . import logic                              # noqa
 
-# spatial needs to be imported last because of documentation generation
-from . import spatial                 # noqa
+from .lib.hl_api_helper import is_documented_by  # noqa
 
 try:
-    from . import server              # noqa
+    from . import server                         # noqa
 except ImportError:
     pass
 
+# spatial needs to be last because of doc generation
+from . import spatial                            # noqa
+
+
 __version__ = ll_api.sli_func("statusdict /version get")
+
+
+@is_documented_by(GetKernelStatus)
+def get(*args, **kwargs):
+    return GetKernelStatus(*args, **kwargs)
+
+
+@is_documented_by(SetKernelStatus)
+def set(*args, **kwargs):
+    __doc__ = SetKernelStatus.__doc__
+    return SetKernelStatus(*args, **kwargs)
 
 
 def test():

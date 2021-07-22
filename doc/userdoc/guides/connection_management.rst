@@ -130,12 +130,12 @@ more details on this interface, see the Git repository of `libneurosim
 In contrast to the other rules for creating connections, this rule
 relies on a Connection Generator object to describe the connectivity
 pattern in a library-specific way. The Connection Generator is handed
-to :py:func:`.Connect` under the key `cg` of the connection specification
+to :py:func:`.Connect` under the key ``cg`` of the connection specification
 dictionary and evaluated internally. If the Connection Generator
 provides values for connection weights and delays, their respective
-indices can be specified under the key `params_map`. Alternatively,
+indices can be specified under the key ``params_map``. Alternatively,
 all synapse parameters can be specified using the synapse
-specification argument to ``Connect1()``.
+specification argument to ``Connect()``.
 
 The following listing shows an example for using the `Connection-Set
 Algebra <https://github.com/INCF/csa>`_ in NEST via the Connection

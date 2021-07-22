@@ -110,19 +110,15 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
 #endif
 
   addmodule< SLIArrayModule >( engine );
-  addmodule< SpecialFunctionsModule >( engine ); // safe without GSL
+  addmodule< SpecialFunctionsModule >( engine );
   addmodule< SLIgraphics >( engine );
   engine.addmodule( new SLIStartup( *argc, *argv ) );
   addmodule< Processes >( engine );
   addmodule< RegexpModule >( engine );
   addmodule< FilesystemModule >( engine );
 
-  // register NestModule class
+  // NestModule extends SLI by commands for neuronal simulations
   addmodule< nest::NestModule >( engine );
-
-  // this can make problems with reference counting, if
-  // the intepreter decides cleans up memory before NEST is ready
-  engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
 
   // now add static modules providing models
   add_static_modules( engine );

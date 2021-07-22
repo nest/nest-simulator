@@ -155,15 +155,22 @@ ModelManager::set_status( const DictionaryDatum& )
 void
 ModelManager::get_status( DictionaryDatum& dict )
 {
-  // syn_ids start at 0, so the maximal number of syn models is MAX_SYN_ID + 1
-  def< int >( dict, names::max_num_syn_models, MAX_SYN_ID + 1 );
-
   ArrayDatum node_models;
   for ( auto const& element : *modeldict_ )
   {
     node_models.push_back( new LiteralDatum( element.first ) );
   }
   def< ArrayDatum >( dict, names::node_models, node_models );
+
+  ArrayDatum synapse_models;
+  for ( auto const& element : *synapsedict_ )
+  {
+    synapse_models.push_back( new LiteralDatum( element.first ) );
+  }
+  def< ArrayDatum >( dict, names::synapse_models, synapse_models );
+
+  // syn_ids start at 0, so the maximal number of syn models is MAX_SYN_ID + 1
+  def< int >( dict, names::max_num_syn_models, MAX_SYN_ID + 1 );
 }
 
 index
@@ -368,6 +375,17 @@ ModelManager::get_model_id( const Name name ) const
     }
   }
   return -1;
+}
+
+index
+ModelManager::get_synapse_model_id( std::string model_name )
+{
+  const Token synmodel = synapsedict_->lookup( model_name );
+  if( synmodel.empty() )
+  {
+    throw UnknownSynapseType( model_name );
+  }
+  return static_cast< index >( synmodel );
 }
 
 DictionaryDatum

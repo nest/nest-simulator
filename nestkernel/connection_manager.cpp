@@ -428,20 +428,13 @@ void
 nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec )
 {
   // Get synapse id
-  size_t syn_id = 0;
+  index syn_id = 0;
   auto synmodel = syn_spec->lookup( names::model );
   if ( not synmodel.empty() )
   {
-    std::string synmodel_name = getValue< std::string >( synmodel );
-    synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-    if ( not synmodel.empty() )
-    {
-      syn_id = static_cast< size_t >( synmodel );
-    }
-    else
-    {
-      throw UnknownModelName( synmodel_name );
-    }
+    const std::string synmodel_name = getValue< std::string >( synmodel );
+    // The following call will throw if synmodel_name is not naming a known model
+    syn_id = kernel().model_manager.get_synapse_model_id( synmodel_name );
   }
   // Connect all sources to all targets
   for ( auto&& source : sources )
@@ -612,7 +605,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
     }
   }
 
-  index synapse_model_id( kernel().model_manager.get_synapsedict()->lookup( syn_model ) );
+  index synapse_model_id( kernel().model_manager.get_synapse_model_id( syn_model ) );
 
   // Increments pointers to weight and delay, if they are specified.
   auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d )
@@ -978,22 +971,13 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
     }
   }
 
-  size_t syn_id = 0;
-
-  // First we check, whether a synapse model is given.
-  // If not, we will iterate all.
+  // We check, whether a synapse model is given. If not, we will iterate all.
+  index syn_id = 0;
   if ( not syn_model_t.empty() )
   {
-    Name synmodel_name = getValue< Name >( syn_model_t );
-    const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-    if ( not synmodel.empty() )
-    {
-      syn_id = static_cast< size_t >( synmodel );
-    }
-    else
-    {
-      throw UnknownModelName( synmodel_name.toString() );
-    }
+    const std::string synmodel_name = getValue< std::string >( syn_model_t );
+    // The following call will throw if synmodel_name is not naming a known model
+    syn_id = kernel().model_manager.get_synapse_model_id( synmodel_name );
     get_connections( connectome, source_a, target_a, syn_id, synapse_label );
   }
   else

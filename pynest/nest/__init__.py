@@ -25,7 +25,9 @@
 
 * ``nest.__version__`` displays the NEST version.
 
-* ``nest.Models()`` shows all available neuron, device and synapse models.
+* ``nest.GetKernelStatus('node_models')`` shows all available neuron and device models.
+
+* ``nest.GetKernelStatus('synapse_models')`` shows all available synapse models.
 
 * ``nest.help('model_name') displays help for the given model, e.g., ``nest.help('iaf_psc_exp')``
 

@@ -247,13 +247,14 @@ Client to execute a simple script on the Server using the
     from NESTServerClient import NESTServerClient
     nsc = NESTServerClient()
 
-    response = nsc.exec_script("print('Hello world!')")
-    print(response['stdout'])                        # 'Hello world!'
+    script = "print('Hello world!')"
+    response = nsc.exec_script(script)
+    print(response['stdout'])          # 'Hello world!'
 
-    response = nsc.exec_script("models=nest.Models()", 'models')
+    script = "models=nest.GetKernelStatus('neuron_models')"
+    response = nsc.exec_script(script, 'models')
     models = response['data']
-
-    print(models)                                    # the list of models
+    print(models)                      # the list of models
 
 In a more realistic scenario, you probably already have your
 simulation script stored in a file. Such scripts can be sent to the
@@ -344,9 +345,9 @@ You can retrieve data about the callable functions of NEST by running::
 
   curl localhost:5000/api
 
-Retrieve available models in NEST::
+Retrieve the current kernel status dict from NEST::
 
-  curl localhost:5000/api/Models
+  curl localhost:5000/api/GetKernelStatus
 
 Send API request with function arguments in JSON format::
 
@@ -543,7 +544,7 @@ Using the above code, we can already send API-requests to NEST Server:
 
 .. code-block:: JavaScript
 
-    getAPI('Models');  // a list of models
+    getAPI('GetKernelStatus');  // the current kernel status dict
 
 Sending API calls with data requires a POST request, which can handle
 the data in JSON-format. To allow for this, we can define a function

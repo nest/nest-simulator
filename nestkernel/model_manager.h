@@ -152,14 +152,19 @@ public:
     const RegisterConnectionModelFlags flags = default_secondary_connection_model_flags );
 
   /**
-   * @return The model id of a given model name
+   * @return The model ID for a Model with a given name
    */
   int get_model_id( const Name ) const;
 
   /**
-   * @return The Model of a given model ID
+   * @return The Model registered with the given model ID
    */
   Model* get_model( index ) const;
+
+  /**
+   * @return The numeric ID of a given synapse model
+   */
+  index get_synapse_model_id( std::string model_name );
 
   DictionaryDatum get_connector_defaults( synindex syn_id ) const;
 
@@ -185,11 +190,6 @@ public:
    * @throws UnknownSynapseType
    */
   void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
-
-  /**
-   * @return Reference to the synapse dictionary
-   */
-  DictionaryDatum& get_synapsedict();
 
   /**
    * Does the network contain copies of models created using CopyModel?
@@ -321,12 +321,6 @@ inline bool
 ModelManager::are_model_defaults_modified() const
 {
   return model_defaults_modified_;
-}
-
-inline DictionaryDatum&
-ModelManager::get_synapsedict()
-{
-  return synapsedict_;
 }
 
 inline bool

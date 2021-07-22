@@ -40,7 +40,9 @@ class TestChangingTicBase(unittest.TestCase):
         """Time objects in models correctly updated"""
         # Generate a dictionary of reference values for each model.
         reference = {}
-        for model in nest.Models():
+        synapse_models = nest.GetKernelStatus('synapse_models')
+        node_models = nest.GetKernelStatus('node_models')
+        for model in node_models + synapse_models:
             if model in self.ignored_models:
                 continue
             try:

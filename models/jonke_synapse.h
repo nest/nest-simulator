@@ -81,7 +81,7 @@ namespace nest
       Adapted by: Philipp Weidel
   Author: Michael Mueller
           Adapted by: Loïc Jeanningros (loic.jeanningros@gmail.com)
-  SeeAlso: synapsedict, stdp_synapse
+  SeeAlso: stdp_synapse
 */
 
 

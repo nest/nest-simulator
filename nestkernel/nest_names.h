@@ -450,6 +450,7 @@ extern const Name structural_plasticity_update_interval;
 extern const Name synapse_id;
 extern const Name synapse_label;
 extern const Name synapse_model;
+extern const Name synapse_models;
 extern const Name synapse_modelid;
 extern const Name synapse_parameters;
 extern const Name synapses_per_driver;

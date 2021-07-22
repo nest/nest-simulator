@@ -47,7 +47,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
         ]
 
     def test_register_synapses(self):
-        for syn_model in nest.Models('synapses'):
+        for syn_model in nest.GetKernelStatus('synapse_models'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.SetDefaults(syn_model, {'delay': 0.5})
@@ -138,7 +138,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
         assert (sp_interval == 10000.)
 
     def test_synapse_creation(self):
-        for syn_model in nest.Models('synapses'):
+        for syn_model in nest.GetKernelStatus('synapse_models'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 syn_dict = {

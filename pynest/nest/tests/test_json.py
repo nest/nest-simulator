@@ -34,7 +34,9 @@ class StatusTestCase(unittest.TestCase):
     def test_GetDefaults_JSON(self):
         """JSON data of GetDefaults"""
 
-        for m in nest.Models():
+        node_models = nest.GetKernelStatus('node_models')
+        synapse_models = nest.GetKernelStatus('synapse_models')
+        for m in node_models + synapse_models:
             d_json = nest.GetDefaults(m, output='json')
             self.assertIsInstance(d_json, str)
 

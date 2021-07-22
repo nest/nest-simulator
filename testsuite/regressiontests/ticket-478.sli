@@ -58,14 +58,14 @@ def
 def
 
 /static_syn_models
-  synapsedict keys
+  GetKernelStatus/synapse_models ::
   { excluded_synapses exch MemberQ not } Select
   { GetDefaults keys { cvs } Map Sort static_defaults eq } Select
   { GetDefaults keys { cvs } Map Sort static_lbl_defaults eq } Select
 def
 
 /plastic_syn_models
-  synapsedict keys
+  GetKernelStatus/synapse_models ::
   { excluded_synapses exch MemberQ not } Select
   { GetDefaults keys { cvs } Map Sort static_defaults neq } Select
   { GetDefaults keys { cvs } Map Sort static_lbl_defaults neq } Select

@@ -267,13 +267,13 @@ copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatu
 }
 
 void
-set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
+set_model_defaults( const std::string modelname, const DictionaryDatum& dict )
 {
   kernel().model_manager.set_model_defaults( modelname, dict );
 }
 
 DictionaryDatum
-get_model_defaults( const Name& modelname )
+get_model_defaults( const std::string modelname )
 {
   const int model_id = kernel().model_manager.get_model_id( modelname );
   if ( model_id != -1 )
@@ -281,14 +281,15 @@ get_model_defaults( const Name& modelname )
     return kernel().model_manager.get_model( model_id )->get_status();
   }
 
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
-  if ( not synmodel.empty() )
+  try
   {
-    const long synapse_id = static_cast< long >( synmodel );
-    return kernel().model_manager.get_connector_defaults( synapse_id );
+    const index synapse_model_id = kernel().model_manager.get_synapse_model_id( modelname );
+    return kernel().model_manager.get_connector_defaults( synapse_model_id );
   }
+  catch ( UnknownSynapseType& ) {}
 
-  throw UnknownModelName( modelname.toString() );
+  throw UnknownModelName( modelname );
+
   return DictionaryDatum(); // supress warning about missing return value; never reached
 }
 

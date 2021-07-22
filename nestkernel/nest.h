@@ -189,8 +189,8 @@ void cleanup();
 
 void copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
 
-void set_model_defaults( const Name& model_name, const DictionaryDatum& );
-DictionaryDatum get_model_defaults( const Name& model_name );
+void set_model_defaults( const std::string model_name, const DictionaryDatum& );
+DictionaryDatum get_model_defaults( const std::string model_name );
 
 ParameterDatum multiply_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );
 ParameterDatum divide_parameter( const ParameterDatum& param1, const ParameterDatum& param2 );

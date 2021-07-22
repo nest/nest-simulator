@@ -426,6 +426,7 @@ const Name structural_plasticity_update_interval( "structural_plasticity_update_
 const Name synapse_id( "synapse_id" );
 const Name synapse_label( "synapse_label" );
 const Name synapse_model( "synapse_model" );
+const Name synapse_models( "synapse_models" );
 const Name synapse_modelid( "synapse_modelid" );
 const Name synapse_parameters( "synapse_parameters" );
 const Name synapses_per_driver( "synapses_per_driver" );

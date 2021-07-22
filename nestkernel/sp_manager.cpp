@@ -303,7 +303,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
     for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
     {
       std::string synModel = getValue< std::string >( syn_spec, names::synapse_model );
-      if ( ( *i )->get_synapse_model() == ( index )( kernel().model_manager.get_synapsedict()->lookup( synModel ) ) )
+      if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( synModel ) )
       {
         cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
         cb->set_post_synaptic_element_name( ( *i )->get_post_synaptic_element_name() );

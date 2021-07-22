@@ -30,26 +30,20 @@ Getting help on the command line interface
        # ... or in IPython
        nest.FunctionName?
 
-Model Information
+Model information
 -----------------
 
-* To get a complete list of the models available in NEST type:
+* To get a list of available neuron models, use:
 
     .. code-block:: python
 
-       nest.Models()
+       nest.GetKernelStatus('node_models')
 
-   * To get a list of only neuron models use:
-
-    .. code-block:: python
-
-       nest.Models(mtype='nodes')
-
-   * To get a list of only synapse models use:
+* To get a list of available synapse models, use:
 
     .. code-block:: python
 
-       nest.Models(mtype='synapses')
+       nest.GetKernelStatus('synapse_models')
 
 * To get details on model equations and parameters, use:
 

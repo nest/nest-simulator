@@ -342,6 +342,18 @@ def SetKernelStatus(params):
         a single packet is sent to the process instead of one packet per
         target thread; requires sort_connections_by_source = true
 
+    **Models**
+
+    Parameters
+    ----------
+
+    node_models: list of str, read only
+        List of available neuron and device models. This includes
+        built-in models as well as those created by calls to
+        CopyModel().
+    synapse_models: list of str, read only
+        List of available synapse models. This includes built-in
+        models as well as those created by calls to CopyModel().
 
     **Output**
 

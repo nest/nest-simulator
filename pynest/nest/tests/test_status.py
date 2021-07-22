@@ -64,7 +64,9 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        for model in nest.Models():
+        node_models = nest.GetKernelStatus("node_models")
+        synapse_models = nest.GetKernelStatus("synapse_models")
+        for model in node_models + synapse_models:
 
             model_status = nest.GetDefaults(model)
             self.assertIsInstance(model_status, dict)
@@ -85,28 +87,32 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        for m in nest.Models():
-            if 'V_m' in nest.GetDefaults(m):
-                v_m = nest.GetDefaults(m)['V_m']
+        node_models = nest.GetKernelStatus("node_models")
+        synapse_models = nest.GetKernelStatus("synapse_models")
+        for model in node_models + synapse_models:
+            if 'V_m' in nest.GetDefaults(model):
+                v_m = nest.GetDefaults(model)['V_m']
 
-                nest.SetDefaults(m, {'V_m': -1.})
-                self.assertEqual(nest.GetDefaults(m, 'V_m'), -1.)
+                nest.SetDefaults(model, {'V_m': -1.})
+                self.assertEqual(nest.GetDefaults(model, 'V_m'), -1.)
 
-                nest.SetDefaults(m, 'V_m', v_m)
-                self.assertEqual(nest.GetDefaults(m, 'V_m'), v_m)
+                nest.SetDefaults(model, 'V_m', v_m)
+                self.assertEqual(nest.GetDefaults(model, 'V_m'), v_m)
 
                 self.assertRaisesRegex(
                     nest.kernel.NESTError, "DictError",
-                    nest.SetDefaults, m, 'nonexistent_status_key', 0)
+                    nest.SetDefaults, model, 'nonexistent_status_key', 0)
 
     def test_GetStatus(self):
         """GetStatus"""
 
-        for m in nest.Models():
-            if 'V_m' in nest.GetDefaults(m):
+        node_models = nest.GetKernelStatus("node_models")
+        synapse_models = nest.GetKernelStatus("synapse_models")
+        for model in node_models + synapse_models:
+            if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
 
-                n = nest.Create(m)
+                n = nest.Create(model)
 
                 d = nest.GetStatus(n)
                 self.assertIsInstance(d, tuple)
@@ -117,7 +123,7 @@ class StatusTestCase(unittest.TestCase):
                 v2 = nest.GetStatus(n, 'V_m')[0]
                 self.assertEqual(v1, v2)
 
-                n = nest.Create(m, 10)
+                n = nest.Create(model, 10)
                 d = nest.GetStatus(n, 'V_m')
                 self.assertEqual(len(d), len(n))
                 self.assertIsInstance(d[0], float)
@@ -130,30 +136,36 @@ class StatusTestCase(unittest.TestCase):
     def test_SetStatus(self):
         """SetStatus with dict"""
 
-        for m in nest.Models():
-            if 'V_m' in nest.GetDefaults(m):
+        node_models = nest.GetKernelStatus("node_models")
+        synapse_models = nest.GetKernelStatus("synapse_models")
+        for model in node_models + synapse_models:
+            if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
-                n = nest.Create(m)
+                n = nest.Create(model)
                 nest.SetStatus(n, {'V_m': 1.})
                 self.assertEqual(nest.GetStatus(n, 'V_m')[0], 1.)
 
     def test_SetStatusList(self):
         """SetStatus with list"""
 
-        for m in nest.Models():
-            if 'V_m' in nest.GetDefaults(m):
+        node_models = nest.GetKernelStatus("node_models")
+        synapse_models = nest.GetKernelStatus("synapse_models")
+        for model in node_models + synapse_models:
+            if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
-                n = nest.Create(m)
+                n = nest.Create(model)
                 nest.SetStatus(n, [{'V_m': 2.}])
                 self.assertEqual(nest.GetStatus(n, 'V_m')[0], 2.)
 
     def test_SetStatusParam(self):
         """SetStatus with parameter"""
 
-        for m in nest.Models():
-            if 'V_m' in nest.GetDefaults(m):
+        node_models = nest.GetKernelStatus("node_models")
+        synapse_models = nest.GetKernelStatus("synapse_models")
+        for model in node_models + synapse_models:
+            if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
-                n = nest.Create(m)
+                n = nest.Create(model)
                 nest.SetStatus(n, 'V_m', 3.)
                 self.assertEqual(nest.GetStatus(n, 'V_m')[0], 3.)
 
@@ -161,20 +173,22 @@ class StatusTestCase(unittest.TestCase):
         """SetStatus of reversal and threshold potential """
 
         excluded = ['a2eif_cond_exp_HW', 'mat2_psc_exp', 'amat2_psc_exp']
-        models = [m for m in nest.Models() if m not in excluded]
+        node_models = nest.GetKernelStatus("node_models")
+        synapse_models = nest.GetKernelStatus("synapse_models")
+        models = [m for m in node_models + synapse_models if m not in excluded]
 
-        for m in models:
-            if all(key in nest.GetDefaults(m) for key in ('V_th', 'E_L')):
+        for model in models:
+            if all(key in nest.GetDefaults(model) for key in ('V_th', 'E_L')):
                 nest.ResetKernel()
 
-                neuron1 = nest.Create(m)
-                neuron2 = nest.Create(m)
+                neuron1 = nest.Create(model)
+                neuron2 = nest.Create(model)
 
                 # must not depend on the order
                 new_EL = -90.
                 new_Vth = -10.
 
-                if 'V_reset' in nest.GetDefaults(m):
+                if 'V_reset' in nest.GetDefaults(model):
                     nest.SetStatus(neuron1 + neuron2, {'V_reset': new_EL})
 
                 nest.SetStatus(neuron1, {'E_L': new_EL})
@@ -188,11 +202,13 @@ class StatusTestCase(unittest.TestCase):
         """SetStatus of reversal and threshold potential
            check if error is raised if V_reset > V_th"""
 
-        for m in nest.Models():
-            if all(key in nest.GetDefaults(m) for key in ('V_th', 'V_reset')):
+        node_models = nest.GetKernelStatus("node_models")
+        synapse_models = nest.GetKernelStatus("synapse_models")
+        for model in node_models + synapse_models:
+            if all(key in nest.GetDefaults(model) for key in ('V_th', 'V_reset')):
                 nest.ResetKernel()
 
-                neuron = nest.Create(m)
+                neuron = nest.Create(model)
 
                 # should raise exception
                 self.assertRaisesRegex(

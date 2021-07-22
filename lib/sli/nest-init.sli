@@ -802,7 +802,7 @@ def
    delay      double         - the delay of the connection
    conn_rule  literal        - the name of the connection rule
    conn_spec  dict           - dictionary with connectivity specification (see Options)
-   syn_model  literal        - the name of the synapse model, see synapsedict
+   syn_model  literal        - the name of the synapse model
    syn_spec   dict           - dictionary with synapse model specification (see Options)
 
    Options:
@@ -840,7 +840,7 @@ def
    A list of available connection rules can be obtained from the
    kernel status dictionary by inspecting the key /connection_rules.
 
-   SeeAlso: synapsedict, cvnodecollection, GetOptions
+   SeeAlso: cvnodecollection, GetOptions
 
    Author: Hannah Bos, Hans Ekkehard Plesser, Jochen Martin Eppler
 
@@ -1067,6 +1067,8 @@ def
       network, as a list of arrays (IntVectorDatum), one array per connection.
    2. Each array (connection object) has the following elements:
       [source-node_id target-node_id target-thread synapse-model-id port]
+      where synapse-model-id corresponds to the position of the model in the list
+      of models available from the /synapse_models property of the kernel status dictionary.
    3. The optional dictionary elements /source and /target can be used to filter
       for specific pre- and postsynaptic neurons, respectively.
    4. The optional parameter /synapse_model can be used to filter for a specific synapse model.
@@ -1075,16 +1077,13 @@ def
       on the MPI process executing the function.
 
    Remarks:
-   1. See synapsedict for the synapse-model-id's for all synapse models.
-   2. The /synapse_label property can only be assigned to synapse models with names ending
+   1. The /synapse_label property can only be assigned to synapse models with names ending
       with '_lbl'. All other synapses have the default synapse_label UNLABELED_CONNECTION (-1).
-   3. The "port" enumerates connections per source, thread and synapse model. It is
+   2. The "port" enumerates connections per source, thread and synapse model. It is
       mainly important for NEST internally.
-   4. In OpenMP mode, GetConnections works thread-parallel for better performance.
-   5. Connection objects can be converted to SLI lists with cva.
-   6. Connection objects can be passed to SetStatus, and GetStatus
-
-   SeeAlso: synapsedict
+   3. In OpenMP mode, GetConnections works thread-parallel for better performance.
+   4. Connection objects can be converted to SLI lists with cva.
+   5. Connection objects can be passed to SetStatus, and GetStatus
 */
 /GetConnections [/dictionarytype]
 {

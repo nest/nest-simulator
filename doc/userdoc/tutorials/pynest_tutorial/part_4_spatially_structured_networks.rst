@@ -278,51 +278,51 @@ following table lists the parameters that can be used.
              'allow_autapses': False
              }
 
-+-------------------------+----------------------------------------------------+---------------------------------------+
-| Parameter               | Description                                        | Possible values                       |
-|                         |                                                    |                                       |
-+=========================+====================================================+=======================================+
-| | rule                  | | Determines how nodes are selected when           | | Can be any connection rule, but for |
-|                         | | connections are made.                            | | spatial specific parameters has to  |
-|                         |                                                    | | be one of the following:            |
-|                         |                                                    | | ``pairwise_bernoulli``,             |
-|                         |                                                    | | ``fixed_indegree``,                 |
-|                         |                                                    | | ``fixed_outdegree``                 |
-+-------------------------+----------------------------------------------------+---------------------------------------+
-| | mask                  | | Spatially selected subset of neurons considered  | | circular,                           |
-|                         | | as (potential) targets                           | | rectangular, elliptical,            |
-|                         |                                                    | | doughnut, grid                      |
-+-------------------------+----------------------------------------------------+---------------------------------------+
-| | p                     | | Value or NEST Parameter that determines the      | | constant,                           |
-|                         | | likelihood of a neuron being chosen as a target. | | NEST Parameter                      |
-|                         | | Can be distance-dependent.                       |                                       |
-+-------------------------+----------------------------------------------------+---------------------------------------+
-| | weight                | | Distribution of weight values of connections.    | | constant,                           |
-|                         | | Can be distance-dependent or -independent.       | | NEST Parameter                      |
-|                         | | **NB**: this value overrides any value currently |                                       |
-|                         | | used by synapse\_model, and therefore unless     |                                       |
-|                         | | defined will default to 1.!                      |                                       |
-+-------------------------+----------------------------------------------------+---------------------------------------+
-| | delay                 | | Distribution of delay values for connections.    | | constant,                           |
-|                         | | Can be distance-dependent or -independent.       | | NEST Parameter                      |
-|                         | | **NB**: like weights, this value overrides any   |                                       |
-|                         | | value currently used by synapse\_model!          |                                       |
-+-------------------------+----------------------------------------------------+---------------------------------------+
-| | synapse_model         | | Define the type of synapse model to be included. | | any synapse model included in       |
-|                         |                                                    | | ``nest.Models()``, or currently     |
-|                         |                                                    | | user-defined                        |
-+-------------------------+----------------------------------------------------+---------------------------------------+
-| | use_on_source         | | Whether we want the mask and connection          | | boolean                             |
-|                         | | probability to be applied to the source neurons  |                                       |
-|                         | | instead of the target neurons.                   |                                       |
-+-------------------------+----------------------------------------------------+---------------------------------------+
-| | allow\_multapses      | | Whether we want to have multiple connections     | | boolean                             |
-|                         | | between the same source-target pair, or ensure   |                                       |
-|                         | | unique connections.                              |                                       |
-+-------------------------+----------------------------------------------------+---------------------------------------+
-| | allow_autapses        | | Whether we want to allow a neuron to connect to  | | boolean                             |
-|                         | | itself                                           |                                       |
-+-------------------------+----------------------------------------------------+---------------------------------------+
++-------------------------+----------------------------------------------------+-----------------------------------------+
+| Parameter               | Description                                        | Possible values                         |
+|                         |                                                    |                                         |
++=========================+====================================================+=========================================+
+| | rule                  | | Determines how nodes are selected when           | | Can be any connection rule, but for   |
+|                         | | connections are made.                            | | spatial specific parameters has to    |
+|                         |                                                    | | be one of the following:              |
+|                         |                                                    | | ``pairwise_bernoulli``,               |
+|                         |                                                    | | ``fixed_indegree``,                   |
+|                         |                                                    | | ``fixed_outdegree``                   |
++-------------------------+----------------------------------------------------+-----------------------------------------+
+| | mask                  | | Spatially selected subset of neurons considered  | | circular,                             |
+|                         | | as (potential) targets                           | | rectangular, elliptical,              |
+|                         |                                                    | | doughnut, grid                        |
++-------------------------+----------------------------------------------------+-----------------------------------------+
+| | p                     | | Value or NEST Parameter that determines the      | | constant,                             |
+|                         | | likelihood of a neuron being chosen as a target. | | NEST Parameter                        |
+|                         | | Can be distance-dependent.                       |                                         |
++-------------------------+----------------------------------------------------+-----------------------------------------+
+| | weight                | | Distribution of weight values of connections.    | | constant,                             |
+|                         | | Can be distance-dependent or -independent.       | | NEST Parameter                        |
+|                         | | **NB**: this value overrides any value currently |                                         |
+|                         | | used by synapse\_model, and therefore unless     |                                         |
+|                         | | defined will default to 1.!                      |                                         |
++-------------------------+----------------------------------------------------+-----------------------------------------+
+| | delay                 | | Distribution of delay values for connections.    | | constant,                             |
+|                         | | Can be distance-dependent or -independent.       | | NEST Parameter                        |
+|                         | | **NB**: like weights, this value overrides any   |                                         |
+|                         | | value currently used by synapse\_model!          |                                         |
++-------------------------+----------------------------------------------------+-----------------------------------------+
+| | synapse_model         | | Define the type of synapse model to be included. | | any synapse model included in the     |
+|                         |                                                    | | list returned by                      |
+|                         |                                                    | | ``GetKernelStatus('synapse_models')`` |
++-------------------------+----------------------------------------------------+-----------------------------------------+
+| | use_on_source         | | Whether we want the mask and connection          | | boolean                               |
+|                         | | probability to be applied to the source neurons  |                                         |
+|                         | | instead of the target neurons.                   |                                         |
++-------------------------+----------------------------------------------------+-----------------------------------------+
+| | allow\_multapses      | | Whether we want to have multiple connections     | | boolean                               |
+|                         | | between the same source-target pair, or ensure   |                                         |
+|                         | | unique connections.                              |                                         |
++-------------------------+----------------------------------------------------+-----------------------------------------+
+| | allow_autapses        | | Whether we want to allow a neuron to connect to  | | boolean                               |
+|                         | | itself                                           |                                         |
++-------------------------+----------------------------------------------------+-----------------------------------------+
 
 Connecting spatially distributed nodes
 --------------------------------------

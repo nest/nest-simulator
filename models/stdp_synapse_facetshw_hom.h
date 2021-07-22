@@ -145,7 +145,7 @@ References
 See also
 ++++++++
 
-stdp_synapse, synapsedict, tsodyks_synapse, static_synapse
+stdp_synapse, tsodyks_synapse, static_synapse
 
 EndUserDocs */
 

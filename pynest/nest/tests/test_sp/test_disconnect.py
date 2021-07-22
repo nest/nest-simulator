@@ -69,7 +69,7 @@ class TestDisconnectSingle(unittest.TestCase):
         ]
 
     def test_synapse_deletion_one_to_one_no_sp(self):
-        for syn_model in nest.Models('synapses'):
+        for syn_model in nest.GetKernelStatus('synapse_models'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.SetKernelStatus(

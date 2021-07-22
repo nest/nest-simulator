@@ -589,10 +589,10 @@ private:
    */
   std::vector< std::vector< size_t > > num_connections_;
 
+  DictionaryDatum connruledict_; //!< Dictionary for connection rules.
+
   //! ConnBuilder factories, indexed by connruledict_ elements.
   std::vector< GenericConnBuilderFactory* > connbuilder_factories_;
-
-  DictionaryDatum connruledict_; //!< Dictionary for connection rules.
 
   delay min_delay_; //!< Value of the smallest delay in the network.
 

@@ -350,7 +350,7 @@ if test "${HAVE_MPI}" = "true"; then
     junit_close
 else
   echo "  Not running MPI tests because NEST was compiled without support"
-  echo "  for distributed computing. See the file README.md for details."
+  echo "  for distributed computing."
 fi
 
 echo
@@ -450,7 +450,7 @@ if test "${MUSIC}"; then
     junit_close
 else
   echo "  Not running MUSIC tests because NEST was compiled without support"
-  echo "  for it. See the file README.md for details."
+  echo "  for it."
 fi
 
 echo

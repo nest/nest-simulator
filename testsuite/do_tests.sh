@@ -42,11 +42,11 @@
 usage ()
 {
     if test $1 = 1; then
-        echo "Error: Unknown option \'$2\'"
+        echo "Error: Unknown option '$2'"
     fi
 
     if test $1 = 2; then
-        echo "Error: Missing required option \'$2\'"
+        echo "Error: Missing required option '$2'"
     fi
 
     cat <<EOF

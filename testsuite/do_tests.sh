@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-
-# This script runs the NEST testsuite.
+#
+# Central entry point for the complete NEST test suite. The tests
+# ensure a correctly working installation of NEST.
 #
 # The test suite consists of SLI and Python scripts that use the
 # respective language's native `unittest` library to assert certain

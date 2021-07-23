@@ -108,7 +108,7 @@ Datum *const p;   makes p a const pointer to a Datum. Any change to the
  * 
  * It directly passes the Datum pointer to the location in the
  * array. Some convenient ways to write assignments are actually
- * inefficient
+ * inefficient.
  * 
  * @par Examples
  * 

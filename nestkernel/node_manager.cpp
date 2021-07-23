@@ -105,7 +105,7 @@ NodeManager::add_node( index model_id, long n )
     throw BadProperty();
   }
 
-  Model* model = kernel().model_manager.get_model( model_id );
+  Model* model = kernel().model_manager.get_node_model( model_id );
   assert( model != 0 );
   model->deprecation_warning( "Create" );
 
@@ -756,7 +756,7 @@ NodeManager::print( std::ostream& out ) const
   {
     const index first_node_id = it->get_first_node_id();
     const index last_node_id = it->get_last_node_id();
-    const Model* mod = kernel().model_manager.get_model( it->get_model_id() );
+    const Model* mod = kernel().model_manager.get_node_model( it->get_model_id() );
 
     std::stringstream node_id_range_strs;
     node_id_range_strs << std::setw( max_node_id_width + 1 ) << first_node_id;

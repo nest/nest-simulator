@@ -112,14 +112,14 @@ Node::get_name() const
     return std::string( "UnknownNode" );
   }
 
-  return kernel().model_manager.get_model( model_id_ )->get_name();
+  return kernel().model_manager.get_node_model( model_id_ )->get_name();
 }
 
 Model&
 Node::get_model_() const
 {
   assert( model_id_ >= 0 );
-  return *kernel().model_manager.get_model( model_id_ );
+  return *kernel().model_manager.get_node_model( model_id_ );
 }
 
 DictionaryDatum

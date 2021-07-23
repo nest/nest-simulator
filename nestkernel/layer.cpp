@@ -58,7 +58,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   AbstractLayer* layer_local = 0;
 
   auto element_name = getValue< std::string >( layer_dict, names::elements );
-  auto element_id = kernel().model_manager.get_model_id( element_name );
+  auto element_id = kernel().model_manager.get_node_model_id( element_name );
 
   if ( element_id == -1 )
   {

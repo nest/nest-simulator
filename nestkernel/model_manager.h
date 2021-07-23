@@ -154,12 +154,12 @@ public:
   /**
    * @return The model ID for a Model with a given name
    */
-  int get_model_id( const Name ) const;
+  int get_node_model_id( const Name ) const;
 
   /**
    * @return The Model registered with the given model ID
    */
-  Model* get_model( index ) const;
+  Model* get_node_model( index ) const;
 
   /**
    * @return The numeric ID of a given synapse model
@@ -312,7 +312,7 @@ private:
 
 
 inline Model*
-ModelManager::get_model( index m ) const
+ModelManager::get_node_model( index m ) const
 {
   return node_models_[ m ];
 }

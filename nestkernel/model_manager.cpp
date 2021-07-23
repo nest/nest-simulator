@@ -232,7 +232,7 @@ ModelManager::register_node_model_( Model* model )
 index
 ModelManager::copy_node_model_( index old_id, Name new_name )
 {
-  Model* old_model = get_model( old_id );
+  Model* old_model = get_node_model( old_id );
   old_model->deprecation_warning( "CopyModel" );
 
   Model* new_model = old_model->clone( new_name.toString() );
@@ -318,7 +318,7 @@ ModelManager::set_node_defaults_( index model_id, const DictionaryDatum& params 
 {
   params->clear_access_flags();
 
-  get_model( model_id )->set_status( params );
+  get_node_model( model_id )->set_status( params );
 
   ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_node_defaults_", "Unread dictionary entries: " );
 }
@@ -363,7 +363,7 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
 // TODO: replace int with index and return value -1 with invalid_index, also
 // change all pertaining code
 int
-ModelManager::get_model_id( const Name name ) const
+ModelManager::get_node_model_id( const Name name ) const
 {
   const Name model_name( name );
   for ( int i = 0; i < ( int ) node_models_.size(); ++i )
@@ -495,7 +495,7 @@ ModelManager::calibrate( const TimeConverter& tc )
 bool
 ModelManager::compare_model_by_id_( const int a, const int b )
 {
-  return kernel().model_manager.get_model( a )->get_name() < kernel().model_manager.get_model( b )->get_name();
+  return kernel().model_manager.get_node_model( a )->get_name() < kernel().model_manager.get_node_model( b )->get_name();
 }
 
 void

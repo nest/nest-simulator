@@ -45,7 +45,7 @@ M_WARNING setverbosity
 
 % select multisynapse models
 /models
- GetKernelStatus /node_models get
+ GetKernelStatus/node_models ::
  { cvs dup length neg -13 max Take (_multisynapse) eq } Select
  def
 

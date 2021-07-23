@@ -54,7 +54,7 @@ M_ERROR setverbosity
              /correlospinmatrix_detector
            ] def          
               
-GetKernelStatus /node_models get
+GetKernelStatus/node_models ::
 {
   /model Set
   model GetDefaults /element_type get /recorder eq

@@ -122,7 +122,8 @@ M_ERROR setverbosity
 % Now the real test
 {
   % apply to all models of element_type neuron
-  GetKernelStatus /node_models get {
+  GetKernelStatus/node_models ::
+  {
     /model Set
     
     model skip_list exch MemberQ not

@@ -60,7 +60,7 @@ M_WARNING setverbosity
 } def
 
 
-GetKernelStatus /node_models get
+GetKernelStatus/node_models ::
 {
   dup cvs dup (cond_exp) searchif exch (multisynapse) searchif not and
   {

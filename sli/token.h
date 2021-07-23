@@ -114,7 +114,7 @@ Datum *const p;   makes p a const pointer to a Datum. Any change to the
  * 
  * 1. `a.push_back(5);`
  * 
- *    This is convenient notation, but is much more expensive, because it is
+ *    This is convenient notation, but it is much more expensive because it is
  *    equivalent to the following code:
  *    .
  *    @code

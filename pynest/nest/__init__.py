@@ -78,17 +78,3 @@ def get(*args, **kwargs):
 def set(*args, **kwargs):
     __doc__ = SetKernelStatus.__doc__
     return SetKernelStatus(*args, **kwargs)
-
-
-def test():
-    """Runs all PyNEST unit tests."""
-    from . import tests
-    import unittest
-
-    debug = ll_api.get_debug()
-    ll_api.set_debug(True)
-
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(tests.suite())
-
-    ll_api.set_debug(debug)

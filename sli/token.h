@@ -124,7 +124,7 @@ Datum *const p;   makes p a const pointer to a Datum. Any change to the
  *    a.push_back_move( tmp3 );
  *    @endcode
  * 
- *    Some of this, the compiler can optimize away, but benchmarks showed a
+ *    The compiler can optimize away some of the inefficiencies, but benchmarks showed a
  *    big residual overhead compared to directly assigning the Datum
  *    pointer.
  * 

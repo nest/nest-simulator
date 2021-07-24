@@ -53,7 +53,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
         # Now with multithreading
 
         nest.ResetKernel()
-        nest.SetKernelStatus({"local_num_threads": 2})
+        nest.set({"local_num_threads": 2})
 
         mm = nest.Create("multimeter", params={"record_to": "memory"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})

@@ -7,11 +7,11 @@ Time-driven and event-driven approaches
 To drive the simulation, neurons and devices (*nodes*) are updated in a
 time-driven fashion by calling a member function on each of them in a
 regular interval. The spacing of the grid is called the *simulation
-resolution* (default 0.1ms) and can be set using ``SetKernelStatus``:
+resolution* (default 0.1ms) and can be set using ``set()``:
 
 ::
 
-    SetKernelStatus({"resolution": 0.1})
+    nest.set({"resolution": 0.1})
 
 Even though a neuron model can use smaller time steps internally, the
 membrane potential will only be visible to a ``multimeter`` on the
@@ -66,11 +66,11 @@ the buffers for inter-process communication depend on *dmin+dmax* as
 histories that long back have to be kept. NEST will figure out the
 correct value of *dmin* and *dmax* based on the actual delays used
 during connection setup. Their actual values can be retrieved using
-``GetKernelStatus``:
+``get()``:
 
 ::
 
-    GetKernelStatus("min_delay")   # (A corresponding entry exists for max_delay)
+    get("min_delay")   # (A corresponding entry exists for max_delay)
 
 Set *dmin* and *dmax* manually
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,11 +87,11 @@ the easiest way to assert its integrity is to not change its size after
 initialization. Thus, we freeze the delay extrema after the first call
 to ``Simulate``. To still allow adding new connections inbetween calls
 to ``Simulate``, the required boundaries of delays can be set manually
-using ``SetKernelStatus``:
+using ``set()``:
 
 ::
 
-    SetKernelStatus({"min_delay": 0.5, "max_delay": 2.5})
+    nest.set({"min_delay": 0.5, "max_delay": 2.5})
 
 These settings should be used with care, though: setting the delay
 extrema too wide without need leads to decreased performance due to more
@@ -140,7 +140,7 @@ for a simple loop over different realizations:
 
     for n in range(5):
         nest.ResetKernel()
-        nest.SetKernelStatus({'rng_seed': n+1})   # seed > 0 required
+        nest.set({'rng_seed': n+1})   # seed > 0 required
 
         # build network
         # simulate network
@@ -157,15 +157,15 @@ using
 
 ::
 
-    nest.GetKernelStatus('rng_types')
+    nest.get('rng_types')
 
 To select any of the random number generator types available, use one of the
 following
 
 ::
 
-    nest.SetKernelStatus({'rng_type': 'mt19937'})
-    nest.SetKernelStatus({'rng_type': 'mt19937', 'rng_seed': 12234})
+    nest.set({'rng_type': 'mt19937'})
+    nest.set({'rng_type': 'mt19937', 'rng_seed': 12234})
 
 In the first case, the `rng_seed` set previously (or the default seed) is used,
 otherwise the seed specified.
@@ -251,7 +251,7 @@ a Poisson spike train using different seeds and output files for each run:
 
     for n in range(10):
         nest.ResetKernel()
-        nest.SetKernelStatus({'rng_seed': n + 1})  # seed > 0 required
+        nest.set({'rng_seed': n + 1})  # seed > 0 required
         pg = nest.Create('poisson_generator', params={'rate': 1000000.0})
         nrn= nest.Create('iaf_psc_alpha')
         sr = nest.Create('spike_recorder',
@@ -270,7 +270,7 @@ The progress of the simulation can be monitored by setting:
 
 ::
 
-    SetKernelStatus({"print_time": True})
+    nest.set({"print_time": True})
 
 If enabled, a line is printed to screen at every time step of the simulation to
 track the percentage, the absolute elapsed model time and the real-time factor,

@@ -68,17 +68,19 @@ nest.ResetKernel()
 
 numpy.random.seed(1)
 
-nest.SetKernelStatus({'resolution': 0.05,
-                      'total_num_virtual_procs': threads,
-                      'print_time': True,
-                      # Settings for waveform relaxation
-                      # 'use_wfr': False uses communication in every step
-                      # instead of an iterative solution
-                      'use_wfr': True,
-                      'wfr_comm_interval': 1.0,
-                      'wfr_tol': 0.0001,
-                      'wfr_max_iterations': 15,
-                      'wfr_interpolation_order': 3})
+nest.set({
+    'resolution': 0.05,
+    'total_num_virtual_procs': threads,
+    'print_time': True,
+    # Settings for waveform relaxation
+    # 'use_wfr': False uses communication in every step
+    # instead of an iterative solution
+    'use_wfr': True,
+    'wfr_comm_interval': 1.0,
+    'wfr_tol': 0.0001,
+    'wfr_max_iterations': 15,
+    'wfr_interpolation_order': 3
+})
 
 neurons = nest.Create('hh_psc_alpha_gap', n_neuron)
 

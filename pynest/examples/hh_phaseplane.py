@@ -62,7 +62,7 @@ num_n_steps = len(n_vec)
 nest.ResetKernel()
 nest.set_verbosity('M_ERROR')
 
-nest.SetKernelStatus({'resolution': dt})
+nest.set({'resolution': dt})
 neuron = nest.Create('hh_psc_alpha')
 
 # Numerically obtain equilibrium state

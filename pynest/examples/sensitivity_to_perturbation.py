@@ -130,7 +130,7 @@ for trial in [0, 1]:
     # simulation and set the simulation resolution (later defined
     # synaptic delays cannot be smaller than the simulation resolution).
     nest.ResetKernel()
-    nest.SetKernelStatus({"resolution": dt})
+    nest.set({"resolution": dt})
 
     ###############################################################################
     # Now we start building the network and create excitatory and inhibitory nodes
@@ -183,7 +183,7 @@ for trial in [0, 1]:
     # the simulation Kernel. In addition, we ensure that there is no spike left in
     # the spike recorder.
 
-    nest.SetKernelStatus({"rng_seed": seed_NEST, 'biological_time': 0.0})
+    nest.set({"rng_seed": seed_NEST, 'biological_time': 0.0})
     spikerecorder.n_events = 0
 
     # We assign random initial membrane potentials to all neurons

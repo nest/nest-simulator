@@ -42,7 +42,7 @@ class GetNodesTestCase(unittest.TestCase):
 
     def test_GetNodes(self):
         """test GetNodes"""
-        all_nodes_ref = nest.NodeCollection(list(range(1, nest.GetKernelStatus('network_size') + 1)))
+        all_nodes_ref = nest.NodeCollection(list(range(1, nest.get('network_size') + 1)))
         all_nodes = nest.GetNodes()
 
         self.assertEqual(all_nodes_ref, all_nodes)

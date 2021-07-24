@@ -46,7 +46,7 @@ import numpy
 
 def build_network(sigma, dt):
     nest.ResetKernel()
-    nest.SetKernelStatus({'resolution': dt, 'use_wfr': False})
+    nest.set({'resolution': dt, 'use_wfr': False})
     Params = {'lambda': 0.1, 'sigma': sigma, 'tau': 1., 'rectify_output': True}
     D1 = nest.Create('lin_rate_ipn', params=Params)
     D2 = nest.Create('lin_rate_ipn', params=Params)

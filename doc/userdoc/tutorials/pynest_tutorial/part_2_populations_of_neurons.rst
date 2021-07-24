@@ -335,7 +335,7 @@ section.
 Getting and setting basic settings and parameters of NEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  ``GetKernelStatus(keys=none)``
+-  ``get(keys=none)``
 
    Obtain parameters of the simulation kernel. Returns:
 

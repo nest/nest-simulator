@@ -105,7 +105,7 @@ resolution = 0.1
 
 for s_t_pre, s_t_post in zip(spike_times_pre, spike_times_post):
     nest.ResetKernel()
-    nest.SetKernelStatus({"resolution": resolution})
+    nest.set({"resolution": resolution})
 
     # Create one neuron
     nrn = nest.Create("aeif_psc_delta_clopath", 1, nrn_params)

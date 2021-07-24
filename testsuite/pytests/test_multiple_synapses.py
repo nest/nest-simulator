@@ -54,7 +54,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
         node = nest.Create('iaf_psc_alpha')
         nest.Connect(node, node, syn_spec=nest.CollocatedSynapses({'weight': -2.}, {'weight': 3.}))
 
-        self.assertEqual(2, nest.GetKernelStatus('num_connections'))
+        self.assertEqual(2, nest.get('num_connections'))
 
         conns = nest.GetConnections()
         self.assertEqual([-2, 3], conns.weight)

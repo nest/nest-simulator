@@ -33,7 +33,7 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
     def test_QuantalSTPSynapse(self):
         """Compare quantal_stp_synapse with its deterministic equivalent"""
         nest.ResetKernel()
-        nest.SetKernelStatus({"rng_seed": 1})
+        nest.set({"rng_seed": 1})
         nest.set_verbosity(100)
         n_syn = 12  # number of synapses in a connection
         n_trials = 100  # number of measurement trials
@@ -79,7 +79,7 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         nest.Connect(voltmeter[1:], neuron[1:])
 
         for t in range(n_trials):
-            t_net = nest.GetKernelStatus("biological_time")
+            t_net = nest.get("biological_time")
             nest.SetStatus(source, {"origin": t_net})
             nest.Simulate(t_tot)
 

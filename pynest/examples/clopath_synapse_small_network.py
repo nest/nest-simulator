@@ -58,7 +58,7 @@ pg_A = 30.      # amplitude of Gaussian
 pg_sigma = 10.  # std deviation
 
 nest.ResetKernel()
-nest.SetKernelStatus({'resolution': resolution})
+nest.set({'resolution': resolution})
 
 # Create neurons and devices
 nrn_model = 'aeif_psc_delta_clopath'

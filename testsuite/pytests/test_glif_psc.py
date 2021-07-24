@@ -39,9 +39,7 @@ class GLIFPSCTestCase(unittest.TestCase):
         msd = 123456
         self.resol = 0.01
         nest.ResetKernel()
-        N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
-        nest.SetKernelStatus({'resolution': self.resol,
-                              'rng_seed': msd})
+        nest.set({'resolution': self.resol, 'rng_seed': msd})
 
     def simulate_w_stim(self, model_params):
         """

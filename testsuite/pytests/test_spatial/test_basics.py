@@ -305,7 +305,7 @@ class BasicsTestCase(unittest.TestCase):
                  'mask': {'grid': {'shape': [2, 2]}}}
         sdict = {'synapse_model': 'stdp_synapse'}
         nest.ResetKernel()
-        nest.SetKernelStatus({'sort_connections_by_source': False, 'use_compressed_spikes': False})
+        nest.set({'sort_connections_by_source': False, 'use_compressed_spikes': False})
 
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(shape=[3, 3],
@@ -352,7 +352,7 @@ class BasicsTestCase(unittest.TestCase):
                  'p': 1.}
         sdict = {'synapse_model': 'stdp_synapse'}
 
-        nest.SetKernelStatus({'sort_connections_by_source': False, 'use_compressed_spikes': False})
+        nest.set({'sort_connections_by_source': False, 'use_compressed_spikes': False})
 
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(shape=[1, 1],
@@ -366,7 +366,7 @@ class BasicsTestCase(unittest.TestCase):
 
         # Test positions on a grid, we can calculate what they should be
         nest.ResetKernel()
-        nest.SetKernelStatus({'sort_connections_by_source': False, 'use_compressed_spikes': False})
+        nest.set({'sort_connections_by_source': False, 'use_compressed_spikes': False})
 
         x_extent = 1.
         y_extent = 1.
@@ -402,7 +402,7 @@ class BasicsTestCase(unittest.TestCase):
         # Test that we get correct positions when we send in a positions array
         # when creating the layer
         nest.ResetKernel()
-        nest.SetKernelStatus({'sort_connections_by_source': False, 'use_compressed_spikes': False})
+        nest.set({'sort_connections_by_source': False, 'use_compressed_spikes': False})
 
         positions = [(np.random.uniform(-0.5, 0.5),
                       np.random.uniform(-0.5, 0.5)) for _ in range(50)]

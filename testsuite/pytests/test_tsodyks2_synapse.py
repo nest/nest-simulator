@@ -67,7 +67,7 @@ class Tsodyks2SynapseTest(unittest.TestCase):
         """
         nest.set_verbosity("M_WARNING")
         nest.ResetKernel()
-        nest.SetKernelStatus({"resolution": self.resolution})
+        nest.set({"resolution": self.resolution})
 
         neurons = nest.Create(
             "parrot_neuron",

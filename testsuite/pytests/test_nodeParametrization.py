@@ -346,8 +346,7 @@ class TestNodeParametrization(unittest.TestCase):
                 param, p = specs
                 nest.Connect(n, n, conn_spec={'rule': rule,
                                               param: p})
-                self.assertEqual(nest.GetKernelStatus()['num_connections'], 4,
-                                 'Error with {}'.format(rule))
+                self.assertEqual(nest.get('num_connections'), 4, f'Error with {rule}')
 
     def test_node_pos_parameter(self):
         """Test node-position parameter"""

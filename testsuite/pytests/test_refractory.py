@@ -118,9 +118,7 @@ class TestRefractoryCase(unittest.TestCase):
         nest.ResetKernel()
 
         msd = 123456
-        nest.SetKernelStatus({
-            'resolution': resolution,
-            'rng_seed': msd})
+        nest.set({'resolution': resolution, 'rng_seed': msd})
 
     def compute_reftime(self, model, sr, vm, neuron):
         '''

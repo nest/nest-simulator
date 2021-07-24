@@ -39,7 +39,7 @@ import matplotlib.pyplot as plt
 nest.ResetKernel()
 
 ###############################################################################
-# With ``SetKernelStatus``, global properties of the simulation kernel can be
+# With ``set()``, global properties of the simulation kernel can be
 # specified. The following properties are related to writing to file:
 #
 # * ``overwrite_files`` is set to True to permit overwriting of an existing file.
@@ -47,9 +47,7 @@ nest.ResetKernel()
 #   to  the current working directory.
 # * 'data_prefix' allows to specify a common prefix for all data files.
 
-nest.SetKernelStatus({"overwrite_files": True,
-                      "data_path": "",
-                      "data_prefix": ""})
+nest.set({"overwrite_files": True, "data_path": "", "data_prefix": ""})
 
 ###############################################################################
 # For illustration, the recordables of the ``iaf_cond_alpha`` neuron model are
@@ -79,7 +77,7 @@ print("iaf_cond_alpha recordables: {0}".format(
 #
 #  - `record_to` indicates where to put recorded data. All possible values are
 #    available by inspecting the keys of the `recording_backends` dictionary
-#    obtained from ``GetKernelStatus()``.
+#    obtained from ``get()``.
 #  - `label` specifies an arbitrary label for the device. If writing to files,
 #    it used in the file name instead of the model name.
 #

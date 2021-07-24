@@ -194,7 +194,7 @@ t_U = (convolution_resolution * numpy.linspace(-ulen / 2., ulen / 2., ulen) +
 # verbosity using ``set_verbosity`` to suppress info messages.
 
 nest.ResetKernel()
-nest.SetKernelStatus({'resolution': simulation_resolution})
+nest.set({'resolution': simulation_resolution})
 nest.set_verbosity("M_WARNING")
 
 

@@ -87,7 +87,7 @@ for h in resolutions:
     data[h] = {}
     for model in ["iaf_psc_exp", "iaf_psc_exp_ps"]:
         nest.ResetKernel()
-        nest.SetKernelStatus({'resolution': h})
+        nest.set({'resolution': h})
 
         neuron = nest.Create(model)
         voltmeter = nest.Create("voltmeter", params={"interval": h})

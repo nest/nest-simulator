@@ -293,7 +293,7 @@ def reset_seed(seed, nr_threads):
     '''
 
     nest.ResetKernel()
-    nest.SetKernelStatus({'local_num_threads': nr_threads, 'rng_seed': seed})
+    nest.set({'local_num_threads': nr_threads, 'rng_seed': seed})
 
 # copied from Masterthesis, Daniel Hjertholm
 

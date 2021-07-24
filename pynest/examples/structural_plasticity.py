@@ -151,16 +151,13 @@ class StructralPlasticityExample:
         nest.ResetKernel()
         nest.set_verbosity('M_ERROR')
 
+
 ####################################################################################
 # We set global kernel parameters. Here we define the resolution
 # for the simulation, which is also the time resolution for the update
 # of the synaptic elements.
 
-        nest.SetKernelStatus(
-            {
-                'resolution': self.dt
-            }
-        )
+        nest.set({'resolution': self.dt})
 
 
 ####################################################################################
@@ -169,9 +166,7 @@ class StructralPlasticityExample:
 # to notice that synaptic elements and connections change on different
 # time scales.
 
-        nest.SetKernelStatus({
-            'structural_plasticity_update_interval': self.update_interval,
-        })
+        nest.set({'structural_plasticity_update_interval': self.update_interval})
 
 
 ####################################################################################
@@ -186,7 +181,7 @@ class StructralPlasticityExample:
         nest.SetDefaults('synapse_ex', {'weight': self.psc_e, 'delay': 1.0})
         nest.CopyModel('static_synapse', 'synapse_in')
         nest.SetDefaults('synapse_in', {'weight': self.psc_i, 'delay': 1.0})
-        nest.SetKernelStatus({
+        nest.set({
             'structural_plasticity_synapses': {
                 'synapse_ex': {
                     'synapse_model': 'synapse_ex',

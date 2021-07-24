@@ -60,7 +60,7 @@ import matplotlib.pyplot as plt
 def build_network(dt):
 
     nest.ResetKernel()
-    nest.SetKernelStatus({"local_num_threads": 1, "resolution": dt})
+    nest.set({"local_num_threads": 1, "resolution": dt})
 
     neuron = nest.Create('iaf_psc_alpha')
     neuron.I_e = 376.0

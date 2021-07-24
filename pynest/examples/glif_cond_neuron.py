@@ -48,7 +48,7 @@ import matplotlib.gridspec as gridspec
 
 nest.ResetKernel()
 resolution = 0.05
-nest.SetKernelStatus({"resolution": resolution})
+nest.set({"resolution": resolution})
 
 ###############################################################################
 # We create the five levels of GLIF model to be tested, i.e.,

@@ -75,8 +75,12 @@ t_bin = 10.0  # ms bin size
 pc = 0.5
 nu = 100.0
 
-nest.SetKernelStatus({'local_num_threads': 1, 'resolution': h,
-                      'overwrite_files': True, 'rng_seed': 12345})
+nest.set({
+    'local_num_threads': 1,
+    'resolution': h,
+    'overwrite_files': True,
+    'rng_seed': 12345
+})
 
 # Set up network, connect and simulate
 mg = nest.Create('mip_generator')

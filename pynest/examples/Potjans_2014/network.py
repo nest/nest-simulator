@@ -270,9 +270,8 @@ class Network:
         nest.ResetKernel()
 
         # set seeds for random number generation
-        nest.SetKernelStatus(
-            {'local_num_threads': self.sim_dict['local_num_threads']})
-        N_vp = nest.GetKernelStatus('total_num_virtual_procs')
+        nest.set({'local_num_threads': self.sim_dict['local_num_threads']})
+        N_vp = nest.get('total_num_virtual_procs')
 
         rng_seed = self.sim_dict['rng_seed']
 
@@ -287,7 +286,7 @@ class Network:
             'rng_seed': rng_seed,
             'overwrite_files': self.sim_dict['overwrite_files'],
             'print_time': self.sim_dict['print_time']}
-        nest.SetKernelStatus(kernel_dict)
+        nest.set(kernel_dict)
 
     def __create_neuronal_populations(self):
         """ Creates the neuronal populations.

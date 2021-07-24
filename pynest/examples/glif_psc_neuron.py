@@ -47,7 +47,7 @@ import matplotlib.gridspec as gridspec
 
 nest.ResetKernel()
 resolution = 0.05
-nest.SetKernelStatus({"resolution": resolution})
+nest.set({"resolution": resolution})
 
 ##############################################################################
 # We also pre-define the synapse time constant array, [2.0, 1.0] ms for

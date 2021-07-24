@@ -54,7 +54,7 @@ nest.ResetKernel()   # in case we run the script multiple times from iPython
 # them to the generators using ``Connect``.
 
 
-nest.SetKernelStatus({'resolution': 0.01})
+nest.set({'resolution': 0.01})
 
 num_nodes = 2
 g = nest.Create('sinusoidal_poisson_generator', n=num_nodes,
@@ -104,7 +104,7 @@ for j in range(num_nodes):
 
 
 nest.ResetKernel()
-nest.SetKernelStatus({'local_num_threads': 4})
+nest.set({'local_num_threads': 4})
 
 
 ###############################################################################
@@ -141,9 +141,9 @@ plt.title('Individual spike trains for each target')
 
 
 nest.ResetKernel()
-nest.SetKernelStatus({'local_num_threads': 4})
+nest.set({'local_num_threads': 4})
 
-g = nest.Create('sinusoidal_poisson_generator',
+g = nest.Create('sinusoidal_poisson_generator', 
                 params={'rate': 100.0, 'amplitude': 50.0,
                         'frequency': 10.0, 'phase': 0.0,
                         'individual_spike_trains': False})

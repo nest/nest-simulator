@@ -134,8 +134,7 @@ class ParrotNeuronPoissonTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.SetKernelStatus({'resolution': h,
-                              'rng_seed': 123})
+        nest.set({'resolution': h, 'rng_seed': 123})
 
         source = nest.Create('poisson_generator', params={'rate': rate})
         parrots = nest.Create('parrot_neuron', 2)

@@ -143,7 +143,7 @@ plt.title('Individual spike trains for each target')
 nest.ResetKernel()
 nest.set({'local_num_threads': 4})
 
-g = nest.Create('sinusoidal_poisson_generator', 
+g = nest.Create('sinusoidal_poisson_generator',
                 params={'rate': 100.0, 'amplitude': 50.0,
                         'frequency': 10.0, 'phase': 0.0,
                         'individual_spike_trains': False})

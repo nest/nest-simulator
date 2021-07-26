@@ -5,13 +5,6 @@ Here you can find details on a variety of topics in NEST.
 
 .. toctree::
     :maxdepth: 1
-    :caption: Transition guides to NEST 3.0
-
-    nest2_to_nest3/index
-    spatial/index
-
-.. toctree::
-    :maxdepth: 1
     :caption: In-depth guides to NEST
 
     built-in_timers

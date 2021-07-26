@@ -2,22 +2,6 @@
 Welcome to the NEST simulator documentation!
 ********************************************
 
-:orange:`Introducing NEST 3.0`
-------------------------------
-
-NEST 3.0 provides a more intuitive experience with simplified yet versatile handling and manipulation of nodes and connections.
-
-You can find all the information in our section :doc:`guides/nest2_to_nest3/index`.
-
-.. note::
-
-  Note that some of your simulation scripts may need to be updated to run in NEST 3.0!
-  See our :doc:`reference guide <guides/nest2_to_nest3/refguide_nest2_nest3>` comparing NEST 2.x versus NEST 3.0 syntax.
-
-
-
-----
-
 If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
 
 +------------------------------------+---------------------------------------+

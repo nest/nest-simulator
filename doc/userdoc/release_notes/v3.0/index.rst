@@ -10,7 +10,7 @@ nodes and connections with the functions ``get()`` and ``set()`` or by direct me
 neuron properties, create spatial positions, define connection probabilities, and much more. In addition, it is now way
 easier to perform operations such as slicing, iterating, and tests for equality on collections of neurons and synapses.
 
-NEST 3.0 replaces the old random number generator library :doc:`with a new one <../random_numbers>` based on the C++ Standard
+NEST 3.0 replaces the old random number generator library :doc:`with a new one <../../guidesrandom_numbers>` based on the C++ Standard
 Library. The new library also provides generators from the Random 123 library, including crypotgraphic generators. Most notably,
 you can now much more easily seed all generators and change the type of random number generator you are using.
 
@@ -20,7 +20,7 @@ is now available. The interface for :doc:`stimulation devices <nest3_features/st
 external sources, such as other simulators.
 
 The Topology Module is no longer a separate module; it is integrated within ``nest``, and now referred to as support for 
-:doc:`spatially-structured networks <../spatial/index>`.
+:doc:`spatially-structured networks <../../guides/spatial/index>`.
 
 :doc:`NEST Server <../../../nest_server>` is a novel backend to NEST that allows to run simulations via a RESTful API.
 Instead of directly importing ``nest`` into your Python session, the code that controls the simulation is sent over HTTP to
@@ -34,7 +34,7 @@ To explore what NEST 3.0 has to offer in more detail, check out the links below!
    :maxdepth: 1
 
    New features in NEST 3.0 <nest3_features/index>
-   Spatially-structured networks (topology module) <../spatial/index>
+   Spatially-structured networks (topology module) <../../guides/spatial/index>
    Old versus new function syntax <refguide_nest2_nest3>
    whats_removed
 

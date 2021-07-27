@@ -164,7 +164,7 @@ pass_or_die
 % connections with plain static_synapse
 {
   ResetKernel
-  GetKernelStatus/node_models ::
+  GetKernelStatus /node_models get
   {
     /mod Set
     mod GetDefaults /dflts Set

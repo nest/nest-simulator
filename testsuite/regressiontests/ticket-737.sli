@@ -48,7 +48,7 @@ M_ERROR setverbosity
    /step_rate_generator  %connected with rate_connection_delayed
 ] def
 
-/stimulators GetKernelStatus/node_models ::
+/stimulators GetKernelStatus /node_models get
 {
   GetDefaults /element_type get /stimulator eq
 } Select def

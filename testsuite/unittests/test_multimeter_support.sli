@@ -67,7 +67,7 @@ M_ERROR setverbosity
 def
 
 {
-  GetKernelStatus/node_models :: { run_test } Map
+  GetKernelStatus /node_models get { run_test } Map
   true exch { and } Fold
 }
 assert_or_die

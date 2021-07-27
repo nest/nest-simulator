@@ -193,10 +193,10 @@ Last /target get 6 eq assert_or_die
 ResetKernel
 
 /n_connections 0 def
-GetKernelStatus/node_models ::
+GetKernelStatus /node_models get
 {
   Create /node_a Set
-  GetKernelStatus/node_models ::
+  GetKernelStatus /node_models get
   {
     Create /node_b Set
 

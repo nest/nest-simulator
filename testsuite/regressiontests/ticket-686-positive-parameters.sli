@@ -51,7 +51,7 @@ M_ERROR setverbosity
 def
 
 /models [] def
-GetKernelStatus/node_models :: {
+GetKernelStatus /node_models get {
   /m Set skipped_models m MemberQ not {
     models m append /models Set
   } if

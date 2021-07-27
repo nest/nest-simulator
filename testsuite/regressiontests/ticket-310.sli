@@ -43,7 +43,7 @@
 /skip_list [ /iaf_chxk_2008 /correlospinmatrix_detector ] def
 
 {
-  GetKernelStatus/node_models ::
+  GetKernelStatus /node_models get
   {
     dup skip_list exch MemberQ not
     {

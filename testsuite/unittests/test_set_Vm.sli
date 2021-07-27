@@ -56,7 +56,7 @@ FirstVersion: July 2008
 } def
 
 {
-  GetKernelStatus/node_models ::
+  GetKernelStatus /node_models get
   {
     /model Set
     /res false def

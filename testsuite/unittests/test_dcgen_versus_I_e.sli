@@ -47,7 +47,7 @@ M_ERROR setverbosity
 /amp 123.456 def
 /res [] def  % array to collect bool results
 
-GetKernelStatus/node_models :: {
+GetKernelStatus /node_models get {
 
   /model Set
 

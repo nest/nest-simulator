@@ -64,7 +64,7 @@ M_ERROR setverbosity
 def
 
 {
-  GetKernelStatus/node_models :: { run_test } forall
+  GetKernelStatus /node_models get { run_test } forall
 }
 pass_or_die
 

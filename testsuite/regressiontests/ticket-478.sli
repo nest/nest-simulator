@@ -58,14 +58,14 @@ def
 def
 
 /static_syn_models
-  GetKernelStatus/synapse_models ::
+  GetKernelStatus /synapse_models get
   { excluded_synapses exch MemberQ not } Select
   { GetDefaults keys { cvs } Map Sort static_defaults eq } Select
   { GetDefaults keys { cvs } Map Sort static_lbl_defaults eq } Select
 def
 
 /plastic_syn_models
-  GetKernelStatus/synapse_models ::
+  GetKernelStatus /synapse_models get
   { excluded_synapses exch MemberQ not } Select
   { GetDefaults keys { cvs } Map Sort static_defaults neq } Select
   { GetDefaults keys { cvs } Map Sort static_lbl_defaults neq } Select
@@ -75,7 +75,7 @@ def
 /ds_models
   [/gamma_sup_generator /mip_generator /noise_generator /poisson_generator
    /ppd_sup_generator /sinusoidal_gamma_generator /poisson_generator_ps]
-  { GetKernelStatus/node_models :: exch MemberQ } Select
+  { GetKernelStatus /node_models get exch MemberQ } Select
 def
 
 ResetKernel

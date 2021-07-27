@@ -119,7 +119,7 @@ M_ERROR setverbosity
 def
 
 {
-  GetKernelStatus/node_models :: {
+  GetKernelStatus /node_models get {
     dup skip_list exch MemberQ not
     {
       run_tests

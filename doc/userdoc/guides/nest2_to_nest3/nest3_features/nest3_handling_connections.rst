@@ -212,7 +212,7 @@ Setting connection parameters
 Collocated synapses
 ~~~~~~~~~~~~~~~~~~~
 It is now possible to create connections with several synapses simultaneously. The different synapse dictionaries will
-then be applied to each source-target pair. To create these collocated synapses, :py:func:`.CollocatedSynapses` must be used
+then be applied to each source-target pair. To create these collocated synapses, :py:class:`.CollocatedSynapses` must be used
 as the ``syn_spec`` argument of :py:func:`.Connect`, instead of the usual syn_spec dictionary argument. The constructor
 ``CollocatedSynapses()`` takes dictionaries as arguments.
 

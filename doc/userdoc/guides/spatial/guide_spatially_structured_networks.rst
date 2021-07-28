@@ -4,7 +4,7 @@
 Guide to spatially-structured networks
 =======================================
 
-The NEST simulator [1]_ provides  a convenient interface for creating neurons placed in
+NEST provides  a convenient interface for creating neurons placed in
 space and connecting those neurons with probabilities and
 properties depending on the relative placement of neurons. This permits
 the creation of complex networks with spatial structure.
@@ -814,10 +814,11 @@ this example:
     :start-after: #{ conn3 #}
     :end-before: #{ end #}
 
-The resulting connections are shown in  :numref:`fig_conn3`. By default the
-top-left corner of a grid mask, i.e., the grid mask element with grid
-index :math:`[0,0]`\  [2]_, is aligned with the driver node. You can
-change this alignment by specifying an *anchor* for the mask:
+The resulting connections are shown in :numref:`fig_conn3`. By default
+the top-left corner of a grid mask, i.e., the grid mask element with
+grid index :math:`[0,0]`\ (see :ref:`2.1.1 <sec:verysimple>`), is
+aligned with the driver node. You can change this alignment by
+specifying an *anchor* for the mask:
 
 .. literalinclude:: user_manual_scripts/connections.py
     :start-after: #{ conn3c #}
@@ -1600,16 +1601,3 @@ used in connections, e.g.
    nest.Connect(l, l, {'rule': 'pairwise_bernoulli',
                        'p': 0.5,
                        'mask': {'elliptic': {'r_x': 0.5, 'r_y': 0.25}}})
-
-
-
-References
-----------
-
-.. [1]
-   NEST is available under an open source license at
-   `www.nest-simulator.org <www.nest-simulator.org>`__.
-
-.. [2]
-   See Sec. :ref:`2.1.1 <sec:verysimple>` for the distinction between
-   layer coordinates and grid indices

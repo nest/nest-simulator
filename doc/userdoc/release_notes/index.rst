@@ -1,4 +1,4 @@
-Release Notes
+Release notes
 =============
 
 This page contains links to the release notes of all recently

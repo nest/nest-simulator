@@ -150,8 +150,8 @@ Composing
                         model=iaf_psc_alpha, size=10, first=1, last=10;
                         model=iaf_psc_delta, size=3, first=14, last=16)
 
-    Note that composing NodeCollections that overlap or that contain metadata
-    (see section on :ref:`spatially distributed nodes <topo_changes>`) is not supported.
+    Note that composing NodeCollections that overlap or that contain
+    metadata is not supported.
 
 .. _testing_equality:
 
@@ -185,7 +185,7 @@ Direct attributes
     >>> neurons.C_m
         (111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0)
 
-    If your nodes are spatially distributed (see :ref:`spatially distributed nodes <topo_changes>`),
+    If your nodes are spatially distributed (see :doc:`../../../guides/spatial/index`),
     you can also get the spatial properties of the nodes
 
     >>> spatial_nodes.spatial

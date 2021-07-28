@@ -41,7 +41,7 @@ Author: Hans E Plesser
 /synmodels 
   [/stdp_synapse_hom /stdp_pl_synapse_hom /stdp_facetshw_synapse_hom 
   /stdp_dopamine_synapse]
-  { synapsedict exch known } Select
+  { GetKernelStatus /synapse_models get exch MemberQ } Select
 def
 
 % prepare stdp_dopamine_synapse, which needs a

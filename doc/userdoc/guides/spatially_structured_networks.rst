@@ -1,8 +1,5 @@
-.. _sec:intro:
-
-=======================================
-Guide to spatially-structured networks
-=======================================
+Spatially-structured networks
+=============================
 
 NEST provides  a convenient interface for creating neurons placed in
 space and connecting those neurons with probabilities and
@@ -20,41 +17,37 @@ documentation.
 
 This manual describes the spatial functionalities included with NEST 3.0.
 
-In the next section of this manual, we introduce spatially distributed nodes.
-In Chapter \ :ref:`3 <sec:connections>` we then
-describe how to connect spatial nodes with each other, before discussing in
-Chapter \ :ref:`4 <sec:inspection>` how you can inspect and visualize
-spatial networks. Chapter \ :ref:`5 <ch:custom_masks>` deals with creating connection
-boundaries using parameters, and the more advanced topic of extending the
-functionalities with custom masks provided by C++ classes in an extension module.
+In the next sections of this manual, we introduce the commands and
+concepts required to work with spatially distributed nodes. In
+particular,
 
-You will find the Python scripts used in the examples in this manual in
-the NEST source code directory under
-``doc/guides/spatial/user_manual_scripts``.
+*  section :ref:`sec:connections` describes how to connect spatial
+   nodes with each other
+*  section :ref:`sec:inspection` explains how you can inspect and
+   visualize spatial networks.
+*  section :ref:`sec:custom_masks` deals with creating connection
+   boundaries using parameters, and the more advanced topic of
+   extending the functionalities with custom masks provided by C++
+   classes in an extension module.
 
-.. _sec:limitations:
+The Python scripts used throughout this manual are found in the NEST
+sources under ``doc/guides/spatially_structured_networks/scripts``.
 
-Limitations and Disclaimer
---------------------------
+There may be a number of undocumented features, which you may discover
+by browsing the code. These features are highly experimental and
+should *not be used for simulations*, as they have not been validated.
 
-Undocumented features
-   There may be a number of undocumented features, which
-   you may discover by browsing the code. These features are highly
-   experimental and should *not be used for simulations*, as they have
-   not been validated.
+Spatially distributed nodes
+---------------------------
 
-.. _sec:layers:
+Neuronal networks can have an organized spatial distribution, which we
+call *layers*. Layers are NodeCollections with spatial metadata. We
+will first illustrate how to place elements in simple grid-like
+layers, where each element is a single model neuron, before describing
+how the elements can be placed freely in space.
 
-Structurally distributed nodes
-------------------------------
-
-Neuronal networks can have an organized spatial distribution, which we call *layers*. Layers in NEST 3.0
-are NodeCollections with spatial metadata. We will first
-illustrate how to place elements in simple grid-like layers, where each
-element is a single model neuron, before describing how the elements can be placed
-freely in space.
-
-We will illustrate the definition and use of spatially distributed NodeCollections using examples.
+We will illustrate the definition and use of spatially distributed
+NodeCollections using examples.
 
 NEST distinguishes between two classes of layers:
 
@@ -67,25 +60,23 @@ free layers
 Grid-based layers allow for more efficient connection-generation under
 certain circumstances.
 
-.. _sec:gridbased:
-
 Grid-based NodeCollections
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. _sec:verysimple:
+.. _sec:spatial_verysimple:
 
 A very simple example
 ^^^^^^^^^^^^^^^^^^^^^
 
 We create a first, grid-based simple NodeCollection with the following command:
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ layer1 #}
     :end-before: #{ end #}
 
 .. _fig_layer1:
 
-.. figure:: user_manual_figures/layer1.png
+.. figure:: spatially_structured_networks/figures/layer1.png
    :name: fig:layer1
 
    Simple grid-based NodeCollection centered about the origin. Blue circles mark
@@ -149,13 +140,13 @@ Grid-based layers have a default extent of :math:`1\times 1`. You can specify a
 different extent of a layer, i.e., its size in :math:`x`- and
 :math:`y`-direction by passing the ``extent`` argument to ``nest.spatial.grid()``:
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ layer2 #}
     :end-before: #{ end #}
 
 .. _fig_layer2:
 
-.. figure:: user_manual_figures/layer2.png
+.. figure:: spatially_structured_networks/figures/layer2.png
    :name: fig:layer2
 
    Same layer as in :numref:`fig_layer1`, but with different extent.
@@ -171,8 +162,6 @@ automatically ensured for integer values. Otherwise, under rare
 circumstances, subtle rounding errors may occur and trigger an
 assertion, thus stopping NEST.
 
-.. _sec:setcenter:
-
 Setting the center
 ^^^^^^^^^^^^^^^^^^
 
@@ -181,13 +170,13 @@ be changed by passing the ``center`` argument to ``nest.spatial.grid()``.
 The following code creates layers centered about :math:`(0,0)`,
 :math:`(-1,1)`, and :math:`(1.5,0.5)`, respectively:
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ layer3 #}
     :end-before: #{ end #}
 
 .. _fig_layer3:
 
-.. figure:: user_manual_figures/layer3.png
+.. figure:: spatially_structured_networks/figures/layer3.png
    :name: fig:layer3
 
    Three layers centered, respectively, about :math:`(0,0)` (blue),
@@ -200,10 +189,8 @@ rows, respectively, even though elements in these three layers have
 different positions in the global coordinate system.
 
 The ``center`` coordinates should be numbers that can be expressed
-exactly as binary fractions. For more information, see
-Sec. \ :ref:`2.1.2 <sec:setextent>`.
-
-.. _sec:fixedlayerexample:
+exactly as binary fractions. For more information, see the section
+:ref:`sec:setextent`.
 
 Constructing a layer: an example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -229,13 +216,13 @@ about :math:`y=0`, we have :math:`c_y=0`. Thus, the center coordinates
 are :math:`(n_x d/2, 0)`. The layer is created with the following code
 and shown in :numref:`fig_layer3a`:
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ layer3a #}
     :end-before: #{ end #}
 
 .. _fig_layer3a:
 
-.. figure:: user_manual_figures/layer3a.png
+.. figure:: spatially_structured_networks/figures/layer3a.png
    :name: fig:layer3a
 
    NodeCollection with :math:`n_x=5` columns and :math:`n_y=3` rows, spacing
@@ -243,8 +230,6 @@ and shown in :numref:`fig_layer3a`:
    centered about the :math:`y`-axis. The cross marks the point on the
    extent placed at the origin :math:`(0,0)`, the circle the center of
    the layer.
-
-.. _sec:freelayer:
 
 Free layers
 ~~~~~~~~~~~
@@ -257,13 +242,13 @@ parameter to ``nest.spatial.free()``. The following code creates a NodeCollectio
 extent :math:`1\times 1`, i.e., spanning the square
 :math:`[-0.5,0.5]\times[-0.5,0.5]`:
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ layer4 #}
     :end-before: #{ end #}
 
 .. _fig_layer4:
 
-.. figure:: user_manual_figures/layer4.png
+.. figure:: spatially_structured_networks/figures/layer4.png
    :name: fig:layer4
 
    A free layer with 50 elements uniformly distributed in an extent of
@@ -288,20 +273,19 @@ Note the following points:
 -  The extent is automatically set when using ``nest.spatial.free``, however, it
    is still possible to set the extent yourself by passing the ``extent`` variable to the object.
 
--  All element positions must be *within* the layer’s extent.
-   Elements may be placed on the perimeter of the extent as long as no
-   periodic boundary conditions are used; see
-   Sec. \ :ref:`2.4 <sec:periodic>`.
+-  All element positions must be *within* the layer’s extent. Elements
+   may be placed on the perimeter of the extent as long as no periodic
+   boundary conditions are used; see the section :ref:`sec:periodic`.
 
 To create a spatially distributed NodeCollection from a list, do the following:
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ layer4b #}
     :end-before: #{ end #}
 
 .. _fig_layer4b:
 
-.. figure:: user_manual_figures/layer4b.png
+.. figure:: spatially_structured_networks/figures/layer4b.png
    :name: fig:layer4b
 
    A free layer with 3 elements freely distributed space. The extent is given by the gray lines.
@@ -310,8 +294,6 @@ Note that when using a list to specify the positions, neither ``'n'`` nor ``num_
 are specified. Furthermore, the extent is calculated from the node positions, and is here
 :math:`1.45\times 1.45`. The extent could also be set by passing the ``extent`` argument.
 
-.. _sec:3dlayer:
-
 3D layers
 ~~~~~~~~~
 
@@ -319,13 +301,13 @@ Although the term “layer” suggests a 2-dimensional structure, the layers
 in NEST may in fact be 3-dimensional. The example from the previous
 section may be easily extended by updating number of dimensions for the positions:
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ layer4_3d #}
     :end-before: #{ end #}
 
 .. _fig_layer4_3d:
 
-.. figure:: user_manual_figures/layer4_3d.png
+.. figure:: spatially_structured_networks/figures/layer4_3d.png
    :name: fig:layer4_3d
 
    A free 3D layer with 200 elements uniformly distributed in an extent
@@ -335,13 +317,13 @@ Again it is also possible to specify a list of list to create nodes in a 3-dimen
 space. Another possibility is to create a 3D grid-layer, with 3 elements passed to
 the shape argument, ``shape=[nx, ny, nz]``:
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ layer4_3d_b #}
     :end-before: #{ end #}
 
 .. _fig_layer4_3d_b:
 
-.. figure:: user_manual_figures/layer4_3d_b.png
+.. figure:: spatially_structured_networks/figures/layer4_3d_b.png
    :name: fig:layer4_3d_b
 
    A grid 3D NodeCollection with 120 elements distributed on a grid with 4 elements in the x-direction,
@@ -369,15 +351,16 @@ surface of a torus. :numref:`fig_player` illustrates this for a
 one-dimensional layer, which turns from a line to a ring upon
 introduction of periodic boundary conditions.
 
-You specify periodic boundary conditions for a NodeCollection using the entry ``edge_wrap``:
+You specify periodic boundary conditions for a NodeCollection using
+the entry ``edge_wrap``:
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ player #}
     :end-before: #{ end #}
 
 .. _fig_player:
 
-.. figure:: user_manual_figures/player.png
+.. figure:: spatially_structured_networks/figures/player.png
    :name: fig:player
 
    Top left: Layer with single row and five columns without periodic
@@ -402,10 +385,7 @@ for a layer with periodic boundary conditions; :math:`x_{\text{ext}}`
 and :math:`y_{\text{ext}}` are the components of the extent size.
 
 We will discuss the consequences of periodic boundary conditions more in
-Chapter \ :ref:`3 <sec:connections>`.
-
-.. _sec:subnet:
-
+the section on :ref:`sec:connections`.
 
 Layers as NodeCollection
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -418,11 +398,11 @@ be of interest:
    properties of the NodeCollection (``l`` is the layer created at the beginning
    of this guide):
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ layer1s #}
     :end-before: #{ end #}
 
-.. literalinclude:: user_manual_scripts/layers.log
+.. literalinclude:: spatially_structured_networks/scripts/layers.log
     :start-after: #{ layer1s.log #}
     :end-before: #{ end.log #}
 
@@ -438,11 +418,11 @@ not change properties of the spatially distributed NodeCollection.
    ``Connect`` with spatial dependence, or visualization of layers) can
    only be used on NodeCollections created with spatial distribution.
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ layer1p #}
     :end-before: #{ end #}
 
-.. literalinclude:: user_manual_scripts/layers.log
+.. literalinclude:: spatially_structured_networks/scripts/layers.log
     :start-after: #{ layer1p.log #}
     :end-before: #{ end.log #}
 
@@ -453,15 +433,13 @@ Connections
 
 The most important feature of the spatially-structured networks is the ability to
 create connections between NodeCollections with quite some flexibility. In this
-chapter, we will illustrate how to specify and create connections. All
+section, we will illustrate how to specify and create connections. All
 connections are created using the ``Connect`` function.
-
-.. _sec:conn_basics:
 
 Basic principles
 ~~~~~~~~~~~~~~~~
 
-.. _sec:terminology:
+.. _sec:spatial_terminology:
 
 Terminology
 ^^^^^^^^^^^
@@ -520,15 +498,15 @@ Distance
 
 Mask
    The *mask* defines which pool nodes are at all considered as
-   potential targets for each driver node. See
-   Sec. \ :ref:`3.3 <sec:conn_masks>` for details.
+   potential targets for each driver node. See section
+   :ref:`sec:conn_masks` for details.
 
 Connection probability or ``p``
    The *connection probability*, specified as ``p`` in the connection
    specifications, is either a value, or a parameter which specifies the
    probability for creating a connection between a driver and a pool node.
    The default probability is :math:`1`, i.e., connections are created with
-   certainty. See Sec. \ :ref:`3.4 <sec:conn_kernels>` for details.
+   certainty. See section :ref:`sec:conn_kernels` for details.
 
 Autapse
    An *autapse* is a synapse (connection) from a node onto itself.
@@ -541,33 +519,32 @@ Multapse
    can be disabled by adding ``'allow_multapses': False`` to the
    connection dictionary.
 
-.. _sec:minimalcall:
-
 Connecting spatially distributed nodes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-As with "normal" NodeCollections, connections between spatially distributed nodes are created
-by calling ``Connect``. However, having spatial information about the nodes makes
-position-based options available, and so in addition to the usual connection
-schemes there exists additional connection parameters for spatially distributed
+As with "normal" NodeCollections, connections between spatially
+distributed nodes are created by calling ``Connect``. However, having
+spatial information about the nodes makes position-based options
+available, and so in addition to the usual connection schemes there
+exists additional connection parameters for spatially distributed
 NodeCollections.
 
 In many cases when connecting spatially distributed NodeCollections, a
-mask will be specified. Mask specifications are described in
-Sec. \ :ref:`3.3 <sec:conn_masks>`. Only neurons within the mask are considered as potential sources or
-targets. If no mask is given, all neurons in the respective NodeCollection are
-considered sources or targets.
+mask will be specified. Mask specifications are described in the
+section :ref:`sec:conn_masks`. Only neurons within the mask are
+considered as potential sources or targets. If no mask is given, all
+neurons in the respective NodeCollection are considered sources or
+targets.
 
 Here is a simple example, cf. :numref:`fig_conn1`
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn1 #}
     :end-before: #{ end #}
 
 .. _fig_conn1:
 
-.. figure:: user_manual_figures/conn1.png
+.. figure:: spatially_structured_networks/figures/conn1.png
    :name: fig:conn1
 
    Left: Minimal connection example from a layer onto itself using a
@@ -589,8 +566,6 @@ centered about each source node. Since the connection probability is 1.0,
 we connect to all nodes within the mask. Note the effect of normal and
 periodic boundary conditions on the connections created for different
 nodes in the NodeCollection, as illustrated in :numref:`fig_conn1`.
-
-.. _sec:mapping:
 
 Mapping source and target layers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -633,7 +608,7 @@ targets.
 If none of the mask types provided in the library meet your need, you may
 define custom masks, either by introducing a cut-off to the connection
 probability using parameters, or by adding more mask types in a NEST extension
-module. This is covered in Chapter \ :ref:`5 <ch:custom_masks>`.
+module. This is covered in the section on :ref:`sec:custom_masks`.
 
 .. _sec:free_masks:
 
@@ -649,7 +624,7 @@ Rectangular
    specified by its lower left and upper right corners, measured in the
    same unit as element coordinates. Example:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn2r #}
     :end-before: #{ end #}
 
@@ -657,7 +632,7 @@ Circular
    All nodes within a circle are connected. The area is specified by its
    radius.
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn2c #}
     :end-before: #{ end #}
 
@@ -666,7 +641,7 @@ Doughnut
    nodes *on* the inner circle are not connected. The area is specified
    by the radii of the inner and outer circles.
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn2d #}
     :end-before: #{ end #}
 
@@ -674,13 +649,13 @@ Elliptical
    All nodes within an ellipsis are connected. The area is specified by
    its major and minor axis.
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn2e #}
     :end-before: #{ end #}
 
 .. _fig_conn2_a:
 
-.. figure:: user_manual_figures/conn2_a.png
+.. figure:: spatially_structured_networks/figures/conn2_a.png
    :name: fig:conn2_a
 
    Masks for 2D layers. For all mask types, the driver node is marked by
@@ -696,25 +671,25 @@ the mask dictionary. The anchor is a 2D vector specifying the location
 of the mask center relative to the driver node, as in the following
 examples (cf.  :numref:`fig_conn2_b`).
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn2ro #}
     :end-before: #{ end #}
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn2co #}
     :end-before: #{ end #}
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn2do #}
     :end-before: #{ end #}
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn2eo #}
     :end-before: #{ end #}
 
 .. _fig_conn2_b:
 
-.. figure:: user_manual_figures/conn2_b.png
+.. figure:: spatially_structured_networks/figures/conn2_b.png
    :name: fig:conn2_b
 
    The same masks as in :numref:`fig_conn2_a`, but centered about
@@ -727,17 +702,17 @@ add an ``'azimuth_angle'`` entry in the specific mask dictionary. The
 ``azimuth_angle`` is measured in degrees and is the rotational angle
 from the x-axis to the y-axis.
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn2rr #}
     :end-before: #{ end #}
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn2er #}
     :end-before: #{ end #}
 
 .. _fig_conn2_c:
 
-.. figure:: user_manual_figures/conn2_c.png
+.. figure:: spatially_structured_networks/figures/conn2_c.png
    :name: fig:conn2_c
 
    Rotated rectangular and elliptical mask from  :numref:`fig_conn2_a` and
@@ -757,7 +732,7 @@ Box
    by its lower left and upper right corners, measured in the same unit
    as element coordinates. Example:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn_3d_a #}
     :end-before: #{ end #}
 
@@ -765,7 +740,7 @@ Spherical
    All nodes within a sphere are connected. The area is specified by its
    radius.
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn_3d_b #}
     :end-before: #{ end #}
 
@@ -773,7 +748,7 @@ Ellipsoidal
    All nodes within an ellipsoid are connected. The area is specified by
    its major, minor, and polar axis.
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn_3d_c #}
     :end-before: #{ end #}
 
@@ -792,15 +767,13 @@ the (possibly rotated) x-axis is missing.
 
 .. _fig_conn_3d:
 
-.. figure:: user_manual_figures/conn_3d.png
+.. figure:: spatially_structured_networks/figures/conn_3d.png
    :name: fig:conn3d
 
    Masks for 3D NodeCollections. For all mask types, the driver node is marked by
    a wide light-red circle, the selected pool nodes by red dots and the
    masks are red. From left to right: box and spherical masks
    centered about the driver node.
-
-.. _sec:grid_masks:
 
 Masks for grid-based layers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -810,23 +783,23 @@ these, you specify the size of the mask not by lower left and upper
 right corner coordinates, but give their size in x and y direction, as in
 this example:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn3 #}
     :end-before: #{ end #}
 
 The resulting connections are shown in :numref:`fig_conn3`. By default
 the top-left corner of a grid mask, i.e., the grid mask element with
-grid index :math:`[0,0]`\ (see :ref:`2.1.1 <sec:verysimple>`), is
+grid index :math:`[0,0]`\ (see :ref:`2.1.1 <sec:spatial_verysimple>`), is
 aligned with the driver node. You can change this alignment by
 specifying an *anchor* for the mask:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn3c #}
     :end-before: #{ end #}
 
 You can even place the anchor outside the mask:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn3x #}
     :end-before: #{ end #}
 
@@ -834,7 +807,7 @@ The resulting connection patterns are shown in  :numref:`fig_conn3`.
 
 .. _fig_conn3:
 
-.. figure:: user_manual_figures/conn3.png
+.. figure:: spatially_structured_networks/figures/conn3.png
    :name: fig:conn3
 
    Grid masks for connections between grid-based layers. Left:
@@ -855,11 +828,11 @@ Note the following:
    with identical grid spacings.
 
 -  The semantics of the ``'anchor'`` property for grid-based masks
-   differ significantly for general masks described in
-   Sec. \ :ref:`3.3.1 <sec:free_masks>`. For general masks, the anchor is
-   the center of the mask relative to the driver node. For grid-based
-   nodes, the anchor determines which mask element is aligned with the
-   driver element.
+   differ significantly for general masks described in the section
+   :ref:`sec:free_masks`. For general masks, the anchor is the center
+   of the mask relative to the driver node. For grid-based nodes, the
+   anchor determines which mask element is aligned with the driver
+   element.
 
 .. _sec:conn_kernels:
 
@@ -886,17 +859,18 @@ Free probabilistic connections using `pairwise_bernoulli`
    most one connection between each driver-pool pair*.
 
 Prescribed number of connections
-   can be obtained by using ``fixed_indegree`` or ``fixed_outdegree`` connection rule, and
-   specifying the number of connections to create per driver node. See
-   Sec. \ :ref:`3.7 <sec:prescribed_numbers>` for details.
+   can be obtained by using ``fixed_indegree`` or ``fixed_outdegree``
+   connection rule, and specifying the number of connections to create
+   per driver node. See the section :ref:`sec:prescribed_numbers`
+   for details.
 
-A selection of specific NEST parameters pertaining to spatially structured networks are shown in Table
-:ref:`tbl_parameters`.
+A selection of specific NEST parameters pertaining to spatially
+structured networks are shown the table below.
 
-.. _tbl_parameters:
+.. _tbl:parameters:
 
-Spatially-structured specific NEST parameters
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+NEST parameters specific to spatially-structured networks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The parameters in the table below represent positions of neurons or
 distances between two neurons. To set node parameters, only the node
@@ -972,7 +946,7 @@ parameters drawing values from random distributions.
 
 .. _fig_conn4:
 
-.. figure:: user_manual_figures/conn4.png
+.. figure:: spatially_structured_networks/figures/conn4.png
    :name: fig:conn4
 
    Illustration of various connection probabilities. Top left: constant probability,
@@ -986,7 +960,7 @@ Several examples follow. They are illustrated in  :numref:`fig_conn4`.
 Constant
    Fixed connection probability:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn4cp #}
     :end-before: #{ end #}
 
@@ -996,7 +970,7 @@ Gaussian
    probability is 1 for :math:`d=0` and falls off with a “standard
    deviation” of :math:`\sigma=1`:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn4g #}
     :end-before: #{ end #}
 
@@ -1006,7 +980,7 @@ Cut-off Gaussian
 
 .. TODO: Reference to full Parameter table with nest.logic.conditional().
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn4cut #}
     :end-before: #{ end #}
 
@@ -1016,7 +990,7 @@ Cut-off Gaussian
    :math:`y`- directions. This probability depends on displacement, not
    only on distance:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn42d #}
     :end-before: #{ end #}
 
@@ -1024,12 +998,10 @@ Note that for pool layers with periodic boundary conditions, NEST
 always uses the shortest possible displacement vector from driver to
 pool neuron as ``nest.spatial.distance``.
 
-.. _sec:conn_wd:
-
 Weights and delays
 ~~~~~~~~~~~~~~~~~~
 
-Parameters, such as those presented in Table :ref:`tbl_parameters`, can
+Parameters, such as those presented in Table :ref:`tbl:parameters`, can
 also be used to specify distance-dependent or randomized weights and
 delays for the connections created by ``Connect``. Weight and delays are in NEST
 passed along in a synapse dictionary to the ``Connect`` call.
@@ -1049,7 +1021,7 @@ entire NodeCollection and is centered about the driver node.
 
 
 Linear example
-  .. literalinclude:: user_manual_scripts/connections.py
+  .. literalinclude:: spatially_structured_networks/scripts/connections.py
       :start-after: #{ conn5lin #}
       :end-before: #{ end #}
 
@@ -1063,7 +1035,7 @@ Linear example
 
 
 Linear example with periodic boundary conditions
-  .. literalinclude:: user_manual_scripts/connections.py
+  .. literalinclude:: spatially_structured_networks/scripts/connections.py
       :start-after: #{ conn5linpbc #}
       :end-before: #{ end #}
 
@@ -1075,11 +1047,11 @@ Linear example with periodic boundary conditions
 
 
 Various spatially dependent distributions
-  .. literalinclude:: user_manual_scripts/connections.py
+  .. literalinclude:: spatially_structured_networks/scripts/connections.py
       :start-after: #{ conn5exp #}
       :end-before: #{ end #}
 
-  .. literalinclude:: user_manual_scripts/connections.py
+  .. literalinclude:: spatially_structured_networks/scripts/connections.py
       :start-after: #{ conn5gauss #}
       :end-before: #{ end #}
 
@@ -1090,7 +1062,7 @@ Various spatially dependent distributions
 
 
 Randomized weights and delays
-  .. literalinclude:: user_manual_scripts/connections.py
+  .. literalinclude:: spatially_structured_networks/scripts/connections.py
       :start-after: #{ conn5uniform #}
       :end-before: #{ end #}
 
@@ -1100,7 +1072,7 @@ Randomized weights and delays
 
 .. _fig_conn5:
 
-.. figure:: user_manual_figures/conn5.png
+.. figure:: spatially_structured_networks/figures/conn5.png
    :name: fig:conn5
 
    Distance-dependent and randomized weights and delays. See text for
@@ -1123,17 +1095,15 @@ linear (actually affine) with respect to the displacement between the nodes, of 
 \ where :math:`d_x` and :math:`d_y` are the displacements between the source and
 target neuron on the x and y axis, respectively. The parameter is then simply:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn_param_design #}
     :end-before: #{ end #}
 
 This can be directly plugged into the ``Connect`` function:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn_param_design_ex #}
     :end-before: #{ end #}
-
-.. _sec:conn_pbc:
 
 Periodic boundary conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1196,7 +1166,7 @@ Connection generation now proceeds in a different way than before:
    distributed within the mask with the spatial profile given by the
    probability.
 
-4. If you prohibit multapses (cf Sec. \ :ref:`3.1.1 <sec:terminology>`)
+4. If you prohibit multapses (see section :ref:`sec:spatial_terminology`)
    and prescribe a number of connections greater than the number of pool
    nodes in the mask, ``Connect`` may get stuck in an infinite
    loop and NEST will hang. Keep in mind that the number of nodes within
@@ -1210,7 +1180,6 @@ Connection generation now proceeds in a different way than before:
 6. Similarly, if you use the connection rule ``'rule': fixed_outdegree`` in the connection
    dictionary, you have to use ``'outdegree'`` to specify the number of connections
    per source node.
-
 
 The following code generates a network of 1000 randomly placed nodes and
 connects them with a fixed fan out, of 50 outgoing connections per node
@@ -1232,13 +1201,13 @@ distance. For the connection probability and parameter values below we have
 The resulting distribution of distances between connected nodes is shown in
  :numref:`fig_conn6`.
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn6 #}
     :end-before: #{ end #}
 
 .. _fig_conn6:
 
-.. figure:: user_manual_figures/conn6.png
+.. figure:: spatially_structured_networks/figures/conn6.png
    :name: fig:conn6
 
    Distribution of distances between source and target for a network of
@@ -1251,8 +1220,6 @@ Functions determining weight and delay as function of
 distance/displacement work in just the same way as before when the
 number of connections is prescribed.
 
-.. _sec:conn_synapse:
-
 Synapse models and properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1261,7 +1228,7 @@ model in NEST, ``static_synapse``. You can specify a different model by
 adding a ``'synapse_model'`` entry to the synapse specification
 dictionary, as in this example:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn8 #}
     :end-before: #{ end #}
 
@@ -1282,18 +1249,16 @@ needs to be specified and optionally also an anchor for shifting the
 center of the mask. As demonstrated in the following example,
 stimulation devices have to be connected as the source layer.
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn9 #}
     :end-before: #{ end #}
 
-While recording devices, on the other hand, have to be connected as the target layer (see also
-Sec. \ :ref:`3.11 <sec:rec_dev>`):
+While recording devices, on the other hand, have to be connected as
+the target layer (see also the following section):
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn10 #}
     :end-before: #{ end #}
-
-.. _sec:rec_dev:
 
 Spatially distributed NodeCollections and recording devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1303,27 +1268,26 @@ another NodeCollection with spatial extent. This is especially true for spike re
 create a single spike recorder and connect all neurons in the spatially
 distributed NodeCollection to that spike recorder:
 
-.. literalinclude:: user_manual_scripts/connections.py
+.. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn11 #}
     :end-before: #{ end #}
 
-Connecting a layer of neurons to a layer of recording devices as described
-in Sec. \ :ref:`3.10 <sec:dev_subregions>`, is
-only possible using the ``pairwise_bernoulli`` rule. Note that voltmeter
+Connecting a layer of neurons to a layer of recording devices as
+described in the section on :ref:`sec:dev_subregions`, is only
+possible using the ``pairwise_bernoulli`` rule. Note that voltmeter
 and multimeter do not suffer from this restriction, since they are
 connected as sources, not as targets.
 
 .. _sec:inspection:
 
-Inspecting Spatially distributed NodeCollections
+Inspecting spatially distributed NodeCollections
 ------------------------------------------------
 
-We strongly recommend that you inspect the NodeConnections created to be sure that
-node placement and connectivity indeed turned out as expected. In this
-chapter, we describe some functions that NEST provide to query and
-visualize networks, NodeCollections, and connectivity.
-
-.. _sec:queries:
+We strongly recommend that you inspect the NodeConnections created to
+be sure that node placement and connectivity indeed turned out as
+expected. In this section, we describe some functions that NEST
+provide to query and visualize networks, NodeCollections, and
+connectivity.
 
 Query functions
 ~~~~~~~~~~~~~~~
@@ -1376,8 +1340,6 @@ The following table presents some query functions provided by NEST.
 |                                 |                                                     |
 +---------------------------------+-----------------------------------------------------+
 
-.. _sec:visualize:
-
 Visualization functions
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1398,7 +1360,7 @@ NEST provides three functions to visualize networks:
 
 .. _fig_vislayer:
 
-.. figure:: user_manual_figures/vislayer.png
+.. figure:: spatially_structured_networks/figures/vislayer.png
    :name: fig:vislayer
 
    :math:`21\times 21` grid with divergent Gaussian projections onto
@@ -1412,11 +1374,11 @@ which connects to itself with Gaussian connections. The resulting graphics
 is shown in :numref:`fig_vislayer`. All elements and the targets of the
 center neuron are shown, as well as mask and connection probability.
 
-.. literalinclude:: user_manual_scripts/layers.py
+.. literalinclude:: spatially_structured_networks/scripts/layers.py
     :start-after: #{ vislayer #}
     :end-before: #{ end #}
 
-.. _ch:custom_masks:
+.. _sec:custom_masks:
 
 Creating custom masks
 ---------------------
@@ -1436,8 +1398,6 @@ Implementing a custom mask in C++ gives much higher connection performance and g
 in implementation, but requires some knowledge of the C++ language. As the mask in this case
 is implemented in an extension module, which is dynamically loaded into NEST, it also requires
 some additional steps for installation.
-
-.. _sec:maskparameter:
 
 Using parameters to specify connection boundaries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1487,8 +1447,6 @@ information.
    l = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[11, 11], extent=[1., 1.]))
    nest.Connect(l, l, {'rule': 'pairwise_bernoulli', 'p': mask_param})
 
-.. _sec:maskmodule:
-
 Adding masks in a module
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1500,9 +1458,10 @@ on writing such modules, see the
 
 To add a mask, a subclass of ``nest::Mask<D>`` must be defined, where ``D``
 is the dimension (2 or 3). In this case we will define a 2-dimensional
-elliptic mask by creating a class called ``EllipticMask``. Note that
-elliptical masks are already part of NEST see
-Sec. \ :ref:`3.3 <sec:conn_masks>`. That elliptical mask is defined in a
+elliptic mask by creating a class called ``EllipticMask``.
+
+Please note that elliptical masks are already part of NEST (see
+:ref:`sec:conn_masks`). However, that elliptical mask is defined in a
 different way than what we will do here though, so this can still be
 used as an introductory example. First, we must include the header
 files for the ``Mask`` parent class:

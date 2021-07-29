@@ -21,7 +21,7 @@ SIONlib is now available. The interface for :doc:`stimulation devices <features/
 data from external sources, such as other simulators.
 
 The Topology Module is no longer a separate module; it is integrated within PyNest, and now referred to as support for
-:doc:`spatially-structured networks <../../guides/spatial/index>`.
+:doc:`spatially-structured networks <../../guides/spatially_structured_networks>`.
 
 :doc:`NEST Server <../../../nest_server>` is a novel backend to NEST that allows to run simulations via a RESTful API.
 Instead of directly importing ``nest`` into your Python session, the code that controls the simulation is sent over HTTP

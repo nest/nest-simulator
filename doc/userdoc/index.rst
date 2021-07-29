@@ -68,7 +68,7 @@ Where to find what
 
 * :doc:`Example Networks <examples/index>`  demonstrate the use of dozens of the neural network models implemented in NEST.
 
-* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts from :doc:`Parallel Computing <guides/parallel_computing>` to handling :doc:`Gap Junction Simulations <guides/simulations_with_gap_junctions>` and :doc:`setting up a spatially-structured network <guides/spatial/guide_spatially_structured_networks>`.
+* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts from :doc:`Parallel Computing <guides/parallel_computing>` to handling :doc:`Gap Junction Simulations <guides/simulations_with_gap_junctions>` and :doc:`setting up a spatially-structured network <guides/spatially_structured_networks>`.
 
 * :doc:`Reference Material <ref_material/index>` provides a quick look up of definitions, functions and terms.
 

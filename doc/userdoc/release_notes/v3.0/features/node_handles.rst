@@ -185,7 +185,7 @@ Direct attributes
     >>> neurons.C_m
         (111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0)
 
-    If your nodes are spatially distributed (see :doc:`../../../guides/spatial/index`),
+    If your nodes are spatially distributed (see :doc:`../../../guides/spatially_structured_networks`),
     you can also get the spatial properties of the nodes
 
     >>> spatial_nodes.spatial

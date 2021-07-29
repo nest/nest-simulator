@@ -129,8 +129,8 @@ for fname in allfiles:
                 line = textwrap.dedent(line).strip()
                 # Tricks for the blanks
                 line = html.escape(line)
-                line = re.sub('^(\s)*- ', ' &bull; ', line)
-                line = re.sub('^(\s)*@note', ' &bull; ', line)
+                line = re.sub(r'^(\s)*- ', ' &bull; ', line)
+                line = re.sub(r'^(\s)*@note', ' &bull; ', line)
                 alllines.append(line)
             item = '\n'.join(alllines)
             num += 1

@@ -135,7 +135,7 @@ M_ERROR setverbosity
 {
   ResetKernel
   << >> begin
-    /recvars [ /V_m /weighted_spikes_ex /weighted_spikes_in ] def
+    /recvars [ /V_m ] def
     /n /iaf_psc_alpha Create def
     /mm1 /multimeter << /record_from recvars >> Create def	
     /mm2 /multimeter << /record_from recvars >> Create def	

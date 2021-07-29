@@ -71,7 +71,7 @@ exclude_dirs = [
 
 # match all file names against these regular expressions. if a match
 # is found the file is excluded from the check
-exclude_file_patterns = ['\.#.*', '#.*', '.*~', '.*.bak']
+exclude_file_patterns = [r'\.#.*', '#.*', '.*~', '.*.bak']
 exclude_file_regex = [re.compile(pattern) for pattern in exclude_file_patterns]
 
 exclude_files = [

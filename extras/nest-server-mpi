@@ -31,30 +31,44 @@ rank = comm.Get_rank()
 
 
 def log(call_name, msg):
-    global rank
-    print(f'==> WORKER {rank}/{time.time():.7f} ({call_name}): {msg}')
+    msg = f'==> WORKER {rank}/{time.time():.7f} ({call_name}): {msg}'
+    print(msg, flush=True)
 
 
 if rank == 0:
-    print("==> Starting NEST Server Master on rank 0")
+    print("==> Starting NEST Server Master on rank 0", flush=True)
     nest.server.set_mpi_comm(comm)
     nest.server.run_mpi_app(host=opt['--host'], port=opt['--port'])
+
 else:
-    print(f"==> Starting NEST Server Worker on rank {rank}")
+    print(f"==> Starting NEST Server Worker on rank {rank}", flush=True)
     nest.server.set_mpi_comm(comm)
     while True:
+
         log('spinwait', 'waiting for call bcast')
         call_name = comm.bcast(None, root=0)
+
         log(call_name, 'received call bcast, waiting for data bcast')
         data = comm.bcast(None, root=0)
+
         log(call_name, f'received data bcast, data={data}')
         args, kwargs = data
+
         if call_name == 'exec':
             response = nest.server.do_exec(args, kwargs)
         else:
-            call = getattr(nest, call_name)
-            args, kwargs = nest.server.NodeCollection(call, args, kwargs)
+            call, args, kwargs = nest.server.nestify(call_name, args, kwargs)
             log(call_name, f'local call, args={args}, kwargs={kwargs}')
-            response = nest.hl_api.serializable(call(*args, **kwargs))
+
+            # The following exception handler is useful if an error
+            # occurs simulataneously on all processes. If only a
+            # subset of processes raises an exception, a deadlock due
+            # to mismatching MPI communication calls is inevitable on
+            # the next call.
+            try:
+                response = call(*args, **kwargs)
+            except Exception:
+                continue
+
         log(call_name, f'sending reponse gather, data={response}')
-        comm.gather(response, root=0)
+        comm.gather(nest.hl_api.serializable(response), root=0)

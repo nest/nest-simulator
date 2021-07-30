@@ -31,6 +31,7 @@ import os
 import numpy as np
 import nest
 import helpers
+import warnings
 
 
 class Network:
@@ -189,13 +190,13 @@ class Network:
             self.net_dict['full_num_neurons'])
 
         # scaled numbers of neurons and synapses
-        self.num_neurons = np.round((self.net_dict['full_num_neurons'] *
-                                     self.net_dict['N_scaling'])).astype(int)
-        self.num_synapses = np.round((full_num_synapses *
-                                      self.net_dict['N_scaling'] *
-                                      self.net_dict['K_scaling'])).astype(int)
-        self.ext_indegrees = np.round((self.net_dict['K_ext'] *
-                                       self.net_dict['K_scaling'])).astype(int)
+        self.num_neurons = np.round((self.net_dict['full_num_neurons']
+                                     * self.net_dict['N_scaling'])).astype(int)
+        self.num_synapses = np.round((full_num_synapses
+                                      * self.net_dict['N_scaling']
+                                      * self.net_dict['K_scaling'])).astype(int)
+        self.ext_indegrees = np.round((self.net_dict['K_ext']
+                                       * self.net_dict['K_scaling'])).astype(int)
 
         # conversion from PSPs to PSCs
         PSC_over_PSP = helpers.postsynaptic_potential_to_current(
@@ -210,7 +211,7 @@ class Network:
             DC_amp = np.zeros(self.num_pops)
         else:
             if nest.Rank() == 0:
-                print('DC input compensates for missing Poisson input.\n')
+                warnings.warn('DC input created to compensate missing Poisson input.\n')
             DC_amp = helpers.dc_input_compensating_poisson(
                 self.net_dict['bg_rate'], self.net_dict['K_ext'],
                 self.net_dict['neuron_params']['tau_syn'],
@@ -323,9 +324,9 @@ class Network:
                     self.net_dict['neuron_params']['V0_mean']['original'],
                     self.net_dict['neuron_params']['V0_std']['original']))
             else:
-                raise Exception(
-                    'V0_type incorrect. ' +
-                    'Valid options are "optimized" and "original".')
+                raise ValueError(
+                    'V0_type is incorrect. '
+                    + 'Valid options are "optimized" and "original".')
 
             self.pops.append(population)
 
@@ -418,8 +419,8 @@ class Network:
 
         dc_dict = {'amplitude': dc_amp_stim,
                    'start': self.stim_dict['dc_start'],
-                   'stop': (self.stim_dict['dc_start'] +
-                            self.stim_dict['dc_dur'])}
+                   'stop': (self.stim_dict['dc_start']
+                            + self.stim_dict['dc_dur'])}
         self.dc_stim_input = nest.Create('dc_generator', n=self.num_pops,
                                          params=dc_dict)
 
@@ -447,15 +448,15 @@ class Network:
                         'weight': nest.math.redraw(
                             nest.random.normal(
                                 mean=self.weight_matrix_mean[i][j],
-                                std=abs(self.weight_matrix_mean[i][j] *
-                                        self.net_dict['weight_rel_std'])),
+                                std=abs(self.weight_matrix_mean[i][j]
+                                        * self.net_dict['weight_rel_std'])),
                             min=w_min,
                             max=w_max),
                         'delay': nest.math.redraw(
                             nest.random.normal(
                                 mean=self.net_dict['delay_matrix_mean'][i][j],
-                                std=(self.net_dict['delay_matrix_mean'][i][j] *
-                                     self.net_dict['delay_rel_std'])),
+                                std=(self.net_dict['delay_matrix_mean'][i][j]
+                                     * self.net_dict['delay_rel_std'])),
                             min=self.sim_resolution,
                             max=np.Inf)}
 
@@ -517,8 +518,8 @@ class Network:
                 'delay': nest.math.redraw(
                     nest.random.normal(
                         mean=self.stim_dict['delay_th_mean'],
-                        std=(self.stim_dict['delay_th_mean'] *
-                             self.stim_dict['delay_th_rel_std'])),
+                        std=(self.stim_dict['delay_th_mean']
+                             * self.stim_dict['delay_th_rel_std'])),
                     min=self.sim_resolution,
                     max=np.Inf)}
 

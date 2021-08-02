@@ -21,11 +21,11 @@
 
 """
 This Python script is part of the NEST GitHub Actions CI build and test environment.
-It parses the GitHub Actions build log file 'gha_build.sh.log' (The name is
+It parses the GitHub Actions build log file 'ci_build.sh.log' (The name is
 hard-wired in '.nestbuildmatrix.yml'.) and creates the 'NEST GitHub Actions Build Summary'.
 
 NOTE: Please note that the parsing process is coupled to shell script
-      'gha_build.sh' and relies on the message numbers "MSGBLDnnnn'.
+      'ci_build.sh' and relies on the message numbers "MSGBLDnnnn'.
       It does not rely on the messages texts itself except for file names.
 """
 
@@ -640,7 +640,7 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
        summary_format is not None:
 
         # Keys, i.e. file names, are identical in these dictionaries.
-        # If this assertion raises an exception, please check gha_build.sh
+        # If this assertion raises an exception, please check ci_build.sh
         # which runs the GitHub Actions build.
         assert (summary_format.keys() == summary_cppcheck.keys())
         assert (summary_format.keys() == summary_vera.keys())

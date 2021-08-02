@@ -229,12 +229,6 @@ double getValue< double >( const Token& );
 template <>
 void setValue< double >( const Token&, double const& value );
 
-template <>
-float getValue< float >( const Token& );
-
-template <>
-void setValue< float >( const Token&, float const& value );
-
 
 template <>
 Token newToken< double >( double const& value );

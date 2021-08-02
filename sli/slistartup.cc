@@ -389,9 +389,6 @@ SLIStartup::init( SLIInterpreter* i )
   platform += "bg/q";
 #endif
 
-#ifdef IS_K
-  platform = "k";
-#endif
   if ( platform == "" )
   {
     platform = "default";

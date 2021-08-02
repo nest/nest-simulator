@@ -215,6 +215,10 @@ private:
                                    //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
+  double update_time_limit_;       //!< throw exception if single update cycle takes longer
+                                   //!< than update_time_limit_ (seconds, default inf)
+  double min_update_time_;         //!< shortest update time seen so far (seconds)
+  double max_update_time_;         //!< longest update time seen so far (seconds)
 
   // private stop watches for benchmarking purposes
   Stopwatch sw_simulate_;

@@ -66,13 +66,13 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
 
     for key, value in doc_dic.items():
         if key == "FullName":
-            fullname = value.strip("\s\n")
-            fullname = re.sub("(\n)", " <br/> ", fullname)
+            fullname = value.strip(r"\s\n")
+            fullname = re.sub(r"(\n)", " <br/> ", fullname)
 
             htmllist.append('''<div class="doc_header">Name:</div>
 <div class="doc_paragraph">%s - %s</div>''' %
                             (name, fullname))
-            hlpfullname = re.sub(' <br\/> ', '\n', fullname).strip()
+            hlpfullname = re.sub(r' <br\/> ', '\n', fullname).strip()
             hlplist.append('Name: %s - %s\n' % (name, hlpfullname))
 
     # sorting linked keywords
@@ -83,18 +83,18 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
                 if (key != "Name" and key != "FullName" and
                         key != "SeeAlso" and key != "File"):
                     # strip whitespace and paragraph breaks at start of entry
-                    value = re.sub("^(\s*(\n))*\s*", "", value)
+                    value = re.sub(r"^(\s*(\n))*\s*", "", value)
                     # strip whitespace and paragraph breaks at end of entry
-                    value = re.sub("((\n)\s*)*$", "", value)
-                    value = re.sub("(\n)", " <br/> ", value)
-                    value = re.sub("(^|\n) ", "&nbsp;", value)
+                    value = re.sub(r"((\n)\s*)*$", "", value)
+                    value = re.sub(r"(\n)", " <br/> ", value)
+                    value = re.sub(r"(^|\n) ", "&nbsp;", value)
                     htmllist.append('<div class="doc_header">%s: </div>' % key)
                     htmllist.append('<div class="doc_paragraph">%s</div>'
                                     % value)
                     hlpvalue = re.sub(' <br/> ', '\n', value).rstrip()
                     hlpvalue = re.sub('\n ', '\n', hlpvalue).rstrip()
                     hlpvalue = hlpvalue.lstrip('\n')
-                    hlpvalue = re.sub('\n[\s?]*\n', '\n', hlpvalue).rstrip()
+                    hlpvalue = re.sub(r'\n[\s?]*\n', '\n', hlpvalue).rstrip()
                     # Better looking .hlp files
                     dedented_text = textwrap.dedent(hlpvalue).strip()
                     hlpcontent = ('%s:\n\n%s\n\n' % (key, dedented_text))

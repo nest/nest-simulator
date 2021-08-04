@@ -347,7 +347,6 @@ private:
     unsigned int r_ref_;
 
     State_( const Parameters_& ); //!< Default initialization
-    State_( const State_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
     void set( const DictionaryDatum&, const Parameters_&, Node* );

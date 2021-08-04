@@ -65,7 +65,7 @@ neuron.set(a=4.0, b=80.5)
 
 dc = nest.Create("dc_generator", 2)
 
-dc.set(amplitude=[500.0, 800.0], start=[0.0,  500.0], stop=[200.0, 1000.0])
+dc.set(amplitude=[500.0, 800.0], start=[0.0, 500.0], stop=[200.0, 1000.0])
 ###############################################################################
 # We connect the DC generators.
 

@@ -221,7 +221,7 @@ def process_all_sources(path, all_headers, print_suggestion):
     count = 0
     for root, dirs, files in os.walk(path):
         for f in files:
-            if re.search("\.h$|\.hpp$|\.c$|\.cc|\.cpp$", f):
+            if re.search(r"\.h$|\.hpp$|\.c$|\.cc|\.cpp$", f):
                 # valid source file
                 count += process_source(root, f, all_headers, print_suggestion)
         for d in dirs:

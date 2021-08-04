@@ -55,7 +55,7 @@ dependencies:
   - scipy
   - mpi4py
   - terminaltables
-  - pep8
+  - pycodestyle
 
   # Working with NEST ------
   - ipython
@@ -92,7 +92,7 @@ dependencies:
   # PIP dependencies -- do not delete
   - pip:
     # For testsuite
-    - junitparser
+    - junitparser >= 2
     # For documentation
     - example
     - Image

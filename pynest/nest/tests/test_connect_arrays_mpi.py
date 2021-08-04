@@ -115,7 +115,7 @@ class ConnectArraysMPICase(unittest.TestCase):
         weight = 1.5
         delay = 1.4
 
-        nest.Connect(nest.AllToAll(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+        nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
 
         self.assert_connections(sources, targets, weight, delay, 'all_to_all')
 

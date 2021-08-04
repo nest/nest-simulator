@@ -97,9 +97,10 @@ neurons.I_e = [(n * (bias_end - bias_begin) / N + bias_begin)
 # Connect alternating current and noise generators as well as
 # `spike_recorder`s to neurons
 
-nest.Connect(drive, neurons)
-nest.Connect(noise, neurons)
-nest.Connect(neurons, sr)
+nest.Connect(nest.AllToAll(drive, neurons))
+nest.Connect(nest.AllToAll(noise, neurons))
+nest.Connect(nest.AllToAll(neurons, sr))
+nest.BuildNetwork()
 
 ###############################################################################
 # Simulate the network for time `T`.

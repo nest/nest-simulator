@@ -107,9 +107,10 @@ noise.rate = [n_ex * r_ex, n_in * r_in]
 # available in NEST.
 
 
-nest.Connect(neuron, spikerecorder)
-nest.Connect(voltmeter, neuron)
-nest.Connect(noise, neuron, syn_spec={'weight': [[epsc, ipsc]], 'delay': 1.0})
+nest.Connect(nest.AllToAll(neuron, spikerecorder))
+nest.Connect(nest.AllToAll(voltmeter, neuron))
+nest.Connect(nest.AllToAll(noise, neuron, syn_spec=nest.synapsemodels.static(weight=[[epsc, ipsc]], delay=1.0)))
+nest.BuildNetwork()
 
 ###############################################################################
 # To determine the optimal rate of the neurons in the inhibitory population,

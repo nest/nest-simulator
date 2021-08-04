@@ -167,7 +167,6 @@ def BuildNetwork():
 
         # Call SLI function
         sps(projection_list)
-        print(projection_list)
         sr('connect_projections')
 
         # reset all projections

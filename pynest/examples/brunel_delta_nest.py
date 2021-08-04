@@ -160,10 +160,8 @@ print("Connecting devices")
 # the excitatory and one for the inhibitory connections giving the
 # previously defined weights and equal delays.
 
-nest.CopyModel("static_synapse", "excitatory",
-               {"weight": J_ex, "delay": delay})
-nest.CopyModel("static_synapse", "inhibitory",
-               {"weight": J_in, "delay": delay})
+ex_syn = nest.CopyModel("static_synapse", "excitatory", {"weight": J_ex, "delay": delay})
+in_syn = nest.CopyModel("static_synapse", "inhibitory", {"weight": J_in, "delay": delay})
 
 ###############################################################################
 # Connecting the previously defined poisson generator to the excitatory and
@@ -173,8 +171,8 @@ nest.CopyModel("static_synapse", "inhibitory",
 # via ``syn_spec`` which expects a dictionary when defining multiple variables
 # or a string when simply using a pre-defined synapse.
 
-nest.Connect(noise, nodes_ex, syn_spec="excitatory")
-nest.Connect(noise, nodes_in, syn_spec="excitatory")
+nest.Connect(nest.AllToAll(noise, nodes_ex, syn_spec=ex_syn))
+nest.Connect(nest.AllToAll(noise, nodes_in, syn_spec=ex_syn))
 
 ###############################################################################
 # Connecting the first ``N_rec`` nodes of the excitatory and inhibitory
@@ -182,8 +180,8 @@ nest.Connect(noise, nodes_in, syn_spec="excitatory")
 # Here the same shortcut for the specification of the synapse as defined
 # above is used.
 
-nest.Connect(nodes_ex[:N_rec], espikes, syn_spec="excitatory")
-nest.Connect(nodes_in[:N_rec], ispikes, syn_spec="excitatory")
+nest.Connect(nest.AllToAll(nodes_ex[:N_rec], espikes, syn_spec=ex_syn))
+nest.Connect(nest.AllToAll(nodes_in[:N_rec], ispikes, syn_spec=ex_syn))
 
 print("Connecting network")
 
@@ -197,8 +195,7 @@ print("Excitatory connections")
 # specification is reduced to assigning the pre-defined excitatory synapse it
 # suffices to insert a string.
 
-conn_params_ex = {'rule': 'fixed_indegree', 'indegree': CE}
-nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_ex, "excitatory")
+nest.Connect(nest.FixedIndegree(nodes_ex, nodes_ex + nodes_in, indegree=CE, syn_spec=ex_syn))
 
 print("Inhibitory connections")
 
@@ -208,12 +205,12 @@ print("Inhibitory connections")
 # parameters are defined analogously to the connection from the excitatory
 # population defined above.
 
-conn_params_in = {'rule': 'fixed_indegree', 'indegree': CI}
-nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, "inhibitory")
+nest.Connect(nest.FixedIndegree(nodes_in, nodes_ex + nodes_in, indegree=CI, syn_spec=in_syn))
 
 ###############################################################################
 # Storage of the time point after the buildup of the network in a variable.
 
+nest.BuildNetwork()
 endbuild = time.time()
 
 ###############################################################################

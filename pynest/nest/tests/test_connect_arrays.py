@@ -45,7 +45,7 @@ class TestConnectArrays(unittest.TestCase):
         weights = 1.5
         delays = 1.4
 
-        nest.Connect(nest.AllToAll(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+        nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
 
         conns = nest.GetConnections()
 

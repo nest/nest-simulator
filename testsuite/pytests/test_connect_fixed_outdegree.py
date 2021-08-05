@@ -22,8 +22,8 @@
 import numpy as np
 import unittest
 import scipy.stats
-from . import test_connect_helpers as hf
-from . test_connect_parameters import TestParams
+import test_connect_helpers as hf
+from test_connect_parameters import TestParams
 
 
 class TestFixedOutDegree(TestParams):
@@ -44,7 +44,7 @@ class TestFixedOutDegree(TestParams):
     stat_dict = {'alpha2': 0.05, 'n_runs': 400}
 
     # tested on each mpi process separately
-    """def testErrorMessages(self):
+    def testErrorMessages(self):
         got_error = False
         conn_params = self.conn_dict.clone()
         conn_params.allow_autapses = True
@@ -124,7 +124,7 @@ class TestFixedOutDegree(TestParams):
         hf.nest.Connect(conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
-        hf.mpi_assert(np.diag(M), np.zeros(N), self)"""
+        hf.mpi_assert(np.diag(M), np.zeros(N), self)
 
     def testMultapsesTrue(self):
         conn_params = self.conn_dict.clone()
@@ -146,7 +146,7 @@ class TestFixedOutDegree(TestParams):
         print(conn_params.outdegree * N)
         hf.mpi_assert(nr_conns, conn_params.outdegree * N, self)
 
-    """def testMultapsesFalse(self):
+    def testMultapsesFalse(self):
         conn_params = self.conn_dict.clone()
         N = 3
         conn_params.allow_autapses = True
@@ -161,7 +161,7 @@ class TestFixedOutDegree(TestParams):
         M = hf.get_connectivity_matrix(pop, pop)
         M = hf.gather_data(M)
         if M is not None:
-            self.assertTrue(M.flatten, np.ones(N * N))"""
+            self.assertTrue(M.flatten, np.ones(N * N))
 
 
 def suite():

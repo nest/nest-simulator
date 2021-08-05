@@ -24,8 +24,8 @@ import collections
 import numpy as np
 import unittest
 import scipy.stats
-from . import test_connect_helpers as hf
-from . test_connect_parameters import TestParams
+import test_connect_helpers as hf
+from test_connect_parameters import TestParams
 
 
 class TestSymmetricPairwiseBernoulli(TestParams):

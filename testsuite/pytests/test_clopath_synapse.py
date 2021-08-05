@@ -67,7 +67,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
 
             # try to connect with clopath_rule
             with self.assertRaises(nest.kernel.NESTError):
-                nest.ConnectImmediately(nest.AllToAll(n, n, syn_spec=nest.synapsemodels.clopath()))
+                nest.Connect(nest.AllToAll(n, n, syn_spec=nest.synapsemodels.clopath()))
+                nest.BuildNetwork()
 
 
     def test_SynapseDepressionFacilitation(self):

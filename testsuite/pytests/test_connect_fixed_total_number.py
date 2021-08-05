@@ -48,20 +48,17 @@ class TestFixedTotalNumber(TestParams):
     # tested on each mpi process separately
     def testErrorMessages(self):
         got_error = False
-        conn_params = self.conn_dict.clone()
-        conn_params.allow_autapses = True
-        conn_params.allow_multapses = False
-        conn_params.N = self.N1 * self.N2 + 1
+        conn_params = hf.nest.FixedTotalNumber(source=None, target=None, N=self.N1 * self.N2 + 1,
+                                               allow_autapses=True, allow_multapses=False)
+
         try:
             self.setUpNetwork(conn_params)
         except hf.nest.kernel.NESTError:
             got_error = True
-        self.conn_dict.N = self.Nconn
-        conn_params.allow_multapses = True
         self.assertTrue(got_error)
 
     def testTotalNumberOfConnections(self):
-        conn_params = self.conn_dict.clone()
+        conn_params = hf.nest.FixedTotalNumber(source=None, target=None, N=self.Nconn)
         self.setUpNetwork(conn_params)
         total_conn = len(hf.nest.GetConnections(self.pop1, self.pop2))
         hf.mpi_assert(total_conn, self.Nconn, self)
@@ -72,10 +69,9 @@ class TestFixedTotalNumber(TestParams):
         hf.mpi_assert(M, M_none, self)
 
     def testStatistics(self):
-        conn_params = self.conn_dict.clone()
-        conn_params.allow_autapses = True
-        conn_params.allow_multapses = True
-        conn_params.N = self.N
+        conn_params = hf.nest.FixedTotalNumber(source=None, target=None, N=self.N,
+                                               allow_autapses=True, allow_multapses=True)
+
         for fan in ['in', 'out']:
             expected = hf.get_expected_degrees_totalNumber(
                 self.N, fan, self.N_s, self.N_t)
@@ -97,15 +93,11 @@ class TestFixedTotalNumber(TestParams):
             self.assertGreater(p, self.stat_dict['alpha2'])
 
     def testAutapsesTrue(self):
-        conn_params = self.conn_dict.clone()
         N = 3
 
         # test that autapses exist
-        conn_params.N = N * N * N
-        conn_params.allow_autapses = True
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.FixedTotalNumber(source=pop, target=pop, N=N * N * N, allow_autapses=True)
         hf.nest.Connect(conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
@@ -114,15 +106,11 @@ class TestFixedTotalNumber(TestParams):
             self.assertTrue(np.sum(np.diag(M)) > N)
 
     def testAutapsesFalse(self):
-        conn_params = self.conn_dict.clone()
         N = 3
 
         # test that autapses were excluded
-        conn_params.N = N * (N - 1)
-        conn_params.allow_autapses = False
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.FixedTotalNumber(source=pop, target=pop, N=N * (N - 1), allow_autapses=False)
         hf.nest.Connect(conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)

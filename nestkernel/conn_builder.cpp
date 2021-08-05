@@ -1235,6 +1235,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
+  , tgt_ids_()
 {
   // check for potential errors
   long n_targets = static_cast< long >( targets_->size() );
@@ -1290,6 +1291,8 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
 void
 nest::FixedOutDegreeBuilder::connect_()
 {
+#pragma omp single
+{
   // get global rng that is tested for synchronization for all threads
   RngPtr grng = get_rank_synced_rng();
 
@@ -1299,11 +1302,11 @@ nest::FixedOutDegreeBuilder::connect_()
     const index snode_id = ( *source_it ).node_id;
 
     std::set< long > ch_ids;
-    std::vector< index > tgt_ids_;
     const long n_rnd = targets_->size();
 
     Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
     const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
+
     for ( long j = 0; j < outdegree_value; ++j )
     {
       unsigned long t_id;
@@ -1324,16 +1327,23 @@ nest::FixedOutDegreeBuilder::connect_()
         ch_ids.insert( t_id );
       }
 
-      tgt_ids_.push_back( tnode_id );
+      tgt_ids_[ snode_id ].push_back( tnode_id );
     }
+  }
+} // omp single
 
-    // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+  // get thread id
+  const thread tid = kernel().vp_manager.get_thread_id();
 
-    RngPtr rng = get_vp_specific_rng( tid );
+  RngPtr rng = get_vp_specific_rng( tid );
 
-    std::vector< index >::const_iterator tnode_id_it = tgt_ids_.begin();
-    for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
+  NodeCollection::const_iterator source_it = sources_->begin();
+  for ( ; source_it < sources_->end(); ++source_it )
+  {
+    const index snode_id = ( *source_it ).node_id;
+
+    std::vector< index >::const_iterator tnode_id_it = tgt_ids_[ snode_id ].begin();
+    for ( ; tnode_id_it != tgt_ids_[ snode_id ].end(); ++tnode_id_it )
     {
       Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
       if ( target->is_proxy() )
@@ -1354,6 +1364,9 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
   const std::vector< DictionaryDatum >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
   , N_( ( *conn_spec )[ names::N ] )
+  , number_of_targets_on_vp_()
+  , local_targets_()
+  , num_conns_on_vp_()
 {
 
   // check for potential errors
@@ -1386,6 +1399,8 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
 void
 nest::FixedTotalNumberBuilder::connect_()
 {
+#pragma omp single
+{
   const int M = kernel().vp_manager.get_num_virtual_processes();
   const long size_sources = sources_->size();
   const long size_targets = targets_->size();
@@ -1394,16 +1409,17 @@ nest::FixedTotalNumberBuilder::connect_()
 
   // Compute the distribution of targets over processes using the modulo
   // function
-  std::vector< size_t > number_of_targets_on_vp( M, 0 );
-  std::vector< index > local_targets;
-  local_targets.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
+  //std::vector< size_t > number_of_targets_on_vp( M, 0 );
+  number_of_targets_on_vp_.resize( M, 0 );
+  //std::vector< index > local_targets;
+  local_targets_.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
   for ( size_t t = 0; t < targets_->size(); t++ )
   {
     int vp = kernel().vp_manager.node_id_to_vp( ( *targets_ )[ t ] );
-    ++number_of_targets_on_vp[ vp ];
+    ++number_of_targets_on_vp_[ vp ];
     if ( kernel().vp_manager.is_local_vp( vp ) )
     {
-      local_targets.push_back( ( *targets_ )[ t ] );
+      local_targets_.push_back( ( *targets_ )[ t ] );
     }
   }
 
@@ -1419,7 +1435,8 @@ nest::FixedTotalNumberBuilder::connect_()
   // K from gsl is equivalent to M = n_vps
   // N is already taken from stack
   // p[] is targets_on_vp
-  std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
+  //std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
+  num_conns_on_vp_.resize( M, 0 );
 
   // calculate exact multinomial distribution
   // get global rng that is tested for synchronization for all threads
@@ -1439,23 +1456,25 @@ nest::FixedTotalNumberBuilder::connect_()
     {
       break;
     }
-    if ( number_of_targets_on_vp[ k ] > 0 )
+    if ( number_of_targets_on_vp_[ k ] > 0 )
     {
-      double num_local_targets = static_cast< double >( number_of_targets_on_vp[ k ] );
+      double num_local_targets = static_cast< double >( number_of_targets_on_vp_[ k ] );
       double p_local = num_local_targets / ( size_targets - sum_dist );
 
       binomial_distribution::param_type param( N_ - sum_partitions, p_local );
-      num_conns_on_vp[ k ] = bino_dist( grng, param );
+      num_conns_on_vp_[ k ] = bino_dist( grng, param );
     }
 
-    sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
-    sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
+    sum_dist += static_cast< double >( number_of_targets_on_vp_[ k ] );
+    sum_partitions += static_cast< unsigned int >( num_conns_on_vp_[ k ] );
   }
 
   // end code adapted from gsl 1.8
+} // pragma omp single
 
   // get thread id
   const thread tid = kernel().vp_manager.get_thread_id();
+  const long size_sources = sources_->size();
 
   // try
   // {
@@ -1467,10 +1486,10 @@ nest::FixedTotalNumberBuilder::connect_()
 
     // gather local target node IDs
     std::vector< index > thread_local_targets;
-    thread_local_targets.reserve( number_of_targets_on_vp[ vp_id ] );
+    thread_local_targets.reserve( number_of_targets_on_vp_[ vp_id ] );
 
-    std::vector< index >::const_iterator tnode_id_it = local_targets.begin();
-    for ( ; tnode_id_it != local_targets.end(); ++tnode_id_it )
+    std::vector< index >::const_iterator tnode_id_it = local_targets_.begin();
+    for ( ; tnode_id_it != local_targets_.end(); ++tnode_id_it )
     {
       if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == vp_id )
       {
@@ -1478,9 +1497,9 @@ nest::FixedTotalNumberBuilder::connect_()
       }
     }
 
-    assert( thread_local_targets.size() == number_of_targets_on_vp[ vp_id ] );
+    assert( thread_local_targets.size() == number_of_targets_on_vp_[ vp_id ] );
 
-    while ( num_conns_on_vp[ vp_id ] > 0 )
+    while ( num_conns_on_vp_[ vp_id ] > 0 )
     {
 
       // draw random numbers for source node from all source neurons
@@ -1501,7 +1520,7 @@ nest::FixedTotalNumberBuilder::connect_()
       if ( allow_autapses_ or snode_id != tnode_id )
       {
         single_connect_( snode_id, *target, target_thread, rng );
-        num_conns_on_vp[ vp_id ]--;
+        num_conns_on_vp_[ vp_id ]--;
       }
     }
   }

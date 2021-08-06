@@ -246,10 +246,15 @@ nest::ConnBuilder::connect()
           synapse_parameter.second->reset();
         }
       }
-
+#pragma omp single
+{
       std::swap( sources_, targets_ );
+}
       connect_();
+#pragma omp single
+{
       std::swap( sources_, targets_ ); // re-establish original state
+}
     }
   }
   // check if any exceptions have been raised
@@ -1402,7 +1407,6 @@ nest::FixedTotalNumberBuilder::connect_()
 #pragma omp single
 {
   const int M = kernel().vp_manager.get_num_virtual_processes();
-  const long size_sources = sources_->size();
   const long size_targets = targets_->size();
 
   // drawing connection ids

@@ -197,7 +197,7 @@ class diffusion_connection_lbl(SynapseModel):
 
 class gap_junction(SynapseModel):
     def __init__(self, **kwargs):
-        super().__init__('gab_junction', **kwargs)
+        super().__init__('gap_junction', **kwargs)
 
 
 class gap_junction_lbl(SynapseModel):

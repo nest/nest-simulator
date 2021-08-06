@@ -234,11 +234,10 @@ print("Excitatory connections")
 
 ###############################################################################
 # Connecting the excitatory population to all neurons using the pre-defined
-# excitatory synapse. Beforehand, the connection parameter are defined in a
-# dictionary. Here we use the connection rule ``fixed_indegree``,
+# excitatory synapse. Here we use the connection rule ``fixed_indegree``,
 # which requires the definition of the indegree. Since the synapse
 # specification is reduced to assigning the pre-defined excitatory synapse it
-# suffices to insert the argument.
+# suffices to insert the previously defined object.
 
 nest.Connect(nest.FixedIndegree(nodes_ex, nodes_ex + nodes_in, indegree=CE, syn_spec=ex_syn))
 

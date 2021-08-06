@@ -168,8 +168,8 @@ in_syn = nest.CopyModel("static_synapse", "inhibitory", {"weight": J_in, "delay"
 # inhibitory neurons using the excitatory synapse. Since the poisson
 # generator is connected to all neurons in the population the default rule
 # (# ``all_to_all``) of ``Connect`` is used. The synaptic properties are inserted
-# via ``syn_spec`` which expects a dictionary when defining multiple variables
-# or a string when simply using a pre-defined synapse.
+# via ``syn_spec`` which expects a SynapseModel class, where parameters can be
+# given when defining the model.
 
 nest.Connect(nest.AllToAll(noise, nodes_ex, syn_spec=ex_syn))
 nest.Connect(nest.AllToAll(noise, nodes_in, syn_spec=ex_syn))
@@ -189,11 +189,10 @@ print("Excitatory connections")
 
 ###############################################################################
 # Connecting the excitatory population to all neurons using the pre-defined
-# excitatory synapse. Beforehand, the connection parameter are defined in a
-# dictionary. Here we use the connection rule ``fixed_indegree``,
+# excitatory synapse. Here we use the connection rule ``fixed_indegree``,
 # which requires the definition of the indegree. Since the synapse
 # specification is reduced to assigning the pre-defined excitatory synapse it
-# suffices to insert a string.
+# suffices to insert the previously defined object.
 
 nest.Connect(nest.FixedIndegree(nodes_ex, nodes_ex + nodes_in, indegree=CE, syn_spec=ex_syn))
 

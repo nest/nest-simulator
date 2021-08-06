@@ -173,38 +173,26 @@ print("Connecting devices")
 # a pre-defined synapse, the name of the customary synapse and an optional
 # parameter dictionary. The parameters defined in the dictionary will be the
 # default parameter for the customary synapse. Here we define one synapse for
-# the excitatory and one for the inhibitory connections giving the
-# previously defined weights and equal delays.
+# the excitatory connections giving the previously defined weights and equal delays.
 
-nest.CopyModel("static_synapse", "excitatory",
-               {"weight": J_ex, "delay": delay})
-nest.CopyModel("static_synapse", "inhibitory",
-               {"weight": J_in, "delay": delay})
+ex_syn = nest.CopyModel("static_synapse", "excitatory", {"weight": J_ex, "delay": delay})
+
 
 ###################################################################################
 # Connecting the previously defined poisson generator to the excitatory and
 # inhibitory neurons using the excitatory synapse. Since the poisson
 # generator is connected to all neurons in the population the default rule
 # (# ``all_to_all``) of ``Connect`` is used. The synaptic properties are
-# pre-defined # in a dictionary and inserted via ``syn_spec``. As synaptic model
-# the pre-defined synapses "excitatory" and "inhibitory" are choosen,
-# thus setting ``weight`` and ``delay``. The receptor type is drawn from a
+# pre-defined and inserted via ``syn_spec``. The receptor type is drawn from a
 # distribution for each connection, which is specified in the synapse
-# properties by assigning a dictionary to the keyword ``receptor_type``,
-# which includes the specification of the distribution and the associated
-# parameter.
+# properties by assigning a ``nest.random`` parameter to the keyword ``receptor_type``.
 
-syn_params_ex = {"model": "excitatory",
-                 "receptor_type": {"distribution": "uniform_int",
-                                   "low": 1, "high": nr_ports}
-                 }
-syn_params_in = {"model": "inhibitory",
-                 "receptor_type": {"distribution": "uniform_int",
-                                   "low": 1, "high": nr_ports}
-                 }
+receptor = nest.random.uniform_int(max=nr_ports - 1) + 1
+syn_params_ex = nest.synapsemodels.static(weight=J_ex, delay=delay, receptor_type=receptor)
+syn_params_in = nest.synapsemodels.static(weight=J_in, delay=delay, receptor_type=receptor)
 
-nest.Connect(noise, nodes_ex, syn_spec=syn_params_ex)
-nest.Connect(noise, nodes_in, syn_spec=syn_params_ex)
+nest.Connect(nest.AllToAll(noise, nodes_ex, syn_spec=syn_params_ex))
+nest.Connect(nest.AllToAll(noise, nodes_in, syn_spec = syn_params_ex))
 
 ###############################################################################
 # Connecting the first ``N_rec`` nodes of the excitatory and inhibitory
@@ -212,8 +200,8 @@ nest.Connect(noise, nodes_in, syn_spec=syn_params_ex)
 # Here the same shortcut for the specification of the synapse as defined
 # above is used.
 
-nest.Connect(nodes_ex[:N_rec], espikes, syn_spec="excitatory")
-nest.Connect(nodes_in[:N_rec], ispikes, syn_spec="excitatory")
+nest.Connect(nest.AllToAll(nodes_ex[:N_rec], espikes, syn_spec=ex_syn))
+nest.Connect(nest.AllToAll(nodes_in[:N_rec], ispikes, syn_spec=ex_syn))
 
 print("Connecting network")
 
@@ -222,12 +210,10 @@ print("Excitatory connections")
 ###############################################################################
 # Connecting the excitatory population to all neurons while distribution the
 # ports. Here we use the previously defined parameter dictionary
-# ``syn_params_ex``. Beforehand, the connection parameter are defined in a
-# dictionary. Here we use the connection rule ``fixed_indegree``,
+# ``syn_params_ex``. Here we use the connection rule ``fixed_indegree``,
 # which requires the definition of the indegree.
 
-conn_params_ex = {'rule': 'fixed_indegree', 'indegree': CE}
-nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_ex, syn_params_ex)
+nest.Connect(nest.FixedIndegree(nodes_ex, nodes_ex + nodes_in, indegree=CE, syn_spec=syn_params_ex))
 
 print("Inhibitory connections")
 
@@ -237,12 +223,12 @@ print("Inhibitory connections")
 # ``syn_params_in``.The connection parameter are defined analogously to the
 # connection from the excitatory population defined above.
 
-conn_params_in = {'rule': 'fixed_indegree', 'indegree': CI}
-nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, syn_params_in)
+nest.Connect(nest.FixedIndegree(nodes_in, nodes_ex + nodes_in, indegree=CI, syn_spec=syn_params_in))
 
 ###############################################################################
 # Storage of the time point after the buildup of the network in a variable.
 
+nest.BuildNetwork()
 endbuild = time.time()
 
 ###############################################################################

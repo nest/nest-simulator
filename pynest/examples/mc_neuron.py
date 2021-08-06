@@ -85,7 +85,7 @@ n = nest.Create('iaf_cond_alpha_mc', params=params)
 # recorded and the time interval at which quantities are measured.
 
 mm = nest.Create('multimeter', params={'record_from': rqs, 'interval': 0.1})
-nest.Connect(mm, n)
+nest.Connect(nest.AllToAll(mm, n))
 
 ###############################################################################
 # We create one current generator per compartment and configure a stimulus
@@ -102,9 +102,9 @@ cgs[2].set(start=50.0, stop=100.0, amplitude=100.0)  # distal
 # Generators are then connected to the correct compartments. Specification of
 # the ``receptor_type`` uniquely defines the target compartment and receptor.
 
-nest.Connect(cgs[0], n, syn_spec={'receptor_type': syns['soma_curr']})
-nest.Connect(cgs[1], n, syn_spec={'receptor_type': syns['proximal_curr']})
-nest.Connect(cgs[2], n, syn_spec={'receptor_type': syns['distal_curr']})
+nest.Connect(nest.AllToAll(cgs[0], n, syn_spec=nest.synapsemodels.static(receptor_type=syns['soma_curr'])))
+nest.Connect(nest.AllToAll(cgs[1], n, syn_spec=nest.synapsemodels.static(receptor_type=syns['proximal_curr'])))
+nest.Connect(nest.AllToAll(cgs[2], n, syn_spec=nest.synapsemodels.static(receptor_type=syns['distal_curr'])))
 
 ###############################################################################
 # We create one excitatory and one inhibitory spike generator per compartment
@@ -123,12 +123,12 @@ sgs[5].spike_times = [410.0, 430.0]  # distal inhibitory
 # Connect generators to correct compartments in the same way as in case of
 # current generator
 
-nest.Connect(sgs[0], n, syn_spec={'receptor_type': syns['soma_exc']})
-nest.Connect(sgs[1], n, syn_spec={'receptor_type': syns['soma_inh']})
-nest.Connect(sgs[2], n, syn_spec={'receptor_type': syns['proximal_exc']})
-nest.Connect(sgs[3], n, syn_spec={'receptor_type': syns['proximal_inh']})
-nest.Connect(sgs[4], n, syn_spec={'receptor_type': syns['distal_exc']})
-nest.Connect(sgs[5], n, syn_spec={'receptor_type': syns['distal_inh']})
+nest.Connect(nest.AllToAll(sgs[0], n, syn_spec=nest.synapsemodels.static(receptor_type=syns['soma_exc'])))
+nest.Connect(nest.AllToAll(sgs[1], n, syn_spec=nest.synapsemodels.static(receptor_type=syns['soma_inh'])))
+nest.Connect(nest.AllToAll(sgs[2], n, syn_spec=nest.synapsemodels.static(receptor_type=syns['proximal_exc'])))
+nest.Connect(nest.AllToAll(sgs[3], n, syn_spec=nest.synapsemodels.static(receptor_type=syns['proximal_inh'])))
+nest.Connect(nest.AllToAll(sgs[4], n, syn_spec=nest.synapsemodels.static(receptor_type=syns['distal_exc'])))
+nest.Connect(nest.AllToAll(sgs[5], n, syn_spec=nest.synapsemodels.static(receptor_type=syns['distal_inh'])))
 
 ###############################################################################
 # Run the simulation for 700 ms.

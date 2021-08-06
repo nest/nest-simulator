@@ -51,15 +51,13 @@ def build_network(sigma, dt):
     D1 = nest.Create('lin_rate_ipn', params=Params)
     D2 = nest.Create('lin_rate_ipn', params=Params)
 
-    nest.Connect(D1, D2, 'all_to_all', {
-        'synapse_model': 'rate_connection_instantaneous', 'weight': -0.2})
-    nest.Connect(D2, D1, 'all_to_all', {
-        'synapse_model': 'rate_connection_instantaneous', 'weight': -0.2})
+    nest.Connect(nest.AllToAll(D1, D2, syn_spec=nest.synapsemodels.rate_connection_instantaneous(weight=-0.2)))
+    nest.Connect(nest.AllToAll(D2, D1, syn_spec=nest.synapsemodels.rate_connection_instantaneous(weight=-0.2)))
 
     mm = nest.Create('multimeter')
     mm.set(interval=dt, record_from=['rate'])
-    nest.Connect(mm, D1, syn_spec={'delay': dt})
-    nest.Connect(mm, D2, syn_spec={'delay': dt})
+    nest.Connect(nest.AllToAll(mm, D1, syn_spec=nest.synapsemodels.static(delay=dt)))
+    nest.Connect(nest.AllToAll(mm, D2, syn_spec=nest.synapsemodels.static(delay=dt)))
 
     return D1, D2, mm
 

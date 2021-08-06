@@ -142,12 +142,10 @@ for trial in [0, 1]:
     nodes_in = nest.Create(neuron_model, NI)
     allnodes = nodes_ex + nodes_in
 
-    nest.Connect(nodes_ex, allnodes,
-                 conn_spec={'rule': 'fixed_indegree', 'indegree': KE},
-                 syn_spec={'weight': J, 'delay': dt})
-    nest.Connect(nodes_in, allnodes,
-                 conn_spec={'rule': 'fixed_indegree', 'indegree': KI},
-                 syn_spec={'weight': -g * J, 'delay': dt})
+    nest.Connect(nest.FixedIndegree(nodes_ex, allnodes, indegree=KE,
+                                    syn_spec=nest.synapsemodels.static(weight=J, delay=dt)))
+    nest.Connect(nest.FixedIndegree(nodes_in, allnodes, indegree=KI,
+                                    syn_spec=nest.synapsemodels.static(weight=-g * J, delay=dt)))
 
     ###############################################################################
     # Afterwards we create a ``poisson_generator`` that provides spikes (the external
@@ -158,18 +156,14 @@ for trial in [0, 1]:
     # The ``fade_out`` period has to last at least twice as long as the simulation
     # resolution to suppress the neurons from firing.
 
-    ext = nest.Create("poisson_generator",
-                      params={'rate': rate_ext, 'stop': T})
-    nest.Connect(ext, allnodes,
-                 syn_spec={'weight': Jext, 'delay': dt})
+    ext = nest.Create("poisson_generator", params={'rate': rate_ext, 'stop': T})
+    nest.Connect(nest.AllToAll(ext, allnodes, syn_spec=nest.synapsemodels.static(weight=Jext, delay=dt)))
 
-    suppr = nest.Create("dc_generator",
-                        params={'amplitude': -1e16, 'start': T,
-                                'stop': T + fade_out})
-    nest.Connect(suppr, allnodes)
+    suppr = nest.Create("dc_generator", params={'amplitude': -1e16, 'start': T, 'stop': T + fade_out})
+    nest.Connect(nest.AllToAll(suppr, allnodes))
 
     spikerecorder = nest.Create("spike_recorder")
-    nest.Connect(allnodes, spikerecorder)
+    nest.Connect(nest.AllToAll(allnodes, spikerecorder))
 
     ###############################################################################
     # We then create the ``spike_generator``, which provides the extra spike
@@ -200,8 +194,8 @@ for trial in [0, 1]:
 
     if trial == 1:
         id_stim = [senders[0][spiketimes[0] > t_stim][0]]
-        nest.Connect(stimulus, nest.NodeCollection(id_stim),
-                     syn_spec={'weight': Jstim, 'delay': dt})
+        nest.Connect(nest.AllToAll(stimulus, nest.NodeCollection(id_stim),
+                                   syn_spec=nest.synapsemodels.static(weight=Jstim, delay=dt)))
         stimulus.spike_times = [t_stim]
 
     # Now we simulate the network and add a fade out period to discard

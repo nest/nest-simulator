@@ -52,7 +52,7 @@ sr = nest.Create('spike_recorder')
 
 sr.record_to = 'memory'
 
-nest.Connect(neuron, sr, syn_spec={'weight': 1.0, 'delay': h})
+nest.Connect(nest.AllToAll(neuron, sr, syn_spec=nest.synapsemodels.static(weight=1.0, delay=h)))
 
 # Simulation loop
 n_data = int(dcto / float(dcstep))

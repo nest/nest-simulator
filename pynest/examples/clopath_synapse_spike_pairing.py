@@ -117,22 +117,20 @@ for s_t_pre, s_t_post in zip(spike_times_pre, spike_times_post):
     # Create and connect spike generators
     spike_gen_pre = nest.Create("spike_generator", {"spike_times": s_t_pre})
 
-    nest.Connect(spike_gen_pre, prrt_nrn,
-                 syn_spec={"delay": resolution})
+    nest.Connect(nest.AllToAll(spike_gen_pre, prrt_nrn, syn_spec=nest.synapsemodels.static(delay=resolution)))
 
     spike_gen_post = nest.Create("spike_generator", {"spike_times": s_t_post})
 
-    nest.Connect(spike_gen_post, nrn, syn_spec={"delay": resolution, "weight": 80.0})
+    nest.Connect(nest.AllToAll(spike_gen_post, nrn, syn_spec=nest.synapsemodels.static(delay=resolution, weight=80.0)))
 
     # Create weight recorder
     wr = nest.Create('weight_recorder')
 
     # Create Clopath connection with weight recorder
-    nest.CopyModel("clopath_synapse", "clopath_synapse_rec",
-                   {"weight_recorder": wr})
-    syn_dict = {"synapse_model": "clopath_synapse_rec",
-                "weight": init_w, "delay": resolution}
-    nest.Connect(prrt_nrn, nrn, syn_spec=syn_dict)
+    nest.CopyModel("clopath_synapse", "clopath_synapse_rec", {"weight_recorder": wr})
+    nest.Connect(nest.AllToAll(prrt_nrn, nrn,
+                               syn_spec=nest.synapsemodels.SynapseModel(synapse_model="clopath_synapse_rec",
+                                                                        weight=init_w, delay=resolution)))
 
     # Simulation
     simulation_time = (10.0 + max(s_t_pre[-1], s_t_post[-1]))

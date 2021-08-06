@@ -144,8 +144,7 @@ siegert_drive = nest.Create('siegert_neuron', params={'mean': p_rate})
 # To record from the rate neurons a multimeter is created and the parameter
 # ``record_from`` is set to `rate` as well as the recording interval to `dt`
 
-multimeter = nest.Create(
-    'multimeter', params={'record_from': ['rate'], 'interval': dt})
+multimeter = nest.Create('multimeter', params={'record_from': ['rate'], 'interval': dt})
 
 ###############################################################################
 # Connections between ``Siegert neurons`` are realized with the synapse model
@@ -156,28 +155,22 @@ multimeter = nest.Create(
 # Connections originating from the driving neuron
 
 
-syn_dict = {'drift_factor': drift_factor_ext,
-            'diffusion_factor': diffusion_factor_ext,
-            'synapse_model': 'diffusion_connection'}
+syn_spec = nest.synapsemodels.diffusion_connection(drift_factor=drift_factor_ext, diffusion_factor=diffusion_factor_ext)
 
-nest.Connect(
-    siegert_drive, siegert_ex + siegert_in, 'all_to_all', syn_dict)
-nest.Connect(multimeter, siegert_ex + siegert_in)
+nest.Connect(nest.AllToAll(siegert_drive, siegert_ex + siegert_in, syn_spec=syn_spec))
+nest.Connect(nest.AllToAll(multimeter, siegert_ex + siegert_in))
 
 ###############################################################################
 # Connections originating from the excitatory neuron
 
-
-syn_dict = {'drift_factor': drift_factor_ex, 'diffusion_factor':
-            diffusion_factor_ex, 'synapse_model': 'diffusion_connection'}
-nest.Connect(siegert_ex, siegert_ex + siegert_in, 'all_to_all', syn_dict)
+syn_spec = nest.synapsemodels.diffusion_connection(drift_factor=drift_factor_ex, diffusion_factor=diffusion_factor_ex)
+nest.Connect(nest.AllToAll(siegert_ex, siegert_ex + siegert_in, syn_spec=syn_spec))
 
 ###############################################################################
 # Connections originating from the inhibitory neuron
 
-syn_dict = {'drift_factor': drift_factor_in, 'diffusion_factor':
-            diffusion_factor_in, 'synapse_model': 'diffusion_connection'}
-nest.Connect(siegert_in, siegert_ex + siegert_in, 'all_to_all', syn_dict)
+syn_spec = nest.synapsemodels.diffusion_connection(drift_factor=drift_factor_in, diffusion_factor=diffusion_factor_in)
+nest.Connect(nest.AllToAll(siegert_in, siegert_ex + siegert_in, syn_spec=syn_spec))
 
 ###############################################################################
 # Simulate the network

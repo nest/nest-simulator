@@ -94,9 +94,9 @@ for h in resolutions:
         dc = nest.Create("dc_generator", params={"amplitude": stim_current})
         sr = nest.Create("spike_recorder")
 
-        nest.Connect(voltmeter, neuron)
-        nest.Connect(dc, neuron)
-        nest.Connect(neuron, sr)
+        nest.Connect(nest.AllToAll(voltmeter, neuron))
+        nest.Connect(nest.AllToAll(dc, neuron))
+        nest.Connect(nest.AllToAll(neuron, sr))
 
         nest.Simulate(simtime)
 

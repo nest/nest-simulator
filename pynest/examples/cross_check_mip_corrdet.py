@@ -90,13 +90,13 @@ sr = nest.Create('spike_recorder', params={'time_in_steps': True})
 pn1 = nest.Create('parrot_neuron')
 pn2 = nest.Create('parrot_neuron')
 
-nest.Connect(mg, pn1)
-nest.Connect(mg, pn2)
-nest.Connect(pn1, sr)
-nest.Connect(pn2, sr)
+nest.Connect(nest.AllToAll(mg, pn1))
+nest.Connect(nest.AllToAll(mg, pn2))
+nest.Connect(nest.AllToAll(pn1, sr))
+nest.Connect(nest.AllToAll(pn2, sr))
 
-nest.Connect(pn1, cd, syn_spec={'weight': 1.0, 'receptor_type': 0})
-nest.Connect(pn2, cd, syn_spec={'weight': 1.0, 'receptor_type': 1})
+nest.Connect(nest.AllToAll(pn1, cd, syn_spec=nest.synapsemodels.static(weight=1.0, receptor_type=0)))
+nest.Connect(nest.AllToAll(pn2, cd, syn_spec=nest.synapsemodels.static(weight=1.0, receptor_type=1)))
 
 nest.Simulate(T)
 

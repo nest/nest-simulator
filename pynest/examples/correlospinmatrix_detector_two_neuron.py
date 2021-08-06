@@ -53,10 +53,10 @@ n1.set(theta=0.0, tau_m=tau_m, c_1=0.0, c_2=2. * m_x, c_3=1.0)
 n2 = nest.Create("mcculloch_pitts_neuron")
 n2.set(theta=0.5, tau_m=tau_m)
 
-nest.Connect(n1, n2, syn_spec={"weight": 1.0})
+nest.Connect(nest.AllToAll(n1, n2, syn_spec=nest.synapsemodels.static(weight=1.0)))
 
-nest.Connect(n1, csd, syn_spec={"receptor_type": 0})
-nest.Connect(n2, csd, syn_spec={"receptor_type": 1})
+nest.Connect(nest.AllToAll(n1, csd, syn_spec=nest.synapsemodels.static(receptor_type=0)))
+nest.Connect(nest.AllToAll(n2, csd, syn_spec=nest.synapsemodels.static(receptor_type=1)))
 
 nest.Simulate(T)
 

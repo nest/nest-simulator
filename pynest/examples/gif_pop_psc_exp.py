@@ -154,9 +154,9 @@ g_syn[:, 0] = C_m / tau_ex
 g_syn[:, 1] = C_m / tau_in
 for i in range(M):
     for j in range(M):
-        nest.Connect(nest_pops[j], nest_pops[i],
-                     syn_spec={'weight': J_syn[i, j] * g_syn[i, j] * pconn[i, j],
-                               'delay': delay[i, j]})
+        nest.Connect(nest.AllToAll(nest_pops[j], nest_pops[i],
+                     syn_spec=nest.synapsemodels.static(weight=J_syn[i, j] * g_syn[i, j] * pconn[i, j],
+                                                        delay=delay[i, j])))
 
 ###############################################################################
 # To record the instantaneous population rate `Abar(t)` we use a multimeter,
@@ -165,14 +165,14 @@ for i in range(M):
 # monitor the output using a multimeter, this only records with dt_rec!
 nest_mm = nest.Create('multimeter')
 nest_mm.set(record_from=['n_events', 'mean'], interval=dt_rec)
-nest.Connect(nest_mm, nest_pops)
+nest.Connect(nest.AllToAll(nest_mm, nest_pops))
 
 # monitor the output using a spike recorder
 nest_sr = []
 for i in range(M):
     nest_sr.append(nest.Create('spike_recorder'))
     nest_sr[i].time_in_steps = True
-    nest.Connect(nest_pops[i], nest_sr[i], syn_spec={'weight': 1., 'delay': dt})
+    nest.Connect(nest.AllToAll(nest_pops[i], nest_sr[i], syn_spec=nest.synapsemodels.static(weight=1., delay=dt)))
 
 ###############################################################################
 # All neurons in a given population will be stimulated with a step input
@@ -191,7 +191,7 @@ for i in range(M):
                             origin=t0,
                             stop=t_end)
     pop_ = nest_pops[i]
-    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1., 'delay': dt})
+    nest.Connect(nest.AllToAll(nest_stepcurrent[i], pop_, syn_spec=nest.synapsemodels.static(weight=1., delay=dt)))
 
 ###############################################################################
 # We can now start the simulation:
@@ -273,15 +273,13 @@ for i in range(M):
 for i, nest_i in enumerate(nest_pops):
     for j, nest_j in enumerate(nest_pops):
         if np.allclose(pconn[i, j], 1.):
-            conn_spec = {'rule': 'all_to_all'}
+            nest.Connect(nest.AllToAll(nest_j, nest_i,
+                                       syn_spec=nest.synapsemodels.static(weight=J_syn[i, j] * g_syn[i, j],
+                                                                          delay=delay[i, j])))
         else:
-            conn_spec = {
-                'rule': 'fixed_indegree', 'indegree': int(pconn[i, j] * N[j])}
-
-        nest.Connect(nest_j, nest_i,
-                     conn_spec,
-                     syn_spec={'weight': J_syn[i, j] * g_syn[i, j],
-                               'delay': delay[i, j]})
+            nest.Connect(nest.FixedIndegree(nest_j, nest_i, indegree=int(pconn[i, j] * N[j]),
+                                            syn_spec=nest.synapsemodels.static(weight=J_syn[i, j] * g_syn[i, j],
+                                                                               delay=delay[i, j])))
 
 ###############################################################################
 # We want to record all spikes of each population in order to compute the
@@ -295,7 +293,7 @@ for i, nest_i in enumerate(nest_pops):
     nest_sr[i].time_in_steps = True
 
     # record all spikes from population to compute population activity
-    nest.Connect(nest_i, nest_sr[i], syn_spec={'weight': 1., 'delay': dt})
+    nest.Connect(nest.AllToAll(nest_i, nest_sr[i], syn_spec=nest.synapsemodels.static(weight=1., delay=dt)))
 
 Nrecord = [5, 0]    # for each population "i" the first Nrecord[i] neurons are recorded
 nest_mm_Vm = []
@@ -303,7 +301,8 @@ for i, nest_i in enumerate(nest_pops):
     nest_mm_Vm.append(nest.Create('multimeter'))
     nest_mm_Vm[i].set(record_from=['V_m'], interval=dt_rec)
     if Nrecord[i] != 0:
-        nest.Connect(nest_mm_Vm[i], nest_i[:Nrecord[i]], syn_spec={'weight': 1., 'delay': dt})
+        nest.Connect(nest.AllToAll(nest_mm_Vm[i], nest_i[:Nrecord[i]],
+                                   syn_spec=nest.synapsemodels.static(weight=1., delay=dt)))
 
 ###############################################################################
 # As before, all neurons in a given population will be stimulated with a
@@ -324,7 +323,7 @@ for i in range(M):
                             stop=t_end)
     # optionally a stopping time may be added by: 'stop': sim_T + t0
     pop_ = nest_pops[i]
-    nest.Connect(nest_stepcurrent[i], pop_, syn_spec={'weight': 1., 'delay': dt})
+    nest.Connect(nest.AllToAll(nest_stepcurrent[i], pop_, syn_spec=nest.synapsemodels.static(weight=1., delay=dt)))
 
 ###############################################################################
 # We can now start the microscopic simulation:

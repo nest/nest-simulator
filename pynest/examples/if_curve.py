@@ -96,8 +96,8 @@ class IF_curve():
         # We connect the noisy current to the neurons and the neurons to
         # the spike recorders.
 
-        nest.Connect(self.noise, self.neuron, 'all_to_all')
-        nest.Connect(self.neuron, self.spike_recorder, 'all_to_all')
+        nest.Connect(nest.AllToAll(self.noise, self.neuron))
+        nest.Connect(nest.AllToAll(self.neuron, self.spike_recorder))
 
     def output_rate(self, mean, std):
         self.build()

@@ -71,8 +71,7 @@ class TestAllToAll(TestParams):
             hf.mpi_assert(M_nest, self.param_array, self)
 
     def testInputArrayWithoutAutapses(self):
-        conn_params = self.conn_dict.clone()
-        conn_params.allow_autapses = False
+        conn_params = hf.nest.AllToAll(source=None, target=None, allow_autapses=False)
         syn_params = {}
         for label in ['weight', 'delay']:
             syn_params = {}
@@ -91,7 +90,6 @@ class TestAllToAll(TestParams):
             hf.mpi_assert(M_nest, self.param_array, self)
 
     def testInputArrayRPort(self):
-        conn_params = self.conn_dict.clone()
         syn_params = {}
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1 + i for i in range(self.N2)]}
@@ -100,9 +98,8 @@ class TestAllToAll(TestParams):
         self.param_array = np.transpose(np.asarray(
             [np.arange(1, self.N2 + 1) for i in range(self.N1)]))
         syn_params['receptor_type'] = self.param_array
-        conn_params.syn_spec = hf.nest.synapsemodels.static(**syn_params)
-        conn_params.source = self.pop1
-        conn_params.target = self.pop2
+        conn_params = hf.nest.AllToAll(source=self.pop1, target=self.pop2,
+                                       syn_spec=hf.nest.synapsemodels.static(**syn_params))
         hf.nest.Connect(conn_params)
 
         M = hf.get_weighted_connectivity_matrix(self.pop1, self.pop2, 'receptor')
@@ -117,8 +114,8 @@ class TestAllToAll(TestParams):
         syn_params = {}
         for i, param in enumerate(params):
             syn_params[param] = values[i]
-        conn_params = self.conn_dict.clone()
-        conn_params.syn_spec = hf.nest.synapsemodels.stdp(**syn_params)
+        conn_params = hf.nest.AllToAll(source=None, target=None,
+                                       syn_spec=hf.nest.synapsemodels.stdp(**syn_params))
         self.setUpNetwork(conn_params)
         for i, param in enumerate(params):
             a = hf.get_weighted_connectivity_matrix(
@@ -136,10 +133,9 @@ class TestAllToAll(TestParams):
         self.pop2 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
         syn_params = {}
         syn_params['receptor_type'] = 1 + hf.nest.random.uniform_int(n_rport)
-        conn_params = self.conn_dict.clone()
-        conn_params.syn_spec = hf.nest.synapsemodels.static(**syn_params)
-        conn_params.source = self.pop1
-        conn_params.target = self.pop2
+        
+        conn_params = hf.nest.AllToAll(source=self.pop1, target=self.pop2,
+                                       syn_spec=hf.nest.synapsemodels.static(**syn_params))
         hf.nest.Connect(conn_params)
         M = hf.get_weighted_connectivity_matrix(
             self.pop1, self.pop2, 'receptor')

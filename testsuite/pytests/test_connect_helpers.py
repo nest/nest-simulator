@@ -144,8 +144,9 @@ def get_weighted_connectivity_matrix(pop1, pop2, label):
 def check_synapse(params, values, syn_params, TestCase):
     for i, param in enumerate(params):
         syn_params.__setattr__(param, values[i])
-    TestCase.conn_dict.syn_spec = syn_params
-    TestCase.setUpNetwork(TestCase.conn_dict)
+    conn_spec = TestCase.conn_dict.clone()
+    conn_spec.syn_spec = syn_params
+    TestCase.setUpNetwork(conn_spec)
     for i, param in enumerate(params):
         conns = nest.GetConnections(TestCase.pop1, TestCase.pop2)
         conn_params = conns.get(param)

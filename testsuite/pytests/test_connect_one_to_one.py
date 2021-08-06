@@ -46,8 +46,7 @@ class TestOneToOne(TestParams):
         hf.mpi_assert(M, np.zeros((self.N, self.N)), self)
 
     def testSymmetricFlag(self):
-        conn_dict_symmetric = hf.nest.OneToOne(source=None, target=None)
-        conn_dict_symmetric.make_symmetric = True
+        conn_dict_symmetric = hf.nest.OneToOne(source=None, target=None, make_symmetric=True)
         self.setUpNetwork(conn_dict_symmetric)
         M1 = hf.get_connectivity_matrix(self.pop1, self.pop2)
         M2 = hf.get_connectivity_matrix(self.pop2, self.pop1)
@@ -65,8 +64,9 @@ class TestOneToOne(TestParams):
                 self.param_array = np.arange(1, self.N_array + 1) * 0.1
             syn_params[label] = self.param_array
             hf.nest.ResetKernel()
-            self.conn_dict.syn_spec = hf.nest.synapsemodels.static(**syn_params)
-            self.setUpNetwork(self.conn_dict, N1=self.N_array, N2=self.N_array)
+            conn_spec = hf.nest.OneToOne(source=None, target=None, syn_spec=hf.nest.synapsemodels.static(**syn_params))
+            
+            self.setUpNetwork(conn_spec, N1=self.N_array, N2=self.N_array)
             M_nest = hf.get_weighted_connectivity_matrix(
                 self.pop1, self.pop2, label)
             hf.mpi_assert(M_nest, np.diag(self.param_array), self)
@@ -79,10 +79,9 @@ class TestOneToOne(TestParams):
         self.pop2 = hf.nest.Create(neuron_model, self.N1, neuron_dict)
         self.param_array = np.arange(1, self.N1 + 1, dtype=int)
         syn_params.receptor_type = self.param_array
-        self.conn_dict.syn_spec = syn_params
-        self.conn_dict.source = self.pop1
-        self.conn_dict.target = self.pop2
-        hf.nest.Connect(self.conn_dict)
+        conn_spec = hf.nest.OneToOne(source=self.pop1, target=self.pop2, syn_spec=syn_params)
+
+        hf.nest.Connect(conn_spec)
         M = hf.get_weighted_connectivity_matrix(
             self.pop1, self.pop2, 'receptor')
         hf.mpi_assert(M, np.diag(self.param_array), self)
@@ -93,8 +92,9 @@ class TestOneToOne(TestParams):
         values = [np.arange(self.N1, dtype=float) for i in range(6)]
         for i, param in enumerate(params):
             syn_params[param] = values[i]
-        self.conn_dict.syn_spec = hf.nest.synapsemodels.stdp(**syn_params)
-        self.setUpNetwork(self.conn_dict)
+        syn_spec = hf.nest.synapsemodels.stdp(**syn_params)
+        conn_params = hf.nest.OneToOne(source=None, target=None, syn_spec=syn_spec)
+        self.setUpNetwork(conn_params)
         for i, param in enumerate(params):
             a = hf.get_weighted_connectivity_matrix(
                 self.pop1, self.pop2, param)

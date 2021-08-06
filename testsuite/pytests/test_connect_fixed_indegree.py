@@ -48,22 +48,17 @@ class TestFixedInDegree(TestParams):
     # tested on each mpi process separately
     def testErrorMessages(self):
         got_error = False
-        conn_params = self.conn_dict.clone()
-        conn_params.allow_autapses = True
-        conn_params.allow_multapses = False
-        conn_params.indegree = self.N1 + 1
+        conn_params = hf.nest.FixedIndegree(source=None, target=None, indegree=self.N1 + 1,
+                                            allow_autapses=True, allow_multapses=False)
         try:
             self.setUpNetwork(conn_params)
         except hf.nest.kernel.NESTError:
             got_error = True
-        conn_params.indegree = self.Nin
         self.assertTrue(got_error)
 
     def testInDegree(self):
-        conn_params = self.conn_dict.clone()
-        conn_params.allow_autapses = False
-        conn_params.allow_multapses = False
-        conn_params.indegree = self.Nin
+        conn_params = hf.nest.FixedIndegree(source=None, target=None, indegree=self.Nin,
+                                            allow_autapses=False, allow_multapses=False)
         self.setUpNetwork(conn_params)
         # make sure the indegree is right
         M = hf.get_connectivity_matrix(self.pop1, self.pop2)
@@ -76,10 +71,8 @@ class TestFixedInDegree(TestParams):
         hf.mpi_assert(M, M_none, self)
 
     def testStatistics(self):
-        conn_params = self.conn_dict.clone()
-        conn_params.allow_autapses = True
-        conn_params.allow_multapses = True
-        conn_params.indegree = self.C
+        conn_params = hf.nest.FixedIndegree(source=None, target=None, indegree=self.C,
+                                            allow_autapses=True, allow_multapses=True)
         expected = hf.get_expected_degrees_fixedDegrees(
             self.C, 'in', self.N_s, self.N_t)
         pvalues = []
@@ -97,63 +90,47 @@ class TestFixedInDegree(TestParams):
             self.assertGreater(p, self.stat_dict['alpha2'])
 
     def testAutapsesTrue(self):
-        conn_params = self.conn_dict.clone()
         N = 10
-        conn_params.allow_multapses = False
 
         # test that autapses exist
-        conn_params.indegree = N
-        conn_params.allow_autapses = True
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.FixedIndegree(source=pop, target=pop, indegree=N,
+                                            allow_autapses=True, allow_multapses=False)
         hf.nest.Connect(conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.ones(N), self)
 
     def testAutapsesFalse(self):
-        conn_params = self.conn_dict.clone()
         N = 10
-        conn_params.allow_multapses = False
 
         # test that autapses were excluded
-        conn_params.indegree = N - 1
-        conn_params.allow_autapses = False
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.FixedIndegree(source=pop, target=pop, indegree=N - 1,
+                                            allow_autapses=False, allow_multapses=False)
         hf.nest.Connect(conn_params)
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.zeros(N), self)
 
     def testMultapsesTrue(self):
-        conn_params = self.conn_dict.clone()
         N = 3
-        conn_params.allow_autapses = True
 
         # test that multapses were drawn
-        conn_params.indegree = N + 1
-        conn_params.allow_multapses = True
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.FixedIndegree(source=pop, target=pop, indegree=N + 1,
+                                            allow_autapses=True, allow_multapses=True)
         hf.nest.Connect(conn_params)
         nr_conns = len(hf.nest.GetConnections(pop, pop))
         hf.mpi_assert(nr_conns, conn_params.indegree * N, self)
 
     def testMultapsesFalse(self):
-        conn_params = self.conn_dict.clone()
         N = 3
-        conn_params.allow_autapses = True
 
         # test that no multapses exist
-        conn_params.indegree = N
-        conn_params.allow_multapses = False
         pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params.source = pop
-        conn_params.target = pop
+        conn_params = hf.nest.FixedIndegree(source=pop, target=pop, indegree=N,
+                                            allow_autapses=True, allow_multapses=False)
         hf.nest.Connect(conn_params)
         M = hf.get_connectivity_matrix(pop, pop)
         M = hf.gather_data(M)

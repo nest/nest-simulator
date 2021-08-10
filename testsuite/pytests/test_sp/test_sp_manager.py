@@ -91,12 +91,11 @@ class TestStructuralPlasticityManager(unittest.TestCase):
         via GetKernelStatus.
         """
         neuron_model = 'iaf_psc_alpha'
-        nest.CopyModel('static_synapse', 'synapse_ex')
-        nest.SetDefaults('synapse_ex', {'weight': 1.0, 'delay': 1.0})
+        new_syn = nest.CopyModel('static_synapse', weight=1.0, delay=1.0)
         nest.SetKernelStatus({
             'structural_plasticity_synapses': {
-                'synapse_ex': {
-                    'synapse_model': 'synapse_ex',
+                new_syn.synapse_model: {
+                    'synapse_model': new_syn.synapse_model,
                     'post_synaptic_element': 'Den_ex',
                     'pre_synaptic_element': 'Axon_ex',
                 },

@@ -132,7 +132,6 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         syns = nest.GetDefaults(nrn_model)['receptor_types']
         init_w = 100.0
         syn_params = {
-            'synapse_model': 'urbanczik_synapse_wr',
             'receptor_type': syns['dendritic_exc'],
             'tau_Delta': 100.0,  # time constant of low pass filtering of the weight change
             'eta': 0.75,         # learning rate
@@ -176,9 +175,9 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         create connections
         '''
         nest.Connect(nest.AllToAll(sg_prox, prrt_nrn, syn_spec=nest.synapsemodels.static(delay=resolution)))
-        nest.CopyModel('urbanczik_synapse', 'urbanczik_synapse_wr',
-                       {'weight_recorder': wr[0]})
-        nest.Connect(nest.AllToAll(prrt_nrn, nrn, syn_spec=nest.synapsemodels.SynapseModel(**syn_params)))
+        urbanczik_synapse = nest.CopyModel('urbanczik_synapse', weight_recorder=wr[0])
+        urbanczik_synapse.specs = syn_params
+        nest.Connect(nest.AllToAll(prrt_nrn, nrn, syn_spec=urbanczik_synapse))
         nest.Connect(nest.AllToAll(sg_soma_exc, nrn,
                                    syn_spec=nest.synapsemodels.static(receptor_type=syns['soma_exc'],
                                                                       weight=10.0*resolution,

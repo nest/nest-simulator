@@ -238,8 +238,8 @@ def simulate(parameters):
     espikes = nest.Create('spike_recorder', params={'label': 'brunel-py-ex'})
     ispikes = nest.Create('spike_recorder', params={'label': 'brunel-py-in'})
 
-    ex_syn = nest.CopyModel('static_synapse', 'excitatory', {'weight': J_ex, 'delay': parameters['delay']})
-    in_syn = nest.CopyModel('static_synapse', 'inhibitory', {'weight': J_in, 'delay': parameters['delay']})
+    ex_syn = nest.synapsemodels.static(weight=J_ex, delay=parameters['delay'])
+    in_syn = nest.synapsemodels.static(weight=J_in, delay=parameters['delay'])
 
     nest.Connect(nest.AllToAll(noise, nodes_ex, syn_spec=ex_syn))
     nest.Connect(nest.AllToAll(noise, nodes_in, syn_spec=ex_syn))
@@ -250,11 +250,10 @@ def simulate(parameters):
     if parameters['N_rec'] > NI:
         raise ValueError(
             f'Requested recording from {parameters["N_rec"]} neurons, but only {NI} in inhibitory population')
+
     nest.Connect(nest.AllToAll(nodes_ex[:parameters['N_rec']], espikes))
     nest.Connect(nest.AllToAll(nodes_in[:parameters['N_rec']], ispikes))
-
     nest.Connect(nest.FixedIndegree(nodes_ex, nodes_ex + nodes_in, indegree=CE, syn_spec=ex_syn))
-
     nest.Connect(nest.FixedIndegree(nodes_in, nodes_ex + nodes_in, indegree=CI, syn_spec=in_syn))
 
     nest.Simulate(parameters['sim_time'])

@@ -126,15 +126,15 @@ class TestParams(unittest.TestCase):
         self.assertTrue(ports[0] == rtype)
 
     def testSynapseSetting(self):
-        test_syn = hf.nest.CopyModel("static_synapse", 'test_syn', {'receptor_type': 0})
-        syn_params = {'synapse_model': 'test_syn'}
+        test_syn = hf.nest.CopyModel("static_synapse", receptor_type=0)
+        syn_model = test_syn.synapse_model
         conn_params = self.conn_dict.clone()
         conn_params.syn_spec = test_syn
         self.setUpNetwork(conn_params)
         conns = hf.nest.GetConnections(self.pop1, self.pop2)
         syns = conns.get('synapse_model')
         self.assertTrue(hf.all_equal(syns))
-        self.assertTrue(syns[0] == syn_params['synapse_model'])
+        self.assertTrue(syns[0] == syn_model)
 
     # tested on each mpi process separatly
     def testDefaultParams(self):

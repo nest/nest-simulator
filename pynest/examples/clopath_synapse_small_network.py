@@ -105,10 +105,8 @@ syn_dict_input_to_inh = nest.synapsemodels.static(weight=nest.random.uniform(0.0
 nest.Connect(nest.AllToAll(pop_input, pop_inh, syn_spec=syn_dict_input_to_inh))
 
 # Create exc->exc connections
-nest.CopyModel('clopath_synapse', 'clopath_exc_to_exc',
-               {'Wmax': 0.75, 'weight_recorder': wr, 'weight': 0.25, 'delay': delay})
-nest.Connect(nest.AllToAll(pop_exc, pop_exc, allow_autapses=False,
-                           syn_spec=nest.synapsemodels.SynapseModel(synapse_model='clopath_exc_to_exc')))
+clopath_exc_to_exc = nest.CopyModel('clopath_synapse', Wmax=0.75, weight_recorder=wr, weight=0.25, delay=delay)
+nest.Connect(nest.AllToAll(pop_exc, pop_exc, allow_autapses=False, syn_spec=clopath_exc_to_exc))
 
 # Create exc->inh connections
 syn_dict_exc_to_inh = nest.synapsemodels.static(weight=1.0, delay=delay)

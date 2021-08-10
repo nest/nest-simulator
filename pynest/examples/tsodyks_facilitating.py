@@ -135,7 +135,6 @@ nest.Connect(nest.AllToAll(volts, neurons[1]))
 # neuron (`neurons[1]`).  The command ``tsodyks(**syn_param)`` created the
 # ``tsodyks_synapse`` model with parameters ``syn_param``.
 
-nest.CopyModel("tsodyks_synapse", "syn", syn_param)
 nest.Connect(nest.AllToAll(neurons[0], neurons[1], syn_spec=nest.synapsemodels.tsodyks(**syn_param)))
 
 ###############################################################################

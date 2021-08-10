@@ -162,12 +162,9 @@ class ClopathSynapseTestCase(unittest.TestCase):
                 wr = nest.Create('weight_recorder', 1)
 
                 # Create Clopath synapse with weight recorder
-                nest.CopyModel("clopath_synapse", "clopath_synapse_rec",
-                               {"weight_recorder": wr})
-
-                syn_dict = {"synapse_model": "clopath_synapse_rec",
-                            "weight": init_w, "delay": resolution}
-                nest.Connect(prrt_nrn, nrn, syn_spec=syn_dict)
+                clopath_syn = nest.CopyModel("clopath_synapse", weight_recorder=wr)
+                clopath_syn.specs = {"weight": init_w, "delay": resolution}
+                nest.Connect(nest.AllToAll(prrt_nrn, nrn, syn_spec=clopath_syn))
 
                 # Simulation
                 simulation_time = (10.0 + max(s_t_pre[-1], s_t_post[-1]))

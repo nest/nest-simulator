@@ -190,13 +190,11 @@ class TestDisconnect(unittest.TestCase):
         for syn_model in nest.Models('synapses'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
-                new_syn = nest.CopyModel('static_synapse', 'my_static_synapse')
+                new_syn = nest.CopyModel('static_synapse')
                 syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn_model,
                                                            pre_synaptic_element='SE1',
                                                            post_synaptic_element='SE2')
-                # nest.SetKernelStatus(
-                #   {'structural_plasticity_synapses': {'syn1': syn_dict}}
-                # )
+
                 neurons = nest.Create('iaf_psc_alpha', 2, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},

@@ -198,15 +198,13 @@ ispikes.set(label="brunel-py-in", record_to="ascii")
 print("Connecting devices")
 
 ###############################################################################
-# Definition of a synapse using ``CopyModel``, which expects the model name of
-# a pre-defined synapse, the name of the customary synapse and an optional
-# parameter dictionary. The parameters defined in the dictionary will be the
-# default parameter for the customary synapse. Here we define one synapse for
+# Definition of a synapse using ``nest.synapsemodels.static``, which defines
+# a static synapse with the given parameters. Here we define one synapse for
 # the excitatory and one for the inhibitory connections giving the
 # previously defined weights and equal delays.
 
-ex_syn = nest.CopyModel("static_synapse", "excitatory", {"weight": J_ex, "delay": delay})
-in_syn = nest.CopyModel("static_synapse", "inhibitory", {"weight": J_in, "delay": delay})
+ex_syn = nest.synapsemodels.static(weight=J_ex, delay=delay)
+in_syn = nest.synapsemodels.static(weight=J_in, delay=delay)
 
 #################################################################################
 # Connecting the previously defined poisson generator to the excitatory and
@@ -291,8 +289,8 @@ rate_in = events_in / simtime * 1000.0 / N_rec
 # inhibitory synapse model. The numbers are summed up resulting in the total
 # number of synapses.
 
-num_synapses = (nest.GetDefaults("excitatory")["num_connections"] +
-                nest.GetDefaults("inhibitory")["num_connections"])
+num_synapses = (nest.GetDefaults(ex_syn.synapse_model)["num_connections"] +
+                nest.GetDefaults(in_syn.synapse_model)["num_connections"])
 
 ###############################################################################
 # Establishing the time it took to build and simulate the network by taking

@@ -23,6 +23,8 @@
 Functions for model handling
 """
 
+import numpy
+
 from ..ll_api import *
 from .hl_api_helper import *
 from .hl_api_types import to_json
@@ -190,28 +192,35 @@ def GetDefaults(model, keys=None, output=''):
 
 
 @check_stack
-def CopyModel(existing, new, params=None):
+def CopyModel(existing, new=None, **kwargs):
     """Create a new model by copying an existing one.
 
     Parameters
     ----------
     existing : str
         Name of existing model
-    new : str
-        Name of the copied model
-    params : dict, optional
+    new : str, optional
+        Name of the copied model. Must be defined if model is a neuron model.
+    kwargs : optional
         Default parameters assigned to the copy. Not provided parameters are
         taken from the existing model.
 
     """
 
     model_deprecation_warning(existing)
+    synapse_model = existing in Models(mtype="synapses")
+    
+    if synapse_model:
+        rand_data = numpy.random.randint(1000)
+        new = f"{existing}_{rand_data}"
+    elif new is None:
+        raise ValueError("'new' must be defined if 'existing' is not a synapse model.")
 
-    if params is not None:
-        sps(params)
+    if kwargs:
+        sps(kwargs)
         sr("/%s /%s 3 2 roll CopyModel" % (existing, new))
     else:
         sr("/%s /%s CopyModel" % (existing, new))
 
-    if existing in Models(mtype="synapses"):
-        return copy_synapse_class(new, params)
+    if synapse_model:
+        return copy_synapse_class(new)

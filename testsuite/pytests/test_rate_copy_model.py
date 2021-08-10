@@ -63,7 +63,7 @@ class RateCopyModelTestCase(unittest.TestCase):
                 'interval': dt})
 
         # create new connection
-        rate_new = nest.CopyModel('rate_connection_instantaneous', 'rate_connection_new', {'weight': weight})
+        rate_new = nest.CopyModel('rate_connection_instantaneous', weight=weight)
 
         # record rates and connect neurons
         neurons = rate_neuron_1 + rate_neuron_2

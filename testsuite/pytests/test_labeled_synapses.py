@@ -201,12 +201,6 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             with self.assertRaises(nest.kernel.NESTError):
                 nest.SetDefaults(syn, {'synapse_label': 123})
 
-            # try set on connect
-            with self.assertRaises(nest.kernel.NESTError):
-                syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn, synapse_label=123, receptor_type=r_type)
-                nest.Connect(nest.OneToOne(a, a, make_symmetric=symm, syn_spec=syn_spec))
-                nest.BuildNetwork()
-
             # plain connection
             syn_spec_no_label = nest.synapsemodels.SynapseModel(synapse_model=syn, receptor_type=r_type)
             nest.Connect(nest.OneToOne(a, a, make_symmetric=symm, syn_spec=syn_spec_no_label))
@@ -216,6 +210,12 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
             with self.assertRaises(nest.kernel.NESTError):
                 c.set({'synapse_label': 123})
+
+            # try set on connect
+            with self.assertRaises(nest.kernel.NESTError):
+                syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn, synapse_label=123, receptor_type=r_type)
+                nest.Connect(nest.OneToOne(a, a, make_symmetric=symm, syn_spec=syn_spec))
+                nest.BuildNetwork()
 
 
 def suite():

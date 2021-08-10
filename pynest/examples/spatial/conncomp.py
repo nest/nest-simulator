@@ -51,13 +51,10 @@ a_in = nest.Create('in', positions=pos)
 b_pyr = nest.Create('pyr', positions=pos)
 b_in = nest.Create('in', positions=pos)
 
-nest.Connect(a_pyr, b_pyr, {'rule': 'pairwise_bernoulli',
-                            'p': 0.5,
-                            'mask': {'circular': {'radius': 0.5}}})
+nest.Connect(nest.PairwiseBernoulli(a_pyr, b_pyr, p=0.5, mask={'circular': {'radius': 0.5}}))
 
-nest.Connect(a_pyr, b_in, {'rule': 'pairwise_bernoulli',
-                           'p': 0.2,
-                           'mask': {'circular': {'radius': 1.}}})
+nest.Connect(nest.PairwiseBernoulli(a_pyr, b_in, p=0.2, mask={'circular': {'radius': 1.}}))
+nest.BuildNetwork()
 
 plt.clf()
 

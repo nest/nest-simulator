@@ -45,13 +45,12 @@ ax = fig.add_subplot(111, projection='3d')
 ax.scatter(xpos, ypos, zpos, s=15, facecolor='b')
 
 # Exponential connections in full box volume [-0.75,0.75]**3
-nest.Connect(l1, l1,
-             {'rule': 'pairwise_bernoulli',
-              'p': nest.spatial_distributions.exponential(nest.spatial.distance,
-                                                          beta=0.25),
-              'allow_autapses': False,
-              'mask': {'box': {'lower_left': [-0.75, -0.75, -0.75],
-                               'upper_right': [0.75, 0.75, 0.75]}}})
+nest.Connect(nest.PairwiseBernoulli(l1, l1,
+                                    p=nest.spatial_distributions.exponential(nest.spatial.distance, beta=0.25),
+                                    allow_autapses=False,
+                                    mask={'box': {'lower_left': [-0.75, -0.75, -0.75],
+                                                  'upper_right': [0.75, 0.75, 0.75]}}))
+nest.BuildNetwork()
 
 # show connections from center element
 # sender shown in red, targets in green

@@ -42,13 +42,11 @@ pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.], edge_wrap=True)
 a = nest.Create('iaf_psc_alpha', positions=pos)
 b = nest.Create('iaf_psc_alpha', positions=pos)
 
-nest.Connect(a, b,
-             conn_spec={'rule': 'pairwise_bernoulli',
-                        'p': 0.5,
-                        'use_on_source': True,
-                        'mask': {'rectangular': {'lower_left': [-0.2, -0.5],
-                                                 'upper_right': [0.2, 0.5]}}},
-             syn_spec={'weight': nest.random.uniform(0.5, 2.)})
+nest.Connect(nest.PairwiseBernoulli(a, b, p=0.5, use_on_source=True,
+                                    mask={'rectangular': {'lower_left': [-0.2, -0.5],
+                                                          'upper_right': [0.2, 0.5]}},
+                                    syn_spec=nest.synapsemodels.static(weight=nest.random.uniform(0.5, 2.))))
+nest.BuildNetwork()
 plt.clf()
 
 ############################################################################
@@ -62,9 +60,6 @@ for tgt_index in [30 * 15 + 15, 0]:
 
     spos_x = np.array([x for x, y in spos])
     spos_y = np.array([y for x, y in spos])
-
-    print(spos_x)
-    print(spos_y)
 
     # scatter-plot
     plt.scatter(spos_x, spos_y, 20, zorder=10)

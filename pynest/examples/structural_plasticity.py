@@ -240,10 +240,10 @@ class StructralPlasticityExample:
         """
         noise = nest.Create('poisson_generator')
         noise.rate = self.bg_rate
-        nest.Connect(noise, self.nodes_e, 'all_to_all',
-                     {'weight': self.psc_ext, 'delay': 1.0})
-        nest.Connect(noise, self.nodes_i, 'all_to_all',
-                     {'weight': self.psc_ext, 'delay': 1.0})
+        nest.Connect(nest.AllToAll(noise, self.nodes_e,
+                                   syn_spec=nest.synapsemodels.static(weight=self.psc_ext, delay=1.0)))
+        nest.Connect(nest.AllToAll(noise, self.nodes_i,
+                                   syn_spec=nest.synapsemodels.static(weight=self.psc_ext, delay=1.0)))
 
     ####################################################################################
     # In order to save the amount of average calcium concentration in each

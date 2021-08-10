@@ -120,24 +120,23 @@ volts.set(label="voltmeter", interval=1.)
 ###############################################################################
 # Sixth, the ``dc_generator`` is connected to the first neuron
 # (`neurons[0]`) and the `voltmeter` is connected to the second neuron
-# (`neurons[1]`). The command `Connect` has different variants. Plain
-# ``Connect`` just takes the handles of pre- and postsynaptic nodes and
-# uses the default values for weight and delay. Note that the connection
-# direction for the ``voltmeter`` reflects the signal flow in the simulation
-# kernel, because it observes the neuron instead of receiving events from it.
+# (`neurons[1]`). The command  ``Connect`` has different variants. Plain
+# `Connect` takes an object representing the connection rule, which contains
+# the handles of pre- and postsynaptic nodes  and uses the default values for
+# weight and delay. Note that the connection direction for the ``voltmeter``
+# reflects the signal flow in the simulation kernel, because it observes the
+# neuron instead of receiving events from it.
 
-nest.Connect(dc_gen, neurons[0])
-nest.Connect(volts, neurons[1])
+nest.Connect(nest.AllToAll(dc_gen, neurons[0]))
+nest.Connect(nest.AllToAll(volts, neurons[1]))
 
 ###############################################################################
 # Seventh, the first neuron (`neurons[0]`) is connected to the second
-# neuron (`neurons[1]`).  The command ``CopyModel`` copies the
-# ``tsodyks_synapse`` model to the new name ``syn`` with parameters
-# ``syn_param``.  The manually defined model ``syn`` is used in the
-# connection routine via the ``syn_spec`` parameter.
+# neuron (`neurons[1]`).  The command ``tsodyks(**syn_param)`` created the
+# ``tsodyks_synapse`` model with parameters ``syn_param``.
 
 nest.CopyModel("tsodyks_synapse", "syn", syn_param)
-nest.Connect(neurons[0], neurons[1], syn_spec="syn")
+nest.Connect(nest.AllToAll(neurons[0], neurons[1], syn_spec=nest.synapsemodels.tsodyks(**syn_param)))
 
 ###############################################################################
 # Finally, we simulate the configuration using the command ``Simulate``,

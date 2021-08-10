@@ -68,8 +68,8 @@ def build_network(dt):
     vm = nest.Create('voltmeter')
     sr = nest.Create('spike_recorder')
 
-    nest.Connect(vm, neuron)
-    nest.Connect(neuron, sr)
+    nest.Connect(nest.AllToAll(vm, neuron))
+    nest.Connect(nest.AllToAll(neuron, sr))
 
     return vm, sr
 

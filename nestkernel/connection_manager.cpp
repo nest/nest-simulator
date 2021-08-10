@@ -66,8 +66,8 @@ nest::ConnectionManager::ConnectionManager()
   , min_delay_( 1 )
   , max_delay_( 1 )
   , keep_source_table_( true )
-  , have_connections_changed_( false )
-  , has_get_connections_been_called_( false )
+  , connections_have_changed_( false )
+  , get_connections_has_been_called_( false )
   , sort_connections_by_source_( true )
   , use_compressed_spikes_( true )
   , has_primary_connections_( false )
@@ -95,13 +95,13 @@ nest::ConnectionManager::initialize()
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
-  have_connections_changed_ = false;
+  connections_have_changed_ = false;
 
   compressed_spike_data_.resize( 0 );
   check_primary_connections_.initialize( num_threads, false );
   check_secondary_connections_.initialize( num_threads, false );
 
-  set_has_get_connections_been_called( false );
+  get_connections_has_been_called_ = false;
 
 #pragma omp parallel
   {
@@ -414,7 +414,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   }
 
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
-  set_have_connections_changed();
+  set_connections_have_changed();
 
   cb->connect();
   delete cb;
@@ -620,7 +620,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
   };
 
   // Set flag before entering parallel section in case we have less connections than ranks.
-  set_have_connections_changed();
+  set_connections_have_changed();
 
   // Vector for storing exceptions raised by threads.
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
@@ -848,7 +848,7 @@ nest::ConnectionManager::disconnect( const thread tid,
   const index snode_id,
   const index tnode_id )
 {
-  set_have_connections_changed();
+  set_connections_have_changed();
 
   assert( syn_id != invalid_synindex );
 
@@ -960,7 +960,7 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
 
   // If connections have changed, (re-)build presynaptic infrastructure,
   // as this may involve sorting connections by source node IDs.
-  if ( have_connections_changed() )
+  if ( connections_have_changed() )
   {
     if ( not kernel().simulation_manager.has_been_simulated() )
     {
@@ -1008,7 +1008,7 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
     connectome.pop_front();
   }
 
-  set_has_get_connections_been_called( true );
+  get_connections_has_been_called_ = true;
 
   return result;
 }
@@ -1601,26 +1601,26 @@ nest::ConnectionManager::check_secondary_connections_exist()
 }
 
 void
-nest::ConnectionManager::set_have_connections_changed()
+nest::ConnectionManager::set_connections_have_changed()
 {
   assert( kernel().vp_manager.get_thread_id() == 0 );
 
-  if ( has_get_connections_been_called_ )
+  if ( get_connections_has_been_called_ )
   {
     std::string msg =
       "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
     LOG( M_WARNING, "ConnectionManager", msg );
-    // Reset the has_get_connections_been_called_ flag because we have updated connections.
-    set_has_get_connections_been_called( false );
+    // Reset the get_connections_has_been_called_ flag because we have updated connections.
+    get_connections_has_been_called_ = false;
   }
 
-  have_connections_changed_ = true;
+  connections_have_changed_ = true;
 }
 
 void
-nest::ConnectionManager::unset_have_connections_changed()
+nest::ConnectionManager::unset_connections_have_changed()
 {
-  have_connections_changed_ = false;
+  connections_have_changed_ = false;
 }
 
 

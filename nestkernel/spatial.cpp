@@ -455,7 +455,7 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   ALL_ENTRIES_ACCESSED( *connection_dict, "nest::CreateLayers", "Unread dictionary entries: " );
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
-  kernel().connection_manager.set_have_connections_changed();
+  kernel().connection_manager.set_connections_have_changed();
 
   source->connect( source_nc, target, target_nc, connector );
 }

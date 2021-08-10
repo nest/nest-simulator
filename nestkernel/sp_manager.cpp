@@ -259,7 +259,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   DictionaryDatum& conn_spec,
   DictionaryDatum& syn_spec )
 {
-  if ( kernel().connection_manager.have_connections_changed() )
+  if ( kernel().connection_manager.connections_have_changed() )
   {
     if ( kernel().connection_manager.secondary_connections_exist() )
     {
@@ -315,7 +315,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries: " );
 
   // Set flag before calling cb->disconnect() in case exception is thrown after some connections have been removed.
-  kernel().connection_manager.set_have_connections_changed();
+  kernel().connection_manager.set_connections_have_changed();
   cb->disconnect();
 
   delete cb;
@@ -412,7 +412,7 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
   }
   if ( synapses_created or post_deleted_id.size() > 0 or pre_deleted_id.size() > 0 )
   {
-    kernel().connection_manager.set_have_connections_changed();
+    kernel().connection_manager.set_connections_have_changed();
   }
 }
 

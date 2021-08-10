@@ -619,7 +619,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
     }
   };
 
-  // Set flag before entering parallel section in case we have less connections than ranks.
+  // Set flag before entering parallel section in case we have fewer connections than ranks.
   set_connections_have_changed();
 
   // Vector for storing exceptions raised by threads.

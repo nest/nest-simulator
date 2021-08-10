@@ -1493,7 +1493,7 @@ std::shared_ptr< Parameter > compare_parameter( const std::shared_ptr< Parameter
 
 /**
  * Create a parameter that chooses between two other parameters,
- * based on one a given condition parameter. The resulting value of the condition parameter
+ * based on a given condition parameter. The resulting value of the condition parameter
  * is treated as a bool, meaning that a zero value evaluates as false, and all other values
  * evaluate as true.
  * @returns a new dynamically allocated parameter.

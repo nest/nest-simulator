@@ -259,7 +259,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   DictionaryDatum& conn_spec,
   DictionaryDatum& syn_spec )
 {
-  if ( kernel().connection_manager.have_connections_changed() )
+  if ( kernel().connection_manager.connections_have_changed() )
   {
     if ( kernel().connection_manager.secondary_connections_exist() )
     {
@@ -314,6 +314,8 @@ SPManager::disconnect( NodeCollectionPTR sources,
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries: " );
   ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries: " );
 
+  // Set flag before calling cb->disconnect() in case exception is thrown after some connections have been removed.
+  kernel().connection_manager.set_connections_have_changed();
   cb->disconnect();
 
   delete cb;
@@ -402,10 +404,15 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
   kernel().mpi_manager.communicate( post_vacant_id, post_vacant_id_global, displacements );
   kernel().mpi_manager.communicate( post_vacant_n, post_vacant_n_global, displacements );
 
+  bool synapses_created = false;
   if ( pre_vacant_id_global.size() > 0 and post_vacant_id_global.size() > 0 )
   {
-    create_synapses(
+    synapses_created = create_synapses(
       pre_vacant_id_global, pre_vacant_n_global, post_vacant_id_global, post_vacant_n_global, sp_builder );
+  }
+  if ( synapses_created or post_deleted_id.size() > 0 or pre_deleted_id.size() > 0 )
+  {
+    kernel().connection_manager.set_connections_have_changed();
   }
 }
 
@@ -416,8 +423,10 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
  * @param post_id target id
  * @param post_n number of available synaptic elements in the post node
  * @param sp_conn_builder structural plasticity connection builder to use
+ *
+ * @return true if synapses are created
  */
-void
+bool
 SPManager::create_synapses( std::vector< index >& pre_id,
   std::vector< int >& pre_n,
   std::vector< index >& post_id,
@@ -449,6 +458,8 @@ SPManager::create_synapses( std::vector< index >& pre_id,
 
   // create synapse
   sp_conn_builder->sp_connect( pre_id_rnd, post_id_rnd );
+
+  return not pre_id_rnd.empty();
 }
 
 /**

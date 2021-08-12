@@ -105,14 +105,14 @@ class PostTraceTester(object):
         n_steps = int(np.ceil(self.sim_time_ / self.delay_))
         trace_nest = []
         trace_nest_t = []
-        t = nest.GetStatus([0], "time")[0]
+        t = nest.GetKernelStatus("biological_time")
         trace_nest_t.append(t)
         post_tr = nest.GetStatus(post_parrot_ps)[0]['post_trace']
         trace_nest.append(post_tr)
         for step in range(n_steps):
             print("\n[py] simulating for " + str(self.delay_) + " ms")
             nest.Simulate(self.delay_)
-            t = nest.GetStatus([0], "time")[0]
+            t = nest.GetKernelStatus("biological_time")
             nearby_pre_spike = np.any(
                 np.abs(t - np.array(self.pre_spike_times_) - self.delay_)
                 < self.resolution_/2.)

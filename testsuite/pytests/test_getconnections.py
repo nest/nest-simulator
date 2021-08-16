@@ -68,7 +68,8 @@ class GetConnectionsTestCase(unittest.TestCase):
 
     def test_GetConnectionsTargetModels(self):
         """GetConnections iterating models for target"""
-        for model in nest.GetKernelStatus('node_models'):
+        node_models = nest.GetKernelStatus('node_models')
+        for model in node_models:
             nest.ResetKernel()
             alpha = nest.Create('iaf_psc_alpha')
             try:
@@ -89,7 +90,8 @@ class GetConnectionsTestCase(unittest.TestCase):
 
     def test_GetConnectionsSourceModels(self):
         """GetConnections iterating models for source"""
-        for model in nest.GetKernelStatus('node_models'):
+        node_models = nest.GetKernelStatus('node_models')
+        for model in node_models:
             nest.ResetKernel()
             alpha = nest.Create('iaf_psc_alpha')
             try:

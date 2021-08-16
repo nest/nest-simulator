@@ -7,7 +7,7 @@ Time-driven and event-driven approaches
 To drive the simulation, neurons and devices (*nodes*) are updated in a
 time-driven fashion by calling a member function on each of them in a
 regular interval. The spacing of the grid is called the *simulation
-resolution* (default 0.1ms) and can be set using ``set()``:
+resolution* (default 0.1ms) and can be set using :py:func:`.set`:
 
 ::
 
@@ -24,7 +24,7 @@ transmitted through them (`Morrison et al.
 simulation and allow the efficient use of computer clusters, NEST uses a
 :doc:`hybrid parallelization strategy <parallel_computing>`. The
 following figure shows the basic loop that is run upon a call to
-``Simulate``:
+:py:func:`.Simulate`:
 
 .. figure:: ../static/img/simulation_loop-241x300.png
    :alt: Simulation Loop
@@ -66,7 +66,7 @@ the buffers for inter-process communication depend on *dmin+dmax* as
 histories that long back have to be kept. NEST will figure out the
 correct value of *dmin* and *dmax* based on the actual delays used
 during connection setup. Their actual values can be retrieved using
-``get()``:
+:py:func:`.get`:
 
 ::
 
@@ -79,15 +79,15 @@ In linear simulation scripts that build a network, simulate it, carry
 out some post-processing and exit, the user does not have to worry about
 the delay extrema *dmin* and *dmax* as they are set automatically to the
 correct values. However, NEST also allows subsequent calls
-to\ ``Simulate``, which only work correctly if the content of the spike
+to\ :py:func:`.Simulate`, which only work correctly if the content of the spike
 buffers is preserved over the simulations.
 
 As mentioned above, the size of that buffer depends on *dmin+dmax* and
 the easiest way to assert its integrity is to not change its size after
 initialization. Thus, we freeze the delay extrema after the first call
-to ``Simulate``. To still allow adding new connections inbetween calls
-to ``Simulate``, the required boundaries of delays can be set manually
-using ``set()``:
+to ``Simulate()``. To still allow adding new connections inbetween calls
+to ``Simulate()``, the required boundaries of delays can be set manually
+using :py:func:`.set`:
 
 ::
 
@@ -167,7 +167,7 @@ following
     nest.set({'rng_type': 'mt19937'})
     nest.set({'rng_type': 'mt19937', 'rng_seed': 12234})
 
-In the first case, the `rng_seed` set previously (or the default seed) is used,
+In the first case, the ``rng_seed`` set previously (or the default seed) is used,
 otherwise the seed specified.
 
 
@@ -189,7 +189,7 @@ Split a simulation into multiple intervals
 
 In some cases, it may be useful to run a simulation in shorter intervals
 to extract information while the simulation is running. The simplest way
-of doing this is to simply loop over ``Simulate()`` calls:
+of doing this is to simply loop over :py:func:`.Simulate` calls:
 
 ::
 
@@ -212,7 +212,7 @@ A more efficient solution doing exactly the same thing is
         # extract and analyse data
     nest.Cleanup()
 
-For convenience, the ``RunManager()`` context manager can handle preparation
+For convenience, the :py:func:`.RunManager` context manager can handle preparation
 and cleanup for you:
 
 ::
@@ -223,15 +223,15 @@ and cleanup for you:
             # extract and analyse data
 
 .. note::
-   - If you do not use ``RunManager()``, you must call ``Prepare()``,
-     ``Run()`` and ``Cleanup()`` in that order.
-   - You can call ``Run()`` any number of times inside a ``RunManager()``
-     context or between ``Prepare()`` and ``Cleanup()`` calls.
-   - Calling ``SetStatus()`` inside a ``RunManager()`` context or
-     between ``Prepare()`` and ``Cleanup()`` will **lead to unpredictable
+   - If you do not use :py:func:`.RunManager`, you must call :py:func:`.Prepare`,
+     :py:func:`.Run` and :py:func:`.Cleanup` in that order.
+   - You can call :py:func:`.Run` any number of times inside a :py:func:`.RunManager`
+     context or between :py:func:`.Prepare` and :py:func:`.Cleanup` calls.
+   - Calling :py:func:`.SetStatus` inside a :py:func:`.RunManager` context or
+     between :py:func:`.Prepare` and :py:func:`.Cleanup` will **lead to unpredictable
      results**.
-   - After calling ``Cleanup()``, you need to call ``Prepare()`` again before
-     calling ``Run()``.
+   - After calling :py:func:`.Cleanup`, you need to call :py:func:`.Prepare` again before
+     calling :py:func:`.Run`.
 
 Repeated simulations
 --------------------
@@ -283,7 +283,7 @@ for example:
 The *real-time factor* is defined as the quotient of *wall-clock time* (which
 is also known as real time) and the *model time* (which is the duration by
 which the state of the model is advanced in time, or in short, the argument to
-the ``Simulate()`` call):
+the :py:func:`.Simulate` call):
 
 .. math::
 

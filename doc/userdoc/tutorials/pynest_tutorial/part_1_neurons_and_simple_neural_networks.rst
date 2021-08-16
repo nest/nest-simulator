@@ -110,12 +110,12 @@ arranged with spatial structure to build networks distributed in space
 - we will get to this later in the course. For now we
 will work with the default network structure of NEST.
 
-New nodes are created with the command ``Create``, which takes as arguments the model name of the
+New nodes are created with the command :py:func:`.Create`, which takes as arguments the model name of the
 desired node type, and optionally the number of nodes to be created and
-the initialising parameters. The function returns a ``NodeCollection`` of handles to
-the new nodes, which you can assign to a variable for later use. A ``NodeCollection`` is a compact
+the initialising parameters. The function returns a :py:class:`.NodeCollection` of handles to
+the new nodes, which you can assign to a variable for later use. A :py:class:`.NodeCollection` is a compact
 representation of the node handles, which are integer numbers, called *ids*. Many PyNEST functions expect
-or return a ``NodeCollection`` (see `command overview`_). Thus, it is
+or return a :py:class:`.NodeCollection` (see `command overview`_). Thus, it is
 easy to apply functions to large sets of nodes with a single function
 call.
 
@@ -147,7 +147,7 @@ Many of these properties are not relevant for the dynamics of the
 neuron. To find out what the interesting properties are, look at the
 documentation of the model through the helpdesk. If you already know
 which properties you are interested in, you can specify a key, or a list
-of keys, as an optional argument to ``get``:
+of keys, as an optional argument to :py:meth:`~.NodeCollection.get`:
 
 ::
 
@@ -157,13 +157,14 @@ of keys, as an optional argument to ``get``:
 In the first case we query the value of the constant background current
 ``I_e``; the result is given as a floating point element. In the second
 case, we query the values of the reset potential and threshold of the
-neuron, and receive the result as a dictionary . If ``get`` is
+neuron, and receive the result as a dictionary . If :py:meth:`~.NodeCollection.get` is
 called on a NodeCollection with more than one element, the returned dictionary
 will contain lists with the same number of elements as the number of nodes in
-the NodeCollection. If ``get`` is called with a specific key on a NodeCollection
-with several elements, a list the size of the NodeCollection will be returned.
+the NodeCollection. If ``get()`` is
+called with a specific key on a NodeCollection with several elements, a list
+the size of the NodeCollection will be returned.
 
-To modify the properties in the dictionary, we use ``set``. In the
+To modify the properties in the dictionary, we use :py:meth:`~.NodeCollection.set`. In the
 following example, the background current is set to 375.0pA, a value
 causing the neuron to spike periodically.
 
@@ -247,7 +248,7 @@ to form a small network.
    Spikes of the neuron.
 
 
-The order in which the arguments to ``Connect`` are specified reflects
+The order in which the arguments to :py:func:`.Connect` are specified reflects
 the flow of events: if the neuron spikes, it sends an event to the spike
 recorder. Conversely, the multimeter periodically sends requests to the
 neuron to ask for its membrane potential at that point in time. This can
@@ -308,14 +309,14 @@ obtain and display the spikes from the spike recorder.
     plt.plot(ts, evs, ".")
     plt.show()
 
-Here we extract the events more concisely by sending the parameter name to ``get``.
-This extracts the dictionary element
+Here we extract the events more concisely by sending the parameter name to
+:py:meth:`~.NodeCollection.get`. This extracts the dictionary element
 with the key ``events`` rather than the whole status dictionary. The
 output should look like :numref:`VM-neuron` and :numref:`spikes-one-neuron`.
 If you want to execute this as a script, just paste all lines into a text
 file named, say, ``one-neuron.py`` . You can then run it from the command
 line by prefixing the file name with ``python``, or from the Python or ipython
-prompt, by prefixing it with ``run``.
+prompt, by prefixing it with :py:func:`.Run`.
 
 It is possible to collect information of multiple neurons on a single
 multimeter. This does complicate retrieving the information: the data
@@ -382,7 +383,7 @@ Additionally, the constant input current should be set to 0:
 Each event of the excitatory generator should produce a postsynaptic
 current of 1.2pA amplitude, an inhibitory event of -2.0pA. The synaptic
 weights can be defined in a dictionary, which is passed to the
-``Connect`` function using the keyword ``syn_spec`` (synapse
+:py:func:`.Connect` function using the keyword ``syn_spec`` (synapse
 specifications). In general all parameters determining the synapse can
 be specified in the synapse dictionary, such as ``"weight"``,
 ``"delay"``, the synaptic model (``"synapse_model"``) and parameters specific to
@@ -505,7 +506,7 @@ Nodes
 Connections
 ~~~~~~~~~~~
 
-This is an abbreviated version of the documentation for the ``Connect``
+This is an abbreviated version of the documentation for the :py:func:`.Connect`
 function, please see NEST’s online help for the full version and
 :doc:`Connection Management <../../guides/connection_management>` for an introduction
 and examples.
@@ -543,7 +544,7 @@ Available keys in the synapse dictionary are ``"synapse_model"``, ``"weight"``,
 synapse model. All parameters are optional and if not specified will use
 the default values determined by the current synapse model. ``"synapse_model"``
 determines the synapse type, taken from pre-defined synapse types in
-NEST or manually specified synapses created via ``CopyModel()``. All
+NEST or manually specified synapses created via :py:func:`.CopyModel`. All
 other parameters can be scalars or distributions. In the case of scalar
 parameters, all keys take doubles except for ``"receptor_type"`` which
 has to be initialised with an integer. Distributed parameters are

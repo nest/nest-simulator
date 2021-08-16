@@ -45,6 +45,19 @@ nest::UnknownModelName::message() const
 }
 
 std::string
+nest::UnknownComponent::message() const
+{
+  std::ostringstream msg;
+  msg << "/" << n_.toString() + " is not a known component. ";
+#ifndef HAVE_GSL
+  msg << " A frequent cause for this error is that NEST was compiled "
+         "without the GNU Scientific Library, which is required for "
+         "the conductance-based neuron models.";
+#endif
+  return msg.str();
+}
+
+std::string
 nest::NewModelNameExists::message() const
 {
   std::ostringstream msg;

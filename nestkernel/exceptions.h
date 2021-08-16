@@ -87,7 +87,7 @@ public:
 /**
  * Exception to be thrown if a model with the the specified name
  * does not exist.
- * @see UnknownModelID
+ * @see UnknownComponent
  * @ingroup KernelExceptions
  */
 class UnknownModelName : public KernelException
@@ -102,6 +102,29 @@ public:
   }
 
   ~UnknownModelName() throw()
+  {
+  }
+  std::string message() const;
+};
+
+/**
+ * Exception to be thrown if a component with the the specified name
+ * does not exist.
+ * @see UnknownModelName
+ * @ingroup KernelExceptions
+ */
+class UnknownComponent : public KernelException
+{
+  const Name n_;
+
+public:
+  UnknownComponent( const Name& n )
+    : KernelException( "UnknownComponent" )
+    , n_( n )
+  {
+  }
+
+  ~UnknownComponent() throw()
   {
   }
   std::string message() const;
@@ -133,7 +156,6 @@ public:
  * is used within the network and the providing module hence cannot be
  * uninstalled. This exception can occur if the user tries to uninstall a
  * module.
- * @see UnknownModelID
  * @ingroup KernelExceptions
  */
 class ModelInUse : public KernelException

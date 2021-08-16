@@ -125,9 +125,10 @@ public:
    * Set the default parameters of a model.
    * @param name of model.
    * @param params default parameters to be set.
+   * @return true if the operation succeeded, false else
    * @see set_node_defaults_, set_synapse_defaults_
    */
-  void set_model_defaults( Name name, DictionaryDatum params );
+  bool set_model_defaults( Name name, DictionaryDatum params );
 
   /**
    * Register a synape model with a custom Connector model and without any

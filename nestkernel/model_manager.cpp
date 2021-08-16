@@ -287,7 +287,7 @@ ModelManager::copy_connection_model_( index old_id, Name new_name )
 }
 
 
-void
+bool
 ModelManager::set_model_defaults( Name name, DictionaryDatum params )
 {
   const Token nodemodel = modeldict_->lookup( name );
@@ -298,18 +298,18 @@ ModelManager::set_model_defaults( Name name, DictionaryDatum params )
   {
     id = static_cast< index >( nodemodel );
     set_node_defaults_( id, params );
+    return true;
   }
   else if ( not synmodel.empty() )
   {
     id = static_cast< index >( synmodel );
     set_synapse_defaults_( id, params );
+    return true;
   }
   else
   {
-    throw UnknownModelName( name );
+    return false;
   }
-
-  model_defaults_modified_ = true;
 }
 
 
@@ -321,6 +321,7 @@ ModelManager::set_node_defaults_( index model_id, const DictionaryDatum& params 
   get_node_model( model_id )->set_status( params );
 
   ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_node_defaults_", "Unread dictionary entries: " );
+  model_defaults_modified_ = true;
 }
 
 void
@@ -358,6 +359,7 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
   }
 
   ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_synapse_defaults_", "Unread dictionary entries: " );
+  model_defaults_modified_ = true;
 }
 
 // TODO: replace int with index and return value -1 with invalid_index, also

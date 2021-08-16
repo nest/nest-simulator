@@ -267,15 +267,26 @@ copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatu
 }
 
 void
-set_model_defaults( const std::string modelname, const DictionaryDatum& dict )
+set_model_defaults( const std::string component, const DictionaryDatum& dict )
 {
-  kernel().model_manager.set_model_defaults( modelname, dict );
+  if ( kernel().model_manager.set_model_defaults( component, dict ) )
+  {
+    return;
+  }
+
+  if ( kernel().io_manager.is_valid_recording_backend ( component ) )
+  {
+    kernel().io_manager.set_recording_backend_status( component, dict );
+    return;
+  }
+
+  throw UnknownComponent( component );
 }
 
 DictionaryDatum
-get_model_defaults( const std::string modelname )
+get_model_defaults( const std::string component )
 {
-  const int model_id = kernel().model_manager.get_model_id( modelname );
+  const int model_id = kernel().model_manager.get_node_model_id( component );
   if ( model_id != -1 )
   {
     return kernel().model_manager.get_node_model( model_id )->get_status();
@@ -283,14 +294,19 @@ get_model_defaults( const std::string modelname )
 
   try
   {
-    const index synapse_model_id = kernel().model_manager.get_synapse_model_id( modelname );
+    const index synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
     return kernel().model_manager.get_connector_defaults( synapse_model_id );
   }
   catch ( UnknownSynapseType& ) {}
 
-  throw UnknownModelName( modelname );
+  if ( kernel().io_manager.is_valid_recording_backend ( component ) )
+  {
+    return kernel().io_manager.get_recording_backend_status( component );
+  }
 
-  return DictionaryDatum(); // supress warning about missing return value; never reached
+  throw UnknownComponent( component );
+
+  return DictionaryDatum();  // supress missing return value warning; never reached
 }
 
 ParameterDatum

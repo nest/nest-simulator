@@ -442,6 +442,7 @@ extern const Name start;
 extern const Name state;
 extern const Name std;
 extern const Name std_mod;
+extern const Name stimulation_backends;
 extern const Name stimulator;
 extern const Name stimulus_source;
 extern const Name step;

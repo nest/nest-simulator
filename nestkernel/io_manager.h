@@ -47,8 +47,11 @@ public:
   void finalize() override;   // called from meta-manger to reinit
   void change_num_threads( thread ) override;
 
-  void set_status( const DictionaryDatum& ) override; // set parameters
-  void get_status( DictionaryDatum& ) override;       // get parameters
+  void set_recording_backend_status( std::string, const DictionaryDatum& );
+  void set_status( const DictionaryDatum& ) override;
+
+  DictionaryDatum get_recording_backend_status( std::string );
+  void get_status( DictionaryDatum& ) override;
 
   IOManager(); // Construct only by meta-manager
   ~IOManager() override;

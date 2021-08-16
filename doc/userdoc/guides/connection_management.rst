@@ -70,7 +70,7 @@ to :py:func:`.Connect` and will just take on the default value.
 
 After your connections are established, a quick sanity check is to
 look up the number of connections in the network, which can be easily
-done using py:func:`.get`:
+done using :py:func:`.get`:
 
 ::
 

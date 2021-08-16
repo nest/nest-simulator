@@ -30,7 +30,6 @@ microcircuit.
 from matplotlib.patches import Polygon
 import matplotlib.pyplot as plt
 import os
-import sys
 import numpy as np
 if 'DISPLAY' not in os.environ:
     import matplotlib

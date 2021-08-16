@@ -38,7 +38,7 @@ statusdict /prgdocdir get (/examples)                  join addpath
 statusdict /prgdocdir get (/examples/FacetsBenchmarks) join addpath
 
 /test {
-  statusdict/prgdatadir :: (/extras/do_tests.sh ) join
+  statusdict/prgdatadir :: (/testsuite/do_tests.sh ) join
   statusdict/prefix :: (/bin/nest) join
   join system ; ;
 } def

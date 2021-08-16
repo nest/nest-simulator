@@ -4,7 +4,7 @@ New functionality for handling connections (synapses)
 =====================================================
 
 Just like a NodeCollection is a container for node IDs, a SynapseCollection is a
-container for connections. In NEST 3, when you call ``GetConnections()`` a
+container for connections. In NEST 3, when you call :py:func:`.GetConnections` a
 SynapseCollection is returned. SynapseCollections support a lot of the same operations
 as NodeCollections.
 
@@ -132,7 +132,7 @@ Setting and getting attributes directly
     as the SynapseCollection.
 
     For :ref:`spatially distributed <topo_changes>` sources and targets, you can access the distance between
-    the source-target pairs by calling `distance` on your SynapseCollection.
+    the source-target pairs by calling ``distance`` on your SynapseCollection.
 
     >>>  synapses.distance
          (0.47140452079103173,
@@ -150,7 +150,7 @@ Setting and getting attributes directly
 
 Getting connection parameters
     Just as with NodeCollection, you can get parameters of the connections with
-    ``get()``. The same function arguments as for :ref:`NodeCollections get() <get_param>`
+    :py:meth:`~.SynpaseCollection.get`. The same function arguments as for :ref:`NodeCollections get() <get_param>`
     apply here. The returned values also follow the same rules.
 
     If you call ``get()`` without any arguments, a dictionary with all parameters is
@@ -187,7 +187,7 @@ Getting connection parameters
 
 Setting connection parameters
     Likewise, you can set the parameters of connections in the SynapseCollection.
-    Again the same rules as with ``set()`` on NodeCollection applies, see :ref:`set_param`
+    Again the same rules as with :py:meth:`~.SynapseCollection.set` on NodeCollection applies, see :ref:`set_param`
     for more details.
 
     If you want to set several parameters at once, use ``set(parameter_dictionary)``.
@@ -203,17 +203,17 @@ Setting connection parameters
 
     >>>  synapses.set(weight=[4.0, 4.5, 5.0, 5.5])
 
-    Note that some parameters, like `source` and `target`, cannot be set.  The documentation of a specific
+    Note that some parameters, like ``source`` and ``target``, cannot be set.  The documentation of a specific
     model will point out which parameters can be set and which are read-only.
 
 
-.. _collocated_synapses
+.. _collocated_synapses:
 
 Collocated synapses
 ~~~~~~~~~~~~~~~~~~~
 It is now possible to create connections with several synapses simultaneously. The different synapse dictionaries will
-then be applied to each source-target pair. To create these collocated synapses, ``CollocatedSynapses()`` must be used
-as the `syn_spec` argument of ``Connect``, instead of the usual syn_spec dictionary argument. The constructor
+then be applied to each source-target pair. To create these collocated synapses, :py:class:`.CollocatedSynapses` must be used
+as the ``syn_spec`` argument of :py:func:`.Connect`, instead of the usual syn_spec dictionary argument. The constructor
 ``CollocatedSynapses()`` takes dictionaries as arguments.
 
   ::
@@ -227,8 +227,8 @@ as the `syn_spec` argument of ``Connect``, instead of the usual syn_spec diction
     conns = nest.GetConnections()
     print(conns.alpha)
 
-This will create 9 connections: 3 using `static_synapse` with a `weight` of `4` and `delay` of `1.5`, and 6 using
-the `stdp_synapse`. Of the 6 using `stdp_synapse`, 3 will have the default alpha value, and 3 will have an alpha of
+This will create 9 connections: 3 using ``static_synapse`` with a ``weight`` of `4` and ``delay`` of `1.5`, and 6 using
+the ``stdp_synapse``. Of the 6 using ``stdp_synapse``, 3 will have the default alpha value, and 3 will have an alpha of
 `3.0`.
 
   >>> print(nest.GetKernelStatus('num_connections'))
@@ -249,7 +249,7 @@ If you want to connect with different receptor types, you can do the following:
     conns = nest.GetConnections()
     print(conns.get())
 
-You can see how many synapse parameters you have by calling `len()` on your `CollocatedSynapses` object:
+You can see how many synapse parameters you have by calling ``len()`` on your ``CollocatedSynapses`` object:
 
   >>> len(syn_spec)
   2
@@ -262,7 +262,7 @@ New functionality for connecting arrays of node IDs
 While you should aim to use NodeCollections to create connections whenever possible,
 there may be cases where you have a predefined set of pairs of pre- and postsynaptic nodes.
 In those cases, it may be inefficient to convert the individual IDs in the pair to NodeCollections
-to be passed to the ``Connect()`` function, especially if there are thousands or millions of
+to be passed to the :py:func:`.Connect` function, especially if there are thousands or millions of
 pairs to connect.
 
 To efficiently create connections in these cases, you can pass NumPy arrays to ``Connect()``.

@@ -31,6 +31,7 @@ import os
 import numpy as np
 import nest
 import helpers
+import warnings
 
 
 class Network:
@@ -210,7 +211,7 @@ class Network:
             DC_amp = np.zeros(self.num_pops)
         else:
             if nest.Rank() == 0:
-                print('DC input compensates for missing Poisson input.\n')
+                warnings.warn('DC input created to compensate missing Poisson input.\n')
             DC_amp = helpers.dc_input_compensating_poisson(
                 self.net_dict['bg_rate'], self.net_dict['K_ext'],
                 self.net_dict['neuron_params']['tau_syn'],
@@ -324,8 +325,8 @@ class Network:
                     self.net_dict['neuron_params']['V0_mean']['original'],
                     self.net_dict['neuron_params']['V0_std']['original']))
             else:
-                raise Exception(
-                    'V0_type incorrect. ' +
+                raise ValueError(
+                    'V0_type is incorrect. ' +
                     'Valid options are "optimized" and "original".')
 
             self.pops.append(population)
@@ -419,10 +420,8 @@ class Network:
 
         dc_dict = {'amplitude': dc_amp_stim,
                    'start': self.stim_dict['dc_start'],
-                   'stop': (self.stim_dict['dc_start'] +
-                            self.stim_dict['dc_dur'])}
-        self.dc_stim_input = nest.Create('dc_generator', n=self.num_pops,
-                                         params=dc_dict)
+                   'stop': self.stim_dict['dc_start'] + self.stim_dict['dc_dur']}
+        self.dc_stim_input = nest.Create('dc_generator', n=self.num_pops, params=dc_dict)
 
     def __connect_neuronal_populations(self):
         """ Creates the recurrent connections between neuronal populations. """

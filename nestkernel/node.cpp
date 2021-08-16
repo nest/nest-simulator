@@ -148,6 +148,7 @@ Node::get_status_base()
   // add information available for all nodes
   ( *dict )[ names::local ] = kernel().node_manager.is_local_node( this );
   ( *dict )[ names::model ] = LiteralDatum( get_name() );
+  ( *dict )[ names::model_id ] = get_model_id();
   ( *dict )[ names::global_id ] = get_node_id();
   ( *dict )[ names::vp ] = get_vp();
   ( *dict )[ names::element_type ] = LiteralDatum( get_element_type() );

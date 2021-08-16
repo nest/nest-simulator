@@ -308,6 +308,7 @@ extern const Name min_delay;
 extern const Name min_update_time;
 extern const Name minor_axis;
 extern const Name model;
+extern const Name model_id;
 extern const Name ms_per_tic;
 extern const Name mu;
 extern const Name mu_minus;

@@ -547,7 +547,7 @@ class TestNodeCollection(unittest.TestCase):
         self.assertEqual(get_conn_some.get('source'), compare_source)
         self.assertEqual(get_conn_some.get('target'), compare_target)
 
-        expected_syn_id = nest.GetKernelStatus('synapse_models').index('static_synapse')
+        expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         compare_list = [3, 1, 0, expected_syn_id, 6]
         conn = [get_conn_some.get('source')[3],

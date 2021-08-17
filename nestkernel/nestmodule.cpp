@@ -619,7 +619,7 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
   const std::string name = getValue< std::string >( i->OStack.pick( 1 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  kernel().model_manager.set_model_defaults( name, params );
+  set_model_defaults( name, params );
 
   i->OStack.pop( 2 );
   i->EStack.pop();

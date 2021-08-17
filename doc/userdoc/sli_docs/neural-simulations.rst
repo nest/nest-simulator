@@ -469,11 +469,12 @@ backend to use. To dump recorded data to a file, set ``ascii``, to
 print to the screen, use ``screen`` and to hold the data in memory,
 set ``memory``, which is also the default for all devices. Data
 stored in memory can be retrieved after the simulation using
-:py:func:`.GetStatus`. To get a list of all available recording backends, run
+:py:func:`.GetStatus`. To get a list of all available recording
+backends, run
 
 ::
 
-   SLI ] GetKernelStatus /recording_backends get keys ==
+   SLI ] GetKernelStatus /recording_backends get ==
 
 The list of available device models can be retrieved by calling
 ``GetKernelStatus /node_models get`. The most important devices are:

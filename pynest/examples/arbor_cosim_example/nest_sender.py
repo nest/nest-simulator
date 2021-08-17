@@ -20,7 +20,6 @@ if (not STATUS_DICT["have_recordingbackend_arbor"]):
     sys.exit(1)
 
 nest.set_communicator(comm)
-nest.SetKernelStatus({'recording_backends': {'arbor': {}}})
 
 print("Building network")
 pg = nest.Create('poisson_generator', params={'rate': 10.0})

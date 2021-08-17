@@ -89,32 +89,40 @@ instance using :py:func:`.SetStatus`.
    specific backend was selected has to be *set again* on the new
    backend, if the backend is changed later on.
 
-The full list of available recording backends and their respective
-properties can be obtained from the kernel's status dictionary.
+The full list of available recording backends can be obtained from the
+kernel's status dictionary.
 
 ::
 
-   nest.GetKernelStatus("recording_backends")
-   {u'ascii': {},
-    u'memory': {},
-    u'mpi': {},
-    u'screen': {},
-    u'sionlib': {u'buffer_size': 1024,
-     u'filename': u'',
-     u'sion_chunksize': 262144,
-     u'sion_collective': False,
-     u'sion_n_files': 1}}
+   >>> nest.GetKernelStatus("recording_backends")
+   ('ascii', 'memory', 'mpi', 'screen', 'sionlib')
 
-The example shows that only the `sionlib` backend has backend-specific
-global properties, which can be modified by supplying a nested
-dictionary to :py:func:`.SetKernelStatus`.
+If a recording backend has global properties (shared by all enrolled
+recording devices), they can be inspected using :py:func`.GetDefaults`
 
 ::
 
-    nest.SetKernelStatus({"recording_backends": {'sionlib': {'buffer_size': 512}}})
+   >>> nest.GetDefaults("sionlib")
+   {'buffer_size': 1024,
+    'filename': '',
+    'sion_chunksize': 262144,
+    'sion_collective': False,
+    'sion_n_files': 1}
 
-The following is a list of built-in recording backends that come with
-NEST:
+Such global parameters can be set for a recording backend using
+:py:func:`.SetDefaults`
+
+::
+
+   >>> nest.SetDefaults('sionlib', {'buffer_size': 512})
+
+Built-in backends
+-----------------
+
+Following is a list of built-in recording backends that come with
+NEST. Please note that the availability of some of them depends on the
+compile-time configuration for NEST. See the backend documentation for
+details.
 
 - :doc:`../models/recording_backend_memory`
 - :doc:`../models/recording_backend_ascii`

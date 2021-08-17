@@ -154,8 +154,9 @@ public:
 
   /**
    * @return The model ID for a Model with a given name
+   * @throws UnknownModelName if the model is not available
    */
-  int get_node_model_id( const Name ) const;
+  index get_node_model_id( const Name ) const;
 
   /**
    * @return The Model registered with the given model ID
@@ -164,6 +165,7 @@ public:
 
   /**
    * @return The numeric ID of a given synapse model
+   * @throws UnknownSynapseType if the model is not available
    */
   index get_synapse_model_id( std::string model_name );
 

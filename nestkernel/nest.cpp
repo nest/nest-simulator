@@ -168,12 +168,7 @@ create( const Name& model_name, const index n_nodes )
     throw RangeCheck();
   }
 
-  const int model_id = kernel().model_manager.get_node_model_id( model_name );
-  if ( model_id == -1 )
-  {
-    throw UnknownModelName( model_name );
-  }
-
+  const index model_id = kernel().model_manager.get_node_model_id( model_name );
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
@@ -286,11 +281,12 @@ set_model_defaults( const std::string component, const DictionaryDatum& dict )
 DictionaryDatum
 get_model_defaults( const std::string component )
 {
-  const int model_id = kernel().model_manager.get_node_model_id( component );
-  if ( model_id != -1 )
+  try
   {
+    const index model_id = kernel().model_manager.get_node_model_id( component );
     return kernel().model_manager.get_node_model( model_id )->get_status();
   }
+  catch ( UnknownModelName& ) {}
 
   try
   {
@@ -305,7 +301,6 @@ get_model_defaults( const std::string component )
   }
 
   throw UnknownComponent( component );
-
   return DictionaryDatum();  // supress missing return value warning; never reached
 }
 

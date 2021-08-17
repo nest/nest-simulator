@@ -362,9 +362,7 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
   model_defaults_modified_ = true;
 }
 
-// TODO: replace int with index and return value -1 with invalid_index, also
-// change all pertaining code
-int
+index
 ModelManager::get_node_model_id( const Name name ) const
 {
   const Name model_name( name );
@@ -376,7 +374,9 @@ ModelManager::get_node_model_id( const Name name ) const
       return i;
     }
   }
-  return -1;
+
+  throw UnknownModelName( model_name );
+  return 0; // supress missing return value warning; never reached
 }
 
 index

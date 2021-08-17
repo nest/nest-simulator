@@ -60,11 +60,6 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   auto element_name = getValue< std::string >( layer_dict, names::elements );
   auto element_id = kernel().model_manager.get_node_model_id( element_name );
 
-  if ( element_id == -1 )
-  {
-    throw UnknownModelName( element_name );
-  }
-
   if ( layer_dict->known( names::positions ) )
   {
     if ( layer_dict->known( names::shape ) )

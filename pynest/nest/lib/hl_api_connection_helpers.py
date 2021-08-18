@@ -254,51 +254,36 @@ def _process_input_nodes(pre, post, conn_spec):
     """
     use_connect_arrays = False
 
-    # check for 'one_to_one' conn_spec
-    one_to_one_cspec = (conn_spec if not isinstance(conn_spec, dict)
-                        else conn_spec.get('rule', 'all_to_all') == 'one_to_one')
+    # check for 'array_connect' conn_spec
+    one_to_one_cspec = conn_spec.get('rule') == 'one_to_one'
 
     # check and convert input types
-    pre_is_nc, post_is_nc = True, True
+    if isinstance(pre, NodeCollection) and isinstance(post, NodeCollection):
+        return
 
-    if not isinstance(pre, NodeCollection):
-        # skip uniqueness check for connect_arrays compatible `conn_spec`
-        if not one_to_one_cspec and len(set(pre)) == len(pre):
-            pre = NodeCollection(pre)
-        else:
-            pre_is_nc = False
+    if len(pre) != len(post):
+        raise NESTErrors.ArgumentType(
+            "Connect",
+            "If `pre` or `post` contain non-unique IDs, then they must have the same length.")
 
-    if not isinstance(post, NodeCollection):
-        # skip uniqueness check for connect_arrays compatible `conn_spec`
-        if not one_to_one_cspec and len(set(post)) == len(post):
-            post = NodeCollection(post)
-        else:
-            post_is_nc = False
+    # convert to arrays
+    pre = np.asarray(pre)
+    post = np.asarray(post)
 
-    if not pre_is_nc or not post_is_nc:
-        if len(pre) != len(post):
-            raise NESTErrors.ArgumentType(
-                "Connect",
-                "If `pre` or `post` contain non-unique IDs, then they must have the same length.")
+    # check array type
+    if not issubclass(pre.dtype.type, (int, np.integer)):
+        raise NESTErrors.ArgumentType("Connect", " `pre` IDs should be integers.")
 
-        # convert to arrays
-        pre = np.asarray(pre)
-        post = np.asarray(post)
+    if not issubclass(post.dtype.type, (int, np.integer)):
+        raise NESTErrors.ArgumentType("Connect", " `post` IDs should be integers.")
 
-        # check array type
-        if not issubclass(pre.dtype.type, (int, np.integer)):
-            raise NESTErrors.ArgumentType("Connect", " `pre` IDs should be integers.")
+    # check dimension
+    if not (pre.ndim == 1 and post.ndim == 1):
+        raise ValueError("Sources and targets must be 1-dimensional arrays")
 
-        if not issubclass(post.dtype.type, (int, np.integer)):
-            raise NESTErrors.ArgumentType("Connect", " `post` IDs should be integers.")
-
-        # check dimension
-        if not (pre.ndim == 1 and post.ndim == 1):
-            raise ValueError("Sources and targets must be 1-dimensional arrays")
-
-        use_connect_arrays = True
+    use_connect_arrays = True
 
     if use_connect_arrays and not one_to_one_cspec:
-        raise ValueError("When connecting two arrays with non-unique IDs, `conn_spec` must be 'one_to_one'.")
+        raise ValueError("When connecting two arrays with non-unique IDs, `conn_spec` must be 'array_connect'.")
 
     return use_connect_arrays, pre, post

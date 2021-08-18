@@ -25,12 +25,13 @@ Connection semantics prototype functions
 
 import copy
 from ..ll_api import sps, sr
-from .hl_api_types import CollocatedSynapses
+from .hl_api_types import CollocatedSynapses, NodeCollection
 from .hl_api_connection_helpers import _process_syn_spec, _process_spatial_projections, _connect_layers_needed
 from ..synapsemodels.hl_api_synapsemodels import SynapseModel
 
 __all__ = [
     'AllToAll',
+    'ArrayConnect',
     'BuildNetwork',
     'Connect',
     'ConnectImmediately',
@@ -60,6 +61,8 @@ class Projection(object):
             if param is not None and type(param) is bool:
                 self.conn_spec[name] = param
 
+        self.use_connect_arrays = False
+
     def apply(self):
         # If syn_spec is a SynapseModel object it must be converted to a dictionary
         syn_spec = self.syn_spec.to_dict() if issubclass(type(self.syn_spec), SynapseModel) else self.syn_spec
@@ -81,7 +84,7 @@ class Projection(object):
         return [self.source, self.target, self.conn_spec, syn_spec]
 
     def __getattr__(self, attr):
-        if attr in ['source', 'target', 'conn_spec', 'syn_spec']:
+        if attr in ['source', 'target', 'conn_spec', 'syn_spec', 'use_connect_arrays']:
             return super().__getattribute__(attr)
         if attr in self.conn_spec:
             return self.conn_spec[attr]
@@ -89,7 +92,7 @@ class Projection(object):
             raise AttributeError(f'{attr} is not a connection- or synapse-specification')
 
     def __setattr__(self, attr, value):
-        if attr in ['source', 'target', 'conn_spec', 'syn_spec']:
+        if attr in ['source', 'target', 'conn_spec', 'syn_spec', 'use_connect_arrays']:
             return super().__setattr__(attr, value)
         else:
             self.conn_spec[attr] = value
@@ -140,14 +143,18 @@ def ConnectImmediately(projections):
 
 
 def BuildNetwork():
+    from .hl_api_connections import array_connect
+
     if not projection_collection.network_built:
         # Convert to list of lists
         projection_list = []
         print(f'Connecting {len(projection_collection.get())} projections...')
-        for projection in projection_collection.get():
-            projection = projection.to_list()
+        for proj in projection_collection.get():
+            projection = proj.to_list()
             source, target, conn_spec, syn_spec = projection
-            if _connect_layers_needed(conn_spec, syn_spec):
+            if proj.use_connect_arrays:
+                array_connect(source, target, conn_spec, syn_spec)
+            elif _connect_layers_needed(conn_spec, syn_spec):
                 # Check that pre and post are layers
                 if source.spatial is None:
                     raise TypeError("Presynaptic NodeCollection must have spatial information")
@@ -183,6 +190,23 @@ class AllToAll(Projection):
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'all_to_all'}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
+
+
+class ArrayConnect(Projection):
+    """NB! Will not be connected with the other projections, we send this to C++ on it's own."""
+    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
+        self.conn_spec = {'rule': 'one_to_one'}  # ArrayConnect uses an one-to-one scheme
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
+
+        # Check if we can convert to NodeCollection and use normal connection routines
+        if ( not isinstance(source, NodeCollection) and not
+             isinstance(target, NodeCollection) and
+             len(set(source)) == len(source) and
+             len(set(target)) == len(target) ):
+            self.source = NodeCollection(source)
+            self.target = NodeCollection(target)
+        else:
+            self.use_connect_arrays = True#array_connect(source, target, self.conn_spec, self.syn_spec)
 
 
 class Conngen(Projection):

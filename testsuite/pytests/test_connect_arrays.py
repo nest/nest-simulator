@@ -45,11 +45,12 @@ class TestConnectArrays(unittest.TestCase):
         weights = 1.5
         delays = 1.4
 
-        nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+        nest.Connect(nest.ArrayConnect(sources, targets,
+                                       syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
 
         conns = nest.GetConnections()
 
-        self.assertEqual(len(conns), n*n)
+        self.assertEqual(len(conns), n)
 
         for c in conns:
             np.testing.assert_approx_equal(c.weight, weights)
@@ -64,7 +65,8 @@ class TestConnectArrays(unittest.TestCase):
         weights = np.ones(n)
         delays = np.ones(n)
 
-        nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+        nest.Connect(nest.ArrayConnect(sources, targets,
+                                       syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
 
         conns = nest.GetConnections()
 
@@ -83,7 +85,8 @@ class TestConnectArrays(unittest.TestCase):
         weights = 2 * np.ones(n)
         delays = 1.5 * np.ones(n)
 
-        nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+        nest.Connect(nest.ArrayConnect(sources, targets,
+                                       syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
 
         conns = nest.GetConnections()
 
@@ -100,8 +103,14 @@ class TestConnectArrays(unittest.TestCase):
         sources = np.arange(1, n+1, dtype=np.uint64)
         targets = self.non_unique
 
-        with self.assertRaises(ValueError):
-            nest.Connect(nest.AllToAll(sources, targets))
+        nest.Connect(nest.ArrayConnect(sources, targets))
+        nest.BuildNetwork()
+
+        conns = nest.GetConnections()
+
+        for s, t, c in zip(sources, targets, conns):
+            self.assertEqual(c.source, s)
+            self.assertEqual(c.target, t)
 
     def test_connect_arrays_different_weights_delays(self):
         """Connecting NumPy arrays with different weights and delays"""
@@ -112,7 +121,8 @@ class TestConnectArrays(unittest.TestCase):
         weights = np.linspace(0.6, 1.5, n)
         delays = np.linspace(0.4, 1.3, n)
 
-        nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+        nest.Connect(nest.ArrayConnect(sources, targets,
+                                       syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
 
         conns = nest.GetConnections()
 
@@ -131,7 +141,8 @@ class TestConnectArrays(unittest.TestCase):
         weights = np.ones(len(sources))
         delays = np.ones(len(sources))
 
-        nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+        nest.Connect(nest.ArrayConnect(sources, targets,
+                                       syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
 
         conns = nest.GetConnections()
 
@@ -154,7 +165,7 @@ class TestConnectArrays(unittest.TestCase):
         targets = self.non_unique
         weights = np.ones(n)
 
-        nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights)))
+        nest.Connect(nest.ArrayConnect(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights)))
 
         conns = nest.GetConnections()
 
@@ -170,7 +181,7 @@ class TestConnectArrays(unittest.TestCase):
         sources = list(range(1, n + 1))
         targets = self.non_unique
 
-        nest.Connect(nest.OneToOne(sources, targets))
+        nest.Connect(nest.ArrayConnect(sources, targets))
 
         conns = nest.GetConnections()
 
@@ -185,7 +196,7 @@ class TestConnectArrays(unittest.TestCase):
         targets = self.non_unique
         delays = np.ones(n)
 
-        nest.Connect(nest.OneToOne(neurons, targets, syn_spec=nest.synapsemodels.static(delay=delays)))
+        nest.Connect(nest.ArrayConnect(neurons, targets, syn_spec=nest.synapsemodels.static(delay=delays)))
 
         conns = nest.GetConnections()
 
@@ -204,9 +215,9 @@ class TestConnectArrays(unittest.TestCase):
         delays = np.ones(len(sources))
         receptor_type = np.ones(len(sources), dtype=np.uint64)
 
-        nest.Connect(nest.OneToOne(sources, targets,
-                                   syn_spec=nest.synapsemodels.static(weight=weights, delay=delays,
-                                                                      receptor_type=receptor_type)))
+        nest.Connect(nest.ArrayConnect(sources, targets,
+                                       syn_spec=nest.synapsemodels.static(weight=weights, delay=delays,
+                                                                          receptor_type=receptor_type)))
 
         conns = nest.GetConnections()
 
@@ -229,10 +240,10 @@ class TestConnectArrays(unittest.TestCase):
         alpha = 0.1*np.ones(len(sources))
         tau = 20.*np.ones(len(sources))
 
-        nest.Connect(nest.OneToOne(sources, targets,
-                                   syn_spec=nest.synapsemodels.vogels_sprekeler(weight=weights, delay=delays,
-                                                                                receptor_type=receptor_type,
-                                                                                alpha=alpha, tau=tau)))
+        nest.Connect(nest.ArrayConnect(sources, targets,
+                                       syn_spec=nest.synapsemodels.vogels_sprekeler(weight=weights, delay=delays,
+                                                                                    receptor_type=receptor_type,
+                                                                                    alpha=alpha, tau=tau)))
 
         conns = nest.GetConnections()
 
@@ -256,9 +267,10 @@ class TestConnectArrays(unittest.TestCase):
         receptor_type = 1.5*np.ones(len(sources))
 
         with self.assertRaises(nest.kernel.NESTErrors.BadParameter):
-            nest.Connect(nest.OneToOne(sources, targets,
-                                       syn_spec=nest.synapsemodels.vogels_sprekeler(weight=weights, delay=delays,
-                                                                                    receptor_type=receptor_type)))
+            nest.Connect(nest.ArrayConnect(sources, targets,
+                                           syn_spec=nest.synapsemodels.vogels_sprekeler(weight=weights, delay=delays,
+                                                                                        receptor_type=receptor_type)))
+            nest.BuildNetwork()
 
     def test_connect_arrays_wrong_dtype(self):
         """Raises exception when connecting NumPy arrays with wrong dtype"""
@@ -270,8 +282,9 @@ class TestConnectArrays(unittest.TestCase):
         delays = np.ones(n)
 
         with self.assertRaises(nest.kernel.NESTErrors.ArgumentType):
-            nest.Connect(nest.OneToOne(sources, targets,
-                                       syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+            nest.Connect(nest.ArrayConnect(sources, targets,
+                                           syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+            nest.BuildNetwork()
 
     def test_connect_arrays_unknown_nodes(self):
         """Raises exception when connecting NumPy arrays with unknown nodes"""
@@ -283,8 +296,9 @@ class TestConnectArrays(unittest.TestCase):
         delays = np.ones(len(sources))
 
         with self.assertRaises(nest.kernel.NESTErrors.UnknownNode):
-            nest.Connect(nest.OneToOne(sources, targets,
-                                       syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+            nest.Connect(nest.ArrayConnect(sources, targets,
+                                           syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+            nest.BuildNetwork()
 
     @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
     def test_connect_arrays_receptor_type(self):
@@ -298,8 +312,8 @@ class TestConnectArrays(unittest.TestCase):
         targets = self.non_unique
 
         weights = len(sources) * [2.]
-        nest.Connect(nest.OneToOne(sources, targets,
-                                   syn_spec=nest.synapsemodels.static(weight=weights, receptor_type=0)))
+        nest.Connect(nest.ArrayConnect(sources, targets,
+                                       syn_spec=nest.synapsemodels.static(weight=weights, receptor_type=0)))
 
         self.assertEqual(len(sources) * [0], nest.GetConnections().receptor)
 
@@ -320,8 +334,8 @@ class TestConnectArrays(unittest.TestCase):
         # Need to make sure the correct alpha value is used with the correct source
         src_alpha_ref = {key: val for key, val in zip(source, alpha)}
 
-        nest.Connect(nest.OneToOne(sources, targets,
-                                   syn_spec=nest.synapsemodels.stdp(weight=weights, receptor_type=0, alpha=alpha)))
+        nest.Connect(nest.ArrayConnect(source, target,
+                                       syn_spec=nest.synapsemodels.stdp(weight=weights, receptor_type=0, alpha=alpha)))
 
         conns = nest.GetConnections()
         src = conns.source

@@ -40,6 +40,7 @@ from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
 __all__ = [
+    'array_connect',
     'OldConnect',
     'Disconnect',
     'GetConnections',
@@ -290,6 +291,58 @@ def OldConnect(pre, post=None, conn_spec=None, syn_spec=None,
 
     if return_synapsecollection:
         return GetConnections(pre, post)
+    
+@check_stack
+def array_connect(pre, post, conn_spec, syn_spec=None):
+    use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
+
+    # Converting conn_spec to dict, without putting it on the SLI stack.
+    processed_conn_spec = _process_conn_spec(conn_spec)
+    # If syn_spec is given, its contents are checked, and if needed converted
+    # to the right formats.
+    processed_syn_spec = _process_syn_spec(
+        syn_spec, processed_conn_spec, len(pre), len(post), use_connect_arrays)
+
+    # If pre and post are arrays of node IDs, and conn_spec is unspecified,
+    # the node IDs are connected one-to-one.
+    if use_connect_arrays:
+        if processed_syn_spec is None:
+            raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
+                             "be specified and contain at least the synapse model.")
+
+        # In case of misspelling
+        if "weights" in processed_syn_spec:
+            raise ValueError("To specify weights, use 'weight' in syn_spec.")
+        if "delays" in processed_syn_spec:
+            raise ValueError("To specify delays, use 'delay' in syn_spec.")
+
+        weights = numpy.array(processed_syn_spec['weight']) if 'weight' in processed_syn_spec else None
+        delays = numpy.array(processed_syn_spec['delay']) if 'delay' in processed_syn_spec else None
+
+        try:
+            synapse_model = processed_syn_spec['synapse_model']
+        except KeyError:
+            raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
+                             "contain a synapse model.")
+
+        # Split remaining syn_spec entries to key and value arrays
+        reduced_processed_syn_spec = {k: processed_syn_spec[k]
+                                      for k in set(processed_syn_spec.keys()).difference(
+                                          set(('weight', 'delay', 'synapse_model')))}
+
+        if len(reduced_processed_syn_spec) > 0:
+            syn_param_keys = numpy.array(list(reduced_processed_syn_spec.keys()), dtype=numpy.string_)
+            syn_param_values = numpy.zeros([len(reduced_processed_syn_spec), len(pre)])
+
+            for i, value in enumerate(reduced_processed_syn_spec.values()):
+                syn_param_values[i] = value
+        else:
+            syn_param_keys = None
+            syn_param_values = None
+
+        connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
+
+    return use_connect_arrays
 
 
 @check_stack

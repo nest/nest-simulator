@@ -186,8 +186,10 @@ class EINetwork:
         in_syn = self.i_syn.clone()
         in_syn.specs = {"weight": network["i_syns"].weight.values}
 
-        nest.Connect(nest.OneToOne(network["e_syns"].source.values, network["e_syns"].target.values, syn_spec=ex_syn))
-        nest.Connect(nest.OneToOne(network["i_syns"].source.values, network["i_syns"].target.values, syn_spec=in_syn))
+        nest.Connect(nest.ArrayConnect(network["e_syns"].source.values,
+                                       network["e_syns"].target.values, syn_spec=ex_syn))
+        nest.Connect(nest.ArrayConnect(network["i_syns"].source.values,
+                                       network["i_syns"].target.values, syn_spec=in_syn))
 
         ###############################################################################
         # Reconnect instruments

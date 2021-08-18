@@ -26,27 +26,33 @@ import unittest
 import nest
 
 HAVE_OPENMP = nest.ll_api.sli_func('is_threaded')
+HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
 
 
 class TestParamThreadInvariance(unittest.TestCase):
 
     @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+    @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
     def test_exponential_thread_invariance(self):
         self.param_thread_invariance('exponential')
 
     @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+    @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
     def test_lognormal_thread_invariance(self):
         self.param_thread_invariance('lognormal')
 
     @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+    @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
     def test_normal_thread_invariance(self):
         self.param_thread_invariance('normal')
 
     @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+    @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
     def test_uniform_thread_invariance(self):
         self.param_thread_invariance('uniform')
 
     @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+    @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
     def test_uniform_int_thread_invariance(self):
         self.param_thread_invariance('uniform_int')
 

@@ -58,8 +58,8 @@ def _process_conn_spec(conn_spec):
 
 def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_arrays):
     """Processes the synapse specifications from None, string or dictionary to a dictionary."""
-    syn_spec = copy.deepcopy(syn_spec)
-    
+    syn_spec = copy.copy(syn_spec)
+
     if syn_spec is None:
         # for use_connect_arrays, return "static_synapse" by default
         if use_connect_arrays:

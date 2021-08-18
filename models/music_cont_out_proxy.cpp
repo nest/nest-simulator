@@ -237,7 +237,7 @@ nest::music_cont_out_proxy::calibrate()
   // only publish the output port once,
   if ( S_.published_ == false )
   {
-    const index synmodel_id = kernel().model_manager.get_synaps_model_id( "static_synapse" );
+    const index synmodel_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
     std::vector< MUSIC::GlobalIndex > music_index_map;
 
     DictionaryDatum dummy_params = new Dictionary();

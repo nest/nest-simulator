@@ -90,12 +90,11 @@ def rel_import_star(module_name):
     # Emulate a bit of import machinery to replace module level
     # `from .X import *` statements.
     module = importlib.import_module(module_name, __name__)
-    module_dict = vars(module).items()
+    mod_iter = vars(module).items()
     if hasattr(module, "__all__"):
-        all = module.__all__
-        _module_dict.update(p for p in module_dict if p[0] in all)
+        _module_dict.update(kv for kv in mod_iter if kv[0] in module.__all__)
     else:
-        _module_dict.update(p for p in module_dict if not p[0].startswith("_"))
+        _module_dict.update(kv for kv in mod_iter if not kv[0].startswith("_"))
 
 # Import public API of `.hl_api` into the module instance
 rel_import_star(".hl_api")

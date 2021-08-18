@@ -87,9 +87,7 @@ nest::KernelManager::initialize()
   {
     m->initialize();
   }
-
   ++fingerprint_;
-
   initialized_ = true;
 }
 
@@ -114,12 +112,11 @@ nest::KernelManager::cleanup()
 void
 nest::KernelManager::finalize()
 {
-  initialized_ = false;
-
   for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
     ( *m_it )->finalize();
   }
+  initialized_ = false;
 }
 
 void

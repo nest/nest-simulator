@@ -109,8 +109,7 @@ recording devices), they can be inspected using :py:func`.GetDefaults`
     'sion_collective': False,
     'sion_n_files': 1}
 
-Such global parameters can be set for a recording backend using
-:py:func:`.SetDefaults`
+Such global parameters can be set using :py:func:`.SetDefaults`
 
 ::
 

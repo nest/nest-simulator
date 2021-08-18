@@ -798,12 +798,12 @@ def
    Parameters:
    sources    nodecollection  - the node IDs of the sources
    targets    nodecollection  - the node IDs of the targets
-   weight     double         - the weight of the connection
-   delay      double         - the delay of the connection
-   conn_rule  literal        - the name of the connection rule
-   conn_spec  dict           - dictionary with connectivity specification (see Options)
-   syn_model  literal        - the name of the synapse model
-   syn_spec   dict           - dictionary with synapse model specification (see Options)
+   weight     double          - the weight of the connection
+   delay      double          - the delay of the connection
+   conn_rule  literal         - the name of the connection rule
+   conn_spec  dict            - dictionary with connectivity specification (see Options)
+   syn_model  literal         - the name of the synapse model
+   syn_spec   dict            - dictionary with synapse model specification (see Options)
 
    Options:
    /conn_spec - dictionary with connectivity specification, must at least contain /rule

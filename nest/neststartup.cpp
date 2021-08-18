@@ -120,7 +120,7 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
   // NestModule extends SLI by commands for neuronal simulations
   addmodule< nest::NestModule >( engine );
 
-  // now add static modules providing models
+  // now add static modules providing components.
   add_static_modules( engine );
 
 /*

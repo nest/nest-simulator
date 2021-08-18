@@ -224,5 +224,4 @@ userdict begin
   ResetKernel
  } for                                  % for each coupling strength
 end
-
 } for                                   % for each neuron model

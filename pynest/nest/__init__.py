@@ -39,42 +39,100 @@ For more information visit https://www.nest-simulator.org.
 
 """
 
-import sys
+
+# Store interpreter-given module attributes to copy into replacement module
+# instance later on. Use `.copy()` to prevent pollution with other variables
+_original_module_attrs = globals().copy()
+
+import sys, types, importlib
 if sys.version_info[0] == 2:
     msg = "Python 2 is no longer supported. Please use Python >= 3.6."
     raise Exception(msg)
 
-from . import ll_api                             # noqa
-from .ll_api import set_communicator             # noqa
+class NestModule(types.ModuleType):
+    from . import ll_api                             # noqa
+    from .ll_api import set_communicator             # noqa
 
-from . import pynestkernel as kernel             # noqa
-from .hl_api import *                            # noqa
+    from . import pynestkernel as kernel             # noqa
 
-from . import random                             # noqa
-from . import math                               # noqa
-from . import spatial_distributions              # noqa
-from . import logic                              # noqa
+    from . import random                             # noqa
+    from . import math                               # noqa
+    from . import spatial_distributions              # noqa
+    from . import logic                              # noqa
 
-from .lib.hl_api_helper import is_documented_by  # noqa
+    try:
+        from . import server                         # noqa
+    except ImportError:
+        pass
 
-try:
-    from . import server                         # noqa
-except ImportError:
-    pass
+    @property
+    def spatial(self):
+        # Classic switch-a-roo: while the `spatial` property is called
+        # we remove the `spatial` property, so that we avoid inf. recursion
+        # into this property when we try to `from . import spatial`.
+        # Then when the `spatial` module has been retrieved we put its value
+        # where the property was and return it.
+        cls = type(self)
+        del cls.spatial
+        from . import spatial
+        cls.spatial = spatial
+        return spatial
 
-# spatial needs to be last because of doc generation
-from . import spatial                            # noqa
+    __version__ = ll_api.sli_func("statusdict /version get")
 
+# Create a module instance and copy over the original module attributes
+_module = NestModule(__name__)
+_module_dict = vars(_module)
+_module_dict.update(_original_module_attrs)
 
-__version__ = ll_api.sli_func("statusdict /version get")
+def rel_import_star(module_name):
+    global _module_dict
+    # Emulate a bit of import machinery to replace module level
+    # `from .X import *` statements.
+    module = importlib.import_module(module_name, __name__)
+    module_dict = vars(module).items()
+    if hasattr(module, "__all__"):
+        all = module.__all__
+        _module_dict.update(kv for kv in module_dict if kv[0] in all)
+    else:
+        _module_dict.update(kv for kv in module_dict if not kv[0].startswith("_"))
 
+# Import public API of `.hl_api` into the module instance
+rel_import_star(".hl_api")
 
-@is_documented_by(GetKernelStatus)
-def get(*args, **kwargs):
-    return GetKernelStatus(*args, **kwargs)
+# POC kernel attributes
+class KernelAttribute:
+    def __init__(self, name, doc, readonly=False):
+        self._name = name
+        self.__doc__ = doc
+        self._readonly = readonly
 
+    def __get__(self, instance, cls=None):
+        if cls is not None:
+            return self
+        return instance.GetKernelStatus(self._name)
 
-@is_documented_by(SetKernelStatus)
-def set(*args, **kwargs):
-    __doc__ = SetKernelStatus.__doc__
-    return SetKernelStatus(*args, **kwargs)
+    def __set__(self, instance, value):
+        if self._readonly:
+            raise ValueError(f"`{self._name}` is a read only kernel attribute.")
+        return instance.SetKernelStatus({self._name: value})
+
+# Foobar list of processed kernel attributes, to be replaced by some tbd source
+for attr in [
+    KernelAttribute("local_num_threads", "This is a docstring"),
+    KernelAttribute("network_size", "This is a docstring", readonly=True),
+]:
+    setattr(NestModule, attr._name, attr)
+
+# Update the public API of the module
+_module.__all__ = list(k for k in _module_dict if not k.startswith("_"))
+
+# Set the interpreter's `nest` module to the curated module instance
+# so that `import nest` returns the `_module` object.
+sys.modules[__name__] = _module
+
+# Some compiled/binary components of NEST manage to snag a reference to the
+# original module instead of the one we put in `sys.modules`. Thus we unpack
+# the module instance here to provide all the references at the module level for
+# these edge cases.
+globals().update(_module_dict)

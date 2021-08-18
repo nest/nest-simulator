@@ -25,6 +25,7 @@
 #include "node_collection.h"
 #include "node.h"
 #include "spatial.h"
+#include "vp_manager_impl.h"
 
 // includes from sli
 #include "sharedptrdatum.h"
@@ -99,9 +100,11 @@ NormalParameter::NormalParameter( const DictionaryDatum& d )
 }
 
 double
-NormalParameter::value( RngPtr rng, Node* )
+NormalParameter::value( RngPtr rng, Node* node )
 {
-  return normal_dists_[ kernel().vp_manager.get_thread_id() ]( rng );
+  const auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
+  const auto tid = kernel().vp_manager.vp_to_thread( vp );
+  return normal_dists_[ tid ]( rng );
 }
 
 
@@ -123,9 +126,11 @@ LognormalParameter::LognormalParameter( const DictionaryDatum& d )
 }
 
 double
-LognormalParameter::value( RngPtr rng, Node* )
+LognormalParameter::value( RngPtr rng, Node* node )
 {
-  return lognormal_dists_[ kernel().vp_manager.get_thread_id() ]( rng );
+  const auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
+  const auto tid = kernel().vp_manager.vp_to_thread( vp );
+  return lognormal_dists_[ tid ]( rng );
 }
 
 

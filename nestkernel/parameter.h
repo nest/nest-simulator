@@ -262,7 +262,7 @@ public:
    */
   NormalParameter( const DictionaryDatum& d );
 
-  double value( RngPtr rng, Node* ) override;
+  double value( RngPtr rng, Node* node ) override;
 
 private:
   double mean_, std_;
@@ -288,7 +288,7 @@ public:
    */
   LognormalParameter( const DictionaryDatum& d );
 
-  double value( RngPtr rng, Node* ) override;
+  double value( RngPtr rng, Node* node ) override;
 
 private:
   double mean_, std_;

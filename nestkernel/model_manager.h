@@ -310,6 +310,7 @@ private:
 inline Model*
 ModelManager::get_node_model( index m ) const
 {
+  assert( m >= 0 && m < node_models_.size() );
   return node_models_[ m ];
 }
 

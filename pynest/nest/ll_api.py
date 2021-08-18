@@ -354,8 +354,17 @@ def init(argv):
         else:
             try:
                 import keyword
-                from .lib.hl_api_models import Models		# noqa
-                keyword.kwlist += Models()
+                from .lib.hl_api_simulation import GetKernelStatus  #noqa
+                keyword_lists = (
+                    "connection_rules",
+                    "node_models",
+                    "recording_backends",
+                    "rng_types",
+                    "stimulation_backends",
+                    "synapse_models",
+                )
+                for kwl in keyword_lists:
+                    keyword.kwlist += GetKernelStatus(kwl)
             except ImportError:
                 pass
 

@@ -126,7 +126,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     }
     if ( not Time::resolution_is_default() )
     {
-      errors.push_back( "Resolution has been set" );
+      errors.push_back( "Resolution has been modified" );
     }
     if ( kernel().model_manager.are_model_defaults_modified() )
     {

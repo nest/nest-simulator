@@ -30,18 +30,18 @@ from .hl_api_connection_helpers import _process_syn_spec, _process_spatial_proje
 from ..synapsemodels.hl_api_synapsemodels import SynapseModel
 
 __all__ = [
+    'AllToAll',
+    'BuildNetwork',
     'Connect',
     'ConnectImmediately',
     'Conngen',
-    'BuildNetwork',
-    'OneToOne',
-    'AllToAll',
     'FixedIndegree',
     'FixedOutdegree',
     'FixedTotalNumber',
+    'OneToOne',
     'PairwiseBernoulli',
-    'SymmetricPairwiseBernoulli',
     'reset_projection_collection',
+    'SymmetricPairwiseBernoulli',
 ]
 
 
@@ -179,15 +179,15 @@ def reset_projection_collection():
     projection_collection.network_built = False
 
 
-class OneToOne(Projection):
-    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
-        self.conn_spec = {'rule': 'one_to_one'}
-        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
-
-
 class AllToAll(Projection):
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'all_to_all'}
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
+
+
+class Conngen(Projection):
+    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, cg=None, **kwargs):
+        self.conn_spec = {'rule': 'conngen', 'cg': cg}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
@@ -209,6 +209,12 @@ class FixedTotalNumber(Projection):
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
+class OneToOne(Projection):
+    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
+        self.conn_spec = {'rule': 'one_to_one'}
+        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
+
+
 class PairwiseBernoulli(Projection):
     def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'pairwise_bernoulli', 'p': p}
@@ -219,8 +225,3 @@ class SymmetricPairwiseBernoulli(Projection):
         self.conn_spec = {'rule': 'symmetric_pairwise_bernoulli', 'p': p}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
-
-class Conngen(Projection):
-    def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, cg=None, **kwargs):
-        self.conn_spec = {'rule': 'conngen', 'cg': cg}
-        super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)

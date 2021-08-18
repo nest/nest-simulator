@@ -68,9 +68,17 @@ nest::SimulationManager::SimulationManager()
 void
 nest::SimulationManager::initialize()
 {
-  // set resolution, ensure clock is calibrated to new resolution
+  Time::reset_to_defaults();
   Time::reset_resolution();
+
+  clock_.set_to_zero();
   clock_.calibrate();
+
+  to_do_ = 0;
+  slice_ = 0;
+  from_step_ = 0;
+  to_step_ = 0; // consistent with to_do_ = 0
+
 
   prepared_ = false;
   simulating_ = false;
@@ -84,13 +92,6 @@ nest::SimulationManager::initialize()
 void
 nest::SimulationManager::finalize()
 {
-  nest::Time::reset_to_defaults();
-
-  clock_.set_to_zero(); // ensures consistent state
-  to_do_ = 0;
-  slice_ = 0;
-  from_step_ = 0;
-  to_step_ = 0; // consistent with to_do_ = 0
 }
 
 void

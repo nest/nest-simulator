@@ -132,14 +132,6 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     {
       errors.push_back( "Model defaults were modified" );
     }
-    if ( kernel().model_manager.has_user_models() )
-    {
-      errors.push_back( "Custom neuron models exist" );
-    }
-    if ( kernel().model_manager.has_user_prototypes() )
-    {
-      errors.push_back( "Custom synapse models exist" );
-    }
 
     if ( errors.size() == 1 )
     {

@@ -194,13 +194,6 @@ public:
    */
   void assert_valid_syn_id( synindex syn_id, thread t = 0 ) const;
 
-  /**
-   * Does the network contain copies of models created using CopyModel?
-   */
-  bool has_user_models() const;
-
-  bool has_user_prototypes() const;
-
   bool are_model_defaults_modified() const;
 
   size_t get_num_connection_models() const;
@@ -326,12 +319,6 @@ ModelManager::are_model_defaults_modified() const
   return model_defaults_modified_;
 }
 
-inline bool
-ModelManager::has_user_models() const
-{
-  return node_models_.size() > builtin_node_models_.size();
-}
-
 inline ConnectorModel&
 ModelManager::get_connection_model( synindex syn_id, thread t )
 {
@@ -359,12 +346,6 @@ ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
   {
     throw UnknownSynapseType( syn_id );
   }
-}
-
-inline bool
-ModelManager::has_user_prototypes() const
-{
-  return connection_models_[ 0 ].size() > builtin_connection_models_.size();
 }
 
 inline void

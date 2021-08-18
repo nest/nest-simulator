@@ -172,14 +172,6 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     {
       throw KernelException( "Network has been simulated" );
     }
-    if ( kernel().model_manager.has_user_models() )
-    {
-      throw KernelException( "Custom neuron models exist" );
-    }
-    if ( kernel().model_manager.has_user_prototypes() )
-    {
-      throw KernelException( "Custom synapse models exist" );
-    }
     if ( kernel().model_manager.are_model_defaults_modified() )
     {
       throw KernelException( "Model defaults were modified");

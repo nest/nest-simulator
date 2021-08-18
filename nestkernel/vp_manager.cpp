@@ -87,8 +87,8 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( n_threads_conflict or n_procs_conflict )
     {
       throw BadProperty(
-        "Requested total_num_virtual_procs is incompatible with other "
-        "properties. It must be an integer multiple of num_processes and equal to "
+        "Requested total_num_virtual_procs is incompatible with other properties. "
+        "It must be an integer multiple of num_processes and equal to "
         "local_num_threads * num_processes. Value unchanged." );
     }
   }
@@ -106,41 +106,53 @@ nest::VPManager::set_status( const DictionaryDatum& d )
 
   if ( n_threads_updated or n_vps_updated )
   {
-    // TODO: collect error descriptions for all conditions and throw a
-    // single exception with a comprehensive summary and a pointer to
-    // ResetKernel at the end of the if block.
-
-    if ( kernel().node_manager.size() > 0 )
-    {
-      throw KernelException( "Nodes exist: number of threads cannot be changed." );
-    }
-    if ( kernel().connection_manager.get_user_set_delay_extrema() )
-    {
-      throw KernelException( "Delay extrema have been set: number of threads cannot be changed." );
-    }
-    if ( kernel().simulation_manager.has_been_simulated() )
-    {
-      throw KernelException( "Network has been simulated: number of threads cannot be changed." );
-    }
-    if ( not Time::resolution_is_default() )
-    {
-      throw KernelException( "Resolution has been set: number of threads cannot be changed." );
-    }
     if ( kernel().sp_manager.is_structural_plasticity_enabled() and ( n_threads > 1 ) )
     {
       throw KernelException( "Structural plasticity enabled: multithreading cannot be enabled." );
     }
-    if ( kernel().model_manager.has_user_models() )
+
+    std::vector< std::string > errors;
+    if ( kernel().node_manager.size() > 0 )
     {
-      throw KernelException( "Custom neuron models exist: number of threads cannot be changed." );
+      errors.push_back( "Nodes exist" );
     }
-    if ( kernel().model_manager.has_user_prototypes() )
+    if ( kernel().connection_manager.get_user_set_delay_extrema() )
     {
-      throw KernelException( "Custom synapse models exist: number of threads cannot be changed." );
+      errors.push_back( "Delay extrema have been set" );
+    }
+    if ( kernel().simulation_manager.has_been_simulated() )
+    {
+      errors.push_back( "Network has been simulated" );
+    }
+    if ( not Time::resolution_is_default() )
+    {
+      errors.push_back( "Resolution has been set" );
     }
     if ( kernel().model_manager.are_model_defaults_modified() )
     {
-      throw KernelException( "Model defaults were modified: number of threads cannot be changed." );
+      errors.push_back( "Model defaults were modified" );
+    }
+    if ( kernel().model_manager.has_user_models() )
+    {
+      errors.push_back( "Custom neuron models exist" );
+    }
+    if ( kernel().model_manager.has_user_prototypes() )
+    {
+      errors.push_back( "Custom synapse models exist" );
+    }
+
+    if ( errors.size() == 1 )
+    {
+      throw KernelException( errors[0] + ": number of threads cannot be changed." );
+    }
+    if ( errors.size() > 1 )
+    {
+      std::string msg = "Number of threads unchanged. Error conditions:";
+      for (auto& error: errors)
+      {
+	msg += " " + error + ".";
+      }
+      throw KernelException( msg );
     }
 
     kernel().change_number_of_threads( n_threads );

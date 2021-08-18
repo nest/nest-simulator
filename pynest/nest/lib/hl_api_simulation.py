@@ -241,6 +241,11 @@ def SetKernelStatus(params):
     T_min : float, read only
         The smallest representable time value
 
+    Please note that the simulation resolution, the number of ms per
+    tic, and tics per md and stepcan only be set while there are no
+    nodes and connections in the network, the network not yet been
+    simulated, and no model defaults were modified.
+
 
     **Random number generators**
 
@@ -262,15 +267,20 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    total_num_virtual_procs : int, default: 1
-        The total number of virtual processes
     local_num_threads : int, default: 1
         The local number of threads
     num_processes : int, read only
         The number of MPI processes
+    total_num_virtual_procs : int, default: 1
+        The total number of virtual processes
     off_grid_spiking : bool, read only
         Whether to transmit precise spike times in MPI communication
 
+    Please note that the local number of threads and total number of
+    virtual processes can only be set while there are no nodes and
+    connections in the network, the network not yet been simulated,
+    delay extrema and resolution are unchanged, and no model defaults
+    were modified.
 
     **MPI buffers**
 

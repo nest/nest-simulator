@@ -161,30 +161,42 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   double resd = 0.0;
   bool res_updated = updateValue< double >( d, names::resolution, resd );
 
-  // A similar cascade of checks can be found in SimulationManager::set_status().
-  // If you change the wording of the exceptions here, please be so kind to make
-  // corresponding changes there. :-)
   if ( tics_per_ms_updated or res_updated )
   {
+    std::vector< std::string > errors;
     if ( kernel().node_manager.size() > 0 )
     {
-      throw KernelException( "Nodes exist: time representation cannot be changed." );
+      throw KernelException( "Nodes exist" );
     }
-    if ( has_been_simulated() ) // someone may have simulated empty network
+    if ( has_been_simulated() )
     {
-      throw KernelException( "Network has been simulated: time representation cannot be changed." );
+      throw KernelException( "Network has been simulated" );
     }
     if ( kernel().model_manager.has_user_models() )
     {
-      throw KernelException( "Custom neuron models exist: time representation cannot be changed." );
+      throw KernelException( "Custom neuron models exist" );
     }
     if ( kernel().model_manager.has_user_prototypes() )
     {
-      throw KernelException( "Custom synapse models exist: time representation cannot be changed." );
+      throw KernelException( "Custom synapse models exist" );
     }
     if ( kernel().model_manager.are_model_defaults_modified() )
     {
-      throw KernelException( "Model defaults were modified: time representation cannot be changed.");
+      throw KernelException( "Model defaults were modified");
+    }
+
+    if ( errors.size() == 1 )
+    {
+      throw KernelException( errors[0] + ": time representation cannot be changed." );
+    }
+    if ( errors.size() > 1 )
+    {
+      std::string msg = "Time representation unchanged. Error conditions:";
+      for (auto& error: errors)
+      {
+	msg += " " + error + ".";
+      }
+      throw KernelException( msg );
     }
 
     // only allow TICS_PER_MS to be changed together with resolution

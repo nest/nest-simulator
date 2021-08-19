@@ -49,7 +49,44 @@ if sys.version_info[0] == 2:
     msg = "Python 2 is no longer supported. Please use Python >= 3.6."
     raise Exception(msg)
 
+
+def _rel_import_star(module, import_module_name):
+    """Emulates `from X import *` into `module`"""
+
+    imported = importlib.import_module(import_module_name, __name__)
+    imp_iter = vars(imported).items()
+    if hasattr(module, "__all__"):
+        # If a public api is defined using the `__all__` attribute, copy that.
+        module.update(kv for kv in imp_iter if kv[0] in imported.__all__)
+    else:
+        # Otherwise follow "underscore is private" convention.
+        module.update(kv for kv in imp_iter if not kv[0].startswith("_"))
+
+
+def _lazy_module_property(module_name):
+    """
+    Returns a property that lazy loads a module and substitutes itself with it.
+    The class variable name must match given `module_name`::
+
+      class ModuleClass(types.ModuleType):
+          lazy_module_xy = _lazy_module_property("lazy_module_xy")
+    """
+    def lazy_loader(self):
+        cls = type(self)
+        delattr(cls, module_name)
+        module = importlib.import_module("." + module_name, __name__)
+        setattr(cls, module_name, module)
+        return module
+
+    return property(lazy_loader)
+
+
 class NestModule(types.ModuleType):
+    """
+    A module class for the `nest` root module to control the dynamic generation
+    of module level attributes such as the KernelAttributes and lazy loading
+    some submodules.
+    """
     from . import ll_api                             # noqa
     from .ll_api import set_communicator             # noqa
 
@@ -65,42 +102,27 @@ class NestModule(types.ModuleType):
     except ImportError:
         pass
 
-    @property
-    def spatial(self):
-        # Classic switch-a-roo: while the `spatial` property is called
-        # we remove the `spatial` property, so that we avoid inf. recursion
-        # into this property when we try to `from . import spatial`.
-        # Then when the `spatial` module has been retrieved we put its value
-        # where the property was and return it.
-        cls = type(self)
-        del cls.spatial
-        from . import spatial
-        cls.spatial = spatial
-        return spatial
+    # Lazy load the `spatial` module to avoid circular imports.
+    spatial = _lazy_module_property("spatial")
 
     __version__ = ll_api.sli_func("statusdict /version get")
 
-# Create a module instance and copy over the original module attributes
+# Instantiate a NestModule
 _module = NestModule(__name__)
+# We manipulate the nest module instance through its `__dict__` (= vars())
 _module_dict = vars(_module)
+# Copy over the original module attributes to preverse all interpreter given
+# magic attributes such as `__name__`, `__path__`, `__package__`, ...
 _module_dict.update(_original_module_attrs)
 
-def rel_import_star(module_name):
-    global _module_dict
-    # Emulate a bit of import machinery to replace module level
-    # `from .X import *` statements.
-    module = importlib.import_module(module_name, __name__)
-    mod_iter = vars(module).items()
-    if hasattr(module, "__all__"):
-        _module_dict.update(kv for kv in mod_iter if kv[0] in module.__all__)
-    else:
-        _module_dict.update(kv for kv in mod_iter if not kv[0].startswith("_"))
+# Import public API of `.hl_api` into the nest module instance
+_rel_import_star(_module_dict, ".hl_api")
 
-# Import public API of `.hl_api` into the module instance
-rel_import_star(".hl_api")
-
-# POC kernel attributes
 class KernelAttribute:
+    """
+    A `KernelAttribute` dispatches attribute access of a `nest` attribute to the
+    nest kernel by deferring to `nestGetKernelStatus` or `nest.SetKernelStatus`.
+    """
     def __init__(self, name, doc, readonly=False):
         self._name = name
         self.__doc__ = doc
@@ -123,15 +145,14 @@ for attr in [
 ]:
     setattr(NestModule, attr._name, attr)
 
-# Update the public API of the module
+# Finalize the nest module instance by generating its public API.
 _module.__all__ = list(k for k in _module_dict if not k.startswith("_"))
 
-# Set the interpreter's `nest` module to the curated module instance
-# so that `import nest` returns the `_module` object.
+# Set the nest module object as the return value of `import nest` using sys
 sys.modules[__name__] = _module
 
-# Some compiled/binary components of NEST manage to snag a reference to the
-# original module instead of the one we put in `sys.modules`. Thus we unpack
-# the module instance here to provide all the references at the module level for
-# these edge cases.
+# Some compiled/binary components (`pynestkernel.pyx` for example) of NEST
+# obtain a reference to this file's original module object instead of what's in
+# `sys.modules`. For these edge cases we make available all attributes of the
+# nest module instance to this file's module object.
 globals().update(_module_dict)

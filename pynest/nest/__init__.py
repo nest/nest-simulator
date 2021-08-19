@@ -107,6 +107,9 @@ class NestModule(types.ModuleType):
 
     __version__ = ll_api.sli_func("statusdict /version get")
 
+    def __dir__(self):
+        return list(set(vars(self).keys()) | set(self.__all__))
+
 # Instantiate a NestModule
 _module = NestModule(__name__)
 # We manipulate the nest module instance through its `__dict__` (= vars())

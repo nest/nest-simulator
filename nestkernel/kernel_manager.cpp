@@ -83,10 +83,11 @@ nest::KernelManager::~KernelManager()
 void
 nest::KernelManager::initialize()
 {
-  for ( auto& m : managers )
+  for ( auto& manager : managers )
   {
-    m->initialize();
+    manager->initialize();
   }
+
   ++fingerprint_;
   initialized_ = true;
 }
@@ -94,9 +95,9 @@ nest::KernelManager::initialize()
 void
 nest::KernelManager::prepare()
 {
-  for ( auto& m : managers )
+  for ( auto& manager : managers )
   {
-    m->prepare();
+    manager->prepare();
   }
 }
 

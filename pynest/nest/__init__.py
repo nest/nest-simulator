@@ -153,7 +153,9 @@ for ln in _param_lines:
     setattr(NestModule, _param, _kernel_attr)
 
 # Finalize the nest module instance by generating its public API.
-_module.__all__ = list(k for k in _module_dict if not k.startswith("_"))
+_api = list(k for k in _module_dict if not k.startswith("_"))
+_api.extend(k for k in dir(NestModule) if not k.startswith("_"))
+_module.__all__ = list(set(_api))
 
 # Set the nest module object as the return value of `import nest` using sys
 sys.modules[__name__] = _module

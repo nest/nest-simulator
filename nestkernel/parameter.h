@@ -87,12 +87,14 @@ public:
    * @param source_pos position of the source node
    * @param target_pos position of the target node
    * @param layer spatial layer
+   * @param node target node, required for normal and lognormal parameters
    * @returns the value of the parameter.
    */
   virtual double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer );
+    const AbstractLayer& layer,
+    Node* node );
 
   /**
    * Applies a parameter on a single-node ID NodeCollection and given array of positions.
@@ -384,7 +386,8 @@ public:
   value( RngPtr,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& ) override
+    const AbstractLayer&,
+    Node* ) override
   {
     switch ( synaptic_endpoint_ )
     {
@@ -434,7 +437,8 @@ public:
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override;
+    const AbstractLayer& layer,
+    Node* ) override;
 
 private:
   int dimension_;
@@ -481,10 +485,11 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    return parameter1_->value( rng, source_pos, target_pos, layer )
-      * parameter2_->value( rng, source_pos, target_pos, layer );
+    return parameter1_->value( rng, source_pos, target_pos, layer, node )
+      * parameter2_->value( rng, source_pos, target_pos, layer, node );
   }
 
 protected:
@@ -532,10 +537,11 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    return parameter1_->value( rng, source_pos, target_pos, layer )
-      / parameter2_->value( rng, source_pos, target_pos, layer );
+    return parameter1_->value( rng, source_pos, target_pos, layer, node )
+      / parameter2_->value( rng, source_pos, target_pos, layer, node );
   }
 
 protected:
@@ -583,10 +589,11 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    return parameter1_->value( rng, source_pos, target_pos, layer )
-      + parameter2_->value( rng, source_pos, target_pos, layer );
+    return parameter1_->value( rng, source_pos, target_pos, layer, node )
+      + parameter2_->value( rng, source_pos, target_pos, layer, node );
   }
 
 protected:
@@ -634,10 +641,11 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    return parameter1_->value( rng, source_pos, target_pos, layer )
-      - parameter2_->value( rng, source_pos, target_pos, layer );
+    return parameter1_->value( rng, source_pos, target_pos, layer, node )
+      - parameter2_->value( rng, source_pos, target_pos, layer, node );
   }
 
 protected:
@@ -704,10 +712,11 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    return compare_( parameter1_->value( rng, source_pos, target_pos, layer ),
-      parameter2_->value( rng, source_pos, target_pos, layer ) );
+    return compare_( parameter1_->value( rng, source_pos, target_pos, layer, node ),
+      parameter2_->value( rng, source_pos, target_pos, layer, node ) );
   }
 
 protected:
@@ -792,15 +801,16 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    if ( condition_->value( rng, source_pos, target_pos, layer ) )
+    if ( condition_->value( rng, source_pos, target_pos, layer, node ) )
     {
-      return if_true_->value( rng, source_pos, target_pos, layer );
+      return if_true_->value( rng, source_pos, target_pos, layer, node );
     }
     else
     {
-      return if_false_->value( rng, source_pos, target_pos, layer );
+      return if_false_->value( rng, source_pos, target_pos, layer, node );
     }
   }
 
@@ -852,9 +862,10 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    return std::min( p_->value( rng, source_pos, target_pos, layer ), other_value_ );
+    return std::min( p_->value( rng, source_pos, target_pos, layer, node ), other_value_ );
   }
 
 protected:
@@ -903,9 +914,10 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    return std::max( p_->value( rng, source_pos, target_pos, layer ), other_value_ );
+    return std::max( p_->value( rng, source_pos, target_pos, layer, node ), other_value_ );
   }
 
 protected:
@@ -945,7 +957,8 @@ public:
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override;
+    const AbstractLayer& layer,
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const p_;
@@ -993,9 +1006,10 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    return std::exp( p_->value( rng, source_pos, target_pos, layer ) );
+    return std::exp( p_->value( rng, source_pos, target_pos, layer, node ) );
   }
 
 protected:
@@ -1041,9 +1055,10 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    return std::sin( p_->value( rng, source_pos, target_pos, layer ) );
+    return std::sin( p_->value( rng, source_pos, target_pos, layer, node ) );
   }
 
 protected:
@@ -1088,9 +1103,10 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    return std::cos( p_->value( rng, source_pos, target_pos, layer ) );
+    return std::cos( p_->value( rng, source_pos, target_pos, layer, node ) );
   }
 
 protected:
@@ -1138,9 +1154,10 @@ public:
   value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override
+    const AbstractLayer& layer,
+    Node* node ) override
   {
-    return std::pow( p_->value( rng, source_pos, target_pos, layer ), exponent_ );
+    return std::pow( p_->value( rng, source_pos, target_pos, layer, node ), exponent_ );
   }
 
 protected:
@@ -1272,7 +1289,8 @@ public:
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override;
+    const AbstractLayer& layer,
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const p_;
@@ -1317,7 +1335,8 @@ public:
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override;
+    const AbstractLayer& layer,
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const p_;
@@ -1367,7 +1386,8 @@ public:
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override;
+    const AbstractLayer& layer,
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const px_;
@@ -1418,7 +1438,8 @@ public:
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
-    const AbstractLayer& layer ) override;
+    const AbstractLayer& layer,
+    Node* node ) override;
 
 protected:
   std::shared_ptr< Parameter > const p_;
@@ -1428,9 +1449,13 @@ protected:
 };
 
 inline double
-Parameter::value( RngPtr rng, const std::vector< double >&, const std::vector< double >&, const AbstractLayer& )
+Parameter::value( RngPtr rng,
+  const std::vector< double >&,
+  const std::vector< double >&,
+  const AbstractLayer&,
+  Node* node )
 {
-  return value( rng, nullptr );
+  return value( rng, node );
 }
 
 inline bool

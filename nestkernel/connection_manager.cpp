@@ -140,6 +140,13 @@ nest::ConnectionManager::finalize()
 }
 
 void
+nest::ConnectionManager::change_number_of_threads()
+{
+  finalize();
+  initialize();
+}
+
+void
 nest::ConnectionManager::set_status( const DictionaryDatum& d )
 {
   for ( size_t i = 0; i < delay_checkers_.size(); ++i )

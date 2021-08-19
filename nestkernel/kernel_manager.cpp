@@ -128,35 +128,20 @@ nest::KernelManager::reset()
 }
 
 void
-nest::KernelManager::change_number_of_threads( thread n_threads )
+nest::KernelManager::change_number_of_threads( thread new_num_threads )
 {
-  // see VPManager::set_status() for input checks and descriptions for
-  // the conditions in the following assertions
+  // For descriptions of the following conditions, see the cascade of
+  // user input checks in VPManager::set_status()
   assert( node_manager.size() == 0 );
   assert( not connection_manager.get_user_set_delay_extrema() );
   assert( not simulation_manager.has_been_simulated() );
   assert( Time::resolution_is_default() );
-  assert( not sp_manager.is_structural_plasticity_enabled() or n_threads == 1 );
+  assert( not sp_manager.is_structural_plasticity_enabled() or new_num_threads == 1 );
 
-  node_manager.finalize();
-  connection_manager.finalize();
-  model_manager.finalize();
-  modelrange_manager.finalize();
-  random_manager.finalize();
-
-  vp_manager.set_num_threads( n_threads );
-
-  random_manager.initialize();
-  modelrange_manager.initialize();
-  model_manager.initialize();
-  connection_manager.initialize();
-  event_delivery_manager.initialize();
-  music_manager.initialize();
-  node_manager.initialize();
-
+  vp_manager.set_num_threads( new_num_threads );
   for ( auto& manager : managers )
   {
-    manager->change_num_threads( n_threads );
+    manager->change_number_of_threads();
   }
 }
 

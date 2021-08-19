@@ -168,7 +168,8 @@ IOManager::finalize()
   }
 }
 
-void IOManager::change_num_threads( thread )
+void
+IOManager::change_number_of_threads()
 {
   for ( const auto& it : recording_backends_ )
   {

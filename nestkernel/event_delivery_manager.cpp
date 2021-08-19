@@ -119,6 +119,13 @@ EventDeliveryManager::finalize()
 }
 
 void
+EventDeliveryManager::change_number_of_threads()
+{
+  finalize();
+  initialize();
+}
+
+void
 EventDeliveryManager::set_status( const DictionaryDatum& dict )
 {
   updateValue< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );

@@ -149,7 +149,7 @@ public:
   /**
    * Reset kernel.
    *
-   * Resets kernel by finalizing and initializing.
+   * Resets the kernel by finalizing and initializing all managers.
    *
    * @see initialize(), finalize()
    */
@@ -158,18 +158,16 @@ public:
   /**
    * Change number of threads.
    *
-   * The kernel first needs to be finalized with the old number of threads
-   * and then initialized with the new number of threads.
-   *
-   * @see initialize(), finalize()
+   * Set the new number of threads on all managers by calling
+   * change_number_of_threads() on each of them.
    */
-  void change_number_of_threads( thread );
-
-  void prepare();
-  void cleanup();
+  void change_number_of_threads( thread new_num_threads );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );
+
+  void prepare();
+  void cleanup();
 
   //! Returns true if kernel is initialized
   bool is_initialized() const;
@@ -192,7 +190,7 @@ public:
 
 private:
   std::vector< ManagerInterface* > managers;
-  bool initialized_; //!< true if all sub-managers initialized
+  bool initialized_; //!< true if the kernel is initialized
 };
 
 KernelManager& kernel();

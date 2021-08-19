@@ -45,17 +45,10 @@ public:
   {
   }
 
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void
-  set_status( const DictionaryDatum& )
-  {
-  }
-  virtual void
-  get_status( DictionaryDatum& )
-  {
-  }
+  virtual void initialize() override;
+  virtual void finalize() override;
+  virtual void set_status( const DictionaryDatum& ) override;
+  virtual void get_status( DictionaryDatum& ) override;
 
   /**
    * Assign a range of node IDs for the given model
@@ -93,6 +86,15 @@ private:
   index last_node_id_;
 };
 
+inline void
+nest::ModelRangeManager::set_status( const DictionaryDatum& )
+{
+}
+
+inline void
+nest::ModelRangeManager::get_status( DictionaryDatum& )
+{
+}
 
 inline bool
 nest::ModelRangeManager::is_in_range( index node_id ) const

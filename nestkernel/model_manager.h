@@ -48,15 +48,11 @@ public:
   ModelManager();
   ~ModelManager();
 
-  /**
-   *
-   */
-  virtual void initialize();
-
-  /**
-   *
-   */
-  virtual void finalize();
+  virtual void initialize() override;
+  virtual void finalize() override;
+  virtual void change_number_of_threads() override;
+  virtual void set_status( const DictionaryDatum& ) override;
+  virtual void get_status( DictionaryDatum& ) override;
 
   /**
    * Resize the structures for the Connector objects if necessary.
@@ -68,15 +64,6 @@ public:
    */
   void calibrate( const TimeConverter& );
 
-  /**
-   *
-   */
-  virtual void set_status( const DictionaryDatum& );
-
-  /**
-   *
-   */
-  virtual void get_status( DictionaryDatum& );
 
   /**
    *
@@ -352,9 +339,7 @@ ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 inline void
 ModelManager::delete_secondary_events_prototypes()
 {
-  for ( std::vector< std::map< synindex, SecondaryEvent* > >::iterator it = secondary_events_prototypes_.begin();
-        it != secondary_events_prototypes_.end();
-        ++it )
+  for ( auto it = secondary_events_prototypes_.begin(); it != secondary_events_prototypes_.end(); ++it )
   {
     for ( std::map< synindex, SecondaryEvent* >::iterator iit = it->begin(); iit != it->end(); ++iit )
     {

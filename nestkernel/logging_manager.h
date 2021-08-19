@@ -49,11 +49,10 @@ class LoggingManager : public ManagerInterface
 public:
   LoggingManager();
 
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  virtual void initialize() override;
+  virtual void finalize() override;
+  virtual void set_status( const DictionaryDatum& ) override;
+  virtual void get_status( DictionaryDatum& ) override;
 
   /**
    * Register a logging client.
@@ -122,6 +121,7 @@ private:
   bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary
                             //!< entries
 };
+
 } // namespace nest
 
 #endif // ifndef LOGGING_MANAGER_H

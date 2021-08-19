@@ -81,6 +81,13 @@ NodeManager::finalize()
   destruct_nodes_();
 }
 
+void
+NodeManager::change_number_of_threads()
+{
+  // No nodes exist at this point, so nothing to tear down
+  initialize();
+}
+
 DictionaryDatum
 NodeManager::get_status( index idx )
 {

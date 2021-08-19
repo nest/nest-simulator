@@ -138,7 +138,8 @@ class KernelAttribute:
 
     def __set__(self, instance, value):
         if self._readonly:
-            raise ValueError(f"`{self._name}` is a read only kernel attribute.")
+            msg = f"`{self._name}` is a read only kernel attribute."
+            raise AttributeError(msg)
         return instance.SetKernelStatus({self._name: value})
 
 # Parse the `SetKernelStatus` docstring to obtain the kernel attributes.

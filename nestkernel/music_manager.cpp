@@ -69,9 +69,6 @@ MUSICManager::finalize()
 {
 }
 
-/*
-     - set the ... properties
-*/
 void
 MUSICManager::set_status( const DictionaryDatum& )
 {

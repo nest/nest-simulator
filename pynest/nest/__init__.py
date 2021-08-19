@@ -129,7 +129,7 @@ class KernelAttribute:
         self._readonly = readonly
 
     def __get__(self, instance, cls=None):
-        if cls is not None:
+        if instance is None:
             return self
         return instance.GetKernelStatus(self._name)
 

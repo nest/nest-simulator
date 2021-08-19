@@ -460,7 +460,7 @@ ModelManager::clear_node_models_()
 void
 ModelManager::clear_connection_models_()
 {
-  for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
+  for ( size_t t = 0; t < connection_models_.size(); ++t )
   {
     for ( auto&& connection_model : connection_models_[ t ] )
     {

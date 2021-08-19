@@ -46,29 +46,27 @@ nest::TargetTableDevices::initialize()
 void
 nest::TargetTableDevices::finalize()
 {
-#pragma omp parallel
+  for ( size_t tid = 0; tid < target_to_devices_.size(); ++tid )
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
-    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit = target_to_devices_[ tid ].begin();
-          iit != target_to_devices_[ tid ].end();
-          ++iit )
+    for ( auto iit = target_to_devices_[ tid ].begin(); iit != target_to_devices_[ tid ].end(); ++iit )
     {
       for ( std::vector< ConnectorBase* >::iterator iiit = iit->begin(); iiit != iit->end(); ++iiit )
       {
         delete *iiit;
       }
     }
+  }
 
-    for ( std::vector< std::vector< ConnectorBase* > >::iterator iit = target_from_devices_[ tid ].begin();
-          iit != target_from_devices_[ tid ].end();
-          ++iit )
+  for ( size_t tid = 0; tid < target_to_devices_.size(); ++tid )
+  {
+    for ( auto iit = target_from_devices_[ tid ].begin(); iit != target_from_devices_[ tid ].end(); ++iit )
     {
       for ( std::vector< ConnectorBase* >::iterator iiit = iit->begin(); iiit != iit->end(); ++iiit )
       {
         delete *iiit;
       }
     }
-  } // end omp parallel
+  }
 
   std::vector< std::vector< std::vector< ConnectorBase* > > >().swap( target_to_devices_ );
   std::vector< std::vector< std::vector< ConnectorBase* > > >().swap( target_from_devices_ );

@@ -302,15 +302,13 @@ nest::ConnectionManager::set_synapse_status( const index source_node_id,
 void
 nest::ConnectionManager::delete_connections_()
 {
-#pragma omp parallel
+  for ( size_t tid = 0; tid < connections_.size(); ++tid )
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
-    for ( std::vector< ConnectorBase* >::iterator conn = connections_[ tid ].begin(); conn != connections_[ tid ].end();
-          ++conn )
+    for ( auto conn = connections_[ tid ].begin(); conn != connections_[ tid ].end(); ++conn )
     {
       delete *conn;
     }
-  } // end omp parallel
+  }
 }
 
 const nest::Time

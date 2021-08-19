@@ -138,12 +138,19 @@ class KernelAttribute:
             raise ValueError(f"`{self._name}` is a read only kernel attribute.")
         return instance.SetKernelStatus({self._name: value})
 
-# Foobar list of processed kernel attributes, to be replaced by some tbd source
-for attr in [
-    KernelAttribute("local_num_threads", "This is a docstring"),
-    KernelAttribute("network_size", "This is a docstring", readonly=True),
-]:
-    setattr(NestModule, attr._name, attr)
+# Parse the `SetKernelStatus` docstring to obtain the kernel attributes.
+_doc_lines = _module.SetKernelStatus.__doc__.split('\n')
+# Get the lines describing parameters
+_param_lines = (line for line in _doc_lines if ' : ' in line)
+# Exclude the first parameter `params`.
+next(_param_lines)
+# Process each parameter line into a KernelAttribute and add it to the nest
+# module instance.
+for ln in _param_lines:
+    _param = ln.split(":")[0].strip()
+    _readonly = "read only" in ln
+    _kernel_attr = KernelAttribute(_param, None, _readonly)
+    setattr(NestModule, _param, _kernel_attr)
 
 # Finalize the nest module instance by generating its public API.
 _module.__all__ = list(k for k in _module_dict if not k.startswith("_"))
@@ -156,3 +163,7 @@ sys.modules[__name__] = _module
 # `sys.modules`. For these edge cases we make available all attributes of the
 # nest module instance to this file's module object.
 globals().update(_module_dict)
+
+# Clean up obsolete references
+del _param_lines, _doc_lines, _rel_import_star, _lazy_module_property, \
+    _param, _readonly, _kernel_attr, _module_dict, _original_module_attrs

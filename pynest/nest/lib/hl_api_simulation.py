@@ -220,12 +220,10 @@ def SetKernelStatus(params):
     valids = nest._kernel_attr_names
     keys = list(params.keys())
     for key in keys:
-        msg = None
         if key not in valids:
             msg = f'`{key}` is not a valid kernel parameter, ' + \
                   'valid parameters are: ' + \
                   ', '.join(f"'{p}'" for p in sorted(valids))
-        if msg is not None:
             if raise_errors:
                 raise ValueError(msg)
             else:

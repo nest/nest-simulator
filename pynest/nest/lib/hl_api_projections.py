@@ -143,7 +143,7 @@ def ConnectImmediately(projections):
 
 
 def BuildNetwork():
-    from .hl_api_connections import array_connect
+    from .hl_api_connections import _array_connect
 
     if not projection_collection.network_built:
         # Convert to list of lists
@@ -153,7 +153,7 @@ def BuildNetwork():
             projection = proj.to_list()
             source, target, conn_spec, syn_spec = projection
             if proj.use_connect_arrays:
-                array_connect(source, target, conn_spec, syn_spec)
+                _array_connect(source, target, conn_spec, syn_spec)
             elif _connect_layers_needed(conn_spec, syn_spec):
                 # Check that pre and post are layers
                 if source.spatial is None:
@@ -193,12 +193,12 @@ class AllToAll(Projection):
 
 
 class ArrayConnect(Projection):
-    """NB! Will not be connected with the other projections, we send this to C++ on it's own."""
+    """NB! Will not be connected with other projections, we send this to C++ on it's own."""
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'one_to_one'}  # ArrayConnect uses an one-to-one scheme
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
-        # Check if we can convert to NodeCollection and use normal connection routines
+        # Check if we can convert to NodeCollection and use normal one-to-one connection routines
         if ( not isinstance(source, NodeCollection) and not
              isinstance(target, NodeCollection) and
              len(set(source)) == len(source) and
@@ -206,7 +206,7 @@ class ArrayConnect(Projection):
             self.source = NodeCollection(source)
             self.target = NodeCollection(target)
         else:
-            self.use_connect_arrays = True#array_connect(source, target, self.conn_spec, self.syn_spec)
+            self.use_connect_arrays = True
 
 
 class Conngen(Projection):

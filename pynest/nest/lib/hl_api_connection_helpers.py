@@ -241,12 +241,8 @@ def _process_input_nodes(pre, post, conn_spec):
     """
     Check the properties of `pre` and `post` nodes:
 
-    * If `conn_spec` is 'one_to_one', no uniqueness check is performed; the
-      "regular" one-to-one connect is used if both inputs are NodeCollection,
-      "connect_arrays" is used otherwise.
-    * If both `pre` and `post` are NodeCollections or can be converted to
-      NodeCollections (i.e. contain unique IDs), then proceed to "regular"
-      connect (potentially after conversion to NodeCollection).
+    * If `conn_spec` is not 'one_to_one', an error is raised as we "connect_arrays"
+      use `one_to_one` connection.
     * If both `pre` and `post` are arrays and contain non-unique items, then
       we proceed to "connect_arrays".
     * If at least one of them has non-unique items and they have different
@@ -284,6 +280,6 @@ def _process_input_nodes(pre, post, conn_spec):
     use_connect_arrays = True
 
     if use_connect_arrays and not one_to_one_cspec:
-        raise ValueError("When connecting two arrays with non-unique IDs, `conn_spec` must be 'array_connect'.")
+        raise ValueError("When connecting two arrays with non-unique IDs, `conn_spec` must be 'one_to_one'.")
 
     return use_connect_arrays, pre, post

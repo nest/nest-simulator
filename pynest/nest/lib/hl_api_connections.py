@@ -40,7 +40,7 @@ from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
 __all__ = [
-    'array_connect',
+    '_array_connect',
     'OldConnect',
     'Disconnect',
     'GetConnections',
@@ -293,7 +293,14 @@ def OldConnect(pre, post=None, conn_spec=None, syn_spec=None,
         return GetConnections(pre, post)
     
 @check_stack
-def array_connect(pre, post, conn_spec, syn_spec=None):
+def _array_connect(pre, post, conn_spec, syn_spec=None):
+    """
+    Connect `pre` nodes to `post` nodes with one-to-one scheme.
+
+    `pre` and `post` are arrays of node IDs, which might contain non-unique IDs. You
+    may also specify weight, delay, and receptor type for each connection as NumPy
+    arrays in the `syn_spec` dictionary.
+    """
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
 
     # Converting conn_spec to dict, without putting it on the SLI stack.

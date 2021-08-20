@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_connection_semantics_prototype.py
+# test_projections.py
 #
 # This file is part of NEST.
 #
@@ -25,7 +25,7 @@ import nest
 nest.set_verbosity('M_ERROR')
 
 
-class TestConnectionSemanticsPrototype(unittest.TestCase):
+class TestProjections(unittest.TestCase):
     threaded_num_threads = 2
     spatial_grid_dim = [4, 5]
     spatial_extent = [2., 2.]
@@ -294,7 +294,7 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestConnectionSemanticsPrototype)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestProjections)
     return suite
 
 

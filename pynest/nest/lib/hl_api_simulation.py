@@ -197,8 +197,9 @@ def ResetKernel():
 
 
 def SetKernelStatus(params):
-    """Set parameters for the simulation kernel. See the nest module attribute
-    documentation for a valid list of params.
+    """Set parameters for the simulation kernel.
+    
+    See the nest module attribute documentation for a valid list of params.
 
     Parameters
     ----------

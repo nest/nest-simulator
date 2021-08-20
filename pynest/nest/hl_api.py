@@ -50,7 +50,6 @@ __all__ = [
     'Cleanup',
     'CollocatedSynapses',
     'Connect',
-    'ConnectImmediately',
     'ConnectionRules',
     'Conngen',
     'CopyModel',

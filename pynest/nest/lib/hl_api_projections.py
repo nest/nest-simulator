@@ -34,7 +34,6 @@ __all__ = [
     'ArrayConnect',
     'BuildNetwork',
     'Connect',
-    'ConnectImmediately',
     'Conngen',
     'FixedIndegree',
     'FixedOutdegree',
@@ -62,11 +61,6 @@ class Projection(object):
                 self.conn_spec[name] = param
 
         self.use_connect_arrays = False
-
-    def apply(self):
-        # If syn_spec is a SynapseModel object it must be converted to a dictionary
-        syn_spec = self.syn_spec.to_dict() if issubclass(type(self.syn_spec), SynapseModel) else self.syn_spec
-        nestlib_Connect(self.source, self.target, self.conn_spec, syn_spec)
 
     def clone(self):
         return copy.copy(self)
@@ -122,6 +116,86 @@ projection_collection = ProjectionCollection()
 
 
 def Connect(projection):
+    """
+    Connect `pre` nodes to `post` nodes.
+
+    Nodes in `pre` and `post` are connected using the specified connectivity
+    (`all-to-all` by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
+    Details depend on the connectivity rule.
+
+    Parameters
+    ----------
+    pre : NodeCollection (or array-like object)
+        Presynaptic nodes, as object representing the IDs of the nodes
+    post : NodeCollection (or array-like object)
+        Postsynaptic nodes, as object representing the IDs of the nodes
+    conn_spec : str or dict, optional
+        Specifies connectivity rule, see below
+    syn_spec : str or dict, optional
+        Specifies synapse model, see below
+    return_synapsecollection: bool
+        Specifies whether or not we should return a :py:class:`.SynapseCollection` of pre and post connections
+
+    Raises
+    ------
+    kernel.NESTError
+
+    Notes
+    -----
+    If pre and post have spatial positions, a `mask` can be specified as a dictionary. The mask define which
+    nodes are considered as potential targets for each source node. Connections with spatial nodes can also
+    use `nest.spatial_distributions` as parameters, for instance for the probability `p`.
+
+    **Connectivity specification (conn_spec)**
+
+    Available rules and associated parameters::
+
+     - 'all_to_all' (default)
+     - 'one_to_one'
+     - 'fixed_indegree', 'indegree'
+     - 'fixed_outdegree', 'outdegree'
+     - 'fixed_total_number', 'N'
+     - 'pairwise_bernoulli', 'p'
+     - 'symmetric_pairwise_bernoulli', 'p'
+
+    See :ref:`conn_rules` for more details, including example usage.
+
+    **Synapse specification (syn_spec)**
+
+    The synapse model and its properties can be given either as a string
+    identifying a specific synapse model (default: :cpp:class:`static_synapse <nest::static_synapse>`) or
+    as a dictionary specifying the synapse model and its parameters.
+
+    Available keys in the synapse specification dictionary are::
+
+     - 'synapse_model'
+     - 'weight'
+     - 'delay'
+     - 'receptor_type'
+     - any parameters specific to the selected synapse model.
+
+    See :ref:`synapse_spec` for details, including example usage.
+
+    All parameters are optional and if not specified, the default values
+    of the synapse model will be used. The key 'synapse_model' identifies the
+    synapse model, this can be one of NEST's built-in synapse models
+    or a user-defined model created via :py:func:`.CopyModel`.
+
+    If `synapse_model` is not specified the default model :cpp:class:`static_synapse <nest::static_synapse>`
+    will be used.
+
+    Distributed parameters can be defined through NEST's different parametertypes. NEST has various
+    random parameters, spatial parameters and distributions (only accesseable for nodes with spatial positions),
+    logical expressions and mathematical expressions, which can be used to define node and connection parameters.
+
+    To see all available parameters, see documentation defined in distributions, logic, math,
+    random and spatial modules.
+
+    See Also
+    ---------
+    :ref:`connection_management`
+    """
+
     if issubclass(type(projection), Projection):
         projection_collection.add(projection)
     elif issubclass(type(projection), (list, tuple)):
@@ -129,17 +203,9 @@ def Connect(projection):
             projection_collection.add(proj)
     else:
         raise TypeError('"projection" must be a projection or a list of projections')
+
     if projection_collection.network_built:
         projection_collection.network_built = False
-
-
-def ConnectImmediately(projections):
-    projections = [projections] if issubclass(type(projections), Projection) else projections
-    if not (issubclass(type(projections), (tuple, list)) and
-            all([issubclass(type(x), Projection) for x in projections])):
-        raise TypeError('"projections" must be a projection or a list of projections')
-    for projection in projections:
-        projection.apply()
 
 
 def BuildNetwork():

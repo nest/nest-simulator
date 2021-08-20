@@ -112,30 +112,6 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
         conns = nest.GetConnections()
         self.assertEqual(len(conns), N*(IN_A + IN_B))
 
-    def test_connect_single_projection(self):
-        """Connect with a single projection"""
-        n = nest.Create('iaf_psc_alpha', 1)
-
-        nest.ConnectImmediately(nest.OneToOne(source=n, target=n))
-
-        conns = nest.GetConnections()
-        self.assertEqual(len(conns), 1)
-        self.assertEqual(conns.source, 1)
-        self.assertEqual(conns.target, 1)
-
-    def test_connect_projection_list(self):
-        """Connect with list of projections"""
-        N = 10
-        IN_A = 2
-        IN_B = 5
-        n = nest.Create('iaf_psc_alpha', N)
-
-        nest.ConnectImmediately([nest.FixedIndegree(source=n, target=n, indegree=IN_A),
-                                 nest.FixedIndegree(source=n, target=n, indegree=IN_B)])
-
-        conns = nest.GetConnections()
-        self.assertEqual(len(conns), N*(IN_A + IN_B))
-
     def test_connect_with_synapse_object(self):
         """Connect projection with synapse object"""
         weight = 0.5

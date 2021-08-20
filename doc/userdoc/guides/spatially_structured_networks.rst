@@ -85,7 +85,7 @@ We create a first, grid-based simple NodeCollection with the following command:
 
 The layer is shown in :numref:`fig_layer1`. Note the following properties:
 
--  We are using the standard ``Create`` function, but in addition to model
+-  We are using the standard :py:func:`.Create` function, but in addition to model
    type, we are also passing a ``nest.spatial.grid`` object as the
    ``positions`` argument.
 
@@ -267,7 +267,7 @@ Note the following points:
    by the ``num_dimensions`` variable. num_dimensions can either be 2 or 3.
 
 -  When using a parameter object you also need to specify how many elements you want to create
-   by specifying ``'n'`` in the ``Create`` call. This is **not** the case when you pass a list to
+   by specifying ``'n'`` in the :py:func:`.Create` call. This is **not** the case when you pass a list to
    the ``nest.spatial.free`` object.
 
 -  The extent is automatically set when using ``nest.spatial.free``, however, it
@@ -415,7 +415,7 @@ not change properties of the spatially distributed NodeCollection.
    elements of any other NodeCollection. NodeCollections created as layers can
    therefore be used in the same ways as any standard NodeCollection.
    However, operations requiring a NodeCollection with spatial data (e.g.
-   ``Connect`` with spatial dependence, or visualization of layers) can
+   :py:func:`.Connect` with spatial dependence, or visualization of layers) can
    only be used on NodeCollections created with spatial distribution.
 
 .. literalinclude:: spatially_structured_networks/scripts/layers.py
@@ -433,8 +433,8 @@ Connections
 
 The most important feature of the spatially-structured networks is the ability to
 create connections between NodeCollections with quite some flexibility. In this
-section, we will illustrate how to specify and create connections. All
-connections are created using the ``Connect`` function.
+chapter, we will illustrate how to specify and create connections. All
+connections are created using the :py:func:`.Connect` function.
 
 Basic principles
 ~~~~~~~~~~~~~~~~
@@ -449,12 +449,12 @@ We begin by introducing important terminology:
 Connection
    In the context of connections between the elements of NodeCollections with spatial
    distributions, we often call the set of all connections between pairs of
-   network nodes created by a single call to ``Connect`` a
+   network nodes created by a single call to :py:func:`.Connect` a
    *connection*.
 
 Connection dictionary
    A dictionary specifying the properties of a connection between two
-   NodeCollections in a call to ``Connect``.
+   NodeCollections in a call to :py:func:`.Connect`.
 
 Source
    The *source* of a single connection is the node sending signals
@@ -522,11 +522,11 @@ Multapse
 Connecting spatially distributed nodes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As with "normal" NodeCollections, connections between spatially
-distributed nodes are created by calling ``Connect``. However, having
-spatial information about the nodes makes position-based options
-available, and so in addition to the usual connection schemes there
-exists additional connection parameters for spatially distributed
+
+As with "normal" NodeCollections, connections between spatially distributed nodes are created
+by calling :py:func:`.Connect`. However, having spatial information about the nodes makes
+position-based options available, and so in addition to the usual connection
+schemes there exists additional connection parameters for spatially distributed
 NodeCollections.
 
 In many cases when connecting spatially distributed NodeCollections, a
@@ -850,8 +850,8 @@ NEST then generates a connection according to this probability.
 Probabilistic connections between layers can be generated in two different
 ways:
 
-Free probabilistic connections using `pairwise_bernoulli`
-   In this case, ``Connect`` considers each driver node :math:`D` in turn.
+Free probabilistic connections using ``pairwise_bernoulli``
+   In this case, :py:func:`.Connect` considers each driver node :math:`D` in turn.
    For each :math:`D`, it evaluates the parameter value for each pool node
    :math:`P` within the mask and creates a connection according to the
    resulting probability. This means in particular that *each possible
@@ -1003,8 +1003,8 @@ Weights and delays
 
 Parameters, such as those presented in Table :ref:`tbl:parameters`, can
 also be used to specify distance-dependent or randomized weights and
-delays for the connections created by ``Connect``. Weight and delays are in NEST
-passed along in a synapse dictionary to the ``Connect`` call.
+delays for the connections created by :py:func:`.Connect`. Weight and delays are in NEST
+passed along in a synapse dictionary to the ``Connect()`` call.
 
 ::
 
@@ -1099,7 +1099,7 @@ target neuron on the x and y axis, respectively. The parameter is then simply:
     :start-after: #{ conn_param_design #}
     :end-before: #{ end #}
 
-This can be directly plugged into the ``Connect`` function:
+This can be directly plugged into the :py:func:`.Connect` function:
 
 .. literalinclude:: spatially_structured_networks/scripts/connections.py
     :start-after: #{ conn_param_design_ex #}
@@ -1153,7 +1153,7 @@ prescribing the number of connections for each driver node by using
 
 Connection generation now proceeds in a different way than before:
 
-1. For each driver node, ``Connect`` randomly selects a node from
+1. For each driver node, :py:func:`.Connect` randomly selects a node from
    the mask region in the pool layer, and creates a connection with the
    probability prescribed. This is repeated until the
    requested number of connections has been created.
@@ -1168,7 +1168,7 @@ Connection generation now proceeds in a different way than before:
 
 4. If you prohibit multapses (see section :ref:`sec:spatial_terminology`)
    and prescribe a number of connections greater than the number of pool
-   nodes in the mask, ``Connect`` may get stuck in an infinite
+   nodes in the mask, ``Connect()`` may get stuck in an infinite
    loop and NEST will hang. Keep in mind that the number of nodes within
    the mask may vary considerably for free layers with randomly placed
    nodes.
@@ -1223,7 +1223,7 @@ number of connections is prescribed.
 Synapse models and properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, ``Connect`` creates connections using the default synapse
+By default, :py:func:`.Connect` creates connections using the default synapse
 model in NEST, ``static_synapse``. You can specify a different model by
 adding a ``'synapse_model'`` entry to the synapse specification
 dictionary, as in this example:
@@ -1345,18 +1345,18 @@ Visualization functions
 
 NEST provides three functions to visualize networks:
 
-+---------------------------------+------------------------------------------+
-| ``PlotLayer()``                 | Plot nodes in a spatially distributed    |
-|                                 | NodeCollection.                          |
-+---------------------------------+------------------------------------------+
-| ``PlotTargets()``               | Plot all targets of a node in a given    |
-|                                 | NodeCollection.                          |
-+---------------------------------+------------------------------------------+
-| ``PlotProbabilityParameter()``  | Add indication of mask and probability   |
-|                                 | ``p`` to  plot of NodeCollection. This   |
-|                                 | function is usually called by            |
-|                                 | ``PlotTargets``.                         |
-+---------------------------------+------------------------------------------+
++--------------------------------------+------------------------------------------+
+| :py:func:`.PlotLayer`                | Plot nodes in a spatially distributed    |
+|                                      | NodeCollection.                          |
++--------------------------------------+------------------------------------------+
+| :py:func:`.PlotTargets`              | Plot all targets of a node in a given    |
+|                                      | NodeCollection.                          |
++--------------------------------------+------------------------------------------+
+| :py:func:`.PlotProbabilityParameter` | Add indication of mask and probability   |
+|                                      | ``p`` to  plot of NodeCollection. This   |
+|                                      | function is usually called by            |
+|                                      | :py:func:`.PlotTargets`.                 |
++--------------------------------------+------------------------------------------+
 
 .. _fig_vislayer:
 

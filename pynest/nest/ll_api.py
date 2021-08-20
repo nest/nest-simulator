@@ -273,6 +273,37 @@ def check_stack(thing):
         raise ValueError("unable to decorate {0}".format(thing))
 
 
+class KernelAttribute:
+    """
+    Descriptor that dispatches attribute access to the nest kernel.
+    """
+    def __init__(self, name, doc, readonly=False):
+        self._name = name
+        self.__doc__ = doc
+        self._readonly = readonly
+
+    @stack_checker
+    def __get__(self, instance, cls=None):
+        if instance is None:
+            return self
+
+        sr('GetKernelStatus')
+        status_root = spp()
+
+        if self._name is None:
+            return status_root
+        else:
+            return status_root[self._name]
+
+    @stack_checker
+    def __set__(self, instance, value):
+        if self._readonly:
+            msg = f"`{self._name}` is a read only kernel attribute."
+            raise AttributeError(msg)
+        sps({self._name: value})
+        sr('SetKernelStatus')
+
+
 initialized = False
 
 

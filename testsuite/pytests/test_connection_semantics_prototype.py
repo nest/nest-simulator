@@ -199,7 +199,7 @@ class TestConnectionSemanticsPrototype(unittest.TestCase):
         syn_spec = nest.CollocatedSynapses(nest.synapsemodels.static(weight=weight_a),
                                            nest.synapsemodels.static(weight=weight_b))
         projection = nest.FixedIndegree(source=layer, target=layer, indegree=indegree, mask=self.rec_mask,
-                                                    syn_spec=syn_spec)
+                                        syn_spec=syn_spec)
         nest.Connect(projection)
         nest.BuildNetwork()
 

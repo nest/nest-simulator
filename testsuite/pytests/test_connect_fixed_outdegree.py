@@ -48,7 +48,7 @@ class TestFixedOutDegree(TestParams):
         got_error = False
         conn_params = hf.nest.FixedOutdegree(source=None, target=None, outdegree=self.N2 + 1,
                                              allow_autapses=True, allow_multapses=False)
-  
+
         try:
             self.setUpNetwork(conn_params)
         except hf.nest.kernel.NESTError:
@@ -57,7 +57,7 @@ class TestFixedOutDegree(TestParams):
 
     def testOutDegree(self):
         conn_params = hf.nest.FixedOutdegree(source=None, target=None, outdegree=self.Nout,
-                                             allow_autapses = False, allow_multapses = False)
+                                             allow_autapses=False, allow_multapses=False)
         self.setUpNetwork(conn_params)
         # make sure the outdegree is right
         M = hf.get_connectivity_matrix(self.pop1, self.pop2)
@@ -73,7 +73,7 @@ class TestFixedOutDegree(TestParams):
 
     def testStatistics(self):
         conn_params = hf.nest.FixedOutdegree(source=None, target=None, outdegree=self.C,
-                                             allow_autapses = True, allow_multapses = True)
+                                             allow_autapses=True, allow_multapses=True)
 
         expected = hf.get_expected_degrees_fixedDegrees(
             self.C, 'out', self.N_s, self.N_t)

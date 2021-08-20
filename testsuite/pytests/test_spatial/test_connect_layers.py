@@ -175,7 +175,7 @@ class ConnectLayersTestCase(unittest.TestCase):
     def test_connect_layers_outdegree_mask(self):
         """Connecting layers with fixed_outdegree and mask"""
         projection = nest.FixedOutdegree(self.layer, self.layer, outdegree=1,
-                                        mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
+                                         mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
         self._check_connections(projection, 20)
 
     def test_connect_layers_outdegree_kernel(self):
@@ -186,7 +186,7 @@ class ConnectLayersTestCase(unittest.TestCase):
     def test_connect_layers_outdegree_kernel_mask(self):
         """Connecting layers with fixed_outdegree, kernel and mask"""
         projection = nest.FixedOutdegree(self.layer, self.layer, outdegree=1, p=0.5,
-                                        mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
+                                         mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
         self._check_connections(projection, 20)
 
     def test_connect_layers_bernoulli_mask(self):
@@ -327,7 +327,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         indegree = 10
         syn_label = 123
         projection = nest.FixedIndegree(self.layer, self.layer, indegree=indegree, p=1.0,
-                                        mask= {'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0., 0.]}},
+                                        mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0., 0.]}},
                                         syn_spec=nest.synapsemodels.stdp_lbl(synapse_label=syn_label))
 
         nest.Connect(projection)
@@ -343,7 +343,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         indegree = 10
 
         projection = nest.FixedIndegree(multisyn_layer, multisyn_layer, indegree=indegree, p=1.0,
-                                        mask= {'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0., 0.]}},
+                                        mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0., 0.]}},
                                         syn_spec=nest.synapsemodels.static(receptor_type=receptor_type))
 
         nest.Connect(projection)

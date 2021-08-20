@@ -347,7 +347,7 @@ protected:
 
 private:
   ParameterDatum outdegree_;
-  std::map< int, std::vector < index > > tgt_ids_;
+  std::map< int, std::vector< index > > tgt_ids_;
 };
 
 class FixedTotalNumberBuilder : public ConnBuilder

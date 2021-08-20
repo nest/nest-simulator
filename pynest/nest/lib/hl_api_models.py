@@ -209,7 +209,7 @@ def CopyModel(existing, new=None, **kwargs):
 
     model_deprecation_warning(existing)
     synapse_model = existing in Models(mtype="synapses")
-    
+
     if synapse_model:
         rand_data = numpy.random.randint(1000)
         new = f"{existing}_{rand_data}"

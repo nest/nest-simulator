@@ -141,7 +141,6 @@ TokenArray::toVector( std::vector< double >& a ) const
       DoubleDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
     }
-
   }
 }
 

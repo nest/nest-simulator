@@ -251,7 +251,7 @@ class TestParams(unittest.TestCase):
             syn_spec.synapse_model = syn
             self.pop1 = hf.nest.Create('iaf_psc_exp_multisynapse', self.N1, {'tau_syn': [0.2, 0.5]})
             self.pop2 = hf.nest.Create('iaf_psc_exp_multisynapse', self.N2, {'tau_syn': [0.2, 0.5]})
-            
+
             conn_params.source = self.pop1
             conn_params.target = self.pop2
             conn_params.syn_spec = syn_spec

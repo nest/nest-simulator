@@ -220,7 +220,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
                                                receptor_type=receptor_type_b))
 
         nest.Connect(nest.FixedIndegree(spatial_nodes_src, spatial_nodes_trgt, indegree=indegree, syn_spec=syn_spec))
-                     
+
         conns = nest.GetConnections()
         self.assertEqual(num_trgt * indegree * 2, len(conns))
         reference = sorted([receptor_type_a, receptor_type_b]*num_trgt*indegree)
@@ -244,7 +244,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
                                                delay=1.4))
 
         nest.Connect(nest.FixedOutdegree(spatial_nodes_src, spatial_nodes_trgt, outdegree=outdegree, syn_spec=syn_spec))
-                     
+
         conns = nest.GetConnections()
 
         self.assertEqual(num_src * outdegree * 3, len(conns))

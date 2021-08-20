@@ -133,7 +133,7 @@ class TestAllToAll(TestParams):
         self.pop2 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
         syn_params = {}
         syn_params['receptor_type'] = 1 + hf.nest.random.uniform_int(n_rport)
-        
+
         conn_params = hf.nest.AllToAll(source=self.pop1, target=self.pop2,
                                        syn_spec=hf.nest.synapsemodels.static(**syn_params))
         hf.nest.Connect(conn_params)

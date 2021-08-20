@@ -119,7 +119,8 @@ class SynapseModel:
     def __setattr__(self, attr, value):
         if attr in ['synapse_model', 'specs']:
             return super().__setattr__(attr, value)
-        else: self.specs[attr] = value
+        else:
+            self.specs[attr] = value
 
     def clone(self):
         return copy.deepcopy(self)

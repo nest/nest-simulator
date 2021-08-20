@@ -70,7 +70,6 @@ class ClopathSynapseTestCase(unittest.TestCase):
                 nest.Connect(nest.AllToAll(n, n, syn_spec=nest.synapsemodels.clopath()))
                 nest.BuildNetwork()
 
-
     def test_SynapseDepressionFacilitation(self):
         """Ensure that depression and facilitation work correctly"""
 

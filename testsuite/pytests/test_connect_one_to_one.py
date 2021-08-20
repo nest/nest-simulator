@@ -65,7 +65,7 @@ class TestOneToOne(TestParams):
             syn_params[label] = self.param_array
             hf.nest.ResetKernel()
             conn_spec = hf.nest.OneToOne(source=None, target=None, syn_spec=hf.nest.synapsemodels.static(**syn_params))
-            
+
             self.setUpNetwork(conn_spec, N1=self.N_array, N2=self.N_array)
             M_nest = hf.get_weighted_connectivity_matrix(
                 self.pop1, self.pop2, label)

@@ -90,9 +90,9 @@ class Projection(object):
             return super().__setattr__(attr, value)
         else:
             self.conn_spec[attr] = value
-    
+
     def __str__(self):
-        output = f'source: {self.source} \ntarget: {self.target} \nconn_spec: {self.conn_spec} \nsyn_spec: {self.syn_spec}'
+        output = f'source: {self.source} \ntarget: {self.target} \nconn_spec: {self.conn_spec} \nsyn_spec: {self.syn_spec}'  # noqa
         return output
 
 
@@ -265,10 +265,10 @@ class ArrayConnect(Projection):
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
         # Check if we can convert to NodeCollection and use normal one-to-one connection routines
-        if ( not isinstance(source, NodeCollection) and not
-             isinstance(target, NodeCollection) and
-             len(set(source)) == len(source) and
-             len(set(target)) == len(target) ):
+        if (not isinstance(source, NodeCollection) and not
+           isinstance(target, NodeCollection) and
+           len(set(source)) == len(source) and
+           len(set(target)) == len(target)):
             self.source = NodeCollection(source)
             self.target = NodeCollection(target)
         else:
@@ -310,8 +310,8 @@ class PairwiseBernoulli(Projection):
         self.conn_spec = {'rule': 'pairwise_bernoulli', 'p': p}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
+
 class SymmetricPairwiseBernoulli(Projection):
     def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'symmetric_pairwise_bernoulli', 'p': p}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
-

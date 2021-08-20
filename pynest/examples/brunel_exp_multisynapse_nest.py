@@ -189,7 +189,7 @@ syn_params_ex = nest.synapsemodels.static(weight=J_ex, delay=delay, receptor_typ
 syn_params_in = nest.synapsemodels.static(weight=J_in, delay=delay, receptor_type=receptor)
 
 nest.Connect(nest.AllToAll(noise, nodes_ex, syn_spec=syn_params_ex))
-nest.Connect(nest.AllToAll(noise, nodes_in, syn_spec = syn_params_ex))
+nest.Connect(nest.AllToAll(noise, nodes_in, syn_spec=syn_params_ex))
 
 ###############################################################################
 # Connecting the first ``N_rec`` nodes of the excitatory and inhibitory

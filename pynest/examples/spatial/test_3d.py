@@ -45,7 +45,7 @@ ax = fig.add_subplot(111, projection='3d')
 ax.scatter(xpos, ypos, zpos, s=15, facecolor='b')
 
 # full connections in box volume [-0.2,0.2]**3
-nest.Connect(nest.PairwiseBernoulli(l1, l1, p=1.,allow_autapses=False,
+nest.Connect(nest.PairwiseBernoulli(l1, l1, p=1., allow_autapses=False,
                                     mask={'box': {'lower_left': [-0.2, -0.2, -0.2], 'upper_right': [0.2, 0.2, 0.2]}}))
 nest.BuildNetwork()
 

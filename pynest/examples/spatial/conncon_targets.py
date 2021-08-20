@@ -42,7 +42,7 @@ pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.], edge_wrap=True)
 a = nest.Create('iaf_psc_alpha', positions=pos)
 b = nest.Create('iaf_psc_alpha', positions=pos)
 
-mask= {'rectangular': {'lower_left': [-0.2, -0.5], 'upper_right': [0.2, 0.5]}}
+mask = {'rectangular': {'lower_left': [-0.2, -0.5], 'upper_right': [0.2, 0.5]}}
 
 nest.Connect(nest.PairwiseBernoulli(a, b, p=0.5, use_on_source=True, mask=mask,
                                     syn_spec=nest.synapsemodels.static(weight=nest.random.uniform(0.5, 2.))))

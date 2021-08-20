@@ -1496,8 +1496,12 @@ Description:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /ConnectLayers [/nodecollectiontype /nodecollectiontype /dictionarytype]
-  /ConnectLayers_g_g_D load
-def
+{
+  3 arraystore
+  1 arraystore
+  pstack
+  connect_projections
+} bind def
 
 /CreateLayerParams [/dictionarytype /dictionarytype]
   /CreateLayer_D_D load

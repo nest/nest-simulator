@@ -87,8 +87,8 @@ class TestRecordingBackends(unittest.TestCase):
 
         if HAVE_SIONLIB:
             chunksize = nest.GetDefaults("sionlib", "sion_chunksize")
-            sl_params = {"sionlib": {"sion_chunksize": chunksize + 1}}
-            nest.Defaults("sionlib", sl_params)
+            sl_params = {"sion_chunksize": chunksize + 1}
+            nest.SetDefaults("sionlib", sl_params)
 
             sl_chunksize = nest.GetDefaults("sionlib", "sion_chunksize")
             self.assertEqual(sl_chunksize, chunksize + 1)

@@ -213,7 +213,7 @@ modeldict
       /n_connections n_connections 1 add def
     }
     {
-      5 npop
+      2 npop
     } ifelse
   } forall
 

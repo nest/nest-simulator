@@ -246,13 +246,12 @@ nest::ConnBuilder::connect()
           synapse_parameter.second->reset();
         }
       }
-#pragma omp single
+#pragma omp critical
       {
         std::swap( sources_, targets_ );
-      }
-      connect_();
-#pragma omp single
-      {
+
+        connect_();
+
         std::swap( sources_, targets_ ); // re-establish original state
       }
     }

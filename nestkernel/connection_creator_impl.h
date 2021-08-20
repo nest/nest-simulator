@@ -661,9 +661,12 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     return;
   }
 
-// TODO: omp parallel implementation
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 #pragma omp single
   {
+    const auto tid = kernel().vp_manager.get_thread_id();
+try
+{
     // protect against connecting to devices without proxies
     // we need to do this before creating the first connection to leave
     // the network untouched if any target does not have proxies
@@ -801,6 +804,20 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       }
     }
   }
+  catch ( std::exception& err )
+      {
+        // We must create a new exception here, err's lifetime ends at
+        // the end of the catch block.
+        exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      }
+    }
+    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    {
+      if ( exceptions_raised.at( tid ).get() )
+      {
+        throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
+      }
+    }
 }
 
 } // namespace nest

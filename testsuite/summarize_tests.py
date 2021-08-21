@@ -31,6 +31,7 @@ import junitparser as jp
 import glob
 import os
 import sys
+import xml
 
 
 assert int(jp.version.split('.')[0]) >= 2, 'junitparser version must be >= 2'
@@ -65,10 +66,13 @@ if __name__ == '__main__':
     for pfile in sorted(glob.glob(os.path.join(test_outdir, '*.xml'))):
 
         ph_name = os.path.splitext(os.path.split(pfile)[1])[0].replace('_', ' ')
-        ph_res = parse_result_file(pfile)
-        results[ph_name] = ph_res
-        for k, v in ph_res.items():
-            totals[k] += v
+        try:
+            ph_res = parse_result_file(pfile)
+            results[ph_name] = ph_res
+            for k, v in ph_res.items():
+                totals[k] += v
+        except xml.etree.ElementTree.ParseError:
+            results[ph_name] = None
 
     cols = ['Tests', 'Skipped', 'Failures', 'Errors', 'Time']
     tline = '-' * (len(cols) * 10 + 20)
@@ -85,11 +89,16 @@ if __name__ == '__main__':
     print()
 
     print(tline)
+    missing_results = []
     for pn, pr in results.items():
         print('{:<20s}'.format(pn), end='')
-        for c in cols:
-            fstr = '{:10.1f}' if c == 'Time' else '{:10d}'
-            print(fstr.format(pr[c]), end='')
+        if pr is not None:
+            for c in cols:
+                fstr = '{:10.1f}' if c == 'Time' else '{:10d}'
+                print(fstr.format(pr[c]), end='')
+        else:
+            print(f'{"--- crashed, results invalid ---":^{10*len(cols)}}', end='')
+            missing_results.append(pn)
         print()
 
     print(tline)
@@ -101,11 +110,13 @@ if __name__ == '__main__':
     print(tline)
     print()
 
-    if totals['Failures'] + totals['Errors'] > 0:
+    if totals['Failures'] + totals['Errors'] > 0 or missing_results:
         print('THE NEST TESTSUITE DISCOVERED PROBLEMS')
         print('    The following tests failed')
         for t in totals['Failed tests']:
-            print('    | {:s}'.format(t))   # | marks line for parsing
+            print(f'    | {t}')   # | marks line for parsing
+        for m in missing_results:
+            print(f'    | {m} (test phase crashed)')
         print()
         print('    Please report test failures by creating an issue at')
         print('        https://github.com/nest/nest_simulator/issues')

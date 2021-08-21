@@ -39,11 +39,6 @@ For more information visit https://www.nest-simulator.org.
 
 """
 
-import sys
-if sys.version_info[0] == 2:
-    msg = "Python 2 is no longer supported. Please use Python >= 3.6."
-    raise Exception(msg)
-
 from . import ll_api                  # noqa
 from .ll_api import set_communicator  # noqa
 

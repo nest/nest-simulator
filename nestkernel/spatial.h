@@ -126,7 +126,6 @@ BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const DictionaryDatum& dict );
 void dump_layer_nodes( NodeCollectionPTR layer_nc, OstreamDatum& out );
 void dump_layer_connections( const Token& syn_model,
   NodeCollectionPTR source_layer_nc,

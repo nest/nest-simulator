@@ -331,18 +331,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } disconnect_g_g_D_Dfunction;
 
-  class Connect_g_g_D_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } connect_g_g_D_Dfunction;
-
-  class Connect_g_g_D_aFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } connect_g_g_D_afunction;
-
   class ConnectProjections_aFunction : public SLIFunction
   {
   public:
@@ -734,12 +722,6 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } distance_afunction;
-
-  class ConnectLayers_g_g_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } connectlayers_g_g_Dfunction;
 
   class CreateMask_DFunction : public SLIFunction
   {

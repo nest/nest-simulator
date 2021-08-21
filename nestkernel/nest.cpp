@@ -188,15 +188,6 @@ get_nodes( const DictionaryDatum& params, const bool local_only )
 }
 
 void
-connect( NodeCollectionPTR sources,
-  NodeCollectionPTR targets,
-  const DictionaryDatum& connectivity,
-  const std::vector< DictionaryDatum >& synapse_params )
-{
-  kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
-}
-
-void
 connect_arrays( long* sources,
   long* targets,
   double* weights,

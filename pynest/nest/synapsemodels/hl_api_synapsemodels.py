@@ -26,6 +26,7 @@ Synapse models
 import copy
 
 __all__ = [
+    '_copy_synapse_class',
     'bernoulli',
     'bernoulli_hpc',
     'bernoulli_lbl',
@@ -35,7 +36,6 @@ __all__ = [
     'cont_delay',
     'cont_delay_hpc',
     'cont_delay_lbl',
-    'copy_synapse_class',
     'diffusion_connection',
     'diffusion_connection_lbl',
     'gap_junction',
@@ -129,7 +129,7 @@ class SynapseModel:
         return f'synapse_model: {self.synapse_model}, specs: {self.specs}'
 
 
-def copy_synapse_class(model):
+def _copy_synapse_class(model):
     def model_init(self, model):
         SynapseModel.__init__(self, model)
 

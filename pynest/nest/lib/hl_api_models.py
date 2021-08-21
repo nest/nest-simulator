@@ -28,7 +28,7 @@ import numpy
 from ..ll_api import *
 from .hl_api_helper import *
 from .hl_api_types import to_json
-from ..synapsemodels.hl_api_synapsemodels import copy_synapse_class
+from ..synapsemodels.hl_api_synapsemodels import _copy_synapse_class
 
 __all__ = [
     'ConnectionRules',
@@ -223,4 +223,4 @@ def CopyModel(existing, new=None, **kwargs):
         sr("/%s /%s CopyModel" % (existing, new))
 
     if synapse_model:
-        return copy_synapse_class(new)
+        return _copy_synapse_class(new)

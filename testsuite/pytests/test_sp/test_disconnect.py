@@ -29,11 +29,11 @@ try:
     from mpi4py import MPI
 except ImportError:
     # Test without MPI
-    mpi_test = 0
+    mpi_test = False
 else:
     # Test with MPI
-    mpi_test = 1
-mpi_test = nest.ll_api.sli_func("statusdict/have_mpi ::") & mpi_test
+    mpi_test = True
+mpi_test = nest.ll_api.sli_func("statusdict/have_mpi ::") and mpi_test
 
 
 class TestDisconnectSingle(unittest.TestCase):
@@ -84,11 +84,11 @@ class TestDisconnectSingle(unittest.TestCase):
                 nest.Connect(neurons[0], neurons[2], "one_to_one", syn_dict)
                 nest.Connect(neurons[1], neurons[3], "one_to_one", syn_dict)
 
-                # Delete existent connection
+                # Delete existing connection
                 conns = nest.GetConnections(
                     neurons[0], neurons[2], syn_model)
                 if mpi_test:
-                    print("rim with mpi")
+                    print("Run with mpi")
                     conns = self.comm.allgather(conns.get('source'))
                     conns = list(filter(None, conns))
                 assert len(conns) == 1
@@ -102,7 +102,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns = list(filter(None, conns))
                 assert len(conns) == 0
 
-                # Assert that one can not delete a non existent connection
+                # Assert that one cannot delete a non-existing connection
                 conns1 = nest.GetConnections(
                     neurons[:1], neurons[1:2], syn_model)
                 if mpi_test:

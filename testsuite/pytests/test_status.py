@@ -31,31 +31,32 @@ import nest
 class StatusTestCase(unittest.TestCase):
     """Tests of Get/SetStatus, Get/SetDefaults, and Get/SetKernelStatus via get/set"""
 
-    def test_get(self):
-        """GetKernelStatus via get"""
+    def test_GetKernelStatus(self):
+        """GetKernelStatus"""
 
         nest.ResetKernel()
 
-        kernel_status = nest.get()
+        kernel_status = nest.GetKernelStatus()
         self.assertIsInstance(kernel_status, dict)
         self.assertGreater(len(kernel_status), 1)
 
-        self.assertRaises(KeyError, nest.get, "nonexistent_status_key")
+        self.assertRaises(KeyError, nest.GetKernelStatus, "nonexistent_status_key")
 
         test_keys = ("resolution", ) * 3
-        kernel_status = nest.get(test_keys)
+        kernel_status = nest.GetKernelStatus(test_keys)
         self.assertEqual(len(kernel_status), len(test_keys))
 
-        self.assertRaises(TypeError, nest.get, 42)
+        self.assertRaises(TypeError, nest.GetKernelStatus, 42)
 
-    def test_set(self):
-        """SetKernelStatus via set"""
+    def test_SetKernelStatus(self):
+        """SetKernelStatus"""
 
         nest.ResetKernel()
-        nest.set({})
-        nest.set({'resolution': 0.2})
+        nest.SetKernelStatus({})
+        nest.SetKernelStatus({'resolution': 0.2})
 
-        self.assertRaises(ValueError, nest.set, {'nonexistent_status_key': 0})
+        self.assertRaises(ValueError, nest.SetKernelStatus,
+                          {'nonexistent_status_key': 0})
 
     def test_GetDefaults(self):
         """GetDefaults"""

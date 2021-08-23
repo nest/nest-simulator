@@ -277,7 +277,7 @@ class SpatialTester(object):
             seed = rnd.randint(10 ** 10)
         seed = 3 * seed  # Reduces probability of overlapping seed values.
         rnd.seed(seed)
-        nest.set({'rng_seed': seed})
+        nest.rng_seed = seed
 
     def _build(self):
         """Create populations."""

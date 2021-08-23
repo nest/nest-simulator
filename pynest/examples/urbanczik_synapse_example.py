@@ -110,7 +110,7 @@ t_end = n_pattern_rep*pattern_duration + t_start
 simulation_time = t_end + 2.0*pattern_duration
 n_rep_total = int(np.around(simulation_time / pattern_duration))
 resolution = 0.1
-nest.set({'resolution': resolution})
+nest.resolution = resolution
 
 # neuron parameters
 nrn_model = 'pp_cond_exp_mc_urbanczik'
@@ -232,7 +232,7 @@ nest.Simulate(pattern_duration)
 t_srs = [ssr.get('events', 'times') for ssr in sr]
 
 nest.ResetKernel()
-nest.set({'resolution': resolution})
+nest.resolution = resolution
 
 """
 neuron and devices

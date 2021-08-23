@@ -40,7 +40,7 @@ class MultiplePoissonGeneratorsTestCase(unittest.TestCase):
         num_spikes = []
         for i in range(num_iterations):
             nest.ResetKernel()
-            nest.set({'local_num_threads': local_num_threads})
+            nest.local_num_threads = local_num_threads
             nest.set_verbosity('M_WARNING')
             print('num iter {:>5d}/{}'.format(i+1, num_iterations), end='\r')
 
@@ -51,7 +51,7 @@ class MultiplePoissonGeneratorsTestCase(unittest.TestCase):
             nest.Connect(poisson_generator, parrots, 'all_to_all')
 
             nest.Simulate(time_simulation)
-            num_spikes.append(nest.get('local_spike_counter'))
+            num_spikes.append(nest.local_spike_counter)
 
         self.assertEqual(len(np.unique(num_spikes)), 1)
 

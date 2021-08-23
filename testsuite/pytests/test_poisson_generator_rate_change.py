@@ -48,7 +48,7 @@ class TestPgRateChange(unittest.TestCase):
         sim_time = 100  # Time to simulate
 
         nest.ResetKernel()
-        nest.set({'resolution': resolution})
+        nest.resolution = resolution
         rate = 100.
         pg = nest.Create('poisson_generator_ps', params={'rate': rate})
         parrots = nest.Create('parrot_neuron_ps', n_parrots)

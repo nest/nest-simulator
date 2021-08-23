@@ -70,11 +70,11 @@ to :py:func:`.Connect` and will just take on the default value.
 
 After your connections are established, a quick sanity check is to
 look up the number of connections in the network, which can be easily
-done using :py:func:`.get`:
+done using the corresponding kernel attribute:
 
 ::
 
-    print(nest.get('num_connections'))
+    print(nest.num_connections)
 
 Have a look at the :ref:`inspecting_connections` section further down
 to get more tips on how to examine the connections in greater detail.
@@ -507,7 +507,7 @@ The example above will create 9 connections in total because there are
 3 neurons times 3 synapse specifications in the :py:func:`.CollocatedSynapses`
 object, and the connection rule ``one_to_one`` is used.
 
-  >>> print(nest.get('num_connections'))
+  >>> print(nest.num_connections)
   9
 
 In more detail, the connections have the following properties:

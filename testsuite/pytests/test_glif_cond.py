@@ -39,10 +39,10 @@ class GLIFCONDTestCase(unittest.TestCase):
         """
         Clean up and initialize NEST before each test.
         """
-        msd = 123456
         self.resol = 0.01
         nest.ResetKernel()
-        nest.set({'resolution': self.resol, 'rng_seed': msd})
+        nest.resolution = self.resol
+        nest.rng_seed = 123456
 
     def simulate_w_stim(self, model_params):
         """

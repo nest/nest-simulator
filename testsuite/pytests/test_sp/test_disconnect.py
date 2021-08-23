@@ -72,7 +72,8 @@ class TestDisconnectSingle(unittest.TestCase):
         for syn_model in nest.Models('synapses'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
-                nest.set({'resolution': 0.1, 'total_num_virtual_procs': self.num_procs})
+                nest.resolution = 0.1
+                nest.total_num_virtual_procs = self.num_procs
                 neurons = nest.Create('iaf_psc_alpha', 4)
                 syn_dict = {'synapse_model': syn_model}
 

@@ -53,7 +53,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         """Weight Recorder Single Threaded"""
 
         nest.ResetKernel()
-        nest.set({"local_num_threads": 1})
+        nest.local_num_threads = 1
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
@@ -83,7 +83,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         """Weight Recorder Multi Threaded"""
 
         nest.ResetKernel()
-        nest.set({"local_num_threads": 2})
+        nest.local_num_threads = 2
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
@@ -113,7 +113,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         """Weight Recorder Defined Subset Of Senders"""
 
         nest.ResetKernel()
-        nest.set({"local_num_threads": 1})
+        nest.local_num_threads = 1
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
@@ -144,7 +144,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         """Weight Recorder Defined Subset Of Targets"""
 
         nest.ResetKernel()
-        nest.set({"local_num_threads": 1})
+        nest.local_num_threads = 1
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
@@ -175,7 +175,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         """Weight Recorder Defined Subset Of Targets and Senders"""
 
         nest.ResetKernel()
-        nest.set({"local_num_threads": 1})
+        nest.local_num_threads = 1
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
@@ -210,7 +210,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         """Weight Recorder Multapses"""
 
         nest.ResetKernel()
-        nest.set({"local_num_threads": 2})
+        nest.local_num_threads = 2
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
@@ -257,7 +257,7 @@ class WeightRecorderTestCase(unittest.TestCase):
         """Weight Recorder rports"""
 
         nest.ResetKernel()
-        nest.set({"local_num_threads": 1})
+        nest.local_num_threads = 1
 
         wr = nest.Create('weight_recorder')
 

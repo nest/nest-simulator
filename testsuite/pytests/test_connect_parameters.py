@@ -57,7 +57,7 @@ class TestParams(unittest.TestCase):
     # the the threading is actually used
     def setUp(self):
         hf.nest.ResetKernel()
-        hf.nest.set({'local_num_threads': self.nr_threads})
+        hf.nest.local_num_threads = self.nr_threads
 
     def setUpNetwork(self, conn_dict=None, syn_dict=None, N1=None, N2=None):
         if N1 is None:

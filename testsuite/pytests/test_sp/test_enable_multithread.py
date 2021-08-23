@@ -47,11 +47,11 @@ class TestEnableMultithread(unittest.TestCase):
         # Setting multiple threads when structural plasticity is enabled should
         # throw an exception
         with self.assertRaises(nest.kernel.NESTError):
-            nest.set({'local_num_threads': 2})
+            nest.local_num_threads = 2
 
     def test_multithread_enable(self):
         nest.ResetKernel()
-        nest.set({'local_num_threads': 2})
+        nest.local_num_threads = 2
         # Setting multiple threads when structural plasticity is enabled should
         # throw an exception
         with self.assertRaises(nest.kernel.NESTError):

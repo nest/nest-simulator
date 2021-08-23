@@ -62,7 +62,9 @@ class SiegertNeuronTestCase(unittest.TestCase):
         # reset kernel
         nest.set_verbosity("M_WARNING")
         nest.ResetKernel()
-        nest.set({"resolution": self.dt, "use_wfr": False, "rng_seed": rng_seed})
+        nest.resolution = self.dt
+        nest.use_wfr = False
+        nest.rng_seed = rng_seed
 
     def simulate_fix_input_stats(self, mu, sigma):
         """

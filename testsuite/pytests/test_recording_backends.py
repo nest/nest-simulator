@@ -67,7 +67,7 @@ class TestRecordingBackends(unittest.TestCase):
 
         nest.ResetKernel()
 
-        backends = nest.get("recording_backends")
+        backends = nest.recording_backends
         expected_backends = ("ascii", "memory", "screen")
 
         self.assertTrue(all([b in backends for b in expected_backends]))
@@ -86,13 +86,12 @@ class TestRecordingBackends(unittest.TestCase):
         nest.ResetKernel()
 
         if HAVE_SIONLIB:
-            rb_status = nest.get("recording_backends")
+            rb_status = nest.recording_backends
             chunksize = rb_status["sionlib"]["sion_chunksize"]
             sl_params = {"sionlib": {"sion_chunksize": chunksize + 1}}
-            nest.set({"recording_backends": sl_params})
+            nest.recording_backends = sl_params
 
-            rb_status = nest.get("recording_backends")
-            sl_chunksize = rb_status["sionlib"]["sion_chunksize"]
+            sl_chunksize = nest.recording_backends["sionlib"]["sion_chunksize"]
             self.assertEqual(sl_chunksize, chunksize + 1)
 
     def testSetDefaultRecordingBackend(self):

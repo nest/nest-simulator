@@ -85,12 +85,10 @@ neuron_params = {'linear_summation': True,
 # total simulation time.
 
 nest.ResetKernel()
-nest.set({
-    "resolution": dt,
-    "use_wfr": False,
-    "print_time": True,
-    "overwrite_files": True
-})
+nest.resolution = dt
+nest.use_wfr = False
+nest.print_time = True
+nest.overwrite_files = True
 
 print("Building network")
 

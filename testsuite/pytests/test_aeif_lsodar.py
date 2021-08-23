@@ -203,7 +203,8 @@ class AEIFTestCase(unittest.TestCase):
         msd = 123456
         self.resol = 0.01
         nest.ResetKernel()
-        nest.set({'resolution': self.resol, 'rng_seed': msd})
+        nest.resolution = self.resol
+        nest.rng_seed = msd
 
     def compute_difference(self, multimeters, params, reference, recordables):
         '''

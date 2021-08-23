@@ -132,7 +132,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
             # Loop over pairs of spike trains
             for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
                 nest.ResetKernel()
-                nest.set({"resolution": resolution})
+                nest.resolution = resolution
 
                 # Create one neuron
                 nrn = nest.Create(nrn_model, 1, nrn_params)

@@ -344,9 +344,8 @@ class TestNodeParametrization(unittest.TestCase):
                 nest.ResetKernel()
                 n = nest.Create('iaf_psc_alpha', 2)
                 param, p = specs
-                nest.Connect(n, n, conn_spec={'rule': rule,
-                                              param: p})
-                self.assertEqual(nest.get('num_connections'), 4, f'Error with {rule}')
+                nest.Connect(n, n, conn_spec={'rule': rule, param: p})
+                self.assertEqual(nest.num_connections, 4, f'Error with {rule}')
 
     def test_node_pos_parameter(self):
         """Test node-position parameter"""

@@ -70,17 +70,15 @@ nest.ResetKernel()
 h = 0.1             # Computation step size in ms
 T = 100000.0        # Total duration
 delta_tau = 10.0
-tau_max = 100.0  # ms correlation window
-t_bin = 10.0  # ms bin size
+tau_max = 100.0     # ms correlation window
+t_bin = 10.0        # ms bin size
 pc = 0.5
 nu = 100.0
 
-nest.set({
-    'local_num_threads': 1,
-    'resolution': h,
-    'overwrite_files': True,
-    'rng_seed': 12345
-})
+nest.local_num_threads = 1
+nest.resolution = h
+nest.overwrite_files = True
+nest.rng_seed = 12345
 
 # Set up network, connect and simulate
 mg = nest.Create('mip_generator')

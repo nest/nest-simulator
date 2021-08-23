@@ -486,18 +486,17 @@ class TestNodeCollection(unittest.TestCase):
 
         n = nest.Create('iaf_psc_exp', 10)
         nest.Connect(n, n, {'rule': 'one_to_one'})
-        connections = nest.get('num_connections')
-        self.assertEqual(connections, 10)
+        self.assertEqual(nest.num_connections, 10)
 
         for nc in n:
             nest.Connect(nc, nc)
-        self.assertEqual(nest.get('num_connections'), 20)
+        self.assertEqual(nest.num_connections, 20)
 
         nest.ResetKernel()
 
         n = nest.Create('iaf_psc_alpha', 2)
         nest.Connect(n[0], n[1])
-        self.assertEqual(nest.get('num_connections'), 1)
+        self.assertEqual(nest.num_connections, 1)
 
     def test_SetStatus_and_GetStatus(self):
         """

@@ -123,10 +123,12 @@ qsyn_params["weight"] = 1. / n_sites
 
 ###############################################################################
 # We reset NEST to have a well-defined starting point,
-# make NEST less verbose, and set some kernel parameters.
+# make NEST less verbose, and set some kernel attributes.
+
 nest.ResetKernel()
 nest.set_verbosity("M_ERROR")
-nest.set({"resolution": resolution, "rng_seed": seed})
+nest.resolution = resolution
+nest.rng_seed = seed
 
 ###############################################################################
 # We create three different neurons.

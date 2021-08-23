@@ -42,10 +42,10 @@ class StatusTestCase(unittest.TestCase):
             d_json = nest.hl_api.to_json(d)
             self.assertIsInstance(d_json, str)
 
-    def test_GetKernelStatus_JSON(self):
+    def test_kernel_status_JSON(self):
         """JSON data of KernelStatus"""
 
-        d = nest.GetKernelStatus()
+        d = nest.kernel_status
         d_json = nest.hl_api.to_json(d)
         self.assertIsInstance(d_json, str)
 

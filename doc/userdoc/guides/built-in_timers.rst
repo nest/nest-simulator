@@ -7,11 +7,12 @@ Basic timers
 Basic built-in timers keep track of the time NEST spent for network
 construction and actual simulation (propagation of the network
 state). These timers are active in all simulations with NEST, and the
-measured times can be queried using :py:func:`.get`. For example:
+measured times can be checked by querying the corresponding kernel
+attributes. For example:
 
 ::
 
-    nest.get('time_simulate')
+    nest.time_simulate
 
 The following basic time measurements are available:
 

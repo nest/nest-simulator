@@ -91,7 +91,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
         """
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.set({'resolution': self.resolution})
+        nest.resolution = self.resolution
 
         neurons = nest.Create(
             "parrot_neuron",

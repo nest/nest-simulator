@@ -272,13 +272,14 @@ class TestGrowthCurve(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        nest.set({"total_num_virtual_procs": 4, "rng_seed": 1})
         nest.set_verbosity('M_ERROR')
+        nest.total_num_virtual_procs = 4
+        nest.rng_seed = 1
 
         self.sim_time = 10000.0
         self.sim_step = 100
 
-        nest.set({'structural_plasticity_update_interval': self.sim_time + 1})
+        nest.structural_plasticity_update_interval = self.sim_time + 1
 
         self.se_integrator = []
         self.sim_steps = None

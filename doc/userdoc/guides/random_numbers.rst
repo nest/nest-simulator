@@ -72,7 +72,7 @@ library. To see all available generators, run
 
 ::
 
-    nest.GetKernelStatus('rng_types')
+    nest.rng_types
 
 This currently gives the following generators:
 
@@ -95,7 +95,7 @@ set it in the following way:
 
 ::
 
-     nest.set({'rng_type': 'Philox_32'})
+     nest.rng_type = 'Philox_32'
 
 It is a good idea to cross-check your simulation results using a different random number generator
 type. Even though generators and our understanding of them has become much better in recent years,
@@ -113,7 +113,7 @@ You can use any number :math:`s` with :math:`1\leq s \leq 2^{31}-1` as seed:
 
 ::
 
-    nest.set({'rng_seed': 12345})
+    nest.rng_seed = 12345
 
 As long as you use different seed values, NEST will ensure that all random number streams in a
 simulation are seeded properly; see :ref:`Random number internals <random_internals>` for details.
@@ -122,7 +122,7 @@ You can inspect the RNG type and seed value used with
 
 ::
 
-    nest.GetKernelStatus(['rng_type', 'rng_seed'])
+    print(nest.rng_type, nest.rng_seed)
 
 Any simulation run with the same seed shall return identical results (provided the same
 compiler/C++ Standard Library was used).
@@ -273,10 +273,10 @@ We use the `modern random package introduced with NumPy 1.17 <https://numpy.org/
     n_vp = 4
     py_seed = 987654
 
-    nest.set({'total_num_virtual_procs': n_vp})
+    nest.total_num_virtual_procs = n_vp
     nrns = nest.Create('iaf_psc_alpha', 12)
 
-    rngs = {vp: np.random.default_rng(py_seed+vp) for vp in nest.GetLocalVPs()}
+    rngs = {vp: np.random.default_rng(py_seed + vp) for vp in nest.GetLocalVPs()}
 
     for n in nest.GetLocalNodeCollection(nrns):
         n.set({'V_m': rngs[n.get('vp')].uniform()})

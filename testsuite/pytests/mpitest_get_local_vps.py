@@ -38,7 +38,7 @@ class LocalVPsTestCase():
     def test_local_vps(self):
         num_procs = nest.NumProcesses()
         n_vp = 3 * num_procs
-        nest.set({'total_num_virtual_procs': n_vp})
+        nest.total_num_virtual_procs = n_vp
 
         local_vps = list(nest.GetLocalVPs())
 

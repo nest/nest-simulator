@@ -35,10 +35,11 @@ class TestIssue578():
         nest.ResetKernel()
         nest.set_verbosity('M_ALL')
         # Testing with 2 MPI processes
-        nest.set({'resolution': 0.1, 'total_num_virtual_procs': 2})
+        nest.resolution = 0.1
+        nest.total_num_virtual_procs = 2
         # Update the SP interval
         nest.EnableStructuralPlasticity()
-        nest.set({'structural_plasticity_update_interval': 1000.})
+        nest.structural_plasticity_update_interval = 1000.0
 
         growth_curve = {
             'growth_curve': "gaussian",
@@ -70,7 +71,7 @@ class TestIssue578():
                     'pre_synaptic_element': 'Axon_ex',
                     'post_synaptic_element': 'Den_ex'}
 
-        nest.set({'structural_plasticity_synapses': {'synapseEE': synDictE}})
+        nest.structural_plasticity_synapses = {'synapseEE': synDictE}
 
         try:
             nest.Simulate(200 * 1000)

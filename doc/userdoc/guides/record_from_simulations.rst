@@ -94,7 +94,7 @@ properties can be obtained from the kernel's status dictionary.
 
 ::
 
-   nest.get("recording_backends")
+   >>> print(nest.recording_backends)
    {u'ascii': {},
     u'memory': {},
     u'mpi': {},
@@ -106,12 +106,12 @@ properties can be obtained from the kernel's status dictionary.
      u'sion_n_files': 1}}
 
 The example shows that only the `sionlib` backend has backend-specific
-global properties, which can be modified by supplying a nested
-dictionary to :py:func:`.set`.
+global properties, which can be modified by setting a nested
+dictionary on the kernel attribute ``recording_backends``.
 
 ::
 
-    nest.set({"recording_backends": {'sionlib': {'buffer_size': 512}}})
+    nest.recording_backends = {'sionlib': {'buffer_size': 512}}
 
 The following is a list of built-in recording backends that come with
 NEST:

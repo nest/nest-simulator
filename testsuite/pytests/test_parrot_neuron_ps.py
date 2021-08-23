@@ -32,7 +32,7 @@ def _round_up(simtime):
     Returns simulation time rounded up to next multiple of resolution.
     """
 
-    res = nest.get('resolution')
+    res = nest.resolution
     return res * math.ceil(float(simtime) / float(res))
 
 
@@ -147,7 +147,8 @@ class ParrotNeuronPSPoissonTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.set({'resolution': h, 'rng_seed': 123})
+        nest.resolution = h
+        nest.rng_seed = 123
 
         source = nest.Create('poisson_generator', params={'rate': rate})
         parrots = nest.Create('parrot_neuron_ps', 2)

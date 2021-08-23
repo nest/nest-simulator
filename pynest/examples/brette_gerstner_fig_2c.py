@@ -48,7 +48,7 @@ nest.ResetKernel()
 # First we make sure that the resolution of the simulation is 0.1 ms. This is
 # important, since the slop of the action potential is very steep.
 
-nest.set({"resolution": 0.1})
+nest.resolution = 0.1
 neuron = nest.Create("aeif_cond_alpha")
 
 ###############################################################################

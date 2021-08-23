@@ -56,12 +56,12 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
-                nest.set({
+                nest.SetKernelStatus({
                     'min_delay': 0.1,
                     'max_delay': 1.0,
                     'structural_plasticity_synapses': {'syn1': syn_dict}
                 })
-                kernel_status = nest.get('structural_plasticity_synapses')
+                kernel_status = nest.structural_plasticity_synapses
                 self.assertIn('syn1', kernel_status)
                 self.assertEqual(kernel_status['syn1'], extract_dict_a_from_b(
                     kernel_status['syn1'], syn_dict))
@@ -70,34 +70,27 @@ class TestStructuralPlasticityManager(unittest.TestCase):
         nest.ResetKernel()
         delay = 1.0
         syn_model = 'static_synapse'
-        nest.set({
-            'structural_plasticity_synapses': {
-                'syn1': {
-                    'synapse_model': syn_model,
-                    'pre_synaptic_element': 'SE1',
-                    'post_synaptic_element': 'SE2',
-                }
+        nest.structural_plasticity_synapses = {
+            'syn1': {
+                'synapse_model': syn_model,
+                'pre_synaptic_element': 'SE1',
+                'post_synaptic_element': 'SE2',
             }
-        })
-        self.assertLessEqual(nest.get('min_delay'), delay)
-        self.assertGreaterEqual(nest.get('max_delay'), delay)
+        }
+        self.assertLessEqual(nest.min_delay, delay)
+        self.assertGreaterEqual(nest.max_delay, delay)
 
     def test_getting_kernel_status(self):
-        """
-        Test the functionality of the structural plasticity status via get().
-        """
         neuron_model = 'iaf_psc_alpha'
         nest.CopyModel('static_synapse', 'synapse_ex')
         nest.SetDefaults('synapse_ex', {'weight': 1.0, 'delay': 1.0})
-        nest.set({
-            'structural_plasticity_synapses': {
-                'synapse_ex': {
-                    'synapse_model': 'synapse_ex',
-                    'post_synaptic_element': 'Den_ex',
-                    'pre_synaptic_element': 'Axon_ex',
-                },
+        nest.structural_plasticity_synapses = {
+            'synapse_ex': {
+                'synapse_model': 'synapse_ex',
+                'post_synaptic_element': 'Den_ex',
+                'pre_synaptic_element': 'Axon_ex',
             }
-        })
+        }
 
         growth_curve = {
             'growth_curve': "gaussian",
@@ -121,15 +114,13 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                             {'synaptic_elements': synaptic_elements}
                             )
 
-        sp_synapses = nest.get('structural_plasticity_synapses')
-        syn = sp_synapses['syn1']
-        assert ('pre_synaptic_element' in syn)
-        assert ('post_synaptic_element' in syn)
-        assert (syn['pre_synaptic_element'] == 'Axon_ex')
-        assert (syn['post_synaptic_element'] == 'Den_ex')
+        sp_synapses = nest.structural_plasticity_synapses['syn1']
+        assert ('pre_synaptic_element' in sp_synapses)
+        assert ('post_synaptic_element' in sp_synapses)
+        assert (sp_synapses['pre_synaptic_element'] == 'Axon_ex')
+        assert (sp_synapses['post_synaptic_element'] == 'Den_ex')
 
-        sp_interval = nest.get('structural_plasticity_update_interval')
-        assert (sp_interval == 10000.)
+        assert (nest.structural_plasticity_update_interval == 10000.)
 
     def test_synapse_creation(self):
         for syn_model in nest.Models('synapses'):
@@ -140,9 +131,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
-                nest.set({
-                    'structural_plasticity_synapses': {'syn1': syn_dict}
-                })
+                nest.structural_plasticity_synapses = {'syn1': syn_dict}
                 neurons = nest.Create('iaf_psc_alpha', 2, {
                     'synaptic_elements': {
                         'SE1': {'z': 10.0, 'growth_rate': 0.0},

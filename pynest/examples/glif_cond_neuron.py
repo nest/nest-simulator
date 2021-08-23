@@ -44,11 +44,11 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
 ##############################################################################
-# We initialize the nest and set the simulation resolution.
+# We initialize NEST and set the simulation resolution.
 
 nest.ResetKernel()
 resolution = 0.05
-nest.set({"resolution": resolution})
+nest.resolution = resolution
 
 ###############################################################################
 # We create the five levels of GLIF model to be tested, i.e.,

@@ -102,7 +102,7 @@ nest.Connect(pg, sr)
 
 
 for n in range(num_trials):
-    pg.origin = nest.get('biological_time')
+    pg.origin = nest.biological_time
     nest.Simulate(trial_duration)
 
 

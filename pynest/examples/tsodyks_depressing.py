@@ -96,10 +96,11 @@ syn_param = {"tau_psc": Tau_psc,
              "x": 1.0}
 
 ###############################################################################
-# Third, we reset the kernel and set the resolution using ``set()``.
+# Third, we reset the kernel and set the resolution using the corresponding
+# kernel attribute.
 
 nest.ResetKernel()
-nest.set({"resolution": h})
+nest.resolution = h
 
 ###############################################################################
 # Fourth, the nodes are created using ``Create``. We store the returned

@@ -210,10 +210,10 @@ def SetKernelStatus(params):
     See Also
     --------
 
-    get, GetKernelStatus
+    GetKernelStatus
 
     """
-    import nest
+    import nest    # noqa
     raise_errors = params.get('dict_miss_is_error', nest.dict_miss_is_error)
     # Double-check validity of the given params here to prevent accidental
     # mutation of the nest module by the `setattr` statement at the end of the
@@ -266,11 +266,11 @@ def GetKernelStatus(keys=None):
 
     See Also
     --------
-    set, SetKernelStatus
+    SetKernelStatus
 
     """
 
-    import nest
+    import nest    # noqa
     status_root = nest.kernel_status
 
     if keys is None:

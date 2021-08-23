@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""PyNEST - Python interface for the NEST simulator
+r"""PyNEST - Python interface for the NEST simulator
 
 * ``nest.helpdesk()`` opens the NEST documentation in your browser.
 
@@ -213,8 +213,10 @@ update_time_limit: double
 # instance later on. Use `.copy()` to prevent pollution with other variables
 _original_module_attrs = globals().copy()
 
-from .ll_api import KernelAttribute
-import sys, types, importlib
+from .ll_api import KernelAttribute  # noqa
+import sys
+import types
+import importlib
 if sys.version_info[0] == 2:
     msg = "Python 2 is no longer supported. Please use Python >= 3.6."
     raise Exception(msg)
@@ -298,7 +300,7 @@ _kernel_attr_names = set()
 # Parse this module's docstring to obtain the kernel attributes.
 for _line in __doc__.split('\n'):
     # Parse the `parameter : description. read only` lines
-    if not ' : ' in _line:
+    if ' : ' not in _line:
         continue
     _param = _line.split(":")[0].strip()
     _readonly = "read only" in _line

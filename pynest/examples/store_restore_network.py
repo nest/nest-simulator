@@ -142,9 +142,9 @@ class EINetwork:
         network["i_nrns"] = self.neurons.get(["V_m"], output="pandas")
 
         network["e_syns"] = nest.GetConnections(synapse_model="e_syn").get(
-                                     ("source", "target", "weight"), output="pandas")
+            ("source", "target", "weight"), output="pandas")
         network["i_syns"] = nest.GetConnections(synapse_model="i_syn").get(
-                                     ("source", "target", "weight"), output="pandas")
+            ("source", "target", "weight"), output="pandas")
 
         with open(dump_filename, "wb") as f:
             pickle.dump(network, f, pickle.HIGHEST_PROTOCOL)
@@ -309,7 +309,7 @@ if __name__ == "__main__":
     # Continue simulation by another 1s.
     print("\n*** Continuing simulation ***")
     nest.Simulate(T_sim)
-    dplot.add_to_plot(ein, lbl="Continued simulation", t_min=T_sim, t_max=2*T_sim)
+    dplot.add_to_plot(ein, lbl="Continued simulation", t_min=T_sim, t_max=2 * T_sim)
 
     ###############################################################################
     # Clear kernel, restore network from file and simulate for 1s.

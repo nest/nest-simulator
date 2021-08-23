@@ -209,7 +209,7 @@ def build_network(logger):
     # set global kernel parameters
     nest.total_num_virtual_procs = params['nvp']
     nest.resolution = params['dt']
-    nest.overwrite_files =  True
+    nest.overwrite_files = True
 
     nest.message(M_INFO, 'build_network', 'Creating excitatory population.')
     E_neurons = nest.Create('iaf_psc_alpha', NE, params=model_params)

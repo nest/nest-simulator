@@ -78,7 +78,7 @@ print("iaf_cond_alpha recordables: {0}".format(
 #  In addition, more parameters can be modified for writing to file:
 #
 #  - `record_to` indicates where to put recorded data. All possible values are
-#    available by inspecting the keys of the dictionary obtained from the 
+#    available by inspecting the keys of the dictionary obtained from the
 #    kernel attribute `recording_backends`.
 #  - `label` specifies an arbitrary label for the device. If writing to files,
 #    it used in the file name instead of the model name.

@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Connection semantics prototype functions
+Connection projection functions and classes
 """
 
 import copy
@@ -46,6 +46,29 @@ __all__ = [
 
 
 class Projection(object):
+    """
+    Projection base class representing individual projections between NodeCollections.
+
+    Used by :py:func:`Connect` and :py:func:`BuildNetwork`. The projection will
+    be put in a buffer when called with :py:func:`Connect`. The actual connections
+    will be made when :py:func:`BuildNetwork` is called.
+
+    Parameters
+    ----------
+    source: NodeCollection
+        presynaptic nodes
+    target: NodeCollection
+        postsynaptic nodes
+    allow_autapses: bool
+        are autapses allowed
+    allow_multapses: bool
+        are multapses allowed
+    syn_spec: :py:class:`.SynapseModel<nest.synapsemodels.hl_api_synapsemodels.SynapseModel>`
+        class representating the synapse model
+    kwargs: (optional)
+        keyword arguments representing further connection specifications
+    """
+
     conn_spec = {}  # Filled by subclass
 
     def __init__(self, source, target, allow_autapses, allow_multapses, syn_spec, **kwargs):
@@ -61,21 +84,6 @@ class Projection(object):
                 self.conn_spec[name] = param
 
         self.use_connect_arrays = False
-
-    def clone(self):
-        return copy.copy(self)
-
-    def to_list(self):
-        # Projection connection expects syn_spec to be a list of dicts. Because of the different forms syn_spec
-        # can come in, this requires some processing. TODO: Can this be cleaned up?
-        syn_spec = self.syn_spec.to_dict() if issubclass(type(self.syn_spec), SynapseModel) else self.syn_spec
-        syn_spec = _process_syn_spec(syn_spec, self.conn_spec, len(self.source), len(self.target), False)
-
-        if syn_spec is None:
-            syn_spec = {'synapse_model': 'static_synapse'}
-        elif isinstance(syn_spec, dict) and 'synapse_model' not in syn_spec:
-            syn_spec['synapse_model'] = 'static_synapse'
-        return [self.source, self.target, self.conn_spec, syn_spec]
 
     def __getattr__(self, attr):
         if attr in ['source', 'target', 'conn_spec', 'syn_spec', 'use_connect_arrays']:
@@ -95,8 +103,35 @@ class Projection(object):
         output = f'source: {self.source} \ntarget: {self.target} \nconn_spec: {self.conn_spec} \nsyn_spec: {self.syn_spec}'  # noqa
         return output
 
+    def clone(self):
+        """Clone object."""
+        return copy.copy(self)
+
+    def to_list(self):
+        """Convert object to list.
+
+        Projection connection expects syn_spec to be a list of dicts. Because of the different forms syn_spec
+        can come in, this requires some processing.
+
+        TODO: Can this be cleaned up?"""
+
+        syn_spec = self.syn_spec.to_dict() if issubclass(type(self.syn_spec), SynapseModel) else self.syn_spec
+        syn_spec = _process_syn_spec(syn_spec, self.conn_spec, len(self.source), len(self.target), False)
+
+        if syn_spec is None:
+            syn_spec = {'synapse_model': 'static_synapse'}
+        elif isinstance(syn_spec, dict) and 'synapse_model' not in syn_spec:
+            syn_spec['synapse_model'] = 'static_synapse'
+        return [self.source, self.target, self.conn_spec, syn_spec]
+
 
 class ProjectionCollection(object):
+    """
+    Class for buffering all projections.
+    
+    When :py:func:`Connect` is called with a :py:class:`Projection`, the projection
+    is added to `_batch_projections` and stored until :py:func:`BuildNetwork` is called.
+    """
 
     def __init__(self):
         self.reset()
@@ -118,6 +153,8 @@ projection_collection = ProjectionCollection()
 def Connect(projection):
     """
     Connect `pre` nodes to `post` nodes.
+
+    TODO: needs to be re-written. Parts of this can probably be moved to other functions/classes.
 
     Nodes in `pre` and `post` are connected using the specified connectivity
     (`all-to-all` by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
@@ -209,6 +246,21 @@ def Connect(projection):
 
 
 def BuildNetwork():
+    """
+    Build network.
+
+    Send all projections in the `projection_collection` buffer to the kernel to create all
+    connections in the buffer.
+
+    The kernel expects a list of lists, where the inner lists should contain the respective
+    projection's `source`, `target`, `conn_spec` dictionary, and `syn_spec` dictionary. For
+    spatial networks, the inner lists should contain the projection's `source`, `target`,
+    and spatial_projection dictionary containing connection and synapse specifications.
+
+    If `source` and `target` are arrays, `connect_array` should be used. This will happen
+    irregardles of the other projections in the buffer, and will be done in it's own call
+    to the kernel.
+    """
     from .hl_api_connections import _array_connect
 
     if not projection_collection.network_built:
@@ -248,18 +300,26 @@ def BuildNetwork():
 
 
 def reset_projection_collection():
+    """Reset `projection_collection`"""
     projection_collection.reset()
     projection_collection.network_built = False
 
 
 class AllToAll(Projection):
+    """
+    Class representing `all_to_all` connection rule.
+    """
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'all_to_all'}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class ArrayConnect(Projection):
-    """NB! Will not be connected with other projections, we send this to C++ on it's own."""
+    """
+    Class representing `connect_array`.
+
+    NB! Will not be connected with other projections, we send this to C++ on it's own.
+    """
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'one_to_one'}  # ArrayConnect uses an one-to-one scheme
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
@@ -276,42 +336,75 @@ class ArrayConnect(Projection):
 
 
 class Conngen(Projection):
+    """
+    Class representing the `conngen` connection rule.
+    
+    Mandatory associated parameter: `cg`
+    """
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, cg=None, **kwargs):
         self.conn_spec = {'rule': 'conngen', 'cg': cg}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class FixedIndegree(Projection):
+    """
+    Class representing the `fixed_indegree` connection rule.
+    
+    Mandatory associated parameter: `indegree`
+    """
     def __init__(self, source, target, indegree, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'fixed_indegree', 'indegree': indegree}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class FixedOutdegree(Projection):
+    """
+    Class representing the `fixed_outdegree` connection rule.
+    
+    Mandatory associated parameter: `outdegree`
+    """
     def __init__(self, source, target, outdegree, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'fixed_outdegree', 'outdegree': outdegree}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class FixedTotalNumber(Projection):
+    """
+    Class representing the `fixed_total_number` connection rule.
+    
+    Mandatory associated parameter: `N`
+    """
     def __init__(self, source, target, N, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'fixed_total_number', 'N': N}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class OneToOne(Projection):
+    """
+    Class representing the `one_to_one` connection rule.
+    """
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'one_to_one'}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class PairwiseBernoulli(Projection):
+    """
+    Class representing the `pairwise_bernoulli` connection rule.
+    
+    Mandatory associated parameter: `p`
+    """
     def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'pairwise_bernoulli', 'p': p}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)
 
 
 class SymmetricPairwiseBernoulli(Projection):
+    """
+    Class representing the `symmetric_pairwise_bernoulli` connection rule.
+    
+    Mandatory associated parameter: `p`
+    """
     def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
         self.conn_spec = {'rule': 'symmetric_pairwise_bernoulli', 'p': p}
         super().__init__(source, target, allow_autapses, allow_multapses, syn_spec, **kwargs)

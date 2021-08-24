@@ -106,12 +106,20 @@ __all__ = [
 
 
 class SynapseModel:
+    """
+    Base class for all synapse models, used when connecting nodes.
+
+    Parameters
+    ----------
+    synapse_model: string
+        Name of the synapse model.
+    kwargs: optional
+        keyword arguments representing the parameters of the synapse model.
+    """
+
     def __init__(self, synapse_model, **kwargs):
         self.synapse_model = synapse_model
         self.specs = kwargs
-
-    def to_dict(self):
-        return dict(self.specs, synapse_model=self.synapse_model)
 
     def __getattr__(self, attr):
         return super().__getattribute__(attr)
@@ -122,14 +130,25 @@ class SynapseModel:
         else:
             self.specs[attr] = value
 
-    def clone(self):
-        return copy.deepcopy(self)
-
     def __str__(self):
         return f'synapse_model: {self.synapse_model}, specs: {self.specs}'
 
+    def to_dict(self):
+        """Convert object to dictionary."""
+        return dict(self.specs, synapse_model=self.synapse_model)
+
+    def clone(self):
+        """Clone object."""
+        return copy.deepcopy(self)
+
 
 def _copy_synapse_class(model):
+    """
+    Create new SynapseModel class using model as synapse_model name.
+
+    This function is used by :py:func:`CopyModel()<nest.lib.hl_api_models.CopyModel>`
+    to create 'new' synapse models.
+    """
     def model_init(self, model):
         SynapseModel.__init__(self, model)
 

@@ -121,9 +121,22 @@ def _array_connect(pre, post, conn_spec, syn_spec=None):
     """
     Connect `pre` nodes to `post` nodes with one-to-one scheme.
 
-    `pre` and `post` are arrays of node IDs, which might contain non-unique IDs. You
-    may also specify weight, delay, and receptor type for each connection as NumPy
-    arrays in the `syn_spec` dictionary.
+    `pre` and `post` are arrays of node IDs, which might contain non-unique IDs. The
+    arrays must be of the same length. You may also specify weight, delay, and
+    receptor type for each connection as NumPy arrays in the `syn_spec` dictionary.
+    
+    Parameters
+    ----------
+    pre: list/array/NodeCollection
+        Node IDs
+    post: list/array/NodeCollection
+        Node IDs
+    conn_spec: Dictionary
+        Connection specifications. Must contain the keyword `rule`
+    syn_spec: Dictionary (optional)
+        Synapse specifications
+        If `weight`, `delay`, or `receptor_type` is specified, they must be given as
+        single elements or as arrays with the length of pre and post.
     """
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
 

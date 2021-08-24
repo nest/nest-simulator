@@ -196,7 +196,7 @@ print()
 # Simulate one additional time step. This ensures that the
 # voltage traces for all trials, including the last, have the full length, so we
 # can easily transform them into a matrix below.
-nest.Simulate(nest.get('resolution'))
+nest.Simulate(nest.resolution)
 
 ###############################################################################
 # Extract voltage traces and reshape the matrix with one column per trial

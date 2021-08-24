@@ -231,7 +231,7 @@ This will create 9 connections: 3 using ``static_synapse`` with a ``weight`` of 
 the ``stdp_synapse``. Of the 6 using ``stdp_synapse``, 3 will have the default alpha value, and 3 will have an alpha of
 `3.0`.
 
-  >>> print(nest.get('num_connections'))
+  >>> print(nest.GetKernelStatus('num_connections'))
   9
 
 If you want to connect with different receptor types, you can do the following:

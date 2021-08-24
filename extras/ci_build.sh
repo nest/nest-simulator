@@ -84,6 +84,7 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
 
     echo "MSGBLD0070: Retrieving changed files."
     file_names=$CHANGED_FILES
+    echo "MSGBLD0071: $file_names"
 
     # Note: uncomment the following line to static check *all* files, not just those that have changed.
     # Warning: will run for a very long time

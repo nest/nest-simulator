@@ -222,7 +222,7 @@ def SetKernelStatus(params):
 
     resolution : float, default: 0.1
         The resolution of the simulation (in ms)
-    time : float
+    biological_time : float
         The current simulation time (in ms)
     to_do : int, read only
         The number of steps yet to be simulated

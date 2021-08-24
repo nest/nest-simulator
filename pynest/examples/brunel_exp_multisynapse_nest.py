@@ -194,13 +194,11 @@ nest.CopyModel("static_synapse", "inhibitory",
 # which includes the specification of the distribution and the associated
 # parameter.
 
-syn_params_ex = {"model": "excitatory",
-                 "receptor_type": {"distribution": "uniform_int",
-                                   "low": 1, "high": nr_ports}
+syn_params_ex = {"synapse_model": "excitatory",
+                 "receptor_type": nest.random.uniform_int(max=nr_ports-1) + 1
                  }
-syn_params_in = {"model": "inhibitory",
-                 "receptor_type": {"distribution": "uniform_int",
-                                   "low": 1, "high": nr_ports}
+syn_params_in = {"synapse_model": "inhibitory",
+                 "receptor_type": nest.random.uniform_int(max=nr_ports-1) + 1
                  }
 
 nest.Connect(noise, nodes_ex, syn_spec=syn_params_ex)

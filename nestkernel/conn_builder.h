@@ -121,7 +121,7 @@ public:
  * @param update amount of connected synaptic elements to update
  * @return
  */
-  bool change_connected_synaptic_elements( index snode_id, index tnode_id, const int thread tid, int update );
+  bool change_connected_synaptic_elements( index snode_id, index tnode_id, const int tid, int update );
 
   virtual bool
   supports_symmetric() const

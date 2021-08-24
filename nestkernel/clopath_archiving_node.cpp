@@ -72,7 +72,7 @@ nest::ClopathArchivingNode::init_clopath_buffers()
    * Since we write into the buffer before we read from it, we have to
    * add 1 to the size of the buffers.
    */
-  layed_u_bars_idx_ = 0;
+  delayed_u_bars_idx_ = 0;
   delay_u_bars_steps_ = Time::delay_ms_to_steps( delay_u_bars_ ) + 1;
   delayed_u_bar_plus_.resize( delay_u_bars_steps_ );
   delayed_u_bar_minus_.resize( delay_u_bars_steps_ );

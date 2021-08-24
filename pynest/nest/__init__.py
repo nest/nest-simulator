@@ -214,9 +214,9 @@ update_time_limit: double
 _original_module_attrs = globals().copy()
 
 from .ll_api import KernelAttribute  # noqa
-import sys
-import types
-import importlib
+import sys                           # noqa
+import types                         # noqa
+import importlib                     # noqa
 if sys.version_info[0] == 2:
     msg = "Python 2 is no longer supported. Please use Python >= 3.6."
     raise Exception(msg)

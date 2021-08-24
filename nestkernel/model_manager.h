@@ -279,7 +279,6 @@ private:
   std::vector< ConnectorModel* > secondary_connector_models_;
   std::vector< std::map< synindex, SecondaryEvent* > > secondary_events_prototypes_;
 
-
   DictionaryDatum modeldict_; //!< Dictionary of all models
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
 

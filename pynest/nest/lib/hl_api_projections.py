@@ -128,7 +128,7 @@ class Projection(object):
 class ProjectionCollection(object):
     """
     Class for buffering all projections.
-    
+
     When :py:func:`Connect` is called with a :py:class:`Projection`, the projection
     is added to `_batch_projections` and stored until :py:func:`BuildNetwork` is called.
     """
@@ -338,7 +338,7 @@ class ArrayConnect(Projection):
 class Conngen(Projection):
     """
     Class representing the `conngen` connection rule.
-    
+
     Mandatory associated parameter: `cg`
     """
     def __init__(self, source, target, allow_autapses=None, allow_multapses=None, syn_spec=None, cg=None, **kwargs):
@@ -349,7 +349,7 @@ class Conngen(Projection):
 class FixedIndegree(Projection):
     """
     Class representing the `fixed_indegree` connection rule.
-    
+
     Mandatory associated parameter: `indegree`
     """
     def __init__(self, source, target, indegree, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
@@ -360,7 +360,7 @@ class FixedIndegree(Projection):
 class FixedOutdegree(Projection):
     """
     Class representing the `fixed_outdegree` connection rule.
-    
+
     Mandatory associated parameter: `outdegree`
     """
     def __init__(self, source, target, outdegree, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
@@ -371,7 +371,7 @@ class FixedOutdegree(Projection):
 class FixedTotalNumber(Projection):
     """
     Class representing the `fixed_total_number` connection rule.
-    
+
     Mandatory associated parameter: `N`
     """
     def __init__(self, source, target, N, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
@@ -391,7 +391,7 @@ class OneToOne(Projection):
 class PairwiseBernoulli(Projection):
     """
     Class representing the `pairwise_bernoulli` connection rule.
-    
+
     Mandatory associated parameter: `p`
     """
     def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):
@@ -402,7 +402,7 @@ class PairwiseBernoulli(Projection):
 class SymmetricPairwiseBernoulli(Projection):
     """
     Class representing the `symmetric_pairwise_bernoulli` connection rule.
-    
+
     Mandatory associated parameter: `p`
     """
     def __init__(self, source, target, p, allow_autapses=None, allow_multapses=None, syn_spec=None, **kwargs):

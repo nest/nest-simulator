@@ -124,7 +124,7 @@ def _array_connect(pre, post, conn_spec, syn_spec=None):
     `pre` and `post` are arrays of node IDs, which might contain non-unique IDs. The
     arrays must be of the same length. You may also specify weight, delay, and
     receptor type for each connection as NumPy arrays in the `syn_spec` dictionary.
-    
+
     Parameters
     ----------
     pre: list/array/NodeCollection

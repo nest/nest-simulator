@@ -235,7 +235,7 @@ for f in $FILE_NAMES; do
       if $PERFORM_PEP8; then
         print_msg "MSGBLD0190: " "Running PEP8 .......: $f"
         case $f in
-          *user_manual_scripts*)
+          *spatially_structured_networks\/scripts*)
             IGNORES=$PYCODESTYLE_IGNORES_USER_MANUAL
             ;;
           *examples*)

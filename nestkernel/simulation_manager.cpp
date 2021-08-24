@@ -503,7 +503,7 @@ nest::SimulationManager::prepare()
   // it resizes coefficient arrays for secondary events
   kernel().node_manager.check_wfr_use();
 
-  if ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.have_connections_changed() )
+  if ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed() )
   {
 #pragma omp parallel
     {
@@ -772,8 +772,8 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
 #pragma omp single
   {
     kernel().node_manager.set_have_nodes_changed( false );
+    kernel().connection_manager.unset_connections_have_changed();
   }
-  kernel().connection_manager.unset_have_connections_changed( tid );
 
 #pragma omp barrier
   if ( tid == 0 )

@@ -121,7 +121,7 @@ nest.ResetKernel()
 nrns = nest.Create('iaf_psc_alpha', 15)
 nest.Connect(nrns[:5], nrns[:5],
              'one_to_one',
-             {'synapse_model': 'stdp_synapse', 'weight': nest.random.normal(mean=5.0, std=2)})
+             {'synapse_model': 'stdp_synapse', 'weight': nest.random.normal(mean=5.0, std=2.0)})
 nest.Connect(nrns[:10], nrns[5:12],
              {'rule': 'pairwise_bernoulli', 'p': 0.4},
              {'weight': 4.0})

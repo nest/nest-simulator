@@ -159,6 +159,7 @@ nest.Connect(nest.AllToAll(pre_neuron, qsyn_neuron, syn_spec=nest.synapsemodels.
 
 nest.Connect(nest.AllToAll(tsyn_voltmeter, tsyn_neuron))
 nest.Connect(nest.AllToAll(qsyn_voltmeter, qsyn_neuron))
+nest.BuildNetwork()
 
 ###############################################################################
 # This loop runs over the `n_trials` trials and performs a standard protocol

@@ -21,6 +21,13 @@
 
 """
 High-level API of PyNEST Module
+
+**Internal use only**, do not import from this module or its submodules in your
+code.
+
+This module imports all parts of the public API of the root ``nest`` module,
+both static and dynamic submodules. During initialization of the ``nest`` module
+all public attributes of `nest.hl_api` are copied into the ``nest`` module.
 """
 
 from . import import_libs as _il
@@ -31,6 +38,28 @@ from . import import_libs as _il
 # from lib.$X import * ; _ignore_modules.add('lib.$X')
 ############################
 _ignore_modules = set()
+from .lib.hl_api_connection_helpers import *
+_ignore_modules.add('lib.hl_api_connection_helpers')
+from .lib.hl_api_connections import *
+_ignore_modules.add('lib.hl_api_connections')
+from .lib.hl_api_exceptions import *
+_ignore_modules.add('lib.hl_api_exceptions')
+from .lib.helper import *
+_ignore_modules.add('lib.helper')
+from .lib.hl_api_info import *
+_ignore_modules.add('lib.hl_api_info')
+from .lib.hl_api_models import *
+_ignore_modules.add('lib.hl_api_models')
+from .lib.hl_api_nodes import *
+_ignore_modules.add('lib.hl_api_nodes')
+from .lib.hl_api_parallel_computing import *
+_ignore_modules.add('lib.hl_api_parallel_computing')
+from .lib.hl_api_simulation import *
+_ignore_modules.add('lib.hl_api_simulation')
+from .lib.hl_api_spatial import *
+_ignore_modules.add('lib.hl_api_spatial')
+from .lib.hl_api_types import *
+_ignore_modules.add('lib.hl_api_types')
 
 ############################
 # Then whatever is left over, load dynamically

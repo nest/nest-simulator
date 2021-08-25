@@ -31,6 +31,18 @@ import nest
 class StatusTestCase(unittest.TestCase):
     """Tests of Get/SetStatus, Get/SetDefaults, and Get/SetKernelStatus via get/set"""
 
+    def test_kernel_attributes(self):
+        """Test nest attribute access of kernel attributes"""
+
+        nest.ResetKernel()
+
+        self.assertEqual(nest.GetKernelStatus(), nest.kernel_status)
+        self.assertEqual(nest.GetKernelStatus("resolution"), nest.resolution)
+
+        nest.resolution = 0.4
+        self.assertEqual(0.4, nest.resolution)
+        self.assertRaises(AttributeError, setattr, nest, "network_size", 120)
+
     def test_GetKernelStatus(self):
         """GetKernelStatus"""
 
@@ -57,6 +69,10 @@ class StatusTestCase(unittest.TestCase):
 
         self.assertRaises(ValueError, nest.SetKernelStatus,
                           {'nonexistent_status_key': 0})
+        # Readonly check
+        self.assertRaises(ValueError, nest.SetKernelStatus,
+                          {'network_size': 120})
+
 
     def test_GetDefaults(self):
         """GetDefaults"""

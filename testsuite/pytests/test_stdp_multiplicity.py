@@ -116,8 +116,10 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             assert multiplicity * delta < resolution / 2., "Test inconsistent."
 
             nest.ResetKernel()
-            nest.tics_per_ms = tics_per_ms
-            nest.resolution = resolution
+            nest.SetKernelStatus({
+                'tics_per_ms': tics_per_ms,
+                'resolution': resolution
+            })
 
             pre_times = sorted(t_base - k * delta
                                for t_base in pre_spike_times_base

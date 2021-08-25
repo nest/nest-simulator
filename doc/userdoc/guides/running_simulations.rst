@@ -92,7 +92,8 @@ using :py:func:`.SetKernelStatus`:
 
 ::
 
-    nest.SetKernelStatus({"min_delay": 0.5, "max_delay": 2.5})
+    # For co-dependent properties, we use `set()` instead of kernel attributes
+    nest.set(min_delay=0.5, may_delay=2.5)
 
 These settings should be used with care, though: setting the delay
 extrema too wide without need leads to decreased performance due to more

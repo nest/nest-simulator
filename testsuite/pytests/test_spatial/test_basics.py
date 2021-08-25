@@ -368,8 +368,8 @@ class BasicsTestCase(unittest.TestCase):
 
         # Test positions on a grid, we can calculate what they should be
         nest.ResetKernel()
-        nest.sort_connections_by_source = False
-        nest.use_compressed_spikes = False
+        # For co-dependent properties, we use `set()` instead of kernel attributes
+        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
 
         x_extent = 1.
         y_extent = 1.
@@ -405,8 +405,8 @@ class BasicsTestCase(unittest.TestCase):
         # Test that we get correct positions when we send in a positions array
         # when creating the layer
         nest.ResetKernel()
-        nest.sort_connections_by_source = False
-        nest.use_compressed_spikes = False
+        # For co-dependent properties, we use `set()` instead of kernel attributes
+        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
 
         positions = [(np.random.uniform(-0.5, 0.5),
                       np.random.uniform(-0.5, 0.5)) for _ in range(50)]

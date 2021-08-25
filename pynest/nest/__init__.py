@@ -66,18 +66,35 @@ def _rel_import_star(module, import_module_name):
         module.update(kv for kv in imp_iter if not kv[0].startswith("_"))
 
 
-def _lazy_module_property(module_name):
+def _lazy_module_property(module_name, optional=False, optional_hint=""):
     """
     Returns a property that lazy loads a module and substitutes itself with it.
     The class variable name must match given `module_name`::
 
       class ModuleClass(types.ModuleType):
           lazy_module_xy = _lazy_module_property("lazy_module_xy")
+
+    :param module_name: Name of the lazy loadable module.
+    :type module_name: str
+    :param optional: Optional modules raise more descriptive errors.
+    :type optional: bool
+    :param optional_hint: Message appended in case of import errors, to help
+      users install missing optional modules
+    :type optional_hint: str
     """
     def lazy_loader(self):
         cls = type(self)
         delattr(cls, module_name)
-        module = importlib.import_module("." + module_name, __name__)
+        try:
+            module = importlib.import_module("." + module_name, __name__)
+        except ImportError as e:
+            if optional:
+                raise ImportError(
+                    f"This functionality requires the optional module "
+                     + module_name + ". " + optional_hint
+                ) from None
+            else:
+                raise e from None
         setattr(cls, module_name, module)
         return module
 

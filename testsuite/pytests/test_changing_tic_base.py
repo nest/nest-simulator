@@ -50,7 +50,7 @@ class TestChangingTicBase(unittest.TestCase):
                 pass
 
         # Change the tic-base.
-        nest.SetkernelStatus({
+        nest.SetKernelStatus({
             'tics_per_ms': 1500.0,
             'resolution': 0.5
         })

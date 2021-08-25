@@ -86,7 +86,7 @@ jobs:
            CHANGED_FILES="$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})"
            echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
        - name: Dependencies MacOS
-         if: runner.os =='macOS'
+         if: runner.os == 'macOS'
          run: |
             brew install coreutils gsl open-mpi automake autoconf libtool
             brew info python

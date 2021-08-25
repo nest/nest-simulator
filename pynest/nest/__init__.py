@@ -281,11 +281,16 @@ class NestModule(types.ModuleType):
     # Property for the full SLI `GetKernelStatus` dictionary
     kernel_status = KernelAttribute(None, "Get kernel status.", readonly=True)
 
-    def set(self, *args, **kwargs):
-        return self.SetKernelStatus(*args, **kwargs)
+    def set(self, **kwargs):
+        return self.SetKernelStatus(kwargs)
 
-    def get(self, *args, **kwargs):
-        return self.GetKernelStatus(*args, **kwargs)
+    def get(self, *args):
+        if len(args) == 0:
+            return self.GetKernelStatus()
+        if len(args) == 1:
+            return self.GetKernelStatus(args[0])
+        else:
+            return self.GetKernelStatus(args)
 
 
     def __dir__(self):

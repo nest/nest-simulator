@@ -25,9 +25,9 @@ High-level API of PyNEST Module
 **Internal use only**, do not import from this module or its submodules in your
 code.
 
-This module imports all parts of the public API of the root ``nest`` module,
-both static and dynamic submodules. During initialization of the ``nest`` module
-all public attributes of `nest.hl_api` are copied into the ``nest`` module.
+This module imports all static parts of the public API of the root ``nest``
+module. During initialization of the ``nest`` module all public attributes of
+`nest.hl_api` are copied into the ``nest`` module.
 """
 
 # With '__all__' we provide an explicit index of the package. Without any
@@ -92,10 +92,6 @@ __all__ = [
     'sysinfo',
 ]
 
-
-#############################
-# Static core module imports
-############################
 from .lib.hl_api_connection_helpers import *
 from .lib.hl_api_connections import *
 from .lib.hl_api_exceptions import *
@@ -107,8 +103,3 @@ from .lib.hl_api_parallel_computing import *
 from .lib.hl_api_simulation import *
 from .lib.hl_api_spatial import *
 from .lib.hl_api_types import *
-
-############################
-# Static optional module imports
-
-############################

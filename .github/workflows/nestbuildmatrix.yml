@@ -83,8 +83,9 @@ jobs:
          with:
            fetch-depth: 0
        - run: |
-           CHANGED_FILES="$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})"
-           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+           echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
+           echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
+           echo 'EOF' >> $GITHUB_ENV
        - name: Dependencies MacOS
          if: runner.os == 'macOS'
          run: |

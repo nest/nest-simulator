@@ -44,8 +44,8 @@ from .lib.hl_api_connections import *
 _ignore_modules.add('lib.hl_api_connections')
 from .lib.hl_api_exceptions import *
 _ignore_modules.add('lib.hl_api_exceptions')
-from .lib.helper import *
-_ignore_modules.add('lib.helper')
+from .lib.hl_api_helper import *
+_ignore_modules.add('lib.hl_api_helper')
 from .lib.hl_api_info import *
 _ignore_modules.add('lib.hl_api_info')
 from .lib.hl_api_models import *

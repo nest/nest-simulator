@@ -196,6 +196,7 @@ def ResetKernel():
     sr('ResetKernel')
 
 
+@check_stack
 def SetKernelStatus(params):
     """Set parameters for the simulation kernel.
 
@@ -215,26 +216,29 @@ def SetKernelStatus(params):
     """
     import nest    # noqa
     raise_errors = params.get('dict_miss_is_error', nest.dict_miss_is_error)
-    # Double-check validity of the given params here to prevent accidental
-    # mutation of the nest module by the `setattr` statement at the end of the
-    # function.
     valids = nest._kernel_attr_names
+    readonly = nest._readonly_kernel_attrs
     keys = list(params.keys())
     for key in keys:
+        msg = None
         if key not in valids:
             msg = f'`{key}` is not a valid kernel parameter, ' + \
                   'valid parameters are: ' + \
                   ', '.join(f"'{p}'" for p in sorted(valids))
+        elif key in readonly:
+            msg = f'`{key}` is a readonly kernel parameter'
+        if msg is not None:
             if raise_errors:
                 raise ValueError(msg)
             else:
                 warnings.warn(msg + f' \n`{key}` has been ignored')
                 del params[key]
 
-    for k, v in params.items():
-        setattr(nest, k, v)
+    sps(params)
+    sr('SetKernelStatus')
 
 
+@check_stack
 def GetKernelStatus(keys=None):
     """Obtain parameters of the simulation kernel.
 
@@ -270,8 +274,8 @@ def GetKernelStatus(keys=None):
 
     """
 
-    import nest    # noqa
-    status_root = nest.kernel_status
+    sr('GetKernelStatus')
+    status_root = spp()
 
     if keys is None:
         return status_root

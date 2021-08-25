@@ -297,6 +297,7 @@ _module_dict.update(_original_module_attrs)
 _rel_import_star(_module_dict, ".hl_api")
 
 _kernel_attr_names = set()
+_readonly_kernel_attrs = set()
 # Parse this module's docstring to obtain the kernel attributes.
 for _line in __doc__.split('\n'):
     # Parse the `parameter : description. read only` lines
@@ -305,10 +306,13 @@ for _line in __doc__.split('\n'):
     _param = _line.split(":")[0].strip()
     _readonly = "read only" in _line
     _kernel_attr_names.add(_param)
+    if _readonly:
+        _readonly_kernel_attrs.add(_param)
     # Create a kernel attribute descriptor and add it to the nest module
     _kernel_attr = KernelAttribute(_param, None, _readonly)
     setattr(NestModule, _param, _kernel_attr)
 _module._kernel_attr_names = _kernel_attr_names
+_module._readonly_kernel_attrs = _readonly_kernel_attrs
 
 # Finalize the nest module instance by generating its public API.
 _api = list(k for k in _module_dict if not k.startswith("_"))
@@ -326,4 +330,5 @@ globals().update(_module_dict)
 
 # Clean up obsolete references
 del _kernel_attr_names, _rel_import_star, _lazy_module_property, _readonly, \
-    _kernel_attr, _module, _module_dict, _original_module_attrs, _line, _param
+    _kernel_attr, _module, _module_dict, _original_module_attrs, _line, \
+    _param, _readonly_kernel_attrs

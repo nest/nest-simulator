@@ -75,7 +75,7 @@ produced during successive calls to ``Run`` in between a pair of
 set. When creating a new recording, if the filename already exists,
 the ``Prepare`` call will fail with a corresponding error message. To
 instead overwrite the old file set, the kernel property
-``overwrite_files`` can be set to *true* using the coresponding kernel
+``overwrite_files`` can be set to ``True`` using the coresponding kernel
 attribute. An alternative way for avoiding name clashes is to set the
 kernel attributes ``data_path`` or ``data_prefix``, so that another
 full filename is composed.
@@ -131,7 +131,7 @@ Global parameters
 
 These parameters can be set by assigning a nested dictionary to the
 kernel attribute ``recording_backends``. The dictionary has to have
-the form ``{'sionlib': {k_1: v_1, ... k_n: v_n}`` with ``k_i`` being
+the form ``{'sionlib': {k_1: v_1, …, k_n: v_n}`` with ``k_i`` being
 from the following list:
 
 filename

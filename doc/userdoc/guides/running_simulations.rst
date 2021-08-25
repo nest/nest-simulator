@@ -141,7 +141,7 @@ for a simple loop over different realizations:
 
     for n in range(5):
         nest.ResetKernel()
-        nest.rng_seed = n+1   # seed > 0 required
+        nest.rng_seed = n + 1   # seed > 0 required
 
         # build network
         # simulate network
@@ -165,8 +165,8 @@ following
 
 ::
 
-    nest.rng_type': 'mt19937'
-    nest.rng_seed': 12234
+    nest.rng_type = 'mt19937'
+    nest.rng_seed = 12234
 
 In the example, the generator is initialized with the defalt seed (or with a
 previously defined seed, if one was set). The second line re-sets the seed to

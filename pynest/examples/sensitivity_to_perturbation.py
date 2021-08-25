@@ -186,7 +186,6 @@ for trial in [0, 1]:
     # the spike recorder.
 
     nest.rng_seed = seed_NEST
-    nest.biological_time = 0.0
 
     spikerecorder.n_events = 0
 

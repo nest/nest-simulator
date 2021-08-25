@@ -49,7 +49,7 @@ nest.ResetKernel()
 
 nest.overwrite_files = True
 nest.data_path = ""
-nest.data_prefix": ""
+nest.data_prefix = ""
 
 ###############################################################################
 # For illustration, the recordables of the ``iaf_cond_alpha`` neuron model are
@@ -79,7 +79,7 @@ print("iaf_cond_alpha recordables: {0}".format(
 #
 #  - `record_to` indicates where to put recorded data. All possible values are
 #    available by inspecting the keys of the dictionary obtained from the
-#    kernel attribute `recording_backends`.
+#    kernel attribute ``recording_backends``.
 #  - `label` specifies an arbitrary label for the device. If writing to files,
 #    it used in the file name instead of the model name.
 #

@@ -18,8 +18,8 @@ simulation kernel. In addition to the traditional access method via
 :py:func:`.GetKernelStatus` and :py:func:`.SetKernelStatus`,
 properties can now be set and retrieved via direct kernel attributes.
 
-The co-dependent properties `min_delay` and `max_delay` can now be set
-using a value tuple via the new kernel attribute `delay_extrema`.
+The co-dependent properties ``min_delay`` and ``max_delay`` can now be set
+using a value tuple via the new kernel attribute ``delay_extrema``.
 
 As the old access functions might get removed in a future version of
 NEST, we advise to use the new shortcuts already now.

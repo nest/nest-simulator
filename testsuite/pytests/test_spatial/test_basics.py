@@ -305,10 +305,8 @@ class BasicsTestCase(unittest.TestCase):
                  'mask': {'grid': {'shape': [2, 2]}}}
         sdict = {'synapse_model': 'stdp_synapse'}
         nest.ResetKernel()
-        nest.SetKernelStatus({
-            'sort_connections_by_source': False,
-            'use_compressed_spikes': False
-        })
+        # For co-dependent properties, we use `set()` instead of kernel attributes
+        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
 
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(shape=[3, 3],
@@ -355,10 +353,8 @@ class BasicsTestCase(unittest.TestCase):
                  'p': 1.}
         sdict = {'synapse_model': 'stdp_synapse'}
 
-        nest.SetKernelStatus({
-            'sort_connections_by_source': False,
-            'use_compressed_spikes': False
-        })
+        # For co-dependent properties, we use `set()` instead of kernel attributes
+        nest.set(use_compressed_spikes=False, sort_connections_by_source=False})
 
         layer = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(shape=[1, 1],

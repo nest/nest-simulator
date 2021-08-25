@@ -70,9 +70,9 @@ be written to the same file, while the call to ``Run`` will flush all
 data to the file, so it is available for immediate inspection.
 
 If the file name already exists when creating a new recording, the
-call to ``Prepare`` will fail with a FileExists error. To overwrite
+call to ``Prepare`` will fail with a ``FileExists`` error. To overwrite
 the old file, the kernel property ``overwrite_files`` can be set to
-*true* using the corresponding kernel attribute. An alternative way
+``True`` using the corresponding kernel attribute. An alternative way
 for avoiding name clashes is to set the kernel attributes
 ``data_path`` or ``data_prefix``, so that another filename is chosen.
 

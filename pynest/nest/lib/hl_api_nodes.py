@@ -86,7 +86,7 @@ def Create(model, n=1, params=None, positions=None):
         spatial = getattr(nest.NestModule, "spatial")
         # We only accept positions as either a free object or a grid object.
         if not isinstance(positions, (spatial.free, spatial.grid)):
-            raise TypeError('`positions` must be either a spatial.free object or spatial.grid object')
+            raise TypeError('`positions` must be either a nest.spatial.free or a nest.spatial.grid object')
         layer_specs = {'elements': model}
         layer_specs['edge_wrap'] = positions.edge_wrap
         if isinstance(positions, spatial.free):

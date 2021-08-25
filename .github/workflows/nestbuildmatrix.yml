@@ -87,7 +87,7 @@ jobs:
            echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
            echo 'EOF' >> $GITHUB_ENV
        - name: Dependencies MacOS
-         if: runner.os =='macOS'
+         if: runner.os == 'macOS'
          run: |
             brew install coreutils gsl open-mpi automake autoconf libtool
             brew info python

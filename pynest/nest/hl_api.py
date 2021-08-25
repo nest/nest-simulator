@@ -30,46 +30,6 @@ both static and dynamic submodules. During initialization of the ``nest`` module
 all public attributes of `nest.hl_api` are copied into the ``nest`` module.
 """
 
-from . import import_libs as _il
-
-#############################
-# insert static imports here
-# in the form:
-# from lib.$X import * ; _ignore_modules.add('lib.$X')
-############################
-_ignore_modules = set()
-from .lib.hl_api_connection_helpers import *
-_ignore_modules.add('lib.hl_api_connection_helpers')
-from .lib.hl_api_connections import *
-_ignore_modules.add('lib.hl_api_connections')
-from .lib.hl_api_exceptions import *
-_ignore_modules.add('lib.hl_api_exceptions')
-from .lib.hl_api_helper import *
-_ignore_modules.add('lib.hl_api_helper')
-from .lib.hl_api_info import *
-_ignore_modules.add('lib.hl_api_info')
-from .lib.hl_api_models import *
-_ignore_modules.add('lib.hl_api_models')
-from .lib.hl_api_nodes import *
-_ignore_modules.add('lib.hl_api_nodes')
-from .lib.hl_api_parallel_computing import *
-_ignore_modules.add('lib.hl_api_parallel_computing')
-from .lib.hl_api_simulation import *
-_ignore_modules.add('lib.hl_api_simulation')
-from .lib.hl_api_spatial import *
-_ignore_modules.add('lib.hl_api_spatial')
-from .lib.hl_api_types import *
-_ignore_modules.add('lib.hl_api_types')
-
-############################
-# Then whatever is left over, load dynamically
-# then do
-#   `from .libs.$X import *`
-# for every module in ./libs/$X.py that is left
-_il.import_libs(__file__, globals(), 'lib', ignore=_ignore_modules)
-
-############################
-
 # With '__all__' we provide an explicit index of the package. Without any
 # imported submodules and any redundant functions we could minimize list.
 __all__ = [
@@ -131,3 +91,24 @@ __all__ = [
     'set_verbosity',
     'sysinfo',
 ]
+
+
+#############################
+# Static core module imports
+############################
+from .lib.hl_api_connection_helpers import *
+from .lib.hl_api_connections import *
+from .lib.hl_api_exceptions import *
+from .lib.hl_api_helper import *
+from .lib.hl_api_info import *
+from .lib.hl_api_models import *
+from .lib.hl_api_nodes import *
+from .lib.hl_api_parallel_computing import *
+from .lib.hl_api_simulation import *
+from .lib.hl_api_spatial import *
+from .lib.hl_api_types import *
+
+############################
+# Static optional module imports
+
+############################

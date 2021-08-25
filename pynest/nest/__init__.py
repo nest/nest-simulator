@@ -292,7 +292,6 @@ class NestModule(types.ModuleType):
         else:
             return self.GetKernelStatus(args)
 
-
     def __dir__(self):
         return list(set(vars(self).keys()) | set(self.__all__))
 

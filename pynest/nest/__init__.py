@@ -274,12 +274,19 @@ class NestModule(types.ModuleType):
     except ImportError:
         pass
 
+    __version__ = ll_api.sli_func("statusdict /version get")
+
     # Lazy load the `spatial` module to avoid circular imports.
     spatial = _lazy_module_property("spatial")
     # Property for the full SLI `GetKernelStatus` dictionary
     kernel_status = KernelAttribute(None, "Get kernel status.", readonly=True)
 
-    __version__ = ll_api.sli_func("statusdict /version get")
+    def set(self, *args, **kwargs):
+        return self.SetKernelStatus(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        return self.GetKernelStatus(*args, **kwargs)
+
 
     def __dir__(self):
         return list(set(vars(self).keys()) | set(self.__all__))

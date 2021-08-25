@@ -36,9 +36,8 @@ class GLIFPSCTestCase(unittest.TestCase):
         """
         Clean up and initialize NEST before each test.
         """
-        self.resol = 0.01
         nest.ResetKernel()
-        nest.resolution = self.resol
+        nest.resolution = 0.01
         nest.rng_seed = 123456
 
     def simulate_w_stim(self, model_params):

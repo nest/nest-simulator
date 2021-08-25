@@ -88,11 +88,12 @@ the easiest way to assert its integrity is to not change its size after
 initialization. Thus, we freeze the delay extrema after the first call
 to ``Simulate()``. To still allow adding new connections inbetween calls
 to ``Simulate()``, the required boundaries of delays can be set manually
-using :py:func:`.SetKernelStatus`:
+using :py:func:`.set`:
 
 ::
 
-    # For co-dependent properties, we use `set()` instead of kernel attributes
+    # For co-dependent properties, we use `set()`
+    # instead of kernel attributes
     nest.set(min_delay=0.5, may_delay=2.5)
 
 These settings should be used with care, though: setting the delay

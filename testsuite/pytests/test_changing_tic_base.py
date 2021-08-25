@@ -50,10 +50,7 @@ class TestChangingTicBase(unittest.TestCase):
                 pass
 
         # Change the tic-base.
-        nest.SetKernelStatus({
-            'tics_per_ms': 1500.0,
-            'resolution': 0.5
-        })
+        nest.set(resolution=0.5, tics_per_ms=1500.0)
 
         # At this point, Time objects in models should have been updated to
         # account for the new tic-base. Values in model defaults should therefore

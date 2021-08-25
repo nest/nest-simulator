@@ -39,9 +39,8 @@ class GLIFCONDTestCase(unittest.TestCase):
         """
         Clean up and initialize NEST before each test.
         """
-        self.resol = 0.01
         nest.ResetKernel()
-        nest.resolution = self.resol
+        nest.resolution = 0.01
         nest.rng_seed = 123456
 
     def simulate_w_stim(self, model_params):
@@ -54,37 +53,37 @@ class GLIFCONDTestCase(unittest.TestCase):
         nrn = nest.Create("glif_cond", params=model_params)
 
         # Create and connect inputs to glif model
-        espikes = nest.Create("spike_generator",
-                              params={"spike_times": [10., 100.,
-                                                      400., 700.]})
-        ispikes = nest.Create("spike_generator",
-                              params={"spike_times": [15., 99.,
-                                                      300., 800.]})
+        espikes_params = {"spike_times": [10.0, 100.0, 400.0, 700.0]}
+        espikes = nest.Create("spike_generator", params=espikes_params)
 
-        pg = nest.Create("poisson_generator",
-                         params={"rate": 1000.,
-                                 "start": 200., "stop": 500.})
+        ispikes_params = {"spike_times": [15.0, 99.0, 300.0, 800.0]}
+        ispikes = nest.Create("spike_generator", params=ispikes_params)
+
+        pg_params = {"rate": 1000.0, "start": 200.0, "stop": 500.0}
+        pg = nest.Create("poisson_generator", params=pg_params)
+
         pn = nest.Create("parrot_neuron")
-        cg = nest.Create("step_current_generator",
-                         params={"amplitude_values": [100., ],
-                                 "amplitude_times": [600., ],
-                                 "start": 600., "stop": 900.})
+
+        cg_params = {
+            "amplitude_values": [100.0],
+            "amplitude_times": [600.0],
+            "start": 600.0, "stop": 900.0
+        }
+        cg = nest.Create("step_current_generator", params=cg_params)
 
         nest.Connect(espikes, nrn, syn_spec={"receptor_type": 1})
         nest.Connect(ispikes, nrn, syn_spec={"receptor_type": 2})
         nest.Connect(pg, pn)
-        nest.Connect(pn, nrn, syn_spec={"weight": 22.,
-                                        "receptor_type": 1})
-        nest.Connect(pn, nrn, syn_spec={"weight": 10.,
-                                        "receptor_type": 2})
-        nest.Connect(cg, nrn, syn_spec={"weight": 3.})
+        nest.Connect(pn, nrn, syn_spec={"weight": 22.0, "receptor_type": 1})
+        nest.Connect(pn, nrn, syn_spec={"weight": 10.0, "receptor_type": 2})
+        nest.Connect(cg, nrn, syn_spec={"weight": 3.0})
 
         # For recording spikes and voltage traces
         sr = nest.Create('spike_recorder')
         nest.Connect(nrn, sr)
 
-        mm = nest.Create("multimeter", params={"record_from": ["V_m"],
-                                               "interval": self.resol})
+        mm_params = {"record_from": ["V_m"], "interval": nest.resolution}
+        mm = nest.Create("multimeter", params=mm_params)
         nest.Connect(mm, nrn)
 
         nest.Simulate(1000.)
@@ -96,8 +95,9 @@ class GLIFCONDTestCase(unittest.TestCase):
         return times, V_m, spikes
 
     def ks_assert_spikes(self, spikes, reference_spikes):
-        """
-        Runs a two-sided Kolmogorov-Smirnov statistic test on a set of spikes against a set of reference spikes.
+        """Runs a two-sided Kolmogorov-Smirnov statistic test on a set of
+        spikes against a set of reference spikes.
+
         """
         p_value_lim = 0.1
         d, p_value = scipy.stats.ks_2samp(spikes, reference_spikes)
@@ -116,9 +116,11 @@ class GLIFCONDTestCase(unittest.TestCase):
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_params)
-        spikes_expected = [388.04, 612.99, 628.73, 644.47, 660.21, 675.95, 691.69,
-                           707.14, 722.88, 738.62, 754.36, 770.1, 785.84, 801.85,
-                           817.76, 833.5, 849.24, 864.98, 880.72, 896.46]
+        spikes_expected = [
+            388.04, 612.99, 628.73, 644.47, 660.21, 675.95, 691.69,
+            707.14, 722.88, 738.62, 754.36, 770.1, 785.84, 801.85,
+            817.76, 833.5, 849.24, 864.98, 880.72, 896.46
+        ]
         self.ks_assert_spikes(spikes, spikes_expected)
         self.assertAlmostEqual(V_m[0], -78.85)
 
@@ -133,9 +135,12 @@ class GLIFCONDTestCase(unittest.TestCase):
             "V_m": -78.85
         }
         times, V_m, spikes = self.simulate_w_stim(lif_r_params)
-        expected_spikes = [388.04, 613.06, 620.66, 628.7, 637.19, 646.12, 655.48, 665.26, 675.44,
-                           686., 696.91, 707.68, 719.21, 731., 743.01, 755.21, 767.57, 780.07,
-                           792.69, 811.13, 823.56, 836.09, 848.74, 861.48, 874.3, 887.18, 900.12]
+        expected_spikes = [
+            388.04, 613.06, 620.66, 628.7, 637.19, 646.12, 655.48, 665.26,
+            675.44, 686., 696.91, 707.68, 719.21, 731., 743.01, 755.21,
+            767.57, 780.07, 792.69, 811.13, 823.56, 836.09, 848.74, 861.48,
+            874.3, 887.18, 900.12
+        ]
         self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
 
@@ -151,7 +156,9 @@ class GLIFCONDTestCase(unittest.TestCase):
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_asc_params)
-        expected_spikes = [388.04, 613.71, 644.97, 679.45, 716.83, 758.15, 814.83, 863.82]
+        expected_spikes = [
+            388.04, 613.71, 644.97, 679.45, 716.83, 758.15, 814.83, 863.82
+        ]
         self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
 
@@ -167,7 +174,9 @@ class GLIFCONDTestCase(unittest.TestCase):
         }
 
         times, V_m, spikes = self.simulate_w_stim(lif_r_asc_params)
-        expected_spikes = [388.04, 613.79, 645.19, 681.34, 722.24, 769.22, 825.66, 885.68]
+        expected_spikes = [
+            388.04, 613.79, 645.19, 681.34, 722.24, 769.22, 825.66, 885.68
+        ]
         self.ks_assert_spikes(spikes, expected_spikes)
         self.assertAlmostEqual(V_m[0], -78.85)
 

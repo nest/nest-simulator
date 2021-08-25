@@ -43,9 +43,9 @@ import nest
 import numpy as np
 
 
-def corr_spikes_sorted(spike1, spike2, tbin, tau_max, h):
-    tau_max_i = int(tau_max / h)
-    tbin_i = int(tbin / h)
+def corr_spikes_sorted(spike1, spike2, tbin, tau_max, resolution):
+    tau_max_i = int(tau_max / resolution)
+    tbin_i = int(tbin / resolution)
 
     cross = np.zeros(int(2 * tau_max_i / tbin_i + 1), 'd')
 
@@ -67,7 +67,7 @@ def corr_spikes_sorted(spike1, spike2, tbin, tau_max, h):
 
 nest.ResetKernel()
 
-h = 0.1             # Computation step size in ms
+resolution = 0.1    # Computation step size in ms
 T = 100000.0        # Total duration
 delta_tau = 10.0
 tau_max = 100.0     # ms correlation window
@@ -76,7 +76,7 @@ pc = 0.5
 nu = 100.0
 
 nest.local_num_threads = 1
-nest.resolution = h
+nest.resolution = resolution
 nest.overwrite_files = True
 nest.rng_seed = 12345
 
@@ -113,7 +113,7 @@ sp1 = spikes[spikes == 4]
 sp2 = spikes[spikes == 5]
 
 # Find crosscorrelation
-cross = corr_spikes_sorted(sp1, sp2, t_bin, tau_max, h)
+cross = corr_spikes_sorted(sp1, sp2, t_bin, tau_max, resolution)
 
 print("Crosscorrelation:")
 print(cross)

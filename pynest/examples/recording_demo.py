@@ -25,7 +25,7 @@ Recording examples
 
 This script demonstrates how to select different recording backends
 and read the result data back in. The simulated network itself is
-rather boring with only a single poisson generater stimulating a
+rather boring with only a single poisson generator stimulating a
 single neuron, so we get some data.
 
 """

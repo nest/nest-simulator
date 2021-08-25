@@ -36,8 +36,6 @@
 
 /* BeginUserDocs: device, recorder
 
-.. _weight_recorder:
-
 Short description
 +++++++++++++++++
 

@@ -118,7 +118,7 @@ server_dir = f'{source_dir}/pynest/nest/server'
 #   - We need \s* at the start of the regex because some imports are nested in try-blocks.
 #     This can lead to false positives if a comment line or multiline string line begins with
 #     "import" or "from".
-import_re = re.compile('\s*(import|from)\s+(\w+)')
+import_re = re.compile(r'\s*(import|from)\s+(\w+)')
 
 imports = defaultdict(set)
 for dirpath, _, fnames in os.walk(source_dir):

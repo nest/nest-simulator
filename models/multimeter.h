@@ -40,8 +40,6 @@
 
 /* BeginUserDocs: device, recorder
 
-.. _multimeter:
-
 Short description
 +++++++++++++++++
 
@@ -114,16 +112,14 @@ fail if carried out in the wrong direction, i.e., trying to connect the
 
 .. include:: ../models/recording_device.rst
 
-.. glossary::
+record_from
+    A list (default: `[]`) of parameters and state variables to sample
+    from the nodes, the multimeter is connected to. Potential
+    recordables are given in the corresponding model documentation.
 
- record_from
-   A list (default: `[]`) of parameters and state variables to sample
-   from the nodes, the multimeter is connected to. Potential
-   recordables are given in the corresponding model documentation.
-
- interval
-   A float (default: `1.0`) specifying the interval in ms, at which
-   data is collected from the nodes, the multimeter is connected to.
+interval
+    A float (default: `1.0`) specifying the interval in ms, at which
+    data is collected from the nodes, the multimeter is connected to.
 
 See also
 ++++++++

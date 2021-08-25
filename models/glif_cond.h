@@ -319,7 +319,6 @@ private:
     std::vector< double > y_; //!< neuron state
 
     State_( const Parameters_& );
-    State_( const State_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
     void set( const DictionaryDatum&, const Parameters_&, double );

@@ -83,12 +83,13 @@ def Create(model, n=1, params=None, positions=None):
     model_deprecation_warning(model)
 
     if positions is not None:
+        spatial = getattr(nest.NestModule, "spatial")
         # We only accept positions as either a free object or a grid object.
-        if not isinstance(positions, (nest.spatial.free, nest.spatial.grid)):
-            raise TypeError('`positions` must be either a nest.spatial.free object or nest.spatial.grid object')
+        if not isinstance(positions, (spatial.free, spatial.grid)):
+            raise TypeError('`positions` must be either a spatial.free object or spatial.grid object')
         layer_specs = {'elements': model}
         layer_specs['edge_wrap'] = positions.edge_wrap
-        if isinstance(positions, nest.spatial.free):
+        if isinstance(positions, spatial.free):
             layer_specs['positions'] = positions.pos
             # If the positions are based on a parameter object, the number of nodes must be specified.
             if isinstance(positions.pos, Parameter):

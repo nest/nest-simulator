@@ -100,28 +100,30 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
 
     return property(lazy_loader)
 
-
 class NestModule(types.ModuleType):
     """
     A module class for the `nest` root module to control the dynamic generation
-    of module level attributes such as the KernelAttributes and lazy loading
-    some submodules.
-
+    of module level attributes such as the KernelAttributes, lazy loading
+    some submodules and importing the public APIs of the hl_api submodules.
     """
+
+    # If one is interested in the object obtained from `import nest` read
+    # through this class definition and the code below it, which instantiates
+    # and further modifies it.
+
     from . import ll_api                             # noqa
-    from .ll_api import set_communicator             # noqa
-
     from . import pynestkernel as kernel             # noqa
-
+    from . import hl_api                             # noqa
     from . import random                             # noqa
     from . import math                               # noqa
     from . import spatial_distributions              # noqa
     from . import logic                              # noqa
-
+    from .ll_api import set_communicator             # noqa
     try:
         from . import server                         # noqa
     except ImportError:
         pass
+
 
     __version__ = ll_api.sli_func("statusdict /version get")
 
@@ -434,8 +436,17 @@ _module_dict = vars(_module)
 # magic attributes such as `__name__`, `__path__`, `__package__`, ...
 _module_dict.update(_original_module_attrs)
 
-# Import public API of `.hl_api` into the nest module instance
-_rel_import_star(_module_dict, ".hl_api")
+# Import public APIs of submodules into the `nest.` namespace
+# Equivalent to `from .X import *` but this statement
+_rel_import_star(_module_dict, ".lib.hl_api_connections")
+_rel_import_star(_module_dict, ".lib.hl_api_exceptions")
+_rel_import_star(_module_dict, ".lib.hl_api_info")
+_rel_import_star(_module_dict, ".lib.hl_api_models")
+_rel_import_star(_module_dict, ".lib.hl_api_nodes")
+_rel_import_star(_module_dict, ".lib.hl_api_parallel_computing")
+_rel_import_star(_module_dict, ".lib.hl_api_simulation")
+_rel_import_star(_module_dict, ".lib.hl_api_spatial")
+_rel_import_star(_module_dict, ".lib.hl_api_types")
 
 # Finalize the nest module instance by generating its public API.
 _api = list(k for k in _module_dict if not k.startswith("_"))

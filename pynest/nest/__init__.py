@@ -158,7 +158,7 @@ class NestModule(types.ModuleType):
     )
     rng_seed = KernelAttribute(
         "int",
-        """Seed value used as base for seeding NEST random number generators
+        r"""Seed value used as base for seeding NEST random number generators
         (:math:`1 \leq s \leq 2^{32}-1`).""",
         default=143202461,
     )

@@ -39,11 +39,11 @@ The following basic time measurements are available:
    connectivity changed in the meantime, and it may cause significant
    overhead by adding to ``time_simulate``. Therefore, the cumulative
    time NEST spent for building the pre-synaptic connection
-   infrastructure is also tracked by a basic timer and available in
-   the kernel dictionary as ``time_communicate_prepare``.
+   infrastructure is also tracked by a basic timer and available as
+   kernel attribute ``time_communicate_prepare``.
 
-In the context of NEST performance monitoring, other useful
-kernel-dictionary items are:
+In the context of NEST performance monitoring, other useful kernel
+attributes are:
 
 +-----------------------+----------------------------------+
 |Name                   |Explanation                       |
@@ -66,14 +66,14 @@ Detailed timers
 ---------------
 
 Detailed built-in timers can be activated (and again deactivated)
-prior to compilation through the cmake flag
+prior to compilation through the CMake flag
 ``-Dwith-detailed-timers=ON``. They provide further insights into the
 time NEST spends in different phases of the simulation cycle, but they
 can impact the runtime. Therefore, detailed timers are by default
 inactive.
 
 If detailed timers are active, the following time measurements are
-available in the kernel dictionary:
+available as kernel attributes:
 
 +--------------------------------+----------------------------------+----------------------------------+
 |Name                            |Explanation                       |Part of                           |

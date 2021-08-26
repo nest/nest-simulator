@@ -67,11 +67,9 @@ class StatusTestCase(unittest.TestCase):
         nest.SetKernelStatus({})
         nest.SetKernelStatus({'resolution': 0.2})
 
-        self.assertRaises(ValueError, nest.SetKernelStatus,
-                          {'nonexistent_status_key': 0})
+        self.assertRaises(ValueError, nest.SetKernelStatus, {'nonexistent_status_key': 0})
         # Readonly check
-        self.assertRaises(ValueError, nest.SetKernelStatus,
-                          {'network_size': 120})
+        self.assertRaises(ValueError, nest.SetKernelStatus, {'network_size': 120})
 
 
     def test_GetDefaults(self):

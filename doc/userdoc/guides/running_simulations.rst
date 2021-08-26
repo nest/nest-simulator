@@ -67,7 +67,7 @@ the buffers for inter-process communication depend on *dmin+dmax* as
 histories that long back have to be kept. NEST will figure out the
 correct value of *dmin* and *dmax* based on the actual delays used
 during connection setup. Their actual values can be retrieved as kernel
-properties:
+attributes:
 
 ::
 
@@ -92,7 +92,7 @@ using :py:func:`.set`:
 
 ::
 
-    # For co-dependent properties, we use `set()`
+    # For co-dependent properties, we have to use `set()`
     # instead of kernel attributes
     nest.set(min_delay=0.5, may_delay=2.5)
 

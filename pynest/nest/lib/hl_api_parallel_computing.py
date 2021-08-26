@@ -25,7 +25,6 @@ Functions for parallel computing
 
 from ..ll_api import check_stack, sps, sr, spp
 from .. import pynestkernel as kernel
-from .hl_api_helper import is_string
 
 __all__ = [
     'NumProcesses',

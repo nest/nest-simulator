@@ -97,7 +97,7 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
             if optional:
                 raise ImportError(
                     f"This functionality requires the optional module "
-                     + module_name + ". " + optional_hint
+                    + module_name + ". " + optional_hint
                 ) from None
             else:
                 raise e from None
@@ -105,6 +105,7 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
         return module
 
     return property(lazy_loader)
+
 
 class NestModule(types.ModuleType):
     """
@@ -125,7 +126,6 @@ class NestModule(types.ModuleType):
         from . import server                         # noqa
     except ImportError:
         pass
-
 
     __version__ = ll_api.sli_func("statusdict /version get")
 

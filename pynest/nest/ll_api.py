@@ -65,6 +65,7 @@ __all__ = [
     'sr',
     'stack_checker',
     'take_array_index',
+    'KernelAttribute',
 ]
 
 
@@ -277,10 +278,22 @@ class KernelAttribute:
     """
     Descriptor that dispatches attribute access to the nest kernel.
     """
-    def __init__(self, name, doc, readonly=False):
-        self._name = name
-        self.__doc__ = doc
+    def __init__(self, typehint, doc, readonly=False, default=None, localonly=False):
         self._readonly = readonly
+        self._localonly = localonly
+        self._default = default
+        self.__doc__ = f"{typehint}. " + ", ".join(
+            c for c in (
+                readonly and "read only",
+                localonly and "local only",
+                default is not None and f"default: {default}"
+            )
+            if c
+        ) + "\n" + doc
+
+    def __set_name__(self, cls, name):
+        self._name = name
+        self._full_status = name == "kernel_status"
 
     @stack_checker
     def __get__(self, instance, cls=None):
@@ -290,7 +303,7 @@ class KernelAttribute:
         sr('GetKernelStatus')
         status_root = spp()
 
-        if self._name is None:
+        if self._full_status:
             return status_root
         else:
             return status_root[self._name]

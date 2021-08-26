@@ -285,7 +285,7 @@ layer we have created above:
    --------------------------------------------------
    Total number of entries: 24
 
-Using the command SetStatus`, it is possible to change the entries of
+Using the command ``SetStatus``, it is possible to change the entries of
 this so called *status dictionary*. The following lines of code change
 the threshold value ``V_th`` to -60 mV:
 

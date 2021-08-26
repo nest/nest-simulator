@@ -38,6 +38,12 @@ r"""PyNEST - Python interface for the NEST simulator
 For more information visit https://www.nest-simulator.org.
 """
 
+# WARNING: This file is only used to create the `NestModule` below and then
+# ignored. If you'd like to make changes to the root `nest` module, they need to
+# be made to the `NestModule` class/instance instead.
+
+################
+
 # Store interpreter-given module attributes to copy into replacement module
 # instance later on. Use `.copy()` to prevent pollution with other variables
 _original_module_attrs = globals().copy()
@@ -106,10 +112,6 @@ class NestModule(types.ModuleType):
     of module level attributes such as the KernelAttributes, lazy loading
     some submodules and importing the public APIs of the hl_api submodules.
     """
-
-    # If one is interested in the object obtained from `import nest` read
-    # through this class definition and the code below it, which instantiates
-    # and further modifies it.
 
     from . import ll_api                             # noqa
     from . import pynestkernel as kernel             # noqa
@@ -430,7 +432,7 @@ class NestModule(types.ModuleType):
 # Instantiate a NestModule to replace the nest Python module. Based on
 # https://mail.python.org/pipermail/python-ideas/2012-May/014969.html
 _module = NestModule(__name__)
-# We manipulate the nest module instance through its `__dict__` (= vars())
+# Manipulate the nest module instance through its `__dict__` (= vars())
 _module_dict = vars(_module)
 # Copy over the original module attributes to preverse all interpreter given
 # magic attributes such as `__name__`, `__path__`, `__package__`, ...

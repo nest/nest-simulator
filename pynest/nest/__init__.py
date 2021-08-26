@@ -437,7 +437,6 @@ _module_dict = vars(_module)
 _module_dict.update(_original_module_attrs)
 
 # Import public APIs of submodules into the `nest.` namespace
-# Equivalent to `from .X import *` but this statement
 _rel_import_star(_module_dict, ".lib.hl_api_connections")
 _rel_import_star(_module_dict, ".lib.hl_api_exceptions")
 _rel_import_star(_module_dict, ".lib.hl_api_info")

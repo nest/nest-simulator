@@ -39,6 +39,11 @@ For more information visit https://www.nest-simulator.org.
 
 """
 
+import sys
+if ( sys.version_info[0] == 2 ) or ( sys.version_info[0] == 3 and sys.version_info[1] < 8 ):
+    msg = "Unsupported Python version. Please use Python >= 3.8."
+    raise Exception(msg)
+
 from . import ll_api                  # noqa
 from .ll_api import set_communicator  # noqa
 
@@ -59,3 +64,17 @@ except ImportError:
     pass
 
 __version__ = ll_api.sli_func("statusdict /version get")
+
+
+def test():
+    """Runs all PyNEST unit tests."""
+    from . import tests
+    import unittest
+
+    debug = ll_api.get_debug()
+    ll_api.set_debug(True)
+
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(tests.suite())
+
+    ll_api.set_debug(debug)

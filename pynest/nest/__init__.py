@@ -337,8 +337,12 @@ class NestModule(types.ModuleType):
         default=float("+inf"),
     )
 
-    _kernel_attr_names = set(k for k, v in vars().items() if isinstance(v, KernelAttribute))
-    _readonly_kernel_attrs = set(k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly)
+    _kernel_attr_names = set(
+        k for k, v in vars().items() if isinstance(v, KernelAttribute)
+    )
+    _readonly_kernel_attrs = set(
+        k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly
+    )
 
     def set(self, **kwargs):
         return self.SetKernelStatus(kwargs)

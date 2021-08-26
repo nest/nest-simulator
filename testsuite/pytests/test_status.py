@@ -71,7 +71,6 @@ class StatusTestCase(unittest.TestCase):
         # Readonly check
         self.assertRaises(ValueError, nest.SetKernelStatus, {'network_size': 120})
 
-
     def test_GetDefaults(self):
         """GetDefaults"""
 

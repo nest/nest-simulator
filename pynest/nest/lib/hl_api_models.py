@@ -211,7 +211,7 @@ def CopyModel(existing, new=None, **kwargs):
     synapse_model = existing in Models(mtype="synapses")
 
     if synapse_model:
-        rand_data = numpy.random.randint(1000)
+        rand_data = numpy.random.randint(1000000)
         new = f"{existing}_{rand_data}"
     elif new is None:
         raise ValueError("'new' must be defined if 'existing' is not a synapse model.")

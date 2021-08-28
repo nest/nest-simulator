@@ -40,8 +40,8 @@ For more information visit https://www.nest-simulator.org.
 """
 
 import sys
-if ( sys.version_info.major < @Python_VERSION_MAJOR@ ) or ( sys.version_info.major == @Python_VERSION_MAJOR@ and sys.version_info.minor < @Python_VERSION_MINOR@ ):
-    msg = "Python runtime version is older than compiletime version. Please use Python >= @Python_VERSION_MAJOR@.@Python_VERSION_MINOR@."
+if sys.version_info.major != @Python_VERSION_MAJOR@ or sys.version_info.minor != @Python_VERSION_MINOR@ :
+    msg = "Python runtime version does not match 'nest' compiletime version. Please use Python @Python_VERSION_MAJOR@.@Python_VERSION_MINOR@."
     raise Exception(msg)
 
 from . import ll_api                  # noqa

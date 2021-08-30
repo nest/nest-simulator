@@ -58,23 +58,29 @@ class StdpSpikeMultiplicity(unittest.TestCase):
        delta, since in this case all spikes are at the end of the step, i.e.,
        all spikes have identical times independent of delta.
 
-    2. We choose delta values that are decrease by factors of 2. The
+    2. We choose delta values that are decreased by factors of 2. The
        plasticity rules depend on spike-time differences through
+
+       ::
 
            exp(dT / tau)
 
        where dT is the time between pre- and postsynaptic spikes. We construct
        pre- and postsynaptic spike times so that
 
-          dT = pre_post_shift + m * delta
+       ::
 
-       with m * delta < resolution << pre_post_shift. The time-dependence
+           dT = pre_post_shift + m * delta
+
+       with ``m * delta < resolution << pre_post_shift``. The time-dependence
        of the plasticity rule is therefore to good approximation linear in
        delta.
 
-       We can thus test as follows: Let w_pl be the weight obtained with the
-       plain parrot, and w_ps_j the weight obtained with the precise parrot
-       for delta_j = delta0 / 2^j. Then,
+       We can thus test as follows: Let ``w_pl`` be the weight obtained with the
+       plain parrot, and ``w_ps_j`` the weight obtained with the precise parrot
+       for ``delta_j = delta0 / 2^j``. Then,
+
+       ::
 
          ( w_ps_{j+1} - w_pl ) / ( w_ps_j - w_pl ) ~ 0.5  for all j
 
@@ -221,7 +227,6 @@ class StdpSpikeMultiplicity(unittest.TestCase):
         print(post_weights)
         return post_weights
 
-    # XXX: TODO: use ``@pytest.mark.parametrize`` for this
     def _test_stdp_multiplicity(self, pre_post_shift, max_abs_err=1E-6):
         """Check that for smaller and smaller timestep, weights obtained from parrot and precise parrot converge.
 
@@ -234,15 +239,16 @@ class StdpSpikeMultiplicity(unittest.TestCase):
         w_plain = np.array(post_weights['parrot'])
         w_precise = np.array(post_weights['parrot_ps'])
 
-        assert all(w_plain == w_plain[0]), 'Plain weights should be independent of timestep, but differ!'
+        assert all(w_plain == w_plain[0]), 'Plain weights should be independent of timestep!'
         abs_err = np.abs(w_precise - w_plain)
-        assert abs_err[-1] < max_abs_err
-        assert np.all(np.diff(abs_err) < 1), 'Error should decrease with smaller timestep!'
+        assert abs_err[-1] < max_abs_err, 'Final absolute error is ' + '{0:.2E}'.format(abs_err[-1]) + ' but should be <= ' + '{0:.2E}'.format(max_abs_err)
+        assert np.all(np.diff(abs_err) < 0), 'Error should decrease with smaller timestep!'
 
     def test_stdp_multiplicity(self):
         """Check weight convergence on potentiation and depression.
 
         See also: _test_stdp_multiplicity()."""
+        # XXX: TODO: use ``@pytest.mark.parametrize`` for this
         self._test_stdp_multiplicity(pre_post_shift=10.)    # test potentiation
         self._test_stdp_multiplicity(pre_post_shift=-10.)   # test depression
 

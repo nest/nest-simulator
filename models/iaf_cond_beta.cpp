@@ -153,16 +153,11 @@ nest::iaf_cond_beta::State_::State_( const State_& s )
 
 nest::iaf_cond_beta::State_& nest::iaf_cond_beta::State_::operator=( const State_& s )
 {
-  if ( this == &s ) // avoid assignment to self
-  {
-    return *this;
-  }
+  r = s.r;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y[ i ] = s.y[ i ];
   }
-
-  r = s.r;
   return *this;
 }
 
@@ -309,13 +304,6 @@ nest::iaf_cond_beta::~iaf_cond_beta()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::iaf_cond_beta::init_state_( const Node& proto )
-{
-  const iaf_cond_beta& pr = downcast< iaf_cond_beta >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::iaf_cond_beta::init_buffers_()

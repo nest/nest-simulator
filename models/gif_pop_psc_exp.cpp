@@ -262,13 +262,6 @@ nest::gif_pop_psc_exp::gif_pop_psc_exp( const gif_pop_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_pop_psc_exp::init_state_( const Node& proto )
-{
-  const gif_pop_psc_exp& pr = downcast< gif_pop_psc_exp >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::gif_pop_psc_exp::init_buffers_()
 {
   B_.ex_spikes_.clear(); //!< includes resize

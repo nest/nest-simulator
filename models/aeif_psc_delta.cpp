@@ -115,6 +115,7 @@ nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode
 nest::aeif_psc_delta::Parameters_::Parameters_()
   : V_peak_( 0.0 )    // mV
   , V_reset_( -60.0 ) // mV
+  , t_ref_( 0.0 )     // ms
   , g_L( 30.0 )       // nS
   , C_m( 281.0 )      // pF
   , E_L( -70.6 )      // mV
@@ -123,7 +124,6 @@ nest::aeif_psc_delta::Parameters_::Parameters_()
   , a( 4.0 )          // nS
   , b( 80.5 )         // pA
   , V_th( -50.4 )     // mV
-  , t_ref_( 0.0 )     // ms
   , I_e( 0.0 )        // pA
   , gsl_error_tol( 1e-6 )
   , with_refr_input_( false )
@@ -153,13 +153,12 @@ nest::aeif_psc_delta::State_::State_( const State_& s )
 
 nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
-
+  refr_spikes_buffer_ = s.refr_spikes_buffer_;
+  r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = s.y_[ i ];
   }
-  r_ = s.r_;
   return *this;
 }
 
@@ -335,13 +334,6 @@ nest::aeif_psc_delta::~aeif_psc_delta()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::aeif_psc_delta::init_state_( const Node& proto )
-{
-  const aeif_psc_delta& pr = downcast< aeif_psc_delta >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::aeif_psc_delta::init_buffers_()

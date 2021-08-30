@@ -133,11 +133,6 @@ Token::operator double() const
   return getValue< double >( *this );
 }
 
-Token::operator float() const
-{
-  return getValue< float >( *this );
-}
-
 Token::operator bool() const
 {
   return getValue< bool >( *this );

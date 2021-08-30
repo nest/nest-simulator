@@ -19,7 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""IAF Neuron example
+"""
+IAF neuron example
 ------------------
 
 A DC current is injected into the neuron using a current generator
@@ -78,7 +79,7 @@ def build_network(dt):
 # voltage trace is plotted
 
 for dt in [0.1, 0.5, 1.0]:
-    print("Running simulation with dt=%.2f" % dt)
+    print(f"Running simulation with dt={dt:.2f}")
     vm, sr = build_network(dt)
 
     nest.Simulate(1000.0)
@@ -100,8 +101,8 @@ for dt in [0.1, 0.5, 1.0]:
 ###########################################################################
 # Using the matplotlib library the voltage trace is plotted over time
 
-    plt.plot(times, potentials, label="dt=%.2f" % dt)
-    print("  Number of spikes: {0}".format(sr.n_events))
+    plt.plot(times, potentials, label=f"dt={dt:.2f}")
+    print(f"  Number of spikes: {sr.n_events}")
 
 ###########################################################################
 # Finally the axis are labelled and a legend is generated

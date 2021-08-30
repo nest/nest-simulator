@@ -47,8 +47,8 @@ for ctr in [(0.0, 0.0), (-2.0, 2.0), (0.5, 1.0)]:
     plt.axes().set_xticks(np.arange(-3.0, 3.1, 1.0))
     plt.axes().set_yticks(np.arange(-3.0, 3.1, 1.0))
     plt.grid(True)
-    plt.xlabel('4 Columns, Extent: 1.5, Center: %.1f' % ctr[0])
-    plt.ylabel('2 Rows, Extent: 1.0, Center: %.1f' % ctr[1])
+    plt.xlabel(f'4 Columns, Extent: 1.5, Center: {ctr[0]:.1f}')
+    plt.ylabel(f'2 Rows, Extent: 1.0, Center: {ctr[1]:.1f}')
 
     plt.show()
     # plt.savefig('grid_iaf_oc_{}_{}.png'.format(ctr[0], ctr[1]))

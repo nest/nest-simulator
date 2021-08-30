@@ -217,7 +217,7 @@ inline void
 stdp_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
-  const double t_spike = e.get_stamp().get_ms();
+  const double t_spike = e.get_stamp().get_ms() - e.get_offset();
 
   // use accessor functions (inherited from Connection< >) to obtain delay and
   // target

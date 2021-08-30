@@ -261,13 +261,9 @@ nest::correlomatrix_detector::correlomatrix_detector( const correlomatrix_detect
  * ---------------------------------------------------------------- */
 
 void
-nest::correlomatrix_detector::init_state_( const Node& proto )
+nest::correlomatrix_detector::init_state_()
 {
-  const correlomatrix_detector& pr = downcast< correlomatrix_detector >( proto );
-
-  device_.init_state( pr.device_ );
-  S_ = pr.S_;
-  set_buffers_initialized( false ); // force recreation of buffers
+  device_.init_state();
 }
 
 void

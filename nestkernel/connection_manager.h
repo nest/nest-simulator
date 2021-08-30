@@ -230,6 +230,7 @@ public:
 
   index get_target_node_id( const thread tid, const synindex syn_id, const index lcid ) const;
 
+  bool get_device_connected( thread tid, index lcid ) const;
   /**
    * Triggered by volume transmitter in update.
    * Triggeres updates for all connectors of dopamine synapses that
@@ -344,24 +345,19 @@ public:
    * Returns true if connection information needs to be
    * communicated. False otherwise.
    */
-  bool have_connections_changed() const;
+  bool connections_have_changed() const;
 
   /**
    * Sets flag indicating whether connection information needs to be
    * communicated to true.
    */
-  void set_have_connections_changed( const thread tid );
+  void set_connections_have_changed();
 
   /**
    * Sets flag indicating whether connection information needs to be
    * communicated to false.
    */
-  void unset_have_connections_changed( const thread tid );
-
-  /**
-   * Sets flag indicating whether GetConnections has been called since last update of connections.
-   */
-  void set_has_get_connections_been_called( const bool has_get_connections_been_called );
+  void unset_connections_have_changed();
 
   /**
    * Deletes TargetTable and resets processed flags of
@@ -613,10 +609,10 @@ private:
 
   //! True if new connections have been created since startup or last call to
   //! simulate.
-  PerThreadBoolIndicator have_connections_changed_;
+  bool connections_have_changed_;
 
   //! true if GetConnections has been called.
-  bool has_get_connections_been_called_;
+  bool get_connections_has_been_called_;
 
   //! Whether to sort connections by source node ID.
   bool sort_connections_by_source_;
@@ -749,9 +745,9 @@ ConnectionManager::get_remote_targets_of_local_node( const thread tid, const ind
 }
 
 inline bool
-ConnectionManager::have_connections_changed() const
+ConnectionManager::connections_have_changed() const
 {
-  return have_connections_changed_.any_true();
+  return connections_have_changed_;
 }
 
 inline void
@@ -830,6 +826,12 @@ ConnectionManager::get_target_node_id( const thread tid, const synindex syn_id, 
   return connections_[ tid ][ syn_id ]->get_target_node_id( tid, lcid );
 }
 
+inline bool
+ConnectionManager::get_device_connected( const thread tid, const index lcid ) const
+{
+  return target_table_devices_.is_device_connected( tid, lcid );
+}
+
 inline void
 ConnectionManager::send( const thread tid,
   const synindex syn_id,
@@ -855,12 +857,6 @@ ConnectionManager::set_source_has_more_targets( const thread tid,
   const bool more_targets )
 {
   connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
-}
-
-inline void
-nest::ConnectionManager::set_has_get_connections_been_called( const bool has_get_connections_been_called )
-{
-  has_get_connections_been_called_ = has_get_connections_been_called;
 }
 
 inline const std::vector< SpikeData >&

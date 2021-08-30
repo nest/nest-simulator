@@ -166,11 +166,10 @@ nest::gif_cond_exp::State_::State_( const State_& s )
 
 nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=( const State_& s )
 {
-  assert( this != &s ); // would be bad logical error in program
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
-    neuron_state_[ i ] = s.neuron_state_[ i ];
-  }
+  I_stim_ = s.I_stim_;
+  sfa_ = s.sfa_;
+  stc_ = s.stc_;
+  r_ref_ = s.r_ref_;
 
   sfa_elems_.resize( s.sfa_elems_.size(), 0.0 );
   for ( size_t i = 0; i < sfa_elems_.size(); ++i )
@@ -183,12 +182,10 @@ nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=( const State_&
   {
     stc_elems_[ i ] = s.stc_elems_[ i ];
   }
-
-  I_stim_ = s.I_stim_;
-  sfa_ = s.sfa_;
-  stc_ = s.stc_;
-  r_ref_ = s.r_ref_;
-
+  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
+    neuron_state_[ i ] = s.neuron_state_[ i ];
+  }
   return *this;
 }
 
@@ -394,13 +391,6 @@ nest::gif_cond_exp::~gif_cond_exp()
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::gif_cond_exp::init_state_( const Node& proto )
-{
-  const gif_cond_exp& pr = downcast< gif_cond_exp >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::gif_cond_exp::init_buffers_()

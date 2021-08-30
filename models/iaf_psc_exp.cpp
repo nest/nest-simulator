@@ -59,8 +59,6 @@ RecordablesMap< iaf_psc_exp >::create()
 {
   // use standard names whereever you can for consistency!
   insert_( names::V_m, &iaf_psc_exp::get_V_m_ );
-  insert_( names::weighted_spikes_ex, &iaf_psc_exp::get_weighted_spikes_ex_ );
-  insert_( names::weighted_spikes_in, &iaf_psc_exp::get_weighted_spikes_in_ );
   insert_( names::I_syn_ex, &iaf_psc_exp::get_I_syn_ex_ );
   insert_( names::I_syn_in, &iaf_psc_exp::get_I_syn_in_ );
 }
@@ -233,13 +231,6 @@ nest::iaf_psc_exp::iaf_psc_exp( const iaf_psc_exp& n )
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::iaf_psc_exp::init_state_( const Node& proto )
-{
-  const iaf_psc_exp& pr = downcast< iaf_psc_exp >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::iaf_psc_exp::init_buffers_()

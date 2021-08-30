@@ -205,6 +205,7 @@ ProjectionCollection::ConnectionClassWrapper_::SpatialBuilderWrapper_::connect()
   AbstractLayerPTR source_layer = get_layer( sources );
   AbstractLayerPTR target_layer = get_layer( targets );
 
+  kernel().connection_manager.set_connections_have_changed();
   source_layer->connect( sources, target_layer, targets, spatial_builder );
 }
 

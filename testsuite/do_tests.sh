@@ -98,8 +98,8 @@ if test ! "${REPORTDIR}"; then
 fi
 
 if test "${PYTHON}"; then
-    command -v nosetests >/dev/null 2>&1 || {
-        echo "Error: PyNEST testing requested, but command 'nosetests' cannot be executed."
+    command -v pytest >/dev/null 2>&1 || {
+        echo "Error: PyNEST testing requested, but command 'pytest' cannot be executed."
         exit 1
     }
     NOSE="$(command -v nosetests)"

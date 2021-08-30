@@ -54,7 +54,7 @@ class TestMPIDependentTests(unittest.TestCase):
 
         for test, num_procs in mpitests:
             test = os.path.join(path, test)
-            mpirun_cmd = ["sli", "-c", f"{num_procs} (nosetests) ({test}) mpirun =only"]
+            mpirun_cmd = ["sli", "-c", f"{num_procs} (pytest) ({test}) mpirun =only"]
             command = check_output(mpirun_cmd).decode("utf-8")
             print("Executing test with command: " + command)
             command = command.split()
@@ -64,7 +64,7 @@ class TestMPIDependentTests(unittest.TestCase):
                 failing_tests.append((test, num_procs))
 
         self.assertTrue(not failing_tests, 'The following tests failed ' +
-                        'when executing with "mpirun -np N nosetests ' +
+                        'when executing with "mpirun -np N pytest ' +
                         '[script]": {}'.format(failing_tests))
 
 

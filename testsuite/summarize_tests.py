@@ -45,7 +45,7 @@ def parse_result_file(fname):
         suites = list(results)
         assert len(suites) == 1, "We currently handle only XML files with on testsuite."
         results = suites[0]
-        
+
     assert all(len(case.result) == 1 for case in results if case.result), 'Case result has unexpected length > 1'
     failed_tests = ['.'.join((case.classname, case.name)) for case in results
                     if case.result and not isinstance(case.result[0], jp.junitparser.Skipped)]

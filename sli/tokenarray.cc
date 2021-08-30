@@ -127,13 +127,20 @@ TokenArray::toVector( std::vector< double >& a ) const
   a.reserve( size() );
   for ( Token* idx = begin(); idx != end(); ++idx )
   {
-    DoubleDatum* targetid = dynamic_cast< DoubleDatum* >( idx->datum() );
-    if ( targetid == NULL )
+    DoubleDatum* targetdd = dynamic_cast< DoubleDatum* >( idx->datum() );
+    if ( targetdd )
+    {
+      a.push_back( targetdd->get() );
+    }
+    else if ( IntegerDatum* targetid = dynamic_cast< IntegerDatum* >( idx->datum() ) )
+    {
+      a.push_back( static_cast< double >( targetid->get() ) );
+    }
+    else
     {
       DoubleDatum const d;
       throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
     }
-    a.push_back( targetid->get() );
   }
 }
 

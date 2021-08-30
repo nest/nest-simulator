@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# do_tests.sh.in
+# do_tests.sh
 #
 # This file is part of NEST.
 #
@@ -19,12 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-
-# This script runs the NEST testsuite.
+#
+# Central entry point for the complete NEST test suite. The tests
+# ensure a correctly working installation of NEST.
 #
 # The test suite consists of SLI and Python scripts that use the
-# language's native `unittest` library to assert certain invariants
-# and thus ensure a correctly working installation of NEST.
+# respective language's native `unittest` library to assert certain
+# invariants and thus ensure a correctly working installation of NEST.
 #
 
 
@@ -41,11 +42,11 @@
 usage ()
 {
     if test $1 = 1; then
-        echo "Error: Unknown option \'$2\'"
+        echo "Error: Unknown option '$2'"
     fi
 
     if test $1 = 2; then
-        echo "Error: Missing required option \'$2\'"
+        echo "Error: Missing required option '$2'"
     fi
 
     cat <<EOF
@@ -120,13 +121,15 @@ if test -d "${REPORTDIR}"; then
 fi
 mkdir "${REPORTDIR}"
 
-TEST_BASEDIR="${PREFIX}/share/doc/nest"
+TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"
 TEST_RUNFILE="${REPORTDIR}/runtest.sh"
 
 NEST="nest_serial"
+
+HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
 if test "$(uname -s)" = "Darwin"; then
@@ -154,6 +157,11 @@ if test "${PYTHON}"; then
     NOSE_VERSION="$("${NOSE}" --version | cut -d' ' -f3)"
     echo "  Nose executable .... $NOSE (version $NOSE_VERSION)"
     echo "  PYTHONPATH ......... `print_paths ${PYTHONPATH:-}`"
+fi
+if test "${HAVE_MPI}" = "true"; then
+    echo "  Running MPI tests .. yes"
+else
+    echo "  Running MPI tests .. no (compiled without MPI support)"
 fi
 if test "${MUSIC}"; then
     MUSIC_VERSION="$("${MUSIC}" --version | head -n1 | cut -d' ' -f2)"
@@ -316,7 +324,7 @@ junit_close
 echo
 echo "Phase 5: Running MPI tests"
 echo "--------------------------"
-if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue; then
+if test "${HAVE_MPI}" = "true"; then
     junit_open '05_mpitests'
 
     NEST="nest_indirect"
@@ -342,7 +350,7 @@ if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue; then
     junit_close
 else
   echo "  Not running MPI tests because NEST was compiled without support"
-  echo "  for distributed computing. See the file README.md for details."
+  echo "  for distributed computing."
 fi
 
 echo
@@ -442,18 +450,30 @@ if test "${MUSIC}"; then
     junit_close
 else
   echo "  Not running MUSIC tests because NEST was compiled without support"
-  echo "  for it. See the file README.md for details."
+  echo "  for it."
 fi
 
 echo
 echo "Phase 7: Running PyNEST tests"
 echo "-----------------------------"
 if test "${PYTHON}"; then
-    # Find the path to PyNEST without actually importing it
-    PYNEST_TEST_DIR="$("${PYTHON}" -c "import importlib.util; print(importlib.util.find_spec('nest').submodule_search_locations[0])")/tests"
-    XUNIT_FILE="${REPORTDIR}/07_pynesttests.xml"
-    "${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="07_pynesttests" --xunit-file="${XUNIT_FILE}" "${PYNEST_TEST_DIR}" 2>&1 \
-        | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
+    PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests/"
+    XUNIT_NAME="07_pynesttests"
+    XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
+    "${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="${XUNIT_NAME}" \
+		--xunit-file="${XUNIT_FILE}" --exclude=test_mpitests\.py "${PYNEST_TEST_DIR}" 2>&1 \
+        | tee -a "${TEST_LOGFILE}" | grep --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
+
+    if test "${HAVE_MPI}" = "true"; then
+	echo
+	echo "  Running PyNEST tests with MPI (no output will be produced)"
+	XUNIT_NAME="${XUNIT_NAME}_mpi"
+	XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
+	"${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="${XUNIT_NAME}" \
+		    --xunit-file="${XUNIT_FILE}" "${PYNEST_TEST_DIR}/test_mpitests.py" \
+		    2>&1 | tee -a "${TEST_LOGFILE}" >/dev/null
+	            # "&>FILE" or ">>FILE 2>&1" don't silence the line above. Why?!
+    fi
 else
     echo
     echo "  Not running PyNEST tests because NEST was compiled without Python support."

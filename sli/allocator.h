@@ -276,21 +276,6 @@ private:
   size_t capacity_;
 };
 
-#ifdef IS_K
-/**
- * The Fujitsu compiler on K cannot handle OpenMP thread-private
- * properly. We therefore need to emulate the thread-private storage
- * by padding the allocator objects to the size of a cache line so
- * that the instantiations for different threads lie on different
- * cache lines.
- */
-class PaddedPMA : public PoorMansAllocator
-{
-  // Only works for sizeof(PoorMansAllocator) < 64
-  char padding[ 64 - sizeof( PoorMansAllocator ) ];
-};
-#endif /* #ifdef IS_K */
-
 #endif /* #ifdef USE_PMA */
 
 #endif /* #ifndef ALLOCATOR_H */

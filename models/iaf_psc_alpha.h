@@ -323,18 +323,6 @@ private:
   }
 
   inline double
-  get_weighted_spikes_ex_() const
-  {
-    return V_.weighted_spikes_ex_;
-  }
-
-  inline double
-  get_weighted_spikes_in_() const
-  {
-    return V_.weighted_spikes_in_;
-  }
-
-  inline double
   get_I_syn_ex_() const
   {
     return S_.I_ex_;

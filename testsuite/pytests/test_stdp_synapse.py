@@ -134,8 +134,10 @@ class STDPSynapseTest(unittest.TestCase):
         spike_senders = nest.Create(
             "spike_generator",
             2,
-            params=({"spike_times": self.hardcoded_pre_times + self.simulation_duration - self.hardcoded_trains_length},
-                    {"spike_times": self.hardcoded_post_times + self.simulation_duration - self.hardcoded_trains_length})
+            params=({"spike_times": self.hardcoded_pre_times
+                     + self.simulation_duration - self.hardcoded_trains_length},
+                    {"spike_times": self.hardcoded_post_times
+                     + self.simulation_duration - self.hardcoded_trains_length})
         )
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]

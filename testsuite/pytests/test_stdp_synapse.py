@@ -339,9 +339,7 @@ class STDPSynapseTest(unittest.TestCase):
         self.init_params()
         for self.dendritic_delay in [1., self.resolution]:
             self.init_params()
-            for self.nest_neuron_model in ["iaf_psc_exp",
-                                           "iaf_cond_exp",
-                                           "iaf_psc_exp_ps"]:
+            for self.nest_neuron_model in ["iaf_psc_exp", "iaf_cond_exp"]:
                 fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
                 self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
 

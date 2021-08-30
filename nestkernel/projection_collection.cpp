@@ -74,6 +74,8 @@ ProjectionCollection::ProjectionCollection( const ArrayDatum& projections )
 void
 ProjectionCollection::connect()
 {
+  kernel().connection_manager.set_connections_have_changed();
+
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
   {
@@ -201,8 +203,6 @@ ProjectionCollection::ConnectionClassWrapper_::SpatialBuilderWrapper_::SpatialBu
 void
 ProjectionCollection::ConnectionClassWrapper_::SpatialBuilderWrapper_::connect()
 {
-  kernel().connection_manager.set_connections_have_changed();
-
   AbstractLayerPTR source_layer = get_layer( sources );
   AbstractLayerPTR target_layer = get_layer( targets );
 

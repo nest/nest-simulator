@@ -44,8 +44,6 @@ except ImportError:
 # Make MPI-enabled NEST import properly. The underlying problem is that the
 # shared object pynestkernel dynamically opens other libraries that open
 # yet other libraries.
-
-# Python 3.3 and later has flags in os
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 
 from . import pynestkernel as kernel      # noqa

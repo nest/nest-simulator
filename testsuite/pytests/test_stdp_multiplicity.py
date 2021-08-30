@@ -227,7 +227,7 @@ class StdpSpikeMultiplicity(unittest.TestCase):
         print(post_weights)
         return post_weights
 
-    def _test_stdp_multiplicity(self, pre_post_shift, max_abs_err=1E-6):
+    def _test_stdp_multiplicity(self, pre_post_shift, max_abs_err=1E-3):
         """Check that for smaller and smaller timestep, weights obtained from parrot and precise parrot converge.
 
         Enforce a maximum allowed absolute error ``max_abs_err`` between the final weights for the smallest timestep

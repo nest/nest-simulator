@@ -23,6 +23,7 @@
 # and stdp_nn_restr_synapse in NEST.
 
 import nest
+import numpy as np
 import unittest
 from math import exp
 
@@ -75,8 +76,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
         # post:  2 3 4       8 9 10    12
         self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13], dtype=float)
         self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12], dtype=float)
-        self.hardcoded_trains_length = 5 * self.synapse_parameters["delay"] \
-            + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
+        self.hardcoded_trains_length = 2. + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self,
                                                             pairing_scheme):

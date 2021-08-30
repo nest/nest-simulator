@@ -77,8 +77,7 @@ class STDPSynapseTest(unittest.TestCase):
         # post:  2 3 4       8 9 10    12
         self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13], dtype=float)
         self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12], dtype=float)
-        self.hardcoded_trains_length = 5 * self.synapse_parameters["delay"] \
-            + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
+        self.hardcoded_trains_length = 2. + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):
         pre_spikes, post_spikes, t_weight_by_nest, weight_by_nest = self.do_the_nest_simulation()
@@ -135,8 +134,8 @@ class STDPSynapseTest(unittest.TestCase):
         spike_senders = nest.Create(
             "spike_generator",
             2,
-            params=({"spike_times": hardcoded_pre_times + self.simulation_duration - self.hardcoded_trains_length},
-                    {"spike_times": hardcoded_post_times + self.simulation_duration - self.hardcoded_trains_length})
+            params=({"spike_times": self.hardcoded_pre_times + self.simulation_duration - self.hardcoded_trains_length},
+                    {"spike_times": self.hardcoded_post_times + self.simulation_duration - self.hardcoded_trains_length})
         )
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]

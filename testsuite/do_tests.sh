@@ -461,8 +461,7 @@ if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests/"
     XUNIT_NAME="07_pynesttests"
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-    "${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="${XUNIT_NAME}" \
-		--xunit-file="${XUNIT_FILE}" --exclude=test_mpitests\.py "${PYNEST_TEST_DIR}" 2>&1 \
+    pytest -v --junit-xml="${XUNIT_FILE}" -n auto --exclude=test_mpitests\.py "${PYNEST_TEST_DIR}" 2>&1 \
         | tee -a "${TEST_LOGFILE}" | grep --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
     NOSE_STATUS=${PIPESTATUS[0]}
     if (( ${NOSE_STATUS} > 1 )); then
@@ -475,8 +474,7 @@ if test "${PYTHON}"; then
         echo "  Running PyNEST tests with MPI (no output will be produced)"
        XUNIT_NAME="${XUNIT_NAME}_mpi"
        XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-       "${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="${XUNIT_NAME}" \
-          --xunit-file="${XUNIT_FILE}" "${PYNEST_TEST_DIR}/test_mpitests.py" \
+       pytest -v --junit-xml="${XUNIT_FILE}" -n auto "${PYNEST_TEST_DIR}/test_mpitests.py" \
     	     2>&1 | tee -a "${TEST_LOGFILE}" >/dev/null
 	         # "&>FILE" or ">>FILE 2>&1" don't silence the line above. Why?!
 

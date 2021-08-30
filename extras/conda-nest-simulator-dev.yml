@@ -48,8 +48,8 @@ dependencies:
   - readline
 
   # Testing NEST ------------
-  - nose
   - pytest
+  - pytest-xdist
   - numpy
   - pandas
   - scipy

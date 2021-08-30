@@ -66,9 +66,19 @@ class STDPSynapseTest(unittest.TestCase):
         self.neuron_parameters = {
             "tau_minus": self.tau_post,
         }
-        self.hardcoded_trains_length = 15
-        self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13.])
-        self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12.])
+
+        # While the random sequences, fairly long, would supposedly
+        # reveal small differences in the weight change between NEST
+        # and ours, some low-probability events (say, coinciding
+        # spikes) can well not have occured. To generate and
+        # test every possible combination of pre/post precedence, we
+        # append some hardcoded spike sequences:
+        # pre: 1       5 6 7   9    11 12 13
+        # post:  2 3 4       8 9 10    12
+        self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13], dtype=float)
+        self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12], dtype=float)
+        self.hardcoded_trains_length = 5 * self.synapse_parameters["delay"] \
+            + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):
         pre_spikes, post_spikes, t_weight_by_nest, weight_by_nest = self.do_the_nest_simulation()
@@ -104,12 +114,10 @@ class STDPSynapseTest(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus({'resolution': self.resolution})
 
-        neurons = nest.Create(
+        presynaptic_neuron, postsynaptic_neuron = nest.Create(
             self.nest_neuron_model,
             2,
             params=self.neuron_parameters)
-        presynaptic_neuron = neurons[0]
-        postsynaptic_neuron = neurons[1]
 
         generators = nest.Create(
             "poisson_generator",
@@ -124,32 +132,11 @@ class STDPSynapseTest(unittest.TestCase):
         wr = nest.Create('weight_recorder')
         nest.CopyModel(self.synapse_model, self.synapse_model + "_rec", {"weight_recorder": wr})
 
-        # While the random sequences, fairly long, would supposedly
-        # reveal small differences in the weight change between NEST
-        # and ours, some low-probability events (say, coinciding
-        # spikes) can well not have occured. To generate and
-        # test every possible combination of pre/post precedence, we
-        # append some hardcoded spike sequences:
-        # pre: 1       5 6 7   9    11 12 13
-        # post:  2 3 4       8 9 10    12
-        (
-            hardcoded_pre_times,
-            hardcoded_post_times
-        ) = [
-            [
-                self.simulation_duration - self.hardcoded_trains_length + float(t)
-                for t in train
-            ] for train in (
-                self.hardcoded_pre_times,
-                self.hardcoded_post_times
-            )
-        ]
-
         spike_senders = nest.Create(
             "spike_generator",
             2,
-            params=({"spike_times": hardcoded_pre_times},
-                    {"spike_times": hardcoded_post_times})
+            params=({"spike_times": hardcoded_pre_times + self.simulation_duration - self.hardcoded_trains_length},
+                    {"spike_times": hardcoded_post_times + self.simulation_duration - self.hardcoded_trains_length})
         )
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]

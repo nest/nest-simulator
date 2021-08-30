@@ -40,6 +40,12 @@ assert int(jp.version.split('.')[0]) >= 2, 'junitparser version must be >= 2'
 def parse_result_file(fname):
 
     results = jp.JUnitXml.fromfile(fname)
+    if isinstance(results, jp.junitparser.JUnitXml):
+        # special case for pytest, which wraps all once more
+        suites = list(results)
+        assert len(suites) == 1, "We currently handle only XML files with on testsuite."
+        results = suites[0]
+        
     assert all(len(case.result) == 1 for case in results if case.result), 'Case result has unexpected length > 1'
     failed_tests = ['.'.join((case.classname, case.name)) for case in results
                     if case.result and not isinstance(case.result[0], jp.junitparser.Skipped)]
@@ -64,15 +70,11 @@ if __name__ == '__main__':
               'Time': 0, 'Failed tests': []}
 
     for pfile in sorted(glob.glob(os.path.join(test_outdir, '*.xml'))):
-
         ph_name = os.path.splitext(os.path.split(pfile)[1])[0].replace('_', ' ')
-        try:
-            ph_res = parse_result_file(pfile)
-            results[ph_name] = ph_res
-            for k, v in ph_res.items():
-                totals[k] += v
-        except xml.etree.ElementTree.ParseError:
-            results[ph_name] = None
+        ph_res = parse_result_file(pfile)
+        results[ph_name] = ph_res
+        for k, v in ph_res.items():
+            totals[k] += v
 
     cols = ['Tests', 'Skipped', 'Failures', 'Errors', 'Time']
     tline = '-' * (len(cols) * 10 + 20)
@@ -89,16 +91,11 @@ if __name__ == '__main__':
     print()
 
     print(tline)
-    missing_results = []
     for pn, pr in results.items():
         print('{:<20s}'.format(pn), end='')
-        if pr is not None:
-            for c in cols:
-                fstr = '{:10.1f}' if c == 'Time' else '{:10d}'
-                print(fstr.format(pr[c]), end='')
-        else:
-            print(f'{"--- crashed, results invalid ---":^{10*len(cols)}}', end='')
-            missing_results.append(pn)
+        for c in cols:
+            fstr = '{:10.1f}' if c == 'Time' else '{:10d}'
+            print(fstr.format(pr[c]), end='')
         print()
 
     print(tline)
@@ -110,13 +107,11 @@ if __name__ == '__main__':
     print(tline)
     print()
 
-    if totals['Failures'] + totals['Errors'] > 0 or missing_results:
+    if totals['Failures'] + totals['Errors'] > 0:
         print('THE NEST TESTSUITE DISCOVERED PROBLEMS')
         print('    The following tests failed')
         for t in totals['Failed tests']:
             print(f'    | {t}')   # | marks line for parsing
-        for m in missing_results:
-            print(f'    | {m} (test phase crashed)')
         print()
         print('    Please report test failures by creating an issue at')
         print('        https://github.com/nest/nest_simulator/issues')

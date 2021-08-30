@@ -102,7 +102,7 @@ if test "${PYTHON}"; then
         echo "Error: PyNEST testing requested, but command 'pytest' cannot be executed."
         exit 1
     }
-    NOSE="$(command -v nosetests)"
+    PYTEST="$(command -v pytest)"
 fi
 
 python3 -c "import junitparser" >/dev/null 2>&1
@@ -154,8 +154,8 @@ echo "  PREFIX ............. $PREFIX"
 if test "${PYTHON}"; then
     PYTHON_VERSION="$("${PYTHON}" --version | cut -d' ' -f2)"
     echo "  Python executable .. $PYTHON (version $PYTHON_VERSION)"
-    NOSE_VERSION="$("${NOSE}" --version | cut -d' ' -f3)"
-    echo "  Nose executable .... $NOSE (version $NOSE_VERSION)"
+    PYTEST_VERSION="$("${PYTEST}" --version 2>&1 | cut -d' ' -f2)"
+    echo "  Pytest executable .. $PYTEST (version $PYTEST_VERSION)"
     echo "  PYTHONPATH ......... `print_paths ${PYTHONPATH:-}`"
 fi
 if test "${HAVE_MPI}" = "true"; then
@@ -461,28 +461,16 @@ if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests/"
     XUNIT_NAME="07_pynesttests"
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-    pytest -v --junit-xml="${XUNIT_FILE}" -n auto --exclude=test_mpitests\.py "${PYNEST_TEST_DIR}" 2>&1 \
-        | tee -a "${TEST_LOGFILE}" | grep --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
-    NOSE_STATUS=${PIPESTATUS[0]}
-    if (( ${NOSE_STATUS} > 1 )); then
-        # create empty file to mark crash
-        touch ${XUNIT_FILE}
-    fi
+    "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
+          --ignore="${PYNEST_TEST_DIR}/test_mpitests.py" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
   
     if test "${HAVE_MPI}" = "true"; then
-        echo
-        echo "  Running PyNEST tests with MPI (no output will be produced)"
+       echo
+       echo "  Running PyNEST tests with MPI (no output will be produced)"
        XUNIT_NAME="${XUNIT_NAME}_mpi"
        XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-       pytest -v --junit-xml="${XUNIT_FILE}" -n auto "${PYNEST_TEST_DIR}/test_mpitests.py" \
-    	     2>&1 | tee -a "${TEST_LOGFILE}" >/dev/null
-	         # "&>FILE" or ">>FILE 2>&1" don't silence the line above. Why?!
-
-        NOSE_STATUS=${PIPESTATUS[0]}
-        if (( ${NOSE_STATUS} > 1 )); then
-            # create empty file to mark crash
-            touch ${XUNIT_FILE}
-        fi
+       "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
+             "${PYNEST_TEST_DIR}/test_mpitests.py"  2>&1 | tee -a "${TEST_LOGFILE}" 
     fi
 else
     echo

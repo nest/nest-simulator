@@ -43,7 +43,7 @@ def parse_result_file(fname):
     if isinstance(results, jp.junitparser.JUnitXml):
         # special case for pytest, which wraps all once more
         suites = list(results)
-        assert len(suites) == 1, "We currently handle only XML files with on testsuite."
+        assert len(suites) == 1, "JUnit XML files may only contain results from a single testsuite."
         results = suites[0]
 
     assert all(len(case.result) == 1 for case in results if case.result), 'Case result has unexpected length > 1'

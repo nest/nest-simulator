@@ -83,7 +83,7 @@ sys.modules["nest.kernel"] = pynestkernel_mock
 # `MagicMock`ed later on and expose `nest.NestModule` as `sphinx` does not seem
 # to autodoc properties the way the `autoclass` directive would. We can then
 # autoclass `nest.NestModule` to generate the documentation of the properties
-import nest
+import nest  # noqa
 nest.NestModule = type(nest)
 
 # -- General configuration ------------------------------------------------

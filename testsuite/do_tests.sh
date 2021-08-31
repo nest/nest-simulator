@@ -462,15 +462,14 @@ if test "${PYTHON}"; then
     XUNIT_NAME="07_pynesttests"
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
     "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
-          --ignore="${PYNEST_TEST_DIR}/test_mpitests.py" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
+          --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
   
     if test "${HAVE_MPI}" = "true"; then
-       echo
-       echo "  Running PyNEST tests with MPI (no output will be produced)"
-       XUNIT_NAME="${XUNIT_NAME}_mpi"
-       XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-       "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
-             "${PYNEST_TEST_DIR}/test_mpitests.py"  2>&1 | tee -a "${TEST_LOGFILE}" 
+       for numproc in 2 4 ; do
+           XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
+           mpirun -np ${numproc} "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" \
+                 "${PYNEST_TEST_DIR}/mpi/${numproc}"  2>&1 | tee -a "${TEST_LOGFILE}"
+       done 
     fi
 else
     echo

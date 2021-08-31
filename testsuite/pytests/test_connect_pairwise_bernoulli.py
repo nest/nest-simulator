@@ -23,11 +23,10 @@
 import numpy as np
 import unittest
 import scipy.stats
-import test_connect_helpers as hf
-from test_connect_parameters import TestParams
+import connect_test_base as hf
 
 
-class TestPairwiseBernoulli(TestParams):
+class TestPairwiseBernoulli(hf.ConnectTestBase):
 
     # specify connection pattern and specific params
     rule = 'pairwise_bernoulli'

@@ -21,11 +21,10 @@
 
 import numpy as np
 import unittest
-import test_connect_helpers as hf
-from test_connect_parameters import TestParams
+import connect_test_base as hf
 
 
-class TestOneToOne(TestParams):
+class TestOneToOne(hf.ConnectTestBase):
 
     # specify connection pattern
     rule = 'one_to_one'

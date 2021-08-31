@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# mpitest_issue_578_sp.py
+# test_issue_578_sp.py
 #
 # This file is part of NEST.
 #
@@ -19,18 +19,20 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-This test is called from test_mpitests.py
-"""
 
 import nest
 import sys
+import unittest
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
 class TestIssue578():
+    """
+    This test must be run with 2 mpi processes.
+    """
 
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_targets(self):
         nest.ResetKernel()
         nest.set_verbosity('M_ALL')
@@ -88,15 +90,3 @@ class TestIssue578():
         except Exception:
             print(sys.exc_info()[0])
             self.fail("Exception during simulation")
-
-
-# We can not define the regular suite() and runner() functions here, because
-# it will not show up as failed in the testsuite if it fails. This is
-# because the test is called from test_mpitests, and the unittest system in
-# test_mpitests will only register the failing test if we call this test
-# directly.
-if HAVE_GSL:
-    mpitest = TestIssue578()
-    mpitest.test_targets()
-else:
-    print("Skipping because GSL is not available")

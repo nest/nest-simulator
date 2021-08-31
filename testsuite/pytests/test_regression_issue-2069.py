@@ -26,15 +26,27 @@ import unittest
 class SynSpecCopyTestCase(unittest.TestCase):
 
     def test_syn_spec_copied(self):
-        """..."""
+        """Check if simple syn_spec is copied"""
+
         nodes = nest.Create('iaf_psc_alpha', 4)
         # When connecting, the weight list will be converted to a numpy array. We need to make sure our
         # syn_spec, especially the weight list, is not modified.
         syn_spec = {'synapse_model': 'stdp_synapse', 'weight': [1., 2., 3., 4.]}
         
         nest.Connect(nodes, nodes, 'one_to_one', syn_spec=syn_spec)
-        
+
         self.assertDictEqual(syn_spec, {'synapse_model': 'stdp_synapse', 'weight': [1., 2., 3., 4.]})
+
+    def test_syn_spec_copied_with_parameter(self):
+        """Check if simple syn_spec is copied when weight is nest.Parameter"""
+
+        nodes = nest.Create('iaf_psc_alpha', 4)
+        weight_param = nest.random.uniform(0., 5)
+        syn_spec = {'synapse_model': 'stdp_synapse', 'weight': weight_param}
+
+        nest.Connect(nodes, nodes, syn_spec=syn_spec)
+
+        self.assertDictEqual(syn_spec, {'synapse_model': 'stdp_synapse', 'weight': weight_param})
 
 
 def suite():

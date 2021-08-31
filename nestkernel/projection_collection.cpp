@@ -74,17 +74,25 @@ ProjectionCollection::ProjectionCollection( const ArrayDatum& projections )
 void
 ProjectionCollection::connect()
 {
+  // Precompute ntrees
+  for ( auto& projection : projections_ )
+  {
+    projection.compute_ntree();
+  }
+
+  kernel().connection_manager.set_connections_have_changed();
+
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 #pragma omp parallel
   {
     const auto tid = kernel().vp_manager.get_thread_id();
-    std::cerr << "[thread " << tid << "] ProjectionCollection::connect()\n";
 
     try
     {
       // Apply projection connections
       for ( auto& projection : projections_ )
       {
+#pragma omp barrier
         projection.connect();
       }
     }
@@ -188,6 +196,16 @@ ProjectionCollection::ConnectionClassWrapper_::connect()
   }
 }
 
+void
+ProjectionCollection::ConnectionClassWrapper_::compute_ntree()
+{
+  if ( spatial_conn_creator_ )
+  {
+    assert( not conn_builder_ );
+    spatial_conn_creator_->compute_ntree();
+  }
+}
+
 ProjectionCollection::ConnectionClassWrapper_::SpatialBuilderWrapper_::SpatialBuilderWrapper_(
   const NodeCollectionDatum sources,
   const NodeCollectionDatum targets,
@@ -204,8 +222,17 @@ ProjectionCollection::ConnectionClassWrapper_::SpatialBuilderWrapper_::connect()
   AbstractLayerPTR source_layer = get_layer( sources );
   AbstractLayerPTR target_layer = get_layer( targets );
 
-  kernel().connection_manager.set_connections_have_changed();
   source_layer->connect( sources, target_layer, targets, spatial_builder );
+}
+
+void
+ProjectionCollection::ConnectionClassWrapper_::SpatialBuilderWrapper_::compute_ntree()
+{
+  AbstractLayerPTR source_layer = get_layer( sources );
+  AbstractLayerPTR target_layer = get_layer( targets );
+
+  source_layer->compute_ntree( sources );
+  target_layer->compute_ntree( targets );
 }
 
 } // namespace nest

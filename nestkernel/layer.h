@@ -58,6 +58,8 @@ public:
    */
   AbstractLayer()
     : node_collection_( NodeCollectionPTR( 0 ) )
+    , cached_ntree_md_( NodeCollectionMetadataPTR( 0 ) )
+    , cached_vector_md_( NodeCollectionMetadataPTR( 0 ) )
   {
   }
 
@@ -100,6 +102,8 @@ public:
   virtual double compute_displacement( const std::vector< double >& from_pos,
     const std::vector< double >& to_pos,
     const unsigned int dimension ) const = 0;
+
+  virtual void compute_ntree( NodeCollectionPTR node_collection ) = 0;
 
   /**
    * Returns distance to node from given position. When using periodic
@@ -181,22 +185,22 @@ protected:
   /**
    * Metadata for the layer for which we cache global position information
    */
-  static NodeCollectionMetadataPTR cached_ntree_md_;
+  NodeCollectionMetadataPTR cached_ntree_md_;
 
   /**
    * Metadata for the layer for which we cache global position information
    */
-  static NodeCollectionMetadataPTR cached_vector_md_;
+  NodeCollectionMetadataPTR cached_vector_md_;
 
   /**
    * Clear the cache for global position information
    */
-  virtual void clear_ntree_cache_() const = 0;
+  virtual void clear_ntree_cache_() = 0;
 
   /**
    * Clear the cache for global position information
    */
-  virtual void clear_vector_cache_() const = 0;
+  virtual void clear_vector_cache_() = 0;
 
   /**
    * Gets metadata of the NodeCollection to which this layer belongs.
@@ -334,6 +338,7 @@ public:
 
   double compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const;
 
+  void compute_ntree( NodeCollectionPTR node_collection );
 
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
@@ -411,12 +416,12 @@ protected:
   /**
    * Clear the cache for global position information
    */
-  void clear_ntree_cache_() const;
+  void clear_ntree_cache_() ;
 
   /**
    * Clear the cache for global position information
    */
-  void clear_vector_cache_() const;
+  void clear_vector_cache_() ;
 
   std::shared_ptr< Ntree< D, index > > do_get_global_positions_ntree_( NodeCollectionPTR node_collection );
 
@@ -646,6 +651,15 @@ Layer< D >::compute_distance( const std::vector< double >& from_pos, const std::
   return std::sqrt( squared_displacement );
 }
 
+
+template < int D >
+inline void
+Layer< D >::compute_ntree( NodeCollectionPTR node_collection )
+{
+  get_global_positions_ntree( node_collection );
+}
+
+
 template < int D >
 inline std::vector< double >
 Layer< D >::get_position_vector( const index sind ) const
@@ -655,7 +669,7 @@ Layer< D >::get_position_vector( const index sind ) const
 
 template < int D >
 inline void
-Layer< D >::clear_ntree_cache_() const
+Layer< D >::clear_ntree_cache_()
 {
   cached_ntree_ = std::shared_ptr< Ntree< D, index > >();
   cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
@@ -663,7 +677,7 @@ Layer< D >::clear_ntree_cache_() const
 
 template < int D >
 inline void
-Layer< D >::clear_vector_cache_() const
+Layer< D >::clear_vector_cache_() 
 {
   if ( cached_vector_ != 0 )
   {

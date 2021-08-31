@@ -44,9 +44,6 @@
 namespace nest
 {
 
-NodeCollectionMetadataPTR AbstractLayer::cached_ntree_md_ = NodeCollectionMetadataPTR( 0 );
-NodeCollectionMetadataPTR AbstractLayer::cached_vector_md_ = NodeCollectionMetadataPTR( 0 );
-
 AbstractLayer::~AbstractLayer()
 {
 }

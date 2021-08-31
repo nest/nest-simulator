@@ -48,6 +48,8 @@ private:
 
       void connect();
 
+      void compute_ntree();
+
       const NodeCollectionPTR sources;
       const NodeCollectionPTR targets;
       ConnectionCreator spatial_builder;
@@ -59,6 +61,7 @@ private:
     ConnectionClassWrapper_( SpatialBuilderWrapper_* const );
 
     void connect();
+    void compute_ntree();
 
   private:
     // Regular connections

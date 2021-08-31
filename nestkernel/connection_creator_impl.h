@@ -251,7 +251,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
     {
       // By supplying the target layer to the MaskedLayer constructor, the
       // mask is mirrored so it may be applied to the source layer instead
-      pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, target, source_nc ) );
+      pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, target, target_nc ) );
     }
     else
     {

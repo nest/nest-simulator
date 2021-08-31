@@ -37,7 +37,7 @@ r"""PyNEST - Python interface for the NEST simulator
 
 For more information visit https://www.nest-simulator.org.
 
-..autoclass:: NestModule
+.. autoclass:: NestModule
     :members:
 """
 

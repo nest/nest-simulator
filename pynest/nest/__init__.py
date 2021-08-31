@@ -36,9 +36,6 @@ r"""PyNEST - Python interface for the NEST simulator
      - ``nest.Connect?``
 
 For more information visit https://www.nest-simulator.org.
-
-.. autoclass:: NestModule
-    :members:
 """
 
 

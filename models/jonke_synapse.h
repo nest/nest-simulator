@@ -54,29 +54,32 @@ dependent plasticity. Unlike stdp_synapse, we use the update equations:
 
 .. math::
 
-   \Delta w &= \lambda * w_{max} * (K_+(w) * F_+(t) - \beta)           & \quad  if t - t_j^(k) > 0
+   \Delta w &= \lambda * w_{max} * (K_+(w) * F_+(t) - \beta)           & \quad  if t - t_j^(k) > 0 \\
    \Delta w &= \lambda * w_{max} * (-alpha * K_-(w) * F_-(t) - \beta)  & \quad  else
 
 where
 
 .. math::
 
-   K_+(w) &= \exp(\nu_+ w)
+   K_+(w) &= \exp(\nu_+ w) \\
    K_-(w) &= \exp(\nu_- w)
 
 and
 
 .. math::
 
-   F_+(t) &= \exp((t - t_j^(k))/\tau_+)
+   F_+(t) &= \exp((t - t_j^(k))/\tau_+) \\
    F_-(t) &= \exp((t - t_j^(k))/\tau_-)
 
 This makes it possible to implement update rules which approximate the
-rule of [1]_, e.g. the rules given in [2]_ and [3]_.
+rule stated in [1]_, and for examples, the rules given in [2]_ and [3]_.
 
 .. warning::
 
-   This synaptic plasticity rule does not take :doc:`precise spike timing <simulations_with_precise_spike_times>` into account. When calculating the weight update, the precise spike time part of the timestamp is ignored.
+   This synaptic plasticity rule does not take
+   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
 
 Parameters
 ++++++++++

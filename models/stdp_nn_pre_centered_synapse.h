@@ -78,7 +78,10 @@ constant tau_minus and increases to 1 on a post-spike occurrence.
 
 .. warning::
 
-   This synaptic plasticity rule does not take :doc:`precise spike timing <simulations_with_precise_spike_times>` into account. When calculating the weight update, the precise spike time part of the timestamp is ignored.
+   This synaptic plasticity rule does not take
+   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
 
 Parameters
 ++++++++++

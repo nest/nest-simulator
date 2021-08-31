@@ -26,7 +26,7 @@ import pytest
 def test_consistent_local_vps():
     """
     Test local_vps field of kernel status.
-    
+
     This test ensures that the PyNEST-generated local_vps information
     agrees with the thread-VP mappings in the kernel.
     """

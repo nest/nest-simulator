@@ -14,6 +14,7 @@ Here you can find detailed look into a variety of topics in NEST.
     simulations_with_gap_junctions
     simulations_with_precise_spike_times
     using_nest_with_music
+    built-in_timers
 
 .. toctree::
    :maxdepth: 1

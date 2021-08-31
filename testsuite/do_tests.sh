@@ -475,7 +475,7 @@ if test "${PYTHON}"; then
     if test "${HAVE_MPI}" = "true" -a "${MPIRUN}" ; then
        for numproc in 2 4 ; do
            XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
-           "${MPIRUN}" -np ${numproc} "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" \
+           "${MPIRUN}" -np ${numproc} --oversubscribe "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" \
                  "${PYNEST_TEST_DIR}/mpi/${numproc}"  2>&1 | tee -a "${TEST_LOGFILE}"
        done 
     fi

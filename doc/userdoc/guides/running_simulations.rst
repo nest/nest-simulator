@@ -94,7 +94,7 @@ using :py:func:`.set`:
 
     # For co-dependent properties, we have to use `set()`
     # instead of kernel attributes
-    nest.set(min_delay=0.5, may_delay=2.5)
+    nest.set(min_delay=0.5, max_delay=2.5)
 
 These settings should be used with care, though: setting the delay
 extrema too wide without need leads to decreased performance due to more

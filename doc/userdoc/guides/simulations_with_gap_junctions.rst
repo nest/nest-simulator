@@ -108,7 +108,7 @@ general the following parameters can be set via kernel parameters:
 .. code:: python
 
     nest.use_wfr = True
-    nest.wfr_comm_interval = 1.0,
+    nest.wfr_comm_interval = 1.0
     nest.wfr_tol = 0.0001
     nest.wfr_max_iterations = 15
     nest.wfr_interpolation_order = 3

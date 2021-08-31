@@ -166,6 +166,7 @@ def BuildNetwork():
     # Call SLI function
     sps(projection_list)
     sr('connect_projections')
+    projection_collection.reset()
 
 
 class OneToOne(Projection):

@@ -21,6 +21,7 @@
 
 import nest
 
+
 def test_consistent_local_vps():
     """
     Test local_vps field of kernel status.

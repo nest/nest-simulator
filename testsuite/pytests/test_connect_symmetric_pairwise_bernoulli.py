@@ -138,7 +138,7 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
         print(M_all)
         if M_all is not None:
             self.assertTrue(np.array_equal(M_all, M_all.T))
-        
+
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(

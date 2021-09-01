@@ -23,11 +23,11 @@
 import unittest
 import numpy as np
 import scipy.stats
-import connect_test_base as hf
+import connect_test_base
 
 
-@hf.nest.ll_api.check_stack
-class TestAllToAll(hf.ConnectTestBase):
+@connect_test_base.nest.ll_api.check_stack
+class TestAllToAll(connect_test_base.ConnectTestBase):
 
     # specify connection pattern
     rule = 'all_to_all'
@@ -41,14 +41,14 @@ class TestAllToAll(hf.ConnectTestBase):
     def testConnectivity(self):
         self.setUpNetwork(self.conn_dict)
         # make sure all connections do exist
-        M = hf.get_connectivity_matrix(self.pop1, self.pop2)
+        M = connect_test_base.get_connectivity_matrix(self.pop1, self.pop2)
         M_all = np.ones((len(self.pop2), len(self.pop1)))
-        hf.mpi_assert(M, M_all, self)
+        connect_test_base.mpi_assert(M, M_all, self)
         # make sure no connections were drawn from the target to the source
         # population
-        M = hf.get_connectivity_matrix(self.pop2, self.pop1)
+        M = connect_test_base.get_connectivity_matrix(self.pop2, self.pop1)
         M_none = np.zeros((len(self.pop1), len(self.pop2)))
-        hf.mpi_assert(M, M_none, self)
+        connect_test_base.mpi_assert(M, M_none, self)
 
     def testInputArray(self):
         for label in ['weight', 'delay']:
@@ -62,12 +62,12 @@ class TestAllToAll(hf.ConnectTestBase):
                     1, self.N1_array * self.N2_array + 1
                 ).reshape(self.N2_array, self.N1_array) * 0.1
             syn_params[label] = self.param_array
-            hf.nest.ResetKernel()
+            connect_test_base.nest.ResetKernel()
             self.setUpNetwork(self.conn_dict, syn_params,
                               N1=self.N1_array, N2=self.N2_array)
-            M_nest = hf.get_weighted_connectivity_matrix(
+            M_nest = connect_test_base.get_weighted_connectivity_matrix(
                 self.pop1, self.pop2, label)
-            hf.mpi_assert(M_nest, self.param_array, self)
+            connect_test_base.mpi_assert(M_nest, self.param_array, self)
 
     def testInputArrayWithoutAutapses(self):
         self.conn_dict['allow_autapses'] = False
@@ -81,24 +81,24 @@ class TestAllToAll(hf.ConnectTestBase):
                     1, self.N1 * self.N1 + 1).reshape(self.N1, self.N1) * 0.1
             syn_params[label] = self.param_array
             self.setUpNetworkOnePop(self.conn_dict, syn_params)
-            M_nest = hf.get_weighted_connectivity_matrix(
+            M_nest = connect_test_base.get_weighted_connectivity_matrix(
                 self.pop, self.pop, label)
             np.fill_diagonal(self.param_array, 0)
-            hf.mpi_assert(M_nest, self.param_array, self)
+            connect_test_base.mpi_assert(M_nest, self.param_array, self)
 
     def testInputArrayRPort(self):
         syn_params = {}
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1 + i for i in range(self.N2)]}
-        self.pop1 = hf.nest.Create(neuron_model, self.N1)
-        self.pop2 = hf.nest.Create(neuron_model, self.N2, neuron_dict)
+        self.pop1 = connect_test_base.nest.Create(neuron_model, self.N1)
+        self.pop2 = connect_test_base.nest.Create(neuron_model, self.N2, neuron_dict)
         self.param_array = np.transpose(np.asarray(
             [np.arange(1, self.N2 + 1) for i in range(self.N1)]))
         syn_params['receptor_type'] = self.param_array
-        hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
-        M = hf.get_weighted_connectivity_matrix(
+        connect_test_base.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
+        M = connect_test_base.get_weighted_connectivity_matrix(
             self.pop1, self.pop2, 'receptor')
-        hf.mpi_assert(M, self.param_array, self)
+        connect_test_base.mpi_assert(M, self.param_array, self)
 
     def testInputArrayToStdpSynapse(self):
         params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
@@ -111,25 +111,25 @@ class TestAllToAll(hf.ConnectTestBase):
             syn_params[param] = values[i]
         self.setUpNetwork(self.conn_dict, syn_params)
         for i, param in enumerate(params):
-            a = hf.get_weighted_connectivity_matrix(
+            a = connect_test_base.get_weighted_connectivity_matrix(
                 self.pop1, self.pop2, param)
-            hf.mpi_assert(a, values[i], self)
+            connect_test_base.mpi_assert(a, values[i], self)
 
     # test single threaded for now
     def testRPortDistribution(self):
         n_rport = 10
         nr_neurons = 100
-        hf.nest.ResetKernel()  # To reset local_num_threads
+        connect_test_base.nest.ResetKernel()  # To reset local_num_threads
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1 + i for i in range(n_rport)]}
-        self.pop1 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
-        self.pop2 = hf.nest.Create(neuron_model, nr_neurons, neuron_dict)
+        self.pop1 = connect_test_base.nest.Create(neuron_model, nr_neurons, neuron_dict)
+        self.pop2 = connect_test_base.nest.Create(neuron_model, nr_neurons, neuron_dict)
         syn_params = {'synapse_model': 'static_synapse'}
-        syn_params['receptor_type'] = 1 + hf.nest.random.uniform_int(n_rport)
-        hf.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
-        M = hf.get_weighted_connectivity_matrix(
+        syn_params['receptor_type'] = 1 + connect_test_base.nest.random.uniform_int(n_rport)
+        connect_test_base.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
+        M = connect_test_base.get_weighted_connectivity_matrix(
             self.pop1, self.pop2, 'receptor')
-        M = hf.gather_data(M)
+        M = connect_test_base.gather_data(M)
         if M is not None:
             M = M.flatten()
             frequencies = scipy.stats.itemfreq(M)

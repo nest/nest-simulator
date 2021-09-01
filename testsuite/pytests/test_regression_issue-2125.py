@@ -20,7 +20,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-import numpy as np
 import unittest
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
@@ -42,7 +41,7 @@ class ThreadedDisconnectTestCase(unittest.TestCase):
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 1)
 
-         # Make sure we are able to call Disconnect when we have number of threads more than one
+        # Make sure we are able to call Disconnect when we have number of threads more than one
         nest.Disconnect(neurons[0], neurons[2])
 
         conns = nest.GetConnections()

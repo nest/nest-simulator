@@ -20,3 +20,4 @@ jobs:
         stale-pr-message: 'Pull request automatically marked stale!'
         stale-issue-label: 'stale'
         stale-pr-label: 'stale'
+        days-before-close: -1

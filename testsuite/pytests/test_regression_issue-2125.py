@@ -58,5 +58,5 @@ def run():
     runner.run(suite())
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     run()

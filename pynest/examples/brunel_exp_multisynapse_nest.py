@@ -195,10 +195,10 @@ nest.CopyModel("static_synapse", "inhibitory",
 # parameter.
 
 syn_params_ex = {"synapse_model": "excitatory",
-                 "receptor_type": nest.random.uniform_int(max=nr_ports-1) + 1
+                 "receptor_type": nest.random.uniform_int(max=nr_ports - 1) + 1
                  }
 syn_params_in = {"synapse_model": "inhibitory",
-                 "receptor_type": nest.random.uniform_int(max=nr_ports-1) + 1
+                 "receptor_type": nest.random.uniform_int(max=nr_ports - 1) + 1
                  }
 
 nest.Connect(noise, nodes_ex, syn_spec=syn_params_ex)
@@ -276,8 +276,8 @@ rate_in = events_in / simtime * 1000.0 / N_rec
 # inhibitory synapse model. The numbers are summed up resulting in the total
 # number of synapses.
 
-num_synapses = (nest.GetDefaults("excitatory")["num_connections"] +
-                nest.GetDefaults("inhibitory")["num_connections"])
+num_synapses = (nest.GetDefaults("excitatory")["num_connections"]
+                + nest.GetDefaults("inhibitory")["num_connections"])
 
 ###############################################################################
 # Establishing the time it took to build and simulate the network by taking

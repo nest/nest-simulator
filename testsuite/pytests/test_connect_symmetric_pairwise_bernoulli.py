@@ -25,6 +25,7 @@ import numpy as np
 import unittest
 import scipy.stats
 import connect_test_base
+import nest
 
 
 class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
@@ -69,9 +70,9 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
         N = 10
 
         # test that autapses are not permitted
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        with self.assertRaises(connect_test_base.nest.kernel.NESTError):
-            connect_test_base.nest.Connect(pop, pop, conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Connect(pop, pop, conn_params)
 
     def testAutapsesFalse(self):
         conn_params = self.conn_dict.copy()
@@ -80,8 +81,8 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
         # test that autapses were excluded
         conn_params['p'] = 1. - 1. / N
         conn_params['allow_autapses'] = False
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        connect_test_base.nest.Connect(pop, pop, conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        nest.Connect(pop, pop, conn_params)
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         connect_test_base.mpi_assert(np.diag(M), np.zeros(N), self)
 
@@ -91,50 +92,53 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
         N = 10
 
         # test that multapses must be permitted
-        connect_test_base.nest.ResetKernel()
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        with self.assertRaises(connect_test_base.nest.kernel.NESTError):
-            connect_test_base.nest.Connect(pop, pop, conn_params)
+        nest.ResetKernel()
+        pop = nest.Create('iaf_psc_alpha', N)
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Connect(pop, pop, conn_params)
 
         # test that multapses can only arise from symmetric
         # connectivity
         conn_params['p'] = 1. - 1. / N
         conn_params['allow_multapses'] = True
-        connect_test_base.nest.ResetKernel()
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        connect_test_base.nest.Connect(pop, pop, conn_params)
+        nest.ResetKernel()
+        pop = nest.Create('iaf_psc_alpha', N)
+        nest.Connect(pop, pop, conn_params)
 
         conn_dict = collections.defaultdict(int)
-        conn = connect_test_base.nest.GetConnections()
+        conn = nest.GetConnections()
         for s_t_key in zip(conn.sources(), conn.targets()):
             conn_dict[s_t_key] += 1
             self.assertTrue(conn_dict[s_t_key] <= 2)
 
-    def testMakeSymmetric(self):
+    def testCannotSetMSFalse(self):
         conn_params = self.conn_dict.copy()
         N = 100
 
         # test that make_symmetric must be enabled
         conn_params['make_symmetric'] = False
-        connect_test_base.nest.ResetKernel()
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        with self.assertRaises(connect_test_base.nest.kernel.NESTError):
-            connect_test_base.nest.Connect(pop, pop, conn_params)
+        nest.ResetKernel()
+        pop = nest.Create('iaf_psc_alpha', N)
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.Connect(pop, pop, conn_params)
+
+    def testMakeSymmetric(self):
+        conn_params = self.conn_dict.copy()
+        N = 100
 
         # test that all connections are symmetric
         conn_params['make_symmetric'] = True
-        connect_test_base.nest.ResetKernel()
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        connect_test_base.nest.Connect(pop, pop, conn_params)
+        nest.ResetKernel()
+        pop = nest.Create('iaf_psc_alpha', N)
+        nest.Connect(pop, pop, conn_params)
 
-        conns = set()
-        conn = connect_test_base.nest.GetConnections()
-        for s_t_key in zip(conn.sources(), conn.targets()):
-            conns.add(s_t_key)
-
-        for s_t_key in zip(conn.sources(), conn.targets()):
-            self.assertTrue(s_t_key[::-1] in conns)
-
+        M = connect_test_base.get_connectivity_matrix(pop, pop)
+        print(M)
+        M_all = connect_test_base.gather_data(M)
+        print(M_all)
+        if M_all is not None:
+            self.assertTrue(np.array_equal(M_all, M_all.T))
+        
 
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(

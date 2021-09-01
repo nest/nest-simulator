@@ -42,5 +42,3 @@ install( PROGRAMS
     ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
     DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
-
-add_subdirectory( ConnPlotter )

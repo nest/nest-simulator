@@ -132,7 +132,8 @@ NEST="nest_serial"
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
 
 if test "${HAVE_MPI}" = "true"; then
-  MPIRUN="$(command -v mpirun)"
+  MPI_LAUNCHER="$(sli -c '1 () () mpirun cst 0 get =only')"
+  MPI_LAUNCHER="$(command -v $MPI_LAUNCHER)"
 fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
@@ -164,7 +165,7 @@ if test "${PYTHON}"; then
 fi
 if test "${HAVE_MPI}" = "true"; then
     echo "  Running MPI tests .. yes"
-    echo "  MPI launcher ....... $MPIRUN"
+    echo "  MPI launcher ....... $MPI_LAUNCHER"
 else
     echo "  Running MPI tests .. no (compiled without MPI support)"
 fi
@@ -472,11 +473,11 @@ if test "${PYTHON}"; then
           --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
   
     # Run tests in the mpi subdirectories, grouped by number of processes
-    if test "${HAVE_MPI}" = "true" -a "${MPIRUN}" ; then
+    if test "${HAVE_MPI}" = "true" -a "${MPI_LAUNCHER}" ; then
        for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
            XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
-           "${MPIRUN}" -np ${numproc} --oversubscribe "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" \
-                 "${PYNEST_TEST_DIR}/mpi/${numproc}"  2>&1 | tee -a "${TEST_LOGFILE}"
+           PYTEST_ARGS="--verbose --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+           $(sli -c "${numproc} (${PYTEST}) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
        done 
     fi
 else

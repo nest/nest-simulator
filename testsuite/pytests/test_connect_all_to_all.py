@@ -24,9 +24,10 @@ import unittest
 import numpy as np
 import scipy.stats
 import connect_test_base
+import nest
 
 
-@connect_test_base.nest.ll_api.check_stack
+@nest.ll_api.check_stack
 class TestAllToAll(connect_test_base.ConnectTestBase):
 
     # specify connection pattern
@@ -62,7 +63,7 @@ class TestAllToAll(connect_test_base.ConnectTestBase):
                     1, self.N1_array * self.N2_array + 1
                 ).reshape(self.N2_array, self.N1_array) * 0.1
             syn_params[label] = self.param_array
-            connect_test_base.nest.ResetKernel()
+            nest.ResetKernel()
             self.setUpNetwork(self.conn_dict, syn_params,
                               N1=self.N1_array, N2=self.N2_array)
             M_nest = connect_test_base.get_weighted_connectivity_matrix(
@@ -90,12 +91,12 @@ class TestAllToAll(connect_test_base.ConnectTestBase):
         syn_params = {}
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1 + i for i in range(self.N2)]}
-        self.pop1 = connect_test_base.nest.Create(neuron_model, self.N1)
-        self.pop2 = connect_test_base.nest.Create(neuron_model, self.N2, neuron_dict)
+        self.pop1 = nest.Create(neuron_model, self.N1)
+        self.pop2 = nest.Create(neuron_model, self.N2, neuron_dict)
         self.param_array = np.transpose(np.asarray(
             [np.arange(1, self.N2 + 1) for i in range(self.N1)]))
         syn_params['receptor_type'] = self.param_array
-        connect_test_base.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
+        nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
         M = connect_test_base.get_weighted_connectivity_matrix(
             self.pop1, self.pop2, 'receptor')
         connect_test_base.mpi_assert(M, self.param_array, self)
@@ -119,14 +120,14 @@ class TestAllToAll(connect_test_base.ConnectTestBase):
     def testRPortDistribution(self):
         n_rport = 10
         nr_neurons = 100
-        connect_test_base.nest.ResetKernel()  # To reset local_num_threads
+        nest.ResetKernel()  # To reset local_num_threads
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1 + i for i in range(n_rport)]}
-        self.pop1 = connect_test_base.nest.Create(neuron_model, nr_neurons, neuron_dict)
-        self.pop2 = connect_test_base.nest.Create(neuron_model, nr_neurons, neuron_dict)
+        self.pop1 = nest.Create(neuron_model, nr_neurons, neuron_dict)
+        self.pop2 = nest.Create(neuron_model, nr_neurons, neuron_dict)
         syn_params = {'synapse_model': 'static_synapse'}
-        syn_params['receptor_type'] = 1 + connect_test_base.nest.random.uniform_int(n_rport)
-        connect_test_base.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
+        syn_params['receptor_type'] = 1 + nest.random.uniform_int(n_rport)
+        nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
         M = connect_test_base.get_weighted_connectivity_matrix(
             self.pop1, self.pop2, 'receptor')
         M = connect_test_base.gather_data(M)

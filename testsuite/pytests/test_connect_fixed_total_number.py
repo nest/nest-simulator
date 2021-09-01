@@ -23,6 +23,7 @@ import numpy as np
 import unittest
 import scipy.stats
 import connect_test_base
+import nest
 
 
 class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
@@ -52,14 +53,14 @@ class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
         conn_params['N'] = self.N1 * self.N2 + 1
         try:
             self.setUpNetwork(conn_params)
-        except connect_test_base.nest.kernel.NESTError:
+        except nest.kernel.NESTError:
             got_error = True
         self.assertTrue(got_error)
 
     def testTotalNumberOfConnections(self):
         conn_params = self.conn_dict.copy()
         self.setUpNetwork(conn_params)
-        total_conn = len(connect_test_base.nest.GetConnections(self.pop1, self.pop2))
+        total_conn = len(nest.GetConnections(self.pop1, self.pop2))
         connect_test_base.mpi_assert(total_conn, self.Nconn, self)
         # make sure no connections were drawn from the target to the source
         # population
@@ -99,8 +100,8 @@ class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
         # test that autapses exist
         conn_params['N'] = N * N * N
         conn_params['allow_autapses'] = True
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        connect_test_base.nest.Connect(pop, pop, conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         M = connect_test_base.gather_data(M)
@@ -114,8 +115,8 @@ class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
         # test that autapses were excluded
         conn_params['N'] = N * (N - 1)
         conn_params['allow_autapses'] = False
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        connect_test_base.nest.Connect(pop, pop, conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         connect_test_base.mpi_assert(np.diag(M), np.zeros(N), self)

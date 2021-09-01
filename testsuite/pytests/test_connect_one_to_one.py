@@ -22,6 +22,7 @@
 import numpy as np
 import unittest
 import connect_test_base
+import nest
 
 
 class TestOneToOne(connect_test_base.ConnectTestBase):
@@ -64,7 +65,7 @@ class TestOneToOne(connect_test_base.ConnectTestBase):
             elif label == 'delay':
                 self.param_array = np.arange(1, self.N_array + 1) * 0.1
             syn_params[label] = self.param_array
-            connect_test_base.nest.ResetKernel()
+            nest.ResetKernel()
             self.setUpNetwork(self.conn_dict, syn_params,
                               N1=self.N_array, N2=self.N_array)
             M_nest = connect_test_base.get_weighted_connectivity_matrix(
@@ -75,11 +76,11 @@ class TestOneToOne(connect_test_base.ConnectTestBase):
         syn_params = {}
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1 + i for i in range(self.N1)]}
-        self.pop1 = connect_test_base.nest.Create(neuron_model, self.N1, neuron_dict)
-        self.pop2 = connect_test_base.nest.Create(neuron_model, self.N1, neuron_dict)
+        self.pop1 = nest.Create(neuron_model, self.N1, neuron_dict)
+        self.pop2 = nest.Create(neuron_model, self.N1, neuron_dict)
         self.param_array = np.arange(1, self.N1 + 1, dtype=int)
         syn_params['receptor_type'] = self.param_array
-        connect_test_base.nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
+        nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
         M = connect_test_base.get_weighted_connectivity_matrix(
             self.pop1, self.pop2, 'receptor')
         connect_test_base.mpi_assert(M, np.diag(self.param_array), self)

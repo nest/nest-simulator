@@ -24,6 +24,7 @@ import numpy as np
 import unittest
 import scipy.stats
 import connect_test_base
+import nest
 
 
 class TestFixedInDegree(connect_test_base.ConnectTestBase):
@@ -53,7 +54,7 @@ class TestFixedInDegree(connect_test_base.ConnectTestBase):
         conn_params['indegree'] = self.N1 + 1
         try:
             self.setUpNetwork(conn_params)
-        except connect_test_base.nest.kernel.NESTError:
+        except nest.kernel.NESTError:
             got_error = True
         self.assertTrue(got_error)
 
@@ -101,8 +102,8 @@ class TestFixedInDegree(connect_test_base.ConnectTestBase):
         # test that autapses exist
         conn_params['indegree'] = N
         conn_params['allow_autapses'] = True
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        connect_test_base.nest.Connect(pop, pop, conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         connect_test_base.mpi_assert(np.diag(M), np.ones(N), self)
@@ -115,8 +116,8 @@ class TestFixedInDegree(connect_test_base.ConnectTestBase):
         # test that autapses were excluded
         conn_params['indegree'] = N - 1
         conn_params['allow_autapses'] = False
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        connect_test_base.nest.Connect(pop, pop, conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         connect_test_base.mpi_assert(np.diag(M), np.zeros(N), self)
@@ -129,9 +130,9 @@ class TestFixedInDegree(connect_test_base.ConnectTestBase):
         # test that multapses were drawn
         conn_params['indegree'] = N + 1
         conn_params['allow_multapses'] = True
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        connect_test_base.nest.Connect(pop, pop, conn_params)
-        nr_conns = len(connect_test_base.nest.GetConnections(pop, pop))
+        pop = nest.Create('iaf_psc_alpha', N)
+        nest.Connect(pop, pop, conn_params)
+        nr_conns = len(nest.GetConnections(pop, pop))
         connect_test_base.mpi_assert(nr_conns, conn_params['indegree'] * N, self)
 
     def testMultapsesFalse(self):
@@ -142,8 +143,8 @@ class TestFixedInDegree(connect_test_base.ConnectTestBase):
         # test that no multapses exist
         conn_params['indegree'] = N
         conn_params['allow_multapses'] = False
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        connect_test_base.nest.Connect(pop, pop, conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        nest.Connect(pop, pop, conn_params)
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         M = connect_test_base.gather_data(M)
         if M is not None:

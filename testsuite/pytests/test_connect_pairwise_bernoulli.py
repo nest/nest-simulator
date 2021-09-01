@@ -24,6 +24,7 @@ import numpy as np
 import unittest
 import scipy.stats
 import connect_test_base
+import nest
 
 
 class TestPairwiseBernoulli(connect_test_base.ConnectTestBase):
@@ -69,8 +70,8 @@ class TestPairwiseBernoulli(connect_test_base.ConnectTestBase):
         # test that autapses exist
         conn_params['p'] = 1.
         conn_params['allow_autapses'] = True
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        connect_test_base.nest.Connect(pop, pop, conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         connect_test_base.mpi_assert(np.diag(M), np.ones(N), self)
@@ -83,8 +84,8 @@ class TestPairwiseBernoulli(connect_test_base.ConnectTestBase):
         # test that autapses were excluded
         conn_params['p'] = 1.
         conn_params['allow_autapses'] = False
-        pop = connect_test_base.nest.Create('iaf_psc_alpha', N)
-        connect_test_base.nest.Connect(pop, pop, conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         connect_test_base.mpi_assert(np.diag(M), np.zeros(N), self)

@@ -74,8 +74,9 @@ if ( HAVE_PYTHON )
       -D_IS_PYNEST
       )
 
-  install(DIRECTORY  nest/
+  install(DIRECTORY  nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
+      PATTERN "__init__.py.in" EXCLUDE
   )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
   install( CODE "

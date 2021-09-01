@@ -20,8 +20,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-import pytest
-
 
 def test_consistent_local_vps():
     """
@@ -39,6 +37,6 @@ def test_consistent_local_vps():
     # Use thread-vp mapping of neurons to check mapping in kernel
     nrns = nest.GetLocalNodeCollection(nest.Create('iaf_psc_delta', 2 * n_vp))
 
-    vp_direct = [n.get('vp') for n in nrns]
-    vp_indirect = [local_vps[n.get('thread')] for n in nrns]
+    vp_direct = list(nrns.vp)
+    vp_indirect = [local_vps[t] for t in nrns.thread]
     assert vp_direct == vp_indirect

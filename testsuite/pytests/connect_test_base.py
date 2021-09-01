@@ -22,7 +22,6 @@
 import numpy as np
 import scipy.stats
 import nest
-from scipy.stats import truncexpon
 import unittest
 
 try:

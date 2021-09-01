@@ -848,8 +848,6 @@ nest::ConnectionManager::disconnect( const thread tid,
   const index snode_id,
   const index tnode_id )
 {
-  set_connections_have_changed();
-
   assert( syn_id != invalid_synindex );
 
   const index lcid = find_connection( tid, syn_id, snode_id, tnode_id );

@@ -19,6 +19,7 @@ Here is a list of attributes that can be get and/or set on the ``nest`` module:
 
 .. autoclass:: nest.NestModule
   :members:
+  :exclude-members: set_communicator
 
 Functions related to models
 -------------------------------

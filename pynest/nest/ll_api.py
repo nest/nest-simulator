@@ -282,14 +282,19 @@ class KernelAttribute:
         self._readonly = readonly
         self._localonly = localonly
         self._default = default
-        self.__doc__ = f"{typehint}. " + ", ".join(
-            c for c in (
-                readonly and "read only",
-                localonly and "local only",
-                default is not None and f"default: {default}"
+
+        self.__doc__ = (
+            doc
+            + ("." if default is None else f", defaults to ``{default}``.")
+            + ("\n\n" if readonly or localonly else "") + ", ".join(
+                c for c in (
+                    readonly and "**read only**",
+                    localonly and "**local only**",
+                )
+                if c
             )
-            if c
-        ) + "\n" + doc
+            + f"\n\n:type: {typehint}"
+        )
 
     def __set_name__(self, cls, name):
         self._name = name

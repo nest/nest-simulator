@@ -109,228 +109,278 @@ class NestModule(types.ModuleType):
     # Lazy load the `spatial` module to avoid circular imports.
     spatial = _lazy_module_property("spatial")
 
+    # Define the kernel attributes.
+    #
+    # FORMATTING NOTES:
+    # * Multiline strings render incorrectly, join multiple single-quote
+    #   strings instead.
+    # * Strings containing `:` render incorrectly.
+    # * Do not end docstrings with punctuation. A `.` or `,` is added by the
+    #   formatting logic.
+
     kernel_status = KernelAttribute(
-        "dict", "Get the complete kernel status.", readonly=True
+        "dict", "Get the complete kernel status", readonly=True
     )
     resolution = KernelAttribute(
-        "float", """The resolution of the simulation (in ms)""", default=0.1
+        "float", "The resolution of the simulation (in ms)", default=0.1
     )
     biological_time = KernelAttribute(
-        "float", """The current simulation time (in ms)"""
+        "float", "The current simulation time (in ms)"
     )
     to_do = KernelAttribute(
-        "int", """The number of steps yet to be simulated""", readonly=True
+        "int", "The number of steps yet to be simulated", readonly=True
     )
     max_delay = KernelAttribute(
-        "float", """The maximum delay in the network""", default=0.1
+        "float", "The maximum delay in the network", default=0.1
     )
     min_delay = KernelAttribute(
-        "float", """The minimum delay in the network""", default=0.1
+        "float", "The minimum delay in the network", default=0.1
     )
     ms_per_tic = KernelAttribute(
-        "float", """The number of milliseconds per tic""", default=0.001
+        "float", "The number of milliseconds per tic", default=0.001
     )
     tics_per_ms = KernelAttribute(
-        "float", """The number of tics per millisecond""", default=1000.0
+        "float", "The number of tics per millisecond", default=1000.0
     )
     tics_per_step = KernelAttribute(
-        "int", """The number of tics per simulation time step""", default=100
+        "int", "The number of tics per simulation time step", default=100
     )
     T_max = KernelAttribute(
-        "float", """The largest representable time value""", readonly=True
+        "float", "The largest representable time value", readonly=True
     )
     T_min = KernelAttribute(
-        "float", """The smallest representable time value""", readonly=True
+        "float", "The smallest representable time value", readonly=True
     )
     rng_types = KernelAttribute(
-        "list",
-        """Names of random number generator types available.
-        Types: "Philox_32", "Philox_64", "Threefry_32", "Threefry_64", "mt19937", "mt19937_64" """,
+        "list[str]",
+        "List of available random number generator types",
         readonly=True,
     )
     rng_type = KernelAttribute(
         "str",
-        """Name of random number generator type used by NEST.""",
+        "Name of random number generator type used by NEST",
         default="mt19937_64",
     )
     rng_seed = KernelAttribute(
         "int",
-        r"""Seed value used as base for seeding NEST random number generators
-        (:math:`1 \leq s \leq 2^{32}-1`).""",
+        (
+            "Seed value used as base for seeding NEST random number generators "
+            + r"(:math:`1 \leq s\leq 2^{32}-1`)"
+        ),
         default=143202461,
     )
     total_num_virtual_procs = KernelAttribute(
-        "int", """The total number of virtual processes""", default=1
+        "int", "The total number of virtual processes", default=1
     )
     local_num_threads = KernelAttribute(
-        "int", """The local number of threads""", default=1
+        "int", "The local number of threads", default=1
     )
     num_processes = KernelAttribute(
-        "int", """The number of MPI processes""", readonly=True
+        "int", "The number of MPI processes", readonly=True
     )
     off_grid_spiking = KernelAttribute(
         "bool",
-        """Whether to transmit precise spike times in MPI communication""",
+        "Whether to transmit precise spike times in MPI communication",
         readonly=True,
     )
     adaptive_spike_buffers = KernelAttribute(
         "bool",
-        """Whether MPI buffers for communication of spikes resize on the fly""",
+        "Whether MPI buffers for communication of spikes resize on the fly",
         default=True,
     )
     adaptive_target_buffers = KernelAttribute(
         "bool",
-        """Whether MPI buffers for communication of connections resize on the fly""",
+        "Whether MPI buffers for communication of connections resize on the fly",
         default=True,
     )
     buffer_size_secondary_events = KernelAttribute(
         "int",
-        """Size of MPI buffers for communicating secondary events (in bytes, per
-        MPI rank, for developers)""",
+        (
+            "Size of MPI buffers for communicating secondary events "
+            + "(in bytes, per MPI rank, for developers)"
+        ),
         readonly=True,
     )
     buffer_size_spike_data = KernelAttribute(
-        "int", """Total size of MPI buffer for communication of spikes""", default=2
+        "int",
+        "Total size of MPI buffer for communication of spikes",
+        default=2,
     )
     buffer_size_target_data = KernelAttribute(
         "int",
-        """Total size of MPI buffer for communication of connections""",
+        "Total size of MPI buffer for communication of connections",
         default=2,
     )
     growth_factor_buffer_spike_data = KernelAttribute(
         "float",
-        """If MPI buffers for communication of spikes resize on the fly, grow
-        them by this factor each round""",
+        (
+            "If MPI buffers for communication of spikes resize on the fly, "
+            + "grow them by this factor each round"
+        ),
         default=1.5,
     )
     growth_factor_buffer_target_data = KernelAttribute(
         "float",
-        """If MPI buffers for communication of connections resize on the fly, grow
-        them by this factor each round""",
+        (
+            "If MPI buffers for communication of connections resize on the "
+            + "fly, grow them by this factor each round"
+        ),
         default=1.5,
     )
     max_buffer_size_spike_data = KernelAttribute(
         "int",
-        """Maximal size of MPI buffers for communication of spikes.""",
+        "Maximal size of MPI buffers for communication of spikes",
         default=8388608,
     )
     max_buffer_size_target_data = KernelAttribute(
         "int",
-        """Maximal size of MPI buffers for communication of connections""",
+        "Maximal size of MPI buffers for communication of connections",
         default=16777216,
     )
     use_wfr = KernelAttribute(
-        "bool", """Whether to use waveform relaxation method""", default=True
+        "bool", "Whether to use waveform relaxation method", default=True
     )
     wfr_comm_interval = KernelAttribute(
-        "float", """Desired waveform relaxation communication interval""", default=1.0
+        "float",
+        "Desired waveform relaxation communication interval",
+        default=1.0,
     )
     wfr_tol = KernelAttribute(
         "float",
-        """Convergence tolerance of waveform relaxation method""",
+        "Convergence tolerance of waveform relaxation method",
         default=0.0001,
     )
     wfr_max_iterations = KernelAttribute(
         "int",
-        """Maximal number of iterations used for waveform relaxation""",
+        "Maximal number of iterations used for waveform relaxation",
         default=15,
     )
     wfr_interpolation_order = KernelAttribute(
-        "int", """Interpolation order of polynomial used in wfr iterations""", default=3
+        "int",
+        "Interpolation order of polynomial used in wfr iterations",
+        default=3
     )
     max_num_syn_models = KernelAttribute(
-        "int", """Maximal number of synapse models supported""", readonly=True
+        "int", "Maximal number of synapse models supported", readonly=True
     )
     sort_connections_by_source = KernelAttribute(
         "bool",
-        """Whether to sort connections by their source; increases construction
-        time of presynaptic data structures, decreases simulation time if the
-        average number of outgoing connections per neuron is smaller than the
-        total number of threads""",
+        (
+            "Whether to sort connections by their source; increases"
+            + " construction time of presynaptic data structures, decreases"
+            + " simulation time if the average number of outgoing connections"
+            + " per neuron is smaller than the total number of threads"
+        ),
         default=True,
     )
     structural_plasticity_synapses = KernelAttribute(
         "dict",
-        """Defines all synapses which are plastic for the structural plasticity
-        algorithm. Each entry in the dictionary is composed of a synapse model,
-        the pre synaptic element and the postsynaptic element""",
+        (
+            "Defines all synapses which are plastic for the structural"
+            + " plasticity algorithm. Each entry in the dictionary is composed"
+            + " of a synapse model, the presynaptic element and the"
+            + " postsynaptic element"
+        ),
     )
     structural_plasticity_update_interval = KernelAttribute(
         "int",
-        """Defines the time interval in ms at which the structural plasticity
-        manager will make changes in the structure of the network (creation
-        and deletion of plastic synapses)""",
+        (
+            "Defines the time interval in ms at which the structural plasticity"
+            + " manager will make changes in the structure of the network ("
+            + " creation and deletion of plastic synapses)"
+        ),
         default=10000.0,
     )
     use_compressed_spikes = KernelAttribute(
         "bool",
-        """Whether to use spike compression; if a neuron has targets on
-        multiple threads of a process, this switch makes sure that only
-        a single packet is sent to the process instead of one packet per
-        target thread; requires sort_connections_by_source = true""",
+        (
+            "Whether to use spike compression; if a neuron has targets on"
+            + " multiple threads of a process, this switch makes sure that only"
+            + " a single packet is sent to the process instead of one packet"
+            + " per target thread; requires"
+            + " ``nest.sort_connections_by_source = True``"
+        ),
         default=True,
     )
     data_path = KernelAttribute(
         "str",
-        """A path, where all data is written to (default is the current
-        directory)""",
+        "A path, where all data is written to, defaults to current directory",
     )
-    data_prefix = KernelAttribute("str", """A common prefix for all data files""")
+    data_prefix = KernelAttribute("str", "A common prefix for all data files")
     overwrite_files = KernelAttribute(
-        "bool", """Whether to overwrite existing data files""", default=False
+        "bool", "Whether to overwrite existing data files", default=False
     )
     print_time = KernelAttribute(
         "bool",
-        """Whether to print progress information during the simulation""",
+        "Whether to print progress information during the simulation",
         default=False,
     )
     network_size = KernelAttribute(
-        "int", """The number of nodes in the network""", readonly=True
+        "int", "The number of nodes in the network", readonly=True
     )
     num_connections = KernelAttribute(
         "int",
-        """The number of connections in the network""",
+        "The number of connections in the network",
         readonly=True,
         localonly=True,
     )
     local_spike_counter = KernelAttribute(
         "int",
-        """Number of spikes fired by neurons on a given MPI rank during the most
-        recent call to :py:func:`.Simulate`. Only spikes from "normal" neurons
-        are counted, not spikes generated by devices such as ``poisson_generator``.""",
+        (
+            "Number of spikes fired by neurons on a given MPI rank during the"
+            + " most recent call to :py:func:`.Simulate`. Only spikes from"
+            + " \"normal\" neurons are counted, not spikes generated by devices"
+            + " such as ``poisson_generator``"
+        ),
         readonly=True,
     )
     recording_backends = KernelAttribute(
-        "list of str",
-        """List of available backends for recording devices:
-        "memory", "ascii", "screen" """,
+        "dict[str, dict]",
+        (
+            "Dict of backends for recording devices. Each recording backend can"
+            + " have a set of global parameters that can be modified through"
+            + " this attribute by passing a dictionary with the name of the"
+            + " recording backend as key and a dictionary with the global"
+            + " parameters to be overwritten as value.\n\n"
+            + "Example\n"
+            + "~~~~~~~\n\n"
+            + "Please note that NEST must be compiled with SionLIB for the"
+            + " ``sionlib`` backend to be available.\n\n"
+            + ".. code-block:: python\n\n"
+            + "  nest.recording_backends = dict(sionlib=dict(buffer_size=1024))"
+            + "\n\n"
+            + ".. seealso:: The valid global parameters are listed in the"
+            + " documentation of each recording backend"
+        ),
     )
     dict_miss_is_error = KernelAttribute(
         "bool",
-        """Whether missed dictionary entries are treated as errors""",
+        "Whether missed dictionary entries are treated as errors",
         default=True,
     )
     keep_source_table = KernelAttribute(
         "bool",
-        """Whether to keep source table after connection setup is complete""",
+        "Whether to keep source table after connection setup is complete",
         default=True,
     )
     min_update_time = KernelAttribute(
-        "double",
-        """Shortest wall-clock time measured so far for a full update step [seconds].""",
+        "float",
+        "Shortest wall-clock time measured so far for a full update step [seconds]",
         readonly=True,
     )
     max_update_time = KernelAttribute(
-        "double",
-        """Longest wall-clock time measured so far for a full update step [seconds].""",
+        "float",
+        "Longest wall-clock time measured so far for a full update step [seconds]",
         readonly=True,
     )
     update_time_limit = KernelAttribute(
-        "double",
-        """Maximum wall-clock time for one full update step in seconds, .
-        This can be used to terminate simulations that slow down significantly.
-        Simulations may still get stuck if the slowdown occurs within a single update
-        step.""",
+        "float",
+        (
+            "Maximum wall-clock time for one full update step [seconds]."
+            + " This can be used to terminate simulations that slow down"
+            + " significantly. Simulations may still get stuck if the slowdown"
+            + " occurs within a single update step"
+        ),
         default=float("+inf"),
     )
 

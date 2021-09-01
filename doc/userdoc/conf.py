@@ -79,6 +79,13 @@ import pynestkernel_mock  # noqa
 sys.modules["nest.pynestkernel"] = pynestkernel_mock
 sys.modules["nest.kernel"] = pynestkernel_mock
 
+# For the doc build, explicitly import `nest` here so that it isn't
+# `MagicMock`ed later on and expose `nest.NestModule` as `sphinx` does not seem
+# to autodoc properties the way the `autoclass` directive would. We can then
+# autoclass `nest.NestModule` to generate the documentation of the properties
+import nest  # noqa
+nest.NestModule = type(nest)
+
 # -- General configuration ------------------------------------------------
 extensions = [
     'sphinx_gallery.gen_gallery',

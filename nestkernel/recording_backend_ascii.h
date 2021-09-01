@@ -74,7 +74,7 @@ call to ``Prepare`` will fail with a ``FileExists`` error. To overwrite
 the old file, the kernel property ``overwrite_files`` can be set to
 ``True`` using the corresponding kernel attribute. An alternative way
 for avoiding name clashes is to set the kernel attributes
-``data_path`` or ``data_prefix``, so that another filename is chosen.
+``data_path`` or ``data_prefix``, to write to a different file.
 
 Data format
 +++++++++++

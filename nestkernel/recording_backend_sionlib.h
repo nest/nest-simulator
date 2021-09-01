@@ -75,10 +75,9 @@ produced during successive calls to ``Run`` in between a pair of
 set. When creating a new recording, if the filename already exists,
 the ``Prepare`` call will fail with a corresponding error message. To
 instead overwrite the old file set, the kernel property
-``overwrite_files`` can be set to ``True`` using the coresponding kernel
+``overwrite_files`` can be set to ``True`` using the corresponding kernel
 attribute. An alternative way for avoiding name clashes is to set the
-kernel attributes ``data_path`` or ``data_prefix``, so that another
-full filename is composed.
+kernel attributes ``data_path`` or ``data_prefix``, to write to a different file.
 
 Data format
 +++++++++++

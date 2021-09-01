@@ -88,6 +88,7 @@ class NestModule(types.ModuleType):
     A module class for the `nest` root module to control the dynamic generation
     of module level attributes such as the KernelAttributes and lazy loading
     some submodules.
+
     """
     from . import ll_api                             # noqa
     from .ll_api import set_communicator             # noqa
@@ -406,7 +407,8 @@ class NestModule(types.ModuleType):
         return list(set(vars(self).keys()) | set(self.__all__))
 
 
-# Instantiate a NestModule
+# Instantiate a NestModule to replace the nest Python module. Based on
+# https://mail.python.org/pipermail/python-ideas/2012-May/014969.html
 _module = NestModule(__name__)
 # We manipulate the nest module instance through its `__dict__` (= vars())
 _module_dict = vars(_module)

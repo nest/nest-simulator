@@ -164,7 +164,7 @@ if test "${PYTHON}"; then
 fi
 if test "${HAVE_MPI}" = "true"; then
     echo "  Running MPI tests .. yes"
-    echo "  Mpirun executable .. $MPIRUN"
+    echo "  MPI launcher ....... $MPIRUN"
 else
     echo "  Running MPI tests .. no (compiled without MPI support)"
 fi
@@ -473,7 +473,7 @@ if test "${PYTHON}"; then
   
     # Run tests in the mpi subdirectories, grouped by number of processes
     if test "${HAVE_MPI}" = "true" -a "${MPIRUN}" ; then
-       for numproc in 2 4 ; do
+       for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
            XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
            "${MPIRUN}" -np ${numproc} --oversubscribe "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" \
                  "${PYNEST_TEST_DIR}/mpi/${numproc}"  2>&1 | tee -a "${TEST_LOGFILE}"

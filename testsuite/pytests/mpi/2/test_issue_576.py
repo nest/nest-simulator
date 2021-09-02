@@ -38,7 +38,7 @@ def test_simulation_completes():
 
     nest.ResetKernel()
     nest.resolution = 0.1
-    
+
     nest.EnableStructuralPlasticity()
     nest.structural_plasticity_update_interval = 1000.0
 

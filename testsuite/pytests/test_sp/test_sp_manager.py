@@ -56,7 +56,8 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
-                nest.set(min_delay = 0.1, 'max_delay': 1.0)
+                # For co-dependent properties, we use `set()` instead of kernel attributes
+                nest.set(min_delay=0.1, max_delay=1.0)
                 nest.structural_plasticity_synapses = {'syn1': syn_dict}
                 kernel_status = nest.structural_plasticity_synapses
                 self.assertIn('syn1', kernel_status)

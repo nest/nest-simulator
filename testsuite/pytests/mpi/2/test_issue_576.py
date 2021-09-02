@@ -21,13 +21,12 @@
 
 
 import nest
-import sys
 import unittest
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_GSL = nest.ll_api.sli_func('statusdict/have_gsl ::')
 
 
-@unittest.skipIf(nest.NumProcesses() < 2, "Requires >= 2 MPI process")
+@unittest.skipIf(nest.NumProcesses() < 2, 'Requires >= 2 MPI process')
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 def test_simulation_completes():
     """
@@ -50,7 +49,7 @@ def test_simulation_completes():
     })
 
     growth_curve = {
-        'growth_curve': "gaussian",
+        'growth_curve': 'gaussian',
         'growth_rate': 0.0001,  # Beta (elements/ms)
         'continuous': False,
         'eta': 0.1,
@@ -69,7 +68,7 @@ def test_simulation_completes():
                   'tau_syn_ex': 5., 'tau_syn_in': 10.,
                   'I_e': 220.}
 
-    nest.SetDefaults("iaf_cond_exp", neuronDict)
+    nest.SetDefaults('iaf_cond_exp', neuronDict)
     neuronsE = nest.Create('iaf_cond_exp', 1, {
         'synaptic_elements': structural_p_elements_E})
 

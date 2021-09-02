@@ -48,9 +48,9 @@ def gather_spikes(spikes, comm):
     # start with a zero and skip the last entry in cumsum
     offsets[1:] = cummulative_sum_spikes[:-1]
 
-    # Create buffers for sending and receiving
-    # Total nr spikes received is the last entry in cumsum
-    # Allgatherv only available as raw byte buffers
+    # Create buffers for send and receive.
+    # Total number of spikes received is the last entry in cumsum.
+    # 'Allgatherv' only supports raw byte buffers.
     receive_spikes = np.ones(cummulative_sum_spikes[-1], dtype='byte')
     send_buffer = spikes.view(dtype=np.byte)  # send as a byte view in spikes
     receive_buffer = [receive_spikes, receive_count_array, offsets, MPI.BYTE]
@@ -91,7 +91,7 @@ class comm_information():
         local_ranks.sort()
 
         # Small helper function to look for first non consecutive entry.
-        # Ranks can interleaved, the first non consecutive would be nest
+        # Ranks can interleaved, the first non consecutive would be NEST.
 
         def first_missing(np_array):
             for idx in range(np_array.size-1):
@@ -118,7 +118,8 @@ class comm_information():
 #####################################################################
 # MPI configuration
 comm_info = comm_information(True)
-# Only print one the root arbor rank
+
+# Only once in the Arbor root rank
 if comm_info.local_rank != comm_info.arbor_root:
     print_debug = False
 
@@ -128,8 +129,8 @@ min_delay = 10
 duration = 100
 
 ########################################################################
-# handshake #1: communicate the number of cells between arbor and nest
-# send nr of arbor cells
+# Handshake #1: communicate the number of cells between Arbor and NEST
+# Send the number of Arbor cells.
 output = np.array([num_arbor_cells], dtype=np.int32)
 comm_info.world.Bcast(output, comm_info.arbor_root)
 
@@ -145,13 +146,13 @@ print("num_arbor_cells: " + str(num_arbor_cells) + " " +
       "num_total_cells: " + str(num_total_cells))
 
 ########################################################################
-# hand shake #2: min delay
-# first send the arbor delays
+# Handshake #2: min delay
+# Send the Arbor delays first.
 arb_com_time = min_delay / 2.0
 output = np.array([arb_com_time], dtype=np.float32)
 comm_info.world.Bcast(output, comm_info.arbor_root)
 
-# receive the nest delays
+# Receive the NEST delays.
 output = np.array([0], dtype=np.float32)
 comm_info.world.Bcast(output, comm_info.nest_root)
 nest_com_time = output[0]
@@ -179,13 +180,11 @@ print("delta: " + str(delta) + ", " +
       "steps: " + str(steps) + ", ")
 
 #######################################################
-# main simulated simulation loop inclusive nr of steps.
+# Main loop receiving spikes in Arbor from NEST.
 received_spikes = []
 for step in range(steps+1):
     print("step: " + str(step) + ": " + str(step * delta))
 
-    # We are sending no spikes from arbor to nest.
-    # Create a array with size zero with correct type
     output = np.zeros(0, dtype='uint32, uint32, float32')
     received_spikes += [[node, t] for node, _, t in gather_spikes(output, comm_info.world)]
 

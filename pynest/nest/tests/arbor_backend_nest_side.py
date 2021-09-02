@@ -46,8 +46,8 @@ nest.SetKernelStatus({'recording_backends': {'arbor': {}}})
 print("Building network")
 pg = nest.Create('poisson_generator', params={'rate': 10.0})
 
-# We cannot directly record from poisson_generator due to implementation
-# details. Create a parrot and connect the recorder to that
+# Due to implementation details it is not possible to directly record from a 'poisson_generator'.
+# Therefore,  parrot neurons are created and used as relays.
 parrots = nest.Create('parrot_neuron', 100)
 nest.Connect(pg, parrots)
 

@@ -35,6 +35,8 @@
 (unittest) run
 /unittest using
 
+is_threaded not { /skipped_no_openmp exit_test_gracefully } if
+
 /random_params [ 
   << /exponential << >> >>
   << /normal << >> >>

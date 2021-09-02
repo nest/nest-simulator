@@ -1,6 +1,91 @@
 Install NEST
 ============
 
+Who are you?
+
+I'm a Linux or mac user who wants to run simulation scripts for NEST on my computer.
+
+::
+
+    pip3 install nest
+
+See sample code
+
+- Jochen - sample with links
+
+Add models
+
+- NESTML
+
+Extend NEST
+
+- NEST extension module
+
+Perform analyses
+
+- Elephant
+
+Run benchmarks
+
+- benchmark docs
+
+.. note::
+
+   For Windows see neurofedora live media | future WSL
+
+.. note::
+
+   Exceptional cases that need other steps?
+
+
+----
+
+I'm a lecturer who wants to set up a temporary NEST environment for a classroom or workshop to demonstrate neuroscientifc concepts
+
+For a centralized installation workflow where NEST is made available through a port? Participants do no need to install
+NEST themselves, but need access NEST Server or .... (requirement mac or Linux - does MS work?)
+
+- Docker installation
+
+- NEST Server?
+
+- Check out  graphical user interface NEST-Desktop, to help visualize and illustrate complex network simulations.
+
+
+For situations where particpants will need to install NEST, we recommend the compneurolab live media (all operating systems)
+
+----
+
+I'm an administrator of a lab or cluster that requires a semi-permanent or permanent installation of NEST for researchers and students.
+I am responsible for deploying NEST on a machine
+
+- For small clusters (what is small?) see docker installation / spack
+
+- For supercomputers and HPC sytstems, please contact us (see also some notes on set up from older versions of HPC systems)
+
+
+
+----
+
+I am a developer and wants to contribute to the code or documentation of NEST
+
+- compile from source
+
+- developer workflows / tools
+
+- Run benchmarks
+
+
+
+* User installation :ref:`std_install`
+
+* Deployer - (for classrooms) :ref:`container_install`
+
+* Developer installation :ref:`adv_install`
+
+
+.. _std_install:
+
 Standard installation
 ---------------------
 
@@ -27,6 +112,8 @@ with openmpi:
 
    macOS may need special installation instructions. see here
    for windows, there is native biuld, use docker or virtual machine
+
+.. _container_install:
 
 Docker and live media installation
 ----------------------------------
@@ -61,6 +148,8 @@ NEST natively on Windows,
 
 
 ----
+
+.. _adv_install:
 
 Advanced installation
 ---------------------

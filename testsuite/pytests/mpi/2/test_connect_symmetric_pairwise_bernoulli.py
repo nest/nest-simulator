@@ -1,0 +1,1 @@
+../../test_connect_symmetric_pairwise_bernoulli.py

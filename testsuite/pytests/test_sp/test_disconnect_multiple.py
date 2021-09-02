@@ -62,11 +62,8 @@ class TestDisconnect(unittest.TestCase):
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
-                nest.SetKernelStatus({
-                    'min_delay': 0.1,
-                    'max_delay': 1.0,
-                    'structural_plasticity_synapses': {'syn1': syn_dict}
-                })
+                nest.set(min_delay = 0.1, max_delay = 1.0)
+                nest.structural_plasticity_synapses = {'syn1': syn_dict}
                 neurons = nest.Create('iaf_psc_alpha', 10, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -117,11 +114,8 @@ class TestDisconnect(unittest.TestCase):
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
-                nest.SetKernelStatus({
-                    'min_delay': 0.1,
-                    'max_delay': 1.0,
-                    'structural_plasticity_synapses': {'syn1': syn_dict}
-                })
+                nest.set(min_delay = 0.1, max_delay = 1.0)
+                nest.structural_plasticity_synapses =  {'syn1': syn_dict}
                 neurons = nest.Create('iaf_psc_alpha', 10, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},

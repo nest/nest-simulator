@@ -56,11 +56,8 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
-                nest.SetKernelStatus({
-                    'min_delay': 0.1,
-                    'max_delay': 1.0,
-                    'structural_plasticity_synapses': {'syn1': syn_dict}
-                })
+                nest.set(min_delay = 0.1, 'max_delay': 1.0)
+                nest.structural_plasticity_synapses = {'syn1': syn_dict}
                 kernel_status = nest.structural_plasticity_synapses
                 self.assertIn('syn1', kernel_status)
                 self.assertEqual(kernel_status['syn1'], extract_dict_a_from_b(

@@ -30,7 +30,6 @@ except ImportError:
     have_mpi4py = False
 
 have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
-
 test_with_mpi = have_mpi and have_mpi4py and nest.num_processes > 1
 
 
@@ -80,7 +79,6 @@ class TestDisconnectSingle(unittest.TestCase):
                 # Delete existent connection
                 conns = nest.GetConnections(neurons[0], neurons[2], syn_model)
                 if test_with_mpi:
-                    print("rim with mpi")
                     conns = self.comm.allgather(conns.get('source'))
                     conns = list(filter(None, conns))
                 assert len(conns) == 1
@@ -94,7 +92,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns = list(filter(None, conns))
                 assert len(conns) == 0
 
-                # Assert that one cannot delete a non existent connection
+                # Assert that one cannot delete a non-existing connection
                 conns1 = nest.GetConnections(
                     neurons[:1], neurons[1:2], syn_model)
                 if test_with_mpi:

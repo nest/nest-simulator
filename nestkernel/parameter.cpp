@@ -102,8 +102,8 @@ NormalParameter::NormalParameter( const DictionaryDatum& d )
 double
 NormalParameter::value( RngPtr rng, Node* node )
 {
-  const auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
-  const auto tid = kernel().vp_manager.vp_to_thread( vp );
+  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
+                        : kernel().vp_manager.get_thread_id();
   return normal_dists_[ tid ]( rng );
 }
 
@@ -128,8 +128,8 @@ LognormalParameter::LognormalParameter( const DictionaryDatum& d )
 double
 LognormalParameter::value( RngPtr rng, Node* node )
 {
-  const auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
-  const auto tid = kernel().vp_manager.vp_to_thread( vp );
+  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
+                        : kernel().vp_manager.get_thread_id();
   return lognormal_dists_[ tid ]( rng );
 }
 

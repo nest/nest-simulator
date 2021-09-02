@@ -102,11 +102,8 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns1 = list(filter(None, conns1))
                 assert len(conns1) == 0
 
-                try:
+                with self.assertRaises(nest.NESTErrors.NESTError):
                     nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
-                    assert False
-                except nest.kernel.NESTError:
-                    print("Synapse deletion ok: " + syn_model)
 
 
 def suite():

@@ -26,7 +26,7 @@ import unittest
 import nest
 
 HAVE_OPENMP = nest.ll_api.sli_func('is_threaded')
-HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
+HAVE_MPI = nest.ll_api.sli_func('statusdict/have_mpi ::')
 
 
 class TestParamThreadInvariance(unittest.TestCase):

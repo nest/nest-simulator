@@ -1142,6 +1142,22 @@ private:
 
 #endif
 
+#ifdef HAVE_MPI
+class MPIPortsFileUnknown : public KernelException
+{
+public:
+  explicit MPIPortsFileUnknown( const index node_id )
+    : node_id_( node_id )
+  {
+  }
+
+  std::string message() const;
+
+private:
+  const index node_id_;
+};
+#endif
+
 class UnmatchedSteps : public KernelException
 {
 public:

@@ -9,7 +9,8 @@ Please familiarize yourself with our:
 
 * :doc:`NEST Git workflow <development_workflow>`
 * :doc:`C++ coding style guidelines <coding_guidelines_cpp>`
-* :doc:`Developing NEST with IDEs <nest_with_ides>`
+* :doc:`Documentation style guide <styleguide/styleguide>`
+* :doc:`Developing NEST with IDEs guide <nest_with_ides>`
 
 In order to make sure that the NEST Initiative can manage the NEST code base in the long term,
 you need to send us a completed and signed
@@ -24,15 +25,17 @@ If you find an error in the code or documentaton or want to suggest a feature, s
 
 Make sure to check that your issue has not already been reported there before creating a new one.
 
+.. _edit_nest:
+
 Change code or documentation
 ----------------------------
 
 Interested in creating or editing documentation? Check out our :doc:`../documentation_workflow/index`.
 
-For making changes to the PyNEST APIs, please see our :doc:`templates_styleguides/pyapi_template`.
+For making changes to the PyNEST APIs, please see our :doc:`templates/pyapi_template`.
 
 If you are a Vim user and require support for SLI files, please refer to our
-:doc:`templates_styleguides/vim_support_sli`.
+:doc:`styleguides/vim_support_sli`.
 
 An explanation of our continuous integration pipeline can be found under :doc:`ci`.
 
@@ -40,7 +43,7 @@ Contribute a Python example script
 ----------------------------------
 
 If you have a Python example network to contribute, please refer to our
-:doc:`templates_styleguides/example_template` to ensure you cover the required information.
+:doc:`templates/example_template` to ensure you cover the required information.
 
 .. _review_guidelines:
 

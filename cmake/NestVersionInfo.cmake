@@ -20,11 +20,11 @@
 # Determine NEST version based on git branch
 #
 # This module defines
-#  NEST_VERSION_BRANCH, the current git branch
-#  NEST_VERSION_SUFFIX, set using -Dwith-version-suffix=<suffix>.
-#  NEST_VERSION, the numeric version number plus the suffix
-#  NEST_VERSION_GITHASH, the current git revision hash (empty for tarballs)
-#  NEST_VERSION_STRING, the full NEST version string
+#  NEST_VERSION_BRANCH, the current git branch (nest-3.0)
+#  NEST_VERSION_SUFFIX, set using -Dwith-version-suffix=<suffix>. ("-pre")
+#  NEST_VERSION, the numeric version number plus the suffix  ("3.0-pre")
+#  NEST_VERSION_GITHASH, the current git revision hash (empty for tarballs) ("dd47c39ce")
+#  NEST_VERSION_STRING, the full NEST version string ("nest-3.0-pre@dd47c39ce")
 #
 # In release branches, the string "UNKNOWN" below has to be replaced
 # with the proper version (e.g. "nest-2.20") in order to get the
@@ -71,6 +71,5 @@ macro(get_version_info)
     set(NEST_VERSION_STRING "${NEST_VERSION_BRANCH}${versionsuffix}${githash}")
     unset(branchname)
     unset(versionsuffix)
-    unset(githash)
 
 endmacro()

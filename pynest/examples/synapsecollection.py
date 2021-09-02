@@ -100,9 +100,7 @@ nest.ResetKernel()
 
 pre = nest.Create('iaf_psc_alpha', 10)
 post = nest.Create('iaf_psc_delta', 5)
-nest.Connect(pre, post,
-             syn_spec={'weight':
-                       {'distribution': 'uniform', 'low': 0.5, 'high': 4.5}})
+nest.Connect(pre, post, syn_spec={'weight': nest.random.uniform(min=0.5, max=4.5)})
 
 # Get a SynapseCollection with all connections
 conns = nest.GetConnections()
@@ -123,8 +121,7 @@ nest.ResetKernel()
 nrns = nest.Create('iaf_psc_alpha', 15)
 nest.Connect(nrns[:5], nrns[:5],
              'one_to_one',
-             {'synapse_model': 'stdp_synapse',
-              'weight': {'distribution': 'normal', 'mu': 5.0, 'sigma': 2.0}})
+             {'synapse_model': 'stdp_synapse', 'weight': nest.random.normal(mean=5.0, std=2.0)})
 nest.Connect(nrns[:10], nrns[5:12],
              {'rule': 'pairwise_bernoulli', 'p': 0.4},
              {'weight': 4.0})
@@ -133,8 +130,7 @@ nest.Connect(nrns[5:10], nrns[:5],
              {'weight': 3.0})
 nest.Connect(nrns[10:], nrns[:12],
              'all_to_all',
-             {'synapse_model': 'stdp_synapse',
-              'weight': {'distribution': 'uniform', 'low': 1., 'high': 5.}})
+             {'synapse_model': 'stdp_synapse', 'weight': nest.random.uniform(min=1., max=5.)})
 nest.Connect(nrns, nrns[12:],
              {'rule': 'fixed_indegree', 'indegree': 3})
 

@@ -24,7 +24,7 @@
 from distutils.core import setup
 
 setup(name='ConnPlotter',
-      version='0.7a',
+      version='0.7a0',
       description=('ConnPlotter is a tool to create ' +
                    'connectivity pattern tables'),
       author='Hans Ekkehard Plesser (Idea: Eilen Nordlie)',

@@ -24,6 +24,7 @@ Functions for simulation control
 """
 
 from contextlib import contextmanager
+import warnings
 
 from ..ll_api import *
 from .hl_api_helper import *
@@ -197,7 +198,7 @@ def ResetKernel():
 
 @check_stack
 def SetKernelStatus(params):
-    """Set parameters for the simulation kernel.
+    r"""Set parameters for the simulation kernel.
 
     Parameters
     ----------
@@ -219,21 +220,21 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    resolution : float
+    resolution : float, default: 0.1
         The resolution of the simulation (in ms)
     time : float
         The current simulation time (in ms)
     to_do : int, read only
         The number of steps yet to be simulated
-    max_delay : float
+    max_delay : float, default: 0.1
         The maximum delay in the network
-    min_delay : float
+    min_delay : float, default: 0.1
         The minimum delay in the network
-    ms_per_tic : float
+    ms_per_tic : float, default: 0.001
         The number of milliseconds per tic
-    tics_per_ms : float
+    tics_per_ms : float, default: 1000.0
         The number of tics per millisecond
-    tics_per_step : int
+    tics_per_step : int, default: 100
         The number of tics per simulation time step
     T_max : float, read only
         The largest representable time value
@@ -248,9 +249,10 @@ def SetKernelStatus(params):
 
     rng_types : list, read only
         Names of random number generator types available.
-    rng_type : str
+        Types: "Philox_32", "Philox_64", "Threefry_32", "Threefry_64", "mt19937", "mt19937_64"
+    rng_type : str, default: mt19937_64
         Name of random number generator type used by NEST.
-    rng_seed : int
+    rng_seed : int, default: 143202461
         Seed value used as base for seeding NEST random number generators
         (:math:`1 \leq s \leq 2^{32}-1`).
 
@@ -260,13 +262,13 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    total_num_virtual_procs : int
+    total_num_virtual_procs : int, default: 1
         The total number of virtual processes
-    local_num_threads : int
+    local_num_threads : int, default: 1
         The local number of threads
     num_processes : int, read only
         The number of MPI processes
-    off_grid_spiking : bool
+    off_grid_spiking : bool, read only
         Whether to transmit precise spike times in MPI communication
 
 
@@ -275,26 +277,26 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    adaptive_spike_buffers  : bool
+    adaptive_spike_buffers  : bool, default: True
         Whether MPI buffers for communication of spikes resize on the fly
-    adaptive_target_buffers : bool
+    adaptive_target_buffers : bool, default: True
         Whether MPI buffers for communication of connections resize on the fly
     buffer_size_secondary_events : int, read only
         Size of MPI buffers for communicating secondary events (in bytes, per
         MPI rank, for developers)
-    buffer_size_spike_data : int
+    buffer_size_spike_data : int, default: 2
         Total size of MPI buffer for communication of spikes
-    buffer_size_target_data : int
+    buffer_size_target_data : int, default: 2
         Total size of MPI buffer for communication of connections
-    growth_factor_buffer_spike_data : float
+    growth_factor_buffer_spike_data : float, default: 1.5
         If MPI buffers for communication of spikes resize on the fly, grow
         them by this factor each round
-    growth_factor_buffer_target_data : float
+    growth_factor_buffer_target_data : float, default: 1.5
         If MPI buffers for communication of connections resize on the fly, grow
         them by this factor each round
-    max_buffer_size_spike_data : int
+    max_buffer_size_spike_data : int, default: 8388608
         Maximal size of MPI buffers for communication of spikes.
-    max_buffer_size_target_data : int
+    max_buffer_size_target_data : int, default: 16777216
         Maximal size of MPI buffers for communication of connections
 
 
@@ -303,15 +305,15 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    use_wfr : bool
+    use_wfr : bool, default: True
         Whether to use waveform relaxation method
-    wfr_comm_interval : float
+    wfr_comm_interval : float, default: 1.0
         Desired waveform relaxation communication interval
-    wfr_tol : float
+    wfr_tol : float, default: 0.0001
         Convergence tolerance of waveform relaxation method
-    wfr_max_iterations : int
+    wfr_max_iterations : int, default: 15
         Maximal number of iterations used for waveform relaxation
-    wfr_interpolation_order : int
+    wfr_interpolation_order : int, default: 3
         Interpolation order of polynomial used in wfr iterations
 
 
@@ -322,7 +324,7 @@ def SetKernelStatus(params):
 
     max_num_syn_models : int, read only
         Maximal number of synapse models supported
-    sort_connections_by_source : bool
+    sort_connections_by_source : bool, default: True
         Whether to sort connections by their source; increases construction
         time of presynaptic data structures, decreases simulation time if the
         average number of outgoing connections per neuron is smaller than the
@@ -331,11 +333,11 @@ def SetKernelStatus(params):
         Defines all synapses which are plastic for the structural plasticity
         algorithm. Each entry in the dictionary is composed of a synapse model,
         the pre synaptic element and the postsynaptic element
-    structural_plasticity_update_interval : int
+    structural_plasticity_update_interval : int, default: 10000.0
         Defines the time interval in ms at which the structural plasticity
         manager will make changes in the structure of the network (creation
         and deletion of plastic synapses)
-    use_compressed_spikes : bool
+    use_compressed_spikes : bool, default: True
         Whether to use spike compression; if a neuron has targets on
         multiple threads of a process, this switch makes sure that only
         a single packet is sent to the process instead of one packet per
@@ -344,7 +346,7 @@ def SetKernelStatus(params):
 
     **Output**
 
-    Returns
+    Parameters
     -------
 
     data_path : str
@@ -352,19 +354,21 @@ def SetKernelStatus(params):
         directory)
     data_prefix : str
         A common prefix for all data files
-    overwrite_files : bool
+    overwrite_files : bool, default: False
         Whether to overwrite existing data files
-    print_time : bool
+    print_time : bool, default: False
         Whether to print progress information during the simulation
     network_size : int, read only
         The number of nodes in the network
     num_connections : int, read only, local only
         The number of connections in the network
     local_spike_counter : int, read only
-        Number of spikes fired by neurons on a given MPI rank since NEST was
-        started or the last ResetKernel. Only spikes from "normal" neurons
-        (neuron models with proxies) are counted, not spikes generated by
-        devices such as poisson_generator.
+        Number of spikes fired by neurons on a given MPI rank during the most
+        recent call to :py:func:`.Simulate`. Only spikes from "normal" neurons
+        are counted, not spikes generated by devices such as ``poisson_generator``.
+    recording_backends : list of str
+        List of available backends for recording devices:
+        "memory", "ascii", "screen"
 
 
     **Miscellaneous**
@@ -372,10 +376,19 @@ def SetKernelStatus(params):
     Parameters
     ----------
 
-    dict_miss_is_error : bool
+    dict_miss_is_error : bool, default: True
         Whether missed dictionary entries are treated as errors
-    keep_source_table : bool
+    keep_source_table : bool, default: True
         Whether to keep source table after connection setup is complete
+    min_update_time: double, read only
+        Shortest wall-clock time measured so far for a full update step [seconds].
+    max_update_time: double, read only
+        Longest wall-clock time measured so far for a full update step [seconds].
+    update_time_limit: double
+        Maximum wall-clock time for one full update step in seconds, default +inf.
+        This can be used to terminate simulations that slow down significantly.
+        Simulations may still get stuck if the slowdown occurs within a single update
+        step.
 
     See Also
     --------
@@ -383,9 +396,45 @@ def SetKernelStatus(params):
     GetKernelStatus
 
     """
+    # Resolve if missing entries should raise errors
+    raise_errors = params.get('dict_miss_is_error')
+    if raise_errors is None:
+        raise_errors = GetKernelStatus('dict_miss_is_error')
+
+    # Check validity of passed parameters
+    keys = list(params.keys())
+    for key in keys:
+        readonly = _sks_params.get(key)
+        msg = None
+        if readonly is None:
+            # If the parameter is not in the docstring
+            msg = f'`{key}` is not a valid kernel parameter, ' + \
+                  'valid parameters are: ' + \
+                  ', '.join(f"'{p}'" for p in _sks_params.keys())
+        elif readonly:
+            # If the parameter is tagged as read only
+            msg = f'`{key}` is a read only parameter and cannot ' + \
+                  'be defined using SetKernelStatus'
+        # Raise error or warn the user
+        if msg is not None:
+            if raise_errors:
+                raise ValueError(msg)
+            else:
+                warnings.warn(msg + f' \n`{key}` has been ignored')
+                del params[key]
 
     sps(params)
     sr('SetKernelStatus')
+
+
+# Parse the `SetKernelStatus` docstring to obtain all valid and readonly params
+doc_lines = SetKernelStatus.__doc__.split('\n')
+# Get the lines describing parameters
+param_lines = (line.strip() for line in doc_lines if ' : ' in line)
+# Exclude the first parameter `params`.
+next(param_lines)
+_sks_params = {ln.split(" :")[0]: "read only" in ln for ln in param_lines}
+del doc_lines, param_lines
 
 
 @check_stack

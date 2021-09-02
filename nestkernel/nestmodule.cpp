@@ -48,6 +48,7 @@
 #include "nest_datums.h"
 #include "nest_types.h"
 #include "node.h"
+#include "parameter.h"
 #include "sp_manager_impl.h"
 #include "spatial.h"
 
@@ -223,27 +224,6 @@ NestModule::create_mask( const Token& t )
       // For grid layers only, it is also possible to provide an array of longs.
       try
       {
-
-        std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
-        AbstractMask* amask;
-
-        switch ( anchor.size() )
-        {
-        case 2:
-          amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
-          break;
-        case 3:
-          amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
-          break;
-        default:
-          throw BadProperty( "Anchor must be 2- or 3-dimensional." );
-        }
-
-        delete mask;
-        mask = amask;
-      }
-      catch ( TypeMismatch& e )
-      {
         std::vector< long > anchor = getValue< std::vector< long > >( anchor_token );
 
         switch ( anchor.size() )
@@ -271,6 +251,26 @@ NestModule::create_mask( const Token& t )
           }
           break;
         }
+      }
+      catch ( TypeMismatch& e )
+      {
+        std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
+        AbstractMask* amask;
+
+        switch ( anchor.size() )
+        {
+        case 2:
+          amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
+          break;
+        case 3:
+          amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
+          break;
+        default:
+          throw BadProperty( "Anchor must be 2- or 3-dimensional." );
+        }
+
+        delete mask;
+        mask = amask;
       }
     }
 

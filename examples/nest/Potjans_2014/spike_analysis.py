@@ -122,13 +122,13 @@ for layer in ['0', '1', '2', '3']:
             len(files)) + ' spike files from L' + layer + 'P' + population)
         if files:
             merged_file = open(output, 'w')
-            for f in files:
-                data = open(f, 'r')
+            for file in files:
+                data = open(file, 'r')
                 nest_version = next(data)
                 backend_version = next(data)
                 column_header = next(data)
-                for l in data:
-                    a = l.split()
+                for line in data:
+                    a = line.split()
                     a[0] = int(a[0])
                     a[1] = float(a[1])
                     raw_first_node_id = Raw_first_node_ids[int(layer)][int(population)]

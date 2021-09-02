@@ -29,7 +29,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "random_generators.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
@@ -39,7 +39,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-create spike trains as described by the MIP model
+Create spike trains as described by the MIP model
 
 Description
 +++++++++++
@@ -52,8 +52,6 @@ connected to receives a distinct child process as input, whose rate is p*r.
 The value of the pairwise correlation coefficient of two child processes
 created by a MIP process equals p.
 
-Remarks:
-
 The MIP generator may emit more than one spike through a child process
 during a single time step, especially at high rates.  If this happens,
 the generator does not actually send out n spikes.  Instead, it emits
@@ -63,15 +61,24 @@ have their own copy of a MIP generator. By using the same mother_seed
 it is ensured that the mother process is identical for each of the
 generators.
 
-Parameters
-++++++++++
+.. include:: ../models/stimulation_device.rst
 
-The following parameters appear in the element's status dictionary:
+rate
+    Mean firing rate of the parent process, spikes/s
 
-============  ======== ================================================
- rate         spikes/s Mean firing rate of the parent process
- p_copy       real     Copy probability
-============  ======== ================================================
+p_copy
+    Copy probability
+
+Set parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
+The indexing is as follows:
+
+ 0. rate
+ 1. p_copy
 
 Sends
 +++++
@@ -86,29 +93,22 @@ References
        15:67-101.
        DOI: https://doi.org/10.1162/089976603321043702
 
+See also
+++++++++
+
+poisson_generator
+
 EndUserDocs */
 
 /*! Class mip_generator generates spike trains as described
     in the MIP model.
 */
-class mip_generator : public DeviceNode
+class mip_generator : public StimulationDevice
 {
 
 public:
   mip_generator();
   mip_generator( const mip_generator& rhs );
-
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
-
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
 
   /**
    * Import sets of overloaded virtual functions.
@@ -117,22 +117,25 @@ public:
    */
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
+
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
-  void init_state_();
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   /**
    * @todo Should use binomial distribution
    */
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   // ------------------------------------------------------------
 
@@ -159,7 +162,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
   Parameters_ P_;
   Variables_ V_;
 };
@@ -167,7 +169,7 @@ private:
 inline port
 mip_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   if ( dummy_target )
   {
@@ -187,7 +189,7 @@ inline void
 mip_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  device_.get_status( d );
+  StimulationDevice::get_status( d );
 }
 
 inline void
@@ -199,10 +201,16 @@ mip_generator::set_status( const DictionaryDatum& d )
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+inline StimulationDevice::Type
+mip_generator::get_type() const
+{
+  return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace nest

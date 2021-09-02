@@ -195,7 +195,7 @@ nest::RecordingBackendArbor::prepare()
   //  MODEL SETUP
   DictionaryDatum dict_out( new Dictionary );
   kernel().get_status( dict_out );
-  const float nest_min_delay = ( *dict_out )[ "min_delay" ];
+  const double nest_min_delay = ( *dict_out )[ "min_delay" ];
   const int num_nest_cells = ( long ) ( *dict_out )[ "network_size" ]; // Gives size 0 if nest_kernel_reset is called
 
   // HAND SHAKE ARBOR-NEST
@@ -204,10 +204,10 @@ nest::RecordingBackendArbor::prepare()
   arb::shadow::broadcast( num_nest_cells, MPI_COMM_WORLD, arbor_->info.nest_root );
 
   // hand shake #2: communications step size synchronized
-  const float arb_comm_time = arb::shadow::broadcast( 0.f, MPI_COMM_WORLD, arbor_->info.arbor_root );
-  const float nest_comm_time = nest_min_delay;
+  const double arb_comm_time = arb::shadow::broadcast( 0.f, MPI_COMM_WORLD, arbor_->info.arbor_root );
+  const double nest_comm_time = nest_min_delay;
   arb::shadow::broadcast( nest_comm_time, MPI_COMM_WORLD, arbor_->info.nest_root );
-  const float min_delay = std::min( nest_comm_time, arb_comm_time );
+  const double min_delay = std::min( nest_comm_time, arb_comm_time );
 
   // hand shake #3: steps
   steps_left_ = arbor_steps_ =
@@ -251,7 +251,7 @@ nest::RecordingBackendArbor::write( const RecordingDevice& device,
   const unsigned sender_node_id = event.get_sender_node_id();
   const auto step_time = event.get_stamp().get_ms();
   const auto offset = event.get_offset();
-  const auto time = static_cast< float >( step_time - offset );
+  const auto time = static_cast< double >( step_time - offset );
 
   buffer.push_back( { { num_arbor_cells_ + sender_node_id, 0 }, time } );
 }

@@ -22,6 +22,7 @@
 # This script simulates an Arbor run with MPI spike exchange to external
 # NEST. It saves the received spikes to file for testing.
 # Based on arbor_proxy.py in arbor_cosim_example.
+
 from mpi4py import MPI
 import numpy as np
 import math

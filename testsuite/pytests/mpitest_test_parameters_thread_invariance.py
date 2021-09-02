@@ -19,6 +19,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+This script is run from test_parameters_thread_invariance.py,
+which checks that parameter values are invariant over different
+splits of MPI processes and threads. Usage:
+
+mpirun -n <num_procs> python mpitest_test_parameters_thread_invariance.py <parameter_name>
+"""
+
 import nest
 import sys
 

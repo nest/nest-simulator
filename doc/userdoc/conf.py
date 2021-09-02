@@ -148,6 +148,7 @@ numfig = True
 numfig_secnum_depth = (2)
 numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
                  'code-block': 'Code Block %s'}
+
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -293,6 +294,7 @@ def copy_acknowledgments_file(src):
 
 # -- Copy Acknowledgments file ----------------------------
 copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
+
 
 # -- Copy documentation for Microcircuit Model ----------------------------
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")

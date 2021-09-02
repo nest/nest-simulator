@@ -21,7 +21,7 @@ Access to kernel properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 With NEST 3.1 it is easier than ever to access properties of the NEST
-simulation kernel. In addition to the traditional access methods
+simulation kernel. Instead of using the traditional access methods
 :py:func:`.GetKernelStatus` and :py:func:`.SetKernelStatus`,
 properties can now also be set and retrieved via *direct kernel
 attributes*.

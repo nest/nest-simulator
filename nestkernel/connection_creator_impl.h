@@ -405,7 +405,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       // We will select `number_of_connections_` sources within the mask.
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
-      // function using the Vose class.
+      // function using a discrete_distribution.
       if ( kernel_.get() )
       {
 
@@ -429,9 +429,11 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           throw KernelException( msg.c_str() );
         }
 
-        // A Vose object draws random integers with a non-uniform
+        // A discrete_distribution draws random integers with a non-uniform
         // distribution.
-        Vose lottery( probabilities );
+        discrete_distribution lottery;
+        const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
+        lottery.param( param );
 
         // If multapses are not allowed, we must keep track of which
         // sources have been selected already.
@@ -440,7 +442,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // Draw `number_of_connections_` sources
         for ( int i = 0; i < ( int ) number_of_connections_; ++i )
         {
-          index random_id = lottery.get_random_id( rng );
+          index random_id = lottery( rng );
           if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
           {
             --i;
@@ -535,7 +537,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       // We will select `number_of_connections_` sources within the mask.
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
-      // function using the Vose class.
+      // function using a discrete_distribution.
       if ( kernel_.get() )
       {
 
@@ -551,9 +553,11 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source ) );
         }
 
-        // A Vose object draws random integers with a non-uniform
+        // A discrete_distribution draws random integers with a non-uniform
         // distribution.
-        Vose lottery( probabilities );
+        discrete_distribution lottery;
+        const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
+        lottery.param( param );
 
         // If multapses are not allowed, we must keep track of which
         // sources have been selected already.
@@ -562,7 +566,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // Draw `number_of_connections_` sources
         for ( int i = 0; i < ( int ) number_of_connections_; ++i )
         {
-          index random_id = lottery.get_random_id( rng );
+          index random_id = lottery( rng );
           if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
           {
             --i;
@@ -720,9 +724,11 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       throw KernelException( msg.c_str() );
     }
 
-    // Draw targets.  A Vose object draws random integers with a
+    // Draw targets.  A discrete_distribution draws random integers with a
     // non-uniform distribution.
-    Vose lottery( probabilities );
+    discrete_distribution lottery;
+    const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
+    lottery.param( param );
 
     // If multapses are not allowed, we must keep track of which
     // targets have been selected already.
@@ -731,7 +737,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     // Draw `number_of_connections_` targets
     for ( long i = 0; i < ( long ) number_of_connections_; ++i )
     {
-      index random_id = lottery.get_random_id( get_rank_synced_rng() );
+      index random_id = lottery( get_rank_synced_rng() );
       if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
       {
         --i;

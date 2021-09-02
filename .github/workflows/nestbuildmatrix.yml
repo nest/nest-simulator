@@ -166,9 +166,9 @@ jobs:
          if: ${{ matrix.xNEST_BUILD_TYPE == 'ARBOR_BACKEND' }}
          run: |
            echo "MPI with Arbor backend Build"
-           chmod +x extras/gha_build.sh
-           ./extras/gha_build.sh 2>&1 | tee gha_build.sh.log
-           python extras/parse_build_log.py gha_build.sh.log ${{ github.workspace }}
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
+           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: ARBOR_BACKEND
        - name: Full Build
@@ -180,4 +180,3 @@ jobs:
            python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: FULL
-           

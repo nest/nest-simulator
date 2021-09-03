@@ -146,7 +146,7 @@ following steps in order to add support for MPI:
   3. If 2. does not work, but you know the correct compiler wrapper
      for your installation, try adding the following to the invocation
      of ``cmake``::
-         -DMPI_CXX_COMPILER=myC++_CompilerWrapper
+         -DMPI_CXX_COMPILER=myC++_CompilerWrapper \
          -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON
 
 When running large-scale parallel simualations and recording from many
@@ -184,16 +184,6 @@ follwing switch for the invocation of ``cmake``. It expects either
 For details on how to use the Connection Generator Interface, see the
 :ref:`guide on connection management <conn_builder_conngen>`.
 
-Disabling the Python Bindings (PyNEST)
---------------------------------------
-
-To disable Python bindings use::
-
-    -Dwith-python=OFF
-
-as an argument to ``cmake``.
-
-Please see the :doc:`README <pynest_readme_link>` for details.
 
 Python Binding (PyNEST)
 -----------------------

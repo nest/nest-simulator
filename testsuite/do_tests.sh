@@ -464,25 +464,25 @@ echo "Phase 7: Running PyNEST tests"
 echo "-----------------------------"
 
 if test "${PYTHON}"; then
-    PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests/"
+    PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests"
     XUNIT_NAME="07_pynesttests"
     
     # Run all tests except those in the mpi and non_concurrent subdirectories
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-    "${PYTHON}" -m pytest --verbose --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
+    "${PYTHON}" -m pytest --verbose --timeout 30 --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
           --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/non_concurrent" \
           "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
 
     # Run tests that cannot run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_nc.xml"    
-    "${PYTHON}" -m pytest --verbose --junit-xml="${XUNIT_FILE}" \
+    "${PYTHON}" -m pytest --verbose --timeout 30 --junit-xml="${XUNIT_FILE}" \
           "${PYNEST_TEST_DIR}/non_concurrent" 2>&1 | tee -a "${TEST_LOGFILE}" 
   
     # Run tests in the mpi subdirectories, grouped by number of processes
     if test "${HAVE_MPI}" = "true" -a "${MPI_LAUNCHER}" ; then
        for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
            XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
-           PYTEST_ARGS="--verbose --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+           PYTEST_ARGS="--verbose --timeout 30 --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
            $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
        done 
     fi

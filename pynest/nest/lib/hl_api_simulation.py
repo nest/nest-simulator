@@ -200,7 +200,8 @@ def ResetKernel():
 def SetKernelStatus(params):
     """Set parameters for the simulation kernel.
 
-    See the :ref:`PyNEST API documentation <kernel-attributes>` for a valid list of params.
+    See the documentation of :ref:`sec:kernel_attributes` for a valid
+    list of params.
 
     Parameters
     ----------

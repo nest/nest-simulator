@@ -170,8 +170,8 @@ following
     nest.rng_type = 'mt19937'
     nest.rng_seed = 12234
 
-In the example, the generator is initialized with the defalt seed (or with a
-previously defined seed, if one was set). The second line re-sets the seed to
+In the example, the generator is initialized with the default seed (or with a
+previously defined seed, if one was set). The second line sets the seed to
 a new value.
 
 

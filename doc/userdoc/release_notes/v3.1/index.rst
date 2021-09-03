@@ -20,7 +20,7 @@ extensive :doc:`transition guide from NEST 2.x to 3.0
 Access to kernel properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-With NEST 3.1 it is easier than ever to access properties of the NEST
+NEST 3.1 provides a new interface to the properties of the NEST
 simulation kernel. Instead of using the traditional access methods
 :py:func:`.GetKernelStatus` and :py:func:`.SetKernelStatus`,
 properties can now also be set and retrieved via *direct kernel
@@ -56,7 +56,7 @@ Co-dependent properties that have to be set together (for instance
 .. admonition:: Deprecation info
 
       The use of the access functions :py:func:`.GetKernelStatus` and
-      :py:func:`.SetKernelStatus` is now deprecated and they will be
+      :py:func:`.SetKernelStatus` is now deprecated, and they will be
       removed in a future version of NEST. To avoid porting trouble
       later on, we suggest you switch to using the new shortcuts
-      already now.
+      now.

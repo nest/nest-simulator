@@ -112,7 +112,6 @@ set ( nestkernel_sources
       ntree.h ntree_impl.h
       position.h
       spatial.h spatial.cpp
-      vose.h vose.cpp
       stimulation_backend.h
       )
 

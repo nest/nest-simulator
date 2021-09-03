@@ -151,7 +151,7 @@ functions, see documentation.
     # ! Load pynest
     import nest
 
-    # ! Load NEST Topoplogy module (NEST 2.20.1)
+    # ! Load NEST Topoplogy module (NEST 2.20.2)
     import nest.topology as topo
 
     # ! Make sure we start with a clean slate, even if we re-run the script

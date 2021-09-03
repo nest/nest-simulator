@@ -1,3 +1,9 @@
+nest (2.20.2-0ubuntu1ppa1) unstable; urgency=low
+
+  * NEST v2.20.2
+
+ -- Jochen Martin Eppler <j.eppler@fz-juelich.de>  Fri, 03 Sep 2020 11:09:00 +0000
+
 nest (2.20.1-0ubuntu1ppa1) unstable; urgency=low
 
   * NEST v2.20.1

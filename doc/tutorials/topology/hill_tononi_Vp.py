@@ -156,7 +156,7 @@ import pylab
 # ! toolbox.  It is by no means complete.
 # ! Load pynest
 import nest
-# ! Load NEST Topoplogy module (NEST 2.20.1)
+# ! Load NEST Topoplogy module (NEST 2.20.2)
 import nest.topology as topo
 # ! Import math, we need Pi
 import math

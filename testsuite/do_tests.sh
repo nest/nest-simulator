@@ -98,18 +98,12 @@ if test ! "${REPORTDIR}"; then
 fi
 
 if test "${PYTHON}"; then
-    # find valid pytest command
-    for ptname in foo pytest pytest3 pytest-3 ; do
-        PYTEST="$(command -v ${ptname})"
-        if test $PYTEST ; then
-           break
-        fi
-    done
-
-    if test ! "${PYTEST}" ; then
-        echo "Error: PyNEST testing requested, but command 'pytest' cannot be executed."
+    PYTEST_VERSION="$(${PYTHON} -m pytest --version --numprocesses=auto 2>&1)" || {
+        echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
+        echo "       Testing also requires the 'pytest-xdist' extension."
         exit 1
-    fi
+    }
+    PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
 python3 -c "import junitparser" >/dev/null 2>&1
@@ -166,8 +160,7 @@ echo "  PREFIX ............. $PREFIX"
 if test "${PYTHON}"; then
     PYTHON_VERSION="$("${PYTHON}" --version | cut -d' ' -f2)"
     echo "  Python executable .. $PYTHON (version $PYTHON_VERSION)"
-    PYTEST_VERSION="$("${PYTEST}" --version 2>&1 | cut -d' ' -f2)"
-    echo "  Pytest executable .. $PYTEST (version $PYTEST_VERSION)"
+    echo "  Pytest version ..... $PYTEST_VERSION"
     echo "  PYTHONPATH ......... `print_paths ${PYTHONPATH:-}`"
 fi
 if test "${HAVE_MPI}" = "true"; then
@@ -476,7 +469,7 @@ if test "${PYTHON}"; then
     
     # Run all tests except those in the mpi subdirectory
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-    "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
+    "${PYTHON}" -m pytest --verbose --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
           --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
   
     # Run tests in the mpi subdirectories, grouped by number of processes
@@ -484,7 +477,7 @@ if test "${PYTHON}"; then
        for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
            XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
            PYTEST_ARGS="--verbose --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
-           $(sli -c "${numproc} (${PYTEST}) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
+           $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
        done 
     fi
 else

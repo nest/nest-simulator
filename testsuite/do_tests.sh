@@ -128,6 +128,8 @@ TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"
 TEST_RUNFILE="${REPORTDIR}/runtest.sh"
 
+TIME_LIMIT=120  # seconds, for Python tests
+
 NEST="nest_serial"
 
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
@@ -160,8 +162,9 @@ echo "  PREFIX ............. $PREFIX"
 if test "${PYTHON}"; then
     PYTHON_VERSION="$("${PYTHON}" --version | cut -d' ' -f2)"
     echo "  Python executable .. $PYTHON (version $PYTHON_VERSION)"
-    echo "  Pytest version ..... $PYTEST_VERSION"
     echo "  PYTHONPATH ......... `print_paths ${PYTHONPATH:-}`"
+    echo "  Pytest version ..... $PYTEST_VERSION"
+    echo "         timeout ..... $TIME_LIMIT s"
 fi
 if test "${HAVE_MPI}" = "true"; then
     echo "  Running MPI tests .. yes"
@@ -469,20 +472,20 @@ if test "${PYTHON}"; then
     
     # Run all tests except those in the mpi and non_concurrent subdirectories
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-    "${PYTHON}" -m pytest --verbose --timeout 30 --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
+    "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
           --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/non_concurrent" \
           "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
 
     # Run tests that cannot run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_nc.xml"    
-    "${PYTHON}" -m pytest --verbose --timeout 30 --junit-xml="${XUNIT_FILE}" \
+    "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" \
           "${PYNEST_TEST_DIR}/non_concurrent" 2>&1 | tee -a "${TEST_LOGFILE}" 
   
     # Run tests in the mpi subdirectories, grouped by number of processes
     if test "${HAVE_MPI}" = "true" -a "${MPI_LAUNCHER}" ; then
        for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
            XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
-           PYTEST_ARGS="--verbose --timeout 30 --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+           PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
            $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
        done 
     fi

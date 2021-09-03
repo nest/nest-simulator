@@ -292,6 +292,7 @@ class KernelAttribute:
             + f"\n\n:type: {typehint}"
         )
 
+
     def __set_name__(self, cls, name):
         self._name = name
         self._full_status = name == "kernel_status"

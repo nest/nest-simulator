@@ -98,11 +98,18 @@ if test ! "${REPORTDIR}"; then
 fi
 
 if test "${PYTHON}"; then
-    command -v pytest >/dev/null 2>&1 || {
+    # find valid pytest command
+    for ptname in foo pytest pytest3 pytest-3 ; do
+        PYTEST="$(command -v ${ptname})"
+        if test $PYTEST ; then
+           break
+        fi
+    done
+
+    if test ! "${PYTEST}" ; then
         echo "Error: PyNEST testing requested, but command 'pytest' cannot be executed."
         exit 1
-    }
-    PYTEST="$(command -v pytest)"
+    fi
 fi
 
 python3 -c "import junitparser" >/dev/null 2>&1

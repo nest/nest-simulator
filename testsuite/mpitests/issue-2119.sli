@@ -23,10 +23,10 @@
 
 /** @BeginDocumentation
     Name: testsuite::issue-2119 - Test thread-specific spatial random parameters
-    Synopsis: (issue-2119) run -> - 
+    Synopsis: (issue-2119) run -> -
 
     Description:
-    issue-2119.sli checks that randomized parameters depending on the thread of 
+    issue-2119.sli checks that randomized parameters depending on the thread of
     the randomized node perform correctly under MPI and OpenMP.
     
     Author: Håkon Mørk / Hans Ekkehard Plesser
@@ -37,13 +37,13 @@
 
 skip_if_not_threaded
 
-/random_params [ 
+/random_params [
   << /exponential << >> >>
   << /normal << >> >>
   << /lognormal << >> >>
   << /uniform << >> >>
-  << /uniform_int << /max 10 >> >> 
-] def   
+  << /uniform_int << /max 10 >> >>
+] def
 
 
 [1 2 4]

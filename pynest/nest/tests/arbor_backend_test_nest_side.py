@@ -22,6 +22,8 @@
 # This script runs NEST and transmits spikes via the Arbor backend.
 # Spikes are also stored to file for testing.
 # It requires NESTIO + ARBOR-NESTIO.
+# This file is run by test_arbor_backend.py together with
+# arbor_backend_test_arbor_side.py.
 
 from sys import argv
 argv.append('--quiet')

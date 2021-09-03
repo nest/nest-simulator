@@ -19,6 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+# This file runs arbor_backend_test_nest_side.py and arbor_backend_test_arbor_side.py
+# to test communication between NEST and Arbor.
+
 import unittest
 import nest
 import os

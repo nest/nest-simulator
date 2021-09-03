@@ -276,18 +276,21 @@ class KernelAttribute:
     """
     Descriptor that dispatches attribute access to the nest kernel.
     """
-    def __init__(self, typehint, doc, readonly=False, default=None, localonly=False):
+    def __init__(self, typehint, description, readonly=False, default=None, localonly=False):
         self._readonly = readonly
         self._localonly = localonly
         self._default = default
+
+        readonly = readonly and "**read only**"
+        localonly = localonly and "**local only**"
 
         self.__doc__ = "".join((
             description,
             "." if default is None else f", defaults to ``{default}``.",
             "\n\n" if readonly or localonly else "",
-            ", ".join(c for c in (readonly and "**read only**",
-                                          localonly and "**local only**") if c),
-            f"\n\n:type: {typehint}"))
+            ", ".join(c for c in (readonly, localonly) if c),
+            f"\n\n:type: {typehint}"
+        ))
 
     def __set_name__(self, cls, name):
         self._name = name

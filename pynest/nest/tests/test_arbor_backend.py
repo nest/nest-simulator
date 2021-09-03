@@ -78,13 +78,3 @@ class TestArborBackend(unittest.TestCase):
         arbor_spikes = np.loadtxt(self.arbor_output_fname)
         arbor_spikes[:, 0] -= 100  # Need to shift Arbor IDs to make them comparable to NEST IDs
         np.testing.assert_array_equal(nest_spikes, arbor_spikes)
-
-
-def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestArborBackend)
-    return suite
-
-
-if __name__ == "__main__":
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())

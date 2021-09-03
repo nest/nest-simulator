@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# arbor_backend_nest_side.py
+# arbor_backend_test_nest_side.py
 #
 # This file is part of NEST.
 #

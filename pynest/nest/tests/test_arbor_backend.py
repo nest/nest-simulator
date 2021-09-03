@@ -55,8 +55,8 @@ class TestArborBackend(unittest.TestCase):
         Transmitting spikes with Arbor backend
         """
         path = os.path.dirname(__file__)
-        nest_side = os.path.join(path, "arbor_backend_nest_side.py")
-        arbor_side = os.path.join(path, "arbor_backend_arbor_side.py")
+        nest_side = os.path.join(path, "arbor_backend_test_nest_side.py")
+        arbor_side = os.path.join(path, "arbor_backend_test_arbor_side.py")
         args = f"{arbor_side} : -np {self.num_procs} python {nest_side}"
         command = nest.ll_api.sli_func("mpirun", self.num_procs, "python", args)
         print("Executing test with command: " + command)

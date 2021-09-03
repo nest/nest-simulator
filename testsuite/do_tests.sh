@@ -99,14 +99,14 @@ fi
 
 if test "${PYTHON}"; then
     # find valid pytest command
-    for ptname in foo pytest pytest3 pytest-3 ; do
+    for ptname in pytest pytest3 pytest-3; do
         PYTEST="$(command -v ${ptname})"
-        if test $PYTEST ; then
+        if test ${PYTEST}; then
            break
         fi
     done
 
-    if test ! "${PYTEST}" ; then
+    if test ! "${PYTEST}"; then
         echo "Error: PyNEST testing requested, but command 'pytest' cannot be executed."
         exit 1
     fi

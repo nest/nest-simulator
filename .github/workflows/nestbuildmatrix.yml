@@ -53,6 +53,9 @@ jobs:
            - xNEST_BUILD_TYPE: "ARBOR_BACKEND"
              cpp_compiler: "gcc"
              os: macos-latest
+           - xNEST_BUILD_TYPE: "ARBOR_BACKEND"
+             cpp_compiler: "clang"
+             os: macos-latest
            - xNEST_BUILD_TYPE: "FULL"
              os: macos-latest
              cpp_compiler: "gcc"

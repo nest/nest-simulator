@@ -125,6 +125,6 @@ to find out how to install NEST.
 
 Please cite NEST if you use it in your work.
 
-- You can find all the information for [citing NEST here](https://nest-simulator.readthedocs.io/lastest/citing-nest.html)
+- You can find all the information for [citing NEST here](https://nest-simulator.readthedocs.io/en/lastest/citing-nest.html)
 
 

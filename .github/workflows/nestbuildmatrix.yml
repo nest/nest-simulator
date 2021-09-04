@@ -12,7 +12,7 @@ jobs:
        matrix:
          os: ["ubuntu-20.04", macos-latest]
          cpp_compiler: ["gcc", "clang"]
-         xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "ARBOR_BACKEND", "FULL"]
+         xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
          exclude:
            - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
              os: macos-latest
@@ -173,6 +173,7 @@ jobs:
            python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: ARBOR_BACKEND
+           
        - name: Full Build
          if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
          run: |

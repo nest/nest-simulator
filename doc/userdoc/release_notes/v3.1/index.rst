@@ -28,8 +28,7 @@ attributes*.
 
 Where you previously had ``nest.SetKernelStatus({"resolution": 0.2})``
 in your simulation script, you can now just write ``nest.resolution =
-0.5``. Kernel attributes are first-class citizens of the NEST Python
-module, which means that they come with their own docstrings and even
+0.5``. Kernel attributes now come with their own docstrings and even
 tab-completion works for them!
 
 Co-dependent properties that have to be set together (for instance

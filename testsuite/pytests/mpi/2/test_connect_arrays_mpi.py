@@ -115,7 +115,7 @@ class TestConnectArraysMPICase(unittest.TestCase):
 
     def test_connect_arrays_threaded(self):
         """Connecting NumPy arrays, threaded with MPI"""
-        nest.SetKernelStatus({'local_num_threads': 2})
+        nest.local_num_threads = 2
         n = 10
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)

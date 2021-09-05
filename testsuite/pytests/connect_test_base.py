@@ -65,7 +65,7 @@ class ConnectTestBase(unittest.TestCase):
     # the the threading is actually used
     def setUp(self):
         nest.ResetKernel()
-        nest.SetKernelStatus({'local_num_threads': self.nr_threads})
+        nest.local_num_threads = self.nr_threads
 
     def setUpNetwork(self, conn_dict=None, syn_dict=None, N1=None, N2=None):
         if N1 is None:
@@ -552,7 +552,8 @@ def reset_seed(seed, nr_threads):
     '''
 
     nest.ResetKernel()
-    nest.SetKernelStatus({'local_num_threads': nr_threads, 'rng_seed': seed})
+    nest.local_num_threads = nr_threads
+    nest.rng_seed = seed
 
 # copied from Masterthesis, Daniel Hjertholm
 

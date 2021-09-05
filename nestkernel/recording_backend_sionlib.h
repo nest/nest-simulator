@@ -75,10 +75,9 @@ produced during successive calls to ``Run`` in between a pair of
 set. When creating a new recording, if the filename already exists,
 the ``Prepare`` call will fail with a corresponding error message. To
 instead overwrite the old file set, the kernel property
-``overwrite_files`` can be set to *true* using ``SetKernelStatus``. An
-alternative way for avoiding name clashes is to re-set the kernel
-properties ``data_path`` or ``data_prefix``, so that another full
-filename is composed.
+``overwrite_files`` can be set to ``True`` using the corresponding kernel
+attribute. An alternative way for avoiding name clashes is to set the
+kernel attributes ``data_path`` or ``data_prefix``, to write to a different file.
 
 Data format
 +++++++++++
@@ -126,8 +125,13 @@ label
     name for the recording device, and which is stored in the metadata
     section of the container files.
 
-Global parameters (to be set via ``SetKernelStatus``)
-+++++++++++++++++++++++++++++++++++++++++++++++++++++
+Global parameters
++++++++++++++++++
+
+These parameters can be set by assigning a nested dictionary to the
+kernel attribute ``recording_backends``. The dictionary has to have
+the form ``{'sionlib': {k_1: v_1, …, k_n: v_n}`` with ``k_i`` being
+from the following list:
 
 filename
     The filename (default: *"output.sion"*) part of the pattern

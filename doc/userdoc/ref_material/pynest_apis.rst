@@ -2,7 +2,7 @@ PyNEST API
 ==========
 
 The ``nest`` module contains methods and attributes to control the NEST kernel.
-This interface is known as the PyNEST API.
+This interface is known as PyNEST.
 
 .. _sec:kernel_attributes:
 

@@ -47,12 +47,10 @@ import sys                           # noqa
 import types                         # noqa
 import importlib                     # noqa
 
-v_major_mismatch = sys.version_info.major != @Python_VERSION_MAJOR@
-v_minor_mismatch = sys.version_info.minor != @Python_VERSION_MINOR@
-if v_major_mismatch or v_minor_mismatch:
-    msg = ("Python runtime version does not match 'nest' compiletime version. "
-           + "Please use Python @Python_VERSION_MAJOR@.@Python_VERSION_MINOR@.")
-    raise Exception(msg)
+try:
+    import versionchecker
+except ImportError:
+    pass
 
 
 def _rel_import_star(module, import_module_name):

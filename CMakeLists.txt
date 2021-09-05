@@ -351,8 +351,8 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/pynest/nest/__init__.py.in"
-    "${PROJECT_BINARY_DIR}/pynest/nest/__init__.py" @ONLY
+    "${PROJECT_SOURCE_DIR}/pynest/nest/versionchecker.py.in"
+    "${PROJECT_BINARY_DIR}/pynest/nest/versionchecker.py" @ONLY
 )
 
 

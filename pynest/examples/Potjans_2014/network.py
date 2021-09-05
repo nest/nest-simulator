@@ -271,9 +271,8 @@ class Network:
         nest.ResetKernel()
 
         # set seeds for random number generation
-        nest.SetKernelStatus(
-            {'local_num_threads': self.sim_dict['local_num_threads']})
-        N_vp = nest.GetKernelStatus('total_num_virtual_procs')
+        nest.local_num_threads = self.sim_dict['local_num_threads']
+        N_vp = nest.total_num_virtual_procs
 
         rng_seed = self.sim_dict['rng_seed']
 
@@ -281,14 +280,10 @@ class Network:
             print('RNG seed: {} '.format(rng_seed))
             print('  Total number of virtual processes: {}'.format(N_vp))
 
-        # pass parameters to NEST kernel
-        self.sim_resolution = self.sim_dict['sim_resolution']
-        kernel_dict = {
-            'resolution': self.sim_resolution,
-            'rng_seed': rng_seed,
-            'overwrite_files': self.sim_dict['overwrite_files'],
-            'print_time': self.sim_dict['print_time']}
-        nest.SetKernelStatus(kernel_dict)
+        nest.resolution = self.sim_dict['sim_resolution']
+        nest.rng_seed = rng_seed
+        nest.overwrite_files = self.sim_dict['overwrite_files']
+        nest.print_time = self.sim_dict['print_time']
 
     def __create_neuronal_populations(self):
         """ Creates the neuronal populations.
@@ -456,7 +451,7 @@ class Network:
                                 mean=self.net_dict['delay_matrix_mean'][i][j],
                                 std=(self.net_dict['delay_matrix_mean'][i][j] *
                                      self.net_dict['delay_rel_std'])),
-                            min=self.sim_resolution,
+                            min=nest.resolution,
                             max=np.Inf)}
 
                     nest.Connect(
@@ -519,7 +514,7 @@ class Network:
                         mean=self.stim_dict['delay_th_mean'],
                         std=(self.stim_dict['delay_th_mean'] *
                              self.stim_dict['delay_th_rel_std'])),
-                    min=self.sim_resolution,
+                    min=nest.resolution,
                     max=np.Inf)}
 
             nest.Connect(

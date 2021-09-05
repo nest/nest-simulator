@@ -350,6 +350,11 @@ configure_file(
     "${PROJECT_BINARY_DIR}/doc/fulldoc.conf" @ONLY
 )
 
+configure_file(
+    "${PROJECT_SOURCE_DIR}/pynest/nest/versionchecker.py.in"
+    "${PROJECT_BINARY_DIR}/pynest/nest/versionchecker.py" @ONLY
+)
+
 
 ################################################################################
 ##################            Install Extra Files             ##################

@@ -34,29 +34,27 @@ class StatusTestCase(unittest.TestCase):
     def test_GetDefaults_JSON(self):
         """JSON data of GetDefaults"""
 
-        node_models = nest.GetKernelStatus('node_models')
-        synapse_models = nest.GetKernelStatus('synapse_models')
-        for m in node_models + synapse_models:
-            d_json = nest.GetDefaults(m, output='json')
+        for model in nest.node_models + nest.synapse_models:
+            d_json = nest.GetDefaults(model, output='json')
             self.assertIsInstance(d_json, str)
 
-            d = nest.GetDefaults(m)
-            d_json = nest.hl_api.to_json(d)
+            d = nest.GetDefaults(model)
+            d_json = nest.to_json(d)
             self.assertIsInstance(d_json, str)
 
-    def test_GetKernelStatus_JSON(self):
+    def test_kernel_status_JSON(self):
         """JSON data of KernelStatus"""
 
-        d = nest.GetKernelStatus()
-        d_json = nest.hl_api.to_json(d)
+        d = nest.kernel_status
+        d_json = nest.to_json(d)
         self.assertIsInstance(d_json, str)
 
     def test_GetStatus_JSON(self):
         """JSON data of GetStatus"""
 
-        for m in nest.GetKernelStatus('node_models'):
+        for model in nest.node_models:
             nest.ResetKernel()
-            n = nest.Create(m)
+            n = nest.Create(model)
             d_json = nest.GetStatus(n, output='json')
             self.assertIsInstance(d_json, str)
 

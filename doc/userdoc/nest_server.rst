@@ -251,7 +251,7 @@ Client to execute a simple script on the Server using the
     response = nsc.exec_script(script)
     print(response['stdout'])          # 'Hello world!'
 
-    script = "models=nest.GetKernelStatus('neuron_models')"
+    script = "models=nest.node_models"
     response = nsc.exec_script(script, 'models')
     models = response['data']
     print(models)                      # the list of models

@@ -310,7 +310,7 @@ following table lists the parameters that can be used.
 +-------------------------+----------------------------------------------------+-----------------------------------------+
 | | synapse_model         | | Define the type of synapse model to be included. | | any synapse model included in the     |
 |                         |                                                    | | list returned by                      |
-|                         |                                                    | | ``GetKernelStatus('synapse_models')`` |
+|                         |                                                    | | ``nest.synapse_models``               |
 +-------------------------+----------------------------------------------------+-----------------------------------------+
 | | use_on_source         | | Whether we want the mask and connection          | | boolean                               |
 |                         | | probability to be applied to the source neurons  |                                         |

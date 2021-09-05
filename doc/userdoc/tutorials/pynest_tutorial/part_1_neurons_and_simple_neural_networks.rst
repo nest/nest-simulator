@@ -534,21 +534,21 @@ Synapse
 ^^^^^^^
 
 The synapse model and its properties can be inserted either as a
-string naming a synapse model (synapse models are available via
-``GetKernelStatus('synapse_models')``) or as a dictionary. If no
-synapse model is specified, the default model ``"static_synapse"``
-will be used.  Available keys in the synapse dictionary are
-``"synapse_model"``, ``"weight"``, ``"delay"``, ``"receptor_type"``,
-as well as parameters specific to the chosen synapse model. All
-parameters are optional and if not specified will use the default
-values determined by the current synapse model. ``"synapse_model"``
-determines the synapse type, taken from pre-defined synapse types in
-NEST or manually specified synapses created via :py:func:`.CopyModel`.
-All other parameters can be scalars or distributions. In the case of
-scalar parameters, all keys take doubles except for
-``"receptor_type"`` which has to be initialized with an integer.
-Distributed parameters are initialized with a Parameter with
-distribution-specific arguments (such as ``"mean"`` and ``"std"``).
+string naming a synapse model (see ``nest.synapse_models`` for all
+available models) or as a dictionary. If no synapse model is
+specified, the default model ``"static_synapse"`` will be used.
+Available keys in the synapse dictionary are ``"synapse_model"``,
+``"weight"``, ``"delay"``, ``"receptor_type"``, as well as parameters
+specific to the chosen synapse model. All parameters are optional and
+if not specified will use the default values determined by the current
+synapse model. ``"synapse_model"`` determines the synapse type, taken
+from pre-defined synapse types in NEST or manually specified synapses
+created via :py:func:`.CopyModel`.  All other parameters can be
+scalars or distributions. In the case of scalar parameters, all keys
+take doubles except for ``"receptor_type"`` which has to be
+initialized with an integer.  Distributed parameters are initialized
+with a Parameter with distribution-specific arguments (such as
+``"mean"`` and ``"std"``).
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~

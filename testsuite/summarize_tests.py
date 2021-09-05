@@ -31,6 +31,7 @@ import junitparser as jp
 import glob
 import os
 import sys
+import xml
 
 
 assert int(jp.version.split('.')[0]) >= 2, 'junitparser version must be >= 2'
@@ -39,6 +40,12 @@ assert int(jp.version.split('.')[0]) >= 2, 'junitparser version must be >= 2'
 def parse_result_file(fname):
 
     results = jp.JUnitXml.fromfile(fname)
+    if isinstance(results, jp.junitparser.JUnitXml):
+        # special case for pytest, which wraps all once more
+        suites = list(results)
+        assert len(suites) == 1, "JUnit XML files may only contain results from a single testsuite."
+        results = suites[0]
+
     assert all(len(case.result) == 1 for case in results if case.result), 'Case result has unexpected length > 1'
     failed_tests = ['.'.join((case.classname, case.name)) for case in results
                     if case.result and not isinstance(case.result[0], jp.junitparser.Skipped)]
@@ -63,7 +70,6 @@ if __name__ == '__main__':
               'Time': 0, 'Failed tests': []}
 
     for pfile in sorted(glob.glob(os.path.join(test_outdir, '*.xml'))):
-
         ph_name = os.path.splitext(os.path.split(pfile)[1])[0].replace('_', ' ')
         ph_res = parse_result_file(pfile)
         results[ph_name] = ph_res
@@ -105,7 +111,7 @@ if __name__ == '__main__':
         print('THE NEST TESTSUITE DISCOVERED PROBLEMS')
         print('    The following tests failed')
         for t in totals['Failed tests']:
-            print('    | {:s}'.format(t))   # | marks line for parsing
+            print(f'    | {t}')   # | marks line for parsing
         print()
         print('    Please report test failures by creating an issue at')
         print('        https://github.com/nest/nest_simulator/issues')

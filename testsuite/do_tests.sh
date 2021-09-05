@@ -98,11 +98,11 @@ if test ! "${REPORTDIR}"; then
 fi
 
 if test "${PYTHON}"; then
-    command -v nosetests >/dev/null 2>&1 || {
-        echo "Error: PyNEST testing requested, but command 'nosetests' cannot be executed."
+    command -v pytest >/dev/null 2>&1 || {
+        echo "Error: PyNEST testing requested, but command 'pytest' cannot be executed."
         exit 1
     }
-    NOSE="$(command -v nosetests)"
+    PYTEST="$(command -v pytest)"
 fi
 
 python3 -c "import junitparser" >/dev/null 2>&1
@@ -131,6 +131,11 @@ NEST="nest_serial"
 
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
 
+if test "${HAVE_MPI}" = "true"; then
+  MPI_LAUNCHER="$(sli -c '1 () () mpirun cst 0 get =only')"
+  MPI_LAUNCHER="$(command -v $MPI_LAUNCHER)"
+fi
+
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
 if test "$(uname -s)" = "Darwin"; then
     TEST_CRSTATE="$( defaults read com.apple.CrashReporter DialogType )"
@@ -154,12 +159,13 @@ echo "  PREFIX ............. $PREFIX"
 if test "${PYTHON}"; then
     PYTHON_VERSION="$("${PYTHON}" --version | cut -d' ' -f2)"
     echo "  Python executable .. $PYTHON (version $PYTHON_VERSION)"
-    NOSE_VERSION="$("${NOSE}" --version | cut -d' ' -f3)"
-    echo "  Nose executable .... $NOSE (version $NOSE_VERSION)"
+    PYTEST_VERSION="$("${PYTEST}" --version 2>&1 | cut -d' ' -f2)"
+    echo "  Pytest executable .. $PYTEST (version $PYTEST_VERSION)"
     echo "  PYTHONPATH ......... `print_paths ${PYTHONPATH:-}`"
 fi
 if test "${HAVE_MPI}" = "true"; then
     echo "  Running MPI tests .. yes"
+    echo "  MPI launcher ....... $MPI_LAUNCHER"
 else
     echo "  Running MPI tests .. no (compiled without MPI support)"
 fi
@@ -456,23 +462,23 @@ fi
 echo
 echo "Phase 7: Running PyNEST tests"
 echo "-----------------------------"
+
 if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests/"
     XUNIT_NAME="07_pynesttests"
+    
+    # Run all tests except those in the mpi subdirectory
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-    "${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="${XUNIT_NAME}" \
-		--xunit-file="${XUNIT_FILE}" --exclude=test_mpitests\.py "${PYNEST_TEST_DIR}" 2>&1 \
-        | tee -a "${TEST_LOGFILE}" | grep --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
-
-    if test "${HAVE_MPI}" = "true"; then
-	echo
-	echo "  Running PyNEST tests with MPI (no output will be produced)"
-	XUNIT_NAME="${XUNIT_NAME}_mpi"
-	XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-	"${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="${XUNIT_NAME}" \
-		    --xunit-file="${XUNIT_FILE}" "${PYNEST_TEST_DIR}/test_mpitests.py" \
-		    2>&1 | tee -a "${TEST_LOGFILE}" >/dev/null
-	            # "&>FILE" or ">>FILE 2>&1" don't silence the line above. Why?!
+    "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
+          --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
+  
+    # Run tests in the mpi subdirectories, grouped by number of processes
+    if test "${HAVE_MPI}" = "true" -a "${MPI_LAUNCHER}" ; then
+       for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
+           XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
+           PYTEST_ARGS="--verbose --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+           $(sli -c "${numproc} (${PYTEST}) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
+       done 
     fi
 else
     echo

@@ -93,6 +93,7 @@ fi
 if $PERFORM_PEP8; then
   PYCODESTYLE_VERS=`$PEP8 --version`
   print_msg "MSGBLD0105: " "PEP8         : $PYCODESTYLE_VERS"
+  print_msg "MSGBLD0105: " "PEP8 ignores : $PYCODESTYLE_IGNORES"
 fi
 print_msg "" ""
 

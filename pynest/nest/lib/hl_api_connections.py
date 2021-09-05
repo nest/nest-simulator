@@ -35,7 +35,6 @@ from .hl_api_helper import *
 from .hl_api_info import GetStatus
 from .hl_api_nodes import Create
 from .hl_api_parallel_computing import NumProcesses
-from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
 __all__ = [
@@ -124,9 +123,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     Details depend on the connectivity rule.
 
     A list of available synapse models can be obtained from the NEST
-    kernel by calling ``nest.GetKernelStatus('synapse_models')``.
-    Similarly, the list of available connection rules can be obtained
-    by calling ``nest.GetKernelStatus('connection_rules')``.
+    kernel by calling ``nest.synapse_models``. Similarly, the list
+    of available connection rules can be obtained by calling
+    ``nest.connection_rules``.
 
     Parameters
     ----------
@@ -328,7 +327,7 @@ def Disconnect(pre, post, conn_spec='one_to_one', syn_spec='static_synapse'):
 
     The synapse model and its properties can be specified either as a string naming
     a synapse model (the list of all available synapse models can be gotten via
-    ``GetKernelStatus('synapse_models')``) or as a dictionary as described below.
+    ``nest.synapse_models``) or as a dictionary as described below.
 
     Note that only the synapse type is checked when we disconnect and that if
     `syn_spec` is given as a non-empty dictionary, the 'synapse_model' parameter must

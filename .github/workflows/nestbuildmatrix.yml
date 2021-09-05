@@ -12,7 +12,7 @@ jobs:
        matrix:
          os: ["ubuntu-20.04", macos-latest]
          cpp_compiler: ["gcc", "clang"]
-         xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
+         xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "ARBOR_BACKEND", "FULL"]
          exclude:
            - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
              os: macos-latest
@@ -38,6 +38,9 @@ jobs:
            - xNEST_BUILD_TYPE: "OPENMP_ONLY"
              cpp_compiler: "clang"
              os: "ubuntu-20.04"
+           - xNEST_BUILD_TYPE: "ARBOR_BACKEND"
+             cpp_compiler: "clang"
+             os: "ubuntu-20.04"
            - xNEST_BUILD_TYPE: "FULL"
              os: "ubuntu-20.04"
              cpp_compiler: "clang"
@@ -46,6 +49,12 @@ jobs:
              os: macos-latest
            - xNEST_BUILD_TYPE: "OPENMP_ONLY"
              cpp_compiler: "gcc"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "ARBOR_BACKEND"
+             cpp_compiler: "gcc"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "ARBOR_BACKEND"
+             cpp_compiler: "clang"
              os: macos-latest
            - xNEST_BUILD_TYPE: "FULL"
              os: macos-latest
@@ -84,11 +93,10 @@ jobs:
            fetch-depth: 0
        - run: |
            echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
-           echo "CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
+           echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
            echo 'EOF' >> $GITHUB_ENV
-
        - name: Dependencies MacOS
-         if: runner.os =='macOS'
+         if: runner.os == 'macOS'
          run: |
             brew install coreutils gsl open-mpi automake autoconf libtool
             brew info python
@@ -107,8 +115,7 @@ jobs:
          #uses: actions/cache@master
          run: |
             python -m pip install --upgrade pip setuptools
-            python -m pip install scipy junitparser>=2 numpy nose cython matplotlib terminaltables pandoc
-            python -m pip install nose
+            python -m pip install scipy junitparser>=2 numpy pytest pytest-xdist mpi4py cython matplotlib terminaltables pandoc
             pip list
             g++ --version
             set -o pipefail
@@ -157,6 +164,15 @@ jobs:
          env:
           xNEST_BUILD_TYPE: OPENMP_ONLY
 
+       - name: MPI and Arbor
+         if: ${{ matrix.xNEST_BUILD_TYPE == 'ARBOR_BACKEND' }}
+         run: |
+           echo "MPI with Arbor backend Build"
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
+           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
+         env:
+           xNEST_BUILD_TYPE: ARBOR_BACKEND
        - name: Full Build
          if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
          run: |
@@ -166,4 +182,3 @@ jobs:
            python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: FULL
-           

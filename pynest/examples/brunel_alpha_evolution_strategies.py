@@ -229,8 +229,8 @@ def simulate(parameters):
     nest.ResetKernel()
     nest.set_verbosity('M_FATAL')
 
-    nest.SetKernelStatus({'rng_seed': parameters['seed'],
-                          'resolution': parameters['dt']})
+    nest.rng_seed = parameters['seed']
+    nest.resolution = parameters['dt']
 
     nodes_ex = nest.Create('iaf_psc_alpha', NE, params=neuron_parameters)
     nodes_in = nest.Create('iaf_psc_alpha', NI, params=neuron_parameters)

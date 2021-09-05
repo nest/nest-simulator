@@ -785,8 +785,7 @@ class SynapseCollection(object):
             raise ImportError('Pandas could not be imported')
 
         # Return empty tuple if we have no connections or if we have done a nest.ResetKernel()
-        num_conn = GetKernelStatus('num_connections')
-        if self.__len__() == 0 or num_conn == 0:
+        if self.__len__() == 0 or GetKernelStatus('num_connections') == 0:
             return ()
 
         if keys is None:
@@ -850,7 +849,7 @@ class SynapseCollection(object):
         # This was added to ensure that the function is a nop (instead of,
         # for instance, raising an exception) when applied to an empty
         # SynapseCollection, or after having done a nest.ResetKernel().
-        if self.__len__() == 0 or GetKernelStatus()['network_size'] == 0:
+        if self.__len__() == 0 or GetKernelStatus('network_size') == 0:
             return
 
         if (isinstance(params, (list, tuple)) and

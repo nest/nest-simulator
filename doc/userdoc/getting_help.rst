@@ -35,13 +35,13 @@ Model information
 
     .. code-block:: python
 
-       nest.GetKernelStatus('node_models')
+       nest.node_models
 
 * To get a list of available synapse models, use:
 
     .. code-block:: python
 
-       nest.GetKernelStatus('synapse_models')
+       nest.synapse_models
 
 * To get details on model equations and parameters, use:
 

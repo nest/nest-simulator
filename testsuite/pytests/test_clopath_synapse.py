@@ -54,11 +54,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
             nest.Connect(n, n, {"rule": "all_to_all"},
                          {"synapse_model": "clopath_synapse"})
 
-        node_models = nest.GetKernelStatus('node_models')
-        unsupported_models = [n for n in node_models if n not in supported_models]
-
         # Ensure that connecting not supported models fails
-        for nm in unsupported_models:
+        for nm in [n for n in nest.node_models if n not in supported_models]
             nest.ResetKernel()
 
             n = nest.Create(nm, 2)
@@ -130,7 +127,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
             # Loop over pairs of spike trains
             for (s_t_pre, s_t_post) in zip(spike_times_pre, spike_times_post):
                 nest.ResetKernel()
-                nest.SetKernelStatus({"resolution": resolution})
+                nest.resolution = resolution
 
                 # Create one neuron
                 nrn = nest.Create(nrn_model, 1, nrn_params)

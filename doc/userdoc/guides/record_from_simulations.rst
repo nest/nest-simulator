@@ -90,15 +90,16 @@ instance using :py:func:`.SetStatus`.
    backend, if the backend is changed later on.
 
 The full list of available recording backends can be obtained from the
-kernel's status dictionary.
+kernel attribute ``recording_backends``.
 
 ::
 
-   >>> nest.GetKernelStatus("recording_backends")
+   >>> print(nest.recording_backends)
    ('ascii', 'memory', 'mpi', 'screen', 'sionlib')
 
-If a recording backend has global properties (shared by all enrolled
-recording devices), they can be inspected using :py:func`.GetDefaults`
+If a recording backend has global properties (that are shared by all
+enrolled recording devices), those can be looked at using
+:py:func`.GetDefaults`
 
 ::
 

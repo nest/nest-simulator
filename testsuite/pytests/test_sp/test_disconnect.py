@@ -23,8 +23,6 @@ import nest
 import unittest
 import numpy as np
 
-__author__ = 'naveau'
-
 try:
     from mpi4py import MPI
     have_mpi4py = True
@@ -32,9 +30,7 @@ except ImportError:
     have_mpi4py = False
 
 have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
-num_processes = nest.GetKernelStatus("num_processes")
-
-test_with_mpi = have_mpi and have_mpi4py and num_processes > 1
+test_with_mpi = have_mpi and have_mpi4py and nest.num_processes > 1
 
 
 class TestDisconnectSingle(unittest.TestCase):
@@ -69,14 +65,12 @@ class TestDisconnectSingle(unittest.TestCase):
         ]
 
     def test_synapse_deletion_one_to_one_no_sp(self):
-        for syn_model in nest.GetKernelStatus('synapse_models'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
+                nest.resolution = 0.1
+                nest.total_num_virtual_procs = nest.num_processes
 
-                nest.SetKernelStatus({
-                    'resolution': 0.1,
-                    'total_num_virtual_procs': num_processes
-                })
                 neurons = nest.Create('iaf_psc_alpha', 4)
                 syn_dict = {'synapse_model': syn_model}
 
@@ -86,7 +80,6 @@ class TestDisconnectSingle(unittest.TestCase):
                 # Delete existent connection
                 conns = nest.GetConnections(neurons[0], neurons[2], syn_model)
                 if test_with_mpi:
-                    print("rim with mpi")
                     conns = self.comm.allgather(conns.get('source'))
                     conns = list(filter(None, conns))
                 assert len(conns) == 1
@@ -100,7 +93,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns = list(filter(None, conns))
                 assert len(conns) == 0
 
-                # Assert that one cannot delete a non existent connection
+                # Assert that one cannot delete a non-existing connection
                 conns1 = nest.GetConnections(
                     neurons[:1], neurons[1:2], syn_model)
                 if test_with_mpi:
@@ -108,11 +101,8 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns1 = list(filter(None, conns1))
                 assert len(conns1) == 0
 
-                try:
+                with self.assertRaises(nest.NESTErrors.NESTError):
                     nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
-                    assert False
-                except nest.kernel.NESTError:
-                    print("Synapse deletion ok: " + syn_model)
 
 
 def suite():

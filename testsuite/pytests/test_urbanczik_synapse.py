@@ -40,18 +40,9 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
 
-        # Multi-compartment models
-        mc_models = [
-            "iaf_cond_alpha_mc",
-            "pp_cond_exp_mc_urbanczik",
-        ]
-
-        supported_models = [
-            "pp_cond_exp_mc_urbanczik",
-        ]
-
-        node_models = nest.GetKernelStatus('node_models')
-        unsupported_models = [n for n in node_models if n not in supported_models]
+        mc_models = ["iaf_cond_alpha_mc", "pp_cond_exp_mc_urbanczik"] # Multi-compartment models
+        supported_models = ["pp_cond_exp_mc_urbanczik"]
+        unsupported_models = [n for n in nest.node_models if n not in supported_models]
 
         # Connect supported models with Urbanczik synapse
         for nm in supported_models:
@@ -90,7 +81,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         resolution = 0.1
-        nest.SetKernelStatus({'resolution': resolution})
+        nest.resolution = resolution
 
         '''
         neuron parameters

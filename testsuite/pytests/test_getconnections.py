@@ -68,8 +68,7 @@ class GetConnectionsTestCase(unittest.TestCase):
 
     def test_GetConnectionsTargetModels(self):
         """GetConnections iterating models for target"""
-        node_models = nest.GetKernelStatus('node_models')
-        for model in node_models:
+        for model in nest.node_models:
             nest.ResetKernel()
             alpha = nest.Create('iaf_psc_alpha')
             try:
@@ -90,8 +89,7 @@ class GetConnectionsTestCase(unittest.TestCase):
 
     def test_GetConnectionsSourceModels(self):
         """GetConnections iterating models for source"""
-        node_models = nest.GetKernelStatus('node_models')
-        for model in node_models:
+        for model in nest.node_models:
             nest.ResetKernel()
             alpha = nest.Create('iaf_psc_alpha')
             try:
@@ -116,7 +114,7 @@ class GetConnectionsTestCase(unittest.TestCase):
         num_src = 3
         num_tgt = 5
 
-        for synapse_model in nest.GetKernelStatus('synapse_models'):
+        for synapse_model in nest.synapse_models:
             nest.ResetKernel()
 
             src = nest.Create('iaf_psc_alpha', num_src)
@@ -152,14 +150,11 @@ class GetConnectionsTestCase(unittest.TestCase):
     def test_GetConnectionsSynapseLabel(self):
         """GetConnections using synapse_label as argument"""
 
-        synapse_models = nest.GetKernelStatus('synapse_models')
-        labeled_synapse_models = [s for s in synapse_models if s.endswith("_lbl")]
-
         label = 123
         num_src = 3
         num_tgt = 5
 
-        for synapse_model in labeled_synapse_models:
+        for synapse_model in  [s for s in nest.synapse_models if s.endswith("_lbl")]:
             nest.ResetKernel()
 
             src = nest.Create('iaf_psc_alpha', num_src)

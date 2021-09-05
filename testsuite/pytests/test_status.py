@@ -29,7 +29,19 @@ import nest
 
 @nest.ll_api.check_stack
 class StatusTestCase(unittest.TestCase):
-    """Tests of Set/GetStatus"""
+    """Tests of Get/SetStatus, Get/SetDefaults, and Get/SetKernelStatus via get/set"""
+
+    def test_kernel_attributes(self):
+        """Test nest attribute access of kernel attributes"""
+
+        nest.ResetKernel()
+
+        self.assertEqual(nest.GetKernelStatus(), nest.kernel_status)
+        self.assertEqual(nest.GetKernelStatus("resolution"), nest.resolution)
+
+        nest.resolution = 0.4
+        self.assertEqual(0.4, nest.resolution)
+        self.assertRaises(AttributeError, setattr, nest, "network_size", 120)
 
     def test_GetKernelStatus(self):
         """GetKernelStatus"""
@@ -40,8 +52,7 @@ class StatusTestCase(unittest.TestCase):
         self.assertIsInstance(kernel_status, dict)
         self.assertGreater(len(kernel_status), 1)
 
-        self.assertRaises(KeyError, nest.GetKernelStatus,
-                          "nonexistent_status_key")
+        self.assertRaises(KeyError, nest.GetKernelStatus, "nonexistent_status_key")
 
         test_keys = ("resolution", ) * 3
         kernel_status = nest.GetKernelStatus(test_keys)
@@ -56,8 +67,9 @@ class StatusTestCase(unittest.TestCase):
         nest.SetKernelStatus({})
         nest.SetKernelStatus({'resolution': 0.2})
 
-        self.assertRaises(ValueError, nest.SetKernelStatus,
-                          {'nonexistent_status_key': 0})
+        self.assertRaises(ValueError, nest.SetKernelStatus, {'nonexistent_status_key': 0})
+        # Readonly check
+        self.assertRaises(ValueError, nest.SetKernelStatus, {'network_size': 120})
 
     def test_GetDefaults(self):
         """GetDefaults"""
@@ -87,9 +99,7 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        node_models = nest.GetKernelStatus("node_models")
-        synapse_models = nest.GetKernelStatus("synapse_models")
-        for model in node_models + synapse_models:
+        for model in nest.node_models + nest.synapse_models:
             if 'V_m' in nest.GetDefaults(model):
                 v_m = nest.GetDefaults(model)['V_m']
 
@@ -106,9 +116,7 @@ class StatusTestCase(unittest.TestCase):
     def test_GetStatus(self):
         """GetStatus"""
 
-        node_models = nest.GetKernelStatus("node_models")
-        synapse_models = nest.GetKernelStatus("synapse_models")
-        for model in node_models + synapse_models:
+        for model in nest.node_models + nest.synapse_models:
             if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
 
@@ -136,9 +144,7 @@ class StatusTestCase(unittest.TestCase):
     def test_SetStatus(self):
         """SetStatus with dict"""
 
-        node_models = nest.GetKernelStatus("node_models")
-        synapse_models = nest.GetKernelStatus("synapse_models")
-        for model in node_models + synapse_models:
+        for model in nest.node_models + nest.synapse_models:
             if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
                 n = nest.Create(model)
@@ -148,9 +154,7 @@ class StatusTestCase(unittest.TestCase):
     def test_SetStatusList(self):
         """SetStatus with list"""
 
-        node_models = nest.GetKernelStatus("node_models")
-        synapse_models = nest.GetKernelStatus("synapse_models")
-        for model in node_models + synapse_models:
+        for model in nest.node_models + nest.synapse_models:
             if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
                 n = nest.Create(model)
@@ -160,9 +164,7 @@ class StatusTestCase(unittest.TestCase):
     def test_SetStatusParam(self):
         """SetStatus with parameter"""
 
-        node_models = nest.GetKernelStatus("node_models")
-        synapse_models = nest.GetKernelStatus("synapse_models")
-        for model in node_models + synapse_models:
+        for model in nest.node_models + nest.synapse_models:
             if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
                 n = nest.Create(model)
@@ -173,11 +175,9 @@ class StatusTestCase(unittest.TestCase):
         """SetStatus of reversal and threshold potential """
 
         excluded = ['a2eif_cond_exp_HW', 'mat2_psc_exp', 'amat2_psc_exp']
-        node_models = nest.GetKernelStatus("node_models")
-        synapse_models = nest.GetKernelStatus("synapse_models")
-        models = [m for m in node_models + synapse_models if m not in excluded]
+        models = nest.node_models + nest.synapse_models
 
-        for model in models:
+        for model in [m for m in models if m not in excluded]:
             if all(key in nest.GetDefaults(model) for key in ('V_th', 'E_L')):
                 nest.ResetKernel()
 
@@ -202,9 +202,7 @@ class StatusTestCase(unittest.TestCase):
         """SetStatus of reversal and threshold potential
            check if error is raised if V_reset > V_th"""
 
-        node_models = nest.GetKernelStatus("node_models")
-        synapse_models = nest.GetKernelStatus("synapse_models")
-        for model in node_models + synapse_models:
+        for model in nest.node_models + nest.synapse_models:
             if all(key in nest.GetDefaults(model) for key in ('V_th', 'V_reset')):
                 nest.ResetKernel()
 

@@ -87,8 +87,9 @@ ignore_model = [
     "step_rate_generator"        # No regular neuron model
 ]
 
-tested_models = [m for m in nest.GetKernelStatus("node_models") if (nest.GetDefaults(
-                 m, "element_type") == "neuron" and m not in ignore_model)]
+tested_models = [m for m in nest.node_models
+                 if nest.GetDefaults(m, "element_type") == "neuron"
+                 and m not in ignore_model]
 
 # Additional parameters for the connector
 add_connect_param = {
@@ -117,10 +118,8 @@ class TestRefractoryCase(unittest.TestCase):
     def reset(self):
         nest.ResetKernel()
 
-        msd = 123456
-        nest.SetKernelStatus({
-            'resolution': resolution,
-            'rng_seed': msd})
+        nest.resolution = resolution
+        nest.rng_seed = 123456
 
     def compute_reftime(self, model, sr, vm, neuron):
         '''

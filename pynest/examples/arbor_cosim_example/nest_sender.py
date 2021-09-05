@@ -32,8 +32,7 @@ nest.Connect(pg, parrots)
 sd2 = nest.Create('spike_recorder', params={"record_to": "arbor"})
 nest.Connect(parrots, sd2)
 
-status = nest.GetKernelStatus()
-print('min_delay: ', status['min_delay'], ", max_delay: ", status['max_delay'])
+print(f'min_delay: {nest.min_delay}, max_delay: {nest.max_delay}')
 print("Simulate")
 sys.stdout.flush()
 

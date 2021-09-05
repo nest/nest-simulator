@@ -52,7 +52,7 @@ class TestDisconnect(unittest.TestCase):
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):
-        for syn_model in nest.GetKernelStatus('synapse_models'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
@@ -62,11 +62,9 @@ class TestDisconnect(unittest.TestCase):
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
-                nest.SetKernelStatus({
-                    'min_delay': 0.1,
-                    'max_delay': 1.0,
-                    'structural_plasticity_synapses': {'syn1': syn_dict}
-                })
+                # For co-dependent properties, we use `set()` instead of kernel attributes
+                nest.set(min_delay=0.1, max_delay=1.0)
+                nest.structural_plasticity_synapses = {'syn1': syn_dict}
                 neurons = nest.Create('iaf_psc_alpha', 10, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -107,7 +105,7 @@ class TestDisconnect(unittest.TestCase):
                     self.assertEqual(5, st_neuron['SE2']['z_connected'])
 
     def test_multiple_synapse_deletion_one_to_one(self):
-        for syn_model in nest.GetKernelStatus('synapse_models'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
@@ -117,11 +115,9 @@ class TestDisconnect(unittest.TestCase):
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
-                nest.SetKernelStatus({
-                    'min_delay': 0.1,
-                    'max_delay': 1.0,
-                    'structural_plasticity_synapses': {'syn1': syn_dict}
-                })
+                # For co-dependent properties, we use `set()` instead of kernel attributes
+                nest.set(min_delay=0.1, max_delay=1.0)
+                nest.structural_plasticity_synapses = {'syn1': syn_dict}
                 neurons = nest.Create('iaf_psc_alpha', 10, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -162,7 +158,7 @@ class TestDisconnect(unittest.TestCase):
                     self.assertEqual(9, st_neuron['SE2']['z_connected'])
 
     def test_multiple_synapse_deletion_one_to_one_no_sp(self):
-        for syn_model in nest.GetKernelStatus('synapse_models'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
@@ -191,7 +187,7 @@ class TestDisconnect(unittest.TestCase):
                 assert len(conns) == 20
 
     def test_single_synapse_deletion_sp(self):
-        for syn_model in nest.GetKernelStatus('synapse_models'):
+        for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
@@ -200,9 +196,6 @@ class TestDisconnect(unittest.TestCase):
                     'pre_synaptic_element': 'SE1',
                     'post_synaptic_element': 'SE2'
                 }
-                # nest.SetKernelStatus(
-                #   {'structural_plasticity_synapses': {'syn1': syn_dict}}
-                # )
                 neurons = nest.Create('iaf_psc_alpha', 2, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -242,33 +235,33 @@ class TestDisconnect(unittest.TestCase):
 
         nodes = nest.Create('iaf_psc_alpha', 5)
         nest.Connect(nodes, nodes)
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+        self.assertEqual(nest.num_connections, 25)
 
         nest.Disconnect(nodes, nodes)
 
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+        self.assertEqual(nest.num_connections, 20)
 
     def test_disconnect_all_to_all(self):
 
         nodes = nest.Create('iaf_psc_alpha', 5)
         nest.Connect(nodes, nodes)
 
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+        self.assertEqual(nest.num_connections, 25)
 
         nest.Disconnect(nodes, nodes, 'all_to_all')
 
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 0)
+        self.assertEqual(nest.num_connections, 0)
 
     def test_disconnect_static_synapse(self):
 
         nodes = nest.Create('iaf_psc_alpha', 5)
         nest.Connect(nodes, nodes)
 
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+        self.assertEqual(nest.num_connections, 25)
 
         nest.Disconnect(nodes, nodes, syn_spec='static_synapse')
 
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+        self.assertEqual(nest.num_connections, 20)
 
 
 def suite():

@@ -56,6 +56,13 @@ Examples:
 * Guetig STDP         [1]_  mu_plus = mu_minus = [0.0,1.0]
 * van Rossum STDP     [4]_  mu_plus = 0.0 mu_minus = 1.0
 
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
+
 Parameters
 ++++++++++
 

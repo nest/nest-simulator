@@ -70,7 +70,7 @@ using spike = basic_spike< cell_member_type >;
 std::vector< spike >
 gather_spikes( const std::vector< spike >& values, MPI_Comm comm )
 {
-  // Arbor spikes follow the NEURON format: <uint gid, uint local_id, float time>
+  // Arbor spikes follow the NEURON format: <uint gid, uint local_id, double time>
   // TODO: Refactor so that local_id does not have to be send.
 
   int size;
@@ -130,10 +130,10 @@ broadcast( unsigned local, MPI_Comm comm, int root )
   return result;
 }
 
-float
-broadcast( float local, MPI_Comm comm, int root )
+double
+broadcast( double local, MPI_Comm comm, int root )
 {
-  float result = local;
+  double result = local;
   MPI_Bcast( &result, 1, MPI_FLOAT, root, comm );
   return result;
 }

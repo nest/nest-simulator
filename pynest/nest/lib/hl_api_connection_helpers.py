@@ -24,6 +24,7 @@ These are helper functions to ease the definition of the
 Connect function.
 """
 
+import copy
 import numpy as np
 
 from ..ll_api import *
@@ -57,6 +58,8 @@ def _process_conn_spec(conn_spec):
 
 def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_arrays):
     """Processes the synapse specifications from None, string or dictionary to a dictionary."""
+    syn_spec = copy.copy(syn_spec)
+
     if syn_spec is None:
         # for use_connect_arrays, return "static_synapse" by default
         if use_connect_arrays:

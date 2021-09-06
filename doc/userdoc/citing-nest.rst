@@ -10,8 +10,6 @@ visible to potential readers.
 For all versions from 2.8 onwards, you can find the full citation `on Zenondo <https://zenodo.org/search?page=1&size=20&q=title:NEST%20AND%20-description:graphical&file_type=gz&sort=-publication_date>`_.
 
 
-
-
 ----
 
 For all versions below NEST 2.8.0 and for citing NEST without referring

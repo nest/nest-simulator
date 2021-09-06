@@ -7,7 +7,7 @@ Please cite the version of NEST you used in your work. You can :doc:`let us know
 will add them to our `publication list <https://www.nest-simulator.org/publications/>`_; this will help make them
 visible to potential readers.
 
-For all versions from 2.8 onwards, you can find the full citation `on Zenondo <https://zenodo.org/search?page=1&size=20&q=nest-simulator>`_
+For all versions from 2.8 onwards, you can find the full citation `on Zenondo <https://zenodo.org/search?page=1&size=20&q=title:NEST%20AND%20-description:graphical&file_type=gz&sort=-publication_date>`_.
 
 
 

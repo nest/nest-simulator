@@ -116,6 +116,10 @@ public:
         v.back() = e.v.back();
         fix_invariant();
     }
+#if __cplusplus >= 201103L
+    Engine& operator=(const Engine&) = default;
+    Engine& operator=(Engine&&) = default;
+#endif
 
     template <typename SeedSeq>
     explicit Engine(SeedSeq &s

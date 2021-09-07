@@ -23,10 +23,6 @@
 """
 Music example receiver script
 ------------------------------
-
-Please note that MUSIC and the recording backend for Arbor are mutually exclusive
-and cannot be enabled at the same time.
-
 """
 
 import sys

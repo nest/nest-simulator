@@ -1,9 +1,28 @@
-.wy-breadcrumbs-aside {
+ .wy-breadcrumbs-aside {
     display: none !important;
 }
 
 .keep-us-sustainable {
     background-color: #272525;
+}
+div.twocol {
+   width: 430px;
+   height: 150px;
+   border-top-width: 1px;
+   border-top-style: solid;
+   border-bottom-width: 1px;
+   border-bottom-style: solid;
+}
+
+
+div.leftside {
+    width: 150px;
+    padding: 0px 3px 0px 0px;
+    float: left;
+}
+
+div.rightside {
+    margin-left: 160px;
 }
 
 .rst-content dl:not(.docutils) [class^="sig-prename descclassname"] {

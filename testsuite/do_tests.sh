@@ -128,7 +128,7 @@ TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"
 TEST_RUNFILE="${REPORTDIR}/runtest.sh"
 
-TIME_LIMIT=120  # seconds, for Python tests
+TIME_LIMIT=120  # seconds, for each of the Python tests
 
 NEST="nest_serial"
 

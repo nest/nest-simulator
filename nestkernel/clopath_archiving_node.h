@@ -39,41 +39,59 @@
 namespace nest
 {
 
- //! An archiving node which additionally archives parameters
- //! and buffers needed for the Clopath plasticity rule
+/**
+ * a archiving node which additionally archives parameters
+ * and buffers needed for the Clopath plasticity rule
+ */
 class ClopathArchivingNode : public ArchivingNode
 {
 
 public:
-  //! Constructor.
+   /**
+    * Constructor.
+    */
   ClopathArchivingNode();
 
-  //! Copy Constructor.
+   /**
+    * Copy Constructor.
+    */
   ClopathArchivingNode( const ClopathArchivingNode& );
 
-  //! Returns value in LTD history at time t
+  /**
+   * Returns value in LTD history at time t
+   */
   double get_LTD_value( double t );
 
-  //! Sets pointer start (finish) to the first (last) entry in LTP_history
-  //! whose time argument is between t1 and t2
+  /**
+   * Sets pointer start (finish) to the first (last) entry in LTP_history
+   * whose time argument is between t1 and t2
+   */
   void get_LTP_history( double t1,
     double t2,
     std::deque< histentry_extended >::iterator* start,
     std::deque< histentry_extended >::iterator* finish );
 
-  //! Returns threshold theta_plus_
+  /**
+   * Returns threshold theta_plus_
+   */
   double get_theta_plus() const;
 
-  //! Returns threshold theta_minus_
+  /**
+   * Returns threshold theta_minus_
+   */
   double get_theta_minus() const;
 
 protected:
-  //! Creates a new entry in the LTD history and deletes old entries that
-  //! are not needed any more.
+  /**
+   * Creates a new entry in the LTD history and deletes old entries that
+   * are not needed any more.
+   */
   void write_LTD_history( const double t_ltd_ms, double u_bar_minus, double u_bar_bar );
 
-  //! Creates a new entry in the LTP history and delets old entries that
-  //! are not needed any more.
+  /**
+   * Creates a new entry in the LTP history and delets old entries that
+   * are not needed any more.
+   */
   void write_LTP_history( const double t_ltp_ms, double u, double u_bar_plus );
 
   /**

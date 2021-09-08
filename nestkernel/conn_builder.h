@@ -261,13 +261,17 @@ private:
    */
   void register_parameters_requiring_skipping_( ConnParameter& param );
 
-  //! Set synapse specific parameters.
+  /**
+   * Set synapse specific parameters.
+   */
   void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
   void set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx );
   void set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
   void set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs );
 
-  //! Reset weight and delay pointers
+  /**
+   * Reset weight and delay pointers
+   */
   void reset_weights_();
   void reset_delays_();
 };
@@ -489,7 +493,9 @@ public:
    */
   void update_delay( delay& d ) const;
 
-  //!  @note Only for internal use by SPManager.
+  /**
+   *  @note Only for internal use by SPManager.
+   */
   void sp_connect( const std::vector< index >& sources, const std::vector< index >& targets );
 
 protected:

@@ -42,16 +42,22 @@
 namespace nest
 {
 
- //! A node which archives spike history for the purposes of spike-timing
- //! dependent plasticity (STDP)
+ /**
+  * A node which archives spike history for the purposes of spike-timing
+  * dependent plasticity (STDP)
+  */
 class ArchivingNode : public StructuralPlasticityNode
 {
 public:
 
-  //! Constructor
+ /**
+  * Constructor
+  */
   ArchivingNode();
 
-  //! Copy Constructor
+ /**
+  * Copy Constructor
+  */
   ArchivingNode( const ArchivingNode& );
 
   /**
@@ -82,11 +88,15 @@ public:
     get_K_values( t, Kminus, nearest_neighbor_Kminus_to_discard, Kminus_triplet );
   }
 
-  //! Return the triplet Kminus value for the associated iterator.
+  /**
+   * Return the triplet Kminus value for the associated iterator.
+   */
   double get_K_triplet_value( const std::deque< histentry >::iterator& iter );
 
-  //! * Return the spike times (in steps) of spikes which occurred in the range
-  //! * [t1,t2].
+  /**
+   * Return the spike times (in steps) of spikes which occurred in the range
+   * [t1,t2].
+   */
   void get_history( double t1,
     double t2,
     std::deque< histentry >::iterator* start,
@@ -105,13 +115,19 @@ public:
 
 protected:
 
-  //! Record spike history
+   /**
+    * record spike history
+    */
   void set_spiketime( Time const& t_sp, double offset = 0.0 );
 
-  //! Return most recent spike time in ms
+   /**
+    * return most recent spike time in ms
+    */
   inline double get_spiketime_ms() const;
 
-  //! Clear spike history
+   /**
+    * clear spike history
+    */
   void clear_history();
 
   /*

@@ -57,30 +57,45 @@ public:
    */
   CommonSynapseProperties();
 
-  //! Destructor.
+  /**
+   * Destructor.
+   */
   ~CommonSynapseProperties();
 
-  //! Get all properties and put them into a dictionary.
+  /**
+   * Get all properties and put them into a dictionary.
+   */
   void get_status( DictionaryDatum& d ) const;
 
-  //! Set properties from the values given in dictionary.
+  /**
+   * Set properties from the values given in dictionary.
+   */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
 
-  //! Calibrate all time objects, which might be contained in this object.
-
+  /**
+   * Calibrate all time objects, which might be contained in this object.
+   */
   void calibrate( const TimeConverter& );
 
-  //! get reference to registering node
+  /**
+   * get reference to registering node
+   */
   Node* get_node();
 
-  //! get node ID of volume transmitter
+  /**
+   * get node ID of volume transmitter
+   */
   long get_vt_node_id() const;
 
-  //! get node ID of weight_recorder
+  /**
+   * get node ID of weight_recorder
+   */
   index get_wr_node_id() const;
 
-  //! get weight_recorder
+  /**
+   * get weight_recorder
+   */
   NodeCollectionDatum get_weight_recorder() const;
 
 

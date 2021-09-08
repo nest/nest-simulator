@@ -42,18 +42,25 @@
 namespace nest
 {
 
-//! Class containing the common properties for all synapses with common weight.
+/**
+ * Class containing the common properties for all synapses with common weight.
+ */
 class CommonPropertiesHomW : public CommonSynapseProperties
 {
 public:
-   //! Default constructor. Sets all property values to defaults.
+   /**
+    * Default constructor.
+    * Sets all property values to defaults.
+    */
   CommonPropertiesHomW()
     : CommonSynapseProperties()
     , weight_( 1.0 )
   {
   }
 
-  //! Get all properties and put them into a dictionary.
+  /**
+   * Get all properties and put them into a dictionary.
+   */
   void
   get_status( DictionaryDatum& d ) const
   {
@@ -67,7 +74,9 @@ public:
     return weight_;
   }
 
-  //! Set properties from the values given in dictionary.
+  /**
+   * Set properties from the values given in dictionary.
+   */
   void
   set_status( const DictionaryDatum& d, ConnectorModel& cm )
   {

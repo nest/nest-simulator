@@ -88,7 +88,9 @@ public:
   void collect_compressed_spike_data( const thread tid );
   void clear_compressed_spike_data_map( const thread tid );
 
-  //! Add a connectivity rule, i.e. the respective ConnBuilderFactory.
+  /**
+   * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
+   */
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
 
@@ -98,7 +100,9 @@ public:
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
-  //! Create connections.
+  /**
+   * Create connections.
+   */
   void connect( NodeCollectionPTR sources,
       NodeCollectionPTR targets,
       const DictionaryDatum& conn_spec,
@@ -204,10 +208,14 @@ public:
     synindex syn_id,
     long synapse_label ) const;
 
-  //! Returns the number of connections in the network.
+  /**
+   * Returns the number of connections in the network.
+   */
   size_t get_num_connections() const;
 
-  //! Returns the number of connections of this synapse type.
+  /**
+   * Returns the number of connections of this synapse type.
+   */
   size_t get_num_connections( const synindex syn_id ) const;
 
   void
@@ -231,12 +239,16 @@ public:
   void
   trigger_update_weight( const long vt_node_id, const std::vector< spikecounter >& dopa_spikes, const double t_trig );
 
-  //! Return minimal connection delay, which is precomputed by
-  //! update_delay_extrema_().
+  /**
+   * Return minimal connection delay, which is precomputed by
+   * update_delay_extrema_().
+   */
   delay get_min_delay() const;
 
-  //! Return maximal connection delay, which is precomputed by
-  //! update_delay_extrema_().
+  /**
+   * Return maximal connection delay, which is precomputed by
+   * update_delay_extrema_().
+   */
   delay get_max_delay() const;
 
   bool get_user_set_delay_extrema() const;
@@ -244,14 +256,21 @@ public:
   void
   send( const thread tid, const synindex syn_id, const index lcid, const std::vector< ConnectorModel* >& cm, Event& e );
 
-  //! Send event e to all device targets of source source_node_id
+  /**
+   * Send event e to all device targets of source source_node_id
+   */
   void send_to_devices( const thread tid, const index source_node_id, Event& e );
   void send_to_devices( const thread tid, const index source_node_id, SecondaryEvent& e );
 
-  //! Send event e to all targets of source device ldid (local device id)
+  /**
+   * Send event e to all targets of source device ldid (local device id)
+   */
   void send_from_device( const thread tid, const index ldid, Event& e );
 
-  //! Send event e to all targets of node source on thread t
+
+  /**
+   * Send event e to all targets of node source on thread t
+   */
   void send_local( thread t, Node& source, Event& e );
 
   /**
@@ -310,11 +329,15 @@ public:
 
   bool use_compressed_spikes() const;
 
-  //! Sorts connections in the presynaptic infrastructure by increasing
-  //!  source node ID.
+  /**
+   * Sorts connections in the presynaptic infrastructure by increasing
+   * source node ID.
+   */
   void sort_connections( const thread tid );
 
-  //! Removes disabled connections (of structural plasticity)
+  /**
+   * Removes disabled connections (of structural plasticity)
+   */
   void remove_disabled_connections( const thread tid );
 
   /**
@@ -352,7 +375,9 @@ public:
   const std::vector< size_t >&
   get_secondary_send_buffer_positions( const thread tid, const index lid, const synindex syn_id ) const;
 
-  //!  Returns read position in MPI receive buffer for secondary connections.
+  /**
+   * Returns read position in MPI receive buffer for secondary connections.
+   */
   size_t get_secondary_recv_buffer_position( const thread tid, const synindex syn_id, const index lcid ) const;
 
   bool deliver_secondary_events( const thread tid,
@@ -391,8 +416,10 @@ private:
   void
   get_source_node_ids_( const thread tid, const synindex syn_id, const index tnode_id, std::vector< index >& sources );
 
-  //! Splits a TokenArray of node IDs to two vectors containing node IDs of neurons and
-  //! node IDs of devices.
+  /**
+   * Splits a TokenArray of node IDs to two vectors containing node IDs of neurons and
+   * node IDs of devices.
+   */
   void split_to_neuron_device_vectors_( const thread tid,
     NodeCollectionPTR nodecollection,
     std::vector< index >& neuron_node_ids,
@@ -406,15 +433,21 @@ private:
    */
   void update_delay_extrema_();
 
-  //! This method queries and finds the minimum delay
-  //! of all local connections
+  /**
+   * This method queries and finds the minimum delay
+   * of all local connections
+   */
   const Time get_min_delay_time_() const;
 
-  //! This method queries and finds the maximum delay
-  //! of all local connections
+  /**
+   * This method queries and finds the maximum delay
+   * of all local connections
+   */
   const Time get_max_delay_time_() const;
 
-  //! Deletes all connections.
+  /**
+   * Deletes all connections.
+   */
   void delete_connections_();
 
   /**
@@ -498,7 +531,9 @@ private:
     const double delay = NAN,
     const double weight = NAN );
 
-  //! Increases the connection count.
+  /**
+   * Increases the connection count.
+   */
   void increase_connection_count( const thread tid, const synindex syn_id );
 
   /**
@@ -523,8 +558,10 @@ private:
    */
   std::vector< std::vector< std::vector< SpikeData > > > compressed_spike_data_;
 
-  //! Stores absolute position in receive buffer of secondary events.
-  //! structure: threads|synapses|position
+  /**
+   * Stores absolute position in receive buffer of secondary events.
+   * structure: threads|synapses|position
+   */
   std::vector< std::vector< std::vector< size_t > > > secondary_recv_buffer_pos_;
 
   std::map< index, size_t > buffer_pos_of_source_node_id_syn_id_;
@@ -540,8 +577,10 @@ private:
 
   std::vector< DelayChecker > delay_checkers_;
 
-  //! A structure to count the number of synapses of a specific
-  //! type. Arranged in a 2d structure: threads|synapsetypes.
+  /**
+   * A structure to count the number of synapses of a specific
+   * type. Arranged in a 2d structure: threads|synapsetypes.
+   */
   std::vector< std::vector< size_t > > num_connections_;
 
   /**
@@ -557,7 +596,9 @@ private:
    */
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.
 
-  //! ConnBuilder factories, indexed by connruledict_ elements.
+  /**
+   * ConnBuilder factories, indexed by connruledict_ elements.
+   */
   std::vector< GenericConnBuilderFactory* > connbuilder_factories_;
 
   delay min_delay_; //!< Value of the smallest delay in the network.

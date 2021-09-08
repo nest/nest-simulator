@@ -98,9 +98,10 @@ if test ! "${REPORTDIR}"; then
 fi
 
 if test "${PYTHON}"; then
-    PYTEST_VERSION="$(${PYTHON} -m pytest --version --numprocesses=auto 2>&1)" || {
+      TIME_LIMIT=120  # seconds, for each of the Python tests
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=auto 2>&1)" || {
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
-        echo "       Testing also requires the 'pytest-xdist' extension."
+        echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
         exit 1
     }
     PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
@@ -127,8 +128,6 @@ TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"
 TEST_RUNFILE="${REPORTDIR}/runtest.sh"
-
-TIME_LIMIT=120  # seconds, for each of the Python tests
 
 NEST="nest_serial"
 

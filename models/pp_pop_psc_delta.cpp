@@ -296,7 +296,7 @@ nest::pp_pop_psc_delta::calibrate()
       temp = 0;
     }
 
-    for ( int j = 0; j < V_.len_eta_; j++ )
+    for ( int j = 0; j < V_.len_eta_ - 1; j++ )
     {
       S_.age_occupations_.push_back( 0 );
       S_.thetas_ages_.push_back( 0 );

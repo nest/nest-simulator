@@ -52,10 +52,15 @@ Co-dependent properties that have to be set together (for instance
   |     })                                          |                                             |
   +-------------------------------------------------+---------------------------------------------+
 
-.. admonition:: Deprecation info
 
-      The use of the access functions :py:func:`.GetKernelStatus` and
-      :py:func:`.SetKernelStatus` is now deprecated, and they will be
-      removed in a future version of NEST. To avoid porting trouble
-      later on, we suggest you switch to using the new shortcuts
-      now.
+Deprecation information
+~~~~~~~~~~~~~~~~~~~~~~
+
+* The access functions :py:func:`.GetKernelStatus` and
+  :py:func:`.SetKernelStatus` are deprecated. They will be
+  removed in a future version of NEST. To avoid porting trouble
+  later on, we suggest you switch to using the new interface
+  for kernel properties now.
+* Model ``pp_pop_psc_delta`` has been deprecated since 2016 and
+  will be removed in NEST 3.2. Please use model :doc:`gif_pop_psc_exp <gif_pop_psc_exp>`
+  instead.

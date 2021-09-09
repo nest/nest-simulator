@@ -220,7 +220,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
     long prev_spike = B_.spiketimes_.front();
     B_.spiketimes_.pop_front();
 
-    if ( n_spikes > 0 and not B_.spiketimes_.empty() and prev_spike != B_.spiketimes_.front() )
+    if ( n_spikes > 0 and ( B_.spiketimes_.empty() or prev_spike != B_.spiketimes_.front() ) )
     {
       SpikeEvent se;
       se.set_multiplicity( n_spikes );

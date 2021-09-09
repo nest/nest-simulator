@@ -296,6 +296,7 @@ nest::pp_pop_psc_delta::calibrate()
       temp = 0;
     }
 
+    // Set all except last state vector elements to zero, then fill last element with initial value
     for ( int j = 0; j < V_.len_eta_ - 1; j++ )
     {
       S_.age_occupations_.push_back( 0 );

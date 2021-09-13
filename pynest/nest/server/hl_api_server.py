@@ -97,7 +97,7 @@ def do_exec(args, kwargs):
                     data[variable] = locals_.get(variable, None)
             else:
                 data = locals_.get(kwargs['return'], None)
-            response['data'] = nest.hl_api.serializable(data)
+            response['data'] = nest.serializable(data)
         return response
 
     except Exception as e:
@@ -148,7 +148,7 @@ def do_call(call_name, args=[], kwargs={}):
         log(call_name, f'local call, args={args}, kwargs={kwargs}')
         master_response = call(*args, **kwargs)
 
-    response = [nest.hl_api.serializable(master_response)]
+    response = [nest.serializable(master_response)]
     if mpi_comm is not None:
         log(call_name, 'waiting for response gather')
         response = mpi_comm.gather(response[0], root=0)

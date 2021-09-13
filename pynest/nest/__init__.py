@@ -455,6 +455,10 @@ _module.__all__ = list(set(_api))
 
 # Set the nest module object as the return value of `import nest` using sys
 sys.modules[__name__] = _module
+# Leave in the `hl_api` module for backwards compatibility until NEST 4.0.
+# It provides exactly the same references as `nest`, so we can provide the same
+# object there.
+sys.modules[__name__ + ".hl_api"] = _module
 
 # Some compiled/binary components (`pynestkernel.pyx` for example) of NEST
 # obtain a reference to this file's original module object instead of what's in

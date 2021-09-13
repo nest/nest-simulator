@@ -111,12 +111,11 @@ class NestModule(types.ModuleType):
     """
     A module class for the `nest` root module to control the dynamic generation
     of module level attributes such as the KernelAttributes, lazy loading
-    some submodules and importing the public APIs of the hl_api submodules.
+    some submodules and importing the public APIs of the `lib` submodules.
     """
 
     from . import ll_api                             # noqa
     from . import pynestkernel as kernel             # noqa
-    from . import hl_api                             # noqa
     from . import random                             # noqa
     from . import math                               # noqa
     from . import spatial_distributions              # noqa

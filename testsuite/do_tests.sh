@@ -192,8 +192,7 @@ CODES_SKIPPED=\
 ' 202 Skipped (build with-mpi=OFF required),'\
 ' 203 Skipped (Threading required),'\
 ' 204 Skipped (GSL required),'\
-' 205 Skipped (MUSIC required),'\
-' 206 Skipped (Recording backend Arbor required),'
+' 205 Skipped (MUSIC required),'
 
 echo
 echo 'Phase 1: Testing if SLI can execute scripts and report errors'
@@ -468,7 +467,7 @@ echo "-----------------------------"
 if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests"
     XUNIT_NAME="07_pynesttests"
-    
+
     # Run all tests except those in the mpi and non_concurrent subdirectories
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
     "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
@@ -486,7 +485,7 @@ if test "${PYTHON}"; then
            XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
            PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
            $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
-       done 
+       done
     fi
 else
     echo

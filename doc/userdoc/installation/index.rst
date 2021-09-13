@@ -17,13 +17,9 @@ Who are you?
 
       **User**
 
-      I'm a Linux or macOS user who wants to run simulation scripts for NEST on my computer.
+      I'm a student or researcher who wants to run neural network simulation scripts for NEST on my computer.
 
 |
-.. note::
-
-    Windows users see here
-
 |
 
 .. container:: twocol

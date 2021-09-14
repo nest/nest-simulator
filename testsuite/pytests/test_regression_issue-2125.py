@@ -36,7 +36,7 @@ class ThreadedDisconnectTestCase(unittest.TestCase):
 
         neurons = nest.Create('iaf_psc_alpha', 3)
 
-        nest.Connect(neurons[0], neurons[2])
+        nest.Connect(nest.AllToAll(neurons[0], neurons[2]))
 
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 1)

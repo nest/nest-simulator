@@ -82,7 +82,7 @@ class GLIFCONDTestCase(unittest.TestCase):
         sr = nest.Create('spike_recorder')
         nest.Connect(nest.AllToAll(nrn, sr))
 
-        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": self.resol})
+        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": nest.resolution})
         nest.Connect(nest.AllToAll(mm, nrn))
 
         nest.BuildNetwork()

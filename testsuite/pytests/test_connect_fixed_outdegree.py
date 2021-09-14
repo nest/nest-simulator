@@ -119,7 +119,7 @@ class TestFixedOutDegree(connect_test_base.ConnectTestBase):
         N = 3
 
         # test that multapses were drawn
-        pop = hnest.Create('iaf_psc_alpha', N)
+        pop = nest.Create('iaf_psc_alpha', N)
         conn_params = nest.FixedOutdegree(source=pop, target=pop, outdegree=N + 1,
                                           allow_multapses=True, allow_autapses=True)
         nest.Connect(conn_params)

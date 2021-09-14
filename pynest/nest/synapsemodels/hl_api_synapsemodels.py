@@ -130,6 +130,9 @@ class SynapseModel:
         else:
             self.specs[attr] = value
 
+    def __eq__(self, other):
+        return self.to_dict() == other.to_dict()
+
     def __str__(self):
         return f'synapse_model: {self.synapse_model}, specs: {self.specs}'
 

@@ -57,8 +57,6 @@ class TestConnectArraysMPICase(unittest.TestCase):
         delays = conns.delay
         if rule == 'one_to_one':
             expected_projections = np.array([[s, t] for s, t in zip(expected_sources, expected_targets)])
-        elif rule == 'all_to_all':
-            expected_projections = np.array([[s, t] for s in expected_sources for t in expected_targets])
         else:
             self.assertFalse(True, 'rule={} is not valid'.format(rule))
 
@@ -96,9 +94,9 @@ class TestConnectArraysMPICase(unittest.TestCase):
         weight = 1.5
         delay = 1.4
 
-        nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+        nest.Connect(nest.ArrayConnect(sources, targets, syn_spec=nest.synapsemodels.static(weight=weight, delay=delay)))
 
-        self.assert_connections(sources, targets, weight, delay, 'all_to_all')
+        self.assert_connections(sources, targets, weight, delay, 'one_to_one')
 
     def test_connect_arrays_nonunique(self):
         """Connecting NumPy arrays with non-unique node IDs with MPI"""
@@ -108,7 +106,7 @@ class TestConnectArraysMPICase(unittest.TestCase):
         targets = self.non_unique
         weights = np.ones(n)
         delays = np.ones(n)
-        nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+        nest.Connect(nest.ArrayConnect(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
 
         self.assert_connections(sources, targets, weights, delays, 'one_to_one')
 
@@ -122,6 +120,6 @@ class TestConnectArraysMPICase(unittest.TestCase):
         weights = np.linspace(0.6, 1.5, len(sources))  # Interval endpoints are carefully selected to get nice values,
         delays = np.linspace(0.4, 1.3, len(sources))   # that is, a step of 0.1 between values.
 
-        nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
+        nest.Connect(nest.ArrayConnect(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
 
         self.assert_connections(sources, targets, weights, delays, 'one_to_one')

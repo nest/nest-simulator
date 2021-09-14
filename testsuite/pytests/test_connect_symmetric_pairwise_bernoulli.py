@@ -112,7 +112,7 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
 
         # test that make_symmetric must be enabled
         pop = nest.Create('iaf_psc_alpha', N)
-        conn_params = nest.SymmetricPairwiseBernoulli(source=pop, target=pop, p=p, allow_multapses=True,
+        conn_params = nest.SymmetricPairwiseBernoulli(source=pop, target=pop, p=self.p, allow_multapses=True,
                                                       allow_autapses=False, make_symmetric=False)
         with self.assertRaises(nest.kernel.NESTError):
             nest.Connect(conn_params)

@@ -254,7 +254,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         projection.conn_spec['allow_oversized_mask'] = True
         nest.Connect(projection)
         nest.BuildNetwork()
-        self.assertEqual(num_connections, 1)
+        self.assertEqual(nest.num_connections, 1)
 
     def test_connect_layers_weights(self):
         """Connecting layers with specified weights"""

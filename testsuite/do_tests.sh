@@ -99,7 +99,7 @@ fi
 
 if test "${PYTHON}"; then
       TIME_LIMIT=120  # seconds, for each of the Python tests
-      PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=auto 2>&1)" || {
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
         echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
         exit 1
@@ -471,7 +471,7 @@ if test "${PYTHON}"; then
     
     # Run all tests except those in the mpi and non_concurrent subdirectories
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-    "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
+    "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
           --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/non_concurrent" \
           "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
 

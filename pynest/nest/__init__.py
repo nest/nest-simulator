@@ -101,11 +101,6 @@ class NestModule(types.ModuleType):
     from . import spatial_distributions              # noqa
     from . import logic                              # noqa
 
-    try:
-        from . import server                         # noqa
-    except ImportError:
-        pass
-
     __version__ = ll_api.sli_func("statusdict /version get")
 
     # Lazy load the `spatial` module to avoid circular imports.

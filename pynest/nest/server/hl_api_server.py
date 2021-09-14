@@ -31,7 +31,6 @@ from flask_cors import CORS, cross_origin
 from werkzeug.exceptions import abort
 from werkzeug.wrappers import Response
 
-from nest import __version__    # noqa
 import nest
 
 import RestrictedPython

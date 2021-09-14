@@ -19,18 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-This file contains two TestCases, and must be run from nosetests or pytest.
-It requires NEST to be built with MPI and the Python package mpi4py.
-
-The file can be run in two modes: with a single process, or with multiple MPI
-processes. If run with multiple processes, the ConnectArraysMPICase TestCase
-is run, which tests connecting with arrays when using multiple MPI processes.
-If run with a single process, the TestConnectArraysMPI TestCase is run,
-which runs ConnectArraysMPICase in a subprocess with multiple MPI processes,
-and fails if any of the tests in ConnectArraysMPICase fail.
-"""
-
 import os
 import subprocess as sp
 import unittest
@@ -44,17 +32,13 @@ except ImportError:
     HAVE_MPI4PY = False
 
 HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
-MULTIPLE_PROCESSES = nest.NumProcesses() > 1
 
 
 @unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
-class ConnectArraysMPICase(unittest.TestCase):
+class TestConnectArraysMPICase(unittest.TestCase):
     """
     This TestCase uses mpi4py to collect and assert results from all
     processes, and is supposed to only be run with multiple processes.
-    If running with nosetests or pytest, this TestCase is ignored when
-    run with a single process, and called from TestConnectArraysMPI using
-    multiple processes.
     """
     non_unique = np.array([1, 1, 3, 5, 4, 5, 9, 7, 2, 8], dtype=np.uint64)
 
@@ -64,9 +48,6 @@ class ConnectArraysMPICase(unittest.TestCase):
     # the execution.
     if HAVE_MPI4PY:
         comm = MPI.COMM_WORLD.Clone()
-
-    # With pytest or nosetests, only run these tests if using multiple processes
-    __test__ = MULTIPLE_PROCESSES
 
     def assert_connections(self, expected_sources, expected_targets, expected_weights, expected_delays, rule):
         """Gather connections from all processes and assert against expected connections"""
@@ -144,33 +125,3 @@ class ConnectArraysMPICase(unittest.TestCase):
         nest.Connect(nest.OneToOne(sources, targets, syn_spec=nest.synapsemodels.static(weight=weights, delay=delays)))
 
         self.assert_connections(sources, targets, weights, delays, 'one_to_one')
-
-
-@unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
-@unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
-class TestConnectArraysMPI(unittest.TestCase):
-    """
-    When run with nosetests or pytest, this TestCase runs the ConnectArraysMPICase
-    with multiple MPI processes in a subprocess. The test fails if any of the tests in
-    ConnectArraysMPICase fail.
-    """
-
-    # With nosetests, only run this test if using a single process
-    __test__ = not MULTIPLE_PROCESSES
-
-    def testWithMPI(self):
-        """Connect NumPy arrays with MPI"""
-        directory = os.path.dirname(os.path.realpath(__file__))
-        script = os.path.realpath(__file__)
-        test_script = os.path.join(directory, script)
-        command = nest.ll_api.sli_func("mpirun", 2, "nosetests", test_script)
-        command = command.split()
-
-        my_env = os.environ.copy()
-        retcode = sp.call(command, env=my_env)
-
-        self.assertEqual(retcode, 0, 'Test failed when run with "mpirun -np 2 nosetests [script]"')
-
-
-if __name__ == '__main__':
-    raise RuntimeError('This test must be run with nosetests or pytest')

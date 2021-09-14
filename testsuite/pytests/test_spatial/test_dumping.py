@@ -84,7 +84,7 @@ class DumpingTestCase(unittest.TestCase):
         nest.Connect(nest.PairwiseBernoulli(l1, l2, p=1.))
         nest.BuildNetwork()
 
-        print('Num. connections: ', nest.GetKernelStatus('num_connections'))
+        print('Num. connections:', nest.num_connections)
 
         filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
         nest.DumpLayerConnections(l1, l2, 'static_synapse', filename)
@@ -109,7 +109,7 @@ class DumpingTestCase(unittest.TestCase):
         nest.Connect(nest.PairwiseBernoulli(l2, l3, p=1., syn_spec=nest.synapsemodels.stdp()))
         nest.BuildNetwork()
 
-        print('Num. connections: ', nest.GetKernelStatus('num_connections'))
+        print('Num. connections:', nest.num_connections)
 
         filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
         nest.DumpLayerConnections(l2, l3, syn_model, filename)

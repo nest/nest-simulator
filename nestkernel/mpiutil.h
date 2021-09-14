@@ -38,7 +38,7 @@ namespace shadow
 using cell_node_id_type = std::uint32_t;
 using cell_lid_type = std::uint32_t;
 struct cell_member_type;
-using time_type = float;
+using time_type = double;
 constexpr time_type terminal_time = std::numeric_limits< time_type >::max();
 
 template < typename I >
@@ -51,7 +51,7 @@ int mpi_rank( MPI_Comm c );
 int mpi_size( MPI_Comm c );
 int broadcast( int local, MPI_Comm comm, int root );
 unsigned broadcast( unsigned local, MPI_Comm comm, int root );
-float broadcast( float local, MPI_Comm comm, int root );
+double broadcast( double local, MPI_Comm comm, int root );
 
 #ifdef HAVE_RECORDINGBACKEND_ARBOR
 struct comm_info;

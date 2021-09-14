@@ -38,8 +38,9 @@ class StepRateGeneratorTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.SetKernelStatus(
-            {'resolution': 0.1, 'use_wfr': False, 'print_time': False})
+        nest.resolution = 0.1
+        nest.use_wfr = False
+        nest.print_time = False
 
         # create nodes
         neuron = nest.Create("lin_rate_ipn", 1, {"sigma": 0.0})

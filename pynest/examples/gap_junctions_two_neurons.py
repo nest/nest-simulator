@@ -40,7 +40,7 @@ nest.ResetKernel()
 # First we set the resolution of the simulation, create two neurons and
 # create a ``voltmeter`` for recording.
 
-nest.SetKernelStatus({'resolution': 0.05})
+nest.resolution = 0.05
 
 neuron = nest.Create('hh_psc_alpha_gap', 2)
 

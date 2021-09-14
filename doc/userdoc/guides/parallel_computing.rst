@@ -173,7 +173,7 @@ command for this is
 
 .. code-block:: bash
 
-    nest.SetKernelStatus({"local_num_threads": T})
+    nest.local_num_threads = T
 
 Usually, a good choice for `T` is the number of processor cores available
 on your machine.
@@ -287,8 +287,10 @@ of all four neurons are recorded to files.
 
 .. code-block:: python
 
-    from nest import *
-    SetKernelStatus({"total_num_virtual_procs": 4})
+    import nest
+    from nest import Create, Connect, Simulate
+
+    nest.total_num_virtual_procs = 4
     pg = Create("poisson_generator", params={"rate": 50000.0})
     n = Create("iaf_psc_alpha", 4)
     sr = Create("spike_recorder", params={"record_to": "ascii"})

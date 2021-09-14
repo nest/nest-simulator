@@ -200,10 +200,9 @@ class AEIFTestCase(unittest.TestCase):
         '''
         Clean up and initialize NEST before each test.
         '''
-        msd = 123456
-        self.resol = 0.01
         nest.ResetKernel()
-        nest.SetKernelStatus({'resolution': self.resol, 'rng_seed': msd})
+        nest.resolution = 0.01
+        nest.rng_seed = 123456
 
     def compute_difference(self, multimeters, params, reference, recordables):
         '''
@@ -273,7 +272,7 @@ class AEIFTestCase(unittest.TestCase):
         multimeters = {model: nest.Create("multimeter") for model in models}
         # connect them and simulate
         for model, mm in iter(multimeters.items()):
-            nest.SetStatus(mm, {"interval": self.resol,
+            nest.SetStatus(mm, {"interval": nest.resolution,
                                 "record_from": ["V_m", "w"]})
             projection = nest.AllToAll(mm, neurons[model])
             nest.Connect(projection)
@@ -315,7 +314,7 @@ class AEIFTestCase(unittest.TestCase):
         for model, mm in iter(multimeters.items()):
             syn_type = di_syn_types[model]
             key = syn_type[:syn_type.index('_')]
-            nest.SetStatus(mm, {"interval": self.resol,
+            nest.SetStatus(mm, {"interval": nest.resolution,
                                 "record_from": recordables[syn_type]})
             projection = nest.AllToAll(mm, neurons[model])
             nest.Connect(projection)
@@ -324,7 +323,7 @@ class AEIFTestCase(unittest.TestCase):
             nest.Connect(projection)
         for syn_type, mm in iter(ref_mm.items()):
             key = syn_type[:syn_type.index('_')]
-            nest.SetStatus(mm, {"interval": self.resol,
+            nest.SetStatus(mm, {"interval": nest.resolution,
                                 "record_from": recordables[syn_type]})
             nest.Connect(nest.AllToAll(mm, refs[syn_type]))
             weight = 80. if key == "psc" else 1.
@@ -364,12 +363,12 @@ class AEIFTestCase(unittest.TestCase):
         # connect them and simulate
         for model, mm in iter(multimeters.items()):
             syn_type = di_syn_types[model]
-            nest.SetStatus(mm, {"interval": self.resol,
+            nest.SetStatus(mm, {"interval": nest.resolution,
                                 "record_from": ["V_m"]})
             nest.Connect(nest.AllToAll(mm, neurons[model]))
             nest.Connect(nest.AllToAll(dcg, neurons[model]))
         for syn_type, mm in iter(ref_mm.items()):
-            nest.SetStatus(mm, {"interval": self.resol,
+            nest.SetStatus(mm, {"interval": nest.resolution,
                                 "record_from": ["V_m"]})
             nest.Connect(nest.AllToAll(mm, refs[syn_type]))
             nest.Connect(nest.AllToAll(dcg, refs[syn_type]))

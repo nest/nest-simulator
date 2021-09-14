@@ -487,20 +487,21 @@ class TestNodeCollection(unittest.TestCase):
         n = nest.Create('iaf_psc_exp', 10)
         nest.Connect(nest.OneToOne(n, n))
         nest.BuildNetwork()
-        connections = nest.GetKernelStatus('num_connections')
-        self.assertEqual(connections, 10)
+        self.assertEqual(nest.num_connections, 10)
 
         for nc in n:
             nest.Connect(nest.AllToAll(nc, nc))
         nest.BuildNetwork()
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+
+        self.assertEqual(nest.num_connections, 20)
 
         nest.ResetKernel()
 
         n = nest.Create('iaf_psc_alpha', 2)
         nest.Connect(nest.AllToAll(n[0], n[1]))
         nest.BuildNetwork()
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
+
+        self.assertEqual(nest.num_connections, 1)
 
     def test_SetStatus_and_GetStatus(self):
         """
@@ -722,8 +723,8 @@ class TestNodeCollection(unittest.TestCase):
                  ]
         fail_cases = [([True for _ in range(len(n)-1)], IndexError),  # Too few bools
                       ([True for _ in range(len(n)+1)], IndexError),  # Too many bools
-                      ([[True, False], [True, False]], TypeError),  # Too many dimensions
-                      ([True, False, 2.5, False, True], TypeError),  # Not all indices are bools
+                      ([[True, False], [True, False]], TypeError),    # Too many dimensions
+                      ([True, False, 2.5, False, True], TypeError),   # Not all indices are bools
                       ([1, False, 1, False, 1], TypeError),  # Mixing bools and ints
                       ]
         if HAVE_NUMPY:
@@ -776,9 +777,11 @@ class TestNodeCollection(unittest.TestCase):
 
         nodes_a = nest.NodeCollection()
         nodes_a += nest.Create('iaf_psc_alpha', n)
+
         nest.Connect(nest.AllToAll(nodes_a, nodes_a))
         nest.BuildNetwork()
-        self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
+
+        self.assertEqual(nest.num_connections, n * n)
         self.assertTrue(nodes_a)
         self.assertIsNotNone(nodes_a.get())
         nodes_a.V_m = vm
@@ -790,7 +793,8 @@ class TestNodeCollection(unittest.TestCase):
         nodes_b += nest.NodeCollection([])
         nest.Connect(nest.AllToAll(nodes_b, nodes_b))
         nest.BuildNetwork()
-        self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
+
+        self.assertEqual(nest.num_connections, n * n)
         self.assertTrue(nodes_b)
         self.assertIsNotNone(nodes_b.get())
         nodes_b.V_m = vm

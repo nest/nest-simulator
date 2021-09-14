@@ -82,7 +82,7 @@ class IF_curve():
         # and adjust the number of threads.
 
         nest.ResetKernel()
-        nest.SetKernelStatus({'local_num_threads': self.n_threads})
+        nest.local_num_threads = self.n_threads
 
         #######################################################################
         # We create neurons and devices with specified parameters.

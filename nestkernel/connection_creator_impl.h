@@ -94,7 +94,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
     }
     iter->first.get_vector( source_pos );
 
-    if ( without_kernel or rng->drand() < kernel_->value( rng, source_pos, target_pos, source ) )
+    if ( without_kernel or rng->drand() < kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) )
     {
       for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
       {
@@ -103,8 +103,8 @@ ConnectionCreator::connect_to_target_( Iterator from,
           tgt_thread,
           synapse_model_[ indx ],
           param_dicts_[ indx ][ tgt_thread ],
-          delay_[ indx ]->value( rng, source_pos, target_pos, source ),
-          weight_[ indx ]->value( rng, source_pos, target_pos, source ) );
+          delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
+          weight_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ) );
       }
     }
   }
@@ -408,10 +408,9 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           // We will select `number_of_connections_` sources within the mask.
           // If there is no kernel, we can just draw uniform random numbers,
           // but with a kernel we have to set up a probability distribution
-          // function using the Vose class.
+          // function using a discrete_distribution class.
           if ( kernel_.get() )
           {
-
             std::vector< double > probabilities;
             probabilities.reserve( positions.size() );
 
@@ -421,7 +420,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
                   ++iter )
             {
               iter->first.get_vector( source_pos_vector );
-              probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source ) );
+              probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source, tgt ) );
             }
 
             if ( positions.empty()
@@ -433,9 +432,11 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
               throw KernelException( msg.c_str() );
             }
 
-            // A Vose object draws random integers with a non-uniform
+            // A discrete_distribution draws random integers with a non-uniform
             // distribution.
-            Vose lottery( probabilities );
+            discrete_distribution lottery;
+            const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
+            lottery.param( param );
 
             // If multapses are not allowed, we must keep track of which
             // sources have been selected already.
@@ -444,7 +445,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
             // Draw `number_of_connections_` sources
             for ( int i = 0; i < ( int ) number_of_connections_; ++i )
             {
-              index random_id = lottery.get_random_id( rng );
+              index random_id = lottery( rng );
               if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
               {
                 --i;
@@ -460,8 +461,8 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
               positions[ random_id ].first.get_vector( source_pos_vector );
               for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
               {
-                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
-                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
                 kernel().connection_manager.connect(
                   source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
               }
@@ -500,8 +501,8 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
               index source_id = positions[ random_id ].second;
               for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
               {
-                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
-                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
                 kernel().connection_manager.connect(
                   source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
               }
@@ -529,8 +530,8 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           std::vector< double > source_pos_vector( D );
           const std::vector< double > target_pos_vector = target_pos.get_vector();
 
-          if ( ( positions->size() == 0 ) or ( ( not allow_autapses_ ) and ( positions->size() == 1 )
-                                               and ( ( *positions )[ 0 ].second == target_id ) )
+          if ( ( positions->size() == 0 )
+            or ( ( not allow_autapses_ ) and ( positions->size() == 1 ) and ( ( *positions )[ 0 ].second == target_id ) )
             or ( ( not allow_multapses_ ) and ( positions->size() < number_of_connections_ ) ) )
           {
             std::string msg = String::compose( "Global target ID %1: Not enough sources found", target_id );
@@ -540,7 +541,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           // We will select `number_of_connections_` sources within the mask.
           // If there is no kernel, we can just draw uniform random numbers,
           // but with a kernel we have to set up a probability distribution
-          // function using the Vose class.
+          // function using a discrete_distribution.
           if ( kernel_.get() )
           {
 
@@ -553,12 +554,14 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
                   ++iter )
             {
               iter->first.get_vector( source_pos_vector );
-              probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source ) );
+              probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source, tgt ) );
             }
 
-            // A Vose object draws random integers with a non-uniform
+            // A discrete_distribution draws random integers with a non-uniform
             // distribution.
-            Vose lottery( probabilities );
+            discrete_distribution lottery;
+            const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
+            lottery.param( param );
 
             // If multapses are not allowed, we must keep track of which
             // sources have been selected already.
@@ -567,7 +570,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
             // Draw `number_of_connections_` sources
             for ( int i = 0; i < ( int ) number_of_connections_; ++i )
             {
-              index random_id = lottery.get_random_id( rng );
+              index random_id = lottery( rng );
               if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
               {
                 --i;
@@ -584,8 +587,8 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
               ( *positions )[ random_id ].first.get_vector( source_pos_vector );
               for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
               {
-                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
-                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
                 kernel().connection_manager.connect(
                   source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
               }
@@ -622,8 +625,8 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
               ( *positions )[ random_id ].first.get_vector( source_pos_vector );
               for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
               {
-                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
-                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source );
+                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
                 kernel().connection_manager.connect(
                   source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
               }
@@ -731,7 +734,8 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
           {
             // TODO: Why is probability calculated in source layer, but weight and delay in target layer?
             target_pos_node_id_pair.first.get_vector( target_pos_vector );
-            probabilities.push_back( kernel_->value( grng, source_pos_vector, target_pos_vector, source ) );
+            const auto tgt = kernel().node_manager.get_node_or_proxy( target_pos_node_id_pair.second );
+            probabilities.push_back( kernel_->value( grng, source_pos_vector, target_pos_vector, source, tgt ) );
           }
         }
         else
@@ -746,9 +750,11 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
           throw KernelException( msg.c_str() );
         }
 
-        // Draw targets.  A Vose object draws random integers with a
+        // Draw targets.  A discrete_distribution object draws random integers with a
         // non-uniform distribution.
-        Vose lottery( probabilities );
+        discrete_distribution lottery;
+        const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
+        lottery.param( param );
 
         // If multapses are not allowed, we must keep track of which
         // targets have been selected already.
@@ -757,7 +763,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
         // Draw `number_of_connections_` targets
         for ( long i = 0; i < ( long ) number_of_connections_; ++i )
         {
-          index random_id = lottery.get_random_id( get_rank_synced_rng() );
+          index random_id = lottery( get_rank_synced_rng() );
           if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
           {
             --i;
@@ -778,8 +784,9 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
           std::vector< double > rng_delay_vec;
           for ( size_t indx = 0; indx < weight_.size(); ++indx )
           {
-            rng_weight_vec.push_back( weight_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target ) );
-            rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target ) );
+            const auto tgt = kernel().node_manager.get_node_or_proxy( target_pos_node_id_pairs[ indx ].second );
+            rng_weight_vec.push_back( weight_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
+            rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
           }
 
           // We bail out for non-local neurons only now after all possible

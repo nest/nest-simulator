@@ -1,0 +1,66 @@
+/*
+ *  issue-2119.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/** @BeginDocumentation
+    Name: testsuite::issue-2119 - Test thread-specific spatial random parameters
+    Synopsis: (issue-2119) run -> -
+
+    Description:
+    issue-2119.sli checks that randomized parameters depending on the thread of
+    the randomized node perform correctly under MPI and OpenMP.
+    
+    Author: Håkon Mørk / Hans Ekkehard Plesser
+*/
+
+(unittest) run
+/unittest using
+
+skip_if_not_threaded
+
+/random_params [
+  << /exponential << >> >>
+  << /normal << >> >>
+  << /lognormal << >> >>
+  << /uniform << >> >>
+  << /uniform_int << /max 10 >> >>
+] def
+
+
+[1 2 4]
+{
+  << /total_num_virtual_procs 4 >> SetKernelStatus
+  
+  % Create several neurons, randomize membrane potential, check for identical results
+  % independent of proc-thread split. Repeat for all random params.
+  
+  random_params
+  {
+    CreateParameter /param Set
+    /nrns /iaf_psc_alpha 4 Create def
+    nrns << /V_m param >> SetStatus
+  
+    nrns LocalOnly /V_m get
+  }
+  Map Flatten
+
+} distributed_process_invariant_collect_assert_or_die

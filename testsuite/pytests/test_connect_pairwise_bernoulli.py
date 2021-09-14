@@ -23,16 +23,16 @@
 import numpy as np
 import unittest
 import scipy.stats
-import test_connect_helpers as hf
-from test_connect_parameters import TestParams
+import connect_test_base
+import nest
 
 
-class TestPairwiseBernoulli(TestParams):
+class TestPairwiseBernoulli(connect_test_base.ConnectTestBase):
 
     # specify connection pattern and specific params
     rule = 'pairwise_bernoulli'
     p = 0.5
-    conn_dict = hf.nest.PairwiseBernoulli(None, None, p=p)
+    conn_dict = nest.PairwiseBernoulli(None, None, p=p)
     # sizes of source-, target-population and connection probability for
     # statistical test
     N_s = 50
@@ -42,22 +42,23 @@ class TestPairwiseBernoulli(TestParams):
 
     def testStatistics(self):
         for fan in ['in', 'out']:
-            expected = hf.get_expected_degrees_bernoulli(
+            expected = connect_test_base.get_expected_degrees_bernoulli(
                 self.p, fan, self.N_s, self.N_t)
 
             pvalues = []
             for i in range(self.stat_dict['n_runs']):
-                hf.reset_seed(i+1, self.nr_threads)
-                projection = hf.nest.PairwiseBernoulli(None, None, p=self.p)
+                connect_test_base.reset_seed(i+1, self.nr_threads)
+                projection = nest.PairwiseBernoulli(None, None, p=self.p)
                 self.setUpNetwork(projections=projection, N1=self.N_s, N2=self.N_t)
-                degrees = hf.get_degrees(fan, self.pop1, self.pop2)
-                degrees = hf.gather_data(degrees)
+                degrees = connect_test_base.get_degrees(fan, self.pop1, self.pop2)
+                degrees = connect_test_base.gather_data(degrees)
+
                 # degrees = self.comm.gather(degrees, root=0)
                 # if self.rank == 0:
                 if degrees is not None:
-                    chi, p = hf.chi_squared_check(degrees, expected, self.rule)
+                    chi, p = connect_test_base.chi_squared_check(degrees, expected, self.rule)
                     pvalues.append(p)
-                hf.mpi_barrier()
+                connect_test_base.mpi_barrier()
             if degrees is not None:
                 ks, p = scipy.stats.kstest(pvalues, 'uniform')
                 self.assertTrue(p > self.stat_dict['alpha2'])
@@ -65,24 +66,24 @@ class TestPairwiseBernoulli(TestParams):
     def testAutapsesTrue(self):
         # test that autapses exist
         N = 10
-        pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params = hf.nest.PairwiseBernoulli(pop, pop, p=1., allow_multapses=False, allow_autapses=True)
-        hf.nest.Connect(conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params = nest.PairwiseBernoulli(pop, pop, p=1., allow_multapses=False, allow_autapses=True)
+        nest.Connect(conn_params)
 
         # make sure all connections do exist
-        M = hf.get_connectivity_matrix(pop, pop)
-        hf.mpi_assert(np.diag(M), np.ones(N), self)
+        M = connect_test_base.get_connectivity_matrix(pop, pop)
+        connect_test_base.mpi_assert(np.diag(M), np.ones(N), self)
 
     def testAutapsesFalse(self):
         # test that autapses were excluded
         N = 10
-        pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params = hf.nest.PairwiseBernoulli(pop, pop, p=1., allow_multapses=False, allow_autapses=False)
-        hf.nest.Connect(conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params = nest.PairwiseBernoulli(pop, pop, p=1., allow_multapses=False, allow_autapses=False)
+        nest.Connect(conn_params)
 
         # make sure all connections do exist
-        M = hf.get_connectivity_matrix(pop, pop)
-        hf.mpi_assert(np.diag(M), np.zeros(N), self)
+        M = connect_test_base.get_connectivity_matrix(pop, pop)
+        connect_test_base.mpi_assert(np.diag(M), np.zeros(N), self)
 
 
 def suite():

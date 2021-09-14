@@ -175,7 +175,7 @@ Vax.set_xlabel('Time [ms]')
 
 conns = nest.GetConnections(dc, nrn)
 delay = conns.delay
-dt = nest.GetKernelStatus('resolution')
+dt = nest.resolution
 
 t_dc, I_dc = [0], [0]
 

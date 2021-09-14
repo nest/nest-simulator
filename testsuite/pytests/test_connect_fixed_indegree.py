@@ -23,11 +23,11 @@
 import numpy as np
 import unittest
 import scipy.stats
-import test_connect_helpers as hf
-from test_connect_parameters import TestParams
+import connect_test_base
+import nest
 
 
-class TestFixedInDegree(TestParams):
+class TestFixedInDegree(connect_test_base.ConnectTestBase):
 
     # sizes of source-, target-population and outdegree for connection test
     # and tests in test_Params
@@ -36,7 +36,7 @@ class TestFixedInDegree(TestParams):
     Nin = 10
 
     # specify connection pattern and specific params
-    conn_dict = hf.nest.FixedIndegree(source=None, target=None, indegree=Nin)
+    conn_dict = nest.FixedIndegree(source=None, target=None, indegree=Nin)
 
     # sizes of source-, target-population and outdegree for statistical test
     N_s = 10
@@ -48,43 +48,42 @@ class TestFixedInDegree(TestParams):
     # tested on each mpi process separately
     def testErrorMessages(self):
         got_error = False
-        conn_params = hf.nest.FixedIndegree(source=None, target=None, indegree=self.N1 + 1,
-                                            allow_autapses=True, allow_multapses=False)
+        conn_params = nest.FixedIndegree(source=None, target=None, indegree=self.N1 + 1,
+                                         allow_autapses=True, allow_multapses=False)
         try:
             self.setUpNetwork(conn_params)
-        except hf.nest.kernel.NESTError:
+        except nest.kernel.NESTError:
             got_error = True
         self.assertTrue(got_error)
 
     def testInDegree(self):
-        conn_params = hf.nest.FixedIndegree(source=None, target=None, indegree=self.Nin,
-                                            allow_autapses=False, allow_multapses=False)
+        conn_params = nest.FixedIndegree(source=None, target=None, indegree=self.Nin,
+                                         allow_autapses=False, allow_multapses=False)
         self.setUpNetwork(conn_params)
         # make sure the indegree is right
-        M = hf.get_connectivity_matrix(self.pop1, self.pop2)
+        M = connect_test_base.get_connectivity_matrix(self.pop1, self.pop2)
         inds = np.sum(M, axis=1)
-        hf.mpi_assert(inds, self.Nin * np.ones(self.N2), self)
+        connect_test_base.mpi_assert(inds, self.Nin * np.ones(self.N2), self)
         # make sure no connections were drawn from the target to the source
         # population
-        M = hf.get_connectivity_matrix(self.pop2, self.pop1)
+        M = connect_test_base.get_connectivity_matrix(self.pop2, self.pop1)
         M_none = np.zeros((len(self.pop1), len(self.pop2)))
-        hf.mpi_assert(M, M_none, self)
+        connect_test_base.mpi_assert(M, M_none, self)
 
     def testStatistics(self):
-        conn_params = hf.nest.FixedIndegree(source=None, target=None, indegree=self.C,
+        conn_params = nest.FixedIndegree(source=None, target=None, indegree=self.C,
                                             allow_autapses=True, allow_multapses=True)
-        expected = hf.get_expected_degrees_fixedDegrees(
-            self.C, 'in', self.N_s, self.N_t)
+        expected = connect_test_base.get_expected_degrees_fixedDegrees(self.C, 'in', self.N_s, self.N_t)
         pvalues = []
         for i in range(self.stat_dict['n_runs']):
-            hf.reset_seed(i+1, self.nr_threads)
+            connect_test_base.reset_seed(i+1, self.nr_threads)
             self.setUpNetwork(projections=conn_params, N1=self.N_s, N2=self.N_t)
-            degrees = hf.get_degrees('out', self.pop1, self.pop2)
-            degrees = hf.gather_data(degrees)
+            degrees = connect_test_base.get_degrees('out', self.pop1, self.pop2)
+            degrees = connect_test_base.gather_data(degrees)
             if degrees is not None:
-                chi, p = hf.chi_squared_check(degrees, expected)
+                chi, p = connect_test_base.chi_squared_check(degrees, expected)
                 pvalues.append(p)
-            hf.mpi_barrier()
+            connect_test_base.mpi_barrier()
         if degrees is not None:
             ks, p = scipy.stats.kstest(pvalues, 'uniform')
             self.assertGreater(p, self.stat_dict['alpha2'])
@@ -93,47 +92,47 @@ class TestFixedInDegree(TestParams):
         N = 10
 
         # test that autapses exist
-        pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params = hf.nest.FixedIndegree(source=pop, target=pop, indegree=N,
-                                            allow_autapses=True, allow_multapses=False)
-        hf.nest.Connect(conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params = nest.FixedIndegree(source=pop, target=pop, indegree=N,
+                                         allow_autapses=True, allow_multapses=False)
+        nest.Connect(conn_params)
         # make sure all connections do exist
-        M = hf.get_connectivity_matrix(pop, pop)
-        hf.mpi_assert(np.diag(M), np.ones(N), self)
+        M = connect_test_base.get_connectivity_matrix(pop, pop)
+        connect_test_base.mpi_assert(np.diag(M), np.ones(N), self)
 
     def testAutapsesFalse(self):
         N = 10
 
         # test that autapses were excluded
-        pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params = hf.nest.FixedIndegree(source=pop, target=pop, indegree=N - 1,
-                                            allow_autapses=False, allow_multapses=False)
-        hf.nest.Connect(conn_params)
+        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params = nest.FixedIndegree(source=pop, target=pop, indegree=N - 1,
+                                         allow_autapses=False, allow_multapses=False)
+        nest.Connect(conn_params)
         # make sure all connections do exist
-        M = hf.get_connectivity_matrix(pop, pop)
-        hf.mpi_assert(np.diag(M), np.zeros(N), self)
+        M = connect_test_base.get_connectivity_matrix(pop, pop)
+        connect_test_base.mpi_assert(np.diag(M), np.zeros(N), self)
 
     def testMultapsesTrue(self):
         N = 3
 
         # test that multapses were drawn
-        pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params = hf.nest.FixedIndegree(source=pop, target=pop, indegree=N + 1,
-                                            allow_autapses=True, allow_multapses=True)
-        hf.nest.Connect(conn_params)
-        nr_conns = len(hf.nest.GetConnections(pop, pop))
-        hf.mpi_assert(nr_conns, conn_params.indegree * N, self)
+        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params = nest.FixedIndegree(source=pop, target=pop, indegree=N + 1,
+                                         allow_autapses=True, allow_multapses=True)
+        nest.Connect(conn_params)
+        nr_conns = len(nest.GetConnections(pop, pop))
+        connect_test_base.mpi_assert(nr_conns, conn_params.indegree * N, self)
 
     def testMultapsesFalse(self):
         N = 3
 
         # test that no multapses exist
-        pop = hf.nest.Create('iaf_psc_alpha', N)
-        conn_params = hf.nest.FixedIndegree(source=pop, target=pop, indegree=N,
-                                            allow_autapses=True, allow_multapses=False)
-        hf.nest.Connect(conn_params)
-        M = hf.get_connectivity_matrix(pop, pop)
-        M = hf.gather_data(M)
+        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params = nest.FixedIndegree(source=pop, target=pop, indegree=N,
+                                         allow_autapses=True, allow_multapses=False)
+        nest.Connect(conn_params)
+        M = connect_test_base.get_connectivity_matrix(pop, pop)
+        M = connect_test_base.gather_data(M)
         if M is not None:
             self.assertTrue(M.flatten, np.ones(N * N))
 

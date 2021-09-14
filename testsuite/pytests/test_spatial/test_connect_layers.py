@@ -41,7 +41,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         self.dim = [4, 5]
         self.extent = [10., 10.]
         nest.ResetKernel()
-        nest.SetKernelStatus({'rng_seed': 123})
+        nest.rng_seed = 123
         self.layer = nest.Create(
             'iaf_psc_alpha', positions=nest.spatial.grid(self.dim, extent=self.extent))
 
@@ -72,8 +72,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             for i in range(N):
                 nest.Connect(projection)
                 nest.BuildNetwork()
-                num_connections = nest.GetKernelStatus('num_connections')
-                n_conns[i] = num_connections - np.sum(n_conns)
+                n_conns[i] = nest.num_connections - np.sum(n_conns)
                 ref[i] = np.sum(scipy.stats.bernoulli.rvs(p, size=num_pairs))
             ks_stats[ks_i], p_vals[ks_i] = scipy.stats.ks_2samp(n_conns, ref)
             print(f'ks_stat={ks_stats[ks_i]}, p_val={p_vals[ks_i]}')
@@ -249,13 +248,13 @@ class ConnectLayersTestCase(unittest.TestCase):
         with self.assertRaises(nest.kernel.NESTError):
             nest.Connect(projection)
             nest.BuildNetwork()
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 0)
+        self.assertEqual(nest.num_connections, 0)
 
         nest.reset_projection_collection()
         projection.conn_spec['allow_oversized_mask'] = True
         nest.Connect(projection)
         nest.BuildNetwork()
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
+        self.assertEqual(num_connections, 1)
 
     def test_connect_layers_weights(self):
         """Connecting layers with specified weights"""

@@ -119,7 +119,7 @@ class ParrotNeuronPoissonTestCase(unittest.TestCase):
         """
 
         # set up source spike generator, as well as parrot neurons
-        h = 0.1  # ms
+        resolution = 0.1  # ms
         rate = 1000000.  # spikes / s
         delay = 1.    # ms
         t_base = 1000.  # ms
@@ -129,13 +129,13 @@ class ParrotNeuronPoissonTestCase(unittest.TestCase):
 
         # if the test is to be meaningful we must expect signficantly more
         # spikes than time steps
-        assert spikes_expected - 3 * spikes_std > 10. * t_sim / h, \
+        assert spikes_expected - 3 * spikes_std > 10. * t_sim / resolution, \
             "Internal inconsistency: too few spikes."
 
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.SetKernelStatus({'resolution': h,
-                              'rng_seed': 123})
+        nest.resolution = resolution
+        nest.rng_seed = 123
 
         source = nest.Create('poisson_generator', params={'rate': rate})
         parrots = nest.Create('parrot_neuron', 2)

@@ -56,14 +56,15 @@ class TestDisconnect(unittest.TestCase):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.SetDefaults(syn_model, {'delay': 0.5})
+
                 syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn_model,
                                                            pre_synaptic_element='SE1',
                                                            post_synaptic_element='SE2')
-                nest.SetKernelStatus({
-                    'min_delay': 0.1,
-                    'max_delay': 1.0,
-                    'structural_plasticity_synapses': {'syn1': syn_spec.to_dict()}
-                })
+
+                # For co-dependent properties, we use `set()` instead of kernel attributes
+                nest.set(min_delay=0.1, max_delay=1.0)
+                nest.structural_plasticity_synapses = {'syn1': syn_spec.to_dict()}
+
                 neurons = nest.Create('iaf_psc_alpha', 10, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -109,14 +110,15 @@ class TestDisconnect(unittest.TestCase):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.SetDefaults(syn_model, {'delay': 0.5})
+
                 syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn_model,
                                                            pre_synaptic_element='SE1',
                                                            post_synaptic_element='SE2')
-                nest.SetKernelStatus({
-                    'min_delay': 0.1,
-                    'max_delay': 1.0,
-                    'structural_plasticity_synapses': {'syn1': syn_spec.to_dict()}
-                })
+
+                # For co-dependent properties, we use `set()` instead of kernel attributes
+                nest.set(min_delay=0.1, max_delay=1.0)
+                nest.structural_plasticity_synapses = {'syn1': syn_spec.to_dict()}
+
                 neurons = nest.Create('iaf_psc_alpha', 10, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -190,6 +192,7 @@ class TestDisconnect(unittest.TestCase):
         for syn_model in nest.Models('synapses'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
+
                 new_syn = nest.CopyModel('static_synapse')
                 syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn_model,
                                                            pre_synaptic_element='SE1',
@@ -234,11 +237,12 @@ class TestDisconnect(unittest.TestCase):
         nodes = nest.Create('iaf_psc_alpha', 5)
         nest.Connect(nest.AllToAll(nodes, nodes))
         nest.BuildNetwork()
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+
+        self.assertEqual(nest.num_connections, 25)
 
         nest.Disconnect(nodes, nodes)
 
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+        self.assertEqual(nest.num_connections, 20)
 
     def test_disconnect_all_to_all(self):
 
@@ -246,11 +250,11 @@ class TestDisconnect(unittest.TestCase):
         nest.Connect(nest.AllToAll(nodes, nodes))
         nest.BuildNetwork()
 
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+        self.assertEqual(nest.num_connections, 25)
 
         nest.Disconnect(nodes, nodes, 'all_to_all')
 
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 0)
+        self.assertEqual(nest.num_connections, 0)
 
     def test_disconnect_static_synapse(self):
 
@@ -258,11 +262,11 @@ class TestDisconnect(unittest.TestCase):
         nest.Connect(nest.AllToAll(nodes, nodes))
         nest.BuildNetwork()
 
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 25)
+        self.assertEqual(nest.num_connections, 25)
 
         nest.Disconnect(nodes, nodes, syn_spec='static_synapse')
 
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+        self.assertEqual(nest.num_connections, 20)
 
 
 def suite():

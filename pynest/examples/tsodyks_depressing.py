@@ -58,22 +58,22 @@ from numpy import exp
 # Second, the simulation parameters are assigned to variables. The neuron
 # and synapse parameters are stored into a dictionary.
 
-h = 0.1    # simulation step size (ms)
-Tau = 40.    # membrane time constant
-Theta = 15.    # threshold
-E_L = 0.     # reset potential of membrane potential
-R = 0.1    # 100 M Ohm
-C = Tau / R  # Tau (ms)/R in NEST units
-TauR = 2.     # refractory time
-Tau_psc = 3.     # time constant of PSC (= Tau_inact)
-Tau_rec = 800.   # recovery time
-Tau_fac = 0.     # facilitation time
-U = 0.5    # facilitation parameter U
-A = 250.   # PSC weight in pA
-f = 20. / 1000.  # frequency in Hz converted to 1/ms
-Tend = 1200.  # simulation time
-TIstart = 50.    # start time of dc
-TIend = 1050.  # end time of dc
+resolution = 0.1    # simulation step size (ms)
+Tau = 40.0          # membrane time constant
+Theta = 15.0        # threshold
+E_L = 0.0           # reset potential of membrane potential
+R = 0.1             # 100 M Ohm
+C = Tau / R         # Tau (ms)/R in NEST units
+TauR = 2.0          # refractory time
+Tau_psc = 3.0       # time constant of PSC (= Tau_inact)
+Tau_rec = 800.0     # recovery time
+Tau_fac = 0.0       # facilitation time
+U = 0.5             # facilitation parameter U
+A = 250.0           # PSC weight in pA
+f = 20.0 / 1000.0   # frequency in Hz converted to 1/ms
+Tend = 1200.0       # simulation time
+TIstart = 50.0      # start time of dc
+TIend = 1050.0      # end time of dc
 I0 = Theta * C / Tau / (1 - exp(-(1 / f - TauR) / Tau))  # dc amplitude
 
 neuron_param = {"tau_m": Tau,
@@ -96,10 +96,11 @@ syn_param = {"tau_psc": Tau_psc,
              "x": 1.0}
 
 ###############################################################################
-# Third, we reset the kernel and set the resolution using ``SetKernelStatus``.
+# Third, we reset the kernel and set the resolution using the corresponding
+# kernel attribute.
 
 nest.ResetKernel()
-nest.SetKernelStatus({"resolution": h})
+nest.resolution = resolution
 
 ###############################################################################
 # Fourth, the nodes are created using ``Create``. We store the returned

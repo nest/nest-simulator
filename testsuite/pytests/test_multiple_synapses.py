@@ -57,7 +57,7 @@ class MultipleSynapsesTestCase(unittest.TestCase):
                                                                     nest.synapsemodels.static(weight=3.))))
         nest.BuildNetwork()
 
-        self.assertEqual(2, nest.GetKernelStatus('num_connections'))
+        self.assertEqual(2, nest.num_connections)
 
         conns = nest.GetConnections()
         self.assertEqual([-2, 3], conns.weight)

@@ -99,7 +99,7 @@ w_noise = 20.0  # synaptic weights from Poisson to population neurons (pA)
 # Configuration of the simulation kernel with the previously defined time
 # resolution.
 
-nest.SetKernelStatus({"resolution": dt})
+nest.resolution = dt
 
 ###############################################################################
 # Building a population of GIF neurons, a group of Poisson neurons and a

@@ -313,8 +313,8 @@ class TestNodeParametrization(unittest.TestCase):
 
     def test_parameter_arithmetic(self):
         """Test parameter arithmetic"""
-        p1 = nest.hl_api.CreateParameter('constant', {'value': 3.0})
-        p2 = nest.hl_api.CreateParameter('constant', {'value': 2.0})
+        p1 = nest.CreateParameter('constant', {'value': 3.0})
+        p2 = nest.CreateParameter('constant', {'value': 2.0})
         self.assertEqual((p1 + p2).GetValue(), 5.0)
         self.assertEqual((p1 - p2).GetValue(), 1.0)
         self.assertEqual((p1 / p2).GetValue(), 1.5)
@@ -323,7 +323,7 @@ class TestNodeParametrization(unittest.TestCase):
     def test_syn_spec_parameter(self):
         """Test parameter in syn_spec"""
         n = nest.Create('iaf_psc_alpha', 2)
-        p = nest.hl_api.CreateParameter('constant', {'value': 2.0})
+        p = nest.CreateParameter('constant', {'value': 2.0})
         nest.Connect(nest.AllToAll(n, n, syn_spec=nest.synapsemodels.static(weight=p)))
         conns = nest.GetConnections()
         weights = conns.get('weight')
@@ -332,8 +332,8 @@ class TestNodeParametrization(unittest.TestCase):
 
     def test_conn_spec_parameter(self):
         """Test parameter in conn_spec"""
-        p = nest.hl_api.CreateParameter('constant', {'value': 1.0})
-        p2 = nest.hl_api.CreateParameter('constant', {'value': 2.0})
+        p = nest.CreateParameter('constant', {'value': 1.0})
+        p2 = nest.CreateParameter('constant', {'value': 2.0})
         rules = [
             nest.PairwiseBernoulli(None, None, p=p),
             nest.FixedOutdegree(None, None, outdegree=p2),
@@ -346,7 +346,7 @@ class TestNodeParametrization(unittest.TestCase):
             rule.target = n
             nest.Connect(rule)
             nest.BuildNetwork()
-            self.assertEqual(nest.GetKernelStatus()['num_connections'], 4, 'Error with {}'.format(rule))
+            self.assertEqual(nest.num_connections, 4, f'Error with {rule}')
 
     def test_node_pos_parameter(self):
         """Test node-position parameter"""
@@ -506,26 +506,26 @@ class TestNodeParametrization(unittest.TestCase):
     def test_exp_parameter(self):
         """Test exponential of a parameter"""
         for value in np.linspace(-5.0, 5.0, 15):
-            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            p = nest.CreateParameter('constant', {'value': value})
             self.assertEqual(nest.math.exp(p).GetValue(), np.exp(value))
 
     def test_cos_parameter(self):
         """Test cosine of a parameter"""
         for value in np.linspace(-5.0, 5.0, 15):
-            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            p = nest.CreateParameter('constant', {'value': value})
             self.assertEqual(nest.math.cos(p).GetValue(), np.cos(value))
 
     def test_sin_parameter(self):
         """Test sine of a parameter"""
         for value in np.linspace(-5.0, 5.0, 15):
-            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            p = nest.CreateParameter('constant', {'value': value})
             self.assertEqual(nest.math.sin(p).GetValue(), np.sin(value))
 
     def test_power_parameter(self):
         """Test parameter raised to the power of an exponent"""
         # Negative values
         for value in np.linspace(-5.0, 0.0, 15):
-            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            p = nest.CreateParameter('constant', {'value': value})
             # Exponents must be integers
             for exponent in range(-15, 15):
                 self.assertEqual((p**exponent).GetValue(),
@@ -533,7 +533,7 @@ class TestNodeParametrization(unittest.TestCase):
 
         # Positive values
         for value in np.linspace(0.0, 5.0, 15):
-            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            p = nest.CreateParameter('constant', {'value': value})
             for exponent in np.linspace(-5.0, 5.0, 15):
                 self.assertEqual((p**exponent).GetValue(),
                                  value**exponent)
@@ -542,7 +542,7 @@ class TestNodeParametrization(unittest.TestCase):
         """Test min of parameter"""
         reference_value = 2.0
         for value in np.linspace(-5.0, 5.0, 21):
-            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            p = nest.CreateParameter('constant', {'value': value})
             self.assertEqual(nest.math.min(p, reference_value).GetValue(),
                              np.minimum(value, reference_value))
 
@@ -550,7 +550,7 @@ class TestNodeParametrization(unittest.TestCase):
         """Test max of parameter"""
         reference_value = 2.0
         for value in np.linspace(-5.0, 5.0, 21):
-            p = nest.hl_api.CreateParameter('constant', {'value': value})
+            p = nest.CreateParameter('constant', {'value': value})
             self.assertEqual(nest.math.max(p, reference_value).GetValue(),
                              np.maximum(value, reference_value))
 
@@ -583,8 +583,8 @@ class TestNodeParametrization(unittest.TestCase):
 
     def test_parameter_comparison(self):
         """Test comparison of parameters"""
-        p1 = nest.hl_api.CreateParameter('constant', {'value': 1.0})
-        p2 = nest.hl_api.CreateParameter('constant', {'value': 2.0})
+        p1 = nest.CreateParameter('constant', {'value': 1.0})
+        p2 = nest.CreateParameter('constant', {'value': 2.0})
 
         self.assertTrue((p1 < p2).GetValue())
         self.assertTrue((p1 <= p2).GetValue())
@@ -657,7 +657,7 @@ class TestNodeParametrization(unittest.TestCase):
 
     def test_parameter_is_spatial(self):
         """Test parameter is_spatial function"""
-        constant_parameter = nest.hl_api.CreateParameter('constant', {'value': 1.0})
+        constant_parameter = nest.CreateParameter('constant', {'value': 1.0})
         spatial_parameters = [nest.spatial.pos.x,
                               nest.spatial.distance,
                               nest.spatial.distance.x]

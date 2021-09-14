@@ -139,8 +139,10 @@ p_rate = 1000.0 * nu_ex * CE
 # already processed simulation time as well as its percentage of the total
 # simulation time.
 
-nest.SetKernelStatus({"resolution": dt, "print_time": True,
-                      "overwrite_files": True, 'local_num_threads': 4})
+nest.resolution = dt
+nest.print_time = True
+nest.overwrite_files = True
+nest.local_num_threads = 4
 
 print("Building network")
 
@@ -257,9 +259,9 @@ rate_ex = events_ex / simtime * 1000.0 / N_rec
 rate_in = events_in / simtime * 1000.0 / N_rec
 
 ###############################################################################
-# Reading out the number of connections established using ``GetKernelStatis``.
+# Reading out the number of connections established.
 
-num_synapses = nest.GetKernelStatus("num_connections")
+num_synapses = nest.num_connections
 
 ###############################################################################
 # Establishing the time it took to build and simulate the network by taking

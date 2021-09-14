@@ -119,6 +119,7 @@ different SynapseCollections by calling GetConnections with different inputs.
 nest.ResetKernel()
 
 nrns = nest.Create('iaf_psc_alpha', 15)
+
 nest.Connect(nest.OneToOne(nrns[:5], nrns[:5],
                            syn_spec=nest.synapsemodels.stdp(weight=nest.random.normal(mean=5.0, std=2.0))))
 nest.Connect(nest.PairwiseBernoulli(nrns[:10], nrns[5:12], p=0.4, syn_spec=nest.synapsemodels.static(weight=4.0)))

@@ -60,7 +60,7 @@ Common abbreviations in NEST
  vp
    virtual process
 
- **time**
+ time
    milliseconds (ms)
 
  tau_m
@@ -72,19 +72,19 @@ Common abbreviations in NEST
  t_spike
    point in time of last spike in
 
- **capacitance**
+ capacitance
    picofarads (pF)
 
  C_m
    Capacitance of the membrane in pF
 
- **current**
+ current
    picoamperes (pA)
 
  I_e
    constant input current in pA
 
- **conductance**
+ conductance
    nanosiemens (nS)
 
  g_L
@@ -96,16 +96,16 @@ Common abbreviations in NEST
  g_Na
    Sodium peak conductance in nS
 
- **spike rates**
+ spike rates
    spikes/s
 
- **modulation frequencies**
+ modulation frequencies
    herz (Hz)
 
  frequency
    frequncy in Hz
 
- **voltage**
+ voltage
    millivolts (mV)
 
  V_m

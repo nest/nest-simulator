@@ -41,7 +41,7 @@ two optional arguments are ``n``, which gives the number of nodes to be
 created (default: 1) and ``params``, which is a dictionary giving the
 parameters with which the nodes should be initialised. So the most basic
 way of creating a batch of identically parameterised neurons is to
-exploit the optional arguments of ``Create()``:
+exploit the optional arguments of :py:func:`.Create`:
 
 ::
 
@@ -52,7 +52,7 @@ The variable ``neuronpop`` is a NodeCollection representing all the ids of the c
 neurons.
 
 Parameterising the neurons at creation is more efficient than using
-``SetStatus()`` after creation, so try to do this wherever possible.
+:py:func:`.SetStatus` after creation, so try to do this wherever possible.
 
 We can also set the parameters of a neuron model *before* creation,
 which allows us to define a simulation more concisely in many cases. If
@@ -81,7 +81,7 @@ to make a customised version of a neuron model with its own default
 parameters. This function is an effective tool to help you write clearer
 simulation scripts, as you can use the name of the model to indicate
 what role it plays in the simulation. Set up your customised model in
-two steps using ``SetDefaults()``:
+two steps using :py:func:`.SetDefaults`:
 
 ::
 
@@ -97,7 +97,7 @@ or in one step:
     nest.CopyModel("iaf_psc_alpha", "inh_iaf_psc_alpha", params=idict)
 
 Either way, the newly defined models can now be used to generate neuron
-populations and will also be returned by the function ``Models()``.
+populations and will also be returned by the function :py:func:`.Models`.
 
 ::
 
@@ -127,8 +127,9 @@ It is not always the case that we want to set the parameters directly when we ar
 the nodes. Or, we might not want to set the same parameter for all nodes
 in the NodeCollection. A classic example of this is when some parameter should
 be drawn from a random distribution. As previously stated, you can use a dictionary
-of lists to set different values for each node, ``Create()``, ``set()``
-and ``SetStatus()`` all take this option. If you have a lot of nodes in your NodeCollection,
+of lists to set different values for each node, :py:func:`.Create`,
+:py:meth:`~.NodeCollection.set`
+and :py:func:`.SetStatus` all take this option. If you have a lot of nodes in your NodeCollection,
 list comprehension is the way to go:
 
 ::
@@ -200,7 +201,7 @@ patterns requiring the specification of further parameters, such as
 in-degree or connection probabilities, must be defined in a dictionary
 containing the key ``rule`` and the key for parameters associated to the
 rule. Please see :doc:`Connection management <../../guides/connection_management>`
-for an illustrated guide to the usage of ``Connect``, as well as the example below.
+for an illustrated guide to the usage of :py:func:`.Connect`, as well as the example below.
 
 Connecting populations with random connections
 ----------------------------------------------
@@ -264,7 +265,7 @@ Note that for all connectivity rules, it is perfectly legitimate to have
 the same population simultaneously in the role of ``pre`` and ``post``.
 
 For more information on connecting neurons, please read the
-documentation of the ``Connect`` function and consult the guide at
+documentation of the :py:func:`.Connect` function and consult the guide at
 :doc:`Connection management <../../guides/connection_management>`.
 
 Specifying the behaviour of devices
@@ -315,7 +316,7 @@ It often occurs that we need to reset a simulation. For example, if you
 are developing a script, then you may need to run it from the
 ``ipython`` console multiple times before you are happy with its
 behaviour. In this case, it is useful to use the function
-``ResetKernel()``. This gets rid of all nodes you have created, any
+:py:func:`.ResetKernel`. This gets rid of all nodes you have created, any
 customised models you created, and resets the internal clock to 0.
 
 The other main use of resetting is when you need to run a simulation in
@@ -335,7 +336,7 @@ section.
 Getting and setting basic settings and parameters of NEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--  ``GetKernelStatus(keys=none)``
+-  ``nest.kernel_status``
 
    Obtain parameters of the simulation kernel. Returns:
 
@@ -365,9 +366,9 @@ Models
 Simulation control
 ~~~~~~~~~~~~~~~~~~
 
--  ``ResetKernel()``
+-  :py:func:`.ResetKernel`
 
    Reset the simulation kernel. This will destroy the network as well as
-   all custom models created with ``CopyModel()``. The parameters of
+   all custom models created with :py:func:`.CopyModel`. The parameters of
    built-in models are reset to their defaults. Calling this function is
    equivalent to restarting NEST.

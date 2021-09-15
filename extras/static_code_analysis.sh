@@ -93,6 +93,7 @@ fi
 if $PERFORM_PEP8; then
   PYCODESTYLE_VERS=`$PEP8 --version`
   print_msg "MSGBLD0105: " "PEP8         : $PYCODESTYLE_VERS"
+  print_msg "MSGBLD0105: " "PEP8 ignores : $PYCODESTYLE_IGNORES"
 fi
 print_msg "" ""
 
@@ -235,7 +236,7 @@ for f in $FILE_NAMES; do
       if $PERFORM_PEP8; then
         print_msg "MSGBLD0190: " "Running PEP8 .......: $f"
         case $f in
-          *user_manual_scripts*)
+          *spatially_structured_networks\/scripts*)
             IGNORES=$PYCODESTYLE_IGNORES_USER_MANUAL
             ;;
           *examples*)

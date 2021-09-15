@@ -50,7 +50,7 @@ setup(
         'ai',
         'spike',
         'spiking'
-    ]),
+    ])),
     project_urls = {
         'Homepage': 'https://www.nest-simulator.org/',
         'Bug Reports': 'https://github.com/nest/nest-simulator/issues',

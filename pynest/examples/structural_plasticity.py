@@ -151,16 +151,13 @@ class StructralPlasticityExample:
         nest.ResetKernel()
         nest.set_verbosity('M_ERROR')
 
+
 ####################################################################################
 # We set global kernel parameters. Here we define the resolution
 # for the simulation, which is also the time resolution for the update
 # of the synaptic elements.
 
-        nest.SetKernelStatus(
-            {
-                'resolution': self.dt
-            }
-        )
+        nest.resolution = self.dt
 
 
 ####################################################################################
@@ -169,9 +166,7 @@ class StructralPlasticityExample:
 # to notice that synaptic elements and connections change on different
 # time scales.
 
-        nest.SetKernelStatus({
-            'structural_plasticity_update_interval': self.update_interval,
-        })
+        nest.structural_plasticity_update_interval = self.update_interval
 
 
 ####################################################################################
@@ -186,20 +181,18 @@ class StructralPlasticityExample:
         nest.SetDefaults('synapse_ex', {'weight': self.psc_e, 'delay': 1.0})
         nest.CopyModel('static_synapse', 'synapse_in')
         nest.SetDefaults('synapse_in', {'weight': self.psc_i, 'delay': 1.0})
-        nest.SetKernelStatus({
-            'structural_plasticity_synapses': {
-                'synapse_ex': {
-                    'synapse_model': 'synapse_ex',
-                    'post_synaptic_element': 'Den_ex',
-                    'pre_synaptic_element': 'Axon_ex',
-                },
-                'synapse_in': {
-                    'synapse_model': 'synapse_in',
-                    'post_synaptic_element': 'Den_in',
-                    'pre_synaptic_element': 'Axon_in',
-                },
+        nest.structural_plasticity_synapses = {
+            'synapse_ex': {
+                'synapse_model': 'synapse_ex',
+                'post_synaptic_element': 'Den_ex',
+                'pre_synaptic_element': 'Axon_ex'
+            },
+            'synapse_in': {
+                'synapse_model': 'synapse_in',
+                'post_synaptic_element': 'Den_in',
+                'pre_synaptic_element': 'Axon_in'
             }
-        })
+        }
 
     def create_nodes(self):
         """

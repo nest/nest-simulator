@@ -13,12 +13,7 @@ Let’s take a look at a pair of programs that send and receive spikes.
 These can be used as inputs or outputs to the NEST models we created
 above with no change to the code. C++ code tends to be somewhat
 longwinded so we only show the relevant parts here. The C++ interface is
-divided into a setup phase and a runtime phase. You can see the setup below. 
-
-.. note::
-
-   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
-   and cannot be enabled at the same time.
+divided into a setup phase and a runtime phase. You can see the setup below.
 
 .. code-block:: cpp
     :linenos:
@@ -243,7 +238,7 @@ parameters that the output port map did not. We give it a reference to
 our callback function that we defined earlier. When events appear on the
 port, they get passed to the callback function. It also has an optional
 latency parameter. This is the same latency that we set with the
-separate ``SetAcceptableLatency`` function in the NEST
+separate :py:func:`.SetAcceptableLatency` function in the NEST
 example earlier, and it works the same way. Just remember that the MUSIC
 unit of time is seconds, not milliseconds.
 
@@ -414,4 +409,3 @@ straightforward user-level input and output applications. But there is a
 lot more to the MUSIC API, especially if you intend to implement it as a
 simulator interface, so you should consult the documentation for more
 details.
-

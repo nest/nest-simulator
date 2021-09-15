@@ -56,7 +56,7 @@ N = int(NE + NI)       # total number of neurons
 d_e = 5.   # delay of excitatory connections in ms
 g = 5.0  # ratio inhibitory weight/excitatory weight
 epsilon = 0.1  # connection probability
-w = 0.1/numpy.sqrt(N)  # excitatory connection strength
+w = 0.1 / numpy.sqrt(N)  # excitatory connection strength
 
 KE = int(epsilon * NE)  # number of excitatory synapses per neuron (outdegree)
 KI = int(epsilon * NI)  # number of inhibitory synapses per neuron (outdegree)
@@ -85,9 +85,10 @@ neuron_params = {'linear_summation': True,
 # total simulation time.
 
 nest.ResetKernel()
-nest.SetKernelStatus({"resolution": dt, "use_wfr": False,
-                      "print_time": True,
-                      "overwrite_files": True})
+nest.resolution = dt
+nest.use_wfr = False
+nest.print_time = True
+nest.overwrite_files = True
 
 print("Building network")
 
@@ -113,7 +114,7 @@ mm = nest.Create('multimeter', params={'record_from': ['rate'],
 # with a delay (``rate_connection_instantaneous``).
 
 syn_e = {'weight': w, 'delay': d_e, 'synapse_model': 'rate_connection_delayed'}
-syn_i = {'weight': -g*w, 'synapse_model': 'rate_connection_instantaneous'}
+syn_i = {'weight': -g * w, 'synapse_model': 'rate_connection_instantaneous'}
 conn_e = {'rule': connection_rule, 'outdegree': KE}
 conn_i = {'rule': connection_rule, 'outdegree': KI}
 

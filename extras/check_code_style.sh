@@ -32,6 +32,7 @@ VERA=vera++                      # The names of the static code analysis tools e
 CPPCHECK=cppcheck                #    CPPCHECK version 1.69 or later is required !
 CLANG_FORMAT=clang-format-3.6    #    CLANG-FORMAT version 3.6 and only this version is required !
 PEP8=pycodestyle
+PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"
 
 PERFORM_VERA=true                # Perform VERA++ analysis.
 PERFORM_CPPCHECK=false           # Skip CPPCHECK analysis.
@@ -39,8 +40,6 @@ PERFORM_CLANG_FORMAT=true        # Perform CLANG-FORMAT analysis.
 PERFORM_PEP8=true                # Perform PEP8 analysis.
 
 INCREMENTAL=false                # Do not prompt the user before each file analysis.
-
-PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"    # A list of pycodestyle error and warning codes to ignore.
 
 # Exit script on 'Unknown option' condition.
 # error_unknown_option "option"
@@ -316,7 +315,8 @@ IGNORE_MSG_PYCODESTYLE=false
 ./extras/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
 "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
 "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
-"$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" "$PYCODESTYLE_IGNORES"
+"$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" \
+"$PYCODESTYLE_IGNORES"
 if [ $? -gt 0 ]; then
     exit $?
 fi

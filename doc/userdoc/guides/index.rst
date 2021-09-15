@@ -5,13 +5,6 @@ Here you can find details on a variety of topics in NEST.
 
 .. toctree::
     :maxdepth: 1
-    :caption: Transition guides to NEST 3.0
-
-    nest2_to_nest3/index
-    spatial/index
-
-.. toctree::
-    :maxdepth: 1
     :caption: In-depth guides to NEST
 
     built-in_timers
@@ -21,7 +14,7 @@ Here you can find details on a variety of topics in NEST.
     record_from_simulations
     parallel_computing
     random_numbers
-    spatial/guide_spatially_structured_networks
+    spatially_structured_networks
     simulations_with_gap_junctions
     simulations_with_precise_spike_times
     using_nest_with_music

@@ -139,8 +139,10 @@ p_rate = 1000.0 * nu_ex * CE
 # already processed simulation time as well as its percentage of the total
 # simulation time.
 
-nest.SetKernelStatus({"resolution": dt, "print_time": True,
-                      "overwrite_files": True, 'local_num_threads': 4})
+nest.resolution = dt
+nest.print_time = True
+nest.overwrite_files = True
+nest.local_num_threads = 4
 
 print("Building network")
 
@@ -194,13 +196,11 @@ nest.CopyModel("static_synapse", "inhibitory",
 # which includes the specification of the distribution and the associated
 # parameter.
 
-syn_params_ex = {"model": "excitatory",
-                 "receptor_type": {"distribution": "uniform_int",
-                                   "low": 1, "high": nr_ports}
+syn_params_ex = {"synapse_model": "excitatory",
+                 "receptor_type": nest.random.uniform_int(max=nr_ports - 1) + 1
                  }
-syn_params_in = {"model": "inhibitory",
-                 "receptor_type": {"distribution": "uniform_int",
-                                   "low": 1, "high": nr_ports}
+syn_params_in = {"synapse_model": "inhibitory",
+                 "receptor_type": nest.random.uniform_int(max=nr_ports - 1) + 1
                  }
 
 nest.Connect(noise, nodes_ex, syn_spec=syn_params_ex)
@@ -278,8 +278,8 @@ rate_in = events_in / simtime * 1000.0 / N_rec
 # inhibitory synapse model. The numbers are summed up resulting in the total
 # number of synapses.
 
-num_synapses = (nest.GetDefaults("excitatory")["num_connections"] +
-                nest.GetDefaults("inhibitory")["num_connections"])
+num_synapses = (nest.GetDefaults("excitatory")["num_connections"]
+                + nest.GetDefaults("inhibitory")["num_connections"])
 
 ###############################################################################
 # Establishing the time it took to build and simulate the network by taking

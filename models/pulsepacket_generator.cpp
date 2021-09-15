@@ -78,7 +78,7 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
   bool neednewpulse = updateValueParam< long >( d, names::activity, a_, node );
-  neednewpulse = updateValueParam< double >( d, names::sdev, sdev_, node ) || neednewpulse;
+  neednewpulse = updateValueParam< double >( d, names::sdev, sdev_, node ) or neednewpulse;
   if ( a_ < 0 )
   {
     throw BadProperty( "The activity cannot be negative." );
@@ -89,7 +89,7 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
   }
 
 
-  if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ ) || neednewpulse )
+  if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ ) or neednewpulse )
   {
     std::sort( pulse_times_.begin(), pulse_times_.end() );
     ppg.B_.spiketimes_.clear();
@@ -152,7 +152,7 @@ nest::pulsepacket_generator::calibrate()
   // determine pulse-center times that lie within
   // a window sdev*sdev_tolerance around the current time
   while (
-    V_.stop_center_idx_ < P_.pulse_times_.size() && P_.pulse_times_.at( V_.stop_center_idx_ ) - now <= V_.tolerance )
+    V_.stop_center_idx_ < P_.pulse_times_.size() and P_.pulse_times_.at( V_.stop_center_idx_ ) - now <= V_.tolerance )
   {
     if ( std::abs( P_.pulse_times_.at( V_.stop_center_idx_ ) - now ) > V_.tolerance )
     {
@@ -179,7 +179,7 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
   if ( V_.stop_center_idx_ < P_.pulse_times_.size() )
   {
     while ( V_.stop_center_idx_ < P_.pulse_times_.size()
-      && ( Time( Time::ms( P_.pulse_times_.at( V_.stop_center_idx_ ) ) ) - T ).get_ms() <= V_.tolerance )
+      and ( Time( Time::ms( P_.pulse_times_.at( V_.stop_center_idx_ ) ) ) - T ).get_ms() <= V_.tolerance )
     {
       V_.stop_center_idx_++;
     }
@@ -214,13 +214,13 @@ nest::pulsepacket_generator::update( Time const& T, const long from, const long 
 
   // Since we have an ordered list of spiketimes,
   // we can compute the histogram on the fly.
-  while ( not B_.spiketimes_.empty() && B_.spiketimes_.front() < ( T.get_steps() + to ) )
+  while ( not B_.spiketimes_.empty() and B_.spiketimes_.front() < ( T.get_steps() + to ) )
   {
     n_spikes++;
     long prev_spike = B_.spiketimes_.front();
     B_.spiketimes_.pop_front();
 
-    if ( n_spikes > 0 && prev_spike != B_.spiketimes_.front() )
+    if ( n_spikes > 0 and ( B_.spiketimes_.empty() or prev_spike != B_.spiketimes_.front() ) )
     {
       SpikeEvent se;
       se.set_multiplicity( n_spikes );

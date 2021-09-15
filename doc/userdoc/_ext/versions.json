@@ -1,0 +1,57 @@
+{
+	"python": 
+	{
+		"min": 3.8
+	},
+	"pip": 
+	{
+		"min_installed": "20.3.3"
+	},
+	"cmake":
+	{
+		"min": 3.12,
+		"recommended": 3.16
+	},
+	"cython": 
+	{
+		"min": "0.28.3"
+	},
+	"openmpi": 
+	{
+		"min_installed": "4.0.3"
+	},
+	"boost": {
+		"min": 1.69
+	},
+	"gsl": {
+		"min": 1.11
+	},
+	"libtool": 
+	{
+		"min_installed": "2.4.6"
+	},
+	"readline": 
+	{
+		"min_installed": 8.0
+	},
+	"numpy":
+	{
+		"min_installed": "1.19.4"
+	},
+	"scipy": 
+	{
+		"min_installed": "1.5.4"
+	},
+	"matplotlib":
+	{
+		"min": 3.0
+	},
+	"ipython": 
+	{
+		"min_installed": "5.8.0"
+	},
+	"libncurses": 
+	{
+		"min_installed": 6.2
+	}
+}

@@ -8,6 +8,30 @@ Welcome to the NEST simulator documentation!
 :orange:`Introducing NEST 3.0`
 ------------------------------
 
+---- 
+
+Usage:
+
+.. code-block:: php
+
+  The minimum version of cmake is :version:`cmake,min`.
+  The maximum verson of gsl is :version:`gsl, max`.
+  The default (min) version of gsl is :version:`gsl`.
+  The deprecated version of cmake is :version:`cmake,deprecated`.
+
+
+Some examples:
+
+The minimum version of cmake is :version:`cmake,min`.
+
+The maximum verson of gsl is :version:`gsl,max`.
+
+The default (min) version of gsl is :version:`gsl`.
+
+The deprecated version of cmake is :version:`cmake,deprecated`.
+
+----
+
 NEST 3.0 provides a more intuitive experience with simplified yet versatile handling and manipulation of nodes and connections.
 
 You can find all the information in our section :doc:`guides/nest2_to_nest3/index`.

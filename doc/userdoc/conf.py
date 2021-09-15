@@ -92,7 +92,8 @@ extensions = [
     'sphinx_tabs.tabs',
     'nbsphinx',
     'sphinx_rtd_theme',
-    'HoverXTooltip'
+    'HoverXTooltip',
+    'VersionSyncRole',
 ]
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa

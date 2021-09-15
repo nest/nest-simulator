@@ -49,6 +49,7 @@ dependencies:
 
   # Testing NEST ------------
   - pytest
+  - pytest-timeout
   - pytest-xdist
   - numpy
   - pandas

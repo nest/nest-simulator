@@ -98,11 +98,13 @@ if test ! "${REPORTDIR}"; then
 fi
 
 if test "${PYTHON}"; then
-    command -v pytest >/dev/null 2>&1 || {
-        echo "Error: PyNEST testing requested, but command 'pytest' cannot be executed."
+      TIME_LIMIT=120  # seconds, for each of the Python tests
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
+        echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
+        echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
         exit 1
     }
-    PYTEST="$(command -v pytest)"
+    PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
 python3 -c "import junitparser" >/dev/null 2>&1
@@ -159,9 +161,9 @@ echo "  PREFIX ............. $PREFIX"
 if test "${PYTHON}"; then
     PYTHON_VERSION="$("${PYTHON}" --version | cut -d' ' -f2)"
     echo "  Python executable .. $PYTHON (version $PYTHON_VERSION)"
-    PYTEST_VERSION="$("${PYTEST}" --version 2>&1 | cut -d' ' -f2)"
-    echo "  Pytest executable .. $PYTEST (version $PYTEST_VERSION)"
     echo "  PYTHONPATH ......... `print_paths ${PYTHONPATH:-}`"
+    echo "  Pytest version ..... $PYTEST_VERSION"
+    echo "         timeout ..... $TIME_LIMIT s"
 fi
 if test "${HAVE_MPI}" = "true"; then
     echo "  Running MPI tests .. yes"
@@ -190,8 +192,7 @@ CODES_SKIPPED=\
 ' 202 Skipped (build with-mpi=OFF required),'\
 ' 203 Skipped (Threading required),'\
 ' 204 Skipped (GSL required),'\
-' 205 Skipped (MUSIC required),'\
-' 206 Skipped (Recording backend Arbor required),'
+' 205 Skipped (MUSIC required),'
 
 echo
 echo 'Phase 1: Testing if SLI can execute scripts and report errors'
@@ -464,21 +465,27 @@ echo "Phase 7: Running PyNEST tests"
 echo "-----------------------------"
 
 if test "${PYTHON}"; then
-    PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests/"
+    PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests"
     XUNIT_NAME="07_pynesttests"
-    
-    # Run all tests except those in the mpi subdirectory
+
+    # Run all tests except those in the mpi and non_concurrent subdirectories
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
-    "${PYTEST}" --verbose --junit-xml="${XUNIT_FILE}" --numprocesses=auto \
-          --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
+    "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
+          --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/non_concurrent" \
+          "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
+
+    # Run tests that cannot run concurrently
+    XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_nc.xml"    
+    "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" \
+          "${PYNEST_TEST_DIR}/non_concurrent" 2>&1 | tee -a "${TEST_LOGFILE}" 
   
     # Run tests in the mpi subdirectories, grouped by number of processes
     if test "${HAVE_MPI}" = "true" -a "${MPI_LAUNCHER}" ; then
        for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
            XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
-           PYTEST_ARGS="--verbose --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
-           $(sli -c "${numproc} (${PYTEST}) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
-       done 
+           PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+           $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
+       done
     fi
 else
     echo

@@ -21,7 +21,7 @@ updates:
 | Version  | Supported          |
 | -------- | ------------------ |
 | <=2.18.0 | :x:                |
-| 2.20.1   | :white_check_mark: |
+| 2.20.2   | :white_check_mark: |
 | 3.x      | :heavy_check_mark: |
 
 ## Reporting a Vulnerability

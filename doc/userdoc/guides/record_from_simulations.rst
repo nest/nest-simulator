@@ -24,6 +24,7 @@ temporal aspects of the simulation loop.
    of thread execution, events are not necessarily recorded in
    chronological order.
 
+
 Recording devices can fundamentally be subdivided into two groups:
 
 - **Collectors** gather events sent to them. Neurons are connected to
@@ -59,7 +60,7 @@ display it on the terminal, or write it to files.
 To specify the recording backend for a given recording device, the
 property ``record_to`` of the latter has to be set to the name of the
 recording backend to be used. This can either happen already in the
-call to ``Create`` or by using ``SetStatus`` on the model instance.
+call to :py:func:`.Create` or by using :py:func:`.SetStatus` on the model instance.
 
 
 ::
@@ -76,9 +77,9 @@ Each recording backend may provide a specific set of parameters
 in the model status dictionary once the backend is set. This means
 that these parameters can only be reviewed and changed *after* the
 backend has been selected. In particular, recording-device specific
-per-device parameters cannot be set using ``SetDefaults``, but must
-rather be supplied either in the call to ``Create`` or set on an
-instance using ``SetStatus``.
+per-device parameters cannot be set using :py:func:`.SetDefaults`, but must
+rather be supplied either in the call to :py:func:`.Create` or set on an
+instance using :py:func:`.SetStatus`.
 
 .. note::
 
@@ -93,7 +94,7 @@ properties can be obtained from the kernel's status dictionary.
 
 ::
 
-   nest.GetKernelStatus("recording_backends")
+   >>> print(nest.recording_backends)
    {u'ascii': {},
     u'memory': {},
     u'mpi': {},
@@ -105,12 +106,12 @@ properties can be obtained from the kernel's status dictionary.
      u'sion_n_files': 1}}
 
 The example shows that only the `sionlib` backend has backend-specific
-global properties, which can be modified by supplying a nested
-dictionary to ``SetKernelStatus``.
+global properties, which can be modified by setting a nested
+dictionary on the kernel attribute ``recording_backends``.
 
 ::
 
-    nest.SetKernelStatus({"recording_backends": {'sionlib': {'buffer_size': 512}}})
+    nest.recording_backends = {'sionlib': {'buffer_size': 512}}
 
 The following is a list of built-in recording backends that come with
 NEST:

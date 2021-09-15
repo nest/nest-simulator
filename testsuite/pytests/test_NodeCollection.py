@@ -486,18 +486,17 @@ class TestNodeCollection(unittest.TestCase):
 
         n = nest.Create('iaf_psc_exp', 10)
         nest.Connect(n, n, {'rule': 'one_to_one'})
-        connections = nest.GetKernelStatus('num_connections')
-        self.assertEqual(connections, 10)
+        self.assertEqual(nest.num_connections, 10)
 
         for nc in n:
             nest.Connect(nc, nc)
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+        self.assertEqual(nest.num_connections, 20)
 
         nest.ResetKernel()
 
         n = nest.Create('iaf_psc_alpha', 2)
         nest.Connect(n[0], n[1])
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
+        self.assertEqual(nest.num_connections, 1)
 
     def test_SetStatus_and_GetStatus(self):
         """
@@ -719,8 +718,8 @@ class TestNodeCollection(unittest.TestCase):
                  ]
         fail_cases = [([True for _ in range(len(n)-1)], IndexError),  # Too few bools
                       ([True for _ in range(len(n)+1)], IndexError),  # Too many bools
-                      ([[True, False], [True, False]], TypeError),  # Too many dimensions
-                      ([True, False, 2.5, False, True], TypeError),  # Not all indices are bools
+                      ([[True, False], [True, False]], TypeError),    # Too many dimensions
+                      ([True, False, 2.5, False, True], TypeError),   # Not all indices are bools
                       ([1, False, 1, False, 1], TypeError),  # Mixing bools and ints
                       ]
         if HAVE_NUMPY:
@@ -771,7 +770,7 @@ class TestNodeCollection(unittest.TestCase):
         nodes_a = nest.NodeCollection()
         nodes_a += nest.Create('iaf_psc_alpha', n)
         nest.Connect(nodes_a, nodes_a)
-        self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
+        self.assertEqual(nest.num_connections, n * n)
         self.assertTrue(nodes_a)
         self.assertIsNotNone(nodes_a.get())
         nodes_a.V_m = vm
@@ -782,7 +781,7 @@ class TestNodeCollection(unittest.TestCase):
         nodes_b = nest.Create('iaf_psc_alpha', n)
         nodes_b += nest.NodeCollection([])
         nest.Connect(nodes_b, nodes_b)
-        self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
+        self.assertEqual(nest.num_connections, n * n)
         self.assertTrue(nodes_b)
         self.assertIsNotNone(nodes_b.get())
         nodes_b.V_m = vm

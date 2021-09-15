@@ -55,7 +55,6 @@
 #define EXITCODE_SKIPPED_NO_THREADING 203
 #define EXITCODE_SKIPPED_NO_GSL 204
 #define EXITCODE_SKIPPED_NO_MUSIC 205
-#define EXITCODE_SKIPPED_NO_RECORDINGBACKEND_ARBOR 206
 
 
 class SLIStartup : public SLIModule
@@ -108,7 +107,6 @@ public:
   Name ismpi_name;
   Name have_gsl_name;
   Name have_music_name;
-  Name have_recordingbackend_arbor_name;
   Name have_libneurosim_name;
   Name have_sionlib_name;
   Name ndebug_name;
@@ -121,7 +119,6 @@ public:
   Name exitcode_skipped_no_threading_name;
   Name exitcode_skipped_no_gsl_name;
   Name exitcode_skipped_no_music_name;
-  Name exitcode_skipped_no_recordingbackend_arbor_name;
   Name exitcode_scripterror_name;
   Name exitcode_abort_name;
   Name exitcode_userabort_name;

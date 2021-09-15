@@ -25,6 +25,7 @@
 #include "node_collection.h"
 #include "node.h"
 #include "spatial.h"
+#include "vp_manager_impl.h"
 
 // includes from sli
 #include "sharedptrdatum.h"
@@ -35,11 +36,6 @@ template class sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType
 
 namespace nest
 {
-Node*
-Parameter::node_id_to_node_ptr_( const index node_id, const thread t ) const
-{
-  return kernel().node_manager.get_node_or_proxy( node_id, t );
-}
 
 std::vector< double >
 Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
@@ -80,15 +76,14 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
           target_pos.size(),
           source_pos.size() ) );
     }
-    auto value = this->value( rng, source_pos, target_pos, *source_layer.get() );
+    auto value = this->value( rng, source_pos, target_pos, *source_layer.get(), nullptr );
     result.push_back( value );
   }
   return result;
 }
 
 NormalParameter::NormalParameter( const DictionaryDatum& d )
-  : Parameter( d )
-  , mean_( 0.0 )
+  : mean_( 0.0 )
   , std_( 1.0 )
 {
   updateValue< double >( d, names::mean, mean_ );
@@ -105,15 +100,16 @@ NormalParameter::NormalParameter( const DictionaryDatum& d )
 }
 
 double
-NormalParameter::value( RngPtr rng, Node* )
+NormalParameter::value( RngPtr rng, Node* node )
 {
-  return normal_dists_[ kernel().vp_manager.get_thread_id() ]( rng );
+  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
+                        : kernel().vp_manager.get_thread_id();
+  return normal_dists_[ tid ]( rng );
 }
 
 
 LognormalParameter::LognormalParameter( const DictionaryDatum& d )
-  : Parameter( d )
-  , mean_( 0.0 )
+  : mean_( 0.0 )
   , std_( 1.0 )
 {
   updateValue< double >( d, names::mean, mean_ );
@@ -130,14 +126,16 @@ LognormalParameter::LognormalParameter( const DictionaryDatum& d )
 }
 
 double
-LognormalParameter::value( RngPtr rng, Node* )
+LognormalParameter::value( RngPtr rng, Node* node )
 {
-  return lognormal_dists_[ kernel().vp_manager.get_thread_id() ]( rng );
+  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
+                        : kernel().vp_manager.get_thread_id();
+  return lognormal_dists_[ tid ]( rng );
 }
 
 
 double
-NodePosParameter::get_node_pos_( RngPtr, Node* node ) const
+NodePosParameter::get_node_pos_( Node* node ) const
 {
   if ( not node )
   {
@@ -178,7 +176,8 @@ double
 SpatialDistanceParameter::value( RngPtr,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* )
 {
   switch ( dimension_ )
   {
@@ -205,14 +204,13 @@ SpatialDistanceParameter::value( RngPtr,
   }
 }
 
-RedrawParameter::RedrawParameter( const Parameter& p, const double min, const double max )
-  : Parameter( p )
-  , p_( p.clone() )
+RedrawParameter::RedrawParameter( const std::shared_ptr< Parameter > p, const double min, const double max )
+  : Parameter( p->is_spatial() )
+  , p_( p )
   , min_( min )
   , max_( max )
   , max_redraws_( 1000 )
 {
-  parameter_is_spatial_ = p_->is_spatial();
   if ( min > max )
   {
     throw BadParameterValue( "min <= max required." );
@@ -240,26 +238,11 @@ RedrawParameter::value( RngPtr rng, Node* node )
 }
 
 double
-RedrawParameter::value( RngPtr rng, index snode_id, Node* target, thread target_thread )
-{
-  double value;
-  size_t num_redraws = 0;
-  do
-  {
-    if ( num_redraws++ == max_redraws_ )
-    {
-      throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
-    }
-    value = p_->value( rng, snode_id, target, target_thread );
-  } while ( value < min_ or value > max_ );
-  return value;
-}
-
-double
 RedrawParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* node )
 {
   double value;
   size_t num_redraws = 0;
@@ -269,7 +252,7 @@ RedrawParameter::value( RngPtr rng,
     {
       throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
     }
-    value = p_->value( rng, source_pos, target_pos, layer );
+    value = p_->value( rng, source_pos, target_pos, layer, node );
   } while ( value < min_ or value > max_ );
 
   return value;
@@ -277,11 +260,10 @@ RedrawParameter::value( RngPtr rng,
 
 
 ExpDistParameter::ExpDistParameter( const DictionaryDatum& d )
-  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  : Parameter( true )
+  , p_( getValue< ParameterDatum >( d, "x" ) )
   , inv_beta_( 1.0 / getValue< double >( d, "beta" ) )
 {
-  parameter_is_spatial_ = true;
-
   const auto beta = getValue< double >( d, "beta" );
   if ( beta <= 0 )
   {
@@ -293,18 +275,18 @@ double
 ExpDistParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* node )
 {
-  return std::exp( -p_->value( rng, source_pos, target_pos, layer ) * inv_beta_ );
+  return std::exp( -p_->value( rng, source_pos, target_pos, layer, node ) * inv_beta_ );
 }
 
 GaussianParameter::GaussianParameter( const DictionaryDatum& d )
-  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  : Parameter( true )
+  , p_( getValue< ParameterDatum >( d, "x" ) )
   , mean_( getValue< double >( d, "mean" ) )
   , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
 {
-  parameter_is_spatial_ = true;
-
   const auto std = getValue< double >( d, "std" );
   if ( std <= 0 )
   {
@@ -316,16 +298,18 @@ double
 GaussianParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* node )
 {
-  const auto dx = p_->value( rng, source_pos, target_pos, layer ) - mean_;
+  const auto dx = p_->value( rng, source_pos, target_pos, layer, node ) - mean_;
   return std::exp( -dx * dx * inv_two_std2_ );
 }
 
 
 Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
-  : px_( getValue< ParameterDatum >( d, "x" )->clone() )
-  , py_( getValue< ParameterDatum >( d, "y" )->clone() )
+  : Parameter( true )
+  , px_( getValue< ParameterDatum >( d, "x" ) )
+  , py_( getValue< ParameterDatum >( d, "y" ) )
   , mean_x_( getValue< double >( d, "mean_x" ) )
   , mean_y_( getValue< double >( d, "mean_y" ) )
   , x_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
@@ -336,8 +320,6 @@ Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
       getValue< double >( d, "rho" ) / ( ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
                                          * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_y" ) ) )
 {
-  parameter_is_spatial_ = true;
-
   const auto rho = getValue< double >( d, "rho" );
   const auto std_x = getValue< double >( d, "std_x" );
   const auto std_y = getValue< double >( d, "std_y" );
@@ -362,22 +344,22 @@ double
 Gaussian2DParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* node )
 {
-  const auto dx = px_->value( rng, source_pos, target_pos, layer ) - mean_x_;
-  const auto dy = py_->value( rng, source_pos, target_pos, layer ) - mean_y_;
+  const auto dx = px_->value( rng, source_pos, target_pos, layer, node ) - mean_x_;
+  const auto dy = py_->value( rng, source_pos, target_pos, layer, node ) - mean_y_;
   return std::exp( -dx * dx * x_term_const_ - dy * dy * y_term_const_ + dx * dy * xy_term_const_ );
 }
 
 
 GammaParameter::GammaParameter( const DictionaryDatum& d )
-  : p_( getValue< ParameterDatum >( d, "x" )->clone() )
+  : Parameter( true )
+  , p_( getValue< ParameterDatum >( d, "x" ) )
   , kappa_( getValue< double >( d, "kappa" ) )
   , inv_theta_( 1.0 / getValue< double >( d, "theta" ) )
   , delta_( std::pow( inv_theta_, kappa_ ) / std::tgamma( kappa_ ) )
 {
-  parameter_is_spatial_ = true;
-
   if ( kappa_ <= 0 )
   {
     throw BadProperty( "kappa > 0 required for gamma distribution parameter, got kappa=" + std::to_string( kappa_ ) );
@@ -393,10 +375,108 @@ double
 GammaParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* node )
 {
-  const auto x = p_->value( rng, source_pos, target_pos, layer );
+  const auto x = p_->value( rng, source_pos, target_pos, layer, node );
   return std::pow( x, kappa_ - 1. ) * std::exp( -1. * inv_theta_ * x ) * delta_;
+}
+
+
+std::shared_ptr< Parameter >
+multiply_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+{
+  return std::shared_ptr< Parameter >( new ProductParameter( first, second ) );
+}
+
+std::shared_ptr< Parameter >
+divide_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+{
+  return std::shared_ptr< Parameter >( new QuotientParameter( first, second ) );
+}
+
+std::shared_ptr< Parameter >
+add_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+{
+  return std::shared_ptr< Parameter >( new SumParameter( first, second ) );
+}
+
+std::shared_ptr< Parameter >
+subtract_parameter( const std::shared_ptr< Parameter > first, const std::shared_ptr< Parameter > second )
+{
+  return std::shared_ptr< Parameter >( new DifferenceParameter( first, second ) );
+}
+
+std::shared_ptr< Parameter >
+compare_parameter( const std::shared_ptr< Parameter > first,
+  const std::shared_ptr< Parameter > second,
+  const DictionaryDatum& d )
+{
+  return std::shared_ptr< Parameter >( new ComparingParameter( first, second, d ) );
+}
+
+std::shared_ptr< Parameter >
+conditional_parameter( const std::shared_ptr< Parameter > condition,
+  const std::shared_ptr< Parameter > if_true,
+  const std::shared_ptr< Parameter > if_false )
+{
+  return std::shared_ptr< Parameter >( new ConditionalParameter( condition, if_true, if_false ) );
+}
+
+std::shared_ptr< Parameter >
+min_parameter( const std::shared_ptr< Parameter > parameter, const double other )
+{
+  return std::shared_ptr< Parameter >( new MinParameter( parameter, other ) );
+}
+
+std::shared_ptr< Parameter >
+max_parameter( const std::shared_ptr< Parameter > parameter, const double other )
+{
+  return std::shared_ptr< Parameter >( new MaxParameter( parameter, other ) );
+}
+
+std::shared_ptr< Parameter >
+redraw_parameter( const std::shared_ptr< Parameter > parameter, const double min, const double max )
+{
+  return std::shared_ptr< Parameter >( new RedrawParameter( parameter, min, max ) );
+}
+
+std::shared_ptr< Parameter >
+exp_parameter( const std::shared_ptr< Parameter > parameter )
+{
+  return std::shared_ptr< Parameter >( new ExpParameter( parameter ) );
+}
+
+std::shared_ptr< Parameter >
+sin_parameter( const std::shared_ptr< Parameter > parameter )
+{
+  return std::shared_ptr< Parameter >( new SinParameter( parameter ) );
+}
+
+std::shared_ptr< Parameter >
+cos_parameter( const std::shared_ptr< Parameter > parameter )
+{
+  return std::shared_ptr< Parameter >( new CosParameter( parameter ) );
+}
+
+std::shared_ptr< Parameter >
+pow_parameter( const std::shared_ptr< Parameter > parameter, const double exponent )
+{
+  return std::shared_ptr< Parameter >( new PowParameter( parameter, exponent ) );
+}
+
+std::shared_ptr< Parameter >
+dimension_parameter( const std::shared_ptr< Parameter > x_parameter, const std::shared_ptr< Parameter > y_parameter )
+{
+  return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter ) );
+}
+
+std::shared_ptr< Parameter >
+dimension_parameter( const std::shared_ptr< Parameter > x_parameter,
+  const std::shared_ptr< Parameter > y_parameter,
+  const std::shared_ptr< Parameter > z_parameter )
+{
+  return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
 }
 
 } /* namespace nest */

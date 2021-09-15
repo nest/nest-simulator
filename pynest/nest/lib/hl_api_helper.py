@@ -70,7 +70,9 @@ __all__ = [
 _deprecation_warning = {'deprecated_model': {'deprecation_issued': False,
                                              'replacement': 'replacement_mod'},
                         'iaf_psc_alpha_canon': {'deprecation_issued': False,
-                                                'replacement': 'iaf_psc_alpha_ps'}}
+                                                'replacement': 'iaf_psc_alpha_ps'},
+                        'pp_pop_psc_delta': {'deprecation_issued': False,
+                                             'replacement': 'gif_pop_psc_exp'}}
 
 
 def format_Warning(message, category, filename, lineno, line=None):

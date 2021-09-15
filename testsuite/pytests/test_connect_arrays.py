@@ -126,7 +126,7 @@ class TestConnectArrays(unittest.TestCase):
 
     def test_connect_arrays_threaded(self):
         """Connecting NumPy arrays, threaded"""
-        nest.SetKernelStatus({'local_num_threads': 2})
+        nest.local_num_threads = 2
         n = 10
         nest.Create('iaf_psc_alpha', n)
         sources = np.arange(1, n+1, dtype=np.uint64)
@@ -298,7 +298,7 @@ class TestConnectArrays(unittest.TestCase):
     def test_connect_arrays_receptor_type(self):
         """Connecting NumPy arrays with receptor type specified, threaded"""
 
-        nest.SetKernelStatus({'local_num_threads': 2})
+        nest.local_num_threads = 2
 
         n = 10
         nest.Create('iaf_psc_alpha', n)
@@ -314,7 +314,7 @@ class TestConnectArrays(unittest.TestCase):
     def test_connect_arrays_differnt_alpha(self):
         """Connecting NumPy arrays with different alpha values in a threaded environment"""
 
-        nest.SetKernelStatus({'local_num_threads': 4})
+        nest.local_num_threads = 4
 
         neurons = nest.Create("iaf_psc_exp", 10)
         # syn_spec parameters are dependent on source, so we test with source id's not starting with 1

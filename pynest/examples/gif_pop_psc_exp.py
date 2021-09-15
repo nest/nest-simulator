@@ -119,10 +119,11 @@ tau_in = 6.  # in ms
 
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
-nest.SetKernelStatus({'resolution': dt,
-                      'print_time': True,
-                      'local_num_threads': 1})
-t0 = nest.GetKernelStatus('biological_time')
+nest.resolution = dt
+nest.print_time = True
+nest.local_num_threads = 1
+
+t0 = nest.biological_time
 
 nest_pops = nest.Create('gif_pop_psc_exp', M)
 
@@ -196,9 +197,7 @@ for i in range(M):
 ###############################################################################
 # We can now start the simulation:
 
-local_num_threads = 1
-seed = 1
-nest.SetKernelStatus({'rng_seed': seed})
+nest.rng_seed = 1
 
 t = np.arange(0., t_end, dt_rec)
 A_N = np.ones((t.size, M)) * np.nan
@@ -244,9 +243,11 @@ plt.xlabel('time [ms]')
 # possible by building a corresponding network of ``gif_psc_exp`` neuron models:
 
 nest.ResetKernel()
-nest.SetKernelStatus(
-    {'resolution': dt, 'print_time': True, 'local_num_threads': 1})
-t0 = nest.GetKernelStatus('biological_time')
+nest.resolution = dt
+nest.print_time = True
+nest.local_num_threads = 1
+
+t0 = nest.biological_time
 
 nest_pops = []
 for k in range(M):
@@ -329,9 +330,7 @@ for i in range(M):
 ###############################################################################
 # We can now start the microscopic simulation:
 
-local_num_threads = 1
-seed = 1
-nest.SetKernelStatus({'rng_seed': seed})
+nest.rng_seed = 1
 
 t = np.arange(0., t_end, dt_rec)
 A_N = np.ones((t.size, M)) * np.nan

@@ -59,7 +59,7 @@ def g_exc(amplitude, freq, offset, t_start, t_end):
     somatic conductance.
     """
     return lambda t: np.piecewise(t, [(t >= t_start) & (t < t_end)],
-                                  [lambda t: amplitude*np.sin(freq*t) + offset, 0.0])
+                                  [lambda t: amplitude * np.sin(freq * t) + offset, 0.0])
 
 
 def matching_potential(g_E, g_I, nrn_params):
@@ -68,7 +68,7 @@ def matching_potential(g_E, g_I, nrn_params):
     """
     E_E = nrn_params['soma']['E_ex']
     E_I = nrn_params['soma']['E_in']
-    return (g_E*E_E + g_I*E_I) / (g_E + g_I)
+    return (g_E * E_E + g_I * E_I) / (g_E + g_I)
 
 
 def V_w_star(V_w, nrn_params):
@@ -78,7 +78,7 @@ def V_w_star(V_w, nrn_params):
     g_D = nrn_params['g_sp']
     g_L = nrn_params['soma']['g_L']
     E_L = nrn_params['soma']['E_L']
-    return (g_L*E_L + g_D*V_w) / (g_L + g_D)
+    return (g_L * E_L + g_D * V_w) / (g_L + g_D)
 
 
 def phi(U, nrn_params):
@@ -89,7 +89,7 @@ def phi(U, nrn_params):
     k = nrn_params['rate_slope']
     beta = nrn_params['beta']
     theta = nrn_params['theta']
-    return phi_max / (1.0 + k*np.exp(beta*(theta - U)))
+    return phi_max / (1.0 + k * np.exp(beta * (theta - U)))
 
 
 def h(U, nrn_params):
@@ -99,18 +99,18 @@ def h(U, nrn_params):
     k = nrn_params['rate_slope']
     beta = nrn_params['beta']
     theta = nrn_params['theta']
-    return 15.0*beta / (1.0 + np.exp(-beta*(theta - U)) / k)
+    return 15.0 * beta / (1.0 + np.exp(-beta * (theta - U)) / k)
 
 
 # simulation params
 n_pattern_rep = 100         # number of repetitions of the spike pattern
 pattern_duration = 200.0
-t_start = 2.0*pattern_duration
-t_end = n_pattern_rep*pattern_duration + t_start
-simulation_time = t_end + 2.0*pattern_duration
+t_start = 2.0 * pattern_duration
+t_end = n_pattern_rep * pattern_duration + t_start
+simulation_time = t_end + 2.0 * pattern_duration
 n_rep_total = int(np.around(simulation_time / pattern_duration))
 resolution = 0.1
-nest.SetKernelStatus({'resolution': resolution})
+nest.resolution = resolution
 
 # neuron parameters
 nrn_model = 'pp_cond_exp_mc_urbanczik'
@@ -144,14 +144,14 @@ nrn_params = {
 
 # synapse params
 syns = nest.GetDefaults(nrn_model)['receptor_types']
-init_w = 0.3*nrn_params['dendritic']['C_m']
+init_w = 0.3 * nrn_params['dendritic']['C_m']
 syn_params = {
     'synapse_model': 'urbanczik_synapse_wr',
     'receptor_type': syns['dendritic_exc'],
     'tau_Delta': 100.0,  # time constant of low pass filtering of the weight change
     'eta': 0.17,         # learning rate
     'weight': init_w,
-    'Wmax': 4.5*nrn_params['dendritic']['C_m'],
+    'Wmax': 4.5 * nrn_params['dendritic']['C_m'],
     'delay': resolution,
 }
 
@@ -205,11 +205,11 @@ syn_params = {
 """
 
 # somatic input
-ampl_exc = 0.016*nrn_params['dendritic']['C_m']
-offset = 0.018*nrn_params['dendritic']['C_m']
-ampl_inh = 0.06*nrn_params['dendritic']['C_m']
+ampl_exc = 0.016 * nrn_params['dendritic']['C_m']
+offset = 0.018 * nrn_params['dendritic']['C_m']
+ampl_inh = 0.06 * nrn_params['dendritic']['C_m']
 freq = 2.0 / pattern_duration
-soma_exc_inp = g_exc(ampl_exc, 2.0*np.pi*freq, offset, t_start, t_end)
+soma_exc_inp = g_exc(ampl_exc, 2.0 * np.pi * freq, offset, t_start, t_end)
 soma_inh_inp = g_inh(ampl_inh, t_start, t_end)
 
 # dendritic input
@@ -232,7 +232,7 @@ nest.Simulate(pattern_duration)
 t_srs = [ssr.get('events', 'times') for ssr in sr]
 
 nest.ResetKernel()
-nest.SetKernelStatus({'resolution': resolution})
+nest.resolution = resolution
 
 """
 neuron and devices
@@ -274,9 +274,9 @@ nest.CopyModel('urbanczik_synapse', 'urbanczik_synapse_wr',
 nest.Connect(prrt_nrns, nrn, syn_spec=syn_params)
 nest.Connect(mm, nrn, syn_spec={'delay': 0.1})
 nest.Connect(sg_soma_exc, nrn,
-             syn_spec={'receptor_type': syns['soma_exc'], 'weight': 10.0*resolution, 'delay': resolution})
+             syn_spec={'receptor_type': syns['soma_exc'], 'weight': 10.0 * resolution, 'delay': resolution})
 nest.Connect(sg_soma_inh, nrn,
-             syn_spec={'receptor_type': syns['soma_inh'], 'weight': 10.0*resolution, 'delay': resolution})
+             syn_spec={'receptor_type': syns['soma_inh'], 'weight': 10.0 * resolution, 'delay': resolution})
 nest.Connect(nrn, sr_soma)
 
 # simulation divided into intervals of the pattern duration
@@ -284,7 +284,7 @@ for i in np.arange(n_rep_total):
     # Set the spike times of the pattern for each spike generator
     for (sg, t_sp) in zip(sg_prox, t_srs):
         nest.SetStatus(
-            sg, {'spike_times': np.array(t_sp) + i*pattern_duration})
+            sg, {'spike_times': np.array(t_sp) + i * pattern_duration})
 
     nest.Simulate(pattern_duration)
 
@@ -349,7 +349,7 @@ axD.plot(t, h(V_d_star, nrn_params), lw=lw,
          label=r'$h(V_W^\ast)$', color='g', ls='--')
 axD.plot(t, phi(V_s, nrn_params) - phi(V_d_star, nrn_params), lw=lw,
          label=r'$\phi(U) - \phi(V_W^\ast)$', color='r', ls='-')
-axD.plot(spike_times_soma, 0.0*np.ones(len(spike_times_soma)),
+axD.plot(spike_times_soma, 0.0 * np.ones(len(spike_times_soma)),
          's', color='k', markersize=2)
 axD.legend(fontsize=fs)
 

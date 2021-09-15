@@ -18,7 +18,7 @@ synapses gap junctions are bidirectional connections. In order to create
 required: For each created connection a second connection with the exact
 same parameters in the opposite direction is required. NEST provides the
 possibility to create both connections with a single call to
-``nest.Connect`` via the ``make_symmetric`` flag (default value:
+:py:func:`.Connect` via the ``make_symmetric`` flag (default value:
 ``False``) of the connection dictionary:
 
 .. code:: python
@@ -28,7 +28,7 @@ possibility to create both connections with a single call to
     a = nest.Create('hh_psc_alpha_gap')
     b = nest.Create('hh_psc_alpha_gap')
     # Create gap junction between neurons a and b
-    nest.Connect(a, b, {'rule': 'one_to_one', 'make_symmetric': True}, 
+    nest.Connect(a, b, {'rule': 'one_to_one', 'make_symmetric': True},
                        {'model': 'gap_junction', 'weight': 0.5})
 
 In this case the reverse connection is created internally. In order to
@@ -81,15 +81,17 @@ junctions per neuron. E.g. if one desires ``gap_per_neuron = 60`` the
 total number of gap junctions should be chosen as
 ``n_gap_junction = n_neuron * gap_per_neuron / 2``.
 
-**Note:** The (necessary) drawback of creating the random connections on
-the Python level is the serialization of the connection procedure in
-terms of computation time and memory in distributed simulations. Each
-compute node participating in the simulation needs to draw the identical
-full set of random numbers and temporarily represent the total
-connectivity in variable ``m``. Therefore it is advisable to use the
-internal random connection rules of NEST for the creation of connections
-whenever possible. For more details see `Hahne et al.
-2016 <http://link.springer.com/chapter/10.1007/978-3-319-50862-7_4>`__.
+.. note::
+
+  The (necessary) drawback of creating the random connections on
+  the Python level is the serialization of the connection procedure in
+  terms of computation time and memory in distributed simulations. Each
+  compute node participating in the simulation needs to draw the identical
+  full set of random numbers and temporarily represent the total
+  connectivity in variable ``m``. Therefore it is advisable to use the
+  internal random connection rules of NEST for the creation of connections
+  whenever possible. For more details see `Hahne et al.
+  2016 <http://link.springer.com/chapter/10.1007/978-3-319-50862-7_4>`__.
 
 Adjust settings of iterative solution scheme
 --------------------------------------------
@@ -105,11 +107,11 @@ general the following parameters can be set via kernel parameters:
 
 .. code:: python
 
-    nest.SetKernelStatus({'use_wfr': True,
-                          'wfr_comm_interval': 1.0,
-                          'wfr_tol': 0.0001,
-                          'wfr_max_iterations': 15,
-                          'wfr_interpolation_order': 3})
+    nest.use_wfr = True
+    nest.wfr_comm_interval = 1.0
+    nest.wfr_tol = 0.0001
+    nest.wfr_max_iterations = 15
+    nest.wfr_interpolation_order = 3
 
 For a detailed description of the parameters and their function see
 (`Hahne et al. 2016 <https://arxiv.org/abs/1610.09990>`__, Table 2).

@@ -92,7 +92,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         resolution = 0.1
-        nest.SetKernelStatus({'resolution': resolution})
+        nest.resolution = resolution
 
         '''
         neuron parameters

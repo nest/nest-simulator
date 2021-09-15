@@ -200,94 +200,92 @@ R123_CUDA_DEVICE R123_STATIC_INLINE threefry2x##W##_key_t threefry2x##W##keyinit
 R123_CUDA_DEVICE R123_STATIC_INLINE R123_FORCE_INLINE(threefry2x##W##_ctr_t threefry2x##W##_R(unsigned int Nrounds, threefry2x##W##_ctr_t in, threefry2x##W##_key_t k)); \
 R123_CUDA_DEVICE R123_STATIC_INLINE                                          \
 threefry2x##W##_ctr_t threefry2x##W##_R(unsigned int Nrounds, threefry2x##W##_ctr_t in, threefry2x##W##_key_t k){ \
-    threefry2x##W##_ctr_t X;                                              \
-    uint##W##_t ks[2+1];                                          \
-    int  i; /* avoid size_t to avoid need for stddef.h */                   \
+    uint##W##_t X0,X1; \
+    uint##W##_t ks0, ks1, ks2; \
     R123_ASSERT(Nrounds<=32);                                           \
-    ks[2] =  SKEIN_KS_PARITY##W;                                   \
-    for (i=0;i < 2; i++)                                        \
-        {                                                               \
-            ks[i] = k.v[i];                                             \
-            X.v[i]  = in.v[i];                                          \
-            ks[2] ^= k.v[i];                                    \
-        }                                                               \
+    ks2 =  SKEIN_KS_PARITY##W;                                   \
+    ks0 = k.v[0];                                                       \
+    X0  = in.v[0] + ks0;                                                  \
+    ks2 ^= ks0; \
+\
+    ks1 = k.v[1];                                                       \
+    X1  = in.v[1] + ks1;                                                  \
+    ks2 ^= ks1; \
                                                                         \
-    /* Insert initial key before round 0 */                             \
-    X.v[0] += ks[0]; X.v[1] += ks[1];                                   \
-                                                                        \
-    if(Nrounds>0){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_0_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>1){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_1_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>2){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_2_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>3){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_3_0); X.v[1] ^= X.v[0]; } \
+    if(Nrounds>0){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_0_0); X1 ^= X0; } \
+    if(Nrounds>1){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_1_0); X1 ^= X0; } \
+    if(Nrounds>2){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_2_0); X1 ^= X0; } \
+    if(Nrounds>3){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_3_0); X1 ^= X0; } \
     if(Nrounds>3){                                                      \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[1]; X.v[1] += ks[2];                               \
-        X.v[1] += 1;     /* X.v[2-1] += r  */                   \
+        X0 += ks1; X1 += ks2;                               \
+        X1 += 1;     /* X.v[2-1] += r  */                   \
     }                                                                   \
-    if(Nrounds>4){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_4_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>5){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_5_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>6){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_6_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>7){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_7_0); X.v[1] ^= X.v[0]; } \
+    if(Nrounds>4){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_4_0); X1 ^= X0; } \
+    if(Nrounds>5){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_5_0); X1 ^= X0; } \
+    if(Nrounds>6){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_6_0); X1 ^= X0; } \
+    if(Nrounds>7){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_7_0); X1 ^= X0; } \
     if(Nrounds>7){                                                      \
         /* InjectKey(r=2) */                                            \
-        X.v[0] += ks[2]; X.v[1] += ks[0];                               \
-        X.v[1] += 2;                                                    \
+        X0 += ks2; X1 += ks0;                               \
+        X1 += 2;                                                    \
     }                                                                   \
-    if(Nrounds>8){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_0_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>9){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_1_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>10){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_2_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>11){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_3_0); X.v[1] ^= X.v[0]; } \
+    if(Nrounds>8){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_0_0); X1 ^= X0; } \
+    if(Nrounds>9){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_1_0); X1 ^= X0; } \
+    if(Nrounds>10){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_2_0); X1 ^= X0; } \
+    if(Nrounds>11){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_3_0); X1 ^= X0; } \
     if(Nrounds>11){                                                     \
         /* InjectKey(r=3) */                                            \
-        X.v[0] += ks[0]; X.v[1] += ks[1];                               \
-        X.v[1] += 3;                                                    \
+        X0 += ks0; X1 += ks1;                               \
+        X1 += 3;                                                    \
     }                                                                   \
-    if(Nrounds>12){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_4_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>13){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_5_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>14){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_6_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>15){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_7_0); X.v[1] ^= X.v[0]; } \
+    if(Nrounds>12){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_4_0); X1 ^= X0; } \
+    if(Nrounds>13){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_5_0); X1 ^= X0; } \
+    if(Nrounds>14){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_6_0); X1 ^= X0; } \
+    if(Nrounds>15){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_7_0); X1 ^= X0; } \
     if(Nrounds>15){                                                     \
         /* InjectKey(r=4) */                                            \
-        X.v[0] += ks[1]; X.v[1] += ks[2];                               \
-        X.v[1] += 4;                                                    \
+        X0 += ks1; X1 += ks2;                               \
+        X1 += 4;                                                    \
     }                                                                   \
-    if(Nrounds>16){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_0_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>17){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_1_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>18){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_2_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>19){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_3_0); X.v[1] ^= X.v[0]; } \
+    if(Nrounds>16){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_0_0); X1 ^= X0; } \
+    if(Nrounds>17){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_1_0); X1 ^= X0; } \
+    if(Nrounds>18){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_2_0); X1 ^= X0; } \
+    if(Nrounds>19){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_3_0); X1 ^= X0; } \
     if(Nrounds>19){                                                     \
         /* InjectKey(r=5) */                                            \
-        X.v[0] += ks[2]; X.v[1] += ks[0];                               \
-        X.v[1] += 5;                                                    \
+        X0 += ks2; X1 += ks0;                               \
+        X1 += 5;                                                    \
     }                                                                   \
-    if(Nrounds>20){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_4_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>21){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_5_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>22){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_6_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>23){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_7_0); X.v[1] ^= X.v[0]; } \
+    if(Nrounds>20){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_4_0); X1 ^= X0; } \
+    if(Nrounds>21){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_5_0); X1 ^= X0; } \
+    if(Nrounds>22){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_6_0); X1 ^= X0; } \
+    if(Nrounds>23){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_7_0); X1 ^= X0; } \
     if(Nrounds>23){                                                     \
         /* InjectKey(r=6) */                                            \
-        X.v[0] += ks[0]; X.v[1] += ks[1];                               \
-        X.v[1] += 6;                                                    \
+        X0 += ks0; X1 += ks1;                               \
+        X1 += 6;                                                    \
     }                                                                   \
-    if(Nrounds>24){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_0_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>25){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_1_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>26){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_2_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>27){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_3_0); X.v[1] ^= X.v[0]; } \
+    if(Nrounds>24){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_0_0); X1 ^= X0; } \
+    if(Nrounds>25){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_1_0); X1 ^= X0; } \
+    if(Nrounds>26){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_2_0); X1 ^= X0; } \
+    if(Nrounds>27){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_3_0); X1 ^= X0; } \
     if(Nrounds>27){                                                     \
         /* InjectKey(r=7) */                                            \
-        X.v[0] += ks[1]; X.v[1] += ks[2];                               \
-        X.v[1] += 7;                                                    \
+        X0 += ks1; X1 += ks2;                               \
+        X1 += 7;                                                    \
     }                                                                   \
-    if(Nrounds>28){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_4_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>29){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_5_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>30){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_6_0); X.v[1] ^= X.v[0]; } \
-    if(Nrounds>31){  X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x2_7_0); X.v[1] ^= X.v[0]; } \
+    if(Nrounds>28){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_4_0); X1 ^= X0; } \
+    if(Nrounds>29){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_5_0); X1 ^= X0; } \
+    if(Nrounds>30){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_6_0); X1 ^= X0; } \
+    if(Nrounds>31){  X0 += X1; X1 = RotL_##W(X1,R_##W##x2_7_0); X1 ^= X0; } \
     if(Nrounds>31){                                                     \
         /* InjectKey(r=8) */                                            \
-        X.v[0] += ks[2]; X.v[1] += ks[0];                               \
-        X.v[1] += 8;                                                    \
+        X0 += ks2; X1 += ks0;                               \
+        X1 += 8;                                                    \
     }                                                                   \
-    return X;                                                           \
+    threefry2x##W##_ctr_t ret={{X0, X1}};                                   \
+    return ret;                                                             \
 }                                                                       \
  /** @ingroup ThreefryNxW */                                            \
 enum r123_enum_threefry2x##W { threefry2x##W##_rounds = THREEFRY2x##W##_DEFAULT_ROUNDS };       \
@@ -306,418 +304,424 @@ R123_CUDA_DEVICE R123_STATIC_INLINE threefry4x##W##_key_t threefry4x##W##keyinit
 R123_CUDA_DEVICE R123_STATIC_INLINE R123_FORCE_INLINE(threefry4x##W##_ctr_t threefry4x##W##_R(unsigned int Nrounds, threefry4x##W##_ctr_t in, threefry4x##W##_key_t k)); \
 R123_CUDA_DEVICE R123_STATIC_INLINE                                          \
 threefry4x##W##_ctr_t threefry4x##W##_R(unsigned int Nrounds, threefry4x##W##_ctr_t in, threefry4x##W##_key_t k){ \
-    threefry4x##W##_ctr_t X;                                            \
-    uint##W##_t ks[4+1];                                            \
-    int  i; /* avoid size_t to avoid need for stddef.h */                   \
+    uint##W##_t X0, X1, X2, X3; \
+    uint##W##_t ks0, ks1, ks2, ks3, ks4;                          \
     R123_ASSERT(Nrounds<=72);                                           \
-    ks[4] =  SKEIN_KS_PARITY##W;                                    \
-    for (i=0;i < 4; i++)                                            \
-        {                                                               \
-            ks[i] = k.v[i];                                             \
-            X.v[i]  = in.v[i];                                          \
-            ks[4] ^= k.v[i];                                        \
-        }                                                               \
-                                                                        \
-    /* Insert initial key before round 0 */                             \
-    X.v[0] += ks[0]; X.v[1] += ks[1]; X.v[2] += ks[2]; X.v[3] += ks[3]; \
+    ks4 =  SKEIN_KS_PARITY##W;                                    \
+    ks0 = k.v[0]; \
+    X0 = in.v[0] + ks0;  \
+    ks4 ^= ks0;                            \
+    \
+    ks1 = k.v[1]; \
+    X1 = in.v[1] + ks1;  \
+    ks4 ^= ks1;                            \
+    \
+    ks2 = k.v[2]; \
+    X2 = in.v[2] + ks2;  \
+    ks4 ^= ks2;                            \
+    \
+    ks3 = k.v[3]; \
+    X3 = in.v[3] + ks3;  \
+    ks4 ^= ks3;                                                    \
                                                                         \
     if(Nrounds>0){                                                      \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_0_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_0_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_0_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_0_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>1){                                                      \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_1_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_1_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_1_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_1_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>2){                                                      \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_2_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_2_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_2_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_2_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>3){                                                      \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_3_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_3_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_3_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_3_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>3){                                                      \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[1]; X.v[1] += ks[2]; X.v[2] += ks[3]; X.v[3] += ks[4]; \
-        X.v[4-1] += 1;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks1; X1 += ks2; X2 += ks3; X3 += ks4; \
+        X3 += 1;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>4){                                                      \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_4_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_4_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_4_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_4_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>5){                                                      \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_5_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_5_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_5_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_5_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>6){                                                      \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_6_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_6_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_6_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_6_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>7){                                                      \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_7_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_7_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_7_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_7_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>7){                                                      \
         /* InjectKey(r=2) */                                            \
-        X.v[0] += ks[2]; X.v[1] += ks[3]; X.v[2] += ks[4]; X.v[3] += ks[0]; \
-        X.v[4-1] += 2;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks2; X1 += ks3; X2 += ks4; X3 += ks0; \
+        X3 += 2;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>8){                                                      \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_0_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_0_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_0_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_0_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>9){                                                      \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_1_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_1_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_1_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_1_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>10){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_2_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_2_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_2_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_2_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>11){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_3_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_3_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_3_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_3_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>11){                                                     \
         /* InjectKey(r=3) */                                            \
-        X.v[0] += ks[3]; X.v[1] += ks[4]; X.v[2] += ks[0]; X.v[3] += ks[1]; \
-        X.v[4-1] += 3;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks3; X1 += ks4; X2 += ks0; X3 += ks1; \
+        X3 += 3;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>12){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_4_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_4_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_4_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_4_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>13){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_5_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_5_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_5_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_5_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>14){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_6_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_6_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_6_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_6_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>15){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_7_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_7_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_7_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_7_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>15){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[4]; X.v[1] += ks[0]; X.v[2] += ks[1]; X.v[3] += ks[2]; \
-        X.v[4-1] += 4;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks4; X1 += ks0; X2 += ks1; X3 += ks2; \
+        X3 += 4;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>16){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_0_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_0_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_0_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_0_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>17){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_1_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_1_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_1_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_1_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>18){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_2_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_2_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_2_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_2_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>19){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_3_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_3_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_3_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_3_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>19){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[0]; X.v[1] += ks[1]; X.v[2] += ks[2]; X.v[3] += ks[3]; \
-        X.v[4-1] += 5;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks0; X1 += ks1; X2 += ks2; X3 += ks3; \
+        X3 += 5;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>20){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_4_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_4_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_4_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_4_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>21){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_5_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_5_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_5_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_5_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>22){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_6_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_6_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_6_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_6_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>23){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_7_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_7_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_7_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_7_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>23){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[1]; X.v[1] += ks[2]; X.v[2] += ks[3]; X.v[3] += ks[4]; \
-        X.v[4-1] += 6;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks1; X1 += ks2; X2 += ks3; X3 += ks4; \
+        X3 += 6;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>24){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_0_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_0_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_0_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_0_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>25){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_1_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_1_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_1_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_1_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>26){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_2_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_2_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_2_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_2_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>27){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_3_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_3_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_3_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_3_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>27){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[2]; X.v[1] += ks[3]; X.v[2] += ks[4]; X.v[3] += ks[0]; \
-        X.v[4-1] += 7;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks2; X1 += ks3; X2 += ks4; X3 += ks0; \
+        X3 += 7;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>28){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_4_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_4_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_4_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_4_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>29){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_5_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_5_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_5_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_5_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>30){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_6_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_6_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_6_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_6_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>31){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_7_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_7_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_7_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_7_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>31){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[3]; X.v[1] += ks[4]; X.v[2] += ks[0]; X.v[3] += ks[1]; \
-        X.v[4-1] += 8;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks3; X1 += ks4; X2 += ks0; X3 += ks1; \
+        X3 += 8;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>32){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_0_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_0_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_0_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_0_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>33){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_1_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_1_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_1_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_1_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>34){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_2_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_2_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_2_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_2_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>35){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_3_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_3_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_3_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_3_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>35){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[4]; X.v[1] += ks[0]; X.v[2] += ks[1]; X.v[3] += ks[2]; \
-        X.v[4-1] += 9;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks4; X1 += ks0; X2 += ks1; X3 += ks2; \
+        X3 += 9;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>36){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_4_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_4_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_4_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_4_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>37){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_5_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_5_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_5_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_5_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>38){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_6_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_6_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_6_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_6_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>39){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_7_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_7_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_7_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_7_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>39){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[0]; X.v[1] += ks[1]; X.v[2] += ks[2]; X.v[3] += ks[3]; \
-        X.v[4-1] += 10;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks0; X1 += ks1; X2 += ks2; X3 += ks3; \
+        X3 += 10;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>40){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_0_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_0_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_0_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_0_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>41){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_1_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_1_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_1_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_1_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>42){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_2_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_2_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_2_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_2_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>43){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_3_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_3_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_3_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_3_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>43){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[1]; X.v[1] += ks[2]; X.v[2] += ks[3]; X.v[3] += ks[4]; \
-        X.v[4-1] += 11;     /* X.v[WCNT4-1] += r  */                \
+        X0 += ks1; X1 += ks2; X2 += ks3; X3 += ks4; \
+        X3 += 11;     /* XWCNT4-1 += r  */                \
     }                                                                   \
                                                                         \
     if(Nrounds>44){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_4_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_4_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_4_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_4_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>45){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_5_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_5_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_5_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_5_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>46){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_6_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_6_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_6_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_6_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>47){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_7_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_7_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_7_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_7_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>47){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[2]; X.v[1] += ks[3]; X.v[2] += ks[4]; X.v[3] += ks[0]; \
-        X.v[4-1] += 12;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks2; X1 += ks3; X2 += ks4; X3 += ks0; \
+        X3 += 12;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>48){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_0_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_0_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_0_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_0_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>49){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_1_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_1_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_1_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_1_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>50){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_2_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_2_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_2_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_2_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>51){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_3_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_3_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_3_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_3_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>51){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[3]; X.v[1] += ks[4]; X.v[2] += ks[0]; X.v[3] += ks[1]; \
-        X.v[4-1] += 13;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks3; X1 += ks4; X2 += ks0; X3 += ks1; \
+        X3 += 13;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>52){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_4_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_4_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_4_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_4_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>53){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_5_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_5_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_5_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_5_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>54){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_6_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_6_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_6_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_6_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>55){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_7_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_7_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_7_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_7_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>55){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[4]; X.v[1] += ks[0]; X.v[2] += ks[1]; X.v[3] += ks[2]; \
-        X.v[4-1] += 14;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks4; X1 += ks0; X2 += ks1; X3 += ks2; \
+        X3 += 14;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>56){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_0_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_0_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_0_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_0_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>57){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_1_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_1_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_1_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_1_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>58){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_2_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_2_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_2_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_2_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>59){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_3_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_3_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_3_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_3_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>59){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[0]; X.v[1] += ks[1]; X.v[2] += ks[2]; X.v[3] += ks[3]; \
-        X.v[4-1] += 15;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks0; X1 += ks1; X2 += ks2; X3 += ks3; \
+        X3 += 15;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>60){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_4_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_4_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_4_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_4_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>61){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_5_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_5_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_5_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_5_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>62){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_6_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_6_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_6_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_6_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>63){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_7_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_7_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_7_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_7_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>63){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[1]; X.v[1] += ks[2]; X.v[2] += ks[3]; X.v[3] += ks[4]; \
-        X.v[4-1] += 16;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks1; X1 += ks2; X2 += ks3; X3 += ks4; \
+        X3 += 16;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>64){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_0_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_0_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_0_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_0_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>65){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_1_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_1_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_1_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_1_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>66){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_2_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_2_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_2_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_2_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>67){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_3_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_3_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_3_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_3_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>67){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[2]; X.v[1] += ks[3]; X.v[2] += ks[4]; X.v[3] += ks[0]; \
-        X.v[4-1] += 17;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks2; X1 += ks3; X2 += ks4; X3 += ks0; \
+        X3 += 17;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
     if(Nrounds>68){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_4_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_4_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_4_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_4_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>69){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_5_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_5_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_5_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_5_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>70){                                                     \
-        X.v[0] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_6_0); X.v[1] ^= X.v[0]; \
-        X.v[2] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_6_1); X.v[3] ^= X.v[2]; \
+        X0 += X1; X1 = RotL_##W(X1,R_##W##x4_6_0); X1 ^= X0; \
+        X2 += X3; X3 = RotL_##W(X3,R_##W##x4_6_1); X3 ^= X2; \
     }                                                                   \
     if(Nrounds>71){                                                     \
-        X.v[0] += X.v[3]; X.v[3] = RotL_##W(X.v[3],R_##W##x4_7_0); X.v[3] ^= X.v[0]; \
-        X.v[2] += X.v[1]; X.v[1] = RotL_##W(X.v[1],R_##W##x4_7_1); X.v[1] ^= X.v[2]; \
+        X0 += X3; X3 = RotL_##W(X3,R_##W##x4_7_0); X3 ^= X0; \
+        X2 += X1; X1 = RotL_##W(X1,R_##W##x4_7_1); X1 ^= X2; \
     }                                                                   \
     if(Nrounds>71){                                                     \
         /* InjectKey(r=1) */                                            \
-        X.v[0] += ks[3]; X.v[1] += ks[4]; X.v[2] += ks[0]; X.v[3] += ks[1]; \
-        X.v[4-1] += 18;     /* X.v[WCNT4-1] += r  */                 \
+        X0 += ks3; X1 += ks4; X2 += ks0; X3 += ks1; \
+        X3 += 18;     /* XWCNT4-1 += r  */                 \
     }                                                                   \
                                                                         \
-    return X;                                                           \
+    threefry4x##W##_ctr_t ret = {{X0, X1, X2, X3}}; \
+    return ret;                                                           \
 }                                                                       \
                                                                         \
  /** @ingroup ThreefryNxW */                                            \

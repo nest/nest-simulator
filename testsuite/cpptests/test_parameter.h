@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
   ( *d )[ nest::names::max ] = 1.0;
   ParameterDatum uniform_pd = new nest::UniformParameter( d );
   // Requested region is outside of the parameter limits, so it cannot get an acceptable value.
-  ParameterDatum redraw_pd = uniform_pd->redraw( -1.0, -0.5 );
+  ParameterDatum redraw_pd = redraw_parameter( uniform_pd, -1.0, -0.5 );
 
   // We need to go via a factory to avoid compiler confusion. Two somewhat arbitrary sequences are used for seeding.
   nest::RngPtr rng = nest::RandomGeneratorFactory< std::mt19937_64 >().create( { 1234567890, 23423423 } );

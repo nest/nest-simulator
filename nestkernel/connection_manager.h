@@ -345,24 +345,19 @@ public:
    * Returns true if connection information needs to be
    * communicated. False otherwise.
    */
-  bool have_connections_changed() const;
+  bool connections_have_changed() const;
 
   /**
    * Sets flag indicating whether connection information needs to be
    * communicated to true.
    */
-  void set_have_connections_changed( const thread tid );
+  void set_connections_have_changed();
 
   /**
    * Sets flag indicating whether connection information needs to be
    * communicated to false.
    */
-  void unset_have_connections_changed( const thread tid );
-
-  /**
-   * Sets flag indicating whether GetConnections has been called since last update of connections.
-   */
-  void set_has_get_connections_been_called( const bool has_get_connections_been_called );
+  void unset_connections_have_changed();
 
   /**
    * Deletes TargetTable and resets processed flags of
@@ -614,10 +609,10 @@ private:
 
   //! True if new connections have been created since startup or last call to
   //! simulate.
-  PerThreadBoolIndicator have_connections_changed_;
+  bool connections_have_changed_;
 
   //! true if GetConnections has been called.
-  bool has_get_connections_been_called_;
+  bool get_connections_has_been_called_;
 
   //! Whether to sort connections by source node ID.
   bool sort_connections_by_source_;
@@ -750,9 +745,9 @@ ConnectionManager::get_remote_targets_of_local_node( const thread tid, const ind
 }
 
 inline bool
-ConnectionManager::have_connections_changed() const
+ConnectionManager::connections_have_changed() const
 {
-  return have_connections_changed_.any_true();
+  return connections_have_changed_;
 }
 
 inline void
@@ -862,12 +857,6 @@ ConnectionManager::set_source_has_more_targets( const thread tid,
   const bool more_targets )
 {
   connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
-}
-
-inline void
-nest::ConnectionManager::set_has_get_connections_been_called( const bool has_get_connections_been_called )
-{
-  has_get_connections_been_called_ = has_get_connections_been_called;
 }
 
 inline const std::vector< SpikeData >&

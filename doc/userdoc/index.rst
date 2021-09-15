@@ -2,24 +2,6 @@
 Welcome to the NEST simulator documentation!
 ********************************************
 
-.. _index_ref:
-
-
-:orange:`Introducing NEST 3.0`
-------------------------------
-
-NEST 3.0 provides a more intuitive experience with simplified yet versatile handling and manipulation of nodes and connections.
-
-You can find all the information in our section :doc:`guides/nest2_to_nest3/index`.
-
-.. note::
-
-  Note that some of your simulation scripts may need to be updated to run in NEST 3.0!
-  See our :doc:`reference guide <guides/nest2_to_nest3/refguide_nest2_nest3>` comparing NEST 2.x versus NEST 3.0 syntax.
-
-
-----
-
 If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
 
 +------------------------------------+---------------------------------------+
@@ -86,7 +68,7 @@ Where to find what
 
 * :doc:`Example Networks <examples/index>`  demonstrate the use of dozens of the neural network models implemented in NEST.
 
-* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts from :doc:`Parallel Computing <guides/parallel_computing>` to handling :doc:`Gap Junction Simulations <guides/simulations_with_gap_junctions>` and :doc:`setting up a spatially-structured network <guides/spatial/guide_spatially_structured_networks>`.
+* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts from :doc:`Parallel Computing <guides/parallel_computing>` to handling :doc:`Gap Junction Simulations <guides/simulations_with_gap_junctions>` and :doc:`setting up a spatially-structured network <guides/spatially_structured_networks>`.
 
 * :doc:`Reference Material <ref_material/index>` provides a quick look up of definitions, functions and terms.
 
@@ -126,4 +108,3 @@ NEST is available under the :doc:`GNU General Public License 2 or later <license
 .. image:: static/img/EBRAINS.svg
   :width: 25 %
   :target: https://ebrains.eu/
-

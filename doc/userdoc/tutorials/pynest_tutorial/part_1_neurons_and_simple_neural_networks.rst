@@ -4,6 +4,7 @@ Part 1: Neurons and simple neural networks
 Introduction
 ------------
 
+
 In this section we cover the first steps in using PyNEST to simulate
 neuronal networks. When you have worked through this material, you will
 know how to:

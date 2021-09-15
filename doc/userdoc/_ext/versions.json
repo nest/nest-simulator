@@ -5,7 +5,7 @@
 	},
 	"pip": 
 	{
-		"min_installed": "20.3.3"
+		"recommended": "20.3.3"
 	},
 	"cmake":
 	{
@@ -18,7 +18,7 @@
 	},
 	"openmpi": 
 	{
-		"min_installed": "4.0.3"
+		"recommended": "4.0.3"
 	},
 	"boost": {
 		"min": 1.69
@@ -28,19 +28,19 @@
 	},
 	"libtool": 
 	{
-		"min_installed": "2.4.6"
+		"recommended": "2.4.6"
 	},
 	"readline": 
 	{
-		"min_installed": 8.0
+		"recommended": 8.0
 	},
 	"numpy":
 	{
-		"min_installed": "1.19.4"
+		"recommended": "1.19.4"
 	},
 	"scipy": 
 	{
-		"min_installed": "1.5.4"
+		"recommended": "1.5.4"
 	},
 	"matplotlib":
 	{
@@ -48,10 +48,10 @@
 	},
 	"ipython": 
 	{
-		"min_installed": "5.8.0"
+		"recommended": "5.8.0"
 	},
 	"libncurses": 
 	{
-		"min_installed": 6.2
+		"recommended": 6.2
 	}
 }

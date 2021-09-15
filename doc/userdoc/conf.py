@@ -294,8 +294,6 @@ def copy_acknowledgments_file(src):
 
 # -- Copy Acknowledgments file ----------------------------
 copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
-
-
 # -- Copy documentation for Microcircuit Model ----------------------------
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")

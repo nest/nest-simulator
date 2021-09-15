@@ -61,9 +61,9 @@ Deprecation information
   removed in a future version of NEST. To avoid porting trouble
   later on, we suggest you switch to using the new interface
   for kernel properties now.
-* Model ``pp_pop_psc_delta`` has been deprecated since 2016 and
-  will be removed in NEST 3.2. Please use model :doc:`gif_pop_psc_exp <gif_pop_psc_exp>`
-  instead.
+* Model ``pp_pop_psc_delta`` has been deprecated since 2016 and will
+  be removed in NEST 3.2. Please use model :doc:`gif_pop_psc_exp
+  <gif_pop_psc_exp>` instead.
 * The `nest.hl_api` namespace contained the same members as `nest`
   and is being removed in NEST 3.2. All imports from `nest.hl_api`
   can be replaced by imports from `nest`.

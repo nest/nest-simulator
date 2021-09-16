@@ -27,6 +27,18 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 project( nest CXX C )
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
+# this include for coloring messages
+include( Utils )
+# check if the given CMAKE_INSTALL_PREFIX is not empty
+if( NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
+    string(LENGTH ${CMAKE_INSTALL_PREFIX} PathLength)
+    if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
+      set(PathLength 0)
+    endif()
+    printErrorCause(TEXT "CMAKE_INSTALL_PREFIX must be either none empty string or an absolute path" CAUSE "CMAKE_INSTALL_PREFIX is:${CMAKE_INSTALL_PREFIX} [length:${PathLength}]")
+endif()
+
+
 ################################################################################
 ##################         All User Defined options           ##################
 ################################################################################

@@ -59,7 +59,7 @@ endfunction()
 function(printWarning)
   set(singleValued TEXT)
   cmake_parse_arguments(WARN "" "${singleValued}" "" ${ARGN})
-  print(HAS_COLOR MODE "WARNING" TEXT "${WARN_TEXT}" COLOR ${Yellow} )
+  print(HAS_COLOR MODE "WARNING" TEXT "${WARN_TEXT}" COLOR ${Yellow})
 endfunction()
 
 
@@ -67,7 +67,7 @@ endfunction()
 function(printError)
   set(singleValued TEXT)
   cmake_parse_arguments(ERROR "" "${singleValued}" "" ${ARGN})
-  print(HAS_COLOR MODE "FATAL" TEXT "${ERROR_TEXT}" COLOR ${Red} )
+  print(HAS_COLOR MODE "FATAL" TEXT "${ERROR_TEXT}" COLOR ${Red})
 endfunction()
 
 
@@ -76,3 +76,12 @@ function(printInfo)
   cmake_parse_arguments(INFO "" "${singleValued}" "" ${ARGN})
   print(HAS_COLOR TEXT "${INFO_TEXT}" COLOR ${Green} )
 endfunction()
+
+
+function(printErrorCause)
+  set(singleValued TEXT CAUSE)
+  cmake_parse_arguments(ERROR "" "${singleValued}" "" ${ARGN})
+  print(HAS_COLOR TEXT "${ERROR_CAUSE}" COLOR ${BoldRed})
+  printERROR(TEXT "${ERROR_TEXT}")
+endfunction()
+

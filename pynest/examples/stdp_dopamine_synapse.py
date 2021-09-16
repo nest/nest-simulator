@@ -127,6 +127,7 @@ ms_w = 2
 alpha_spikes = 0.4
 alpha_grid = 0.4
 
+# plot data
 fig, ax = plt.subplots(nrows=4)
 
 ax[0].plot(spike_times1, np.ones(len(spike_times1)), '|', ms=ms, mew=mew, color="blue", alpha=alpha_spikes)
@@ -150,6 +151,7 @@ for i, _ax in enumerate(ax):
     if i != len(ax) - 1:
         _ax.set_xticklabels([])
 
+# save plot
 fname = "example_stdp_dopa_synapse"
 print("save ./%s.pdf ..." % fname)
 print("save ./%s.png ..." % fname)

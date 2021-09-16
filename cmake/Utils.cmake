@@ -19,7 +19,7 @@
 
 # Determine NEST version based on git branch
 #
-# This module defines functions to print warrnings, errors and status with colors
+# This module defines functions to print warnings, errors and status with colors
 
 
 string(ASCII 27 Esc)

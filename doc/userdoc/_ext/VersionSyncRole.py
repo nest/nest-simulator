@@ -1,6 +1,8 @@
 import json
 from docutils import nodes
 
+from conf import doc_build_dir
+
 
 def version_role(pattern):
     def role(name, rawtext, text, lineno, inliner, options={}, content=[]):
@@ -14,7 +16,7 @@ def version_role(pattern):
         else:
             level = "min"
 
-        with open('./userdoc/_ext/versions.json') as fp:
+        with open(str(doc_build_dir) + '/_ext/versions.json') as fp:
             data = json.load(fp)
 
         # version = data[package.strip()][level.strip()]

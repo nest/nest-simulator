@@ -23,9 +23,9 @@
 stdp dopamine synapse example
 -----------------------------
 
-script to test stdp_dopamine_synapse model implementing dopamine-dependent spike-timing dependent plasticity 
-as defined in [1], based on [2]. Two neurons, which fire poisson like, are connected by a
-stdp_dopamine_synapse. Dopamine is release by a volume transmitter, which also fires poisson like.
+script to test stdp_dopamine_synapse model implementing dopamine-dependent spike-timing dependent plasticity
+as defined in [1], based on [2]. Two neurons, which fire poisson like, are connected by a stdp_dopamine_synapse.
+Dopamine is release by a volume transmitter, which also fires poisson like.
 
 References
 ~~~~~~~~~~
@@ -45,7 +45,7 @@ See Also
 
 """
 
-# import necessary modules.
+# import necessary modules
 import nest
 import numpy as np
 import matplotlib.pyplot as plt
@@ -75,7 +75,7 @@ parrot_neuron = nest.Create("parrot_neuron")
 vt = nest.Create("volume_transmitter")
 wr = nest.Create("weight_recorder")
 
-# connect the neurons using "stdp_dopamine_synapse" 
+# connect the neurons using "stdp_dopamine_synapse"
 nest.CopyModel("stdp_dopamine_synapse", "stdp_dopa_wr", {"weight_recorder": wr,
                                                          "vt": vt.tolist()[0],
                                                          "weight": J,
@@ -113,7 +113,7 @@ spike_times_dopa = nest.GetStatus(sr_dopa, keys='events')[0]['times']
 t_log = nest.GetStatus(wr, "events")[0]["times"]
 w_log = nest.GetStatus(wr, "events")[0]["weights"]
 
-# plot settings 
+# plot settings
 fig_size = (5.2, 5.7)
 plt.rcParams["font.size"] = 8
 plt.rcParams["legend.fontsize"] = 6

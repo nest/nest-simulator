@@ -80,6 +80,8 @@ is normalized such that an event of weight 1.0 results in a peak current of
    inputs to the two synapses by the sign of the synaptic weight.
    It would be better to use receptor_types, cf iaf_cond_alpha_mc.
 
+See also [1]_, [2]_, [3]_, [4]_, [5]_.
+
 Parameters
 ++++++++++
 

@@ -67,6 +67,8 @@ hh_psc_alpha_clopath.
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
+See also [2]_, [3]_.
+
 Parameters
 ++++++++++
 

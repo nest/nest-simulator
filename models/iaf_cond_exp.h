@@ -72,6 +72,8 @@ of conductance modelled by an exponential function. The exponential function
 is normalized such that an event of weight 1.0 results in a peak conductance of
 1 nS.
 
+See also [1]_.
+
 Parameters
 ++++++++++
 

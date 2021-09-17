@@ -117,6 +117,8 @@ set to the mean values given in [2]_, which have been matched to spike-train
 recordings. Due to the many features of pp_psc_delta and its versatility,
 parameters should be set carefully and consciously.
 
+See also [1]_, [5]_.
+
 Parameters
 ++++++++++
 

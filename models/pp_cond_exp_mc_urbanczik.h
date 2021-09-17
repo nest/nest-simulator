@@ -169,7 +169,7 @@ synaptic delay :math:`d`, the synapse combines a delayed version of the error
 signal with the presynaptic spike train (:math:`S_{pre}`), see :ref:`panel c)
 <fig-multicompartment>`.
 
-.. _fig-multicompartment::
+.. _fig-multicompartment:
 
 .. figure:: ../static/img/multicompartment.png
    :width: 75 %

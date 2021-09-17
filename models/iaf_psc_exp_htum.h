@@ -95,6 +95,9 @@ neuron like dynamics interacting by point events is described in
     For implementation details see the
     `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
+
+See also [4]_.
+
 Parameters
 ++++++++++
 

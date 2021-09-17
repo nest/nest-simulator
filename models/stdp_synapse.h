@@ -60,6 +60,8 @@ exponent can be set separately for potentiation and depression.
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
+See also [2]_, [3]_, [4]_.
+
 Parameters
 ++++++++++
 

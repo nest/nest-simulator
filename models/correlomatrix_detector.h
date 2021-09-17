@@ -54,8 +54,8 @@ record spikes from several pools of spike inputs and calculates the
 covariance matrix of inter-spike intervals (raw auto and cross correlation)
 binned to bins of duration delta_tau. The histogram is only recorded for
 non-negative time lags. The negative part can be obtained by the symmetry of
-the covariance matrix
- :math:` C(t) = C^T(-t)`.
+the covariance matrix :math:` C(t) = C^T(-t)`.
+
 The result can be obtained via GetStatus under the key /count_covariance.
 In parallel it records a weighted histogram, where the connection weight are
 used to weight every count, which is available under the key /covariance.
@@ -88,16 +88,8 @@ sense.
 
 @note Correlomatrix detector breaks with the persistence scheme as
  follows: the internal buffers for storing spikes are part
- of State_, but are initialized by init_buffers_().
+ of State\_, but are initialized by init\_buffers\_().
 
- @todo The correlation detector could be made more efficient as follows
- (HEP 2008-07-01):
- - incoming_ is vector of two deques
- - let handle() push_back() entries in incoming_ and do nothing else
- - keep index to last "old spike" in each incoming_; cannot
-   be iterator since that may change
- - update() deletes all entries before now-tau_max, sorts the new
-   entries, then registers new entries in histogram
 
 Parameters
 ++++++++++

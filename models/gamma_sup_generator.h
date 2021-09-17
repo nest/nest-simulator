@@ -61,6 +61,9 @@ gamma_shape
 n_proc
     Number of superimposed independent component processes, default: 1
 
+
+See also [1]_.
+
 Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -137,7 +140,7 @@ private:
   struct Parameters_
   {
     double rate_;               //!< rate of component gamma process [Hz]
-    unsigned long gamma_shape_; //!< gamma shape parameter [1]_
+    unsigned long gamma_shape_; //!< gamma shape parameter [1]
     unsigned long n_proc_;      //!< number of component processes
 
     /**

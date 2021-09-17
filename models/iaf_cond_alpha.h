@@ -72,6 +72,8 @@ of conductance modelled by an alpha function. The alpha function
 is normalized such that an event of weight 1.0 results in a peak current of 1 nS
 at :math:`t = \tau_{syn}`.
 
+See also [1]_, [2]_, [3]_.
+
 Parameters
 ++++++++++
 

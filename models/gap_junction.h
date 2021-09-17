@@ -49,6 +49,8 @@ connections with a single call to Connect via the make_symmetric flag.
 The value of the parameter "delay" is ignored for connections of
 type gap_junction.
 
+See also [1]_, [2]_.
+
 Sends
 +++++
 

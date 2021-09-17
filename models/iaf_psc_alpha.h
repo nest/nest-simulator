@@ -96,6 +96,8 @@ relevant measures analytically.
    For implementation details see the
    `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
+See also [3]_.
+
 Parameters
 ++++++++++
 

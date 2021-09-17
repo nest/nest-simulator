@@ -65,6 +65,7 @@ Nonlinear rate neurons can be created by typing
 nest.Create('sigmoid_rate_ipn'). Nonlinear rate transformers can be
 created by typing nest.Create('rate_transformer_sigmoid').
 
+See also [1]_, [2]_.
 
 Parameters
 ++++++++++

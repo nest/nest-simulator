@@ -71,6 +71,8 @@ type ``threshold_lin_rate_ipn`` for input noise or of type
 can be obtained by creating models of type
 ``rate_transformer_threshold_lin``.
 
+See also [1]_ [2]_.
+
 Parameters
 ++++++++++
 

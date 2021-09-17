@@ -67,12 +67,15 @@ nest.Create('lin_rate_ipn') or nest.Create('lin_rate_opn') for input
 noise or output noise, respectively. Linear rate transformers can be
 created by typing nest.Create('rate_transformer_lin').
 
+See also [1]_, [2]_.
+
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary. Note
 that some of the parameters only apply to rate neurons and not to rate
 transformers.
+
 ===============  ======= ==================================================
  rate            real    Rate (unitless)
  tau             ms      Time constant of rate dynamics

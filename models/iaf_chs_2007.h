@@ -70,6 +70,8 @@ unsuitable for simulation in NEST. The workaround was to prepare the
 noise signal externally prior to simulation. The noise signal,
 if present, has to be at least as long as the simulation.
 
+See also [2]_.
+
 Parameters
 ++++++++++
 

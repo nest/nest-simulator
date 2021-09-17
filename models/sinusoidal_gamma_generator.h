@@ -98,6 +98,8 @@ order
 individual_spike_trains
     See note above, default: true
 
+See also [1]_.
+
 Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

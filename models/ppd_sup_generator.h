@@ -71,6 +71,8 @@ frequency
 relative_amplitude
     Relative rate modulation amplitude, default: 0
 
+See also [1]_.
+
 Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

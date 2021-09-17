@@ -74,6 +74,8 @@ check out the `Siegert_neuron_integration
 <../model_details/siegert_neuron_integration.ipynb>`_
 notebook in the NEST source code.
 
+See also [1]_, [4]_.
+
 Parameters
 ++++++++++
 

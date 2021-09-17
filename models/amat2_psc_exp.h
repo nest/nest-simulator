@@ -89,6 +89,8 @@ Remarks:
   implementation to avoid a degenerate case of the ODE describing the
   model [1]_.  For very similar values, numerics will be unstable.
 
+See also [4]_.
+
 Parameters
 ++++++++++
 

@@ -90,6 +90,8 @@ and
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
+See also [1]_.
+
 Parameters
 ++++++++++
 

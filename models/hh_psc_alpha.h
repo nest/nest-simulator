@@ -81,6 +81,8 @@ Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
+See also [1]_, [2]_, [3]_.
+
 Parameters
 ++++++++++
 

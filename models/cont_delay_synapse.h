@@ -45,8 +45,8 @@ Description
 
 cont_delay_synapse relaxes the condition that NEST only implements delays
 which are an integer multiple of the time step h. A continuous delay is
-decomposed into an integer part (delay_) and a double (delay_offset_) so
-that the actual delay is given by  delay_*h - delay_offset_. This can be
+decomposed into an integer part (delay\_) and a double (delay_offset\_) so
+that the actual delay is given by  delay_*h - delay_offset\_. This can be
 combined with off-grid spike times.
 
 Remarks:
@@ -58,7 +58,8 @@ using cont_delay_synapse. To set non-grid delays, you must either
 2) set the delay for each synapse after the connections have been created,
 
 Alternative 1) is much more efficient, but all synapses then will have the
-               same delay.
+same delay.
+
 Alternative 2) is slower, but allows individual delay values.
 
 Continuous delays cannot be shorter than the simulation resolution.

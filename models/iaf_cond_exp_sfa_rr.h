@@ -80,6 +80,8 @@ Outgoing spike events induce a change of the adaptation and relative refractory
 conductances by q_sfa and q_rr, respectively. Otherwise these conductances
 decay exponentially with time constants tau_sfa and tau_rr, respectively.
 
+See also [1]_.
+
 Parameters
 ++++++++++
 

@@ -46,6 +46,8 @@ The value of the parameter delay is ignored for connections of
 this type. To create rate connections with delay please use
 the synapse type rate_connection_delayed.
 
+See also [1]_.
+
 Transmits
 +++++++++
 

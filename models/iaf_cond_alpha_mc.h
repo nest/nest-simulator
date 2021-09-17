@@ -110,6 +110,8 @@ the receptor types given in the receptor_types entry of the state dictionary.
 Note that in contrast to the single-compartment iaf_cond_alpha model, all
 synaptic weights must be positive numbers!
 
+See also [1]_, [2]_.
+
 Parameters
 ++++++++++
 

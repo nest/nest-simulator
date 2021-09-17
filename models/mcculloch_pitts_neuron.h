@@ -61,6 +61,7 @@ the gain function and to decide upon a transition.  In order to
 obtain delayed coupling with delay :math:`d`, the user has to specify the
 delay :math:`d+h` upon connection, where :math:`h` is the simulation time step.
 
+See also [2]_.
 
 Parameters
 ++++++++++

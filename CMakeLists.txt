@@ -58,6 +58,7 @@ set( with-ltdl ON CACHE STRING "Find a ltdl library. To set a specific ltdl, set
 set( with-python ON CACHE STRING "Build PyNEST. To set a specific Python, set install path. [default=ON]" )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx. [default=ON]" ON )
 set( with-boost ON CACHE STRING "Find a Boost library. To set a specific Boost installation, set install path. [default=ON]" )
+set( with-sonata ON CACHE STRING "Find a HDF5 library. To set a specific HDF5 installation, set install path. [default=ON]" )
 
 # Whether to build a 'mostly' static executable and static libraries.
 option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )
@@ -155,6 +156,7 @@ nest_process_with_music()
 nest_process_with_sionlib()
 nest_process_with_mpi4py()
 nest_process_with_boost()
+nest_process_with_sonata()
 nest_process_with_recordingbackend_arbor()
 nest_process_target_bits_split()
 nest_process_version_suffix()

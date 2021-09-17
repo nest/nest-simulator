@@ -343,6 +343,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } connect_g_g_D_afunction;
 
+  class ConnectSonata_D_Function : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } ConnectSonata_D_Function;
+
   class ResetKernelFunction : public SLIFunction
   {
   public:

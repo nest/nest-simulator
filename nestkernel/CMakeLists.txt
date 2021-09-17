@@ -142,7 +142,7 @@ endif ()
 add_library( nestkernel ${nestkernel_sources} )
 target_link_libraries( nestkernel
     nestutil sli_lib
-    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}
+    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}  ${HDF5_LIBRARIES}
     )
 
 target_include_directories( nestkernel PRIVATE

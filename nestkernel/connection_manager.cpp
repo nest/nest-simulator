@@ -60,6 +60,8 @@
 #include "token.h"
 #include "tokenutils.h"
 
+#include "H5Cpp.h"  // TODO: need an if/else
+
 nest::ConnectionManager::ConnectionManager()
   : connruledict_( new Dictionary() )
   , connbuilder_factories_()
@@ -716,6 +718,24 @@ nest::ConnectionManager::connect_arrays( long* sources,
   }
 
   sw_construction_connect.stop();
+}
+
+void
+nest::ConnectionManager::connect_sonata( const DictionaryDatum& sonata_config )
+{
+  std::cerr << "ConnectionManager::connect_sonata\n";
+  auto synmodel = sonata_config->lookup( Name( "edges" ) );
+
+
+
+  //const H5::H5std_string FILE_NAME( "/home/stine/Work/sonata/examples/300_pointneurons/./network/internal_internal_edges.h5" );
+
+  /*
+   * Open the specified file and the specified dataset in the file.
+   */
+  //H5::H5File fid = H5::H5File( "/home/stine/Work/sonata/examples/300_pointneurons/./network/internal_internal_edges.h5", H5F_ACC_RDONLY );
+  H5::H5File file( "/home/stine/Work/sonata/examples/300_pointneurons/./network/internal_internal_edges.h5", H5F_ACC_RDONLY );
+  //H5::DataSet dataset = file.openDataSet( DATASET_NAME );
 }
 
 void

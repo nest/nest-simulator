@@ -1038,6 +1038,14 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+/Connect_sonata [/dictionarytype]
+{
+  (sli connect sonata) ==
+  ConnectSonata_D
+} def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 /** @BeginDocumentation
    Name: GetConnections - Retrieve connections between nodes

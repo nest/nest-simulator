@@ -951,6 +951,25 @@ NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
   kernel().connection_manager.sw_construction_connect.stop();
 }
 
+void
+NestModule::ConnectSonata_D_Function::execute( SLIInterpreter* i ) const
+{
+  kernel().connection_manager.sw_construction_connect.start();
+
+  i->assert_stack_load( 1 );
+
+  DictionaryDatum config = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  std::cerr << "ConnectSonata_D_Function\n";
+
+  kernel().connection_manager.connect_sonata(config);
+
+  i->OStack.pop( 1 );
+  i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
+}
+
 /** @BeginDocumentation
    Name: MemoryInfo - Report current memory usage.
    Description:
@@ -2955,6 +2974,7 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
   i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
+  i->createcommand( "ConnectSonata_D", &ConnectSonata_D_Function );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 

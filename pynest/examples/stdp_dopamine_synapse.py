@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# one_neuron.py
+# stdp_dopamine_synapse.py
 #
 # This file is part of NEST.
 #

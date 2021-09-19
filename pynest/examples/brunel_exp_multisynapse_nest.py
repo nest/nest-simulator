@@ -139,8 +139,10 @@ p_rate = 1000.0 * nu_ex * CE
 # already processed simulation time as well as its percentage of the total
 # simulation time.
 
-nest.SetKernelStatus({"resolution": dt, "print_time": True,
-                      "overwrite_files": True, 'local_num_threads': 4})
+nest.resolution = dt
+nest.print_time = True
+nest.overwrite_files = True
+nest.local_num_threads = 4
 
 print("Building network")
 

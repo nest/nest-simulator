@@ -56,7 +56,7 @@ class BaseTestCases:
 
         def setUp(self):
             nest.ResetKernel()
-            nest.SetKernelStatus({'rng_type': self.rng_type})
+            nest.rng_type = self.rng_type
 
         def shortDescription(self):
             """
@@ -124,22 +124,22 @@ def not_supported_msg(what):
     return f'{what} is not supported on the current system'
 
 
-@unittest.skipIf('Philox_32' not in nest.GetKernelStatus('rng_types'), not_supported_msg('Random123'))
+@unittest.skipIf('Philox_32' not in nest.rng_types, not_supported_msg('Random123'))
 class Philox32TestCase(BaseTestCases.Random123TestCase):
     rng_type = 'Philox_32'
 
 
-@unittest.skipIf('Philox_64' not in nest.GetKernelStatus('rng_types'), not_supported_msg('Philox_64'))
+@unittest.skipIf('Philox_64' not in nest.rng_types, not_supported_msg('Philox_64'))
 class Philox64TestCase(BaseTestCases.Random123TestCase):
     rng_type = 'Philox_64'
 
 
-@unittest.skipIf('Threefry_32' not in nest.GetKernelStatus('rng_types'), not_supported_msg('Random123'))
+@unittest.skipIf('Threefry_32' not in nest.rng_types, not_supported_msg('Random123'))
 class Threefry32TestCase(BaseTestCases.Random123TestCase):
     rng_type = 'Threefry_32'
 
 
-@unittest.skipIf('Threefry_64' not in nest.GetKernelStatus('rng_types'), not_supported_msg('Threefry_64'))
+@unittest.skipIf('Threefry_64' not in nest.rng_types, not_supported_msg('Threefry_64'))
 class Threefry64TestCase(BaseTestCases.Random123TestCase):
     rng_type = 'Threefry_64'
 

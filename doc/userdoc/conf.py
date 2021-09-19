@@ -79,6 +79,13 @@ import pynestkernel_mock  # noqa
 sys.modules["nest.pynestkernel"] = pynestkernel_mock
 sys.modules["nest.kernel"] = pynestkernel_mock
 
+# For the doc build, explicitly import `nest` here so that it isn't
+# `MagicMock`ed later on and expose `nest.NestModule` as `sphinx` does not seem
+# to autodoc properties the way the `autoclass` directive would. We can then
+# autoclass `nest.NestModule` to generate the documentation of the properties
+import nest  # noqa
+nest.NestModule = type(nest)
+
 # -- General configuration ------------------------------------------------
 extensions = [
     'sphinx_gallery.gen_gallery',
@@ -148,6 +155,7 @@ numfig = True
 numfig_secnum_depth = (2)
 numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
                  'code-block': 'Code Block %s'}
+
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -293,7 +301,6 @@ def copy_acknowledgments_file(src):
 
 # -- Copy Acknowledgments file ----------------------------
 copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
-
 # -- Copy documentation for Microcircuit Model ----------------------------
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")

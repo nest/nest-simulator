@@ -37,16 +37,10 @@ def test_simulation_completes():
     """
 
     nest.ResetKernel()
-    nest.SetKernelStatus(
-        {
-            'resolution': 0.1,
-        }
-    )
-    # Update the SP interval
+    nest.resolution = 0.1
+
     nest.EnableStructuralPlasticity()
-    nest.SetKernelStatus({
-        'structural_plasticity_update_interval': 1000.,
-    })
+    nest.structural_plasticity_update_interval = 1000.0
 
     growth_curve = {
         'growth_curve': 'gaussian',
@@ -72,16 +66,10 @@ def test_simulation_completes():
     neuronsE = nest.Create('iaf_cond_exp', 1, {
         'synaptic_elements': structural_p_elements_E})
 
-    # synapses
     synDictE = {'synapse_model': 'static_synapse',
                 'weight': 3.,
                 'pre_synaptic_element': 'Axon_ex',
                 'post_synaptic_element': 'Den_ex'}
-
-    nest.SetKernelStatus({
-        'structural_plasticity_synapses': {
-            'synapseEE': synDictE,
-        }
-    })
+    nest.structural_plasticity_synapses = {'synapseEE': synDictE}
 
     nest.Simulate(200 * 1000)

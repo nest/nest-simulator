@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_stdp_synapse.py
+# test_stdp_dopamine_synapse.py
 #
 # This file is part of NEST.
 #
@@ -35,9 +35,9 @@ except Exception:
 @nest.ll_api.check_stack
 class STDPSynapseTest(unittest.TestCase):
     """
-    Compare the STDP synaptic plasticity model against a self-contained Python reference.
+    Compare the STDP dopamine synaptic plasticity model against a self-contained Python reference.
 
-    Random pre and post spike times are generated according to a Poisson distribution; some hard-coded spike times are
+    Random pre, post, dopa spike times are generated according to a Poisson distribution; some hard-coded spike times are
     added to make sure to test for edge cases such as simultaneous pre- and post spike.
     """
 
@@ -47,21 +47,29 @@ class STDPSynapseTest(unittest.TestCase):
         self.synapse_model = "stdp_dopamine_synapse"
         self.presynaptic_firing_rate = 20.    # [ms^-1]
         self.postsynaptic_firing_rate = 20.    # [ms^-1]
-        self.tau_pre = 16.8
+        self.dopa_rate = 20.
+        self.tau_pre = 20.
         self.tau_post = 33.7
-        self.init_weight = .5
+        self.init_weight = 35.
+        self.init_c = 0.
+        self.init_n = 0.
+        self.J = 9999.
+        self.dendritic_delay = 1.
         self.synapse_parameters = {
-            "synapse_model": self.synapse_model,
             "receptor_type": 0,
             "delay": self.dendritic_delay,
-            # STDP constants
-            "lambda": 0.01,
-            "alpha": 0.85,
-            "mu_plus": 0.0,
-            "mu_minus": 0.0,
+            # STDP dopamine parameters
+            "A_plus": 1.,
+            "A_minus": 1.5,
             "tau_plus": self.tau_pre,
-            "Wmax": 15.0,
-            "weight": self.init_weight
+            "tau_c": 1000.,
+            "tau_n": 200.,
+            "b": 0.,
+            "Wmin": 0.,
+            "Wmax": 200.,
+            "weight": self.init_weight,
+            "c": self.init_c,
+            "n": self.init_n
         }
         self.neuron_parameters = {
             "tau_minus": self.tau_post,
@@ -80,17 +88,16 @@ class STDPSynapseTest(unittest.TestCase):
         self.hardcoded_trains_length = 2. + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):
-        pre_spikes, post_spikes, t_weight_by_nest, weight_by_nest = self.do_the_nest_simulation()
+        pre_spikes, post_spikes, dopa_spikes, t_weight_by_nest, weight_by_nest = self.do_the_nest_simulation()
         if DEBUG_PLOTS:
-            self.plot_weight_evolution(pre_spikes, post_spikes,
+            self.plot_weight_evolution(pre_spikes, post_spikes, dopa_spikes,
                                        t_weight_by_nest,
                                        weight_by_nest,
                                        fname_snip=fname_snip,
-                                       title_snip=self.nest_neuron_model + " (NEST)")
+                                       title_snip="NEST")
 
         t_weight_reproduced_independently, weight_reproduced_independently = self.reproduce_weight_drift(
-            pre_spikes, post_spikes,
-            self.init_weight,
+            pre_spikes, post_spikes, dopa_spikes,
             fname_snip=fname_snip)
 
         # ``weight_by_nest`` containts only weight values at pre spike times, ``weight_reproduced_independently``
@@ -106,18 +113,20 @@ class STDPSynapseTest(unittest.TestCase):
 
     def do_the_nest_simulation(self):
         """
-        This function is where calls to NEST reside. Returns the generated pre- and post spike sequences and the
-        resulting weight established by STDP.
+        This function is where calls to NEST reside. Returns the generated pre-, post spike, dopa spikes 
+        sequences, and the resulting weight established by STDP dopamine.
         """
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
         nest.SetKernelStatus({'resolution': self.resolution})
 
+        # create pre and postsynaptic neurons
         presynaptic_neuron, postsynaptic_neuron = nest.Create(
             self.nest_neuron_model,
             2,
             params=self.neuron_parameters)
 
+        # create poisson generators for the pre and postsynaptic neurons
         generators = nest.Create(
             "poisson_generator",
             2,
@@ -128,8 +137,9 @@ class STDPSynapseTest(unittest.TestCase):
         presynaptic_generator = generators[0]
         postsynaptic_generator = generators[1]
 
-        wr = nest.Create('weight_recorder')
-        nest.CopyModel(self.synapse_model, self.synapse_model + "_rec", {"weight_recorder": wr})
+        # create poisson generator for the dopamine release
+        pg_dopa = nest.Create("poisson_generator", params={"rate": self.dopa_rate})
+        parrot_neuron = nest.Create("parrot_neuron")
 
         spike_senders = nest.Create(
             "spike_generator",
@@ -142,57 +152,61 @@ class STDPSynapseTest(unittest.TestCase):
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]
 
+        # create volume transmitter and weight recorder
+        vt = nest.Create("volume_transmitter")
+        wr = nest.Create("weight_recorder")
+
         # The recorder is to save the randomly generated spike trains.
         spike_recorder = nest.Create("spike_recorder")
+        spike_recorder_dopa = nest.Create("spike_recorder")
 
         nest.Connect(presynaptic_generator + pre_spike_generator, presynaptic_neuron,
-                     syn_spec={"synapse_model": "static_synapse", "weight": 9999.})
+                     syn_spec={"synapse_model": "static_synapse", "weight": self.J})
         nest.Connect(postsynaptic_generator + post_spike_generator, postsynaptic_neuron,
-                     syn_spec={"synapse_model": "static_synapse", "weight": 9999.})
+                     syn_spec={"synapse_model": "static_synapse", "weight": self.J})
         nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_recorder,
                      syn_spec={"synapse_model": "static_synapse"})
-        
-        # The synapse of interest itself
-        self.synapse_parameters["synapse_model"] += "_rec"
 
+        nest.Connect(pg_dopa, parrot_neuron)
+        nest.Connect(parrot_neuron, vt, syn_spec={"synapse_model": "static_synapse", 
+                                                                   "weight": self.J, 
+                                                                   "delay": self.dendritic_delay})
+        nest.Connect(parrot_neuron, spike_recorder_dopa)
+        
         # creating a link from the synapse to volume transmitter 
-        vt = nest.Create("volume_transmitter")
-        nest.CopyModel(self.synapse_parameters["synapse_model"], "dopa", {"vt":vt.tolist()[0], "weight": 35., "delay": 1.})
-        
-        #nest.Connect(presynaptic_neuron, postsynaptic_neuron, syn_spec=self.synapse_parameters)
-        nest.Connect(presynaptic_neuron, postsynaptic_neuron, syn_spec={"synapse_model":"dopa"})
-        self.synapse_parameters["synapse_model"] = self.synapse_model
+        self.synapse_parameters["weight_recorder"] = wr
+        self.synapse_parameters["vt"] = vt.get('global_id')
+        nest.CopyModel(self.synapse_model, self.synapse_model + "_rec", self.synapse_parameters)
 
+        nest.Connect(presynaptic_neuron, postsynaptic_neuron, syn_spec={"synapse_model": self.synapse_model + "_rec"})
+
+
+        # simulate network
         nest.Simulate(self.simulation_duration)
 
         all_spikes = nest.GetStatus(spike_recorder, keys='events')[0]
         pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[0]]
         post_spikes = all_spikes['times'][all_spikes['senders'] == postsynaptic_neuron.tolist()[0]]
+        dopa_spikes = nest.GetStatus(spike_recorder_dopa, keys='events')[0]['times']
 
         t_hist = nest.GetStatus(wr, "events")[0]["times"]
         weight = nest.GetStatus(wr, "events")[0]["weights"]
 
-        return pre_spikes, post_spikes, t_hist, weight
+        return pre_spikes, post_spikes, dopa_spikes, t_hist, weight
 
-    def reproduce_weight_drift(self, pre_spikes, post_spikes, initial_weight, fname_snip=""):
-        """Independent, self-contained model of STDP"""
+    def reproduce_weight_drift(self, pre_spikes, post_spikes, dopa_spikes, fname_snip=""):
+        """Independent, self-contained model of STDP dopamine
+        """
+       
+        #TODO: this function is still under construction
+
         def facilitate(w, Kpre, Wmax_=1.):
-            norm_w = (w / self.synapse_parameters["Wmax"]) + (
-                self.synapse_parameters["lambda"] * pow(
-                    1 - (w / self.synapse_parameters["Wmax"]), self.synapse_parameters["mu_plus"]) * Kpre)
-            if norm_w < 1.0:
-                return norm_w * self.synapse_parameters["Wmax"]
-            else:
-                return self.synapse_parameters["Wmax"]
+            c = self.synapse_parameters["A_plus"] * Kpre
+            return c
 
         def depress(w, Kpost):
-            norm_w = (w / self.synapse_parameters["Wmax"]) - (
-                self.synapse_parameters["alpha"] * self.synapse_parameters["lambda"] * pow(
-                    w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"]) * Kpost)
-            if norm_w > 0.0:
-                return norm_w * self.synapse_parameters["Wmax"]
-            else:
-                return 0.
+            c = self.synapse_parameters["A_minus"] * Kpost
+            return c
 
         def Kpost_at_time(t, spikes, init=1., inclusive=True):
             t_curr = 0.
@@ -218,7 +232,9 @@ class STDPSynapseTest(unittest.TestCase):
 
         t = 0.
         Kpre = 0.
-        weight = initial_weight
+        weight = self.init_weight
+        c = self.init_c
+        n = self.init_n
 
         t_log = []
         w_log = []
@@ -274,14 +290,21 @@ class STDPSynapseTest(unittest.TestCase):
             Kpre *= exp(-h / self.tau_pre)
             t = t_next
 
+            #TODO compute c
             if handle_post_spike:
                 # Kpost += 1.    <-- not necessary, will call Kpost_at_time(t) later to compute Kpost for any value t
-                weight = facilitate(weight, Kpre)
+                c = facilitate(c, Kpre)
 
             if handle_pre_spike:
                 Kpre += 1.
                 _Kpost = Kpost_at_time(t - self.dendritic_delay, post_spikes, init=self.init_weight, inclusive=False)
-                weight = depress(weight, _Kpost)
+                c = depress(c, _Kpost)
+            
+            #TODO compute n
+            n = 0
+
+            #TODO compute w
+            weight = c*(n-self.synapse_parameters['b'])
 
             # logging
             t_log.append(t)
@@ -290,44 +313,48 @@ class STDPSynapseTest(unittest.TestCase):
 
         Kpost_log = [Kpost_at_time(t - self.dendritic_delay, post_spikes, init=self.init_weight) for t in t_log]
         if DEBUG_PLOTS:
-            self.plot_weight_evolution(pre_spikes, post_spikes, t_log, w_log, Kpre_log, Kpost_log,
-                                       fname_snip=fname_snip + "_ref", title_snip="Reference")
+            self.plot_weight_evolution(pre_spikes, post_spikes, dopa_spikes, t_log, w_log, Kpre_log, Kpost_log,
+                                       fname_snip=fname_snip, title_snip="reference")
 
         return t_log, w_log
 
-    def plot_weight_evolution(self, pre_spikes, post_spikes, t_log, w_log, Kpre_log=None, Kpost_log=None,
+    def plot_weight_evolution(self, pre_spikes, post_spikes, dopa_spikes, t_log, w_log, Kpre_log=None, Kpost_log=None,
                               fname_snip="", title_snip=""):
-        fig, ax = plt.subplots(nrows=3)
+        """ Plot weight evolution
+        """
 
-        n_spikes = len(pre_spikes)
-        for i in range(n_spikes):
-            ax[0].plot(2 * [pre_spikes[i]], [0, 1], linewidth=2, color="blue", alpha=.4)
+        # plot data
+        fig, ax = plt.subplots(nrows=4)
+        mew = 1
+        ms = 10
+        ms_w = 2
+        alpha_spikes = 0.4
+        alpha_grid = 0.4
+
+        ax[0].plot(pre_spikes, np.ones(len(pre_spikes)), '|', ms=ms, mew=mew, color="blue", alpha=alpha_spikes)
         ax[0].set_ylabel("Pre spikes")
-        ax0_ = ax[0].twinx()
-        if Kpre_log:
-            ax0_.plot(t_log, Kpre_log)
 
-        n_spikes = len(post_spikes)
-        for i in range(n_spikes):
-            ax[1].plot(2 * [post_spikes[i]], [0, 1], linewidth=2, color="red", alpha=.4)
-        ax1_ = ax[1].twinx()
+        ax[1].plot(post_spikes, np.ones(len(post_spikes)), '|', ms=ms, mew=mew, color="blue", alpha=alpha_spikes)
         ax[1].set_ylabel("Post spikes")
-        if Kpost_log:
-            ax1_.plot(t_log, Kpost_log)
 
-        ax[2].plot(t_log, w_log, marker="o", label="nestml")
-        ax[2].set_ylabel("w")
+        ax[2].plot(dopa_spikes, np.ones(len(dopa_spikes)), '|', ms=ms, mew=mew, color='red')
+        ax[2].set_ylabel("Dopa spikes")
 
-        ax[2].set_xlabel("Time [ms]")
-        for _ax in ax:
+        ax[3].plot(t_log, w_log, marker="o", ms=ms_w)
+        ax[3].set_ylabel("Weight (pA)")
+        ax[3].set_xlabel("Time [ms]")
+
+        for i, _ax in enumerate(ax):
             _ax.grid(which="major", axis="both")
-            _ax.grid(which="minor", axis="x", linestyle=":", alpha=.4)
+            _ax.grid(which="minor", axis="x", linestyle=":", alpha=alpha_grid)
             _ax.minorticks_on()
             _ax.set_xlim(0., self.simulation_duration)
-
-        fig.suptitle(title_snip)
-        fig.savefig("/tmp/nest_stdp_synapse_test" + fname_snip + ".png", dpi=300)
-        plt.close(fig)
+            if i != len(ax) - 1:
+                _ax.set_xticklabels([])
+ 
+        # save plot
+        print("save /tmp/%s_%s.pdf ..." % (fname_snip, title_snip))
+        plt.savefig("/tmp/%s_%s.pdf" % (fname_snip, title_snip))
 
     def test_stdp_synapse(self):
         self.dendritic_delay = float('nan')
@@ -335,19 +362,5 @@ class STDPSynapseTest(unittest.TestCase):
         for self.dendritic_delay in [1., self.resolution]:
             self.init_params()
             for self.nest_neuron_model in ["iaf_psc_exp", "iaf_cond_exp"]:
-                fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
+                fname_snip = "nest_neuron_mdl_" + self.nest_neuron_model
                 self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
-
-
-def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(STDPSynapseTest)
-    return unittest.TestSuite([suite])
-
-
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
-
-
-if __name__ == "__main__":
-    run()

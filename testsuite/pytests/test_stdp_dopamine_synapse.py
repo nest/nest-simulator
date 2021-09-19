@@ -54,7 +54,6 @@ class STDPSynapseTest(unittest.TestCase):
         self.init_c = 0.
         self.init_n = 0.
         self.J = 9999.
-        self.dendritic_delay = 1.
         self.synapse_parameters = {
             "receptor_type": 0,
             "delay": self.dendritic_delay,

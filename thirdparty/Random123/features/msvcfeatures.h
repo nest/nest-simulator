@@ -93,7 +93,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifndef R123_USE_SSE4_2
-#if defined(_M_X64)
+#if defined(_M_X64) || _MSC_VER > 1899
 #define R123_USE_SSE4_2 1
 #else
 #define R123_USE_SSE4_2 0
@@ -101,7 +101,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifndef R123_USE_SSE4_1
-#if defined(_M_X64)
+#if defined(_M_X64) || _MSC_VER > 1899
 #define R123_USE_SSE4_1 1
 #else
 #define R123_USE_SSE4_1 0

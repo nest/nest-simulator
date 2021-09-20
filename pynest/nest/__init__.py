@@ -120,11 +120,6 @@ class NestModule(types.ModuleType):
     from . import math                               # noqa
     from . import spatial_distributions              # noqa
     from . import logic                              # noqa
-    from .ll_api import set_communicator             # noqa
-    try:
-        from . import server                         # noqa
-    except ImportError:
-        pass
 
     __version__ = ll_api.sli_func("statusdict /version get")
 

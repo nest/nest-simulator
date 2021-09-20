@@ -317,6 +317,10 @@ struct r123array##_N##x##W{                         \
 CXXOVERLOADS(_N, W, T)
 
 
+#if defined(__CUDACC__)
+/* Disable complaints from CUDA8 and C++ */
+#pragma diag_suppress = code_is_unreachable
+#endif
 _r123array_tpl(1, 32, uint32_t)  /* r123array1x32 */
 _r123array_tpl(2, 32, uint32_t)  /* r123array2x32 */
 _r123array_tpl(4, 32, uint32_t)  /* r123array4x32 */
@@ -326,6 +330,9 @@ _r123array_tpl(8, 32, uint32_t)  /* r123array8x32 */
 _r123array_tpl(1, 64, uint64_t)  /* r123array1x64 */
 _r123array_tpl(2, 64, uint64_t)  /* r123array2x64 */
 _r123array_tpl(4, 64, uint64_t)  /* r123array4x64 */
+#endif
+#if defined(__CUDACC__)
+#pragma diag_default = code_is_unreachable
 #endif
 
 _r123array_tpl(16, 8, uint8_t)  /* r123array16x8 for ARSsw, AESsw */

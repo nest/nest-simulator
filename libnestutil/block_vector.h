@@ -328,6 +328,7 @@ inline BlockVector< value_type_ >::BlockVector( size_t n )
   {
     blockmap_.emplace_back( max_block_size );
   }
+  finish_ = begin(); // Because the blockmap has changed we need to recreate the iterator
   finish_ += n;
 }
 

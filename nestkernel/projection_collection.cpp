@@ -86,7 +86,6 @@ ProjectionCollection::connect()
       // Apply projection connections
       for ( auto& projection : projections_ )
       {
-#pragma omp barrier
         projection.connect();
       }
     }

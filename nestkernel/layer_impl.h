@@ -134,22 +134,18 @@ template < int D >
 std::shared_ptr< Ntree< D, index > >
 Layer< D >::get_global_positions_ntree( NodeCollectionPTR node_collection )
 {
-  if ( cached_ntree_md_ == node_collection_->get_metadata() )
+  if ( cached_ntree_md_ == node_collection->get_metadata() )
   {
     assert( cached_ntree_.get() );
     return cached_ntree_;
   }
-
-  assert( not omp_in_parallel() );
 
   clear_ntree_cache_();
 
   cached_ntree_ =
     std::shared_ptr< Ntree< D, index > >( new Ntree< D, index >( this->lower_left_, this->extent_, this->periodic_ ) );
 
-  do_get_global_positions_ntree_( node_collection );
-
-  return cached_ntree_;
+  return do_get_global_positions_ntree_( node_collection );
 }
 
 template < int D >
@@ -186,7 +182,7 @@ template < int D >
 std::shared_ptr< Ntree< D, index > >
 Layer< D >::do_get_global_positions_ntree_( NodeCollectionPTR node_collection )
 {
-  if ( cached_vector_md_ == node_collection_->get_metadata() )
+  if ( cached_vector_md_ == node_collection->get_metadata() )
   {
     // Convert from vector to Ntree
 
@@ -202,12 +198,12 @@ Layer< D >::do_get_global_positions_ntree_( NodeCollectionPTR node_collection )
   else
   {
 
-    insert_global_positions_ntree_( *cached_ntree_, node_collection_ );
+    insert_global_positions_ntree_( *cached_ntree_, node_collection );
   }
 
   clear_vector_cache_();
 
-  cached_ntree_md_ = node_collection_->get_metadata();
+  cached_ntree_md_ = node_collection->get_metadata();
 
   return cached_ntree_;
 }

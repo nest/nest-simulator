@@ -31,7 +31,7 @@ class cmake_extension(Extension):
 
 wheel_kwargs = {} if not wheel_build else dict(
     cmdclass={
-        'build_ext': build_ext
+        'build_ext': cmake_build
     },
     ext_modules=[cmake_extension('nest')],
 )

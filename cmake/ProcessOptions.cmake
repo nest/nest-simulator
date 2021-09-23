@@ -440,7 +440,7 @@ endfunction()
 
 function( NEST_POST_PROCESS_WITH_PYTHON )
   if ( Python_FOUND )
-    set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" PARENT_SCOPE )
+    set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" CACHE PATH "Python module destination" FORCE)
   endif()
 endfunction()
 

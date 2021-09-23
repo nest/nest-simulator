@@ -38,7 +38,7 @@ if( NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
     endif()
 
     # convert relative path to absolute path
-    printWarning("CMAKE_INSTALL_PREFIX isn't an aboslute path")
+    printWarning("CMAKE_INSTALL_PREFIX isn't an absolute path")
     get_filename_component(absPath ${CMAKE_INSTALL_PREFIX} ABSOLUTE)
     set(CMAKE_INSTALL_PREFIX ${absPath})
     printInfo("CMAKE_INSTALL_PREFIX is now set to ${CMAKE_INSTALL_PREFIX}")  

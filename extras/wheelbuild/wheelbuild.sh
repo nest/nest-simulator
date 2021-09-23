@@ -7,3 +7,4 @@ cd ..
 python extras/wheelbuild/prep_wheel_env.py $BUILDWHEELPATH
 export NEST_CMAKE_WHEELBUILD=wheelbuild
 cd $BUILDWHEELPATH
+python setup.py bdist_wheel

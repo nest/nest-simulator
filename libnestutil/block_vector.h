@@ -598,8 +598,15 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
   if ( block_it_ == current_block_end_ )
   {
     ++block_vector_it_;
-    block_it_ = block_vector_it_->begin();
-    current_block_end_ = block_vector_it_->end();
+    // If we are at end() now, we are outside of the blockmap, which is
+    // undefined. The outer iterator can be in an undefined position that
+    // will compare as safely larger or equal to end(), but we don't set
+    // the inner iterators.
+    if ( block_vector_it_ != block_vector_->blockmap_.end() )
+    {
+      block_it_ = block_vector_it_->begin();
+      current_block_end_ = block_vector_it_->end();
+    }
   }
   return *this;
 }
@@ -613,11 +620,19 @@ inline bv_iterator< value_type_, ref_, ptr_ >& bv_iterator< value_type_, ref_, p
   {
     --block_it_;
   }
-  else
+  else if ( block_vector_it_ != block_vector_->blockmap_.begin() )
   {
     --block_vector_it_;
     current_block_end_ = block_vector_it_->end();
     block_it_ = current_block_end_ - 1;
+  }
+  else
+  {
+    // We are before begin(), which is undefined. We mark this by moving the
+    // outer iterator to an undefined position that will compare as safely smaller
+    // than begin(). According to C++17 Standard, §27.2.6, decrementing an
+    // iterator that is equal to begin() yields undefined behavior.
+    --block_vector_it_;
   }
   return *this;
 }

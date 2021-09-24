@@ -1038,10 +1038,10 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/Connect_sonata [/dictionarytype]
+/Connect_sonata [/dictionarytype /dictionarytype]
 {
   (sli connect sonata) ==
-  ConnectSonata_D
+  ConnectSonata_D_D
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

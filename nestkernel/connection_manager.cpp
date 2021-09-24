@@ -32,6 +32,7 @@
 #include <iomanip>
 #include <limits>
 #include <set>
+#include <string>
 #include <vector>
 
 // Includes from libnestutil:
@@ -61,6 +62,8 @@
 #include "tokenutils.h"
 
 #include "H5Cpp.h"  // TODO: need an if/else
+
+extern "C" herr_t get_group_names( hid_t loc_id, const char* name, const H5L_info_t* linfo, void* opdata );
 
 nest::ConnectionManager::ConnectionManager()
   : connruledict_( new Dictionary() )
@@ -721,21 +724,203 @@ nest::ConnectionManager::connect_arrays( long* sources,
 }
 
 void
-nest::ConnectionManager::connect_sonata( const DictionaryDatum& sonata_config )
+nest::ConnectionManager::connect_sonata( const DictionaryDatum& sonata_config, const DictionaryDatum& sonata_dynamics )
 {
   std::cerr << "ConnectionManager::connect_sonata\n";
   auto synmodel = sonata_config->lookup( Name( "edges" ) );
 
 
-
-  //const H5::H5std_string FILE_NAME( "/home/stine/Work/sonata/examples/300_pointneurons/./network/internal_internal_edges.h5" );
-
   /*
    * Open the specified file and the specified dataset in the file.
    */
-  //H5::H5File fid = H5::H5File( "/home/stine/Work/sonata/examples/300_pointneurons/./network/internal_internal_edges.h5", H5F_ACC_RDONLY );
   H5::H5File file( "/home/stine/Work/sonata/examples/300_pointneurons/./network/internal_internal_edges.h5", H5F_ACC_RDONLY );
-  //H5::DataSet dataset = file.openDataSet( DATASET_NAME );
+
+
+  H5::Group edges_group( file.openGroup( "edges" ) );
+  std::cerr << edges_group.getNumAttrs() << "\n";
+
+  // Get name of groups
+  std::vector< std::string > edge_group_names;
+  // https://support.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Iterate
+  H5Literate( edges_group.getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_group_names, &edge_group_names );
+
+  std::cerr << "Iterating groups:\n";
+  for ( auto&& group_name : edge_group_names )
+  {
+    std::cerr << group_name << "\n";
+
+    H5::Group edges_subgroup( edges_group.openGroup( group_name ) );
+
+    std::cerr << "opening edge_group_id\n";
+    auto edge_group_id = edges_subgroup.openDataSet( "edge_group_id" );
+
+    std::cerr << "opening edge_group_index\n";
+    auto edge_group_index = edges_subgroup.openDataSet( "edge_group_index" );  //only needed if group_id > 0
+
+    auto num_edge_group_id = get_num_elements_( edge_group_id );
+    auto num_edge_group_index = get_num_elements_( edge_group_index );
+
+    std::cerr << "num edge_group_id: " << num_edge_group_id << "\n";
+    std::cerr << "num edge_group_index: " << num_edge_group_index << "\n";
+
+    auto edge_group_id_data = read_data_( edge_group_id, num_edge_group_id );
+    const auto [min, max] = std::minmax_element(edge_group_id_data, edge_group_id_data + num_edge_group_id);
+
+    std::cout << "min = " << *min << ", max = " << *max << '\n';
+
+    if ( *min == *max ) // only one group_id
+    {
+      std::cerr << "only one group_id\n";
+
+      auto edge_parameters = edges_subgroup.openGroup( "0" ); // need to change
+
+
+      std::cerr << "opening weights \n";
+      auto syn_weight = edge_parameters.openDataSet( "syn_weight" );  // need to iterate edge_paramters
+      auto num_syn_weight = get_num_elements_( syn_weight );
+      auto syn_weight_data = read_data_( syn_weight, num_syn_weight );
+      std::cerr << "num num_syn_weight: " << num_syn_weight << "\n";
+
+
+      auto source_node_id = edges_subgroup.openDataSet( "source_node_id" );
+      auto num_source_node_id = get_num_elements_( source_node_id );
+      auto source_node_id_data = read_data_( source_node_id, num_source_node_id );
+
+      auto target_node_id = edges_subgroup.openDataSet( "target_node_id" );
+      auto num_target_node_id = get_num_elements_( target_node_id );
+      auto target_node_id_data = read_data_( target_node_id, num_target_node_id );
+
+      auto edge_type_id = edges_subgroup.openDataSet( "edge_type_id" );  //synapses
+      auto num_edge_type_id = get_num_elements_( edge_type_id );
+      auto edge_type_id_data = read_data_( edge_type_id, num_edge_type_id );
+
+
+      // Create map of edge type ids to NEST synapse_model ids
+      std::cerr << "create edge map\n";
+      std::map< int, DictionaryDatum > type_id_2_syn_spec;
+      sonata_dynamics->lookup( "edges" )->info( std::cerr );
+      auto all_edge_params = getValue< DictionaryDatum >( sonata_dynamics->lookup( "edges" ) );
+
+      std::cerr << "Iterate edge_types dictionary \n";
+      std::string attribute_value;
+      H5::Attribute attr = source_node_id.openAttribute( "node_population" );
+      H5::DataType type = attr.getDataType();
+      attr.read(type, attribute_value);
+
+      std::cerr << "attribute_value " << attribute_value << "\n";
+
+      auto current_edge_params = getValue< DictionaryDatum >( all_edge_params->lookup( attribute_value ) );
+
+      for ( auto it = current_edge_params->begin(); it != current_edge_params->end(); ++it )
+      {
+        std::cerr << it->first.toString() << "\n";
+        const auto type_id = std::stoi( it->first.toString() );
+        std::cerr << type_id << "\n";
+        auto d = getValue< DictionaryDatum >( it->second );
+        d->info( std::cerr );
+        const auto model_name = getValue< std::string >( ( *d )[ "synapse_model" ] );
+
+        if ( not kernel().model_manager.get_synapsedict()->known( model_name ) )
+        {
+          throw UnknownSynapseType( model_name );
+        }
+        //index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( model_name );
+        type_id_2_syn_spec[ type_id ] = d;
+      }
+      assert( num_source_node_id == num_target_node_id );
+      assert( num_source_node_id == num_syn_weight );
+      assert( num_source_node_id == num_edge_type_id );
+
+      std::cerr << "getting parameters\n";
+
+      auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics->lookup( "nodes" ) );
+      auto current_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( attribute_value ) );
+
+      std::cerr << "connecting \n";
+      auto snode_it = current_nc->begin();
+      for ( hsize_t i = 0; i < num_source_node_id; ++i )
+      {
+        const auto sonata_source_id = source_node_id_data[ i ];
+        const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id; //current_nc[ sonata_source_id ];  //This might be wrong..
+        //std::cerr << " " << snode_id << " ";
+
+        const auto sonata_target_id = target_node_id_data[ i ];
+        const index target_id = ( *( snode_it + sonata_target_id ) ).node_id;
+        Node* target = kernel().node_manager.get_node_or_proxy( target_id );
+        thread target_thread = target->get_thread();
+        const double weight = syn_weight_data[ i ];
+
+        const auto syn_spec = type_id_2_syn_spec[ edge_type_id_data[ i ] ];
+        const auto model_name = getValue< std::string >( ( *syn_spec )[ "synapse_model" ] );
+        index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( model_name );
+        const double delay = std::stod( ( *syn_spec )[ names::delay ] );//getValue< double >( ( *syn_spec )[ "delay" ] );  // Need to check that it is actually there
+        const auto param_dict = new Dictionary();  //This needs to be changed
+
+        //const auto node_model_id = type_id_2_model_id[ node_type_id_data[ i ] ];
+        //std::cerr << " " << node_id << " ";
+        // std::cerr << "\n";
+        connect( snode_id,
+                 target,
+                 target_thread,
+                 synapse_model_id,
+                 param_dict,
+                 delay,
+                 weight );
+      }
+
+
+      //map to nest type
+      //hente ut map til nc for id, map til attribute på source og target
+
+     //std::vector< std::string > edge_subgroup_names;
+     // https://support.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Iterate
+     //H5Literate( edges_subgroup.getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_group_names, &edge_subgroup_names );
+
+     //std::cerr << "Iterating groups:\n";
+     //for ( auto&& subgroup_name : edge_subgroup_names )
+     //{
+      //std::cerr << subgroup_name << "\n";
+     //}
+    }
+  }
+}
+
+hsize_t
+nest::ConnectionManager::get_num_elements_( H5::DataSet& dataset )
+{
+  auto dataspace = dataset.getSpace();
+  hsize_t dims_out[ 1 ];
+  dataspace.getSimpleExtentDims( dims_out, NULL );
+  return *dims_out;
+}
+
+int*
+nest::ConnectionManager::read_data_( H5::DataSet dataset, int num_elements )
+{
+  int* data = ( int* ) malloc( num_elements * sizeof( int ) );
+  dataset.read( data, H5::PredType::NATIVE_INT );
+  return data;
+}
+
+herr_t
+get_group_names( hid_t loc_id, const char* name, const H5L_info_t*, void* opdata )
+{
+  // Check that the group exists
+  herr_t status = H5Gget_objinfo( loc_id, name, 0, NULL );
+  if ( status != 0 )
+  {
+    // Group doesn't exist, or some error occurred.
+    return 0; // TODO: is this a dataset?
+  }
+
+  auto group_names = reinterpret_cast< std::vector< std::string >* >( opdata );
+  // Open the group using its name.
+  // group = H5Gopen2(loc_id, name, H5P_DEFAULT);
+  // Display group name.
+  group_names->push_back( name );
+  // std::cout << "Name : " << name << std::endl;
+  // H5Gclose(group);
+  return 0;
 }
 
 void

@@ -952,19 +952,20 @@ NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
 }
 
 void
-NestModule::ConnectSonata_D_Function::execute( SLIInterpreter* i ) const
+NestModule::ConnectSonata_D_D_Function::execute( SLIInterpreter* i ) const
 {
   kernel().connection_manager.sw_construction_connect.start();
 
-  i->assert_stack_load( 1 );
+  i->assert_stack_load( 2 );
 
-  DictionaryDatum config = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  DictionaryDatum config = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum dynamics = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  std::cerr << "ConnectSonata_D_Function\n";
+  std::cerr << "ConnectSonata_D_D_Function\n";
 
-  kernel().connection_manager.connect_sonata(config);
+  kernel().connection_manager.connect_sonata( config, dynamics );
 
-  i->OStack.pop( 1 );
+  i->OStack.pop( 2 );
   i->EStack.pop();
 
   kernel().connection_manager.sw_construction_connect.stop();
@@ -2974,7 +2975,7 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
   i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
-  i->createcommand( "ConnectSonata_D", &ConnectSonata_D_Function );
+  i->createcommand( "ConnectSonata_D_D", &ConnectSonata_D_D_Function );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 

@@ -49,6 +49,8 @@
 #include "dict.h"
 #include "dictdatum.h"
 
+#include "H5Cpp.h"
+
 namespace nest
 {
 class GenericConnBuilderFactory;
@@ -158,7 +160,7 @@ public:
     size_t n,
     std::string syn_model );
 
-  void connect_sonata( const DictionaryDatum& sonata_config );
+  void connect_sonata( const DictionaryDatum& sonata_config, const DictionaryDatum& sonata_dynamics );
 
   index find_connection( const thread tid, const synindex syn_id, const index snode_id, const index tnode_id );
 
@@ -538,6 +540,9 @@ private:
    * Increases the connection count.
    */
   void increase_connection_count( const thread tid, const synindex syn_id );
+
+  hsize_t get_num_elements_( H5::DataSet& dataset );
+  int* read_data_( H5::DataSet dataset, int num_elements );
 
   /**
    * A structure to hold the Connector objects which in turn hold the

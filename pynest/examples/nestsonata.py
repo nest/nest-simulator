@@ -77,20 +77,24 @@ for nodes in config['networks']['nodes']:
         n = len(ntw) - 1
         if sum(np.diff(ntw) == 1) == n:  # We check if node_types are continous
             node_type_df = node_types[node_types.node_type_id == node_type]
-            if node_type_df['model_type'].iloc[0] == 'point_process':  #can there be other names?
-                model = node_type_df.model_template.iloc[0].replace('nest:','')
-                model_name = node_type_df.model_name.iloc[0]
-                model_dynamics = node_type_df.dynamics_params.iloc[0]
-
-                with open(config['components']['point_neuron_models_dir'] + '/' + model_dynamics) as dymanics_file:
-                    dynamics = json.load(dymanics_file)
-                nodes += nest.Create(model, n+1, params=dynamics)
-            else:
+            if node_type_df['model_type'].iloc[0] not in ['point_neuron', 'point_process', 'virtual']:
                 model_type = node_type_df["model_type"].iloc[0]
                 warnings.warn(f'model of type {model_type} is not a NEST model, it will not be used.')
-    node_collections[population_name] = nodes
 
-print(node_collections)
+            if node_type_df['model_type'].iloc[0] == 'virtual':
+                model = 'spike_generator'  # TODO: Need to add spike-data
+            else:
+                model = node_type_df.model_template.iloc[0].replace('nest:','')
+            
+            dynamics = {}
+            if 'dynamics' in node_type_df.keys():
+                model_dynamics = node_type_df.dynamics_params.iloc[0]
+
+                with open(config['components']['point_neuron_models_dir'] + '/' + model_dynamics) as dynamics_file:
+                    dynamics = json.load(dynamics_file)
+            nodes += nest.Create(model, n+1, params=dynamics)
+
+    node_collections[population_name] = nodes
 
 edge_types = {}
 for edges in config['networks']['edges']:
@@ -98,28 +102,23 @@ for edges in config['networks']['edges']:
     
     edge_file = h5py.File(edges["edges_file"], 'r')
     file_name = list(edge_file['edges'].keys())[0]  # What if we have more than one?? can iterate over .items()
-    print(file_name)
     source = edge_file['edges'][file_name]['source_node_id'].attrs['node_population'].decode('UTF-8')
-    print(source)
-    
+
     with open(edge_types_file, 'r') as csv_file:
         reader = csv.DictReader(csv_file, delimiter=' ', quotechar='"')
         rows = list(reader)
-        edge_params = {d['edge_type_id']: {key: d[key] for key in d if key not in ['edge_type_id', 'target_query', 'source_query', ]} for d in rows}
+        edge_params = {d['edge_type_id']: {key: d[key] for key in d if key not in ['edge_type_id', 'target_query', 'source_query']} for d in rows}
         for type_id, type_d in edge_params.items():
             edge_params[type_id]['synapse_model'] = edge_params[type_id]['model_template']
 
-            with open(config['components']['synaptic_models_dir'] + '/' + edge_params[type_id]['dynamics_params']) as dymanics_file:
-                dynamics = json.load(dymanics_file) #fix
+            with open(config['components']['synaptic_models_dir'] + '/' + edge_params[type_id]['dynamics_params']) as dynamics_file:
+                dynamics = json.load(dynamics_file) #fix
             edge_params.update(dynamics)
             edge_params[type_id].pop('model_template', None)
             edge_params[type_id].pop('dynamics_params', None)
     edge_types[source] = edge_params
-    
-    print(edge_types)
 
-#push {'internal': nc, 'external': nc}
-#push csv og dynamics
+
 sonata_dynamics = {'nodes': node_collections, 'edges': edge_types}
 
 print()

@@ -134,147 +134,6 @@ def UserDocExtractor(
                 log.warning("Failed to rebuild 'See also' section: %s", e)
             write_rst_files(doc, tags, outdir, outname)
 
-    log.info("%4d tags found:\n%s", len(tagdict), pformat(list(tagdict.keys())))
-    nfiles = len(set.union(*[set(x) for x in tagdict.values()]))
-    log.info("%4d files in input", nfiles_total)
-    log.info("%4d files with documentation", nfiles)
-    return tagdict
-
-
-def rewrite_short_description(doc, filename, short_description="Short description"):
-    '''
-    Modify a given text by replacing the first section named as given in
-    `short_description` by the filename and content of that section.
-
-    Parameters
-    ----------
-
-    doc : str
-      restructured text with all sections
-
-    filename : str, path
-      name that is inserted in the replaced title (and used for useful error
-      messages).
-
-    short_description : str
-      title of the section that is to be rewritten to the document title
-
-    Returns
-    -------
-
-    str
-        original parameter doc with short_description section replaced
-    '''
-
-    titles = getTitles(doc)
-    if not titles:
-        raise ValueError("No sections found in '%s'!" % filename)
-    name = os.path.splitext(os.path.basename(filename))[0]
-    for title, nexttitle in zip(titles, titles[1:]+[None]):
-        if title.group(1) != short_description:
-            continue
-        secstart = title.end()
-        secend = len(doc) + 1  # last section ends at end of document
-        if nexttitle:
-            secend = nexttitle.start()
-        sdesc = doc[secstart:secend].strip().replace('\n', ' ')
-        fixed_title = "%s – %s" % (name, sdesc)
-        return (
-            doc[:title.start()] +
-            fixed_title + "\n" + "=" * len(fixed_title) + "\n\n" +
-            doc[secend:]
-            )
-    raise ValueError("No section '%s' found in %s!" % (short_description, filename))
-
-
-def rewrite_see_also(doc, filename, tags, see_also="See also"):
-    '''
-    Replace the content of a section named `see_also` in the document `doc`
-    with links to indices of all its tags.
-
-    The original content of the section -if not empty- will discarded and
-    logged as a warning.
-
-    Parameters
-    ----------
-
-    doc : str
-      restructured text with all sections
-
-    filename : str, path
-      name that is inserted in the replaced title (and used for useful error
-      messages).
-
-    tags : iterable (list or dict)
-      all tags the given document is linked to. These are used to construct the
-      links in the `see_also` section.
-
-    see_also : str
-      title of the section that is to be rewritten to the document title
-
-    Returns
-    -------
-
-    str
-        original parameter doc with see_also section replaced
-    '''
-
-    titles = getTitles(doc)
-    if not titles:
-        raise ValueError("No sections found in '%s'!" % filename)
-
-    def rightcase(text):
-        '''
-        Make text title-case except for acronyms, where an acronym is
-        identified simply by being all upper-case.
-
-        This function operates on the whole string, so a text with mixed
-        acronyms and non-acronyms will not be recognized and everything will be
-        title-cased, including the embedded acronyms.
-
-        Parameters
-        ----------
-
-        text : str
-          text that needs to be changed to the right casing.
-
-        Returns
-        -------
-
-        str
-          original text with poentially different characters being
-          upper-/lower-case.
-        '''
-        if text != text.upper():
-            return text.title()  # title-case any tag that is not an acronym
-        return text   # return acronyms unmodified
-
-    for title, nexttitle in zip(titles, titles[1:]+[None]):
-        if title.group(1) != see_also:
-            continue
-        secstart = title.end()
-        secend = len(doc) + 1  # last section ends at end of document
-        if nexttitle:
-            secend = nexttitle.start()
-        original = doc[secstart:secend].strip().replace('\n', ' ')
-        if original:
-            log.warning("dropping manual 'see also' list in %s user docs: '%s'", filename, original)
-        return (
-            doc[:secstart] +
-            "\n" + ", ".join([":doc:`{taglabel} <index_{tag}>`".format(tag=tag, taglabel=rightcase(tag))
-                             for tag in tags]) + "\n\n" +
-            doc[secend:]
-            )
-    raise ValueError("No section '%s' found in %s!" % (see_also, filename))
-
-
-def write_rst_files(doc, tags, outdir, outname):
-    """
-    Write raw rst to a file and generate a wrapper with index
-    """
-    with open(os.path.join(outdir, outname), "w") as outfile:
-        outfile.write(doc)
-
 
 def make_hierarchy(tags, *basetags):
     """
@@ -355,7 +214,7 @@ def rst_index(hierarchy, current_tags=[], underlines='=-~', top=True):
         title = ':doc:`{text} <{filename}>`'.format(
             text=text,
             filename=link or "index_"+t)
-        text = title+'\n'+ul*len(title)+'\n'
+        text = title+'\n'+ul*len(title)+'\n\n'
         return text
 
     def mkitem(t):
@@ -452,7 +311,6 @@ def CreateTagIndices(tags, outdir="userdocs/"):
                              desc="keyword indices", total=nindices):
         current_tags = sorted(current_tags)
         indexname = "index%s.rst" % "".join(["_"+x for x in current_tags])
-
         hier = make_hierarchy(tags.copy(), *current_tags)
         if not any(hier.values()):
             log.debug("index %s is empyt!", str(current_tags))
@@ -575,9 +433,21 @@ def ExtractUserDocs(listoffiles, basedir='..', outdir='userdocs/'):
     tags = UserDocExtractor(listoffiles, basedir=basedir, outdir=outdir)
     data.write(tags, "tags")
 
+
     indexfiles = CreateTagIndices(tags, outdir=outdir)
     data.write(indexfiles, "indexfiles")
 
+    toc_list = []
+
+    for k, v in tags.items():
+        for name in v:
+            toc_list.append(name[:-4])
+
+    for ifile in indexfiles:
+        toc_list.append(ifile[:-4])
+
+    with open(os.path.join(outdir,"toc-tree.json"), "w") as outtoc:
+        json.dump(toc_list, outtoc)
 
 if __name__ == '__main__':
     ExtractUserDocs(

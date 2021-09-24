@@ -62,7 +62,8 @@ private:
   template < typename cv_value_type_ >
   using iter_ = bv_iterator< value_type_, cv_value_type_&, cv_value_type_* >;
 
-  const BlockVector< value_type_ >* block_vector_; //!< BlockVector to which this iterator points
+  //! BlockVector to which this iterator points
+  const BlockVector< value_type_ >* block_vector_;
   //! Iterator for the current block in the blockmap
   typename std::vector< std::vector< value_type_ > >::const_iterator block_vector_it_;
   //! Iterator pointing to the current element in the current block.

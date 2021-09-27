@@ -764,7 +764,7 @@ nest::ConnectionManager::connect_sonata( const DictionaryDatum& sonata_config, c
       {
         std::cerr << "only one group_id\n";
 
-        auto edge_parameters = edges_subgroup.openGroup( "0" ); // TODO: need to change
+        auto edge_parameters = edges_subgroup.openGroup( std::to_string( *min ) );
 
         auto syn_weight = edge_parameters.openDataSet( "syn_weight" );  // TODO: need to iterate edge_paramters
         auto num_syn_weight = get_num_elements_( syn_weight );

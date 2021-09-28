@@ -112,7 +112,7 @@ for edges in config['networks']['edges']:
             edge_params[type_id]['synapse_model'] = edge_params[type_id]['model_template']
 
             with open(config['components']['synaptic_models_dir'] + '/' + edge_params[type_id]['dynamics_params']) as dynamics_file:
-                dynamics = json.load(dynamics_file) #fix
+                dynamics = json.load(dynamics_file)
             edge_params.update(dynamics)
             edge_params[type_id].pop('model_template', None)
             edge_params[type_id].pop('dynamics_params', None)

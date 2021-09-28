@@ -36,6 +36,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , synapse_model_()
   , weight_()
   , delay_()
+  , pool_( nullptr )
 {
   Name connection_type;
   long number_of_connections( -1 ); // overwritten by dict entry
@@ -140,6 +141,14 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   else
   {
     throw BadProperty( "Unknown connection type." );
+  }
+}
+
+ConnectionCreator::~ConnectionCreator()
+{
+  if ( pool_ )
+  {
+    delete pool_;
   }
 }
 

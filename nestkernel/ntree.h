@@ -27,6 +27,7 @@
 #include <bitset>
 #include <utility>
 #include <vector>
+#include <array>
 #include <iterator>
 
 // Includes from spatial:
@@ -268,10 +269,7 @@ public:
     Ntree* parent = 0,
     int subquad = 0 );
 
-  /**
-   * Delete Ntree recursively.
-   */
-  ~Ntree();
+  ~Ntree() = default;
 
   /**
    * Traverse quadtree structure from current ntree.
@@ -374,7 +372,7 @@ protected:
   Ntree* parent_;
   int my_subquad_; ///< This Ntree's subquad number within parent
   int my_depth_;   ///< This Ntree's depth in the tree
-  Ntree* children_[ N ];
+  std::array< Ntree*, N > children_;
   std::bitset< D > periodic_; ///< periodic b.c.
 
   friend class iterator;
@@ -395,21 +393,6 @@ Ntree< D, T, max_capacity, max_depth >::Ntree( const Position< D >& lower_left,
   , my_depth_( parent ? parent->my_depth_ + 1 : 0 )
   , periodic_( periodic )
 {
-}
-
-template < int D, class T, int max_capacity, int max_depth >
-Ntree< D, T, max_capacity, max_depth >::~Ntree()
-{
-  if ( leaf_ )
-  {
-    // if T is a vector class, we do not delete the pointees
-    return;
-  }
-
-  for ( size_t n = 0; n < static_cast< size_t >( N ); ++n )
-  {
-    delete children_[ n ]; // calls destructor in child, thus recursing
-  }
 }
 
 template < int D, class T, int max_capacity, int max_depth >

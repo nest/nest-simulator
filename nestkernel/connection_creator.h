@@ -92,6 +92,7 @@ public:
    * @param dict dictionary containing properties for the connections.
    */
   ConnectionCreator( DictionaryDatum dict );
+  ~ConnectionCreator();
 
   /**
    * Connect two layers.
@@ -103,7 +104,20 @@ public:
   template < int D >
   void connect( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
+  template < int D >
+  void create_pool( Layer< D >& source,
+    NodeCollectionPTR source_nc,
+    Layer< D >& target,
+    NodeCollectionPTR target_nc,
+    bool on_target = false );
+
 private:
+  class PoolWrapperBase_
+  {
+  public:
+    virtual ~PoolWrapperBase_() = default;
+  };
+
   /**
    * Wrapper for masked and unmasked pools.
    *
@@ -111,7 +125,7 @@ private:
    * Essentially, the class works as a fancy union.
    */
   template < int D >
-  class PoolWrapper_
+  class PoolWrapper_ : public PoolWrapperBase_
   {
   public:
     PoolWrapper_();
@@ -160,6 +174,8 @@ private:
   void
   fixed_outdegree_( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
+  void delete_pool_();
+
   ConnectionType type_;
   bool allow_autapses_;
   bool allow_multapses_;
@@ -171,7 +187,18 @@ private:
   std::vector< std::vector< DictionaryDatum > > param_dicts_;
   std::vector< std::shared_ptr< Parameter > > weight_;
   std::vector< std::shared_ptr< Parameter > > delay_;
+
+  PoolWrapperBase_* pool_;
 };
+
+inline void
+ConnectionCreator::delete_pool_()
+{
+  if ( pool_ )
+  {
+    delete pool_;
+  }
+}
 
 } // namespace nest
 

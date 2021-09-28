@@ -66,6 +66,44 @@ ConnectionCreator::connect( Layer< D >& source,
   default:
     throw BadProperty( "Unknown connection type." );
   }
+#pragma omp barrier
+// All threads are now done with the pool, so it can be deleted.
+// There is no need for the implicit barrier at the end of the single clause.
+#pragma omp single nowait
+  {
+    delete_pool_();
+  }
+}
+
+template < int D >
+void
+ConnectionCreator::create_pool( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc,
+  bool on_target )
+{
+  // We have to create the PoolWrapper_ pointer separately and assign it to pool_ in the end because we need the
+  // templated define() function, and templated functions cannot be defined for the base class PoolWrapperBase_.
+  auto pool = new PoolWrapper_< D >();
+  if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
+  {
+    if ( on_target )
+    {
+      // By supplying the target layer to the MaskedLayer constructor, the
+      // mask is mirrored so it may be applied to the source layer instead
+      pool->define( new MaskedLayer< D >( source, mask_, allow_oversized_, target, source_nc ) );
+    }
+    else
+    {
+      pool->define( new MaskedLayer< D >( source, mask_, allow_oversized_, source_nc ) );
+    }
+  }
+  else
+  {
+    pool->define( source.get_global_positions_vector( source_nc ) );
+  }
+  pool_ = pool;
 }
 
 template < typename Iterator, int D >
@@ -182,44 +220,20 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
   Layer< D >& target,
   NodeCollectionPTR target_nc )
 {
-  // Connect using pairwise Bernoulli drawing source nodes (target driven)
-  // For each local target node:
-  //  1. Apply Mask to source layer
-  //  2. For each source node: Compute probability, draw random number, make
-  //     connection conditionally
+// Connect using pairwise Bernoulli drawing source nodes (target driven)
+// For each local target node:
+//  1. Apply Mask to source layer
+//  2. For each source node: Compute probability, draw random number, make
+//     connection conditionally
 
-  // retrieve global positions, either for masked or unmasked pool
-  PoolWrapper_< D > pool;
+#pragma omp single
+  {
+    create_pool( source, source_nc, target, target_nc );
+  } // implicit barrier
 
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
-#pragma omp critical
-  {
-    const auto tid = kernel().vp_manager.get_thread_id();
-    try
-    {
-      if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
-      {
-        pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, source_nc ) );
-      }
-      else
-      {
-        pool.define( source.get_global_positions_vector( source_nc ) );
-      }
-    }
-    catch ( std::exception& err )
-    {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-    }
-  }
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    if ( exceptions_raised.at( tid ).get() )
-    {
-      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
-    }
-  }
+  // We need a pointer to the right PoolWrapper_ type, because we need to use templated functions below.
+  auto* pool = dynamic_cast< PoolWrapper_< D >* >( pool_ );
+  assert( pool );
 
   const int thread_id = kernel().vp_manager.get_thread_id();
 
@@ -236,11 +250,11 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
       if ( mask_.get() )
       {
-        connect_to_target_( pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, source );
+        connect_to_target_( pool->masked_begin( target_pos ), pool->masked_end(), tgt, target_pos, thread_id, source );
       }
       else
       {
-        connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
+        connect_to_target_( pool->begin(), pool->end(), tgt, target_pos, thread_id, source );
       }
     }
   } // for target_begin
@@ -254,48 +268,23 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
   Layer< D >& target,
   NodeCollectionPTR target_nc )
 {
-  // Connecting using pairwise Bernoulli drawing target nodes (source driven)
-  // It is actually implemented as pairwise Bernoulli on source nodes,
-  // but with displacements computed in the target layer. The Mask has been
-  // reversed so that it can be applied to the source instead of the target.
-  // For each local target node:
-  //  1. Apply (Converse)Mask to source layer
-  //  2. For each source node: Compute probability, draw random number, make
-  //     connection conditionally
+// Connecting using pairwise Bernoulli drawing target nodes (source driven)
+// It is actually implemented as pairwise Bernoulli on source nodes,
+// but with displacements computed in the target layer. The Mask has been
+// reversed so that it can be applied to the source instead of the target.
+// For each local target node:
+//  1. Apply (Converse)Mask to source layer
+//  2. For each source node: Compute probability, draw random number, make
+//     connection conditionally
 
-  PoolWrapper_< D > pool;
+#pragma omp single
+  {
+    create_pool( source, source_nc, target, target_nc, true );
+  } // implicit barrier
 
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
-#pragma omp critical
-  {
-    const auto tid = kernel().vp_manager.get_thread_id();
-    try
-    {
-      if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
-      {
-        // By supplying the target layer to the MaskedLayer constructor, the
-        // mask is mirrored so it may be applied to the source layer instead
-        pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, target, source_nc ) );
-      }
-      else
-      {
-        pool.define( source.get_global_positions_vector( source_nc ) );
-      }
-    }
-    catch ( std::exception& err )
-    {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-    }
-  }
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    if ( exceptions_raised.at( tid ).get() )
-    {
-      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
-    }
-  }
+  // We need a pointer to the right PoolWrapper_ type, because we need to use templated functions below.
+  auto* pool = dynamic_cast< PoolWrapper_< D >* >( pool_ );
+  assert( pool );
 
   // We only need to check the first in the NodeCollection
   Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
@@ -321,13 +310,13 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
     {
       // We do the same as in the target driven case, except that we calculate displacements in the target layer.
       // We therefore send in target as last parameter.
-      connect_to_target_( pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, target );
+      connect_to_target_( pool->masked_begin( target_pos ), pool->masked_end(), tgt, target_pos, thread_id, target );
     }
     else
     {
       // We do the same as in the target driven case, except that we calculate displacements in the target layer.
       // We therefore send in target as last parameter.
-      connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, thread_id, target );
+      connect_to_target_( pool->begin(), pool->end(), tgt, target_pos, thread_id, target );
     }
 
   } // end for

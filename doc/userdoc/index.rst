@@ -108,4 +108,3 @@ NEST is available under the :doc:`GNU General Public License 2 or later <license
 .. image:: static/img/EBRAINS.svg
   :width: 25 %
   :target: https://ebrains.eu/
-

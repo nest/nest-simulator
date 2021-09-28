@@ -99,7 +99,6 @@ extensions = [
     'sphinx_tabs.tabs',
     'nbsphinx',
     'sphinx_rtd_theme',
-    'HoverXTooltip',
     'VersionSyncRole',
 ]
 

@@ -28,6 +28,7 @@ import subprocess
 
 from pathlib import Path
 from shutil import copyfile
+import json
 
 import sphinx_rtd_theme
 

@@ -277,10 +277,22 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
 //  2. For each source node: Compute probability, draw random number, make
 //     connection conditionally
 
+  std::exception* err = nullptr;
 #pragma omp single
   {
-    create_pool( source, source_nc, target, target_nc, true );
+    try
+    {
+      create_pool( source, source_nc, target, target_nc, true );
+    }
+    catch ( std::exception& serr )
+    {
+      err = &serr;
+    }
   } // implicit barrier
+  if ( err )
+  {
+    throw *err;
+  }
 
   // We need a pointer to the right PoolWrapper_ type, because we need to use templated functions below.
   auto* pool = dynamic_cast< PoolWrapper_< D >* >( pool_ );

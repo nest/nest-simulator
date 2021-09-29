@@ -4,8 +4,6 @@ import sys
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 
-# from bs4 import BeautifulSoup
-
 from conf import doc_build_dir
 
 

@@ -76,7 +76,7 @@ Common abbreviations in NEST
    picofarads (pF)
 
  C_m
-   Capacitance of the membrane in pF
+   capacitance of the membrane in pF
 
  current
    picoamperes (pA)

@@ -1300,46 +1300,58 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
 void
 nest::FixedOutDegreeBuilder::connect_()
 {
+  std::exception* err = nullptr;
 #pragma omp single
   {
-    // get global rng that is tested for synchronization for all threads
-    RngPtr grng = get_rank_synced_rng();
-
-    NodeCollection::const_iterator source_it = sources_->begin();
-    for ( ; source_it < sources_->end(); ++source_it )
+    try
     {
-      const index snode_id = ( *source_it ).node_id;
+      // get global rng that is tested for synchronization for all threads
+      RngPtr grng = get_rank_synced_rng();
 
-      std::set< long > ch_ids;
-      const long n_rnd = targets_->size();
-
-      Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
-      const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
-
-      for ( long j = 0; j < outdegree_value; ++j )
+      NodeCollection::const_iterator source_it = sources_->begin();
+      for ( ; source_it < sources_->end(); ++source_it )
       {
-        unsigned long t_id;
-        index tnode_id;
-        bool skip_autapse = false;
-        bool skip_multapse = false;
+        const index snode_id = ( *source_it ).node_id;
 
-        do
-        {
-          t_id = grng->ulrand( n_rnd );
-          tnode_id = ( *targets_ )[ t_id ];
-          skip_autapse = not allow_autapses_ and tnode_id == snode_id;
-          skip_multapse = not allow_multapses_ and ch_ids.find( t_id ) != ch_ids.end();
-        } while ( skip_autapse or skip_multapse );
+        std::set< long > ch_ids;
+        const long n_rnd = targets_->size();
 
-        if ( not allow_multapses_ )
+        Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
+        const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
+
+        for ( long j = 0; j < outdegree_value; ++j )
         {
-          ch_ids.insert( t_id );
+          unsigned long t_id;
+          index tnode_id;
+          bool skip_autapse = false;
+          bool skip_multapse = false;
+
+          do
+          {
+            t_id = grng->ulrand( n_rnd );
+            tnode_id = ( *targets_ )[ t_id ];
+            skip_autapse = not allow_autapses_ and tnode_id == snode_id;
+            skip_multapse = not allow_multapses_ and ch_ids.find( t_id ) != ch_ids.end();
+          } while ( skip_autapse or skip_multapse );
+
+          if ( not allow_multapses_ )
+          {
+            ch_ids.insert( t_id );
+          }
+
+          tgt_ids_[ snode_id ].push_back( tnode_id );
         }
-
-        tgt_ids_[ snode_id ].push_back( tnode_id );
       }
     }
+    catch ( std::exception& serr )
+    {
+      err = &serr;
+    }
   } // omp single
+  if ( err )
+  {
+    throw *err;
+  }
 
   // get thread id
   const thread tid = kernel().vp_manager.get_thread_id();
@@ -1408,77 +1420,89 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
 void
 nest::FixedTotalNumberBuilder::connect_()
 {
+  std::exception* err = nullptr;
 #pragma omp single
   {
-    const int M = kernel().vp_manager.get_num_virtual_processes();
-    const long size_targets = targets_->size();
-
-    // drawing connection ids
-
-    // Compute the distribution of targets over processes using the modulo
-    // function
-    // std::vector< size_t > number_of_targets_on_vp( M, 0 );
-    number_of_targets_on_vp_.resize( M, 0 );
-    // std::vector< index > local_targets;
-    local_targets_.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
-    for ( size_t t = 0; t < targets_->size(); t++ )
+    try
     {
-      int vp = kernel().vp_manager.node_id_to_vp( ( *targets_ )[ t ] );
-      ++number_of_targets_on_vp_[ vp ];
-      if ( kernel().vp_manager.is_local_vp( vp ) )
+      const int M = kernel().vp_manager.get_num_virtual_processes();
+      const long size_targets = targets_->size();
+
+      // drawing connection ids
+
+      // Compute the distribution of targets over processes using the modulo
+      // function
+      // std::vector< size_t > number_of_targets_on_vp( M, 0 );
+      number_of_targets_on_vp_.resize( M, 0 );
+      // std::vector< index > local_targets;
+      local_targets_.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
+      for ( size_t t = 0; t < targets_->size(); t++ )
       {
-        local_targets_.push_back( ( *targets_ )[ t ] );
+        int vp = kernel().vp_manager.node_id_to_vp( ( *targets_ )[ t ] );
+        ++number_of_targets_on_vp_[ vp ];
+        if ( kernel().vp_manager.is_local_vp( vp ) )
+        {
+          local_targets_.push_back( ( *targets_ )[ t ] );
+        }
       }
+
+      // We use the multinomial distribution to determine the number of
+      // connections that will be made on one virtual process, i.e. we
+      // partition the set of edges into n_vps subsets. The number of
+      // edges on one virtual process is binomially distributed with
+      // the boundary condition that the sum of all edges over virtual
+      // processes is the total number of edges.
+      // To obtain the num_conns_on_vp we adapt the gsl
+      // implementation of the multinomial distribution.
+
+      // K from gsl is equivalent to M = n_vps
+      // N is already taken from stack
+      // p[] is targets_on_vp
+      // std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
+      num_conns_on_vp_.resize( M, 0 );
+
+      // calculate exact multinomial distribution
+      // get global rng that is tested for synchronization for all threads
+      RngPtr grng = get_rank_synced_rng();
+
+      // begin code adapted from gsl 1.8 //
+      double sum_dist = 0.0; // corresponds to sum_p
+      // norm is equivalent to size_targets
+      unsigned int sum_partitions = 0; // corresponds to sum_n
+
+      binomial_distribution bino_dist;
+      for ( int k = 0; k < M; k++ )
+      {
+        // If we have distributed all connections on the previous processes we exit the loop. It is important to
+        // have this check here, as N - sum_partition is set as n value for GSL, and this must be larger than 0.
+        if ( N_ == sum_partitions )
+        {
+          break;
+        }
+        if ( number_of_targets_on_vp_[ k ] > 0 )
+        {
+          double num_local_targets = static_cast< double >( number_of_targets_on_vp_[ k ] );
+          double p_local = num_local_targets / ( size_targets - sum_dist );
+
+          binomial_distribution::param_type param( N_ - sum_partitions, p_local );
+          num_conns_on_vp_[ k ] = bino_dist( grng, param );
+        }
+
+        sum_dist += static_cast< double >( number_of_targets_on_vp_[ k ] );
+        sum_partitions += static_cast< unsigned int >( num_conns_on_vp_[ k ] );
+      }
+
+      // end code adapted from gsl 1.8
     }
-
-    // We use the multinomial distribution to determine the number of
-    // connections that will be made on one virtual process, i.e. we
-    // partition the set of edges into n_vps subsets. The number of
-    // edges on one virtual process is binomially distributed with
-    // the boundary condition that the sum of all edges over virtual
-    // processes is the total number of edges.
-    // To obtain the num_conns_on_vp we adapt the gsl
-    // implementation of the multinomial distribution.
-
-    // K from gsl is equivalent to M = n_vps
-    // N is already taken from stack
-    // p[] is targets_on_vp
-    // std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
-    num_conns_on_vp_.resize( M, 0 );
-
-    // calculate exact multinomial distribution
-    // get global rng that is tested for synchronization for all threads
-    RngPtr grng = get_rank_synced_rng();
-
-    // begin code adapted from gsl 1.8 //
-    double sum_dist = 0.0; // corresponds to sum_p
-    // norm is equivalent to size_targets
-    unsigned int sum_partitions = 0; // corresponds to sum_n
-
-    binomial_distribution bino_dist;
-    for ( int k = 0; k < M; k++ )
+    catch ( std::exception& serr )
     {
-      // If we have distributed all connections on the previous processes we exit the loop. It is important to
-      // have this check here, as N - sum_partition is set as n value for GSL, and this must be larger than 0.
-      if ( N_ == sum_partitions )
-      {
-        break;
-      }
-      if ( number_of_targets_on_vp_[ k ] > 0 )
-      {
-        double num_local_targets = static_cast< double >( number_of_targets_on_vp_[ k ] );
-        double p_local = num_local_targets / ( size_targets - sum_dist );
-
-        binomial_distribution::param_type param( N_ - sum_partitions, p_local );
-        num_conns_on_vp_[ k ] = bino_dist( grng, param );
-      }
-
-      sum_dist += static_cast< double >( number_of_targets_on_vp_[ k ] );
-      sum_partitions += static_cast< unsigned int >( num_conns_on_vp_[ k ] );
+      err = &serr;
     }
-
-    // end code adapted from gsl 1.8
   } // pragma omp single
+  if ( err )
+  {
+    throw *err;
+  }
 
   // get thread id
   const thread tid = kernel().vp_manager.get_thread_id();
@@ -1532,13 +1556,6 @@ nest::FixedTotalNumberBuilder::connect_()
       }
     }
   }
-  // }
-  // catch ( std::exception& err )
-  // {
-  //   // We must create a new exception here, err's lifetime ends at
-  //   // the end of the catch block.
-  //   exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-  // }
 }
 
 
@@ -1573,8 +1590,6 @@ nest::BernoulliBuilder::connect_()
   // get thread id
   const thread tid = kernel().vp_manager.get_thread_id();
 
-  // try
-  // {
   RngPtr rng = get_vp_specific_rng( tid );
 
   if ( loop_over_targets_() )
@@ -1612,13 +1627,6 @@ nest::BernoulliBuilder::connect_()
       inner_connect_( tid, rng, n->get_node(), tnode_id );
     }
   }
-  // }
-  // catch ( std::exception& err )
-  // {
-  //   // We must create a new exception here, err's lifetime ends at
-  //   // the end of the catch block.
-  //   exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-  // }
 }
 
 void

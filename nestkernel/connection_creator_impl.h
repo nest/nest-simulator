@@ -226,10 +226,22 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 //  2. For each source node: Compute probability, draw random number, make
 //     connection conditionally
 
+  std::exception* err = nullptr;
 #pragma omp single
   {
-    create_pool( source, source_nc, target, target_nc );
+    try
+    {
+      create_pool( source, source_nc, target, target_nc );
+    }
+    catch ( std::exception& serr )
+    {
+      err = &serr;
+    }
   } // implicit barrier
+  if ( err )
+  {
+    throw *err;
+  }
 
   // We need a pointer to the right PoolWrapper_ type, because we need to use templated functions below.
   auto* pool = dynamic_cast< PoolWrapper_< D >* >( pool_ );
@@ -362,277 +374,289 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
     throw IllegalConnection( "Spatial Connect with fixed_indegree to devices is not possible." );
   }
 
+  std::exception* err = nullptr;
 #pragma omp single
   {
-    NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
-    NodeCollection::const_iterator target_end = target_nc->end();
-
-    // protect against connecting to devices without proxies
-    // we need to do this before creating the first connection to leave
-    // the network untouched if any target does not have proxies
-    for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+    try
     {
-      Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
+      NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
+      NodeCollection::const_iterator target_end = target_nc->end();
 
-      assert( not tgt->is_proxy() );
-    }
-
-    if ( mask_.get() )
-    {
-      MaskedLayer< D > masked_source( source, mask_, allow_oversized_, source_nc );
-      const auto masked_source_end = masked_source.end();
-
-      std::vector< std::pair< Position< D >, index > > positions;
-
+      // protect against connecting to devices without proxies
+      // we need to do this before creating the first connection to leave
+      // the network untouched if any target does not have proxies
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        index target_id = ( *tgt_it ).node_id;
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
+        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
 
-        thread target_thread = tgt->get_thread();
-        RngPtr rng = get_vp_specific_rng( target_thread );
-        Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+        assert( not tgt->is_proxy() );
+      }
 
-        // We create a source pos vector here that can be updated with the
-        // source position. This is done to avoid creating and destroying
-        // unnecessarily many vectors.
-        std::vector< double > source_pos_vector( D );
-        const std::vector< double > target_pos_vector = target_pos.get_vector();
+      if ( mask_.get() )
+      {
+        MaskedLayer< D > masked_source( source, mask_, allow_oversized_, source_nc );
+        const auto masked_source_end = masked_source.end();
 
-        // Get (position,node ID) pairs for sources inside mask
-        positions.resize( std::distance( masked_source.begin( target_pos ), masked_source_end ) );
-        std::copy( masked_source.begin( target_pos ), masked_source_end, positions.begin() );
+        std::vector< std::pair< Position< D >, index > > positions;
 
-        // We will select `number_of_connections_` sources within the mask.
-        // If there is no kernel, we can just draw uniform random numbers,
-        // but with a kernel we have to set up a probability distribution
-        // function using a discrete_distribution class.
-        if ( kernel_.get() )
+        for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
         {
-          std::vector< double > probabilities;
-          probabilities.reserve( positions.size() );
+          index target_id = ( *tgt_it ).node_id;
+          Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
 
-          // Collect probabilities for the sources
-          for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions.begin();
-                iter != positions.end();
-                ++iter )
+          thread target_thread = tgt->get_thread();
+          RngPtr rng = get_vp_specific_rng( target_thread );
+          Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+
+          // We create a source pos vector here that can be updated with the
+          // source position. This is done to avoid creating and destroying
+          // unnecessarily many vectors.
+          std::vector< double > source_pos_vector( D );
+          const std::vector< double > target_pos_vector = target_pos.get_vector();
+
+          // Get (position,node ID) pairs for sources inside mask
+          positions.resize( std::distance( masked_source.begin( target_pos ), masked_source_end ) );
+          std::copy( masked_source.begin( target_pos ), masked_source_end, positions.begin() );
+
+          // We will select `number_of_connections_` sources within the mask.
+          // If there is no kernel, we can just draw uniform random numbers,
+          // but with a kernel we have to set up a probability distribution
+          // function using a discrete_distribution class.
+          if ( kernel_.get() )
           {
-            iter->first.get_vector( source_pos_vector );
-            probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source, tgt ) );
+            std::vector< double > probabilities;
+            probabilities.reserve( positions.size() );
+
+            // Collect probabilities for the sources
+            for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions.begin();
+                  iter != positions.end();
+                  ++iter )
+            {
+              iter->first.get_vector( source_pos_vector );
+              probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source, tgt ) );
+            }
+
+            if ( positions.empty()
+              or ( ( not allow_autapses_ ) and ( positions.size() == 1 ) and ( positions[ 0 ].second == target_id ) )
+              or ( ( not allow_multapses_ ) and ( positions.size() < number_of_connections_ ) ) )
+            {
+              std::string msg =
+                String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
+              throw KernelException( msg.c_str() );
+            }
+
+            // A discrete_distribution draws random integers with a non-uniform
+            // distribution.
+            discrete_distribution lottery;
+            const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
+            lottery.param( param );
+
+            // If multapses are not allowed, we must keep track of which
+            // sources have been selected already.
+            std::vector< bool > is_selected( positions.size() );
+
+            // Draw `number_of_connections_` sources
+            for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+            {
+              index random_id = lottery( rng );
+              if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+              {
+                --i;
+                continue;
+              }
+
+              index source_id = positions[ random_id ].second;
+              if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
+              {
+                --i;
+                continue;
+              }
+              positions[ random_id ].first.get_vector( source_pos_vector );
+              for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+              {
+                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                kernel().connection_manager.connect(
+                  source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
+              }
+
+              is_selected[ random_id ] = true;
+            }
           }
-
-          if ( positions.empty()
-            or ( ( not allow_autapses_ ) and ( positions.size() == 1 ) and ( positions[ 0 ].second == target_id ) )
-            or ( ( not allow_multapses_ ) and ( positions.size() < number_of_connections_ ) ) )
+          else
           {
-            std::string msg =
-              String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
-            throw KernelException( msg.c_str() );
-          }
 
-          // A discrete_distribution draws random integers with a non-uniform
-          // distribution.
-          discrete_distribution lottery;
-          const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
-          lottery.param( param );
+            // no kernel
 
-          // If multapses are not allowed, we must keep track of which
-          // sources have been selected already.
-          std::vector< bool > is_selected( positions.size() );
-
-          // Draw `number_of_connections_` sources
-          for ( int i = 0; i < ( int ) number_of_connections_; ++i )
-          {
-            index random_id = lottery( rng );
-            if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+            if ( positions.empty()
+              or ( ( not allow_autapses_ ) and ( positions.size() == 1 ) and ( positions[ 0 ].second == target_id ) )
+              or ( ( not allow_multapses_ ) and ( positions.size() < number_of_connections_ ) ) )
             {
-              --i;
-              continue;
+              std::string msg =
+                String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
+              throw KernelException( msg.c_str() );
             }
 
-            index source_id = positions[ random_id ].second;
-            if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
-            {
-              --i;
-              continue;
-            }
-            positions[ random_id ].first.get_vector( source_pos_vector );
-            for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
-            {
-              const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-              const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-              kernel().connection_manager.connect(
-                source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
-            }
+            // If multapses are not allowed, we must keep track of which
+            // sources have been selected already.
+            std::vector< bool > is_selected( positions.size() );
 
-            is_selected[ random_id ] = true;
+            // Draw `number_of_connections_` sources
+            for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+            {
+              index random_id = rng->ulrand( positions.size() );
+              if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+              {
+                --i;
+                continue;
+              }
+              positions[ random_id ].first.get_vector( source_pos_vector );
+              index source_id = positions[ random_id ].second;
+              for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+              {
+                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                kernel().connection_manager.connect(
+                  source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
+              }
+
+              is_selected[ random_id ] = true;
+            }
           }
         }
-        else
+      }
+      else
+      {
+        // no mask
+
+        // Get (position,node ID) pairs for all nodes in source layer
+        std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector( source_nc );
+
+        for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
         {
+          index target_id = ( *tgt_it ).node_id;
+          Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
+          thread target_thread = tgt->get_thread();
+          RngPtr rng = get_vp_specific_rng( target_thread );
+          Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
-          // no kernel
+          std::vector< double > source_pos_vector( D );
+          const std::vector< double > target_pos_vector = target_pos.get_vector();
 
-          if ( positions.empty()
-            or ( ( not allow_autapses_ ) and ( positions.size() == 1 ) and ( positions[ 0 ].second == target_id ) )
-            or ( ( not allow_multapses_ ) and ( positions.size() < number_of_connections_ ) ) )
+          if ( ( positions->size() == 0 )
+            or ( ( not allow_autapses_ ) and ( positions->size() == 1 ) and ( ( *positions )[ 0 ].second == target_id ) )
+            or ( ( not allow_multapses_ ) and ( positions->size() < number_of_connections_ ) ) )
           {
-            std::string msg =
-              String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
+            std::string msg = String::compose( "Global target ID %1: Not enough sources found", target_id );
             throw KernelException( msg.c_str() );
           }
 
-          // If multapses are not allowed, we must keep track of which
-          // sources have been selected already.
-          std::vector< bool > is_selected( positions.size() );
-
-          // Draw `number_of_connections_` sources
-          for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+          // We will select `number_of_connections_` sources within the mask.
+          // If there is no kernel, we can just draw uniform random numbers,
+          // but with a kernel we have to set up a probability distribution
+          // function using a discrete_distribution.
+          if ( kernel_.get() )
           {
-            index random_id = rng->ulrand( positions.size() );
-            if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+
+            std::vector< double > probabilities;
+            probabilities.reserve( positions->size() );
+
+            // Collect probabilities for the sources
+            for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions->begin();
+                  iter != positions->end();
+                  ++iter )
             {
-              --i;
-              continue;
-            }
-            positions[ random_id ].first.get_vector( source_pos_vector );
-            index source_id = positions[ random_id ].second;
-            for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
-            {
-              const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-              const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-              kernel().connection_manager.connect(
-                source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
+              iter->first.get_vector( source_pos_vector );
+              probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source, tgt ) );
             }
 
-            is_selected[ random_id ] = true;
+            // A discrete_distribution draws random integers with a non-uniform
+            // distribution.
+            discrete_distribution lottery;
+            const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
+            lottery.param( param );
+
+            // If multapses are not allowed, we must keep track of which
+            // sources have been selected already.
+            std::vector< bool > is_selected( positions->size() );
+
+            // Draw `number_of_connections_` sources
+            for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+            {
+              index random_id = lottery( rng );
+              if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+              {
+                --i;
+                continue;
+              }
+
+              index source_id = ( *positions )[ random_id ].second;
+              if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
+              {
+                --i;
+                continue;
+              }
+
+              ( *positions )[ random_id ].first.get_vector( source_pos_vector );
+              for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+              {
+                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                kernel().connection_manager.connect(
+                  source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
+              }
+
+              is_selected[ random_id ] = true;
+            }
+          }
+          else
+          {
+            // no kernel
+
+            // If multapses are not allowed, we must keep track of which
+            // sources have been selected already.
+            std::vector< bool > is_selected( positions->size() );
+
+            // Draw `number_of_connections_` sources
+            for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+            {
+              index random_id = rng->ulrand( positions->size() );
+              if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+              {
+                --i;
+                continue;
+              }
+
+              index source_id = ( *positions )[ random_id ].second;
+              if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
+              {
+                --i;
+                continue;
+              }
+
+              ( *positions )[ random_id ].first.get_vector( source_pos_vector );
+              for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+              {
+                const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
+                kernel().connection_manager.connect(
+                  source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
+              }
+
+              is_selected[ random_id ] = true;
+            }
           }
         }
       }
     }
-    else
+    catch ( std::exception& serr )
     {
-      // no mask
-
-      // Get (position,node ID) pairs for all nodes in source layer
-      std::vector< std::pair< Position< D >, index > >* positions = source.get_global_positions_vector( source_nc );
-
-      for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
-      {
-        index target_id = ( *tgt_it ).node_id;
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
-        thread target_thread = tgt->get_thread();
-        RngPtr rng = get_vp_specific_rng( target_thread );
-        Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
-
-        std::vector< double > source_pos_vector( D );
-        const std::vector< double > target_pos_vector = target_pos.get_vector();
-
-        if ( ( positions->size() == 0 )
-          or ( ( not allow_autapses_ ) and ( positions->size() == 1 ) and ( ( *positions )[ 0 ].second == target_id ) )
-          or ( ( not allow_multapses_ ) and ( positions->size() < number_of_connections_ ) ) )
-        {
-          std::string msg = String::compose( "Global target ID %1: Not enough sources found", target_id );
-          throw KernelException( msg.c_str() );
-        }
-
-        // We will select `number_of_connections_` sources within the mask.
-        // If there is no kernel, we can just draw uniform random numbers,
-        // but with a kernel we have to set up a probability distribution
-        // function using a discrete_distribution.
-        if ( kernel_.get() )
-        {
-
-          std::vector< double > probabilities;
-          probabilities.reserve( positions->size() );
-
-          // Collect probabilities for the sources
-          for ( typename std::vector< std::pair< Position< D >, index > >::iterator iter = positions->begin();
-                iter != positions->end();
-                ++iter )
-          {
-            iter->first.get_vector( source_pos_vector );
-            probabilities.push_back( kernel_->value( rng, source_pos_vector, target_pos_vector, source, tgt ) );
-          }
-
-          // A discrete_distribution draws random integers with a non-uniform
-          // distribution.
-          discrete_distribution lottery;
-          const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
-          lottery.param( param );
-
-          // If multapses are not allowed, we must keep track of which
-          // sources have been selected already.
-          std::vector< bool > is_selected( positions->size() );
-
-          // Draw `number_of_connections_` sources
-          for ( int i = 0; i < ( int ) number_of_connections_; ++i )
-          {
-            index random_id = lottery( rng );
-            if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
-            {
-              --i;
-              continue;
-            }
-
-            index source_id = ( *positions )[ random_id ].second;
-            if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
-            {
-              --i;
-              continue;
-            }
-
-            ( *positions )[ random_id ].first.get_vector( source_pos_vector );
-            for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
-            {
-              const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-              const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-              kernel().connection_manager.connect(
-                source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
-            }
-
-            is_selected[ random_id ] = true;
-          }
-        }
-        else
-        {
-          // no kernel
-
-          // If multapses are not allowed, we must keep track of which
-          // sources have been selected already.
-          std::vector< bool > is_selected( positions->size() );
-
-          // Draw `number_of_connections_` sources
-          for ( int i = 0; i < ( int ) number_of_connections_; ++i )
-          {
-            index random_id = rng->ulrand( positions->size() );
-            if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
-            {
-              --i;
-              continue;
-            }
-
-            index source_id = ( *positions )[ random_id ].second;
-            if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
-            {
-              --i;
-              continue;
-            }
-
-            ( *positions )[ random_id ].first.get_vector( source_pos_vector );
-            for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
-            {
-              const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-              const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-              kernel().connection_manager.connect(
-                source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
-            }
-
-            is_selected[ random_id ] = true;
-          }
-        }
-      }
+      err = &serr;
     }
+  } // pragma omp single
+  if ( err )
+  {
+    throw *err;
   }
 }
 
@@ -659,137 +683,150 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
   {
     throw IllegalConnection( "Spatial Connect with fixed_outdegree to devices is not possible." );
   }
+
+  std::exception* err = nullptr;
 #pragma omp single
   {
-    NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
-    NodeCollection::const_iterator target_end = target_nc->end();
-
-    for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+    try
     {
-      Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
+      NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
+      NodeCollection::const_iterator target_end = target_nc->end();
 
-      assert( not tgt->is_proxy() );
-    }
+      for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+      {
+        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
 
-    // Fixed_outdegree connections (fixed fan out)
-    //
-    // For each (global) source: (All connections made on all mpi procs)
-    // 1. Apply mask to global targets
-    // 2. If using kernel: Compute connection probability for each global target
-    // 3. Draw connections to make using global rng
+        assert( not tgt->is_proxy() );
+      }
 
-    MaskedLayer< D > masked_target( target, mask_, allow_oversized_, target_nc );
-    const auto masked_target_end = masked_target.end();
+      // Fixed_outdegree connections (fixed fan out)
+      //
+      // For each (global) source: (All connections made on all mpi procs)
+      // 1. Apply mask to global targets
+      // 2. If using kernel: Compute connection probability for each global target
+      // 3. Draw connections to make using global rng
 
-    // We create a target positions vector here that can be updated with the
-    // position and node ID pairs. This is done to avoid creating and destroying
-    // unnecessarily many vectors.
-    std::vector< std::pair< Position< D >, index > > target_pos_node_id_pairs;
-    std::vector< std::pair< Position< D >, index > > source_pos_node_id_pairs =
-      *source.get_global_positions_vector( source_nc );
+      MaskedLayer< D > masked_target( target, mask_, allow_oversized_, target_nc );
+      const auto masked_target_end = masked_target.end();
 
-    for ( const auto& source_pos_node_id_pair : source_pos_node_id_pairs )
-    {
-      const Position< D > source_pos = source_pos_node_id_pair.first;
-      const index source_id = source_pos_node_id_pair.second;
-      const std::vector< double > source_pos_vector = source_pos.get_vector();
-
-      // We create a target pos vector here that can be updated with the
-      // target position. This is done to avoid creating and destroying
+      // We create a target positions vector here that can be updated with the
+      // position and node ID pairs. This is done to avoid creating and destroying
       // unnecessarily many vectors.
-      std::vector< double > target_pos_vector( D );
-      std::vector< double > probabilities;
+      std::vector< std::pair< Position< D >, index > > target_pos_node_id_pairs;
+      std::vector< std::pair< Position< D >, index > > source_pos_node_id_pairs =
+        *source.get_global_positions_vector( source_nc );
 
-      // Find potential targets and probabilities
-      RngPtr grng = get_rank_synced_rng();
-      target_pos_node_id_pairs.resize( std::distance( masked_target.begin( source_pos ), masked_target_end ) );
-      std::copy( masked_target.begin( source_pos ), masked_target_end, target_pos_node_id_pairs.begin() );
-
-      probabilities.reserve( target_pos_node_id_pairs.size() );
-      if ( kernel_.get() )
+      for ( const auto& source_pos_node_id_pair : source_pos_node_id_pairs )
       {
-        for ( const auto& target_pos_node_id_pair : target_pos_node_id_pairs )
+        const Position< D > source_pos = source_pos_node_id_pair.first;
+        const index source_id = source_pos_node_id_pair.second;
+        const std::vector< double > source_pos_vector = source_pos.get_vector();
+
+        // We create a target pos vector here that can be updated with the
+        // target position. This is done to avoid creating and destroying
+        // unnecessarily many vectors.
+        std::vector< double > target_pos_vector( D );
+        std::vector< double > probabilities;
+
+        // Find potential targets and probabilities
+        RngPtr grng = get_rank_synced_rng();
+        target_pos_node_id_pairs.resize( std::distance( masked_target.begin( source_pos ), masked_target_end ) );
+        std::copy( masked_target.begin( source_pos ), masked_target_end, target_pos_node_id_pairs.begin() );
+
+        probabilities.reserve( target_pos_node_id_pairs.size() );
+        if ( kernel_.get() )
         {
-          // TODO: Why is probability calculated in source layer, but weight and delay in target layer?
-          target_pos_node_id_pair.first.get_vector( target_pos_vector );
-          const auto tgt = kernel().node_manager.get_node_or_proxy( target_pos_node_id_pair.second );
-          probabilities.push_back( kernel_->value( grng, source_pos_vector, target_pos_vector, source, tgt ) );
+          for ( const auto& target_pos_node_id_pair : target_pos_node_id_pairs )
+          {
+            // TODO: Why is probability calculated in source layer, but weight and delay in target layer?
+            target_pos_node_id_pair.first.get_vector( target_pos_vector );
+            const auto tgt = kernel().node_manager.get_node_or_proxy( target_pos_node_id_pair.second );
+            probabilities.push_back( kernel_->value( grng, source_pos_vector, target_pos_vector, source, tgt ) );
+          }
         }
-      }
-      else
-      {
-        probabilities.resize( target_pos_node_id_pairs.size(), 1.0 );
-      }
-
-      if ( target_pos_node_id_pairs.empty()
-        or ( ( not allow_multapses_ ) and ( target_pos_node_id_pairs.size() < number_of_connections_ ) ) )
-      {
-        std::string msg = String::compose( "Global source ID %1: Not enough targets found", source_id );
-        throw KernelException( msg.c_str() );
-      }
-
-      // Draw targets.  A discrete_distribution object draws random integers with a
-      // non-uniform distribution.
-      discrete_distribution lottery;
-      const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
-      lottery.param( param );
-
-      // If multapses are not allowed, we must keep track of which
-      // targets have been selected already.
-      std::vector< bool > is_selected( target_pos_node_id_pairs.size() );
-
-      // Draw `number_of_connections_` targets
-      for ( long i = 0; i < ( long ) number_of_connections_; ++i )
-      {
-        index random_id = lottery( get_rank_synced_rng() );
-        if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+        else
         {
-          --i;
-          continue;
-        }
-        index target_id = target_pos_node_id_pairs[ random_id ].second;
-        if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
-        {
-          --i;
-          continue;
+          probabilities.resize( target_pos_node_id_pairs.size(), 1.0 );
         }
 
-        is_selected[ random_id ] = true;
-
-        target_pos_node_id_pairs[ random_id ].first.get_vector( target_pos_vector );
-
-        std::vector< double > rng_weight_vec;
-        std::vector< double > rng_delay_vec;
-        for ( size_t indx = 0; indx < weight_.size(); ++indx )
+        if ( target_pos_node_id_pairs.empty()
+          or ( ( not allow_multapses_ ) and ( target_pos_node_id_pairs.size() < number_of_connections_ ) ) )
         {
-          const auto tgt = kernel().node_manager.get_node_or_proxy( target_pos_node_id_pairs[ indx ].second );
-          rng_weight_vec.push_back( weight_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
-          rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
+          std::string msg = String::compose( "Global source ID %1: Not enough targets found", source_id );
+          throw KernelException( msg.c_str() );
         }
 
-        // We bail out for non-local neurons only now after all possible
-        // random numbers haven been drawn. Bailing out any earlier may lead
-        // to desynchronized global rngs.
-        if ( not kernel().node_manager.is_local_node_id( target_id ) )
-        {
-          continue;
-        }
+        // Draw targets.  A discrete_distribution object draws random integers with a
+        // non-uniform distribution.
+        discrete_distribution lottery;
+        const discrete_distribution::param_type param( probabilities.begin(), probabilities.end() );
+        lottery.param( param );
 
-        Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
-        thread target_thread = target_ptr->get_thread();
+        // If multapses are not allowed, we must keep track of which
+        // targets have been selected already.
+        std::vector< bool > is_selected( target_pos_node_id_pairs.size() );
 
-        for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+        // Draw `number_of_connections_` targets
+        for ( long i = 0; i < ( long ) number_of_connections_; ++i )
         {
-          kernel().connection_manager.connect( source_id,
-            target_ptr,
-            target_thread,
-            synapse_model_[ indx ],
-            param_dicts_[ indx ][ target_thread ],
-            rng_delay_vec[ indx ],
-            rng_weight_vec[ indx ] );
+          index random_id = lottery( get_rank_synced_rng() );
+          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+          {
+            --i;
+            continue;
+          }
+          index target_id = target_pos_node_id_pairs[ random_id ].second;
+          if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
+          {
+            --i;
+            continue;
+          }
+
+          is_selected[ random_id ] = true;
+
+          target_pos_node_id_pairs[ random_id ].first.get_vector( target_pos_vector );
+
+          std::vector< double > rng_weight_vec;
+          std::vector< double > rng_delay_vec;
+          for ( size_t indx = 0; indx < weight_.size(); ++indx )
+          {
+            const auto tgt = kernel().node_manager.get_node_or_proxy( target_pos_node_id_pairs[ indx ].second );
+            rng_weight_vec.push_back( weight_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
+            rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
+          }
+
+          // We bail out for non-local neurons only now after all possible
+          // random numbers haven been drawn. Bailing out any earlier may lead
+          // to desynchronized global rngs.
+          if ( not kernel().node_manager.is_local_node_id( target_id ) )
+          {
+            continue;
+          }
+
+          Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
+          thread target_thread = target_ptr->get_thread();
+
+          for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+          {
+            kernel().connection_manager.connect( source_id,
+              target_ptr,
+              target_thread,
+              synapse_model_[ indx ],
+              param_dicts_[ indx ][ target_thread ],
+              rng_delay_vec[ indx ],
+              rng_weight_vec[ indx ] );
+          }
         }
       }
     }
+    catch ( std::exception& serr )
+    {
+      err = &serr;
+    }
+  } // pragma omp single
+  if ( err )
+  {
+    throw *err;
   }
 }
 

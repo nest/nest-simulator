@@ -620,7 +620,9 @@ cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ =
     else:
         raise NESTErrors.PyNESTError("unsupported specialization")
 
-    memcpy(array_data, &vector_ptr.front(), vector_ptr.size() * sizeof(vector_value_t))
+    # skip when vector_ptr points to an empty vector
+    if vector_ptr.size() > 0:
+        memcpy(array_data, &vector_ptr.front(), vector_ptr.size() * sizeof(vector_value_t))
 
     if HAVE_NUMPY:
         if vector_ptr.size() > 0:

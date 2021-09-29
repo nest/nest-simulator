@@ -35,11 +35,6 @@ Start MUSIC using mpirun
     you try to process comand line options in your Pynest script, it is
     very likely you will confuse MUSIC.
 
-    .. note::
-
-       Please note that MUSIC and the recording backend for Arbor are mutually exclusive
-       and cannot be enabled at the same time.
-
 
 Disable messages
 ----------------
@@ -108,5 +103,3 @@ Build Autotool-enable project
     almost ashamed to admit just how many years it took before I
     realized you could do this. I sometimes actually kept two copies of
     projects checked out just so I could build a separate debug version.
-
-

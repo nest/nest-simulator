@@ -38,9 +38,6 @@ jobs:
            - xNEST_BUILD_TYPE: "OPENMP_ONLY"
              cpp_compiler: "clang"
              os: "ubuntu-20.04"
-           - xNEST_BUILD_TYPE: "ARBOR_BACKEND"
-             cpp_compiler: "clang"
-             os: "ubuntu-20.04"
            - xNEST_BUILD_TYPE: "FULL"
              os: "ubuntu-20.04"
              cpp_compiler: "clang"
@@ -49,12 +46,6 @@ jobs:
              os: macos-latest
            - xNEST_BUILD_TYPE: "OPENMP_ONLY"
              cpp_compiler: "gcc"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "ARBOR_BACKEND"
-             cpp_compiler: "gcc"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "ARBOR_BACKEND"
-             cpp_compiler: "clang"
              os: macos-latest
            - xNEST_BUILD_TYPE: "FULL"
              os: macos-latest
@@ -164,15 +155,6 @@ jobs:
          env:
           xNEST_BUILD_TYPE: OPENMP_ONLY
 
-       - name: MPI and Arbor
-         if: ${{ matrix.xNEST_BUILD_TYPE == 'ARBOR_BACKEND' }}
-         run: |
-           echo "MPI with Arbor backend Build"
-           chmod +x extras/ci_build.sh
-           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
-           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-         env:
-           xNEST_BUILD_TYPE: ARBOR_BACKEND
            
        - name: Full Build
          if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}

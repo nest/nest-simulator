@@ -149,21 +149,20 @@ xLIBBOOST=0
 xLIBNEUROSIM=0
 xLTDL=0
 xMPI=0
-xARBOR_BACKEND=0
 xMUSIC=0
 xOPENMP=0
 xPYTHON=0
 xREADLINE=0
 xSIONLIB=0
 
-CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas"
+CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
 
 if [ "$xNEST_BUILD_TYPE" = "OPENMP_ONLY" ]; then
     xGSL=1
     xLIBBOOST=1
     xLTDL=1
     xOPENMP=1
-    CXX_FLAGS="-pedantic -Wextra"
+    CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"
 fi
 
 if [ "$xNEST_BUILD_TYPE" = "MPI_ONLY" ]; then
@@ -171,15 +170,6 @@ if [ "$xNEST_BUILD_TYPE" = "MPI_ONLY" ]; then
     xLIBBOOST=1
     xLTDL=1
     xMPI=1
-fi
-
-if [ "$xNEST_BUILD_TYPE" = "ARBOR_BACKEND" ]; then
-    xGSL=1
-    xLIBBOOST=1
-    xLTDL=1
-    xMPI=1
-    xARBOR_BACKEND=1
-    xPYTHON=1
 fi
 
 if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
@@ -193,7 +183,7 @@ if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
     xPYTHON=1
     xREADLINE=1
     xSIONLIB=1
-    CXX_FLAGS="-pedantic -Wextra"
+    CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"
 fi
 
 if [ "$xNEST_BUILD_TYPE" = "FULL_NO_EXTERNAL_FEATURES" ]; then
@@ -247,11 +237,7 @@ if [ "$xMUSIC" = "1" ] ; then
 else
     CONFIGURE_MUSIC="-Dwith-music=OFF"
 fi
-if [ "$xARBOR_BACKEND" = "1" ] ; then
-    CONFIGURE_ARBOR_BACKEND="-Dwith-recordingbackend-arbor=ON"
-else
-    CONFIGURE_ARBOR_BACKEND="-Dwith-recordingbackend-arbor=OFF"
-fi
+
 if [ "$xGSL" = "1" ] ; then
     CONFIGURE_GSL="-Dwith-gsl=ON"
 else
@@ -322,7 +308,6 @@ cmake \
     $CONFIGURE_MPI \
     $CONFIGURE_PYTHON \
     $CONFIGURE_MUSIC \
-    $CONFIGURE_ARBOR_BACKEND \
     $CONFIGURE_GSL \
     $CONFIGURE_LTDL \
     $CONFIGURE_READLINE \

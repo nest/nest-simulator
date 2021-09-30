@@ -22,6 +22,25 @@ def fish_cmake_vars(*vars):
     values = [m.group(2) for o in p.stdout.decode().split("\n") if (m := pat.match(o))]
     return values
 
+def get_origin_url():
+    p = subprocess.run(
+        "git remote -v"
+        + " | grep origin"
+        + " | grep fetch",
+        shell=True,
+        capture_output=True
+    )
+    remote = p.stdout.decode().split("\t")[1].split(" ")[0]
+    return remote
+
+def get_current_commit():
+    p = subprocess.run(
+        "git rev-parse HEAD",
+        shell=True,
+        capture_output=True
+    )
+    return p.stdout.decode().split("\n")[0]
+
 curr = Path.cwd()
 # Go to the CMake build folder to fish out the CMade Python files from the build files
 os.chdir(built_path)
@@ -35,7 +54,14 @@ module_path = cmake_path / pkgdir / "nest"
 # Go back to the CI root dir
 os.chdir(curr)
 # Pull nest-simulator and initiate Frankenstein assembly of wheel env
-subprocess.run(['git', 'clone', 'git@github.com:nest/nest-simulator', wheel_path, '--depth=1'], check=True)
+remote = get_origin_url()
+commit = get_current_commit()
+print("Cloning NEST repo from", remote)
+subprocess.run(['git', 'clone', remote, wheel_path, '--depth=1'], check=True)
+os.chdir(wheel_path)
+print("Checking out", commit)
+subprocess.run(['git', 'checkout', commit], check=True)
+os.chdir(curr)
 # Go fish `setup.py`
 shutil.copy2(pynest_path / "setup.py", wheel_path)
 # Go fish nest python code and intermingle it with the regular `nest` cpp folder

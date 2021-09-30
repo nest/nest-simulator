@@ -8,17 +8,22 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-2019, macOS-10.15]
+        os: [ubuntu-20.04, macOS-10.15]
 
     steps:
       - uses: actions/checkout@v2
-
-      # Used to host cibuildwheel
       - uses: actions/setup-python@v2
 
-      - name: Install wheel building requirements
+      - name: Install OpenMP (MacOS)
+        if: runner.os == 'macOS'
+        run: brew install libomp
+
+      - name: Install OpenMP (Ubuntu)
+        if: runner.os == 'Linux'
+        run: sudo apt-get install libomp-dev
+
+      - name: Install Python wheel building requirements
         run: |
-          sudo apt-get install libomp-dev
           python -m pip install cibuildwheel==2.2.0a1 wheel cython
 
       - name: Prepare wheel building environment

@@ -65,4 +65,5 @@ os.chdir(curr)
 # Go fish `setup.py`
 shutil.copy2(pynest_path / "setup.py", wheel_path)
 # Go fish nest python code and intermingle it with the regular `nest` cpp folder
+print(f"Copying Python files from `{module_path}`")
 copy_tree(str(module_path), str(wheel_path / "nest"))

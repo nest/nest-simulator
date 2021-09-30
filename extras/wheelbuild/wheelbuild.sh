@@ -3,6 +3,7 @@ BUILDWHEELPATH=build_wheel_env
 mkdir $BUILDPATH
 cd $BUILDPATH
 cmake ..
+make install-nodoc
 cd ..
 export NEST_CMAKE_BUILDWHEEL=ON
 python extras/wheelbuild/prep_wheel_env.py $BUILDWHEELPATH

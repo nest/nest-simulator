@@ -39,9 +39,7 @@ jobs:
           python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_ENVIRONMENT: NEST_CMAKE_BUILDWHEEL=ON
-        # to supply options, put them in 'env', like:
-        # env:
-        #   CIBW_SOME_OPTION: value
+          CIBW_BEFORE_BUILD: sudo apt-get update && sudo apt-get install python-dev python3-dev
 
       - uses: actions/upload-artifact@v2
         with:

@@ -53,7 +53,7 @@ class cmake_build(build_ext):
             check=True
         )
         print('-'*20, 'Build')
-        subprocess.run('make install-nodoc', shell=True, check=True)
+        subprocess.run('make install -j4', shell=True, check=True)
         os.chdir("..")
 
 

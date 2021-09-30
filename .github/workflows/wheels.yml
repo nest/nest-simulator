@@ -34,9 +34,11 @@ jobs:
       - name: Build wheels
         run: |
           echo "STARTING CIBUILDWHEEL"
-          pwd
           cd build_wheel_env
+          pwd
           python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_ENVIRONMENT: NEST_CMAKE_BUILDWHEEL=ON
         # to supply options, put them in 'env', like:
         # env:
         #   CIBW_SOME_OPTION: value

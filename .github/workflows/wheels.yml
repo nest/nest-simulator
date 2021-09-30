@@ -29,10 +29,13 @@ jobs:
       - name: Prepare wheel building environment
         run: |
           source extras/wheelbuild/wheelbuild.sh
+          echo "FINISHED WHEEL ENV PREP"
+          pwd
       - name: Build wheels
         run: |
           echo "STARTING CIBUILDWHEEL"
           pwd
+          cd build_wheel_env
           python -m cibuildwheel --output-dir wheelhouse
         # to supply options, put them in 'env', like:
         # env:

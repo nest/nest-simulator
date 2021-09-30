@@ -78,8 +78,9 @@ if ( HAVE_PYTHON )
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
       PATTERN "versionchecker.py.in" EXCLUDE
   )
-  if(NEST_CMAKE_BUILDWHEEL)
+  if($ENV{NEST_CMAKE_BUILDWHEEL})
       install( TARGETS pynestkernel DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest/ )
+      message("-- Wheel build, installing pynestkernel to ${CMAKE_INSTALL_LIBDIR}/nest/")
   else()
       install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
   endif()

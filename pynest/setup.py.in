@@ -34,7 +34,7 @@ class cmake_build(build_ext):
     def run(self):
         import subprocess
 
-        # The path where CMake will be configured and *hehe* NEST will be built.
+        # The path where CMake will be configured and NEST will be built.
         build_directory = os.path.abspath(self.build_temp)
         # The path where the package will be copied after building.
         lib_directory = os.path.abspath(self.build_lib)

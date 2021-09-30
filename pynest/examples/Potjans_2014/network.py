@@ -445,16 +445,9 @@ class Network:
                         delay=nest.math.redraw(
                             nest.random.normal(
                                 mean=self.net_dict['delay_matrix_mean'][i][j],
-<<<<<<< HEAD
                                 std=self.net_dict['delay_matrix_mean'][i][j] * self.net_dict['delay_rel_std']),
-                            min=self.sim_resolution,
-                            max=np.Inf))
-=======
-                                std=(self.net_dict['delay_matrix_mean'][i][j] *
-                                     self.net_dict['delay_rel_std'])),
                             min=nest.resolution,
-                            max=np.Inf)}
->>>>>>> refs/remotes/nest-simulator/master
+                            max=np.Inf))
 
                     nest.Connect(nest.FixedTotalNumber(source_pop, target_pop, N=self.num_synapses[i][j],
                                                        syn_spec=syn_spec))
@@ -500,16 +493,9 @@ class Network:
                 delay=nest.math.redraw(
                     nest.random.normal(
                         mean=self.stim_dict['delay_th_mean'],
-<<<<<<< HEAD
                         std=self.stim_dict['delay_th_mean'] * self.stim_dict['delay_th_rel_std']),
-                    min=self.sim_resolution,
-                    max=np.Inf))
-=======
-                        std=(self.stim_dict['delay_th_mean'] *
-                             self.stim_dict['delay_th_rel_std'])),
                     min=nest.resolution,
-                    max=np.Inf)}
->>>>>>> refs/remotes/nest-simulator/master
+                    max=np.Inf))
 
             nest.Connect(nest.FixedTotalNumber(self.thalamic_population, target_pop, N=self.num_th_synapses[i],
                                                syn_spec=syn_spec_th))

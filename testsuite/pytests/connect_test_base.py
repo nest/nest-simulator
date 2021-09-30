@@ -236,8 +236,7 @@ class ConnectTestBase(unittest.TestCase):
         # synapse type
         nest.ResetKernel()
         vol = nest.Create('volume_transmitter')
-        nest.SetDefaults('stdp_dopamine_synapse',
-                            {'vt': vol.get('global_id')})
+        nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')})
         params = ['c', 'n']
         values = [0.153, 0.365]
         syn_params = nest.synapsemodels.stdp_dopamine()
@@ -257,8 +256,8 @@ class ConnectTestBase(unittest.TestCase):
             conn_params = self.conn_dict.clone()
             if syn == 'stdp_dopamine_synapse':
                 vol = nest.Create('volume_transmitter')
-                nest.SetDefaults('stdp_dopamine_synapse',
-                                    {'vt': vol.get('global_id')})
+                nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')})
+
             syn_spec.synapse_model = syn
             self.pop1 = nest.Create('iaf_psc_exp_multisynapse', self.N1, {'tau_syn': [0.2, 0.5]})
             self.pop2 = nest.Create('iaf_psc_exp_multisynapse', self.N2, {'tau_syn': [0.2, 0.5]})
@@ -289,8 +288,7 @@ class ConnectTestBase(unittest.TestCase):
         for syn in syns:
             if syn == 'stdp_dopamine_synapse':
                 vol = nest.Create('volume_transmitter')
-                nest.SetDefaults('stdp_dopamine_synapse',
-                                    {'vt': vol.get('global_id')})
+                nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')})
             syn_spec.synapse_model = syn
             check_synapse(['weight'], [syn_spec.specs['weight']], syn_spec, self)
             self.setUp()
@@ -310,11 +308,12 @@ class ConnectTestBase(unittest.TestCase):
         for syn in syns:
             if syn == 'stdp_dopamine_synapse':
                 vol = nest.Create('volume_transmitter')
-                nest.SetDefaults('stdp_dopamine_synapse',
-                                    {'vt': vol.get('global_id')})
+                nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')})
+
             syn_spec.synapse_model = syn
             check_synapse(['delay'], [syn_spec.specs['delay']], syn_spec, self)
             self.setUp()
+
 
 def gather_data(data_array):
     '''
@@ -322,7 +321,6 @@ def gather_data(data_array):
     data is a list and summing all elements to one numpy-array if data is one
     numpy-array. Returns gathered data if rank of current mpi node is zero and
     None otherwise.
-
     '''
     if haveMPI4Py:
         data_array_list = MPI.COMM_WORLD.gather(data_array, root=0)

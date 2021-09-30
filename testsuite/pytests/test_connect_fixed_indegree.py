@@ -72,7 +72,7 @@ class TestFixedInDegree(connect_test_base.ConnectTestBase):
 
     def testStatistics(self):
         conn_params = nest.FixedIndegree(source=None, target=None, indegree=self.C,
-                                            allow_autapses=True, allow_multapses=True)
+                                         allow_autapses=True, allow_multapses=True)
         expected = connect_test_base.get_expected_degrees_fixedDegrees(self.C, 'in', self.N_s, self.N_t)
         pvalues = []
         for i in range(self.stat_dict['n_runs']):

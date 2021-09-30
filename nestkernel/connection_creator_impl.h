@@ -220,11 +220,11 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
   Layer< D >& target,
   NodeCollectionPTR target_nc )
 {
-// Connect using pairwise Bernoulli drawing source nodes (target driven)
-// For each local target node:
-//  1. Apply Mask to source layer
-//  2. For each source node: Compute probability, draw random number, make
-//     connection conditionally
+  // Connect using pairwise Bernoulli drawing source nodes (target driven)
+  // For each local target node:
+  //  1. Apply Mask to source layer
+  //  2. For each source node: Compute probability, draw random number, make
+  //     connection conditionally
 
   std::exception* err = nullptr;
 #pragma omp single
@@ -240,7 +240,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
   } // implicit barrier
   if ( err )
   {
-    throw *err;
+    throw * err;
   }
 
   // We need a pointer to the right PoolWrapper_ type, because we need to use templated functions below.
@@ -280,14 +280,14 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
   Layer< D >& target,
   NodeCollectionPTR target_nc )
 {
-// Connecting using pairwise Bernoulli drawing target nodes (source driven)
-// It is actually implemented as pairwise Bernoulli on source nodes,
-// but with displacements computed in the target layer. The Mask has been
-// reversed so that it can be applied to the source instead of the target.
-// For each local target node:
-//  1. Apply (Converse)Mask to source layer
-//  2. For each source node: Compute probability, draw random number, make
-//     connection conditionally
+  // Connecting using pairwise Bernoulli drawing target nodes (source driven)
+  // It is actually implemented as pairwise Bernoulli on source nodes,
+  // but with displacements computed in the target layer. The Mask has been
+  // reversed so that it can be applied to the source instead of the target.
+  // For each local target node:
+  //  1. Apply (Converse)Mask to source layer
+  //  2. For each source node: Compute probability, draw random number, make
+  //     connection conditionally
 
   std::exception* err = nullptr;
 #pragma omp single
@@ -303,7 +303,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
   } // implicit barrier
   if ( err )
   {
-    throw *err;
+    throw * err;
   }
 
   // We need a pointer to the right PoolWrapper_ type, because we need to use templated functions below.
@@ -543,8 +543,8 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           std::vector< double > source_pos_vector( D );
           const std::vector< double > target_pos_vector = target_pos.get_vector();
 
-          if ( ( positions->size() == 0 )
-            or ( ( not allow_autapses_ ) and ( positions->size() == 1 ) and ( ( *positions )[ 0 ].second == target_id ) )
+          if ( ( positions->size() == 0 ) or ( ( not allow_autapses_ ) and ( positions->size() == 1 )
+                                               and ( ( *positions )[ 0 ].second == target_id ) )
             or ( ( not allow_multapses_ ) and ( positions->size() < number_of_connections_ ) ) )
           {
             std::string msg = String::compose( "Global target ID %1: Not enough sources found", target_id );
@@ -656,7 +656,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
   } // pragma omp single
   if ( err )
   {
-    throw *err;
+    throw * err;
   }
 }
 
@@ -791,7 +791,8 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
           for ( size_t indx = 0; indx < weight_.size(); ++indx )
           {
             const auto tgt = kernel().node_manager.get_node_or_proxy( target_pos_node_id_pairs[ indx ].second );
-            rng_weight_vec.push_back( weight_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
+            rng_weight_vec.push_back(
+              weight_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
             rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
           }
 
@@ -826,7 +827,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
   } // pragma omp single
   if ( err )
   {
-    throw *err;
+    throw * err;
   }
 }
 

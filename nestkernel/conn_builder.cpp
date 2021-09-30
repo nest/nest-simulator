@@ -252,7 +252,7 @@ nest::ConnBuilder::connect()
         std::swap( sources_, targets_ );
       }
 
-        connect_();
+      connect_();
 
 #pragma omp barrier
 #pragma omp single
@@ -1350,7 +1350,7 @@ nest::FixedOutDegreeBuilder::connect_()
   } // omp single
   if ( err )
   {
-    throw *err;
+    throw * err;
   }
 
   // get thread id
@@ -1501,7 +1501,7 @@ nest::FixedTotalNumberBuilder::connect_()
   } // pragma omp single
   if ( err )
   {
-    throw *err;
+    throw * err;
   }
 
   // get thread id

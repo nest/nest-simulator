@@ -78,7 +78,11 @@ if ( HAVE_PYTHON )
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
       PATTERN "versionchecker.py.in" EXCLUDE
   )
-  install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
+  if(NEST_CMAKE_BUILDWHEEL)
+      install( TARGETS pynestkernel DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest/ )
+  else()
+      install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
+  endif()
   install( CODE "
       execute_process(
           COMMAND ${PYTHON} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install_egg_info

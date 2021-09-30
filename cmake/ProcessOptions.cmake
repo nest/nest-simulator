@@ -234,6 +234,8 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
           "@loader_path/../../${CMAKE_INSTALL_LIBDIR}/nest"
           # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
           "@loader_path/../../../nest"
+          # for wheels
+          "@loader_path"
           PARENT_SCOPE )
     else ()
       set( CMAKE_INSTALL_RPATH
@@ -243,6 +245,8 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
           "\$ORIGIN/../../${CMAKE_INSTALL_LIBDIR}/nest"
           # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
           "\$ORIGIN/../../../nest"
+          # for wheels
+          "\$ORIGIN"
           PARENT_SCOPE )
     endif ()
 

@@ -23,54 +23,50 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 import os
 
-wheel_build = os.getenv("NEST_CMAKE_WHEELBUILD")
+build_wheel = os.getenv("NEST_CMAKE_BUILDWHEEL")
 
 class cmake_extension(Extension):
     def __init__(self, name):
         Extension.__init__(self, name, sources=[])
 
-wheel_kwargs = {} if not wheel_build else dict(
+
+class cmake_build(build_ext):
+    def run(self):
+        import subprocess
+
+        # The path where CMake will be configured and *hehe* NEST will be built.
+        build_directory = os.path.abspath(self.build_temp)
+        # The path where the package will be copied after building.
+        lib_directory = os.path.abspath(self.build_lib)
+        # The current working directory
+        p = os.path.abspath(os.getcwd())
+
+        if not os.path.exists(self.build_temp):
+            os.makedirs(self.build_temp)
+
+        os.chdir("build")
+        print('-'*20, 'Configure CMake')
+        subprocess.run(
+            'cmake .. -DCMAKE_INSTALL_LIBDIR=' + str(lib_directory)
+            +' -DCMAKE_INSTALL_PREFIX=' + str(build_directory),
+            shell=True,
+            check=True
+        )
+        print('-'*20, 'Build')
+        subprocess.run('make install-nodoc', shell=True, check=True)
+        os.chdir("..")
+
+
+wheel_kwargs = {} if not build_wheel else dict(
     cmdclass={
         'build_ext': cmake_build
     },
     ext_modules=[cmake_extension('nest')],
 )
 
-class cmake_build(build_ext):
-    def run(self):
-        # The path where CMake will be configured and *hehe* NEST will be built.
-        build_directory = os.path.abspath(self.build_temp)
-        # The path where the package will be copied after building.
-        lib_directory = os.path.abspath(self.build_lib)
-        # The path where the Python package will be compiled.
-        source_path = build_directory + '/python/nest'
-        # Where to copy the package after it is built, so that whatever the next phase is
-        # can copy it into the target 'prefix' path.
-        dest_path = lib_directory + '/nest'
-
-        if not os.path.exists(self.build_temp):
-            os.makedirs(self.build_temp)
-
-        print('-'*20, 'Configure CMake')
-        p = os.path.abspath(os.get_cwd())
-        subprocess.check_call(['cmake . -DCMAKE_INSTALL_PREFIX=' + p],
-                              cwd=self.build_temp)
-
-        print('-'*20, 'Build')
-        subprocess.check_call(['make install'],
-                              cwd=self.build_temp)
-
-        # Copy from build path to some other place from whence it will later be installed.
-        # ... or something like that
-        # ... setuptools is an enigma monkey patched on a mystery
-        if not os.path.exists(dest_path):
-            os.makedirs(dest_path, exist_ok=True)
-        self.copy_tree(source_path, dest_path)
-
-
 setup(
     name = 'nest-simulator',
-    version = '@NEST_VERSION@@githash@',
+    version = 'circular-wheels@fed20315c',
     description = 'Python bindings for NEST',
     author = 'The NEST Initiative',
     url = 'https://www.nest-simulator.org',

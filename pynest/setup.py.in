@@ -62,6 +62,10 @@ wheel_kwargs = {} if not build_wheel else dict(
         'build_ext': cmake_build
     },
     ext_modules=[cmake_extension('nest')],
+    include_package_data=True,
+    package_data={
+      "": ["*.sli"]
+    }
 )
 
 setup(

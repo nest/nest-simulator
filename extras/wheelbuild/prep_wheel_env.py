@@ -78,10 +78,10 @@ if "GHA" not in sys.argv:
     commit = get_current_commit()
     print("Cloning NEST repo from", remote)
     subprocess.run(['git', 'clone', remote, wheel_path], check=True)
-os.chdir(wheel_path)
-print("Checking out", commit)
-subprocess.run(['git', 'checkout', commit], check=True)
-os.chdir(curr)
+    os.chdir(wheel_path)
+    print("Checking out", commit)
+    subprocess.run(['git', 'checkout', commit], check=True)
+    os.chdir(curr)
 # Go fish `setup.py`
 shutil.copy2(pynest_path / "setup.py", wheel_path)
 # Go fish nest python code and intermingle it with the regular `nest` cpp folder

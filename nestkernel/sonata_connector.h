@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CONN_BUILDER_SONATA_H
-#define CONN_BUILDER_SONATA_H
+#ifndef SONATA_CONNECTOR_H
+#define SONATA_CONNECTOR_H
 
 #include "config.h"
 
@@ -30,17 +30,16 @@
 #include <vector>
 
 // Includes from nestkernel:
-#include "conn_builder.h"
 #include "nest_datums.h"
 
 namespace nest
 {
 
-class SonataBuilder : public ConnBuilder
+class SonataConnector
 {
 
 public:
-  SonataBuilder( NodeCollectionPTR sources,
+  SonataConnector( NodeCollectionPTR sources,
       NodeCollectionPTR targets,
       const DictionaryDatum& conn_spec,
       const std::vector< DictionaryDatum >& syn_specs );
@@ -53,4 +52,4 @@ protected:
 } // namespace nest
 
 
-#endif /* ifdef CONN_BUILDER_SONATA_H */
+#endif /* ifdef SONATA_CONNECTOR_H */

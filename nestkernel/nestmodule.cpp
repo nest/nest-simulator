@@ -32,7 +32,6 @@
 // Includes from nestkernel:
 #include "conn_builder.h"
 #include "conn_builder_conngen.h"
-#include "conn_builder_sonata.h"
 #include "connection_creator_impl.h"
 #include "connection_manager_impl.h"
 #include "free_layer.h"
@@ -3062,7 +3061,6 @@ NestModule::init( SLIInterpreter* i )
 #ifdef HAVE_LIBNEUROSIM
   kernel().connection_manager.register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
 #endif
-  kernel().connection_manager.register_conn_builder< SonataBuilder >( "sonata" );
 
   // Add MSP growth curves
   kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );

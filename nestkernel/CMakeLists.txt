@@ -68,7 +68,7 @@ set ( nestkernel_sources
       conn_builder.h conn_builder_impl.h conn_builder.cpp
       conn_builder_factory.h
       conn_builder_conngen.h conn_builder_conngen.cpp
-      conn_builder_sonata.h conn_builder_sonata.cpp
+      sonata_connector.h sonata_connector.cpp
       music_event_handler.h music_event_handler.cpp
       music_rate_in_handler.h music_rate_in_handler.cpp
       music_manager.cpp music_manager.h

@@ -20,7 +20,7 @@
  *
  */
 
-#include "conn_builder_sonata.h"
+#include "sonata_connector.h"
 
 
 // Includes from nestkernel:
@@ -32,17 +32,16 @@
 namespace nest
 {
 
-SonataBuilder::SonataBuilder( NodeCollectionPTR sources,
+SonataConnector::SonataConnector( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs )
-    : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   std::cerr << "sonata builder \n";
 }
 
 void
-SonataBuilder::connect_()
+SonataConnector::connect_()
 {
   std::cerr << "sonata connect \n";
 }

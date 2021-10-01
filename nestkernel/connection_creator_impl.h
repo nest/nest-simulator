@@ -77,11 +77,7 @@ ConnectionCreator::connect( Layer< D >& source,
 
 template < int D >
 void
-ConnectionCreator::create_pool( Layer< D >& source,
-  NodeCollectionPTR source_nc,
-  Layer< D >& target,
-  NodeCollectionPTR target_nc,
-  bool on_target )
+ConnectionCreator::create_pool( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, bool on_target )
 {
   // We have to create the PoolWrapper_ pointer separately and assign it to pool_ in the end because we need the
   // templated define() function, and templated functions cannot be defined for the base class PoolWrapperBase_.
@@ -231,7 +227,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
   {
     try
     {
-      create_pool( source, source_nc, target, target_nc );
+      create_pool( source, source_nc, target );
     }
     catch ( std::exception& serr )
     {
@@ -294,7 +290,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
   {
     try
     {
-      create_pool( source, source_nc, target, target_nc, true );
+      create_pool( source, source_nc, target, true );
     }
     catch ( std::exception& serr )
     {

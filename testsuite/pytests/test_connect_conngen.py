@@ -164,15 +164,15 @@ class ConngenTestCase(unittest.TestCase):
 
         cg = csa.cset(csa.oneToOne, 10000.0, 2.0)
         params_map = {"weight": 0, "delay": 1}
-        projection = nest.Conngen(sources, targets, cg=cg, params_map=params_map)
+
+        n_neurons = 4
+        pop = nest.Create("iaf_psc_alpha", n_neurons)
+
+        projection = nest.Conngen(pop, pop, cg=cg, params_map=params_map)
 
         synspec_w = nest.synapsemodels.static(weight=10.0)
         synspec_d = nest.synapsemodels.static(delay=10.0)
         synspec_wd = nest.synapsemodels.static(weigh=10.0, delay=10.0)
-
-        n_neurons = 4
-
-        pop = nest.Create("iaf_psc_alpha", n_neurons)
 
         projection.syn_spec = synspec_w
         nest.Connect(projection)

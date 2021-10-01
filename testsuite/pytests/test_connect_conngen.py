@@ -103,7 +103,7 @@ class ConngenTestCase(unittest.TestCase):
         cg = csa.cset(csa.oneToOne)
 
         # Connect with a non-standard synapse model
-        projection = nest.Conngen(sources, targets, cg=cg, syn_spec=nest.synapsemodel.stdp(tau_plus=tau_plus))
+        projection = nest.Conngen(sources, targets, cg=cg, syn_spec=nest.synapsemodels.stdp(tau_plus=tau_plus))
         nest.Connect(projection)
         nest.BuildNetwork()
 
@@ -134,7 +134,7 @@ class ConngenTestCase(unittest.TestCase):
 
         pop = nest.Create("iaf_psc_alpha", n_neurons)
         projection = nest.Conngen(pop, pop, cg=cg,
-                                  syn_spec=nest.synapsemodel.SynapseModel(synapse_model="fantasy_synapse"))
+                                  syn_spec=nest.synapsemodels.SynapseModel(synapse_model="fantasy_synapse"))
         nest.Connect(projection)
 
         self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType", nest.BuildNetwork)
@@ -149,9 +149,8 @@ class ConngenTestCase(unittest.TestCase):
         # Create a plain connection set
         cg = csa.cset(csa.oneToOne)
         syn_spec = nest.CollocatedSynapses({'weight': -2.}, {'weight': 2.})
-        projection = nest.Conngen(sources, targets, cg=cg, syn_spec=syn_spec)
-
         pop = nest.Create('iaf_psc_alpha', 3)
+        projection = nest.Conngen(pop, pop, cg=cg, syn_spec=syn_spec)
 
         nest.Connect(projection)
         self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty", nest.BuildNetwork)

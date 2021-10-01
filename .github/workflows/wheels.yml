@@ -27,7 +27,12 @@ jobs:
           python -m pip install cibuildwheel==2.2.0a1 wheel cython
 
       - name: Prepare wheel building environment
+        uses: actions/checkout@v2
+        with:
+          path: build_wheel_env
         run: |
+          echo "STARTING WHEEL ENV PREP"
+          pwd
           source extras/wheelbuild/wheelbuild.sh
           echo "FINISHED WHEEL ENV PREP"
           pwd
@@ -39,7 +44,7 @@ jobs:
           python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_ENVIRONMENT: NEST_CMAKE_BUILDWHEEL=ON
-          CIBW_BEFORE_BUILD: sudo apt-get update && sudo apt-get install python-dev python3-dev
+          CIBW_BEFORE_BUILD_LINUX: sudo apt-get update && sudo apt-get install python-dev python3-dev
 
       - uses: actions/upload-artifact@v2
         with:

@@ -72,11 +72,12 @@ pynest_path = built_path / "pynest"
 module_path = cmake_path / pkgdir / "nest"
 # Go back to the CI root dir
 os.chdir(curr)
-# Pull nest-simulator and initiate Frankenstein assembly of wheel env
-remote = get_origin_url()
-commit = get_current_commit()
-print("Cloning NEST repo from", remote)
-subprocess.run(['git', 'clone', remote, wheel_path], check=True)
+if "GHA" not in sys.argv:
+    # Pull nest-simulator and initiate Frankenstein assembly of wheel env
+    remote = get_origin_url()
+    commit = get_current_commit()
+    print("Cloning NEST repo from", remote)
+    subprocess.run(['git', 'clone', remote, wheel_path], check=True)
 os.chdir(wheel_path)
 print("Checking out", commit)
 subprocess.run(['git', 'checkout', commit], check=True)

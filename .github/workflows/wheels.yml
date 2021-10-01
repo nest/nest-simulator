@@ -26,10 +26,11 @@ jobs:
         run: |
           python -m pip install cibuildwheel==2.2.0a1 wheel cython
 
-      - name: Prepare wheel building environment
+      - name: Clone wheel building environment
         uses: actions/checkout@v2
         with:
           path: build_wheel_env
+      - name: Prepare wheel building environment
         run: |
           echo "STARTING WHEEL ENV PREP"
           pwd

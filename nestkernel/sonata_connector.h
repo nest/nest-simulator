@@ -39,13 +39,9 @@ class SonataConnector
 {
 
 public:
-  SonataConnector( NodeCollectionPTR sources,
-      NodeCollectionPTR targets,
-      const DictionaryDatum& conn_spec,
-      const std::vector< DictionaryDatum >& syn_specs );
+  SonataConnector(const DictionaryDatum& sonata_config, const DictionaryDatum& sonata_dynamics );
 
-protected:
-  void connect_();
+  void connect();
 
 };
 

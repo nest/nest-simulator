@@ -32,16 +32,13 @@
 namespace nest
 {
 
-SonataConnector::SonataConnector( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs )
+SonataConnector::SonataConnector( const DictionaryDatum& sonata_config, const DictionaryDatum& sonata_dynamics )
 {
-  std::cerr << "sonata builder \n";
+  std::cerr << "sonata connector \n";
 }
 
 void
-SonataConnector::connect_()
+SonataConnector::connect()
 {
   std::cerr << "sonata connect \n";
 }

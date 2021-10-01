@@ -52,6 +52,7 @@
 #include "mpi_manager_impl.h"
 #include "nest_names.h"
 #include "node.h"
+#include "sonata_connector.h"
 #include "target_table_devices_impl.h"
 #include "vp_manager_impl.h"
 
@@ -726,23 +727,14 @@ nest::ConnectionManager::connect_arrays( long* sources,
 void
 nest::ConnectionManager::connect_sonata( const DictionaryDatum& sonata_config, const DictionaryDatum& sonata_dynamics )
 {
-  const long rule_id = ( *connruledict_ )[ "sonata" ];
-
-  std::vector< DictionaryDatum > syn_specs = { new Dictionary };
-  //syn_specs[ 0 ][ names::synapse_model ] = "static_synapse";
-  std::string tmp = "static_synapse";
-  std::cerr << syn_specs.size() << "\n";
-  updateValue< std::string >( *( syn_specs[ 0 ] ), names::synapse_model, tmp );
-  std::cerr << syn_specs[0]->known( names::synapse_model ) << "\n";
-
-  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( NodeCollectionPTR( 0 ), NodeCollectionPTR( 0 ), new Dictionary, syn_specs );
-  assert( cb != 0 );
+  SonataConnector sonata_connector(sonata_config, sonata_dynamics);
+  //assert( sonata_connector != 0 );
 
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
   set_connections_have_changed();
 
-  cb->connect();
-  delete cb;
+  sonata_connector.connect();
+  //delete cb;
   /*std::cerr << "ConnectionManager::connect_sonata\n";
   auto all_edge_files = getValue< ArrayDatum >( sonata_config->lookup( "edges" ) );
 

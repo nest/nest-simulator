@@ -32,6 +32,8 @@
 // Includes from nestkernel:
 #include "nest_datums.h"
 
+#include "H5Cpp.h"
+
 namespace nest
 {
 
@@ -42,6 +44,13 @@ public:
   SonataConnector(const DictionaryDatum& sonata_config, const DictionaryDatum& sonata_dynamics );
 
   void connect();
+
+private:
+  hsize_t get_num_elements_( H5::DataSet& dataset );
+  int* read_data_( H5::DataSet dataset, int num_elements );
+
+  DictionaryDatum sonata_config_;
+  DictionaryDatum sonata_dynamics_;
 
 };
 

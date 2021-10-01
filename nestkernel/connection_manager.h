@@ -49,8 +49,6 @@
 #include "dict.h"
 #include "dictdatum.h"
 
-#include "H5Cpp.h"
-
 namespace nest
 {
 class GenericConnBuilderFactory;
@@ -540,9 +538,6 @@ private:
    * Increases the connection count.
    */
   void increase_connection_count( const thread tid, const synindex syn_id );
-
-  hsize_t get_num_elements_( H5::DataSet& dataset );
-  int* read_data_( H5::DataSet dataset, int num_elements );
 
   /**
    * A structure to hold the Connector objects which in turn hold the

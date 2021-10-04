@@ -23,10 +23,10 @@
 Tests for visualization functions.
 """
 
-import os
-import pytest
 import nest
 import numpy as np
+import os
+import pytest
 
 try:
     import matplotlib.pyplot as plt
@@ -58,10 +58,11 @@ class TestVisualization:
         else:
             return '.'
 
+    @pytest.fixture(autouse=True)
     def setUp(self):
         self.filenames = []
-
-    def tearDown(self):
+        yield
+        # fixture teardown code below
         for filename in self.filenames:
             # Cleanup temporary datafiles
             os.remove(filename)
@@ -78,18 +79,18 @@ class TestVisualization:
         filename = os.path.join(self.nest_tmpdir(), 'network_plot.png')
         self.filenames.append(filename)
         nvis.plot_network(sources + targets, filename)
-        self.assertTrue(os.path.isfile(filename), 'Plot was not created or not saved')
+        assert os.path.isfile(filename), 'Plot was not created or not saved'
 
     def voltage_trace_verify(self, device):
-        self.assertIsNotNone(plt._pylab_helpers.Gcf.get_active(), 'No active figure')
+        assert plt._pylab_helpers.Gcf.get_active() is not None, 'No active figure'
         ax = plt.gca()
         vm = device.get('events', 'V_m')
         for ref_vm, line in zip((vm[::2], vm[1::2]), ax.lines):
             x_data, y_data = line.get_data()
             # Check that times are correct
-            self.assertEqual(list(x_data), list(np.unique(device.get('events', 'times'))))
+            assert list(x_data) == list(np.unique(device.get('events', 'times')))
             # Check that voltmeter data corresponds to the lines in the plot
-            self.assertTrue(all(np.isclose(ref_vm, y_data)))
+            assert all(np.isclose(ref_vm, y_data))
         plt.close(ax.get_figure())
 
     @pytest.mark.skipif(not PLOTTING_POSSIBLE, reason='Plotting impossible because matplotlib or display missing')
@@ -141,14 +142,14 @@ class TestVisualization:
             return sr
 
     def spike_recorder_raster_verify(self, sr_ref):
-        self.assertIsNotNone(plt._pylab_helpers.Gcf.get_active(), 'No active figure')
+        assert plt._pylab_helpers.Gcf.get_active() is not None, 'No active figure'
         fig = plt.gcf()
         axs = fig.get_axes()
         x_data, y_data = axs[0].lines[0].get_data()
         plt.close(fig)
         # Have to use isclose() because of round-off errors
-        self.assertEqual(x_data.shape, sr_ref.shape)
-        self.assertTrue(all(np.isclose(x_data, sr_ref)))
+        assert x_data.shape == sr_ref.shape
+        assert all(np.isclose(x_data, sr_ref))
 
     @pytest.mark.skipif(not PLOTTING_POSSIBLE, reason='Plotting impossible because matplotlib or display missing')
     def test_raster_plot(self):
@@ -189,7 +190,7 @@ class TestVisualization:
         all_extracted = nest.raster_plot.extract_events(data)
         times_30_to_40_extracted = nest.raster_plot.extract_events(data, time=[30., 40.], sel=[3])
         source_2_extracted = nest.raster_plot.extract_events(data, sel=[2])
-        self.assertTrue(np.array_equal(all_extracted, data))
-        self.assertTrue(np.all(times_30_to_40_extracted[:, 1] >= 30.))
-        self.assertTrue(np.all(times_30_to_40_extracted[:, 1] < 40.))
-        self.assertEqual(len(source_2_extracted), 0)
+        assert np.array_equal(all_extracted, data)
+        assert np.all(times_30_to_40_extracted[:, 1] >= 30.)
+        assert np.all(times_30_to_40_extracted[:, 1] < 40.)
+        assert len(source_2_extracted) == 0

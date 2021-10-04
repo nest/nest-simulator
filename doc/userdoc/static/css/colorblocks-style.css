@@ -799,6 +799,20 @@ code.descclassname {
 .top-nav a {
 	color: #fff;
 	margin-right: 20px;
+=======
+}
+.navbar-default .navbar-nav  li a {
+  color: #e3e3e3;
+}
+
+.navbar-default .navbar-brand {
+  color: #e3e3e3;
+}
+
+.alert-info{
+  background-image: none;
+  background-color: #1281B3;
+  color: #fff;
 }
 
 [data-md-color-primary="orange"] .md-header, [data-md-color-primary="orange"] .md-hero {

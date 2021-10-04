@@ -21,10 +21,10 @@
 
 # This script tests the parrot_neuron in NEST.
 
-import nest
-import unittest
 import math
+import nest
 import numpy as np
+import pytest
 
 try:
     import matplotlib as mpl
@@ -35,7 +35,7 @@ except Exception:
 
 
 @nest.ll_api.check_stack
-class StdpSpikeMultiplicity(unittest.TestCase):
+class TestStdpSpikeMultiplicity:
     """
     Test correct handling of spike multiplicity in STDP.
 
@@ -207,7 +207,6 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             post_weights['parrot_ps'].append(w_post_ps)
 
         if DEBUG_PLOTS:
-            import datetime
             fig, ax = plt.subplots(nrows=2)
             fig.suptitle("Final obtained weights")
             ax[0].plot(post_weights["parrot"], marker="o", label="parrot")
@@ -222,12 +221,14 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             for _ax in ax:
                 _ax.grid(True)
                 _ax.legend()
-            plt.savefig("/tmp/test_stdp_multiplicity" + str(datetime.datetime.utcnow()) + ".png")
+            plt.savefig("/tmp/test_stdp_multiplicity.png")
             plt.close(fig)
         print(post_weights)
         return post_weights
 
-    def _test_stdp_multiplicity(self, pre_post_shift, max_abs_err=1E-3):
+    @pytest.mark.parametrize("pre_post_shift", [10.,    # test potentiation
+                                                -10.])    # test depression
+    def test_stdp_multiplicity(self, pre_post_shift, max_abs_err=1E-3):
         """Check that for smaller and smaller timestep, weights obtained from parrot and precise parrot converge.
 
         Enforce a maximum allowed absolute error ``max_abs_err`` between the final weights for the smallest timestep
@@ -243,28 +244,3 @@ class StdpSpikeMultiplicity(unittest.TestCase):
         abs_err = np.abs(w_precise - w_plain)
         assert abs_err[-1] < max_abs_err, 'Final absolute error is ' + '{0:.2E}'.format(abs_err[-1]) + ' but should be <= ' + '{0:.2E}'.format(max_abs_err)
         assert np.all(np.diff(abs_err) < 0), 'Error should decrease with smaller timestep!'
-
-    def test_stdp_multiplicity(self):
-        """Check weight convergence on potentiation and depression.
-
-        See also: _test_stdp_multiplicity()."""
-        # XXX: TODO: use ``@pytest.mark.parametrize`` for this
-        self._test_stdp_multiplicity(pre_post_shift=10.)    # test potentiation
-        self._test_stdp_multiplicity(pre_post_shift=-10.)   # test depression
-
-
-def suite():
-
-    # makeSuite is sort of obsolete http://bugs.python.org/issue2721
-    # using loadTestsFromTestCase instead.
-    suite = unittest.TestLoader().loadTestsFromTestCase(StdpSpikeMultiplicity)
-    return unittest.TestSuite([suite])
-
-
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
-
-
-if __name__ == "__main__":
-    run()

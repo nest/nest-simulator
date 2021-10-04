@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-import unittest
+import pytest
 from math import exp
 import numpy as np
 
@@ -33,7 +33,7 @@ except Exception:
 
 
 @nest.ll_api.check_stack
-class STDPSynapseTest(unittest.TestCase):
+class TestSTDPSynapse:
     """
     Compare the STDP synaptic plasticity model against a self-contained Python reference.
 
@@ -71,7 +71,7 @@ class STDPSynapseTest(unittest.TestCase):
         # reveal small differences in the weight change between NEST
         # and ours, some low-probability events (say, coinciding
         # spikes) can well not have occured. To generate and
-        # test every possible combination of pre/post precedence, we
+        # test every possible combination of pre/post order, we
         # append some hardcoded spike sequences:
         # pre: 1       5 6 7   9    11 12 13
         # post:  2 3 4       8 9 10    12
@@ -330,17 +330,3 @@ class STDPSynapseTest(unittest.TestCase):
             for self.nest_neuron_model in ["iaf_psc_exp", "iaf_cond_exp"]:
                 fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
                 self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
-
-
-def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(STDPSynapseTest)
-    return unittest.TestSuite([suite])
-
-
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
-
-
-if __name__ == "__main__":
-    run()

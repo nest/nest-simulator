@@ -24,12 +24,13 @@
 
 import nest
 import numpy as np
-import unittest
+import pytest
+
 from math import exp
 
 
 @nest.ll_api.check_stack
-class STDPNNSynapsesTest(unittest.TestCase):
+class TestSTDPNNSynapses:
     """
     Test the weight change by STDP
     with three nearest-neighbour spike pairing schemes.
@@ -44,6 +45,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
     Instead, it directly iterates through the spike history.
     """
 
+    @pytest.fixture(autouse=True)
     def setUp(self):
         self.resolution = 0.1  # [ms]
         self.presynaptic_firing_rate = 20.0  # [Hz]
@@ -70,7 +72,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
         # reveal small differences in the weight change between NEST
         # and ours, some low-probability events (say, coinciding
         # spikes) can well not have occured. To generate and
-        # test every possible combination of pre/post precedence, we
+        # test every possible combination of pre/post order, we
         # append some hardcoded spike sequences:
         # pre: 1       5 6 7   9    11 12 13
         # post:  2 3 4       8 9 10    12
@@ -87,13 +89,13 @@ class STDPNNSynapsesTest(unittest.TestCase):
         weight_reproduced_independently = self.reproduce_weight_drift(
             pre_spikes, post_spikes,
             self.synapse_parameters["weight"])
-        self.assertAlmostEqual(
+        np.testing.assert_almost_equal(
             weight_reproduced_independently,
             weight_by_nest,
-            msg=synapse_model + " test: "
-                                "Resulting synaptic weight %e "
-                                "differs from expected %e" % (
-                                    weight_by_nest, weight_reproduced_independently))
+            err_msg=synapse_model + " test: "
+                                    "Resulting synaptic weight %e "
+                                    "differs from expected %e" % (
+                                       weight_by_nest, weight_reproduced_independently))
 
     def do_the_nest_simulation(self):
         """
@@ -276,20 +278,3 @@ class STDPNNSynapsesTest(unittest.TestCase):
 
     def test_nn_restr_synapse(self):
         self.do_nest_simulation_and_compare_to_reproduced_weight("nn_restr")
-
-
-def suite():
-
-    # makeSuite is sort of obsolete http://bugs.python.org/issue2721
-    # using loadTestsFromTestCase instead.
-    suite = unittest.TestLoader().loadTestsFromTestCase(STDPNNSynapsesTest)
-    return unittest.TestSuite([suite])
-
-
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
-
-
-if __name__ == "__main__":
-    run()

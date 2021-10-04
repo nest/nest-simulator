@@ -24,7 +24,7 @@ Tests for visualization functions.
 """
 
 import os
-import unittest
+import pytest
 import nest
 import numpy as np
 
@@ -50,7 +50,7 @@ except ImportError:
     HAVE_PANDAS = False
 
 
-class VisualizationTestCase(unittest.TestCase):
+class TestVisualization:
     def nest_tmpdir(self):
         """Returns temp dir path from environment, current dir otherwise."""
         if 'NEST_DATA_PATH' in os.environ:
@@ -66,7 +66,7 @@ class VisualizationTestCase(unittest.TestCase):
             # Cleanup temporary datafiles
             os.remove(filename)
 
-    @unittest.skipIf(not HAVE_PYDOT, 'pydot not found')
+    @pytest.mark.skipif(not HAVE_PYDOT, reason='pydot not found')
     def test_plot_network(self):
         """Test plot_network"""
         import nest.visualization as nvis
@@ -92,7 +92,7 @@ class VisualizationTestCase(unittest.TestCase):
             self.assertTrue(all(np.isclose(ref_vm, y_data)))
         plt.close(ax.get_figure())
 
-    @unittest.skipIf(not PLOTTING_POSSIBLE, 'Plotting impossible because matplotlib or display missing')
+    @pytest.mark.skipif(not PLOTTING_POSSIBLE, reason='Plotting impossible because matplotlib or display missing')
     def test_voltage_trace_from_device(self):
         """Test voltage_trace from device"""
         import nest.voltage_trace
@@ -150,7 +150,7 @@ class VisualizationTestCase(unittest.TestCase):
         self.assertEqual(x_data.shape, sr_ref.shape)
         self.assertTrue(all(np.isclose(x_data, sr_ref)))
 
-    @unittest.skipIf(not PLOTTING_POSSIBLE, 'Plotting impossible because matplotlib or display missing')
+    @pytest.mark.skipif(not PLOTTING_POSSIBLE, reason='Plotting impossible because matplotlib or display missing')
     def test_raster_plot(self):
         """Test raster_plot"""
         import nest.raster_plot
@@ -193,13 +193,3 @@ class VisualizationTestCase(unittest.TestCase):
         self.assertTrue(np.all(times_30_to_40_extracted[:, 1] >= 30.))
         self.assertTrue(np.all(times_30_to_40_extracted[:, 1] < 40.))
         self.assertEqual(len(source_2_extracted), 0)
-
-
-def suite():
-    suite = unittest.makeSuite(VisualizationTestCase, 'test')
-    return suite
-
-
-if __name__ == "__main__":
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())

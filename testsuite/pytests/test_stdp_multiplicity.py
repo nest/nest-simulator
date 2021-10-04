@@ -242,5 +242,6 @@ class TestStdpSpikeMultiplicity:
 
         assert all(w_plain == w_plain[0]), 'Plain weights should be independent of timestep!'
         abs_err = np.abs(w_precise - w_plain)
-        assert abs_err[-1] < max_abs_err, 'Final absolute error is ' + '{0:.2E}'.format(abs_err[-1]) + ' but should be <= ' + '{0:.2E}'.format(max_abs_err)
+        assert abs_err[-1] < max_abs_err, 'Final absolute error is ' + '{0:.2E}'.format(abs_err[-1]) \
+                                          + ' but should be <= ' + '{0:.2E}'.format(max_abs_err)
         assert np.all(np.diff(abs_err) < 0), 'Error should decrease with smaller timestep!'

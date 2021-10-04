@@ -49,7 +49,8 @@ class RateNeuronTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.SetKernelStatus({'resolution': self.dt, 'use_wfr': False})
+        nest.resolution = self.dt
+        nest.use_wfr = False
 
         # set up rate neuron and devices
         self.rate_neuron_ipn = nest.Create(

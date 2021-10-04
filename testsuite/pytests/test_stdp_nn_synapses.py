@@ -103,7 +103,7 @@ class STDPNNSynapsesTest(unittest.TestCase):
         """
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        nest.SetKernelStatus({'resolution': self.resolution})
+        nest.resolution = self.resolution
 
         presynaptic_neuron, postsynaptic_neuron = nest.Create(
             "parrot_neuron",

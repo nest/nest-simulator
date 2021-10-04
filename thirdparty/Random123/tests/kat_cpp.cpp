@@ -29,7 +29,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include "kat_main.h" 
+#include "kat_main.h"
 
 // With C++, it's a little trickier to create the mapping from
 // method-name/round-count to functions
@@ -48,8 +48,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cstring>
 #include <utility>
 #include <stdexcept>
-#include "Random123/MicroURNG.hpp"
-#include "Random123/conventional/Engine.hpp"
+#include <Random123/MicroURNG.hpp>
+#include <Random123/conventional/Engine.hpp>
 
 using namespace std;
 
@@ -100,7 +100,7 @@ void do_test(kat_instance* ti){
     // MicroURNG:  throws if the top 32 bits of the high word of ctr
     // are non-zero.
     typedef typename GEN::ctr_type::value_type value_type;
-
+    
     value_type hibits = data.ctr[data.ctr.size()-1]>>( std::numeric_limits<value_type>::digits - 32 );
     try{
         r123::MicroURNG<GEN> urng(data.ctr, data.ukey);

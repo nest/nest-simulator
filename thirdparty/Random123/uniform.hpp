@@ -174,7 +174,7 @@ R123_CONSTEXPR R123_STATIC_INLINE T maxTvalue(){
 template <typename Ftype, typename Itype>
 R123_CUDA_DEVICE R123_STATIC_INLINE Ftype u01(Itype in){
     typedef typename make_unsigned<Itype>::type Utype;
-    R123_CONSTEXPR Ftype factor = Ftype(1.)/(maxTvalue<Utype>() + Ftype(1.));
+    R123_CONSTEXPR Ftype factor = Ftype(1.)/(Ftype(maxTvalue<Utype>()) + Ftype(1.));
     R123_CONSTEXPR Ftype halffactor = Ftype(0.5)*factor;
 #if R123_UNIFORM_FLOAT_STORE
     volatile Ftype x = Utype(in)*factor; return x+halffactor;
@@ -205,7 +205,7 @@ R123_CUDA_DEVICE R123_STATIC_INLINE Ftype u01(Itype in){
 template <typename Ftype, typename Itype>
 R123_CUDA_DEVICE R123_STATIC_INLINE Ftype uneg11(Itype in){
     typedef typename make_signed<Itype>::type Stype;
-    R123_CONSTEXPR Ftype factor = Ftype(1.)/(maxTvalue<Stype>() + Ftype(1.));
+    R123_CONSTEXPR Ftype factor = Ftype(1.)/(Ftype(maxTvalue<Stype>()) + Ftype(1.));
     R123_CONSTEXPR Ftype halffactor = Ftype(0.5)*factor;
 #if R123_UNIFORM_FLOAT_STORE
     volatile Ftype x = Stype(in)*factor; return x+halffactor;
@@ -241,7 +241,7 @@ R123_CUDA_DEVICE R123_STATIC_INLINE Ftype u01fixedpt(Itype in){
     R123_CONSTEXPR int excess = std::numeric_limits<Utype>::digits - std::numeric_limits<Ftype>::digits;
     if(excess>=0){
         R123_CONSTEXPR int ex_nowarn = (excess>=0) ? excess : 0;
-        R123_CONSTEXPR Ftype factor = Ftype(1.)/(Ftype(1.) + ((maxTvalue<Utype>()>>ex_nowarn)));
+        R123_CONSTEXPR Ftype factor = Ftype(1.)/(Ftype(1.) + Ftype((maxTvalue<Utype>()>>ex_nowarn)));
         return (1 | (Utype(in)>>ex_nowarn)) * factor;
     }else
         return u01<Ftype>(in);
@@ -260,9 +260,9 @@ static inline
 std::array<Ftype, CollType::static_size> u01all(CollType in)
 {
     std::array<Ftype, CollType::static_size> ret;
-    size_t i=0;
+    auto p = ret.begin();
     for(auto e : in){
-        ret[i++] = u01<Ftype>(e);
+        *p++ = u01<Ftype>(e);
     }
     return ret;
 }
@@ -278,9 +278,9 @@ static inline
 std::array<Ftype, CollType::static_size> uneg11all(CollType in)
 {
     std::array<Ftype, CollType::static_size> ret;
-    size_t i=0;
+    auto p = ret.begin();
     for(auto e : in){
-        ret[i++] = uneg11<Ftype>(e);
+        *p++ = uneg11<Ftype>(e);
     }
     return ret;
 }
@@ -296,9 +296,9 @@ static inline
 std::array<Ftype, CollType::static_size> u01fixedptall(CollType in)
 {
     std::array<Ftype, CollType::static_size> ret;
-    size_t i=0;
+    auto p = ret.begin();
     for(auto e : in){
-        ret[i++] = u01fixedpt<Ftype>(e);
+        *p++ = u01fixedpt<Ftype>(e);
     }
     return ret;
 }

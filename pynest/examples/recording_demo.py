@@ -38,7 +38,7 @@ def setup(record_to, time_in_steps):
     """Set up the network with the given parameters."""
 
     nest.ResetKernel()
-    nest.SetKernelStatus({'overwrite_files': True})
+    nest.overwrite_files = True
 
     pg_params = {'rate': 1000000.}
     sr_params = {'record_to': record_to, 'time_in_steps': time_in_steps}
@@ -68,6 +68,6 @@ for time_in_steps in (True, False):
         sr = setup(record_to, time_in_steps)
         nest.Simulate(30.0)
         data = get_data(sr)
-        print(f"simulation resolution in ms: {nest.GetKernelStatus('resolution')}")
+        print(f"simulation resolution in ms: {nest.resolution}")
         print(f"data recorded by recording backend {record_to} (time_in_steps={time_in_steps})")
         print(data)

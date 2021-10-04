@@ -1,3 +1,4 @@
+/* This derivative file contributed via email by Gabriel Rockefeller on 8/5/2013 */
 /*
 Copyright 2010-2011, D. E. Shaw Research.
 All rights reserved.

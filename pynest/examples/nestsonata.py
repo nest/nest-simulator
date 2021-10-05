@@ -107,15 +107,19 @@ for edges in config['networks']['edges']:
     with open(edge_types_file, 'r') as csv_file:
         reader = csv.DictReader(csv_file, delimiter=' ', quotechar='"')
         rows = list(reader)
-        edge_params = {d['edge_type_id']: {key: d[key] for key in d if key not in ['edge_type_id', 'target_query', 'source_query']} for d in rows}
-        for type_id, type_d in edge_params.items():
-            edge_params[type_id]['synapse_model'] = edge_params[type_id]['model_template']
+        skip_params = ['edge_type_id', 'target_query', 'source_query', 'dynamics_params']
+        edge_params = {}
 
-            with open(config['components']['synaptic_models_dir'] + '/' + edge_params[type_id]['dynamics_params']) as dynamics_file:
+        for d in rows:
+            synapse_dict = {key: d[key] for key in d if key not in skip_params}
+            synapse_dict['synapse_model'] = synapse_dict.pop('model_template')
+
+            with open(config['components']['synaptic_models_dir'] + '/' + d['dynamics_params']) as dynamics_file:
                 dynamics = json.load(dynamics_file)
-            edge_params.update(dynamics)
-            edge_params[type_id].pop('model_template', None)
-            edge_params[type_id].pop('dynamics_params', None)
+            synapse_dict.update(dynamics)
+
+            edge_params[d['edge_type_id']] = synapse_dict
+
     edge_types[source] = edge_params
 
 
@@ -128,6 +132,10 @@ print()
 nest.Connect(sonata_config=config['networks'], sonata_dynamics=sonata_dynamics)
 
 print(nest.GetKernelStatus('num_connections'))
+
+conns = nest.GetConnections(synapse_model = 'stdp_synapse')
+print(conns)
+print("num_connections with alpha: ", len(conns.alpha))
 
 
 

@@ -39,6 +39,7 @@ namespace nest
 SonataConnector::SonataConnector( const DictionaryDatum& sonata_config, const DictionaryDatum& sonata_dynamics )
   : sonata_config_ ( sonata_config )
   , sonata_dynamics_ ( sonata_dynamics )
+  , param_dict_ ( new Dictionary() )
 {
   std::cerr << "sonata connector \n";
 }
@@ -73,11 +74,7 @@ SonataConnector::connect()
       H5::Group edges_subgroup( edges_group.openGroup( group_name ) );
 
       auto edge_group_id = edges_subgroup.openDataSet( "edge_group_id" );
-      auto edge_group_index = edges_subgroup.openDataSet( "edge_group_index" );  //only needed if group_id > 0
-
       auto num_edge_group_id = get_num_elements_( edge_group_id );
-      auto num_edge_group_index = get_num_elements_( edge_group_index );
-
       auto edge_group_id_data = read_data_( edge_group_id, num_edge_group_id );
       const auto [min, max] = std::minmax_element(edge_group_id_data, edge_group_id_data + num_edge_group_id);
 
@@ -168,13 +165,15 @@ SonataConnector::connect()
           {
             delay = std::stod( ( *syn_spec )[ names::delay ] );
           }
-          const auto param_dict = new Dictionary();  // TODO: This needs to be changed
+
+          RngPtr rng = get_vp_specific_rng( target_thread );
+          get_synapse_params_( syn_spec, snode_id, *target, target_thread, rng );
 
           kernel().connection_manager.connect( snode_id,
                    target,
                    target_thread,
                    synapse_model_id,
-                   param_dict,
+                   param_dict_,
                    delay,
                    weight );
         }
@@ -198,6 +197,32 @@ SonataConnector::read_data_( H5::DataSet dataset, int num_elements )
   int* data = ( int* ) malloc( num_elements * sizeof( int ) );
   dataset.read( data, H5::PredType::NATIVE_INT );
   return data;
+}
+
+void
+SonataConnector::get_synapse_params_( DictionaryDatum syn_params, index snode_id, Node& target, thread target_thread, RngPtr rng )
+{
+  std::set< Name > skip_syn_params_ = { names::weight, names::delay, names::synapse_model };
+
+  for ( auto syn_param_it = syn_params->begin(); syn_param_it != syn_params->end(); ++syn_param_it )
+  {
+    const Name param_name = syn_param_it->first;
+    if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
+    {
+      continue; // weight, delay or other not-settable parameter
+    }
+
+    auto parameter = ConnParameter::create( ( *syn_params )[ param_name ], kernel().vp_manager.get_num_threads() );
+
+    if ( parameter->provides_long() )
+    {
+      ( *param_dict_ )[ param_name ] = parameter->value_int( target_thread, rng, snode_id, &target );
+    }
+    else
+    {
+      ( *param_dict_ )[ param_name ] = parameter->value_double( target_thread, rng, snode_id, &target );
+    }
+  }
 }
 
 } // namespace nest

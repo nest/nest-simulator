@@ -48,9 +48,11 @@ public:
 private:
   hsize_t get_num_elements_( H5::DataSet& dataset );
   int* read_data_( H5::DataSet dataset, int num_elements );
+  void get_synapse_params_( DictionaryDatum syn_params, index snode_id, Node& target, thread target_thread, RngPtr rng );
 
   DictionaryDatum sonata_config_;
   DictionaryDatum sonata_dynamics_;
+  DictionaryDatum param_dict_;
 
 };
 

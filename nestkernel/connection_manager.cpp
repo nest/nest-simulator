@@ -725,13 +725,10 @@ void
 nest::ConnectionManager::connect_sonata( const DictionaryDatum& sonata_config, const DictionaryDatum& sonata_dynamics )
 {
   SonataConnector sonata_connector(sonata_config, sonata_dynamics);
-  //assert( sonata_connector != 0 );
 
-  // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
+  // Set flag before calling sonata_connector.connect() in case exception is thrown after some connections have been created.
   set_connections_have_changed();
-
   sonata_connector.connect();
-  //delete cb;
 }
 
 void

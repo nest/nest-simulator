@@ -1040,7 +1040,6 @@ def
 
 /Connect_sonata [/dictionarytype /dictionarytype]
 {
-  (sli connect sonata) ==
   ConnectSonata_D_D
 } def
 

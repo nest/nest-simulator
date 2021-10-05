@@ -961,8 +961,6 @@ NestModule::ConnectSonata_D_D_Function::execute( SLIInterpreter* i ) const
   DictionaryDatum config = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   DictionaryDatum dynamics = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  std::cerr << "ConnectSonata_D_D_Function\n";
-
   kernel().connection_manager.connect_sonata( config, dynamics );
 
   i->OStack.pop( 2 );

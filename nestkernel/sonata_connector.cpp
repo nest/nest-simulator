@@ -41,21 +41,17 @@ SonataConnector::SonataConnector( const DictionaryDatum& sonata_config, const Di
   , sonata_dynamics_ ( sonata_dynamics )
   , param_dict_ ( new Dictionary() )
 {
-  std::cerr << "sonata connector \n";
 }
 
 void
 SonataConnector::connect()
 {
-  std::cerr << "sonata connect \n";
-
   auto all_edge_files = getValue< ArrayDatum >( sonata_config_->lookup( "edges" ) );
 
   for ( auto edge_files_dictionary_datum : all_edge_files )
   {
     auto edge_dict = getValue< DictionaryDatum >( edge_files_dictionary_datum );
     auto edge_file = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
-    std::cerr << edge_file << "\n";
 
     // Open the specified file and the specified group in the file.
     H5::H5File file( edge_file, H5F_ACC_RDONLY );
@@ -66,11 +62,8 @@ SonataConnector::connect()
     // https://support.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Iterate
     H5Literate( edges_group.getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_group_names, &edge_group_names );
 
-    std::cerr << "Iterating groups:\n";
     for ( auto&& group_name : edge_group_names )
     {
-      std::cerr << group_name << "\n";
-
       H5::Group edges_subgroup( edges_group.openGroup( group_name ) );
 
       auto edge_group_id = edges_subgroup.openDataSet( "edge_group_id" );
@@ -80,8 +73,6 @@ SonataConnector::connect()
 
       if ( *min == *max ) // only one group_id
       {
-        std::cerr << "only one group_id\n";
-
         auto edge_parameters = edges_subgroup.openGroup( std::to_string( *min ) );
 
         auto syn_weight = edge_parameters.openDataSet( "syn_weight" );  // TODO: need to iterate edge_paramters
@@ -101,39 +92,16 @@ SonataConnector::connect()
         auto num_edge_type_id = get_num_elements_( edge_type_id );
         auto edge_type_id_data = read_data_( edge_type_id, num_edge_type_id );
 
-
-        // Create map of edge type ids to NEST synapse_model ids
-        std::map< int, DictionaryDatum > type_id_2_syn_spec;
-        auto all_edge_params = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "edges" ) );
-
         // Retrieve source and target attributes to find which node population to map to
         std::string source_attribute_value;
-        H5::Attribute s_attr = source_node_id.openAttribute( "node_population" );
-        H5::DataType s_type = s_attr.getDataType();
-        s_attr.read(s_type, source_attribute_value);
+        get_attributes( source_attribute_value, source_node_id, "node_population" );
 
         std::string target_attribute_value;
-        H5::Attribute t_attr = target_node_id.openAttribute( "node_population" );
-        H5::DataType t_type = t_attr.getDataType();
-        t_attr.read(t_type, target_attribute_value);
+        get_attributes( target_attribute_value, target_node_id, "node_population" );
 
-        std::cerr << "source attribute_value " << source_attribute_value << "\n";
-        std::cerr << "target attribute_value " << target_attribute_value << "\n";
+        // Create map of edge type ids to NEST synapse_model ids
+        create_type_id_2_syn_spec( source_attribute_value );  // TODO: Do we use the source or the target attribute for the synapse??
 
-        auto current_edge_params = getValue< DictionaryDatum >( all_edge_params->lookup( source_attribute_value ) );
-
-        for ( auto it = current_edge_params->begin(); it != current_edge_params->end(); ++it )
-        {
-          const auto type_id = std::stoi( it->first.toString() );
-          auto d = getValue< DictionaryDatum >( it->second );
-          const auto model_name = getValue< std::string >( ( *d )[ "synapse_model" ] );
-
-          if ( not kernel().model_manager.get_synapsedict()->known( model_name ) )
-          {
-            throw UnknownSynapseType( model_name );
-          }
-          type_id_2_syn_spec[ type_id ] = d;  // TODO: Do we use the source or the target attribute for the synapse??
-        }
         assert( num_source_node_id == num_target_node_id );
         assert( num_source_node_id == num_syn_weight );
         assert( num_source_node_id == num_edge_type_id );
@@ -146,7 +114,7 @@ SonataConnector::connect()
         // Connect
         auto snode_it = current_source_nc->begin();
         auto tnode_it = current_target_nc->begin();
-        for ( hsize_t i = 0; i < num_source_node_id; ++i )
+        for ( hsize_t i = 0; i < num_source_node_id; ++i )  // iterate sonata files
         {
           const auto sonata_source_id = source_node_id_data[ i ];
           const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id;
@@ -154,12 +122,14 @@ SonataConnector::connect()
           const auto sonata_target_id = target_node_id_data[ i ];
           const index target_id = ( *( tnode_it + sonata_target_id ) ).node_id;
           Node* target = kernel().node_manager.get_node_or_proxy( target_id );
+
           thread target_thread = target->get_thread();
           const double weight = syn_weight_data[ i ];
 
-          const auto syn_spec = type_id_2_syn_spec[ edge_type_id_data[ i ] ];
+          const auto syn_spec = type_id_2_syn_spec_[ edge_type_id_data[ i ] ];
           const auto model_name = getValue< std::string >( ( *syn_spec )[ "synapse_model" ] );
           index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( model_name );
+
           double delay = numerics::nan;
           if ( syn_spec->known( names::delay ) )
           {
@@ -177,6 +147,10 @@ SonataConnector::connect()
                    delay,
                    weight );
         }
+      }
+      else
+      {
+        throw NotImplemented( "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
       }
     }
   }
@@ -197,6 +171,35 @@ SonataConnector::read_data_( H5::DataSet dataset, int num_elements )
   int* data = ( int* ) malloc( num_elements * sizeof( int ) );
   dataset.read( data, H5::PredType::NATIVE_INT );
   return data;
+}
+
+void
+SonataConnector::get_attributes( std::string& attribute_value, H5::DataSet dataset, std::string attribute_name )
+{
+  H5::Attribute attr = dataset.openAttribute( attribute_name );
+  H5::DataType type = attr.getDataType();
+  attr.read( type, attribute_value );
+}
+
+void
+SonataConnector::create_type_id_2_syn_spec( std::string attribute_value )
+{
+  auto all_edge_params = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "edges" ) );
+
+  auto current_edge_params = getValue< DictionaryDatum >( all_edge_params->lookup( attribute_value ) );
+
+  for ( auto it = current_edge_params->begin(); it != current_edge_params->end(); ++it )
+  {
+    const auto type_id = std::stoi( it->first.toString() );
+    auto d = getValue< DictionaryDatum >( it->second );
+    const auto model_name = getValue< std::string >( ( *d )[ "synapse_model" ] );
+
+    if ( not kernel().model_manager.get_synapsedict()->known( model_name ) )
+    {
+      throw UnknownSynapseType( model_name );
+    }
+    type_id_2_syn_spec_[ type_id ] = d;
+  }
 }
 
 void

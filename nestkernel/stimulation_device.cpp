@@ -123,10 +123,6 @@ void
 nest::StimulationDevice::set_status( const DictionaryDatum& d )
 {
 
-  if ( kernel().simulation_manager.has_been_prepared() )
-  {
-    throw BadProperty( "Input parameters cannot be changed while inside a Prepare/Run/Cleanup context." );
-  }
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
 

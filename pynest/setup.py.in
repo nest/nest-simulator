@@ -72,7 +72,7 @@ wheel_kwargs = {} if not build_wheel else dict(
 
 setup(
     name = 'nest-simulator',
-    version = '3.1',
+    version = '3.1', 
     description = 'Python bindings for NEST',
     author = 'The NEST Initiative',
     url = 'https://www.nest-simulator.org',

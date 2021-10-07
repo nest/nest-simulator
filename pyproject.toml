@@ -6,3 +6,11 @@ requires = [
 ]
 
 build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+skip = "*-musllinux_*"
+archs = "auto64"
+env = { NEST_CMAKE_BUILDWHEEL="ON" }
+
+[tool.cibuildwheel.linux]
+before-build = source extras/wheelbuild/prepare_container.sh

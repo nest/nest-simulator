@@ -32,17 +32,11 @@ jobs:
           path: build_wheel_env
       - name: Prepare wheel building environment
         run: |
-          echo "STARTING WHEEL ENV PREP"
-          pwd
           source extras/wheelbuild/wheelbuild.sh
-          echo "FINISHED WHEEL ENV PREP"
-          pwd
       - name: Build wheels
         run: |
-          echo "STARTING CIBUILDWHEEL"
           cd build_wheel_env
-          pwd
-          python -m cibuildwheel --output-dir wheelhouse
+          python -m cibuildwheel --output-dir ../wheelhouse
       - uses: actions/upload-artifact@v2
         with:
           path: ./wheelhouse/*.whl

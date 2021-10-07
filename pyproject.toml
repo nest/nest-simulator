@@ -13,4 +13,4 @@ archs = "auto64"
 env = { NEST_CMAKE_BUILDWHEEL="ON" }
 
 [tool.cibuildwheel.linux]
-before-build = source extras/wheelbuild/prepare_container.sh
+before-build = "source extras/wheelbuild/prepare_container.sh"

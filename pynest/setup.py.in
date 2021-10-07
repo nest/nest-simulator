@@ -45,7 +45,6 @@ class cmake_build(build_ext):
             os.makedirs(self.build_temp)
 
         config = sysconfig.get_paths()
-        print("CONFIG", config)
         os.chdir("build")
         print('-'*20, 'Configure CMake')
         subprocess.run(

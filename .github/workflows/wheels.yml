@@ -46,7 +46,7 @@ jobs:
         env:
           CIBW_ENVIRONMENT: NEST_CMAKE_BUILDWHEEL=ON
           CIBW_BEFORE_BUILD_LINUX: source extras/wheelbuild/prepare_container.sh
-
+          CIBW_ARCHS: auto64
       - uses: actions/upload-artifact@v2
         with:
           path: ./wheelhouse/*.whl

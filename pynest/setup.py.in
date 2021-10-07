@@ -32,7 +32,7 @@ class cmake_extension(Extension):
 
 class cmake_build(build_ext):
     def run(self):
-        import subprocess
+        import subprocess, sysconfig
 
         # The path where CMake will be configured and NEST will be built.
         build_directory = os.path.abspath(self.build_temp)
@@ -44,11 +44,14 @@ class cmake_build(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
 
+        config = sysconfig.get_paths()
+        print("CONFIG", config)
         os.chdir("build")
         print('-'*20, 'Configure CMake')
         subprocess.run(
             'cmake .. -DCMAKE_INSTALL_LIBDIR=' + str(lib_directory)
-            +' -DCMAKE_INSTALL_PREFIX=' + str(build_directory),
+            + ' -DCMAKE_INSTALL_PREFIX=' + str(build_directory)
+            + ' -DPYTHON_INCLUDE_DIR=' + str(config["include"]),
             shell=True,
             check=True
         )

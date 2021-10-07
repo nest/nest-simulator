@@ -396,7 +396,15 @@ function( NEST_PROCESS_WITH_PYTHON )
   elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter and lib/header files
-    find_package( Python 3.8 REQUIRED Interpreter Development )
+    # During a wheel build we build against a static interpreter,
+    # so we build in `.Module` mode, see:
+    # https://github.com/pypa/manylinux/issues/255
+    # https://cmake.org/cmake/help/latest/command/add_library.html
+    if ($ENV{NEST_CMAKE_BUILDWHEEL})
+      find_package( Python 3.8 REQUIRED Interpreter Development.Module )
+    else()
+      find_package( Python 3.8 REQUIRED Interpreter Development )
+    endif()
 
     if ( Python_FOUND )
       if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )

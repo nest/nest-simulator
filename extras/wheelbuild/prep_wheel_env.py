@@ -23,7 +23,7 @@ from pathlib import Path
 import sys
 import os
 import shutil
-from _vendored import copy_tree
+from _vendored import copy_nest_tree
 
 # A tiny build system for the build system of our build system. Patent pending.
 
@@ -85,5 +85,8 @@ if "GHA" not in sys.argv:
 # Go fish `setup.py`
 shutil.copy2(pynest_path / "setup.py", wheel_path)
 # Go fish nest python code and intermingle it with the regular `nest` cpp folder
+# knowing that the cpp files will be ignored and the namespace reused to host
+# the Python files, to be picked up by `setup.py`.
 print(f"Copying Python files from `{module_path}`")
-copy_tree(str(module_path), str(wheel_path / "nest"))
+copied = copy_nest_tree(str(module_path), str(wheel_path / "nest"))
+print(f"Copied into {wheel_path / 'nest'}:\n" + "\n".join(copied))

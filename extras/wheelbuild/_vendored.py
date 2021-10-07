@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # _vendored.py
 #
 # This file is part of NEST.

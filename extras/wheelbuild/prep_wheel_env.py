@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # prep_wheel_env.py
 #
 # This file is part of NEST.

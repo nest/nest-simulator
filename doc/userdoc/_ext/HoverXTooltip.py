@@ -83,7 +83,6 @@ def hxt_role(pattern):
         function: returns its own function.
     """
     def role(name, rawtext, text, lineno, inliner, options={}, content=[]):
-        #node = nodes.reference(rawtext, text, refuri=url, **options)
 
         # example: iaf <hxt:integrate and fire>
         raw_params = pattern % (text,)

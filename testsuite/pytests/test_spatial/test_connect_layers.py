@@ -380,34 +380,6 @@ class ConnectLayersTestCase(unittest.TestCase):
         """Connecting layers with multapses impossible"""
         self._assert_connect_layers_multapses(False)
 
-    def test_connect_sliced_grid_layer(self):
-        """Connecting with sliced grid layer"""
-        positions = nest.spatial.grid([4, 5], extent=[10., 10.])
-        for sliced in ['single', 'range', 'step']:
-            layers = self._reset_and_create_sliced(positions)
-            layer = layers['layer']
-            sliced_pre = layers[sliced]
-            self._assert_connect_sliced(sliced_pre, layer)
-        for sliced in ['single', 'range', 'step']:
-            layers = self._reset_and_create_sliced(positions)
-            layer = layers['layer']
-            sliced_post = layers[sliced]
-            self._assert_connect_sliced(layer, sliced_post)
-
-    def test_connect_sliced_free_layer(self):
-        """Connecting with sliced free layer"""
-        positions = nest.spatial.free(nest.random.uniform(), extent=[10., 10.])
-        for sliced in ['single', 'range', 'step']:
-            layers = self._reset_and_create_sliced(positions)
-            layer = layers['layer']
-            sliced_pre = layers[sliced]
-            self._assert_connect_sliced(sliced_pre, layer)
-        for sliced in ['single', 'range', 'step']:
-            layers = self._reset_and_create_sliced(positions)
-            layer = layers['layer']
-            sliced_post = layers[sliced]
-            self._assert_connect_sliced(layer, sliced_post)
-
     def test_connect_synapse_label(self):
         indegree = 10
         conn_spec = {

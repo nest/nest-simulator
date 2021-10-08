@@ -635,7 +635,6 @@ class TestNodeCollection(unittest.TestCase):
         ref_positions = np.array(nest.GetPosition(n))
         self.assertEqual(param.apply(n), tuple(ref_positions[:, 0]))
         self.assertEqual(param.apply(n[0]), (ref_positions[0, 0],))
-        self.assertEqual(param.apply(n[::2]), tuple(ref_positions[::2, 0]))
 
         with self.assertRaises(nest.kernel.NESTError):
             nest.spatial.pos.z.apply(n)

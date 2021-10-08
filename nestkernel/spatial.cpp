@@ -63,12 +63,17 @@ LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR 
   TokenArray new_positions;
   for ( size_t lid = start; lid < stop; ++lid )
   {
-    const auto pos = layer_->get_position_vector( lid );
-    new_positions.push_back( pos );
+    const auto node =
+      kernel().node_manager.get_mpi_local_node_or_device_head( layer_->get_node_collection()->operator[]( lid ) );
+    if ( not node->is_proxy() )
+    {
+      const auto pos = layer_->get_position_vector( lid );
+      new_positions.push_back( pos );
+    }
   }
 
   // Create new free layer with sliced positions
-  int D = layer_->get_position_vector( start ).size();
+  const auto D = layer_->get_num_dimensions();
   assert( D == 2 or D == 3 );
   AbstractLayer* layer_local = nullptr;
   if ( D == 2 )

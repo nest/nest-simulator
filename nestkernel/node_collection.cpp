@@ -725,6 +725,7 @@ NodeCollectionComposite::local_begin( NodeCollectionPTR cp ) const
 NodeCollectionComposite::const_iterator
 NodeCollectionComposite::MPI_local_begin( NodeCollectionPTR cp ) const
 {
+  assert( step_ == 1 ); // TODO: fix case with step > 1
   size_t num_processes = kernel().mpi_manager.get_num_processes();
   size_t rank = kernel().mpi_manager.get_rank();
   size_t rank_first_node =

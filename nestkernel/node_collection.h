@@ -164,6 +164,8 @@ public:
   nc_const_iterator& operator+=( const size_t );
   nc_const_iterator operator+( const size_t ) const;
 
+  size_t operator-( const nc_const_iterator& ) const;
+
   void print_me( std::ostream& ) const;
 };
 
@@ -720,6 +722,28 @@ inline nc_const_iterator nc_const_iterator::operator+( const size_t n ) const
   nc_const_iterator it = *this;
   return it += n;
 }
+
+
+inline size_t nc_const_iterator::operator-( const nc_const_iterator& other ) const
+{
+  size_t i = 0;
+  if ( other < *this )
+  {
+    for ( auto tmp_it = nc_const_iterator( other ); tmp_it < *this; ++tmp_it )
+    {
+      ++i;
+    }
+  }
+  else
+  {
+    for ( auto tmp_it = nc_const_iterator( *this ); tmp_it < other; ++tmp_it )
+    {
+      --i;
+    }
+  }
+  return i;
+}
+
 
 inline bool nc_const_iterator::operator!=( const nc_const_iterator& rhs ) const
 {

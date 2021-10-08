@@ -32,15 +32,15 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
 
     # sizes of source-, target-population and connection probability for
     # statistical test
-    N_s = 60
-    N_t = 60
+    N_s = 30
+    N_t = 30
     # specify connection pattern and specific params
     rule = 'symmetric_pairwise_bernoulli'
     p = 0.5
     conn_dict = {'rule': rule, 'p': p, 'allow_multapses': True,
                  'allow_autapses': False, 'make_symmetric': True}
     # Critical values and number of iterations of two level test
-    stat_dict = {'alpha2': 0.05, 'n_runs': 300}
+    stat_dict = {'alpha2': 0.05, 'n_runs': 100}
 
     def testStatistics(self):
         for fan in ['in', 'out']:

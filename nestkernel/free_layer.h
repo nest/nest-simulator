@@ -127,28 +127,28 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       {
         step = getValue< long >( d->lookup( names::step ) );
       }
+      assert( step == 1 );
       TokenArray pos = getValue< TokenArray >( tkn );
-      const auto num_nodes = this->node_collection_->size();
-      // Number of positions, excluding the skipped nodes
-      const auto stepped_pos_size = std::floor( pos.size() / ( float ) step ) + ( pos.size() % step > 0 );
 
-      if ( num_nodes != stepped_pos_size )
-      {
-        std::stringstream expected;
-        std::stringstream got;
-        expected << "position array with length " << num_nodes;
-        got << "position array with length" << stepped_pos_size;
-        throw TypeMismatch( expected.str(), got.str() );
-      }
+      // Assuming step==1
+      const auto num_local_nodes = this->node_collection_->end() - this->node_collection_->MPI_local_begin();
 
       positions_.clear();
-      positions_.reserve( num_nodes );
+      positions_.reserve( num_local_nodes );
 
-      for ( Token* it = pos.begin(); it != pos.end(); ++it )
+      auto nc_it = this->node_collection_->begin();
+      for ( Token* it = pos.begin(); it != pos.end(); ++it, ++nc_it )
       {
+        assert( nc_it != this->node_collection_->end() );
         Position< D > point = getValue< std::vector< double > >( *it );
-        positions_.push_back( point );
-
+        const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( ( *nc_it ).node_id );
+        assert( node );
+        if ( not node->is_proxy() )
+        {
+          positions_.push_back( point );
+        }
+        // We do the calculation for lower_left_ and max_point even if we don't add the position, to keep the size of
+        // the layer consistent over processes.
         for ( int d = 0; d < D; ++d )
         {
           if ( point[ d ] < this->lower_left_[ d ] )
@@ -161,22 +161,32 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
           }
         }
       }
+      assert( positions_.size() >= num_local_nodes );
     }
     else if ( tkn.is_a< ParameterDatum >() )
     {
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
       auto pos = dynamic_cast< DimensionParameter* >( pd->get() );
+
+      const auto num_local_nodes = this->node_collection_->end() - this->node_collection_->MPI_local_begin();
+
       positions_.clear();
-      auto num_nodes = this->node_collection_->size();
-      positions_.reserve( num_nodes );
+      positions_.reserve( num_local_nodes );
 
-      const thread tid = kernel().vp_manager.get_thread_id();
-      RngPtr rng = get_vp_specific_rng( tid );
+      RngPtr rng = get_rank_synced_rng();
 
-      for ( size_t i = 0; i < num_nodes; ++i )
+      for ( auto nc_it = this->node_collection_->begin(); nc_it < this->node_collection_->end(); ++nc_it )
       {
         Position< D > point = pos->get_values( rng );
-        positions_.push_back( point );
+
+        const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( ( *nc_it ).node_id );
+        assert( node );
+        if ( not node->is_proxy() )
+        {
+          positions_.push_back( point );
+        }
+        // We do the calculation for lower_left_ and max_point even if we don't add the position, to keep the size of
+        // the layer consistent over processes.
         for ( int d = 0; d < D; ++d )
         {
           if ( point[ d ] < this->lower_left_[ d ] )
@@ -189,6 +199,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
           }
         }
       }
+      assert( positions_.size() >= num_local_nodes );
     }
     else
     {
@@ -239,7 +250,11 @@ template < int D >
 Position< D >
 FreeLayer< D >::get_position( index lid ) const
 {
-  return positions_.at( lid );
+  const auto num_procs = kernel().mpi_manager.get_num_processes();
+  const long diff = static_cast< long >( lid ) - num_procs + 1;
+  const size_t position_id =
+    std::floor( diff / static_cast< double >( num_procs ) ) + ( std::abs( diff ) % num_procs > 0 );
+  return positions_.at( position_id );
 }
 
 template < int D >
@@ -253,16 +268,19 @@ FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collect
   NodeCollection::const_iterator nc_begin = node_collection->MPI_local_begin();
   NodeCollection::const_iterator nc_end = node_collection->end();
 
+  auto pos_it = positions_.begin();
+
   local_node_id_pos.reserve( ( D + 1 ) * node_collection->size() );
 
-  for ( NodeCollection::const_iterator nc_it = nc_begin; nc_it < nc_end; ++nc_it )
+  for ( NodeCollection::const_iterator nc_it = nc_begin; nc_it < nc_end; ++nc_it, ++pos_it )
   {
+    assert( pos_it != positions_.end() );
     // Push node ID into array to communicate
     local_node_id_pos.push_back( ( *nc_it ).node_id );
     // Push coordinates one by one
     for ( int j = 0; j < D; ++j )
     {
-      local_node_id_pos.push_back( positions_[ ( *nc_it ).lid ][ j ] );
+      local_node_id_pos.push_back( ( *pos_it )[ j ] );
     }
   }
 

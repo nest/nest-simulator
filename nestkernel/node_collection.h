@@ -365,6 +365,13 @@ public:
    */
   virtual long find( const index ) const = 0;
 
+  /**
+   * Returns number of devices, i.e. nodes without proxies, in the NodeCollection.
+   *
+   * @return Number of devices.
+   */
+  virtual size_t num_devices() const = 0;
+
 private:
   unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
   static NodeCollectionPTR create_();
@@ -386,6 +393,7 @@ private:
   index last_;                         //!< The last node ID in the primitive
   index model_id_;                     //!< Model ID of the node IDs
   NodeCollectionMetadataPTR metadata_; //!< Pointer to the metadata of the node IDs
+  bool contains_devices_;              //!< Whether the primitive contains devices or not
 
 public:
   using const_iterator = nc_const_iterator;
@@ -463,6 +471,8 @@ public:
   bool empty() const override;
 
   long find( const index ) const override;
+
+  size_t num_devices() const override;
 
   /**
    * Checks if node IDs in another primitive is a continuation of node IDs in this
@@ -590,6 +600,8 @@ public:
   bool empty() const override;
 
   long find( const index ) const override;
+
+  size_t num_devices() const override;
 };
 
 inline bool NodeCollection::operator!=( NodeCollectionPTR rhs ) const
@@ -865,6 +877,12 @@ NodeCollectionPrimitive::find( const index neuron_id ) const
   {
     return neuron_id - first_;
   }
+}
+
+inline size_t
+NodeCollectionPrimitive::num_devices() const
+{
+  return contains_devices_ * size();
 }
 
 inline index NodeCollectionComposite::operator[]( const size_t i ) const

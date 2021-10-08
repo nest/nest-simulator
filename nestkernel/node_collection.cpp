@@ -175,7 +175,7 @@ NodeCollection::create( const std::vector< index >& node_ids_vector )
 NodeCollectionPTR
 NodeCollection::create_()
 {
-  return NodeCollectionPTR( new NodeCollectionPrimitive( 0, 0, invalid_index ) );
+  return NodeCollectionPTR( new NodeCollectionPrimitive() );
 }
 
 NodeCollectionPTR
@@ -240,6 +240,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first,
   , last_( last )
   , model_id_( model_id )
   , metadata_( meta )
+  , contains_devices_( not kernel().model_manager.get_model( model_id_ )->has_proxies() )
 {
   assert( first_ <= last_ );
 }
@@ -249,6 +250,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last, index
   , last_( last )
   , model_id_( model_id )
   , metadata_( nullptr )
+  , contains_devices_( not kernel().model_manager.get_model( model_id_ )->has_proxies() )
 {
   assert( first_ <= last_ );
 }
@@ -272,6 +274,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
     }
   }
   model_id_ = first_model_id;
+  contains_devices_ = not kernel().model_manager.get_model( model_id_ )->has_proxies();
 }
 
 NodeCollectionPrimitive::NodeCollectionPrimitive()
@@ -279,6 +282,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive()
   , last_( 0 )
   , model_id_( invalid_index )
   , metadata_( nullptr )
+  , contains_devices_( false )
 {
 }
 
@@ -894,6 +898,16 @@ NodeCollectionComposite::find( const index node_id ) const
     }
     return -1;
   }
+}
+
+size_t
+NodeCollectionComposite::num_devices() const
+{
+  auto device_accumulator = []( size_t a, const NodeCollectionPrimitive& b )
+  {
+    return a + b.num_devices();
+  };
+  return std::accumulate( parts_.begin(), parts_.end(), static_cast< size_t >( 0 ), device_accumulator );
 }
 
 void

@@ -132,9 +132,11 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
       // Assuming step==1
       const auto num_local_nodes = this->node_collection_->end() - this->node_collection_->MPI_local_begin();
+      const auto num_devices = this->node_collection_->num_devices();
+      const auto expected_num_positions = num_devices > 0 ? num_devices : num_local_nodes;
 
       positions_.clear();
-      positions_.reserve( num_local_nodes );
+      positions_.reserve( expected_num_positions );
 
       auto nc_it = this->node_collection_->begin();
       for ( Token* it = pos.begin(); it != pos.end(); ++it, ++nc_it )
@@ -161,7 +163,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
           }
         }
       }
-      assert( positions_.size() >= num_local_nodes );
+      assert( positions_.size() == expected_num_positions );
     }
     else if ( tkn.is_a< ParameterDatum >() )
     {
@@ -169,9 +171,11 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       auto pos = dynamic_cast< DimensionParameter* >( pd->get() );
 
       const auto num_local_nodes = this->node_collection_->end() - this->node_collection_->MPI_local_begin();
+      const auto num_devices = this->node_collection_->num_devices();
+      const auto expected_num_positions = num_devices > 0 ? num_devices : num_local_nodes;
 
       positions_.clear();
-      positions_.reserve( num_local_nodes );
+      positions_.reserve( expected_num_positions );
 
       RngPtr rng = get_rank_synced_rng();
 
@@ -199,7 +203,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
           }
         }
       }
-      assert( positions_.size() >= num_local_nodes );
+      assert( positions_.size() == expected_num_positions );
     }
     else
     {

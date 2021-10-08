@@ -57,6 +57,10 @@ LayerMetadata::LayerMetadata( AbstractLayerPTR layer )
 void
 LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection )
 {
+  if ( step > 1 )
+  {
+    throw BadProperty( "Slicing a NodeCollection with spatial metadata is currently not possible." );
+  }
   // Get positions of current layer, sliced in start-stop. Because the implementation of NodeCollections sliced
   // with step internally keeps the "skipped" nodes, positions must include the "skipped" nodes as well, so that
   // the node indices match the position indices.

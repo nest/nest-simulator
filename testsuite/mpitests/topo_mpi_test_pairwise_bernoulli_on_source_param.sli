@@ -1,5 +1,5 @@
 /*
- *  topo_mpi_test_free_layer_to_layer_pairwise_bernoulli_on_source_param.sli
+ *  topo_mpi_test_pairwise_bernoulli_on_source_param.sli
  *
  *  This file is part of NEST.
  *

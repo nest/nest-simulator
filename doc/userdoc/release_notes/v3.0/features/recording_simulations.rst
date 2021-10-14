@@ -25,9 +25,11 @@ the inclusion of a backend for writing binary files in parallel on
 large clusters and supercomputers. If MPI is enabled, a special data
 exchange backend is built, which is useful in co-simulation scenarios.
 
-See the guide on :doc:`recording from simulations
-<../../record_from_simulations>` for details on potentially
-available recording backends.
+.. seealso::
+
+  See the guide on :doc:`recording from simulations
+  <../../../guides/record_from_simulations>` for details on potentially
+  available recording backends.
 
 Changes
 ^^^^^^^
@@ -97,4 +99,4 @@ demand, the functionality will be re-added in form of a recording
 backend.
 
 All details about the new infrastructure can be found in the guide on
-:doc:`recording from simulations <../../record_from_simulations>`.
+:doc:`recording from simulations <../../../guides/record_from_simulations>`.

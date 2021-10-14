@@ -127,7 +127,6 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       assert( step == 1 );
       TokenArray pos = getValue< TokenArray >( tkn );
 
-      // Assuming step==1
       const auto num_local_nodes = this->node_collection_->end() - this->node_collection_->MPI_local_begin();
       const auto num_devices = this->node_collection_->num_devices();
       // A NodeCollection with spatial information cannot be a composite, so it contains either only devices or

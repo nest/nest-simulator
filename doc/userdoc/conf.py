@@ -177,6 +177,7 @@ html_static_path = [str(doc_build_dir / 'static')]
 if os.environ.get("READTHEDOCS") == "True":
     # The short X.Y version.
     version = os.environ.get("READTHEDOCS_VERSION")
+    print(f"NEST Version: {version}")
     if version == "latest":
         rst_prolog = ".. warning:: \n   This version of the documentation is NOT an official release. \
                      You are looking at 'latest', which is in active and ongoing development. \

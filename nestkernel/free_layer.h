@@ -119,9 +119,6 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     const Token& tkn = d->lookup( names::positions );
     if ( tkn.is_a< TokenArray >() )
     {
-      // If the positions are created from a layer sliced with step, we need to take that into consideration.
-      // Because the implementation of NodeCollections sliced with step internally keeps the "skipped" nodes,
-      // the positions must include the "skipped" nodes as well for consistency.
       size_t step = 1;
       if ( d->known( names::step ) )
       {
@@ -133,6 +130,9 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       // Assuming step==1
       const auto num_local_nodes = this->node_collection_->end() - this->node_collection_->MPI_local_begin();
       const auto num_devices = this->node_collection_->num_devices();
+      // A NodeCollection with spatial information cannot be a composite, so it contains either only devices or
+      // only regular nodes. Regular nodes are distributed over MPI processes, while devices are present on every
+      // process, and therefore requires positions on all processes.
       const auto expected_num_positions = num_devices > 0 ? num_devices : num_local_nodes;
 
       positions_.clear();
@@ -172,6 +172,9 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
       const auto num_local_nodes = this->node_collection_->end() - this->node_collection_->MPI_local_begin();
       const auto num_devices = this->node_collection_->num_devices();
+      // A NodeCollection with spatial information cannot be a composite, so it contains either only devices or
+      // only regular nodes. Regular nodes are distributed over MPI processes, while devices are present on every
+      // process, and therefore requires positions on all processes.
       const auto expected_num_positions = num_devices > 0 ? num_devices : num_local_nodes;
 
       positions_.clear();

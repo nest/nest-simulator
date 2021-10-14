@@ -3,6 +3,8 @@ Reference guide: NEST 2.x vs NEST 3.0
 
 * This guide shows changes to functions or their output between PyNEST 2.x and PyNEST 3.0
 
+* For additional changes in NEST 3.1 and beyond see our :doc:`release notes <../index>`
+
 * Functions not mentioned are unchanged
 
 * Terms that changed for NEST 3.0 are marked in :green:`green`
@@ -15,7 +17,7 @@ Reference guide: NEST 2.x vs NEST 3.0
 
 .. seealso::
 
-  To see code examples of the key changes, check out our :doc:`nest3_features/index`.
+  To see more of the key changes in 3.0, check out our :doc:`list here <features/index>`.
 
 .. _setverbosity:
 

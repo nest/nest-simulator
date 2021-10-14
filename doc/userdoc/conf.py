@@ -177,10 +177,15 @@ html_theme_options = {'logo_only': True,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = [str(doc_build_dir / 'static')]
 
-rst_prolog = ".. warning:: \n   This version of the documentation is NOT an official release. \
-             You are looking at 'latest', which is in active and ongoing development. \
-             You can change versions on the bottom left of the screen."
-rst_epilog = ""
+if os.environ.get("READTHEDOCS") == "True":
+    if os.environ.get("READTHEDOCS_VERSION") == "latest":
+        rst_prolog = ".. warning:: \n   This version of the documentation is NOT an official release. \
+                     You are looking at 'latest', which is in active and ongoing development. \
+                     You can change versions on the bottom left of the screen."
+        rst_epilog = ""
+
+
+
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.

@@ -184,7 +184,7 @@ if os.environ.get("READTHEDOCS") == "True":
                      You can change versions on the bottom left of the screen."
         rst_epilog = ""
 else:
-    version = "3.1"
+    version = "latest"
 
 # -- Options for HTMLHelp output ------------------------------------------
 

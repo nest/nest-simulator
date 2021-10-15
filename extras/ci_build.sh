@@ -84,6 +84,7 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
 
     echo "MSGBLD0070: Retrieving changed files."
     file_names=$CHANGED_FILES
+    echo "MSGBLD0071: $file_names"
 
     # Note: uncomment the following line to static check *all* files, not just those that have changed.
     # Warning: will run for a very long time
@@ -104,6 +105,7 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     CPPCHECK=cppcheck
     CLANG_FORMAT=clang-format
     PEP8=pycodestyle
+    PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"
 
     # Perform or skip a certain analysis.
     PERFORM_VERA=true
@@ -126,7 +128,8 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     ./extras/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
     "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
     "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
-    "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE"
+    "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" \
+    "$PYCODESTYLE_IGNORES"
 
     exit $?
 fi
@@ -152,14 +155,14 @@ xPYTHON=0
 xREADLINE=0
 xSIONLIB=0
 
-CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas"
+CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
 
 if [ "$xNEST_BUILD_TYPE" = "OPENMP_ONLY" ]; then
     xGSL=1
     xLIBBOOST=1
     xLTDL=1
     xOPENMP=1
-    CXX_FLAGS="-pedantic -Wextra"
+    CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"
 fi
 
 if [ "$xNEST_BUILD_TYPE" = "MPI_ONLY" ]; then
@@ -180,7 +183,7 @@ if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
     xPYTHON=1
     xREADLINE=1
     xSIONLIB=1
-    CXX_FLAGS="-pedantic -Wextra"
+    CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"
 fi
 
 if [ "$xNEST_BUILD_TYPE" = "FULL_NO_EXTERNAL_FEATURES" ]; then
@@ -234,6 +237,7 @@ if [ "$xMUSIC" = "1" ] ; then
 else
     CONFIGURE_MUSIC="-Dwith-music=OFF"
 fi
+
 if [ "$xGSL" = "1" ] ; then
     CONFIGURE_GSL="-Dwith-gsl=ON"
 else

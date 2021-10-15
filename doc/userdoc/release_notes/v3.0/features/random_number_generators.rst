@@ -42,7 +42,7 @@ Which random number generator types are available can be checked by:
 
 .. seealso::
 
-   All the details can be found in our guide on :doc:`random number generators <../../../guides/random_numbers>`
+   Details can be found in our guide on :doc:`random number generators <../../../guides/random_numbers>`
 
 Counter-based random number generators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

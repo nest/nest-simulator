@@ -22,7 +22,7 @@ MPI recording backend.
 
 .. seealso::
 
-  All details about the new infrastructure can be found in the guide on
+  Details about the new infrastructure can be found in the guide on
   :doc:`stimulating the network <../../../guides/stimulate_the_network>`.
 
 Changes

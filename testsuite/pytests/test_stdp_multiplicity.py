@@ -26,13 +26,6 @@ import unittest
 import math
 import numpy as np
 
-try:
-    import matplotlib as mpl
-    import matplotlib.pyplot as plt
-    DEBUG_PLOTS = True
-except Exception:
-    DEBUG_PLOTS = False
-
 
 @nest.ll_api.check_stack
 class StdpSpikeMultiplicity(unittest.TestCase):
@@ -58,29 +51,23 @@ class StdpSpikeMultiplicity(unittest.TestCase):
        delta, since in this case all spikes are at the end of the step, i.e.,
        all spikes have identical times independent of delta.
 
-    2. We choose delta values that are decreased by factors of 2. The
+    2. We choose delta values that are decrease by factors of 2. The
        plasticity rules depend on spike-time differences through
-
-       ::
 
            exp(dT / tau)
 
        where dT is the time between pre- and postsynaptic spikes. We construct
        pre- and postsynaptic spike times so that
 
-       ::
+          dT = pre_post_shift + m * delta
 
-           dT = pre_post_shift + m * delta
-
-       with ``m * delta < resolution << pre_post_shift``. The time-dependence
+       with m * delta < resolution << pre_post_shift. The time-dependence
        of the plasticity rule is therefore to good approximation linear in
        delta.
 
-       We can thus test as follows: Let ``w_pl`` be the weight obtained with the
-       plain parrot, and ``w_ps_j`` the weight obtained with the precise parrot
-       for ``delta_j = delta0 / 2^j``. Then,
-
-       ::
+       We can thus test as follows: Let w_pl be the weight obtained with the
+       plain parrot, and w_ps_j the weight obtained with the precise parrot
+       for delta_j = delta0 / 2^j. Then,
 
          ( w_ps_{j+1} - w_pl ) / ( w_ps_j - w_pl ) ~ 0.5  for all j
 
@@ -129,8 +116,8 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             assert multiplicity * delta < resolution / 2., "Test inconsistent."
 
             nest.ResetKernel()
-            nest.SetKernelStatus({'tics_per_ms': tics_per_ms,
-                                  'resolution': resolution})
+            # For co-dependent properties, we use `set()` instead of kernel attributes
+            nest.set(resolution=resolution, tics_per_ms=tics_per_ms)
 
             pre_times = sorted(t_base - k * delta
                                for t_base in pre_spike_times_base
@@ -170,7 +157,8 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             # create spike recorder --- debugging only
             spikes = nest.Create("spike_recorder")
             nest.Connect(
-                pre_parrot + post_parrot + pre_parrot_ps + post_parrot_ps,
+                pre_parrot + post_parrot +
+                pre_parrot_ps + post_parrot_ps,
                 spikes
             )
 
@@ -206,51 +194,33 @@ class StdpSpikeMultiplicity(unittest.TestCase):
             post_weights['parrot'].append(w_post)
             post_weights['parrot_ps'].append(w_post_ps)
 
-        if DEBUG_PLOTS:
-            import datetime
-            fig, ax = plt.subplots(nrows=2)
-            fig.suptitle("Final obtained weights")
-            ax[0].plot(post_weights["parrot"], marker="o", label="parrot")
-            ax[0].plot(post_weights["parrot_ps"], marker="o", label="parrot_ps")
-            ax[0].set_ylabel("final weight")
-            ax[0].set_xticklabels([])
-            ax[1].semilogy(np.abs(np.array(post_weights["parrot"]) - np.array(post_weights["parrot_ps"])),
-                           marker="o", label="error")
-            ax[1].set_xticks([i for i in range(len(deltas))])
-            ax[1].set_xticklabels(["{0:.1E}".format(d) for d in deltas])
-            ax[1].set_xlabel("timestep [ms]")
-            for _ax in ax:
-                _ax.grid(True)
-                _ax.legend()
-            plt.savefig("/tmp/test_stdp_multiplicity" + str(datetime.datetime.utcnow()) + ".png")
-            plt.close(fig)
-        print(post_weights)
         return post_weights
 
-    def _test_stdp_multiplicity(self, pre_post_shift, max_abs_err=1E-6):
-        """Check that for smaller and smaller timestep, weights obtained from parrot and precise parrot converge.
+    def test_ParrotNeuronSTDPProtocolPotentiation(self):
+        """Check weight convergence on potentiation."""
 
-        Enforce a maximum allowed absolute error ``max_abs_err`` between the final weights for the smallest timestep
-        tested.
-
-        Enforce that the error should strictly decrease with smaller timestep."""
-
-        post_weights = self.run_protocol(pre_post_shift=pre_post_shift)
+        post_weights = self.run_protocol(pre_post_shift=10.0)
         w_plain = np.array(post_weights['parrot'])
         w_precise = np.array(post_weights['parrot_ps'])
 
-        assert all(w_plain == w_plain[0]), 'Plain weights should be independent of timestep!'
-        abs_err = np.abs(w_precise - w_plain)
-        assert abs_err[-1] < max_abs_err, 'Final absolute error is ' + '{0:.2E}'.format(abs_err[-1]) + ' but should be <= ' + '{0:.2E}'.format(max_abs_err)
-        assert np.all(np.diff(abs_err) < 0), 'Error should decrease with smaller timestep!'
+        assert all(w_plain == w_plain[0]), 'Plain weights differ'
+        dw = w_precise - w_plain
+        dwrel = dw[1:] / dw[:-1]
+        assert all(np.round(dwrel, decimals=3) ==
+                   0.5), 'Precise weights do not converge.'
 
-    def test_stdp_multiplicity(self):
-        """Check weight convergence on potentiation and depression.
+    def test_ParrotNeuronSTDPProtocolDepression(self):
+        """Check weight convergence on depression."""
 
-        See also: _test_stdp_multiplicity()."""
-        # XXX: TODO: use ``@pytest.mark.parametrize`` for this
-        self._test_stdp_multiplicity(pre_post_shift=10.)    # test potentiation
-        self._test_stdp_multiplicity(pre_post_shift=-10.)   # test depression
+        post_weights = self.run_protocol(pre_post_shift=-10.0)
+        w_plain = np.array(post_weights['parrot'])
+        w_precise = np.array(post_weights['parrot_ps'])
+
+        assert all(w_plain == w_plain[0]), 'Plain weights differ'
+        dw = w_precise - w_plain
+        dwrel = dw[1:] / dw[:-1]
+        assert all(np.round(dwrel, decimals=3) ==
+                   0.5), 'Precise weights do not converge.'
 
 
 def suite():

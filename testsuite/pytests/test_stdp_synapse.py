@@ -235,13 +235,14 @@ class TestSTDPSynapse:
                 idx_next_post_spike = np.where((post_spikes_delayed - t) > 0)[0][0]
                 t_next_post_spike = post_spikes_delayed[idx_next_post_spike]
 
-            if idx_next_post_spike >= 0 and t_next_post_spike < t_next_pre_spike:
+            if idx_next_pre_spike >= 0 and idx_next_post_spike >= 0 and t_next_post_spike < t_next_pre_spike:
                 handle_post_spike = True
                 handle_pre_spike = False
-            elif idx_next_pre_spike >= 0 and t_next_post_spike > t_next_pre_spike:
+            elif idx_next_pre_spike >= 0 and idx_next_post_spike >= 0 and t_next_post_spike > t_next_pre_spike:
                 handle_post_spike = False
                 handle_pre_spike = True
             else:
+                # simultaneous spikes (both true) or no more spikes to process (both false)
                 handle_post_spike = idx_next_post_spike >= 0
                 handle_pre_spike = idx_next_pre_spike >= 0
 
@@ -329,4 +330,5 @@ class TestSTDPSynapse:
             self.init_params()
             for self.nest_neuron_model in ["iaf_psc_exp", "iaf_cond_exp"]:
                 fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
+                fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
                 self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)

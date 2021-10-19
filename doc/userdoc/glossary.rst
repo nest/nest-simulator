@@ -1,6 +1,7 @@
 :orphan:
 
 .. _sec_glossary:
+:sorted:
 
 Glossary
 ========
@@ -10,142 +11,142 @@ Common abbreviations in NEST
 .. glossary::
 
  iaf
-   integrate and fire
+   integrate and fire.
 
  gif
-   generalized integrate and fire
+   generalized integrate and fire.
 
  cond
-   conductance-based
+   conductance-based.
 
  psc
-   post-synaptic current (current-based)
+   post-synaptic current (current-based).
 
  hh
-   hodgkin huxley
+   hodgkin huxley.
 
  rng
-   random number generator
+   random number generator.
 
  wfr
-   waveform relaxation method
+   waveform relaxation method.
 
  aeif
-   adaptive exponential integrate and fire
+   adaptive exponential integrate and fire.
 
  ht
-   hill and tononi
+   hill and tononi.
 
  pp
-   point process
+   point process.
 
  in
-   inhibitory
+   inhibitory.
 
  ex
-   excitatory
+   excitatory.
 
  MAM
-   multi-area model
+   multi-area model.
 
  mpi
-   message passing interface
+   message passing interface.
 
  stdp
-   spike-timing dependent plasticity synapse
+   spike-timing dependent plasticity synapse.
 
  st
-   short term plasticity
+   short term plasticity.
 
  vp
-   virtual process
+   virtual process.
 
  time
-   milliseconds (ms)
+   milliseconds.
 
  tau_m
-   membrane time constant in ms
+   membrane time constant in milliseconds.
 
  t_ref
-   duration of refractory period in ms
+   duration of refractory period in milliseconds.
 
  t_spike
-   point in time of last spike in
+   point in time of last spike in milliseconds.
 
  capacitance
-   picofarads (pF)
+   picofarads (pF).
 
  C_m
-   capacitance of the membrane in pF
+   capacitance of the membrane in picofarads (pF).
 
  current
-   picoamperes (pA)
+   picoamperes (pA).
 
  I_e
-   constant input current in pA
+   constant input current in picoamperes (pA).
 
  conductance
-   nanosiemens (nS)
+   Nanosiemens (nS).
 
  g_L
-   Leak conductance in nS
+   Leak conductance in Nanosiemens (nS).
 
  g_K
-   Potassium peak conductance in nS
+   Potassium peak conductance in Nanosiemens (nS).
 
  g_Na
-   Sodium peak conductance in nS
+   Sodium peak conductance in Nanosiemens (nS).
 
  spike rates
-   spikes/s
+   Spikes/second.
 
  modulation frequencies
-   herz (Hz)
+   Herz (Hz).
 
  frequency
-   frequncy in Hz
+   Frequncy in Hertz (Hz).
 
  voltage
-   millivolts (mV)
+   Millivolts (mV).
 
  V_m
-   Membrane potential in mV
+   Membrane potential in Millivolts (mV).
 
  E_L
-   Resting membrane potential in mV
+   Resting membrane potential in Millivolts (mV).
 
  V_th
-   Spike threshold in mV
+   Spike threshold in Millivolts (mV).
 
  V_reset double
-   Reset potential of the membrane in mV
+   Reset potential of the membrane in Millivolts (mV).
 
  V_min
-   Absolute lower value for the membrane potential in mV
+   Absolute lower value for the membrane potential in Millivolts (mV).
 
  E_ex
-   Excitatory reversal potential in mV
+   Excitatory reversal potential in Millivolts (mV).
 
  E_in
-   Inhibitory reversal potential in mV
+   Inhibitory reversal potential in Millivolts (mV).
 
  E_Na
-   Sodium reversal potential in mV
+   Sodium reversal potential in Millivolts (mV).
 
  E_K
-   Potassium reversal potential in mV
+   Potassium reversal potential in Millivolts (mV).
 
  subthreshold dynamics
-   Non-spiking backgound activity of the synapses
+   Non-spiking backgound activity of the synapses.
 
  refractory period
    A time period in which neurons cannot fire. This is due to depolarization.
 
  shotnoise
-   Fluctuations in ion channels as a result of ionic migration through an open channel
+   Fluctuations in ion channels as a result of ionic migration through an open channel.
 
  autapse
-   A neuron connected to itself
+   A neuron connected to itself.
 
  multapse
    A neuron that has (multiple) synapses with another neuron.
@@ -163,126 +164,126 @@ Common abbreviations in NEST
    Dendritic trees formed to create new synapses.
 
  axon
-   The output structure of a neuron
+   The output structure of a neuron.
 
  Clopath
-   Refering to the Clopath plasticity rule
+   Refering to the Clopath plasticity rule.
 
  plasticity
-   The ability of a network to grow or reorganize
+   The ability of a network to grow or reorganize.
 
  Hodgkin-Huxley
    A mathematical model that describes how action potentials in neurons can be generated and how they propagate.
 
  refractory time
-   A time period in which neurons cannot fire due to depolarization
+   A time period in which neurons cannot fire due to depolarization.
 
  Point process
    A temporal point process is a mathematical model for a time series of discrete events. 
 
  non-renewal process
-   Point process with adapting threshold eta(t)
+   Point process with adapting threshold eta(t).
 
  rheobase
-   The minimal current that is required to generate a spike
+   The minimal current that is required to generate a spike.
 
  reversal potential
-   The membrane potential at which a neuron causes no net current flow
+   The membrane potential at which a neuron causes no net current flow.
 
  time constant
-   The time it takes for a signal to rise or decay in ms
+   The time it takes for a signal to rise or decay in milliseconds.
 
    See membrane time constant (tau_m) and synaptic time constant (tau_syn) in the model documentation.
 
  Gaussian white noise
-   A random process with a mean of zero
+   A random process with a mean of zero.
 
  sfa
-   spike-frequency adaptation
+   spike-frequency adaptation.
 
  point neuron
    A simple neuron model where its soma along with the membrane potential dynamics are modeled as a resistance–capacitance circuit.
 
  propagator
-   Matrix used in a numerically integrated dynamical system
+   Matrix used in a numerically integrated dynamical system.
    
    See :doc:`exact integration <guides/exact-integration>` page for further information.
 
  synaptic response kernel
-   Shape of post-synaptic response, commonly an alpha, delta-pulse, or exponential function
+   Shape of post-synaptic response, commonly an alpha, delta-pulse, or exponential function.
 
  eligibility trace
-   A property of a synapse, which allows it to be modified for a period of time when some constraints are satisfied
+   A property of a synapse, which allows it to be modified for a period of time when some constraints are satisfied.
 
  reversal potential
-   The membrane potential in which a neuron causes no net current flow
+   The membrane potential in which a neuron causes no net current flow.
 
  alpha function
-   Instance of a synaptic response
+   Instance of a synaptic response.
 
  facilitation
-   Mechanism of making a synapse stronger by increasing the weight
+   Mechanism of making a synapse stronger by increasing the weight.
    
-   Opposite to depression
+   Opposite to depression.
  
  depression
-   Mechanism of making a synapse weaker by decreasing the weight 
+   Mechanism of making a synapse weaker by decreasing the weight.
    
    Opposite to facilitation.
 
  stdp_synapse
-   Synapse with spike-timing dependent plasticity
+   Synapse with spike-timing dependent plasticity.
 
  static_synapse
-   Synapse with a fixed weight
+   Synapse with a fixed weight.
  
  refractoriness
-   The time before a new action potential can take place
+   The time before a new action potential can take place.
 
  renewal process
-   spike-time statistical analysis
+   spike-time statistical analysis.
  
  spike train
-   A sequence of action potentials
+   A sequence of action potentials.
 
  spike-frequency adaptation
    After stimulation, neurons show a reduction in the firing frequency of their spike response following an initial increase. 
 
  GIF
-   Generalized integrate-and-fire model
+   Generalized integrate-and-fire model.
 
  coefficient of variation
-   Standard deviation divided by the mean
+   Standard deviation divided by the mean.
 
  distal dendrite
-   The part of the dentrite that is furthest away from the soma
+   The part of the dentrite that is furthest away from the soma.
 
  proximal dendrite
-   The part of the dentrite which is closest to the soma
+   The part of the dentrite which is closest to the soma.
 
  soma
-   Cell body of the neuron
+   Cell body of the neuron.
 
  psp
-   Post-synaptic potential
+   Post-synaptic potential.
 
  PSC
-   Post-synatpic current
+   Post-synatpic current.
 
  absolute refractory
-   An interval after a neuron fires a spike to prevent it from firing  a spike again
+   An interval after a neuron fires a spike to prevent it from firing a spike again.
 
  indegree
-   Amount of connections to post-synaptic cells
+   Amount of connections to post-synaptic cells.
 
  outdegree
-   Amount of connections from pre-synaptic cells
+   Amount of connections from pre-synaptic cells.
  
  synaptic efficacy
-   The extent to which a pre-synaptic neuron affects a post-synaptic neuron
+   The extent to which a pre-synaptic neuron affects a post-synaptic neuron.
 
  multimeter
-   A device to record analog quantities (e.g., membrane voltage) of a neuron over time
+   A device to record analog quantities (e.g., membrane voltage) of a neuron over time.
 
  events
-   Spikes are encoded as events in NEST
+   Spikes are encoded as events in NEST.

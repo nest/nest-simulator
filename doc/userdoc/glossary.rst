@@ -62,16 +62,16 @@ Common abbreviations in NEST
    virtual process.
 
  time
-   milliseconds.
+   milliseconds (ms).
 
  tau_m
-   membrane time constant in milliseconds.
+   membrane time constant in milliseconds (ms).
 
  t_ref
-   duration of refractory period in milliseconds.
+   duration of refractory period in milliseconds (ms).
 
  t_spike
-   point in time of last spike in milliseconds.
+   point in time of last spike in milliseconds (ms).
 
  capacitance
    picofarads (pF).
@@ -191,7 +191,7 @@ Common abbreviations in NEST
    The membrane potential at which a neuron causes no net current flow.
 
  time constant
-   The time it takes for a signal to rise or decay in milliseconds.
+   The time it takes for a signal to rise or decay in milliseconds (ms).
 
    See membrane time constant (tau_m) and synaptic time constant (tau_syn) in the model documentation.
 

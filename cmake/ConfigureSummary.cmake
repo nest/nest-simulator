@@ -18,7 +18,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 function( NEST_PRINT_CONFIG_SUMMARY )
-  # set summary color : here please choose appropriate color!
+  # set summary color: here please choose appropriate color!
   message( "${BoldCyan}" )
   message( "--------------------------------------------------------------------------------" )
   message( "NEST Configuration Summary" )

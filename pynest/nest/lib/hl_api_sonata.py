@@ -42,7 +42,7 @@ class SonataConnector(object):
         self.base_path = base_path
         self.config = config
         self.node_collections = {}
-        self.edge_types = {}
+        self.edge_types = []
 
         self.convert_config_()
 
@@ -129,7 +129,9 @@ class SonataConnector(object):
     def create_edge_dict(self):
 
         for edges in self.config['networks']['edges']:
-            edge_types_file = edges['edge_types_file']
+            edge_dict = {}
+            edge_dict['edges_file'] = edges['edges_file']
+            edge_types_file = edges['edge_types_file']  # Synapses
 
             edge_file = h5py.File(edges["edges_file"], 'r')
             file_name = list(edge_file['edges'].keys())[0]  # What if we have more than one?? can iterate over .items()
@@ -150,7 +152,7 @@ class SonataConnector(object):
                     synapse_dict.update(dynamics)
 
                     edge_params[d['edge_type_id']] = synapse_dict
+            edge_dict['edge_synapse'] = edge_params
 
-            self.edge_types[source] = edge_params
-            
-            
+            self.edge_types.append(edge_dict)
+

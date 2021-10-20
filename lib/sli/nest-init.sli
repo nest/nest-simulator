@@ -1038,9 +1038,9 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/Connect_sonata [/dictionarytype /dictionarytype]
+/Connect_sonata [/dictionarytype]
 {
-  ConnectSonata_D_D
+  ConnectSonata_D
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

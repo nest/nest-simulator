@@ -36,9 +36,8 @@ extern "C" herr_t get_group_names( hid_t loc_id, const char* name, const H5L_inf
 namespace nest
 {
 
-SonataConnector::SonataConnector( const DictionaryDatum& sonata_config, const DictionaryDatum& sonata_dynamics )
-  : sonata_config_ ( sonata_config )
-  , sonata_dynamics_ ( sonata_dynamics )
+SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
+  : sonata_dynamics_ ( sonata_dynamics )
   , param_dict_ ( new Dictionary() )
 {
 }
@@ -46,11 +45,11 @@ SonataConnector::SonataConnector( const DictionaryDatum& sonata_config, const Di
 void
 SonataConnector::connect()
 {
-  auto all_edge_files = getValue< ArrayDatum >( sonata_config_->lookup( "edges" ) );
+  auto edges = getValue< ArrayDatum >( sonata_dynamics_->lookup( "edges" ) );
 
-  for ( auto edge_files_dictionary_datum : all_edge_files )
+  for ( auto edge_dictionary_datum : edges )
   {
-    auto edge_dict = getValue< DictionaryDatum >( edge_files_dictionary_datum );
+    auto edge_dict = getValue< DictionaryDatum >( edge_dictionary_datum );
     auto edge_file = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
 
     // Open the specified file and the specified group in the file.
@@ -94,7 +93,7 @@ SonataConnector::connect()
         get_attributes_( target_attribute_value, target_node_id, "node_population" );
 
         // Create map of edge type ids to NEST synapse_model ids
-        create_type_id_2_syn_spec_( source_attribute_value );  // TODO: Do we use the source or the target attribute for the synapse??
+        create_type_id_2_syn_spec_( edge_dict );
 
         assert( num_source_node_id == num_target_node_id );
 
@@ -182,13 +181,11 @@ SonataConnector::get_attributes_( std::string& attribute_value, H5::DataSet data
 }
 
 void
-SonataConnector::create_type_id_2_syn_spec_( std::string attribute_value )
+SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_dict )
 {
-  auto all_edge_params = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "edges" ) );
+  auto edge_params = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
 
-  auto current_edge_params = getValue< DictionaryDatum >( all_edge_params->lookup( attribute_value ) );
-
-  for ( auto it = current_edge_params->begin(); it != current_edge_params->end(); ++it )
+  for ( auto it = edge_params->begin(); it != edge_params->end(); ++it )
   {
     const auto type_id = std::stoi( it->first.toString() );
     auto d = getValue< DictionaryDatum >( it->second );

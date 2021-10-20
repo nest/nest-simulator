@@ -46,9 +46,9 @@ function(print)
     cmake_parse_arguments(MSG "${option}" "${singleValued}" "" ${ARGN})
     if (${MSG_HAS_COLOR})
         if ("${MSG_MODE}" STREQUAL "FATAL")
-            message(FATAL_ERROR "[!]${MSG_COLOR} ${MSG_TEXT} ${Reset}")
+            message(FATAL_ERROR "${MSG_COLOR} ${MSG_TEXT} ${Reset}")
         elseif ("${MSG_MODE}" STREQUAL "WARNING")
-            message(WARNING "[-]${MSG_COLOR} ${MSG_TEXT}${Reset}")
+            message(WARNING "${MSG_COLOR} ${MSG_TEXT}${Reset}")
         else()
             message(STATUS "${MSG_COLOR}${MSG_TEXT} ${Reset}") 
         endif()
@@ -57,25 +57,30 @@ function(print)
     endif()  
 endfunction()
 
+function(beginColor)
+
+    
+endfunction(beginColor)
+
 
 function(printWarning TEXT)
-    print(HAS_COLOR MODE "WARNING" TEXT "${TEXT}" COLOR ${Yellow})
+    print(HAS_COLOR MODE "WARNING" TEXT "$ Warning: {TEXT}" COLOR ${Yellow})
 endfunction()
 
 
 
 function(printError TEXT)
-    print(HAS_COLOR MODE "FATAL" TEXT "${TEXT}" COLOR ${Red})
+    print(HAS_COLOR MODE "FATAL" TEXT "Error: ${TEXT}" COLOR ${Red})
 endfunction()
 
 
 function(printInfo TEXT)
-    print(HAS_COLOR TEXT "[*] ${TEXT}" COLOR ${BoldGreen} )
+    print(HAS_COLOR TEXT "Info: ${TEXT}" COLOR ${BoldGreen} )
 endfunction()
 
 
 function(abortMSG TEXT CAUSE )
-    print(HAS_COLOR TEXT "${CAUSE}" COLOR ${BoldRed})
+    print(HAS_COLOR TEXT "Exception: ${CAUSE}" COLOR ${BoldRed})
     printERROR("${TEXT}")
 endfunction()
 

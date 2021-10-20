@@ -202,7 +202,7 @@ nest_check_random123()
 
 include( NestVersionInfo )
 get_version_info()
-message("-- NEST version: ${NEST_VERSION_STRING}")
+printInfo("-- NEST version: ${NEST_VERSION_STRING}")
 
 ################################################################################
 ##################         Enable Testing Targets             ##################
@@ -277,7 +277,7 @@ elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}" )
 else ()
-  message( FATAL_ERROR "Unknown build type: '${CMAKE_BUILD_TYPE}'" )
+  printError( "Unknown build type: '${CMAKE_BUILD_TYPE}'" )
 endif ()
 if ( with-defines )
   foreach ( def ${with-defines} )

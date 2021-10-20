@@ -9,12 +9,13 @@ Table of Contents
    :maxdepth: 1
    :caption: User Documentation
 
-   Download <download>
    Install <installation/index>
-   Configure <installation/configuration>
-   getting_started
+   HPC Configure <hpc_docs/index>
+   Neurons <neuron_docs/index>
+   Synapses <synapse_docs/index>
+   Devices <device_docs/index>
+   Networks <network_docs/index>
    tutorials/index
-   guides/index
    examples/index
    models/index
    nest_server

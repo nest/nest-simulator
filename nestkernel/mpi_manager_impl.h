@@ -78,7 +78,7 @@ nest::MPIManager::communicate_Allgatherv( std::vector< T >& send_buffer,
   std::vector< int >& recv_counts )
 {
   // attempt Allgather
-  MPI_Allgatherv( &send_buffer[ 0 ],
+  MPI_Allgatherv( &( *send_buffer.begin() ),
     send_buffer.size(),
     MPI_Type< T >::type,
     &recv_buffer[ 0 ],

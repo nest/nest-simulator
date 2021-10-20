@@ -104,11 +104,10 @@ class SonataConnector(object):
                         warnings.warn(f'model of type {model_type} is not a NEST model, it will not be used.')
 
                     dynamics = {}
-                    if 'dynamics' in node_type_df.keys():
+                    if 'dynamics_params' in node_type_df.keys():
                         model_dynamics = node_type_df.dynamics_params.iloc[0]
-
                         with open(self.config['components']['point_neuron_models_dir'] + '/' + model_dynamics) as dynamics_file:
-                            dynamics = json.load(dynamics_file)
+                            dynamics.update(json.load(dynamics_file))
 
                     if node_type_df['model_type'].iloc[0] == 'virtual':
                         model = 'spike_generator'
@@ -133,6 +132,7 @@ class SonataConnector(object):
                     else:
                         model = node_type_df.model_template.iloc[0].replace('nest:','')
                         nodes += Create(model, n+1, params=dynamics)
+                        
 
             self.node_collections[population_name] = nodes
 

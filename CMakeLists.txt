@@ -35,17 +35,15 @@ if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
   abortMSG("CMAKE_INSTALL_PREFIX cannot be an empty string" "CMAKE_INSTALL_PREFIX is:${CMAKE_INSTALL_PREFIX} [length:${PathLength}]")
 endif()
 
-# handel non-aboslute path
+# handle relative installation prefixes
 if( NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
     # convert relative path to absolute path
-    printWarning("CMAKE_INSTALL_PREFIX isn't an absolute path")
     get_filename_component(absPath ${CMAKE_INSTALL_PREFIX} ABSOLUTE BASE_DIR ${CMAKE_BINARY_DIR})
     set(CMAKE_INSTALL_PREFIX ${absPath})
-    printInfo("CMAKE_INSTALL_PREFIX is now set to ${CMAKE_INSTALL_PREFIX}")  
+    printInfo("Relative CMAKE_INSTALL_PREFIX has been converted to absolute path ${CMAKE_INSTALL_PREFIX}")
 endif()
 
-
-################################################################################
+###############################################################################
 ##################         All User Defined options           ##################
 ################################################################################
 

@@ -33,16 +33,18 @@ import time
 import matplotlib.pyplot as plt
 
 nest.ResetKernel()
-nest.set(resolution=0.001, tics_per_ms=5000)
 
 base_path = '/home/stine/Work/sonata/examples/300_pointneurons/'
 #base_path = '/home/stine/Work/sonata/examples/GLIF_network/'
 
-
-sonata_connector = nest.SonataConnector(base_path, 'circuit_config.json')
+config = 'circuit_config.json'
+sim_config = 'simulation_config.json'
+sonata_connector = nest.SonataConnector(base_path, config, sim_config)
 
 if not sonata_connector.config['target_simulator'] == 'NEST':
     raise NotImplementedError('Only `target_simulator` of type NEST is supported.')
+
+nest.set(resolution=sonata_connector.config['run']['dt'], tics_per_ms=sonata_connector.config['run']['nsteps_block'])
 
 # Create nodes
 sonata_connector.create_nodes()
@@ -74,7 +76,7 @@ nest.Connect(sonata_connector.node_collections['internal'], s_rec)
 
 print('simulating')
 
-nest.Simulate(1500.)  # Taken from simulation config, needs fixing.
+nest.Simulate(sonata_connector.config['run']['tstop'])
 
 print(s_rec.events)
 

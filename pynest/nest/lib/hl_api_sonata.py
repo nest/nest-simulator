@@ -29,6 +29,7 @@ import pandas as pd
 import numpy as np
 import warnings
 import csv
+from string import Template
 
 from .hl_api_types import NodeCollection
 from .hl_api_nodes import Create
@@ -38,24 +39,29 @@ class SonataConnector(object):
     """
     """
 
-    def __init__(self, base_path, config):
+    def __init__(self, base_path, config, sim_config=None):
         self.base_path = base_path
-        self.config = config
+        self.config = {}
         self.node_collections = {}
         self.edge_types = []
 
-        self.convert_config_()
+        self.convert_config_(config)
+        if sim_config:
+            self.convert_config_(sim_config)
 
-    def convert_config_(self):
-        with open(self.base_path + self.config) as fp:
+    def convert_config_(self, json_config):
+        with open(self.base_path + json_config) as fp:
             config = json.load(fp)
 
         subs = {}
-        for key, value in config["manifest"].items():
-            if key.startswith('$'):
-                key = key[1:]
-            subs[key] = self.base_path + value
-        
+        for dir, path in config["manifest"].items():
+            if dir.startswith('$'):
+                dir = dir[1:]
+            subs[dir] = self.base_path + path
+        for dir, path in subs.items():
+            if '$BASE_DIR' in path:
+                subs[dir] = path.replace('$BASE_DIR', '.')
+
         # Traverse config and do substitutions
         def do_substitutions(obj):
             if isinstance(obj, dict):
@@ -69,7 +75,7 @@ class SonataConnector(object):
                     return obj[1:]
                 else:
                     return obj
-        self.config = do_substitutions(config)
+        self.config.update(do_substitutions(config))
         print(self.config)
         print("")
     
@@ -105,27 +111,31 @@ class SonataConnector(object):
                             dynamics = json.load(dynamics_file)
 
                     if node_type_df['model_type'].iloc[0] == 'virtual':
-                        model = 'spike_generator'  # TODO: Need to add spike-data
-                        spiking_file = h5py.File('/home/stine/Work/sonata/examples/300_pointneurons/inputs/external_spike_trains.h5')
-                        spikes = spiking_file['spikes']['timestamps']
-                        node_ids = spiking_file['spikes']['gids']
-                        timestamps = {}
-                        for indx, node_id in enumerate(node_ids):
-                            if node_id in timestamps:
-                                timestamps[node_id].append(np.round(spikes[indx], 3))
-                            else:
-                                timestamps[node_id] = [np.round(spikes[indx], 3)]
-                        for node_id in np.unique(node_ids):
-                            nc = Create(model, params={'spike_times': timestamps[node_id]})
-                            if dynamics:
-                                nc.set(**dynamics)
-                            nodes += nc
+                        model = 'spike_generator'
+                        # Spiketrains are given in h5 files
+                        for input_name, input_dict in self.config['inputs'].items():
+                            node_set = input_dict['node_set']
+                            if node_set == population_name:
+                                spiking_file = h5py.File(input_dict['input_file'])
+                                spikes = spiking_file['spikes']['timestamps']
+                                node_ids = spiking_file['spikes']['gids']
+                                timestamps = {}
+                                for indx, node_id in enumerate(node_ids):
+                                    if node_id in timestamps:
+                                        timestamps[node_id].append(np.round(spikes[indx], 2))
+                                    else:
+                                        timestamps[node_id] = [np.round(spikes[indx], 2)]
+                                for node_id in np.unique(node_ids):
+                                    nc = Create(model, params={'spike_times': timestamps[node_id]})
+                                    if dynamics:
+                                        nc.set(**dynamics)
+                                    nodes += nc
                     else:
                         model = node_type_df.model_template.iloc[0].replace('nest:','')
                         nodes += Create(model, n+1, params=dynamics)
 
             self.node_collections[population_name] = nodes
-            
+
     def create_edge_dict(self):
 
         for edges in self.config['networks']['edges']:

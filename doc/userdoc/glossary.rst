@@ -11,79 +11,79 @@ Common abbreviations in NEST
 .. glossary::
 
  iaf
-   integrate and fire.
+   Integrate and fire.
 
  gif
-   generalized integrate and fire.
+   Generalized integrate and fire.
 
  cond
-   conductance-based.
+   Conductance-based.
 
  psc
-   post-synaptic current (current-based).
+   Post-synaptic current (current-based).
 
  hh
-   hodgkin huxley.
+   Hodgkin huxley.
 
  rng
-   random number generator.
+   Random number generator.
 
  wfr
-   waveform relaxation method.
+   Waveform relaxation method.
 
  aeif
-   adaptive exponential integrate and fire.
+   Adaptive exponential integrate and fire.
 
  ht
-   hill and tononi.
+   Hill and tononi.
 
  pp
-   point process.
+   Point process.
 
  in
-   inhibitory.
+   Inhibitory.
 
  ex
-   excitatory.
+   Excitatory.
 
  MAM
-   multi-area model.
+   Multi-area model.
 
  mpi
-   message passing interface.
+   Message passing interface.
 
  stdp
-   spike-timing dependent plasticity synapse.
+   Spike-timing dependent plasticity synapse.
 
  st
-   short term plasticity.
+   Short term plasticity.
 
  vp
-   virtual process.
+   Virtual process.
 
  time
-   milliseconds (ms).
+   Milliseconds (ms).
 
  tau_m
-   membrane time constant in milliseconds (ms).
+   Membrane time constant in milliseconds (ms).
 
  t_ref
-   duration of refractory period in milliseconds (ms).
+   Duration of refractory period in milliseconds (ms).
 
  t_spike
-   point in time of last spike in milliseconds (ms).
+   Point in time of last spike in milliseconds (ms).
 
  capacitance
-   picofarads (pF).
+   Picofarads (pF).
 
  C_m
-   capacitance of the membrane in picofarads (pF).
+   Capacitance of the membrane in picofarads (pF).
 
  current
-   picoamperes (pA).
+   Picoamperes (pA).
 
  I_e
-   constant input current in picoamperes (pA).
+   Constant input current in picoamperes (pA).
 
  conductance
    Nanosiemens (nS).
@@ -199,7 +199,7 @@ Common abbreviations in NEST
    A random process with a mean of zero.
 
  sfa
-   spike-frequency adaptation.
+   Spike-frequency adaptation.
 
  point neuron
    A simple neuron model where its soma along with the membrane potential dynamics are modeled as a resistance–capacitance circuit.
@@ -241,7 +241,7 @@ Common abbreviations in NEST
    The time before a new action potential can take place.
 
  renewal process
-   spike-time statistical analysis.
+   Spike-time statistical analysis.
  
  spike train
    A sequence of action potentials.

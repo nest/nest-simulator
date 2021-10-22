@@ -103,7 +103,9 @@ NestModule::name( void ) const
 const std::string
 NestModule::commandstring( void ) const
 {
-  return std::string( "(nest-init) run" );
+  return std::string(R"
+(nest-init) run
+" );
 }
 
 ParameterDatum

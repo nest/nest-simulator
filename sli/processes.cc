@@ -167,7 +167,9 @@ Processes::name( void ) const
 const std::string
 Processes::commandstring( void ) const
 {
-  return std::string( "(processes.sli) run" );
+  return std::string( R"(
+    (processes.sli) run
+    )" );
 }
 
 void

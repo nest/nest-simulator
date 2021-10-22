@@ -19,16 +19,65 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from setuptools import setup
+from setuptools import setup, find_packages, Extension
+from setuptools.command.build_ext import build_ext
+import os
+
+build_wheel = os.getenv("NEST_CMAKE_BUILDWHEEL")
+
+class cmake_extension(Extension):
+    def __init__(self, name):
+        Extension.__init__(self, name, sources=[])
+
+
+class cmake_build(build_ext):
+    def run(self):
+        import subprocess, sysconfig
+
+        # The path where CMake will be configured and NEST will be built.
+        build_directory = os.path.abspath(self.build_temp)
+        # The path where the package will be copied after building.
+        lib_directory = os.path.abspath(self.build_lib)
+        # The current working directory
+        p = os.path.abspath(os.getcwd())
+
+        if not os.path.exists(self.build_temp):
+            os.makedirs(self.build_temp)
+
+        config = sysconfig.get_paths()
+        os.chdir("build")
+        print('-'*20, 'Configure CMake')
+        subprocess.run(
+            'cmake .. -DCMAKE_INSTALL_LIBDIR=' + str(lib_directory)
+            + ' -DCMAKE_INSTALL_PREFIX=' + str(build_directory)
+            + ' -DPYTHON_INCLUDE_DIR=' + str(config["include"]),
+            shell=True,
+            check=True
+        )
+        print('-'*20, 'Build')
+        subprocess.run('make install -j4', shell=True, check=True)
+        os.chdir("..")
+
+
+wheel_kwargs = {} if not build_wheel else dict(
+    cmdclass={
+        'build_ext': cmake_build
+    },
+    ext_modules=[cmake_extension('nest')],
+    include_package_data=True,
+    package_data={
+      "": ["*.sli"]
+    }
+)
 
 setup(
     name = 'nest-simulator',
-    version = '@NEST_VERSION@@githash@',
+    version = '3.1', 
     description = 'Python bindings for NEST',
     author = 'The NEST Initiative',
     url = 'https://www.nest-simulator.org',
     license = 'GPLv2+',
-    packages = ['nest', 'nest.lib'],
+    packages = find_packages(exclude=["examples"]),
     install_requires = ['numpy', 'scipy'],
     extras_require = {'test': ['junitparser', 'matplotlib', 'nose']},
     classifiers = [
@@ -57,4 +106,5 @@ setup(
         'Source': 'https://github.com/nest/nest-simulator',
         'Documentation': 'https://nest-simulator.readthedocs.io/'
     },
+    **wheel_kwargs,
 )

@@ -2,6 +2,7 @@
 set -e -u -x
 
 rm -rf /opt/python/cp35-cp35m
+export NEST_CMAKE_BUILDWHEEL=ON
 
 for PYBIN in /opt/python/*/bin; do
     "${PYBIN}/pip" install wheel cmake

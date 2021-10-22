@@ -49,10 +49,12 @@
 const std::string
 SLIArrayModule::commandstring( void ) const
 {
+  // clang-format off
   return std::string( R"(
     (mathematica) run
     (arraylib) run
     )" );
+  // clang-format on
 }
 
 const std::string

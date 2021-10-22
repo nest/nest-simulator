@@ -68,9 +68,11 @@ FilesystemModule::name( void ) const
 const std::string
 FilesystemModule::commandstring( void ) const
 {
+  // clang-format off
   return std::string( R"(
     (filesystem.sli) run
     )" );
+  // clang-format on
 }
 
 

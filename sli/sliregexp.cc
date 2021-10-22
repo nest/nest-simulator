@@ -105,9 +105,11 @@ RegexpModule::name( void ) const
 const std::string
 RegexpModule::commandstring( void ) const
 {
+  // clang-format off
   return std::string( R"(
     (regexp) run
     )" );
+  // clang-format on
 }
 
 

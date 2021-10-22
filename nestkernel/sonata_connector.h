@@ -50,10 +50,15 @@ private:
   int* read_data_( H5::DataSet dataset, int num_elements );
   int* get_data_( H5::Group group, std::string name );
   void get_attributes_( std::string& attribute_value, H5::DataSet dataset, std::string attribute_name );
+  void weight_and_delay_from_dataset_( H5::Group group);
   void create_type_id_2_syn_spec_( DictionaryDatum edge_dict );
   void get_synapse_params_( DictionaryDatum syn_params, index snode_id, Node& target, thread target_thread, RngPtr rng );
 
   DictionaryDatum sonata_dynamics_;
+  bool weight_dataset_;
+  bool delay_dataset_;
+  double* syn_weight_data_;
+  double* delay_data_;
   std::map< int, DictionaryDatum > type_id_2_syn_spec_;
   DictionaryDatum param_dict_;
 

@@ -38,6 +38,10 @@ namespace nest
 
 SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
   : sonata_dynamics_ ( sonata_dynamics )
+  , weight_dataset_ ( false )
+  , delay_dataset_ ( false )
+  , syn_weight_data_ ( 0 )
+  , delay_data_ ( 0 )
   , param_dict_ ( new Dictionary() )
 {
 }
@@ -82,7 +86,21 @@ SonataConnector::connect()
         auto num_target_node_id = get_num_elements_( target_node_id );
         auto target_node_id_data = read_data_( target_node_id, num_target_node_id );
 
-        auto syn_weight_data = get_data_( edge_parameters, "syn_weight" ); // TODO: need to check edge_paramters
+        // Check if weight and delay are given as h5 files
+        weight_and_delay_from_dataset_( edge_parameters );
+        if ( weight_dataset_ )
+        {
+          auto weight_dataset = edge_parameters.openDataSet( "syn_weight" );
+          syn_weight_data_ = new double[ weight_dataset.getStorageSize() ];
+          weight_dataset.read( syn_weight_data_, weight_dataset.getDataType() );
+        }
+        if ( delay_dataset_ )
+        {
+          auto delay_dataset = edge_parameters.openDataSet( "delay" );
+          delay_data_ = new double[ delay_dataset.getStorageSize() ];
+          delay_dataset.read( delay_data_, delay_dataset.getDataType() );
+        }
+
         auto edge_type_id_data = get_data_( edges_subgroup, "edge_type_id" ); //synapses
 
         // Retrieve source and target attributes to find which node population to map to
@@ -115,14 +133,27 @@ SonataConnector::connect()
           Node* target = kernel().node_manager.get_node_or_proxy( target_id );
 
           thread target_thread = target->get_thread();
-          const double weight = syn_weight_data[ i ];  // TODO: might not be in h5 file
 
           const auto syn_spec = type_id_2_syn_spec_[ edge_type_id_data[ i ] ];
           const auto model_name = getValue< std::string >( ( *syn_spec )[ "synapse_model" ] );
           index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( model_name );
 
+          double weight = numerics::nan;
+          if ( weight_dataset_ )
+          {
+            weight = syn_weight_data_[ i ];
+          }
+          else if ( syn_spec->known( names::weight ) )
+          {
+            weight = std::stod( ( *syn_spec )[ names::weight ] );
+          }
+
           double delay = numerics::nan;
-          if ( syn_spec->known( names::delay ) )
+          if ( delay_dataset_ )
+          {
+            delay = syn_weight_data_[ i ];
+          }
+          else if ( syn_spec->known( names::delay ) )
           {
             delay = std::stod( ( *syn_spec )[ names::delay ] );
           }
@@ -178,6 +209,13 @@ SonataConnector::get_attributes_( std::string& attribute_value, H5::DataSet data
   H5::Attribute attr = dataset.openAttribute( attribute_name );
   H5::DataType type = attr.getDataType();
   attr.read( type, attribute_value );
+}
+
+void
+SonataConnector::weight_and_delay_from_dataset_( H5::Group group )
+{
+  weight_dataset_ = H5Lexists( group.getId(), "syn_weight", H5P_DEFAULT ) > 0;
+  delay_dataset_ = H5Lexists( group.getId(), "delay", H5P_DEFAULT ) > 0;
 }
 
 void

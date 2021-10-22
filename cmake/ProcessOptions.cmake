@@ -391,8 +391,8 @@ function( NEST_PROCESS_WITH_PYTHON )
     message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting CMake option -Dwith-python=ON." )
   elseif ( ${with-python} STREQUAL "ON" )
 
-    # Localize the Python interpreter and lib/header files
-    find_package( Python 3.8 REQUIRED Interpreter Development )
+    # Localize the Python interpreter and ABI
+    find_package( Python 3.8 REQUIRED Interpreter Development.Module )
 
     if ( Python_FOUND )
       if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )

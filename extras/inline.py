@@ -1,11 +1,36 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# find_imports.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
 import sys
 from pathlib import Path
 
 SLI_LIBPATH = Path("lib/sli")
+
+
 def replaced(filename, noinclude=None):
+    '''
+    Recursively replace "(xy) run" SLI commands.
+    '''
     if noinclude is None:
         noinclude = []
     sliimport = re.compile(r'\((?P<name>[^)]+)\) run')
@@ -29,7 +54,11 @@ def replaced(filename, noinclude=None):
         if not found:
             yield f"{line}"
 
+
 def main():
+    '''
+    CLI entry point.
+    '''
     filename = Path(sys.argv[1])
 
     for line in replaced(filename):

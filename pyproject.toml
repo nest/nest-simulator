@@ -9,7 +9,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
-skip = "*-musllinux_*"
+skip = ["*-musllinux_*", "*cp36*", "*cp37*"]
 archs = "auto64"
 environment = { NEST_CMAKE_BUILDWHEEL="ON" }
 

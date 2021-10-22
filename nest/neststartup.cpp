@@ -157,13 +157,6 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
 #endif
 #endif
 
-#ifdef _IS_PYNEST
-  // add the init-script to the list of module initializers
-  ArrayDatum* ad = dynamic_cast< ArrayDatum* >( engine.baselookup( engine.commandstring_name ).datum() );
-  assert( ad != NULL );
-  ad->push_back( new StringDatum( "(" + modulepath + "/pynest-init.sli) run" ) );
-#endif
-
   return engine.startup();
 }
 

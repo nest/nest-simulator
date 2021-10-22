@@ -167,9 +167,11 @@ Processes::name( void ) const
 const std::string
 Processes::commandstring( void ) const
 {
+  // clang-format off
   return std::string( R"(
     (processes.sli) run
     )" );
+  // clang-format on
 }
 
 void

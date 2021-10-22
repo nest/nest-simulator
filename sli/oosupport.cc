@@ -40,9 +40,11 @@ OOSupportModule::init( SLIInterpreter* i )
 const std::string
 OOSupportModule::commandstring( void ) const
 {
+  // clang-format off
   return std::string( R"(
     (oosupport.sli) run
     )" );
+  // clang-format on
 }
 
 const std::string

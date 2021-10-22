@@ -85,8 +85,8 @@ def mkpath(name, mode=0o777, verbose=1, dry_run=0):
         _path_created[abs_head] = 1
     return created_dirs
 
-def copy_py_tree(src, dst, exclude=None, preserve_mode=1, preserve_times=1,
-              preserve_symlinks=0, update=0, verbose=1, dry_run=0):
+def copy_py_tree(src, dst, preserve_mode=1, preserve_times=1,
+              preserve_symlinks=0, update=0, verbose=1, dry_run=0, exclude=None):
     """Copy an entire directory tree 'src' to a new location 'dst'.
 
     Both 'src' and 'dst' must be directory names.  If 'src' is not a

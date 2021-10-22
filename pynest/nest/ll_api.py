@@ -383,8 +383,7 @@ def init(argv):
     if 'PYNEST_DEBUG' in os.environ and '--debug' not in nest_argv:
         nest_argv.append("--debug")
 
-    path = os.path.dirname(__file__)
-    initialized = engine.init(nest_argv, path)
+    initialized = engine.init(nest_argv)
 
     if initialized:
         if not quiet:

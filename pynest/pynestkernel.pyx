@@ -176,7 +176,7 @@ cdef class NESTEngine(object):
             raise NESTError("set_communicator: "
                             "NEST not compiled with MPI4PY")
 
-    def init(self, argv, modulepath):
+    def init(self, argv):
         if self.pEngine is not NULL:
             raise NESTErrors.PyNESTError("engine already initialized")
 
@@ -201,12 +201,8 @@ cdef class NESTEngine(object):
                 argv_chars[i] = argvi # c-string ref extracted
 
             self.pEngine = new SLIInterpreter()
-            modulepath_bytes = modulepath.encode()
 
-            neststartup(&argc,
-                        &argv_chars,
-                        deref(self.pEngine),
-                        modulepath_bytes)
+            neststartup(&argc, &argv_chars, deref(self.pEngine))
 
             # If using MPI, argv might now have changed, so rebuild it
             del argv[:]

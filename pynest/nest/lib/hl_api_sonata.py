@@ -33,6 +33,7 @@ from string import Template
 
 from .hl_api_types import NodeCollection
 from .hl_api_nodes import Create
+from .hl_api_models import GetDefaults
 
 
 class SonataConnector(object):
@@ -154,8 +155,12 @@ class SonataConnector(object):
                 edge_params = {}
 
                 for d in rows:
-                    synapse_dict = {key: d[key] for key in d if key not in skip_params}
-                    synapse_dict['synapse_model'] = synapse_dict.pop('model_template')
+                    d['synapse_model'] = d.pop('model_template')
+                    setable_params = GetDefaults(d['synapse_model'])
+                    if 'syn_weight' in d:
+                        d['weight'] = d.pop('syn_weight')
+
+                    synapse_dict = {key: d[key] for key in setable_params if key in d}
 
                     with open(self.config['components']['synaptic_models_dir'] + '/' + d['dynamics_params']) as dynamics_file:
                         dynamics = json.load(dynamics_file)

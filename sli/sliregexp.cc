@@ -105,7 +105,9 @@ RegexpModule::name( void ) const
 const std::string
 RegexpModule::commandstring( void ) const
 {
-  return std::string( "(regexp) run" );
+  return std::string( R"(
+    (regexp) run
+    )" );
 }
 
 

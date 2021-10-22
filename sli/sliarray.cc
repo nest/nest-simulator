@@ -49,7 +49,10 @@
 const std::string
 SLIArrayModule::commandstring( void ) const
 {
-  return std::string( "(mathematica) run (arraylib) run" );
+  return std::string( R"(
+    (mathematica) run
+    (arraylib) run
+    )" );
 }
 
 const std::string

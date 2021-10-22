@@ -143,7 +143,7 @@ def copy_py_tree(src, dst, preserve_mode=1, preserve_times=1,
 
         elif os.path.isdir(src_name):
             outputs.extend(
-                copy_nest_tree(src_name, dst_name, preserve_mode,
+                copy_py_tree(src_name, dst_name, preserve_mode,
                           preserve_times, preserve_symlinks, update,
                           verbose=verbose, dry_run=dry_run))
         elif n.endswith(".py"):

@@ -25,7 +25,7 @@ from pathlib import Path
 import sys
 import os
 import shutil
-from _vendored import copy_nest_tree
+from _vendored import copy_py_tree
 
 # A tiny build system for the build system of our build system. Patent pending.
 
@@ -90,5 +90,5 @@ shutil.copy2(pynest_path / "setup.py", wheel_path)
 # knowing that the cpp files will be ignored and the namespace reused to host
 # the Python files, to be picked up by `setup.py`.
 print(f"Copying Python files from `{module_path}`")
-copied = copy_nest_tree(str(module_path), str(wheel_path / "nest"))
+copied = copy_py_tree(str(module_path), str(wheel_path / "nest"))
 print(f"Copied into {wheel_path / 'nest'}:\n" + "\n".join(copied))

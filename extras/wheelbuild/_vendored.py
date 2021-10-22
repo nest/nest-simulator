@@ -85,7 +85,7 @@ def mkpath(name, mode=0o777, verbose=1, dry_run=0):
         _path_created[abs_head] = 1
     return created_dirs
 
-def copy_nest_tree(src, dst, preserve_mode=1, preserve_times=1,
+def copy_py_tree(src, dst, preserve_mode=1, preserve_times=1,
               preserve_symlinks=0, update=0, verbose=1, dry_run=0):
     """Copy an entire directory tree 'src' to a new location 'dst'.
 
@@ -146,7 +146,7 @@ def copy_nest_tree(src, dst, preserve_mode=1, preserve_times=1,
                 copy_nest_tree(src_name, dst_name, preserve_mode,
                           preserve_times, preserve_symlinks, update,
                           verbose=verbose, dry_run=dry_run))
-        elif n.endswith(".py") or n.endswith(".sli"):
+        elif n.endswith(".py"):
             copy_file(src_name, dst_name, preserve_mode,
                       preserve_times, update, verbose=verbose,
                       dry_run=dry_run)

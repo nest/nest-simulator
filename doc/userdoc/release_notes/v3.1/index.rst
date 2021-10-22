@@ -28,7 +28,7 @@ attributes*.
 
 Where you previously had ``nest.SetKernelStatus({"resolution": 0.2})``
 in your simulation script, you can now just write ``nest.resolution =
-0.5``. Kernel attributes now come with their own docstrings and even
+0.2``. Kernel attributes now come with their own docstrings and even
 tab-completion works for them!
 
 Co-dependent properties that have to be set together (for instance
@@ -64,3 +64,6 @@ Deprecation information
 * Model ``pp_pop_psc_delta`` has been deprecated since 2016 and
   will be removed in NEST 3.2. Please use model :doc:`gif_pop_psc_exp <gif_pop_psc_exp>`
   instead.
+* The `nest.hl_api` namespace contained the same members as `nest`
+  and is being removed in NEST 3.2. All imports from `nest.hl_api`
+  can be replaced by imports from `nest`.

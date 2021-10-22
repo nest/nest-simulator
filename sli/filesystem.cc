@@ -68,9 +68,9 @@ FilesystemModule::name( void ) const
 const std::string
 FilesystemModule::commandstring( void ) const
 {
-  return std::string( R"
+  return std::string( R"(
     (filesystem.sli) run
-    " );
+    )" );
 }
 
 

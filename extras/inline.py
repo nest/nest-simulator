@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# find_imports.py
+# inline.py
 #
 # This file is part of NEST.
 #

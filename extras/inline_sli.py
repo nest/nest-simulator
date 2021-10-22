@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# inline.py
+# inline_sli.py
 #
 # This file is part of NEST.
 #

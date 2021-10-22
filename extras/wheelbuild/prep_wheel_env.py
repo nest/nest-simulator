@@ -32,6 +32,7 @@ from _vendored import copy_py_tree
 built_path = Path("build")
 wheel_path = Path(sys.argv[1])
 
+
 def fish_cmake_vars(*vars):
     """
     Go fishing in the output of `cmake -LAH` for CMAKE variables.
@@ -42,6 +43,7 @@ def fish_cmake_vars(*vars):
     p = subprocess.run(f'cmake -LAH', shell=True, capture_output=True)
     values = [m.group(2) for o in p.stdout.decode().split("\n") if (m := pat.match(o))]
     return values
+
 
 def get_origin_url():
     p = subprocess.run(
@@ -54,6 +56,7 @@ def get_origin_url():
     remote = p.stdout.decode().split("\t")[1].split(" ")[0]
     return remote
 
+
 def get_current_commit():
     p = subprocess.run(
         "git rev-parse HEAD",
@@ -61,6 +64,7 @@ def get_current_commit():
         capture_output=True
     )
     return p.stdout.decode().split("\n")[0]
+
 
 curr = Path.cwd()
 # Go to the CMake build folder to fish out the CMade Python files from the build files
@@ -94,10 +98,9 @@ copied = copy_py_tree(str(module_path), str(wheel_path / "nest"), exclude=["vers
 print(f"Copied into {wheel_path / 'nest'}:\n" + "\n".join(copied))
 
 # Inline the SLI code
-import os, sys, subprocess
 print("Adding to path", wheel_path / "extras")
 sys.path.insert(0, str(wheel_path / "extras"))
-import inline_sli
+import inline_sli # noqa
 process = subprocess.run(f"egrep -l -r \") run\" {wheel_path / 'sli'} {wheel_path / 'nest'}*", shell=True, capture_output=True, check=True, encoding="utf8")
 to_inline = process.stdout.split("\n")[:-1]
 print("Inlining SLI code in the following files:", "\n".join(to_inline))

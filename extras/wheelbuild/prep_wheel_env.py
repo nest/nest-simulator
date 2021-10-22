@@ -92,3 +92,13 @@ shutil.copy2(pynest_path / "setup.py", wheel_path)
 print(f"Copying Python files from `{module_path}`")
 copied = copy_py_tree(str(module_path), str(wheel_path / "nest"), exclude=["versionchecker.py"])
 print(f"Copied into {wheel_path / 'nest'}:\n" + "\n".join(copied))
+
+# Inline the SLI code
+import os, sys, subprocess
+print("Adding to path", wheel_path / "extras")
+sys.path.insert(0, str(wheel_path / "extras"))
+import inline_sli
+process = subprocess.run(f"egrep -l -r \") run\" {wheel_path / 'sli'} {wheel_path / 'nest'}*", shell=True, capture_output=True, check=True, encoding="utf8")
+to_inline = process.stdout.split("\n")[:-1]
+print("Inlining SLI code in the following files:", "\n".join(to_inline))
+inline_sli.inline(to_inline)

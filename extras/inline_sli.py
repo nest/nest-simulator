@@ -24,7 +24,7 @@ import re
 import sys
 from pathlib import Path
 
-SLI_LIBPATH = Path("lib/sli")
+SLI_LIBPATH = Path(__file__).parent.parent / "lib" / "sli"
 
 
 def replaced(filename, noinclude=None):
@@ -55,19 +55,14 @@ def replaced(filename, noinclude=None):
             yield f"{line}"
 
 
-def main():
+def inline(files):
     '''
-    CLI entry point.
+    SLI code inlining.
     '''
-    filename = Path(sys.argv[1])
-    for arg in sys.argv[1:]:
+    for arg in files:
         filename = Path(arg)
         newfile = filename.with_suffix(".new")
         with newfile.open("w", encoding="utf8") as outfile:
             for line in replaced(filename):
                 outfile.write(line)
         newfile.rename(filename)
-
-
-if __name__ == '__main__':
-    main()

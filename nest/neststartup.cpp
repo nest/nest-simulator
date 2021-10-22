@@ -75,11 +75,7 @@ sli_logging( const nest::LoggingEvent& e )
 }
 
 int
-#ifndef _IS_PYNEST
 neststartup( int* argc, char*** argv, SLIInterpreter& engine )
-#else
-neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string modulepath )
-#endif
 {
   nest::init_nest( argc, argv );
 

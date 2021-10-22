@@ -141,7 +141,7 @@ cdef extern from "interpret.h":
         TokenStack OStack
 
 cdef extern from "neststartup.h":
-    int neststartup(int*, char***, SLIInterpreter&, string) except +
+    int neststartup(int*, char***, SLIInterpreter&) except +
     void nestshutdown(int) except +
     cbool nest_has_mpi4py()
     void c_set_communicator "set_communicator" (object) with gil

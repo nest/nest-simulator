@@ -5,7 +5,7 @@ rm -rf /opt/python/cp35-cp35m
 export NEST_CMAKE_BUILDWHEEL=ON
 
 for PYBIN in /opt/python/*/bin; do
-    "${PYBIN}/pip" install wheel cmake
+    "${PYBIN}/pip" install wheel cmake cython
     export PATH="${PYBIN}":$PATH
     which cmake
     "${PYBIN}/python" ./setup.py bdist_wheel

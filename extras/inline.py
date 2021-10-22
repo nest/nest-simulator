@@ -60,9 +60,13 @@ def main():
     CLI entry point.
     '''
     filename = Path(sys.argv[1])
-
-    for line in replaced(filename):
-        print(line, end='')
+    for arg in sys.argv[1:]:
+        filename = Path(arg)
+        newfile = filename.with_suffix(".new")
+        with newfile.open("w", encoding="utf8") as outfile:
+        for line in replaced(filename):
+                outfile.write(line)
+        newfile.rename(filename)
 
 
 if __name__ == '__main__':

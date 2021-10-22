@@ -64,7 +64,7 @@ def main():
         filename = Path(arg)
         newfile = filename.with_suffix(".new")
         with newfile.open("w", encoding="utf8") as outfile:
-        for line in replaced(filename):
+            for line in replaced(filename):
                 outfile.write(line)
         newfile.rename(filename)
 

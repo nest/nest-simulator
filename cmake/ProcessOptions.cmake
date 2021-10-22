@@ -234,6 +234,8 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
           "@loader_path/../../${CMAKE_INSTALL_LIBDIR}/nest"
           # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
           "@loader_path/../../../nest"
+          # for wheels
+          "@loader_path"
           PARENT_SCOPE )
     else ()
       set( CMAKE_INSTALL_RPATH
@@ -243,6 +245,8 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
           "\$ORIGIN/../../${CMAKE_INSTALL_LIBDIR}/nest"
           # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
           "\$ORIGIN/../../../nest"
+          # for wheels
+          "\$ORIGIN"
           PARENT_SCOPE )
     endif ()
 
@@ -392,7 +396,15 @@ function( NEST_PROCESS_WITH_PYTHON )
   elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter and lib/header files
-    find_package( Python 3.8 REQUIRED Interpreter Development )
+    # During a wheel build we build against a static interpreter,
+    # so we build in `.Module` mode, see:
+    # https://github.com/pypa/manylinux/issues/255
+    # https://cmake.org/cmake/help/latest/command/add_library.html
+    if ($ENV{NEST_CMAKE_BUILDWHEEL})
+      find_package( Python 3.8 REQUIRED Interpreter Development.Module )
+    else()
+      find_package( Python 3.8 REQUIRED Interpreter Development )
+    endif()
 
     if ( Python_FOUND )
       if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
@@ -440,7 +452,7 @@ endfunction()
 
 function( NEST_POST_PROCESS_WITH_PYTHON )
   if ( Python_FOUND )
-    set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" PARENT_SCOPE )
+    set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}/site-packages" CACHE PATH "Python module destination" FORCE)
   endif()
 endfunction()
 

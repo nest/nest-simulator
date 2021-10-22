@@ -1,6 +1,7 @@
 
 __pycache__/
 build/
+build_wheel_env/
 _build/
 install/
 reports/

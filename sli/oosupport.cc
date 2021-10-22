@@ -40,7 +40,9 @@ OOSupportModule::init( SLIInterpreter* i )
 const std::string
 OOSupportModule::commandstring( void ) const
 {
-  return std::string( "(oosupport.sli) run" );
+  return std::string( R"
+    (oosupport.sli) run
+    " );
 }
 
 const std::string

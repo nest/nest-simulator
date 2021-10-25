@@ -134,7 +134,7 @@ def UserDocExtractor(
                 log.warning("Failed to rebuild 'See also' section: %s", e)
             write_rst_files(doc, tags, outdir, outname)
 
-log.info("%4d tags found:\n%s", len(tagdict), pformat(list(tagdict.keys())))
+    log.info("%4d tags found:\n%s", len(tagdict), pformat(list(tagdict.keys())))
     nfiles = len(set.union(*[set(x) for x in tagdict.values()]))
     log.info("%4d files in input", nfiles_total)
     log.info("%4d files with documentation", nfiles)

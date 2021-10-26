@@ -27,7 +27,7 @@
 # respective language's native `unittest` library to assert certain
 # invariants and thus ensure a correctly working installation of NEST.
 #
-
+set -euo pipefail
 
 #
 # usage <exit_code> [argument]

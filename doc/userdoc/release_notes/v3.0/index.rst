@@ -20,7 +20,7 @@ infrastructure more modular and extensible. In addition to the previously suppor
 SIONlib is now available. The interface for :doc:`stimulation devices <features/stimulation_backends>` can now handle
 data from external sources, such as other simulators.
 
-The Topology Module is no longer a separate module; it is integrated within PyNest, and now referred to as support for
+The Topology Module is no longer a separate module; it is integrated within PyNEST, and now referred to as support for
 :doc:`spatially-structured networks <../../guides/spatially_structured_networks>`.
 
 :doc:`NEST Server <../../../nest_server>` is a novel backend to NEST that allows to run simulations via a RESTful API.

@@ -329,13 +329,13 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/nest-config.in"
-    "${PROJECT_BINARY_DIR}/extras/nest-config" @ONLY
+    "${PROJECT_SOURCE_DIR}/bin/nest-config.in"
+    "${PROJECT_BINARY_DIR}/bin/nest-config" @ONLY
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/nest_vars.sh.in"
-    "${PROJECT_BINARY_DIR}/extras/nest_vars.sh" @ONLY
+    "${PROJECT_SOURCE_DIR}/bin/nest_vars.sh.in"
+    "${PROJECT_BINARY_DIR}/bin/nest_vars.sh" @ONLY
 )
 
 configure_file(

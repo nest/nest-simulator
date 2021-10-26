@@ -1,4 +1,4 @@
-# examples/CMakeLists.txt
+# bin/CMakeLists.txt
 #
 # This file is part of NEST.
 #
@@ -16,21 +16,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-install( FILES run_examples.sh
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
 
-install( DIRECTORY nest/
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
-    USE_SOURCE_PERMISSIONS
+install( PROGRAMS
+    ${PROJECT_BINARY_DIR}/extras/nest-config
+    nest-server
+    nest-server-mpi
+    ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
-
-install( FILES EditorSupport/vim/syntax/sli.vim
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/EditorSupport/vim/syntax
-    )
-
-install( FILES sli/nestrc.sli
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/sli
-    )
-
-add_subdirectory( ConnPlotter )

@@ -34,16 +34,18 @@ import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
-example = '300_pointneurons'
-#example = 'GLIF_network'
+#example = '300_pointneurons'
+example = 'GLIF'
+plot = False
 
 if example == '300_pointneurons':
     base_path = '/home/stine/Work/sonata/examples/300_pointneurons/'
     config = 'circuit_config.json'
     sim_config = 'simulation_config.json'
-elif example == 'GLIF_network':
-    base_path = '/home/stine/Work/sonata/examples/GLIF_network/'
-    config = 'config.json'
+    plot = True
+elif example == 'GLIF':
+    base_path = '/home/stine/Work/sonata/examples/GLIF_NEST/'
+    config = 'config_small.json'
     sim_config = None
 
 
@@ -52,16 +54,17 @@ sonata_connector = nest.SonataConnector(base_path, config, sim_config)
 if not sonata_connector.config['target_simulator'] == 'NEST':
     raise NotImplementedError('Only `target_simulator` of type NEST is supported.')
 
-nest.set(resolution=sonata_connector.config['run']['dt'], tics_per_ms=sonata_connector.config['run']['nsteps_block'])
+nest.set(resolution=sonata_connector.config['run']['dt'])#, tics_per_ms=sonata_connector.config['run']['nsteps_block'])
 
 # Create nodes
 sonata_connector.create_nodes()
 sonata_connector.create_edge_dict()
 
 sonata_dynamics = {'nodes': sonata_connector.node_collections, 'edges': sonata_connector.edge_types}
+print(sonata_connector.node_collections)
 
 print()
-print('sonata_dynamics', sonata_dynamics)
+#print('sonata_dynamics', sonata_dynamics)
 print()
 
 start_time = time.time()
@@ -75,27 +78,32 @@ print(conns)
 print("")
 print("number of connections: ", nest.GetKernelStatus('num_connections'))
 #print("num_connections with alpha: ", len(conns.alpha))
-node_id_to_range = 0
-for nc in sonata_connector.node_collections['internal']:
-    #nc = sonata_connector.node_collections['internal'][0]
-    old_val = node_id_to_range
-    node_id_to_range += len(nest.GetConnections(source=nc))
-    print(f'Range of connections with source node id {nc.global_id}: {old_val} {node_id_to_range}')
+
+#node_id_to_range = 0
+#for nc in sonata_connector.node_collections['internal']:
+#    old_val = node_id_to_range
+#    node_id_to_range += len(nest.GetConnections(source=nc))
+#    print(f'Range of connections with source node id {nc.global_id}: {old_val} {node_id_to_range}')
 
 print(f"\nconnection took: {end_time} s")
 
-s_rec = nest.Create('spike_recorder')
-
-nest.Connect(sonata_connector.node_collections['internal'], s_rec)
+if plot:
+    s_rec = nest.Create('spike_recorder')
+    nest.Connect(sonata_connector.node_collections['internal'], s_rec)
 
 print('simulating')
 
-nest.Simulate(sonata_connector.config['run']['tstop'])
+simtime = 0
+if 'tstop' in sonata_connector.config['run']:
+    simtime = sonata_connector.config['run']['tstop']
+else:
+    simtime = sonata_connector.config['run']['duration']
+nest.Simulate(simtime)
 
-print(s_rec.events)
-
-nest.raster_plot.from_device(s_rec)
-plt.show()
+if plot:
+    print(s_rec.events)
+    nest.raster_plot.from_device(s_rec)
+    plt.show()
 
 
 

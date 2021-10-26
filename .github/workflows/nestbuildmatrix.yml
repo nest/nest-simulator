@@ -1,3 +1,7 @@
+#
+# detailed syntax defined in
+# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
+#
 name: NEST matrix jobs
 env:
   CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
@@ -12,7 +16,7 @@ jobs:
        fail-fast: true
      env:
        xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
-     runs_on: "ubuntu"
+     os: "ubuntu-20.04"
      steps:
        # Steps represent a sequence of tasks that will be executed as part of the job
        - name: Checkout repo content
@@ -60,7 +64,7 @@ jobs:
            xNEST_BUILD_TYPE: 'STATIC_CODE_ANALYSIS'
            CHANGED_FILES: ${{env.CHANGED_FILES}}
 
-  build_matrix:
+  test_all_os:
      if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
      runs-on: ${{ matrix.os }}
      strategy:

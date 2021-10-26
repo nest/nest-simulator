@@ -1,4 +1,4 @@
-# bin/CMakeLists.txt
+# CMakeLists.txt
 #
 # This file is part of NEST.
 #
@@ -18,9 +18,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 install( PROGRAMS
-    ${PROJECT_BINARY_DIR}/extras/nest-config
     nest-server
     nest-server-mpi
-    ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
+    ${PROJECT_BINARY_DIR}/bin/nest-config
+    ${PROJECT_BINARY_DIR}/bin/nest_vars.sh
     DESTINATION ${CMAKE_INSTALL_BINDIR}
     )

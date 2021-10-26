@@ -94,48 +94,108 @@ class SonataConnector(object):
 
             node_type_ids = population['node_type_id']
             nodes = NodeCollection([])
+            node_type_map = {}
             for node_type in np.unique(node_type_ids):  # might have to iterate over node_group_id as well
                 ntw = np.where(node_type_ids[:] == node_type)[0]
-
                 n = len(ntw) - 1
-                if sum(np.diff(ntw) == 1) == n:  # We check if node_types are continous
-                    node_type_df = node_types[node_types.node_type_id == node_type]
-                    if node_type_df['model_type'].iloc[0] not in ['point_neuron', 'point_process', 'virtual']:
-                        model_type = node_type_df["model_type"].iloc[0]
-                        warnings.warn(f'model of type {model_type} is not a NEST model, it will not be used.')
+                continous = sum(np.diff(ntw) == 1) == n
+                node_type_map[node_type] = [continous, n]  # We check if node_types are continous
 
-                    dynamics = {}
-                    if 'dynamics_params' in node_type_df.keys():
-                        model_dynamics = node_type_df.dynamics_params.iloc[0]
-                        with open(self.config['components']['point_neuron_models_dir'] + '/' + model_dynamics) as dynamics_file:
-                            dynamics.update(json.load(dynamics_file))
-
-                    if node_type_df['model_type'].iloc[0] == 'virtual':
-                        model = 'spike_generator'
-                        # Spiketrains are given in h5 files
-                        for input_name, input_dict in self.config['inputs'].items():
-                            node_set = input_dict['node_set']
-                            if node_set == population_name:
-                                spiking_file = h5py.File(input_dict['input_file'])
-                                spikes = spiking_file['spikes']['timestamps']
-                                node_ids = spiking_file['spikes']['gids']
-                                timestamps = {}
-                                for indx, node_id in enumerate(node_ids):
-                                    if node_id in timestamps:
-                                        timestamps[node_id].append(np.round(spikes[indx], 2))
-                                    else:
-                                        timestamps[node_id] = [np.round(spikes[indx], 2)]
-                                for node_id in np.unique(node_ids):
-                                    nc = Create(model, params={'spike_times': timestamps[node_id]})
-                                    if dynamics:
-                                        nc.set(**dynamics)
-                                    nodes += nc
-                    else:
-                        model = node_type_df.model_template.iloc[0].replace('nest:','')
-                        nodes += Create(model, n+1, params=dynamics)
-                        
+            count = 0
+            while count < len(node_type_ids):
+                node_type = node_type_ids[count]
+                print(node_type)
+                if node_type_map[node_type][0]:
+                    nodes += self.create_(node_types, node_type, population_name, node_type_map[node_type][1] + 1, nodes)
+                    count += node_type_map[node_type][1] + 1
+                else:
+                    nodes += self.create_(node_types, node_type, population_name, 1, nodes)
+                    count += 1
+            print(count)
+            # for node_type in node_type_ids:
+                # #ntw = np.where(node_type_ids[:] == node_type)[0]
+                # #print(ntw)
+                # if count % 10 == 0:
+                    # print(count)
+                # count += 1
+                #
+                # #n = len(ntw) - 1
+                # #if sum(np.diff(ntw) == 1) == n:  # We check if node_types are continous
+                # node_type_df = node_types[node_types.node_type_id == node_type]
+                # if node_type_df['model_type'].iloc[0] not in ['point_neuron', 'point_process', 'virtual']:
+                    # model_type = node_type_df["model_type"].iloc[0]
+                    # warnings.warn(f'model of type {model_type} is not a NEST model, it will not be used.')
+                    #
+                # dynamics = {}
+                # if 'dynamics_params' in node_type_df.keys():
+                    # model_dynamics = node_type_df.dynamics_params.iloc[0]
+                    # with open(self.config['components']['point_neuron_models_dir'] + '/' + model_dynamics) as dynamics_file:
+                        # dynamics.update(json.load(dynamics_file))
+                        #
+                # if node_type_df['model_type'].iloc[0] == 'virtual':
+                    # model = 'spike_generator'
+                    # # Spiketrains are given in h5 files
+                    # for input_name, input_dict in self.config['inputs'].items():
+                        # node_set = input_dict['node_set']
+                        # if node_set == population_name:
+                            # spiking_file = h5py.File(input_dict['input_file'])
+                            # spikes = spiking_file['spikes']['timestamps']
+                            # node_ids = spiking_file['spikes']['gids']
+                            # timestamps = {}
+                            # for indx, node_id in enumerate(node_ids):
+                                # if node_id in timestamps:
+                                    # timestamps[node_id].append(np.round(spikes[indx], 2))
+                                # else:
+                                    # timestamps[node_id] = [np.round(spikes[indx], 2)]
+                            # for node_id in np.unique(node_ids):
+                                # nc = Create(model, params={'spike_times': timestamps[node_id]})
+                                # if dynamics:
+                                    # nc.set(**dynamics)
+                                # nodes += nc
+                # else:
+                    # model = node_type_df.model_template.iloc[0].replace('nest:','')
+                    # nodes += Create(model, params=dynamics)
+                    #
 
             self.node_collections[population_name] = nodes
+
+    def create_(self, node_types, node_type, population_name, n, nodes):
+        node_type_df = node_types[node_types.node_type_id == node_type]
+        if node_type_df['model_type'].iloc[0] not in ['point_neuron', 'point_process', 'virtual']:
+            model_type = node_type_df["model_type"].iloc[0]
+            warnings.warn(f'model of type {model_type} is not a NEST model, it will not be used.')
+
+        dynamics = {}
+        if 'dynamics_params' in node_type_df.keys():
+            model_dynamics = node_type_df.dynamics_params.iloc[0]
+            with open(self.config['components']['point_neuron_models_dir'] + '/' + model_dynamics) as dynamics_file:
+                dynamics.update(json.load(dynamics_file))
+
+        if node_type_df['model_type'].iloc[0] == 'virtual':
+            model = 'spike_generator'
+            # Spiketrains are given in h5 files
+            for input_name, input_dict in self.config['inputs'].items():
+                node_set = input_dict['node_set']
+                if node_set == population_name:
+                    spiking_file = h5py.File(input_dict['input_file'])
+                    spikes = spiking_file['spikes']['timestamps']
+                    node_ids = spiking_file['spikes']['gids']
+                    timestamps = {}
+                    for indx, node_id in enumerate(node_ids):
+                        if node_id in timestamps:
+                            timestamps[node_id].append(np.round(spikes[indx], 2))
+                        else:
+                            timestamps[node_id] = [np.round(spikes[indx], 2)]
+                    for node_id in np.unique(node_ids):
+                        nc = Create(model, params={'spike_times': timestamps[node_id]})
+                        if dynamics:
+                            nc.set(**dynamics)
+                        nodes = nc
+        else:
+            model = node_type_df.model_template.iloc[0].replace('nest:','')
+            nodes = Create(model, n=n, params=dynamics)
+        
+        return nodes
 
     def create_edge_dict(self):
 

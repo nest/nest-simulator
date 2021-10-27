@@ -107,8 +107,8 @@ run_test ()
     chmod 700 "${TEST_RUNFILE}"
 
     TIME_ELAPSED=$( time_cmd "${TEST_RUNFILE}" )
-    TIME_TOTAL=$(( ${TIME_TOTAL} + ${TIME_ELAPSED} ))
-    JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
+    TIME_TOTAL=$(( ${TIME_TOTAL:-0} + ${TIME_ELAPSED} ))
+    JUNIT_TESTS=$(( ${JUNIT_TESTS:-0} + 1 ))
 
     rm -f "${TEST_RUNFILE}"
 
@@ -119,6 +119,8 @@ run_test ()
     msg_dirty=${param_success##* ${exit_code} }
     msg_dirty_skip=${param_skipped##* ${exit_code} }
     msg_clean=${msg_dirty%%,*}
+    junit_failure=
+    junit_status=
     if test "${msg_dirty}" != "${param_success}" ; then
         explanation="${msg_clean}"
         junit_status=pass
@@ -163,7 +165,7 @@ run_test ()
     junit_write "${junit_class}" "${junit_name}" "${junit_status}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
 
     # Panic on "unexpected" exit code
-    if test "x${unexpected_exitcode}" != x ; then
+    if test "x${unexpected_exitcode:-}" != x ; then
         echo "***"
         echo "*** An unexpected exit code usually hints at a bug in the test suite!"
         ask_results

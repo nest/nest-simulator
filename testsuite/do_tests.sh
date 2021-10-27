@@ -417,7 +417,7 @@ if test "${MUSIC}"; then
         # Run the script and measure execution time. Copy the output to the logfile.
         chmod 755 runner.sh
         TIME_ELAPSED=$( time_cmd ./runner.sh )
-        TIME_TOTAL=$(( ${TIME_TOTAL} + ${TIME_ELAPSED} ))
+        TIME_TOTAL=$(( ${TIME_TOTAL:-0} + ${TIME_ELAPSED} ))
         sed -e 's/^/   > /g' ${TEST_OUTFILE} >> "${TEST_LOGFILE}"
 
         # Retrieve the exit code. This is either the one of the mpirun call
@@ -428,7 +428,7 @@ if test "${MUSIC}"; then
         # The values will be stored in the XML report at 'junit_close'.
         # Test failures and diagnostic information are also stored in the xml-report file
         # with 'unit_write'.
-        JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
+        JUNIT_TESTS=$(( ${JUNIT_TESTS:-0} + 1 ))
         if test -z $(echo ${test_name} | grep failure); then
             if test $exit_code -eq 0; then
                 echo "Success"

@@ -69,7 +69,7 @@ jobs:
      runs-on: ${{ matrix.os }}
      needs: [static_checks]
      strategy:
-       fail-fast: false
+       fail-fast: true
        matrix:
          os: ["ubuntu-20.04", macos-latest]
          cpp_compiler: ["gcc", "clang"]

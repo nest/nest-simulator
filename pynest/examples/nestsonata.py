@@ -32,6 +32,12 @@ import time
 
 import matplotlib.pyplot as plt
 
+def memory_thisjob():
+    """Wrapper to obtain current memory usage"""
+    nest.ll_api.sr('memory_thisjob')
+    return nest.ll_api.spp()
+
+
 nest.ResetKernel()
 
 #example = '300_pointneurons'
@@ -56,9 +62,14 @@ if not sonata_connector.config['target_simulator'] == 'NEST':
 
 nest.set(resolution=sonata_connector.config['run']['dt'])#, tics_per_ms=sonata_connector.config['run']['nsteps_block'])
 
+mem_ini = memory_thisjob()
+
 # Create nodes
 sonata_connector.create_nodes()
+mem_create = memory_thisjob()
+
 sonata_connector.create_edge_dict()
+
 
 sonata_dynamics = {'nodes': sonata_connector.node_collections, 'edges': sonata_connector.edge_types}
 print(sonata_connector.node_collections)
@@ -69,9 +80,10 @@ print()
 
 start_time = time.time()
 
-nest.Connect(sonata_dynamics=sonata_dynamics)
+#nest.Connect(sonata_dynamics=sonata_dynamics)
 
 end_time = time.time() - start_time
+mem_connect = memory_thisjob()
 
 conns = nest.GetConnections()
 print(conns)
@@ -86,6 +98,9 @@ print("number of connections: ", nest.GetKernelStatus('num_connections'))
 #    print(f'Range of connections with source node id {nc.global_id}: {old_val} {node_id_to_range}')
 
 print(f"\nconnection took: {end_time} s")
+print(f'initial memory: {mem_ini}')
+print(f'memory create: {mem_create}')
+print(f'memory connect: {mem_connect}')
 
 if plot:
     s_rec = nest.Create('spike_recorder')

@@ -68,7 +68,7 @@
 #
 run_test ()
 {
-    TEST_TOTAL=$(( ${TEST_TOTAL} + 1 ))
+    TEST_TOTAL=$(( ${TEST_TOTAL:-0} + 1 ))
 
     param_script="$1"
     param_success="$2"

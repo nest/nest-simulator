@@ -224,6 +224,7 @@ add_custom_target( installcheck
 ################################################################################
 
 add_subdirectory( doc )
+add_subdirectory( bin )
 add_subdirectory( examples )
 add_subdirectory( build_support )
 add_subdirectory( lib )

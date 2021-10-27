@@ -65,6 +65,10 @@ EOF
     exit $1
 }
 
+PREFIX=""
+REPORTDIR=""
+PYTHON=""
+MUSIC=""
 while test $# -gt 0 ; do
     case "$1" in
         --help)
@@ -97,7 +101,7 @@ if test ! "${REPORTDIR:-}"; then
     usage 2 "--report-dir";
 fi
 
-if test "${PYTHON:-}"; then
+if test "${PYTHON}"; then
       TIME_LIMIT=120  # seconds, for each of the Python tests
       PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
         echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
@@ -158,7 +162,7 @@ echo
 NEST_VERSION="$(sli -c "statusdict/version :: =only")"
 echo "  NEST executable .... $NEST (version $NEST_VERSION)"
 echo "  PREFIX ............. $PREFIX"
-if test "${PYTHON:-}"; then
+if test "${PYTHON}"; then
     PYTHON_VERSION="$("${PYTHON}" --version | cut -d' ' -f2)"
     echo "  Python executable .. $PYTHON (version $PYTHON_VERSION)"
     echo "  PYTHONPATH ......... `print_paths ${PYTHONPATH:-}`"
@@ -464,7 +468,7 @@ echo
 echo "Phase 7: Running PyNEST tests"
 echo "-----------------------------"
 
-if test "${PYTHON:-}"; then
+if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests"
     XUNIT_NAME="07_pynesttests"
 

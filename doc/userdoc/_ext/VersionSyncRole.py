@@ -29,7 +29,7 @@ def version_role(pattern):
     """ Defines the role function
 
     Args:
-        pattern (str): This argument represents the input pattern of the role whici is just a string (%s).
+        pattern (str): This argument represents the input pattern of the role which is just a string (%s).
 
     Returns:
         function: Returns the defined role function.

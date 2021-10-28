@@ -56,6 +56,23 @@ jobs:
            echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
            echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
            echo 'EOF' >> $GITHUB_ENV
+           echo "GITHUB_ENV = $GITHUB_ENV"
+           cat $GITHUB_ENV
+
+       - name: list files
+         run: |
+           ls -la *
+
+       - name: Upload install results
+         uses: actions/upload-artifact@v2
+         if: ${{ true }}
+         with:
+           name: install-logs
+           path: |
+             **/install_manifest.txt
+             **/CMakeFiles/*.log
+             **/Testing/Temporary/LastTest.log
+             **/reports/**
 
        - name: Static Code Analysis
          run: |
@@ -65,16 +82,20 @@ jobs:
            xNEST_BUILD_TYPE: 'STATIC_CODE_ANALYSIS'
            CHANGED_FILES: ${{env.CHANGED_FILES}}
 
-       - name: Upload install and test results
+       - name: Upload test results
          uses: actions/upload-artifact@v2
          if: ${{ true }}
          with:
-           name: install-and-test-logs
+           name: test-logs
            path: |
              **/install_manifest.txt
              **/CMakeFiles/*.log
              **/Testing/Temporary/LastTest.log
              **/reports/**
+
+       - name: list files
+         run: |
+           ls -la *
 
   test_all_os:
      if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}

@@ -263,7 +263,7 @@ class NodeCollection(object):
             raise IndexError('only integers, slices, lists, tuples, and numpy arrays are valid indices')
 
     def __contains__(self, node_id):
-        return sli_func('MemberQ', self._datum, node_id)
+        return sli_func('InCollection', self._datum, node_id)
 
     def __eq__(self, other):
         if not isinstance(other, NodeCollection):

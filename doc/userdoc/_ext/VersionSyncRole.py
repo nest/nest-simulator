@@ -67,7 +67,6 @@ def version_role(pattern):
     return role
 
 
-
 def setup(app):
     """ Adds the necessary routines to Sphinx.
 

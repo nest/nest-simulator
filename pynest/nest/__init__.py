@@ -429,7 +429,7 @@ class NestModule(types.ModuleType):
 _module = NestModule(__name__)
 # Manipulate the nest module instance through its `__dict__` (= vars())
 _module_dict = vars(_module)
-# Copy over the original module attributes to preverse all interpreter given
+# Copy over the original module attributes to preserve all interpreter-given
 # magic attributes such as `__name__`, `__path__`, `__package__`, ...
 _module_dict.update(_original_module_attrs)
 

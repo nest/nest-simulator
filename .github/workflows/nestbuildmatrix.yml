@@ -43,7 +43,7 @@ jobs:
          #uses: actions/cache@master
          run: |
             python -m pip install --upgrade pip setuptools
-            python -m pip install scipy junitparser>=2 numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+            python -m pip install scipy "junitparser>=2" numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
             pip list
             g++ --version
             set -o pipefail

@@ -273,9 +273,9 @@ class TestNodeCollection(unittest.TestCase):
         def check_membership(nc, reference, inverse_ref):
             """Checks that all node IDs in reference are in nc, and that elements in inverse_ref are not in the nc."""
             for i in reference:
-                self.assertTrue(i in nc, 'i={}'.format(i))
+                self.assertTrue(i in nc, f'{i} in {nc.tolist()}')
             for j in inverse_ref:
-                self.assertFalse(j in nc)
+                self.assertFalse(j in nc, f'{j} not in {nc.tolist()}')
 
             self.assertFalse(reference[-1] + 1 in nc)
             self.assertFalse(0 in nc)

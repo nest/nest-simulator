@@ -67,12 +67,14 @@ jobs:
 
        - name: Upload install and test results
          uses: actions/upload-artifact@v2
+         if: ${{ true }}
          with:
            name: install-and-test-logs
            path: |
              install_manifest.txt
              CMakeFiles/*.log
              Testing/Temporary/LastTest.log
+             reports/**
 
   test_all_os:
      if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -200,10 +202,12 @@ jobs:
 
        - name: Upload install and test results
          uses: actions/upload-artifact@v2
+         if: ${{ true }}
          with:
            name: install-and-test-logs
            path: |
              install_manifest.txt
              CMakeFiles/*.log
              Testing/Temporary/LastTest.log
+             reports/**
 

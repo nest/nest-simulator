@@ -321,7 +321,7 @@ junit_open '03_unittests'
 
 tests_collect=sli
 if test "${PYTHON}"; then
-  test_collect="$test_collect py"
+  tests_collect="$tests_collect py"
 fi
 for test_ext in ${tests_collect} ; do
       for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
@@ -337,7 +337,7 @@ echo "---------------------------------"
 
 junit_open '04_regressiontests'
 
-for test_ext in sli py ; do
+for test_ext in ${tests_collect} ; do
     for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
         run_test "regressiontests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done

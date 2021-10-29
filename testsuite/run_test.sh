@@ -97,8 +97,13 @@ run_test ()
     else
       # Use plain python3 if the PYTHON variable is unset (i.e. PyNEST
       # was not enabled)
-      PYTHON_CMD="${PYTHON:-python3}"
+      if ! test "${PYTHON}"; then
+        echo "! WARNING: STARTING TEST WITH PYTHON='$PYTHON'"
+      fi
+      PYTHON_CMD="${PYTHON}"
+      echo "PYTHON_CMD=$PYTHON_CMD"
       command="'${PYTHON_CMD}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
+      echo "command=$command"
     fi
 
     echo "${command}" >> "${TEST_RUNFILE}"

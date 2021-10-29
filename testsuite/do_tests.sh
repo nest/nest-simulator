@@ -139,6 +139,9 @@ echo "TEST_OUTFILE=${TEST_OUTFILE}"
 echo "TEST_RETFILE=${TEST_RETFILE}"
 echo "TEST_RUNFILE=${TEST_RUNFILE}"
 
+echo "${TEST_BASEDIR}"
+ls -la "${TEST_BASEDIR}"
+
 NEST="nest_serial"
 
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
@@ -316,7 +319,11 @@ echo "--------------------------------"
 
 junit_open '03_unittests'
 
-for test_ext in sli py ; do
+tests_collect=sli
+if test "${PYTHON}"; then
+  test_collect="$test_collect py"
+fi
+for test_ext in ${tests_collect} ; do
       for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
           run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
       done

@@ -84,7 +84,7 @@ jobs:
 
        - name: "Upload install results"
          uses: actions/upload-artifact@v2
-         if: ${{ true }}
+         if: always()
          with:
            name: "static_checks-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-install-logs"
            path: |
@@ -103,7 +103,7 @@ jobs:
 
        - name: "Upload test results"
          uses: actions/upload-artifact@v2
-         if: ${{ true }}
+         if: always()
          with:
            name: "static_checks-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-test-logs"
            path: |
@@ -218,7 +218,7 @@ jobs:
 
        - name: "Upload install and test results"
          uses: actions/upload-artifact@v2
-         if: failure()
+         if: always()
          with:
            name: "test_linux-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
            path: |
@@ -325,7 +325,7 @@ jobs:
 
        - name: "Upload install and test results"
          uses: actions/upload-artifact@v2
-         if: true
+         if: always()
          with:
            name: "test_macos-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
            path: |

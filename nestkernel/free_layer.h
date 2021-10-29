@@ -256,7 +256,7 @@ template < int D >
 Position< D >
 FreeLayer< D >::get_position( index lid ) const
 {
-  return positions_.at( lid_to_position_id_( lid + this->start_ ) );
+  return positions_.at( lid_to_position_id_( lid ) );
 }
 
 template < int D >

@@ -213,7 +213,7 @@ jobs:
 
        - name: "Upload install and test results"
          uses: actions/upload-artifact@v2
-         if: ${{ true }}
+         if: failed()
          with:
            name: "install-and-test-logs"
            path: |

@@ -855,11 +855,11 @@ def printable_summary(list_of_changed_files,
                                                        summary_format,
                                                        summary_pep8)
 
-    if number_of_warnings > 0:
+    if number_of_warnings is not None and number_of_warnings > 0:
         build_summary += '\n  W A R N I N G S\n'
         build_summary += warnings_table(summary_warnings)
 
-    if number_of_errors > 0:
+    if number_of_errors is not None and number_of_errors > 0:
         build_summary += '\n  E R R O R S\n'
         build_summary += errors_table(summary_errors)
 

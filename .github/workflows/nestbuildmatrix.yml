@@ -61,7 +61,12 @@ jobs:
 
        - name: list files
          run: |
+           pwd
            ls -la *
+           ls -la build/*
+
+       - name: list environment
+         run: set
 
        - name: Upload install results
          uses: actions/upload-artifact@v2
@@ -72,7 +77,7 @@ jobs:
              **/install_manifest.txt
              **/CMakeFiles/*.log
              **/Testing/Temporary/LastTest.log
-             **/reports/**
+             build/reports/**
 
        - name: Static Code Analysis
          run: |
@@ -91,11 +96,13 @@ jobs:
              **/install_manifest.txt
              **/CMakeFiles/*.log
              **/Testing/Temporary/LastTest.log
-             **/reports/**
+             build/reports/**
 
        - name: list files
          run: |
+           pwd
            ls -la *
+           ls -la build/*
 
   test_all_os:
      if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -203,7 +210,7 @@ jobs:
          if: contains(matrix.os, 'ubuntu')
          run: sudo ldconfig
 
-       - name: Static Code Analysis
+       - name: CI build
          run: |
            chmod +x build_support/ci_build.sh
            ./build_support/ci_build.sh
@@ -212,7 +219,7 @@ jobs:
            CHANGED_FILES: ${{env.CHANGED_FILES}}
            #GET CHANGED FILES: https://github.com/marketplace/actions/get-changed-files
 
-       - name: "${{ matrix.NEST_BUILD_TYPE }} Build"
+       - name: ${{ matrix.NEST_BUILD_TYPE }} Build
          run: |
            echo "$xNEST_BUILD_TYPE Build"
            chmod +x build_support/ci_build.sh
@@ -230,5 +237,11 @@ jobs:
              install_manifest.txt
              CMakeFiles/*.log
              Testing/Temporary/LastTest.log
-             reports/**
+             build/reports/**
+
+       - name: list files
+         run: |
+           pwd
+           ls -la *
+           ls -la build/*
 

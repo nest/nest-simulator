@@ -298,6 +298,23 @@ fi
 mkdir "$NEST_RESULT"
 echo "MSGBLD0235: Running CMake."
 cd "$NEST_VPATH"
+echo "MSGBLD0236: $(pwd)\$ cmake \
+    -DCMAKE_INSTALL_PREFIX=\"$NEST_RESULT\" \
+    -DCMAKE_CXX_FLAGS=\"$CXX_FLAGS\" \
+    -Dwith-optimize=ON \
+    -Dwith-warning=ON \
+    $CONFIGURE_BOOST \
+    $CONFIGURE_OPENMP \
+    $CONFIGURE_MPI \
+    $CONFIGURE_PYTHON \
+    $CONFIGURE_MUSIC \
+    $CONFIGURE_GSL \
+    $CONFIGURE_LTDL \
+    $CONFIGURE_READLINE \
+    $CONFIGURE_SIONLIB \
+    $CONFIGURE_LIBNEUROSIM \
+    .."
+
 cmake \
     -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
     -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \

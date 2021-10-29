@@ -143,7 +143,6 @@ echo "${TEST_BASEDIR}"
 ls -la "${TEST_BASEDIR}"
 
 NEST="nest_serial"
-
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
 
 if test "${HAVE_MPI}" = "true"; then
@@ -154,7 +153,8 @@ fi
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
 if test "$(uname -s)" = "Darwin"; then
     TEST_CRSTATE="$( defaults read com.apple.CrashReporter DialogType )"
-    defaults write com.apple.CrashReporter DialogType server
+    echo "TEST_CRSTATE=$TEST_CRSTATE"
+    defaults write com.apple.CrashReporter DialogType server || echo "WARNING: Could not set CrashReporter DialogType!"
 fi
 
 print_paths () {

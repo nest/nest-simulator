@@ -38,12 +38,14 @@ jobs:
          env:
            cache-name: "apt-cache"
          with:
-           path: /var/cache/apt
-           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
+           path: |
+             /var/cache/apt
+             !/var/cache/apt/archives/lock
+             !/var/cache/apt/archives/partial
+           key: ${{ runner.os }}-system-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
            restore-keys: |
-             ${{ runner.os }}-build-${{ env.cache-name }}-
-             ${{ runner.os }}-build-
-             ${{ runner.os }}-
+             ${{ runner.os }}-system-${{ env.cache-name }}-
+             ${{ runner.os }}-system-
 
        - name: "Install Linux system dependencies"
          run: |
@@ -55,8 +57,19 @@ jobs:
            sudo apt-get install vera++
            sudo ldconfig
 
+       - name: "Restore pip cache"
+         env:
+           cache-name: "pip-cache"
+         uses: actions/cache@v2
+         with:
+           path: |
+             /opt/hostedtoolcache/Python/**/site-packages/*
+           key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
+           restore-keys: |
+             ${{ runner.os }}-python-${{ env.cache-name }}-
+             ${{ runner.os }}-python-
+
        - name: "Install Python dependencies"
-         #uses: actions/cache@master
          run: |
             python -m pip install --upgrade pip setuptools
             python -c "import setuptools; print('package location:', setuptools.__file__)"
@@ -179,12 +192,14 @@ jobs:
          env:
            cache-name: "apt-cache"
          with:
-           path: /var/cache/apt
-           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
+           path: |
+             /var/cache/apt
+             !/var/cache/apt/archives/lock
+             !/var/cache/apt/archives/partial
+           key: ${{ runner.os }}-system-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
            restore-keys: |
-             ${{ runner.os }}-build-${{ env.cache-name }}-
-             ${{ runner.os }}-build-
-             ${{ runner.os }}-
+             ${{ runner.os }}-system-${{ env.cache-name }}-
+             ${{ runner.os }}-system-
 
        - name: "Install Linux system dependencies"
          run: |
@@ -196,8 +211,19 @@ jobs:
            sudo apt-get install vera++
            sudo ldconfig
 
+       - name: "Restore pip cache"
+         env:
+           cache-name: "pip-cache"
+         uses: actions/cache@v2
+         with:
+           path: |
+             /opt/hostedtoolcache/Python/**/site-packages/*
+           key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
+           restore-keys: |
+             ${{ runner.os }}-python-${{ env.cache-name }}-
+             ${{ runner.os }}-python-
+
        - name: "Install Python dependencies"
-         #uses: actions/cache@master
          run: |
             python -m pip install --upgrade pip setuptools
             python -c "import setuptools; print('package location:', setuptools.__file__)"
@@ -303,8 +329,20 @@ jobs:
             brew install coreutils gsl open-mpi automake autoconf libtool
             brew info python
 
+       - name: "Restore pip cache"
+         env:
+           cache-name: "pip-cache"
+         uses: actions/cache@v2
+         with:
+           path: |
+             /opt/hostedtoolcache/Python/**/site-packages/*
+           key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
+           restore-keys: |
+             ${{ runner.os }}-python-${{ env.cache-name }}-
+             ${{ runner.os }}-python-
+
        - name: "Install Python dependencies"
-         #uses: actions/cache@master
+         #uses: actions/cache@v2
          run: |
             python -m pip install --upgrade pip setuptools
             python -c "import setuptools; print('package location:', setuptools.__file__)"

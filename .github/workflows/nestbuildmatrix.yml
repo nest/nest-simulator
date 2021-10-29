@@ -62,8 +62,8 @@ jobs:
        - name: list files
          run: |
            pwd
-           ls -la *
-           ls -la build/*
+           ls -la * || true
+           ls -la build/* || true
 
        - name: list environment
          run: set
@@ -101,8 +101,8 @@ jobs:
        - name: list files
          run: |
            pwd
-           ls -la *
-           ls -la build/*
+           ls -la * || true
+           ls -la build/* || true
 
   test_all_os:
      if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
@@ -242,6 +242,6 @@ jobs:
        - name: list files
          run: |
            pwd
-           ls -la *
-           ls -la build/*
+           ls -la * || true
+           ls -la build/* || true
 

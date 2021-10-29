@@ -86,12 +86,11 @@ jobs:
          uses: actions/upload-artifact@v2
          if: ${{ true }}
          with:
-           name: "static-install-logs"
            name: "static_checks-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-install-logs"
            path: |
-             **/install_manifest.txt
-             **/CMakeFiles/*.log
-             **/Testing/Temporary/LastTest.log
+             ci_build.sh.log
+             install_manifest.txt
+             **.log
              build/reports/**
 
        - name: "Static Code Analysis"
@@ -108,9 +107,9 @@ jobs:
          with:
            name: "static_checks-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-test-logs"
            path: |
-             **/install_manifest.txt
-             **/CMakeFiles/*.log
-             **/Testing/Temporary/LastTest.log
+             ci_build.sh.log
+             install_manifest.txt
+             **.log
              build/reports/**
 
        - name: "DEBUG: list files"
@@ -223,9 +222,9 @@ jobs:
          with:
            name: "test_linux-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
            path: |
+             ci_build.sh.log
              install_manifest.txt
-             CMakeFiles/*.log
-             Testing/Temporary/LastTest.log
+             **.log
              build/reports/**
 
        - name: "DEBUG: list files"
@@ -330,9 +329,9 @@ jobs:
          with:
            name: "test_macos-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
            path: |
+             ci_build.sh.log
              install_manifest.txt
-             CMakeFiles/*.log
-             Testing/Temporary/LastTest.log
+             **.log
              build/reports/**
 
        - name: "DEBUG: list files"

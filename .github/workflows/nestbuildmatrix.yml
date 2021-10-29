@@ -37,9 +37,9 @@ jobs:
           cache-name: "apt-cache"
         with:
           path: |
-            /var/cache/apt
             !/var/cache/apt/archives/lock
             !/var/cache/apt/archives/partial
+            /var/cache/apt
           key: ${{ runner.os }}-system-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
           restore-keys: |
             ${{ runner.os }}-system-${{ env.cache-name }}-
@@ -53,8 +53,8 @@ jobs:
           sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
           sudo apt-get install vera++
-           g++ --version
           sudo ldconfig
+          g++ --version
 
       - name: "Restore pip cache"
         env:
@@ -72,7 +72,7 @@ jobs:
         run: |
            python -m pip install --upgrade pip setuptools
            python -c "import setuptools; print('package location:', setuptools.__file__)"
-           python -m pip install scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py 'cython>=0.28.3' matplotlib terminaltables pandoc
+           python -m pip install scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
            python -c "import pytest; print('package location:', pytest.__file__)"
            pip list
 
@@ -192,9 +192,9 @@ jobs:
           cache-name: "apt-cache"
         with:
           path: |
-            /var/cache/apt
             !/var/cache/apt/archives/lock
             !/var/cache/apt/archives/partial
+            /var/cache/apt
           key: ${{ runner.os }}-system-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
           restore-keys: |
             ${{ runner.os }}-system-${{ env.cache-name }}-
@@ -209,6 +209,7 @@ jobs:
           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
           sudo apt-get install vera++
           sudo ldconfig
+          g++ --version
 
       - name: "Restore pip cache"
         env:
@@ -224,12 +225,17 @@ jobs:
 
       - name: "Install Python dependencies"
         run: |
-           python -m pip install --upgrade pip setuptools
-           python -c "import setuptools; print('package location:', setuptools.__file__)"
-           python -m pip install scipy "junitparser>=2" numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
-           python -c "import pytest; print('package location:', pytest.__file__)"
-           pip list
-           g++ --version
+          python -m pip install --upgrade pip setuptools
+          python -c "import setuptools; print('package location:', setuptools.__file__)"
+          python -m pip install scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+          python -c "import pytest; print('package location:', pytest.__file__)"
+          pip list
+
+      - name: "DEBUG: find commands"
+        run: |
+          echo "python3: $(which python3)"
+          echo "cython: $(which cython)"
+          echo "python3: $(which cython3)"
 
       - name: "Build NEST"
         run: |
@@ -238,8 +244,8 @@ jobs:
           python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
         env:
           xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
-          CHANGED_FILES: ${{env.CHANGED_FILES}}
-          #GET CHANGED FILES: https://github.com/marketplace/actions/get-changed-files
+          CHANGED_FILES: ${{ env.CHANGED_FILES }}
+          #get changed files: https://github.com/marketplace/actions/get-changed-files
 
       - name: "Upload install and test results"
         uses: actions/upload-artifact@v2
@@ -259,115 +265,119 @@ jobs:
           ls -la build/* || true
 
   test_macos:
-     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-     runs-on: ${{ matrix.os }}
-     needs: [static_checks]
-     strategy:
-       fail-fast: true
-       matrix:
-         os: [macos-latest]
-         cpp_compiler: ["gcc", "clang"]
-         xNEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
-         exclude:
-           - xNEST_BUILD_TYPE: "MPI_ONLY"
-             cpp_compiler: "clang"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
-             cpp_compiler: "clang"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "FULL"
-             os: macos-latest
-             cpp_compiler: "clang"
-           - xNEST_BUILD_TYPE: "MINIMAL"
-             os: macos-latest
-             cpp_compiler: "gcc"
-           - xNEST_BUILD_TYPE: "MPI_ONLY"
-             cpp_compiler: "gcc"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
-             cpp_compiler: "gcc"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "FULL"
-             os: macos-latest
-             cpp_compiler: "gcc"
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ${{ matrix.os }}
+    needs: [static_checks]
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [macos-latest]
+        cpp_compiler: ["gcc", "clang"]
+        xNEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
+        exclude:
+          - xNEST_BUILD_TYPE: "MPI_ONLY"
+            cpp_compiler: "clang"
+            os: macos-latest
+          - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+            cpp_compiler: "clang"
+            os: macos-latest
+          - xNEST_BUILD_TYPE: "FULL"
+            os: macos-latest
+            cpp_compiler: "clang"
+          - xNEST_BUILD_TYPE: "MINIMAL"
+            os: macos-latest
+            cpp_compiler: "gcc"
+          - xNEST_BUILD_TYPE: "MPI_ONLY"
+            cpp_compiler: "gcc"
+            os: macos-latest
+          - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+            cpp_compiler: "gcc"
+            os: macos-latest
+          - xNEST_BUILD_TYPE: "FULL"
+            os: macos-latest
+            cpp_compiler: "gcc"
 
-     steps:
-       - name: "Checkout repository content"
-         uses: actions/checkout@v2
-         with:
-           fetch-depth: 0
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-       - name: "Find changed files"
-         run: |
-           echo "CHANGED_FILES<<EOF" >>$GITHUB_ENV
-           echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >>$GITHUB_ENV
-           echo 'EOF' >>$GITHUB_ENV
+      - name: "Find changed files"
+        run: |
+          echo "CHANGED_FILES<<EOF" >>$GITHUB_ENV
+          echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >>$GITHUB_ENV
+          echo 'EOF' >>$GITHUB_ENV
 
-       - name: "DEBUG: Check path"
-         run: |
-           echo $PATH
-           echo $PWD
-         shell: bash
+      - name: "DEBUG: Check path"
+        run: |
+          echo $PATH
+          echo $PWD
+        shell: bash
 
-       - name: "Set up Python 3.x"
-         uses: actions/setup-python@v2
-         with:
-           python-version: 3.9
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
 
-       - name: "DEBUG: Check Python path"
-         run: echo $PYTHONPATH
+      - name: "DEBUG: Check Python path"
+        run: echo $PYTHONPATH
 
-       - name: "Install MacOS system dependencies"
-         run: |
-            brew install coreutils gsl open-mpi automake autoconf libtool
-            brew info python
+      - name: "Install MacOS system dependencies"
+        run: |
+           brew install coreutils gsl open-mpi automake autoconf libtool
+           brew info python
 
-       - name: "Restore pip cache"
-         env:
-           cache-name: "pip-cache"
-         uses: actions/cache@v2
-         with:
-           path: |
-             /opt/hostedtoolcache/Python/**/site-packages/*
-           key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
-           restore-keys: |
-             ${{ runner.os }}-python-${{ env.cache-name }}-
-             ${{ runner.os }}-python-
+      - name: "Restore pip cache"
+        env:
+          cache-name: "pip-cache"
+        uses: actions/cache@v2
+        with:
+          path: |
+            /opt/hostedtoolcache/Python/**/site-packages/*
+          key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-python-${{ env.cache-name }}-
+            ${{ runner.os }}-python-
 
-       - name: "Install Python dependencies"
-         #uses: actions/cache@v2
-         run: |
-            python -m pip install --upgrade pip setuptools
-            python -c "import setuptools; print('package location:', setuptools.__file__)"
-            python -m pip install scipy "junitparser>=2" numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
-            python -c "import pytest; print('package location:', pytest.__file__)"
-            pip list
-            g++ --version
+      - name: "Install Python dependencies"
+        run: |
+          python -m pip install --upgrade pip setuptools
+          python -c "import setuptools; print('package location:', setuptools.__file__)"
+          python -m pip install scipy "junitparser>=2" numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+          python -c "import pytest; print('package location:', pytest.__file__)"
+          pip list
 
-       - name: "Build NEST"
-         run: |
-           chmod +x build_support/ci_build.sh
-           ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
-           python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-         env:
-           xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
-           CHANGED_FILES: ${{ env.CHANGED_FILES }}
-           #get changed files: https://github.com/marketplace/actions/get-changed-files
+      - name: "DEBUG: find commands"
+        run: |
+          echo "python3: $(which python3)"
+          echo "cython: $(which cython)"
+          echo "python3: $(which cython3)"
 
-       - name: "Upload install and test results"
-         uses: actions/upload-artifact@v2
-         if: always()
-         with:
-           name: "test_macos-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
-           path: |
-             ci_build.sh.log
-             install_manifest.txt
-             **.log
-             build/reports/**
+      - name: "Build NEST"
+        run: |
+          chmod +x build_support/ci_build.sh
+          ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
+          python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
+        env:
+          xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
+          CHANGED_FILES: ${{ env.CHANGED_FILES }}
+          #get changed files: https://github.com/marketplace/actions/get-changed-files
 
-       - name: "DEBUG: list files"
-         run: |
-           pwd
-           ls -la * || true
-           ls -la build/* || true
+      - name: "Upload install and test results"
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: "test_macos-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
+          path: |
+            ci_build.sh.log
+            install_manifest.txt
+            **.log
+            build/reports/**
+
+      - name: "DEBUG: list files"
+        run: |
+          pwd
+          ls -la * || true
+          ls -la build/* || true
 

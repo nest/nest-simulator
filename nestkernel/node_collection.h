@@ -352,9 +352,9 @@ public:
   virtual long find( const index ) const = 0;
 
   /**
-   * Returns number of devices, i.e. nodes without proxies, in the NodeCollection.
+   * Returns whether the NodeCollection has contains any nodes with proxies or not.
    *
-   * @return Number of devices.
+   * @return true if any nodes in the NodeCollection has proxies, false otherwise.
    */
   virtual bool has_proxies() const = 0;
 
@@ -382,8 +382,11 @@ private:
   bool nodes_have_no_proxies_;         //!< Whether the primitive contains devices or not
 
   /**
-   * Return true if all model ids in the primitive are what we expect.
-   * @param model_id Expected model id
+   * Returns whether the model ids of all nodes in the primitive are the same as the expected model id.
+   *
+   * @param model_id Expected model id.
+   * @return true if model ids of all nodes in the primitive are the same as the expected model id, false otherwise.
+   *
    */
   bool all_model_ids_same_as_expected_( index ) const;
 

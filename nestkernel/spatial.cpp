@@ -54,55 +54,6 @@ LayerMetadata::LayerMetadata( AbstractLayerPTR layer )
 {
 }
 
-void
-LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection )
-{
-  if ( step > 1 )
-  {
-    throw BadProperty( "Slicing a NodeCollection with spatial metadata is currently not possible." );
-  }
-  TokenArray new_positions;
-  for ( size_t lid = start; lid < stop; ++lid )
-  {
-    const auto node =
-      kernel().node_manager.get_mpi_local_node_or_device_head( layer_->get_node_collection()->operator[]( lid ) );
-    if ( not node->is_proxy() )
-    {
-      const auto pos = layer_->get_position_vector( lid );
-      new_positions.push_back( pos );
-    }
-  }
-
-  // Create new free layer with sliced positions
-  const auto D = layer_->get_num_dimensions();
-  assert( D == 2 or D == 3 );
-  AbstractLayer* layer_local = nullptr;
-  if ( D == 2 )
-  {
-    layer_local = new FreeLayer< 2 >();
-  }
-  else if ( D == 3 )
-  {
-    layer_local = new FreeLayer< 3 >();
-  }
-  // Wrap the layer as the usual pointer types.
-  std::shared_ptr< AbstractLayer > layer_safe( layer_local );
-  NodeCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
-
-  // Set the relationship with the NodeCollection.
-  node_collection->set_metadata( layer_meta );
-  layer_safe->set_node_collection( node_collection );
-  layer_meta->set_first_node_id( node_collection->operator[]( 0 ) );
-
-  // Inherit status from current layer, but with new positions.
-  DictionaryDatum layer_dict = new Dictionary();
-  layer_->get_status( layer_dict );
-  ( *layer_dict )[ names::positions ] = ArrayDatum( new_positions );
-  ( *layer_dict )[ names::step ] = step;
-  layer_local->set_status( layer_dict );
-}
-
-
 AbstractLayerPTR
 get_layer( NodeCollectionPTR nc )
 {

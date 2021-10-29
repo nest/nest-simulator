@@ -1581,23 +1581,16 @@ NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
     throw BadParameter( "Slicing step must be strictly positive." );
   }
 
-  if ( start >= 0 )
+  // If start or stop are counted backwards from the end with negative keys, they must be adjusted.
+  if ( start < 0 )
   {
-    start -= 1; // adjust from 1-based to 0-based indexing
-  }
-  else
-  {
-    start += g_size; // automatically correct for 0-based indexing
+    start += g_size;
+    stop = stop == 0 ? g_size : stop;
   }
 
-  if ( stop >= 0 )
+  if ( stop < 0 )
   {
-    // no adjustment necessary: adjustment from 1- to 0- based indexing
-    // and adjustment from last- to stop-based logic cancel
-  }
-  else
-  {
-    stop += g_size + 1; // adjust from 0- to 1- based indexin
+    stop += g_size;
   }
 
   NodeCollectionDatum sliced_nc = nodecollection->slice( start, stop, step );

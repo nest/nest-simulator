@@ -239,9 +239,14 @@ GridLayer< D >::gridpos_to_position( Position< D, int > gridpos ) const
 
 template < int D >
 Position< D >
-GridLayer< D >::get_position( index sind ) const
+GridLayer< D >::get_position( index lid ) const
 {
-  return lid_to_position( sind );
+  const auto num_procs = kernel().mpi_manager.get_num_processes();
+  if ( this->node_collection_->has_proxies() )
+  {
+    return lid_to_position( lid );
+  }
+  return lid_to_position( lid / num_procs );
 }
 
 template < int D >
@@ -277,14 +282,10 @@ template < class Ins >
 void
 GridLayer< D >::insert_global_positions_( Ins iter, NodeCollectionPTR node_collection )
 {
-  index i = 0;
-  index lid_end = node_collection->size();
-
-  NodeCollection::const_iterator gi = node_collection->begin();
-
-  for ( ; ( gi < node_collection->end() ) && ( i < lid_end ); ++gi, ++i )
+  for ( auto gi = node_collection->begin(); gi < node_collection->end(); ++gi )
   {
-    *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).node_id );
+    const auto triple = *gi;
+    *iter++ = std::pair< Position< D >, index >( lid_to_position( triple.lid ), triple.node_id );
   }
 }
 

@@ -65,6 +65,8 @@ protected:
   void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
     NodeCollectionPTR node_collection );
 
+  index lid_to_position_id_( index lid ) const;
+
   /// Vector of positions.
   std::vector< Position< D > > positions_;
 
@@ -119,23 +121,19 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     const Token& tkn = d->lookup( names::positions );
     if ( tkn.is_a< TokenArray >() )
     {
-      size_t step = 1;
-      if ( d->known( names::step ) )
-      {
-        step = getValue< long >( d->lookup( names::step ) );
-      }
-      assert( step == 1 );
       TokenArray pos = getValue< TokenArray >( tkn );
 
-      const auto num_local_nodes = this->node_collection_->end() - this->node_collection_->MPI_local_begin();
-      const auto num_devices = this->node_collection_->num_devices();
-      // A NodeCollection with spatial information cannot be a composite, so it contains either only devices or
-      // only regular nodes. Regular nodes are distributed over MPI processes, while devices are present on every
-      // process, and therefore requires positions on all processes.
-      const auto expected_num_positions = num_devices > 0 ? num_devices : num_local_nodes;
+      size_t num_local_nodes = std::accumulate( this->node_collection_->begin(),
+        this->node_collection_->end(),
+        0,
+        []( size_t a, NodeIDTriple b )
+        {
+          const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( b.node_id );
+          return node->is_proxy() ? a : a + 1;
+        } );
 
       positions_.clear();
-      positions_.reserve( expected_num_positions );
+      positions_.reserve( num_local_nodes );
 
       auto nc_it = this->node_collection_->begin();
       for ( Token* it = pos.begin(); it != pos.end(); ++it, ++nc_it )
@@ -162,22 +160,24 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
           }
         }
       }
-      assert( positions_.size() == expected_num_positions );
+      assert( positions_.size() == num_local_nodes );
     }
     else if ( tkn.is_a< ParameterDatum >() )
     {
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
       auto pos = dynamic_cast< DimensionParameter* >( pd->get() );
 
-      const auto num_local_nodes = this->node_collection_->end() - this->node_collection_->MPI_local_begin();
-      const auto num_devices = this->node_collection_->num_devices();
-      // A NodeCollection with spatial information cannot be a composite, so it contains either only devices or
-      // only regular nodes. Regular nodes are distributed over MPI processes, while devices are present on every
-      // process, and therefore requires positions on all processes.
-      const auto expected_num_positions = num_devices > 0 ? num_devices : num_local_nodes;
+      size_t num_local_nodes = std::accumulate( this->node_collection_->begin(),
+        this->node_collection_->end(),
+        0,
+        []( size_t a, NodeIDTriple b )
+        {
+          const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( b.node_id );
+          return node->is_proxy() ? a : a + 1;
+        } );
 
       positions_.clear();
-      positions_.reserve( expected_num_positions );
+      positions_.reserve( num_local_nodes );
 
       RngPtr rng = get_rank_synced_rng();
 
@@ -205,7 +205,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
           }
         }
       }
-      assert( positions_.size() == expected_num_positions );
+      assert( positions_.size() == num_local_nodes );
     }
     else
     {
@@ -256,11 +256,7 @@ template < int D >
 Position< D >
 FreeLayer< D >::get_position( index lid ) const
 {
-  const auto num_procs = kernel().mpi_manager.get_num_processes();
-  const long diff = static_cast< long >( lid ) - num_procs + 1;
-  const size_t position_id =
-    std::floor( diff / static_cast< double >( num_procs ) ) + ( std::abs( diff ) % num_procs > 0 );
-  return positions_.at( position_id );
+  return positions_.at( lid_to_position_id_( lid + this->start_ ) );
 }
 
 template < int D >
@@ -280,13 +276,13 @@ FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collect
 
   for ( NodeCollection::const_iterator nc_it = nc_begin; nc_it < nc_end; ++nc_it, ++pos_it )
   {
-    assert( pos_it != positions_.end() );
     // Push node ID into array to communicate
     local_node_id_pos.push_back( ( *nc_it ).node_id );
     // Push coordinates one by one
+    const auto pos = get_position( ( *nc_it ).lid );
     for ( int j = 0; j < D; ++j )
     {
-      local_node_id_pos.push_back( ( *pos_it )[ j ] );
+      local_node_id_pos.push_back( pos[ j ] );
     }
   }
 
@@ -339,6 +335,18 @@ FreeLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Positio
 
   // Sort vector to ensure consistent results
   std::sort( vec.begin(), vec.end(), node_id_less< D > );
+}
+
+template < int D >
+index
+FreeLayer< D >::lid_to_position_id_( index lid ) const
+{
+  const auto num_procs = kernel().mpi_manager.get_num_processes();
+  if ( not this->node_collection_->has_proxies() )
+  {
+    return lid;
+  }
+  return lid / num_procs;
 }
 
 } // namespace nest

@@ -133,7 +133,7 @@ class NodeCollectionIterator(object):
         if self._increment > len(self._nc) - 1:
             raise StopIteration
 
-        val = sli_func('Take', self._nc._datum, [self._increment + (self._increment >= 0)])
+        val = sli_func('Take_g_a', self._nc._datum, [self._increment, self._increment + 1, 1])
         self._increment += 1
         return val
 
@@ -210,26 +210,26 @@ class NodeCollection(object):
     def __getitem__(self, key):
         if isinstance(key, slice):
             if key.start is None:
-                start = 1
+                start = 0
             else:
-                start = key.start + 1 if key.start >= 0 else max(key.start, -1 * self.__len__())
+                start = key.start if key.start >= 0 else max(key.start, -1 * self.__len__())
                 if start > self.__len__():
                     raise IndexError('slice start value outside of the NodeCollection')
             if key.stop is None:
                 stop = self.__len__()
             else:
-                stop = min(key.stop, self.__len__()) if key.stop >= 0 else key.stop - 1
+                stop = min(key.stop, self.__len__()) if key.stop >= 0 else key.stop
                 if abs(stop) > self.__len__():
                     raise IndexError('slice stop value outside of the NodeCollection')
             step = 1 if key.step is None else key.step
             if step < 1:
                 raise IndexError('slicing step for NodeCollection must be strictly positive')
 
-            return sli_func('Take', self._datum, [start, stop, step])
+            return sli_func('Take_g_a', self._datum, [start, stop, step])
         elif isinstance(key, (int, numpy.integer)):
-            if abs(key + (key >= 0)) > self.__len__():
+            if key >= self.__len__() or key + self.__len__() < 0:
                 raise IndexError('index value outside of the NodeCollection')
-            return sli_func('Take', self._datum, [key + (key >= 0)])
+            return sli_func('Take_g_a', self._datum, [key, key + 1, 1])
         elif isinstance(key, (list, tuple)):
             if len(key) == 0:
                 return NodeCollection([])

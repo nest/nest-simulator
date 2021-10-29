@@ -133,6 +133,12 @@ TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"
 TEST_RUNFILE="${REPORTDIR}/runtest.sh"
 
+echo "TEST_BASEDIR=${TEST_BASEDIR}"
+echo "TEST_LOGFILE=${TEST_LOGFILE}"
+echo "TEST_OUTFILE=${TEST_OUTFILE}"
+echo "TEST_RETFILE=${TEST_RETFILE}"
+echo "TEST_RUNFILE=${TEST_RUNFILE}"
+
 NEST="nest_serial"
 
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"

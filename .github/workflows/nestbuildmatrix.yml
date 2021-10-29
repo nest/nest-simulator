@@ -30,6 +30,18 @@ jobs:
          with:
            python-version: 3.9
 
+       - name: Restore apt cache
+         uses: actions/cache@v2
+         env:
+           cache-name: apt-cache
+         with:
+           path: /var/cache/apt
+           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
+           restore-keys: |
+             ${{ runner.os }}-build-${{ env.cache-name }}-
+             ${{ runner.os }}-build-
+             ${{ runner.os }}-
+
        - name: Dependencies Linux
          run: |
            sudo apt-get update
@@ -104,23 +116,17 @@ jobs:
            ls -la * || true
            ls -la build/* || true
 
-  test_all_os:
+  test_linux:
      if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
      runs-on: ${{ matrix.os }}
      needs: [static_checks]
      strategy:
        fail-fast: true
        matrix:
-         os: ["ubuntu-20.04", macos-latest]
+         os: ["ubuntu-20.04"]
          cpp_compiler: ["gcc", "clang"]
          xNEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
          exclude:
-           - xNEST_BUILD_TYPE: "MPI_ONLY"
-             cpp_compiler: "clang"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
-             cpp_compiler: "clang"
-             os: macos-latest
            - xNEST_BUILD_TYPE: "MINIMAL"
              cpp_compiler: "clang"
              os: "ubuntu-20.04"
@@ -132,21 +138,6 @@ jobs:
              os: "ubuntu-20.04"
            - xNEST_BUILD_TYPE: "FULL"
              os: "ubuntu-20.04"
-             cpp_compiler: "clang"
-           - xNEST_BUILD_TYPE: "MPI_ONLY"
-             cpp_compiler: "gcc"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
-             cpp_compiler: "gcc"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "FULL"
-             os: macos-latest
-             cpp_compiler: "gcc"
-           - xNEST_BUILD_TYPE: "MINIMAL"
-             os: macos-latest
-             cpp_compiler: "gcc"
-           - xNEST_BUILD_TYPE: "FULL"
-             os: macos-latest
              cpp_compiler: "clang"
 
      steps:
@@ -155,20 +146,6 @@ jobs:
        - name: Checkout repo content
          #uses: actions/checkout@v2 # checkout the repository content to github runner.
          uses: actions/checkout@master
-
-       - name: Check Python path
-         run: echo $PYTHONPATH
-
-       - name: Check path
-         run: |
-           echo $PATH
-           echo $PWD
-         shell: bash
-
-       - name: Set up Python 3.x
-         uses: actions/setup-python@v2
-         with:
-           python-version: 3.9
 
        - name: Changed Files
          uses: actions/checkout@v2
@@ -180,6 +157,20 @@ jobs:
            echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
            echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
            echo 'EOF' >> $GITHUB_ENV
+
+       - name: DEBUG: Check path
+         run: |
+           echo $PATH
+           echo $PWD
+         shell: bash
+
+       - name: Set up Python 3.x
+         uses: actions/setup-python@v2
+         with:
+           python-version: 3.9
+
+       - name: DEBUG: Check Python path
+         run: echo $PYTHONPATH
 
        - name: Dependencies MacOS
          if: runner.os == 'macOS'
@@ -210,23 +201,136 @@ jobs:
          if: contains(matrix.os, 'ubuntu')
          run: sudo ldconfig
 
-       - name: CI build
+       - name: Build NEST
          run: |
-           chmod +x build_support/ci_build.sh
-           ./build_support/ci_build.sh
-         env:
-           xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
-           CHANGED_FILES: ${{env.CHANGED_FILES}}
-           #GET CHANGED FILES: https://github.com/marketplace/actions/get-changed-files
-
-       - name: ${{ matrix.NEST_BUILD_TYPE }} Build
-         run: |
-           echo "$xNEST_BUILD_TYPE Build"
            chmod +x build_support/ci_build.sh
            ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
            python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
+           CHANGED_FILES: ${{env.CHANGED_FILES}}
+           #GET CHANGED FILES: https://github.com/marketplace/actions/get-changed-files
+
+       - name: Upload install and test results
+         uses: actions/upload-artifact@v2
+         if: ${{ true }}
+         with:
+           name: install-and-test-logs
+           path: |
+             install_manifest.txt
+             CMakeFiles/*.log
+             Testing/Temporary/LastTest.log
+             build/reports/**
+
+       - name: list files
+         run: |
+           pwd
+           ls -la * || true
+           ls -la build/* || true
+
+  test_macos:
+     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+     runs-on: ${{ matrix.os }}
+     needs: [static_checks]
+     strategy:
+       fail-fast: true
+       matrix:
+         os: [macos-latest]
+         cpp_compiler: ["gcc", "clang"]
+         xNEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
+         exclude:
+           - xNEST_BUILD_TYPE: "MPI_ONLY"
+             cpp_compiler: "clang"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+             cpp_compiler: "clang"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "MPI_ONLY"
+             cpp_compiler: "gcc"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+             cpp_compiler: "gcc"
+             os: macos-latest
+           - xNEST_BUILD_TYPE: "FULL"
+             os: macos-latest
+             cpp_compiler: "gcc"
+           - xNEST_BUILD_TYPE: "MINIMAL"
+             os: macos-latest
+             cpp_compiler: "gcc"
+           - xNEST_BUILD_TYPE: "FULL"
+             os: macos-latest
+             cpp_compiler: "clang"
+
+     steps:
+
+       # Steps represent a sequence of tasks that will be executed as part of the job
+       - name: Checkout repo content
+         #uses: actions/checkout@v2 # checkout the repository content to github runner.
+         uses: actions/checkout@master
+
+       - name: Changed Files
+         uses: actions/checkout@v2
+         with:
+           fetch-depth: 0
+
+       - name: Find changed files
+         run: |
+           echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
+           echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
+           echo 'EOF' >> $GITHUB_ENV
+
+       - name: DEBUG: Check path
+         run: |
+           echo $PATH
+           echo $PWD
+         shell: bash
+
+       - name: Set up Python 3.x
+         uses: actions/setup-python@v2
+         with:
+           python-version: 3.9
+
+       - name: DEBUG: Check Python path
+         run: echo $PYTHONPATH
+
+       - name: Dependencies MacOS
+         if: runner.os == 'macOS'
+         run: |
+            brew install coreutils gsl open-mpi automake autoconf libtool
+            brew info python
+
+       - name: Dependencies Linux
+         if: contains(matrix.os, 'ubuntu')
+         run: |
+           sudo apt-get update
+           #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+           sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev python2-dev libboost-all-dev
+           sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
+           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
+           sudo apt-get install vera++
+
+       - name: Install dependencies
+         #uses: actions/cache@master
+         run: |
+            python -m pip install --upgrade pip setuptools
+            python -m pip install scipy junitparser>=2 numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+            pip list
+            g++ --version
+            set -o pipefail
+
+       - name: Update shared library cache
+         if: contains(matrix.os, 'ubuntu')
+         run: sudo ldconfig
+
+       - name: Build NEST
+         run: |
+           chmod +x build_support/ci_build.sh
+           ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
+           python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
+         env:
+           xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
+           CHANGED_FILES: ${{env.CHANGED_FILES}}
+           #GET CHANGED FILES: https://github.com/marketplace/actions/get-changed-files
 
        - name: Upload install and test results
          uses: actions/upload-artifact@v2

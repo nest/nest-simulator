@@ -86,7 +86,8 @@ jobs:
          uses: actions/upload-artifact@v2
          if: ${{ true }}
          with:
-           name: "install-logs"
+           name: "static-install-logs"
+           name: "static_checks-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-install-logs"
            path: |
              **/install_manifest.txt
              **/CMakeFiles/*.log
@@ -105,7 +106,7 @@ jobs:
          uses: actions/upload-artifact@v2
          if: ${{ true }}
          with:
-           name: "test-logs"
+           name: "static_checks-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-test-logs"
            path: |
              **/install_manifest.txt
              **/CMakeFiles/*.log
@@ -220,7 +221,7 @@ jobs:
          uses: actions/upload-artifact@v2
          if: failure()
          with:
-           name: "install-and-test-logs"
+           name: "test_linux-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
            path: |
              install_manifest.txt
              CMakeFiles/*.log
@@ -325,9 +326,9 @@ jobs:
 
        - name: "Upload install and test results"
          uses: actions/upload-artifact@v2
-         if: ${{ true }}
+         if: true
          with:
-           name: "install-and-test-logs"
+           name: "test_macos-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
            path: |
              install_manifest.txt
              CMakeFiles/*.log

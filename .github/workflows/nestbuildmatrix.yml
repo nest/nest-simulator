@@ -235,7 +235,10 @@ jobs:
         run: |
           echo "python3: $(which python3)"
           echo "cython: $(which cython)"
-          echo "python3: $(which cython3)"
+          echo "cythonize: $(which cythonize)"
+          echo "cython3: $(which cython3)"
+          echo "cython.py: $(which cython.py)"
+          echo "cythonize.py: $(which cythonize.py)"
 
       - name: "Build NEST"
         run: |
@@ -352,7 +355,10 @@ jobs:
         run: |
           echo "python3: $(which python3)"
           echo "cython: $(which cython)"
-          echo "python3: $(which cython3)"
+          echo "cythonize: $(which cythonize)"
+          echo "cython3: $(which cython3)"
+          echo "cython.py: $(which cython.py)"
+          echo "cythonize.py: $(which cythonize.py)"
 
       - name: "Build NEST"
         run: |

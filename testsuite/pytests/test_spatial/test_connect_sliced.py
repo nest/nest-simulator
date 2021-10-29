@@ -93,7 +93,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         """Connect sliced spatial free target population"""
         nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
         nest.Connect(nodes, nodes[self.middle_node],
-                        conn_spec={'rule': 'pairwise_bernoulli',
+                     conn_spec={'rule': 'pairwise_bernoulli',
                                 'p': self.parameter,
                                 'use_on_source': True})
         self._assert_histogram(nest.GetConnections().source, self.reference)
@@ -102,7 +102,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         """Connect sliced spatial grid target population"""
         nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
         nest.Connect(nodes, nodes[self.middle_node],
-                        conn_spec={'rule': 'pairwise_bernoulli',
+                     conn_spec={'rule': 'pairwise_bernoulli',
                                 'p': self.parameter,
                                 'use_on_source': True})
         self._assert_histogram(nest.GetConnections().source, self.reference)
@@ -111,7 +111,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         """Masked connect sliced spatial free target population"""
         nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
         nest.Connect(nodes, nodes[self.middle_node],
-                        conn_spec={'rule': 'pairwise_bernoulli',
+                     conn_spec={'rule': 'pairwise_bernoulli',
                                 'p': self.parameter,
                                 'use_on_source': True,
                                 'mask': self.mask})
@@ -121,7 +121,7 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         """Masked connect sliced spatial grid target population"""
         nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
         nest.Connect(nodes, nodes[self.middle_node],
-                        conn_spec={'rule': 'pairwise_bernoulli',
+                     conn_spec={'rule': 'pairwise_bernoulli',
                                 'p': self.parameter,
                                 'use_on_source': True,
                                 'mask': self.mask})

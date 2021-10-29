@@ -151,7 +151,8 @@ if test "${HAVE_MPI}" = "true"; then
 fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
-if test "$(uname -s)" = "Darwin"; then
+echo "INFO_OS=${INFO_OS}"
+if test "x${INFO_OS}" = "xDarwin"; then
     TEST_CRSTATE="$( defaults read com.apple.CrashReporter DialogType )"
     echo "TEST_CRSTATE=$TEST_CRSTATE"
     defaults write com.apple.CrashReporter DialogType server || echo "WARNING: Could not set CrashReporter DialogType!"
@@ -528,7 +529,7 @@ TESTSUITE_RESULT=$?
 
 # Mac OS X: Restore old crash reporter state
 if test "x${INFO_OS}" = xDarwin ; then
-    defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}"
+    defaults write com.apple.CrashReporter DialogType "${TEST_CRSTATE}" || echo "WARNING: Could not reset CrashReporter DialogType to '${TEST_CRSTATE}'!"
 fi
 
 exit $TESTSUITE_RESULT

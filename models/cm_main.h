@@ -185,14 +185,16 @@ public:
 private:
   void init_state_( const Node& proto );
   void init_buffers_();
-  void init_pointers_();
+  void init_tree_pointers_();
+  void init_syn_pointers_();
+  void init_recordables_pointers_();
 
   void calibrate();
 
   void update( Time const&, const long, const long );
 
   CompTree c_tree_;
-  std::vector< std::shared_ptr< RingBuffer > > syn_buffers_;
+  std::vector< RingBuffer > syn_buffers_;
 
   // To record variables with DataAccessFunctor
   double get_state_element( size_t elem ){ return *recordables_values[elem]; };

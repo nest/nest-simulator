@@ -161,8 +161,9 @@ public:
     // initialization functions for tree structure
     void add_compartment( const long compartment_index, const long parent_index,
                           const DictionaryDatum& compartment_params );
-    void init();
+    void calibrate();
     void init_pointers();
+    void set_syn_buffers( std::vector< RingBuffer >& syn_buffers );
     std::map< std::string, double* > get_recordables();
 
     // get a compartment pointer from the tree

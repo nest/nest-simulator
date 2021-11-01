@@ -145,7 +145,7 @@ std::pair< double, double > nest::K::f_numstep( const double v_comp, const doubl
 
 
 // AMPA synapse ////////////////////////////////////////////////////////////////
-nest::AMPA::AMPA( std::shared_ptr< RingBuffer >  b_spikes, const long syn_index, const DictionaryDatum& receptor_params )
+nest::AMPA::AMPA( const long syn_index, const DictionaryDatum& receptor_params )
   : e_rev_(0.0)
   , tau_r_(0.2)
   , tau_d_(3.0)
@@ -162,9 +162,6 @@ nest::AMPA::AMPA( std::shared_ptr< RingBuffer >  b_spikes, const long syn_index,
 
   double tp = (tau_r_ * tau_d_) / (tau_d_ - tau_r_) * std::log( tau_d_ / tau_r_ );
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
-
-  // store pointer to ringbuffer
-  b_spikes_ = b_spikes;
 }
 
 void
@@ -206,7 +203,7 @@ std::pair< double, double > nest::AMPA::f_numstep( const double v_comp, const do
 
 
 // GABA synapse ////////////////////////////////////////////////////////////////
-nest::GABA::GABA( std::shared_ptr< RingBuffer >  b_spikes, const long syn_index, const DictionaryDatum& receptor_params )
+nest::GABA::GABA( const long syn_index, const DictionaryDatum& receptor_params )
   : e_rev_(-80.)
   , tau_r_(0.2)
   , tau_d_(10.0)
@@ -223,9 +220,6 @@ nest::GABA::GABA( std::shared_ptr< RingBuffer >  b_spikes, const long syn_index,
 
   double tp = (tau_r_ * tau_d_) / (tau_d_ - tau_r_) * std::log( tau_d_ / tau_r_ );
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
-
-  // store pointer to ringbuffer
-  b_spikes_ = b_spikes;
 }
 
 void
@@ -267,7 +261,7 @@ std::pair< double, double > nest::GABA::f_numstep( const double v_comp, const do
 
 
 // NMDA synapse ////////////////////////////////////////////////////////////////
-nest::NMDA::NMDA( std::shared_ptr< RingBuffer >  b_spikes, const long syn_index, const DictionaryDatum& receptor_params )
+nest::NMDA::NMDA( const long syn_index, const DictionaryDatum& receptor_params )
   : e_rev_(0.)
   , tau_r_(0.2)
   , tau_d_(43.0)
@@ -284,9 +278,6 @@ nest::NMDA::NMDA( std::shared_ptr< RingBuffer >  b_spikes, const long syn_index,
 
   double tp = (tau_r_ * tau_d_) / (tau_d_ - tau_r_) * std::log( tau_d_ / tau_r_ );
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
-
-  // store pointer to ringbuffer
-  b_spikes_ = b_spikes;
 }
 
 void
@@ -328,7 +319,7 @@ std::pair< double, double > nest::NMDA::f_numstep( const double v_comp, const do
 
 
 // AMPA_NMDA synapse ///////////////////////////////////////////////////////////
-nest::AMPA_NMDA::AMPA_NMDA( std::shared_ptr< RingBuffer >  b_spikes, const long syn_index, const DictionaryDatum& receptor_params )
+nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const DictionaryDatum& receptor_params )
   : e_rev_(0.)
   , tau_r_AMPA_(0.2)
   , tau_d_AMPA_(3.0)
@@ -358,9 +349,6 @@ nest::AMPA_NMDA::AMPA_NMDA( std::shared_ptr< RingBuffer >  b_spikes, const long 
   // NMDA normalization constant
   tp = (tau_r_NMDA_ * tau_d_NMDA_) / (tau_d_NMDA_ - tau_r_NMDA_) * std::log( tau_d_NMDA_ / tau_r_NMDA_ );
   g_norm_NMDA_ = 1. / ( -std::exp( -tp / tau_r_NMDA_ ) + std::exp( -tp / tau_d_NMDA_ ) );
-
-  // store pointer to ringbuffer
-  b_spikes_ = b_spikes;
 }
 
 void

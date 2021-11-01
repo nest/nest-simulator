@@ -64,10 +64,10 @@ nest::Compartment::Compartment( const long compartment_index,
 };
 
 void
-nest::Compartment::init()
+nest::Compartment::calibrate()
 {
     v_comp = el;
-    compartment_currents.init();
+    compartment_currents.calibrate();
 
     // initialize the buffer
     currents.clear();
@@ -278,6 +278,20 @@ nest::CompTree::set_leafs()
 };
 
 /*
+Initializes pointers for the spike buffers for all synapse receptors
+*/
+void
+nest::CompTree::set_syn_buffers( std::vector< RingBuffer >& syn_buffers )
+{
+  for( auto compartment_it = compartments_.begin();
+     compartment_it != compartments_.end();
+     ++compartment_it )
+  {
+    ( *compartment_it )->compartment_currents.set_syn_buffers( syn_buffers );
+  }
+}
+
+/*
 Returns a map of variable names and pointers to the recordables
 */
 std::map< std::string, double* >
@@ -304,14 +318,14 @@ nest::CompTree::get_recordables()
 Initialize state variables
 */
 void
-nest::CompTree::init()
+nest::CompTree::calibrate()
 {
   // initialize the compartments
   for( auto compartment_it = compartments_.begin();
        compartment_it != compartments_.end();
        ++compartment_it )
   {
-    ( *compartment_it )->init();
+    ( *compartment_it )->calibrate();
   }
 }
 

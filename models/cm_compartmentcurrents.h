@@ -43,8 +43,8 @@ public:
   Na( const DictionaryDatum& channel_params );
   ~Na(){};
 
-  // initialization
-  void init(){m_Na_ = 0.0; h_Na_ = 0.0;};
+  // calibrateialization
+  void calibrate(){m_Na_ = 0.0; h_Na_ = 0.0;};
   void append_recordables(std::map< std::string, double* >* recordables,
                           const long compartment_idx);
 
@@ -66,8 +66,8 @@ public:
   K( const DictionaryDatum& channel_params );
   ~K(){};
 
-  // initialization
-  void init(){n_K_ = 0.0;};
+  // calibrateialization
+  void calibrate(){n_K_ = 0.0;};
   void append_recordables(std::map< std::string, double* >* recordables,
                           const long compartment_idx);
 
@@ -91,20 +91,24 @@ private:
   double g_r_AMPA_ = 0., g_d_AMPA_ = 0.;
 
   // spike buffer
-  std::shared_ptr< RingBuffer >  b_spikes_;
+  RingBuffer* b_spikes_;
 
 public:
   // constructor, destructor
-  AMPA(std::shared_ptr< RingBuffer >  b_spikes, const long syn_index, const DictionaryDatum& receptor_params);
+  AMPA(const long syn_index, const DictionaryDatum& receptor_params);
   ~AMPA(){};
 
-  // initialization of the state variables
-  void init()
+  // calibrateialization of the state variables
+  void calibrate()
   {
     g_r_AMPA_ = 0.; g_d_AMPA_ = 0.;
     b_spikes_->clear();
   };
-  void append_recordables(std::map< std::string, double* >* recordables);
+  void append_recordables( std::map< std::string, double* >* recordables );
+  void set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
+  {
+    b_spikes_ = &syn_buffers[ syn_idx ];
+  };
 
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
@@ -126,23 +130,24 @@ private:
   double g_r_GABA_ = 0., g_d_GABA_ = 0.;
 
   // spike buffer
-  std::shared_ptr< RingBuffer > b_spikes_;
+  RingBuffer* b_spikes_;
 
 public:
   // constructor, destructor
-  GABA(std::shared_ptr< RingBuffer >  b_spikes, const long syn_index, const DictionaryDatum& receptor_params);
+  GABA(const long syn_index, const DictionaryDatum& receptor_params);
   ~GABA(){};
 
-  // initialization of the state variables
-  void init()
+  // calibrateialization of the state variables
+  void calibrate()
   {
     g_r_GABA_ = 0.; g_d_GABA_ = 0.;
     b_spikes_->clear();
   };
   void append_recordables(std::map< std::string, double* >* recordables);
-
-  std::map< std::string, double* > get_recordables();
-  long get_global_idx(){ return syn_idx; };
+  void set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
+  {
+    b_spikes_ = &syn_buffers[ syn_idx ];
+  };
 
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
@@ -164,22 +169,23 @@ private:
   double g_r_NMDA_ = 0., g_d_NMDA_ = 0.;
 
   // spike buffer
-  std::shared_ptr< RingBuffer >  b_spikes_;
+  RingBuffer* b_spikes_;
 
 public:
   // constructor, destructor
-  NMDA(std::shared_ptr< RingBuffer > b_spikes, const long syn_index, const DictionaryDatum& receptor_params);
+  NMDA(const long syn_index, const DictionaryDatum& receptor_params);
   ~NMDA(){};
 
-  // initialization of the state variables
-  void init(){
+  // calibrateialization of the state variables
+  void calibrate(){
     g_r_NMDA_ = 0.; g_d_NMDA_ = 0.;
     b_spikes_->clear();
   };
   void append_recordables(std::map< std::string, double* >* recordables);
-
-  std::map< std::string, double* > get_recordables();
-  long get_global_idx(){ return syn_idx; };
+  void set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
+  {
+    b_spikes_ = &syn_buffers[ syn_idx ];
+  };
 
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
@@ -215,21 +221,25 @@ private:
   double g_r_AN_NMDA_ = 0., g_d_AN_NMDA_ = 0.;
 
   // spike buffer
-  std::shared_ptr< RingBuffer >  b_spikes_;
+  RingBuffer* b_spikes_;
 
 public:
   // constructor, destructor
-  AMPA_NMDA(std::shared_ptr< RingBuffer >  b_spikes, const long syn_index, const DictionaryDatum& receptor_params);
+  AMPA_NMDA(const long syn_index, const DictionaryDatum& receptor_params);
   ~AMPA_NMDA(){};
 
-  // initialization of the state variables
-  void init()
+  // calibrateialization of the state variables
+  void calibrate()
   {
     g_r_AN_AMPA_ = 0.; g_d_AN_AMPA_ = 0.;
     g_r_AN_NMDA_ = 0.; g_d_AN_NMDA_ = 0.;
     b_spikes_->clear();
   };
   void append_recordables(std::map< std::string, double* >* recordables);
+  void set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
+  {
+    b_spikes_ = &syn_buffers[ syn_idx ];
+  };
 
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
@@ -266,62 +276,62 @@ public:
   };
   ~CompartmentCurrents(){};
 
-  void init(){
-    // initialization of the ion channels
-    Na_chan_.init();
-    K_chan_.init();
+  void calibrate(){
+    // calibrateialization of the ion channels
+    Na_chan_.calibrate();
+    K_chan_.calibrate();
 
-    // initialization of AMPA synapses
+    // calibrateialization of AMPA synapses
     for( auto syn_it = AMPA_syns_.begin();
          syn_it != AMPA_syns_.end();
          ++syn_it )
     {
-      syn_it->init();
+      syn_it->calibrate();
 
     }
-    // initialization of GABA synapses
+    // calibrateialization of GABA synapses
     for( auto syn_it = GABA_syns_.begin();
          syn_it != GABA_syns_.end();
          ++syn_it )
     {
-      syn_it->init();
+      syn_it->calibrate();
     }
-    // initialization of NMDA synapses
+    // calibrateialization of NMDA synapses
     for( auto syn_it = NMDA_syns_.begin();
          syn_it != NMDA_syns_.end();
          ++syn_it )
     {
-      syn_it->init();
+      syn_it->calibrate();
     }
-    // initialization of AMPA_NMDA synapses
+    // calibrateialization of AMPA_NMDA synapses
     for( auto syn_it = AMPA_NMDA_syns_.begin();
          syn_it != AMPA_NMDA_syns_.end();
          ++syn_it )
     {
-      syn_it->init();
+      syn_it->calibrate();
     }
   }
 
-  void add_synapse_with_buffer( const std::string& type, std::shared_ptr< RingBuffer > b_spikes, const long syn_idx, const DictionaryDatum& receptor_params )
+  void add_synapse( const std::string& type, const long syn_idx, const DictionaryDatum& receptor_params )
   {
     if ( type == "AMPA" )
     {
-      AMPA syn( b_spikes, syn_idx, receptor_params );
+      AMPA syn( syn_idx, receptor_params );
       AMPA_syns_.push_back( syn );
     }
     else if ( type == "GABA" )
     {
-      GABA syn( b_spikes, syn_idx, receptor_params );
+      GABA syn( syn_idx, receptor_params );
       GABA_syns_.push_back( syn );
     }
     else if ( type == "NMDA" )
     {
-      NMDA syn( b_spikes, syn_idx, receptor_params );
+      NMDA syn( syn_idx, receptor_params );
       NMDA_syns_.push_back( syn );
     }
     else if ( type == "AMPA_NMDA" )
     {
-      AMPA_NMDA syn( b_spikes, syn_idx, receptor_params );
+      AMPA_NMDA syn( syn_idx, receptor_params );
       AMPA_NMDA_syns_.push_back( syn );
     }
     else
@@ -329,6 +339,39 @@ public:
       assert( false );
     }
   };
+
+  void set_syn_buffers( std::vector< RingBuffer >& syn_buffers )
+  {
+
+    // syn_buffers for AMPA synapses
+    for( auto syn_it = AMPA_syns_.begin();
+         syn_it != AMPA_syns_.end();
+         ++syn_it )
+    {
+      syn_it->set_buffer_ptr( syn_buffers );
+    }
+    // syn_buffers for GABA synapses
+    for( auto syn_it = GABA_syns_.begin();
+         syn_it != GABA_syns_.end();
+         ++syn_it )
+    {
+      syn_it->set_buffer_ptr( syn_buffers );
+    }
+    // syn_buffers for NMDA synapses
+    for( auto syn_it = NMDA_syns_.begin();
+         syn_it != NMDA_syns_.end();
+         ++syn_it )
+    {
+      syn_it->set_buffer_ptr( syn_buffers );
+    }
+    // syn_buffers for AMPA_NMDA synapses
+    for( auto syn_it = AMPA_NMDA_syns_.begin();
+         syn_it != AMPA_NMDA_syns_.end();
+         ++syn_it )
+    {
+      syn_it->set_buffer_ptr( syn_buffers );
+    }
+  }
 
   std::map< std::string, double* > get_recordables( const long compartment_idx )
   {

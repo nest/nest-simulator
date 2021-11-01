@@ -74,18 +74,23 @@ nest::cm_main::init_buffers_()
 }
 
 void
-cm_main::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
+nest::cm_main::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
 {
   c_tree_.add_compartment( compartment_idx, parent_compartment_idx, compartment_params);
 
-  init_pointers_();
+  // we need to initialize tree pointers because vectors are resized, thus
+  // moving memory addresses
+  init_tree_pointers_();
+  // we need to initialize the recordables pointers to guarantee that the
+  // recordables of the new compartment will be in the recordables map
+  init_recordables_pointers_();
 }
 
 size_t
-cm_main::add_receptor( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params )
+nest::cm_main::add_receptor( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params )
 {
   // create a ringbuffer to collect spikes for the receptor
-  std::shared_ptr< RingBuffer > buffer = std::shared_ptr< RingBuffer >( new RingBuffer() );
+  RingBuffer buffer;
 
   // add the ringbuffer to the global receptor vector
   const size_t syn_idx = syn_buffers_.size();
@@ -93,22 +98,38 @@ cm_main::add_receptor( const long compartment_idx, const std::string& type, cons
 
   // add the receptor to the compartment
   Compartment* compartment = c_tree_.get_compartment( compartment_idx );
-  compartment->compartment_currents.add_synapse_with_buffer( type, buffer, syn_idx, receptor_params );
+  compartment->compartment_currents.add_synapse( type, syn_idx, receptor_params );
 
-  init_pointers_();
+  // we need to initialize the recordables pointers to guarantee that the
+  // recordables of the new synapse will be in the recordables map
+  init_recordables_pointers_();
 
   return syn_idx;
 }
 
-
+/*
+The following functions initialize the internal pointers of the compartmental
+model.
+*/
 void
-nest::cm_main::init_pointers_()
+nest::cm_main::init_tree_pointers_()
 {
   /*
   initialize the pointers within the compartment tree
   */
   c_tree_.init_pointers();
-
+}
+void
+nest::cm_main::init_syn_pointers_()
+{
+  /*
+  initialize the pointers to the synapse buffers for the receptor currents
+  */
+  c_tree_.set_syn_buffers( syn_buffers_ );
+}
+void
+nest::cm_main::init_recordables_pointers_()
+{
   /*
   Get the map of all recordables (i.e. all state variables of the model):
   --> keys are state variable names suffixed by the compartment index for
@@ -138,15 +159,17 @@ nest::cm_main::init_pointers_()
       recordables_values[index] = rec_it->second;
     }
   }
-
 }
+
 
 void
 nest::cm_main::calibrate()
 {
   logger_.init();
 
-  init_pointers_();
+  init_tree_pointers_();
+  init_syn_pointers_();
+  init_recordables_pointers_();
   c_tree_.init();
 }
 
@@ -191,7 +214,7 @@ nest::cm_main::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
   assert( ( e.get_rport() >= 0 ) && ( ( size_t ) e.get_rport() < syn_buffers_.size() ) );
 
-  syn_buffers_[ e.get_rport() ]->add_value(
+  syn_buffers_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps(kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }

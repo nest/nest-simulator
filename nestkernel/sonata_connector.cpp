@@ -125,6 +125,10 @@ SonataConnector::connect()
         auto tnode_it = current_target_nc->begin();
         for ( hsize_t i = 0; i < num_source_node_id; ++i )  // iterate sonata files
         {
+          if ( i % 100000 == 0 )
+          {
+            std::cerr << "connection number " << i << "\n";
+          }
           const auto sonata_source_id = source_node_id_data[ i ];
           const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id;
 

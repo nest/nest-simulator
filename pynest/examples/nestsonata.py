@@ -80,7 +80,7 @@ print()
 
 start_time = time.time()
 
-#nest.Connect(sonata_dynamics=sonata_dynamics)
+nest.Connect(sonata_dynamics=sonata_dynamics)
 
 end_time = time.time() - start_time
 mem_connect = memory_thisjob()

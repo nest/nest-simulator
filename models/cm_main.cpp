@@ -170,7 +170,7 @@ nest::cm_main::calibrate()
   init_tree_pointers_();
   init_syn_pointers_();
   init_recordables_pointers_();
-  c_tree_.init();
+  c_tree_.calibrate();
 }
 
 /* ----------------------------------------------------------------

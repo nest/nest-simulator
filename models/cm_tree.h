@@ -86,7 +86,7 @@ public:
     ~Compartment(){};
 
     // initialization
-    void init();
+    void calibrate();
     std::map< std::string, double* > get_recordables();
 
     // matrix construction

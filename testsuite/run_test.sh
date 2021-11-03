@@ -91,8 +91,7 @@ run_test ()
     echo "#!/bin/sh" >  "${TEST_RUNFILE}"
     echo "set +e"   >> "${TEST_RUNFILE}"
 
-    echo "${param_script}" | grep -q '\.sli'
-    if test $? -eq 0 ; then
+    if echo "${param_script}" | grep -q '\.sli'; then
       command="'${NEST}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     else
       # Use plain python3 if the PYTHON variable is unset (i.e. PyNEST

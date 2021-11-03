@@ -5,12 +5,12 @@
 	},
 	"pip": 
 	{
-		"recommended": "20.3.3"
+		"min": "20.3.3"
 	},
 	"cmake":
 	{
 		"min": 3.12,
-		"recommended": 3.16
+		"max": 3.16
 	},
 	"cython": 
 	{
@@ -18,7 +18,7 @@
 	},
 	"openmpi": 
 	{
-		"recommended": "4.0.3"
+		"min": "4.0.3"
 	},
 	"boost": {
 		"min": 1.69
@@ -28,19 +28,19 @@
 	},
 	"libtool": 
 	{
-		"recommended": "2.4.6"
+		"min": "2.4.6"
 	},
 	"readline": 
 	{
-		"recommended": 8.0
+		"min": 8.0
 	},
 	"numpy":
 	{
-		"recommended": "1.19.4"
+		"min": "1.19.4"
 	},
 	"scipy": 
 	{
-		"recommended": "1.5.4"
+		"min": "1.5.4"
 	},
 	"matplotlib":
 	{
@@ -48,10 +48,10 @@
 	},
 	"ipython": 
 	{
-		"recommended": "5.8.0"
+		"min": "5.8.0"
 	},
 	"libncurses": 
 	{
-		"recommended": 6.2
+		"min": 6.2
 	}
 }

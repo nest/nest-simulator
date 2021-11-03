@@ -32,7 +32,7 @@ class SynSpecCopyTestCase(unittest.TestCase):
         # When connecting, the weight list will be converted to a numpy array. We need to make sure our
         # syn_spec, especially the weight list, is not modified.
         syn_spec = {'synapse_model': 'stdp_synapse', 'weight': [1., 2., 3., 4.]}
-        
+
         nest.Connect(nodes, nodes, 'one_to_one', syn_spec=syn_spec)
 
         self.assertDictEqual(syn_spec, {'synapse_model': 'stdp_synapse', 'weight': [1., 2., 3., 4.]})

@@ -1559,6 +1559,23 @@ NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+/** @BeginDocumentation
+  Name: nest::Take_g_a - slice a NodeCollection
+
+  Synopsis:
+  nc array Take_g_a -> NodeCollection
+
+  Parameters:
+  nc - NodeCollection to be sliced
+  array - array on the form [start stop step]
+
+  Description:
+  Slice a NodeCollection with given start, stop, and step. The step value gives
+  the steplength of the slice, while the start and stop values give the
+  half-open range of the slice using zero-based indexing. Negative start or stop
+  values count backwards from the last node, so that -1 is the last element, -2
+  is the second to last element, and so on.
+*/
 void
 NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
 {

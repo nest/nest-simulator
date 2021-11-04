@@ -70,6 +70,8 @@ protected:
   /// Vector of positions.
   std::vector< Position< D > > positions_;
 
+  size_t num_local_nodes_ = 0;
+
   /// This class is used when communicating positions across MPI procs.
   class NodePositionData
   {
@@ -115,6 +117,15 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     epsilon[ d ] = 0.1;
   }
 
+  num_local_nodes_ = std::accumulate( this->node_collection_->begin(),
+    this->node_collection_->end(),
+    0,
+    []( size_t a, NodeIDTriple b )
+    {
+      const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( b.node_id );
+      return node->is_proxy() ? a : a + 1;
+    } );
+
   // Read positions from dictionary
   if ( d->known( names::positions ) )
   {
@@ -123,17 +134,8 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     {
       TokenArray pos = getValue< TokenArray >( tkn );
 
-      size_t num_local_nodes = std::accumulate( this->node_collection_->begin(),
-        this->node_collection_->end(),
-        0,
-        []( size_t a, NodeIDTriple b )
-        {
-          const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( b.node_id );
-          return node->is_proxy() ? a : a + 1;
-        } );
-
       positions_.clear();
-      positions_.reserve( num_local_nodes );
+      positions_.reserve( num_local_nodes_ );
 
       auto nc_it = this->node_collection_->begin();
       for ( Token* it = pos.begin(); it != pos.end(); ++it, ++nc_it )
@@ -160,24 +162,15 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
           }
         }
       }
-      assert( positions_.size() == num_local_nodes );
+      assert( positions_.size() == num_local_nodes_ );
     }
     else if ( tkn.is_a< ParameterDatum >() )
     {
       auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
       auto pos = dynamic_cast< DimensionParameter* >( pd->get() );
 
-      size_t num_local_nodes = std::accumulate( this->node_collection_->begin(),
-        this->node_collection_->end(),
-        0,
-        []( size_t a, NodeIDTriple b )
-        {
-          const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( b.node_id );
-          return node->is_proxy() ? a : a + 1;
-        } );
-
       positions_.clear();
-      positions_.reserve( num_local_nodes );
+      positions_.reserve( num_local_nodes_ );
 
       RngPtr rng = get_rank_synced_rng();
 
@@ -205,7 +198,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
           }
         }
       }
-      assert( positions_.size() == num_local_nodes );
+      assert( positions_.size() == num_local_nodes_ );
     }
     else
     {

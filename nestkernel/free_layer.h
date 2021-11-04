@@ -65,6 +65,11 @@ protected:
   void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
     NodeCollectionPTR node_collection );
 
+  /**
+   * Calculate the index in the position vector on this MPI process based on the local ID.
+   * @param lid local ID of the node
+   * @return index in the local position vector
+   */
   index lid_to_position_id_( index lid ) const;
 
   /// Vector of positions.
@@ -334,12 +339,17 @@ template < int D >
 index
 FreeLayer< D >::lid_to_position_id_( index lid ) const
 {
-  const auto num_procs = kernel().mpi_manager.get_num_processes();
+  // If the NodeCollection has proxies, nodes and positions are distributed over MPI processes,
+  // and we must iterate only the local nodes. If not, all nodes and positions are on all MPI processes.
   if ( not this->node_collection_->has_proxies() )
   {
     return lid;
   }
-  return lid / num_procs;
+  else
+  {
+    const auto num_procs = kernel().mpi_manager.get_num_processes();
+    return lid / num_procs;
+  }
 }
 
 } // namespace nest

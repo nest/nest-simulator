@@ -400,11 +400,11 @@ if test "${MUSIC}"; then
 
         # Check if there is an accompanying shell script for the test.
         sh_file="${TESTDIR}/$(basename ${music_file} .music).sh"
-        if test ! -f "${sh_file}"; then unset sh_file; fi
+        if test ! -f "${sh_file}"; then sh_file=""; fi
 
         # Calculate the total number of processes from the '.music' file.
         np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
-        command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =")"
+        test_command="$(sli -c "${np} (${MUSIC}) (${test_name}) mpirun =")"
 
         proc_txt="processes"
         if test $np -eq 1; then proc_txt="process"; fi
@@ -414,14 +414,14 @@ if test "${MUSIC}"; then
         # Copy everything to 'tmpdir'.
         # Variables might also be empty. To prevent 'cp' from terminating in such a case,
         # the exit code is suppressed.
-        cp ${music_file} ${sh_file} ${sli_files} ${tmpdir} 2>/dev/null || :
+        cp -vf ${music_file} ${sh_file} ${sli_files} ${tmpdir} 2>/dev/null || true
 
         # Create the runner script in 'tmpdir'.
         cd "${tmpdir}"
         echo "#!/bin/sh" >  runner.sh
         echo "set +e" >> runner.sh
         echo "NEST_DATA_PATH=\"${tmpdir}\"" >> runner.sh
-        echo "${command} > ${TEST_OUTFILE} 2>&1" >> runner.sh
+        echo "${test_command} > ${TEST_OUTFILE} 2>&1" >> runner.sh
         if test -n "${sh_file}"; then
             chmod 755 "$(basename "${sh_file}")"
             echo "./$(basename "${sh_file}")" >> runner.sh

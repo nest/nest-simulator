@@ -242,10 +242,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first,
   , metadata_( meta )
   , nodes_have_no_proxies_( not kernel().model_manager.get_model( model_id_ )->has_proxies() )
 {
-  if ( not all_model_ids_same_as_expected_( model_id_ ) )
-  {
-    throw BadProperty( "model ids does not match" );
-  }
+  assert_consistent_model_ids_( model_id_ );
 
   assert( first_ <= last_ );
 }
@@ -481,17 +478,21 @@ NodeCollectionPrimitive::overlapping( const NodeCollectionPrimitive& rhs ) const
   return ( ( rhs.first_ <= last_ and rhs.first_ >= first_ ) or ( rhs.last_ <= last_ and rhs.last_ >= first_ ) );
 }
 
-bool
-NodeCollectionPrimitive::all_model_ids_same_as_expected_( index expected_model_id ) const
+void
+NodeCollectionPrimitive::assert_consistent_model_ids_( index expected_model_id ) const
 {
   for ( index node_id = first_; node_id <= last_; ++node_id )
   {
-    if ( kernel().modelrange_manager.get_model_id( node_id ) != expected_model_id )
+    const auto model_id = kernel().modelrange_manager.get_model_id( node_id );
+    if ( model_id != expected_model_id )
     {
-      return false;
+      const auto node_model = kernel().modelrange_manager.get_model_of_node_id( model_id )->get_name();
+      const auto expected_model = kernel().modelrange_manager.get_model_of_node_id( expected_model_id )->get_name();
+      const auto message = "All nodes must have the same model (node with ID " + std::to_string( node_id )
+        + " has model " + node_model + ", expected " + expected_model + ")";
+      throw BadProperty( message );
     }
   }
-  return true;
 }
 
 NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionPrimitive& primitive,

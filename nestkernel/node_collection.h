@@ -380,13 +380,12 @@ private:
   bool nodes_have_no_proxies_;         //!< Whether the primitive contains devices or not
 
   /**
-   * Returns whether the model ids of all nodes in the primitive are the same as the expected model id.
+   * Raise an error if the model IDs of all nodes in the primitive are not the same as the expected model id. For use in
+   * the constructor only.
    *
    * @param model_id Expected model id.
-   * @return true if model ids of all nodes in the primitive are the same as the expected model id, false otherwise.
-   *
    */
-  bool all_model_ids_same_as_expected_( index ) const;
+  void assert_consistent_model_ids_( index ) const;
 
 public:
   using const_iterator = nc_const_iterator;

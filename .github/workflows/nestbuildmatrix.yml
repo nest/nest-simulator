@@ -100,17 +100,6 @@ jobs:
       - name: "list environment"
         run: set
 
-      - name: "Upload install results"
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: "static_checks-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-install-logs"
-          path: |
-            ci_build.sh.log
-            install_manifest.txt
-            **.log
-            build/reports/**
-
       - name: "Static Code Analysis"
         run: |
           chmod +x build_support/ci_build.sh

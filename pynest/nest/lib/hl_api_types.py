@@ -212,14 +212,16 @@ class NodeCollection(object):
             if key.start is None:
                 start = 0
             else:
-                start = key.start if key.start >= 0 else max(key.start, -1 * self.__len__())
-                if start > self.__len__():
+                start = key.start
+                if ((start < 0 and start < -1 * self.__len__()) or
+                        (start >= 0 and start > self.__len__())):
                     raise IndexError('slice start value outside of the NodeCollection')
             if key.stop is None:
                 stop = self.__len__()
             else:
-                stop = min(key.stop, self.__len__()) if key.stop >= 0 else key.stop
-                if abs(stop) > self.__len__():
+                stop = key.stop
+                if ((stop < 0 and stop < -1 * self.__len__()) or
+                        (stop >= 0 and stop > self.__len__())):
                     raise IndexError('slice stop value outside of the NodeCollection')
             step = 1 if key.step is None else key.step
             if step < 1:

@@ -153,6 +153,10 @@ class NodeCollection(object):
 
     If your nodes have spatial extent, use the member parameter ``spatial`` to get the spatial information.
 
+    Slicing a NodeCollection follows standard Python slicing syntax: nc[start:stop:step], where start and stop
+    gives the zero-indexed half-open range of nodes, and step gives the step length between nodes. The step must
+    be strictly positive.
+
     Example
     -------
         ::

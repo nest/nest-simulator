@@ -493,7 +493,7 @@ NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs );
  *
  * The composite type contains a collection of primitives which are not
  * contiguous and homogeneous with each other. If the composite is sliced, it
- * also holds information about what index to start at and which to end at, and
+ * also holds information about what index to start at, one past the index to end at, and
  * the step. The endpoint is one past the last valid node.
  */
 class NodeCollectionComposite : public NodeCollection
@@ -506,8 +506,8 @@ private:
   size_t step_;                                  //!< Step length, set when slicing.
   size_t start_part_;                            //!< Primitive to start at, set when slicing
   size_t start_offset_;                          //!< Element to start at, set when slicing
-  size_t end_part_;                              //!< Primitive to end at, set when slicing
-  size_t end_offset_;                            //!< Element to end at, set when slicing
+  size_t end_part_;                              //!< Primitive or one past the primitive to end at, set when slicing
+  size_t end_offset_;                            //!< One past the element to end at, set when slicing
 
   /**
    * Goes through the vector of primitives, merging as much as possible.
@@ -522,7 +522,7 @@ public:
    *
    * @param primitive Primitive to be converted
    * @param start Offset in the primitive to begin at.
-   * @param end Offset in the primitive to end at.
+   * @param end Offset in the primitive, one past the node to end at.
    * @param step Length to step in the primitive.
    */
   NodeCollectionComposite( const NodeCollectionPrimitive&, size_t, size_t, size_t );
@@ -540,7 +540,7 @@ public:
      *
      * @param composite Composite to slice.
      * @param start Index in the composite to begin at.
-     * @param end Index in the composite to end at.
+     * @param end Index in the composite one past the node to end at.
      * @param step Length to step in the composite.
      */
   NodeCollectionComposite( const NodeCollectionComposite&, size_t, size_t, size_t );

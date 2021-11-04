@@ -213,47 +213,47 @@ def
   << >> begin
   /slice Set
   /coll Set
+
+  % Because Take expects arguments with one-based indexing, while Take_g_a expects
+  % arguments with zero-based indexing, we need to adjust arguments before calling Take_g_a.
   slice length 1 eq
   {
-    slice 0 get dup 1 sub exch 1 3 arraystore coll exch Take_g_a
+    slice 0 get dup 2 arraystore /slice Set
+  } if
+
+  % assume that we have two or three elements now
+  % adjust slice to zero-indexing
+  slice arrayload
+  2 eq
+  {
+    1 /step Set
   }
   {
-    % assume that we have two or three elements now
-    % adjust slice to zero-indexing
-    slice arrayload
-    2 eq
-    {
-      1 /step Set
-    }
-    {
-      /step Set
-    } ifelse
+    /step Set
+  } ifelse
 
-    /stp Set
-    /strt Set
-    strt 0 geq
-    { % strt >= 0
-      % adjust to zero-indexing
-      strt 1 sub /strt Set
-    } if
+  /stp Set
+  /strt Set
+  strt 0 geq
+  { % strt >= 0
+    % adjust to zero-indexing
+    strt 1 sub /strt Set
+  } if
 
-    stp -1 eq
-    { % special case because -1 means the last element
-      coll size /stp Set
-    } if
-    stp -1 lt
-    {
-      % adjust to zero-indexing
-      stp 1 add /stp Set
-    } if
-    strt stp step 3 arraystore
-    coll exch
-    Take_g_a
-  }
-  ifelse
+  stp -1 eq
+  { % special case because -1 means the last element
+    coll size /stp Set
+  } if
+  stp -1 lt
+  {
+    % adjust to zero-indexing
+    stp 1 add /stp Set
+  } if
+  strt stp step 3 arraystore
+  coll exch
+  Take_g_a
+
   end
-
-
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

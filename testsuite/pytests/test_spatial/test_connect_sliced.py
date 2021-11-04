@@ -59,7 +59,6 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         nest.Connect(nodes[self.middle_node], nodes,
                      conn_spec={'rule': 'pairwise_bernoulli',
                                 'p': self.parameter})
-        print(nest.GetConnections(target=nodes).target)
         self._assert_histogram(nest.GetConnections().target, self.reference)
 
     def test_connect_sliced_spatial_on_target_grid(self):
@@ -68,7 +67,6 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         nest.Connect(nodes[self.middle_node], nodes,
                      conn_spec={'rule': 'pairwise_bernoulli',
                                 'p': self.parameter})
-        print(nest.GetConnections().target)
         self._assert_histogram(nest.GetConnections().target, self.reference)
 
     def test_masked_connect_sliced_spatial_on_target_free(self):

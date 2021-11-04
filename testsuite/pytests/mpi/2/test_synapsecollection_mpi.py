@@ -20,30 +20,22 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-import unittest
 
 
-class TestSynapsecollectionMpi(unittest.TestCase):
+class TestSynapsecollectionMpi():
 
     def setUp(self):
         nest.ResetKernel()
 
     def testTooFewConnections(self):
-        """SynapseCollection with too few connections"""
+        """Deadlock with empty SynapseCollection"""
 
         pre = nest.Create('iaf_psc_alpha', 5)
         post = nest.Create('iaf_psc_alpha', 1)
 
-        nest.Connect(pre, post)  # only one process will have a connection
+        nest.Connect(pre, post)  # with 2 processes only one process will have connections
 
-        conns = nest.GetConnections()
-        print(conns)
+        conns = nest.GetConnections()  # Checking that a deadlock does not occur here
 
-
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(unittest.TestLoader().loadTestsFromTestCase(TestSynapsecollectionMpi))
-
-
-if __name__ == '__main__':
-    run()
+        # Expect to get either an empty or a not empty SynapseCollection
+        assert(isinstance(conns, nest.SynapseCollection))

@@ -1602,9 +1602,10 @@ NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
   if ( start < 0 )
   {
     start += g_size;
+    stop = stop == 0 ? g_size : stop;
   }
 
-  if ( stop <= 0 )
+  if ( stop < 0 )
   {
     stop += g_size;
   }

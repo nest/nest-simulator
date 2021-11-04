@@ -190,6 +190,49 @@ class TestNodeCollection(unittest.TestCase):
         with self.assertRaises(IndexError):
             n[::-3]
 
+        primitive = n
+        composite = n + nest.Create('iaf_psc_exp')
+        for nodes in [primitive, composite]:
+            n_list = nodes.tolist()
+            # With slice without arguments
+            self.assertEqual(nodes[:].tolist(), n_list[:])
+            self.assertEqual(nodes[::].tolist(), n_list[::])
+
+            # With start values
+            for start in range(-len(nodes), len(nodes)):
+                self.assertEqual(nodes[start:].tolist(), n_list[start:], f'with [{start}:]')
+
+            # With stop values
+            for stop in range(-len(nodes) + 1, len(nodes) + 1):
+                if stop == 0:
+                    continue  # Slicing to an empty NodeCollection is not allowed.
+                self.assertEqual(nodes[:stop].tolist(), n_list[:stop], f'with [:{stop}]')
+
+            # With step values
+            for step in range(1, len(nodes)):
+                self.assertEqual(nodes[::step].tolist(), n_list[::step], f'with [::{step}]')
+
+            # With start and step values
+            for start in range(-len(nodes), len(nodes)):
+                for step in range(1, len(nodes)):
+                    self.assertEqual(nodes[start::step].tolist(), n_list[start::step], f'with [{start}::{step}]')
+
+            # With stop and step values
+            for stop in range(-len(nodes) + 1, len(nodes) + 1):
+                if stop == 0:
+                    continue  # Slicing to an empty NodeCollection is not allowed.
+                for step in range(1, len(nodes)):
+                    self.assertEqual(nodes[:stop:step].tolist(), n_list[:stop:step], f'with [:{stop}:{step}]')
+
+            # With start, stop, and step values
+            for start in range(-len(nodes), len(nodes)):
+                for stop in range(start+1, len(nodes) + 1):
+                    if stop == 0 or (start < 0 and start+len(nodes) >= stop):
+                        continue  # Cannot slice to an empty NodeCollection, or use stop <= start.
+                    for step in range(1, len(nodes)):
+                        self.assertEqual(nodes[start:stop:step].tolist(), n_list[start:stop:step],
+                                        f'with [{start}:{stop}:{step}]')
+
     def test_correct_index(self):
         """Multiple NodeCollection calls give right indexing"""
         compare_begin = 1

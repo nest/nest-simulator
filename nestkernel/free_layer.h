@@ -269,6 +269,9 @@ FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collect
 
   // If the NodeCollection has proxies, nodes and positions are distributed over MPI processes,
   // and we must iterate only the local nodes. If not, all nodes and positions are on all MPI processes.
+  // All models in a layer are the same, so if has_proxies() for the NodeCollection returns true, we
+  // know that all nodes in the NodeCollection have proxies. Likewise, if it returns false we know that
+  // no nodes have proxies.
   NodeCollection::const_iterator nc_begin =
     node_collection->has_proxies() ? node_collection->MPI_local_begin() : node_collection->begin();
   NodeCollection::const_iterator nc_end = node_collection->end();
@@ -345,6 +348,9 @@ FreeLayer< D >::lid_to_position_id_( index lid ) const
 {
   // If the NodeCollection has proxies, nodes and positions are distributed over MPI processes,
   // and we must iterate only the local nodes. If not, all nodes and positions are on all MPI processes.
+  // All models in a layer are the same, so if has_proxies() for the NodeCollection returns true, we
+  // know that all nodes in the NodeCollection have proxies. Likewise, if it returns false we know that
+  // no nodes have proxies.
   if ( not this->node_collection_->has_proxies() )
   {
     return lid;

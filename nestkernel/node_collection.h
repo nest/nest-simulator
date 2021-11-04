@@ -350,7 +350,7 @@ public:
   virtual long find( const index ) const = 0;
 
   /**
-   * Returns whether the NodeCollection has contains any nodes with proxies or not.
+   * Returns whether the NodeCollection contains any nodes with proxies or not.
    *
    * @return true if any nodes in the NodeCollection has proxies, false otherwise.
    */

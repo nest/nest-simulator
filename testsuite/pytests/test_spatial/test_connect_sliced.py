@@ -140,6 +140,32 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
                     sliced_spatial_attr = nodes_sliced.spatial[attr]
                     self.assertEqual(spatial_attr, sliced_spatial_attr, 'with attr="{}"'.format(attr))
 
+    def test_connect_sliced_spatial_range(self):
+        """Connect spatial population sliced with range"""
+        start = 3
+        end = 10
+        ref = np.copy(self.reference)
+        ref[:start] = 0
+        ref[end:] = 0
+        for pos in [self.free_pos, self.grid_pos]:
+            nodes = nest.Create('iaf_psc_alpha', positions=pos)
+            nest.Connect(nodes[self.middle_node], nodes[start:end],
+                         conn_spec={'rule': 'pairwise_bernoulli',
+                                    'p': self.parameter})
+            self._assert_histogram(nest.GetConnections().target, ref)
+
+    def test_connect_sliced_spatial_step(self):
+        """Connect spatial population sliced with step"""
+        step = 2
+        ref = np.copy(self.reference)
+        ref[1::step] = 0
+        for pos in [self.free_pos, self.grid_pos]:
+            nodes = nest.Create('iaf_psc_alpha', positions=pos)
+            nest.Connect(nodes[self.middle_node], nodes[::step],
+                         conn_spec={'rule': 'pairwise_bernoulli',
+                                    'p': self.parameter})
+            self._assert_histogram(nest.GetConnections().target, ref)
+
 
 def suite():
     suite = unittest.makeSuite(ConnectSlicedSpatialTestCase, 'test')

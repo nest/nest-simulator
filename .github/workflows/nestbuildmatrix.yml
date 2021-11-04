@@ -119,17 +119,6 @@ jobs:
           xNEST_BUILD_TYPE: 'STATIC_CODE_ANALYSIS'
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
 
-      - name: "Upload test results"
-        uses: actions/upload-artifact@v2
-        if: always()
-        with:
-          name: "static_checks-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-test-logs"
-          path: |
-            ci_build.sh.log
-            install_manifest.txt
-            **.log
-            build/reports/**
-
       - name: "DEBUG: list files"
         run: |
           pwd

@@ -421,7 +421,8 @@ NodeCollectionPrimitive::slice( size_t start, size_t end, size_t step ) const
   NodeCollectionPTR sliced_nc;
   if ( step == 1 and metadata_ == nullptr )
   {
-    // Subtract one from the last ID because end is one past the last node.
+    // Create primitive NodeCollection passing node IDs.
+    // Subtract 1 because "end" is one past last element to take while constructor expects ID of last node.
     sliced_nc = std::make_shared< NodeCollectionPrimitive >( first_ + start, first_ + end - 1, model_id_ );
   }
   else

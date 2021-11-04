@@ -241,12 +241,7 @@ template < int D >
 Position< D >
 GridLayer< D >::get_position( index lid ) const
 {
-  const auto num_procs = kernel().mpi_manager.get_num_processes();
-  if ( this->node_collection_->has_proxies() )
-  {
-    return lid_to_position( lid );
-  }
-  return lid_to_position( lid / num_procs );
+  return lid_to_position( lid );
 }
 
 template < int D >

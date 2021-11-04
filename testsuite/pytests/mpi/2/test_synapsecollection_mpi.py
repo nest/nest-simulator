@@ -30,6 +30,8 @@ class TestSynapsecollectionMpi():
     def testTooFewConnections(self):
         """Deadlock with empty SynapseCollection"""
 
+        assert(nest.GetKernelStatus('num_processes') == 2)  # the test expects to be run with 2 MPI processes
+
         pre = nest.Create('iaf_psc_alpha', 5)
         post = nest.Create('iaf_psc_alpha', 1)
 

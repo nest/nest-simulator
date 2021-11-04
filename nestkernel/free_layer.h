@@ -181,6 +181,8 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
       for ( auto nc_it = this->node_collection_->begin(); nc_it < this->node_collection_->end(); ++nc_it )
       {
+        // We generate the position here, even if will not store it, to do the same calculations of lower_left_ and
+        // max_point on all processes.
         Position< D > point = pos->get_values( rng );
 
         const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( ( *nc_it ).node_id );
@@ -265,14 +267,16 @@ FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collect
   // This array will be filled with node ID,pos_x,pos_y[,pos_z] for local nodes:
   std::vector< double > local_node_id_pos;
 
-  NodeCollection::const_iterator nc_begin = node_collection->MPI_local_begin();
+  // If the NodeCollection has proxies, nodes and positions are distributed over MPI processes,
+  // and we must iterate only the local nodes. If not, all nodes and positions are on all MPI processes.
+  NodeCollection::const_iterator nc_begin =
+    node_collection->has_proxies() ? node_collection->MPI_local_begin() : node_collection->begin();
   NodeCollection::const_iterator nc_end = node_collection->end();
 
-  auto pos_it = positions_.begin();
-
-  local_node_id_pos.reserve( ( D + 1 ) * node_collection->size() );
-
-  for ( NodeCollection::const_iterator nc_it = nc_begin; nc_it < nc_end; ++nc_it, ++pos_it )
+  // Reserve capacity in the vector based on number of local nodes. If the NodeCollection is sliced,
+  // it may need less than the reserved capacity.
+  local_node_id_pos.reserve( ( D + 1 ) * num_local_nodes_ );
+  for ( NodeCollection::const_iterator nc_it = nc_begin; nc_it < nc_end; ++nc_it )
   {
     // Push node ID into array to communicate
     local_node_id_pos.push_back( ( *nc_it ).node_id );

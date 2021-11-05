@@ -22,7 +22,7 @@
 import nest
 
 
-def testTooFewConnections(self):
+def testTooFewConnections():
     """Deadlock with empty SynapseCollection"""
 
     nest.ResetKernel()

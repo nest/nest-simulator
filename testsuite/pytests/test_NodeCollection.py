@@ -231,7 +231,7 @@ class TestNodeCollection(unittest.TestCase):
                         continue  # Cannot slice to an empty NodeCollection, or use stop <= start.
                     for step in range(1, len(nodes)):
                         self.assertEqual(nodes[start:stop:step].tolist(), n_list[start:stop:step],
-                                        f'with [{start}:{stop}:{step}]')
+                                         f'with [{start}:{stop}:{step}]')
 
     def test_correct_index(self):
         """Multiple NodeCollection calls give right indexing"""

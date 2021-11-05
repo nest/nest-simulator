@@ -37,6 +37,7 @@ def memory_thisjob():
     nest.ll_api.sr('memory_thisjob')
     return nest.ll_api.spp()
 
+start_time = time.time()
 
 nest.ResetKernel()
 
@@ -74,38 +75,28 @@ sonata_connector.create_edge_dict()
 sonata_dynamics = {'nodes': sonata_connector.node_collections, 'edges': sonata_connector.edge_types}
 print(sonata_connector.node_collections)
 
-print()
+#print()
 #print('sonata_dynamics', sonata_dynamics)
 print()
 
-start_time = time.time()
+connect_start_time = time.time()
 
 nest.Connect(sonata_dynamics=sonata_dynamics)
+print("done connecting")
 
-end_time = time.time() - start_time
+connect_end_time = time.time() - connect_start_time
 mem_connect = memory_thisjob()
 
-conns = nest.GetConnections()
-print(conns)
-print("")
+# conns = nest.GetConnections()
+# print(conns)
+# print("")
 print("number of connections: ", nest.GetKernelStatus('num_connections'))
-#print("num_connections with alpha: ", len(conns.alpha))
-
-#node_id_to_range = 0
-#for nc in sonata_connector.node_collections['internal']:
-#    old_val = node_id_to_range
-#    node_id_to_range += len(nest.GetConnections(source=nc))
-#    print(f'Range of connections with source node id {nc.global_id}: {old_val} {node_id_to_range}')
-
-print(f"\nconnection took: {end_time} s")
-print(f'initial memory: {mem_ini}')
-print(f'memory create: {mem_create}')
-print(f'memory connect: {mem_connect}')
+# #print("num_connections with alpha: ", len(conns.alpha))
 
 if plot:
     s_rec = nest.Create('spike_recorder')
     nest.Connect(sonata_connector.node_collections['internal'], s_rec)
-
+    
 print('simulating')
 
 simtime = 0
@@ -114,6 +105,14 @@ if 'tstop' in sonata_connector.config['run']:
 else:
     simtime = sonata_connector.config['run']['duration']
 nest.Simulate(simtime)
+
+end_time = time.time() - start_time
+
+print(f"\nconnection took: {connect_end_time} s")
+print(f"all took: {end_time} s")
+print(f'initial memory: {mem_ini}')
+print(f'memory create: {mem_create}')
+print(f'memory connect: {mem_connect}')
 
 if plot:
     print(s_rec.events)

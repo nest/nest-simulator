@@ -125,10 +125,10 @@ SonataConnector::connect()
         auto tnode_it = current_target_nc->begin();
         for ( hsize_t i = 0; i < num_source_node_id; ++i )  // iterate sonata files
         {
-          if ( i % 100000 == 0 )
-          {
-            std::cerr << "connection number " << i << "\n";
-          }
+          //if ( i % 100000 == 0 )
+          //{
+            //std::cerr << "connection number " << i << "\n";
+          //}
           const auto sonata_source_id = source_node_id_data[ i ];
           const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id;
 
@@ -173,12 +173,30 @@ SonataConnector::connect()
             delay,
             weight );
         }
+
+        delete source_node_id_data;
+        delete target_node_id_data;
+        if ( weight_dataset_ )
+        {
+          delete syn_weight_data_;
+        }
+        if ( delay_dataset_ )
+        {
+          delete delay_data_;
+        }
+        delete edge_type_id_data;
       }
       else
       {
         throw NotImplemented( "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
       }
+      /*
+       * Close the dataset.
+       */
+      delete edge_group_id_data;
     }
+    edges_group.close();
+    file.close();
   }
 }
 

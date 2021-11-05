@@ -106,45 +106,45 @@ class SonataConnector(object):
                             dynamics.update(json.load(dynamics_file))
                     node_type_map[node_types['node_type_id'][ind]] = dynamics
 
-                nodes_file = h5py.File(nodes["nodes_file"], 'r')
-                population_name = list(nodes_file['nodes'].keys())[0]  # What if we have more than one?? can iterate over .items()
+                with h5py.File(nodes["nodes_file"], 'r') as nodes_file:
+                    population_name = list(nodes_file['nodes'].keys())[0]  # What if we have more than one?? can iterate over .items()
 
-                population = nodes_file['nodes'][population_name]
-                num_elements =  population['node_id'].size
+                    population = nodes_file['nodes'][population_name]
+                    num_elements =  population['node_id'].size
 
-                if model_type == 'virtual':
-                    model = 'spike_generator'
-                    # Spiketrains are given in h5 files
-                    for input_name, input_dict in self.config['inputs'].items():
-                        node_set = input_dict['node_set']
-                        if node_set == population_name:
-                            spiking_file = h5py.File(input_dict['input_file'])
-                            spikes = spiking_file['spikes']['timestamps']
-                            node_ids = spiking_file['spikes']['gids']
-                            timestamps = {}
-                            for indx, node_id in enumerate(node_ids):
-                                if node_id in timestamps:
-                                    timestamps[node_id].append(np.round(spikes[indx], 2))
-                                else:
-                                    timestamps[node_id] = [np.round(spikes[indx], 2)]
-                            
-                            nodes = NodeCollection([])
-                            for node_id in np.unique(node_ids):
-                                nc = Create(model, params={'spike_times': timestamps[node_id]})
-                                #if dynamics:
-                                #   nc.set(**dynamics)  #this needs to be re-added.
-                                nodes += nc
-                else:
-                    model = node_types.model_template.iloc[0].replace('nest:','')
-                    print(model)
-                    nodes = Create(model, num_elements)
-                    
-                    node_type_ids = population['node_type_id']
-                    for node_type in np.unique(node_type_ids):  # might have to iterate over node_group_id as well
-                        indx = np.where(node_type_ids[:] == node_type)[0]
-                        nodes[indx].set(node_type_map[node_type])
-
-                self.node_collections[population_name] = nodes
+                    if model_type == 'virtual':
+                        model = 'spike_generator'
+                        # Spiketrains are given in h5 files
+                        for input_name, input_dict in self.config['inputs'].items():
+                            node_set = input_dict['node_set']
+                            if node_set == population_name:
+                                with h5py.File(input_dict['input_file'], 'r') as spiking_file:
+                                    spikes = spiking_file['spikes']['timestamps']
+                                    node_ids = spiking_file['spikes']['gids']
+                                    timestamps = {}
+                                    for indx, node_id in enumerate(node_ids):
+                                        if node_id in timestamps:
+                                            timestamps[node_id].append(np.round(spikes[indx], 2))
+                                        else:
+                                            timestamps[node_id] = [np.round(spikes[indx], 2)]
+                                    
+                                    nodes = NodeCollection([])
+                                    for node_id in np.unique(node_ids):
+                                        nc = Create(model, params={'spike_times': timestamps[node_id]})
+                                        #if dynamics:
+                                        #   nc.set(**dynamics)  #this needs to be re-added.
+                                        nodes += nc
+                    else:
+                        model = node_types.model_template.iloc[0].replace('nest:','')
+                        print(model)
+                        nodes = Create(model, num_elements)
+                        
+                        node_type_ids = population['node_type_id']
+                        for node_type in np.unique(node_type_ids):  # might have to iterate over node_group_id as well
+                            indx = np.where(node_type_ids[:] == node_type)[0]
+                            nodes[indx].set(node_type_map[node_type])
+    
+                    self.node_collections[population_name] = nodes
             else:
                 raise NotImplemented("TODO: More than one NEST model currently not implemented")
 
@@ -154,10 +154,6 @@ class SonataConnector(object):
             edge_dict = {}
             edge_dict['edges_file'] = edges['edges_file']
             edge_types_file = edges['edge_types_file']  # Synapses
-
-            edge_file = h5py.File(edges["edges_file"], 'r')
-            file_name = list(edge_file['edges'].keys())[0]  # What if we have more than one?? can iterate over .items()
-            source = edge_file['edges'][file_name]['source_node_id'].attrs['node_population'].decode('UTF-8')
 
             with open(edge_types_file, 'r') as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=' ', quotechar='"')

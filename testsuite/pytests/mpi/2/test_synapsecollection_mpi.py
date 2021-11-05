@@ -22,22 +22,18 @@
 import nest
 
 
-class TestSynapsecollectionMpi():
+def testTooFewConnections(self):
+    """Deadlock with empty SynapseCollection"""
 
-    def setUp(self):
-        nest.ResetKernel()
+    nest.ResetKernel()
+    assert(nest.GetKernelStatus('num_processes') == 2)  # the test expects to be run with 2 MPI processes
 
-    def testTooFewConnections(self):
-        """Deadlock with empty SynapseCollection"""
+    pre = nest.Create('iaf_psc_alpha', 5)
+    post = nest.Create('iaf_psc_alpha', 1)
 
-        assert(nest.GetKernelStatus('num_processes') == 2)  # the test expects to be run with 2 MPI processes
+    nest.Connect(pre, post)  # with 2 processes only one process will have connections
 
-        pre = nest.Create('iaf_psc_alpha', 5)
-        post = nest.Create('iaf_psc_alpha', 1)
+    conns = nest.GetConnections()  # Checking that a deadlock does not occur here
 
-        nest.Connect(pre, post)  # with 2 processes only one process will have connections
-
-        conns = nest.GetConnections()  # Checking that a deadlock does not occur here
-
-        # Expect to get either an empty or a not empty SynapseCollection
-        assert(isinstance(conns, nest.SynapseCollection))
+    # Expect to get either an empty or a not empty SynapseCollection
+    assert(isinstance(conns, nest.SynapseCollection))

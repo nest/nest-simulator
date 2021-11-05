@@ -17,7 +17,8 @@ Who are you?
 
       **User**
 
-      I'm a student or researcher who wants to run neural network simulation scripts for NEST on my computer.
+      I'm a student or researcher who wants to run neural network simulation scripts for :ref:`NEST on my computer <user_install>`.
+      If you want to install NEST on a cluster or supercomputer, see our HPC page.
 
 |
 |

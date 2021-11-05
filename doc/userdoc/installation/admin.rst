@@ -1,3 +1,5 @@
+.. _admin_install:
+
 Administrator installation instructions
 ---------------------------------------
 

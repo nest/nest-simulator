@@ -1,40 +1,67 @@
-User install instructions
--------------------------
+.. _user_install:
 
-For macOS and Linux users (:ref:`Windows users see below <windows>`):
+User install instructions
+=========================
+
+
+For Linux and macOS, you can install NEST with pip  |linux| |macos|
+
+
+
+.. |linux| image:: ../static/img/linux.png
+   :scale: 15%
+
+.. |macos| image:: ../static/img/macos.png
+   :scale: 15%
 
 ::
 
-    pip3 install nest
+    pip3 install nest-simulator
 
+
+With mpi?
+
+::
+
+   pip3 install nest-simulator with-mpi=on
+
+:ref:`Windows users see below <windows>`
 
 .. comment: any options?
 
 .. comment: this section below should be modelled after the main page with pretty icons and such, not just a
    bullet list
 
-* Once you've installed NEST, you can explore ouur `interactive script <http://webschleppdienst.de/customers/docstartpage?>`_
-  and find out how to create network simulations.
+Explore what you can do with NEST:
+
+* :doc:`../tutorials/index`
+
+* :doc:`../examples/index`
+
+* :doc:`../models/models-main`
 
 
-* Want to add your own model? With :doc:`NESTML <nestml:index>` you can quickly write a model without messing with
-  any C++ code
-
-* Need to analyze your simulation? Check out these tools
-
-    * For analyzing your output, checki out :doc:`Elephant <elephant:index>`.
-    * To explore simulations in a graphically-friendly way see :doc:`NEST-Desktop <desktop:index>`
-
-* If you need to run benchmarks, see our :doc:`benchmarking documentation <../benchmarking>` for tips
-
-See the main page for other options
+.. |windows| image:: ../static/img/windows.png
+   :scale: 15%
 
 .. _windows:
 
+|windows| Windows
+
    We recommend the neurofedora live media for Windows users
 
-.. note::
 
-   Exceptional cases that need other steps?
+Use NEST with EBRAINS
+---------------------
 
+If you have an EBRAINS account you can check out . . .
+
+
+
+Install NEST on HPC
+-------------------
+
+See details :ref:`about installing NEST with docker <admin_install>`
+
+Find out how to :doc:`optimize your configuration <hpc_install>`
 

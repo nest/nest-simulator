@@ -27,7 +27,6 @@
 #include "spatial.h"
 #include "vp_manager_impl.h"
 
-
 #include "parameter.h"
 
 

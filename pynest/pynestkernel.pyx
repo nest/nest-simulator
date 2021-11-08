@@ -589,77 +589,13 @@ cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ =
         return arr
 
 
-
-
-
 ################################################################################
 ####                                                                        ####
-####                              PyNEST HL API                             ####
+####                              PyNEST LL API                             ####
 ####                                                                        ####
 ################################################################################
 
-from nest.lib.hl_api_helper import model_deprecation_warning, warnings
-
-def Create(string model, long n=1, params=None):
-    """Create n instances of type model.
-
-    Parameters
-    ----------
-    model : str
-        Name of the model to create
-    n : int, optional
-        Number of instances to create
-    params : TYPE, optional
-        Parameters for the new nodes. A single dictionary or a list of
-        dictionaries with size n. If omitted, the model's defaults are used.
-
-    Returns
-    -------
-    NodeCollection:
-        Object representing global IDs of created nodes
-    """
-
-    model_deprecation_warning(model)
-
+def llapi_create(string model, long n=1):
     cdef NodeCollectionPTR gids = create(model, n)
-    cdef NodeCollectionDatum* gids_ = new NodeCollectionDatum(gids)
+    return NodeCollection(gids)
 
-    datum = SLIDatum()
-    (<SLIDatum> datum)._set_datum(<Datum*> new NodeCollectionDatum(gids), SLI_TYPE_NODECOLLECTION.decode())
-
-    return datum
-
-#
-#    if isinstance(params, dict):
-#        // same parameters for all nodes
-#    else:
-#        for i, node in enumerate(gids):
-#            SetStatus(node, params[i])
-#
-    
-    ### gids.set(params)
-###    
-###    if isinstance(params, dict):
-###        cmd = "/%s 3 1 roll exch Create" % model
-#######        sps(params)
-###    else:
-###        cmd = "/%s exch Create" % model
-###
-#######    sps(n)
-#######    sr(cmd)
-###
-#######    gids = spp()
-###
-###    if params is not None and not isinstance(params, dict):
-###        try:
-#######            SetStatus(gids, params)
-###            pass
-###        except:
-###            warnings.warn(
-###                "SetStatus() call failed, but nodes have already been " +
-###                "created! The GIDs of the new nodes are: {0}.".format(gids))
-###            raise
-#    datum = SLIDatum()
-#    (<SLIDatum> datum)._set_datum(<Datum*> new NodeCollectionDatum(deref(<NodeCollectionPTR> gids)), SLI_TYPE_NODECOLLECTION.decode())
-#   
-#    return datum

@@ -160,11 +160,13 @@ cdef class NESTEngine(object):
         kernel().destroy_kernel_manager();
 
     def set_communicator(self, comm):
+        pass
         # extract mpi_comm from mpi4py
-        if nest_has_mpi4py():
-            c_set_communicator(comm)
-        else:
-            raise NESTError("set_communicator: NEST not compiled with MPI4PY")
+        # TODO-PYNEST-NG: enable again after moving pertaining functions
+        #if nest_has_mpi4py():
+        #    c_set_communicator(comm)
+        #else:
+        #    raise NESTError("set_communicator: NEST not compiled with MPI4PY")
 
     def init(self, argv):
 

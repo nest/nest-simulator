@@ -30,13 +30,11 @@
 #include "dictdatum.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "lockptrdatum_impl.h"
+#include "lockptrdatum.h"
 #include "stringdatum.h"
 
 
 SLIType RegexpModule::RegexType;
-
-template class lockPTRDatum< Regex, &RegexpModule::RegexType >;
 
 typedef lockPTRDatum< Regex, &RegexpModule::RegexType > RegexDatum;
 

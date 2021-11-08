@@ -27,12 +27,8 @@
 #include "spatial.h"
 #include "vp_manager_impl.h"
 
-// includes from sli
-#include "sharedptrdatum.h"
-
 #include "parameter.h"
 
-template class sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType >;
 
 namespace nest
 {

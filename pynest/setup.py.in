@@ -49,8 +49,7 @@ class cmake_build(build_ext):
         print('-'*20, 'Configure CMake')
         subprocess.run(
             'cmake .. -DCMAKE_INSTALL_LIBDIR=' + str(lib_directory)
-            + ' -DCMAKE_INSTALL_PREFIX=' + str(build_directory)
-            + ' -DPYTHON_INCLUDE_DIR=' + str(config["include"]),
+            + ' -DCMAKE_INSTALL_PREFIX=' + str(build_directory),
             shell=True,
             check=True
         )
@@ -72,7 +71,7 @@ wheel_kwargs = {} if not build_wheel else dict(
 
 setup(
     name = 'nest-simulator',
-    version = '3.1', 
+    version = '3.1',
     description = 'Python bindings for NEST',
     author = 'The NEST Initiative',
     url = 'https://www.nest-simulator.org',

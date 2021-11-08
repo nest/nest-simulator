@@ -392,7 +392,12 @@ function( NEST_PROCESS_WITH_PYTHON )
   elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter and ABI
-    find_package( Python 3.8 REQUIRED Interpreter Development.Module )
+    if ( ${CMAKE_VERSION} VERSION_LESS "3.18.0")
+      find_package( Python 3.8 REQUIRED Interpreter Development )
+      message( WARNING "CMake 3.18+ is recommended for more universal Python bindings. If you encounter missing Python header or library file errors, try upgrading CMake.")
+    else()
+      find_package( Python 3.8 REQUIRED Interpreter Development.Module )
+    endif()
 
     if ( Python_FOUND )
       if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )

@@ -79,7 +79,6 @@ nest::SimulationManager::initialize()
   from_step_ = 0;
   to_step_ = 0; // consistent with to_do_ = 0
 
-
   prepared_ = false;
   simulating_ = false;
   simulated_ = false;

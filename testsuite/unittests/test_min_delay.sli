@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_min_delay - sli script to test whether min_delay is updated correctly
 
    Synopsis: (test_min_delay) run

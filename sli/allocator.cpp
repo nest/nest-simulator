@@ -126,8 +126,7 @@ sli::pool::grow( size_t nelements )
   char* last = &start[ ( nelements - 1 ) * el_size ];
   for ( char* p = start; p < last; p += el_size )
   {
-    reinterpret_cast< link* >( p )->next =
-      reinterpret_cast< link* >( p + el_size );
+    reinterpret_cast< link* >( p )->next = reinterpret_cast< link* >( p + el_size );
   }
   reinterpret_cast< link* >( last )->next = NULL;
   head = reinterpret_cast< link* >( start );
@@ -198,17 +197,6 @@ PoorMansAllocator::alloc( size_t obj_size )
   return ptr;
 }
 
-#ifdef IS_K
-/**
- * On K computer threadprivate does not yet work properly for objects,
- * only for PODs.
- * Thus we allocate a C-style array of allocators on K, aligned to 64
- * byte boundaries. Each element (allocator) is padded to 64 bytes, so
- * it fills an entire cache line in order to avoid false sharing by
- * accesses of different threads to their respective allocator copies.
- */
-__attribute__( ( aligned( 64 ) ) ) PaddedPMA poormansallocpool[ MAX_THREAD ];
-#else
 PoorMansAllocator poormansallocpool;
 #ifdef _OPENMP
 /**
@@ -216,6 +204,5 @@ PoorMansAllocator poormansallocpool;
  * to accesses by different threads.
  */
 #pragma omp threadprivate( poormansallocpool )
-#endif
 #endif
 #endif

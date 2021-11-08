@@ -31,12 +31,17 @@ namespace nest
 class SpikeEvent;
 class CurrentEvent;
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: proxynode - Proxy to provide Nodes on remote machines
+
 Description:
+
 Remarks:
+
 Parameters:
+
 References:
+
 Author: June 2005, Jochen Martin Eppler
 */
 
@@ -55,7 +60,7 @@ public:
 
   /**
    * Construct proxy node for internal use from
-   * @param GID of represented node
+   * @param node_id of represented node
    * @param model id of represented node
    * @param vp of represented node
    */
@@ -114,7 +119,7 @@ public:
 
 private:
   void
-  init_state_( const Node& )
+  init_state_()
   {
   }
   void

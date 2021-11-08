@@ -32,6 +32,7 @@
 #include "integerdatum.h"
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "compose.hpp"
 #include "logging.h"
 
@@ -44,11 +45,6 @@
 
 nest::music_cont_in_proxy::Parameters_::Parameters_()
   : port_name_( "cont_in" )
-{
-}
-
-nest::music_cont_in_proxy::Parameters_::Parameters_( const Parameters_& op )
-  : port_name_( op.port_name_ )
 {
 }
 
@@ -69,8 +65,7 @@ nest::music_cont_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_cont_in_proxy::Parameters_::set( const DictionaryDatum& d,
-  State_& s )
+nest::music_cont_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
   //  if(d->known(names::port_name) && s.published_)
@@ -90,8 +85,7 @@ nest::music_cont_in_proxy::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_cont_in_proxy::State_::set( const DictionaryDatum&,
-  const Parameters_& )
+nest::music_cont_in_proxy::State_::set( const DictionaryDatum&, const Parameters_& )
 {
 }
 
@@ -118,14 +112,6 @@ nest::music_cont_in_proxy::music_cont_in_proxy( const music_cont_in_proxy& n )
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::music_cont_in_proxy::init_state_( const Node& proto )
-{
-  const music_cont_in_proxy& pr = downcast< music_cont_in_proxy >( proto );
-
-  S_ = pr.S_;
-}
 
 void
 nest::music_cont_in_proxy::init_buffers_()
@@ -159,18 +145,12 @@ nest::music_cont_in_proxy::calibrate()
     S_.port_width_ = V_.MP_->width();
 
     B_.data_ = std::vector< double >( S_.port_width_ );
-    MUSIC::ArrayData data_map( static_cast< void* >( &( B_.data_[ 0 ] ) ),
-      MPI::DOUBLE,
-      0,
-      S_.port_width_ );
+    MUSIC::ArrayData data_map( static_cast< void* >( &( B_.data_[ 0 ] ) ), MPI::DOUBLE, 0, S_.port_width_ );
 
     V_.MP_->map( &data_map );
     S_.published_ = true;
 
-    std::string msg =
-      String::compose( "Mapping MUSIC input port '%1' with width=%2.",
-        P_.port_name_,
-        S_.port_width_ );
+    std::string msg = String::compose( "Mapping MUSIC input port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
     LOG( M_INFO, "music_cont_in_proxy::calibrate()", msg.c_str() );
   }
 }
@@ -181,8 +161,7 @@ nest::music_cont_in_proxy::get_status( DictionaryDatum& d ) const
   P_.get( d );
   S_.get( d );
 
-  ( *d )[ names::data ] =
-    DoubleVectorDatum( new std::vector< double >( B_.data_ ) );
+  ( *d )[ names::data ] = DoubleVectorDatum( new std::vector< double >( B_.data_ ) );
 }
 
 void

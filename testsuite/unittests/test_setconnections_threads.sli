@@ -23,7 +23,7 @@
 
 % test SetStatus for connections
 %
-% we interpret GID as the gid of the source (pre-synaptic) neuron
+% we interpret node ID as the node_id of the source (pre-synaptic) neuron
 %
 % 090406, Morrison Diesmann
 
@@ -49,6 +49,3 @@ source target << >> /stdp_synapse Connect
 conn << /weight 2.0 >> SetStatus
 
 { conn /weight get 2.0 eq} assert_or_die
-
-
-

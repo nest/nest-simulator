@@ -60,11 +60,8 @@ public:
   {
     TypedDatum< slt >::unset_executable();
   }
-  GenericDatum( const GenericDatum< D, slt >& gd )
-    : TypedDatum< slt >( gd )
-    , d( gd.d )
-  {
-  }
+
+  GenericDatum( const GenericDatum< D, slt >& gd ) = default;
 
   const D& operator=( const D& d_s )
   {
@@ -112,8 +109,7 @@ public:
   bool
   equals( const Datum* dat ) const
   {
-    const GenericDatum< D, slt >* ddc =
-      dynamic_cast< GenericDatum< D, slt >* >( const_cast< Datum* >( dat ) );
+    const GenericDatum< D, slt >* ddc = dynamic_cast< GenericDatum< D, slt >* >( const_cast< Datum* >( dat ) );
 
     //    std::cerr << "d = " << d << " ddc = " << ddc << " dat = " << dat <<
     //    std::endl;

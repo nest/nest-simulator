@@ -113,12 +113,10 @@
     /rate 900.0 4.5 mul Hz % rate of inital poisson stimulus
   >>
 
-  /detector /spike_detector
-  /detector_params
+  /recorder /spike_recorder
+  /recorder_params
   <<
-   /withtime true
-   /withgid true
-   /to_file true
+   /record_to /ascii
    /label (cuba_stdp)
   >>
 
@@ -149,24 +147,17 @@ stdp_params
 >> join
 
 % create one single random number generator
-rngdict /knuthlfg get 238 CreateRNG /myrng Set
+% set random number generator seed
+<< /rng_seed 238 >> SetKernelStatus
 
 % normal distribution to draw several quantities from
-myrng rdevdict /normal_clipped get CreateRDV /normal_dv Set
-normal_dv
-<<
- /mu  mean_potential
- /sigma sigma_potential
- /high model_params /V_th get
->> SetStatus
-
-
-
+/normal_param << /normal << /mean mean_potential /std sigma_potential >> >> CreateParameter def
+/v_m_parameter normal_param (-inf) cvd model_params /V_th get redraw def
 
 
 %%% FUNCTION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Take spike detector, find total number of spikes registered,
+% Take spike recorder, find total number of spikes registered,
 % return average rate per neuron in Hz.
 % NOTE: If you are running with several MPI processes, this
 %       function only gives an approximation to the true rate.
@@ -220,23 +211,19 @@ def
   /I_stimulus stimulus Create def
    I_stimulus stimulus_params SetStatus
 
-  % one detector would in principle be enough,
+  % one recorder would in principle be enough,
   % but by recording the populations separately,
   % we save ourselves a lot of sorting work later
 
   M_INFO (BuildNetwork)
-  (Creating excitatory spike detector.) message
-  /E_detector detector Create def
-  E_detector detector_params SetStatus
+  (Creating excitatory spike recorder.) message
+  /E_recorder recorder Create def
+  E_recorder recorder_params SetStatus
 
   M_INFO (BuildNetwork)
-  (Creating inhibitory spike detector.) message
-  /I_detector detector Create def
-  I_detector detector_params SetStatus
-
-  % some connecting functions need lists (arrays) over all
-  % neurons they should work on, so we need to extract these
-  % lists from the subnetworks
+  (Creating inhibitory spike recorder.) message
+  /I_recorder recorder Create def
+  I_recorder recorder_params SetStatus
 
   % all neurons
   /allNeurons E_neurons I_neurons join def
@@ -248,10 +235,7 @@ def
 
   M_INFO (BuildNetwork)
   (Configuring neuron parameters.) message
-  allNeurons
-  {
-   << /V_m  normal_dv Random cvd >> SetStatus
-  } forall
+  allNeurons << /V_m  v_m_parameter >> SetStatus
 
   % Create custom synapse types with appropriate values for
   % our excitatory and inhibitory connections
@@ -272,34 +256,35 @@ def
   (Connecting stimulus generators.) message
 
   % Connect Poisson generator to neuron
-  E_stimulus E_neurons << /rule /all_to_all >> << /model /syn_ex >> Connect
-  I_stimulus I_neurons << /rule /all_to_all >> << /model /syn_ex >> Connect
+  E_stimulus E_neurons << /rule /all_to_all >> << /synapse_model /syn_ex >> Connect
+  I_stimulus I_neurons << /rule /all_to_all >> << /synapse_model /syn_ex >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> excitatory population.) message
-  E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /model synapse_model /weight << /distribution /normal /mu JE /sigma sigma_w >> >> Connect
+  /weight_dist << /normal << /mean JE /std sigma_w >> >> CreateParameter def
+  E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model synapse_model /weight weight_dist >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> inhibitory population.) message
-  E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
+  E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting inhibitory -> excitatory population.) message
-  I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+  I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting inhibitory -> inhibitory population.) message
-  I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+  I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
-  % Spike detectors are connected to the first Nrec neurons in each
+  % Spike recorders are connected to the first Nrec neurons in each
   % population.  Since neurons are equal and connectivity is homogeneously
   % randomized, this is equivalent to picking Nrec neurons at random
   % from each population
   M_INFO (BuildNetwork)
-  (Connecting spike detectors.) message
+  (Connecting spike recorders.) message
 
-  E_neurons Nrec Take E_detector Connect
-  I_neurons Nrec Take I_detector Connect
+  E_neurons Nrec Take E_recorder Connect
+  I_neurons Nrec Take I_recorder Connect
 
   % read out time used for building
   toc /BuildCPUTime Set
@@ -319,7 +304,7 @@ def
   /Nsyn
     CE CI add  % internal synapses
     N mul
-    Nrec 2 mul % "synapses" to spike detectors
+    Nrec 2 mul % "synapses" to spike recorders
     add
     N add      % "synapses" from poisson generator
   def
@@ -329,7 +314,7 @@ def
   (Simulation time   : ) =only SimCPUTime   =only ( s\n) =
   (Number of Neurons : ) =only N =
   (Number of Synapses: ) =only Nsyn =
-  (Excitatory rate   : ) =only E_detector ComputeRate =only ( Hz) =
-  (Inhibitory rate   : ) =only I_detector ComputeRate =only ( Hz) =
+  (Excitatory rate   : ) =only E_recorder ComputeRate =only ( Hz) =
+  (Inhibitory rate   : ) =only I_recorder ComputeRate =only ( Hz) =
 
 } exec

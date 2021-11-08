@@ -41,7 +41,7 @@
 %        >> def
 
 /model /mip_generator def
-/params << /rate 100.0 /p_copy 0.5 /mother_seed 123456 >> def
+/params << /rate 100.0 /p_copy 0.5 >> def
 
 /run_model {
    
@@ -66,7 +66,6 @@
   /voltmeter Create /vm Set
   m  n Connect
   vm n Connect
-  vm << /to_file false /to_memory true >> SetStatus
 
   1000 Simulate
 

@@ -58,7 +58,7 @@
 
 % structural plasticity parameters
 
-/sp_update_interval 100 def % update interval of structural plasticity in simulation steps
+/sp_update_interval 1000. def % update interval of structural plasticity (ms)
 /sp_record_interval 1000 def  % recording of structural plasticity status (Ca, #Axons) (ms)
 
 % Growth curves for synaptic elements of excitatory neurons
@@ -234,8 +234,7 @@
         /resolution dt
         /total_num_virtual_procs nvp
         /overwrite_files overwrite_files
-        /rng_seeds [0 nvp 1 sub] Range seed add
-        /grng_seed seed nvp add
+        /rng_seed seed
       >> SetKernelStatus
 
     EnableStructuralPlasticity
@@ -249,17 +248,17 @@
         /structural_plasticity_update_interval sp_update_interval
         /structural_plasticity_synapses <<
                                             /synapse_ex <<
-                                                            /model /synapse_ex
+                                                            /synapse_model /synapse_ex
                                                             /post_synaptic_element /den_ex
                                                             /pre_synaptic_element /axon_ex
                                                         >>
                                             /synapse_in <<
-                                                            /model /synapse_in
+                                                            /synapse_model /synapse_in
                                                             /post_synaptic_element /den_in
                                                             /pre_synaptic_element /axon_in
                                                         >>
                                         >>
-    >> SetStructuralPlasticityStatus
+    >> SetKernelStatus
 
 } def
 
@@ -291,9 +290,9 @@
     noise neurons_i << /rule /all_to_all >> << /weight psc_ext /delay delay >> Connect
 
     record_spikes {
-        /spike_detector 1 << /to_file true >> Create /spike_detector Set
-        neurons_e spike_detector Connect
-        neurons_i spike_detector Connect
+        /spike_recorder << /record_to /ascii >> Create /spike_recorder Set
+        neurons_e spike_recorder Connect
+        neurons_i spike_recorder Connect
     } if
 } def
 

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_cvi - check if cvi function works
 
 Synopsis: (test_cvi) run -> 

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
     Name: testsuite::test_one_to_one - Test correct connection with many targets
     Synopsis: (test_one_to_one) run -> - 
 

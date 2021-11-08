@@ -27,77 +27,211 @@
 #include <boost/test/unit_test.hpp>
 
 // C++ includes:
+#include <algorithm>
 #include <vector>
 
 // Includes from libnestutil:
 #include "sort.h"
 
-namespace nest
+/**
+ * Wrapper for quicksort3way.
+ *
+ * When calling nest::sort() directly it is impossible to sort with the
+ * built in quicksort3way from tests. This is because if NEST is compiled
+ * with Boost support, nest::sort() sorts with Boost, and if NEST is not
+ * compiled with Boost, nest::sort() calls quicksort3way, but the Boost
+ * tests are not compiled.
+ */
+void
+nest_quicksort( BlockVector< int >& bv0, BlockVector< int >& bv1 )
 {
-
-const bool
-is_sorted( std::vector< size_t >::const_iterator begin,
-  std::vector< size_t >::const_iterator end )
-{
-  for ( std::vector< size_t >::const_iterator it = begin; it < --end; )
-  {
-    if ( *it > *( ++it ) )
-    {
-      return false;
-    }
-  }
-  return true;
+  nest::quicksort3way( bv0, bv1, 0, bv0.size() - 1 );
 }
+
+/**
+ * Fixture filling two BlockVectors and a vector with lineary decreasing numbers.
+ * The vector is then sorted.
+ */
+struct fill_bv_vec_linear
+{
+  fill_bv_vec_linear()
+    : N( 20000 )
+    , N_small( boost::sort::spreadsort::detail::min_sort_size - 10 )
+    , bv_sort( N )
+    , bv_perm( N )
+    , vec_sort( N )
+    , bv_sort_small( N_small )
+    , bv_perm_small( N_small )
+    , vec_sort_small( N_small )
+  {
+    for ( int i = 0; i < N; ++i )
+    {
+      int element = N - i;
+      bv_sort[ i ] = element;
+      bv_perm[ i ] = element;
+      vec_sort[ i ] = element;
+
+      if ( i < N_small )
+      {
+        bv_sort_small[ i ] = element;
+        bv_perm_small[ i ] = element;
+        vec_sort_small[ i ] = element;
+      }
+    }
+    std::sort( vec_sort.begin(), vec_sort.end() );
+    std::sort( vec_sort_small.begin(), vec_sort_small.end() );
+  }
+
+  const int N;
+  const int N_small;
+
+  BlockVector< int > bv_sort;
+  BlockVector< int > bv_perm;
+  std::vector< int > vec_sort;
+
+  BlockVector< int > bv_sort_small;
+  BlockVector< int > bv_perm_small;
+  std::vector< int > vec_sort_small;
+};
+
+/**
+ * Fixture filling two BlockVectors and a vector with random numbers.
+ * The vector is then sorted.
+ */
+struct fill_bv_vec_random
+{
+  fill_bv_vec_random()
+    : N( 20000 )
+    , N_small( boost::sort::spreadsort::detail::min_sort_size - 10 )
+    , bv_sort( N )
+    , bv_perm( N )
+    , vec_sort( N )
+    , bv_sort_small( N_small )
+    , bv_perm_small( N_small )
+    , vec_sort_small( N_small )
+  {
+    for ( int i = 0; i < N; ++i )
+    {
+      const size_t k = std::rand() % N;
+      bv_sort[ i ] = k;
+      bv_perm[ i ] = k;
+      vec_sort[ i ] = k;
+
+      if ( i < N_small )
+      {
+        bv_sort_small[ i ] = k;
+        bv_perm_small[ i ] = k;
+        vec_sort_small[ i ] = k;
+      }
+    }
+    std::sort( vec_sort.begin(), vec_sort.end() );
+    std::sort( vec_sort_small.begin(), vec_sort_small.end() );
+  }
+
+  const int N;
+  const int N_small;
+
+  BlockVector< int > bv_sort;
+  BlockVector< int > bv_perm;
+  std::vector< int > vec_sort;
+
+  BlockVector< int > bv_sort_small;
+  BlockVector< int > bv_perm_small;
+  std::vector< int > vec_sort_small;
+};
 
 BOOST_AUTO_TEST_SUITE( test_sort )
 
 /**
  * Tests whether two arrays with randomly generated numbers are sorted
- * correctly by a single call to sort.
+ * correctly when sorting with NEST's own quicksort.
  */
-BOOST_AUTO_TEST_CASE( test_random )
+BOOST_FIXTURE_TEST_CASE( test_quicksort_random, fill_bv_vec_random )
 {
-  const size_t N = 20000;
-  std::vector< size_t > vec0( N );
-  std::vector< size_t > vec1( N );
+  nest_quicksort( bv_sort, bv_perm );
 
-  for ( size_t i = 0; i < N; ++i )
-  {
-    const size_t k = std::rand() % N;
-    vec0[ i ] = k;
-    vec1[ i ] = k;
-  }
+  // We test here that the BlockVectors bv_sort and bv_perm are both
+  // sorted here. However, if something goes wrong and they for example
+  // contain only zeros, is_sorted will also return true, but the test
+  // should not pass. Therefore, in addition to require the BlockVectors
+  // to be sorted, we also require them to be equal to the sorted
+  // reference vector, vec_sort.
+  BOOST_REQUIRE( std::is_sorted( bv_sort.begin(), bv_sort.end() ) );
+  BOOST_REQUIRE( std::is_sorted( bv_perm.begin(), bv_perm.end() ) );
 
-  nest::sort( vec0, vec1 );
+  BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_sort.begin() ) );
+  BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_perm.begin() ) );
+}
 
-  BOOST_REQUIRE( is_sorted( vec0.begin(), vec0.end() ) );
-  BOOST_REQUIRE( is_sorted( vec1.begin(), vec1.end() ) );
+/**
+ * Tests whether two arrays with linearly decreasing numbers are sorted
+ * correctly when sorting with the built-in quicksort.
+ */
+BOOST_FIXTURE_TEST_CASE( test_quicksort_linear, fill_bv_vec_linear )
+{
+  nest_quicksort( bv_sort, bv_perm );
+
+  BOOST_REQUIRE( std::is_sorted( bv_sort.begin(), bv_sort.end() ) );
+  BOOST_REQUIRE( std::is_sorted( bv_perm.begin(), bv_perm.end() ) );
+
+  BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_sort.begin() ) );
+  BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_perm.begin() ) );
+}
+
+/**
+ * Tests whether two arrays with randomly generated numbers are sorted
+ * correctly when sorting with Boost.
+ */
+BOOST_FIXTURE_TEST_CASE( test_boost_random, fill_bv_vec_random )
+{
+  // Making sure we are sorting with boost
+  static_assert( HAVE_BOOST, "Compiling Boost tests, but HAVE_BOOST!=1." );
+
+  nest::sort( bv_sort, bv_perm );
+
+  BOOST_REQUIRE( std::is_sorted( bv_sort.begin(), bv_sort.end() ) );
+  BOOST_REQUIRE( std::is_sorted( bv_perm.begin(), bv_perm.end() ) );
+
+  BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_sort.begin() ) );
+  BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_perm.begin() ) );
+
+  // Using smaller data sets to sort with the fallback algorithm.
+  nest::sort( bv_sort_small, bv_perm_small );
+
+  BOOST_REQUIRE( std::is_sorted( bv_sort_small.begin(), bv_sort_small.end() ) );
+  BOOST_REQUIRE( std::is_sorted( bv_perm_small.begin(), bv_perm_small.end() ) );
+
+  BOOST_REQUIRE( std::equal( vec_sort_small.begin(), vec_sort_small.end(), bv_sort_small.begin() ) );
+  BOOST_REQUIRE( std::equal( vec_sort_small.begin(), vec_sort_small.end(), bv_perm_small.begin() ) );
 }
 
 /**
  * Tests whether two arrays with linearly increasing numbers are sorted
- * correctly by a single call to sort.
-*/
-BOOST_AUTO_TEST_CASE( test_linear )
+ * correctly when sorting with Boost.
+ */
+BOOST_FIXTURE_TEST_CASE( test_boost_linear, fill_bv_vec_linear )
 {
-  const size_t N = 20000;
-  std::vector< size_t > vec0( N );
-  std::vector< size_t > vec1( N );
+  // Making sure we are sorting with boost
+  static_assert( HAVE_BOOST, "Compiling Boost tests, but HAVE_BOOST!=1." );
 
-  for ( size_t i = 0; i < N; ++i )
-  {
-    vec0[ i ] = N - i - 1;
-    vec1[ i ] = N - i - 1;
-  }
+  nest::sort( bv_sort, bv_perm );
 
-  nest::sort( vec0, vec1 );
+  BOOST_REQUIRE( std::is_sorted( bv_sort.begin(), bv_sort.end() ) );
+  BOOST_REQUIRE( std::is_sorted( bv_perm.begin(), bv_perm.end() ) );
 
-  BOOST_REQUIRE( is_sorted( vec0.begin(), vec0.end() ) );
-  BOOST_REQUIRE( is_sorted( vec1.begin(), vec1.end() ) );
+  BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_sort.begin() ) );
+  BOOST_REQUIRE( std::equal( vec_sort.begin(), vec_sort.end(), bv_perm.begin() ) );
+
+  // Using smaller data sets to sort with the fallback algorithm.
+  nest::sort( bv_sort_small, bv_perm_small );
+
+  BOOST_REQUIRE( std::is_sorted( bv_sort_small.begin(), bv_sort_small.end() ) );
+  BOOST_REQUIRE( std::is_sorted( bv_perm_small.begin(), bv_perm_small.end() ) );
+
+  BOOST_REQUIRE( std::equal( vec_sort_small.begin(), vec_sort_small.end(), bv_sort_small.begin() ) );
+  BOOST_REQUIRE( std::equal( vec_sort_small.begin(), vec_sort_small.end(), bv_perm_small.begin() ) );
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-
-} // of namespace nest
 
 #endif /* TEST_SORT_H */

@@ -31,7 +31,7 @@
 
 // Includes from sli:
 #include "dictdatum.h"
-#include "lockptrdatum.h"
+#include "sharedptrdatum.h"
 #include "name.h"
 
 namespace nest
@@ -49,10 +49,10 @@ public:
   virtual ~GenericConnBuilderFactory()
   {
   }
-  virtual ConnBuilder* create( GIDCollectionPTR,
-    GIDCollectionPTR,
+  virtual ConnBuilder* create( NodeCollectionPTR,
+    NodeCollectionPTR,
     const DictionaryDatum&,
-    const DictionaryDatum& ) const = 0;
+    const std::vector< DictionaryDatum >& ) const = 0;
 };
 
 /**
@@ -66,12 +66,12 @@ class ConnBuilderFactory : public GenericConnBuilderFactory
 public:
   //! create conn builder
   ConnBuilder*
-  create( GIDCollectionPTR sources,
-    GIDCollectionPTR targets,
+  create( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_spec ) const
+    const std::vector< DictionaryDatum >& syn_specs ) const
   {
-    return new ConnBuilderType( sources, targets, conn_spec, syn_spec );
+    return new ConnBuilderType( sources, targets, conn_spec, syn_specs );
   }
 };
 

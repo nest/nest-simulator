@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::issue-327 Ensure that spike_generator handles large precise times
 
@@ -57,19 +57,19 @@ M_ERROR setverbosity
   
   /pn /parrot_neuron_ps Create def
   
-  /sd /spike_detector 
-    << /precise_times true
+  /sr /spike_recorder 
+    <<
        /time_in_steps true
     >>
   Create
   def
   
   sg pn Connect
-  pn sd Connect
+  pn sr Connect
   
   360000 Simulate
   
-  sd /events get
+  sr /events get
   dup /times get /steps Set
   /offsets get /offs Set
   

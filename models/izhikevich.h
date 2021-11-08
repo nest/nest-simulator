@@ -33,64 +33,92 @@
 
 namespace nest
 {
-/* BeginDocumentation
-   Name: izhikevich - Izhikevich neuron model
 
-   Description:
-   Implementation of the simple spiking neuron model introduced by Izhikevich
-   [1]. The dynamics are given by:
-       dv/dt = 0.04*v^2 + 5*v + 140 - u + I
-          du/dt = a*(b*v - u)
+/* BeginUserDocs: neuron, integrate-and-fire
 
-       if v >= V_th:
-         v is set to c
-         u is incremented by d
+Short description
++++++++++++++++++
 
-       v jumps on each spike arrival by the weight of the spike.
+Izhikevich neuron model
 
-   As published in [1], the numerics differs from the standard forward Euler
-   technique in two ways:
-   1) the new value of u is calculated based on the new value of v, rather than
-   the previous value
-   2) the variable v is updated using a time step half the size of that used to
-   update variable u.
+Description
++++++++++++
 
-   This model offers both forms of integration, they can be selected using the
-   boolean parameter consistent_integration. To reproduce some results published
-   on the basis of this model, it is necessary to use the published form of the
-   dynamics. In this case, consistent_integration must be set to false. For all
-   other purposes, it is recommended to use the standard technique for forward
-   Euler integration. In this case, consistent_integration must be set to true
-   (default).
+Implementation of the simple spiking neuron model introduced by Izhikevich
+[1]_. The dynamics are given by:
+
+.. math::
+
+   dV_m/dt &= 0.04 V_m^2 + 5 V_m + 140 - u + I
+   du/dt &= a (b V_m - u)
 
 
-   Parameters:
-   The following parameters can be set in the status dictionary.
+.. math::
 
-   V_m        double - Membrane potential in mV
-   U_m        double - Membrane potential recovery variable
-   V_th       double - Spike threshold in mV.
-   I_e        double - Constant input current in pA. (R=1)
-   V_min      double - Absolute lower value for the membrane potential.
-   a          double - describes time scale of recovery variable
-   b          double - sensitivity of recovery variable
-   c          double - after-spike reset value of V_m
-   d          double - after-spike reset value of U_m
-   consistent_integration  bool - use standard integration technique
+   &\text{if}\;\;\; V_m \geq V_{th}:\\
+   &\;\;\;\; V_m \text{ is set to } c\\
+   &\;\;\;\; u \text{ is incremented by } d\\
+   & \, \\
+   &v \text{ jumps on each spike arrival by the weight of the spike}
 
+As published in [1]_, the numerics differs from the standard forward Euler
+technique in two ways:
 
-   References:
-   [1] Izhikevich, Simple Model of Spiking Neurons,
-   IEEE Transactions on Neural Networks (2003) 14:1569-1572
+1) the new value of :math:`u` is calculated based on the new value of
+   :math:`V_m`, rather than the previous value
+2) the variable :math:`V_m` is updated using a time step half the size of that
+   used to update variable :math:`u`.
 
-   Sends: SpikeEvent
+This model offers both forms of integration, they can be selected using the
+boolean parameter ``consistent_integration``. To reproduce some results
+published on the basis of this model, it is necessary to use the published form
+of the dynamics. In this case, ``consistent_integration`` must be set to false.
+For all other purposes, it is recommended to use the standard technique for
+forward Euler integration. In this case, ``consistent_integration`` must be set
+to true (default).
 
-   Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
-   FirstVersion: 2009
-   Author: Hanuschkin, Morrison, Kunkel
-   SeeAlso: iaf_psc_delta, mat2_psc_exp
-*/
-class izhikevich : public Archiving_Node
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary.
+
+======================= =======  ==============================================
+ V_m                    mV       Membrane potential
+ U_m                    mV       Membrane potential recovery variable
+ V_th                   mV       Spike threshold
+ I_e                    pA       Constant input current (R=1)
+ V_min                  mV       Absolute lower value for the membrane potential
+ a                      real     Describes time scale of recovery variable
+ b                      real     Sensitivity of recovery variable
+ c                      mV       After-spike reset value of V_m
+ d                      mV       After-spike reset value of U_m
+ consistent_integration boolean  Use standard integration technique
+======================= =======  ==============================================
+
+References
+++++++++++
+
+.. [1] Izhikevich EM (2003). Simple model of spiking neurons. IEEE Transactions
+       on Neural Networks, 14:1569-1572. DOI: https://doi.org/10.1109/TNN.2003.820440
+
+Sends
++++++
+
+SpikeEvent
+
+Receives
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+iaf_psc_delta, mat2_psc_exp
+
+EndUserDocs */
+
+class izhikevich : public ArchivingNode
 {
 
 public:
@@ -122,7 +150,6 @@ private:
   friend class RecordablesMap< izhikevich >;
   friend class UniversalDataLogger< izhikevich >;
 
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -154,8 +181,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   // ----------------------------------------------------------------
@@ -177,7 +204,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -279,23 +306,23 @@ izhikevich::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
 izhikevich::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

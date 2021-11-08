@@ -23,98 +23,121 @@
 #ifndef AC_GENERATOR_H
 #define AC_GENERATOR_H
 
-// provides AC input current
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 #include "universal_data_logger.h"
 
-/* BeginDocumentation
-   Name: ac_generator - provides AC input current
-   Description:
+/* BeginUserDocs: device, generator
 
-   This device produce an ac-current which are sent by a CurrentEvent. The
-   current is given by
+Short description
++++++++++++++++++
 
-           I(t) = offset + amplitude * sin ( om * t + phi )
+Produce an alternating current (AC) input
 
-   where
+Description
++++++++++++
 
-       om  = 2 * pi * frequency
-       phi = phase / 180 * pi
+This device produces an AC input sent by CurrentEvents. The
+current is given by
 
-   The parameters are
+.. math::
 
-   amplitude   double -  Amplitude of sine current in pA
-   offset      double -  Constant amplitude offset in pA
-   frequency   double -  Frequency in Hz
-   phase       double -  Phase of sine current (0-360 deg)
+        I(t) = \mathrm{offset} + \mathrm{amplitude} \cdot \sin ( \omega t + \phi )
 
-   Setting start and stop (see StimulatingDevice) only windows the current
-   as defined above. It does not shift the time axis.
+where
 
-   References:
-   [1] S. Rotter and M. Diesmann, Exact digital simulation of time-
-   invariant linear systems with applications to neuronal modeling,
-   Biol. Cybern. 81, 381-402 (1999)
+.. math::
 
-   Sends: CurrentEvent
+    \omega  = 2 \pi \cdot \mathrm{frequency} \\
+    \phi = \frac{\mathrm{phase}}{180} \cdot \pi
 
-   Author: Johan Hake, Spring 2003
+.. include:: ../models/stimulation_device.rst
 
-   SeeAlso: Device, StimulatingDevice, dc_generator, step_current_generator
-*/
+amplitude
+    Amplitude of sine current (pA)
+
+offset
+    Constant amplitude offset (pA)
+
+frequency
+    Frequency (Hz)
+
+phase
+    Phase of sine current (0-360 deg)
+
+Setting `start` and `stop` only windows the current as defined above. It
+does not shift the time axis.
+
+Set parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
+The indexing is as follows:
+
+ 0. amplitude
+ 1. offset
+ 2. frequency
+ 3. phase
+
+References
+++++++++++
+
+.. [1] Rotter S and Diesmann M (1999). Exact digital simulation of time-
+       invariant linear systems with applications to neuronal modeling,
+       Biol. Cybern. 81, 381-402. DOI: https://doi.org/10.1007/s004220050570
+
+Sends
++++++
+
+CurrentEvent
+
+See also
+++++++++
+
+dc_generator, noise_generator, step_current_generator, StimulationDevice,
+Device
+
+EndUserDocs */
 
 namespace nest
 {
-class ac_generator : public DeviceNode
+class ac_generator : public StimulationDevice
 {
 
 public:
   ac_generator();
   ac_generator( const ac_generator& );
 
-  bool
-  has_proxies() const
-  {
-    return false;
-  }
-
   //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
+  bool local_receiver() const override;
 
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
-
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( DataLoggingRequest& );
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
+
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
 
   // ------------------------------------------------------------
@@ -130,8 +153,8 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -161,7 +184,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( ac_generator& );
+    explicit Buffers_( ac_generator& );
     Buffers_( const Buffers_&, ac_generator& );
     UniversalDataLogger< ac_generator > logger_;
   };
@@ -170,9 +193,6 @@ private:
 
   struct Variables_
   {
-    double omega_;   //!< Angelfrequency i rad/s
-    double phi_rad_; //!< Phase of sine current (0-2Pi rad)
-
     // The exact integration matrix
     double A_00_;
     double A_01_;
@@ -188,7 +208,6 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< CurrentEvent > device_;
   static RecordablesMap< ac_generator > recordablesMap_;
   Parameters_ P_;
   State_ S_;
@@ -197,12 +216,9 @@ private:
 };
 
 inline port
-ac_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool )
+ac_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   CurrentEvent e;
   e.set_sender( *this );
@@ -225,7 +241,7 @@ ac_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  device_.get_status( d );
+  StimulationDevice::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -234,17 +250,29 @@ inline void
 ac_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // State_ is read-only
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+inline bool
+ac_generator::local_receiver() const
+{
+  return true;
+}
+
+inline StimulationDevice::Type
+ac_generator::get_type() const
+{
+  return StimulationDevice::Type::CURRENT_GENERATOR;
 }
 
 } // namespace

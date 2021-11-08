@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_dcgen_versus_I_e - sli script to test if setting I_e and applying a DC generator yields the same results.
 
    Synopsis: (test_dcgen_versus_I_e) run

@@ -23,11 +23,15 @@
 #ifndef SIMULATION_MANAGER_H
 #define SIMULATION_MANAGER_H
 
+// C includes:
+#include <sys/time.h>
+
 // C++ includes:
 #include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "nest_time.h"
@@ -82,12 +86,6 @@ public:
   void cleanup();
 
   /**
-   * Simulate for the given time .
-   * calls prepare(); run(Time&); cleanup();
-   */
-  void simulate( Time const& );
-
-  /**
    * Returns true if waveform relaxation is used.
    */
   bool use_wfr() const;
@@ -132,9 +130,11 @@ public:
   bool has_been_simulated() const;
 
   /**
-   * Reset the SimulationManager to the state at T = 0.
+   * Return true, if the SimulationManager has been prepared for simulation.
+   * This is the case from the time when the Prepare function is called until
+   * the simulation context is left by a call to Cleanup.
    */
-  void reset_network();
+  bool has_been_prepared() const;
 
   /**
    * Get slice number. Increased by one for each slice. Can be used
@@ -145,6 +145,21 @@ public:
   //! Return current simulation time.
   // TODO: Precisely how defined? Rename!
   Time const& get_clock() const;
+
+  /**
+   * Get the simulation duration in the current call to run().
+   */
+  Time run_duration() const;
+
+  /**
+   * Get the start time of the current call to run().
+   */
+  Time run_start_time() const;
+
+  /**
+   * Get the simulation's time at the end of the current call to run().
+   */
+  Time run_end_time() const;
 
   //! Return start of current time slice, in steps.
   // TODO: rename / precisely how defined?
@@ -157,6 +172,16 @@ public:
   //! Sorts source table and connections and create new target table.
   void update_connection_infrastructure( const thread tid );
 
+  /**
+   * Set time measurements for internal profiling to zero (reg. prep.)
+   */
+  virtual void reset_timers_for_preparation();
+
+  /**
+   * Set time measurements for internal profiling to zero (reg. sim. dyn.)
+   */
+  virtual void reset_timers_for_dynamics();
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -164,34 +189,46 @@ private:
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!
 
-  Time clock_;            //!< SimulationManager clock, updated once per slice
-  delay slice_;           //!< current update slice
-  delay to_do_;           //!< number of pending cycles.
-  delay to_do_total_;     //!< number of requested cycles in current simulation.
-  delay from_step_;       //!< update clock_+from_step<=T<clock_+to_step_
-  delay to_step_;         //!< update clock_+from_step<=T<clock_+to_step_
-  timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
-  timeval t_slice_end_;   //!< Wall-clock time at the end of time slice
-  long t_real_;   //!< Accumulated wall-clock time spent simulating (in us)
-  bool prepared_; //!< Indicates whether the SimulationManager is in a prepared
-                  //!< state
-  bool simulating_; //!< true if simulation in progress
-  bool simulated_; //!< indicates whether the SimulationManager has already been
-                   //!< simulated for sometime
-  bool exit_on_user_signal_; //!< true if update loop was left due to signal
-  // received
-  bool inconsistent_state_; //!< true after exception during update_
-                            //!< simulation must not be resumed
-  bool print_time_;         //!< Indicates whether time should be printed during
-                            //!< simulations (or not)
-  bool use_wfr_;            //!< Indicates wheter waveform relaxation is used
-  double wfr_comm_interval_; //!< Desired waveform relaxation communication
-                             //!< interval (in ms)
-  double wfr_tol_; //!< Convergence tolerance of waveform relaxation method
-  long wfr_max_iterations_; //!< maximal number of iterations used for waveform
-                            //!< relaxation
+  Time clock_;                     //!< SimulationManager clock, updated once per slice
+  delay slice_;                    //!< current update slice
+  delay to_do_;                    //!< number of pending steps
+  delay to_do_total_;              //!< number of requested steps in current simulation
+  delay from_step_;                //!< update clock_+from_step<=T<clock_+to_step_
+  delay to_step_;                  //!< update clock_+from_step<=T<clock_+to_step_
+  timeval t_slice_begin_;          //!< Wall-clock time at the begin of a time slice
+  timeval t_slice_end_;            //!< Wall-clock time at the end of time slice
+  long t_real_;                    //!< Accumulated wall-clock time spent simulating (in us)
+  bool prepared_;                  //!< Indicates whether the SimulationManager is in a prepared
+                                   //!< state
+  bool simulating_;                //!< true if simulation in progress
+  bool simulated_;                 //!< indicates whether the SimulationManager has already been
+                                   //!< simulated for sometime
+  bool inconsistent_state_;        //!< true after exception during update_
+                                   //!< simulation must not be resumed
+  bool print_time_;                //!< Indicates whether time should be printed during
+                                   //!< simulations (or not)
+  bool use_wfr_;                   //!< Indicates wheter waveform relaxation is used
+  double wfr_comm_interval_;       //!< Desired waveform relaxation communication
+                                   //!< interval (in ms)
+  double wfr_tol_;                 //!< Convergence tolerance of waveform relaxation method
+  long wfr_max_iterations_;        //!< maximal number of iterations used for waveform
+                                   //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
+  double update_time_limit_;       //!< throw exception if single update cycle takes longer
+                                   //!< than update_time_limit_ (seconds, default inf)
+  double min_update_time_;         //!< shortest update time seen so far (seconds)
+  double max_update_time_;         //!< longest update time seen so far (seconds)
+
+  // private stop watches for benchmarking purposes
+  Stopwatch sw_simulate_;
+  Stopwatch sw_communicate_prepare_;
+#ifdef TIMER_DETAILED
+  // intended for internal core developers, not for use in the public API
+  Stopwatch sw_gather_spike_data_;
+  Stopwatch sw_update_;
+  Stopwatch sw_gather_target_data_;
+#endif
 };
 
 inline Time const&
@@ -213,6 +250,12 @@ SimulationManager::has_been_simulated() const
   return simulated_;
 }
 
+inline bool
+SimulationManager::has_been_prepared() const
+{
+  return prepared_;
+}
+
 inline size_t
 SimulationManager::get_slice() const
 {
@@ -223,6 +266,26 @@ inline Time const&
 SimulationManager::get_clock() const
 {
   return clock_;
+}
+
+inline Time
+SimulationManager::run_duration() const
+{
+  return to_do_total_ * Time::get_resolution();
+}
+
+inline Time
+SimulationManager::run_start_time() const
+{
+  assert( not simulating_ ); // implicit due to using get_time()
+  return get_time() - ( to_do_total_ - to_do_ ) * Time::get_resolution();
+}
+
+inline Time
+SimulationManager::run_end_time() const
+{
+  assert( not simulating_ ); // implicit due to using get_time()
+  return ( get_time().get_steps() + to_do_ ) * Time::get_resolution();
 }
 
 inline delay

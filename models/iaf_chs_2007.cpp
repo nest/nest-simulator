@@ -26,6 +26,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -97,21 +98,19 @@ nest::iaf_chs_2007::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_epsp, tau_epsp_ );
   def< double >( d, names::tau_reset, tau_reset_ );
   def< double >( d, names::V_noise, U_noise_ );
-  ( *d )[ names::noise ] =
-    DoubleVectorDatum( new std::vector< double >( noise_ ) );
+  ( *d )[ names::noise ] = DoubleVectorDatum( new std::vector< double >( noise_ ) );
 }
 
 void
-nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s )
+nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, Node* node )
 {
-  updateValue< double >( d, names::V_reset, U_reset_ );
-  updateValue< double >( d, names::V_epsp, U_epsp_ );
-  updateValue< double >( d, names::tau_epsp, tau_epsp_ );
-  updateValue< double >( d, names::tau_reset, tau_reset_ );
-  updateValue< double >( d, names::V_noise, U_noise_ );
+  updateValueParam< double >( d, names::V_reset, U_reset_, node );
+  updateValueParam< double >( d, names::V_epsp, U_epsp_, node );
+  updateValueParam< double >( d, names::tau_epsp, tau_epsp_, node );
+  updateValueParam< double >( d, names::tau_reset, tau_reset_, node );
+  updateValueParam< double >( d, names::V_noise, U_noise_, node );
 
-  const bool updated_noise =
-    updateValue< std::vector< double > >( d, names::noise, noise_ );
+  const bool updated_noise = updateValue< std::vector< double > >( d, names::noise, noise_ );
   if ( updated_noise )
   {
     s.position_ = 0;
@@ -145,9 +144,9 @@ nest::iaf_chs_2007::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_chs_2007::State_::set( DictionaryDatum const& d )
+nest::iaf_chs_2007::State_::set( DictionaryDatum const& d, Node* node )
 {
-  updateValue< double >( d, names::V_m, V_m_ );
+  updateValueParam< double >( d, names::V_m, V_m_, node );
 }
 
 nest::iaf_chs_2007::Buffers_::Buffers_( iaf_chs_2007& n )
@@ -165,7 +164,7 @@ nest::iaf_chs_2007::Buffers_::Buffers_( const Buffers_&, iaf_chs_2007& n )
  * ---------------------------------------------------------------- */
 
 nest::iaf_chs_2007::iaf_chs_2007()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -174,7 +173,7 @@ nest::iaf_chs_2007::iaf_chs_2007()
 }
 
 nest::iaf_chs_2007::iaf_chs_2007( const iaf_chs_2007& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -186,27 +185,12 @@ nest::iaf_chs_2007::iaf_chs_2007( const iaf_chs_2007& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chs_2007::init_node_( const Node& proto )
-{
-  const iaf_chs_2007& pr = downcast< iaf_chs_2007 >( proto );
-  P_ = pr.P_;
-  S_ = pr.S_;
-}
-
-void
-nest::iaf_chs_2007::init_state_( const Node& proto )
-{
-  const iaf_chs_2007& pr = downcast< iaf_chs_2007 >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::iaf_chs_2007::init_buffers_()
 {
   B_.spikes_ex_.clear(); // includes resize
   B_.currents_.clear();  // includes resize
   B_.logger_.reset();
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void
@@ -230,8 +214,7 @@ nest::iaf_chs_2007::calibrate()
   // these depend on the above. Please do not change the order.
   // TODO: use expm1 here to improve accuracy for small timesteps
 
-  V_.P21ex_ =
-    P_.U_epsp_ * std::exp( 1.0 ) / ( P_.C_ ) * V_.P11ex_ * h / P_.tau_epsp_;
+  V_.P21ex_ = P_.U_epsp_ * std::exp( 1.0 ) / ( P_.C_ ) * V_.P11ex_ * h / P_.tau_epsp_;
 
   V_.P20_ = P_.tau_epsp_ / P_.C_ * ( 1.0 - V_.P22_ );
 }
@@ -239,8 +222,7 @@ nest::iaf_chs_2007::calibrate()
 void
 nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -258,9 +240,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
     // exponentially decaying ahp
     S_.V_spike_ *= V_.P30_;
 
-    double noise_term = P_.U_noise_ > 0.0 && not P_.noise_.empty()
-      ? P_.U_noise_ * P_.noise_[ S_.position_++ ]
-      : 0.0;
+    double noise_term = P_.U_noise_ > 0.0 && not P_.noise_.empty() ? P_.U_noise_ * P_.noise_[ S_.position_++ ] : 0.0;
 
     S_.V_m_ = S_.V_syn_ + S_.V_spike_ + noise_term;
 
@@ -285,12 +265,11 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
 void
 nest::iaf_chs_2007::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
 
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
 }

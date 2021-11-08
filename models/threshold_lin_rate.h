@@ -34,66 +34,92 @@
 #include "rate_transformer_node.h"
 #include "rate_transformer_node_impl.h"
 
-
 namespace nest
 {
-/* BeginDocumentation
-Name: threshold_lin_rate - rate model with threshold-linear gain function
 
-Description:
+/* BeginUserDocs: neuron, rate
 
- threshold_lin_rate is an implementation of a nonlinear rate model with input
- function input(h) = min( max( g * ( h - theta ), 0 ), alpha ).
- Input transformation can either be applied to individual inputs
- or to the sum of all inputs.
+Short description
++++++++++++++++++
 
- The model supports connections to other rate models with either zero or
- non-zero delay, and uses the secondary_event concept introduced with
- the gap-junction framework.
+Rate model with threshold-linear gain function
 
-Parameters:
+Description
++++++++++++
 
- The following parameters can be set in the status dictionary.
+threshold_lin_rate is an implementation of a nonlinear rate model with
+input function :math:`input(h) = min( max( g * ( h - \theta ), 0 ),
+\alpha )`.  It either models a rate neuron with input noise (see
+rate_neuron_ipn), a rate neuron with output noise (see
+rate_neuron_opn) or a rate transformer (see
+rate_transformer_node). Input transformation can either be applied to
+individual inputs or to the sum of all inputs.
 
- rate                double - Rate (unitless)
- tau                 double - Time constant of rate dynamics in ms.
- mean                double - Mean of Gaussian white noise.
- std                 double - Standard deviation of Gaussian white noise.
- g                   double - Gain parameter
- theta               double - First Threshold
- alpha               double - Second Threshold
- linear_summation    bool   - Specifies type of non-linearity (see above)
- rectify_output      bool   - Switch to restrict rate to values >= 0
+The model supports connections to other rate models with either zero
+or non-zero delay, and uses the secondary_event concept introduced
+with the gap-junction framework.
 
-Note:
-The boolean parameter linear_summation determines whether the
-input from different presynaptic neurons is first summed linearly and
-then transformed by a nonlinearity (true), or if the input from
-individual presynaptic neurons is first nonlinearly transformed and
-then summed up (false). Default is true.
+The boolean parameter linear_summation determines whether the input
+from different presynaptic neurons is first summed linearly and then
+transformed by a nonlinearity (true), or if the input from individual
+presynaptic neurons is first nonlinearly transformed and then summed
+up (false). Default is true.
 
-References:
+Nonlinear rate neuron instances can be obtained by creating models of
+type ``threshold_lin_rate_ipn`` for input noise or of type
+``threshold_lin_rate_opn`` output noise. Nonlinear rate transformers
+can be obtained by creating models of type
+``rate_transformer_threshold_lin``.
 
- [1] Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
- Bolten, M., Helias, M. and Diesmann, M. (2017).
- Integration of Continuous-Time Dynamics in a
- Spiking Neural Network Simulator.
- Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
+Parameters
+++++++++++
 
- [2] Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
- Bolten, M., Frommer, A. and Diesmann, M. (2015).
- A unified framework for spiking and gap-junction interactions
- in distributed neuronal network simulations.
- Front. Neuroinform. 9:22. doi: 10.3389/fninf.2015.00022
+The following parameters can be set in the status dictionary. Note
+that some of the parameters only apply to rate neurons and not to rate
+transformers.
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+==================  ======= ==============================================
+ rate               real    Rate (unitless)
+ tau                ms      Time constant of rate dynamics
+ mu                 real    Mean input
+ sigma              real    Noise parameter
+ g                  real    Gain parameter
+ alpha              real    Second Threshold
+ theta              real    Threshold
+ rectify_rate       real    Rectifying rate
+ linear_summation   boolean Specifies type of non-linearity (see above)
+ rectify_output     boolean Switch to restrict rate to values >= rectify_rate
+==================  ======= ==============================================
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
+References
+++++++++++
+
+.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
+       Diesmann M (2017). Integration of continuous-time dynamics in a
+       spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
+       DOI: https://doi.org/10.3389/fninf.2017.00034
+.. [2] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
+       (2015). A unified framework for spiking and gap-junction interactions
+       in distributed neuronal network simulations. Frontiers in
+       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
+
+Sends
++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Receives
+++++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
-SeeAlso: rate_connection_instantaneous, rate_connection_delayed
-*/
+See also
+++++++++
+
+rate_connection_instantaneous, rate_connection_delayed
+
+EndUserDocs */
 
 class nonlinearities_threshold_lin_rate
 {
@@ -116,8 +142,8 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum& ); //!< Set values from dicitonary
+  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling
@@ -131,23 +157,20 @@ nonlinearities_threshold_lin_rate::input( double h )
 }
 
 inline double
-nonlinearities_threshold_lin_rate::mult_coupling_ex( double rate )
+nonlinearities_threshold_lin_rate::mult_coupling_ex( double )
 {
   return 1.;
 }
 
 inline double
-nonlinearities_threshold_lin_rate::mult_coupling_in( double rate )
+nonlinearities_threshold_lin_rate::mult_coupling_in( double )
 {
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate >
-  threshold_lin_rate_ipn;
-typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate >
-  threshold_lin_rate_opn;
-typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate >
-  rate_transformer_threshold_lin;
+typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_ipn;
+typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_opn;
+typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate > rate_transformer_threshold_lin;
 
 template <>
 void RecordablesMap< threshold_lin_rate_ipn >::create();

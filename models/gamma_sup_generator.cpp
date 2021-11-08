@@ -27,6 +27,7 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -57,11 +58,9 @@ nest::gamma_sup_generator::Internal_states_::Internal_states_( size_t num_bins,
  * ---------------------------------------------------------------- */
 
 unsigned long
-nest::gamma_sup_generator::Internal_states_::update( double transition_prob,
-  librandom::RngPtr rng )
+nest::gamma_sup_generator::Internal_states_::update( double transition_prob, RngPtr rng )
 {
-  std::vector< unsigned long >
-    n_trans; // only set from poisson_dev_ og bino_dev_ or 0, thus >= 0
+  std::vector< unsigned long > n_trans; // only set from poisson_dist_, bino_dist_ or 0, thus >= 0
   n_trans.resize( occ_.size() );
 
   // go through all states and draw number of transitioning components
@@ -81,8 +80,8 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob,
       if ( ( occ_[ i ] >= 100 && transition_prob <= 0.01 )
         || ( occ_[ i ] >= 500 && transition_prob * occ_[ i ] <= 0.1 ) )
       {
-        poisson_dev_.set_lambda( transition_prob * occ_[ i ] );
-        n_trans[ i ] = poisson_dev_.ldev( rng );
+        poisson_distribution::param_type param( transition_prob * occ_[ i ] );
+        n_trans[ i ] = poisson_dist_( rng, param );
         if ( n_trans[ i ] > occ_[ i ] )
         {
           n_trans[ i ] = occ_[ i ];
@@ -90,8 +89,8 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob,
       }
       else
       {
-        bino_dev_.set_p_n( transition_prob, occ_[ i ] );
-        n_trans[ i ] = bino_dev_.ldev( rng );
+        binomial_distribution::param_type param( occ_[ i ], transition_prob );
+        n_trans[ i ] = bino_dist_( rng, param );
       }
     }
     else
@@ -145,26 +144,25 @@ nest::gamma_sup_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d )
+nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< long >( d, names::gamma_shape, gamma_shape_ );
+  updateValueParam< long >( d, names::gamma_shape, gamma_shape_, node );
   if ( gamma_shape_ < 1 )
   {
     throw BadProperty( "The shape must be larger or equal 1" );
   }
 
-  updateValue< double >( d, names::rate, rate_ );
+  updateValueParam< double >( d, names::rate, rate_, node );
   if ( rate_ < 0.0 )
   {
     throw BadProperty( "The rate must be larger than 0." );
   }
 
   long n_proc_l = n_proc_;
-  updateValue< long >( d, names::n_proc, n_proc_l );
+  updateValueParam< long >( d, names::n_proc, n_proc_l, node );
   if ( n_proc_l < 1 )
   {
-    throw BadProperty(
-      "The number of component processes cannot be smaller than one" );
+    throw BadProperty( "The number of component processes cannot be smaller than one" );
   }
   else
   {
@@ -178,15 +176,13 @@ nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::gamma_sup_generator::gamma_sup_generator()
-  : DeviceNode()
-  , device_()
+  : StimulationDevice()
   , P_()
 {
 }
 
 nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+  : StimulationDevice( n )
   , P_( n.P_ )
 {
 }
@@ -197,23 +193,21 @@ nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::init_state_( const Node& proto )
+nest::gamma_sup_generator::init_state_()
 {
-  const gamma_sup_generator& pr = downcast< gamma_sup_generator >( proto );
-
-  device_.init_state( pr.device_ );
+  StimulationDevice::init_state();
 }
 
 void
 nest::gamma_sup_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulationDevice::init_buffers();
 }
 
 void
 nest::gamma_sup_generator::calibrate()
 {
-  device_.calibrate();
+  StimulationDevice::calibrate();
 
   double h = Time::get_resolution().get_ms();
 
@@ -221,14 +215,12 @@ nest::gamma_sup_generator::calibrate()
   V_.transition_prob_ = P_.rate_ * P_.gamma_shape_ * h / 1000.0;
 
   // approximate equilibrium occupation to initialize to
-  unsigned long ini_occ_0 =
-    static_cast< unsigned long >( P_.n_proc_ / P_.gamma_shape_ );
+  unsigned long ini_occ_0 = static_cast< unsigned long >( P_.n_proc_ / P_.gamma_shape_ );
 
   // If new targets have been added during a simulation break, we
   // initialize the new elements in Internal_states with the initial dist. The
   // existing elements are unchanged.
-  Internal_states_ internal_states0(
-    P_.gamma_shape_, ini_occ_0, P_.n_proc_ - ini_occ_0 * P_.gamma_shape_ );
+  Internal_states_ internal_states0( P_.gamma_shape_, ini_occ_0, P_.n_proc_ - ini_occ_0 * P_.gamma_shape_ );
   B_.internal_states_.resize( P_.num_targets_, internal_states0 );
 }
 
@@ -238,12 +230,9 @@ nest::gamma_sup_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::update( Time const& T,
-  const long from,
-  const long to )
+nest::gamma_sup_generator::update( Time const& T, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
@@ -255,7 +244,7 @@ nest::gamma_sup_generator::update( Time const& T,
   {
     Time t = T + Time::step( lag );
 
-    if ( not device_.is_active( t ) )
+    if ( not StimulationDevice::is_active( t ) )
     {
       continue; // no spike at this lag
     }
@@ -269,22 +258,47 @@ nest::gamma_sup_generator::update( Time const& T,
 void
 nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
 {
-
   // get port number
   const port prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert(
-    0 <= prt && static_cast< size_t >( prt ) < B_.internal_states_.size() );
+  assert( 0 <= prt && static_cast< size_t >( prt ) < B_.internal_states_.size() );
 
-  // age_distribution object propagates one time step and returns number of
-  // spikes
-  unsigned long n_spikes = B_.internal_states_[ prt ].update(
-    V_.transition_prob_, kernel().rng_manager.get_rng( get_thread() ) );
+  // age_distribution object propagates one time step and returns number of spikes
+  unsigned long n_spikes =
+    B_.internal_states_[ prt ].update( V_.transition_prob_, get_vp_specific_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
   }
+}
+
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::gamma_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() != 3 )
+    {
+      throw BadParameterValue(
+        "The size of the data for the gamma_sup_generator needs to be 3 [gamma_shape, rate, n_proc]." );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::gamma_shape ] = DoubleDatum( lround( input_param[ 0 ] ) );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::n_proc ] = DoubleDatum( lround( input_param[ 2 ] ) );
+    ptmp.set( d, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

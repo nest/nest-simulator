@@ -26,16 +26,28 @@
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
+#include "generic_factory.h"
+#include "ntree.h"
+#include "parameter.h"
+#include "position.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "slifunction.h"
 #include "slimodule.h"
 #include "slitype.h"
+#include "sharedptrdatum.h"
+
 
 namespace nest
 {
+class AbstractLayer;
+class AbstractMask;
+template < int D >
+class Layer;
+
 class Node;
+class Parameter;
 
 /**
  * SLI interface of the NEST kernel.
@@ -46,9 +58,14 @@ class Node;
 class NestModule : public SLIModule
 {
 public:
+#ifdef HAVE_LIBNEUROSIM
+  static SLIType ConnectionGeneratorType;
+#endif
   static SLIType ConnectionType;
-  static SLIType GIDCollectionType;
-  static SLIType GIDCollectionIteratorType;
+  static SLIType MaskType;
+  static SLIType NodeCollectionType;
+  static SLIType NodeCollectionIteratorType;
+  static SLIType ParameterType;
 
   NestModule();
   ~NestModule();
@@ -57,6 +74,58 @@ public:
 
   const std::string commandstring( void ) const;
   const std::string name( void ) const;
+
+  static sharedPtrDatum< Parameter, &ParameterType > create_parameter( const Token& );
+  static Parameter* create_parameter( const Name& name, const DictionaryDatum& d );
+
+  using ParameterFactory = GenericFactory< Parameter >;
+  using ParameterCreatorFunction = GenericFactory< Parameter >::CreatorFunction;
+
+  template < class T >
+  static bool register_parameter( const Name& name );
+
+  using MaskFactory = GenericFactory< AbstractMask >;
+  using MaskCreatorFunction = GenericFactory< AbstractMask >::CreatorFunction;
+
+  /**
+   * Register an AbstractMask subclass as a new mask type. The name will
+   * be found using the function T::get_name()
+   * @returns true if the new type was successfully registered, or false
+   *          if a mask type with the same name already exists.
+   */
+  template < class T >
+  static bool register_mask();
+
+  /**
+   * Register a new mask type with the given name, with a supplied
+   * function to create mask objects of this type.
+   * @param name    name of the new mask type.
+   * @param creator function creating objects of this type. The function
+   *                will be called with the parameter dictionary as
+   *                argument and should return a pointer to a new Mask
+   *                object.
+   * @returns true if the new type was successfully registered, or false
+   *          if a mask type with the same name already exists.
+   */
+  static bool register_mask( const Name& name, MaskCreatorFunction creator );
+
+  /**
+   * Return a Mask object.
+   * @param t Either an existing MaskDatum, or a Dictionary containing
+   *          mask parameters. The dictionary should contain a key with
+   *          the name of the mask type, with a dictionary of parameters
+   *          as value, and optionally an anchor.
+   * @returns Either the MaskDatum given as argument, or a new mask.
+   */
+  static sharedPtrDatum< AbstractMask, &NestModule::MaskType > /*MaskDatum*/ create_mask( const Token& t );
+
+  /**
+   * Create a new Mask object using the mask factory.
+   * @param name Mask type to create.
+   * @param d    Dictionary with parameters specific for this mask type.
+   * @returns dynamically allocated new Mask object.
+   */
+  static AbstractMask* create_mask( const Name& name, const DictionaryDatum& d );
 
   /**
    * @defgroup NestSliInterface SLI Interface functions of the NEST kernel.
@@ -84,14 +153,13 @@ public:
    * - @c s  : string
    * - @c l  : literal
    * - @c f  : function
-   * - @c r  : rng
    * - @c is : input stream
    * - @c os : output stream
    * - @c t  : any token
    * - @c C  : connectiontype
    * - @c cg : connectiongeneratortype
-   * - @c g  : gid collection
-   * - @c q  : gid collection iterator
+   * - @c g  : node collection
+   * - @c q  : node collection iterator
    *
    * @subsection compoundtypes Codes for compund data types
    * - @c A  : array
@@ -100,9 +168,9 @@ public:
    *
    * @section conventions Conventions
    * -# All interface functions expect and return nodes as vectors
-   *    of GIDs (Vi).
-   * -# Functions must document how they loop over GID vectors and
-   *    how the function is applied to subnets provided as
+   *    of node IDs (Vi).
+   * -# Functions must document how they loop over node ID vectors and
+   *    how the function is applied to NodeCollections provided as
    *    arguments.
    * -# Functions that do not require overloading on the SLI level,
    *    need not carry their argument list in the SLI function
@@ -154,6 +222,12 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } getstatus_afunction;
+
+  class GetMetadata_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getmetadata_gfunction;
 
   class GetKernelStatus_Function : public SLIFunction
   {
@@ -245,23 +319,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } create_l_ifunction;
 
-  class RestoreNodes_aFunction : public SLIFunction
+  class GetNodes_D_b : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } restorenodes_afunction;
-
-  class DataConnect_i_D_sFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } dataconnect_i_D_sfunction;
-
-  class DataConnect_aFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } dataconnect_afunction;
+  } getnodes_D_bfunction;
 
   class Disconnect_g_g_D_DFunction : public SLIFunction
   {
@@ -275,17 +337,17 @@ public:
     void execute( SLIInterpreter* ) const;
   } connect_g_g_D_Dfunction;
 
+  class Connect_g_g_D_aFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } connect_g_g_D_afunction;
+
   class ResetKernelFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
   } resetkernelfunction;
-
-  class ResetNetworkFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } resetnetworkfunction;
 
   class MemoryInfoFunction : public SLIFunction
   {
@@ -354,30 +416,25 @@ public:
   } mpiabort_ifunction;
 #endif
 
-  class GetGlobalRngFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  } getglobalrngfunction;
-
   class Cvdict_CFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
   } cvdict_Cfunction;
 
-  class Cvgidcollection_i_iFunction : public SLIFunction
+  class Cvnodecollection_i_iFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_i_ifunction;
+  } cvnodecollection_i_ifunction;
 
-  class Cvgidcollection_iaFunction : public SLIFunction
+  class Cvnodecollection_iaFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_iafunction;
+  } cvnodecollection_iafunction;
 
-  class Cvgidcollection_ivFunction : public SLIFunction
+  class Cvnodecollection_ivFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cvgidcollection_ivfunction;
+  } cvnodecollection_ivfunction;
 
   class Cva_gFunction : public SLIFunction
   {
@@ -404,6 +461,16 @@ public:
     void execute( SLIInterpreter* ) const;
   } memberq_g_ifunction;
 
+  class Find_g_iFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } find_g_ifunction;
+
+  class eq_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } eq_gfunction;
+
   class BeginIterator_gFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
@@ -414,15 +481,15 @@ public:
     void execute( SLIInterpreter* ) const;
   } enditerator_gfunction;
 
-  class GetGID_qFunction : public SLIFunction
+  class GetNodeID_qFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } getgid_qfunction;
+  } getnodeid_qfunction;
 
-  class GetGIDModelID_qFunction : public SLIFunction
+  class GetNodeIDModelID_qFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } getgidmodelid_qfunction;
+  } getnodeidmodelid_qfunction;
 
   class Next_qFunction : public SLIFunction
   {
@@ -461,18 +528,6 @@ public:
   } setmaxbuffered_l_ifunction;
 #endif
 
-  class SetStructuralPlasticityStatus_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } setstructuralplasticitystatus_Dfunction;
-
-  class GetStructuralPlasticityStatus_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getstructuralplasticitystatus_function;
-
   class EnableStructuralPlasticity_Function : public SLIFunction
   {
   public:
@@ -491,8 +546,287 @@ public:
     void execute( SLIInterpreter* ) const;
   } setstdpeps_dfunction;
 
+  class Mul_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } mul_P_Pfunction;
+
+  class Div_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } div_P_Pfunction;
+
+  class Add_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } add_P_Pfunction;
+
+  class Sub_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } sub_P_Pfunction;
+
+  class Compare_P_P_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } compare_P_P_Dfunction;
+
+  class Conditional_P_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } conditional_P_P_Pfunction;
+
+  class Min_P_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } min_P_dfunction;
+
+  class Max_P_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } max_P_dfunction;
+
+  class Redraw_P_d_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } redraw_P_d_dfunction;
+
+  class Exp_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } exp_Pfunction;
+
+  class Sin_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } sin_Pfunction;
+
+  class Cos_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } cos_Pfunction;
+
+  class Pow_P_dFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } pow_P_dfunction;
+
+  class Dimension2d_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dimension2d_P_Pfunction;
+
+  class Dimension3d_P_P_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dimension3d_P_P_Pfunction;
+
+  class CreateParameter_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } createparameter_Dfunction;
+
+  class GetValue_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getvalue_Pfunction;
+
+  class IsSpatial_PFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } isspatial_Pfunction;
+
+  class Apply_P_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } apply_P_Dfunction;
+
+  class Apply_P_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } apply_P_gfunction;
+
+#ifdef HAVE_LIBNEUROSIM
+  class CGParse_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgparse_sfunction;
+
+  class CGParseFile_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgparsefile_sfunction;
+
+  class CGSelectImplementation_s_sFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgselectimplementation_s_sfunction;
+#endif
+
+  //
+  // SLI functions for spatial networks
+  //
+
+  class CreateLayer_D_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } createlayer_D_Dfunction;
+
+  class GetPosition_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getposition_gfunction;
+
+  class Displacement_g_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } displacement_g_gfunction;
+
+  class Displacement_a_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } displacement_a_gfunction;
+
+  class Distance_g_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } distance_g_gfunction;
+
+  class Distance_a_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } distance_a_gfunction;
+
+  class Distance_aFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } distance_afunction;
+
+  class ConnectLayers_g_g_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } connectlayers_g_g_Dfunction;
+
+  class CreateMask_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } createmask_Dfunction;
+
+  class GetLayerStatus_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getlayerstatus_gfunction;
+
+  class Inside_a_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } inside_a_Mfunction;
+
+  class And_M_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } and_M_Mfunction;
+
+  class Or_M_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } or_M_Mfunction;
+
+  class Sub_M_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } sub_M_Mfunction;
+
+  class DumpLayerNodes_os_gFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dumplayernodes_os_gfunction;
+
+  class DumpLayerConnections_os_g_g_lFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } dumplayerconnections_os_g_g_lfunction;
+
+  class Cvdict_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } cvdict_Mfunction;
+
+  class SelectNodesByMask_g_a_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } selectnodesbymask_g_a_Mfunction;
+
+private:
+  static ParameterFactory& parameter_factory_();
+  static MaskFactory& mask_factory_();
+
   //@}
 };
+
+template < class T >
+inline bool
+NestModule::register_parameter( const Name& name )
+{
+  return parameter_factory_().register_subtype< T >( name );
+}
+
+template < class T >
+inline bool
+NestModule::register_mask()
+{
+  return mask_factory_().register_subtype< T >( T::get_name() );
+}
+
+inline bool
+NestModule::register_mask( const Name& name, MaskCreatorFunction creator )
+{
+  return mask_factory_().register_subtype( name, creator );
+}
+
+inline AbstractMask*
+NestModule::create_mask( const Name& name, const DictionaryDatum& d )
+{
+  return mask_factory_().create( name, d );
+}
 
 } // namespace
 

@@ -24,12 +24,12 @@
 from distutils.core import setup
 
 setup(name='ConnPlotter',
-      version='0.7a',
+      version='0.7a0',
       description=('ConnPlotter is a tool to create ' +
                    'connectivity pattern tables'),
       author='Hans Ekkehard Plesser (Idea: Eilen Nordlie)',
       author_email='hans.ekkehard.plesser@umb.no',
-      url='http://www.nest-simulator.org',
+      url='https://www.nest-simulator.org',
       license='GNU Public License v2 or later',
       packages=['ConnPlotter', 'ConnPlotter.examples'],
       package_dir={'ConnPlotter': ''}

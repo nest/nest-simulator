@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_set_delay_extrema - sli script to test if min_ and max_delay
    can be set by the user correctly
 

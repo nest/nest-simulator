@@ -23,7 +23,18 @@
 Functions for parallel computing
 """
 
+from ..ll_api import *
+from .. import pynestkernel as kernel
 from .hl_api_helper import *
+
+__all__ = [
+    'NumProcesses',
+    'Rank',
+    'GetLocalVPs',
+    'SetAcceptableLatency',
+    'SetMaxBuffered',
+    'SyncProcesses',
+]
 
 
 @check_stack
@@ -37,7 +48,7 @@ def Rank():
 
     Note
     ----
-    DO NOT USE Rank() TO EXECUTE ANY FUNCTION IMPORTED FROM THE nest
+    DO NOT USE `Rank()` TO EXECUTE ANY FUNCTION IMPORTED FROM THE `nest`
     MODULE ON A SUBSET OF RANKS IN AN MPI-PARALLEL SIMULATION.
 
     This will lead to unpredictable behavior. Symptoms may be an
@@ -66,7 +77,7 @@ def NumProcesses():
 
 @check_stack
 def SetAcceptableLatency(port_name, latency):
-    """Set the acceptable latency (in ms) for a MUSIC port.
+    """Set the acceptable `latency` (in ms) for a MUSIC port.
 
     Parameters
     ----------
@@ -96,3 +107,23 @@ def SetMaxBuffered(port_name, size):
     sps(kernel.SLILiteral(port_name))
     sps(size)
     sr("SetMaxBuffered")
+
+
+@check_stack
+def SyncProcesses():
+    """Synchronize all MPI processes.
+    """
+
+    sr("SyncProcesses")
+
+
+@check_stack
+def GetLocalVPs():
+    """Return iterable representing the VPs local to the MPI rank.
+    """
+
+    # Compute local VPs as range based on round-robin logic in
+    # VPManager::get_vp(). mpitest_get_local_vps ensures this is in
+    # sync with the kernel.
+    n_vp = sli_func("GetKernelStatus /total_num_virtual_procs get")
+    return range(Rank(), n_vp, NumProcesses())

@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_pass - test if SLI returns exit code 0 after executing a file.
 
 Synopsis: (test_pass) run -> 

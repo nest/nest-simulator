@@ -21,33 +21,6 @@
  */
 
 
-/* BeginDocumentation
-Name: rate_connection_instantaneous - Synapse type for instantaneous rate
-connections.
-
-Description:
- rate_connection_instantaneous is a connector to create
- instantaneous connections between rate model neurons.
-
- The value of the parameter delay is ignored for connections of
- this type. To create rate connections with delay please use
- the synapse type rate_connection_delayed.
-
-Transmits: InstantaneousRateConnectionEvent
-
-References:
-
- Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
- Bolten, M., Helias, M. and Diesmann, M. (2017).
- Integration of Continuous-Time Dynamics in a
- Spiking Neural Network Simulator.
- Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
-
-Author: David Dahmen, Jan Hahne, Jannis Schuecker
-SeeAlso: rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
-*/
-
-
 #ifndef RATE_CONNECTION_INSTANTANEOUS_H
 #define RATE_CONNECTION_INSTANTANEOUS_H
 
@@ -55,6 +28,44 @@ SeeAlso: rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
 
 namespace nest
 {
+
+/* BeginUserDocs: synapse, rate
+
+Short description
++++++++++++++++++
+
+Synapse type for instantaneous rate connections
+
+Description
++++++++++++
+
+rate_connection_instantaneous is a connector to create
+instantaneous connections between rate model neurons.
+
+The value of the parameter delay is ignored for connections of
+this type. To create rate connections with delay please use
+the synapse type rate_connection_delayed.
+
+Transmits
++++++++++
+
+InstantaneousRateConnectionEvent
+
+References
+++++++++++
+
+.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
+       Diesmann M (2017). Integration of continuous-time dynamics in a
+       spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
+       DOI: https://doi.org/10.3389/fninf.2017.00034
+
+See also
+++++++++
+
+rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
+
+EndUserDocs */
+
 /**
  * Class representing a rate connection. A rate connection
  * has the properties weight and receiver port.
@@ -90,17 +101,13 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
   {
     EventType ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
-    Connection< targetidentifierT >::target_.set_rport(
-      t.handles_test_event( ge, receptor_type ) );
+    Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
     Connection< targetidentifierT >::target_.set_target( &t );
   }
 
@@ -142,8 +149,7 @@ private:
 
 template < typename targetidentifierT >
 void
-RateConnectionInstantaneous< targetidentifierT >::get_status(
-  DictionaryDatum& d ) const
+RateConnectionInstantaneous< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -152,9 +158,7 @@ RateConnectionInstantaneous< targetidentifierT >::get_status(
 
 template < typename targetidentifierT >
 void
-RateConnectionInstantaneous< targetidentifierT >::set_status(
-  const DictionaryDatum& d,
-  ConnectorModel& cm )
+RateConnectionInstantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )

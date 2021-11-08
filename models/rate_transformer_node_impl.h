@@ -35,6 +35,8 @@
 
 // Includes from libnestutil:
 #include "numerics.h"
+#include "dict_util.h"
+
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -55,8 +57,7 @@ namespace nest
  * ---------------------------------------------------------------- */
 
 template < class TNonlinearities >
-RecordablesMap< rate_transformer_node< TNonlinearities > >
-  rate_transformer_node< TNonlinearities >::recordablesMap_;
+RecordablesMap< rate_transformer_node< TNonlinearities > > rate_transformer_node< TNonlinearities >::recordablesMap_;
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -80,46 +81,40 @@ nest::rate_transformer_node< TNonlinearities >::State_::State_()
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::Parameters_::get(
-  DictionaryDatum& d ) const
+nest::rate_transformer_node< TNonlinearities >::Parameters_::get( DictionaryDatum& d ) const
 {
   def< bool >( d, names::linear_summation, linear_summation_ );
 }
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::Parameters_::set(
-  const DictionaryDatum& d )
+nest::rate_transformer_node< TNonlinearities >::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< bool >( d, names::linear_summation, linear_summation_ );
+  updateValueParam< bool >( d, names::linear_summation, linear_summation_, node );
 }
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::State_::get(
-  DictionaryDatum& d ) const
+nest::rate_transformer_node< TNonlinearities >::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::rate, rate_ ); // Rate
 }
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::State_::set(
-  const DictionaryDatum& d )
+nest::rate_transformer_node< TNonlinearities >::State_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::rate, rate_ ); // Rate
+  updateValueParam< double >( d, names::rate, rate_, node ); // Rate
 }
 
 template < class TNonlinearities >
-nest::rate_transformer_node< TNonlinearities >::Buffers_::Buffers_(
-  rate_transformer_node< TNonlinearities >& n )
+nest::rate_transformer_node< TNonlinearities >::Buffers_::Buffers_( rate_transformer_node< TNonlinearities >& n )
   : logger_( n )
 {
 }
 
 template < class TNonlinearities >
-nest::rate_transformer_node< TNonlinearities >::Buffers_::Buffers_(
-  const Buffers_&,
+nest::rate_transformer_node< TNonlinearities >::Buffers_::Buffers_( const Buffers_&,
   rate_transformer_node< TNonlinearities >& n )
   : logger_( n )
 {
@@ -131,7 +126,7 @@ nest::rate_transformer_node< TNonlinearities >::Buffers_::Buffers_(
 
 template < class TNonlinearities >
 nest::rate_transformer_node< TNonlinearities >::rate_transformer_node()
-  : Archiving_Node()
+  : ArchivingNode()
   , S_()
   , B_( *this )
 {
@@ -140,9 +135,8 @@ nest::rate_transformer_node< TNonlinearities >::rate_transformer_node()
 }
 
 template < class TNonlinearities >
-nest::rate_transformer_node< TNonlinearities >::rate_transformer_node(
-  const rate_transformer_node& n )
-  : Archiving_Node( n )
+nest::rate_transformer_node< TNonlinearities >::rate_transformer_node( const rate_transformer_node& n )
+  : ArchivingNode( n )
   , nonlinearities_( n.nonlinearities_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -156,14 +150,6 @@ nest::rate_transformer_node< TNonlinearities >::rate_transformer_node(
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::init_state_( const Node& proto )
-{
-  const rate_transformer_node& pr = downcast< rate_transformer_node >( proto );
-  S_ = pr.S_;
-}
-
-template < class TNonlinearities >
-void
 nest::rate_transformer_node< TNonlinearities >::init_buffers_()
 {
   B_.delayed_rates_.clear(); // includes resize
@@ -174,15 +160,14 @@ nest::rate_transformer_node< TNonlinearities >::init_buffers_()
   B_.last_y_values.resize( buffer_size, 0.0 );
 
   B_.logger_.reset(); // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 template < class TNonlinearities >
 void
 nest::rate_transformer_node< TNonlinearities >::calibrate()
 {
-  B_.logger_
-    .init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 }
 
 /* ----------------------------------------------------------------
@@ -196,8 +181,7 @@ nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
   const long to,
   const bool called_from_wfr_update )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
@@ -228,8 +212,7 @@ nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
 
     if ( P_.linear_summation_ )
     {
-      S_.rate_ +=
-        nonlinearities_.input( delayed_rates + B_.instant_rates_[ lag ] );
+      S_.rate_ += nonlinearities_.input( delayed_rates + B_.instant_rates_[ lag ] );
     }
     else
     {
@@ -239,8 +222,7 @@ nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
     if ( called_from_wfr_update )
     {
       // check if deviation from last iteration exceeds wfr_tol
-      wfr_tol_exceeded = wfr_tol_exceeded
-        or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
+      wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
       // update last_y_values for next wfr iteration
       B_.last_y_values[ lag ] = S_.rate_;
     }
@@ -283,8 +265,7 @@ nest::rate_transformer_node< TNonlinearities >::update_( Time const& origin,
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::handle(
-  InstantaneousRateConnectionEvent& e )
+nest::rate_transformer_node< TNonlinearities >::handle( InstantaneousRateConnectionEvent& e )
 {
   const double weight = e.get_weight();
 
@@ -299,8 +280,7 @@ nest::rate_transformer_node< TNonlinearities >::handle(
     }
     else
     {
-      B_.instant_rates_[ i ] +=
-        weight * nonlinearities_.input( e.get_coeffvalue( it ) );
+      B_.instant_rates_[ i ] += weight * nonlinearities_.input( e.get_coeffvalue( it ) );
     }
     ++i;
   }
@@ -308,11 +288,10 @@ nest::rate_transformer_node< TNonlinearities >::handle(
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::handle(
-  DelayedRateConnectionEvent& e )
+nest::rate_transformer_node< TNonlinearities >::handle( DelayedRateConnectionEvent& e )
 {
   const double weight = e.get_weight();
-  const long delay = e.get_delay();
+  const long delay = e.get_delay_steps();
 
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
@@ -325,8 +304,7 @@ nest::rate_transformer_node< TNonlinearities >::handle(
     }
     else
     {
-      B_.delayed_rates_.add_value(
-        delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
+      B_.delayed_rates_.add_value( delay + i, weight * nonlinearities_.input( e.get_coeffvalue( it ) ) );
     }
     ++i;
   }

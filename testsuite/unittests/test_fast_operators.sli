@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
  Name: testsuite::test_fast_operators - ensures that internal operators do not check number of arguments
 
 Synopsis: (test_fast_operators) run

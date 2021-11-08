@@ -31,111 +31,168 @@
 // C++ includes:
 #include <vector>
 
-// Includes from librandom:
-#include "randomgen.h"
-
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 #include "universal_data_logger.h"
 
 namespace nest
 {
-/* BeginDocumentation
-   Name: sinusoidal_gamma_generator - Generates sinusoidally modulated gamma
-                                      spike trains.
 
-   Description:
-   sinusoidal_gamma_generator generates sinusoidally modulated gamma spike
-   trains. By default, each target of the generator will receive a different
-   spike train.
+/* BeginUserDocs: device, generator
 
-   The instantaneous rate of the process is given by
+Short description
++++++++++++++++++
 
-       f(t) = rate + amplitude sin ( 2 pi frequency t + phase * pi/180 )
+Generates sinusoidally modulated gamma spike trains
 
-   Parameters:
-   The following parameters can be set in the status dictionary:
+Description
++++++++++++
 
-   rate       double - Mean firing rate in spikes/second, default: 0 s^-1
-   amplitude  double - Firing rate modulation amplitude in spikes/second,
-                       default: 0 s^-1
-   frequency  double - Modulation frequency in Hz, default: 0 Hz
-   phase      double - Modulation phase in degree [0-360], default: 0
-   order      double - Gamma order (>= 1), default: 1
+sinusoidal_gamma_generator generates sinusoidally modulated gamma spike
+trains. By default, each target of the generator will receive a different
+spike train.
 
-   individual_spike_trains   bool - See note below, default: true
+The instantaneous rate of the process is given by
 
-   Remarks:
-   - The gamma generator requires 0 <= amplitude <= rate.
-   - The state of the generator is reset on calibration.
-   - The generator does not support precise spike timing.
-   - You can use the multimeter to sample the rate of the generator.
-   - The generator will create different trains if run at different
-     temporal resolutions.
+.. math::
 
-   - Individual spike trains vs single spike train:
-     By default, the generator sends a different spike train to each of its
-     targets. If /individual_spike_trains is set to false using either
-     SetDefaults or CopyModel before a generator node is created, the generator
-     will send the same spike train to all of its targets.
+ f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase * \pi/180 )
 
-   Receives: DataLoggingRequest
+Remarks
++++++++
 
-   Sends: SpikeEvent
+- The gamma generator requires 0 <= amplitude <= rate.
+- The state of the generator is reset on calibration.
+- The generator does not support precise spike timing.
+- You can use the multimeter to sample the rate of the generator.
+- The generator will create different trains if run at different
+  temporal resolutions.
 
-   References: Barbieri et al, J Neurosci Methods 105:25-37 (2001)
-   FirstVersion: October 2007, May 2013
-   Author: Hans E Plesser, Thomas Heiberg
+Individual spike trains vs single spike train:
+By default, the generator sends a different spike train to each of its
+targets. If /individual_spike_trains is set to false using either
+SetDefaults or CopyModel before a generator node is created, the generator
+will send the same spike train to all of its targets.
 
-   SeeAlso: sinusoidal_poisson_generator, gamma_sup_generator
-*/
+.. include:: ../models/stimulation_device.rst
 
+rate
+    Mean firing rate, default: 0 spikes/s
+
+amplitude
+    Firing rate modulation amplitude, default: 0 s^-1
+
+frequency
+    Modulation frequency, default: 0 Hz
+
+phase
+    Modulation phase in degree [0-360], default: 0
+
+order
+    Gamma order (>= 1), default: 1
+
+individual_spike_trains
+    See note above, default: true
+
+Set parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The parameters in this stimulation device can be updated with input
+coming from a stimulation backend. The data structure used for the
+update holds one value for each of the parameters mentioned above.
+The indexing is as follows:
+
+ 0. frequency
+ 1. phase
+ 2. order
+ 3. rate
+ 4. amplitude
+ 5. individual_spike_trains
+
+Receives
+++++++++
+
+DataLoggingRequest
+
+Sends
++++++
+
+SpikeEvent
+
+References
+++++++++++
+
+.. [1] Barbieri et al. (2001). Construction and analysis of non-Poisson
+       stimulus-response models of neural spiking activity. Journal of
+       Neuroscience Methods, 105:25-3.
+       DOI: https://doi.org/10.1016/S0165-0270(00)00344-7
+
+See also
+++++++++
+
+sinusoidal_poisson_generator, gamma_sup_generator
+
+EndUserDocs */
 
 /**
  * AC Gamma Generator.
  * Generates AC-modulated inhomogeneous gamma process.
- * @todo The implementation is very quick and dirty and not tuned for
- * performance at all.
- * @note  The simulator works by calculating the hazard h(t) for each time step
- * and comparing h(t) dt to a [0,1)-uniform number. The hazard is given by
- * $[
- *     h(t) = \frac{a \lambda(t) \Lambda(t)^{a-1} e^{-\Lambda(t)}}{\Gamma(a,
- *                                                                  \Lambda(t))}
- * $]
- * with
- * $[  \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi ) $]
- * $[  \Lambda(t) = a \int_{t_0}^t \lambda(s) ds $]
- * and the incomplete Gamma function $\Gamma(a,z)$; $a$ is the order of the
- * gamma function and $t_0$ the time of the most recent spike.
  *
- * @note This implementation includes an additional $a$ factor in the
- * calculation of $\Lambda(t)$ and $h(t)$ in order to keep the mean rate
- * constant with varying $a$
+ * .. todo::
+ *    The implementation is very quick and dirty and not tuned for
+ *    performance at all.
  *
- * @note Let $t_0$ be the time of the most recent spike. If stimulus parameters
- * are changed at
- *       $t_c > t_0$, then $\Lambda(t)$ is integrated piecewise for $t>t_c$ as
- *       $[ \Lambda(t) = \a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
- *                      + \a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds $]
+ * .. note::
+ *    The simulator works by calculating the hazard h(t) for each time step
+ *    and comparing h(t) dt to a [0,1)-uniform number. The hazard is given by
+ *
+ *    .. math::
+ *       h(t) = \frac{a \lambda(t) \Lambda(t)^{a-1} e^{-\Lambda(t)}}{\Gamma(a, \Lambda(t))}
+ *
+ *     with
+ *
+ *     .. math::
+ *        \lambda(t) = dc + ac \sin ( 2 \pi f t + \phi )
+ *        \Lambda(t) = a \int_{t_0}^t \lambda(s) ds
+ *
+ * and the incomplete Gamma function :math:`Gamma(a,z)`; :math:`a` is the order
+ * of the gamma function and :math:`t_0` the time of the most recent spike.
+ *
+ * .. note::
+ *    This implementation includes an additional :math:`a` factor in the
+ *    calculation of :math:`\Lambda(t)` and :math:`h(t)` in order to keep the mean rate
+ *    constant with varying :math:`a`.
+ *
+ * .. note::
+ *    Let :math:`t_0` be the time of the most recent spike. If stimulus parameters
+ *    are changed at :math:`t_c > t_0`, then :math:`\Lambda(t)` is integrated piecewise for
+ *    :math:`t>t_c` as
+ *
+ *    .. math::
+ *
+ *       \Lambda(t) &= a_{old} \int_{t_0}^{t_c]} \lambda_{old}(s) ds
+ *                     &+ a_{new} \int_{t_c}^{t]} \lambda_{new}(s) ds
+ *
  *       where "old" and "new" indicate old an new parameter values,
  *       respectively.
  *
- * @todo This implementation assumes that outgoing connections are all made from
- *       the same synapse type, see #737. Once #681 is fixed, we need to add a
-         check that his assumption holds.
+ * .. todo::
+ *    This implementation assumes that outgoing connections are all made from
+ *    the same synapse type, see #737. Once #681 is fixed, we need to add a
+ *    check that his assumption holds.
  */
-class sinusoidal_gamma_generator : public DeviceNode
+class sinusoidal_gamma_generator : public StimulationDevice
 {
 
 public:
   sinusoidal_gamma_generator();
   sinusoidal_gamma_generator( const sinusoidal_gamma_generator& );
 
-  port send_test_event( Node&, rport, synindex, bool );
+  port send_test_event( Node&, rport, synindex, bool ) override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -146,40 +203,29 @@ public:
   using Node::handles_test_event;
   using Node::event_hook;
 
-  void handle( DataLoggingRequest& );
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
+  port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   //! Model can be switched between proxies (single spike train) and not
-  bool
-  has_proxies() const
-  {
-    return not P_.individual_spike_trains_;
-  }
+  bool has_proxies() const override;
 
   //! Allow multimeter to connect to local instances
-  bool
-  local_receiver() const
-  {
-    return true;
-  }
+  bool local_receiver() const override;
 
-  Name
-  get_element_type() const
-  {
-    return names::stimulator;
-  }
+  StimulationDevice::Type get_type() const override;
+  void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
-  void event_hook( DSSpikeEvent& );
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
+  void event_hook( DSSpikeEvent& ) override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   struct Parameters_
   {
@@ -223,19 +269,14 @@ private:
      * @note State is passed so that the position can be reset if the
      *       spike_times_ vector has been filled with new data.
      */
-    void set( const DictionaryDatum&, const sinusoidal_gamma_generator& );
+    void set( const DictionaryDatum&, const sinusoidal_gamma_generator&, Node* );
   };
 
   struct State_
   {
-
     double rate_; //!< current rate, kept for recording
 
     State_(); //!< Sets default state value
-
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_& );
   };
 
   // ------------------------------------------------------------
@@ -282,7 +323,7 @@ private:
     double t_ms_; //!< current time in ms, for communication with event_hook()
     //! current time in steps, for communication with event_hook()
     long t_steps_;
-    librandom::RngPtr rng_; //!< thread-specific random generator
+    RngPtr rng_; //!< thread-specific random generator
   };
 
   double
@@ -297,7 +338,6 @@ private:
   //! compute hazard for given target index, including time-step factor
   double hazard_( port ) const;
 
-  StimulatingDevice< SpikeEvent > device_;
   static RecordablesMap< sinusoidal_gamma_generator > recordablesMap_;
 
   Parameters_ P_;
@@ -307,12 +347,9 @@ private:
 };
 
 inline port
-sinusoidal_gamma_generator::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
-  device_.enforce_single_syn_type( syn_id );
+  StimulationDevice::enforce_single_syn_type( syn_id );
 
   // to ensure correct overloading resolution, we need explicit event types
   // therefore, we need to duplicate the code here
@@ -347,8 +384,7 @@ sinusoidal_gamma_generator::send_test_event( Node& target,
 }
 
 inline port
-sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -361,8 +397,7 @@ inline void
 sinusoidal_gamma_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  S_.get( d );
-  device_.get_status( d );
+  StimulationDevice::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -371,14 +406,34 @@ sinusoidal_gamma_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
-  ptmp.set( d, *this ); // throws if BadProperty
+  ptmp.set( d, *this, this ); // throws if BadProperty
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
-  device_.set_status( d );
+  StimulationDevice::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+//! Model can be switched between proxies (single spike train) and not
+inline bool
+sinusoidal_gamma_generator::has_proxies() const
+{
+  return not P_.individual_spike_trains_;
+}
+
+//! Allow multimeter to connect to local instances
+inline bool
+sinusoidal_gamma_generator::local_receiver() const
+{
+  return true;
+}
+
+inline StimulationDevice::Type
+sinusoidal_gamma_generator::get_type() const
+{
+  return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
 } // namespace

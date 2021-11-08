@@ -20,7 +20,7 @@
  *
  */
 
- /* BeginDocumentation
+ /** @BeginDocumentation
 Name: testsuite::test_mini_brunel_ps - Test parallel simulation of small Brunel-style network
 
 Synopsis: nest_indirect test_mini_brunel_ps.sli -> -
@@ -149,14 +149,8 @@ def % brunel_setup
     /rate  p_rate
     >> SetStatus
 
-    /exsd /spike_detector Create def
-    exsd
-    <<
-    /withtime true   % record time of spikes
-    /withgid true    % record which neuron spiked
-    /precise_times true
-    /time_in_steps true    
-    >> SetStatus
+    /exsr /spike_recorder Create def
+    exsr << /time_in_steps true >> SetStatus
 
     allNeurons
     {
@@ -178,20 +172,20 @@ def % brunel_setup
     /static_synapse /syn_in << /weight JI >> CopyModel
 
     expoisson E_neurons stack /all_to_all /syn_ex Connect
-    E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
-    I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+    E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
+    I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
 
 
     inpoisson I_neurons /all_to_all /syn_ex Connect
-    E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
-    I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
+    E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
+    I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
     
-    E_neurons Nrec Take exsd Connect
+    E_neurons Nrec Take exsr Connect
     
     simtime Simulate
 
     % get events, replace vectors with SLI arrays    
-    /ev exsd /events get def
+    /ev exsr /events get def
     ev keys { /k Set ev dup k get cva k exch put } forall
     ev 
   endusing
@@ -200,4 +194,3 @@ def % brunel_setup
 
 
 
-    

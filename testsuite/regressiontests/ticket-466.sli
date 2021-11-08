@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::ticket-466.sli - test if mirollo_strogatz_ps can handle simultaneous inputs
 
 Synopsis: (ticket-466.sli) run -> dies if assertion fails

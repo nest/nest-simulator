@@ -35,27 +35,35 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "normal_randomdev.h"
-#include "poisson_randomdev.h"
-#include "ring_buffer.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
-
 
 namespace nest
 {
 
-/* BeginDocumentation
-Name: rate_transformer_node - Rate neuron that sums up incoming rates
-                and applies a nonlinearity specified via the template.
+/* BeginUserDocs: neuron, rate
 
-Description:
+Short description
++++++++++++++++++
+
+Rate neuron that sums up incoming rates and applies a nonlinearity specified via the template
+
+Description
++++++++++++
+
+Base class for rate transformer model of the form
+
+.. math::
+
+   X_i(t) = \phi( \sum w_{ij} \cdot \psi( X_j(t-d_{ij}) ) )
 
 The rate transformer node simply applies the nonlinearity specified in the
 input-function of the template class to all incoming inputs. The boolean
 parameter linear_summation determines whether the input function is applied to
-the summed up incoming connections (True, default value) or to each input
-individually (False).
+the summed up incoming connections (True, default value, input
+represents phi) or to each input individually (False, input represents psi).
+
 An important application is to provide the possibility to
 apply different nonlinearities to different incoming connections of the
 same rate neuron by connecting the sending rate neurons to the
@@ -70,19 +78,26 @@ Remarks:
   are handled as usual.
 - Delays are honored on incoming and outgoing connections.
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+Receives
+++++++++
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
-Parameters:
-Only the parameter linear_summation and the parameters from the
-class Nonlinearities can be set in the status dictionary.
+Sends
++++++
 
-Author: Mario Senden, Jan Hahne, Jannis Schuecker
-FirstVersion: November 2017
-*/
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+
+Parameters
+++++++++++
+
+Only the parameter ``linear_summation`` and the parameters from the class ``Nonlinearities`` can be set in the
+status dictionary.
+
+EndUserDocs */
+
 template < class TNonlinearities >
-class rate_transformer_node : public Archiving_Node
+class rate_transformer_node : public ArchivingNode
 {
 
 public:
@@ -102,6 +117,7 @@ public:
 
   using Node::handle;
   using Node::sends_secondary_event;
+  using Node::handles_test_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );
@@ -125,7 +141,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -157,7 +172,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -178,7 +193,7 @@ private:
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum& );
+    void set( const DictionaryDatum&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -221,24 +236,19 @@ private:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< rate_transformer_node< TNonlinearities > >
-    recordablesMap_;
+  static RecordablesMap< rate_transformer_node< TNonlinearities > > recordablesMap_;
 };
 
 template < class TNonlinearities >
 inline void
-rate_transformer_node< TNonlinearities >::update( Time const& origin,
-  const long from,
-  const long to )
+rate_transformer_node< TNonlinearities >::update( Time const& origin, const long from, const long to )
 {
   update_( origin, from, to, false );
 }
 
 template < class TNonlinearities >
 inline bool
-rate_transformer_node< TNonlinearities >::wfr_update( Time const& origin,
-  const long from,
-  const long to )
+rate_transformer_node< TNonlinearities >::wfr_update( Time const& origin, const long from, const long to )
 {
   State_ old_state = S_; // save state before wfr update
   const bool wfr_tol_exceeded = update_( origin, from, to, true );
@@ -249,9 +259,7 @@ rate_transformer_node< TNonlinearities >::wfr_update( Time const& origin,
 
 template < class TNonlinearities >
 inline port
-rate_transformer_node< TNonlinearities >::handles_test_event(
-  InstantaneousRateConnectionEvent&,
-  rport receptor_type )
+rate_transformer_node< TNonlinearities >::handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -262,9 +270,7 @@ rate_transformer_node< TNonlinearities >::handles_test_event(
 
 template < class TNonlinearities >
 inline port
-rate_transformer_node< TNonlinearities >::handles_test_event(
-  DelayedRateConnectionEvent&,
-  rport receptor_type )
+rate_transformer_node< TNonlinearities >::handles_test_event( DelayedRateConnectionEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -275,9 +281,7 @@ rate_transformer_node< TNonlinearities >::handles_test_event(
 
 template < class TNonlinearities >
 inline port
-rate_transformer_node< TNonlinearities >::handles_test_event(
-  DataLoggingRequest& dlr,
-  rport receptor_type )
+rate_transformer_node< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -292,7 +296,7 @@ rate_transformer_node< TNonlinearities >::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
   nonlinearities_.get( d );
@@ -303,21 +307,21 @@ inline void
 rate_transformer_node< TNonlinearities >::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d );         // throws if BadProperty
+  stmp.set( d, this );   // throws if BadProperty
 
   // We now know that (stmp) is consistent. We do not
   // write it back to (S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
 
-  nonlinearities_.set( d );
+  nonlinearities_.set( d, this );
 }
 
 } // namespace

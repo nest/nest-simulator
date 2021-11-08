@@ -23,7 +23,7 @@
 #ifndef SIGMOID_RATE_H
 #define SIGMOID_RATE_H
 
-// Includes from c++:
+// C++ includes:
 #include <cmath>
 
 // Includes from models:
@@ -36,63 +36,93 @@
 namespace nest
 {
 
-/* BeginDocumentation
-Name: sigmoid_rate - rate model with sigmoidal gain function
+/* BeginUserDocs: neuron, rate
 
-Description:
+Short description
++++++++++++++++++
 
- sigmoid_rate is an implementation of a nonlinear rate model with input
- function input(h) = g / ( 1. + exp( -beta * ( h - theta ) ) ).
- Input transformation can either be applied to individual inputs
- or to the sum of all inputs.
+Rate neuron model with sigmoidal gain function
 
- The model supports connections to other rate models with either zero or
- non-zero delay, and uses the secondary_event concept introduced with
- the gap-junction framework.
+Description
++++++++++++
 
-Parameters:
+sigmoid_rate is an implementation of a nonlinear rate model with input
+function :math:`input(h) = g / ( 1. + \exp( -\beta * ( h - \theta ) ) )`.
 
- The following parameters can be set in the status dictionary.
+It either models a rate neuron with input noise (see rate_neuron_ipn)
+or a rate transformer (see rate_transformer_node).
 
- rate                double - Rate (unitless)
- tau                 double - Time constant of rate dynamics in ms.
- mean                double - Mean of Gaussian white noise.
- std                 double - Standard deviation of Gaussian white noise.
- g                   double - Gain parameter.
- beta                double - Slope parameter.
- theta               double - Threshold.
- linear_summation    bool   - Specifies type of non-linearity (see above).
- rectify_output      bool   - Switch to restrict rate to values >= 0.
+Input transformation can either be applied to individual inputs
+or to the sum of all inputs.
+
+The model supports connections to other rate models with either zero or
+non-zero delay, and uses the secondary_event concept introduced with
+the gap-junction framework.
+
+The following parameters can be set in the status dictionary.
+
+Nonlinear rate neurons can be created by typing
+nest.Create('sigmoid_rate_ipn'). Nonlinear rate transformers can be
+created by typing nest.Create('rate_transformer_sigmoid').
+
+
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary. Note
+that some of the parameters only apply to rate neurons and not to rate
+transformers.
+
+==================  ======= ==============================================
+ rate               real    Rate (unitless)
+ tau                ms      Time constant of rate dynamics
+ mu                 real    Mean input
+ sigma              real    Noise parameter
+ g                  real    Gain parameter
+ beta               real    Slope parameter
+ theta              real    Threshold
+ rectify_rate       real    Rectifying rate
+ linear_summation   boolean Specifies type of non-linearity (see above)
+ rectify_output     boolean Switch to restrict rate to values >= rectify_rate
+==================  ======= ==============================================
 
 Note:
+
 The boolean parameter linear_summation determines whether the
 input from different presynaptic neurons is first summed linearly and
 then transformed by a nonlinearity (true), or if the input from
 individual presynaptic neurons is first nonlinearly transformed and
 then summed up (false). Default is true.
 
-References:
+References
+++++++++++
 
- [1] Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
- Bolten, M., Helias, M. and Diesmann, M. (2017).
- Integration of Continuous-Time Dynamics in a
- Spiking Neural Network Simulator.
- Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
+.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
+       Diesmann M (2017). Integration of continuous-time dynamics in a
+       spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
+       DOI: https://doi.org/10.3389/fninf.2017.00034
+.. [2] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
+       (2015). A unified framework for spiking and gap-junction interactions
+       in distributed neuronal network simulations. Frontiers in
+       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 
- [2] Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
- Bolten, M., Frommer, A. and Diesmann, M. (2015).
- A unified framework for spiking and gap-junction interactions
- in distributed neuronal network simulations.
- Front. Neuroinform. 9:22. doi: 10.3389/fninf.2015.00022
+Sends
++++++
 
-Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
-Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
+Receives
+++++++++
+
+InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
 DataLoggingRequest
 
-Author: Mario Senden, Jan Hahne, Jannis Schuecker
-SeeAlso: rate_connection_instantaneous, rate_connection_delayed
-*/
+See also
+++++++++
+
+rate_connection_instantaneous, rate_connection_delayed
+
+EndUserDocs */
 
 class nonlinearities_sigmoid_rate
 {
@@ -111,8 +141,8 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-  void set( const DictionaryDatum& ); //!< Set values from dicitonary
+  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling
@@ -126,20 +156,19 @@ nonlinearities_sigmoid_rate::input( double h )
 }
 
 inline double
-nonlinearities_sigmoid_rate::mult_coupling_ex( double rate )
+nonlinearities_sigmoid_rate::mult_coupling_ex( double )
 {
   return 1.;
 }
 
 inline double
-nonlinearities_sigmoid_rate::mult_coupling_in( double rate )
+nonlinearities_sigmoid_rate::mult_coupling_in( double )
 {
   return 1.;
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate > sigmoid_rate_ipn;
-typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate >
-  rate_transformer_sigmoid;
+typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate > rate_transformer_sigmoid;
 
 template <>
 void RecordablesMap< sigmoid_rate_ipn >::create();

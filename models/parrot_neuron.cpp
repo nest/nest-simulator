@@ -44,7 +44,7 @@ namespace nest
 {
 
 parrot_neuron::parrot_neuron()
-  : Archiving_Node()
+  : ArchivingNode()
 {
 }
 
@@ -52,20 +52,18 @@ void
 parrot_neuron::init_buffers_()
 {
   B_.n_spikes_.clear(); // includes resize
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void
 parrot_neuron::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
   {
-    const unsigned long current_spikes_n =
-      static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
+    const unsigned long current_spikes_n = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
     if ( current_spikes_n > 0 )
     {
       // create a new SpikeEvent, set its multiplicity and send it
@@ -86,13 +84,13 @@ void
 parrot_neuron::get_status( DictionaryDatum& d ) const
 {
   def< double >( d, names::t_spike, get_spiketime_ms() );
-  Archiving_Node::get_status( d );
+  ArchivingNode::get_status( d );
 }
 
 void
 parrot_neuron::set_status( const DictionaryDatum& d )
 {
-  Archiving_Node::set_status( d );
+  ArchivingNode::set_status( d );
 }
 
 void
@@ -101,8 +99,7 @@ parrot_neuron::handle( SpikeEvent& e )
   // Repeat only spikes incoming on port 0, port 1 will be ignored
   if ( 0 == e.get_rport() )
   {
-    B_.n_spikes_.add_value( e.get_rel_delivery_steps(
-                              kernel().simulation_manager.get_slice_origin() ),
+    B_.n_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       static_cast< double >( e.get_multiplicity() ) );
   }
 }

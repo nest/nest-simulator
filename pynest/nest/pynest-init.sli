@@ -80,7 +80,7 @@ def
   () =
   (              -- N E S T --) =
   (  Copyright (C) 2004 The NEST Initiative) = () =
-  ( Version: ) =only statusdict/rcsinfo :: =
+  ( Version: ) =only statusdict/version :: =
   ( Built: ) =only statusdict/built :: =
   () =
 
@@ -89,7 +89,7 @@ def
   () =
 
   ( Problems or suggestions?) =
-  (   Visit http://www.nest-simulator.org) =
+  (   Visit https://www.nest-simulator.org) =
   () =
 
   ( Type 'nest.help()' to find out more about NEST.) =
@@ -118,13 +118,3 @@ def
   } if
   not % invert the return value of stopped
 } bind def
-
-
-% Check for rcsinfo SLI file and run it. If it does not
-% exist, put an empty string into statusdict/rcsinfo.
-mark
-  { (rcsinfo) (r) file } stopped not
-    { (rcsinfo) run }
-    { statusdict /rcsinfo () put }
-  ifelse
-] ;

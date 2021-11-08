@@ -26,10 +26,12 @@
 #include <sys/time.h>
 
 // C++ includes:
+#include <limits>
 #include <vector>
 
 // Includes from libnestutil:
 #include "compose.hpp"
+#include "numerics.h"
 
 // Includes from nestkernel:
 #include "connection_manager_impl.h"
@@ -38,7 +40,6 @@
 
 // Includes from sli:
 #include "dictutils.h"
-#include "psignal.h"
 
 nest::SimulationManager::SimulationManager()
   : clock_( Time::tic( 0L ) )
@@ -48,9 +49,9 @@ nest::SimulationManager::SimulationManager()
   , from_step_( 0L )
   , to_step_( 0L ) // consistent with to_do_ == 0
   , t_real_( 0L )
+  , prepared_( false )
   , simulating_( false )
   , simulated_( false )
-  , exit_on_user_signal_( false )
   , inconsistent_state_( false )
   , print_time_( false )
   , use_wfr_( true )
@@ -58,6 +59,9 @@ nest::SimulationManager::SimulationManager()
   , wfr_tol_( 0.0001 )
   , wfr_max_iterations_( 15 )
   , wfr_interpolation_order_( 3 )
+  , update_time_limit_( std::numeric_limits< double >::infinity() )
+  , min_update_time_( std::numeric_limits< double >::infinity() )
+  , max_update_time_( -std::numeric_limits< double >::infinity() )
 {
 }
 
@@ -71,8 +75,10 @@ nest::SimulationManager::initialize()
   prepared_ = false;
   simulating_ = false;
   simulated_ = false;
-  exit_on_user_signal_ = false;
   inconsistent_state_ = false;
+
+  reset_timers_for_preparation();
+  reset_timers_for_dynamics();
 }
 
 void
@@ -85,6 +91,25 @@ nest::SimulationManager::finalize()
   slice_ = 0;
   from_step_ = 0;
   to_step_ = 0; // consistent with to_do_ = 0
+}
+
+void
+nest::SimulationManager::reset_timers_for_preparation()
+{
+  sw_communicate_prepare_.reset();
+#ifdef TIMER_DETAILED
+  sw_gather_target_data_.reset();
+#endif
+}
+
+void
+nest::SimulationManager::reset_timers_for_dynamics()
+{
+  sw_simulate_.reset();
+#ifdef TIMER_DETAILED
+  sw_gather_spike_data_.reset();
+  sw_update_.reset();
+#endif
 }
 
 void
@@ -101,7 +126,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   TimeConverter time_converter;
 
   double time;
-  if ( updateValue< double >( d, names::time, time ) )
+  if ( updateValue< double >( d, names::biological_time, time ) )
   {
     if ( time != 0.0 )
     {
@@ -115,7 +140,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "SimulationManager::set_status",
         "Simulation time reset to t=0.0. Resetting the simulation time is not "
         "fully supported in NEST at present. Some spikes may be lost, and "
-        "stimulating devices may behave unexpectedly. PLEASE REVIEW YOUR "
+        "stimulation devices may behave unexpectedly. PLEASE REVIEW YOUR "
         "SIMULATION OUTPUT CAREFULLY!" );
 
       clock_ = Time::step( 0 );
@@ -132,11 +157,9 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   // total_num_threads because they might reset the network and the time
   // representation
   double tics_per_ms = 0.0;
-  bool tics_per_ms_updated =
-    updateValue< double >( d, names::tics_per_ms, tics_per_ms );
+  bool tics_per_ms_updated = updateValue< double >( d, names::tics_per_ms, tics_per_ms );
   double resd = 0.0;
   bool res_updated = updateValue< double >( d, names::resolution, resd );
-  double integer_part; // Dummy variable to be used with std::modf().
 
   if ( tics_per_ms_updated or res_updated )
   {
@@ -164,6 +187,22 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "created. Please call ResetKernel first." );
       throw KernelException();
     }
+    else if ( kernel().model_manager.has_user_models() or kernel().model_manager.has_user_prototypes() )
+    {
+      LOG( M_ERROR,
+        "SimulationManager::set_status",
+        "Cannot change time representation when user models have been "
+        "created. Please call ResetKernel first." );
+      throw KernelException();
+    }
+    else if ( kernel().model_manager.are_model_defaults_modified() )
+    {
+      LOG( M_ERROR,
+        "SimulationManager::set_status",
+        "Cannot change time representation after model defaults have "
+        "been modified. Please call ResetKernel first." );
+      throw KernelException();
+    }
     else if ( res_updated and tics_per_ms_updated ) // only allow TICS_PER_MS to
                                                     // be changed together with
                                                     // resolution
@@ -176,7 +215,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "unchanged." );
         throw KernelException();
       }
-      else if ( std::modf( resd * tics_per_ms, &integer_part ) != 0 )
+      else if ( not is_integer( resd * tics_per_ms ) )
       {
         LOG( M_ERROR,
           "SimulationManager::set_status",
@@ -191,15 +230,12 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         // adjust delays in the connection system to new resolution
         kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
-        LOG( M_INFO,
-          "SimulationManager::set_status",
-          "tics per ms and resolution changed." );
+        LOG( M_INFO, "SimulationManager::set_status", "tics per ms and resolution changed." );
 
         // make sure that wfr communication interval is always greater or equal
         // to resolution if no wfr is used explicitly set wfr_comm_interval
         // to resolution because communication in every step is needed
-        if ( wfr_comm_interval_ < Time::get_resolution().get_ms()
-          or not use_wfr_ )
+        if ( wfr_comm_interval_ < Time::get_resolution().get_ms() or not use_wfr_ )
         {
           wfr_comm_interval_ = Time::get_resolution().get_ms();
         }
@@ -215,7 +251,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
           "unchanged." );
         throw KernelException();
       }
-      else if ( std::modf( resd / Time::get_ms_per_tic(), &integer_part ) != 0 )
+      else if ( not is_integer( resd / Time::get_ms_per_tic() ) )
       {
         LOG( M_ERROR,
           "SimulationManager::set_status",
@@ -229,15 +265,12 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         // adjust delays in the connection system to new resolution
         kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
-        LOG( M_INFO,
-          "SimulationManager::set_status",
-          "Temporal resolution changed." );
+        LOG( M_INFO, "SimulationManager::set_status", "Temporal resolution changed." );
 
         // make sure that wfr communication interval is always greater or equal
         // to resolution if no wfr is used explicitly set wfr_comm_interval
         // to resolution because communication in every step is needed
-        if ( wfr_comm_interval_ < Time::get_resolution().get_ms()
-          or not use_wfr_ )
+        if ( wfr_comm_interval_ < Time::get_resolution().get_ms() or not use_wfr_ )
         {
           wfr_comm_interval_ = Time::get_resolution().get_ms();
         }
@@ -311,9 +344,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     }
     else
     {
-      LOG( M_INFO,
-        "SimulationManager::set_status",
-        "Waveform communication interval changed successfully. " );
+      LOG( M_INFO, "SimulationManager::set_status", "Waveform communication interval changed successfully. " );
       wfr_comm_interval_ = wfr_interval;
     }
   }
@@ -324,9 +355,8 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   {
     if ( tol < 0.0 )
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Tolerance must be zero or positive" );
+      LOG( M_ERROR, "SimulationManager::set_status", "Tolerance must be zero or positive" );
+      throw KernelException();
     }
     else
     {
@@ -344,6 +374,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         "SimulationManager::set_status",
         "Maximal number of iterations  for the waveform relaxation must be "
         "positive. To disable waveform relaxation set use_wfr instead." );
+      throw KernelException();
     }
     else
     {
@@ -357,14 +388,26 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   {
     if ( ( interp_order < 0 ) or ( interp_order == 2 ) or ( interp_order > 3 ) )
     {
-      LOG( M_ERROR,
-        "SimulationManager::set_status",
-        "Interpolation order must be 0, 1, or 3." );
+      LOG( M_ERROR, "SimulationManager::set_status", "Interpolation order must be 0, 1, or 3." );
+      throw KernelException();
     }
     else
     {
       wfr_interpolation_order_ = interp_order;
     }
+  }
+
+  // update time limit
+  double t_new = 0.0;
+  if ( updateValue< double >( d, names::update_time_limit, t_new ) )
+  {
+    if ( t_new <= 0 )
+    {
+      LOG( M_ERROR, "SimulationManager::set_status", "update_time_limit > 0 required." );
+      throw KernelException();
+    }
+
+    update_time_limit_ = t_new;
   }
 }
 
@@ -379,7 +422,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::T_min, Time::min().get_ms() );
   def< double >( d, names::T_max, Time::max().get_ms() );
 
-  def< double >( d, names::time, get_time().get_ms() );
+  def< double >( d, names::biological_time, get_time().get_ms() );
   def< long >( d, names::to_do, to_do_ );
   def< bool >( d, names::print_time, print_time_ );
 
@@ -388,6 +431,18 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::wfr_tol, wfr_tol_ );
   def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
   def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
+
+  def< double >( d, names::update_time_limit, update_time_limit_ );
+  def< double >( d, names::min_update_time, min_update_time_ );
+  def< double >( d, names::max_update_time, max_update_time_ );
+
+  def< double >( d, names::time_simulate, sw_simulate_.elapsed() );
+  def< double >( d, names::time_communicate_prepare, sw_communicate_prepare_.elapsed() );
+#ifdef TIMER_DETAILED
+  def< double >( d, names::time_gather_spike_data, sw_gather_spike_data_.elapsed() );
+  def< double >( d, names::time_update, sw_update_.elapsed() );
+  def< double >( d, names::time_gather_target_data, sw_gather_target_data_.elapsed() );
+#endif
 }
 
 void
@@ -409,6 +464,10 @@ nest::SimulationManager::prepare()
       "earlier error. Please run ResetKernel first." );
   }
 
+  // reset profiling timers
+  reset_timers_for_dynamics();
+  kernel().event_delivery_manager.reset_timers_for_dynamics();
+
   t_real_ = 0;
   t_slice_begin_ = timeval(); // set to timeval{0, 0} as unset flag
   t_slice_end_ = timeval();   // set to timeval{0, 0} as unset flag
@@ -417,22 +476,6 @@ nest::SimulationManager::prepare()
   // this call sets the member variables
   kernel().connection_manager.update_delay_extrema_();
   kernel().event_delivery_manager.init_moduli();
-
-  // Check for synchrony of global rngs over processes.
-  // We need to do this ahead of any simulation in case random numbers
-  // have been consumed on the SLI level.
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    if ( not kernel().mpi_manager.grng_synchrony(
-           kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
-    {
-      LOG( M_ERROR,
-        "SimulationManager::prepare",
-        "Global Random Number Generators are not synchronized prior to "
-        "simulation." );
-      throw KernelException();
-    }
-  }
 
   // if at the beginning of a simulation, set up spike buffers
   if ( not simulated_ )
@@ -450,8 +493,7 @@ nest::SimulationManager::prepare()
   // before enter_runtime
   if ( not simulated_ ) // only enter the runtime mode once
   {
-    double tick = Time::get_resolution().get_ms()
-      * kernel().connection_manager.get_min_delay();
+    double tick = Time::get_resolution().get_ms() * kernel().connection_manager.get_min_delay();
     kernel().music_manager.enter_runtime( tick );
   }
   prepared_ = true;
@@ -461,8 +503,7 @@ nest::SimulationManager::prepare()
   // it resizes coefficient arrays for secondary events
   kernel().node_manager.check_wfr_use();
 
-  if ( kernel().node_manager.have_nodes_changed()
-    or kernel().connection_manager.have_connections_changed() )
+  if ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed() )
   {
 #pragma omp parallel
     {
@@ -470,14 +511,6 @@ nest::SimulationManager::prepare()
       update_connection_infrastructure( tid );
     } // of omp parallel
   }
-}
-
-void
-nest::SimulationManager::simulate( Time const& t )
-{
-  prepare();
-  run( t );
-  cleanup();
 }
 
 void
@@ -492,8 +525,7 @@ nest::SimulationManager::assert_valid_simtime( Time const& t )
   {
     LOG( M_ERROR,
       "SimulationManager::run",
-      String::compose( "Simulation time must be >= %1 ms (one time step).",
-           Time::get_resolution().get_ms() ) );
+      String::compose( "Simulation time must be >= %1 ms (one time step).", Time::get_resolution().get_ms() ) );
     throw KernelException();
   }
 
@@ -527,6 +559,9 @@ nest::SimulationManager::run( Time const& t )
 {
   assert_valid_simtime( t );
 
+  kernel().random_manager.check_rng_synchrony();
+  kernel().io_manager.pre_run_hook();
+
   if ( not prepared_ )
   {
     std::string msg = "Run called without calling Prepare.";
@@ -542,8 +577,10 @@ nest::SimulationManager::run( Time const& t )
     return;
   }
 
-  // Reset profiling timers and counters within event_delivery_manager
-  kernel().event_delivery_manager.reset_timers_counters();
+  // Reset local spike counters within event_delivery_manager
+  kernel().event_delivery_manager.reset_counters();
+
+  sw_simulate_.start();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -553,9 +590,7 @@ nest::SimulationManager::run( Time const& t )
   delay end_sim = from_step_ + to_do_;
   if ( kernel().connection_manager.get_min_delay() < end_sim )
   {
-    to_step_ =
-      kernel()
-        .connection_manager.get_min_delay(); // update to end of time slice
+    to_step_ = kernel().connection_manager.get_min_delay(); // update to end of time slice
   }
   else
   {
@@ -580,7 +615,10 @@ nest::SimulationManager::run( Time const& t )
 
   call_update_();
 
-  kernel().node_manager.post_run_cleanup();
+  kernel().io_manager.post_run_hook();
+  kernel().random_manager.check_rng_synchrony();
+
+  sw_simulate_.stop();
 }
 
 void
@@ -595,20 +633,8 @@ nest::SimulationManager::cleanup()
 
   if ( not simulated_ )
   {
+    prepared_ = false;
     return;
-  }
-
-  // Check for synchronicity of global rngs over processes
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    if ( not kernel().mpi_manager.grng_synchrony(
-           kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
-    {
-      throw KernelException(
-        "In SimulationManager::cleanup(): "
-        "Global Random Number Generators are not "
-        "in sync at end of simulation." );
-    }
   }
 
   kernel().node_manager.finalize_nodes();
@@ -672,22 +698,21 @@ nest::SimulationManager::call_update_()
 
   kernel().mpi_manager.synchronize();
 
-  if ( exit_on_user_signal_ )
-  {
-    LOG( M_WARNING,
-      "SimulationManager::resume",
-      String::compose( "Exiting on user signal %1.", SLIsignalflag ) );
-    SLIsignalflag = 0;
-  }
-
-  LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
+  LOG( M_INFO, "SimulationManager::run", "Simulation finished." );
 }
 
 void
 nest::SimulationManager::update_connection_infrastructure( const thread tid )
 {
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_communicate_prepare_.start();
+  }
+
   kernel().connection_manager.restructure_connection_tables( tid );
   kernel().connection_manager.sort_connections( tid );
+  kernel().connection_manager.collect_compressed_spike_data( tid );
 
 #pragma omp barrier // wait for all threads to finish sorting
 
@@ -705,28 +730,55 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   if ( kernel().connection_manager.secondary_connections_exist() )
   {
 #pragma omp barrier
-    kernel()
-      .connection_manager.compute_compressed_secondary_recv_buffer_positions(
-        tid );
+    kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions( tid );
+#pragma omp barrier
 #pragma omp single
     {
+      kernel().mpi_manager.communicate_recv_counts_secondary_events();
       kernel().event_delivery_manager.configure_secondary_buffers();
     }
   }
 
+#ifdef TIMER_DETAILED
+  if ( tid == 0 )
+  {
+    sw_gather_target_data_.start();
+  }
+#endif
+
   // communicate connection information from postsynaptic to
   // presynaptic side
   kernel().event_delivery_manager.gather_target_data( tid );
+
+#ifdef TIMER_DETAILED
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_gather_target_data_.stop();
+  }
+#endif
 
   if ( kernel().connection_manager.secondary_connections_exist() )
   {
     kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
   }
 
+#pragma omp barrier
+  if ( kernel().connection_manager.use_compressed_spikes() )
+  {
+    kernel().connection_manager.clear_compressed_spike_data_map( tid );
+  }
+
 #pragma omp single
   {
     kernel().node_manager.set_have_nodes_changed( false );
-    kernel().connection_manager.set_have_connections_changed( false );
+    kernel().connection_manager.unset_connections_have_changed();
+  }
+
+#pragma omp barrier
+  if ( tid == 0 )
+  {
+    sw_communicate_prepare_.stop();
   }
 }
 
@@ -743,10 +795,11 @@ nest::SimulationManager::update_()
   std::vector< bool > done;
   bool done_all = true;
   delay old_to_step;
-  exit_on_user_signal_ = false;
 
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
-    kernel().vp_manager.get_num_threads() );
+  double start_current_update = sw_simulate_.elapsed();
+  bool update_time_limit_exceeded = false;
+
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 // parallel section begins
 #pragma omp parallel
   {
@@ -760,19 +813,15 @@ nest::SimulationManager::update_()
       }
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
-        and ( ( clock_.get_steps() + from_step_ )
-                % kernel()
-                    .sp_manager.get_structural_plasticity_update_interval()
-              == 0 ) )
+        and ( std::fmod( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms(),
+                kernel().sp_manager.get_structural_plasticity_update_interval() ) == 0 ) )
       {
-        for ( SparseNodeArray::const_iterator i =
-                kernel().node_manager.get_local_nodes( tid ).begin();
+        for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
               i != kernel().node_manager.get_local_nodes( tid ).end();
               ++i )
         {
           Node* node = i->get_node();
-          node->update_synaptic_elements(
-            Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
+          node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
         }
 #pragma omp barrier
 #pragma omp single
@@ -780,8 +829,7 @@ nest::SimulationManager::update_()
           kernel().sp_manager.update_structural_plasticity();
         }
         // Remove 10% of the vacant elements
-        for ( SparseNodeArray::const_iterator i =
-                kernel().node_manager.get_local_nodes( tid ).begin();
+        for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
               i != kernel().node_manager.get_local_nodes( tid ).end();
               ++i )
         {
@@ -821,8 +869,7 @@ nest::SimulationManager::update_()
           }
 
           // the following could be made thread-safe
-          kernel().music_manager.update_music_event_handlers(
-            clock_, from_step_, to_step_ );
+          kernel().music_manager.update_music_event_handlers( clock_, from_step_, to_step_ );
         }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
@@ -832,8 +879,7 @@ nest::SimulationManager::update_()
       // preliminary update of nodes that use waveform relaxtion, only
       // necessary if secondary connections exist and any node uses
       // wfr
-      if ( kernel().connection_manager.secondary_connections_exist()
-        and kernel().node_manager.wfr_is_used() )
+      if ( kernel().connection_manager.secondary_connections_exist() and kernel().node_manager.wfr_is_used() )
       {
 #pragma omp single
         {
@@ -851,16 +897,14 @@ nest::SimulationManager::update_()
         }
 
         bool max_iterations_reached = true;
-        const std::vector< Node* >& thread_local_wfr_nodes =
-          kernel().node_manager.get_wfr_nodes_on_thread( tid );
+        const std::vector< Node* >& thread_local_wfr_nodes = kernel().node_manager.get_wfr_nodes_on_thread( tid );
         for ( long n = 0; n < wfr_max_iterations_; ++n )
         {
           bool done_p = true;
 
           // this loop may be empty for those threads
           // that do not have any nodes requiring wfr_update
-          for ( std::vector< Node* >::const_iterator i =
-                  thread_local_wfr_nodes.begin();
+          for ( std::vector< Node* >::const_iterator i = thread_local_wfr_nodes.begin();
                 i != thread_local_wfr_nodes.end();
                 ++i )
           {
@@ -894,8 +938,7 @@ nest::SimulationManager::update_()
 
           // deliver SecondaryEvents generated during wfr_update
           // returns the done value over all threads
-          done_p = kernel().event_delivery_manager.deliver_secondary_events(
-            tid, true );
+          done_p = kernel().event_delivery_manager.deliver_secondary_events( tid, true );
 
           if ( done_p )
           {
@@ -909,8 +952,7 @@ nest::SimulationManager::update_()
           to_step_ = old_to_step;
           if ( max_iterations_reached )
           {
-            std::string msg = String::compose(
-              "Maximum number of iterations reached at interval %1-%2 ms",
+            std::string msg = String::compose( "Maximum number of iterations reached at interval %1-%2 ms",
               clock_.get_ms(),
               clock_.get_ms() + to_step_ * Time::get_resolution().get_ms() );
             LOG( M_WARNING, "SimulationManager::wfr_update", msg );
@@ -918,13 +960,18 @@ nest::SimulationManager::update_()
         }
 
       } // of if(wfr_is_used)
-      // end of preliminary update
+        // end of preliminary update
 
-      const SparseNodeArray& thread_local_nodes =
-        kernel().node_manager.get_local_nodes( tid );
-      for ( SparseNodeArray::const_iterator n = thread_local_nodes.begin();
-            n != thread_local_nodes.end();
-            ++n )
+#ifdef TIMER_DETAILED
+#pragma omp barrier
+      if ( tid == 0 )
+      {
+        sw_update_.start();
+      }
+#endif
+      const SparseNodeArray& thread_local_nodes = kernel().node_manager.get_local_nodes( tid );
+
+      for ( SparseNodeArray::const_iterator n = thread_local_nodes.begin(); n != thread_local_nodes.end(); ++n )
       {
         // We update in a parallel region. Therefore, we need to catch
         // exceptions here and then handle them after the parallel region.
@@ -939,13 +986,20 @@ nest::SimulationManager::update_()
         catch ( std::exception& e )
         {
           // so throw the exception after parallel region
-          exceptions_raised.at( tid ) = lockPTR< WrappedThreadException >(
-            new WrappedThreadException( e ) );
+          exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( e ) );
         }
       }
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
+#ifdef TIMER_DETAILED
+      if ( tid == 0 )
+      {
+        sw_update_.stop();
+        sw_gather_spike_data_.start();
+      }
+#endif
+
       // gather and deliver only at end of slice, i.e., end of min_delay step
       if ( to_step_ == kernel().connection_manager.get_min_delay() )
       {
@@ -959,12 +1013,17 @@ nest::SimulationManager::update_()
           {
             kernel().event_delivery_manager.gather_secondary_events( true );
           }
-          kernel().event_delivery_manager.deliver_secondary_events(
-            tid, false );
+          kernel().event_delivery_manager.deliver_secondary_events( tid, false );
         }
       }
 
 #pragma omp barrier
+#ifdef TIMER_DETAILED
+      if ( tid == 0 )
+      {
+        sw_gather_spike_data_.stop();
+      }
+#endif
 
 // the following block is executed by the master thread only
 // the other threads are enforced to wait at the end of the block
@@ -972,67 +1031,62 @@ nest::SimulationManager::update_()
       {
         advance_time_();
 
-        if ( SLIsignalflag != 0 )
-        {
-          LOG( M_INFO,
-            "SimulationManager::update",
-            "Simulation exiting on user signal." );
-          exit_on_user_signal_ = true;
-        }
-
         if ( print_time_ )
         {
           gettimeofday( &t_slice_end_, NULL );
           print_progress_();
         }
+
+        // We cannot throw exception inside master, would not get caught.
+        const double end_current_update = sw_simulate_.elapsed();
+        const double update_time = end_current_update - start_current_update;
+        update_time_limit_exceeded = update_time > update_time_limit_;
+        min_update_time_ = std::min( min_update_time_, update_time );
+        max_update_time_ = std::max( max_update_time_, update_time );
+        start_current_update = end_current_update;
       }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
+      kernel().io_manager.post_step_hook();
+// enforce synchronization after post-step activities of the recording backends
+#pragma omp barrier
+      const double end_current_update = sw_simulate_.elapsed();
+      if ( end_current_update - start_current_update > update_time_limit_ )
+      {
+        LOG( M_ERROR, "SimulationManager::update", "Update time limit exceeded." );
+        throw KernelException();
+      }
+      start_current_update = end_current_update;
 
-    } while ( to_do_ > 0 and not exit_on_user_signal_
-      and not exceptions_raised.at( tid ) );
+    } while ( to_do_ > 0 and not update_time_limit_exceeded and not exceptions_raised.at( tid ) );
 
     // End of the slice, we update the number of synaptic elements
-    for ( SparseNodeArray::const_iterator i =
-            kernel().node_manager.get_local_nodes( tid ).begin();
+    for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
           i != kernel().node_manager.get_local_nodes( tid ).end();
           ++i )
     {
       Node* node = i->get_node();
-      node->update_synaptic_elements(
-        Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
+      node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     }
+
   } // of omp parallel
+
+  if ( update_time_limit_exceeded )
+  {
+    LOG( M_ERROR, "SimulationManager::update", "Update time limit exceeded." );
+    throw KernelException();
+  }
 
   // check if any exceptions have been raised
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised.at( tid ).valid() )
+    if ( exceptions_raised.at( tid ).get() )
     {
       simulating_ = false; // must mark this here, see #311
       inconsistent_state_ = true;
       throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
     }
   }
-}
-
-void
-nest::SimulationManager::reset_network()
-{
-  if ( not has_been_simulated() )
-  {
-    return; // nothing to do
-  }
-
-  kernel().event_delivery_manager.clear_pending_spikes();
-
-  kernel().node_manager.reinit_nodes();
-
-  // ConnectionManager doesn't support resetting dynamic synapses yet
-  LOG( M_WARNING,
-    "SimulationManager::ResetNetwork",
-    "Synapses with internal dynamics (facilitation, STDP) are not reset.\n"
-    "This will be implemented in a future version of NEST." );
 }
 
 void
@@ -1066,8 +1120,7 @@ nest::SimulationManager::advance_time_()
     to_step_ = end_sim; // update to end of simulation time
   }
 
-  assert( to_step_ - from_step_
-    <= ( long ) kernel().connection_manager.get_min_delay() );
+  assert( to_step_ - from_step_ <= ( long ) kernel().connection_manager.get_min_delay() );
 }
 
 void
@@ -1083,17 +1136,16 @@ nest::SimulationManager::print_progress_()
     t_real_ += t_real_s + ( t_slice_end_.tv_usec - t_slice_begin_.tv_usec );
     // ms
     double t_real_acc = ( t_real_ ) / 1000.;
-    double t_sim_acc =
-      ( to_do_total_ - to_do_ ) * Time::get_resolution().get_ms();
-    rt_factor = t_sim_acc / t_real_acc;
+    double t_sim_acc = ( to_do_total_ - to_do_ ) * Time::get_resolution().get_ms();
+    // real-time factor = wall-clock time / model time
+    rt_factor = t_real_acc / t_sim_acc;
   }
 
   int percentage = ( 100 - int( float( to_do_ ) / to_do_total_ * 100 ) );
 
-  std::cout << "\r" << std::setw( 3 ) << std::right << percentage << " %: "
-            << "network time: " << std::fixed << std::setprecision( 1 )
-            << clock_.get_ms() << " ms, "
-            << "realtime factor: " << std::setprecision( 4 ) << rt_factor
+  std::cout << "\r[ " << std::setw( 3 ) << std::right << percentage << "% ] "
+            << "Model time: " << std::fixed << std::setprecision( 1 ) << clock_.get_ms() << " ms, "
+            << "Real-time factor: " << std::setprecision( 4 ) << rt_factor
             << std::resetiosflags( std::ios_base::floatfield );
   std::flush( std::cout );
 }

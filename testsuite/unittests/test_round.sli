@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_round - check if round function works
 
 Synopsis: (test_round) run ->

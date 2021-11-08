@@ -20,7 +20,7 @@
  *
  */
  
- /* BeginDocumentation
+ /** @BeginDocumentation
    Name: testsuite::test_multisynapse_models - test properties of multisynapse models
 
    Synopsis: (test_multisynapse_models) run

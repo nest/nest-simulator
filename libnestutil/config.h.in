@@ -22,19 +22,17 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
-/* 
-    Configuration header.
-    config.h is automatically generated from config.h.in
-    during the configuration process. 
 
-    Please make all changes in config.h.in.
+/*
+  config.h is automatically generated from config.h.in during the
+  configuration process. Please make all changes in config.h.in.
 */
 
-#define NEST_VERSION_PRGNAME "@NEST_VERSION_PRGNAME@"
-
-#define NEST_VERSION_MAJOR_REVISION @NEST_VERSION_MAJOR@
-#define NEST_VERSION_MINOR_REVISION @NEST_VERSION_MINOR@
-#define NEST_VERSION_PATCHLEVEL "@NEST_VERSION_PATCHLEVEL@"
+#define NEST_VERSION_STRING "@NEST_VERSION_STRING@"
+#define NEST_VERSION_BRANCH "@NEST_VERSION_BRANCH@"
+#define NEST_VERSION_SUFFIX "@NEST_VERSION_SUFFIX@"
+#define NEST_VERSION "@NEST_VERSION@"
+#define NEST_VERSION_GITHASH "@NEST_VERSION_GITHASH@"
 
 // TODO NEST_HOST and NEST_HOSTVENDOR not available with cmake
 #define NEST_HOST "@NEST_TARGET_TRIPLE@"
@@ -45,6 +43,7 @@
 #define NEST_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@"
 #define NEST_INSTALL_DATADIR "@CMAKE_INSTALL_DATADIR@"
 #define NEST_INSTALL_DOCDIR "@CMAKE_INSTALL_DOCDIR@"
+#define NEST_INSTALL_LIBDIR "@CMAKE_INSTALL_LIBDIR@/nest"
 
 #define NEST_EXITCODE_ABORT @NEST_EXITCODE_ABORT@
 #define NEST_EXITCODE_SEGFAULT @NEST_EXITCODE_SEGFAULT@
@@ -58,8 +57,8 @@
 /* tics per step in simulation */
 #define CONFIG_TICS_PER_STEP @tics_per_step@
 
-/* when to truncate the recursive instantiation of the connector */
-#define CONFIG_CONNECTOR_CUTOFF @connector_cutoff@
+/* Define to 1 if you have a 32 bit architecture */
+#cmakedefine HAVE_32BIT_ARCH 1
 
 /* define if the compiler does not include *.h headers ISO conformant */
 #cmakedefine HAVE_ALPHA_CXX_STD_BUG 1
@@ -91,6 +90,12 @@
 /* Define to 1 if you have usable long long type. */
 #cmakedefine HAVE_LONG_LONG 1
 
+/* Define to 1 if you have u_int46_t type. */
+#cmakedefine HAVE_U_INT64_T 1
+
+/* Define to 1 if you have uint46_t type. */
+#cmakedefine HAVE_UINT64_T 1
+
 /* Define to 1 if you have the <mach/mach.h> header file. */
 #cmakedefine HAVE_MACH_MACH_H 1
 
@@ -102,6 +107,9 @@
 
 /* MPI is available. */
 #cmakedefine HAVE_MPI 1
+
+/* Boost is available. */
+#cmakedefine HAVE_BOOST 1
 
 /* MUSIC support enabled? */
 #cmakedefine HAVE_MUSIC 1
@@ -163,7 +171,21 @@
 /* Configuring for K */
 #cmakedefine IS_K 1
 
-/* Use PS array construction semantics */
-#cmakedefine PS_ARRAYS 1
+/* Is SIONlib available? */
+#cmakedefine HAVE_SIONLIB 1
+
+/* Is mpi4py available? */
+#cmakedefine HAVE_MPI4PY 1
+
+/* Do Random123 generators work? */
+#cmakedefine HAVE_RANDOM123 1
+
+/* Bit counts for Target members */
+#define TARGET_BITS_SPLIT @TARGET_BITS_SPLIT@
+#define TARGET_BITS_SPLIT_STANDARD 0
+#define TARGET_BITS_SPLIT_HPC 1
+
+/* Whether to enable detailed NEST internal timers */
+#cmakedefine TIMER_DETAILED 1
 
 #endif // #ifndef CONFIG_H

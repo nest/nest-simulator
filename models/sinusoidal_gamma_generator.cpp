@@ -26,12 +26,12 @@
 
 // C++ includes:
 #include <cmath>
-#include <limits>
 
 // External includes:
 #include <gsl/gsl_sf_gamma.h>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -41,16 +41,14 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
+#include "booldatum.h"
 
 namespace nest
 {
-RecordablesMap< sinusoidal_gamma_generator >
-  sinusoidal_gamma_generator::recordablesMap_;
+RecordablesMap< sinusoidal_gamma_generator > sinusoidal_gamma_generator::recordablesMap_;
 
 template <>
 void
@@ -72,8 +70,7 @@ nest::sinusoidal_gamma_generator::Parameters_::Parameters_()
 {
 }
 
-nest::sinusoidal_gamma_generator::Parameters_::Parameters_(
-  const Parameters_& p )
+nest::sinusoidal_gamma_generator::Parameters_::Parameters_( const Parameters_& p )
   : om_( p.om_ )
   , phi_( p.phi_ )
   , order_( p.order_ )
@@ -84,9 +81,8 @@ nest::sinusoidal_gamma_generator::Parameters_::Parameters_(
 {
 }
 
-nest::sinusoidal_gamma_generator::Parameters_&
-  nest::sinusoidal_gamma_generator::Parameters_::
-  operator=( const Parameters_& p )
+nest::sinusoidal_gamma_generator::Parameters_& nest::sinusoidal_gamma_generator::Parameters_::operator=(
+  const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -110,8 +106,7 @@ nest::sinusoidal_gamma_generator::State_::State_()
 }
 
 
-nest::sinusoidal_gamma_generator::Buffers_::Buffers_(
-  sinusoidal_gamma_generator& n )
+nest::sinusoidal_gamma_generator::Buffers_::Buffers_( sinusoidal_gamma_generator& n )
   : logger_( n )
   , t0_ms_()
   , // will be set in init_buffers_
@@ -121,8 +116,7 @@ nest::sinusoidal_gamma_generator::Buffers_::Buffers_(
 {
 }
 
-nest::sinusoidal_gamma_generator::Buffers_::Buffers_( const Buffers_& b,
-  sinusoidal_gamma_generator& n )
+nest::sinusoidal_gamma_generator::Buffers_::Buffers_( const Buffers_& b, sinusoidal_gamma_generator& n )
   : logger_( n )
   , t0_ms_( b.t0_ms_ )
   , Lambda_t0_( b.Lambda_t0_ )
@@ -146,24 +140,18 @@ nest::sinusoidal_gamma_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::sinusoidal_gamma_generator::State_::get( DictionaryDatum& ) const
-{
-}
-
-void
 nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
-  const sinusoidal_gamma_generator& n )
+  const sinusoidal_gamma_generator& n,
+  Node* node )
 {
-  if ( not n.is_model_prototype()
-    && d->known( names::individual_spike_trains ) )
+  if ( not n.is_model_prototype() && d->known( names::individual_spike_trains ) )
   {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
       " a model default using SetDefaults or upon CopyModel." );
   }
 
-  if ( updateValue< bool >(
-         d, names::individual_spike_trains, individual_spike_trains_ ) )
+  if ( updateValue< bool >( d, names::individual_spike_trains, individual_spike_trains_ ) )
   {
     // this can happen only on model prototypes
     if ( individual_spike_trains_ )
@@ -178,17 +166,17 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
     }
   }
 
-  if ( updateValue< double >( d, names::frequency, om_ ) )
+  if ( updateValueParam< double >( d, names::frequency, om_, node ) )
   {
     om_ *= 2.0 * numerics::pi / 1000.0;
   }
 
-  if ( updateValue< double >( d, names::phase, phi_ ) )
+  if ( updateValueParam< double >( d, names::phase, phi_, node ) )
   {
     phi_ *= numerics::pi / 180.0;
   }
 
-  if ( updateValue< double >( d, names::order, order_ ) )
+  if ( updateValueParam< double >( d, names::order, order_, node ) )
   {
     if ( order_ < 1.0 )
     {
@@ -200,13 +188,13 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
      floating-point comparison issues under 32-bit Linux.
   */
   double dc_unscaled = 1e3 * rate_;
-  if ( updateValue< double >( d, names::rate, dc_unscaled ) )
+  if ( updateValueParam< double >( d, names::rate, dc_unscaled, node ) )
   {
     rate_ = 1e-3 * dc_unscaled; // scale to 1/ms
   }
 
   double ac_unscaled = 1e3 * amplitude_;
-  if ( updateValue< double >( d, names::amplitude, ac_unscaled ) )
+  if ( updateValueParam< double >( d, names::amplitude, ac_unscaled, node ) )
   {
     amplitude_ = 1e-3 * ac_unscaled; // scale to 1/ms
   }
@@ -223,8 +211,7 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
  * ---------------------------------------------------------------- */
 
 nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
-  : DeviceNode()
-  , device_()
+  : StimulationDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -232,10 +219,8 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
   recordablesMap_.create();
 }
 
-nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator(
-  const sinusoidal_gamma_generator& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator( const sinusoidal_gamma_generator& n )
+  : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -247,23 +232,18 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator(
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_gamma_generator::init_state_( const Node& proto )
+nest::sinusoidal_gamma_generator::init_state_()
 {
-  const sinusoidal_gamma_generator& pr =
-    downcast< sinusoidal_gamma_generator >( proto );
-
-  device_.init_state( pr.device_ );
-  S_ = pr.S_;
+  StimulationDevice::init_state();
 }
 
 void
 nest::sinusoidal_gamma_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulationDevice::init_buffers();
   B_.logger_.reset();
 
-  std::vector< double >( P_.num_trains_,
-    kernel().simulation_manager.get_time().get_ms() ).swap( B_.t0_ms_ );
+  std::vector< double >( P_.num_trains_, kernel().simulation_manager.get_time().get_ms() ).swap( B_.t0_ms_ );
   std::vector< double >( P_.num_trains_, 0.0 ).swap( B_.Lambda_t0_ );
   B_.P_prev_ = P_;
 }
@@ -271,9 +251,7 @@ nest::sinusoidal_gamma_generator::init_buffers_()
 // ----------------------------------------------------
 
 inline double
-nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p,
-  double t_a,
-  double t_b ) const
+nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p, double t_a, double t_b ) const
 {
   if ( t_a == t_b )
   {
@@ -283,8 +261,8 @@ nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p,
   double deltaLambda = p.order_ * p.rate_ * ( t_b - t_a );
   if ( std::abs( p.amplitude_ ) > 0 && std::abs( p.om_ ) > 0 )
   {
-    deltaLambda += -p.order_ * p.amplitude_ / p.om_
-      * ( std::cos( p.om_ * t_b + p.phi_ ) - std::cos( p.om_ * t_a + p.phi_ ) );
+    deltaLambda +=
+      -p.order_ * p.amplitude_ / p.om_ * ( std::cos( p.om_ * t_b + p.phi_ ) - std::cos( p.om_ * t_a + p.phi_ ) );
   }
   return deltaLambda;
 }
@@ -296,10 +274,10 @@ nest::sinusoidal_gamma_generator::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-  device_.calibrate();
+  StimulationDevice::calibrate();
 
   V_.h_ = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 
   const double t_ms = kernel().simulation_manager.get_time().get_ms();
 
@@ -323,19 +301,15 @@ nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
 {
   // Note: We compute Lambda for the entire interval since the last spike/
   //       parameter change each time for better accuracy.
-  const double Lambda = B_.Lambda_t0_[ tgt_idx ]
-    + deltaLambda_( P_, B_.t0_ms_[ tgt_idx ], V_.t_ms_ );
-  return V_.h_ * P_.order_ * S_.rate_ * std::pow( Lambda, P_.order_ - 1 )
-    * std::exp( -Lambda ) / gsl_sf_gamma_inc( P_.order_, Lambda );
+  const double Lambda = B_.Lambda_t0_[ tgt_idx ] + deltaLambda_( P_, B_.t0_ms_[ tgt_idx ], V_.t_ms_ );
+  return V_.h_ * P_.order_ * S_.rate_ * std::pow( Lambda, P_.order_ - 1 ) * std::exp( -Lambda )
+    / gsl_sf_gamma_inc( P_.order_, Lambda );
 }
 
 void
-nest::sinusoidal_gamma_generator::update( Time const& origin,
-  const long from,
-  const long to )
+nest::sinusoidal_gamma_generator::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -344,12 +318,10 @@ nest::sinusoidal_gamma_generator::update( Time const& origin,
     V_.t_ms_ = t.get_ms();
     V_.t_steps_ = t.get_steps();
 
-    S_.rate_ =
-      P_.rate_ + P_.amplitude_ * std::sin( P_.om_ * V_.t_ms_ + P_.phi_ );
+    S_.rate_ = P_.rate_ + P_.amplitude_ * std::sin( P_.om_ * V_.t_ms_ + P_.phi_ );
 
     // t_steps_-1 since t_steps is end of interval, while activity det by start
-    if ( P_.num_trains_ > 0 && S_.rate_ > 0
-      && device_.is_active( Time::step( V_.t_steps_ - 1 ) ) )
+    if ( P_.num_trains_ > 0 and S_.rate_ > 0 and StimulationDevice::is_active( Time::step( V_.t_steps_ - 1 ) ) )
     {
       if ( P_.individual_spike_trains_ )
       {
@@ -392,4 +364,35 @@ nest::sinusoidal_gamma_generator::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
+/* ----------------------------------------------------------------
+ * Other functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() != 6 )
+    {
+      throw BadParameterValue(
+        "The size of the data for the sinusoidal_gamma_generator needs to 6 "
+        "[frequency, phase, order, rate, amplitude, individual_spike_trains]." );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 0 ] );
+    ( *d )[ names::phase ] = DoubleDatum( input_param[ 1 ] );
+    ( *d )[ names::order ] = DoubleDatum( input_param[ 2 ] );
+    ( *d )[ names::rate ] = DoubleDatum( input_param[ 3 ] );
+    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 4 ] );
+    ( *d )[ names::individual_spike_trains ] = BoolDatum( input_param[ 5 ] );
+    ptmp.set( d, *this, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
+}
 #endif // HAVE_GSL

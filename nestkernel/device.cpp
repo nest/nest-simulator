@@ -59,6 +59,15 @@ nest::Device::Parameters_::Parameters_( const Parameters_& p )
   stop_.calibrate();
 }
 
+nest::Device::Parameters_& nest::Device::Parameters_::operator=( const Parameters_& p )
+{
+  origin_ = p.origin_;
+  start_ = p.start_;
+  stop_ = p.stop_;
+
+  return *this;
+}
+
 
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
@@ -73,9 +82,7 @@ nest::Device::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Device::Parameters_::update_( const DictionaryDatum& d,
-  const Name& name,
-  Time& value )
+nest::Device::Parameters_::update_( const DictionaryDatum& d, const Name& name, Time& value )
 {
   /* We cannot update the Time values directly, since updateValue()
          doesn't support Time objects. We thus read the value in ms into
@@ -131,12 +138,6 @@ nest::Device::Device( const Device& n )
 /* ----------------------------------------------------------------
  * Device initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::Device::init_parameters( const Device& proto )
-{
-  P_ = Parameters_( proto.P_ ); // force recalibration of Time objects
-}
 
 void
 nest::Device::calibrate()

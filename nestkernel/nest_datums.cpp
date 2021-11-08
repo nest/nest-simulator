@@ -22,14 +22,6 @@
 
 #include "nest_datums.h"
 
-// explicit instantiations
-template class AggregateDatum< nest::ConnectionID,
-  &nest::NestModule::ConnectionType >;
-template class lockPTRDatum< nest::GIDCollection,
-  &nest::NestModule::GIDCollectionType >;
-template class lockPTRDatum< nest::gc_const_iterator,
-  &nest::NestModule::GIDCollectionIteratorType >;
-
 // instantiate memory management pool
 template <>
 sli::pool ConnectionDatum::memory( sizeof( nest::ConnectionID ), 10000, 1 );
@@ -52,14 +44,14 @@ ConnectionDatum::pprint( std::ostream& out ) const
 
 template <>
 void
-GIDCollectionDatum::pprint( std::ostream& out ) const
+NodeCollectionDatum::pprint( std::ostream& out ) const
 {
   this->operator->()->print_me( out );
 }
 
 template <>
 void
-GIDCollectionIteratorDatum::pprint( std::ostream& out ) const
+NodeCollectionIteratorDatum::pprint( std::ostream& out ) const
 {
   this->operator->()->print_me( out );
 }

@@ -26,7 +26,6 @@ from libcpp.vector cimport vector
 
 from cpython.ref cimport PyObject
 
-
 cdef extern from "name.h":
     cppclass Name:
         string toString() except +
@@ -67,14 +66,19 @@ cdef extern from "mask.h" namespace "nest":
     cppclass MaskDatum:
         MaskDatum(const MaskDatum&)
 
-cdef extern from "topology_parameter.h" namespace "nest":
+cdef extern from "parameter.h":
     cppclass ParameterDatum:
         ParameterDatum(const ParameterDatum&)
 
-cdef extern from "gid_collection.h" namespace "nest":
-    cppclass GIDCollectionPTR:
-        GIDCollectionPTR()
-	
+cdef extern from "node_collection.h":
+    cppclass NodeCollectionPTR:
+        NodeCollectionPTR()
+    cppclass NodeCollectionDatum:
+        NodeCollectionDatum(const NodeCollectionDatum&)
+
+    cppclass NodeCollectionIteratorDatum:
+        NodeCollectionIteratorDatum(const NodeCollectionIteratorDatum&)
+
 cdef extern from "connection_id.h" namespace "nest":
     cppclass ConnectionID:
         ConnectionID(long, long, long, long) except +
@@ -84,19 +88,19 @@ cdef extern from "nest_datums.h":
     cppclass ConnectionDatum:
         ConnectionDatum(const ConnectionID&) except +
         ConnectionDatum(const ConnectionDatum&) except +
-        long get_source_gid()
-        long get_target_gid()
+        long get_source_node_id()
+        long get_target_node_id()
         long get_target_thread()
         long get_synapse_model_id()
         long get_port()
 
-    cppclass GIDCollectionDatum:
-        GIDCollectionDatum()
-        GIDCollectionDatum(const GIDCollectionDatum&)
-        GIDCollectionDatum(const GIDCollectionPTR&)
+    cppclass NodeCollectionDatum:
+        NodeCollectionDatum()
+        NodeCollectionDatum(const NodeCollectionDatum&)
+        NodeCollectionDatum(const NodeCollectionPTR&)
 
-    cppclass GIDCollectionIteratorDatum:
-        GIDCollectionIteratorDatum(const GIDCollectionIteratorDatum&)
+    cppclass NodeCollectionIteratorDatum:
+        NodeCollectionIteratorDatum(const NodeCollectionIteratorDatum&)
 
 
 cdef extern from "arraydatum.h":
@@ -154,7 +158,7 @@ cdef extern from "kernel_manager.h" namespace "nest":
 
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
-    GIDCollectionPTR create( const string model_name, const long n )
+    NodeCollectionPTR create( const string model_name, const long n )
 
 cdef extern from "pynestkernel_aux.h":
     CYTHON_isConnectionGenerator( x )
@@ -162,7 +166,15 @@ cdef extern from "pynestkernel_aux.h":
     CYTHON_DEREF( x )
     CYTHON_ADDR( x )
 
+# TODO-PYNEST-NG: Move these from neststartup to mpimanager  
+# cdef extern from "neststartup.h":
+#     cbool nest_has_mpi4py()
+#     void c_set_communicator "set_communicator" (object) with gil
 
+cdef extern from "nest.h" namespace "nest":
+    Datum* node_collection_array_index(const Datum* node_collection, const long* array, unsigned long n) except +
+    Datum* node_collection_array_index(const Datum* node_collection, const cbool* array, unsigned long n) except +
+    void connect_arrays( long* sources, long* targets, double* weights, double* delays, vector[string]& p_keys, double* p_values, size_t n, string syn_model ) except +
 
 cdef extern from *:
 

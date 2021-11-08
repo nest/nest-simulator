@@ -58,35 +58,35 @@ public:
   }
 
   /**
-   * Assign a range of GIDs for the given model
+   * Assign a range of node IDs for the given model
    */
-  void add_range( index model, index first_gid, index last_gid );
+  void add_range( index model, index first_node_id, index last_node_id );
 
   /**
-   * Check whether a GID is with the range of assigned gids
+   * Check whether a node ID is with the range of assigned node IDs
    */
-  bool is_in_range( index gid ) const;
+  bool is_in_range( index node_id ) const;
 
   /**
-   * Get the ID of the model to which this GID is assigned
+   * Get the ID of the model to which this node ID is assigned
    */
-  index get_model_id( index gid ) const;
+  index get_model_id( index node_id ) const;
 
   /**
-   * Return the Model for a given GID.
+   * Return the Model for a given node ID.
    */
-  Model* get_model_of_gid( index );
+  Model* get_model_of_node_id( index );
 
   /**
-   * Check whether this model ID has any gids assigned to it
+   * Check whether this model ID has any node IDs assigned to it
    */
   bool model_in_use( index i ) const;
 
   /**
    * Return the contiguous range of IDs of nodes assigned to the same model
-   * as the node with the given GID.
+   * as the node with the given node ID.
    */
-  const modelrange& get_contiguous_gid_range( index gid ) const;
+  const modelrange& get_contiguous_node_id_range( index node_id ) const;
 
   std::vector< modelrange >::const_iterator begin() const;
 
@@ -94,15 +94,15 @@ public:
 
 private:
   std::vector< modelrange > modelranges_;
-  index first_gid_;
-  index last_gid_;
+  index first_node_id_;
+  index last_node_id_;
 };
 
 
 inline bool
-nest::ModelRangeManager::is_in_range( index gid ) const
+nest::ModelRangeManager::is_in_range( index node_id ) const
 {
-  return ( ( gid <= last_gid_ ) and ( gid >= first_gid_ ) );
+  return ( ( node_id <= last_node_id_ ) and ( node_id >= first_node_id_ ) );
 }
 
 inline std::vector< modelrange >::const_iterator

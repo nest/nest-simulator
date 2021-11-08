@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-689 - GetConnections throws Segmentation Fault if hpc_synapses are used.
 

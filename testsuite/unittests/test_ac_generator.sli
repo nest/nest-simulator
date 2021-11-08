@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_ac_generator - test that ac_generator provides correct current
 
    Synopsis: (test_ac_generator) run

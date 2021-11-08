@@ -21,19 +21,19 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_psp_amplitude_consistency - test the consistency of PSP amplitudes across models.
 
 Synopsis: (test_psp_amplitude_consistency) run -> 
 
 Description:
 
-This test computes the peak amplitude of the post-synaptic potential
+This test computes the peak amplitude of the postsynaptic potential
 for different neuron models and checks whether their PSP peak
 amplitudes match approximately.
 
 The maximal PSP amplitude is computed for different synaptic time
-constants to ensure that the scaling of the post-synaptic response is
+constants to ensure that the scaling of the postsynaptic response is
 consinstent between models.
 
 Author:  December 2012, Gewaltig
@@ -119,17 +119,17 @@ M_ERROR setverbosity
 modeldict /aeif_cond_alpha known
 {
   (Testing /aeif_cond_alpha) =
-  /ComputePSP << /model /aeif_cond_alpha >> SetOptions
+  /ComputePSP << /synapse_model /aeif_cond_alpha >> SetOptions
   tau_syns { ComputePSP } Map
-  /ComputePSP << /model /iaf_cond_alpha >> SetOptions
+  /ComputePSP << /synapse_model /iaf_cond_alpha >> SetOptions
   tau_syns { ComputePSP } Map
 
   sub {sqr} Map Mean 1.e-4 lt assert_or_die
 
   (Testing /aeif_cond_exp) =
-  /ComputePSP << /model /aeif_cond_exp >> SetOptions
+  /ComputePSP << /synapse_model /aeif_cond_exp >> SetOptions
   tau_syns { ComputePSP } Map
-  /ComputePSP << /model /iaf_cond_exp >> SetOptions
+  /ComputePSP << /synapse_model /iaf_cond_exp >> SetOptions
   tau_syns { ComputePSP } Map
 
   sub {sqr} Map Mean 1.e-4 lt assert_or_die
@@ -139,9 +139,9 @@ modeldict /aeif_cond_alpha known
 modeldict /iaf_cond_exp_sfa_rr  known
 {
   (Testing /iaf_cond_exp_sfa_rr ) =
-  /ComputePSP << /model /iaf_cond_exp_sfa_rr >> SetOptions
+  /ComputePSP << /synapse_model /iaf_cond_exp_sfa_rr >> SetOptions
   tau_syns { ComputePSP } Map
-  /ComputePSP << /model /iaf_cond_exp >> SetOptions
+  /ComputePSP << /synapse_model /iaf_cond_exp >> SetOptions
   tau_syns { ComputePSP } Map
 
   sub {sqr} Map Mean 1.e-4 lt assert_or_die
@@ -152,9 +152,9 @@ modeldict /iaf_cond_exp_sfa_rr  known
 modeldict /hh_psc_alpha  known
 {
   (Testing /hh_psc_alpha) =
-  /ComputePSP << /model /iaf_cond_alpha >> SetOptions
+  /ComputePSP << /synapse_model /iaf_cond_alpha >> SetOptions
   tau_syns { ComputePSP } Map
-  /ComputePSP << /model /hh_psc_alpha >> SetOptions
+  /ComputePSP << /synapse_model /hh_psc_alpha >> SetOptions
   tau_syns { ComputePSP } Map
 
   sub {sqr} Map Mean 1.e-4 lt assert_or_die

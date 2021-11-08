@@ -37,6 +37,9 @@
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
+#include "node_collection.h"
+
+#include "deprecation_warning.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -48,7 +51,8 @@
 namespace nest
 {
 class Model;
-class Archiving_Node;
+class ArchivingNode;
+class TimeConverter;
 
 
 /**
@@ -77,11 +81,13 @@ class Archiving_Node;
  * @ingroup user_interface
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
+
    Name: Node - General properties of all nodes.
+
    Parameters:
    frozen     booltype    - Whether the node is updated during simulation
-   global_id  integertype - The global id of the node (cf. local_id)
+   global_id  integertype - The node ID of the node (cf. local_id)
    local      booltype    - Whether the node is available on the local process
    model      literaltype - The model type the node was created from
    state      integertype - The state of the node (see the help on elementstates
@@ -90,6 +96,7 @@ class Archiving_Node;
                             locally)
    vp         integertype - The id of the virtual process the node is assigned
                             to (valid globally)
+
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 
@@ -129,6 +136,11 @@ public:
   virtual bool has_proxies() const;
 
   /**
+   * Returns true if the node supports the Urbanczik-Senn plasticity rule
+   */
+  virtual bool supports_urbanczik_archiving() const;
+
+  /**
    * Returns true if the node only receives events from nodes/devices
    * on the same thread.
    */
@@ -145,8 +157,8 @@ public:
   virtual bool one_node_per_process() const;
 
   /**
-   * Returns true if the node if it sends/receives -grid events This is
-   * used to discriminate between different types of nodes, when adding
+   * Returns true if the node sends/receives off-grid events. This is
+   * used to discriminate between different types of nodes when adding
    * new nodes to the network.
    */
   virtual bool is_off_grid() const;
@@ -182,9 +194,14 @@ public:
    * Each node has a unique network ID which can be used to access
    * the Node comparable to a pointer.
    *
-   * The smallest valid GID is 1.
+   * The smallest valid node ID is 1.
    */
-  index get_gid() const;
+  index get_node_id() const;
+
+  /**
+   * Return lockpointer to the NodeCollection that created this node.
+   */
+  NodeCollectionPTR get_nc() const;
 
   /**
    * Return model ID of the node.
@@ -221,33 +238,14 @@ public:
   void set_node_uses_wfr( const bool );
 
   /**
-   * Set state variables to the default values for the model.
-   * Dynamic variables are all observable state variables of a node
-   * that change during Node::update().
-   * After calling init_state(), the state variables
-   * should have the same values that they had after the node was
-   * created. In practice, they will be initialized to the values
-   * of the prototype node (model).
-   * @note If the parameters of the model have been changes since the node
-   *       was created, the node will be initialized to the present values
-   *       set in the model.
-   * @note This function is the public interface to the private function
-   *       Node::init_state_(const Node&) that must be implemented by
-   *       derived classes.
+   * Initialize node prior to first simulation after node has been created.
+   *
+   * init() allows the node to configure internal data structures prior to
+   * being simulated. The method has an effect only the first time it is
+   * called on a given node, otherwise it returns immediately. init() calls
+   * virtual functions init_state_() and init_buffers_().
    */
-  void init_state();
-
-  /**
-   * Initialize buffers of a node.
-   * This function initializes the Buffers of a Node, e.g., ring buffers
-   * for incoming events, buffers for logging potentials.
-   * This function is called before Simulate is called for the first time
-   * on a node, but not upon resumption of a simulation.
-   * This is a wrapper function, which calls the overloaded
-   * Node::init_buffers_() worker only if the buffers of the node have not been
-   * initialized yet.
-   */
-  void init_buffers();
+  void init();
 
   /**
    * Re-calculate dependent parameters of the node.
@@ -257,6 +255,15 @@ public:
    *
    */
   virtual void calibrate() = 0;
+
+  /**
+   * Re-calculate time-based properties of the node.
+   * This function is called after a change in resolution.
+   */
+  virtual void
+  calibrate_time( const TimeConverter& )
+  {
+  }
 
   /**
    * Cleanup node after Run. Override this function if a node needs to
@@ -371,10 +378,7 @@ public:
    * DS*Events when called with the dummy target, and *Events when called with
    * the real target, see #478.
    */
-  virtual port send_test_event( Node& receiving_node,
-    rport receptor_type,
-    synindex syn_id,
-    bool dummy_target );
+  virtual port send_test_event( Node& receiving_node, rport receptor_type, synindex syn_id, bool dummy_target );
 
   /**
    * Check if the node can handle a particular event and receptor type.
@@ -404,12 +408,9 @@ public:
   virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
   virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
   virtual port handles_test_event( GapJunctionEvent&, rport receptor_type );
-  virtual port handles_test_event( InstantaneousRateConnectionEvent&,
-    rport receptor_type );
-  virtual port handles_test_event( DiffusionConnectionEvent&,
-    rport receptor_type );
-  virtual port handles_test_event( DelayedRateConnectionEvent&,
-    rport receptor_type );
+  virtual port handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type );
+  virtual port handles_test_event( DiffusionConnectionEvent&, rport receptor_type );
+  virtual port handles_test_event( DelayedRateConnectionEvent&, rport receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -453,7 +454,7 @@ public:
    * @throws IllegalConnection
    *
    */
-  virtual void register_stdp_connection( double );
+  virtual void register_stdp_connection( double, double );
 
   /**
    * Handle incoming spike events.
@@ -655,12 +656,14 @@ public:
    */
   virtual double get_K_value( double t );
 
+  virtual double get_LTD_value( double t );
+
   /**
-   * write the Kminus and triplet_Kminus values at t (in ms) to
-   * the provided locations.
+   * write the Kminus, nearest_neighbor_Kminus, and Kminus_triplet
+   * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
-  virtual void get_K_values( double t, double& Kminus, double& triplet_Kminus );
+  virtual void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet );
 
   /**
   * return the spike history for (t1,t2].
@@ -670,6 +673,25 @@ public:
     double t2,
     std::deque< histentry >::iterator* start,
     std::deque< histentry >::iterator* finish );
+
+  // for Clopath synapse
+  virtual void get_LTP_history( double t1,
+    double t2,
+    std::deque< histentry_extended >::iterator* start,
+    std::deque< histentry_extended >::iterator* finish );
+  // for Urbanczik synapse
+  virtual void get_urbanczik_history( double t1,
+    double t2,
+    std::deque< histentry_extended >::iterator* start,
+    std::deque< histentry_extended >::iterator* finish,
+    int );
+  // make neuron parameters accessible in Urbanczik synapse
+  virtual double get_C_m( int comp );
+  virtual double get_g_L( int comp );
+  virtual double get_tau_L( int comp );
+  virtual double get_tau_s( int comp );
+  virtual double get_tau_syn_ex( int comp );
+  virtual double get_tau_syn_in( int comp );
 
   /**
    * Modify Event object parameters during event delivery.
@@ -716,6 +738,13 @@ public:
    * @see get_model_id()
    */
   void set_model_id( int );
+
+  /** Execute post-initialization actions in node models.
+   * This method is called by NodeManager::add_node() on a node once
+   * is fully initialized, i.e. after node ID, nc, model_id, thread, vp is
+   * set.
+   */
+  void set_initialized();
 
   /**
    * @returns type of signal this node produces
@@ -774,19 +803,6 @@ public:
    */
   index get_thread_lid() const;
 
-  //! True if buffers have been initialized.
-  bool
-  buffers_initialized() const
-  {
-    return buffers_initialized_;
-  }
-
-  void
-  set_buffers_initialized( bool initialized )
-  {
-    buffers_initialized_ = initialized;
-  }
-
   /**
    * Sets the local device id.
    * Throws an error if used on a non-device node.
@@ -801,8 +817,16 @@ public:
    */
   virtual index get_local_device_id() const;
 
+  /**
+   * Member of DeprecationWarning class to be used by models if parameters are
+   * deprecated.
+   */
+  DeprecationWarning deprecation_warning;
+
 private:
-  void set_gid_( index ); //!< Set global node id
+  void set_node_id_( index ); //!< Set global node id
+
+  void set_nc_( NodeCollectionPTR );
 
   /** Return a new dictionary datum .
    *
@@ -815,25 +839,23 @@ private:
 
 protected:
   /**
-   * Private function to initialize the state of a node to model defaults.
-   * This function, which must be overloaded by all derived classes, provides
-   * the implementation for initializing the state of a node to the model
-   * defaults; the state is the set of observable dynamic variables.
-   * @param Reference to model prototype object.
-   * @see Node::init_state()
-   * @note To provide a reasonable behavior during the transition to the new
-   *       scheme, init_state_() has a default implementation calling
-   *       init_dynamic_state_().
+   * Configure state variables depending on runtime information.
+   *
+   * Overload this method if the node needs to adapt state variables prior to
+   * first simulation to runtime information, e.g., the number of incoming
+   * connections.
    */
-  virtual void init_state_( Node const& ) = 0;
+  virtual void init_state_();
 
   /**
-   * Private function to initialize the buffers of a node.
-   * This function, which must be overloaded by all derived classes, provides
-   * the implementation for initializing the buffers of a node.
-   * @see Node::init_buffers()
+   * Configure persistent internal data structures.
+   *
+   * Let node configure persistent internal data structures, such as input
+   * buffers or ODE solvers, to runtime information prior to first simulation.
    */
-  virtual void init_buffers_() = 0;
+  virtual void init_buffers_();
+
+  virtual void set_initialized_();
 
   Model& get_model_() const;
 
@@ -855,11 +877,11 @@ protected:
 
 private:
   /**
-   * Global Element ID (GID).
+   * Global Element ID (node ID).
    *
-   * The GID is unique within the network. The smallest valid GID is 1.
+   * The node ID is unique within the network. The smallest valid node ID is 1.
    */
-  index gid_;
+  index node_id_;
 
   /**
    * Local id of this node in the thread-local vector of nodes.
@@ -873,11 +895,14 @@ private:
    * @see get_model_id(), set_model_id()
    */
   int model_id_;
-  thread thread_;            //!< thread node is assigned to
-  thread vp_;                //!< virtual process node is assigned to
-  bool frozen_;              //!< node shall not be updated if true
-  bool buffers_initialized_; //!< Buffers have been initialized
-  bool node_uses_wfr_;       //!< node uses waveform relaxation method
+
+  thread thread_;      //!< thread node is assigned to
+  thread vp_;          //!< virtual process node is assigned to
+  bool frozen_;        //!< node shall not be updated if true
+  bool initialized_;   //!< state and buffers have been initialized
+  bool node_uses_wfr_; //!< node uses waveform relaxation method
+
+  NodeCollectionPTR nc_ptr_;
 };
 
 inline bool
@@ -890,6 +915,12 @@ inline bool
 Node::node_uses_wfr() const
 {
   return node_uses_wfr_;
+}
+
+inline bool
+Node::supports_urbanczik_archiving() const
+{
+  return false;
 }
 
 inline void
@@ -935,15 +966,28 @@ Node::get_element_type() const
 }
 
 inline index
-Node::get_gid() const
+Node::get_node_id() const
 {
-  return gid_;
+  return node_id_;
+}
+
+inline NodeCollectionPTR
+Node::get_nc() const
+{
+  return nc_ptr_;
 }
 
 inline void
-Node::set_gid_( index i )
+Node::set_node_id_( index i )
 {
-  gid_ = i;
+  node_id_ = i;
+}
+
+
+inline void
+Node::set_nc_( NodeCollectionPTR nc_ptr )
+{
+  nc_ptr_ = nc_ptr;
 }
 
 inline int

@@ -30,15 +30,17 @@
 
 #include "histentry.h"
 
-// member functions of histentry
-
-nest::histentry::histentry( double t,
-  double Kminus,
-  double triplet_Kminus,
-  size_t access_counter )
+nest::histentry::histentry( double t, double Kminus, double Kminus_triplet, size_t access_counter )
   : t_( t )
   , Kminus_( Kminus )
-  , triplet_Kminus_( triplet_Kminus )
+  , Kminus_triplet_( Kminus_triplet )
+  , access_counter_( access_counter )
+{
+}
+
+nest::histentry_extended::histentry_extended( double t, double dw, size_t access_counter )
+  : t_( t )
+  , dw_( dw )
   , access_counter_( access_counter )
 {
 }

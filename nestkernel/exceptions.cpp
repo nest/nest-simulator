@@ -49,9 +49,7 @@ std::string
 nest::NewModelNameExists::message() const
 {
   std::ostringstream msg;
-  msg << "/"
-      << n_.toString()
-      + " is the name of an existing model and cannot be re-used.";
+  msg << "/" << n_.toString() + " is the name of an existing model and cannot be re-used.";
   return msg.str();
 }
 
@@ -67,8 +65,7 @@ nest::UnknownModelID::message() const
 std::string
 nest::ModelInUse::message() const
 {
-  std::string str =
-    "Model " + modelname_ + " is in use and cannot be unloaded/uninstalled.";
+  std::string str = "Model " + modelname_ + " is in use and cannot be unloaded/uninstalled.";
   return str.c_str();
 }
 
@@ -135,8 +132,7 @@ nest::NodeWithProxiesExpected::message() const
 {
   std::ostringstream out;
   out << "Nest expected a node with proxies (eg normal model neuron),"
-         "but the node with id " << id_ << " is not a node without proxies, "
-                                           "e.g., a subnet or device.";
+         "but the node with id " << id_ << " is not a node without proxies, e.g., a device.";
   return out.str();
 }
 
@@ -145,8 +141,7 @@ nest::UnknownReceptorType::message() const
 {
   std::ostringstream msg;
 
-  msg << "Receptor type " << receptor_type_ << " is not available in " << name_
-      << ".";
+  msg << "Receptor type " << receptor_type_ << " is not available in " << name_ << ".";
   return msg.str();
 }
 
@@ -155,8 +150,7 @@ nest::IncompatibleReceptorType::message() const
 {
   std::ostringstream msg;
 
-  msg << "Receptor type " << receptor_type_ << " in " << name_
-      << " does not accept " << event_type_ << ".";
+  msg << "Receptor type " << receptor_type_ << " in " << name_ << " does not accept " << event_type_ << ".";
   return msg.str();
 }
 
@@ -213,17 +207,28 @@ nest::BadDelay::message() const
 std::string
 nest::UnexpectedEvent::message() const
 {
-  return "Node cannot handle received event.";
+  if ( msg_.empty() )
+  {
+    return std::string(
+      "Target node cannot handle input event.\n"
+      "    A common cause for this is an attempt to connect recording devices incorrectly.\n"
+      "    Note that recorders such as spike recorders must be connected as\n\n"
+      "        nest.Connect(neurons, spike_det)\n\n"
+      "    while meters such as voltmeters must be connected as\n\n"
+      "        nest.Connect(meter, neurons) " );
+  }
+  else
+  {
+    return "UnexpectedEvent: " + msg_;
+  }
 }
 
 std::string
 nest::UnsupportedEvent::message() const
 {
   return std::string(
-    "The current synapse type does not support the event type of the "
-    "sender.\n"
-    "       A common reason for this is a dynamic synapse between a "
-    "device and a neuron." );
+    "The current synapse type does not support the event type of the sender.\n"
+    "    A common cause for this is a plastic synapse between a device and a neuron." );
 }
 
 std::string
@@ -253,8 +258,7 @@ nest::DimensionMismatch::message() const
   }
   else
   {
-    out << "Expected dimension size: " << expected_
-        << "\nProvided dimension size: " << provided_;
+    out << "Expected dimension size: " << expected_ << "\nProvided dimension size: " << provided_;
   }
 
   return out.str();
@@ -267,26 +271,11 @@ nest::DistributionError::message() const
 }
 
 std::string
-nest::SubnetExpected::message() const
-{
-  return std::string();
-}
-
-std::string
-nest::SimulationError::message() const
-{
-  return std::string(
-    "One or more nodes reported an error. Please check the output preceeding "
-    "this message." );
-}
-
-std::string
 nest::InvalidDefaultResolution::message() const
 {
   std::ostringstream msg;
-  msg << "The default resolution of " << Time::get_resolution()
-      << " is not consistent with the value " << val_ << " of property '"
-      << prop_.toString() << "' in model " << model_ << ".\n"
+  msg << "The default resolution of " << Time::get_resolution() << " is not consistent with the value " << val_
+      << " of property '" << prop_.toString() << "' in model " << model_ << ".\n"
       << "This is an internal NEST error, please report it at "
          "https://github.com/nest/nest-simulator/issues";
   return msg.str();
@@ -296,9 +285,8 @@ std::string
 nest::InvalidTimeInModel::message() const
 {
   std::ostringstream msg;
-  msg << "The time property " << prop_.toString() << " = " << val_
-      << " of model " << model_ << " is not compatible with the resolution "
-      << Time::get_resolution() << ".\n"
+  msg << "The time property " << prop_.toString() << " = " << val_ << " of model " << model_
+      << " is not compatible with the resolution " << Time::get_resolution() << ".\n"
       << "Please set a compatible value with SetDefaults!";
   return msg.str();
 }
@@ -307,9 +295,8 @@ std::string
 nest::StepMultipleRequired::message() const
 {
   std::ostringstream msg;
-  msg << "The time property " << prop_.toString() << " = " << val_
-      << " of model " << model_ << " must be a multiple of the resolution "
-      << Time::get_resolution() << ".";
+  msg << "The time property " << prop_.toString() << " = " << val_ << " of model " << model_
+      << " must be a multiple of the resolution " << Time::get_resolution() << ".";
   return msg.str();
 }
 
@@ -317,9 +304,8 @@ std::string
 nest::TimeMultipleRequired::message() const
 {
   std::ostringstream msg;
-  msg << "In model " << model_ << ", the time property " << prop_a_.toString()
-      << " = " << val_a_ << " must be multiple of time property "
-      << prop_b_.toString() << " = " << val_b_ << '.';
+  msg << "In model " << model_ << ", the time property " << prop_a_.toString() << " = " << val_a_
+      << " must be multiple of time property " << prop_b_.toString() << " = " << val_b_ << '.';
   return msg.str();
 }
 
@@ -328,8 +314,7 @@ std::string
 nest::MUSICPortUnconnected::message() const
 {
   std::ostringstream msg;
-  msg << "Cannot use instance of model " << model_ << " because the MUSIC port "
-      << portname_ << " is unconnected.";
+  msg << "Cannot use instance of model " << model_ << " because the MUSIC port " << portname_ << " is unconnected.";
   return msg.str();
 }
 
@@ -337,8 +322,8 @@ std::string
 nest::MUSICPortHasNoWidth::message() const
 {
   std::ostringstream msg;
-  msg << "Cannot use instance of model " << model_ << " because the MUSIC port "
-      << portname_ << " has no width specified in configuration file.";
+  msg << "Cannot use instance of model " << model_ << " because the MUSIC port " << portname_
+      << " has no width specified in configuration file.";
   return msg.str();
 }
 
@@ -346,8 +331,7 @@ std::string
 nest::MUSICPortAlreadyPublished::message() const
 {
   std::ostringstream msg;
-  msg << "The instance of model " << model_
-      << " cannot change the MUSIC port / establish connections " << portname_
+  msg << "The instance of model " << model_ << " cannot change the MUSIC port / establish connections " << portname_
       << " since it is already published.";
   return msg.str();
 }
@@ -356,8 +340,7 @@ std::string
 nest::MUSICSimulationHasRun::message() const
 {
   std::ostringstream msg;
-  msg << "The instance of model " << model_
-      << " won't work, since the simulation has already been running";
+  msg << "The instance of model " << model_ << " won't work, since the simulation has already been running";
   return msg.str();
 }
 
@@ -365,8 +348,8 @@ std::string
 nest::MUSICChannelUnknown::message() const
 {
   std::ostringstream msg;
-  msg << "The port " << portname_ << " cannot be mapped in " << model_
-      << " because the channel " << channel_ << " does not exists.";
+  msg << "The port " << portname_ << " cannot be mapped in " << model_ << " because the channel " << channel_
+      << " does not exists.";
   return msg.str();
 }
 
@@ -383,8 +366,19 @@ std::string
 nest::MUSICChannelAlreadyMapped::message() const
 {
   std::ostringstream msg;
-  msg << "The channel " << channel_ << " of port " << portname_
-      << " has already be mapped to another proxy in " << model_;
+  msg << "The channel " << channel_ << " of port " << portname_ << " has already be mapped to another proxy in "
+      << model_;
+  return msg.str();
+}
+#endif
+
+#ifdef HAVE_MPI
+std::string
+nest::MPIPortsFileUnknown::message() const
+{
+  std::ostringstream msg;
+  msg << "The node with ID " << node_id_ << " requires a label,"
+      << " which specifies the folder with files containing the MPI ports";
   return msg.str();
 }
 #endif
@@ -410,6 +404,32 @@ nest::NumericalInstability::message() const
 }
 
 std::string
+nest::UnmatchedSteps::message() const
+{
+  std::ostringstream msg;
+  msg << "Steps for backend device don't match NEST steps: "
+      << "steps expected: " << total_steps_ << " "
+      << "steps executed: " << current_step_ << ".";
+  return msg.str();
+}
+
+std::string
+nest::BackendPrepared::message() const
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " may not be prepare()'d multiple times.";
+  return msg.str();
+}
+
+std::string
+nest::BackendNotPrepared::message() const
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " may not be cleanup()'d without preparation (multiple cleanups?).";
+  return msg.str();
+}
+
+std::string
 nest::KeyError::message() const
 {
   std::ostringstream msg;
@@ -417,4 +437,22 @@ nest::KeyError::message() const
       << "Error encountered with map type: '" << map_type_ << "'"
       << " when applying operation: '" << map_op_ << "'";
   return msg.str();
+}
+
+std::string
+nest::InternalError::message() const
+{
+  return msg_;
+}
+
+std::string
+nest::LayerExpected::message() const
+{
+  return std::string();
+}
+
+std::string
+nest::LayerNodeExpected::message() const
+{
+  return std::string();
 }

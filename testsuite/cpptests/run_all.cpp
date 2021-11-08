@@ -22,8 +22,12 @@
 
 #define BOOST_TEST_MODULE cpptests
 #define BOOST_TEST_DYN_LINK
-#include <boost/test/unit_test.hpp>
+#include <boost/test/included/unit_test.hpp>
 
 // Includes from cpptests
+#include "test_block_vector.h"
+#include "test_enum_bitfield.h"
 #include "test_sort.h"
+#include "test_streamers.h"
 #include "test_target_fields.h"
+#include "test_parameter.h"

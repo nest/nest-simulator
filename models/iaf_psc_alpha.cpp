@@ -26,12 +26,14 @@
 #include <limits>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 #include "propagator_stability.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -40,8 +42,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-nest::RecordablesMap< nest::iaf_psc_alpha >
-  nest::iaf_psc_alpha::recordablesMap_;
+nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
 
 namespace nest
 {
@@ -56,8 +57,6 @@ RecordablesMap< iaf_psc_alpha >::create()
 {
   // use standard names whereever you can for consistency!
   insert_( names::V_m, &iaf_psc_alpha::get_V_m_ );
-  insert_( names::weighted_spikes_ex, &iaf_psc_alpha::get_weighted_spikes_ex_ );
-  insert_( names::weighted_spikes_in, &iaf_psc_alpha::get_weighted_spikes_in_ );
   insert_( names::I_syn_ex, &iaf_psc_alpha::get_I_syn_ex_ );
   insert_( names::I_syn_in, &iaf_psc_alpha::get_I_syn_in_ );
 }
@@ -111,15 +110,15 @@ iaf_psc_alpha::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
+iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValue< double >( d, names::E_L, E_L_ );
+  updateValueParam< double >( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  if ( updateValueParam< double >( d, names::V_reset, V_reset_, node ) )
   {
     V_reset_ -= E_L_;
   }
@@ -128,7 +127,7 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
     V_reset_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  if ( updateValueParam< double >( d, names::V_th, Theta_, node ) )
   {
     Theta_ -= E_L_;
   }
@@ -137,7 +136,7 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
     Theta_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_min, LowerBound_ ) )
+  if ( updateValueParam< double >( d, names::V_min, LowerBound_, node ) )
   {
     LowerBound_ -= E_L_;
   }
@@ -146,12 +145,12 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
     LowerBound_ -= delta_EL;
   }
 
-  updateValue< double >( d, names::I_e, I_e_ );
-  updateValue< double >( d, names::C_m, C_ );
-  updateValue< double >( d, names::tau_m, Tau_ );
-  updateValue< double >( d, names::tau_syn_ex, tau_ex_ );
-  updateValue< double >( d, names::tau_syn_in, tau_in_ );
-  updateValue< double >( d, names::t_ref, TauR_ );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
+  updateValueParam< double >( d, names::C_m, C_, node );
+  updateValueParam< double >( d, names::tau_m, Tau_, node );
+  updateValueParam< double >( d, names::tau_syn_ex, tau_ex_, node );
+  updateValueParam< double >( d, names::tau_syn_in, tau_in_, node );
+  updateValueParam< double >( d, names::t_ref, TauR_, node );
 
   if ( C_ <= 0.0 )
   {
@@ -187,11 +186,9 @@ iaf_psc_alpha::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-iaf_psc_alpha::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL )
+iaf_psc_alpha::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValue< double >( d, names::V_m, y3_ ) )
+  if ( updateValueParam< double >( d, names::V_m, y3_, node ) )
   {
     y3_ -= p.E_L_;
   }
@@ -217,7 +214,7 @@ iaf_psc_alpha::Buffers_::Buffers_( const Buffers_&, iaf_psc_alpha& n )
  * ---------------------------------------------------------------- */
 
 iaf_psc_alpha::iaf_psc_alpha()
-  : Archiving_Node()
+  : ArchivingNode()
   , P_()
   , S_()
   , B_( *this )
@@ -226,7 +223,7 @@ iaf_psc_alpha::iaf_psc_alpha()
 }
 
 iaf_psc_alpha::iaf_psc_alpha( const iaf_psc_alpha& n )
-  : Archiving_Node( n )
+  : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -238,22 +235,13 @@ iaf_psc_alpha::iaf_psc_alpha( const iaf_psc_alpha& n )
  * ---------------------------------------------------------------- */
 
 void
-iaf_psc_alpha::init_state_( const Node& proto )
-{
-  const iaf_psc_alpha& pr = downcast< iaf_psc_alpha >( proto );
-  S_ = pr.S_;
-}
-
-void
 iaf_psc_alpha::init_buffers_()
 {
-  B_.ex_spikes_.clear(); // includes resize
-  B_.in_spikes_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.input_buffer_.clear(); // includes resize
 
   B_.logger_.reset();
 
-  Archiving_Node::clear_history();
+  ArchivingNode::clear_history();
 }
 
 void
@@ -318,8 +306,7 @@ iaf_psc_alpha::calibrate()
 void
 iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long lag = from; lag < to; ++lag )
@@ -327,9 +314,8 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     if ( S_.r_ == 0 )
     {
       // neuron not refractory
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.dI_ex_
-        + V_.P32_ex_ * S_.I_ex_ + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_
-        + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
+      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.dI_ex_ + V_.P32_ex_ * S_.I_ex_ + V_.P31_in_ * S_.dI_in_
+        + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
 
       // lower bound of membrane potential
       S_.y3_ = ( S_.y3_ < P_.LowerBound_ ? P_.LowerBound_ : S_.y3_ );
@@ -344,9 +330,13 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     S_.I_ex_ = V_.P21_ex_ * S_.dI_ex_ + V_.P22_ex_ * S_.I_ex_;
     S_.dI_ex_ *= V_.P11_ex_;
 
+    // get read access to the correct input-buffer slot
+    const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
+    auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
+
     // Apply spikes delivered in this step; spikes arriving at T+1 have
     // an immediate effect on the state of the neuron
-    V_.weighted_spikes_ex_ = B_.ex_spikes_.get_value( lag );
+    V_.weighted_spikes_ex_ = input[ Buffers_::SYN_EX ];
     S_.dI_ex_ += V_.EPSCInitialValue_ * V_.weighted_spikes_ex_;
 
     // alpha shape EPSCs
@@ -355,7 +345,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 
     // Apply spikes delivered in this step; spikes arriving at T+1 have
     // an immediate effect on the state of the neuron
-    V_.weighted_spikes_in_ = B_.in_spikes_.get_value( lag );
+    V_.weighted_spikes_in_ = input[ Buffers_::SYN_IN ];
     S_.dI_in_ += V_.IPSCInitialValue_ * V_.weighted_spikes_in_;
 
     // threshold crossing
@@ -374,7 +364,10 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     }
 
     // set new input current
-    S_.y0_ = B_.currents_.get_value( lag );
+    S_.y0_ = input[ Buffers_::I0 ];
+
+    // reset all values in the currently processed input-buffer slot
+    B_.input_buffer_.reset_values_all_channels( input_buffer_slot );
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
@@ -384,35 +377,29 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 void
 iaf_psc_alpha::handle( SpikeEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
+
+  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
   const double s = e.get_weight() * e.get_multiplicity();
 
-  if ( e.get_weight() > 0.0 )
-  {
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
-      s );
-  }
-  else
-  {
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
-      s );
-  }
+  // separate buffer channels for excitatory and inhibitory inputs
+  B_.input_buffer_.add_value( input_buffer_slot, s > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, s );
 }
 
 void
 iaf_psc_alpha::handle( CurrentEvent& e )
 {
-  assert( e.get_delay() > 0 );
+  assert( e.get_delay_steps() > 0 );
+
+  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
   const double I = e.get_current();
   const double w = e.get_weight();
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-    w * I );
+  B_.input_buffer_.add_value( input_buffer_slot, Buffers_::I0, w * I );
 }
 
 void

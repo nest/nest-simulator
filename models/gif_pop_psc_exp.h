@@ -23,11 +23,12 @@
 #ifndef PP_POP_PSC_BETA_H
 #define PP_POP_PSC_BETA_H
 
+
+// Includes from nestkernel:
 #include "nest.h"
 #include "node.h"
+#include "random_generators.h"
 #include "ring_buffer.h"
-#include "poisson_randomdev.h"
-#include "gsl_binomial_randomdev.h"
 #include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
@@ -35,108 +36,127 @@
 namespace nest
 {
 
-
 class Network;
 
-/* BeginDocumentation
-   Name: gif_pop_psc_exp - Population of generalized integrate-and-fire neurons
-   with exponential postsynaptic currents and adaptation
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
-   Description:
+Short description
++++++++++++++++++
 
-   This model simulates a population of spike-response model neurons with
-   multi-timescale adaptation and exponential postsynaptic currents, as
-   described in [1].
-
-   The single neuron model is defined by the hazard function
-
-      lambda_0 * exp[ ( V_m - E_sfa ) / Delta_V ]
-
-   After each spike the membrane potential V_m is reset to V_reset. Spike
-   frequency
-   adaptation is implemented by a set of exponentially decaying traces, the
-   sum of which is E_sfa. Upon a spike, all adaptation traces are incremented
-   by the respective q_sfa each and decay with the respective time constant
-   tau_sfa.
-
-   The corresponding single neuron model is available in NEST as gif_psc_exp.
-   The default parameters, although some are named slightly different, are not
-   matched in both models due to historical reasons. See below for the parameter
-   translation.
-
-   As gif_pop_psc_exp represents many neurons in one node, it may send a lot
-   of spikes. In each time step, it sends at most one spike though, the
-   multiplicity of which is set to the number of emitted spikes. Postsynaptic
-   neurons and devices in NEST understand this as several spikes, but
-   communication effort is reduced in simulations.
-
-   This model uses a new algorithm to directly simulate the population activity
-   (sum of all spikes) of the population of neurons, without explicitly
-   representing each single neuron (see [1]). The computational cost is largely
-   independent of the number N of neurons represented. The algorithm used
-   here is fundamentally different from and likely much faster than the one
-   used in the previously added population model pp_pop_psc_delta.
-
-   Connecting two population models corresponds to full connectivity of every
-   neuron in each population. An approximation of random connectivity can be
-   implemented by connecting populations through a spike_dilutor.
+Population of generalized integrate-and-fire neurons with exponential
+postsynaptic currents and adaptation
 
 
-   Parameters:
+Description
++++++++++++
 
-   The following parameters can be set in the status dictionary.
+This model simulates a population of spike-response model neurons with
+multi-timescale adaptation and exponential postsynaptic currents, as
+described by Schwalger et al. (2017) [1]_.
 
-   V_reset    double - Membrane potential is reset to this value in mV after a
-   spike.
-   V_T_star   double - Threshold level of the membrane potential in mV.
-   E_L        double - Resting potential in mV
-   Delta_V    double - Noise level of escape rate in mV.
-   C_m        double - Capacitance of the membrane in pF.
-   tau_m      double - Membrane time constant in ms.
-   t_ref      double - Duration of refractory period in ms.
-   I_e        double - Constant input current in pA.
-   N          long   - Number of neurons in the population.
-   len_kernel long   - Refractory effects are accounted for up to len_kernel
-   time steps
-   lambda_0   double - Firing rate at threshold in 1/s.
-   tau_syn_ex double - Time constant for excitatory synaptic currents in ms.
-   tau_syn_in double - Time constant for inhibitory synaptic currents in ms.
-   tau_sfa    double vector  - Adaptation time constants in ms.
-   q_sfa      double vector  - Adaptation kernel amplitudes in ms.
-   BinoRand   bool   - If True, binomial random numbers are used, otherwise
-                       we use Poisson distributed spike counts.
+The single neuron model is defined by the hazard function
 
+.. math::
 
-   Parameter translation to gif_psc_exp:
+ h(t) = \lambda_0  \exp\frac{V_m(t) - E_{\text{sfa}}(t)}{\Delta_V}
 
-   gif_pop_psc_exp    gif_psc_exp     relation
-   ----------------------------------------------------
-   tau_m              g_L             tau_m = C_m / g_L
-   N                  ---             use N gif_psc_exp
+After each spike, the membrane potential :math:`V_m` is reset to
+:math:`V_{\text{reset}}`. Spike frequency
+adaptation is implemented by a set of exponentially decaying traces, the
+sum of which is :math:`E_{\text{sfa}}`. Upon a spike, each of the adaptation traces is
+incremented by the respective :math:`q_{\text{sfa}}` and decays with the respective time constant
+:math:`\tau_{\text{sfa}}`.
+
+The corresponding single neuron model is available in NEST as ``gif_psc_exp``.
+The default parameters, although some are named slightly different, are not
+matched in both models for historical reasons. See below for the parameter
+translation.
+
+Connecting two population models corresponds to full connectivity of every
+neuron in each population. An approximation of random connectivity can be
+implemented by connecting populations through a ``spike_dilutor``.
 
 
-   References:
+Parameters
+++++++++++
 
-   [1] Towards a theory of cortical columns: From spiking neurons to
-       interacting neural populations of finite size
-       Tilo Schwalger, Moritz Deger, Wulfram Gerstner
-       PLoS Comput Biol 2017
+The following parameters can be set in the status dictionary.
+
+
+=========== ============= =====================================================
+ V_reset    mV            Membrane potential is reset to this value after
+                          a spike
+ V_T_star   mV            Threshold level of the membrane potential
+ E_L        mV            Resting potential
+ Delta_V    mV            Noise level of escape rate
+ C_m        pF            Capacitance of the membrane
+ tau_m      ms            Membrane time constant
+ t_ref      ms            Duration of refractory period
+ I_e        pA            Constant input current
+ N          integer       Number of neurons in the population
+ len_kernel integer       Refractory effects are accounted for up to len_kernel
+                          time steps
+ lambda_0   1/s           Firing rate at threshold
+ tau_syn_ex ms            Time constant for excitatory synaptic currents
+ tau_syn_in ms            Time constant for inhibitory synaptic currents
+ tau_sfa    list of ms    vector Adaptation time constants
+ q_sfa      list of ms    Adaptation kernel amplitudes
+ BinoRand   boolean       If True, binomial random numbers are used, otherwise
+                          we use Poisson distributed spike counts
+=========== ============= =====================================================
+
+
+=============== ============  =============================
+**Parameter translation to gif_psc_exp**
+-----------------------------------------------------------
+gif_pop_psc_exp  gif_psc_exp  relation
+tau_m            g_L          tau_m = C_m / g_L
+N                ---          use N gif_psc_exp neurons
+=============== ============  =============================
+
+
+References
+++++++++++
+
+.. [1] Schwalger T, Deger M, Gerstner W (2017). Towards a theory of cortical
+       columns: From spiking neurons to interacting neural populations of
+       finite size. PLoS Computational Biology.
        https://doi.org/10.1371/journal.pcbi.1005507
 
-   Sends: SpikeEvent
 
-   Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
+Sends
++++++
 
-   Authors: Nov 2016, Moritz Deger, Tilo Schwalger, Hesam Setareh
-   SeeAlso: gif_psc_exp, pp_pop_psc_delta, spike_dilutor
-*/
+SpikeEvent
+
+Receives
+++++++++
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+See also
+++++++++
+
+gif_psc_exp, pp_pop_psc_delta, spike_dilutor
+
+EndUserDocs */
+
 
 /**
- * Population of generalized integrate-and-fire neurons with exponential
- * postsynaptic currents and adaptation
+ * @note
+ * As gif_pop_psc_exp represents many neurons in one node, it may send a lot
+ * of spikes. In each time step, it sends at most one spike, the
+ * multiplicity of which is set to the number of emitted spikes. Postsynaptic
+ * neurons and devices in NEST understand this as several spikes, but
+ * communication effort is reduced in simulations.
+ *
+ * This model uses a new algorithm to directly simulate the population activity
+ * (sum of all spikes) of the population of neurons, without explicitly
+ * representing each single neuron. The computational cost is largely
+ * independent of the number N of neurons represented. The algorithm used
+ * here is fundamentally different from and likely much faster than the one
+ * used in the previously added population model pp_pop_psc_delta.
  */
-
-
 class gif_pop_psc_exp : public Node
 {
 
@@ -166,7 +186,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
 
@@ -189,7 +208,6 @@ private:
    */
   struct Parameters_
   {
-
     /** Number of neurons in the population. */
     long N_;
 
@@ -236,9 +254,9 @@ private:
     /** Binomial random number switch */
     bool BinoRand_;
 
-    Parameters_();                      //!< Sets default parameter values
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    Parameters_();                                  //!< Sets default parameter values
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -248,7 +266,6 @@ private:
    */
   struct State_
   {
-
     double y0_;        // DC input current
     double I_syn_ex_;  // synaptic current
     double I_syn_in_;  // synaptic current
@@ -263,7 +280,7 @@ private:
     State_(); //!< Default initialization
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -308,11 +325,10 @@ private:
     double h_; // simulation time step in ms
     double min_double_;
 
-    librandom::RngPtr rng_; // random number generator of own thread
+    RngPtr rng_; // random number generator of own thread
 
-    librandom::PoissonRandomDev poisson_dev_; // Poisson random number generator
-    librandom::GSL_BinomialRandomDev
-      bino_dev_; // Binomial random number generator
+    poisson_distribution poisson_dist_; //!< poisson distribution
+    binomial_distribution bino_dist_;   //!< binomial distribution
 
     double x_;                     // internal variable of population dynamics
     double z_;                     // internal variable of population dynamics
@@ -390,10 +406,7 @@ private:
 };
 
 inline port
-gif_pop_psc_exp::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+gif_pop_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -422,8 +435,7 @@ gif_pop_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-gif_pop_psc_exp::handles_test_event( DataLoggingRequest& dlr,
-  rport receptor_type )
+gif_pop_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -441,17 +453,17 @@ gif_pop_psc_exp::get_status( DictionaryDatum& d ) const
   // parent class is called. Since this model derives from Node, and
   // not from ArchivingNode, this call has been disabled here
   // (Node does not have a comparable method).
-  //  Archiving_Node::get_status(d);
+  //  ArchivingNode::get_status(d);
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
 gif_pop_psc_exp::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -462,7 +474,7 @@ gif_pop_psc_exp::set_status( const DictionaryDatum& d )
   // parent class is called. Since this model derives from Node, and
   // not from ArchivingNode, this call has been disabled here
   // (Node does not have a comparable method).
-  //  Archiving_Node::set_status(d);
+  //  ArchivingNode::set_status(d);
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -19,33 +19,35 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
-from matplotlib.pylab import *
+"""
+Auto- and crosscorrelation functions for spike trains
+-----------------------------------------------------
 
-'''
-Auto- and crosscorrelation functions for spike trains.
-
-A time bin of size tbin is centered around the time difference it
-represents. If the correlation function is calculated for tau in
-[-tau_max, tau_max], the pair events contributing to the left-most
-bin are those for which tau in [-tau_max-tbin/2, tau_max+tbin/2) and
+A time bin of size `tbin` is centered around the time difference it
+represents. If the correlation function is calculated for `tau` in
+`[-tau_max, tau_max]`, the pair events contributing to the left-most
+bin are those for which `tau` in `[-tau_max-tbin/2, tau_max+tbin/2)` and
 so on.
 
 Correlate two spike trains with each other assumes spike times to be ordered in
-time. tau > 0 means spike2 is later than spike1
+time. `tau > 0` means spike2 is later than spike1
 
-tau_max: maximum time lag in ms correlation function
-tbin:    bin size
-spike1:  first spike train [tspike...]
-spike2:  second spike train [tspike...]
-'''
+* tau_max: maximum time lag in ms correlation function
+* tbin:    bin size
+* spike1:  first spike train [tspike...]
+* spike2:  second spike train [tspike...]
+
+"""
+
+import nest
+import numpy as np
 
 
-def corr_spikes_sorted(spike1, spike2, tbin, tau_max, h):
-    tau_max_i = int(tau_max / h)
-    tbin_i = int(tbin / h)
+def corr_spikes_sorted(spike1, spike2, tbin, tau_max, resolution):
+    tau_max_i = int(tau_max / resolution)
+    tbin_i = int(tbin / resolution)
 
-    cross = zeros(int(2 * tau_max_i / tbin_i + 1), 'd')
+    cross = np.zeros(int(2 * tau_max_i / tbin_i + 1), 'd')
 
     j0 = 0
 
@@ -62,64 +64,56 @@ def corr_spikes_sorted(spike1, spike2, tbin, tau_max, h):
 
     return cross
 
+
 nest.ResetKernel()
 
-h = 0.1             # Computation step size in ms
+resolution = 0.1    # Computation step size in ms
 T = 100000.0        # Total duration
 delta_tau = 10.0
-tau_max = 100.0
+tau_max = 100.0     # ms correlation window
+t_bin = 10.0        # ms bin size
 pc = 0.5
 nu = 100.0
 
-# grng_seed is 0 because test data was produced for seed = 0
-nest.SetKernelStatus({'local_num_threads': 1, 'resolution': h,
-                      'overwrite_files': True, 'grng_seed': 0})
+nest.local_num_threads = 1
+nest.resolution = resolution
+nest.overwrite_files = True
+nest.rng_seed = 12345
 
 # Set up network, connect and simulate
 mg = nest.Create('mip_generator')
-nest.SetStatus(mg, {'rate': nu, 'p_copy': pc})
+mg.set(rate=nu, p_copy=pc)
 
 cd = nest.Create('correlation_detector')
-nest.SetStatus(cd, {'tau_max': tau_max, 'delta_tau': delta_tau})
+cd.set(tau_max=tau_max, delta_tau=delta_tau)
 
-sd = nest.Create('spike_detector')
-nest.SetStatus(sd, {'withtime': True,
-                    'withgid': True, 'time_in_steps': True})
+sr = nest.Create('spike_recorder', params={'time_in_steps': True})
 
 pn1 = nest.Create('parrot_neuron')
 pn2 = nest.Create('parrot_neuron')
 
 nest.Connect(mg, pn1)
 nest.Connect(mg, pn2)
-nest.Connect(pn1, sd)
-nest.Connect(pn2, sd)
+nest.Connect(pn1, sr)
+nest.Connect(pn2, sr)
 
-nest.SetDefaults('static_synapse', {'weight': 1.0, 'receptor_type': 0})
-nest.Connect(pn1, cd)
-
-nest.SetDefaults('static_synapse', {'weight': 1.0, 'receptor_type': 1})
-nest.Connect(pn2, cd)
+nest.Connect(pn1, cd, syn_spec={'weight': 1.0, 'receptor_type': 0})
+nest.Connect(pn2, cd, syn_spec={'weight': 1.0, 'receptor_type': 1})
 
 nest.Simulate(T)
 
-n_events = nest.GetStatus(cd)[0]['n_events']
-n1 = n_events[0]
-n2 = n_events[1]
+n_events_1, n_events_2 = cd.n_events
 
-lmbd1 = (n1 / (T - tau_max)) * 1000.0
-lmbd2 = (n2 / (T - tau_max)) * 1000.0
+lmbd1 = (n_events_1 / (T - tau_max)) * 1000.0
+lmbd2 = (n_events_2 / (T - tau_max)) * 1000.0
 
-h = 0.1
-tau_max = 100.0  # ms correlation window
-t_bin = 10.0  # ms bin size
+spikes = sr.get('events', 'senders')
 
-spikes = nest.GetStatus(sd)[0]['events']['senders']
+sp1 = spikes[spikes == 4]
+sp2 = spikes[spikes == 5]
 
-sp1 = find(spikes[:] == 4)
-sp2 = find(spikes[:] == 5)
-
-# Find crosscorrolation
-cross = corr_spikes_sorted(sp1, sp2, t_bin, tau_max, h)
+# Find crosscorrelation
+cross = corr_spikes_sorted(sp1, sp2, t_bin, tau_max, resolution)
 
 print("Crosscorrelation:")
 print(cross)

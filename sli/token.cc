@@ -69,6 +69,13 @@ Token::Token( unsigned long value )
   p = new IntegerDatum( value );
 }
 
+#ifdef HAVE_32BIT_ARCH
+Token::Token( uint64_t value )
+{
+  p = new IntegerDatum( value );
+}
+#endif
+
 Token::Token( double value )
 {
   p = new DoubleDatum( value );
@@ -124,11 +131,6 @@ Token::operator size_t() const
 Token::operator double() const
 {
   return getValue< double >( *this );
-}
-
-Token::operator float() const
-{
-  return getValue< float >( *this );
 }
 
 Token::operator bool() const

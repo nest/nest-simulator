@@ -162,7 +162,7 @@ private:
 
 // Part 4: Documentation for all functions -------------------------
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: Gammainc - incomplete gamma function
 
@@ -186,7 +186,7 @@ Remarks: This is the incomplete Gamma function P(a,x) defined as no. 6.5.1
 References: http://sources.redhat.com/gsl/ref
 */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: Erf - error function
 
@@ -210,7 +210,7 @@ References: http://sources.redhat.com/gsl/ref
 SeeAlso: Erfc
 */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: Erfc - complementary error function
 
@@ -234,7 +234,7 @@ References: http://sources.redhat.com/gsl/ref
 SeeAlso: Erf
 */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name:GaussDiskConv - Convolution of a Gaussian with an excentric disk
 

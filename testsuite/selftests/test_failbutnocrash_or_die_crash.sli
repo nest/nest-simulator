@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_failbutnocrash_or_die_crash - sli script to test the failbutnocrash_or_die_crash function
 
    Synopsis: (test_failbutnocrash_or_die_crash) run

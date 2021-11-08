@@ -19,7 +19,6 @@
 
 set( nest_sources
     neststartup.cpp neststartup.h
-    sli_neuron.h sli_neuron.cpp
     )
 
 add_executable( nest main.cpp ${nest_sources} )
@@ -50,40 +49,46 @@ else ()
     set_target_properties( nest_lib
         PROPERTIES
         OUTPUT_NAME nest
+
+        # delay lookup of symbols from libpython when building with MPI4Py
+        LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup"
         )
 endif ()
 
 target_link_libraries( nest
-    nestutil nestkernel random sli_lib sli_readline
-    ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} )
+    nestutil nestkernel sli_lib sli_readline
+    ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} OpenMP::OpenMP_CXX )
 
 target_link_libraries( nest_lib
-    nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} )
+    nestutil nestkernel sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
+    OpenMP::OpenMP_CXX )
 
 target_include_directories( nest PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_BINARY_DIR}/nest
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${SLI_MODULE_INCLUDE_DIRS}
     )
+
 
 target_compile_definitions( nest PRIVATE
     -D_BUILD_NEST_CLI
 )
 
 target_include_directories( nest_lib PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_BINARY_DIR}/nest
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
-    ${PROJECT_SOURCE_DIR}/librandom
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${SLI_MODULE_INCLUDE_DIRS}
-    ${PYTHON_INCLUDE_DIRS}
+    ${Python_INCLUDE_DIRS}
     )
+
 
 if ( HAVE_PYTHON )
   target_compile_definitions( nest_lib PRIVATE
@@ -92,13 +97,10 @@ if ( HAVE_PYTHON )
 endif ()
 
 install( TARGETS nest nest_lib
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
-
-install( FILES sli/models-init.sli
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
 
 FILTER_HEADERS("${nest_sources}" install_headers )
 install( FILES ${install_headers}

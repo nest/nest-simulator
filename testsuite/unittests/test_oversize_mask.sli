@@ -1,0 +1,191 @@
+/*
+ *  test_oversize_mask.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+% this test ensures that ConnectLayers accepts oversized masks only
+% when explicitly allowed
+
+(unittest) run
+/unittest using
+
+/make_grid_layer
+{
+  << /shape [ 1 1 ] /elements /iaf_psc_alpha /edge_wrap true >> CreateLayer
+}
+def
+
+/make_free_layer
+{
+  << /positions [[0. 0.]] /elements /iaf_psc_alpha /edge_wrap true /extent [1.0 1.0] >> CreateLayer
+}
+def
+
+% correct, grid-based
+{
+  ResetKernel
+  make_grid_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+     /mask << /grid << /shape [ 1 1 ] >> >>
+  >>
+  ConnectLayers
+} pass_or_die
+
+% incorrect, grid-based, too wide
+{
+  ResetKernel
+  make_grid_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+     /mask << /grid << /shape [ 2 1 ] >> >>
+  >>
+  ConnectLayers
+} fail_or_die
+
+% incorrect, grid-based, too tall
+{
+  ResetKernel
+  make_grid_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+     /mask << /grid << /shape [ 1 2 ] >> >>
+  >>
+  ConnectLayers
+} fail_or_die
+
+% incorrect, grid-based, too wide and tall
+{
+  ResetKernel
+  make_grid_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+     /mask << /grid << /shape [ 2 2 ] >> >>
+  >>
+  ConnectLayers
+} fail_or_die
+
+% correct, grid-based, too wide and tall, but oversized allowed
+{
+  ResetKernel
+  make_grid_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+     /mask << /grid << /shape [ 2 2 ] >> >>
+     /allow_oversized_mask true
+  >>
+  ConnectLayers
+} pass_or_die
+
+% ----------------------------
+
+% correct, circular
+{
+  ResetKernel
+  make_free_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+      /mask << /circular << /radius 0.5 >> >>
+  >>
+  ConnectLayers
+} pass_or_die
+
+% incorrect, circular, too wide
+{
+  ResetKernel
+  make_free_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+      /mask << /circular << /radius 0.51 >> >>
+  >>
+  ConnectLayers
+} fail_or_die
+
+% correct, circular, too wide but allowed
+{
+  ResetKernel
+  make_free_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+      /mask << /circular << /radius 0.51 >> >>
+      /allow_oversized_mask true
+  >>
+  ConnectLayers
+} pass_or_die
+
+% ----------------------------------------------------------
+
+% correct, doughnut
+{
+  ResetKernel
+  make_free_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+      /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.5 >> >>
+  >>
+  ConnectLayers
+} pass_or_die
+
+% incorrect, doughnut, too wide
+{
+  ResetKernel
+  make_free_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+      /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.51 >> >>
+  >>
+  ConnectLayers
+} fail_or_die
+
+% correct, doughnut, too wide but allowed
+{
+  ResetKernel
+  make_free_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+      /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.51 >> >>
+      /allow_oversized_mask true
+  >>
+  ConnectLayers
+} pass_or_die
+
+% -------------------------------------------
+
+% correct, rectangular
+{
+  ResetKernel
+  make_free_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+      /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.5 0.5] >> >>
+  >>
+  ConnectLayers
+} pass_or_die
+
+% incorrect, rectangular, too wide
+{
+  ResetKernel
+  make_free_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+      /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.51 0.5] >> >>
+  >>
+  ConnectLayers
+} fail_or_die
+
+% correct, rectangular, too wide but allowed
+{
+  ResetKernel
+  make_free_layer dup
+  << /connection_type (pairwise_bernoulli_on_target)
+      /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.51 0.5] >> >>
+      /allow_oversized_mask true
+  >>
+  ConnectLayers
+} pass_or_die
+
+
+endusing

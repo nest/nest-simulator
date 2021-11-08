@@ -23,7 +23,6 @@
 #ifndef VECTOR_UTIL_H
 #define VECTOR_UTIL_H
 
-#include <deque>
 #include <vector>
 #include <cstddef>
 
@@ -39,20 +38,13 @@ grow( std::vector< T >& v )
   // while growing large vectors; value determined by experimenting
   // with different max block sizes
   const size_t max_block_size_MiB = 256;
-  const size_t max_block_size = static_cast< size_t >(
-    max_block_size_MiB * ( 2 << 20 ) / static_cast< double >( sizeof( T ) ) );
+  const size_t max_block_size =
+    static_cast< size_t >( max_block_size_MiB * ( 2 << 20 ) / static_cast< double >( sizeof( T ) ) );
 
   if ( v.size() == v.capacity() )
   {
-    v.reserve( v.size() < max_block_size ? 2 * v.size()
-                                         : ( v.size() + max_block_size ) );
+    v.reserve( v.size() < max_block_size ? 2 * v.size() : ( v.size() + max_block_size ) );
   }
-}
-
-template < typename T >
-inline void
-grow( std::deque< T >& v )
-{
 }
 
 } // namespace vector_util

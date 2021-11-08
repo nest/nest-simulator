@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-573 - Maximum number of synapse types reached in copy_synapse_prototype without error message 
 
@@ -39,7 +39,8 @@ Author: Maximilian Schmidt, 2014-02-20
 M_ERROR setverbosity
 
 {
-[1 255] Range
+/max_num_syn_models 0 GetStatus /max_num_syn_models get def
+[1 max_num_syn_models] Range
 {
     cvs (syn) exch join cvlit
     /static_synapse

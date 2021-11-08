@@ -21,8 +21,7 @@
  */
 
 % Debuggin support for SLI
-/*
-BeginDocumentation
+/** @BeginDocumentation
    
    Name: debug.sli - Debugging support for sli 
    
@@ -47,8 +46,7 @@ BeginDocumentation
 systemdict begin
 
 %% Resume operation after a system signal
-/*
-BeginDocumentation
+/** @BeginDocumentation
    
    Name: resume - Resume interrupted SLI program after a system signal.
    
@@ -105,8 +103,7 @@ BeginDocumentation
    /SingleStepMode false
  >> def
 
-/*
-BeginDocumentation
+/** @BeginDocumentation
    
    Name: inspect - inspect an object
    
@@ -333,7 +330,7 @@ def
 end
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: break - interrupt the execution of a procedure for inspection
 SeeAlso: continue
 */
@@ -361,7 +358,7 @@ SeeAlso: continue
  } loop
 } bind def
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: continue - continue an interrupted  procedure
 SeeAlso: break
 */

@@ -23,8 +23,6 @@
 #ifndef KERNEL_MANAGER_H
 #define KERNEL_MANAGER_H
 
-#include <ctime>
-
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
@@ -35,7 +33,7 @@
 #include "mpi_manager.h"
 #include "music_manager.h"
 #include "node_manager.h"
-#include "rng_manager.h"
+#include "random_manager.h"
 #include "simulation_manager.h"
 #include "sp_manager.h"
 #include "vp_manager.h"
@@ -44,7 +42,7 @@
 #include "dictdatum.h"
 
 // clang-format off
-/* BeginDocumentation
+/** @BeginDocumentation
  Name: kernel - Global properties of the simulation kernel.
 
  Description:
@@ -72,22 +70,11 @@
  off_grid_spiking              booltype    - Whether to transmit precise spike times in MPI
                                              communication (read only)
 
- Connector configuration
- initial_connector_capacity    integertype - When a connector is first created, it starts with this
-                                             capacity (if >= connector_cutoff)
- large_connector_limit         integertype - Capacity doubling is used up to this limit
- large_connector_growth_factor doubletype  - Capacity growth factor to use beyond the limit
-
  Random number generators
- grng_seed                     integertype - Seed for global random number generator used
-                                             synchronously by all virtual processes to
-                                             create, e.g., fixed fan-out connections
-                                             (write only).
- rng_seeds                     arraytype   - Seeds for the per-virtual-process random
-                                             number generators used for most purposes.
-                                             Array with one integer per virtual process,
-                                             all must be unique and differ from
-                                             grng_seed (write only).
+ rng_types                     arraytype   - Names of random number generator types available (read only)
+ rng_type                      stringtype  - Name of random number generator type used by kernel
+ rng_seed                      integertype - Seed value used as basis of seeding of all random number
+                                             generators managed by the kernel (\f$1 leq s \leq 2^{32}-1\f$).
 
  Output
  data_path                     stringtype  - A path, where all data is written to
@@ -124,7 +111,7 @@ private:
   KernelManager();
   ~KernelManager();
 
-  std::clock_t fingerprint_;
+  unsigned long fingerprint_;
 
   static KernelManager* kernel_manager_instance_;
 
@@ -176,7 +163,10 @@ public:
    *
    * @see initialize(), finalize()
    */
-  void change_number_of_threads( size_t );
+  void change_number_of_threads( thread );
+
+  void prepare();
+  void cleanup();
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );
@@ -184,13 +174,12 @@ public:
   //! Returns true if kernel is initialized
   bool is_initialized() const;
 
-  std::clock_t get_fingerprint() const;
+  unsigned long get_fingerprint() const;
 
   LoggingManager logging_manager;
-  IOManager io_manager;
   MPIManager mpi_manager;
   VPManager vp_manager;
-  RNGManager rng_manager;
+  RandomManager random_manager;
   SimulationManager simulation_manager;
   ModelRangeManager modelrange_manager;
   ConnectionManager connection_manager;
@@ -199,8 +188,10 @@ public:
   ModelManager model_manager;
   MUSICManager music_manager;
   NodeManager node_manager;
+  IOManager io_manager;
 
 private:
+  std::vector< ManagerInterface* > managers;
   bool initialized_; //!< true if all sub-managers initialized
 };
 
@@ -227,7 +218,7 @@ nest::KernelManager::is_initialized() const
   return initialized_;
 }
 
-inline std::clock_t
+inline unsigned long
 nest::KernelManager::get_fingerprint() const
 {
   return fingerprint_;

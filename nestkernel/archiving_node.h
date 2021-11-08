@@ -20,18 +20,11 @@
  *
  */
 
-/**
- * \file archiving_node.h
- * Definition of Archiving_Node which is capable of
- * recording and managing a spike history.
- * \author Moritz Helias, Abigail Morrison
- * \date april 2006
- */
-
 #ifndef ARCHIVING_NODE_H
 #define ARCHIVING_NODE_H
 
 // C++ includes:
+#include <algorithm>
 #include <deque>
 
 // Includes from nestkernel:
@@ -39,7 +32,7 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
-#include "synaptic_element.h"
+#include "structural_plasticity_node.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -50,102 +43,67 @@ namespace nest
 {
 
 /**
- * \class Archiving_Node
- * a node which archives spike history for the purposes of
- * timing dependent plasticity
+ * A node which archives spike history for the purposes of spike-timing
+ * dependent plasticity (STDP)
  */
-class Archiving_Node : public Node
+class ArchivingNode : public StructuralPlasticityNode
 {
-  using Node::get_synaptic_elements;
-
 public:
   /**
-   * \fn Archiving_Node()
+   * \fn ArchivingNode()
    * Constructor.
    */
-  Archiving_Node();
+  ArchivingNode();
 
   /**
-   * \fn Archiving_Node()
+   * \fn ArchivingNode()
    * Copy Constructor.
    */
-  Archiving_Node( const Archiving_Node& );
-  /**
-
-   * \fn double get_Ca_minus()
-   * return the current value of Ca_minus
-   */
-  double get_Ca_minus() const;
-
-  /**
-   * \fn double get_synaptic_elements(Name n)
-   * get the number of synaptic element for the current Node
-   * the number of synaptic elements is a double value but the number of
-   * actual vacant and connected elements is an integer truncated from this
-   * value
-   */
-  double get_synaptic_elements( Name n ) const;
-
-  /**
-   * \fn int get_synaptic_elements_vacant(Name n)
-   * get the number of synaptic elements of type n which are available
-   * for new synapse creation
-   */
-  int get_synaptic_elements_vacant( Name n ) const;
-
-  /**
-   * \fn int get_synaptic_elements_connected(Name n)
-   * get the number of synaptic element of type n which are currently
-   * connected
-   */
-  int get_synaptic_elements_connected( Name n ) const;
-
-  /**
-   * \fn std::map<Name, double> get_synaptic_elements()
-   * get the number of all synaptic elements for the current Node
-   */
-  std::map< Name, double > get_synaptic_elements() const;
-
-  /**
-   * \fn void update_synaptic_elements()
-   * Change the number of synaptic elements in the node depending on the
-   * dynamics described by the corresponding growth curve
-   */
-  void update_synaptic_elements( double t );
-
-  /**
-   * \fn void decay_synaptic_elements_vacant()
-   * Delete a certain portion of the vacant synaptic elements which are not
-   * in use
-   */
-  void decay_synaptic_elements_vacant();
-
-  /**
-   * \fn void connect_synaptic_element()
-   * Change the number of connected synaptic elements by n
-   */
-  void connect_synaptic_element( Name name, int n );
+  ArchivingNode( const ArchivingNode& );
 
   /**
    * \fn double get_K_value(long t)
-   * return the Kminus value at t (in ms).
+   * return the Kminus (synaptic trace) value at t (in ms). When the trace is
+   * requested at the exact same time that the neuron emits a spike, the trace
+   * value as it was just before the spike is returned.
    */
   double get_K_value( double t );
 
   /**
-   * write the Kminus and triplet_Kminus values at t (in ms) to
-   * the provided locations.
+   * \fn void get_K_values( double t,
+   *   double& Kminus,
+   *   double& nearest_neighbor_Kminus,
+   *   double& Kminus_triplet )
+   * write the Kminus (eligibility trace for STDP),
+   * nearest_neighbour_Kminus (eligibility trace for nearest-neighbour STDP:
+   *   like Kminus, but increased to 1, rather than by 1, on a spike
+   *   occurrence),
+   * and Kminus_triplet
+   * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
-
-  void get_K_values( double t, double& Kminus, double& triplet_Kminus );
+  void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet );
 
   /**
-   * \fn double get_triplet_K_value(std::deque<histentry>::iterator &iter)
+   * \fn void get_K_values( double t,
+   *   double& Kminus,
+   *   double& Kminus_triplet )
+   * The legacy version of the function, kept for compatibility
+   * after changing the function signature in PR #865.
+   * @throws UnexpectedEvent
+   */
+  void
+  get_K_values( double t, double& Kminus, double& Kminus_triplet )
+  {
+    double nearest_neighbor_Kminus_to_discard;
+    get_K_values( t, Kminus, nearest_neighbor_Kminus_to_discard, Kminus_triplet );
+  }
+
+  /**
+   * \fn double get_K_triplet_value(std::deque<histentry>::iterator &iter)
    * return the triplet Kminus value for the associated iterator.
    */
-
-  double get_triplet_K_value( const std::deque< histentry >::iterator& iter );
+  double get_K_triplet_value( const std::deque< histentry >::iterator& iter );
 
   /**
    * \fn void get_history(long t1, long t2,
@@ -165,16 +123,10 @@ public:
    * t_first_read: The newly registered synapse will read the history entries
    * with t > t_first_read.
    */
-  void register_stdp_connection( double t_first_read );
+  void register_stdp_connection( double t_first_read, double delay );
 
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
-
-  /**
-   * retrieve the current value of tau_Ca which defines the exponential decay
-   * constant of the intracellular calcium concentration
-   */
-  double get_tau_Ca() const;
 
 protected:
   /**
@@ -195,17 +147,17 @@ protected:
    */
   void clear_history();
 
-private:
   // number of incoming connections from stdp connectors.
   // needed to determine, if every incoming connection has
   // read the spikehistory for a given point in time
   size_t n_incoming_;
 
+private:
   // sum exp(-(t-ti)/tau_minus)
   double Kminus_;
 
   // sum exp(-(t-ti)/tau_minus_triplet)
-  double triplet_Kminus_;
+  double Kminus_triplet_;
 
   double tau_minus_;
   double tau_minus_inv_;
@@ -214,51 +166,19 @@ private:
   double tau_minus_triplet_;
   double tau_minus_triplet_inv_;
 
+  double max_delay_;
+  double trace_;
+
   double last_spike_;
 
   // spiking history needed by stdp synapses
   std::deque< histentry > history_;
-
-  /*
-   * Structural plasticity
-   */
-
-  // Time of the last update of the Calcium concentration in ms
-  double Ca_t_;
-
-  // Value of the calcium concentration [Ca2+] at Ca_t_. Intracellular calcium
-  // concentration has a linear factor to mean electrical activity of 10^2,
-  // this means, for example, that a [Ca2+] of 0.2 is equivalent to a mean
-  // activity of 20Hz.
-  double Ca_minus_;
-
-  // Time constant for exponential decay of the intracellular calcium
-  // concentration
-  double tau_Ca_;
-
-  // Increase in calcium concentration [Ca2+] for each spike of the neuron
-  double beta_Ca_;
-
-  // Map of the synaptic elements
-  std::map< Name, SynapticElement > synaptic_elements_map_;
 };
 
 inline double
-Archiving_Node::get_spiketime_ms() const
+ArchivingNode::get_spiketime_ms() const
 {
   return last_spike_;
-}
-
-inline double
-Archiving_Node::get_tau_Ca() const
-{
-  return tau_Ca_;
-}
-
-inline double
-Archiving_Node::get_Ca_minus() const
-{
-  return Ca_minus_;
 }
 
 } // of namespace

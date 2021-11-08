@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-452 - Ensure that precise simulations give identical results whether stepped or run continuously
 
@@ -32,7 +32,7 @@ whether one simulates the full simulation time without interruption, or splits t
 into many small pieces.
 
 The problem was unrelated to the setting of kernel property  /off_grid_spiking
-and the spike_detector property  /precise_times.
+and the spike_recorder property  /precise_times.
  
 Author: Hans Ekkehard Plesser, 2010-09-30; based on original reproduced code by Alexander Hanuschkin
  */
@@ -58,23 +58,18 @@ M_ERROR setverbosity
    
  pg n 1.0 1.0 Connect
 
- /spike_detector 
-     <<
-      /withtime true   
-      /withgid false
-      /precise_times false  % problem was unrelated to setting
-    >> Create /sd Set
+ /spike_recorder Create /sr Set
 
- n sd Connect
+ n sr Connect
 
  simcommand
 
- sd [/events /times] get cva 
+ sr [/events /times] get cva 
 
 } def 
 
 
-[/iaf_psc_delta_canon /iaf_psc_alpha_canon ]
+[/iaf_psc_delta_ps /iaf_psc_alpha_ps ]
 {
  {Run} exch prepend
  [

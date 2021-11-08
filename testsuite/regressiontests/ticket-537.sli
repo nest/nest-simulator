@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-537 - Regression test for memory allocation/free error in TokenarrayObj
 

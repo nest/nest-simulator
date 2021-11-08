@@ -28,10 +28,11 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "gid_collection.h"
+#include "node_collection.h"
 #include "nest_types.h"
 #include "sparse_node_array.h"
 
@@ -57,7 +58,6 @@ public:
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
 
-  void reinit_nodes();
   /**
    * Get properties of a node. The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.
@@ -80,31 +80,26 @@ public:
    * @param m valid Model ID.
    * @param n Number of Nodes to be created. Defaults to 1 if not
    * specified.
-   * @returns GIDCollection as lock pointer
+   * @returns NodeCollection as lock pointer
    * @throws nest::UnknownModelID
    */
-  GIDCollectionPTR add_node( index m, long n = 1 );
-
-
-  /**
-   * Restore nodes from an array of status dictionaries.
-   * The following entries must be present in each dictionary:
-   * /model - with the name or index of a neuron mode.
-   *
-   * The following entries are optional:
-   * /parent - the node is created in the parent subnet
-   *
-   * Restore nodes uses the current working node as root. Thus, all
-   * GIDs in the status dictionaties are offset by the GID of the current
-   * working node. This allows entire subnetworks to be copied.
-   */
-  void restore_nodes( const ArrayDatum& );
+  NodeCollectionPTR add_node( index m, long n = 1 );
 
   /**
-   * Set the state (observable dynamic variables) of a node to model defaults.
-   * @see Node::init_state()
+   * Get node ID's of all nodes with the given properties.
+   *
+   * Only node ID's of nodes matching the properties given in the dictionary
+   * exactly will be returned. If the dictionary is empty, all nodes will be
+   * returned. If the local_only bool is true, only node IDs of nodes simulated on
+   * the local MPI process will be returned.
+   *
+   * @param dict parameter dictionary of selection properties
+   * @param local_only bool indicating whether all nodes, or just mpi local nodes
+   * should be returned.
+   *
+   * @returns NodeCollection as lock pointer
    */
-  void init_state( index );
+  NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
   /**
    * Return total number of network nodes.
@@ -117,9 +112,9 @@ public:
   index get_max_num_local_nodes() const;
 
   /**
-   * Returns the number of devices per virtual process.
+   * Returns the number of devices per thread.
    */
-  index get_num_local_devices() const;
+  index get_num_thread_local_devices( thread t ) const;
 
   /**
    * Print network information.
@@ -132,22 +127,22 @@ public:
   bool is_local_node( Node* ) const;
 
   /**
-   * Return true, if the given gid is on the local machine
+   * Return true, if the given node ID is on the local machine
    */
-  bool is_local_gid( index gid ) const;
+  bool is_local_node_id( index node_id ) const;
 
   /**
    * Return pointer to the specified Node. The function expects that
-   * the given gid and thread are valid. If they are not, an assertion
+   * the given node ID and thread are valid. If they are not, an assertion
    * will fail. In case the given Node does not exist on the fiven
    * thread, a proxy is returned instead.
    *
-   * @param gid index of the Node
+   * @param node_id index of the Node
    * @param tid local thread index of the Node
    *
    * @ingroup net_access
    */
-  Node* get_node_or_proxy( index gid, thread tid );
+  Node* get_node_or_proxy( index node_id, thread tid );
 
   /**
    * Return pointer of the specified Node.
@@ -161,7 +156,7 @@ public:
    * If the node has proxies, it returns the node on the first thread (used by
    * recorders).
    *
-   * @params gid Index of the Node.
+   * @params node_id Index of the Node.
    */
   Node* get_mpi_local_node_or_device_head( index );
 
@@ -252,9 +247,7 @@ private:
    *        each call so Node::set_status_()
    * @throws UnaccessedDictionaryEntry
    */
-  void set_status_single_node_( Node&,
-    const DictionaryDatum&,
-    bool clear_flags = true );
+  void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.
@@ -269,10 +262,10 @@ private:
    * VPs, it is represented by a proxy.
    *
    * @param model Model of neuron to create.
-   * @param min_gid GID of first neuron to create.
-   * @param max_gid GID of last neuron to create (inclusive).
+   * @param min_node_id node ID of first neuron to create.
+   * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_neurons_( Model& model, index min_gid, index max_gid );
+  void add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
   /**
    * Add device nodes.
@@ -280,10 +273,10 @@ private:
    * For device nodes, a clone of the node is added to every virtual process.
    *
    * @param model Model of neuron to create.
-   * @param min_gid GID of first neuron to create.
-   * @param max_gid GID of last neuron to create (inclusive).
+   * @param min_node_id node ID of first neuron to create.
+   * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_devices_( Model& model, index min_gid, index max_gid );
+  void add_devices_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
   /**
    * Add MUSIC nodes.
@@ -292,11 +285,10 @@ private:
    * always placed on thread 0.
    *
    * @param model Model of neuron to create.
-   * @param min_gid GID of first neuron to create.
-   * @param max_gid GID of last neuron to create (inclusive).
+   * @param min_node_id node ID of first neuron to create.
+   * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_music_nodes_( Model& model, index min_gid, index max_gid );
-
+  void add_music_nodes_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr );
 
 private:
   /**
@@ -305,28 +297,30 @@ private:
   */
   std::vector< SparseNodeArray > local_nodes_;
 
-  std::vector< std::vector< Node* > >
-    wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
-                     //!< use the waveform relaxation method
-  bool wfr_is_used_; //!< there is at least one node that uses
-                     //!< waveform relaxation
+  std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
+                                                      //!< use the waveform relaxation method
+  bool wfr_is_used_;                                  //!< there is at least one node that uses
+                                                      //!< waveform relaxation
   //! Network size when wfr_nodes_vec_ was last updated
   index wfr_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
 
-  index num_local_devices_; //!< stores number of local devices
+  std::vector< index > num_thread_local_devices_; //!< stores number of thread local devices
 
   bool have_nodes_changed_; //!< true if new nodes have been created
                             //!< since startup or last call to simulate
 
   //! Store exceptions raised in thread-parallel sections for later handling
-  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
+
+  // private stop watch for benchmarking purposes
+  Stopwatch sw_construction_create_;
 };
 
 inline index
 NodeManager::size() const
 {
-  return local_nodes_[ 0 ].get_max_gid();
+  return local_nodes_[ 0 ].get_max_node_id();
 }
 
 inline Node*

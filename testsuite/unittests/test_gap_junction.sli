@@ -20,7 +20,7 @@
  *
  */
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
 
     Name: testsuite::test_gap_junction - Ensure that gap_junction connection can only be created between neurons which support them.
 
@@ -59,7 +59,7 @@ M_ERROR setverbosity
   setup
   neuron_gap neuron_gap
   << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction >> 
+  << /synapse_model /gap_junction >>
   Connect
 } pass_or_die
 
@@ -67,7 +67,7 @@ M_ERROR setverbosity
   setup
   neuron_gap neuron_gap
   << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction /weight 2.0 >> 
+  << /synapse_model /gap_junction /weight 2.0 >>
   Connect
 } pass_or_die
 
@@ -75,16 +75,16 @@ M_ERROR setverbosity
   setup
   neuron_gap neuron_gap
   << /rule /all_to_all >> 
-  << /model /gap_junction >> 
+  << /synapse_model /gap_junction >>
   Connect
 } pass_or_die
 
 % Check that delay cannot be set for gap-junction connections
 {
   setup
-  neuron_gap  neuron_gap
+  neuron_gap neuron_gap
   << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction /delay 2.0 >> 
+  << /synapse_model /gap_junction /delay 2.0 >>
   Connect
 } fail_or_die
 
@@ -92,24 +92,16 @@ M_ERROR setverbosity
   setup
   neuron_gap neuron_gap
   << /rule /all_to_all >> 
-  << /model /gap_junction /delay 2.0 >> 
+  << /synapse_model /gap_junction /delay 2.0 >>
   Connect
 } fail_or_die
 
 % Check that illegal gap-junction connections cannot be created
 {
   setup
-  neuron_gap 0 get neuron_gap 0 get
-  << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction >> 
-  Connect
-} fail_or_die
-
-{
-  setup
   neuron_no_gap neuron_no_gap
   << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction >> 
+  << /synapse_model /gap_junction >>
   Connect
 } fail_or_die
 
@@ -117,7 +109,7 @@ M_ERROR setverbosity
   setup
   neuron_no_gap neuron_gap
   << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction >> 
+  << /synapse_model /gap_junction >>
   Connect
 } fail_or_die
 
@@ -126,7 +118,7 @@ M_ERROR setverbosity
   setup
   neuron_gap neuron_no_gap
   << /rule /one_to_one /make_symmetric false >> 
-  << /model /gap_junction /weight 2.0 >> 
+  << /synapse_model /gap_junction /weight 2.0 >>
   Connect
 } fail_or_die
 
@@ -143,7 +135,7 @@ M_ERROR setverbosity
   % ... then create a gap-junction connection
   neuron_gap neuron_gap
   << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction >> 
+  << /synapse_model /gap_junction >>
   Connect
 
   GetKernelStatus /max_delay get /new_max Set
@@ -180,7 +172,7 @@ M_ERROR setverbosity
   % ... then create a gap-junction connection
   neuron_gap neuron_gap
   << /rule /one_to_one /make_symmetric true >> 
-  << /model /gap_junction >> 
+  << /synapse_model /gap_junction >>
   Connect
 
   GetKernelStatus /max_delay get /new_max Set

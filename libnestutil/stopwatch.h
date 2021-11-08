@@ -108,8 +108,8 @@ public:
    * Returns the time elapsed between the start and stop of the
    * stopwatch. If it is running, it returns the time from start
    * until now. If the stopwatch is run previously, the previous
-   * runtime is added. If you want only the last measurment, you
-   * have to reset the timer, before stating the measurment.
+   * runtime is added. If you want only the last measurement, you
+   * have to reset the timer, before stating the measurement.
    * Does not change the running state.
    */
   double elapsed( timeunit_t timeunit = SECONDS ) const;
@@ -118,8 +118,8 @@ public:
    * Returns the time elapsed between the start and stop of the
    * stopwatch. If it is running, it returns the time from start
    * until now. If the stopwatch is run previously, the previous
-   * runtime is added. If you want only the last measurment, you
-   * have to reset the timer, before stating the measurment.
+   * runtime is added. If you want only the last measurement, you
+   * have to reset the timer, before stating the measurement.
    * Does not change the running state.
    * In contrast to Stopwatch::elapsed(), only the timestamp is returned,
    * that is the number if microseconds as an integer.
@@ -134,16 +134,13 @@ public:
   /**
    * This method prints out the currently elapsed time.
    */
-  void print( const char* msg = "",
-    timeunit_t timeunit = SECONDS,
-    std::ostream& os = std::cout ) const;
+  void print( const char* msg = "", timeunit_t timeunit = SECONDS, std::ostream& os = std::cout ) const;
 
   /**
    * Convenient method for writing time in seconds
    * to some ostream.
    */
-  friend std::ostream& operator<<( std::ostream& os,
-    const Stopwatch& stopwatch );
+  friend std::ostream& operator<<( std::ostream& os, const Stopwatch& stopwatch );
 
 private:
 #ifndef DISABLE_TIMING
@@ -161,8 +158,7 @@ private:
 inline bool
 Stopwatch::correct_timeunit( timeunit_t t )
 {
-  return t == MICROSEC || t == MILLISEC || t == SECONDS || t == MINUTES
-    || t == HOURS || t == DAYS;
+  return t == MICROSEC || t == MILLISEC || t == SECONDS || t == MINUTES || t == HOURS || t == DAYS;
 }
 
 inline void
@@ -222,7 +218,7 @@ nest::Stopwatch::elapsed_timestamp() const
   }
   else
   {
-    // stopped before, get time of current measurment + last measurments
+    // stopped before, get time of current measurement + last measurements
     return _end - _beg + _prev_elapsed;
   }
 #else
@@ -236,15 +232,13 @@ nest::Stopwatch::reset()
 #ifndef DISABLE_TIMING
   _beg = 0; // invariant: _end >= _beg
   _end = 0;
-  _prev_elapsed = 0; // erase all prev. measurments
+  _prev_elapsed = 0; // erase all prev. measurements
   _running = false;  // of course not running.
 #endif
 }
 
 inline void
-nest::Stopwatch::print( const char* msg,
-  timeunit_t timeunit,
-  std::ostream& os ) const
+nest::Stopwatch::print( const char* msg, timeunit_t timeunit, std::ostream& os ) const
 {
 #ifndef DISABLE_TIMING
   assert( correct_timeunit( timeunit ) );
@@ -272,9 +266,8 @@ nest::Stopwatch::print( const char* msg,
     break;
   }
 #ifdef DEBUG
-  os << " (running: " << ( _running ? "true" : "false" ) << ", begin: " << _beg
-     << ", end: " << _end << ", diff: " << ( _end - _beg )
-     << ", prev: " << _prev_elapsed << ")";
+  os << " (running: " << ( _running ? "true" : "false" ) << ", begin: " << _beg << ", end: " << _end
+     << ", diff: " << ( _end - _beg ) << ", prev: " << _prev_elapsed << ")";
 #endif
   os << std::endl;
 #endif

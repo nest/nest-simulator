@@ -35,9 +35,8 @@ find_library( NEUROSIM_LIBRARY
     NAMES neurosim
     HINTS ${LIBNEUROSIM_ROOT}/lib
     )
-
 find_library( PYNEUROSIM_LIBRARY
-    NAMES pyneurosim
+    NAMES py3neurosim
     HINTS ${LIBNEUROSIM_ROOT}/lib
     )
 

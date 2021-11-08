@@ -25,9 +25,10 @@
 
 // C++ includes:
 #include <cassert>
-#include <deque>
 #include <iostream>
 #include <vector>
+
+#include "block_vector.h"
 
 namespace nest
 {
@@ -40,18 +41,26 @@ struct SourceTablePosition
   long tid;    //!< thread index
   long syn_id; //!< synapse-type index
   long lcid;   //!< local connection index
+
   SourceTablePosition();
   SourceTablePosition( const long tid, const long syn_id, const long lcid );
-  SourceTablePosition( const SourceTablePosition& rhs );
+  SourceTablePosition( const SourceTablePosition& rhs ) = default;
 
-  template < typename T >
-  void wrap_position(
-    const std::vector< std::vector< std::vector< T > > >& sources );
-  template < typename T >
-  void wrap_position(
-    const std::vector< std::vector< std::deque< T > > >& sources );
+  /**
+   * Decreases indices until a valid entry is found.
+   */
+  void seek_to_next_valid_index( const std::vector< std::vector< BlockVector< Source > > >& sources );
 
-  bool is_at_end() const;
+  /**
+   * Decreases the inner most index (lcid).
+   */
+  void decrease();
+
+  /**
+   * Returns true if the indices point outside the SourceTable, e.g.,
+   * to signal that the end was reached.
+   */
+  bool is_invalid() const;
 };
 
 inline SourceTablePosition::SourceTablePosition()
@@ -61,31 +70,27 @@ inline SourceTablePosition::SourceTablePosition()
 {
 }
 
-inline SourceTablePosition::SourceTablePosition( const long tid,
-  const long syn_id,
-  const long lcid )
+inline SourceTablePosition::SourceTablePosition( const long tid, const long syn_id, const long lcid )
   : tid( tid )
   , syn_id( syn_id )
   , lcid( lcid )
 {
 }
 
-inline SourceTablePosition::SourceTablePosition(
-  const SourceTablePosition& rhs )
-  : tid( rhs.tid )
-  , syn_id( rhs.syn_id )
-  , lcid( rhs.lcid )
-{
-}
-
-template < typename T >
 inline void
-SourceTablePosition::wrap_position(
-  const std::vector< std::vector< std::vector< T > > >& sources )
+SourceTablePosition::seek_to_next_valid_index( const std::vector< std::vector< BlockVector< Source > > >& sources )
 {
-  // check for validity of indices and update if necessary
+  if ( lcid >= 0 )
+  {
+    return; // nothing to do if we are at a valid index
+  }
+
+  // we stay in this loop either until we can return a valid position,
+  // i.e., lcid >= 0, or we have reached the end of the
+  // multidimensional vector
   while ( lcid < 0 )
   {
+    // first try finding a valid lcid by only decreasing synapse index
     --syn_id;
     if ( syn_id >= 0 )
     {
@@ -93,6 +98,8 @@ SourceTablePosition::wrap_position(
       continue;
     }
 
+    // if we can not find a valid lcid by decreasing synapse indices,
+    // try decreasing thread index
     --tid;
     if ( tid >= 0 )
     {
@@ -104,74 +111,41 @@ SourceTablePosition::wrap_position(
       continue;
     }
 
-    assert( tid < 0 );
-    assert( syn_id < 0 );
-    assert( lcid < 0 );
-    return;
+    // if we can not find a valid lcid by decreasing synapse or thread
+    // indices, we have read all entries
+    assert( tid == -1 );
+    assert( syn_id == -1 );
+    assert( lcid == -1 );
+    return; // reached the end without finding a valid entry
   }
-}
 
-template < typename T >
-inline void
-SourceTablePosition::wrap_position(
-  const std::vector< std::vector< std::deque< T > > >& sources )
-{
-  // check for validity of indices and update if necessary
-  while ( lcid < 0 )
-  {
-    --syn_id;
-    if ( syn_id >= 0 )
-    {
-      lcid = sources[ tid ][ syn_id ].size() - 1;
-      continue;
-    }
-
-    --tid;
-    if ( tid >= 0 )
-    {
-      syn_id = sources[ tid ].size() - 1;
-      if ( syn_id >= 0 )
-      {
-        lcid = sources[ tid ][ syn_id ].size() - 1;
-      }
-      continue;
-    }
-
-    assert( tid < 0 );
-    assert( syn_id < 0 );
-    assert( lcid < 0 );
-    return;
-  }
+  return; // found a valid entry
 }
 
 inline bool
-SourceTablePosition::is_at_end() const
+SourceTablePosition::is_invalid() const
 {
-  if ( tid < 0 and syn_id < 0 and lcid < 0 )
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return ( tid == -1 and syn_id == -1 and lcid == -1 );
 }
 
-inline bool operator==( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline void
+SourceTablePosition::decrease()
 {
-  return ( ( lhs.tid == rhs.tid ) and ( lhs.syn_id == rhs.syn_id )
-    and ( lhs.lcid == rhs.lcid ) );
+  --lcid;
+  assert( lcid >= -1 );
 }
 
-inline bool operator!=( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool operator==( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
+{
+  return ( ( lhs.tid == rhs.tid ) and ( lhs.syn_id == rhs.syn_id ) and ( lhs.lcid == rhs.lcid ) );
+}
+
+inline bool operator!=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return not operator==( lhs, rhs );
 }
 
-inline bool operator<( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool operator<( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   if ( lhs.tid == rhs.tid )
   {
@@ -190,20 +164,17 @@ inline bool operator<( const SourceTablePosition& lhs,
   }
 }
 
-inline bool operator>( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool operator>( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return operator<( rhs, lhs );
 }
 
-inline bool operator<=( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool operator<=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return not operator>( lhs, rhs );
 }
 
-inline bool operator>=( const SourceTablePosition& lhs,
-  const SourceTablePosition& rhs )
+inline bool operator>=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
 {
   return not operator<( lhs, rhs );
 }

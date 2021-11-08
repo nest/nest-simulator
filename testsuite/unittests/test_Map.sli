@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_Map - check if Map function works
 
 Synopsis: (test_Map) run -> 

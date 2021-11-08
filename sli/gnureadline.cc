@@ -38,7 +38,7 @@ extern "C" int write_history( const char* );
 extern "C" void using_history();
 extern "C" void clear_history();
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: GNUreadline - Read and edit a line from standard input
 Synopsis: (prompt) GNUreadline -> (string) true
                                -> false
@@ -85,7 +85,7 @@ GNUReadline::GNUReadlineFunction::execute( SLIInterpreter* i ) const
   }
 }
 
-/*BeginDocumentation
+/** @BeginDocumentation
 Name: GNUaddhistory - Add a string to the readline-history
 Synopsis: (string) GRNUaddhistory -> -
 Description: Adds a string to the readline history.

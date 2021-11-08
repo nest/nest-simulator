@@ -20,54 +20,6 @@
  *
  */
 
-
-/* BeginDocumentation
-Name: parrot_neuron - Neuron that repeats incoming spikes.
-
-Description:
-
-The parrot neuron simply emits one spike for every incoming spike.
-An important application is to provide identical poisson spike
-trains to a group of neurons. The poisson_generator sends a different
-spike train to each of its target neurons. By connecting one
-poisson_generator to a parrot_neuron and then that parrot_neuron to
-a group of neurons, all target neurons will receive the same poisson
-spike train.
-
-Remarks:
-
-- Weights on connection to the parrot_neuron are ignored.
-- Weights on connections from the parrot_neuron are handled as usual.
-- Delays are honored on incoming and outgoing connections.
-
-Only spikes arriving on connections to port 0 will be repeated.
-Connections onto port 1 will be accepted, but spikes incoming
-through port 1 will be ignored. This allows setting exact pre-
-and post-synaptic spike times for STDP protocols by connecting
-two parrot neurons spiking at desired times by, e.g., a
-stdp_synapse onto port 1 on the post-synaptic parrot neuron.
-
-Receives: SpikeEvent
-
-Sends: SpikeEvent
-
-Parameters:
-No parameters to be set in the status dictionary.
-
-Author: David Reichert, Abigail Morrison, Alexander Seeholzer, Hans Ekkehard
-Plesser
-FirstVersion: May 2006
-*/
-
-
-/**
- * The parrot neuron emits one spike for every incoming spike,
- * but may use multiplicity to indicate number of spikes in a single
- * time step.
- * Instead of the accumulated weigths of the incoming spikes, the
- * number of the spikes is stored within a ring buffer.
- */
-
 #ifndef PARROT_NEURON_H
 #define PARROT_NEURON_H
 
@@ -80,7 +32,52 @@ FirstVersion: May 2006
 
 namespace nest
 {
-class parrot_neuron : public Archiving_Node
+
+/* BeginUserDocs: neuron, parrot
+
+Short description
++++++++++++++++++
+
+Neuron that repeats incoming spikes
+
+Description
++++++++++++
+
+The parrot neuron simply emits one spike for every incoming spike.
+An important application is to provide identical poisson spike
+trains to a group of neurons. The ``poisson_generator`` sends a different
+spike train to each of its target neurons. By connecting one
+``poisson_generator`` to a ``parrot_neuron`` and then that ``parrot_neuron`` to
+a group of neurons, all target neurons will receive the same poisson
+spike train.
+
+Remarks
+.......
+
+- Weights of connections *to* the ``parrot_neuron`` are ignored.
+- Weights on connections *from* the ``parrot_neuron`` are handled as usual.
+- Delays are honored on incoming and outgoing connections.
+
+Only spikes arriving on connections to port 0 will be repeated.
+Connections onto port 1 will be accepted, but spikes incoming
+through port 1 will be ignored. This allows setting exact pre-
+and postsynaptic spike times for STDP protocols by connecting
+two parrot neurons spiking at desired times by, e.g., a
+`stdp_synapse` onto port 1 on the postsynaptic parrot neuron.
+
+Receives
+++++++++
+
+SpikeEvent
+
+Sends
++++++
+
+SpikeEvent
+
+EndUserDocs */
+
+class parrot_neuron : public ArchivingNode
 {
 
 public:
@@ -107,10 +104,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void
-  init_state_( const Node& )
-  {
-  } // no state
   void init_buffers_();
   void
   calibrate()
@@ -132,10 +125,7 @@ private:
 };
 
 inline port
-parrot_neuron::send_test_event( Node& target,
-  rport receptor_type,
-  synindex,
-  bool )
+parrot_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

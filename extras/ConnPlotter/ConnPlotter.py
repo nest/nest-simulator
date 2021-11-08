@@ -93,7 +93,7 @@ pattern = ConnectionPattern(layerList, connList, synTypes = \
     ((SynType('Asyn',  1.0, 'orange'),
       SynType('Bsyn',  2.5, 'r'),
       SynType('Csyn',  0.5, (1.0, 0.5, 0.0))),  # end first group
-     (SynType('Dsyn', -1.5, matplotlib.pylab.cm.jet),
+     (SynType('Dsyn', -1.5, matplotlib.cm.jet),
       SynType('Esyn', -3.2, '0.95'))))
 # See documentation of class ConnectionPattern for more options.
 
@@ -151,10 +151,10 @@ pattern.toLaTeX('pattern.tex', standalone=True)
 
 from . import colormaps as cm
 
-import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 import warnings
+import nest
 
 __all__ = ['ConnectionPattern', 'SynType', 'plotParams', 'PlotParams']
 
@@ -227,40 +227,40 @@ class PlotParams(object):
             return self._left
 
         @left.setter
-        def left(self, l):
-            self._left = float(l)
+        def left(self, left):
+            self._left = float(left)
 
         @property
         def right(self):
             return self._right
 
         @right.setter
-        def right(self, r):
-            self._right = float(r)
+        def right(self, right):
+            self._right = float(right)
 
         @property
         def top(self):
             return self._top
 
         @top.setter
-        def top(self, t):
-            self._top = float(t)
+        def top(self, top):
+            self._top = float(top)
 
         @property
         def bottom(self):
             return self._bottom
 
         @bottom.setter
-        def bottom(self, b):
-            self._bottom = float(b)
+        def bottom(self, bottom):
+            self._bottom = float(bottom)
 
         @property
         def colbar(self):
             return self._colbar
 
         @colbar.setter
-        def colbar(self, b):
-            self._colbar = float(b)
+        def colbar(self, colbar):
+            self._colbar = float(colbar)
 
     def __init__(self):
         """Set default values"""
@@ -661,13 +661,14 @@ class ConnectionPattern(object):
 
     class _Connection(object):
 
-        def __init__(self, conninfo, layers, synapses, intensity, tcd, Vmem):
+        def __init__(self, conninfo, layers, synapses, tgt_model, intensity, tcd, Vmem):
             """
             Arguments:
             conninfo: list of connection info entries:
                       (sender,target,conn_dict)
             layers  : list of _LayerProps objects
             synapses: list of _SynProps objects
+            tgt_model: model of target neurons
             intensity: 'wp', 'p', 'tcd'
             tcd      : tcd object
             Vmem     : reference membrane potential for tcd calculations
@@ -677,7 +678,7 @@ class ConnectionPattern(object):
 
             # get source and target layer
             self.slayer, self.tlayer = conninfo[:2]
-            lnames = [l.name for l in layers]
+            lnames = [layer.name for layer in layers]
 
             if self.slayer not in lnames:
                 raise Exception('Unknown source layer "%s".' % self.slayer)
@@ -687,13 +688,14 @@ class ConnectionPattern(object):
             # if target layer is singular (extent==(0,0)),
             # we do not create a full object
             self.singular = False
-            for l in layers:
-                if l.name == self.tlayer and l.singular:
+            for layer in layers:
+                if layer.name == self.tlayer and layer.singular:
                     self.singular = True
                     return
 
             # see if we connect to/from specific neuron types
             cdict = conninfo[2]
+            sdict = conninfo[3]
 
             if 'sources' in cdict:
                 if tuple(cdict['sources'].keys()) == ('model',):
@@ -716,8 +718,8 @@ class ConnectionPattern(object):
             # now get (mean) weight, we need this if we classify
             # connections by sign of weight only
             try:
-                self._mean_wght = _weighteval(cdict['weights'])
-            except:
+                self._mean_wght = _weighteval(sdict['weight'])
+            except Exception:
                 raise ValueError('No or corrupt weight information.')
 
             # synapse model
@@ -730,30 +732,30 @@ class ConnectionPattern(object):
                     self.synmodel = 'inh'
             else:
                 try:
-                    self.synmodel = cdict['synapse_model']
+                    self.synmodel = sdict['synapse_model']
                     if self.synmodel not in synapses:
                         raise Exception('Unknown synapse model "%s".'
                                         % self.synmodel)
-                except:
+                except Exception:
                     raise Exception('Explicit synapse model info required.')
 
             # store information about connection
             try:
                 self._mask = cdict['mask']
-                self._kern = cdict['kernel']
-                self._wght = cdict['weights']
+                self._p_raw = cdict['p']
+                self._wght = sdict['weight']
                 # next line presumes only one layer name will match
                 self._textent = [tl.ext for tl in layers
                                  if tl.name == self.tlayer][0]
                 if intensity == 'tcd':
-                    self._tcd = tcd(self.synmodel, self.tnrn, Vmem)
+                    self._tcd = tcd(self.synmodel, tgt_model, Vmem)
                 else:
                     self._tcd = None
-            except:
+            except Exception:
                 raise Exception('Corrupt connection dictionary')
 
             # prepare for lazy evaluation
-            self._kernel = None
+            self._p = None
 
         # --------------------------------------------------------------------
 
@@ -775,12 +777,12 @@ class ConnectionPattern(object):
         @property
         def kernval(self):
             """Kernel value, as masked array."""
-            if self._kernel is None:
-                self._kernel = _evalkernel(self._mask, self._kern,
-                                           self._mean_wght,
-                                           self._textent, self._intensity,
-                                           self._tcd)
-            return self._kernel
+            if self._p is None:
+                self._p = _evalkernel(self._mask, self._p_raw,
+                                      self._mean_wght,
+                                      self._textent, self._intensity,
+                                      self._tcd)
+            return self._p
 
         # --------------------------------------------------------------------
 
@@ -794,7 +796,7 @@ class ConnectionPattern(object):
         @property
         def kernel(self):
             """Dictionary describing the kernel."""
-            return self._kern
+            return self._p_raw
 
         # --------------------------------------------------------------------
 
@@ -848,7 +850,7 @@ class ConnectionPattern(object):
             slabel, tlabel: Values for sender/target label
             parent        : _Block to which _Patch/_Block belongs
             """
-            self.l, self.t, self.r, self.c = left, top, row, col
+            self.left, self.t, self.r, self.c = left, top, row, col
             self.w, self.h = width, height
             self.slbl, self.tlbl = slabel, tlabel
             self.ax = None
@@ -858,13 +860,13 @@ class ConnectionPattern(object):
 
         def _update_size(self, new_lr):
             """Update patch size by inspecting all children."""
-            if new_lr[0] < self.l:
+            if new_lr[0] < self.left:
                 raise ValueError(
-                    "new_lr[0] = %f < l = %f" % (new_lr[0], self.l))
+                    "new_lr[0] = %f < l = %f" % (new_lr[0], self.left))
             if new_lr[1] < self.t:
                 raise ValueError(
                     "new_lr[1] = %f < t = %f" % (new_lr[1], self.t))
-            self.w, self.h = new_lr[0] - self.l, new_lr[1] - self.t
+            self.w, self.h = new_lr[0] - self.left, new_lr[1] - self.t
             if self._parent:
                 self._parent._update_size(new_lr)
 
@@ -873,14 +875,14 @@ class ConnectionPattern(object):
         @property
         def tl(self):
             """Top left corner of the patch."""
-            return (self.l, self.t)
+            return (self.left, self.t)
 
         # --------------------------------------------------------------------
 
         @property
         def lr(self):
             """Lower right corner of the patch."""
-            return (self.l + self.w, self.t + self.h)
+            return (self.left + self.w, self.t + self.h)
 
         # --------------------------------------------------------------------
 
@@ -890,7 +892,7 @@ class ConnectionPattern(object):
             if isinstance(self, ConnectionPattern._Block):
                 return min([e.l_patches for e in _flattened(self.elements)])
             else:
-                return self.l
+                return self.left
 
         # --------------------------------------------------------------------
 
@@ -910,7 +912,7 @@ class ConnectionPattern(object):
             if isinstance(self, ConnectionPattern._Block):
                 return max([e.r_patches for e in _flattened(self.elements)])
             else:
-                return self.l + self.w
+                return self.left + self.w
 
         # --------------------------------------------------------------------
 
@@ -1071,7 +1073,7 @@ class ConnectionPattern(object):
         synsep = 0.5 / 20. * patchmax  # distance between synapse types
 
         # find maximal extents of individual patches, horizontal and vertical
-        maxext = max(_flattened([l.ext for l in self._layers]))
+        maxext = max(_flattened([layer.ext for layer in self._layers]))
 
         patchscale = patchmax / float(maxext)  # determines patch size
 
@@ -1274,7 +1276,7 @@ class ConnectionPattern(object):
         """Scaled axes rectangle for patch, reverses y-direction."""
         xsc, ysc = self._axes.lr
         return self._figscale * np.array(
-            [p.l / xsc, 1 - (p.t + p.h) / ysc, p.w / xsc, p.h / ysc])
+            [p.left / xsc, 1 - (p.t + p.h) / ysc, p.w / xsc, p.h / ysc])
 
     # ------------------------------------------------------------------------
 
@@ -1282,7 +1284,7 @@ class ConnectionPattern(object):
         """Scaled axes rectangle for patch, does not reverse y-direction."""
         xsc, ysc = self._axes.lr
         return self._figscale * np.array(
-            [p.l / xsc, p.t / ysc, p.w / xsc, p.h / ysc])
+            [p.left / xsc, p.t / ysc, p.w / xsc, p.h / ysc])
 
     # ------------------------------------------------------------------------
 
@@ -1290,8 +1292,8 @@ class ConnectionPattern(object):
         """Configure synapse information based on connections and user info."""
 
         # compile information on synapse types and weights
-        synnames = set(c[2]['synapse_model'] for c in cList)
-        synweights = set(_weighteval(c[2]['weights']) for c in cList)
+        synnames = set(c[3]['synapse_model'] for c in cList)
+        synweights = set(_weighteval(c[3]['weight']) for c in cList)
 
         # set up synTypes for all pre-defined cases
         if synTypes:
@@ -1366,10 +1368,10 @@ class ConnectionPattern(object):
                    will be sorted in diagram in order of increasing numbers.
         """
         # extract layers to dict mapping name to extent
-        self._layers = [self._LayerProps(l[0], l[1]['extent']) for l in lList]
+        self._layers = [self._LayerProps(layer[0], layer[3]) for layer in lList]
 
         # ensure layer names are unique
-        lnames = [l.name for l in self._layers]
+        lnames = [layer.name for layer in self._layers]
         if len(lnames) != len(set(lnames)):
             raise ValueError('Layer names must be unique.')
 
@@ -1393,7 +1395,10 @@ class ConnectionPattern(object):
         # everything in a dictionary, so we can find early instances.
         self._cTable = {}
         for conn in cList:
-            key, val = self._Connection(conn, self._layers, self._synAttr,
+            # Extract target model name
+            tgt_model = [layer_spec[1] for layer_spec in lList if layer_spec[0] == conn[1]][0]
+            print(tgt_model)
+            key, val = self._Connection(conn, self._layers, self._synAttr, tgt_model,
                                         intensity, tcd, Vmem).keyval
             if key:
                 if key in self._cTable:
@@ -1477,13 +1482,15 @@ class ConnectionPattern(object):
         figure created
         """
 
-        # translate new to old paramter names (per v 0.5)
+        import matplotlib.pyplot as plt
+
+        # translate new to old parameter names (per v 0.5)
         normalize = globalColors
         if colorLimits:
             normalize = True
 
         if selectSyns:
-            if aggrPops or aggrSyns:
+            if aggrGroups or aggrSyns:
                 raise ValueError(
                     'selectSyns cannot be combined with aggregation.')
             selected = selectSyns
@@ -1620,9 +1627,8 @@ class ConnectionPattern(object):
 
         # add decoration
         for block in _flattened(self._axes.elements):
-
             ax = f.add_axes(self._scaledBox(block),
-                            axisbg=plotParams.layer_bg[block.location],
+                            facecolor=plotParams.layer_bg[block.location],
                             xticks=[], yticks=[],
                             zorder=plotParams.z_layer)
             if hasattr(ax, 'frame'):
@@ -1631,7 +1637,7 @@ class ConnectionPattern(object):
                 for sp in ax.spines.values():
                     # turn off axis lines, make room for frame edge
                     sp.set_color('none')
-            if block.l <= self._axes.l_patches and block.slbl:
+            if block.left <= self._axes.l_patches and block.slbl:
                 ax.set_ylabel(block.slbl,
                               rotation=plotParams.layer_orientation['sender'],
                               fontproperties=plotParams.layer_font)
@@ -1648,7 +1654,7 @@ class ConnectionPattern(object):
                         continue  # should not happen
 
                     ax = f.add_axes(self._scaledBox(pb),
-                                    axisbg='none', xticks=[], yticks=[],
+                                    facecolor='none', xticks=[], yticks=[],
                                     zorder=plotParams.z_pop)
                     if hasattr(ax, 'frame'):
                         ax.frame.set_visible(False)
@@ -1656,7 +1662,7 @@ class ConnectionPattern(object):
                         for sp in ax.spines.values():
                             # turn off axis lines, make room for frame edge
                             sp.set_color('none')
-                    if pb.l + pb.w >= self._axes.r_patches and pb.slbl:
+                    if pb.left + pb.w >= self._axes.r_patches and pb.slbl:
                         ax.set_ylabel(pb.slbl,
                                       rotation=plotParams.pop_orientation[
                                           'sender'],
@@ -1841,7 +1847,7 @@ class ConnectionPattern(object):
                         cbax.set_yticks([])
 
                         # full-intensity color from color map
-                        cbax.set_axis_bgcolor(self._synAttr[syn].cmap(1.0))
+                        cbax.set_facecolor(self._synAttr[syn].cmap(1.0))
 
                         # narrower border
                         if hasattr(cbax, 'frame'):
@@ -1970,6 +1976,8 @@ class ConnectionPattern(object):
 
                 if isinstance(conn.kernel, (int, float)):
                     lfile.write(r'$%g$' % conn.kernel)
+                elif isinstance(conn.kernel, nest.Parameter):
+                    lfile.write(r'$<Parameter>$')
                 elif 'gaussian' in conn.kernel:
                     ckg = conn.kernel['gaussian']
                     lfile.write(r'$\mathcal{G}(p_0 = %g, \sigma = %g)$' %
@@ -2098,19 +2106,12 @@ def _kerneval(x, y, fun):
     Evaluate function given as topology style dict at
     (x,y). Assume x,y are 2d numpy matrices
     """
-
     if isinstance(fun, (float, int)):
         return float(fun) * np.ones(np.shape(x))
-    elif isinstance(fun, dict):
-        assert (len(fun) == 1)
-
-    if 'gaussian' in fun:
-        g = fun['gaussian']
-        p0 = g['p_center']
-        sig = g['sigma']
-        return p0 * np.exp(-0.5 * (x ** 2 + y ** 2) / sig ** 2)
-    else:
-        raise Exception('Unknown kernel "%s"', tuple(fun.keys())[0])
+    elif isinstance(fun, nest.Parameter):
+        # Create a single node in origo that we can apply the Parameter on.
+        origo_node = nest.Create('iaf_psc_alpha', positions=nest.spatial.free([[0., 0.]]))
+        return np.array([fun.apply(origo_node, list(np.column_stack((xn, yn)))) for xn, yn in zip(x, y)])
 
     # something very wrong
     raise Exception('Cannot handle kernel.')
@@ -2137,7 +2138,7 @@ def _addKernels(kList):
     assert (len(kList) > 0)
 
     if len(kList) < 2:
-        return kList[0].copy()
+        return kList[0].copy() if isinstance(kList[0], dict) else kList[0]
 
     d = np.ma.filled(kList[0], fill_value=0).copy()
     m = kList[0].mask.copy()

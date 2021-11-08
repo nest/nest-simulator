@@ -33,20 +33,17 @@
 namespace nest
 {
 
-proxynode::proxynode( index gid, index model_id, index vp )
+proxynode::proxynode( index node_id, index model_id, index vp )
   : Node()
 {
-  set_gid_( gid );
+  set_node_id_( node_id );
   set_model_id( model_id );
   set_vp( vp );
   set_frozen_( true );
 }
 
 port
-proxynode::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool dummy_target )
+proxynode::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
 {
   return kernel()
     .model_manager.get_model( get_model_id() )
@@ -56,33 +53,25 @@ proxynode::send_test_event( Node& target,
 void
 proxynode::sends_secondary_event( GapJunctionEvent& ge )
 {
-  kernel()
-    .model_manager.get_model( get_model_id() )
-    ->sends_secondary_event( ge );
+  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( ge );
 }
 
 void
 proxynode::sends_secondary_event( InstantaneousRateConnectionEvent& re )
 {
-  kernel()
-    .model_manager.get_model( get_model_id() )
-    ->sends_secondary_event( re );
+  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( re );
 }
 
 void
 proxynode::sends_secondary_event( DiffusionConnectionEvent& de )
 {
-  kernel()
-    .model_manager.get_model( get_model_id() )
-    ->sends_secondary_event( de );
+  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( de );
 }
 
 void
 proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
 {
-  kernel()
-    .model_manager.get_model( get_model_id() )
-    ->sends_secondary_event( re );
+  kernel().model_manager.get_model( get_model_id() )->sends_secondary_event( re );
 }
 
 /**

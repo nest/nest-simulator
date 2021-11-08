@@ -39,7 +39,6 @@ positive to 0.5..1.
 
 # ----------------------------------------------------------------------------
 
-import matplotlib.pyplot as plt
 import matplotlib.colors as mc
 import matplotlib.cbook as cbook
 import numpy as np
@@ -138,7 +137,7 @@ def make_colormap(color):
 
     try:
         r, g, b = mc.colorConverter.to_rgb(color)
-    except:
+    except Exception:
         raise ValueError('Illegal color specification: %s' % color.__repr__)
 
     cm = mc.LinearSegmentedColormap(color.__str__(),

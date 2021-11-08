@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_add_freeze_thaw - test that per-thread nodes vectors are updated 
 
 Synopsis: (test_add_freeze_thaw.sli) run -> dies if assertion fails

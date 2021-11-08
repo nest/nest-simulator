@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_lambertw - check if lambertw function works
 
 Synopsis: (test_lambertw) run -> some known relations

@@ -29,10 +29,10 @@
    trains for different targets.
 
    Protocol:
-   1. poisson_generator_ps projects to two spike_detectors
+   1. poisson_generator_ps projects to two spike_recorders
    2. run for different resolutions, record precise spike times is ms
    3. test all spikes are in (start, stop]
-   3. test for different results between spike_detectors
+   3. test for different results between spike_recorders
    4. test for identical results across resolutions
 */
 
@@ -44,18 +44,12 @@
   /start 1.0
   /stop  2.0
   /rate 12345.0  % expect ~ 12.3 spikes
->> def 
-
-/sd_params <<
-  /to_memory     true
-  /precise_times true
-  /time_in_steps false
 >> def
 
 /resolutions [0.01 0.1 0.2 0.5 1.0] def
 
-% ensure all spikes arrive at detector
-/simtime ps_params /stop get 2.0 add def  
+% ensure all spikes arrive at recorder
+/simtime ps_params /stop get 2.0 add def
 
 /check_limits % true if all spikes in (origin+start, origin+stop]
 {
@@ -74,41 +68,43 @@
     /h Set
     ResetKernel
     << /resolution h >> SetKernelStatus
-  
+
     /poisson_generator_ps Create /pg Set
     pg ps_params SetStatus
 
-    /spike_detector sd_params SetDefaults
-    [ /spike_detector Create
-      /spike_detector Create
-    ] /sds Set
-    sds { pg exch 1.0 1.0 Connect } forall
+    [ /spike_recorder Create
+      /spike_recorder Create
+    ] /srs Set
+    srs { pg exch 1.0 1.0 Connect } forall
 
     simtime Simulate
-    sds { [/events /times] get cva } Map
+    srs { [/events /times] get cva } Map
   end
 } def
 
 resolutions { single_trial } Map
 /res Set
 
+(First test) =
 % first test: limits
 res Flatten check_limits
 
+(Second test) =
 % second test: different results between targets
-res { 
-  arrayload ; neq 
+res {
+  arrayload ; neq
 } Map
 
+(Third test) =
 % third test: equality among runs
-% Test for spike time equality to within 2.3e-16 ms.
-res Transpose { 
-  dup 0 get /ref Set 
-  Rest true exch { ref sub 0 exch { abs max } Fold 2.3e-16 lt and } Fold
-} Map 
+% Test for spike time equality to within 1.0e-16 ms.
+res Transpose {
+  dup First /ref Set
+  Rest true exch { ref sub 0 exch { abs max } Fold 1.0e-15 lt and } Fold
+} Map
 
-% collect 
-3 arraystore Flatten 
+% collect
+3 arraystore Flatten
 true exch { and } Fold
 
 assert_or_die

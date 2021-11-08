@@ -41,18 +41,19 @@ namespace nest
 class SendBufferPosition
 {
 private:
+  thread begin_rank_;
+  thread end_rank_;
+  thread max_size_;
   size_t num_spike_data_written_;
-  std::vector< unsigned int > idx_;
-  std::vector< unsigned int > begin_;
-  std::vector< unsigned int > end_;
+  size_t send_recv_count_per_rank_;
+  std::vector< thread > idx_;
+  std::vector< thread > begin_;
+  std::vector< thread > end_;
 
   thread rank_to_index_( const thread rank ) const;
 
-  const unsigned int max_size_;
-
 public:
-  SendBufferPosition( const AssignedRanks& assigned_ranks,
-    const unsigned int send_recv_count_per_rank );
+  SendBufferPosition( const AssignedRanks& assigned_ranks, const unsigned int send_recv_count_per_rank );
 
   /**
    * Returns current index of specified rank in MPI buffer.
@@ -84,16 +85,15 @@ public:
   bool are_all_chunks_filled() const;
 
   void increase( const thread rank );
-
-  const unsigned int send_recv_count_per_rank;
 };
 
-inline SendBufferPosition::SendBufferPosition(
-  const AssignedRanks& assigned_ranks,
+inline SendBufferPosition::SendBufferPosition( const AssignedRanks& assigned_ranks,
   const unsigned int send_recv_count_per_rank )
-  : num_spike_data_written_( 0 )
+  : begin_rank_( assigned_ranks.begin )
+  , end_rank_( assigned_ranks.end )
   , max_size_( assigned_ranks.max_size )
-  , send_recv_count_per_rank( send_recv_count_per_rank )
+  , num_spike_data_written_( 0 )
+  , send_recv_count_per_rank_( send_recv_count_per_rank )
 {
   idx_.resize( assigned_ranks.size );
   begin_.resize( assigned_ranks.size );
@@ -112,6 +112,8 @@ inline SendBufferPosition::SendBufferPosition(
 inline thread
 SendBufferPosition::rank_to_index_( const thread rank ) const
 {
+  assert( begin_rank_ <= rank );
+  assert( rank < end_rank_ );
   return rank % max_size_;
 }
 
@@ -142,7 +144,7 @@ SendBufferPosition::is_chunk_filled( const thread rank ) const
 inline bool
 SendBufferPosition::are_all_chunks_filled() const
 {
-  return num_spike_data_written_ == send_recv_count_per_rank * idx_.size();
+  return num_spike_data_written_ == send_recv_count_per_rank_ * idx_.size();
 }
 
 inline void

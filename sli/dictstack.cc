@@ -37,8 +37,7 @@ DictionaryStack::~DictionaryStack()
 {
   // We have to clear the dictionary before we delete it, otherwise the
   // dictionary references will prevent proper deletion.
-  for ( std::list< DictionaryDatum >::iterator i = d.begin(); i != d.end();
-        ++i )
+  for ( std::list< DictionaryDatum >::iterator i = d.begin(); i != d.end(); ++i )
   {
     ( *i )->clear();
   }
@@ -49,8 +48,7 @@ DictionaryStack::undef( const Name& n )
 {
 
   size_t num_erased = 0;
-  for ( std::list< DictionaryDatum >::iterator it = d.begin(); it != d.end();
-        ++it )
+  for ( std::list< DictionaryDatum >::iterator it = d.begin(); it != d.end(); ++it )
   {
     num_erased += ( *it )->erase( n );
   }

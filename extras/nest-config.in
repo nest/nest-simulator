@@ -1,6 +1,6 @@
 #! /bin/sh
 
-prefix=${NEST_INSTALL_DIR:-@CMAKE_INSTALL_PREFIX@}
+prefix="@CMAKE_INSTALL_PREFIX@"
 exec_prefix=${prefix}
 
 usage()
@@ -54,7 +54,7 @@ while test $# -gt 0; do
         echo $exec_prefix
         ;;
     --version)
-        echo "@NEST_VERSION_VERSION@"
+        echo "@NEST_VERSION_STRING@"
         ;;
     --help)
         usage 0
@@ -66,16 +66,16 @@ while test $# -gt 0; do
         echo "@ALL_CXXFLAGS@"
         ;;
     --libs)
-        echo "-L$prefix/@CMAKE_INSTALL_LIBDIR@ @ALL_LIBS@"
+        echo "-L$prefix/@CMAKE_INSTALL_LIBDIR@/nest @ALL_LIBS@"
         ;;
     --compiler)
         echo "@CMAKE_CXX_COMPILER@"
         ;;
     --python-executable)
-        echo "@PYTHON_EXECUTABLE@"
+        echo "@Python_EXECUTABLE@"
         ;;
     --python-version)
-        echo "@PYTHON_VERSION@"
+        echo "@Python_VERSION@"
         ;;
 
     --static-libraries)

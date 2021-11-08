@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-949 Ensure Connect throws an error if trying to connect with delay < resolution.
 

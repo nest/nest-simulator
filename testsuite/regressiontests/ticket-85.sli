@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
 
 Name: testsuite::ticket-85 Ensure that plastic synapses can be used with precise models.
 
@@ -39,9 +39,8 @@ Author: Hans Ekkehard Plesser, 2015-11-23
 M_ERROR setverbosity
 
 /precise_models 
-  [ /iaf_psc_alpha_canon
-    /iaf_psc_alpha_presc
-    /iaf_psc_delta_canon
+  [ /iaf_psc_alpha_ps
+    /iaf_psc_delta_ps
     /iaf_psc_exp_ps
     /parrot_neuron_ps
   ]
@@ -59,7 +58,7 @@ precise_models
   } pass_or_die
 } forall
 
-% second test: do we get status information from Archiving_Node?
+% second test: do we get status information from ArchivingNode?
 precise_models
 {
   {
@@ -78,14 +77,14 @@ precise_models
     ResetKernel
     /sg /spike_generator << /spike_times [ 10. ] >> Create def
     /n model Create def
-    /sd /spike_detector << /withtime true /precise_times true >> Create def
+    /sr /spike_recorder Create def
     
     sg n 10000. 1. Connect
-    n sd Connect
+    n sr Connect
     
     20 Simulate
     
-    sd /events get /times get dup length 1 sub get
+    sr /events get /times get dup length 1 sub get
     n /t_spike get
     eq
   } assert_or_die

@@ -27,6 +27,9 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
+// Includes from libnestutil:
+#include "dict_util.h"
+
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
@@ -59,8 +62,7 @@ nest::dc_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::dc_generator::Parameters_& nest::dc_generator::Parameters_::operator=(
-  const Parameters_& p )
+nest::dc_generator::Parameters_& nest::dc_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -99,9 +101,9 @@ nest::dc_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::dc_generator::Parameters_::set( const DictionaryDatum& d )
+nest::dc_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::amplitude, amp_ );
+  updateValueParam< double >( d, names::amplitude, amp_, node );
 }
 
 
@@ -110,8 +112,7 @@ nest::dc_generator::Parameters_::set( const DictionaryDatum& d )
  * ---------------------------------------------------------------- */
 
 nest::dc_generator::dc_generator()
-  : DeviceNode()
-  , device_()
+  : StimulationDevice()
   , P_()
   , S_()
   , B_( *this )
@@ -120,8 +121,7 @@ nest::dc_generator::dc_generator()
 }
 
 nest::dc_generator::dc_generator( const dc_generator& n )
-  : DeviceNode( n )
-  , device_( n.device_ )
+  : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -132,20 +132,16 @@ nest::dc_generator::dc_generator( const dc_generator& n )
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
 void
-nest::dc_generator::init_state_( const Node& proto )
+nest::dc_generator::init_state_()
 {
-  const dc_generator& pr = downcast< dc_generator >( proto );
-
-  device_.init_state( pr.device_ );
-  S_ = pr.S_;
+  StimulationDevice::init_state();
 }
 
 void
 nest::dc_generator::init_buffers_()
 {
-  device_.init_buffers();
+  StimulationDevice::init_buffers();
   B_.logger_.reset();
 }
 
@@ -154,7 +150,7 @@ nest::dc_generator::calibrate()
 {
   B_.logger_.init();
 
-  device_.calibrate();
+  StimulationDevice::calibrate();
 }
 
 
@@ -165,8 +161,7 @@ nest::dc_generator::calibrate()
 void
 nest::dc_generator::update( Time const& origin, const long from, const long to )
 {
-  assert(
-    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   long start = origin.get_steps();
@@ -176,8 +171,7 @@ nest::dc_generator::update( Time const& origin, const long from, const long to )
   for ( long offs = from; offs < to; ++offs )
   {
     S_.I_ = 0.0;
-
-    if ( device_.is_active( Time::step( start + offs ) ) )
+    if ( StimulationDevice::is_active( Time::step( start + offs ) ) )
     {
       S_.I_ = P_.amp_;
       kernel().event_delivery_manager.send( *this, ce, offs );
@@ -190,4 +184,25 @@ void
 nest::dc_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
+}
+
+void
+nest::dc_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+{
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+
+  // For the input backend
+  if ( not input_param.empty() )
+  {
+    if ( input_param.size() != 1 )
+    {
+      throw BadParameterValue( "The size of the data for the dc_generator needs to be 1 [amplitude]." );
+    }
+    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
+    ptmp.set( d, this );
+  }
+
+  // if we get here, temporary contains consistent set of properties
+  P_ = ptmp;
 }

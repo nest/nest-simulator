@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # nest_script.py
@@ -20,17 +20,24 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Music example
+--------------
+
+This example runs 2 NEST instances and one receiver instance. Neurons on
+the NEST instances are observed by the music_cont_out_proxy and their
+values are forwarded through MUSIC to the receiver.
+
+"""
 import nest
-import music
-import numpy
 
 proxy = nest.Create('music_cont_out_proxy', 1)
-nest.SetStatus(proxy, {'port_name': 'out'})
-nest.SetStatus(proxy, {'record_from': ["V_m"], 'interval': 0.1})
+proxy.port_name = 'out'
+proxy.set(record_from=["V_m"], interval=0.1)
 
 neuron_grp = nest.Create('iaf_cond_exp', 2)
-nest.SetStatus(proxy, {'targets': neuron_grp})
-nest.SetStatus(neuron_grp[0], "I_e", 300.)
-nest.SetStatus(neuron_grp[1], "I_e", 600.)
+proxy.targets = neuron_grp
+neuron_grp[0].I_e = 300.
+neuron_grp[1].I_e = 600.
 
 nest.Simulate(200)

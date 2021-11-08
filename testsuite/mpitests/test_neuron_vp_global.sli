@@ -43,9 +43,9 @@ skip_if_not_threaded
 
   /nodes /iaf_psc_alpha 4 Create def
 
-  % build list of GID-VP pairs for local neurons
+  % build list of node ID-VP pairs for local neurons
   nodes { GetStatus } Map
-  { dup /global_id get exch /vp get 2 arraystore } Map  
+  { dup /global_id get exch /vp get 2 arraystore } Map
 }
 distributed_rank_invariant_collect_assert_or_die
 % pooled over all processes, we must always have the same pairs

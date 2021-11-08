@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::test_gif_pop_psc_exp - sli script for test of gif_pop_psc_exp
 
 Synopsis: (test_gif_pop_psc_exp) run -> compare mean and variance of population rate of the model with desired values

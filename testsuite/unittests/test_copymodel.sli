@@ -20,7 +20,7 @@
  *
  */
 
-/* BeginDocumentation
+/** @BeginDocumentation
    Name: testsuite::test_copymodel - sli script to test if CopyModel works as expected
 
    Synopsis: (test_copymodel) run

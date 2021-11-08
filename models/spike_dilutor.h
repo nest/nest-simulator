@@ -29,33 +29,44 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "stimulating_device.h"
+#include "stimulation_device.h"
 
 namespace nest
 {
 
-/* BeginDocumentation
-Name: spike_dilutor - repeats incoming spikes with a certain probability.
+/* BeginUserDocs: device, generator
 
-Description:
-  The device repeats incoming spikes with a certain probability.
-  Targets will receive diffenrent spike trains.
+Short description
++++++++++++++++++
 
-Remarks:
-  In parallel simulations, a copy of the device is present on each process
-  and spikes are collected only from local sources.
+Repeat incoming spikes with a certain probability
 
-Parameters:
-   The following parameters appear in the element's status dictionary:
-   p_copy double - Copy probability
+Description
++++++++++++
 
-Sends: SpikeEvent
+The device repeats incoming spikes with a certain probability.
+Targets will receive diffenrent spike trains.
 
-Author: Adapted from mip_generator by Kunkel, Oct 2011
-ported to Nest 2.6 by: Setareh, April 2015
+In parallel simulations, a copy of the device is present on each process
+and spikes are collected only from local sources.
 
-SeeAlso: mip_generator
-*/
+Parameters
+++++++++++
+
+p_copy
+    Copy probability
+
+Sends
++++++
+
+SpikeEvent
+
+See also
+++++++++
+
+mip_generator
+
+EndUserDocs */
 
 class spike_dilutor : public DeviceNode
 {
@@ -65,18 +76,18 @@ public:
   spike_dilutor( const spike_dilutor& rhs );
 
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return false;
   }
   bool
-  local_receiver() const
+  local_receiver() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::stimulator;
   }
@@ -85,21 +96,21 @@ public:
   using Node::handle;
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool );
-  port handles_test_event( SpikeEvent&, rport );
-  void handle( SpikeEvent& );
+  port send_test_event( Node&, rport, synindex, bool ) override;
+  port handles_test_event( SpikeEvent&, rport ) override;
+  void handle( SpikeEvent& ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_state_( const Node& );
-  void init_buffers_();
-  void calibrate();
+  void init_state_() override;
+  void init_buffers_() override;
+  void calibrate() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
-  void event_hook( DSSpikeEvent& );
+  void event_hook( DSSpikeEvent& ) override;
 
   // ------------------------------------------------------------
 
@@ -111,10 +122,10 @@ private:
     double p_copy_; //!< copy probability for each incoming spike
 
     Parameters_(); //!< Sets default parameter values
-    Parameters_( const Parameters_& );
+    Parameters_( const Parameters_& ) = default;
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 
   struct Buffers_
@@ -124,16 +135,20 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< SpikeEvent > device_;
+  class DilutorStimulationDevice : public StimulationDevice
+  {
+    StimulationDevice::Type
+    get_type() const override
+    {
+      return StimulationDevice::Type::SPIKE_GENERATOR;
+    }
+  } device_;
   Parameters_ P_;
   Buffers_ B_;
 };
 
 inline port
-spike_dilutor::send_test_event( Node& target,
-  rport receptor_type,
-  synindex syn_id,
-  bool )
+spike_dilutor::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
 
   device_.enforce_single_syn_type( syn_id );
@@ -164,7 +179,7 @@ inline void
 spike_dilutor::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  ptmp.set( d, this );   // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

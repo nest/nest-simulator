@@ -68,7 +68,85 @@ Datum *const p;   makes p a const pointer to a Datum. Any change to the
 /***********************************************************/
 
 /** A type-independent container for C++-types.
- *  @ingroup TokenHandling
+ *
+ * Class Token is a wrapper class around Datum pointers and non-Datum
+ * objects. In fact, since Datum objects have a memory manager, we should
+ * avoid creating Datum objects on the stack as local variables. Class
+ * Token takes ownership of the Datum pointers and will properly delete
+ * them when they are no longer needed. Thus, use one of the following
+ * idioms:
+ *
+ * @par Construction
+ *
+ * @code
+ * Token t( new IntergerDatum( 5 ) );
+ * Token t = 5;
+ * Token t = new IntegerDatum( 5 );
+ * @endcode
+ *
+ * The object constructor `Token(Datum&)` is historic and should not be
+ * used anymore.
+ *
+ * @par Assignment
+ *
+ * @code
+ * Token t1 = t;
+ * t1.move( t ); // move Datum from t to t1
+ * @endcode
+ *
+ * `TokenArrays`, `TokenStack`, and `Dictionary` are token
+ * containers. Their assignment interface takes
+ *
+ * 1. Datum pointers
+ * 2. Token references
+ *
+ * Thus, the recommended assignments are
+ *
+ * @code
+ * array.push_back( new IntegerDatum( 5 ) );
+ * @endcode
+ *
+ * It directly passes the Datum pointer to the location in the
+ * array. Some convenient ways to write assignments are actually
+ * inefficient.
+ *
+ * @par Examples
+ *
+ * 1. `a.push_back(5);`
+ *
+ *    This is convenient notation, but it is much more expensive because it is
+ *    equivalent to the following code:
+ *    .
+ *    @code
+ *    IntegerDatum tmp1( 5 );
+ *    Token tmp2( new IntegerDatum( mp1 ) );
+ *    Token tmp3( tmp2 );  // one more Datum copy
+ *    a.push_back_move( tmp3 );
+ *    @endcode
+ *
+ *    The compiler can optimize away some of the inefficiencies, but benchmarks showed a
+ *    big residual overhead compared to directly assigning the Datum
+ *    pointer.
+ *
+ * 2. `a.push_back(IntegerDatum(5));`
+ *
+ *    This looks efficient, but in fact it is not, because it is equivalent
+ *    to:
+ *    .
+ *    @code
+ *    Token tmp1( new IntegerDatum( IntegerDatum( 5 ) );
+ *    a.push_back_move( tmp1 );
+ *    @endcode
+ *
+ * 3. `a.push_back(t);`
+ *
+ *    Involves one Datum copy
+ *
+ * 4. `a.push_back_move(t);`
+ *
+ *    Moves the pointer and leaves a void token behind.
+ *
+ * @ingroup TokenHandling
  */
 class Token
 {
@@ -121,6 +199,9 @@ public:
   Token( long );
   Token( bool );
   Token( unsigned long );
+#ifdef HAVE_32BIT_ARCH
+  Token( uint64_t );
+#endif
   Token( double );
   Token( const char* );
   Token( std::string );

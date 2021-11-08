@@ -54,11 +54,9 @@ OOSupportModule::CallMemberFunction::execute( SLIInterpreter* i ) const
 {
   //  call: dict key call -> unknown
 
-  DictionaryDatum* dict =
-    dynamic_cast< DictionaryDatum* >( i->OStack.pick( 1 ).datum() );
+  DictionaryDatum* dict = dynamic_cast< DictionaryDatum* >( i->OStack.pick( 1 ).datum() );
   assert( dict != NULL );
-  LiteralDatum* key =
-    dynamic_cast< LiteralDatum* >( i->OStack.pick( 0 ).datum() );
+  LiteralDatum* key = dynamic_cast< LiteralDatum* >( i->OStack.pick( 0 ).datum() );
   assert( key != NULL );
 
   Token value = ( *dict )->lookup( *key );

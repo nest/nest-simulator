@@ -20,7 +20,7 @@
  *
  */
 
-  /* BeginDocumentation
+  /** @BeginDocumentation
 
     Name: testsuite::test_wfr_settings - Tests the possible settings for the waveform relaxation method
 

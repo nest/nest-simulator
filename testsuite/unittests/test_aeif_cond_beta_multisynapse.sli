@@ -20,7 +20,7 @@
  *
  */
  
- /* BeginDocumentation
+ /** @BeginDocumentation
    Name: testsuite::test_aeif_cond_beta_multisynapse - sli script for the aeif multisynapse model with synaptic conductance modeled by a double exponential function
 
    Synopsis: (test_aeif_cond_beta_multisynapse) run
@@ -49,7 +49,7 @@
    An analogous approximation can be derived for small inhibitory inputs.
 
    References
-   A. Roth and M.C.W. van Rossum, Modeling synapses, in Computational
+   A. Roth and M. C. W. van Rossum, Modeling synapses, in Computational
    Modeling Methods for Neuroscientists, MIT Press 2013, Chapter 6, pp. 139-159
 
    SeeAlso:
@@ -88,11 +88,7 @@ sg << /spike_times [spike_time] >> SetStatus % generates a single peak
 
 % Creates a voltmeter
 /voltmeter Create /vm Set
-vm << /withtime true
-/time_in_steps true
-/interval dt
-/to_file true
-/precision 5 >> SetStatus
+vm << /time_in_steps true /interval dt >> SetStatus
 
 % Creates one aeif_conf_beta_multisynapse neuron
 /aeif_cond_beta_multisynapse Create /multisynapse_neuron Set
@@ -115,7 +111,7 @@ delays length 1 arraystore Range /synapses_idx exch def
   /delay exch def
   % connect spike generator to each port
   sg multisynapse_neuron /one_to_one <<
-  /model /static_synapse
+  /synapse_model /static_synapse
   /delay delay
   /weight W
   /receptor_type syn_id >> Connect
@@ -196,15 +192,14 @@ d /times get cva /ts Set % get times
     Create
   def
   
-  /sd /spike_detector << /time_in_steps true >> Create def
-  /vm /voltmeter << /withtime true /time_in_steps true
-                    /interval res >> Create def
+  /sr /spike_recorder << /time_in_steps true >> Create def
+  /vm /voltmeter << /time_in_steps true /interval res >> Create def
   
-  nrn sd Connect
+  nrn sr Connect
   vm nrn Connect
   
   10 Simulate
-  /stime sd /events get /times get cva 0 get def
+  /stime sr /events get /times get cva 0 get def
   [ vm /events get dup /times get cva exch /V_m get cva ] Transpose dup
   { First stime eq } Select First  % time/voltage at spike
   Last V_reset eq  % V_m == V_reset at spike time
@@ -229,15 +224,14 @@ d /times get cva /ts Set % get times
     Create
   def
   
-  /sd /spike_detector << /time_in_steps true >> Create def
-  /vm /voltmeter << /withtime true /time_in_steps true
-                    /interval res >> Create def
+  /sr /spike_recorder << /time_in_steps true >> Create def
+  /vm /voltmeter << /time_in_steps true /interval res >> Create def
   
-  nrn sd Connect
+  nrn sr Connect
   vm nrn Connect
   
   10 Simulate
-  /stime sd /events get /times get cva 0 get def
+  /stime sr /events get /times get cva 0 get def
   [ vm /events get dup /times get cva exch /V_m get cva ] Transpose
   /result Set
   
@@ -274,15 +268,14 @@ d /times get cva /ts Set % get times
     Create
   def
   
-  /sd /spike_detector << /time_in_steps true >> Create def
-  /vm /multimeter << /withtime true /time_in_steps true
-                     /interval res /record_from [ /V_m /w ] >> Create def
+  /sr /spike_recorder << /time_in_steps true >> Create def
+  /vm /multimeter << /time_in_steps true /interval res /record_from [ /V_m /w ] >> Create def
   
-  nrn sd Connect
+  nrn sr Connect
   vm nrn Connect
   
   50 Simulate
-  /stime sd /events get /times get cva 0 get def
+  /stime sr /events get /times get cva 0 get def
   /mme vm /events get def
   [ mme /times get cva mme /V_m get cva mme /w get cva] Transpose
   /result Set
@@ -329,8 +322,10 @@ d /times get cva /ts Set % get times
   ResetKernel
   /nrn /aeif_cond_beta_multisynapse Create def
   
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval 1.0 /record_from [ /V_m /w /g_1 ] >> Create def
+  /mm /multimeter << /time_in_steps true
+                     /interval 1.0
+		     /record_from [ /V_m /w /g_1 ]
+		  >> Create def
   
   mm nrn Connect
   
@@ -473,7 +468,7 @@ assert_or_die
     /delay exch def
     % Connect spike generator to each port
     sg nrn /one_to_one <<
-      /model /static_synapse
+      /synapse_model /static_synapse
       /delay delay
       /weight W
       /receptor_type syn_id >>
@@ -481,8 +476,10 @@ assert_or_die
   } ScanThread
 
   % Create the multimeter that will record from the 3 conductance channels
-  /mm /multimeter << /withtime true /time_in_steps true
-                     /interval dt /record_from [ /g_1 /g_2 /g_3 /g_4 ] >> Create def
+  /mm /multimeter << /time_in_steps true
+                     /interval dt
+		     /record_from [ /g_1 /g_2 /g_3 /g_4 ]
+		  >> Create def
 
   mm nrn Connect
 

@@ -21,7 +21,7 @@
  */
 
 
-/* BeginDocumentation
+/** @BeginDocumentation
 Name: testsuite::ticket-459 - test that changing the leak reversal potential leaves all other neuron parameters else unchanged
 
 Synopsis: (ticket-459.sli) run -> dies if assertion fails

@@ -91,7 +91,9 @@ class SonataConnector(object):
             node_types_file = nodes['node_types_file']
             node_types = pd.read_csv(node_types_file, sep='\s+')
 
-            if len(node_types) == 1 or self.is_unique_(node_types['model_template']):  # need to change, here for spike trains
+            one_model = node_types['model_type'].all() == 'virtual' or self.is_unique_(node_types['model_template'])
+
+            if one_model:
                 model_type = node_types.model_type.iloc[0]
                 if model_type not in ['point_neuron', 'point_process', 'virtual']:
                     warnings.warn(f'model of type {model_type} is not a NEST model, it will not be used.')
@@ -121,19 +123,22 @@ class SonataConnector(object):
                                 with h5py.File(input_dict['input_file'], 'r') as spiking_file:
                                     spikes = spiking_file['spikes']['timestamps']
                                     node_ids = spiking_file['spikes']['gids']
-                                    timestamps = {}
+                                    timestamps = {i: [] for i in range(num_elements)}
+                                    dt = self.config['run']['dt']
                                     for indx, node_id in enumerate(node_ids):
-                                        if node_id in timestamps:
-                                            timestamps[node_id].append(np.round(spikes[indx], 2))
-                                        else:
-                                            timestamps[node_id] = [np.round(spikes[indx], 2)]
-                                    
-                                    nodes = NodeCollection([])
-                                    for node_id in np.unique(node_ids):
-                                        nc = Create(model, params={'spike_times': timestamps[node_id]})
+                                        rate = round(spikes[indx] / dt) * dt
+                                        if rate == 0.:
+                                            continue
+                                        timestamps[node_id].append(rate)#np.round(spikes[indx], 1))
+
+                                    #nodes = NodeCollection([])
+                                    #for node_id in np.unique(node_ids):
+                                    #    nc = Create(model, params={'spike_times': timestamps[node_id]})
                                         #if dynamics:
                                         #   nc.set(**dynamics)  #this needs to be re-added.
-                                        nodes += nc
+                                    #    nodes += nc
+                                nodes = Create(model, num_elements)
+                                nodes.set([{'spike_times': timestamps[i]} for i in range(len(nodes))])
                     else:
                         model = node_types.model_template.iloc[0].replace('nest:','')
                         print(model)

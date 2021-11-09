@@ -91,19 +91,17 @@ Threading
 .. list-table:: OpenMP settings
    :header-rows: 1
 
-   * - Setting
-     - Description
-   * - `--map-by-core`
-     - make it work
-   * - `--report-bindings`
-     -
-   * - `OMP_PLACES`
-     -
-   * - `OMP_PROC_BIND`
-     -
-   * - `JAFFINITY=TRUE`
-     -
-   * - `--bind-to core:overload-allowed`
-     -
+   * - export OMP_NUM_THREADS=#CPUSPERTASK#
+     - variable telling OpenMP how many threads are used on a MPI process
+   * - export OMP_PROC_BIN=true
+     - no movement of threads between OpenMP threads and OpenMP places
+   * - export OMP_PROC_BIN=close
+     - no movement of threads between OpenMP threads and OpenMP places and OpenMP places are 'close' in a hardware sense
+   * - export OMP_PLACES=threads/cores
+     - each OpenMP place corresponds to a hardware thread/core
+   * - export OPM_PLACES="{a : b : c}"
+     - OpenMP places are a, a+b, a+2c, ... a+nc=b (numbering usually relates to cores/hardware threads)
+   * - export OPM_DISPLAY_ENV=true
+     - display OpenMP variables
 
 

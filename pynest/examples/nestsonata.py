@@ -43,17 +43,18 @@ nest.ResetKernel()
 
 #example = '300_pointneurons'
 example = 'GLIF'
-plot = False
+plot = True
 
 if example == '300_pointneurons':
     base_path = '/home/stine/Work/sonata/examples/300_pointneurons/'
     config = 'circuit_config.json'
     sim_config = 'simulation_config.json'
-    plot = True
+    population_to_plot = 'internal'
 elif example == 'GLIF':
     base_path = '/home/stine/Work/sonata/examples/GLIF_NEST/'
-    config = 'config_small.json'
+    config = 'config.json'
     sim_config = None
+    population_to_plot = 'v1'
 
 
 sonata_connector = nest.SonataConnector(base_path, config, sim_config)
@@ -95,15 +96,17 @@ print("number of connections: ", nest.GetKernelStatus('num_connections'))
 
 if plot:
     s_rec = nest.Create('spike_recorder')
-    nest.Connect(sonata_connector.node_collections['internal'], s_rec)
-    
+    nest.Connect(sonata_connector.node_collections[population_to_plot], s_rec)
+
 print('simulating')
 
 simtime = 0
 if 'tstop' in sonata_connector.config['run']:
     simtime = sonata_connector.config['run']['tstop']
 else:
+    #simtime = 1000.
     simtime = sonata_connector.config['run']['duration']
+
 nest.Simulate(simtime)
 
 end_time = time.time() - start_time
@@ -115,7 +118,7 @@ print(f'memory create: {mem_create}')
 print(f'memory connect: {mem_connect}')
 
 if plot:
-    print(s_rec.events)
+    #print(s_rec.events)
     nest.raster_plot.from_device(s_rec)
     plt.show()
 

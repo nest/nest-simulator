@@ -205,7 +205,7 @@ class TestNodeCollection(unittest.TestCase):
             # With stop values
             for stop in range(-len(nodes) + 1, len(nodes) + 1):
                 if stop == 0:
-                    continue  # Slicing to an empty NodeCollection is not allowed.
+                    continue  # Slicing an empty NodeCollection is not allowed.
                 self.assertEqual(nodes[:stop].tolist(), n_list[:stop], f'with [:{stop}]')
 
             # With step values
@@ -220,7 +220,7 @@ class TestNodeCollection(unittest.TestCase):
             # With stop and step values
             for stop in range(-len(nodes) + 1, len(nodes) + 1):
                 if stop == 0:
-                    continue  # Slicing to an empty NodeCollection is not allowed.
+                    continue  # Slicing an empty NodeCollection is not allowed.
                 for step in range(1, len(nodes)):
                     self.assertEqual(nodes[:stop:step].tolist(), n_list[:stop:step], f'with [:{stop}:{step}]')
 
@@ -228,7 +228,7 @@ class TestNodeCollection(unittest.TestCase):
             for start in range(-len(nodes), len(nodes)):
                 for stop in range(start+1, len(nodes) + 1):
                     if stop == 0 or (start < 0 and start+len(nodes) >= stop):
-                        continue  # Cannot slice to an empty NodeCollection, or use stop <= start.
+                        continue  # Cannot slice an empty NodeCollection, or use stop <= start.
                     for step in range(1, len(nodes)):
                         self.assertEqual(nodes[start:stop:step].tolist(), n_list[start:stop:step],
                                          f'with [{start}:{stop}:{step}]')

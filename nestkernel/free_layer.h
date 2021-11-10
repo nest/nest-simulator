@@ -181,7 +181,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
       for ( auto nc_it = this->node_collection_->begin(); nc_it < this->node_collection_->end(); ++nc_it )
       {
-        // We generate the position here, even if will not store it, to do the same calculations of lower_left_ and
+        // We generate the position here, even if we do not store it, to do the same calculations of lower_left_ and
         // max_point on all processes.
         Position< D > point = pos->get_values( rng );
 

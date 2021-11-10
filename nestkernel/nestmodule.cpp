@@ -1567,7 +1567,7 @@ NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
 
   Parameters:
   nc - NodeCollection to be sliced
-  array - array on the form [start stop step]
+  array - array of the form [start stop step]
 
   Description:
   Slice a `NodeCollection` using pythonic slicing conventions:

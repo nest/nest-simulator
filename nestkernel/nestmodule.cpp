@@ -1570,11 +1570,10 @@ NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
   array - array on the form [start stop step]
 
   Description:
-  Slice a NodeCollection with given start, stop, and step. The step value gives
-  the steplength of the slice, while the start and stop values give the
-  half-open range of the slice using zero-based indexing. Negative start or stop
-  values count backwards from the last node, so that -1 is the last element, -2
-  is the second to last element, and so on.
+  Slice a `NodeCollection` using pythonic slicing conventions:
+  - Include elements from and including `start` to but excluding `stop`.
+  - `step` is the step length in the slice and must be positive.
+  - Negative values for `start` and `stop` count from the end of the `NodeCollection`,  i.e., -1 is the last element.
 */
 void
 NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const

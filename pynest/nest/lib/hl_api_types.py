@@ -154,7 +154,7 @@ class NodeCollection(object):
     If your nodes have spatial extent, use the member parameter ``spatial`` to get the spatial information.
 
     Slicing a NodeCollection follows standard Python slicing syntax: nc[start:stop:step], where start and stop
-    gives the zero-indexed half-open range of nodes, and step gives the step length between nodes. The step must
+    gives the zero-indexed right-open range of nodes, and step gives the step length between nodes. The step must
     be strictly positive.
 
     Example
@@ -217,15 +217,13 @@ class NodeCollection(object):
                 start = 0
             else:
                 start = key.start
-                if ((start < 0 and start < -1 * self.__len__()) or
-                        (start >= 0 and start > self.__len__())):
+                if abs(start) > self.__len__():
                     raise IndexError('slice start value outside of the NodeCollection')
             if key.stop is None:
                 stop = self.__len__()
             else:
                 stop = key.stop
-                if ((stop < 0 and stop < -1 * self.__len__()) or
-                        (stop >= 0 and stop > self.__len__())):
+                if abs(stop) > self.__len__():
                     raise IndexError('slice stop value outside of the NodeCollection')
             step = 1 if key.step is None else key.step
             if step < 1:

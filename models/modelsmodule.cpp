@@ -230,7 +230,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
   kernel().model_manager.register_node_model< pp_pop_psc_delta >(
-    "pp_pop_psc_delta", /*private_model*/ false, /*deprecation_info*/ "a future version of NEST" );
+    "pp_pop_psc_delta", /*deprecation_info*/ "a future version of NEST" );
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
   kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >( "gif_psc_exp_multisynapse" );
   kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );

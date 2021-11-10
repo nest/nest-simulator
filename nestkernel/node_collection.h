@@ -380,7 +380,7 @@ private:
   bool nodes_have_no_proxies_;         //!< Whether the primitive contains devices or not
 
   /**
-   * Raise an error if the model IDs of all nodes in the primitive are not the same as the expected model id. 
+   * Raise an error if the model IDs of all nodes in the primitive are not the same as the expected model id.
    *
    * @note  For use in the constructor only.
    *

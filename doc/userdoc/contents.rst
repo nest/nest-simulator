@@ -15,18 +15,18 @@ Table of Contents
 
 .. toctree::
    :maxdepth: 1
-   :caption: Your system setup
+   :caption: Specialized setup of NEST
 
    Communicate with other tools <coupling_nest_docs/index>
    HPC optimization  <hpc_docs/index>
-   Benchmarking <hpc_docs/index>
+   Benchmarking <hpc_docs/benchmarking>
 
 
 .. toctree::
    :maxdepth: 1
    :caption: Understand how NEST works
 
-   NEST models - how they are used and how you can create your own <models/models_main>
+   NEST models - how they are used and how you can create your own <models/models-main>
    Neurons <neuron_docs/index>
    Synapses and connections <synapse_docs/index>
    Devices - record and stimulate <device_docs/index>
@@ -42,15 +42,16 @@ Table of Contents
    Glossary - list of commonly used terms in NEST <glossary>
    Release notes - find out what's new and what's changed <release_notes/index>
    troubleshooting
+   Command line help <getting_help>
 
 .. toctree::
    :maxdepth: 1
-   :caption: Get involved
+   :caption: Community
 
-   Community <community>
-   getting_help
+   Contact us <community>
    Contribute <contribute/index>
-   documentation_workflow/index
+   Developer space <developer_space>
+   News and updates <https://nest-simulator.org>
    Publications <https://www.nest-simulator.org/publications/>
    NEST Initiative <https://www.nest-initiative.org/>
 

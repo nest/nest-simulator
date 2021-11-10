@@ -472,7 +472,7 @@ class TestNodeCollection(unittest.TestCase):
 
         self.assertTrue(len(n) > 0)
 
-        models = ['iaf_psc_alpha'] + list(models)
+        models = ['iaf_psc_alpha'] + list(nest.node_models)
         for count, nc in enumerate(n):
             self.assertEqual(nc.get('model'), models[count])
 

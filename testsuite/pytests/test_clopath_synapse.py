@@ -55,7 +55,7 @@ class ClopathSynapseTestCase(unittest.TestCase):
                          {"synapse_model": "clopath_synapse"})
 
         # Ensure that connecting not supported models fails
-        for nm in [n for n in nest.node_models if n not in supported_models]
+        for nm in [n for n in nest.node_models if n not in supported_models]:
             nest.ResetKernel()
 
             n = nest.Create(nm, 2)

@@ -119,16 +119,7 @@ def Create(model, n=1, params=None, positions=None):
     if isinstance(params, dict) and params:  # if params is a dict and not empty
         iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
 
-    if not iterable_or_parameter_in_params:
-        cmd = "/%s 3 1 roll exch Create" % model
-        sps(params)
-    else:
-        cmd = "/%s exch Create" % model
-
-    sps(n)
-    sr(cmd)
-
-    node_ids = spp()
+    node_ids = kernel.llapi_create(model.encode('utf8'), n)
 
     if params is not None and iterable_or_parameter_in_params:
         try:

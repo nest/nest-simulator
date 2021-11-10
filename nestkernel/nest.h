@@ -94,6 +94,8 @@ void register_secondary_connection_model( const std::string& name,
 
 void print_nodes_to_stream( std::ostream& out = std::cout );
 
+std::string pprint_to_string( NodeCollectionPTR nc );
+
 RngPtr get_rank_synced_rng();
 RngPtr get_vp_synced_rng( thread tid );
 RngPtr get_vp_specific_rng( thread tid );

@@ -70,9 +70,11 @@ cdef extern from "parameter.h":
     cppclass ParameterDatum:
         ParameterDatum(const ParameterDatum&)
 
-cdef extern from "node_collection.h":
+cdef extern from "node_collection.h" namespace "nest":
     cppclass NodeCollectionPTR:
         NodeCollectionPTR()
+
+cdef extern from "node_collection.h":
     cppclass NodeCollectionDatum:
         NodeCollectionDatum(const NodeCollectionDatum&)
 
@@ -93,11 +95,6 @@ cdef extern from "nest_datums.h":
         long get_target_thread()
         long get_synapse_model_id()
         long get_port()
-
-    cppclass NodeCollectionDatum:
-        NodeCollectionDatum()
-        NodeCollectionDatum(const NodeCollectionDatum&)
-        NodeCollectionDatum(const NodeCollectionPTR&)
 
     cppclass NodeCollectionIteratorDatum:
         NodeCollectionIteratorDatum(const NodeCollectionIteratorDatum&)
@@ -159,6 +156,7 @@ cdef extern from "kernel_manager.h" namespace "nest":
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     NodeCollectionPTR create( const string model_name, const long n )
+    string pprint_to_string( NodeCollectionPTR nc )
 
 cdef extern from "pynestkernel_aux.h":
     CYTHON_isConnectionGenerator( x )
@@ -166,7 +164,7 @@ cdef extern from "pynestkernel_aux.h":
     CYTHON_DEREF( x )
     CYTHON_ADDR( x )
 
-# TODO-PYNEST-NG: Move these from neststartup to mpimanager  
+# TODO-PYNEST-NG: Move these from neststartup to mpimanager
 # cdef extern from "neststartup.h":
 #     cbool nest_has_mpi4py()
 #     void c_set_communicator "set_communicator" (object) with gil

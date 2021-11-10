@@ -81,6 +81,17 @@ except ImportError:
     pass
 
 
+cdef class NodeCollectionObject(object):
+
+    cdef NodeCollectionPTR thisptr
+
+    def __repr__(self):
+        return "<NodeCollectionObject>"
+
+    cdef _set_nc(self, NodeCollectionPTR nc):
+        self.thisptr = nc
+
+
 cdef class SLIDatum(object):
 
     cdef Datum* thisptr
@@ -588,14 +599,17 @@ cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ =
     else:
         return arr
 
-
 ################################################################################
 ####                                                                        ####
 ####                              PyNEST LL API                             ####
 ####                                                                        ####
 ################################################################################
 
-def llapi_create(string model, long n=1):
+def llapi_create(string model, long n):
     cdef NodeCollectionPTR gids = create(model, n)
-    return NodeCollection(gids)
+    obj = NodeCollectionObject()
+    obj._set_nc(gids)
+    return nest.NodeCollection(obj)
 
+def llapi_to_string(NodeCollectionObject nc):
+    return pprint_to_string(nc.thisptr)

@@ -72,6 +72,7 @@ set ( nestkernel_sources
       music_rate_in_handler.h music_rate_in_handler.cpp
       music_manager.cpp music_manager.h
       nest.h nest_impl.h nest.cpp
+      ../models/iaf_psc_alpha.h ../models/iaf_psc_alpha.cpp
       synaptic_element.h synaptic_element.cpp
       growth_curve.h growth_curve.cpp
       growth_curve_factory.h

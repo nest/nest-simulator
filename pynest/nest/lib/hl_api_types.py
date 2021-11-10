@@ -187,16 +187,13 @@ class NodeCollection(object):
     def __init__(self, data=None):
         if data is None:
             data = []
-        if isinstance(data, kernel.SLIDatum):
-            if data.dtype != "nodecollectiontype":
-                raise TypeError("Need NodeCollection Datum.")
+        if isinstance(data, kernel.NodeCollectionObject):
             self._datum = data
         else:
             # Data from user, must be converted to datum
             # Data can be anything that can be converted to a NodeCollection,
             # such as list, tuple, etc.
-            nc = sli_func('cvnodecollection', data)
-            self._datum = nc._datum
+            nc = kernel.make_nodecollection(data) # TODO-PYNEST-NG: implement
 
     def __iter__(self):
         return NodeCollectionIterator(self)
@@ -284,10 +281,10 @@ class NodeCollection(object):
         return sli_func('size', self._datum)
 
     def __str__(self):
-        return sli_func('pcvs', self._datum)
+        return kernel.llapi_to_string(self._datum).decode('utf8')
 
     def __repr__(self):
-        return sli_func('pcvs', self._datum)
+        return self.__str__()
 
     def get(self, *params, **kwargs):
         """

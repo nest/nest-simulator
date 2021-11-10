@@ -52,273 +52,22 @@ __all__ = [
     'check_stack',
     'connect_arrays',
     'set_communicator',
-    'get_debug',
-    'set_debug',
-    'sli_func',
-    'sli_pop',
-    'sli_push',
-    'sli_run',
-    'spp',
-    'sps',
-    'sr',
-    'stack_checker',
     'take_array_index',
-    'KernelAttribute',
+    # 'KernelAttribute', TODO-PYNEST-NG: Enable again when it works without SLI
 ]
 
 
 engine = kernel.NESTEngine()
 
-sli_push = sps = engine.push
-sli_pop = spp = engine.pop
 take_array_index = engine.take_array_index
 connect_arrays = engine.connect_arrays
 
 
-def catching_sli_run(cmd):
-    """Send a command string to the NEST kernel to be executed, catch
-    SLI errors and re-raise them in Python.
-
-    Parameters
-    ----------
-    cmd : str
-        The SLI command to be executed.
-    Raises
-    ------
-    kernel.NESTError
-        SLI errors are bubbled to the Python API as NESTErrors.
-    """
-
-    if sys.version_info >= (3, ):
-        def encode(s):
-            return s
-
-        def decode(s):
-            return s
-    else:
-        def encode(s):
-            return s.encode('utf-8')
-
-        def decode(s):
-            return s.decode('utf-8')
-
-    engine.run('{%s} runprotected' % decode(cmd))
-    if not sli_pop():
-        errorname = sli_pop()
-        message = sli_pop()
-        commandname = sli_pop()
-        engine.run('clear')
-
-        exceptionCls = getattr(kernel.NESTErrors, errorname)
-        raise exceptionCls(commandname, message)
-
-
-sli_run = sr = catching_sli_run
-
-
-def sli_func(s, *args, **kwargs):
-    """Convenience function for executing an SLI command s with
-    arguments args.
-
-    This executes the SLI sequence:
-    ``sli_push(args); sli_run(s); y=sli_pop()``
-
-    Parameters
-    ----------
-    s : str
-        Function to call
-    *args
-        Arbitrary number of arguments to pass to the SLI function
-    **kwargs
-        namespace : str
-            The sli code is executed in the given SLI namespace.
-        litconv : bool
-            Convert string args beginning with / to literals.
-
-    Returns
-    -------
-    The function may have multiple return values. The number of return values
-    is determined by the SLI function that was called.
-
-    Examples
-    --------
-    r,q = sli_func('dup rollu add',2,3)
-    r   = sli_func('add',2,3)
-    r   = sli_func('add pop',2,3)
-    """
-
-    # check for namespace
-    slifun = 'sli_func'  # version not converting to literals
-    if 'namespace' in kwargs:
-        s = kwargs['namespace'] + ' using ' + s + ' endusing'
-    elif 'litconv' in kwargs:
-        if kwargs['litconv']:
-            slifun = 'sli_func_litconv'
-    elif len(kwargs) > 0:
-        raise kernel.NESTErrors.PyNESTError(
-            "'namespace' and 'litconv' are the only valid keyword arguments.")
-
-    sli_push(args)       # push array of arguments on SLI stack
-    sli_push(s)          # push command string
-    sli_run(slifun)      # SLI support code to execute s on args
-    r = sli_pop()        # return value is an array
-
-    if len(r) == 1:      # 1 return value is no tuple
-        return r[0]
-
-    if len(r) != 0:
-        return r
-
-
-__debug = False
-
-
-def get_debug():
-    """Return the current value of the debug flag of the low-level API.
-
-    Returns
-    -------
-    bool:
-        current value of the debug flag
-    """
-
-    return __debug
-
-
-def set_debug(dbg=True):
-    """Set the debug flag of the low-level API.
-
-    Parameters
-    ----------
-    dbg : bool, optional
-        Value to set the debug flag to
-    """
-
-    global __debug
-    __debug = dbg
-
-
-def stack_checker(f):
-    """Decorator to add stack checks to functions using PyNEST's
-    low-level API.
-
-    This decorator works only on functions. See
-    check_stack() for the generic version for functions and
-    classes.
-
-    Parameters
-    ----------
-    f : function
-        Function to decorate
-
-    Returns
-    -------
-    function:
-        Decorated function
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    @functools.wraps(f)
-    def stack_checker_func(*args, **kwargs):
-        if not get_debug():
-            return f(*args, **kwargs)
-        else:
-            sr('count')
-            stackload_before = spp()
-            result = f(*args, **kwargs)
-            sr('count')
-            num_leftover_elements = spp() - stackload_before
-            if num_leftover_elements != 0:
-                eargs = (f.__name__, num_leftover_elements)
-                etext = "Function '%s' left %i elements on the stack."
-                raise kernel.NESTError(etext % eargs)
-            return result
-
-    return stack_checker_func
-
-
-def check_stack(thing):
-    """Convenience wrapper for applying the stack_checker decorator to
-    all class methods of the given class, or to a given function.
-
-    If the object cannot be decorated, it is returned unchanged.
-
-    Parameters
-    ----------
-    thing : function or class
-        Description
-
-    Returns
-    -------
-    function or class
-        Decorated function or class
-
-    Raises
-    ------
-    ValueError
-    """
-
-    if inspect.isfunction(thing):
-        return stack_checker(thing)
-    elif inspect.isclass(thing):
-        for name, mtd in inspect.getmembers(thing, predicate=inspect.ismethod):
-            if name.startswith("test_"):
-                setattr(thing, name, stack_checker(mtd))
-        return thing
-    else:
-        raise ValueError("unable to decorate {0}".format(thing))
-
-
-class KernelAttribute:
-    """
-    Descriptor that dispatches attribute access to the nest kernel.
-    """
-    def __init__(self, typehint, description, readonly=False, default=None, localonly=False):
-        self._readonly = readonly
-        self._localonly = localonly
-        self._default = default
-
-        readonly = readonly and "**read only**"
-        localonly = localonly and "**local only**"
-
-        self.__doc__ = (
-            description
-            + ("." if default is None else f", defaults to ``{default}``.")
-            + ("\n\n" if readonly or localonly else "")
-            + ", ".join(c for c in (readonly, localonly) if c)
-            + f"\n\n:type: {typehint}"
-        )
-
-    def __set_name__(self, cls, name):
-        self._name = name
-        self._full_status = name == "kernel_status"
-
-    @stack_checker
-    def __get__(self, instance, cls=None):
-        if instance is None:
-            return self
-
-        sr('GetKernelStatus')
-        status_root = spp()
-
-        if self._full_status:
-            return status_root
-        else:
-            return status_root[self._name]
-
-    @stack_checker
-    def __set__(self, instance, value):
-        if self._readonly:
-            msg = f"`{self._name}` is a read only kernel attribute."
-            raise AttributeError(msg)
-        sps({self._name: value})
-        sr('SetKernelStatus')
-
-
 initialized = False
+
+
+def check_stack(thing):  # # TODO-PYNEST-NG: remove
+    return thing
 
 
 def set_communicator(comm):
@@ -384,24 +133,26 @@ def init(argv):
         nest_argv.append("--debug")
 
     path = os.path.dirname(__file__)
-    initialized = engine.init(nest_argv, path)
+    initialized = engine.init(nest_argv)
 
     if initialized:
         if not quiet:
-            engine.run("pywelcome")
+            print('NEST initialized successfully!')  # TODO-PYNEST-NG: Implement welcome in Python
+            # engine.run("pywelcome")
 
+        # TODO-PYNEST-NG: Enable again when it works without SLI
         # Dirty hack to get tab-completion for models in IPython.
-        try:
-            __IPYTHON__
-        except NameError:
-            pass
-        else:
-            try:
-                import keyword
-                from .lib.hl_api_models import Models		# noqa
-                keyword.kwlist += Models()
-            except ImportError:
-                pass
+        # try:
+        #     __IPYTHON__
+        # except NameError:
+        #     pass
+        # else:
+        #     try:
+        #         import keyword
+        #         from .lib.hl_api_models import Models		# noqa
+        #         keyword.kwlist += Models()
+        #     except ImportError:
+        #         pass
 
     else:
         raise kernel.NESTErrors.PyNESTError("Initialization of NEST failed.")

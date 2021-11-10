@@ -31,6 +31,13 @@
 #include "mpi_manager_impl.h"
 #include "parameter.h"
 
+#include "../models/iaf_psc_alpha.h"
+
+#include "model_manager.h"
+#include "model_manager_impl.h"
+#include "genericmodel_impl.h"
+
+
 // Includes from sli:
 #include "sliexceptions.h"
 #include "token.h"
@@ -44,6 +51,7 @@ init_nest( int* argc, char** argv[] )
   KernelManager::create_kernel_manager();
   kernel().mpi_manager.init_mpi( argc, argv );
   kernel().initialize();
+  kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
 }
 
 void
@@ -79,6 +87,15 @@ print_nodes_to_stream( std::ostream& ostr )
 {
   kernel().node_manager.print( ostr );
 }
+
+std::string
+pprint_to_string( NodeCollectionPTR nc )
+{
+  std::stringstream stream;
+  nc->print_me( stream );
+  return stream.str();
+}
+
 
 RngPtr
 get_rank_synced_rng()

@@ -221,8 +221,6 @@ def
     slice 0 get dup 2 arraystore /slice Set
   } if
 
-  % assume that we have two or three elements now
-  % adjust slice to zero-indexing
   slice arrayload
   2 eq
   {
@@ -232,23 +230,38 @@ def
     /step Set
   } ifelse
 
+  % We assume that we have two or three elements now.
+  % Have to adjust slice to zero-indexing.
   /stp Set
   /strt Set
-  strt 0 geq
-  { % strt >= 0
+
+  % With one-based indexing, 0 is not a valid index.
+  strt 0 eq
+  { % strt == 0
+    /Take /RangeError raiseerror
+  } if
+
+  % For positive start values, start is adjusted one down for zero-based indexing.
+  % The stop value goes from inclusive to exclusive, so positive stop values do not have to be adjusted.
+  strt 0 gt
+  { % strt > 0
     % adjust to zero-indexing
     strt 1 sub /strt Set
   } if
 
-  stp -1 eq
-  { % special case because -1 means the last element
-    coll size /stp Set
+  % Negative one-based start values are converted to positive zero-based start values.
+  strt 0 lt
+  { % strt < 0
+    strt coll size add /strt Set
   } if
-  stp -1 lt
+
+  % Negative one-based stop values are converted to positive zero-based stop values.
+  % Because we go from inclusive to exclusive stop value, stop is adjusted one up.
+  stp -1 leq
   {
-    % adjust to zero-indexing
-    stp 1 add /stp Set
+    stp coll size add 1 add /stp Set
   } if
+
   strt stp step 3 arraystore
   coll exch
   Take_g_a

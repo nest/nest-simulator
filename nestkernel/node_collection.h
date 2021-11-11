@@ -70,20 +70,6 @@ public:
   virtual index get_first_node_id() const = 0;
   virtual std::string get_type() const = 0;
 
-  /**
-   * Create a new NodeCollectionMetadata from this NodeCollectionMetadata, sliced to (inclusive) boundaries,
-   * with a step parameter. The slicing of metadata is analogous to the slicing of NodeCollections.
-   *
-   * The sliced metadata is set as the metadata of the specified NodeCollection.
-   * The original metadata is unchanged.
-   *
-   * @param start Index of the metadata to start at
-   * @param stop Index of the metadata to stop at
-   * @param step Number of places between elements to skip
-   * @param node_collection NodeCollection to which the sliced metadata is assigned
-   */
-  virtual void slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection ) = 0;
-
   virtual bool operator==( const NodeCollectionMetadataPTR ) const = 0;
 };
 
@@ -327,11 +313,11 @@ public:
    * parameter. Note that the boundaries being specified are inclusive.
    *
    * @param start Index of the NodeCollection to start at
-   * @param stop Index of the NodeCollection to stop at
+   * @param end One past the index of the NodeCollection to stop at
    * @param step Number of places between node IDs to skip. Defaults to 1
    * @return a NodeCollection pointer to the new, sliced NodeCollection.
    */
-  virtual NodeCollectionPTR slice( size_t start, size_t stop, size_t step ) const = 0;
+  virtual NodeCollectionPTR slice( size_t start, size_t end, size_t step ) const = 0;
 
   /**
    * Sets the metadata of the NodeCollection.
@@ -363,6 +349,13 @@ public:
    */
   virtual long find( const index ) const = 0;
 
+  /**
+   * Returns whether the NodeCollection contains any nodes with proxies or not.
+   *
+   * @return true if any nodes in the NodeCollection has proxies, false otherwise.
+   */
+  virtual bool has_proxies() const = 0;
+
 private:
   unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
   static NodeCollectionPTR create_();
@@ -384,6 +377,16 @@ private:
   index last_;                         //!< The last node ID in the primitive
   index model_id_;                     //!< Model ID of the node IDs
   NodeCollectionMetadataPTR metadata_; //!< Pointer to the metadata of the node IDs
+  bool nodes_have_no_proxies_;         //!< Whether the primitive contains devices or not
+
+  /**
+   * Raise an error if the model IDs of all nodes in the primitive are not the same as the expected model id.
+   *
+   * @note  For use in the constructor only.
+   *
+   * @param model_id Expected model id.
+   */
+  void assert_consistent_model_ids_( index ) const;
 
 public:
   using const_iterator = nc_const_iterator;
@@ -451,7 +454,7 @@ public:
   size_t size() const override;
 
   bool contains( index node_id ) const override;
-  NodeCollectionPTR slice( size_t start, size_t stop, size_t step = 1 ) const override;
+  NodeCollectionPTR slice( size_t start, size_t end, size_t step = 1 ) const override;
 
   void set_metadata( NodeCollectionMetadataPTR ) override;
 
@@ -461,6 +464,8 @@ public:
   bool empty() const override;
 
   long find( const index ) const override;
+
+  bool has_proxies() const override;
 
   /**
    * Checks if node IDs in another primitive is a continuation of node IDs in this
@@ -489,8 +494,8 @@ NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs );
  *
  * The composite type contains a collection of primitives which are not
  * contiguous and homogeneous with each other. If the composite is sliced, it
- * also holds information about what index to start at and which to end at, and
- * the step.
+ * also holds information about what index to start at, one past the index to end at, and
+ * the step. The endpoint is one past the last valid node.
  */
 class NodeCollectionComposite : public NodeCollection
 {
@@ -502,8 +507,8 @@ private:
   size_t step_;                                  //!< Step length, set when slicing.
   size_t start_part_;                            //!< Primitive to start at, set when slicing
   size_t start_offset_;                          //!< Element to start at, set when slicing
-  size_t stop_part_;                             //!< Primitive to stop at, set when slicing
-  size_t stop_offset_;                           //!< Element to stop at, set when slicing
+  size_t end_part_;                              //!< Primitive or one past the primitive to end at, set when slicing
+  size_t end_offset_;                            //!< One past the element to end at, set when slicing
 
   /**
    * Goes through the vector of primitives, merging as much as possible.
@@ -518,7 +523,7 @@ public:
    *
    * @param primitive Primitive to be converted
    * @param start Offset in the primitive to begin at.
-   * @param stop Offset in the primitive to stop at.
+   * @param end Offset in the primitive, one past the node to end at.
    * @param step Length to step in the primitive.
    */
   NodeCollectionComposite( const NodeCollectionPrimitive&, size_t, size_t, size_t );
@@ -536,7 +541,7 @@ public:
      *
      * @param composite Composite to slice.
      * @param start Index in the composite to begin at.
-     * @param stop Index in the composite to stop at.
+     * @param end Index in the composite one past the node to end at.
      * @param step Length to step in the composite.
      */
   NodeCollectionComposite( const NodeCollectionComposite&, size_t, size_t, size_t );
@@ -578,7 +583,7 @@ public:
   size_t size() const override;
 
   bool contains( index node_id ) const override;
-  NodeCollectionPTR slice( size_t start, size_t stop, size_t step = 1 ) const override;
+  NodeCollectionPTR slice( size_t start, size_t end, size_t step = 1 ) const override;
 
   void set_metadata( NodeCollectionMetadataPTR ) override;
 
@@ -588,6 +593,8 @@ public:
   bool empty() const override;
 
   long find( const index ) const override;
+
+  bool has_proxies() const override;
 };
 
 inline bool NodeCollection::operator!=( NodeCollectionPTR rhs ) const
@@ -617,13 +624,13 @@ inline NodeIDTriple nc_const_iterator::operator*() const
   {
     // for efficiency we check each value instead of simply checking against
     // composite_collection->end()
-    if ( composite_collection_->stop_offset_ != 0 or composite_collection_->stop_part_ != 0 )
+    if ( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 )
     {
-      if ( not( part_idx_ < composite_collection_->stop_part_
-             or ( part_idx_ == composite_collection_->stop_part_
-                  and element_idx_ < composite_collection_->stop_offset_ ) ) )
+      if ( not( part_idx_ < composite_collection_->end_part_
+             or ( part_idx_ == composite_collection_->end_part_
+                  and element_idx_ < composite_collection_->end_offset_ ) ) )
       {
-        throw KernelException( "Invalid NodeCollection iterator (composite element beyond specified stop element)" );
+        throw KernelException( "Invalid NodeCollection iterator (composite element beyond specified end element)" );
       }
     }
     else if ( part_idx_ >= composite_collection_->parts_.size()
@@ -681,12 +688,12 @@ inline nc_const_iterator& nc_const_iterator::operator++()
     }
     // If we went past the end of the composite, we need to adjust the
     // position of the iterator.
-    if ( composite_collection_->stop_offset_ != 0 or composite_collection_->stop_part_ != 0 )
+    if ( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 )
     {
-      if ( part_idx_ >= composite_collection_->stop_part_ and element_idx_ >= composite_collection_->stop_offset_ )
+      if ( part_idx_ >= composite_collection_->end_part_ and element_idx_ >= composite_collection_->end_offset_ )
       {
-        part_idx_ = composite_collection_->stop_part_;
-        element_idx_ = composite_collection_->stop_offset_;
+        part_idx_ = composite_collection_->end_part_;
+        element_idx_ = composite_collection_->end_offset_;
       }
     }
     else if ( part_idx_ >= composite_collection_->parts_.size() )
@@ -843,9 +850,15 @@ NodeCollectionPrimitive::find( const index neuron_id ) const
   }
 }
 
+inline bool
+NodeCollectionPrimitive::has_proxies() const
+{
+  return not nodes_have_no_proxies_;
+}
+
 inline index NodeCollectionComposite::operator[]( const size_t i ) const
 {
-  if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or stop_part_ != parts_.size() or stop_offset_ > 0 )
+  if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or end_part_ != parts_.size() or end_offset_ > 0 )
   {
     // Composite is sliced, we use iterator arithmetic.
     return ( *( begin() + i ) ).node_id;
@@ -902,9 +915,9 @@ NodeCollectionComposite::begin( NodeCollectionPTR cp ) const
 inline NodeCollectionComposite::const_iterator
 NodeCollectionComposite::end( NodeCollectionPTR cp ) const
 {
-  if ( stop_part_ != 0 or stop_offset_ != 0 )
+  if ( end_part_ != 0 or end_offset_ != 0 )
   {
-    return const_iterator( cp, *this, stop_part_, stop_offset_, step_ );
+    return const_iterator( cp, *this, end_part_, end_offset_, step_ );
   }
   else
   {

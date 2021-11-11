@@ -801,6 +801,7 @@ def GetTargetPositions(sources, tgt_layer, syn_model=None):
     # Make dictionary where the keys are the source node_ids, which is mapped to a
     # list with the positions of the targets connected to the source.
     src_tgt_pos_map = dict((snode_id, []) for snode_id in sources.tolist())
+
     for i in range(len(connections)):
         tgt_indx = tgts[i] - first_tgt_node_id
         src_tgt_pos_map[srcs[i]].append(pos_all_tgts[tgt_indx])

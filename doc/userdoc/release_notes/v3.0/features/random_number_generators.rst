@@ -40,7 +40,9 @@ Which random number generator types are available can be checked by:
 
     nest.GetKernelStatus('rng_types')
 
-Details about the new random number generators can be found in the guide on :doc:`random number generators <../random_numbers>`.
+.. seealso::
+
+   Details can be found in our guide on :doc:`random number generators <../../../guides/random_numbers>`
 
 Counter-based random number generators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

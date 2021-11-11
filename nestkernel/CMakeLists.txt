@@ -79,7 +79,6 @@ set ( nestkernel_sources
       kernel_manager.h kernel_manager.cpp
       vp_manager.h vp_manager_impl.h vp_manager.cpp
       io_manager.h io_manager_impl.h io_manager.cpp
-      mpiutil.h mpiutil_impl.h
       mpi_manager.h mpi_manager_impl.h mpi_manager.cpp
       simulation_manager.h simulation_manager.cpp
       connection_manager.h connection_manager_impl.h connection_manager.cpp
@@ -113,7 +112,6 @@ set ( nestkernel_sources
       ntree.h ntree_impl.h
       position.h
       spatial.h spatial.cpp
-      vose.h vose.cpp
       stimulation_backend.h
       )
 
@@ -123,13 +121,6 @@ if ( HAVE_SIONLIB )
        ${nestkernel_sources}
        recording_backend_sionlib.h recording_backend_sionlib.cpp
        )
-endif ()
-
-if ( HAVE_RECORDINGBACKEND_ARBOR )
-  set( nestkernel_sources
-    ${nestkernel_sources}
-    recording_backend_arbor.h recording_backend_arbor.cpp
-  )
 endif ()
 
 if ( HAVE_MPI )

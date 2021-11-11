@@ -2,7 +2,11 @@
 Welcome to the NEST simulator documentation!
 ********************************************
 
-If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
+
+In our :doc:`release notes <release_notes/index>`, you can find an overview of the newest changes and features for NEST 3.x.
+
+If you are transitioning from NEST 2.x to NEST 3.x, check out our :doc:`reference guide <release_notes/v3.0/refguide_nest2_nest3>`.
+
 
 +------------------------------------+---------------------------------------+
 |                                    |                                       |
@@ -28,6 +32,8 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
     NEST comes packaged with a large collection of neuron and synaptic plasticity models.
     You can find a list of all available models in our :doc:`model directory <models/index>`,
     or select a model category by clicking one of the images:
+
+If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
 
 .. raw:: html
 

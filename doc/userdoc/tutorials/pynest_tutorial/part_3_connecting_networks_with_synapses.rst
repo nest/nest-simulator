@@ -89,7 +89,7 @@ connection routine.
     nest.Connect(epop1, epop2, conn_dict, syn_dict)
 
 If no synapse model is given, connections are made using the model
-``static_synapse``.
+:hxt_ref:`static_synapse`.
 
 Distributing synapse parameters
 -------------------------------
@@ -165,7 +165,7 @@ specifying a given synapse model:
     nest.GetConnections(synapse_model="stdp_synapse")
 
 will return all the connections in the network which are of type
-``stdp_synapse``. The last two cases are slower than the first case, as
+:hxt_ref:`stdp_synapse`. The last two cases are slower than the first case, as
 a full search of all connections has to be performed. The arguments
 ``source``, ``target`` and ``synapse_model`` can be used individually,
 as above, or in any conjunction:
@@ -175,7 +175,7 @@ as above, or in any conjunction:
     nest.GetConnections(epop1, epop2, "stdp_synapse")
 
 will return all the connections that the neurons in ``epop1`` have to
-neurons in ``epop2`` of type ``stdp_synapse``. Note that all these
+neurons in ``epop2`` of type :hxt_ref:`stdp_synapse`. Note that all these
 querying commands will only return the local connections, i.e. those
 represented on that particular MPI process in a distributed simulation.
 
@@ -253,7 +253,7 @@ Repetitive code, copy-and-paste, functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Often you need to repeat a section of code with minor modifications. For
-example, you have two ``multimeter``\ s and you wish to extract the
+example, you have two :hxt_ref:`multimeter`\ s and you wish to extract the
 recorded variable from each of them and then calculate its maximum. The
 temptation is to write the code once, then copy-and-paste it to its new
 location and make any necessary modifications:

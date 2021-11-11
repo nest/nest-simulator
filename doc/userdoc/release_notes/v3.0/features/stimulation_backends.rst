@@ -20,6 +20,11 @@ available only when the NEST is compiled with MPI support. This is useful in
 case of co-simulation and allows a closed loop simulation if it's coupled with the
 MPI recording backend.
 
+.. seealso::
+
+  Details about the new infrastructure can be found in the guide on
+  :doc:`stimulating the network <../../../guides/stimulate_the_network>`.
+
 Changes
 ^^^^^^^
 
@@ -30,5 +35,4 @@ parametrization.  If a backend, such as ``mpi`` is selected, the
 values for producing the stimuli are received from the backend's input
 channel.
 
-All details about the new infrastructure can be found in the guide on
-:doc:`stimulating the network <../../stimulate_the_network.rst>`.
+

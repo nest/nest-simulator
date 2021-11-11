@@ -54,6 +54,13 @@ of neurons. The spikes emitted by the pool of dopamine neurons are
 delivered to the synapse via the assigned volume transmitter. The
 dopaminergic dynamics is calculated in the synapse itself.
 
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
+
 Parameters
 ++++++++++
 

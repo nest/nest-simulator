@@ -47,6 +47,13 @@ irrespective of the order of the pre- and postsynaptic spikes. Each
 pre-synaptic spike also causes a constant depression of the synaptic weight
 which differentiates this rule from other classical stdp rules.
 
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
+
 Parameters
 ++++++++++
 

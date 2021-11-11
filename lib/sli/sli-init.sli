@@ -2343,6 +2343,26 @@ SeeAlso: statusdict
 
 
 /** @BeginDocumentation
+Name: unittest::exit_test_gracefully - End test script and report it as skipped
+Synopsis: literal exit_test_gracefully -> -
+Description:
+This function will terminate NEST/SLI with a return code signaling that a
+test was skipped. It should be used to leave test scripts that have special
+prerequisites.
+Parameters:
+literal - Reason for exit
+Example:
+/unittest using
+is_threaded not { /skipped_no_threading exit_test_gracefully } if
+SeeAlso: skip_if_no_mpi, skip_if_have_mpi, skip_if_not_threaded, skip_if_without_gsl, skip_if_without_music 
+*/
+/exit_test_gracefully[/literaltype]
+{
+  statusdict/exitcodes :: exch get quit_i
+} bind def
+
+
+/** @BeginDocumentation
 Name: skip_if_* - End script and report it as skipped
 Synopsis: skip_if_* -> -
 Description:

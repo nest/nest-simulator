@@ -314,7 +314,7 @@ nest::MPIManager::communicate( std::vector< long >& local_nodes, std::vector< lo
     displacements.at( i ) = displacements.at( i - 1 ) + num_nodes_per_rank.at( i - 1 );
   }
 
-  MPI_Allgatherv( &local_nodes[ 0 ],
+  MPI_Allgatherv( &( *local_nodes.begin() ),
     local_nodes.size(),
     MPI_Type< long >::type,
     &global_nodes[ 0 ],

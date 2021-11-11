@@ -84,13 +84,12 @@ public:
   {
     first_node_id_ = node_id;
   }
+
   index
   get_first_node_id() const
   {
     return first_node_id_;
   }
-
-  void slice( size_t start, size_t stop, size_t step, NodeCollectionPTR node_collection );
 
   bool operator==( const NodeCollectionMetadataPTR rhs ) const
   {

@@ -20,7 +20,6 @@ build/
 install/
 examples/example_logs/
 
-/build_support/nest-config
 /libnestutil/config.h
 /librandom/randomtest
 /nest/nest

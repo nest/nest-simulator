@@ -55,7 +55,7 @@ illustrates the interaction between the user’s simulation script
 (``mysimulation.py``) and the NEST simulator. Eppler et al. [3]_
 contains a technically detailed description of the implementation of this
 interface and parts of this text are based on this reference. The
-simulation kernel is written in C++ to obtain the highest possible performance
+simulation kernel is written in C++ to obtain the highest possible performance
 for the simulation.
 
 You can use PyNEST interactively from the Python prompt or from within

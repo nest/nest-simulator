@@ -206,7 +206,11 @@ volume_transmitter::get_status( DictionaryDatum& d ) const
 inline void
 volume_transmitter::set_status( const DictionaryDatum& d )
 {
-  P_.set( d, this );
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( d, this );   // throws if BadProperty
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
 }
 
 inline const std::vector< nest::spikecounter >&

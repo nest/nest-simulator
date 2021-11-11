@@ -12,8 +12,6 @@ on: [push, pull_request]
 jobs:
   static_checks:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    strategy:
-      fail-fast: true
     env:
       xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
     runs-on: "ubuntu-20.04"
@@ -27,9 +25,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-
-      - name: "DEBUG: Check Python path"
-        run: echo $PYTHONPATH
 
       - name: "Restore apt cache"
         uses: actions/cache@v2
@@ -76,13 +71,6 @@ jobs:
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
-      - name: "DEBUG: list files"
-        if: always()
-        run: |
-          pwd
-          ls -la * || true
-          ls -la build/* || true
-
       - name: "Find changed files"
         run: |
           echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
@@ -91,35 +79,18 @@ jobs:
           echo "GITHUB_ENV = $GITHUB_ENV"
           cat $GITHUB_ENV
 
-      - name: "DEBUG: list files"
-        run: |
-          pwd
-          ls -la * || true
-          ls -la build/* || true
-
-      - name: "list environment"
-        run: set
-
       - name: "Static Code Analysis"
-        run: |
-          chmod +x build_support/ci_build.sh
-          ./build_support/ci_build.sh
+        run: build_support/ci_build.sh
         env:
           xNEST_BUILD_TYPE: 'STATIC_CODE_ANALYSIS'
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
-
-      - name: "DEBUG: list files"
-        run: |
-          pwd
-          ls -la * || true
-          ls -la build/* || true
 
   test_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
     needs: [static_checks]
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: ["ubuntu-20.04"]
         cpp_compiler: ["gcc", "clang"]
@@ -150,19 +121,10 @@ jobs:
           echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >>$GITHUB_ENV
           echo 'EOF' >>$GITHUB_ENV
 
-      - name: "DEBUG: Check path"
-        run: |
-          echo $PATH
-          echo $PWD
-        shell: bash
-
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-
-      - name: "DEBUG: Check Python path"
-        run: echo $PYTHONPATH
 
       - name: "Restore apt cache"
         uses: actions/cache@v2
@@ -209,19 +171,8 @@ jobs:
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
-      - name: "DEBUG: find commands"
-        run: |
-          echo "python3: $(which python3)"
-          echo "cython: $(which cython)"
-          echo "cythonize: $(which cythonize)"
-          echo "cython3: $(which cython3)"
-          echo "cython.py: $(which cython.py)"
-          echo "cythonize.py: $(which cythonize.py)"
-          find /opt/hostedtoolcache/Python/ -iname "*cython*"
-
       - name: "Build NEST"
         run: |
-          chmod +x build_support/ci_build.sh
           ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
           python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
         env:
@@ -240,18 +191,12 @@ jobs:
             **.log
             build/reports/**
 
-      - name: "DEBUG: list files"
-        run: |
-          pwd
-          ls -la * || true
-          ls -la build/* || true
-
   test_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
     needs: [static_checks]
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [macos-latest]
         cpp_compiler: ["gcc", "clang"]
@@ -291,19 +236,10 @@ jobs:
           echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >>$GITHUB_ENV
           echo 'EOF' >>$GITHUB_ENV
 
-      - name: "DEBUG: Check path"
-        run: |
-          echo $PATH
-          echo $PWD
-        shell: bash
-
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
-
-      - name: "DEBUG: Check Python path"
-        run: echo $PYTHONPATH
 
       - name: "Install MacOS system dependencies"
         run: |
@@ -330,18 +266,8 @@ jobs:
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
-      - name: "DEBUG: find commands"
-        run: |
-          echo "python3: $(which python3)"
-          echo "cython: $(which cython)"
-          echo "cythonize: $(which cythonize)"
-          echo "cython3: $(which cython3)"
-          echo "cython.py: $(which cython.py)"
-          echo "cythonize.py: $(which cythonize.py)"
-
       - name: "Build NEST"
         run: |
-          chmod +x build_support/ci_build.sh
           ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
           python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
         env:
@@ -359,10 +285,3 @@ jobs:
             install_manifest.txt
             **.log
             build/reports/**
-
-      - name: "DEBUG: list files"
-        run: |
-          pwd
-          ls -la * || true
-          ls -la build/* || true
-

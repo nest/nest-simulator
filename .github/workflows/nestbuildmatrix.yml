@@ -209,16 +209,6 @@ jobs:
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
-      - name: "DEBUG: find commands"
-        run: |
-          echo "python3: $(which python3)"
-          echo "cython: $(which cython)"
-          echo "cythonize: $(which cythonize)"
-          echo "cython3: $(which cython3)"
-          echo "cython.py: $(which cython.py)"
-          echo "cythonize.py: $(which cythonize.py)"
-          find /opt/hostedtoolcache/Python/ -iname "*cython*"
-
       - name: "Build NEST"
         run: |
           chmod +x build_support/ci_build.sh

@@ -34,17 +34,13 @@ Python packages:
 - `Cython 0.28.3 or higher <https://cython.org>`_
 - `NumPy <http://www.numpy.org>`_
 - `SciPy <http://www.scipy.org>`_
+- Flask
+- Werkzeug
+- RestrictedPython
 
 The following packages are optional, but recommended to run the unit tests:
 
-- `nosetest 1.3.7 or higher <https://nose.readthedocs.io>`_
 - `Matplotlib 3.0 or higher <http://matplotlib.org>`_
-
-For NEST server, the followinga additional packages are necessary:
-
-- `Flask <https://flask.palletsprojects.com/>`_
-- `Werkzeug <https://werkzeug.palletsprojects.com/>`_
-- `RestrictedPython <https://restrictedpython.readthedocs.io/>`_
 
 .. _source-install:
 
@@ -138,7 +134,6 @@ further adjust settings for your system.
     python3-numpy \
     python3-scipy \
     python3-matplotlib \
-    python3-nose \
     python3-junitparser \
     python3-mpi4py \
     openmpi-bin \

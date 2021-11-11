@@ -48,6 +48,7 @@
 #include "nest_datums.h"
 #include "nest_types.h"
 #include "node.h"
+#include "parameter.h"
 #include "sp_manager_impl.h"
 #include "spatial.h"
 
@@ -223,27 +224,6 @@ NestModule::create_mask( const Token& t )
       // For grid layers only, it is also possible to provide an array of longs.
       try
       {
-
-        std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
-        AbstractMask* amask;
-
-        switch ( anchor.size() )
-        {
-        case 2:
-          amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
-          break;
-        case 3:
-          amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
-          break;
-        default:
-          throw BadProperty( "Anchor must be 2- or 3-dimensional." );
-        }
-
-        delete mask;
-        mask = amask;
-      }
-      catch ( TypeMismatch& e )
-      {
         std::vector< long > anchor = getValue< std::vector< long > >( anchor_token );
 
         switch ( anchor.size() )
@@ -271,6 +251,26 @@ NestModule::create_mask( const Token& t )
           }
           break;
         }
+      }
+      catch ( TypeMismatch& e )
+      {
+        std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
+        AbstractMask* amask;
+
+        switch ( anchor.size() )
+        {
+        case 2:
+          amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
+          break;
+        case 3:
+          amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
+          break;
+        default:
+          throw BadProperty( "Anchor must be 2- or 3-dimensional." );
+        }
+
+        delete mask;
+        mask = amask;
       }
     }
 
@@ -1559,6 +1559,22 @@ NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+/** @BeginDocumentation
+  Name: nest::Take_g_a - slice a NodeCollection
+
+  Synopsis:
+  nc array Take_g_a -> NodeCollection
+
+  Parameters:
+  nc - NodeCollection to be sliced
+  array - array of the form [start stop step]
+
+  Description:
+  Slice a `NodeCollection` using pythonic slicing conventions:
+  - Include elements from and including `start` to but excluding `stop`.
+  - `step` is the step length in the slice and must be positive.
+  - Negative values for `start` and `stop` count from the end of the `NodeCollection`,  i.e., -1 is the last element.
+*/
 void
 NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
 {
@@ -1581,23 +1597,16 @@ NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
     throw BadParameter( "Slicing step must be strictly positive." );
   }
 
-  if ( start >= 0 )
+  // If start or stop are counted backwards from the end with negative keys, they must be adjusted.
+  if ( start < 0 )
   {
-    start -= 1; // adjust from 1-based to 0-based indexing
-  }
-  else
-  {
-    start += g_size; // automatically correct for 0-based indexing
+    start += g_size;
+    stop = stop == 0 ? g_size : stop;
   }
 
-  if ( stop >= 0 )
+  if ( stop < 0 )
   {
-    // no adjustment necessary: adjustment from 1- to 0- based indexing
-    // and adjustment from last- to stop-based logic cancel
-  }
-  else
-  {
-    stop += g_size + 1; // adjust from 0- to 1- based indexin
+    stop += g_size;
   }
 
   NodeCollectionDatum sliced_nc = nodecollection->slice( start, stop, step );

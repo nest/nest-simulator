@@ -58,7 +58,7 @@ pg_A = 30.      # amplitude of Gaussian
 pg_sigma = 10.  # std deviation
 
 nest.ResetKernel()
-nest.SetKernelStatus({'resolution': resolution})
+nest.resolution = resolution
 
 # Create neurons and devices
 nrn_model = 'aeif_psc_delta_clopath'
@@ -144,14 +144,14 @@ pop_inh.V_m = nest.random.normal(-60., 25.)
 # Simulation divided into intervals of 100ms for shifting the Gaussian
 
 sim_interval = 100.
-for i in range(int(simulation_time/sim_interval)):
+for i in range(int(simulation_time / sim_interval)):
     # set rates of poisson generators
     rates = np.empty(500)
     # pg_mu will be randomly chosen out of 25,75,125,...,425,475
     pg_mu = 25 + random.randint(0, 9) * 50
     for j in range(500):
         rates[j] = pg_A * np.exp((-1 * (j - pg_mu)**2) / (2 * pg_sigma**2))
-        pg[j].rate = rates[j]*1.75
+        pg[j].rate = rates[j] * 1.75
     nest.Simulate(sim_interval)
 
 ##############################################################################
@@ -183,8 +183,8 @@ weight_matrix[tu10[0], tu10[1]] = weights[tu9[0], tu9[1]]
 weight_matrix[tl10[0], tl10[1]] = weights[tl9[0], tl9[1]]
 
 # Difference between initial and final value
-init_w_matrix = np.ones((10, 10))*0.25
-init_w_matrix -= np.identity(10)*0.25
+init_w_matrix = np.ones((10, 10)) * 0.25
+init_w_matrix -= np.identity(10) * 0.25
 
 cax = ax.imshow(weight_matrix - init_w_matrix)
 cbarB = fig.colorbar(cax, ax=ax)

@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""PyNEST - Python interface for the NEST simulator
+r"""PyNEST - Python interface for the NEST simulator
 
 * ``nest.helpdesk()`` opens the NEST documentation in your browser.
 
@@ -36,45 +36,399 @@
      - ``nest.Connect?``
 
 For more information visit https://www.nest-simulator.org.
-
 """
 
-import sys
-if sys.version_info[0] == 2:
-    msg = "Python 2 is no longer supported. Please use Python >= 3.6."
-    raise Exception(msg)
+# Store interpreter-given module attributes to copy into replacement module
+# instance later on. Use `.copy()` to prevent pollution with other variables
+_original_module_attrs = globals().copy()
 
-from . import ll_api                  # noqa
-from .ll_api import set_communicator  # noqa
-
-from . import pynestkernel as kernel  # noqa
-from .hl_api import *                 # noqa
-
-from . import random                  # noqa
-from . import math                    # noqa
-from . import spatial_distributions   # noqa
-from . import logic                   # noqa
-
-# spatial needs to be imported last because of documentation generation
-from . import spatial                 # noqa
+from .ll_api import KernelAttribute  # noqa
+import sys                           # noqa
+import types                         # noqa
+import importlib                     # noqa
 
 try:
-    from . import server              # noqa
+    import versionchecker
 except ImportError:
     pass
 
-__version__ = ll_api.sli_func("statusdict /version get")
+
+def _rel_import_star(module, import_module_name):
+    """Emulates `from X import *` into `module`"""
+
+    imported = importlib.import_module(import_module_name, __name__)
+    imp_iter = vars(imported).items()
+    if hasattr(module, "__all__"):
+        # If a public api is defined using the `__all__` attribute, copy that.
+        module.update(kv for kv in imp_iter if kv[0] in imported.__all__)
+    else:
+        # Otherwise follow "underscore is private" convention.
+        module.update(kv for kv in imp_iter if not kv[0].startswith("_"))
 
 
-def test():
-    """Runs all PyNEST unit tests."""
-    from . import tests
-    import unittest
+def _lazy_module_property(module_name):
+    """
+    Returns a property that lazy loads a module and substitutes itself with it.
+    The class variable name must match given `module_name`::
 
-    debug = ll_api.get_debug()
-    ll_api.set_debug(True)
+      class ModuleClass(types.ModuleType):
+          lazy_module_xy = _lazy_module_property("lazy_module_xy")
+    """
+    def lazy_loader(self):
+        cls = type(self)
+        delattr(cls, module_name)
+        module = importlib.import_module("." + module_name, __name__)
+        setattr(cls, module_name, module)
+        return module
 
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(tests.suite())
+    return property(lazy_loader)
 
-    ll_api.set_debug(debug)
+
+class NestModule(types.ModuleType):
+    """
+    A module class for the `nest` root module to control the dynamic generation
+    of module level attributes such as the KernelAttributes and lazy loading
+    some submodules.
+
+    """
+    from . import ll_api                             # noqa
+    from .ll_api import set_communicator             # noqa
+
+    from . import pynestkernel as kernel             # noqa
+
+    from . import random                             # noqa
+    from . import math                               # noqa
+    from . import spatial_distributions              # noqa
+    from . import logic                              # noqa
+
+    __version__ = ll_api.sli_func("statusdict /version get")
+
+    # Lazy load the `spatial` module to avoid circular imports.
+    spatial = _lazy_module_property("spatial")
+
+    # Define the kernel attributes.
+    #
+    # FORMATTING NOTES:
+    # * Multiline strings render incorrectly, join multiple single-quote
+    #   strings instead.
+    # * Strings containing `:` render incorrectly.
+    # * Do not end docstrings with punctuation. A `.` or `,` is added by the
+    #   formatting logic.
+
+    kernel_status = KernelAttribute(
+        "dict", "Get the complete kernel status", readonly=True
+    )
+    resolution = KernelAttribute(
+        "float", "The resolution of the simulation (in ms)", default=0.1
+    )
+    biological_time = KernelAttribute(
+        "float", "The current simulation time (in ms)"
+    )
+    to_do = KernelAttribute(
+        "int", "The number of steps yet to be simulated", readonly=True
+    )
+    max_delay = KernelAttribute(
+        "float", "The maximum delay in the network", default=0.1
+    )
+    min_delay = KernelAttribute(
+        "float", "The minimum delay in the network", default=0.1
+    )
+    ms_per_tic = KernelAttribute(
+        "float", "The number of milliseconds per tic", default=0.001
+    )
+    tics_per_ms = KernelAttribute(
+        "float", "The number of tics per millisecond", default=1000.0
+    )
+    tics_per_step = KernelAttribute(
+        "int", "The number of tics per simulation time step", default=100
+    )
+    T_max = KernelAttribute(
+        "float", "The largest representable time value", readonly=True
+    )
+    T_min = KernelAttribute(
+        "float", "The smallest representable time value", readonly=True
+    )
+    rng_types = KernelAttribute(
+        "list[str]",
+        "List of available random number generator types",
+        readonly=True,
+    )
+    rng_type = KernelAttribute(
+        "str",
+        "Name of random number generator type used by NEST",
+        default="mt19937_64",
+    )
+    rng_seed = KernelAttribute(
+        "int",
+        (
+            "Seed value used as base for seeding NEST random number generators "
+            + r"(:math:`1 \leq s\leq 2^{32}-1`)"
+        ),
+        default=143202461,
+    )
+    total_num_virtual_procs = KernelAttribute(
+        "int", "The total number of virtual processes", default=1
+    )
+    local_num_threads = KernelAttribute(
+        "int", "The local number of threads", default=1
+    )
+    num_processes = KernelAttribute(
+        "int", "The number of MPI processes", readonly=True
+    )
+    off_grid_spiking = KernelAttribute(
+        "bool",
+        "Whether to transmit precise spike times in MPI communication",
+        readonly=True,
+    )
+    adaptive_spike_buffers = KernelAttribute(
+        "bool",
+        "Whether MPI buffers for communication of spikes resize on the fly",
+        default=True,
+    )
+    adaptive_target_buffers = KernelAttribute(
+        "bool",
+        "Whether MPI buffers for communication of connections resize on the fly",
+        default=True,
+    )
+    buffer_size_secondary_events = KernelAttribute(
+        "int",
+        (
+            "Size of MPI buffers for communicating secondary events "
+            + "(in bytes, per MPI rank, for developers)"
+        ),
+        readonly=True,
+    )
+    buffer_size_spike_data = KernelAttribute(
+        "int",
+        "Total size of MPI buffer for communication of spikes",
+        default=2,
+    )
+    buffer_size_target_data = KernelAttribute(
+        "int",
+        "Total size of MPI buffer for communication of connections",
+        default=2,
+    )
+    growth_factor_buffer_spike_data = KernelAttribute(
+        "float",
+        (
+            "If MPI buffers for communication of spikes resize on the fly, "
+            + "grow them by this factor each round"
+        ),
+        default=1.5,
+    )
+    growth_factor_buffer_target_data = KernelAttribute(
+        "float",
+        (
+            "If MPI buffers for communication of connections resize on the "
+            + "fly, grow them by this factor each round"
+        ),
+        default=1.5,
+    )
+    max_buffer_size_spike_data = KernelAttribute(
+        "int",
+        "Maximal size of MPI buffers for communication of spikes",
+        default=8388608,
+    )
+    max_buffer_size_target_data = KernelAttribute(
+        "int",
+        "Maximal size of MPI buffers for communication of connections",
+        default=16777216,
+    )
+    use_wfr = KernelAttribute(
+        "bool", "Whether to use waveform relaxation method", default=True
+    )
+    wfr_comm_interval = KernelAttribute(
+        "float",
+        "Desired waveform relaxation communication interval",
+        default=1.0,
+    )
+    wfr_tol = KernelAttribute(
+        "float",
+        "Convergence tolerance of waveform relaxation method",
+        default=0.0001,
+    )
+    wfr_max_iterations = KernelAttribute(
+        "int",
+        "Maximal number of iterations used for waveform relaxation",
+        default=15,
+    )
+    wfr_interpolation_order = KernelAttribute(
+        "int",
+        "Interpolation order of polynomial used in wfr iterations",
+        default=3
+    )
+    max_num_syn_models = KernelAttribute(
+        "int", "Maximal number of synapse models supported", readonly=True
+    )
+    sort_connections_by_source = KernelAttribute(
+        "bool",
+        (
+            "Whether to sort connections by their source; increases"
+            + " construction time of presynaptic data structures, decreases"
+            + " simulation time if the average number of outgoing connections"
+            + " per neuron is smaller than the total number of threads"
+        ),
+        default=True,
+    )
+    structural_plasticity_synapses = KernelAttribute(
+        "dict",
+        (
+            "Defines all synapses which are plastic for the structural"
+            + " plasticity algorithm. Each entry in the dictionary is composed"
+            + " of a synapse model, the presynaptic element and the"
+            + " postsynaptic element"
+        ),
+    )
+    structural_plasticity_update_interval = KernelAttribute(
+        "int",
+        (
+            "Defines the time interval in ms at which the structural plasticity"
+            + " manager will make changes in the structure of the network ("
+            + " creation and deletion of plastic synapses)"
+        ),
+        default=10000.0,
+    )
+    use_compressed_spikes = KernelAttribute(
+        "bool",
+        (
+            "Whether to use spike compression; if a neuron has targets on"
+            + " multiple threads of a process, this switch makes sure that only"
+            + " a single packet is sent to the process instead of one packet"
+            + " per target thread; requires"
+            + " ``nest.sort_connections_by_source = True``"
+        ),
+        default=True,
+    )
+    data_path = KernelAttribute(
+        "str",
+        "A path, where all data is written to, defaults to current directory",
+    )
+    data_prefix = KernelAttribute("str", "A common prefix for all data files")
+    overwrite_files = KernelAttribute(
+        "bool", "Whether to overwrite existing data files", default=False
+    )
+    print_time = KernelAttribute(
+        "bool",
+        "Whether to print progress information during the simulation",
+        default=False,
+    )
+    network_size = KernelAttribute(
+        "int", "The number of nodes in the network", readonly=True
+    )
+    num_connections = KernelAttribute(
+        "int",
+        "The number of connections in the network",
+        readonly=True,
+        localonly=True,
+    )
+    local_spike_counter = KernelAttribute(
+        "int",
+        (
+            "Number of spikes fired by neurons on a given MPI rank during the"
+            + " most recent call to :py:func:`.Simulate`. Only spikes from"
+            + " \"normal\" neurons are counted, not spikes generated by devices"
+            + " such as ``poisson_generator``"
+        ),
+        readonly=True,
+    )
+    recording_backends = KernelAttribute(
+        "dict[str, dict]",
+        (
+            "Dict of backends for recording devices. Each recording backend can"
+            + " have a set of global parameters that can be modified through"
+            + " this attribute by passing a dictionary with the name of the"
+            + " recording backend as key and a dictionary with the global"
+            + " parameters to be overwritten as value.\n\n"
+            + "Example\n"
+            + "~~~~~~~\n\n"
+            + "Please note that NEST must be compiled with SionLIB for the"
+            + " ``sionlib`` backend to be available.\n\n"
+            + ".. code-block:: python\n\n"
+            + "  nest.recording_backends = dict(sionlib=dict(buffer_size=1024))"
+            + "\n\n"
+            + ".. seealso:: The valid global parameters are listed in the"
+            + " documentation of each recording backend"
+        ),
+    )
+    dict_miss_is_error = KernelAttribute(
+        "bool",
+        "Whether missed dictionary entries are treated as errors",
+        default=True,
+    )
+    keep_source_table = KernelAttribute(
+        "bool",
+        "Whether to keep source table after connection setup is complete",
+        default=True,
+    )
+    min_update_time = KernelAttribute(
+        "float",
+        "Shortest wall-clock time measured so far for a full update step [seconds]",
+        readonly=True,
+    )
+    max_update_time = KernelAttribute(
+        "float",
+        "Longest wall-clock time measured so far for a full update step [seconds]",
+        readonly=True,
+    )
+    update_time_limit = KernelAttribute(
+        "float",
+        (
+            "Maximum wall-clock time for one full update step [seconds]."
+            + " This can be used to terminate simulations that slow down"
+            + " significantly. Simulations may still get stuck if the slowdown"
+            + " occurs within a single update step"
+        ),
+        default=float("+inf"),
+    )
+
+    _kernel_attr_names = set(
+        k for k, v in vars().items() if isinstance(v, KernelAttribute)
+    )
+    _readonly_kernel_attrs = set(
+        k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly
+    )
+
+    def set(self, **kwargs):
+        return self.SetKernelStatus(kwargs)
+
+    def get(self, *args):
+        if len(args) == 0:
+            return self.GetKernelStatus()
+        if len(args) == 1:
+            return self.GetKernelStatus(args[0])
+        else:
+            return self.GetKernelStatus(args)
+
+    def __dir__(self):
+        return list(set(vars(self).keys()) | set(self.__all__))
+
+
+# Instantiate a NestModule to replace the nest Python module. Based on
+# https://mail.python.org/pipermail/python-ideas/2012-May/014969.html
+_module = NestModule(__name__)
+# We manipulate the nest module instance through its `__dict__` (= vars())
+_module_dict = vars(_module)
+# Copy over the original module attributes to preverse all interpreter given
+# magic attributes such as `__name__`, `__path__`, `__package__`, ...
+_module_dict.update(_original_module_attrs)
+
+# Import public API of `.hl_api` into the nest module instance
+_rel_import_star(_module_dict, ".hl_api")
+
+# Finalize the nest module instance by generating its public API.
+_api = list(k for k in _module_dict if not k.startswith("_"))
+_api.extend(k for k in dir(NestModule) if not k.startswith("_"))
+_module.__all__ = list(set(_api))
+
+# Set the nest module object as the return value of `import nest` using sys
+sys.modules[__name__] = _module
+
+# Some compiled/binary components (`pynestkernel.pyx` for example) of NEST
+# obtain a reference to this file's original module object instead of what's in
+# `sys.modules`. For these edge cases we make available all attributes of the
+# nest module instance to this file's module object.
+globals().update(_module_dict)
+
+# Clean up obsolete references
+del _rel_import_star, _lazy_module_property, _module, _module_dict, \
+    _original_module_attrs

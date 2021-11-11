@@ -44,7 +44,6 @@
 #   ' 203 Skipped (Threading required),'\
 #   ' 204 Skipped (GSL required),'\
 #   ' 205 Skipped (MUSIC required),'
-#   ' 206 Skipped (Recording backend Arbor required),'
 #   codes_failure=\
 #   ' 1 Failed: missed assertion,'\
 #   ' 2 Failed: error in tested code block,'\
@@ -98,7 +97,7 @@ run_test ()
     else
       # Use plain python3 if the PYTHON variable is unset (i.e. PyNEST
       # was not enabled)
-      PYTHON_CMD="${PYTHON:-python3}"	
+      PYTHON_CMD="${PYTHON:-python3}"
       command="'${PYTHON_CMD}' '${TEST_BASEDIR}/${param_script}' > '${TEST_OUTFILE}' 2>&1"
     fi
 
@@ -110,7 +109,7 @@ run_test ()
     TIME_ELAPSED=$( time_cmd "${TEST_RUNFILE}" )
     TIME_TOTAL=$(( ${TIME_TOTAL} + ${TIME_ELAPSED} ))
     JUNIT_TESTS=$(( ${JUNIT_TESTS} + 1 ))
-    
+
     rm -f "${TEST_RUNFILE}"
 
     exit_code="$(cat "${TEST_RETFILE}")"

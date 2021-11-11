@@ -111,7 +111,7 @@ assigned to the recorder. Spike files have the file extension ``gdf`` and
 analog recordings from the ``multimeter`` have ``dat`` as file extension.
 
 The ``label`` and ``file_extension`` of a recording device can be set like any
-other parameter of a node using ``SetStatus``.
+other parameter of a node using :py:func:`.SetStatus`.
 
 
 Spike exchange and synapse update
@@ -173,7 +173,7 @@ command for this is
 
 .. code-block:: bash
 
-    nest.SetKernelStatus({"local_num_threads": T})
+    nest.local_num_threads = T
 
 Usually, a good choice for `T` is the number of processor cores available
 on your machine.
@@ -190,7 +190,7 @@ Multiprocessing
 **Using Python's ``multiprocessing`` module with NEST may lead to unpredictable results!**
 
 NEST internally parallelizes network construction [1]_ and maintains internal data structures in this process. For
-example, running several ``Connect()`` calls simultaneously can interfere with the internal parallelization and will
+example, running several :py:func:`.Connect` calls simultaneously can interfere with the internal parallelization and will
 likely lead to unpredictable/wrong results.
 
 .. _distributed_computing:
@@ -251,16 +251,16 @@ commands are available:
 
 .. glossary::
 
- ``NumProcesses``
+ :py:func:`.NumProcesses`
      The number of MPI processes in the simulation
 
  ``ProcessorName``
      The name of the machine. The result might differ on each process.
 
- ``Rank``
+ :py:func:`.Rank`
      The rank of the MPI process. The result differs on each process.
 
- ``SyncProcesses``
+ :py:func:`.SyncProcesses`
       Synchronize all MPI processes.
 
 
@@ -287,8 +287,10 @@ of all four neurons are recorded to files.
 
 .. code-block:: python
 
-    from nest import *
-    SetKernelStatus({"total_num_virtual_procs": 4})
+    import nest
+    from nest import Create, Connect, Simulate
+
+    nest.total_num_virtual_procs = 4
     pg = Create("poisson_generator", params={"rate": 50000.0})
     n = Create("iaf_psc_alpha", 4)
     sr = Create("spike_recorder", params={"record_to": "ascii"})

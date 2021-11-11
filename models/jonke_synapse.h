@@ -39,50 +39,87 @@
 namespace nest
 {
 
-/* BeginDocumentation
-  Name: jonke_synapse - Synapse type for spike-timing dependent
-    plasticity with additional additive factors.
-  Description:
-    jonke_synapse is a connector to create synapses with spike time
-    dependent plasticity. Unlike stdp_synapse, we use the update equations:
-    \Delta w = \lambda * w_{max} * (K_+(w) * F_+(t) - beta)            if t - t_j^(k) > 0
-    \Delta w = \lambda * w_{max} * (-alpha * K_-(w) * F_-(t) - beta)   else
-    where
-    K_+(w) = exp(\nu_+ w)
-    K_-(w) = exp(\nu_- w)
-    and
-    F_+(t) = exp((t - t_j^(k))/tau_+)
-    F_-(t) = exp((t - t_j^(k))/tau_-)
-    This makes it possible to implement update rules which approximate the
-    rule of [1], e.g. the rules given in [2] and [3].
-  Parameters:
-    lambda          double - Step size
-    Wmax            double - Maximum allowed weight, note that this scales each
-                            weight update
-    alpha           double - Determine shape of depression term
-    mu_plus         double - Set weight dependency of facilitating update
-    mu_minus        double - Set weight dependency of depressing update
-    tau_plus        double - Time constant of STDP window, potentiation in ms
-    beta            double - Set negative offset for both updates
-    (tau_minus is defined in the postsynaptic neuron.)
-  Transmits: SpikeEvent
-  References:
-    [1] Nessler, Bernhard, et al. "Bayesian computation emerges in generic
-        cortical microcircuits through spike-timing-dependent plasticity." PLoS
-        computational biology 9.4 (2013): e1003037.
-    [2] Legenstein, Robert, et al. "Assembly pointers for variable binding in
-        networks of spiking neurons." arXiv preprint arXiv:1611.03698 (2016).
-    [3] Jonke, Zeno, et al. "Feedback inhibition shapes emergent computational
-        properties of cortical microcircuit motifs." arXiv preprint
-        arXiv:1705.07614 (2017).
-  Adapted from stdp_synapse:
-      FirstVersion: March 2006
-      Author: Moritz Helias, Abigail Morrison
-      Adapted by: Philipp Weidel
-  Author: Michael Mueller
-          Adapted by: Loïc Jeanningros (loic.jeanningros@gmail.com)
-  SeeAlso: synapsedict, stdp_synapse
-*/
+/* BeginUserDocs: synapse, spike-timing-dependent plasticity
+
+Short description
++++++++++++++++++
+
+Synapse type for spike-timing dependent plasticity with additional additive factors.
+
+Description
++++++++++++
+
+jonke_synapse is a connector to create synapses with spike time
+dependent plasticity. Unlike stdp_synapse, we use the update equations:
+
+.. math::
+
+   \Delta w &= \lambda * w_{max} * (K_+(w) * F_+(t) - \beta)           & \quad  if t - t_j^(k) > 0 \\
+   \Delta w &= \lambda * w_{max} * (-alpha * K_-(w) * F_-(t) - \beta)  & \quad  else
+
+where
+
+.. math::
+
+   K_+(w) &= \exp(\nu_+ w) \\
+   K_-(w) &= \exp(\nu_- w)
+
+and
+
+.. math::
+
+   F_+(t) &= \exp((t - t_j^(k))/\tau_+) \\
+   F_-(t) &= \exp((t - t_j^(k))/\tau_-)
+
+This makes it possible to implement update rules which approximate the
+rule stated in [1]_, and for examples, the rules given in [2]_ and [3]_.
+
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
+
+Parameters
+++++++++++
+
+========== ========  ======================================================
+ lambda     double    Step size
+ Wmax       double    Maximum allowed weight, note that this scales each
+                      weight update
+ alpha      double    Determine shape of depression term
+ mu_plus    double    Set weight dependency of facilitating update
+ mu_minus   double    Set weight dependency of depressing update
+ tau_plus   double    Time constant of STDP window, potentiation in ms
+ beta       double    Set negative offset for both updates
+========== ========  ======================================================
+
+(tau_minus is defined in the postsynaptic neuron.)
+
+Transmits
++++++++++
+
+SpikeEvent
+
+References
+++++++++++
+
+.. [1] Nessler, Bernhard, et al. "Bayesian computation emerges in generic
+       cortical microcircuits through spike-timing-dependent plasticity." PLoS
+       computational biology 9.4 (2013): e1003037.
+.. [2] Legenstein, Robert, et al. "Assembly pointers for variable binding in
+       networks of spiking neurons." arXiv preprint arXiv:1611.03698 (2016).
+.. [3] Jonke, Zeno, et al. "Feedback inhibition shapes emergent computational
+       properties of cortical microcircuit motifs." arXiv preprint
+       arXiv:1705.07614 (2017).
+
+See also
+++++++++
+
+synapsedict, stdp_synapse
+
+EndUserDocs */
 
 
 /**

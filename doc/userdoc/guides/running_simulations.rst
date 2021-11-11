@@ -7,11 +7,12 @@ Time-driven and event-driven approaches
 To drive the simulation, neurons and devices (*nodes*) are updated in a
 time-driven fashion by calling a member function on each of them in a
 regular interval. The spacing of the grid is called the *simulation
-resolution* (default 0.1ms) and can be set using ``SetKernelStatus``:
+resolution* (default 0.1ms) and can be set using the corresponding
+kernel attribute:
 
 ::
 
-    SetKernelStatus({"resolution": 0.1})
+    nest.resolution = 0.1
 
 Even though a neuron model can use smaller time steps internally, the
 membrane potential will only be visible to a ``multimeter`` on the
@@ -24,7 +25,7 @@ transmitted through them (`Morrison et al.
 simulation and allow the efficient use of computer clusters, NEST uses a
 :doc:`hybrid parallelization strategy <parallel_computing>`. The
 following figure shows the basic loop that is run upon a call to
-``Simulate``:
+:py:func:`.Simulate`:
 
 .. figure:: ../static/img/simulation_loop-241x300.png
    :alt: Simulation Loop
@@ -65,12 +66,12 @@ These optimizations mean that the sizes of spike buffers in nodes and
 the buffers for inter-process communication depend on *dmin+dmax* as
 histories that long back have to be kept. NEST will figure out the
 correct value of *dmin* and *dmax* based on the actual delays used
-during connection setup. Their actual values can be retrieved using
-``GetKernelStatus``:
+during connection setup. Their actual values can be retrieved as kernel
+attributes:
 
 ::
 
-    GetKernelStatus("min_delay")   # (A corresponding entry exists for max_delay)
+    nest.min_delay   # A corresponding entry exists for max_delay
 
 Set *dmin* and *dmax* manually
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -79,19 +80,21 @@ In linear simulation scripts that build a network, simulate it, carry
 out some post-processing and exit, the user does not have to worry about
 the delay extrema *dmin* and *dmax* as they are set automatically to the
 correct values. However, NEST also allows subsequent calls
-to\ ``Simulate``, which only work correctly if the content of the spike
+to\ :py:func:`.Simulate`, which only work correctly if the content of the spike
 buffers is preserved over the simulations.
 
 As mentioned above, the size of that buffer depends on *dmin+dmax* and
 the easiest way to assert its integrity is to not change its size after
 initialization. Thus, we freeze the delay extrema after the first call
-to ``Simulate``. To still allow adding new connections inbetween calls
-to ``Simulate``, the required boundaries of delays can be set manually
-using ``SetKernelStatus``:
+to ``Simulate()``. To still allow adding new connections inbetween calls
+to ``Simulate()``, the required boundaries of delays can be set manually
+using :py:func:`.set`:
 
 ::
 
-    SetKernelStatus({"min_delay": 0.5, "max_delay": 2.5})
+    # For co-dependent properties, we have to use `set()`
+    # instead of kernel attributes
+    nest.set(min_delay=0.5, max_delay=2.5)
 
 These settings should be used with care, though: setting the delay
 extrema too wide without need leads to decreased performance due to more
@@ -140,7 +143,7 @@ for a simple loop over different realizations:
 
     for n in range(5):
         nest.ResetKernel()
-        nest.SetKernelStatus({'rng_seed': n+1})   # seed > 0 required
+        nest.rng_seed = n + 1   # seed > 0 required
 
         # build network
         # simulate network
@@ -157,18 +160,19 @@ using
 
 ::
 
-    nest.GetKernelStatus('rng_types')
+    nest.rng_types
 
 To select any of the random number generator types available, use one of the
 following
 
 ::
 
-    nest.SetKernelStatus({'rng_type': 'mt19937'})
-    nest.SetKernelStatus({'rng_type': 'mt19937', 'rng_seed': 12234})
+    nest.rng_type = 'mt19937'
+    nest.rng_seed = 12234
 
-In the first case, the `rng_seed` set previously (or the default seed) is used,
-otherwise the seed specified.
+In the example, the generator is initialized with the default seed (or with a
+previously defined seed, if one was set). The second line sets the seed to
+a new value.
 
 
 Random numbers may depend on compiler used
@@ -189,7 +193,7 @@ Split a simulation into multiple intervals
 
 In some cases, it may be useful to run a simulation in shorter intervals
 to extract information while the simulation is running. The simplest way
-of doing this is to simply loop over ``Simulate()`` calls:
+of doing this is to simply loop over :py:func:`.Simulate` calls:
 
 ::
 
@@ -212,7 +216,7 @@ A more efficient solution doing exactly the same thing is
         # extract and analyse data
     nest.Cleanup()
 
-For convenience, the ``RunManager()`` context manager can handle preparation
+For convenience, the :py:func:`.RunManager` context manager can handle preparation
 and cleanup for you:
 
 ::
@@ -223,15 +227,15 @@ and cleanup for you:
             # extract and analyse data
 
 .. note::
-   - If you do not use ``RunManager()``, you must call ``Prepare()``,
-     ``Run()`` and ``Cleanup()`` in that order.
-   - You can call ``Run()`` any number of times inside a ``RunManager()``
-     context or between ``Prepare()`` and ``Cleanup()`` calls.
-   - Calling ``SetStatus()`` inside a ``RunManager()`` context or
-     between ``Prepare()`` and ``Cleanup()`` will **lead to unpredictable
+   - If you do not use :py:func:`.RunManager`, you must call :py:func:`.Prepare`,
+     :py:func:`.Run` and :py:func:`.Cleanup` in that order.
+   - You can call :py:func:`.Run` any number of times inside a :py:func:`.RunManager`
+     context or between :py:func:`.Prepare` and :py:func:`.Cleanup` calls.
+   - Calling :py:func:`.SetStatus` inside a :py:func:`.RunManager` context or
+     between :py:func:`.Prepare` and :py:func:`.Cleanup` will **lead to unpredictable
      results**.
-   - After calling ``Cleanup()``, you need to call ``Prepare()`` again before
-     calling ``Run()``.
+   - After calling :py:func:`.Cleanup`, you need to call :py:func:`.Prepare` again before
+     calling :py:func:`.Run`.
 
 Repeated simulations
 --------------------
@@ -251,7 +255,7 @@ a Poisson spike train using different seeds and output files for each run:
 
     for n in range(10):
         nest.ResetKernel()
-        nest.SetKernelStatus({'rng_seed': n + 1})  # seed > 0 required
+        nest.rng_seed = n + 1  # seed > 0 required
         pg = nest.Create('poisson_generator', params={'rate': 1000000.0})
         nrn= nest.Create('iaf_psc_alpha')
         sr = nest.Create('spike_recorder',
@@ -270,7 +274,7 @@ The progress of the simulation can be monitored by setting:
 
 ::
 
-    SetKernelStatus({"print_time": True})
+    nest.print_time = True
 
 If enabled, a line is printed to screen at every time step of the simulation to
 track the percentage, the absolute elapsed model time and the real-time factor,
@@ -283,7 +287,7 @@ for example:
 The *real-time factor* is defined as the quotient of *wall-clock time* (which
 is also known as real time) and the *model time* (which is the duration by
 which the state of the model is advanced in time, or in short, the argument to
-the ``Simulate()`` call):
+the :py:func:`.Simulate` call):
 
 .. math::
 

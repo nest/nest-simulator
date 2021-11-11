@@ -45,7 +45,6 @@ set( with-detailed-timers OFF CACHE STRING "Enable detailed NEST internal time m
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
 set( with-sionlib OFF CACHE STRING "Request the use of SIONlib. Optionally give the directory where SIONlib is installed. [default=OFF]" )
-set( with-recordingbackend-arbor OFF CACHE STRING "Request compilation of the recording backend for Arbor. Requires MPI, Python and mpi4py. [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
@@ -155,7 +154,6 @@ nest_process_with_music()
 nest_process_with_sionlib()
 nest_process_with_mpi4py()
 nest_process_with_boost()
-nest_process_with_recordingbackend_arbor()
 nest_process_target_bits_split()
 nest_process_version_suffix()
 
@@ -206,7 +204,7 @@ endif ()
 
 add_custom_target( installcheck
   COMMAND ${CMAKE_COMMAND} -E env
-    ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh
+    ${CMAKE_INSTALL_FULL_DATADIR}/testsuite/do_tests.sh
 	--prefix=${CMAKE_INSTALL_PREFIX}
 	--report-dir="${PROJECT_BINARY_DIR}/reports"
 	${TEST_OPTS}
@@ -348,6 +346,11 @@ configure_file(
 configure_file(
     "${PROJECT_SOURCE_DIR}/doc/fulldoc.conf.in"
     "${PROJECT_BINARY_DIR}/doc/fulldoc.conf" @ONLY
+)
+
+configure_file(
+    "${PROJECT_SOURCE_DIR}/pynest/nest/versionchecker.py.in"
+    "${PROJECT_BINARY_DIR}/pynest/nest/versionchecker.py" @ONLY
 )
 
 

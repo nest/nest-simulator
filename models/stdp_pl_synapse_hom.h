@@ -62,6 +62,13 @@ Remarks:
 The parameters can only be set by SetDefaults and apply to all synapses of
 the model.
 
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
+
 References
 ++++++++++
 

@@ -48,14 +48,15 @@ dependencies:
   - readline
 
   # Testing NEST ------------
-  - nose
   - pytest
+  - pytest-timeout
+  - pytest-xdist
   - numpy
   - pandas
   - scipy
   - mpi4py
   - terminaltables
-  - pep8
+  - pycodestyle
 
   # Working with NEST ------
   - ipython

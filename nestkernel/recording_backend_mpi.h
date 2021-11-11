@@ -31,10 +31,13 @@
 #include <unistd.h>
 #include <mpi.h>
 
-/* BeginUserDocs: recording backend
+/* BeginUserDocs: NOINDEX
 
 Recording backend `mpi` - Send data with MPI
 ############################################
+
+Description
++++++++++++
 
 .. admonition:: Availability
 

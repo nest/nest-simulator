@@ -9,7 +9,7 @@ Who are you?
 
    .. container:: leftside
 
-      .. image:: ../static/img/020-user.png
+      .. image:: ../static/img/020-user_black.png
          :target: user.html
 
 
@@ -17,8 +17,10 @@ Who are you?
 
       **User**
 
-      I'm a student or researcher who wants to run neural network simulation scripts for :ref:`NEST on my computer <user_install>`.
-      If you want to install NEST on a cluster or supercomputer, see our HPC page.
+      I'm a student or researcher who wants to run neural network simulation scripts
+
+      * :ref:`on my computer <user_install>` or
+      * :ref:`on a cluster of supercomputer <admin_install>`.
 
 |
 |
@@ -27,7 +29,7 @@ Who are you?
 
    .. container:: leftside
 
-      .. image:: ../static/img/014-teacher.png
+      .. image:: ../static/img/class_black.png
          :target: lecturer.html
 
 
@@ -45,7 +47,7 @@ Who are you?
 
    .. container:: leftside
 
-      .. image:: ../static/img/001-shuttle.png
+      .. image:: ../static/img/001-shuttle_black.png
          :target: admin.html
 
 
@@ -63,7 +65,7 @@ Who are you?
 
    .. container:: leftside
 
-      .. image:: ../static/img/019-programmer-1.png
+      .. image:: ../static/img/dev_black.png
          :target: developer.html
 
 

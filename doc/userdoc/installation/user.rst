@@ -4,8 +4,8 @@ User install instructions
 =========================
 
 
-For Linux and macOS, you can install NEST with pip  |linux| |macos|
-
+For Linux and macOS, you can install NEST with pip
+|linux| |macos|
 
 
 .. |linux| image:: ../static/img/linux.png
@@ -46,7 +46,8 @@ Explore what you can do with NEST:
 
 .. _windows:
 
-|windows| Windows
+Windows
+|windows|
 
    We recommend the neurofedora live media for Windows users
 
@@ -58,8 +59,8 @@ If you have an EBRAINS account you can check out . . .
 
 
 
-Install NEST on HPC
--------------------
+Install NEST on HPC systems
+---------------------------
 
 See details :ref:`about installing NEST with docker <admin_install>`
 

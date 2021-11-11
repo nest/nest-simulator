@@ -7,7 +7,7 @@
 }
 div.twocol {
    width: 430px;
-   height: 160px;
+   height: 180px;
    border-top-width: 1px;
    border-top-style: solid;
    border-bottom-width: 1px;
@@ -17,7 +17,7 @@ div.twocol {
 
 div.leftside {
     width: 150px;
-    padding: 0px 3px 0px 0px;
+    padding: 10px 3px 0px 0px;
     float: left;
 }
 

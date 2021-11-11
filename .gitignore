@@ -38,8 +38,8 @@ CMakeDoxygenDefaults.cmake
 # generated files
 doc/fulldoc.conf
 doc/normaldoc.conf
-build_support/nest-config
-build_support/nest_vars.sh
+bin/nest-config
+bin/nest_vars.sh
 libnestutil/config.h
 nest/static_modules.h
 pynest/setup.py

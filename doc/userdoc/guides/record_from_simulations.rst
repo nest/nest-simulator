@@ -97,8 +97,8 @@ kernel attribute ``recording_backends``.
    >>> print(nest.recording_backends)
    ('ascii', 'memory', 'mpi', 'screen', 'sionlib')
 
-If a recording backend has global properties (that are shared by all
-enrolled recording devices), those can be looked at using
+If a recording backend has global properties (i.e., parameters shared
+by all enrolled recording devices), those can be inspected with
 :py:func`.GetDefaults`
 
 ::

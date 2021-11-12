@@ -240,7 +240,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first,
   , last_( last )
   , model_id_( model_id )
   , metadata_( meta )
-  , nodes_have_no_proxies_( not kernel().model_manager.get_model( model_id_ )->has_proxies() )
+  , nodes_have_no_proxies_( not kernel().model_manager.get_node_model( model_id_ )->has_proxies() )
 {
   assert_consistent_model_ids_( model_id_ );
 
@@ -252,7 +252,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last, index
   , last_( last )
   , model_id_( model_id )
   , metadata_( nullptr )
-  , nodes_have_no_proxies_( not kernel().model_manager.get_model( model_id_ )->has_proxies() )
+  , nodes_have_no_proxies_( not kernel().model_manager.get_node_model( model_id_ )->has_proxies() )
 {
   assert( first_ <= last_ );
 }
@@ -276,7 +276,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
     }
   }
   model_id_ = first_model_id;
-  nodes_have_no_proxies_ = not kernel().model_manager.get_model( model_id_ )->has_proxies();
+  nodes_have_no_proxies_ = not kernel().model_manager.get_node_model( model_id_ )->has_proxies();
 }
 
 NodeCollectionPrimitive::NodeCollectionPrimitive()

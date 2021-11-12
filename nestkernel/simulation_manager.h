@@ -77,7 +77,7 @@ public:
    * calls to get_status(), but any changes to the network are undefined,
    * leading serious risk of incorrect results.
    */
-  void run( Time const& ) override;
+  void run( Time const& );
 
   /**
    * Closes a set of runs, doing finalizations such as file closures.

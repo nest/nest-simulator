@@ -421,7 +421,6 @@ const Name std_mod( "std_mod" );
 const Name stimulation_backends( "stimulation_backends" );
 const Name stimulator( "stimulator" );
 const Name stimulus_source( "stimulus_source" );
-const Name step( "step" );
 const Name stop( "stop" );
 const Name structural_plasticity_synapses( "structural_plasticity_synapses" );
 const Name structural_plasticity_update_interval( "structural_plasticity_update_interval" );

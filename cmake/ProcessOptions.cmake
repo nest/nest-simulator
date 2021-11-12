@@ -392,7 +392,7 @@ function( NEST_PROCESS_WITH_PYTHON )
   elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter and ABI
-    find_package( Python 3.8 Interpreter Development.Module )
+    find_package( Python 3.8 COMPONENTS Interpreter Development.Module )
     if ( NOT Python_FOUND )
       find_package( Python 3.8 REQUIRED Interpreter Development )
       string( CONCAT PYABI_WARN "Could not locate Python ABI"

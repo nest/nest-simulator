@@ -152,16 +152,6 @@ ModelManager::change_number_of_threads()
 {
   finalize();
   initialize();
-
-  // JME: reset the number of threads on each of the models, but keep
-  // JME: the prototypes around
-
-  // JME: due to the checks in vp manager, we can rest assured that
-  // JME: there are no instances of nodes or connections around
-  // JME: (cf. ConnectionManager and NodeManager)
-
-  // JME: remove the check for custom models existing and model
-  // JME: defaults having been changed from VPManager::set_status()
 }
 
 void

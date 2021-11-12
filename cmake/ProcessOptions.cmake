@@ -395,6 +395,13 @@ function( NEST_PROCESS_WITH_PYTHON )
     find_package( Python 3.8 Interpreter Development.Module )
     if ( NOT Python_FOUND )
       find_package( Python 3.8 REQUIRED Interpreter Development )
+      string( CONCAT PYABI_WARN "Could not locate Python ABI"
+        ", using shared libraries and header file instead."
+        " If you encounter missing `libpython.so` or `Python.h` file errors"
+        " please verify that CMake is up-to-date (3.18+) or that Python"
+        " development packages are installed."
+      )
+      message( WARNING "$PYABI_WARN")
     endif()
 
     if ( Python_FOUND )

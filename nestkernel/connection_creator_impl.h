@@ -481,7 +481,6 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
           else
           {
-
             // no kernel
 
             if ( positions.empty()

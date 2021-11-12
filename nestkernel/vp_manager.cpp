@@ -135,14 +135,14 @@ nest::VPManager::set_status( const DictionaryDatum& d )
 
     if ( errors.size() == 1 )
     {
-      throw KernelException( errors[0] + ": number of threads cannot be changed." );
+      throw KernelException( errors[ 0 ] + ": number of threads cannot be changed." );
     }
     if ( errors.size() > 1 )
     {
       std::string msg = "Number of threads unchanged. Error conditions:";
-      for (auto& error: errors)
+      for ( auto& error : errors )
       {
-	msg += " " + error + ".";
+        msg += " " + error + ".";
       }
       throw KernelException( msg );
     }

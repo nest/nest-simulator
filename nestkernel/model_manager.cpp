@@ -120,7 +120,7 @@ ModelManager::initialize()
   // (re-)append all synapse prototypes
   for ( auto&& connection_model : builtin_connection_models_ )
   {
-    if (connection_model != 0 )
+    if ( connection_model != 0 )
     {
       std::string name = connection_model->get_name();
       for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
@@ -153,15 +153,15 @@ ModelManager::change_number_of_threads()
   finalize();
   initialize();
 
-  //JME: reset the number of threads on each of the models, but keep
-  //JME: the prototypes around
+  // JME: reset the number of threads on each of the models, but keep
+  // JME: the prototypes around
 
-  //JME: due to the checks in vp manager, we can rest assured that
-  //JME: there are no instances of nodes or connections around
-  //JME: (cf. ConnectionManager and NodeManager)
+  // JME: due to the checks in vp manager, we can rest assured that
+  // JME: there are no instances of nodes or connections around
+  // JME: (cf. ConnectionManager and NodeManager)
 
-  //JME: remove the check for custom models existing and model
-  //JME: defaults having been changed from VPManager::set_status()
+  // JME: remove the check for custom models existing and model
+  // JME: defaults having been changed from VPManager::set_status()
 }
 
 void
@@ -400,7 +400,7 @@ index
 ModelManager::get_synapse_model_id( std::string model_name )
 {
   const Token synmodel = synapsedict_->lookup( model_name );
-  if( synmodel.empty() )
+  if ( synmodel.empty() )
   {
     throw UnknownSynapseType( model_name );
   }
@@ -514,7 +514,8 @@ ModelManager::calibrate( const TimeConverter& tc )
 bool
 ModelManager::compare_model_by_id_( const int a, const int b )
 {
-  return kernel().model_manager.get_node_model( a )->get_name() < kernel().model_manager.get_node_model( b )->get_name();
+  return kernel().model_manager.get_node_model( a )->get_name()
+    < kernel().model_manager.get_node_model( b )->get_name();
 }
 
 void
@@ -566,8 +567,8 @@ ModelManager::create_secondary_events_prototypes()
     {
       if ( not connection_models_[ tid ][ syn_id ]->is_primary() )
       {
-        secondary_events_prototypes_[ tid ].insert( std::pair< synindex, SecondaryEvent* >(
-          syn_id, connection_models_[ tid ][ syn_id ]->create_event() ) );
+        secondary_events_prototypes_[ tid ].insert(
+          std::pair< synindex, SecondaryEvent* >( syn_id, connection_models_[ tid ][ syn_id ]->create_event() ) );
       }
     }
   }

@@ -94,8 +94,7 @@ public:
    * @see register_prototype_connection
    */
   template < class ModelT >
-  index
-  register_node_model( const Name& name, std::string deprecation_info = std::string() );
+  index register_node_model( const Name& name, std::string deprecation_info = std::string() );
 
   /**
    * Copy an existing model and register it as a new model.
@@ -279,7 +278,7 @@ private:
   std::vector< ConnectorModel* > secondary_connector_models_;
   std::vector< std::map< synindex, SecondaryEvent* > > secondary_events_prototypes_;
 
-  DictionaryDatum modeldict_; //!< Dictionary of all models
+  DictionaryDatum modeldict_;   //!< Dictionary of all node models
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
 
   Model* proxynode_model_;

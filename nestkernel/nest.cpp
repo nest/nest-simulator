@@ -269,7 +269,7 @@ set_model_defaults( const std::string component, const DictionaryDatum& dict )
     return;
   }
 
-  if ( kernel().io_manager.is_valid_recording_backend ( component ) )
+  if ( kernel().io_manager.is_valid_recording_backend( component ) )
   {
     kernel().io_manager.set_recording_backend_status( component, dict );
     return;
@@ -286,22 +286,26 @@ get_model_defaults( const std::string component )
     const index model_id = kernel().model_manager.get_node_model_id( component );
     return kernel().model_manager.get_node_model( model_id )->get_status();
   }
-  catch ( UnknownModelName& ) {}
+  catch ( UnknownModelName& )
+  {
+  }
 
   try
   {
     const index synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
     return kernel().model_manager.get_connector_defaults( synapse_model_id );
   }
-  catch ( UnknownSynapseType& ) {}
+  catch ( UnknownSynapseType& )
+  {
+  }
 
-  if ( kernel().io_manager.is_valid_recording_backend ( component ) )
+  if ( kernel().io_manager.is_valid_recording_backend( component ) )
   {
     return kernel().io_manager.get_recording_backend_status( component );
   }
 
   throw UnknownComponent( component );
-  return DictionaryDatum();  // supress missing return value warning; never reached
+  return DictionaryDatum(); // supress missing return value warning; never reached
 }
 
 ParameterDatum

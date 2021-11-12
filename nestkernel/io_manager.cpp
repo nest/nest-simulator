@@ -183,7 +183,7 @@ IOManager::change_number_of_threads()
 void
 IOManager::set_recording_backend_status( std::string recording_backend, const DictionaryDatum& d )
 {
-  recording_backends_[recording_backend]->set_status( d );
+  recording_backends_[ recording_backend ]->set_status( d );
 }
 
 void
@@ -197,7 +197,7 @@ DictionaryDatum
 IOManager::get_recording_backend_status( std::string recording_backend )
 {
   DictionaryDatum status( new Dictionary );
-  recording_backends_[recording_backend]->get_status( status );
+  recording_backends_[ recording_backend ]->get_status( status );
   return status;
 }
 

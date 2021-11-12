@@ -174,19 +174,19 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     }
     if ( kernel().model_manager.are_model_defaults_modified() )
     {
-      throw KernelException( "Model defaults were modified");
+      throw KernelException( "Model defaults were modified" );
     }
 
     if ( errors.size() == 1 )
     {
-      throw KernelException( errors[0] + ": time representation cannot be changed." );
+      throw KernelException( errors[ 0 ] + ": time representation cannot be changed." );
     }
     if ( errors.size() > 1 )
     {
       std::string msg = "Time representation unchanged. Error conditions:";
-      for (auto& error: errors)
+      for ( auto& error : errors )
       {
-	msg += " " + error + ".";
+        msg += " " + error + ".";
       }
       throw KernelException( msg );
     }

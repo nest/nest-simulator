@@ -249,7 +249,8 @@ public:
     return default_connection_;
   }
 
-  virtual SecondaryEvent* create_event() const
+  virtual SecondaryEvent*
+  create_event() const
   {
     // Must not be called for a ConnectorModel belonging to a primary
     // connection. Only required for secondary connection types.

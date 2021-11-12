@@ -24,8 +24,10 @@ import unittest
 
 __author__ = 'naveau'
 
+
 def extract_dict_a_from_b(a, b):
     return dict((k, b[k]) for k in a.keys() if k in b.keys())
+
 
 class TestStructuralPlasticityManager(unittest.TestCase):
 

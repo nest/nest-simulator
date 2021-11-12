@@ -23,9 +23,16 @@
 Classes defining the different PyNEST types
 """
 
-from ..ll_api import *
+from ..ll_api import check_stack, sli_func, sps, sr, spp, take_array_index
 from .. import pynestkernel as kernel
-from .hl_api_helper import *
+from .hl_api_helper import (
+    broadcast,
+    get_parameters,
+    get_parameters_hierarchical_addressing,
+    is_iterable,
+    is_literal,
+    restructure_data,
+)
 from .hl_api_simulation import GetKernelStatus
 
 import numpy
@@ -973,7 +980,7 @@ class Mask(object):
         return sli_func("Inside", point, self._datum)
 
 
-class Parameter(object):
+class Parameter:
     """
     Class for parameters
 

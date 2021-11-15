@@ -16,14 +16,16 @@ selection of earlier :doc:`transition guides <release_notes/index>`.
    :depth: 1
 
 
-Information about components
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Retrieve available node and synapse models
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The function ``Models()`` has been removed from the ``nest`` Python
-module. Where you previously would have used ``nest.Models("nodes")``
-to acquire the list of available node models, you would now run
-``nest.node_models`` instead. The list of available synapse models can
-be retrieved using ``nest.synapse_models``.
+The PyNEST function ``Models()`` is now deprecated and will be removed
+in a future version of NEST. Where you previously used the function
+``nest.Models("nodes")`` to acquire the list of available node models,
+you would now write ``nest.node_models`` instead. The list of
+available synapse models can be retrieved using the kernel attribute
+``nest.synapse_models``. Filtering can easily and explicitly be
+implemented using a conditional expression in a list comprehension.
 
 +--------------------------------------------+--------------------------------------------------+
 | NEST 3.1                                   | NEST 3.2                                         |
@@ -34,6 +36,9 @@ be retrieved using ``nest.synapse_models``.
 +--------------------------------------------+--------------------------------------------------+
 | ``nest.Models(mtype="nodes", sel="iaf")``  | ``[m for m in nest.node_models if "iaf" in m]``  |
 +--------------------------------------------+--------------------------------------------------+
+
+New kernel attributes
+^^^^^^^^^^^^^^^^^^^^^
 
 On the SLI level, the individual dictionaries ``connruledict``,
 ``growthcurvedict``, ``modeldict``, and ``synapsedict`` have been
@@ -48,9 +53,8 @@ Global properties for recording backends
 
 The functions :py:func`.GetDefaults` and :py:func`.SetDefaults` have
 been extended to also work on the global properties of recording
-backends. This new mechanism complements backend property access via
-nested dictionaries and oftentimes leads to simpler and more readable
-code:
+backends. This new mechanism replaces backend property access via
+nested dictionaries and leads to simpler and more readable code:
 
 +----------------------------------------+------------------------------------------+
 | NEST 3.1                               | NEST 3.2                                 |

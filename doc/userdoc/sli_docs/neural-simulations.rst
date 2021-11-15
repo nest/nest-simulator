@@ -199,8 +199,8 @@ these elements are C++ classes.
 
 An overview of all available node models can be retrieved from the
 NEST kernel using ``GetKernelStatus /node_models get``, while passing
-the key 'synapse_models' to that function will return the list of
-available synapse models.
+the key 'synapse_models' will return the list of available synapse
+models.
 
 You can find a list of all available neuron models in our :doc:`model
 directory <models/index_neuron>`.

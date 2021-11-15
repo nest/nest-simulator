@@ -403,6 +403,7 @@ function( NEST_PROCESS_WITH_PYTHON )
       message( WARNING "${PYABI_WARN}")
     else()
       find_package( Python 3.8 REQUIRED Interpreter Development.Module )
+    endif()
 
     if ( Python_FOUND )
       if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )

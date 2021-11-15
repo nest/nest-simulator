@@ -403,6 +403,8 @@ function( NEST_PROCESS_WITH_PYTHON )
       message( WARNING "${PYABI_WARN}")
     else()
       find_package( Python 3.8 REQUIRED Interpreter Development.Module )
+
+    if ( Python_FOUND )
       if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
         execute_process( COMMAND "${Python_EXECUTABLE}" "-c"
           "import sys, os; print(int(bool(os.environ.get('CONDA_DEFAULT_ENV', False)) or (sys.prefix != sys.base_prefix)))"

@@ -252,7 +252,7 @@ Client to execute a simple script on the Server using the
     print(response['stdout'])          # 'Hello world!'
 
     script = "models=nest.node_models"
-    response = nsc.exec_script(script, 'models')
+    response = nsc.exec_script(script, return_vars='models')
     models = response['data']
     print(models)                      # the list of models
 
@@ -266,7 +266,7 @@ the NEST Server Client.
     from NESTServerClient import NESTServerClient
     nsc = NESTServerClient()
 
-    response = nsc.from_file('simulation_script.py', 'n_events')
+    response = nsc.from_file('simulation_script.py', return_vars='n_events')
     n_events = response['data']
 
     print('Number of events:', n_events)

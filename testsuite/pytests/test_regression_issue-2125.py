@@ -32,7 +32,7 @@ class ThreadedDisconnectTestCase(unittest.TestCase):
         """Test that threaded disconnect does not produce segmentation fault"""
         nest.ResetKernel()
         nest.set_verbosity('M_ERROR')
-        nest.SetKernelStatus({'local_num_threads': 2})
+        nest.local_num_threads = 2
 
         neurons = nest.Create('iaf_psc_alpha', 3)
 

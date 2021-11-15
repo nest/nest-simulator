@@ -1,11 +1,6 @@
 Connect two NEST simulations using MUSIC
 ========================================
 
-.. note::
-
-   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
-   and cannot be enabled at the same time.
-
 Let’s look at an example of two NEST simulations connected through
 MUSIC. We’ll implement the simple network in :numref:`neuronmusic3`
 from :doc:`the introduction to this tutorial <music_tutorial_1>`.
@@ -23,7 +18,7 @@ called *send.py*.
     #!/usr/bin/env python3
 
     import nest
-    nest.SetKernelStatus({"overwrite_files": True})
+    nest.overwrite_files = True
 
     neurons = nest.Create('iaf_psc_alpha', 2, {'I_e': [400.0, 405.0]})
 
@@ -68,7 +63,7 @@ For the receiving process script, *receive.py* we do:
     #!/usr/bin/env python3
 
     import nest
-    nest.SetKernelStatus({"overwrite_files": True})
+    nest.overwrite_files = True
 
     music_in = nest.Create("music_event_in_proxy", 2, {'port_name': 'p_in'})
 

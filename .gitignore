@@ -76,3 +76,4 @@ cscope.out
 .project
 .cproject
 .pydevproject
+.python-version

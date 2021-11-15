@@ -206,7 +206,7 @@ added to each of the *features.h files, AND to examples/ut_features.cpp.
 #include "nvccfeatures.h"
 #elif defined(__ICC)
 #include "iccfeatures.h"
-#elif defined(__xlC__)
+#elif defined(__xlC__) || defined(__ibmxl__)
 #include "xlcfeatures.h"
 #elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
 #include "sunprofeatures.h"

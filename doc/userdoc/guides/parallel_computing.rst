@@ -173,7 +173,7 @@ command for this is
 
 .. code-block:: bash
 
-    nest.SetKernelStatus({"local_num_threads": T})
+    nest.local_num_threads = T
 
 Usually, a good choice for `T` is the number of processor cores available
 on your machine.
@@ -287,17 +287,18 @@ of all four neurons are recorded to files.
 
 .. code-block:: python
 
-    from nest import *
-    SetKernelStatus({"total_num_virtual_procs": 4})
-    pg = Create("poisson_generator", params={"rate": 50000.0})
-    n = Create("iaf_psc_alpha", 4)
-    sr = Create("spike_recorder", params={"record_to": "ascii"})
-    Connect(pg, [n[0]], syn_spec={'weight': 1000.0, 'delay': 1.0})
-    Connect([n[0]], [n[1]], syn_spec={'weight': 1000.0, 'delay': 1.0})
-    Connect([n[1]], [n[2]], syn_spec={'weight': 1000.0, 'delay': 1.0})
-    Connect([n[2]], [n[3]], syn_spec={'weight': 1000.0, 'delay': 1.0})
-    Connect(n, sr)
-    Simulate(100.0)
+    import nest
+
+    nest.total_num_virtual_procs = 4
+    pg = nest.Create("poisson_generator", params={"rate": 50000.0})
+    n = nest.Create("iaf_psc_alpha", 4)
+    sr = nest.Create("spike_recorder", params={"record_to": "ascii"})
+    nest.Connect(pg, n[0], syn_spec={"weight": 1000.0, "delay": 1.0})
+    nest.Connect(n[0], n[1], syn_spec={"weight": 1000.0, "delay": 1.0})
+    nest.Connect(n[1], n[2], syn_spec={"weight": 1000.0, "delay": 1.0})
+    nest.Connect(n[2], n[3], syn_spec={"weight": 1000.0, "delay": 1.0})
+    nest.Connect(n, sr)
+    nest.Simulate(100.0)
 
 The script is run three times using different numbers of MPI processes,
 but 4 virtual processes in every run:

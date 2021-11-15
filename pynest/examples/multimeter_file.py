@@ -39,17 +39,17 @@ import matplotlib.pyplot as plt
 nest.ResetKernel()
 
 ###############################################################################
-# With ``SetKernelStatus``, global properties of the simulation kernel can be
-# specified. The following properties are related to writing to file:
+# Global properties of the simulation kernel can be set via attributes
+# of the nest module. The following properties are related to writing to file:
 #
-# * ``overwrite_files`` is set to True to permit overwriting of an existing file.
+# * ``overwrite_files`` can be set True to permit overwriting of existing files.
 # * ``data_path`` is the path to which all data is written. It is given relative
 #   to  the current working directory.
-# * 'data_prefix' allows to specify a common prefix for all data files.
+# * ``data_prefix`` allows to specify a common prefix for all data files.
 
-nest.SetKernelStatus({"overwrite_files": True,
-                      "data_path": "",
-                      "data_prefix": ""})
+nest.overwrite_files = True
+nest.data_path = ""
+nest.data_prefix = ""
 
 ###############################################################################
 # For illustration, the recordables of the ``iaf_cond_alpha`` neuron model are
@@ -78,8 +78,8 @@ print("iaf_cond_alpha recordables: {0}".format(
 #  In addition, more parameters can be modified for writing to file:
 #
 #  - `record_to` indicates where to put recorded data. All possible values are
-#    available by inspecting the keys of the `recording_backends` dictionary
-#    obtained from ``GetKernelStatus()``.
+#    available by inspecting the keys of the dictionary obtained from the
+#    kernel attribute ``recording_backends``.
 #  - `label` specifies an arbitrary label for the device. If writing to files,
 #    it used in the file name instead of the model name.
 #

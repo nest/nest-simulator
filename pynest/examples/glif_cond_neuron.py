@@ -44,11 +44,11 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
 ##############################################################################
-# We initialize the nest and set the simulation resolution.
+# We initialize NEST and set the simulation resolution.
 
 nest.ResetKernel()
 resolution = 0.05
-nest.SetKernelStatus({"resolution": resolution})
+nest.resolution = resolution
 
 ###############################################################################
 # We create the five levels of GLIF model to be tested, i.e.,
@@ -100,10 +100,10 @@ neurons = n_lif + n_lif_r + n_lif_asc + n_lif_r_asc + n_lif_r_asc_a
 
 espikes = nest.Create("spike_generator",
                       params={"spike_times": [10., 100., 150.],
-                              "spike_weights": [20.]*3})
+                              "spike_weights": [20.] * 3})
 ispikes = nest.Create("spike_generator",
                       params={"spike_times": [15., 99., 150.],
-                              "spike_weights": [-20.]*3})
+                              "spike_weights": [-20.] * 3})
 cg = nest.Create("step_current_generator",
                  params={"amplitude_values": [400., ],
                          "amplitude_times": [200., ],

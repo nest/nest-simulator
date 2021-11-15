@@ -178,20 +178,60 @@ class TestNodeCollection(unittest.TestCase):
         n_list_negative_start_end = n_slice_negative_start_end.tolist()
         self.assertEqual(n_list_negative_start_end, [4, 5, 6])
 
-        n_slice_start_outside = n[-15:]
-        n_list_start_outside = n_slice_start_outside.tolist()
-        self.assertEqual(n_list_start_outside, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        with self.assertRaises(IndexError):
+            n[-15:]
 
-        n_slice_stop_outside = n[:15]
-        n_list_stop_outside = n_slice_stop_outside.tolist()
-        self.assertEqual(n_list_stop_outside, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        with self.assertRaises(IndexError):
+            n[:15]
 
-        n_slice_start_stop_outside = n[-13:17]
-        n_list_start_stop_outside = n_slice_start_stop_outside.tolist()
-        self.assertEqual(n_list_start_stop_outside, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        with self.assertRaises(IndexError):
+            n[-13:17]
 
         with self.assertRaises(IndexError):
             n[::-3]
+
+        primitive = n
+        composite = n + nest.Create('iaf_psc_exp')
+        for nodes in [primitive, composite]:
+            n_list = nodes.tolist()
+            # With slice without arguments
+            self.assertEqual(nodes[:].tolist(), n_list[:])
+            self.assertEqual(nodes[::].tolist(), n_list[::])
+
+            # With start values
+            for start in range(-len(nodes), len(nodes)):
+                self.assertEqual(nodes[start:].tolist(), n_list[start:], f'with [{start}:]')
+
+            # With stop values
+            for stop in range(-len(nodes) + 1, len(nodes) + 1):
+                if stop == 0:
+                    continue  # Slicing an empty NodeCollection is not allowed.
+                self.assertEqual(nodes[:stop].tolist(), n_list[:stop], f'with [:{stop}]')
+
+            # With step values
+            for step in range(1, len(nodes)):
+                self.assertEqual(nodes[::step].tolist(), n_list[::step], f'with [::{step}]')
+
+            # With start and step values
+            for start in range(-len(nodes), len(nodes)):
+                for step in range(1, len(nodes)):
+                    self.assertEqual(nodes[start::step].tolist(), n_list[start::step], f'with [{start}::{step}]')
+
+            # With stop and step values
+            for stop in range(-len(nodes) + 1, len(nodes) + 1):
+                if stop == 0:
+                    continue  # Slicing an empty NodeCollection is not allowed.
+                for step in range(1, len(nodes)):
+                    self.assertEqual(nodes[:stop:step].tolist(), n_list[:stop:step], f'with [:{stop}:{step}]')
+
+            # With start, stop, and step values
+            for start in range(-len(nodes), len(nodes)):
+                for stop in range(start+1, len(nodes) + 1):
+                    if stop == 0 or (start < 0 and start+len(nodes) >= stop):
+                        continue  # Cannot slice an empty NodeCollection, or use stop <= start.
+                    for step in range(1, len(nodes)):
+                        self.assertEqual(nodes[start:stop:step].tolist(), n_list[start:stop:step],
+                                         f'with [{start}:{stop}:{step}]')
 
     def test_correct_index(self):
         """Multiple NodeCollection calls give right indexing"""
@@ -273,9 +313,9 @@ class TestNodeCollection(unittest.TestCase):
         def check_membership(nc, reference, inverse_ref):
             """Checks that all node IDs in reference are in nc, and that elements in inverse_ref are not in the nc."""
             for i in reference:
-                self.assertTrue(i in nc, 'i={}'.format(i))
+                self.assertTrue(i in nc, f'{i} in {nc.tolist()}')
             for j in inverse_ref:
-                self.assertFalse(j in nc)
+                self.assertFalse(j in nc, f'{j} not in {nc.tolist()}')
 
             self.assertFalse(reference[-1] + 1 in nc)
             self.assertFalse(0 in nc)
@@ -486,18 +526,17 @@ class TestNodeCollection(unittest.TestCase):
 
         n = nest.Create('iaf_psc_exp', 10)
         nest.Connect(n, n, {'rule': 'one_to_one'})
-        connections = nest.GetKernelStatus('num_connections')
-        self.assertEqual(connections, 10)
+        self.assertEqual(nest.num_connections, 10)
 
         for nc in n:
             nest.Connect(nc, nc)
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+        self.assertEqual(nest.num_connections, 20)
 
         nest.ResetKernel()
 
         n = nest.Create('iaf_psc_alpha', 2)
         nest.Connect(n[0], n[1])
-        self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
+        self.assertEqual(nest.num_connections, 1)
 
     def test_SetStatus_and_GetStatus(self):
         """
@@ -719,8 +758,8 @@ class TestNodeCollection(unittest.TestCase):
                  ]
         fail_cases = [([True for _ in range(len(n)-1)], IndexError),  # Too few bools
                       ([True for _ in range(len(n)+1)], IndexError),  # Too many bools
-                      ([[True, False], [True, False]], TypeError),  # Too many dimensions
-                      ([True, False, 2.5, False, True], TypeError),  # Not all indices are bools
+                      ([[True, False], [True, False]], TypeError),    # Too many dimensions
+                      ([True, False, 2.5, False, True], TypeError),   # Not all indices are bools
                       ([1, False, 1, False, 1], TypeError),  # Mixing bools and ints
                       ]
         if HAVE_NUMPY:
@@ -771,7 +810,7 @@ class TestNodeCollection(unittest.TestCase):
         nodes_a = nest.NodeCollection()
         nodes_a += nest.Create('iaf_psc_alpha', n)
         nest.Connect(nodes_a, nodes_a)
-        self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
+        self.assertEqual(nest.num_connections, n * n)
         self.assertTrue(nodes_a)
         self.assertIsNotNone(nodes_a.get())
         nodes_a.V_m = vm
@@ -782,7 +821,7 @@ class TestNodeCollection(unittest.TestCase):
         nodes_b = nest.Create('iaf_psc_alpha', n)
         nodes_b += nest.NodeCollection([])
         nest.Connect(nodes_b, nodes_b)
-        self.assertEqual(nest.GetKernelStatus('num_connections'), n*n)
+        self.assertEqual(nest.num_connections, n * n)
         self.assertTrue(nodes_b)
         self.assertIsNotNone(nodes_b.get())
         nodes_b.V_m = vm

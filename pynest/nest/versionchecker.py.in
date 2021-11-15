@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# utils.py
+# versionchecker.py
 #
 # This file is part of NEST.
 #
@@ -18,9 +18,16 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-__author__ = 'naveau'
 
 
-def extract_dict_a_from_b(a, b):
+"""
+Check that the Python compiletime and runtime versions match.
 
-    return dict([(k, b[k]) for k in a.keys() if k in b.keys()])
+"""
+
+v_major_mismatch = sys.version_info.major != @Python_VERSION_MAJOR@
+v_minor_mismatch = sys.version_info.minor != @Python_VERSION_MINOR@
+if v_major_mismatch or v_minor_mismatch:
+    msg = ("Python runtime version does not match 'nest' compiletime version. "
+           + "Please use Python @Python_VERSION_MAJOR@.@Python_VERSION_MINOR@.")
+    raise Exception(msg)

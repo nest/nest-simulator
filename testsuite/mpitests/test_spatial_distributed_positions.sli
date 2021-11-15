@@ -1,5 +1,5 @@
 /*
- *  iostreamdatum.cc
+ *  test_spatial_distributed_positions.sli
  *
  *  This file is part of NEST.
  *
@@ -20,12 +20,39 @@
  *
  */
 
-#include "iostreamdatum.h"
+(unittest) run
+/unittest using
 
-// Includes from sli:
-#include "interpret.h"
-#include "lockptrdatum_impl.h"
+skip_if_not_threaded
 
-template class lockPTRDatum< std::istream, &SLIInterpreter::Istreamtype >;
-template class lockPTRDatum< std::istream, &SLIInterpreter::XIstreamtype >;
-template class lockPTRDatum< std::ostream, &SLIInterpreter::Ostreamtype >;
+[1 2 4]
+{
+  ResetKernel
+  << /total_num_virtual_procs 4 >> SetKernelStatus
+
+ << /uniform << /min 0.0 /max 1.0  >> >> CreateParameter /pos_param Set
+ pos_param pos_param dimension2d /pos Set
+
+  /layer_spec
+  << /positions pos
+    /n 4
+    /edge_wrap false
+    /elements /iaf_psc_alpha
+  >> def
+
+  /layer layer_spec CreateLayer def
+
+  layer GetMetadata /meta Set
+
+  {
+    % Abort if there is no metadata.
+    meta length 0 gt
+  } assert_or_die
+
+  {
+    % Abort if the metadata does not contain positions.
+    meta keys /positions MemberQ
+  } assert_or_die
+
+  meta /positions get
+} distributed_process_invariant_collect_assert_or_die

@@ -391,8 +391,13 @@ function( NEST_PROCESS_WITH_PYTHON )
     message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting CMake option -Dwith-python=ON." )
   elseif ( ${with-python} STREQUAL "ON" )
 
-    # Localize the Python interpreter and lib/header files
-    find_package( Python 3.8 REQUIRED Interpreter Development )
+    # Localize the Python interpreter and ABI
+    if ( ${CMAKE_VERSION} VERSION_LESS "3.18.0")
+      find_package( Python 3.8 REQUIRED Interpreter Development )
+      message( WARNING "CMake 3.18+ is recommended for more universal Python bindings. If you encounter missing Python header or library file errors, try upgrading CMake.")
+    else()
+      find_package( Python 3.8 REQUIRED Interpreter Development.Module )
+    endif()
 
     if ( Python_FOUND )
       if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
@@ -658,25 +663,3 @@ function( NEST_PROCESS_WITH_MPI4PY )
 
   endif ()
 endfunction ()
-
-function( NEST_PROCESS_WITH_RECORDINGBACKEND_ARBOR )
-  if (with-recordingbackend-arbor)
-	if (NOT HAVE_MPI)
-	  message( FATAL_ERROR "Recording backend Arbor needs MPI." )
-    endif ()
-
-	if (NOT HAVE_PYTHON)
-	  message( FATAL_ERROR "Recording backend Arbor needs Python." )
-	endif ()
-
-    include( FindPythonModule )
-
-	find_python_module(mpi4py)
-	if ( HAVE_MPI4PY )
-	  include_directories( "${PY_MPI4PY}/include" )
-	else ()
-	  message( FATAL_ERROR "CMake cannot find mpi4py, needed for recording backend Arbor" )
-    endif ()
-	set( HAVE_RECORDINGBACKEND_ARBOR ON PARENT_SCOPE )
-  endif()
-endfunction()

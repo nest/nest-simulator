@@ -70,45 +70,6 @@ R123_STATIC_INLINE double timer(double *d) {
     return *d - dold;
 }
 
-#define WHITESPACE " \t\f\v\n"
-char *nameclean(char *s)
-{
-    char *cp = s, *cp2, *cpend = s + strlen(s);
-    size_t i;
-
-    cp2 = s;
-    while ((cp2 = strstr(cp2, "(R)")) != NULL) {
-	*cp2++ = ' ';
-	*cp2++ = ' ';
-	*cp2++ = ' ';
-    }
-    cp2 = s;
-    while ((cp2 = strstr(cp2, "CPU")) != NULL) {
-	*cp2++ = ' ';
-	*cp2++ = ' ';
-	*cp2++ = ' ';
-    }
-    cp2 = s;
-    while ((cp2 = strchr(cp2, '@')) != NULL) {
-	*cp2++ = ' ';
-    }
-    while ((i = strcspn(cp, WHITESPACE)) > 0) {
-	cp += i;
-	i = strspn(cp, WHITESPACE);
-	if (i > 0) {
-	    cp2 = cp + i;
-	    *cp++ = ' ';
-	    if (cp2 > cp) {
-		memmove(cp, cp2, cpend - cp);
-		cpend -= cp2 - cp;
-	    }
-	}
-    }
-    return s;
-}
-
-#undef WHITESPACE
-
 /* strdup may or may not be in string.h, depending on the value
    of the pp-symbol _XOPEN_SOURCE and other arcana.  Just
    do it ourselves.
@@ -189,37 +150,6 @@ void prtu32(uint32_t v){ fprintf(stderr, "%08" PRIx32, v); }
 void prtu64(uint64_t v){ fprintf(stderr, "%016" PRIx64, v); }
 
 #endif /* __cplusplus */
-
-/*
- * Convert a hexfloat string of the form "0xA.BpN" to a double,
- * where A and B are hex integers and N is a decimal integer
- * exponent
- */
-double
-hextod(const char *cp)
-{
-    uint64_t whole = 0, frac = 0;
-    int exponent = 0, len = 0;
-    double d;
-    char *s;
-    if (cp[0] == '0' && (cp[1] == 'x'||cp[1] == 'X'))
-	cp += 2;
-    whole = strtou64(cp, &s, 16);
-    if (s[0] == '.') {
-	char *cp = ++s;
-	frac = strtou64(s, &s, 16);
-	len = s - cp;
-    }
-    if (s[0] == 'p') {
-	s++;
-	exponent = atoi(s);
-    }
-    frac += whole<<(4*len);
-    exponent -= 4*len;
-    d = frac;
-    d = ldexp(d, exponent);
-    return d;
-}
 
 #define CHECKNOTEQUAL(x, y)  do { if ((x) != (y)) ; else { \
     fprintf(stderr, "%s: %s line %d error %s == %s (%s)\n", progname, __FILE__, __LINE__, #x, #y, strerror(errno)); \

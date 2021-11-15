@@ -62,13 +62,13 @@ nested dictionaries and leads to simpler and more readable code:
 |  ::                                    |  ::                                      |
 |                                        |                                          |
 |     params = {"sion_chunksize": 1024}  |     params = {"sion_chunksize": 1024}    |
-|     nest.recording_backends = {        |     nest.SetDefaults('sionlib', params)  |
+|     nest.recording_backends = {        |     nest.SetDefaults("sionlib", params)  |
 |         "sionlib": params              |                                          |
 |     }                                  |                                          |
 |                                        |                                          |
 +----------------------------------------+------------------------------------------+
 |  ::                                    |  ::                                      |
 |                                        |                                          |
-|     nest.recording_backends["ascii"]   |     nest.GetDefaults('ascii')            |
+|     nest.recording_backends["ascii"]   |     nest.GetDefaults("ascii")            |
 |                                        |                                          |
 +----------------------------------------+------------------------------------------+

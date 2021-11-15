@@ -478,7 +478,7 @@ stored in memory can be retrieved after the simulation using
 
    SLI ] GetKernelStatus /recording_backends get ==
 
-The list of available device models can be retrieved by calling
+A list of node models including all available device models can be retrieved by calling
 ``GetKernelStatus /node_models get`. The most important devices are:
 
 * ``voltmeter`` Device to observe membrane potentials.

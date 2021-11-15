@@ -48,7 +48,7 @@ namespace nest
 
 /**
  * Encapsulate all calls to MUSIC.
-*/
+ */
 class MUSICManager : public ManagerInterface
 {
 public:

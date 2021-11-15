@@ -609,7 +609,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
     }
   }
 
-  index synapse_model_id( kernel().model_manager.get_synapse_model_id( syn_model ) );
+  const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_model );
 
   // Increments pointers to weight and delay, if they are specified.
   auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d )

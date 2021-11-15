@@ -60,7 +60,7 @@ ModelManager::~ModelManager()
   clear_connection_models_();
   for ( auto&& connection_model : builtin_connection_models_ )
   {
-    if ( connection_model != 0 )
+    if ( connection_model != nullptr )
     {
       delete connection_model;
     }
@@ -69,7 +69,7 @@ ModelManager::~ModelManager()
   clear_node_models_();
   for ( auto&& node_model : builtin_node_models_ )
   {
-    if ( node_model != 0 )
+    if ( node_model != nullptr )
     {
       delete node_model;
     }
@@ -120,7 +120,7 @@ ModelManager::initialize()
   // (re-)append all synapse prototypes
   for ( auto&& connection_model : builtin_connection_models_ )
   {
-    if ( connection_model != 0 )
+    if ( connection_model != nullptr )
     {
       std::string name = connection_model->get_name();
       for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )

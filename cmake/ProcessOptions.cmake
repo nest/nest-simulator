@@ -401,9 +401,8 @@ function( NEST_PROCESS_WITH_PYTHON )
         " is up-to-date (3.18+)."
       )
       message( WARNING "${PYABI_WARN}")
-    endif()
-
-    if ( Python_FOUND )
+    else()
+      find_package( Python 3.8 REQUIRED Interpreter Development.Module )
       if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
         execute_process( COMMAND "${Python_EXECUTABLE}" "-c"
           "import sys, os; print(int(bool(os.environ.get('CONDA_DEFAULT_ENV', False)) or (sys.prefix != sys.base_prefix)))"

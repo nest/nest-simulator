@@ -288,6 +288,7 @@ get_model_defaults( const std::string component )
   }
   catch ( UnknownModelName& )
   {
+    // ignore errors; throw at the end of the function if that's reached
   }
 
   try
@@ -297,6 +298,7 @@ get_model_defaults( const std::string component )
   }
   catch ( UnknownSynapseType& )
   {
+    // ignore errors; throw at the end of the function if that's reached
   }
 
   if ( kernel().io_manager.is_valid_recording_backend( component ) )

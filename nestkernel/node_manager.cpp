@@ -84,7 +84,8 @@ NodeManager::finalize()
 void
 NodeManager::change_number_of_threads()
 {
-  // No nodes exist at this point, so nothing to tear down
+  // No nodes exist at this point, so nothing to tear down. See
+  // checks for node_manager.size() in VPManager::set_status()
   initialize();
 }
 

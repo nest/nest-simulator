@@ -40,8 +40,8 @@ PyNEST - an interface to the NEST simulator
 
    Python Interface Figure.
    The Python interpreter imports NEST as a module and
-   dynamically loads the NEST simulator kernel (``pynestkernel.so``). The
-   core functionality is defined in ``hl_api.py``. A simulation script of
+   dynamically loads the NEST simulator kernel (``pynestkernel.so``).
+   A simulation script of
    the user (``mysimulation.py``) uses functions defined in this high-level
    API. These functions generate code in SLI (Simulation Language
    Interpreter), the native language of the interpreter of NEST. This
@@ -55,7 +55,7 @@ illustrates the interaction between the user’s simulation script
 (``mysimulation.py``) and the NEST simulator. Eppler et al. [3]_
 contains a technically detailed description of the implementation of this
 interface and parts of this text are based on this reference. The
-simulation kernel is written in C++ to obtain the highest possible performance
+simulation kernel is written in C++ to obtain the highest possible performance
 for the simulation.
 
 You can use PyNEST interactively from the Python prompt or from within

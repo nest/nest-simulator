@@ -47,8 +47,7 @@ if os.environ.get("READTHEDOCS") == "True":
 else:
     doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/userdoc"
 
-print("doc_build_dir", str(doc_build_dir))
-print("source_dir", str(source_dir))
+sys.path.append(os.path.abspath("./_ext"))
 
 source_suffix = '.rst'
 master_doc = 'contents'
@@ -99,7 +98,9 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx_tabs.tabs',
     'nbsphinx',
-    'sphinx_rtd_theme'
+    'sphinx_rtd_theme',
+    'HoverXTooltip',
+    'VersionSyncRole',
 ]
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa

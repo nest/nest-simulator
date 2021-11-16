@@ -38,7 +38,7 @@ import pydoc
 
 from string import Template
 
-from ..ll_api import *
+from ..ll_api import check_stack, sps, sr, spp
 from .. import pynestkernel as kernel
 
 __all__ = [

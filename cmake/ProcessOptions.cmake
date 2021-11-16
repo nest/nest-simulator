@@ -395,15 +395,18 @@ function( NEST_PROCESS_WITH_PYTHON )
     message( FATAL_ERROR "Python 2 is not supported anymore, please use Python 3 by setting CMake option -Dwith-python=ON." )
   elseif ( ${with-python} STREQUAL "ON" )
 
-    # Localize the Python interpreter and lib/header files
-    # During a wheel build we build against a static interpreter,
-    # so we build in `.Module` mode, see:
-    # https://github.com/pypa/manylinux/issues/255
-    # https://cmake.org/cmake/help/latest/command/add_library.html
-    if ($ENV{NEST_CMAKE_BUILDWHEEL})
-      find_package( Python 3.8 REQUIRED Interpreter Development.Module )
-    else()
+    # Localize the Python interpreter and ABI
+    find_package( Python 3.8 QUIET COMPONENTS Interpreter Development.Module )
+    if ( NOT Python_FOUND )
       find_package( Python 3.8 REQUIRED Interpreter Development )
+      string( CONCAT PYABI_WARN "Could not locate Python ABI"
+        ", using shared libraries and header file instead."
+        " Please clear your CMake cache and build folder and verify that CMake"
+        " is up-to-date (3.18+)."
+      )
+      message( WARNING "${PYABI_WARN}")
+    else()
+      find_package( Python 3.8 REQUIRED Interpreter Development.Module )
     endif()
 
     if ( Python_FOUND )

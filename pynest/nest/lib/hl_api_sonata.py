@@ -84,6 +84,44 @@ class SonataConnector(object):
         numpy_array = col.to_numpy()
         return (numpy_array[0] == numpy_array).all()
     
+    def save_nodes_to_file(self):
+        with open('node_information.txt', 'w') as file:
+            for name, nc in self.node_collections.items():
+                file.write(name + ': ')
+                file.write(str(nc))
+                file.write('\n')
+                params = nc.get()
+                file.write(str(params))
+                file.write('\n\n')
+
+    def check_node_params(self):
+        for nodes in self.config['networks']['nodes']:
+            node_types_file = nodes['node_types_file']
+            node_types = pd.read_csv(node_types_file, sep='\s+')
+
+            with h5py.File(nodes["nodes_file"], 'r') as nodes_file:
+                population_name = list(nodes_file['nodes'].keys())[0]
+                population = nodes_file['nodes'][population_name]
+
+                nc = self.node_collections[population_name]
+
+                node_type_ids = population['node_type_id']
+                if 'dynamics_params' in node_types.keys():
+                    for count, node_type in enumerate(node_type_ids):
+                        dynamics = {}
+                        json_file = node_types.dynamics_params[node_types['node_type_id'] == node_type].iloc[0]
+
+                        with open(self.config['components']['point_neuron_models_dir'] + '/' + json_file) as dynamics_file:
+                            dynamics.update(json.load(dynamics_file))
+                        node_params = nc[count].get(dynamics.keys())
+                        for k, v in node_params.items():
+                            if isinstance(v, tuple):
+                                node_params[k] = list(v)
+                        if node_params != dynamics:
+                            raise ValueError(f'NodeCollection {nc} with name {population_name} has the wrong parameters! Expected \n{dynamics}, \n got \n{node_params}')
+
+            print(f'All node parameters for nc {population_name} ok!')
+
     def create_nodes(self):
         # Create nodes
 

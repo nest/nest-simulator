@@ -68,6 +68,7 @@ mem_ini = memory_thisjob()
 
 # Create nodes
 sonata_connector.create_nodes()
+#sonata_connector.check_node_params()
 mem_create = memory_thisjob()
 
 sonata_connector.create_edge_dict()

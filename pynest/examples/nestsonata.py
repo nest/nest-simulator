@@ -41,8 +41,8 @@ start_time = time.time()
 
 nest.ResetKernel()
 
-#example = '300_pointneurons'
-example = 'GLIF'
+example = '300_pointneurons'
+#example = 'GLIF'
 plot = True
 
 if example == '300_pointneurons':
@@ -76,6 +76,8 @@ sonata_connector.create_edge_dict()
 
 sonata_dynamics = {'nodes': sonata_connector.node_collections, 'edges': sonata_connector.edge_types}
 print(sonata_connector.node_collections)
+
+sonata_connector.dump_connections('check_connections.h5')
 
 #print()
 #print('sonata_dynamics', sonata_dynamics)
@@ -119,7 +121,7 @@ print(f'memory create: {mem_create}')
 print(f'memory connect: {mem_connect}')
 
 if plot:
-    #print(s_rec.events)
+    print(s_rec.events)
     nest.raster_plot.from_device(s_rec)
     plt.show()
 

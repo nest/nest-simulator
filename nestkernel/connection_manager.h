@@ -159,6 +159,7 @@ public:
     std::string syn_model );
 
   void connect_sonata( const DictionaryDatum& sonata_dynamics );
+  void dump_connections( std::string file_name );
 
   index find_connection( const thread tid, const synindex syn_id, const index snode_id, const index tnode_id );
 

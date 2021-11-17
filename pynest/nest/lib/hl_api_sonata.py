@@ -31,6 +31,7 @@ import warnings
 import csv
 from string import Template
 
+from ..ll_api import sli_func
 from .hl_api_types import NodeCollection
 from .hl_api_nodes import Create
 from .hl_api_models import GetDefaults
@@ -220,4 +221,7 @@ class SonataConnector(object):
             edge_dict['edge_synapse'] = edge_params
 
             self.edge_types.append(edge_dict)
+
+    def dump_connections(self, outname):  #TODO: make part of nest
+        sli_func('DumpConnections_s', outname)
 

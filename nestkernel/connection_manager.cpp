@@ -63,6 +63,9 @@
 #include "tokenutils.h"
 
 
+#include "H5Cpp.h"
+
+
 nest::ConnectionManager::ConnectionManager()
   : connruledict_( new Dictionary() )
   , connbuilder_factories_()
@@ -729,6 +732,60 @@ nest::ConnectionManager::connect_sonata( const DictionaryDatum& sonata_dynamics 
   // Set flag before calling sonata_connector.connect() in case exception is thrown after some connections have been created.
   set_connections_have_changed();
   sonata_connector.connect();
+}
+
+void
+nest::ConnectionManager::dump_connections( std::string file_name )
+{
+  std::cerr << "ConnectionManager::dump_connections" << " " << file_name << "\n";
+  H5::H5File file(file_name, H5F_ACC_TRUNC);
+  H5::Group edge_grp(file.createGroup("edges"));
+
+  /*
+   * Create dataspace for the dataset in the file.
+   */
+  const int MSPACE1_RANK = 1;   // Rank of the first dataset in memory
+  //const int MSPACE1_DIM = 50;   // Dataset size in memory
+  const int MSPACE2_RANK = 1;   // Rank of the second dataset in memory
+  //const int MSPACE2_DIM = 4;    // Dataset size in memory
+  const int FSPACE_RANK = 1;    // Dataset rank as it is stored in the file
+  const int FSPACE_DIM1 = 16;    // Dimension sizes of the dataset as it is...
+  //const int FSPACE_DIM2 = 12;   // ...stored in the file
+  const int MSPACE_DIM1 = 8;    // We will read dataset back from the file...
+  //const int MSPACE_DIM2 = 12;   // ...to the dataset in memory with these ...
+                                  // ...dataspace parameters
+  hsize_t fdim[] = {FSPACE_DIM1}; // dim sizes of ds (on disk)
+  H5::DataSpace fspace( FSPACE_RANK, fdim );
+
+  /*
+   * Create dataset and write it into the file.
+   */
+  int matrix[FSPACE_DIM1];
+  for (int i = 0; i < MSPACE_DIM1; i++)
+  {
+    matrix[i] = 0;
+  }
+
+
+  const std::string DATASET_NAME( "Matrix in file" );
+  H5::DataSet dataset(edge_grp.createDataSet( DATASET_NAME, H5::PredType::NATIVE_INT, fspace ));
+  dataset.write( matrix, H5::PredType::NATIVE_INT );
+
+  hsize_t dim1[] = {MSPACE_DIM1};  /* Dimension size of the first dataset (in memory) */
+  H5::DataSpace mspace1( MSPACE1_RANK, dim1 );
+
+  int matrix2[MSPACE_DIM1];
+  for (int i = 0; i < MSPACE_DIM1; i++)
+  {
+    matrix2[i] = i;
+  }
+  hsize_t dim2[] = {MSPACE_DIM1};  /* Dimension size of the second dataset (in memory */
+  H5::DataSpace mspace2( MSPACE2_RANK, dim2 );
+  dataset.write( matrix2, H5::PredType::NATIVE_INT, mspace2, fspace );
+
+  dataset.close();
+  edge_grp.close();
+  file.close();
 }
 
 void

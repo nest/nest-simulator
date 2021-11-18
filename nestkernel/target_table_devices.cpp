@@ -57,7 +57,7 @@ nest::TargetTableDevices::finalize()
     }
   }
 
-  for ( size_t tid = 0; tid < target_to_devices_.size(); ++tid )
+  for ( size_t tid = 0; tid < target_from_devices_.size(); ++tid )
   {
     for ( auto iit = target_from_devices_[ tid ].begin(); iit != target_from_devices_[ tid ].end(); ++iit )
     {

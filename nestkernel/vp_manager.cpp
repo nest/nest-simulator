@@ -87,7 +87,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     if ( n_threads_conflict or n_procs_conflict )
     {
       throw BadProperty(
-        "Requested total_num_virtual_procs is incompatible with other properties. "
+        "Requested total_num_virtual_procs is incompatible with the number of processes and threads."
         "It must be an integer multiple of num_processes and equal to "
         "local_num_threads * num_processes. Value unchanged." );
     }

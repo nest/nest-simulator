@@ -130,8 +130,8 @@ nest::KernelManager::reset()
 void
 nest::KernelManager::change_number_of_threads( thread new_num_threads )
 {
-  // For descriptions of the following conditions, see the cascade of
-  // user input checks in VPManager::set_status()
+  // Inputs are checked in VPManager::set_status().
+  // Just double check here that all values are legal.
   assert( node_manager.size() == 0 );
   assert( not connection_manager.get_user_set_delay_extrema() );
   assert( not simulation_manager.has_been_simulated() );

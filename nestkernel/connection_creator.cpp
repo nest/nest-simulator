@@ -152,7 +152,7 @@ ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vect
   }
   std::string syn_name = ( *dict_datum )[ names::synapse_model ];
 
-  // The following call will throw if syn_name is not naming a known model
+  // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
   const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_.push_back( synapse_model_id );
 

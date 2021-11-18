@@ -248,7 +248,6 @@ DictinfoFunction::execute( SLIInterpreter* i ) const
  Synopsis: dict length_d -> int
 
  Examples: <</a 1 /b 2>> length_d -> 2
-   statusdict length_d --> 28
 
  Author: docu by Sirko Straube
 

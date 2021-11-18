@@ -122,10 +122,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
     (`all-to-all` by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
     Details depend on the connectivity rule.
 
-    A list of available synapse models can be obtained from the NEST
-    kernel by calling ``nest.synapse_models``. Similarly, the list
-    of available connection rules can be obtained by calling
-    ``nest.connection_rules``.
+    Lists of synapse models and connection rules are available as
+    ``nest.synapse_models`` and ``nest.connection_rules``, respectively.
 
     Parameters
     ----------

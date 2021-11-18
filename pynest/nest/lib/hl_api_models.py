@@ -116,7 +116,7 @@ def SetDefaults(model, params, val=None):
     params : str or dict
         Dictionary of new default parameter values
     val : str, optional
-        If given, ``params`` has to be the name of a property.
+        If given, ``params`` has to be the name of a parameter.
 
     """
 

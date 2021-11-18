@@ -76,9 +76,7 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        node_models = nest.GetKernelStatus("node_models")
-        synapse_models = nest.GetKernelStatus("synapse_models")
-        for model in node_models + synapse_models:
+        for model in nest.node_models + nest.synapse_models:
 
             model_status = nest.GetDefaults(model)
             self.assertIsInstance(model_status, dict)

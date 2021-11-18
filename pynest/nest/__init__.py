@@ -29,8 +29,8 @@ r"""PyNEST - Python interface for the NEST simulator
 
 * ``nest.synapse_models`` shows all available synapse models.
 
-* ``nest.help('model_name') displays help for the given model, e.g.,
-  ``nest.help('iaf_psc_exp')``
+* ``nest.help("model_name") displays help for the given model, e.g.,
+  ``nest.help("iaf_psc_exp")``
 
 * To get help on functions in the ``nest`` package, use Python's
   ``help()`` function or IPython's ``?``, e.g.

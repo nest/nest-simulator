@@ -441,7 +441,7 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t synaps
   }
   const std::string syn_name = ( *syn_params )[ names::synapse_model ];
 
-  // The following call will throw if syn_name is not naming a known model
+  // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
   const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_id_[ synapse_indx ] = synapse_model_id;
 

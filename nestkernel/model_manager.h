@@ -111,7 +111,7 @@ public:
    * Set the default parameters of a model.
    * @param name of model.
    * @param params default parameters to be set.
-   * @return true if the operation succeeded, false else
+   * @return true if the operation succeeded, else false
    * @see set_node_defaults_, set_synapse_defaults_
    */
   bool set_model_defaults( Name name, DictionaryDatum params );

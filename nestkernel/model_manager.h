@@ -66,18 +66,19 @@ public:
 
 
   /**
-   *
+   * Return a proxynode configured for thread tid and the given
+   * node_id.
    */
   Node* get_proxy_node( thread tid, index node_id );
 
   /**
    * Return pointer to protoype for given synapse id.
    * @throws UnknownSynapseType
+   *
+   * @todo: make the return type const, after the increment of
+   *        num_connections and the min_ and max_delay setting in
+   *        ConnectorBase was moved out to the ConnectionManager
    */
-
-  //  TODO: make the return type const, after the increment of
-  //  num_connections and the min_ and max_delay setting in
-  //  ConnectorBase was moved out to the ConnectionManager
   ConnectorModel& get_connection_model( synindex syn_id, thread t = 0 );
 
   const std::vector< ConnectorModel* >& get_connection_models( thread tid );
@@ -197,13 +198,10 @@ public:
   SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const thread tid ) const;
 
 private:
-  /**  */
   void clear_node_models_();
 
-  /**  */
   void clear_connection_models_();
 
-  /**  */
   index register_node_model_( Model* model );
 
   synindex register_connection_model_( ConnectorModel* );

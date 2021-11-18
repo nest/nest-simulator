@@ -37,6 +37,7 @@ __all__ = [
 ]
 
 
+@deprecated
 @check_stack
 def Models(mtype="all", sel=None):
     """Return a tuple of neuron, device, or synapse model names.
@@ -88,6 +89,7 @@ def Models(mtype="all", sel=None):
     return tuple(models)
 
 
+@deprecated
 @check_stack
 def ConnectionRules():
     """Return a tuple of all available connection rules.

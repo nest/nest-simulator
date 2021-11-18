@@ -48,6 +48,10 @@ attributes with the names ``connection_rules``, ``growth_curves``,
 available stimulation backends has been added under the attribute
 ``stimulation_backends``.
 
+In the course of adding the new kernel attributes, the functions
+``Models()`` and ``ConnectionRules()`` of PyNEST have been marked as
+deprecated and will be removed in a later version.
+
 Global properties for recording backends
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

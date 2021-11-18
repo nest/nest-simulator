@@ -166,15 +166,15 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     std::vector< std::string > errors;
     if ( kernel().node_manager.size() > 0 )
     {
-      throw KernelException( "Nodes exist" );
+      errors.push_back( "Nodes have already been created" );
     }
     if ( has_been_simulated() )
     {
-      throw KernelException( "Network has been simulated" );
+      errors.push_back( "Network has been simulated" );
     }
     if ( kernel().model_manager.are_model_defaults_modified() )
     {
-      throw KernelException( "Model defaults were modified" );
+      errors.push_back( "Model defaults were modified" );
     }
 
     if ( errors.size() == 1 )

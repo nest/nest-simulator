@@ -97,7 +97,7 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        for model in nest.node_models + nest.synapse_models:
+        for model in nest.node_models:
             if 'V_m' in nest.GetDefaults(model):
                 v_m = nest.GetDefaults(model)['V_m']
 
@@ -114,7 +114,7 @@ class StatusTestCase(unittest.TestCase):
     def test_GetStatus(self):
         """GetStatus"""
 
-        for model in nest.node_models + nest.synapse_models:
+        for model in nest.node_models:
             if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
 
@@ -142,7 +142,7 @@ class StatusTestCase(unittest.TestCase):
     def test_SetStatus(self):
         """SetStatus with dict"""
 
-        for model in nest.node_models + nest.synapse_models:
+        for model in nest.node_models:
             if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
                 n = nest.Create(model)
@@ -152,7 +152,7 @@ class StatusTestCase(unittest.TestCase):
     def test_SetStatusList(self):
         """SetStatus with list"""
 
-        for model in nest.node_models + nest.synapse_models:
+        for model in nest.node_models:
             if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
                 n = nest.Create(model)
@@ -162,7 +162,7 @@ class StatusTestCase(unittest.TestCase):
     def test_SetStatusParam(self):
         """SetStatus with parameter"""
 
-        for model in nest.node_models + nest.synapse_models:
+        for model in nest.node_models:
             if 'V_m' in nest.GetDefaults(model):
                 nest.ResetKernel()
                 n = nest.Create(model)

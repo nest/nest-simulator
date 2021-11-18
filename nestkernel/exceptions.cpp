@@ -35,11 +35,11 @@ std::string
 nest::UnknownModelName::message() const
 {
   std::ostringstream msg;
-  msg << "/" << n_.toString() + " is not a known model name. ";
+  msg << "/" << n_.toString() + " is not a known model name.";
 #ifndef HAVE_GSL
-  msg << " A frequent cause for this error is that NEST was compiled "
-         "without the GNU Scientific Library, which is required for "
-         "the conductance-based neuron models.";
+  msg << " A frequent cause for this error is that NEST was compiled"
+         " without the GNU Scientific Library, which is required for"
+         " the conductance-based neuron models.";
 #endif
   return msg.str();
 }
@@ -48,11 +48,11 @@ std::string
 nest::UnknownComponent::message() const
 {
   std::ostringstream msg;
-  msg << "/" << n_.toString() + " is not a known component. ";
+  msg << "/" << n_.toString() + " is not a known component.";
 #ifndef HAVE_GSL
-  msg << " A frequent cause for this error is that NEST was compiled "
-         "without the GNU Scientific Library, which is required for "
-         "the conductance-based neuron models.";
+  msg << " A frequent cause for this error is that NEST was compiled"
+         " without the GNU Scientific Library, which is required for"
+         " the conductance-based neuron models.";
 #endif
   return msg.str();
 }

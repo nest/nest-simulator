@@ -441,7 +441,7 @@ nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const 
   if ( not synmodel.empty() )
   {
     const std::string synmodel_name = getValue< std::string >( synmodel );
-    // The following call will throw if synmodel_name is not naming a known model
+    // The following throws UnknownSynapseType for invalid synmodel_name
     syn_id = kernel().model_manager.get_synapse_model_id( synmodel_name );
   }
   // Connect all sources to all targets
@@ -981,7 +981,7 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
   if ( not syn_model_t.empty() )
   {
     const std::string synmodel_name = getValue< std::string >( syn_model_t );
-    // The following call will throw if synmodel_name is not naming a known model
+    // The following throws UnknownSynapseType for invalid synmodel_name
     syn_id = kernel().model_manager.get_synapse_model_id( synmodel_name );
     get_connections( connectome, source_a, target_a, syn_id, synapse_label );
   }

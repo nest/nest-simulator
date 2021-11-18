@@ -30,8 +30,6 @@ from pathlib import Path
 from shutil import copyfile
 import json
 
-import sphinx_rtd_theme
-
 from subprocess import check_output, CalledProcessError
 from mock import Mock as MagicMock
 
@@ -161,7 +159,9 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_material'
+html_title = 'NEST simulator documentation'
+#html_theme = "pydata_sphinx_Otheme"
 html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
 html_theme_options = {'logo_only': True,
                       'display_version': True}
@@ -170,12 +170,41 @@ html_theme_options = {'logo_only': True,
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = {
+        # Set the name of the project to appear in the navigation.
+    # Set you GA account ID to enable tracking
+    #'google_analytics_account': 'UA-XXXXX',
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
+    # Specify a base_url used to generate sitemap.xml. If not
+    # specified, then no sitemap will be built.
+    'base_url': 'https://nest-simulator.readthedocs.io/en/latest/',
+
+    # Set the color and the accent color
+    'color_primary': 'orange',
+    'color_accent': 'white',
+    'theme_color': 'ff6633',
+
+    # Set the repo location to get a badge with stats
+    'repo_url': 'https://github.com/nest/nest-simulator/',
+    'repo_name': 'NEST',
+
+    # Visible levels of the global TOC; -1 means unlimited
+    'globaltoc_depth': 1,
+    # If False, expand all TOC entries
+    'globaltoc_collapse': True,
+    # If True, show hidden TOC entries
+    'globaltoc_includehidden': False,
+    }
+
 html_static_path = [str(doc_build_dir / 'static')]
+html_additional_pages = {'index': 'index.html'}
+html_sidebars = {
+    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
+}
+rst_prolog = ".. warning:: \n   This version of the documentation is NOT an official release. \
+             You are looking at 'latest', which is in active and ongoing development. \
+             You can change versions on the bottom left of the screen."
+rst_epilog = ""
 
 # -- Options for HTMLHelp output ------------------------------------------
 

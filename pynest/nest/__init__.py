@@ -299,6 +299,11 @@ class NestModule(types.ModuleType):
         ),
         default=10000.0,
     )
+    growth_curves = KernelAttribute(
+        "list[str]",
+        "The list of the available structural plasticity growth curves",
+        readonly=True,
+    )
     use_compressed_spikes = KernelAttribute(
         "bool",
         (
@@ -331,6 +336,11 @@ class NestModule(types.ModuleType):
         "The number of connections in the network",
         readonly=True,
         localonly=True,
+    )
+    connection_rules = KernelAttribute(
+        "list[str]",
+        "The list of available connection rules",
+        readonly=True,
     )
     node_models = KernelAttribute(
         "list[str]",

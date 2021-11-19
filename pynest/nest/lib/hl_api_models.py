@@ -24,7 +24,7 @@ Functions for model handling
 """
 
 from ..ll_api import check_stack, sps, sr, spp
-from .hl_api_helper import is_iterable, is_literal, model_deprecation_warning
+from .hl_api_helper import deprecated, is_iterable, is_literal, model_deprecation_warning
 from .hl_api_types import to_json
 from .hl_api_simulation import GetKernelStatus
 
@@ -37,7 +37,7 @@ __all__ = [
 ]
 
 
-@deprecated
+@deprecated("nest.node_models or nest.synapse_models")
 @check_stack
 def Models(mtype="all", sel=None):
     """Return a tuple of neuron, device, or synapse model names.
@@ -89,7 +89,7 @@ def Models(mtype="all", sel=None):
     return tuple(models)
 
 
-@deprecated
+@deprecated("nest.connection_rules")
 @check_stack
 def ConnectionRules():
     """Return a tuple of all available connection rules.

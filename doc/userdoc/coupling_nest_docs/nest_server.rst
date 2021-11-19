@@ -1,3 +1,5 @@
+.. _nest_server:
+
 NEST Server
 ===========
 

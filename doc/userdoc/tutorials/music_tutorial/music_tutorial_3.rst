@@ -1,3 +1,5 @@
+.. _music_connections_cpp_python:
+
 MUSIC Connections in C++ and Python
 ===================================
 

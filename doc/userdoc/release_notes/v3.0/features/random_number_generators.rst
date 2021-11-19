@@ -1,3 +1,5 @@
+.. _simpler_rngs:
+
 Simpler handling of random number generators
 --------------------------------------------
 

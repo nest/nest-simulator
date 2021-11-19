@@ -1,3 +1,5 @@
+.. _pynest_tutorail_1:
+
 Part 1: Neurons and simple neural networks
 ==========================================
 

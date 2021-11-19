@@ -1,3 +1,5 @@
+.. _pymusic_interface:
+
 The pymusic interface
 ---------------------
 

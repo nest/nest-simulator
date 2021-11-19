@@ -1,3 +1,5 @@
+.. _cmake_options:
+
 CMake Options for NEST
 ======================
 

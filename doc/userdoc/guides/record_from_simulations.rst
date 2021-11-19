@@ -1,3 +1,5 @@
+.. _record_simulation:
+
 Record from simulations
 =======================
 

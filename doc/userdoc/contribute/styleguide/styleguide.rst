@@ -1,3 +1,5 @@
+.. _doc_styleguide:
+
 The NEST documentation style guide
 ==================================
 

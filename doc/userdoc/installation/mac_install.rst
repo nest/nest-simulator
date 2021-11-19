@@ -1,3 +1,5 @@
+.. _nest_macos:
+
 Building NEST on macOS
 ======================
 

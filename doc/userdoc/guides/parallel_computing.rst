@@ -1,3 +1,5 @@
+.. _parallel_computing:
+
 Guide to parallel computing
 ===========================
 

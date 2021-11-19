@@ -1,3 +1,5 @@
+.. _code_style_cpp:
+
 NEST coding style guidelines for C++
 ====================================
 

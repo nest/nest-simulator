@@ -1,14 +1,12 @@
 :orphan:
 
-.. _sec_glossary:
-:sorted:
+.. _glossary:
 
 Glossary
 ========
 
-Common abbreviations in NEST
-----------------------------
 .. glossary::
+ :sorted:
 
  iaf
    Integrate and fire.
@@ -179,7 +177,7 @@ Common abbreviations in NEST
    A time period in which neurons cannot fire due to depolarization.
 
  Point process
-   A temporal point process is a mathematical model for a time series of discrete events. 
+   A temporal point process is a mathematical model for a time series of discrete events.
 
  non-renewal process
    Point process with adapting threshold eta(t).
@@ -206,7 +204,7 @@ Common abbreviations in NEST
 
  propagator
    Matrix used in a numerically integrated dynamical system.
-   
+
    See :doc:`exact integration <guides/exact-integration>` page for further information.
 
  synaptic response kernel
@@ -223,12 +221,12 @@ Common abbreviations in NEST
 
  facilitation
    Mechanism of making a synapse stronger by increasing the weight.
-   
+
    Opposite to depression.
- 
+
  depression
    Mechanism of making a synapse weaker by decreasing the weight.
-   
+
    Opposite to facilitation.
 
  stdp_synapse
@@ -236,18 +234,18 @@ Common abbreviations in NEST
 
  static_synapse
    Synapse with a fixed weight.
- 
+
  refractoriness
    The time before a new action potential can take place.
 
  renewal process
    Spike-time statistical analysis.
- 
+
  spike train
    A sequence of action potentials.
 
  spike-frequency adaptation
-   After stimulation, neurons show a reduction in the firing frequency of their spike response following an initial increase. 
+   After stimulation, neurons show a reduction in the firing frequency of their spike response following an initial increase.
 
  GIF
    Generalized integrate-and-fire model.
@@ -278,7 +276,7 @@ Common abbreviations in NEST
 
  outdegree
    Amount of connections from pre-synaptic cells.
- 
+
  synaptic efficacy
    The extent to which a pre-synaptic neuron affects a post-synaptic neuron.
 

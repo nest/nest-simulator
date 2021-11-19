@@ -1,5 +1,7 @@
 :orphan:
 
+.. _music_sli:
+
 MUSIC with SLI
 ==============
 

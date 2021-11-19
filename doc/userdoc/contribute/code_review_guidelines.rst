@@ -1,3 +1,5 @@
+.. _code_guidelines:
+
 Code review guidelines
 ======================
 

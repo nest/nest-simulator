@@ -1,3 +1,5 @@
+.. _intro_music_tutorial:
+
 Introduction to the MUSIC Interface
 ===================================
 

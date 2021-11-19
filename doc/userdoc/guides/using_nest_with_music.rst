@@ -1,3 +1,5 @@
+.. _nest_music:
+
 Using NEST with MUSIC
 =====================
 

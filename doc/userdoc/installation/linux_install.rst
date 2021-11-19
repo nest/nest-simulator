@@ -1,3 +1,5 @@
+.. _linux_install:
+
 Ubuntu/Debian Installation
 ==========================
 
@@ -62,7 +64,7 @@ further adjust settings for your system.
     libopenmpi-dev
 
 * When NEST is installed with Python and without ``cmake`` option ``-DCMAKE_INSTALL_PREFIX=<nest_install_dir>``,
-  only `virtual environments <https://docs.python.org/3/tutorial/venv.html>`_ are supported. 
+  only `virtual environments <https://docs.python.org/3/tutorial/venv.html>`_ are supported.
   Activate the virtual environment you want to use, or if you don't already have one, create a new virtual environment for NEST:
 
 .. code-block:: bash
@@ -154,7 +156,7 @@ further adjust settings for your system.
 
     cd nest-simulator-x.y.z-build
 
-* Configure NEST. You may need additional ``cmake`` options (see :doc:`cmake_options`). 
+* Configure NEST. You may need additional ``cmake`` options (see :doc:`cmake_options`).
   Installing NEST with Python outside a virtual Python environment requires the
   ``cmake`` option ``-DCMAKE_INSTALL_PREFIX=<nest_install_dir>``.
 

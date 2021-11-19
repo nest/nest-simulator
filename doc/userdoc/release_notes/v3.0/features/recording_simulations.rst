@@ -1,3 +1,5 @@
+.. _record_sims:
+
 Recording from simulations
 ==========================
 

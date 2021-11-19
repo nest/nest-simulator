@@ -1,3 +1,5 @@
+.. _stimulation_backends:
+
 Stimulation backends
 ====================
 

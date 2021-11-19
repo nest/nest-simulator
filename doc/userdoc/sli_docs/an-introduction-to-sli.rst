@@ -1,5 +1,7 @@
 :orphan:
 
+.. _sli_intro:
+
 An Introduction to SLI
 ======================
 

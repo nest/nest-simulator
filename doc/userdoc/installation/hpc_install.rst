@@ -1,10 +1,12 @@
+.. _hpc_install:
+
 High Performance Computer Systems Installation
 ================================================
 
 Minimal configuration
 -------------------------
 
-NEST can be compiled without any external packages; such a configuration may be useful for initial porting to a new supercomputer. However, this implies several restrictions: 
+NEST can be compiled without any external packages; such a configuration may be useful for initial porting to a new supercomputer. However, this implies several restrictions:
 
 - Some neuron and synapse models will not be available, as they depend on ODE solvers from the GNU Scientific Library.
 - The Python extension will not be available
@@ -52,7 +54,7 @@ as in::
 BlueGene/Q and PyNEST
 ~~~~~~~~~~~~~~~~~~~~~
 
-Building PyNEST on BlueGene/Q requires you to compile dynamically, i.e. 
+Building PyNEST on BlueGene/Q requires you to compile dynamically, i.e.
 ``-Dstatic-libraries=OFF``. Furthermore, you have to cythonize the
 ``pynest/pynestkernel.pyx/.pyx`` on a machine with Cython installed::
 
@@ -87,10 +89,10 @@ Furthermore, for running PyNEST, make sure all Python dependencies are installed
 environment variables are set properly::
 
     module load python3/3.4.2
-    
+
     # adds PyNEST to the PYTHONPATH
     source <nest-install-dir>/bin/nest_vars.sh
-    
+
     # makes HOME and PYTHONPATH available for Python
     runjob \
       --exp-env HOME \
@@ -122,8 +124,8 @@ allocator library as shown in the following example::
            -DCMAKE_INSTALL_PREFIX:PATH=$PWD/install \
            -Dstatic-libraries=ON -Dwith-warning=OFF \
            -DCMAKE_EXE_LINKER_FLAGS="-Wl,--allow-multiple-definition" \
-           -Dwith-libraries=$HOME/tcmalloc/install/lib/libtcmalloc.a 
-     
+           -Dwith-libraries=$HOME/tcmalloc/install/lib/libtcmalloc.a
+
 
 Compiling for Fujitsu Sparc64
 -------------------------------

@@ -1,3 +1,5 @@
+.. _nest_ides:
+
 Developing NEST with IDEs
 =========================
 

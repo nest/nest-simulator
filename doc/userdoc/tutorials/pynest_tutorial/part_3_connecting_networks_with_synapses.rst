@@ -1,3 +1,5 @@
+.. _pynest_tutorial_3:
+
 Part 3: Connecting networks with synapses
 =========================================
 

@@ -1,3 +1,5 @@
+.. _pynest_tutorial_2:
+
 Part 2: Populations of neurons
 ==============================
 

@@ -1,3 +1,5 @@
+.. _connect_two_sims_music:
+
 Connect two NEST simulations using MUSIC
 ========================================
 

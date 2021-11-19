@@ -1,3 +1,5 @@
+.. _sim_precise_spike_times:
+
 Simulations with precise spike times
 ====================================
 

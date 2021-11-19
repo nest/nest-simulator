@@ -1,3 +1,5 @@
+.. _spatial_network:
+
 Spatially-structured networks
 =============================
 

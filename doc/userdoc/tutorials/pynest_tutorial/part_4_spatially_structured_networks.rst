@@ -1,3 +1,5 @@
+.. _pynest_tutorial_4:
+
 Part 4: Spatially structured networks
 =====================================
 

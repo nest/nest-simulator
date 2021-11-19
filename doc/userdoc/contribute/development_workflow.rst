@@ -1,3 +1,5 @@
+.. _git_workflow:
+
 NEST Git workflow
 =================
 
@@ -87,7 +89,7 @@ Then ``git branch -a`` to show you all branches. You’ll get something like:
 
 This tells you that you are currently on the ``master`` branch, and that you
 also have a ``remote`` connection to ``origin/master``. The ``master`` branch is the
-default branch and this is where code that has been reviewed and tested resides. 
+default branch and this is where code that has been reviewed and tested resides.
 ``origin/master`` is just a copy of the ``master`` branch on your system on the ``remote``.
 
 What remote repository is ``remote/origin``? Try ``git remote -v`` to see the web
@@ -280,7 +282,7 @@ Editing workflow - commands explained
    related, complete changes. Leave files with unfinished changes for later
    commits.
 
-7. To commit the staged files into the local copy of your repository, run 
+7. To commit the staged files into the local copy of your repository, run
    ``git commit``. Write a clear Git commit message that describes the changes
    that you have made. Please read `this article <http://chris.beams.io/posts/git-commit/>`_
    on writing commit messages. If a commit fixes an open issue on the `GitHub issue

@@ -1,5 +1,7 @@
 :orphan:
 
+.. _pynest_example_template:
+
 PyNEST example template
 =======================
 

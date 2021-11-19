@@ -1,3 +1,5 @@
+.. _video_one_neuron:
+
 Introduction to NEST: Simulating a single neuron
 ==================================================
 

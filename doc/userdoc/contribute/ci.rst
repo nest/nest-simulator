@@ -1,3 +1,5 @@
+.. _cont_integration:
+
 Continuous Integration
 ======================
 

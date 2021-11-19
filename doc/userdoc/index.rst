@@ -2,6 +2,7 @@
 Welcome to the NEST simulator documentation!
 ********************************************
 
+:ref:`built_in_timers`
 
 In our :doc:`release notes <release_notes/index>`, you can find an overview of the newest changes and features for NEST 3.x.
 

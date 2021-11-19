@@ -1,3 +1,5 @@
+.. _live_media:
+
 NEST LIVE MEDIA Installation
 =============================
 

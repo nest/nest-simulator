@@ -25,6 +25,7 @@ Low-level API of PyNEST Module
 
 import functools
 import inspect
+import keyword
 
 import sys
 import os
@@ -397,21 +398,17 @@ def init(argv):
         except NameError:
             pass
         else:
-            try:
-                import keyword
-                from .lib.hl_api_simulation import GetKernelStatus  #noqa
-                keyword_lists = (
-                    "connection_rules",
-                    "node_models",
-                    "recording_backends",
-                    "rng_types",
-                    "stimulation_backends",
-                    "synapse_models",
-                )
-                for kwl in keyword_lists:
-                    keyword.kwlist += GetKernelStatus(kwl)
-            except ImportError:
-                pass
+            from .lib.hl_api_simulation import GetKernelStatus  #noqa
+            keyword_lists = (
+                "connection_rules",
+                "node_models",
+                "recording_backends",
+                "rng_types",
+                "stimulation_backends",
+                "synapse_models",
+            )
+            for kwl in keyword_lists:
+                keyword.kwlist += GetKernelStatus(kwl)
 
     else:
         raise kernel.NESTErrors.PyNESTError("Initialization of NEST failed.")

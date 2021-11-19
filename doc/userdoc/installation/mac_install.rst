@@ -1,4 +1,4 @@
-.. _nest_macos:
+.. _mac_install:
 
 Building NEST on macOS
 ======================
@@ -24,7 +24,7 @@ Preparations
 
       xcode-select --install
 
-#. Create a conda environment with necessary tools (see also :doc:`conda_tips`)
+#. Create a conda environment with necessary tools (see also :ref:`conda_tips`)
 
    .. code:: sh
 
@@ -33,7 +33,7 @@ Preparations
    .. note::
 
       To build NEST natively on a Mac with Apple's M1 chip, you need to use Miniforge as
-      described in :doc:`conda_tips`.
+      described in :ref:`conda_tips`.
 
 #. Activate the environment with
 
@@ -89,7 +89,7 @@ Building NEST
    ``conda info`` and looking for the "active env location" entry in the output.
 
    To compile NEST with :ref:`MPI support <distributed-computing>`, add ``-Dwith-mpi=ON`` as ``cmake`` option.
-   For further CMake options, see :doc:`cmake_options`.
+   For further CMake options, see :ref:`cmake_options`.
 
 #. Compile, install, and verify NEST with
 

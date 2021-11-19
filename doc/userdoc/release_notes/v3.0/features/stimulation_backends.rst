@@ -14,7 +14,7 @@ another simulator, or a generic signal generator toolkit.
 
 Technically, this new feature is implemented through stimulation backends that can be based on NEST has been extended by an architecture to select of Nest has been modified to include a backend for
 stimulation devices. This modification is inspired by the backend for
-recording devices. (:doc:`recording from simulations <recording_simulations>`)
+recording devices. (:ref:`recording from simulations <record_simulations>`)
 
 With NEST 3.0, we change the terminology of input device to stimulation device.
 NEST 3.0 supports one stimulation backend, `MPI communication`. This backend is
@@ -25,7 +25,7 @@ MPI recording backend.
 .. seealso::
 
   Details about the new infrastructure can be found in the guide on
-  :doc:`stimulating the network <../../../guides/stimulate_the_network>`.
+  :ref:`stimulating the network <stimulate_network>`.
 
 Changes
 ^^^^^^^

@@ -1,4 +1,4 @@
-.. _intro_music_tutorial:
+.. _music_tutorial_1:
 
 Introduction to the MUSIC Interface
 ===================================
@@ -42,7 +42,7 @@ constructs.
 
 .. sidebar:: Jump to
 
-    :doc:`Part 1 - Connect 2 NEST simulations <music_tutorial_2>`
+    :ref:`Part 1 - Connect 2 NEST simulations <music_tutorial_2>`
 
 
 

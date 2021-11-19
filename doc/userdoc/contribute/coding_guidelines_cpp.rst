@@ -248,7 +248,7 @@ Compiler
 
 NEST compiles with any recent version of the `GNU C/C++
 Compiler <https://gcc.gnu.org/>`_ ``gcc``. Support for and limitations of other
-compilers is described in the :doc:`Installation Instructions <../installation/index>`
+compilers is described in the :ref:`Installation Instructions <install_nest>`
 
 Online reference documents
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

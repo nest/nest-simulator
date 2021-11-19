@@ -6,11 +6,11 @@ Getting help
 Have a specific question or problem with NEST?
 ----------------------------------------------
 
-Check out the :doc:`troubleshooting section <troubleshooting>` for
+Check out the :ref:`troubleshooting section <troubleshooting>` for
 common issues.
 
 If your question is not on there, you are welcome to subscribe to our
-:doc:`Mailing List <community>` and ask.
+:ref:`Mailing List <community>` and ask.
 
 Getting help on the command line interface
 ------------------------------------------

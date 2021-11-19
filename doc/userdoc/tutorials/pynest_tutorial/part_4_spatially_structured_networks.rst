@@ -18,11 +18,12 @@ be able to:
 For more information on the usage of PyNEST, please see the other
 sections of this tutorial:
 
-- :doc:`Part 1: Neurons and simple neural networks <part_1_neurons_and_simple_neural_networks>`
-- :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
-- :doc:`Part 3: Connecting networks with synapses <part_3_connecting_networks_with_synapses>`
+- :ref:`Part 1: Neurons and simple neural networks <pynest_tutorial_1>`
+- :ref:`Part 2: Populations of neurons <pynest_tutorial_2>`
+- :ref:`Part 3: Connecting networks with synapses <pynest_tutorial_3>`
 
-More advanced examples can be found at :doc:`Example Networks <../../examples/index>`, or
+More advanced examples can be found at :ref:`Example
+Networks <pynest_examples>`, or
 have a look at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
@@ -51,7 +52,7 @@ models that incorporate spatial location and spatial connectivity
 profiles.
 
 .. note::
-   For comprehensive documentation of spatial properties and connectivity, see the :doc:`../../guides/spatially_structured_networks`.
+   For comprehensive documentation of spatial properties and connectivity, see the :ref:`spatial_networks`.
 
 Adding spatial information to populations
 -----------------------------------------
@@ -153,7 +154,7 @@ placement. We then need to define a Parameter for the placement of the
 neurons, or we can define the positions of the neurons explicitly. Note
 that the extent is calculated from the positions of the nodes, but we can
 also explicitly specify it. See the *Free layers* section of the
-:doc:`../../guides/spatially_structured_networks`
+:ref:`spatial_networks`
 for details.
 
 The following snippet produces :numref:`free`:
@@ -174,7 +175,7 @@ nodes, we specify the number of neurons to be created. This is not
 necessary when using an array of positions.
 
 See the table of *Spatially-structured specific NEST parameters* in the
-:doc:`../../guides/spatially_structured_networks`
+:ref:`spatial_networks`
 for a selection of NEST Parameters that can be used.
 
 The following is an example of how to create off-grid nodes with a list of positions. It will create
@@ -206,7 +207,7 @@ connection, the number of connections, or defining a subset of the nodes
 to connect.
 
 The *Connections* section in the
-:doc:`../../guides/spatially_structured_networks`
+:ref:`spatial_networks`
 deals comprehensively with all the different possibilities, and it’s suggested
 that you look there for learning about the different constraints, as well
 as reading through the different examples listed there. Here are some
@@ -376,7 +377,7 @@ was built correctly:
    -  ``nest.PlotProbabilityParameter()``
 
    which allow us to generate the plots used with NUTM and this handout.
-   See the *Visualization functions* section in our :doc:`../../guides/spatially_structured_networks`
+   See the *Visualization functions* section in our :ref:`spatial_networks`
    for more details.
 
 It may also be useful to look at the ``.spatial`` property of the

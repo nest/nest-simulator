@@ -29,8 +29,8 @@ exchange backend is built, which is useful in co-simulation scenarios.
 
 .. seealso::
 
-  See the guide on :doc:`recording from simulations
-  <../../../guides/record_from_simulations>` for details on recording backends.
+  See the guide on :ref:`recording from simulations
+  <record_simulations>` for details on recording backends.
 
 Changes
 ^^^^^^^
@@ -100,4 +100,4 @@ demand, the functionality will be re-added in form of a recording
 backend.
 
 Details about the new infrastructure can be found in the guide on
-:doc:`recording from simulations <../../../guides/record_from_simulations>`.
+:ref:`recording from simulations <record_simulations>`.

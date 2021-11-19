@@ -1,4 +1,4 @@
-.. _documentation_workflow:
+.. _userdoc_workflow:
 
 User-level documentation workflow
 #################################
@@ -30,7 +30,7 @@ This workflow aims for the concept of **user-correctable documentation**.
 .. note::
    This workflow shows you how to create **user-level documentation**
    for NEST. For the **developer documentation**, please refer to our
-   :doc:`Developer documentation workflow
+   :ref:`Developer documentation workflow
    <developer_documentation_workflow>`.
 
 Changing the documentation
@@ -49,7 +49,7 @@ Setting up your environment
 +++++++++++++++++++++++++++
 
 We recommend that you set up a full NEST developer environment using
-Conda (for details on Conda, see :doc:`../installation/conda_tips`):
+Conda (for details on Conda, see :ref:`conda_tips`):
 
 .. code-block:: bash
 
@@ -135,9 +135,7 @@ sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
 5. Re-render documentation as described above.
 
-You can find our full :doc:`documentation style guide <../contribute/styleguide/styleguide>` here.
-
-Previewing on Read the Docs (optional)
+You can find our full :ref:`documentation style guide <docdoc_iewing on Read the Docs (optional)
 ++++++++++++++++++++++++++++++++++++++
 
 Proceed as follows to preview your version of the documentation on Read the
@@ -171,6 +169,6 @@ Creating pull request
 +++++++++++++++++++++
 
 Once your documentation work is finished, you can create a
-:doc:`pull request <../contribute/development_workflow` to the ``master``
+:ref:`pull request <git_workflow>` to the ``master``
 branch of the NEST Source Code Repository. Your pull request will be reviewed
 by the NEST Documentation Team!

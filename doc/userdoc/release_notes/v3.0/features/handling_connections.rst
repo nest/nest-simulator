@@ -1,4 +1,4 @@
-.. _SynapseCollection:
+.. _handling_connections:
 
 New functionality for handling connections (synapses)
 =====================================================

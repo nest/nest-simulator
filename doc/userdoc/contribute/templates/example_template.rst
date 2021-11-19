@@ -1,6 +1,6 @@
 :orphan:
 
-.. _pynest_example_template:
+.. _pyexample_template:
 
 PyNEST example template
 =======================

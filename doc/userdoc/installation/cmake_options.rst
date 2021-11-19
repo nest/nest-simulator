@@ -16,7 +16,7 @@ path.
 Choice of compiler
 ------------------
 
-We :doc:`systematically test <../contribute/ci>` NEST using the GNU gcc and the Clang compiler suites.
+We :ref:`systematically test <cont_integration>` NEST using the GNU gcc and the Clang compiler suites.
 Compilation with other up-to-date compilers should also work, but we do not
 regularly test against those compilers and can thus only provide limited support.
 
@@ -130,9 +130,9 @@ corresponding tests, you have to tell it about how your
 function in your ``~/.nestrc`` file. The file already contains an
 example implementation that should work with the `OpenMPI
 <http://www.openmpi.org>`__ implementation. For more details, see the
-documentation on the :doc:`configuration`.
+documentation on the :ref:`config_options`.
 
-See the :doc:`../guides/parallel_computing` to learn how to execute
+See the :ref:`parallel_computing` to learn how to execute
 threaded and distributed simulations with NEST.
 
 .. _compile_with_libneurosim:

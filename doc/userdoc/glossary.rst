@@ -205,7 +205,7 @@ Glossary
  propagator
    Matrix used in a numerically integrated dynamical system.
 
-   See :doc:`exact integration <guides/exact-integration>` page for further information.
+   See :ref:`exact integration <exact_integration>` page for further information.
 
  synaptic response kernel
    Shape of post-synaptic response, commonly an alpha, delta-pulse, or exponential function.

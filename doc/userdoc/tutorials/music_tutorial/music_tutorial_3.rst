@@ -1,4 +1,4 @@
-.. _music_connections_cpp_python:
+.. _music_tutorial_3:
 
 MUSIC Connections in C++ and Python
 ===================================

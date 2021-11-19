@@ -1,4 +1,4 @@
-.. _pynest_tutorail_1:
+.. _pynest_tutorial_1:
 
 Part 1: Neurons and simple neural networks
 ==========================================
@@ -20,14 +20,14 @@ know how to:
 For more information on the usage of PyNEST, please see the other
 sections of this primer:
 
--  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
--  :doc:`Part 3: Connecting networks with
-   synapses <part_3_connecting_networks_with_synapses>`
--  :doc:`Part 4: Spatially structured
-   networks <part_4_spatially_structured_networks>`
+-  :ref:`Part 2: Populations of neurons <pynest_tutorial_2>`
+-  :ref:`Part 3: Connecting networks with
+   synapses <pynest_tutorial_3>`
+-  :ref:`Part 4: Spatially structured
+   networks <pynest_tutorial_4>`
 
-More advanced examples can be found at `Example
-Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
+More advanced examples can be found at :ref:`Example
+Networks <pynest_examples>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
@@ -421,8 +421,8 @@ the synaptic model.
 The rest of the code remains as before. You should see a membrane
 potential as in :numref:`vm_one_neuron_noise` and :numref:`spikes_one_neuron_noise`.
 
-In the next part of the introduction (:doc:`Part 2: Populations of
-neurons <part_2_populations_of_neurons>`) we will look at more
+In the next part of the introduction (:ref:`Part 2: Populations of
+neurons <pynest_tutorial_2>`) we will look at more
 methods for connecting many neurons at once.
 
 Two connected neurons
@@ -477,7 +477,7 @@ the following sections of this introduction will add more.
 Getting information about NEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See the :doc:`Getting Help Section <../../getting_help>`
+See the :ref:`Getting Help Section <getting_help>`
 
 Nodes
 ~~~~~
@@ -510,7 +510,7 @@ Connections
 
 This is an abbreviated version of the documentation for the :py:func:`.Connect`
 function, please see NEST’s online help for the full version and
-:doc:`Connection Management <../../guides/connection_management>` for an introduction
+:ref:`Connection Management <connection_management>` for an introduction
 and examples.
 
 -  ``Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=False)``

@@ -11,11 +11,11 @@ Download NEST
       Distribution packages ease the installation on Debian/Ubuntu,
       Fedora, macOS and Conda.
 
-      See our :doc:`installation instructions <installation/index>` to
+      See our :ref:`installation instructions <install_nest>` to
       find the right option for you.
 
 Here you'll find the lastest versions of the source code and virtual machine (VM) images for download.
-If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
+If you use NEST for your project, don't forget to :ref:`cite NEST <cite_nest>`!
 
 
 Download the source code
@@ -24,7 +24,7 @@ Download the source code
 * If you are compiling NEST from source, you can download the zip or tarball of the  `latest release <https://github.com/nest/nest-simulator/releases>`_ from our GitHub page.
   You can find the download link below the release notes in the section labeled "Assets".
 
-* Then, follow the installation instructions for :doc:`Linux <installation/linux_install>` or :doc:`macOS <installation/mac_install>`.
+* Then, follow the installation instructions for :ref:`Linux <linux_install>` or :ref:`macOS <mac_install>`.
 
 * You can also test out the `latest developer version <https://github.com/nest/nest-simulator>`_ from GitHub.
 
@@ -41,7 +41,7 @@ If you run **Windows**, this is the option for you OR if you just want to run NE
 
   `Checksum <https://nest-simulator.org/downloads/gplreleases/nest-3.1.ova.sha512sum>`_
 
-* After downloading the virtual machine, check out the :doc:`install instructions for Live Media <installation/livemedia>`.
+* After downloading the virtual machine, check out the :ref:`install instructions for Live Media <live_media>`.
 
 
 Older versions of VM images
@@ -65,7 +65,7 @@ thus, we encourage our users to use the **most recent version of NEST**.
 
 ----
 
-NEST is available under the :doc:`GNU General Public License 2 or later <license>`. This means that you can
+NEST is available under the :ref:`GNU General Public License 2 or later <license>`. This means that you can
 
 -  use NEST for your research,
 -  modify and improve NEST according to your needs,

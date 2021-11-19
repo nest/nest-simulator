@@ -18,14 +18,14 @@ After you have worked through this material, you will know how to:
 For more information on the usage of PyNEST, please see the other
 sections of this primer:
 
--  :doc:`Part 1: Neurons and simple neural
-   networks <part_1_neurons_and_simple_neural_networks>`
--  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
--  :doc:`Part 4: Spatially structured
-   networks <part_4_spatially_structured_networks>`
+-  :ref:`Part 1: Neurons and simple neural
+   networks <pynest_tutorial_1>`
+-  :ref:`Part 2: Populations of neurons <pynest_tutorial_2>`
+-  :ref:`Part 4: Spatially structured
+   networks <pynest_tutorial_4>`
 
-More advanced examples can be found at `Example
-Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
+More advanced examples can be found at :ref:`Example
+Networks <pynest_examples>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
@@ -119,7 +119,7 @@ parameters associated with the distribution can be set (for example
     nest.Connect(epop1, neuron, "all_to_all", syn_dict)
 
 Available distributions and associated parameters are described in
-:doc:`Connection Management<../../guides/connection_management>`, the most common
+:ref:`Connection Managementi <connection_management>`, the most common
 ones are:
 
 +-------------------+------------------------+
@@ -350,7 +350,7 @@ or, even better
 
     neuronpop.set(V_m=-67.0)
 
-:doc:`See Part 2 <part_2_populations_of_neurons>` for more examples on
+:ref:`See Part 2 <pynest_tutorial_2>` for more examples on
 operations on multiple neurons, such as setting the status from a random
 distribution and connecting populations.
 

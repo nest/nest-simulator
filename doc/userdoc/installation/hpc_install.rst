@@ -22,7 +22,7 @@ To configure NEST for compilation without external packages, use the following  
           -Dwith-openmp=OFF \
           </path/to/nest/source>
 
-See the :doc:`CMake Options <cmake_options>` to  further adjust settings for your system.
+See the :ref:`CMake Options <cmake_options>` to  further adjust settings for your system.
 
 Compiling for BlueGene/Q
 ---------------------------

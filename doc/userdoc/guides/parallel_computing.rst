@@ -219,8 +219,8 @@ enabling the :ref:`recording backend for recording to binary files
 <recording_backend_sionlib>`) can be found in the :ref:`compilation
 options for distributed computing <compile-with-mpi>`.
 
-Please also see the :doc:`generic installation instructions
-<../installation/index>`, where you can find an overview of all options for
+Please also see the :ref:`generic installation instructions
+<install_nest>`, where you can find an overview of all options for
 installing NEST.
 
 Run distributed simulations
@@ -274,7 +274,7 @@ parallelization strategies, the number of virtual processes has to be
 kept constant. A simulation with a specific number of virtual processes
 will always yield the same results, no matter how they are distributed
 over threads and processes, given that the seeds for the random number
-generators of the different virtual processes are the same (see :doc:`Random
+generators of the different virtual processes are the same (see :ref:`Random
 numbers in NEST <random_numbers>`).
 
 In order to achieve a constant number of virtual processes, NEST

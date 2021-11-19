@@ -250,7 +250,7 @@ Editing workflow - commands explained
    C++ and SLI coding guidelines.
 3. Test your changes by building the source code and running the tests.
    (Usually ``cmake``, ``make``, ``make install``, ``make installcheck``. Please see the
-   :doc:`installation section <../installation>` for details.)
+   :ref:`installation section <install_nest>` for details.)
 4. Check which files have changed with ``git status``. You'll see a listing like this one:
 
    .. code::
@@ -332,5 +332,5 @@ When you feel your work is finished, you can create a pull request (PR). GitHub
 has a nice help page that outlines the process for
 `submitting pull requests <https://help.github.com/articles/using-pull-requests/#initiating-the-pull-request>`_.
 
-Please check out our :doc:`coding style guidelines <coding_guidelines_cpp>` and
-:ref:`code review guidelines <review_guidelines>` prior to submitting it.
+Please check out our :ref:`coding style guidelines <code_style_cpp>` and
+:ref:`code review guidelines <code_guidelines>` prior to submitting it.

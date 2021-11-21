@@ -398,7 +398,7 @@ def init(argv):
         except NameError:
             pass
         else:
-            from .lib.hl_api_simulation import GetKernelStatus  #noqa
+            from .lib.hl_api_simulation import GetKernelStatus  # noqa
             keyword_lists = (
                 "connection_rules",
                 "node_models",

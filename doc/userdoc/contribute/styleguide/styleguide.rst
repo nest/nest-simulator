@@ -68,11 +68,11 @@ The language we use
 
 We do, however, use terminology appropriate to NEST and neuroscience when
 specific and exact terms are needed, which is often. But explanations or
-references should be provided for clarity in introductory texts and the :ref:`sec_glossary`.
+references should be provided for clarity in introductory texts and the :ref:`glossary`.
 
 If you have further questions about style rules not addressed here, use
 `the Microsoft style guide <https://docs.microsoft.com/en-us/style-guide/welcome/>`_ as a resource
-or ask on the :ref:`mailing list <nest_community>`.
+or ask on the :ref:`mailing list <community>`.
 
 How to phrase content in NEST
 -----------------------------

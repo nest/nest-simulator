@@ -107,7 +107,7 @@ further adjust settings for your system.
 NEST should now be successfully installed in your active Python environment.
 
 * See the :ref:`Getting started <getting_started>` pages to find out how to get going with NEST or check out our
-  :ref:`example networks <pyenst_examples>`.
+  :ref:`example networks <pynest_examples>`.
 
 
 Installation from source without a virtual Python environment

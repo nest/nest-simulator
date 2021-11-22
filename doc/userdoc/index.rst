@@ -74,9 +74,9 @@ Where to find what
 * :ref:`Example Networks <pynest_examples>`  demonstrate the use of dozens of the neural network models implemented in NEST.
 
 * :ref:`Topical Guides <toc_guides>` provide deeper insight into several topics and concepts from :ref:`Parallel Computing <parallel_computing>`
-  to handling :ref:`Gap Junction Simulations <sim_gap_junctions>` and :ref:`setting up a spatially-structured network <gspatial_networks>`.
+  to handling :ref:`Gap Junction Simulations <sim_gap_junctions>` and :ref:`setting up a spatially-structured network <spatial_networks>`.
 
-* :ref:`Reference Material <pynest_apis>` provides a quick look up of definitions, functions and terms.
+* :ref:`Reference Material <pynest_api>` provides a quick look up of definitions, functions and terms.
 
 Interested in contributing?
 ---------------------------

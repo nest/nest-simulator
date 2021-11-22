@@ -31,7 +31,7 @@ This workflow aims for the concept of **user-correctable documentation**.
    This workflow shows you how to create **user-level documentation**
    for NEST. For the **developer documentation**, please refer to our
    :ref:`Developer documentation workflow
-   <developer_documentation_workflow>`.
+   <devdoc_workflow>`.
 
 Changing the documentation
 ++++++++++++++++++++++++++

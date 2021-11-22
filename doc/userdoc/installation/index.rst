@@ -258,7 +258,7 @@ provide containerized versions of NEST in several formats:
        We have live media (.ova) if you want to run NEST in a virtual machine. This option is suitable for Windows users, since we don't support
        NEST natively on Windows,
 
-       :ref:`Download the live media here <download_livemedia>`, and follow the :ref:`instructions to set up the virutal machine <livei_media>` .
+       :ref:`Download the live media here <download_livemedia>`, and follow the :ref:`instructions to set up the virtual machine <live_media>` .
 
 
 

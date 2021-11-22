@@ -122,7 +122,7 @@ the large number of resulting files. By installing the `SIONlib
 library <http://www.fz-juelich.de/jsc/sionlib>`_ and supplying its
 installation path to the ``-Dwith-sionlib=<path>`` option when calling
 `cmake`, you can enable the :ref:`recording backend for binary files
-<recording_backend_sionlib>`, which solves this problem.
+<recording_backends>`, which solves this problem.
 
 If you compiled NEST with support for MPI and also want to run the
 corresponding tests, you have to tell it about how your

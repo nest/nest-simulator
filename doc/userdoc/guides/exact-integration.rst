@@ -1,4 +1,4 @@
-.. _extact_integration:
+.. _exact_integration:
 
 Integrating neural models using exact integration
 =================================================

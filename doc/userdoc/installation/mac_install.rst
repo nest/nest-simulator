@@ -88,7 +88,7 @@ Building NEST
    You can find the ``<conda_env_dir>`` for the currently active conda environment by running
    ``conda info`` and looking for the "active env location" entry in the output.
 
-   To compile NEST with :ref:`MPI support <distributed-computing>`, add ``-Dwith-mpi=ON`` as ``cmake`` option.
+   To compile NEST with :ref:`MPI support <distributed_computing>`, add ``-Dwith-mpi=ON`` as ``cmake`` option.
    For further CMake options, see :ref:`cmake_options`.
 
 #. Compile, install, and verify NEST with

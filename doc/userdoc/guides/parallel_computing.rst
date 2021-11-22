@@ -216,7 +216,7 @@ When using the :ref:`standard installation instructions <standard>`, it
 is usually sufficient to add ``-Dwith-mpi=ON`` when calling `cmake`.
 However, more detailed information on this and related flags (e.g., for
 enabling the :ref:`recording backend for recording to binary files
-<recording_backend_sionlib>`) can be found in the :ref:`compilation
+<recording_backends>`) can be found in the :ref:`compilation
 options for distributed computing <compile-with-mpi>`.
 
 Please also see the :ref:`generic installation instructions

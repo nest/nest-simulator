@@ -107,6 +107,7 @@ The layer is shown in :numref:`fig_layer1`. Note the following properties:
 .. _dx_dy_extent:
 
 .. math::
+      :label: dx_dy_extent
 
       \begin{split}
       dx &= \frac{\text{x-extent}}{\text{number of columns}} \\
@@ -1193,9 +1194,9 @@ certain distance is then given by the product of the probabilities for
 finding nodes at a certain distance with the probability value for this
 distance. For the connection probability and parameter values below we have
 
-.. _eq_ptheo:
 
 .. math::
+   :label: eq_ptheo
 
    p_{\text{conn}}(d) = \frac{12}{\pi} \times 2\pi r \times (1-2r)
     = 24 r (1-2r) \qquad \text{for} \quad 0\le r < \frac{1}{2}\;.\qquad

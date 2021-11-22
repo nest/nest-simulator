@@ -1,4 +1,4 @@
-.. _faq_precise_neurons:
+.. _faqs_precise_neurons:
 
 Questions and answers about precise neurons
 ===========================================

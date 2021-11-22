@@ -425,7 +425,7 @@ The following parameters and functionalities are provided:
 
 For more information, check out the guide on
 :ref:`parametrization <param_ex>` or the documentation on the
-different :ref:`PyNEST APIs <pynest_apis>`.
+different :ref:`PyNEST APIs <pynest_api>`.
 
 ::
 

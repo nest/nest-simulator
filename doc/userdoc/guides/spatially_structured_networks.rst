@@ -104,8 +104,6 @@ The layer is shown in :numref:`fig_layer1`. Note the following properties:
 
 -  The *grid spacing* of the layer is
 
-.. _dx_dy_extent:
-
 .. math::
       :label: dx_dy_extent
 
@@ -209,7 +207,7 @@ To see how to construct a layer, consider the following example:
 
 -  the extent shall be centered about :math:`y=0`.
 
-From Eq. :numref:`dx_dy_extent`, we see that the extent of the NodeCollection must be
+From Eq. :eq:`dx_dy_extent`, we see that the extent of the NodeCollection must be
 :math:`(n_x d, n_y d)`. We now need to find the coordinates
 :math:`(c_x, c_y)` of the center of the layer. To place the left edge of
 the extent at :math:`x=0`, we must place the center of the layer at
@@ -1217,7 +1215,7 @@ The resulting distribution of distances between connected nodes is shown in
    1000 randomly placed nodes, a fixed fan out of 50 connections and a
    connection probability decaying linearly from 1 to 0 at
    :math:`d=0.5`. The red line is the expected distribution from
-   Eq. :numref:`eq_ptheo`.
+   Eq. :eq:`eq_ptheo`.
 
 Functions determining weight and delay as function of
 distance/displacement work in just the same way as before when the

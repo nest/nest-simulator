@@ -23,11 +23,11 @@ In the next sections of this manual, we introduce the commands and
 concepts required to work with spatially distributed nodes. In
 particular,
 
-*  section :ref:`sec:connections` describes how to connect spatial
+*  section :ref:`sec_connections` describes how to connect spatial
    nodes with each other
-*  section :ref:`sec:inspection` explains how you can inspect and
+*  section :ref:`sec_inspection` explains how you can inspect and
    visualize spatial networks.
-*  section :ref:`sec:custom_masks` deals with creating connection
+*  section :ref:`sec_custom_masks` deals with creating connection
    boundaries using parameters, and the more advanced topic of
    extending the functionalities with custom masks provided by C++
    classes in an extension module.
@@ -65,7 +65,7 @@ certain circumstances.
 Grid-based NodeCollections
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. _sec:spatial_verysimple:
+.. _sec_spatial_verysimple:
 
 A very simple example
 ^^^^^^^^^^^^^^^^^^^^^
@@ -133,7 +133,7 @@ but the grid spacing may differ in x- and y-direction.
    follow matrix convention, i.e., run from top to bottom. Following
    pythonic conventions, indices run from 0.
 
-.. _sec:setextent:
+.. _sec_setextent:
 
 Setting the extent
 ^^^^^^^^^^^^^^^^^^
@@ -192,7 +192,7 @@ different positions in the global coordinate system.
 
 The ``center`` coordinates should be numbers that can be expressed
 exactly as binary fractions. For more information, see the section
-:ref:`sec:setextent`.
+:ref:`sec_setextent`.
 
 Constructing a layer: an example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -277,7 +277,7 @@ Note the following points:
 
 -  All element positions must be *within* the layer’s extent. Elements
    may be placed on the perimeter of the extent as long as no periodic
-   boundary conditions are used; see the section :ref:`sec:periodic`.
+   boundary conditions are used; see the section :ref:`sec_periodic`.
 
 To create a spatially distributed NodeCollection from a list, do the following:
 
@@ -333,7 +333,7 @@ the shape argument, ``shape=[nx, ny, nz]``:
    of size :math:`1\times 1\times 1`.
 
 
-.. _sec:periodic:
+.. _sec_periodic:
 
 Periodic boundary conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -387,7 +387,7 @@ for a layer with periodic boundary conditions; :math:`x_{\text{ext}}`
 and :math:`y_{\text{ext}}` are the components of the extent size.
 
 We will discuss the consequences of periodic boundary conditions more in
-the section on :ref:`sec:connections`.
+the section on :ref:`sec_connections`.
 
 Layers as NodeCollection
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -428,7 +428,7 @@ not change properties of the spatially distributed NodeCollection.
     :start-after: #{ layer1p.log #}
     :end-before: #{ end.log #}
 
-.. _sec:connections:
+.. _sec_connections:
 
 Connections
 -----------
@@ -441,7 +441,7 @@ connections are created using the :py:func:`.Connect` function.
 Basic principles
 ~~~~~~~~~~~~~~~~
 
-.. _sec:spatial_terminology:
+.. _sec_spatial_terminology:
 
 Terminology
 ^^^^^^^^^^^
@@ -501,14 +501,14 @@ Distance
 Mask
    The *mask* defines which pool nodes are at all considered as
    potential targets for each driver node. See section
-   :ref:`sec:conn_masks` for details.
+   :ref:`sec_conn_masks` for details.
 
 Connection probability or ``p``
    The *connection probability*, specified as ``p`` in the connection
    specifications, is either a value, or a parameter which specifies the
    probability for creating a connection between a driver and a pool node.
    The default probability is :math:`1`, i.e., connections are created with
-   certainty. See section :ref:`sec:conn_kernels` for details.
+   certainty. See section :ref:`sec_conn_kernels` for details.
 
 Autapse
    An *autapse* is a synapse (connection) from a node onto itself.
@@ -533,7 +533,7 @@ NodeCollections.
 
 In many cases when connecting spatially distributed NodeCollections, a
 mask will be specified. Mask specifications are described in the
-section :ref:`sec:conn_masks`. Only neurons within the mask are
+section :ref:`sec_conn_masks`. Only neurons within the mask are
 considered as potential sources or targets. If no mask is given, all
 neurons in the respective NodeCollection are considered sources or
 targets.
@@ -591,7 +591,7 @@ layers. NEST applies the following *coordinate mapping rules*:
    not matter for displacement computations whether the driver layer has
    periodic boundary conditions.
 
-.. _sec:conn_masks:
+.. _sec_conn_masks:
 
 Masks
 ~~~~~
@@ -610,9 +610,9 @@ targets.
 If none of the mask types provided in the library meet your need, you may
 define custom masks, either by introducing a cut-off to the connection
 probability using parameters, or by adding more mask types in a NEST extension
-module. This is covered in the section on :ref:`sec:custom_masks`.
+module. This is covered in the section on :ref:`sec_custom_masks`.
 
-.. _sec:free_masks:
+.. _sec_free_masks:
 
 Masks for 2D layers
 ^^^^^^^^^^^^^^^^^^^
@@ -722,7 +722,7 @@ from the x-axis to the y-axis.
    :math:`120^\circ` and the elliptical mask is rotated
    :math:`45^\circ`.
 
-.. _sec:3d_masks:
+.. _sec_3d_masks:
 
 Masks for 3D layers
 ^^^^^^^^^^^^^^^^^^^
@@ -791,7 +791,7 @@ this example:
 
 The resulting connections are shown in :numref:`fig_conn3`. By default
 the top-left corner of a grid mask, i.e., the grid mask element with
-grid index :math:`[0,0]`\ (see :ref:`2.1.1 <sec:spatial_verysimple>`), is
+grid index :math:`[0,0]`\ (see :ref:`2.1.1 <sec_spatial_verysimple>`), is
 aligned with the driver node. You can change this alignment by
 specifying an *anchor* for the mask:
 
@@ -831,12 +831,12 @@ Note the following:
 
 -  The semantics of the ``'anchor'`` property for grid-based masks
    differ significantly for general masks described in the section
-   :ref:`sec:free_masks`. For general masks, the anchor is the center
+   :ref:`sec_free_masks`. For general masks, the anchor is the center
    of the mask relative to the driver node. For grid-based nodes, the
    anchor determines which mask element is aligned with the driver
    element.
 
-.. _sec:conn_kernels:
+.. _sec_conn_kernels:
 
 Probabilistic connection rules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -863,13 +863,13 @@ Free probabilistic connections using ``pairwise_bernoulli``
 Prescribed number of connections
    can be obtained by using ``fixed_indegree`` or ``fixed_outdegree``
    connection rule, and specifying the number of connections to create
-   per driver node. See the section :ref:`sec:prescribed_numbers`
+   per driver node. See the section :ref:`sec_prescribed_numbers`
    for details.
 
 A selection of specific NEST parameters pertaining to spatially
 structured networks are shown the table below.
 
-.. _tbl:parameters:
+.. _tbl_parameters:
 
 NEST parameters specific to spatially-structured networks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1003,7 +1003,7 @@ pool neuron as ``nest.spatial.distance``.
 Weights and delays
 ~~~~~~~~~~~~~~~~~~
 
-Parameters, such as those presented in Table :ref:`tbl:parameters`, can
+Parameters, such as those presented in Table :ref:`tbl_parameters`, can
 also be used to specify distance-dependent or randomized weights and
 delays for the connections created by :py:func:`.Connect`. Weight and delays are in NEST
 passed along in a synapse dictionary to the ``Connect()`` call.
@@ -1136,7 +1136,7 @@ sense. In general, we recommend to use periodic boundary conditions only
 when connection masks are significantly smaller than the NodeCollections they are
 applied to.
 
-.. _sec:prescribed_numbers:
+.. _sec_prescribed_numbers:
 
 Prescribed number of connections
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1168,7 +1168,7 @@ Connection generation now proceeds in a different way than before:
    distributed within the mask with the spatial profile given by the
    probability.
 
-4. If you prohibit multapses (see section :ref:`sec:spatial_terminology`)
+4. If you prohibit multapses (see section :ref:`sec_spatial_terminology`)
    and prescribe a number of connections greater than the number of pool
    nodes in the mask, ``Connect()`` may get stuck in an infinite
    loop and NEST will hang. Keep in mind that the number of nodes within
@@ -1238,7 +1238,7 @@ You have to use synapse models if you want to set, e.g., the receptor
 type of connections or parameters for plastic synapse models. These can
 not be set in distance-dependent ways at present.
 
-.. _sec:dev_subregions:
+.. _sec_dev_subregions:
 
 Connecting devices to subregions of NodeCollections
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1275,12 +1275,12 @@ distributed NodeCollection to that spike recorder:
     :end-before: #{ end #}
 
 Connecting a layer of neurons to a layer of recording devices as
-described in the section on :ref:`sec:dev_subregions`, is only
+described in the section on :ref:`sec_dev_subregions`, is only
 possible using the ``pairwise_bernoulli`` rule. Note that voltmeter
 and multimeter do not suffer from this restriction, since they are
 connected as sources, not as targets.
 
-.. _sec:inspection:
+.. _sec_inspection:
 
 Inspecting spatially distributed NodeCollections
 ------------------------------------------------
@@ -1380,7 +1380,7 @@ center neuron are shown, as well as mask and connection probability.
     :start-after: #{ vislayer #}
     :end-before: #{ end #}
 
-.. _sec:custom_masks:
+.. _sec_custom_masks:
 
 Creating custom masks
 ---------------------
@@ -1463,7 +1463,7 @@ is the dimension (2 or 3). In this case we will define a 2-dimensional
 elliptic mask by creating a class called ``EllipticMask``.
 
 Please note that elliptical masks are already part of NEST (see
-:ref:`sec:conn_masks`). However, that elliptical mask is defined in a
+:ref:`sec_conn_masks`). However, that elliptical mask is defined in a
 different way than what we will do here though, so this can still be
 used as an introductory example. First, we must include the header
 files for the ``Mask`` parent class:

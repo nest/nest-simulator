@@ -1,4 +1,4 @@
-.. _music_tutoial_2:
+.. _music_tutorial_2:
 
 Connect two NEST simulations using MUSIC
 ========================================

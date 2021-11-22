@@ -305,7 +305,7 @@ As with :py:meth:`~.NodeCollection.get`, you can set parameters in different way
 To set several parameters at once, use ``nodes.set(parameter_dict)``, where the
 keys of the parameter_dict are the parameter names. The values could be a list
 the size of the NodeCollection, a single value, or a ``nest.Parameter``. For more info see our
-page on :ref:`parm_ex`.
+page on :ref:`param_ex`.
 
 ::
 

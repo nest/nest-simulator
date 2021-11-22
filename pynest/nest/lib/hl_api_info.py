@@ -29,7 +29,7 @@ import textwrap
 import webbrowser
 
 from ..ll_api import check_stack, sli_func, sps, sr, spp
-from .hl_api_helper import broadcast, is_iterable, is_literal, uni_str
+from .hl_api_helper import broadcast, is_iterable, is_literal, load_help, uni_str
 from .hl_api_types import to_json
 import nest
 

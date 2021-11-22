@@ -40,7 +40,7 @@ private:
 
 public:
   Na();
-  Na( const DictionaryDatum& channel_params );
+  explicit Na( const DictionaryDatum& channel_params );
   ~Na(){};
 
   // calibrateialization
@@ -63,7 +63,7 @@ private:
 
 public:
   K();
-  K( const DictionaryDatum& channel_params );
+  explicit K( const DictionaryDatum& channel_params );
   ~K(){};
 
   // calibrateialization
@@ -269,7 +269,7 @@ private:
 
 public:
   CompartmentCurrents(){};
-  CompartmentCurrents(const DictionaryDatum& channel_params)
+  explicit CompartmentCurrents(const DictionaryDatum& channel_params)
   {
     Na_chan_ = Na( channel_params );
     K_chan_ = K( channel_params );

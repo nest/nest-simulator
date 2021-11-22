@@ -82,7 +82,7 @@ public:
     // constructor, destructor
     Compartment(const long compartment_index, const long parent_index);
     Compartment(const long compartment_index, const long parent_index,
-	            const DictionaryDatum& compartment_params);
+                const DictionaryDatum& compartment_params);
     ~Compartment(){};
 
     // initialization
@@ -93,7 +93,7 @@ public:
     void construct_matrix_element( const long lag );
 
     // maxtrix inversion
-    inline void gather_input( const std::pair< double, double > in );
+    inline void gather_input( const std::pair< double, double >& in );
     inline std::pair< double, double > io();
     inline double calc_v( const double v_in );
 }; // Compartment
@@ -103,7 +103,7 @@ public:
 Short helper functions for solving the matrix equation. Can hopefully be inlined
 */
 inline void
-nest::Compartment::gather_input( const std::pair< double, double > in)
+nest::Compartment::gather_input( const std::pair< double, double >& in)
 {
     xx_ += in.first; yy_ += in.second;
 };

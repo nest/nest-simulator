@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# do_tests.sh.in
+# do_tests.sh
 #
 # This file is part of NEST.
 #
@@ -19,12 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-
-# This script runs the NEST testsuite.
+#
+# Central entry point for the complete NEST test suite. The tests
+# ensure a correctly working installation of NEST.
 #
 # The test suite consists of SLI and Python scripts that use the
-# language's native `unittest` library to assert certain invariants
-# and thus ensure a correctly working installation of NEST.
+# respective language's native `unittest` library to assert certain
+# invariants and thus ensure a correctly working installation of NEST.
 #
 
 
@@ -41,11 +42,11 @@
 usage ()
 {
     if test $1 = 1; then
-        echo "Error: Unknown option \'$2\'"
+        echo "Error: Unknown option '$2'"
     fi
 
     if test $1 = 2; then
-        echo "Error: Missing required option \'$2\'"
+        echo "Error: Missing required option '$2'"
     fi
 
     cat <<EOF
@@ -97,11 +98,13 @@ if test ! "${REPORTDIR}"; then
 fi
 
 if test "${PYTHON}"; then
-    command -v nosetests >/dev/null 2>&1 || {
-        echo "Error: PyNEST testing requested, but command 'nosetests' cannot be executed."
+      TIME_LIMIT=120  # seconds, for each of the Python tests
+      PYTEST_VERSION="$(${PYTHON} -m pytest --version --timeout ${TIME_LIMIT} --numprocesses=1 2>&1)" || {
+        echo "Error: PyNEST testing requested, but 'pytest' cannot be run."
+        echo "       Testing also requires the 'pytest-xdist' and 'pytest-timeout' extensions."
         exit 1
     }
-    NOSE="$(command -v nosetests)"
+    PYTEST_VERSION="$(echo "${PYTEST_VERSION}" | cut -d' ' -f2)"
 fi
 
 python3 -c "import junitparser" >/dev/null 2>&1
@@ -120,13 +123,20 @@ if test -d "${REPORTDIR}"; then
 fi
 mkdir "${REPORTDIR}"
 
-TEST_BASEDIR="${PREFIX}/share/doc/nest"
+TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"
 TEST_RUNFILE="${REPORTDIR}/runtest.sh"
 
 NEST="nest_serial"
+
+HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
+
+if test "${HAVE_MPI}" = "true"; then
+  MPI_LAUNCHER="$(sli -c '1 () () mpirun cst 0 get =only')"
+  MPI_LAUNCHER="$(command -v $MPI_LAUNCHER)"
+fi
 
 # Under Mac OS X, suppress crash reporter dialogs. Restore old state at end.
 if test "$(uname -s)" = "Darwin"; then
@@ -151,9 +161,15 @@ echo "  PREFIX ............. $PREFIX"
 if test "${PYTHON}"; then
     PYTHON_VERSION="$("${PYTHON}" --version | cut -d' ' -f2)"
     echo "  Python executable .. $PYTHON (version $PYTHON_VERSION)"
-    NOSE_VERSION="$("${NOSE}" --version | cut -d' ' -f3)"
-    echo "  Nose executable .... $NOSE (version $NOSE_VERSION)"
     echo "  PYTHONPATH ......... `print_paths ${PYTHONPATH:-}`"
+    echo "  Pytest version ..... $PYTEST_VERSION"
+    echo "         timeout ..... $TIME_LIMIT s"
+fi
+if test "${HAVE_MPI}" = "true"; then
+    echo "  Running MPI tests .. yes"
+    echo "  MPI launcher ....... $MPI_LAUNCHER"
+else
+    echo "  Running MPI tests .. no (compiled without MPI support)"
 fi
 if test "${MUSIC}"; then
     MUSIC_VERSION="$("${MUSIC}" --version | head -n1 | cut -d' ' -f2)"
@@ -176,8 +192,7 @@ CODES_SKIPPED=\
 ' 202 Skipped (build with-mpi=OFF required),'\
 ' 203 Skipped (Threading required),'\
 ' 204 Skipped (GSL required),'\
-' 205 Skipped (MUSIC required),'\
-' 206 Skipped (Recording backend Arbor required),'
+' 205 Skipped (MUSIC required),'
 
 echo
 echo 'Phase 1: Testing if SLI can execute scripts and report errors'
@@ -316,7 +331,7 @@ junit_close
 echo
 echo "Phase 5: Running MPI tests"
 echo "--------------------------"
-if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue; then
+if test "${HAVE_MPI}" = "true"; then
     junit_open '05_mpitests'
 
     NEST="nest_indirect"
@@ -342,7 +357,7 @@ if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue; then
     junit_close
 else
   echo "  Not running MPI tests because NEST was compiled without support"
-  echo "  for distributed computing. See the file README.md for details."
+  echo "  for distributed computing."
 fi
 
 echo
@@ -442,18 +457,36 @@ if test "${MUSIC}"; then
     junit_close
 else
   echo "  Not running MUSIC tests because NEST was compiled without support"
-  echo "  for it. See the file README.md for details."
+  echo "  for it."
 fi
 
 echo
 echo "Phase 7: Running PyNEST tests"
 echo "-----------------------------"
+
 if test "${PYTHON}"; then
-    # Find the path to PyNEST without actually importing it
-    PYNEST_TEST_DIR="$("${PYTHON}" -c "import importlib.util; print(importlib.util.find_spec('nest').submodule_search_locations[0])")/tests"
-    XUNIT_FILE="${REPORTDIR}/07_pynesttests.xml"
-    "${PYTHON}" "${NOSE}" -v --with-xunit --xunit-testsuite-name="07_pynesttests" --xunit-file="${XUNIT_FILE}" "${PYNEST_TEST_DIR}" 2>&1 \
-        | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
+    PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests"
+    XUNIT_NAME="07_pynesttests"
+
+    # Run all tests except those in the mpi and non_concurrent subdirectories
+    XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
+    "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
+          --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/non_concurrent" \
+          "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}" 
+
+    # Run tests that cannot run concurrently
+    XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_nc.xml"    
+    "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" \
+          "${PYNEST_TEST_DIR}/non_concurrent" 2>&1 | tee -a "${TEST_LOGFILE}" 
+  
+    # Run tests in the mpi subdirectories, grouped by number of processes
+    if test "${HAVE_MPI}" = "true" -a "${MPI_LAUNCHER}" ; then
+       for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
+           XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
+           PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"
+           $(sli -c "${numproc} (${PYTHON} -m pytest) (${PYTEST_ARGS}) mpirun =only") 2>&1 | tee -a "${TEST_LOGFILE}"
+       done
+    fi
 else
     echo
     echo "  Not running PyNEST tests because NEST was compiled without Python support."

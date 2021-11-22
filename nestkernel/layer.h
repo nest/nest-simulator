@@ -171,6 +171,7 @@ public:
     const Token& syn_model ) = 0;
 
   void set_node_collection( NodeCollectionPTR );
+  NodeCollectionPTR get_node_collection();
 
 protected:
   /**
@@ -516,6 +517,13 @@ inline void
 AbstractLayer::set_node_collection( NodeCollectionPTR node_collection )
 {
   node_collection_ = node_collection;
+}
+
+
+inline NodeCollectionPTR
+AbstractLayer::get_node_collection()
+{
+  return node_collection_;
 }
 
 template < int D >

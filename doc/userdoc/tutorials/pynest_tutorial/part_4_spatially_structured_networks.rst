@@ -43,13 +43,13 @@ between three types of specificity:
 -  Projection specificity – which cells do they project to, and how?
 
 In the previous sections, we saw that we can create deterministic or
-randomly selected connections between networks using ``Connect()``. Likewise, it is
-also possible to use ``Create()`` and ``Connect()`` to create network
+randomly selected connections between networks using :py:func:`.Connect`. Likewise, it is
+also possible to use :py:func:`.Create` and :py:func:`.Connect` to create network
 models that incorporate spatial location and spatial connectivity
 profiles.
 
 .. note::
-   For comprehensive documentation of spatial properties and connectivity, see the :doc:`../../guides/spatial/guide_spatially_structured_networks` [1]_.
+   For comprehensive documentation of spatial properties and connectivity, see the :doc:`../../guides/spatially_structured_networks`.
 
 Adding spatial information to populations
 -----------------------------------------
@@ -97,7 +97,7 @@ where ``positions`` will define the locations of the elements.
 
 The ``node_model`` is the model type of the neuron, which can either be an
 existing model in the ``NEST`` collection, or one that we've previously
-defined using ``CopyModel()``.
+defined using :py:func:`.CopyModel`.
 
 We next have to decide whether the nodes should be placed in a
 **grid-based** or **free** (off-grid) fashion, which is equivalent to
@@ -151,7 +151,7 @@ placement. We then need to define a Parameter for the placement of the
 neurons, or we can define the positions of the neurons explicitly. Note
 that the extent is calculated from the positions of the nodes, but we can
 also explicitly specify it. See the *Free layers* section of the
-:doc:`../../guides/spatial/guide_spatially_structured_networks`
+:doc:`../../guides/spatially_structured_networks`
 for details.
 
 The following snippet produces :numref:`free`:
@@ -172,7 +172,7 @@ nodes, we specify the number of neurons to be created. This is not
 necessary when using an array of positions.
 
 See the table of *Spatially-structured specific NEST parameters* in the
-:doc:`../../guides/spatial/guide_spatially_structured_networks`
+:doc:`../../guides/spatially_structured_networks`
 for a selection of NEST Parameters that can be used.
 
 The following is an example of how to create off-grid nodes with a list of positions. It will create
@@ -204,7 +204,7 @@ connection, the number of connections, or defining a subset of the nodes
 to connect.
 
 The *Connections* section in the
-:doc:`../../guides/spatial/guide_spatially_structured_networks`
+:doc:`../../guides/spatially_structured_networks`
 deals comprehensively with all the different possibilities, and it’s suggested
 that you look there for learning about the different constraints, as well
 as reading through the different examples listed there. Here are some
@@ -374,12 +374,11 @@ was built correctly:
    -  ``nest.PlotProbabilityParameter()``
 
    which allow us to generate the plots used with NUTM and this handout.
-   See the *Visualization functions* section in our :doc:`../../guides/spatial/guide_spatially_structured_networks`
+   See the *Visualization functions* section in our :doc:`../../guides/spatially_structured_networks`
    for more details.
 
 It may also be useful to look at the ``.spatial`` property of the
-NodeCollection, which describes the spatial properties. Other useful
-functions that may be of help are listed in the :doc:`../../guides/nest2_to_nest3/refguide_nest2_nest3`.
+NodeCollection, which describes the spatial properties.
 
 >>>  ex_pop.spatial
      {'center': (0.0, 0.0),

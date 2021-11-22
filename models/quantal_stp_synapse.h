@@ -52,6 +52,13 @@ equations is taken from Maass and Markram 2002 [3]_.
 The connection weight is interpreted as the maximal weight that can
 be obtained if all n release sites are activated.
 
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
+
 Parameters
 ++++++++++
 

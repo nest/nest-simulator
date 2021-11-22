@@ -66,8 +66,8 @@ nest::ConnectionManager::ConnectionManager()
   , min_delay_( 1 )
   , max_delay_( 1 )
   , keep_source_table_( true )
-  , have_connections_changed_()
-  , has_get_connections_been_called_( false )
+  , connections_have_changed_( false )
+  , get_connections_has_been_called_( false )
   , sort_connections_by_source_( true )
   , use_compressed_spikes_( true )
   , has_primary_connections_( false )
@@ -95,13 +95,13 @@ nest::ConnectionManager::initialize()
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
-  compressed_spike_data_.resize( 0 );
+  connections_have_changed_ = false;
 
-  have_connections_changed_.initialize( num_threads, false );
+  compressed_spike_data_.resize( 0 );
   check_primary_connections_.initialize( num_threads, false );
   check_secondary_connections_.initialize( num_threads, false );
 
-  set_has_get_connections_been_called( false );
+  get_connections_has_been_called_ = false;
 
 #pragma omp parallel
   {
@@ -413,6 +413,9 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
     ALL_ENTRIES_ACCESSED( *syn_params, "Connect", "Unread dictionary entries in syn_spec: " );
   }
 
+  // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
+  set_connections_have_changed();
+
   cb->connect();
   delete cb;
 }
@@ -457,8 +460,8 @@ nest::ConnectionManager::update_delay_extrema_()
 
   if ( not get_user_set_delay_extrema() )
   {
-    // If no min/max_delay is set explicitly (SetKernelStatus), then the default
-    // delay used by the SPBuilders have to be respected for the min/max_delay.
+    // If no min/max_delay is set explicitly, then the default delay used by the
+    // SPBuilders have to be respected for min/max_delay.
     min_delay_ = std::min( min_delay_, kernel().sp_manager.builder_min_delay() );
     max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
   }
@@ -494,8 +497,6 @@ nest::ConnectionManager::connect( const index snode_id,
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
-  set_have_connections_changed( target_thread );
-
   Node* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
 
   ConnectionType connection_type = connection_required( source, target, target_thread );
@@ -526,8 +527,6 @@ nest::ConnectionManager::connect( const index snode_id,
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
   const thread tid = kernel().vp_manager.get_thread_id();
-
-  set_have_connections_changed( tid );
 
   if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
   {
@@ -619,6 +618,9 @@ nest::ConnectionManager::connect_arrays( long* sources,
       ++d;
     }
   };
+
+  // Set flag before entering parallel section in case we have fewer connections than ranks.
+  set_connections_have_changed();
 
   // Vector for storing exceptions raised by threads.
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
@@ -846,8 +848,6 @@ nest::ConnectionManager::disconnect( const thread tid,
   const index snode_id,
   const index tnode_id )
 {
-  set_have_connections_changed( tid );
-
   assert( syn_id != invalid_synindex );
 
   const index lcid = find_connection( tid, syn_id, snode_id, tnode_id );
@@ -958,7 +958,7 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
 
   // If connections have changed, (re-)build presynaptic infrastructure,
   // as this may involve sorting connections by source node IDs.
-  if ( have_connections_changed() )
+  if ( connections_have_changed() )
   {
     if ( not kernel().simulation_manager.has_been_simulated() )
     {
@@ -1006,7 +1006,7 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
     connectome.pop_front();
   }
 
-  set_has_get_connections_been_called( true );
+  get_connections_has_been_called_ = true;
 
   return result;
 }
@@ -1599,35 +1599,26 @@ nest::ConnectionManager::check_secondary_connections_exist()
 }
 
 void
-nest::ConnectionManager::set_have_connections_changed( const thread tid )
+nest::ConnectionManager::set_connections_have_changed()
 {
-  // Need to check if have_connections_changed_ has already been set, because if
-  // we have a lot of threads and they all try to set the variable at once we get
-  // performance issues on supercomputers.
-  if ( have_connections_changed_[ tid ].is_false() )
+  assert( kernel().vp_manager.get_thread_id() == 0 );
+
+  if ( get_connections_has_been_called_ )
   {
-    if ( has_get_connections_been_called_ )
-    {
-      std::string msg =
-        "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
-      LOG( M_WARNING, "ConnectionManager", msg );
-      // Reset the has_get_connections_been_called_ flag because we have updated connections.
-      set_has_get_connections_been_called( false );
-    }
-    have_connections_changed_[ tid ].set_true();
+    std::string msg =
+      "New connections created, connection descriptors previously obtained using 'GetConnections' are now invalid.";
+    LOG( M_WARNING, "ConnectionManager", msg );
+    // Reset the get_connections_has_been_called_ flag because we have updated connections.
+    get_connections_has_been_called_ = false;
   }
+
+  connections_have_changed_ = true;
 }
 
 void
-nest::ConnectionManager::unset_have_connections_changed( const thread tid )
+nest::ConnectionManager::unset_connections_have_changed()
 {
-  // Need to check if have_connections_changed_ has already been set, because if
-  // we have a lot of threads and they all try to set the variable at once we get
-  // performance issues on supercomputers.
-  if ( have_connections_changed_[ tid ].is_true() )
-  {
-    have_connections_changed_[ tid ].set_false();
-  }
+  connections_have_changed_ = false;
 }
 
 

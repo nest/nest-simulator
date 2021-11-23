@@ -25,16 +25,6 @@
 // C++ includes:
 #include <iterator>
 
-// Includes from sli:
-#include "lockptrdatum_impl.h"
-
-// explicit instantiations
-template class AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >;
-template class AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >;
-template class AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >;
-template class lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >;
-template class lockPTRDatum< std::vector< double >, &SLIInterpreter::DoubleVectortype >;
-
 
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09

@@ -58,7 +58,7 @@ jobs:
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
-            ~/.cache/pip
+            $HOME/.cache/pip
           key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-python-${{ env.cache-name }}-
@@ -159,7 +159,7 @@ jobs:
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
-            ~/.cache/pip
+            $HOME/.cache/pip
           key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-python-${{ env.cache-name }}-
@@ -255,7 +255,7 @@ jobs:
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
-            ~/.cache/pip
+            $HOME/.cache/pip
           key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-python-${{ env.cache-name }}-

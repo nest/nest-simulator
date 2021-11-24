@@ -1,14 +1,11 @@
 /*
 Simple Responsive Template v 1.2
 
-
 primary styles 
    Author: www.prowebdesign.ro
    Add your own styles to customize the project.
-
-
-
 BASE (MOBILE) SIZE
+
 	These are the mobile styles. It's what people see on their phones.
 	Remember, keep it light: Speed is Important.
 */
@@ -258,6 +255,7 @@ a.buttonlink:hover{
 	color: #8e391d;
 }
 
+
 /****************************************
 *****************************************
 MEDIAQUERIES
@@ -432,7 +430,6 @@ ul.srt-menu li li li.sfHover ul {
 /*GRID*/
 /*
  & Columns : 12 
-
  */
  .row{
 	 margin-left: -15px;
@@ -767,6 +764,7 @@ code.descclassname {
 }
 /* from css w3schools: */
 /*
+
 .top-nav {
   overflow: hidden;
   background-color: #f63;
@@ -779,11 +777,13 @@ code.descclassname {
 
 
 /* Change background on mouse-over 
+
 .top-nav a:hover {
   background: #ddd;
   color: black;
 }
 */
+
 /* Links inside the navbar */
 .center { 
   margin: 5px;
@@ -799,8 +799,8 @@ code.descclassname {
 .top-nav a {
 	color: #fff;
 	margin-right: 20px;
-=======
 }
+
 .navbar-default .navbar-nav  li a {
   color: #e3e3e3;
 }

@@ -73,21 +73,126 @@ nest::cm_main::init_buffers_()
   ArchivingNode::clear_history();
 }
 
-void
-nest::cm_main::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
-{
-  c_tree_.add_compartment( compartment_idx, parent_compartment_idx, compartment_params);
 
-  // we need to initialize tree pointers because vectors are resized, thus
-  // moving memory addresses
-  init_tree_pointers_();
-  // we need to initialize the recordables pointers to guarantee that the
-  // recordables of the new compartment will be in the recordables map
-  init_recordables_pointers_();
+
+        // CURRENT:
+        // n_neat = nest.Create('cm_main')
+        // nest.SetStatus(n_neat, {'V_th': 100.})
+        // nest.AddCompartment(n_neat, 0, -1, SP)
+
+
+        //     PROPOSED:
+
+        //         SP = {
+        //     'C_m': 0.1,     # [pF] Capacitance
+        //     'g_c': 0.1,     # [nS] Coupling conductance to parent (soma here)
+        //     'g_L': 0.1,     # [nS] Leak conductance
+        //     'e_L': -70.0    # [mV] leak reversal
+        // }
+
+        // n_neat = nest.Create('cm_main', 1, {
+        //         'V_th': 100.0)
+
+        // n_neat.SetStatus({
+        //         "compartments": [
+        //             { # comp_idx implicitly by index in list (?)
+        //             "parent": -1,
+        //             "params": SP},
+        //             {comp2}
+        //             {comp3}
+        //         ]})
+
+        // n_neat.SetStatus({
+        //     "receptors": [
+        //         {"comp_idx": 2,
+        //         "receptor_type": "AMPA_NMDA",
+        //         "my_receptor_type": "my_fast_AMPA_NMDA"
+        //         ],
+        //         ...})
+
+        // receptor_names_to_idx = n_neat.GetStatus("receptor_idx")
+
+        // # receptor_names_to_idx = {"my_fast_AMPA_NMDA": 0,
+        // #                          "my_slow_AMPA": 1,
+        // #                          ...}
+
+        // nest.Connect(pre, post, syn_spec={"receptor_id": receptor_names_to_idx["my_slow_AMPA"]})
+
+
+void
+nest::cm_main::set_status( const DictionaryDatum& statusdict )
+{
+
+  updateValue< double >( statusdict, names::V_th, V_th_ );
+  ArchivingNode::set_status( statusdict );
+
+  if( statusdict->known("compartments") )
+  {
+    // Set status is used to add a compartment to the tree. We add either a
+    // single compartment, or multiple compartments, depending on wether the
+    // entry was a list of dicts or a single dict
+    // TODO: implmenent list of dicts case
+    DictionaryDatum dd = getValue< DictionaryDatum >( statusdict, "compartments" );
+
+    if( dd->known("params") )
+    {
+      c_tree_.add_compartment(
+                               getValue< long >( "idx" ),
+                               getValue< long >( "parent_idx" ),
+                               getValue< DictionaryDatum >( "params" )
+                             );
+    }
+    else
+    {
+      c_tree_.add_compartment(
+                               getValue< long >( "idx" ),
+                               getValue< long >( "parent_idx" )
+                             );
+    }
+
+    // we need to initialize tree pointers because vectors are resized, thus
+    // moving memory addresses
+    init_tree_pointers_();
+    // we need to initialize the recordables pointers to guarantee that the
+    // recordables of the new compartment will be in the recordables map
+    init_recordables_pointers_();
+
+  }
+
+  if( statusdict->known("receptors") )
+  {
+    // Set status is used to add a receptors to the tree. We add either a
+    // single receptor, or multiple receptors, depending on wether the
+    // entry was a list of dicts or a single dict
+    // TODO: implmenent list of dicts case
+    DictionaryDatum dd = getValue< DictionaryDatum >( statusdict, "receptors" );
+
+    add_receptor_( getValue< long >( "comp_idx" ),
+                   getValue< std::string >( "type" ),
+                   getValue< DictionaryDatum >( "params" )
+                 );
+  }
+
+
+
 }
 
-size_t
-nest::cm_main::add_receptor( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params )
+// void
+// nest::cm_main::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
+// {
+//   c_tree_.add_compartment( compartment_idx, parent_compartment_idx, compartment_params);
+
+//   // we need to initialize tree pointers because vectors are resized, thus
+//   // moving memory addresses
+//   init_tree_pointers_();
+//   // we need to initialize the recordables pointers to guarantee that the
+//   // recordables of the new compartment will be in the recordables map
+//   init_recordables_pointers_();
+// }
+
+// size_t
+void
+nest::cm_main::add_receptor_( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params )
 {
   // create a ringbuffer to collect spikes for the receptor
   RingBuffer buffer;
@@ -104,7 +209,7 @@ nest::cm_main::add_receptor( const long compartment_idx, const std::string& type
   // recordables of the new synapse will be in the recordables map
   init_recordables_pointers_();
 
-  return syn_idx;
+  // return syn_idx;
 }
 
 /*

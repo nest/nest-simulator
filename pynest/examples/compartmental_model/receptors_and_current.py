@@ -47,12 +47,13 @@ dend_params = {
 
 # create a model with three compartments
 cm = nest.Create('cm_main')
-nest.AddCompartment(cm, 0, -1, soma_params)
-nest.AddCompartment(cm, 1, 0, dend_params)
-nest.AddCompartment(cm, 2, 0, dend_params)
+nest.SetStatus(cm, {'V_th': -50.})
+nest.SetStatus(cm, {'compartments': {"idx": 0, "parent_idx": -1}})#, "params": soma_params}})
+# nest.SetStatus(cm, {'compartments': {"idx": 1, "parent_idx":  0, "params": dend_params}})
+# nest.SetStatus(cm, {'compartments': {"idx": 2, "parent_idx":  0, "params": dend_params}})
 
 # spike threshold
-nest.SetStatus(cm, {'V_th': -50.})
+# nest.SetStatus(cm, {'V_th': -50.})
 
 # add GABA receptor in compartment 0 (soma)
 syn_idx_GABA = nest.AddReceptor(cm, 0, "GABA", {})

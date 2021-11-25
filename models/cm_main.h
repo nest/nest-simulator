@@ -175,12 +175,12 @@ public:
   compartment specified by ``parent_compartment_idx`` as parent. The parent
   has to be in the tree, otherwise an error will be raised.
   */
-  void add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params ) override;
+  // void add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params ) override;
   /*
   Function to a add a receptor to a compartment. Returns the index of the
   receptor in the receptor stack.
   */
-  size_t add_receptor( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params ) override;
+  void add_receptor_( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params );// override;
 
 private:
   void init_state_( const Node& proto );
@@ -268,12 +268,12 @@ cm_main::get_status( DictionaryDatum& d ) const
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
-inline void
-cm_main::set_status( const DictionaryDatum& d )
-{
-  updateValue< double >( d, names::V_th, V_th_ );
-  ArchivingNode::set_status( d );
-}
+// inline void
+// cm_main::set_status( const DictionaryDatum& d )
+// {
+//   updateValue< double >( d, names::V_th, V_th_ );
+//   ArchivingNode::set_status( d );
+// }
 
 } // namespace
 

@@ -149,12 +149,51 @@ Assumes parent of compartment is already added
 */
 void
 nest::CompTree::add_compartment( const long compartment_index,
+                                 const long parent_index )
+{
+    Compartment* compartment = new Compartment( compartment_index, parent_index );
+    add_compartment( compartment, parent_index );
+
+    // if( parent_index >= 0 )
+    // {
+    //     Compartment* parent = get_compartment( parent_index );
+    //     parent->children.push_back( *compartment );
+    // }
+    // else
+    // {
+    //     root_ = *compartment;
+    // }
+
+    // compartment_indices_.push_back(compartment_index);
+
+    // set_compartments();
+};
+void
+nest::CompTree::add_compartment( const long compartment_index,
                                  const long parent_index,
 			                           const DictionaryDatum& compartment_params )
 {
     Compartment* compartment = new Compartment( compartment_index, parent_index,
                 				                        compartment_params );
+    add_compartment( compartment, parent_index );
+    // if( parent_index >= 0 )
+    // {
+    //     Compartment* parent = get_compartment( parent_index );
+    //     parent->children.push_back( *compartment );
+    // }
+    // else
+    // {
+    //     root_ = *compartment;
+    // }
 
+    // compartment_indices_.push_back(compartment_index);
+
+    // set_compartments();
+};
+void
+nest::CompTree::add_compartment( Compartment* compartment,
+                                 const long parent_index)
+{
     if( parent_index >= 0 )
     {
         Compartment* parent = get_compartment( parent_index );
@@ -165,10 +204,10 @@ nest::CompTree::add_compartment( const long compartment_index,
         root_ = *compartment;
     }
 
-    compartment_indices_.push_back(compartment_index);
+    compartment_indices_.push_back(compartment->comp_index);
 
     set_compartments();
-};
+}
 
 /*
 Get the compartment corresponding to the provided index in the tree.

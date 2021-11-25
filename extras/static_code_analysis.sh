@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# This shell script is part of the NEST Travis CI build and test environment.
-# It performs the static code analysis and is invoked by 'travis_build.sh'.
+# This shell script is part of the NEST CI build and test environment.
+# It performs the static code analysis and is invoked by 'ci_build.sh'.
 # The script is also executed when running 'check_code_style.sh' for
 # a local static code analysis.
 #
@@ -32,8 +32,8 @@
 #
 
 # Command line parameters.
-RUNS_ON_TRAVIS=${1}           # true or false, indicating whether the script is executed on Travis CI or runs local.
-INCREMENTAL=${2}              # true or false, user needs to confirm befor checking a source file.
+RUNS_ON_CI=${1}               # true or false, indicating whether the script is executed on the CI or not.
+INCREMENTAL=${2}              # true or false, user needs to confirm before checking a source file.
 FILE_NAMES=${3}               # The list of files or a single file to be checked.
 NEST_VPATH=${4}               # The high level NEST build path.
 VERA=${5}                     # Name of the VERA++ executable.
@@ -47,15 +47,15 @@ PERFORM_PEP8=${12}            # true or false, indicating whether PEP8 analysis 
 IGNORE_MSG_VERA=${13}         # true or false, indicating whether VERA++ messages should accout for the build result.
 IGNORE_MSG_CPPCHECK=${14}     # true or false, indicating whether CPPCHECK messages should accout for the build result.
 IGNORE_MSG_CLANG_FORMAT=${15} # true or false, indicating whether CLANG-FORMAT messages should accout for the build result.
-IGNORE_MSG_PEP8=${16}         # true or false, indicating whether PEP8 messages should accout for the build result.
+IGNORE_MSG_PYCODESTYLE=${16}  # true or false, indicating whether pycodestyle messages should accout for the build result.
+PYCODESTYLE_IGNORES=${17}     # The list of pycodestyle error and warning codes to ignore.
 
-# PEP8 rules to ignore.
-PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
-PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
-PEP8_IGNORES_TOPO_MANUAL="${PEP8_IGNORES_EXAMPLES},E265"
+# PYCODESTYLE rules to ignore.
+PYCODESTYLE_IGNORES_EXAMPLES="${PYCODESTYLE_IGNORES},E402"
+PYCODESTYLE_IGNORES_USER_MANUAL="${PYCODESTYLE_IGNORES_EXAMPLES},E265"
 
-# PEP8 rules.
-PEP8_MAX_LINE_LENGTH=120
+# PYCODESTYLE rules.
+PYCODESTYLE_MAX_LINE_LENGTH=120
 
 # Constants
 typeset -i MAX_CPPCHECK_MSG_COUNT=10
@@ -65,10 +65,10 @@ ROOT_DIRS_TO_IGNORE="thirdparty"
 DIRS_TO_IGNORE=$(for dir in ${ROOT_DIRS_TO_IGNORE}; do find ${dir} -type d; done)
 
 # Print a message.
-# The format of the message depends on whether the script is executed on Travis CI or runs local.
+# The format of the message depends on whether the script is executed on CI or not.
 # print_msg "string1" "string2"
 print_msg() {
-  if $RUNS_ON_TRAVIS; then
+  if $RUNS_ON_CI; then
     echo "$1$2"
   else
     echo "$2"
@@ -91,14 +91,15 @@ if $PERFORM_CLANG_FORMAT; then
   print_msg "MSGBLD0105: " "CLANG-FORMAT : $CLANG_FORMAT_VERS"
 fi
 if $PERFORM_PEP8; then
-  PEP8_VERS=`$PEP8 --version`
-  print_msg "MSGBLD0105: " "PEP8         : $PEP8_VERS"
+  PYCODESTYLE_VERS=`$PEP8 --version`
+  print_msg "MSGBLD0105: " "PEP8         : $PYCODESTYLE_VERS"
+  print_msg "MSGBLD0105: " "PEP8 ignores : $PYCODESTYLE_IGNORES"
 fi
 print_msg "" ""
 
 # The following messages report on the command line arguments IGNORE_MSG_xxx which indicate whether
-# static code analysis error messages will cause the Travis CI build to fail or are ignored.
-if $RUNS_ON_TRAVIS; then
+# static code analysis error messages will cause the CI build to fail or are ignored.
+if $RUNS_ON_CI; then
   if $IGNORE_MSG_VERA; then
     print_msg "MSGBLD1010: " "IGNORE_MSG_VERA is set. VERA++ messages will not cause the build to fail."
   fi
@@ -108,8 +109,8 @@ if $RUNS_ON_TRAVIS; then
   if $IGNORE_MSG_CLANG_FORMAT; then
     print_msg "MSGBLD1030: " "IGNORE_MSG_CLANG_FORMAT is set. CLANG_FORMAT messages will not cause the build to fail."
   fi
-  if $RUNS_ON_TRAVIS && $IGNORE_MSG_PEP8; then
-    print_msg "MSGBLD1040: " "IGNORE_MSG_PEP8 is set. PEP8 messages will not cause the build to fail."
+  if $RUNS_ON_CI && $IGNORE_MSG_PYCODESTYLE; then
+    print_msg "MSGBLD1040: " "IGNORE_MSG_PYCODESTYLE is set. PYCODESTYLE messages will not cause the build to fail."
   fi
 fi
 
@@ -137,12 +138,12 @@ for f in $FILE_NAMES; do
     print_msg "MSGBLD0110: " "$f is not a file or does not exist anymore."
     continue
   fi
-  if ! $RUNS_ON_TRAVIS && $INCREMENTAL; then
+  if ! $RUNS_ON_CI && $INCREMENTAL; then
     print_msg "" ""
     print_msg "" "Press [Enter] to continue.  (Static code analysis for file $f.)"
     read continue
   fi
-  if $RUNS_ON_TRAVIS; then
+  if $RUNS_ON_CI; then
     print_msg "MSGBLD0120: " "Perform static code analysis for file $f."
   fi
 
@@ -152,7 +153,7 @@ for f in $FILE_NAMES; do
       cppcheck_failed=false
       clang_format_failed=false
 
-      if $RUNS_ON_TRAVIS; then
+      if $RUNS_ON_CI; then
         f_base=$NEST_VPATH/reports/`basename $f`
       else
         f_base=`basename $f`
@@ -170,7 +171,7 @@ for f in $FILE_NAMES; do
           done
         fi
         rm ${f_base}_vera.txt
-        if $RUNS_ON_TRAVIS; then
+        if $RUNS_ON_CI; then
           print_msg "MSGBLD0140: " "VERA++ for file $f completed."
         fi
       fi
@@ -187,7 +188,7 @@ for f in $FILE_NAMES; do
           cat ${f_base}_cppcheck.txt | while read line
           do
             print_msg "MSGBLD0155: " "[CPPC] $line"
-            if $RUNS_ON_TRAVIS; then
+            if $RUNS_ON_CI; then
               msg_count+=1
               if [ ${msg_count} -ge ${MAX_CPPCHECK_MSG_COUNT} ]; then
                 print_msg "MSGBLD0156: " "[CPPC] MAX_CPPCHECK_MSG_COUNT (${MAX_CPPCHECK_MSG_COUNT}) reached for file: $f"
@@ -197,7 +198,7 @@ for f in $FILE_NAMES; do
           done
         fi
         rm ${f_base}_cppcheck.txt
-        if $RUNS_ON_TRAVIS; then
+        if $RUNS_ON_CI; then
           print_msg "MSGBLD0160: " "CPPCHECK for file $f completed."
         fi
       fi
@@ -219,7 +220,7 @@ for f in $FILE_NAMES; do
         fi
         rm $file_formatted
         rm $file_diff
-        if $RUNS_ON_TRAVIS; then
+        if $RUNS_ON_CI; then
           print_msg "MSGBLD0180: " "CLANG-FORMAT for file $f completed."
         fi
       fi
@@ -231,29 +232,29 @@ for f in $FILE_NAMES; do
       ;;
 
     *.py )
-      # PEP8
+      # PYCODESTYLE
       if $PERFORM_PEP8; then
         print_msg "MSGBLD0190: " "Running PEP8 .......: $f"
         case $f in
-          *user_manual_scripts*)
-            IGNORES=$PEP8_IGNORES_TOPO_MANUAL
+          *spatially_structured_networks\/scripts*)
+            IGNORES=$PYCODESTYLE_IGNORES_USER_MANUAL
             ;;
           *examples*)
-            IGNORES=$PEP8_IGNORES_EXAMPLES
+            IGNORES=$PYCODESTYLE_IGNORES_EXAMPLES
             ;;
           *)
-            IGNORES=$PEP8_IGNORES
+            IGNORES=$PYCODESTYLE_IGNORES
             ;;
         esac
-        if ! pep8_result=`$PEP8 --max-line-length=$PEP8_MAX_LINE_LENGTH --ignore=$IGNORES $f` ; then
-          printf '%s\n' "$pep8_result" | while IFS= read -r line
+        if ! pycodestyle_result=`$PEP8 --max-line-length=$PYCODESTYLE_MAX_LINE_LENGTH --ignore=$IGNORES $f` ; then
+          printf '%s\n' "$pycodestyle_result" | while IFS= read -r line
           do
             print_msg "MSGBLD0195: " "[PEP8] $line"
           done
           # Add the file to the list of files with format errors.
           python_files_with_errors="$python_files_with_errors $f"
         fi
-        if $RUNS_ON_TRAVIS; then
+        if $RUNS_ON_CI; then
           print_msg "MSGBLD0200: " "PEP8 check for file $f completed."
         fi
       fi
@@ -282,7 +283,7 @@ if [ $nlines_copyright_check \> 1 ] || \
     for f in $c_files_with_errors; do
       print_msg "MSGBLD0220: " "... $f"
     done
-    if ! $RUNS_ON_TRAVIS; then
+    if ! $RUNS_ON_CI; then
       print_msg "" "Run $CLANG_FORMAT -i <filename> for autocorrection."
       print_msg "" ""
     fi
@@ -311,13 +312,13 @@ if [ $nlines_copyright_check \> 1 ] || \
     for f in $python_files_with_errors; do
       print_msg "MSGBLD0220: " "... $f"
     done
-    if ! $RUNS_ON_TRAVIS; then
+    if ! $RUNS_ON_CI; then
       print_msg "" "Run pep8ify -w <filename> for autocorrection."
       print_msg "" ""
     fi
   fi
 
-  if ! $RUNS_ON_TRAVIS; then
+  if ! $RUNS_ON_CI; then
       print_msg "" "For detailed problem descriptions, consult the tagged messages above."
       print_msg "" "Tags may be [VERA], [CPPC], [DIFF], [COPY], [NAME] and [PEP8]."
   fi

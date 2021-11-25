@@ -69,13 +69,12 @@ to ``Run`` in between a pair of ``Prepare`` and ``Cleanup`` calls will
 be written to the same file, while the call to ``Run`` will flush all
 data to the file, so it is available for immediate inspection.
 
-When creating a new recording, if the file name already
-exists, the ``Prepare`` call will fail with a corresponding error
-message. To instead overwrite the old file, the kernel property
-``overwrite_files`` can be set to *true* using ``SetKernelStatus``. An
-alternative way for avoiding name clashes is to re-set the kernel
-properties ``data_path`` or ``data_prefix``, so that another filename is
-chosen.
+If the file name already exists when creating a new recording, the
+call to ``Prepare`` will fail with a ``FileExists`` error. To overwrite
+the old file, the kernel property ``overwrite_files`` can be set to
+``True`` using the corresponding kernel attribute. An alternative way
+for avoiding name clashes is to set the kernel attributes
+``data_path`` or ``data_prefix``, to write to a different file.
 
 Data format
 +++++++++++

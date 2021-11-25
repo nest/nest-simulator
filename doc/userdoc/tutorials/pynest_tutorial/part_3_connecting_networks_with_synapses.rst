@@ -47,21 +47,21 @@ parameters except for the ``tau_plus``, which will have the value given
 above.
 
 Moreover, we can also create customised variants of synapse models using
-``CopyModel()``, exactly as demonstrated for neuron models:
+:py:func:`.CopyModel`, exactly as demonstrated for neuron models:
 
 ::
 
     nest.CopyModel("stdp_synapse","layer1_stdp_synapse",{"Wmax": 90.0})
 
 Now ``layer1_stdp_synapse`` will appear in the list returned by
-``Models()``, and can be used anywhere that a built-in model name can be
+:py:func:`.Models`, and can be used anywhere that a built-in model name can be
 used.
 
 STDP synapses
 ~~~~~~~~~~~~~
 
 For the majority of synapses, all of their parameters are accessible via
-``GetDefaults()`` and ``SetDefaults()``. Synapse models implementing
+:py:func:`.GetDefaults` and :py:func:`.SetDefaults`. Synapse models implementing
 spike-timing dependent plasticity are an exception to this, as their
 dynamics are driven by the postsynaptic spike train as well as the
 pre-synaptic one. As a consequence, the time constant of the depressing
@@ -89,13 +89,13 @@ connection routine.
     nest.Connect(epop1, epop2, conn_dict, syn_dict)
 
 If no synapse model is given, connections are made using the model
-``static_synapse``.
+:hxt_ref:`static_synapse`.
 
 Distributing synapse parameters
 -------------------------------
 
 The synapse parameters are specified in the synapse dictionary which is
-passed to the ``Connect``-function. If the parameter is set to a scalar
+passed to the :py:func:`.Connect`-function. If the parameter is set to a scalar
 all connections will be drawn using the same parameter. Parameters can
 be randomly distributed by passing a NEST Parameter object. The Parameter object
 can be combined to create a more complex parameter. Optionally,
@@ -123,15 +123,15 @@ ones are:
 +-------------------+------------------------+
 | Distributions     | Keys                   |
 +===================+========================+
-| ``normal``        | ``mean``, ``std``      |
+| `normal`          | `mean`, `std`          |
 +-------------------+------------------------+
-| ``lognormal``     | ``mean``, ``std``      |
+| `lognormal`       | `mean`, `std`          |
 +-------------------+------------------------+
-| ``uniform``       | ``min``, ``max``       |
+| `uniform`         | `min`, `max`           |
 +-------------------+------------------------+
-| ``exponential``   | ``beta``               |
+| `exponential`     | `beta`                 |
 +-------------------+------------------------+
-| ``gamma``         | ``kappa``, ``theta``   |
+| `gamma`           | `kappa`, `theta`       |
 +-------------------+------------------------+
 
 Querying the synapses
@@ -165,7 +165,7 @@ specifying a given synapse model:
     nest.GetConnections(synapse_model="stdp_synapse")
 
 will return all the connections in the network which are of type
-``stdp_synapse``. The last two cases are slower than the first case, as
+:hxt_ref:`stdp_synapse`. The last two cases are slower than the first case, as
 a full search of all connections has to be performed. The arguments
 ``source``, ``target`` and ``synapse_model`` can be used individually,
 as above, or in any conjunction:
@@ -175,14 +175,14 @@ as above, or in any conjunction:
     nest.GetConnections(epop1, epop2, "stdp_synapse")
 
 will return all the connections that the neurons in ``epop1`` have to
-neurons in ``epop2`` of type ``stdp_synapse``. Note that all these
+neurons in ``epop2`` of type :hxt_ref:`stdp_synapse`. Note that all these
 querying commands will only return the local connections, i.e. those
 represented on that particular MPI process in a distributed simulation.
 
 Once we have the SynapseCollection of connections, we can extract data from it using
-``get()``. In the simplest case, this returns a dictionary of lists,
+:py:meth:`~.SynapseCollection.get`. In the simplest case, this returns a dictionary of lists,
 containing the parameters and variables for each
-connection found by ``GetConnections``. However, usually we don't want
+connection found by :py:func:`.GetConnections`. However, usually we don't want
 all the information from a synapse, just some specific part of it. For
 example, if we want to check that we have connected the network as intended,
 we might want to examine only the parameter ``target`` of each
@@ -253,7 +253,7 @@ Repetitive code, copy-and-paste, functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Often you need to repeat a section of code with minor modifications. For
-example, you have two ``multimeter``\ s and you wish to extract the
+example, you have two :hxt_ref:`multimeter`\ s and you wish to extract the
 recorded variable from each of them and then calculate its maximum. The
 temptation is to write the code once, then copy-and-paste it to its new
 location and make any necessary modifications:
@@ -333,7 +333,7 @@ loops:
         nest.SetStatus(NodeCollection([n]), {"V_m": -67.0})
 
 Not only is this error prone, the majority of
-PyNEST functions are expecting a NodeCollection anyway. If you give them a NodeCollection,
+PyNEST functions are expecting a :py:class:`.NodeCollection` anyway. If you give them a NodeCollection,
 you are reducing the complexity of your main script (good) and pushing
 the loop down to the faster C++ kernel, where it will run more quickly
 (also good). Therefore, instead you should write:

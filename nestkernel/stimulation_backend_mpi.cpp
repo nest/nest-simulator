@@ -36,7 +36,7 @@ nest::StimulationBackendMPI::StimulationBackendMPI()
 {
 }
 
-nest::StimulationBackendMPI::~StimulationBackendMPI()
+nest::StimulationBackendMPI::~StimulationBackendMPI() noexcept
 {
 }
 

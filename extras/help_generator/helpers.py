@@ -46,7 +46,7 @@ def check_ifdef(item, filetext, docstring):
     If there is an 'ifdef' requirement write it to the data.
     """
     ifdefstring = r'(\#ifdef((.*?)\n(.*?)\n*))\#endif'
-    require_reg = re.compile('HAVE\_((.*?)*)\n')
+    require_reg = re.compile(r'HAVE\_((.*?)*)\n')
     # every doc in an #ifdef
     ifdefs = re.findall(ifdefstring, filetext, re.DOTALL)
     for ifitem in ifdefs:

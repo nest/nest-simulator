@@ -84,11 +84,10 @@ jobs:
            fetch-depth: 0
        - run: |
            echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
-           echo "CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
+           echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
            echo 'EOF' >> $GITHUB_ENV
-
        - name: Dependencies MacOS
-         if: runner.os =='macOS'
+         if: runner.os == 'macOS'
          run: |
             brew install coreutils gsl open-mpi automake autoconf libtool
             brew info python
@@ -98,7 +97,7 @@ jobs:
          run: |
            sudo apt-get update
            #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-           sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pep8 libpcre3 libpcre3-dev python2-dev libboost-all-dev
+           sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev python2-dev libboost-all-dev
            sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
            sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
            sudo apt-get install vera++
@@ -107,8 +106,7 @@ jobs:
          #uses: actions/cache@master
          run: |
             python -m pip install --upgrade pip setuptools
-            python -m pip install scipy junitparser>=2 numpy nose cython matplotlib terminaltables pandoc
-            python -m pip install nose
+            python -m pip install scipy junitparser>=2 numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
             pip list
             g++ --version
             set -o pipefail
@@ -120,8 +118,8 @@ jobs:
        - name: Static Code Analysis
          if: ${{ matrix.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYSIS' }}
          run: |
-           chmod +x extras/gha_build.sh
-           ./extras/gha_build.sh
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh
          env:
            xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
            CHANGED_FILES: ${{env.CHANGED_FILES}}
@@ -131,9 +129,9 @@ jobs:
          if: ${{ matrix.xNEST_BUILD_TYPE == 'MINIMAL' }}
          run: |
            echo "Minimal Build"
-           chmod +x extras/gha_build.sh
-           ./extras/gha_build.sh 2>&1 | tee gha_build.sh.log
-           python extras/parse_build_log.py gha_build.sh.log ${{ github.workspace }}
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
+           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: "MINIMAL"
 
@@ -141,9 +139,9 @@ jobs:
          if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
          run: |
            echo "MPI Only Build"
-           chmod +x extras/gha_build.sh
-           ./extras/gha_build.sh 2>&1 | tee gha_build.sh.log
-           python extras/parse_build_log.py gha_build.sh.log ${{ github.workspace }}
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
+           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: MPI_ONLY
 
@@ -151,19 +149,19 @@ jobs:
          if: ${{ matrix.xNEST_BUILD_TYPE == 'OPENMP_ONLY' }}
          run: |
            echo "OpenMP Only Build"
-           chmod +x extras/gha_build.sh
-           ./extras/gha_build.sh 2>&1 | tee gha_build.sh.log
-           python extras/parse_build_log.py gha_build.sh.log ${{ github.workspace }}
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
+           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
           xNEST_BUILD_TYPE: OPENMP_ONLY
 
+           
        - name: Full Build
          if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
          run: |
            echo "FULL Build"
-           chmod +x extras/gha_build.sh
-           ./extras/gha_build.sh 2>&1 | tee gha_build.sh.log
-           python extras/parse_build_log.py gha_build.sh.log ${{ github.workspace }}
+           chmod +x extras/ci_build.sh
+           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
+           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
          env:
            xNEST_BUILD_TYPE: FULL
-           

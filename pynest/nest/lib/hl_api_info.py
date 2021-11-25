@@ -28,8 +28,8 @@ import os
 import textwrap
 import webbrowser
 
-from ..ll_api import *
-from .hl_api_helper import *
+from ..ll_api import check_stack, sli_func, sps, sr, spp
+from .hl_api_helper import broadcast, is_iterable, is_literal, uni_str
 from .hl_api_types import to_json
 import nest
 
@@ -202,7 +202,7 @@ def set_verbosity(level):
 
     Parameters
     ----------
-    level : str
+    level : str, default: 'M_INFO'
         Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', 'M_DEPRECATED',
         'M_INFO' or 'M_ALL'.
     """

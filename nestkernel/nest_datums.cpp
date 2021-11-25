@@ -22,11 +22,6 @@
 
 #include "nest_datums.h"
 
-// explicit instantiations
-template class AggregateDatum< nest::ConnectionID, &nest::NestModule::ConnectionType >;
-template class sharedPtrDatum< nest::NodeCollection, &nest::NestModule::NodeCollectionType >;
-template class sharedPtrDatum< nest::nc_const_iterator, &nest::NestModule::NodeCollectionIteratorType >;
-
 // instantiate memory management pool
 template <>
 sli::pool ConnectionDatum::memory( sizeof( nest::ConnectionID ), 10000, 1 );

@@ -86,6 +86,13 @@ might choose to have a synaptic current that is not necessarily identical to
 the concentration of transmitter y(t) in the synaptic cleft. It may realize
 an arbitrary postsynaptic effect depending on y(t).
 
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
+
 Parameters
 ++++++++++
 

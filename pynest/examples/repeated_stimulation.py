@@ -55,7 +55,7 @@ import matplotlib.pyplot as plt
 
 rate = 1000.0  # generator rate in spikes/s
 start = 100.0  # start of simulation relative to trial start, in ms
-stop = 500.0  # end of simulation relative to trial start, in ms
+stop = 500.0   # end of simulation relative to trial start, in ms
 
 
 ###############################################################################
@@ -63,7 +63,7 @@ stop = 500.0  # end of simulation relative to trial start, in ms
 
 
 trial_duration = 1000.0  # trial duration, in ms
-num_trials = 5      # number of trials to perform
+num_trials = 5           # number of trials to perform
 
 
 ###############################################################################
@@ -75,11 +75,8 @@ num_trials = 5      # number of trials to perform
 
 
 nest.ResetKernel()
-pg = nest.Create('poisson_generator',
-                 params={'rate': rate,
-                         'start': start,
-                         'stop': stop}
-                 )
+pg_params = {'rate': rate, 'start': start, 'stop': stop}
+pg = nest.Create('poisson_generator', params=pg_params)
 
 
 ###############################################################################
@@ -105,7 +102,7 @@ nest.Connect(pg, sr)
 
 
 for n in range(num_trials):
-    pg.origin = nest.GetKernelStatus('biological_time')
+    pg.origin = nest.biological_time
     nest.Simulate(trial_duration)
 
 

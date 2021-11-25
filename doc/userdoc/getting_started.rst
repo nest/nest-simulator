@@ -80,8 +80,7 @@ You should see the following image as the output:
 Need a quieter NEST?
 --------------------
 
-Take a look at the `set_verbosity <https://nest-simulator.readthedocs.io/en/latest/ref_material/pynest_apis.html#nest.lib.hl_api_info.set_verbosity>`_
-documentation, which describes how to display fewer messages on the terminal.
+Take a look at the :py:func:`.set_verbosity` documentation, which describes how to display fewer messages on the terminal.
 
 Want to know more?
 ------------------

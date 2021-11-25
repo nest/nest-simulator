@@ -31,7 +31,8 @@ GIT_END_SHA=HEAD                 # '<master>..<HEAD>' are processed.
 VERA=vera++                      # The names of the static code analysis tools executables.
 CPPCHECK=cppcheck                #    CPPCHECK version 1.69 or later is required !
 CLANG_FORMAT=clang-format-3.6    #    CLANG-FORMAT version 3.6 and only this version is required !
-PEP8=pep8
+PEP8=pycodestyle
+PYCODESTYLE_IGNORES="E121,E123,E126,E226,E24,E704,W503,W504"
 
 PERFORM_VERA=true                # Perform VERA++ analysis.
 PERFORM_CPPCHECK=false           # Skip CPPCHECK analysis.
@@ -76,7 +77,7 @@ print_usage() {
 Usage: ./extras/check_code_style.sh [options ...]
 
 This script processes C/C++ and Python source code files to verify compliance with the NEST
-coding  style  guidelines.  The  checks are performed the same way as in the NEST Travis CI
+coding  style  guidelines.  The  checks are performed the same way as in the NEST CI
 build and test environment. If no file is specified, a local 'git diff' is issued to obtain
 the changed files in the commit range '<git-sha-start>..<git-sha-end>'. By default, this is
 'master..head'.
@@ -109,16 +110,16 @@ Options:
                                      Default: --cppcheck=cppcheck
                                      Note: CPPCHECK version 1.69 or later is required.
                                            This corresponds to the version installed in
-                                           the NEST Travis CI build and test environment.
+                                           the NEST CI build and test environment.
 
     --clang-format=exe               The name of the CLANG-FORMAT executable.
                                      Default: --clang-format=clang-format-3.6
                                      Note: CLANG-FORMAT version 3.6 is required.
                                            This corresponds to the version installed in
-                                           the NEST Travis CI build and test environment.
+                                           the NEST CI build and test environment.
 
     --pep8=exe                       The name of the PEP8 executable.
-                                     Default: --pep8=pep8
+                                     Default: --pep8=pycodestyle
 
     --perform-vera=on/off            Turn on/off VERA++ analysis.
                                      Default: --perform-vera=on
@@ -280,9 +281,9 @@ if $PERFORM_CLANG_FORMAT; then
   fi
 fi
 
-# Verify the PEP8 installation.
+# Verify the pycodestyle installation.
 if $PERFORM_PEP8; then
-  $PEP8 --ignore="E121,E501" ./extras/parse_build_log.py || error_exit "Failed to verify the PEP8 installation. Executable: $PEP8"
+  $PEP8 --ignore=$PYCODESTYLE_IGNORES ./extras/parse_build_log.py || error_exit "Failed to verify the pycodestyle installation. Executable: $PEP8"
 fi
 
 # Extracting changed files between two commits.
@@ -303,18 +304,19 @@ if [ ! -x ./extras/static_code_analysis.sh ]; then
 fi
 
 
-RUNS_ON_TRAVIS=false
+RUNS_ON_CI=false
 
 unset NEST_VPATH               # These command line arguments are placeholders and not required here.
 IGNORE_MSG_VERA=false          # They are needed when running the static code analysis script within
-IGNORE_MSG_CPPCHECK=false      # the Travis CI build environment.
+IGNORE_MSG_CPPCHECK=false      # the CI build environment.
 IGNORE_MSG_CLANG_FORMAT=false
-IGNORE_MSG_PEP8=false
+IGNORE_MSG_PYCODESTYLE=false
 
-./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
+./extras/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
 "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
 "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
-"$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
+"$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" \
+"$PYCODESTYLE_IGNORES"
 if [ $? -gt 0 ]; then
     exit $?
 fi

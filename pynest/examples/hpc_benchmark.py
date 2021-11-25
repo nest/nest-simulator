@@ -207,10 +207,9 @@ def build_network(logger):
     stdp_params = brunel_params['stdp_params']
 
     # set global kernel parameters
-    nest.SetKernelStatus({
-        'total_num_virtual_procs': params['nvp'],
-        'resolution': params['dt'],
-        'overwrite_files': True})
+    nest.total_num_virtual_procs = params['nvp']
+    nest.resolution = params['dt']
+    nest.overwrite_files = True
 
     nest.message(M_INFO, 'build_network', 'Creating excitatory population.')
     E_neurons = nest.Create('iaf_psc_alpha', NE, params=model_params)
@@ -382,7 +381,7 @@ def run_simulation():
         if params['record_spikes']:
             logger.log(str(compute_rate(sr)) + ' # average rate')
 
-        print(nest.GetKernelStatus())
+        print(nest.kernel_status)
 
 
 def compute_rate(sr):

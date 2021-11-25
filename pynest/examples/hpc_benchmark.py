@@ -219,7 +219,7 @@ def build_network(logger):
 
     if brunel_params['randomize_Vm']:
         nest.message(M_INFO, 'build_network',
-                     'Randomzing membrane potentials.')
+                     'Randomizing membrane potentials.')
 
         random_vm = nest.random.normal(brunel_params['mean_potential'],
                                        brunel_params['sigma_potential'])

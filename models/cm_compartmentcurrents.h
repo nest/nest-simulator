@@ -45,7 +45,7 @@ public:
 
   // calibrateialization
   void calibrate(){m_Na_ = 0.0; h_Na_ = 0.0;};
-  void append_recordables(std::map< std::string, double* >* recordables,
+  void append_recordables(std::map< Name, double* >* recordables,
                           const long compartment_idx);
 
   // numerical integration step
@@ -68,7 +68,7 @@ public:
 
   // calibrateialization
   void calibrate(){n_K_ = 0.0;};
-  void append_recordables(std::map< std::string, double* >* recordables,
+  void append_recordables(std::map< Name, double* >* recordables,
                           const long compartment_idx);
 
   // numerical integration step
@@ -105,7 +105,7 @@ public:
     g_r_AMPA_ = 0.; g_d_AMPA_ = 0.;
     b_spikes_->clear();
   };
-  void append_recordables( std::map< std::string, double* >* recordables );
+  void append_recordables( std::map< Name, double* >* recordables );
   void set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
   {
     b_spikes_ = &syn_buffers[ syn_idx ];
@@ -145,7 +145,7 @@ public:
     g_r_GABA_ = 0.; g_d_GABA_ = 0.;
     b_spikes_->clear();
   };
-  void append_recordables(std::map< std::string, double* >* recordables);
+  void append_recordables(std::map< Name, double* >* recordables);
   void set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
   {
     b_spikes_ = &syn_buffers[ syn_idx ];
@@ -184,7 +184,7 @@ public:
     g_r_NMDA_ = 0.; g_d_NMDA_ = 0.;
     b_spikes_->clear();
   };
-  void append_recordables(std::map< std::string, double* >* recordables);
+  void append_recordables(std::map< Name, double* >* recordables);
   void set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
   {
     b_spikes_ = &syn_buffers[ syn_idx ];
@@ -239,7 +239,7 @@ public:
     g_r_AN_NMDA_ = 0.; g_d_AN_NMDA_ = 0.;
     b_spikes_->clear();
   };
-  void append_recordables(std::map< std::string, double* >* recordables);
+  void append_recordables(std::map< Name, double* >* recordables);
   void set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
   {
     b_spikes_ = &syn_buffers[ syn_idx ];
@@ -405,10 +405,10 @@ public:
     }
   }
 
-  std::map< std::string, double* > get_recordables( const long compartment_idx )
+  std::map< Name, double* > get_recordables( const long compartment_idx )
   {
 
-    std::map< std::string, double* > recordables;
+    std::map< Name, double* > recordables;
 
     // recordables sodium channel
     Na_chan_.append_recordables( &recordables, compartment_idx );

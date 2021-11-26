@@ -93,7 +93,7 @@ public:
 
     // initialization
     void calibrate();
-    std::map< std::string, double* > get_recordables();
+    std::map< Name, double* > get_recordables();
 
     // matrix construction
     void construct_matrix_element( const long lag );
@@ -172,7 +172,7 @@ public:
     void calibrate();
     void init_pointers();
     void set_syn_buffers( std::vector< RingBuffer >& syn_buffers );
-    std::map< std::string, double* > get_recordables();
+    std::map< Name, double* > get_recordables();
 
     // get a compartment pointer from the tree
     Compartment* get_compartment( const long compartment_index );

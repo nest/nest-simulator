@@ -207,7 +207,7 @@ private:
   the vector 'recordables_values' stores pointers to all state variables
   present in the model
   */
-  std::vector< std::string > recordables_names;
+  std::vector< Name > recordables_names;
   std::vector< double* > recordables_values;
 
   //! Mapping of recordables names to access functions

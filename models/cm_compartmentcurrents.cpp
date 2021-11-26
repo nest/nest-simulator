@@ -44,11 +44,11 @@ nest::Na::Na(const DictionaryDatum& channel_params)
 }
 
 void
-nest::Na::append_recordables(std::map< std::string, double* >* recordables,
+nest::Na::append_recordables(std::map< Name, double* >* recordables,
                              const long compartment_idx)
 {
-  ( *recordables )["m_Na_" + std::to_string(compartment_idx)] = &m_Na_;
-  ( *recordables )["h_Na_" + std::to_string(compartment_idx)] = &h_Na_;
+  ( *recordables )[ Name( "m_Na_" + std::to_string(compartment_idx) ) ] = &m_Na_;
+  ( *recordables )[ Name( "h_Na_" + std::to_string(compartment_idx) ) ] = &h_Na_;
 }
 
 std::pair< double, double > nest::Na::f_numstep( const double v_comp, const double dt)
@@ -110,10 +110,10 @@ nest::K::K( const DictionaryDatum& channel_params )
 
 
 void
-nest::K::append_recordables(std::map< std::string, double* >* recordables,
+nest::K::append_recordables(std::map< Name, double* >* recordables,
                             const long compartment_idx)
 {
-  ( *recordables )["n_K_" + std::to_string(compartment_idx)] = &n_K_;
+  ( *recordables )[ Name( "n_K_" + std::to_string(compartment_idx) ) ] = &n_K_;
 }
 
 std::pair< double, double > nest::K::f_numstep( const double v_comp, const double dt)
@@ -175,10 +175,10 @@ nest::AMPA::AMPA( const long syn_index, const DictionaryDatum& receptor_params )
 }
 
 void
-nest::AMPA::append_recordables(std::map< std::string, double* >* recordables)
+nest::AMPA::append_recordables(std::map< Name, double* >* recordables)
 {
-  ( *recordables )["g_r_AMPA_" + std::to_string(syn_idx)] = &g_r_AMPA_;
-  ( *recordables )["g_d_AMPA_" + std::to_string(syn_idx)] = &g_d_AMPA_;
+  ( *recordables )[ Name( "g_r_AMPA_" + std::to_string(syn_idx) ) ] = &g_r_AMPA_;
+  ( *recordables )[ Name( "g_d_AMPA_" + std::to_string(syn_idx) ) ] = &g_d_AMPA_;
 }
 
 std::pair< double, double > nest::AMPA::f_numstep( const double v_comp, const double dt, const long lag )
@@ -243,10 +243,10 @@ nest::GABA::GABA( const long syn_index, const DictionaryDatum& receptor_params )
 }
 
 void
-nest::GABA::append_recordables(std::map< std::string, double* >* recordables)
+nest::GABA::append_recordables(std::map< Name, double* >* recordables)
 {
-  ( *recordables )["g_r_GABA_" + std::to_string(syn_idx)] = &g_r_GABA_;
-  ( *recordables )["g_d_GABA_" + std::to_string(syn_idx)] = &g_d_GABA_;
+  ( *recordables )[ Name( "g_r_GABA_" + std::to_string(syn_idx) ) ] = &g_r_GABA_;
+  ( *recordables )[ Name( "g_d_GABA_" + std::to_string(syn_idx) ) ] = &g_d_GABA_;
 }
 
 std::pair< double, double > nest::GABA::f_numstep( const double v_comp, const double dt, const long lag )
@@ -311,10 +311,10 @@ nest::NMDA::NMDA( const long syn_index, const DictionaryDatum& receptor_params )
 }
 
 void
-nest::NMDA::append_recordables(std::map< std::string, double* >* recordables)
+nest::NMDA::append_recordables(std::map< Name, double* >* recordables)
 {
-  ( *recordables )["g_r_NMDA_" + std::to_string(syn_idx)] = &g_r_NMDA_;
-  ( *recordables )["g_d_NMDA_" + std::to_string(syn_idx)] = &g_d_NMDA_;
+  ( *recordables )[ Name( "g_r_NMDA_" + std::to_string(syn_idx) ) ] = &g_r_NMDA_;
+  ( *recordables )[ Name( "g_d_NMDA_" + std::to_string(syn_idx) ) ] = &g_d_NMDA_;
 }
 
 std::pair< double, double > nest::NMDA::f_numstep( const double v_comp, const double dt, const long lag )
@@ -399,12 +399,12 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const DictionaryDatum& recepto
 }
 
 void
-nest::AMPA_NMDA::append_recordables(std::map< std::string, double* >* recordables)
+nest::AMPA_NMDA::append_recordables(std::map< Name, double* >* recordables)
 {
-  ( *recordables )["g_r_AN_AMPA_" + std::to_string(syn_idx)] = &g_r_AN_AMPA_;
-  ( *recordables )["g_d_AN_AMPA_" + std::to_string(syn_idx)] = &g_d_AN_AMPA_;
-  ( *recordables )["g_r_AN_NMDA_" + std::to_string(syn_idx)] = &g_r_AN_NMDA_;
-  ( *recordables )["g_d_AN_NMDA_" + std::to_string(syn_idx)] = &g_d_AN_NMDA_;
+  ( *recordables )[ Name( "g_r_AN_AMPA_" + std::to_string(syn_idx) ) ] = &g_r_AN_AMPA_;
+  ( *recordables )[ Name( "g_d_AN_AMPA_" + std::to_string(syn_idx) ) ] = &g_d_AN_AMPA_;
+  ( *recordables )[ Name( "g_r_AN_NMDA_" + std::to_string(syn_idx) ) ] = &g_r_AN_NMDA_;
+  ( *recordables )[ Name( "g_d_AN_NMDA_" + std::to_string(syn_idx) ) ] = &g_d_AN_NMDA_;
 }
 
 std::pair< double, double > nest::AMPA_NMDA::f_numstep( const double v_comp, const double dt, const long lag )

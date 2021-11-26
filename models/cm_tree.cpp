@@ -85,14 +85,14 @@ nest::Compartment::calibrate()
     currents.clear();
 }
 
-std::map< std::string, double* >
+std::map< Name, double* >
 nest::Compartment::get_recordables()
 {
-    std::map< std::string, double* > recordables =
+    std::map< Name, double* > recordables =
         compartment_currents.get_recordables(comp_index);
 
     recordables.insert(recordables.begin(), recordables.end());
-    recordables["v_comp" + std::to_string(comp_index)] = &v_comp;
+    recordables[ Name( "v_comp" + std::to_string(comp_index) ) ] = &v_comp;
 
     return recordables;
 }
@@ -319,10 +319,10 @@ nest::CompTree::set_syn_buffers( std::vector< RingBuffer >& syn_buffers )
 /*
 Returns a map of variable names and pointers to the recordables
 */
-std::map< std::string, double* >
+std::map< Name, double* >
 nest::CompTree::get_recordables()
 {
-  std::map< std::string, double* > recordables;
+  std::map< Name, double* > recordables;
 
   /*
   add recordables for all compartments, suffixed by compartment_idx,
@@ -332,7 +332,7 @@ nest::CompTree::get_recordables()
      compartment_it != compartments_.end();
      ++compartment_it )
   {
-    std::map< std::string, double* > recordables_comp =
+    std::map< Name, double* > recordables_comp =
                                           ( *compartment_it )->get_recordables();
     recordables.insert(recordables_comp.begin(), recordables_comp.end());
   }

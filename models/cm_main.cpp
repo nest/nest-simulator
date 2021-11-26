@@ -122,10 +122,8 @@ nest::cm_main::init_buffers_()
 void
 nest::cm_main::set_status( const DictionaryDatum& statusdict )
 {
-
   updateValue< double >( statusdict, names::V_th, V_th_ );
   ArchivingNode::set_status( statusdict );
-
 
   /*
   Add a compartment (or compartments) to the tree, so that the new compartment
@@ -260,7 +258,7 @@ nest::cm_main::init_recordables_pointers_()
       voltage (e.g. "v_comp1") or by the synapse index for receptor currents
   --> values are pointers to the specific state variables
   */
-  std::map< std::string, double* > recordables = c_tree_.get_recordables();
+  std::map< Name, double* > recordables = c_tree_.get_recordables();
 
   for (auto rec_it = recordables.begin(); rec_it != recordables.end(); rec_it++)
   {

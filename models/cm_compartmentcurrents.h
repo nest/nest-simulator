@@ -293,7 +293,7 @@ public:
       syn_it->calibrate();
 
     }
-    // calibrateialization of GABA synapses
+    // calibrate GABA synapses
     for( auto syn_it = GABA_syns_.begin();
          syn_it != GABA_syns_.end();
          ++syn_it )

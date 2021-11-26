@@ -421,7 +421,7 @@ public:
     // recordables GABA synapses
     for( auto syn_it = GABA_syns_.begin(); syn_it != GABA_syns_.end(); syn_it++)
       syn_it->append_recordables( &recordables );
-    // recordables AMPA synapses
+    // recordables NMDA synapses
     for( auto syn_it = NMDA_syns_.begin(); syn_it != NMDA_syns_.end(); syn_it++)
       syn_it->append_recordables( &recordables );
     // recordables AMPA_NMDA synapses

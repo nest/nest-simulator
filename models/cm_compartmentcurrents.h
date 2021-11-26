@@ -232,7 +232,7 @@ public:
   AMPA_NMDA(const long syn_index, const DictionaryDatum& receptor_params);
   ~AMPA_NMDA(){};
 
-  // calibrateialization of the state variables
+  // calibrate state variables
   void calibrate()
   {
     g_r_AN_AMPA_ = 0.; g_d_AN_AMPA_ = 0.;

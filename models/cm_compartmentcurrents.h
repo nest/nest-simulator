@@ -300,7 +300,7 @@ public:
     {
       syn_it->calibrate();
     }
-    // calibrateialization of NMDA synapses
+    // calibrate NMDA synapses
     for( auto syn_it = NMDA_syns_.begin();
          syn_it != NMDA_syns_.end();
          ++syn_it )

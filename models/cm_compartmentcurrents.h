@@ -43,7 +43,7 @@ public:
   explicit Na( const DictionaryDatum& channel_params );
   ~Na(){};
 
-  // calibrateialization
+  // calibrate initialization
   void calibrate(){m_Na_ = 0.0; h_Na_ = 0.0;};
   void append_recordables(std::map< Name, double* >* recordables,
                           const long compartment_idx);

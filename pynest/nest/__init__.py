@@ -100,6 +100,7 @@ class NestModule(types.ModuleType):
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
         self.__all__ = list(set(_api))
+
         # Block setting of unknown attributes
         type(self).__setattr__ = _setattr_error
 
@@ -413,7 +414,6 @@ def _setattr_error(self, attr, val):
             cls_attr.__set__(self, val)
         else:
             raise err
-
 
 
 def _rel_import_star(module, import_module_name):

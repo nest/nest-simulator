@@ -715,7 +715,7 @@ class SynapseCollection(object):
     def __setattr__(self, attr, value):
         # `_datum` is the only property of SynapseCollection that should not be
         # interpreted as a property of the model
-        if attr == '_datum' or 'print_full':
+        if attr == '_datum' or attr == 'print_full':
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})

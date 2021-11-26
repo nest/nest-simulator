@@ -42,6 +42,35 @@ except ImportError:
 
 
 @nest.ll_api.check_stack
+class TestNestGetSet(unittest.TestCase):
+    """nest module get/set tests"""
+
+    def setUp(self):
+        nest.ResetKernel()
+
+    def test_get(self):
+        # TestCase.setUp calls ResetKernel so kernel attributes should be equal to their
+        # defaults. Test will error if there is a problem with the `.get` mechanism.
+        kst = nest.get("keep_source_table")
+        self.assertEqual(type(nest).keep_source_table._default, kst, "get value not equal to default after ResetKernel")
+        self.assertEqual(kst, nest.keep_source_table, 'kernel attribute value not equal to get value')
+        with self.assertRaises(AttributeError, "no AttributeError for unknown attribute"):
+            nest.accessAbsolutelyUnknownThingOnNestModule
+        with self.assertRaises(KeyError, "no KeyError for unknown get key"):
+            nest.get("accessAbsolutelyUnknownKernelAttribute")
+
+    def test_set(self):
+        with self.assertRaises(AttributeError, "arbitrary attribute assignment passed"):
+            nest.absolutelyUnknownThingOnNestModule = 5
+        with self.assertRaises(AttributeError, "known attribute assignment passed"):
+            nest.get = 5
+        nest.set(total_num_virtual_procs=2)
+        self.assertEqual(2, nest.total_num_virtual_procs, 'set failed')
+        nest.total_num_virtual_procs = 3
+        self.assertEqual(3, nest.total_num_virtual_procs, 'kernelattribute set failed')
+
+
+@nest.ll_api.check_stack
 class TestNodeCollectionGetSet(unittest.TestCase):
     """NodeCollection get/set tests"""
 

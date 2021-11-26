@@ -50,16 +50,21 @@ nest::Compartment::Compartment( const long compartment_index,
   , comp_index( compartment_index )
   , p_index( parent_index )
   , parent( nullptr )
-  , v_comp( getValue< double >( compartment_params, "e_L" ) )
-  , ca( getValue< double >( compartment_params, "C_m" ) )
-  , gc( getValue< double >( compartment_params, "g_c" ) )
-  , gl( getValue< double >( compartment_params, "g_L" ) )
-  , el( getValue< double >( compartment_params, "e_L" ) )
+  , v_comp( 0.0 )
+  , ca( 1.0 )
+  , gc( 0.01 )
+  , gl( 0.1 )
+  , el( -70. )
   , ff( 0.0 )
   , gg( 0.0 )
   , hh( 0.0 )
   , n_passed( 0 )
 {
+  updateValue< double >( compartment_params, names::C_m, ca );
+  updateValue< double >( compartment_params, names::g_C, gc );
+  updateValue< double >( compartment_params, names::g_L, gl );
+  updateValue< double >( compartment_params, names::e_L, el );
+
   compartment_currents = CompartmentCurrents(compartment_params);
 };
 
@@ -153,20 +158,6 @@ nest::CompTree::add_compartment( const long compartment_index,
 {
     Compartment* compartment = new Compartment( compartment_index, parent_index );
     add_compartment( compartment, parent_index );
-
-    // if( parent_index >= 0 )
-    // {
-    //     Compartment* parent = get_compartment( parent_index );
-    //     parent->children.push_back( *compartment );
-    // }
-    // else
-    // {
-    //     root_ = *compartment;
-    // }
-
-    // compartment_indices_.push_back(compartment_index);
-
-    // set_compartments();
 };
 void
 nest::CompTree::add_compartment( const long compartment_index,
@@ -176,19 +167,6 @@ nest::CompTree::add_compartment( const long compartment_index,
     Compartment* compartment = new Compartment( compartment_index, parent_index,
                 				                        compartment_params );
     add_compartment( compartment, parent_index );
-    // if( parent_index >= 0 )
-    // {
-    //     Compartment* parent = get_compartment( parent_index );
-    //     parent->children.push_back( *compartment );
-    // }
-    // else
-    // {
-    //     root_ = *compartment;
-    // }
-
-    // compartment_indices_.push_back(compartment_index);
-
-    // set_compartments();
 };
 void
 nest::CompTree::add_compartment( Compartment* compartment,

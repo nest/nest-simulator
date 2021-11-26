@@ -95,6 +95,7 @@ private:
 
 public:
   // constructor, destructor
+  AMPA(const long syn_index);
   AMPA(const long syn_index, const DictionaryDatum& receptor_params);
   ~AMPA(){};
 
@@ -134,6 +135,7 @@ private:
 
 public:
   // constructor, destructor
+  GABA(const long syn_index);
   GABA(const long syn_index, const DictionaryDatum& receptor_params);
   ~GABA(){};
 
@@ -173,6 +175,7 @@ private:
 
 public:
   // constructor, destructor
+  NMDA(const long syn_index);
   NMDA(const long syn_index, const DictionaryDatum& receptor_params);
   ~NMDA(){};
 
@@ -225,6 +228,7 @@ private:
 
 public:
   // constructor, destructor
+  AMPA_NMDA(const long syn_index);
   AMPA_NMDA(const long syn_index, const DictionaryDatum& receptor_params);
   ~AMPA_NMDA(){};
 
@@ -311,6 +315,34 @@ public:
       syn_it->calibrate();
     }
   }
+
+  void add_synapse( const std::string& type, const long syn_idx )
+  {
+    if ( type == "AMPA" )
+    {
+      AMPA syn( syn_idx );
+      AMPA_syns_.push_back( syn );
+    }
+    else if ( type == "GABA" )
+    {
+      GABA syn( syn_idx );
+      GABA_syns_.push_back( syn );
+    }
+    else if ( type == "NMDA" )
+    {
+      NMDA syn( syn_idx );
+      NMDA_syns_.push_back( syn );
+    }
+    else if ( type == "AMPA_NMDA" )
+    {
+      AMPA_NMDA syn( syn_idx );
+      AMPA_NMDA_syns_.push_back( syn );
+    }
+    else
+    {
+      assert( false );
+    }
+  };
 
   void add_synapse( const std::string& type, const long syn_idx, const DictionaryDatum& receptor_params )
   {

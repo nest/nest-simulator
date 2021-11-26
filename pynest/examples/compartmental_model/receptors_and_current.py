@@ -34,33 +34,38 @@ nest.SetKernelStatus(dict(resolution=.1))
 # somatic and dendritic parameters
 soma_params = {
     'C_m': 10.0,    # [pF] Capacitance
-    'g_c': 0.0,     # soma has no parent
+    'g_C': 0.0,     # soma has no parent
     'g_L': 1.,      # [nS] Leak conductance
     'e_L': -70.0    # [mV] leak reversal
 }
 dend_params = {
     'C_m': 0.1,     # [pF] Capacitance
-    'g_c': 0.1,     # [nS] Coupling conductance to parent (soma here)
+    'g_C': 0.1,     # [nS] Coupling conductance to parent (soma here)
     'g_L': 0.1,     # [nS] Leak conductance
     'e_L': -70.0    # [mV] leak reversal
 }
 
 # create a model with three compartments
 cm = nest.Create('cm_main')
-nest.SetStatus(cm, {'V_th': -50.})
-nest.SetStatus(cm, {'compartments': {"idx": 0, "parent_idx": -1}})#, "params": soma_params}})
-# nest.SetStatus(cm, {'compartments': {"idx": 1, "parent_idx":  0, "params": dend_params}})
-# nest.SetStatus(cm, {'compartments': {"idx": 2, "parent_idx":  0, "params": dend_params}})
+nest.SetStatus(cm, {'compartments': {"comp_idx": 0, "parent_idx": -1, "params": soma_params}})
+nest.SetStatus(cm, {'compartments': {"comp_idx": 1, "parent_idx":  0, "params": dend_params}})
+nest.SetStatus(cm, {'compartments': {"comp_idx": 2, "parent_idx":  0, "params": dend_params}})
 
 # spike threshold
-# nest.SetStatus(cm, {'V_th': -50.})
+nest.SetStatus(cm, {'V_th': -50.})
 
 # add GABA receptor in compartment 0 (soma)
-syn_idx_GABA = nest.AddReceptor(cm, 0, "GABA", {})
+# syn_idx_GABA = nest.AddReceptor(cm, 0, "GABA", {})
+nest.SetStatus(cm, {'receptors': {"comp_idx": 0, "receptor_type": "GABA"}})
+syn_idx_GABA = 0
 # add AMPA receptor in compartment 1
-syn_idx_AMPA = nest.AddReceptor(cm, 1, "AMPA", {})
+# syn_idx_AMPA = nest.AddReceptor(cm, 1, "AMPA", {})
+nest.SetStatus(cm, {'receptors': {"comp_idx": 1, "receptor_type": "AMPA", "params": {}}})
+syn_idx_AMPA = 1
 # add AMPA+NMDA receptor in compartment 2
-syn_idx_NMDA = nest.AddReceptor(cm, 2, "AMPA_NMDA", {})
+# syn_idx_NMDA = nest.AddReceptor(cm, 2, "AMPA_NMDA", {})
+nest.SetStatus(cm, {'receptors': {"comp_idx": 2, "receptor_type": "AMPA_NMDA"}})
+syn_idx_NMDA = 2
 
 # create three spike generators
 sg1 = nest.Create('spike_generator', 1, {'spike_times': [101., 105., 106.,110., 150.]})

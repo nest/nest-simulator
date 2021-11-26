@@ -126,73 +126,94 @@ nest::cm_main::set_status( const DictionaryDatum& statusdict )
   updateValue< double >( statusdict, names::V_th, V_th_ );
   ArchivingNode::set_status( statusdict );
 
-  if( statusdict->known("compartments") )
+
+  /*
+  Add a compartment (or compartments) to the tree, so that the new compartment
+  has the compartment specified by "parent_idx" as parent. The parent
+  has to be in the tree, otherwise an error will be raised.
+  */
+  if( statusdict->known( names::compartments ) )
   {
     // Set status is used to add a compartment to the tree. We add either a
     // single compartment, or multiple compartments, depending on wether the
     // entry was a list of dicts or a single dict
     // TODO: implmenent list of dicts case
-    DictionaryDatum dd = getValue< DictionaryDatum >( statusdict, "compartments" );
+    DictionaryDatum dd = getValue< DictionaryDatum >( statusdict, names::compartments);
 
-    if( dd->known("params") )
+    if( dd->known( names::params ) )
     {
       c_tree_.add_compartment(
-                               getValue< long >( "idx" ),
-                               getValue< long >( "parent_idx" ),
-                               getValue< DictionaryDatum >( "params" )
+                               getValue< long >( dd, names::comp_idx ),
+                               getValue< long >( dd, names::parent_idx ),
+                               getValue< DictionaryDatum >( dd, names::params )
                              );
     }
     else
     {
       c_tree_.add_compartment(
-                               getValue< long >( "idx" ),
-                               getValue< long >( "parent_idx" )
+                               getValue< long >( dd, names::comp_idx ),
+                               getValue< long >( dd, names::parent_idx )
                              );
     }
-
-    // we need to initialize tree pointers because vectors are resized, thus
-    // moving memory addresses
-    init_tree_pointers_();
-    // we need to initialize the recordables pointers to guarantee that the
-    // recordables of the new compartment will be in the recordables map
-    init_recordables_pointers_();
-
   }
 
-  if( statusdict->known("receptors") )
+  // we need to initialize tree pointers because vectors are resized, thus
+  // moving memory addresses
+  init_tree_pointers_();
+
+  if( statusdict->known( names::receptors ) )
   {
     // Set status is used to add a receptors to the tree. We add either a
     // single receptor, or multiple receptors, depending on wether the
     // entry was a list of dicts or a single dict
     // TODO: implmenent list of dicts case
-    DictionaryDatum dd = getValue< DictionaryDatum >( statusdict, "receptors" );
+    DictionaryDatum dd = getValue< DictionaryDatum >( statusdict, names::receptors );
 
-    add_receptor_( getValue< long >( "comp_idx" ),
-                   getValue< std::string >( "type" ),
-                   getValue< DictionaryDatum >( "params" )
-                 );
+    if( dd->known( names::params ) )
+    {
+      add_receptor_(
+                     getValue< long >( dd, names::comp_idx ),
+                     getValue< std::string >( dd, names::receptor_type ),
+                     getValue< DictionaryDatum >( dd, names::params )
+                   );
+    }
+    else
+    {
+      add_receptor_(
+                     getValue< long >( dd, names::comp_idx ),
+                     getValue< std::string >( dd, names::receptor_type )
+                   );
+    }
   }
 
-
-
+  // we need to initialize the recordables pointers to guarantee that the
+  // recordables of the new compartment will be in the recordables map
+  init_recordables_pointers_();
 }
 
-// void
-// nest::cm_main::add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
-// {
-//   c_tree_.add_compartment( compartment_idx, parent_compartment_idx, compartment_params);
-
-//   // we need to initialize tree pointers because vectors are resized, thus
-//   // moving memory addresses
-//   init_tree_pointers_();
-//   // we need to initialize the recordables pointers to guarantee that the
-//   // recordables of the new compartment will be in the recordables map
-//   init_recordables_pointers_();
-// }
-
-// size_t
 void
-nest::cm_main::add_receptor_( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params )
+nest::cm_main::add_receptor_( const long compartment_idx,
+                              const std::string& type )
+{
+  // create a ringbuffer to collect spikes for the receptor
+  RingBuffer buffer;
+
+  // add the ringbuffer to the global receptor vector
+  const size_t syn_idx = syn_buffers_.size();
+  syn_buffers_.push_back( buffer );
+
+  // add the receptor to the compartment
+  Compartment* compartment = c_tree_.get_compartment( compartment_idx );
+  compartment->compartment_currents.add_synapse( type, syn_idx );
+
+  // we need to initialize the recordables pointers to guarantee that the
+  // recordables of the new synapse will be in the recordables map
+  init_recordables_pointers_();
+}
+void
+nest::cm_main::add_receptor_( const long compartment_idx,
+                              const std::string& type,
+                              const DictionaryDatum& receptor_params )
 {
   // create a ringbuffer to collect spikes for the receptor
   RingBuffer buffer;
@@ -207,9 +228,7 @@ nest::cm_main::add_receptor_( const long compartment_idx, const std::string& typ
 
   // we need to initialize the recordables pointers to guarantee that the
   // recordables of the new synapse will be in the recordables map
-  init_recordables_pointers_();
-
-  // return syn_idx;
+  // init_recordables_pointers_();
 }
 
 /*

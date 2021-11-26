@@ -145,6 +145,16 @@ std::pair< double, double > nest::K::f_numstep( const double v_comp, const doubl
 
 
 // AMPA synapse ////////////////////////////////////////////////////////////////
+nest::AMPA::AMPA( const long syn_index)
+  : e_rev_(0.0)
+  , tau_r_(0.2)
+  , tau_d_(3.0)
+{
+  syn_idx = syn_index;
+
+  double tp = (tau_r_ * tau_d_) / (tau_d_ - tau_r_) * std::log( tau_d_ / tau_r_ );
+  g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
+}
 nest::AMPA::AMPA( const long syn_index, const DictionaryDatum& receptor_params )
   : e_rev_(0.0)
   , tau_r_(0.2)
@@ -203,6 +213,16 @@ std::pair< double, double > nest::AMPA::f_numstep( const double v_comp, const do
 
 
 // GABA synapse ////////////////////////////////////////////////////////////////
+nest::GABA::GABA( const long syn_index )
+  : e_rev_(-80.)
+  , tau_r_(0.2)
+  , tau_d_(10.0)
+{
+  syn_idx = syn_index;
+
+  double tp = (tau_r_ * tau_d_) / (tau_d_ - tau_r_) * std::log( tau_d_ / tau_r_ );
+  g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
+}
 nest::GABA::GABA( const long syn_index, const DictionaryDatum& receptor_params )
   : e_rev_(-80.)
   , tau_r_(0.2)
@@ -261,6 +281,16 @@ std::pair< double, double > nest::GABA::f_numstep( const double v_comp, const do
 
 
 // NMDA synapse ////////////////////////////////////////////////////////////////
+nest::NMDA::NMDA( const long syn_index )
+  : e_rev_(0.)
+  , tau_r_(0.2)
+  , tau_d_(43.0)
+{
+  syn_idx = syn_index;
+
+  double tp = (tau_r_ * tau_d_) / (tau_d_ - tau_r_) * std::log( tau_d_ / tau_r_ );
+  g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
+}
 nest::NMDA::NMDA( const long syn_index, const DictionaryDatum& receptor_params )
   : e_rev_(0.)
   , tau_r_(0.2)
@@ -319,6 +349,23 @@ std::pair< double, double > nest::NMDA::f_numstep( const double v_comp, const do
 
 
 // AMPA_NMDA synapse ///////////////////////////////////////////////////////////
+nest::AMPA_NMDA::AMPA_NMDA( const long syn_index )
+  : e_rev_(0.)
+  , tau_r_AMPA_(0.2)
+  , tau_d_AMPA_(3.0)
+  , tau_r_NMDA_(0.2)
+  , tau_d_NMDA_(43.0)
+  , NMDA_ratio_(2.0)
+{
+  syn_idx = syn_index;
+
+  // AMPA normalization constant
+  double tp = (tau_r_AMPA_ * tau_d_AMPA_) / (tau_d_AMPA_ - tau_r_AMPA_) * std::log( tau_d_AMPA_ / tau_r_AMPA_ );
+  g_norm_AMPA_ = 1. / ( -std::exp( -tp / tau_r_AMPA_ ) + std::exp( -tp / tau_d_AMPA_ ) );
+  // NMDA normalization constant
+  tp = (tau_r_NMDA_ * tau_d_NMDA_) / (tau_d_NMDA_ - tau_r_NMDA_) * std::log( tau_d_NMDA_ / tau_r_NMDA_ );
+  g_norm_NMDA_ = 1. / ( -std::exp( -tp / tau_r_NMDA_ ) + std::exp( -tp / tau_d_NMDA_ ) );
+}
 nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const DictionaryDatum& receptor_params )
   : e_rev_(0.)
   , tau_r_AMPA_(0.2)

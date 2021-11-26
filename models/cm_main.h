@@ -64,16 +64,20 @@ in the standard manner
 .. code-block:: Python
     cm =  nest.Create('cm_main')
 
-users add compartments using the `nest.add_compartment()` function
+compartments can using the `nest.SetStatus()` function
 
 .. code-block:: Python
-    comp = nest.AddCompartment(cm, [compartment index], [parent index],
-                                   [dictionary with compartment params])
+    nest.SetStatus(cm, {"compartments": {"comp_idx": [compartment index],
+                                         "parent_idx": [parent index],
+                                         "params": [dictionary with compartment params])
 
-After all compartments have been added, users can add receptors
+After all compartments have been added, receptors can be added, also using
+`nest.SetStatus()`
 
 .. code-block:: Python
-    recept = nest.AddReceptor(cm, [compartment index], ['AMPA', 'GABA' or 'AMPA+NMDA'])
+    nest.SetStatus(cm, {"receptors": {"comp_idx": [compartment index],
+                                      "receptor_type": ['AMPA', 'GABA' or 'AMPA_NMDA'],
+                                      "params": [dictionary with receptor params])
 
 Compartment voltages can be recorded. To do so, users create a multimeter in the
 standard manner but specify the to be recorded voltages as
@@ -104,14 +108,14 @@ The following parameters can be set using the `AddCompartment` function
 
 =========== ======= ===========================================================
  C_m        uF      Capacitance of compartment
- g_c        uS      Coupling conductance with parent compartment
+ g_C        uS      Coupling conductance with parent compartment
  g_L        uS      Leak conductance of the compartment
  e_L        mV      Leak reversal of the compartment
 =========== ======= ===========================================================
 
 Ion channels and receptor types for the default model are hardcoded.
 For ion channels, there is a Na-channel and a K-channel. Parameters can be set
-by specifying the following entries in the `AddCompartment` dictionary argument:
+by specifying the following entries in the `SetStatus` dictionary argument:
 
 =========== ======= ===========================================================
  gbar_Na    uS      Maximal conductance Na channel
@@ -170,24 +174,18 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
-  /*
-  Function to a compartment to the tree, so that the new compartment has the
-  compartment specified by ``parent_compartment_idx`` as parent. The parent
-  has to be in the tree, otherwise an error will be raised.
-  */
-  // void add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params ) override;
-  /*
-  Function to a add a receptor to a compartment. Returns the index of the
-  receptor in the receptor stack.
-  */
-  void add_receptor_( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params );// override;
-
 private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void init_tree_pointers_();
   void init_syn_pointers_();
   void init_recordables_pointers_();
+
+  void add_receptor_( const long compartment_idx,
+                      const std::string& type );
+  void add_receptor_( const long compartment_idx,
+                      const std::string& type,
+                      const DictionaryDatum& receptor_params );
 
   void calibrate();
 

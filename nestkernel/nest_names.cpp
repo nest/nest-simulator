@@ -591,6 +591,15 @@ const Name y_1( "y_1" );
 
 const Name z( "z" );
 const Name z_connected( "z_connected" );
+
+const Name compartments( "compartments" );
+const Name comp_idx( "comp_idx" );
+const Name parent_idx( "parent_idx" );
+const Name params( "params" );
+
+const Name e_L( "e_L" );
+const Name g_C( "g_C" );
+
 } // namespace names
 
 } // namespace nest

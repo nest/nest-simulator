@@ -33,7 +33,7 @@ nest.SetKernelStatus(dict(resolution=.1))
 soma_params = {
     # passive parameters
     'C_m': 89.245535,           # [pF] Capacitance
-    'g_c': 0.0,                 # soma has no parent
+    'g_C': 0.0,                 # soma has no parent
     'g_L': 8.924572508,         # [nS] Leak conductance
     'e_L': -75.0,               # [mV] leak reversal
     # ion channel params
@@ -45,7 +45,7 @@ soma_params = {
 dend_params_passive = {
     # passive parameters
     'C_m': 1.929929,
-    'g_c': 1.255439494,
+    'g_C': 1.255439494,
     'g_L': 0.192992878,
     'e_L': -75.0,
     # by default, active conducances are set to zero, so we don't need to specify
@@ -54,7 +54,7 @@ dend_params_passive = {
 dend_params_active = {
     # passive parameters
     'C_m': 1.929929,            # [pF] Capacitance
-    'g_c': 1.255439494,         # [nS] Coupling conductance to parent (soma here)
+    'g_C': 1.255439494,         # [nS] Coupling conductance to parent (soma here)
     'g_L': 0.192992878,         # [nS] Leak conductance
     'e_L': -70.0,               # [mV] leak reversal
     # ion channel params
@@ -66,23 +66,27 @@ dend_params_active = {
 
 # create a neuron model with a passive dendritic compartment
 cm_pas = nest.Create('cm_main')
-nest.AddCompartment(cm_pas, 0, -1, soma_params)
-nest.AddCompartment(cm_pas, 1, 0, dend_params_passive)
+nest.SetStatus(cm_pas, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": soma_params}})
+nest.SetStatus(cm_pas, {"compartments": {"comp_idx": 1, "parent_idx":  0, "params": dend_params_passive}})
 # create a neuron model with an active dendritic compartment
 cm_act = nest.Create('cm_main')
-nest.AddCompartment(cm_act, 0, -1, soma_params)
-nest.AddCompartment(cm_act, 1, 0, dend_params_active)
+nest.SetStatus(cm_act, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": soma_params}})
+nest.SetStatus(cm_act, {"compartments": {"comp_idx": 1, "parent_idx":  0, "params": dend_params_active}})
 
 # set spike thresholds
 nest.SetStatus(cm_pas, {'V_th': -50.})
 nest.SetStatus(cm_act, {'V_th': -50.})
 
 # add somatic and dendritic receptor to passive dendrite model
-syn_idx_soma_pas = nest.AddReceptor(cm_pas, 0, "AMPA_NMDA")
-syn_idx_dend_pas = nest.AddReceptor(cm_pas, 1, "AMPA_NMDA")
+nest.SetStatus(cm_pas, {"receptors": {"comp_idx": 0, "receptor_type": "AMPA_NMDA", "params": {}}})
+nest.SetStatus(cm_pas, {"receptors": {"comp_idx": 1, "receptor_type": "AMPA_NMDA"}})
+syn_idx_soma_pas = 0
+syn_idx_dend_pas = 1
 # add somatic and dendritic receptor to active dendrite model
-syn_idx_soma_act = nest.AddReceptor(cm_act, 0, "AMPA_NMDA")
-syn_idx_dend_act = nest.AddReceptor(cm_act, 1, "AMPA_NMDA")
+nest.SetStatus(cm_act, {"receptors": {"comp_idx": 0, "receptor_type": "AMPA_NMDA"}})
+nest.SetStatus(cm_act, {"receptors": {"comp_idx": 1, "receptor_type": "AMPA_NMDA"}})
+syn_idx_soma_act = 0
+syn_idx_dend_act = 1
 
 # create a two spike generators
 sg_soma = nest.Create('spike_generator', 1, {'spike_times': [10.,13.,16.]})

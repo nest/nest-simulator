@@ -74,6 +74,13 @@ nest::Compartment::calibrate()
     v_comp = el;
     compartment_currents.calibrate();
 
+    const double dt = Time::get_resolution().get_ms();
+    ca__div__dt = ca / dt;
+    gl__div__2 = gl / 2.;
+    gg0 = ca__div__dt + gl__div__2;
+    gc__div__2 = gc / 2.;
+    gl__times__el = gl * el;
+
     // initialize the buffer
     currents.clear();
 }
@@ -97,35 +104,36 @@ nest::Compartment::construct_matrix_element( const long lag )
     const double dt = Time::get_resolution().get_ms();
 
     // matrix diagonal element
-    gg = ca / dt + gl / 2.;
+    gg = gg0;
+
 
     if( parent != nullptr )
     {
-        gg += gc / 2.;
+        gg += gc__div__2;
         // matrix off diagonal element
-        hh = -gc / 2.;
+        hh = -gc__div__2;
     }
 
     for( auto child_it = children.begin();
          child_it != children.end();
          ++child_it )
     {
-        gg += (*child_it).gc / 2.;
+        gg += (*child_it).gc__div__2;
     }
 
     // right hand side
-    ff = ca / dt * v_comp - gl * (v_comp / 2. - el);
+    ff = (ca__div__dt - gl__div__2) * v_comp + gl__times__el;
 
     if( parent != nullptr )
     {
-        ff -= gc * (v_comp - parent->v_comp) / 2.;
+        ff -= gc__div__2 * (v_comp - parent->v_comp);
     }
 
     for( auto child_it = children.begin();
          child_it != children.end();
          ++child_it )
     {
-        ff -= (*child_it).gc * (v_comp - (*child_it).v_comp) / 2.;
+        ff -= (*child_it).gc__div__2 * (v_comp - (*child_it).v_comp);
     }
 
     // add all currents to compartment

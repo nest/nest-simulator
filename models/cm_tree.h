@@ -72,6 +72,12 @@ public:
     double gc; // coupling conductance with parent (meaningless if root) [uS]
     double gl; // leak conductance of compartment [uS]
     double el; // leak current reversal potential [mV]
+    // auxiliary variables for efficienchy
+    double gg0;
+    double ca__div__dt;
+    double gl__div__2;
+    double gc__div__2;
+    double gl__times__el;
     // for numerical integration
     double ff;
     double gg;

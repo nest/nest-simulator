@@ -411,7 +411,7 @@ def lambertwm1(x):
     return sp.lambertw(x, k=-1 if x < 0 else 0).real
 
 
-class Logger(object):
+class Logger:
     """Logger context manager used to properly log memory and timing
     information from network simulations.
 

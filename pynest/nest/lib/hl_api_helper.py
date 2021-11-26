@@ -595,7 +595,7 @@ def get_parameters_hierarchical_addressing(nc, params):
     return result
 
 
-class SuppressedDeprecationWarning(object):
+class SuppressedDeprecationWarning:
     """
     Context manager turning off deprecation warnings for given methods.
 

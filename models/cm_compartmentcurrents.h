@@ -281,7 +281,7 @@ public:
   ~CompartmentCurrents(){};
 
   void calibrate(){
-    // calibrateialization of the ion channels
+    // calibrate ion channels
     Na_chan_.calibrate();
     K_chan_.calibrate();
 

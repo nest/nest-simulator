@@ -66,7 +66,7 @@ public:
   explicit K( const DictionaryDatum& channel_params );
   ~K(){};
 
-  // calibrateialization
+  // calibrate initialization
   void calibrate(){n_K_ = 0.0;};
   void append_recordables(std::map< Name, double* >* recordables,
                           const long compartment_idx);

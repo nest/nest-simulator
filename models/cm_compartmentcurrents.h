@@ -179,7 +179,7 @@ public:
   NMDA(const long syn_index, const DictionaryDatum& receptor_params);
   ~NMDA(){};
 
-  // calibrateialization of the state variables
+  // calibrate state variables
   void calibrate(){
     g_r_NMDA_ = 0.; g_d_NMDA_ = 0.;
     b_spikes_->clear();

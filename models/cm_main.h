@@ -86,7 +86,7 @@ using the syntax '{state_variable_name}{compartment_index}'. For receptor state
 variables, use the receptor index '{state_variable_name}{receptor_index}' i.e.
 
 .. code-block:: Python
-    mm = nest.Create('multimeter', 1, {'record_from': ['v_comp{compartment_index]'}, ...})
+    mm = nest.Create('multimeter', 1, {'record_from': ['v_comp[compartment_index]'}, ...})
 
 Current generators can be connected to the model. In this case, the receptor
 type is the [compartment index], i.e.

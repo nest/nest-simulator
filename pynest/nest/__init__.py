@@ -100,6 +100,9 @@ class NestModule(types.ModuleType):
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
         self.__all__ = list(set(_api))
+        # Block setting of unknown attributes
+        type(self).__setattr__ = _setattr_error
+
 
     def set(self, **kwargs):
         return self.SetKernelStatus(kwargs)
@@ -397,6 +400,11 @@ class NestModule(types.ModuleType):
     _readonly_kernel_attrs = builtins.set(
         k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly
     )
+
+
+def _setattr_error(self, attr, val):
+    raise AttributeError(f"module 'nest' has no attribute '{attr}'")
+
 
 
 def _rel_import_star(module, import_module_name):

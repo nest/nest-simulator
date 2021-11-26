@@ -403,7 +403,16 @@ class NestModule(types.ModuleType):
 
 
 def _setattr_error(self, attr, val):
-    raise AttributeError(f"module 'nest' has no attribute '{attr}'")
+    err = AttributeError(f"can't set attribute '{attr}' on module 'nest'")
+    try:
+        cls_attr = getattr(type(self), attr)
+    except AttributeError:
+        raise err from None
+    else:
+        if hasattr(cls_attr, "__set__"):
+            cls_attr.__set__(self, val)
+        else:
+            raise err
 
 
 

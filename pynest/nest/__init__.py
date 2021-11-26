@@ -104,7 +104,6 @@ class NestModule(types.ModuleType):
         # Block setting of unknown attributes
         type(self).__setattr__ = _setattr_error
 
-
     def set(self, **kwargs):
         return self.SetKernelStatus(kwargs)
 

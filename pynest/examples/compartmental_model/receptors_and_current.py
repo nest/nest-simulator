@@ -55,15 +55,12 @@ nest.SetStatus(cm, {'compartments': {"comp_idx": 2, "parent_idx":  0, "params": 
 nest.SetStatus(cm, {'V_th': -50.})
 
 # add GABA receptor in compartment 0 (soma)
-# syn_idx_GABA = nest.AddReceptor(cm, 0, "GABA", {})
 nest.SetStatus(cm, {'receptors': {"comp_idx": 0, "receptor_type": "GABA"}})
 syn_idx_GABA = 0
 # add AMPA receptor in compartment 1
-# syn_idx_AMPA = nest.AddReceptor(cm, 1, "AMPA", {})
 nest.SetStatus(cm, {'receptors': {"comp_idx": 1, "receptor_type": "AMPA", "params": {}}})
 syn_idx_AMPA = 1
 # add AMPA+NMDA receptor in compartment 2
-# syn_idx_NMDA = nest.AddReceptor(cm, 2, "AMPA_NMDA", {})
 nest.SetStatus(cm, {'receptors': {"comp_idx": 2, "receptor_type": "AMPA_NMDA"}})
 syn_idx_NMDA = 2
 
@@ -80,11 +77,11 @@ nest.Connect(sg2, cm, syn_spec={
 nest.Connect(sg3, cm, syn_spec={
     'synapse_model': 'static_synapse', 'weight': .3, 'delay': 0.5, 'receptor_type': syn_idx_GABA})
 
-# # # create a current generator
-# dcg = nest.Create('dc_generator', {'amplitude': 1.})
-# # connect the current generator to compartment 1
-# nest.Connect(dcg, cm, syn_spec={
-#     'synapse_model': 'static_synapse', 'weight': 1., 'delay': 0.1, 'receptor_type': 1})
+# create a current generator
+dcg = nest.Create('dc_generator', {'amplitude': 1.})
+# connect the current generator to compartment 1
+nest.Connect(dcg, cm, syn_spec={
+    'synapse_model': 'static_synapse', 'weight': 1., 'delay': 0.1, 'receptor_type': 1})
 
 # create a multimeter to measure the three voltages
 mm = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp2'], 'interval': .1})

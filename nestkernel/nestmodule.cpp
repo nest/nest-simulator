@@ -883,37 +883,6 @@ NestModule::ResetKernelFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-void
-NestModule::AddCompartment_lllD_Function::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 4 );
-
-  const DictionaryDatum compartment_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-  const long parent_compartment_idx = getValue< long >( i->OStack.pick( 1 ) );
-  const long compartment_idx = getValue< long >( i->OStack.pick( 2 ) );
-  const index node_id = getValue< long >( i->OStack.pick( 3 ) );
-  add_compartment( node_id, compartment_idx, parent_compartment_idx, compartment_params );
-
-  i->OStack.pop( 4 );
-  i->EStack.pop();
-}
-
-void
-NestModule::AddReceptor_llsD_Function::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 4 );
-
-  const DictionaryDatum receptor_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
-  const std::string type = getValue< std::string >( i->OStack.pick( 1 ) );
-  const long compartment_idx = getValue< long >( i->OStack.pick( 2 ) );
-  const index node_id = getValue< long >( i->OStack.pick( 3 ) );
-  const size_t syn_idx = add_receptor( node_id, compartment_idx, type, receptor_params);
-
-  i->OStack.pop( 4 );
-  i->OStack.push( syn_idx );
-  i->EStack.pop();
-}
-
 // Disconnect for nodecollection nodecollection conn_spec syn_spec
 void
 NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const

@@ -230,10 +230,6 @@ public:
   bool have_nodes_changed() const;
   void set_have_nodes_changed( const bool changed );
 
-  void add_compartment( const index node_id, const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params );
-
-  size_t add_receptor( const index node_id, const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params  );
-
 private:
   /**
    * Initialize the network data structures.

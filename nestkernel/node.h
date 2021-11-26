@@ -823,9 +823,6 @@ public:
    */
   DeprecationWarning deprecation_warning;
 
-  virtual void add_compartment( const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params ){ assert( false ); };
-  virtual size_t add_receptor( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params ){ assert( false ); };
-
 private:
   void set_node_id_( index ); //!< Set global node id
 

@@ -803,33 +803,4 @@ void
 NodeManager::set_status( const DictionaryDatum& )
 {
 }
-
-void
-NodeManager::add_compartment( const index node_id, const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
-{
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    Node* node = local_nodes_[ tid ].get_node_by_node_id( node_id );
-    if ( node != 0 )
-    {
-      ( *node ).add_compartment( compartment_idx, parent_compartment_idx, compartment_params );
-    }
-  }
-}
-
-size_t
-NodeManager::add_receptor( const index node_id, const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params )
-{
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    Node* node = local_nodes_[ tid ].get_node_by_node_id( node_id );
-    if ( node != 0 )
-    {
-      return ( *node ).add_receptor( compartment_idx, type, receptor_params );
-    }
-  }
-
-  return 0;
-}
-
 }

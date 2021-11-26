@@ -28,7 +28,7 @@ namespace nest
 
 template <>
 void
-DynamicRecordablesMap< cm_main >::create( cm_main& host)
+DynamicRecordablesMap< cm_main >::create( cm_main& host )
 {
 }
 
@@ -74,49 +74,48 @@ nest::cm_main::init_buffers_()
 }
 
 
+// CURRENT:
+// n_neat = nest.Create('cm_main')
+// nest.SetStatus(n_neat, {'V_th': 100.})
+// nest.AddCompartment(n_neat, 0, -1, SP)
 
-        // CURRENT:
-        // n_neat = nest.Create('cm_main')
-        // nest.SetStatus(n_neat, {'V_th': 100.})
-        // nest.AddCompartment(n_neat, 0, -1, SP)
 
+//     PROPOSED:
 
-        //     PROPOSED:
+//         SP = {
+//     'C_m': 0.1,     # [pF] Capacitance
+//     'g_c': 0.1,     # [nS] Coupling conductance to parent (soma here)
+//     'g_L': 0.1,     # [nS] Leak conductance
+//     'e_L': -70.0    # [mV] leak reversal
+// }
 
-        //         SP = {
-        //     'C_m': 0.1,     # [pF] Capacitance
-        //     'g_c': 0.1,     # [nS] Coupling conductance to parent (soma here)
-        //     'g_L': 0.1,     # [nS] Leak conductance
-        //     'e_L': -70.0    # [mV] leak reversal
-        // }
+// n_neat = nest.Create('cm_main', 1, {
+//         'V_th': 100.0)
 
-        // n_neat = nest.Create('cm_main', 1, {
-        //         'V_th': 100.0)
+// n_neat.SetStatus({
+//         "compartments": [
+//             { # comp_idx implicitly by index in list (?)
+//             "parent": -1,
+//             "params": SP},
+//             {comp2}
+//             {comp3}
+//         ]})
 
-        // n_neat.SetStatus({
-        //         "compartments": [
-        //             { # comp_idx implicitly by index in list (?)
-        //             "parent": -1,
-        //             "params": SP},
-        //             {comp2}
-        //             {comp3}
-        //         ]})
+// n_neat.SetStatus({
+//     "receptors": [
+//         {"comp_idx": 2,
+//         "receptor_type": "AMPA_NMDA",
+//         "my_receptor_type": "my_fast_AMPA_NMDA"
+//         ],
+//         ...})
 
-        // n_neat.SetStatus({
-        //     "receptors": [
-        //         {"comp_idx": 2,
-        //         "receptor_type": "AMPA_NMDA",
-        //         "my_receptor_type": "my_fast_AMPA_NMDA"
-        //         ],
-        //         ...})
+// receptor_names_to_idx = n_neat.GetStatus("receptor_idx")
 
-        // receptor_names_to_idx = n_neat.GetStatus("receptor_idx")
+// # receptor_names_to_idx = {"my_fast_AMPA_NMDA": 0,
+// #                          "my_slow_AMPA": 1,
+// #                          ...}
 
-        // # receptor_names_to_idx = {"my_fast_AMPA_NMDA": 0,
-        // #                          "my_slow_AMPA": 1,
-        // #                          ...}
-
-        // nest.Connect(pre, post, syn_spec={"receptor_id": receptor_names_to_idx["my_slow_AMPA"]})
+// nest.Connect(pre, post, syn_spec={"receptor_id": receptor_names_to_idx["my_slow_AMPA"]})
 
 
 void
@@ -130,28 +129,23 @@ nest::cm_main::set_status( const DictionaryDatum& statusdict )
   has the compartment specified by "parent_idx" as parent. The parent
   has to be in the tree, otherwise an error will be raised.
   */
-  if( statusdict->known( names::compartments ) )
+  if ( statusdict->known( names::compartments ) )
   {
     // Set status is used to add a compartment to the tree. We add either a
     // single compartment, or multiple compartments, depending on wether the
     // entry was a list of dicts or a single dict
     // TODO: implmenent list of dicts case
-    DictionaryDatum dd = getValue< DictionaryDatum >( statusdict, names::compartments);
+    DictionaryDatum dd = getValue< DictionaryDatum >( statusdict, names::compartments );
 
-    if( dd->known( names::params ) )
+    if ( dd->known( names::params ) )
     {
-      c_tree_.add_compartment(
-                               getValue< long >( dd, names::comp_idx ),
-                               getValue< long >( dd, names::parent_idx ),
-                               getValue< DictionaryDatum >( dd, names::params )
-                             );
+      c_tree_.add_compartment( getValue< long >( dd, names::comp_idx ),
+        getValue< long >( dd, names::parent_idx ),
+        getValue< DictionaryDatum >( dd, names::params ) );
     }
     else
     {
-      c_tree_.add_compartment(
-                               getValue< long >( dd, names::comp_idx ),
-                               getValue< long >( dd, names::parent_idx )
-                             );
+      c_tree_.add_compartment( getValue< long >( dd, names::comp_idx ), getValue< long >( dd, names::parent_idx ) );
     }
   }
 
@@ -159,7 +153,7 @@ nest::cm_main::set_status( const DictionaryDatum& statusdict )
   // moving memory addresses
   init_tree_pointers_();
 
-  if( statusdict->known( names::receptors ) )
+  if ( statusdict->known( names::receptors ) )
   {
     // Set status is used to add a receptors to the tree. We add either a
     // single receptor, or multiple receptors, depending on wether the
@@ -167,20 +161,15 @@ nest::cm_main::set_status( const DictionaryDatum& statusdict )
     // TODO: implmenent list of dicts case
     DictionaryDatum dd = getValue< DictionaryDatum >( statusdict, names::receptors );
 
-    if( dd->known( names::params ) )
+    if ( dd->known( names::params ) )
     {
-      add_receptor_(
-                     getValue< long >( dd, names::comp_idx ),
-                     getValue< std::string >( dd, names::receptor_type ),
-                     getValue< DictionaryDatum >( dd, names::params )
-                   );
+      add_receptor_( getValue< long >( dd, names::comp_idx ),
+        getValue< std::string >( dd, names::receptor_type ),
+        getValue< DictionaryDatum >( dd, names::params ) );
     }
     else
     {
-      add_receptor_(
-                     getValue< long >( dd, names::comp_idx ),
-                     getValue< std::string >( dd, names::receptor_type )
-                   );
+      add_receptor_( getValue< long >( dd, names::comp_idx ), getValue< std::string >( dd, names::receptor_type ) );
     }
   }
 
@@ -190,8 +179,7 @@ nest::cm_main::set_status( const DictionaryDatum& statusdict )
 }
 
 void
-nest::cm_main::add_receptor_( const long compartment_idx,
-                              const std::string& type )
+nest::cm_main::add_receptor_( const long compartment_idx, const std::string& type )
 {
   // create a ringbuffer to collect spikes for the receptor
   RingBuffer buffer;
@@ -210,8 +198,8 @@ nest::cm_main::add_receptor_( const long compartment_idx,
 }
 void
 nest::cm_main::add_receptor_( const long compartment_idx,
-                              const std::string& type,
-                              const DictionaryDatum& receptor_params )
+  const std::string& type,
+  const DictionaryDatum& receptor_params )
 {
   // create a ringbuffer to collect spikes for the receptor
   RingBuffer buffer;
@@ -260,25 +248,24 @@ nest::cm_main::init_recordables_pointers_()
   */
   std::map< Name, double* > recordables = c_tree_.get_recordables();
 
-  for (auto rec_it = recordables.begin(); rec_it != recordables.end(); rec_it++)
+  for ( auto rec_it = recordables.begin(); rec_it != recordables.end(); rec_it++ )
   {
     // check if name is already in recordables map
-    auto recname_it = find(recordables_names.begin(), recordables_names.end(), rec_it->first);
-    if( recname_it == recordables_names.end() )
+    auto recname_it = find( recordables_names.begin(), recordables_names.end(), rec_it->first );
+    if ( recname_it == recordables_names.end() )
     {
       // recordable name is not yet in map, we need to add it
       recordables_names.push_back( rec_it->first );
       recordables_values.push_back( rec_it->second );
       const long rec_idx = recordables_values.size() - 1;
       // add the recordable to the recordable_name -> recordable_index map
-      recordablesMap_.insert( rec_it->first,
-                              DataAccessFunctor< cm_main >( *this, rec_idx ) );
+      recordablesMap_.insert( rec_it->first, DataAccessFunctor< cm_main >( *this, rec_idx ) );
     }
     else
     {
       // recordable name is in map, we update the pointer to the recordable
       long index = recname_it - recordables_names.begin();
-      recordables_values[index] = rec_it->second;
+      recordables_values[ index ] = rec_it->second;
     }
   }
 }
@@ -329,16 +316,14 @@ nest::cm_main::handle( SpikeEvent& e )
 {
   if ( e.get_weight() < 0 )
   {
-    throw BadProperty(
-      "Synaptic weights must be positive." );
+    throw BadProperty( "Synaptic weights must be positive." );
   }
 
   assert( e.get_delay_steps() > 0 );
   assert( ( e.get_rport() >= 0 ) && ( ( size_t ) e.get_rport() < syn_buffers_.size() ) );
 
   syn_buffers_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps(kernel().simulation_manager.get_slice_origin() ),
-    e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
 }
 
 void

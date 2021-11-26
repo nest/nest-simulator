@@ -130,18 +130,6 @@ get_node_status( const index node_id )
 }
 
 void
-add_compartment( const index node_id, const long compartment_idx, const long parent_compartment_idx, const DictionaryDatum& compartment_params )
-{
-  kernel().node_manager.add_compartment( node_id, compartment_idx, parent_compartment_idx, compartment_params );
-}
-
-size_t
-add_receptor( const index node_id, const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params  )
-{
-  return kernel().node_manager.add_receptor( node_id, compartment_idx, type, receptor_params );
-}
-
-void
 set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
 {
   DictionaryDatum conn_dict = conn.get_dict();

@@ -181,11 +181,8 @@ private:
   void init_syn_pointers_();
   void init_recordables_pointers_();
 
-  void add_receptor_( const long compartment_idx,
-                      const std::string& type );
-  void add_receptor_( const long compartment_idx,
-                      const std::string& type,
-                      const DictionaryDatum& receptor_params );
+  void add_receptor_( const long compartment_idx, const std::string& type );
+  void add_receptor_( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params );
 
   void calibrate();
 
@@ -195,7 +192,11 @@ private:
   std::vector< RingBuffer > syn_buffers_;
 
   // To record variables with DataAccessFunctor
-  double get_state_element( size_t elem ){ return *recordables_values[elem]; };
+  double
+  get_state_element( size_t elem )
+  {
+    return *recordables_values[ elem ];
+  };
 
   // The next classes need to be friends to access the State_ class/member
   friend class DataAccessFunctor< cm_main >;
@@ -241,7 +242,7 @@ inline port
 cm_main::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   // if get_compartment returns nullptr, raise the error
-  if ( !c_tree_.get_compartment( long(receptor_type), c_tree_.get_root(), 0 ) )
+  if ( !c_tree_.get_compartment( long( receptor_type ), c_tree_.get_root(), 0 ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

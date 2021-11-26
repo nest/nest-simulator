@@ -54,15 +54,15 @@ class TestNestGetSet(unittest.TestCase):
         kst = nest.get("keep_source_table")
         self.assertEqual(type(nest).keep_source_table._default, kst, "get value not equal to default after ResetKernel")
         self.assertEqual(kst, nest.keep_source_table, 'kernel attribute value not equal to get value')
-        with self.assertRaises(AttributeError, "no AttributeError for unknown attribute"):
+        with self.assertRaises(AttributeError, msg="no AttributeError for unknown attribute"):
             nest.accessAbsolutelyUnknownThingOnNestModule
-        with self.assertRaises(KeyError, "no KeyError for unknown get key"):
+        with self.assertRaises(KeyError, msg="no KeyError for unknown get key"):
             nest.get("accessAbsolutelyUnknownKernelAttribute")
 
     def test_set(self):
-        with self.assertRaises(AttributeError, "arbitrary attribute assignment passed"):
+        with self.assertRaises(AttributeError, msg="arbitrary attribute assignment passed"):
             nest.absolutelyUnknownThingOnNestModule = 5
-        with self.assertRaises(AttributeError, "known attribute assignment passed"):
+        with self.assertRaises(AttributeError, msg="known attribute assignment passed"):
             nest.get = 5
         nest.set(total_num_virtual_procs=2)
         self.assertEqual(2, nest.total_num_virtual_procs, 'set failed')

@@ -139,7 +139,7 @@ public:
   GABA(const long syn_index, const DictionaryDatum& receptor_params);
   ~GABA(){};
 
-  // calibrateialization of the state variables
+  // calibrate state variables
   void calibrate()
   {
     g_r_GABA_ = 0.; g_d_GABA_ = 0.;

@@ -285,7 +285,7 @@ public:
     Na_chan_.calibrate();
     K_chan_.calibrate();
 
-    // calibrateialization of AMPA synapses
+    // calibrate AMPA synapses
     for( auto syn_it = AMPA_syns_.begin();
          syn_it != AMPA_syns_.end();
          ++syn_it )

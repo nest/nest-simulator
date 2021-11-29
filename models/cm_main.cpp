@@ -127,60 +127,101 @@ nest::cm_main::set_status( const DictionaryDatum& statusdict )
   /*
   Add a compartment (or compartments) to the tree, so that the new compartment
   has the compartment specified by "parent_idx" as parent. The parent
-  has to be in the tree, otherwise an error will be raised.
+  has to be in the tree, otherwise an error will be raised.  We add either a
+  single compartment or multiple compartments, depending on wether the
+  entry was a list of dicts or a single dict
   */
   if ( statusdict->known( names::compartments ) )
   {
-    // Set status is used to add a compartment to the tree. We add either a
-    // single compartment, or multiple compartments, depending on wether the
-    // entry was a list of dicts or a single dict
-    // TODO: implmenent list of dicts case
-    DictionaryDatum dd = getValue< DictionaryDatum >( statusdict, names::compartments );
+    Datum* dat = ( *statusdict )[ names::compartments ].datum();
+    ArrayDatum* ad = dynamic_cast< ArrayDatum* >( dat );
+    DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dat );
 
-    if ( dd->known( names::params ) )
+    if ( ad != nullptr )
     {
-      c_tree_.add_compartment( getValue< long >( dd, names::comp_idx ),
-        getValue< long >( dd, names::parent_idx ),
-        getValue< DictionaryDatum >( dd, names::params ) );
+      // A list of compartments is provided, we add them all to the tree
+      for ( Token* tt = ( *ad ).begin(); tt != ( *ad ).end(); ++tt)
+      {
+        // cast the Datum pointer stored within token dynamically to a
+        // DictionaryDatum pointer
+        add_compartment_( *dynamic_cast< DictionaryDatum* >( tt->datum() ) );
+      }
+    }
+    else if ( dd != nullptr )
+    {
+      // A single compartment is provided, we add add it to the tree
+      add_compartment_( *dd );
     }
     else
     {
-      c_tree_.add_compartment( getValue< long >( dd, names::comp_idx ), getValue< long >( dd, names::parent_idx ) );
+      throw BadProperty(
+        "\'compartments\' entry could not be identified, provide dict of "
+        "parameters for a single compartment, or list of parameter dicts for "
+        "multiple compartments" );
     }
   }
 
-  // we need to initialize tree pointers because vectors are resized, thus
-  // moving memory addresses
-  init_tree_pointers_();
-
+  /*
+  Add a receptor (or receptors) to the tree, so that the new receptor
+  targets the compartment specified by "comp_idx". The compartment
+  has to be in the tree, otherwise an error will be raised.  We add either a
+  single receptor or multiple receptors, depending on wether the
+  entry was a list of dicts or a single dict
+  */
   if ( statusdict->known( names::receptors ) )
   {
-    // Set status is used to add a receptors to the tree. We add either a
-    // single receptor, or multiple receptors, depending on wether the
-    // entry was a list of dicts or a single dict
-    // TODO: implmenent list of dicts case
-    DictionaryDatum dd = getValue< DictionaryDatum >( statusdict, names::receptors );
+    Datum* dat = ( *statusdict )[ names::receptors ].datum();
+    ArrayDatum* ad = dynamic_cast< ArrayDatum* >( dat );
+    DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dat );
 
-    if ( dd->known( names::params ) )
+    if ( ad != nullptr )
     {
-      add_receptor_( getValue< long >( dd, names::comp_idx ),
-        getValue< std::string >( dd, names::receptor_type ),
-        getValue< DictionaryDatum >( dd, names::params ) );
+      for ( Token* tt = ( *ad ).begin(); tt != ( *ad ).end(); ++tt)
+      {
+        // cast the Datum pointer stored within token dynamically to a
+        // DictionaryDatum pointer
+        add_receptor_( *dynamic_cast< DictionaryDatum* >( tt->datum() ) );
+      }
+    }
+    else if ( dd != nullptr )
+    {
+      add_receptor_( *dd );
     }
     else
     {
-      add_receptor_( getValue< long >( dd, names::comp_idx ), getValue< std::string >( dd, names::receptor_type ) );
+       throw BadProperty(
+        "\'receptors\' entry could not be identified, provide dict of "
+        "parameters for a single receptor, or list of parameter dicts for "
+        "multiple receptors" );
     }
   }
-
-  // we need to initialize the recordables pointers to guarantee that the
-  // recordables of the new compartment will be in the recordables map
+  /*
+  we need to initialize the recordables pointers to guarantee that the
+  recordables of the new compartments and/or receptors will be in the
+  recordables map
+  */
   init_recordables_pointers_();
 }
-
 void
-nest::cm_main::add_receptor_( const long compartment_idx, const std::string& type )
+nest::cm_main::add_compartment_( DictionaryDatum& dd )
 {
+  if ( dd->known( names::params ) )
+  {
+    c_tree_.add_compartment( getValue< long >( dd, names::comp_idx ),
+      getValue< long >( dd, names::parent_idx ),
+      getValue< DictionaryDatum >( dd, names::params ) );
+  }
+  else
+  {
+    c_tree_.add_compartment( getValue< long >( dd, names::comp_idx ), getValue< long >( dd, names::parent_idx ) );
+  }
+}
+void
+nest::cm_main::add_receptor_( DictionaryDatum& dd )
+{
+  const long compartment_idx = getValue< long >( dd, names::comp_idx );
+  const std::string receptor_type = getValue< std::string >( dd, names::receptor_type );
+
   // create a ringbuffer to collect spikes for the receptor
   RingBuffer buffer;
 
@@ -190,31 +231,19 @@ nest::cm_main::add_receptor_( const long compartment_idx, const std::string& typ
 
   // add the receptor to the compartment
   Compartment* compartment = c_tree_.get_compartment( compartment_idx );
-  compartment->compartment_currents.add_synapse( type, syn_idx );
-
-  // we need to initialize the recordables pointers to guarantee that the
-  // recordables of the new synapse will be in the recordables map
-  init_recordables_pointers_();
-}
-void
-nest::cm_main::add_receptor_( const long compartment_idx,
-  const std::string& type,
-  const DictionaryDatum& receptor_params )
-{
-  // create a ringbuffer to collect spikes for the receptor
-  RingBuffer buffer;
-
-  // add the ringbuffer to the global receptor vector
-  const size_t syn_idx = syn_buffers_.size();
-  syn_buffers_.push_back( buffer );
-
-  // add the receptor to the compartment
-  Compartment* compartment = c_tree_.get_compartment( compartment_idx );
-  compartment->compartment_currents.add_synapse( type, syn_idx, receptor_params );
-
-  // we need to initialize the recordables pointers to guarantee that the
-  // recordables of the new synapse will be in the recordables map
-  // init_recordables_pointers_();
+  if ( dd->known( names::params ) )
+  {
+    compartment->compartment_currents.add_synapse(
+      receptor_type,
+      syn_idx,
+      getValue< DictionaryDatum >( dd, names::params ) );
+  }
+  else
+  {
+    compartment->compartment_currents.add_synapse(
+      receptor_type,
+      syn_idx);
+  }
 }
 
 /*

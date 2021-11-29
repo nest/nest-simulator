@@ -665,6 +665,48 @@ class NEASTTestCase(unittest.TestCase):
         self.assertTrue(np.any(events_neat_0['v_comp0'] != soma_params['e_L']))
         self.assertTrue(np.any(events_neat_1['v_comp0'] != soma_params['e_L']))
 
+    def test_setstatus_combinations(self, dt=0.1):
+
+        sg_01 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
+        sg_02 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
+
+        sg_11 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
+        sg_12 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
+
+        # set status with individual calls for each receptor and compartment
+        n_neat_0 = nest.Create('cm_main')
+        nest.SetStatus(n_neat_0, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": SP}})
+        nest.SetStatus(n_neat_0, {"compartments": {"comp_idx": 1, "parent_idx": 0, "params": DP[0]}})
+        nest.SetStatus(n_neat_0, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
+        nest.SetStatus(n_neat_0, {"receptors": {"comp_idx": 1, "receptor_type": "AMPA"}})
+
+        nest.Connect(sg_01, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
+        nest.Connect(sg_02, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
+
+        # set status with single call
+        n_neat_1 = nest.Create('cm_main')
+        nest.SetStatus(n_neat_1, {"compartments": [{"comp_idx": 0, "parent_idx": -1, "params": SP},
+                                                   {"comp_idx": 1, "parent_idx": 0, "params": DP[0]}],
+                                  "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
+                                                {"comp_idx": 1, "receptor_type": "AMPA"}]})
+
+        nest.Connect(sg_11, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
+        nest.Connect(sg_12, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
+
+
+        m_neat_0 = nest.Create('multimeter', 1, {'record_from': ['v_comp0'], 'interval': dt})
+        nest.Connect(m_neat_0, n_neat_0)
+
+        m_neat_1 = nest.Create('multimeter', 1, {'record_from': ['v_comp0'], 'interval': dt})
+        nest.Connect(m_neat_1, n_neat_1)
+
+        nest.Simulate(100.)
+
+        events_neat_0 = nest.GetStatus(m_neat_0, 'events')[0]
+        events_neat_1 = nest.GetStatus(m_neat_1, 'events')[0]
+
+        self.assertTrue(np.allclose(events_neat_0['v_comp0'], events_neat_1['v_comp0']))
+
 
 def suite():
 

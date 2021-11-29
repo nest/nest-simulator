@@ -181,8 +181,8 @@ private:
   void init_syn_pointers_();
   void init_recordables_pointers_();
 
-  void add_receptor_( const long compartment_idx, const std::string& type );
-  void add_receptor_( const long compartment_idx, const std::string& type, const DictionaryDatum& receptor_params );
+  void add_compartment_( DictionaryDatum& dd );
+  void add_receptor_( DictionaryDatum& dd );
 
   void calibrate();
 

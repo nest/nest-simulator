@@ -33,8 +33,6 @@ from .hl_api_info import SetStatus
 from .hl_api_types import NodeCollection, Parameter
 
 __all__ = [
-    'AddCompartment',
-    'AddReceptor',
     'Create',
     'GetLocalNodeCollection',
     'GetNodes',
@@ -201,19 +199,4 @@ def GetLocalNodeCollection(nc):
 
     sps(nc)
     sr("LocalOnly")
-    return spp()
-
-def AddCompartment(node, compartment_idx, parent_compartment_idx, compartment_params):
-    sps(node)
-    sps(compartment_idx)
-    sps(parent_compartment_idx)
-    sps(compartment_params)
-    sr("AddCompartment")
-
-def AddReceptor(node, compartment_idx, type, receptor_params={}):
-    sps(node)
-    sps(compartment_idx)
-    sps(type)
-    sps(receptor_params)
-    sr("AddReceptor")
     return spp()

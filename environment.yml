@@ -29,7 +29,6 @@
 # aimed at NEST developers. You can specify a different name by passing
 # -n my_name to the conda env create command.
 
-name: nest-simulator-dev
 channels:
   - conda-forge
 

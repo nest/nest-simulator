@@ -145,8 +145,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                     assert 10 == st_neuron['SE1']['z_connected']
                     assert 10 == st_neuron['SE2']['z_connected']
 
-                assert 20 == len(
-                    nest.GetConnections(neurons, neurons, syn_model))
+                assert 20 == len(nest.GetConnections(neurons, neurons, syn_model))
                 break
 
 

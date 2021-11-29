@@ -144,6 +144,7 @@ nest::Compartment::construct_matrix_element( const long lag )
 // compartment tree functions //////////////////////////////////////////////////
 nest::CompTree::CompTree()
   : root_( 0, -1 )
+  , size_( 0 )
 {
   compartments_.resize( 0 );
   leafs_.resize( 0 );
@@ -155,22 +156,24 @@ root shoud have -1 as parent index. Add root compartment first.
 Assumes parent of compartment is already added
 */
 void
-nest::CompTree::add_compartment( const long compartment_index, const long parent_index )
+nest::CompTree::add_compartment( const long parent_index )
 {
-  Compartment* compartment = new Compartment( compartment_index, parent_index );
+  Compartment* compartment = new Compartment( size_, parent_index );
   add_compartment( compartment, parent_index );
 };
 void
-nest::CompTree::add_compartment( const long compartment_index,
+nest::CompTree::add_compartment(
   const long parent_index,
   const DictionaryDatum& compartment_params )
 {
-  Compartment* compartment = new Compartment( compartment_index, parent_index, compartment_params );
+  Compartment* compartment = new Compartment( size_, parent_index, compartment_params );
   add_compartment( compartment, parent_index );
 };
 void
 nest::CompTree::add_compartment( Compartment* compartment, const long parent_index )
 {
+  size_++;
+
   if ( parent_index >= 0 )
   {
     Compartment* parent = get_compartment( parent_index );
@@ -227,6 +230,17 @@ nest::CompTree::get_compartment( const long compartment_index, Compartment* comp
   }
 
   return r_compartment;
+}
+/*
+Get the compartment corresponding to the provided index in the tree. Optimized
+trough the use of a pointer vector containing all compartments. Calling this
+function before CompTree::init_pointers() is called will result in a segmentation
+fault
+*/
+nest::Compartment*
+nest::CompTree::get_compartment_opt( const long compartment_idx )
+{
+  return compartments_[ compartment_idx ];
 }
 
 /*
@@ -350,8 +364,7 @@ Return voltage of single compartment voltage, indicated by the compartment_index
 double
 nest::CompTree::get_compartment_voltage( const long compartment_index )
 {
-  const Compartment* compartment = get_compartment( compartment_index );
-  return compartment->v_comp;
+  return compartments_[ compartment_index ]->v_comp;
 }
 
 /*

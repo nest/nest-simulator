@@ -267,13 +267,6 @@ cm_main::get_status( DictionaryDatum& d ) const
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
-// inline void
-// cm_main::set_status( const DictionaryDatum& d )
-// {
-//   updateValue< double >( d, names::V_th, V_th_ );
-//   ArchivingNode::set_status( d );
-// }
-
 } // namespace
 
 #endif /* #ifndef IAF_NEAT_H */

@@ -55,8 +55,8 @@ def create_1dend_1comp(dt=0.1):
     n_neat = nest.Create('cm_main')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": SP}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 1, "parent_idx": 0, "params": DP[0]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
 
     m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1'], 'interval': .1})
     nest.Connect(m_neat, n_neat)
@@ -98,9 +98,9 @@ def create_2dend_1comp(dt=0.1):
     n_neat = nest.Create('cm_main')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": SP}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 1, "parent_idx": 0, "params": DP[0]}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 2, "parent_idx": 0, "params": DP[1]}})
+    nest.SetStatus(n_neat, {"compartments": { "parent_idx": -1, "params": SP}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[1]}})
 
     m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp2'], 'interval': .1})
     nest.Connect(m_neat, n_neat)
@@ -157,9 +157,9 @@ def create_1dend_2comp(dt=0.1):
     n_neat = nest.Create('cm_main')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": SP}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 1, "parent_idx": 0, "params": DP[0]}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 2, "parent_idx": 1, "params": DP[1]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 1, "params": DP[1]}})
 
     m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp2'], 'interval': .1})
     nest.Connect(m_neat, n_neat)
@@ -218,11 +218,11 @@ def create_tdend_4comp(dt=0.1):
     n_neat = nest.Create('cm_main')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": SP}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 1, "parent_idx": 0, "params": DP[0]}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 2, "parent_idx": 1, "params": DP[1]}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 3, "parent_idx": 2, "params": DP[2]}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 4, "parent_idx": 2, "params": DP[3]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 1, "params": DP[1]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 2, "params": DP[2]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 2, "params": DP[3]}})
 
     m_neat = nest.Create('multimeter', 1,
                          {'record_from': ['v_comp%d'%ii for ii in range(5)],
@@ -306,17 +306,17 @@ def create_2tdend_4comp(dt=0.1):
     nest.SetStatus(n_neat, {'V_th': 100.})
 
 
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": SP}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
     # dendrite 1
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 1, "parent_idx": 0, "params": DP[0]}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 2, "parent_idx": 1, "params": DP[1]}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 3, "parent_idx": 2, "params": DP[2]}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 4, "parent_idx": 2, "params": DP[3]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 1, "params": DP[1]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 2, "params": DP[2]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 2, "params": DP[3]}})
     # dendrite 2
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 5, "parent_idx": 0, "params": DP[4]}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 6, "parent_idx": 5, "params": DP[5]}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 7, "parent_idx": 6, "params": DP[6]}})
-    nest.SetStatus(n_neat, {"compartments": {"comp_idx": 8, "parent_idx": 6, "params": DP[7]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[4]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 5, "params": DP[5]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 6, "params": DP[6]}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 6, "params": DP[7]}})
 
     m_neat = nest.Create('multimeter', 1,
                          {'record_from': ['v_comp%d'%ii for ii in range(9)],
@@ -637,10 +637,10 @@ class NEASTTestCase(unittest.TestCase):
         }
 
         n_neat_0 = nest.Create('cm_main')
-        nest.SetStatus(n_neat_0, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": soma_params}})
+        nest.SetStatus(n_neat_0, {"compartments": {"parent_idx": -1, "params": soma_params}})
 
         n_neat_1 = nest.Create('cm_main')
-        nest.SetStatus(n_neat_1, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": soma_params}})
+        nest.SetStatus(n_neat_1, {"compartments": {"parent_idx": -1, "params": soma_params}})
         nest.SetStatus(n_neat_1, {"receptors": {"comp_idx": 0, "receptor_type": "AMPA"}})
         syn_idx = 0
 
@@ -675,8 +675,8 @@ class NEASTTestCase(unittest.TestCase):
 
         # set status with individual calls for each receptor and compartment
         n_neat_0 = nest.Create('cm_main')
-        nest.SetStatus(n_neat_0, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": SP}})
-        nest.SetStatus(n_neat_0, {"compartments": {"comp_idx": 1, "parent_idx": 0, "params": DP[0]}})
+        nest.SetStatus(n_neat_0, {"compartments": {"parent_idx": -1, "params": SP}})
+        nest.SetStatus(n_neat_0, {"compartments": {"parent_idx": 0, "params": DP[0]}})
         nest.SetStatus(n_neat_0, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
         nest.SetStatus(n_neat_0, {"receptors": {"comp_idx": 1, "receptor_type": "AMPA"}})
 
@@ -685,8 +685,8 @@ class NEASTTestCase(unittest.TestCase):
 
         # set status with single call
         n_neat_1 = nest.Create('cm_main')
-        nest.SetStatus(n_neat_1, {"compartments": [{"comp_idx": 0, "parent_idx": -1, "params": SP},
-                                                   {"comp_idx": 1, "parent_idx": 0, "params": DP[0]}],
+        nest.SetStatus(n_neat_1, {"compartments": [{"parent_idx": -1, "params": SP},
+                                                   {"parent_idx": 0, "params": DP[0]}],
                                   "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
                                                 {"comp_idx": 1, "receptor_type": "AMPA"}]})
 

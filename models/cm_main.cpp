@@ -73,51 +73,6 @@ nest::cm_main::init_buffers_()
   ArchivingNode::clear_history();
 }
 
-
-// CURRENT:
-// n_neat = nest.Create('cm_main')
-// nest.SetStatus(n_neat, {'V_th': 100.})
-// nest.AddCompartment(n_neat, 0, -1, SP)
-
-
-//     PROPOSED:
-
-//         SP = {
-//     'C_m': 0.1,     # [pF] Capacitance
-//     'g_c': 0.1,     # [nS] Coupling conductance to parent (soma here)
-//     'g_L': 0.1,     # [nS] Leak conductance
-//     'e_L': -70.0    # [mV] leak reversal
-// }
-
-// n_neat = nest.Create('cm_main', 1, {
-//         'V_th': 100.0)
-
-// n_neat.SetStatus({
-//         "compartments": [
-//             { # comp_idx implicitly by index in list (?)
-//             "parent": -1,
-//             "params": SP},
-//             {comp2}
-//             {comp3}
-//         ]})
-
-// n_neat.SetStatus({
-//     "receptors": [
-//         {"comp_idx": 2,
-//         "receptor_type": "AMPA_NMDA",
-//         "my_receptor_type": "my_fast_AMPA_NMDA"
-//         ],
-//         ...})
-
-// receptor_names_to_idx = n_neat.GetStatus("receptor_idx")
-
-// # receptor_names_to_idx = {"my_fast_AMPA_NMDA": 0,
-// #                          "my_slow_AMPA": 1,
-// #                          ...}
-
-// nest.Connect(pre, post, syn_spec={"receptor_id": receptor_names_to_idx["my_slow_AMPA"]})
-
-
 void
 nest::cm_main::set_status( const DictionaryDatum& statusdict )
 {
@@ -207,13 +162,13 @@ nest::cm_main::add_compartment_( DictionaryDatum& dd )
 {
   if ( dd->known( names::params ) )
   {
-    c_tree_.add_compartment( getValue< long >( dd, names::comp_idx ),
+    c_tree_.add_compartment(
       getValue< long >( dd, names::parent_idx ),
       getValue< DictionaryDatum >( dd, names::params ) );
   }
   else
   {
-    c_tree_.add_compartment( getValue< long >( dd, names::comp_idx ), getValue< long >( dd, names::parent_idx ) );
+    c_tree_.add_compartment( getValue< long >( dd, names::parent_idx ) );
   }
 }
 void
@@ -299,7 +254,6 @@ nest::cm_main::init_recordables_pointers_()
   }
 }
 
-
 void
 nest::cm_main::calibrate()
 {
@@ -363,7 +317,7 @@ nest::cm_main::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  Compartment* compartment = c_tree_.get_compartment( e.get_rport() );
+  Compartment* compartment = c_tree_.get_compartment_opt( e.get_rport() );
   compartment->currents.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 

@@ -66,12 +66,12 @@ dend_params_active = {
 
 # create a neuron model with a passive dendritic compartment
 cm_pas = nest.Create('cm_main')
-nest.SetStatus(cm_pas, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": soma_params}})
-nest.SetStatus(cm_pas, {"compartments": {"comp_idx": 1, "parent_idx":  0, "params": dend_params_passive}})
+nest.SetStatus(cm_pas, {"compartments": [{"parent_idx": -1, "params": soma_params},
+                                         {"parent_idx":  0, "params": dend_params_passive}]})
 # create a neuron model with an active dendritic compartment
 cm_act = nest.Create('cm_main')
-nest.SetStatus(cm_act, {"compartments": {"comp_idx": 0, "parent_idx": -1, "params": soma_params}})
-nest.SetStatus(cm_act, {"compartments": {"comp_idx": 1, "parent_idx":  0, "params": dend_params_active}})
+nest.SetStatus(cm_act, {"compartments": [{"parent_idx": -1, "params": soma_params},
+                                         {"parent_idx":  0, "params": dend_params_active}]})
 
 # set spike thresholds
 nest.SetStatus(cm_pas, {'V_th': -50.})

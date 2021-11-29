@@ -153,6 +153,8 @@ private:
   std::vector< Compartment* > compartments_;
   std::vector< Compartment* > leafs_;
 
+  long size_ = 0;
+
   // recursion functions for matrix inversion
   void solve_matrix_downsweep( Compartment* compartment_ptr, std::vector< Compartment* >::iterator leaf_it );
   void solve_matrix_upsweep( Compartment* compartment, double vv );
@@ -168,9 +170,9 @@ public:
   ~CompTree(){};
 
   // initialization functions for tree structure
-  void add_compartment( const long compartment_index, const long parent_index );
+  void add_compartment( const long parent_index );
   void
-  add_compartment( const long compartment_index, const long parent_index, const DictionaryDatum& compartment_params );
+  add_compartment( const long parent_index, const DictionaryDatum& compartment_params );
   void add_compartment( Compartment* compartment, const long parent_index );
   void calibrate();
   void init_pointers();
@@ -180,10 +182,18 @@ public:
   // get a compartment pointer from the tree
   Compartment* get_compartment( const long compartment_index );
   Compartment* get_compartment( const long compartment_index, Compartment* compartment, const long raise_flag );
+  Compartment* get_compartment_opt( const long compartment_indx );
   Compartment*
   get_root()
   {
     return &root_;
+  };
+
+  // get tree size (number of nodes)
+  long
+  get_size()
+  {
+    return size_;
   };
 
   // get voltage values

@@ -169,8 +169,7 @@ public:
 
   // initialization functions for tree structure
   void add_compartment( const long parent_index );
-  void
-  add_compartment( const long parent_index, const DictionaryDatum& compartment_params );
+  void add_compartment( const long parent_index, const DictionaryDatum& compartment_params );
   void add_compartment( Compartment* compartment, const long parent_index );
   void calibrate();
   void init_pointers();

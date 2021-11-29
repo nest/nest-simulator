@@ -162,9 +162,7 @@ nest::CompTree::add_compartment( const long parent_index )
   add_compartment( compartment, parent_index );
 };
 void
-nest::CompTree::add_compartment(
-  const long parent_index,
-  const DictionaryDatum& compartment_params )
+nest::CompTree::add_compartment( const long parent_index, const DictionaryDatum& compartment_params )
 {
   Compartment* compartment = new Compartment( size_, parent_index, compartment_params );
   add_compartment( compartment, parent_index );

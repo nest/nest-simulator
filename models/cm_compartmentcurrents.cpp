@@ -57,34 +57,31 @@ nest::Na::f_numstep( const double v_comp, const double dt )
 
   if ( gbar_Na_ > 1e-9 )
   {
-    //auxiliary variables for 'm'
+    // auxiliary variables for 'm'
     double a__times__v_comp__plus__b = 0.182 * v_comp + 6.3723659999999995;
     double m_a__times__v_comp__minus_b = -0.124 * v_comp - 4.3416119999999996;
-    double one__minus__a__times__exp__mb__times__v_comp = 1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp );
+    double one__minus__a__times__exp__mb__times__v_comp =
+      1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp );
     double one__minus__c__times__exp__d__times__v_comp = 1.0 - 48.927192870146527 * exp( 0.1111111111111111 * v_comp );
 
     // activation and timescale of state variable 'm'
-    double m_inf_Na = a__times__v_comp__plus__b
-      / ( one__minus__a__times__exp__mb__times__v_comp
-                        * ( m_a__times__v_comp__minus_b
-                              / one__minus__c__times__exp__d__times__v_comp
-                            + a__times__v_comp__plus__b
-                              / one__minus__a__times__exp__mb__times__v_comp ) );
-    double tau_m_Na = 0.3115264797507788
-      / ( m_a__times__v_comp__minus_b / one__minus__c__times__exp__d__times__v_comp
-                        + a__times__v_comp__plus__b
-                          / one__minus__a__times__exp__mb__times__v_comp );
+    double m_inf_Na =
+      a__times__v_comp__plus__b / ( one__minus__a__times__exp__mb__times__v_comp
+                                    * ( m_a__times__v_comp__minus_b / one__minus__c__times__exp__d__times__v_comp
+                                        + a__times__v_comp__plus__b / one__minus__a__times__exp__mb__times__v_comp ) );
+    double tau_m_Na =
+      0.3115264797507788 / ( m_a__times__v_comp__minus_b / one__minus__c__times__exp__d__times__v_comp
+                             + a__times__v_comp__plus__b / one__minus__a__times__exp__mb__times__v_comp );
 
     // auxiliary variables for 'h'
     double v_comp__div__5 = 0.20000000000000001 * v_comp;
 
     // activation and timescale of state variable 'h'
     double h_inf_Na = 1.0 / ( exp( 0.16129032258064516 * v_comp + 10.483870967741936 ) + 1.0 );
-    double tau_h_Na =
-      0.3115264797507788
+    double tau_h_Na = 0.3115264797507788
       / ( ( -0.0091000000000000004 * v_comp - 0.68261830000000012 )
-            / ( 1.0 - 3277527.8765015295 * exp( v_comp__div__5 ) )
-          + ( 0.024 * v_comp + 1.200312 ) / ( 1.0 - 4.5282043263959816e-5 * exp( -v_comp__div__5) ) );
+                          / ( 1.0 - 3277527.8765015295 * exp( v_comp__div__5 ) )
+                        + ( 0.024 * v_comp + 1.200312 ) / ( 1.0 - 4.5282043263959816e-5 * exp( -v_comp__div__5 ) ) );
 
     // advance state variable 'm' one timestep
     double p_m_Na = exp( -dt / tau_m_Na );
@@ -144,17 +141,16 @@ nest::K::f_numstep( const double v_comp, const double dt )
   {
     // auxiliary variables
     double v_comp__minus__25 = v_comp - 25.0;
-    double m__v_comp_m_25 = - v_comp__minus__25;
+    double m__v_comp_m_25 = -v_comp__minus__25;
     double v_comp_m_25__div__9 = v_comp__minus__25 / 9.0;
     double m_v_comp_m_25__div__9 = m__v_comp_m_25 / 9.0;
     double exp__m_v_comp_m_25__div__9 = exp( m_v_comp_m_25__div__9 );
     double exp__v_comp_m_25__div__9 = exp( v_comp_m_25__div__9 );
     double expr = ( ( -0.002 ) * v_comp__minus__25 / ( 1.0 - exp__v_comp_m_25__div__9 )
-                                       + 0.02 * v_comp__minus__25 / ( 1.0 - exp__m_v_comp_m_25__div__9 ) );
+      + 0.02 * v_comp__minus__25 / ( 1.0 - exp__m_v_comp_m_25__div__9 ) );
 
     // activation and timescale of state variable 'm'
-    double n_inf_K =
-      0.02 * v_comp__minus__25 / ( ( 1.0 - exp__m_v_comp_m_25__div__9 ) * expr );
+    double n_inf_K = 0.02 * v_comp__minus__25 / ( ( 1.0 - exp__m_v_comp_m_25__div__9 ) * expr );
     double tau_n_K = 0.3115264797507788 / expr;
 
     // advance state variable 'm' one timestep

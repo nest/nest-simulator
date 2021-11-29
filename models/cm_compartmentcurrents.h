@@ -112,7 +112,8 @@ public:
   AMPA( const long syn_index, const DictionaryDatum& receptor_params );
   ~AMPA(){};
 
-  long get_syn_idx()
+  long
+  get_syn_idx()
   {
     return syn_idx;
   };
@@ -169,7 +170,8 @@ public:
   GABA( const long syn_index, const DictionaryDatum& receptor_params );
   ~GABA(){};
 
-  long get_syn_idx()
+  long
+  get_syn_idx()
   {
     return syn_idx;
   };
@@ -226,7 +228,8 @@ public:
   NMDA( const long syn_index, const DictionaryDatum& receptor_params );
   ~NMDA(){};
 
-  long get_syn_idx()
+  long
+  get_syn_idx()
   {
     return syn_idx;
   };
@@ -300,7 +303,8 @@ public:
   AMPA_NMDA( const long syn_index, const DictionaryDatum& receptor_params );
   ~AMPA_NMDA(){};
 
-  long get_syn_idx()
+  long
+  get_syn_idx()
   {
     return syn_idx;
   };

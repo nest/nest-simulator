@@ -2935,9 +2935,6 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "GetNodes_D_b", &getnodes_D_bfunction );
 
-  i->createcommand( "AddCompartment_lllD", &add_compartment_lllD_function );
-  i->createcommand( "AddReceptor_llsD", &add_receptor_llsD_function );
-
   i->createcommand( "mul_P_P", &mul_P_Pfunction );
   i->createcommand( "div_P_P", &div_P_Pfunction );
   i->createcommand( "add_P_P", &add_P_Pfunction );

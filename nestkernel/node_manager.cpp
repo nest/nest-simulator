@@ -30,7 +30,6 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "archiving_node.h"
 #include "event_delivery_manager.h"
 #include "genericmodel.h"
 #include "kernel_manager.h"

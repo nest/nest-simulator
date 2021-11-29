@@ -594,6 +594,7 @@ const Name z_connected( "z_connected" );
 
 const Name compartments( "compartments" );
 const Name comp_idx( "comp_idx" );
+const Name receptor_idx( "receptor_idx" );
 const Name parent_idx( "parent_idx" );
 const Name params( "params" );
 

@@ -62,15 +62,42 @@ nest::cm_main::cm_main( const cm_main& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::cm_main::init_state_( const Node& proto )
-{
-}
-
-void
 nest::cm_main::init_buffers_()
 {
   logger_.reset();
   ArchivingNode::clear_history();
+}
+
+void
+cm_main::get_status( DictionaryDatum& statusdict ) const
+{
+  def< double >( statusdict, names::V_th, V_th_ );
+  ArchivingNode::get_status( statusdict );
+
+  // add all recordables to the status dictionary
+  ( *statusdict )[ names::recordables ] = recordablesMap_.get_list();
+
+  // We add a list of dicts with compartment information and
+  // a list of dicts with receptor information to the status dictionary
+  ArrayDatum compartment_ad;
+  ArrayDatum receptor_ad;
+  for ( long comp_idx_ = 0; comp_idx_ != c_tree_.get_size(); comp_idx_++)
+  {
+    DictionaryDatum dd = DictionaryDatum( new Dictionary );
+    Compartment* compartment = c_tree_.get_compartment( comp_idx_ );
+
+    // add compartment info
+    def< long >( dd, names::comp_idx, comp_idx_ );
+    def< long >( dd, names::parent_idx, compartment->p_index );
+    compartment_ad.push_back( dd );
+
+    // add receptor info
+    compartment->compartment_currents.add_receptor_info( receptor_ad, compartment->comp_index );
+
+  }
+  // add compartment info and receptor info to the status dictionary
+  def< ArrayDatum >( statusdict, names::compartments, compartment_ad );
+  def< ArrayDatum >( statusdict, names::receptors, receptor_ad );
 }
 
 void

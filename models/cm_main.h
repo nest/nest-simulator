@@ -175,7 +175,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void init_tree_pointers_();
   void init_syn_pointers_();
@@ -257,14 +256,6 @@ cm_main::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
     throw UnknownReceptorType( receptor_type, get_name() );
   }
   return logger_.connect_logging_device( dlr, recordablesMap_ );
-}
-
-inline void
-cm_main::get_status( DictionaryDatum& d ) const
-{
-  def< double >( d, names::V_th, V_th_ );
-  ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 } // namespace

@@ -619,6 +619,7 @@ extern const Name z_connected;
 extern const Name compartments;
 extern const Name comp_idx;
 extern const Name parent_idx;
+extern const Name receptor_idx;
 extern const Name params;
 
 extern const Name e_L;

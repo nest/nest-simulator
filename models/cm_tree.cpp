@@ -199,12 +199,12 @@ and also has the option to throw an error if no compartment corresponding to
 `compartment_index` is found in the tree
 */
 nest::Compartment*
-nest::CompTree::get_compartment( const long compartment_index )
+nest::CompTree::get_compartment( const long compartment_index ) const
 {
   return get_compartment( compartment_index, get_root(), 1 );
 }
 nest::Compartment*
-nest::CompTree::get_compartment( const long compartment_index, Compartment* compartment, const long raise_flag )
+nest::CompTree::get_compartment( const long compartment_index, Compartment* compartment, const long raise_flag ) const
 {
   Compartment* r_compartment = nullptr;
 
@@ -238,7 +238,7 @@ function before CompTree::init_pointers() is called will result in a segmentatio
 fault
 */
 nest::Compartment*
-nest::CompTree::get_compartment_opt( const long compartment_idx )
+nest::CompTree::get_compartment_opt( const long compartment_idx ) const
 {
   return compartments_[ compartment_idx ];
 }

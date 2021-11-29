@@ -707,6 +707,28 @@ class NEASTTestCase(unittest.TestCase):
 
         self.assertTrue(np.allclose(events_neat_0['v_comp0'], events_neat_1['v_comp0']))
 
+    def test_getstatus(self):
+        n_neat = nest.Create('cm_main')
+        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+        nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
+        nest.SetStatus(n_neat, {"receptors": {"comp_idx": 1, "receptor_type": "AMPA"}})
+        nest.SetStatus(n_neat, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
+
+        compartments = nest.GetStatus(n_neat, keys="compartments")
+        receptors = nest.GetStatus(n_neat, keys="receptors")
+
+        self.assertTrue(compartments[0][0]["comp_idx"] == 0)
+        self.assertTrue(compartments[0][0]["parent_idx"] == -1)
+        self.assertTrue(compartments[0][1]["comp_idx"] == 1)
+        self.assertTrue(compartments[0][1]["parent_idx"] == 0)
+
+        self.assertTrue(receptors[0][0]["comp_idx"] == 0)
+        self.assertTrue(receptors[0][0]["receptor_idx"] == 1)
+        self.assertTrue(receptors[0][0]["receptor_type"] == "GABA")
+        self.assertTrue(receptors[0][1]["comp_idx"] == 1)
+        self.assertTrue(receptors[0][1]["receptor_idx"] == 0)
+        self.assertTrue(receptors[0][1]["receptor_type"] == "AMPA")
+
 
 def suite():
 

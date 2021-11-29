@@ -109,6 +109,11 @@ public:
   AMPA( const long syn_index, const DictionaryDatum& receptor_params );
   ~AMPA(){};
 
+  long get_syn_idx()
+  {
+    return syn_idx;
+  };
+
   // calibrateialization of the state variables
   void
   calibrate()
@@ -153,6 +158,11 @@ public:
   GABA( const long syn_index, const DictionaryDatum& receptor_params );
   ~GABA(){};
 
+  long get_syn_idx()
+  {
+    return syn_idx;
+  };
+
   // calibrate state variables
   void
   calibrate()
@@ -196,6 +206,11 @@ public:
   NMDA( const long syn_index );
   NMDA( const long syn_index, const DictionaryDatum& receptor_params );
   ~NMDA(){};
+
+  long get_syn_idx()
+  {
+    return syn_idx;
+  };
 
   // calibrate state variables
   void
@@ -256,6 +271,11 @@ public:
   AMPA_NMDA( const long syn_index );
   AMPA_NMDA( const long syn_index, const DictionaryDatum& receptor_params );
   ~AMPA_NMDA(){};
+
+  long get_syn_idx()
+  {
+    return syn_idx;
+  };
 
   // calibrate state variables
   void
@@ -369,7 +389,6 @@ public:
       assert( false );
     }
   };
-
   void
   add_synapse( const std::string& type, const long syn_idx, const DictionaryDatum& receptor_params )
   {
@@ -400,9 +419,49 @@ public:
   };
 
   void
+  add_receptor_info( ArrayDatum& ad, const long compartment_index )
+  {
+    // receptor info for AMPA synapses
+    for ( auto syn_it = AMPA_syns_.begin(); syn_it != AMPA_syns_.end(); ++syn_it )
+    {
+      DictionaryDatum dd = DictionaryDatum( new Dictionary );
+      def< long >( dd, names::receptor_idx, syn_it->get_syn_idx() );
+      def< long >( dd, names::comp_idx, compartment_index );
+      def< std::string >( dd, names::receptor_type, "AMPA" );
+      ad.push_back( dd );
+    }
+    // receptor info for GABA synapses
+    for ( auto syn_it = GABA_syns_.begin(); syn_it != GABA_syns_.end(); ++syn_it )
+    {
+      DictionaryDatum dd = DictionaryDatum( new Dictionary );
+      def< long >( dd, names::receptor_idx, syn_it->get_syn_idx() );
+      def< long >( dd, names::comp_idx, compartment_index );
+      def< std::string >( dd, names::receptor_type, "GABA" );
+      ad.push_back( dd );
+    }
+    // receptor info for NMDA synapses
+    for ( auto syn_it = NMDA_syns_.begin(); syn_it != NMDA_syns_.end(); ++syn_it )
+    {
+      DictionaryDatum dd = DictionaryDatum( new Dictionary );
+      def< long >( dd, names::receptor_idx, syn_it->get_syn_idx() );
+      def< long >( dd, names::comp_idx, compartment_index );
+      def< std::string >( dd, names::receptor_type, "NMDA" );
+      ad.push_back( dd );
+    }
+    // receptor info for AMPA_NMDA synapses
+    for ( auto syn_it = AMPA_NMDA_syns_.begin(); syn_it != AMPA_NMDA_syns_.end(); ++syn_it )
+    {
+      DictionaryDatum dd = DictionaryDatum( new Dictionary );
+      def< long >( dd, names::receptor_idx, syn_it->get_syn_idx() );
+      def< long >( dd, names::comp_idx, compartment_index );
+      def< std::string >( dd, names::receptor_type, "AMPA_NMDA" );
+      ad.push_back( dd );
+    }
+  };
+
+  void
   set_syn_buffers( std::vector< RingBuffer >& syn_buffers )
   {
-
     // syn_buffers for AMPA synapses
     for ( auto syn_it = AMPA_syns_.begin(); syn_it != AMPA_syns_.end(); ++syn_it )
     {

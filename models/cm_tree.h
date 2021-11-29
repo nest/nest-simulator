@@ -148,7 +148,7 @@ private:
   /*
   structural data containers for the compartment model
   */
-  Compartment root_;
+  mutable Compartment root_;
   std::vector< long > compartment_indices_;
   std::vector< Compartment* > compartments_;
   std::vector< Compartment* > leafs_;
@@ -180,18 +180,18 @@ public:
   std::map< Name, double* > get_recordables();
 
   // get a compartment pointer from the tree
-  Compartment* get_compartment( const long compartment_index );
-  Compartment* get_compartment( const long compartment_index, Compartment* compartment, const long raise_flag );
-  Compartment* get_compartment_opt( const long compartment_indx );
+  Compartment* get_compartment( const long compartment_index ) const;
+  Compartment* get_compartment( const long compartment_index, Compartment* compartment, const long raise_flag ) const;
+  Compartment* get_compartment_opt( const long compartment_indx ) const;
   Compartment*
-  get_root()
+  get_root() const
   {
     return &root_;
   };
 
   // get tree size (number of nodes)
   long
-  get_size()
+  get_size() const
   {
     return size_;
   };

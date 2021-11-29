@@ -46,7 +46,7 @@ dend_params = {
 }
 
 # create a model with three compartments
-cm = nest.Create('cm_main')
+cm = nest.Create('cm_default')
 nest.SetStatus(cm, {'compartments': {"parent_idx": -1, "params": soma_params}})
 nest.SetStatus(cm, {'compartments': [{"parent_idx":  0, "params": dend_params},
                                      {"parent_idx":  0, "params": dend_params}]})

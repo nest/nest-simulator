@@ -52,7 +52,7 @@ def create_1dend_1comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('cm_main')
+    n_neat = nest.Create('cm_default')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
     nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
@@ -95,7 +95,7 @@ def create_2dend_1comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('cm_main')
+    n_neat = nest.Create('cm_default')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
     nest.SetStatus(n_neat, {"compartments": { "parent_idx": -1, "params": SP}})
@@ -154,7 +154,7 @@ def create_1dend_2comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('cm_main')
+    n_neat = nest.Create('cm_default')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
     nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
@@ -215,7 +215,7 @@ def create_tdend_4comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('cm_main')
+    n_neat = nest.Create('cm_default')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
     nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
@@ -302,7 +302,7 @@ def create_2tdend_4comp(dt=0.1):
     # create nest model with two compartments
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
-    n_neat = nest.Create('cm_main')
+    n_neat = nest.Create('cm_default')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
 
@@ -636,10 +636,10 @@ class NEASTTestCase(unittest.TestCase):
             'e_L': -70.0,
         }
 
-        n_neat_0 = nest.Create('cm_main')
+        n_neat_0 = nest.Create('cm_default')
         nest.SetStatus(n_neat_0, {"compartments": {"parent_idx": -1, "params": soma_params}})
 
-        n_neat_1 = nest.Create('cm_main')
+        n_neat_1 = nest.Create('cm_default')
         nest.SetStatus(n_neat_1, {"compartments": {"parent_idx": -1, "params": soma_params}})
         nest.SetStatus(n_neat_1, {"receptors": {"comp_idx": 0, "receptor_type": "AMPA"}})
         syn_idx = 0
@@ -674,7 +674,7 @@ class NEASTTestCase(unittest.TestCase):
         sg_12 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
 
         # set status with individual calls for each receptor and compartment
-        n_neat_0 = nest.Create('cm_main')
+        n_neat_0 = nest.Create('cm_default')
         nest.SetStatus(n_neat_0, {"compartments": {"parent_idx": -1, "params": SP}})
         nest.SetStatus(n_neat_0, {"compartments": {"parent_idx": 0, "params": DP[0]}})
         nest.SetStatus(n_neat_0, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
@@ -684,7 +684,7 @@ class NEASTTestCase(unittest.TestCase):
         nest.Connect(sg_02, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
 
         # set status with single call
-        n_neat_1 = nest.Create('cm_main')
+        n_neat_1 = nest.Create('cm_default')
         nest.SetStatus(n_neat_1, {"compartments": [{"parent_idx": -1, "params": SP},
                                                    {"parent_idx": 0, "params": DP[0]}],
                                   "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
@@ -708,7 +708,7 @@ class NEASTTestCase(unittest.TestCase):
         self.assertTrue(np.allclose(events_neat_0['v_comp0'], events_neat_1['v_comp0']))
 
     def test_getstatus(self):
-        n_neat = nest.Create('cm_main')
+        n_neat = nest.Create('cm_default')
         nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
         nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
         nest.SetStatus(n_neat, {"receptors": {"comp_idx": 1, "receptor_type": "AMPA"}})

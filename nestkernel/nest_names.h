@@ -125,6 +125,8 @@ extern const Name continuous;
 extern const Name count_covariance;
 extern const Name count_histogram;
 extern const Name covariance;
+extern const Name compartments;
+extern const Name comp_idx;
 
 extern const Name Delta_T;
 extern const Name Delta_V;
@@ -189,6 +191,7 @@ extern const Name equilibrate;
 extern const Name eta;
 extern const Name events;
 extern const Name extent;
+extern const Name e_L;
 
 extern const Name file_extension;
 extern const Name filename;
@@ -237,6 +240,7 @@ extern const Name growth_factor_buffer_spike_data;
 extern const Name growth_factor_buffer_target_data;
 extern const Name growth_rate;
 extern const Name gsl_error_tol;
+extern const Name g_C;
 
 extern const Name h;
 extern const Name has_connections;
@@ -373,6 +377,8 @@ extern const Name proximal_inh;
 extern const Name psi;
 extern const Name published;
 extern const Name pulse_times;
+extern const Name parent_idx;
+extern const Name params;
 
 extern const Name q_rr;
 extern const Name q_sfa;
@@ -409,6 +415,7 @@ extern const Name rng_type;
 extern const Name rng_types;
 extern const Name rport;
 extern const Name rule;
+extern const Name receptor_idx;
 
 extern const Name S;
 extern const Name S_act_NMDA;
@@ -615,15 +622,6 @@ extern const Name y_1;
 
 extern const Name z;
 extern const Name z_connected;
-
-extern const Name compartments;
-extern const Name comp_idx;
-extern const Name parent_idx;
-extern const Name receptor_idx;
-extern const Name params;
-
-extern const Name e_L;
-extern const Name g_C;
 
 } // namespace names
 

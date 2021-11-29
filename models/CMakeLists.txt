@@ -30,6 +30,9 @@ set( models_sources
     amat2_psc_exp.h amat2_psc_exp.cpp
     bernoulli_synapse.h
     binary_neuron.h
+    cm_default.h cm_default.cpp
+    cm_tree.h cm_tree.cpp
+    cm_compartmentcurrents.h cm_compartmentcurrents.cpp
     clopath_synapse.h
     cont_delay_synapse.h cont_delay_synapse_impl.h
     correlation_detector.h correlation_detector.cpp
@@ -72,9 +75,6 @@ set( models_sources
     iaf_psc_exp.h iaf_psc_exp.cpp
     iaf_psc_exp_htum.h iaf_psc_exp_htum.cpp
     iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
-    cm_main.h cm_main.cpp
-    cm_tree.h cm_tree.cpp
-    cm_compartmentcurrents.h cm_compartmentcurrents.cpp
     iaf_psc_exp_ps.cpp iaf_psc_exp_ps.h
     iaf_psc_exp_ps_lossless.cpp iaf_psc_exp_ps_lossless.h
     izhikevich.h izhikevich.cpp

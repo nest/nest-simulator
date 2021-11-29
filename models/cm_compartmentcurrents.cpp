@@ -86,29 +86,6 @@ nest::Na::f_numstep( const double v_comp, const double dt )
             / ( 1.0 - 3277527.8765015295 * exp( v_comp__div__5 ) )
           + ( 0.024 * v_comp + 1.200312 ) / ( 1.0 - 4.5282043263959816e-5 * exp( -v_comp__div__5) ) );
 
-
-
-
-    // // activation and timescale of state variable 'm'
-    // double m_inf_Na = ( 0.182 * v_comp + 6.3723659999999995 )
-    //   / ( ( 1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp ) )
-    //                     * ( ( -0.124 * v_comp - 4.3416119999999996 )
-    //                           / ( 1.0 - 48.927192870146527 * exp( 0.1111111111111111 * v_comp ) )
-    //                         + ( 0.182 * v_comp + 6.3723659999999995 )
-    //                           / ( 1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp ) ) ) );
-    // double tau_m_Na = 0.3115264797507788
-    //   / ( ( -0.124 * v_comp - 4.3416119999999996 ) / ( 1.0 - 48.927192870146527 * exp( 0.1111111111111111 * v_comp ) )
-    //                     + ( 0.182 * v_comp + 6.3723659999999995 )
-    //                       / ( 1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp ) ) );
-
-    // // activation and timescale of state variable 'h'
-    // double h_inf_Na = 1.0 / ( exp( 0.16129032258064516 * v_comp + 10.483870967741936 ) + 1.0 );
-    // double tau_h_Na =
-    //   0.3115264797507788
-    //   / ( ( -0.0091000000000000004 * v_comp - 0.68261830000000012 )
-    //         / ( 1.0 - 3277527.8765015295 * exp( 0.20000000000000001 * v_comp ) )
-    //       + ( 0.024 * v_comp + 1.200312 ) / ( 1.0 - 4.5282043263959816e-5 * exp( -0.20000000000000001 * v_comp ) ) );
-
     // advance state variable 'm' one timestep
     double p_m_Na = exp( -dt / tau_m_Na );
     m_Na_ *= p_m_Na;
@@ -177,7 +154,7 @@ nest::K::f_numstep( const double v_comp, const double dt )
 
     // activation and timescale of state variable 'm'
     double n_inf_K =
-      0.02 * v_comp__minus__25 / ( ( 1.0 - exp__m_v_comp_m_25__div__9 ) *  expr );
+      0.02 * v_comp__minus__25 / ( ( 1.0 - exp__m_v_comp_m_25__div__9 ) * expr );
     double tau_n_K = 0.3115264797507788 / expr;
 
     // advance state variable 'm' one timestep

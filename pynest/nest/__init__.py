@@ -406,6 +406,16 @@ class NestModule(types.ModuleType):
 
 
 def _setattr_error(self, attr, val):
+    """
+    When attributes on the `nest` module instance are set, check if it exists on the
+    module type and try to call `__set__` on them. Without this explicit check `nest`s
+    `__setattr__` shadows class attributes and descriptors (such as `KernelAttribute`s).
+
+    Once this function exists on the `nest` module, new attributes can only be added using
+    `__dict__` manipulation. It is added onto the module at the end of `__init__`,
+    "freezing" the module.
+    """
+
     err = AttributeError(f"can't set attribute '{attr}' on module 'nest'")
     try:
         cls_attr = getattr(type(self), attr)

@@ -72,6 +72,7 @@ nest.SetStatus(cm_pas, {"compartments": [{"parent_idx": -1, "params": soma_param
 cm_act = nest.Create('cm_default')
 nest.SetStatus(cm_act, {"compartments": [{"parent_idx": -1, "params": soma_params},
                                          {"parent_idx":  0, "params": dend_params_active}]})
+print(cm_pas.compartments)
 print(nest.GetStatus(cm_pas, keys="compartments"))
 # set spike thresholds
 nest.SetStatus(cm_pas, {'V_th': -50.})

@@ -60,14 +60,6 @@ nest::cm_default::cm_default( const cm_default& n )
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::cm_default::init_buffers_()
-{
-  logger_.reset();
-  ArchivingNode::clear_history();
-}
-
 void
 cm_default::get_status( DictionaryDatum& statusdict ) const
 {

@@ -38,9 +38,13 @@ nest::Na::Na( const DictionaryDatum& channel_params )
 {
   // update sodium channel parameters
   if ( channel_params->known( "gbar_Na" ) )
+  {
     gbar_Na_ = getValue< double >( channel_params, "gbar_Na" );
+  }
   if ( channel_params->known( "e_Na" ) )
+  {
     e_Na_ = getValue< double >( channel_params, "e_Na" );
+  }
 }
 
 void
@@ -120,9 +124,13 @@ nest::K::K( const DictionaryDatum& channel_params )
 {
   // update sodium channel parameters
   if ( channel_params->known( "gbar_K" ) )
+  {
     gbar_K_ = getValue< double >( channel_params, "gbar_K" );
+  }
   if ( channel_params->known( "e_Na" ) )
+  {
     e_K_ = getValue< double >( channel_params, "e_K" );
+  }
 }
 
 
@@ -191,11 +199,17 @@ nest::AMPA::AMPA( const long syn_index, const DictionaryDatum& receptor_params )
 
   // update sodium channel parameters
   if ( receptor_params->known( "e_AMPA" ) )
+  {
     e_rev_ = getValue< double >( receptor_params, "e_AMPA" );
+  }
   if ( receptor_params->known( "tau_r_AMPA" ) )
+  {
     tau_r_ = getValue< double >( receptor_params, "tau_r_AMPA" );
+  }
   if ( receptor_params->known( "tau_d_AMPA" ) )
+  {
     tau_d_ = getValue< double >( receptor_params, "tau_d_AMPA" );
+  }
 
   double tp = ( tau_r_ * tau_d_ ) / ( tau_d_ - tau_r_ ) * std::log( tau_d_ / tau_r_ );
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
@@ -257,11 +271,17 @@ nest::GABA::GABA( const long syn_index, const DictionaryDatum& receptor_params )
 
   // update sodium channel parameters
   if ( receptor_params->known( "e_GABA" ) )
+  {
     e_rev_ = getValue< double >( receptor_params, "e_GABA" );
+  }
   if ( receptor_params->known( "tau_r_GABA" ) )
+  {
     tau_r_ = getValue< double >( receptor_params, "tau_r_GABA" );
+  }
   if ( receptor_params->known( "tau_d_GABA" ) )
+  {
     tau_d_ = getValue< double >( receptor_params, "tau_d_GABA" );
+  }
 
   double tp = ( tau_r_ * tau_d_ ) / ( tau_d_ - tau_r_ ) * std::log( tau_d_ / tau_r_ );
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
@@ -323,11 +343,17 @@ nest::NMDA::NMDA( const long syn_index, const DictionaryDatum& receptor_params )
 
   // update sodium channel parameters
   if ( receptor_params->known( "e_NMDA" ) )
+  {
     e_rev_ = getValue< double >( receptor_params, "e_NMDA" );
+  }
   if ( receptor_params->known( "tau_r_NMDA" ) )
+  {
     tau_r_ = getValue< double >( receptor_params, "tau_r_NMDA" );
+  }
   if ( receptor_params->known( "tau_d_NMDA" ) )
+  {
     tau_d_ = getValue< double >( receptor_params, "tau_d_NMDA" );
+  }
 
   double tp = ( tau_r_ * tau_d_ ) / ( tau_d_ - tau_r_ ) * std::log( tau_d_ / tau_r_ );
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
@@ -399,17 +425,29 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const DictionaryDatum& recepto
 
   // update sodium channel parameters
   if ( receptor_params->known( "e_AMPA_NMDA" ) )
+  {
     e_rev_ = getValue< double >( receptor_params, "e_AMPA_NMDA" );
+  }
   if ( receptor_params->known( "tau_r_AMPA" ) )
+  {
     tau_r_AMPA_ = getValue< double >( receptor_params, "tau_r_AMPA" );
+  }
   if ( receptor_params->known( "tau_d_AMPA" ) )
+  {
     tau_d_AMPA_ = getValue< double >( receptor_params, "tau_d_AMPA" );
+  }
   if ( receptor_params->known( "tau_r_NMDA" ) )
+  {
     tau_r_NMDA_ = getValue< double >( receptor_params, "tau_r_NMDA" );
+  }
   if ( receptor_params->known( "tau_d_NMDA" ) )
+  {
     tau_d_NMDA_ = getValue< double >( receptor_params, "tau_d_NMDA" );
+  }
   if ( receptor_params->known( "NMDA_ratio" ) )
+  {
     NMDA_ratio_ = getValue< double >( receptor_params, "NMDA_ratio" );
+  }
 
   // AMPA normalization constant
   double tp = ( tau_r_AMPA_ * tau_d_AMPA_ ) / ( tau_d_AMPA_ - tau_r_AMPA_ ) * std::log( tau_d_AMPA_ / tau_r_AMPA_ );

@@ -219,7 +219,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_buffers_();
   void init_tree_pointers_();
   void init_syn_pointers_();
   void init_recordables_pointers_();
@@ -285,7 +284,7 @@ inline port
 cm_default::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   // if get_compartment returns nullptr, raise the error
-  if ( !c_tree_.get_compartment( long( receptor_type ), c_tree_.get_root(), 0 ) )
+  if ( not c_tree_.get_compartment( long( receptor_type ), c_tree_.get_root(), 0 ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

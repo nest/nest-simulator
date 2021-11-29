@@ -34,6 +34,11 @@ nest::Compartment::Compartment( const long compartment_index, const long parent_
   , gc( 0.01 )
   , gl( 0.1 )
   , el( -70. )
+  , gg0( 0.0 )
+  , ca__div__dt( 0.0 )
+  , gl__div__2( 0.0 )
+  , gc__div__2( 0.0 )
+  , gl__times__el( 0.0 )
   , ff( 0.0 )
   , gg( 0.0 )
   , hh( 0.0 )
@@ -54,6 +59,11 @@ nest::Compartment::Compartment( const long compartment_index,
   , gc( 0.01 )
   , gl( 0.1 )
   , el( -70. )
+  , gg0( 0.0 )
+  , ca__div__dt( 0.0 )
+  , gl__div__2( 0.0 )
+  , gc__div__2( 0.0 )
+  , gl__times__el( 0.0 )
   , ff( 0.0 )
   , gg( 0.0 )
   , hh( 0.0 )
@@ -213,14 +223,14 @@ nest::CompTree::get_compartment( const long compartment_index, Compartment* comp
   else
   {
     auto child_it = compartment->children.begin();
-    while ( !r_compartment && child_it != compartment->children.end() )
+    while ( ( not r_compartment ) && child_it != compartment->children.end() )
     {
       r_compartment = get_compartment( compartment_index, &( *child_it ), 0 );
       ++child_it;
     }
   }
 
-  if ( !r_compartment && raise_flag )
+  if ( (not r_compartment) && raise_flag )
   {
     std::ostringstream err_msg;
     err_msg << "Node index " << compartment_index << " not in tree";

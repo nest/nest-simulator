@@ -43,7 +43,7 @@ class STDPSynapseTest(unittest.TestCase):
 
     def init_params(self):
         self.resolution = 0.1    # [ms]
-        self.simulation_duration = 50#1E3    # [ms]
+        self.simulation_duration = 100 #1E3    # [ms]
         self.synapse_model = "stdp_dopamine_synapse"
         self.presynaptic_firing_rate = 20.    # [ms^-1]
         self.postsynaptic_firing_rate = 20.    # [ms^-1]
@@ -190,7 +190,7 @@ class STDPSynapseTest(unittest.TestCase):
         weight = nest.GetStatus(wr, "events")[0]["weights"]
 
         a = nest.GetConnections(synapse_model=self.synapse_model + "_rec")
-        #print(a.n, a.c, a.weight)
+        print(a.n, a.c, a.weight)
 
         return pre_spikes, post_spikes, dopa_spikes, t_hist, weight
 
@@ -198,8 +198,6 @@ class STDPSynapseTest(unittest.TestCase):
         """Independent, self-contained model of STDP dopamine
         """
        
-        #TODO: this function is still under construction
-
         def update_dopamine(n):
             n += 1 / self.synapse_parameters["tau_n"]
             return n
@@ -290,7 +288,7 @@ class STDPSynapseTest(unittest.TestCase):
             t_next = min(t_next_dopa_spike, t_next_pre_spike, t_next_post_spike)
             if t_next != np.inf:
                 if t_next == t_next_dopa_spike:
-                    handle_dopa_spike = True    
+                    handle_dopa_spike = True 
                 if t_next == t_next_post_spike:
                     handle_post_spike = True
                 if t_next == t_next_pre_spike:
@@ -308,23 +306,26 @@ class STDPSynapseTest(unittest.TestCase):
                 handle_post_spike = False'''
 
             h = t - t_next
-            Kpre *= exp( h / self.tau_pre)
             t = t_next
 
             # update weight
             weight = update_weight(weight, c, n, h)
 
+            Kpre *= exp( h / self.tau_pre)
             n *= exp( h / self.synapse_parameters['tau_n'])
+            c *= exp( h / self.synapse_parameters['tau_c'])
 
             # compute c
             if handle_post_spike:
                 # Kpost += 1.    <-- not necessary, will call Kpost_at_time(t) later to compute Kpost for any value t
                 c = facilitate(c, Kpre)
+                print('c, kpre', c, Kpre)
 
             if handle_pre_spike:
                 Kpre += 1.
                 _Kpost = Kpost_at_time(t - self.dendritic_delay, post_spikes, inclusive=False)
                 c = depress(c, _Kpost)
+                print('c, _Kpost', c, _Kpost)
 
             # compute n
             if handle_dopa_spike:

@@ -100,6 +100,9 @@ private:
   // state variables
   double g_r_AMPA_ = 0., g_d_AMPA_ = 0.;
 
+  // propagators
+  double prop_r_ = 0., prop_d_ = 0.;
+
   // spike buffer
   RingBuffer* b_spikes_;
 
@@ -118,6 +121,11 @@ public:
   void
   calibrate()
   {
+    const double dt = Time::get_resolution().get_ms();
+    // construct propagators
+    prop_r_ = std::exp( -dt / tau_r_ );
+    prop_d_ = std::exp( -dt / tau_d_ );
+
     g_r_AMPA_ = 0.;
     g_d_AMPA_ = 0.;
     b_spikes_->clear();
@@ -149,6 +157,9 @@ private:
   // state variables
   double g_r_GABA_ = 0., g_d_GABA_ = 0.;
 
+  // propagators
+  double prop_r_ = 0., prop_d_ = 0.;
+
   // spike buffer
   RingBuffer* b_spikes_;
 
@@ -167,6 +178,11 @@ public:
   void
   calibrate()
   {
+    const double dt = Time::get_resolution().get_ms();
+    // construct propagators
+    prop_r_ = std::exp( -dt / tau_r_ );
+    prop_d_ = std::exp( -dt / tau_d_ );
+
     g_r_GABA_ = 0.;
     g_d_GABA_ = 0.;
     b_spikes_->clear();
@@ -198,6 +214,9 @@ private:
   // state variables
   double g_r_NMDA_ = 0., g_d_NMDA_ = 0.;
 
+  // propagators
+  double prop_r_ = 0., prop_d_ = 0.;
+
   // spike buffer
   RingBuffer* b_spikes_;
 
@@ -216,6 +235,11 @@ public:
   void
   calibrate()
   {
+    const double dt = Time::get_resolution().get_ms();
+    // construct propagators
+    prop_r_ = std::exp( -dt / tau_r_ );
+    prop_d_ = std::exp( -dt / tau_d_ );
+
     g_r_NMDA_ = 0.;
     g_d_NMDA_ = 0.;
     b_spikes_->clear();
@@ -263,6 +287,10 @@ private:
   double g_r_AN_AMPA_ = 0., g_d_AN_AMPA_ = 0.;
   double g_r_AN_NMDA_ = 0., g_d_AN_NMDA_ = 0.;
 
+  // propagators
+  double prop_r_AMPA_ = 0., prop_d_AMPA_ = 0.;
+  double prop_r_NMDA_ = 0., prop_d_NMDA_ = 0.;
+
   // spike buffer
   RingBuffer* b_spikes_;
 
@@ -281,6 +309,12 @@ public:
   void
   calibrate()
   {
+    const double dt = Time::get_resolution().get_ms();
+    prop_r_AMPA_ = std::exp( -dt / tau_r_AMPA_ );
+    prop_d_AMPA_ = std::exp( -dt / tau_d_AMPA_ );
+    prop_r_NMDA_ = std::exp( -dt / tau_r_NMDA_ );
+    prop_d_NMDA_ = std::exp( -dt / tau_d_NMDA_ );
+
     g_r_AN_AMPA_ = 0.;
     g_d_AN_AMPA_ = 0.;
     g_r_AN_NMDA_ = 0.;

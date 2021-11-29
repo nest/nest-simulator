@@ -57,25 +57,57 @@ nest::Na::f_numstep( const double v_comp, const double dt )
 
   if ( gbar_Na_ > 1e-9 )
   {
+    //auxiliary variables for 'm'
+    double a__times__v_comp__plus__b = 0.182 * v_comp + 6.3723659999999995;
+    double m_a__times__v_comp__minus_b = -0.124 * v_comp - 4.3416119999999996;
+    double one__minus__a__times__exp__mb__times__v_comp = 1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp );
+    double one__minus__c__times__exp__d__times__v_comp = 1.0 - 48.927192870146527 * exp( 0.1111111111111111 * v_comp );
+
     // activation and timescale of state variable 'm'
-    double m_inf_Na = ( 0.182 * v_comp + 6.3723659999999995 )
-      / ( ( 1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp ) )
-                        * ( ( -0.124 * v_comp - 4.3416119999999996 )
-                              / ( 1.0 - 48.927192870146527 * exp( 0.1111111111111111 * v_comp ) )
-                            + ( 0.182 * v_comp + 6.3723659999999995 )
-                              / ( 1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp ) ) ) );
+    double m_inf_Na = a__times__v_comp__plus__b
+      / ( one__minus__a__times__exp__mb__times__v_comp
+                        * ( m_a__times__v_comp__minus_b
+                              / one__minus__c__times__exp__d__times__v_comp
+                            + a__times__v_comp__plus__b
+                              / one__minus__a__times__exp__mb__times__v_comp ) );
     double tau_m_Na = 0.3115264797507788
-      / ( ( -0.124 * v_comp - 4.3416119999999996 ) / ( 1.0 - 48.927192870146527 * exp( 0.1111111111111111 * v_comp ) )
-                        + ( 0.182 * v_comp + 6.3723659999999995 )
-                          / ( 1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp ) ) );
+      / ( m_a__times__v_comp__minus_b / one__minus__c__times__exp__d__times__v_comp
+                        + a__times__v_comp__plus__b
+                          / one__minus__a__times__exp__mb__times__v_comp );
+
+    // auxiliary variables for 'h'
+    double v_comp__div__5 = 0.20000000000000001 * v_comp;
 
     // activation and timescale of state variable 'h'
     double h_inf_Na = 1.0 / ( exp( 0.16129032258064516 * v_comp + 10.483870967741936 ) + 1.0 );
     double tau_h_Na =
       0.3115264797507788
       / ( ( -0.0091000000000000004 * v_comp - 0.68261830000000012 )
-            / ( 1.0 - 3277527.8765015295 * exp( 0.20000000000000001 * v_comp ) )
-          + ( 0.024 * v_comp + 1.200312 ) / ( 1.0 - 4.5282043263959816e-5 * exp( -0.20000000000000001 * v_comp ) ) );
+            / ( 1.0 - 3277527.8765015295 * exp( v_comp__div__5 ) )
+          + ( 0.024 * v_comp + 1.200312 ) / ( 1.0 - 4.5282043263959816e-5 * exp( -v_comp__div__5) ) );
+
+
+
+
+    // // activation and timescale of state variable 'm'
+    // double m_inf_Na = ( 0.182 * v_comp + 6.3723659999999995 )
+    //   / ( ( 1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp ) )
+    //                     * ( ( -0.124 * v_comp - 4.3416119999999996 )
+    //                           / ( 1.0 - 48.927192870146527 * exp( 0.1111111111111111 * v_comp ) )
+    //                         + ( 0.182 * v_comp + 6.3723659999999995 )
+    //                           / ( 1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp ) ) ) );
+    // double tau_m_Na = 0.3115264797507788
+    //   / ( ( -0.124 * v_comp - 4.3416119999999996 ) / ( 1.0 - 48.927192870146527 * exp( 0.1111111111111111 * v_comp ) )
+    //                     + ( 0.182 * v_comp + 6.3723659999999995 )
+    //                       / ( 1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp ) ) );
+
+    // // activation and timescale of state variable 'h'
+    // double h_inf_Na = 1.0 / ( exp( 0.16129032258064516 * v_comp + 10.483870967741936 ) + 1.0 );
+    // double tau_h_Na =
+    //   0.3115264797507788
+    //   / ( ( -0.0091000000000000004 * v_comp - 0.68261830000000012 )
+    //         / ( 1.0 - 3277527.8765015295 * exp( 0.20000000000000001 * v_comp ) )
+    //       + ( 0.024 * v_comp + 1.200312 ) / ( 1.0 - 4.5282043263959816e-5 * exp( -0.20000000000000001 * v_comp ) ) );
 
     // advance state variable 'm' one timestep
     double p_m_Na = exp( -dt / tau_m_Na );
@@ -133,13 +165,20 @@ nest::K::f_numstep( const double v_comp, const double dt )
 
   if ( gbar_K_ > 1e-9 )
   {
+    // auxiliary variables
+    double v_comp__minus__25 = v_comp - 25.0;
+    double m__v_comp_m_25 = - v_comp__minus__25;
+    double v_comp_m_25__div__9 = v_comp__minus__25 / 9.0;
+    double m_v_comp_m_25__div__9 = m__v_comp_m_25 / 9.0;
+    double exp__m_v_comp_m_25__div__9 = exp( m_v_comp_m_25__div__9 );
+    double exp__v_comp_m_25__div__9 = exp( v_comp_m_25__div__9 );
+    double expr = ( ( -0.002 ) * v_comp__minus__25 / ( 1.0 - exp__v_comp_m_25__div__9 )
+                                       + 0.02 * v_comp__minus__25 / ( 1.0 - exp__m_v_comp_m_25__div__9 ) );
+
     // activation and timescale of state variable 'm'
     double n_inf_K =
-      0.02 * ( v_comp - 25.0 ) / ( ( 1.0 - exp( ( 25.0 - v_comp ) / 9.0 ) )
-                                   * ( ( -0.002 ) * ( v_comp - 25.0 ) / ( 1.0 - exp( ( v_comp - 25.0 ) / 9.0 ) )
-                                       + 0.02 * ( v_comp - 25.0 ) / ( 1.0 - exp( ( 25.0 - v_comp ) / 9.0 ) ) ) );
-    double tau_n_K = 0.3115264797507788 / ( ( -0.002 ) * ( v_comp - 25.0 ) / ( 1.0 - exp( ( v_comp - 25.0 ) / 9.0 ) )
-                                            + 0.02 * ( v_comp - 25.0 ) / ( 1.0 - exp( ( 25.0 - v_comp ) / 9.0 ) ) );
+      0.02 * v_comp__minus__25 / ( ( 1.0 - exp__m_v_comp_m_25__div__9 ) *  expr );
+    double tau_n_K = 0.3115264797507788 / expr;
 
     // advance state variable 'm' one timestep
     double p_n_K = exp( -dt / tau_n_K );
@@ -199,13 +238,9 @@ nest::AMPA::append_recordables( std::map< Name, double* >* recordables )
 std::pair< double, double >
 nest::AMPA::f_numstep( const double v_comp, const double dt, const long lag )
 {
-  // construct propagators
-  double prop_r = std::exp( -dt / tau_r_ );
-  double prop_d = std::exp( -dt / tau_d_ );
-
   // update conductance
-  g_r_AMPA_ *= prop_r;
-  g_d_AMPA_ *= prop_d;
+  g_r_AMPA_ *= prop_r_;
+  g_d_AMPA_ *= prop_d_;
 
   // add spikes
   double s_val = b_spikes_->get_value( lag ) * g_norm_;
@@ -269,13 +304,9 @@ nest::GABA::append_recordables( std::map< Name, double* >* recordables )
 std::pair< double, double >
 nest::GABA::f_numstep( const double v_comp, const double dt, const long lag )
 {
-  // construct propagators
-  double prop_r = std::exp( -dt / tau_r_ );
-  double prop_d = std::exp( -dt / tau_d_ );
-
   // update conductance
-  g_r_GABA_ *= prop_r;
-  g_d_GABA_ *= prop_d;
+  g_r_GABA_ *= prop_r_;
+  g_d_GABA_ *= prop_d_;
 
   // add spikes
   double s_val = b_spikes_->get_value( lag ) * g_norm_;
@@ -339,12 +370,9 @@ nest::NMDA::append_recordables( std::map< Name, double* >* recordables )
 std::pair< double, double >
 nest::NMDA::f_numstep( const double v_comp, const double dt, const long lag )
 {
-  double prop_r = std::exp( -dt / tau_r_ );
-  double prop_d = std::exp( -dt / tau_d_ );
-
   // update conductance
-  g_r_NMDA_ *= prop_r;
-  g_d_NMDA_ *= prop_d;
+  g_r_NMDA_ *= prop_r_;
+  g_d_NMDA_ *= prop_d_;
 
   // add spikes
   double s_val = b_spikes_->get_value( lag ) * g_norm_;
@@ -430,16 +458,11 @@ nest::AMPA_NMDA::append_recordables( std::map< Name, double* >* recordables )
 std::pair< double, double >
 nest::AMPA_NMDA::f_numstep( const double v_comp, const double dt, const long lag )
 {
-  double prop_r_AMPA = std::exp( -dt / tau_r_AMPA_ );
-  double prop_d_AMPA = std::exp( -dt / tau_d_AMPA_ );
-  double prop_r_NMDA = std::exp( -dt / tau_r_NMDA_ );
-  double prop_d_NMDA = std::exp( -dt / tau_d_NMDA_ );
-
   // update conductance
-  g_r_AN_AMPA_ *= prop_r_AMPA;
-  g_d_AN_AMPA_ *= prop_d_AMPA;
-  g_r_AN_NMDA_ *= prop_r_NMDA;
-  g_d_AN_NMDA_ *= prop_d_NMDA;
+  g_r_AN_AMPA_ *= prop_r_AMPA_;
+  g_d_AN_AMPA_ *= prop_d_AMPA_;
+  g_r_AN_NMDA_ *= prop_r_NMDA_;
+  g_d_AN_NMDA_ *= prop_d_NMDA_;
 
   // add spikes
   double s_val_ = b_spikes_->get_value( lag );

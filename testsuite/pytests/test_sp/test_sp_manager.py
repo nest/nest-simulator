@@ -120,7 +120,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
         assert sp_synapses['pre_synaptic_element'] == 'Axon_ex'
         assert sp_synapses['post_synaptic_element'] == 'Den_ex'
 
-        assert nest.structural_plasticity_update_interval == 10000.
+        assert nest.structural_plasticity_update_interval == 10000.0
 
     def test_synapse_creation(self):
         for syn_model in nest.Models('synapses'):

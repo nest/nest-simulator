@@ -72,8 +72,7 @@ nest.SetStatus(cm_pas, {"compartments": [{"parent_idx": -1, "params": soma_param
 cm_act = nest.Create('cm_default')
 nest.SetStatus(cm_act, {"compartments": [{"parent_idx": -1, "params": soma_params},
                                          {"parent_idx":  0, "params": dend_params_active}]})
-print(cm_pas.compartments)
-print(nest.GetStatus(cm_pas, keys="compartments"))
+
 # set spike thresholds
 nest.SetStatus(cm_pas, {'V_th': -50.})
 nest.SetStatus(cm_act, {'V_th': -50.})
@@ -83,7 +82,6 @@ nest.SetStatus(cm_pas, {"receptors": {"comp_idx": 0, "receptor_type": "AMPA_NMDA
 nest.SetStatus(cm_pas, {"receptors": {"comp_idx": 1, "receptor_type": "AMPA_NMDA"}})
 syn_idx_soma_pas = 0
 syn_idx_dend_pas = 1
-print(nest.GetStatus(cm_pas, keys="receptors"))
 # add somatic and dendritic receptor to active dendrite model
 nest.SetStatus(cm_act, {"receptors": {"comp_idx": 0, "receptor_type": "AMPA_NMDA"}})
 nest.SetStatus(cm_act, {"receptors": {"comp_idx": 1, "receptor_type": "AMPA_NMDA"}})

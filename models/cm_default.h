@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron
+/* BeginUserDocs: neuron, compartmental model
 
 Short description
 +++++++++++++++++
@@ -46,15 +46,16 @@ Currently, AMPA, GABA or AMPA+NMDA receptors.
 Description
 +++++++++++
 
-`cm_default` is an implementation of a compartmental model. Users can
-define the structure of the neuron, i.e., soma and dendritic tree by
-adding compartments. Each compartment can be assigned receptors,
-currently modeled by AMPA, GABA or NMDA dynamics.
+`cm_default` is an implementation of a compartmental model. The structure of the
+neuron -- soma, dendrites, axon -- is user-defined at runtime by adding
+compartments through `nest.SetStatus()`. Each compartment can be assigned
+receptors, also through `nest.SetStatus()`.
 
 The default model is passive, but sodium and potassium currents can be added
 by passing non-zero conductances 'g_Na' and 'g_K' with the parameter dictionary
-when adding compartments. We are working on the inclusion of general ion channel
-currents through NESTML.
+when adding compartments. Receptors can be AMPA and/or NMDA (excitatory), and
+GABA (inhibitory). Ion channel and receptor currents to the compartments can be
+customized through NESTML
 
 Usage
 +++++
@@ -72,7 +73,7 @@ compartments can using the `nest.SetStatus()` function
                                           {"parent_idx": 0,
                                           "params": {"e_L": -60., "g_C": 0.02}})
 
-Each compartment is assigned an index, corresponding to the order in which there
+Each compartment is assigned an index, corresponding to the order in which they
 were added. Subsequently, compartment indices are used to specify parent
 compartments in the tree, or are used to assign receptors to the compartments.
 By convention, the first compartment is the root (soma), which has no parent.
@@ -85,10 +86,28 @@ To add receptors to the model, also use `nest.SetStatus()`
                                       "receptor_type": "AMPA",
                                       "params": {"e_AMPA": 0., "tau_AMPA": 3.})
 
-Note that the "compartments" resp. "receptors" entries can also be a list of
-compartment resp. receptor parameters.
+Similar to compartments, each receptor is assigned an index, starting at 0 and
+corresponding to the order in which they are added. This index is used
+subsequently to connect synapses to the receptor
 
-Compartment voltages can be recorded. To do so, users create a multimeter in the
+.. code-block:: Python
+    nest.Connect(pre, cm_model, syn_spec={
+        'synapse_model': 'static_synapse', 'weight': 5., 'delay': 0.5,
+        'receptor_type': 2})
+
+Note:
+  In the `nest.SetStatus()` call, the 'receptor_type' entry is string that
+  specifies the type of receptor. In the `nest.Connect()` call, the
+  'receptor_type' entry is and integer that specifies the receptor index.
+
+Note:
+  The "compartments" resp. "receptors" entries can be a dict or a list
+  of dicts containing compartment resp. receptor details. When a dict is provided,
+  a single compartment resp. receptor is added to the model. When a list of dicts
+  is provided, multiple compartments resp. receptors are added with a single
+  `nest.SetStatus()` call.
+
+Compartment voltages can be recorded. To do so, create a multimeter in the
 standard manner but specify the to be recorded voltages as
 'v_comp{compartment_index}'. Ion channels state variables can be recorded as well,
 using the syntax '{state_variable_name}{compartment_index}'. For receptor state
@@ -122,7 +141,7 @@ The following parameters can be set using the `AddCompartment` function
  e_L        mV      Leak reversal of the compartment (default: -70. mV)
 =========== ======= ===============================================================
 
-Ion channels and receptor types for the default models are hardcoded.
+Ion channels and receptor types for the default model are hardcoded.
 For ion channels, there is a Na-channel and a K-channel. Parameters can be set
 by specifying the following entries in the `SetStatus` dictionary argument:
 
@@ -219,13 +238,10 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_tree_pointers_();
-  void init_syn_pointers_();
-  void init_recordables_pointers_();
-
   void add_compartment_( DictionaryDatum& dd );
   void add_receptor_( DictionaryDatum& dd );
 
+  void init_recordables_pointers_();
   void calibrate();
 
   void update( Time const&, const long, const long );

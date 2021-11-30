@@ -59,7 +59,8 @@ nest::cm_default::cm_default( const cm_default& n )
 
 /* ----------------------------------------------------------------
  * Node initialization functions
- * ---------------------------------------------------------------- */
+ * ----------------------------------------------------------------
+ */
 void
 cm_default::get_status( DictionaryDatum& statusdict ) const
 {
@@ -214,26 +215,6 @@ nest::cm_default::add_receptor_( DictionaryDatum& dd )
   }
 }
 
-/*
-The following functions initialize the internal pointers of the compartmental
-model.
-*/
-void
-nest::cm_default::init_tree_pointers_()
-{
-  /*
-  initialize the pointers within the compartment tree
-  */
-  c_tree_.init_pointers();
-}
-void
-nest::cm_default::init_syn_pointers_()
-{
-  /*
-  initialize the pointers to the synapse buffers for the receptor currents
-  */
-  c_tree_.set_syn_buffers( syn_buffers_ );
-}
 void
 nest::cm_default::init_recordables_pointers_()
 {
@@ -272,9 +253,13 @@ nest::cm_default::calibrate()
 {
   logger_.init();
 
-  init_tree_pointers_();
-  init_syn_pointers_();
+  //initialize the pointers within the compartment tree
+  c_tree_.init_pointers();
+  // initialize the pointers to the synapse buffers for the receptor currents
+  c_tree_.set_syn_buffers( syn_buffers_ );
+  // construct the reordables map
   init_recordables_pointers_();
+
   c_tree_.calibrate();
 }
 

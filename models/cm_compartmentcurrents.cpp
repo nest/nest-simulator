@@ -65,8 +65,8 @@ nest::Na::f_numstep( const double v_comp, const double dt )
     double a__times__v_comp__plus__b = 0.182 * v_comp + 6.3723659999999995;
     double m_a__times__v_comp__minus_b = -0.124 * v_comp - 4.3416119999999996;
     double one__minus__a__times__exp__mb__times__v_comp =
-      1.0 - 0.020438532058318047 * exp( -0.1111111111111111 * v_comp );
-    double one__minus__c__times__exp__d__times__v_comp = 1.0 - 48.927192870146527 * exp( 0.1111111111111111 * v_comp );
+      1.0 - 0.020438532058318047 * std::exp( -0.1111111111111111 * v_comp );
+    double one__minus__c__times__exp__d__times__v_comp = 1.0 - 48.927192870146527 * std::exp( 0.1111111111111111 * v_comp );
 
     // activation and timescale of state variable 'm'
     double m_inf_Na =
@@ -81,24 +81,24 @@ nest::Na::f_numstep( const double v_comp, const double dt )
     double v_comp__div__5 = 0.20000000000000001 * v_comp;
 
     // activation and timescale of state variable 'h'
-    double h_inf_Na = 1.0 / ( exp( 0.16129032258064516 * v_comp + 10.483870967741936 ) + 1.0 );
+    double h_inf_Na = 1.0 / ( std::exp( 0.16129032258064516 * v_comp + 10.483870967741936 ) + 1.0 );
     double tau_h_Na = 0.3115264797507788
       / ( ( -0.0091000000000000004 * v_comp - 0.68261830000000012 )
-                          / ( 1.0 - 3277527.8765015295 * exp( v_comp__div__5 ) )
+                          / ( 1.0 - 3277527.8765015295 * std::exp( v_comp__div__5 ) )
                         + ( 0.024 * v_comp + 1.200312 ) / ( 1.0 - 4.5282043263959816e-5 * exp( -v_comp__div__5 ) ) );
 
     // advance state variable 'm' one timestep
-    double p_m_Na = exp( -dt / tau_m_Na );
+    double p_m_Na = std::exp( -dt / tau_m_Na );
     m_Na_ *= p_m_Na;
     m_Na_ += ( 1. - p_m_Na ) * m_inf_Na;
 
     // advance state variable 'h' one timestep
-    double p_h_Na = exp( -dt / tau_h_Na );
+    double p_h_Na = std::exp( -dt / tau_h_Na );
     h_Na_ *= p_h_Na;
     h_Na_ += ( 1. - p_h_Na ) * h_inf_Na;
 
     // compute the conductance of the sodium channel
-    double g_Na = gbar_Na_ * pow( m_Na_, 3 ) * h_Na_;
+    double g_Na = gbar_Na_ * std::pow( m_Na_, 3 ) * h_Na_;
 
     // add to variables for numerical integration
     g_val += g_Na / 2.;
@@ -152,8 +152,8 @@ nest::K::f_numstep( const double v_comp, const double dt )
     double m__v_comp_m_25 = -v_comp__minus__25;
     double v_comp_m_25__div__9 = v_comp__minus__25 / 9.0;
     double m_v_comp_m_25__div__9 = m__v_comp_m_25 / 9.0;
-    double exp__m_v_comp_m_25__div__9 = exp( m_v_comp_m_25__div__9 );
-    double exp__v_comp_m_25__div__9 = exp( v_comp_m_25__div__9 );
+    double exp__m_v_comp_m_25__div__9 = std::exp( m_v_comp_m_25__div__9 );
+    double exp__v_comp_m_25__div__9 = std::exp( v_comp_m_25__div__9 );
     double expr = ( ( -0.002 ) * v_comp__minus__25 / ( 1.0 - exp__v_comp_m_25__div__9 )
       + 0.02 * v_comp__minus__25 / ( 1.0 - exp__m_v_comp_m_25__div__9 ) );
 
@@ -162,7 +162,7 @@ nest::K::f_numstep( const double v_comp, const double dt )
     double tau_n_K = 0.3115264797507788 / expr;
 
     // advance state variable 'm' one timestep
-    double p_n_K = exp( -dt / tau_n_K );
+    double p_n_K = std::exp( -dt / tau_n_K );
     n_K_ *= p_n_K;
     n_K_ += ( 1. - p_n_K ) * n_inf_K;
 
@@ -244,7 +244,7 @@ nest::AMPA::f_numstep( const double v_comp, const double dt, const long lag )
 
   // for numberical integration
   double g_val = -d_i_tot_dv / 2.;
-  double i_val = i_tot - d_i_tot_dv * v_comp / 2.;
+  double i_val = i_tot + g_val * v_comp;
 
   return std::make_pair( g_val, i_val );
 }
@@ -316,7 +316,7 @@ nest::GABA::f_numstep( const double v_comp, const double dt, const long lag )
 
   // for numberical integration
   double g_val = -d_i_tot_dv / 2.;
-  double i_val = i_tot - d_i_tot_dv * v_comp / 2.;
+  double i_val = i_tot + g_val * v_comp;
 
   return std::make_pair( g_val, i_val );
 }
@@ -381,14 +381,17 @@ nest::NMDA::f_numstep( const double v_comp, const double dt, const long lag )
   // compute conductance window
   double g_NMDA = g_r_NMDA_ + g_d_NMDA_;
 
+  // auxiliary variables
+  std::pair< double, double > NMDA_sigmoid = NMDA_sigmoid__and__d_NMDAsigmoid_dv( v_comp );
+
   // total current
-  double i_tot = g_NMDA * NMDAsigmoid( v_comp ) * ( e_rev_ - v_comp );
+  double i_tot = g_NMDA * NMDA_sigmoid.first * ( e_rev_ - v_comp );
   // voltage derivative of total current
-  double d_i_tot_dv = g_NMDA * ( d_NMDAsigmoid_dv( v_comp ) * ( e_rev_ - v_comp ) - NMDAsigmoid( v_comp ) );
+  double d_i_tot_dv = g_NMDA * ( NMDA_sigmoid.second * ( e_rev_ - v_comp ) - NMDA_sigmoid.first );
 
   // for numberical integration
   double g_val = -d_i_tot_dv / 2.;
-  double i_val = i_tot - d_i_tot_dv * v_comp / 2.;
+  double i_val = i_tot + g_val * v_comp;
 
   return std::make_pair( g_val, i_val );
 }
@@ -488,15 +491,18 @@ nest::AMPA_NMDA::f_numstep( const double v_comp, const double dt, const long lag
   double g_AMPA = g_r_AN_AMPA_ + g_d_AN_AMPA_;
   double g_NMDA = g_r_AN_NMDA_ + g_d_AN_NMDA_;
 
+  // auxiliary variable
+  std::pair< double, double > NMDA_sigmoid = NMDA_sigmoid__and__d_NMDAsigmoid_dv( v_comp );
+
   // total current
-  double i_tot = ( g_AMPA + NMDA_ratio_ * g_NMDA * NMDAsigmoid( v_comp ) ) * ( e_rev_ - v_comp );
+  double i_tot = ( g_AMPA + NMDA_ratio_ * g_NMDA * NMDA_sigmoid.first ) * ( e_rev_ - v_comp );
   // voltage derivative of total current
   double d_i_tot_dv =
-    -g_AMPA + NMDA_ratio_ * g_NMDA * ( d_NMDAsigmoid_dv( v_comp ) * ( e_rev_ - v_comp ) - NMDAsigmoid( v_comp ) );
+    -g_AMPA + NMDA_ratio_ * g_NMDA * ( NMDA_sigmoid.second * ( e_rev_ - v_comp ) -  NMDA_sigmoid.first );
 
   // for numberical integration
   double g_val = -d_i_tot_dv / 2.;
-  double i_val = i_tot - d_i_tot_dv * v_comp / 2.;
+  double i_val = i_tot + g_val * v_comp;
 
   return std::make_pair( g_val, i_val );
 }

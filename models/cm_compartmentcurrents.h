@@ -19,8 +19,8 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef SYNAPSES_NEAT_H
-#define SYNAPSES_NEAT_H
+#ifndef CM_COMPARTMENTCURRENTS_H
+#define CM_COMPARTMENTCURRENTS_H
 
 #include <stdlib.h>
 
@@ -108,7 +108,7 @@ private:
 
 public:
   // constructor, destructor
-  AMPA( const long syn_index );
+  explicit AMPA( const long syn_index );
   AMPA( const long syn_index, const DictionaryDatum& receptor_params );
   ~AMPA(){};
 
@@ -166,7 +166,7 @@ private:
 
 public:
   // constructor, destructor
-  GABA( const long syn_index );
+  explicit GABA( const long syn_index );
   GABA( const long syn_index, const DictionaryDatum& receptor_params );
   ~GABA(){};
 
@@ -224,7 +224,7 @@ private:
 
 public:
   // constructor, destructor
-  NMDA( const long syn_index );
+  explicit NMDA( const long syn_index );
   NMDA( const long syn_index, const DictionaryDatum& receptor_params );
   ~NMDA(){};
 
@@ -257,17 +257,17 @@ public:
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
 
-  // synapse specific funtions
-  inline double
-  NMDAsigmoid( double v_comp )
+  // synapse specific funtion
+  inline std::pair< double, double >
+  NMDA_sigmoid__and__d_NMDAsigmoid_dv( double v_comp)
   {
-    return 1. / ( 1. + 0.3 * std::exp( -.1 * v_comp ) );
-  };
-  inline double
-  d_NMDAsigmoid_dv( double v_comp )
-  {
-    return 0.03 * std::exp( -0.1 * v_comp ) / std::pow( 0.3 * std::exp( -0.1 * v_comp ) + 1.0, 2 );
-  };
+    double exp__v_comp = std::exp( -.1 * v_comp );
+    double denom = 1. + 0.3 * exp__v_comp;
+
+    return std::make_pair(
+      1. / denom,
+      0.03 * exp__v_comp / std::pow( denom, 2 ) );
+  }
 };
 
 
@@ -299,7 +299,7 @@ private:
 
 public:
   // constructor, destructor
-  AMPA_NMDA( const long syn_index );
+  explicit AMPA_NMDA( const long syn_index );
   AMPA_NMDA( const long syn_index, const DictionaryDatum& receptor_params );
   ~AMPA_NMDA(){};
 
@@ -335,17 +335,18 @@ public:
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
 
-  // synapse specific funtions
-  inline double
-  NMDAsigmoid( double v_comp )
+  // synapse specific funtion
+  inline std::pair< double, double >
+  NMDA_sigmoid__and__d_NMDAsigmoid_dv( double v_comp)
   {
-    return 1. / ( 1. + 0.3 * std::exp( -.1 * v_comp ) );
-  };
-  inline double
-  d_NMDAsigmoid_dv( double v_comp )
-  {
-    return 0.03 * std::exp( -0.1 * v_comp ) / std::pow( 0.3 * std::exp( -0.1 * v_comp ) + 1.0, 2 );
-  };
+    double exp__v_comp = std::exp( -.1 * v_comp );
+    double denom = 1. + 0.3 * exp__v_comp;
+
+    return std::make_pair(
+      1. / denom,
+      0.03 * exp__v_comp / std::pow( denom, 2 ) );
+  }
+
 };
 
 
@@ -362,12 +363,14 @@ private:
   std::vector< AMPA_NMDA > AMPA_NMDA_syns_;
 
 public:
-  CompartmentCurrents(){};
+  CompartmentCurrents()
+    : Na_chan_()
+    , K_chan_()
+  {};
   explicit CompartmentCurrents( const DictionaryDatum& channel_params )
-  {
-    Na_chan_ = Na( channel_params );
-    K_chan_ = K( channel_params );
-  };
+    : Na_chan_( channel_params )
+    , K_chan_( channel_params )
+  {};
   ~CompartmentCurrents(){};
 
   void
@@ -615,4 +618,4 @@ public:
 
 } // namespace
 
-#endif /* #ifndef SYNAPSES_NEAT_H */
+#endif /* #ifndef CM_COMPARTMENTCURRENTS_H */

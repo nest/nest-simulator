@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef IAF_NEAT_H
-#define IAF_NEAT_H
+#ifndef CM_DEFAULT_H
+#define CM_DEFAULT_H
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -319,4 +319,4 @@ cm_default::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 
 } // namespace
 
-#endif /* #ifndef IAF_NEAT_H */
+#endif /* #ifndef CM_DEFAULT_H */

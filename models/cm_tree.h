@@ -19,6 +19,10 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#ifndef CM_TREE_H
+#define CM_TREE_H
+
 #include <stdlib.h>
 
 #include "nest_time.h"
@@ -43,7 +47,6 @@
 
 namespace nest
 {
-
 
 class Compartment
 {
@@ -186,7 +189,7 @@ public:
     return &root_;
   };
 
-  // get tree size (number of nodes)
+  // get tree size (number of compartments)
   long
   get_size() const
   {
@@ -207,3 +210,5 @@ public:
 }; // CompTree
 
 } // namespace
+
+#endif /* #ifndef CM_TREE_H */

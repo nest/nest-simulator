@@ -29,8 +29,6 @@ class TestHelperFunctions(unittest.TestCase):
         help_text = nest.hl_api.load_help('ac_generator')
         if help_text:
             self.assertTrue(isinstance(help_text, str))
-        else:
-            self.assetsIfNone(help_text)
 
     def test_get_verbosity(self):
         verbosity = nest.get_verbosity()

@@ -29,8 +29,6 @@ class TestInfoFunctions(unittest.TestCase):
         help_text = nest.help('ac_generator', return_text=True)
         if help_text:
             self.assertTrue(isinstance(help_text, str))
-        else:
-            self.assertIsNone(help_text)
 
 
 def suite():

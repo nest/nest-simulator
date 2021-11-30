@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_helper_functions.py
+# test_info_functions.py
 #
 # This file is part of NEST.
 #
@@ -23,38 +23,18 @@ import unittest
 import nest
 
 
-class TestHelperFunctions(unittest.TestCase):
+class TestInfoFunctions(unittest.TestCase):
 
-    def test_get_help_fname(self):
-        help_text = nest.hl_api.load_help('ac_generator')
+    def test_help(self):
+        help_text = nest.help('ac_generator', return_text=True)
         if help_text:
             self.assertTrue(isinstance(help_text, str))
         else:
-            self.assetsIfNone(help_text)
-
-    def test_get_verbosity(self):
-        verbosity = nest.get_verbosity()
-        self.assertTrue(isinstance(verbosity, int))
-
-    def test_set_verbosity(self):
-        levels = [('M_ALL', 0),
-                  ('M_DEBUG', 5),
-                  ('M_STATUS', 7),
-                  ('M_INFO', 10),
-                  ('M_DEPRECATED', 18),
-                  ('M_WARNING', 20),
-                  ('M_ERROR', 30),
-                  ('M_FATAL', 40),
-                  ('M_QUIET', 100)
-                  ]
-        for level, code in levels:
-            nest.set_verbosity(level)
-            verbosity = nest.get_verbosity()
-            self.assertEqual(verbosity, code)
+            self.assertIsNone(help_text)
 
 
 def suite():
-    suite = unittest.makeSuite(TestHelperFunctions, 'test')
+    suite = unittest.makeSuite(TestInfoFunctions, 'test')
     return suite
 
 

@@ -45,8 +45,8 @@ class STDPSynapseTest(unittest.TestCase):
         self.resolution = 0.1    # [ms]
         self.simulation_duration = 1000 #1E3    # [ms]
         self.synapse_model = "stdp_dopamine_synapse"
-        self.presynaptic_firing_rate = 10. #20.    # [ms^-1]
-        self.postsynaptic_firing_rate = 10. #20.    # [ms^-1]
+        self.presynaptic_firing_rate = 20.    # [ms^-1]
+        self.postsynaptic_firing_rate = 20.    # [ms^-1]
         self.dopa_rate = 20.
         self.tau_pre = 20.
         self.tau_post = 33.7
@@ -83,9 +83,9 @@ class STDPSynapseTest(unittest.TestCase):
         # pre: 1       5 6 7   9    11 12 13
         # post:  2 3 4       8 9 10    12
         self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13], dtype=float)
-        #self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 13], dtype=float)
+        #self.hardcoded_pre_times = np.array([9], dtype=float)
         self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12], dtype=float)
-        #self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12], dtype=float)
+        #self.hardcoded_post_times = np.array([13], dtype=float)
         self.hardcoded_trains_length = 2. + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):

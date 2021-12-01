@@ -119,7 +119,7 @@ def CreateParameter(parametertype, specs):
     return sli_func('CreateParameter', {parametertype: specs})
 
 
-class NodeCollectionIterator(object):
+class NodeCollectionIterator:
     """
     Iterator class for `NodeCollection`.
 
@@ -145,7 +145,7 @@ class NodeCollectionIterator(object):
         return val
 
 
-class NodeCollection(object):
+class NodeCollection:
     """
     Class for `NodeCollection`.
 
@@ -543,7 +543,7 @@ class NodeCollection(object):
             self.set({attr: value})
 
 
-class SynapseCollectionIterator(object):
+class SynapseCollectionIterator:
     """
     Iterator class for SynapseCollection.
     """
@@ -558,7 +558,7 @@ class SynapseCollectionIterator(object):
         return SynapseCollection(next(self._iter))
 
 
-class SynapseCollection(object):
+class SynapseCollection:
     """
     Class for Connections.
 
@@ -899,7 +899,7 @@ class SynapseCollection(object):
         sr('Transpose { arrayload pop SetStatus } forall')
 
 
-class CollocatedSynapses(object):
+class CollocatedSynapses:
     """
     Class for collocated synapse specifications.
 
@@ -929,7 +929,7 @@ class CollocatedSynapses(object):
         return len(self.syn_specs)
 
 
-class Mask(object):
+class Mask:
     """
     Class for spatial masks.
 

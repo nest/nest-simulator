@@ -201,7 +201,6 @@ By default, everything will be installed to the subdirectories ``<nest_install_d
 - Examples ``<nest_install_dir>/share/doc/nest/examples``
 - PyNEST ``<nest_install_dir>/lib/pythonX.Y/site-packages/nest``
 - PyNEST examples ``<nest_install_dir>/share/doc/nest/examples/pynest``
-- Extras ``<nest_install_dir>/share/nest/extras/``
 
 If you want to run the ``nest`` executable or use the ``nest`` Python module without providing explicit paths, you
 have to add the installation directory to your search paths.

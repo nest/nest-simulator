@@ -392,9 +392,15 @@ function( NEST_PROCESS_WITH_PYTHON )
   elseif ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter and ABI
-    if ( ${CMAKE_VERSION} VERSION_LESS "3.18.0")
+    find_package( Python 3.8 QUIET COMPONENTS Interpreter Development.Module )
+    if ( NOT Python_FOUND )
       find_package( Python 3.8 REQUIRED Interpreter Development )
-      message( WARNING "CMake 3.18+ is recommended for more universal Python bindings. If you encounter missing Python header or library file errors, try upgrading CMake.")
+      string( CONCAT PYABI_WARN "Could not locate Python ABI"
+        ", using shared libraries and header file instead."
+        " Please clear your CMake cache and build folder and verify that CMake"
+        " is up-to-date (3.18+)."
+      )
+      message( WARNING "${PYABI_WARN}")
     else()
       find_package( Python 3.8 REQUIRED Interpreter Development.Module )
     endif()

@@ -25,11 +25,6 @@ import nest
 
 class TestHelperFunctions(unittest.TestCase):
 
-    def test_load_help(self):
-        help_text = nest.hl_api.load_help('ac_generator')
-        if help_text:
-            self.assertTrue(isinstance(help_text, str))
-
     def test_get_verbosity(self):
         verbosity = nest.get_verbosity()
         self.assertTrue(isinstance(verbosity, int))

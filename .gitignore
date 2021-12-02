@@ -76,3 +76,6 @@ cscope.out
 .cproject
 .pydevproject
 .python-version
+
+# Merge conflict artifacts
+*.orig

@@ -8,7 +8,7 @@ A simple syntax file for Vim users is provided below. Copy it to your Vim config
 
 .. code-block::
 
-   $ cp ${prefix}/share/nest/extras/EditorSupport/vim/syntax/sli.vim ~/.vim/syntax/sli.vim
+   $ cp ${prefix}/share/doc/nest/EditorSupport/vim/syntax/sli.vim ~/.vim/syntax/sli.vim
 
 Then add the following lines to your ``~/.vimrc`` file to use it:
 

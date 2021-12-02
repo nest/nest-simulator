@@ -43,7 +43,7 @@ You can also attach files to issues. Data dumps or example code snippets that he
 * Make commits of logical units.
 * Make sure NEST compiles and has no new warnings.
 * Make sure all tests pass (`make installcheck`).
-* Make sure your code conforms to our [coding guidelines](https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html) (`./extras/check_code_style.sh`)
+* Make sure your code conforms to our [coding guidelines](https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html) (`./build_support/check_code_style.sh`)
 
 ## Code Review
 

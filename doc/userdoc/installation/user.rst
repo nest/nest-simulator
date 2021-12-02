@@ -3,6 +3,129 @@
 User install instructions
 =========================
 
+* Linux install
+
+* macOS
+
+* Windows
+
+* Docker (cross-platform)
+
+* NEST in EBRAINS
+
+|linux|  Linux
+---------------
+
+Ubuntu
+~~~~~~
+
+Ubuntu users can install NEST via the PPA repository.
+
+1. Add the PPA repository for NEST and update apt:
+
+ .. code-block:: bash
+
+     sudo add-apt-repository ppa:nest-simulator/nest
+     sudo apt-get update
+
+2. Install NEST:
+
+ .. code-block:: bash
+
+     sudo apt-get install nest
+
+Debian
+~~~~~~
+
+Debian users can install NEST via the Ubuntu PPA repository.
+
+1. Create a new ``apt`` repository entry in ``/etc/apt/sources.list.d/nest-simulator-ubuntu-nest-XXX.list`` by:
+
+    .. code-block:: bash
+
+       sudo apt install devscripts build-essential software-properties-common dpkg-dev
+       sudo add-apt-repository --enable-source ppa:nest-simulator/nest
+
+2. Disable the binary package in the repository file created under ``/etc/apt/sources.list.d/`` by commenting
+   out the ``deb`` line, while keeping the ``deb-src`` line. It should look similar to this:
+
+    .. code-block:: bash
+
+        #deb http://ppa.launchpad.net/nest-simulator/nest/ubuntu focal main
+        deb-src http://ppa.launchpad.net/nest-simulator/nest/ubuntu focal main
+
+
+3. Import the PPA GPC key and rebuild the package:
+
+    .. code-block:: bash
+
+       sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 \
+                        --recv-keys 0CF7539642ABD23CBCA8D487F0B8B6C5EC02D7DD
+       sudo apt update
+       sudo apt source --build nest
+
+4. Install any missing dependencies, if ``apt`` tells you so.
+   In addition, install:
+
+    .. code-block:: bash
+
+        sudo apt install python3-all dh-python
+
+5. After installing the dependencies, enter ``sudo apt source --build nest`` again.
+   When the build finished, look for lines like:
+
+    .. code-block:: bash
+
+        dpkg-deb: building package 'nest-dbgsym' in '../nest-dbgsym_2.20.0-0~202001311135~ubuntu20.04.1_amd64.deb'.
+        dpkg-deb: building package 'nest' in '../nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.deb'.
+        #dh binary
+        dpkg-genbuildinfo --build=binary
+        dpkg-genchanges --build=binary >../nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.changes
+
+    and note down the full package name. In the above example this would be
+    `nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.deb`, where the number `202001311135` and potentially the
+    Ubuntu version number may be different.
+
+6. Install the ready Debian package after the rebuild:
+
+    .. code-block:: bash
+
+        sudo dpkg --install nest-simulator-x.y.z~NUMBER~ubuntu20.04.1_amd64.deb
+
+    The package name is taken from the result of the previous step. `NUMBER` and potentially the Ubuntu
+    version might differ.
+
+7. Test the package:
+
+    .. code-block:: bash
+
+       python3
+       import nest
+
+|macos| macOS
+-------------
+
+1. `Install Homebrew <https://brew.sh/>`_.
+
+2. Install NEST via:
+
+.. code-block:: bash
+
+    brew install nest
+
+-----
+
+:ref:`See our docker installation instructions <docker>`
+
+|macos| |linux| |windows| Live media
+------------------------------------
+
+We have live media (.ova) if you want to run NEST in a virtual machine.
+
+:ref:`Download the live media here <download_livemedia>`, and follow the :doc:`instructions to set up the virtual machine <livemedia>` .
+
+
+
 
 For Linux and macOS, you can install NEST with pip
 |linux| |macos|
@@ -25,37 +148,19 @@ With mpi?
 
    pip3 install nest-simulator with-mpi=on
 
-:ref:`Windows users see below <windows>`
 
 .. comment: any options?
 
 .. comment: this section below should be modelled after the main page with pretty icons and such, not just a
    bullet list
 
-Explore what you can do with NEST:
-
-* :doc:`../tutorials/index`
-
-* :doc:`../examples/index`
-
-* :doc:`../models/models-main`
-
 
 .. |windows| image:: ../static/img/windows.png
    :scale: 15%
 
-.. _windows:
-
-Windows
-|windows|
-
-   We recommend the neurofedora live media for Windows users
 
 
-Use NEST with EBRAINS
----------------------
 
-If you have an EBRAINS account you can check out . . .
 
 
 

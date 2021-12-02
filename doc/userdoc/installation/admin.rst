@@ -10,6 +10,8 @@ If you need to deploy NEST on a machine
 Docker container
 ~~~~~~~~~~~~~~~~
 
+.. include:: docker.rst
+
 With open-mpi + jupyter notebook
 Without open-mpi + jupyter notebook ...
 
@@ -32,4 +34,3 @@ See the `README <https://github.com/nest/nest-docker>`_ to find out more, but no
 :doc:`Instructions for high performance computers <hpc_install>` provides some instructions for certain machines.
 
 
-EBRAINS set up?

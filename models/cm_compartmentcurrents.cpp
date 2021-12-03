@@ -70,13 +70,13 @@ nest::Na::f_numstep( const double v_comp, const double dt )
       1.0 - 48.927192870146527 * std::exp( 0.1111111111111111 * v_comp );
 
     // activation and timescale of state variable 'm'
-    double m_inf_Na = a__times__v_comp__plus__b
-      / ( one__minus__a__times__exp__mb__times__v_comp
-        * ( m_a__times__v_comp__minus_b / one__minus__c__times__exp__d__times__v_comp
-          + a__times__v_comp__plus__b / one__minus__a__times__exp__mb__times__v_comp ) );
-    double tau_m_Na = 0.3115264797507788
-      / ( m_a__times__v_comp__minus_b / one__minus__c__times__exp__d__times__v_comp
-        + a__times__v_comp__plus__b / one__minus__a__times__exp__mb__times__v_comp );
+    double m_inf_Na =
+      a__times__v_comp__plus__b / ( one__minus__a__times__exp__mb__times__v_comp
+                                    * ( m_a__times__v_comp__minus_b / one__minus__c__times__exp__d__times__v_comp
+                                        + a__times__v_comp__plus__b / one__minus__a__times__exp__mb__times__v_comp ) );
+    double tau_m_Na =
+      0.3115264797507788 / ( m_a__times__v_comp__minus_b / one__minus__c__times__exp__d__times__v_comp
+                             + a__times__v_comp__plus__b / one__minus__a__times__exp__mb__times__v_comp );
 
     // auxiliary variables for 'h'
     double v_comp__div__5 = 0.20000000000000001 * v_comp;
@@ -85,8 +85,8 @@ nest::Na::f_numstep( const double v_comp, const double dt )
     double h_inf_Na = 1.0 / ( std::exp( 0.16129032258064516 * v_comp + 10.483870967741936 ) + 1.0 );
     double tau_h_Na = 0.3115264797507788
       / ( ( -0.0091000000000000004 * v_comp - 0.68261830000000012 )
-          / ( 1.0 - 3277527.8765015295 * std::exp( v_comp__div__5 ) )
-        + ( 0.024 * v_comp + 1.200312 ) / ( 1.0 - 4.5282043263959816e-5 * exp( -v_comp__div__5 ) ) );
+                          / ( 1.0 - 3277527.8765015295 * std::exp( v_comp__div__5 ) )
+                        + ( 0.024 * v_comp + 1.200312 ) / ( 1.0 - 4.5282043263959816e-5 * exp( -v_comp__div__5 ) ) );
 
     // advance state variable 'm' one timestep
     double p_m_Na = std::exp( -dt / tau_m_Na );

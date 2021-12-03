@@ -253,7 +253,7 @@ nest::cm_default::calibrate()
 {
   logger_.init();
 
-  //initialize the pointers within the compartment tree
+  // initialize the pointers within the compartment tree
   c_tree_.init_pointers();
   // initialize the pointers to the synapse buffers for the receptor currents
   c_tree_.set_syn_buffers( syn_buffers_ );

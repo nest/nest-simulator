@@ -42,7 +42,7 @@ private:
 public:
   Na();
   explicit Na( const DictionaryDatum& channel_params );
-  ~Na(){};
+  ~Na() {};
 
   // calibrate initialization
   void
@@ -70,7 +70,7 @@ private:
 public:
   K();
   explicit K( const DictionaryDatum& channel_params );
-  ~K(){};
+  ~K() {};
 
   // calibrate initialization
   void
@@ -110,7 +110,7 @@ public:
   // constructor, destructor
   explicit AMPA( const long syn_index );
   AMPA( const long syn_index, const DictionaryDatum& receptor_params );
-  ~AMPA(){};
+  ~AMPA() {};
 
   long
   get_syn_idx()
@@ -168,7 +168,7 @@ public:
   // constructor, destructor
   explicit GABA( const long syn_index );
   GABA( const long syn_index, const DictionaryDatum& receptor_params );
-  ~GABA(){};
+  ~GABA() {};
 
   long
   get_syn_idx()
@@ -226,7 +226,7 @@ public:
   // constructor, destructor
   explicit NMDA( const long syn_index );
   NMDA( const long syn_index, const DictionaryDatum& receptor_params );
-  ~NMDA(){};
+  ~NMDA() {};
 
   long
   get_syn_idx()
@@ -259,14 +259,12 @@ public:
 
   // synapse specific funtion
   inline std::pair< double, double >
-  NMDA_sigmoid__and__d_NMDAsigmoid_dv( double v_comp)
+  NMDA_sigmoid__and__d_NMDAsigmoid_dv( double v_comp )
   {
     double exp__v_comp = std::exp( -.1 * v_comp );
     double denom = 1. + 0.3 * exp__v_comp;
 
-    return std::make_pair(
-      1. / denom,
-      0.03 * exp__v_comp / std::pow( denom, 2 ) );
+    return std::make_pair( 1. / denom, 0.03 * exp__v_comp / std::pow( denom, 2 ) );
   }
 };
 
@@ -301,7 +299,7 @@ public:
   // constructor, destructor
   explicit AMPA_NMDA( const long syn_index );
   AMPA_NMDA( const long syn_index, const DictionaryDatum& receptor_params );
-  ~AMPA_NMDA(){};
+  ~AMPA_NMDA() {};
 
   long
   get_syn_idx()
@@ -337,16 +335,13 @@ public:
 
   // synapse specific funtion
   inline std::pair< double, double >
-  NMDA_sigmoid__and__d_NMDAsigmoid_dv( double v_comp)
+  NMDA_sigmoid__and__d_NMDAsigmoid_dv( double v_comp )
   {
     double exp__v_comp = std::exp( -.1 * v_comp );
     double denom = 1. + 0.3 * exp__v_comp;
 
-    return std::make_pair(
-      1. / denom,
-      0.03 * exp__v_comp / std::pow( denom, 2 ) );
+    return std::make_pair( 1. / denom, 0.03 * exp__v_comp / std::pow( denom, 2 ) );
   }
-
 };
 
 
@@ -365,13 +360,11 @@ private:
 public:
   CompartmentCurrents()
     : Na_chan_()
-    , K_chan_()
-  {};
+    , K_chan_() {};
   explicit CompartmentCurrents( const DictionaryDatum& channel_params )
     : Na_chan_( channel_params )
-    , K_chan_( channel_params )
-  {};
-  ~CompartmentCurrents(){};
+    , K_chan_( channel_params ) {};
+  ~CompartmentCurrents() {};
 
   void
   calibrate()

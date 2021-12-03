@@ -29,8 +29,8 @@
 #include "nest_types.h"
 #include "universal_data_logger.h"
 
-#include "cm_tree.h"
 #include "cm_compartmentcurrents.h"
+#include "cm_tree.h"
 
 namespace nest
 {

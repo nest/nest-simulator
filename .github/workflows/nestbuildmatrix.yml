@@ -477,11 +477,26 @@ jobs:
   build_wheel:
     needs: [pytest]
     if: false
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
   build_conda:
     needs: [pytest]
     if: false
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
   build_docker:
     needs: [build_wheel]
     if: false
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0

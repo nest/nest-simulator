@@ -475,8 +475,9 @@ jobs:
             build/reports/**
 
   build_wheel:
-    needs: [pytest]
     if: false
+    runs-on: "ubuntu-20.04"
+    needs: [pytest]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -484,8 +485,9 @@ jobs:
           fetch-depth: 0
 
   build_conda:
-    needs: [pytest]
     if: false
+    runs-on: "ubuntu-20.04"
+    needs: [pytest]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -493,8 +495,9 @@ jobs:
           fetch-depth: 0
 
   build_docker:
-    needs: [build_wheel]
     if: false
+    runs-on: "ubuntu-20.04"
+    needs: [build_wheel]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2

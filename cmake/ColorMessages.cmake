@@ -57,29 +57,15 @@ function(print)
     endif()  
 endfunction()
 
-function(beginColor)
-
-    
-endfunction(beginColor)
-
 
 function(printWarning TEXT)
     print(HAS_COLOR MODE "WARNING" TEXT "Warning: ${TEXT}" COLOR ${Yellow})
 endfunction()
 
-
-
 function(printError TEXT)
     print(HAS_COLOR MODE "FATAL" TEXT "Error: ${TEXT}" COLOR ${Red})
 endfunction()
 
-
 function(printInfo TEXT)
     print(HAS_COLOR TEXT "Info: ${TEXT}" COLOR ${BoldGreen} )
 endfunction()
-
-
-function(abortMSG TEXT )
-    printERROR("${TEXT}")
-endfunction()
-

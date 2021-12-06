@@ -77,12 +77,7 @@ For all other purposes, it is recommended to use the standard technique for
 forward Euler integration. In this case, ``consistent_integration`` must be set
 to true (default).
 
-Note that the Izhikevich model in NEST differs from the origial publication [1]_.
-The Izhikevich model (as published by the author) has some numerical issues, which the Izhikevich model
-(in the NEST source) does not have. Also, the STDP model used in the original paper does not perfectly
-match the STDP synapse shipped with NEST. For further details see [2]_.
-
-
+For a detailed analysis and discussion of the numerical issues in the original publication, see [2]_.
 
 Parameters
 ++++++++++

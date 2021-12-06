@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        clang_version: [9, 10]
+        clang_version: [9, 10, 11, 12, 13, 14]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -30,6 +30,9 @@ jobs:
       - name: "Run clang-format..."
         run: diff -u <(cat nestkernel/*) <(clang-format nestkernel/*)
         #run: find . \( -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" \) -print0 | xargs -0 clang-format -i
+    env:
+      CLANG_FORMAT_FILE: ".clang-format"
+
 
   vera:
     runs-on: "ubuntu-20.04"

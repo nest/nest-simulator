@@ -79,6 +79,57 @@ jobs:
         run: |
           pydocstyle pynest/
 
+  pycodestyle:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install pycodestyle
+
+      - name: "Run pydocstyle tests"
+        run: |
+          pycodestyle pynest/
+
+  mypy:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install mypy
+
+      - name: "Run pydocstyle tests"
+        run: |
+          mypy pynest/
+
+  pytest:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install pytest py-coverage py-doctest
+
+      - name: "Run pydocstyle tests"
+        run: |
+          pytest pynest/
+
   pylint:
     runs-on: "ubuntu-20.04"
     steps:
@@ -115,6 +166,7 @@ jobs:
 
 
   static_checks:
+    when: never()
     env:
       xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
     runs-on: "ubuntu-20.04"
@@ -192,7 +244,7 @@ jobs:
   test_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [cppcheck, vera, pydocstyle, pylint, flake8, clang-format]
+    needs: [clang-format, vera, cppcheck, pydocstyle, pycodestyle, mypy, pytest, pylint, flake8]
     strategy:
       fail-fast: false
       matrix:
@@ -299,7 +351,7 @@ jobs:
   test_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [static_checks]
+    needs: [clang-format, vera, cppcheck, pydocstyle, pycodestyle, mypy, pytest, pylint, flake8]
     strategy:
       fail-fast: false
       matrix:

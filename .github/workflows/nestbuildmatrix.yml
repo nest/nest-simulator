@@ -132,7 +132,7 @@ jobs:
   pytest:
     runs-on: "ubuntu-20.04"
     if: false
-    #needs: [pydocstyle, pycodestyle, pylint, flake8]
+    needs: [test_macos, test_linux]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -473,3 +473,15 @@ jobs:
             install_manifest.txt
             **.log
             build/reports/**
+
+  build_wheel:
+    needs: [pytest]
+    if: false
+
+  build_conda:
+    needs: [pytest]
+    if: false
+
+  build_docker:
+    needs: [build_wheel]
+    if: false

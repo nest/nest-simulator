@@ -195,6 +195,32 @@ jobs:
         run: |
           flake8 pynest
 
+  sphinx:
+    runs-on: "ubuntu-20.04"
+    needs: [pydocstyle]
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          sudo apt install cmake
+          pip install -r requirements.txt
+
+      - name: "Test-build documentation"
+        run: |
+          mkdir -pv build
+          cd build
+          cmake -DCMAKE_INSTALL_PREFIX=../install ..
+          make doc
+
 
   static_checks:
     if: false
@@ -498,7 +524,17 @@ jobs:
   build_docker:
     if: false
     runs-on: "ubuntu-20.04"
-    needs: [build_wheel]
+    needs: [build_wheel, sphinx]
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+  deploy_docs:
+    if: false
+    runs-on: "ubuntu-20.04"
+    needs: [sphinx]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2

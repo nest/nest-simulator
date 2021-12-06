@@ -27,7 +27,8 @@ jobs:
           sudo apt-get install clang-format-${{ matrix.clang-version }}
 
       - name: "Run clang-format..."
-        run: find . \( -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" \) -print0 | xargs -0 clang-format -i '{}' \;
+        run: diff -u <(cat nestkernel/*) <(clang-format nestkernel/*)
+        #run: find . \( -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" \) -print0 | xargs -0 clang-format -i
 
   vera:
     runs-on: "ubuntu-20.04"
@@ -108,6 +109,7 @@ jobs:
 
   mypy:
     runs-on: "ubuntu-20.04"
+    needs: [pydocstyle, pycodestyle, pylint, flake8]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -121,7 +123,7 @@ jobs:
 
       - name: "Install Linux system dependencies"
         run: |
-          pip install mypy
+          pip install mypy matplotlib numpy scipy
 
       - name: "Run mypy..."
         run: |
@@ -129,6 +131,7 @@ jobs:
 
   pytest:
     runs-on: "ubuntu-20.04"
+    needs: [pydocstyle, pycodestyle, pylint, flake8]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -270,7 +273,7 @@ jobs:
   test_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, vera, cppcheck, pydocstyle, pycodestyle, mypy, pytest, pylint, flake8]
+    needs: [clang-format, vera, cppcheck, mypy, pytest]
     strategy:
       fail-fast: false
       matrix:

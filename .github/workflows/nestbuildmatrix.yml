@@ -34,7 +34,7 @@ jobs:
         #run: find . \( -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" \) -print0 | xargs -0 clang-format -i
     env:
       CLANG_FORMAT_FILE: ".clang-format"
-      CLANG_VERSION: ${{ matrix.clang-version }}
+      CLANG_VERSION: ${{ matrix.clang_version }}
 
   vera:
     runs-on: "ubuntu-20.04"

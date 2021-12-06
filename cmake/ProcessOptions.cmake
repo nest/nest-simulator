@@ -400,7 +400,7 @@ function( NEST_PROCESS_WITH_PYTHON )
         " Please clear your CMake cache and build folder and verify that CMake"
         " is up-to-date (3.18+)."
       )
-      message( WARNING "${PYABI_WARN}")
+      printWarning("${PYABI_WARN}")
     else()
       find_package( Python 3.8 REQUIRED Interpreter Development.Module )
     endif()

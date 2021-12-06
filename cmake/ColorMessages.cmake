@@ -64,7 +64,7 @@ endfunction(beginColor)
 
 
 function(printWarning TEXT)
-    print(HAS_COLOR MODE "WARNING" TEXT "$ Warning: {TEXT}" COLOR ${Yellow})
+    print(HAS_COLOR MODE "WARNING" TEXT "Warning: ${TEXT}" COLOR ${Yellow})
 endfunction()
 
 

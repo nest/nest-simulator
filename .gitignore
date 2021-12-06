@@ -1,6 +1,7 @@
 
 __pycache__/
 build/
+conda/
 _build/
 install/
 reports/

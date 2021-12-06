@@ -27,8 +27,7 @@ jobs:
           sudo apt-get install clang-format-${{ matrix.clang-version }}
 
       - name: "Run clang-format..."
-        run: clang-format
-          find . \( -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" \) -exec clang-format -i '{}' \;
+        run: find . \( -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" \) -print0 | xargs -0 clang-format -i '{}' \;
 
   vera:
     runs-on: "ubuntu-20.04"

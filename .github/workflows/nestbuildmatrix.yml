@@ -13,6 +13,7 @@ jobs:
   clang-format:
     runs-on: "ubuntu-20.04"
     strategy:
+      fail-fast: false
       matrix:
         clang_version: [9, 10]
     steps:

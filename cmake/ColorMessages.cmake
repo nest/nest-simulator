@@ -79,8 +79,7 @@ function(printInfo TEXT)
 endfunction()
 
 
-function(abortMSG TEXT CAUSE )
-    print(HAS_COLOR TEXT "Exception: ${CAUSE}" COLOR ${BoldRed})
+function(abortMSG TEXT )
     printERROR("${TEXT}")
 endfunction()
 

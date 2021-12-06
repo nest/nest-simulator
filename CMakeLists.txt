@@ -31,8 +31,7 @@ include( ColorMessages )
 
 # check if the given CMAKE_INSTALL_PREFIX is not empty
 if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-  set(PathLength 0)
-  abortMSG("CMAKE_INSTALL_PREFIX cannot be an empty string" "CMAKE_INSTALL_PREFIX is:${CMAKE_INSTALL_PREFIX} [length:${PathLength}]")
+  abortMSG("CMAKE_INSTALL_PREFIX cannot be an empty string")
 endif()
 
 # handle relative installation prefixes

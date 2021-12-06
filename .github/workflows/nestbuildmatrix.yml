@@ -73,7 +73,7 @@ jobs:
       - name: "Install Linux system dependencies"
         run: |
           sudo apt-get update
-          sudo apt-get install pydocstyle
+          sudo apt-get install python3-pydocstyle
 
       - name: "Run pydocstyle tests"
         run: |
@@ -90,7 +90,7 @@ jobs:
       - name: "Install Linux system dependencies"
         run: |
           sudo apt-get update
-          sudo apt-get install pycodestyle
+          sudo apt-get install python3-pycodestyle
 
       - name: "Run pydocstyle tests"
         run: |
@@ -107,7 +107,7 @@ jobs:
       - name: "Install Linux system dependencies"
         run: |
           sudo apt-get update
-          sudo apt-get install mypy
+          sudo apt-get install python3-mypy
 
       - name: "Run pydocstyle tests"
         run: |
@@ -124,7 +124,7 @@ jobs:
       - name: "Install Linux system dependencies"
         run: |
           sudo apt-get update
-          sudo apt-get install pytest py-coverage py-doctest
+          sudo apt-get install python3-pytest python3-pytest-cov python3-pytest-doctestplus
 
       - name: "Run pydocstyle tests"
         run: |
@@ -141,7 +141,7 @@ jobs:
       - name: "Install Linux system dependencies"
         run: |
           sudo apt-get update
-          sudo apt-get install pylint
+          sudo apt-get install python3-pylint
 
       - name: "Run pydocstyle tests"
         run: |
@@ -158,7 +158,7 @@ jobs:
       - name: "Install Linux system dependencies"
         run: |
           sudo apt-get update
-          sudo apt-get install flake8
+          sudo apt-get install python3-pyflakes
 
       - name: "Run flake8 tests"
         run: |

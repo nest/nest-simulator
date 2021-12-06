@@ -10,6 +10,60 @@ on: [push, pull_request]
 
 
 jobs:
+  clang-format:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install clang-format
+
+      - name: "Run clang-format"
+        run: clang-format
+
+  vera-checks:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install vera++
+
+      - name: "Run VERA++ tests"
+        run: |
+          find . -iname "*.h" -o -iname "*.hxx" -exec clang-format '{}' \;
+
+  cpp-checks:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install cppchecks
+
+      - name: "Run VERA++ tests"
+        run: |
+          cppcheck '{}' \;
+
+
   static_checks:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     env:

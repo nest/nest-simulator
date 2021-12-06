@@ -123,7 +123,7 @@ jobs:
 
       - name: "Install Linux system dependencies"
         run: |
-          pip install mypy matplotlib numpy scipy
+          pip install mypy matplotlib numpy scipy data-science-types
 
       - name: "Run mypy..."
         run: |
@@ -131,6 +131,7 @@ jobs:
 
   pytest:
     runs-on: "ubuntu-20.04"
+    if: false
     #needs: [pydocstyle, pycodestyle, pylint, flake8]
     steps:
       - name: "Checkout repository content"

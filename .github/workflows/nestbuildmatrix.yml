@@ -11,7 +11,6 @@ on: [push, pull_request]
 
 jobs:
   clang-format:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: "ubuntu-20.04"
     steps:
       - name: "Checkout repository content"
@@ -26,9 +25,9 @@ jobs:
 
       - name: "Run clang-format"
         run: clang-format
+          find . -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" -exec clang-format -i '{}' \;
 
-  vera-checks:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+  vera:
     runs-on: "ubuntu-20.04"
     steps:
       - name: "Checkout repository content"
@@ -43,10 +42,10 @@ jobs:
 
       - name: "Run VERA++ tests"
         run: |
-          find . -iname "*.h" -o -iname "*.hxx" -exec clang-format '{}' \;
+          sudo cp build_support/vera++.profile /usr/lib/vera++/profiles/nest
+          find . -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" -print0 | xargs -0 -L10 vera++ --profile nest '{}' >${f_base}_vera.txt 2>&1
 
-  cpp-checks:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+  cppcheck:
     runs-on: "ubuntu-20.04"
     steps:
       - name: "Checkout repository content"
@@ -61,11 +60,61 @@ jobs:
 
       - name: "Run VERA++ tests"
         run: |
-          cppcheck '{}' \;
+          cppcheck --enable=all --language=c++ --std=c++11 --suppress=missingIncludeSystem ./
+
+  pydocstyle:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install pydocstyle
+
+      - name: "Run pydocstyle tests"
+        run: |
+          pydocstyle pynest/
+
+  pylint:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install pylint
+
+      - name: "Run pydocstyle tests"
+        run: |
+          pylint pynest/
+
+  flake8:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install flake8
+
+      - name: "Run flake8 tests"
+        run: |
+          flake8 pynest
 
 
   static_checks:
-    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     env:
       xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
     runs-on: "ubuntu-20.04"
@@ -143,7 +192,7 @@ jobs:
   test_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [static_checks]
+    needs: [cppcheck, vera, pydocstyle, pylint, flake8, clang-format]
     strategy:
       fail-fast: false
       matrix:

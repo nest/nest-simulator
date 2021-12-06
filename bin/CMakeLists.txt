@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# utils.py
+# CMakeLists.txt
 #
 # This file is part of NEST.
 #
@@ -18,9 +16,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-__author__ = 'naveau'
 
-
-def extract_dict_a_from_b(a, b):
-
-    return dict([(k, b[k]) for k in a.keys() if k in b.keys()])
+install( PROGRAMS
+    nest-server
+    nest-server-mpi
+    ${PROJECT_BINARY_DIR}/bin/nest-config
+    ${PROJECT_BINARY_DIR}/bin/nest_vars.sh
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )

@@ -440,7 +440,6 @@ extern const Name std;
 extern const Name std_mod;
 extern const Name stimulator;
 extern const Name stimulus_source;
-extern const Name step;
 extern const Name stop;
 extern const Name structural_plasticity_synapses;
 extern const Name structural_plasticity_update_interval;

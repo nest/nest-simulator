@@ -1,4 +1,6 @@
-# extras/CMakeLists.txt
+# -*- coding: utf-8 -*-
+#
+# test_synapsecollection_mpi.py
 #
 # This file is part of NEST.
 #
@@ -17,30 +19,21 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-install( DIRECTORY logos
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
+import nest
 
-install( DIRECTORY help_generator
-    DESTINATION ${CMAKE_INSTALL_DATADIR}
-    )
 
-install( FILES EditorSupport/vim/syntax/sli.vim
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras/EditorSupport/vim/syntax
-    )
+def testTooFewConnections():
+    """Deadlock with empty SynapseCollection"""
 
-install( FILES nestrc.sli
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
-    )
+    nest.ResetKernel()
+    assert(nest.GetKernelStatus('num_processes') == 2)  # the test expects to be run with 2 MPI processes
 
-install( PROGRAMS
-    ${PROJECT_BINARY_DIR}/extras/nest-config
-    nest_indirect
-    nest_serial
-    nest-server
-    nest-server-mpi
-    ${PROJECT_BINARY_DIR}/extras/nest_vars.sh
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+    pre = nest.Create('iaf_psc_alpha', 5)
+    post = nest.Create('iaf_psc_alpha', 1)
 
-add_subdirectory( ConnPlotter )
+    nest.Connect(pre, post)  # with 2 processes only one process will have connections
+
+    conns = nest.GetConnections()  # Checking that a deadlock does not occur here
+
+    # Expect to get either an empty or a not empty SynapseCollection
+    assert(isinstance(conns, nest.SynapseCollection))

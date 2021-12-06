@@ -37,7 +37,7 @@ call:
 
 .. code::
 
-   ./extras/format_all_c_c++_files.sh [start folder, defaults to '$PWD']
+   ./build_support/format_all_c_c++_files.sh [start folder, defaults to '$PWD']
 
 We use clang-format version 3.6 in the Travis CI. Older versions do not
 understand all formatting options we defined in ``.clang-format``. Newer versions
@@ -137,15 +137,15 @@ Build from scratch:
 Local static analysis
 #####################
 
-We ship a script ``./extras/check_code_style.sh`` that lets you perform the
+We ship a script ``./build_support/check_code_style.sh`` that lets you perform the
 checks on all changed files as we do during the Travis CI tasks.
 
 .. code::
 
-   $ ./extras/check_code_style.sh --help
+   $ ./build_support/check_code_style.sh --help
    Usage: check_code_style.sh [options ...]
 
-   Usage: ./extras/check_code_style.sh [options ...]
+   Usage: ./build_support/check_code_style.sh [options ...]
 
    This script processes C/C++ and Python source code files to verify compliance with the NEST
    coding  style  guidelines.  The  checks are performed the same way as in the NEST Travis CI
@@ -155,7 +155,7 @@ checks on all changed files as we do during the Travis CI tasks.
 
    The script expects to be run from the base directory of the NEST sources,
    i.e. all executions should start like:
-    ./extras/check_code_style.sh ...
+    ./build_support/check_code_style.sh ...
 
    The setup of the tooling is explained here:
    https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html
@@ -210,7 +210,7 @@ line:
 
 .. code::
 
-   ./extras/check_code_style.sh --git-start=104d47c0 --git-end=d66e4465
+   ./build_support/check_code_style.sh --git-start=104d47c0 --git-end=d66e4465
 
 General remarks and resources
 #############################
@@ -914,7 +914,7 @@ Vera++ profile
 ##############
 
 The Vera++ profile required for testing NEST is available as
-``extras/vera++.profile``. To make it available, copy this file with the
+``build_support/vera++.profile``. To make it available, copy this file with the
 new name ``nest`` to ``/usr/lib/vera++/profiles``. The exact path might
 differ depending on how you installed Vera++. Please refer to the
 documentation of `Vera++ <https://bitbucket.org/verateam/vera/wiki/Home>`_ in that case.

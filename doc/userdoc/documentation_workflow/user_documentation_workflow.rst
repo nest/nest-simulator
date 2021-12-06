@@ -53,22 +53,23 @@ Conda (for details on Conda, see :doc:`../installation/conda_tips`):
 
 .. code-block:: bash
 
-    conda env create -f <nest_source_dir>/extras/conda-nest-simulator-dev.yml
-    conda activate nest-simulator-dev
+    cd <nest_source_dir>/
+    conda env create -p conda/
+    conda activate conda/
 
 If you later on want to deactivate or delete the build environment:
 
 .. code-block:: bash
 
    conda deactivate
-   conda remove --name nest-simulator-dev --all
+   rm -rf conda/
 
 If you want to install only a minimal set of packages for building the
 documentation and avoid using Conda, you can use pip:
 
 .. code-block:: bash
 
-    pip3 install -r <nest_source_dir>/extras/nest-simulator-doc-requirements.txt
+    pip3 install -r <nest_source_dir>/doc/requirements.txt
 
 
 Generating documentation with Sphinx

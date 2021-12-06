@@ -73,14 +73,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Install Linux system dependencies"
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
         run: |
-          sudo apt-get update
-          sudo apt-get install python3-pydocstyle
+          pip install pydocstyle
 
       - name: "Run pydocstyle..."
         run: |
-          pydocstyle-3 pynest/
+          pydocstyle pynest/
 
   pycodestyle:
     runs-on: "ubuntu-20.04"
@@ -90,14 +94,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Install Linux system dependencies"
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
         run: |
-          sudo apt-get update
-          sudo apt-get install python3-pycodestyle
+          pip install pycodestyle
 
       - name: "Run pycodestyle..."
         run: |
-          pycodestyle-3 pynest/
+          pycodestyle pynest/
 
   mypy:
     runs-on: "ubuntu-20.04"
@@ -107,14 +115,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
       - name: "Install Linux system dependencies"
         run: |
-          sudo apt-get update
-          sudo apt-get install python3-mypy
+          pip install mypy
 
       - name: "Run mypy..."
         run: |
-          mypy-3 pynest/
+          mypy pynest/
 
   pytest:
     runs-on: "ubuntu-20.04"
@@ -124,14 +136,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Install Linux system dependencies"
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
         run: |
-          sudo apt-get update
-          sudo apt-get install python3-pytest python3-pytest-cov python3-pytest-doctestplus
+          pip install pytest pytest-cov pytest-doctestplus
 
       - name: "Run pytest..."
         run: |
-          pytest-3 pynest/
+          pytest pynest/
 
   pylint:
     runs-on: "ubuntu-20.04"
@@ -141,10 +157,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
       - name: "Install Linux system dependencies"
         run: |
-          sudo apt-get update
-          sudo apt-get install pylint
+          pip install pylint
 
       - name: "Run pylint..."
         run: |
@@ -158,10 +178,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Install Linux system dependencies"
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
         run: |
-          sudo apt-get update
-          sudo apt-get install python3-pyflak8
+          pip install flake8
 
       - name: "Run flake8..."
         run: |

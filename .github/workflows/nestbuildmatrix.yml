@@ -166,7 +166,7 @@ jobs:
 
 
   static_checks:
-    when: never()
+    if: false
     env:
       xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
     runs-on: "ubuntu-20.04"

@@ -248,8 +248,6 @@ nest::iaf_psc_exp::calibrate()
 
   const double h = Time::get_resolution().get_ms();
 
-  // numbering of state vaiables: i_0 = 0, i_syn_ = 1, V_m_ = 2
-
   // commented out propagators: forward Euler
   // needed to exactly reproduce Tsodyks network
 
@@ -388,7 +386,6 @@ nest::iaf_psc_exp::handle( CurrentEvent& e )
   const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
-  // add weighted current; HEP 2002-10-04
   if ( 0 == e.get_rport() )
   {
     B_.input_buffer_.add_value( input_buffer_slot, Buffers_::I0, w * c );

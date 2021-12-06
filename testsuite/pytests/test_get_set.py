@@ -60,7 +60,7 @@ class TestNestGetSet(unittest.TestCase):
         kst = nest.get("keep_source_table")
         self.assertEqual(type(nest).keep_source_table._default, kst, "get value not equal to default after ResetKernel")
         self.assertEqual(kst, nest.keep_source_table, 'kernel attribute value not equal to get value')
-        # Getting the value of unknown attributes should error. Should error if there is
+        # Getting the value of unknown attributes should error. The test should also error if there is
         # a problem with possible `__getattr__` implementations.
         with self.assertRaises(AttributeError, msg="no AttributeError for unknown attribute"):
             nest.accessAbsolutelyUnknownThingOnNestModule

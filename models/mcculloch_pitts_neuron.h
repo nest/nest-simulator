@@ -138,7 +138,8 @@ public:
   bool operator()( RngPtr, double h );
 };
 
-inline bool gainfunction_mcculloch_pitts::operator()( RngPtr, double h )
+inline bool
+gainfunction_mcculloch_pitts::operator()( RngPtr, double h )
 {
   return h > theta_;
 }

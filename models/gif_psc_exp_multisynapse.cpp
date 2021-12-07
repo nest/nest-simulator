@@ -36,9 +36,9 @@
 
 // Includes from sli:
 #include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
 #include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 #include "compose.hpp"
 #include "propagator_stability.h"
@@ -160,20 +160,20 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d, Node
 
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
-      "tau_sfa: %1\nSize of q_sfa: %2",
-      tau_sfa_.size(),
-      q_sfa_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
+                       "tau_sfa: %1\nSize of q_sfa: %2",
+        tau_sfa_.size(),
+        q_sfa_.size() ) );
   }
 
   if ( tau_stc_.size() != q_stc_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
-      "tau_stc: %1\nSize of q_stc: %2",
-      tau_stc_.size(),
-      q_stc_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
+                       "tau_stc: %1\nSize of q_stc: %2",
+        tau_stc_.size(),
+        q_stc_.size() ) );
   }
   if ( g_L_ <= 0 )
   {

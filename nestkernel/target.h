@@ -27,9 +27,9 @@
 #include <cassert>
 
 // Includes from nestkernel:
+#include "exceptions.h"
 #include "nest_types.h"
 #include "static_assert.h"
-#include "exceptions.h"
 
 namespace nest
 {
@@ -175,7 +175,8 @@ inline Target::Target( const Target& target )
   set_status( TARGET_ID_UNPROCESSED ); // initialize
 }
 
-inline Target& Target::operator=( const Target& other )
+inline Target&
+Target::operator=( const Target& other )
 {
   remote_target_id_ = other.remote_target_id_;
   set_status( TARGET_ID_UNPROCESSED );

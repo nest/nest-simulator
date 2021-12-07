@@ -262,7 +262,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_exp_sfa_rr& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_exp_sfa_rr& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, iaf_cond_exp_sfa_rr& );
 

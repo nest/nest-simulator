@@ -270,8 +270,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( mat2_psc_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, mat2_psc_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( mat2_psc_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, mat2_psc_exp& ); //!< Sets buffer pointers to 0
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_ex_;

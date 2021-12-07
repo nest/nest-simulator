@@ -37,10 +37,10 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
-#include "node_collection.h"
 #include "growth_curve_factory.h"
 #include "nest_time.h"
 #include "nest_types.h"
+#include "node_collection.h"
 
 // Includes from sli:
 #include "arraydatum.h"

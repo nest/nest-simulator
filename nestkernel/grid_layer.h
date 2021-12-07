@@ -74,7 +74,8 @@ public:
     /**
      * Postfix increment operator.
      */
-    masked_iterator operator++( int )
+    masked_iterator
+    operator++( int )
     {
       masked_iterator tmp = *this;
       ++*this;
@@ -84,11 +85,13 @@ public:
     /**
      * Iterators are equal if they point to the same node in the same layer.
      */
-    bool operator==( const masked_iterator& other ) const
+    bool
+    operator==( const masked_iterator& other ) const
     {
       return ( other.layer_.get_metadata() == layer_.get_metadata() ) && ( other.node_ == node_ );
     }
-    bool operator!=( const masked_iterator& other ) const
+    bool
+    operator!=( const masked_iterator& other ) const
     {
       return ( other.layer_.get_metadata() != layer_.get_metadata() ) || ( other.node_ != node_ );
     }
@@ -374,7 +377,8 @@ inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::operat
 }
 
 template < int D >
-typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::operator++()
+typename GridLayer< D >::masked_iterator&
+GridLayer< D >::masked_iterator::operator++()
 {
   do
   {

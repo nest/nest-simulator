@@ -123,9 +123,22 @@ NEST allows for several configuration options for custom builds:
 | -Dwith-sionlib=[OFF|ON|</path/to/sionlib>]  | Request the use of sionlib. Optionally give the directory,     |
 |                                             | where sionlib  is installed. [default=OFF]                     |
 +---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-recordingbackend-arbor=[OFF|ON]      | Request compilation of the recording backend for Arbor.        |
-|                                             | Requires MPI, Python and mpi4py. [default=OFF]                 |
+
+**Cross-compiling:**
+
+Should be set via toolchain files
+
 +---------------------------------------------+----------------------------------------------------------------+
+| -Denable-bluegene=[OFF|STRING]              | Configure for BlueGene. [default=OFF]                          |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dk-computer=[OFF|ON]                       | Enable K computer. [default=OFF]                               |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dtarget-bits-split=["standard"|STRING]     | Split of the 64-bit target neuron identifier type. "standard"  |
+|                                             | is recommended for most users. If running on more than 262144  |
+|                                             | MPI processes or more than 512 threads, change to "hpc".       |
+|                                             | [default="standard"]                                           |
++---------------------------------------------+----------------------------------------------------------------+
+
 
 .. _compile-with-mpi:
 
@@ -235,10 +248,19 @@ All configuration options
 | -Dcythonize-pynest=[OFF|ON]                 | Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to|
 |                                             | be build from a pre-cythonized pynestkernel.pyx. [default=ON]  |
 +---------------------------------------------+----------------------------------------------------------------+
+| -Denable-bluegene=[OFF|STRING]              | Configure for BlueGene. [default=OFF]                          |
++---------------------------------------------+----------------------------------------------------------------+
 | -Dexternal-modules=[OFF|<list;of;modules>]  | External NEST modules to be linked in, separated by ';'.       |
 |                                             | [default=OFF]                                                  |
 +---------------------------------------------+----------------------------------------------------------------+
+| -Dk-computer=[OFF|ON]                       | Enable K computer. [default=OFF]                               |
++---------------------------------------------+----------------------------------------------------------------+
 | -Dstatic-libraries=[OFF|ON]                 | Build static executable and libraries. [default=OFF]           |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dtarget-bits-split=["standard"|STRING]     | Split of the 64-bit target neuron identifier type. "standard"  |
+|                                             | is recommended for most users. If running on more than 262144  |
+|                                             | MPI processes or more than 512 threads, change to "hpc".       |
+|                                             | [default="standard"]                                           |
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dtics_per_ms=[number]                      | Specify elementary unit of time. [default 1000.0]              |
 +---------------------------------------------+----------------------------------------------------------------+
@@ -281,8 +303,7 @@ All configuration options
 | -Dwith-music=[OFF|ON|</path/to/music>]      | Request the use of MUSIC. Optionally give the directory, where |
 |                                             | MUSIC  is installed. [default=OFF]                             |
 +---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-openmp=[OFF|ON|<OpenMP-Flag>]        | Enable OpenMP multi-threading. Optional: set OMP flag. MPI     |
-|                                             | MPI                                                            |
+| -Dwith-openmp=[OFF|ON|<OpenMP-Flag>]        | Enable OpenMP multi-threading. Optional: set OMP flag.         |
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-optimize=[OFF|ON|<list;of;flags>]    | Enable user defined optimizations. Separate multiple flags by  |
 |                                             | ';'. [default OFF, when ON, defaults to '-O3']                 |
@@ -294,9 +315,6 @@ All configuration options
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-readline=[OFF|ON|</path/to/readline>]| Find a GNU Readline library. To set a specific library, set    |
 |                                             | install path. [default=ON]                                     |
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-recordingbackend-arbor=[OFF|ON]      | Request compilation of the recording backend for Arbor.        |
-|                                             | Requires MPI, Python and mpi4py. [default=OFF]                 |
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-version-suffix=[string]              | Set a user defined version suffix. [default '']                |
 +---------------------------------------------+----------------------------------------------------------------+

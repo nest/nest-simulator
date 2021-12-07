@@ -968,20 +968,6 @@ NestModule::ConnectSonata_D_Function::execute( SLIInterpreter* i ) const
   kernel().connection_manager.sw_construction_connect.stop();
 }
 
-void
-NestModule::DumpConnections_sFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-
-  std::string out_file = getValue< std::string >( i->OStack.pick( 0 ) );
-  std::cerr << "NestModule::DumpConnections\n";
-
-  kernel().connection_manager.dump_connections( out_file );
-
-  i->OStack.pop( 1 );
-  i->EStack.pop();
-}
-
 /** @BeginDocumentation
    Name: MemoryInfo - Report current memory usage.
    Description:
@@ -2987,7 +2973,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
   i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
   i->createcommand( "ConnectSonata_D", &ConnectSonata_D_Function );
-  i->createcommand( "DumpConnections_s", &dumpconnections_sfunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 

@@ -41,8 +41,8 @@ start_time = time.time()
 
 nest.ResetKernel()
 
-example = '300_pointneurons'
-#example = 'GLIF'
+#example = '300_pointneurons'
+example = 'GLIF'
 plot = True
 
 if example == '300_pointneurons':
@@ -68,7 +68,7 @@ mem_ini = memory_thisjob()
 
 # Create nodes
 sonata_connector.create_nodes()
-#sonata_connector.check_node_params()
+##sonata_connector.check_node_params()
 mem_create = memory_thisjob()
 
 sonata_connector.create_edge_dict()
@@ -76,8 +76,6 @@ sonata_connector.create_edge_dict()
 
 sonata_dynamics = {'nodes': sonata_connector.node_collections, 'edges': sonata_connector.edge_types}
 print(sonata_connector.node_collections)
-
-sonata_connector.dump_connections('check_connections.h5')
 
 #print()
 #print('sonata_dynamics', sonata_dynamics)
@@ -98,7 +96,11 @@ print("number of connections: ", nest.GetKernelStatus('num_connections'))
 # #print("num_connections with alpha: ", len(conns.alpha))
 
 if plot:
+    #mm = nest.Create('multimeter')
+    #mm.record_from = ['V_m']
+
     s_rec = nest.Create('spike_recorder')
+    s_rec.record_to = 'ascii'
     nest.Connect(sonata_connector.node_collections[population_to_plot], s_rec)
 
 print('simulating')
@@ -107,6 +109,7 @@ simtime = 0
 if 'tstop' in sonata_connector.config['run']:
     simtime = sonata_connector.config['run']['tstop']
 else:
+    #pass
     #simtime = 1000.
     simtime = sonata_connector.config['run']['duration']
 
@@ -120,10 +123,18 @@ print(f'initial memory: {mem_ini}')
 print(f'memory create: {mem_create}')
 print(f'memory connect: {mem_connect}')
 
+#sonata_connector.dump_connections('check_connections_glif.txt')
+
 if plot:
-    print(s_rec.events)
-    nest.raster_plot.from_device(s_rec)
-    plt.show()
+    pass
+    #print(s_rec.events)
+    #nest.raster_plot.from_device(s_rec)
+    #plt.show()
+
+net_size = nest.GetKernelStatus('network_size')
+print(nest.NodeCollection([net_size - 1]).get())
+print(nest.NodeCollection([net_size]).get())
+print(s_rec.get())
 
 
 

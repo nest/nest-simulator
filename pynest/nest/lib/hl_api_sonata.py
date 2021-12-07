@@ -31,10 +31,12 @@ import warnings
 import csv
 from string import Template
 
-from ..ll_api import sli_func
+from .hl_api_info import GetStatus
 from .hl_api_types import NodeCollection
 from .hl_api_nodes import Create
 from .hl_api_models import GetDefaults
+from .hl_api_connections import GetConnections
+from .hl_api_simulation import GetKernelStatus
 
 
 class SonataConnector(object):
@@ -222,6 +224,40 @@ class SonataConnector(object):
 
             self.edge_types.append(edge_dict)
 
-    def dump_connections(self, outname):  #TODO: make part of nest
-        sli_func('DumpConnections_s', outname)
-
+    def dump_connections(self, outname):
+        net_size = GetKernelStatus('network_size')
+        print(f'network size: {net_size}')
+        if True:
+            with open(outname, 'w') as connections_file:
+                net_size = GetKernelStatus('network_size')
+                print(f'network size: {net_size}')
+                counter = 0
+                ncs = [self.node_collections['v1'],]#list(self.node_collections.values())
+                for nc in ncs:
+                    prev = 0
+                    step = 10000
+                    for i in range(step, len(nc), step):
+                        conns = GetConnections(source=nc[prev:i])
+                        if len(conns) == 0:
+                            print("no connections!")
+                            conns = GetConnections(target=nc[prev:i])
+                        for l in GetStatus(conns):  # for comparison with bmtk built on NEST 2.20
+                            s = f'{l["source"]} {l["target"]} {l["delay"]} {l["weight"]} {l["synapse_model"]} {l["receptor"]}\n'
+                            connections_file.write(s)
+                        #connections_file.write(str(GetStatus(conns)))  # for comparison with bmtk built on NEST 2.20
+                        counter += len(conns)
+                        if counter >= 40000:
+                            break
+                        prev = i
+                    if prev < len(nc) and counter < 400000:
+                        conns = GetConnections(source=nc[prev:])
+                        if len(conns) == 0:
+                            print("no connections!")
+                            conns = GetConnections(target=nc[prev:])
+                        for l in GetStatus(conns):  # for comparison with bmtk built on NEST 2.20
+                            s = f'{l["source"]} {l["target"]} {l["delay"]} {l["weight"]} {l["synapse_model"]} {l["receptor"]}\n'
+                            connections_file.write(s)
+                        #connections_file.write(str(GetStatus(conns)))  # for comparison with bmtk built on NEST 2.20
+                        counter += len(conns)
+                print(f'number of counted connections: {counter}')
+        print(f'num connections: {GetKernelStatus("num_connections")}')

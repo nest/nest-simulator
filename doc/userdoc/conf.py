@@ -223,7 +223,7 @@ def config_inited_handler(app, config):
     )
 
 def toc_customizer(app, docname, source):
-    if docname == "models/models-main":
+    if docname == "models/models-toc":
         models_toc = json.load(open(doc_build_dir / "models/toc-tree.json"))
         html_context = {
             'nest_models': models_toc

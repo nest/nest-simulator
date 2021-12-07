@@ -37,12 +37,12 @@ log() {
 
 pid() {
   # Get Process ID of instance of NEST Server with host and port.
-  pgrep -f "uwsgi --module nest.server.app --http-socket $HOST:$PORT"
+  pgrep -f "uwsgi --module nest.server.app --http-socket ${HOST}:${PORT}"
 }
 
 set-uwsgi_opts() {
   # Set opts for uwsgi.
-  UWSGI_OPTS="--module nest.server:app --http-socket $HOST:$PORT"
+  UWSGI_OPTS="--module nest.server:app --http-socket ${HOST}:${PORT}"
   UWSGI_OPTS="${UWSGI_OPTS} --uid ${USER}"
   UWSGI_OPTS="${UWSGI_OPTS} --buffer-size ${BUFFER_SIZE}"
   if [ -n "${PLUGIN}" ]; then
@@ -56,13 +56,13 @@ set-uwsgi_opts() {
 start() {
   # Start instance of NEST Server.
   if pid > /dev/null;  then
-    echo "NEST Server is already running at http://$HOST:$PORT."
+    echo "NEST Server is already running at http://${HOST}:${PORT}."
   else
     set-uwsgi_opts
-    uwsgi $UWSGI_OPTS
-    if [ $STDOUT == 0 ]; then
-      echo "NEST Server is running at http://$HOST:$PORT."
-      if [ $DAEMONIZE == 0 ]; then
+    uwsgi ${UWSGI_OPTS}
+    if [ ${STDOUT} == 0 ]; then
+      echo "NEST Server is running at http://${HOST}:${PORT}."
+      if [ ${DAEMONIZE} == 0 ]; then
         read -p "Press any key to stop... "
         stop
       fi
@@ -73,7 +73,7 @@ start() {
 status() {
   # List all processes of NEST Server.
   PS_AUX="$(ps aux | grep "[u]wsgi --module nest.server.app")"
-  PS_CMD="$(echo $PS_AUX | awk '{ for(i=1;i<=NF;i++) {if ( i >= 11 ) printf $i" "}; printf "\n" }')"
+  PS_CMD="$(echo ${PS_AUX} | awk '{ for(i=1;i<=NF;i++) {if ( i >= 11 ) printf $i" "}; printf "\n" }')"
   printf "HTTP-SOCKET\t\tUID\n"
   echo "${PS_CMD}" | awk '{ for(i=1;i<=NF;i++) {if ( i == 5 || i == 7 ) printf $i"\t\t"}; printf "\n" }'
 }
@@ -82,9 +82,9 @@ stop() {
   # Stop instance of NEST Server.
   if pid > /dev/null; then
     kill "$(pid)"
-    echo "NEST Server running at http://$HOST:$PORT has stopped."
+    echo "NEST Server running at http://${HOST}:${PORT} has stopped."
   else
-    echo "NEST Server is not running at http://$HOST:$PORT."
+    echo "NEST Server is not running at http://${HOST}:${PORT}."
     false
   fi
 }

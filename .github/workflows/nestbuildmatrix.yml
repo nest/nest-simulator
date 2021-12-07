@@ -561,7 +561,7 @@ jobs:
   build_docker:
     if: false
     runs-on: "ubuntu-20.04"
-    needs: [build_wheel, sphinx]
+    needs: [build_wheel, sphinx-rtd]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2
@@ -571,7 +571,7 @@ jobs:
   deploy_docs:
     if: false
     runs-on: "ubuntu-20.04"
-    needs: [sphinx]
+    needs: [sphinx-rtd]
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v2

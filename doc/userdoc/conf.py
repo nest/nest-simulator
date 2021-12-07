@@ -84,6 +84,8 @@ sys.modules["nest.kernel"] = pynestkernel_mock
 # autoclass `nest.NestModule` to generate the documentation of the properties
 import nest  # noqa
 
+vars(nest)["NestModule"] = type(nest)
+
 # -- General configuration ------------------------------------------------
 extensions = [
     'sphinx_gallery.gen_gallery',

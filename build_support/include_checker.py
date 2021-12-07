@@ -28,10 +28,10 @@ This script suggest C/CPP include orders that conform to the NEST coding style
 guidelines. Call the script like (from NEST sources):
 
 For one file:
-    python3 extras/include_checker.py -nest $PWD -f nest/main.cpp
+    python3 build_support/include_checker.py -nest $PWD -f nest/main.cpp
 
 For one directory:
-    python3 extras/include_checker.py -nest $PWD -d nest
+    python3 build_support/include_checker.py -nest $PWD -d nest
 
 If everything is OK, or only few includes are in the wrong order, it will print
 something like:

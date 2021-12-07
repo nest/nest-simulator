@@ -33,7 +33,7 @@
 
 namespace nest
 {
-// clang-format off
+
 /**
  * This class implements a 64-bit target neuron identifier type. It uniquely identifies
  * a target neuron on a (remote) machine. Used in TargetTable for the presynaptic part
@@ -65,7 +65,6 @@ namespace nest
  * of bits needs to sum to 64. The processed flag must always use one
  * bit.
  */
-// clang-format on
 
 enum enum_status_target_id
 {

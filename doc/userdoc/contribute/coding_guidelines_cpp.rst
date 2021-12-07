@@ -27,22 +27,18 @@ on the clang compiler frontend. It prettyprints input files in a
 configurable manner, and also has Vim and Emacs integration. We supply a
 :ref:`clang-format-file` to enforce some parts of the coding style. During
 the code review process we check that there is no difference between the committed
-files and the formatted version of the committed files:
+files and the formatted version of the committed files.
 
-Developers can benefit from the tool by formatting their changes before issuing
-a pull request: for fixing the formatting of a single file consider using
-``clang-format -i <committed file>`` on that file. For fixing more files at once
-we provide a script that applies the formatting. From the source directory
-call:
+Developers can benefit from the tool by formatting their changes
+before issuing a pull request. For fixing more files at once we
+provide a script that applies the formatting. From the source
+directory call:
 
 .. code::
 
    ./build_support/format_all_c_c++_files.sh [start folder, defaults to '$PWD']
 
-We use clang-format version 3.6 in the Travis CI. Older versions do not
-understand all formatting options we defined in ``.clang-format``. Newer versions
-lead to formatting differences to files formatted with version 3.6 even though the
-same set of rules is used.
+We use clang-format version 9 in our CI.
 
 Get ``clang-format``:
 Ubuntu see `here <http://llvm.org/apt/>`_:
@@ -62,12 +58,12 @@ Ubuntu see `here <http://llvm.org/apt/>`_:
 
    # install clang-format with:
    sudo apt-get update
-   sudo apt-get install libstdc++6 libllvm3.6 clang-format-3.6
+   sudo apt-get install clang-format-9
 
 OS X:
 
-* Installing ``clang-format-3.6`` from the `pre-built
-  binaries <http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-apple-darwin.tar.xz>`_.
+* Installing ``clang-format`` from the `pre-built binaries
+  <https://github.com/llvm/llvm-project/releases/download/llvmorg-9.0.1/clang+llvm-9.0.1-x86_64-apple-darwin.tar.xz`_.
 
 Further we use `Vera++ <https://bitbucket.org/verateam/vera/wiki/Home>`_, which
 'is a programmable tool for verification, analysis and transformation of C++
@@ -184,10 +180,8 @@ checks on all changed files as we do during the Travis CI tasks.
                                               the NEST Travis CI build and test environment.
 
        --clang-format=exe               The name of the CLANG-FORMAT executable.
-                                        Default: --clang-format=clang-format-3.6
-                                        Note: CLANG-FORMAT version 3.6 is required.
-                                              This corresponds to the version installed in
-                                              the NEST Travis CI build and test environment.
+                                        Default: --clang-format=clang-format-9
+                                        Note: CLANG-FORMAT version 9 is required.
 
        --pep8=exe                       The name of the PEP8 executable.
                                         Default: --pep8=pep8

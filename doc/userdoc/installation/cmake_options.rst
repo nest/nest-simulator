@@ -28,36 +28,6 @@ Options for configuring NEST
 
 NEST allows for several configuration options for custom builds:
 
-**Change NEST behavior:**
-
-+--------------------------+----------------------------------------------------+
-| -Dtics_per_ms=[number]   |  Specify elementary unit of time. [default 1000.0] |
-+--------------------------+----------------------------------------------------+
-| -Dtics_per_step=[number] |  Specify resolution. [default 100]                 |
-+--------------------------+----------------------------------------------------+
-
-**Add user modules:**
-
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dexternal-modules=[OFF|<list;of;modules>]  | External NEST modules to be linked in, separated by ';'.       |
-|                                             | [default=OFF]                                                  |
-+---------------------------------------------+----------------------------------------------------------------+
-
-**Connect NEST with external projects:**
-
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-libneurosim=                         | Request the use of libneurosim. Optionally give the directory, |
-| [OFF|ON|</path/to/libneurosim>]             | where libneurosim  is installed. [default=OFF]                 |
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-music=[OFF|ON|</path/to/music>]      | Request the use of MUSIC. Optionally give the directory, where |
-|                                             | MUSIC  is installed. [default=OFF]                             |
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-sionlib=[OFF|ON|</path/to/sionlib>]  | Request the use of sionlib. Optionally give the directory,     |
-|                                             | where sionlib  is installed. [default=OFF]                     |
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-recordingbackend-arbor=[OFF|ON]      | Request compilation of the recording backend for Arbor.        |
-|                                             | Requires MPI, Python and mpi4py. [default=OFF]                 |
-+---------------------------------------------+----------------------------------------------------------------+
 
 **Change parallelization scheme:**
 
@@ -65,8 +35,7 @@ NEST allows for several configuration options for custom builds:
 | -Dwith-mpi=[OFF|ON|</path/to/mpi>]          | Request compilation with MPI. Optionally give directory with   |
 |                                             | MPI installation. [default=OFF]                                |
 +---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-openmp=[OFF|ON|<OpenMP-Flag>]        | Enable OpenMP multi-threading. Optional: set OMP flag. MPI     |
-|                                             | MPI                                                            |
+| -Dwith-openmp=[OFF|ON|<OpenMP-Flag>]        | Enable OpenMP multi-threading. Optional: set OMP flag.         |
 +---------------------------------------------+----------------------------------------------------------------+
 
 **Set default libraries:**
@@ -90,7 +59,6 @@ NEST allows for several configuration options for custom builds:
 | -Dwith-boost=[OFF|ON|</path/to/boost>]      | Find a Boost library. To set a specific Boost installation,    |
 |                                             | set install path. [default=ON]                                 |
 +---------------------------------------------+----------------------------------------------------------------+
-
 
 **Use detailed NEST internal timers:**
 
@@ -128,6 +96,36 @@ NEST allows for several configuration options for custom builds:
 | -Dwith-version-suffix=[string]              | Set a user defined version suffix. [default '']                |
 +---------------------------------------------+----------------------------------------------------------------+
 
+**Change NEST behavior:**
+
++--------------------------+----------------------------------------------------+
+| -Dtics_per_ms=[number]   |  Specify elementary unit of time. [default 1000.0] |
++--------------------------+----------------------------------------------------+
+| -Dtics_per_step=[number] |  Specify resolution. [default 100]                 |
++--------------------------+----------------------------------------------------+
+
+**Add user modules:**
+
++---------------------------------------------+----------------------------------------------------------------+
+| -Dexternal-modules=[OFF|<list;of;modules>]  | External NEST modules to be linked in, separated by ';'.       |
+|                                             | [default=OFF]                                                  |
++---------------------------------------------+----------------------------------------------------------------+
+
+**Connect NEST with external projects:**
+
++---------------------------------------------+----------------------------------------------------------------+
+| -Dwith-libneurosim=                         | Request the use of libneurosim. Optionally give the directory, |
+| [OFF|ON|</path/to/libneurosim>]             | where libneurosim  is installed. [default=OFF]                 |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dwith-music=[OFF|ON|</path/to/music>]      | Request the use of MUSIC. Optionally give the directory, where |
+|                                             | MUSIC  is installed. [default=OFF]                             |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dwith-sionlib=[OFF|ON|</path/to/sionlib>]  | Request the use of sionlib. Optionally give the directory,     |
+|                                             | where sionlib  is installed. [default=OFF]                     |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dwith-recordingbackend-arbor=[OFF|ON]      | Request compilation of the recording backend for Arbor.        |
+|                                             | Requires MPI, Python and mpi4py. [default=OFF]                 |
++---------------------------------------------+----------------------------------------------------------------+
 
 .. _compile-with-mpi:
 

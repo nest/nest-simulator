@@ -30,7 +30,7 @@ jobs:
       - name: "Run clang-format..."
         id: diffstep
         run: |
-          files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*" -printf "\"%p\" ")
+          files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*")
           diff -u <(cat ${files}) <(clang-format-$CLANG_VERSION ${files})
     env:
       CLANG_FORMAT_FILE: ".clang-format"

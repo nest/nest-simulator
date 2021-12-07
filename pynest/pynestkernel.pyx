@@ -81,7 +81,7 @@ except ImportError:
     pass
 
 
-cdef class SLIDatum(object):
+cdef class SLIDatum:
 
     cdef Datum* thisptr
     cdef readonly unicode dtype
@@ -109,7 +109,7 @@ cdef class SLIDatum(object):
         self.thisptr = dat
 
 
-cdef class SLILiteral(object):
+cdef class SLILiteral:
 
     cdef readonly object name
     cdef object _hash
@@ -152,7 +152,7 @@ cdef class SLILiteral(object):
             return self.name >= obj
 
 
-cdef class NESTEngine(object):
+cdef class NESTEngine:
 
     cdef SLIInterpreter* pEngine
 

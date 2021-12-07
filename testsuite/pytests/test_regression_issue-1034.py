@@ -30,7 +30,7 @@ import scipy.stats
 import unittest
 
 
-class PostTraceTester(object):
+class PostTraceTester:
     '''Test that postsynaptic trace values returned from NEST are consistent
     with reference values generated in Python.
 
@@ -59,7 +59,7 @@ class PostTraceTester(object):
         nest.set_verbosity("M_WARNING")
 
         nest.ResetKernel()
-        nest.SetKernelStatus({'resolution': self.resolution_})
+        nest.resolution = self.resolution_
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
@@ -104,14 +104,14 @@ class PostTraceTester(object):
         n_steps = int(np.ceil(self.sim_time_ / self.delay_))
         trace_nest = []
         trace_nest_t = []
-        t = nest.GetKernelStatus("biological_time")
+        t = nest.biological_time
         trace_nest_t.append(t)
         post_tr = nest.GetStatus(post_parrot_ps)[0]['post_trace']
         trace_nest.append(post_tr)
         for step in range(n_steps):
             print("\n[py] simulating for " + str(self.delay_) + " ms")
             nest.Simulate(self.delay_)
-            t = nest.GetKernelStatus("biological_time")
+            t = nest.biological_time
             nearby_pre_spike = np.any(
                 np.abs(t - np.array(self.pre_spike_times_) - self.delay_) < self.resolution_ / 2.)
             if show_all_nest_trace_samples or nearby_pre_spike:

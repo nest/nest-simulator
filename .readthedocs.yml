@@ -7,7 +7,7 @@ sphinx:
 python:
    version: 3.8
    install:
-   - requirements: extras/nest-simulator-doc-requirements.txt
+   - requirements: doc/requirements.txt
 
 build:
   image: latest

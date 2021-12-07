@@ -123,11 +123,12 @@ qsyn_params["weight"] = 1. / n_sites
 
 ###############################################################################
 # We reset NEST to have a well-defined starting point,
-# make NEST less verbose, and set some kernel parameters.
+# make NEST less verbose, and set some kernel attributes.
+
 nest.ResetKernel()
 nest.set_verbosity("M_ERROR")
-nest.SetKernelStatus({"resolution": resolution,
-                      "rng_seed": seed})
+nest.resolution = resolution
+nest.rng_seed = seed
 
 ###############################################################################
 # We create three different neurons.
@@ -195,7 +196,7 @@ print()
 # Simulate one additional time step. This ensures that the
 # voltage traces for all trials, including the last, have the full length, so we
 # can easily transform them into a matrix below.
-nest.Simulate(nest.GetKernelStatus('resolution'))
+nest.Simulate(nest.resolution)
 
 ###############################################################################
 # Extract voltage traces and reshape the matrix with one column per trial

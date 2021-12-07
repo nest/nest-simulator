@@ -34,7 +34,6 @@
 // Includes from spatial:
 #include "mask.h"
 #include "position.h"
-#include "vose.h"
 
 namespace nest
 {

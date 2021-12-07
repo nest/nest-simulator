@@ -27,7 +27,20 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 project( nest CXX C )
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
-################################################################################
+# check if the given CMAKE_INSTALL_PREFIX is not empty
+if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
+  message(FATAL_ERROR "CMAKE_INSTALL_PREFIX cannot be an empty string")
+endif()
+
+# handle relative installation prefixes
+if( NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
+    # convert relative path to absolute path
+    get_filename_component(absPath ${CMAKE_INSTALL_PREFIX} ABSOLUTE BASE_DIR ${CMAKE_BINARY_DIR})
+    set(CMAKE_INSTALL_PREFIX ${absPath})
+    message(STATUS "Relative CMAKE_INSTALL_PREFIX has been set to absolute path ${CMAKE_INSTALL_PREFIX}")
+endif()
+
+###############################################################################
 ##################         All User Defined options           ##################
 ################################################################################
 
@@ -45,7 +58,6 @@ set( with-detailed-timers OFF CACHE STRING "Enable detailed NEST internal time m
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
 set( with-sionlib OFF CACHE STRING "Request the use of SIONlib. Optionally give the directory where SIONlib is installed. [default=OFF]" )
-set( with-recordingbackend-arbor OFF CACHE STRING "Request compilation of the recording backend for Arbor. Requires MPI, Python and mpi4py. [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
@@ -155,7 +167,6 @@ nest_process_with_music()
 nest_process_with_sionlib()
 nest_process_with_mpi4py()
 nest_process_with_boost()
-nest_process_with_recordingbackend_arbor()
 nest_process_target_bits_split()
 nest_process_version_suffix()
 
@@ -226,8 +237,9 @@ add_custom_target( installcheck
 ################################################################################
 
 add_subdirectory( doc )
+add_subdirectory( bin )
 add_subdirectory( examples )
-add_subdirectory( extras )
+add_subdirectory( build_support )
 add_subdirectory( lib )
 add_subdirectory( libnestutil )
 add_subdirectory( models )
@@ -331,13 +343,13 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/nest-config.in"
-    "${PROJECT_BINARY_DIR}/extras/nest-config" @ONLY
+    "${PROJECT_SOURCE_DIR}/bin/nest-config.in"
+    "${PROJECT_BINARY_DIR}/bin/nest-config" @ONLY
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/nest_vars.sh.in"
-    "${PROJECT_BINARY_DIR}/extras/nest_vars.sh" @ONLY
+    "${PROJECT_SOURCE_DIR}/bin/nest_vars.sh.in"
+    "${PROJECT_BINARY_DIR}/bin/nest_vars.sh" @ONLY
 )
 
 configure_file(
@@ -351,8 +363,8 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/pynest/nest/__init__.py.in"
-    "${PROJECT_BINARY_DIR}/pynest/nest/__init__.py" @ONLY
+    "${PROJECT_SOURCE_DIR}/pynest/nest/versionchecker.py.in"
+    "${PROJECT_BINARY_DIR}/pynest/nest/versionchecker.py" @ONLY
 )
 
 

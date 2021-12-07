@@ -1,169 +1,290 @@
-name: NEST matrix jobs
+#
+# detailed syntax defined in
+# https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
+#
+name: "NEST matrix jobs"
 env:
   CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
   PYTHONPATH: ${{ github.workspace }}/build/python
 on: [push, pull_request]
+
+
 jobs:
-  setup:
-     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-     runs-on: ${{ matrix.os }}
-     strategy:
-       fail-fast: false
-       matrix:
-         os: ["ubuntu-20.04", macos-latest]
-         cpp_compiler: ["gcc", "clang"]
-         xNEST_BUILD_TYPE: ["STATIC_CODE_ANALYSIS", "MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
-         exclude:
-           - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
-             os: macos-latest
-             cpp_compiler: "clang"
-           - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
-             os: "ubuntu-20.04"
-             cpp_compiler: "clang"
-           - xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
-             os: macos-latest
-             cpp_compiler: "gcc"
-           - xNEST_BUILD_TYPE: "MPI_ONLY"
-             cpp_compiler: "clang"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
-             cpp_compiler: "clang"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "MINIMAL"
-             cpp_compiler: "clang"
-             os: "ubuntu-20.04"
-           - xNEST_BUILD_TYPE: "MPI_ONLY"
-             cpp_compiler: "clang"
-             os: "ubuntu-20.04"
-           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
-             cpp_compiler: "clang"
-             os: "ubuntu-20.04"
-           - xNEST_BUILD_TYPE: "FULL"
-             os: "ubuntu-20.04"
-             cpp_compiler: "clang"
-           - xNEST_BUILD_TYPE: "MPI_ONLY"
-             cpp_compiler: "gcc"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "OPENMP_ONLY"
-             cpp_compiler: "gcc"
-             os: macos-latest
-           - xNEST_BUILD_TYPE: "FULL"
-             os: macos-latest
-             cpp_compiler: "gcc"
-           - xNEST_BUILD_TYPE: "MINIMAL"
-             os: macos-latest
-             cpp_compiler: "gcc"
-           - xNEST_BUILD_TYPE: "FULL"
-             os: macos-latest
-             cpp_compiler: "clang"
+  static_checks:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    env:
+      xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-     steps:
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
 
-       # Steps represent a sequence of tasks that will be executed as part of the job
-       - name: Checkout repo content
-         #uses: actions/checkout@v2 # checkout the repository content to github runner.
-         uses: actions/checkout@master
+      - name: "Restore apt cache"
+        uses: actions/cache@v2
+        env:
+          cache-name: "apt-cache"
+        with:
+          path: |
+            !/var/cache/apt/archives/lock
+            !/var/cache/apt/archives/partial
+            /var/cache/apt
+          key: ${{ runner.os }}-system-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-system-${{ env.cache-name }}-
+            ${{ runner.os }}-system-
 
-       - name: Check Python path
-         run: echo $PYTHONPATH
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev python2-dev libboost-all-dev
+          sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
+          sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
+          sudo apt-get install vera++
+          sudo ldconfig
+          g++ --version
 
-       - name: Check path
-         run: |
-           echo $PATH
-           echo $PWD
-         shell: bash
+      - name: "Restore pip cache"
+        env:
+          cache-name: "pip-cache"
+        uses: actions/cache@v2
+        with:
+          path: |
+            /opt/hostedtoolcache/Python/**/site-packages/*
+            $HOME/.cache/pip
+          key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-python-${{ env.cache-name }}-
+            ${{ runner.os }}-python-
 
-       - name: Set up Python 3.x
-         uses: actions/setup-python@v2
-         with:
-           python-version: 3.9
+      - name: "Install Python dependencies"
+        run: |
+          python -m pip install --upgrade pip setuptools
+          python -c "import setuptools; print('package location:', setuptools.__file__)"
+          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+          python -c "import pytest; print('package location:', pytest.__file__)"
+          pip list
 
-       - name: Changed Files
-         uses: actions/checkout@v2
-         with:
-           fetch-depth: 0
-       - run: |
-           echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
-           echo "CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
-           echo 'EOF' >> $GITHUB_ENV
+      - name: "Find changed files"
+        run: |
+          echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
+          echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+          echo "GITHUB_ENV = $GITHUB_ENV"
+          cat $GITHUB_ENV
 
-       - name: Dependencies MacOS
-         if: runner.os =='macOS'
-         run: |
-            brew install coreutils gsl open-mpi automake autoconf libtool
-            brew info python
+      - name: "Static Code Analysis"
+        run: build_support/ci_build.sh
+        env:
+          xNEST_BUILD_TYPE: 'STATIC_CODE_ANALYSIS'
+          CHANGED_FILES: ${{ env.CHANGED_FILES }}
 
-       - name: Dependencies Linux
-         if: contains(matrix.os, 'ubuntu')
-         run: |
-           sudo apt-get update
-           #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-           sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev python2-dev libboost-all-dev
-           sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
-           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
-           sudo apt-get install vera++
+  test_linux:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ${{ matrix.os }}
+    needs: [static_checks]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-20.04"]
+        cpp_compiler: ["gcc", "clang"]
+        xNEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
+        exclude:
+          - xNEST_BUILD_TYPE: "MINIMAL"
+            cpp_compiler: "clang"
+            os: "ubuntu-20.04"
+          - xNEST_BUILD_TYPE: "MPI_ONLY"
+            cpp_compiler: "clang"
+            os: "ubuntu-20.04"
+          - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+            cpp_compiler: "clang"
+            os: "ubuntu-20.04"
+          - xNEST_BUILD_TYPE: "FULL"
+            os: "ubuntu-20.04"
+            cpp_compiler: "clang"
 
-       - name: Install dependencies
-         #uses: actions/cache@master
-         run: |
-            python -m pip install --upgrade pip setuptools
-            python -m pip install scipy junitparser>=2 numpy nose cython matplotlib terminaltables pandoc
-            python -m pip install nose
-            pip list
-            g++ --version
-            set -o pipefail
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-       - name: Update shared library cache
-         if: contains(matrix.os, 'ubuntu')
-         run: sudo ldconfig
+      - name: "Find changed files"
+        run: |
+          echo "CHANGED_FILES<<EOF" >>$GITHUB_ENV
+          echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >>$GITHUB_ENV
+          echo 'EOF' >>$GITHUB_ENV
 
-       - name: Static Code Analysis
-         if: ${{ matrix.xNEST_BUILD_TYPE == 'STATIC_CODE_ANALYSIS' }}
-         run: |
-           chmod +x extras/ci_build.sh
-           ./extras/ci_build.sh
-         env:
-           xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
-           CHANGED_FILES: ${{env.CHANGED_FILES}}
-           #GET CHANGED FILES: https://github.com/marketplace/actions/get-changed-files
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
 
-       - name: Minimal Build
-         if: ${{ matrix.xNEST_BUILD_TYPE == 'MINIMAL' }}
-         run: |
-           echo "Minimal Build"
-           chmod +x extras/ci_build.sh
-           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
-           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-         env:
-           xNEST_BUILD_TYPE: "MINIMAL"
+      - name: "Restore apt cache"
+        uses: actions/cache@v2
+        env:
+          cache-name: "apt-cache"
+        with:
+          path: |
+            !/var/cache/apt/archives/lock
+            !/var/cache/apt/archives/partial
+            /var/cache/apt
+          key: ${{ runner.os }}-system-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-system-${{ env.cache-name }}-
+            ${{ runner.os }}-system-
 
-       - name: MPI Only
-         if: ${{ matrix.xNEST_BUILD_TYPE == 'MPI_ONLY' }}
-         run: |
-           echo "MPI Only Build"
-           chmod +x extras/ci_build.sh
-           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
-           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-         env:
-           xNEST_BUILD_TYPE: MPI_ONLY
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev python2-dev libboost-all-dev
+          sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
+          sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
+          sudo apt-get install vera++
+          sudo ldconfig
+          g++ --version
 
-       - name: OpenMP Only
-         if: ${{ matrix.xNEST_BUILD_TYPE == 'OPENMP_ONLY' }}
-         run: |
-           echo "OpenMP Only Build"
-           chmod +x extras/ci_build.sh
-           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
-           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-         env:
-          xNEST_BUILD_TYPE: OPENMP_ONLY
+      - name: "Restore pip cache"
+        env:
+          cache-name: "pip-cache"
+        uses: actions/cache@v2
+        with:
+          path: |
+            /opt/hostedtoolcache/Python/**/site-packages/*
+            $HOME/.cache/pip
+          key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-python-${{ env.cache-name }}-
+            ${{ runner.os }}-python-
 
-       - name: Full Build
-         if: ${{ matrix.xNEST_BUILD_TYPE == 'FULL' }}
-         run: |
-           echo "FULL Build"
-           chmod +x extras/ci_build.sh
-           ./extras/ci_build.sh 2>&1 | tee ci_build.sh.log
-           python extras/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-         env:
-           xNEST_BUILD_TYPE: FULL
-           
+      - name: "Install Python dependencies"
+        run: |
+          python -m pip install --upgrade pip setuptools
+          python -c "import setuptools; print('package location:', setuptools.__file__)"
+          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+          python -c "import pytest; print('package location:', pytest.__file__)"
+          pip list
+
+      - name: "Build NEST"
+        run: |
+          ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
+          python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
+        env:
+          xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
+          CHANGED_FILES: ${{ env.CHANGED_FILES }}
+          #get changed files: https://github.com/marketplace/actions/get-changed-files
+
+      - name: "Upload install and test results"
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: "test_linux-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
+          path: |
+            ci_build.sh.log
+            install_manifest.txt
+            **.log
+            build/reports/**
+
+  test_macos:
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
+    runs-on: ${{ matrix.os }}
+    needs: [static_checks]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest]
+        cpp_compiler: ["gcc", "clang"]
+        xNEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
+        exclude:
+          - xNEST_BUILD_TYPE: "MPI_ONLY"
+            cpp_compiler: "clang"
+            os: macos-latest
+          - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+            cpp_compiler: "clang"
+            os: macos-latest
+          - xNEST_BUILD_TYPE: "FULL"
+            os: macos-latest
+            cpp_compiler: "clang"
+          - xNEST_BUILD_TYPE: "MINIMAL"
+            os: macos-latest
+            cpp_compiler: "gcc"
+          - xNEST_BUILD_TYPE: "MPI_ONLY"
+            cpp_compiler: "gcc"
+            os: macos-latest
+          - xNEST_BUILD_TYPE: "OPENMP_ONLY"
+            cpp_compiler: "gcc"
+            os: macos-latest
+          - xNEST_BUILD_TYPE: "FULL"
+            os: macos-latest
+            cpp_compiler: "gcc"
+
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "Find changed files"
+        run: |
+          echo "CHANGED_FILES<<EOF" >>$GITHUB_ENV
+          echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >>$GITHUB_ENV
+          echo 'EOF' >>$GITHUB_ENV
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: "Install MacOS system dependencies"
+        run: |
+          brew install coreutils gsl open-mpi automake autoconf libtool
+          brew info python
+
+      - name: "Restore pip cache"
+        env:
+          cache-name: "pip-cache"
+        uses: actions/cache@v2
+        with:
+          path: |
+            /opt/hostedtoolcache/Python/**/site-packages/*
+            $HOME/.cache/pip
+          key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-python-${{ env.cache-name }}-
+            ${{ runner.os }}-python-
+
+      - name: "Install Python dependencies"
+        run: |
+          python -m pip install --upgrade pip setuptools
+          python -c "import setuptools; print('package location:', setuptools.__file__)"
+          python -m pip install --force-reinstall --upgrade scipy "junitparser>=2" numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc
+          python -c "import pytest; print('package location:', pytest.__file__)"
+          pip list
+
+      - name: "Build NEST"
+        run: |
+          ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
+          python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
+        env:
+          xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
+          CHANGED_FILES: ${{ env.CHANGED_FILES }}
+          #get changed files: https://github.com/marketplace/actions/get-changed-files
+
+      - name: "Upload install and test results"
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: "test_macos-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.xNEST_BUILD_TYPE }}-logs"
+          path: |
+            ci_build.sh.log
+            install_manifest.txt
+            **.log
+            build/reports/**

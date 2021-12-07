@@ -25,13 +25,10 @@
 #include "node_collection.h"
 #include "node.h"
 #include "spatial.h"
-
-// includes from sli
-#include "sharedptrdatum.h"
+#include "vp_manager_impl.h"
 
 #include "parameter.h"
 
-template class sharedPtrDatum< nest::Parameter, &nest::NestModule::ParameterType >;
 
 namespace nest
 {
@@ -75,7 +72,7 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
           target_pos.size(),
           source_pos.size() ) );
     }
-    auto value = this->value( rng, source_pos, target_pos, *source_layer.get() );
+    auto value = this->value( rng, source_pos, target_pos, *source_layer.get(), nullptr );
     result.push_back( value );
   }
   return result;
@@ -99,9 +96,11 @@ NormalParameter::NormalParameter( const DictionaryDatum& d )
 }
 
 double
-NormalParameter::value( RngPtr rng, Node* )
+NormalParameter::value( RngPtr rng, Node* node )
 {
-  return normal_dists_[ kernel().vp_manager.get_thread_id() ]( rng );
+  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
+                        : kernel().vp_manager.get_thread_id();
+  return normal_dists_[ tid ]( rng );
 }
 
 
@@ -123,9 +122,11 @@ LognormalParameter::LognormalParameter( const DictionaryDatum& d )
 }
 
 double
-LognormalParameter::value( RngPtr rng, Node* )
+LognormalParameter::value( RngPtr rng, Node* node )
 {
-  return lognormal_dists_[ kernel().vp_manager.get_thread_id() ]( rng );
+  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
+                        : kernel().vp_manager.get_thread_id();
+  return lognormal_dists_[ tid ]( rng );
 }
 
 
@@ -171,7 +172,8 @@ double
 SpatialDistanceParameter::value( RngPtr,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* )
 {
   switch ( dimension_ )
   {
@@ -235,7 +237,8 @@ double
 RedrawParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* node )
 {
   double value;
   size_t num_redraws = 0;
@@ -245,7 +248,7 @@ RedrawParameter::value( RngPtr rng,
     {
       throw KernelException( String::compose( "Number of redraws exceeded limit of %1", max_redraws_ ) );
     }
-    value = p_->value( rng, source_pos, target_pos, layer );
+    value = p_->value( rng, source_pos, target_pos, layer, node );
   } while ( value < min_ or value > max_ );
 
   return value;
@@ -268,9 +271,10 @@ double
 ExpDistParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* node )
 {
-  return std::exp( -p_->value( rng, source_pos, target_pos, layer ) * inv_beta_ );
+  return std::exp( -p_->value( rng, source_pos, target_pos, layer, node ) * inv_beta_ );
 }
 
 GaussianParameter::GaussianParameter( const DictionaryDatum& d )
@@ -290,9 +294,10 @@ double
 GaussianParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* node )
 {
-  const auto dx = p_->value( rng, source_pos, target_pos, layer ) - mean_;
+  const auto dx = p_->value( rng, source_pos, target_pos, layer, node ) - mean_;
   return std::exp( -dx * dx * inv_two_std2_ );
 }
 
@@ -335,10 +340,11 @@ double
 Gaussian2DParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* node )
 {
-  const auto dx = px_->value( rng, source_pos, target_pos, layer ) - mean_x_;
-  const auto dy = py_->value( rng, source_pos, target_pos, layer ) - mean_y_;
+  const auto dx = px_->value( rng, source_pos, target_pos, layer, node ) - mean_x_;
+  const auto dy = py_->value( rng, source_pos, target_pos, layer, node ) - mean_y_;
   return std::exp( -dx * dx * x_term_const_ - dy * dy * y_term_const_ + dx * dy * xy_term_const_ );
 }
 
@@ -365,9 +371,10 @@ double
 GammaParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
   const std::vector< double >& target_pos,
-  const AbstractLayer& layer )
+  const AbstractLayer& layer,
+  Node* node )
 {
-  const auto x = p_->value( rng, source_pos, target_pos, layer );
+  const auto x = p_->value( rng, source_pos, target_pos, layer, node );
   return std::pow( x, kappa_ - 1. ) * std::exp( -1. * inv_theta_ * x ) * delta_;
 }
 

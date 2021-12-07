@@ -43,25 +43,25 @@ pid() {
 set-uwsgi_opts() {
   # Set opts for uwsgi.
   UWSGI_OPTS="--module nest.server:app --http-socket $HOST:$PORT"
-  UWSGI_OPTS=$UWSGI_OPTS" --uid $USER"
-  UWSGI_OPTS=$UWSGI_OPTS" --buffer-size $BUFFER_SIZE"
-  if [ -n "$PLUGIN" ]; then
-    UWSGI_OPTS=$UWSGI_OPTS" --plugin $PLUGIN"
+  UWSGI_OPTS="${UWSGI_OPTS} --uid ${USER}"
+  UWSGI_OPTS="${UWSGI_OPTS} --buffer-size ${BUFFER_SIZE}"
+  if [ -n "${PLUGIN}" ]; then
+    UWSGI_OPTS="${UWSGI_OPTS} --plugin \"${PLUGIN}\""
   fi
-  if [ $STDOUT == 0 ]; then
-    UWSGI_OPTS=$UWSGI_OPTS" --daemonize /tmp/nest-server.log"
+  if [ "${STDOUT}" -eq 0 ]; then
+    UWSGI_OPTS="${UWSGI_OPTS} --daemonize /tmp/nest-server.log"
   fi
 }
 
 start() {
   # Start instance of NEST Server.
-  if [ `pid` ]; then
-    echo "NEST Simulator is already serving at http://$HOST:$PORT."
+  if pid; then
+    echo "NEST Server is already running at http://$HOST:$PORT."
   else
     set-uwsgi_opts
     uwsgi $UWSGI_OPTS
     if [ $STDOUT == 0 ]; then
-      echo "NEST Simulator is serving at http://$HOST:$PORT."
+      echo "NEST Server is running at http://$HOST:$PORT."
       if [ $DAEMONIZE == 0 ]; then
         read -p "Press any key to stop... "
         stop
@@ -72,19 +72,19 @@ start() {
 
 status() {
   # List all processes of NEST Server.
-  PS_AUX=`ps aux | grep "[u]wsgi --module nest.server.app"`
-  PS_CMD=`echo $PS_AUX | awk '{ for(i=1;i<=NF;i++) {if ( i >= 11 ) printf $i" "}; printf "\n" }'`
+  PS_AUX="$(ps aux | grep "[u]wsgi --module nest.server.app")"
+  PS_CMD="$(echo $PS_AUX | awk '{ for(i=1;i<=NF;i++) {if ( i >= 11 ) printf $i" "}; printf "\n" }')"
   printf "HTTP-SOCKET\t\tUID\n"
-  echo $PS_CMD | awk '{ for(i=1;i<=NF;i++) {if ( i == 5 || i == 7 ) printf $i"\t\t"}; printf "\n" }'
+  echo "${PS_CMD}" | awk '{ for(i=1;i<=NF;i++) {if ( i == 5 || i == 7 ) printf "${i}\t\t"}; printf "\n" }'
 }
 
 stop() {
   # Stop instance of NEST Server.
-  if [ `pid` ]; then
-    kill -9 `pid`
-    echo "NEST Simulator serving at http://$HOST:$PORT has stopped."
+  if pid; then
+    kill -9 "$(pid)"
+    echo "NEST Server running at http://$HOST:$PORT has stopped."
   else
-    echo "NEST Simulator is not serving at http://$HOST:$PORT."
+    echo "NEST Server is not running at http://$HOST:$PORT."
   fi
 }
 

@@ -30,8 +30,8 @@ jobs:
       - name: "Run clang-format..."
         id: diffstep
         run: |
-          diff -u <(cat nestkernel/*.{h,cpp,cc}) <(clang-format nestkernel/*.{h,cpp,cc})
-        #run: find . \( -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" \) -print0 | xargs -0 clang-format -i
+	  files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*" -printf "'%p' ")
+	  diff -u <(cat ${files}) <(clang-format-$CLANG_VERSION ${files})
     env:
       CLANG_FORMAT_FILE: ".clang-format"
       CLANG_VERSION: ${{ matrix.clang_version }}

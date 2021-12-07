@@ -55,7 +55,7 @@ set-uwsgi_opts() {
 
 start() {
   # Start instance of NEST Server.
-  if pid; then
+  if pid > /dev/null;  then
     echo "NEST Server is already running at http://$HOST:$PORT."
   else
     set-uwsgi_opts
@@ -75,16 +75,17 @@ status() {
   PS_AUX="$(ps aux | grep "[u]wsgi --module nest.server.app")"
   PS_CMD="$(echo $PS_AUX | awk '{ for(i=1;i<=NF;i++) {if ( i >= 11 ) printf $i" "}; printf "\n" }')"
   printf "HTTP-SOCKET\t\tUID\n"
-  echo "${PS_CMD}" | awk '{ for(i=1;i<=NF;i++) {if ( i == 5 || i == 7 ) printf "${i}\t\t"}; printf "\n" }'
+  echo "${PS_CMD}" | awk '{ for(i=1;i<=NF;i++) {if ( i == 5 || i == 7 ) printf $i"\t\t"}; printf "\n" }'
 }
 
 stop() {
   # Stop instance of NEST Server.
-  if pid; then
-    kill -9 "$(pid)"
+  if pid > /dev/null; then
+    kill "$(pid)"
     echo "NEST Server running at http://$HOST:$PORT has stopped."
   else
     echo "NEST Server is not running at http://$HOST:$PORT."
+    false
   fi
 }
 

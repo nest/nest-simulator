@@ -30,7 +30,7 @@ jobs:
       - name: "Run clang-format..."
         id: diffstep
         run: |
-          diff -u <(cat nestkernel/*) <(clang-format nestkernel/*)
+          diff -u <(cat nestkernel/*.{h,cpp,cc}) <(clang-format nestkernel/*.{h,cpp,cc})
         #run: find . \( -iname "*.cpp" -o -iname "*.cpp" -o -iname "*.h" -o -iname "*.hxx" \) -print0 | xargs -0 clang-format -i
     env:
       CLANG_FORMAT_FILE: ".clang-format"

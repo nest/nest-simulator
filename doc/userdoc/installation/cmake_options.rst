@@ -160,7 +160,7 @@ following steps in order to add support for MPI:
          -DMPI_CXX_COMPILER=myC++_CompilerWrapper \
          -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON
 
-When running large-scale parallel simualations and recording from many
+When running large-scale parallel simulations and recording from many
 neurons, writing to ASCII files might become prohibitively slow due to
 the large number of resulting files. By installing the `SIONlib
 library <http://www.fz-juelich.de/jsc/sionlib>`_ and supplying its

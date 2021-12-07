@@ -245,13 +245,14 @@ jobs:
           auto-update-conda: true
           python-version: "3.7"
           
-      - name: Install CI test dependencies
+      - name: Install conda dependencies
         shell: bash -l {0}
         run: |
           conda info
           conda env create -p conda
           
       - name: "Test-build documentation"
+        shell: bash -l {0}
         run: |
           conda activate conda/
           mkdir -pv build

@@ -24,8 +24,8 @@ jobs:
 
       - name: "Install Linux system dependencies"
         run: |
-          sudo apt-get update
-          sudo apt-get install clang-format-$CLANG_VERSION
+          apt update
+          apt install clang-format-$CLANG_VERSION
 
       - name: "Run clang-format..."
         id: diffstep

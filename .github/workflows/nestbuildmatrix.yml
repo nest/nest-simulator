@@ -567,7 +567,7 @@ jobs:
     uses: conda-forge/nest-simulator-feedstock/.github/workflows/nest_trigger.yml@f9a89c898b4481931fe6b587c05547b42e758e46
     with:
       commit_name: foo
-      commit_hash: ${{ env.GITHUB_SHA }}
+      commit_hash: ${{ GITHUB_SHA }}
 
   build_docker:
     if: false

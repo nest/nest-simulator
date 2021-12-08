@@ -350,7 +350,7 @@ jobs:
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
 
   test_linux:
-    if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
     needs: [clang-format, vera, cppcheck, mypy]
     strategy:
@@ -563,14 +563,15 @@ jobs:
           fetch-depth: 0
 
   build_conda:
-    if: false
+    if: always
     runs-on: "ubuntu-20.04"
-    needs: [pytest]
+    needs: []
     steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v2
+      - name: "Trigger conda build"
+        uses: conda-forge/nest-simulator-feedstock/.github/workflows/conda_nest.yml@4a1d34210e968b15f9502c345b59b1553f0dcb6f
         with:
-          fetch-depth: 0
+          commit_name: foo
+          commit_hash: ${{ env.GITHUB_SHA }}
 
   build_docker:
     if: false

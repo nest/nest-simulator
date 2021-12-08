@@ -564,14 +564,10 @@ jobs:
 
   build_conda:
     if: always
-    runs-on: "ubuntu-20.04"
-    needs: []
-    steps:
-      - name: "Trigger conda build"
-        uses: conda-forge/nest-simulator-feedstock/.github/workflows/conda_nest.yml@4a1d34210e968b15f9502c345b59b1553f0dcb6f
-        with:
-          commit_name: foo
-          commit_hash: ${{ env.GITHUB_SHA }}
+    uses: conda-forge/nest-simulator-feedstock/.github/workflows/conda_nest.yml@4a1d34210e968b15f9502c345b59b1553f0dcb6f
+    with:
+      commit_name: foo
+      commit_hash: ${{ env.GITHUB_SHA }}
 
   build_docker:
     if: false

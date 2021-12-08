@@ -61,32 +61,40 @@ nest::Na::f_numstep( const double v_comp, const double dt )
 
   if ( gbar_Na_ > 1e-9 )
   {
-    // auxiliary variables for 'm'
-    double a__times__v_comp__plus__b = 0.182 * v_comp + 6.3723659999999995;
-    double m_a__times__v_comp__minus_b = -0.124 * v_comp - 4.3416119999999996;
-    double one__minus__a__times__exp__mb__times__v_comp =
-      1.0 - 0.020438532058318047 * std::exp( -0.1111111111111111 * v_comp );
-    double one__minus__c__times__exp__d__times__v_comp =
-      1.0 - 48.927192870146527 * std::exp( 0.1111111111111111 * v_comp );
+    /*
+    Channel taken from the following .mod file:
+    https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
 
-    // activation and timescale of state variable 'm'
-    double m_inf_Na =
-      a__times__v_comp__plus__b / ( one__minus__a__times__exp__mb__times__v_comp
-                                    * ( m_a__times__v_comp__minus_b / one__minus__c__times__exp__d__times__v_comp
-                                        + a__times__v_comp__plus__b / one__minus__a__times__exp__mb__times__v_comp ) );
-    double tau_m_Na =
-      0.3115264797507788 / ( m_a__times__v_comp__minus_b / one__minus__c__times__exp__d__times__v_comp
-                             + a__times__v_comp__plus__b / one__minus__a__times__exp__mb__times__v_comp );
+    Info in .mod file:
+    > Sodium channel, Hodgkin-Huxley style kinetics.
+    >
+    > Kinetics were fit to data from Huguenard et al. (1988) and Hamill et
+    > al. (1991)
+    >
+    > ...
+    >
+    > Author: Zach Mainen, Salk Institute, 1994, zach@salk.edu
+    */
+    // auxiliary variables
+    double v_comp_plus_35 = v_comp + 35.013;
+    double exp_vcp35 = std::exp( 0.111111111111111 * v_comp_plus_35 );
 
-    // auxiliary variables for 'h'
-    double v_comp__div__5 = 0.20000000000000001 * v_comp;
+    double alpha_m = 0.182 * v_comp_plus_35 * exp_vcp35 / ( exp_vcp35 - 1. );
+    double beta_m = -0.124 * v_comp_plus_35 / ( 1. - exp_vcp35 );
 
-    // activation and timescale of state variable 'h'
-    double h_inf_Na = 1.0 / ( std::exp( 0.16129032258064516 * v_comp + 10.483870967741936 ) + 1.0 );
-    double tau_h_Na = 0.3115264797507788
-      / ( ( -0.0091000000000000004 * v_comp - 0.68261830000000012 )
-                          / ( 1.0 - 3277527.8765015295 * std::exp( v_comp__div__5 ) )
-                        + ( 0.024 * v_comp + 1.200312 ) / ( 1.0 - 4.5282043263959816e-5 * exp( -v_comp__div__5 ) ) );
+    double v_comp_plus_50 = v_comp + 50.013;
+    double v_comp_plus_75 = v_comp + 75.013;
+
+    double alpha_h = 0.024 * v_comp_plus_50 / ( 1.0 - std::exp( -0.2 * v_comp_plus_50 ) );
+    double beta_h = -0.0091 * v_comp_plus_75 / ( 1.0 - std::exp( 0.2 * v_comp_plus_75 ) );
+
+    // activation and timescale for state variable 'm'
+    double tau_m_Na = 1. / ( 3.21 * ( alpha_m + beta_m ) );
+    double m_inf_Na = alpha_m / ( alpha_m + beta_m );
+
+    // activation and timescale for state variable 'h'
+    double tau_h_Na = 1. / ( 3.21 * ( alpha_h + beta_h ) );
+    double h_inf_Na = 1. / ( 1. + std::exp( ( v_comp + 65. ) / 6.2 ) );
 
     // advance state variable 'm' one timestep
     double p_m_Na = std::exp( -dt / tau_m_Na );
@@ -148,19 +156,25 @@ nest::K::f_numstep( const double v_comp, const double dt )
 
   if ( gbar_K_ > 1e-9 )
   {
-    // auxiliary variables
-    double v_comp__minus__25 = v_comp - 25.0;
-    double m__v_comp_m_25 = -v_comp__minus__25;
-    double v_comp_m_25__div__9 = v_comp__minus__25 / 9.0;
-    double m_v_comp_m_25__div__9 = m__v_comp_m_25 / 9.0;
-    double exp__m_v_comp_m_25__div__9 = std::exp( m_v_comp_m_25__div__9 );
-    double exp__v_comp_m_25__div__9 = std::exp( v_comp_m_25__div__9 );
-    double expr = ( ( -0.002 ) * v_comp__minus__25 / ( 1.0 - exp__v_comp_m_25__div__9 )
-      + 0.02 * v_comp__minus__25 / ( 1.0 - exp__m_v_comp_m_25__div__9 ) );
+    /*
+    Channel taken from the following .mod file:
+    https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/kv.mod#tabs-2
 
-    // activation and timescale of state variable 'm'
-    double n_inf_K = 0.02 * v_comp__minus__25 / ( ( 1.0 - exp__m_v_comp_m_25__div__9 ) * expr );
-    double tau_n_K = 0.3115264797507788 / expr;
+    Info in .mod file:
+    > Potassium channel, Hodgkin-Huxley style kinetics
+    > Kinetic rates based roughly on Sah et al. and Hamill et al. (1991)
+    >
+    > Author: Zach Mainen, Salk Institute, 1995, zach@salk.edu
+    */
+    // auxiliary variables
+    double v_comp_minus_25 = v_comp - 25.;
+    double exp_vm25_div_9 = std::exp( v_comp_minus_25 / 9. );
+    double alpha_n = 0.02 * v_comp_minus_25 / ( 1. - 1. / exp_vm25_div_9 );
+    double beta_n = -0.002 * v_comp_minus_25 / ( 1. - exp_vm25_div_9 );
+
+    // activation and timescale of state variable 'n'
+    double tau_n_K = 1. / ( 3.21 * ( alpha_n + beta_n ) );
+    double n_inf_K = alpha_n * tau_n_K;
 
     // advance state variable 'm' one timestep
     double p_n_K = std::exp( -dt / tau_n_K );

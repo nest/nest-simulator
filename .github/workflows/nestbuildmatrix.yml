@@ -564,7 +564,7 @@ jobs:
 
   build_conda:
     if: always
-    uses: conda-forge/nest-simulator-feedstock/.github/workflows/conda_nest.yml@4a1d34210e968b15f9502c345b59b1553f0dcb6f
+    uses: conda-forge/nest-simulator-feedstock/.github/workflows/nest_trigger.yml@f9a89c898b4481931fe6b587c05547b42e758e46
     with:
       commit_name: foo
       commit_hash: ${{ env.GITHUB_SHA }}

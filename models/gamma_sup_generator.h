@@ -47,7 +47,7 @@ Simulate the superimposed spike train of a population of gamma processes
 Description
 +++++++++++
 
-The gamma_sup_generator generator simulates the pooled spike train of a
+The ``gamma_sup_generator`` generator simulates the pooled spike train of a
 population of neurons firing independently with gamma process statistics.
 
 .. include:: ../models/stimulation_device.rst

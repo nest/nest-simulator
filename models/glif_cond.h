@@ -52,14 +52,14 @@ Conductance-based generalized leaky integrate and fire (GLIF) model
 Description
 +++++++++++
 
-glif_cond provides five generalized leaky integrate
+``glif_cond`` provides five generalized leaky integrate
 and fire (GLIF) models [1]_ with conductance-based synapses.
 Incoming spike events induce a postsynaptic change of conductance modeled
 by an alpha function [2]_. The alpha function is normalized such that an event
-of weight 1.0 results in a peak conductance change of 1 nS at t = tau_syn. On
+of weight 1.0 results in a peak conductance change of 1 nS at `t = tau_syn`. On
 the postsynaptic side, there can be arbitrarily many synaptic time constants.
 This can be reached by specifying separate receptor ports, each for a different
-time constant. The port number has to match the respective "receptor_type" in
+time constant. The port number has to match the respective ``receptor_type`` in
 the connectors.
 
 The five GLIF models are:
@@ -76,7 +76,7 @@ The five GLIF models are:
 Remarks:
 
 GLIF model mechanism setting is based on three parameters
-(spike_dependent_threshold, after_spike_currents, adapting_threshold).
+(``spike_dependent_threshold``, ``after_spike_currents``, ``adapting_threshold``).
 The settings of these three parameters for the five GLIF models are listed
 below. Other combinations of these parameters will not be supported.
 
@@ -105,8 +105,8 @@ parameter setting of voltage_reset_fraction and voltage_reset_add may lead to th
 situation that voltage is bigger than threshold after reset. In this case, the neuron
 will continue to spike until the end of the simulation regardless the stimulated inputs.
 We recommend the setting of the parameters of these three models to follow the
-condition of (E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
-< (V_th + th_spike_add).
+condition of :math:`(E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
+< (V_th + th_spike_add)`.
 
 Parameters
 ++++++++++

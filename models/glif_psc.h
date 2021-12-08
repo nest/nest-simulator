@@ -42,11 +42,11 @@ Current-based generalized leaky integrate-and-fire models
 Description
 +++++++++++
 
-glif_psc provides five generalized leaky integrate-and-fire
+``glif_psc`` provides five generalized leaky integrate-and-fire
 (GLIF) models [1]_ with alpha-function shaped synaptic currents.
 Incoming spike events induce a postsynaptic change of current modeled
 by an alpha function [2]_. The alpha function is normalized such that an event
-of weight 1.0 results in a peak current of 1 pA at t = tau_syn. By default,
+of weight 1.0 results in a peak current of 1 pA at `t = tau_syn`. By default,
 glif_psc has a single synapse that is accessible through receptor_port 1.
 An arbitrary number of synapses with different time constants can be
 configured by setting the desired time constants as tau_syn array.
@@ -66,7 +66,7 @@ The five GLIF models are:
 Remarks:
 
 GLIF model mechanism setting is based on three parameters
-(spike_dependent_threshold, after_spike_currents, adapting_threshold).
+(``spike_dependent_threshold``, ``after_spike_currents``, ``adapting_threshold``).
 The settings of these three parameters for the five GLIF models are listed
 below. Other combinations of these parameters will not be supported.
 
@@ -95,14 +95,14 @@ parameter setting of voltage_reset_fraction and voltage_reset_add may lead to th
 situation that voltage is bigger than threshold after reset. In this case, the neuron
 will continue to spike until the end of the simulation regardless the stimulated inputs.
 We recommend the setting of the parameters of these three models to follow the
-condition of (E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
-< (V_th + th_spike_add).
+condition of :math:`(E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
+< (V_th + th_spike_add)`.
 
 .. note::
 
-  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-  `tau_syn_in`, respectively, to avoid numerical instabilities.
+  If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+  will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
+  ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.

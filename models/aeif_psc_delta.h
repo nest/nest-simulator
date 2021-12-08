@@ -67,7 +67,7 @@ Current-based adaptive exponential integrate-and-fire neuron model with delta sy
 Description
 +++++++++++
 
-aeif_psc_delta is the adaptive exponential integrate and fire neuron
+``aeif_psc_delta`` is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with postsynaptic currents
 in the form of delta spikes.
 
@@ -91,9 +91,9 @@ and
 
  I(t) = J \sum_k \delta(t - t^k).
 
-Here delta is the dirac delta function and k indexes incoming
-spikes. This is implemented such that V_m will be incremented/decremented by
-the value of J after a spike.
+Here delta is the dirac delta function and `k` indexes incoming
+spikes. This is implemented such that ``V_m`` will be incremented/decremented by
+the value of `J` after a spike.
 
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.

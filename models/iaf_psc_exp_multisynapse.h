@@ -48,9 +48,9 @@ Leaky integrate-and-fire neuron model with multiple ports
 Description
 +++++++++++
 
-iaf_psc_exp_multisynapse is a direct extension of iaf_psc_exp.
+``iaf_psc_exp_multisynapse`` is a direct extension of iaf_psc_exp.
 On the postsynaptic side, there can be arbitrarily many synaptic
-time constants (iaf_psc_exp has exactly two: tau_syn_ex and tau_syn_in).
+time constants (``iaf_psc_exp`` has exactly two: ``tau_syn_ex`` and ``tau_syn_in``).
 
 This can be reached by specifying separate receptor ports, each for
 a different time constant. The port number has to match the respective
@@ -58,9 +58,10 @@ a different time constant. The port number has to match the respective
 
 .. note::
 
-   If `tau_m` is very close to a synaptic time constant, the model
-   will numerically behave as if `tau_m` is equal to the synaptic
-   time constant, to avoid numerical instabilities.
+
+   If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
+   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
    For implementation details see the
    `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.

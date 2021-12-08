@@ -62,8 +62,8 @@ Only spikes arriving on connections to port 0 will be repeated.
 Connections onto port 1 will be accepted, but spikes incoming
 through port 1 will be ignored. This allows setting exact pre-
 and postsynaptic spike times for STDP protocols by connecting
-two parrot neurons spiking at desired times by, e.g., a
-`stdp_synapse` onto port 1 on the postsynaptic parrot neuron.
+two parrot neurons spiking at desired times by, for example, a
+``stdp_synapse`` onto port 1 on the postsynaptic parrot neuron.
 
 Receives
 ++++++++

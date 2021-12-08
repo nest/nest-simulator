@@ -58,7 +58,7 @@ Description
    This model is deprecated and will be removed in NEST 3.
    Please use ``iaf_psc_alpha_ps`` instead.
 
-iaf_psc_alpha_canon is the "canonical" implementatoin of the leaky
+``iaf_psc_alpha_canon`` is the "canonical" implementatoin of the leaky
 integrate-and-fire model neuron with alpha-shaped postsynaptic
 currents in the sense of [1]_. This is the most exact implementation
 available.
@@ -73,7 +73,7 @@ spikes is determined by interpolation once a threshold crossing has
 been detected. Return from refractoriness occurs precisly at spike
 time plus refractory period.
 
-This implementation is more complex than the plain iaf_psc_alpha
+This implementation is more complex than the plain ``iaf_psc_alpha``
 neuron, but achieves much higher precision. In particular, it does not
 suffer any binning of spike times to grid points. Depending on your
 application, the canonical application may provide superior overall
@@ -86,13 +86,14 @@ dynamics are integrated using exact integration between events [2]_.
    times to target nodes (on-grid spike time plus offset).
 
    A further improvement of precise simulation is implemented in
-   iaf_psc_exp_ps based on [3]_.
+   ``iaf_psc_exp_ps`` based on [3]_.
 
 .. note::
 
-   If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-   will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-   `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+   If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
+   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
    For implementation details see the
    `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.

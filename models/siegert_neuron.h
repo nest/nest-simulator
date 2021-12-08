@@ -55,7 +55,7 @@ model for mean-field analysis of spiking networks
 Description
 +++++++++++
 
-siegert_neuron is an implementation of a rate model with the
+``siegert_neuron`` is an implementation of a rate model with the
 non-linearity given by the gain function of the
 leaky-integrate-and-fire neuron with delta or exponentially decaying
 synapses [2]_ and [3]_ (their eq. 25). The model can be used for a

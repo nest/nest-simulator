@@ -50,7 +50,7 @@ This connection merely scales the synaptic weight, based on the spike history
 and the parameters of the kinetic model. Thus, it is suitable for all types
 of synaptic dynamics, that is current or conductance based.
 
-The parameter A_se from the publications is represented by the
+The parameter ``A_se`` from the publications is represented by the
 synaptic weight. The variable x in the synapse properties is the
 factor that scales the synaptic weight.
 

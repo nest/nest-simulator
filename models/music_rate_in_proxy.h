@@ -52,13 +52,13 @@ A device which receives rate data from MUSIC
 Description
 +++++++++++
 
-A music_rate_in_proxy can be used to receive rate data from
+A ``music_rate_in_proxy`` can be used to receive rate data from
 remote MUSIC applications in NEST.
 
 It uses the MUSIC library to receive the data from other applications.
-The music_rate_in_proxy represents a complete port to which MUSIC can
-connect and send data. The music_rate_in_proxy can be queried using
-GetStatus to retrieve the messages.
+The ``music_rate_in_proxy`` represents a complete port to which MUSIC can
+connect and send data. The ``music_rate_in_proxy`` can be queried using
+``GetStatus`` to retrieve the messages.
 
 Parameters
 ++++++++++

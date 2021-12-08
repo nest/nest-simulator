@@ -63,23 +63,23 @@ left-closed and right-open in the lower triangular part of the matrix. On the
 diagonal and in the upper triangular part the intervals are left-open and
 right-closed. This ensures proper counting of events at the border of bins.
 
-The correlospinmatrix_detector has a variable number of inputs which can be
+The ``correlospinmatrix_detector`` has a variable number of inputs which can be
 set via SetStatus under the key N_channels. All incoming connections to a
 specified receptor will be pooled.
 
 Remarks:
 
 This recorder does not record to file, screen or memory in the usual
-sense. The result must be obtained by a call to GetStatus. Setting either
-N_channels, Tstart, Tstop, tau_max or delta_tau clears count_covariance.
+sense. The result must be obtained by a call to ``GetStatus``. Setting either
+``N_channels``, ``Tstart``, ``Tstop``, ``tau_max`` or ``delta_tau`` clears count_covariance.
 
 Correlospinmatrix detectors IGNORE any connection delays.
 
 Correlospinmatrix detector breaks with the persistence scheme as
 follows: the internal buffers for storing spikes are part
-of State\_, but are initialized by init_buffers_().
+of ``State_``, but are initialized by ``init_buffers_()``.
 
-See pynest/examples/correlospinmatrix_detector_two_neuron.py
+See :doc:`../auto_examples/correlospinmatrix_detector_two_neuron`
 for a script reproducing a setting studied in Fig 1 of Grinzburg &
 Sompolinsky (1994) PRE 50(4) p. 3171.
 

@@ -40,12 +40,12 @@ Synapse type for symmetric spike-timing dependent plasticity with constant depre
 Description
 +++++++++++
 
-vogels_sprekeler_synapse is a connector to create synapses with symmetric
+``vogels_sprekeler_synapse`` is a connector to create synapses with symmetric
 spike time dependent plasticity and constant depression (as defined in [1]_).
-The learning rule is symmetric, i.e., the synapse is strengthened
+The learning rule is symmetric, that is, the synapse is strengthened
 irrespective of the order of the pre- and postsynaptic spikes. Each
 pre-synaptic spike also causes a constant depression of the synaptic weight
-which differentiates this rule from other classical stdp rules.
+which differentiates this rule from other classical STDP rules.
 
 .. warning::
 

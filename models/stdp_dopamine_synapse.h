@@ -46,7 +46,7 @@ Synapse type for dopamine-modulated spike-timing dependent plasticity
 Description
 +++++++++++
 
-stdp_dopamine_synapse is a connection to create synapses with
+``stdp_dopamine_synapse`` is a connection to create synapses with
 dopamine-modulated spike-timing dependent plasticity (used as a
 benchmark model in [1]_, based on [2]_). The dopaminergic signal is a
 low-pass filtered version of the spike rate of a user-specific pool

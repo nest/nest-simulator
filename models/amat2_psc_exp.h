@@ -47,7 +47,7 @@ PSCs and adaptive threshold
 Description
 +++++++++++
 
-amat2_psc_exp is an implementation of a leaky integrate-and-fire model
+``amat2_psc_exp`` is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 
@@ -74,9 +74,9 @@ neuron like dynamics interacting by point events is described in
 Remarks:
 
 - The default parameter values for this model are different from the
-  corresponding parameter values for mat2_psc_exp.
-- If identical parameters are used, and beta==0, then this model shall
-  behave exactly as mat2_psc_exp.
+  corresponding parameter values for ``mat2_psc_exp``.
+- If identical parameters are used, and ``beta==0``, then this model shall
+  behave exactly as ``mat2_psc_exp``.
 - The time constants in the model must fullfill the following conditions:
   - :math:`\tau_m != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`
   - :math:`\tau_v != {\tau_{syn_{ex}}, \tau_{syn_{in}}}`

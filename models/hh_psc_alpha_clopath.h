@@ -67,7 +67,7 @@ Hodgkin-Huxley neuron model with support for Clopath plasticity
 Description
 +++++++++++
 
-hh_psc_alpha_clopath is an implementation of a spiking neuron using the
+``hh_psc_alpha_clopath`` is an implementation of a spiking neuron using the
 Hodgkin-Huxley formalism and that is capable of connecting to a Clopath
 synapse.
 

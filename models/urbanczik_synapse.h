@@ -50,7 +50,7 @@ Synapse type for a plastic synapse after Urbanczik and Senn
 Description
 +++++++++++
 
-urbanczik_synapse is a connector to create Urbanczik synapses as defined in
+``urbanczik_synapse`` is a connector to create Urbanczik synapses as defined in
 [1]_ that can connect suitable :ref:`multicompartment models
 <multicompartment-models>`. In contrast to most STDP models, the synaptic weight
 depends on the postsynaptic dendritic potential, in addition to the pre- and

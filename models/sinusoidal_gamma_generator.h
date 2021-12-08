@@ -52,7 +52,7 @@ Generates sinusoidally modulated gamma spike trains
 Description
 +++++++++++
 
-sinusoidal_gamma_generator generates sinusoidally modulated gamma spike
+``sinusoidal_gamma_generator`` generates sinusoidally modulated gamma spike
 trains. By default, each target of the generator will receive a different
 spike train.
 

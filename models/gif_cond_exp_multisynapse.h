@@ -56,7 +56,7 @@ Conductance-based generalized integrate-and-fire neuron with multiple synaptic t
 Description
 +++++++++++
 
-gif_cond_exp_multisynapse is the generalized integrate-and-fire neuron
+``gif_cond_exp_multisynapse`` is the generalized integrate-and-fire neuron
 according to Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with
 postsynaptic conductances in the form of truncated exponentials.
 
@@ -129,9 +129,9 @@ which fits the model using experimental data, requires a different set of
 The same formula applies for :math:`q_\gamma`.
 
 On the postsynaptic side, there can be arbitrarily many synaptic time constants
-(gif_psc_exp has exactly two: tau_syn_ex and tau_syn_in). This can be reached
+(gif_psc_exp has exactly two: ``tau_syn_ex`` and ``tau_syn_in``). This can be reached
 by specifying separate receptor ports, each for a different time constant. The
-port number has to match the respective "receptor_type" in the connectors.
+port number has to match the respective ``receptor_type`` in the connectors.
 
 The shape of synaptic conductance is exponential.
 

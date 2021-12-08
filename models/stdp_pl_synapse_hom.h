@@ -42,7 +42,7 @@ Synapse type for spike-timing dependent plasticity with power law
 Description
 +++++++++++
 
-stdp_pl_synapse is a connector to create synapses with spike time
+``stdp_pl_synapse`` is a connector to create synapses with spike time
 dependent plasticity using homoegeneous parameters (as defined in [1]_).
 
 Parameters

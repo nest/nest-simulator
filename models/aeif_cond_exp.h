@@ -78,7 +78,7 @@ Conductance based exponential integrate-and-fire neuron model
 Description
 +++++++++++
 
-aeif_cond_exp is the adaptive exponential integrate and fire neuron
+``aeif_cond_exp`` is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with postsynaptic
 conductances in the form of truncated exponentials.
 

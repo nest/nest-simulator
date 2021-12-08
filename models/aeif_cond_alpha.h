@@ -78,7 +78,7 @@ Conductance based exponential integrate-and-fire neuron model
 Description
 +++++++++++
 
-aeif_cond_alpha is the adaptive exponential integrate and fire neuron according
+``aeif_cond_alpha`` is the adaptive exponential integrate and fire neuron according
 to Brette and Gerstner (2005).
 Synaptic conductances are modelled as alpha-functions.
 

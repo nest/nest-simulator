@@ -49,7 +49,7 @@ Device for evaluating cross correlation between two spike sources
 Description
 +++++++++++
 
-The correlation_detector device is a recording device. It is used to record
+The ``correlation_detector`` device is a recording device. It is used to record
 spikes from two pools of spike inputs and calculates the count_histogram of
 inter-spike intervals (raw cross correlation) binned to bins of duration
 :math:`\delta_\tau`. The result can be obtained via GetStatus under the key
@@ -74,13 +74,13 @@ with :math:`t_{2,j}-t_{1,i}` in
 
 The bins are centered around the time difference they represent, but are
 left-closed and right-open. This means that events with time difference
--tau_max-delta_tau/2 are counted in the leftmost bin, but event with
-difference tau_max+delta_tau/2 are not counted at all.
+:math:`-tau_max-delta_tau/2` are counted in the leftmost bin, but event with
+difference :math:`tau_max+delta_tau/2` are not counted at all.
 
 The correlation detector has two inputs, which are selected via the
 receptor_port of the incoming connection: All incoming connections with
-receptor_port = 0 will be pooled as the spike source 1, the ones with
-receptor_port = 1 will be used as spike source 2.
+``receptor_port = 0`` will be pooled as the spike source 1, the ones with
+``receptor_port = 1`` will be used as spike source 2.
 
 Parameters
 ++++++++++
@@ -129,7 +129,7 @@ Correlation detectors IGNORE any connection delays.
 
 Correlation detector breaks with the persistence scheme as
 follows: the internal buffers for storing spikes are part
-of State\_, but are initialized by init\_buffers\_().
+of ``State_``, but are initialized by ``init_buffers\()``.
 
 
 Receives

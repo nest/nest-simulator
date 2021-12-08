@@ -78,9 +78,10 @@ nest::Na::f_numstep( const double v_comp, const double dt )
     // auxiliary variables
     double v_comp_plus_35 = v_comp + 35.013;
     double exp_vcp35 = std::exp( 0.111111111111111 * v_comp_plus_35 );
+    double frac_evcp35 = 1. / ( exp_vcp35 - 1. );
 
-    double alpha_m = 0.182 * v_comp_plus_35 * exp_vcp35 / ( exp_vcp35 - 1. );
-    double beta_m = -0.124 * v_comp_plus_35 / ( 1. - exp_vcp35 );
+    double alpha_m = 0.182 * v_comp_plus_35 * exp_vcp35 * frac_evcp35;
+    double beta_m = 0.124 * v_comp_plus_35 * frac_evcp35;
 
     double v_comp_plus_50 = v_comp + 50.013;
     double v_comp_plus_75 = v_comp + 75.013;
@@ -169,8 +170,9 @@ nest::K::f_numstep( const double v_comp, const double dt )
     // auxiliary variables
     double v_comp_minus_25 = v_comp - 25.;
     double exp_vm25_div_9 = std::exp( v_comp_minus_25 / 9. );
-    double alpha_n = 0.02 * v_comp_minus_25 * exp_vm25_div_9 / ( exp_vm25_div_9 - 1. );
-    double beta_n = -0.002 * v_comp_minus_25 / ( 1. - exp_vm25_div_9 );
+    double frac_evm25d9 = 1. / ( exp_vm25_div_9 - 1. );
+    double alpha_n = 0.02 * v_comp_minus_25 * exp_vm25_div_9 * frac_evm25d9;
+    double beta_n = 0.002 * v_comp_minus_25 * frac_evm25d9;
 
     // activation and timescale of state variable 'n'
     double tau_n_K = 1. / ( 3.21 * ( alpha_n + beta_n ) );

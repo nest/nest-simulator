@@ -566,8 +566,9 @@ jobs:
     if: always
     uses: conda-forge/nest-simulator-feedstock/.github/workflows/nest_trigger.yml@f9a89c898b4481931fe6b587c05547b42e758e46
     with:
-      commit_name: foo
-      commit_hash: ${{ GITHUB_SHA }}
+      # see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+      commit_name: ${{ github.ref }}
+      commit_hash: ${{ github.sha }}
 
   build_docker:
     if: false

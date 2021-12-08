@@ -169,7 +169,7 @@ nest::K::f_numstep( const double v_comp, const double dt )
     // auxiliary variables
     double v_comp_minus_25 = v_comp - 25.;
     double exp_vm25_div_9 = std::exp( v_comp_minus_25 / 9. );
-    double alpha_n = 0.02 * v_comp_minus_25 / ( 1. - 1. / exp_vm25_div_9 );
+    double alpha_n = 0.02 * v_comp_minus_25 * exp_vm25_div_9 / ( exp_vm25_div_9 - 1. );
     double beta_n = -0.002 * v_comp_minus_25 / ( 1. - exp_vm25_div_9 );
 
     // activation and timescale of state variable 'n'

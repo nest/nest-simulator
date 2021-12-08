@@ -214,11 +214,10 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: "Install dependencies"
         run: |
-          sudo apt install cmake
           pip install -r doc/requirements.txt
           
       - name: "Test-build documentation"
@@ -226,7 +225,14 @@ jobs:
           mkdir -pv build
           cd build
           cmake -DCMAKE_INSTALL_PREFIX=../install ..
-          make html
+          make html |& tee sphinx-output.log
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2.3.0
+        with:
+          path: |
+            build/sphinx-output.log
+            build/userdoc/html/
 
   sphinx-conda:
     # as close as possible to the suggested user docs build in the documentation
@@ -258,7 +264,14 @@ jobs:
           mkdir -pv build
           cd build
           cmake -DCMAKE_INSTALL_PREFIX=../install ..
-          make html
+          make html |& tee sphinx-output.log
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2.3.0
+        with:
+          path: |
+            build/sphinx-output.log
+            build/userdoc/html/
 
   static_checks:
     if: false

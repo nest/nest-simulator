@@ -77,6 +77,8 @@ For all other purposes, it is recommended to use the standard technique for
 forward Euler integration. In this case, ``consistent_integration`` must be set
 to true (default).
 
+For a detailed analysis and discussion of the numerical issues in the original publication, see [2]_.
+
 Parameters
 ++++++++++
 
@@ -98,8 +100,12 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Izhikevich EM (2003). Simple model of spiking neurons. IEEE Transactions
+.. [1] Izhikevich EM. (2003). Simple model of spiking neurons. IEEE Transactions
        on Neural Networks, 14:1569-1572. DOI: https://doi.org/10.1109/TNN.2003.820440
+
+.. [2] Pauli R, Weidel P, Kunkel S, Morrison A (2018). Reproducing polychronization: A guide to maximizing
+       the reproducibility of spiking network models. Frontiers in Neuroinformatics, 12.
+       DOI: https://www.frontiersin.org/article/10.3389/fninf.2018.00046
 
 Sends
 +++++

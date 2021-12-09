@@ -75,6 +75,11 @@ class NestModule(types.ModuleType):
     from . import logic                              # noqa
     from .ll_api import set_communicator
 
+    try:
+        from . import server                         # noqa
+    except ImportError:
+        pass
+
     def __init__(self, name):
         super().__init__(name)
         # Copy over the original module attributes to preserve all interpreter-given

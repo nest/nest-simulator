@@ -423,10 +423,12 @@ jobs:
         with:
           path: |
             $HOME/.ccache
-          key: ${{ runner.os }}-${{ env.cache-name }}
+            .ccache
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.xNEST_BUILD_TYPE }}
           restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.xNEST_BUILD_TYPE }}
             ${{ runner.os }}-${{ env.cache-name }}
-            ${{ runner.os }}-
+            ${{ runner.os }}
 
       - name: "Restore pip cache"
         env:
@@ -451,6 +453,8 @@ jobs:
 
       - name: "Build NEST"
         run: |
+          ccache -d
+          ccache -s
           ccache -z
           ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
           python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}

@@ -67,18 +67,47 @@ nest::Na::f_numstep( const double v_comp, const double dt )
     */
     // auxiliary variables
     double v_comp_plus_35 = v_comp + 35.013;
-    double exp_vcp35_div_9 = std::exp( 0.111111111111111 * v_comp_plus_35 );
-    double frac_evcp35d9 = 1. / ( exp_vcp35_div_9 - 1. );
 
-    double alpha_m = 0.182 * v_comp_plus_35 * exp_vcp35_div_9 * frac_evcp35d9;
-    double beta_m = 0.124 * v_comp_plus_35 * frac_evcp35d9;
-    double frac_alpha_plus_beta_m = 1. / ( alpha_m + beta_m );
+    // trap the case where alpha_m and beta_m are 0/0 by substituting explicitly
+    // precomputed limiting values
+    double alpha_m, frac_alpha_plus_beta_m;
+    if ( std::abs( v_comp_plus_35 ) > 1e-5 )
+    {
+      double exp_vcp35_div_9 = std::exp( 0.111111111111111 * v_comp_plus_35 );
+      double frac_evcp35d9 = 1. / ( exp_vcp35_div_9 - 1. );
+
+      alpha_m = 0.182 * v_comp_plus_35 * exp_vcp35_div_9 * frac_evcp35d9;
+      double beta_m = 0.124 * v_comp_plus_35 * frac_evcp35d9;
+      frac_alpha_plus_beta_m = 1. / ( alpha_m + beta_m );
+    }
+    else
+    {
+      alpha_m = 1.638;
+      frac_alpha_plus_beta_m = 1. / ( alpha_m + 1.116 );
+    }
 
     double v_comp_plus_50 = v_comp + 50.013;
     double v_comp_plus_75 = v_comp + 75.013;
 
-    double alpha_h = 0.024 * v_comp_plus_50 / ( 1.0 - std::exp( -0.2 * v_comp_plus_50 ) );
-    double beta_h = -0.0091 * v_comp_plus_75 / ( 1.0 - std::exp( 0.2 * v_comp_plus_75 ) );
+    // trap the case where alpha_h or beta_h are 0/0 by substituting
+    // precomputed limiting values
+    double alpha_h, beta_h;
+    if ( std::abs( v_comp_plus_50 ) > 1e-5 )
+    {
+      alpha_h = 0.024 * v_comp_plus_50 / ( 1.0 - std::exp( -0.2 * v_comp_plus_50 ) );
+    }
+    else
+    {
+      alpha_h = 0.12;
+    }
+    if ( std::abs( v_comp_plus_75 ) > 1e-9 )
+    {
+      beta_h = -0.0091 * v_comp_plus_75 / ( 1.0 - std::exp( 0.2 * v_comp_plus_75 ) );
+    }
+    else
+    {
+      beta_h = 0.0455;
+    }
 
     // activation and timescale for state variable 'm'
     double tau_m_Na = q10_ * frac_alpha_plus_beta_m;
@@ -154,11 +183,25 @@ nest::K::f_numstep( const double v_comp, const double dt )
     */
     // auxiliary variables
     double v_comp_minus_25 = v_comp - 25.;
-    double exp_vm25_div_9 = std::exp( 0.111111111111111 * v_comp_minus_25 );
-    double frac_evm25d9 = 1. / ( exp_vm25_div_9 - 1. );
-    double alpha_n = 0.02 * v_comp_minus_25 * exp_vm25_div_9 * frac_evm25d9;
-    double beta_n = 0.002 * v_comp_minus_25 * frac_evm25d9;
-    double frac_alpha_plus_beta_n = 1. / ( alpha_n + beta_n );
+
+    // trap the case where alpha_n and beta_n are 0/0 by substituting explicitly
+    // precomputed limiting values
+    double alpha_n, frac_alpha_plus_beta_n;
+    if ( std::abs( v_comp_minus_25 ) > 1e-5 )
+    {
+      double exp_vm25_div_9 = std::exp( 0.111111111111111 * v_comp_minus_25 );
+      double frac_evm25d9 = 1. / ( exp_vm25_div_9 - 1. );
+
+      alpha_n = 0.02 * v_comp_minus_25 * exp_vm25_div_9 * frac_evm25d9;
+      double beta_n = 0.002 * v_comp_minus_25 * frac_evm25d9;
+      frac_alpha_plus_beta_n = 1. / ( alpha_n + beta_n );
+    }
+    else
+    {
+      alpha_n = 0.18;
+      double beta_n = 0.018;
+      frac_alpha_plus_beta_n = 1. / ( alpha_n + beta_n );
+    }
 
     // activation and timescale of state variable 'n'
     double tau_n_K = q10_ * frac_alpha_plus_beta_n;

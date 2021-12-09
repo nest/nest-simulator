@@ -451,10 +451,13 @@ jobs:
 
       - name: "Build NEST"
         run: |
+          ccache -z
           ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
           python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
+          ccache -s
         env:
           xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
+          CMAKE_C_COMPILER_LAUNCHER: ccache
           CMAKE_CXX_COMPILER_LAUNCHER: ccache
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
           #get changed files: https://github.com/marketplace/actions/get-changed-files

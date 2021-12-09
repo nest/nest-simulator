@@ -62,26 +62,17 @@ nest::Na::f_numstep( const double v_comp, const double dt )
   if ( gbar_Na_ > 1e-9 )
   {
     /*
-    Channel taken from the following .mod file:
+    Channel rate equations from the following .mod file:
     https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
-
-    Info in .mod file:
-    > Sodium channel, Hodgkin-Huxley style kinetics.
-    >
-    > Kinetics were fit to data from Huguenard et al. (1988) and Hamill et
-    > al. (1991)
-    >
-    > ...
-    >
-    > Author: Zach Mainen, Salk Institute, 1994, zach@salk.edu
     */
     // auxiliary variables
     double v_comp_plus_35 = v_comp + 35.013;
-    double exp_vcp35 = std::exp( 0.111111111111111 * v_comp_plus_35 );
-    double frac_evcp35 = 1. / ( exp_vcp35 - 1. );
+    double exp_vcp35_div_9 = std::exp( 0.111111111111111 * v_comp_plus_35 );
+    double frac_evcp35d9 = 1. / ( exp_vcp35_div_9 - 1. );
 
-    double alpha_m = 0.182 * v_comp_plus_35 * exp_vcp35 * frac_evcp35;
-    double beta_m = 0.124 * v_comp_plus_35 * frac_evcp35;
+    double alpha_m = 0.182 * v_comp_plus_35 * exp_vcp35_div_9 * frac_evcp35d9;
+    double beta_m = 0.124 * v_comp_plus_35 * frac_evcp35d9;
+    double frac_alpha_plus_beta_m = 1. / ( alpha_m + beta_m );
 
     double v_comp_plus_50 = v_comp + 50.013;
     double v_comp_plus_75 = v_comp + 75.013;
@@ -90,11 +81,11 @@ nest::Na::f_numstep( const double v_comp, const double dt )
     double beta_h = -0.0091 * v_comp_plus_75 / ( 1.0 - std::exp( 0.2 * v_comp_plus_75 ) );
 
     // activation and timescale for state variable 'm'
-    double tau_m_Na = 1. / ( 3.21 * ( alpha_m + beta_m ) );
-    double m_inf_Na = alpha_m / ( alpha_m + beta_m );
+    double tau_m_Na = q10_ * frac_alpha_plus_beta_m;
+    double m_inf_Na = alpha_m * frac_alpha_plus_beta_m;
 
     // activation and timescale for state variable 'h'
-    double tau_h_Na = 1. / ( 3.21 * ( alpha_h + beta_h ) );
+    double tau_h_Na = q10_ / ( alpha_h + beta_h );
     double h_inf_Na = 1. / ( 1. + std::exp( ( v_comp + 65. ) / 6.2 ) );
 
     // advance state variable 'm' one timestep
@@ -158,25 +149,20 @@ nest::K::f_numstep( const double v_comp, const double dt )
   if ( gbar_K_ > 1e-9 )
   {
     /*
-    Channel taken from the following .mod file:
+    Channel rate equations from the following .mod file:
     https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/kv.mod#tabs-2
-
-    Info in .mod file:
-    > Potassium channel, Hodgkin-Huxley style kinetics
-    > Kinetic rates based roughly on Sah et al. and Hamill et al. (1991)
-    >
-    > Author: Zach Mainen, Salk Institute, 1995, zach@salk.edu
     */
     // auxiliary variables
     double v_comp_minus_25 = v_comp - 25.;
-    double exp_vm25_div_9 = std::exp( v_comp_minus_25 / 9. );
+    double exp_vm25_div_9 = std::exp( 0.111111111111111 * v_comp_minus_25 );
     double frac_evm25d9 = 1. / ( exp_vm25_div_9 - 1. );
     double alpha_n = 0.02 * v_comp_minus_25 * exp_vm25_div_9 * frac_evm25d9;
     double beta_n = 0.002 * v_comp_minus_25 * frac_evm25d9;
+    double frac_alpha_plus_beta_n = 1. / ( alpha_n + beta_n );
 
     // activation and timescale of state variable 'n'
-    double tau_n_K = 1. / ( 3.21 * ( alpha_n + beta_n ) );
-    double n_inf_K = alpha_n * tau_n_K;
+    double tau_n_K = q10_ * frac_alpha_plus_beta_n;
+    double n_inf_K = alpha_n * frac_alpha_plus_beta_n;
 
     // advance state variable 'm' one timestep
     double p_n_K = std::exp( -dt / tau_n_K );

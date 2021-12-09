@@ -84,7 +84,7 @@ sys.modules["nest.kernel"] = pynestkernel_mock
 # autoclass `nest.NestModule` to generate the documentation of the properties
 import nest  # noqa
 
-vars(nest)["NestModule"] = type(nest)
+vars(nest)["NestModule"] = type(nest)        # direct write to nest.NestModule is suppressed as unknown attribute 
 
 # -- General configuration ------------------------------------------------
 extensions = [

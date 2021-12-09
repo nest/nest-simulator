@@ -427,7 +427,7 @@ To avoid including paths, we try to use the ``:ref:`` role when possible.
 Each reStructuredText file should include a reference label at the beginning of the file.
 
 Sphinx can automatically link to these labels, so long as they are unique.
-You can also add labels anywhere within in a document to lable figures, subheadings, or arbitrary places in a file.
+You can also add labels anywhere within a document to label figures, subheadings, or arbitrary places in a file.
 
 
 The ``:doc:`` role is used for auto-generated files such as the PyNEST examples and models, as well as

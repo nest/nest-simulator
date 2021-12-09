@@ -408,12 +408,25 @@ jobs:
         run: |
           sudo apt-get update
           #https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+          sudo apt-get install ccache
           sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq pycodestyle libpcre3 libpcre3-dev python2-dev libboost-all-dev
           sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
           sudo apt-get install vera++
           sudo ldconfig
           g++ --version
+
+      - name: "Restore ccache"
+        env:
+          cache-name: "ccache"
+        uses: actions/cache@v2
+        with:
+          path: |
+            $HOME/.ccache
+          key: ${{ runner.os }}-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}
+            ${{ runner.os }}-
 
       - name: "Restore pip cache"
         env:
@@ -442,6 +455,7 @@ jobs:
           python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
         env:
           xNEST_BUILD_TYPE: ${{ matrix.xNEST_BUILD_TYPE }}
+          CMAKE_CXX_COMPILER_LAUNCHER: ccache
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
           #get changed files: https://github.com/marketplace/actions/get-changed-files
 

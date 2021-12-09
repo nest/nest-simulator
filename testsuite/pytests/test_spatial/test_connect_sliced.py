@@ -46,8 +46,6 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
 
     def setUp(self):
         nest.ResetKernel()
-        self.free_nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
-        self.grid_nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
 
     def _assert_histogram(self, sources_or_targets, ref):
         """Create a histogram of input data and assert it against reference values"""
@@ -55,49 +53,85 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         counts, _ = hist
         np_testing.assert_array_equal(counts, ref)
 
-    def test_connect_sliced_spatial_on_target(self):
-        """Connect sliced spatial source population"""
-        for nodes in [self.free_nodes, self.grid_nodes]:
-            nest.Connect(nodes[self.middle_node], nodes,
-                         conn_spec={'rule': 'pairwise_bernoulli',
-                                    'p': self.parameter})
-            self._assert_histogram(nest.GetConnections().target, self.reference)
+    def test_connect_sliced_spatial_on_target_free(self):
+        """Connect sliced free spatial source population"""
+        nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
+        nest.Connect(nodes[self.middle_node], nodes,
+                     conn_spec={'rule': 'pairwise_bernoulli',
+                                'p': self.parameter})
+        self._assert_histogram(nest.GetConnections().target, self.reference)
 
-    def test_masked_connect_sliced_spatial_on_target(self):
-        """Masked connect sliced spatial source population"""
-        for nodes in [self.free_nodes, self.grid_nodes]:
-            nest.Connect(nodes[self.middle_node], nodes,
-                         conn_spec={'rule': 'pairwise_bernoulli',
-                                    'p': self.parameter,
-                                    'mask': self.mask})
-            self._assert_histogram(nest.GetConnections().target, self.reference_masked)
+    def test_connect_sliced_spatial_on_target_grid(self):
+        """Connect sliced grid spatial source population"""
+        nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
+        nest.Connect(nodes[self.middle_node], nodes,
+                     conn_spec={'rule': 'pairwise_bernoulli',
+                                'p': self.parameter})
+        self._assert_histogram(nest.GetConnections().target, self.reference)
 
-    def test_connect_sliced_spatial_on_source(self):
-        """Connect sliced spatial target population"""
-        for nodes in [self.free_nodes, self.grid_nodes]:
-            nest.Connect(nodes, nodes[self.middle_node],
-                         conn_spec={'rule': 'pairwise_bernoulli',
-                                    'p': self.parameter,
-                                    'use_on_source': True})
-            self._assert_histogram(nest.GetConnections().source, self.reference)
+    def test_masked_connect_sliced_spatial_on_target_free(self):
+        """Masked connect sliced free spatial source population"""
+        nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
+        nest.Connect(nodes[self.middle_node], nodes,
+                     conn_spec={'rule': 'pairwise_bernoulli',
+                                'p': self.parameter,
+                                'mask': self.mask})
+        self._assert_histogram(nest.GetConnections().target, self.reference_masked)
 
-    def test_masked_connect_sliced_spatial_on_source(self):
-        """Masked connect sliced spatial target population"""
-        for nodes in [self.free_nodes, self.grid_nodes]:
-            nest.Connect(nodes, nodes[self.middle_node],
-                         conn_spec={'rule': 'pairwise_bernoulli',
-                                    'p': self.parameter,
-                                    'use_on_source': True,
-                                    'mask': self.mask})
-            self._assert_histogram(nest.GetConnections().source, self.reference_masked)
+    def test_masked_connect_sliced_spatial_on_target_grid(self):
+        """Masked connect sliced grid spatial source population"""
+        nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
+        nest.Connect(nodes[self.middle_node], nodes,
+                     conn_spec={'rule': 'pairwise_bernoulli',
+                                'p': self.parameter,
+                                'mask': self.mask})
+        self._assert_histogram(nest.GetConnections().target, self.reference_masked)
+
+    def test_connect_sliced_spatial_on_source_free(self):
+        """Connect sliced spatial free target population"""
+        nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
+        nest.Connect(nodes, nodes[self.middle_node],
+                     conn_spec={'rule': 'pairwise_bernoulli',
+                                'p': self.parameter,
+                                'use_on_source': True})
+        self._assert_histogram(nest.GetConnections().source, self.reference)
+
+    def test_connect_sliced_spatial_on_source_grid(self):
+        """Connect sliced spatial grid target population"""
+        nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
+        nest.Connect(nodes, nodes[self.middle_node],
+                     conn_spec={'rule': 'pairwise_bernoulli',
+                                'p': self.parameter,
+                                'use_on_source': True})
+        self._assert_histogram(nest.GetConnections().source, self.reference)
+
+    def test_masked_connect_sliced_spatial_on_source_free(self):
+        """Masked connect sliced spatial free target population"""
+        nodes = nest.Create('iaf_psc_alpha', positions=self.free_pos)
+        nest.Connect(nodes, nodes[self.middle_node],
+                     conn_spec={'rule': 'pairwise_bernoulli',
+                                'p': self.parameter,
+                                'use_on_source': True,
+                                'mask': self.mask})
+        self._assert_histogram(nest.GetConnections().source, self.reference_masked)
+
+    def test_masked_connect_sliced_spatial_on_source_grid(self):
+        """Masked connect sliced spatial grid target population"""
+        nodes = nest.Create('iaf_psc_alpha', positions=self.grid_pos)
+        nest.Connect(nodes, nodes[self.middle_node],
+                     conn_spec={'rule': 'pairwise_bernoulli',
+                                'p': self.parameter,
+                                'use_on_source': True,
+                                'mask': self.mask})
+        self._assert_histogram(nest.GetConnections().source, self.reference_masked)
 
     def test_sliced_spatial_inheritance(self):
         """Sliced spatial inherits attributes"""
         wrapped_pos = nest.spatial.free(nest.random.uniform(-0.5, 0.5), num_dimensions=2, edge_wrap=True)
         extent_pos = nest.spatial.free(nest.random.uniform(-0.5, 0.5), extent=[5., 2.5])
-        wrapped_nodes = nest.Create('iaf_psc_alpha', positions=wrapped_pos)
-        extent_nodes = nest.Create('iaf_psc_alpha', positions=extent_pos)
-        for nodes in [self.free_nodes, self.grid_nodes, wrapped_nodes, extent_nodes]:
+        for pos in [self.free_pos, self.grid_pos, wrapped_pos, extent_pos]:
+            nest.ResetKernel()
+            nodes = nest.Create('iaf_psc_alpha', positions=pos)
             for nodes_sliced in nodes:
                 for attr in ['edge_wrap', 'extent']:
                     spatial_attr = nodes.spatial[attr]
@@ -111,7 +145,8 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         ref = np.copy(self.reference)
         ref[:start] = 0
         ref[end:] = 0
-        for nodes in [self.free_nodes, self.grid_nodes]:
+        for pos in [self.free_pos, self.grid_pos]:
+            nodes = nest.Create('iaf_psc_alpha', positions=pos)
             nest.Connect(nodes[self.middle_node], nodes[start:end],
                          conn_spec={'rule': 'pairwise_bernoulli',
                                     'p': self.parameter})
@@ -122,7 +157,8 @@ class ConnectSlicedSpatialTestCase(unittest.TestCase):
         step = 2
         ref = np.copy(self.reference)
         ref[1::step] = 0
-        for nodes in [self.free_nodes, self.grid_nodes]:
+        for pos in [self.free_pos, self.grid_pos]:
+            nodes = nest.Create('iaf_psc_alpha', positions=pos)
             nest.Connect(nodes[self.middle_node], nodes[::step],
                          conn_spec={'rule': 'pairwise_bernoulli',
                                     'p': self.parameter})

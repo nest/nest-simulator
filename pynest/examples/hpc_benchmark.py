@@ -207,10 +207,9 @@ def build_network(logger):
     stdp_params = brunel_params['stdp_params']
 
     # set global kernel parameters
-    nest.SetKernelStatus({
-        'total_num_virtual_procs': params['nvp'],
-        'resolution': params['dt'],
-        'overwrite_files': True})
+    nest.total_num_virtual_procs = params['nvp']
+    nest.resolution = params['dt']
+    nest.overwrite_files = True
 
     nest.message(M_INFO, 'build_network', 'Creating excitatory population.')
     E_neurons = nest.Create('iaf_psc_alpha', NE, params=model_params)
@@ -220,7 +219,7 @@ def build_network(logger):
 
     if brunel_params['randomize_Vm']:
         nest.message(M_INFO, 'build_network',
-                     'Randomzing membrane potentials.')
+                     'Randomizing membrane potentials.')
 
         random_vm = nest.random.normal(brunel_params['mean_potential'],
                                        brunel_params['sigma_potential'])
@@ -382,7 +381,7 @@ def run_simulation():
         if params['record_spikes']:
             logger.log(str(compute_rate(sr)) + ' # average rate')
 
-        print(nest.GetKernelStatus())
+        print(nest.kernel_status)
 
 
 def compute_rate(sr):
@@ -412,7 +411,7 @@ def lambertwm1(x):
     return sp.lambertw(x, k=-1 if x < 0 else 0).real
 
 
-class Logger(object):
+class Logger:
     """Logger context manager used to properly log memory and timing
     information from network simulations.
 

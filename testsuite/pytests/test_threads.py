@@ -43,9 +43,9 @@ class ThreadTestCase(unittest.TestCase):
             self.skipTest("NEST was compiled without multi-threading")
 
         nest.ResetKernel()
-        self.assertEqual(nest.GetKernelStatus()['local_num_threads'], 1)
+        self.assertEqual(nest.local_num_threads, 1)
 
-        nest.SetKernelStatus({'local_num_threads': 8})
+        nest.local_num_threads = 8
         n = nest.Create('iaf_psc_alpha', 8)
         st = list(nest.GetStatus(n, 'vp'))
         st.sort()
@@ -58,7 +58,7 @@ class ThreadTestCase(unittest.TestCase):
             self.skipTest("NEST was compiled without multi-threading")
 
         nest.ResetKernel()
-        nest.SetKernelStatus({'local_num_threads': 8})
+        nest.local_num_threads = 8
         pre = nest.Create("iaf_psc_alpha")
         post = nest.Create("iaf_psc_alpha", 6)
 
@@ -89,7 +89,7 @@ class ThreadTestCase(unittest.TestCase):
         for t in threads:
 
             nest.ResetKernel()
-            nest.SetKernelStatus({'local_num_threads': t})
+            nest.local_num_threads = t
 
             # force a lot of spike events
             n = nest.Create('iaf_psc_alpha', N, {'I_e': 2000.})

@@ -34,7 +34,7 @@ we update regularly.
 If you have used NEST in your research, let us know!
 Don't forget to :doc:`cite NEST <citing-nest>` in your work.
 
-Have a talk or poster where you used NEST? `Download our logo  <https://github.com/nest/nest-simulator/tree/master/extras/logos>`_!
+Have a talk or poster where you used NEST? `Download our logo  <https://github.com/nest/nest-simulator/tree/master/doc/logos>`_!
 
 Become a NEST member
 --------------------

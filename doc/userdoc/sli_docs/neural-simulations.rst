@@ -34,7 +34,7 @@ one neuron:
 We are going to simulate a standard integrate and fire model with
 resting potential at -70 mV and spike threshold at -55 mV. In this line,
 we use the model ``iaf_psc_alpha`` to create a neuron. The command
-:py:func:`.Create` returns a handle to the created neuron, which we store in the
+``Create`` returns a handle to the created neuron, which we store in the
 variable ``neuron``.
 
 Next, we would like to add a stimulation and a recording device to the
@@ -99,7 +99,7 @@ We can now run the simulation and expect to see some results:
 
    SLI ] 15.0 Simulate
 
-The command :py:func:`.Simulate` runs the simulation for the specified number of
+The command ``Simulate`` runs the simulation for the specified number of
 milliseconds. Below, you see a transcript of the simulation:
 
 ::
@@ -220,7 +220,7 @@ that we have created before.
    Sep 21 10:13:39 Network::clear_models [Info]:
     Models will be cleared and parameters reset.
 
-Nodes are created from a model, using the command :py:func:`.Create`.
+Nodes are created from a model, using the command ``Create``.
 
 ::
 
@@ -230,7 +230,7 @@ Nodes are created from a model, using the command :py:func:`.Create`.
 In the fist line, we create one integrate and fire neuron from the model
 ``iaf_psc_alpha``.
 
-The return value of :py:func:`.Create` is an integer that identifies the last
+The return value of ``Create`` is an integer that identifies the last
 node that was created in the network (note that this can be different
 from 1 if you have not called ``ResetKernel before)``. This integer is
 called the node’s *node ID* (the network as a whole owns the node ID
@@ -285,7 +285,7 @@ layer we have created above:
    --------------------------------------------------
    Total number of entries: 24
 
-Using the command :py:func:`.SetStatus`, it is possible to change the entries of
+Using the command ``SetStatus``, it is possible to change the entries of
 this so called *status dictionary*. The following lines of code change
 the threshold value ``V_th`` to -60 mV:
 
@@ -295,7 +295,7 @@ the threshold value ``V_th`` to -60 mV:
    SLI ] 1 GetStatus /V_th get =
    -60
 
-Please note, that :py:func:`.SetStatus` checks if a property really exists in a
+Please note, that ``SetStatus`` checks if a property really exists in a
 node and will issue an error if it doesn’t. This behavior can be changed
 by the following command:
 
@@ -306,7 +306,7 @@ by the following command:
 Then, NEST is very tolerant with respect to the property that you are
 trying to change: If it does not know the property, or if the property
 cannot be changed, there will be no error, but only a warning. In any
-case, :py:func:`.SetStatus` does complain if the new value does not match in the
+case, ``SetStatus`` does complain if the new value does not match in the
 expected type:
 
 ::
@@ -326,7 +326,7 @@ Connections
 
 Connections between nodes define possible channels for interactions
 between them. A connection between two nodes is established, using the
-command :py:func:`.Connect`.
+command ``Connect``.
 
 Each connection has two basic parameters, *weight* and *delay*. The
 weight determines the strength of the connection, the delay determines
@@ -348,7 +348,7 @@ Example 1
 
 To inspect the parameters of a connection, one first needs to obtain a
 handle to the connection. This is done using the command
-:py:func:`.GetConnections`. It takes a dictionary that at least contains the id
+``GetConnections``. It takes a dictionary that at least contains the id
 of the source node and will return a list of handles for all outgoing
 connections. The search can be restricted by using the optional
 parameters *target* and *synapse_type*.
@@ -365,7 +365,7 @@ Example 2
    SLI ] c2 length ==
    1
 
-To actually see the parameters of the connection, :py:func:`.GetStatus` is used,
+To actually see the parameters of the connection, ``GetStatus`` is used,
 just like it is for nodes.
 
 Example 3
@@ -387,7 +387,7 @@ Example 3
    --------------------------------------------------
    Total number of entries: 7
 
-To change the parameters of a connection, :py:func:`.SetStatus` is used, just
+To change the parameters of a connection, ``SetStatus`` is used, just
 like it is for nodes.
 
 Example 4
@@ -411,7 +411,7 @@ this input.
 
 Devices have a built-in timer which controls the period they are active.
 Outside this interval, a device will remain silent. The timer can be
-configured using the command :py:func:`.SetStatus`.
+configured using the command ``SetStatus``.
 
 By definition, a device is active in the interval \\((t_1,t_2)\) if we
 can observe events \\(E\) with time stamps \\(t_E\) which obey \\(t_1 <=
@@ -475,7 +475,7 @@ backend to use. To dump recorded data to a file, set ``ascii``, to
 print to the screen, use ``screen`` and to hold the data in memory,
 set ``memory``, which is also the default for all devices. Data
 stored in memory can be retrieved after the simulation using
-:py:func:`.GetStatus`. To get a list of all available recording backends, run
+``GetStatus``. To get a list of all available recording backends, run
 
 ::
 

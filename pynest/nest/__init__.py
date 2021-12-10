@@ -97,8 +97,8 @@ class NestModule(types.ModuleType):
             pass
 
         # Lazy loaded modules. They are descriptors, so add them to the type object
-        type(self).spatial = _lazy_module_property("spatial")
         type(self).raster_plot = _lazy_module_property("raster_plot")
+        type(self).spatial = _lazy_module_property("spatial")
         type(self).visualization = _lazy_module_property("visualization")
         type(self).voltage_trace = _lazy_module_property("voltage_trace")
 

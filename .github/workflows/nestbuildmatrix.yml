@@ -453,7 +453,7 @@ jobs:
 
       - name: "Build NEST"
         run: |
-          ccache -d
+          ccache -p
           ccache -s
           ccache -z
           ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log

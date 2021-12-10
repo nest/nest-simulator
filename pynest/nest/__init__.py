@@ -75,11 +75,6 @@ class NestModule(types.ModuleType):
     from . import logic                              # noqa
     from .ll_api import set_communicator
 
-    try:
-        from . import server                         # noqa
-    except ImportError:
-        pass
-
     def __init__(self, name):
         super().__init__(name)
         # Copy over the original module attributes to preserve all interpreter-given
@@ -98,10 +93,16 @@ class NestModule(types.ModuleType):
         _rel_import_star(self, ".lib.hl_api_types")
 
         # Lazy loaded modules. They are descriptors, so add them to the type object
-        type(self).spatial = _lazy_module_property("spatial")
         type(self).raster_plot = _lazy_module_property("raster_plot")
+        type(self).spatial = _lazy_module_property("spatial")
         type(self).visualization = _lazy_module_property("visualization")
         type(self).voltage_trace = _lazy_module_property("voltage_trace")
+
+        try:
+            _rel_import_star(self, ".server.hl_api_server")
+            type(self).server = _lazy_module_property("server")
+        except ImportError:
+            pass
 
         self.__version__ = ll_api.sli_func("statusdict /version get")
         # Finalize the nest module with a public API.

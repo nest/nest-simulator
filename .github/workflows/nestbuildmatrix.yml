@@ -424,6 +424,7 @@ jobs:
           path: |
             $HOME/.ccache
             .ccache
+            /home/runner/.ccache
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.xNEST_BUILD_TYPE }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.xNEST_BUILD_TYPE }}

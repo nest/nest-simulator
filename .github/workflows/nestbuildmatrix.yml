@@ -417,6 +417,8 @@ jobs:
           g++ --version
 
       - name: "Restore ccache"
+        # Using CCache to re-use compiled objects from prior runs that have the same
+        # source (hashed), compiler (mtime+size) and compile flags.
         env:
           cache-name: "ccache"
         uses: actions/cache@v2

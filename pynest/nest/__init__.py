@@ -91,18 +91,16 @@ class NestModule(types.ModuleType):
         _rel_import_star(self, ".lib.hl_api_simulation")
         _rel_import_star(self, ".lib.hl_api_spatial")
         _rel_import_star(self, ".lib.hl_api_types")
-
-        # Lazy loaded modules. They are descriptors, so add them to the type object
-        type(self).raster_plot = _lazy_module_property("raster_plot")
-        type(self).spatial = _lazy_module_property("spatial")
-        type(self).visualization = _lazy_module_property("visualization")
-        type(self).voltage_trace = _lazy_module_property("voltage_trace")
-
         try:
             _rel_import_star(self, ".server.hl_api_server")
-            type(self).server = _lazy_module_property("server")
         except ImportError:
             pass
+
+        # Lazy loaded modules. They are descriptors, so add them to the type object
+        type(self).spatial = _lazy_module_property("spatial")
+        type(self).raster_plot = _lazy_module_property("raster_plot")
+        type(self).visualization = _lazy_module_property("visualization")
+        type(self).voltage_trace = _lazy_module_property("voltage_trace")
 
         self.__version__ = ll_api.sli_func("statusdict /version get")
         # Finalize the nest module with a public API.

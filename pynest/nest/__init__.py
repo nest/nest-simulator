@@ -74,7 +74,6 @@ class NestModule(types.ModuleType):
     from . import spatial_distributions              # noqa
     from . import logic                              # noqa
     from .ll_api import set_communicator
-    
     try:
         from . import server                         # noqa
     except ImportError:

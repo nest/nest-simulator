@@ -125,6 +125,11 @@ and :doc:`cmake_options`.
 
    .. tab:: Conda (Linux/macOS)
 
+       .. warning::
+
+           The Conda package is only available for NEST 2.X.
+           If you want to use NEST 3.X, please see other installation options.
+
        1. To keep your conda setup tidy, we recommend that you install NEST into
           a separate `conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
           together with Python packages that you will use when working with NEST;

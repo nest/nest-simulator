@@ -213,9 +213,11 @@ EventDeliveryManager::init_moduli()
     moduli_[ d ] = ( kernel().simulation_manager.get_clock().get_steps() + d ) % ( min_delay + max_delay );
   }
 
-  // Slice-based ring-buffers have one bin per min_delay steps,
-  // up to max_delay.  Time is counted as for normal ring buffers.
-  // The slice_moduli_ table maps time steps to these bins
+  /*
+   * Slice-based ring-buffers have one bin per min_delay steps,
+   * up to max_delay.  Time is counted as for normal ring buffers.
+   * The slice_moduli_ table maps time steps to these bins
+   */
   const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   slice_moduli_.resize( min_delay + max_delay );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
@@ -224,14 +226,6 @@ EventDeliveryManager::init_moduli()
   }
 }
 
-/**
- * This function is called after all nodes have been updated.
- * We can compute the value of (T+d) mod max_delay without explicit
- * reference to the network clock, because compute_moduli_ is
- * called whenever the network clock advances.
- * The various modulos for all available delays are stored in
- * a lookup-table and this table is rotated once per time slice.
- */
 void
 EventDeliveryManager::update_moduli()
 {
@@ -248,9 +242,9 @@ EventDeliveryManager::update_moduli()
   std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
 
   /*
-   For the slice-based ring buffer, we cannot rotate the table, but
-   have to re-compute it, since max_delay_ may not be a multiple of
-   min_delay_.  Reference time is the time at the beginning of the slice.
+   * For the slice-based ring buffer, we cannot rotate the table, but
+   * have to re-compute it, since max_delay_ may not be a multiple of
+   * min_delay_.  Reference time is the time at the beginning of the slice.
    */
   const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
@@ -532,14 +526,16 @@ EventDeliveryManager::set_end_and_invalid_markers_( const AssignedRanks& assigne
     // thread-local index of (global) rank
     if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
     {
-      // Set end marker at last position that contains a valid
-      // entry. This could possibly be the last entry in this
-      // chunk. Since we call set_complete_marker_spike_data_ /after/
-      // this function, the end marker would be replaced by a complete
-      // marker. However, the effect of an end marker and a complete
-      // marker /at the last position in a chunk/ leads effectively
-      // to the same behavior: after this entry, the first entry of
-      // the next chunk is read, i.e., the next element in the buffer.
+     /*
+      * Set end marker at last position that contains a valid
+      * entry. This could possibly be the last entry in this
+      * chunk. Since we call set_complete_marker_spike_data_ /after/
+      * this function, the end marker would be replaced by a complete
+      * marker. However, the effect of an end marker and a complete
+      * marker /at the last position in a chunk/ leads effectively
+      * to the same behavior: after this entry, the first entry of
+      * the next chunk is read, i.e., the next element in the buffer.
+      */
       assert( send_buffer_position.idx( rank ) - 1 < send_buffer_position.end( rank ) );
       send_buffer[ send_buffer_position.idx( rank ) - 1 ].set_end_marker();
     }

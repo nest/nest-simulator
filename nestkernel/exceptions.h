@@ -971,8 +971,8 @@ class MUSICPortHasNoWidth : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    * @param portname  name of music port
    */
@@ -1025,16 +1025,16 @@ private:
 };
 
 /**
-* Exception to be thrown if the user tries to change the name of an already
-* published port.
-* @ingroup KernelExceptions
-*/
+ * Exception to be thrown if the user tries to change the name of an already
+ * published port.
+ * @ingroup KernelExceptions
+ */
 class MUSICSimulationHasRun : public KernelException
 {
 public:
   /**
-  * @note model should be passed from get_name() to ensure that
-  *             names of copied models are reported correctly.
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    */
   MUSICSimulationHasRun( const std::string& model )

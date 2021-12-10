@@ -39,6 +39,14 @@
 
 namespace nest
 {
+/**
+ * @BeginDocumentation
+ * Name: Install - Load a dynamic module to extend the functionality.
+ *
+ * Description:
+ *
+ * Synopsis: (module_name) Install -> handle
+*/
 
 // structure to store handles and pointers to modules
 struct sDynModule;
@@ -52,6 +60,12 @@ typedef std::vector< SLIModule* > vecLinkedModules;
  * SLI interface of the Ddynamic module loader.
  * This class implements the SLI functions which allow for
  * loading dynamic modules into the kernel to extend its functionality.
+ *
+ *
+ * At the time when DynamicLoaderModule is constructed, the SLI Interpreter
+ * and NestModule must be already constructed and initialized.
+ * DynamicLoaderModule relies on the presence of
+ * the following SLI datastructures: Name, Dictionary.
  */
 
 class DynamicLoaderModule : public SLIModule

@@ -217,9 +217,17 @@ public:
 
   bool deliver_secondary_events( const thread tid, const bool called_from_wfr_update );
 
-  /**
-   * Update table of fixed modulos, including slice-based.
-   */
+ /**
+  * This function is called after all nodes have been updated.
+  * We can compute the value of (T+d) mod max_delay without explicit
+  * reference to the network clock, because compute_moduli_ is
+  * called whenever the network clock advances.
+  * The various modulos for all available delays are stored in
+  * a lookup-table and this table is rotated once per time slice.
+  *
+  * Update table of fixed modulos, including slice-based.
+  */
+
   void update_moduli();
 
   /**
@@ -548,4 +556,12 @@ EventDeliveryManager::get_slice_modulo( delay d )
 
 } // namespace nest
 
-#endif /* EVENT_DELIVERY_MANAGER_H */
+#/**
+ * This function is called after all nodes have been updated.
+ * We can compute the value of (T+d) mod max_delay without explicit
+ * reference to the network clock, because compute_moduli_ is
+ * called whenever the network clock advances.
+ * The various modulos for all available delays are stored in
+ * a lookup-table and this table is rotated once per time slice.
+ */
+endif /* EVENT_DELIVERY_MANAGER_H */

@@ -84,12 +84,6 @@ DynamicLoaderModule::getLinkedModules()
 }
 
 
-/**
- * At the time when DynamicLoaderModule is constructed, the SLI Interpreter
- *   and NestModule must be already constructed and initialized.
- *   DynamicLoaderModule relies on the presence of
- *   the following SLI datastructures: Name, Dictionary.
- */
 DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
   : loadmodule_function( dyn_modules )
 {
@@ -138,14 +132,6 @@ has_name( SLIModule const* const m, const std::string n )
 }
 
 
-/**
- * @BeginDocumentation
- * Name: Install - Load a dynamic module to extend the functionality.
- *
- * Description:
- *
- * Synopsis: (module_name) Install -> handle
-*/
 DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( vecDynModules& dyn_modules )
   : dyn_modules_( dyn_modules )
 {

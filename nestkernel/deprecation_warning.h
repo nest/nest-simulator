@@ -66,7 +66,7 @@ public:
   {
   }
 
-  /*
+  /**
    * Set parameter name to be deprecated.
    */
   void
@@ -75,7 +75,7 @@ public:
     deprecated_functions_[ name ] = true;
   }
 
-  /*
+  /**
    * Issues deprecation warning.
    */
   void deprecation_warning( std::string name );

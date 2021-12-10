@@ -20,7 +20,7 @@
  *
  */
 
-/**
+/*
  *  @file event.cpp
  *  Implementation of Event::operator() for all event types.
  *  @note Must be isolated here, since it requires full access to

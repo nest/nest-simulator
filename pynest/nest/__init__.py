@@ -416,19 +416,20 @@ def _setattr_error(self, attr, val):
     `__dict__` manipulation. It is added onto the module at the end of `__init__`,
     "freezing" the module.
     """
-    # Allow import machinery to set imported modules on `nest`
     if isinstance(val, types.ModuleType):
-        return super(type(self), self).__setattr__(attr, val)
-    err = AttributeError(f"can't set attribute '{attr}' on module 'nest'")
-    try:
-        cls_attr = getattr(type(self), attr)
-    except AttributeError:
-        raise err from None
+        # Allow import machinery to set imported modules on `nest`
+        self.__dict__[attr] = val
     else:
-        if hasattr(cls_attr, "__set__"):
-            cls_attr.__set__(self, val)
+        err = AttributeError(f"can't set attribute '{attr}' on module 'nest'")
+        try:
+            cls_attr = getattr(type(self), attr)
+        except AttributeError:
+            raise err from None
         else:
-            raise err
+            if hasattr(cls_attr, "__set__"):
+                cls_attr.__set__(self, val)
+            else:
+                raise err
 
 
 def _rel_import_star(module, import_module_name):

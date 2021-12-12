@@ -97,8 +97,8 @@ class NestModule(types.ModuleType):
         _rel_import_star(self, ".lib.hl_api_types")
 
         # Lazy loaded modules. They are descriptors, so add them to the type object
-        type(self).raster_plot = _lazy_module_property("raster_plot")
         type(self).spatial = _lazy_module_property("spatial")
+        type(self).raster_plot = _lazy_module_property("raster_plot")
         type(self).visualization = _lazy_module_property("visualization")
         type(self).voltage_trace = _lazy_module_property("voltage_trace")
 
@@ -466,9 +466,6 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
         cls = type(self)
         delattr(cls, module_name)
         try:
-            module = importlib.import_module("." + module_name, __name__)
-        except AttributeError as e:
-            # retry importing module.
             module = importlib.import_module("." + module_name, __name__)
         except ImportError as e:
             if optional:

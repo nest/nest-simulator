@@ -410,8 +410,8 @@ function( NEST_PROCESS_WITH_PYTHON )
         execute_process( COMMAND "${Python_EXECUTABLE}" "-c"
           "import sys, os; print(int(bool(os.environ.get('CONDA_DEFAULT_ENV', False)) or (sys.prefix != sys.base_prefix)))"
           OUTPUT_VARIABLE Python_InVirtualEnv OUTPUT_STRIP_TRAILING_WHITESPACE )
-
-        if ( NOT Python_InVirtualEnv AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+        # NOT Python_InVirtualEnv AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT equiv to NOT Python_InVirtualEnv  (redundant)
+        if ( NOT Python_InVirtualEnv )
           message( FATAL_ERROR "No virtual Python environment found and no installation prefix specified. "
             "Please either build and install NEST in a virtual Python environment or specify CMake option -DCMAKE_INSTALL_PREFIX=<nest_install_dir>.")
         endif()

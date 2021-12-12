@@ -26,10 +26,14 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
 project( nest CXX C )
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
-
 # check if the given CMAKE_INSTALL_PREFIX is not empty
 if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
   message(FATAL_ERROR "CMAKE_INSTALL_PREFIX cannot be an empty string")
+endif()
+# if CMAKE_INSTALL_PREFIX is set to default (/usr/local), then set CMAKE_INSTALL_PREFIX to CMAKE_CURRENT_BINARY_DIR/nest_install
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/nest_install" CACHE PATH "nest install path" FORCE)
+  set(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT 0 CACHE BOOL "set to false" FORCE)
 endif()
 
 # handle relative installation prefixes

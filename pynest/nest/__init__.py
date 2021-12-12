@@ -93,8 +93,9 @@ class NestModule(types.ModuleType):
         _rel_import_star(self, ".lib.hl_api_types")
 
         # Lazy loaded modules. They are descriptors, so add them to the type object
-        type(self).spatial = _lazy_module_property("spatial")
         type(self).raster_plot = _lazy_module_property("raster_plot")
+        type(self).server = _lazy_module_property("server")
+        type(self).spatial = _lazy_module_property("spatial")
         type(self).visualization = _lazy_module_property("visualization")
         type(self).voltage_trace = _lazy_module_property("voltage_trace")
 
@@ -415,7 +416,9 @@ def _setattr_error(self, attr, val):
     `__dict__` manipulation. It is added onto the module at the end of `__init__`,
     "freezing" the module.
     """
-
+    # Allow import machinery to set imported modules on `nest`
+    if isinstance(val, types.ModuleType):
+        return super(type(self), self).__setattr__(attr, val)
     err = AttributeError(f"can't set attribute '{attr}' on module 'nest'")
     try:
         cls_attr = getattr(type(self), attr)

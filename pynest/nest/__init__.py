@@ -429,7 +429,7 @@ def _setattr_error(self, attr, val):
             if hasattr(cls_attr, "__set__"):
                 cls_attr.__set__(self, val)
             else:
-                raise err
+                raise err from None
 
 
 def _rel_import_star(module, import_module_name):

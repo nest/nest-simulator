@@ -420,7 +420,7 @@ def _setattr_error(self, attr, val):
         # Allow import machinery to set imported modules on `nest`
         self.__dict__[attr] = val
     else:
-        err = AttributeError(f"can't set attribute '{attr}' on module 'nest'")
+        err = AttributeError(f"Cannot set attribute '{attr}' on module 'nest'")
         try:
             cls_attr = getattr(type(self), attr)
         except AttributeError:

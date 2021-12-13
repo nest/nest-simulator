@@ -281,8 +281,7 @@ nest::SourceTable::source_should_be_processed_( const thread rank_start,
 
   return not( source.is_processed()
     or source.is_disabled()
-    // is this thread responsible for this part of the MPI
-    // buffer?
+    // is this thread responsible for this part of the MPI buffer?
     or source_rank < rank_start or rank_end <= source_rank );
 }
 

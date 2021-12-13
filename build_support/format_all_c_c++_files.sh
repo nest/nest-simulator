@@ -6,8 +6,8 @@
 # e.g. by executing `CLANG_FORMAT=clang-format-10 ./format_all_c_c++_files.sh`.
 # By default the script starts at the current working directory ($PWD), but
 # supply a different starting directory as the first argument to the command.
-CLANG_FORMAT=${CLANG_FORMAT-clang-format-9}
-CLANG_FORMAT_FILE=${CLANG_FORMAT_FILE-.clang-format}
+CLANG_FORMAT=${CLANG_FORMAT:-clang-format-9}
+CLANG_FORMAT_FILE=${CLANG_FORMAT_FILE:-.clang-format}
 
 # Drop files that should not be checked
 FILES_TO_IGNORE="pynestkernel.cpp"

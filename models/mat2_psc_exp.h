@@ -80,12 +80,6 @@ The following state variables can be read out with the multimeter device:
  V_m   mV    Non-resetting membrane potential
  V_th  mV    Two-timescale adaptive threshold
 ====== ====  =================================
-The present implementation uses individual variables for the
-components of the state vector and the non-zero matrix elements of
-the propagator. Because the propagator is a lower triangular matrix,
-no full matrix multiplication needs to be carried out and the
-computation can be done "in place", i.e. no temporary state vector
-object is required.
 
 Parameters
 ++++++++++
@@ -137,6 +131,15 @@ Receives
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
 EndUserDocs */
+
+/**
+ * The present implementation uses individual variables for the
+ * components of the state vector and the non-zero matrix elements of
+ * the propagator. Because the propagator is a lower triangular matrix,
+ * no full matrix multiplication needs to be carried out and the
+ * computation can be done "in place", i.e. no temporary state vector
+ * object is required.
+ */
 
 class mat2_psc_exp : public ArchivingNode
 {

@@ -87,7 +87,7 @@ The membrane potential is given by the following differential equation:
 
 .. math::
 
- C dV/dt = -g_L(V-E_L) + g_L*\Delta_T*\exp((V-V_T)/\Delta_T)
+ C dV/dt = -g_L(V-E_L) + g_L \cdot \Delta_T \cdot \exp((V-V_T)/\Delta_T)
  + I_{syn_{tot}}(V, t) - w + I_e
 
 
@@ -103,7 +103,7 @@ and the differential equation for the spike-adaptation current w is:
 
 .. math::
 
- \tau_w * dw/dt = a(V - E_L) - w
+ \tau_w \cdot dw/dt = a(V - E_L) - w
 
 When the neuron fires a spike, the adaptation current w <- w + b.
 

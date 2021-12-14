@@ -48,7 +48,7 @@ Description
 +++++++++++
 
 threshold_lin_rate is an implementation of a nonlinear rate model with
-input function :math:`input(h) = min( max( g * ( h - \theta ), 0 ),
+input function :math:`input(h) = min( max( g \cdot ( h - \theta ), 0 ),
 \alpha )`.  It either models a rate neuron with input noise (see
 rate_neuron_ipn), a rate neuron with output noise (see
 rate_neuron_opn) or a rate transformer (see

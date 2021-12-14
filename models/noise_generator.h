@@ -62,7 +62,7 @@ The current generated is given by
 
 .. math::
 
-  I(t) = mean + std * N_j  \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
+  I(t) = mean + std \cdot N_j  \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
 
 where :math:`N_j` are Gaussian random numbers with unit standard deviation and
 :math:`t_0` is the device onset time.
@@ -70,7 +70,7 @@ If the modulation is added the current is given by
 
 .. math::
 
-   I(t) = mean + \sqrt(std^2 + std_{mod}^2 * \sin(\omega * t + phase)) * N_j \\
+   I(t) = mean + \sqrt(std^2 + std_{mod}^2 \cdot \sin(\omega \cdot t + phase)) \cdot N_j \\
                               \text{ for } t_0 + j dt \leq t < t_0 + (j-1) dt
 
 For a detailed discussion of the properties of the noise generator, please see

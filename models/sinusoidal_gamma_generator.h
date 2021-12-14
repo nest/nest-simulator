@@ -60,7 +60,7 @@ The instantaneous rate of the process is given by
 
 .. math::
 
- f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase * \pi/180 )
+ f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase \cdot \pi/180 )
 
 Remarks
 +++++++

@@ -54,7 +54,7 @@ The instantaneous rate of the process is given by
 .. math::
 
   f(t) = max(0, rate + amplitude \sin ( 2 \pi frequency t + phase
-     * \pi/180 )) >= 0
+     \cdot \pi/180 )) >= 0
 
 Remarks
 +++++++

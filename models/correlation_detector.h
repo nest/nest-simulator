@@ -58,19 +58,19 @@ In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors, the
 `Kahan summation algorithm <http://en.wikipedia.org/wiki/Kahan_summation_algorithm>`_
 is used when calculating the weighted histogram.
-Both are arrays of :math:`2*\tau_{max}/\delta_{\tau}+1` values containing the
+Both are arrays of :math:`2\cdot\tau_{max}/\delta_{\tau}+1` values containing the
 histogram counts in the following way:
 
 Let :math:`t_{1,i}` be the spike times of source 1,
 :math:`t_{2,j}` the spike times of source 2.
 histogram[n] then contains the sum of products of the weight
-:math:`w_{1,i}*w_{2,j}`, count_histogram[n] contains 1 summed over all events
+:math:`w_{1,i}\cdot w_{2,j}`, count_histogram[n] contains 1 summed over all events
 with :math:`t_{2,j}-t_{1,i}` in
 
 .. math::
 
-    n*\delta_\tau - \tau_{max} - \delta_\tau/2
-    n*\delta_\tau - \tau_{max} + \delta_\tau/2
+    n\cdot\delta_\tau - \tau_{max} - \delta_\tau/2
+    n\cdot\delta_\tau - \tau_{max} + \delta_\tau/2
 
 The bins are centered around the time difference they represent, but are
 left-closed and right-open. This means that events with time difference

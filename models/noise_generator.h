@@ -77,33 +77,28 @@ For a detailed discussion of the properties of the noise generator, please see
 `noise_generator <../model_details/noise_generator.ipynb>`_
 notebook included in the NEST source code.
 
-Remarks
-+++++++
+All targets receive different currents, but he currents for all
+targets change at the same points in time. The interval between
+changes, dt, must be a multiple of the time step.
 
- - All targets receive different currents.
+The effect of this noise current on a neuron depends on dt. Consider
+the membrane potential fluctuations evoked when a noise current is
+injected into a neuron. The standard deviation of these fluctuations
+across an ensemble will increase with dt for a given value of std.
+For the leaky integrate-and-fire neuron with time constant :math:`\tau_m` and
+capacity :math:`C_m`, membrane potential fluctuations Sigma at time
+:math:`t_j+delay` are given by
 
- - The currents for all targets change at the same points in time.
+.. math::
 
- - The interval between changes, dt, must be a multiple of the time step.
+   \Sigma = std \cdot \tau_m / C_m \cdot \sqrt( (1-x) / (1+x) )  \\
+                          \text{where } x = exp(-dt/\tau_m)
 
- - The effect of this noise current on a neuron depends on dt. Consider
-   the membrane potential fluctuations evoked when a noise current is
-   injected into a neuron. The standard deviation of these fluctuations
-   across an ensemble will increase with dt for a given value of std.
-   For the leaky integrate-and-fire neuron with time constant :math:`\tau_m` and
-   capacity :math:`C_m`, membrane potential fluctuations Sigma at time
-   :math:`t_j+delay` are given by
+for large :math:`t_j`. In the white noise limit, :math:`dt \rightarrow 0`, one has
 
-   .. math::
+.. math::
 
-      \Sigma = std * \tau_m / C_m * \sqrt( (1-x) / (1+x) )  \\
-                             \text{where } x = exp(-dt/\tau_m)
-
-   for large :math:`t_j`. In the white noise limit, :math:`dt \rightarrow 0`, one has
-
-   .. math::
-
-      \Sigma \rightarrow std / C_m * \sqrt(dt * \tau / 2).
+   \Sigma \rightarrow std / C_m * \sqrt(dt \cdot \tau / 2).
 
 To obtain comparable results for different values of dt, you must adapt std.
 
@@ -132,8 +127,8 @@ phase
 frequency
     The frequency of the sine modulation
 
-Set parameters from a stimulation backend
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Setting parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulation device can be updated with input
 coming from a stimulation backend. The data structure used for the

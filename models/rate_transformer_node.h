@@ -72,11 +72,9 @@ receiving rate neuron instead of using a direct connection.
 Please note that for instantaneous rate connections the rate arrives
 one time step later at the receiving rate neurons as with a direct connection.
 
-Remarks:
-
-- Weights on connections from and to the rate_transformer_node
-  are handled as usual.
-- Delays are honored on incoming and outgoing connections.
+Weights on connections from and to the rate_transformer_node are
+handled as usual. Delays are honored on incoming and outgoing
+connections.
 
 Receives
 ++++++++

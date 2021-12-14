@@ -62,15 +62,14 @@ The instantaneous rate of the process is given by
 
  f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase \cdot \pi/180 )
 
-Remarks
-+++++++
+.. note::
 
-- The gamma generator requires 0 <= amplitude <= rate.
-- The state of the generator is reset on calibration.
-- The generator does not support precise spike timing.
-- You can use the multimeter to sample the rate of the generator.
-- The generator will create different trains if run at different
-  temporal resolutions.
+   - The gamma generator requires 0 <= amplitude <= rate.
+   - The state of the generator is reset on calibration.
+   - The generator does not support precise spike timing.
+   - You can use the multimeter to sample the rate of the generator.
+   - The generator will create different trains if run at different
+     temporal resolutions.
 
 Individual spike trains vs single spike train:
 By default, the generator sends a different spike train to each of its
@@ -98,8 +97,8 @@ order
 individual_spike_trains
     See note above, default: true
 
-Set parameters from a stimulation backend
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Setting parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulation device can be updated with input
 coming from a stimulation backend. The data structure used for the

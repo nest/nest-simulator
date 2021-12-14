@@ -101,17 +101,15 @@ Parameters
  Wmax      real    Maximal synaptic weight
 =========  ======= ======================================================
 
+The common properties can only be set by SetDefaults and apply to all
+instances of the synapse model.
+
 === ======  =====================================
 **Individual properties**
 -------------------------------------------------
  c  real    Eligibility trace
  n  real    Neuromodulator concentration
 === ======  =====================================
-
-Remarks:
-
-The common properties can only be set by SetDefaults and apply to all
-synapses of the model.
 
 References
 ++++++++++

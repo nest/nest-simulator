@@ -92,6 +92,16 @@ of the nest simulation kernel because it is at the same time complex
 enough to exhibit non-trivial dynamics and simple enough compute
 relevant measures analytically.
 
+Please note that this node is capable of sending precise spike times
+to target nodes (on-grid spike time plus offset).
+
+The iaf_psc_delta_ps neuron accepts connections transmitting
+CurrentEvents. These events transmit stepwise-constant currents which
+can only change at on-grid times.
+
+For details about exact subthreshold integration, please see
+:doc:`../guides/exact-integration`.
+
 Parameters
 ++++++++++
 
@@ -109,19 +119,6 @@ The following parameters can be set in the status dictionary.
  V_min             mV      Absolute lower value for the membrane potential
  refractory_input  (bool)  If true, keep input during refractory period (default: false)
 =================  ======  ==============================================================
-
-Remarks
-+++++++
-
-Please note that this node is capable of sending precise spike times
-to target nodes (on-grid spike time plus offset).
-
-The iaf_psc_delta_ps neuron accepts connections transmitting
-CurrentEvents. These events transmit stepwise-constant currents which
-can only change at on-grid times.
-
-For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
 
 References
 ++++++++++

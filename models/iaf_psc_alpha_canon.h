@@ -97,6 +97,18 @@ dynamics are integrated using exact integration between events [2]_.
    For implementation details see the
    `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
+This model transmits precise spike times to target nodes (on-grid spike
+time and offset). If this node is connected to a spike_recorder, the
+property "precise_times" of the spike_recorder has to be set to true in
+order to record the offsets in addition to the on-grid spike times.
+
+The iaf_psc_delta_ps neuron accepts connections transmitting
+CurrentEvents. These events transmit stepwise-constant currents which
+can only change at on-grid times.
+
+For details about exact subthreshold integration, please see
+:doc:`../guides/exact-integration`.
+
 Parameters
 ++++++++++
 
@@ -116,22 +128,6 @@ The following parameters can be set in the status dictionary.
  Interpol_Order  (int)   Interpolation order for spike time:
                          0-none, 1-linear, 2-quadratic, 3-cubic
 ===============  ======  ==========================================================
-
-Remarks
-+++++++
-
-This model transmits precise spike times to target nodes (on-grid spike
-time and offset). If this node is connected to a spike_recorder, the
-property "precise_times" of the spike_recorder has to be set to true in
-order to record the offsets in addition to the on-grid spike times.
-
-The iaf_psc_delta_ps neuron accepts connections transmitting
-CurrentEvents. These events transmit stepwise-constant currents which
-can only change at on-grid times.
-
-For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
-
 
 References
 ++++++++++

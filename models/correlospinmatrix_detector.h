@@ -68,20 +68,13 @@ The correlospinmatrix_detector has a variable number of inputs which can be
 set via SetStatus under the key N_channels. All incoming connections to a
 specified receptor will be pooled.
 
-Remarks:
+Setting either N_channels, Tstart, Tstop, tau_max or delta_tau clears
+count_covariance.
 
-This recorder does not record to file, screen or memory in the usual
-sense. The result must be obtained by a call to GetStatus. Setting either
-N_channels, Tstart, Tstop, tau_max or delta_tau clears count_covariance.
+Correlospinmatrix detectors ignore any connection delays.
 
-Correlospinmatrix detectors IGNORE any connection delays.
-
-Correlospinmatrix detector breaks with the persistence scheme as
-follows: the internal buffers for storing spikes are part
-of State_, but are initialized by init_buffers_().
-
-See pynest/examples/correlospinmatrix_detector_two_neuron.py
-for a script reproducing a setting studied in Fig 1 of Grinzburg &
+See :doc:`../auto_examples/correlospinmatrix_detector_two_neuron` for
+a script reproducing a setting studied in Fig 1 of Grinzburg &
 Sompolinsky (1994) PRE 50(4) p. 3171.
 
 Parameters
@@ -126,6 +119,12 @@ See also
 correlation_detector, correlomatrix_detector, spike_recorder
 
 EndUserDocs */
+
+/**
+ * Correlospinmatrix detector breaks with the persistence scheme as
+ * follows: the internal buffers for storing spikes are part of
+ * State_, but are initialized by init_buffers_().
+ */
 
 class correlospinmatrix_detector : public Node
 {

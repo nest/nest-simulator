@@ -44,7 +44,8 @@ A note on connectivity
 
 Each neuron receives :math:`K_{in,{\\tau} E}` excitatory connections randomly
 drawn from population E and :math:`K_{in,\\tau I}` inhibitory connections from
-population I. Autapses are prohibited and multapses are allowed. Each neuron
+population I. Autapses are prohibited (denoted by the crossed out A next to
+the connections) while multapses are allowed (denoted by the M). Each neuron
 receives additional input from an external stimulation device. All delays are
 constant, all weights but excitatory onto excitatory are constant. Excitatory
 onto excitatory weights are time dependent. Figure taken from [4]_.

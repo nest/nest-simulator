@@ -83,7 +83,7 @@ print()
 
 connect_start_time = time.time()
 
-nest.Connect(sonata_dynamics=sonata_dynamics)
+#nest.Connect(sonata_dynamics=sonata_dynamics)
 print("done connecting")
 
 connect_end_time = time.time() - connect_start_time
@@ -113,7 +113,7 @@ else:
     #simtime = 1000.
     simtime = sonata_connector.config['run']['duration']
 
-nest.Simulate(simtime)
+#nest.Simulate(simtime)
 
 end_time = time.time() - start_time
 
@@ -124,6 +124,13 @@ print(f'memory create: {mem_create}')
 print(f'memory connect: {mem_connect}')
 
 #sonata_connector.dump_connections('check_connections_glif.txt')
+
+#with open('NEST_neurons_GLIF.txt', 'w') as neurons_file:
+#    for model in nest.GetStatus(nest.NodeCollection(list(range(1, nest.GetKernelStatus('network_size') + 1))), 'model'):
+#        neurons_file.write(str(model) + "\n")
+#with open('NEST_neuron_params_GLIF.txt', 'w') as neurons_file:
+#    for dd in nest.GetStatus(nest.NodeCollection(list(range(1, nest.GetKernelStatus('network_size') + 1)))):
+#        neurons_file.write(str(dd) + "\n")
 
 if plot:
     pass

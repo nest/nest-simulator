@@ -63,7 +63,7 @@ P_MIN = 0.1
 SEED = 1234567
 
 
-class SpatialTester(object):
+class SpatialTester:
     """Tests for spatially structured networks."""
 
     def __init__(self, seed, dim, L, N, spatial_distribution, distribution_params=None,

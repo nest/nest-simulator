@@ -86,8 +86,9 @@ For native installations, the requirements can be simply installed via
 or by installing the full NEST development environment in case you
 prefer using ``conda``::
 
-  conda env create -f extras/conda-nest-simulator-dev.yml
-  conda activate nest-simulator
+  cd <nest-source-dir>
+  conda env create -p conda/
+  conda activate conda/
 
 As an alternative to a native installation, NEST Server is available
 from the NEST Docker image. Please check out the corresponding

@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# __init__.py
+# CMakeLists.txt
 #
 # This file is part of NEST.
 #
@@ -18,11 +16,3 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-
-# ConnPlotter --- A Tool to Generate Connectivity Pattern Matrices
-
-from .simple import *
-from .complex import *
-from .non_dale import *
-
-__all__ = ['simple', 'complex', 'non_dale']

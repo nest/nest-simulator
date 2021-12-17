@@ -25,8 +25,8 @@ Functions for model handling
 
 import numpy
 
-from ..ll_api import *
-from .hl_api_helper import *
+from ..ll_api import check_stack, sps, sr, spp
+from .hl_api_helper import is_iterable, is_literal, model_deprecation_warning
 from .hl_api_types import to_json
 from ..synapsemodels.hl_api_synapsemodels import _copy_synapse_class
 

@@ -30,7 +30,7 @@ import scipy.stats
 import unittest
 
 
-class PostTraceTester(object):
+class PostTraceTester:
     '''Test that postsynaptic trace values returned from NEST are consistent
     with reference values generated in Python.
 

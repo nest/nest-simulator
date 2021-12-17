@@ -10,7 +10,7 @@ may work, but can also lead to various complications.
 This guide shows how to build NEST with a development environment created with Conda. The main
 advantage of Conda is that you can fully insulate the entire environment in a Conda environment.
 If you want to base your setup on Homebrew or MacPorts, you can still use the
-``extras/conda-nest-simulator-dev.yml`` file as a guide to necessary packages.
+``environment.yml`` file as a guide to necessary packages.
 
 Preparations
 ------------
@@ -26,7 +26,8 @@ Preparations
 
    .. code:: sh
 
-      conda env create -f extras/conda-nest-simulator-dev.yml
+      cd <nest_source_dir>
+      conda env create -p conda/
 
    .. note::
 
@@ -37,9 +38,10 @@ Preparations
 
    .. code:: sh
 
-      conda acvitate nest-simulator
+      conda acvitate conda/
 
-   This assumes that you have created the environment with its default name ``nest-simulator``.
+   This assumes that you have created the environment in the folder ``conda/`` as given above. Note that the trailing
+   slash is necessary for conda to distinguish it from a named environment.
 
 #. If you want to build NEST with MPI, you must digitally sign the ``orterun`` and ``orted`` binaries
 

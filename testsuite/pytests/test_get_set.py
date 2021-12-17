@@ -42,6 +42,49 @@ except ImportError:
 
 
 @nest.ll_api.check_stack
+class TestNestGetSet(unittest.TestCase):
+    """nest module get/set tests"""
+
+    def setUp(self):
+        nest.ResetKernel()
+
+    def test_get(self):
+        """
+        Test the `nest` module's `.get` function, `KernelAttribute` access and errors on
+        unknown attribute access.
+        """
+
+        # TestCase.setUp calls ResetKernel so kernel attributes should be equal to their
+        # defaults. Test should also error if there is a problem in general with the
+        # `.get` mechanism.
+        kst = nest.get("keep_source_table")
+        self.assertEqual(type(nest).keep_source_table._default, kst, "get value not equal to default after ResetKernel")
+        self.assertEqual(kst, nest.keep_source_table, 'kernel attribute value not equal to get value')
+        # Getting the value of unknown attributes should error. The test should also error if there is
+        # a problem with possible `__getattr__` implementations.
+        with self.assertRaises(AttributeError, msg="no AttributeError for unknown attribute"):
+            nest.accessAbsolutelyUnknownThingOnNestModule
+        with self.assertRaises(KeyError, msg="no KeyError for unknown get key"):
+            nest.get("accessAbsolutelyUnknownKernelAttribute")
+
+    def test_set(self):
+        """
+        Test the `nest` module's `.set` function, `KernelAttribute` assignment and errors
+        on unknown attribute assignment.
+        """
+        # Setting the value of unknown attributes should error. Prevents user errors.
+        with self.assertRaises(AttributeError, msg="arbitrary attribute assignment passed"):
+            nest.absolutelyUnknownThingOnNestModule = 5
+        # Don't allow non-KA to be replaced on the module.
+        with self.assertRaises(AttributeError, msg="known attribute assignment passed"):
+            nest.get = 5
+        nest.set(total_num_virtual_procs=2)
+        self.assertEqual(2, nest.total_num_virtual_procs, 'set failed')
+        nest.total_num_virtual_procs = 3
+        self.assertEqual(3, nest.total_num_virtual_procs, 'kernelattribute set failed')
+
+
+@nest.ll_api.check_stack
 class TestNodeCollectionGetSet(unittest.TestCase):
     """NodeCollection get/set tests"""
 

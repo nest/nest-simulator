@@ -143,10 +143,6 @@ Cross-compiling
 Should be set via toolchain files
 
 +---------------------------------------------+----------------------------------------------------------------+
-| -Denable-bluegene=[OFF|STRING]              | Configure for BlueGene. [default=OFF]                          |
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dk-computer=[OFF|ON]                       | Enable K computer. [default=OFF]                               |
-+---------------------------------------------+----------------------------------------------------------------+
 | -Dtarget-bits-split=["standard"|STRING]     | Split of the 64-bit target neuron identifier type. "standard"  |
 |                                             | is recommended for most users. If running on more than 262144  |
 |                                             | MPI processes or more than 512 threads, change to "hpc".       |

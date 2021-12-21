@@ -67,13 +67,34 @@ External libraries
 | -Dwith-boost=[OFF|ON|</path/to/boost>]      | Find a Boost library. To set a specific Boost installation,    |
 |                                             | set install path. [default=ON]                                 |
 +---------------------------------------------+----------------------------------------------------------------+
+| -Dwith-libneurosim=                         | Request the use of libneurosim. Optionally give the directory, |
+| [OFF|ON|</path/to/libneurosim>]             | where libneurosim  is installed. [default=OFF]                 |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dwith-music=[OFF|ON|</path/to/music>]      | Request the use of MUSIC. Optionally give the directory, where |
+|                                             | MUSIC  is installed. [default=OFF]                             |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dwith-sionlib=[OFF|ON|</path/to/sionlib>]  | Request the use of sionlib. Optionally give the directory,     |
+|                                             | where sionlib  is installed. [default=OFF]                     |
++---------------------------------------------+----------------------------------------------------------------+
 
-Use detailed NEST internal timers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NEST properties
+~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-detailed-timers=[OFF|ON]             | Enable detailed NEST internal time measurements. Detailed      |
 |                                             | timers can affect the performance. [default=OFF]               |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dtarget-bits-split=["standard"|"hpc"]      | Split of the 64-bit target neuron identifier type. "standard"  |
+|                                             | is recommended for most users. If running on more than 262144  |
+|                                             | MPI processes or more than 512 threads, change to "hpc".       |
+|                                             | [default="standard"]                                           |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dtics_per_ms=[number]                      | Specify elementary unit of time. [default 1000.0]              |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dtics_per_step=[number]                    | Specify resolution. [default 100]                              |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dexternal-modules=[OFF|<list;of;modules>]  | External NEST modules to be linked in, separated by ';'.       |
+|                                             | [default=OFF]                                                  |
 +---------------------------------------------+----------------------------------------------------------------+
 
 Generic build configuration
@@ -104,49 +125,6 @@ Generic build configuration
 |                                             | by ';'. [default OFF]                                          |
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-version-suffix=[string]              | Set a user defined version suffix. [default '']                |
-+---------------------------------------------+----------------------------------------------------------------+
-
-Change NEST behavior
-~~~~~~~~~~~~~~~~~~~~
-
-+--------------------------+----------------------------------------------------+
-| -Dtics_per_ms=[number]   |  Specify elementary unit of time. [default 1000.0] |
-+--------------------------+----------------------------------------------------+
-| -Dtics_per_step=[number] |  Specify resolution. [default 100]                 |
-+--------------------------+----------------------------------------------------+
-
-Add user modules
-~~~~~~~~~~~~~~~~
-
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dexternal-modules=[OFF|<list;of;modules>]  | External NEST modules to be linked in, separated by ';'.       |
-|                                             | [default=OFF]                                                  |
-+---------------------------------------------+----------------------------------------------------------------+
-
-Connect NEST with external projects
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-libneurosim=                         | Request the use of libneurosim. Optionally give the directory, |
-| [OFF|ON|</path/to/libneurosim>]             | where libneurosim  is installed. [default=OFF]                 |
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-music=[OFF|ON|</path/to/music>]      | Request the use of MUSIC. Optionally give the directory, where |
-|                                             | MUSIC  is installed. [default=OFF]                             |
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-sionlib=[OFF|ON|</path/to/sionlib>]  | Request the use of sionlib. Optionally give the directory,     |
-|                                             | where sionlib  is installed. [default=OFF]                     |
-+---------------------------------------------+----------------------------------------------------------------+
-
-Cross-compiling
-~~~~~~~~~~~~~~~
-
-Should be set via toolchain files
-
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dtarget-bits-split=["standard"|STRING]     | Split of the 64-bit target neuron identifier type. "standard"  |
-|                                             | is recommended for most users. If running on more than 262144  |
-|                                             | MPI processes or more than 512 threads, change to "hpc".       |
-|                                             | [default="standard"]                                           |
 +---------------------------------------------+----------------------------------------------------------------+
 
 

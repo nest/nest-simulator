@@ -29,6 +29,17 @@ Options for configuring NEST
 NEST allows for several configuration options for custom builds:
 
 
+Use Python to build PyNEST
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++---------------------------------------------+----------------------------------------------------------------+
+| -Dwith-python=[OFF|ON|<path/to/Python]      | Build PyNEST. To set a specific Python, set install path.      |
+|                                             | [default=ON]                                                   |
++---------------------------------------------+----------------------------------------------------------------+
+| -Dcythonize-pynest=[OFF|ON]                 | Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to|
+|                                             | be build from a pre-cythonized pynestkernel.pyx. [default=ON]  |
++---------------------------------------------+----------------------------------------------------------------+
+
 Select parallelization scheme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -52,11 +63,6 @@ External libraries
 | -Dwith-ltdl=[OFF|ON|</path/to/ltdl>]        | Find an ltdl library. To set a specific ltdl, set install path.|
 |                                             | NEST uses the ltdl for dynamic loading of external user        |
 |                                             | modules. [default=ON]                                          |
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-python=[OFF|ON]                      | Build PyNEST. [default=ON]                                     |
-+---------------------------------------------+----------------------------------------------------------------+
-| -Dcythonize-pynest=[OFF|ON]                 | Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to|
-|                                             | be build from a pre-cythonized pynestkernel.pyx. [default=ON]  |
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-boost=[OFF|ON|</path/to/boost>]      | Find a Boost library. To set a specific Boost installation,    |
 |                                             | set install path. [default=ON]                                 |

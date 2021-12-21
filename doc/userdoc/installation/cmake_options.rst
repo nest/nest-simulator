@@ -29,7 +29,8 @@ Options for configuring NEST
 NEST allows for several configuration options for custom builds:
 
 
-**Change parallelization scheme:**
+Select parallelization scheme
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-mpi=[OFF|ON|</path/to/mpi>]          | Request compilation with MPI. Optionally give directory with   |
@@ -38,7 +39,8 @@ NEST allows for several configuration options for custom builds:
 | -Dwith-openmp=[OFF|ON|<OpenMP-Flag>]        | Enable OpenMP multi-threading. Optional: set OMP flag.         |
 +---------------------------------------------+----------------------------------------------------------------+
 
-**Set default libraries:**
+External libraries
+~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-gsl=[OFF|ON|</path/to/gsl>]          | Find a gsl library. To set a specific library, set install     |
@@ -60,14 +62,16 @@ NEST allows for several configuration options for custom builds:
 |                                             | set install path. [default=ON]                                 |
 +---------------------------------------------+----------------------------------------------------------------+
 
-**Use detailed NEST internal timers:**
+Use detailed NEST internal timers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-detailed-timers=[OFF|ON]             | Enable detailed NEST internal time measurements. Detailed      |
 |                                             | timers can affect the performance. [default=OFF]               |
 +---------------------------------------------+----------------------------------------------------------------+
 
-**Change compilation behavior:**
+Generic build configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dstatic-libraries=[OFF|ON]                 | Build static executable and libraries. [default=OFF]           |
@@ -96,7 +100,8 @@ NEST allows for several configuration options for custom builds:
 | -Dwith-version-suffix=[string]              | Set a user defined version suffix. [default '']                |
 +---------------------------------------------+----------------------------------------------------------------+
 
-**Change NEST behavior:**
+Change NEST behavior
+~~~~~~~~~~~~~~~~~~~~
 
 +--------------------------+----------------------------------------------------+
 | -Dtics_per_ms=[number]   |  Specify elementary unit of time. [default 1000.0] |
@@ -104,14 +109,16 @@ NEST allows for several configuration options for custom builds:
 | -Dtics_per_step=[number] |  Specify resolution. [default 100]                 |
 +--------------------------+----------------------------------------------------+
 
-**Add user modules:**
+Add user modules
+~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dexternal-modules=[OFF|<list;of;modules>]  | External NEST modules to be linked in, separated by ';'.       |
 |                                             | [default=OFF]                                                  |
 +---------------------------------------------+----------------------------------------------------------------+
 
-**Connect NEST with external projects:**
+Connect NEST with external projects
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-libneurosim=                         | Request the use of libneurosim. Optionally give the directory, |
@@ -124,7 +131,8 @@ NEST allows for several configuration options for custom builds:
 |                                             | where sionlib  is installed. [default=OFF]                     |
 +---------------------------------------------+----------------------------------------------------------------+
 
-**Cross-compiling:**
+Cross-compiling
+~~~~~~~~~~~~~~~
 
 Should be set via toolchain files
 

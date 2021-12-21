@@ -40,6 +40,8 @@ Use Python to build PyNEST
 |                                             | be build from a pre-cythonized pynestkernel.pyx. [default=ON]  |
 +---------------------------------------------+----------------------------------------------------------------+
 
+For more details, see the :ref:`Python binding <compile_with_python>` section below.
+
 Select parallelization scheme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -49,6 +51,8 @@ Select parallelization scheme
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-openmp=[OFF|ON|<OpenMP-Flag>]        | Enable OpenMP multi-threading. Optional: set OMP flag.         |
 +---------------------------------------------+----------------------------------------------------------------+
+
+See also the section on :ref:`building with mpi <compile-with-mpi>` below.
 
 External libraries
 ~~~~~~~~~~~~~~~~~~
@@ -183,6 +187,7 @@ follwing switch for the invocation of ``cmake``. It expects either
 For details on how to use the Connection Generator Interface, see the
 :ref:`guide on connection management <conn_builder_conngen>`.
 
+.. _compile_with_python:
 
 Python Binding (PyNEST)
 -----------------------

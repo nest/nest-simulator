@@ -746,7 +746,6 @@ WARN_LOGFILE           = doxygen.log
 INPUT		=	@PROJECT_SOURCE_DIR@/README.md \
 			@PROJECT_SOURCE_DIR@/doc \
 			@PROJECT_SOURCE_DIR@/examples \
-			@PROJECT_SOURCE_DIR@/extras \
 			@PROJECT_SOURCE_DIR@/lib \
 			@PROJECT_SOURCE_DIR@/libnestutil \
 			@PROJECT_SOURCE_DIR@/models \

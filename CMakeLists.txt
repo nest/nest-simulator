@@ -27,7 +27,20 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 project( nest CXX C )
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
-################################################################################
+# check if the given CMAKE_INSTALL_PREFIX is not empty
+if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
+  message(FATAL_ERROR "CMAKE_INSTALL_PREFIX cannot be an empty string")
+endif()
+
+# handle relative installation prefixes
+if( NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
+    # convert relative path to absolute path
+    get_filename_component(absPath ${CMAKE_INSTALL_PREFIX} ABSOLUTE BASE_DIR ${CMAKE_BINARY_DIR})
+    set(CMAKE_INSTALL_PREFIX ${absPath})
+    message(STATUS "Relative CMAKE_INSTALL_PREFIX has been set to absolute path ${CMAKE_INSTALL_PREFIX}")
+endif()
+
+###############################################################################
 ##################         All User Defined options           ##################
 ################################################################################
 
@@ -226,8 +239,9 @@ add_custom_target( installcheck
 ################################################################################
 
 add_subdirectory( doc )
+add_subdirectory( bin )
 add_subdirectory( examples )
-add_subdirectory( extras )
+add_subdirectory( build_support )
 add_subdirectory( lib )
 add_subdirectory( libnestutil )
 add_subdirectory( models )
@@ -331,13 +345,13 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/nest-config.in"
-    "${PROJECT_BINARY_DIR}/extras/nest-config" @ONLY
+    "${PROJECT_SOURCE_DIR}/bin/nest-config.in"
+    "${PROJECT_BINARY_DIR}/bin/nest-config" @ONLY
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/nest_vars.sh.in"
-    "${PROJECT_BINARY_DIR}/extras/nest_vars.sh" @ONLY
+    "${PROJECT_SOURCE_DIR}/bin/nest_vars.sh.in"
+    "${PROJECT_BINARY_DIR}/bin/nest_vars.sh" @ONLY
 )
 
 configure_file(

@@ -2179,9 +2179,9 @@ SeeAlso: welcome
 { 
   << >>
   begin
-    
+
     (HOME) getenv pop     % get home directory (we alrady know that $HOME is set)
-    
+
     (/.slirc)       % Check if a legacy file is present
     join
     ifstream       
@@ -2197,15 +2197,15 @@ SeeAlso: welcome
     {% $HOME/.slirc is not present
       (HOME) getenv pop % get home directory (we alrady know that $HOME is set)
       (/.nestrc) join /outfile Set
-      statusdict /prgdocdir get (/examples/nestrc.sli) join /infile Set  
-      
+      statusdict /prgdocdir get (/examples/sli/nestrc.sli) join /infile Set
+
       infile outfile CopyFile 
       {
         M_WARNING (evalrcfile) (NEST has created its configuration file $HOME/.nestrc) message
         M_WARNING (evalrcfile) (If this troubles you, type '/nestrc help' at the prompt to learn more.) message
       } :addwarnings 
     } ifelse
-    
+
   end
 } def
 

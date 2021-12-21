@@ -70,14 +70,14 @@ void ::nest::volume_transmitter::Parameters_::set( const DictionaryDatum& d, Nod
  * ---------------------------------------------------------------- */
 
 nest::volume_transmitter::volume_transmitter()
-  : ArchivingNode()
+  : Node()
   , P_()
   , local_device_id_( 0 )
 {
 }
 
 nest::volume_transmitter::volume_transmitter( const volume_transmitter& n )
-  : ArchivingNode( n )
+  : Node( n )
   , P_( n.P_ )
   , local_device_id_( n.local_device_id_ )
 {
@@ -89,7 +89,6 @@ nest::volume_transmitter::init_buffers_()
   B_.neuromodulatory_spikes_.clear();
   B_.spikecounter_.clear();
   B_.spikecounter_.push_back( spikecounter( 0.0, 0.0 ) ); // insert pseudo last dopa spike at t = 0.0
-  ArchivingNode::clear_history();
 }
 
 void

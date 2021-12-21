@@ -38,7 +38,7 @@ import pydoc
 
 from string import Template
 
-from ..ll_api import *
+from ..ll_api import check_stack, sli_func, sps, sr, spp
 from .. import pynestkernel as kernel
 
 __all__ = [
@@ -595,7 +595,7 @@ def get_parameters_hierarchical_addressing(nc, params):
     return result
 
 
-class SuppressedDeprecationWarning(object):
+class SuppressedDeprecationWarning:
     """
     Context manager turning off deprecation warnings for given methods.
 

@@ -47,8 +47,7 @@ if os.environ.get("READTHEDOCS") == "True":
 else:
     doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/userdoc"
 
-print("doc_build_dir", str(doc_build_dir))
-print("source_dir", str(source_dir))
+sys.path.append(os.path.abspath("./_ext"))
 
 source_suffix = '.rst'
 master_doc = 'contents'
@@ -84,7 +83,8 @@ sys.modules["nest.kernel"] = pynestkernel_mock
 # to autodoc properties the way the `autoclass` directive would. We can then
 # autoclass `nest.NestModule` to generate the documentation of the properties
 import nest  # noqa
-nest.NestModule = type(nest)
+
+vars(nest)["NestModule"] = type(nest)        # direct write to nest.NestModule is suppressed as unknown attribute
 
 # -- General configuration ------------------------------------------------
 extensions = [
@@ -99,7 +99,9 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx_tabs.tabs',
     'nbsphinx',
-    'sphinx_rtd_theme'
+    'sphinx_rtd_theme',
+    'HoverXTooltip',
+    'VersionSyncRole',
 ]
 
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
@@ -311,3 +313,4 @@ copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
+copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")

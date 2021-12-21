@@ -121,8 +121,8 @@ mm = nest.Create('multimeter',
 # the multimeter, just like the voltmeter is connected to the neuron,
 # not the neuron to the multimeter.
 
-nest.Connect(dc, nrn)
-nest.Connect(mm, nrn)
+nest.Connect(nest.AllToAll(dc, nrn))
+nest.Connect(nest.AllToAll(mm, nrn))
 
 ###############################################################################
 # We are ready to simulate. We alternate between driving the neuron with

@@ -32,7 +32,7 @@ class TestPairwiseBernoulli(connect_test_base.ConnectTestBase):
     # specify connection pattern and specific params
     rule = 'pairwise_bernoulli'
     p = 0.5
-    conn_dict = {'rule': rule, 'p': p}
+    conn_dict = nest.PairwiseBernoulli(None, None, p=p)
     # sizes of source-, target-population and connection probability for
     # statistical test
     N_s = 50
@@ -48,10 +48,11 @@ class TestPairwiseBernoulli(connect_test_base.ConnectTestBase):
             pvalues = []
             for i in range(self.stat_dict['n_runs']):
                 connect_test_base.reset_seed(i+1, self.nr_threads)
-                self.setUpNetwork(conn_dict=self.conn_dict,
-                                  N1=self.N_s, N2=self.N_t)
+                projection = nest.PairwiseBernoulli(None, None, p=self.p)
+                self.setUpNetwork(projections=projection, N1=self.N_s, N2=self.N_t)
                 degrees = connect_test_base.get_degrees(fan, self.pop1, self.pop2)
                 degrees = connect_test_base.gather_data(degrees)
+
                 # degrees = self.comm.gather(degrees, root=0)
                 # if self.rank == 0:
                 if degrees is not None:
@@ -63,29 +64,23 @@ class TestPairwiseBernoulli(connect_test_base.ConnectTestBase):
                 self.assertTrue(p > self.stat_dict['alpha2'])
 
     def testAutapsesTrue(self):
-        conn_params = self.conn_dict.copy()
-        N = 10
-        conn_params['allow_multapses'] = False
-
         # test that autapses exist
-        conn_params['p'] = 1.
-        conn_params['allow_autapses'] = True
+        N = 10
         pop = nest.Create('iaf_psc_alpha', N)
-        nest.Connect(pop, pop, conn_params)
+        conn_params = nest.PairwiseBernoulli(pop, pop, p=1., allow_multapses=False, allow_autapses=True)
+        nest.Connect(conn_params)
+
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         connect_test_base.mpi_assert(np.diag(M), np.ones(N), self)
 
     def testAutapsesFalse(self):
-        conn_params = self.conn_dict.copy()
-        N = 10
-        conn_params['allow_multapses'] = False
-
         # test that autapses were excluded
-        conn_params['p'] = 1.
-        conn_params['allow_autapses'] = False
+        N = 10
         pop = nest.Create('iaf_psc_alpha', N)
-        nest.Connect(pop, pop, conn_params)
+        conn_params = nest.PairwiseBernoulli(pop, pop, p=1., allow_multapses=False, allow_autapses=False)
+        nest.Connect(conn_params)
+
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         connect_test_base.mpi_assert(np.diag(M), np.zeros(N), self)

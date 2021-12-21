@@ -62,7 +62,7 @@ class ThreadTestCase(unittest.TestCase):
         pre = nest.Create("iaf_psc_alpha")
         post = nest.Create("iaf_psc_alpha", 6)
 
-        nest.Connect(pre, post)
+        nest.Connect(nest.AllToAll(pre, post))
 
         conn = nest.GetConnections(pre)
         # Because of threading, targets may be in a different order than
@@ -96,8 +96,8 @@ class ThreadTestCase(unittest.TestCase):
             sr = nest.Create('spike_recorder')
             vm = nest.Create('voltmeter')
 
-            nest.Connect(n, sr)
-            nest.Connect(vm, n)
+            nest.Connect(nest.AllToAll(n, sr))
+            nest.Connect(nest.AllToAll(vm, n))
 
             nest.Simulate(Simtime)
 

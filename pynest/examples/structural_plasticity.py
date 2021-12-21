@@ -177,18 +177,17 @@ class StructralPlasticityExample:
 # called `Den_ex`. In a similar manner, synaptic elements for inhibitory
 # synapses are defined.
 
-        nest.CopyModel('static_synapse', 'synapse_ex')
-        nest.SetDefaults('synapse_ex', {'weight': self.psc_e, 'delay': 1.0})
-        nest.CopyModel('static_synapse', 'synapse_in')
-        nest.SetDefaults('synapse_in', {'weight': self.psc_i, 'delay': 1.0})
+        syn_ex = nest.CopyModel('static_synapse', weight=self.psc_e, delay=1.0)
+        syn_in = nest.CopyModel('static_synapse', weight=self.psc_i, delay=1.0)
+
         nest.structural_plasticity_synapses = {
-            'synapse_ex': {
-                'synapse_model': 'synapse_ex',
+            syn_ex.synapse_model: {
+                'synapse_model': syn_ex.synapse_model,
                 'post_synaptic_element': 'Den_ex',
                 'pre_synaptic_element': 'Axon_ex'
             },
-            'synapse_in': {
-                'synapse_model': 'synapse_in',
+            syn_in.synapse_model: {
+                'synapse_model': syn_in.synapse_model,
                 'post_synaptic_element': 'Den_in',
                 'pre_synaptic_element': 'Axon_in'
             }
@@ -233,10 +232,10 @@ class StructralPlasticityExample:
         """
         noise = nest.Create('poisson_generator')
         noise.rate = self.bg_rate
-        nest.Connect(noise, self.nodes_e, 'all_to_all',
-                     {'weight': self.psc_ext, 'delay': 1.0})
-        nest.Connect(noise, self.nodes_i, 'all_to_all',
-                     {'weight': self.psc_ext, 'delay': 1.0})
+        nest.Connect(nest.AllToAll(noise, self.nodes_e,
+                                   syn_spec=nest.synapsemodels.static(weight=self.psc_ext, delay=1.0)))
+        nest.Connect(nest.AllToAll(noise, self.nodes_i,
+                                   syn_spec=nest.synapsemodels.static(weight=self.psc_ext, delay=1.0)))
 
     ####################################################################################
     # In order to save the amount of average calcium concentration in each

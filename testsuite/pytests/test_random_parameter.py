@@ -120,8 +120,7 @@ class RandomParameterTestCase(unittest.TestCase):
         param = nest.random.uniform(min=w_min, max=w_max)
 
         nodes = nest.Create('iaf_psc_alpha', 10)
-        nest.Connect(nodes, nodes, syn_spec={'synapse_model': 'static_synapse',
-                                             'weight': param})
+        nest.Connect(nest.AllToAll(nodes, nodes, syn_spec=nest.synapsemodels.static(weight=param)))
         weights = nest.GetConnections().weight
 
         d, p_val = scipy.stats.kstest(weights, cdf, args=cdf_args)

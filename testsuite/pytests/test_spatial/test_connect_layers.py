@@ -45,20 +45,19 @@ class ConnectLayersTestCase(unittest.TestCase):
         self.layer = nest.Create(
             'iaf_psc_alpha', positions=nest.spatial.grid(self.dim, extent=self.extent))
 
-    def _check_connections(self, conn_spec, expected_num_connections):
+    def _check_connections(self, projection, expected_num_connections):
         """Helper function which asserts that connecting with the specified conn_spec gives
         the expected number of connections."""
-        nest.Connect(self.layer, self.layer, conn_spec)
+        nest.Connect(projection)
         conns = nest.GetConnections()
         self.assertEqual(len(conns), expected_num_connections)
 
-    def _check_connections_statistical(self, conn_spec, p, num_pairs):
+    def _check_connections_statistical(self, projection, p, num_pairs):
         """Helper function which asserts that the number of connections created are based on a bernoulli distribution.
         The connection function is iterated N times, then the distribution of number of created connections are tested
         against a bernoulli distribution using a Kolmogorov-Smirnov test. This is done ks_N times, to get statistical
         values. The mean of the KS tests is then compared to the limits. If either of the values are below the specified
         limits, the test fails."""
-        self.assertEqual(conn_spec['rule'], 'pairwise_bernoulli')
         N = 100  # Number of samples per KS test
         ks_N = 5  # Number of KS tests to perform.
         p_val_lim = 0.1  # Limit for the p value of the KS test
@@ -71,7 +70,8 @@ class ConnectLayersTestCase(unittest.TestCase):
             n_conns = np.zeros(N)
             ref = np.zeros(N)
             for i in range(N):
-                nest.Connect(self.layer, self.layer, conn_spec)
+                nest.Connect(projection)
+                nest.BuildNetwork()
                 n_conns[i] = nest.num_connections - np.sum(n_conns)
                 ref[i] = np.sum(scipy.stats.bernoulli.rvs(p, size=num_pairs))
             ks_stats[ks_i], p_vals[ks_i] = scipy.stats.ks_2samp(n_conns, ref)
@@ -87,12 +87,8 @@ class ConnectLayersTestCase(unittest.TestCase):
     def _assert_connect_layers_autapses(self, autapses, expected_num_autapses):
         """Helper function which asserts that connecting with or without allowing autapses gives
         the expected number of autapses."""
-        conn_spec = {
-            'rule': 'pairwise_bernoulli',
-            'p': 1.0,
-            'allow_autapses': autapses,
-        }
-        nest.Connect(self.layer, self.layer, conn_spec)
+        projection = nest.PairwiseBernoulli(self.layer, self.layer, p=1.0, allow_autapses=autapses)
+        nest.Connect(projection)
         conns = nest.GetConnections()
         n_autapses = 0
         for s, t in zip(conns.sources(), conns.targets()):
@@ -103,14 +99,9 @@ class ConnectLayersTestCase(unittest.TestCase):
     def _assert_connect_layers_multapses(self, multapses):
         """Helper function which asserts that connecting with or without allowing multapses
         gives the expected number of multapses."""
-        conn_spec = {
-            'rule': 'fixed_indegree',
-            'indegree': 10,
-            'p': 1.0,
-            'allow_autapses': False,
-            'allow_multapses': multapses,
-        }
-        nest.Connect(self.layer, self.layer, conn_spec)
+        projection = nest.FixedIndegree(self.layer, self.layer, indegree=10,
+                                        allow_autapses=False, allow_multapses=multapses)
+        nest.Connect(projection)
         conns = nest.GetConnections()
         conn_pairs = np.array([list(conns.sources()), list(conns.targets())]).T
         num_nonunique_conns = len(conn_pairs) - len(np.unique(conn_pairs, axis=0))
@@ -120,15 +111,14 @@ class ConnectLayersTestCase(unittest.TestCase):
             self.assertEqual(num_nonunique_conns, 0)
 
     def _assert_connect_sliced(self, pre, post):
-        """Helper function which asserts that connecting with ConnectLayers on the SLI level
-        gives the expected number of connections."""
+        """Helper function which asserts that connecting with Connect gives the expected number of connections."""
         # Using distance based probability with zero weight to
-        # use ConnectLayers to connect on the SLI level.
+        # use ConnectLayers on the SLI level.
         p = 1.0 + 0.*nest.spatial.distance
-        conn_spec = {'rule': 'pairwise_bernoulli', 'p': p}
         expected_conns = len(pre) * len(post)
 
-        nest.Connect(pre, post, conn_spec)
+        projection = nest.PairwiseBernoulli(pre, post, p=p)
+        nest.Connect(projection)
         conns = nest.GetConnections()
         result = '{} ({}), pre length={}, post length={}'.format(len(conns), expected_conns, len(pre), len(post))
         print(result)
@@ -146,121 +136,71 @@ class ConnectLayersTestCase(unittest.TestCase):
 
     def test_connect_layers_indegree(self):
         """Connecting layers with fixed_indegree."""
-        conn_spec = {'rule': 'fixed_indegree', 'indegree': 2, 'p': 1.}
-        self._check_connections(conn_spec, 40)
+        projection = nest.FixedIndegree(self.layer, self.layer, indegree=2, p=1.)
+        self._check_connections(projection, 40)
 
     def test_connect_layers_outdegree(self):
         """Connecting layers with fixed_outdegree."""
-        conn_spec = {'rule': 'fixed_outdegree', 'outdegree': 2, 'p': 1.}
-        self._check_connections(conn_spec, 40)
+        projection = nest.FixedOutdegree(self.layer, self.layer, outdegree=2, p=1.)
+        self._check_connections(projection, 40)
 
     def test_connect_layers_bernoulli(self):
         """Connecting layers with pairwise_bernoulli."""
-        conn_spec = {'rule': 'pairwise_bernoulli', 'p': 1.0, 'use_on_source': False}
-        self._check_connections(conn_spec, 400)
+        projection = nest.PairwiseBernoulli(self.layer, self.layer, p=1., use_on_source=False)
+        self._check_connections(projection, 400)
 
     def test_connect_layers_bernoulli_source(self):
         """Connecting layers with pairwise_bernoulli."""
-        conn_spec = {'rule': 'pairwise_bernoulli', 'p': 1.0, 'use_on_source': True}
-        self._check_connections(conn_spec, 400)
+        projection = nest.PairwiseBernoulli(self.layer, self.layer, p=1., use_on_source=True)
+        self._check_connections(projection, 400)
 
     def test_connect_layers_indegree_mask(self):
         """Connecting layers with fixed_indegree and mask."""
-        conn_spec = {
-            'rule': 'fixed_indegree',
-            'indegree': 1,
-            'mask': {
-                'rectangular': {
-                    'lower_left': [-5., -5.],
-                    'upper_right': [0.1, 0.1]
-                }
-            },
-        }
-        self._check_connections(conn_spec, 20)
+        projection = nest.FixedIndegree(self.layer, self.layer, indegree=1,
+                                        mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
+        self._check_connections(projection, 20)
 
     def test_connect_layers_indegree_kernel(self):
         """Connecting layers with fixed_indegree and kernel."""
-        conn_spec = {'rule': 'fixed_indegree', 'indegree': 1, 'p': 0.5}
-        self._check_connections(conn_spec, 20)
+        projection = nest.FixedIndegree(self.layer, self.layer, indegree=1, p=0.5)
+        self._check_connections(projection, 20)
 
     def test_connect_layers_indegree_kernel_mask(self):
         """Connecting layers with fixed_indegree, kernel and mask."""
-        conn_spec = {
-            'rule': 'fixed_indegree',
-            'indegree': 1,
-            'mask': {
-                'rectangular': {
-                    'lower_left': [-5., -5.],
-                    'upper_right': [0.1, 0.1]
-                }
-            },
-            'p': 0.5
-        }
-        self._check_connections(conn_spec, 20)
+        projection = nest.FixedIndegree(self.layer, self.layer, indegree=1, p=0.5,
+                                        mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
+        self._check_connections(projection, 20)
 
     def test_connect_layers_outdegree_mask(self):
         """Connecting layers with fixed_outdegree and mask"""
-        conn_spec = {
-            'rule': 'fixed_outdegree',
-            'outdegree': 1,
-            'mask': {
-                'rectangular': {
-                    'lower_left': [-5., -5.],
-                    'upper_right': [0.1, 0.1]
-                }
-            }
-        }
-        self._check_connections(conn_spec, 20)
+        projection = nest.FixedOutdegree(self.layer, self.layer, outdegree=1,
+                                         mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
+        self._check_connections(projection, 20)
 
     def test_connect_layers_outdegree_kernel(self):
         """Connecting layers with fixed_outdegree and kernel"""
-        conn_spec = {'rule': 'fixed_outdegree', 'outdegree': 1, 'p': 0.5}
-        self._check_connections(conn_spec, 20)
+        projection = nest.FixedOutdegree(self.layer, self.layer, outdegree=1, p=0.5)
+        self._check_connections(projection, 20)
 
     def test_connect_layers_outdegree_kernel_mask(self):
         """Connecting layers with fixed_outdegree, kernel and mask"""
-        conn_spec = {
-            'rule': 'fixed_outdegree',
-            'outdegree': 1,
-            'mask': {
-                'rectangular': {
-                    'lower_left': [-5., -5.],
-                    'upper_right': [0.1, 0.1]
-                }
-            },
-            'p': 0.5
-        }
-        self._check_connections(conn_spec, 20)
+        projection = nest.FixedOutdegree(self.layer, self.layer, outdegree=1, p=0.5,
+                                         mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
+        self._check_connections(projection, 20)
 
     def test_connect_layers_bernoulli_mask(self):
         """Connecting layers with pairwise_bernoulli and mask"""
-        conn_spec = {
-            'rule': 'pairwise_bernoulli',
-            'p': 1.0,
-            'mask': {
-                'rectangular': {
-                    'lower_left': [-5., -5.],
-                    'upper_right': [0.1, 0.1]
-                }
-            }
-        }
-        self._check_connections(conn_spec, 108)
+        projection = nest.PairwiseBernoulli(self.layer, self.layer, p=1.,
+                                            mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
+        self._check_connections(projection, 108)
 
     @unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
     def test_connect_layers_bernoulli_kernel_mask(self):
         """Connecting layers with pairwise_bernoulli, kernel and mask"""
         p = 0.5
-        conn_spec = {
-            'rule': 'pairwise_bernoulli',
-            'p': p,
-            'mask': {
-                'rectangular': {
-                    'lower_left': [-5., -5.],
-                    'upper_right': [0.1, 0.1]
-                }
-            }
-        }
-        self._check_connections_statistical(conn_spec, p, 108)
+        projection = nest.PairwiseBernoulli(self.layer, self.layer, p=p,
+                                            mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
+        self._check_connections_statistical(projection, p, 108)
 
     @unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
     def test_connect_layers_bernoulli_kernel_mask_source(self):
@@ -268,82 +208,59 @@ class ConnectLayersTestCase(unittest.TestCase):
         Connecting layers with pairwise_bernoulli, kernel and mask on source
         """
         p = 0.5
-        conn_spec = {
-            'rule': 'pairwise_bernoulli',
-            'p': p,
-            'mask': {
-                'rectangular': {
-                    'lower_left': [-5., -5.],
-                    'upper_right': [0.1, 0.1]
-                }
-            },
-            'use_on_source': True
-        }
-        self._check_connections_statistical(conn_spec, p, 108)
+        projection = nest.PairwiseBernoulli(self.layer, self.layer, p=p, use_on_source=True,
+                                            mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
+        self._check_connections_statistical(projection, p, 108)
 
     def test_connect_nonlayers_mask(self):
         """Throw when connecting non-layer NodeCollections with mask."""
         neurons = nest.Create('iaf_psc_alpha', 20)
-        conn_spec = {
-            'rule': 'pairwise_bernoulli',
-            'p': 1.0,
-            'mask': {
-                'rectangular': {
-                    'lower_left': [-5., -5.],
-                    'upper_right': [0.1, 0.1]
-                }
-            }
-        }
+        projection = nest.PairwiseBernoulli(neurons, neurons, p=1.,
+                                            mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
         with self.assertRaises(TypeError):
-            nest.Connect(neurons, neurons, conn_spec)
+            nest.Connect(projection)
+            nest.BuildNetwork()
 
     def test_connect_nonlayers_kernel(self):
         """Throw when connecting non-layer NodeCollections with kernel."""
         neurons = nest.Create('iaf_psc_alpha', 20)
-        conn_spec = {
-            'rule': 'fixed_outdegree',
-            'outdegree': 1,
-            'p': 1.0,
-        }
+        projection = nest.FixedOutdegree(neurons, neurons, p=1., outdegree=1)
         with self.assertRaises(TypeError):
-            nest.Connect(neurons, neurons, conn_spec)
+            nest.Connect(projection)
+            nest.BuildNetwork()
 
     def test_connect_kernel_mask_wrong_rule(self):
         """Throw when connecting with mask or kernel and wrong rule."""
-        conn_spec_kernel = {'rule': 'all_to_all', 'p': 0.5}
-        conn_spec_mask = {
-            'rule': 'all_to_all',
-            'mask': {
-                'rectangular': {
-                    'lower_left': [-5., -5.],
-                    'upper_right': [0.1, 0.1]
-                }
-            }
-        }
-        for conn_spec in [conn_spec_kernel, conn_spec_mask]:
+        projection_kernel = nest.AllToAll(self.layer, self.layer, p=0.5)
+        projection_mask = nest.AllToAll(self.layer, self.layer,
+                                        mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0.1, 0.1]}})
+        for projection in [projection_kernel, projection_mask]:
             with self.assertRaises(nest.kernel.NESTError):
-                nest.Connect(self.layer, self.layer, conn_spec)
+                nest.Connect(projection)
+                nest.BuildNetwork()
 
     def test_connect_oversized_mask(self):
         """Connecting with specified oversized mask possible."""
         free_layer = nest.Create('iaf_psc_alpha', positions=nest.spatial.free(
             [[0., 0.]], edge_wrap=True, extent=[1., 1.]))
-        conn_spec = {'rule': 'pairwise_bernoulli', 'p': 1.0, 'mask': {'circular': {'radius': 2.}}}
+        projection = nest.PairwiseBernoulli(free_layer, free_layer, p=1.0, mask={'circular': {'radius': 2.}})
+
         with self.assertRaises(nest.kernel.NESTError):
-            nest.Connect(free_layer, free_layer, conn_spec)
+            nest.Connect(projection)
+            nest.BuildNetwork()
         self.assertEqual(nest.num_connections, 0)
-        conn_spec['allow_oversized_mask'] = True
-        nest.Connect(free_layer, free_layer, conn_spec)
+
+        nest.reset_projection_collection()
+        projection.conn_spec['allow_oversized_mask'] = True
+        nest.Connect(projection)
+        nest.BuildNetwork()
         self.assertEqual(nest.num_connections, 1)
 
     def test_connect_layers_weights(self):
         """Connecting layers with specified weights"""
-        conn_spec = {
-            'rule': 'pairwise_bernoulli',
-            'p': 1.0,
-        }
-        syn_spec = {'weight': nest.random.uniform(min=0.5)}
-        nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
+        projection = nest.PairwiseBernoulli(self.layer, self.layer, p=1.0,
+                                            syn_spec=nest.synapsemodels.static(weight=nest.random.uniform(min=0.5)))
+        nest.Connect(projection)
         conns = nest.GetConnections()
         conn_weights = np.array(conns.get('weight'))
         self.assertTrue(len(np.unique(conn_weights)) > 1)
@@ -352,12 +269,9 @@ class ConnectLayersTestCase(unittest.TestCase):
 
     def test_connect_layers_delays(self):
         """Connecting layers with specified delays"""
-        conn_spec = {
-            'rule': 'pairwise_bernoulli',
-            'p': 1.0,
-        }
-        syn_spec = {'delay': nest.random.uniform(min=0.5)}
-        nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
+        projection = nest.PairwiseBernoulli(self.layer, self.layer, p=1.0,
+                                            syn_spec=nest.synapsemodels.static(delay=nest.random.uniform(min=0.5)))
+        nest.Connect(projection)
         conns = nest.GetConnections()
         conn_delays = np.array(conns.get('delay'))
         self.assertTrue(len(np.unique(conn_delays)) > 1)
@@ -410,21 +324,12 @@ class ConnectLayersTestCase(unittest.TestCase):
 
     def test_connect_synapse_label(self):
         indegree = 10
-        conn_spec = {
-            'rule': 'fixed_indegree',
-            'indegree': indegree,
-            'p': 1.0,
-            'mask': {
-                'rectangular': {
-                    'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
-                }
-            }
-        }
         syn_label = 123
-        syn_spec = {'synapse_model': 'stdp_synapse_lbl', 'synapse_label': syn_label}
+        projection = nest.FixedIndegree(self.layer, self.layer, indegree=indegree, p=1.0,
+                                        mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0., 0.]}},
+                                        syn_spec=nest.synapsemodels.stdp_lbl(synapse_label=syn_label))
 
-        nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
+        nest.Connect(projection)
         conns = nest.GetConnections()
         self.assertEqual(conns.get('synapse_label'), [syn_label]*len(self.layer)*indegree)
 
@@ -435,20 +340,12 @@ class ConnectLayersTestCase(unittest.TestCase):
             params={'tau_syn': [0.1 + i for i in range(receptor_type)]},
             positions=nest.spatial.grid(self.dim, extent=self.extent))
         indegree = 10
-        conn_spec = {
-            'rule': 'fixed_indegree',
-            'indegree': indegree,
-            'p': 1.0,
-            'mask': {
-                'rectangular': {
-                    'lower_left': [-5., -5.],
-                    'upper_right': [0., 0.]
-                }
-            }
-        }
-        syn_spec = {'receptor_type': receptor_type}
 
-        nest.Connect(multisyn_layer, multisyn_layer, conn_spec, syn_spec)
+        projection = nest.FixedIndegree(multisyn_layer, multisyn_layer, indegree=indegree, p=1.0,
+                                        mask={'rectangular': {'lower_left': [-5., -5.], 'upper_right': [0., 0.]}},
+                                        syn_spec=nest.synapsemodels.static(receptor_type=receptor_type))
+
+        nest.Connect(projection)
         conns = nest.GetConnections()
         self.assertEqual(conns.get('receptor'), [receptor_type]*len(multisyn_layer)*indegree)
 

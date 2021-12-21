@@ -223,10 +223,10 @@ pgs = nest.Create('poisson_generator', n=n_pg, params={'rate': p_rate})
 
 prrt_nrns_pg = nest.Create('parrot_neuron', n_pg)
 
-nest.Connect(pgs, prrt_nrns_pg, {'rule': 'one_to_one'})
+nest.Connect(nest.OneToOne(pgs, prrt_nrns_pg))
 
 sr = nest.Create('spike_recorder', n_pg)
-nest.Connect(prrt_nrns_pg, sr, {'rule': 'one_to_one'})
+nest.Connect(nest.OneToOne(prrt_nrns_pg, sr))
 
 nest.Simulate(pattern_duration)
 t_srs = [ssr.get('events', 'times') for ssr in sr]
@@ -268,16 +268,20 @@ sr_soma = nest.Create('spike_recorder')
 
 
 # create connections
-nest.Connect(sg_prox, prrt_nrns, {'rule': 'one_to_one'})
-nest.CopyModel('urbanczik_synapse', 'urbanczik_synapse_wr',
-               {'weight_recorder': wr[0]})
-nest.Connect(prrt_nrns, nrn, syn_spec=syn_params)
-nest.Connect(mm, nrn, syn_spec={'delay': 0.1})
-nest.Connect(sg_soma_exc, nrn,
-             syn_spec={'receptor_type': syns['soma_exc'], 'weight': 10.0 * resolution, 'delay': resolution})
-nest.Connect(sg_soma_inh, nrn,
-             syn_spec={'receptor_type': syns['soma_inh'], 'weight': 10.0 * resolution, 'delay': resolution})
-nest.Connect(nrn, sr_soma)
+nest.Connect(nest.OneToOne(sg_prox, prrt_nrns))
+urbanczik_syn = nest.CopyModel('urbanczik_synapse', weight_recorder=wr[0])
+urbanczik_syn.specs = syn_params
+
+nest.Connect(nest.AllToAll(prrt_nrns, nrn, syn_spec=urbanczik_syn))
+nest.Connect(nest.AllToAll(mm, nrn, syn_spec=nest.synapsemodels.static(delay=0.1)))
+nest.Connect(nest.AllToAll(sg_soma_exc, nrn, syn_spec=nest.synapsemodels.static(receptor_type=syns['soma_exc'],
+                                                                                weight=10.0 * resolution,
+                                                                                delay=resolution)))
+nest.Connect(nest.AllToAll(sg_soma_inh, nrn, syn_spec=nest.synapsemodels.static(receptor_type=syns['soma_inh'],
+                                                                                weight=10.0 * resolution,
+                                                                                delay=resolution)))
+nest.Connect(nest.AllToAll(nrn, sr_soma))
+nest.BuildNetwork()
 
 # simulation divided into intervals of the pattern duration
 for i in np.arange(n_rep_total):

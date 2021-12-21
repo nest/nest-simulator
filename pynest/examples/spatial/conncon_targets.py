@@ -42,15 +42,11 @@ pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.], edge_wrap=True)
 a = nest.Create('iaf_psc_alpha', positions=pos)
 b = nest.Create('iaf_psc_alpha', positions=pos)
 
-cdict = {'rule': 'pairwise_bernoulli',
-         'p': 0.5,
-         'use_on_source': True,
-         'mask': {'rectangular': {'lower_left': [-0.2, -0.5],
-                                  'upper_right': [0.2, 0.5]}}}
+mask = {'rectangular': {'lower_left': [-0.2, -0.5], 'upper_right': [0.2, 0.5]}}
 
-nest.Connect(a, b,
-             conn_spec=cdict,
-             syn_spec={'weight': nest.random.uniform(0.5, 2.)})
+nest.Connect(nest.PairwiseBernoulli(a, b, p=0.5, use_on_source=True, mask=mask,
+                                    syn_spec=nest.synapsemodels.static(weight=nest.random.uniform(0.5, 2.))))
+nest.BuildNetwork()
 
 #####################################################################
 # first, clear existing figure, get current figure
@@ -61,7 +57,7 @@ fig = plt.gcf()
 for src_index in [30 * 15 + 15, 0]:
     # obtain node id for center
     src = a[src_index:src_index + 1]
-    nest.PlotTargets(src, b, mask=cdict['mask'], fig=fig)
+    nest.PlotTargets(src, b, mask=mask, fig=fig)
 
 # beautify
 plt.axes().set_xticks(np.arange(-1.5, 1.55, 0.5))

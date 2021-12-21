@@ -470,7 +470,7 @@ def CreateTagIndices(tags, outdir="userdocs/"):
     return indexfiles
 
 
-class JsonWriter(object):
+class JsonWriter:
     """
     Helper class to have a unified data output interface.
     """

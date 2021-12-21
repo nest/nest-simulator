@@ -34,6 +34,22 @@ and independent of network size (indegree=11250).
 
 This is the standard network investigated in [1]_, [2]_, [3]_.
 
+A note on connectivity
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. image:: ../../../examples/hpc_benchmark_connectivity.svg
+   :width: 50 %
+   :alt: HPC Benchmark network architecture
+   :align: right
+
+Each neuron receives :math:`K_{in,{\\tau} E}` excitatory connections randomly
+drawn from population E and :math:`K_{in,\\tau I}` inhibitory connections from
+population I. Autapses are prohibited (denoted by the crossed out A next to
+the connections) while multapses are allowed (denoted by the M). Each neuron
+receives additional input from an external stimulation device. All delays are
+constant, all weights but excitatory onto excitatory are constant. Excitatory
+onto excitatory weights are time dependent. Figure taken from [4]_.
+
 A note on scaling
 ~~~~~~~~~~~~~~~~~
 
@@ -69,6 +85,8 @@ References
        for neuroscience. Front. Neuroinform. 6:26
 .. [3] Kunkel et al (2014). Spiking network simulation code for petascale
        computers. Front. Neuroinform. 8:78
+.. [4] Senk et al (2021). Connectivity Concepts in Neuronal Network Modeling.
+       arXiv. 2110.02883
 
 """
 
@@ -219,7 +237,7 @@ def build_network(logger):
 
     if brunel_params['randomize_Vm']:
         nest.message(M_INFO, 'build_network',
-                     'Randomzing membrane potentials.')
+                     'Randomizing membrane potentials.')
 
         random_vm = nest.random.normal(brunel_params['mean_potential'],
                                        brunel_params['sigma_potential'])
@@ -266,11 +284,8 @@ def build_network(logger):
 
     tic = time.time()
 
-    nest.SetDefaults('static_synapse_hpc', {'delay': brunel_params['delay']})
-    nest.CopyModel('static_synapse_hpc', 'syn_ex',
-                   {'weight': JE_pA})
-    nest.CopyModel('static_synapse_hpc', 'syn_in',
-                   {'weight': brunel_params['g'] * JE_pA})
+    syn_ex = nest.synapsemodels.static_hpc(weight=JE_pA, delay=brunel_params['delay'])
+    syn_in = nest.synapsemodels.static_hpc(weight=brunel_params['g'] * JE_pA, delay=brunel_params['delay'])
 
     stdp_params['weight'] = JE_pA
     nest.SetDefaults('stdp_pl_synapse_hom_hpc', stdp_params)
@@ -279,42 +294,32 @@ def build_network(logger):
 
     # Connect Poisson generator to neuron
 
-    nest.Connect(E_stimulus, E_neurons, {'rule': 'all_to_all'},
-                 {'synapse_model': 'syn_ex'})
-    nest.Connect(E_stimulus, I_neurons, {'rule': 'all_to_all'},
-                 {'synapse_model': 'syn_ex'})
+    nest.Connect(nest.AllToAll(E_stimulus, E_neurons, syn_spec=syn_ex))
+    nest.Connect(nest.AllToAll(E_stimulus, I_neurons, syn_spec=syn_ex))
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> excitatory population.')
 
-    nest.Connect(E_neurons, E_neurons,
-                 {'rule': 'fixed_indegree', 'indegree': CE,
-                  'allow_autapses': False, 'allow_multapses': True},
-                 {'synapse_model': 'stdp_pl_synapse_hom_hpc'})
+    nest.Connect(nest.FixedIndegree(E_neurons, E_neurons, indegree=CE, allow_autapses=False, allow_multapses=True,
+                                    syn_spec=nest.synapsemodels.stdp_pl_hom_hpc()))
 
     nest.message(M_INFO, 'build_network',
                  'Connecting inhibitory -> excitatory population.')
 
-    nest.Connect(I_neurons, E_neurons,
-                 {'rule': 'fixed_indegree', 'indegree': CI,
-                  'allow_autapses': False, 'allow_multapses': True},
-                 {'synapse_model': 'syn_in'})
+    nest.Connect(nest.FixedIndegree(I_neurons, E_neurons, indegree=CI, allow_autapses=False, allow_multapses=True,
+                                    syn_spec=syn_in))
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> inhibitory population.')
 
-    nest.Connect(E_neurons, I_neurons,
-                 {'rule': 'fixed_indegree', 'indegree': CE,
-                  'allow_autapses': False, 'allow_multapses': True},
-                 {'synapse_model': 'syn_ex'})
+    nest.Connect(nest.FixedIndegree(E_neurons, I_neurons, indegree=CE, allow_autapses=False, allow_multapses=True,
+                                    syn_spec=syn_ex))
 
     nest.message(M_INFO, 'build_network',
                  'Connecting inhibitory -> inhibitory population.')
 
-    nest.Connect(I_neurons, I_neurons,
-                 {'rule': 'fixed_indegree', 'indegree': CI,
-                  'allow_autapses': False, 'allow_multapses': True},
-                 {'synapse_model': 'syn_in'})
+    nest.Connect(nest.FixedIndegree(I_neurons, I_neurons, indegree=CI, allow_autapses=False, allow_multapses=True,
+                                    syn_spec=syn_in))
 
     if params['record_spikes']:
         if params['nvp'] != 1:
@@ -335,8 +340,10 @@ def build_network(logger):
             exit(1)
 
         nest.message(M_INFO, 'build_network', 'Connecting spike recorders.')
-        nest.Connect(local_neurons[:brunel_params['Nrec']], E_recorder,
-                     'all_to_all', 'static_synapse_hpc')
+        nest.Connect(nest.AllToAll(local_neurons[:brunel_params['Nrec']], E_recorder,
+                                   syn_spec=nest.synapsemodels.static_hpc()))
+
+    nest.BuildNetwork()
 
     # read out time used for building
     BuildEdgeTime = time.time() - tic
@@ -411,7 +418,7 @@ def lambertwm1(x):
     return sp.lambertw(x, k=-1 if x < 0 else 0).real
 
 
-class Logger(object):
+class Logger:
     """Logger context manager used to properly log memory and timing
     information from network simulations.
 

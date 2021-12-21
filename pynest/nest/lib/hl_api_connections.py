@@ -25,20 +25,21 @@ Functions for connection handling
 
 import numpy
 
-from ..ll_api import *
+from ..ll_api import check_stack, connect_arrays, sps, sr, spp
 from .. import pynestkernel as kernel
 
 from .hl_api_connection_helpers import (_process_input_nodes, _connect_layers_needed,
                                         _connect_spatial, _process_conn_spec,
                                         _process_spatial_projections, _process_syn_spec)
-from .hl_api_helper import *
+from .hl_api_helper import is_string
 from .hl_api_info import GetStatus
 from .hl_api_nodes import Create
 from .hl_api_parallel_computing import NumProcesses
+from .hl_api_projections import BuildNetwork
 from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
 
 __all__ = [
-    'Connect',
+    '_array_connect',
     'Disconnect',
     'GetConnections',
 ]
@@ -83,6 +84,8 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
     params = {}
 
+    BuildNetwork()
+
     if source is not None:
         if isinstance(source, NodeCollection):
             params['source'] = source
@@ -113,96 +116,27 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
 
 @check_stack
-def Connect(pre, post=None, conn_spec=None, syn_spec=None,
-            return_synapsecollection=False):
+def _array_connect(pre, post, conn_spec, syn_spec=None):
     """
-    Connect `pre` nodes to `post` nodes.
+    Connect `pre` nodes to `post` nodes with one-to-one scheme.
 
-    Nodes in `pre` and `post` are connected using the specified connectivity
-    (`all-to-all` by default) and synapse type (:cpp:class:`static_synapse <nest::static_synapse>` by default).
-    Details depend on the connectivity rule.
+    `pre` and `post` are arrays of node IDs, which might contain non-unique IDs. The
+    arrays must be of the same length. You may also specify weight, delay, and
+    receptor type for each connection as NumPy arrays in the `syn_spec` dictionary.
 
     Parameters
     ----------
-    pre : NodeCollection (or array-like object)
-        Presynaptic nodes, as object representing the IDs of the nodes
-    post : NodeCollection (or array-like object)
-        Postsynaptic nodes, as object representing the IDs of the nodes
-    conn_spec : str or dict, optional
-        Specifies connectivity rule, see below
-    syn_spec : str or dict, optional
-        Specifies synapse model, see below
-    return_synapsecollection: bool
-        Specifies whether or not we should return a :py:class:`.SynapseCollection` of pre and post connections
-
-    Raises
-    ------
-    kernel.NESTError
-
-    Notes
-    -----
-    It is possible to connect NumPy arrays of node IDs one-to-one by passing the arrays as `pre` and `post`,
-    specifying `'one_to_one'` for `conn_spec`.
-    In that case, the arrays may contain non-unique IDs.
-    You may also specify weight, delay, and receptor type for each connection as NumPy arrays in the `syn_spec`
-    dictionary.
-    This feature is currently not available when MPI is used; trying to connect arrays with more than one
-    MPI process will raise an error.
-
-    If pre and post have spatial positions, a `mask` can be specified as a dictionary. The mask define which
-    nodes are considered as potential targets for each source node. Connections with spatial nodes can also
-    use `nest.spatial_distributions` as parameters, for instance for the probability `p`.
-
-    **Connectivity specification (conn_spec)**
-
-    Available rules and associated parameters::
-
-     - 'all_to_all' (default)
-     - 'one_to_one'
-     - 'fixed_indegree', 'indegree'
-     - 'fixed_outdegree', 'outdegree'
-     - 'fixed_total_number', 'N'
-     - 'pairwise_bernoulli', 'p'
-     - 'symmetric_pairwise_bernoulli', 'p'
-
-    See :ref:`conn_rules` for more details, including example usage.
-
-    **Synapse specification (syn_spec)**
-
-    The synapse model and its properties can be given either as a string
-    identifying a specific synapse model (default: :cpp:class:`static_synapse <nest::static_synapse>`) or
-    as a dictionary specifying the synapse model and its parameters.
-
-    Available keys in the synapse specification dictionary are::
-
-     - 'synapse_model'
-     - 'weight'
-     - 'delay'
-     - 'receptor_type'
-     - any parameters specific to the selected synapse model.
-
-    See :ref:`synapse_spec` for details, including example usage.
-
-    All parameters are optional and if not specified, the default values
-    of the synapse model will be used. The key 'synapse_model' identifies the
-    synapse model, this can be one of NEST's built-in synapse models
-    or a user-defined model created via :py:func:`.CopyModel`.
-
-    If `synapse_model` is not specified the default model :cpp:class:`static_synapse <nest::static_synapse>`
-    will be used.
-
-    Distributed parameters can be defined through NEST's different parametertypes. NEST has various
-    random parameters, spatial parameters and distributions (only accesseable for nodes with spatial positions),
-    logical expressions and mathematical expressions, which can be used to define node and connection parameters.
-
-    To see all available parameters, see documentation defined in distributions, logic, math,
-    random and spatial modules.
-
-    See Also
-    ---------
-    :ref:`connection_management`
+    pre: list/array/NodeCollection
+        Node IDs
+    post: list/array/NodeCollection
+        Node IDs
+    conn_spec: Dictionary
+        Connection specifications. Must contain the keyword `rule`
+    syn_spec: Dictionary (optional)
+        Synapse specifications
+        If `weight`, `delay`, or `receptor_type` is specified, they must be given as
+        single elements or as arrays with the length of pre and post.
     """
-
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
 
     # Converting conn_spec to dict, without putting it on the SLI stack.
@@ -215,9 +149,6 @@ def Connect(pre, post=None, conn_spec=None, syn_spec=None,
     # If pre and post are arrays of node IDs, and conn_spec is unspecified,
     # the node IDs are connected one-to-one.
     if use_connect_arrays:
-        if return_synapsecollection:
-            raise ValueError("SynapseCollection cannot be returned when connecting two arrays of node IDs")
-
         if processed_syn_spec is None:
             raise ValueError("When connecting two arrays of node IDs, the synapse specification dictionary must "
                              "be specified and contain at least the synapse model.")
@@ -254,38 +185,7 @@ def Connect(pre, post=None, conn_spec=None, syn_spec=None,
 
         connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
 
-        return
-
-    sps(pre)
-    sps(post)
-
-    if not isinstance(pre, NodeCollection):
-        raise TypeError("Not implemented, presynaptic nodes must be a NodeCollection")
-    if not isinstance(post, NodeCollection):
-        raise TypeError("Not implemented, postsynaptic nodes must be a NodeCollection")
-
-    # In some cases we must connect with ConnectLayers instead.
-    if _connect_layers_needed(processed_conn_spec, processed_syn_spec):
-        # Check that pre and post are layers
-        if pre.spatial is None:
-            raise TypeError("Presynaptic NodeCollection must have spatial information")
-        if post.spatial is None:
-            raise TypeError("Presynaptic NodeCollection must have spatial information")
-
-        # Create the projection dictionary
-        spatial_projections = _process_spatial_projections(
-            processed_conn_spec, processed_syn_spec)
-
-        # Connect using ConnectLayers
-        _connect_spatial(pre, post, spatial_projections)
-    else:
-        sps(processed_conn_spec)
-        if processed_syn_spec is not None:
-            sps(processed_syn_spec)
-        sr('Connect')
-
-    if return_synapsecollection:
-        return GetConnections(pre, post)
+    return use_connect_arrays
 
 
 @check_stack

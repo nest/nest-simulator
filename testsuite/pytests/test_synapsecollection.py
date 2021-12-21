@@ -45,7 +45,7 @@ class TestSynapseCollection(unittest.TestCase):
         Test simple SynapseCollection.
         """
         nrns = nest.Create('iaf_psc_alpha', 2)
-        nest.Connect(nrns, nrns)
+        nest.Connect(nest.AllToAll(nrns, nrns))
 
         get_conns = nest.GetConnections()
 
@@ -63,7 +63,7 @@ class TestSynapseCollection(unittest.TestCase):
         Test get() and set() on SynapseCollection.
         """
         nrns = nest.Create('iaf_psc_alpha', 2)
-        nest.Connect(nrns, nrns)
+        nest.Connect(nest.AllToAll(nrns, nrns))
 
         get_conns = nest.GetConnections()
 
@@ -92,7 +92,7 @@ class TestSynapseCollection(unittest.TestCase):
 
         nest.ResetKernel()
         nrns = nest.Create('iaf_psc_alpha', 2)
-        nest.Connect(nrns, nrns)
+        nest.Connect(nest.AllToAll(nrns, nrns))
 
         get_conns = nest.GetConnections()
 
@@ -105,7 +105,7 @@ class TestSynapseCollection(unittest.TestCase):
         Test get() on SynapseCollection
         """
         nrns = nest.Create('iaf_psc_alpha', 2)
-        nest.Connect(nrns, nrns)
+        nest.Connect(nest.AllToAll(nrns, nrns))
         conns = nest.GetConnections()
 
         # Key is a string
@@ -147,7 +147,7 @@ class TestSynapseCollection(unittest.TestCase):
         nest.ResetKernel()
 
         nrns = nest.Create('iaf_psc_alpha')
-        nest.Connect(nrns, nrns)
+        nest.Connect(nest.AllToAll(nrns, nrns))
         conns = nest.GetConnections()
 
         self.assertEqual(len(conns), 1)
@@ -183,8 +183,8 @@ class TestSynapseCollection(unittest.TestCase):
 
         nrns = nest.Create('iaf_psc_alpha', 4)
 
-        nest.Connect(nrns, nrns, 'one_to_one')
-        nest.Connect(nrns, nrns, 'one_to_one', {'synapse_model': 'stdp_synapse', 'alpha': 2.})
+        nest.Connect(nest.OneToOne(nrns, nrns))
+        nest.Connect(nest.OneToOne(nrns, nrns, syn_spec=nest.synapsemodels.stdp(alpha=2.)))
 
         conns = nest.GetConnections()
         alpha_ref = [None]*len(nrns) + [2.]*len(nrns)
@@ -198,7 +198,7 @@ class TestSynapseCollection(unittest.TestCase):
         """
 
         nrns = nest.Create('iaf_psc_alpha', 10)
-        nest.Connect(nrns, nrns)
+        nest.Connect(nest.AllToAll(nrns, nrns))
 
         get_conns = nest.GetConnections(nrns[3:6], nrns[2:8:2])
 
@@ -213,7 +213,7 @@ class TestSynapseCollection(unittest.TestCase):
         nest.ResetKernel()
 
         nrns = nest.Create('iaf_psc_alpha', 10)
-        nest.Connect(nrns, nrns, {'rule': 'one_to_one'})
+        nest.Connect(nest.OneToOne(nrns, nrns))
 
         get_conns = nest.GetConnections(nrns[3:6], nrns[2:8:2])
 
@@ -228,7 +228,7 @@ class TestSynapseCollection(unittest.TestCase):
         nest.ResetKernel()
 
         nrns = nest.Create('iaf_psc_alpha', 10)
-        nest.Connect(nrns[3:6], nrns[2:8:2], {'rule': 'one_to_one'})
+        nest.Connect(nest.OneToOne(nrns[3:6], nrns[2:8:2]))
 
         get_conns = nest.GetConnections(nrns[3:6], nrns[2:8:2])
 
@@ -245,14 +245,9 @@ class TestSynapseCollection(unittest.TestCase):
         Test GetConnections with synapse_model
         """
         nrns = nest.Create('iaf_psc_alpha', 10)
-        nest.Connect(nrns[:4], nrns[2:6],
-                     syn_spec={'synapse_model': 'stdp_synapse'})
-        nest.Connect(nrns[5:7], nrns[8:],
-                     conn_spec={'rule': 'one_to_one'},
-                     syn_spec={'synapse_model': 'tsodyks_synapse'})
-        nest.Connect(nrns[7:], nrns[:5],
-                     syn_spec={'synapse_model': 'stdp_triplet_synapse',
-                               'weight': 5.})
+        nest.Connect(nest.AllToAll(nrns[:4], nrns[2:6], syn_spec=nest.synapsemodels.stdp()))
+        nest.Connect(nest.OneToOne(nrns[5:7], nrns[8:], syn_spec=nest.synapsemodels.tsodyks()))
+        nest.Connect(nest.AllToAll(nrns[7:], nrns[:5], syn_spec=nest.synapsemodels.stdp_triplet(weight=5.)))
 
         get_conn_1 = nest.GetConnections(nrns, nrns,
                                          synapse_model='stdp_synapse')
@@ -294,7 +289,7 @@ class TestSynapseCollection(unittest.TestCase):
         Test get on SynapseCollection with pandas output
         """
         nrn = nest.Create('iaf_psc_alpha')
-        nest.Connect(nrn, nrn)
+        nest.Connect(nest.AllToAll(nrn, nrn))
         conns = nest.GetConnections()
 
         expected_syn_model = 'static_synapse'
@@ -325,7 +320,7 @@ class TestSynapseCollection(unittest.TestCase):
         nest.ResetKernel()
 
         nrns = nest.Create('iaf_psc_alpha', 2)
-        nest.Connect(nrns, nrns)
+        nest.Connect(nest.AllToAll(nrns, nrns))
         conns = nest.GetConnections()
 
         conns_val = conns.get(output='pandas')
@@ -368,7 +363,7 @@ class TestSynapseCollection(unittest.TestCase):
         self.assertEqual(conns.get(), ())
 
         nrns = nest.Create('iaf_psc_alpha', 2)
-        nest.Connect(nrns, nrns, 'one_to_one')
+        nest.Connect(nest.OneToOne(nrns, nrns))
         conns = nest.GetConnections()
         self.assertEqual(len(conns), 2)
 
@@ -393,8 +388,8 @@ class TestSynapseCollection(unittest.TestCase):
         s_nodes = nest.Create('iaf_psc_alpha', 2)
         t_nodes = nest.Create('iaf_psc_alpha', 3)
 
-        nest.Connect(s_nodes, t_nodes[1], syn_spec={'weight': [[1., 2.]]})
-        nest.Connect(s_nodes, t_nodes[:2], syn_spec={'synapse_model': 'stdp_synapse', 'weight': [[4., 3.], [3., 2.]]})
+        nest.Connect(nest.AllToAll(s_nodes, t_nodes[1], syn_spec=nest.synapsemodels.static(weight=[[1., 2.]])))
+        nest.Connect(nest.AllToAll(s_nodes, t_nodes[:2], syn_spec=nest.synapsemodels.stdp(weight=[[4., 3.], [3., 2.]])))
 
         conns = nest.GetConnections()
         self.assertEqual(ref_str, str(conns))

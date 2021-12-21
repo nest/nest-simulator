@@ -62,8 +62,7 @@ class RateNeuronTestCase(unittest.TestCase):
                                   'interval': self.dt, 'start': self.tstart})
 
         # record rates and noise
-        nest.Connect(
-            self.multimeter, self.rate_neuron_ipn + self.rate_neuron_opn)
+        nest.Connect(nest.AllToAll(self.multimeter, self.rate_neuron_ipn + self.rate_neuron_opn))
 
     def test_RateNeuronMean(self):
         """Check the mean value of the rate_neurons"""

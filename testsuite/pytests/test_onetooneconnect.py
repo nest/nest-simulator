@@ -39,7 +39,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
 
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
-        nest.Connect(pre, post, "one_to_one")
+        nest.Connect(nest.OneToOne(pre, post))
         connections = nest.GetConnections(pre)
         targets = connections.get("target")
         self.assertEqual(list(targets), post.tolist())
@@ -49,7 +49,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
 
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
-        nest.Connect(pre, post, "one_to_one", syn_spec={"weight": 2.0})
+        nest.Connect(nest.OneToOne(pre, post, syn_spec=nest.synapsemodels.static(weight=2.0)))
         connections = nest.GetConnections(pre)
         weights = connections.get("weight")
         self.assertEqual(weights, [2.0, 2.0])
@@ -57,8 +57,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.ResetKernel()
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
-        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
-                     syn_spec={"weight": [2.0, 3.0]})
+        nest.Connect(nest.OneToOne(pre, post, syn_spec=nest.synapsemodels.static(weight=[2.0, 3.0])))
         connections = nest.GetConnections(pre)
         weights = connections.get("weight")
         self.assertEqual(weights, [2.0, 3.0])
@@ -68,8 +67,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
 
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
-        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
-                     syn_spec={"weight": 2.0, "delay": 2.0})
+        nest.Connect(nest.OneToOne(pre, post, syn_spec=nest.synapsemodels.static(weight=2.0, delay=2.0)))
         connections = nest.GetConnections(pre)
         weights = connections.get("weight")
         delays = connections.get("delay")
@@ -79,8 +77,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.ResetKernel()
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
-        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
-                     syn_spec={"weight": [2.0, 3.0], "delay": [2.0, 3.0]})
+        nest.Connect(nest.OneToOne(pre, post, syn_spec=nest.synapsemodels.static(weight=[2.0, 3.0], delay=[2.0, 3.0])))
         connections = nest.GetConnections(pre)
         weights = connections.get("weight")
         delays = connections.get("delay")
@@ -92,10 +89,15 @@ class OneToOneConnectTestCase(unittest.TestCase):
 
         n = nest.Create('iaf_psc_alpha')
         vm = nest.Create('voltmeter')
-        sr = nest.Create('spike_recorder')
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.Connect, n, vm)
-        self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.Connect, sr, n)
+        nest.Connect(nest.OneToOne(n, vm))
+        self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.BuildNetwork)
+
+        nest.ResetKernel()
+        n = nest.Create('iaf_psc_alpha')
+        sr = nest.Create('spike_recorder')
+        nest.Connect(nest.OneToOne(sr, n))
+        self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.BuildNetwork)
 
 
 def suite():

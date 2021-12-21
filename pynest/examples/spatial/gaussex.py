@@ -42,12 +42,12 @@ pos = nest.spatial.grid(shape=[30, 30], extent=[3., 3.])
 a = nest.Create('iaf_psc_alpha', positions=pos)
 b = nest.Create('iaf_psc_alpha', positions=pos)
 
-cdict = {'rule': 'pairwise_bernoulli',
-         'p': nest.spatial_distributions.gaussian(nest.spatial.distance,
+cdict = {'p': nest.spatial_distributions.gaussian(nest.spatial.distance,
                                                   std=0.5),
          'mask': {'circular': {'radius': 3.0}}}
 
-nest.Connect(a, b, cdict)
+nest.Connect(nest.PairwiseBernoulli(a, b, p=cdict['p'], mask=cdict['mask']))
+nest.BuildNetwork()
 
 #####################################################################
 # plot targets of neurons in different grid locations

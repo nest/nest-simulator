@@ -246,10 +246,19 @@ nest::ConnBuilder::connect()
           synapse_parameter.second->reset();
         }
       }
+#pragma omp barrier
+#pragma omp single
+      {
+        std::swap( sources_, targets_ );
+      }
 
-      std::swap( sources_, targets_ );
       connect_();
-      std::swap( sources_, targets_ ); // re-establish original state
+
+#pragma omp barrier
+#pragma omp single
+      {
+        std::swap( sources_, targets_ ); // re-establish original state
+      }
     }
   }
   // check if any exceptions have been raised
@@ -1235,6 +1244,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
+  , tgt_ids_()
 {
   // check for potential errors
   long n_targets = static_cast< long >( targets_->size() );
@@ -1290,50 +1300,71 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
 void
 nest::FixedOutDegreeBuilder::connect_()
 {
-  // get global rng that is tested for synchronization for all threads
-  RngPtr grng = get_rank_synced_rng();
+  std::exception* err = nullptr;
+#pragma omp single
+  {
+    try
+    {
+      // get global rng that is tested for synchronization for all threads
+      RngPtr grng = get_rank_synced_rng();
+
+      NodeCollection::const_iterator source_it = sources_->begin();
+      for ( ; source_it < sources_->end(); ++source_it )
+      {
+        const index snode_id = ( *source_it ).node_id;
+
+        std::set< long > ch_ids;
+        const long n_rnd = targets_->size();
+
+        Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
+        const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
+
+        for ( long j = 0; j < outdegree_value; ++j )
+        {
+          unsigned long t_id;
+          index tnode_id;
+          bool skip_autapse = false;
+          bool skip_multapse = false;
+
+          do
+          {
+            t_id = grng->ulrand( n_rnd );
+            tnode_id = ( *targets_ )[ t_id ];
+            skip_autapse = not allow_autapses_ and tnode_id == snode_id;
+            skip_multapse = not allow_multapses_ and ch_ids.find( t_id ) != ch_ids.end();
+          } while ( skip_autapse or skip_multapse );
+
+          if ( not allow_multapses_ )
+          {
+            ch_ids.insert( t_id );
+          }
+
+          tgt_ids_[ snode_id ].push_back( tnode_id );
+        }
+      }
+    }
+    catch ( std::exception& serr )
+    {
+      err = &serr;
+    }
+  } // omp single
+  if ( err )
+  {
+    throw * err;
+  }
+
+  // get thread id
+  const thread tid = kernel().vp_manager.get_thread_id();
+
+  RngPtr rng = get_vp_specific_rng( tid );
 
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
     const index snode_id = ( *source_it ).node_id;
 
-    std::set< long > ch_ids;
-    std::vector< index > tgt_ids_;
-    const long n_rnd = targets_->size();
-
-    Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
-    const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
-    for ( long j = 0; j < outdegree_value; ++j )
-    {
-      unsigned long t_id;
-      index tnode_id;
-      bool skip_autapse = false;
-      bool skip_multapse = false;
-
-      do
-      {
-        t_id = grng->ulrand( n_rnd );
-        tnode_id = ( *targets_ )[ t_id ];
-        skip_autapse = not allow_autapses_ and tnode_id == snode_id;
-        skip_multapse = not allow_multapses_ and ch_ids.find( t_id ) != ch_ids.end();
-      } while ( skip_autapse or skip_multapse );
-
-      if ( not allow_multapses_ )
-      {
-        ch_ids.insert( t_id );
-      }
-
-      tgt_ids_.push_back( tnode_id );
-    }
-
-    // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
-
-    RngPtr rng = get_vp_specific_rng( tid );
-
-    std::vector< index >::const_iterator tnode_id_it = tgt_ids_.begin();
-    for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
+    std::vector< index >::const_iterator tnode_id_it = tgt_ids_[ snode_id ].begin();
+    for ( ; tnode_id_it != tgt_ids_[ snode_id ].end(); ++tnode_id_it )
     {
       Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
       if ( target->is_proxy() )
@@ -1354,6 +1385,9 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
   const std::vector< DictionaryDatum >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
   , N_( ( *conn_spec )[ names::N ] )
+  , number_of_targets_on_vp_()
+  , local_targets_()
+  , num_conns_on_vp_()
 {
 
   // check for potential errors
@@ -1386,76 +1420,93 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
 void
 nest::FixedTotalNumberBuilder::connect_()
 {
-  const int M = kernel().vp_manager.get_num_virtual_processes();
-  const long size_sources = sources_->size();
-  const long size_targets = targets_->size();
-
-  // drawing connection ids
-
-  // Compute the distribution of targets over processes using the modulo
-  // function
-  std::vector< size_t > number_of_targets_on_vp( M, 0 );
-  std::vector< index > local_targets;
-  local_targets.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
-  for ( size_t t = 0; t < targets_->size(); t++ )
+  std::exception* err = nullptr;
+#pragma omp single
   {
-    int vp = kernel().vp_manager.node_id_to_vp( ( *targets_ )[ t ] );
-    ++number_of_targets_on_vp[ vp ];
-    if ( kernel().vp_manager.is_local_vp( vp ) )
+    try
     {
-      local_targets.push_back( ( *targets_ )[ t ] );
+      const int M = kernel().vp_manager.get_num_virtual_processes();
+      const long size_targets = targets_->size();
+
+      // drawing connection ids
+
+      // Compute the distribution of targets over processes using the modulo
+      // function
+      // std::vector< size_t > number_of_targets_on_vp( M, 0 );
+      number_of_targets_on_vp_.resize( M, 0 );
+      // std::vector< index > local_targets;
+      local_targets_.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
+      for ( size_t t = 0; t < targets_->size(); t++ )
+      {
+        int vp = kernel().vp_manager.node_id_to_vp( ( *targets_ )[ t ] );
+        ++number_of_targets_on_vp_[ vp ];
+        if ( kernel().vp_manager.is_local_vp( vp ) )
+        {
+          local_targets_.push_back( ( *targets_ )[ t ] );
+        }
+      }
+
+      // We use the multinomial distribution to determine the number of
+      // connections that will be made on one virtual process, i.e. we
+      // partition the set of edges into n_vps subsets. The number of
+      // edges on one virtual process is binomially distributed with
+      // the boundary condition that the sum of all edges over virtual
+      // processes is the total number of edges.
+      // To obtain the num_conns_on_vp we adapt the gsl
+      // implementation of the multinomial distribution.
+
+      // K from gsl is equivalent to M = n_vps
+      // N is already taken from stack
+      // p[] is targets_on_vp
+      // std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
+      num_conns_on_vp_.resize( M, 0 );
+
+      // calculate exact multinomial distribution
+      // get global rng that is tested for synchronization for all threads
+      RngPtr grng = get_rank_synced_rng();
+
+      // begin code adapted from gsl 1.8 //
+      double sum_dist = 0.0; // corresponds to sum_p
+      // norm is equivalent to size_targets
+      unsigned int sum_partitions = 0; // corresponds to sum_n
+
+      binomial_distribution bino_dist;
+      for ( int k = 0; k < M; k++ )
+      {
+        // If we have distributed all connections on the previous processes we exit the loop. It is important to
+        // have this check here, as N - sum_partition is set as n value for GSL, and this must be larger than 0.
+        if ( N_ == sum_partitions )
+        {
+          break;
+        }
+        if ( number_of_targets_on_vp_[ k ] > 0 )
+        {
+          double num_local_targets = static_cast< double >( number_of_targets_on_vp_[ k ] );
+          double p_local = num_local_targets / ( size_targets - sum_dist );
+
+          binomial_distribution::param_type param( N_ - sum_partitions, p_local );
+          num_conns_on_vp_[ k ] = bino_dist( grng, param );
+        }
+
+        sum_dist += static_cast< double >( number_of_targets_on_vp_[ k ] );
+        sum_partitions += static_cast< unsigned int >( num_conns_on_vp_[ k ] );
+      }
+
+      // end code adapted from gsl 1.8
     }
-  }
-
-  // We use the multinomial distribution to determine the number of
-  // connections that will be made on one virtual process, i.e. we
-  // partition the set of edges into n_vps subsets. The number of
-  // edges on one virtual process is binomially distributed with
-  // the boundary condition that the sum of all edges over virtual
-  // processes is the total number of edges.
-  // To obtain the num_conns_on_vp we adapt the gsl
-  // implementation of the multinomial distribution.
-
-  // K from gsl is equivalent to M = n_vps
-  // N is already taken from stack
-  // p[] is targets_on_vp
-  std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
-
-  // calculate exact multinomial distribution
-  // get global rng that is tested for synchronization for all threads
-  RngPtr grng = get_rank_synced_rng();
-
-  // begin code adapted from gsl 1.8 //
-  double sum_dist = 0.0; // corresponds to sum_p
-  // norm is equivalent to size_targets
-  unsigned int sum_partitions = 0; // corresponds to sum_n
-
-  binomial_distribution bino_dist;
-  for ( int k = 0; k < M; k++ )
+    catch ( std::exception& serr )
+    {
+      err = &serr;
+    }
+  } // pragma omp single
+  if ( err )
   {
-    // If we have distributed all connections on the previous processes we exit the loop. It is important to
-    // have this check here, as N - sum_partition is set as n value for GSL, and this must be larger than 0.
-    if ( N_ == sum_partitions )
-    {
-      break;
-    }
-    if ( number_of_targets_on_vp[ k ] > 0 )
-    {
-      double num_local_targets = static_cast< double >( number_of_targets_on_vp[ k ] );
-      double p_local = num_local_targets / ( size_targets - sum_dist );
-
-      binomial_distribution::param_type param( N_ - sum_partitions, p_local );
-      num_conns_on_vp[ k ] = bino_dist( grng, param );
-    }
-
-    sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
-    sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
+    throw * err;
   }
-
-  // end code adapted from gsl 1.8
 
   // get thread id
   const thread tid = kernel().vp_manager.get_thread_id();
+  const long size_sources = sources_->size();
 
   // try
   // {
@@ -1467,10 +1518,10 @@ nest::FixedTotalNumberBuilder::connect_()
 
     // gather local target node IDs
     std::vector< index > thread_local_targets;
-    thread_local_targets.reserve( number_of_targets_on_vp[ vp_id ] );
+    thread_local_targets.reserve( number_of_targets_on_vp_[ vp_id ] );
 
-    std::vector< index >::const_iterator tnode_id_it = local_targets.begin();
-    for ( ; tnode_id_it != local_targets.end(); ++tnode_id_it )
+    std::vector< index >::const_iterator tnode_id_it = local_targets_.begin();
+    for ( ; tnode_id_it != local_targets_.end(); ++tnode_id_it )
     {
       if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == vp_id )
       {
@@ -1478,9 +1529,9 @@ nest::FixedTotalNumberBuilder::connect_()
       }
     }
 
-    assert( thread_local_targets.size() == number_of_targets_on_vp[ vp_id ] );
+    assert( thread_local_targets.size() == number_of_targets_on_vp_[ vp_id ] );
 
-    while ( num_conns_on_vp[ vp_id ] > 0 )
+    while ( num_conns_on_vp_[ vp_id ] > 0 )
     {
 
       // draw random numbers for source node from all source neurons
@@ -1501,17 +1552,10 @@ nest::FixedTotalNumberBuilder::connect_()
       if ( allow_autapses_ or snode_id != tnode_id )
       {
         single_connect_( snode_id, *target, target_thread, rng );
-        num_conns_on_vp[ vp_id ]--;
+        num_conns_on_vp_[ vp_id ]--;
       }
     }
   }
-  // }
-  // catch ( std::exception& err )
-  // {
-  //   // We must create a new exception here, err's lifetime ends at
-  //   // the end of the catch block.
-  //   exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-  // }
 }
 
 
@@ -1546,8 +1590,6 @@ nest::BernoulliBuilder::connect_()
   // get thread id
   const thread tid = kernel().vp_manager.get_thread_id();
 
-  // try
-  // {
   RngPtr rng = get_vp_specific_rng( tid );
 
   if ( loop_over_targets_() )
@@ -1585,13 +1627,6 @@ nest::BernoulliBuilder::connect_()
       inner_connect_( tid, rng, n->get_node(), tnode_id );
     }
   }
-  // }
-  // catch ( std::exception& err )
-  // {
-  //   // We must create a new exception here, err's lifetime ends at
-  //   // the end of the catch block.
-  //   exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-  // }
 }
 
 void
@@ -1662,93 +1697,81 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR so
 void
 nest::SymmetricBernoulliBuilder::connect_()
 {
-#pragma omp parallel
+  const thread tid = kernel().vp_manager.get_thread_id();
+
+  // Use RNG generating same number sequence on all threads
+  RngPtr synced_rng = get_vp_synced_rng( tid );
+
+  binomial_distribution bino_dist;
+  binomial_distribution::param_type param( sources_->size(), p_ );
+
+  unsigned long indegree;
+  index snode_id;
+  std::set< index > previous_snode_ids;
+  Node* target;
+  thread target_thread;
+  Node* source;
+  thread source_thread;
+
+  for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
-
-    // Use RNG generating same number sequence on all threads
-    RngPtr synced_rng = get_vp_synced_rng( tid );
-
-    try
+    // sample indegree according to truncated Binomial distribution
+    indegree = sources_->size();
+    while ( indegree >= sources_->size() )
     {
-      binomial_distribution bino_dist;
-      binomial_distribution::param_type param( sources_->size(), p_ );
-
-      unsigned long indegree;
-      index snode_id;
-      std::set< index > previous_snode_ids;
-      Node* target;
-      thread target_thread;
-      Node* source;
-      thread source_thread;
-
-      for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
-      {
-        // sample indegree according to truncated Binomial distribution
-        indegree = sources_->size();
-        while ( indegree >= sources_->size() )
-        {
-          indegree = bino_dist( synced_rng, param );
-        }
-        assert( indegree < sources_->size() );
-
-        target = kernel().node_manager.get_node_or_proxy( ( *tnode_id ).node_id, tid );
-        target_thread = tid;
-
-        // check whether the target is on this thread
-        if ( target->is_proxy() )
-        {
-          target_thread = invalid_thread_;
-        }
-
-        previous_snode_ids.clear();
-
-        // choose indegree number of sources randomly from all sources
-        size_t i = 0;
-        while ( i < indegree )
-        {
-          snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
-
-          // Avoid autapses and multapses. Due to symmetric connectivity,
-          // multapses might exist if the target neuron with node ID snode_id draws the
-          // source with node ID tnode_id while choosing sources itself.
-          if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
-          {
-            continue;
-          }
-          previous_snode_ids.insert( snode_id );
-
-          source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
-          source_thread = tid;
-
-          if ( source->is_proxy() )
-          {
-            source_thread = invalid_thread_;
-          }
-
-          // if target is local: connect
-          if ( target_thread == tid )
-          {
-            assert( target != NULL );
-            single_connect_( snode_id, *target, target_thread, synced_rng );
-          }
-
-          // if source is local: connect
-          if ( source_thread == tid )
-          {
-            assert( source != NULL );
-            single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
-          }
-
-          ++i;
-        }
-      }
+      indegree = bino_dist( synced_rng, param );
     }
-    catch ( std::exception& err )
+    assert( indegree < sources_->size() );
+
+    target = kernel().node_manager.get_node_or_proxy( ( *tnode_id ).node_id, tid );
+    target_thread = tid;
+
+    // check whether the target is on this thread
+    if ( target->is_proxy() )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      target_thread = invalid_thread_;
+    }
+
+    previous_snode_ids.clear();
+
+    // choose indegree number of sources randomly from all sources
+    size_t i = 0;
+    while ( i < indegree )
+    {
+      snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
+
+      // Avoid autapses and multapses. Due to symmetric connectivity,
+      // multapses might exist if the target neuron with node ID snode_id draws the
+      // source with node ID tnode_id while choosing sources itself.
+      if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
+      {
+        continue;
+      }
+      previous_snode_ids.insert( snode_id );
+
+      source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
+      source_thread = tid;
+
+      if ( source->is_proxy() )
+      {
+        source_thread = invalid_thread_;
+      }
+
+      // if target is local: connect
+      if ( target_thread == tid )
+      {
+        assert( target != NULL );
+        single_connect_( snode_id, *target, target_thread, synced_rng );
+      }
+
+      // if source is local: connect
+      if ( source_thread == tid )
+      {
+        assert( source != NULL );
+        single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
+      }
+
+      ++i;
     }
   }
 }

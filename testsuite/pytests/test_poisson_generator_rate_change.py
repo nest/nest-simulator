@@ -54,8 +54,8 @@ class TestPgRateChange(unittest.TestCase):
         parrots = nest.Create('parrot_neuron_ps', n_parrots)
         sr = nest.Create('spike_recorder',
                          params={'start': 0., 'stop': float(sim_time)})
-        nest.Connect(pg, parrots, syn_spec={'delay': resolution})
-        nest.Connect(parrots, sr, syn_spec={'delay': resolution})
+        nest.Connect(nest.AllToAll(pg, parrots, syn_spec=nest.synapsemodels.static(delay=resolution)))
+        nest.Connect(nest.AllToAll(parrots, sr, syn_spec=nest.synapsemodels.static(delay=resolution)))
 
         # First simulation
         nest.Simulate(sim_time)

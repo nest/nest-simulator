@@ -116,14 +116,11 @@ spike_det = nest.Create("spike_recorder")
 # Poisson group and the population, and also connecting spike recorder to
 # the population.
 
-nest.Connect(
-    population, population, {'rule': 'pairwise_bernoulli', 'p': p_ex},
-    syn_spec={"weight": w_ex}
-)
+nest.Connect(nest.PairwiseBernoulli(population, population, p=p_ex, syn_spec=nest.synapsemodels.static(weight=w_ex)))
 
-nest.Connect(noise, population, 'all_to_all', syn_spec={"weight": w_noise})
+nest.Connect(nest.AllToAll(noise, population, syn_spec=nest.synapsemodels.static(weight=w_noise)))
 
-nest.Connect(population, spike_det)
+nest.Connect(nest.AllToAll(population, spike_det))
 
 ###############################################################################
 # Simulation of the network.

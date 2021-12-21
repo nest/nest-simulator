@@ -26,8 +26,8 @@ Functions for simulation control
 from contextlib import contextmanager
 import warnings
 
-from ..ll_api import *
-from .hl_api_helper import *
+from ..ll_api import check_stack, sps, sr, spp
+from .hl_api_helper import is_iterable, is_literal
 from .hl_api_parallel_computing import Rank
 
 __all__ = [
@@ -59,7 +59,9 @@ def Simulate(t):
     RunManager
 
     """
+    from .hl_api_projections import BuildNetwork  # TODO: need to clean up all the imports
 
+    BuildNetwork()
     sps(float(t))
     sr('ms Simulate')
 
@@ -195,7 +197,7 @@ def ResetKernel():
 
     sr('ResetKernel')
 
-    from ..projections.hl_api_projections import projection_collection
+    from .hl_api_projections import projection_collection
     projection_collection.reset()
 
 
@@ -220,7 +222,7 @@ def SetKernelStatus(params):
     """
     # We need the nest module to be fully initialized in order to access the
     # _kernel_attr_names and _readonly_kernel_attrs. As hl_api_simulation is
-    # imported via hl_api during initialization, we can't put the import on
+    # imported during nest module initialization, we can't put the import on
     # the module level, but have to have it on the function level.
     import nest    # noqa
     raise_errors = params.get('dict_miss_is_error', nest.dict_miss_is_error)

@@ -38,8 +38,7 @@ spike = nest.Create('spike_generator', params={'spike_times':
 delays = [1., 30.]
 w = [1., 5.]
 for syn in range(2):
-    nest.Connect(spike, neuron, syn_spec={'synapse_model': 'static_synapse',
-                                          'receptor_type': 1 + syn,
-                                          'weight': w[syn],
-                                          'delay': delays[syn]})
+    nest.Connect(nest.AllToAll(spike, neuron,
+                               syn_spec=nest.synapsemodels.static(receptor_type=1 + syn,
+                                                                  weight=w[syn], delay=delays[syn])))
 nest.Simulate(100.)

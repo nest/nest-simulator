@@ -47,8 +47,9 @@ def setup(record_to, time_in_steps):
     pg = nest.Create('poisson_generator', 1, pg_params)
     sr = nest.Create('spike_recorder', 1, sr_params)
 
-    nest.Connect(pg, n, syn_spec={'weight': 10.})
-    nest.Connect(n, sr)
+    nest.Connect(nest.AllToAll(pg, n, syn_spec=nest.synapsemodels.static(weight=10.)))
+    nest.Connect(nest.AllToAll(n, sr))
+    nest.BuildNetwork()
 
     return sr
 

@@ -92,47 +92,31 @@ wr = nest.Create('weight_recorder')
 
 ##############################################################################
 # First connect Poisson generators to helper neurons
-nest.Connect(pg, pop_input, 'one_to_one', {'synapse_model': 'static_synapse',
-                                           'weight': 1.0, 'delay': delay})
+nest.Connect(nest.OneToOne(pg, pop_input, syn_spec=nest.synapsemodels.static(weight=1.0, delay=delay)))
 
 ##############################################################################
 # Create all the connections
 
-nest.CopyModel('clopath_synapse', 'clopath_input_to_exc',
-               {'Wmax': 3.0})
-conn_dict_input_to_exc = {'rule': 'all_to_all'}
-syn_dict_input_to_exc = {'synapse_model': 'clopath_input_to_exc',
-                         'weight': nest.random.uniform(0.5, 2.0),
-                         'delay': delay}
-nest.Connect(pop_input, pop_exc, conn_dict_input_to_exc,
-             syn_dict_input_to_exc)
+syn_dict_input_to_exc = nest.synapsemodels.clopath(weight=nest.random.uniform(0.5, 2.0), delay=delay, Wmax=3.0)
+nest.Connect(nest.AllToAll(pop_input, pop_exc, syn_spec=syn_dict_input_to_exc))
 
 # Create input->inh connections
-conn_dict_input_to_inh = {'rule': 'all_to_all'}
-syn_dict_input_to_inh = {'synapse_model': 'static_synapse',
-                         'weight': nest.random.uniform(0.0, 0.5),
-                         'delay': delay}
-nest.Connect(pop_input, pop_inh, conn_dict_input_to_inh, syn_dict_input_to_inh)
+syn_dict_input_to_inh = nest.synapsemodels.static(weight=nest.random.uniform(0.0, 0.5), delay=delay)
+nest.Connect(nest.AllToAll(pop_input, pop_inh, syn_spec=syn_dict_input_to_inh))
 
 # Create exc->exc connections
-nest.CopyModel('clopath_synapse', 'clopath_exc_to_exc',
-               {'Wmax': 0.75, 'weight_recorder': wr})
-syn_dict_exc_to_exc = {'synapse_model': 'clopath_exc_to_exc', 'weight': 0.25,
-                       'delay': delay}
-conn_dict_exc_to_exc = {'rule': 'all_to_all', 'allow_autapses': False}
-nest.Connect(pop_exc, pop_exc, conn_dict_exc_to_exc, syn_dict_exc_to_exc)
+clopath_exc_to_exc = nest.CopyModel('clopath_synapse', Wmax=0.75, weight_recorder=wr, weight=0.25, delay=delay)
+nest.Connect(nest.AllToAll(pop_exc, pop_exc, allow_autapses=False, syn_spec=clopath_exc_to_exc))
 
 # Create exc->inh connections
-syn_dict_exc_to_inh = {'synapse_model': 'static_synapse',
-                       'weight': 1.0, 'delay': delay}
-conn_dict_exc_to_inh = {'rule': 'fixed_indegree', 'indegree': 8}
-nest.Connect(pop_exc, pop_inh, conn_dict_exc_to_inh, syn_dict_exc_to_inh)
+syn_dict_exc_to_inh = nest.synapsemodels.static(weight=1.0, delay=delay)
+nest.Connect(nest.FixedIndegree(pop_exc, pop_inh, indegree=8, syn_spec=syn_dict_exc_to_inh))
 
 # Create inh->exc connections
-syn_dict_inh_to_exc = {'synapse_model': 'static_synapse',
-                       'weight': 1.0, 'delay': delay}
-conn_dict_inh_to_exc = {'rule': 'fixed_outdegree', 'outdegree': 6}
-nest.Connect(pop_inh, pop_exc, conn_dict_inh_to_exc, syn_dict_inh_to_exc)
+syn_dict_inh_to_exc = nest.synapsemodels.static(weight=1.0, delay=delay)
+nest.Connect(nest.FixedOutdegree(pop_inh, pop_exc, outdegree=6, syn_spec=syn_dict_inh_to_exc))
+
+nest.BuildNetwork()
 
 ##############################################################################
 # Randomize the initial membrane potential

@@ -105,11 +105,7 @@ public:
   void connect( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
   template < int D >
-  void create_pool( Layer< D >& source,
-    NodeCollectionPTR source_nc,
-    Layer< D >& target,
-    NodeCollectionPTR target_nc,
-    bool on_target = false );
+  void create_pool( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, bool on_target = false );
 
 private:
   class PoolWrapperBase_

@@ -200,9 +200,10 @@ class TestRefractoryCase(unittest.TestCase):
                 nest.SetStatus(cg, "amplitude", 15000.)
 
             # Connect them and simulate
-            nest.Connect(vm, neuron)
-            nest.Connect(cg, neuron, syn_spec=add_connect_param.get(model, {}))
-            nest.Connect(neuron, sr)
+            nest.Connect(nest.AllToAll(vm, neuron))
+            nest.Connect(nest.AllToAll(cg, neuron,
+                                       syn_spec=nest.synapsemodels.static(**add_connect_param.get(model, {}))))
+            nest.Connect(nest.AllToAll(neuron, sr))
 
             nest.Simulate(simtime)
 

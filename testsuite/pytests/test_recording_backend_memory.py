@@ -40,7 +40,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
 
         mm = nest.Create("multimeter", params={"record_to": "memory"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})
-        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+        nest.Connect(nest.AllToAll(mm, nest.Create("iaf_psc_alpha")))
 
         nest.Simulate(15)
         self.assertEqual(mm.get("n_events"), 140)
@@ -57,7 +57,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
 
         mm = nest.Create("multimeter", params={"record_to": "memory"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})
-        nest.Connect(mm, nest.Create("iaf_psc_alpha", 2))
+        nest.Connect(nest.AllToAll(mm, nest.Create("iaf_psc_alpha", 2)))
 
         nest.Simulate(15)
         self.assertEqual(mm.get("n_events"), 280)
@@ -74,7 +74,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
 
         mm = nest.Create("multimeter", params={"record_to": "memory"})
         mm.set({"interval": 0.1, "record_from": ["V_m"]})
-        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+        nest.Connect(nest.AllToAll(mm, nest.Create("iaf_psc_alpha")))
 
         nest.Simulate(15)
 

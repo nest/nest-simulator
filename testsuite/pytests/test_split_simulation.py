@@ -36,7 +36,8 @@ class TestSplit(unittest.TestCase):
             nest.ResetKernel()
             n1 = nest.Create("iaf_psc_alpha", params={"I_e": 376.0})
             self.spike = nest.Create('spike_recorder')
-            nest.Connect(n1, self.spike)
+            nest.Connect(nest.AllToAll(n1, self.spike))
+            nest.BuildNetwork()
             f(self)
             events = self.spike.events
             return list(zip(events['senders'], events['times']))

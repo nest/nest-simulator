@@ -21,7 +21,7 @@
 
 # This script performs a static code analysis and can be used to verify
 # if a source file fulfills the NEST coding style guidelines.
-# Run ./extras/check_code_style.sh --help for more detailed information.
+# Run ./build_support/check_code_style.sh --help for more detailed information.
 
 # Set default parameters.
 unset FILE_TO_BE_CHECKED
@@ -74,7 +74,7 @@ usage() {
 
 print_usage() {
     cat <<EOF
-Usage: ./extras/check_code_style.sh [options ...]
+Usage: ./build_support/check_code_style.sh [options ...]
 
 This script processes C/C++ and Python source code files to verify compliance with the NEST
 coding  style  guidelines.  The  checks are performed the same way as in the NEST CI
@@ -84,7 +84,7 @@ the changed files in the commit range '<git-sha-start>..<git-sha-end>'. By defau
 
 The script expects to be run from the base directory of the NEST sources,
 i.e. all executions should start like:
-    ./extras/check_code_style.sh ...
+    ./build_support/check_code_style.sh ...
 
 The setup of the tooling is explained here:
     https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html
@@ -283,7 +283,7 @@ fi
 
 # Verify the pycodestyle installation.
 if $PERFORM_PEP8; then
-  $PEP8 --ignore=$PYCODESTYLE_IGNORES ./extras/parse_build_log.py || error_exit "Failed to verify the pycodestyle installation. Executable: $PEP8"
+  $PEP8 --ignore=$PYCODESTYLE_IGNORES ./build_support/parse_build_log.py || error_exit "Failed to verify the pycodestyle installation. Executable: $PEP8"
 fi
 
 # Extracting changed files between two commits.
@@ -299,8 +299,8 @@ if [ -z "$file_names" ]; then
   exit 0
 fi
 
-if [ ! -x ./extras/static_code_analysis.sh ]; then
-  sudo chmod +x ./extras/static_code_analysis.sh
+if [ ! -x ./build_support/static_code_analysis.sh ]; then
+  sudo chmod +x ./build_support/static_code_analysis.sh
 fi
 
 
@@ -312,7 +312,7 @@ IGNORE_MSG_CPPCHECK=false      # the CI build environment.
 IGNORE_MSG_CLANG_FORMAT=false
 IGNORE_MSG_PYCODESTYLE=false
 
-./extras/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
+./build_support/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
 "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
 "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
 "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" \

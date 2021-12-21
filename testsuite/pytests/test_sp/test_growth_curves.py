@@ -31,7 +31,7 @@ import sys
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
-class SynapticElementIntegrator(object):
+class SynapticElementIntegrator:
     """
     Generic class which describes how to compute the number of
     Synaptic Element based on Ca value
@@ -291,10 +291,11 @@ class TestGrowthCurve(unittest.TestCase):
         # build
         self.pop = nest.Create('iaf_psc_alpha', 10)
         self.spike_recorder = nest.Create('spike_recorder')
-        nest.Connect(self.pop, self.spike_recorder, 'all_to_all')
+        nest.Connect(nest.AllToAll(self.pop, self.spike_recorder))
         noise = nest.Create('poisson_generator')
         nest.SetStatus(noise, {"rate": 800000.0})
-        nest.Connect(noise, self.pop, 'all_to_all')
+        nest.Connect(nest.AllToAll(noise, self.pop))
+        nest.BuildNetwork()
 
     def simulate(self):
         self.sim_steps = numpy.arange(0, self.sim_time, self.sim_step)

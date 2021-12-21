@@ -104,13 +104,6 @@ public:
     const std::vector< DictionaryDatum >& syn_specs );
 
   /**
-   * Create connections.
-   */
-  void connect( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
-
-  void connect( TokenArray, TokenArray, const DictionaryDatum& );
-
-  /**
    * Connect two nodes. The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.

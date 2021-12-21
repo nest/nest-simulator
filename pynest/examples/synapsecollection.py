@@ -70,7 +70,7 @@ nest.ResetKernel()
 
 nrns = nest.Create('iaf_psc_alpha', 10)
 
-nest.Connect(nrns, nrns, 'one_to_one')
+nest.Connect(nest.OneToOne(nrns, nrns))
 conns = nest.GetConnections(nrns, nrns)  # This returns a SynapseCollection
 # We can get desired information of the SynapseCollection with simple get() call.
 g = conns.get(['source', 'target', 'weight'])
@@ -100,7 +100,7 @@ nest.ResetKernel()
 
 pre = nest.Create('iaf_psc_alpha', 10)
 post = nest.Create('iaf_psc_delta', 5)
-nest.Connect(pre, post, syn_spec={'weight': nest.random.uniform(min=0.5, max=4.5)})
+nest.Connect(nest.AllToAll(pre, post, syn_spec=nest.synapsemodels.static(weight=nest.random.uniform(min=0.5, max=4.5))))
 
 # Get a SynapseCollection with all connections
 conns = nest.GetConnections()
@@ -119,20 +119,14 @@ different SynapseCollections by calling GetConnections with different inputs.
 nest.ResetKernel()
 
 nrns = nest.Create('iaf_psc_alpha', 15)
-nest.Connect(nrns[:5], nrns[:5],
-             'one_to_one',
-             {'synapse_model': 'stdp_synapse', 'weight': nest.random.normal(mean=5.0, std=2.0)})
-nest.Connect(nrns[:10], nrns[5:12],
-             {'rule': 'pairwise_bernoulli', 'p': 0.4},
-             {'weight': 4.0})
-nest.Connect(nrns[5:10], nrns[:5],
-             {'rule': 'fixed_total_number', 'N': 5},
-             {'weight': 3.0})
-nest.Connect(nrns[10:], nrns[:12],
-             'all_to_all',
-             {'synapse_model': 'stdp_synapse', 'weight': nest.random.uniform(min=1., max=5.)})
-nest.Connect(nrns, nrns[12:],
-             {'rule': 'fixed_indegree', 'indegree': 3})
+
+nest.Connect(nest.OneToOne(nrns[:5], nrns[:5],
+                           syn_spec=nest.synapsemodels.stdp(weight=nest.random.normal(mean=5.0, std=2.0))))
+nest.Connect(nest.PairwiseBernoulli(nrns[:10], nrns[5:12], p=0.4, syn_spec=nest.synapsemodels.static(weight=4.0)))
+nest.Connect(nest.FixedTotalNumber(nrns[5:10], nrns[:5], N=5, syn_spec=nest.synapsemodels.static(weight=3.0)))
+nest.Connect(nest.AllToAll(nrns[10:], nrns[:12],
+                           syn_spec=nest.synapsemodels.stdp(weight=nest.random.uniform(min=1., max=5.))))
+nest.Connect(nest.FixedIndegree(nrns, nrns[12:], indegree=3))
 
 # First get a SynapseCollection consisting of all the connections
 conns = nest.GetConnections()

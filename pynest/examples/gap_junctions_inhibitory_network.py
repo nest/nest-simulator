@@ -94,34 +94,25 @@ pg = nest.Create("poisson_generator", params={'rate': 500.0})
 # with synaptic weight ``j_exc = 300.0`` pA and the same delay.
 # The desired connections are created with the following commands:
 
-conn_dict = {'rule': 'fixed_indegree',
-             'indegree': inh_per_neuron,
-             'allow_autapses': False,
-             'allow_multapses': True}
+syn_spec = nest.synapsemodels.static(weight=j_inh, delay=delay)
 
-syn_dict = {'synapse_model': 'static_synapse',
-            'weight': j_inh,
-            'delay': delay}
+nest.Connect(nest.FixedIndegree(neurons, neurons, indegree=inh_per_neuron, allow_autapses=False, allow_multapses=True,
+                                syn_spec=syn_spec))
 
-nest.Connect(neurons, neurons, conn_dict, syn_dict)
-
-nest.Connect(pg, neurons, 'all_to_all',
-             syn_spec={'synapse_model': 'static_synapse',
-                       'weight': j_exc,
-                       'delay': delay})
+nest.Connect(nest.AllToAll(pg, neurons, syn_spec=nest.synapsemodels.static(weight=j_exc, delay=delay)))
 
 ###############################################################################
 # Then the neurons are connected to the ``spike_recorder`` and the initial
 # membrane potential of each neuron is set randomly between -40 and -80 mV.
 
-nest.Connect(neurons, sr)
+nest.Connect(nest.AllToAll(neurons, sr))
 
 neurons.V_m = nest.random.uniform(min=-80., max=-40.)
 
 #######################################################################################
 # Finally gap junctions are added to the network. :math:`(60*500)/2` ``gap_junction``
 # connections are added randomly resulting in an average of 60 gap-junction
-# connections per neuron. We must not use the ``fixed_indegree`` oder
+# connections per neuron. We must not use the ``fixed_indegree`` or the
 # ``fixed_outdegree`` functionality of ``nest.Connect()`` to create the
 # connections, as ``gap_junction`` connections are bidirectional connections
 # and we need to make sure that the same neurons are connected in both ways.
@@ -134,10 +125,10 @@ neuron_list = neurons.tolist()
 connections = numpy.random.choice(neuron_list, [n_connection, 2])
 
 for source_node_id, target_node_id in connections:
-    nest.Connect(nest.NodeCollection([source_node_id]),
-                 nest.NodeCollection([target_node_id]),
-                 {'rule': 'one_to_one', 'make_symmetric': True},
-                 {'synapse_model': 'gap_junction', 'weight': gap_weight})
+    nest.Connect(nest.OneToOne(nest.NodeCollection([source_node_id]),
+                               nest.NodeCollection([target_node_id]),
+                               make_symmetric=True,
+                               syn_spec=nest.synapsemodels.gap_junction(weight=gap_weight)))
 
 ###############################################################################
 # In the end we start the simulation and plot the spike pattern.

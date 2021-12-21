@@ -27,7 +27,7 @@ Connect function.
 import copy
 import numpy as np
 
-from ..ll_api import *
+from ..ll_api import sps, sr, spp
 from .. import pynestkernel as kernel
 from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
 from .hl_api_exceptions import NESTErrors
@@ -141,7 +141,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
     elif isinstance(syn_spec, CollocatedSynapses):
         return syn_spec
 
-    raise TypeError("syn_spec must be a string or dict")
+    raise TypeError("syn_spec must be a subclass of SynapseModel")
 
 
 def _process_spatial_projections(conn_spec, syn_spec):
@@ -244,12 +244,8 @@ def _process_input_nodes(pre, post, conn_spec):
     """
     Check the properties of `pre` and `post` nodes:
 
-    * If `conn_spec` is 'one_to_one', no uniqueness check is performed; the
-      "regular" one-to-one connect is used if both inputs are NodeCollection,
-      "connect_arrays" is used otherwise.
-    * If both `pre` and `post` are NodeCollections or can be converted to
-      NodeCollections (i.e. contain unique IDs), then proceed to "regular"
-      connect (potentially after conversion to NodeCollection).
+    * If `conn_spec` is not 'one_to_one', an error is raised as we "connect_arrays"
+      use `one_to_one` connection.
     * If both `pre` and `post` are arrays and contain non-unique items, then
       we proceed to "connect_arrays".
     * If at least one of them has non-unique items and they have different
@@ -257,49 +253,34 @@ def _process_input_nodes(pre, post, conn_spec):
     """
     use_connect_arrays = False
 
-    # check for 'one_to_one' conn_spec
-    one_to_one_cspec = (conn_spec if not isinstance(conn_spec, dict)
-                        else conn_spec.get('rule', 'all_to_all') == 'one_to_one')
+    # check for 'array_connect' conn_spec
+    one_to_one_cspec = conn_spec.get('rule') == 'one_to_one'
 
     # check and convert input types
-    pre_is_nc, post_is_nc = True, True
+    if isinstance(pre, NodeCollection) and isinstance(post, NodeCollection):
+        return
 
-    if not isinstance(pre, NodeCollection):
-        # skip uniqueness check for connect_arrays compatible `conn_spec`
-        if not one_to_one_cspec and len(set(pre)) == len(pre):
-            pre = NodeCollection(pre)
-        else:
-            pre_is_nc = False
+    if len(pre) != len(post):
+        raise NESTErrors.ArgumentType(
+            "Connect",
+            "If `pre` or `post` contain non-unique IDs, then they must have the same length.")
 
-    if not isinstance(post, NodeCollection):
-        # skip uniqueness check for connect_arrays compatible `conn_spec`
-        if not one_to_one_cspec and len(set(post)) == len(post):
-            post = NodeCollection(post)
-        else:
-            post_is_nc = False
+    # convert to arrays
+    pre = np.asarray(pre)
+    post = np.asarray(post)
 
-    if not pre_is_nc or not post_is_nc:
-        if len(pre) != len(post):
-            raise NESTErrors.ArgumentType(
-                "Connect",
-                "If `pre` or `post` contain non-unique IDs, then they must have the same length.")
+    # check array type
+    if not issubclass(pre.dtype.type, (int, np.integer)):
+        raise NESTErrors.ArgumentType("Connect", " `pre` IDs should be integers.")
 
-        # convert to arrays
-        pre = np.asarray(pre)
-        post = np.asarray(post)
+    if not issubclass(post.dtype.type, (int, np.integer)):
+        raise NESTErrors.ArgumentType("Connect", " `post` IDs should be integers.")
 
-        # check array type
-        if not issubclass(pre.dtype.type, (int, np.integer)):
-            raise NESTErrors.ArgumentType("Connect", " `pre` IDs should be integers.")
+    # check dimension
+    if not (pre.ndim == 1 and post.ndim == 1):
+        raise ValueError("Sources and targets must be 1-dimensional arrays")
 
-        if not issubclass(post.dtype.type, (int, np.integer)):
-            raise NESTErrors.ArgumentType("Connect", " `post` IDs should be integers.")
-
-        # check dimension
-        if not (pre.ndim == 1 and post.ndim == 1):
-            raise ValueError("Sources and targets must be 1-dimensional arrays")
-
-        use_connect_arrays = True
+    use_connect_arrays = True
 
     if use_connect_arrays and not one_to_one_cspec:
         raise ValueError("When connecting two arrays with non-unique IDs, `conn_spec` must be 'one_to_one'.")

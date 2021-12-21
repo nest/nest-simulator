@@ -56,7 +56,7 @@ models
 {
   dup == 
   { Create dup Connect } fail_or_die
-  4 npop  % remove debris after failed test
+  pop  % remove debris after failed test
 } forall
 
 { count 0 eq } assert_or_die  % check for empty stack

@@ -49,9 +49,6 @@ class Tsodyks2SynapseTest(unittest.TestCase):
         }
 
     def test_tsodyk2_synapse(self):
-        synapse_model = "tsodyks2_synapse_rec"
-        self.synapse_parameters["synapse_model"] = synapse_model
-
         pre_spikes, weight_by_nest = self.do_the_nest_simulation()
         weight_reproduced_independently = self.reproduce_weight_drift(
             pre_spikes,
@@ -83,16 +80,13 @@ class Tsodyks2SynapseTest(unittest.TestCase):
 
         spike_recorder = nest.Create("spike_recorder")
 
-        nest.Connect(presynaptic_generator, presynaptic_neuron,
-                     syn_spec={"synapse_model": "static_synapse"})
-        nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_recorder,
-                     syn_spec={"synapse_model": "static_synapse"})
+        nest.Connect(nest.AllToAll(presynaptic_generator, presynaptic_neuron))
+        nest.Connect(nest.AllToAll(presynaptic_neuron + postsynaptic_neuron, spike_recorder))
         # The synapse of interest itself
         wr = nest.Create("weight_recorder")
-        nest.CopyModel("tsodyks2_synapse", "tsodyks2_synapse_rec",
-                       {"weight_recorder": wr})
-        nest.Connect(presynaptic_neuron, postsynaptic_neuron,
-                     syn_spec=self.synapse_parameters)
+        tsodyks2_synapse_rec = nest.CopyModel("tsodyks2_synapse", weight_recorder=wr)
+        tsodyks2_synapse_rec.specs = self.synapse_parameters
+        nest.Connect(nest.AllToAll(presynaptic_neuron, postsynaptic_neuron, syn_spec=tsodyks2_synapse_rec))
 
         nest.Simulate(self.simulation_duration)
 

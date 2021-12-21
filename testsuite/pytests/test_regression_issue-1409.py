@@ -48,7 +48,7 @@ class MultiplePoissonGeneratorsTestCase(unittest.TestCase):
             poisson_generator = nest.Create('poisson_generator', num_pg)
             poisson_generator.rate = 2000.
 
-            nest.Connect(poisson_generator, parrots, 'all_to_all')
+            nest.Connect(nest.AllToAll(poisson_generator, parrots))
 
             nest.Simulate(time_simulation)
             num_spikes.append(nest.local_spike_counter)

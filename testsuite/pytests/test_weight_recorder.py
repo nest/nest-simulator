@@ -56,16 +56,14 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.local_num_threads = 1
 
         wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        stdp_syn = nest.CopyModel("stdp_synapse", weight_recorder=wr, weight=1.)
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10., 15., 55., 70.]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
-        nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
-        nest.Connect(sg, pre)
+        nest.Connect(nest.AllToAll(pre, post, syn_spec=stdp_syn))
+        nest.Connect(nest.AllToAll(sg, pre))
 
         connections = nest.GetConnections(pre, post)
 
@@ -86,16 +84,14 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.local_num_threads = 2
 
         wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        stdp_syn = nest.CopyModel("stdp_synapse", weight_recorder=wr, weight=1.)
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10., 15., 55., 70.]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
-        nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
-        nest.Connect(sg, pre)
+        nest.Connect(nest.AllToAll(pre, post, syn_spec=stdp_syn))
+        nest.Connect(nest.AllToAll(sg, pre))
 
         connections = nest.GetConnections(pre, post)
 
@@ -116,16 +112,16 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.local_num_threads = 1
 
         wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        stdp_syn = nest.CopyModel("stdp_synapse", weight_recorder=wr, weight=1.)
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10., 15., 55., 70.]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
-        nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
-        nest.Connect(sg, pre)
+        nest.Connect(nest.AllToAll(pre, post, syn_spec=stdp_syn))
+        nest.Connect(nest.AllToAll(sg, pre))
+
+        nest.BuildNetwork()
 
         nest.SetStatus(wr, {"senders": pre[:3]})
         connections = nest.GetConnections(pre[:3], post)
@@ -147,16 +143,16 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.local_num_threads = 1
 
         wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        stdp_syn = nest.CopyModel("stdp_synapse", weight_recorder=wr, weight=1.)
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10., 15., 55., 70.]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
-        nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
-        nest.Connect(sg, pre)
+        nest.Connect(nest.AllToAll(pre, post, syn_spec=stdp_syn))
+        nest.Connect(nest.AllToAll(sg, pre))
+
+        nest.BuildNetwork()
 
         nest.SetStatus(wr, {"targets": post[:3]})
         connections = nest.GetConnections(pre, post[:3])
@@ -178,16 +174,16 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.local_num_threads = 1
 
         wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        stdp_syn = nest.CopyModel("stdp_synapse", weight_recorder=wr, weight=1.)
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator",  params={"spike_times": [10., 15., 55., 70.]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
-        nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
-        nest.Connect(sg, pre)
+        nest.Connect(nest.AllToAll(pre, post, syn_spec=stdp_syn))
+        nest.Connect(nest.AllToAll(sg, pre))
+
+        nest.BuildNetwork()
 
         nest.SetStatus(wr, {"senders": pre[1:3], "targets": post[:3]})
 
@@ -213,17 +209,15 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.local_num_threads = 2
 
         wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        stdp_syn = nest.CopyModel("stdp_synapse", weight_recorder=wr, weight=1.)
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10., 15., 55., 70.]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
-        nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
-        nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
-        nest.Connect(sg, pre)
+        nest.Connect(nest.OneToOne(pre, post, syn_spec=stdp_syn))
+        nest.Connect(nest.OneToOne(pre, post, syn_spec=stdp_syn))
+        nest.Connect(nest.AllToAll(sg, pre))
 
         # simulate before GetConnections
         # as order of connections changes at beginning of simulation (sorting)
@@ -261,25 +255,19 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         wr = nest.Create('weight_recorder')
 
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec_0",
-                       {"weight_recorder": wr, "weight": 1.,
-                        "receptor_type": 1})
+        stdp_syn_0 = nest.CopyModel("stdp_synapse", weight_recorder=wr, weight=1., receptor_type=1)
+        stdp_syn_1 = nest.CopyModel("stdp_synapse", weight_recorder=wr, weight=1., receptor_type=2)
 
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec_1",
-                       {"weight_recorder": wr, "weight": 1.,
-                        "receptor_type": 2})
-
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10., 15., 55., 70.]})
 
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("aeif_cond_alpha_multisynapse", 5,
                            {"V_th": -69.9, 'tau_syn': [20., 30.],
                             'E_rev': [0., 0.]})
 
-        nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec_0")
-        nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec_1")
-        nest.Connect(sg, pre)
+        nest.Connect(nest.OneToOne(pre, post, syn_spec=stdp_syn_0))
+        nest.Connect(nest.OneToOne(pre, post, syn_spec=stdp_syn_1))
+        nest.Connect(nest.AllToAll(sg, pre))
 
         connections = nest.GetConnections(pre, post)
         receptors = connections.get("receptor")

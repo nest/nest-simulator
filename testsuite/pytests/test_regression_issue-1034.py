@@ -30,7 +30,7 @@ import scipy.stats
 import unittest
 
 
-class PostTraceTester(object):
+class PostTraceTester:
     '''Test that postsynaptic trace values returned from NEST are consistent
     with reference values generated in Python.
 
@@ -62,8 +62,8 @@ class PostTraceTester(object):
         nest.resolution = self.resolution_
 
         wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        stdp_synapse_rec = nest.CopyModel("stdp_synapse", weight_recorder=wr, weight=1.,
+                                          receptor_type=1, delay=self.delay_)
 
         # create spike_generators with these times
         pre_sg_ps = nest.Create("spike_generator",
@@ -78,27 +78,21 @@ class PostTraceTester(object):
         post_parrot_ps = nest.Create("parrot_neuron_ps",
                                      params={"tau_minus": self.tau_minus_})
 
-        nest.Connect(pre_sg_ps, pre_parrot_ps,
-                     syn_spec={"delay": self.delay_})
-        nest.Connect(post_sg_ps, post_parrot_ps,
-                     syn_spec={"delay": self.delay_})
+        nest.Connect(nest.AllToAll(pre_sg_ps, pre_parrot_ps, syn_spec=nest.synapsemodels.static(delay=self.delay_)))
+        nest.Connect(nest.AllToAll(post_sg_ps, post_parrot_ps, syn_spec=nest.synapsemodels.static(delay=self.delay_)))
 
         # create spike recorder --- debugging only
         spikes = nest.Create("spike_recorder")
-        nest.Connect(pre_parrot_ps + post_parrot_ps, spikes)
+        nest.Connect(nest.AllToAll(pre_parrot_ps + post_parrot_ps, spikes))
 
         # connect both parrot neurons with a stdp synapse onto port 1
         # thereby spikes transmitted through the stdp connection are
         # not repeated postsynaptically.
-        nest.Connect(
-            pre_parrot_ps, post_parrot_ps,
-            syn_spec={'synapse_model': 'stdp_synapse_rec',
-                      'receptor_type': 1,
-                      'delay': self.delay_})
+        nest.Connect(nest.AllToAll(pre_parrot_ps, post_parrot_ps, syn_spec=stdp_synapse_rec))
+        nest.BuildNetwork()
 
         # get STDP synapse
-        syn_ps = nest.GetConnections(source=pre_parrot_ps,
-                                     synapse_model="stdp_synapse_rec")
+        syn_ps = nest.GetConnections(source=pre_parrot_ps, synapse_model=stdp_synapse_rec.synapse_model)
 
         print("[py] Total simulation time: " + str(self.sim_time_) + " ms")
         n_steps = int(np.ceil(self.sim_time_ / self.delay_))

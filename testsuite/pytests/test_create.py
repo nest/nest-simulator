@@ -87,7 +87,7 @@ class CreateTestCase(unittest.TestCase):
     def test_CopyModel(self):
         """CopyModel"""
 
-        nest.CopyModel('iaf_psc_alpha', 'new_neuron', {'V_m': 10.0})
+        nest.CopyModel('iaf_psc_alpha', 'new_neuron', V_m=10.0)
         vm = nest.GetDefaults('new_neuron')['V_m']
         self.assertEqual(vm, 10.0)
 
@@ -95,9 +95,10 @@ class CreateTestCase(unittest.TestCase):
         vm = nest.GetStatus(n[0])[0]['V_m']
         self.assertEqual(vm, 10.0)
 
-        nest.CopyModel('static_synapse', 'new_synapse', {'weight': 10.})
-        nest.Connect(n[0], n[1], syn_spec='new_synapse')
-        w = nest.GetDefaults('new_synapse')['weight']
+        new_syn = nest.CopyModel('static_synapse', weight=10.)
+        nest.Connect(nest.AllToAll(n[0], n[1], syn_spec=new_syn))
+        nest.BuildNetwork()
+        w = nest.GetDefaults(new_syn.synapse_model)['weight']
         self.assertEqual(w, 10.0)
 
         self.assertRaisesRegex(

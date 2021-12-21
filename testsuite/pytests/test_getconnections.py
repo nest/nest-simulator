@@ -39,7 +39,7 @@ class GetConnectionsTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         a = nest.Create("iaf_psc_alpha", 3)
-        nest.Connect(a, a)
+        nest.Connect(nest.AllToAll(a, a))
         c1 = nest.GetConnections(a)
         c2 = nest.GetConnections(a, synapse_model="static_synapse")
         self.assertEqual(c1, c2)
@@ -73,7 +73,8 @@ class GetConnectionsTestCase(unittest.TestCase):
             alpha = nest.Create('iaf_psc_alpha')
             try:
                 other = nest.Create(model)
-                nest.Connect(alpha, other)
+                nest.Connect(nest.AllToAll(alpha, other))
+                nest.BuildNetwork()
             except nest.kernel.NESTError:
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
@@ -94,7 +95,8 @@ class GetConnectionsTestCase(unittest.TestCase):
             alpha = nest.Create('iaf_psc_alpha')
             try:
                 other = nest.Create(model)
-                nest.Connect(other, alpha)
+                nest.Connect(nest.AllToAll(other, alpha))
+                nest.BuildNetwork()
             except nest.kernel.NESTError:
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
@@ -121,11 +123,13 @@ class GetConnectionsTestCase(unittest.TestCase):
             tgt = nest.Create('iaf_psc_alpha', num_tgt)
 
             # First create one connection with static_synapse
-            nest.Connect(src[0], tgt[0])
+            nest.Connect(nest.AllToAll(src[0], tgt[0]))
 
             try:
                 # Connect with specified synapse
-                nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model})
+                syn_mod = nest.synapsemodels.SynapseModel(synapse_model=synapse_model)
+                nest.Connect(nest.AllToAll(src, tgt, syn_spec=syn_mod))
+                nest.BuildNetwork()
             except nest.kernel.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue
@@ -163,11 +167,13 @@ class GetConnectionsTestCase(unittest.TestCase):
             tgt = nest.Create('iaf_psc_alpha', num_tgt)
 
             # First create one connection with static_synapse
-            nest.Connect(src[0], tgt[0])
+            nest.Connect(nest.AllToAll(src[0], tgt[0]))
 
             try:
                 # Connect with specified synapse
-                nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model, "synapse_label": label})
+                syn_mod = nest.synapsemodels.SynapseModel(synapse_model=synapse_model, synapse_label=label)
+                nest.Connect(nest.AllToAll(src, tgt, syn_spec=syn_mod))
+                nest.BuildNetwork()
             except nest.kernel.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue

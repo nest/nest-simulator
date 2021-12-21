@@ -71,37 +71,36 @@ class TestDisconnectSingle(unittest.TestCase):
                 nest.resolution = 0.1
                 nest.total_num_virtual_procs = nest.num_processes
                 neurons = nest.Create('iaf_psc_alpha', 4)
-                syn_dict = {'synapse_model': syn_model}
+                syn_spec = nest.synapsemodels.SynapseModel(synapse_model=syn_model)
 
-                nest.Connect(neurons[0], neurons[2], "one_to_one", syn_dict)
-                nest.Connect(neurons[1], neurons[3], "one_to_one", syn_dict)
+                nest.Connect(nest.OneToOne(neurons[0], neurons[2], syn_spec=syn_spec))
+                nest.Connect(nest.OneToOne(neurons[1], neurons[3], syn_spec=syn_spec))
 
                 # Delete existent connection
                 conns = nest.GetConnections(neurons[0], neurons[2], syn_model)
+
                 if test_with_mpi:
                     conns = self.comm.allgather(conns.get('source'))
                     conns = list(filter(None, conns))
                 assert len(conns) == 1
 
-                nest.Disconnect(neurons[0], neurons[2], syn_spec=syn_dict)
+                nest.Disconnect(neurons[0], neurons[2], syn_spec=syn_spec.to_dict())
 
-                conns = nest.GetConnections(
-                    neurons[0], neurons[2], syn_model)
+                conns = nest.GetConnections(neurons[0], neurons[2], syn_model)
                 if test_with_mpi:
                     conns = self.comm.allgather(conns.get('source'))
                     conns = list(filter(None, conns))
                 assert len(conns) == 0
 
                 # Assert that one cannot delete a non-existing connection
-                conns1 = nest.GetConnections(
-                    neurons[:1], neurons[1:2], syn_model)
+                conns1 = nest.GetConnections(neurons[:1], neurons[1:2], syn_model)
                 if test_with_mpi:
                     conns1 = self.comm.allgather(conns1.get('source'))
                     conns1 = list(filter(None, conns1))
                 assert len(conns1) == 0
 
                 with self.assertRaises(nest.NESTErrors.NESTError):
-                    nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
+                    nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_spec.to_dict())
 
 
 def suite():

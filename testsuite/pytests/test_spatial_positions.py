@@ -29,10 +29,10 @@ def reset():
 
 
 def connect_and_get_connections(pre, post):
-    conn_spec = {'rule': 'pairwise_bernoulli',
-                 'p': 1.0,
-                 'mask': {'circular': {'radius': 1.0}}}
-    nest.Connect(pre, post, conn_spec, {'weight': nest.spatial.distance})
+    mask = {'circular': {'radius': 1.0}}
+    projections = nest.PairwiseBernoulli(pre, post, p=1.0, mask=mask,
+                                         syn_spec=nest.synapsemodels.static(weight=nest.spatial.distance))
+    nest.Connect(projections)
     return nest.GetConnections()
 
 

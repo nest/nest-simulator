@@ -92,8 +92,8 @@ class EINetwork:
         self.neuron_model = "iaf_psc_delta"
 
         # Create synapse models so we can extract specific connection information
-        nest.CopyModel("stdp_synapse_hom", "e_syn", {"Wmax": 2 * self.JE})
-        nest.CopyModel("static_synapse", "i_syn")
+        self.e_syn = nest.CopyModel("stdp_synapse_hom", Wmax=2 * self.JE)
+        self.i_syn = nest.CopyModel("static_synapse")
 
         self.nrn_params = {"V_m": nest.random.normal(-65., 5.)}
         self.poisson_rate = 800.
@@ -110,14 +110,16 @@ class EINetwork:
         self.pg = nest.Create("poisson_generator", {"rate": self.poisson_rate})
         self.sr = nest.Create("spike_recorder")
 
-        nest.Connect(self.e_neurons, self.neurons,
-                     {"rule": "fixed_indegree", "indegree": self.indeg_e},
-                     {"synapse_model": "e_syn", "weight": self.JE})
-        nest.Connect(self.i_neurons, self.neurons,
-                     {"rule": "fixed_indegree", "indegree": self.indeg_i},
-                     {"synapse_model": "i_syn", "weight": self.JI})
-        nest.Connect(self.pg, self.neurons, "all_to_all", {"weight": self.JE})
-        nest.Connect(self.e_neurons, self.sr)
+        ex_syn = self.e_syn.clone()
+        ex_syn.specs = {"weight": self.JE}
+        in_syn = self.i_syn.clone()
+        in_syn.specs = {"weight": self.JI}
+
+        nest.Connect(nest.FixedIndegree(self.e_neurons, self.neurons, indegree=self.indeg_e, syn_spec=ex_syn))
+        nest.Connect(nest.FixedIndegree(self.i_neurons, self.neurons, indegree=self.indeg_i, syn_spec=in_syn))
+        nest.Connect(nest.AllToAll(self.pg, self.neurons, syn_spec=nest.synapsemodels.static(weight=self.JE)))
+        nest.Connect(nest.AllToAll(self.e_neurons, self.sr))
+        nest.BuildNetwork()
 
     def store(self, dump_filename):
         """
@@ -141,9 +143,9 @@ class EINetwork:
         network["e_nrns"] = self.neurons.get(["V_m"], output="pandas")
         network["i_nrns"] = self.neurons.get(["V_m"], output="pandas")
 
-        network["e_syns"] = nest.GetConnections(synapse_model="e_syn").get(
+        network["e_syns"] = nest.GetConnections(synapse_model=self.e_syn.synapse_model).get(
             ("source", "target", "weight"), output="pandas")
-        network["i_syns"] = nest.GetConnections(synapse_model="i_syn").get(
+        network["i_syns"] = nest.GetConnections(synapse_model=self.i_syn.synapse_model).get(
             ("source", "target", "weight"), output="pandas")
 
         with open(dump_filename, "wb") as f:
@@ -178,18 +180,22 @@ class EINetwork:
 
         ###############################################################################
         # Reconstruct connectivity
-        nest.Connect(network["e_syns"].source.values, network["e_syns"].target.values,
-                     "one_to_one",
-                     {"synapse_model": "e_syn", "weight": network["e_syns"].weight.values})
+        ex_syn = self.e_syn.clone()
+        ex_syn.specs = {"weight": network["e_syns"].weight.values}
+        in_syn = self.i_syn.clone()
+        in_syn.specs = {"weight": network["i_syns"].weight.values}
 
-        nest.Connect(network["i_syns"].source.values, network["i_syns"].target.values,
-                     "one_to_one",
-                     {"synapse_model": "i_syn", "weight": network["i_syns"].weight.values})
+        nest.Connect(nest.ArrayConnect(network["e_syns"].source.values,
+                                       network["e_syns"].target.values, syn_spec=ex_syn))
+        nest.Connect(nest.ArrayConnect(network["i_syns"].source.values,
+                                       network["i_syns"].target.values, syn_spec=in_syn))
 
         ###############################################################################
         # Reconnect instruments
-        nest.Connect(self.pg, self.neurons, "all_to_all", {"weight": self.JE})
-        nest.Connect(self.e_neurons, self.sr)
+        nest.Connect(nest.AllToAll(self.pg, self.neurons, syn_spec=nest.synapsemodels.static(weight=self.JE)))
+        nest.Connect(nest.AllToAll(self.e_neurons, self.sr))
+
+        nest.BuildNetwork()
 
 
 class DemoPlot:
@@ -258,7 +264,7 @@ class DemoPlot:
 
         # To save time while plotting, we extract only a subset of connections.
         # For simplicity, we just use a prime-number stepping.
-        w = nest.GetConnections(source=net.e_neurons[::41], synapse_model="e_syn").weight
+        w = nest.GetConnections(source=net.e_neurons[::41], synapse_model=net.e_syn.synapse_model).weight
         wbins = np.arange(0.7, 1.4, 0.01)
         self.weights.hist(w, bins=wbins,
                           histtype="step", density=True, label=lbl,

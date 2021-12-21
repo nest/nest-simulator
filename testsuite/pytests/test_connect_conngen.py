@@ -70,8 +70,9 @@ class ConngenTestCase(unittest.TestCase):
         # a parameter map mapping weight to position 0 in the value
         # set and delay to position 1
         params_map = {"weight": 0, "delay": 1}
-        connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
-        nest.Connect(sources, targets, connspec)
+        projection = nest.Conngen(sources, targets, cg=cg, params_map=params_map)
+        nest.Connect(projection)
+        nest.BuildNetwork()
 
         for i in range(n_neurons):
             # We expect all connections from sources to have the
@@ -102,9 +103,9 @@ class ConngenTestCase(unittest.TestCase):
         cg = csa.cset(csa.oneToOne)
 
         # Connect with a non-standard synapse model
-        connspec = {"rule": "conngen", "cg": cg}
-        synspec = {'synapse_model': synmodel, "tau_plus": tau_plus}
-        nest.Connect(sources, targets, connspec, synspec)
+        projection = nest.Conngen(sources, targets, cg=cg, syn_spec=nest.synapsemodels.stdp(tau_plus=tau_plus))
+        nest.Connect(projection)
+        nest.BuildNetwork()
 
         for i in range(n_neurons):
             # We expect all connections to have the correct targets
@@ -128,15 +129,15 @@ class ConngenTestCase(unittest.TestCase):
 
         # Create a plain connection set
         cg = csa.cset(csa.oneToOne)
-        connspec = {"rule": "conngen", "cg": cg}
-        synspec = {'synapse_model': "fantasy_synapse"}
 
         n_neurons = 4
 
         pop = nest.Create("iaf_psc_alpha", n_neurons)
+        projection = nest.Conngen(pop, pop, cg=cg,
+                                  syn_spec=nest.synapsemodels.SynapseModel(synapse_model="fantasy_synapse"))
+        nest.Connect(projection)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType",
-                               nest.Connect, pop, pop, connspec, synspec)
+        self.assertRaisesRegex(nest.kernel.NESTError, "UnknownSynapseType", nest.BuildNetwork)
 
     def test_Conngen_error_collocated_synapses(self):
         """
@@ -147,13 +148,12 @@ class ConngenTestCase(unittest.TestCase):
 
         # Create a plain connection set
         cg = csa.cset(csa.oneToOne)
-        connspec = {"rule": "conngen", "cg": cg}
-        synspec = nest.CollocatedSynapses({'weight': -2.}, {'weight': 2.})
-
+        syn_spec = nest.CollocatedSynapses({'weight': -2.}, {'weight': 2.})
         pop = nest.Create('iaf_psc_alpha', 3)
+        projection = nest.Conngen(pop, pop, cg=cg, syn_spec=syn_spec)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
-                               nest.Connect, pop, pop, connspec, synspec)
+        nest.Connect(projection)
+        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty", nest.BuildNetwork)
 
     def test_Conngen_error_weight_and_delay_in_synspec_and_conngen(self):
         """
@@ -164,24 +164,29 @@ class ConngenTestCase(unittest.TestCase):
 
         cg = csa.cset(csa.oneToOne, 10000.0, 2.0)
         params_map = {"weight": 0, "delay": 1}
-        connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
-
-        synspec_w = {'weight': 10.0}
-        synspec_d = {'delay': 10.0}
-        synspec_wd = {'weight': 10.0, 'delay': 10.0}
 
         n_neurons = 4
-
         pop = nest.Create("iaf_psc_alpha", n_neurons)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
-                               nest.Connect, pop, pop, connspec, synspec_w)
+        projection = nest.Conngen(pop, pop, cg=cg, params_map=params_map)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
-                               nest.Connect, pop, pop, connspec, synspec_d)
+        synspec_w = nest.synapsemodels.static(weight=10.0)
+        synspec_d = nest.synapsemodels.static(delay=10.0)
+        synspec_wd = nest.synapsemodels.static(weigh=10.0, delay=10.0)
 
-        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty",
-                               nest.Connect, pop, pop, connspec, synspec_wd)
+        projection.syn_spec = synspec_w
+        nest.Connect(projection)
+        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty", nest.BuildNetwork)
+        nest.reset_projection_collection()
+
+        projection.syn_spec = synspec_d
+        nest.Connect(projection)
+        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty", nest.BuildNetwork)
+        nest.reset_projection_collection()
+
+        projection.syn_spec = synspec_wd
+        nest.Connect(projection)
+        self.assertRaisesRegex(nest.kernel.NESTError, "BadProperty", nest.BuildNetwork)
 
 
 def suite():

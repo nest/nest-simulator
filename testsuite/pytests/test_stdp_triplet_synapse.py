@@ -39,7 +39,7 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         self.dendritic_delay = 1.0
         self.decay_duration = 5.0
         self.synapse_model = "stdp_triplet_synapse"
-        self.syn_spec = {
+        self.syn_spec = nest.synapsemodels.SynapseModel(**{
             "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
             # set receptor 1 postsynaptically, to not generate extra spikes
@@ -54,7 +54,7 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
             "Kplus": 0.0,
             "Kplus_triplet": 0.0,
             "Wmax": 100.0,
-        }
+        })
         self.post_neuron_params = {
             "tau_minus": 33.7,
             "tau_minus_triplet": 125.0,
@@ -64,14 +64,14 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         self.pre_neuron = nest.Create("parrot_neuron")
         self.post_neuron = nest.Create(
             "parrot_neuron", 1, params=self.post_neuron_params)
-        nest.Connect(self.pre_neuron, self.post_neuron, syn_spec=self.syn_spec)
+        nest.Connect(nest.AllToAll(self.pre_neuron, self.post_neuron, syn_spec=self.syn_spec))
 
     def generateSpikes(self, neuron, times):
         """Trigger spike to given neuron at specified times."""
         delay = 1.
         gen = nest.Create("spike_generator", 1, {
                           "spike_times": [t - delay for t in times]})
-        nest.Connect(gen, neuron, syn_spec={"delay": delay})
+        nest.Connect(nest.AllToAll(gen, neuron, syn_spec=nest.synapsemodels.static(delay=delay)))
 
     def status(self, which):
         """Get synapse parameter status."""
@@ -81,8 +81,8 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
 
     def decay(self, time, Kplus, Kplus_triplet, Kminus, Kminus_triplet):
         """Decay variables."""
-        Kplus *= exp(-time / self.syn_spec["tau_plus"])
-        Kplus_triplet *= exp(-time / self.syn_spec["tau_plus_triplet"])
+        Kplus *= exp(-time / self.syn_spec.specs["tau_plus"])
+        Kplus_triplet *= exp(-time / self.syn_spec.specs["tau_plus_triplet"])
         Kminus *= exp(-time / self.post_neuron_params["tau_minus"])
         Kminus_triplet *= exp(-time /
                               self.post_neuron_params["tau_minus_triplet"])
@@ -92,16 +92,16 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         """Facilitate weight."""
         Wmax = self.status("Wmax")
         return np.sign(Wmax) * (abs(w) + Kplus * (
-            self.syn_spec["Aplus"] +
-            self.syn_spec["Aplus_triplet"] * Kminus_triplet)
+            self.syn_spec.specs["Aplus"] +
+            self.syn_spec.specs["Aplus_triplet"] * Kminus_triplet)
         )
 
     def depress(self, w, Kminus, Kplus_triplet):
         """Depress weight."""
         Wmax = self.status("Wmax")
         return np.sign(Wmax) * (abs(w) - Kminus * (
-            self.syn_spec["Aminus"] +
-            self.syn_spec["Aminus_triplet"] * Kplus_triplet)
+            self.syn_spec.specs["Aminus"] +
+            self.syn_spec.specs["Aminus_triplet"] * Kplus_triplet)
         )
 
     def assertAlmostEqualDetailed(self, expected, given, message):
@@ -114,10 +114,11 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         """Check that exceptions are thrown when setting bad parameters."""
 
         def setupProperty(property):
-            bad_syn_spec = self.syn_spec.copy()
-            bad_syn_spec.update(property)
-            nest.Connect(self.pre_neuron, self.post_neuron,
-                         syn_spec=bad_syn_spec)
+            nest.reset_projection_collection()
+            bad_syn_spec = self.syn_spec.clone()
+            bad_syn_spec.specs.update(property)
+            nest.Connect(nest.AllToAll(self.pre_neuron, self.post_neuron, syn_spec=bad_syn_spec))
+            nest.BuildNetwork()
 
         def badPropertyWith(content, parameters):
             self.assertRaisesRegexp(
@@ -281,10 +282,9 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
         """Check that setting maximum weight property keep weight limited."""
 
         limited_weight = self.status("weight") + 1e-10
-        limited_syn_spec = self.syn_spec.copy()
-        limited_syn_spec.update({"Wmax": limited_weight})
-        nest.Connect(self.pre_neuron, self.post_neuron,
-                     syn_spec=limited_syn_spec)
+        limited_syn_spec = self.syn_spec
+        limited_syn_spec.specs.update({"Wmax": limited_weight})
+        nest.Connect(nest.AllToAll(self.pre_neuron, self.post_neuron, syn_spec=limited_syn_spec))
 
         self.generateSpikes(self.pre_neuron, [2.0])
         self.generateSpikes(self.pre_neuron, [3.0])  # trigger computation
@@ -307,7 +307,7 @@ class STDPTripletInhTestCase(STDPTripletSynapseTestCase):
         self.dendritic_delay = 1.0
         self.decay_duration = 5.0
         self.synapse_model = "stdp_triplet_synapse"
-        self.syn_spec = {
+        self.syn_spec = nest.synapsemodels.SynapseModel(**{
             "synapse_model": self.synapse_model,
             "delay": self.dendritic_delay,
             # set receptor 1 postsynaptically, to not generate extra spikes
@@ -322,7 +322,7 @@ class STDPTripletInhTestCase(STDPTripletSynapseTestCase):
             "Kplus": 0.0,
             "Kplus_triplet": 0.0,
             "Wmax": -100.0,
-        }
+        })
         self.post_neuron_params = {
             "tau_minus": 33.7,
             "tau_minus_triplet": 125.0,
@@ -332,7 +332,7 @@ class STDPTripletInhTestCase(STDPTripletSynapseTestCase):
         self.pre_neuron = nest.Create("parrot_neuron")
         self.post_neuron = nest.Create("parrot_neuron", 1,
                                        params=self.post_neuron_params)
-        nest.Connect(self.pre_neuron, self.post_neuron, syn_spec=self.syn_spec)
+        nest.Connect(nest.AllToAll(self.pre_neuron, self.post_neuron, syn_spec=self.syn_spec))
 
 
 def suite_inh():

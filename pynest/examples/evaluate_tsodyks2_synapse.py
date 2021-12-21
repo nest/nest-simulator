@@ -89,8 +89,8 @@ fac_params = {"U": 0.1, "u": 0.1, 'x': 1.0, "tau_fac": 1000.,
 ###############################################################################
 # Now we assign the parameter set to the synapse models.
 
-tsodyks_params = dict(fac_params, synapse_model="tsodyks_synapse")  # for tsodyks_synapse
-tsodyks2_params = dict(fac_params, synapse_model="tsodyks2_synapse")  # for tsodyks2_synapse
+tsodyks_params = nest.synapsemodels.tsodyks(**fac_params)  # for tsodyks_synapse
+tsodyks2_params = nest.synapsemodels.tsodyks2(**fac_params)  # for tsodyks2_synapse
 
 ###############################################################################
 # Create three neurons.
@@ -101,8 +101,8 @@ neuron = nest.Create("iaf_psc_exp", 3, params={"tau_syn_ex": 3.})
 # Neuron one produces spikes. Neurons 2 and 3 receive the spikes via the two
 # synapse models.
 
-nest.Connect(neuron[0], neuron[1], syn_spec=tsodyks_params)
-nest.Connect(neuron[0], neuron[2], syn_spec=tsodyks2_params)
+nest.Connect(nest.AllToAll(neuron[0], neuron[1], syn_spec=tsodyks_params))
+nest.Connect(nest.AllToAll(neuron[0], neuron[2], syn_spec=tsodyks2_params))
 
 ###############################################################################
 # Now create two voltmeters to record the responses.
@@ -112,8 +112,8 @@ voltmeter = nest.Create("voltmeter", 2)
 ###############################################################################
 # Connect the voltmeters to the neurons.
 
-nest.Connect(voltmeter[0], neuron[1])
-nest.Connect(voltmeter[1], neuron[2])
+nest.Connect(nest.AllToAll(voltmeter[0], neuron[1]))
+nest.Connect(nest.AllToAll(voltmeter[1], neuron[2]))
 
 ###############################################################################
 # Now simulate the standard STP protocol: a burst of spikes, followed by a

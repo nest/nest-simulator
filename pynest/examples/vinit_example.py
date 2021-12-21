@@ -74,7 +74,7 @@ for vinit in numpy.arange(-100, -50, 10, float):
     cbn.V_m = vinit
 
     voltmeter = nest.Create("voltmeter")
-    nest.Connect(voltmeter, cbn)
+    nest.Connect(nest.AllToAll(voltmeter, cbn))
 
     nest.Simulate(75.0)
 

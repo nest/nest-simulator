@@ -28,8 +28,7 @@ import nest
 class TestOneToOne(connect_test_base.ConnectTestBase):
 
     # specify connection pattern
-    rule = 'one_to_one'
-    conn_dict = {'rule': rule}
+    conn_dict = nest.OneToOne(source=None, target=None)
     # sizes of populations
     N = 6
     N1 = N
@@ -47,8 +46,7 @@ class TestOneToOne(connect_test_base.ConnectTestBase):
         connect_test_base.mpi_assert(M, np.zeros((self.N, self.N)), self)
 
     def testSymmetricFlag(self):
-        conn_dict_symmetric = self.conn_dict.copy()
-        conn_dict_symmetric['make_symmetric'] = True
+        conn_dict_symmetric = nest.OneToOne(source=None, target=None, make_symmetric=True)
         self.setUpNetwork(conn_dict_symmetric)
         M1 = connect_test_base.get_connectivity_matrix(self.pop1, self.pop2)
         M2 = connect_test_base.get_connectivity_matrix(self.pop2, self.pop1)
@@ -65,33 +63,37 @@ class TestOneToOne(connect_test_base.ConnectTestBase):
             elif label == 'delay':
                 self.param_array = np.arange(1, self.N_array + 1) * 0.1
             syn_params[label] = self.param_array
+
             nest.ResetKernel()
-            self.setUpNetwork(self.conn_dict, syn_params,
-                              N1=self.N_array, N2=self.N_array)
-            M_nest = connect_test_base.get_weighted_connectivity_matrix(
-                self.pop1, self.pop2, label)
+            conn_spec = nest.OneToOne(source=None, target=None, syn_spec=nest.synapsemodels.static(**syn_params))
+
+            self.setUpNetwork(conn_spec, N1=self.N_array, N2=self.N_array)
+            M_nest = connect_test_base.get_weighted_connectivity_matrix(self.pop1, self.pop2, label)
             connect_test_base.mpi_assert(M_nest, np.diag(self.param_array), self)
 
     def testInputArrayRPort(self):
-        syn_params = {}
+        syn_params = nest.synapsemodels.static()
         neuron_model = 'iaf_psc_exp_multisynapse'
         neuron_dict = {'tau_syn': [0.1 + i for i in range(self.N1)]}
         self.pop1 = nest.Create(neuron_model, self.N1, neuron_dict)
         self.pop2 = nest.Create(neuron_model, self.N1, neuron_dict)
         self.param_array = np.arange(1, self.N1 + 1, dtype=int)
-        syn_params['receptor_type'] = self.param_array
-        nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
-        M = connect_test_base.get_weighted_connectivity_matrix(
-            self.pop1, self.pop2, 'receptor')
+        syn_params.receptor_type = self.param_array
+        conn_spec = nest.OneToOne(source=self.pop1, target=self.pop2, syn_spec=syn_params)
+
+        nest.Connect(conn_spec)
+        M = connect_test_base.get_weighted_connectivity_matrix(self.pop1, self.pop2, 'receptor')
         connect_test_base.mpi_assert(M, np.diag(self.param_array), self)
 
     def testInputArrayToStdpSynapse(self):
         params = ['Wmax', 'alpha', 'lambda', 'mu_minus', 'mu_plus', 'tau_plus']
-        syn_params = {'synapse_model': 'stdp_synapse'}
+        syn_params = {}
         values = [np.arange(self.N1, dtype=float) for i in range(6)]
         for i, param in enumerate(params):
             syn_params[param] = values[i]
-        self.setUpNetwork(self.conn_dict, syn_params)
+        syn_spec = nest.synapsemodels.stdp(**syn_params)
+        conn_params = nest.OneToOne(source=None, target=None, syn_spec=syn_spec)
+        self.setUpNetwork(conn_params)
         for i, param in enumerate(params):
             a = connect_test_base.get_weighted_connectivity_matrix(
                 self.pop1, self.pop2, param)

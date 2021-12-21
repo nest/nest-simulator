@@ -56,7 +56,7 @@ function process_dir {
 
 function help_output {
   echo "The $CLANG_FORMAT_FILE requires clang-format version 3.6 or later."
-  echo "Use like: [CLANG_FORMAT=<clang-format-3.6>] ./extras/`basename $0` [start folder, defaults to '$PWD']"
+  echo "Use like: [CLANG_FORMAT=<clang-format-3.6>] ./build_support/`basename $0` [start folder, defaults to '$PWD']"
   exit 0
 }
 

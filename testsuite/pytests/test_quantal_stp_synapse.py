@@ -43,14 +43,11 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
                       "tau_fac": 500., "tau_rec": 200., "weight": 1.}
 
         # Here we assign the parameter set to the synapse models
-        t1_params = fac_params       # for tsodyks2_synapse
-        t2_params = t1_params.copy()  # for furhmann_synapse
+        t1_params = nest.synapsemodels.tsodyks2(**fac_params)     # for tsodyks2_synapse
+        t2_params = nest.synapsemodels.quantal_stp(**fac_params)  # for furhmann_synapse
 
-        t1_params["synapse_model"] = "tsodyks2_synapse"
-
-        t2_params["n"] = n_syn
-        t2_params["weight"] = 1. / n_syn
-        t2_params["synapse_model"] = "quantal_stp_synapse"
+        t2_params.specs["n"] = n_syn
+        t2_params.specs["weight"] = 1. / n_syn
 
         source = nest.Create("spike_generator")
         source.spike_times = [30., 60., 90., 120., 150., 180., 210., 240., 270., 300., 330., 360., 390., 900.]
@@ -61,9 +58,9 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         # We must send spikes via parrot because devices cannot
         # connect through plastic synapses
         # See #478.
-        nest.Connect(source, parrot)
-        nest.Connect(parrot, neuron[:1], syn_spec=t1_params)
-        nest.Connect(parrot, neuron[1:], syn_spec=t2_params)
+        nest.Connect(nest.AllToAll(source, parrot))
+        nest.Connect(nest.AllToAll(parrot, neuron[:1], syn_spec=t1_params))
+        nest.Connect(nest.AllToAll(parrot, neuron[1:], syn_spec=t2_params))
 
         voltmeter = nest.Create("voltmeter", 2)
 
@@ -75,8 +72,9 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         nest.Simulate(t_tot)
 
         # Now we connect the voltmeters
-        nest.Connect(voltmeter[:1], neuron[:1])
-        nest.Connect(voltmeter[1:], neuron[1:])
+        nest.Connect(nest.AllToAll(voltmeter[:1], neuron[:1]))
+        nest.Connect(nest.AllToAll(voltmeter[1:], neuron[1:]))
+        nest.BuildNetwork()
 
         for t in range(n_trials):
             t_net = nest.biological_time

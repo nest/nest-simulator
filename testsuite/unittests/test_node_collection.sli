@@ -755,7 +755,7 @@ pop pop
 } fail_or_die
 
 % remove arguments of failed command
-pop pop pop pop
+pop
 
 % --------------------------------------------------
 
@@ -776,7 +776,7 @@ pop pop pop pop
 } fail_or_die
 
 % remove arguments of failed command
-pop pop pop pop
+pop
 
 % --------------------------------------------------
 
@@ -999,7 +999,7 @@ pop pop
 } fail_or_die
 
 % remove arguments of failed command
-pop pop pop pop
+pop
 
 % --------------------------------------------------
 
@@ -1020,7 +1020,7 @@ pop pop pop pop
 } fail_or_die
 
 % remove arguments of failed command
-pop pop pop pop
+pop
 
 % --------------------------------------------------
 

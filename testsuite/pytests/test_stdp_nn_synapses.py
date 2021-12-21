@@ -84,6 +84,7 @@ class TestSTDPNNSynapses:
                                                             pairing_scheme):
         synapse_model = "stdp_" + pairing_scheme + "_synapse"
         self.synapse_parameters["synapse_model"] = synapse_model
+        self.syn_spec = nest.synapsemodels.SynapseModel(**self.synapse_parameters)
 
         pre_spikes, post_spikes, weight_by_nest = self.do_the_nest_simulation()
         weight_reproduced_independently = self.reproduce_weight_drift(
@@ -136,15 +137,11 @@ class TestSTDPNNSynapses:
         # The recorder is to save the randomly generated spike trains.
         spike_recorder = nest.Create("spike_recorder")
 
-        nest.Connect(presynaptic_generator + pre_spike_generator, presynaptic_neuron,
-                     syn_spec={"synapse_model": "static_synapse"})
-        nest.Connect(postsynaptic_generator + post_spike_generator, postsynaptic_neuron,
-                     syn_spec={"synapse_model": "static_synapse"})
-        nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_recorder,
-                     syn_spec={"synapse_model": "static_synapse"})
+        nest.Connect(nest.AllToAll(presynaptic_generator + pre_spike_generator, presynaptic_neuron))
+        nest.Connect(nest.AllToAll(postsynaptic_generator + post_spike_generator, postsynaptic_neuron))
+        nest.Connect(nest.AllToAll(presynaptic_neuron + postsynaptic_neuron, spike_recorder))
         # The synapse of interest itself
-        nest.Connect(presynaptic_neuron, postsynaptic_neuron,
-                     syn_spec=self.synapse_parameters)
+        nest.Connect(nest.AllToAll(presynaptic_neuron, postsynaptic_neuron, syn_spec=self.syn_spec))
         plastic_synapse_of_interest = nest.GetConnections(synapse_model=self.synapse_parameters["synapse_model"])
 
         nest.Simulate(self.simulation_duration)

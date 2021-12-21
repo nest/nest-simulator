@@ -347,6 +347,7 @@ protected:
 
 private:
   ParameterDatum outdegree_;
+  std::map< int, std::vector< index > > tgt_ids_;
 };
 
 class FixedTotalNumberBuilder : public ConnBuilder
@@ -362,6 +363,9 @@ protected:
 
 private:
   long N_;
+  std::vector< size_t > number_of_targets_on_vp_;
+  std::vector< index > local_targets_;
+  std::vector< long > num_conns_on_vp_;
 };
 
 class BernoulliBuilder : public ConnBuilder

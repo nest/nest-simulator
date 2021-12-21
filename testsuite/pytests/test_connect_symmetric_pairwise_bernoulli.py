@@ -35,10 +35,10 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
     N_s = 60
     N_t = 60
     # specify connection pattern and specific params
-    rule = 'symmetric_pairwise_bernoulli'
     p = 0.5
-    conn_dict = {'rule': rule, 'p': p, 'allow_multapses': True,
-                 'allow_autapses': False, 'make_symmetric': True}
+    conn_dict = nest.SymmetricPairwiseBernoulli(source=None, target=None, p=p, allow_multapses=True,
+                                                allow_autapses=False, make_symmetric=True)
+    rule = 'symmetric_pairwise_bernoulli'
     # Critical values and number of iterations of two level test
     stat_dict = {'alpha2': 0.05, 'n_runs': 300}
 
@@ -50,8 +50,7 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
             pvalues = []
             for i in range(self.stat_dict['n_runs']):
                 connect_test_base.reset_seed(i+1, self.nr_threads)
-                self.setUpNetwork(conn_dict=self.conn_dict,
-                                  N1=self.N_s, N2=self.N_t)
+                self.setUpNetwork(projections=self.conn_dict, N1=self.N_s, N2=self.N_t)
                 degrees = connect_test_base.get_degrees(fan, self.pop1, self.pop2)
                 degrees = connect_test_base.gather_data(degrees)
                 # degrees = self.comm.gather(degrees, root=0)
@@ -65,45 +64,42 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
                 self.assertGreater(p, self.stat_dict['alpha2'])
 
     def testAutapsesTrue(self):
-        conn_params = self.conn_dict.copy()
-        conn_params['allow_autapses'] = True
-        N = 10
-
         # test that autapses are not permitted
+        N = 10
         pop = nest.Create('iaf_psc_alpha', N)
+        conn_params = nest.SymmetricPairwiseBernoulli(pop, pop, p=self.p, allow_multapses=True,
+                                                      allow_autapses=True, make_symmetric=True)
         with self.assertRaises(nest.kernel.NESTError):
-            nest.Connect(pop, pop, conn_params)
+            nest.Connect(conn_params)
+            nest.BuildNetwork()
 
     def testAutapsesFalse(self):
-        conn_params = self.conn_dict.copy()
-        N = 10
-
         # test that autapses were excluded
-        conn_params['p'] = 1. - 1. / N
-        conn_params['allow_autapses'] = False
+        N = 10
         pop = nest.Create('iaf_psc_alpha', N)
-        nest.Connect(pop, pop, conn_params)
+        conn_params = nest.SymmetricPairwiseBernoulli(pop, pop, p=1. - 1. / N, allow_multapses=True,
+                                                      allow_autapses=False, make_symmetric=True)
+        nest.Connect(conn_params)
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         connect_test_base.mpi_assert(np.diag(M), np.zeros(N), self)
 
     def testMultapses(self):
-        conn_params = self.conn_dict.copy()
-        conn_params['allow_multapses'] = False
-        N = 10
-
         # test that multapses must be permitted
-        nest.ResetKernel()
+        N = 10
         pop = nest.Create('iaf_psc_alpha', N)
+        conn_params = nest.SymmetricPairwiseBernoulli(pop, pop, p=self.p, allow_multapses=False,
+                                                      allow_autapses=False, make_symmetric=True)
         with self.assertRaises(nest.kernel.NESTError):
-            nest.Connect(pop, pop, conn_params)
+            nest.Connect(conn_params)
+            nest.BuildNetwork()
 
         # test that multapses can only arise from symmetric
         # connectivity
-        conn_params['p'] = 1. - 1. / N
-        conn_params['allow_multapses'] = True
         nest.ResetKernel()
         pop = nest.Create('iaf_psc_alpha', N)
-        nest.Connect(pop, pop, conn_params)
+        conn_params = nest.SymmetricPairwiseBernoulli(pop, pop, p=1. - 1. / N, allow_multapses=True,
+                                                      allow_autapses=False, make_symmetric=True)
+        nest.Connect(conn_params)
 
         conn_dict = collections.defaultdict(int)
         conn = nest.GetConnections()
@@ -112,25 +108,24 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
             self.assertTrue(conn_dict[s_t_key] <= 2)
 
     def testCannotSetMSFalse(self):
-        conn_params = self.conn_dict.copy()
         N = 100
 
         # test that make_symmetric must be enabled
-        conn_params['make_symmetric'] = False
-        nest.ResetKernel()
         pop = nest.Create('iaf_psc_alpha', N)
+        conn_params = nest.SymmetricPairwiseBernoulli(source=pop, target=pop, p=self.p, allow_multapses=True,
+                                                      allow_autapses=False, make_symmetric=False)
         with self.assertRaises(nest.kernel.NESTError):
-            nest.Connect(pop, pop, conn_params)
+            nest.Connect(conn_params)
+            nest.BuildNetwork()
 
     def testMakeSymmetric(self):
-        conn_params = self.conn_dict.copy()
         N = 100
 
         # test that all connections are symmetric
-        conn_params['make_symmetric'] = True
-        nest.ResetKernel()
         pop = nest.Create('iaf_psc_alpha', N)
-        nest.Connect(pop, pop, conn_params)
+        conn_params = nest.SymmetricPairwiseBernoulli(pop, pop, p=self.p, allow_multapses=True,
+                                                      allow_autapses=False, make_symmetric=True)
+        nest.Connect(conn_params)
 
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         print(M)

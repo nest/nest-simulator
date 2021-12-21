@@ -67,9 +67,9 @@ neuron_1.I_e = 376.0
 weight = 20.0
 delay = 1.0
 
-nest.Connect(neuron_1, neuron_2, syn_spec={"weight": weight, "delay": delay})
-nest.Connect(voltmeter, neuron_1)
-nest.Connect(voltmeter, neuron_2)
+nest.Connect(nest.AllToAll(neuron_1, neuron_2, syn_spec=nest.synapsemodels.static(weight=weight, delay=delay)))
+nest.Connect(nest.AllToAll(voltmeter, neuron_1))
+nest.Connect(nest.AllToAll(voltmeter, neuron_2))
 
 ###############################################################################
 # Now we simulate the network using ``Simulate``, which takes the

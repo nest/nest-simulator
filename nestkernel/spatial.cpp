@@ -402,22 +402,6 @@ minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
 }
 
 void
-connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const DictionaryDatum& connection_dict )
-{
-  AbstractLayerPTR source = get_layer( source_nc );
-  AbstractLayerPTR target = get_layer( target_nc );
-
-  connection_dict->clear_access_flags();
-  ConnectionCreator connector( connection_dict );
-  ALL_ENTRIES_ACCESSED( *connection_dict, "nest::CreateLayers", "Unread dictionary entries: " );
-
-  // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
-  kernel().connection_manager.set_connections_have_changed();
-
-  source->connect( source_nc, target, target_nc, connector );
-}
-
-void
 dump_layer_nodes( NodeCollectionPTR layer_nc, OstreamDatum& out )
 {
   AbstractLayerPTR layer = get_layer( layer_nc );

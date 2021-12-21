@@ -120,13 +120,12 @@ class TestMCNeuron(unittest.TestCase):
         label = ['soma_curr', 'proximal_curr', 'distal_curr', 'soma_exc',
                  'soma_inh', 'proximal_exc', 'proximal_inh', 'distal_exc',
                  'distal_inh']
-        nest.Connect(self.mm, self.n)
+        nest.Connect(nest.AllToAll(self.mm, self.n))
         for i, l in enumerate(label[:3]):
-            nest.Connect(self.cgs[i], self.n,
-                         syn_spec={'receptor_type': syns[l]})
+            nest.Connect(nest.AllToAll(self.cgs[i], self.n, syn_spec=nest.synapsemodels.static(receptor_type=syns[l])))
         for i, l in enumerate(label[3:]):
-            nest.Connect(self.sgs[i], self.n,
-                         syn_spec={'receptor_type': syns[l]})
+            nest.Connect(nest.AllToAll(self.sgs[i], self.n, syn_spec=nest.synapsemodels.static(receptor_type=syns[l])))
+        nest.BuildNetwork()
 
     def testNeuron(self):
         self.setUpNodes()

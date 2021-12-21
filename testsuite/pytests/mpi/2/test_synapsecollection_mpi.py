@@ -31,7 +31,7 @@ def testTooFewConnections():
     pre = nest.Create('iaf_psc_alpha', 5)
     post = nest.Create('iaf_psc_alpha', 1)
 
-    nest.Connect(pre, post)  # with 2 processes only one process will have connections
+    nest.Connect(nest.AllToAll(pre, post))  # with 2 processes only one process will have connections
 
     conns = nest.GetConnections()  # Checking that a deadlock does not occur here
 

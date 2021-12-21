@@ -153,19 +153,13 @@ tsyn_voltmeter, qsyn_voltmeter = nest.Create("voltmeter",
 # Connect one neuron with the deterministic tsodyks2 synapse and the other neuron
 # with the stochastic quantal stp synapse; then, connect a voltmeter to each neuron.
 # Here, ``**tsyn_params`` inserts the content of the ``tsyn_params`` dict into the
-# dict passed to ``syn_spec``.
+# tsodyks2 object passed to ``syn_spec``.
 
-nest.Connect(pre_neuron, tsyn_neuron,
-             syn_spec={"synapse_model": "tsodyks2_synapse", **tsyn_params})
+nest.Connect(nest.AllToAll(pre_neuron, tsyn_neuron, syn_spec=nest.synapsemodels.tsodyks2(**tsyn_params)))
+nest.Connect(nest.AllToAll(pre_neuron, qsyn_neuron, syn_spec=nest.synapsemodels.quantal_stp(**qsyn_params)))
 
-# For technical reasons, we currently must set the parameters of the
-# quantal_stp_synapse via default values. This will change in a future version
-# of NEST.
-nest.SetDefaults("quantal_stp_synapse", qsyn_params)
-nest.Connect(pre_neuron, qsyn_neuron, syn_spec={"synapse_model": "quantal_stp_synapse"})
-
-nest.Connect(tsyn_voltmeter, tsyn_neuron)
-nest.Connect(qsyn_voltmeter, qsyn_neuron)
+nest.Connect(nest.AllToAll(tsyn_voltmeter, tsyn_neuron))
+nest.Connect(nest.AllToAll(qsyn_voltmeter, qsyn_neuron))
 
 ###############################################################################
 # This loop runs over the `n_trials` trials and performs a standard protocol

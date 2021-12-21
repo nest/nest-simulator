@@ -186,11 +186,11 @@ sr = nest.Create('spike_recorder')
 ###############################################################################
 # We connect devices and neurons and start the simulation.
 
-pg_n_synspec = {'weight': np.tile(J, ((n_neurons), 1)), 'delay': 0.1}
-nest.Connect(pg, n, syn_spec=pg_n_synspec)
-nest.Connect(pg, n_free, syn_spec={'weight': [J]})
-nest.Connect(vm, n_free)
-nest.Connect(n, sr)
+pg_n_synspec = nest.synapsemodels.static(weight=np.tile(J, ((n_neurons), 1)), delay=0.1)
+nest.Connect(nest.AllToAll(pg, n, syn_spec=pg_n_synspec))
+nest.Connect(nest.AllToAll(pg, n_free, syn_spec=nest.synapsemodels.static(weight=[J])))
+nest.Connect(nest.AllToAll(vm, n_free))
+nest.Connect(nest.AllToAll(n, sr))
 
 nest.Simulate(simtime)
 

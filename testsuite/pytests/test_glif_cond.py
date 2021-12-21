@@ -71,21 +71,21 @@ class GLIFCONDTestCase(unittest.TestCase):
         }
         cg = nest.Create("step_current_generator", params=cg_params)
 
-        nest.Connect(espikes, nrn, syn_spec={"receptor_type": 1})
-        nest.Connect(ispikes, nrn, syn_spec={"receptor_type": 2})
-        nest.Connect(pg, pn)
-        nest.Connect(pn, nrn, syn_spec={"weight": 22.0, "receptor_type": 1})
-        nest.Connect(pn, nrn, syn_spec={"weight": 10.0, "receptor_type": 2})
-        nest.Connect(cg, nrn, syn_spec={"weight": 3.0})
+        nest.Connect(nest.AllToAll(espikes, nrn, syn_spec=nest.synapsemodels.static(receptor_type=1)))
+        nest.Connect(nest.AllToAll(ispikes, nrn, syn_spec=nest.synapsemodels.static(receptor_type=2)))
+        nest.Connect(nest.AllToAll(pg, pn))
+        nest.Connect(nest.AllToAll(pn, nrn, syn_spec=nest.synapsemodels.static(weight=22., receptor_type=1)))
+        nest.Connect(nest.AllToAll(pn, nrn, syn_spec=nest.synapsemodels.static(weight=10., receptor_type=2)))
+        nest.Connect(nest.AllToAll(cg, nrn, syn_spec=nest.synapsemodels.static(weight=3.)))
 
         # For recording spikes and voltage traces
         sr = nest.Create('spike_recorder')
-        nest.Connect(nrn, sr)
+        nest.Connect(nest.AllToAll(nrn, sr))
 
-        mm_params = {"record_from": ["V_m"], "interval": nest.resolution}
-        mm = nest.Create("multimeter", params=mm_params)
-        nest.Connect(mm, nrn)
+        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": nest.resolution})
+        nest.Connect(nest.AllToAll(mm, nrn))
 
+        nest.BuildNetwork()
         nest.Simulate(1000.)
 
         times = nest.GetStatus(mm, 'events')[0]['times']

@@ -154,28 +154,24 @@ ispikes.set(label="brunel-py-in", record_to="ascii")
 print("Connecting devices")
 
 ###############################################################################
-# Definition of a synapse using ``CopyModel``, which expects the model name of
-# a pre-defined synapse, the name of the customary synapse and an optional
-# parameter dictionary. The parameters defined in the dictionary will be the
-# default parameter for the customary synapse. Here we define one synapse for
+# Definition of a synapse using ``nest.synapsemodels.static``, which defines
+# a static synapse with the given parameters. Here we define one synapse for
 # the excitatory and one for the inhibitory connections giving the
 # previously defined weights and equal delays.
 
-nest.CopyModel("static_synapse", "excitatory",
-               {"weight": J_ex, "delay": delay})
-nest.CopyModel("static_synapse", "inhibitory",
-               {"weight": J_in, "delay": delay})
+ex_syn = nest.synapsemodels.static(weight=J_ex, delay=delay)
+in_syn = nest.synapsemodels.static(weight=J_in, delay=delay)
 
 ###############################################################################
 # Connecting the previously defined poisson generator to the excitatory and
 # inhibitory neurons using the excitatory synapse. Since the poisson
 # generator is connected to all neurons in the population the default rule
 # (# ``all_to_all``) of ``Connect`` is used. The synaptic properties are inserted
-# via ``syn_spec`` which expects a dictionary when defining multiple variables
-# or a string when simply using a pre-defined synapse.
+# via ``syn_spec`` which expects a SynapseModel class, where parameters can be
+# given when defining the model.
 
-nest.Connect(noise, nodes_ex, syn_spec="excitatory")
-nest.Connect(noise, nodes_in, syn_spec="excitatory")
+nest.Connect(nest.AllToAll(noise, nodes_ex, syn_spec=ex_syn))
+nest.Connect(nest.AllToAll(noise, nodes_in, syn_spec=ex_syn))
 
 ###############################################################################
 # Connecting the first ``N_rec`` nodes of the excitatory and inhibitory
@@ -183,8 +179,8 @@ nest.Connect(noise, nodes_in, syn_spec="excitatory")
 # Here the same shortcut for the specification of the synapse as defined
 # above is used.
 
-nest.Connect(nodes_ex[:N_rec], espikes, syn_spec="excitatory")
-nest.Connect(nodes_in[:N_rec], ispikes, syn_spec="excitatory")
+nest.Connect(nest.AllToAll(nodes_ex[:N_rec], espikes, syn_spec=ex_syn))
+nest.Connect(nest.AllToAll(nodes_in[:N_rec], ispikes, syn_spec=ex_syn))
 
 print("Connecting network")
 
@@ -192,14 +188,12 @@ print("Excitatory connections")
 
 ###############################################################################
 # Connecting the excitatory population to all neurons using the pre-defined
-# excitatory synapse. Beforehand, the connection parameter are defined in a
-# dictionary. Here we use the connection rule ``fixed_indegree``,
+# excitatory synapse. Here we use the connection rule ``fixed_indegree``,
 # which requires the definition of the indegree. Since the synapse
 # specification is reduced to assigning the pre-defined excitatory synapse it
-# suffices to insert a string.
+# suffices to insert the previously defined object.
 
-conn_params_ex = {'rule': 'fixed_indegree', 'indegree': CE}
-nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_ex, "excitatory")
+nest.Connect(nest.FixedIndegree(nodes_ex, nodes_ex + nodes_in, indegree=CE, syn_spec=ex_syn))
 
 print("Inhibitory connections")
 
@@ -209,12 +203,12 @@ print("Inhibitory connections")
 # parameters are defined analogously to the connection from the excitatory
 # population defined above.
 
-conn_params_in = {'rule': 'fixed_indegree', 'indegree': CI}
-nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, "inhibitory")
+nest.Connect(nest.FixedIndegree(nodes_in, nodes_ex + nodes_in, indegree=CI, syn_spec=in_syn))
 
 ###############################################################################
 # Storage of the time point after the buildup of the network in a variable.
 
+nest.BuildNetwork()
 endbuild = time.time()
 
 ###############################################################################
@@ -250,8 +244,8 @@ rate_in = events_in / simtime * 1000.0 / N_rec
 # inhibitory synapse model. The numbers are summed up resulting in the total
 # number of synapses.
 
-num_synapses = (nest.GetDefaults("excitatory")["num_connections"] +
-                nest.GetDefaults("inhibitory")["num_connections"])
+num_synapses = (nest.GetDefaults(ex_syn.synapse_model)["num_connections"] +
+                nest.GetDefaults(in_syn.synapse_model)["num_connections"])
 
 ###############################################################################
 # Establishing the time it took to build and simulate the network by taking

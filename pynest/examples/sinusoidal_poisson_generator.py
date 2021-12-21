@@ -66,8 +66,8 @@ g = nest.Create('sinusoidal_poisson_generator', n=num_nodes,
 m = nest.Create('multimeter', num_nodes, {'interval': 0.1, 'record_from': ['rate']})
 s = nest.Create('spike_recorder', num_nodes)
 
-nest.Connect(m, g, 'one_to_one')
-nest.Connect(g, s, 'one_to_one')
+nest.Connect(nest.OneToOne(m, g, 'one_to_one'))
+nest.Connect(nest.OneToOne(g, s, 'one_to_one'))
 print(m.get())
 nest.Simulate(200)
 
@@ -121,8 +121,8 @@ g = nest.Create('sinusoidal_poisson_generator',
 p = nest.Create('parrot_neuron', 20)
 s = nest.Create('spike_recorder')
 
-nest.Connect(g, p, 'all_to_all')
-nest.Connect(p, s, 'all_to_all')
+nest.Connect(nest.AllToAll(g, p))
+nest.Connect(nest.AllToAll(p, s))
 
 nest.Simulate(200)
 ev = s.events
@@ -150,8 +150,8 @@ g = nest.Create('sinusoidal_poisson_generator',
 p = nest.Create('parrot_neuron', 20)
 s = nest.Create('spike_recorder')
 
-nest.Connect(g, p, 'all_to_all')
-nest.Connect(p, s, 'all_to_all')
+nest.Connect(nest.AllToAll(g, p))
+nest.Connect(nest.AllToAll(p, s))
 
 nest.Simulate(200)
 ev = s.events

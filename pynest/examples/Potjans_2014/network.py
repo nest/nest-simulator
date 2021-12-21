@@ -123,6 +123,8 @@ class Network:
         if self.stim_dict['dc_input']:
             self.__connect_dc_stim_input()
 
+        nest.BuildNetwork()
+
         nest.Prepare()
         nest.Cleanup()
 
@@ -426,10 +428,6 @@ class Network:
         for i, target_pop in enumerate(self.pops):
             for j, source_pop in enumerate(self.pops):
                 if self.num_synapses[i][j] >= 0.:
-                    conn_dict_rec = {
-                        'rule': 'fixed_total_number',
-                        'N': self.num_synapses[i][j]}
-
                     if self.weight_matrix_mean[i][j] < 0:
                         w_min = np.NINF
                         w_max = 0.0
@@ -437,27 +435,22 @@ class Network:
                         w_min = 0.0
                         w_max = np.Inf
 
-                    syn_dict = {
-                        'synapse_model': 'static_synapse',
-                        'weight': nest.math.redraw(
+                    syn_spec = nest.synapsemodels.static(
+                        weight=nest.math.redraw(
                             nest.random.normal(
                                 mean=self.weight_matrix_mean[i][j],
-                                std=abs(self.weight_matrix_mean[i][j] *
-                                        self.net_dict['weight_rel_std'])),
+                                std=abs(self.weight_matrix_mean[i][j] * self.net_dict['weight_rel_std'])),
                             min=w_min,
                             max=w_max),
-                        'delay': nest.math.redraw(
+                        delay=nest.math.redraw(
                             nest.random.normal(
                                 mean=self.net_dict['delay_matrix_mean'][i][j],
-                                std=(self.net_dict['delay_matrix_mean'][i][j] *
-                                     self.net_dict['delay_rel_std'])),
+                                std=self.net_dict['delay_matrix_mean'][i][j] * self.net_dict['delay_rel_std']),
                             min=nest.resolution,
-                            max=np.Inf)}
+                            max=np.Inf))
 
-                    nest.Connect(
-                        source_pop, target_pop,
-                        conn_spec=conn_dict_rec,
-                        syn_spec=syn_dict)
+                    nest.Connect(nest.FixedTotalNumber(source_pop, target_pop, N=self.num_synapses[i][j],
+                                                       syn_spec=syn_spec))
 
     def __connect_recording_devices(self):
         """ Connects the recording devices to the microcircuit."""
@@ -466,9 +459,9 @@ class Network:
 
         for i, target_pop in enumerate(self.pops):
             if 'spike_recorder' in self.sim_dict['rec_dev']:
-                nest.Connect(target_pop, self.spike_recorders[i])
+                nest.Connect(nest.AllToAll(target_pop, self.spike_recorders[i]))
             if 'voltmeter' in self.sim_dict['rec_dev']:
-                nest.Connect(self.voltmeters[i], target_pop)
+                nest.Connect(nest.AllToAll(self.voltmeters[i], target_pop))
 
     def __connect_poisson_bg_input(self):
         """ Connects the Poisson generators to the microcircuit."""
@@ -476,17 +469,9 @@ class Network:
             print('Connecting Poisson generators for background input.')
 
         for i, target_pop in enumerate(self.pops):
-            conn_dict_poisson = {'rule': 'all_to_all'}
+            syn_spec_poisson = nest.synapsemodels.static(weight=self.weight_ext, delay=self.net_dict['delay_poisson'])
 
-            syn_dict_poisson = {
-                'synapse_model': 'static_synapse',
-                'weight': self.weight_ext,
-                'delay': self.net_dict['delay_poisson']}
-
-            nest.Connect(
-                self.poisson_bg_input[i], target_pop,
-                conn_spec=conn_dict_poisson,
-                syn_spec=syn_dict_poisson)
+            nest.Connect(nest.AllToAll(self.poisson_bg_input[i], target_pop, syn_spec=syn_spec_poisson))
 
     def __connect_thalamic_stim_input(self):
         """ Connects the thalamic input to the neuronal populations."""
@@ -494,32 +479,26 @@ class Network:
             print('Connecting thalamic input.')
 
         # connect Poisson input to thalamic population
-        nest.Connect(self.poisson_th, self.thalamic_population)
+        nest.Connect(nest.AllToAll(self.poisson_th, self.thalamic_population))
 
         # connect thalamic population to neuronal populations
         for i, target_pop in enumerate(self.pops):
-            conn_dict_th = {
-                'rule': 'fixed_total_number',
-                'N': self.num_th_synapses[i]}
-
-            syn_dict_th = {
-                'weight': nest.math.redraw(
+            syn_spec_th = nest.synapsemodels.static(
+                weight=nest.math.redraw(
                     nest.random.normal(
                         mean=self.weight_th,
                         std=self.weight_th * self.net_dict['weight_rel_std']),
                     min=0.0,
                     max=np.Inf),
-                'delay': nest.math.redraw(
+                delay=nest.math.redraw(
                     nest.random.normal(
                         mean=self.stim_dict['delay_th_mean'],
-                        std=(self.stim_dict['delay_th_mean'] *
-                             self.stim_dict['delay_th_rel_std'])),
+                        std=self.stim_dict['delay_th_mean'] * self.stim_dict['delay_th_rel_std']),
                     min=nest.resolution,
-                    max=np.Inf)}
+                    max=np.Inf))
 
-            nest.Connect(
-                self.thalamic_population, target_pop,
-                conn_spec=conn_dict_th, syn_spec=syn_dict_th)
+            nest.Connect(nest.FixedTotalNumber(self.thalamic_population, target_pop, N=self.num_th_synapses[i],
+                                               syn_spec=syn_spec_th))
 
     def __connect_dc_stim_input(self):
         """ Connects the DC generators to the neuronal populations. """
@@ -528,4 +507,4 @@ class Network:
             print('Connecting DC generators.')
 
         for i, target_pop in enumerate(self.pops):
-            nest.Connect(self.dc_stim_input[i], target_pop)
+            nest.Connect(nest.AllToAll(self.dc_stim_input[i], target_pop))

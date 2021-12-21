@@ -23,9 +23,16 @@
 Classes defining the different PyNEST types
 """
 
-from ..ll_api import *
+from ..ll_api import check_stack, sli_func, sps, sr, spp, take_array_index
 from .. import pynestkernel as kernel
-from .hl_api_helper import *
+from .hl_api_helper import (
+    broadcast,
+    get_parameters,
+    get_parameters_hierarchical_addressing,
+    is_iterable,
+    is_literal,
+    restructure_data,
+)
 from .hl_api_simulation import GetKernelStatus
 from ..synapsemodels.hl_api_synapsemodels import SynapseModel
 
@@ -113,7 +120,7 @@ def CreateParameter(parametertype, specs):
     return sli_func('CreateParameter', {parametertype: specs})
 
 
-class NodeCollectionIterator(object):
+class NodeCollectionIterator:
     """
     Iterator class for `NodeCollection`.
 
@@ -139,7 +146,7 @@ class NodeCollectionIterator(object):
         return val
 
 
-class NodeCollection(object):
+class NodeCollection:
     """
     Class for `NodeCollection`.
 
@@ -537,7 +544,7 @@ class NodeCollection(object):
             self.set({attr: value})
 
 
-class SynapseCollectionIterator(object):
+class SynapseCollectionIterator:
     """
     Iterator class for SynapseCollection.
     """
@@ -552,7 +559,7 @@ class SynapseCollectionIterator(object):
         return SynapseCollection(next(self._iter))
 
 
-class SynapseCollection(object):
+class SynapseCollection:
     """
     Class for Connections.
 
@@ -709,7 +716,7 @@ class SynapseCollection(object):
     def __setattr__(self, attr, value):
         # `_datum` is the only property of SynapseCollection that should not be
         # interpreted as a property of the model
-        if attr == '_datum' or 'print_full':
+        if attr == '_datum' or attr == 'print_full':
             super().__setattr__(attr, value)
         else:
             self.set({attr: value})
@@ -893,7 +900,7 @@ class SynapseCollection(object):
         sr('Transpose { arrayload pop SetStatus } forall')
 
 
-class CollocatedSynapses(object):
+class CollocatedSynapses:
     """
     Class for collocated synapse specifications.
 
@@ -924,7 +931,7 @@ class CollocatedSynapses(object):
         return len(self.syn_specs)
 
 
-class Mask(object):
+class Mask:
     """
     Class for spatial masks.
 
@@ -975,7 +982,7 @@ class Mask(object):
         return sli_func("Inside", point, self._datum)
 
 
-class Parameter(object):
+class Parameter:
     """
     Class for parameters
 

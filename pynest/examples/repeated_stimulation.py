@@ -91,7 +91,7 @@ sr = nest.Create('spike_recorder')
 # the ``spike_recorder`` `sr`
 
 
-nest.Connect(pg, sr)
+nest.Connect(nest.AllToAll(pg, sr))
 
 
 ###############################################################################

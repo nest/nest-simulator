@@ -71,16 +71,16 @@ neuron.I_e = 376.0
 
 ###############################################################################
 # Fourth, the neuron is connected to the voltmeter. The command
-# ``Connect`` has different variants. Plain ``Connect`` just takes the
-# handles of pre- and postsynaptic nodes and uses the default values
-# for weight and delay. Note that the connection direction for the voltmeter is
-# reversed compared to the spike recorder, because it observes the
-# neuron instead of receiving events from it. Thus, ``Connect``
+# ``Connect`` has different variants. Plain ``Connect`` just takes an object
+# representing the connection rule, containing pre- and postsynaptic nodes and
+# uses the default values for weight and delay. Note that the connection direction
+# for the voltmeter is reversed compared to the spike recorder, because it observes
+# the neuron instead of receiving events from it. Thus, ``Connect``
 # reflects the direction of signal flow in the simulation kernel
 # rather than the physical process of inserting an electrode into the
 # neuron. The latter semantics is presently not available in NEST.
 
-nest.Connect(voltmeter, neuron)
+nest.Connect(nest.AllToAll(voltmeter, neuron))
 
 ###############################################################################
 # Now we simulate the network using ``Simulate``, which takes the

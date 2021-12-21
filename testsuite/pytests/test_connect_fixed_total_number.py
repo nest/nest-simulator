@@ -28,14 +28,14 @@ import nest
 
 class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
 
-    # specify connection pattern and specific params
-    rule = 'fixed_total_number'
-    conn_dict = {'rule': rule}
     # sizes of source-, target-population and outdegree for connection test
     N1 = 50
     N2 = 70
     Nconn = 100
-    conn_dict['N'] = Nconn
+
+    # specify connection pattern and specific params
+    conn_dict = nest.FixedTotalNumber(source=None, target=None, N=Nconn)
+
     # sizes of source-, target-population and total number of connections for
     # statistical test
     N_s = 20
@@ -47,10 +47,9 @@ class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
     # tested on each mpi process separately
     def testErrorMessages(self):
         got_error = False
-        conn_params = self.conn_dict.copy()
-        conn_params['allow_autapses'] = True
-        conn_params['allow_multapses'] = False
-        conn_params['N'] = self.N1 * self.N2 + 1
+        conn_params = nest.FixedTotalNumber(source=None, target=None, N=self.N1 * self.N2 + 1,
+                                            allow_autapses=True, allow_multapses=False)
+
         try:
             self.setUpNetwork(conn_params)
         except nest.kernel.NESTError:
@@ -58,7 +57,7 @@ class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
         self.assertTrue(got_error)
 
     def testTotalNumberOfConnections(self):
-        conn_params = self.conn_dict.copy()
+        conn_params = nest.FixedTotalNumber(source=None, target=None, N=self.Nconn)
         self.setUpNetwork(conn_params)
         total_conn = len(nest.GetConnections(self.pop1, self.pop2))
         connect_test_base.mpi_assert(total_conn, self.Nconn, self)
@@ -69,18 +68,16 @@ class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
         connect_test_base.mpi_assert(M, M_none, self)
 
     def testStatistics(self):
-        conn_params = self.conn_dict.copy()
-        conn_params['allow_autapses'] = True
-        conn_params['allow_multapses'] = True
-        conn_params['N'] = self.N
+        conn_params = nest.FixedTotalNumber(source=None, target=None, N=self.N,
+                                            allow_autapses=True, allow_multapses=True)
+
         for fan in ['in', 'out']:
             expected = connect_test_base.get_expected_degrees_totalNumber(
                 self.N, fan, self.N_s, self.N_t)
             pvalues = []
             for i in range(self.stat_dict['n_runs']):
                 connect_test_base.reset_seed(i + 1, self.nr_threads)
-                self.setUpNetwork(conn_dict=conn_params,
-                                  N1=self.N_s, N2=self.N_t)
+                self.setUpNetwork(projections=conn_params, N1=self.N_s, N2=self.N_t)
                 degrees = connect_test_base.get_degrees(fan, self.pop1, self.pop2)
                 degrees = connect_test_base.gather_data(degrees)
                 if degrees is not None:
@@ -94,14 +91,13 @@ class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
             self.assertGreater(p, self.stat_dict['alpha2'])
 
     def testAutapsesTrue(self):
-        conn_params = self.conn_dict.copy()
         N = 3
 
         # test that autapses exist
-        conn_params['N'] = N * N * N
-        conn_params['allow_autapses'] = True
         pop = nest.Create('iaf_psc_alpha', N)
-        nest.Connect(pop, pop, conn_params)
+        conn_params = nest.FixedTotalNumber(source=pop, target=pop, N=N * N * N, allow_autapses=True)
+        nest.Connect(conn_params)
+
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         M = connect_test_base.gather_data(M)
@@ -109,14 +105,13 @@ class TestFixedTotalNumber(connect_test_base.ConnectTestBase):
             self.assertTrue(np.sum(np.diag(M)) > N)
 
     def testAutapsesFalse(self):
-        conn_params = self.conn_dict.copy()
         N = 3
 
         # test that autapses were excluded
-        conn_params['N'] = N * (N - 1)
-        conn_params['allow_autapses'] = False
         pop = nest.Create('iaf_psc_alpha', N)
-        nest.Connect(pop, pop, conn_params)
+        conn_params = nest.FixedTotalNumber(source=pop, target=pop, N=N * (N - 1), allow_autapses=False)
+        nest.Connect(conn_params)
+
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         connect_test_base.mpi_assert(np.diag(M), np.zeros(N), self)

@@ -23,7 +23,7 @@
 # This shell script is part of the NEST CI build and test environment.
 # It is invoked by the top-level Github Actions script '.github/workflows/nestbuildmatrix.yml'.
 #
-# NOTE: This shell script is tightly coupled to 'extras/parse_build_log.py'.
+# NOTE: This shell script is tightly coupled to 'build_support/parse_build_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) or the variable name
 #      'file_names' have effects on the build/test-log parsing process.
 
@@ -55,7 +55,7 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     echo "--> Detected PYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
     CONFIGURE_PYTHON="-DPYTHON_EXECUTABLE=$PYTHON_EXECUTABLE -DPYTHON_LIBRARY=$PYTHON_LIBRARY -DPYTHON_INCLUDE_DIR=$PYTHON_INCLUDE_DIR"
     # Add the NEST profile to the VERA++ profiles.
-    sudo cp extras/vera++.profile /usr/lib/vera++/profiles/nest
+    sudo cp build_support/vera++.profile /usr/lib/vera++/profiles/nest
     echo "MSGBLD0020: VERA++ initialization completed."
     if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
         echo "MSGBLD0030: Installing CPPCHECK version 1.69."
@@ -124,8 +124,8 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
     RUNS_ON_CI=true
     INCREMENTAL=false
 
-    chmod +x extras/static_code_analysis.sh
-    ./extras/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
+    chmod +x build_support/static_code_analysis.sh
+    ./build_support/static_code_analysis.sh "$RUNS_ON_CI" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
     "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
     "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
     "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PYCODESTYLE" \
@@ -232,8 +232,8 @@ else
 fi
 if [ "$xMUSIC" = "1" ] ; then
     CONFIGURE_MUSIC="-Dwith-music=$HOME/.cache/music.install"
-    chmod +x extras/install_music.sh
-    ./extras/install_music.sh
+    chmod +x build_support/install_music.sh
+    ./build_support/install_music.sh
 else
     CONFIGURE_MUSIC="-Dwith-music=OFF"
 fi
@@ -256,22 +256,22 @@ fi
 if [ "$xLIBBOOST" = "1" ] ; then
     #CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_72_0.install"
     CONFIGURE_BOOST="-Dwith-boost=$HOME/.cache/boost_1_71_0.install"
-    chmod +x extras/install_libboost.sh
-    ./extras/install_libboost.sh
+    chmod +x build_support/install_libboost.sh
+    ./build_support/install_libboost.sh
 else
     CONFIGURE_BOOST="-Dwith-boost=OFF"
 fi
 if [ "$xSIONLIB" = "1" ] ; then
     CONFIGURE_SIONLIB="-Dwith-sionlib=$HOME/.cache/sionlib.install"
-    chmod +x extras/install_sionlib.sh
-    ./extras/install_sionlib.sh
+    chmod +x build_support/install_sionlib.sh
+    ./build_support/install_sionlib.sh
 else
     CONFIGURE_SIONLIB="-Dwith-sionlib=OFF"
 fi
 if [ "$xLIBNEUROSIM" = "1" ] ; then
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
-    chmod +x extras/install_csa-libneurosim.sh
-    ./extras/install_csa-libneurosim.sh $PYLIB_DIR
+    chmod +x build_support/install_csa-libneurosim.sh
+    ./build_support/install_csa-libneurosim.sh $PYLIB_DIR
     PYMAJOR=`python3 -c 'import sys; print("%i.%i" % sys.version_info[:2])'`
     export PYTHONPATH=$HOME/.cache/csa.install/lib/python$PYMAJOR/site-packages${PYTHONPATH:+:$PYTHONPATH}
     if [[ $OSTYPE == darwin* ]]; then
@@ -282,7 +282,7 @@ if [ "$xLIBNEUROSIM" = "1" ] ; then
 else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
-cp extras/nestrc.sli ~/.nestrc
+cp examples/sli/nestrc.sli ~/.nestrc
 # Explicitly allow MPI oversubscription. This is required by Open MPI versions > 3.0.
 # Not having this in place leads to a "not enough slots available" error.
 #if [[ "$OSTYPE" = darwin* ]] ; then
@@ -298,6 +298,23 @@ fi
 mkdir "$NEST_RESULT"
 echo "MSGBLD0235: Running CMake."
 cd "$NEST_VPATH"
+echo "MSGBLD0236: $(pwd)\$ cmake \
+    -DCMAKE_INSTALL_PREFIX=\"$NEST_RESULT\" \
+    -DCMAKE_CXX_FLAGS=\"$CXX_FLAGS\" \
+    -Dwith-optimize=ON \
+    -Dwith-warning=ON \
+    $CONFIGURE_BOOST \
+    $CONFIGURE_OPENMP \
+    $CONFIGURE_MPI \
+    $CONFIGURE_PYTHON \
+    $CONFIGURE_MUSIC \
+    $CONFIGURE_GSL \
+    $CONFIGURE_LTDL \
+    $CONFIGURE_READLINE \
+    $CONFIGURE_SIONLIB \
+    $CONFIGURE_LIBNEUROSIM \
+    .."
+
 cmake \
     -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
     -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \

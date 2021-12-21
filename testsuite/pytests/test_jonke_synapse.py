@@ -42,13 +42,10 @@ class TestJonkeSynapse:
     postsynaptic_firing_rate = 20.0  # [Hz]
     simulation_duration = 1e+4  # [ms]
     hardcoded_trains_length = 15.  # [ms]
-    synapse_parameters = {
-        "synapse_model": "jonke_synapse",
-        "receptor_type": 1,
-        "delay": resolution,
-        # initial weight
-        "weight": 2.0
-    }
+    synapse_parameters = nest.synapsemodels.jonke(receptor_type=1,
+                                                  delay=resolution,
+                                                  # initial weight
+                                                  weight=2.0)
     synapse_constants = {
         # STDP constants
         "lambda": 0.1 * np.e,
@@ -71,11 +68,11 @@ class TestJonkeSynapse:
         pre_spikes, post_spikes, weight_by_nest = self.do_the_nest_simulation()
         weight_reproduced_independently = self.reproduce_weight_drift(
             pre_spikes, post_spikes,
-            self.synapse_parameters["weight"])
+            self.synapse_parameters.specs["weight"])
         np.testing.assert_almost_equal(
             weight_reproduced_independently,
             weight_by_nest,
-            err_msg=f"{self.synapse_parameters['synapse_model']} test:\n" +
+            err_msg=f"{self.synapse_parameters.synapse_model} test:\n" +
                     f"Resulting synaptic weight {weight_by_nest} " +
                     f"differs from expected {weight_reproduced_independently}")
 
@@ -131,20 +128,19 @@ class TestJonkeSynapse:
         # The recorder is to save the randomly generated spike trains.
         spike_recorder = nest.Create("spike_recorder")
 
-        nest.Connect(presynaptic_generator + pre_spike_generator, presynaptic_neuron,
-                     syn_spec={"synapse_model": "static_synapse"})
-        nest.Connect(postsynaptic_generator + post_spike_generator, postsynaptic_neuron,
-                     syn_spec={"synapse_model": "static_synapse"})
-        nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_recorder,
-                     syn_spec={"synapse_model": "static_synapse"})
+        nest.Connect(nest.AllToAll(presynaptic_generator + pre_spike_generator, presynaptic_neuron,
+                     syn_spec=nest.synapsemodels.static()))
+        nest.Connect(nest.AllToAll(postsynaptic_generator + post_spike_generator, postsynaptic_neuron,
+                     syn_spec=nest.synapsemodels.static()))
+        nest.Connect(nest.AllToAll(presynaptic_neuron + postsynaptic_neuron, spike_recorder,
+                     syn_spec=nest.synapsemodels.static()))
 
         # The synapse of interest itself
         nest.SetDefaults(
-            self.synapse_parameters["synapse_model"], self.synapse_constants)
-        nest.Connect(presynaptic_neuron, postsynaptic_neuron,
-                     syn_spec=self.synapse_parameters)
+            self.synapse_parameters.synapse_model, self.synapse_constants)
+        nest.Connect(nest.AllToAll(presynaptic_neuron, postsynaptic_neuron, syn_spec=self.synapse_parameters))
         plastic_synapse_of_interest = nest.GetConnections(
-            synapse_model=self.synapse_parameters["synapse_model"])
+            synapse_model=self.synapse_parameters.synapse_model)
 
         nest.Simulate(self.simulation_duration)
 
@@ -203,7 +199,7 @@ class TestJonkeSynapse:
 
                 # A post-spike is actually accounted in STDP only after
                 # it backpropagates through the dendrite.
-                t += self.synapse_parameters["delay"]
+                t += self.synapse_parameters.specs["delay"]
 
                 # Evaluating the facilitation rule.
                 if t_previous_pre != -1:  # otherwise nothing to pair with

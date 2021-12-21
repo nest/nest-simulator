@@ -61,7 +61,6 @@ w = 0.1 / numpy.sqrt(N)  # excitatory connection strength
 KE = int(epsilon * NE)  # number of excitatory synapses per neuron (outdegree)
 KI = int(epsilon * NI)  # number of inhibitory synapses per neuron (outdegree)
 K_tot = int(KI + KE)  # total number of synapses per neuron
-connection_rule = 'fixed_outdegree'  # connection rule
 
 ###############################################################################
 # Definition of the neuron model and its neuron parameters
@@ -107,29 +106,27 @@ mm = nest.Create('multimeter', params={'record_from': ['rate'],
                                        'interval': dt})
 
 ###############################################################################
-# Specify synapse and connection dictionaries:
+# Specify synapses:
 # Connections originating from excitatory neurons are associated
 # with a delay `d` (``rate_connection_delayed``).
 # Connections originating from inhibitory neurons are not associated
 # with a delay (``rate_connection_instantaneous``).
 
-syn_e = {'weight': w, 'delay': d_e, 'synapse_model': 'rate_connection_delayed'}
-syn_i = {'weight': -g * w, 'synapse_model': 'rate_connection_instantaneous'}
-conn_e = {'rule': connection_rule, 'outdegree': KE}
-conn_i = {'rule': connection_rule, 'outdegree': KI}
+syn_e = nest.synapsemodels.rate_connection_delayed(weight=w, delay=d_e)
+syn_i = nest.synapsemodels.rate_connection_instantaneous(weight=-g * w)
 
 ###############################################################################
 # Connect rate units
 
-nest.Connect(n_e, n_e, conn_e, syn_e)
-nest.Connect(n_i, n_i, conn_i, syn_i)
-nest.Connect(n_e, n_i, conn_i, syn_e)
-nest.Connect(n_i, n_e, conn_e, syn_i)
+nest.Connect(nest.FixedOutdegree(n_e, n_e, outdegree=KE, syn_spec=syn_e))
+nest.Connect(nest.FixedOutdegree(n_i, n_i, outdegree=KI, syn_spec=syn_i))
+nest.Connect(nest.FixedOutdegree(n_e, n_i, outdegree=KI, syn_spec=syn_e))
+nest.Connect(nest.FixedOutdegree(n_i, n_e, outdegree=KE, syn_spec=syn_i))
 
 ###############################################################################
 # Connect recording device to rate units
 
-nest.Connect(mm, n_e + n_i)
+nest.Connect(nest.AllToAll(mm, n_e + n_i))
 
 ###############################################################################
 # Simulate the network

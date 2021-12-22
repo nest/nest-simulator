@@ -605,6 +605,19 @@ cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ =
 ####                                                                        ####
 ################################################################################
 
+cdef object any_to_pyobj(any operand):
+    if is_int(operand):
+        return any_cast[int](operand)
+
+cdef object dictionary_to_pydict(dictionary cdict):
+    cdef tmp = {}
+
+    cdef dictionary.const_iterator it = cdict.begin()
+    while it != cdict.end():
+        tmp[deref(it).first.decode('utf8')] = any_to_pyobj(deref(it).second)
+        inc(it)
+    return tmp
+
 def llapi_create(string model, long n):
     cdef NodeCollectionPTR gids = create(model, n)
     obj = NodeCollectionObject()
@@ -613,3 +626,21 @@ def llapi_create(string model, long n):
 
 def llapi_to_string(NodeCollectionObject nc):
     return pprint_to_string(nc.thisptr)
+
+def llapi_get_kernel_status():
+    cdef dictionary cdict = get_kernel_status()
+
+    # for d in dict:
+    #     print(d)
+
+    return dictionary_to_pydict(cdict)
+
+    # cdef dictionary.const_iterator it = dict.begin()
+    # while it != dict.end():
+    #     print(deref(it).first)
+    #     print(any_to_pyobj(deref(it).second))
+    #     inc(it)
+
+    # return dict
+    # return dictionary
+    # return sli_dict_to_object(<DictionaryDatum*> get_kernel_status())

@@ -123,13 +123,16 @@ set_kernel_status( const DictionaryDatum& dict )
   ALL_ENTRIES_ACCESSED( *dict, "SetKernelStatus", "Unread dictionary entries: " );
 }
 
-DictionaryDatum
+dictionary
 get_kernel_status()
 {
   assert( kernel().is_initialized() );
 
-  DictionaryDatum d( new Dictionary );
-  kernel().get_status( d );
+  dictionary d;
+
+  d[ "test_first" ] = 42;
+
+  // kernel().get_status( d );
 
   return d;
 }

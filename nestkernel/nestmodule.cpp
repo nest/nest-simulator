@@ -598,9 +598,9 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::GetKernelStatus_Function::execute( SLIInterpreter* i ) const
 {
-  DictionaryDatum dict = get_kernel_status();
+  // DictionaryDatum dict = get_kernel_status();
 
-  i->OStack.push( dict );
+  // i->OStack.push( dict );
   i->EStack.pop();
 }
 

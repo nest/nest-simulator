@@ -29,6 +29,7 @@
 // Includes from libnestutil:
 #include "enum_bitfield.h"
 #include "logging.h"
+#include "dictionary.h"
 
 // Includes from nestkernel:
 #include "nest_datums.h"
@@ -101,7 +102,7 @@ RngPtr get_vp_synced_rng( thread tid );
 RngPtr get_vp_specific_rng( thread tid );
 
 void set_kernel_status( const DictionaryDatum& dict );
-DictionaryDatum get_kernel_status();
+dictionary get_kernel_status();
 
 void set_node_status( const index node_id, const DictionaryDatum& dict );
 DictionaryDatum get_node_status( const index node_id );

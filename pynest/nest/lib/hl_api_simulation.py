@@ -281,8 +281,7 @@ def GetKernelStatus(keys=None):
 
     """
 
-    sr('GetKernelStatus')
-    status_root = spp()
+    status_root = kernel.llapi_get_kernel_status()
 
     if keys is None:
         return status_root

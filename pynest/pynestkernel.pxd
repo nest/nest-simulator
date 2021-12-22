@@ -23,6 +23,7 @@ from libcpp cimport bool as cbool
 
 from libcpp.string cimport string
 from libcpp.vector cimport vector
+from libcpp.utility cimport pair
 
 from cpython.ref cimport PyObject
 
@@ -142,6 +143,30 @@ cdef extern from "tokenstack.h":
         # Supposed to be used only through the addr_tok macro
         Token* top()
 
+cdef extern from "dictionary.h" namespace "boost":
+    cppclass any:
+        any()
+    T any_cast[T](any& operand)
+
+cdef extern from "dictionary.h":
+    cppclass dictionary:
+        dictionary()
+        # ctypedef key_type
+        # ctypedef mapped_type
+        cppclass const_iterator:
+            pair[string, any]& operator*()
+            const_iterator operator++()
+            bint operator==(const const_iterator&)
+            bint operator!=(const const_iterator&)
+        const_iterator begin()
+        const_iterator end()
+    cbool is_int(const any&)
+    cbool is_double(const any&)
+    cbool is_string(const any&)
+    cbool is_int_vector(const any&)
+    cbool is_double_vector(const any&)
+    cbool is_dict(const any&)
+
 cdef extern from "mpi_manager.h" namespace "nest":
     cppclass MPIManager:
         void mpi_finalize( int exitcode ) except +
@@ -157,6 +182,7 @@ cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     NodeCollectionPTR create( const string model_name, const long n )
     string pprint_to_string( NodeCollectionPTR nc )
+    dictionary get_kernel_status()
 
 cdef extern from "pynestkernel_aux.h":
     CYTHON_isConnectionGenerator( x )

@@ -412,36 +412,37 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::SimulationManager::get_status( DictionaryDatum& d )
+nest::SimulationManager::get_status( dictionary& d )
 {
-  def< double >( d, names::ms_per_tic, Time::get_ms_per_tic() );
-  def< double >( d, names::tics_per_ms, Time::get_tics_per_ms() );
-  def< long >( d, names::tics_per_step, Time::get_tics_per_step() );
-  def< double >( d, names::resolution, Time::get_resolution().get_ms() );
+  d[ names::ms_per_tic.toString() ] = Time::get_ms_per_tic();
+  d[ names::tics_per_ms.toString() ] = Time::get_tics_per_ms();
+  d[ names::tics_per_step.toString() ] =
+    static_cast< size_t >( Time::get_tics_per_step() ); // casting to avoid extra checks of any types
+  d[ names::resolution.toString() ] = Time::get_resolution().get_ms();
 
-  def< double >( d, names::T_min, Time::min().get_ms() );
-  def< double >( d, names::T_max, Time::max().get_ms() );
+  d[ names::T_min.toString() ] = Time::min().get_ms();
+  d[ names::T_max.toString() ] = Time::max().get_ms();
 
-  def< double >( d, names::biological_time, get_time().get_ms() );
-  def< long >( d, names::to_do, to_do_ );
-  def< bool >( d, names::print_time, print_time_ );
+  d[ names::biological_time.toString() ] = get_time().get_ms();
+  d[ names::to_do.toString() ] = static_cast< long >( to_do_ ); // casting to avoid extra checks of any types
+  d[ names::print_time.toString() ] = print_time_;
 
-  def< bool >( d, names::use_wfr, use_wfr_ );
-  def< double >( d, names::wfr_comm_interval, wfr_comm_interval_ );
-  def< double >( d, names::wfr_tol, wfr_tol_ );
-  def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
-  def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
+  d[ names::use_wfr.toString() ] = use_wfr_;
+  d[ names::wfr_comm_interval.toString() ] = wfr_comm_interval_;
+  d[ names::wfr_tol.toString() ] = wfr_tol_;
+  d[ names::wfr_max_iterations.toString() ] = wfr_max_iterations_;
+  d[ names::wfr_interpolation_order.toString() ] = wfr_interpolation_order_;
 
-  def< double >( d, names::update_time_limit, update_time_limit_ );
-  def< double >( d, names::min_update_time, min_update_time_ );
-  def< double >( d, names::max_update_time, max_update_time_ );
+  d[ names::update_time_limit.toString() ] = update_time_limit_;
+  d[ names::min_update_time.toString() ] = min_update_time_;
+  d[ names::max_update_time.toString() ] = max_update_time_;
 
-  def< double >( d, names::time_simulate, sw_simulate_.elapsed() );
-  def< double >( d, names::time_communicate_prepare, sw_communicate_prepare_.elapsed() );
+  d[ names::time_simulate.toString() ] = sw_simulate_.elapsed();
+  d[ names::time_communicate_prepare.toString() ] = sw_communicate_prepare_.elapsed();
 #ifdef TIMER_DETAILED
-  def< double >( d, names::time_gather_spike_data, sw_gather_spike_data_.elapsed() );
-  def< double >( d, names::time_update, sw_update_.elapsed() );
-  def< double >( d, names::time_gather_target_data, sw_gather_target_data_.elapsed() );
+  d[ names::time_gather_spike_data.toString() ] = sw_gather_spike_data_.elapsed();
+  d[ names::time_update.toString() ] = sw_update_.elapsed();
+  d[ names::time_gather_target_data.toString() ] = sw_gather_target_data_.elapsed();
 #endif
 }
 

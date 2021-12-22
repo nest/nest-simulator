@@ -169,7 +169,7 @@ public:
   void cleanup();
 
   void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& );
+  void get_status( dictionary& );
 
   //! Returns true if kernel is initialized
   bool is_initialized() const;

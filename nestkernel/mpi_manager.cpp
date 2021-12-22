@@ -224,19 +224,19 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
 }
 
 void
-nest::MPIManager::get_status( DictionaryDatum& dict )
+nest::MPIManager::get_status( dictionary& dict )
 {
-  def< long >( dict, names::num_processes, num_processes_ );
-  def< bool >( dict, names::adaptive_spike_buffers, adaptive_spike_buffers_ );
-  def< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
-  def< size_t >( dict, names::buffer_size_target_data, buffer_size_target_data_ );
-  def< size_t >( dict, names::buffer_size_spike_data, buffer_size_spike_data_ );
-  def< size_t >( dict, names::send_buffer_size_secondary_events, get_send_buffer_size_secondary_events_in_int() );
-  def< size_t >( dict, names::recv_buffer_size_secondary_events, get_recv_buffer_size_secondary_events_in_int() );
-  def< size_t >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
-  def< size_t >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
-  def< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
-  def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
+  dict[ names::num_processes.toString() ] = num_processes_;
+  dict[ names::adaptive_spike_buffers.toString() ] = adaptive_spike_buffers_;
+  dict[ names::adaptive_target_buffers.toString() ] = adaptive_target_buffers_;
+  dict[ names::buffer_size_target_data.toString() ] = buffer_size_target_data_;
+  dict[ names::buffer_size_spike_data.toString() ] = buffer_size_spike_data_;
+  dict[ names::send_buffer_size_secondary_events.toString() ] = get_send_buffer_size_secondary_events_in_int();
+  dict[ names::recv_buffer_size_secondary_events.toString() ] = get_recv_buffer_size_secondary_events_in_int();
+  dict[ names::max_buffer_size_spike_data.toString() ] = max_buffer_size_spike_data_;
+  dict[ names::max_buffer_size_target_data.toString() ] = max_buffer_size_target_data_;
+  dict[ names::growth_factor_buffer_spike_data.toString() ] = growth_factor_buffer_spike_data_;
+  dict[ names::growth_factor_buffer_target_data.toString() ] = growth_factor_buffer_target_data_;
 }
 
 #ifdef HAVE_MPI

@@ -91,25 +91,25 @@ SPManager::finalize()
  * Methods to retrieve data regarding structural plasticity variables
  */
 void
-SPManager::get_status( DictionaryDatum& d )
+SPManager::get_status( dictionary& d )
 {
-  DictionaryDatum sp_synapses = DictionaryDatum( new Dictionary() );
-  DictionaryDatum sp_synapse;
-  def< DictionaryDatum >( d, names::structural_plasticity_synapses, sp_synapses );
+  dictionary sp_synapses;
+
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
-    sp_synapse = DictionaryDatum( new Dictionary() );
-    def< std::string >( sp_synapse, names::pre_synaptic_element, ( *i )->get_pre_synaptic_element_name() );
-    def< std::string >( sp_synapse, names::post_synaptic_element, ( *i )->get_post_synaptic_element_name() );
-    def< std::string >( sp_synapse,
-      names::synapse_model,
-      kernel().model_manager.get_synapse_prototype( ( *i )->get_synapse_model(), 0 ).get_name() );
+    dictionary sp_synapse;
+    // DictionaryDatum sp_synapse = DictionaryDatum( new Dictionary() );
+    sp_synapse[ names::pre_synaptic_element.toString() ] = ( *i )->get_pre_synaptic_element_name();
+    sp_synapse[ names::post_synaptic_element.toString() ] = ( *i )->get_post_synaptic_element_name();
+    sp_synapse[ names::synapse_model.toString() ] =
+      kernel().model_manager.get_synapse_prototype( ( *i )->get_synapse_model(), 0 ).get_name();
     std::stringstream syn_name;
     syn_name << "syn" << ( sp_conn_builders_.end() - i );
-    def< DictionaryDatum >( sp_synapses, syn_name.str(), sp_synapse );
+    sp_synapses[ syn_name.str() ] = sp_synapse;
   }
 
-  def< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
+  d[ names::structural_plasticity_synapses.toString() ] = sp_synapses;
+  d[ names::structural_plasticity_update_interval.toString() ] = structural_plasticity_update_interval_;
 }
 
 /**

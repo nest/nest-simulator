@@ -183,19 +183,19 @@ nest::ConnectionManager::get_delay_checker()
 }
 
 void
-nest::ConnectionManager::get_status( DictionaryDatum& dict )
+nest::ConnectionManager::get_status( dictionary& dict )
 {
   update_delay_extrema_();
-  def< double >( dict, names::min_delay, Time( Time::step( min_delay_ ) ).get_ms() );
-  def< double >( dict, names::max_delay, Time( Time::step( max_delay_ ) ).get_ms() );
+  dict[ names::min_delay.toString() ] = Time( Time::step( min_delay_ ) ).get_ms();
+  dict[ names::max_delay.toString() ] = Time( Time::step( max_delay_ ) ).get_ms();
 
   const size_t n = get_num_connections();
-  def< long >( dict, names::num_connections, n );
-  def< bool >( dict, names::keep_source_table, keep_source_table_ );
-  def< bool >( dict, names::sort_connections_by_source, sort_connections_by_source_ );
-  def< bool >( dict, names::use_compressed_spikes, use_compressed_spikes_ );
+  dict[ names::num_connections.toString() ] = n;
+  dict[ names::keep_source_table.toString() ] = keep_source_table_;
+  dict[ names::sort_connections_by_source.toString() ] = sort_connections_by_source_;
+  dict[ names::use_compressed_spikes.toString() ] = use_compressed_spikes_;
 
-  def< double >( dict, names::time_construction_connect, sw_construction_connect.elapsed() );
+  dict[ names::time_construction_connect.toString() ] = sw_construction_connect.elapsed();
 }
 
 DictionaryDatum

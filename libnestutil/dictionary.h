@@ -30,47 +30,17 @@
 
 using dictionary = std::map< std::string, boost::any >;
 
-// int
-inline bool
-is_int( const boost::any& operand )
-{
-  return operand.type() == typeid( int );
-}
+std::string debug_type( const boost::any& operand );
 
-// double
-inline bool
-is_double( const boost::any& operand )
-{
-  return operand.type() == typeid( double );
-}
-
-// string
-inline bool
-is_string( const boost::any& operand )
-{
-  return operand.type() == typeid( std::string );
-}
-
-// vector of ints
-inline bool
-is_int_vector( const boost::any& operand )
-{
-  return operand.type() == typeid( std::vector< int > );
-}
-
-// vector of doubles
-inline bool
-is_double_vector( const boost::any& operand )
-{
-  return operand.type() == typeid( std::vector< double > );
-}
-
-// dict
-inline bool
-is_dict( const boost::any& operand )
-{
-  return operand.type() == typeid( dictionary );
-}
-
+bool is_int( const boost::any& operand );
+bool is_long( const boost::any& operand );
+bool is_size_t( const boost::any& operand );
+bool is_double( const boost::any& operand );
+bool is_bool( const boost::any& operand );
+bool is_string( const boost::any& operand );
+bool is_int_vector( const boost::any& operand );
+bool is_double_vector( const boost::any& operand );
+bool is_string_vector( const boost::any& operand );
+bool is_dict( const boost::any& operand );
 
 #endif /* DICTIONARY_H_ */

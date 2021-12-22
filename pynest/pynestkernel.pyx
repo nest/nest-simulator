@@ -608,6 +608,24 @@ cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ =
 cdef object any_to_pyobj(any operand):
     if is_int(operand):
         return any_cast[int](operand)
+    if is_long(operand):
+        return any_cast[long](operand)
+    if is_size_t(operand):
+        return any_cast[size_t](operand)
+    if is_double(operand):
+        return any_cast[double](operand)
+    if is_bool(operand):
+        return any_cast[cbool](operand)
+    if is_string(operand):
+        return any_cast[string](operand)
+    if is_int_vector(operand):
+        return any_cast[vector[int]](operand)
+    if is_double_vector(operand):
+        return any_cast[vector[double]](operand)
+    if is_string_vector(operand):
+        return any_cast[vector[string]](operand)
+    if is_dict(operand):
+        return dictionary_to_pydict(any_cast[dictionary](operand))
 
 cdef object dictionary_to_pydict(dictionary cdict):
     cdef tmp = {}
@@ -615,6 +633,8 @@ cdef object dictionary_to_pydict(dictionary cdict):
     cdef dictionary.const_iterator it = cdict.begin()
     while it != cdict.end():
         tmp[deref(it).first.decode('utf8')] = any_to_pyobj(deref(it).second)
+        if tmp[deref(it).first.decode('utf8')] is None:
+            print('Could not convert: ' + deref(it).first.decode('utf8') + ' of type ' + debug_type(deref(it).second).decode('utf8'))
         inc(it)
     return tmp
 
@@ -629,18 +649,4 @@ def llapi_to_string(NodeCollectionObject nc):
 
 def llapi_get_kernel_status():
     cdef dictionary cdict = get_kernel_status()
-
-    # for d in dict:
-    #     print(d)
-
     return dictionary_to_pydict(cdict)
-
-    # cdef dictionary.const_iterator it = dict.begin()
-    # while it != dict.end():
-    #     print(deref(it).first)
-    #     print(any_to_pyobj(deref(it).second))
-    #     inc(it)
-
-    # return dict
-    # return dictionary
-    # return sli_dict_to_object(<DictionaryDatum*> get_kernel_status())

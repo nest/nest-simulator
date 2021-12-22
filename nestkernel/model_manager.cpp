@@ -29,6 +29,7 @@
 
 // Includes from libnestutil:
 #include "compose.hpp"
+#include "dictionary.h"
 
 // Includes from nestkernel:
 #include "connector_model_impl.h"
@@ -172,10 +173,10 @@ ModelManager::set_status( const DictionaryDatum& )
 }
 
 void
-ModelManager::get_status( DictionaryDatum& dict )
+ModelManager::get_status( dictionary& dict )
 {
   // syn_ids start at 0, so the maximal number of syn models is MAX_SYN_ID + 1
-  def< int >( dict, names::max_num_syn_models, MAX_SYN_ID + 1 );
+  dict[ names::max_num_syn_models.toString() ] = MAX_SYN_ID + 1;
 }
 
 index

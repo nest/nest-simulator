@@ -125,17 +125,17 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
 }
 
 void
-EventDeliveryManager::get_status( DictionaryDatum& dict )
+EventDeliveryManager::get_status( dictionary& dict )
 {
-  def< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
-  def< unsigned long >(
-    dict, names::local_spike_counter, std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 ) );
+  dict[ names::off_grid_spiking.toString() ] = off_grid_spiking_;
+  dict[ names::local_spike_counter.toString() ] =
+    std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 );
 
 #ifdef TIMER_DETAILED
-  def< double >( dict, names::time_collocate_spike_data, sw_collocate_spike_data_.elapsed() );
-  def< double >( dict, names::time_communicate_spike_data, sw_communicate_spike_data_.elapsed() );
-  def< double >( dict, names::time_deliver_spike_data, sw_deliver_spike_data_.elapsed() );
-  def< double >( dict, names::time_communicate_target_data, sw_communicate_target_data_.elapsed() );
+  dict[ names::time_collocate_spike_data.toString() ] = sw_collocate_spike_data_.elapsed();
+  dict[ names::time_communicate_spike_data.toString() ] = sw_communicate_spike_data_.elapsed();
+  dict[ names::time_deliver_spike_data.toString() ] = sw_deliver_spike_data_.elapsed();
+  dict[ names::time_communicate_target_data.toString() ] = sw_communicate_target_data_.elapsed();
 #endif
 }
 

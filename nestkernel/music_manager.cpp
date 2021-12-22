@@ -78,7 +78,7 @@ MUSICManager::set_status( const DictionaryDatum& )
 }
 
 void
-MUSICManager::get_status( DictionaryDatum& )
+MUSICManager::get_status( dictionary& )
 {
 }
 

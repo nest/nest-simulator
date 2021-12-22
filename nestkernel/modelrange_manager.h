@@ -53,7 +53,7 @@ public:
   {
   }
   virtual void
-  get_status( DictionaryDatum& )
+  get_status( dictionary& )
   {
   }
 

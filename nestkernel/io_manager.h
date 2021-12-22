@@ -48,7 +48,7 @@ public:
   void change_num_threads( thread ) override;
 
   void set_status( const DictionaryDatum& ) override; // set parameters
-  void get_status( DictionaryDatum& ) override;       // get parameters
+  void get_status( dictionary& ) override;            // get parameters
 
   IOManager(); // Construct only by meta-manager
   ~IOManager() override;

@@ -28,6 +28,7 @@
 
 // Includes from sli:
 #include "dictdatum.h"
+#include "dictionary.h"
 
 namespace nest
 {
@@ -101,7 +102,7 @@ public:
   virtual void change_num_threads( thread ){};
 
   virtual void set_status( const DictionaryDatum& ) = 0;
-  virtual void get_status( DictionaryDatum& ) = 0;
+  virtual void get_status( dictionary& ) = 0;
 
   virtual void prepare(){};
   virtual void cleanup(){};

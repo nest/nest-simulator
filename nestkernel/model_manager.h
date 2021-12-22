@@ -76,7 +76,7 @@ public:
   /**
    *
    */
-  virtual void get_status( DictionaryDatum& );
+  virtual void get_status( dictionary& );
 
   /**
    *

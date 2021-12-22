@@ -160,11 +160,16 @@ cdef extern from "dictionary.h":
             bint operator!=(const const_iterator&)
         const_iterator begin()
         const_iterator end()
+    string debug_type(const any&)
     cbool is_int(const any&)
+    cbool is_long(const any&)
+    cbool is_size_t(const any&)
     cbool is_double(const any&)
+    cbool is_bool(const any&)
     cbool is_string(const any&)
     cbool is_int_vector(const any&)
     cbool is_double_vector(const any&)
+    cbool is_string_vector(const any&)
     cbool is_dict(const any&)
 
 cdef extern from "mpi_manager.h" namespace "nest":

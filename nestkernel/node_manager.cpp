@@ -792,10 +792,10 @@ NodeManager::set_status( index node_id, const DictionaryDatum& d )
 }
 
 void
-NodeManager::get_status( DictionaryDatum& d )
+NodeManager::get_status( dictionary& d )
 {
-  def< long >( d, names::network_size, size() );
-  def< double >( d, names::time_construction_create, sw_construction_create_.elapsed() );
+  d[ names::network_size.toString() ] = size();
+  d[ names::time_construction_create.toString() ] = sw_construction_create_.elapsed();
 }
 
 void

@@ -166,7 +166,7 @@ nest::KernelManager::set_status( const DictionaryDatum& dict )
 }
 
 void
-nest::KernelManager::get_status( DictionaryDatum& dict )
+nest::KernelManager::get_status( dictionary& dict )
 {
   assert( is_initialized() );
 

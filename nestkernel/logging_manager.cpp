@@ -59,9 +59,9 @@ nest::LoggingManager::set_status( const DictionaryDatum& dict )
 }
 
 void
-nest::LoggingManager::get_status( DictionaryDatum& dict )
+nest::LoggingManager::get_status( dictionary& dict )
 {
-  ( *dict )[ names::dict_miss_is_error ] = dict_miss_is_error_;
+  dict[ names::dict_miss_is_error.toString() ] = dict_miss_is_error_;
 }
 
 

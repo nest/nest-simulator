@@ -53,7 +53,7 @@ public:
   virtual void finalize();
 
   virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  virtual void get_status( dictionary& );
 
   /**
       check for errors in time before run

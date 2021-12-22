@@ -125,17 +125,17 @@ nest::RandomManager::reset_rngs_()
 }
 
 void
-nest::RandomManager::get_status( DictionaryDatum& d )
+nest::RandomManager::get_status( dictionary& d )
 {
-  ArrayDatum rng_types;
+  std::vector< std::string > rng_types;
   for ( auto rng = rng_types_.begin(); rng != rng_types_.end(); ++rng )
   {
     rng_types.push_back( rng->first );
   }
 
-  def< ArrayDatum >( d, names::rng_types, rng_types );
-  def< long >( d, names::rng_seed, base_seed_ );
-  def< std::string >( d, names::rng_type, current_rng_type_ );
+  d[ names::rng_types.toString() ] = rng_types;
+  d[ names::rng_seed.toString() ] = static_cast< long >( base_seed_ ); // casting to avoid checking for exotic types
+  d[ names::rng_type.toString() ] = current_rng_type_;
 }
 
 void

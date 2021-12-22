@@ -56,7 +56,7 @@ public:
   virtual void finalize();
 
   virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  virtual void get_status( dictionary& );
 
   /**
    * Get properties of a node. The specified node must exist.

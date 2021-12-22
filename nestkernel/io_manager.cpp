@@ -201,20 +201,22 @@ IOManager::set_status( const DictionaryDatum& d )
 }
 
 void
-IOManager::get_status( DictionaryDatum& d )
+IOManager::get_status( dictionary& d )
 {
-  ( *d )[ names::data_path ] = data_path_;
-  ( *d )[ names::data_prefix ] = data_prefix_;
-  ( *d )[ names::overwrite_files ] = overwrite_files_;
+  d[ names::data_path.toString() ] = data_path_;
+  d[ names::data_prefix.toString() ] = data_prefix_;
+  d[ names::overwrite_files.toString() ] = overwrite_files_;
 
-  DictionaryDatum recording_backends( new Dictionary );
-  for ( const auto& it : recording_backends_ )
-  {
-    DictionaryDatum recording_backend_status( new Dictionary );
-    it.second->get_status( recording_backend_status );
-    ( *recording_backends )[ it.first ] = recording_backend_status;
-  }
-  ( *d )[ names::recording_backends ] = recording_backends;
+  // TODO-PYNEST-NG: dict implement get_status() for recording backends with dictionary.
+
+  // DictionaryDatum recording_backends( new Dictionary );
+  // for ( const auto& it : recording_backends_ )
+  // {
+  //   DictionaryDatum recording_backend_status( new Dictionary );
+  //   it.second->get_status( recording_backend_status );
+  //   ( *recording_backends )[ it.first ] = recording_backend_status;
+  // }
+  // ( *d )[ names::recording_backends ] = recording_backends;
 }
 
 void

@@ -69,7 +69,7 @@ public:
   virtual void initialize();
   virtual void finalize();
 
-  virtual void get_status( DictionaryDatum& );
+  virtual void get_status( dictionary& );
   virtual void set_status( const DictionaryDatum& );
 
   DictionaryDatum& get_growthcurvedict();

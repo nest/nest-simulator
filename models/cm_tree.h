@@ -115,7 +115,7 @@ nest::Compartment::gather_input( const std::pair< double, double >& in )
 {
   xx_ += in.first;
   yy_ += in.second;
-};
+}
 inline std::pair< double, double >
 nest::Compartment::io()
 {
@@ -128,7 +128,7 @@ nest::Compartment::io()
   double f_val( ff * hh / gg );
 
   return std::make_pair( g_val, f_val );
-};
+}
 inline double
 nest::Compartment::calc_v( const double v_in )
 {
@@ -140,7 +140,7 @@ nest::Compartment::calc_v( const double v_in )
   v_comp = ( ff - v_in * hh ) / gg;
 
   return v_comp;
-};
+}
 
 
 class CompTree

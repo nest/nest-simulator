@@ -72,7 +72,7 @@ public:
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
   // numerical integration step
-  std::pair< double, double > f_numstep( const double v_comp, const double dt );
+  std::pair< double, double > f_numstep( const double v_comp );
 };
 
 
@@ -112,7 +112,7 @@ public:
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
   // numerical integration step
-  std::pair< double, double > f_numstep( const double v_comp, const double dt );
+  std::pair< double, double > f_numstep( const double v_comp );
 };
 
 
@@ -170,7 +170,7 @@ public:
   };
 
   // numerical integration step
-  std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
+  std::pair< double, double > f_numstep( const double v_comp, const long lag );
 };
 
 
@@ -228,7 +228,7 @@ public:
   };
 
   // numerical integration step
-  std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
+  std::pair< double, double > f_numstep( const double v_comp, const long lag );
 };
 
 
@@ -286,7 +286,7 @@ public:
   };
 
   // numerical integration step
-  std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
+  std::pair< double, double > f_numstep( const double v_comp, const long lag );
 
   // synapse specific funtion
   inline std::pair< double, double >
@@ -362,7 +362,7 @@ public:
   };
 
   // numerical integration step
-  std::pair< double, double > f_numstep( const double v_comp, const double dt, const long lag );
+  std::pair< double, double > f_numstep( const double v_comp, const long lag );
 
   // synapse specific funtion
   inline std::pair< double, double >
@@ -585,20 +585,20 @@ public:
   };
 
   std::pair< double, double >
-  f_numstep( const double v_comp, const double dt, const long lag )
+  f_numstep( const double v_comp, const long lag )
   {
     std::pair< double, double > gi( 0., 0. );
     double g_val = 0.;
     double i_val = 0.;
 
     // contribution of Na channel
-    gi = Na_chan_.f_numstep( v_comp, dt );
+    gi = Na_chan_.f_numstep( v_comp );
 
     g_val += gi.first;
     i_val += gi.second;
 
     // contribution of K channel
-    gi = K_chan_.f_numstep( v_comp, dt );
+    gi = K_chan_.f_numstep( v_comp );
 
     g_val += gi.first;
     i_val += gi.second;
@@ -606,7 +606,7 @@ public:
     // contribution of AMPA synapses
     for ( auto syn_it = AMPA_syns_.begin(); syn_it != AMPA_syns_.end(); ++syn_it )
     {
-      gi = syn_it->f_numstep( v_comp, dt, lag );
+      gi = syn_it->f_numstep( v_comp, lag );
 
       g_val += gi.first;
       i_val += gi.second;
@@ -614,7 +614,7 @@ public:
     // contribution of GABA synapses
     for ( auto syn_it = GABA_syns_.begin(); syn_it != GABA_syns_.end(); ++syn_it )
     {
-      gi = syn_it->f_numstep( v_comp, dt, lag );
+      gi = syn_it->f_numstep( v_comp, lag );
 
       g_val += gi.first;
       i_val += gi.second;
@@ -622,7 +622,7 @@ public:
     // contribution of NMDA synapses
     for ( auto syn_it = NMDA_syns_.begin(); syn_it != NMDA_syns_.end(); ++syn_it )
     {
-      gi = syn_it->f_numstep( v_comp, dt, lag );
+      gi = syn_it->f_numstep( v_comp, lag );
 
       g_val += gi.first;
       i_val += gi.second;
@@ -630,7 +630,7 @@ public:
     // contribution of AMPA_NMDA synapses
     for ( auto syn_it = AMPA_NMDA_syns_.begin(); syn_it != AMPA_NMDA_syns_.end(); ++syn_it )
     {
-      gi = syn_it->f_numstep( v_comp, dt, lag );
+      gi = syn_it->f_numstep( v_comp, lag );
 
       g_val += gi.first;
       i_val += gi.second;

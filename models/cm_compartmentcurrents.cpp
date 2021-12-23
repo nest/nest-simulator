@@ -55,8 +55,9 @@ nest::Na::append_recordables( std::map< Name, double* >* recordables, const long
 }
 
 std::pair< double, double >
-nest::Na::f_numstep( const double v_comp, const double dt )
+nest::Na::f_numstep( const double v_comp )
 {
+  const double dt = Time::get_resolution().get_ms();
   double g_val = 0., i_val = 0.;
 
   if ( gbar_Na_ > 1e-9 )
@@ -171,8 +172,9 @@ nest::K::append_recordables( std::map< Name, double* >* recordables, const long 
 }
 
 std::pair< double, double >
-nest::K::f_numstep( const double v_comp, const double dt )
+nest::K::f_numstep( const double v_comp )
 {
+  const double dt = Time::get_resolution().get_ms();
   double g_val = 0., i_val = 0.;
 
   if ( gbar_K_ > 1e-9 )
@@ -269,7 +271,7 @@ nest::AMPA::append_recordables( std::map< Name, double* >* recordables )
 }
 
 std::pair< double, double >
-nest::AMPA::f_numstep( const double v_comp, const double dt, const long lag )
+nest::AMPA::f_numstep( const double v_comp, const long lag )
 {
   // update conductance
   g_r_AMPA_ *= prop_r_;
@@ -341,7 +343,7 @@ nest::GABA::append_recordables( std::map< Name, double* >* recordables )
 }
 
 std::pair< double, double >
-nest::GABA::f_numstep( const double v_comp, const double dt, const long lag )
+nest::GABA::f_numstep( const double v_comp, const long lag )
 {
   // update conductance
   g_r_GABA_ *= prop_r_;
@@ -413,7 +415,7 @@ nest::NMDA::append_recordables( std::map< Name, double* >* recordables )
 }
 
 std::pair< double, double >
-nest::NMDA::f_numstep( const double v_comp, const double dt, const long lag )
+nest::NMDA::f_numstep( const double v_comp, const long lag )
 {
   // update conductance
   g_r_NMDA_ *= prop_r_;
@@ -516,7 +518,7 @@ nest::AMPA_NMDA::append_recordables( std::map< Name, double* >* recordables )
 }
 
 std::pair< double, double >
-nest::AMPA_NMDA::f_numstep( const double v_comp, const double dt, const long lag )
+nest::AMPA_NMDA::f_numstep( const double v_comp, const long lag )
 {
   // update conductance
   g_r_AN_AMPA_ *= prop_r_AMPA_;

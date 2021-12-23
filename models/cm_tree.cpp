@@ -45,7 +45,7 @@ nest::Compartment::Compartment( const long compartment_index, const long parent_
   , n_passed( 0 )
 {
   compartment_currents = CompartmentCurrents();
-};
+}
 nest::Compartment::Compartment( const long compartment_index,
   const long parent_index,
   const DictionaryDatum& compartment_params )
@@ -75,7 +75,7 @@ nest::Compartment::Compartment( const long compartment_index,
   updateValue< double >( compartment_params, names::e_L, el );
 
   compartment_currents = CompartmentCurrents( compartment_params );
-};
+}
 
 void
 nest::Compartment::calibrate()
@@ -109,11 +109,8 @@ nest::Compartment::get_recordables()
 void
 nest::Compartment::construct_matrix_element( const long lag )
 {
-  const double dt = Time::get_resolution().get_ms();
-
   // matrix diagonal element
   gg = gg0;
-
 
   if ( parent != nullptr )
   {
@@ -141,7 +138,7 @@ nest::Compartment::construct_matrix_element( const long lag )
   }
 
   // add all currents to compartment
-  std::pair< double, double > gi = compartment_currents.f_numstep( v_comp, dt, lag );
+  std::pair< double, double > gi = compartment_currents.f_numstep( v_comp, lag );
   gg += gi.first;
   ff += gi.second;
 
@@ -170,13 +167,13 @@ nest::CompTree::add_compartment( const long parent_index )
 {
   Compartment* compartment = new Compartment( size_, parent_index );
   add_compartment( compartment, parent_index );
-};
+}
 void
 nest::CompTree::add_compartment( const long parent_index, const DictionaryDatum& compartment_params )
 {
   Compartment* compartment = new Compartment( size_, parent_index, compartment_params );
   add_compartment( compartment, parent_index );
-};
+}
 void
 nest::CompTree::add_compartment( Compartment* compartment, const long parent_index )
 {
@@ -404,7 +401,7 @@ nest::CompTree::construct_matrix( const long lag )
   {
     ( *compartment_it )->construct_matrix_element( lag );
   }
-};
+}
 
 /*
 Solve matrix with O(n) algorithm
@@ -419,7 +416,7 @@ nest::CompTree::solve_matrix()
 
   // do up sweep to set voltages
   solve_matrix_upsweep( &root_, 0.0 );
-};
+}
 void
 nest::CompTree::solve_matrix_downsweep( Compartment* compartment, std::vector< Compartment* >::iterator leaf_it )
 {
@@ -450,7 +447,7 @@ nest::CompTree::solve_matrix_downsweep( Compartment* compartment, std::vector< C
       }
     }
   }
-};
+}
 void
 nest::CompTree::solve_matrix_upsweep( Compartment* compartment, double vv )
 {
@@ -461,7 +458,7 @@ nest::CompTree::solve_matrix_upsweep( Compartment* compartment, double vv )
   {
     solve_matrix_upsweep( &( *child_it ), vv );
   }
-};
+}
 
 /*
 Print the tree graph
@@ -486,5 +483,5 @@ nest::CompTree::print_tree() const
     std::cout << std::endl;
   }
   std::cout << std::endl;
-};
+}
 ////////////////////////////////////////////////////////////////////////////////

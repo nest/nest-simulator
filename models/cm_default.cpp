@@ -26,10 +26,16 @@ namespace nest
 {
 
 
+/*
+ * For some reason this code block is needed. However, I have found no
+ * difference in calling init_recordable_pointers() from the calibrate function,
+ * except that an unused-variable warning is generated in the code-checks
+ */
 template <>
 void
 DynamicRecordablesMap< cm_default >::create( cm_default& host )
 {
+  host.init_recordables_pointers_();
 }
 
 /* ----------------------------------------------------------------
@@ -257,8 +263,6 @@ nest::cm_default::calibrate()
   c_tree_.init_pointers();
   // initialize the pointers to the synapse buffers for the receptor currents
   c_tree_.set_syn_buffers( syn_buffers_ );
-  // construct the reordables map
-  init_recordables_pointers_();
 
   c_tree_.calibrate();
 }

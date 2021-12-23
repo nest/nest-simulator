@@ -315,7 +315,7 @@ nest::CompTree::set_leafs()
       leafs_.push_back( *compartment_it );
     }
   }
-};
+}
 
 /*
 Initializes pointers for the spike buffers for all synapse receptors

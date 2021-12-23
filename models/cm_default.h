@@ -291,7 +291,10 @@ cm_default::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( ( receptor_type < 0 ) or ( receptor_type >= static_cast< port >( syn_buffers_.size() ) ) )
   {
-    throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
+    std::ostringstream msg;
+    msg << "Valid spike receptor ports for " << get_name() << " are in ";
+    msg << "[" << 0 << ", " << syn_buffers_.size() << "[";
+    throw UnknownPort( receptor_type, msg.str() );
   }
   return receptor_type;
 }
@@ -302,7 +305,10 @@ cm_default::handles_test_event( CurrentEvent&, rport receptor_type )
   // if get_compartment returns nullptr, raise the error
   if ( not c_tree_.get_compartment( long( receptor_type ), c_tree_.get_root(), 0 ) )
   {
-    throw UnknownReceptorType( receptor_type, get_name() );
+    std::ostringstream msg;
+    msg << "Valid current receptor ports for " << get_name() << " are in ";
+    msg << "[" << 0 << ", " << c_tree_.get_size() << "[";
+    throw UnknownPort( receptor_type, msg.str() );
   }
   return receptor_type;
 }

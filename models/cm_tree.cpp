@@ -153,7 +153,7 @@ nest::Compartment::construct_matrix_element( const long lag )
 
 // compartment tree functions //////////////////////////////////////////////////
 nest::CompTree::CompTree()
-  : root_( 0, -1 )
+  : root_( -1, -1 )
   , size_( 0 )
 {
   compartments_.resize( 0 );
@@ -184,11 +184,25 @@ nest::CompTree::add_compartment( Compartment* compartment, const long parent_ind
 
   if ( parent_index >= 0 )
   {
-    Compartment* parent = get_compartment( parent_index );
+    // we do not raise an UnknownCompartment exception from within
+    // get_compartment(), because we want to print a more informative
+    // exception message
+    Compartment* parent = get_compartment( parent_index, get_root(), 0 );
+    if ( parent == nullptr ){
+      std::string msg = "does not exist in tree, but was specified as a parent compartment";
+      throw UnknownCompartment( parent_index, msg );
+    }
+
     parent->children.push_back( *compartment );
   }
   else
   {
+    // we raise an error if the root already exists
+    if ( root_.comp_index >= 0 )
+    {
+      std::string msg = ", the root, has already been instantiated";
+      throw UnknownCompartment( root_.comp_index, msg );
+    }
     root_ = *compartment;
   }
 
@@ -232,9 +246,8 @@ nest::CompTree::get_compartment( const long compartment_index, Compartment* comp
 
   if ( (not r_compartment) && raise_flag )
   {
-    std::ostringstream err_msg;
-    err_msg << "Node index " << compartment_index << " not in tree";
-    throw BadProperty( err_msg.str() );
+    std::string msg = "does not exist in tree";
+    throw UnknownCompartment( compartment_index, msg );
   }
 
   return r_compartment;
@@ -345,6 +358,12 @@ Initialize state variables
 void
 nest::CompTree::calibrate()
 {
+  if ( root_.comp_index < 0 )
+  {
+    std::string msg = "does not exist in tree, meaning that no compartments have been added";
+    throw UnknownCompartment( 0, msg );
+  }
+
   // initialize the compartments
   for ( auto compartment_it = compartments_.begin(); compartment_it != compartments_.end(); ++compartment_it )
   {

@@ -137,6 +137,15 @@ nest::NodeWithProxiesExpected::message() const
 }
 
 std::string
+nest::UnknownCompartment::message() const
+{
+  std::ostringstream msg;
+
+  msg << "Compartment " << compartment_idx_ << " " << info_ << ".";
+  return msg.str();
+}
+
+std::string
 nest::UnknownReceptorType::message() const
 {
   std::ostringstream msg;
@@ -158,7 +167,11 @@ std::string
 nest::UnknownPort::message() const
 {
   std::ostringstream out;
-  out << "Port with id " << id_ << " does not exist.";
+  out << "Port with id " << id_ << " does not exist." ;
+  if ( not info_.empty() )
+  {
+    out << " " << info_ << ".";
+  }
   return out.str();
 }
 

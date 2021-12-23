@@ -560,9 +560,6 @@ class NEASTTestCase(unittest.TestCase):
         # explicit solution for steady state voltage
         v_sol = np.linalg.solve(-gg, gl*el)
 
-        print(v_neat)
-        print(v_sol)
-
         self.assertTrue(np.allclose(v_neat, v_sol))
 
     def test_conductance_input(self, model_name='1dend_1comp', dt=.01, t_max=300.):
@@ -584,7 +581,6 @@ class NEASTTestCase(unittest.TestCase):
 
         gl = np.array([SP['g_L']] + [DP[ii]['g_L'] for ii in range(n_comp-1)])
         el = np.array([SP['e_L']] + [DP[ii]['e_L'] for ii in range(n_comp-1)])
-        print(el)
 
         syn_weights = weight * np.arange(1,n_comp+1)
 
@@ -609,9 +605,6 @@ class NEASTTestCase(unittest.TestCase):
 
         # explicit solution for steady state voltage
         v_sol = np.linalg.solve(-gg + np.diag(gs), gl*el)
-
-        print(v_neat)
-        print(v_sol)
 
         self.assertTrue(np.allclose(v_neat, v_sol, rtol=1e-4))
 
@@ -729,9 +722,92 @@ class NEASTTestCase(unittest.TestCase):
         self.assertTrue(receptors[0][1]["receptor_idx"] == 0)
         self.assertTrue(receptors[0][1]["receptor_type"] == "AMPA")
 
+        recordables = nest.GetStatus(n_neat, keys="recordables")[0]
+        recordables_ = {'m_Na_0', 'h_Na_0', 'n_K_0', 'v_comp0',
+                        'm_Na_1', 'h_Na_1', 'n_K_1', 'v_comp1',
+                        'g_r_AMPA_0', 'g_d_AMPA_0',
+                        'g_r_GABA_1', 'g_d_GABA_1'}
+        assert set(recordables) == recordables_
+
+    def test_error_handling(self):
+        # test double root
+        n_neat = nest.Create('cm_default')
+        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                                    "UnknownCompartment in SLI function SetStatus_id: "
+                                    "Compartment 0 , the root, "
+                                    "has already been instantiated."):
+            nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+
+        # test undefined parent compartment
+        n_neat = nest.Create('cm_default')
+        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                                    "UnknownCompartment in SLI function SetStatus_id: "
+                                    "Compartment 15 does not exist in tree, "
+                                    "but was specified as a parent."):
+            nest.SetStatus(n_neat, {"compartments": {"parent_idx": 15, "params": SP}})
+
+        # test undefined compartment when adding receptor
+        n_neat = nest.Create('cm_default')
+        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                                    "UnknownCompartment in SLI function SetStatus_id: "
+                                    "Compartment 12 does not exist in tree."):
+            nest.SetStatus(n_neat, {"receptors": {"comp_idx": 12, "receptor_type": "GABA"}})
+
+        # test simulate without adding compartments
+        n_neat = nest.Create('cm_default')
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                                    "UnknownCompartment in SLI function Simulate_d: "
+                                    "Compartment 0 does not exist in tree, "
+                                    "meaning that no compartments have been added."):
+            nest.Simulate(10.)
+
+        # test connection port out of range for current input
+        n_neat = nest.Create('cm_default')
+        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+        nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": SP}})
+        dc = nest.Create('dc_generator', {'amplitude': 2.0})
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                                    "UnknownPort in SLI function Connect_g_g_D_D: "
+                                    "Port with id 3 does not exist. Valid current "
+                                    "receptor ports for cm_default are in \[0, 2\[."):
+            nest.Connect(dc, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
+                                                 'receptor_type': 3})
+
+        # test connection port out of range for spike input
+        n_neat = nest.Create('cm_default')
+        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+        nest.SetStatus(n_neat, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
+        nest.SetStatus(n_neat, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
+        nest.SetStatus(n_neat, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
+        sg = nest.Create('spike_generator', 1, {'spike_times': [10.]})
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                                    "UnknownPort in SLI function Connect_g_g_D_D: "
+                                    "Port with id 3 does not exist. Valid spike "
+                                    "receptor ports for cm_default are in \[0, 3\[."):
+            nest.Connect(sg, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
+                                                 'receptor_type': 3})
+
+
+        # test connection with unknown recordable
+        n_neat = nest.Create('cm_default')
+        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+        mm = nest.Create('multimeter', 1, {'record_from': ['v_comp1'], 'interval': 1.})
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                                    "IllegalConnection in SLI function Connect_g_g_D_D: "
+                                    "Creation of connection is not possible because:\n"
+                                    "Cannot connect with unknown recordable v_comp1"):
+            nest.Connect(mm, n_neat)
+
 
 def suite():
-
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721
     # using loadTestsFromTestCase instead.
     suite = unittest.TestLoader().loadTestsFromTestCase(NEASTTestCase)

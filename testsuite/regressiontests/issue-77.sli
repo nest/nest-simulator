@@ -84,7 +84,6 @@ M_ERROR setverbosity
              /music_cont_in_proxy         % MUSIC port
              /music_rate_out_proxy        % MUSIC port
              /music_rate_in_proxy         % MUSIC port
-             /cm_default             % compartmental model, should add compartment and receptor first
            ] def
 
 % The following models require connections to rport 1 or other specific parameters:
@@ -127,6 +126,7 @@ M_ERROR setverbosity
     {
       ResetKernel
       /n model Create def
+
       extra_params model known
       {
          extra_params model get /params known
@@ -136,6 +136,19 @@ M_ERROR setverbosity
            SetStatus
          } if
       } if
+
+      % if the model is a compartmental model,
+      % we need to add at least a root compartment
+      model GetDefaults dup
+      /compartments known
+      {
+          n
+          <<
+            /compartments << /parent_idx -1  >>
+            /receptors << /comp_idx 0 /receptor_type (AMPA) >>
+          >> SetStatus
+      }
+      if
 
       /pg /poisson_generator << /rate 1e5 >> Create def
       /parrot /parrot_neuron_ps Create def

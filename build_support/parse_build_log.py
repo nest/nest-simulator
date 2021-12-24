@@ -465,6 +465,7 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
     number_of_tests_skipped = None
     failed_tests = []
     status_tests = None
+    test_time = 0.0
     with open(log_filename) as fh:
         for line in fh:
             if is_message(line, msg_testsuite_section_start):
@@ -854,11 +855,11 @@ def printable_summary(list_of_changed_files,
                                                        summary_format,
                                                        summary_pep8)
 
-    if number_of_warnings > 0:
+    if number_of_warnings is not None and number_of_warnings > 0:
         build_summary += '\n  W A R N I N G S\n'
         build_summary += warnings_table(summary_warnings)
 
-    if number_of_errors > 0:
+    if number_of_errors is not None and number_of_errors > 0:
         build_summary += '\n  E R R O R S\n'
         build_summary += errors_table(summary_errors)
 
@@ -894,7 +895,7 @@ def printable_summary(list_of_changed_files,
          convert_bool_value_to_status_string(status_make_install)],
         ['Make installcheck',
          convert_bool_value_to_status_string(status_tests) + '\n' +
-         '\nTestsuite runtime      : {:d}s'.format(int(test_time)) +
+         '\nTestsuite runtime      : {:.2f}s'.format(test_time) +
          '\nTotal number of tests  : ' + str(number_of_tests_total) +
          '\nNumber of tests skipped: ' + str(number_of_tests_skipped) +
          '\nNumber of tests failed : ' + str(number_of_tests_failed) +

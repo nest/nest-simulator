@@ -86,7 +86,7 @@ class DistanceParameter(Parameter):
 distance = DistanceParameter()
 
 
-class pos(object):
+class pos:
     """
     Position of node in a specific dimension.
 
@@ -116,7 +116,7 @@ class pos(object):
         return CreateParameter('position', {'dimension': dimension})
 
 
-class source_pos(object):
+class source_pos:
     """
     Position of the source node in a specific dimension.
 
@@ -147,7 +147,7 @@ class source_pos(object):
                                {'dimension': dimension, 'synaptic_endpoint': 1})
 
 
-class target_pos(object):
+class target_pos:
     """
     Position of the target node in a specific dimension.
 
@@ -178,7 +178,7 @@ class target_pos(object):
                                {'dimension': dimension, 'synaptic_endpoint': 2})
 
 
-class grid(object):
+class grid:
     """
     Defines grid-based positions for nodes.
 
@@ -201,7 +201,7 @@ class grid(object):
         self.edge_wrap = edge_wrap
 
 
-class free(object):
+class free:
     """
     Defines positions for nodes based on a list of positions, or a Parameter object.
 

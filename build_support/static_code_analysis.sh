@@ -26,7 +26,7 @@
 # a local static code analysis.
 #
 # NOTE: This shell script is tightly coupled to Python script
-#       'extras/parse_build_log.py'.
+#       'build_support/parse_build_log.py'.
 #       Any changes to message numbers (MSGBLDnnnn) have effects on
 #       the build/test-log parsing process.
 #
@@ -117,11 +117,11 @@ fi
 
 export NEST_SOURCE=$PWD
 print_msg "MSGBLD1050: " "Running check for copyright headers"
-copyright_check_errors=`python3 extras/check_copyright_headers.py`
+copyright_check_errors=`python3 build_support/check_copyright_headers.py`
 print_msg "MSGBLD1060: " "Running sanity check for Name definition and usage"
-unused_names_errors=`python3 extras/check_unused_names.py`
+unused_names_errors=`python3 build_support/check_unused_names.py`
 print_msg "MSGBLD1070: " "Running check for forbidden type usage"
-forbidden_types_errors=`bash extras/check_forbidden_types.sh`
+forbidden_types_errors=`bash build_support/check_forbidden_types.sh`
 
 
 # Perform static code analysis.

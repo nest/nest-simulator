@@ -29,7 +29,6 @@
 # aimed at NEST developers. You can specify a different name by passing
 # -n my_name to the conda env create command.
 
-name: nest-simulator-dev
 channels:
   - conda-forge
 
@@ -76,10 +75,8 @@ dependencies:
   - path.py
   - pydot
   - recommonmark
-  - sphinx-tabs
-  - sphinx >= 2
+  - sphinx >= 4.0.2
   - sphinx_rtd_theme
-  - jinja2 < 3
   - tqdm
   - yamllint
 
@@ -99,3 +96,4 @@ dependencies:
     - Image
     - sphinx_autobuild
     - sphinx_gallery
+    - sphinx-tabs

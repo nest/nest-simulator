@@ -187,7 +187,7 @@ class TestSTDPSynapse:
             else:
                 return 0.
 
-        def Kpost_at_time(t, spikes, init=1., inclusive=True):
+        def Kpost_at_time(t, spikes, inclusive=True):
             t_curr = 0.
             Kpost = 0.
             for spike_idx, t_sp in enumerate(spikes):
@@ -274,7 +274,7 @@ class TestSTDPSynapse:
 
             if handle_pre_spike:
                 Kpre += 1.
-                _Kpost = Kpost_at_time(t - self.dendritic_delay, post_spikes, init=self.init_weight, inclusive=False)
+                _Kpost = Kpost_at_time(t - self.dendritic_delay, post_spikes, inclusive=False)
                 weight = depress(weight, _Kpost)
 
             # logging
@@ -282,7 +282,7 @@ class TestSTDPSynapse:
             w_log.append(weight)
             Kpre_log.append(Kpre)
 
-        Kpost_log = [Kpost_at_time(t - self.dendritic_delay, post_spikes, init=self.init_weight) for t in t_log]
+        Kpost_log = [Kpost_at_time(t - self.dendritic_delay, post_spikes) for t in t_log]
         if DEBUG_PLOTS:
             self.plot_weight_evolution(pre_spikes, post_spikes, t_log, w_log, Kpre_log, Kpost_log,
                                        fname_snip=fname_snip + "_ref", title_snip="Reference")

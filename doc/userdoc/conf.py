@@ -83,7 +83,8 @@ sys.modules["nest.kernel"] = pynestkernel_mock
 # to autodoc properties the way the `autoclass` directive would. We can then
 # autoclass `nest.NestModule` to generate the documentation of the properties
 import nest  # noqa
-nest.NestModule = type(nest)
+
+vars(nest)["NestModule"] = type(nest)        # direct write to nest.NestModule is suppressed as unknown attribute
 
 # -- General configuration ------------------------------------------------
 extensions = [
@@ -312,3 +313,4 @@ copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
+copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")

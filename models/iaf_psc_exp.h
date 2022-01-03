@@ -80,16 +80,16 @@ model with escape noise [4]_.
 
 iaf_psc_exp can handle current input in two ways:
 
-1. Current input through receptor_type 0 are handled as stepwise constant
-   current input as in other iaf models, i.e., this current directly enters the
+1. Current input through receptor_type 0 is handled as a stepwise constant
+   current input as in other iaf models, that is, this current directly enters the
    membrane potential equation.
-2. Current input through receptor_type 1, in contrast, is filtered through an
+2. In contrast, current input through receptor_type 1 is filtered through an
    exponential kernel with the time constant of the excitatory synapse,
    ``tau_syn_ex``.
 
    For an example application, see [4]_.
 
-   **Warning:** this current contribution is added to the state variable
+   **Warning:** this current input is added to the state variable
    ``i_syn_ex_``, which changes its numerical values in case it is being
    recorded.
 

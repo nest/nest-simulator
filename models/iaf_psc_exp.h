@@ -257,7 +257,7 @@ private:
     double i_1_;      //!< Current input that is filtered through the excitatory synapse exponential kernel
     double i_syn_ex_; //!< Postsynaptic current for excitatory inputs (includes contribution from current input on
                       //!< receptor type 1)
-    double i_syn_in_; //!< Postsynaptic current for inh. inputs
+    double i_syn_in_; //!< Postsynaptic current for inhibitory inputs
     double V_m_;      //!< Membrane potential
     int r_ref_;       //!< Absolute refractory counter (no membrane potential propagation)
 

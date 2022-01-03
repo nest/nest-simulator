@@ -80,7 +80,7 @@ model with escape noise [4]_.
 
 iaf_psc_exp can handle current input in two ways:
 
-1. Current input through receptor_type 0 are handled as stepwise constant
+1. Current input through receptor_type 0 is handled as a stepwise constant
    current input as in other iaf models, i.e., this current directly enters the
    membrane potential equation.
 2. Current input through receptor_type 1, in contrast, is filtered through an

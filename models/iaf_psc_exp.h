@@ -53,10 +53,13 @@ The threshold crossing is followed by an absolute refractory period (t_ref)
 during which the membrane potential is clamped to the resting potential
 and spiking is prohibited.
 
+The neuron dynamics is solved on the time grid given by the computation step
+size. Incoming as well as emitted spikes are forced to that grid.
+
 The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [2]_. The neuron dynamics is solved on the time
-grid given by the computation step size. Incoming as well as emitted
-spikes are forced to that grid.
+Integration scheme [2]_, which is more precise, but different from the
+implementation in [1]_, which uses the forward Euler integration scheme.
+This precludes an exact numerical reproduction of the results from [1]_.
 
 An additional state variable and the corresponding differential
 equation represents a piecewise constant external current.

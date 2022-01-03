@@ -89,7 +89,7 @@ iaf_psc_exp can handle current input in two ways:
 
    For an example application, see [4]_.
 
-   **Warning:** this current contribution is added to the state variable
+   **Warning:** this current input is added to the state variable
    ``i_syn_ex_``, which changes its numerical values in case it is being
    recorded.
 

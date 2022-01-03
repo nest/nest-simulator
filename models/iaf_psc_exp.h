@@ -90,8 +90,10 @@ iaf_psc_exp can handle current input in two ways:
    For an example application, see [4]_.
 
    **Warning:** this current input is added to the state variable
-   ``i_syn_ex_``, which changes its numerical values in case it is being
-   recorded.
+   ``i_syn_ex_``. If this variable is being recorded, its numerical value
+   will thus not correspond to the excitatory synaptic input current, but to
+   the sum of excitatory synaptic input current and the contribution from
+   receptor type 1 currents.
 
 For conversion between postsynaptic potentials (PSPs) and PSCs,
 please refer to the ``postsynaptic_potential_to_current`` function in
@@ -255,9 +257,9 @@ private:
     // state variables
     double i_0_;      //!< Stepwise constant input current
     double i_1_;      //!< Current input that is filtered through the excitatory synapse exponential kernel
-    double i_syn_ex_; //!< Postsynaptic current for exc. inputs (includes contribution from current input on
+    double i_syn_ex_; //!< Postsynaptic current for excitatory inputs (includes contribution from current input on
                       //!< receptor type 1)
-    double i_syn_in_; //!< Postsynaptic current for inh. inputs
+    double i_syn_in_; //!< Postsynaptic current for inhibitory inputs
     double V_m_;      //!< Membrane potential
     int r_ref_;       //!< Absolute refractory counter (no membrane potential propagation)
 

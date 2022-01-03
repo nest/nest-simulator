@@ -75,10 +75,8 @@ dependencies:
   - path.py
   - pydot
   - recommonmark
-  - sphinx-tabs
-  - sphinx >= 2
+  - sphinx >= 4.0.2
   - sphinx_rtd_theme
-  - jinja2 < 3
   - tqdm
   - yamllint
 
@@ -98,3 +96,4 @@ dependencies:
     - Image
     - sphinx_autobuild
     - sphinx_gallery
+    - sphinx-tabs

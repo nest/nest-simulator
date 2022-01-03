@@ -255,7 +255,7 @@ private:
     // state variables
     double i_0_;      //!< Stepwise constant input current
     double i_1_;      //!< Current input that is filtered through the excitatory synapse exponential kernel
-    double i_syn_ex_; //!< Postsynaptic current for exc. inputs (includes contribution from current input on
+    double i_syn_ex_; //!< Postsynaptic current for excitatory inputs (includes contribution from current input on
                       //!< receptor type 1)
     double i_syn_in_; //!< Postsynaptic current for inh. inputs
     double V_m_;      //!< Membrane potential

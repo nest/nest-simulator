@@ -74,6 +74,7 @@ enough to exhibit non-trivial dynamics and simple enough compute
 relevant measures analytically.
 
 .. note::
+
    The present implementation uses individual variables for the
    components of the state vector and the non-zero matrix elements of
    the propagator. Because the propagator is a lower triangular matrix,

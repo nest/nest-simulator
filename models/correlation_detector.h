@@ -50,20 +50,20 @@ Description
 +++++++++++
 
 The ``correlation_detector`` device is a recording device. It is used to record
-spikes from two pools of spike inputs and calculates the count_histogram of
+spikes from two pools of spike inputs and calculates the ``count_histogram`` of
 inter-spike intervals (raw cross correlation) binned to bins of duration
-:math:`\delta_\tau`. The result can be obtained via GetStatus under the key
-/count_histogram.
+``delta_tau``. The result can be obtained via ``GetStatus`` under the key
+``/count_histogram``.
 In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors, the
 `Kahan summation algorithm <http://en.wikipedia.org/wiki/Kahan_summation_algorithm>`_
 is used when calculating the weighted histogram.
-Both are arrays of :math:`2*\tau_{max}/\delta_{\tau}+1` values containing the
+Both are arrays of :math:`2*\tau_{max}/\delta_\tau+1` values containing the
 histogram counts in the following way:
 
 Let :math:`t_{1,i}` be the spike times of source 1,
 :math:`t_{2,j}` the spike times of source 2.
-histogram[n] then contains the sum of products of the weight
+``histogram[n]`` then contains the sum of products of the weight
 :math:`w_{1,i}*w_{2,j}`, count_histogram[n] contains 1 summed over all events
 with :math:`t_{2,j}-t_{1,i}` in
 
@@ -74,8 +74,8 @@ with :math:`t_{2,j}-t_{1,i}` in
 
 The bins are centered around the time difference they represent, but are
 left-closed and right-open. This means that events with time difference
-:math:`-tau_max-delta_tau/2` are counted in the leftmost bin, but event with
-difference :math:`tau_max+delta_tau/2` are not counted at all.
+:math:`-\tau_{max}-\delta_\tau/2` are counted in the leftmost bin, but event with
+difference :math:`\tau_{max}+\delta_\tau/2` are not counted at all.
 
 The correlation detector has two inputs, which are selected via the
 receptor_port of the incoming connection: All incoming connections with

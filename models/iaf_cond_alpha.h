@@ -108,12 +108,12 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Remarks:
 
- @note Per 2009-04-17, this class has been revised to our newest
-        insights into class design. Please use THIS CLASS as a reference
-        when designing your own models with nonlinear dynamics.
-        One weakness of this class is that it distinguishes between
-        inputs to the two synapses by the sign of the synaptic weight.
-        It would be better to use receptor_types, cf iaf_cond_alpha_mc.
+Per 2009-04-17, this class has been revised to our newest
+insights into class design. Please use THIS CLASS as a reference
+when designing your own models with nonlinear dynamics.
+One weakness of this class is that it distinguishes between
+inputs to the two synapses by the sign of the synaptic weight.
+It would be better to use receptor_types, cf iaf_cond_alpha_mc.
 
 
 References

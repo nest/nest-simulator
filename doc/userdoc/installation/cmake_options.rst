@@ -33,7 +33,7 @@ Use Python to build PyNEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-python=[OFF|ON|<path/to/Python]      | Build PyNEST. To set a specific Python, set install path.      |
+| -Dwith-python=[OFF|ON|<path/to/Python>]      | Build PyNEST. To set a specific Python, set install path.      |
 |                                             | [default=ON]                                                   |
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dcythonize-pynest=[OFF|ON]                 | Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to|
@@ -46,10 +46,10 @@ Select parallelization scheme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-mpi=[OFF|ON|</path/to/mpi>]          | Request compilation with MPI. Optionally give directory with   |
+| -Dwith-mpi=[OFF|ON|</path/to/mpi>]          | Enable MPI parallelization. Optionally give directory with   |
 |                                             | MPI installation. [default=OFF]                                |
 +---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-openmp=[OFF|ON|<OpenMP-Flag>]        | Enable OpenMP multi-threading. Optional: set OMP flag.         |
+| -Dwith-openmp=[OFF|ON|<OpenMP-Flag>]        | Enable OpenMP multi-threading. Optionally set OMP compiler flags.         |
 +---------------------------------------------+----------------------------------------------------------------+
 
 See also the section on :ref:`building with mpi <compile-with-mpi>` below.
@@ -58,7 +58,7 @@ External libraries
 ~~~~~~~~~~~~~~~~~~
 
 +---------------------------------------------+----------------------------------------------------------------+
-| -Dwith-gsl=[OFF|ON|</path/to/gsl>]          | Find a gsl library. To set a specific library, set install     |
+| -Dwith-gsl=[OFF|ON|</path/to/gsl>]          | Build with the GSL library. To set a specific library, set install     |
 |                                             | path. [default=ON]                                             |
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-readline=[OFF|ON|</path/to/readline>]| Find a GNU Readline library. To set a specific library, set    |
@@ -93,9 +93,9 @@ NEST properties
 |                                             | MPI processes or more than 512 threads, change to "hpc".       |
 |                                             | [default="standard"]                                           |
 +---------------------------------------------+----------------------------------------------------------------+
-| -Dtics_per_ms=[number]                      | Specify elementary unit of time. [default 1000.0]              |
+| -Dtics_per_ms=[number]                      | Specify elementary unit of time. [default 1000 tics per ms]              |
 +---------------------------------------------+----------------------------------------------------------------+
-| -Dtics_per_step=[number]                    | Specify resolution. [default 100]                              |
+| -Dtics_per_step=[number]                    | Specify resolution. [default 100 tics per step]                              |
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dexternal-modules=[OFF|<list;of;modules>]  | External NEST modules to be linked in, separated by ';'.       |
 |                                             | [default=OFF]                                                  |
@@ -108,7 +108,7 @@ Generic build configuration
 | -Dstatic-libraries=[OFF|ON]                 | Build static executable and libraries. [default=OFF]           |
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-optimize=[OFF|ON|<list;of;flags>]    | Enable user defined optimizations. Separate multiple flags by  |
-|                                             | ';'. [default OFF, when ON, defaults to '-O3']                 |
+|                                             | ';'. [default OFF (uses '-O2'); when ON, use '-O3']                 |
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-warning=[OFF|ON|<list;of;flags>]     | Enable user defined warnings. Separate  multiple flags by ';'. |
 |                                             | [default ON, when ON, defaults to '-Wall']                     |
@@ -117,7 +117,7 @@ Generic build configuration
 |                                             | ';'. [default OFF, when ON, defaults to '-g']                  |
 +---------------------------------------------+----------------------------------------------------------------+
 |-Dwith-intel-compiler-flags=[<list;of;flags>]| User defined flags for the Intel compiler. Separate multiple   |
-|                                             | flags by ';'. [defaults to '-fp-model strict']                 |
+|                                             | flags by ';'. [default '-fp-model strict']                 |
 +---------------------------------------------+----------------------------------------------------------------+
 | -Dwith-libraries=[<list;of;libraries>]      | Link additional libraries. Give full path. Separate multiple   |
 |                                             | libraries by ';'. [default OFF]                                |

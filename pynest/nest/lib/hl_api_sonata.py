@@ -39,6 +39,10 @@ from .hl_api_connections import GetConnections
 from .hl_api_simulation import GetKernelStatus
 
 
+__all__ = [
+    'SonataConnector'
+]
+
 class SonataConnector(object):
     """
     """

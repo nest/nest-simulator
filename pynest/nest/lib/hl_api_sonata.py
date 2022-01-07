@@ -228,40 +228,43 @@ class SonataConnector(object):
 
             self.edge_types.append(edge_dict)
 
-    def dump_connections(self, outname):
+    def dump_connections(self, orig_outname):
         net_size = GetKernelStatus('network_size')
         print(f'network size: {net_size}')
         if True:
-            with open(outname, 'w') as connections_file:
-                net_size = GetKernelStatus('network_size')
-                print(f'network size: {net_size}')
-                counter = 0
-                ncs = [self.node_collections['v1'],]#list(self.node_collections.values())
-                for nc in ncs:
-                    prev = 0
-                    step = 10000
-                    for i in range(step, len(nc), step):
-                        conns = GetConnections(source=nc[prev:i])
-                        if len(conns) == 0:
-                            print("no connections!")
-                            conns = GetConnections(target=nc[prev:i])
-                        for l in GetStatus(conns):  # for comparison with bmtk built on NEST 2.20
-                            s = f'{l["source"]} {l["target"]} {l["delay"]} {l["weight"]} {l["synapse_model"]} {l["receptor"]}\n'
-                            connections_file.write(s)
-                        #connections_file.write(str(GetStatus(conns)))  # for comparison with bmtk built on NEST 2.20
-                        counter += len(conns)
-                        if counter >= 40000:
-                            break
-                        prev = i
-                    if prev < len(nc) and counter < 400000:
-                        conns = GetConnections(source=nc[prev:])
-                        if len(conns) == 0:
-                            print("no connections!")
-                            conns = GetConnections(target=nc[prev:])
-                        for l in GetStatus(conns):  # for comparison with bmtk built on NEST 2.20
-                            s = f'{l["source"]} {l["target"]} {l["delay"]} {l["weight"]} {l["synapse_model"]} {l["receptor"]}\n'
-                            connections_file.write(s)
-                        #connections_file.write(str(GetStatus(conns)))  # for comparison with bmtk built on NEST 2.20
-                        counter += len(conns)
-                print(f'number of counted connections: {counter}')
+            net_size = GetKernelStatus('network_size')
+            print(f'network size: {net_size}')
+            counter = 0
+            prev = 0
+            num_files = 100
+            nc = NodeCollection(list(range(1, net_size + 1)))
+            orig_step = int(net_size / num_files)
+            step = orig_step
+            print(step)
+            for file_indx in range(num_files):
+                outname = orig_outname + '_' + str(file_indx) + '.txt'
+                with open(outname, 'w') as connections_file:
+                    print(nc[prev:step])
+                    conns = GetConnections(source=nc[prev:step])
+                    #if len(conns) == 0:
+                    #    print("no connections!")
+                    #    conns = GetConnections(target=nc[prev:step])
+                    for l in GetStatus(conns):  # for comparison with bmtk built on NEST 2.20
+                        s = f'{l["source"]} {l["target"]} {l["delay"]} {l["weight"]} {l["synapse_model"]} {l["receptor"]}\n'
+                        connections_file.write(s)
+                    counter += len(conns)
+                    prev = step
+                    step += orig_step
+            if prev < net_size:
+                with open(orig_outname + '_rest.txt', 'w') as connections_file:
+                    conns = GetConnections(source=nc[prev:])
+                    #if len(conns) == 0:
+                    #    print("no connections!")
+                    #    conns = GetConnections(target=nc[prev:])
+                    for l in GetStatus(conns):  # for comparison with bmtk built on NEST 2.20
+                        s = f'{l["source"]} {l["target"]} {l["delay"]} {l["weight"]} {l["synapse_model"]} {l["receptor"]}\n'
+                        connections_file.write(s)
+                    counter += len(conns)
+
+            print(f'number of counted connections: {counter}')
         print(f'num connections: {GetKernelStatus("num_connections")}')

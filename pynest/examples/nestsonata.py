@@ -52,7 +52,7 @@ if example == '300_pointneurons':
     population_to_plot = 'internal'
 elif example == 'GLIF':
     base_path = '/home/stine/Work/sonata/examples/GLIF_NEST/'
-    config = 'config.json'
+    config = 'config_small.json'
     sim_config = None
     population_to_plot = 'v1'
 
@@ -83,15 +83,12 @@ print()
 
 connect_start_time = time.time()
 
-#nest.Connect(sonata_dynamics=sonata_dynamics)
+nest.Connect(sonata_dynamics=sonata_dynamics)
 print("done connecting")
 
 connect_end_time = time.time() - connect_start_time
 mem_connect = memory_thisjob()
 
-# conns = nest.GetConnections()
-# print(conns)
-# print("")
 print("number of connections: ", nest.GetKernelStatus('num_connections'))
 # #print("num_connections with alpha: ", len(conns.alpha))
 
@@ -123,7 +120,7 @@ print(f'initial memory: {mem_ini}')
 print(f'memory create: {mem_create}')
 print(f'memory connect: {mem_connect}')
 
-#sonata_connector.dump_connections('check_connections_glif.txt')
+#sonata_connector.dump_connections('check_connections_glif')
 
 #with open('NEST_neurons_GLIF.txt', 'w') as neurons_file:
 #    for model in nest.GetStatus(nest.NodeCollection(list(range(1, nest.GetKernelStatus('network_size') + 1))), 'model'):

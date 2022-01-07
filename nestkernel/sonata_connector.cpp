@@ -29,6 +29,9 @@
 // Includes from sli:
 #include "dictutils.h"
 
+#include <iostream>
+#include <fstream>
+
 #include "H5Cpp.h"  // TODO: need an if/else
 
 extern "C" herr_t get_group_names( hid_t loc_id, const char* name, const H5L_info_t* linfo, void* opdata );
@@ -50,6 +53,8 @@ void
 SonataConnector::connect()
 {
   auto edges = getValue< ArrayDatum >( sonata_dynamics_->lookup( "edges" ) );
+
+  std::ofstream MyFile("check_conns.txt");
 
   for ( auto edge_dictionary_datum : edges )
   {
@@ -161,13 +166,16 @@ SonataConnector::connect()
           RngPtr rng = get_vp_specific_rng( target_thread );
           get_synapse_params_( syn_spec, snode_id, *target, target_thread, rng );
 
-          /*if ( i % 100000 == 0 )
-          {
+          //if ( i % 100000 == 0 )
+          //{
             //std::cerr << "connection number " << i << "\n";
-            std::cerr << "connection number " << i << " source " << snode_id << " target " << target_id << "\n";
-            std::cerr << "source node id data " << sonata_source_id << "\n";
-            std::cerr << "snode_it begin " << (*snode_it).node_id << "\n";
-          }*/
+          //std::cerr << "connection number " << i << " source " << snode_id << " target " << target_id << " weight " << weight << " delay " << delay << "\n";
+
+          MyFile << "connection number " << i << " source " << snode_id << " target " << target_id << " weight " << weight << " delay " << delay << "\n";
+            //std::cerr << "source node id data " << sonata_source_id << "\n";
+            //std::cerr << "snode_it begin " << (*snode_it).node_id << "\n";
+          //}
+
 
           kernel().connection_manager.connect( snode_id,
             target,
@@ -202,6 +210,7 @@ SonataConnector::connect()
     edges_group.close();
     file.close();
   }
+  MyFile.close();
 }
 
 hsize_t

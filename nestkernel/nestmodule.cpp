@@ -1996,7 +1996,7 @@ NestModule::Apply_P_DFunction::execute( SLIInterpreter* i ) const
   auto positions = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
   auto param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-  auto result = apply( param, positions );
+  auto result = nest::apply( param, positions ); // Using nest namespace explicitly to avoid confusion with std in C++17
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -2011,7 +2011,7 @@ NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-  auto result = apply( param, nc );
+  auto result = nest::apply( param, nc ); // Using nest namespace explicitly to avoid confusion with std in C++17
 
   i->OStack.pop( 2 );
   i->OStack.push( result );

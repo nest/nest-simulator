@@ -1996,7 +1996,7 @@ NestModule::Apply_P_DFunction::execute( SLIInterpreter* i ) const
   auto positions = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
   auto param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-  auto result = nest::apply( param, positions ); // Using nest namespace explicitly to avoid confusion with std in C++17
+  auto result = apply( std::as_const(param), std::as_const(positions) ); // Due to ADL, std::as_const() is required for the compiler to select nest::appl(), not std::apply in C++17
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -2011,7 +2011,7 @@ NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-  auto result = nest::apply( param, nc ); // Using nest namespace explicitly to avoid confusion with std in C++17
+  auto result = apply( std::as_const(param), std::as_const(nc) ); // Due to ADL, std::as_const() is required for the compiler to select nest::appl(), not std::apply in C++17
 
   i->OStack.pop( 2 );
   i->OStack.push( result );

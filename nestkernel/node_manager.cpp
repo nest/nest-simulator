@@ -226,7 +226,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
       // the end of the catch block.
       exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
-  }
+  } // omp parallel
 }
 
 void
@@ -265,7 +265,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
       // the end of the catch block.
       exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
-  }
+  } // omp parallel
 }
 
 void
@@ -303,7 +303,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
       // the end of the catch block.
       exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
-  }
+  } // omp parallel
 }
 
 NodeCollectionPTR
@@ -323,7 +323,8 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
       {
         nodes_on_thread[ tid ].push_back( node.get_node_id() );
       }
-    }
+    } // omp parallel
+
 #pragma omp barrier
 
     for ( auto vec : nodes_on_thread )
@@ -595,7 +596,7 @@ NodeManager::destruct_nodes_()
     }
 
     local_nodes_[ t ].clear();
-  }
+  } // omp parallel
 }
 
 void
@@ -668,8 +669,7 @@ NodeManager::prepare_nodes()
       // so throw the exception after parallel region
       exceptions_raised.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( e ) );
     }
-
-  } // end of parallel section / end of for threads
+  } // omp parallel
 
   // check if any exceptions have been raised
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
@@ -710,7 +710,7 @@ NodeManager::post_run_cleanup()
     {
       n->get_node()->post_run_cleanup();
     }
-  }
+  } // omp parallel
 }
 
 /**
@@ -733,7 +733,7 @@ NodeManager::finalize_nodes()
     {
       n->get_node()->finalize();
     }
-  }
+  } // omp parallel
 }
 
 void

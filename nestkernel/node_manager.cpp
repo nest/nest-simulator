@@ -572,15 +572,9 @@ NodeManager::ensure_valid_thread_local_ids()
 void
 NodeManager::destruct_nodes_()
 {
-#ifdef _OPENMP
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-#endif // clang-format on
-
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
@@ -634,14 +628,9 @@ NodeManager::prepare_nodes()
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
-#ifdef _OPENMP
 #pragma omp parallel reduction( + : num_active_nodes, num_active_wfr_nodes )
   {
     size_t t = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif
 
     // We prepare nodes in a parallel region. Therefore, we need to catch
     // exceptions here and then handle them after the parallel region.
@@ -693,14 +682,9 @@ NodeManager::prepare_nodes()
 void
 NodeManager::post_run_cleanup()
 {
-#ifdef _OPENMP
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-#endif // clang-format on
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
@@ -716,14 +700,9 @@ NodeManager::post_run_cleanup()
 void
 NodeManager::finalize_nodes()
 {
-#ifdef _OPENMP
 #pragma omp parallel
   {
     thread tid = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-#endif // clang-format on
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ tid ].begin(); n != local_nodes_[ tid ].end(); ++n )
     {

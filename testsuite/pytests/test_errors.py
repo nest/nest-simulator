@@ -101,16 +101,16 @@ class ErrorTestCase(unittest.TestCase):
         nc = nest.Create('iaf_psc_alpha', 10)
         nest.ResetKernel()
 
-        self.assertRaisesRegexp(
-            nest.kernel.NESTError, "UnknownNode", nest.NodeCollection, [99])
+        msg = "UnknownNode"
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, nest.NodeCollection, [99])
 
     def test_UnknownModel(self):
         """Unknown model name"""
 
         nest.ResetKernel()
 
-        self.assertRaisesRegex(
-            nest.kernel.NESTError, "UnknownModelName", nest.Create, -1)
+        msg = "UnknownModelName"
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, nest.Create, -1)
 
 
 def suite():

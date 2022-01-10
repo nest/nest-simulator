@@ -435,8 +435,9 @@ stdp_dopamine_synapse< targetidentifierT >::update_weight_( double c0,
 {
   const double taus_ = ( cp.tau_c_ + cp.tau_n_ ) / ( cp.tau_c_ * cp.tau_n_ );
   weight_ = weight_
-    - c0 * ( n0 / taus_ * numerics::expm1( taus_ * minus_dt )
-             - cp.b_ * cp.tau_c_ * numerics::expm1( minus_dt / cp.tau_c_ ) );
+    - c0
+      * ( n0 / taus_ * numerics::expm1( taus_ * minus_dt )
+        - cp.b_ * cp.tau_c_ * numerics::expm1( minus_dt / cp.tau_c_ ) );
 
   if ( weight_ < cp.Wmin_ )
   {

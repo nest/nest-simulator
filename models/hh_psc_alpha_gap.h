@@ -39,8 +39,8 @@
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
-#include "ring_buffer.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -285,7 +285,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( hh_psc_alpha_gap& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_psc_alpha_gap& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, hh_psc_alpha_gap& );
 

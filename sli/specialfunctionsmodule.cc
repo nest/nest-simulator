@@ -69,7 +69,7 @@ SpecialFunctionsModule::name( void ) const
 void
 SpecialFunctionsModule::init( SLIInterpreter* i )
 {
-// Do whatever initialization is needed, then...
+  // Do whatever initialization is needed, then...
 
 #ifdef HAVE_GSL
   // turn error handler off, so that errors in GSL functions

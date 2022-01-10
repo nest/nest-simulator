@@ -278,8 +278,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_chxk_2008& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_chxk_2008& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_chxk_2008& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_chxk_2008& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_chxk_2008 > logger_;

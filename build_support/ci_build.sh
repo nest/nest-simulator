@@ -66,20 +66,11 @@ if [ "$xNEST_BUILD_TYPE" = "STATIC_CODE_ANALYSIS" ]; then
         mkdir -p install
         make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
         cd -
+        rm -rf cppcheck
         echo "MSGBLD0040: CPPCHECK installation completed."
-
-        echo "MSGBLD0050: Installing CLANG-FORMAT."
-        wget --no-verbose http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-        tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-        # Copy and not move because '.cache' may aleady contain other subdirectories and files.
-        cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
-        echo "MSGBLD0060: CLANG-FORMAT installation completed."
-
-        # Remove these directories, otherwise the copyright-header check will complain.
-        rm -rf cppcheck clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
     fi
 
-    # Ensure that the cppcheck and clang-format installation can be found.
+    # Ensure that the cppcheck installation can be found.
     export PATH=$HOME/.cache/bin:$PATH
 
     echo "MSGBLD0070: Retrieving changed files."

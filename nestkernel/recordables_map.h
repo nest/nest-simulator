@@ -142,9 +142,10 @@ class DataAccessFunctor
 public:
   DataAccessFunctor( HostNode& n, size_t elem )
     : parent_( &n )
-    , elem_( elem ){};
+    , elem_( elem ) {};
 
-  double operator()() const
+  double
+  operator()() const
   {
     return parent_->get_state_element( elem_ );
   };

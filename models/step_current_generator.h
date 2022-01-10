@@ -31,7 +31,6 @@
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
-#include "stimulation_device.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
 #include "stimulation_device.h"

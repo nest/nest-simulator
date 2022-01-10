@@ -269,7 +269,8 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
   {
     const std::string msg =
       "CopyModel cannot generate another synapse. Maximal synapse model count "
-      "of " + std::to_string( MAX_SYN_ID ) + " exceeded.";
+      "of "
+      + std::to_string( MAX_SYN_ID ) + " exceeded.";
     LOG( M_ERROR, "ModelManager::copy_synapse_model_", msg );
     throw KernelException( "Synapse model count exceeded" );
   }

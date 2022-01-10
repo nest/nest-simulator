@@ -328,8 +328,8 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_psc_delta_clopath& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_psc_delta_clopath& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_psc_delta_clopath& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_psc_delta_clopath& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< aeif_psc_delta_clopath > logger_;

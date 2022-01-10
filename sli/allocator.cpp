@@ -94,7 +94,8 @@ sli::pool::~pool()
   }
 }
 
-sli::pool& sli::pool::operator=( const sli::pool& p )
+sli::pool&
+sli::pool::operator=( const sli::pool& p )
 {
   if ( &p == this )
   {

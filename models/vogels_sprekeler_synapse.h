@@ -24,8 +24,8 @@
 #define VOGELS_SPREKELER_SYNAPSE_H
 
 // C-header for math.h since copysign() is in C99 but not C++98
-#include <math.h>
 #include "connection.h"
+#include <math.h>
 
 namespace nest
 {
@@ -110,8 +110,8 @@ public:
   // Since ConnectionBase depends on the template parameter, they are not
   // automatically
   // found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 

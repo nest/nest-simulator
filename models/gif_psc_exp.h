@@ -24,10 +24,10 @@
 #define GIF_PSC_EXP_H
 
 // Includes from nestkernel:
-#include "event.h"
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 #include "nest.h"

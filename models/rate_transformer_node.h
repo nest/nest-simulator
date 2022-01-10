@@ -116,8 +116,8 @@ public:
    */
 
   using Node::handle;
-  using Node::sends_secondary_event;
   using Node::handles_test_event;
+  using Node::sends_secondary_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );

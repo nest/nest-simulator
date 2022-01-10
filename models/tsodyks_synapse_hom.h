@@ -71,10 +71,10 @@ However, there are no technical restrictions using this model of synaptic
 plasticity also in conjunction with neuron models that have a different
 dynamics for their synaptic current or conductance. The effective synaptic
 weight, which will be transmitted to the postsynaptic neuron upon occurrence
-of a spike at time t is `u(t)*x(t)*w`, where u(t) and x(t) are defined in
-Eq (3) and (4), w is the synaptic weight specified upon connection.
-The interpretation is as follows: The quantity `u(t)*x(t)` is the release
-probability times the amount of releasable synaptic vesicles at time t of the
+of a spike at time t is :math:`u(t) \cdot x(t) \cdot w`, where `u(t)` and `x(t)` are defined in
+Eq (3) and (4), `w` is the synaptic weight specified upon connection.
+The interpretation is as follows: The quantity :math:`u(t) \cdot x(t)` is the release
+probability times the amount of releasable synaptic vesicles at time `t` of the
 presynaptic neuron's spike, so this equals the amount of transmitter expelled
 into the synaptic cleft.
 

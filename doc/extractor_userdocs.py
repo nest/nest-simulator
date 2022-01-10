@@ -558,19 +558,10 @@ def ExtractUserDocs(listoffiles, basedir='..', outdir='userdocs/'):
     indexfiles = CreateTagIndices(tags, outdir=outdir)
     data.write(indexfiles, "indexfiles")
 
-    toc_list = []
-
-    for k, v in tags.items():
-        for name in v:
-            toc_list.append(name[:-4])
-
-    for ifile in indexfiles:
-        toc_list.append(ifile[:-4])
-
-    toc_uniq = list(set(toc_list))
-
-    with open(os.path.join(outdir,"toc-tree.json"), "w") as outtoc:
-        json.dump(toc_uniq, outtoc)
+    toc_list = [name[:-4] for names in tags.values() for name in names]
+    idx_list = [indexfile[:-4] for indexfile in indexfiles]
+    with open(os.path.join(outdir, "toc-tree.json"), "w") as tocfile:
+        json.dump(set(toc_list + idx_list), tocfile)
 
 if __name__ == '__main__':
     ExtractUserDocs(

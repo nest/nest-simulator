@@ -65,8 +65,8 @@ non-zero delay, and uses the ``secondary_event`` concept introduced with
 the gap-junction framework.
 
 Nonlinear rate neurons can be created by typing
-nest.Create(``gauss_rate_ipn``). Nonlinear rate transformers can be
-created by typing ``nest.Create('rate_transformer_gauss``).
+``nest.Create("gauss_rate_ipn")``. Nonlinear rate transformers can be
+created by typing ``nest.Create("rate_transformer_gauss")``.
 
 See also [1]_, [2]_.
 

@@ -57,7 +57,7 @@ state, the same state is recorded again.  Therefore, it is not only
 the transitions that are recorded. Data is recorded in memory or to
 file as for all RecordingDevices. By default, node ID, time, and binary
 state (0 or 1) for each decoded state is recorded. The state can be
-accessed from ``['events']['weight']``.
+accessed by calling ``detector.events["weight"]``.
 
 The ``spin_detector`` will record binary state times with full
 precision from neurons emitting precisely timed spikes.

@@ -85,7 +85,7 @@ neuron like dynamics interacting by point events is described in
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step
-sizes. sli/testsuite/nest contains a number of such tests.
+sizes and the testsuite contains a number of such tests.
 
 The ``iaf_psc_delta_ps`` is the standard model used to check the consistency
 of the nest simulation kernel because it is at the same time complex

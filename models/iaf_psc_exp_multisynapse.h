@@ -54,7 +54,7 @@ time constants (``iaf_psc_exp`` has exactly two: ``tau_syn_ex`` and ``tau_syn_in
 
 This can be reached by specifying separate receptor ports, each for
 a different time constant. The port number has to match the respective
-"receptor_type" in the connectors.
+``receptor_type`` in the connectors.
 
 .. note::
 

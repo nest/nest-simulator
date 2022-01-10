@@ -56,9 +56,9 @@ non-zero delay, and uses the secondary_event concept introduced with
 the gap-junction framework.
 
 Nonlinear rate neurons can be created by typing
-``nest.Create('tanh_rate_ipn')`` or ``nest.Create('tanh_rate_opn')`` for input
+``nest.Create("tanh_rate_ipn")`` or ``nest.Create("tanh_rate_opn")`` for input
 noise or output noise, respectively. Nonlinear rate transformers can
-be created by typing ``nest.Create('rate_transformer_tanh')``.
+be created by typing ``nest.Create("rate_transformer_tanh")``.
 
 See also [1]_, [2]_.
 

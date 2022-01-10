@@ -49,7 +49,7 @@ Synapse type for spike-timing dependent plasticity with additional additive fact
 Description
 +++++++++++
 
-jonke_synapse ``is`` a connector to create synapses with spike time
+jonke_synapse is a connector to create synapses with spike time
 dependent plasticity. Unlike ``stdp_synapse``, we use the update equations:
 
 .. math::

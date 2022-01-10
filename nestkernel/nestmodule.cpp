@@ -1996,8 +1996,8 @@ NestModule::Apply_P_DFunction::execute( SLIInterpreter* i ) const
   auto positions = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
   auto param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-  // Argument-dependent lookup requires explicit namespace qualification to avoid confusion with std::apply() in C++17 and later
-  // See https://github.com/llvm/llvm-project/issues/53084#issuecomment-1007969489
+  // Argument-dependent lookup requires explicit namespace qualification to avoid confusion with std::apply() in C++17
+  // and later See https://github.com/llvm/llvm-project/issues/53084#issuecomment-1007969489
   auto result = nest::apply( param, positions );
 
   i->OStack.pop( 2 );
@@ -2013,8 +2013,8 @@ NestModule::Apply_P_gFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nc = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
   ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-  // Argument-dependent lookup requires explicit namespace qualification to avoid confusion with std::apply() in C++17 and later
-  // See https://github.com/llvm/llvm-project/issues/53084#issuecomment-1007969489
+  // Argument-dependent lookup requires explicit namespace qualification to avoid confusion with std::apply() in C++17
+  // and later See https://github.com/llvm/llvm-project/issues/53084#issuecomment-1007969489
   auto result = nest::apply( param, nc );
 
   i->OStack.pop( 2 );

@@ -502,16 +502,14 @@ NodeManager::ensure_valid_thread_local_ids()
     return;
   }
 
-#ifdef _OPENMP
 #pragma omp critical( update_wfr_nodes_vec )
   {
-// This code may be called from a thread-parallel context, when it is
-// invoked by TargetIdentifierIndex::set_target() during parallel
-// wiring. Nested OpenMP parallelism is problematic, therefore, we
-// enforce single threading here. This should be unproblematic wrt
-// performance, because the wfr_nodes_vec_ is rebuilt only once after
-// changes in network size.
-#endif
+    // This code may be called from a thread-parallel context, when it is
+    // invoked by TargetIdentifierIndex::set_target() during parallel
+    // wiring. Nested OpenMP parallelism is problematic, therefore, we
+    // enforce single threading here. This should be unproblematic wrt
+    // performance, because the wfr_nodes_vec_ is rebuilt only once after
+    // changes in network size.
 
     // Check again, if the network size changed, since a previous thread
     // can have updated wfr_nodes_vec_ before.
@@ -568,9 +566,7 @@ NodeManager::ensure_valid_thread_local_ids()
         }
       }
     }
-#ifdef _OPENMP
-  } // end of omp critical region
-#endif
+  } // omp critical
 }
 
 void

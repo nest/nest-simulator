@@ -86,22 +86,12 @@ class ErrorTestCase(unittest.TestCase):
         def slice_test_composite():
             return nc_c[8:9]
 
-        self.assertRaisesRegexp(
-            nest.kernel.NESTError, "InvalidNodeCollection", add_test_primitive)
-
-        self.assertRaisesRegexp(
-            nest.kernel.NESTError, "InvalidNodeCollection", add_test_composite)
-
-        self.assertRaisesRegexp(
-            nest.kernel.NESTError, "InvalidNodeCollection", add_test_pc)
-
-        self.assertRaisesRegexp(nest.kernel.NESTError,
-                                "InvalidNodeCollection",
-                                slice_test_primitive)
-
-        self.assertRaisesRegexp(nest.kernel.NESTError,
-                                "InvalidNodeCollection",
-                                slice_test_composite)
+        msg = "InvalidNodeCollection"
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, add_test_primitive)
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, add_test_composite)
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, add_test_pc)
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, slice_test_primitive)
+        self.assertRaisesRegex(nest.kernel.NESTError, msg, slice_test_composite)
 
     def test_UnknownNode(self):
         """Unknown node"""

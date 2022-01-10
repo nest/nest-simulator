@@ -120,10 +120,9 @@ class STDPTripletSynapseTestCase(unittest.TestCase):
                          syn_spec=bad_syn_spec)
 
         def badPropertyWith(content, parameters):
-            self.assertRaisesRegexp(
-                nest.kernel.NESTError, "BadProperty(.+)" + content,
-                setupProperty, parameters
-            )
+            self.assertRaisesRegex(nest.kernel.NESTError,
+                                   "BadProperty(.+)" + content,
+                                   setupProperty, parameters)
 
         badPropertyWith("Kplus", {"Kplus": -1.0})
         badPropertyWith("Kplus_triplet", {"Kplus_triplet": -1.0})

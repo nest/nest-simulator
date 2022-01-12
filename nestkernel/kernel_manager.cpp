@@ -135,7 +135,6 @@ nest::KernelManager::change_number_of_threads( thread new_num_threads )
   assert( node_manager.size() == 0 );
   assert( not connection_manager.get_user_set_delay_extrema() );
   assert( not simulation_manager.has_been_simulated() );
-  assert( Time::resolution_is_default() );
   assert( not sp_manager.is_structural_plasticity_enabled() or new_num_threads == 1 );
 
   vp_manager.set_num_threads( new_num_threads );

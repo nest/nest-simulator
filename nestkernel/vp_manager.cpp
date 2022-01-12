@@ -124,10 +124,6 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     {
       errors.push_back( "Network has been simulated" );
     }
-    if ( not Time::resolution_is_default() )
-    {
-      errors.push_back( "Resolution has been modified" );
-    }
     if ( kernel().model_manager.are_model_defaults_modified() )
     {
       errors.push_back( "Model defaults were modified" );

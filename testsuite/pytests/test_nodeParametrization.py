@@ -512,13 +512,13 @@ class TestNodeParametrization(unittest.TestCase):
         """Test cosine of a parameter"""
         for value in np.linspace(-5.0, 5.0, 15):
             p = nest.CreateParameter('constant', {'value': value})
-            self.assertEqual(nest.math.cos(p).GetValue(), np.cos(value))
+            self.assertAlmostEqual(nest.math.cos(p).GetValue(), np.cos(value))
 
     def test_sin_parameter(self):
         """Test sine of a parameter"""
         for value in np.linspace(-5.0, 5.0, 15):
             p = nest.CreateParameter('constant', {'value': value})
-            self.assertEqual(nest.math.sin(p).GetValue(), np.sin(value))
+            self.assertAlmostEqual(nest.math.sin(p).GetValue(), np.sin(value))
 
     def test_power_parameter(self):
         """Test parameter raised to the power of an exponent"""

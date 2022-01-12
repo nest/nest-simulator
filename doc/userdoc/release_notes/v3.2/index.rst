@@ -15,64 +15,9 @@ selection of earlier :doc:`transition guides <release_notes/index>`.
    :local:
    :depth: 1
 
-
-Retrieve available node and synapse models
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The PyNEST function ``Models()`` is now deprecated and will be removed
-in a future version of NEST. Where you previously used the function
-``nest.Models("nodes")`` to acquire the list of available node models,
-you would now write ``nest.node_models`` instead. The list of
-available synapse models can be retrieved using the kernel attribute
-``nest.synapse_models``. Filtering can easily and explicitly be
-implemented using a conditional expression in a list comprehension.
-
-+--------------------------------------------+--------------------------------------------------+
-| NEST 3.1                                   | NEST 3.2                                         |
-+============================================+==================================================+
-| ``nest.Models(mtype="nodes")``             | ``nest.node_models``                             |
-+-----------....-----------------------------+--------------------------------------------------+
-| ``nest.Models(mtype="synapses")``          | ``nest.synapse_models``                          |
-+--------------------------------------------+--------------------------------------------------+
-| ``nest.Models(mtype="nodes", sel="iaf")``  | ``[m for m in nest.node_models if "iaf" in m]``  |
-+--------------------------------------------+--------------------------------------------------+
-
-New kernel attributes
-^^^^^^^^^^^^^^^^^^^^^
-
-On the SLI level, the individual dictionaries ``connruledict``,
-``growthcurvedict``, ``modeldict``, and ``synapsedict`` have been
-removed. Their content is now consistently available as kernel
-attributes with the names ``connection_rules``, ``growth_curves``,
-``node_models``, and ``synapse_models``. Moreover, the list of
-available stimulation backends has been added under the attribute
-``stimulation_backends``.
-
-In the course of adding the new kernel attributes, the functions
-``Models()`` and ``ConnectionRules()`` of PyNEST have been marked as
-deprecated and will be removed in a later version.
-
-Global properties for recording backends
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The functions :py:func`.GetDefaults` and :py:func`.SetDefaults` have
-been extended to also work on the global properties of recording
-backends. This new mechanism replaces backend property access via
-nested dictionaries and leads to simpler and more readable code:
-
-+----------------------------------------+------------------------------------------+
-| NEST 3.1                               | NEST 3.2                                 |
-+========================================+==========================================+
-|  ::                                    |  ::                                      |
-|                                        |                                          |
-|     params = {"sion_chunksize": 1024}  |     params = {"sion_chunksize": 1024}    |
-|     nest.recording_backends = {        |     nest.SetDefaults("sionlib", params)  |
-|         "sionlib": params              |                                          |
-|     }                                  |                                          |
-|                                        |                                          |
-+----------------------------------------+------------------------------------------+
-|  ::                                    |  ::                                      |
-|                                        |                                          |
-|     nest.recording_backends["ascii"]   |     nest.GetDefaults("ascii")            |
-|                                        |                                          |
-+----------------------------------------+------------------------------------------+
+ConnPlotter
+~~~~~~~~~~~
+All files related to ConnPlotter have been removed from NEST 3.2 and 
+moved to a separate repository `connplotter <https://github.com/nest
+/connplotter> _`.
+>>>>>>> cb61289cc5751f68eb42f5eaf6564acc03823252

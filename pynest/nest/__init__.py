@@ -95,13 +95,20 @@ class NestModule(types.ModuleType):
         _rel_import_star(self, ".lib.hl_api_types")
 
         # Lazy loaded modules. They are descriptors, so add them to the type object
+        type(self).raster_plot = _lazy_module_property("raster_plot")
+        type(self).server = _lazy_module_property("server")
         type(self).spatial = _lazy_module_property("spatial")
+        type(self).visualization = _lazy_module_property("visualization")
+        type(self).voltage_trace = _lazy_module_property("voltage_trace")
 
         self.__version__ = ll_api.sli_func("statusdict /version get")
         # Finalize the nest module with a public API.
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
         self.__all__ = list(set(_api))
+
+        # Block setting of unknown attributes
+        type(self).__setattr__ = _setattr_error
 
     def set(self, **kwargs):
         return self.SetKernelStatus(kwargs)
@@ -410,6 +417,32 @@ class NestModule(types.ModuleType):
     _readonly_kernel_attrs = builtins.set(
         k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly
     )
+
+
+def _setattr_error(self, attr, val):
+    """
+    When attributes on the `nest` module instance are set, check if it exists on the
+    module type and try to call `__set__` on them. Without this explicit check `nest`s
+    `__setattr__` shadows class attributes and descriptors (such as `KernelAttribute`s).
+
+    Once this function exists on the `nest` module, new attributes can only be added using
+    `__dict__` manipulation. It is added onto the module at the end of `__init__`,
+    "freezing" the module.
+    """
+    if isinstance(val, types.ModuleType):
+        # Allow import machinery to set imported modules on `nest`
+        self.__dict__[attr] = val
+    else:
+        err = AttributeError(f"Cannot set attribute '{attr}' on module 'nest'")
+        try:
+            cls_attr = getattr(type(self), attr)
+        except AttributeError:
+            raise err from None
+        else:
+            if hasattr(cls_attr, "__set__"):
+                cls_attr.__set__(self, val)
+            else:
+                raise err from None
 
 
 def _rel_import_star(module, import_module_name):

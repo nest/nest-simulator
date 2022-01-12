@@ -560,8 +560,9 @@ def ExtractUserDocs(listoffiles, basedir='..', outdir='userdocs/'):
 
     toc_list = [name[:-4] for names in tags.values() for name in names]
     idx_list = [indexfile[:-4] for indexfile in indexfiles]
+
     with open(os.path.join(outdir, "toc-tree.json"), "w") as tocfile:
-        json.dump(set(toc_list + idx_list), tocfile)
+        json.dump(list(set(toc_list)) + list(set(idx_list)), tocfile)
 
 if __name__ == '__main__':
     ExtractUserDocs(

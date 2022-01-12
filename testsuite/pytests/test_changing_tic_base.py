@@ -36,52 +36,6 @@ class TestChangingTicBase(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
 
-    def test_models(self):
-        """Time objects in models correctly updated"""
-        # Generate a dictionary of reference values for each model.
-        reference = {}
-        for model in nest.Models():
-            if model in self.ignored_models:
-                continue
-            try:
-                reference[model] = nest.GetDefaults(model)
-            except nest.kernel.NESTError:
-                # If we can't get the defaults, we ignore the model.
-                pass
-
-        # Change the tic-base.
-        nest.set(resolution=0.5, tics_per_ms=1500.0)
-
-        # At this point, Time objects in models should have been updated to
-        # account for the new tic-base. Values in model defaults should therefore
-        # be equal (within a tolerance) to the reference values.
-
-        failing_models = []
-        for model in reference.keys():
-            model_reference = reference[model]
-            model_defaults = nest.GetDefaults(model)
-            # Remove entries where the item contains more than one value, as this causes issues when comparing.
-            array_keys = [key for key, value in model_defaults.items()
-                          if isinstance(value, (list, tuple, dict, np.ndarray))]
-            for key in array_keys:
-                del model_defaults[key]
-                del model_reference[key]
-
-            keydiff = []
-            for key, value in model_defaults.items():
-                # value may not be a number, so we test for equality first.
-                # If it's not equal to the reference value, we assume it is a number.
-                if value != model_reference[key] and abs(value - model_reference[key]) > self.eps:
-                    print(value - model_reference[key])
-                    keydiff.append([key, model_reference[key], value])
-            # If any keys have values different from the reference, the model fails.
-            if len(keydiff) > 0:
-                print(model, keydiff)
-                failing_models.append(model)
-
-        # No models should fail for the test to pass.
-        self.assertEqual([], failing_models)
-
     def _assert_ticbase_change_raises_and_reset(self, after_call):
         """Assert that changing tic-base raises a NESTError, and reset the kernel"""
         with self.assertRaises(nest.kernel.NESTError, msg=f'after calling "{after_call}"'):

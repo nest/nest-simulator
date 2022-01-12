@@ -51,10 +51,12 @@ Description
 
 This device can be used to inject a Gaussian "white" noise current into a node.
 
-The current is not really white, but a piecewise constant current with Gaussian
-distributed amplitude. The current changes at intervals of dt. dt must be a
-multiple of the simulation step size, the default is 1.0 ms,
-corresponding to a 1 kHz cut-off.
+The current is not really white, but a piecewise constant current with
+Gaussian distributed amplitude. The current changes at intervals of
+dt. dt must be a multiple of the simulation step size, the default is
+10 times the simulation resolution (equating to 1.0 ms, corresponding
+to a 1 kHz cut-off).
+
 Additionally a second sinusodial modulated term can be added to the standard
 deviation of the noise.
 
@@ -346,12 +348,6 @@ inline SignalType
 noise_generator::sends_signal() const
 {
   return ALL;
-}
-
-inline void
-noise_generator::calibrate_time( const TimeConverter& tc )
-{
-  P_.dt_ = tc.from_old_tics( P_.dt_.get_tics() );
 }
 
 inline bool

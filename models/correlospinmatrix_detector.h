@@ -49,15 +49,15 @@ Device for measuring the covariance matrix from several inputs
 Description
 +++++++++++
 
-The correlospinmatrix_detector is a recording device. It is used
-to record correlations from binary neurons from several binary sources and
-calculates the raw auto and cross correlation binned to bins of duration
-delta_tau. The result can be obtained via GetStatus under the key
-/count_covariance. The result is a tensor of rank 3 of size
+The correlospinmatrix_detector is a device that receives input from several
+binary neuron sources and calculates the raw auto and cross correlation binned
+to bins of duration delta_tau, which defaults to the simulation resolution.
+
+The result can be obtained from the node's status dictionary under the key
+/count_covariance in the format of a tensor of rank 3 of size
 N_channels x N_channels, with each entry :math:`C_{ij}` being a vector of size
 :math:`2*\tau_{max}/\delta_{\tau} + 1` containing the histogram for the
-different
-time lags.
+different time lags.
 
 The bins are centered around the time difference they represent, and are
 left-closed and right-open in the lower triangular part of the matrix. On the
@@ -300,7 +300,7 @@ correlospinmatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type
 }
 
 inline void
-nest::correlospinmatrix_detector::get_status( DictionaryDatum& d ) const
+correlospinmatrix_detector::get_status( DictionaryDatum& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -308,7 +308,7 @@ nest::correlospinmatrix_detector::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-nest::correlospinmatrix_detector::set_status( const DictionaryDatum& d )
+correlospinmatrix_detector::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );
@@ -323,20 +323,9 @@ nest::correlospinmatrix_detector::set_status( const DictionaryDatum& d )
 
 
 inline SignalType
-nest::correlospinmatrix_detector::receives_signal() const
+correlospinmatrix_detector::receives_signal() const
 {
   return BINARY;
-}
-
-inline void
-nest::correlospinmatrix_detector::calibrate_time( const TimeConverter& tc )
-{
-  P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
-  P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );
-  P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
-  P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
-
-  S_.t_last_in_spike_ = tc.from_old_tics( S_.t_last_in_spike_.get_tics() );
 }
 
 } // namespace

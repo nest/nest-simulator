@@ -28,7 +28,9 @@
 #include <numeric>
 
 // Includes from libnestutil:
+#include "compose.hpp"
 #include "dict_util.h"
+#include "logging.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -41,7 +43,7 @@
  * ---------------------------------------------------------------- */
 
 nest::correlation_detector::Parameters_::Parameters_()
-  : delta_tau_( Time::ms( 1.0 ) )
+  : delta_tau_( 5 * Time::get_resolution() )
   , tau_max_( 10 * delta_tau_ )
   , Tstart_( Time::ms( 0.0 ) )
   , Tstop_( Time::pos_inf() )
@@ -54,13 +56,15 @@ nest::correlation_detector::Parameters_::Parameters_( const Parameters_& p )
   , Tstart_( p.Tstart_ )
   , Tstop_( p.Tstop_ )
 {
-  // Check for proper properties is not done here but in the
-  // correlation_detector() copy c'tor. The check cannot be
-  // placed here, since this c'tor is also used to copy to
-  // temporaries in correlation_detector::set_status().
-  // If we checked for errors here, we could never change values
-  // that have become invalid after a resolution change.
-  delta_tau_.calibrate();
+  if ( not delta_tau_.is_step() )
+  {
+    delta_tau_ = 5 * Time::get_resolution();
+  }
+  else
+  {
+    delta_tau_.calibrate();
+  }
+
   tau_max_.calibrate();
   Tstart_.calibrate();
   Tstop_.calibrate();
@@ -206,10 +210,6 @@ nest::correlation_detector::correlation_detector()
   , P_()
   , S_()
 {
-  if ( not P_.delta_tau_.is_step() )
-  {
-    throw InvalidDefaultResolution( get_name(), names::delta_tau, P_.delta_tau_ );
-  }
 }
 
 nest::correlation_detector::correlation_detector( const correlation_detector& n )
@@ -218,10 +218,6 @@ nest::correlation_detector::correlation_detector( const correlation_detector& n 
   , P_( n.P_ )
   , S_()
 {
-  if ( not P_.delta_tau_.is_step() )
-  {
-    throw InvalidTimeInModel( get_name(), names::delta_tau, P_.delta_tau_ );
-  }
 }
 
 
@@ -345,4 +341,24 @@ nest::correlation_detector::handle( SpikeEvent& e )
     // the deque
     S_.incoming_[ sender ].insert( insert_pos, sp_i );
   } // device active
+}
+
+void
+nest::correlation_detector::calibrate_time( const TimeConverter& tc )
+{
+  if ( not P_.delta_tau_.is_step() )
+  {
+    std::string old = String::compose( "(was %1 ms)", P_.delta_tau_.get_ms() );
+    P_.delta_tau_ = 5 * Time::get_resolution();
+    std::string msg = String::compose( "Default value for delta_tau is now %1 ms %2", P_.delta_tau_.get_ms(), old );
+    LOG( M_INFO, get_name(), msg );
+  }
+  else
+  {
+    P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
+  }
+
+  P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );
+  P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
+  P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
 }

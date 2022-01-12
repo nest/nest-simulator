@@ -204,13 +204,20 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       }
       else
       {
+        double old_res = nest::Time::get_resolution().get_ms();
+        tic_t old_tpms = nest::Time::get_resolution().get_tics_per_ms();
+
         nest::Time::set_resolution( tics_per_ms, resd );
         // adjust to new resolution
         clock_.calibrate();
         // adjust delays in the connection system to new resolution
         kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
-        LOG( M_INFO, "SimulationManager::set_status", "tics per ms and resolution changed." );
+
+        std::string msg = String::compose(
+          "tics per ms and resolution changed from %1 tics and %2 ms to %3 tics and %4 ms.",
+          old_tpms, old_res, tics_per_ms, resd );
+        LOG( M_INFO, "SimulationManager::set_status", msg );
 
         // make sure that wfr communication interval is always greater or equal
         // to resolution if no wfr is used explicitly set wfr_comm_interval
@@ -233,12 +240,17 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       }
       else
       {
+        double old_res = nest::Time::get_resolution().get_ms();
+
         Time::set_resolution( resd );
         clock_.calibrate(); // adjust to new resolution
         // adjust delays in the connection system to new resolution
         kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
-        LOG( M_INFO, "SimulationManager::set_status", "Temporal resolution changed." );
+
+        std::string msg = String::compose(
+          "Temporal resolution changed from %1 to %2 ms.", old_res, resd );
+        LOG( M_INFO, "SimulationManager::set_status", msg );
 
         // make sure that wfr communication interval is always greater or equal
         // to resolution if no wfr is used explicitly set wfr_comm_interval

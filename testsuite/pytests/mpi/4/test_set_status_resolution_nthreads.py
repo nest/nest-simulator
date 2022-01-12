@@ -30,7 +30,7 @@ def reset():
 
 def testSetStatus_resolution_before_nthreads(reset):
     """"""
-    
+
     nest.resolution = 0.5
     nest.local_num_threads = 4
     nest.Simulate(100)
@@ -40,7 +40,7 @@ def testSetStatus_resolution_before_nthreads(reset):
 
 def testSetStatus_nthreads_before_resolution(reset):
     """"""
-    
+
     nest.local_num_threads = 4
     nest.resolution = 0.5
     nest.Simulate(100)

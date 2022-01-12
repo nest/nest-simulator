@@ -56,7 +56,7 @@ Description
 and fire (GLIF) models [1]_ with conductance-based synapses.
 Incoming spike events induce a postsynaptic change of conductance modeled
 by an alpha function [2]_. The alpha function is normalized such that an event
-of weight 1.0 results in a peak conductance change of 1 nS at `t = tau_syn`. On
+of weight 1.0 results in a peak conductance change of 1 nS at :math:`t = tau_syn`. On
 the postsynaptic side, there can be arbitrarily many synaptic time constants.
 This can be reached by specifying separate receptor ports, each for a different
 time constant. The port number has to match the respective ``receptor_type`` in

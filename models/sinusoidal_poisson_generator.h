@@ -53,8 +53,8 @@ The instantaneous rate of the process is given by
 
 .. math::
 
-  f(t) = max(0, rate + amplitude \sin ( 2 \pi frequency t + phase
-     * \pi/180 )) >= 0
+  f(t) = \mathrm{max}(0, \mathrm{rate} + \mathrm{amplitude} \cdot \sin ( 2 \pi \cdot \mathrm{frequency} t + \mathrm{phase}
+    \cdot \frac{\pi}{180} )) >= 0
 
 Remarks
 +++++++

@@ -46,7 +46,7 @@ Description
 (GLIF) models [1]_ with alpha-function shaped synaptic currents.
 Incoming spike events induce a postsynaptic change of current modeled
 by an alpha function [2]_. The alpha function is normalized such that an event
-of weight 1.0 results in a peak current of 1 pA at `t = tau_syn`. By default,
+of weight 1.0 results in a peak current of 1 pA at :math:`t = tau_syn`. By default,
 glif_psc has a single synapse that is accessible through receptor_port 1.
 An arbitrary number of synapses with different time constants can be
 configured by setting the desired time constants as tau_syn array.

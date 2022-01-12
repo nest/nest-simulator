@@ -79,9 +79,9 @@ Here :math:`xi_j(t)` denotes a Gaussian white noise.
 This template class needs to be instantiated with a class
 containing the following functions:
 
-- input (nonlinearity that is applied to the input, either psi or phi)
-- mult_coupling_ex (factor of multiplicative coupling for excitatory input)
-- mult_coupling_in (factor of multiplicative coupling for inhibitory input)
+- ``input`` (nonlinearity that is applied to the input, either psi or phi)
+- ``mult_coupling_ex`` (factor of multiplicative coupling for excitatory input)
+- ``mult_coupling_in`` (factor of multiplicative coupling for inhibitory input)
 
 The boolean parameter ``linear_summation`` determines whether the input function
 is applied to the summed up incoming connections (True, default value, input

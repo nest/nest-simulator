@@ -407,9 +407,9 @@ stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const Dictiona
   {
     if ( syn_spec->known( param_arr[ n ] ) )
     {
-      throw NotImplemented(
-        "Connect doesn't support the setting of parameter param_arr[ n ]"
-        "in stdp_dopamine_synapse. Use SetDefaults() or CopyModel()." );
+      std::string msg = "Connect doesn't support the setting of parameter " + param_arr[ n ]
+        + " in stdp_dopamine_synapse. Use SetDefaults() or CopyModel().";
+      throw NotImplemented( msg );
     }
   }
 }

@@ -72,7 +72,7 @@ neuron like dynamics interacting by point events is described in
 [1]_. A flow chart can be found in [2]_.
 
 The default parameter values for this model are different from the
-corresponding parameter values for mat2_psc_exp. If identical
+corresponding parameter values for ``mat2_psc_exp``. If identical
 parameters are used, and beta is 0, then this model shall behave
 exactly as mat2_psc_exp.
 

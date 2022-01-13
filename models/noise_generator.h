@@ -77,16 +77,16 @@ For a detailed discussion of the properties of the noise generator, please see
 `noise_generator <../model_details/noise_generator.ipynb>`_
 notebook included in the NEST source code.
 
-All targets receive different currents, but he currents for all
+All targets receive different currents, but the currents for all
 targets change at the same points in time. The interval between
-changes, dt, must be a multiple of the time step.
+changes, ``dt``, must be a multiple of the time step.
 
-The effect of this noise current on a neuron depends on dt. Consider
+The effect of this noise current on a neuron depends on ``dt``. Consider
 the membrane potential fluctuations evoked when a noise current is
 injected into a neuron. The standard deviation of these fluctuations
-across an ensemble will increase with dt for a given value of std.
-For the leaky integrate-and-fire neuron with time constant :math:`\tau_m` and
-capacity :math:`C_m`, membrane potential fluctuations Sigma at time
+across an ensemble will increase with ``dt`` for a given value of ``std``.
+For the leaky integrate-and-fire neuron with time constant ``tau_m`` and
+capacity ``C_m``, membrane potential fluctuations Sigma at time
 :math:`t_j+delay` are given by
 
 .. math::

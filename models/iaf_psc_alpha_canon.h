@@ -103,7 +103,7 @@ property "precise_times" of the spike_recorder has to be set to true in
 order to record the offsets in addition to the on-grid spike times.
 
 The iaf_psc_delta_ps neuron accepts connections transmitting
-CurrentEvents. These events transmit stepwise-constant currents which
+``CurrentEvents``. These events transmit stepwise-constant currents which
 can only change at on-grid times.
 
 For details about exact subthreshold integration, please see

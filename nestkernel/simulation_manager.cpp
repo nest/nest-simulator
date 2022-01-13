@@ -204,8 +204,8 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       }
       else
       {
-        double old_res = nest::Time::get_resolution().get_ms();
-        tic_t old_tpms = nest::Time::get_resolution().get_tics_per_ms();
+        const double old_res = nest::Time::get_resolution().get_ms();
+        const tic_t old_tpms = nest::Time::get_resolution().get_tics_per_ms();
 
         nest::Time::set_resolution( tics_per_ms, resd );
         // adjust to new resolution
@@ -215,7 +215,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         kernel().model_manager.calibrate( time_converter );
 
         std::string msg =
-          String::compose( "tics per ms and resolution changed from %1 tics and %2 ms to %3 tics and %4 ms.",
+          String::compose( "Tics per ms and resolution changed from %1 tics and %2 ms to %3 tics and %4 ms.",
             old_tpms,
             old_res,
             tics_per_ms,
@@ -243,7 +243,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       }
       else
       {
-        double old_res = nest::Time::get_resolution().get_ms();
+        const double old_res = nest::Time::get_resolution().get_ms();
 
         Time::set_resolution( resd );
         clock_.calibrate(); // adjust to new resolution

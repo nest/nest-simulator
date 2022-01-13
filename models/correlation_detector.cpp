@@ -352,9 +352,9 @@ nest::correlation_detector::calibrate_time( const TimeConverter& tc )
   }
   else
   {
-    std::string old = String::compose( "(was %1 ms)", P_.delta_tau_.get_ms() );
+    const double old = P_.delta_tau_.get_ms();
     P_.delta_tau_ = P_.get_default_delta_tau();
-    std::string msg = String::compose( "Default value for delta_tau is now %1 ms %2", P_.delta_tau_.get_ms(), old );
+    std::string msg = String::compose( "Default for delta_tau changed from %1 to %2 ms", old, P_.delta_tau_.get_ms() );
     LOG( M_INFO, get_name(), msg );
   }
 

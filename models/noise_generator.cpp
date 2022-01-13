@@ -399,9 +399,9 @@ nest::noise_generator::calibrate_time( const TimeConverter& tc )
   }
   else
   {
-    std::string old = String::compose( "(was %1 ms)", P_.dt_.get_ms() );
+    const double old = P_.dt_.get_ms();
     P_.dt_ = P_.get_default_dt();
-    std::string msg = String::compose( "Default value for dt is now %1 ms %2", P_.dt_.get_ms(), old );
+    std::string msg = String::compose( "Default for dt changed from %1 to %2 ms", old, P_.dt_.get_ms() );
     LOG( M_INFO, get_name(), msg );
   }
 }

@@ -110,7 +110,8 @@ Parameters
                                     always reset) is allowed.
 ======================= =========== ===========================================
 
-Common properties can only be set on the synapse model using SetDefaults.
+Common properties can only be set on the synapse model using
+:py:func:`.SetDefaults`.
 
 ============  ======= =====================================================
 **Individual properties**

@@ -101,8 +101,8 @@ Parameters
  Wmax      real    Maximal synaptic weight
 =========  ======= ======================================================
 
-The common properties can only be set by SetDefaults and apply to all
-instances of the synapse model.
+The common properties can only be set by :py:func:`.SetDefaults` and apply
+to all instances of the synapse model.
 
 === ======  =====================================
 **Individual properties**

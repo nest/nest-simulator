@@ -49,12 +49,12 @@ decomposed into an integer part (delay_) and a double (delay_offset_) so
 that the actual delay is given by  delay_*h - delay_offset_. This can be
 combined with off-grid spike times.
 
-All delays set by the normal NEST Connect function will be rounded, even when
-using cont_delay_synapse. To set non-grid delays, you must either
+All delays set by the normal NEST Connect function will be rounded, even
+when using cont_delay_synapse. To set non-grid delays, you must either
 
-1. set the delay as model default using SetDefaults, which is very
-   efficient, but results in a situation where all synapses then will
-   have the same delay.
+1. set the delay as model default using :py:func:`.SetDefaults`, which
+   is very efficient, but results in a situation where all synapses then
+   will have the same delay.
 
 2. set the delay for each synapse after the connections have been
    created, which is slower, but allows individual delay values.

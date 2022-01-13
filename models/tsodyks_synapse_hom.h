@@ -110,7 +110,7 @@ Parameters
 
    The weight and the parameters U, tau_psc, tau_fac, and tau_rec are
    common to all synapses of the model and must be set using
-   SetDefaults on the synapse model.
+   :py:func:`.SetDefaults` on the synapse model.
 
 References
 ++++++++++

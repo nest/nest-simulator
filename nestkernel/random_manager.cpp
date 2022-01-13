@@ -32,9 +32,11 @@
 #include "vp_manager_impl.h"
 
 // Includes from libnestutil:
+#ifdef HAVE_RANDOM123
 #include "Random123/conventional/Engine.hpp"
 #include "Random123/philox.h"
 #include "Random123/threefry.h"
+#endif
 
 
 const std::string nest::RandomManager::DEFAULT_RNG_TYPE_ = "mt19937_64";

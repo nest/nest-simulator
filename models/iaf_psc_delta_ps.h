@@ -95,7 +95,7 @@ relevant measures analytically.
 Please note that this node is capable of sending precise spike times
 to target nodes (on-grid spike time plus offset).
 
-The iaf_psc_delta_ps neuron accepts connections transmitting
+The ``af_psc_delta_ps`` neuron accepts connections transmitting
 ``CurrentEvents``. These events transmit stepwise-constant currents which
 can only change at on-grid times.
 

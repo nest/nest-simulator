@@ -729,12 +729,12 @@ inline nc_const_iterator& nc_const_iterator::operator+=( const size_t n )
     }
     // If we went past the end of the composite, we need to adjust the
     // position of the iterator.
-    if ( composite_collection_->stop_offset_ != 0 or composite_collection_->stop_part_ != 0 )
+    if ( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 )
     {
-      if ( part_idx_ >= composite_collection_->stop_part_ and element_idx_ >= composite_collection_->stop_offset_ )
+      if ( part_idx_ >= composite_collection_->end_part_ and element_idx_ >= composite_collection_->end_offset_ )
       {
-        part_idx_ = composite_collection_->stop_part_;
-        element_idx_ = composite_collection_->stop_offset_;
+        part_idx_ = composite_collection_->end_part_;
+        element_idx_ = composite_collection_->end_offset_;
       }
     }
     else if ( part_idx_ >= composite_collection_->parts_.size() )

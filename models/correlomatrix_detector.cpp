@@ -60,13 +60,13 @@ nest::correlomatrix_detector::Parameters_::Parameters_( const Parameters_& p )
   , Tstop_( p.Tstop_ )
   , N_channels_( p.N_channels_ )
 {
-  if ( not delta_tau_.is_step() )
+  if ( delta_tau_.is_step() )
   {
-    delta_tau_ = get_default_delta_tau();
+    delta_tau_.calibrate();
   }
   else
   {
-    delta_tau_.calibrate();
+    delta_tau_ = get_default_delta_tau();
   }
 
   tau_max_.calibrate();
@@ -391,16 +391,16 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 void
 nest::correlomatrix_detector::calibrate_time( const TimeConverter& tc )
 {
-  if ( not P_.delta_tau_.is_step() )
+  if ( P_.delta_tau_.is_step() )
+  {
+    P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
+  }
+  else
   {
     std::string old = String::compose( "(was %1 ms)", P_.delta_tau_.get_ms() );
     P_.delta_tau_ = P_.get_default_delta_tau();
     std::string msg = String::compose( "Default value for delta_tau is now %1 ms %2", P_.delta_tau_.get_ms(), old );
     LOG( M_INFO, get_name(), msg );
-  }
-  else
-  {
-    P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
   }
 
   P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );

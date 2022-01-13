@@ -75,13 +75,13 @@ nest::noise_generator::Parameters_::Parameters_( const Parameters_& p )
   , dt_( p.dt_ )
   , num_targets_( 0 ) // we do not copy connections
 {
-  if ( not dt_.is_step() )
+  if ( dt_.is_step() )
   {
-    dt_ = get_default_dt();
+    dt_.calibrate();
   }
   else
   {
-    dt_.calibrate();
+    dt_ = get_default_dt();
   }
 }
 
@@ -393,15 +393,15 @@ nest::noise_generator::set_data_from_stimulation_backend( std::vector< double >&
 void
 nest::noise_generator::calibrate_time( const TimeConverter& tc )
 {
-  if ( not P_.dt_.is_step() )
+  if ( P_.dt_.is_step() )
+  {
+    P_.dt_ = tc.from_old_tics( P_.dt_.get_tics() );
+  }
+  else
   {
     std::string old = String::compose( "(was %1 ms)", P_.dt_.get_ms() );
     P_.dt_ = P_.get_default_dt();
     std::string msg = String::compose( "Default value for dt is now %1 ms %2", P_.dt_.get_ms(), old );
     LOG( M_INFO, get_name(), msg );
-  }
-  else
-  {
-    P_.dt_ = tc.from_old_tics( P_.dt_.get_tics() );
   }
 }

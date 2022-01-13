@@ -29,7 +29,7 @@ def reset():
 
 
 def testSetStatus_resolution_before_nthreads(reset):
-    """"""
+    """Test if resolution can be set before number of threads."""
 
     nest.resolution = 0.5
     nest.local_num_threads = 4
@@ -39,7 +39,7 @@ def testSetStatus_resolution_before_nthreads(reset):
 
 
 def testSetStatus_nthreads_before_resolution(reset):
-    """"""
+    """Test if number of threads can be set before resolution."""
 
     nest.local_num_threads = 4
     nest.resolution = 0.5

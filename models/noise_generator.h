@@ -123,7 +123,7 @@ std
     The standard deviation of noise current (pA)
 
 dt
-    The interval between changes in current in ms (default: 1.0)
+    The interval between changes in current (ms; default: 10 * resolution)
 
 std_mod
     The modulated standard deviation of noise current (pA)

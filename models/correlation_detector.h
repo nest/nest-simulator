@@ -103,12 +103,14 @@ the
                               effects of the correlation counts.
 delta_tau            ms       Bin width. This has to be an odd multiple of
                               the resolution, to allow the symmetry between
-                              positive and negative time-lags.
+                              positive and negative time-lags. Defaults to 5
+                              times the simulation resolution
 tau_max              ms       One-sided width. In the lower triangular part
                               events with differences in [0, tau_max+delta_tau/2)
                               are counted. On the diagonal and in the upper
                               triangular part events with differences in
-                              (0, tau_max+delta_tau/2].
+                              (0, tau_max+delta_tau/2]. Defaults to 10 times the
+                              value of delta_tau.
 N_channels           integer  The number of pools. This defines the range of
                               receptor_type. Default is 1.
                               Setting N_channels clears count_covariance,

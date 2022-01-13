@@ -171,7 +171,7 @@ private:
    * clean all the memory allocated for the updating device. The function is used only by the master thread
    * @param data
    */
-  void clean_memory_input_data( std::pair< int*, double* >* data );
+  void clean_memory_input_data( std::vector< std::pair< int*, double* > >& data );
 };
 
 } // namespace

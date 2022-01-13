@@ -214,9 +214,12 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
 
-        std::string msg = String::compose(
-          "tics per ms and resolution changed from %1 tics and %2 ms to %3 tics and %4 ms.",
-          old_tpms, old_res, tics_per_ms, resd );
+        std::string msg =
+          String::compose( "tics per ms and resolution changed from %1 tics and %2 ms to %3 tics and %4 ms.",
+            old_tpms,
+            old_res,
+            tics_per_ms,
+            resd );
         LOG( M_INFO, "SimulationManager::set_status", msg );
 
         // make sure that wfr communication interval is always greater or equal
@@ -248,8 +251,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
         kernel().connection_manager.calibrate( time_converter );
         kernel().model_manager.calibrate( time_converter );
 
-        std::string msg = String::compose(
-          "Temporal resolution changed from %1 to %2 ms.", old_res, resd );
+        std::string msg = String::compose( "Temporal resolution changed from %1 to %2 ms.", old_res, resd );
         LOG( M_INFO, "SimulationManager::set_status", msg );
 
         // make sure that wfr communication interval is always greater or equal

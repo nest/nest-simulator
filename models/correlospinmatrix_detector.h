@@ -232,6 +232,8 @@ private:
      *          binwidth or tau_max.
      */
     bool set( const DictionaryDatum&, const correlospinmatrix_detector&, Node* );
+
+    Time get_default_delta_tau();
   };
 
   // ------------------------------------------------------------
@@ -326,6 +328,12 @@ inline SignalType
 correlospinmatrix_detector::receives_signal() const
 {
   return BINARY;
+}
+
+inline Time
+correlospinmatrix_detector::Parameters_::get_default_delta_tau()
+{
+  return Time::get_resolution();
 }
 
 } // namespace

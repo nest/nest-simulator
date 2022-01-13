@@ -241,6 +241,8 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
     void set( const DictionaryDatum&, const noise_generator&, Node* node );
+
+    Time get_default_dt();
   };
 
   // ------------------------------------------------------------
@@ -360,6 +362,12 @@ inline StimulationDevice::Type
 noise_generator::get_type() const
 {
   return StimulationDevice::Type::CURRENT_GENERATOR;
+}
+
+inline Time
+noise_generator::Parameters_::get_default_dt()
+{
+  return 10 * Time::get_resolution();
 }
 
 } // namespace

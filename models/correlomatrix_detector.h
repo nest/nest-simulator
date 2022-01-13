@@ -249,6 +249,8 @@ private:
      *          binwidth or tau_max.
      */
     bool set( const DictionaryDatum&, const correlomatrix_detector&, Node* node );
+
+    Time get_default_delta_tau();
   };
 
   // ------------------------------------------------------------
@@ -326,6 +328,11 @@ correlomatrix_detector::set_status( const DictionaryDatum& d )
   }
 }
 
+inline Time
+correlomatrix_detector::Parameters_::get_default_delta_tau()
+{
+  return 5 * Time::get_resolution();
+}
 
 } // namespace
 

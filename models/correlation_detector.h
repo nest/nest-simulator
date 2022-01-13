@@ -260,6 +260,8 @@ private:
      *          binwidth or tau_max.
      */
     bool set( const DictionaryDatum&, const correlation_detector&, Node* );
+
+    Time get_default_delta_tau();
   };
 
   // ------------------------------------------------------------
@@ -339,6 +341,13 @@ correlation_detector::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+inline Time
+correlation_detector::Parameters_::get_default_delta_tau()
+{
+  return 5 * Time::get_resolution();
+}
+
 
 } // namespace
 

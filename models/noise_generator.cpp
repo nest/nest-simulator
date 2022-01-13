@@ -61,7 +61,7 @@ nest::noise_generator::Parameters_::Parameters_()
   , std_mod_( 0.0 ) // pA / sqrt(s)
   , freq_( 0.0 )    // Hz
   , phi_deg_( 0.0 ) // degree
-  , dt_( 10 * Time::get_resolution() )
+  , dt_( get_default_dt() )
   , num_targets_( 0 )
 {
 }
@@ -77,7 +77,7 @@ nest::noise_generator::Parameters_::Parameters_( const Parameters_& p )
 {
   if ( not dt_.is_step() )
   {
-    dt_ = 10 * Time::get_resolution();
+    dt_ = get_default_dt();
   }
   else
   {
@@ -396,7 +396,7 @@ nest::noise_generator::calibrate_time( const TimeConverter& tc )
   if ( not P_.dt_.is_step() )
   {
     std::string old = String::compose( "(was %1 ms)", P_.dt_.get_ms() );
-    P_.dt_ = 10 * Time::get_resolution();
+    P_.dt_ = P_.get_default_dt();
     std::string msg = String::compose( "Default value for dt is now %1 ms %2", P_.dt_.get_ms(), old );
     LOG( M_INFO, get_name(), msg );
   }

@@ -27,7 +27,7 @@ import numpy as np
 @nest.ll_api.check_stack
 class TestChangingTicBase(unittest.TestCase):
     eps = 1e-7  # Tolerance value
-    
+
     # The defaults of iaf_psc_exp_ps_lossless contains the time of the
     # last spike, converted to ms from step=-1.  As the initialized
     # step-value is negative, there is no need to account for the
@@ -51,7 +51,7 @@ class TestChangingTicBase(unittest.TestCase):
           "correlomatrix_detector": ["delta_tau"],
           "correlospinmatrix_detector": ["delta_tau"],
           "noise_generator":  ["dt"],
-	}
+        }
 
         # Generate a dictionary of reference values for each model.
         reference = {}

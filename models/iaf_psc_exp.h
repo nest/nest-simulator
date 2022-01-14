@@ -69,21 +69,6 @@ Spiking in this model can be either deterministic (delta=0) or stochastic (delta
 > 0). In the stochastic case this model implements a type of spike response
 model with escape noise [4]_.
 
-Remarks:
-
-The present implementation uses individual variables for the
-components of the state vector and the non-zero matrix elements of
-the propagator. Because the propagator is a lower triangular matrix,
-no full matrix multiplication needs to be carried out and the
-computation can be done "in place", i.e. no temporary state vector
-object is required.
-
-The template support of recent C++ compilers enables a more succinct
-formulation without loss of runtime performance already at minimal
-optimization levels. A future version of iaf_psc_exp will probably
-address the problem of efficient usage of appropriate vector and
-matrix objects.
-
 .. note::
 
   If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
@@ -160,6 +145,21 @@ See also
 iaf_cond_exp, iaf_psc_exp_ps
 
 EndUserDocs */
+
+/**
+ * The present implementation uses individual variables for the
+ * components of the state vector and the non-zero matrix elements of
+ * the propagator. Because the propagator is a lower triangular matrix,
+ * no full matrix multiplication needs to be carried out and the
+ * computation can be done "in place", i.e. no temporary state vector
+ * object is required.
+ *
+ * The template support of recent C++ compilers enables a more succinct
+ * formulation without loss of runtime performance already at minimal
+ * optimization levels. A future version of iaf_psc_exp will probably
+ * address the problem of efficient usage of appropriate vector and
+ * matrix objects.
+ */
 
 class iaf_psc_exp : public ArchivingNode
 {

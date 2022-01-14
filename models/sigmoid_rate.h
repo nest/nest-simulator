@@ -47,7 +47,7 @@ Description
 +++++++++++
 
 sigmoid_rate is an implementation of a nonlinear rate model with input
-function :math:`input(h) = g / ( 1. + \exp( -\beta * ( h - \theta ) ) )`.
+function :math:`input(h) = g / ( 1. + \exp( -\beta \cdot ( h - \theta ) ) )`.
 
 It either models a rate neuron with input noise (see rate_neuron_ipn)
 or a rate transformer (see rate_transformer_node).

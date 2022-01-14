@@ -79,25 +79,7 @@ The correlomatrix_detector has a variable number of inputs which can be set
 via SetStatus under the key N_channels. All incoming connections to a
 specified receptor will be pooled.
 
-Remarks:
-
-This recorder does not record to file, screen or memory in the usual
-sense.
-
-@note Correlomatrix detectors IGNORE any connection delays.
-
-@note Correlomatrix detector breaks with the persistence scheme as
- follows: the internal buffers for storing spikes are part
- of State_, but are initialized by init_buffers_().
-
- @todo The correlation detector could be made more efficient as follows
- (HEP 2008-07-01):
- - incoming_ is vector of two deques
- - let handle() push_back() entries in incoming_ and do nothing else
- - keep index to last "old spike" in each incoming_; cannot
-   be iterator since that may change
- - update() deletes all entries before now-tau_max, sorts the new
-   entries, then registers new entries in histogram
+Correlomatrix detectors ignore any connection delays.
 
 Parameters
 ++++++++++
@@ -143,6 +125,21 @@ See also
 correlation_detector, spike_recorder
 
 EndUserDocs */
+
+/**
+ * @note Correlomatrix detector breaks with the persistence scheme as
+ *  follows: the internal buffers for storing spikes are part
+ *  of State_, but are initialized by init_buffers_().
+ *
+ *  @todo The correlation detector could be made more efficient as follows
+ *  (HEP 2008-07-01):
+ *  - incoming_ is vector of two deques
+ *  - let handle() push_back() entries in incoming_ and do nothing else
+ *  - keep index to last "old spike" in each incoming_; cannot
+ *    be iterator since that may change
+ *  - update() deletes all entries before now-tau_max, sorts the new
+ *    entries, then registers new entries in histogram
+ */
 
 class correlomatrix_detector : public Node
 {

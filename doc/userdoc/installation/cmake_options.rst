@@ -33,7 +33,7 @@ Use Python to build PyNEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-python=[OFF|ON|<path/to/Python>]``   | Build PyNEST [default=ON]. To set a specific Python, set       |
+| ``-Dwith-python=[OFF|ON|<path/to/Python>]``   | Build PyNEST [default=ON]. To set a specific Python, give the  |
 |                                               | install path.                                                  |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dcythonize-pynest=[OFF|ON]``               | Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, |
@@ -60,23 +60,23 @@ External libraries
 
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]``| Build with `libneurosim <https://github.com/INCF/libneurosim>`_ [default=OFF]. Optionally      |
-|                                                       | give the directory, where libneurosim is installed.                                            |
+|                                                       | give the directory where libneurosim is installed.                                             |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-music=[OFF|ON|</path/to/music>]``            | Build with `MUSIC <https://github.com/INCF/MUSIC>`_ [default=OFF]. Optionally give the         |
-|                                                       | directory, where MUSIC is installed.                                                           |
+|                                                       | directory where MUSIC is installed.                                                            |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-sionlib=[OFF|ON|</path/to/sionlib>]``        | Build with                                                                                     |
 |                                                       | `sionlib <https://www.fz-juelich.de/ias/jsc/EN/Expertise/Support/Software/SIONlib/_node.html>`_|
-|                                                       | [default=OFF]. Optionally give the directory, where sionlib is installed.                      |
+|                                                       | [default=OFF]. Optionally give the directory where sionlib is installed.                       |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-boost=[OFF|ON|</path/to/boost>]``            | Build with Boost [default=ON]. To set a specific Boost installation, set install path.         |
+| ``-Dwith-boost=[OFF|ON|</path/to/boost>]``            | Build with Boost [default=ON]. To set a specific Boost installation, give the install path.    |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-readline=[OFF|ON|</path/to/readline>]``      | Build with GNU Readline library [default=ON]. To set a specific library, set install path.     |
+| ``-Dwith-readline=[OFF|ON|</path/to/readline>]``      | Build with GNU Readline library [default=ON]. To set a specific library, give the install path.|
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-ltdl=[OFF|ON|</path/to/ltdl>]``              | Build with ltdl library [default=ON]. To set a specific ltdl, set install path. NEST uses the  |
+| ``-Dwith-ltdl=[OFF|ON|</path/to/ltdl>]``              | Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses|
 |                                                       | ltdl for dynamic loading of external user modules.                                             |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-gsl=[OFF|ON|</path/to/gsl>]``                | Build with the GSL library [default=ON]. To set a specific library, set install path.          |
+| ``-Dwith-gsl=[OFF|ON|</path/to/gsl>]``                | Build with the GSL library [default=ON]. To set a specific library, give the install path.     |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 
 NEST properties
@@ -106,14 +106,14 @@ Generic build configuration
 | ``-Dstatic-libraries=[OFF|ON]``                      | Build static executable and libraries [default=OFF].             |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-optimize=[OFF|ON|<list;of;flags>]``         | Enable user defined optimizations                                |
-|                                                      | [default=OFF (uses '-O2'); when ON, use '-O3']. Separate         |
-|                                                      | multiple flags by';'.                                            |
+|                                                      | [default=OFF (uses '-O2')]. When ON, '-O3' is used. Separate     |
+|                                                      | multiple flags by ';'.                                           |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-warning=[OFF|ON|<list;of;flags>]``          | Enable user defined warnings [default=ON (uses '-Wall')].        |
 |                                                      | Separate  multiple flags by ';'.                                 |
 +------------------------------------------------------+------------------------------------------------------------------+
-| ``-Dwith-debug=[OFF|ON|<list;of;flags>]``            | Enable user defined debug flags [default=OFF, when ON, use '-g'].|
-|                                                      | Separate  multiple flags by ';'.                                 |
+| ``-Dwith-debug=[OFF|ON|<list;of;flags>]``            | Enable user defined debug flags [default=OFF]. When ON, '-g' is  |
+|                                                      | used. Separate  multiple flags by ';'.                           |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-intel-compiler-flags=[OFF|<list;of;flags>]``| User defined flags for the Intel compiler                        |
 |                                                      | [default='-fp-model strict']. Separate multiple flags by ';'.    |

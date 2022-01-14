@@ -75,27 +75,6 @@ superior overall performance given an accuracy goal; see [1]_ [2]_ for
 details. Subthreshold dynamics are integrated using exact integration
 between events [3]_.
 
-Parameters
-++++++++++
-
-The following parameters can be set in the status dictionary.
-
-==========  =====  ==========================================================
-E_L         mV     Resting membrane potential
-C_m         pF     Capacitance of the membrane
-tau_m       ms     Membrane time constant
-tau_syn_ex  ms     Excitatory synaptic time constant
-tau_syn_in  ms     Inhibitory synaptic time constant
-t_ref       ms     Duration of refractory period
-V_th        mV     Spike threshold
-I_e         pA     Constant input current
-V_min       mV     Absolute lower value for the membrane potential
-V_reset     mV     Reset value for the membrane potential
-==========  =====  ==========================================================
-
-Remarks
-+++++++
-
 Please note that this node is capable of sending precise spike times
 to target nodes (on-grid spike time and offset).
 
@@ -114,6 +93,24 @@ can only change at on-grid times.
 
 For details about exact subthreshold integration, please see
 :doc:`../guides/exact-integration`.
+
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary.
+
+==========  =====  ==========================================================
+E_L         mV     Resting membrane potential
+C_m         pF     Capacitance of the membrane
+tau_m       ms     Membrane time constant
+tau_syn_ex  ms     Excitatory synaptic time constant
+tau_syn_in  ms     Inhibitory synaptic time constant
+t_ref       ms     Duration of refractory period
+V_th        mV     Spike threshold
+I_e         pA     Constant input current
+V_min       mV     Absolute lower value for the membrane potential
+V_reset     mV     Reset value for the membrane potential
+==========  =====  ==========================================================
 
 References
 ++++++++++

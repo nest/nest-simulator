@@ -64,11 +64,12 @@ Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
-Remarks:
-The way the noise term was implemented in the original model makes it
-unsuitable for simulation in NEST. The workaround was to prepare the
-noise signal externally prior to simulation. The noise signal,
-if present, has to be at least as long as the simulation.
+.. note::
+
+   The way the noise term was implemented in the original model makes
+   it unsuitable for simulation in NEST. The workaround was to prepare
+   the noise signal externally prior to simulation. The noise signal,
+   if present, has to be at least as long as the simulation.
 
 See also [2]_.
 

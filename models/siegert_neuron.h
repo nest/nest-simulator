@@ -67,8 +67,6 @@ The model supports connections to other rate models with zero
 delay, and uses the secondary_event concept introduced with the
 gap-junction framework.
 
-Remarks:
-
 For details on the numerical solution of the Siegert integral, you can
 check out the `Siegert_neuron_integration
 <../model_details/siegert_neuron_integration.ipynb>`_
@@ -99,7 +97,6 @@ iaf_psc_exp/delta.
  V_reset   mV      Reset relative to resting potential
 =========  ======  ================================================
 
-
 References
 ++++++++++
 
@@ -118,7 +115,6 @@ References
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
        Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
-
 
 Sends
 +++++

@@ -57,8 +57,6 @@ Parameters
  mu        real    Weight dependence exponent, potentiation
 =========  ======  ====================================================
 
-Remarks:
-
 The parameters can only be set by SetDefaults and apply to all synapses of
 the model.
 

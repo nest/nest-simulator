@@ -54,8 +54,8 @@ dependent plasticity. Unlike ``stdp_synapse``, we use the update equations:
 
 .. math::
 
-   \Delta w &= \lambda * w_{max} * (K_+(w) * F_+(t) - \beta)           & \quad  if t - t_j^(k) > 0 \\
-   \Delta w &= \lambda * w_{max} * (-alpha * K_-(w) * F_-(t) - \beta)  & \quad  else
+   \Delta w &= \lambda \cdot w_{max} \cdot (K_+(w) \cdot F_+(t) - \beta)  & \quad  if t - t_j^(k) > 0 \\
+   \Delta w &= \lambda \cdot w_{max} \cdot (-alpha \cdot K_-(w) \cdot F_-(t) - \beta)  & \quad  else
 
 where
 

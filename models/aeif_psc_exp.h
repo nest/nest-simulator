@@ -78,14 +78,14 @@ The membrane potential is given by the following differential equation:
 
 .. math::
 
- C dV/dt= -g_L(V-E_L)+g_L*\Delta_T*\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
+ C dV/dt= -g_L(V-E_L)+g_L\cdot\Delta_T\cdot\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
                                                      -g_i(t)(V-E_i)-w +I_e
 
 and
 
 .. math::
 
- \tau_w * dw/dt= a(V-E_L) -W
+ \tau_w \cdot dw/dt= a(V-E_L) -W
 
 
 Note that the spike detection threshold ``V_peak`` is automatically set to

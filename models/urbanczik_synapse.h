@@ -63,10 +63,10 @@ model is :doc:`pp_cond_exp_mc_urbanczik <pp_cond_exp_mc_urbanczik>`.
 
 .. warning::
 
-   This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
-   account. When calculating the weight update, the precise spike time part
-   of the timestamp is ignored.
+   This synaptic plasticity rule does not take :doc:`precise spike
+   timing <../guides/simulations_with_precise_spike_times>` into account. When
+   calculating the weight update, the precise spike time part of the
+   timestamp is ignored.
 
 Parameters
 ++++++++++
@@ -81,11 +81,6 @@ Wmin        real   Minimum allowed weight
 All other parameters are stored in the neuron models that are compatible
 with the Urbanczik synapse.
 
-Remarks:
-
-So far the implementation of the urbanczik_synapse only supports
-two-compartment neurons.
-
 Transmits
 +++++++++
 
@@ -94,8 +89,9 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Urbanczik R. and Senn W (2014). Learning by the dendritic prediction of
-       somatic spiking. Neuron, 81:521 - 528. https://doi.org/10.1016/j.neuron.2013.11.030
+.. [1] Urbanczik R. and Senn W (2014). Learning by the dendritic
+       prediction of somatic spiking. Neuron, 81:521 - 528.
+       https://doi.org/10.1016/j.neuron.2013.11.030
 
 See also
 ++++++++

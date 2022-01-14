@@ -59,7 +59,7 @@ both by adjusting three parameters:
 
 .. math::
 
-  rate = Rect[ c_1 * V' + c_2 * \exp(c_3 * V') ],
+  rate = Rect[ c_1 \cdot V' + c_2 \cdot \exp(c_3 * V') ],
 
 where the effective potential :math:`V' = V_m - E_{sfa}` and :math:`E_{sfa}`
 is called the adaptive threshold. Here Rect means rectifier:
@@ -73,7 +73,7 @@ linear rate model.
 The dead time enables to include refractoriness. If dead time is 0, the
 number of spikes in one time step might exceed one and is drawn from the
 Poisson distribution accordingly. Otherwise, the probability for a spike
-is given by :math:`1 - \exp(-rate*h)`, where h is the simulation time step. If
+is given by :math:`1 - \exp(-rate \cdot h)`, where h is the simulation time step. If
 dead_time is smaller than the simulation resolution (time step), it is
 internally set to the resolution.
 

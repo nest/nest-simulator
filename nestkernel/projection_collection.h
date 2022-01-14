@@ -28,6 +28,8 @@
 #include "dictutils.h"
 #include "nest_datums.h"
 #include "connection_creator.h"
+#include "spatial.h"
+
 
 namespace nest
 {
@@ -50,6 +52,10 @@ private:
 
       const NodeCollectionPTR sources;
       const NodeCollectionPTR targets;
+
+      AbstractLayerPTR source_layer;
+      AbstractLayerPTR target_layer;
+
       ConnectionCreator spatial_builder;
     };
     ConnectionClassWrapper_() = delete;

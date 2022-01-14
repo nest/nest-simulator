@@ -25,6 +25,7 @@
 #include "projection_collection.h"
 #include "kernel_manager.h"
 #include "spatial.h"
+#include "connection_creator_impl.h"
 
 namespace nest
 {
@@ -195,16 +196,16 @@ ProjectionCollection::ConnectionClassWrapper_::SpatialBuilderWrapper_::SpatialBu
   const DictionaryDatum conn_dict )
   : sources( sources )
   , targets( targets )
+  , source_layer( get_layer( sources ) )
+  , target_layer( get_layer( targets ) )
   , spatial_builder( ConnectionCreator( conn_dict ) )
 {
+  source_layer->create_pool_if_needed( sources, target_layer, spatial_builder );
 }
 
 void
 ProjectionCollection::ConnectionClassWrapper_::SpatialBuilderWrapper_::connect()
 {
-  AbstractLayerPTR source_layer = get_layer( sources );
-  AbstractLayerPTR target_layer = get_layer( targets );
-
   source_layer->connect( sources, target_layer, targets, spatial_builder );
 }
 

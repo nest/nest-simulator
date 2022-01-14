@@ -112,6 +112,10 @@ public:
   virtual double compute_distance( const std::vector< double >& from_pos,
     const std::vector< double >& to_pos ) const = 0;
 
+
+  virtual void
+  create_pool_if_needed( NodeCollectionPTR source_nc, AbstractLayerPTR target_layer, ConnectionCreator& connector ) = 0;
+
   /**
    * Connect this layer to the given target layer. The actual connections
    * are made in class ConnectionCreator.
@@ -370,6 +374,9 @@ public:
     const std::vector< double >& anchor,
     bool allow_oversized,
     NodeCollectionPTR node_collection );
+
+  void
+  create_pool_if_needed( NodeCollectionPTR source_nc, AbstractLayerPTR target_layer, ConnectionCreator& connector );
 
   /**
    * Connect this layer to the given target layer. The actual connections

@@ -45,7 +45,7 @@ ConnectionCreator::connect( Layer< D >& source,
   {
   case Pairwise_bernoulli_on_source:
 
-    pairwise_bernoulli_on_source_( source, source_nc, target, target_nc );
+    pairwise_bernoulli_on_source_( source, target, target_nc );
     break;
 
   case Fixed_indegree:
@@ -60,25 +60,34 @@ ConnectionCreator::connect( Layer< D >& source,
 
   case Pairwise_bernoulli_on_target:
 
-    pairwise_bernoulli_on_target_( source, source_nc, target, target_nc );
+    pairwise_bernoulli_on_target_( target, target_nc );
     break;
 
   default:
     throw BadProperty( "Unknown connection type." );
   }
-#pragma omp barrier
-// All threads are now done with the pool, so it can be deleted.
-// There is no need for the implicit barrier at the end of the single clause.
-#pragma omp single nowait
-  {
-    delete_pool_();
-  }
 }
+
 
 template < int D >
 void
-ConnectionCreator::create_pool( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, bool on_target )
+ConnectionCreator::create_pool_if_needed( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target )
 {
+  bool on_target = false;
+  switch ( type_ )
+  {
+  case Pairwise_bernoulli_on_source:
+    on_target = false;
+    break;
+  case Pairwise_bernoulli_on_target:
+    on_target = true;
+    break;
+  case Fixed_indegree:
+  case Fixed_outdegree:
+    // No need to create a pool.
+    return;
+  }
+
   // We have to create the PoolWrapper_ pointer separately and assign it to pool_ in the end because we need the
   // templated define() function, and templated functions cannot be defined for the base class PoolWrapperBase_.
   auto pool = new PoolWrapper_< D >();
@@ -211,33 +220,13 @@ ConnectionCreator::PoolWrapper_< D >::end() const
 
 template < int D >
 void
-ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
-  NodeCollectionPTR source_nc,
-  Layer< D >& target,
-  NodeCollectionPTR target_nc )
+ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc )
 {
   // Connect using pairwise Bernoulli drawing source nodes (target driven)
   // For each local target node:
   //  1. Apply Mask to source layer
   //  2. For each source node: Compute probability, draw random number, make
   //     connection conditionally
-
-  std::exception* err = nullptr;
-#pragma omp single
-  {
-    try
-    {
-      create_pool( source, source_nc, target );
-    }
-    catch ( std::exception& serr )
-    {
-      err = &serr;
-    }
-  } // implicit barrier
-  if ( err )
-  {
-    throw * err;
-  }
 
   // We need a pointer to the right PoolWrapper_ type, because we need to use templated functions below.
   auto* pool = dynamic_cast< PoolWrapper_< D >* >( pool_ );
@@ -271,10 +260,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
 template < int D >
 void
-ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
-  NodeCollectionPTR source_nc,
-  Layer< D >& target,
-  NodeCollectionPTR target_nc )
+ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& target, NodeCollectionPTR target_nc )
 {
   // Connecting using pairwise Bernoulli drawing target nodes (source driven)
   // It is actually implemented as pairwise Bernoulli on source nodes,
@@ -284,23 +270,6 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
   //  1. Apply (Converse)Mask to source layer
   //  2. For each source node: Compute probability, draw random number, make
   //     connection conditionally
-
-  std::exception* err = nullptr;
-#pragma omp single
-  {
-    try
-    {
-      create_pool( source, source_nc, target, true );
-    }
-    catch ( std::exception& serr )
-    {
-      err = &serr;
-    }
-  } // implicit barrier
-  if ( err )
-  {
-    throw * err;
-  }
 
   // We need a pointer to the right PoolWrapper_ type, because we need to use templated functions below.
   auto* pool = dynamic_cast< PoolWrapper_< D >* >( pool_ );
@@ -370,7 +339,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
     throw IllegalConnection( "Spatial Connect with fixed_indegree to devices is not possible." );
   }
 
-  std::exception* err = nullptr;
+  std::shared_ptr< WrappedThreadException > err;
 #pragma omp single
   {
     try
@@ -646,7 +615,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
     }
     catch ( std::exception& serr )
     {
-      err = &serr;
+      err = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( serr ) );
     }
   } // pragma omp single
   if ( err )

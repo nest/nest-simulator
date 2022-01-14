@@ -105,7 +105,7 @@ public:
   void connect( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
   template < int D >
-  void create_pool( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, bool on_target = false );
+  void create_pool_if_needed( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target );
 
 private:
   class PoolWrapperBase_
@@ -151,16 +151,10 @@ private:
     const Layer< D >& source );
 
   template < int D >
-  void pairwise_bernoulli_on_source_( Layer< D >& source,
-    NodeCollectionPTR source_nc,
-    Layer< D >& target,
-    NodeCollectionPTR target_nc );
+  void pairwise_bernoulli_on_source_( Layer< D >& source, Layer< D >& target, NodeCollectionPTR target_nc );
 
   template < int D >
-  void pairwise_bernoulli_on_target_( Layer< D >& source,
-    NodeCollectionPTR source_nc,
-    Layer< D >& target,
-    NodeCollectionPTR target_nc );
+  void pairwise_bernoulli_on_target_( Layer< D >& target, NodeCollectionPTR target_nc );
 
   template < int D >
   void

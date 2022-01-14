@@ -263,6 +263,8 @@ def BuildNetwork():
     """
     from .hl_api_connections import _array_connect
 
+    print(f'Connecting {len(projection_collection.get())} projections...')
+
     if not projection_collection.network_built:
         # Convert to list of lists
         projection_list = []

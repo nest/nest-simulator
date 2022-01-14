@@ -107,6 +107,27 @@ Layer< D >::get_status( DictionaryDatum& d ) const
   }
 }
 
+
+template < int D >
+void
+Layer< D >::create_pool_if_needed( NodeCollectionPTR source_nc,
+  AbstractLayerPTR target_layer,
+  ConnectionCreator& connector )
+{
+  AbstractLayer* target_abs = target_layer.get();
+  assert( target_abs != 0 );
+
+  try
+  {
+    Layer< D >& tgt = dynamic_cast< Layer< D >& >( *target_abs );
+    connector.create_pool_if_needed( *this, source_nc, tgt );
+  }
+  catch ( std::bad_cast& e )
+  {
+    throw BadProperty( "Target layer must have same number of dimensions as source layer." );
+  }
+}
+
 template < int D >
 void
 Layer< D >::connect( NodeCollectionPTR source_nc,

@@ -87,16 +87,16 @@ NEST properties
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dtics_per_step=[number]``                  | Specify resolution [default=100 tics per step].                |
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dexternal-modules=[OFF|<list;of;modules>]``| External NEST modules to be linked in, separated by ';'        |
+| ``-Dexternal-modules=[OFF|<list;of;modules>]``| External NEST modules to be linked in, separated by ';',       |
 |                                               | [default=OFF].                                                 |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-detailed-timers=[OFF|ON]``           | Build with detailed internal time measurements [default=OFF].  |
 |                                               | Detailed timers can affect the performance.                    |
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dtarget-bits-split=["standard"|"hpc"]``    | Split of the 64-bit target neuron identifier type              |
-|                                               | [default="standard"]. "standard" is recommended for most users.|
+| ``-Dtarget-bits-split=['standard'|'hpc']``    | Split of the 64-bit target neuron identifier type              |
+|                                               | [default='standard']. 'standard' is recommended for most users.|
 |                                               | If running on more than 262144 MPI processes or more than 512  |
-|                                               | threads, change to "hpc".                                      |
+|                                               | threads, change to 'hpc'.                                      |
 +-----------------------------------------------+----------------------------------------------------------------+
 
 Generic build configuration

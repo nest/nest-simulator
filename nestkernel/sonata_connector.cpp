@@ -171,7 +171,9 @@ SonataConnector::connect()
             //std::cerr << "connection number " << i << "\n";
           //std::cerr << "connection number " << i << " source " << snode_id << " target " << target_id << " weight " << weight << " delay " << delay << "\n";
 
-          MyFile << "connection number " << i << " source " << snode_id << " target " << target_id << " weight " << weight << " delay " << delay << "\n";
+          //MyFile << "connection number " << i << " source " << snode_id << " target " << target_id << " weight " << weight << " delay " << delay << "\n";
+          //MyFile << snode_id << " " << target_id << " " << weight << " " << delay << "\n";
+          MyFile << snode_id << " " << target_id << "\n";
             //std::cerr << "source node id data " << sonata_source_id << "\n";
             //std::cerr << "snode_it begin " << (*snode_it).node_id << "\n";
           //}

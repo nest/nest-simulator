@@ -61,6 +61,12 @@ factor that scales the synaptic weight.
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
+Under identical conditions, the tsodyks2_synapse produces slightly
+lower peak amplitudes than the tsodyks_synapse. However, the
+qualitative behavior is identical. The script
+:doc:`../auto_examples/evaluate_tsodyks2_synapse` compares the two
+synapse models.
+
 Parameters
 ++++++++++
 
@@ -75,14 +81,6 @@ The following parameters can be set in the status dictionary:
  tau_fac  ms      Time constant for facilitation, default = 0(off)
  tau_rec  ms      Time constant for depression, default = 800ms
 ========  ======  ========================================================
-
-Remarks:
-
-Under identical conditions, the tsodyks2_synapse produces
-slightly lower peak amplitudes than the tsodyks_synapse. However,
-the qualitative behavior is identical. The script
-test_tsodyks2_synapse.py in the examples compares the two synapse
-models.
 
 References
 ++++++++++

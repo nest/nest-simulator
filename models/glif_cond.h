@@ -73,8 +73,6 @@ The five GLIF models are:
 * **GLIF Model 5** - Leaky integrate and fire with biologically defined reset rules,
   after-spike currents and a voltage dependent threshold (LIF_R_ASC_A)
 
-Remarks:
-
 GLIF model mechanism setting is based on three parameters
 (spike_dependent_threshold, after_spike_currents, adapting_threshold).
 The settings of these three parameters for the five GLIF models are listed

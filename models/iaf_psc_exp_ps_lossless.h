@@ -76,27 +76,6 @@ meets the threshold.
   For implementation details see the
   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
-Parameters
-++++++++++
-
-The following parameters can be set in the status dictionary.
-
-===========  ========  ==========================================================
- E_L         mV        Resting membrane potential
- C_m         pF/mum^2  Specific capacitance of the membrane
- tau_m       ms        Membrane time constant
- tau_syn_ex  ms        Excitatory synaptic time constant
- tau_syn_in  ms        Inhibitory synaptic time constant
- t_ref       ms        Duration of refractory period
- V_th        mV        Spike threshold
- I_e         pA        Constant input current
- V_min       mV        Absolute lower value for the membrane potential.
- V_reset     mV        Reset value for the membrane potential.
-===========  ========  ==========================================================
-
-Remarks
-+++++++
-
 This model transmits precise spike times to target nodes (on-grid spike
 time and offset). If this node is connected to a spike_recorder, the
 property "precise_times" of the spike_recorder has to be set to true in
@@ -114,6 +93,24 @@ see issue #921.
 
 For details about exact subthreshold integration, please see
 :doc:`../guides/exact-integration`.
+
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary.
+
+===========  ========  ==========================================================
+ E_L         mV        Resting membrane potential
+ C_m         pF/mum^2  Specific capacitance of the membrane
+ tau_m       ms        Membrane time constant
+ tau_syn_ex  ms        Excitatory synaptic time constant
+ tau_syn_in  ms        Inhibitory synaptic time constant
+ t_ref       ms        Duration of refractory period
+ V_th        mV        Spike threshold
+ I_e         pA        Constant input current
+ V_min       mV        Absolute lower value for the membrane potential.
+ V_reset     mV        Reset value for the membrane potential.
+===========  ========  ==========================================================
 
 References
 ++++++++++

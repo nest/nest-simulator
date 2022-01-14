@@ -186,6 +186,7 @@ signal with the presynaptic spike train (:math:`S_{pre}`), see :ref:`panel c)
    quantities; the dendritic membrane potential (middle) and the somatic spike
    train (bottom).
 
+See :doc:`../auto_examples/urbanczik_synapse_example` to learn more.
 
 Parameters
 ++++++++++
@@ -210,14 +211,13 @@ these parameters are marked with an asterisk.
  t_ref          ms      Duration of refractory period
 ============   =====   =====================================================
 
-See :doc:`../auto_examples/urbanczik_synapse_example` to learn more.
+.. note::
 
-Remarks:
-
-The neuron model uses standard units of NEST instead of the unitless quantities
-used in [1]_.
+   The neuron model uses standard units of NEST instead of the unitless quantities
+   used in [1]_.
 
 .. note::
+
    All parameters that occur for both compartments are stored as C arrays, with
    index 0 being soma.
 

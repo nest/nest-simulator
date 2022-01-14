@@ -77,8 +77,6 @@ Parameters
  Wmax     real     Maximum allowed weight
 ========= =======  ======================================================
 
-Remarks:
-
 The parameters are common to all synapses of the model and must be set using
 SetDefaults on the synapse model.
 

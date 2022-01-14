@@ -51,12 +51,10 @@ spike train to each of its target neurons. By connecting one
 a group of neurons, all target neurons will receive the same poisson
 spike train.
 
-Remarks
-.......
-
-- Weights of connections *to* the ``parrot_neuron`` are ignored.
-- Weights on connections *from* the ``parrot_neuron`` are handled as usual.
-- Delays are honored on incoming and outgoing connections.
+Please note that weights of connections *to* the ``parrot_neuron``
+are ignored, while weights on connections *from* the ``parrot_neuron``
+to the target are handled as usual. Delays are honored on both
+incoming and outgoing connections.
 
 Only spikes arriving on connections to port 0 will be repeated.
 Connections onto port 1 will be accepted, but spikes incoming

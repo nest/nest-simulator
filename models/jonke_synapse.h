@@ -54,8 +54,8 @@ dependent plasticity. Unlike stdp_synapse, we use the update equations:
 
 .. math::
 
-   \Delta w &= \lambda * w_{max} * (K_+(w) * F_+(t) - \beta)           & \quad  if t - t_j^(k) > 0 \\
-   \Delta w &= \lambda * w_{max} * (-alpha * K_-(w) * F_-(t) - \beta)  & \quad  else
+   \Delta w &= \lambda \cdot w_{max} \cdot (K_+(w) \cdot F_+(t) - \beta)  & \quad  if t - t_j^(k) > 0 \\
+   \Delta w &= \lambda \cdot w_{max} \cdot (-alpha \cdot K_-(w) \cdot F_-(t) - \beta)  & \quad  else
 
 where
 
@@ -420,9 +420,9 @@ jonke_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum&
   {
     if ( syn_spec->known( param_arr[ n ] ) )
     {
-      throw NotImplemented(
-        "Connect doesn't support the setting of parameter param_arr[ n ]"
-        "in jonke_synapse. Use SetDefaults() or CopyModel()." );
+      std::string msg = "Connect doesn't support the setting of parameter " + param_arr[ n ]
+        + " in jonke_synapse. Use SetDefaults() or CopyModel().";
+      throw NotImplemented( msg );
     }
   }
 }

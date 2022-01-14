@@ -256,6 +256,7 @@ def write_rst_files(doc, tags, outdir, outname):
     with open(os.path.join(outdir, outname), "w") as outfile:
         outfile.write(doc)
 
+
 def make_hierarchy(tags, *basetags):
     """
     This method adds a single level of hierachy to the given dictionary.
@@ -553,7 +554,6 @@ def ExtractUserDocs(listoffiles, basedir='..', outdir='userdocs/'):
     # Gather all information and write RSTs
     tags = UserDocExtractor(listoffiles, basedir=basedir, outdir=outdir)
     data.write(tags, "tags")
-
 
     indexfiles = CreateTagIndices(tags, outdir=outdir)
     data.write(indexfiles, "indexfiles")

@@ -68,7 +68,7 @@ set( external-modules OFF CACHE STRING "External NEST modules to be linked in, s
 set( with-detailed-timers OFF CACHE STRING "Build with detailed internal time measurements [default=OFF]. Detailed timers can affect the performance." )
 set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuron identifier type [default='standard']. 'standard' is recommended for most users. If running on more than 262144 MPI processes or more than 512 threads, change to 'hpc'." )
 
-# Generic build configuration
+# generic build configuration
 option( static-libraries "Build static executable and libraries [default=OFF]" OFF )
 set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=OFF (uses '-O2')]. When ON, '-O3' is used. Separate multiple flags by ';'." )
 set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )

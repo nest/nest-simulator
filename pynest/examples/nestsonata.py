@@ -41,9 +41,9 @@ start_time = time.time()
 
 nest.ResetKernel()
 
-#example = '300_pointneurons'
-example = 'GLIF'
-plot = True
+example = '300_pointneurons'
+#example = 'GLIF'
+plot = False
 
 if example == '300_pointneurons':
     base_path = '/home/stine/Work/sonata/examples/300_pointneurons/'
@@ -51,8 +51,8 @@ if example == '300_pointneurons':
     sim_config = 'simulation_config.json'
     population_to_plot = 'internal'
 elif example == 'GLIF':
-    base_path = '/home/stine/Work/sonata/examples/GLIF_NEST/'
-    config = 'config_small.json'
+    base_path = '/home/stine/Work/sonata/examples/glif_nest_220/'#'/home/stine/Work/sonata/examples/GLIF_NEST/'
+    config = 'config.json'
     sim_config = None
     population_to_plot = 'v1'
 
@@ -62,13 +62,13 @@ sonata_connector = nest.SonataConnector(base_path, config, sim_config)
 if not sonata_connector.config['target_simulator'] == 'NEST':
     raise NotImplementedError('Only `target_simulator` of type NEST is supported.')
 
-nest.set(resolution=sonata_connector.config['run']['dt'])#, tics_per_ms=sonata_connector.config['run']['nsteps_block'])
+nest.set(resolution=sonata_connector.config['run']['dt'], overwrite_files=True, total_num_virtual_procs=4)#, tics_per_ms=sonata_connector.config['run']['nsteps_block'])
 
 mem_ini = memory_thisjob()
 
 # Create nodes
 sonata_connector.create_nodes()
-##sonata_connector.check_node_params()
+# sonata_connector.check_node_params()
 mem_create = memory_thisjob()
 
 sonata_connector.create_edge_dict()
@@ -76,9 +76,6 @@ sonata_connector.create_edge_dict()
 
 sonata_dynamics = {'nodes': sonata_connector.node_collections, 'edges': sonata_connector.edge_types}
 print(sonata_connector.node_collections)
-
-#print()
-#print('sonata_dynamics', sonata_dynamics)
 print()
 
 connect_start_time = time.time()
@@ -90,7 +87,6 @@ connect_end_time = time.time() - connect_start_time
 mem_connect = memory_thisjob()
 
 print("number of connections: ", nest.GetKernelStatus('num_connections'))
-# #print("num_connections with alpha: ", len(conns.alpha))
 
 if plot:
     #mm = nest.Create('multimeter')
@@ -106,11 +102,10 @@ simtime = 0
 if 'tstop' in sonata_connector.config['run']:
     simtime = sonata_connector.config['run']['tstop']
 else:
-    #pass
-    #simtime = 1000.
     simtime = sonata_connector.config['run']['duration']
 
-#nest.Simulate(simtime)
+if plot:
+    nest.Simulate(simtime)
 
 end_time = time.time() - start_time
 
@@ -130,15 +125,28 @@ print(f'memory connect: {mem_connect}')
 #        neurons_file.write(str(dd) + "\n")
 
 if plot:
-    pass
-    #print(s_rec.events)
-    #nest.raster_plot.from_device(s_rec)
-    #plt.show()
+    nest.raster_plot.from_device(s_rec)
+    plt.show()
 
 net_size = nest.GetKernelStatus('network_size')
 print(nest.NodeCollection([net_size - 1]).get())
 print(nest.NodeCollection([net_size]).get())
-print(s_rec.get())
+#print(s_rec.get())
+
+# Check against h5 files
+if False:
+    with h5py.File('/home/stine/Work/sonata/examples/GLIF_NEST/./network/v1_v1_edges.h5', 'r') as edges_file:
+        edge = edges_file['edges']['v1_to_v1']
+        source_node_id = edge['target_node_id']
+    
+        with open('check_conns.txt', 'r') as check_conns_file:
+            count = 0
+            for line in check_conns_file:
+                src = line[:]
+                s_src = source_node_id[count]
+                count += 1
+                if int(src) - 1 != s_src:
+                    raise ValueError(f'sonata target {s_src} do not match NEST target {src} for connection number {count}')
 
 
 

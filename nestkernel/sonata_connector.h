@@ -40,6 +40,10 @@ namespace nest
 class SonataConnector
 {
 
+  /*
+   * HDF5 do NOT support MPI parallel and thread parallel runs simultaneously, see
+   * https://portal.hdfgroup.org/display/knowledge/Questions+about+thread-safety+and+concurrent+access
+   */
 public:
   SonataConnector( const DictionaryDatum& sonata_dynamics );
 

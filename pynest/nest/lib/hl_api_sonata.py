@@ -246,9 +246,6 @@ class SonataConnector(object):
                 with open(outname, 'w') as connections_file:
                     print(nc[prev:step])
                     conns = GetConnections(source=nc[prev:step])
-                    #if len(conns) == 0:
-                    #    print("no connections!")
-                    #    conns = GetConnections(target=nc[prev:step])
                     for l in GetStatus(conns):  # for comparison with bmtk built on NEST 2.20
                         s = f'{l["source"]} {l["target"]} {l["delay"]} {l["weight"]} {l["synapse_model"]} {l["receptor"]}\n'
                         connections_file.write(s)

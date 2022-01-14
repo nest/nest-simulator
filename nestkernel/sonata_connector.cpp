@@ -52,9 +52,19 @@ SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
 void
 SonataConnector::connect()
 {
+  // From https://portal.hdfgroup.org/display/HDF5/Introduction+to+Parallel+HDF5:
+  // "Each process of the MPI communicator creates an access template and sets it up with MPI parallel access
+  // information. This is done with the H5P_CREATE call to obtain the file access property list and the
+  // H5P_SET_FAPL_MPIO call to set up parallel I/O access."
+  //auto access_prop_list = H5Pcreate(H5P_FILE_ACCESS);
+  // set parallel access with communicator
+  //H5Pset_fapl_mpio(access_prop_list, MPI_COMM_WORLD, MPI_INFO_NULL);
+
+
+
   auto edges = getValue< ArrayDatum >( sonata_dynamics_->lookup( "edges" ) );
 
-  std::ofstream MyFile("check_conns.txt");
+  //std::ofstream MyFile("check_conns.txt");
 
   for ( auto edge_dictionary_datum : edges )
   {
@@ -128,6 +138,7 @@ SonataConnector::connect()
         // Connect
         auto snode_it = current_source_nc->begin();
         auto tnode_it = current_target_nc->begin();
+
         for ( hsize_t i = 0; i < num_source_node_id; ++i )  // iterate sonata files
         {
           const auto sonata_source_id = source_node_id_data[ i ];
@@ -171,11 +182,12 @@ SonataConnector::connect()
             //std::cerr << "connection number " << i << "\n";
           //std::cerr << "connection number " << i << " source " << snode_id << " target " << target_id << " weight " << weight << " delay " << delay << "\n";
 
-          MyFile << "connection number " << i << " source " << snode_id << " target " << target_id << " weight " << weight << " delay " << delay << "\n";
+          //MyFile << "connection number " << i << " source " << snode_id << " target " << target_id << " weight " << weight << " delay " << delay << "\n";
+          //MyFile << snode_id << " " << target_id << " " << weight << " " << delay << "\n";
+          //MyFile << snode_id << " " << target_id << "\n";
             //std::cerr << "source node id data " << sonata_source_id << "\n";
             //std::cerr << "snode_it begin " << (*snode_it).node_id << "\n";
           //}
-
 
           kernel().connection_manager.connect( snode_id,
             target,
@@ -202,15 +214,16 @@ SonataConnector::connect()
       {
         throw NotImplemented( "Connecting with Sonata files with more than one edgegroup is currently not implemented" );
       }
-      /*
-       * Close the dataset.
-       */
+      // Close the dataset.
       delete edge_group_id_data;
     }
+
     edges_group.close();
     file.close();
   }
-  MyFile.close();
+
+
+  //MyFile.close();
 }
 
 hsize_t

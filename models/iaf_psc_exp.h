@@ -158,6 +158,21 @@ iaf_cond_exp, iaf_psc_exp_ps
 
 EndUserDocs */
 
+/**
+ * The present implementation uses individual variables for the
+ * components of the state vector and the non-zero matrix elements of
+ * the propagator. Because the propagator is a lower triangular matrix,
+ * no full matrix multiplication needs to be carried out and the
+ * computation can be done "in place", i.e. no temporary state vector
+ * object is required.
+ *
+ * The template support of recent C++ compilers enables a more succinct
+ * formulation without loss of runtime performance already at minimal
+ * optimization levels. A future version of iaf_psc_exp will probably
+ * address the problem of efficient usage of appropriate vector and
+ * matrix objects.
+ */
+
 class iaf_psc_exp : public ArchivingNode
 {
 

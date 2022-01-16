@@ -54,9 +54,6 @@ a given number of spikes with normal distributed random displacements
 from the center time of the pulse.
 It resembles the output of synfire groups of neurons.
 
-Remarks
-+++++++
-
 - All targets receive identical spike trains.
 - New pulse packets are generated when activity or sdev are changed.
 - Gaussian pulse are independently generated for each given
@@ -75,8 +72,8 @@ activity
 sdev
     Standard deviation of spike times in each pulse (ms)
 
-Set parameters from a stimulation backend
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Setting parameters from a stimulation backend
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The parameters in this stimulation device can be updated with input
 coming from a stimulation backend. The data structure used for the

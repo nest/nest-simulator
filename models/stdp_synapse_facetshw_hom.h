@@ -61,6 +61,13 @@ stdp_synapse_hom.
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
+The synapse IDs are assigned to each synapse in an ascending order (0,1,2,
+...) according their first presynaptic activity and is used to group synapses
+that are updated at once. It is possible to avoid activity dependent synapse
+ID assignments by manually setting the no_synapses and the synapse_id(s)
+before running the simulation. The weights will be discretized after the
+first presynaptic activity at a synapse.
+
 Parameters
 ++++++++++
 
@@ -103,6 +110,9 @@ Parameters
                                     always reset) is allowed.
 ======================= =========== ===========================================
 
+Common properties can only be set on the synapse model using
+:py:func:`.SetDefaults`.
+
 ============  ======= =====================================================
 **Individual properties**
 ---------------------------------------------------------------------------
@@ -115,17 +125,6 @@ Parameters
  synapse_id   integer Synapse ID, used to assign synapses to groups (synapse
                       drivers)
 ============  ======= =====================================================
-
-Remarks:
-
-The synapse IDs are assigned to each synapse in an ascending order (0,1,2,
-...) according their first presynaptic activity and is used to group synapses
-that are updated at once. It is possible to avoid activity dependent synapse
-ID assignments by manually setting the no_synapses and the synapse_id(s)
-before running the simulation. The weights will be discretized after the
-first presynaptic activity at a synapse.
-
-Common properties can only be set on the synapse model using SetDefaults.
 
 Transmits
 +++++++++

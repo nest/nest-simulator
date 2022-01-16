@@ -28,70 +28,107 @@ Options for configuring NEST
 
 NEST allows for several configuration options for custom builds:
 
-Change NEST behavior::
 
-    -Dtics_per_ms=[number]     Specify elementary unit of time. [default 1000.0]
-    -Dtics_per_step=[number]   Specify resolution. [default 100]
+Use Python to build PyNEST
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Add user modules::
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-python=[OFF|ON|<path/to/Python>]``   | Build PyNEST [default=ON]. To set a specific Python, give the  |
+|                                               | install path.                                                  |
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dcythonize-pynest=[OFF|ON]``               | Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, |
+|                                               | PyNEST has to be build from a pre-cythonized pynestkernel.pyx. |
++-----------------------------------------------+----------------------------------------------------------------+
 
-    -Dexternal-modules=[OFF|<list;of;modules>]  External NEST modules to be linked
-                                                in, separated by ';'. [default=OFF]
+For more details, see the :ref:`Python binding <compile_with_python>` section below.
 
-Connect NEST with external projects::
+Select parallelization scheme
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    -Dwith-music=[OFF|ON|</path/to/music>] Request the use of MUSIC. Optionally
-                                           give the directory, where MUSIC is installed.
-                                           [default=OFF]
++---------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-mpi=[OFF|ON|</path/to/mpi>]``      | Build with MPI parallelization [default=OFF]. Optionally give  |
+|                                             | directory with MPI installation.                               |
++---------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-openmp=[OFF|ON|<OpenMP-Flag>]``    | Build with OpenMP multi-threading [default=ON]. Optionally set |
+|                                             | OMP compiler flags.                                            |
++---------------------------------------------+----------------------------------------------------------------+
 
-Change parallelization scheme::
+See also the section on :ref:`building with mpi <compile-with-mpi>` below.
 
-    -Dwith-mpi=[OFF|ON|</path/to/mpi>]  Request compilation with MPI. Optionally
-                                        give directory with MPI installation.
-                                        [default=OFF]
-    -Dwith-openmp=[OFF|ON|<OpenMP-Flag>]  Enable OpenMP multi-threading.
-                                          Optional: set OMP flag. [default=ON]
+External libraries
+~~~~~~~~~~~~~~~~~~
 
-Set default libraries::
++-------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]``| Build with `libneurosim <https://github.com/INCF/libneurosim>`_ [default=OFF]. Optionally      |
+|                                                       | give the directory where libneurosim is installed.                                             |
++-------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-music=[OFF|ON|</path/to/music>]``            | Build with `MUSIC <https://github.com/INCF/MUSIC>`_ [default=OFF]. Optionally give the         |
+|                                                       | directory where MUSIC is installed.                                                            |
++-------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-sionlib=[OFF|ON|</path/to/sionlib>]``        | Build with                                                                                     |
+|                                                       | `sionlib <https://www.fz-juelich.de/ias/jsc/EN/Expertise/Support/Software/SIONlib/_node.html>`_|
+|                                                       | [default=OFF]. Optionally give the directory where sionlib is installed.                       |
++-------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-boost=[OFF|ON|</path/to/boost>]``            | Build with Boost [default=ON]. To set a specific Boost installation, give the install path.    |
++-------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-readline=[OFF|ON|</path/to/readline>]``      | Build with GNU Readline library [default=ON]. To set a specific library, give the install path.|
++-------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-ltdl=[OFF|ON|</path/to/ltdl>]``              | Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses|
+|                                                       | ltdl for dynamic loading of external user modules.                                             |
++-------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-gsl=[OFF|ON|</path/to/gsl>]``                | Build with the GSL library [default=ON]. To set a specific library, give the install path.     |
++-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 
-    -Dwith-gsl=[OFF|ON|</path/to/gsl>]           Find a gsl library. To set a specific
-                                                 library, set install path.[default=ON]
-    -Dwith-readline=[OFF|ON|</path/to/readline>] Find a GNU Readline library. To set
-                                                 a specific library, set install path.
-                                                 [default=ON]
-    -Dwith-ltdl=[OFF|ON|</path/to/ltdl>]         Find an ltdl library. To set a specific
-                                                 ltdl, set install path. NEST uses the
-                                                 ltdl for dynamic loading of external
-                                                 user modules. [default=ON]
-    -Dwith-python=[OFF|ON]                       Build PyNEST. [default=ON]
-    -Dcythonize-pynest=[OFF|ON]                  Use Cython to cythonize pynestkernel.pyx.
-                                                 If OFF, PyNEST has to be build from
-                                                 a pre-cythonized pynestkernel.pyx.
-                                                 [default=ON]
+NEST properties
+~~~~~~~~~~~~~~~
 
-Change compilation behavior::
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dtics_per_ms=[number]``                    | Specify elementary unit of time [default=1000 tics per ms].    |
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dtics_per_step=[number]``                  | Specify resolution [default=100 tics per step].                |
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dexternal-modules=[OFF|<list;of;modules>]``| External NEST modules to be linked in, separated by ';',       |
+|                                               | [default=OFF].                                                 |
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-detailed-timers=[OFF|ON]``           | Build with detailed internal time measurements [default=OFF].  |
+|                                               | Detailed timers can affect the performance.                    |
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dtarget-bits-split=['standard'|'hpc']``    | Split of the 64-bit target neuron identifier type              |
+|                                               | [default='standard']. 'standard' is recommended for most users.|
+|                                               | If running on more than 262144 MPI processes or more than 512  |
+|                                               | threads, change to 'hpc'.                                      |
++-----------------------------------------------+----------------------------------------------------------------+
 
-    -Dstatic-libraries=[OFF|ON]     Build static executable and libraries. [default=OFF]
-    -Dwith-optimize=[OFF|ON|<list;of;flags>]       Enable user defined optimizations. Separate
-                                                   multiple flags by ';'.
-                                                   [default OFF, when ON, defaults to '-O3']
-    -Dwith-warning=[OFF|ON|<list;of;flags>]        Enable user defined warnings. Separate
-                                                   multiple flags by ';'.
-                                                   [default ON, when ON, defaults to '-Wall']
-    -Dwith-debug=[OFF|ON|<list;of;flags>]          Enable user defined debug flags. Separate
-                                                   multiple flags by ';'.
-                                                   [default OFF, when ON, defaults to '-g']
-    -Dwith-intel-compiler-flags=[<list;of;flags>]  User defined flags for the Intel compiler.
-                                                   Separate multiple flags by ';'.
-                                                   [defaults to '-fp-model strict']
-    -Dwith-libraries=<list;of;libraries>           Link additional libraries. Give full path.
-                                                   Separate multiple libraries by ';'.
-                                                   [default OFF]
-    -Dwith-includes=<list;of;includes>             Add additional include paths. Give full
-                                                   path without '-I'. Separate multiple include
-                                                   paths by ';'. [default OFF]
-    -Dwith-defines=<list;of;defines>               Additional defines, e.g. '-DXYZ=1'.
-                                                   Separate multiple defines by ';'. [default OFF]
+Generic build configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dstatic-libraries=[OFF|ON]``                      | Build static executable and libraries [default=OFF].             |
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-optimize=[OFF|ON|<list;of;flags>]``         | Enable user defined optimizations                                |
+|                                                      | [default=OFF (uses '-O2')]. When ON, '-O3' is used. Separate     |
+|                                                      | multiple flags by ';'.                                           |
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-warning=[OFF|ON|<list;of;flags>]``          | Enable user defined warnings [default=ON (uses '-Wall')].        |
+|                                                      | Separate  multiple flags by ';'.                                 |
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-debug=[OFF|ON|<list;of;flags>]``            | Enable user defined debug flags [default=OFF]. When ON, '-g' is  |
+|                                                      | used. Separate  multiple flags by ';'.                           |
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-intel-compiler-flags=[OFF|<list;of;flags>]``| User defined flags for the Intel compiler                        |
+|                                                      | [default='-fp-model strict']. Separate multiple flags by ';'.    |
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-libraries=[OFF|<list;of;libraries>]``       | Link additional libraries [default=OFF]. Give full path. Separate|
+|                                                      | multiple libraries by ';'.                                       |
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-includes=[OFF|<list;of;includes>]``         | Add additional include paths [default=OFF]. Give full path       |
+|                                                      | without '-I'. Separate multiple include paths by ';'.            |
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-defines=[OFF|<list;of;defines>]``           | Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate       |
+|                                                      | multiple defines by ';'.                                         |
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-version-suffix=[string]``                   | Set a user defined version suffix [default=''].                  |
++------------------------------------------------------+------------------------------------------------------------------+
 
 
 .. _compile-with-mpi:
@@ -111,10 +148,10 @@ following steps in order to add support for MPI:
   3. If 2. does not work, but you know the correct compiler wrapper
      for your installation, try adding the following to the invocation
      of ``cmake``::
-         -DMPI_CXX_COMPILER=myC++_CompilerWrapper
+         -DMPI_CXX_COMPILER=myC++_CompilerWrapper \
          -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON
 
-When running large-scale parallel simualations and recording from many
+When running large-scale parallel simulations and recording from many
 neurons, writing to ASCII files might become prohibitively slow due to
 the large number of resulting files. By installing the `SIONlib
 library <http://www.fz-juelich.de/jsc/sionlib>`_ and supplying its
@@ -149,16 +186,7 @@ follwing switch for the invocation of ``cmake``. It expects either
 For details on how to use the Connection Generator Interface, see the
 :ref:`guide on connection management <conn_builder_conngen>`.
 
-Disabling the Python Bindings (PyNEST)
---------------------------------------
-
-To disable Python bindings use::
-
-    -Dwith-python=OFF
-
-as an argument to ``cmake``.
-
-Please see the :doc:`README <pynest_readme_link>` for details.
+.. _compile_with_python:
 
 Python Binding (PyNEST)
 -----------------------

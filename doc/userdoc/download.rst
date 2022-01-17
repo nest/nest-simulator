@@ -37,9 +37,9 @@ Download the NEST image for VMs
 The VM image of NEST is available in the OVA format, and is suitable, for example, for importing into VirtualBox.
 If you run **Windows**, this is the option for you OR if you just want to run NEST without installing it on your computer.
 
-* Download the `latest live media image  <https://nest-simulator.org/downloads/gplreleases/nest-3.1.ova>`_.
+* Download the `latest live media image  <https://nest-simulator.org/downloads/gplreleases/nest-latest.ova>`_.
 
-  `Checksum <https://nest-simulator.org/downloads/gplreleases/nest-3.1.ova.sha512sum>`_
+  `Checksum <https://nest-simulator.org/downloads/gplreleases/nest-latest.ova.sha512sum>`_
 
 * After downloading the virtual machine, check out the :ref:`install instructions for Live Media <live_media>`.
 
@@ -47,17 +47,15 @@ If you run **Windows**, this is the option for you OR if you just want to run NE
 Older versions of VM images
 ---------------------------
 
-`NEST Live Media 2.20.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova>`_
 
-`Checksum 2.20.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.20.0.ova.sha512sum>`_
+`NEST Live Media 3.1 <https://nest-simulator.org/downloads/gplreleases/nest-3.1.ova>`_
 
-`NEST Live Media 2.18.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.18.0.ova>`_
+`Checksum 3.1 <https://nest-simulator.org/downloads/gplreleases/nest-3.1.ova.sha512sum>`_
 
-`Checksum 2.18.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.18.0.ova.sha512sum>`_
+`NEST Live Media 2.20.2 <https://nest-simulator.org/downloads/gplreleases/nest-2.20.2.ova>`_
 
-`NEST Live Media 2.16.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.16.0.ova>`_
+`Checksum 2.20.2 <https://nest-simulator.org/downloads/gplreleases/nest-2.20.2.ova.sha512sum>`_
 
-`Checksum 2.16.0 <https://nest-simulator.org/downloads/gplreleases/lubuntu-18.04_nest-2.16.0.ova.sha512sum>`_
 
 We continuously aim to improve NEST, implement features, and fix bugs with every new version;
 thus, we encourage our users to use the **most recent version of NEST**.

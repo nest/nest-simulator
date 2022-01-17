@@ -1,7 +1,7 @@
 .. _contribute:
 
-Contributing to NEST
-====================
+Contribute to NEST
+==================
 
 NEST draws its strength from the many people that use and improve it. We
 are happy to consider your contributions (e.g., new models, bug or
@@ -71,3 +71,5 @@ Have a question?
 ----------------
 
 If you want to get in contact with us, see our :ref:`community` page for ways you can reach us.
+
+

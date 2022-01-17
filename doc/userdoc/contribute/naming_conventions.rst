@@ -1,3 +1,5 @@
+.. _naming_conventions:
+
 Variables and parameter Names
 =============================
 

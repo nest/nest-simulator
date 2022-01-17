@@ -1,3 +1,5 @@
+.. _nest_server:
+
 NEST Server
 ===========
 
@@ -10,7 +12,7 @@ What is NEST Server?
 
 NEST Server enables users to interact with the NEST simulation engine
 via a RESTful API. Using this approach, you can perform the same basic
-operations as with :doc:`PyNEST <ref_material/pynest_apis>`, but
+operations as with :ref:`PyNEST <pynest_api>`, but
 instead of doing so by directly importing the ``nest`` module, all
 commands, including their arguments and result data, are channeled
 through HTTP requests and responses over a TCP/IP connection.

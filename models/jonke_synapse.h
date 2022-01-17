@@ -77,7 +77,7 @@ rule stated in [1]_, and for examples, the rules given in [2]_ and [3]_.
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 

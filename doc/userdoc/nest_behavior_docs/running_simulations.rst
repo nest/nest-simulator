@@ -1,3 +1,5 @@
+.. _run_simulations:
+
 How to run simulations
 ======================
 
@@ -23,7 +25,7 @@ the synapses, meaning that they are only updated when an event is
 transmitted through them (`Morrison et al.
 2005 <http://dx.doi.org/10.1162/0899766054026648>`_). To speed up the
 simulation and allow the efficient use of computer clusters, NEST uses a
-:doc:`hybrid parallelization strategy <parallel_computing>`. The
+:ref:`hybrid parallelization strategy <parallel_computing>`. The
 following figure shows the basic loop that is run upon a call to
 :py:func:`.Simulate`:
 
@@ -117,9 +119,9 @@ end of the interval* during which the threshold was crossed.
 
 NEST also has a some models that determine the precise time of the
 threshold crossing during the interval. Please see the documentation on
-:doc:`precise spike time neurons <simulations_with_precise_spike_times>`
+:ref:`precise spike time neurons <sim_precise_spike_times>`
 for details about neuron update in continuous time and the
-:doc:`documentation on connection management <connection_management>`
+:ref:`documentation on connection management <connection_management>`
 for how to set the delay when creating synapses.
 
 .. _stepped_simulations:
@@ -246,7 +248,7 @@ then to build the network anew. If your simulations are rather large and
 you are working on a computer with a job queueing system, it may be most
 efficient to submit individual jobs or a job array to simulate network
 instances in parallel; don't forget to use different
-:doc:`random seeds <random_numbers>`!
+:ref:`random seeds <random_numbers>`!
 
 The following example performs simulations of a single neuron driven by
 a Poisson spike train using different seeds and output files for each run:

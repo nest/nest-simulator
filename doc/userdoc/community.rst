@@ -1,4 +1,4 @@
-.. _nest_community:
+.. _community:
 
 NEST Community
 ==============
@@ -14,7 +14,7 @@ time allows.
 
 By subscribing to the mailing list you will also get notified of all NEST related events!
 
-Before submitting a question, please take a look at our :doc:`guidelines for the NEST mailing list <contribute/mailing_list_guidelines>`.
+Before submitting a question, please take a look at our :ref:`guidelines for the NEST mailing list <mail_guidelines>`.
 
 Open video conference
 ---------------------
@@ -32,9 +32,9 @@ We have compiled  a `list of NEST-related peer-reviewed publications <https://ww
 we update regularly.
 
 If you have used NEST in your research, let us know!
-Don't forget to :doc:`cite NEST <citing-nest>` in your work.
+Don't forget to :ref:`cite NEST <cite_nest>` in your work.
 
-Have a talk or poster where you used NEST? `Download our logo  <https://github.com/nest/nest-simulator/tree/master/extras/logos>`_!
+Have a talk or poster where you used NEST? `Download our logo  <https://github.com/nest/nest-simulator/tree/master/doc/logos>`_!
 
 Become a NEST member
 --------------------

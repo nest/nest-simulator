@@ -87,7 +87,7 @@ an arbitrary postsynaptic effect depending on y(t).
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -106,11 +106,11 @@ Parameters
                   cleft [0,1]
 ========  ======  ========================================================
 
-Remarks:
+.. note::
 
-The weight and the parameters U, tau_psc, tau_fac, and tau_rec are common to
-all synapses of the model and must be set using SetDefaults on the synapse
-model.
+   The weight and the parameters U, tau_psc, tau_fac, and tau_rec are
+   common to all synapses of the model and must be set using
+   :py:func:`.SetDefaults` on the synapse model.
 
 References
 ++++++++++

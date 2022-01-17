@@ -59,7 +59,7 @@ Examples:
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -76,8 +76,6 @@ Parameters
  mu_minus real     Weight dependence exponent, depression
  Wmax     real     Maximum allowed weight
 ========= =======  ======================================================
-
-Remarks:
 
 The parameters are common to all synapses of the model and must be set using
 SetDefaults on the synapse model.

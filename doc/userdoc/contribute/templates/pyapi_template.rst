@@ -1,5 +1,7 @@
 :orphan:
 
+.. _pyapi_template:
+
 PyNEST API template
 ===================
 

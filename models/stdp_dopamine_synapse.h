@@ -57,7 +57,7 @@ dopaminergic dynamics is calculated in the synapse itself.
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -101,17 +101,15 @@ Parameters
  Wmax      real    Maximal synaptic weight
 =========  ======= ======================================================
 
+The common properties can only be set by :py:func:`.SetDefaults` and apply
+to all instances of the synapse model.
+
 === ======  =====================================
 **Individual properties**
 -------------------------------------------------
  c  real    Eligibility trace
  n  real    Neuromodulator concentration
 === ======  =====================================
-
-Remarks:
-
-The common properties can only be set by SetDefaults and apply to all
-synapses of the model.
 
 References
 ++++++++++
@@ -409,9 +407,9 @@ stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const Dictiona
   {
     if ( syn_spec->known( param_arr[ n ] ) )
     {
-      throw NotImplemented(
-        "Connect doesn't support the setting of parameter param_arr[ n ]"
-        "in stdp_dopamine_synapse. Use SetDefaults() or CopyModel()." );
+      std::string msg = "Connect doesn't support the setting of parameter " + param_arr[ n ]
+        + " in stdp_dopamine_synapse. Use SetDefaults() or CopyModel().";
+      throw NotImplemented( msg );
     }
   }
 }

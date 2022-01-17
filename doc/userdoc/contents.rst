@@ -15,6 +15,13 @@ Table of Contents
 
 .. toctree::
    :maxdepth: 1
+   :caption: Release notes
+
+   Release notes <release_notes/index>
+
+
+.. toctree::
+   :maxdepth: 1
    :caption: Specialized setup of NEST
 
    Connect to other tools <coupling_nest_docs/index>
@@ -31,7 +38,9 @@ Table of Contents
    Synapses and connections <synapse_docs/index>
    Devices  <device_docs/index>
    Spatially-structured networks <networks/index>
-   Simulation behavior <nest_behavior_docs/index>
+   Simulation behavior <nest_behavior_docs/running_simulations>
+   Random numbers <nest_behavior_docs/random_numbers>
+   Built-in timers <nest_behavior_docs/built-in_timers>
 
 .. toctree::
    :maxdepth: 1
@@ -40,17 +49,21 @@ Table of Contents
    ref_material/pynest_apis
    Model directory <models/index>
    Glossary <glossary>
-   Release notes <release_notes/index>
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Get help
+
    troubleshooting
    Command line help <getting_help>
+   Contact us <community>
 
 .. toctree::
    :maxdepth: 1
    :caption: Community
 
-   Contact us <community>
-   Contribute <contribute/index>
-   Developer space <developer_space>
+   Contribute <devdoc/contribute>
+   Developer space <devdoc/index>
    News and updates <https://nest-simulator.org>
    Publications <https://www.nest-simulator.org/publications/>
    NEST Initiative <https://www.nest-initiative.org/>

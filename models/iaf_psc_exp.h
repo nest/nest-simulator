@@ -53,10 +53,13 @@ The threshold crossing is followed by an absolute refractory period (``t_ref``)
 during which the membrane potential is clamped to the resting potential
 and spiking is prohibited.
 
+The neuron dynamics is solved on the time grid given by the computation step
+size. Incoming as well as emitted spikes are forced to that grid.
+
 The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [2]_. The neuron dynamics is solved on the time
-grid given by the computation step size. Incoming as well as emitted
-spikes are forced to that grid.
+Integration scheme [2]_, which is more precise, but different from the
+implementation in [1]_, which uses the forward Euler integration scheme.
+This precludes an exact numerical reproduction of the results from [1]_.
 
 An additional state variable and the corresponding differential
 equation represents a piecewise constant external current.
@@ -79,13 +82,22 @@ model with escape noise [4]_.
   For implementation details see the
   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
-``iaf_psc_exp`` can handle current input in two ways: Current input
-through ``receptor_type`` 0 are handled as stepwise constant current
-input as in other iaf models, that is, this current directly enters
-the membrane potential equation. Current input through
-``receptor_type`` 1, in contrast, is filtered through an exponential
-kernel with the time constant of the excitatory synapse,
-``tau_syn_ex``. For an example application, see [4]_.
+``iaf_psc_exp`` can handle current input in two ways:
+
+1. Current input through ``receptor_type`` 0 is handled as a stepwise constant
+   current input as in other iaf models, that is, this current directly enters the
+   membrane potential equation.
+2. In contrast, current input through ``receptor_type`` 1 is filtered through an
+   exponential kernel with the time constant of the excitatory synapse,
+   ``tau_syn_ex``.
+
+   For an example application, see [4]_.
+
+   **Warning:** this current input is added to the state variable
+   ``i_syn_ex_``. If this variable is being recorded, its numerical value
+   will thus not correspond to the excitatory synaptic input current, but to
+   the sum of excitatory synaptic input current and the contribution from
+   receptor type 1 currents.
 
 For conversion between postsynaptic potentials (PSPs) and PSCs,
 please refer to the ``postsynaptic_potential_to_current`` function in
@@ -262,15 +274,13 @@ private:
   struct State_
   {
     // state variables
-    //! synaptic stepwise constant input current, variable 0
-    double i_0_;
-    double i_1_;      //!< presynaptic stepwise constant input current
-    double i_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
-    double i_syn_in_; //!< postsynaptic current for inh. inputs, variable 1
-    double V_m_;      //!< membrane potential, variable 2
-
-    //! absolute refractory counter (no membrane potential propagation)
-    int r_ref_;
+    double i_0_;      //!< Stepwise constant input current
+    double i_1_;      //!< Current input that is filtered through the excitatory synapse exponential kernel
+    double i_syn_ex_; //!< Postsynaptic current for excitatory inputs (includes contribution from current input on
+                      //!< receptor type 1)
+    double i_syn_in_; //!< Postsynaptic current for inhibitory inputs
+    double V_m_;      //!< Membrane potential
+    int r_ref_;       //!< Absolute refractory counter (no membrane potential propagation)
 
     State_(); //!< Default initialization
 

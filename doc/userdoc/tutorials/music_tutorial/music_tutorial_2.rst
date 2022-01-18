@@ -1,9 +1,11 @@
+.. _music_tutorial_2:
+
 Connect two NEST simulations using MUSIC
 ========================================
 
 Let’s look at an example of two NEST simulations connected through
 MUSIC. We’ll implement the simple network in :numref:`neuronmusic3`
-from :doc:`the introduction to this tutorial <music_tutorial_1>`.
+from :ref:`the introduction to this tutorial <music_tutorial_1>`.
 
 We need a sending process, a receiving process and a MUSIC
 configuration file.
@@ -89,13 +91,13 @@ data, so we need one input proxy per channel to be able to distinguish
 the channels from each other. On line 8 we set the input channel for
 each input proxy.
 
-:doc:`The SetAcceptableLatency command <music_tutorial_setlatency>` on line 10 sets the
+:ref:`The SetAcceptableLatency command <music_latency>` on line 10 sets the
 maximum time, in milliseconds, that MUSIC is allowed to delay delivery of spikes
 transmitted through the named port. This should never be more than the
 *minimum* of the delays from the input proxies to their targets; that’s
 the 2.0 ms we set on line 10 in our case.
 
-On line 12 we create a set of :doc:`parrot neurons <music_tutorial_parrot>`.
+On line 12 we create a set of :ref:`parrot neurons <music_parrot>`.
 They simply repeat the input they’re given. On lines 14-15 we create and
 configure a spike recorder to save our inputs. We connect the input proxies
 one-to-one with the parrot neurons on line 17, then the parrot neurons to

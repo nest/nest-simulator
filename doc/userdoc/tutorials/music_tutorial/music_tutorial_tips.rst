@@ -1,3 +1,5 @@
+.. _tips_music:
+
 Practical tips
 ==============
 
@@ -82,7 +84,7 @@ Build Autotool-enable project
     To build an Autotool-enabled C/C++ project, you don’t actually need to
     be in the main directory. You can create a subdirectory and build
     everything from there. For instance, with the simple C++ MUSIC project
-    in section :doc:`C++ build <music_tutorial_3>`, we can do this:
+    in section :ref:`C++ build <music_tutorial_3>`, we can do this:
 
     .. code-block:: sh
 

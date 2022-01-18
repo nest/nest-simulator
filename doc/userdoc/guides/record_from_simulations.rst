@@ -1,3 +1,5 @@
+.. _record_simulations:
+
 Record from simulations
 =======================
 
@@ -15,7 +17,7 @@ section about :ref:`Recording Backends <recording_backends>`.
 
 Recording devices can only reliably record data that was generated
 during the previous simulation time step interval. See the guide about
-:doc:`running simulations <running_simulations>` for details about the
+:ref:`running simulations <run_simulations>` for details about the
 temporal aspects of the simulation loop.
 
 .. note::

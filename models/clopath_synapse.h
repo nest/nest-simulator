@@ -63,7 +63,7 @@ archiving. So far, compatible models are ``aeif_psc_delta_clopath`` and
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 

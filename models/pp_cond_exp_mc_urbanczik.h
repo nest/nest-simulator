@@ -157,7 +157,7 @@ delay specified in the synapse model does *not* account for any delay that might
 be associated with information traveling through the explicitly modeled
 dendritic compartments.
 
-In the :ref:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic
+In the :doc:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic
 weight is driven by an error signal, which is the difference between the firing
 rate of the soma (derived from the somatic spike train :math:`S_{post}`) and the
 dendritic prediction of the firing rate of the soma (derived from the dendritic

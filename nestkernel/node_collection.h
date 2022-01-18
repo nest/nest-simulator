@@ -744,6 +744,7 @@ inline nc_const_iterator& nc_const_iterator::operator+=( const size_t n )
       element_idx_ = end_of_composite.element_idx_;
     }
   }
+
   return *this;
 }
 

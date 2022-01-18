@@ -58,7 +58,7 @@ Conductance-based generalized integrate-and-fire neuron model
 Description
 +++++++++++
 
-gif_psc_exp is the generalized integrate-and-fire neuron according to
+``gif_psc_exp`` is the generalized integrate-and-fire neuron according to
 Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with postsynaptic
 conductances in the form of truncated exponentials.
 

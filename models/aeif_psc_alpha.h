@@ -67,7 +67,7 @@ Current-based exponential integrate-and-fire neuron model
 Description
 +++++++++++
 
-aeif_psc_alpha is the adaptive exponential integrate and fire neuron according
+``aeif_psc_alpha`` is the adaptive exponential integrate and fire neuron according
 to Brette and Gerstner (2005).
 Synaptic currents are modelled as alpha-functions.
 
@@ -89,6 +89,8 @@ and
 
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+
+See also [1]_.
 
 Parameters
 ++++++++++

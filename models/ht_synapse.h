@@ -39,7 +39,7 @@ Synapse with depression after Hill & Tononi (2005)
 Description
 +++++++++++
 
-This synapse implements the depression model described in [1, p 1678].
+This synapse implements the depression model described in [1]_, p 1678.
 
 Synaptic dynamics are given by
 

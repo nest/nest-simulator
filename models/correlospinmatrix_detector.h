@@ -49,22 +49,21 @@ Device for measuring the covariance matrix from several inputs
 Description
 +++++++++++
 
-The correlospinmatrix_detector is a recording device. It is used
+The ``correlospinmatrix_detector`` is a recording device. It is used
 to record correlations from binary neurons from several binary sources and
 calculates the raw auto and cross correlation binned to bins of duration
-delta_tau. The result can be obtained via GetStatus under the key
-/count_covariance. The result is a tensor of rank 3 of size
-N_channels x N_channels, with each entry :math:`C_{ij}` being a vector of size
+``delta_tau``. The result can be obtained via :py:func:`.GetStatus`` under the key
+``/count_covariance``. The result is a tensor of rank 3 of size
+``N_channels x N_channels``, with each entry :math:`C_{ij}` being a vector of size
 :math:`2\cdot\tau_{max}/\delta_{\tau} + 1` containing the histogram for the
-different
-time lags.
+different time lags.
 
 The bins are centered around the time difference they represent, and are
 left-closed and right-open in the lower triangular part of the matrix. On the
 diagonal and in the upper triangular part the intervals are left-open and
 right-closed. This ensures proper counting of events at the border of bins.
 
-The correlospinmatrix_detector has a variable number of inputs which can be
+The ``correlospinmatrix_detector`` has a variable number of inputs which can be
 set via SetStatus under the key N_channels. All incoming connections to a
 specified receptor will be pooled.
 

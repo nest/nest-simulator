@@ -49,7 +49,7 @@ Synapse type for spike-timing dependent plasticity with symmetric nearest-neighb
 Description
 +++++++++++
 
-stdp_nn_symm_synapse is a connector to create synapses with spike time
+``stdp_nn_symm_synapse`` is a connector to create synapses with spike time
 dependent plasticity with the symmetric nearest-neighbour spike pairing
 scheme [1]_.
 
@@ -57,20 +57,20 @@ When a presynaptic spike occurs, it is taken into account in the depression
 part of the STDP weight change rule with the nearest preceding postsynaptic
 one, and when a postsynaptic spike occurs, it is accounted in the
 facilitation rule with the nearest preceding presynaptic one (instead of
-pairing with all spikes, like in stdp_synapse). For a clear illustration of
+pairing with all spikes, like in ``stdp_synapse``). For a clear illustration of
 this scheme see fig. 7A in [2]_.
 
-The pairs exactly coinciding (so that presynaptic_spike == postsynaptic_spike
-+ dendritic_delay), leading to zero delta_t, are discarded. In this case the
+The pairs exactly coinciding (so that ``presynaptic_spike == postsynaptic_spike
++ dendritic_delay``), leading to zero ``delta_t``, are discarded. In this case the
 concerned pre/postsynaptic spike is paired with the second latest preceding
-post/presynaptic one (for example, pre=={10 ms; 20 ms} and post=={20 ms} will
+post/presynaptic one (for example, ``pre=={10 ms; 20 ms}`` and ``post=={20 ms}`` will
 result in a potentiation pair 20-to-10).
 
 The implementation involves two additional variables - presynaptic and
 postsynaptic traces [2]_. The presynaptic trace decays exponentially over
-time with the time constant tau_plus and increases to 1 on a pre-spike
+time with the time constant ``tau_plus`` and increases to 1 on a pre-spike
 occurrence. The postsynaptic trace (implemented on the postsynaptic neuron
-side) decays with the time constant tau_minus and increases to 1 on a
+side) decays with the time constant ``tau_minus`` and increases to 1 on a
 post-spike occurrence.
 
 .. warning::

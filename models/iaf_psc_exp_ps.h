@@ -54,7 +54,7 @@ threshold crossing
 Description
 +++++++++++
 
-iaf_psc_exp_ps is the "canonical" implementation of the leaky
+``iaf_psc_exp_ps`` is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
 that uses the regula falsi method to approximate the timing of a threshold
 crossing. This is the most exact implementation available.

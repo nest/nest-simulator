@@ -46,7 +46,7 @@ Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and ad
 Description
 +++++++++++
 
-mat2_psc_exp is an implementation of a leaky integrate-and-fire model
+``mat2_psc_exp`` is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 

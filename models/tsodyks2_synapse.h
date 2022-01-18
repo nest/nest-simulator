@@ -50,7 +50,7 @@ This connection merely scales the synaptic weight, based on the spike history
 and the parameters of the kinetic model. Thus, it is suitable for all types
 of synaptic dynamics, that is current or conductance based.
 
-The parameter A_se from the publications is represented by the
+The parameter ``A_se`` from the publications is represented by the
 synaptic weight. The variable x in the synapse properties is the
 factor that scales the synaptic weight.
 
@@ -60,6 +60,8 @@ factor that scales the synaptic weight.
    :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
+
+See also [3]_.
 
 Under identical conditions, the tsodyks2_synapse produces slightly
 lower peak amplitudes than the tsodyks_synapse. However, the

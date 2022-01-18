@@ -50,14 +50,14 @@ A device which receives spikes from MUSIC
 Description
 +++++++++++
 
-A music_event_in_proxy can be used to pass spikes to nodes within NEST
+A ``music_event_in_proxy`` can be used to pass spikes to nodes within NEST
 which are received from another application.
 
 It uses the MUSIC library to receive spike events from other
-applications. The music_event_in_proxy represents one channel on a port
+applications. The ``music_event_in_proxy`` represents one channel on a port
 to which MUSIC can connect an event source. The music_event_in_proxy can
 be connected to local neurons or devices within NEST to receive
-the events. Multiple music_in_proxies can be configured to listen
+the events. Multiple ``music_in_proxies`` can be configured to listen
 on the same port, but each channel can only listened to by a
 single proxy.
 

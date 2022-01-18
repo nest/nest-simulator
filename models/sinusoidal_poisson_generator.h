@@ -45,7 +45,7 @@ Generate sinusoidally modulated Poisson spike trains
 Description
 +++++++++++
 
-sinusoidal_poisson_generator generates sinusoidally modulated Poisson spike
+``sinusoidal_poisson_generator`` generates sinusoidally modulated Poisson spike
 trains. By default, each target of the generator will receive a different
 spike train.
 

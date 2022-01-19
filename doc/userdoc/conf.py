@@ -223,6 +223,7 @@ def config_inited_handler(app, config):
         outdir=str(doc_build_dir / "models")
     )
 
+
 def toc_customizer(app, docname, source):
     if docname == "models/models-toc":
         models_toc = json.load(open(doc_build_dir / "models/toc-tree.json"))
@@ -230,6 +231,7 @@ def toc_customizer(app, docname, source):
         models_source = source[0]
         rendered = app.builder.templates.render_string(models_source, html_context)
         source[0] = rendered
+
 
 def setup(app):
     app.connect("source-read", toc_customizer)

@@ -343,7 +343,7 @@ nest::RecordingBackendMPI::write( const RecordingDevice& device,
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 void
-nest::RecordingBackendMPI::get_status( DictionaryDatum& ) const
+nest::RecordingBackendMPI::get_status( dictionary& ) const
 {
   // nothing to do
 }

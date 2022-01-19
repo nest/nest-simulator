@@ -225,7 +225,7 @@ public:
 
   void set_status( const DictionaryDatum& ) override;
 
-  void get_status( DictionaryDatum& ) const override;
+  void get_status( dictionary& ) const override;
 
   void pre_run_hook() override;
 
@@ -356,7 +356,7 @@ private:
 
     Parameters_();
 
-    void get( const RecordingBackendSIONlib&, DictionaryDatum& ) const;
+    void get( const RecordingBackendSIONlib&, dictionary& ) const;
     void set( const RecordingBackendSIONlib&, const DictionaryDatum& );
   };
 

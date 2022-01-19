@@ -30,6 +30,8 @@
 #include "dictdatum.h"
 #include "name.h"
 
+#include "dictionary.h"
+
 namespace nest
 {
 
@@ -268,7 +270,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void get_status( DictionaryDatum& params ) const = 0;
+  virtual void get_status( dictionary& params ) const = 0;
 
   /**
    * Check if the given per-device properties are valid and usable by

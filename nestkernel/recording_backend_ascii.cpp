@@ -187,7 +187,7 @@ nest::RecordingBackendASCII::set_status( const DictionaryDatum& )
 }
 
 void
-nest::RecordingBackendASCII::get_status( DictionaryDatum& ) const
+nest::RecordingBackendASCII::get_status( dictionary& ) const
 {
   // nothing to do
 }

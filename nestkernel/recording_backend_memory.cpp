@@ -152,7 +152,7 @@ nest::RecordingBackendMemory::post_step_hook()
 }
 
 void
-nest::RecordingBackendMemory::get_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype >& ) const
+nest::RecordingBackendMemory::get_status( dictionary& ) const
 {
   // nothing to do
 }

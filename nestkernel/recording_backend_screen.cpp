@@ -159,7 +159,7 @@ nest::RecordingBackendScreen::set_status( const DictionaryDatum& )
 }
 
 void
-nest::RecordingBackendScreen::get_status( DictionaryDatum& ) const
+nest::RecordingBackendScreen::get_status( dictionary& ) const
 {
   // nothing to do
 }

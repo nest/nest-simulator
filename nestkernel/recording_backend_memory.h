@@ -140,7 +140,7 @@ public:
 
   void set_status( const DictionaryDatum& ) override;
 
-  void get_status( DictionaryDatum& ) const override;
+  void get_status( dictionary& ) const override;
 
   void check_device_status( const DictionaryDatum& ) const override;
   void get_device_defaults( DictionaryDatum& ) const override;

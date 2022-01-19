@@ -207,16 +207,14 @@ IOManager::get_status( dictionary& d )
   d[ names::data_prefix.toString() ] = data_prefix_;
   d[ names::overwrite_files.toString() ] = overwrite_files_;
 
-  // TODO-PYNEST-NG: dict implement get_status() for recording backends with dictionary.
-
-  // DictionaryDatum recording_backends( new Dictionary );
-  // for ( const auto& it : recording_backends_ )
-  // {
-  //   DictionaryDatum recording_backend_status( new Dictionary );
-  //   it.second->get_status( recording_backend_status );
-  //   ( *recording_backends )[ it.first ] = recording_backend_status;
-  // }
-  // ( *d )[ names::recording_backends ] = recording_backends;
+  dictionary recording_backends;
+  for ( const auto& it : recording_backends_ )
+  {
+    dictionary recording_backend_status;
+    it.second->get_status( recording_backend_status );
+    recording_backends[ it.first.toString() ] = recording_backend_status;
+  }
+  d[ names::recording_backends.toString() ] = recording_backends;
 }
 
 void

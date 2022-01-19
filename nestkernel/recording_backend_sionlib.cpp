@@ -619,13 +619,13 @@ nest::RecordingBackendSIONlib::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&, DictionaryDatum& d ) const
+nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&, dictionary& d ) const
 {
-  ( *d )[ names::filename ] = filename_;
-  ( *d )[ names::buffer_size ] = buffer_size_;
-  ( *d )[ names::sion_chunksize ] = sion_chunksize_;
-  ( *d )[ names::sion_collective ] = sion_collective_;
-  ( *d )[ names::sion_n_files ] = sion_n_files_;
+  d[ names::filename.toString() ] = filename_;
+  d[ names::buffer_size.toString() ] = buffer_size_;
+  d[ names::sion_chunksize.toString() ] = sion_chunksize_;
+  d[ names::sion_collective.toString() ] = sion_collective_;
+  d[ names::sion_n_files.toString() ] = sion_n_files_;
 }
 
 void
@@ -649,11 +649,11 @@ nest::RecordingBackendSIONlib::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::RecordingBackendSIONlib::get_status( DictionaryDatum& d ) const
+nest::RecordingBackendSIONlib::get_status( dictionary& d ) const
 {
   P_.get( *this, d );
 
-  ( *d )[ names::filename ] = filename_;
+  d[ names::filename.toString() ] = filename_;
 }
 
 void

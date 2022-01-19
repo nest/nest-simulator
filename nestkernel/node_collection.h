@@ -713,7 +713,7 @@ inline nc_const_iterator& nc_const_iterator::operator+=( const size_t n )
     element_idx_ += n * step_;
   }
   else
-  { 
+  {
     element_idx_ += n * step_;
     // If we went past the size of the primitive, we need to adjust the element
     // and primitive part indices.
@@ -744,7 +744,6 @@ inline nc_const_iterator& nc_const_iterator::operator+=( const size_t n )
       element_idx_ = end_of_composite.element_idx_;
     }
   }
-
   return *this;
 }
 

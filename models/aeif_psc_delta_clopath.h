@@ -68,8 +68,8 @@ Adaptive exponential integrate-and-fire neuron
 Description
 +++++++++++
 
-aeif_psc_delta_clopath is an implementation of the neuron model as it is used
-in [1]_. It is an extension of the aeif_psc_delta model and capable of
+``aeif_psc_delta_clopath`` is an implementation of the neuron model as it is used
+in [1]_. It is an extension of the ``aeif_psc_delta`` model and capable of
 connecting to a Clopath synapse.
 
 Note that there are two points that are not mentioned in the paper but
@@ -77,8 +77,8 @@ present in a MATLAB implementation by Claudia Clopath [3]_. The first one is the
 clamping of the membrane potential to a fixed value after a spike occured to
 mimik a real spike and not just the upswing. This is important since the finite
 duration of the spike influences the evolution of the convolved versions
-(u_bar_[plus/minus]) of the membrane potential and thus the change of the
-synaptic weight. Secondly, there is a delay with which u_bar_[plus/minus] are
+(``u_bar_[plus/minus]``) of the membrane potential and thus the change of the
+synaptic weight. Secondly, there is a delay with which ``u_bar_[plus/minus]`` are
 used to compute the change of the synaptic weight.
 
 Note:
@@ -90,6 +90,8 @@ model.
 
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+
+See also [2]_.
 
 Parameters
 ++++++++++

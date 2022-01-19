@@ -425,7 +425,7 @@ The following parameters and functionalities are provided:
 
 For more information, check out the guide on
 :ref:`parametrization <param_ex>` or the documentation on the
-different :doc:`PyNEST APIs <../ref_material/pynest_apis>`.
+different :ref:`PyNEST APIs <pynest_api>`.
 
 ::
 
@@ -466,7 +466,7 @@ distributed parameters, it needs to be defined in two steps:
     nest.Connect(A, B, syn_spec=syn_dict)
 
 For further information on the available distributions see
-:doc:`Random numbers in NEST <random_numbers>`.
+:ref:`Random numbers in NEST <random_numbers>`.
 
 .. _collocated_synapses:
 
@@ -540,8 +540,8 @@ Spatially-structured networks
 Nodes in NEST can be created so that they have a position in two- or
 three-dimensional space. To take full advantage of the arrangement of
 nodes, connection parameters can be based on the nodes' positions or
-their spatial relation to each other. See :doc:`Spatially-structured
-networks <spatial/index>` for the full information about how to create
+their spatial relation to each other. See :ref:`Spatially-structured
+networks <spatial_networks>` for the full information about how to create
 and connect such networks.
 
 Connecting sparse matrices with array indexing
@@ -835,7 +835,7 @@ directly from the SynapseCollection using the dot-notation:
   >>>  conn.delay
        [1.0, 1.0]
 
-For :doc:`spatially distributed networks <spatial/index>`, you can
+For :ref:`spatially distributed networks <spatial_networks>`, you can
 access the distance between the source-target pairs by querying
 `distance` on your SynapseCollection.
 

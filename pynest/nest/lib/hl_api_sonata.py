@@ -136,7 +136,7 @@ class SonataConnector(object):
             node_types_file = nodes['node_types_file']
             node_types = pd.read_csv(node_types_file, sep='\s+')
 
-            one_model = node_types['model_type'].all() == 'virtual' or self.is_unique_(node_types['model_template'])
+            one_model = (node_types['model_type'] == 'virtual').all() or self.is_unique_(node_types['model_template'])
 
             if one_model:
                 model_type = node_types.model_type.iloc[0]

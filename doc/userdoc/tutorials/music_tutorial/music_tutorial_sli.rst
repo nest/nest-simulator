@@ -1,5 +1,7 @@
 :orphan:
 
+.. _music_sli:
+
 MUSIC with SLI
 ==============
 
@@ -17,7 +19,7 @@ other examples, and should be straightforward to follow. But we will
 give a few pointers for how to connect things with MUSIC.
 
 The SLI version of the sending process file from
-:doc:`Part 2 of the MUSIC tutorial <music_tutorial_2>`, *sender.sli*, is outlined
+:ref:`Part 2 of the MUSIC tutorial <music_tutorial_2>`, *sender.sli*, is outlined
 below. Comments are prefixed with a “%”.
 
 ::

@@ -67,7 +67,7 @@ Hodgkin-Huxley neuron model with support for Clopath plasticity
 Description
 +++++++++++
 
-hh_psc_alpha_clopath is an implementation of a spiking neuron using the
+``hh_psc_alpha_clopath`` is an implementation of a spiking neuron using the
 Hodgkin-Huxley formalism and that is capable of connecting to a Clopath
 synapse.
 
@@ -81,6 +81,8 @@ weight 1.0 results in a peak current of 1 pA.
 Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
+
+See also [1]_, [2]_, [3]_, [4]_, [5]_, [6]_.
 
 Parameters
 ++++++++++

@@ -1,3 +1,5 @@
+.. _troubleshooting:
+
 Troubleshooting
 ===============
 
@@ -5,9 +7,9 @@ Here you can find some tips to try to find out why your installation of NEST did
 
 Please make sure you have:
 
-* Followed the :doc:`installation instructions <installation/index>`
+* Followed the :ref:`installation instructions <install_nest>`
 * Installed the required :ref:`dependencies <standard>`
-* Viewed the :doc:`CMake options <installation/cmake_options>`
+* Viewed the :ref:`CMake options <cmake_options>`
 
 You can also check our `Mailing List Archive <https://www.nest-initiative.org/mailinglist/hyperkitty/list/
 users@nest-simulator.org/>`_ and `Stack Overflow <https://stackoverflow.com/questions/tagged/nest-simulator>`_
@@ -186,7 +188,7 @@ If your Python version is correct and you still have the same error, then try on
     If something is missing, you can try to  ``conda install <package>`` BUT be aware that this **may break pre-installed packages**!
 
     You may be better off creating a new Conda environment and install NEST with all needed packages at one time!
-    See the section on :doc:`installation for Conda <installation/index>`.
+    See the section on :ref:`installation for Conda <install_nest>`.
 
 
 

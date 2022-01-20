@@ -39,7 +39,7 @@ Synapse with depression after Hill & Tononi (2005)
 Description
 +++++++++++
 
-This synapse implements the depression model described in [1, p 1678].
+This synapse implements the depression model described in [1]_, p 1678.
 
 Synaptic dynamics are given by
 
@@ -49,7 +49,7 @@ Synaptic dynamics are given by
     P(T+) = (1 - \delta_P) P(T-)    \text{ for T : time of a spike } \\
     P(t=0) = 1
 
-:math:`w(t) = w_{max} * P(t)`   is the resulting synaptic weight
+:math:`w(t) = w_{max} \cdot P(t)`   is the resulting synaptic weight
 
 For implementation details see:
 `HillTononi_model <../model_details/HillTononiModels.ipynb>`_
@@ -57,7 +57,7 @@ For implementation details see:
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 

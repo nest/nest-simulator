@@ -1,4 +1,4 @@
-.. _SynapseCollection:
+.. _handling_connections:
 
 New functionality for handling connections (synapses)
 =====================================================
@@ -131,7 +131,7 @@ Setting and getting attributes directly
     If you use a list to set the parameter, the list needs to be the same length
     as the SynapseCollection.
 
-    For :ref:`spatially distributed <topo_changes>` sources and targets, you can access the distance between
+    For :ref:`spatially distributed <tbl_parameters>` sources and targets, you can access the distance between
     the source-target pairs by calling ``distance`` on your SynapseCollection.
 
     >>>  synapses.distance

@@ -68,8 +68,8 @@ Hodgkin-Huxley neuron model with gap-junction support
 Description
 +++++++++++
 
-hh_psc_alpha_gap is an implementation of a spiking neuron using the
-Hodgkin-Huxley formalism. In contrast to hh_psc_alpha the implementation
+``hh_psc_alpha_gap`` is an implementation of a spiking neuron using the
+Hodgkin-Huxley formalism. In contrast to ``hh_psc_alpha`` the implementation
 additionally supports gap junctions.
 
 1. Postsynaptic currents
@@ -85,6 +85,8 @@ it is considered a spike.
 3. Gap Junctions
 Gap Junctions are implemented by a gap current of the form
 :math:`g_{ij}( V_i - V_j)`.
+
+See also [1]_, [2]_, [3]_, [4]_.
 
 Parameters
 ++++++++++

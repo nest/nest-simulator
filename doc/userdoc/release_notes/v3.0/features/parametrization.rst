@@ -85,7 +85,7 @@ Spatial parameters
 The `spatial` module contains parameters related to spatial positions of the
 nodes.
 
-To create spatially distributed nodes (see :doc:`../../../guides/spatially_structured_networks` for more), use
+To create spatially distributed nodes (see :ref:`spatial_networks` for more), use
 ``nest.spatial.grid()`` or ``nest.spatial.free``.
 
   +----------------------------------------------------+-------------------------------------------------------+

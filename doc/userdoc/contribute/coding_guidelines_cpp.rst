@@ -1,3 +1,5 @@
+.. _code_style_cpp:
+
 NEST coding style guidelines for C++
 ====================================
 
@@ -38,32 +40,10 @@ directory call:
 
    ./build_support/format_all_c_c++_files.sh [start folder, defaults to '$PWD']
 
-We use clang-format version 9 in our CI.
+We use clang-format version 9 in our CI, which is readily available on all Ubuntu versions since 20.04 LTS by running ``apt install clang-format-9``. To install on OS X, you can install by using the following steps:
 
-Get ``clang-format``:
-Ubuntu see `here <http://llvm.org/apt/>`_:
-
-.. code::
-
-   # To retrieve the archive signature:
-   wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
-
-   # Repository for Trusty (14.04)
-   sudo sh -c 'echo "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" >> /etc/apt/sources.list'
-
-   # Repositories for Precise (12.04)
-   sudo sh -c 'echo "\ndeb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.6 main" >> /etc/apt/sources.list'
-   sudo sh -c 'echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu precise main" >> /etc/apt/sources.list'
-   # make sure each 'deb ...' is on its own line in /etc/apt/sources.list
-
-   # install clang-format with:
-   sudo apt-get update
-   sudo apt-get install clang-format-9
-
-OS X:
-
-* Installing ``clang-format`` from the `pre-built binaries
-  <https://github.com/llvm/llvm-project/releases/download/llvmorg-9.0.1/clang+llvm-9.0.1-x86_64-apple-darwin.tar.xz`_.
+1. download and unpack the `pre-built Clang+LLVM-9.0.1 binaries <https://github.com/llvm/llvm-project/releases/download/llvmorg-9.0.1/clang+llvm-9.0.1-x86_64-apple-darwin.tar.xz>`_
+2. copy ``bin/clang-format`` from the archive to ``clang-format-9`` in a location, where it will be found, e.g., ``/usr/local/bin``.
 
 Further we use `Vera++ <https://bitbucket.org/verateam/vera/wiki/Home>`_, which
 'is a programmable tool for verification, analysis and transformation of C++
@@ -81,7 +61,7 @@ Ubuntu:
 
 .. code::
 
-   apt-get install vera++
+   apt install vera++
 
 OS X:
 
@@ -105,7 +85,7 @@ Ubuntu 15.10:
 
 .. code::
 
-  apt-get install cppcheck
+  apt install cppcheck
 
 Earlier versions of Ubuntu do not provide a package for cppcheck 1.69. Please
 follow the instructions to build cppcheck from scratch.
@@ -240,7 +220,7 @@ Compiler
 
 NEST compiles with any recent version of the `GNU C/C++
 Compiler <https://gcc.gnu.org/>`_ ``gcc``. Support for and limitations of other
-compilers is described in the :doc:`Installation Instructions <../installation/index>`
+compilers is described in the :ref:`Installation Instructions <install_nest>`
 
 Online reference documents
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

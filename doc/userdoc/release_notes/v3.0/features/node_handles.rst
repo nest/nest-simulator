@@ -1,4 +1,4 @@
-.. _nodeid:
+.. _node_handles:
 
 New functionality for node handles (neurons and devices)
 ========================================================
@@ -185,7 +185,7 @@ Direct attributes
     >>> neurons.C_m
         (111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0, 111.0)
 
-    If your nodes are spatially distributed (see :doc:`../../../guides/spatially_structured_networks`),
+    If your nodes are spatially distributed (see :ref:`spatial_networks`),
     you can also get the spatial properties of the nodes
 
     >>> spatial_nodes.spatial
@@ -305,7 +305,7 @@ As with :py:meth:`~.NodeCollection.get`, you can set parameters in different way
 To set several parameters at once, use ``nodes.set(parameter_dict)``, where the
 keys of the parameter_dict are the parameter names. The values could be a list
 the size of the NodeCollection, a single value, or a ``nest.Parameter``. For more info see our
-page on :doc:`parametrization`.
+page on :ref:`param_ex`.
 
 ::
 

@@ -1,3 +1,5 @@
+.. _conda_tips:
+
 Tips for installing NEST with conda
 ===================================
 
@@ -20,7 +22,7 @@ You can either install
 - Miniconda from `<https://docs.conda.io/en/latest/miniconda.html>`_
 - Miniforge from `<https://github.com/conda-forge/miniforge>`_
 
-For Apple systems with an M1 chip, you must at present use Miniforge and 
+For Apple systems with an M1 chip, you must at present use Miniforge and
 select the ``arm64 (Apple Silicon)`` installer to create a conda environment
 that will support native builds of NEST.
 
@@ -37,7 +39,7 @@ if they are used in multiple environments, and not produce disk eating copies).
 Get familiar with conda environments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Conda environments are a powerful tool. See the `Conda documentation on Managing Environments 
+Conda environments are a powerful tool. See the `Conda documentation on Managing Environments
 <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
 for more information.
 
@@ -46,7 +48,7 @@ To see which environments are installed on your system, use
 .. code:: sh
 
    conda info --envs
-   
+
 
 Installing NEST with Conda
 --------------------------
@@ -58,7 +60,7 @@ Follow :ref:`these instructions to install NEST from Conda Forge <conda_forge_in
 Creating a Conda environment for running and building NEST
 ----------------------------------------------------------
 
-If you want to compile NEST yourself, you can create an environment containing all necessary 
+If you want to compile NEST yourself, you can create an environment containing all necessary
 software for running and building NEST by executing the following command from the NEST source directory
 
 .. code:: sh

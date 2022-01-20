@@ -1,3 +1,5 @@
+.. _sample_doc:
+
 Main title of document
 ======================
 

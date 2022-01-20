@@ -72,6 +72,8 @@ phase
 Setting `start` and `stop` only windows the current as defined above. It
 does not shift the time axis.
 
+See also [1]_.
+
 Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

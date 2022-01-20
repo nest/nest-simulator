@@ -105,9 +105,9 @@ public:
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
-  using ConnectionBase::set_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
+  using ConnectionBase::set_delay_steps;
 
   //! Used by ConnectorModel::add_connection() for fast initialization
   void

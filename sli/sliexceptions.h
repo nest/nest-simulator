@@ -71,7 +71,7 @@ public:
   {
   }
 
-  virtual ~SLIException() throw(){};
+  virtual ~SLIException() throw() {};
 
   /**
    * Returns the SLI error name, used by raiseerror.
@@ -358,7 +358,7 @@ public:
   StackUnderflow( int n, int g )
     : InterpreterError( "StackUnderflow" )
     , needed( n )
-    , given( g ){};
+    , given( g ) {};
 
   std::string message() const;
 };

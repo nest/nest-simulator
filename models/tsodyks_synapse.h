@@ -145,9 +145,9 @@ public:
   tsodyks_synapse();
 
   /**
-     * Copy constructor from a property object.
-     * Needs to be defined properly in order for GenericConnector to work.
-     */
+   * Copy constructor from a property object.
+   * Needs to be defined properly in order for GenericConnector to work.
+   */
   tsodyks_synapse( const tsodyks_synapse& ) = default;
 
   /**
@@ -161,8 +161,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 

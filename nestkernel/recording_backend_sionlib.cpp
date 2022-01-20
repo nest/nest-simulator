@@ -599,7 +599,8 @@ nest::RecordingBackendSIONlib::SIONBuffer::write( const char* v, size_t n )
 }
 
 template < typename T >
-nest::RecordingBackendSIONlib::SIONBuffer& nest::RecordingBackendSIONlib::SIONBuffer::operator<<( const T data )
+nest::RecordingBackendSIONlib::SIONBuffer&
+nest::RecordingBackendSIONlib::SIONBuffer::operator<<( const T data )
 {
   write( ( const char* ) &data, sizeof( T ) );
   return *this;

@@ -579,11 +579,10 @@ NodeManager::destruct_nodes_()
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
+#else
   for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-#endif // clang-format on
-
+#endif
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
@@ -642,8 +641,8 @@ NodeManager::prepare_nodes()
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
 #endif
 
     // We prepare nodes in a parallel region. Therefore, we need to catch
@@ -701,10 +700,10 @@ NodeManager::post_run_cleanup()
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
+#else
   for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-#endif // clang-format on
+#endif
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
@@ -724,10 +723,10 @@ NodeManager::finalize_nodes()
 #pragma omp parallel
   {
     thread tid = kernel().vp_manager.get_thread_id();
-#else // clang-format off
+#else
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-#endif // clang-format on
+#endif
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ tid ].begin(); n != local_nodes_[ tid ].end(); ++n )
     {

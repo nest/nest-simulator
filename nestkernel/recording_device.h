@@ -28,12 +28,12 @@
 #include <vector>
 
 // Includes from nestkernel:
-#include "node.h"
 #include "device.h"
 #include "device_node.h"
-#include "recording_backend.h"
-#include "nest_types.h"
 #include "kernel_manager.h"
+#include "nest_types.h"
+#include "node.h"
+#include "recording_backend.h"
 
 // Includes from sli:
 #include "dictdatum.h"

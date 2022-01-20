@@ -50,12 +50,12 @@ Description
 +++++++++++
 
 jonke_synapse is a connector to create synapses with spike time
-dependent plasticity. Unlike stdp_synapse, we use the update equations:
+dependent plasticity. Unlike ``stdp_synapse``, we use the update equations:
 
 .. math::
 
-   \Delta w &= \lambda * w_{max} * (K_+(w) * F_+(t) - \beta)           & \quad  if t - t_j^(k) > 0 \\
-   \Delta w &= \lambda * w_{max} * (-alpha * K_-(w) * F_-(t) - \beta)  & \quad  else
+   \Delta w &= \lambda \cdot w_{max} \cdot (K_+(w) \cdot F_+(t) - \beta)  & \quad  if t - t_j^(k) > 0 \\
+   \Delta w &= \lambda \cdot w_{max} \cdot (-alpha \cdot K_-(w) \cdot F_-(t) - \beta)  & \quad  else
 
 where
 
@@ -77,7 +77,7 @@ rule stated in [1]_, and for examples, the rules given in [2]_ and [3]_.
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -420,9 +420,9 @@ jonke_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum&
   {
     if ( syn_spec->known( param_arr[ n ] ) )
     {
-      throw NotImplemented(
-        "Connect doesn't support the setting of parameter param_arr[ n ]"
-        "in jonke_synapse. Use SetDefaults() or CopyModel()." );
+      std::string msg = "Connect doesn't support the setting of parameter " + param_arr[ n ]
+        + " in jonke_synapse. Use SetDefaults() or CopyModel().";
+      throw NotImplemented( msg );
     }
   }
 }

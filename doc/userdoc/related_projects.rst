@@ -1,3 +1,5 @@
+.. _related_projects:
+
 Related projects
 ================
 
@@ -88,4 +90,9 @@ networks with biologically realistic connectivity.
 
 * :ref:`Get started with TVB <tvb:tutorial_0_gettingstarted>`
 
+ConnPlotter
+-----------
 
+The ConnPlotter package allows you to plot connection matrices from NEST.
+
+* :ref: `Get started with ConnPlotter <https://github.com/nest/connplotter>`

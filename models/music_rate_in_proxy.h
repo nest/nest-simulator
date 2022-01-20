@@ -52,25 +52,25 @@ A device which receives rate data from MUSIC
 Description
 +++++++++++
 
-A music_rate_in_proxy can be used to receive rate data from
+A ``music_rate_in_proxy`` can be used to receive rate data from
 remote MUSIC applications in NEST.
 
 It uses the MUSIC library to receive the data from other applications.
-The music_rate_in_proxy represents a complete port to which MUSIC can
-connect and send data. The music_rate_in_proxy can be queried using
-GetStatus to retrieve the messages.
+The ``music_rate_in_proxy`` represents a complete port to which MUSIC can
+connect and send data. The ``music_rate_in_proxy`` can be queried using
+``GetStatus`` to retrieve the messages.
 
 Parameters
 ++++++++++
 
 The following properties are available in the status dictionary:
 
-port_name      - The name of the MUSIC input port to listen to (default:
-                 rate_in)
-port_width     - The width of the MUSIC input port
-data           - The data received on the port as vector of doubles
-published      - A bool indicating if the port has been already published
-                 with MUSIC
+========== ===================================================================
+port_name  The name of the MUSIC input port to listen to (default: rate_in)
+port_width The width of the MUSIC input port
+data       The data received on the port as vector of doubles
+published  A bool indicating if the port has been already published with MUSIC
+========== ===================================================================
 
 The parameter port_name can be set using SetStatus.
 

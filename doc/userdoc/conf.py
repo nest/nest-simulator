@@ -28,6 +28,7 @@ import subprocess
 
 from pathlib import Path
 from shutil import copyfile
+import json
 
 import sphinx_rtd_theme
 
@@ -83,7 +84,8 @@ sys.modules["nest.kernel"] = pynestkernel_mock
 # to autodoc properties the way the `autoclass` directive would. We can then
 # autoclass `nest.NestModule` to generate the documentation of the properties
 import nest  # noqa
-nest.NestModule = type(nest)
+
+vars(nest)["NestModule"] = type(nest)        # direct write to nest.NestModule is suppressed as unknown attribute
 
 # -- General configuration ------------------------------------------------
 extensions = [
@@ -222,6 +224,27 @@ def config_inited_handler(app, config):
     )
 
 
+def toc_customizer(app, docname, source):
+    if docname == "models/models-toc":
+        models_toc = json.load(open(doc_build_dir / "models/toc-tree.json"))
+        html_context = {"nest_models": models_toc}
+        models_source = source[0]
+        rendered = app.builder.templates.render_string(models_source, html_context)
+        source[0] = rendered
+
+
+def setup(app):
+    app.connect("source-read", toc_customizer)
+    app.add_css_file('css/custom.css')
+    app.add_css_file('css/pygments.css')
+    app.add_js_file("js/copybutton.js")
+    app.add_js_file("js/custom.js")
+
+    # for events see
+    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
+    app.connect('config-inited', config_inited_handler)
+
+
 nitpick_ignore = [('py:class', 'None'),
                   ('py:class', 'optional'),
                   ('py:class', 's'),
@@ -233,17 +256,6 @@ nitpick_ignore = [('py:class', 'None'),
                   ('cpp:identifier', 'ClopathArchivingNode'),
                   ('cpp:identifier', 'MessageHandler'),
                   ('cpp:identifer', 'CommonPropertiesHomW')]
-
-
-def setup(app):
-    app.add_css_file('css/custom.css')
-    app.add_css_file('css/pygments.css')
-    app.add_js_file("js/copybutton.js")
-    app.add_js_file("js/custom.js")
-
-    # for events see
-    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
-    app.connect('config-inited', config_inited_handler)
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -312,3 +324,4 @@ copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
 copy_example_file(source_dir / "pynest/examples/Potjans_2014/README.rst")
+copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")

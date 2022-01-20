@@ -1,3 +1,5 @@
+.. _simpler_rngs:
+
 Simpler handling of random number generators
 --------------------------------------------
 
@@ -42,7 +44,7 @@ Which random number generator types are available can be checked by:
 
 .. seealso::
 
-   Details can be found in our guide on :doc:`random number generators <../../../guides/random_numbers>`
+   Details can be found in our guide on :ref:`random number generators <random_numbers>`
 
 Counter-based random number generators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

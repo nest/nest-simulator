@@ -1,5 +1,7 @@
 :orphan:
 
+.. _music_latency:
+
 The SetAcceptableLatency command
 --------------------------------
 

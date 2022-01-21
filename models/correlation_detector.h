@@ -150,7 +150,7 @@ EndUserDocs */
  *   be iterator since that may change
  * - update() deletes all entries before now-tau_max, sorts the new
  *   entries, then registers new entries in histogram
-*/
+ */
 
 class correlation_detector : public Node
 {

@@ -9,7 +9,7 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/nest/nest-simulator?logo=github)](https://github.com/nest/nest-simulator)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/nest/nest-simulator?logo=github&color=%23ff6633)](https://github.com/nest/nest-simulator)
 
-[![Ubuntu version](https://img.shields.io/badge/ubuntu-v2.20.0%20(PPA)-blue?logo=debian)](https://nest-simulator.readthedocs.io/en/latest/installation/)
+[![Ubuntu version](https://img.shields.io/badge/ubuntu-(PPA)-blue?logo=debian)](https://nest-simulator.readthedocs.io/en/latest/installation/)
 [![Fedora package](https://img.shields.io/fedora/v/nest?logo=fedora)](https://src.fedoraproject.org/rpms/nest)
 [![Conda version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
 [![Homebrew version](https://img.shields.io/homebrew/v/nest.svg?logo=apple)](https://formulae.brew.sh/formula/nest)

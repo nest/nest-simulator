@@ -145,6 +145,7 @@ target_include_directories( nestkernel PRIVATE
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/nestkernel/spatial
+    ${PROJECT_SOURCE_DIR}/models
     )
 
 install( TARGETS nestkernel

@@ -78,12 +78,12 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
   return result;
 }
 
-NormalParameter::NormalParameter( const DictionaryDatum& d )
+NormalParameter::NormalParameter( const dictionary& d )
   : mean_( 0.0 )
   , std_( 1.0 )
 {
-  updateValue< double >( d, names::mean, mean_ );
-  updateValue< double >( d, names::std, std_ );
+  d.update_value( names::mean.toString(), mean_ );
+  d.update_value( names::std.toString(), std_ );
   if ( std_ <= 0 )
   {
     throw BadProperty( "nest::NormalParameter: std > 0 required." );
@@ -104,12 +104,12 @@ NormalParameter::value( RngPtr rng, Node* node )
 }
 
 
-LognormalParameter::LognormalParameter( const DictionaryDatum& d )
+LognormalParameter::LognormalParameter( const dictionary& d )
   : mean_( 0.0 )
   , std_( 1.0 )
 {
-  updateValue< double >( d, names::mean, mean_ );
-  updateValue< double >( d, names::std, std_ );
+  d.update_value( names::mean.toString(), mean_ );
+  d.update_value( names::std.toString(), std_ );
   if ( std_ <= 0 )
   {
     throw BadProperty( "nest::LognormalParameter: std > 0 required." );
@@ -255,12 +255,12 @@ RedrawParameter::value( RngPtr rng,
 }
 
 
-ExpDistParameter::ExpDistParameter( const DictionaryDatum& d )
+ExpDistParameter::ExpDistParameter( const dictionary& d )
   : Parameter( true )
-  , p_( getValue< ParameterDatum >( d, "x" ) )
-  , inv_beta_( 1.0 / getValue< double >( d, "beta" ) )
+  , p_( d.get< ParameterDatum >( "x" ) )
+  , inv_beta_( 1.0 / d.get< double >( "beta" ) )
 {
-  const auto beta = getValue< double >( d, "beta" );
+  const auto beta = d.get< double >( "beta" );
   if ( beta <= 0 )
   {
     throw BadProperty( "beta > 0 required for exponential distribution parameter, got beta=" + std::to_string( beta ) );
@@ -277,13 +277,13 @@ ExpDistParameter::value( RngPtr rng,
   return std::exp( -p_->value( rng, source_pos, target_pos, layer, node ) * inv_beta_ );
 }
 
-GaussianParameter::GaussianParameter( const DictionaryDatum& d )
+GaussianParameter::GaussianParameter( const dictionary& d )
   : Parameter( true )
-  , p_( getValue< ParameterDatum >( d, "x" ) )
-  , mean_( getValue< double >( d, "mean" ) )
-  , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
+  , p_( d.get< ParameterDatum >( "x" ) )
+  , mean_( d.get< double >( "mean" ) )
+  , inv_two_std2_( 1.0 / ( 2 * d.get< double >( "std" ) * d.get< double >( "std" ) ) )
 {
-  const auto std = getValue< double >( d, "std" );
+  const auto std = d.get< double >( "std" );
   if ( std <= 0 )
   {
     throw BadProperty( "std > 0 required for gaussian distribution parameter, got std=" + std::to_string( std ) );
@@ -302,23 +302,22 @@ GaussianParameter::value( RngPtr rng,
 }
 
 
-Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
+Gaussian2DParameter::Gaussian2DParameter( const dictionary& d )
   : Parameter( true )
-  , px_( getValue< ParameterDatum >( d, "x" ) )
-  , py_( getValue< ParameterDatum >( d, "y" ) )
-  , mean_x_( getValue< double >( d, "mean_x" ) )
-  , mean_y_( getValue< double >( d, "mean_y" ) )
-  , x_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
-                          * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_x" ) ) )
-  , y_term_const_( 1. / ( 2. * ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
-                          * getValue< double >( d, "std_y" ) * getValue< double >( d, "std_y" ) ) )
-  , xy_term_const_(
-      getValue< double >( d, "rho" ) / ( ( 1. - getValue< double >( d, "rho" ) * getValue< double >( d, "rho" ) )
-                                         * getValue< double >( d, "std_x" ) * getValue< double >( d, "std_y" ) ) )
+  , px_( d.get< ParameterDatum >( "x" ) )
+  , py_( d.get< ParameterDatum >( "y" ) )
+  , mean_x_( d.get< double >( "mean_x" ) )
+  , mean_y_( d.get< double >( "mean_y" ) )
+  , x_term_const_( 1. / ( 2. * ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) ) * d.get< double >( "std_x" )
+                          * d.get< double >( "std_x" ) ) )
+  , y_term_const_( 1. / ( 2. * ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) ) * d.get< double >( "std_y" )
+                          * d.get< double >( "std_y" ) ) )
+  , xy_term_const_( d.get< double >( "rho" ) / ( ( 1. - d.get< double >( "rho" ) * d.get< double >( "rho" ) )
+                                                 * d.get< double >( "std_x" ) * d.get< double >( "std_y" ) ) )
 {
-  const auto rho = getValue< double >( d, "rho" );
-  const auto std_x = getValue< double >( d, "std_x" );
-  const auto std_y = getValue< double >( d, "std_y" );
+  const auto rho = d.get< double >( "rho" );
+  const auto std_x = d.get< double >( "std_x" );
+  const auto std_y = d.get< double >( "std_y" );
   if ( rho >= 1 or rho <= -1 )
   {
     throw BadProperty(
@@ -349,18 +348,18 @@ Gaussian2DParameter::value( RngPtr rng,
 }
 
 
-GammaParameter::GammaParameter( const DictionaryDatum& d )
+GammaParameter::GammaParameter( const dictionary& d )
   : Parameter( true )
-  , p_( getValue< ParameterDatum >( d, "x" ) )
-  , kappa_( getValue< double >( d, "kappa" ) )
-  , inv_theta_( 1.0 / getValue< double >( d, "theta" ) )
+  , p_( d.get< ParameterDatum >( "x" ) )
+  , kappa_( d.get< double >( "kappa" ) )
+  , inv_theta_( 1.0 / d.get< double >( "theta" ) )
   , delta_( std::pow( inv_theta_, kappa_ ) / std::tgamma( kappa_ ) )
 {
   if ( kappa_ <= 0 )
   {
     throw BadProperty( "kappa > 0 required for gamma distribution parameter, got kappa=" + std::to_string( kappa_ ) );
   }
-  const auto theta = getValue< double >( d, "theta" );
+  const auto theta = d.get< double >( "theta" );
   if ( theta <= 0 )
   {
     throw BadProperty( "theta > 0 required for gamma distribution parameter, got theta=" + std::to_string( theta ) );

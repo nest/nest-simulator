@@ -129,7 +129,7 @@ public:
   };
 
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   void
   check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
@@ -142,9 +142,9 @@ public:
    * Checks to see if weight is given in syn_spec.
    */
   void
-  check_synapse_params( const DictionaryDatum& syn_spec ) const
+  check_synapse_params( const dictionary& syn_spec ) const
   {
-    if ( syn_spec->known( names::weight ) )
+    if ( syn_spec.known( names::weight.toString() ) )
     {
       throw BadProperty(
         "Weight cannot be specified since it needs to be equal "
@@ -181,10 +181,10 @@ public:
 
 template < typename targetidentifierT >
 void
-static_synapse_hom_w< targetidentifierT >::get_status( DictionaryDatum& d ) const
+static_synapse_hom_w< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 } // namespace

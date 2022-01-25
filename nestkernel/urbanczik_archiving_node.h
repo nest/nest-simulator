@@ -119,8 +119,8 @@ protected:
 
   urbanczik_parameters* urbanczik_params;
 
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& d );
+  void get_status( dictionary& d ) const;
+  void set_status( const dictionary& d );
 
 private:
   std::deque< histentry_extended > urbanczik_history_[ urbanczik_parameters::NCOMP - 1 ];

@@ -47,7 +47,7 @@ nest::RecordingBackendMemory::finalize()
 }
 
 void
-nest::RecordingBackendMemory::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+nest::RecordingBackendMemory::enroll( const RecordingDevice& device, const dictionary& params )
 {
   thread t = device.get_thread();
   index node_id = device.get_node_id();
@@ -113,21 +113,21 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendMemory::check_device_status( const DictionaryDatum& params ) const
+nest::RecordingBackendMemory::check_device_status( const dictionary& params ) const
 {
   DeviceData dd;
   dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void
-nest::RecordingBackendMemory::get_device_defaults( DictionaryDatum& params ) const
+nest::RecordingBackendMemory::get_device_defaults( dictionary& params ) const
 {
   DeviceData dd;
   dd.get_status( params );
 }
 
 void
-nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
+nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device, dictionary& d ) const
 {
   const thread t = device.get_thread();
   const index node_id = device.get_node_id();
@@ -158,7 +158,7 @@ nest::RecordingBackendMemory::get_status( dictionary& ) const
 }
 
 void
-nest::RecordingBackendMemory::set_status( lockPTRDatum< Dictionary, &SLIInterpreter::Dictionarytype > const& )
+nest::RecordingBackendMemory::set_status( const dictionary& )
 {
   // nothing to do
 }
@@ -215,18 +215,18 @@ nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::get_status( DictionaryDatum& d ) const
+nest::RecordingBackendMemory::DeviceData::get_status( dictionary& d ) const
 {
   DictionaryDatum events;
 
-  if ( not d->known( names::events ) )
+  if ( not d.known( names::events.toString() ) )
   {
     events = DictionaryDatum( new Dictionary );
-    ( *d )[ names::events ] = events;
+    d[ names::events.toString() ] = events;
   }
   else
   {
-    events = getValue< DictionaryDatum >( d, names::events );
+    events = d.get< DictionaryDatum >( names::events.toString() );
   }
 
   initialize_property_intvector( events, names::senders );
@@ -257,14 +257,14 @@ nest::RecordingBackendMemory::DeviceData::get_status( DictionaryDatum& d ) const
     append_property( events, long_value_names_[ i ], long_values_[ i ] );
   }
 
-  ( *d )[ names::time_in_steps ] = time_in_steps_;
+  d[ names::time_in_steps.toString() ] = time_in_steps_;
 }
 
 void
-nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d )
+nest::RecordingBackendMemory::DeviceData::set_status( const dictionary& d )
 {
   bool time_in_steps = false;
-  if ( updateValue< bool >( d, names::time_in_steps, time_in_steps ) )
+  if ( d.update_value( names::time_in_steps.toString(), time_in_steps ) )
   {
     if ( kernel().simulation_manager.has_been_simulated() )
     {
@@ -275,7 +275,7 @@ nest::RecordingBackendMemory::DeviceData::set_status( const DictionaryDatum& d )
   }
 
   size_t n_events = 1;
-  if ( updateValue< long >( d, names::n_events, n_events ) and n_events == 0 )
+  if ( d.update_value( names::n_events.toString(), n_events ) and n_events == 0 )
   {
     clear();
   }

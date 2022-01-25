@@ -173,8 +173,8 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -224,12 +224,12 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* node );
+    double set( const dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -248,14 +248,14 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( dictionary&, const Parameters_& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* node );
+    void set( const dictionary&, const Parameters_&, double, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -392,17 +392,17 @@ iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type 
 }
 
 inline void
-iaf_psc_alpha::get_status( DictionaryDatum& d ) const
+iaf_psc_alpha::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_psc_alpha::set_status( const DictionaryDatum& d )
+iaf_psc_alpha::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty

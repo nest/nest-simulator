@@ -91,7 +91,7 @@ public:
    *   be defined by a dictionary, parametertype, or double.
    * @param dict dictionary containing properties for the connections.
    */
-  ConnectionCreator( DictionaryDatum dict );
+  ConnectionCreator( dictionary dict );
 
   /**
    * Connect two layers.
@@ -130,7 +130,7 @@ private:
     std::vector< std::pair< Position< D >, index > >* positions_;
   };
 
-  void extract_params_( const DictionaryDatum&, std::vector< DictionaryDatum >& );
+  void extract_params_( dictionary&, std::vector< dictionary >& );
 
   template < typename Iterator, int D >
   void connect_to_target_( Iterator from,
@@ -168,7 +168,7 @@ private:
   std::shared_ptr< AbstractMask > mask_;
   std::shared_ptr< Parameter > kernel_;
   std::vector< index > synapse_model_;
-  std::vector< std::vector< DictionaryDatum > > param_dicts_;
+  std::vector< std::vector< dictionary > > param_dicts_;
   std::vector< std::shared_ptr< Parameter > > weight_;
   std::vector< std::shared_ptr< Parameter > > delay_;
 };

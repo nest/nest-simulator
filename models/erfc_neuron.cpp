@@ -26,17 +26,17 @@ namespace nest
 {
 
 void
-gainfunction_erfc::get( DictionaryDatum& d ) const
+gainfunction_erfc::get( dictionary& d ) const
 {
-  def< double >( d, names::theta, theta_ );
-  def< double >( d, names::sigma, sigma_ );
+  d[ names::theta.toString() ] = theta_;
+  d[ names::sigma.toString() ] = sigma_;
 }
 
 void
-gainfunction_erfc::set( const DictionaryDatum& d, Node* node )
+gainfunction_erfc::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::theta, theta_, node );
-  updateValueParam< double >( d, names::sigma, sigma_, node );
+  update_value_param( d, names::theta.toString(), theta_, node );
+  update_value_param( d, names::sigma.toString(), sigma_, node );
 }
 
 /*

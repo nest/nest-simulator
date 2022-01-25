@@ -27,6 +27,8 @@
 #include <iostream>
 
 #include "dictionary.h"
+#include "parameter.h"
+#include "nest_datums.h"
 
 
 // debug
@@ -92,6 +94,13 @@ is_double_vector( const boost::any& operand )
   return operand.type() == typeid( std::vector< double > );
 }
 
+// vector of vector of doubles
+bool
+is_double_vector_vector( const boost::any& operand )
+{
+  return operand.type() == typeid( std::vector< std::vector< double > > );
+}
+
 // vector of strings
 bool
 is_string_vector( const boost::any& operand )
@@ -104,4 +113,207 @@ bool
 is_dict( const boost::any& operand )
 {
   return operand.type() == typeid( dictionary );
+}
+
+// parameter
+bool
+is_parameter( const boost::any& operand )
+{
+  return operand.type() == typeid( std::shared_ptr< nest::Parameter > );
+}
+
+// NodeCollection
+bool
+is_nc( const boost::any& operand )
+{
+  return operand.type() == typeid( NodeCollectionDatum );
+}
+
+bool
+value_equal( const boost::any first, const boost::any second )
+{
+  if ( is_int( first ) )
+  {
+    if ( not is_int( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< int >( first );
+    const auto other_value = boost::any_cast< int >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else if ( is_long( first ) )
+  {
+    if ( not is_long( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< long >( first );
+    const auto other_value = boost::any_cast< long >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else if ( is_size_t( first ) )
+  {
+    if ( not is_size_t( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< size_t >( first );
+    const auto other_value = boost::any_cast< size_t >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else if ( is_double( first ) )
+  {
+    if ( not is_double( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< double >( first );
+    const auto other_value = boost::any_cast< double >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else if ( is_bool( first ) )
+  {
+    if ( not is_bool( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< bool >( first );
+    const auto other_value = boost::any_cast< bool >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else if ( is_string( first ) )
+  {
+    if ( not is_string( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< std::string >( first );
+    const auto other_value = boost::any_cast< std::string >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else if ( is_int_vector( first ) )
+  {
+    if ( not is_int_vector( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< std::vector< int > >( first );
+    const auto other_value = boost::any_cast< std::vector< int > >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else if ( is_double_vector( first ) )
+  {
+    if ( not is_double_vector( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< std::vector< double > >( first );
+    const auto other_value = boost::any_cast< std::vector< double > >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else if ( is_double_vector_vector( first ) )
+  {
+    if ( not is_double_vector_vector( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< std::vector< std::vector< double > > >( first );
+    const auto other_value = boost::any_cast< std::vector< std::vector< double > > >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else if ( is_string_vector( first ) )
+  {
+    if ( not is_string_vector( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< std::vector< std::string > >( first );
+    const auto other_value = boost::any_cast< std::vector< std::string > >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else if ( is_dict( first ) )
+  {
+    if ( not is_dict( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< dictionary >( first );
+    const auto other_value = boost::any_cast< dictionary >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else if ( is_parameter( first ) )
+  {
+    if ( not is_parameter( second ) )
+    {
+      return false;
+    }
+    const auto this_value = boost::any_cast< std::shared_ptr< nest::Parameter > >( first );
+    const auto other_value = boost::any_cast< std::shared_ptr< nest::Parameter > >( second );
+    if ( this_value != other_value )
+    {
+      return false;
+    }
+  }
+  else
+  {
+    // TODO-PYNEST-NG: raise error
+    assert( false );
+  }
+  return true;
+}
+
+
+bool dictionary::operator==( const dictionary& other ) const
+{
+  // Iterate elements in the other dictionary
+  for ( auto& kv_pair : other )
+  {
+    // Check if it exists in this dictionary
+    if ( not known( kv_pair.first ) )
+    {
+      return false;
+    }
+    // Check for equality
+    const auto value = at( kv_pair.first );
+    if ( not value_equal( value, kv_pair.second ) )
+    {
+      return false;
+    }
+  }
+  // All elements are equal
+  return true;
 }

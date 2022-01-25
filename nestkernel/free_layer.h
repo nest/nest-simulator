@@ -49,8 +49,8 @@ class FreeLayer : public Layer< D >
 {
 public:
   Position< D > get_position( index sind ) const;
-  void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& ) const;
+  void set_status( const dictionary& );
+  void get_status( dictionary& ) const;
 
 protected:
   /**
@@ -99,7 +99,7 @@ protected:
 
 template < int D >
 void
-FreeLayer< D >::set_status( const DictionaryDatum& d )
+FreeLayer< D >::set_status( const dictionary& d )
 {
   Layer< D >::set_status( d );
 
@@ -114,20 +114,20 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
   }
 
   // Read positions from dictionary
-  if ( d->known( names::positions ) )
+  if ( d.known( names::positions.toString() ) )
   {
-    const Token& tkn = d->lookup( names::positions );
-    if ( tkn.is_a< TokenArray >() )
+    const auto positions = d.at( names::positions.toString() );
+    if ( is_double_vector_vector( positions ) )
     {
       // If the positions are created from a layer sliced with step, we need to take that into consideration.
       // Because the implementation of NodeCollections sliced with step internally keeps the "skipped" nodes,
       // the positions must include the "skipped" nodes as well for consistency.
       size_t step = 1;
-      if ( d->known( names::step ) )
+      if ( d.known( names::step.toString() ) )
       {
-        step = getValue< long >( d->lookup( names::step ) );
+        step = d.get< long >( names::step.toString() );
       }
-      TokenArray pos = getValue< TokenArray >( tkn );
+      const auto pos = d.get< std::vector< std::vector< double > > >( names::positions.toString() );
       const auto num_nodes = this->node_collection_->size();
       // Number of positions, excluding the skipped nodes
       const auto stepped_pos_size = std::floor( pos.size() / ( float ) step ) + ( pos.size() % step > 0 );
@@ -144,9 +144,9 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       positions_.clear();
       positions_.reserve( num_nodes );
 
-      for ( Token* it = pos.begin(); it != pos.end(); ++it )
+      for ( auto& position : pos )
       {
-        Position< D > point = getValue< std::vector< double > >( *it );
+        Position< D > point = position;
         positions_.push_back( point );
 
         for ( int d = 0; d < D; ++d )
@@ -162,10 +162,10 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
         }
       }
     }
-    else if ( tkn.is_a< ParameterDatum >() )
+    else if ( is_parameter( positions ) )
     {
-      auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
-      auto pos = dynamic_cast< DimensionParameter* >( pd->get() );
+      auto pd = d.get< std::shared_ptr< Parameter > >( names::positions.toString() );
+      auto pos = dynamic_cast< DimensionParameter* >( pd.get() );
       positions_.clear();
       auto num_nodes = this->node_collection_->size();
       positions_.reserve( num_nodes );
@@ -195,9 +195,9 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       throw KernelException( "'positions' must be an array or a DimensionParameter." );
     }
   }
-  if ( d->known( names::extent ) )
+  if ( d.known( names::extent.toString() ) )
   {
-    this->extent_ = getValue< std::vector< double > >( d, names::extent );
+    this->extent_ = d.get< std::vector< double > >( names::extent.toString() );
 
     Position< D > center = ( max_point + this->lower_left_ ) / 2;
     auto lower_left_point = this->lower_left_; // save lower-left-most point
@@ -223,16 +223,17 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-FreeLayer< D >::get_status( DictionaryDatum& d ) const
+FreeLayer< D >::get_status( dictionary& d ) const
 {
-  Layer< D >::get_status( d );
+  // TODO-PYNEST-NG: fix this
+  // Layer< D >::get_status( d );
 
-  TokenArray points;
-  for ( typename std::vector< Position< D > >::const_iterator it = positions_.begin(); it != positions_.end(); ++it )
-  {
-    points.push_back( it->getToken() );
-  }
-  def2< TokenArray, ArrayDatum >( d, names::positions, points );
+  // TokenArray points;
+  // for ( typename std::vector< Position< D > >::const_iterator it = positions_.begin(); it != positions_.end(); ++it )
+  // {
+  //   points.push_back( it->getToken() );
+  // }
+  // def2< TokenArray, ArrayDatum >( d, names::positions, points );
 }
 
 template < int D >

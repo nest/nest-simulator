@@ -101,7 +101,7 @@ public:
    */
   virtual void change_num_threads( thread ){};
 
-  virtual void set_status( const DictionaryDatum& ) = 0;
+  virtual void set_status( const dictionary& ) = 0;
   virtual void get_status( dictionary& ) = 0;
 
   virtual void prepare(){};

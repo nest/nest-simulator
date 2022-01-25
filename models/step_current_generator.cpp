@@ -100,7 +100,7 @@ nest::step_current_generator::Buffers_::Buffers_( const Buffers_&, step_current_
  * ---------------------------------------------------------------- */
 
 void
-nest::step_current_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::step_current_generator::Parameters_::get( dictionary& d ) const
 {
   std::vector< double >* times_ms = new std::vector< double >();
   times_ms->reserve( amp_time_stamps_.size() );
@@ -108,9 +108,9 @@ nest::step_current_generator::Parameters_::get( DictionaryDatum& d ) const
   {
     times_ms->push_back( amp_time_stamp.get_ms() );
   }
-  ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
-  ( *d )[ names::amplitude_values ] = DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
-  ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_amp_times_ );
+  d[ names::amplitude_times.toString() ] = DoubleVectorDatum( times_ms );
+  d[ names::amplitude_values.toString() ] = DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
+  d[ names::allow_offgrid_times.toString() ] = BoolDatum( allow_offgrid_amp_times_ );
 }
 
 nest::Time
@@ -158,12 +158,12 @@ nest::step_current_generator::Parameters_::validate_time_( double t, const Time&
 }
 
 void
-nest::step_current_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* )
+nest::step_current_generator::Parameters_::set( const dictionary& d, Buffers_& b, Node* )
 {
   std::vector< double > new_times;
-  const bool times_changed = updateValue< std::vector< double > >( d, names::amplitude_times, new_times );
-  const bool values_changed = updateValue< std::vector< double > >( d, names::amplitude_values, amp_values_ );
-  const bool allow_offgrid_changed = updateValue< bool >( d, names::allow_offgrid_times, allow_offgrid_amp_times_ );
+  const bool times_changed = d.update_value( names::amplitude_times.toString(), new_times );
+  const bool values_changed = d.update_value( names::amplitude_values.toString(), amp_values_ );
+  const bool allow_offgrid_changed = d.update_value( names::allow_offgrid_times.toString(), allow_offgrid_amp_times_ );
 
   if ( times_changed xor values_changed )
   {
@@ -337,7 +337,8 @@ nest::step_current_generator::set_data_from_stimulation_backend( std::vector< do
       throw BadParameterValue(
         "The size of the data for the step_current_generator needs to be even [(time,amplitude) pairs] " );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    dictionary d;
+    ( new Dictionary );
     std::vector< double > times_ms;
     std::vector< double > amplitudes_pA;
     const size_t n_step = P_.amp_time_stamps_.size();
@@ -353,8 +354,8 @@ nest::step_current_generator::set_data_from_stimulation_backend( std::vector< do
       times_ms.push_back( time_amplitude[ n * 2 ] );
       amplitudes_pA.push_back( time_amplitude[ n * 2 + 1 ] );
     }
-    ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
-    ( *d )[ names::amplitude_values ] = DoubleVectorDatum( amplitudes_pA );
+    d[ names::amplitude_times.toString() ] = DoubleVectorDatum( times_ms );
+    d[ names::amplitude_values.toString() ] = DoubleVectorDatum( amplitudes_pA );
 
     ptmp.set( d, B_, this );
   }

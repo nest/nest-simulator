@@ -138,12 +138,12 @@ public:
   /**
    * Get all properties and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   double alpha_;
   double beta_;
@@ -167,31 +167,31 @@ JonkeCommonProperties::JonkeCommonProperties()
 }
 
 void
-JonkeCommonProperties::get_status( DictionaryDatum& d ) const
+JonkeCommonProperties::get_status( dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
-  def< double >( d, names::alpha, alpha_ );
-  def< double >( d, names::beta, beta_ );
-  def< double >( d, names::lambda, lambda_ );
-  def< double >( d, names::mu_plus, mu_plus_ );
-  def< double >( d, names::mu_minus, mu_minus_ );
-  def< double >( d, names::tau_plus, tau_plus_ );
-  def< double >( d, names::Wmax, Wmax_ );
+  d[ names::alpha.toString() ] = alpha_;
+  d[ names::beta.toString() ] = beta_;
+  d[ names::lambda.toString() ] = lambda_;
+  d[ names::mu_plus.toString() ] = mu_plus_;
+  d[ names::mu_minus.toString() ] = mu_minus_;
+  d[ names::tau_plus.toString() ] = tau_plus_;
+  d[ names::Wmax.toString() ] = Wmax_;
 }
 
 void
-JonkeCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+JonkeCommonProperties::set_status( const dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  updateValue< double >( d, names::alpha, alpha_ );
-  updateValue< double >( d, names::beta, beta_ );
-  updateValue< double >( d, names::lambda, lambda_ );
-  updateValue< double >( d, names::tau_plus, tau_plus_ );
-  updateValue< double >( d, names::mu_plus, mu_plus_ );
-  updateValue< double >( d, names::mu_minus, mu_minus_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
+  d.update_value( names::alpha.toString(), alpha_ );
+  d.update_value( names::beta.toString(), beta_ );
+  d.update_value( names::lambda.toString(), lambda_ );
+  d.update_value( names::tau_plus.toString(), tau_plus_ );
+  d.update_value( names::mu_plus.toString(), mu_plus_ );
+  d.update_value( names::mu_minus.toString(), mu_minus_ );
+  d.update_value( names::Wmax.toString(), Wmax_ );
 }
 
 
@@ -230,19 +230,19 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   /**
    * Checks to see if illegal parameters are given in syn_spec.
    *
    * The illegal parameters are:  "alpha", "beta", "lambda", "mu_plus", "mu_minus", "tau_plus", "Wmax"
    */
-  void check_synapse_params( const DictionaryDatum& d ) const;
+  void check_synapse_params( const dictionary& d ) const;
 
   /**
    * Send an event to the receiver of this connection.
@@ -394,31 +394,31 @@ jonke_synapse< targetidentifierT >::jonke_synapse()
 
 template < typename targetidentifierT >
 void
-jonke_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+jonke_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight.toString() ] = weight_;
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-jonke_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+jonke_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight.toString(), weight_ );
 }
 
 template < typename targetidentifierT >
 void
-jonke_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+jonke_synapse< targetidentifierT >::check_synapse_params( const dictionary& syn_spec ) const
 {
   std::string param_arr[] = { "alpha", "beta", "lambda", "mu_plus", "mu_minus", "tau_plus", "Wmax" };
 
   const size_t n_param = sizeof( param_arr ) / sizeof( std::string );
   for ( size_t n = 0; n < n_param; ++n )
   {
-    if ( syn_spec->known( param_arr[ n ] ) )
+    if ( syn_spec.known( param_arr[ n ] ) )
     {
       throw NotImplemented(
         "Connect doesn't support the setting of parameter param_arr[ n ]"

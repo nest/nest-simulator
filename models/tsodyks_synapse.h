@@ -167,12 +167,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -294,32 +294,32 @@ tsodyks_synapse< targetidentifierT >::tsodyks_synapse()
 
 template < typename targetidentifierT >
 void
-tsodyks_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+tsodyks_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
+  d[ names::weight.toString() ] = weight_;
 
-  def< double >( d, names::U, U_ );
-  def< double >( d, names::tau_psc, tau_psc_ );
-  def< double >( d, names::tau_rec, tau_rec_ );
-  def< double >( d, names::tau_fac, tau_fac_ );
-  def< double >( d, names::x, x_ );
-  def< double >( d, names::y, y_ );
-  def< double >( d, names::u, u_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::U.toString() ] = U_;
+  d[ names::tau_psc.toString() ] = tau_psc_;
+  d[ names::tau_rec.toString() ] = tau_rec_;
+  d[ names::tau_fac.toString() ] = tau_fac_;
+  d[ names::x.toString() ] = x_;
+  d[ names::y.toString() ] = y_;
+  d[ names::u.toString() ] = u_;
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-tsodyks_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+tsodyks_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   // Handle parameters that may throw an exception first, so we can leave the
   // synapse untouched
   // in case of invalid parameter values
   double x = x_;
   double y = y_;
-  updateValue< double >( d, names::x, x );
-  updateValue< double >( d, names::y, y );
+  d.update_value( names::x.toString(), x );
+  d.update_value( names::y.toString(), y );
 
   if ( x + y > 1.0 )
   {
@@ -330,33 +330,33 @@ tsodyks_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Conn
   y_ = y;
 
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight.toString(), weight_ );
 
-  updateValue< double >( d, names::U, U_ );
+  d.update_value( names::U.toString(), U_ );
   if ( U_ > 1.0 || U_ < 0.0 )
   {
     throw BadProperty( "U must be in [0,1]." );
   }
 
-  updateValue< double >( d, names::tau_psc, tau_psc_ );
+  d.update_value( names::tau_psc.toString(), tau_psc_ );
   if ( tau_psc_ <= 0.0 )
   {
     throw BadProperty( "tau_psc must be > 0." );
   }
 
-  updateValue< double >( d, names::tau_rec, tau_rec_ );
+  d.update_value( names::tau_rec.toString(), tau_rec_ );
   if ( tau_rec_ <= 0.0 )
   {
     throw BadProperty( "tau_rec must be > 0." );
   }
 
-  updateValue< double >( d, names::tau_fac, tau_fac_ );
+  d.update_value( names::tau_fac.toString(), tau_fac_ );
   if ( tau_fac_ < 0.0 )
   {
     throw BadProperty( "tau_fac must be >= 0." );
   }
 
-  updateValue< double >( d, names::u, u_ );
+  d.update_value( names::u.toString(), u_ );
 }
 
 } // namespace

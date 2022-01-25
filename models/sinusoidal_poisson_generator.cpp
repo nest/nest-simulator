@@ -120,52 +120,52 @@ nest::sinusoidal_poisson_generator::Buffers_::Buffers_( const Buffers_&, sinusoi
  * ---------------------------------------------------------------- */
 
 void
-nest::sinusoidal_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::sinusoidal_poisson_generator::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::rate ] = rate_ * 1000.0;
-  ( *d )[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
-  ( *d )[ names::phase ] = 180.0 / numerics::pi * phi_;
-  ( *d )[ names::amplitude ] = amplitude_ * 1000.0;
-  ( *d )[ names::individual_spike_trains ] = individual_spike_trains_;
+  d[ names::rate.toString() ] = rate_ * 1000.0;
+  d[ names::frequency.toString() ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
+  d[ names::phase.toString() ] = 180.0 / numerics::pi * phi_;
+  d[ names::amplitude.toString() ] = amplitude_ * 1000.0;
+  d[ names::individual_spike_trains.toString() ] = individual_spike_trains_;
 }
 
 void
-nest::sinusoidal_poisson_generator::State_::get( DictionaryDatum& d ) const
+nest::sinusoidal_poisson_generator::State_::get( dictionary& d ) const
 {
-  ( *d )[ names::y_0 ] = y_0_;
-  ( *d )[ names::y_1 ] = y_1_;
+  d[ names::y_0.toString() ] = y_0_;
+  d[ names::y_1.toString() ] = y_1_;
 }
 
 void
-nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
+nest::sinusoidal_poisson_generator::Parameters_::set( const dictionary& d,
   const sinusoidal_poisson_generator& n,
   Node* node )
 {
-  if ( not n.is_model_prototype() && d->known( names::individual_spike_trains ) )
+  if ( not n.is_model_prototype() && d.known( names::individual_spike_trains.toString() ) )
   {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
       " a model default using SetDefaults or upon CopyModel." );
   }
 
-  updateValue< bool >( d, names::individual_spike_trains, individual_spike_trains_ );
+  d.update_value( names::individual_spike_trains.toString(), individual_spike_trains_ );
 
-  if ( updateValueParam< double >( d, names::rate, rate_, node ) )
+  if ( update_value_param( d, names::rate.toString(), rate_, node ) )
   {
     rate_ /= 1000.0; // scale to ms^-1
   }
 
-  if ( updateValueParam< double >( d, names::frequency, om_, node ) )
+  if ( update_value_param( d, names::frequency.toString(), om_, node ) )
   {
     om_ *= 2.0 * numerics::pi / 1000.0;
   }
 
-  if ( updateValueParam< double >( d, names::phase, phi_, node ) )
+  if ( update_value_param( d, names::phase.toString(), phi_, node ) )
   {
     phi_ *= numerics::pi / 180.0;
   }
 
-  if ( updateValueParam< double >( d, names::amplitude, amplitude_, node ) )
+  if ( update_value_param( d, names::amplitude.toString(), amplitude_, node ) )
   {
     amplitude_ /= 1000.0;
   }
@@ -324,12 +324,13 @@ nest::sinusoidal_poisson_generator::set_data_from_stimulation_backend( std::vect
         "The size of the data for the sinusoidal_gamma_generator needs to 5 "
         "[rate, frequency, phase, amplitude, individual_spike_trains]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );
-    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 1 ] );
-    ( *d )[ names::phase ] = DoubleDatum( input_param[ 2 ] );
-    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 3 ] );
-    ( *d )[ names::individual_spike_trains ] = BoolDatum( input_param[ 4 ] );
+    dictionary d;
+    ( new Dictionary );
+    d[ names::rate.toString() ] = DoubleDatum( input_param[ 0 ] );
+    d[ names::frequency.toString() ] = DoubleDatum( input_param[ 1 ] );
+    d[ names::phase.toString() ] = DoubleDatum( input_param[ 2 ] );
+    d[ names::amplitude.toString() ] = DoubleDatum( input_param[ 3 ] );
+    d[ names::individual_spike_trains.toString() ] = BoolDatum( input_param[ 4 ] );
     ptmp.set( d, *this, this );
   }
 

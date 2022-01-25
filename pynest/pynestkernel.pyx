@@ -91,6 +91,9 @@ cdef class NodeCollectionObject(object):
     cdef _set_nc(self, NodeCollectionPTR nc):
         self.thisptr = nc
 
+    # cdef _get_ptr(self):
+    #     return self.thisptr
+
 
 cdef class SLIDatum(object):
 
@@ -638,11 +641,34 @@ cdef object dictionary_to_pydict(dictionary cdict):
         inc(it)
     return tmp
 
+cdef dictionary pydict_to_dictionary(object py_dict):
+    cdef dictionary cdict = dictionary()
+    for key, value in py_dict.items():
+        if isinstance(value, int):
+            cdict[key.encode('utf-8')] = <long>value
+        elif isinstance(value, str):
+            cdict[key.encode('utf-8')] = <string>value.encode('utf-8')
+        else:
+            raise AttributeError(f'value of key ({key}) is not a known type, got {type(value)}')
+    return cdict
+
 def llapi_create(string model, long n):
     cdef NodeCollectionPTR gids = create(model, n)
     obj = NodeCollectionObject()
     obj._set_nc(gids)
     return nest.NodeCollection(obj)
+
+def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
+    cdef vector[dictionary] syn_param_vec
+    if synapse_params is not None:
+        syn_param_vec.push_back(pydict_to_dictionary(synapse_params))
+
+    connect(pre.thisptr, post.thisptr,
+            pydict_to_dictionary(conn_params),
+            syn_param_vec)
+
+def llapi_nc_size(NodeCollectionObject nc):
+    return nc_size(nc.thisptr)
 
 def llapi_to_string(NodeCollectionObject nc):
     return pprint_to_string(nc.thisptr)

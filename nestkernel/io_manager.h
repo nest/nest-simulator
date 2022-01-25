@@ -47,8 +47,8 @@ public:
   void finalize() override;   // called from meta-manger to reinit
   void change_num_threads( thread ) override;
 
-  void set_status( const DictionaryDatum& ) override; // set parameters
-  void get_status( dictionary& ) override;            // get parameters
+  void set_status( const dictionary& ) override; // set parameters
+  void get_status( dictionary& ) override;       // get parameters
 
   IOManager(); // Construct only by meta-manager
   ~IOManager() override;
@@ -106,20 +106,20 @@ public:
   void
   write( const Name&, const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& );
 
-  void enroll_recorder( const Name&, const RecordingDevice&, const DictionaryDatum& );
-  void enroll_stimulator( const Name&, StimulationDevice&, const DictionaryDatum& );
+  void enroll_recorder( const Name&, const RecordingDevice&, const dictionary& );
+  void enroll_stimulator( const Name&, StimulationDevice&, const dictionary& );
 
   void set_recording_value_names( const Name& backend_name,
     const RecordingDevice& device,
     const std::vector< Name >& double_value_names,
     const std::vector< Name >& long_value_names );
 
-  void check_recording_backend_device_status( const Name&, const DictionaryDatum& );
-  void get_recording_backend_device_defaults( const Name&, DictionaryDatum& );
-  void get_recording_backend_device_status( const Name&, const RecordingDevice&, DictionaryDatum& );
+  void check_recording_backend_device_status( const Name&, const dictionary& );
+  void get_recording_backend_device_defaults( const Name&, dictionary& );
+  void get_recording_backend_device_status( const Name&, const RecordingDevice&, dictionary& );
 
 private:
-  void set_data_path_prefix_( const DictionaryDatum& );
+  void set_data_path_prefix_( const dictionary& );
   void register_recording_backends_();
   void register_stimulation_backends_();
 

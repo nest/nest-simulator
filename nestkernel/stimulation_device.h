@@ -157,8 +157,8 @@ public:
    * @see class comment for details.
    */
   bool is_active( const Time& ) const override;
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( dictionary& d ) const override;
+  void set_status( const dictionary& ) override;
 
   bool has_proxies() const override;
   Name get_element_type() const override;
@@ -203,8 +203,8 @@ protected:
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum& );
+    void get( dictionary& ) const;
+    void set( const dictionary& );
   } P_;
 
 private:
@@ -217,7 +217,7 @@ private:
    */
   synindex first_syn_id_;
 
-  DictionaryDatum backend_params_;
+  dictionary backend_params_;
 };
 
 inline Name

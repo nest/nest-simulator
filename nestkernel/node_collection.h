@@ -32,6 +32,7 @@
 
 // Includes from libnestuil:
 #include "lockptr.h"
+#include "dictionary.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -63,8 +64,8 @@ public:
   NodeCollectionMetadata() = default;
   virtual ~NodeCollectionMetadata() = default;
 
-  virtual void set_status( const DictionaryDatum&, bool ) = 0;
-  virtual void get_status( DictionaryDatum& ) const = 0;
+  virtual void set_status( const dictionary&, bool ) = 0;
+  virtual void get_status( dictionary& ) const = 0;
 
   virtual void set_first_node_id( index ) = 0;
   virtual index get_first_node_id() const = 0;

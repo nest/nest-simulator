@@ -26,21 +26,21 @@ namespace nest
 {
 
 void
-gainfunction_ginzburg::get( DictionaryDatum& d ) const
+gainfunction_ginzburg::get( dictionary& d ) const
 {
-  def< double >( d, names::theta, theta_ );
-  def< double >( d, names::c_1, c1_ );
-  def< double >( d, names::c_2, c2_ );
-  def< double >( d, names::c_3, c3_ );
+  d[ names::theta.toString() ] = theta_;
+  d[ names::c_1.toString() ] = c1_;
+  d[ names::c_2.toString() ] = c2_;
+  d[ names::c_3.toString() ] = c3_;
 }
 
 void
-gainfunction_ginzburg::set( const DictionaryDatum& d, Node* node )
+gainfunction_ginzburg::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::theta, theta_, node );
-  updateValueParam< double >( d, names::c_1, c1_, node );
-  updateValueParam< double >( d, names::c_2, c2_, node );
-  updateValueParam< double >( d, names::c_3, c3_, node );
+  update_value_param( d, names::theta.toString(), theta_, node );
+  update_value_param( d, names::c_1.toString(), c1_, node );
+  update_value_param( d, names::c_2.toString(), c2_, node );
+  update_value_param( d, names::c_3.toString(), c3_, node );
 }
 
 /*

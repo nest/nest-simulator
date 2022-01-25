@@ -140,14 +140,14 @@ nest::ConnectionManager::finalize()
 }
 
 void
-nest::ConnectionManager::set_status( const DictionaryDatum& d )
+nest::ConnectionManager::set_status( const dictionary& d )
 {
   for ( size_t i = 0; i < delay_checkers_.size(); ++i )
   {
     delay_checkers_[ i ].set_status( d );
   }
 
-  updateValue< bool >( d, names::keep_source_table, keep_source_table_ );
+  d.update_value( names::keep_source_table.toString(), keep_source_table_ );
   if ( not keep_source_table_ and kernel().sp_manager.is_structural_plasticity_enabled() )
   {
     throw KernelException(
@@ -155,7 +155,7 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
       "to false." );
   }
 
-  updateValue< bool >( d, names::sort_connections_by_source, sort_connections_by_source_ );
+  d.update_value( names::sort_connections_by_source.toString(), sort_connections_by_source_ );
   if ( not sort_connections_by_source_ and kernel().sp_manager.is_structural_plasticity_enabled() )
   {
     throw KernelException(
@@ -163,14 +163,14 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
       "be set to false." );
   }
 
-  updateValue< bool >( d, names::use_compressed_spikes, use_compressed_spikes_ );
+  d.update_value( names::use_compressed_spikes.toString(), use_compressed_spikes_ );
   if ( use_compressed_spikes_ and not sort_connections_by_source_ )
   {
     throw KernelException( "Spike compression requires sort_connections_by_source to be true." );
   }
 
   //  Need to update the saved values if we have changed the delay bounds.
-  if ( d->known( names::min_delay ) or d->known( names::max_delay ) )
+  if ( d.known( names::min_delay.toString() ) or d.known( names::max_delay.toString() ) )
   {
     update_delay_extrema_();
   }
@@ -198,7 +198,7 @@ nest::ConnectionManager::get_status( dictionary& dict )
   dict[ names::time_construction_connect.toString() ] = sw_construction_connect.elapsed();
 }
 
-DictionaryDatum
+dictionary
 nest::ConnectionManager::get_synapse_status( const index source_node_id,
   const index target_node_id,
   const thread tid,
@@ -207,12 +207,12 @@ nest::ConnectionManager::get_synapse_status( const index source_node_id,
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
-  DictionaryDatum dict( new Dictionary );
-  ( *dict )[ names::source ] = source_node_id;
-  ( *dict )[ names::synapse_model ] = LiteralDatum( kernel().model_manager.get_synapse_prototype( syn_id ).get_name() );
-  ( *dict )[ names::target_thread ] = tid;
-  ( *dict )[ names::synapse_id ] = syn_id;
-  ( *dict )[ names::port ] = lcid;
+  dictionary dict;
+  dict[ names::source.toString() ] = source_node_id;
+  dict[ names::synapse_model.toString() ] = kernel().model_manager.get_synapse_prototype( syn_id ).get_name();
+  dict[ names::target_thread.toString() ] = tid;
+  dict[ names::synapse_id.toString() ] = syn_id;
+  dict[ names::port.toString() ] = lcid;
 
   const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
   const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
@@ -248,7 +248,7 @@ nest::ConnectionManager::set_synapse_status( const index source_node_id,
   const thread tid,
   const synindex syn_id,
   const index lcid,
-  const DictionaryDatum& dict )
+  const dictionary& dict )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
@@ -352,8 +352,8 @@ nest::ConnBuilder*
 nest::ConnectionManager::get_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const dictionary& conn_spec,
+  const std::vector< dictionary >& syn_specs )
 {
   const size_t rule_id = connruledict_->lookup( name );
   return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
@@ -371,8 +371,8 @@ nest::ConnectionManager::calibrate( const TimeConverter& tc )
 void
 nest::ConnectionManager::connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const dictionary& conn_spec,
+  const std::vector< dictionary >& syn_specs )
 {
   if ( sources->empty() )
   {
@@ -383,18 +383,20 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
     throw IllegalConnection( "Postsynaptic nodes cannot be an empty NodeCollection" );
   }
 
-  conn_spec->clear_access_flags();
+  // TODO-PYNEST-NG: Access flags
 
-  for ( auto syn_params : syn_specs )
-  {
-    syn_params->clear_access_flags();
-  }
+  // conn_spec->clear_access_flags();
 
-  if ( not conn_spec->known( names::rule ) )
+  // for ( auto syn_params : syn_specs )
+  // {
+  //   syn_params->clear_access_flags();
+  // }
+
+  if ( not conn_spec.known( names::rule.toString() ) )
   {
     throw BadProperty( "Connectivity spec must contain connectivity rule." );
   }
-  const Name rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
+  const Name rule_name = conn_spec.get< std::string >( names::rule.toString() );
 
   if ( not connruledict_->known( rule_name ) )
   {
@@ -407,11 +409,11 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   assert( cb != 0 );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
-  ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
-  for ( auto syn_params : syn_specs )
-  {
-    ALL_ENTRIES_ACCESSED( *syn_params, "Connect", "Unread dictionary entries in syn_spec: " );
-  }
+  // ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
+  // for ( auto syn_params : syn_specs )
+  // {
+  //   ALL_ENTRIES_ACCESSED( *syn_params, "Connect", "Unread dictionary entries in syn_spec: " );
+  // }
 
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
   set_connections_have_changed();
@@ -421,18 +423,18 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
 }
 
 void
-nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec )
+nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const dictionary& syn_spec )
 {
   // Get synapse id
   size_t syn_id = 0;
-  auto synmodel = syn_spec->lookup( names::model );
-  if ( not synmodel.empty() )
+  if ( syn_spec.known( names::model.toString() ) )
   {
-    std::string synmodel_name = getValue< std::string >( synmodel );
-    synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-    if ( not synmodel.empty() )
+    std::string synmodel_name = syn_spec.get< std::string >( names::model.toString() );
+    const auto& syndict = kernel().model_manager.get_synapsedict();
+
+    if ( syndict.known( synmodel_name ) )
     {
-      syn_id = static_cast< size_t >( synmodel );
+      syn_id = static_cast< size_t >( syndict.get< synindex >( synmodel_name ) );
     }
     else
     {
@@ -491,7 +493,7 @@ nest::ConnectionManager::connect( const index snode_id,
   Node* target,
   thread target_thread,
   const synindex syn_id,
-  const DictionaryDatum& params,
+  const dictionary& params,
   const double delay,
   const double weight )
 {
@@ -521,7 +523,7 @@ nest::ConnectionManager::connect( const index snode_id,
 bool
 nest::ConnectionManager::connect( const index snode_id,
   const index tnode_id,
-  const DictionaryDatum& params,
+  const dictionary& params,
   const synindex syn_id )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
@@ -586,25 +588,25 @@ nest::ConnectionManager::connect_arrays( long* sources,
   }
 
   // Dictionary holding additional synapse parameters, passed to the connect call.
-  std::vector< DictionaryDatum > param_dicts;
+  std::vector< dictionary > param_dicts;
   param_dicts.reserve( kernel().vp_manager.get_num_threads() );
   for ( thread i = 0; i < kernel().vp_manager.get_num_threads(); ++i )
   {
-    param_dicts.emplace_back( new Dictionary );
+    param_dicts.emplace_back();
     for ( auto& param_keys : p_keys )
     {
       if ( Name( param_keys ) == names::receptor_type )
       {
-        ( *param_dicts[ i ] )[ param_keys ] = Token( new IntegerDatum( 0 ) );
+        param_dicts[ i ][ param_keys ] = 0;
       }
       else
       {
-        ( *param_dicts[ i ] )[ param_keys ] = Token( new DoubleDatum( 0.0 ) );
+        param_dicts[ i ][ param_keys ] = 0.0;
       }
     }
   }
 
-  index synapse_model_id( kernel().model_manager.get_synapsedict()->lookup( syn_model ) );
+  index synapse_model_id( kernel().model_manager.get_synapsedict().get< synindex >( syn_model ) );
 
   // Increments pointers to weight and delay, if they are specified.
   auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d )
@@ -682,20 +684,18 @@ nest::ConnectionManager::connect_arrays( long* sources,
               throw BadParameter( "Receptor types must be integers." );
             }
 
-            // Change value of dictionary entry without allocating new datum.
-            auto id = static_cast< IntegerDatum* >( ( ( *param_dicts[ tid ] )[ param_pointer_pair.first ] ).datum() );
-            ( *id ) = rtype_as_long;
+            param_dicts[ tid ][ param_pointer_pair.first.toString() ] = rtype_as_long;
           }
           else
           {
-            auto dd = static_cast< DoubleDatum* >( ( ( *param_dicts[ tid ] )[ param_pointer_pair.first ] ).datum() );
-            ( *dd ) = *param;
+            param_dicts[ tid ][ param_pointer_pair.first.toString() ] = *param;
           }
         }
 
         connect( *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
 
-        ALL_ENTRIES_ACCESSED( *param_dicts[ tid ], "connect_arrays", "Unread dictionary entries: " );
+        // TODO-PYNEST-NG: Access flags
+        // ALL_ENTRIES_ACCESSED( *param_dicts[ tid ], "connect_arrays", "Unread dictionary entries: " );
 
         increment_wd( w, d );
       }
@@ -724,7 +724,7 @@ nest::ConnectionManager::connect_( Node& s,
   const index s_node_id,
   const thread tid,
   const synindex syn_id,
-  const DictionaryDatum& params,
+  const dictionary& params,
   const double delay,
   const double weight )
 {
@@ -775,7 +775,7 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   const index s_node_id,
   const thread tid,
   const synindex syn_id,
-  const DictionaryDatum& params,
+  const dictionary& params,
   const double delay,
   const double weight )
 {
@@ -790,7 +790,7 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   Node& r,
   const thread tid,
   const synindex syn_id,
-  const DictionaryDatum& params,
+  const dictionary& params,
   const double delay,
   const double weight )
 {
@@ -978,10 +978,11 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
   if ( not syn_model_t.empty() )
   {
     Name synmodel_name = getValue< Name >( syn_model_t );
-    const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-    if ( not synmodel.empty() )
+    const auto& syndict = kernel().model_manager.get_synapsedict();
+    // const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+    if ( syndict.known( synmodel_name.toString() ) )
     {
-      syn_id = static_cast< size_t >( synmodel );
+      syn_id = static_cast< size_t >( syndict.get< synindex >( synmodel_name.toString() ) );
     }
     else
     {

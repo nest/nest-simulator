@@ -31,11 +31,18 @@
 #include "mpi_manager_impl.h"
 #include "parameter.h"
 
-#include "../models/iaf_psc_alpha.h"
+#include "iaf_psc_alpha.h"
+#include "static_synapse.h"
+#include "connector_model_impl.h"
+
+
+#include "connection_manager_impl.h"
 
 #include "model_manager.h"
 #include "model_manager_impl.h"
 #include "genericmodel_impl.h"
+
+#include "dictionary.h"
 
 
 // Includes from sli:
@@ -52,6 +59,34 @@ init_nest( int* argc, char** argv[] )
   kernel().mpi_manager.init_mpi( argc, argv );
   kernel().initialize();
   kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
+
+  kernel().model_manager.register_connection_model< static_synapse >( "static_synapse" );
+
+
+  // Add connection rules
+  kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
+  kernel().connection_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
+  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
+  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
+  kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+  kernel().connection_manager.register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
+  kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+#ifdef HAVE_LIBNEUROSIM
+  kernel().connection_manager.register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
+#endif
+
+  register_parameter< ConstantParameter >( "constant" );
+  register_parameter< UniformParameter >( "uniform" );
+  register_parameter< UniformIntParameter >( "uniform_int" );
+  register_parameter< NormalParameter >( "normal" );
+  register_parameter< LognormalParameter >( "lognormal" );
+  register_parameter< ExponentialParameter >( "exponential" );
+  register_parameter< NodePosParameter >( "position" );
+  register_parameter< SpatialDistanceParameter >( "distance" );
+  register_parameter< GaussianParameter >( "gaussian" );
+  register_parameter< Gaussian2DParameter >( "gaussian2d" );
+  register_parameter< GammaParameter >( "gamma" );
+  register_parameter< ExpDistParameter >( "exp_distribution" );
 }
 
 void
@@ -96,6 +131,12 @@ pprint_to_string( NodeCollectionPTR nc )
   return stream.str();
 }
 
+size_t
+nc_size( NodeCollectionPTR nc )
+{
+  return nc->size();
+}
+
 
 RngPtr
 get_rank_synced_rng()
@@ -116,11 +157,12 @@ get_vp_specific_rng( thread tid )
 }
 
 void
-set_kernel_status( const DictionaryDatum& dict )
+set_kernel_status( const dictionary& dict )
 {
-  dict->clear_access_flags();
+  // TODO-PYNEST-NG: access flags
+  // dict->clear_access_flags();
   kernel().set_status( dict );
-  ALL_ENTRIES_ACCESSED( *dict, "SetKernelStatus", "Unread dictionary entries: " );
+  // ALL_ENTRIES_ACCESSED( *dict, "SetKernelStatus", "Unread dictionary entries: " );
 }
 
 dictionary
@@ -140,39 +182,42 @@ get_kernel_status()
 }
 
 void
-set_node_status( const index node_id, const DictionaryDatum& dict )
+set_node_status( const index node_id, const dictionary& dict )
 {
   kernel().node_manager.set_status( node_id, dict );
 }
 
-DictionaryDatum
+dictionary
 get_node_status( const index node_id )
 {
   return kernel().node_manager.get_status( node_id );
 }
 
 void
-set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict )
+set_connection_status( const ConnectionDatum& conn, const dictionary& dict )
 {
-  DictionaryDatum conn_dict = conn.get_dict();
-  const index source_node_id = getValue< long >( conn_dict, nest::names::source );
-  const index target_node_id = getValue< long >( conn_dict, nest::names::target );
-  const thread tid = getValue< long >( conn_dict, nest::names::target_thread );
-  const synindex syn_id = getValue< long >( conn_dict, nest::names::synapse_modelid );
-  const port p = getValue< long >( conn_dict, nest::names::port );
+  // TODO_PYNEST-NG: Get ConnectionDatum dict
+  // DictionaryDatum conn_dict = conn.get_dict();
+  dictionary conn_dict;
+  const index source_node_id = conn_dict.get< long >( nest::names::source.toString() );
+  const index target_node_id = conn_dict.get< long >( nest::names::target.toString() );
+  const thread tid = conn_dict.get< long >( nest::names::target_thread.toString() );
+  const synindex syn_id = conn_dict.get< long >( nest::names::synapse_modelid.toString() );
+  const port p = conn_dict.get< long >( nest::names::port.toString() );
 
-  dict->clear_access_flags();
+  // TODO_PYNEST-NG: Access flags
+  // dict->clear_access_flags();
 
   kernel().connection_manager.set_synapse_status( source_node_id, target_node_id, tid, syn_id, p, dict );
 
-  ALL_ENTRIES_ACCESSED2( *dict,
-    "SetStatus",
-    "Unread dictionary entries: ",
-    "Maybe you tried to set common synapse properties through an individual "
-    "synapse?" );
+  // ALL_ENTRIES_ACCESSED2( *dict,
+  //   "SetStatus",
+  //   "Unread dictionary entries: ",
+  //   "Maybe you tried to set common synapse properties through an individual "
+  //   "synapse?" );
 }
 
-DictionaryDatum
+dictionary
 get_connection_status( const ConnectionDatum& conn )
 {
   return kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
@@ -190,20 +235,20 @@ create( const std::string model_name, const index n_nodes )
     throw RangeCheck();
   }
 
-  const Token model = kernel().model_manager.get_modeldict()->lookup( model_name );
-  if ( model.empty() )
+  if ( not kernel().model_manager.get_modeldict().known( model_name ) )
   {
+    std::cerr << "model name: " << model_name << "\n";
     throw UnknownModelName( model_name );
   }
 
   // create
-  const index model_id = static_cast< index >( model );
+  const index model_id = static_cast< index >( kernel().model_manager.get_modeldict().get< index >( model_name ) );
 
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
 NodeCollectionPTR
-get_nodes( const DictionaryDatum& params, const bool local_only )
+get_nodes( const dictionary& params, const bool local_only )
 {
   return kernel().node_manager.get_nodes( params, local_only );
 }
@@ -211,8 +256,8 @@ get_nodes( const DictionaryDatum& params, const bool local_only )
 void
 connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const DictionaryDatum& connectivity,
-  const std::vector< DictionaryDatum >& synapse_params )
+  const dictionary& connectivity,
+  const std::vector< dictionary >& synapse_params )
 {
   kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 }
@@ -286,55 +331,119 @@ cleanup()
 }
 
 void
-copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict )
+copy_model( const Name& oldmodname, const Name& newmodname, const dictionary& dict )
 {
   kernel().model_manager.copy_model( oldmodname, newmodname, dict );
 }
 
 void
-set_model_defaults( const Name& modelname, const DictionaryDatum& dict )
+set_model_defaults( const Name& modelname, const dictionary& dict )
 {
   kernel().model_manager.set_model_defaults( modelname, dict );
 }
 
-DictionaryDatum
+dictionary
 get_model_defaults( const Name& modelname )
 {
-  const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
+  // const Token nodemodel = kernel().model_manager.get_modeldict()->lookup( modelname );
+  // const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( modelname );
 
-  DictionaryDatum dict;
+  dictionary dict;
 
-  if ( not nodemodel.empty() )
-  {
-    const long model_id = static_cast< long >( nodemodel );
-    Model* m = kernel().model_manager.get_model( model_id );
-    dict = m->get_status();
-  }
-  else if ( not synmodel.empty() )
-  {
-    const long synapse_id = static_cast< long >( synmodel );
-    dict = kernel().model_manager.get_connector_defaults( synapse_id );
-  }
-  else
-  {
-    throw UnknownModelName( modelname.toString() );
-  }
+  // TODO-PYNEST-NG: fix when updating models get_status()
+
+  // if ( not nodemodel.empty() )
+  // {
+  //   const long model_id = static_cast< long >( nodemodel );
+  //   Model* m = kernel().model_manager.get_model( model_id );
+  //   dict = m->get_status();
+  // }
+  // else if ( not synmodel.empty() )
+  // {
+  //   const long synapse_id = static_cast< long >( synmodel );
+  //   dict = kernel().model_manager.get_connector_defaults( synapse_id );
+  // }
+  // else
+  // {
+  //   throw UnknownModelName( modelname.toString() );
+  // }
 
   return dict;
 }
 
-ParameterDatum
-create_parameter( const DictionaryDatum& param_dict )
+std::shared_ptr< Parameter >
+create_parameter( const boost::any& value )
 {
-  param_dict->clear_access_flags();
-
-  ParameterDatum datum( NestModule::create_parameter( param_dict ) );
-
-  ALL_ENTRIES_ACCESSED( *param_dict, "nest::CreateParameter", "Unread dictionary entries: " );
-
-  return datum;
+  if ( is_double( value ) )
+  {
+    return create_parameter( boost::any_cast< double >( value ) );
+  }
+  else if ( is_int( value ) )
+  {
+    return create_parameter( boost::any_cast< int >( value ) );
+  }
+  else if ( is_dict( value ) )
+  {
+    return create_parameter( boost::any_cast< dictionary >( value ) );
+  }
+  else if ( is_parameter( value ) )
+  {
+    return create_parameter( boost::any_cast< std::shared_ptr< Parameter > >( value ) );
+  }
+  throw BadProperty( "Parameter must be parametertype, constant or dictionary." );
 }
+
+std::shared_ptr< Parameter >
+create_parameter( const std::shared_ptr< Parameter > param )
+{
+  // TODO-PYNEST-NG: do we need this function?
+  return param;
+}
+
+std::shared_ptr< Parameter >
+create_parameter( const double value )
+{
+  const auto param = new ConstantParameter( value );
+  return std::shared_ptr< Parameter >( param );
+}
+
+std::shared_ptr< Parameter >
+create_parameter( const int value )
+{
+  const auto param = new ConstantParameter( value );
+  return std::shared_ptr< Parameter >( param );
+}
+
+std::shared_ptr< Parameter >
+create_parameter( const dictionary& param_dict )
+{
+  // The dictionary should only have a single key, which is the name of
+  // the parameter type to create.
+  if ( param_dict.size() != 1 )
+  {
+    throw BadProperty( "Parameter definition dictionary must contain one single key only." );
+  }
+
+  // TODO-PYNEST-NG: Access flags
+  const auto n = param_dict.begin()->first;
+  const auto pdict = param_dict.get< dictionary >( n );
+  return create_parameter( n, pdict );
+}
+
+std::shared_ptr< Parameter >
+create_parameter( const std::string& name, const dictionary& d )
+{
+  // The parameter factory will create the parameter
+  return std::shared_ptr< Parameter >( parameter_factory_().create( name, d ) );
+}
+
+ParameterFactory&
+parameter_factory_( void )
+{
+  static ParameterFactory factory;
+  return factory;
+}
+
 
 double
 get_value( const ParameterDatum& param )
@@ -407,5 +516,6 @@ node_collection_array_index( const Datum* datum, const bool* array, unsigned lon
   }
   return new NodeCollectionDatum( NodeCollection::create( node_ids ) );
 }
+
 
 } // namespace nest

@@ -155,7 +155,7 @@ nest::KernelManager::change_number_of_threads( thread new_num_threads )
 }
 
 void
-nest::KernelManager::set_status( const DictionaryDatum& dict )
+nest::KernelManager::set_status( const dictionary& dict )
 {
   assert( is_initialized() );
 

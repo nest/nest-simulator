@@ -130,12 +130,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  virtual void get_status( DictionaryDatum& d ) const;
+  virtual void get_status( dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  virtual void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  virtual void set_status( const dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -223,26 +223,26 @@ ht_synapse< targetidentifierT >::ht_synapse()
 
 template < typename targetidentifierT >
 void
-ht_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+ht_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::tau_P, tau_P_ );
-  def< double >( d, names::delta_P, delta_P_ );
-  def< double >( d, names::P, p_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight.toString() ] = weight_;
+  d[ names::tau_P.toString() ] = tau_P_;
+  d[ names::delta_P.toString() ] = delta_P_;
+  d[ names::P.toString() ] = p_;
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-ht_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+ht_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
 
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::tau_P, tau_P_ );
-  updateValue< double >( d, names::delta_P, delta_P_ );
-  updateValue< double >( d, names::P, p_ );
+  d.update_value( names::weight.toString(), weight_ );
+  d.update_value( names::tau_P.toString(), tau_P_ );
+  d.update_value( names::delta_P.toString(), delta_P_ );
+  d.update_value( names::P.toString(), p_ );
 
   if ( tau_P_ <= 0.0 )
   {

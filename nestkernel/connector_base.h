@@ -81,13 +81,13 @@ public:
    * Write status of the connection at position lcid to the dictionary
    * dict.
    */
-  virtual void get_synapse_status( const thread tid, const index lcid, DictionaryDatum& dict ) const = 0;
+  virtual void get_synapse_status( const thread tid, const index lcid, dictionary& dict ) const = 0;
 
   /**
    * Set status of the connection at position lcid according to the
    * dictionary dict.
    */
-  virtual void set_synapse_status( const index lcid, const DictionaryDatum& dict, ConnectorModel& cm ) = 0;
+  virtual void set_synapse_status( const index lcid, const dictionary& dict, ConnectorModel& cm ) = 0;
 
   /**
    * Add ConnectionID with given source_node_id and lcid to conns. If
@@ -243,7 +243,7 @@ public:
   }
 
   void
-  get_synapse_status( const thread tid, const index lcid, DictionaryDatum& dict ) const
+  get_synapse_status( const thread tid, const index lcid, dictionary& dict ) const
   {
     assert( lcid < C_.size() );
 
@@ -251,11 +251,11 @@ public:
 
     // get target node ID here, where tid is available
     // necessary for hpc synapses using TargetIdentifierIndex
-    def< long >( dict, names::target, C_[ lcid ].get_target( tid )->get_node_id() );
+    dict[ names::target.toString() ] = C_[ lcid ].get_target( tid )->get_node_id();
   }
 
   void
-  set_synapse_status( const index lcid, const DictionaryDatum& dict, ConnectorModel& cm )
+  set_synapse_status( const index lcid, const dictionary& dict, ConnectorModel& cm )
   {
     assert( lcid < C_.size() );
 

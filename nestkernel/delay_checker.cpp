@@ -58,14 +58,14 @@ nest::DelayChecker::calibrate( const TimeConverter& tc )
 }
 
 void
-nest::DelayChecker::get_status( DictionaryDatum& d ) const
+nest::DelayChecker::get_status( dictionary& d ) const
 {
-  ( *d )[ names::min_delay ] = get_min_delay().get_ms();
-  ( *d )[ names::max_delay ] = get_max_delay().get_ms();
+  d[ names::min_delay.toString() ] = get_min_delay().get_ms();
+  d[ names::max_delay.toString() ] = get_max_delay().get_ms();
 }
 
 void
-nest::DelayChecker::set_status( const DictionaryDatum& d )
+nest::DelayChecker::set_status( const dictionary& d )
 {
   // For the minimum delay, we always round down. The easiest way to do this,
   // is to round up and then subtract one step. The only remaining edge case
@@ -73,7 +73,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
   // a min delay that is one step too small. We can detect this by an
   // additional test.
   double delay_tmp = 0.0;
-  bool min_delay_updated = updateValue< double >( d, names::min_delay, delay_tmp );
+  bool min_delay_updated = d.update_value( names::min_delay.toString(), delay_tmp );
   Time new_min_delay;
   if ( min_delay_updated )
   {
@@ -86,7 +86,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
   }
 
   // For the maximum delay, we always round up, using ms_stamp
-  bool max_delay_updated = updateValue< double >( d, names::max_delay, delay_tmp );
+  bool max_delay_updated = d.update_value( names::max_delay.toString(), delay_tmp );
   Time new_max_delay = Time( Time::ms_stamp( delay_tmp ) );
 
   if ( min_delay_updated xor max_delay_updated )

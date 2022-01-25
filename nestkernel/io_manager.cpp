@@ -77,10 +77,10 @@ IOManager::~IOManager()
 }
 
 void
-IOManager::set_data_path_prefix_( const DictionaryDatum& dict )
+IOManager::set_data_path_prefix_( const dictionary& dict )
 {
   std::string tmp;
-  if ( updateValue< std::string >( dict, names::data_path, tmp ) )
+  if ( dict.update_value( names::data_path.toString(), tmp ) )
   {
     DIR* testdir = opendir( tmp.c_str() );
     if ( testdir != NULL )
@@ -109,7 +109,7 @@ IOManager::set_data_path_prefix_( const DictionaryDatum& dict )
     }
   }
 
-  if ( updateValue< std::string >( dict, names::data_prefix, tmp ) )
+  if ( dict.update_value( names::data_prefix.toString(), tmp ) )
   {
     if ( tmp.find( '/' ) == std::string::npos )
     {
@@ -125,17 +125,17 @@ IOManager::set_data_path_prefix_( const DictionaryDatum& dict )
 void
 IOManager::initialize()
 {
-  DictionaryDatum dict( new Dictionary );
+  dictionary dict;
   // The properties data_path and data_prefix can be set via environment variables
   char* data_path = std::getenv( "NEST_DATA_PATH" );
   if ( data_path )
   {
-    ( *dict )[ names::data_path ] = std::string( data_path );
+    dict[ names::data_path.toString() ] = std::string( data_path );
   }
   char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
   if ( data_prefix )
   {
-    ( *dict )[ names::data_prefix ] = std::string( data_prefix );
+    dict[ names::data_prefix.toString() ] = std::string( data_prefix );
   }
 
   set_data_path_prefix_( dict );
@@ -180,19 +180,19 @@ void IOManager::change_num_threads( thread )
 }
 
 void
-IOManager::set_status( const DictionaryDatum& d )
+IOManager::set_status( const dictionary& d )
 {
   set_data_path_prefix_( d );
 
-  updateValue< bool >( d, names::overwrite_files, overwrite_files_ );
+  d.update_value( names::overwrite_files.toString(), overwrite_files_ );
 
-  DictionaryDatum recording_backends;
-  if ( updateValue< DictionaryDatum >( d, names::recording_backends, recording_backends ) )
+  dictionary recording_backends;
+  if ( d.update_value( names::recording_backends.toString(), recording_backends ) )
   {
     for ( const auto& it : recording_backends_ )
     {
-      DictionaryDatum recording_backend_status;
-      if ( updateValue< DictionaryDatum >( recording_backends, it.first, recording_backend_status ) )
+      dictionary recording_backend_status;
+      if ( recording_backends.update_value( it.first.toString(), recording_backend_status ) )
       {
         it.second->set_status( recording_backend_status );
       }
@@ -304,7 +304,7 @@ IOManager::write( const Name& backend_name,
 }
 
 void
-IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& device, const DictionaryDatum& params )
+IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& device, const dictionary& params )
 {
   for ( auto& it : recording_backends_ )
   {
@@ -320,7 +320,7 @@ IOManager::enroll_recorder( const Name& backend_name, const RecordingDevice& dev
 }
 
 void
-nest::IOManager::enroll_stimulator( const Name& backend_name, StimulationDevice& device, const DictionaryDatum& params )
+nest::IOManager::enroll_stimulator( const Name& backend_name, StimulationDevice& device, const dictionary& params )
 {
 
   if ( not is_valid_stimulation_backend( backend_name ) and not backend_name.toString().empty() )
@@ -360,21 +360,19 @@ IOManager::set_recording_value_names( const Name& backend_name,
 }
 
 void
-IOManager::check_recording_backend_device_status( const Name& backend_name, const DictionaryDatum& params )
+IOManager::check_recording_backend_device_status( const Name& backend_name, const dictionary& params )
 {
   recording_backends_[ backend_name ]->check_device_status( params );
 }
 
 void
-IOManager::get_recording_backend_device_defaults( const Name& backend_name, DictionaryDatum& params )
+IOManager::get_recording_backend_device_defaults( const Name& backend_name, dictionary& params )
 {
   recording_backends_[ backend_name ]->get_device_defaults( params );
 }
 
 void
-IOManager::get_recording_backend_device_status( const Name& backend_name,
-  const RecordingDevice& device,
-  DictionaryDatum& d )
+IOManager::get_recording_backend_device_status( const Name& backend_name, const RecordingDevice& device, dictionary& d )
 {
   recording_backends_[ backend_name ]->get_device_status( device, d );
 }

@@ -201,8 +201,8 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -246,8 +246,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -290,8 +290,8 @@ private:
 
     State_( const Parameters_& ); //!< Default initialization
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void get( dictionary& ) const;
+    void set( const dictionary&, Node* node );
 
   }; // State_
 
@@ -419,13 +419,13 @@ aeif_cond_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport
 }
 
 inline void
-aeif_cond_alpha_multisynapse::get_status( DictionaryDatum& d ) const
+aeif_cond_alpha_multisynapse::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 }
 
 } // namespace

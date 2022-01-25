@@ -111,13 +111,13 @@ class MsgHandler : public MUSIC::MessageHandler
 
 public:
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( dictionary& d ) const
   {
     DictionaryDatum dict( new Dictionary );
-    ( *dict )[ names::messages ] = messages;
-    ( *dict )[ names::message_times ] = DoubleVectorDatum( new std::vector< double >( message_times ) );
-    ( *d )[ names::n_messages ] = messages.size();
-    ( *d )[ names::data ] = dict;
+    dict[ names::messages.toString() ] = messages;
+    dict[ names::message_times.toString() ] = DoubleVectorDatum( new std::vector< double >( message_times ) );
+    d[ names::n_messages.toString() ] = messages.size();
+    d[ names::data.toString() ] = dict;
   }
 
   void
@@ -151,8 +151,8 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -173,12 +173,12 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;
+    void get( dictionary& ) const;
 
     /**
      * Set values from dicitonary.
      */
-    void set( const DictionaryDatum&, State_&, Node* );
+    void set( const dictionary&, State_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -191,9 +191,9 @@ private:
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void set( const dictionary&, const Parameters_&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -219,7 +219,7 @@ private:
 };
 
 inline void
-music_message_in_proxy::get_status( DictionaryDatum& d ) const
+music_message_in_proxy::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -228,7 +228,7 @@ music_message_in_proxy::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-music_message_in_proxy::set_status( const DictionaryDatum& d )
+music_message_in_proxy::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;   // temporary copy in case of errors
   ptmp.set( d, S_, this ); // throws if BadProperty
@@ -237,7 +237,7 @@ music_message_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_, this ); // throws if BadProperty
 
   long nm = 0;
-  if ( updateValueParam< long >( d, names::n_messages, nm, this ) )
+  if ( update_value_param( d, names::n_messages.toString(), nm, this ) )
   {
     if ( nm == 0 )
     {

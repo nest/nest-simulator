@@ -141,9 +141,9 @@ public:
     e();
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double )
@@ -167,26 +167,26 @@ private:
 
 template < typename targetidentifierT >
 void
-DiffusionConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+DiffusionConnection< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::drift_factor, drift_factor_ );
-  def< double >( d, names::diffusion_factor, diffusion_factor_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight.toString() ] = weight_;
+  d[ names::drift_factor.toString() ] = drift_factor_;
+  d[ names::diffusion_factor.toString() ] = diffusion_factor_;
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-DiffusionConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+DiffusionConnection< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
-  if ( d->known( names::delay ) )
+  if ( d.known( names::delay.toString() ) )
   {
     throw BadProperty( "diffusion_connection has no delay." );
   }
   // If the parameter weight is set, we throw a BadProperty
-  if ( d->known( names::weight ) )
+  if ( d.known( names::weight.toString() ) )
   {
     throw BadProperty(
       "Please use the parameters drift_factor and "
@@ -194,8 +194,8 @@ DiffusionConnection< targetidentifierT >::set_status( const DictionaryDatum& d, 
   }
 
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::drift_factor, drift_factor_ );
-  updateValue< double >( d, names::diffusion_factor, diffusion_factor_ );
+  d.update_value( names::drift_factor.toString(), drift_factor_ );
+  d.update_value( names::diffusion_factor.toString(), diffusion_factor_ );
 }
 
 } // namespace

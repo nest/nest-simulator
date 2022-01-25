@@ -227,45 +227,45 @@ nest::hh_cond_beta_gap_traub::State_& nest::hh_cond_beta_gap_traub::State_::oper
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_cond_beta_gap_traub::Parameters_::get( DictionaryDatum& d ) const
+nest::hh_cond_beta_gap_traub::Parameters_::get( dictionary& d ) const
 {
-  def< double >( d, names::g_Na, g_Na );
-  def< double >( d, names::g_K, g_K );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::E_Na, E_Na );
-  def< double >( d, names::E_K, E_K );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::V_T, V_T );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
-  def< double >( d, names::tau_rise_ex, tau_rise_ex );
-  def< double >( d, names::tau_decay_ex, tau_decay_ex );
-  def< double >( d, names::tau_rise_in, tau_rise_in );
-  def< double >( d, names::tau_decay_in, tau_decay_in );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::I_e, I_e );
+  d[ names::g_Na.toString() ] = g_Na;
+  d[ names::g_K.toString() ] = g_K;
+  d[ names::g_L.toString() ] = g_L;
+  d[ names::C_m.toString() ] = C_m;
+  d[ names::E_Na.toString() ] = E_Na;
+  d[ names::E_K.toString() ] = E_K;
+  d[ names::E_L.toString() ] = E_L;
+  d[ names::V_T.toString() ] = V_T;
+  d[ names::E_ex.toString() ] = E_ex;
+  d[ names::E_in.toString() ] = E_in;
+  d[ names::tau_rise_ex.toString() ] = tau_rise_ex;
+  d[ names::tau_decay_ex.toString() ] = tau_decay_ex;
+  d[ names::tau_rise_in.toString() ] = tau_rise_in;
+  d[ names::tau_decay_in.toString() ] = tau_decay_in;
+  d[ names::t_ref.toString() ] = t_ref_;
+  d[ names::I_e.toString() ] = I_e;
 }
 
 void
-nest::hh_cond_beta_gap_traub::Parameters_::set( const DictionaryDatum& d )
+nest::hh_cond_beta_gap_traub::Parameters_::set( const dictionary& d )
 {
-  updateValue< double >( d, names::g_Na, g_Na );
-  updateValue< double >( d, names::g_K, g_K );
-  updateValue< double >( d, names::g_L, g_L );
-  updateValue< double >( d, names::C_m, C_m );
-  updateValue< double >( d, names::E_Na, E_Na );
-  updateValue< double >( d, names::E_K, E_K );
-  updateValue< double >( d, names::E_L, E_L );
-  updateValue< double >( d, names::V_T, V_T );
-  updateValue< double >( d, names::E_ex, E_ex );
-  updateValue< double >( d, names::E_in, E_in );
-  updateValue< double >( d, names::tau_rise_ex, tau_rise_ex );
-  updateValue< double >( d, names::tau_decay_ex, tau_decay_ex );
-  updateValue< double >( d, names::tau_rise_in, tau_rise_in );
-  updateValue< double >( d, names::tau_decay_in, tau_decay_in );
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::I_e, I_e );
+  d.update_value( names::g_Na.toString(), g_Na );
+  d.update_value( names::g_K.toString(), g_K );
+  d.update_value( names::g_L.toString(), g_L );
+  d.update_value( names::C_m.toString(), C_m );
+  d.update_value( names::E_Na.toString(), E_Na );
+  d.update_value( names::E_K.toString(), E_K );
+  d.update_value( names::E_L.toString(), E_L );
+  d.update_value( names::V_T.toString(), V_T );
+  d.update_value( names::E_ex.toString(), E_ex );
+  d.update_value( names::E_in.toString(), E_in );
+  d.update_value( names::tau_rise_ex.toString(), tau_rise_ex );
+  d.update_value( names::tau_decay_ex.toString(), tau_decay_ex );
+  d.update_value( names::tau_rise_in.toString(), tau_rise_in );
+  d.update_value( names::tau_decay_in.toString(), tau_decay_in );
+  d.update_value( names::t_ref.toString(), t_ref_ );
+  d.update_value( names::I_e.toString(), I_e );
 
   if ( C_m <= 0 )
   {
@@ -289,21 +289,21 @@ nest::hh_cond_beta_gap_traub::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::hh_cond_beta_gap_traub::State_::get( DictionaryDatum& d ) const
+nest::hh_cond_beta_gap_traub::State_::get( dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
-  def< double >( d, names::Act_m, y_[ HH_M ] );
-  def< double >( d, names::Inact_h, y_[ HH_H ] );
-  def< double >( d, names::Act_n, y_[ HH_N ] );
+  d[ names::V_m.toString() ] = y_[ V_M ]; // Membrane potential
+  d[ names::Act_m.toString() ] = y_[ HH_M ];
+  d[ names::Inact_h.toString() ] = y_[ HH_H ];
+  d[ names::Act_n.toString() ] = y_[ HH_N ];
 }
 
 void
-nest::hh_cond_beta_gap_traub::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::hh_cond_beta_gap_traub::State_::set( const dictionary& d, const Parameters_& )
 {
-  updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::Act_m, y_[ HH_M ] );
-  updateValue< double >( d, names::Inact_h, y_[ HH_H ] );
-  updateValue< double >( d, names::Act_n, y_[ HH_N ] );
+  d.update_value( names::V_m.toString(), y_[ V_M ] );
+  d.update_value( names::Act_m.toString(), y_[ HH_M ] );
+  d.update_value( names::Inact_h.toString(), y_[ HH_H ] );
+  d.update_value( names::Act_n.toString(), y_[ HH_N ] );
   if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );

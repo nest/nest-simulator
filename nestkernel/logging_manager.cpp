@@ -53,9 +53,9 @@ nest::LoggingManager::finalize()
 }
 
 void
-nest::LoggingManager::set_status( const DictionaryDatum& dict )
+nest::LoggingManager::set_status( const dictionary& dict )
 {
-  updateValue< bool >( dict, names::dict_miss_is_error, dict_miss_is_error_ );
+  dict.update_value( names::dict_miss_is_error.toString(), dict_miss_is_error_ );
 }
 
 void

@@ -207,8 +207,8 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   /**
@@ -249,8 +249,8 @@ private:
   {
     Parameters_();
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dicitonary
 
     // Note: Conductances are unitless
     // Leaks
@@ -364,8 +364,8 @@ public:
 
     ~State_();
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const ht_neuron&, Node* node );
+    void get( dictionary& ) const;
+    void set( const dictionary&, const ht_neuron&, Node* node );
   };
 
 private:

@@ -149,12 +149,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -248,51 +248,51 @@ tsodyks2_synapse< targetidentifierT >::tsodyks2_synapse()
 
 template < typename targetidentifierT >
 void
-tsodyks2_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+tsodyks2_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
+  d[ names::weight.toString() ] = weight_;
 
-  def< double >( d, names::dU, U_ );
-  def< double >( d, names::u, u_ );
-  def< double >( d, names::tau_rec, tau_rec_ );
-  def< double >( d, names::tau_fac, tau_fac_ );
-  def< double >( d, names::x, x_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::dU.toString() ] = U_;
+  d[ names::u.toString() ] = u_;
+  d[ names::tau_rec.toString() ] = tau_rec_;
+  d[ names::tau_fac.toString() ] = tau_fac_;
+  d[ names::x.toString() ] = x_;
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-tsodyks2_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+tsodyks2_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight.toString(), weight_ );
 
-  updateValue< double >( d, names::dU, U_ );
+  d.update_value( names::dU.toString(), U_ );
   if ( U_ > 1.0 || U_ < 0.0 )
   {
     throw BadProperty( "U must be in [0,1]." );
   }
 
-  updateValue< double >( d, names::u, u_ );
+  d.update_value( names::u.toString(), u_ );
   if ( u_ > 1.0 || u_ < 0.0 )
   {
     throw BadProperty( "u must be in [0,1]." );
   }
 
-  updateValue< double >( d, names::tau_rec, tau_rec_ );
+  d.update_value( names::tau_rec.toString(), tau_rec_ );
   if ( tau_rec_ <= 0.0 )
   {
     throw BadProperty( "tau_rec must be > 0." );
   }
 
-  updateValue< double >( d, names::tau_fac, tau_fac_ );
+  d.update_value( names::tau_fac.toString(), tau_fac_ );
   if ( tau_fac_ < 0.0 )
   {
     throw BadProperty( "tau_fac must be >= 0." );
   }
 
-  updateValue< double >( d, names::x, x_ );
+  d.update_value( names::x.toString(), x_ );
 }
 
 } // namespace

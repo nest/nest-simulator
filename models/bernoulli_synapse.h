@@ -172,9 +172,9 @@ public:
     e_spike.set_multiplicity( n_spikes_in );
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -189,21 +189,21 @@ private:
 
 template < typename targetidentifierT >
 void
-bernoulli_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+bernoulli_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::p_transmit, p_transmit_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight.toString() ] = weight_;
+  d[ names::p_transmit.toString() ] = p_transmit_;
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-bernoulli_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+bernoulli_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::p_transmit, p_transmit_ );
+  d.update_value( names::weight.toString(), weight_ );
+  d.update_value( names::p_transmit.toString(), p_transmit_ );
 
   if ( p_transmit_ < 0 || p_transmit_ > 1 )
   {

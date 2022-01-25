@@ -27,6 +27,8 @@
 #include <limits>
 #include <vector>
 
+#include <boost/any.hpp>
+
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "parameter.h"
@@ -115,7 +117,7 @@ public:
   * @param nthread number of threads
   * required to fix number pointers to the iterator (one for each thread)
   */
-  static ConnParameter* create( const Token&, const size_t );
+  static ConnParameter* create( const boost::any&, const size_t );
 };
 
 
@@ -318,7 +320,7 @@ private:
 class ArrayIntegerParameter : public ConnParameter
 {
 public:
-  ArrayIntegerParameter( const std::vector< long >& values, const size_t nthreads )
+  ArrayIntegerParameter( const std::vector< int >& values, const size_t nthreads )
     : values_( &values )
     , next_( nthreads, values_->begin() )
   {
@@ -384,21 +386,21 @@ public:
   void
   reset() const
   {
-    for ( std::vector< std::vector< long >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
+    for ( std::vector< std::vector< int >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
     {
       *it = values_->begin();
     }
   }
 
 private:
-  const std::vector< long >* values_;
-  mutable std::vector< std::vector< long >::const_iterator > next_;
+  const std::vector< int >* values_;
+  mutable std::vector< std::vector< int >::const_iterator > next_;
 };
 
 class ParameterConnParameterWrapper : public ConnParameter
 {
 public:
-  ParameterConnParameterWrapper( const ParameterDatum&, const size_t );
+  ParameterConnParameterWrapper( Parameter*, const size_t );
 
   double value_double( thread target_thread, RngPtr rng, index snode_id, Node* target ) const;
 

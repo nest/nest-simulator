@@ -81,14 +81,14 @@ NodeManager::finalize()
   destruct_nodes_();
 }
 
-DictionaryDatum
+dictionary
 NodeManager::get_status( index idx )
 {
   Node* target = get_mpi_local_node_or_device_head( idx );
 
   assert( target != 0 );
 
-  DictionaryDatum d = target->get_status_base();
+  dictionary d = target->get_status_base();
 
   return d;
 }
@@ -307,11 +307,11 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
 }
 
 NodeCollectionPTR
-NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
+NodeManager::get_nodes( const dictionary& params, const bool local_only )
 {
   std::vector< long > nodes;
 
-  if ( params->empty() )
+  if ( params.empty() )
   {
     std::vector< std::vector< long > > nodes_on_thread;
     nodes_on_thread.resize( kernel().vp_manager.get_num_threads() );
@@ -341,13 +341,12 @@ NodeManager::get_nodes( const DictionaryDatum& params, const bool local_only )
         bool match = true;
         index node_id = node.get_node_id();
 
-        DictionaryDatum node_status = get_status( node_id );
-        for ( Dictionary::iterator dict_entry = params->begin(); dict_entry != params->end(); ++dict_entry )
+        dictionary node_status = get_status( node_id );
+        for ( auto& entry : params )
         {
-          if ( node_status->known( dict_entry->first ) )
+          if ( node_status.known( entry.first ) )
           {
-            const Token token = node_status->lookup( dict_entry->first );
-            if ( not( token == dict_entry->second or token.matches_as_string( dict_entry->second ) ) )
+            if ( not value_equal( node_status.at( entry.first ), entry.second ) )
             {
               match = false;
               break;
@@ -599,20 +598,21 @@ NodeManager::destruct_nodes_()
 }
 
 void
-NodeManager::set_status_single_node_( Node& target, const DictionaryDatum& d, bool clear_flags )
+NodeManager::set_status_single_node_( Node& target, const dictionary& d, bool clear_flags )
 {
   // proxies have no properties
   if ( not target.is_proxy() )
   {
-    if ( clear_flags )
-    {
-      d->clear_access_flags();
-    }
+    // TODO-PYNEST-NG: access flags
+    // if ( clear_flags )
+    // {
+    //   d->clear_access_flags();
+    // }
     target.set_status_base( d );
 
     // TODO: Not sure this check should be at single neuron level; advantage is
     // it stops after first failure.
-    ALL_ENTRIES_ACCESSED( *d, "NodeManager::set_status", "Unread dictionary entries: " );
+    // ALL_ENTRIES_ACCESSED( *d, "NodeManager::set_status", "Unread dictionary entries: " );
   }
 }
 
@@ -779,7 +779,7 @@ NodeManager::print( std::ostream& out ) const
 }
 
 void
-NodeManager::set_status( index node_id, const DictionaryDatum& d )
+NodeManager::set_status( index node_id, const dictionary& d )
 {
   for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
@@ -799,7 +799,7 @@ NodeManager::get_status( dictionary& d )
 }
 
 void
-NodeManager::set_status( const DictionaryDatum& )
+NodeManager::set_status( const dictionary& )
 {
 }
 }

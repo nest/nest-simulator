@@ -94,10 +94,10 @@ nest::music_cont_out_proxy::Buffers_::Buffers_( const Buffers_& b )
  * ---------------------------------------------------------------- */
 
 void
-nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d ) const
+nest::music_cont_out_proxy::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::port_name ] = port_name_;
-  ( *d )[ names::interval ] = interval_.get_ms();
+  d[ names::port_name.toString() ] = port_name_;
+  d[ names::interval.toString() ] = interval_.get_ms();
 
   ArrayDatum ad_record_from;
 
@@ -106,12 +106,12 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d ) const
     ad_record_from.push_back( LiteralDatum( record_from_[ j ] ) );
   }
 
-  ( *d )[ names::record_from ] = ad_record_from;
-  ( *d )[ names::targets ] = new NodeCollectionDatum( targets_ );
+  d[ names::record_from.toString() ] = ad_record_from;
+  d[ names::targets.toString() ] = new NodeCollectionDatum( targets_ );
 }
 
 void
-nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
+nest::music_cont_out_proxy::Parameters_::set( const dictionary& d,
   const Node& self,
   const State_& state,
   const Buffers_& buffers )
@@ -119,10 +119,10 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
   if ( state.published_ == false )
   {
-    updateValue< string >( d, names::port_name, port_name_ );
+    d.update_value( names::port_name.toString(), port_name_ );
   }
 
-  if ( buffers.has_targets_ && ( d->known( names::interval ) || d->known( names::record_from ) ) )
+  if ( buffers.has_targets_ && ( d.known( names::interval.toString() ) || d.known( names::record_from.toString() ) ) )
   {
     throw BadProperty(
       "The recording interval and the list of properties to record "
@@ -130,7 +130,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
   }
 
   double v;
-  if ( updateValue< double >( d, names::interval, v ) )
+  if ( d.update_value( names::interval.toString(), v ) )
   {
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
     {
@@ -149,18 +149,18 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
     }
   }
   // extract data
-  if ( d->known( names::record_from ) )
+  if ( d.known( names::record_from.toString() ) )
   {
     record_from_.clear();
 
-    ArrayDatum ad = getValue< ArrayDatum >( d, names::record_from );
+    ArrayDatum ad = d.get< ArrayDatum >( names::record_from.toString() );
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
     {
       record_from_.push_back( Name( getValue< std::string >( *t ) ) );
     }
   }
 
-  if ( d->known( names::targets ) )
+  if ( d.known( names::targets.toString() ) )
   {
     if ( record_from_.empty() )
     {
@@ -169,7 +169,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
     if ( state.published_ == false )
     {
-      targets_ = getValue< NodeCollectionDatum >( d, names::targets );
+      targets_ = d.get< NodeCollectionDatum >( names::targets.toString() );
     }
     else
     {
@@ -179,10 +179,10 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 }
 
 void
-nest::music_cont_out_proxy::State_::get( DictionaryDatum& d ) const
+nest::music_cont_out_proxy::State_::get( dictionary& d ) const
 {
-  ( *d )[ names::published ] = published_;
-  ( *d )[ names::port_width ] = port_width_;
+  d[ names::published.toString() ] = published_;
+  d[ names::port_width.toString() ] = port_width_;
 }
 
 /* ----------------------------------------------------------------
@@ -237,13 +237,12 @@ nest::music_cont_out_proxy::calibrate()
   // only publish the output port once,
   if ( S_.published_ == false )
   {
-    const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
-    assert( synmodel.empty() == false && "synapse 'static_synapse' not available" );
+    assert( synmodel.known( "static_synapse" ) && "synapse 'static_synapse' not available" );
 
-    const index synmodel_id = static_cast< index >( synmodel );
+    const index synmodel_id = synmodel.get< synindex >( "static_synapse" );
     std::vector< MUSIC::GlobalIndex > music_index_map;
 
-    DictionaryDatum dummy_params = new Dictionary();
+    dictionary dummy_params;
     for ( size_t i = 0; i < P_.targets_->size(); ++i )
     {
       const index tnode_id = ( *P_.targets_ )[ i ];
@@ -307,7 +306,7 @@ nest::music_cont_out_proxy::calibrate()
 }
 
 void
-nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
+nest::music_cont_out_proxy::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -331,7 +330,7 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
+nest::music_cont_out_proxy::set_status( const dictionary& d )
 {
   P_.set( d, *this, S_, B_ ); // throws if BadProperty
 }

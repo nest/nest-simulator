@@ -100,37 +100,37 @@ nest::iaf_psc_alpha_ps::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_alpha_ps::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_psc_alpha_ps::Parameters_::get( dictionary& d ) const
 {
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, U_th_ + E_L_ );
-  def< double >( d, names::V_min, U_min_ + E_L_ );
-  def< double >( d, names::V_reset, U_reset_ + E_L_ );
-  def< double >( d, names::C_m, c_m_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::tau_syn_ex, tau_syn_ex_ );
-  def< double >( d, names::tau_syn_in, tau_syn_in_ );
-  def< double >( d, names::t_ref, t_ref_ );
+  d[ names::E_L.toString() ] = E_L_;
+  d[ names::I_e.toString() ] = I_e_;
+  d[ names::V_th.toString() ] = U_th_ + E_L_;
+  d[ names::V_min.toString() ] = U_min_ + E_L_;
+  d[ names::V_reset.toString() ] = U_reset_ + E_L_;
+  d[ names::C_m.toString() ] = c_m_;
+  d[ names::tau_m.toString() ] = tau_m_;
+  d[ names::tau_syn_ex.toString() ] = tau_syn_ex_;
+  d[ names::tau_syn_in.toString() ] = tau_syn_in_;
+  d[ names::t_ref.toString() ] = t_ref_;
 }
 
 double
-nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
+nest::iaf_psc_alpha_ps::Parameters_::set( const dictionary& d )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValue< double >( d, names::E_L, E_L_ );
+  d.update_value( names::E_L.toString(), E_L_ );
   const double delta_EL = E_L_ - ELold;
 
-  updateValue< double >( d, names::tau_m, tau_m_ );
-  updateValue< double >( d, names::tau_syn_ex, tau_syn_ex_ );
-  updateValue< double >( d, names::tau_syn_in, tau_syn_in_ );
-  updateValue< double >( d, names::C_m, c_m_ );
-  updateValue< double >( d, names::t_ref, t_ref_ );
-  updateValue< double >( d, names::I_e, I_e_ );
+  d.update_value( names::tau_m.toString(), tau_m_ );
+  d.update_value( names::tau_syn_ex.toString(), tau_syn_ex_ );
+  d.update_value( names::tau_syn_in.toString(), tau_syn_in_ );
+  d.update_value( names::C_m.toString(), c_m_ );
+  d.update_value( names::t_ref.toString(), t_ref_ );
+  d.update_value( names::I_e.toString(), I_e_ );
 
-  if ( updateValue< double >( d, names::V_th, U_th_ ) )
+  if ( d.update_value( names::V_th.toString(), U_th_ ) )
   {
     U_th_ -= E_L_;
   }
@@ -139,7 +139,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
     U_th_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_min, U_min_ ) )
+  if ( d.update_value( names::V_min.toString(), U_min_ ) )
   {
     U_min_ -= E_L_;
   }
@@ -148,7 +148,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
     U_min_ -= delta_EL;
   }
 
-  if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
+  if ( d.update_value( names::V_reset.toString(), U_reset_ ) )
   {
     U_reset_ -= E_L_;
   }
@@ -186,20 +186,20 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::iaf_psc_alpha_ps::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::iaf_psc_alpha_ps::State_::get( dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
-  def< double >( d, names::I_syn_ex, I_ex_ );    // Excitatory synaptic current
-  def< double >( d, names::I_syn_in, I_in_ );    // Inhibitory synaptic current
-  def< double >( d, names::dI_syn_in, dI_in_ );  // Derivative inhib. current
-  def< double >( d, names::dI_syn_ex, dI_ex_ );  // Derivative exc. current
-  def< bool >( d, names::is_refractory, is_refractory_ );
+  d[ names::V_m.toString() ] = V_m_ + p.E_L_; // Membrane potential
+  d[ names::I_syn_ex.toString() ] = I_ex_;    // Excitatory synaptic current
+  d[ names::I_syn_in.toString() ] = I_in_;    // Inhibitory synaptic current
+  d[ names::dI_syn_in.toString() ] = dI_in_;  // Derivative inhib. current
+  d[ names::dI_syn_ex.toString() ] = dI_ex_;  // Derivative exc. current
+  d[ names::is_refractory.toString() ] = is_refractory_;
 }
 
 void
-nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+nest::iaf_psc_alpha_ps::State_::set( const dictionary& d, const Parameters_& p, double delta_EL )
 {
-  if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  if ( d.update_value( names::V_m.toString(), V_m_ ) )
   {
     V_m_ -= p.E_L_;
   }

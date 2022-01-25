@@ -165,8 +165,8 @@ public:
 
   SignalType receives_signal() const;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
   void calibrate_time( const TimeConverter& tc );
 
@@ -224,14 +224,14 @@ private:
 
     Parameters_& operator=( const Parameters_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
 
     /**
      * Set values from dicitonary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const DictionaryDatum&, const correlospinmatrix_detector&, Node* );
+    bool set( const dictionary&, const correlospinmatrix_detector&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -272,12 +272,12 @@ private:
 
     State_(); //!< initialize default state
 
-    void get( DictionaryDatum& ) const;
+    void get( dictionary& ) const;
 
     /**
      * @param bool if true, force state reset
      */
-    void set( const DictionaryDatum&, const Parameters_&, bool, Node* );
+    void set( const dictionary&, const Parameters_&, bool, Node* );
 
     void reset( const Parameters_& );
   };
@@ -300,7 +300,7 @@ correlospinmatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type
 }
 
 inline void
-nest::correlospinmatrix_detector::get_status( DictionaryDatum& d ) const
+nest::correlospinmatrix_detector::get_status( dictionary& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -308,7 +308,7 @@ nest::correlospinmatrix_detector::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-nest::correlospinmatrix_detector::set_status( const DictionaryDatum& d )
+nest::correlospinmatrix_detector::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );

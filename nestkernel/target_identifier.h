@@ -59,13 +59,13 @@ public:
 
 
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( dictionary& d ) const
   {
     // Do nothing if called on synapse prototype
     if ( target_ != 0 )
     {
-      def< long >( d, names::rport, rport_ );
-      def< long >( d, names::target, target_->get_node_id() );
+      d[ names::rport.toString() ] = rport_;
+      d[ names::target.toString() ] = target_->get_node_id();
     }
   }
 
@@ -122,13 +122,13 @@ public:
 
 
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( dictionary& d ) const
   {
     // Do nothing if called on synapse prototype
     if ( target_ != invalid_targetindex )
     {
-      def< long >( d, names::rport, 0 );
-      def< long >( d, names::target, target_ );
+      d[ names::rport.toString() ] = 0;
+      d[ names::target.toString() ] = target_;
     }
   }
 

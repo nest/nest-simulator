@@ -218,8 +218,8 @@ public:
   nest::port handles_test_event( nest::CurrentEvent&, nest::port );
   nest::port handles_test_event( nest::DataLoggingRequest&, nest::port );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   //! Reset internal buffers of neuron.
@@ -278,8 +278,8 @@ private:
 
     Parameters_();
 
-    void get( DictionaryDatum& ) const;
-    double set( const DictionaryDatum& );
+    void get( dictionary& ) const;
+    double set( const dictionary& );
   };
 
 
@@ -320,8 +320,8 @@ private:
 
     State_( const Parameters_& );
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double );
+    void get( dictionary&, const Parameters_& ) const;
+    void set( const dictionary&, const Parameters_&, double );
   };
 
 
@@ -467,7 +467,7 @@ nest::glif_cond::handles_test_event( nest::DataLoggingRequest& dlr, nest::port r
 }
 
 inline void
-glif_cond::get_status( DictionaryDatum& d ) const
+glif_cond::get_status( dictionary& d ) const
 {
   // get our own parameter and state data
   P_.get( d );
@@ -476,11 +476,11 @@ glif_cond::get_status( DictionaryDatum& d ) const
   // get information managed by parent class
   ArchivingNode::get_status( d );
 
-  ( *d )[ nest::names::recordables ] = recordablesMap_.get_list();
+  d[ nest::names::recordables.toString() ] = recordablesMap_.get_list();
 }
 
 inline void
-glif_cond::set_status( const DictionaryDatum& d )
+glif_cond::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;                 // temporary copy in case of errors
   const double delta_EL = ptmp.set( d ); // throws if BadProperty

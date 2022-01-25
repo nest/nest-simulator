@@ -71,13 +71,13 @@ nest::music_rate_out_proxy::Buffers_::Buffers_( const Buffers_& b )
  * ---------------------------------------------------------------- */
 
 void
-nest::music_rate_out_proxy::Parameters_::get( DictionaryDatum& d ) const
+nest::music_rate_out_proxy::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::port_name ] = port_name_;
+  d[ names::port_name.toString() ] = port_name_;
 }
 
 void
-nest::music_rate_out_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
+nest::music_rate_out_proxy::Parameters_::set( const dictionary& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
   //  if(d->known(names::port_name) && s.published_)
@@ -85,19 +85,19 @@ nest::music_rate_out_proxy::Parameters_::set( const DictionaryDatum& d, State_& 
 
   if ( not s.published_ )
   {
-    updateValue< string >( d, names::port_name, port_name_ );
+    d.update_value( names::port_name.toString(), port_name_ );
   }
 }
 
 void
-nest::music_rate_out_proxy::State_::get( DictionaryDatum& d ) const
+nest::music_rate_out_proxy::State_::get( dictionary& d ) const
 {
-  ( *d )[ names::published ] = published_;
-  ( *d )[ names::port_width ] = port_width_;
+  d[ names::published.toString() ] = published_;
+  d[ names::port_width.toString() ] = port_width_;
 }
 
 void
-nest::music_rate_out_proxy::State_::set( const DictionaryDatum&, const Parameters_& )
+nest::music_rate_out_proxy::State_::set( const dictionary&, const Parameters_& )
 {
 }
 
@@ -191,23 +191,23 @@ nest::music_rate_out_proxy::calibrate()
 }
 
 void
-nest::music_rate_out_proxy::get_status( DictionaryDatum& d ) const
+nest::music_rate_out_proxy::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
 
-  ( *d )[ names::connection_count ] = V_.index_map_.size();
+  d[ names::connection_count.toString() ] = V_.index_map_.size();
 
   // make a copy, since MUSIC uses int instead of long int
   std::vector< long >* pInd_map_long = new std::vector< long >( V_.index_map_.size() );
   std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator, std::vector< long >::iterator >(
     V_.index_map_.begin(), V_.index_map_.end(), pInd_map_long->begin() );
 
-  ( *d )[ names::index_map ] = IntVectorDatum( pInd_map_long );
+  d[ names::index_map.toString() ] = IntVectorDatum( pInd_map_long );
 }
 
 void
-nest::music_rate_out_proxy::set_status( const DictionaryDatum& d )
+nest::music_rate_out_proxy::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, S_ );     // throws if BadProperty

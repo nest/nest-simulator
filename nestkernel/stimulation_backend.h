@@ -110,7 +110,7 @@ public:
   *
   * @ingroup NESTio
   */
-  virtual void enroll( StimulationDevice&, const DictionaryDatum& ){};
+  virtual void enroll( StimulationDevice&, const dictionary& ){};
 
   /**
    * Disenroll a `StimulationDevice` from the `StimulationBackend`.

@@ -181,52 +181,52 @@ nest::aeif_cond_exp::State_& nest::aeif_cond_exp::State_::operator=( const State
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_exp::Parameters_::get( DictionaryDatum& d ) const
+nest::aeif_cond_exp::Parameters_::get( dictionary& d ) const
 {
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::V_th, V_th );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
-  def< double >( d, names::tau_syn_ex, tau_syn_ex );
-  def< double >( d, names::tau_syn_in, tau_syn_in );
-  def< double >( d, names::a, a );
-  def< double >( d, names::b, b );
-  def< double >( d, names::Delta_T, Delta_T );
-  def< double >( d, names::tau_w, tau_w );
-  def< double >( d, names::I_e, I_e );
-  def< double >( d, names::V_peak, V_peak_ );
-  def< double >( d, names::gsl_error_tol, gsl_error_tol );
+  d[ names::C_m.toString() ] = C_m;
+  d[ names::V_th.toString() ] = V_th;
+  d[ names::t_ref.toString() ] = t_ref_;
+  d[ names::g_L.toString() ] = g_L;
+  d[ names::E_L.toString() ] = E_L;
+  d[ names::V_reset.toString() ] = V_reset_;
+  d[ names::E_ex.toString() ] = E_ex;
+  d[ names::E_in.toString() ] = E_in;
+  d[ names::tau_syn_ex.toString() ] = tau_syn_ex;
+  d[ names::tau_syn_in.toString() ] = tau_syn_in;
+  d[ names::a.toString() ] = a;
+  d[ names::b.toString() ] = b;
+  d[ names::Delta_T.toString() ] = Delta_T;
+  d[ names::tau_w.toString() ] = tau_w;
+  d[ names::I_e.toString() ] = I_e;
+  d[ names::V_peak.toString() ] = V_peak_;
+  d[ names::gsl_error_tol.toString() ] = gsl_error_tol;
 }
 
 void
-nest::aeif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::aeif_cond_exp::Parameters_::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::V_th, V_th, node );
-  updateValueParam< double >( d, names::V_peak, V_peak_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
-  updateValueParam< double >( d, names::E_ex, E_ex, node );
-  updateValueParam< double >( d, names::E_in, E_in, node );
+  update_value_param( d, names::V_th.toString(), V_th, node );
+  update_value_param( d, names::V_peak.toString(), V_peak_, node );
+  update_value_param( d, names::t_ref.toString(), t_ref_, node );
+  update_value_param( d, names::E_L.toString(), E_L, node );
+  update_value_param( d, names::V_reset.toString(), V_reset_, node );
+  update_value_param( d, names::E_ex.toString(), E_ex, node );
+  update_value_param( d, names::E_in.toString(), E_in, node );
 
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m.toString(), C_m, node );
+  update_value_param( d, names::g_L.toString(), g_L, node );
 
-  updateValueParam< double >( d, names::tau_syn_ex, tau_syn_ex, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_syn_in, node );
+  update_value_param( d, names::tau_syn_ex.toString(), tau_syn_ex, node );
+  update_value_param( d, names::tau_syn_in.toString(), tau_syn_in, node );
 
-  updateValueParam< double >( d, names::a, a, node );
-  updateValueParam< double >( d, names::b, b, node );
-  updateValueParam< double >( d, names::Delta_T, Delta_T, node );
-  updateValueParam< double >( d, names::tau_w, tau_w, node );
+  update_value_param( d, names::a.toString(), a, node );
+  update_value_param( d, names::b.toString(), b, node );
+  update_value_param( d, names::Delta_T.toString(), Delta_T, node );
+  update_value_param( d, names::tau_w.toString(), tau_w, node );
 
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::I_e.toString(), I_e, node );
 
-  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
+  update_value_param( d, names::gsl_error_tol.toString(), gsl_error_tol, node );
 
   if ( V_peak_ < V_th )
   {
@@ -279,21 +279,21 @@ nest::aeif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::aeif_cond_exp::State_::get( DictionaryDatum& d ) const
+nest::aeif_cond_exp::State_::get( dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] );
-  def< double >( d, names::g_ex, y_[ G_EXC ] );
-  def< double >( d, names::g_in, y_[ G_INH ] );
-  def< double >( d, names::w, y_[ W ] );
+  d[ names::V_m.toString() ] = y_[ V_M ];
+  d[ names::g_ex.toString() ] = y_[ G_EXC ];
+  d[ names::g_in.toString() ] = y_[ G_INH ];
+  d[ names::w.toString() ] = y_[ W ];
 }
 
 void
-nest::aeif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::aeif_cond_exp::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
-  updateValueParam< double >( d, names::g_ex, y_[ G_EXC ], node );
-  updateValueParam< double >( d, names::g_in, y_[ G_INH ], node );
-  updateValueParam< double >( d, names::w, y_[ W ], node );
+  update_value_param( d, names::V_m.toString(), y_[ V_M ], node );
+  update_value_param( d, names::g_ex.toString(), y_[ G_EXC ], node );
+  update_value_param( d, names::g_in.toString(), y_[ G_INH ], node );
+  update_value_param( d, names::w.toString(), y_[ W ], node );
   if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
   {
     throw BadProperty( "Conductances must not be negative." );

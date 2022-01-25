@@ -63,74 +63,48 @@ nest::weight_recorder::Parameters_::Parameters_()
 }
 
 void
-nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
+nest::weight_recorder::Parameters_::get( dictionary& d ) const
 {
   if ( senders_.get() )
   {
-    ( *d )[ names::senders ] = senders_;
+    d[ names::senders.toString() ] = senders_;
   }
   else
   {
     ArrayDatum ad;
-    ( *d )[ names::senders ] = ad;
+    d[ names::senders.toString() ] = ad;
   }
   if ( targets_.get() )
   {
-    ( *d )[ names::targets ] = targets_;
+    d[ names::targets.toString() ] = targets_;
   }
   else
   {
     ArrayDatum ad;
-    ( *d )[ names::targets ] = ad;
+    d[ names::targets.toString() ] = ad;
   }
 }
 
 void
-nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
+nest::weight_recorder::Parameters_::set( const dictionary& d )
 {
-  if ( d->known( names::senders ) )
+  auto get_or_create_nc = [&d]( NodeCollectionDatum& nc, const std::string& key )
   {
-    const Token& tkn = d->lookup( names::senders );
-    if ( tkn.is_a< NodeCollectionDatum >() )
+    const auto value = d.at( key );
+    if ( is_nc( value ) )
     {
-      senders_ = getValue< NodeCollectionDatum >( tkn );
+      nc = d.get< NodeCollectionDatum >( key );
     }
-    else
+    else if ( is_int_vector( value ) )
     {
-      if ( tkn.is_a< IntVectorDatum >() )
-      {
-        IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
-        senders_ = NodeCollection::create( ivd );
-      }
-      if ( tkn.is_a< ArrayDatum >() )
-      {
-        ArrayDatum ad = getValue< ArrayDatum >( tkn );
-        senders_ = NodeCollection::create( ad );
-      }
+      const auto node_ids = d.get< std::vector< int > >( key );
+      // TODO-PYNEST-NG: make a NodeCollection::create(vector<int>) variant
+      // nc = NodeCollection::create(node_ids);
     }
-  }
+  };
 
-  if ( d->known( names::targets ) )
-  {
-    const Token& tkn = d->lookup( names::targets );
-    if ( tkn.is_a< NodeCollectionDatum >() )
-    {
-      targets_ = getValue< NodeCollectionDatum >( tkn );
-    }
-    else
-    {
-      if ( tkn.is_a< IntVectorDatum >() )
-      {
-        IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
-        targets_ = NodeCollection::create( ivd );
-      }
-      if ( tkn.is_a< ArrayDatum >() )
-      {
-        ArrayDatum ad = getValue< ArrayDatum >( tkn );
-        targets_ = NodeCollection::create( ad );
-      }
-    }
-  }
+  get_or_create_nc( senders_, names::senders.toString() );
+  get_or_create_nc( targets_, names::targets.toString() );
 }
 
 void
@@ -152,7 +126,7 @@ nest::weight_recorder::get_type() const
 }
 
 void
-nest::weight_recorder::get_status( DictionaryDatum& d ) const
+nest::weight_recorder::get_status( dictionary& d ) const
 {
   // get the data from the device
   RecordingDevice::get_status( d );
@@ -178,7 +152,7 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::weight_recorder::set_status( const DictionaryDatum& d )
+nest::weight_recorder::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;
   ptmp.set( d );

@@ -51,7 +51,7 @@ public:
    * shape - size in grid coordinates
              (length 2 for 2D layers or length 3 for 3D layers)
    */
-  GridMask( const DictionaryDatum& d );
+  GridMask( const dictionary& d );
 
   bool
   inside( const std::vector< double >& ) const
@@ -110,9 +110,9 @@ protected:
 };
 
 template < int D >
-GridMask< D >::GridMask( const DictionaryDatum& d )
+GridMask< D >::GridMask( const dictionary& d )
 {
-  std::vector< long > shape = getValue< std::vector< long > >( d, names::shape );
+  std::vector< long > shape = d.get< std::vector< long > >( names::shape.toString() );
 
   if ( D == 2 )
   {

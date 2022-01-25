@@ -168,8 +168,8 @@ public:
   void handle( CurrentEvent& );
   void handle( DataLoggingRequest& );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -207,8 +207,8 @@ private:
 
     Parameters_(); //!< Set default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dicitonary
   };
 
   // State variables class --------------------------------------------
@@ -247,13 +247,13 @@ public:
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
 
     /**
      * Set state from values in dictionary.
      * Requires Parameters_ as argument to, eg, check bounds.'
      */
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void set( const dictionary&, const Parameters_&, Node* );
   };
 
 private:
@@ -395,17 +395,17 @@ iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type
 }
 
 inline void
-iaf_cond_alpha::get_status( DictionaryDatum& d ) const
+iaf_cond_alpha::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_cond_alpha::set_status( const DictionaryDatum& d )
+iaf_cond_alpha::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

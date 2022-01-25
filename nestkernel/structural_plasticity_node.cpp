@@ -51,35 +51,33 @@ nest::StructuralPlasticityNode::StructuralPlasticityNode( const StructuralPlasti
 }
 
 void
-nest::StructuralPlasticityNode::get_status( DictionaryDatum& d ) const
+nest::StructuralPlasticityNode::get_status( dictionary& d ) const
 {
-  DictionaryDatum synaptic_elements_d;
-  DictionaryDatum synaptic_element_d;
+  dictionary synaptic_elements_d;
 
-  def< double >( d, names::Ca, Ca_minus_ );
-  def< double >( d, names::tau_Ca, tau_Ca_ );
-  def< double >( d, names::beta_Ca, beta_Ca_ );
+  d[ names::Ca.toString() ] = Ca_minus_;
+  d[ names::tau_Ca.toString() ] = tau_Ca_;
+  d[ names::beta_Ca.toString() ] = beta_Ca_;
 
-  synaptic_elements_d = DictionaryDatum( new Dictionary );
-  def< DictionaryDatum >( d, names::synaptic_elements, synaptic_elements_d );
+  d[ names::synaptic_elements.toString() ] = synaptic_elements_d;
   for ( std::map< Name, SynapticElement >::const_iterator it = synaptic_elements_map_.begin();
         it != synaptic_elements_map_.end();
         ++it )
   {
-    synaptic_element_d = DictionaryDatum( new Dictionary );
-    def< DictionaryDatum >( synaptic_elements_d, it->first, synaptic_element_d );
+    dictionary synaptic_element_d;
+    synaptic_elements_d[ it->first.toString() ] = synaptic_element_d;
     it->second.get( synaptic_element_d );
   }
 }
 
 void
-nest::StructuralPlasticityNode::set_status( const DictionaryDatum& d )
+nest::StructuralPlasticityNode::set_status( const dictionary& d )
 {
   // We need to preserve values in case invalid values are set
   double new_tau_Ca = tau_Ca_;
   double new_beta_Ca = beta_Ca_;
-  updateValue< double >( d, names::tau_Ca, new_tau_Ca );
-  updateValue< double >( d, names::beta_Ca, new_beta_Ca );
+  d.update_value( names::tau_Ca.toString(), new_tau_Ca );
+  d.update_value( names::beta_Ca.toString(), new_beta_Ca );
 
   if ( new_tau_Ca <= 0.0 )
   {
@@ -97,43 +95,46 @@ nest::StructuralPlasticityNode::set_status( const DictionaryDatum& d )
 
   // check, if to clear spike history and K_minus
   bool clear = false;
-  updateValue< bool >( d, names::clear, clear );
+  d.update_value( names::clear.toString(), clear );
   if ( clear )
   {
     clear_history();
   }
 
-  if ( d->known( names::synaptic_elements_param ) )
-  {
-    const DictionaryDatum synaptic_elements_dict = getValue< DictionaryDatum >( d, names::synaptic_elements_param );
+  // TODO-PYNEST-NG: fix
+  // if ( d->known( names::synaptic_elements_param ) )
+  // {
+  //   const DictionaryDatum synaptic_elements_dict = getValue< DictionaryDatum >( d, names::synaptic_elements_param );
 
-    for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
-          it != synaptic_elements_map_.end();
-          ++it )
-    {
-      if ( synaptic_elements_dict->known( it->first ) )
-      {
-        const DictionaryDatum synaptic_elements_a = getValue< DictionaryDatum >( synaptic_elements_dict, it->first );
-        it->second.set( synaptic_elements_a );
-      }
-    }
-  }
-  if ( not d->known( names::synaptic_elements ) )
-  {
-    return;
-  }
+  //   for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
+  //         it != synaptic_elements_map_.end();
+  //         ++it )
+  //   {
+  //     if ( synaptic_elements_dict->known( it->first ) )
+  //     {
+  //       const DictionaryDatum synaptic_elements_a = getValue< DictionaryDatum >( synaptic_elements_dict, it->first );
+  //       it->second.set( synaptic_elements_a );
+  //     }
+  //   }
+  // }
+  // if ( not d->known( names::synaptic_elements ) )
+  // {
+  //   return;
+  // }
   // we replace the existing synaptic_elements_map_ by the new one
-  DictionaryDatum synaptic_elements_d;
+  dictionary synaptic_elements_d;
   std::pair< std::map< Name, SynapticElement >::iterator, bool > insert_result;
 
   synaptic_elements_map_ = std::map< Name, SynapticElement >();
-  synaptic_elements_d = getValue< DictionaryDatum >( d, names::synaptic_elements );
+  synaptic_elements_d = d.get< dictionary >( names::synaptic_elements.toString() );
 
-  for ( Dictionary::const_iterator i = synaptic_elements_d->begin(); i != synaptic_elements_d->end(); ++i )
-  {
-    insert_result = synaptic_elements_map_.insert( std::pair< Name, SynapticElement >( i->first, SynapticElement() ) );
-    ( insert_result.first->second ).set( getValue< DictionaryDatum >( synaptic_elements_d, i->first ) );
-  }
+  // TODO-PYNEST-NG: fix
+  // for ( Dictionary::const_iterator i = synaptic_elements_d->begin(); i != synaptic_elements_d->end(); ++i )
+  // {
+  //   insert_result = synaptic_elements_map_.insert( std::pair< Name, SynapticElement >( i->first, SynapticElement() )
+  //   );
+  //   ( insert_result.first->second ).set( synaptic_elements_d.get< DictionaryDatum >( i->first ) );
+  // }
 }
 
 void

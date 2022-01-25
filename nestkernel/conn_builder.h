@@ -77,7 +77,7 @@ public:
   virtual void disconnect();
 
   //! parameters: sources, targets, specifications
-  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
+  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
   virtual ~ConnBuilder();
 
   index
@@ -209,7 +209,7 @@ protected:
   std::vector< index > synapse_model_id_;
 
   //! dictionaries to pass to connect function, one per thread for every syn_spec
-  std::vector< std::vector< DictionaryDatum > > param_dicts_;
+  std::vector< std::vector< dictionary > > param_dicts_;
 
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
@@ -245,10 +245,10 @@ private:
   /*
    * Set synapse specific parameters.
    */
-  void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
-  void set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx );
-  void set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
-  void set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs );
+  void set_synapse_model_( dictionary syn_params, size_t indx );
+  void set_default_weight_or_delay_( dictionary syn_params, size_t indx );
+  void set_synapse_params( dictionary syn_defaults, dictionary syn_params, size_t indx );
+  void set_structural_plasticity_parameters( std::vector< dictionary > syn_specs );
 
   /**
    * Reset weight and delay pointers
@@ -262,8 +262,8 @@ class OneToOneBuilder : public ConnBuilder
 public:
   OneToOneBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs );
+    const dictionary& conn_spec,
+    const std::vector< dictionary >& syn_specs );
 
   bool
   supports_symmetric() const
@@ -289,8 +289,8 @@ class AllToAllBuilder : public ConnBuilder
 public:
   AllToAllBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs )
+    const dictionary& conn_spec,
+    const std::vector< dictionary >& syn_specs )
     : ConnBuilder( sources, targets, conn_spec, syn_specs )
   {
   }
@@ -321,10 +321,7 @@ private:
 class FixedInDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedInDegreeBuilder( NodeCollectionPTR,
-    NodeCollectionPTR,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+  FixedInDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
 
 protected:
   void connect_();
@@ -337,10 +334,7 @@ private:
 class FixedOutDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedOutDegreeBuilder( NodeCollectionPTR,
-    NodeCollectionPTR,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+  FixedOutDegreeBuilder( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
 
 protected:
   void connect_();
@@ -352,10 +346,7 @@ private:
 class FixedTotalNumberBuilder : public ConnBuilder
 {
 public:
-  FixedTotalNumberBuilder( NodeCollectionPTR,
-    NodeCollectionPTR,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+  FixedTotalNumberBuilder( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
 
 protected:
   void connect_();
@@ -367,10 +358,7 @@ private:
 class BernoulliBuilder : public ConnBuilder
 {
 public:
-  BernoulliBuilder( NodeCollectionPTR,
-    NodeCollectionPTR,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+  BernoulliBuilder( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
 
 protected:
   void connect_();
@@ -385,8 +373,8 @@ class SymmetricBernoulliBuilder : public ConnBuilder
 public:
   SymmetricBernoulliBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+    const dictionary&,
+    const std::vector< dictionary >& );
 
   bool
   supports_symmetric() const
@@ -406,8 +394,8 @@ class SPBuilder : public ConnBuilder
 public:
   SPBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_spec );
+    const dictionary& conn_spec,
+    const std::vector< dictionary >& syn_spec );
 
   std::string
   get_pre_synaptic_element_name() const

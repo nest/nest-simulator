@@ -229,8 +229,8 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -289,8 +289,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -321,8 +321,8 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( dictionary&, const Parameters_& ) const;
+    void set( const dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -449,16 +449,16 @@ gif_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport rec
 }
 
 inline void
-gif_psc_exp_multisynapse::get_status( DictionaryDatum& d ) const
+gif_psc_exp_multisynapse::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 }
 
 inline void
-gif_psc_exp_multisynapse::set_status( const DictionaryDatum& d )
+gif_psc_exp_multisynapse::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

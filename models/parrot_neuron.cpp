@@ -81,14 +81,14 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
 }
 
 void
-parrot_neuron::get_status( DictionaryDatum& d ) const
+parrot_neuron::get_status( dictionary& d ) const
 {
-  def< double >( d, names::t_spike, get_spiketime_ms() );
+  d[ names::t_spike.toString() ] = get_spiketime_ms();
   ArchivingNode::get_status( d );
 }
 
 void
-parrot_neuron::set_status( const DictionaryDatum& d )
+parrot_neuron::set_status( const dictionary& d )
 {
   ArchivingNode::set_status( d );
 }

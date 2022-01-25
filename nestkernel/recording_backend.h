@@ -118,7 +118,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void enroll( const RecordingDevice& device, const DictionaryDatum& params ) = 0;
+  virtual void enroll( const RecordingDevice& device, const dictionary& params ) = 0;
 
   /**
    * Disenroll a `RecordingDevice` from the `RecordingBackend`.
@@ -258,7 +258,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void set_status( const DictionaryDatum& params ) = 0;
+  virtual void set_status( const dictionary& params ) = 0;
 
   /**
    * Return the status of the recording backend by writing it to the given
@@ -289,7 +289,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void check_device_status( const DictionaryDatum& params ) const = 0;
+  virtual void check_device_status( const dictionary& params ) const = 0;
 
   /**
    * Return the per-device defaults by writing it to the given params
@@ -301,7 +301,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void get_device_defaults( DictionaryDatum& params ) const = 0;
+  virtual void get_device_defaults( dictionary& params ) const = 0;
 
   /**
    * Return the per-device status of the given recording device by
@@ -318,7 +318,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void get_device_status( const RecordingDevice& device, DictionaryDatum& params ) const = 0;
+  virtual void get_device_status( const RecordingDevice& device, dictionary& params ) const = 0;
 
   static const std::vector< Name > NO_DOUBLE_VALUE_NAMES;
   static const std::vector< Name > NO_LONG_VALUE_NAMES;

@@ -57,10 +57,10 @@ public:
   {
   }
 
-  void set_status( const DictionaryDatum&, bool ){};
+  void set_status( const dictionary&, bool ){};
 
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( dictionary& d ) const
   {
     layer_->get_status( d );
   }
@@ -100,11 +100,11 @@ public:
       return false;
     }
     // Compare status dictionaries of this layer and rhs layer
-    DictionaryDatum dict( new Dictionary() );
-    DictionaryDatum rhs_dict( new Dictionary() );
+    dictionary dict;
+    dictionary rhs_dict;
     get_status( dict );
     rhs_layer_metadata->get_status( rhs_dict );
-    return *dict == *rhs_dict;
+    return dict == rhs_dict;
   }
 
 private:
@@ -113,7 +113,7 @@ private:
 };
 
 AbstractLayerPTR get_layer( NodeCollectionPTR layer_nc );
-NodeCollectionPTR create_layer( const DictionaryDatum& layer_dict );
+NodeCollectionPTR create_layer( const dictionary& layer_dict );
 ArrayDatum get_position( NodeCollectionPTR layer_nc );
 std::vector< double > get_position( const index node_id );
 ArrayDatum displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
@@ -126,7 +126,7 @@ BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
-void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const DictionaryDatum& dict );
+void connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& dict );
 void dump_layer_nodes( NodeCollectionPTR layer_nc, OstreamDatum& out );
 void dump_layer_connections( const Token& syn_model,
   NodeCollectionPTR source_layer_nc,

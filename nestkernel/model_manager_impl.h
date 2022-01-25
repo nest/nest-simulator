@@ -43,7 +43,7 @@ template < class ModelT >
 index
 ModelManager::register_node_model( const Name& name, bool private_model, std::string deprecation_info )
 {
-  if ( not private_model and modeldict_->known( name ) )
+  if ( not private_model and modeldict_.known( name.toString() ) )
   {
     std::string msg = String::compose(
       "A model called '%1' already exists.\n"
@@ -56,30 +56,6 @@ ModelManager::register_node_model( const Name& name, bool private_model, std::st
   return register_node_model_( model, private_model );
 }
 
-template < class ModelT >
-index
-ModelManager::register_preconf_node_model( const Name& name,
-  DictionaryDatum& conf,
-  bool private_model,
-  std::string deprecation_info )
-{
-  if ( not private_model and modeldict_->known( name ) )
-  {
-    std::string msg = String::compose(
-      "A model called '%1' already exists.\n"
-      "Please choose a different name!",
-      name );
-    throw NamingConflict( msg );
-  }
-
-  Model* model = new GenericModel< ModelT >( name.toString(), deprecation_info );
-  conf->clear_access_flags();
-  model->set_status( conf );
-  std::string missed;
-  // we only get here from C++ code, no need for exception
-  assert( conf->all_accessed( missed ) );
-  return register_node_model_( model, private_model );
-}
 
 template < template < typename targetidentifierT > class ConnectionT >
 void

@@ -75,8 +75,8 @@ public:
   const std::string commandstring( void ) const;
   const std::string name( void ) const;
 
-  static sharedPtrDatum< Parameter, &ParameterType > create_parameter( const Token& );
-  static Parameter* create_parameter( const Name& name, const DictionaryDatum& d );
+  // static sharedPtrDatum< Parameter, &ParameterType > create_parameter( const Token& );
+  // static Parameter* create_parameter( const Name& name, const DictionaryDatum& d );
 
   using ParameterFactory = GenericFactory< Parameter >;
   using ParameterCreatorFunction = GenericFactory< Parameter >::CreatorFunction;
@@ -125,7 +125,7 @@ public:
    * @param d    Dictionary with parameters specific for this mask type.
    * @returns dynamically allocated new Mask object.
    */
-  static AbstractMask* create_mask( const Name& name, const DictionaryDatum& d );
+  static AbstractMask* create_mask( const Name& name, const dictionary& d );
 
   /**
    * @defgroup NestSliInterface SLI Interface functions of the NEST kernel.
@@ -822,11 +822,11 @@ NestModule::register_mask( const Name& name, MaskCreatorFunction creator )
   return mask_factory_().register_subtype( name, creator );
 }
 
-inline AbstractMask*
-NestModule::create_mask( const Name& name, const DictionaryDatum& d )
-{
-  return mask_factory_().create( name, d );
-}
+// inline AbstractMask*
+// NestModule::create_mask( const Name& name, const dictionary& d )
+// {
+//   return mask_factory_().create( name, d );
+// }
 
 } // namespace
 

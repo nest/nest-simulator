@@ -106,54 +106,54 @@ NestModule::commandstring( void ) const
   return std::string( "(nest-init) run" );
 }
 
-ParameterDatum
-NestModule::create_parameter( const Token& t )
-{
-  // t can be an existing ParameterDatum, a DoubleDatum containing a
-  // constant value for this parameter, or a Dictionary containing
-  // parameters
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
-  if ( pd )
-  {
-    return *pd;
-  }
+// ParameterDatum
+// NestModule::create_parameter( const Token& t )
+// {
+//   // t can be an existing ParameterDatum, a DoubleDatum containing a
+//   // constant value for this parameter, or a Dictionary containing
+//   // parameters
+//   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
+//   if ( pd )
+//   {
+//     return *pd;
+//   }
 
-  // If t is a DoubleDatum, create a ConstantParameter with this value
-  DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
-  if ( dd )
-  {
-    return new ConstantParameter( *dd );
-  }
+//   // If t is a DoubleDatum, create a ConstantParameter with this value
+//   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
+//   if ( dd )
+//   {
+//     return new ConstantParameter( *dd );
+//   }
 
-  DictionaryDatum* dictd = dynamic_cast< DictionaryDatum* >( t.datum() );
-  if ( dictd )
-  {
+//   DictionaryDatum* dictd = dynamic_cast< DictionaryDatum* >( t.datum() );
+//   if ( dictd )
+//   {
 
-    // The dictionary should only have a single key, which is the name of
-    // the parameter type to create.
-    if ( ( *dictd )->size() != 1 )
-    {
-      throw BadProperty( "Parameter definition dictionary must contain one single key only." );
-    }
+//     // The dictionary should only have a single key, which is the name of
+//     // the parameter type to create.
+//     if ( ( *dictd )->size() != 1 )
+//     {
+//       throw BadProperty( "Parameter definition dictionary must contain one single key only." );
+//     }
 
-    Name n = ( *dictd )->begin()->first;
-    DictionaryDatum pdict = getValue< DictionaryDatum >( *dictd, n );
-    return create_parameter( n, pdict );
-  }
-  else
-  {
-    throw BadProperty( "Parameter must be parametertype, constant or dictionary." );
-  }
-}
+//     Name n = ( *dictd )->begin()->first;
+//     DictionaryDatum pdict = getValue< DictionaryDatum >( *dictd, n );
+//     return create_parameter( n, pdict );
+//   }
+//   else
+//   {
+//     throw BadProperty( "Parameter must be parametertype, constant or dictionary." );
+//   }
+// }
 
-Parameter*
-NestModule::create_parameter( const Name& name, const DictionaryDatum& d )
-{
-  // The parameter factory will create the parameter
-  Parameter* param = parameter_factory_().create( name, d );
+// Parameter*
+// NestModule::create_parameter( const Name& name, const DictionaryDatum& d )
+// {
+//   // The parameter factory will create the parameter
+//   Parameter* param = parameter_factory_().create( name, d );
 
-  return param;
-}
+//   return param;
+// }
 
 GenericFactory< Parameter >&
 NestModule::parameter_factory_( void )
@@ -173,109 +173,110 @@ NestModule::mask_factory_( void )
 MaskDatum
 NestModule::create_mask( const Token& t )
 {
-  // t can be either an existing MaskDatum, or a Dictionary containing
-  // mask parameters
-  MaskDatum* maskd = dynamic_cast< MaskDatum* >( t.datum() );
-  if ( maskd )
-  {
-    return *maskd;
-  }
-  else
-  {
+  // TODO-PYNEST-NG: move and convert to use dictionary
+  // // t can be either an existing MaskDatum, or a Dictionary containing
+  // // mask parameters
+  // MaskDatum* maskd = dynamic_cast< MaskDatum* >( t.datum() );
+  // if ( maskd )
+  // {
+  //   return *maskd;
+  // }
+  // else
+  // {
 
-    DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( t.datum() );
-    if ( dd == 0 )
-    {
-      throw BadProperty( "Mask must be masktype or dictionary." );
-    }
+  //   DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( t.datum() );
+  //   if ( dd == 0 )
+  //   {
+  //     throw BadProperty( "Mask must be masktype or dictionary." );
+  //   }
 
-    // The dictionary should contain one key which is the name of the
-    // mask type, and optionally the key 'anchor'. To find the unknown
-    // mask type key, we must loop through all keys. The value for the
-    // anchor key will be stored in the anchor_token variable.
-    Token anchor_token;
-    bool has_anchor = false;
-    AbstractMask* mask = 0;
+  //   // The dictionary should contain one key which is the name of the
+  //   // mask type, and optionally the key 'anchor'. To find the unknown
+  //   // mask type key, we must loop through all keys. The value for the
+  //   // anchor key will be stored in the anchor_token variable.
+  //   Token anchor_token;
+  //   bool has_anchor = false;
+  //   AbstractMask* mask = 0;
 
-    for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end(); ++dit )
-    {
+  //   for ( Dictionary::iterator dit = ( *dd )->begin(); dit != ( *dd )->end(); ++dit )
+  //   {
 
-      if ( dit->first == names::anchor )
-      {
+  //     if ( dit->first == names::anchor )
+  //     {
 
-        anchor_token = dit->second;
-        has_anchor = true;
-      }
-      else
-      {
+  //       anchor_token = dit->second;
+  //       has_anchor = true;
+  //     }
+  //     else
+  //     {
 
-        if ( mask != 0 )
-        { // mask has already been defined
-          throw BadProperty( "Mask definition dictionary contains extraneous items." );
-        }
-        mask = create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
-      }
-    }
+  //       if ( mask != 0 )
+  //       { // mask has already been defined
+  //         throw BadProperty( "Mask definition dictionary contains extraneous items." );
+  //       }
+  //       mask = create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
+  //     }
+  //   }
 
-    if ( has_anchor )
-    {
+  //   if ( has_anchor )
+  //   {
 
-      // The anchor may be an array of doubles (a spatial position).
-      // For grid layers only, it is also possible to provide an array of longs.
-      try
-      {
-        std::vector< long > anchor = getValue< std::vector< long > >( anchor_token );
+  //     // The anchor may be an array of doubles (a spatial position).
+  //     // For grid layers only, it is also possible to provide an array of longs.
+  //     try
+  //     {
+  //       std::vector< long > anchor = getValue< std::vector< long > >( anchor_token );
 
-        switch ( anchor.size() )
-        {
-        case 2:
-          try
-          {
-            GridMask< 2 >& grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
-            grid_mask_2d.set_anchor( Position< 2, int >( anchor[ 0 ], anchor[ 1 ] ) );
-          }
-          catch ( std::bad_cast& e )
-          {
-            throw BadProperty( "Mask must be 2-dimensional grid mask." );
-          }
-          break;
-        case 3:
-          try
-          {
-            GridMask< 3 >& grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
-            grid_mask_3d.set_anchor( Position< 3, int >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
-          }
-          catch ( std::bad_cast& e )
-          {
-            throw BadProperty( "Mask must be 3-dimensional grid mask." );
-          }
-          break;
-        }
-      }
-      catch ( TypeMismatch& e )
-      {
-        std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
-        AbstractMask* amask;
+  //       switch ( anchor.size() )
+  //       {
+  //       case 2:
+  //         try
+  //         {
+  //           GridMask< 2 >& grid_mask_2d = dynamic_cast< GridMask< 2 >& >( *mask );
+  //           grid_mask_2d.set_anchor( Position< 2, int >( anchor[ 0 ], anchor[ 1 ] ) );
+  //         }
+  //         catch ( std::bad_cast& e )
+  //         {
+  //           throw BadProperty( "Mask must be 2-dimensional grid mask." );
+  //         }
+  //         break;
+  //       case 3:
+  //         try
+  //         {
+  //           GridMask< 3 >& grid_mask_3d = dynamic_cast< GridMask< 3 >& >( *mask );
+  //           grid_mask_3d.set_anchor( Position< 3, int >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+  //         }
+  //         catch ( std::bad_cast& e )
+  //         {
+  //           throw BadProperty( "Mask must be 3-dimensional grid mask." );
+  //         }
+  //         break;
+  //       }
+  //     }
+  //     catch ( TypeMismatch& e )
+  //     {
+  //       std::vector< double > anchor = getValue< std::vector< double > >( anchor_token );
+  //       AbstractMask* amask;
 
-        switch ( anchor.size() )
-        {
-        case 2:
-          amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
-          break;
-        case 3:
-          amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
-          break;
-        default:
-          throw BadProperty( "Anchor must be 2- or 3-dimensional." );
-        }
+  //       switch ( anchor.size() )
+  //       {
+  //       case 2:
+  //         amask = new AnchoredMask< 2 >( dynamic_cast< Mask< 2 >& >( *mask ), anchor );
+  //         break;
+  //       case 3:
+  //         amask = new AnchoredMask< 3 >( dynamic_cast< Mask< 3 >& >( *mask ), anchor );
+  //         break;
+  //       default:
+  //         throw BadProperty( "Anchor must be 2- or 3-dimensional." );
+  //       }
 
-        delete mask;
-        mask = amask;
-      }
-    }
+  //       delete mask;
+  //       mask = amask;
+  //     }
+  //   }
 
-    return mask;
-  }
+  //   return mask;
+  // }
 }
 
 static AbstractMask*
@@ -337,7 +338,7 @@ NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
   index node_id = getValue< long >( i->OStack.pick( 1 ) );
 
-  set_node_status( node_id, dict );
+  // set_node_status( node_id, dict );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -351,7 +352,7 @@ NestModule::SetStatus_CDFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 1 ) );
 
-  set_connection_status( conn, dict );
+  // set_connection_status( conn, dict );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -364,7 +365,7 @@ NestModule::SetKernelStatus_DFunction::execute( SLIInterpreter* i ) const
 
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
 
-  set_kernel_status( dict );
+  // set_kernel_status( dict );
 
   i->OStack.pop();
   i->EStack.pop();
@@ -390,49 +391,49 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  ArrayDatum dict_a = getValue< ArrayDatum >( i->OStack.top() );
-  ArrayDatum conn_a = getValue< ArrayDatum >( i->OStack.pick( 1 ) );
+  // ArrayDatum dict_a = getValue< ArrayDatum >( i->OStack.top() );
+  // ArrayDatum conn_a = getValue< ArrayDatum >( i->OStack.pick( 1 ) );
 
-  if ( ( dict_a.size() != 1 ) and ( dict_a.size() != conn_a.size() ) )
-  {
-    throw RangeCheck();
-  }
-  if ( dict_a.size() == 1 ) // Broadcast
-  {
-    DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ 0 ] );
-    const size_t n_conns = conn_a.size();
-    for ( size_t con = 0; con < n_conns; ++con )
-    {
-      ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
-      dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status( con_id.get_source_node_id(),
-        con_id.get_target_node_id(),
-        con_id.get_target_thread(),
-        con_id.get_synapse_model_id(),
-        con_id.get_port(),
-        dict );
+  // if ( ( dict_a.size() != 1 ) and ( dict_a.size() != conn_a.size() ) )
+  // {
+  //   throw RangeCheck();
+  // }
+  // if ( dict_a.size() == 1 ) // Broadcast
+  // {
+  //   DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ 0 ] );
+  //   const size_t n_conns = conn_a.size();
+  //   for ( size_t con = 0; con < n_conns; ++con )
+  //   {
+  //     ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
+  //     dict->clear_access_flags();
+  //     kernel().connection_manager.set_synapse_status( con_id.get_source_node_id(),
+  //       con_id.get_target_node_id(),
+  //       con_id.get_target_thread(),
+  //       con_id.get_synapse_model_id(),
+  //       con_id.get_port(),
+  //       dict );
 
-      ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
-    }
-  }
-  else
-  {
-    const size_t n_conns = conn_a.size();
-    for ( size_t con = 0; con < n_conns; ++con )
-    {
-      DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
-      ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
-      dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status( con_id.get_source_node_id(),
-        con_id.get_target_node_id(),
-        con_id.get_target_thread(),
-        con_id.get_synapse_model_id(),
-        con_id.get_port(),
-        dict );
+  //     ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
+  //   }
+  // }
+  // else
+  // {
+  //   const size_t n_conns = conn_a.size();
+  //   for ( size_t con = 0; con < n_conns; ++con )
+  //   {
+  //     DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
+  //     ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
+  //     dict->clear_access_flags();
+  //     kernel().connection_manager.set_synapse_status( con_id.get_source_node_id(),
+  //       con_id.get_target_node_id(),
+  //       con_id.get_target_thread(),
+  //       con_id.get_synapse_model_id(),
+  //       con_id.get_port(),
+  //       dict );
 
-      ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
-    }
-  }
+  //     ALL_ENTRIES_ACCESSED( *dict, "SetStatus", "Unread dictionary entries: " );
+  //   }
+  // }
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -502,8 +503,8 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
   for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it )
   {
     index node_id = ( *it ).node_id;
-    DictionaryDatum dict = get_node_status( node_id );
-    result.push_back( dict );
+    // DictionaryDatum dict = get_node_status( node_id );
+    // result.push_back( dict );
   }
 
   i->OStack.pop();
@@ -517,10 +518,10 @@ NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   index node_id = getValue< long >( i->OStack.pick( 0 ) );
-  DictionaryDatum dict = get_node_status( node_id );
+  // DictionaryDatum dict = get_node_status( node_id );
 
   i->OStack.pop();
-  i->OStack.push( dict );
+  // i->OStack.push( dict );
   i->EStack.pop();
 }
 
@@ -531,14 +532,14 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
 
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
-  DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
-    conn.get_target_node_id(),
-    conn.get_target_thread(),
-    conn.get_synapse_model_id(),
-    conn.get_port() );
+  // DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+  //   conn.get_target_node_id(),
+  //   conn.get_target_thread(),
+  //   conn.get_synapse_model_id(),
+  //   conn.get_port() );
 
   i->OStack.pop();
-  i->OStack.push( result_dict );
+  // i->OStack.push( result_dict );
   i->EStack.pop();
 }
 
@@ -554,12 +555,12 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   for ( size_t nt = 0; nt < n_results; ++nt )
   {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
-    DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
-      con_id.get_target_node_id(),
-      con_id.get_target_thread(),
-      con_id.get_synapse_model_id(),
-      con_id.get_port() );
-    result.push_back( result_dict );
+    // DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
+    //   con_id.get_target_node_id(),
+    //   con_id.get_target_thread(),
+    //   con_id.get_synapse_model_id(),
+    //   con_id.get_port() );
+    // result.push_back( result_dict );
   }
 
   i->OStack.pop();
@@ -585,7 +586,7 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   // return empty dict if NC does not have metadata
   if ( meta.get() )
   {
-    meta->get_status( dict );
+    // meta->get_status( dict );
 
     ( *dict )[ names::network_size ] = nc->size();
   }
@@ -619,7 +620,7 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
   const Name name = getValue< Name >( i->OStack.pick( 1 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  kernel().model_manager.set_model_defaults( name, params );
+  // kernel().model_manager.set_model_defaults( name, params );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -637,13 +638,13 @@ NestModule::GetDefaults_lFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const Name modelname = getValue< Name >( i->OStack.pick( 0 ) );
+  // const Name modelname = getValue< Name >( i->OStack.pick( 0 ) );
 
-  DictionaryDatum dict = get_model_defaults( modelname );
+  // DictionaryDatum dict = get_model_defaults( modelname );
 
-  i->OStack.pop();
-  i->OStack.push( dict );
-  i->EStack.pop();
+  // i->OStack.pop();
+  // i->OStack.push( dict );
+  // i->EStack.pop();
 }
 
 void
@@ -788,7 +789,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
   const Name new_name = getValue< Name >( i->OStack.pick( 1 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  kernel().model_manager.copy_model( old_name, new_name, params );
+  // kernel().model_manager.copy_model( old_name, new_name, params );
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -847,13 +848,13 @@ NestModule::GetNodes_D_b::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 2 );
 
   // extract arguments
-  const bool local_only = getValue< bool >( i->OStack.pick( 0 ) );
-  const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  // const bool local_only = getValue< bool >( i->OStack.pick( 0 ) );
+  // const DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
 
-  NodeCollectionDatum nodes = get_nodes( params, local_only );
+  // NodeCollectionDatum nodes = get_nodes( params, local_only );
 
   i->OStack.pop( 2 );
-  i->OStack.push( nodes );
+  // i->OStack.push( nodes );
   i->EStack.pop();
 }
 
@@ -895,7 +896,7 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
   // dictionary access checking is handled by disconnect
-  kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
+  // kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -906,49 +907,49 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 {
-  kernel().connection_manager.sw_construction_connect.start();
+  // kernel().connection_manager.sw_construction_connect.start();
 
   i->assert_stack_load( 4 );
 
-  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
-  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
-  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  // NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
+  // NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
+  // DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  // DictionaryDatum synapse_params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  // dictionary access checking is handled by connect
-  kernel().connection_manager.connect( sources, targets, connectivity, { synapse_params } );
+  // // dictionary access checking is handled by connect
+  // kernel().connection_manager.connect( sources, targets, connectivity, { synapse_params } );
 
-  i->OStack.pop( 4 );
-  i->EStack.pop();
+  // i->OStack.pop( 4 );
+  // i->EStack.pop();
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  // kernel().connection_manager.sw_construction_connect.stop();
 }
 
 void
 NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
 {
-  kernel().connection_manager.sw_construction_connect.start();
+  // kernel().connection_manager.sw_construction_connect.start();
 
   i->assert_stack_load( 4 );
 
-  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
-  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
-  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  ArrayDatum synapse_params_arr = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
-  std::vector< DictionaryDatum > synapse_params;
+  // NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
+  // NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
+  // DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  // ArrayDatum synapse_params_arr = getValue< ArrayDatum >( i->OStack.pick( 0 ) );
+  // std::vector< DictionaryDatum > synapse_params;
 
-  for ( auto syn_param : synapse_params_arr )
-  {
-    synapse_params.push_back( getValue< DictionaryDatum >( syn_param ) );
-  }
+  // for ( auto syn_param : synapse_params_arr )
+  // {
+  //   synapse_params.push_back( getValue< DictionaryDatum >( syn_param ) );
+  // }
 
-  // dictionary access checking is handled by connect
-  kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
+  // // dictionary access checking is handled by connect
+  // kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
 
-  i->OStack.pop( 4 );
-  i->EStack.pop();
+  // i->OStack.pop( 4 );
+  // i->EStack.pop();
 
-  kernel().connection_manager.sw_construction_connect.stop();
+  // kernel().connection_manager.sw_construction_connect.stop();
 }
 
 /** @BeginDocumentation
@@ -1710,10 +1711,10 @@ NestModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   const DictionaryDatum param_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  ParameterDatum datum = nest::create_parameter( param_dict );
+  // ParameterDatum datum = nest::create_parameter( param_dict );
 
   i->OStack.pop( 1 );
-  i->OStack.push( datum );
+  // i->OStack.push( datum );
   i->EStack.pop();
 }
 
@@ -2142,15 +2143,15 @@ NestModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum layer_dict = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  NodeCollectionDatum layer = create_layer( layer_dict );
+  // NodeCollectionDatum layer = create_layer( layer_dict );
 
-  for ( auto&& node_id_triple : *layer )
-  {
-    set_node_status( node_id_triple.node_id, params );
-  }
+  // for ( auto&& node_id_triple : *layer )
+  // {
+  //   // set_node_status( node_id_triple.node_id, params );
+  // }
 
   i->OStack.pop( 2 );
-  i->OStack.push( layer );
+  // i->OStack.push( layer );
   i->EStack.pop();
 }
 
@@ -2664,7 +2665,7 @@ NestModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
   const NodeCollectionDatum target = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
   const DictionaryDatum connection_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  connect_layers( source, target, connection_dict );
+  // connect_layers( source, target, connection_dict );
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -2881,203 +2882,204 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::init( SLIInterpreter* i )
 {
-  ConnectionType.settypename( "connectiontype" );
-  ConnectionType.setdefaultaction( SLIInterpreter::datatypefunction );
+  assert( false );
+  //   ConnectionType.settypename( "connectiontype" );
+  //   ConnectionType.setdefaultaction( SLIInterpreter::datatypefunction );
 
-  MaskType.settypename( "masktype" );
-  MaskType.setdefaultaction( SLIInterpreter::datatypefunction );
+  //   MaskType.settypename( "masktype" );
+  //   MaskType.setdefaultaction( SLIInterpreter::datatypefunction );
 
-  NodeCollectionType.settypename( "nodecollectiontype" );
-  NodeCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
+  //   NodeCollectionType.settypename( "nodecollectiontype" );
+  //   NodeCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
 
-  NodeCollectionIteratorType.settypename( "nodecollectioniteratortype" );
-  NodeCollectionIteratorType.setdefaultaction( SLIInterpreter::datatypefunction );
+  //   NodeCollectionIteratorType.settypename( "nodecollectioniteratortype" );
+  //   NodeCollectionIteratorType.setdefaultaction( SLIInterpreter::datatypefunction );
 
-  ParameterType.settypename( "parametertype" );
-  ParameterType.setdefaultaction( SLIInterpreter::datatypefunction );
+  //   ParameterType.settypename( "parametertype" );
+  //   ParameterType.setdefaultaction( SLIInterpreter::datatypefunction );
 
-  // register interface functions with interpreter
+  //   // register interface functions with interpreter
 
-  i->createcommand( "SetStatus_id", &setstatus_idfunction );
-  i->createcommand( "SetStatus_CD", &setstatus_CDfunction );
-  i->createcommand( "SetStatus_aa", &setstatus_aafunction );
-  i->createcommand( "SetKernelStatus", &setkernelstatus_Dfunction );
+  //   i->createcommand( "SetStatus_id", &setstatus_idfunction );
+  //   i->createcommand( "SetStatus_CD", &setstatus_CDfunction );
+  //   i->createcommand( "SetStatus_aa", &setstatus_aafunction );
+  //   i->createcommand( "SetKernelStatus", &setkernelstatus_Dfunction );
 
-  i->createcommand( "GetStatus_g", &getstatus_gfunction );
-  i->createcommand( "GetStatus_i", &getstatus_ifunction );
-  i->createcommand( "GetStatus_C", &getstatus_Cfunction );
-  i->createcommand( "GetStatus_a", &getstatus_afunction );
-  i->createcommand( "GetMetadata_g", &getmetadata_gfunction );
-  i->createcommand( "GetKernelStatus", &getkernelstatus_function );
+  //   i->createcommand( "GetStatus_g", &getstatus_gfunction );
+  //   i->createcommand( "GetStatus_i", &getstatus_ifunction );
+  //   i->createcommand( "GetStatus_C", &getstatus_Cfunction );
+  //   i->createcommand( "GetStatus_a", &getstatus_afunction );
+  //   i->createcommand( "GetMetadata_g", &getmetadata_gfunction );
+  //   i->createcommand( "GetKernelStatus", &getkernelstatus_function );
 
-  i->createcommand( "GetConnections_D", &getconnections_Dfunction );
-  i->createcommand( "cva_C", &cva_cfunction );
+  //   i->createcommand( "GetConnections_D", &getconnections_Dfunction );
+  //   i->createcommand( "cva_C", &cva_cfunction );
 
-  i->createcommand( "Simulate_d", &simulatefunction );
-  i->createcommand( "Run_d", &runfunction );
-  i->createcommand( "Prepare", &preparefunction );
-  i->createcommand( "Cleanup", &cleanupfunction );
+  //   i->createcommand( "Simulate_d", &simulatefunction );
+  //   i->createcommand( "Run_d", &runfunction );
+  //   i->createcommand( "Prepare", &preparefunction );
+  //   i->createcommand( "Cleanup", &cleanupfunction );
 
-  i->createcommand( "CopyModel_l_l_D", &copymodel_l_l_Dfunction );
-  i->createcommand( "SetDefaults_l_D", &setdefaults_l_Dfunction );
-  i->createcommand( "GetDefaults_l", &getdefaults_lfunction );
+  //   i->createcommand( "CopyModel_l_l_D", &copymodel_l_l_Dfunction );
+  //   i->createcommand( "SetDefaults_l_D", &setdefaults_l_Dfunction );
+  //   i->createcommand( "GetDefaults_l", &getdefaults_lfunction );
 
-  i->createcommand( "Create_l_i", &create_l_ifunction );
+  //   i->createcommand( "Create_l_i", &create_l_ifunction );
 
-  i->createcommand( "GetNodes_D_b", &getnodes_D_bfunction );
+  //   i->createcommand( "GetNodes_D_b", &getnodes_D_bfunction );
 
-  i->createcommand( "mul_P_P", &mul_P_Pfunction );
-  i->createcommand( "div_P_P", &div_P_Pfunction );
-  i->createcommand( "add_P_P", &add_P_Pfunction );
-  i->createcommand( "sub_P_P", &sub_P_Pfunction );
+  //   i->createcommand( "mul_P_P", &mul_P_Pfunction );
+  //   i->createcommand( "div_P_P", &div_P_Pfunction );
+  //   i->createcommand( "add_P_P", &add_P_Pfunction );
+  //   i->createcommand( "sub_P_P", &sub_P_Pfunction );
 
-  i->createcommand( "compare_P_P_D", &compare_P_P_Dfunction );
-  i->createcommand( "conditional_P_P_P", &conditional_P_P_Pfunction );
+  //   i->createcommand( "compare_P_P_D", &compare_P_P_Dfunction );
+  //   i->createcommand( "conditional_P_P_P", &conditional_P_P_Pfunction );
 
-  i->createcommand( "min_P_d", &min_P_dfunction );
-  i->createcommand( "max_P_d", &max_P_dfunction );
-  i->createcommand( "redraw_P_d_d", &redraw_P_d_dfunction );
+  //   i->createcommand( "min_P_d", &min_P_dfunction );
+  //   i->createcommand( "max_P_d", &max_P_dfunction );
+  //   i->createcommand( "redraw_P_d_d", &redraw_P_d_dfunction );
 
-  i->createcommand( "exp_P", &exp_Pfunction );
-  i->createcommand( "sin_P", &sin_Pfunction );
-  i->createcommand( "cos_P", &cos_Pfunction );
-  i->createcommand( "pow_P_d", &pow_P_dfunction );
+  //   i->createcommand( "exp_P", &exp_Pfunction );
+  //   i->createcommand( "sin_P", &sin_Pfunction );
+  //   i->createcommand( "cos_P", &cos_Pfunction );
+  //   i->createcommand( "pow_P_d", &pow_P_dfunction );
 
-  i->createcommand( "dimension2d_P_P", &dimension2d_P_Pfunction );
-  i->createcommand( "dimension3d_P_P_P", &dimension3d_P_P_Pfunction );
+  //   i->createcommand( "dimension2d_P_P", &dimension2d_P_Pfunction );
+  //   i->createcommand( "dimension3d_P_P_P", &dimension3d_P_P_Pfunction );
 
-  i->createcommand( "CreateParameter_D", &createparameter_Dfunction );
+  //   i->createcommand( "CreateParameter_D", &createparameter_Dfunction );
 
-  i->createcommand( "GetValue_P", &getvalue_Pfunction );
-  i->createcommand( "IsSpatial_P", &isspatial_Pfunction );
-  i->createcommand( "Apply_P_D", &apply_P_Dfunction );
-  i->createcommand( "Apply_P_g", &apply_P_gfunction );
+  //   i->createcommand( "GetValue_P", &getvalue_Pfunction );
+  //   i->createcommand( "IsSpatial_P", &isspatial_Pfunction );
+  //   i->createcommand( "Apply_P_D", &apply_P_Dfunction );
+  //   i->createcommand( "Apply_P_g", &apply_P_gfunction );
 
-  i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
-  i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
+  //   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
+  //   i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
 
-  i->createcommand( "ResetKernel", &resetkernelfunction );
+  //   i->createcommand( "ResetKernel", &resetkernelfunction );
 
-  i->createcommand( "MemoryInfo", &memoryinfofunction );
+  //   i->createcommand( "MemoryInfo", &memoryinfofunction );
 
-  i->createcommand( "PrintNodes", &printnodesfunction );
-  i->createcommand( "PrintNodesToStream", &printnodestostreamfunction );
+  //   i->createcommand( "PrintNodes", &printnodesfunction );
+  //   i->createcommand( "PrintNodesToStream", &printnodestostreamfunction );
 
-  i->createcommand( "Rank", &rankfunction );
-  i->createcommand( "NumProcesses", &numprocessesfunction );
-  i->createcommand( "SetFakeNumProcesses", &setfakenumprocesses_ifunction );
-  i->createcommand( "SyncProcesses", &syncprocessesfunction );
-  i->createcommand( "TimeCommunication_i_i_b", &timecommunication_i_i_bfunction );
-  i->createcommand( "TimeCommunicationv_i_i", &timecommunicationv_i_ifunction );
-  i->createcommand( "TimeCommunicationAlltoall_i_i", &timecommunicationalltoall_i_ifunction );
-  i->createcommand( "TimeCommunicationAlltoallv_i_i", &timecommunicationalltoallv_i_ifunction );
-  i->createcommand( "ProcessorName", &processornamefunction );
-#ifdef HAVE_MPI
-  i->createcommand( "MPI_Abort", &mpiabort_ifunction );
-#endif
+  //   i->createcommand( "Rank", &rankfunction );
+  //   i->createcommand( "NumProcesses", &numprocessesfunction );
+  //   i->createcommand( "SetFakeNumProcesses", &setfakenumprocesses_ifunction );
+  //   i->createcommand( "SyncProcesses", &syncprocessesfunction );
+  //   i->createcommand( "TimeCommunication_i_i_b", &timecommunication_i_i_bfunction );
+  //   i->createcommand( "TimeCommunicationv_i_i", &timecommunicationv_i_ifunction );
+  //   i->createcommand( "TimeCommunicationAlltoall_i_i", &timecommunicationalltoall_i_ifunction );
+  //   i->createcommand( "TimeCommunicationAlltoallv_i_i", &timecommunicationalltoallv_i_ifunction );
+  //   i->createcommand( "ProcessorName", &processornamefunction );
+  // #ifdef HAVE_MPI
+  //   i->createcommand( "MPI_Abort", &mpiabort_ifunction );
+  // #endif
 
-  i->createcommand( "cvdict_C", &cvdict_Cfunction );
+  //   i->createcommand( "cvdict_C", &cvdict_Cfunction );
 
-  i->createcommand( "cvnodecollection_i_i", &cvnodecollection_i_ifunction );
-  i->createcommand( "cvnodecollection_ia", &cvnodecollection_iafunction );
-  i->createcommand( "cvnodecollection_iv", &cvnodecollection_ivfunction );
-  i->createcommand( "cva_g", &cva_gfunction );
-  i->createcommand( "size_g", &size_gfunction );
-  i->createcommand( "ValidQ_g", &validq_gfunction );
-  i->createcommand( "join_g_g", &join_g_gfunction );
-  i->createcommand( "MemberQ_g_i", &memberq_g_ifunction );
-  i->createcommand( "Find_g_i", &find_g_ifunction );
-  i->createcommand( "eq_g", &eq_gfunction );
-  i->createcommand( ":beginiterator_g", &beginiterator_gfunction );
-  i->createcommand( ":enditerator_g", &enditerator_gfunction );
-  i->createcommand( ":getnodeid_q", &getnodeid_qfunction );
-  i->createcommand( ":getnodeidmodelid_q", &getnodeidmodelid_qfunction );
-  i->createcommand( ":next_q", &next_qfunction );
-  i->createcommand( ":eq_q_q", &eq_q_qfunction );
-  i->createcommand( ":lt_q_q", &lt_q_qfunction );
-  i->createcommand( "get_g_i", &get_g_ifunction );
-  i->createcommand( "Take_g_a", &take_g_afunction );
+  //   i->createcommand( "cvnodecollection_i_i", &cvnodecollection_i_ifunction );
+  //   i->createcommand( "cvnodecollection_ia", &cvnodecollection_iafunction );
+  //   i->createcommand( "cvnodecollection_iv", &cvnodecollection_ivfunction );
+  //   i->createcommand( "cva_g", &cva_gfunction );
+  //   i->createcommand( "size_g", &size_gfunction );
+  //   i->createcommand( "ValidQ_g", &validq_gfunction );
+  //   i->createcommand( "join_g_g", &join_g_gfunction );
+  //   i->createcommand( "MemberQ_g_i", &memberq_g_ifunction );
+  //   i->createcommand( "Find_g_i", &find_g_ifunction );
+  //   i->createcommand( "eq_g", &eq_gfunction );
+  //   i->createcommand( ":beginiterator_g", &beginiterator_gfunction );
+  //   i->createcommand( ":enditerator_g", &enditerator_gfunction );
+  //   i->createcommand( ":getnodeid_q", &getnodeid_qfunction );
+  //   i->createcommand( ":getnodeidmodelid_q", &getnodeidmodelid_qfunction );
+  //   i->createcommand( ":next_q", &next_qfunction );
+  //   i->createcommand( ":eq_q_q", &eq_q_qfunction );
+  //   i->createcommand( ":lt_q_q", &lt_q_qfunction );
+  //   i->createcommand( "get_g_i", &get_g_ifunction );
+  //   i->createcommand( "Take_g_a", &take_g_afunction );
 
-#ifdef HAVE_MUSIC
-  i->createcommand( "SetAcceptableLatency", &setacceptablelatency_l_dfunction );
-  i->createcommand( "SetMaxBuffered", &setmaxbuffered_l_ifunction );
-#endif
-  i->createcommand( "EnableStructuralPlasticity", &enablestructuralplasticity_function );
-  i->createcommand( "DisableStructuralPlasticity", &disablestructuralplasticity_function );
-  i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
+  // #ifdef HAVE_MUSIC
+  //   i->createcommand( "SetAcceptableLatency", &setacceptablelatency_l_dfunction );
+  //   i->createcommand( "SetMaxBuffered", &setmaxbuffered_l_ifunction );
+  // #endif
+  //   i->createcommand( "EnableStructuralPlasticity", &enablestructuralplasticity_function );
+  //   i->createcommand( "DisableStructuralPlasticity", &disablestructuralplasticity_function );
+  //   i->createcommand( "Disconnect_g_g_D_D", &disconnect_g_g_D_Dfunction );
 
-  i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
+  //   i->createcommand( "SetStdpEps", &setstdpeps_dfunction );
 
-  // SLI functions for spatial networks
-  i->createcommand( "CreateLayer_D_D", &createlayer_D_Dfunction );
-  i->createcommand( "GetPosition_g", &getposition_gfunction );
-  i->createcommand( "Displacement_g_g", &displacement_g_gfunction );
-  i->createcommand( "Displacement_a_g", &displacement_a_gfunction );
-  i->createcommand( "Distance_g_g", &distance_g_gfunction );
-  i->createcommand( "Distance_a_g", &distance_a_gfunction );
-  i->createcommand( "Distance_a", &distance_afunction );
-  i->createcommand( "CreateMask_D", &createmask_Dfunction );
-  i->createcommand( "Inside_a_M", &inside_a_Mfunction );
-  i->createcommand( "and_M_M", &and_M_Mfunction );
-  i->createcommand( "or_M_M", &or_M_Mfunction );
-  i->createcommand( "sub_M_M", &sub_M_Mfunction );
-  i->createcommand( "ConnectLayers_g_g_D", &connectlayers_g_g_Dfunction );
-  i->createcommand( "GetLayerStatus_g", &getlayerstatus_gfunction );
-  i->createcommand( "DumpLayerNodes_os_g", &dumplayernodes_os_gfunction );
-  i->createcommand( "DumpLayerConnections_os_g_g_l", &dumplayerconnections_os_g_g_lfunction );
-  i->createcommand( "cvdict_M", &cvdict_Mfunction );
-  i->createcommand( "SelectNodesByMask_g_a_M", &selectnodesbymask_g_a_Mfunction );
+  //   // SLI functions for spatial networks
+  //   i->createcommand( "CreateLayer_D_D", &createlayer_D_Dfunction );
+  //   i->createcommand( "GetPosition_g", &getposition_gfunction );
+  //   i->createcommand( "Displacement_g_g", &displacement_g_gfunction );
+  //   i->createcommand( "Displacement_a_g", &displacement_a_gfunction );
+  //   i->createcommand( "Distance_g_g", &distance_g_gfunction );
+  //   i->createcommand( "Distance_a_g", &distance_a_gfunction );
+  //   i->createcommand( "Distance_a", &distance_afunction );
+  //   i->createcommand( "CreateMask_D", &createmask_Dfunction );
+  //   i->createcommand( "Inside_a_M", &inside_a_Mfunction );
+  //   i->createcommand( "and_M_M", &and_M_Mfunction );
+  //   i->createcommand( "or_M_M", &or_M_Mfunction );
+  //   i->createcommand( "sub_M_M", &sub_M_Mfunction );
+  //   i->createcommand( "ConnectLayers_g_g_D", &connectlayers_g_g_Dfunction );
+  //   i->createcommand( "GetLayerStatus_g", &getlayerstatus_gfunction );
+  //   i->createcommand( "DumpLayerNodes_os_g", &dumplayernodes_os_gfunction );
+  //   i->createcommand( "DumpLayerConnections_os_g_g_l", &dumplayerconnections_os_g_g_lfunction );
+  //   i->createcommand( "cvdict_M", &cvdict_Mfunction );
+  //   i->createcommand( "SelectNodesByMask_g_a_M", &selectnodesbymask_g_a_Mfunction );
 
 
-  // Add connection rules
-  kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
-  kernel().connection_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
-  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
-  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
-  kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
-  kernel().connection_manager.register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
-  kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
-#ifdef HAVE_LIBNEUROSIM
-  kernel().connection_manager.register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
-#endif
+  //   // Add connection rules
+  //   kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
+  //   kernel().connection_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
+  //   kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
+  //   kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
+  //   kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+  //   kernel().connection_manager.register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
+  //   kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+  // #ifdef HAVE_LIBNEUROSIM
+  //   kernel().connection_manager.register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
+  // #endif
 
-  // Add MSP growth curves
-  kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
+  //   // Add MSP growth curves
+  //   kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
+  //   kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
+  //   kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
 
-  Token statusd = i->baselookup( Name( "statusdict" ) );
-  DictionaryDatum dd = getValue< DictionaryDatum >( statusd );
-  dd->insert( Name( "kernelname" ), new StringDatum( "NEST" ) );
-  dd->insert( Name( "is_mpi" ), new BoolDatum( kernel().mpi_manager.is_mpi_used() ) );
+  //   Token statusd = i->baselookup( Name( "statusdict" ) );
+  //   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );
+  //   dd->insert( Name( "kernelname" ), new StringDatum( "NEST" ) );
+  //   dd->insert( Name( "is_mpi" ), new BoolDatum( kernel().mpi_manager.is_mpi_used() ) );
 
-  register_parameter< ConstantParameter >( "constant" );
-  register_parameter< UniformParameter >( "uniform" );
-  register_parameter< UniformIntParameter >( "uniform_int" );
-  register_parameter< NormalParameter >( "normal" );
-  register_parameter< LognormalParameter >( "lognormal" );
-  register_parameter< ExponentialParameter >( "exponential" );
-  register_parameter< NodePosParameter >( "position" );
-  register_parameter< SpatialDistanceParameter >( "distance" );
-  register_parameter< GaussianParameter >( "gaussian" );
-  register_parameter< Gaussian2DParameter >( "gaussian2d" );
-  register_parameter< GammaParameter >( "gamma" );
-  register_parameter< ExpDistParameter >( "exp_distribution" );
+  //   register_parameter< ConstantParameter >( "constant" );
+  //   register_parameter< UniformParameter >( "uniform" );
+  //   register_parameter< UniformIntParameter >( "uniform_int" );
+  //   register_parameter< NormalParameter >( "normal" );
+  //   register_parameter< LognormalParameter >( "lognormal" );
+  //   register_parameter< ExponentialParameter >( "exponential" );
+  //   register_parameter< NodePosParameter >( "position" );
+  //   register_parameter< SpatialDistanceParameter >( "distance" );
+  //   register_parameter< GaussianParameter >( "gaussian" );
+  //   register_parameter< Gaussian2DParameter >( "gaussian2d" );
+  //   register_parameter< GammaParameter >( "gamma" );
+  //   register_parameter< ExpDistParameter >( "exp_distribution" );
 
-#ifdef HAVE_LIBNEUROSIM
-  i->createcommand( "CGParse", &cgparse_sfunction );
-  i->createcommand( "CGParseFile", &cgparsefile_sfunction );
-  i->createcommand( "CGSelectImplementation", &cgselectimplementation_s_sfunction );
-#endif
+  // #ifdef HAVE_LIBNEUROSIM
+  //   i->createcommand( "CGParse", &cgparse_sfunction );
+  //   i->createcommand( "CGParseFile", &cgparsefile_sfunction );
+  //   i->createcommand( "CGSelectImplementation", &cgselectimplementation_s_sfunction );
+  // #endif
 
-  register_mask< BallMask< 2 > >();
-  register_mask< BallMask< 3 > >();
-  register_mask< EllipseMask< 2 > >();
-  register_mask< EllipseMask< 3 > >();
-  register_mask< BoxMask< 2 > >();
-  register_mask< BoxMask< 3 > >();
-  register_mask( "doughnut", create_doughnut );
-  register_mask< GridMask< 2 > >();
+  //   register_mask< BallMask< 2 > >();
+  //   register_mask< BallMask< 3 > >();
+  //   register_mask< EllipseMask< 2 > >();
+  //   register_mask< EllipseMask< 3 > >();
+  //   register_mask< BoxMask< 2 > >();
+  //   register_mask< BoxMask< 3 > >();
+  //   register_mask( "doughnut", create_doughnut );
+  //   register_mask< GridMask< 2 > >();
 }
 
 } // namespace nest

@@ -139,12 +139,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -278,27 +278,27 @@ clopath_synapse< targetidentifierT >::clopath_synapse()
 
 template < typename targetidentifierT >
 void
-clopath_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+clopath_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::x_bar, x_bar_ );
-  def< double >( d, names::tau_x, tau_x_ );
-  def< double >( d, names::Wmin, Wmin_ );
-  def< double >( d, names::Wmax, Wmax_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight.toString() ] = weight_;
+  d[ names::x_bar.toString() ] = x_bar_;
+  d[ names::tau_x.toString() ] = tau_x_;
+  d[ names::Wmin.toString() ] = Wmin_;
+  d[ names::Wmax.toString() ] = Wmax_;
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-clopath_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+clopath_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::x_bar, x_bar_ );
-  updateValue< double >( d, names::tau_x, tau_x_ );
-  updateValue< double >( d, names::Wmin, Wmin_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
+  d.update_value( names::weight.toString(), weight_ );
+  d.update_value( names::x_bar.toString(), x_bar_ );
+  d.update_value( names::tau_x.toString(), tau_x_ );
+  d.update_value( names::Wmin.toString(), Wmin_ );
+  d.update_value( names::Wmax.toString(), Wmax_ );
 
   // check if weight_ and Wmin_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmin_ >= 0 ) - ( Wmin_ < 0 ) ) ) )

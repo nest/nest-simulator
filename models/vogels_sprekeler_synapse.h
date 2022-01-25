@@ -118,12 +118,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -267,29 +267,29 @@ vogels_sprekeler_synapse< targetidentifierT >::vogels_sprekeler_synapse()
 
 template < typename targetidentifierT >
 void
-vogels_sprekeler_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+vogels_sprekeler_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::tau, tau_ );
-  def< double >( d, names::alpha, alpha_ );
-  def< double >( d, names::eta, eta_ );
-  def< double >( d, names::Wmax, Wmax_ );
-  def< double >( d, names::Kplus, Kplus_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight.toString() ] = weight_;
+  d[ names::tau.toString() ] = tau_;
+  d[ names::alpha.toString() ] = alpha_;
+  d[ names::eta.toString() ] = eta_;
+  d[ names::Wmax.toString() ] = Wmax_;
+  d[ names::Kplus.toString() ] = Kplus_;
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-vogels_sprekeler_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+vogels_sprekeler_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::tau, tau_ );
-  updateValue< double >( d, names::alpha, alpha_ );
-  updateValue< double >( d, names::eta, eta_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
-  updateValue< double >( d, names::Kplus, Kplus_ );
+  d.update_value( names::weight.toString(), weight_ );
+  d.update_value( names::tau.toString(), tau_ );
+  d.update_value( names::alpha.toString(), alpha_ );
+  d.update_value( names::eta.toString(), eta_ );
+  d.update_value( names::Wmax.toString(), Wmax_ );
+  d.update_value( names::Kplus.toString(), Kplus_ );
 
   // if the weight_ is not 0, we check to ensure that weight_ and Wmax_ are of
   // the same sign

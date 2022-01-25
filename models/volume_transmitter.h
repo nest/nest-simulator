@@ -140,8 +140,8 @@ public:
 
   port handles_test_event( SpikeEvent&, rport );
 
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& d );
+  void get_status( dictionary& d ) const;
+  void set_status( const dictionary& d );
 
   /**
    * Since volume transmitters are duplicated on each thread, and are
@@ -167,8 +167,8 @@ private:
   struct Parameters_
   {
     Parameters_();
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void get( dictionary& ) const;
+    void set( const dictionary&, Node* node );
     long deliver_interval_; //!< update interval in d_min time steps
   };
 
@@ -198,14 +198,14 @@ volume_transmitter::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline void
-volume_transmitter::get_status( DictionaryDatum& d ) const
+volume_transmitter::get_status( dictionary& d ) const
 {
   P_.get( d );
   ArchivingNode::get_status( d );
 }
 
 inline void
-volume_transmitter::set_status( const DictionaryDatum& d )
+volume_transmitter::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

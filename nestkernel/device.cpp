@@ -74,11 +74,11 @@ nest::Device::Parameters_& nest::Device::Parameters_::operator=( const Parameter
  * ---------------------------------------------------------------- */
 
 void
-nest::Device::Parameters_::get( DictionaryDatum& d ) const
+nest::Device::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::origin ] = origin_.get_ms();
-  ( *d )[ names::start ] = start_.get_ms();
-  ( *d )[ names::stop ] = stop_.get_ms();
+  d[ names::origin.toString() ] = origin_.get_ms();
+  d[ names::start.toString() ] = start_.get_ms();
+  d[ names::stop.toString() ] = stop_.get_ms();
 }
 
 void
@@ -107,11 +107,11 @@ nest::Device::Parameters_::update_( const DictionaryDatum& d, const Name& name, 
 }
 
 void
-nest::Device::Parameters_::set( const DictionaryDatum& d )
+nest::Device::Parameters_::set( const dictionary& d )
 {
-  update_( d, names::origin, origin_ );
-  update_( d, names::start, start_ );
-  update_( d, names::stop, stop_ );
+  d.update_value( names::origin.toString(), origin_ );
+  d.update_value( names::start.toString(), start_ );
+  d.update_value( names::stop.toString(), stop_ );
 
   if ( stop_ < start_ )
   {

@@ -87,11 +87,11 @@ proxynode::sends_signal() const
 }
 
 void
-proxynode::get_status( DictionaryDatum& d ) const
+proxynode::get_status( dictionary& d ) const
 {
   const Model* model = kernel().model_manager.get_model( model_id_ );
   const Name element_type = model->get_prototype().get_element_type();
-  ( *d )[ names::element_type ] = LiteralDatum( element_type );
+  d[ names::element_type.toString() ] = LiteralDatum( element_type );
 }
 
 

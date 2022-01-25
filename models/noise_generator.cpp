@@ -120,33 +120,33 @@ nest::noise_generator::Buffers_::Buffers_( const Buffers_& b, noise_generator& n
  * ---------------------------------------------------------------- */
 
 void
-nest::noise_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::noise_generator::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::mean ] = mean_;
-  ( *d )[ names::std ] = std_;
-  ( *d )[ names::std_mod ] = std_mod_;
-  ( *d )[ names::dt ] = dt_.get_ms();
-  ( *d )[ names::phase ] = phi_deg_;
-  ( *d )[ names::frequency ] = freq_;
+  d[ names::mean.toString() ] = mean_;
+  d[ names::std.toString() ] = std_;
+  d[ names::std_mod.toString() ] = std_mod_;
+  d[ names::dt.toString() ] = dt_.get_ms();
+  d[ names::phase.toString() ] = phi_deg_;
+  d[ names::frequency.toString() ] = freq_;
 }
 
 void
-nest::noise_generator::State_::get( DictionaryDatum& d ) const
+nest::noise_generator::State_::get( dictionary& d ) const
 {
-  ( *d )[ names::y_0 ] = y_0_;
-  ( *d )[ names::y_1 ] = y_1_;
+  d[ names::y_0.toString() ] = y_0_;
+  d[ names::y_1.toString() ] = y_1_;
 }
 
 void
-nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n, Node* node )
+nest::noise_generator::Parameters_::set( const dictionary& d, const noise_generator& n, Node* node )
 {
-  updateValueParam< double >( d, names::mean, mean_, node );
-  updateValueParam< double >( d, names::std, std_, node );
-  updateValueParam< double >( d, names::std_mod, std_mod_, node );
-  updateValueParam< double >( d, names::frequency, freq_, node );
-  updateValueParam< double >( d, names::phase, phi_deg_, node );
+  update_value_param( d, names::mean.toString(), mean_, node );
+  update_value_param( d, names::std.toString(), std_, node );
+  update_value_param( d, names::std_mod.toString(), std_mod_, node );
+  update_value_param( d, names::frequency.toString(), freq_, node );
+  update_value_param( d, names::phase.toString(), phi_deg_, node );
   double dt;
-  if ( updateValueParam< double >( d, names::dt, dt, node ) )
+  if ( update_value_param( d, names::dt.toString(), dt, node ) )
   {
     dt_ = Time::ms( dt );
   }
@@ -378,12 +378,13 @@ nest::noise_generator::set_data_from_stimulation_backend( std::vector< double >&
       throw BadParameterValue(
         "The size of the data for the noise_generator needs to be 5 [mean, std, std_mod, frequency, phase]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::mean ] = DoubleDatum( input_param[ 0 ] );
-    ( *d )[ names::std ] = DoubleDatum( input_param[ 1 ] );
-    ( *d )[ names::std_mod ] = DoubleDatum( input_param[ 2 ] );
-    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 3 ] );
-    ( *d )[ names::phase ] = DoubleDatum( input_param[ 4 ] );
+    dictionary d;
+    ( new Dictionary );
+    d[ names::mean.toString() ] = DoubleDatum( input_param[ 0 ] );
+    d[ names::std.toString() ] = DoubleDatum( input_param[ 1 ] );
+    d[ names::std_mod.toString() ] = DoubleDatum( input_param[ 2 ] );
+    d[ names::frequency.toString() ] = DoubleDatum( input_param[ 3 ] );
+    d[ names::phase.toString() ] = DoubleDatum( input_param[ 4 ] );
     ptmp.set( d, *this, this );
   }
 

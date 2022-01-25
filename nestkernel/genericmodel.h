@@ -95,8 +95,8 @@ public:
   void deprecation_warning( const std::string& );
 
 private:
-  void set_status_( DictionaryDatum );
-  DictionaryDatum get_status_();
+  void set_status_( dictionary );
+  dictionary get_status_();
 
   size_t get_element_size() const;
 
@@ -241,17 +241,17 @@ GenericModel< ElementT >::sends_signal() const
 
 template < typename ElementT >
 void
-GenericModel< ElementT >::set_status_( DictionaryDatum d )
+GenericModel< ElementT >::set_status_( dictionary d )
 {
   proto_.set_status( d );
 }
 
 template < typename ElementT >
-DictionaryDatum
+dictionary
 GenericModel< ElementT >::get_status_()
 {
-  DictionaryDatum d = proto_.get_status_base();
-  ( *d )[ names::elementsize ] = sizeof( ElementT );
+  dictionary d = proto_.get_status_base();
+  d[ names::elementsize.toString() ] = sizeof( ElementT );
   return d;
 }
 

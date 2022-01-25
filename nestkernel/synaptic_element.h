@@ -90,6 +90,8 @@
 // Includes from nestkernel:
 #include "growth_curve.h"
 
+#include "dictionary.h"
+
 // Includes from sli:
 #include "dictdatum.h"
 
@@ -145,14 +147,14 @@ public:
   * Store current values in a dictionary.
   * @param d to write data
   */
-  void get( DictionaryDatum& d ) const;
+  void get( dictionary& d ) const;
 
   /**
   * \fn void set(const DictionaryDatum&)
   * Set values from a dictionary.
   * @param d to take data from
   */
-  void set( const DictionaryDatum& d );
+  void set( const dictionary& d );
 
 
   /*

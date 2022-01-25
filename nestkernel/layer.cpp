@@ -52,47 +52,46 @@ AbstractLayer::~AbstractLayer()
 }
 
 NodeCollectionPTR
-AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
+AbstractLayer::create_layer( const dictionary& layer_dict )
 {
   index length = 0;
   AbstractLayer* layer_local = 0;
 
-  auto element_name = getValue< std::string >( layer_dict, names::elements );
-  auto element_model = kernel().model_manager.get_modeldict()->lookup( element_name );
+  auto element_name = layer_dict.get< std::string >( names::elements.toString() );
 
-  if ( element_model.empty() )
+  if ( not kernel().model_manager.get_modeldict().known( element_name ) )
   {
     throw UnknownModelName( element_name );
   }
+  auto element_model = kernel().model_manager.get_modeldict().get< index >( element_name );
   auto element_id = static_cast< long >( element_model );
 
-  if ( layer_dict->known( names::positions ) )
+  if ( layer_dict.known( names::positions.toString() ) )
   {
-    if ( layer_dict->known( names::shape ) )
+    if ( layer_dict.known( names::shape.toString() ) )
     {
       throw BadProperty( "Cannot specify both positions and shape." );
     }
     int num_dimensions = 0;
 
-    const Token& tkn = layer_dict->lookup( names::positions );
-    if ( tkn.is_a< TokenArray >() )
+    const auto positions = layer_dict.at( names::positions.toString() );
+    if ( is_double_vector_vector( positions ) )
     {
-      TokenArray positions = getValue< TokenArray >( tkn );
-      length = positions.size();
-      std::vector< double > pos = getValue< std::vector< double > >( positions[ 0 ] );
-      num_dimensions = pos.size();
+      const auto pos = layer_dict.get< std::vector< std::vector< double > > >( names::positions.toString() );
+      length = pos.size();
+      num_dimensions = pos[ 0 ].size();
     }
-    else if ( tkn.is_a< ParameterDatum >() )
+    else if ( is_parameter( positions ) )
     {
-      auto pd = dynamic_cast< ParameterDatum* >( tkn.datum() );
-      auto positions = dynamic_cast< DimensionParameter* >( pd->get() );
+      auto pd = layer_dict.get< std::shared_ptr< Parameter > >( names::positions.toString() );
+      auto pos = dynamic_cast< DimensionParameter* >( pd.get() );
       // To avoid nasty segfaults, we check that the parameter is indeed a DimensionParameter.
-      if ( not std::is_same< std::remove_reference< decltype( *positions ) >::type, DimensionParameter >::value )
+      if ( not std::is_same< std::remove_reference< decltype( *pos ) >::type, DimensionParameter >::value )
       {
         throw KernelException( "When 'positions' is a Parameter, it must be a DimensionParameter." );
       }
-      length = getValue< long >( layer_dict, names::n );
-      num_dimensions = positions->get_num_dimensions();
+      length = layer_dict.get< long >( names::n.toString() );
+      num_dimensions = pos->get_num_dimensions();
     }
     else
     {
@@ -117,9 +116,9 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
       throw BadProperty( "Positions must have 2 or 3 coordinates." );
     }
   }
-  else if ( layer_dict->known( names::shape ) )
+  else if ( layer_dict.known( names::shape.toString() ) )
   {
-    std::vector< long > shape = getValue< std::vector< long > >( layer_dict, names::shape );
+    std::vector< long > shape = layer_dict.get< std::vector< long > >( names::shape.toString() );
 
     if ( not std::all_of( shape.begin(),
            shape.end(),

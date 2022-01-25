@@ -55,14 +55,14 @@ public:
   virtual void initialize();
   virtual void finalize();
 
-  virtual void set_status( const DictionaryDatum& );
+  virtual void set_status( const dictionary& );
   virtual void get_status( dictionary& );
 
   /**
    * Get properties of a node. The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
-  DictionaryDatum get_status( index );
+  dictionary get_status( index );
 
   /**
    * Set properties of a Node. The specified node must exist.
@@ -71,7 +71,7 @@ public:
    *                                          entry.
    * @throws TypeMismatch   Array is not a flat & homogeneous array of integers.
    */
-  void set_status( index, const DictionaryDatum& );
+  void set_status( index, const dictionary& );
 
   /**
    * Add a number of nodes to the network.
@@ -99,7 +99,7 @@ public:
    *
    * @returns NodeCollection as lock pointer
    */
-  NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
+  NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );
 
   /**
    * Return total number of network nodes.
@@ -247,7 +247,7 @@ private:
    *        each call so Node::set_status_()
    * @throws UnaccessedDictionaryEntry
    */
-  void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
+  void set_status_single_node_( Node&, const dictionary&, bool clear_flags = true );
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.

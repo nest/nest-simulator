@@ -98,37 +98,37 @@ nest::pp_pop_psc_delta::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_pop_psc_delta::Parameters_::get( DictionaryDatum& d ) const
+nest::pp_pop_psc_delta::Parameters_::get( dictionary& d ) const
 {
-  def< long >( d, names::N, N_ );
-  def< double >( d, names::rho_0, rho_0_ );
-  def< double >( d, names::delta_u, delta_u_ );
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::C_m, c_m_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::len_kernel, len_kernel_ );
+  d[ names::N.toString() ] = N_;
+  d[ names::rho_0.toString() ] = rho_0_;
+  d[ names::delta_u.toString() ] = delta_u_;
+  d[ names::I_e.toString() ] = I_e_;
+  d[ names::C_m.toString() ] = c_m_;
+  d[ names::tau_m.toString() ] = tau_m_;
+  d[ names::len_kernel.toString() ] = len_kernel_;
 
   ArrayDatum tau_eta_list_ad( tau_eta_ );
-  def< ArrayDatum >( d, names::tau_eta, tau_eta_list_ad );
+  d[ names::tau_eta.toString() ] = tau_eta_list_ad;
 
   ArrayDatum val_eta_list_ad( val_eta_ );
-  def< ArrayDatum >( d, names::val_eta, val_eta_list_ad );
+  d[ names::val_eta.toString() ] = val_eta_list_ad;
 }
 
 void
-nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::pp_pop_psc_delta::Parameters_::set( const dictionary& d, Node* node )
 {
 
-  updateValueParam< long >( d, names::N, N_, node );
-  updateValueParam< double >( d, names::rho_0, rho_0_, node );
-  updateValueParam< double >( d, names::delta_u, delta_u_, node );
-  updateValueParam< double >( d, names::len_kernel, len_kernel_, node );
+  update_value_param( d, names::N.toString(), N_, node );
+  update_value_param( d, names::rho_0.toString(), rho_0_, node );
+  update_value_param( d, names::delta_u.toString(), delta_u_, node );
+  update_value_param( d, names::len_kernel.toString(), len_kernel_, node );
 
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::C_m, c_m_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValue< std::vector< double > >( d, names::tau_eta, tau_eta_ );
-  updateValue< std::vector< double > >( d, names::val_eta, val_eta_ );
+  update_value_param( d, names::I_e.toString(), I_e_, node );
+  update_value_param( d, names::C_m.toString(), c_m_, node );
+  update_value_param( d, names::tau_m.toString(), tau_m_, node );
+  d.update_value( names::tau_eta.toString(), tau_eta_ );
+  d.update_value( names::val_eta.toString(), val_eta_ );
 
 
   if ( tau_eta_.size() != val_eta_.size() )
@@ -170,18 +170,18 @@ nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::pp_pop_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& ) const
+nest::pp_pop_psc_delta::State_::get( dictionary& d, const Parameters_& ) const
 {
-  def< double >( d, names::V_m, h_ ); // Filterd version of input
+  d[ names::V_m.toString() ] = h_; // Filterd version of input
   int n_spikes = n_spikes_past_.size() > 0 ? n_spikes_past_[ p_n_spikes_past_ ]
                                            : 0; // return 0 if n_spikes_past_ has not been initialized yet
-  def< long >( d, names::n_events, n_spikes );  // Number of generated spikes
+  d[ names::n_events.toString() ] = n_spikes;   // Number of generated spikes
 }
 
 void
-nest::pp_pop_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::pp_pop_psc_delta::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, h_, node );
+  update_value_param( d, names::V_m.toString(), h_, node );
   initialized_ = false; // vectors of the state should be initialized with new parameter set.
 }
 

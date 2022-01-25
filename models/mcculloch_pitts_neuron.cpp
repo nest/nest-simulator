@@ -26,15 +26,15 @@ namespace nest
 {
 
 void
-gainfunction_mcculloch_pitts::get( DictionaryDatum& d ) const
+gainfunction_mcculloch_pitts::get( dictionary& d ) const
 {
-  def< double >( d, names::theta, theta_ );
+  d[ names::theta.toString() ] = theta_;
 }
 
 void
-gainfunction_mcculloch_pitts::set( const DictionaryDatum& d, Node* node )
+gainfunction_mcculloch_pitts::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::theta, theta_, node );
+  update_value_param( d, names::theta.toString(), theta_, node );
 }
 
 /*

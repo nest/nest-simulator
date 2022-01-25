@@ -59,13 +59,13 @@ nest::music_rate_in_proxy::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::music_rate_in_proxy::Parameters_::get( DictionaryDatum& d ) const
+nest::music_rate_in_proxy::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::port_name ] = port_name_;
+  d[ names::port_name.toString() ] = port_name_;
 }
 
 void
-nest::music_rate_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
+nest::music_rate_in_proxy::Parameters_::set( const dictionary& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
   //  if(d->known(names::port_name) && s.registered_)
@@ -73,19 +73,19 @@ nest::music_rate_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s
 
   if ( not s.registered_ )
   {
-    updateValue< string >( d, names::port_name, port_name_ );
-    updateValue< long >( d, names::music_channel, channel_ );
+    d.update_value( names::port_name.toString(), port_name_ );
+    d.update_value( names::music_channel.toString(), channel_ );
   }
 }
 
 void
-nest::music_rate_in_proxy::State_::get( DictionaryDatum& d ) const
+nest::music_rate_in_proxy::State_::get( dictionary& d ) const
 {
-  ( *d )[ names::registered ] = registered_;
+  d[ names::registered.toString() ] = registered_;
 }
 
 void
-nest::music_rate_in_proxy::State_::set( const DictionaryDatum&, const Parameters_& )
+nest::music_rate_in_proxy::State_::set( const dictionary&, const Parameters_& )
 {
 }
 
@@ -131,16 +131,16 @@ nest::music_rate_in_proxy::calibrate()
 }
 
 void
-nest::music_rate_in_proxy::get_status( DictionaryDatum& d ) const
+nest::music_rate_in_proxy::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
 
-  ( *d )[ names::data ] = DoubleVectorDatum( new std::vector< double >( 1, B_.data_ ) );
+  d[ names::data.toString() ] = DoubleVectorDatum( new std::vector< double >( 1, B_.data_ ) );
 }
 
 void
-nest::music_rate_in_proxy::set_status( const DictionaryDatum& d )
+nest::music_rate_in_proxy::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, S_ );     // throws if BadProperty

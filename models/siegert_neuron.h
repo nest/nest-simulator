@@ -166,8 +166,8 @@ public:
   {
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -218,9 +218,9 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum&, Node* node );
+    void set( const dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -234,8 +234,8 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void get( dictionary& ) const;
+    void set( const dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -332,16 +332,16 @@ siegert_neuron::handles_test_event( DataLoggingRequest& dlr, rport receptor_type
 }
 
 inline void
-siegert_neuron::get_status( DictionaryDatum& d ) const
+siegert_neuron::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 }
 
 inline void
-siegert_neuron::set_status( const DictionaryDatum& d )
+siegert_neuron::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

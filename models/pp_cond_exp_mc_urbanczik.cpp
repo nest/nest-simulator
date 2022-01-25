@@ -326,63 +326,63 @@ nest::pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( const Buffers_&, pp_cond_exp
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_cond_exp_mc_urbanczik::Parameters_::get( DictionaryDatum& d ) const
+nest::pp_cond_exp_mc_urbanczik::Parameters_::get( dictionary& d ) const
 {
-  def< double >( d, names::t_ref, t_ref );
-  def< double >( d, names::phi_max, urbanczik_params.phi_max );
-  def< double >( d, names::rate_slope, urbanczik_params.rate_slope );
-  def< double >( d, names::beta, urbanczik_params.beta );
-  def< double >( d, names::theta, urbanczik_params.theta );
+  d[ names::t_ref.toString() ] = t_ref;
+  d[ names::phi_max.toString() ] = urbanczik_params.phi_max;
+  d[ names::rate_slope.toString() ] = urbanczik_params.rate_slope;
+  d[ names::beta.toString() ] = urbanczik_params.beta;
+  d[ names::theta.toString() ] = urbanczik_params.theta;
 
-  def< double >( d, names::g_sp, urbanczik_params.g_conn[ SOMA ] );
-  def< double >( d, names::g_ps, urbanczik_params.g_conn[ DEND ] );
+  d[ names::g_sp.toString() ] = urbanczik_params.g_conn[ SOMA ];
+  d[ names::g_ps.toString() ] = urbanczik_params.g_conn[ DEND ];
 
   // create subdictionaries for per-compartment parameters
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    DictionaryDatum dd = new Dictionary();
+    dictionary dd;
 
-    def< double >( dd, names::g_L, urbanczik_params.g_L[ n ] );
-    def< double >( dd, names::E_L, urbanczik_params.E_L[ n ] );
-    def< double >( dd, names::E_ex, E_ex[ n ] );
-    def< double >( dd, names::E_in, E_in[ n ] );
-    def< double >( dd, names::C_m, urbanczik_params.C_m[ n ] );
-    def< double >( dd, names::tau_syn_ex, urbanczik_params.tau_syn_ex[ n ] );
-    def< double >( dd, names::tau_syn_in, urbanczik_params.tau_syn_in[ n ] );
-    def< double >( dd, names::I_e, I_e[ n ] );
+    dd[ names::g_L.toString() ] = urbanczik_params.g_L[ n ];
+    dd[ names::E_L.toString() ] = urbanczik_params.E_L[ n ];
+    dd[ names::E_ex.toString() ] = E_ex[ n ];
+    dd[ names::E_in.toString() ] = E_in[ n ];
+    dd[ names::C_m.toString() ] = urbanczik_params.C_m[ n ];
+    dd[ names::tau_syn_ex.toString() ] = urbanczik_params.tau_syn_ex[ n ];
+    dd[ names::tau_syn_in.toString() ] = urbanczik_params.tau_syn_in[ n ];
+    dd[ names::I_e.toString() ] = I_e[ n ];
 
-    ( *d )[ comp_names_[ n ] ] = dd;
+    d[ comp_names_[ n ].toString() ] = dd;
   }
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const DictionaryDatum& d )
+nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const dictionary& d )
 {
   // allow setting the membrane potential
-  updateValue< double >( d, names::t_ref, t_ref );
-  updateValue< double >( d, names::phi_max, urbanczik_params.phi_max );
-  updateValue< double >( d, names::rate_slope, urbanczik_params.rate_slope );
-  updateValue< double >( d, names::beta, urbanczik_params.beta );
-  updateValue< double >( d, names::theta, urbanczik_params.theta );
+  d.update_value( names::t_ref.toString(), t_ref );
+  d.update_value( names::phi_max.toString(), urbanczik_params.phi_max );
+  d.update_value( names::rate_slope.toString(), urbanczik_params.rate_slope );
+  d.update_value( names::beta.toString(), urbanczik_params.beta );
+  d.update_value( names::theta.toString(), urbanczik_params.theta );
 
-  updateValue< double >( d, Name( names::g_sp ), urbanczik_params.g_conn[ SOMA ] );
-  updateValue< double >( d, Name( names::g_ps ), urbanczik_params.g_conn[ DEND ] );
+  d.update_value( Name( names::g_sp ).toString(), urbanczik_params.g_conn[ SOMA ] );
+  d.update_value( Name( names::g_ps ).toString(), urbanczik_params.g_conn[ DEND ] );
 
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    if ( d->known( comp_names_[ n ] ) )
+    if ( d.known( comp_names_[ n ].toString() ) )
     {
-      DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
+      auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
 
-      updateValue< double >( dd, names::E_L, urbanczik_params.E_L[ n ] );
-      updateValue< double >( dd, names::E_ex, E_ex[ n ] );
-      updateValue< double >( dd, names::E_in, E_in[ n ] );
-      updateValue< double >( dd, names::C_m, urbanczik_params.C_m[ n ] );
-      updateValue< double >( dd, names::g_L, urbanczik_params.g_L[ n ] );
-      updateValue< double >( dd, names::tau_syn_ex, urbanczik_params.tau_syn_ex[ n ] );
-      updateValue< double >( dd, names::tau_syn_in, urbanczik_params.tau_syn_in[ n ] );
-      updateValue< double >( dd, names::I_e, I_e[ n ] );
+      dd.update_value( names::E_L.toString(), urbanczik_params.E_L[ n ] );
+      dd.update_value( names::E_ex.toString(), E_ex[ n ] );
+      dd.update_value( names::E_in.toString(), E_in[ n ] );
+      dd.update_value( names::C_m.toString(), urbanczik_params.C_m[ n ] );
+      dd.update_value( names::g_L.toString(), urbanczik_params.g_L[ n ] );
+      dd.update_value( names::tau_syn_ex.toString(), urbanczik_params.tau_syn_ex[ n ] );
+      dd.update_value( names::tau_syn_in.toString(), urbanczik_params.tau_syn_in[ n ] );
+      dd.update_value( names::I_e.toString(), I_e[ n ] );
     }
   }
   if ( urbanczik_params.rate_slope < 0 )
@@ -416,29 +416,29 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::State_::get( DictionaryDatum& d ) const
+nest::pp_cond_exp_mc_urbanczik::State_::get( dictionary& d ) const
 {
   // we assume here that State_::get() always is called after
   // Parameters_::get(), so that the per-compartment dictionaries exist
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    assert( d->known( comp_names_[ n ] ) );
-    DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
+    assert( d.known( comp_names_[ n ].toString() ) );
+    auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
 
-    def< double >( dd, names::V_m, y_[ idx( n, V_M ) ] ); // Membrane potential
+    dd[ names::V_m.toString() ] = y_[ idx( n, V_M ) ]; // Membrane potential
   }
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::pp_cond_exp_mc_urbanczik::State_::set( const dictionary& d, const Parameters_& )
 {
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    if ( d->known( comp_names_[ n ] ) )
+    if ( d.known( comp_names_[ n ].toString() ) )
     {
-      DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
-      updateValue< double >( dd, names::V_m, y_[ idx( n, V_M ) ] );
+      auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
+      dd.update_value( names::V_m.toString(), y_[ idx( n, V_M ) ] );
     }
   }
 }

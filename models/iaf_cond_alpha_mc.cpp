@@ -312,59 +312,59 @@ nest::iaf_cond_alpha_mc::Buffers_::Buffers_( const Buffers_&, iaf_cond_alpha_mc&
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_alpha_mc::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_cond_alpha_mc::Parameters_::get( dictionary& d ) const
 {
-  def< double >( d, names::V_th, V_th );
-  def< double >( d, names::V_reset, V_reset );
-  def< double >( d, names::t_ref, t_ref );
+  d[ names::V_th.toString() ] = V_th;
+  d[ names::V_reset.toString() ] = V_reset;
+  d[ names::t_ref.toString() ] = t_ref;
 
-  def< double >( d, names::g_sp, g_conn[ SOMA ] );
-  def< double >( d, names::g_pd, g_conn[ PROX ] );
+  d[ names::g_sp.toString() ] = g_conn[ SOMA ];
+  d[ names::g_pd.toString() ] = g_conn[ PROX ];
 
   // create subdictionaries for per-compartment parameters
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    DictionaryDatum dd = new Dictionary();
+    dictionary dd;
 
-    def< double >( dd, names::g_L, g_L[ n ] );
-    def< double >( dd, names::E_L, E_L[ n ] );
-    def< double >( dd, names::E_ex, E_ex[ n ] );
-    def< double >( dd, names::E_in, E_in[ n ] );
-    def< double >( dd, names::C_m, C_m[ n ] );
-    def< double >( dd, names::tau_syn_ex, tau_synE[ n ] );
-    def< double >( dd, names::tau_syn_in, tau_synI[ n ] );
-    def< double >( dd, names::I_e, I_e[ n ] );
+    dd[ names::g_L.toString() ] = g_L[ n ];
+    dd[ names::E_L.toString() ] = E_L[ n ];
+    dd[ names::E_ex.toString() ] = E_ex[ n ];
+    dd[ names::E_in.toString() ] = E_in[ n ];
+    dd[ names::C_m.toString() ] = C_m[ n ];
+    dd[ names::tau_syn_ex.toString() ] = tau_synE[ n ];
+    dd[ names::tau_syn_in.toString() ] = tau_synI[ n ];
+    dd[ names::I_e.toString() ] = I_e[ n ];
 
-    ( *d )[ comp_names_[ n ] ] = dd;
+    d[ comp_names_[ n ].toString() ] = dd;
   }
 }
 
 void
-nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_cond_alpha_mc::Parameters_::set( const dictionary& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValueParam< double >( d, names::V_th, V_th, node );
-  updateValueParam< double >( d, names::V_reset, V_reset, node );
-  updateValueParam< double >( d, names::t_ref, t_ref, node );
+  update_value_param( d, names::V_th.toString(), V_th, node );
+  update_value_param( d, names::V_reset.toString(), V_reset, node );
+  update_value_param( d, names::t_ref.toString(), t_ref, node );
 
-  updateValueParam< double >( d, Name( names::g_sp ), g_conn[ SOMA ], node );
-  updateValueParam< double >( d, Name( names::g_pd ), g_conn[ PROX ], node );
+  update_value_param( d, Name( names::g_sp ).toString(), g_conn[ SOMA ], node );
+  update_value_param( d, Name( names::g_pd ).toString(), g_conn[ PROX ], node );
 
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    if ( d->known( comp_names_[ n ] ) )
+    if ( d.known( comp_names_[ n ].toString() ) )
     {
-      DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
+      auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
 
-      updateValueParam< double >( dd, names::E_L, E_L[ n ], node );
-      updateValueParam< double >( dd, names::E_ex, E_ex[ n ], node );
-      updateValueParam< double >( dd, names::E_in, E_in[ n ], node );
-      updateValueParam< double >( dd, names::C_m, C_m[ n ], node );
-      updateValueParam< double >( dd, names::g_L, g_L[ n ], node );
-      updateValueParam< double >( dd, names::tau_syn_ex, tau_synE[ n ], node );
-      updateValueParam< double >( dd, names::tau_syn_in, tau_synI[ n ], node );
-      updateValueParam< double >( dd, names::I_e, I_e[ n ], node );
+      update_value_param( d, names::E_L.toString(), E_L[ n ], node );
+      update_value_param( d, names::E_ex.toString(), E_ex[ n ], node );
+      update_value_param( d, names::E_in.toString(), E_in[ n ], node );
+      update_value_param( d, names::C_m.toString(), C_m[ n ], node );
+      update_value_param( d, names::g_L.toString(), g_L[ n ], node );
+      update_value_param( d, names::tau_syn_ex.toString(), tau_synE[ n ], node );
+      update_value_param( d, names::tau_syn_in.toString(), tau_synI[ n ], node );
+      update_value_param( d, names::I_e.toString(), I_e[ n ], node );
     }
   }
   if ( V_reset >= V_th )
@@ -391,29 +391,29 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d, Node* node 
 }
 
 void
-nest::iaf_cond_alpha_mc::State_::get( DictionaryDatum& d ) const
+nest::iaf_cond_alpha_mc::State_::get( dictionary& d ) const
 {
   // we assume here that State_::get() always is called after
   // Parameters_::get(), so that the per-compartment dictionaries exist
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    assert( d->known( comp_names_[ n ] ) );
-    DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
+    assert( d.known( comp_names_[ n ].toString() ) );
+    auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
 
-    def< double >( dd, names::V_m, y_[ idx( n, V_M ) ] ); // Membrane potential
+    dd[ names::V_m.toString() ] = y_[ idx( n, V_M ) ]; // Membrane potential
   }
 }
 
 void
-nest::iaf_cond_alpha_mc::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::iaf_cond_alpha_mc::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    if ( d->known( comp_names_[ n ] ) )
+    if ( d.known( comp_names_[ n ].toString() ) )
     {
-      DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
-      updateValueParam< double >( dd, names::V_m, y_[ idx( n, V_M ) ], node );
+      auto dd = d.get< dictionary >( comp_names_[ n ].toString() );
+      update_value_param( d, names::V_m.toString(), y_[ idx( n, V_M ) ], node );
     }
   }
 }

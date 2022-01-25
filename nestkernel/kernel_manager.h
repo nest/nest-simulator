@@ -168,7 +168,7 @@ public:
   void prepare();
   void cleanup();
 
-  void set_status( const DictionaryDatum& );
+  void set_status( const dictionary& );
   void get_status( dictionary& );
 
   //! Returns true if kernel is initialized

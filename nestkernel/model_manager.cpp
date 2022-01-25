@@ -48,8 +48,8 @@ ModelManager::ModelManager()
   , models_()
   , pristine_prototypes_()
   , prototypes_()
-  , modeldict_( new Dictionary )
-  , synapsedict_( new Dictionary )
+  , modeldict_()
+  , synapsedict_()
   , proxynode_model_( 0 )
   , proxy_nodes_()
   , dummy_spike_sources_()
@@ -104,7 +104,8 @@ ModelManager::initialize()
     models_.push_back( pristine_models_[ i ].first->clone( name ) );
     if ( not pristine_models_[ i ].second )
     {
-      modeldict_->insert( name, i );
+      std::cerr << name << " " << i << "\n";
+      modeldict_[ name ] = i;
     }
   }
 
@@ -129,7 +130,7 @@ ModelManager::initialize()
     dummy_spike_sources_[ t ] = create_proxynode_( t, model_id );
   }
 
-  synapsedict_->clear();
+  synapsedict_.clear();
 
   // one list of prototypes per thread
   std::vector< std::vector< ConnectorModel* > > tmp_proto( kernel().vp_manager.get_num_threads() );
@@ -146,7 +147,7 @@ ModelManager::initialize()
       {
         prototypes_[ t ].push_back( ( *i )->clone( name ) );
       }
-      synapsedict_->insert( name, prototypes_[ 0 ].size() - 1 );
+      synapsedict_[ name ] = static_cast< synindex >( prototypes_[ 0 ].size() - 1 );
     }
   }
 }
@@ -168,7 +169,7 @@ ModelManager::finalize()
 }
 
 void
-ModelManager::set_status( const DictionaryDatum& )
+ModelManager::set_status( const dictionary& )
 {
 }
 
@@ -180,26 +181,23 @@ ModelManager::get_status( dictionary& dict )
 }
 
 index
-ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
+ModelManager::copy_model( Name old_name, Name new_name, dictionary params )
 {
-  if ( modeldict_->known( new_name ) or synapsedict_->known( new_name ) )
+  if ( modeldict_.known( new_name.toString() ) or synapsedict_.known( new_name.toString() ) )
   {
     throw NewModelNameExists( new_name );
   }
 
-  const Token oldnodemodel = modeldict_->lookup( old_name );
-  const Token oldsynmodel = synapsedict_->lookup( old_name );
-
   index new_id;
-  if ( not oldnodemodel.empty() )
+  if ( modeldict_.known( old_name.toString() ) )
   {
-    index old_id = static_cast< index >( oldnodemodel );
+    index old_id = modeldict_.get< index >( old_name.toString() );
     new_id = copy_node_model_( old_id, new_name );
     set_node_defaults_( new_id, params );
   }
-  else if ( not oldsynmodel.empty() )
+  else if ( synapsedict_.known( old_name.toString() ) )
   {
-    index old_id = static_cast< index >( oldsynmodel );
+    index old_id = synapsedict_.get< synindex >( old_name.toString() );
     new_id = copy_synapse_model_( old_id, new_name );
     set_synapse_defaults_( new_id, params );
   }
@@ -232,7 +230,7 @@ ModelManager::register_node_model_( Model* model, bool private_model )
 
   if ( not private_model )
   {
-    modeldict_->insert( name, id );
+    modeldict_[ name ] = id;
   }
 
   return id;
@@ -248,7 +246,7 @@ ModelManager::copy_node_model_( index old_id, Name new_name )
   models_.push_back( new_model );
 
   index new_id = models_.size() - 1;
-  modeldict_->insert( new_name, new_id );
+  modeldict_[ new_name.toString() ] = new_id;
 
 #pragma omp parallel
   {
@@ -289,7 +287,7 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
     prototypes_[ t ][ new_id ]->set_syn_id( new_id );
   }
 
-  synapsedict_->insert( new_name, new_id );
+  synapsedict_[ new_name.toString() ] = static_cast< synindex >( new_id );
 
   kernel().connection_manager.resize_connections();
   return new_id;
@@ -297,20 +295,17 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
 
 
 void
-ModelManager::set_model_defaults( Name name, DictionaryDatum params )
+ModelManager::set_model_defaults( Name name, dictionary params )
 {
-  const Token nodemodel = modeldict_->lookup( name );
-  const Token synmodel = synapsedict_->lookup( name );
-
   index id;
-  if ( not nodemodel.empty() )
+  if ( modeldict_.known( name.toString() ) )
   {
-    id = static_cast< index >( nodemodel );
+    id = modeldict_.get< index >( name.toString() );
     set_node_defaults_( id, params );
   }
-  else if ( not synmodel.empty() )
+  else if ( synapsedict_.known( name.toString() ) )
   {
-    id = static_cast< index >( synmodel );
+    id = synapsedict_.get< synindex >( name.toString() );
     set_synapse_defaults_( id, params );
   }
   else
@@ -323,19 +318,21 @@ ModelManager::set_model_defaults( Name name, DictionaryDatum params )
 
 
 void
-ModelManager::set_node_defaults_( index model_id, const DictionaryDatum& params )
+ModelManager::set_node_defaults_( index model_id, const dictionary& params )
 {
-  params->clear_access_flags();
+  // TODO-PYNEST-NG: Access flags
+  // params->clear_access_flags();
 
   get_model( model_id )->set_status( params );
 
-  ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_node_defaults_", "Unread dictionary entries: " );
+  // ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_node_defaults_", "Unread dictionary entries: " );
 }
 
 void
-ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& params )
+ModelManager::set_synapse_defaults_( index model_id, const dictionary& params )
 {
-  params->clear_access_flags();
+  // TODO-PYNEST-NG: Access flags
+  // params->clear_access_flags();
   assert_valid_syn_id( model_id );
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
@@ -366,7 +363,7 @@ ModelManager::set_synapse_defaults_( index model_id, const DictionaryDatum& para
     }
   }
 
-  ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_synapse_defaults_", "Unread dictionary entries: " );
+  // ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_synapse_defaults_", "Unread dictionary entries: " );
 }
 
 // TODO: replace int with index and return value -1 with invalid_index, also
@@ -387,12 +384,12 @@ ModelManager::get_model_id( const Name name ) const
 }
 
 
-DictionaryDatum
+dictionary
 ModelManager::get_connector_defaults( synindex syn_id ) const
 {
   assert_valid_syn_id( syn_id );
 
-  DictionaryDatum dict( new Dictionary() );
+  dictionary dict;
 
   for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
   {
@@ -400,7 +397,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
     prototypes_[ t ][ syn_id ]->get_status( dict );
   }
 
-  ( *dict )[ names::num_connections ] = kernel().connection_manager.get_num_connections( syn_id );
+  dict[ names::num_connections.toString() ] = kernel().connection_manager.get_num_connections( syn_id );
 
   return dict;
 }
@@ -447,7 +444,7 @@ ModelManager::clear_models_()
   proxy_nodes_.clear();
   dummy_spike_sources_.clear();
 
-  modeldict_->clear();
+  modeldict_.clear();
 
   model_defaults_modified_ = false;
 }
@@ -555,7 +552,7 @@ ModelManager::create_secondary_events_prototypes()
 synindex
 ModelManager::register_connection_model_( ConnectorModel* cf )
 {
-  if ( synapsedict_->known( cf->get_name() ) )
+  if ( synapsedict_.known( cf->get_name() ) )
   {
     delete cf;
     std::string msg = String::compose(
@@ -576,7 +573,7 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
     prototypes_[ t ][ syn_id ]->set_syn_id( syn_id );
   }
 
-  synapsedict_->insert( cf->get_name(), syn_id );
+  synapsedict_[ cf->get_name() ] = syn_id;
 
   // Need to resize Connector vectors in case connection model is added after
   // ConnectionManager is initialised.

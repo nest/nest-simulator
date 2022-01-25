@@ -70,9 +70,9 @@ public:
   virtual void finalize();
 
   virtual void get_status( dictionary& );
-  virtual void set_status( const DictionaryDatum& );
+  virtual void set_status( const dictionary& );
 
-  DictionaryDatum& get_growthcurvedict();
+  dictionary& get_growthcurvedict();
 
   /**
    * Create a new Growth Curve object using the GrowthCurve Factory
@@ -96,7 +96,7 @@ public:
    * \param connectivityParams connectivity Dictionary
    * \param synapseParams synapse parameters Dictionary
    */
-  void disconnect( NodeCollectionPTR, NodeCollectionPTR, DictionaryDatum&, DictionaryDatum& );
+  void disconnect( NodeCollectionPTR, NodeCollectionPTR, dictionary&, dictionary& );
 
   /**
    * Disconnect two nodes.
@@ -198,7 +198,7 @@ private:
    Description:
    This dictionary provides indexes for the growth curve factory
    */
-  DictionaryDatum growthcurvedict_; //!< Dictionary for growth rules.
+  dictionary growthcurvedict_; //!< Dictionary for growth rules.
 
   /**
    * GrowthCurve factories, indexed by growthcurvedict_ elements.
@@ -206,7 +206,7 @@ private:
   std::vector< GenericGrowthCurveFactory* > growthcurve_factories_;
 };
 
-inline DictionaryDatum&
+inline dictionary&
 SPManager::get_growthcurvedict()
 {
   return growthcurvedict_;
@@ -215,7 +215,7 @@ SPManager::get_growthcurvedict()
 inline GrowthCurve*
 SPManager::new_growth_curve( Name name )
 {
-  const long nc_id = ( *growthcurvedict_ )[ name ];
+  const long nc_id = growthcurvedict_.get< long >( name.toString() );
   return growthcurve_factories_.at( nc_id )->create();
 }
 

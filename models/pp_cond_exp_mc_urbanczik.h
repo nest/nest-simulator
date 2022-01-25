@@ -272,8 +272,8 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -374,8 +374,8 @@ private:
     Parameters_( const Parameters_& );            //!< needed to copy C-arrays
     Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( dictionary& ) const; //!< Store current values in dictionary
+    void set( const dictionary& ); //!< Set values from dicitonary
   };
 
 
@@ -417,8 +417,8 @@ public:
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void get( dictionary& ) const;
+    void set( const dictionary&, const Parameters_& );
 
     /**
      * Compute linear index into state array from compartment and element.
@@ -606,33 +606,33 @@ pp_cond_exp_mc_urbanczik::handles_test_event( DataLoggingRequest& dlr, rport rec
 }
 
 inline void
-pp_cond_exp_mc_urbanczik::get_status( DictionaryDatum& d ) const
+pp_cond_exp_mc_urbanczik::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 
   /**
    * @todo dictionary construction should be done only once for
    * static member in default c'tor, but this leads to
    * a seg fault on exit, see #328
    */
-  DictionaryDatum receptor_dict_ = new Dictionary();
-  ( *receptor_dict_ )[ names::soma_exc ] = SOMA_EXC;
-  ( *receptor_dict_ )[ names::soma_inh ] = SOMA_INH;
-  ( *receptor_dict_ )[ names::soma_curr ] = I_SOMA;
+  dictionary receptor_dict_;
+  receptor_dict_[ names::soma_exc.toString() ] = SOMA_EXC;
+  receptor_dict_[ names::soma_inh.toString() ] = SOMA_INH;
+  receptor_dict_[ names::soma_curr.toString() ] = I_SOMA;
 
-  ( *receptor_dict_ )[ names::dendritic_exc ] = DEND_EXC;
-  ( *receptor_dict_ )[ names::dendritic_inh ] = DEND_INH;
-  ( *receptor_dict_ )[ names::dendritic_curr ] = I_DEND;
+  receptor_dict_[ names::dendritic_exc.toString() ] = DEND_EXC;
+  receptor_dict_[ names::dendritic_inh.toString() ] = DEND_INH;
+  receptor_dict_[ names::dendritic_curr.toString() ] = I_DEND;
 
-  ( *d )[ names::receptor_types ] = receptor_dict_;
+  d[ names::receptor_types.toString() ] = receptor_dict_;
 }
 
 inline void
-pp_cond_exp_mc_urbanczik::set_status( const DictionaryDatum& d )
+pp_cond_exp_mc_urbanczik::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty

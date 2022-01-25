@@ -55,23 +55,23 @@ nest::poisson_generator_ps::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator_ps::Parameters_::get( DictionaryDatum& d ) const
+nest::poisson_generator_ps::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::rate ] = rate_;
-  ( *d )[ names::dead_time ] = dead_time_;
+  d[ names::rate.toString() ] = rate_;
+  d[ names::dead_time.toString() ] = dead_time_;
 }
 
 void
-nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::poisson_generator_ps::Parameters_::set( const dictionary& d, Node* node )
 {
 
-  updateValueParam< double >( d, names::dead_time, dead_time_, node );
+  update_value_param( d, names::dead_time.toString(), dead_time_, node );
   if ( dead_time_ < 0 )
   {
     throw BadProperty( "The dead time cannot be negative." );
   }
 
-  updateValueParam< double >( d, names::rate, rate_, node );
+  update_value_param( d, names::rate.toString(), rate_, node );
 
   if ( rate_ < 0.0 )
   {
@@ -292,9 +292,10 @@ nest::poisson_generator_ps::set_data_from_stimulation_backend( std::vector< doub
     {
       throw BadParameterValue( "The size of the data for the poisson_generator_ps need to be 2 [dead_time, rate]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::dead_time ] = DoubleDatum( input_param[ 0 ] );
-    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
+    dictionary d;
+    ( new Dictionary );
+    d[ names::dead_time.toString() ] = DoubleDatum( input_param[ 0 ] );
+    d[ names::rate.toString() ] = DoubleDatum( input_param[ 1 ] );
     ptmp.set( d, this );
   }
 

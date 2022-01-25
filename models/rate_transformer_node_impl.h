@@ -81,30 +81,30 @@ nest::rate_transformer_node< TNonlinearities >::State_::State_()
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::Parameters_::get( DictionaryDatum& d ) const
+nest::rate_transformer_node< TNonlinearities >::Parameters_::get( dictionary& d ) const
 {
-  def< bool >( d, names::linear_summation, linear_summation_ );
+  d[ names::linear_summation.toString() ] = linear_summation_;
 }
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::rate_transformer_node< TNonlinearities >::Parameters_::set( const dictionary& d, Node* node )
 {
-  updateValueParam< bool >( d, names::linear_summation, linear_summation_, node );
+  update_value_param( d, names::linear_summation.toString(), linear_summation_, node );
 }
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::State_::get( DictionaryDatum& d ) const
+nest::rate_transformer_node< TNonlinearities >::State_::get( dictionary& d ) const
 {
-  def< double >( d, names::rate, rate_ ); // Rate
+  d[ names::rate.toString() ] = rate_; // Rate
 }
 
 template < class TNonlinearities >
 void
-nest::rate_transformer_node< TNonlinearities >::State_::set( const DictionaryDatum& d, Node* node )
+nest::rate_transformer_node< TNonlinearities >::State_::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::rate, rate_, node ); // Rate
+  update_value_param( d, names::rate.toString(), rate_, node ); // Rate
 }
 
 template < class TNonlinearities >

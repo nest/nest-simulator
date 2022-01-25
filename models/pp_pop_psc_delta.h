@@ -183,8 +183,8 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -230,9 +230,9 @@ private:
     /** -------------- */
     std::vector< double > val_eta_;
 
-    Parameters_();                                  //!< Sets default parameter values
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    Parameters_();                             //!< Sets default parameter values
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -259,8 +259,8 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( dictionary&, const Parameters_& ) const;
+    void set( const dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -379,15 +379,15 @@ pp_pop_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_ty
 }
 
 inline void
-pp_pop_psc_delta::get_status( DictionaryDatum& d ) const
+pp_pop_psc_delta::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 }
 
 inline void
-pp_pop_psc_delta::set_status( const DictionaryDatum& d )
+pp_pop_psc_delta::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

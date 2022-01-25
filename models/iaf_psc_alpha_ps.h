@@ -192,8 +192,8 @@ public:
     return true;
   } // uses off_grid events
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
   /**
    * Based on the current state, compute the value of the membrane potential
@@ -315,12 +315,12 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum& );
+    double set( const dictionary& );
   };
 
   // ----------------------------------------------------------------
@@ -342,14 +342,14 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( dictionary&, const Parameters_& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double );
+    void set( const dictionary&, const Parameters_&, double );
   };
 
   // ----------------------------------------------------------------
@@ -495,17 +495,17 @@ iaf_psc_alpha_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_ty
 }
 
 inline void
-iaf_psc_alpha_ps::get_status( DictionaryDatum& d ) const
+iaf_psc_alpha_ps::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_psc_alpha_ps::set_status( const DictionaryDatum& d )
+iaf_psc_alpha_ps::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;                 // temporary copy in case of errors
   const double delta_EL = ptmp.set( d ); // throws if BadProperty

@@ -137,8 +137,8 @@ public:
   }
 
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -170,9 +170,9 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
 
-    void set( const DictionaryDatum&, Node* node );
+    void set( const dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -186,14 +186,14 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum& ) const;
+    void get( dictionary& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, Node* node );
+    void set( const dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -292,19 +292,19 @@ rate_transformer_node< TNonlinearities >::handles_test_event( DataLoggingRequest
 
 template < class TNonlinearities >
 inline void
-rate_transformer_node< TNonlinearities >::get_status( DictionaryDatum& d ) const
+rate_transformer_node< TNonlinearities >::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 
   nonlinearities_.get( d );
 }
 
 template < class TNonlinearities >
 inline void
-rate_transformer_node< TNonlinearities >::set_status( const DictionaryDatum& d )
+rate_transformer_node< TNonlinearities >::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

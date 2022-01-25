@@ -85,7 +85,7 @@ public:
     const index s_node_id,
     const thread tid,
     const synindex syn_id,
-    const DictionaryDatum& p,
+    const dictionary& p,
     const double d,
     const double w );
 
@@ -96,7 +96,7 @@ public:
     Node& target,
     const thread tid,
     const synindex syn_id,
-    const DictionaryDatum& p,
+    const dictionary& p,
     const double d,
     const double w );
 
@@ -170,7 +170,7 @@ public:
   void get_synapse_status_to_device( const thread tid,
     const index source_node_id,
     const synindex syn_id,
-    DictionaryDatum& dict,
+    dictionary& dict,
     const index lcid ) const;
 
   /**
@@ -179,7 +179,7 @@ public:
   void get_synapse_status_from_device( const thread tid,
     const index ldid,
     const synindex syn_id,
-    DictionaryDatum& dict,
+    dictionary& dict,
     const index lcid ) const;
 
   /**
@@ -189,7 +189,7 @@ public:
     const index source_node_id,
     const synindex syn_id,
     ConnectorModel& cm,
-    const DictionaryDatum& dict,
+    const dictionary& dict,
     const index lcid );
 
   /**
@@ -199,7 +199,7 @@ public:
     const index ldid,
     const synindex syn_id,
     ConnectorModel& cm,
-    const DictionaryDatum& dict,
+    const dictionary& dict,
     const index lcid );
 
   /**
@@ -212,7 +212,7 @@ inline void
 TargetTableDevices::get_synapse_status_from_device( const thread tid,
   const index ldid,
   const synindex syn_id,
-  DictionaryDatum& dict,
+  dictionary& dict,
   const index lcid ) const
 {
   target_from_devices_[ tid ][ ldid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
@@ -223,7 +223,7 @@ TargetTableDevices::set_synapse_status_from_device( const thread tid,
   const index ldid,
   const synindex syn_id,
   ConnectorModel& cm,
-  const DictionaryDatum& dict,
+  const dictionary& dict,
   const index lcid )
 {
   target_from_devices_[ tid ][ ldid ][ syn_id ]->set_synapse_status( lcid, dict, cm );

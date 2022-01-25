@@ -278,7 +278,7 @@ class NodeCollection(object):
         return not self == other
 
     def __len__(self):
-        return sli_func('size', self._datum)
+        return kernel.llapi_nc_size(self._datum)
 
     def __str__(self):
         return kernel.llapi_to_string(self._datum).decode('utf8')

@@ -56,7 +56,7 @@ nest::RecordingBackendASCII::finalize()
 }
 
 void
-nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const dictionary& params )
 {
   const thread t = device.get_thread();
   const index node_id = device.get_node_id();
@@ -181,7 +181,7 @@ nest::RecordingBackendASCII::prepare()
 }
 
 void
-nest::RecordingBackendASCII::set_status( const DictionaryDatum& )
+nest::RecordingBackendASCII::set_status( const dictionary& )
 {
   // nothing to do
 }
@@ -193,21 +193,21 @@ nest::RecordingBackendASCII::get_status( dictionary& ) const
 }
 
 void
-nest::RecordingBackendASCII::check_device_status( const DictionaryDatum& params ) const
+nest::RecordingBackendASCII::check_device_status( const dictionary& params ) const
 {
   DeviceData dd( "", "" );
   dd.set_status( params ); // throws if params contains invalid entries
 }
 
 void
-nest::RecordingBackendASCII::get_device_defaults( DictionaryDatum& params ) const
+nest::RecordingBackendASCII::get_device_defaults( dictionary& params ) const
 {
   DeviceData dd( "", "" );
   dd.get_status( params );
 }
 
 void
-nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, DictionaryDatum& d ) const
+nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, dictionary& d ) const
 {
   const thread t = device.get_thread();
   const index node_id = device.get_node_id();
@@ -323,26 +323,25 @@ nest::RecordingBackendASCII::DeviceData::write( const Event& event,
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::get_status( DictionaryDatum& d ) const
+nest::RecordingBackendASCII::DeviceData::get_status( dictionary& d ) const
 {
-  ( *d )[ names::file_extension ] = file_extension_;
-  ( *d )[ names::precision ] = precision_;
-  ( *d )[ names::time_in_steps ] = time_in_steps_;
+  d[ names::file_extension.toString() ] = file_extension_;
+  d[ names::precision.toString() ] = precision_;
+  d[ names::time_in_steps.toString() ] = time_in_steps_;
 
   std::string filename = compute_filename_();
-  initialize_property_array( d, names::filenames );
-  append_property( d, names::filenames, filename );
+  d[ names::filenames.toString() ] = std::vector< std::string >( { filename } );
 }
 
 void
-nest::RecordingBackendASCII::DeviceData::set_status( const DictionaryDatum& d )
+nest::RecordingBackendASCII::DeviceData::set_status( const dictionary& d )
 {
-  updateValue< std::string >( d, names::file_extension, file_extension_ );
-  updateValue< long >( d, names::precision, precision_ );
-  updateValue< std::string >( d, names::label, label_ );
+  d.update_value( names::file_extension.toString(), file_extension_ );
+  d.update_value( names::precision.toString(), precision_ );
+  d.update_value( names::label.toString(), label_ );
 
   bool time_in_steps = false;
-  if ( updateValue< bool >( d, names::time_in_steps, time_in_steps ) )
+  if ( d.update_value( names::time_in_steps.toString(), time_in_steps ) )
   {
     if ( kernel().simulation_manager.has_been_simulated() )
     {

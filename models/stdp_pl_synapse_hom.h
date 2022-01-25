@@ -105,12 +105,12 @@ public:
   /**
    * Get all properties and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   // data members common to all connections
   double tau_plus_;
@@ -158,12 +158,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -298,27 +298,27 @@ stdp_pl_synapse_hom< targetidentifierT >::stdp_pl_synapse_hom()
 
 template < typename targetidentifierT >
 void
-stdp_pl_synapse_hom< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_pl_synapse_hom< targetidentifierT >::get_status( dictionary& d ) const
 {
 
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
+  d[ names::weight.toString() ] = weight_;
 
   // own properties, different for individual synapse
-  def< double >( d, names::Kplus, Kplus_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::Kplus.toString() ] = Kplus_;
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-stdp_pl_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_pl_synapse_hom< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight.toString(), weight_ );
 
-  updateValue< double >( d, names::Kplus, Kplus_ );
+  d.update_value( names::Kplus.toString(), Kplus_ );
 }
 
 } // of namespace nest

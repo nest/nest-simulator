@@ -125,8 +125,8 @@ public:
    */
   void register_stdp_connection( double t_first_read, double delay );
 
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& d );
+  void get_status( dictionary& d ) const;
+  void set_status( const dictionary& d );
 
 protected:
   /**

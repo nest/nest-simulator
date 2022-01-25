@@ -30,7 +30,7 @@ nest::RecordingDevice::RecordingDevice()
   : DeviceNode()
   , Device()
   , P_()
-  , backend_params_( new Dictionary )
+  , backend_params_()
 {
 }
 
@@ -38,7 +38,7 @@ nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
   : DeviceNode( rd )
   , Device( rd )
   , P_( rd.P_ )
-  , backend_params_( new Dictionary( *rd.backend_params_ ) )
+  , backend_params_( ( rd.backend_params_ ) )
 {
 }
 
@@ -69,19 +69,19 @@ nest::RecordingDevice::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingDevice::Parameters_::get( DictionaryDatum& d ) const
+nest::RecordingDevice::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::label ] = label_;
-  ( *d )[ names::record_to ] = LiteralDatum( record_to_ );
+  d[ names::label.toString() ] = label_;
+  d[ names::record_to.toString() ] = LiteralDatum( record_to_ );
 }
 
 void
-nest::RecordingDevice::Parameters_::set( const DictionaryDatum& d )
+nest::RecordingDevice::Parameters_::set( const dictionary& d )
 {
-  updateValue< std::string >( d, names::label, label_ );
+  d.update_value( names::label.toString(), label_ );
 
   std::string record_to;
-  if ( updateValue< std::string >( d, names::record_to, record_to ) )
+  if ( d.update_value( names::record_to.toString(), record_to ) )
   {
     if ( not kernel().io_manager.is_valid_recording_backend( record_to ) )
     {
@@ -99,18 +99,18 @@ nest::RecordingDevice::State_::State_()
 }
 
 void
-nest::RecordingDevice::State_::get( DictionaryDatum& d ) const
+nest::RecordingDevice::State_::get( dictionary& d ) const
 {
   size_t n_events = 0;
-  updateValue< long >( d, names::n_events, n_events );
-  ( *d )[ names::n_events ] = n_events + n_events_;
+  d.update_value( names::n_events.toString(), n_events );
+  d[ names::n_events.toString() ] = n_events + n_events_;
 }
 
 void
-nest::RecordingDevice::State_::set( const DictionaryDatum& d )
+nest::RecordingDevice::State_::set( const dictionary& d )
 {
   size_t n_events = 0;
-  if ( updateValue< long >( d, names::n_events, n_events ) )
+  if ( d.update_value( names::n_events.toString(), n_events ) )
   {
     if ( n_events != 0 )
     {
@@ -122,7 +122,7 @@ nest::RecordingDevice::State_::set( const DictionaryDatum& d )
 }
 
 void
-nest::RecordingDevice::set_status( const DictionaryDatum& d )
+nest::RecordingDevice::set_status( const dictionary& d )
 {
   if ( kernel().simulation_manager.has_been_prepared() )
   {
@@ -139,28 +139,30 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
-    DictionaryDatum backend_params = DictionaryDatum( new Dictionary );
+    dictionary backend_params;
 
     // copy all properties not previously accessed from d to backend_params
-    for ( auto kv_pair = d->begin(); kv_pair != d->end(); ++kv_pair )
+    for ( auto& kv_pair : d )
     {
-      if ( not kv_pair->second.accessed() )
-      {
-        ( *backend_params )[ kv_pair->first ] = kv_pair->second;
-      }
+      // TODO-PYNEST-NG: Fix when access flags are added
+      // if ( not kv_pair.second.accessed() )
+      // {
+      //   ( *backend_params )[ kv_pair.first ] = kv_pair.second;
+      // }
     }
 
     kernel().io_manager.check_recording_backend_device_status( ptmp.record_to_, backend_params );
 
     // cache all properties accessed by the backend in private member
-    backend_params_->clear();
-    for ( auto kv_pair = backend_params->begin(); kv_pair != backend_params->end(); ++kv_pair )
+    backend_params_.clear();
+    for ( auto& kv_pair : backend_params )
     {
-      if ( kv_pair->second.accessed() )
-      {
-        ( *backend_params_ )[ kv_pair->first ] = kv_pair->second;
-        d->lookup( kv_pair->first ).set_access_flag();
-      }
+      // TODO-PYNEST-NG: Fix when access flags are added
+      // if ( kv_pair->second.accessed() )
+      // {
+      //   ( *backend_params_ )[ kv_pair->first ] = kv_pair->second;
+      //   d->lookup( kv_pair->first ).set_access_flag();
+      // }
     }
   }
   else
@@ -174,14 +176,14 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::RecordingDevice::get_status( DictionaryDatum& d ) const
+nest::RecordingDevice::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
 
   Device::get_status( d );
 
-  ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
+  d[ names::element_type.toString() ] = LiteralDatum( names::recorder );
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
@@ -189,9 +191,9 @@ nest::RecordingDevice::get_status( DictionaryDatum& d ) const
     kernel().io_manager.get_recording_backend_device_defaults( P_.record_to_, d );
 
     // then overwrite with cached parameters
-    for ( auto kv_pair = backend_params_->begin(); kv_pair != backend_params_->end(); ++kv_pair )
+    for ( auto& kv_pair : backend_params_ )
     {
-      ( *d )[ kv_pair->first ] = kv_pair->second;
+      d[ kv_pair.first ] = kv_pair.second;
     }
   }
   else

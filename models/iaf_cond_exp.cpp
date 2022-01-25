@@ -145,40 +145,40 @@ nest::iaf_cond_exp::State_& nest::iaf_cond_exp::State_::operator=( const State_&
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_exp::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_cond_exp::Parameters_::get( dictionary& d ) const
 {
-  def< double >( d, names::V_th, V_th_ );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::tau_syn_ex, tau_synE );
-  def< double >( d, names::tau_syn_in, tau_synI );
-  def< double >( d, names::I_e, I_e );
+  d[ names::V_th.toString() ] = V_th_;
+  d[ names::V_reset.toString() ] = V_reset_;
+  d[ names::t_ref.toString() ] = t_ref_;
+  d[ names::g_L.toString() ] = g_L;
+  d[ names::E_L.toString() ] = E_L;
+  d[ names::E_ex.toString() ] = E_ex;
+  d[ names::E_in.toString() ] = E_in;
+  d[ names::C_m.toString() ] = C_m;
+  d[ names::tau_syn_ex.toString() ] = tau_synE;
+  d[ names::tau_syn_in.toString() ] = tau_synI;
+  d[ names::I_e.toString() ] = I_e;
 }
 
 void
-nest::iaf_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_cond_exp::Parameters_::set( const dictionary& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValueParam< double >( d, names::V_th, V_th_, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_th.toString(), V_th_, node );
+  update_value_param( d, names::V_reset.toString(), V_reset_, node );
+  update_value_param( d, names::t_ref.toString(), t_ref_, node );
+  update_value_param( d, names::E_L.toString(), E_L, node );
 
-  updateValueParam< double >( d, names::E_ex, E_ex, node );
-  updateValueParam< double >( d, names::E_in, E_in, node );
+  update_value_param( d, names::E_ex.toString(), E_ex, node );
+  update_value_param( d, names::E_in.toString(), E_in, node );
 
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m.toString(), C_m, node );
+  update_value_param( d, names::g_L.toString(), g_L, node );
 
-  updateValueParam< double >( d, names::tau_syn_ex, tau_synE, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
+  update_value_param( d, names::tau_syn_ex.toString(), tau_synE, node );
+  update_value_param( d, names::tau_syn_in.toString(), tau_synI, node );
 
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::I_e.toString(), I_e, node );
   if ( V_reset_ >= V_th_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -198,19 +198,19 @@ nest::iaf_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::iaf_cond_exp::State_::get( DictionaryDatum& d ) const
+nest::iaf_cond_exp::State_::get( dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
-  def< double >( d, names::g_ex, y_[ G_EXC ] );
-  def< double >( d, names::g_in, y_[ G_INH ] );
+  d[ names::V_m.toString() ] = y_[ V_M ]; // Membrane potential
+  d[ names::g_ex.toString() ] = y_[ G_EXC ];
+  d[ names::g_in.toString() ] = y_[ G_INH ];
 }
 
 void
-nest::iaf_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::iaf_cond_exp::State_::set( const dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
-  updateValueParam< double >( d, names::g_ex, y_[ G_EXC ], node );
-  updateValueParam< double >( d, names::g_in, y_[ G_INH ], node );
+  update_value_param( d, names::V_m.toString(), y_[ V_M ], node );
+  update_value_param( d, names::g_ex.toString(), y_[ G_EXC ], node );
+  update_value_param( d, names::g_in.toString(), y_[ G_INH ], node );
 }
 
 nest::iaf_cond_exp::Buffers_::Buffers_( iaf_cond_exp& n )

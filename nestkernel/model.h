@@ -143,7 +143,7 @@ public:
    * @param d Dictionary with named parameter settings.
    * @ingroup status_interface
    */
-  void set_status( DictionaryDatum );
+  void set_status( dictionary );
 
   /**
    * Export properties of the prototype node by setting
@@ -151,7 +151,7 @@ public:
    * @param d Dictionary.
    * @ingroup status_interface
    */
-  DictionaryDatum get_status( void );
+  dictionary get_status( void );
 
   virtual port send_test_event( Node&, rport, synindex, bool ) = 0;
 
@@ -211,9 +211,9 @@ public:
   }
 
 private:
-  virtual void set_status_( DictionaryDatum ) = 0;
+  virtual void set_status_( dictionary ) = 0;
 
-  virtual DictionaryDatum get_status_() = 0;
+  virtual dictionary get_status_() = 0;
 
 
   /**

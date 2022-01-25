@@ -71,7 +71,7 @@ public:
   /**
    *
    */
-  virtual void set_status( const DictionaryDatum& );
+  virtual void set_status( const dictionary& );
 
   /**
    *
@@ -118,32 +118,6 @@ public:
   register_node_model( const Name& name, bool private_model = false, std::string deprecation_info = std::string() );
 
   /**
-   * Register a pre-configured model prototype with the network.
-   * This function must be called exactly once for each model class to make
-   * it known to the network. The natural place for a call to this function
-   * is in a *module.cpp file.
-   *
-   * Pre-configured models are models based on the same class, as
-   * another model, but have different parameter settings; e.g.,
-   * voltmeter is a pre-configured multimeter.
-   *
-   * @param name of the new node model.
-   * @param private_model if true, don't add model to modeldict.
-   * @param dictionary to use to pre-configure model
-   * @param deprecation_info  If non-empty string, deprecation warning will
-   *                          be issued for model with this info to user.
-   *
-   * @return ID of the new model object.
-   * @see register_private_prototype_model, register_node_model,
-   * register_prototype_connection
-   */
-  template < class ModelT >
-  index register_preconf_node_model( const Name& name,
-    DictionaryDatum& conf,
-    bool private_model = false,
-    std::string deprecation_info = std::string() );
-
-  /**
    * Copy an existing model and register it as a new model.
    * This function allows users to create their own, cloned models.
    * @param old_name name of existing model.
@@ -152,7 +126,7 @@ public:
    * @return model ID of new Model object.
    * @see copy_node_model_, copy_synapse_model_
    */
-  index copy_model( Name old_name, Name new_name, DictionaryDatum params );
+  index copy_model( Name old_name, Name new_name, dictionary params );
 
   /**
    * Set the default parameters of a model.
@@ -160,7 +134,7 @@ public:
    * @param params default parameters to be set.
    * @see set_node_defaults_, set_synapse_defaults_
    */
-  void set_model_defaults( Name name, DictionaryDatum params );
+  void set_model_defaults( Name name, dictionary params );
 
   /**
    * Register a synape model with a custom Connector model and without any
@@ -194,7 +168,7 @@ public:
    */
   Model* get_model( index ) const;
 
-  DictionaryDatum get_connector_defaults( synindex syn_id ) const;
+  dictionary get_connector_defaults( synindex syn_id ) const;
 
   /**
    * Checks, whether synapse type requires symmetric connections
@@ -234,12 +208,12 @@ public:
   /**
    * @return Reference to the model dictionary
    */
-  DictionaryDatum& get_modeldict();
+  dictionary& get_modeldict();
 
   /**
    * @return Reference to the synapse dictionary
    */
-  DictionaryDatum& get_synapsedict();
+  dictionary& get_synapsedict();
 
   /**
    * Does the network contain copies of models created using CopyModel?
@@ -304,7 +278,7 @@ private:
    * @param params default parameters to be set.
    * @see set_model_defaults, set_synapse_defaults_
    */
-  void set_node_defaults_( index model_id, const DictionaryDatum& params );
+  void set_node_defaults_( index model_id, const dictionary& params );
 
   /**
    * Set the default parameters of a model.
@@ -312,7 +286,7 @@ private:
    * @param params default parameters to be set.
    * @see set_model_defaults, set_node_defaults_
    */
-  void set_synapse_defaults_( index model_id, const DictionaryDatum& params );
+  void set_synapse_defaults_( index model_id, const dictionary& params );
 
   //! Compares model ids for sorting in memory_info
   static bool compare_model_by_id_( const int a, const int b );
@@ -353,7 +327,7 @@ private:
 
    SeeAlso: info, Device, RecordingDevice
    */
-  DictionaryDatum modeldict_; //!< Dictionary of all models
+  dictionary modeldict_; //!< Dictionary of all models
 
   /** @BeginDocumentation
    Name: synapsedict - Dictionary containing all synapse models.
@@ -372,7 +346,7 @@ private:
 
    SeeAlso: info
    */
-  DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
+  dictionary synapsedict_; //!< Dictionary of all synapse models
 
   Model* proxynode_model_;
 
@@ -410,13 +384,13 @@ ModelManager::are_model_defaults_modified() const
   return model_defaults_modified_;
 }
 
-inline DictionaryDatum&
+inline dictionary&
 ModelManager::get_modeldict()
 {
   return modeldict_;
 }
 
-inline DictionaryDatum&
+inline dictionary&
 ModelManager::get_synapsedict()
 {
   return synapsedict_;

@@ -168,8 +168,8 @@ public:
   SignalType sends_signal() const;
 
   Type get_type() const;
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
   void calibrate_time( const TimeConverter& tc );
 
@@ -197,8 +197,8 @@ private:
     Parameters_();
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& );
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Buffers_&, Node* node );
+    void get( dictionary& ) const;
+    void set( const dictionary&, const Buffers_&, Node* node );
   };
 
   // ------------------------------------------------------------
@@ -224,7 +224,7 @@ private:
 
 
 inline void
-nest::multimeter::get_status( DictionaryDatum& d ) const
+nest::multimeter::get_status( dictionary& d ) const
 {
   RecordingDevice::get_status( d );
   P_.get( d );
@@ -248,11 +248,11 @@ nest::multimeter::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-nest::multimeter::set_status( const DictionaryDatum& d )
+nest::multimeter::set_status( const dictionary& d )
 {
   // protect multimeter from being frozen
   bool freeze = false;
-  if ( updateValue< bool >( d, names::frozen, freeze ) && freeze )
+  if ( d.update_value( names::frozen.toString(), freeze ) && freeze )
   {
     throw BadProperty( "multimeter cannot be frozen." );
   }

@@ -28,7 +28,9 @@
 #include <vector>
 #include <boost/any.hpp>
 
-using dictionary = std::map< std::string, boost::any >;
+#include "sliexceptions.h"
+
+// using dictionary = std::map< std::string, boost::any >;
 
 std::string debug_type( const boost::any& operand );
 
@@ -40,7 +42,58 @@ bool is_bool( const boost::any& operand );
 bool is_string( const boost::any& operand );
 bool is_int_vector( const boost::any& operand );
 bool is_double_vector( const boost::any& operand );
+bool is_double_vector_vector( const boost::any& operand );
 bool is_string_vector( const boost::any& operand );
 bool is_dict( const boost::any& operand );
+bool is_parameter( const boost::any& operand );
+bool is_nc( const boost::any& operand );
+
+bool value_equal( const boost::any first, const boost::any second );
+
+class dictionary : public std::map< std::string, boost::any >
+{
+public:
+  template < typename T >
+  T
+  get( const std::string& key ) const
+  {
+    try
+    {
+      return boost::any_cast< T >( at( key ) );
+    }
+    catch ( const boost::bad_any_cast& )
+    {
+      std::string msg = std::string( "Failed to cast " ) + key + " from " + debug_type( at( key ) ) + " to type "
+        + std::string( typeid( T ).name() );
+      std::cerr << msg << "\n";
+      throw TypeMismatch( msg );
+    }
+  }
+
+  template < typename T >
+  bool
+  update_value( const std::string& key, T& value ) const
+  {
+    auto it = find( key );
+    if ( it != end() )
+    {
+      value = boost::any_cast< T >( it->second );
+      return true;
+    }
+    return false;
+  }
+
+  bool
+  known( const std::string& key ) const
+  {
+    return find( key ) != end();
+  }
+
+  bool operator==( const dictionary& other ) const;
+  bool operator!=( const dictionary& other ) const
+  {
+    return not( *this == other );
+  }
+};
 
 #endif /* DICTIONARY_H_ */

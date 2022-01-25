@@ -62,10 +62,10 @@ public:
    * Get all properties and put them into a dictionary.
    */
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( dictionary& d ) const
   {
     CommonSynapseProperties::get_status( d );
-    def< double >( d, names::weight, weight_ );
+    d[ names::weight.toString() ] = weight_;
   }
 
   double
@@ -78,10 +78,10 @@ public:
    * Set properties from the values given in dictionary.
    */
   void
-  set_status( const DictionaryDatum& d, ConnectorModel& cm )
+  set_status( const dictionary& d, ConnectorModel& cm )
   {
     CommonSynapseProperties::set_status( d, cm );
-    updateValue< double >( d, names::weight, weight_ );
+    d.update_value( names::weight.toString(), weight_ );
   }
 
 private:

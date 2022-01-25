@@ -46,9 +46,9 @@ BOOST_AUTO_TEST_SUITE( test_parameter )
  */
 BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 2 ) )
 {
-  DictionaryDatum d = new Dictionary();
-  ( *d )[ nest::names::min ] = 0.0;
-  ( *d )[ nest::names::max ] = 1.0;
+  dictionary d;
+  d[ nest::names::min.toString() ] = 0.0;
+  d[ nest::names::max.toString() ] = 1.0;
   ParameterDatum uniform_pd = new nest::UniformParameter( d );
   // Requested region is outside of the parameter limits, so it cannot get an acceptable value.
   ParameterDatum redraw_pd = redraw_parameter( uniform_pd, -1.0, -0.5 );
@@ -69,8 +69,8 @@ BOOST_AUTO_TEST_CASE( test_uniform_int_returns_integer )
   const int max = 100;
   const int num_iterations = 1000;
 
-  DictionaryDatum d = new Dictionary();
-  ( *d )[ nest::names::max ] = max;
+  dictionary d;
+  d[ nest::names::max.toString() ] = max;
   ParameterDatum uniform_int_pd = new nest::UniformIntParameter( d );
 
   // We need to go via a factory to avoid compiler confusion

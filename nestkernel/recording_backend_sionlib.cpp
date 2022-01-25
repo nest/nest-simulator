@@ -631,15 +631,15 @@ nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&,
 void
 nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&, const DictionaryDatum& d )
 {
-  updateValue< std::string >( d, names::filename, filename_ );
-  updateValue< long >( d, names::buffer_size, buffer_size_ );
-  updateValue< long >( d, names::sion_chunksize, sion_chunksize_ );
-  updateValue< bool >( d, names::sion_collective, sion_collective_ );
-  updateValue< long >( d, names::sion_n_files, sion_n_files_ );
+  d.update_value( names::filename.toString(), filename_ );
+  d.update_value( names::buffer_size.toString(), buffer_size_ );
+  d.update_value( names::sion_chunksize.toString(), sion_chunksize_ );
+  d.update_value( names::sion_collective.toString(), sion_collective_ );
+  d.update_value( names::sion_n_files.toString(), sion_n_files_ );
 }
 
 void
-nest::RecordingBackendSIONlib::set_status( const DictionaryDatum& d )
+nest::RecordingBackendSIONlib::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( *this, d );  // throws if BadProperty
@@ -686,7 +686,7 @@ nest::RecordingBackendSIONlib::post_step_hook()
 }
 
 void
-nest::RecordingBackendSIONlib::check_device_status( const DictionaryDatum& ) const
+nest::RecordingBackendSIONlib::check_device_status( const dictionary& ) const
 {
   // nothing to do
 }

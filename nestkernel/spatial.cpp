@@ -89,10 +89,10 @@ LayerMetadata::slice( size_t start, size_t stop, size_t step, NodeCollectionPTR 
   layer_meta->set_first_node_id( node_collection->operator[]( 0 ) );
 
   // Inherit status from current layer, but with new positions.
-  DictionaryDatum layer_dict = new Dictionary();
+  dictionary layer_dict;
   layer_->get_status( layer_dict );
-  ( *layer_dict )[ names::positions ] = ArrayDatum( new_positions );
-  ( *layer_dict )[ names::step ] = step;
+  layer_dict[ names::positions.toString() ] = ArrayDatum( new_positions );
+  layer_dict[ names::step.toString() ] = step;
   layer_local->set_status( layer_dict );
 }
 
@@ -111,13 +111,14 @@ get_layer( NodeCollectionPTR nc )
 }
 
 NodeCollectionPTR
-create_layer( const DictionaryDatum& layer_dict )
+create_layer( const dictionary& layer_dict )
 {
-  layer_dict->clear_access_flags();
+  // TODO-PYNEST-NG: Access flags
+  // layer_dict->clear_access_flags();
 
   NodeCollectionPTR layer = AbstractLayer::create_layer( layer_dict );
 
-  ALL_ENTRIES_ACCESSED( *layer_dict, "nest::CreateLayer", "Unread dictionary entries: " );
+  // ALL_ENTRIES_ACCESSED( *layer_dict, "nest::CreateLayer", "Unread dictionary entries: " );
 
   return layer;
 }
@@ -445,14 +446,15 @@ minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 )
 }
 
 void
-connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const DictionaryDatum& connection_dict )
+connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const dictionary& connection_dict )
 {
   AbstractLayerPTR source = get_layer( source_nc );
   AbstractLayerPTR target = get_layer( target_nc );
 
-  connection_dict->clear_access_flags();
+  // TODO-PYNEST-NG: Access flags
+  // connection_dict->clear_access_flags();
   ConnectionCreator connector( connection_dict );
-  ALL_ENTRIES_ACCESSED( *connection_dict, "nest::CreateLayers", "Unread dictionary entries: " );
+  // ALL_ENTRIES_ACCESSED( *connection_dict, "nest::CreateLayers", "Unread dictionary entries: " );
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
   kernel().connection_manager.set_connections_have_changed();

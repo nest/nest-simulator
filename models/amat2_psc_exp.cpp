@@ -107,47 +107,47 @@ nest::amat2_psc_exp::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::amat2_psc_exp::Parameters_::get( DictionaryDatum& d ) const
+nest::amat2_psc_exp::Parameters_::get( dictionary& d ) const
 {
-  def< double >( d, names::E_L, E_L_ ); // Resting potential
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::C_m, C_ );
-  def< double >( d, names::tau_m, Tau_ );
-  def< double >( d, names::tau_syn_ex, tau_ex_ );
-  def< double >( d, names::tau_syn_in, tau_in_ );
-  def< double >( d, names::t_ref, tau_ref_ );
-  def< double >( d, names::tau_1, tau_1_ );
-  def< double >( d, names::tau_2, tau_2_ );
-  def< double >( d, names::alpha_1, alpha_1_ );
-  def< double >( d, names::alpha_2, alpha_2_ );
-  def< double >( d, names::beta, beta_ );
-  def< double >( d, names::tau_v, tau_v_ );
-  def< double >( d, names::omega, omega_ + E_L_ );
+  d[ names::E_L.toString() ] = E_L_; // Resting potential
+  d[ names::I_e.toString() ] = I_e_;
+  d[ names::C_m.toString() ] = C_;
+  d[ names::tau_m.toString() ] = Tau_;
+  d[ names::tau_syn_ex.toString() ] = tau_ex_;
+  d[ names::tau_syn_in.toString() ] = tau_in_;
+  d[ names::t_ref.toString() ] = tau_ref_;
+  d[ names::tau_1.toString() ] = tau_1_;
+  d[ names::tau_2.toString() ] = tau_2_;
+  d[ names::alpha_1.toString() ] = alpha_1_;
+  d[ names::alpha_2.toString() ] = alpha_2_;
+  d[ names::beta.toString() ] = beta_;
+  d[ names::tau_v.toString() ] = tau_v_;
+  d[ names::omega.toString() ] = omega_ + E_L_;
 }
 
 double
-nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::amat2_psc_exp::Parameters_::set( const dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L.toString(), E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::C_m, C_, node );
-  updateValueParam< double >( d, names::tau_m, Tau_, node );
-  updateValueParam< double >( d, names::tau_syn_ex, tau_ex_, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_in_, node );
-  updateValueParam< double >( d, names::t_ref, tau_ref_, node );
-  updateValueParam< double >( d, names::tau_1, tau_1_, node );
-  updateValueParam< double >( d, names::tau_2, tau_2_, node );
-  updateValueParam< double >( d, names::alpha_1, alpha_1_, node );
-  updateValueParam< double >( d, names::alpha_2, alpha_2_, node );
-  updateValueParam< double >( d, names::beta, beta_, node );
-  updateValueParam< double >( d, names::tau_v, tau_v_, node );
+  update_value_param( d, names::I_e.toString(), I_e_, node );
+  update_value_param( d, names::C_m.toString(), C_, node );
+  update_value_param( d, names::tau_m.toString(), Tau_, node );
+  update_value_param( d, names::tau_syn_ex.toString(), tau_ex_, node );
+  update_value_param( d, names::tau_syn_in.toString(), tau_in_, node );
+  update_value_param( d, names::t_ref.toString(), tau_ref_, node );
+  update_value_param( d, names::tau_1.toString(), tau_1_, node );
+  update_value_param( d, names::tau_2.toString(), tau_2_, node );
+  update_value_param( d, names::alpha_1.toString(), alpha_1_, node );
+  update_value_param( d, names::alpha_2.toString(), alpha_2_, node );
+  update_value_param( d, names::beta.toString(), beta_, node );
+  update_value_param( d, names::tau_v.toString(), tau_v_, node );
 
-  if ( updateValueParam< double >( d, names::omega, omega_, node ) )
+  if ( update_value_param( d, names::omega.toString(), omega_, node ) )
   {
     omega_ -= E_L_;
   }
@@ -181,20 +181,20 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::amat2_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::amat2_psc_exp::State_::get( dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
+  d[ names::V_m.toString() ] = V_m_ + p.E_L_; // Membrane potential
   // Adaptive threshold
-  def< double >( d, names::V_th, p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ + V_th_v_ );
-  def< double >( d, names::V_th_alpha_1, V_th_1_ );
-  def< double >( d, names::V_th_alpha_2, V_th_2_ );
-  def< double >( d, names::V_th_v, V_th_v_ );
+  d[ names::V_th.toString() ] = p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ + V_th_v_;
+  d[ names::V_th_alpha_1.toString() ] = V_th_1_;
+  d[ names::V_th_alpha_2.toString() ] = V_th_2_;
+  d[ names::V_th_v.toString() ] = V_th_v_;
 }
 
 void
-nest::amat2_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+nest::amat2_psc_exp::State_::set( const dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )
+  if ( update_value_param( d, names::V_m.toString(), V_m_, node ) )
   {
     V_m_ -= p.E_L_;
   }
@@ -203,9 +203,9 @@ nest::amat2_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p
     V_m_ -= delta_EL;
   }
 
-  updateValueParam< double >( d, names::V_th_alpha_1, V_th_1_, node );
-  updateValueParam< double >( d, names::V_th_alpha_2, V_th_2_, node );
-  updateValueParam< double >( d, names::V_th_v, V_th_v_, node );
+  update_value_param( d, names::V_th_alpha_1.toString(), V_th_1_, node );
+  update_value_param( d, names::V_th_alpha_2.toString(), V_th_2_, node );
+  update_value_param( d, names::V_th_v.toString(), V_th_v_, node );
 }
 
 nest::amat2_psc_exp::Buffers_::Buffers_( amat2_psc_exp& n )

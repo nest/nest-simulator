@@ -90,23 +90,23 @@ nest::multimeter::Buffers_::Buffers_()
 }
 
 void
-nest::multimeter::Parameters_::get( DictionaryDatum& d ) const
+nest::multimeter::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::interval ] = interval_.get_ms();
-  ( *d )[ names::offset ] = offset_.get_ms();
+  d[ names::interval.toString() ] = interval_.get_ms();
+  d[ names::offset.toString() ] = offset_.get_ms();
   ArrayDatum ad;
   for ( size_t j = 0; j < record_from_.size(); ++j )
   {
     ad.push_back( LiteralDatum( record_from_[ j ] ) );
   }
-  ( *d )[ names::record_from ] = ad;
+  d[ names::record_from.toString() ] = ad;
 }
 
 void
-nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
+nest::multimeter::Parameters_::set( const dictionary& d, const Buffers_& b, Node* node )
 {
-  if ( b.has_targets_
-    && ( d->known( names::interval ) || d->known( names::offset ) || d->known( names::record_from ) ) )
+  if ( b.has_targets_ && ( d.known( names::interval.toString() ) || d.known( names::offset.toString() )
+                           || d.known( names::record_from.toString() ) ) )
   {
     throw BadProperty(
       "The recording interval, the interval offset and the list of properties "
@@ -115,7 +115,7 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
   }
 
   double v;
-  if ( updateValueParam< double >( d, names::interval, v, node ) )
+  if ( update_value_param( d, names::interval.toString(), v, node ) )
   {
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
     {
@@ -134,7 +134,7 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
     }
   }
 
-  if ( updateValueParam< double >( d, names::offset, v, node ) )
+  if ( update_value_param( d, names::offset.toString(), v, node ) )
   {
     // if offset is different from the default value (0), it must be at least
     // as large as the resolution
@@ -156,11 +156,11 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
   }
 
   // extract data
-  if ( d->known( names::record_from ) )
+  if ( d.known( names::record_from.toString() ) )
   {
     record_from_.clear();
 
-    ArrayDatum ad = getValue< ArrayDatum >( d, names::record_from );
+    ArrayDatum ad = d.get< ArrayDatum >( names::record_from.toString() );
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
     {
       record_from_.push_back( Name( getValue< std::string >( *t ) ) );
@@ -244,10 +244,11 @@ multimeter::get_type() const
 voltmeter::voltmeter()
   : multimeter()
 {
-  DictionaryDatum vmdict = DictionaryDatum( new Dictionary );
+  dictionary vmdict;
+  ( new Dictionary );
   ArrayDatum ad;
   ad.push_back( LiteralDatum( names::V_m.toString() ) );
-  ( *vmdict )[ names::record_from ] = ad;
+  vmdict[ names::record_from.toString() ] = ad;
   set_status( vmdict );
 }
 

@@ -132,8 +132,8 @@ public:
   Type get_type() const;
   SignalType receives_signal() const;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
   void calibrate_time( const TimeConverter& tc );
 

@@ -70,7 +70,7 @@ nest::spike_recorder::get_type() const
 }
 
 void
-nest::spike_recorder::get_status( DictionaryDatum& d ) const
+nest::spike_recorder::get_status( dictionary& d ) const
 {
   RecordingDevice::get_status( d );
 
@@ -92,7 +92,7 @@ nest::spike_recorder::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::spike_recorder::set_status( const DictionaryDatum& d )
+nest::spike_recorder::set_status( const dictionary& d )
 {
   RecordingDevice::set_status( d );
 }

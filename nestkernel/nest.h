@@ -97,27 +97,29 @@ void print_nodes_to_stream( std::ostream& out = std::cout );
 
 std::string pprint_to_string( NodeCollectionPTR nc );
 
+size_t nc_size( NodeCollectionPTR nc );
+
 RngPtr get_rank_synced_rng();
 RngPtr get_vp_synced_rng( thread tid );
 RngPtr get_vp_specific_rng( thread tid );
 
-void set_kernel_status( const DictionaryDatum& dict );
+void set_kernel_status( const dictionary& dict );
 dictionary get_kernel_status();
 
-void set_node_status( const index node_id, const DictionaryDatum& dict );
-DictionaryDatum get_node_status( const index node_id );
+void set_node_status( const index node_id, const dictionary& dict );
+dictionary get_node_status( const index node_id );
 
-void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
-DictionaryDatum get_connection_status( const ConnectionDatum& conn );
+void set_connection_status( const ConnectionDatum& conn, const dictionary& dict );
+dictionary get_connection_status( const ConnectionDatum& conn );
 
 NodeCollectionPTR create( const std::string model_name, const index n );
 
-NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
+NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );
 
 void connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const DictionaryDatum& connectivity,
-  const std::vector< DictionaryDatum >& synapse_params );
+  const dictionary& connectivity,
+  const std::vector< dictionary >& synapse_params );
 
 /**
  * @brief Connect arrays of node IDs one-to-one
@@ -193,9 +195,24 @@ void cleanup();
 void copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
 
 void set_model_defaults( const Name& model_name, const DictionaryDatum& );
-DictionaryDatum get_model_defaults( const Name& model_name );
+dictionary get_model_defaults( const Name& model_name );
 
-ParameterDatum create_parameter( const DictionaryDatum& param_dict );
+// TODO-PYNEST-NG: static functions?
+std::shared_ptr< Parameter > create_parameter( const boost::any& );
+std::shared_ptr< Parameter > create_parameter( const std::shared_ptr< Parameter > );
+std::shared_ptr< Parameter > create_parameter( const double );
+std::shared_ptr< Parameter > create_parameter( const int );
+std::shared_ptr< Parameter > create_parameter( const dictionary& param_dict );
+std::shared_ptr< Parameter > create_parameter( const std::string& name, const dictionary& d );
+
+template < class T >
+bool register_parameter( const Name& name );
+
+using ParameterFactory = GenericFactory< Parameter >;
+
+ParameterFactory& parameter_factory_();
+
+
 double get_value( const ParameterDatum& param );
 bool is_spatial( const ParameterDatum& param );
 std::vector< double > apply( const ParameterDatum& param, const NodeCollectionDatum& nc );
@@ -203,6 +220,14 @@ std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum&
 
 Datum* node_collection_array_index( const Datum* datum, const long* array, unsigned long n );
 Datum* node_collection_array_index( const Datum* datum, const bool* array, unsigned long n );
+
+
+template < class T >
+inline bool
+register_parameter( const Name& name )
+{
+  return parameter_factory_().register_subtype< T >( name );
+}
 }
 
 

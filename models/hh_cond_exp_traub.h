@@ -172,8 +172,8 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -221,8 +221,8 @@ private:
 
     Parameters_();
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dicitonary
   };
 
 public:
@@ -254,8 +254,8 @@ public:
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( dictionary& ) const;
+    void set( const dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -370,19 +370,19 @@ hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr, rport receptor_t
 }
 
 inline void
-hh_cond_exp_traub::get_status( DictionaryDatum& d ) const
+hh_cond_exp_traub::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 
-  def< double >( d, names::t_spike, get_spiketime_ms() );
+  d[ names::t_spike.toString() ] = get_spiketime_ms();
 }
 
 inline void
-hh_cond_exp_traub::set_status( const DictionaryDatum& d )
+hh_cond_exp_traub::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

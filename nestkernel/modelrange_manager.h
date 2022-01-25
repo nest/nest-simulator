@@ -49,7 +49,7 @@ public:
   virtual void finalize();
 
   virtual void
-  set_status( const DictionaryDatum& )
+  set_status( const dictionary& )
   {
   }
   virtual void

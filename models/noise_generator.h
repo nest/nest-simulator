@@ -187,8 +187,8 @@ public:
 
   port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -236,9 +236,9 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
-    void set( const DictionaryDatum&, const noise_generator&, Node* node );
+    void set( const dictionary&, const noise_generator&, Node* node );
   };
 
   // ------------------------------------------------------------
@@ -252,7 +252,7 @@ private:
 
     State_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
   };
 
   // ------------------------------------------------------------
@@ -316,17 +316,17 @@ noise_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_typ
 }
 
 inline void
-noise_generator::get_status( DictionaryDatum& d ) const
+noise_generator::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   StimulationDevice::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 }
 
 inline void
-noise_generator::set_status( const DictionaryDatum& d )
+noise_generator::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;               // temporary copy in case of errors
   ptmp.num_targets_ = P_.num_targets_; // Copy Constr. does not copy connections

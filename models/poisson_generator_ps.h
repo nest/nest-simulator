@@ -103,8 +103,8 @@ public:
 
   port send_test_event( Node&, rport, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -154,8 +154,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -228,21 +228,21 @@ poisson_generator_ps::send_test_event( Node& target, rport receptor_type, synind
 }
 
 inline void
-poisson_generator_ps::get_status( DictionaryDatum& d ) const
+poisson_generator_ps::get_status( dictionary& d ) const
 {
   P_.get( d );
   StimulationDevice::get_status( d );
 }
 
 inline void
-poisson_generator_ps::set_status( const DictionaryDatum& d )
+poisson_generator_ps::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty
 
   // If the rate is changed, the event_hook must handle the interval from
   // the rate change to the first subsequent spike.
-  if ( d->known( names::rate ) )
+  if ( d.known( names::rate.toString() ) )
   {
     B_.next_spike_.assign( P_.num_targets_, Buffers_::SpikeTime( Time::neg_inf(), 0 ) );
   }

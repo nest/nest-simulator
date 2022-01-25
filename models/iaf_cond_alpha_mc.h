@@ -196,8 +196,8 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
 private:
   void init_buffers_();
@@ -309,8 +309,8 @@ private:
     Parameters_( const Parameters_& );            //!< needed to copy C-arrays
     Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dicitonary
   };
 
 
@@ -351,8 +351,8 @@ public:
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( dictionary& ) const;
+    void set( const dictionary&, const Parameters_&, Node* );
 
     /**
      * Compute linear index into state array from compartment and element.
@@ -524,37 +524,37 @@ iaf_cond_alpha_mc::handles_test_event( DataLoggingRequest& dlr, rport receptor_t
 }
 
 inline void
-iaf_cond_alpha_mc::get_status( DictionaryDatum& d ) const
+iaf_cond_alpha_mc::get_status( dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 
   /**
    * @todo dictionary construction should be done only once for
    * static member in default c'tor, but this leads to
    * a seg fault on exit, see #328
    */
-  DictionaryDatum receptor_dict_ = new Dictionary();
-  ( *receptor_dict_ )[ names::soma_exc ] = SOMA_EXC;
-  ( *receptor_dict_ )[ names::soma_inh ] = SOMA_INH;
-  ( *receptor_dict_ )[ names::soma_curr ] = I_SOMA;
+  dictionary receptor_dict_;
+  receptor_dict_[ names::soma_exc.toString() ] = SOMA_EXC;
+  receptor_dict_[ names::soma_inh.toString() ] = SOMA_INH;
+  receptor_dict_[ names::soma_curr.toString() ] = I_SOMA;
 
-  ( *receptor_dict_ )[ names::proximal_exc ] = PROX_EXC;
-  ( *receptor_dict_ )[ names::proximal_inh ] = PROX_INH;
-  ( *receptor_dict_ )[ names::proximal_curr ] = I_PROX;
+  receptor_dict_[ names::proximal_exc.toString() ] = PROX_EXC;
+  receptor_dict_[ names::proximal_inh.toString() ] = PROX_INH;
+  receptor_dict_[ names::proximal_curr.toString() ] = I_PROX;
 
-  ( *receptor_dict_ )[ names::distal_exc ] = DIST_EXC;
-  ( *receptor_dict_ )[ names::distal_inh ] = DIST_INH;
-  ( *receptor_dict_ )[ names::distal_curr ] = I_DIST;
+  receptor_dict_[ names::distal_exc.toString() ] = DIST_EXC;
+  receptor_dict_[ names::distal_inh.toString() ] = DIST_INH;
+  receptor_dict_[ names::distal_curr.toString() ] = I_DIST;
 
-  ( *d )[ names::receptor_types ] = receptor_dict_;
+  d[ names::receptor_types.toString() ] = receptor_dict_;
 }
 
 inline void
-iaf_cond_alpha_mc::set_status( const DictionaryDatum& d )
+iaf_cond_alpha_mc::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty

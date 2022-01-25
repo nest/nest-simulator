@@ -116,7 +116,7 @@ public:
 
   void finalize() override;
 
-  void enroll( StimulationDevice& device, const DictionaryDatum& params ) override;
+  void enroll( StimulationDevice& device, const dictionary& params ) override;
 
   void disenroll( StimulationDevice& device ) override;
 

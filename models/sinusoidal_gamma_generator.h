@@ -207,8 +207,8 @@ public:
 
   port handles_test_event( DataLoggingRequest&, rport ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
   //! Model can be switched between proxies (single spike train) and not
   bool has_proxies() const override;
@@ -262,14 +262,14 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
      * @note State is passed so that the position can be reset if the
      *       spike_times_ vector has been filled with new data.
      */
-    void set( const DictionaryDatum&, const sinusoidal_gamma_generator&, Node* );
+    void set( const dictionary&, const sinusoidal_gamma_generator&, Node* );
   };
 
   struct State_
@@ -394,15 +394,15 @@ sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr, rport r
 }
 
 inline void
-sinusoidal_gamma_generator::get_status( DictionaryDatum& d ) const
+sinusoidal_gamma_generator::get_status( dictionary& d ) const
 {
   P_.get( d );
   StimulationDevice::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables.toString() ] = recordablesMap_.get_list();
 }
 
 inline void
-sinusoidal_gamma_generator::set_status( const DictionaryDatum& d )
+sinusoidal_gamma_generator::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 

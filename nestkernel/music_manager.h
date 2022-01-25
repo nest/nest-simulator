@@ -79,7 +79,7 @@ public:
   virtual void initialize(); // called from meta-manager to construct
   virtual void finalize();   // called from meta-manger to reinit
 
-  virtual void set_status( const DictionaryDatum& );
+  virtual void set_status( const dictionary& );
   virtual void get_status( dictionary& );
 
   MUSICManager();

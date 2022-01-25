@@ -50,15 +50,15 @@ nest::poisson_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::poisson_generator::Parameters_::get( dictionary& d ) const
 {
-  def< double >( d, names::rate, rate_ );
+  d[ names::rate.toString() ] = rate_;
 }
 
 void
-nest::poisson_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::poisson_generator::Parameters_::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::rate, rate_, node );
+  update_value_param( d, names::rate.toString(), rate_, node );
   if ( rate_ < 0 )
   {
     throw BadProperty( "The rate cannot be negative." );
@@ -165,8 +165,9 @@ nest::poisson_generator::set_data_from_stimulation_backend( std::vector< double 
     {
       throw BadParameterValue( "The size of the data for the poisson generator needs to be 1 [rate]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );
+    dictionary d;
+    ( new Dictionary );
+    d[ names::rate.toString() ] = DoubleDatum( input_param[ 0 ] );
     ptmp.set( d, this );
   }
 

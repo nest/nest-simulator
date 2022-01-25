@@ -30,7 +30,7 @@ nest::StimulationDevice::StimulationDevice()
   : DeviceNode()
   , Device()
   , first_syn_id_( invalid_synindex )
-  , backend_params_( new Dictionary )
+  , backend_params_()
 {
 }
 
@@ -95,19 +95,19 @@ nest::StimulationDevice::Parameters_::Parameters_()
 }
 
 void
-nest::StimulationDevice::Parameters_::get( DictionaryDatum& d ) const
+nest::StimulationDevice::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::label ] = label_;
-  ( *d )[ names::stimulus_source ] = LiteralDatum( stimulus_source_ );
+  d[ names::label.toString() ] = label_;
+  d[ names::stimulus_source.toString() ] = LiteralDatum( stimulus_source_ );
 }
 
 void
-nest::StimulationDevice::Parameters_::set( const DictionaryDatum& d )
+nest::StimulationDevice::Parameters_::set( const dictionary& d )
 {
-  updateValue< std::string >( d, names::label, label_ );
+  d.update_value( names::label.toString(), label_ );
 
   std::string stimulus_source;
-  if ( updateValue< std::string >( d, names::stimulus_source, stimulus_source ) )
+  if ( d.update_value( names::stimulus_source.toString(), stimulus_source ) )
   {
 
     if ( not kernel().io_manager.is_valid_stimulation_backend( stimulus_source ) )
@@ -120,7 +120,7 @@ nest::StimulationDevice::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::StimulationDevice::set_status( const DictionaryDatum& d )
+nest::StimulationDevice::set_status( const dictionary& d )
 {
 
   Parameters_ ptmp = P_; // temporary copy in case of errors
@@ -130,26 +130,28 @@ nest::StimulationDevice::set_status( const DictionaryDatum& d )
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
-    DictionaryDatum backend_params = DictionaryDatum( new Dictionary );
+    dictionary backend_params;
 
     // copy all properties not previously accessed from d to backend_params
-    for ( auto& kv_pair : *d )
+    for ( auto& kv_pair : d )
     {
-      if ( not kv_pair.second.accessed() )
-      {
-        ( *backend_params )[ kv_pair.first ] = kv_pair.second;
-      }
+      // TODO-PYNEST-NG: access flags
+      // if ( not kv_pair.second.accessed() )
+      // {
+      //   backend_params[ kv_pair.first.toString() ] = kv_pair.second;
+      // }
     }
 
     // cache all properties accessed by the backend in private member
-    backend_params_->clear();
-    for ( auto& kv_pair : *backend_params )
+    backend_params_.clear();
+    for ( auto& kv_pair : backend_params )
     {
-      if ( kv_pair.second.accessed() )
-      {
-        ( *backend_params_ )[ kv_pair.first ] = kv_pair.second;
-        d->lookup( kv_pair.first ).set_access_flag();
-      }
+      // TODO-PYNEST-NG: access flags
+      // if ( kv_pair.second.accessed() )
+      // {
+      //   backend_params_[ kv_pair.first.toString() ] = kv_pair.second;
+      //   d->lookup( kv_pair.first ).set_access_flag();
+      // }
     }
   }
   else
@@ -163,20 +165,20 @@ nest::StimulationDevice::set_status( const DictionaryDatum& d )
 
 
 void
-nest::StimulationDevice::get_status( DictionaryDatum& d ) const
+nest::StimulationDevice::get_status( dictionary& d ) const
 {
   P_.get( d );
 
   Device::get_status( d );
 
-  ( *d )[ names::element_type ] = LiteralDatum( names::stimulator );
+  d[ names::element_type.toString() ] = names::stimulator.toString();
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {
     // overwrite with cached parameters
-    for ( auto& kv_pair : *backend_params_ )
+    for ( auto& kv_pair : backend_params_ )
     {
-      ( *d )[ kv_pair.first ] = kv_pair.second;
+      d[ kv_pair.first ] = kv_pair.second;
     }
   }
 }

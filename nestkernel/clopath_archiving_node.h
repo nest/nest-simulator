@@ -117,8 +117,8 @@ protected:
   void write_clopath_history( Time const& t_sp, double u, double u_bar_plus, double u_bar_minus, double u_bar_bar );
 
   void init_clopath_buffers();
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& d );
+  void get_status( dictionary& d ) const;
+  void set_status( const dictionary& d );
 
 private:
   std::vector< histentry_extended > ltd_history_;

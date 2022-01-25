@@ -142,8 +142,8 @@ public:
 
   Position< D, index > get_dims() const;
 
-  void set_status( const DictionaryDatum& d );
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
+  void set_status( const dictionary& d );
 
 protected:
   Position< D, index > dims_; ///< number of nodes in each direction.
@@ -164,11 +164,11 @@ GridLayer< D >::get_dims() const
 
 template < int D >
 void
-GridLayer< D >::set_status( const DictionaryDatum& d )
+GridLayer< D >::set_status( const dictionary& d )
 {
   std::vector< long > new_dims( D );
 
-  updateValue< std::vector< long > >( d, names::shape, new_dims );
+  d.update_value( names::shape.toString(), new_dims );
 
   index new_size = 1;
   for ( int i = 0; i < D; ++i )
@@ -183,15 +183,15 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
     throw BadProperty( "Total size of layer must be unchanged." );
   }
 
-  if ( d->known( names::extent ) )
+  if ( d.known( names::extent.toString() ) )
   {
     Position< D > center = this->get_center();
-    this->extent_ = getValue< std::vector< double > >( d, names::extent );
+    this->extent_ = d.get< std::vector< double > >( names::extent.toString() );
     this->lower_left_ = center - this->extent_ / 2;
   }
-  if ( d->known( names::center ) )
+  if ( d.known( names::center.toString() ) )
   {
-    this->lower_left_ = getValue< std::vector< double > >( d, names::center );
+    this->lower_left_ = d.get< std::vector< double > >( names::center.toString() );
     this->lower_left_ -= this->extent_ / 2;
   }
 
@@ -200,11 +200,11 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-GridLayer< D >::get_status( DictionaryDatum& d ) const
+GridLayer< D >::get_status( dictionary& d ) const
 {
   Layer< D >::get_status( d );
 
-  ( *d )[ names::shape ] = std::vector< index >( dims_.get_vector() );
+  d[ names::shape.toString() ] = std::vector< index >( dims_.get_vector() );
 }
 
 template < int D >

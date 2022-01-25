@@ -64,21 +64,21 @@ nest::pulsepacket_generator::Variables_::Variables_()
  * ---------------------------------------------------------------- */
 
 void
-nest::pulsepacket_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::pulsepacket_generator::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::pulse_times ] = DoubleVectorDatum( new std::vector< double >( pulse_times_ ) );
-  ( *d )[ names::activity ] = a_;
-  ( *d )[ names::sdev ] = sdev_;
+  d[ names::pulse_times.toString() ] = DoubleVectorDatum( new std::vector< double >( pulse_times_ ) );
+  d[ names::activity.toString() ] = a_;
+  d[ names::sdev.toString() ] = sdev_;
 }
 
 void
-nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepacket_generator& ppg, Node* node )
+nest::pulsepacket_generator::Parameters_::set( const dictionary& d, pulsepacket_generator& ppg, Node* node )
 {
 
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
-  bool neednewpulse = updateValueParam< long >( d, names::activity, a_, node );
-  neednewpulse = updateValueParam< double >( d, names::sdev, sdev_, node ) or neednewpulse;
+  bool neednewpulse = update_value_param( d, names::activity.toString(), a_, node );
+  neednewpulse = update_value_param( d, names::sdev.toString(), sdev_, node ) or neednewpulse;
   if ( a_ < 0 )
   {
     throw BadProperty( "The activity cannot be negative." );
@@ -89,7 +89,7 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepa
   }
 
 
-  if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ ) or neednewpulse )
+  if ( d.update_value( "pulse_times", pulse_times_ ) or neednewpulse )
   {
     std::sort( pulse_times_.begin(), pulse_times_.end() );
     ppg.B_.spiketimes_.clear();
@@ -248,11 +248,12 @@ nest::pulsepacket_generator::set_data_from_stimulation_backend( std::vector< dou
         "The size of the data for the pulse_generator needs to be higher than 3 "
         "[activity, sdev, all the pulse times]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::activity ] = DoubleDatum( input_param[ 0 ] );
-    ( *d )[ names::sdev ] = DoubleDatum( input_param[ 1 ] );
+    dictionary d;
+    ( new Dictionary );
+    d[ names::activity.toString() ] = DoubleDatum( input_param[ 0 ] );
+    d[ names::sdev.toString() ] = DoubleDatum( input_param[ 1 ] );
     input_param.erase( input_param.begin(), input_param.begin() + 2 );
-    ( *d )[ names::pulse_times ] = DoubleVectorDatum( input_param );
+    d[ names::pulse_times.toString() ] = DoubleVectorDatum( input_param );
     ptmp.set( d, *this, this );
   }
 

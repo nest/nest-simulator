@@ -81,7 +81,7 @@ public:
     Node& tgt,
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
-    const DictionaryDatum& d,
+    const dictionary& d,
     const double delay = NAN,
     const double weight = NAN ) = 0;
 
@@ -89,15 +89,15 @@ public:
 
   virtual void calibrate( const TimeConverter& tc ) = 0;
 
-  virtual void get_status( DictionaryDatum& ) const = 0;
-  virtual void set_status( const DictionaryDatum& ) = 0;
+  virtual void get_status( dictionary& ) const = 0;
+  virtual void set_status( const dictionary& ) = 0;
 
   virtual const CommonSynapseProperties& get_common_properties() const = 0;
 
   /**
    * Checks to see if illegal parameters are given in syn_spec.
    */
-  virtual void check_synapse_params( const DictionaryDatum& ) const = 0;
+  virtual void check_synapse_params( const dictionary& ) const = 0;
 
   virtual SecondaryEvent* get_event() const = 0;
 
@@ -211,7 +211,7 @@ public:
     Node& tgt,
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
-    const DictionaryDatum& d,
+    const dictionary& d,
     const double delay,
     const double weight );
 
@@ -219,11 +219,11 @@ public:
 
   void calibrate( const TimeConverter& tc );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
   void
-  check_synapse_params( const DictionaryDatum& syn_spec ) const
+  check_synapse_params( const dictionary& syn_spec ) const
   {
     default_connection_.check_synapse_params( syn_spec );
   }

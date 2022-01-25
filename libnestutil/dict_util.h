@@ -28,6 +28,8 @@
 #include "nest_datums.h"
 #include "vp_manager_impl.h"
 
+#include "dictionary.h"
+
 // Includes from sli:
 #include "dictdatum.h"
 #include "dictutils.h"
@@ -36,32 +38,55 @@ namespace nest
 {
 
 
-/** Update a variable from a dictionary entry if it exists, skip call if it
- * doesn't. If the dictionary entry is a parameter, return value generated from
- * the parameter parameter.
- */
-template < typename FT, typename VT >
-bool
-updateValueParam( DictionaryDatum const& d, Name const n, VT& value, nest::Node* node )
-{
-  const Token& t = d->lookup( n );
+// /** Update a variable from a dictionary entry if it exists, skip call if it
+//  * doesn't. If the dictionary entry is a parameter, return value generated from
+//  * the parameter parameter.
+//  */
+// template < typename FT, typename VT >
+// bool
+// updateValueParam( DictionaryDatum const& d, Name const n, VT& value, nest::Node* node )
+// {
+//   const Token& t = d->lookup( n );
 
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
-  if ( pd )
+//   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
+//   if ( pd )
+//   {
+//     if ( not node )
+//     {
+//       throw BadParameter( "Cannot use Parameter with this model." );
+//     }
+//     auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
+//     auto tid = kernel().vp_manager.vp_to_thread( vp );
+//     auto rng = get_vp_specific_rng( tid );
+//     value = pd->get()->value( rng, node );
+//     return true;
+//   }
+//   else
+//   {
+//     return updateValue< FT >( d, n, value );
+//   }
+// }
+
+template < typename T >
+bool
+update_value_param( dictionary const& d, const std::string& key, T& value, nest::Node* node )
+{
+  if ( is_parameter( d.at( key ) ) )
   {
     if ( not node )
     {
       throw BadParameter( "Cannot use Parameter with this model." );
     }
-    auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
-    auto tid = kernel().vp_manager.vp_to_thread( vp );
-    auto rng = get_vp_specific_rng( tid );
-    value = pd->get()->value( rng, node );
+    auto param = d.get< std::shared_ptr< Parameter > >( key );
+    const auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
+    const auto tid = kernel().vp_manager.vp_to_thread( vp );
+    const auto rng = get_vp_specific_rng( tid );
+    value = param->value( rng, node );
     return true;
   }
   else
   {
-    return updateValue< FT >( d, n, value );
+    return d.update_value( key, value );
   }
 }
 

@@ -49,10 +49,8 @@ public:
   virtual ~GenericConnBuilderFactory()
   {
   }
-  virtual ConnBuilder* create( NodeCollectionPTR,
-    NodeCollectionPTR,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& ) const = 0;
+  virtual ConnBuilder*
+  create( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& ) const = 0;
 };
 
 /**
@@ -68,8 +66,8 @@ public:
   ConnBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs ) const
+    const dictionary& conn_spec,
+    const std::vector< dictionary >& syn_specs ) const
   {
     return new ConnBuilderType( sources, targets, conn_spec, syn_specs );
   }

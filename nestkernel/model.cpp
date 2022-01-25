@@ -111,7 +111,7 @@ Model::mem_capacity()
 }
 
 void
-Model::set_status( DictionaryDatum d )
+Model::set_status( dictionary d )
 {
   try
   {
@@ -123,10 +123,10 @@ Model::set_status( DictionaryDatum d )
   }
 }
 
-DictionaryDatum
+dictionary
 Model::get_status( void )
 {
-  DictionaryDatum d = get_status_();
+  dictionary d = get_status_();
 
   std::vector< long > tmp( memory_.size() );
   for ( size_t t = 0; t < tmp.size(); ++t )
@@ -134,24 +134,24 @@ Model::get_status( void )
     tmp[ t ] = memory_[ t ].get_instantiations();
   }
 
-  ( *d )[ names::instantiations ] = Token( tmp );
-  ( *d )[ names::type_id ] = LiteralDatum( kernel().model_manager.get_model( type_id_ )->get_name() );
+  d[ names::instantiations.toString() ] = Token( tmp );
+  d[ names::type_id.toString() ] = LiteralDatum( kernel().model_manager.get_model( type_id_ )->get_name() );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
     tmp[ t ] = memory_[ t ].get_total();
   }
 
-  ( *d )[ names::capacity ] = Token( tmp );
+  d[ names::capacity.toString() ] = Token( tmp );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
     tmp[ t ] = memory_[ t ].available();
   }
 
-  ( *d )[ names::available ] = Token( tmp );
+  d[ names::available.toString() ] = Token( tmp );
 
-  ( *d )[ names::model ] = LiteralDatum( get_name() );
+  d[ names::model.toString() ] = LiteralDatum( get_name() );
   return d;
 }
 

@@ -100,8 +100,8 @@ public:
   port handles_test_event( SpikeEvent&, rport ) override;
   void handle( SpikeEvent& ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( dictionary& ) const override;
+  void set_status( const dictionary& ) override;
 
 private:
   void init_state_() override;
@@ -124,8 +124,8 @@ private:
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& ) = default;
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void get( dictionary& ) const;             //!< Store current values in dictionary
+    void set( const dictionary&, Node* node ); //!< Set values from dicitonary
   };
 
   struct Buffers_
@@ -169,14 +169,14 @@ spike_dilutor::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline void
-spike_dilutor::get_status( DictionaryDatum& d ) const
+spike_dilutor::get_status( dictionary& d ) const
 {
   P_.get( d );
   device_.get_status( d );
 }
 
 inline void
-spike_dilutor::set_status( const DictionaryDatum& d )
+spike_dilutor::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

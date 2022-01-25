@@ -61,31 +61,31 @@ nest::music_message_in_proxy::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::music_message_in_proxy::Parameters_::get( DictionaryDatum& d ) const
+nest::music_message_in_proxy::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::port_name ] = port_name_;
-  ( *d )[ names::acceptable_latency ] = acceptable_latency_;
+  d[ names::port_name.toString() ] = port_name_;
+  d[ names::acceptable_latency.toString() ] = acceptable_latency_;
 }
 
 void
-nest::music_message_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s, Node* node )
+nest::music_message_in_proxy::Parameters_::set( const dictionary& d, State_& s, Node* node )
 {
   if ( not s.published_ )
   {
-    updateValue< string >( d, names::port_name, port_name_ );
-    updateValueParam< double >( d, names::acceptable_latency, acceptable_latency_, node );
+    d.update_value( names::port_name.toString(), port_name_ );
+    update_value_param( d, names::acceptable_latency.toString(), acceptable_latency_, node );
   }
 }
 
 void
-nest::music_message_in_proxy::State_::get( DictionaryDatum& d ) const
+nest::music_message_in_proxy::State_::get( dictionary& d ) const
 {
-  ( *d )[ names::published ] = published_;
-  ( *d )[ names::port_width ] = port_width_;
+  d[ names::published.toString() ] = published_;
+  d[ names::port_width.toString() ] = port_width_;
 }
 
 void
-nest::music_message_in_proxy::State_::set( const DictionaryDatum&, const Parameters_&, Node* )
+nest::music_message_in_proxy::State_::set( const dictionary&, const Parameters_&, Node* )
 {
 }
 

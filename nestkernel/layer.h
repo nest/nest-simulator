@@ -71,14 +71,14 @@ public:
    * entries in the dictionary.
    * @param d Dictionary with named parameter settings.
    */
-  virtual void set_status( const DictionaryDatum& ) = 0;
+  virtual void set_status( const dictionary& ) = 0;
 
   /**
    * Export properties of the layer by setting
    * entries in the status dictionary.
    * @param d Dictionary.
    */
-  virtual void get_status( DictionaryDatum& ) const = 0;
+  virtual void get_status( dictionary& ) const = 0;
 
   virtual unsigned int get_num_dimensions() const = 0;
 
@@ -132,7 +132,7 @@ public:
    * parameters.
    * @returns pointer to NodeCollection for new layer
    */
-  static NodeCollectionPTR create_layer( const DictionaryDatum& );
+  static NodeCollectionPTR create_layer( const dictionary& );
 
   /**
    * Return a vector with the node IDs of the nodes inside the mask.
@@ -234,14 +234,14 @@ public:
    * entries in the dictionary.
    * @param d Dictionary with named parameter settings.
    */
-  void set_status( const DictionaryDatum& );
+  void set_status( const dictionary& );
 
   /**
    * Export properties of the layer by setting
    * entries in the status dictionary.
    * @param d Dictionary.
    */
-  void get_status( DictionaryDatum& ) const;
+  void get_status( dictionary& ) const;
 
   unsigned int
   get_num_dimensions() const

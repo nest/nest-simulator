@@ -146,8 +146,8 @@ public:
 
   SignalType sends_signal() const;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
   void calibrate_time( const TimeConverter& tc );
 
@@ -180,20 +180,20 @@ private:
     std::vector< Name > record_from_; //!< recordables to record from
     NodeCollectionPTR targets_;       //!< nodes to be observed
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Node&, const State_&, const Buffers_& ); //!< Set values from dictionary
+    void get( dictionary& ) const;                                              //!< Store current values in dictionary
+    void set( const dictionary&, const Node&, const State_&, const Buffers_& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
 
   struct State_
   {
-    State_();                           //!< Sets default state value
-    State_( const State_& );            //!< Copy constructor for state values
-    bool published_;                    //!< indicates whether this node has been published
-                                        //!< already with MUSIC
-    size_t port_width_;                 //!< the width of the MUSIC port
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    State_();                      //!< Sets default state value
+    State_( const State_& );       //!< Copy constructor for state values
+    bool published_;               //!< indicates whether this node has been published
+                                   //!< already with MUSIC
+    size_t port_width_;            //!< the width of the MUSIC port
+    void get( dictionary& ) const; //!< Store current values in dictionary
   };
 
   // ------------------------------------------------------------

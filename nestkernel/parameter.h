@@ -27,6 +27,8 @@
 #include <limits>
 #include <cmath>
 
+#include "boost/any.hpp"
+
 // Includes from nestkernel:
 #include "nest_names.h"
 #include "nest_types.h"
@@ -145,9 +147,9 @@ public:
    * The dictionary must include the following entry:
    * value - constant value of this parameter
    */
-  ConstantParameter( const DictionaryDatum& d )
+  ConstantParameter( const dictionary& d )
   {
-    value_ = getValue< double >( d, "value" );
+    value_ = d.get< double >( "value" );
     returns_int_only_ = value_is_integer_( value_ );
   }
 
@@ -183,12 +185,12 @@ public:
    * min - minimum value
    * max - maximum value
    */
-  UniformParameter( const DictionaryDatum& d )
+  UniformParameter( const dictionary& d )
     : lower_( 0.0 )
     , range_( 1.0 )
   {
-    updateValue< double >( d, names::min, lower_ );
-    updateValue< double >( d, names::max, range_ );
+    d.update_value( names::min.toString(), lower_ );
+    d.update_value( names::max.toString(), range_ );
     if ( lower_ >= range_ )
     {
       throw BadProperty(
@@ -224,11 +226,11 @@ public:
    * The dictionary can include the following entries:
    * max - maximum value
    */
-  UniformIntParameter( const DictionaryDatum& d )
+  UniformIntParameter( const dictionary& d )
     : Parameter( false, true )
     , max_( 1.0 )
   {
-    updateValue< long >( d, names::max, max_ );
+    d.update_value( names::max.toString(), max_ );
     if ( max_ <= 0 )
     {
       throw BadProperty( "nest::UniformIntParameter: max > 0 required." );
@@ -262,7 +264,7 @@ public:
    * mean - mean value
    * std - standard deviation
    */
-  NormalParameter( const DictionaryDatum& d );
+  NormalParameter( const dictionary& d );
 
   double value( RngPtr rng, Node* node ) override;
 
@@ -288,7 +290,7 @@ public:
    * mean - mean value of logarithm
    * sigma - standard distribution of logarithm
    */
-  LognormalParameter( const DictionaryDatum& d );
+  LognormalParameter( const dictionary& d );
 
   double value( RngPtr rng, Node* node ) override;
 
@@ -313,10 +315,10 @@ public:
    * The dictionary can include the following entries:
    * beta - the scale parameter
    */
-  ExponentialParameter( const DictionaryDatum& d )
+  ExponentialParameter( const dictionary& d )
     : beta_( 1.0 )
   {
-    updateValue< double >( d, names::beta, beta_ );
+    d.update_value( names::beta.toString(), beta_ );
   }
 
   double
@@ -347,12 +349,12 @@ public:
    *                     from the presynaptic or postsynaptic node in a connection.
    *                     0: unspecified, 1: presynaptic, 2: postsynaptic.
    */
-  NodePosParameter( const DictionaryDatum& d )
+  NodePosParameter( const dictionary& d )
     : Parameter( true )
     , dimension_( 0 )
     , synaptic_endpoint_( 0 )
   {
-    bool dimension_specified = updateValue< long >( d, names::dimension, dimension_ );
+    bool dimension_specified = d.update_value( names::dimension.toString(), dimension_ );
     if ( not dimension_specified )
     {
       throw BadParameterValue( "Dimension must be specified when creating a node position parameter." );
@@ -361,7 +363,7 @@ public:
     {
       throw BadParameterValue( "Node position parameter dimension cannot be negative." );
     }
-    updateValue< long >( d, names::synaptic_endpoint, synaptic_endpoint_ );
+    d.update_value( names::synaptic_endpoint.toString(), synaptic_endpoint_ );
     if ( synaptic_endpoint_ < 0 or 2 < synaptic_endpoint_ )
     {
       throw BadParameterValue( "Synaptic endpoint must either be unspecified (0), source (1) or target (2)." );
@@ -417,11 +419,11 @@ private:
 class SpatialDistanceParameter : public Parameter
 {
 public:
-  SpatialDistanceParameter( const DictionaryDatum& d )
+  SpatialDistanceParameter( const dictionary& d )
     : Parameter( true )
     , dimension_( 0 )
   {
-    updateValue< long >( d, names::dimension, dimension_ );
+    d.update_value( names::dimension.toString(), dimension_ );
     if ( dimension_ < 0 )
     {
       throw BadParameterValue( "Spatial distance parameter dimension cannot be negative." );
@@ -1264,7 +1266,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  ExpDistParameter( const DictionaryDatum& d );
+  ExpDistParameter( const dictionary& d );
 
   /**
    * Copy constructor.
@@ -1310,7 +1312,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  GaussianParameter( const DictionaryDatum& d );
+  GaussianParameter( const dictionary& d );
 
   /**
    * Copy constructor.
@@ -1357,7 +1359,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  Gaussian2DParameter( const DictionaryDatum& d );
+  Gaussian2DParameter( const dictionary& d );
 
   /**
    * Copy constructor.
@@ -1412,7 +1414,7 @@ public:
   /**
    * Construct the parameter from a dictionary of arguments.
    */
-  GammaParameter( const DictionaryDatum& d );
+  GammaParameter( const dictionary& d );
 
   /**
    * Copy constructor.

@@ -68,7 +68,7 @@ public:
   virtual void initialize();
   virtual void finalize();
 
-  virtual void set_status( const DictionaryDatum& );
+  virtual void set_status( const dictionary& );
   virtual void get_status( dictionary& );
 
   void init_mpi( int* argc, char** argv[] );

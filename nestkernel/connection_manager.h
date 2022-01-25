@@ -81,7 +81,7 @@ public:
   virtual void initialize();
   virtual void finalize();
 
-  virtual void set_status( const DictionaryDatum& );
+  virtual void set_status( const dictionary& );
   virtual void get_status( dictionary& );
 
   DictionaryDatum& get_connruledict();
@@ -100,15 +100,15 @@ public:
   ConnBuilder* get_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs );
+    const dictionary& conn_spec,
+    const std::vector< dictionary >& syn_specs );
 
   /**
    * Create connections.
    */
-  void connect( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
+  void connect( NodeCollectionPTR, NodeCollectionPTR, const dictionary&, const std::vector< dictionary >& );
 
-  void connect( TokenArray, TokenArray, const DictionaryDatum& );
+  void connect( TokenArray, TokenArray, const dictionary& );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -133,7 +133,7 @@ public:
     Node* target,
     thread target_thread,
     const synindex syn_id,
-    const DictionaryDatum& params,
+    const dictionary& params,
     const double delay = numerics::nan,
     const double weight = numerics::nan );
 
@@ -147,7 +147,7 @@ public:
    * \param params Parameter dictionary to configure the synapse.
    * \param syn_id The synapse model to use.
    */
-  bool connect( const index snode_id, const index target, const DictionaryDatum& params, const synindex syn_id );
+  bool connect( const index snode_id, const index target, const dictionary& params, const synindex syn_id );
 
   void connect_arrays( long* sources,
     long* targets,
@@ -172,7 +172,7 @@ public:
   ConnectionType connection_required( Node*& source, Node*& target, thread tid );
 
   // aka conndatum GetStatus
-  DictionaryDatum get_synapse_status( const index source_node_id,
+  dictionary get_synapse_status( const index source_node_id,
     const index target_node_id,
     const thread tid,
     const synindex syn_id,
@@ -184,7 +184,7 @@ public:
     const thread tid,
     const synindex syn_id,
     const index lcid,
-    const DictionaryDatum& dict );
+    const dictionary& dict );
 
   /**
    * Return connections between pairs of neurons.
@@ -475,7 +475,7 @@ private:
     const index s_node_id,
     const thread tid,
     const synindex syn_id,
-    const DictionaryDatum& params,
+    const dictionary& params,
     const double delay = numerics::nan,
     const double weight = numerics::nan );
 
@@ -502,7 +502,7 @@ private:
     const index s_node_id,
     const thread tid,
     const synindex syn_id,
-    const DictionaryDatum& params,
+    const dictionary& params,
     const double delay = NAN,
     const double weight = NAN );
 
@@ -528,7 +528,7 @@ private:
     Node& target,
     const thread tid,
     const synindex syn_id,
-    const DictionaryDatum& params,
+    const dictionary& params,
     const double delay = NAN,
     const double weight = NAN );
 

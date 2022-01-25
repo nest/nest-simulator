@@ -46,27 +46,27 @@ cont_delay_synapse< targetidentifierT >::cont_delay_synapse()
 
 template < typename targetidentifierT >
 void
-cont_delay_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+cont_delay_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
 
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::delay, Time( Time::step( get_delay_steps() ) ).get_ms() - delay_offset_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight.toString() ] = weight_;
+  d[ names::delay.toString() ] = Time( Time::step( get_delay_steps() ) ).get_ms() - delay_offset_;
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-cont_delay_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+cont_delay_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
 
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight.toString(), weight_ );
 
   // set delay if mentioned
   double delay;
 
-  if ( updateValue< double >( d, names::delay, delay ) )
+  if ( d.update_value( names::delay.toString(), delay ) )
   {
 
     const double h = Time::get_resolution().get_ms();
@@ -92,9 +92,9 @@ cont_delay_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, C
 
 template < typename targetidentifierT >
 void
-cont_delay_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+cont_delay_synapse< targetidentifierT >::check_synapse_params( const dictionary& syn_spec ) const
 {
-  if ( syn_spec->known( names::delay ) )
+  if ( syn_spec.known( names::delay.toString() ) )
   {
     LOG( M_WARNING,
       "Connect",

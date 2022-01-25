@@ -100,19 +100,19 @@ nest::correlomatrix_detector::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlomatrix_detector::Parameters_::get( DictionaryDatum& d ) const
+nest::correlomatrix_detector::Parameters_::get( dictionary& d ) const
 {
-  ( *d )[ names::delta_tau ] = delta_tau_.get_ms();
-  ( *d )[ names::tau_max ] = tau_max_.get_ms();
-  ( *d )[ names::Tstart ] = Tstart_.get_ms();
-  ( *d )[ names::Tstop ] = Tstop_.get_ms();
-  ( *d )[ names::N_channels ] = N_channels_;
+  d[ names::delta_tau.toString() ] = delta_tau_.get_ms();
+  d[ names::tau_max.toString() ] = tau_max_.get_ms();
+  d[ names::Tstart.toString() ] = Tstart_.get_ms();
+  d[ names::Tstop.toString() ] = Tstop_.get_ms();
+  d[ names::N_channels.toString() ] = N_channels_;
 }
 
 void
-nest::correlomatrix_detector::State_::get( DictionaryDatum& d ) const
+nest::correlomatrix_detector::State_::get( dictionary& d ) const
 {
-  ( *d )[ names::n_events ] = IntVectorDatum( new std::vector< long >( n_events_ ) );
+  d[ names::n_events.toString() ] = IntVectorDatum( new std::vector< long >( n_events_ ) );
 
   ArrayDatum* C = new ArrayDatum;
   ArrayDatum* CountC = new ArrayDatum;
@@ -128,18 +128,18 @@ nest::correlomatrix_detector::State_::get( DictionaryDatum& d ) const
     C->push_back( *C_i );
     CountC->push_back( *CountC_i );
   }
-  ( *d )[ names::covariance ] = C;
-  ( *d )[ names::count_covariance ] = CountC;
+  d[ names::covariance.toString() ] = C;
+  d[ names::count_covariance.toString() ] = CountC;
 }
 
 bool
-nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d, const correlomatrix_detector& n, Node* node )
+nest::correlomatrix_detector::Parameters_::set( const dictionary& d, const correlomatrix_detector& n, Node* node )
 {
   bool reset = false;
   double t;
   long N;
 
-  if ( updateValueParam< long >( d, names::N_channels, N, node ) )
+  if ( update_value_param( d, names::N_channels.toString(), N, node ) )
   {
     if ( N < 1 )
     {
@@ -152,25 +152,25 @@ nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d, const 
     }
   }
 
-  if ( updateValueParam< double >( d, names::delta_tau, t, node ) )
+  if ( update_value_param( d, names::delta_tau.toString(), t, node ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValueParam< double >( d, names::tau_max, t, node ) )
+  if ( update_value_param( d, names::tau_max.toString(), t, node ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValueParam< double >( d, names::Tstart, t, node ) )
+  if ( update_value_param( d, names::Tstart.toString(), t, node ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValueParam< double >( d, names::Tstop, t, node ) )
+  if ( update_value_param( d, names::Tstop.toString(), t, node ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -195,7 +195,7 @@ nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d, const 
 }
 
 void
-nest::correlomatrix_detector::State_::set( const DictionaryDatum&, const Parameters_&, bool, Node* )
+nest::correlomatrix_detector::State_::set( const dictionary&, const Parameters_&, bool, Node* )
 {
 }
 

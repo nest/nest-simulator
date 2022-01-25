@@ -44,9 +44,8 @@ __all__ = [
 def _process_conn_spec(conn_spec):
     """Processes the connectivity specifications from None, string or dictionary to a dictionary."""
     if conn_spec is None:
-        # Get default conn_spec
-        sr('/Connect /conn_spec GetOption')
-        return spp()
+        # Use default conn_spec
+        return {'rule': 'all_to_all'}
     elif isinstance(conn_spec, str):
         processed_conn_spec = {'rule': conn_spec}
         return processed_conn_spec
@@ -61,11 +60,8 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
     syn_spec = copy.copy(syn_spec)
 
     if syn_spec is None:
-        # for use_connect_arrays, return "static_synapse" by default
-        if use_connect_arrays:
-            return {"synapse_model": "static_synapse"}
-
-        return syn_spec
+        # Use default syn_spec
+        return {"synapse_model": "static_synapse"}
 
     rule = conn_spec['rule']
 

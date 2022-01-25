@@ -113,7 +113,7 @@ nest::SimulationManager::reset_timers_for_dynamics()
 }
 
 void
-nest::SimulationManager::set_status( const DictionaryDatum& d )
+nest::SimulationManager::set_status( const dictionary& d )
 {
   // Create an instance of time converter here to capture the current
   // representation of time objects: TICS_PER_MS and TICS_PER_STEP
@@ -126,7 +126,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   TimeConverter time_converter;
 
   double time;
-  if ( updateValue< double >( d, names::biological_time, time ) )
+  if ( d.update_value( names::biological_time.toString(), time ) )
   {
     if ( time != 0.0 )
     {
@@ -151,15 +151,15 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     }
   }
 
-  updateValue< bool >( d, names::print_time, print_time_ );
+  d.update_value( names::print_time.toString(), print_time_ );
 
   // tics_per_ms and resolution must come after local_num_thread /
   // total_num_threads because they might reset the network and the time
   // representation
   double tics_per_ms = 0.0;
-  bool tics_per_ms_updated = updateValue< double >( d, names::tics_per_ms, tics_per_ms );
+  bool tics_per_ms_updated = d.update_value( names::tics_per_ms.toString(), tics_per_ms );
   double resd = 0.0;
-  bool res_updated = updateValue< double >( d, names::resolution, resd );
+  bool res_updated = d.update_value( names::resolution.toString(), resd );
 
   if ( tics_per_ms_updated or res_updated )
   {
@@ -290,7 +290,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   // must be set before nodes are created.
   // Important: wfr_comm_interval_ may change depending on use_wfr_
   bool wfr;
-  if ( updateValue< bool >( d, names::use_wfr, wfr ) )
+  if ( d.update_value( names::use_wfr.toString(), wfr ) )
   {
     if ( kernel().node_manager.size() > 0 )
     {
@@ -316,7 +316,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   // connections are created. If use_wfr_ is false wfr_comm_interval_ is set to
   // the resolution whenever the resolution changes.
   double wfr_interval;
-  if ( updateValue< double >( d, names::wfr_comm_interval, wfr_interval ) )
+  if ( d.update_value( names::wfr_comm_interval.toString(), wfr_interval ) )
   {
     if ( not use_wfr_ )
     {
@@ -351,7 +351,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // set the convergence tolerance for the waveform relaxation method
   double tol;
-  if ( updateValue< double >( d, names::wfr_tol, tol ) )
+  if ( d.update_value( names::wfr_tol.toString(), tol ) )
   {
     if ( tol < 0.0 )
     {
@@ -366,7 +366,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // set the maximal number of iterations for the waveform relaxation method
   long max_iter;
-  if ( updateValue< long >( d, names::wfr_max_iterations, max_iter ) )
+  if ( d.update_value( names::wfr_max_iterations.toString(), max_iter ) )
   {
     if ( max_iter <= 0 )
     {
@@ -384,7 +384,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // set the interpolation order for the waveform relaxation method
   long interp_order;
-  if ( updateValue< long >( d, names::wfr_interpolation_order, interp_order ) )
+  if ( d.update_value( names::wfr_interpolation_order.toString(), interp_order ) )
   {
     if ( ( interp_order < 0 ) or ( interp_order == 2 ) or ( interp_order > 3 ) )
     {
@@ -399,7 +399,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   // update time limit
   double t_new = 0.0;
-  if ( updateValue< double >( d, names::update_time_limit, t_new ) )
+  if ( d.update_value( names::update_time_limit.toString(), t_new ) )
   {
     if ( t_new <= 0 )
     {

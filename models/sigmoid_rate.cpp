@@ -26,19 +26,19 @@ namespace nest
 {
 
 void
-nonlinearities_sigmoid_rate::get( DictionaryDatum& d ) const
+nonlinearities_sigmoid_rate::get( dictionary& d ) const
 {
-  def< double >( d, names::g, g_ );
-  def< double >( d, names::beta, beta_ );
-  def< double >( d, names::theta, theta_ );
+  d[ names::g.toString() ] = g_;
+  d[ names::beta.toString() ] = beta_;
+  d[ names::theta.toString() ] = theta_;
 }
 
 void
-nonlinearities_sigmoid_rate::set( const DictionaryDatum& d, Node* node )
+nonlinearities_sigmoid_rate::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::g, g_, node );
-  updateValueParam< double >( d, names::beta, beta_, node );
-  updateValueParam< double >( d, names::theta, theta_, node );
+  update_value_param( d, names::g.toString(), g_, node );
+  update_value_param( d, names::beta.toString(), beta_, node );
+  update_value_param( d, names::theta.toString(), theta_, node );
 }
 
 /*

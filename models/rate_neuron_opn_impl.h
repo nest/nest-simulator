@@ -87,31 +87,31 @@ nest::rate_neuron_opn< TNonlinearities >::State_::State_()
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_opn< TNonlinearities >::Parameters_::get( DictionaryDatum& d ) const
+nest::rate_neuron_opn< TNonlinearities >::Parameters_::get( dictionary& d ) const
 {
-  def< double >( d, names::tau, tau_ );
-  def< double >( d, names::sigma, sigma_ );
-  def< double >( d, names::mu, mu_ );
-  def< bool >( d, names::linear_summation, linear_summation_ );
-  def< bool >( d, names::mult_coupling, mult_coupling_ );
+  d[ names::tau.toString() ] = tau_;
+  d[ names::sigma.toString() ] = sigma_;
+  d[ names::mu.toString() ] = mu_;
+  d[ names::linear_summation.toString() ] = linear_summation_;
+  d[ names::mult_coupling.toString() ] = mult_coupling_;
 
   // Also allow old names (to not break old scripts)
-  def< double >( d, names::std, sigma_ );
-  def< double >( d, names::mean, mu_ );
+  d[ names::std.toString() ] = sigma_;
+  d[ names::mean.toString() ] = mu_;
 }
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_opn< TNonlinearities >::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::rate_neuron_opn< TNonlinearities >::Parameters_::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::tau, tau_, node );
-  updateValueParam< double >( d, names::mu, mu_, node );
-  updateValueParam< double >( d, names::sigma, sigma_, node );
-  updateValueParam< bool >( d, names::linear_summation, linear_summation_, node );
-  updateValueParam< bool >( d, names::mult_coupling, mult_coupling_, node );
+  update_value_param( d, names::tau.toString(), tau_, node );
+  update_value_param( d, names::mu.toString(), mu_, node );
+  update_value_param( d, names::sigma.toString(), sigma_, node );
+  update_value_param( d, names::linear_summation.toString(), linear_summation_, node );
+  update_value_param( d, names::mult_coupling.toString(), mult_coupling_, node );
 
   // Check for old names
-  if ( updateValueParam< double >( d, names::mean, mu_, node ) )
+  if ( update_value_param( d, names::mean.toString(), mu_, node ) )
   {
     LOG( M_WARNING,
       "rate_neuron_opn< TNonlinearities >::Parameters_::set",
@@ -119,7 +119,7 @@ nest::rate_neuron_opn< TNonlinearities >::Parameters_::set( const DictionaryDatu
       "name from now on." );
   }
 
-  if ( updateValueParam< double >( d, names::std, sigma_, node ) )
+  if ( update_value_param( d, names::std.toString(), sigma_, node ) )
   {
     LOG( M_WARNING,
       "rate_neuron_opn< TNonlinearities >::Parameters_::set",
@@ -140,18 +140,18 @@ nest::rate_neuron_opn< TNonlinearities >::Parameters_::set( const DictionaryDatu
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_opn< TNonlinearities >::State_::get( DictionaryDatum& d ) const
+nest::rate_neuron_opn< TNonlinearities >::State_::get( dictionary& d ) const
 {
-  def< double >( d, names::rate, rate_ );             // Rate
-  def< double >( d, names::noise, noise_ );           // Noise
-  def< double >( d, names::noisy_rate, noisy_rate_ ); // Noisy rate
+  d[ names::rate.toString() ] = rate_;             // Rate
+  d[ names::noise.toString() ] = noise_;           // Noise
+  d[ names::noisy_rate.toString() ] = noisy_rate_; // Noisy rate
 }
 
 template < class TNonlinearities >
 void
-nest::rate_neuron_opn< TNonlinearities >::State_::set( const DictionaryDatum& d, Node* node )
+nest::rate_neuron_opn< TNonlinearities >::State_::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::rate, rate_, node ); // Rate
+  update_value_param( d, names::rate.toString(), rate_, node ); // Rate
 }
 
 template < class TNonlinearities >

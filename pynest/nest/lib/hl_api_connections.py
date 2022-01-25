@@ -255,8 +255,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
 
         return
 
-    sps(pre)
-    sps(post)
+    # sps(pre)
+    # sps(post)
 
     if not isinstance(pre, NodeCollection):
         raise TypeError("Not implemented, presynaptic nodes must be a NodeCollection")
@@ -278,10 +278,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None,
         # Connect using ConnectLayers
         _connect_spatial(pre, post, spatial_projections)
     else:
-        sps(processed_conn_spec)
-        if processed_syn_spec is not None:
-            sps(processed_syn_spec)
-        sr('Connect')
+        # sps(processed_conn_spec)
+        kernel.llapi_connect(pre._datum, post._datum, processed_conn_spec, processed_syn_spec)
+        # sr('Connect')
 
     if return_synapsecollection:
         return GetConnections(pre, post)

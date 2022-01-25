@@ -79,11 +79,11 @@ Layer< D >::compute_displacement( const std::vector< double >& from_pos,
 
 template < int D >
 void
-Layer< D >::set_status( const DictionaryDatum& d )
+Layer< D >::set_status( const dictionary& d )
 {
-  if ( d->known( names::edge_wrap ) )
+  if ( d.known( names::edge_wrap.toString() ) )
   {
-    if ( getValue< bool >( d, names::edge_wrap ) )
+    if ( d.get< bool >( names::edge_wrap.toString() ) )
     {
       periodic_ = ( 1 << D ) - 1; // All dimensions periodic
     }
@@ -92,18 +92,18 @@ Layer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-Layer< D >::get_status( DictionaryDatum& d ) const
+Layer< D >::get_status( dictionary& d ) const
 {
-  ( *d )[ names::extent ] = std::vector< double >( extent_.get_vector() );
-  ( *d )[ names::center ] = std::vector< double >( ( lower_left_ + extent_ / 2 ).get_vector() );
+  d[ names::extent.toString() ] = std::vector< double >( extent_.get_vector() );
+  d[ names::center.toString() ] = std::vector< double >( ( lower_left_ + extent_ / 2 ).get_vector() );
 
   if ( periodic_.none() )
   {
-    ( *d )[ names::edge_wrap ] = BoolDatum( false );
+    d[ names::edge_wrap.toString() ] = BoolDatum( false );
   }
   else if ( periodic_.count() == D )
   {
-    ( *d )[ names::edge_wrap ] = true;
+    d[ names::edge_wrap.toString() ] = true;
   }
 }
 
@@ -327,15 +327,15 @@ Layer< D >::dump_connections( std::ostream& out,
     for ( size_t i = 0; i < connectome.size(); ++i )
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( connectome.get( i ) );
-      DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
+      dictionary result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
         con_id.get_target_node_id(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
         con_id.get_port() );
 
-      long target_node_id = getValue< long >( result_dict, names::target );
-      double weight = getValue< double >( result_dict, names::weight );
-      double delay = getValue< double >( result_dict, names::delay );
+      long target_node_id = result_dict.get< long >( names::target.toString() );
+      double weight = result_dict.get< double >( names::weight.toString() );
+      double delay = result_dict.get< double >( names::delay.toString() );
 
       // Print source, target, weight, delay, rports
       out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay;

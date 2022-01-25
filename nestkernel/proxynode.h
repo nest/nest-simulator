@@ -94,7 +94,7 @@ public:
   {
   }
 
-  void get_status( DictionaryDatum& ) const;
+  void get_status( dictionary& ) const;
 
   /**
    * Proxy nodes have no properties.
@@ -104,7 +104,7 @@ public:
    * problems with dictionary entry checking
    */
   void
-  set_status( const DictionaryDatum& )
+  set_status( const dictionary& )
   {
     assert( false );
   }

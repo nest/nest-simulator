@@ -62,7 +62,7 @@ nest::StimulationBackendMPI::finalize()
 }
 
 void
-nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const DictionaryDatum& )
+nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const dictionary& )
 {
   thread tid = device.get_thread();
   index node_id = device.get_node_id();

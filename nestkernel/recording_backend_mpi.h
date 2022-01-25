@@ -104,7 +104,7 @@ public:
   void initialize() override;
   void finalize() override;
 
-  void enroll( const RecordingDevice& device, const DictionaryDatum& params ) override;
+  void enroll( const RecordingDevice& device, const dictionary& params ) override;
 
   void disenroll( const RecordingDevice& device ) override;
 
@@ -118,7 +118,7 @@ public:
 
   void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
-  void set_status( const DictionaryDatum& ) override;
+  void set_status( const dictionary& ) override;
 
   void get_status( dictionary& ) const override;
 
@@ -128,9 +128,9 @@ public:
 
   void post_step_hook() override;
 
-  void check_device_status( const DictionaryDatum& ) const override;
-  void get_device_defaults( DictionaryDatum& ) const override;
-  void get_device_status( const RecordingDevice& device, DictionaryDatum& params_dictionary ) const override;
+  void check_device_status( const dictionary& ) const override;
+  void get_device_defaults( dictionary& ) const override;
+  void get_device_status( const RecordingDevice& device, dictionary& params_dictionary ) const override;
 
 private:
   bool enrolled_;

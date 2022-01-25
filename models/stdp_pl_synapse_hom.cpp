@@ -49,22 +49,22 @@ STDPPLHomCommonProperties::STDPPLHomCommonProperties()
 }
 
 void
-STDPPLHomCommonProperties::get_status( DictionaryDatum& d ) const
+STDPPLHomCommonProperties::get_status( dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
-  def< double >( d, names::tau_plus, tau_plus_ );
-  def< double >( d, names::lambda, lambda_ );
-  def< double >( d, names::alpha, alpha_ );
-  def< double >( d, names::mu, mu_ );
+  d[ names::tau_plus.toString() ] = tau_plus_;
+  d[ names::lambda.toString() ] = lambda_;
+  d[ names::alpha.toString() ] = alpha_;
+  d[ names::mu.toString() ] = mu_;
 }
 
 void
-STDPPLHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+STDPPLHomCommonProperties::set_status( const dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  updateValue< double >( d, names::tau_plus, tau_plus_ );
+  d.update_value( names::tau_plus.toString(), tau_plus_ );
   if ( tau_plus_ > 0. )
   {
     tau_plus_inv_ = 1. / tau_plus_;
@@ -73,9 +73,9 @@ STDPPLHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel&
   {
     throw BadProperty( "tau_plus > 0. required." );
   }
-  updateValue< double >( d, names::lambda, lambda_ );
-  updateValue< double >( d, names::alpha, alpha_ );
-  updateValue< double >( d, names::mu, mu_ );
+  d.update_value( names::lambda.toString(), lambda_ );
+  d.update_value( names::alpha.toString(), alpha_ );
+  d.update_value( names::mu.toString(), mu_ );
 }
 
 } // of namespace nest

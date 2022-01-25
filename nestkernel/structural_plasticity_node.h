@@ -115,8 +115,8 @@ public:
    */
   void connect_synaptic_element( Name name, int n );
 
-  void get_status( DictionaryDatum& d ) const;
-  void set_status( const DictionaryDatum& d );
+  void get_status( dictionary& d ) const;
+  void set_status( const dictionary& d );
 
   /**
    * retrieve the current value of tau_Ca which defines the exponential decay

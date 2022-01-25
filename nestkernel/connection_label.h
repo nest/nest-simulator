@@ -59,7 +59,7 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
@@ -67,7 +67,7 @@ public:
    * @note Target and Rport cannot be changed after a connection has been
    * created.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   long get_label() const;
 
@@ -84,22 +84,22 @@ ConnectionLabel< ConnectionT >::ConnectionLabel()
 
 template < typename ConnectionT >
 void
-ConnectionLabel< ConnectionT >::get_status( DictionaryDatum& d ) const
+ConnectionLabel< ConnectionT >::get_status( dictionary& d ) const
 {
   ConnectionT::get_status( d );
-  def< long >( d, names::synapse_label, label_ );
+  d[ names::synapse_label.toString() ] = label_;
   // override names::size_of from ConnectionT,
   // as the size from ConnectionLabel< ConnectionT > is
   // one long larger
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename ConnectionT >
 void
-ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+ConnectionLabel< ConnectionT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   long lbl;
-  if ( updateValue< long >( d, names::synapse_label, lbl ) )
+  if ( d.update_value( names::synapse_label.toString(), lbl ) )
   {
     if ( lbl >= 0 )
     {

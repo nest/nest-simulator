@@ -93,7 +93,7 @@ public:
 
   void finalize() override;
 
-  void enroll( const RecordingDevice& device, const DictionaryDatum& params ) override;
+  void enroll( const RecordingDevice& device, const dictionary& params ) override;
 
   void disenroll( const RecordingDevice& device ) override;
 
@@ -113,20 +113,20 @@ public:
 
   void post_step_hook() override;
 
-  void set_status( const DictionaryDatum& ) override;
+  void set_status( const dictionary& ) override;
 
   void get_status( dictionary& ) const override;
 
-  void check_device_status( const DictionaryDatum& ) const override;
-  void get_device_defaults( DictionaryDatum& ) const override;
-  void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
+  void check_device_status( const dictionary& ) const override;
+  void get_device_defaults( dictionary& ) const override;
+  void get_device_status( const RecordingDevice& device, dictionary& ) const override;
 
 private:
   struct DeviceData
   {
     DeviceData();
-    void get_status( DictionaryDatum& ) const;
-    void set_status( const DictionaryDatum& );
+    void get_status( dictionary& ) const;
+    void set_status( const dictionary& );
     void write( const Event&, const std::vector< double >&, const std::vector< long >& );
 
   private:

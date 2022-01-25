@@ -139,10 +139,10 @@ nest::RandomManager::get_status( dictionary& d )
 }
 
 void
-nest::RandomManager::set_status( const DictionaryDatum& d )
+nest::RandomManager::set_status( const dictionary& d )
 {
   long rng_seed;
-  bool rng_seed_updated = updateValue< long >( d, names::rng_seed, rng_seed );
+  bool rng_seed_updated = d.update_value( names::rng_seed.toString(), rng_seed );
 
   if ( rng_seed_updated )
   {
@@ -155,7 +155,7 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
   }
 
   std::string rng_type;
-  bool rng_type_updated = updateValue< std::string >( d, names::rng_type, rng_type );
+  bool rng_type_updated = d.update_value( names::rng_type.toString(), rng_type );
 
   if ( rng_type_updated )
   {
@@ -170,7 +170,7 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
   }
 
   // If number of threads has been changed, we need to update the RNGs.
-  bool n_threads_updated = d->known( names::local_num_threads );
+  bool n_threads_updated = d.known( names::local_num_threads.toString() );
   if ( n_threads_updated or rng_seed_updated or rng_type_updated )
   {
     reset_rngs_();

@@ -26,19 +26,19 @@ namespace nest
 {
 
 void
-nonlinearities_threshold_lin_rate::get( DictionaryDatum& d ) const
+nonlinearities_threshold_lin_rate::get( dictionary& d ) const
 {
-  def< double >( d, names::g, g_ );
-  def< double >( d, names::theta, theta_ );
-  def< double >( d, names::alpha, alpha_ );
+  d[ names::g.toString() ] = g_;
+  d[ names::theta.toString() ] = theta_;
+  d[ names::alpha.toString() ] = alpha_;
 }
 
 void
-nonlinearities_threshold_lin_rate::set( const DictionaryDatum& d, Node* node )
+nonlinearities_threshold_lin_rate::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::g, g_, node );
-  updateValueParam< double >( d, names::theta, theta_, node );
-  updateValueParam< double >( d, names::alpha, alpha_, node );
+  update_value_param( d, names::g.toString(), g_, node );
+  update_value_param( d, names::theta.toString(), theta_, node );
+  update_value_param( d, names::alpha.toString(), alpha_, node );
 }
 
 /*

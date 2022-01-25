@@ -179,44 +179,44 @@ aeif_cond_alpha_multisynapse::State_::State_( const Parameters_& p )
  * ---------------------------------------------------------------- */
 
 void
-aeif_cond_alpha_multisynapse::Parameters_::get( DictionaryDatum& d ) const
+aeif_cond_alpha_multisynapse::Parameters_::get( dictionary& d ) const
 {
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::V_th, V_th );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< size_t >( d, names::n_receptors, n_receptors() );
+  d[ names::C_m.toString() ] = C_m;
+  d[ names::V_th.toString() ] = V_th;
+  d[ names::t_ref.toString() ] = t_ref_;
+  d[ names::g_L.toString() ] = g_L;
+  d[ names::E_L.toString() ] = E_L;
+  d[ names::V_reset.toString() ] = V_reset_;
+  d[ names::n_receptors.toString() ] = n_receptors();
   ArrayDatum E_rev_ad( E_rev );
   ArrayDatum tau_syn_ad( tau_syn );
-  def< ArrayDatum >( d, names::E_rev, E_rev_ad );
-  def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
-  def< double >( d, names::a, a );
-  def< double >( d, names::b, b );
-  def< double >( d, names::Delta_T, Delta_T );
-  def< double >( d, names::tau_w, tau_w );
-  def< double >( d, names::I_e, I_e );
-  def< double >( d, names::V_peak, V_peak_ );
-  def< double >( d, names::gsl_error_tol, gsl_error_tol );
-  def< bool >( d, names::has_connections, has_connections_ );
+  d[ names::E_rev.toString() ] = E_rev_ad;
+  d[ names::tau_syn.toString() ] = tau_syn_ad;
+  d[ names::a.toString() ] = a;
+  d[ names::b.toString() ] = b;
+  d[ names::Delta_T.toString() ] = Delta_T;
+  d[ names::tau_w.toString() ] = tau_w;
+  d[ names::I_e.toString() ] = I_e;
+  d[ names::V_peak.toString() ] = V_peak_;
+  d[ names::gsl_error_tol.toString() ] = gsl_error_tol;
+  d[ names::has_connections.toString() ] = has_connections_;
 }
 
 void
-aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node )
+aeif_cond_alpha_multisynapse::Parameters_::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::V_th, V_th, node );
-  updateValueParam< double >( d, names::V_peak, V_peak_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::V_th.toString(), V_th, node );
+  update_value_param( d, names::V_peak.toString(), V_peak_, node );
+  update_value_param( d, names::t_ref.toString(), t_ref_, node );
+  update_value_param( d, names::E_L.toString(), E_L, node );
+  update_value_param( d, names::V_reset.toString(), V_reset_, node );
 
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m.toString(), C_m, node );
+  update_value_param( d, names::g_L.toString(), g_L, node );
 
   const size_t old_n_receptors = n_receptors();
-  bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev );
-  bool tau_flag = updateValue< std::vector< double > >( d, names::tau_syn, tau_syn );
+  bool Erev_flag = d.update_value( names::E_rev.toString(), E_rev );
+  bool tau_flag = d.update_value( names::tau_syn.toString(), tau_syn );
   if ( Erev_flag || tau_flag )
   { // receptor arrays have been modified
     if ( ( E_rev.size() != old_n_receptors || tau_syn.size() != old_n_receptors )
@@ -247,14 +247,14 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* 
     }
   }
 
-  updateValueParam< double >( d, names::a, a, node );
-  updateValueParam< double >( d, names::b, b, node );
-  updateValueParam< double >( d, names::Delta_T, Delta_T, node );
-  updateValueParam< double >( d, names::tau_w, tau_w, node );
+  update_value_param( d, names::a.toString(), a, node );
+  update_value_param( d, names::b.toString(), b, node );
+  update_value_param( d, names::Delta_T.toString(), Delta_T, node );
+  update_value_param( d, names::tau_w.toString(), tau_w, node );
 
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::I_e.toString(), I_e, node );
 
-  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
+  update_value_param( d, names::gsl_error_tol.toString(), gsl_error_tol, node );
 
   if ( V_peak_ < V_th )
   {
@@ -307,9 +307,9 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* 
 }
 
 void
-aeif_cond_alpha_multisynapse::State_::get( DictionaryDatum& d ) const
+aeif_cond_alpha_multisynapse::State_::get( dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] );
+  d[ names::V_m.toString() ] = y_[ V_M ];
 
   std::vector< double >* dg = new std::vector< double >();
   std::vector< double >* g = new std::vector< double >();
@@ -322,17 +322,17 @@ aeif_cond_alpha_multisynapse::State_::get( DictionaryDatum& d ) const
     g->push_back( y_[ State_::G + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
   }
 
-  ( *d )[ names::dg ] = DoubleVectorDatum( dg );
-  ( *d )[ names::g ] = DoubleVectorDatum( g );
+  d[ names::dg.toString() ] = DoubleVectorDatum( dg );
+  d[ names::g.toString() ] = DoubleVectorDatum( g );
 
-  def< double >( d, names::w, y_[ W ] );
+  d[ names::w.toString() ] = y_[ W ];
 }
 
 void
-aeif_cond_alpha_multisynapse::State_::set( const DictionaryDatum& d, Node* node )
+aeif_cond_alpha_multisynapse::State_::set( const dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
-  updateValueParam< double >( d, names::w, y_[ W ], node );
+  update_value_param( d, names::V_m.toString(), y_[ V_M ], node );
+  update_value_param( d, names::w.toString(), y_[ W ], node );
 }
 
 aeif_cond_alpha_multisynapse::Buffers_::Buffers_( aeif_cond_alpha_multisynapse& n )
@@ -616,7 +616,7 @@ aeif_cond_alpha_multisynapse::handle( DataLoggingRequest& e )
 }
 
 void
-aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
+aeif_cond_alpha_multisynapse::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty

@@ -96,8 +96,8 @@ public:
   port send_test_event( Node&, rport, synindex, bool );
   port handles_test_event( SpikeEvent&, rport );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( dictionary& ) const;
+  void set_status( const dictionary& );
 
   bool
   is_off_grid() const

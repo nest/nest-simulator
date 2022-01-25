@@ -42,21 +42,19 @@ namespace nest
  * int.
  */
 bool
-update_value_int( const DictionaryDatum& d, Name propname, int& prop )
+update_value_int( const dictionary& d, Name propname, int& prop )
 {
-  if ( d->known( propname ) )
+  if ( d.known( propname.toString() ) )
   {
-    Datum* dat = ( *d )[ propname ].datum();
-    IntegerDatum* intdat = dynamic_cast< IntegerDatum* >( dat );
-    if ( intdat != 0 )
+    const auto value = d.at( propname.toString() );
+    if ( is_int( value ) )
     {
-      prop = static_cast< int >( intdat->get() );
+      prop = boost::any_cast< int >( value );
       return true;
     }
-    DoubleDatum* doubledat = dynamic_cast< DoubleDatum* >( dat );
-    if ( doubledat != 0 )
+    else if ( is_double( value ) )
     {
-      prop = static_cast< int >( doubledat->get() );
+      prop = static_cast< int >( boost::any_cast< double >( value ) );
       return true;
     }
     else
@@ -84,30 +82,30 @@ quantal_stp_synapse< targetidentifierT >::quantal_stp_synapse()
 
 template < typename targetidentifierT >
 void
-quantal_stp_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+quantal_stp_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::dU, U_ );
-  def< double >( d, names::u, u_ );
-  def< double >( d, names::tau_rec, tau_rec_ );
-  def< double >( d, names::tau_fac, tau_fac_ );
-  def< int >( d, names::n, n_ );
-  def< int >( d, names::a, a_ );
+  d[ names::weight.toString() ] = weight_;
+  d[ names::dU.toString() ] = U_;
+  d[ names::u.toString() ] = u_;
+  d[ names::tau_rec.toString() ] = tau_rec_;
+  d[ names::tau_fac.toString() ] = tau_fac_;
+  d[ names::n.toString() ] = n_;
+  d[ names::a.toString() ] = a_;
 }
 
 
 template < typename targetidentifierT >
 void
-quantal_stp_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+quantal_stp_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight.toString(), weight_ );
 
-  updateValue< double >( d, names::dU, U_ );
-  updateValue< double >( d, names::u, u_ );
-  updateValue< double >( d, names::tau_rec, tau_rec_ );
-  updateValue< double >( d, names::tau_fac, tau_fac_ );
+  d.update_value( names::dU.toString(), U_ );
+  d.update_value( names::u.toString(), u_ );
+  d.update_value( names::tau_rec.toString(), tau_rec_ );
+  d.update_value( names::tau_fac.toString(), tau_fac_ );
   update_value_int( d, names::n, n_ );
   update_value_int( d, names::a, a_ );
 }

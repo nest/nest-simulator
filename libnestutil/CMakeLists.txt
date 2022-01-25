@@ -42,7 +42,11 @@ add_library( nestutil ${nestutil_sources} )
 target_link_libraries( nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} )
 
 target_include_directories( nestutil PRIVATE
+    ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
+    ${PROJECT_SOURCE_DIR}/nestkernel
+    ${PROJECT_SOURCE_DIR}/sli
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${Boost_INCLUDE_DIRS}
     )
 

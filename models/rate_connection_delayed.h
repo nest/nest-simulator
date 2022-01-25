@@ -125,9 +125,9 @@ public:
     e();
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -141,19 +141,19 @@ private:
 
 template < typename targetidentifierT >
 void
-RateConnectionDelayed< targetidentifierT >::get_status( DictionaryDatum& d ) const
+RateConnectionDelayed< targetidentifierT >::get_status( dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight.toString() ] = weight_;
+  d[ names::size_of.toString() ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-RateConnectionDelayed< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+RateConnectionDelayed< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight.toString(), weight_ );
 }
 
 } // namespace

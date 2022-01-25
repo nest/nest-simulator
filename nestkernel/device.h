@@ -82,8 +82,8 @@ public:
   /** Set internal variables before calls to SimulationManager::run() */
   virtual void calibrate();
 
-  virtual void get_status( DictionaryDatum& ) const;
-  virtual void set_status( const DictionaryDatum& );
+  virtual void get_status( dictionary& ) const;
+  virtual void set_status( const dictionary& );
 
   /**
    *  Returns true if the device is active at the given time stamp.
@@ -133,8 +133,8 @@ private:
 
     Parameters_& operator=( const Parameters_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dictionary
+    void get( dictionary& ) const; //!< Store current values in dictionary
+    void set( const dictionary& ); //!< Set values from dictionary
 
   private:
     //! Update given Time parameter including error checking
@@ -178,13 +178,13 @@ private:
 } // namespace
 
 inline void
-nest::Device::get_status( DictionaryDatum& d ) const
+nest::Device::get_status( dictionary& d ) const
 {
   P_.get( d );
 }
 
 inline void
-nest::Device::set_status( const DictionaryDatum& d )
+nest::Device::set_status( const dictionary& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty

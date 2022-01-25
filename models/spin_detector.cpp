@@ -82,7 +82,7 @@ nest::spin_detector::get_type() const
 }
 
 void
-nest::spin_detector::get_status( DictionaryDatum& d ) const
+nest::spin_detector::get_status( dictionary& d ) const
 {
   // get the data from the device
   RecordingDevice::get_status( d );
@@ -106,7 +106,7 @@ nest::spin_detector::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::spin_detector::set_status( const DictionaryDatum& d )
+nest::spin_detector::set_status( const dictionary& d )
 {
   RecordingDevice::set_status( d );
 }

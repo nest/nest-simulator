@@ -146,6 +146,7 @@ cdef extern from "tokenstack.h":
 cdef extern from "dictionary.h" namespace "boost":
     cppclass any:
         any()
+        any& operator=[T](T&)
     T any_cast[T](any& operand)
 
 cdef extern from "dictionary.h":
@@ -153,6 +154,7 @@ cdef extern from "dictionary.h":
         dictionary()
         # ctypedef key_type
         # ctypedef mapped_type
+        any& operator[](const string&)
         cppclass const_iterator:
             pair[string, any]& operator*()
             const_iterator operator++()
@@ -186,7 +188,12 @@ cdef extern from "kernel_manager.h" namespace "nest":
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     NodeCollectionPTR create( const string model_name, const long n )
+    void connect(NodeCollectionPTR sources,
+                 NodeCollectionPTR targets,
+                 const dictionary& connectivity,
+                 const vector[dictionary]& synapse_params )
     string pprint_to_string( NodeCollectionPTR nc )
+    size_t nc_size( NodeCollectionPTR nc )
     dictionary get_kernel_status()
 
 cdef extern from "pynestkernel_aux.h":

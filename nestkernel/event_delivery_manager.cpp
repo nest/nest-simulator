@@ -119,9 +119,9 @@ EventDeliveryManager::finalize()
 }
 
 void
-EventDeliveryManager::set_status( const DictionaryDatum& dict )
+EventDeliveryManager::set_status( const dictionary& dict )
 {
-  updateValue< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
+  dict.update_value( names::off_grid_spiking.toString(), off_grid_spiking_ );
 }
 
 void

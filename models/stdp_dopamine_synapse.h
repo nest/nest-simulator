@@ -152,12 +152,12 @@ public:
   /**
    * Get all properties and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   Node* get_node();
 
@@ -223,12 +223,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const dictionary& d, ConnectorModel& cm );
 
   /**
    * Checks to see if illegal parameters are given in syn_spec.
@@ -237,7 +237,7 @@ public:
    * tau_n, tau_plus, c and n. The last two are prohibited only if we have more
    * than one thread.
    */
-  void check_synapse_params( const DictionaryDatum& d ) const;
+  void check_synapse_params( const dictionary& d ) const;
 
   /**
    * Send an event to the receiver of this connection.
@@ -349,35 +349,35 @@ stdp_dopamine_synapse< targetidentifierT >::stdp_dopamine_synapse()
 
 template < typename targetidentifierT >
 void
-stdp_dopamine_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_dopamine_synapse< targetidentifierT >::get_status( dictionary& d ) const
 {
 
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
+  d[ names::weight.toString() ] = weight_;
 
   // own properties, different for individual synapse
-  def< double >( d, names::c, c_ );
-  def< double >( d, names::n, n_ );
+  d[ names::c.toString() ] = c_;
+  d[ names::n.toString() ] = n_;
 }
 
 template < typename targetidentifierT >
 void
-stdp_dopamine_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_dopamine_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight.toString(), weight_ );
 
-  updateValue< double >( d, names::c, c_ );
-  updateValue< double >( d, names::n, n_ );
+  d.update_value( names::c.toString(), c_ );
+  d.update_value( names::n.toString(), n_ );
 }
 
 template < typename targetidentifierT >
 void
-stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const dictionary& syn_spec ) const
 {
-  if ( syn_spec->known( names::vt ) )
+  if ( syn_spec.known( names::vt.toString() ) )
   {
     throw NotImplemented(
       "Connect doesn't support the direct specification of the "
@@ -387,14 +387,14 @@ stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const Dictiona
   // Setting of parameter c and n not thread safe.
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
-    if ( syn_spec->known( names::c ) )
+    if ( syn_spec.known( names::c.toString() ) )
     {
       throw NotImplemented(
         "For multi-threading Connect doesn't support the setting "
         "of parameter c in stdp_dopamine_synapse. "
         "Use SetDefaults() or CopyModel()." );
     }
-    if ( syn_spec->known( names::n ) )
+    if ( syn_spec.known( names::n.toString() ) )
     {
       throw NotImplemented(
         "For multi-threading Connect doesn't support the setting "
@@ -407,7 +407,7 @@ stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const Dictiona
   const size_t n_param = sizeof( param_arr ) / sizeof( std::string );
   for ( size_t n = 0; n < n_param; ++n )
   {
-    if ( syn_spec->known( param_arr[ n ] ) )
+    if ( syn_spec.known( param_arr[ n ] ) )
     {
       throw NotImplemented(
         "Connect doesn't support the setting of parameter param_arr[ n ]"

@@ -608,7 +608,8 @@ inline void NodeCollection::set_metadata( NodeCollectionMetadataPTR )
   throw KernelException( "Cannot set Metadata on this type of NodeCollection." );
 }
 
-inline NodeIDTriple nc_const_iterator::operator*() const
+inline NodeIDTriple
+nc_const_iterator::operator*() const
 {
   NodeIDTriple gt;
   if ( primitive_collection_ )
@@ -782,7 +783,8 @@ nc_const_iterator::get_current_part_offset( size_t& part, size_t& offset )
   offset = element_idx_;
 }
 
-inline index NodeCollectionPrimitive::operator[]( const size_t idx ) const
+inline index
+NodeCollectionPrimitive::operator[]( const size_t idx ) const
 {
   // throw exception if outside of NodeCollection
   if ( first_ + idx > last_ )
@@ -890,7 +892,8 @@ NodeCollectionPrimitive::has_proxies() const
   return not nodes_have_no_proxies_;
 }
 
-inline index NodeCollectionComposite::operator[]( const size_t i ) const
+inline index
+NodeCollectionComposite::operator[]( const size_t i ) const
 {
   if ( step_ > 1 or start_part_ > 0 or start_offset_ > 0 or end_part_ != parts_.size() or end_offset_ > 0 )
   {

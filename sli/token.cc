@@ -175,7 +175,8 @@ Token::pprint( std::ostream& out ) const
   }
 }
 
-std::ostream& operator<<( std::ostream& out, const Token& c )
+std::ostream&
+operator<<( std::ostream& out, const Token& c )
 {
   if ( not c )
   {

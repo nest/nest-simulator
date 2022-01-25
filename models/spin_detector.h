@@ -31,9 +31,9 @@
 #include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
+#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "recording_device.h"
-#include "nest_timeconverter.h"
 
 namespace nest
 {

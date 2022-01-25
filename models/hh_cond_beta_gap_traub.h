@@ -30,8 +30,8 @@
 
 // C includes:
 #include <gsl/gsl_errno.h>
-#include <gsl/gsl_odeiv.h>
 #include <gsl/gsl_matrix.h>
+#include <gsl/gsl_odeiv.h>
 #include <gsl/gsl_sf_exp.h>
 
 // Includes from nestkernel:

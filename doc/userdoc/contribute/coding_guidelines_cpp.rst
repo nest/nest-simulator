@@ -29,47 +29,21 @@ on the clang compiler frontend. It prettyprints input files in a
 configurable manner, and also has Vim and Emacs integration. We supply a
 :ref:`clang-format-file` to enforce some parts of the coding style. During
 the code review process we check that there is no difference between the committed
-files and the formatted version of the committed files:
+files and the formatted version of the committed files.
 
-Developers can benefit from the tool by formatting their changes before issuing
-a pull request: for fixing the formatting of a single file consider using
-``clang-format -i <committed file>`` on that file. For fixing more files at once
-we provide a script that applies the formatting. From the source directory
-call:
+Developers can benefit from the tool by formatting their changes
+before issuing a pull request. For fixing more files at once we
+provide a script that applies the formatting. From the source
+directory call:
 
 .. code::
 
    ./build_support/format_all_c_c++_files.sh [start folder, defaults to '$PWD']
 
-We use clang-format version 3.6 in the Travis CI. Older versions do not
-understand all formatting options we defined in ``.clang-format``. Newer versions
-lead to formatting differences to files formatted with version 3.6 even though the
-same set of rules is used.
+We use clang-format version 9 in our CI, which is readily available on all Ubuntu versions since 20.04 LTS by running ``apt install clang-format-9``. To install on OS X, you can install by using the following steps:
 
-Get ``clang-format``:
-Ubuntu see `here <http://llvm.org/apt/>`_:
-
-.. code::
-
-   # To retrieve the archive signature:
-   wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
-
-   # Repository for Trusty (14.04)
-   sudo sh -c 'echo "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" >> /etc/apt/sources.list'
-
-   # Repositories for Precise (12.04)
-   sudo sh -c 'echo "\ndeb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.6 main" >> /etc/apt/sources.list'
-   sudo sh -c 'echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu precise main" >> /etc/apt/sources.list'
-   # make sure each 'deb ...' is on its own line in /etc/apt/sources.list
-
-   # install clang-format with:
-   sudo apt-get update
-   sudo apt-get install libstdc++6 libllvm3.6 clang-format-3.6
-
-OS X:
-
-* Installing ``clang-format-3.6`` from the `pre-built
-  binaries <http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-apple-darwin.tar.xz>`_.
+1. download and unpack the `pre-built Clang+LLVM-9.0.1 binaries <https://github.com/llvm/llvm-project/releases/download/llvmorg-9.0.1/clang+llvm-9.0.1-x86_64-apple-darwin.tar.xz>`_
+2. copy ``bin/clang-format`` from the archive to ``clang-format-9`` in a location, where it will be found, e.g., ``/usr/local/bin``.
 
 Further we use `Vera++ <https://bitbucket.org/verateam/vera/wiki/Home>`_, which
 'is a programmable tool for verification, analysis and transformation of C++
@@ -87,7 +61,7 @@ Ubuntu:
 
 .. code::
 
-   apt-get install vera++
+   apt install vera++
 
 OS X:
 
@@ -111,7 +85,7 @@ Ubuntu 15.10:
 
 .. code::
 
-  apt-get install cppcheck
+  apt install cppcheck
 
 Earlier versions of Ubuntu do not provide a package for cppcheck 1.69. Please
 follow the instructions to build cppcheck from scratch.
@@ -186,10 +160,8 @@ checks on all changed files as we do during the Travis CI tasks.
                                               the NEST Travis CI build and test environment.
 
        --clang-format=exe               The name of the CLANG-FORMAT executable.
-                                        Default: --clang-format=clang-format-3.6
-                                        Note: CLANG-FORMAT version 3.6 is required.
-                                              This corresponds to the version installed in
-                                              the NEST Travis CI build and test environment.
+                                        Default: --clang-format=clang-format-9
+                                        Note: CLANG-FORMAT version 9 is required.
 
        --pep8=exe                       The name of the PEP8 executable.
                                         Default: --pep8=pep8

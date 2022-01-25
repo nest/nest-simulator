@@ -177,18 +177,6 @@ html_theme_options = {'logo_only': True,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = [str(doc_build_dir / 'static')]
 
-if os.environ.get("READTHEDOCS") == "True":
-    # The short X.Y version.
-    version = os.environ.get("READTHEDOCS_VERSION")
-    print(f"NEST Version: {version}")
-    if version == "latest":
-        rst_prolog = ".. warning:: \n   This version of the documentation is NOT an official release. \
-                     You are looking at 'latest', which is in active and ongoing development. \
-                     You can change versions on the bottom left of the screen."
-        rst_epilog = ""
-else:
-    version = "latest"
-
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
@@ -223,6 +211,7 @@ def config_inited_handler(app, config):
         outdir=str(doc_build_dir / "models")
     )
 
+
 def toc_customizer(app, docname, source):
     if docname == "models/models-toc":
         models_toc = json.load(open(doc_build_dir / "models/toc-tree.json"))
@@ -230,6 +219,7 @@ def toc_customizer(app, docname, source):
         models_source = source[0]
         rendered = app.builder.templates.render_string(models_source, html_context)
         source[0] = rendered
+
 
 def setup(app):
     app.connect("source-read", toc_customizer)

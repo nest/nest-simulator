@@ -150,7 +150,7 @@ EndUserDocs */
  *   be iterator since that may change
  * - update() deletes all entries before now-tau_max, sorts the new
  *   entries, then registers new entries in histogram
-*/
+ */
 
 class correlation_detector : public Node
 {
@@ -219,7 +219,8 @@ private:
     /**
      * Greater operator needed for insertion sort.
      */
-    inline bool operator>( const Spike_& second ) const
+    inline bool
+    operator>( const Spike_& second ) const
     {
       return timestep_ > second.timestep_;
     }

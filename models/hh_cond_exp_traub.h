@@ -276,7 +276,7 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( hh_cond_exp_traub& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_cond_exp_traub& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, hh_cond_exp_traub& );
 

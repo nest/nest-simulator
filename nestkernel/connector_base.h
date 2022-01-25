@@ -64,7 +64,7 @@ public:
   // Destructor needs to be declared virtual to avoid undefined
   // behavior, avoid possible memory leak and needs to be defined to
   // avoid linker error, see, e.g., Meyers, S. (2005) p40ff
-  virtual ~ConnectorBase(){};
+  virtual ~ConnectorBase() {};
 
   /**
    * Return syn_id_ of the synapse type of this Connector (index in
@@ -425,7 +425,8 @@ public:
     {
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
              ->get_common_properties()
-             .get_vt_node_id() == vt_node_id )
+             .get_vt_node_id()
+        == vt_node_id )
       {
         C_[ i ].trigger_update_weight( tid,
           dopa_spikes,

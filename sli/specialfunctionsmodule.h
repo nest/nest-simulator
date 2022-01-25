@@ -53,7 +53,7 @@ class SpecialFunctionsModule : public SLIModule
   // Part 1: Methods pertaining to the module ----------------------
 
 public:
-  SpecialFunctionsModule( void ){};
+  SpecialFunctionsModule( void ) {};
   // ~SpecialFunctionsModule(void);
 
   // The Module is registered by a call to this Function:

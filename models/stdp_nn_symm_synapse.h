@@ -144,8 +144,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -228,7 +228,7 @@ private:
  * Send an event to the receiver of this connection.
  * \param e The event to send
  * \param t The thread on which this connection is stored.
-  * \param cp Common properties object, containing the stdp parameters.
+ * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
 inline void

@@ -49,38 +49,43 @@ Device for evaluating cross correlation between two spike sources
 Description
 +++++++++++
 
-The correlation_detector device is a recording device. It is used to record
-spikes from two pools of spike inputs and calculates the count_histogram of
+The ``correlation_detector`` device is a recording device. It is used to record
+spikes from two pools of spike inputs and calculates the ``count_histogram`` of
 inter-spike intervals (raw cross correlation) binned to bins of duration
-:math:`\delta_\tau`. The result can be obtained via GetStatus under the key
-/count_histogram.
+``delta_tau``. The result can be obtained via :py:func:`.GetStatus` under the key
+
 In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors, the
 `Kahan summation algorithm <http://en.wikipedia.org/wiki/Kahan_summation_algorithm>`_
 is used when calculating the weighted histogram.
-Both are arrays of :math:`2*\tau_{max}/\delta_{\tau}+1` values containing the
+Both are arrays of :math:`2\cdot\tau_{max}/\delta_{\tau}+1` values containing the
 histogram counts in the following way:
 
 Let :math:`t_{1,i}` be the spike times of source 1,
 :math:`t_{2,j}` the spike times of source 2.
-histogram[n] then contains the sum of products of the weight
-:math:`w_{1,i}*w_{2,j}`, count_histogram[n] contains 1 summed over all events
+``histogram[n]`` then contains the sum of products of the weight
+:math:`w_{1,i}\cdot w_{2,j}`, count_histogram[n] contains 1 summed over all events
 with :math:`t_{2,j}-t_{1,i}` in
 
 .. math::
 
-    n*\delta_\tau - \tau_{max} - \delta_\tau/2
-    n*\delta_\tau - \tau_{max} + \delta_\tau/2
+    n\cdot\delta_\tau - \tau_{max} - \delta_\tau/2
+    n\cdot\delta_\tau - \tau_{max} + \delta_\tau/2
 
 The bins are centered around the time difference they represent, but are
 left-closed and right-open. This means that events with time difference
--tau_max-delta_tau/2 are counted in the leftmost bin, but event with
-difference tau_max+delta_tau/2 are not counted at all.
+:math:`-\tau_{max}-\delta_\tau/2` are counted in the leftmost bin, but event with
+difference :math:`\tau_{max}+\delta_\tau/2` are not counted at all.
 
 The correlation detector has two inputs, which are selected via the
 receptor_port of the incoming connection: All incoming connections with
-receptor_port = 0 will be pooled as the spike source 1, the ones with
-receptor_port = 1 will be used as spike source 2.
+``receptor_port = 0`` will be pooled as the spike source 1, the ones with
+``receptor_port = 1`` will be used as spike source 2.
+
+Correlation detectors ignore any connection delays.
+
+See :doc:`../auto_examples/cross_check_mip_corrdet` to learn more
+about the usage of the correlation detector.
 
 Parameters
 ++++++++++
@@ -120,32 +125,6 @@ n_events             list of  Number of events from source 0 and 1. By setting
                      integers n_events to [0,0], the histogram is cleared.
 ==================== ======== ==================================================
 
-Remarks:
-
-This recorder does not record to file, screen or memory in the usual
-sense.
-
-Correlation detectors IGNORE any connection delays.
-
-Correlation detector breaks with the persistence scheme as
-follows: the internal buffers for storing spikes are part
-of State_, but are initialized by init_buffers_().
-
-@todo The correlation detector could be made more efficient as follows
-(HEP 2008-07-01):
-- incoming_ is vector of two deques
-- let handle() push_back() entries in incoming_ and do nothing else
-- keep index to last "old spike" in each incoming_; cannot
-  be iterator since that may change
-- update() deletes all entries before now-tau_max, sorts the new
-  entries, then registers new entries in histogram
-
-Example:
-
-See Auto- and crosscorrelation functions for spike
-trains[cross_check_mip_corrdet.py]
-in pynest/examples.
-
 Receives
 ++++++++
 
@@ -157,6 +136,21 @@ See also
 spike_recorder
 
 EndUserDocs */
+
+/**
+ * Correlation detector breaks with the persistence scheme as follows:
+ * the internal buffers for storing spikes are part of State_, but are
+ * initialized by init_buffers_().
+ *
+ * @todo The correlation detector could be made more efficient as follows
+ * (HEP 2008-07-01):
+ * - incoming_ is vector of two deques
+ * - let handle() push_back() entries in incoming_ and do nothing else
+ * - keep index to last "old spike" in each incoming_; cannot
+ *   be iterator since that may change
+ * - update() deletes all entries before now-tau_max, sorts the new
+ *   entries, then registers new entries in histogram
+ */
 
 class correlation_detector : public Node
 {
@@ -225,7 +219,8 @@ private:
     /**
      * Greater operator needed for insertion sort.
      */
-    inline bool operator>( const Spike_& second ) const
+    inline bool
+    operator>( const Spike_& second ) const
     {
       return timestep_ > second.timestep_;
     }

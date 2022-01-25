@@ -91,11 +91,13 @@ protected:
     {
       return Position< D >( pos_ );
     }
-    bool operator<( const NodePositionData& other ) const
+    bool
+    operator<( const NodePositionData& other ) const
     {
       return node_id_ < other.node_id_;
     }
-    bool operator==( const NodePositionData& other ) const
+    bool
+    operator==( const NodePositionData& other ) const
     {
       return node_id_ == other.node_id_;
     }
@@ -122,11 +124,8 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     epsilon[ d ] = 0.1;
   }
 
-  num_local_nodes_ = std::accumulate( this->node_collection_->begin(),
-    this->node_collection_->end(),
-    0,
-    []( size_t a, NodeIDTriple b )
-    {
+  num_local_nodes_ =
+    std::accumulate( this->node_collection_->begin(), this->node_collection_->end(), 0, []( size_t a, NodeIDTriple b ) {
       const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( b.node_id );
       return node->is_proxy() ? a : a + 1;
     } );

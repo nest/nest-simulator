@@ -1,5 +1,7 @@
 :orphan:
 
+.. _sli_intro:
+
 An Introduction to SLI
 ======================
 
@@ -28,15 +30,15 @@ at the command prompt. You should then see something like this:
    Type 'help' to get more information.
    Type 'quit' or CTRL-D to quit NEST.
 
-See :doc:`here <../installation/configuration>` for advanced configuration options.
+See :ref:`here <config_options>` for advanced configuration options.
 
 SLI user manual
 ---------------
 
 This manual gives a brief overview of the SLI programming language.
 
-1. :doc:`First Steps <first-steps>`
-2. :doc:`Objects and data types <objects-and-data-types>`
-3. :doc:`Programming in SLI <programming-in-sli>`
-4. :doc:`Using files and keyboard input <using-files-and-keyboard-input>`
-5. :doc:`Neural simulations <neural-simulations>`
+1. :ref:`First Steps <first_steps_sli>`
+2. :ref:`Objects and data types <obj_data_sli>`
+3. :ref:`Programming in SLI <programming_sli>`
+4. :ref:`Using files and keyboard input <files_keyboard_sli>`
+5. :ref:`Neural simulations <neural_sims_sli>`

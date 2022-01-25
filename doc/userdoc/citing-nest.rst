@@ -1,9 +1,11 @@
 :orphan:
 
+.. _cite_nest:
+
 Cite NEST
 =========
 
-Please cite the version of NEST you used in your work. You can :doc:`let us know <community>` about your publications that used NEST, and we
+Please cite the version of NEST you used in your work. You can :ref:`let us know <community>` about your publications that used NEST, and we
 will add them to our `publication list <https://www.nest-simulator.org/publications/>`_; this will help make them
 visible to potential readers.
 

@@ -197,7 +197,7 @@ protected:
   friend Time operator-( const Time& t1, const Time& t2 );
   friend Time operator*( const long factor, const Time& t );
   friend Time operator*( const Time& t, long factor );
-  friend std::ostream&(::operator<<)( std::ostream&, const Time& );
+  friend std::ostream&( ::operator<<)( std::ostream&, const Time& );
 
   /////////////////////////////////////////////////////////////
   // Limits for time, including infinity definitions
@@ -247,7 +247,7 @@ public:
   {
     tic_t t;
     explicit tic( tic_t t )
-      : t( t ){};
+      : t( t ) {};
   };
 
   struct step
@@ -269,7 +269,7 @@ public:
 
     static double fromtoken( const Token& t );
     explicit ms( const Token& t )
-      : t( fromtoken( t ) ){};
+      : t( fromtoken( t ) ) {};
   };
 
   struct ms_stamp
@@ -295,7 +295,7 @@ protected:
 
 public:
   Time()
-    : tics( 0 ){};
+    : tics( 0 ) {};
 
   // Default copy constructor: assumes legal time object
   // Defined by compiler.
@@ -307,8 +307,8 @@ public:
   }
 
   Time( step t )
-    : tics( ( time_abs( t.t ) < LIM_MAX.steps ) ? t.t * Range::TICS_PER_STEP : ( t.t < 0 ) ? LIM_NEG_INF.tics
-                                                                                           : LIM_POS_INF.tics )
+    : tics( ( time_abs( t.t ) < LIM_MAX.steps ) ? t.t * Range::TICS_PER_STEP
+                                                : ( t.t < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics )
   {
   }
 
@@ -476,7 +476,8 @@ public:
   // Unary operators
   /////////////////////////////////////////////////////////////
 
-  Time& operator+=( const Time& t )
+  Time&
+  operator+=( const Time& t )
   {
     tics += t.tics;
     range();
@@ -566,42 +567,50 @@ const Time TimeZero;
 // Binary operators
 /////////////////////////////////////////////////////////////
 
-inline bool operator==( const Time& t1, const Time& t2 )
+inline bool
+operator==( const Time& t1, const Time& t2 )
 {
   return t1.tics == t2.tics;
 }
 
-inline bool operator!=( const Time& t1, const Time& t2 )
+inline bool
+operator!=( const Time& t1, const Time& t2 )
 {
   return t1.tics != t2.tics;
 }
 
-inline bool operator<( const Time& t1, const Time& t2 )
+inline bool
+operator<( const Time& t1, const Time& t2 )
 {
   return t1.tics < t2.tics;
 }
 
-inline bool operator>( const Time& t1, const Time& t2 )
+inline bool
+operator>( const Time& t1, const Time& t2 )
 {
   return t1.tics > t2.tics;
 }
 
-inline bool operator<=( const Time& t1, const Time& t2 )
+inline bool
+operator<=( const Time& t1, const Time& t2 )
 {
   return t1.tics <= t2.tics;
 }
 
-inline bool operator>=( const Time& t1, const Time& t2 )
+inline bool
+operator>=( const Time& t1, const Time& t2 )
 {
   return t1.tics >= t2.tics;
 }
 
-inline Time operator+( const Time& t1, const Time& t2 )
+inline Time
+operator+( const Time& t1, const Time& t2 )
 {
   return Time::tic( t1.tics + t2.tics ); // check range
 }
 
-inline Time operator-( const Time& t1, const Time& t2 )
+inline Time
+operator-( const Time& t1, const Time& t2 )
 {
   return Time::tic( t1.tics - t2.tics ); // check range
 }

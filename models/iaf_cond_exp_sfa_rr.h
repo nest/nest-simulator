@@ -67,7 +67,7 @@ adaptation and relative refractory mechanisms
 Description
 +++++++++++
 
-iaf_cond_exp_sfa_rr is an implementation of a spiking neuron using
+``iaf_cond_exp_sfa_rr`` is an implementation of a spiking neuron using
 integrate-and-fire dynamics with conductance-based synapses, with additional
 spike-frequency adaptation and relative refractory mechanisms as described in
 [2]_, page 166.
@@ -77,8 +77,10 @@ an exponential function. The exponential function is normalized such that an
 event of weight 1.0 results in a peak current of 1 nS.
 
 Outgoing spike events induce a change of the adaptation and relative refractory
-conductances by q_sfa and q_rr, respectively. Otherwise these conductances
-decay exponentially with time constants tau_sfa and tau_rr, respectively.
+conductances by ``q_sfa`` and ``q_rr``, respectively. Otherwise these conductances
+decay exponentially with time constants ``tau_sfa`` and ``tau_rr``, respectively.
+
+See also [1]_.
 
 Parameters
 ++++++++++
@@ -262,7 +264,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_exp_sfa_rr& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_exp_sfa_rr& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, iaf_cond_exp_sfa_rr& );
 

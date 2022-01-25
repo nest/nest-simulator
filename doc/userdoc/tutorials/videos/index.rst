@@ -1,3 +1,5 @@
+ .. _toc_videos:
+
 Video tutorial series
 =====================
 

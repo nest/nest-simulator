@@ -1,9 +1,11 @@
 :orphan:
 
+.. _music_parrot:
+
 Those parrot neurons, or why you never connect devices to each other
 --------------------------------------------------------------------
 
-In ``receive.py`` in :doc:`Part 2 of the MUSIC tutorial <music_tutorial_2>`, we used parrot neurons as
+In ``receive.py`` in :ref:`Part 2 of the MUSIC tutorial <music_tutorial_2>`, we used parrot neurons as
 target for the input proxies, then connected the spike recorder to those
 neurons. Couldn’t we have connected the spike recorder directly to the
 proxies?

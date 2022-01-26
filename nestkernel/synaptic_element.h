@@ -143,14 +143,14 @@ public:
   }
 
   /**
-  * \fn void get(DictionaryDatum&) const
+  * \fn void get(dictionary&) const
   * Store current values in a dictionary.
   * @param d to write data
   */
   void get( dictionary& d ) const;
 
   /**
-  * \fn void set(const DictionaryDatum&)
+  * \fn void set(const dictionary&)
   * Set values from a dictionary.
   * @param d to take data from
   */

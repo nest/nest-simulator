@@ -102,22 +102,22 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
   }
 
   // TODO-PYNEST-NG: fix
-  // if ( d->known( names::synaptic_elements_param ) )
+  // if ( d.known( names::synaptic_elements_param.toString() ) )
   // {
-  //   const DictionaryDatum synaptic_elements_dict = getValue< DictionaryDatum >( d, names::synaptic_elements_param );
+  //   const dictionary synaptic_elements_dict = d.get<dictionary>(names::synaptic_elements_param.toString());
 
   //   for ( std::map< Name, SynapticElement >::iterator it = synaptic_elements_map_.begin();
   //         it != synaptic_elements_map_.end();
   //         ++it )
   //   {
-  //     if ( synaptic_elements_dict->known( it->first ) )
+  //     if ( synaptic_elements_dict.known( it->first.toString() ) )
   //     {
-  //       const DictionaryDatum synaptic_elements_a = getValue< DictionaryDatum >( synaptic_elements_dict, it->first );
+  //       const dictionary synaptic_elements_a = synaptic_elements_dict.get<dictionary>(it->first.toString());
   //       it->second.set( synaptic_elements_a );
   //     }
   //   }
   // }
-  // if ( not d->known( names::synaptic_elements ) )
+  // if ( not d.known( names::synaptic_elements.toString() ) )
   // {
   //   return;
   // }
@@ -133,7 +133,7 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
   // {
   //   insert_result = synaptic_elements_map_.insert( std::pair< Name, SynapticElement >( i->first, SynapticElement() )
   //   );
-  //   ( insert_result.first->second ).set( synaptic_elements_d.get< DictionaryDatum >( i->first ) );
+  //   ( insert_result.first->second ).set( synaptic_elements_d.get< dictionary >( i->first ) );
   // }
 }
 

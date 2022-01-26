@@ -34,6 +34,8 @@
 #include "nest_types.h"
 #include "exceptions.h"
 
+#include "dictionary.h"
+
 // Includes from sli:
 #include "dictdatum.h"
 
@@ -51,8 +53,8 @@ public:
   virtual ~GrowthCurve()
   {
   }
-  virtual void get( DictionaryDatum& d ) const = 0;
-  virtual void set( const DictionaryDatum& d ) = 0;
+  virtual void get( dictionary& d ) const = 0;
+  virtual void set( const dictionary& d ) = 0;
   virtual double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const = 0;
   virtual bool
@@ -131,8 +133,8 @@ class GrowthCurveLinear : public GrowthCurve
 {
 public:
   GrowthCurveLinear();
-  void get( DictionaryDatum& d ) const;
-  void set( const DictionaryDatum& d );
+  void get( dictionary& d ) const;
+  void set( const dictionary& d );
   double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
 
 private:
@@ -218,8 +220,8 @@ class GrowthCurveGaussian : public GrowthCurve
 {
 public:
   GrowthCurveGaussian();
-  void get( DictionaryDatum& d ) const;
-  void set( const DictionaryDatum& d );
+  void get( dictionary& d ) const;
+  void set( const dictionary& d );
   double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
 
 private:
@@ -290,8 +292,8 @@ class GrowthCurveSigmoid : public GrowthCurve
 {
 public:
   GrowthCurveSigmoid();
-  void get( DictionaryDatum& d ) const;
-  void set( const DictionaryDatum& d );
+  void get( dictionary& d ) const;
+  void set( const dictionary& d );
   double update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const;
 
 private:

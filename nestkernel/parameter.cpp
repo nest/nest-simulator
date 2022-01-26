@@ -405,7 +405,7 @@ subtract_parameter( const std::shared_ptr< Parameter > first, const std::shared_
 std::shared_ptr< Parameter >
 compare_parameter( const std::shared_ptr< Parameter > first,
   const std::shared_ptr< Parameter > second,
-  const DictionaryDatum& d )
+  const dictionary& d )
 {
   return std::shared_ptr< Parameter >( new ComparingParameter( first, second, d ) );
 }

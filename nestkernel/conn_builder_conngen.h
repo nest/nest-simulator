@@ -45,8 +45,8 @@ class ConnectionGeneratorBuilder : public ConnBuilder
 public:
   ConnectionGeneratorBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
-    const DictionaryDatum&,
-    const std::vector< DictionaryDatum >& );
+    const dictionary&,
+    const std::vector< dictionary >& );
 
 protected:
   void connect_();
@@ -56,7 +56,7 @@ protected:
 
 private:
   ConnectionGeneratorDatum cg_;
-  DictionaryDatum params_map_;
+  dictionary params_map_;
 };
 
 } // namespace nest

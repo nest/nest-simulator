@@ -217,44 +217,61 @@ nest::RecordingBackendMemory::DeviceData::push_back( const Event& event,
 void
 nest::RecordingBackendMemory::DeviceData::get_status( dictionary& d ) const
 {
-  DictionaryDatum events;
+  dictionary events;
 
   if ( not d.known( names::events.toString() ) )
   {
-    events = DictionaryDatum( new Dictionary );
     d[ names::events.toString() ] = events;
   }
   else
   {
-    events = d.get< DictionaryDatum >( names::events.toString() );
+    events = d.get< dictionary >( names::events.toString() );
   }
 
-  initialize_property_intvector( events, names::senders );
-  append_property( events, names::senders, senders_ );
+  auto init_intvector = [&events]( std::string key ) -> std::vector< int >&
+  {
+    if ( not events.known( key ) )
+    {
+      events[ key ] = std::vector< int >();
+    }
+    return boost::any_cast< std::vector< int >& >( events[ key ] );
+  };
+  auto init_doublevector = [&events]( std::string key ) -> std::vector< double >&
+  {
+    if ( not events.known( key ) )
+    {
+      events[ key ] = std::vector< double >();
+    }
+    return boost::any_cast< std::vector< double >& >( events[ key ] );
+  };
+
+  // TODO-PYNEST-NG: check that the vector in events is appended correctly
+  auto& senders = init_intvector( names::senders.toString() );
+  senders.insert( senders.end(), senders_.begin(), senders_.end() );
 
   if ( time_in_steps_ )
   {
-    initialize_property_intvector( events, names::times );
-    append_property( events, names::times, times_steps_ );
+    auto& times = init_intvector( names::times.toString() );
+    times.insert( times.end(), times_steps_.begin(), times_steps_.end() );
 
-    initialize_property_doublevector( events, names::offsets );
-    append_property( events, names::offsets, times_offset_ );
+    auto& offsets = init_doublevector( names::offsets.toString() );
+    offsets.insert( offsets.end(), times_offset_.begin(), times_offset_.end() );
   }
   else
   {
-    initialize_property_doublevector( events, names::times );
-    append_property( events, names::times, times_ms_ );
+    auto& times = init_doublevector( names::times.toString() );
+    times.insert( times.end(), times_ms_.begin(), times_ms_.end() );
   }
 
   for ( size_t i = 0; i < double_values_.size(); ++i )
   {
-    initialize_property_doublevector( events, double_value_names_[ i ] );
-    append_property( events, double_value_names_[ i ], double_values_[ i ] );
+    auto& double_name = init_doublevector( double_value_names_[ i ].toString() );
+    double_name.insert( double_name.end(), double_values_[ i ].begin(), double_values_[ i ].end() );
   }
   for ( size_t i = 0; i < long_values_.size(); ++i )
   {
-    initialize_property_intvector( events, long_value_names_[ i ] );
-    append_property( events, long_value_names_[ i ], long_values_[ i ] );
+    auto& long_name = init_intvector( long_value_names_[ i ].toString() );
+    long_name.insert( long_name.end(), long_values_[ i ].begin(), long_values_[ i ].end() );
   }
 
   d[ names::time_in_steps.toString() ] = time_in_steps_;

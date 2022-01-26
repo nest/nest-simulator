@@ -410,13 +410,14 @@ distance( const ArrayDatum conns )
 }
 
 MaskDatum
-create_mask( const DictionaryDatum& mask_dict )
+create_mask( const dictionary& mask_dict )
 {
-  mask_dict->clear_access_flags();
+  // TODO-PYNEST-NG: access flags
+  // mask_dict->clear_access_flags();
 
   MaskDatum datum( NestModule::create_mask( mask_dict ) );
 
-  ALL_ENTRIES_ACCESSED( *mask_dict, "nest::CreateMask", "Unread dictionary entries: " );
+  // ALL_ENTRIES_ACCESSED( *mask_dict, "nest::CreateMask", "Unread dictionary entries: " );
 
   return datum;
 }
@@ -488,11 +489,11 @@ dump_layer_connections( const Token& syn_model,
   }
 }
 
-DictionaryDatum get_layer_status( NodeCollectionPTR )
+dictionary get_layer_status( NodeCollectionPTR )
 {
   assert( false && "not implemented" );
 
-  return DictionaryDatum();
+  return {};
 }
 
 } // namespace nest

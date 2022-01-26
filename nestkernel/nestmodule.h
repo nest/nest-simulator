@@ -117,7 +117,7 @@ public:
    *          as value, and optionally an anchor.
    * @returns Either the MaskDatum given as argument, or a new mask.
    */
-  static sharedPtrDatum< AbstractMask, &NestModule::MaskType > /*MaskDatum*/ create_mask( const Token& t );
+  static sharedPtrDatum< AbstractMask, &NestModule::MaskType > /*MaskDatum*/ create_mask( const dictionary& params );
 
   /**
    * Create a new Mask object using the mask factory.

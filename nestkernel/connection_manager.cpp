@@ -61,7 +61,7 @@
 #include "tokenutils.h"
 
 nest::ConnectionManager::ConnectionManager()
-  : connruledict_( new Dictionary() )
+  : connruledict_()
   , connbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
@@ -355,7 +355,7 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   const dictionary& conn_spec,
   const std::vector< dictionary >& syn_specs )
 {
-  const size_t rule_id = connruledict_->lookup( name );
+  const auto rule_id = connruledict_.get< int >( name );
   return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
 }
 
@@ -398,12 +398,12 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   }
   const Name rule_name = conn_spec.get< std::string >( names::rule.toString() );
 
-  if ( not connruledict_->known( rule_name ) )
+  if ( not connruledict_.known( rule_name.toString() ) )
   {
     throw BadProperty( String::compose( "Unknown connectivity rule: %1", rule_name ) );
   }
 
-  const long rule_id = ( *connruledict_ )[ rule_name ];
+  const auto rule_id = connruledict_.get< int >( rule_name.toString() );
 
   ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
   assert( cb != 0 );
@@ -927,29 +927,26 @@ nest::ConnectionManager::get_num_connections( const synindex syn_id ) const
 }
 
 ArrayDatum
-nest::ConnectionManager::get_connections( const DictionaryDatum& params )
+nest::ConnectionManager::get_connections( const dictionary& params )
 {
   std::deque< ConnectionID > connectome;
-  const Token& source_t = params->lookup( names::source );
-  const Token& target_t = params->lookup( names::target );
-  const Token& syn_model_t = params->lookup( names::synapse_model );
   NodeCollectionPTR source_a = NodeCollectionPTR( 0 );
   NodeCollectionPTR target_a = NodeCollectionPTR( 0 );
 
   long synapse_label = UNLABELED_CONNECTION;
-  updateValue< long >( params, names::synapse_label, synapse_label );
+  params.update_value( names::synapse_label.toString(), synapse_label );
 
-  if ( not source_t.empty() )
+  if ( params.known( names::source.toString() ) )
   {
-    source_a = getValue< NodeCollectionDatum >( source_t );
+    source_a = params.get< NodeCollectionDatum >( names::source.toString() );
     if ( not source_a->valid() )
     {
       throw KernelException( "GetConnection requires valid source NodeCollection." );
     }
   }
-  if ( not target_t.empty() )
+  if ( params.known( names::target.toString() ) )
   {
-    target_a = getValue< NodeCollectionDatum >( target_t );
+    target_a = params.get< NodeCollectionDatum >( names::target.toString() );
     if ( not target_a->valid() )
     {
       throw KernelException( "GetConnection requires valid target NodeCollection." );
@@ -975,18 +972,18 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
 
   // First we check, whether a synapse model is given.
   // If not, we will iterate all.
-  if ( not syn_model_t.empty() )
+  if ( params.known( names::target.toString() ) )
   {
-    Name synmodel_name = getValue< Name >( syn_model_t );
+    const auto synmodel_name = params.get< std::string >( names::synapse_model.toString() );
     const auto& syndict = kernel().model_manager.get_synapsedict();
     // const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-    if ( syndict.known( synmodel_name.toString() ) )
+    if ( syndict.known( synmodel_name ) )
     {
-      syn_id = static_cast< size_t >( syndict.get< synindex >( synmodel_name.toString() ) );
+      syn_id = static_cast< size_t >( syndict.get< synindex >( synmodel_name ) );
     }
     else
     {
-      throw UnknownModelName( synmodel_name.toString() );
+      throw UnknownModelName( synmodel_name );
     }
     get_connections( connectome, source_a, target_a, syn_id, synapse_label );
   }

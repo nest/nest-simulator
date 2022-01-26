@@ -25,6 +25,8 @@
 // Includes from nestkernel:
 #include "nest_names.h"
 
+#include "dictionary.h"
+
 // Includes from sli:
 #include "integerdatum.h"
 
@@ -53,21 +55,21 @@ ConnectionID::ConnectionID( long source_node_id, long target_thread, long synaps
 {
 }
 
-DictionaryDatum
+dictionary
 ConnectionID::get_dict() const
 {
-  DictionaryDatum dict( new Dictionary );
+  dictionary dict;
 
   // The node ID of the presynaptic node
-  def< long >( dict, nest::names::source, source_node_id_ );
+  dict[ nest::names::source.toString() ] = source_node_id_;
   // The node ID of the postsynaptic node
-  def< long >( dict, nest::names::target, target_node_id_ );
+  dict[ nest::names::target.toString() ] = target_node_id_;
   // The id of the synapse model
-  def< long >( dict, nest::names::synapse_modelid, synapse_modelid_ );
+  dict[ nest::names::synapse_modelid.toString() ] = synapse_modelid_;
   // The thread of the postsynaptic node
-  def< long >( dict, nest::names::target_thread, target_thread_ );
+  dict[ nest::names::target_thread.toString() ] = target_thread_;
   // The index in the list
-  def< long >( dict, nest::names::port, port_ );
+  dict[ nest::names::port.toString() ] = port_;
 
   return dict;
 }

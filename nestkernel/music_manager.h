@@ -51,8 +51,8 @@ void nest::Communicator::finalize()
 
 Linked Functions:
 
-void set_status( index, const DictionaryDatum& );
-DictionaryDatum get_status( index );
+void set_status( index, const dictionary& );
+dictionary get_status( index );
 void register_music_in_port( std::string portname );
 void unregister_music_in_port( std::string portname );
 void register_music_event_in_proxy( std::string portname, int channel,

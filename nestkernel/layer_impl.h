@@ -305,8 +305,8 @@ Layer< D >::dump_connections( std::ostream& out,
   std::vector< std::pair< Position< D >, index > >* src_vec = get_global_positions_vector( node_collection );
 
   // Dictionary with parameters for get_connections()
-  DictionaryDatum ncdict( new Dictionary );
-  def( ncdict, names::synapse_model, syn_model );
+  dictionary ncdict;
+  ncdict[ names::synapse_model.toString() ] = syn_model;
 
   // Avoid setting up new array for each iteration of the loop
   std::vector< index > source_array( 1 );
@@ -320,7 +320,7 @@ Layer< D >::dump_connections( std::ostream& out,
     const Position< D > source_pos = src_iter->first;
 
     source_array[ 0 ] = source_node_id;
-    def( ncdict, names::source, NodeCollectionDatum( NodeCollection::create( source_array ) ) );
+    ncdict[ names::source.toString() ] = NodeCollectionDatum( NodeCollection::create( source_array ) );
     ArrayDatum connectome = kernel().connection_manager.get_connections( ncdict );
 
     // Print information about all local connections for current source

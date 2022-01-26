@@ -33,6 +33,8 @@
 // C++ includes:
 #include <vector>
 
+#include "dictionary.h"
+
 // Includes from sli:
 #include "slifunction.h"
 #include "slimodule.h"
@@ -108,7 +110,7 @@ private:
   vecDynModules dyn_modules;
 
   //! Dictionary for dynamically loaded modules.
-  static Dictionary* moduledict_;
+  static dictionary moduledict_;
 };
 
 } // namespace

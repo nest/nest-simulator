@@ -357,7 +357,7 @@ private:
     Parameters_();
 
     void get( const RecordingBackendSIONlib&, dictionary& ) const;
-    void set( const RecordingBackendSIONlib&, const DictionaryDatum& );
+    void set( const RecordingBackendSIONlib&, const dictionary& );
   };
 
   Parameters_ P_;

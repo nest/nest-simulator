@@ -93,7 +93,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 #ifdef HAVE_MUSIC
     // We allow music_channel as alias for receptor_type during
     // connection setup
-    ( *syn_defaults )[ names::music_channel ] = 0;
+    syn_defaults[ names::music_channel.toString() ] = 0;
 #endif
 
     set_synapse_params( syn_defaults, syn_params, synapse_indx );

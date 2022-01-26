@@ -113,9 +113,9 @@ public:
   void
   get_status( dictionary& d ) const
   {
-    DictionaryDatum dict( new Dictionary );
+    dictionary dict;
     dict[ names::messages.toString() ] = messages;
-    dict[ names::message_times.toString() ] = DoubleVectorDatum( new std::vector< double >( message_times ) );
+    dict[ names::message_times.toString() ] = std::vector< double >( message_times );
     d[ names::n_messages.toString() ] = messages.size();
     d[ names::data.toString() ] = dict;
   }

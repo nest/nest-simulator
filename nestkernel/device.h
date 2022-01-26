@@ -138,7 +138,7 @@ private:
 
   private:
     //! Update given Time parameter including error checking
-    static void update_( const DictionaryDatum&, const Name&, Time& );
+    static void update_( const dictionary&, const Name&, Time& );
   };
 
 

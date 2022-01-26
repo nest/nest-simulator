@@ -185,7 +185,7 @@ public:
    */
   bool connector_requires_urbanczik_archiving( const synindex syn_id ) const;
 
-  void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
+  void set_connector_defaults( synindex syn_id, const dictionary& d );
 
   /**
    * Check, if there are instances of a given model.

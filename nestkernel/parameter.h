@@ -674,13 +674,13 @@ public:
    *              1: >
    *
    */
-  ComparingParameter( std::shared_ptr< Parameter > m1, std::shared_ptr< Parameter > m2, const DictionaryDatum& d )
+  ComparingParameter( std::shared_ptr< Parameter > m1, std::shared_ptr< Parameter > m2, const dictionary& d )
     : Parameter( m1->is_spatial() or m2->is_spatial(), true )
     , parameter1_( m1 )
     , parameter2_( m2 )
     , comparator_( -1 )
   {
-    if ( not updateValue< long >( d, names::comparator, comparator_ ) )
+    if ( not d.update_value( names::comparator.toString(), comparator_ ) )
     {
       throw BadParameter( "A comparator has to be specified." );
     }
@@ -1516,7 +1516,7 @@ std::shared_ptr< Parameter > subtract_parameter( const std::shared_ptr< Paramete
  */
 std::shared_ptr< Parameter > compare_parameter( const std::shared_ptr< Parameter > first,
   const std::shared_ptr< Parameter > second,
-  const DictionaryDatum& d );
+  const dictionary& d );
 
 /**
  * Create a parameter that chooses between two other parameters,

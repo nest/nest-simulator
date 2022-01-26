@@ -35,28 +35,29 @@ namespace nest
 
 ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
-  const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
+  const dictionary& conn_spec,
+  const std::vector< dictionary >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
   , cg_( ConnectionGeneratorDatum() )
   , params_map_()
 {
-  updateValue< ConnectionGeneratorDatum >( conn_spec, "cg", cg_ );
+  conn_spec.update_value( "cg", cg_ );
   if ( cg_->arity() != 0 )
   {
-    if ( not conn_spec->known( "params_map" ) )
+    if ( not conn_spec.known( "params_map" ) )
     {
       throw BadProperty( "A params_map has to be given if the ConnectionGenerator has values." );
     }
 
-    updateValue< DictionaryDatum >( conn_spec, "params_map", params_map_ );
+    conn_spec.update_value( "params_map", params_map_ );
 
-    for ( Dictionary::iterator it = params_map_->begin(); it != params_map_->end(); ++it )
-    {
-      it->second.set_access_flag();
-    }
+    // TODO-PYNEST-NG: access flags
+    // for ( Dictionary::iterator it = params_map_->begin(); it != params_map_->end(); ++it )
+    // {
+    //   it->second.set_access_flag();
+    // }
 
-    if ( syn_specs[ 0 ]->known( names::weight ) or syn_specs[ 0 ]->known( names::delay ) )
+    if ( syn_specs[ 0 ].known( names::weight.toString() ) or syn_specs[ 0 ].known( names::delay.toString() ) )
     {
       throw BadProperty(
         "Properties weight and delay cannot be specified in syn_spec if the ConnectionGenerator has values." );
@@ -93,13 +94,13 @@ ConnectionGeneratorBuilder::connect_()
   }
   else if ( num_parameters == 2 )
   {
-    if ( not params_map_->known( names::weight ) or not params_map_->known( names::delay ) )
+    if ( not params_map_.known( names::weight.toString() ) or not params_map_.known( names::delay.toString() ) )
     {
       throw BadProperty( "The parameter map has to contain the indices of weight and delay." );
     }
 
-    const size_t d_idx = ( *params_map_ )[ names::delay ];
-    const size_t w_idx = ( *params_map_ )[ names::weight ];
+    const size_t d_idx = params_map_.get< size_t >( names::delay.toString() );
+    const size_t w_idx = params_map_.get< size_t >( names::weight.toString() );
 
     const bool d_idx_is_0_or_1 = ( d_idx == 0 ) or ( d_idx == 1 );
     const bool w_idx_is_0_or_1 = ( w_idx == 0 ) or ( w_idx == 1 );

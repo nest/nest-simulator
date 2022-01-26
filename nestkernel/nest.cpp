@@ -197,7 +197,7 @@ void
 set_connection_status( const ConnectionDatum& conn, const dictionary& dict )
 {
   // TODO_PYNEST-NG: Get ConnectionDatum dict
-  // DictionaryDatum conn_dict = conn.get_dict();
+  // dictionary conn_dict = conn.get_dict();
   dictionary conn_dict;
   const index source_node_id = conn_dict.get< long >( nest::names::source.toString() );
   const index target_node_id = conn_dict.get< long >( nest::names::target.toString() );
@@ -276,13 +276,14 @@ connect_arrays( long* sources,
 }
 
 ArrayDatum
-get_connections( const DictionaryDatum& dict )
+get_connections( const dictionary& dict )
 {
-  dict->clear_access_flags();
+  // TODO-PYNEST-NG: access flags
+  // dict->clear_access_flags();
 
   ArrayDatum array = kernel().connection_manager.get_connections( dict );
 
-  ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
+  // ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
 
   return array;
 }
@@ -473,14 +474,13 @@ apply( const ParameterDatum& param, const NodeCollectionDatum& nc )
 }
 
 std::vector< double >
-apply( const ParameterDatum& param, const DictionaryDatum& positions )
+apply( const ParameterDatum& param, const dictionary& positions )
 {
-  auto source_tkn = positions->lookup( names::source );
-  auto source_nc = getValue< NodeCollectionPTR >( source_tkn );
-
-  auto targets_tkn = positions->lookup( names::targets );
-  TokenArray target_tkns = getValue< TokenArray >( targets_tkn );
-  return param->apply( source_nc, target_tkns );
+  auto source_nc = positions.get< NodeCollectionPTR >( names::source.toString() );
+  auto targets = positions.get< std::vector< int > >( names::targets.toString() );
+  // TODO-PYNEST-NG: fix Parameter::apply()
+  // return param->apply( source_nc, targets );
+  return {};
 }
 
 Datum*

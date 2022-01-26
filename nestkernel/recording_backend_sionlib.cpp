@@ -71,7 +71,7 @@ nest::RecordingBackendSIONlib::finalize()
 }
 
 void
-nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const DictionaryDatum& )
+nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const dictionary& )
 {
   const thread t = device.get_thread();
   const thread node_id = device.get_node_id();
@@ -629,7 +629,7 @@ nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&,
 }
 
 void
-nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&, const DictionaryDatum& d )
+nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&, const dictionary& d )
 {
   d.update_value( names::filename.toString(), filename_ );
   d.update_value( names::buffer_size.toString(), buffer_size_ );
@@ -692,13 +692,13 @@ nest::RecordingBackendSIONlib::check_device_status( const dictionary& ) const
 }
 
 void
-nest::RecordingBackendSIONlib::get_device_defaults( DictionaryDatum& ) const
+nest::RecordingBackendSIONlib::get_device_defaults( dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice&, DictionaryDatum& ) const
+nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice&, dictionary& ) const
 {
   // nothing to do
 }

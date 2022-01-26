@@ -42,12 +42,12 @@ template < typename ConnBuilder >
 void
 ConnectionManager::register_conn_builder( const std::string& name )
 {
-  assert( not connruledict_->known( name ) );
+  assert( not connruledict_.known( name ) );
   GenericConnBuilderFactory* cb = new ConnBuilderFactory< ConnBuilder >();
   assert( cb != 0 );
   const int id = connbuilder_factories_.size();
   connbuilder_factories_.push_back( cb );
-  connruledict_->insert( name, id );
+  connruledict_[ name ] = id;
 }
 
 inline void

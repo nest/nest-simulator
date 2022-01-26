@@ -98,7 +98,6 @@ SPManager::get_status( dictionary& d )
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
     dictionary sp_synapse;
-    // DictionaryDatum sp_synapse = DictionaryDatum( new Dictionary() );
     sp_synapse[ names::pre_synaptic_element.toString() ] = ( *i )->get_pre_synaptic_element_name();
     sp_synapse[ names::post_synaptic_element.toString() ] = ( *i )->get_post_synaptic_element_name();
     sp_synapse[ names::synapse_model.toString() ] =
@@ -288,7 +287,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   }
   const std::string rule_name = conn_spec.get< std::string >( names::rule.toString() );
 
-  if ( not kernel().connection_manager.get_connruledict()->known( rule_name ) )
+  if ( not kernel().connection_manager.get_connruledict().known( rule_name ) )
   {
     throw BadProperty( "Unknown connectivity rule: " + rule_name );
   }

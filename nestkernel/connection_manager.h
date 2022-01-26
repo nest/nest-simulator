@@ -84,7 +84,7 @@ public:
   virtual void set_status( const dictionary& );
   virtual void get_status( dictionary& );
 
-  DictionaryDatum& get_connruledict();
+  dictionary& get_connruledict();
 
   void compute_target_data_buffer_size();
   void compute_compressed_secondary_recv_buffer_positions( const thread tid );
@@ -200,7 +200,7 @@ public:
    * The function then iterates all entries in source and collects the
    * connection IDs to all neurons in target.
    */
-  ArrayDatum get_connections( const DictionaryDatum& params );
+  ArrayDatum get_connections( const dictionary& params );
 
   void get_connections( std::deque< ConnectionID >& connectome,
     NodeCollectionPTR source,
@@ -595,7 +595,7 @@ private:
    *
    * SeeAlso: Connect
    */
-  DictionaryDatum connruledict_; //!< Dictionary for connection rules.
+  dictionary connruledict_; //!< Dictionary for connection rules.
 
   //! ConnBuilder factories, indexed by connruledict_ elements.
   std::vector< GenericConnBuilderFactory* > connbuilder_factories_;
@@ -642,7 +642,7 @@ private:
   double stdp_eps_;
 };
 
-inline DictionaryDatum&
+inline dictionary&
 ConnectionManager::get_connruledict()
 {
   return connruledict_;

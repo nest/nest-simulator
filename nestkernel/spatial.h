@@ -121,7 +121,7 @@ ArrayDatum displacement( NodeCollectionPTR layer_nc, const ArrayDatum point );
 std::vector< double > distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
 std::vector< double > distance( NodeCollectionPTR layer_nc, const ArrayDatum point );
 std::vector< double > distance( const ArrayDatum conns );
-MaskDatum create_mask( const DictionaryDatum& mask_dict );
+MaskDatum create_mask( const dictionary& mask_dict );
 BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
@@ -132,7 +132,7 @@ void dump_layer_connections( const Token& syn_model,
   NodeCollectionPTR source_layer_nc,
   NodeCollectionPTR target_layer_nc,
   OstreamDatum& out_file );
-DictionaryDatum get_layer_status( NodeCollectionPTR layer_nc );
+dictionary get_layer_status( NodeCollectionPTR layer_nc );
 }
 
 #endif /* SPATIAL_H */

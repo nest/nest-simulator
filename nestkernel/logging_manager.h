@@ -30,14 +30,13 @@
 // Includes from libnestutil:
 #include "logging.h"
 #include "manager_interface.h"
+#include "dictionary.h"
 
 // Includes from sli:
 #include "dictdatum.h"
 
 // Inclused from nestkernel:
 #include "nest_names.h"
-
-class Dictionary;
 
 namespace nest
 {
@@ -91,13 +90,13 @@ public:
    * Implements standard behaviour for dictionary entry misses. Use with define
    * ALL_ENTRIES_ACCESSED.
    */
-  void all_entries_accessed( const Dictionary&,
+  void all_entries_accessed( const dictionary&,
     const std::string&,
     const std::string&,
     const std::string&,
     const size_t ) const;
 
-  void all_entries_accessed( const Dictionary&,
+  void all_entries_accessed( const dictionary&,
     const std::string&,
     const std::string&,
     const std::string&,

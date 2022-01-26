@@ -137,7 +137,7 @@ NestModule::commandstring( void ) const
 //     }
 
 //     Name n = ( *dictd )->begin()->first;
-//     DictionaryDatum pdict = getValue< DictionaryDatum >( *dictd, n );
+//     DictionaryDatum pdict = *dictd.get<DictionaryDatum>(n.toString());
 //     return create_parameter( n, pdict );
 //   }
 //   else
@@ -171,7 +171,7 @@ NestModule::mask_factory_( void )
 }
 
 MaskDatum
-NestModule::create_mask( const Token& t )
+NestModule::create_mask( const dictionary& params )
 {
   // TODO-PYNEST-NG: move and convert to use dictionary
   // // t can be either an existing MaskDatum, or a Dictionary containing
@@ -283,25 +283,25 @@ static AbstractMask*
 create_doughnut( const DictionaryDatum& d )
 {
   // The doughnut (actually an annulus) is created using a DifferenceMask
-  Position< 2 > center( 0, 0 );
-  if ( d->known( names::anchor ) )
-  {
-    center = getValue< std::vector< double > >( d, names::anchor );
-  }
+  // Position< 2 > center( 0, 0 );
+  // if ( d.known( names::anchor.toString() ) )
+  // {
+  //   center = d.get< std::vector< double > >( names::anchor.toString() );
+  // }
 
-  const double outer = getValue< double >( d, names::outer_radius );
-  const double inner = getValue< double >( d, names::inner_radius );
-  if ( inner >= outer )
-  {
-    throw BadProperty(
-      "nest::create_doughnut: "
-      "inner_radius < outer_radius required." );
-  }
+  // const double outer = d.get< double >( names::outer_radius.toString() );
+  // const double inner = d.get< double >( names::inner_radius.toString() );
+  // if ( inner >= outer )
+  // {
+  //   throw BadProperty(
+  //     "nest::create_doughnut: "
+  //     "inner_radius < outer_radius required." );
+  // }
 
-  BallMask< 2 > outer_circle( center, outer );
-  BallMask< 2 > inner_circle( center, inner );
+  // BallMask< 2 > outer_circle( center, outer );
+  // BallMask< 2 > inner_circle( center, inner );
 
-  return new DifferenceMask< 2 >( outer_circle, inner_circle );
+  // return new DifferenceMask< 2 >( outer_circle, inner_circle );
 }
 
 
@@ -588,7 +588,7 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
   {
     // meta->get_status( dict );
 
-    ( *dict )[ names::network_size ] = nc->size();
+    // dict[ names::network_size.toString() ] = nc->size();
   }
 
   i->OStack.pop();
@@ -654,10 +654,10 @@ NestModule::GetConnections_DFunction::execute( SLIInterpreter* i ) const
 
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  ArrayDatum array = get_connections( dict );
+  // ArrayDatum array = get_connections( dict );
 
   i->OStack.pop();
-  i->OStack.push( array );
+  // i->OStack.push( array );
   i->EStack.pop();
 }
 
@@ -1303,10 +1303,10 @@ NestModule::Cvdict_CFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
-  DictionaryDatum dict = conn.get_dict();
+  // DictionaryDatum dict = conn.get_dict();
 
   i->OStack.pop();
-  i->OStack.push( dict );
+  // i->OStack.push( dict );
   i->EStack.pop();
 }
 
@@ -1845,10 +1845,10 @@ NestModule::Compare_P_P_DFunction::execute( SLIInterpreter* i ) const
   ParameterDatum param2 = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
   DictionaryDatum param3 = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  ParameterDatum newparam = compare_parameter( param1, param2, param3 );
+  // ParameterDatum newparam = compare_parameter( param1, param2, param3 );
 
   i->OStack.pop( 3 );
-  i->OStack.push( newparam );
+  // i->OStack.push( newparam );
   i->EStack.pop();
 }
 
@@ -1988,10 +1988,10 @@ NestModule::Apply_P_DFunction::execute( SLIInterpreter* i ) const
   auto positions = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
   auto param = getValue< ParameterDatum >( i->OStack.pick( 1 ) );
 
-  auto result = apply( param, positions );
+  // auto result = apply( param, positions );
 
   i->OStack.pop( 2 );
-  i->OStack.push( result );
+  // i->OStack.push( result );
   i->EStack.pop();
 }
 
@@ -2399,10 +2399,10 @@ NestModule::CreateMask_DFunction::execute( SLIInterpreter* i ) const
 
   const DictionaryDatum mask_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  MaskDatum datum = nest::create_mask( mask_dict );
+  // MaskDatum datum = nest::create_mask( mask_dict );
 
   i->OStack.pop( 1 );
-  i->OStack.push( datum );
+  // i->OStack.push( datum );
   i->EStack.pop();
 }
 
@@ -2693,10 +2693,10 @@ NestModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 
   const NodeCollectionDatum layer = getValue< NodeCollectionDatum >( i->OStack.pick( 0 ) );
 
-  DictionaryDatum result = get_layer_status( layer );
+  // DictionaryDatum result = get_layer_status( layer );
 
   i->OStack.pop( 1 );
-  i->OStack.push( result );
+  // i->OStack.push( result );
   i->EStack.pop();
 }
 
@@ -2811,10 +2811,10 @@ NestModule::Cvdict_MFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
-  DictionaryDatum dict = mask->get_dict();
+  // DictionaryDatum dict = mask->get_dict();
 
   i->OStack.pop();
-  i->OStack.push( dict );
+  // i->OStack.push( dict );
   i->EStack.pop();
 }
 

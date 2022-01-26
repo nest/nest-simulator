@@ -75,7 +75,7 @@ struct sDynModule
 };
 
 // static member initialization
-Dictionary* DynamicLoaderModule::moduledict_ = new Dictionary();
+dictionary DynamicLoaderModule::moduledict_;
 
 vecLinkedModules&
 DynamicLoaderModule::getLinkedModules()
@@ -93,7 +93,7 @@ DynamicLoaderModule::getLinkedModules()
 DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
   : loadmodule_function( dyn_modules )
 {
-  interpreter.def( "moduledict", new DictionaryDatum( moduledict_ ) );
+  // interpreter.def( "moduledict", new dictionary( moduledict_ ) );
 }
 
 DynamicLoaderModule::~DynamicLoaderModule()
@@ -249,7 +249,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   // put handle to module onto stack
   int moduleid = dyn_modules_.size() - 1;
   i->OStack.push( moduleid );
-  ( *moduledict_ )[ new_module.name ] = moduleid;
+  moduledict_[ new_module.name ] = moduleid;
 
   // now we can run the module initializer, after we have cleared the EStack
   if ( not pModule->commandstring().empty() )

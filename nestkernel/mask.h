@@ -67,7 +67,7 @@ public:
   /**
    * @returns a dictionary with the definition for this mask.
    */
-  virtual DictionaryDatum
+  virtual dictionary
   get_dict() const
   {
     throw KernelException( "Can not convert mask to dict" );
@@ -248,7 +248,7 @@ public:
 
   Box< D > get_bbox() const;
 
-  DictionaryDatum get_dict() const;
+  dictionary get_dict() const;
 
   Mask< D >* clone() const;
 
@@ -349,7 +349,7 @@ public:
 
   Box< D > get_bbox() const;
 
-  DictionaryDatum get_dict() const;
+  dictionary get_dict() const;
 
   Mask< D >* clone() const;
 
@@ -454,7 +454,7 @@ public:
 
   Box< D > get_bbox() const;
 
-  DictionaryDatum get_dict() const;
+  dictionary get_dict() const;
 
   Mask< D >* clone() const;
 
@@ -722,7 +722,7 @@ public:
 
   Box< D > get_bbox() const;
 
-  DictionaryDatum get_dict() const;
+  dictionary get_dict() const;
 
   Mask< D >* clone() const;
 

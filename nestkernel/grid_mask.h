@@ -61,7 +61,7 @@ public:
 
   void set_anchor( const Position< D, int >& );
 
-  DictionaryDatum get_dict() const;
+  dictionary get_dict() const;
 
   GridMask< D >*
   clone() const
@@ -143,12 +143,12 @@ GridMask< 3 >::get_name()
 }
 
 template < int D >
-DictionaryDatum
+dictionary
 GridMask< D >::get_dict() const
 {
-  DictionaryDatum d( new Dictionary );
-  DictionaryDatum maskd( new Dictionary );
-  def< DictionaryDatum >( d, get_name(), maskd );
+  dictionary d;
+  dictionary maskd;
+  d[ get_name().toString() ] = maskd;
 
   long shape_x = lower_right_[ 0 ] - upper_left_[ 0 ];
   long shape_y = lower_right_[ 1 ] - upper_left_[ 1 ];
@@ -159,7 +159,7 @@ GridMask< D >::get_dict() const
     long shape_z = lower_right_[ 2 ] - upper_left_[ 2 ];
     shape_dim.push_back( shape_z );
   }
-  def< std::vector< long > >( maskd, names::shape, shape_dim );
+  maskd[ names::shape.toString() ] = shape_dim;
 
   return d;
 }

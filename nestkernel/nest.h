@@ -146,7 +146,7 @@ void connect_arrays( long* sources,
   size_t n,
   std::string syn_model );
 
-ArrayDatum get_connections( const DictionaryDatum& dict );
+ArrayDatum get_connections( const dictionary& dict );
 
 void simulate( const double& t );
 
@@ -192,9 +192,9 @@ void prepare();
  */
 void cleanup();
 
-void copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
+void copy_model( const Name& oldmodname, const Name& newmodname, const dictionary& dict );
 
-void set_model_defaults( const Name& model_name, const DictionaryDatum& );
+void set_model_defaults( const Name& model_name, const dictionary& );
 dictionary get_model_defaults( const Name& model_name );
 
 // TODO-PYNEST-NG: static functions?
@@ -216,7 +216,7 @@ ParameterFactory& parameter_factory_();
 double get_value( const ParameterDatum& param );
 bool is_spatial( const ParameterDatum& param );
 std::vector< double > apply( const ParameterDatum& param, const NodeCollectionDatum& nc );
-std::vector< double > apply( const ParameterDatum& param, const DictionaryDatum& positions );
+std::vector< double > apply( const ParameterDatum& param, const dictionary& positions );
 
 Datum* node_collection_array_index( const Datum* datum, const long* array, unsigned long n );
 Datum* node_collection_array_index( const Datum* datum, const bool* array, unsigned long n );

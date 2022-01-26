@@ -34,7 +34,7 @@
 #include "logging_event.h"
 
 // Includes from nestkernel:
-#include "dynamicloader.h"
+// #include "dynamicloader.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest.h"
@@ -118,13 +118,13 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
   addmodule< FilesystemModule >( engine );
 
   // register NestModule class
-  addmodule< nest::NestModule >( engine );
+  // addmodule< nest::NestModule >( engine );
 
   // this can make problems with reference counting, if
   // the intepreter decides cleans up memory before NEST is ready
   // engine.def( "modeldict", nest::kernel().model_manager.get_modeldict() );
   // engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
-  engine.def( "connruledict", nest::kernel().connection_manager.get_connruledict() );
+  // engine.def( "connruledict", nest::kernel().connection_manager.get_connruledict() );
   // engine.def( "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
 
   // now add static modules providing models
@@ -142,18 +142,18 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
  * optimize DynamicLoaderModule::registerLinkedModule() away.
  */
 #ifdef HAVE_LIBLTDL
-  // dynamic loader module for managing linked and dynamically loaded extension
-  // modules
-  nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( engine );
+// dynamic loader module for managing linked and dynamically loaded extension
+// modules
+// nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( engine );
 
 // initialize all modules that were linked into at compile time
 // these modules have registered via calling DynamicLoader::registerLinkedModule
 // from their constructor
 #ifndef IS_BLUEGENE
-  pDynLoader->initLinkedModules( engine );
+// pDynLoader->initLinkedModules( engine );
 
-  // interpreter will delete module on destruction
-  engine.addmodule( pDynLoader );
+// interpreter will delete module on destruction
+// engine.addmodule( pDynLoader );
 #endif
 #endif
 

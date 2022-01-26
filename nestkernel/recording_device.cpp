@@ -147,7 +147,7 @@ nest::RecordingDevice::set_status( const dictionary& d )
       // TODO-PYNEST-NG: Fix when access flags are added
       // if ( not kv_pair.second.accessed() )
       // {
-      //   ( *backend_params )[ kv_pair.first ] = kv_pair.second;
+      //   backend_params[ kv_pair.first.toString() ] = kv_pair.second;
       // }
     }
 
@@ -160,7 +160,7 @@ nest::RecordingDevice::set_status( const dictionary& d )
       // TODO-PYNEST-NG: Fix when access flags are added
       // if ( kv_pair->second.accessed() )
       // {
-      //   ( *backend_params_ )[ kv_pair->first ] = kv_pair->second;
+      //   backend_params_[ kv_pair->first.toString() ] = kv_pair->second;
       //   d->lookup( kv_pair->first ).set_access_flag();
       // }
     }

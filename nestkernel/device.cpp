@@ -82,7 +82,7 @@ nest::Device::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::Device::Parameters_::update_( const DictionaryDatum& d, const Name& name, Time& value )
+nest::Device::Parameters_::update_( const dictionary& d, const Name& name, Time& value )
 {
   /* We cannot update the Time values directly, since updateValue()
          doesn't support Time objects. We thus read the value in ms into
@@ -94,7 +94,7 @@ nest::Device::Parameters_::update_( const DictionaryDatum& d, const Name& name, 
   */
 
   double val;
-  if ( updateValue< double >( d, name, val ) )
+  if ( d.update_value( name.toString(), val ) )
   {
     const Time t = Time::ms( val );
     if ( t.is_finite() and not t.is_grid_time() )

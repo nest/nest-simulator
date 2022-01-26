@@ -774,7 +774,7 @@ public:
    *
    *  get_status_base() first gets a dictionary with the basic
    *  information of an element, using get_status_dict_(). It then
-   *  calls the custom function get_status(DictionaryDatum) with
+   *  calls the custom function get_status(dictionary) with
    *  the created status dictionary as argument.
    */
   dictionary get_status_base();

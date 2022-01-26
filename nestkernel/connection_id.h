@@ -23,6 +23,8 @@
 #ifndef CONNECTION_ID_H
 #define CONNECTION_ID_H
 
+#include "dictionary.h"
+
 // Includes from sli:
 #include "arraydatum.h"
 #include "dictutils.h"
@@ -38,7 +40,7 @@ public:
   ConnectionID( long source_node_id, long target_thread, long synapse_modelid, long port );
   ConnectionID( const ConnectionID& );
 
-  DictionaryDatum get_dict() const;
+  dictionary get_dict() const;
   ArrayDatum to_ArrayDatum() const;
   bool operator==( const ConnectionID& c ) const;
   void print_me( std::ostream& out ) const;

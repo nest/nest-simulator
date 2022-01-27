@@ -44,14 +44,14 @@ Linear rate model
 Description
 +++++++++++
 
-lin_rate is an implementation of a rate model with linear input
+``lin_rate`` is an implementation of a rate model with linear input
 function :math:`input(h) = g \cdot h`. It either models a rate neuron with
-input noise (see rate_neuron_ipn), a rate neuron with output noise
-(see rate_neuron_opn) or a rate transformer (see
-rate_transformer_node).
+input noise (see ``rate_neuron_ipn``), a rate neuron with output noise
+(see ``rate_neuron_opn``) or a rate transformer (see
+``rate_transformer_node``).
 
 Linear rate neurons support multiplicative coupling which can be
-switched on and off via the boolean parameter mult_coupling
+switched on and off via the boolean parameter ``mult_coupling``
 (default=false). In case multiplicative coupling is active, the
 excitatory input of the model is multiplied with the function
 :math:`mult\_coupling\_ex(rate) = g_{ex} \cdot ( \theta_{ex} - rate )` and the
@@ -63,9 +63,11 @@ or non-zero delay, and it uses the secondary_event concept introduced
 with the gap-junction framework.
 
 Linear rate neurons can be created by typing
-nest.Create('lin_rate_ipn') or nest.Create('lin_rate_opn') for input
+``nest.Create("lin_rate_ipn")`` or ``nest.Create("lin_rate_opn")`` for input
 noise or output noise, respectively. Linear rate transformers can be
-created by typing nest.Create('rate_transformer_lin').
+created by typing ``nest.Create("rate_transformer_lin")``.
+
+See also [1]_, [2]_.
 
 Parameters
 ++++++++++
@@ -73,6 +75,7 @@ Parameters
 The following parameters can be set in the status dictionary. Note
 that some of the parameters only apply to rate neurons and not to rate
 transformers.
+
 ===============  ======= ==================================================
  rate            real    Rate (unitless)
  tau             ms      Time constant of rate dynamics

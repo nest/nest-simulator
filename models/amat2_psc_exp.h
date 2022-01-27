@@ -47,7 +47,7 @@ PSCs and adaptive threshold
 Description
 +++++++++++
 
-amat2_psc_exp is an implementation of a leaky integrate-and-fire model
+``amat2_psc_exp`` is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 
@@ -82,6 +82,8 @@ The following state variables can be read out using a multimeter:
  V_m        mV   Non-resetting membrane potential
  V_th       mV   Two-timescale adaptive threshold
 =========== ==== ==================================
+
+See also [4]_.
 
 Parameters
 ++++++++++

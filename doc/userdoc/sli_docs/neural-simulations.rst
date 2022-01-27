@@ -1,5 +1,7 @@
 :orphan:
 
+.. _neural_sims_sli:
+
 Neural simulations
 ==================
 

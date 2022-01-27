@@ -1,4 +1,6 @@
-Integrating neural models using exact integration 
+.. _exact_integration:
+
+Integrating neural models using exact integration
 =================================================
 
 The simple integrate-and fire model
@@ -56,7 +58,7 @@ This is obviously not a particularly handy solution since calculating the integr
 Solving it with exact integration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-With exact integration, these costly computations can be avoided. 
+With exact integration, these costly computations can be avoided.
 
 Restrictions to :math:`g`
 ------------------------
@@ -77,7 +79,7 @@ The non-homogeneous differential equation is reformulated as a multidimensional 
 .. math::
     \frac{d}{dt}y=Ay
 
-where 
+where
 
 .. math::
     A=\begin{pmatrix}
@@ -105,7 +107,7 @@ This makes ist very easy to determine the solution as
 .. math::
     y(t)= e^{At}y_0
 
-and 
+and
 
 .. math::
     y_{t+h}=y(t+h)=e^{A(t+h)}\cdot y_0=e^{Ah}\cdot e^{At}\cdot y_0=e^{Ah}\cdot y_t.
@@ -146,7 +148,7 @@ First we make the substitutions:
         y_3 &= V
     \end{align*}
 
-for the equation 
+for the equation
 
 .. math::
     \frac{dV}{dt}=\frac{-1}{Tau}V+\frac{1}{C}\iota
@@ -156,8 +158,8 @@ we get the homogeneous differential equation (for :math:`y=(y_1,y_2,y_3)^t`)
 .. math::
     \frac{d}{dt}y= Ay=
     \begin{pmatrix}
-    \frac{1}{\tau_{syn}}& 0 & 0\\ 
-    1 & \frac{1}{\tau_{syn}} & 0\\ 
+    \frac{1}{\tau_{syn}}& 0 & 0\\
+    1 & \frac{1}{\tau_{syn}} & 0\\
     0 & \frac{1}{C} & -\frac {1}{\tau}
     \end{pmatrix}
     y.
@@ -172,7 +174,7 @@ The complete update for the neuron can be written as
 .. math::
     y_{t+h}=e^{Ah}y_t + x_{t+h}
 
-where 
+where
 
 .. math::
     x_{t+h}+\begin{pmatrix}\frac{e}{\tau_{\text{syn}}}\\0\\0\end{pmatrix}\sum_{k\in S_{t+h}}\hat{\iota}_k

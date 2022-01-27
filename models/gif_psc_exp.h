@@ -45,7 +45,7 @@ Current-based generalized integrate-and-fire neuron model
 Description
 +++++++++++
 
-gif_psc_exp is the generalized integrate-and-fire neuron according to
+``gif_psc_exp`` is the generalized integrate-and-fire neuron according to
 Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with exponential
 shaped postsynaptic currents.
 
@@ -124,9 +124,9 @@ The shape of postsynaptic current is exponential.
 
 .. note::
 
-  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-  `tau_syn_in`, respectively, to avoid numerical instabilities.
+  If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+  will numerically behave as if ``tau_m`` is equal to `tau_syn_ex` or
+  ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.

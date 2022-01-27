@@ -43,21 +43,21 @@ Synapse type for spike-timing dependent plasticity using homogeneous parameters
 Description
 +++++++++++
 
-stdp_facetshw_synapse is a connector to create synapses with spike-timing
+``stdp_facetshw_synapse`` is a connector to create synapses with spike-timing
 dependent plasticity (as defined in [1]_).
-This connector is a modified version of stdp_synapse.
+This connector is a modified version of ``stdp_synapse``.
 It includes constraints of the hardware developed in the FACETS (BrainScaleS)
-project [2,3], as e.g. 4-bit weight resolution, sequential updates of groups
+project [2]_, [3]_, as for example, 4-bit weight resolution, sequential updates of groups
 of synapses and reduced symmetric nearest-neighbor spike pairing scheme. For
 details see [3]_.
-The modified spike pairing scheme requires the calculation of tau_minus_
-within this synapse and not at the neuron site via Kplus_ like in
-stdp_synapse_hom.
+The modified spike pairing scheme requires the calculation of ``tau_minus_``
+within this synapse and not at the neuron site via ``Kplus_`` like in
+``stdp_synapse_hom``.
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -93,7 +93,7 @@ Parameters
                         integers
  configbit_0            list of     Configuration bits for evaluation
                         integers    function. For details see code in
-                                    function eval_function_ and [4]_
+                                    function ``eval_function_`` and [4]_
                                     (configbit[0]=e_cc, ..[1]_=e_ca,
                                     ..[2]_=e_ac, ..[3]=e_aa).
                                     Depending on these two sets of

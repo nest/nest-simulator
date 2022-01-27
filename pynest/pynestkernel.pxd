@@ -187,7 +187,8 @@ cdef extern from "kernel_manager.h" namespace "nest":
 
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
-    NodeCollectionPTR create( const string model_name, const long n )
+    void reset_kernel()
+    NodeCollectionPTR create( const string model_name, const long n ) except +
     void connect(NodeCollectionPTR sources,
                  NodeCollectionPTR targets,
                  const dictionary& connectivity,

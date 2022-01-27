@@ -194,8 +194,7 @@ def ResetKernel():
     unloaded. This may change in a future version of NEST.
 
    """
-
-    sr('ResetKernel')
+    kernel.llapi_reset_kernel()
 
 
 @check_stack

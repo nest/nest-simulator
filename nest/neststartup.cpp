@@ -81,7 +81,7 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine )
 neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string modulepath )
 #endif
 {
-  nest::init_nest( argc, argv );
+  // nest::init_nest( argc, argv );
 
   sli_engine = &engine;
   register_logger_client( sli_logging );

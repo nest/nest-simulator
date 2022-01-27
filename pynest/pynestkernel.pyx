@@ -652,8 +652,16 @@ cdef dictionary pydict_to_dictionary(object py_dict):
             raise AttributeError(f'value of key ({key}) is not a known type, got {type(value)}')
     return cdict
 
+def llapi_reset_kernel():
+    reset_kernel()
+
 def llapi_create(string model, long n):
-    cdef NodeCollectionPTR gids = create(model, n)
+    cdef NodeCollectionPTR gids
+    try:
+        gids = create(model, n)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_create', '') from None
     obj = NodeCollectionObject()
     obj._set_nc(gids)
     return nest.NodeCollection(obj)

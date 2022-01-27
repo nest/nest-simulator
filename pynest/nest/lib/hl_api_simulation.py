@@ -62,8 +62,7 @@ def Simulate(t):
 
     """
 
-    sps(float(t))
-    sr('ms Simulate')
+    kernel.llapi_simulate(t)
 
 
 @check_stack

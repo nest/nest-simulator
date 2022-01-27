@@ -196,6 +196,7 @@ cdef extern from "nest.h" namespace "nest":
     string pprint_to_string( NodeCollectionPTR nc )
     size_t nc_size( NodeCollectionPTR nc )
     dictionary get_kernel_status()
+    void simulate( const double& t )
 
 cdef extern from "pynestkernel_aux.h":
     CYTHON_isConnectionGenerator( x )

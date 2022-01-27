@@ -646,6 +646,8 @@ cdef dictionary pydict_to_dictionary(object py_dict):
     for key, value in py_dict.items():
         if isinstance(value, int):
             cdict[key.encode('utf-8')] = <long>value
+        elif isinstance(value, float):
+            cdict[key.encode('utf-8')] = <double>value
         elif isinstance(value, str):
             cdict[key.encode('utf-8')] = <string>value.encode('utf-8')
         else:
@@ -684,3 +686,6 @@ def llapi_to_string(NodeCollectionObject nc):
 def llapi_get_kernel_status():
     cdef dictionary cdict = get_kernel_status()
     return dictionary_to_pydict(cdict)
+
+def llapi_simulate(float t):
+    simulate(t)

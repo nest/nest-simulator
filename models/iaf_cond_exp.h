@@ -228,8 +228,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_cond_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_cond_exp& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_cond_exp > logger_;

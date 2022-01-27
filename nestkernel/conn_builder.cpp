@@ -1472,7 +1472,7 @@ nest::FixedTotalNumberBuilder::connect_()
     sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
   }
 
-// end code adapted from gsl 1.8
+  // end code adapted from gsl 1.8
 
 #pragma omp parallel
   {

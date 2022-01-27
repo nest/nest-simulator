@@ -74,7 +74,8 @@ nest::correlomatrix_detector::Parameters_::Parameters_( const Parameters_& p )
   Tstop_.calibrate();
 }
 
-nest::correlomatrix_detector::Parameters_& nest::correlomatrix_detector::Parameters_::operator=( const Parameters_& p )
+nest::correlomatrix_detector::Parameters_&
+nest::correlomatrix_detector::Parameters_::operator=( const Parameters_& p )
 {
   delta_tau_ = p.delta_tau_;
   tau_max_ = p.tau_max_;
@@ -356,8 +357,9 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
         if ( sender_ind <= other_ind )
         {
-          bin = -1. * std::floor( ( 0.5 * P_.delta_tau_.get_steps() - std::abs( spike_i - spike_j->timestep_ ) )
-                        / P_.delta_tau_.get_steps() );
+          bin = -1.
+            * std::floor( ( 0.5 * P_.delta_tau_.get_steps() - std::abs( spike_i - spike_j->timestep_ ) )
+              / P_.delta_tau_.get_steps() );
         }
         else
         {

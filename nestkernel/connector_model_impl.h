@@ -162,9 +162,9 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
       throw BadDelay( default_connection_.get_delay(),
         String::compose( "Default delay of '%1' must be between min_delay %2 "
                          "and max_delay %3.",
-                        get_name(),
-                        Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ),
-                        Time::delay_steps_to_ms( kernel().connection_manager.get_max_delay() ) ) );
+          get_name(),
+          Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ),
+          Time::delay_steps_to_ms( kernel().connection_manager.get_max_delay() ) ) );
     }
     default_delay_needs_check_ = false;
   }

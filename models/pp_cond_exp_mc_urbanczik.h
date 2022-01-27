@@ -443,7 +443,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( pp_cond_exp_mc_urbanczik& ); //!<Sets buffer pointers to 0
+    Buffers_( pp_cond_exp_mc_urbanczik& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, pp_cond_exp_mc_urbanczik& );
 

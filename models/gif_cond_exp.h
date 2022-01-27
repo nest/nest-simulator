@@ -33,10 +33,10 @@
 #include <gsl/gsl_odeiv.h>
 
 // Includes from nestkernel:
-#include "event.h"
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "ring_buffer.h"
 
 #include "universal_data_logger.h"
 

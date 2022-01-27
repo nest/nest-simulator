@@ -75,8 +75,8 @@ nest::correlospinmatrix_detector::Parameters_::Parameters_( const Parameters_& p
 }
 
 
-nest::correlospinmatrix_detector::Parameters_& nest::correlospinmatrix_detector::Parameters_::operator=(
-  const Parameters_& p )
+nest::correlospinmatrix_detector::Parameters_&
+nest::correlospinmatrix_detector::Parameters_::operator=( const Parameters_& p )
 {
   delta_tau_ = p.delta_tau_;
   tau_max_ = p.tau_max_;

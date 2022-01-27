@@ -88,8 +88,8 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
-  using Node::sends_signal;
   using Node::receives_signal;
+  using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
   SignalType sends_signal() const;

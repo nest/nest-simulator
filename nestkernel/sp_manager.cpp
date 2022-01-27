@@ -135,8 +135,8 @@ SPManager::set_status( const DictionaryDatum& d )
   {
     return;
   } /*
-    * Configure synapses model updated during the simulation.
-    */
+     * Configure synapses model updated during the simulation.
+     */
   Token synmodel;
   DictionaryDatum syn_specs, syn_spec;
   DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );

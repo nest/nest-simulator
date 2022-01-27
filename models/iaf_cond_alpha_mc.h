@@ -376,7 +376,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_alpha_mc& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_alpha_mc& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, iaf_cond_alpha_mc& );
 

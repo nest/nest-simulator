@@ -150,7 +150,8 @@ public:
   bool operator()( RngPtr rng, double h );
 };
 
-inline bool gainfunction_erfc::operator()( RngPtr rng, double h )
+inline bool
+gainfunction_erfc::operator()( RngPtr rng, double h )
 {
   return rng->drand() < 0.5 * erfc( -( h - theta_ ) / ( sqrt( 2. ) * sigma_ ) );
 }

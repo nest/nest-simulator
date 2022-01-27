@@ -34,7 +34,8 @@ template < class T >
 class delete_ptr
 {
 public:
-  T* operator()( T* p )
+  T*
+  operator()( T* p )
   {
     delete p;
     return 0;

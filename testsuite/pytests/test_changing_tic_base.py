@@ -55,7 +55,7 @@ class TestChangingTicBase(unittest.TestCase):
 
         # Generate a dictionary of reference values for each model.
         reference = {}
-        for model in nest.Models():
+        for model in nest.node_models + nest.synapse_models:
             if model in self.ignored_models:
                 continue
             try:

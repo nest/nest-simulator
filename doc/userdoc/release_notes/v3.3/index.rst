@@ -24,8 +24,8 @@ well as ``dt`` in the ``noise_generator`` are now automatically
 adjusted and made compatible with a newly set simulation resolution to
 avoid errors when those models are instantiated. Moreover, the default
 value for ``delta_tau`` in the ``correlation_detector`` has been
-changed from 1.0 to 5 times the simulation resolution, in order to be
-consistent with the documentation of the device.
+changed from 1.0 ms to 5 times the simulation resolution, in order to
+be consistent with the documentation of the device.
 
 Retrieve available node and synapse models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

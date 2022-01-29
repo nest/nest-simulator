@@ -43,7 +43,7 @@ class STDPSynapseTest(unittest.TestCase):
 
     def init_params(self):
         self.resolution = 0.1    # [ms]
-        self.simulation_duration = 1000 #1E3    # [ms]
+        self.simulation_duration = 100 #1E3    # [ms]
         self.synapse_model = "stdp_dopamine_synapse"
         self.presynaptic_firing_rate = 20.    # [ms^-1]
         self.postsynaptic_firing_rate = 20.    # [ms^-1]
@@ -82,10 +82,11 @@ class STDPSynapseTest(unittest.TestCase):
         # append some hardcoded spike sequences:
         # pre: 1       5 6 7   9    11 12 13
         # post:  2 3 4       8 9 10    12
-        self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13], dtype=float)
-        #self.hardcoded_pre_times = np.array([9], dtype=float)
-        self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12], dtype=float)
-        #self.hardcoded_post_times = np.array([13], dtype=float)
+        #self.hardcoded_pre_times = np.array([1, 5], dtype=float)
+        self.hardcoded_pre_times = np.array([1, 5], dtype=float)
+        #self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13], dtype=float)
+        self.hardcoded_post_times = np.array([2, 3], dtype=float)
+        #self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12], dtype=float)
         self.hardcoded_trains_length = 2. + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):
@@ -104,7 +105,9 @@ class STDPSynapseTest(unittest.TestCase):
         # ``weight_by_nest`` containts only weight values at pre spike times, ``weight_reproduced_independently``
         # contains the weight at pre *and* post times: check that weights are equal only for pre spike times
         print('\nweight reference', weight_reproduced_independently)
+        print('\nt weight reproduced independently', t_weight_reproduced_independently)
         print('\nweight nest', weight_by_nest)
+        print('\nt weight nest', t_weight_by_nest)
         assert len(weight_by_nest) > 0
         for idx_pre_spike_nest, t_pre_spike_nest in enumerate(t_weight_by_nest):
             idx_pre_spike_reproduced_independently = \
@@ -139,6 +142,8 @@ class STDPSynapseTest(unittest.TestCase):
                      "stop": (self.simulation_duration - self.hardcoded_trains_length)}))
         presynaptic_generator = generators[0]
         postsynaptic_generator = generators[1]
+
+        #print('stop', self.simulation_duration - self.hardcoded_trains_length)
 
         # create poisson generator for the dopamine release
         pg_dopa = nest.Create("poisson_generator", params={"rate": self.dopa_rate})
@@ -207,6 +212,9 @@ class STDPSynapseTest(unittest.TestCase):
             return n
 
         def update_weight(w, c0, n0, minus_dt):
+
+            print("\nupdate_weight w: %f, c0: %f, n0: %f, minus_dt:%f" % (w, c0, n0, minus_dt))
+
             taus = ( self.synapse_parameters["tau_c"] + self.synapse_parameters["tau_n"] ) / ( self.synapse_parameters["tau_c"] * self.synapse_parameters["tau_n"] )
 
             w = w - c0 * ( n0 / taus * np.expm1( taus * minus_dt )
@@ -272,6 +280,7 @@ class STDPSynapseTest(unittest.TestCase):
         print('pre', pre_spikes_delayed)
 
         while t < self.simulation_duration:
+            print('############################################')
             idx_next_pre_spike = -1
             t_next_pre_spike = np.inf
             if np.where((pre_spikes_delayed - t) > 0)[0].size > 0:
@@ -298,15 +307,19 @@ class STDPSynapseTest(unittest.TestCase):
             if t_next != np.inf:
                 if t_next == t_next_dopa_spike:
                     handle_dopa_spike = True 
+                    print('handle_dopa_spike, t_next', t_next)
                 if t_next == t_next_post_spike:
                     handle_post_spike = True
+                    print('handle_post_spike, t_next', t_next)
                 if t_next == t_next_pre_spike:
                     handle_pre_spike = True
+                    print('handle_pre_spike, t_next', t_next)
             #print(t_next_dopa_spike, t_next_pre_spike, t_next_post_spike)
             #print(handle_dopa_spike, handle_pre_spike, handle_post_spike)
             if t_next == np.inf:
                 # no more spikes to process
                 t_next = self.simulation_duration
+                break
     
             '''# max timestep
             t_next_ = min(t_next, t + 1E-3)
@@ -320,6 +333,7 @@ class STDPSynapseTest(unittest.TestCase):
 
             # update weight
             weight = update_weight(weight, c, n, h)
+            print('weight', weight)
 
             Kpre *= exp( h / self.tau_pre)
             n *= exp( h / self.synapse_parameters['tau_n'])
@@ -340,6 +354,7 @@ class STDPSynapseTest(unittest.TestCase):
             # compute n
             if handle_dopa_spike:
                 n = update_dopamine(n)
+                print('n', n)
 
             # logging
             t_log.append(t)
@@ -386,7 +401,7 @@ class STDPSynapseTest(unittest.TestCase):
             _ax.set_xlim(0., self.simulation_duration+2.)
             if i != len(ax) - 1:
                 _ax.set_xticklabels([])
- 
+
         # save plot
         print("save /tmp/%s_%s.pdf ..." % (fname_snip, title_snip))
         plt.savefig("/tmp/%s_%s.pdf" % (fname_snip, title_snip))
@@ -397,6 +412,7 @@ class STDPSynapseTest(unittest.TestCase):
         #for self.dendritic_delay in [1., self.resolution]:
         for self.dendritic_delay in [1.]:
             self.init_params()
-            for self.nest_neuron_model in ["iaf_psc_exp", "iaf_cond_exp"]:
+            #for self.nest_neuron_model in ["iaf_psc_exp", "iaf_cond_exp"]:
+            for self.nest_neuron_model in ["iaf_psc_exp"]:
                 fname_snip = "nest_neuron_mdl_" + self.nest_neuron_model
                 self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)

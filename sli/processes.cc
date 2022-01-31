@@ -82,21 +82,23 @@
 #endif
 
 #if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-extern "C" {
-// These functions are defined in the file "get_mem.c". They need
-// to reside in a plain C file, because the #pragmas defined in the
-// BG header files interfere with C++, causing "undefined reference
-// to non-virtual thunk" MH 12-02-22, redid fix by JME 12-01-27.
-long bg_get_heap_mem();
-long bg_get_stack_mem();
-long bg_get_mmap_mem();
+extern "C"
+{
+  // These functions are defined in the file "get_mem.c". They need
+  // to reside in a plain C file, because the #pragmas defined in the
+  // BG header files interfere with C++, causing "undefined reference
+  // to non-virtual thunk" MH 12-02-22, redid fix by JME 12-01-27.
+  long bg_get_heap_mem();
+  long bg_get_stack_mem();
+  long bg_get_mmap_mem();
 }
 #endif
 
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
-extern "C" {
-// Similar to the above prototype definitions for BG.
-unsigned long darwin_get_used_mem();
+extern "C"
+{
+  // Similar to the above prototype definitions for BG.
+  unsigned long darwin_get_used_mem();
 }
 #endif
 
@@ -364,7 +366,7 @@ Processes::Sysexec_aFunction::execute( SLIInterpreter* i ) const
   // **argv denotes an pointer to an array which is allocated dynamically
   // the old formulation char *argv[array->size() + 1]; is no longer legal c++
   // (Ruediger!!)
-  char** argv = new char* [ array->size() + 1 ];
+  char** argv = new char*[ array->size() + 1 ];
 
   for ( unsigned int j = 0; j < array->size(); j++ ) // forall in array
   {

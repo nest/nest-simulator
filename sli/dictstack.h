@@ -210,8 +210,9 @@ public:
    *  If the Name is not found,
    *  @a VoidToken is returned.
    */
-  const Token& baselookup( const Name& n ) // lookup in a specified
-  {                                        // base dictionary
+  const Token&
+  baselookup( const Name& n ) // lookup in a specified
+  {                           // base dictionary
 #ifdef DICTSTACK_CACHE
     Name::handle_t key = n.toIndex();
     if ( key < basecache_.size() )
@@ -274,8 +275,9 @@ public:
 
   /** Test for a name in the bottom level dictionary.
    */
-  bool baseknown( const Name& n ) // lookup in a specified
-  {                               // base dictionary
+  bool
+  baseknown( const Name& n ) // lookup in a specified
+  {                          // base dictionary
 #ifdef DICTSTACK_CACHE
     Name::handle_t key = n.toIndex();
     if ( key < basecache_.size() )
@@ -389,13 +391,13 @@ DictionaryStack::def( const Name& n, const Token& t )
 inline void
 DictionaryStack::def_move( const Name& n, Token& t )
 {
-//
-// insert (n,t) in top level dictionary
-// dictionary stack must contain at least one dictionary
-// VoidToken is an illegal value for t.
-// def_move returns t as the VoidToken.
-//
-/* clear_token_from_cache(n); */
+  //
+  // insert (n,t) in top level dictionary
+  // dictionary stack must contain at least one dictionary
+  // VoidToken is an illegal value for t.
+  // def_move returns t as the VoidToken.
+  //
+  /* clear_token_from_cache(n); */
 
 #ifdef DICTSTACK_CACHE
   cache_token( n, &( ( *d.begin() )->insert_move( n, t ) ) );

@@ -56,14 +56,14 @@ precise spike times used in Casti et al. 2008
 Description
 +++++++++++
 
-iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with
+``iaf_chxk_2008`` is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses [1]_. A spike is emitted when the membrane potential
 is crossed from below. After a spike, an afterhyperpolarizing (AHP) conductance
 is activated which repolarizes the neuron over time. Membrane potential is not
 reset explicitly and the model also has no explicit refractory time.
 
 The AHP conductance and excitatory and inhibitory synaptic input conductances
-follow alpha-function time courses as in the iaf_cond_alpha model.
+follow alpha-function time courses as in the ``iaf_cond_alpha`` model.
 
 .. note::
    In accordance with the original Fortran implementation of the model used
@@ -71,7 +71,7 @@ follow alpha-function time courses as in the iaf_cond_alpha model.
    determined by linear interpolation within the time step during which the
    threshold was crossed.
 
-   iaf_chxk_2008 neurons therefore emit spikes with precise spike time
+   ``iaf_chxk_2008`` neurons therefore emit spikes with precise spike time
    information, but they ignore precise spike times when handling synaptic
    input.
 
@@ -278,8 +278,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_chxk_2008& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_chxk_2008& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_chxk_2008& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_chxk_2008& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_chxk_2008 > logger_;

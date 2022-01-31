@@ -396,10 +396,10 @@ SLIStartup::init( SLIInterpreter* i )
   {
     i->message( SLIInterpreter::M_FATAL,
       "SLIStartup",
-      String::compose(
-        "SLI initialisation file not found at %1.\n"
-        "Please check your NEST installation.",
-        startupfile ).c_str() );
+      String::compose( "SLI initialisation file not found at %1.\n"
+                       "Please check your NEST installation.",
+        startupfile )
+        .c_str() );
 
     // We cannot call i->terminate() here because the interpreter is not fully configured yet.
     // If running PyNEST, the Python process will terminate.

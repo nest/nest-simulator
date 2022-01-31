@@ -1,3 +1,5 @@
+.. _stimulate_network:
+
 Stimulate the network
 =====================
 

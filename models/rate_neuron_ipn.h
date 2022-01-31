@@ -36,8 +36,8 @@
 #include "nest_types.h"
 #include "node.h"
 #include "random_generators.h"
-#include "ring_buffer.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
@@ -74,15 +74,18 @@ or
 
 This template class needs to be instantiated with a class
 containing the following functions:
- - input (nonlinearity that is applied to the input, either psi or phi)
- - mult_coupling_ex (factor of multiplicative coupling for excitatory input)
- - mult_coupling_in (factor of multiplicative coupling for inhibitory input)
 
-The boolean parameter linear_summation determines whether the input function
+- ``input`` (nonlinearity that is applied to the input, either psi or phi)
+- ``mult_coupling_ex`` (factor of multiplicative coupling for excitatory input)
+- ``mult_coupling_in`` (factor of multiplicative coupling for inhibitory input)
+
+The boolean parameter ``linear_summation`` determines whether the input function
 is applied to the summed up incoming connections (True, default value, input
 represents phi) or to each input individually (False, input represents psi).
 In case of multiplicative coupling the nonlinearity is applied separately
-to the summed excitatory and inhibitory inputs if linear_summation=True.
+to the summed excitatory and inhibitory inputs if ``linear_summation=True``.
+
+See also [1]_.
 
 References
 ++++++++++
@@ -116,8 +119,8 @@ public:
    * Hiding
    */
   using Node::handle;
-  using Node::sends_secondary_event;
   using Node::handles_test_event;
+  using Node::sends_secondary_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );

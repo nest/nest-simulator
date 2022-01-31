@@ -1,5 +1,7 @@
 :orphan:
 
+.. _obj_data_sli:
+
 Objects and data types
 ======================
 
@@ -59,7 +61,7 @@ Calculate the dot product of the vectors \\([1 2 3]cdot[4 5 6]\)
    SLI ] [1 2 3]
    SLI [1] [4 5 6]
    SLI [2] Dot =
-   32                                                                              
+   32
 
 Names
 -----
@@ -127,7 +129,7 @@ Example 5
 ::
 
    SLI ] (Hello World!) =
-   Hello World!                                                                    
+   Hello World!
 
 Procedures
 ----------

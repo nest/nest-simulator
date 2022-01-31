@@ -27,8 +27,8 @@
 #include <initializer_list>
 #include <memory>
 #include <random>
-#include <utility>
 #include <type_traits>
+#include <utility>
 
 // libnestutil includes:
 #include "randutils.hpp"
@@ -137,97 +137,113 @@ public:
     rng_.seed( sseq );
   }
 
-  inline unsigned long operator()( std::uniform_int_distribution< unsigned long >& d ) override
+  inline unsigned long
+  operator()( std::uniform_int_distribution< unsigned long >& d ) override
   {
     return d( rng_ );
   }
 
-  inline double operator()( std::uniform_real_distribution<>& d ) override
+  inline double
+  operator()( std::uniform_real_distribution<>& d ) override
   {
     return d( rng_ );
   }
 
-  inline unsigned long operator()( std::poisson_distribution< unsigned long >& d ) override
+  inline unsigned long
+  operator()( std::poisson_distribution< unsigned long >& d ) override
   {
     return d( rng_ );
   }
 
-  inline double operator()( std::normal_distribution<>& d ) override
+  inline double
+  operator()( std::normal_distribution<>& d ) override
   {
     return d( rng_ );
   }
 
-  inline double operator()( std::lognormal_distribution<>& d ) override
+  inline double
+  operator()( std::lognormal_distribution<>& d ) override
   {
     return d( rng_ );
   }
 
-  inline unsigned long operator()( std::binomial_distribution< unsigned long >& d ) override
+  inline unsigned long
+  operator()( std::binomial_distribution< unsigned long >& d ) override
   {
     return d( rng_ );
   }
 
-  inline double operator()( std::gamma_distribution<>& d ) override
+  inline double
+  operator()( std::gamma_distribution<>& d ) override
   {
     return d( rng_ );
   }
 
-  inline double operator()( std::exponential_distribution<>& d ) override
+  inline double
+  operator()( std::exponential_distribution<>& d ) override
   {
     return d( rng_ );
   }
 
-  inline unsigned long operator()( std::discrete_distribution< unsigned long >& d ) override
+  inline unsigned long
+  operator()( std::discrete_distribution< unsigned long >& d ) override
   {
     return d( rng_ );
   }
 
-  inline unsigned long operator()( std::uniform_int_distribution< unsigned long >& d,
+  inline unsigned long
+  operator()( std::uniform_int_distribution< unsigned long >& d,
     std::uniform_int_distribution< unsigned long >::param_type& p ) override
   {
     return d( rng_, p );
   }
 
-  inline double operator()( std::uniform_real_distribution<>& d,
-    std::uniform_real_distribution<>::param_type& p ) override
+  inline double
+  operator()( std::uniform_real_distribution<>& d, std::uniform_real_distribution<>::param_type& p ) override
   {
     return d( rng_, p );
   }
 
-  inline unsigned long operator()( std::poisson_distribution< unsigned long >& d,
+  inline unsigned long
+  operator()( std::poisson_distribution< unsigned long >& d,
     std::poisson_distribution< unsigned long >::param_type& p ) override
   {
     return d( rng_, p );
   }
 
-  inline double operator()( std::normal_distribution<>& d, std::normal_distribution<>::param_type& p ) override
+  inline double
+  operator()( std::normal_distribution<>& d, std::normal_distribution<>::param_type& p ) override
   {
     return d( rng_, p );
   }
 
-  inline double operator()( std::lognormal_distribution<>& d, std::lognormal_distribution<>::param_type& p ) override
+  inline double
+  operator()( std::lognormal_distribution<>& d, std::lognormal_distribution<>::param_type& p ) override
   {
     return d( rng_, p );
   }
 
-  inline unsigned long operator()( std::binomial_distribution< unsigned long >& d,
+  inline unsigned long
+  operator()( std::binomial_distribution< unsigned long >& d,
     std::binomial_distribution< unsigned long >::param_type& p ) override
   {
     return d( rng_, p );
   }
 
-  inline double operator()( std::gamma_distribution<>& d, std::gamma_distribution<>::param_type& p ) override
+  inline double
+  operator()( std::gamma_distribution<>& d, std::gamma_distribution<>::param_type& p ) override
   {
     return d( rng_, p );
   }
 
-  inline double operator()( std::exponential_distribution<>& d,
-    std::exponential_distribution<>::param_type& p ) override
+  inline double
+  operator()( std::exponential_distribution<>& d, std::exponential_distribution<>::param_type& p ) override
   {
     return d( rng_, p );
   }
 
-  inline unsigned long operator()( std::discrete_distribution< unsigned long >& d,
+  inline unsigned long
+  operator()( std::discrete_distribution< unsigned long >& d,
     std::discrete_distribution< unsigned long >::param_type& p ) override
   {
     return d( rng_, p );
@@ -258,7 +274,7 @@ private:
 class BaseRandomGeneratorFactory
 {
 public:
-  virtual ~BaseRandomGeneratorFactory(){};
+  virtual ~BaseRandomGeneratorFactory() {};
 
   /**
    * @brief Clones the RNG wrapper and sets the state of the cloned RNG engine.
@@ -308,7 +324,8 @@ public:
    *
    * @param g Pointer to the RNG wrapper.
    */
-  inline result_type operator()( RngPtr g )
+  inline result_type
+  operator()( RngPtr g )
   {
     static_assert( std::is_same< result_type, unsigned long >::value or std::is_same< result_type, double >::value,
       "result_type of the distribution must be unsigned long or double" );
@@ -324,7 +341,8 @@ public:
    * @param g Pointer to the RNG wrapper.
    * @param params Distribution parameter set to use.
    */
-  inline result_type operator()( RngPtr g, param_type& params )
+  inline result_type
+  operator()( RngPtr g, param_type& params )
   {
     static_assert( std::is_same< result_type, unsigned long >::value or std::is_same< result_type, double >::value,
       "result_type of the distribution must be unsigned long or double" );

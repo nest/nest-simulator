@@ -50,16 +50,24 @@ This connection merely scales the synaptic weight, based on the spike history
 and the parameters of the kinetic model. Thus, it is suitable for all types
 of synaptic dynamics, that is current or conductance based.
 
-The parameter A_se from the publications is represented by the
+The parameter ``A_se`` from the publications is represented by the
 synaptic weight. The variable x in the synapse properties is the
 factor that scales the synaptic weight.
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
+
+See also [3]_.
+
+Under identical conditions, the tsodyks2_synapse produces slightly
+lower peak amplitudes than the tsodyks_synapse. However, the
+qualitative behavior is identical. The script
+:doc:`../auto_examples/evaluate_tsodyks2_synapse` compares the two
+synapse models.
 
 Parameters
 ++++++++++
@@ -75,14 +83,6 @@ The following parameters can be set in the status dictionary:
  tau_fac  ms      Time constant for facilitation, default = 0(off)
  tau_rec  ms      Time constant for depression, default = 800ms
 ========  ======  ========================================================
-
-Remarks:
-
-Under identical conditions, the tsodyks2_synapse produces
-slightly lower peak amplitudes than the tsodyks_synapse. However,
-the qualitative behavior is identical. The script
-test_tsodyks2_synapse.py in the examples compares the two synapse
-models.
 
 References
 ++++++++++
@@ -141,8 +141,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 

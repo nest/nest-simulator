@@ -32,8 +32,8 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "node_collection.h"
 #include "nest_types.h"
+#include "node_collection.h"
 #include "sparse_node_array.h"
 
 // Includes from sli:
@@ -294,7 +294,7 @@ private:
   /**
    * The network as sparse array of local nodes. One entry per thread,
    * which contains only the thread-local nodes.
-  */
+   */
   std::vector< SparseNodeArray > local_nodes_;
 
   std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that

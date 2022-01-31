@@ -370,10 +370,10 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
     nest_warning_re = re.compile(f'.*({build_dir}.*: warning:.*)')
     known_warnings = [
-        f'{build_dir}/sli/scanner.cc:642:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:674:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:716:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
-        f'{build_dir}/sli/scanner.cc:744:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:643:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:675:19: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:717:13: warning: this statement may fall through [-Wimplicit-fallthrough=]',
+        f'{build_dir}/sli/scanner.cc:745:24: warning: this statement may fall through [-Wimplicit-fallthrough=]',
         (f'{build_dir}/thirdparty/Random123/conventional/Engine.hpp:140:15: warning: implicitly-declared'
          ' ‘r123::Engine<r123::Threefry4x64_R<20> >& r123::Engine<r123::Threefry4x64_R<20> >::operator='
          '(const r123::Engine<r123::Threefry4x64_R<20> >&)’ is deprecated [-Wdeprecated-copy]'),

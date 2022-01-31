@@ -1,3 +1,5 @@
+.. _doc_styleguide:
+
 The NEST documentation style guide
 ==================================
 
@@ -18,12 +20,12 @@ Contribute to the docs
 
 If you want to add or modify documentation, make sure to read through this guide before writing a contribution.
 
-We have templates for :doc:`Python example scripts <../templates/pyapi_template>` and the :doc:`PyNEST API docstrings <../templates/example_template>`.
+We have templates for :ref:`Python example scripts <pyapi_template>` and the :ref:`PyNEST API docstrings <pyexample_template>`.
 
 You will also need to know how to build the documentation locally on your machine: See
-:doc:`../../documentation_workflow/user_documentation_workflow`.
+:ref:`userdoc_workflow`.
 
-For additional information, including the Git workflow and making a pull request see :doc:`../index`.
+For additional information, including the Git workflow and making a pull request see :ref:`contribute`.
 
 
 A few tips on writing documentation
@@ -66,11 +68,11 @@ The language we use
 
 We do, however, use terminology appropriate to NEST and neuroscience when
 specific and exact terms are needed, which is often. But explanations or
-references should be provided for clarity in introductory texts and the :ref:`sec_glossary`.
+references should be provided for clarity in introductory texts and the :ref:`glossary`.
 
 If you have further questions about style rules not addressed here, use
 `the Microsoft style guide <https://docs.microsoft.com/en-us/style-guide/welcome/>`_ as a resource
-or ask on the :ref:`mailing list <nest_community>`.
+or ask on the :ref:`mailing list <community>`.
 
 How to phrase content in NEST
 -----------------------------
@@ -414,8 +416,24 @@ Rendered as
 References
 ~~~~~~~~~~
 
-For referencing reStructuredText files within the documentation, use the ``:doc:`` role. It requires the relative path to
-the file::
+There are two main ways to link to documents or sections of documents in reStructuredText.
+
+The ``:doc:`` role can be used to reference whole documents. But it requires the relative path
+to the document.
+If a file is moved, then all references to the file need to be updated.
+
+To avoid including paths, we try to use the ``:ref:`` role when possible.
+
+Each reStructuredText file should include a reference label at the beginning of the file.
+
+Sphinx can automatically link to these labels, so long as they are unique.
+You can also add labels anywhere within a document to label figures, subheadings, or arbitrary places in a file.
+
+
+The ``:doc:`` role is used for auto-generated files such as the PyNEST examples and models, as well as
+some cases of intersphinx links, and Jupyter notebooks
+
+Here is an example of the ``:doc:`` role::
 
    :doc:`sample_doc`
 
@@ -431,7 +449,6 @@ This will be rendered as
 
    :doc:`custom label <sample_doc>`
 
-For cross-referencing specific section headings, figures, or other arbitrary places within a file, use the ``:ref:`` role.
 
 The ``:ref:`` role requires a reference label that looks like this ``.. _type_ref-label:``.
 
@@ -458,7 +475,10 @@ Rendered as
 * The label must begin with an underscore "_" for Sphinx to recognize it. But the reference to the label (i.e., ``:ref:`ref-label```)
   does not include the underscore.
 
-* Use "sec\_" (section), "fig\_" (figure), "eq\_" (equation), "tab\_" (table),  at the beginning of each reference label to denote the type of reference.
+
+* Labels at the beginning of the document should be close to the filename or main heading of that document.
+
+* Use "sec\_" (section), "fig\_" (figure), "eq\_" (equation), "tab\_" (table),  at the beginning of each reference label to denote the type of reference, within a document.
 
 * Separate the reference label from the text it is referencing with a newline.
 
@@ -577,7 +597,7 @@ NumPy style docstrings
 * However, we use different formatting marks than what is stated in their guide. See section on
   :ref:`double backticks <sec_dbltick>`.
 
-* If you are contributing to the :doc:`PyNEST API <example_template>`, make sure you carefully read the NumPy guide, along
+* If you are contributing to the :ref:`PyNEST API <pyexample_template>`, make sure you carefully read the NumPy guide, along
   with this one.
 
 

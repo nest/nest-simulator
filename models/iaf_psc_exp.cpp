@@ -248,30 +248,17 @@ nest::iaf_psc_exp::calibrate()
 
   const double h = Time::get_resolution().get_ms();
 
-  // numbering of state vaiables: i_0 = 0, i_syn_ = 1, V_m_ = 2
-
-  // commented out propagators: forward Euler
-  // needed to exactly reproduce Tsodyks network
-
   // these P are independent
   V_.P11ex_ = std::exp( -h / P_.tau_ex_ );
-  // P11ex_ = 1.0-h/tau_ex_;
-
   V_.P11in_ = std::exp( -h / P_.tau_in_ );
-  // P11in_ = 1.0-h/tau_in_;
 
   V_.P22_ = std::exp( -h / P_.Tau_ );
-  // P22_ = 1.0-h/Tau_;
 
   // these are determined according to a numeric stability criterion
   V_.P21ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
   V_.P21in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
 
-  // P21ex_ = h/C_;
-  // P21in_ = h/C_;
-
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );
-  // P20_ = h/C_;
 
   // t_ref_ specifies the length of the absolute refractory period as
   // a double in ms. The grid based iaf_psc_exp can only handle refractory
@@ -388,7 +375,6 @@ nest::iaf_psc_exp::handle( CurrentEvent& e )
   const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
-  // add weighted current; HEP 2002-10-04
   if ( 0 == e.get_rport() )
   {
     B_.input_buffer_.add_value( input_buffer_slot, Buffers_::I0, w * c );

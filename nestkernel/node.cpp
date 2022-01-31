@@ -151,10 +151,10 @@ Node::get_status_base()
 
   // add information available for all nodes
   dict[ names::local.toString() ] = kernel().node_manager.is_local_node( this );
-  dict[ names::model.toString() ] = LiteralDatum( get_name() );
+  dict[ names::model.toString() ] = get_name();
   dict[ names::global_id.toString() ] = get_node_id();
   dict[ names::vp.toString() ] = get_vp();
-  dict[ names::element_type.toString() ] = LiteralDatum( get_element_type() );
+  dict[ names::element_type.toString() ] = get_element_type();
 
   // add information available only for local nodes
   if ( not is_proxy() )

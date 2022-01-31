@@ -72,7 +72,7 @@ void
 nest::RecordingDevice::Parameters_::get( dictionary& d ) const
 {
   d[ names::label.toString() ] = label_;
-  d[ names::record_to.toString() ] = LiteralDatum( record_to_ );
+  d[ names::record_to.toString() ] = record_to_.toString();
 }
 
 void
@@ -183,7 +183,7 @@ nest::RecordingDevice::get_status( dictionary& d ) const
 
   Device::get_status( d );
 
-  d[ names::element_type.toString() ] = LiteralDatum( names::recorder );
+  d[ names::element_type.toString() ] = names::recorder.toString();
 
   if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
   {

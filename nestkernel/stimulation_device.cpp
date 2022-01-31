@@ -98,7 +98,7 @@ void
 nest::StimulationDevice::Parameters_::get( dictionary& d ) const
 {
   d[ names::label.toString() ] = label_;
-  d[ names::stimulus_source.toString() ] = LiteralDatum( stimulus_source_ );
+  d[ names::stimulus_source.toString() ] = stimulus_source_.toString();
 }
 
 void

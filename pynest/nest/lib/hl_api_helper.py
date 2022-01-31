@@ -536,16 +536,13 @@ def get_parameters(nc, param):
     """
     # param is single literal
     if is_literal(param):
-        cmd = '/{} get'.format(param)
-        sps(nc._datum)
-        try:
-            sr(cmd)
-            result = spp()
-        except kernel.NESTError:
-            result = nc.get()[param]  # If the NodeCollection is a composite.
+        result = nc.get()[param]
+        # try:
+        # except kernel.NESTError:
+        #     result = nc.get()[param]  # If the NodeCollection is a composite.
     # param is array of strings
     elif is_iterable(param):
-        result = {param_name: nc.get(param_name) for param_name in param}
+        result = {param_name: get_parameters(nc, param_name) for param_name in param}
     else:
         raise TypeError("Params should be either a string or an iterable")
 

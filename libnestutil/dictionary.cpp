@@ -108,6 +108,13 @@ is_string_vector( const boost::any& operand )
   return operand.type() == typeid( std::vector< std::string > );
 }
 
+// vector of boost::any
+bool
+is_any_vector( const boost::any& operand )
+{
+  return operand.type() == typeid( std::vector< boost::any > );
+}
+
 // dict
 bool
 is_dict( const boost::any& operand )

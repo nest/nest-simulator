@@ -106,6 +106,8 @@ RngPtr get_vp_specific_rng( thread tid );
 void set_kernel_status( const dictionary& dict );
 dictionary get_kernel_status();
 
+dictionary get_nc_status( NodeCollectionPTR node_collection );
+
 void set_node_status( const index node_id, const dictionary& dict );
 dictionary get_node_status( const index node_id );
 

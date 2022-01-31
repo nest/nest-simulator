@@ -44,6 +44,7 @@ bool is_int_vector( const boost::any& operand );
 bool is_double_vector( const boost::any& operand );
 bool is_double_vector_vector( const boost::any& operand );
 bool is_string_vector( const boost::any& operand );
+bool is_any_vector( const boost::any& operand );
 bool is_dict( const boost::any& operand );
 bool is_parameter( const boost::any& operand );
 bool is_nc( const boost::any& operand );

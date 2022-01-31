@@ -181,6 +181,33 @@ get_kernel_status()
   return d;
 }
 
+dictionary
+get_nc_status( NodeCollectionPTR node_collection )
+{
+  dictionary result;
+  for ( NodeCollection::const_iterator it = node_collection->begin(); it < node_collection->end(); ++it )
+  {
+    const auto node_status = get_node_status( ( *it ).node_id );
+    for ( auto& kv_pair : node_status )
+    {
+      auto p = result.find( kv_pair.first );
+      if ( p != result.end() )
+      {
+        // key exists
+        auto& v = boost::any_cast< std::vector< boost::any >& >( p->second );
+        v.push_back( kv_pair.second );
+        // *p = v;
+      }
+      else
+      {
+        // key does not exist yet
+        result[ kv_pair.first ] = std::vector< boost::any >{ kv_pair.second };
+      }
+    }
+  }
+  return result;
+}
+
 void
 set_node_status( const index node_id, const dictionary& dict )
 {

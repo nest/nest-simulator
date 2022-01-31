@@ -172,6 +172,7 @@ cdef extern from "dictionary.h":
     cbool is_int_vector(const any&)
     cbool is_double_vector(const any&)
     cbool is_string_vector(const any&)
+    cbool is_any_vector(const any&)
     cbool is_dict(const any&)
 
 cdef extern from "mpi_manager.h" namespace "nest":
@@ -196,6 +197,7 @@ cdef extern from "nest.h" namespace "nest":
     string pprint_to_string( NodeCollectionPTR nc )
     size_t nc_size( NodeCollectionPTR nc )
     dictionary get_kernel_status()
+    dictionary get_nc_status( NodeCollectionPTR nc )
     void simulate( const double& t )
 
 cdef extern from "pynestkernel_aux.h":

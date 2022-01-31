@@ -135,7 +135,7 @@ Model::get_status( void )
   }
 
   d[ names::instantiations.toString() ] = Token( tmp );
-  d[ names::type_id.toString() ] = LiteralDatum( kernel().model_manager.get_model( type_id_ )->get_name() );
+  d[ names::type_id.toString() ] = kernel().model_manager.get_model( type_id_ )->get_name();
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
@@ -151,7 +151,7 @@ Model::get_status( void )
 
   d[ names::available.toString() ] = Token( tmp );
 
-  d[ names::model.toString() ] = LiteralDatum( get_name() );
+  d[ names::model.toString() ] = get_name();
   return d;
 }
 

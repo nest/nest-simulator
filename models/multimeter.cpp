@@ -94,10 +94,10 @@ nest::multimeter::Parameters_::get( dictionary& d ) const
 {
   d[ names::interval.toString() ] = interval_.get_ms();
   d[ names::offset.toString() ] = offset_.get_ms();
-  ArrayDatum ad;
+  std::vector< std::string > ad;
   for ( size_t j = 0; j < record_from_.size(); ++j )
   {
-    ad.push_back( LiteralDatum( record_from_[ j ] ) );
+    ad.push_back( record_from_[ j ].toString() );
   }
   d[ names::record_from.toString() ] = ad;
 }
@@ -245,9 +245,8 @@ voltmeter::voltmeter()
   : multimeter()
 {
   dictionary vmdict;
-  ( new Dictionary );
-  ArrayDatum ad;
-  ad.push_back( LiteralDatum( names::V_m.toString() ) );
+  std::vector< std::string > ad;
+  ad.push_back( names::V_m.toString() );
   vmdict[ names::record_from.toString() ] = ad;
   set_status( vmdict );
 }

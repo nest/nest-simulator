@@ -99,11 +99,11 @@ nest::music_cont_out_proxy::Parameters_::get( dictionary& d ) const
   d[ names::port_name.toString() ] = port_name_;
   d[ names::interval.toString() ] = interval_.get_ms();
 
-  ArrayDatum ad_record_from;
+  std::vector< std::string > ad_record_from;
 
   for ( size_t j = 0; j < record_from_.size(); ++j )
   {
-    ad_record_from.push_back( LiteralDatum( record_from_[ j ] ) );
+    ad_record_from.push_back( record_from_[ j ].toString() );
   }
 
   d[ names::record_from.toString() ] = ad_record_from;

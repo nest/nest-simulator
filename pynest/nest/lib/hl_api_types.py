@@ -374,7 +374,7 @@ class NodeCollection(object):
 
         if len(params) == 0:
             # get() is called without arguments
-            result = sli_func('get', self._datum)
+            result = kernel.llapi_get_nc_status(self._datum)
         elif len(params) == 1:
             # params is a tuple with a string or list of strings
             result = get_parameters(self, params[0])

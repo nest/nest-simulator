@@ -607,6 +607,14 @@ cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ =
 ####                              PyNEST LL API                             ####
 ####                                                                        ####
 ################################################################################
+cdef object any_vector_to_list(vector[any] cvec):
+    cdef tmp = []
+    cdef vector[any].iterator it = cvec.begin()
+    while it != cvec.end():
+        tmp.append(any_to_pyobj(deref(it)))
+        inc(it)
+    return tmp
+
 
 cdef object any_to_pyobj(any operand):
     if is_int(operand):
@@ -627,6 +635,8 @@ cdef object any_to_pyobj(any operand):
         return any_cast[vector[double]](operand)
     if is_string_vector(operand):
         return any_cast[vector[string]](operand)
+    if is_any_vector(operand):
+        return tuple(any_vector_to_list(any_cast[vector[any]](operand)))
     if is_dict(operand):
         return dictionary_to_pydict(any_cast[dictionary](operand))
 
@@ -653,6 +663,14 @@ cdef dictionary pydict_to_dictionary(object py_dict):
         else:
             raise AttributeError(f'value of key ({key}) is not a known type, got {type(value)}')
     return cdict
+
+# cdef object vec_of_dict_to_list(vector[dictionary] cvec):
+#     cdef tmp = []
+#     cdef vector[dictionary].iterator it = cvec.begin()
+#     while it != cvec.end():
+#         tmp.append(dictionary_to_pydict(deref(it)))
+#         inc(it)
+#     return tmp
 
 def llapi_reset_kernel():
     reset_kernel()
@@ -689,3 +707,8 @@ def llapi_get_kernel_status():
 
 def llapi_simulate(float t):
     simulate(t)
+
+def llapi_get_nc_status(NodeCollectionObject nc):
+    cdef dictionary statuses = get_nc_status(nc.thisptr)
+    # return vec_of_dict_to_list(statuses)
+    return dictionary_to_pydict(statuses)

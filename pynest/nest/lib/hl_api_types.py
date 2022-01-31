@@ -222,7 +222,7 @@ class NodeCollection(object):
             if step < 1:
                 raise IndexError('slicing step for NodeCollection must be strictly positive')
 
-            return sli_func('Take', self._datum, [start, stop, step])
+            return kernel.llapi_slice(self._datum, start, stop, step)
         elif isinstance(key, (int, numpy.integer)):
             if abs(key + (key >= 0)) > self.__len__():
                 raise IndexError('index value outside of the NodeCollection')

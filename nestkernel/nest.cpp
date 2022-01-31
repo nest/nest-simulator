@@ -255,6 +255,39 @@ get_connection_status( const ConnectionDatum& conn )
 }
 
 NodeCollectionPTR
+slice_nc( const NodeCollectionPTR nc, long start, long stop, long step )
+{
+  const size_t g_size = nc->size();
+
+  // TODO-PYNEST-NG: Zero-based indexing?
+  if ( step < 1 )
+  {
+    throw BadParameter( "Slicing step must be strictly positive." );
+  }
+
+  if ( start >= 0 )
+  {
+    start -= 1; // adjust from 1-based to 0-based indexing
+  }
+  else
+  {
+    start += g_size; // automatically correct for 0-based indexing
+  }
+
+  if ( stop >= 0 )
+  {
+    // no adjustment necessary: adjustment from 1- to 0- based indexing
+    // and adjustment from last- to stop-based logic cancel
+  }
+  else
+  {
+    stop += g_size + 1; // adjust from 0- to 1- based indexin
+  }
+
+  return nc->slice( start, stop, step );
+}
+
+NodeCollectionPTR
 create( const std::string model_name, const index n_nodes )
 {
   if ( n_nodes == 0 )

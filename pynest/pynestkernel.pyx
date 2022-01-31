@@ -695,6 +695,17 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
             pydict_to_dictionary(conn_params),
             syn_param_vec)
 
+def llapi_slice(NodeCollectionObject nc, long start, long stop, long step):
+    cdef NodeCollectionPTR nc_ptr
+    try:
+        nc_ptr = slice_nc(nc.thisptr, start, stop, step)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_slice', '') from None
+    obj = NodeCollectionObject()
+    obj._set_nc(nc_ptr)
+    return nest.NodeCollection(obj)
+
 def llapi_nc_size(NodeCollectionObject nc):
     return nc_size(nc.thisptr)
 

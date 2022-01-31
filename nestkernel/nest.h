@@ -114,6 +114,8 @@ dictionary get_node_status( const index node_id );
 void set_connection_status( const ConnectionDatum& conn, const dictionary& dict );
 dictionary get_connection_status( const ConnectionDatum& conn );
 
+NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step );
+
 NodeCollectionPTR create( const std::string model_name, const index n );
 
 NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );

@@ -46,7 +46,7 @@ Non-resetting leaky integrate-and-fire neuron model with exponential PSCs and ad
 Description
 +++++++++++
 
-mat2_psc_exp is an implementation of a leaky integrate-and-fire model
+``mat2_psc_exp`` is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 
@@ -268,8 +268,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( mat2_psc_exp& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, mat2_psc_exp& ); //!<Sets buffer pointers to 0
+    Buffers_( mat2_psc_exp& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, mat2_psc_exp& ); //!< Sets buffer pointers to 0
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_ex_;

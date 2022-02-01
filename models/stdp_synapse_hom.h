@@ -42,7 +42,7 @@ Synapse type for spike-timing dependent plasticity using homogeneous parameters
 Description
 +++++++++++
 
-stdp_synapse_hom is a connector to create synapses with spike time
+``stdp_synapse_hom`` is a connector to create synapses with spike time
 dependent plasticity (as defined in [1]_). Here the weight dependence
 exponent can be set separately for potentiation and depression.
 

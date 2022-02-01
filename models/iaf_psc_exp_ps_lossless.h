@@ -55,7 +55,7 @@ state space analysis
 Description
 +++++++++++
 
-iaf_psc_exp_ps_lossless is the precise state space implementation of the leaky
+``iaf_psc_exp_ps_lossless`` is the precise state space implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
 that uses time reversal to detect spikes [1]_. This is the most exact
 implementation available.
@@ -69,9 +69,9 @@ meets the threshold.
 
 .. note::
 
-  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-  `tau_syn_in`, respectively, to avoid numerical instabilities.
+   If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
+   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
@@ -87,7 +87,7 @@ can only change at on-grid times.
 
 In the current implementation, tau_syn_ex and tau_syn_in must be equal.
 This is because the state space would be 3-dimensional otherwise, which
-makes the detection of threshold crossing more difficult [1].
+makes the detection of threshold crossing more difficult [1]_.
 Support for different time constants may be added in the future,
 see issue #921.
 
@@ -173,7 +173,8 @@ public:
   void handle( CurrentEvent& );
   void handle( DataLoggingRequest& );
 
-  bool is_off_grid() const // uses off_grid events
+  bool
+  is_off_grid() const // uses off_grid events
   {
     return true;
   }

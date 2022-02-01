@@ -45,14 +45,14 @@ postsynaptic currents
 Description
 +++++++++++
 
-iaf_psc_delta is an implementation of a leaky integrate-and-fire model
+``iaf_psc_delta`` is an implementation of a leaky integrate-and-fire model
 where the potential jumps on each spike arrival.
 
 The threshold crossing is followed by an absolute refractory period
 during which the membrane potential is clamped to the resting potential.
 
 Spikes arriving while the neuron is refractory, are discarded by
-default. If the property "refractory_input" is set to true, such
+default. If the property ``refractory_input`` is set to true, such
 spikes are added to the membrane potential at the end of the
 refractory period, dampened according to the interval between
 arrival and end of refractoriness.

@@ -66,11 +66,13 @@ Simple conductance based leaky integrate-and-fire neuron model
 Description
 +++++++++++
 
-iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
+``iaf_cond_alpha`` is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a postsynaptic change
 of conductance modelled by an alpha function. The alpha function
 is normalized such that an event of weight 1.0 results in a peak current of 1 nS
 at :math:`t = \tau_{syn}`.
+
+See also [1]_, [2]_, [3]_.
 
 Parameters
 ++++++++++
@@ -255,8 +257,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_alpha& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_cond_alpha& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_alpha& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_cond_alpha& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_cond_alpha > logger_;

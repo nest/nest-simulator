@@ -39,7 +39,7 @@ Synapse with depression after Hill & Tononi (2005)
 Description
 +++++++++++
 
-This synapse implements the depression model described in [1, p 1678].
+This synapse implements the depression model described in [1]_, p 1678.
 
 Synaptic dynamics are given by
 
@@ -115,8 +115,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 

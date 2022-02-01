@@ -45,7 +45,7 @@ Generate sinusoidally modulated Poisson spike trains
 Description
 +++++++++++
 
-sinusoidal_poisson_generator generates sinusoidally modulated Poisson spike
+``sinusoidal_poisson_generator`` generates sinusoidally modulated Poisson spike
 trains. By default, each target of the generator will receive a different
 spike train.
 
@@ -134,9 +134,9 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
+  using Node::event_hook;
   using Node::handle;
   using Node::handles_test_event;
-  using Node::event_hook;
 
   void handle( DataLoggingRequest& ) override;
 

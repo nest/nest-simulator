@@ -20,6 +20,7 @@ See also Anno et al. [1]_ for detailed study on this topic.
    overview_hardware
    slurm_script
    pinning_threads
+   advanced_config
 
 * :ref:`Overview of hardware and software terminology <overview_hardware>`
 

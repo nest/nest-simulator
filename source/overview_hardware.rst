@@ -35,12 +35,17 @@ On the right side, we see how the data and instructions are allocated through so
 * A set of data and instructions that belong together is referred to as a task or process. This can be your entire simulation
   script or a subset of it.
 
-* We typically use the standard Message Passing Interface (MPI) to instruct how processes work in parallel.
+* We typically use the standard Message Passing Interface (MPI) to instruct how processes work in parallel (See e.g.,
+  `OpenMPI <https://www.open-mpi.org/>`_).
+
+* We can adjust the number of processes and threads. For example, instead of the 2 processes and 4 threads per process in the
+  image above, we could have 1 process with 8 threads.
 
 * The smallest unit of executable program is known as a thread. The thread is a virtual component. A single core can
-  have one or two threads. Therefore the total number of possible threads is double the number of cores.
+  have one or two threads. Therefore the total number of possible threads is double the number of cores. In NEST, we recommend
+  only having one thread per core.
 
-* We can control the number and placement of threads with programs like OpenMP.
+* We can control the number and placement of threads with programs like `OpenMP <https://www.openmp.org/>`_.
 
 
 To efficiently run your large and complex simulation, you need to configure the optimal number of threads and processes for

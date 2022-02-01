@@ -83,7 +83,7 @@ This is also known as wall time, which is the time allocated to your job.
 
   #SBATCH --nodes=1
 
-The number of nodes needed for your job (see also image and description above). The number of nodes will depend on your memory needs and if you're
+The number of nodes needed for your job (see :ref:`figure here <overview_hardware>`). The number of nodes will depend on your memory needs and if you're
 trying to increase the speed of the simulation.
 
 How much memeory does your simulation need? To get a rough estimate of the memory requirements for your simulation, you can
@@ -107,7 +107,7 @@ varies depending on what HPC system you are using).
 .. note::
 
     In NEST, the above calculation is the same one you would do to determine the number of Virtual processes in a given simulation.
-    See the guide to parallel_computing for more details.
+    See the guide to :ref:`parallel_computing` for more detais.
 
 
 ::
@@ -116,9 +116,9 @@ varies depending on what HPC system you are using).
 
    #SBATCH --cpus-per-task=64
 
-In this example, we are assuming there are 64 cores. We are using 1 MPI process (``ntasks-per-node``) and 64 threads
+In this example, we are assuming there are 64 cores in a node. We are using 1 MPI process (``ntasks-per-node``) and 64 threads
 (``cpus-per-task``). We can increase the ``ntasks-per-node``
-to 2, but then we would decrease the ``cpus-per-task`` to 32 (because we want the total to be 64).
+to 2, but then we would need to decrease the ``cpus-per-task`` to 32 (because we want the total to be 64).
 
 |
 
@@ -131,8 +131,8 @@ Two threads per core can lead to slower performance in NEST.
 
 |
 
-We want to control the placement of the threads using OpenMP. This is referred to as pinning threads. (See below for further
-details.
+We want to control the placement of the threads using OpenMP. This is referred to as pinning threads. (See section
+:ref:`pinning_threads` for further details.)
 
 ::
 
@@ -153,7 +153,7 @@ You can then tell the job script to schedule your simulation
 
 ----
 
-Here is an example of the NEST script  `my_nest_simulation.py`:
+Here is an example of the NEST script  ``my_nest_simulation.py``:
 
 .. code-block:: python
 
@@ -175,4 +175,8 @@ Here is an example of the NEST script  `my_nest_simulation.py`:
    nest.Connect(n, sr)
    nest.Simulate(100.)
 
-For more information about how parallism works in NEST see our guide to :ref:`parallel_computing`.
+----
+
+For more information about how parallelism works in NEST see our guide to :ref:`parallel_computing`.
+
+For advanced configuration options, see our :ref:`advanced_hpc`

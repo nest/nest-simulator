@@ -62,6 +62,7 @@ Table of Contents
    :maxdepth: 1
    :caption: Community
 
+   related_projects
    Contribute <devdoc/contribute>
    Developer space <devdoc/index>
    News and updates <https://nest-simulator.org>

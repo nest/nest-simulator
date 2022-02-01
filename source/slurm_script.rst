@@ -29,7 +29,13 @@ Finding the optimal parameters for your script may require some trial and error.
    export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
    export OMP_PROC_BIND=TRUE
 
+   # For one MPI process (ntasks-per-node)
    srun python my_nest_simulation.py
+
+   # For > 1 MPI process (ntasks-per-node)
+   module load openmpi
+   mpirun -n <num_of_processes> python3 my_nest_simulation.py
+
 
 
 ----
@@ -144,15 +150,33 @@ will prevent the threads from moving around.
 
 |
 
+
+You can then tell the job script to schedule your simulation.
+
 ::
 
    srun python my_nest_simulation.py
 
-You can then tell the job script to schedule your simulation
+Or, if you are using multiple MPI processes
+
+::
+
+  module load openmpi
+  mpirun -n <num_of_processes> python3 my_nest_simulation.py
+
+We invoke ``mpirun`` explicity when running multiple processes because it ensures each process represents a subset of your entire
+script. For example, if you have 4 processes (``ntasks-per-node = 4``) and use ``mpirun -n 4``, your script,
+``my_nest_simulation.py``, will be divided up into the 4 processes. If you run ``srun`` with 4 processes, the entire simulation script
+will be run 4 times.
+
+The `Slurm documentation <https://slurm.schedmd.com/mpi_guide.html#open_mpi>`_  contains additional options for running MPI.
+
 
 ----
 
-Here is an example of the NEST script  ``my_nest_simulation.py``:
+Here is an example of the NEST script  ``my_nest_simulation.py``.
+
+Don't forget to set ``local_num_threads`` in your script!
 
 .. code-block:: python
 

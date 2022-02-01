@@ -55,7 +55,8 @@ dependencies:
   - scipy
   - mpi4py
   - terminaltables
-  - pycodestyle
+  - pycodestyle == 2.5.0  
+  - cppcheck
 
   # Working with NEST ------
   - ipython

@@ -130,6 +130,14 @@ SonataConnector::connect()
 
         assert( num_source_node_id == num_target_node_id );
 
+        std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+
+#pragma omp parallel
+        {
+          auto tid = kernel().vp_manager.get_thread_id();
+
+          try
+              {
         // Retrieve parameters
         auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
         auto current_source_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value ) );
@@ -149,6 +157,14 @@ SonataConnector::connect()
           Node* target = kernel().node_manager.get_node_or_proxy( target_id );
 
           thread target_thread = target->get_thread();
+
+          if ( target->is_proxy() or tid != target_thread )
+          {
+            // skip array parameters handled in other virtual processes
+            //skip_conn_parameter_( tid );
+            //std::cerr << "continue\n";
+            continue;
+          }
 
           const auto syn_spec = type_id_2_syn_spec_[ edge_type_id_data[ i ] ];
           const auto model_name = getValue< std::string >( ( *syn_spec )[ "synapse_model" ] );
@@ -197,6 +213,24 @@ SonataConnector::connect()
             delay,
             weight );
         }
+              }
+                  catch ( std::exception& err )
+                  {
+                    // We must create a new exception here, err's lifetime ends at
+                    // the end of the catch block.
+                    exceptions_raised_.at( tid ) =
+                      std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+                  }
+        }// omp parallel
+        // check if any exceptions have been raised
+        for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+        {
+          if ( exceptions_raised_.at( thr ).get() )
+          {
+            throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+          }
+        }
+#pragma omp barrier
 
         delete source_node_id_data;
         delete target_node_id_data;

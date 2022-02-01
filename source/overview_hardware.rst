@@ -47,7 +47,6 @@ On the right side, we see how the data and instructions are allocated through so
 
 * We can control the number and placement of threads with programs like `OpenMP <https://www.openmp.org/>`_.
 
-
 To efficiently run your large and complex simulation, you need to configure the optimal number of threads and processes for
 your simulation and the given hardware of the HPC system you are using.
 

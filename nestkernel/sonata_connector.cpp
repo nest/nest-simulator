@@ -45,7 +45,7 @@ SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
   , delay_dataset_ ( false )
   , syn_weight_data_ ( 0 )
   , delay_data_ ( 0 )
-  , param_dict_ ( new Dictionary() )
+  , param_dicts_ ()
 {
 }
 
@@ -70,6 +70,10 @@ SonataConnector::connect()
   {
     auto edge_dict = getValue< DictionaryDatum >( edge_dictionary_datum );
     auto edge_file = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
+
+    // Create new, empty, synapse dictionaries, one per thread. Will be filled with synapse parameters from the
+    // different edge types
+    set_synapse_params();
 
     // Open the specified file and the specified group in the file.
     H5::H5File file( edge_file, H5F_ACC_RDONLY );
@@ -191,7 +195,8 @@ SonataConnector::connect()
           }
 
           RngPtr rng = get_vp_specific_rng( target_thread );
-          get_synapse_params_( syn_spec, snode_id, *target, target_thread, rng );
+          auto param_dict = new Dictionary();
+          auto pd = get_synapse_params_( syn_spec, snode_id, *target, target_thread, rng, param_dict );  //might have to create one param dict per syn_spec???? Do we keep the old versions now????
 
           //if ( i % 100000 == 0 )
           //{
@@ -209,7 +214,7 @@ SonataConnector::connect()
             target,
             target_thread,
             synapse_model_id,
-            param_dict_,
+            pd,
             delay,
             weight );
         }
@@ -320,7 +325,47 @@ SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_dict )
 }
 
 void
-SonataConnector::get_synapse_params_( DictionaryDatum syn_params, index snode_id, Node& target, thread target_thread, RngPtr rng )
+SonataConnector::set_synapse_params( DictionaryDatum syn_dict, DictionaryDatum synapse_params, index synapse_model_id, int type_id )
+{
+  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );  // NOT AT ALL SURE THIS IS NEEDED!
+  std::set< Name > skip_syn_params_ = { names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model };
+  for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
+  {
+    const Name param_name = default_it->first;
+    if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
+    {
+      continue; // weight, delay or other not-settable parameter
+    }
+
+    if ( syn_dict->known( param_name ) )
+    {
+      synapse_params[ param_name ] =
+        ConnParameter::create( ( *syn_dict )[ param_name ], kernel().vp_manager.get_num_threads() );
+    }
+  }
+
+  // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
+  // create it here once to avoid re-creating the object over and over again.
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    type_id_2_syn_spec_[ type_id ].push_back( new Dictionary() );
+
+    for (  auto syn_param_it = synapse_params->begin(); syn_param_it != synapse_params->end(); ++syn_param_it )
+    {
+      if ( ( syn_param_it->second )->provides_long() )
+      {
+        ( *type_id_2_syn_spec_[ type_id ][ tid ] )[ syn_param_it->first ] = Token( new IntegerDatum( 0 ) );
+      }
+      else
+      {
+        ( *type_id_2_syn_spec_[ type_id ][ tid ] )[ syn_param_it->first ] = Token( new DoubleDatum( 0.0 ) );
+      }
+    }
+  }
+}
+
+DictionaryDatum
+SonataConnector::get_synapse_params_( DictionaryDatum syn_params, index snode_id, Node& target, thread target_thread, RngPtr rng, DictionaryDatum param_dict )
 {
   std::set< Name > skip_syn_params_ = { names::weight, names::delay, names::synapse_model };
 
@@ -336,13 +381,14 @@ SonataConnector::get_synapse_params_( DictionaryDatum syn_params, index snode_id
 
     if ( parameter->provides_long() )
     {
-      ( *param_dict_ )[ param_name ] = parameter->value_int( target_thread, rng, snode_id, &target );
+      ( *param_dict )[ param_name ] = parameter->value_int( target_thread, rng, snode_id, &target );
     }
     else
     {
-      ( *param_dict_ )[ param_name ] = parameter->value_double( target_thread, rng, snode_id, &target );
+      ( *param_dict )[ param_name ] = parameter->value_double( target_thread, rng, snode_id, &target );
     }
   }
+  return param_dict;
 }
 
 } // namespace nest

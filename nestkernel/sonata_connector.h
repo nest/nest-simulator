@@ -56,15 +56,19 @@ private:
   void get_attributes_( std::string& attribute_value, H5::DataSet dataset, std::string attribute_name );
   void weight_and_delay_from_dataset_( H5::Group group);
   void create_type_id_2_syn_spec_( DictionaryDatum edge_dict );
-  void get_synapse_params_( DictionaryDatum syn_params, index snode_id, Node& target, thread target_thread, RngPtr rng );
+  void set_synapse_params();
+  DictionaryDatum get_synapse_params_( DictionaryDatum syn_params, index snode_id, Node& target, thread target_thread, RngPtr rng, DictionaryDatum param_dict );
 
   DictionaryDatum sonata_dynamics_;
   bool weight_dataset_;
   bool delay_dataset_;
   double* syn_weight_data_;
   double* delay_data_;
-  std::map< int, DictionaryDatum > type_id_2_syn_spec_;
-  DictionaryDatum param_dict_;
+  //std::map< int, DictionaryDatum > type_id_2_syn_spec_;
+  std::map< int, std::vector< DictionaryDatum > > type_id_2_syn_spec_;
+  //DictionaryDatum param_dict_;
+  //! dictionaries to pass to connect function, one per thread
+  std::vector< DictionaryDatum > param_dicts_;
 
 };
 

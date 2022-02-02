@@ -117,6 +117,7 @@ SonataConnector::connect()
 
         // Create map of edge type ids to NEST synapse_model ids
         create_type_id_2_syn_spec_( edge_dict );
+        auto edge_params = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
 
         assert( num_source_node_id == num_target_node_id );
 
@@ -154,28 +155,29 @@ SonataConnector::connect()
               }
 
               auto edge_type_id = edge_type_id_data[ i ];
-              const auto syn_spec = type_id_2_syn_spec_[ edge_type_id ][ tid ];
               index synapse_model_id = type_id_2_syn_model_[ edge_type_id ];
+
+              const auto syn_spec = getValue< DictionaryDatum >( edge_params->lookup( std::to_string( edge_type_id ) ) );
 
               double weight = numerics::nan;
               if ( weight_dataset_ )
               {
                 weight = syn_weight_data_[ i ];
               }
-              //else if ( syn_spec->known( names::weight ) )  // THIS WILL NOT WORK ANYMORE BECAUSE WEIGHT AND DELAY IS SKIPPED!! Use edge_params["edge_synapse"][type_id]
-              //{
-               // weight = std::stod( ( *syn_spec )[ names::weight ] );
-              //}
+              else if ( syn_spec->known( names::weight ) )
+              {
+                weight = std::stod( ( *syn_spec )[ names::weight ] );
+              }
 
               double delay = numerics::nan;
               if ( delay_dataset_ )
               {
                 delay = syn_weight_data_[ i ];
               }
-              //else if ( syn_spec->known( names::delay ) )
-              //{
-                //delay = std::stod( ( *syn_spec )[ names::delay ] );
-              //}
+              else if ( syn_spec->known( names::delay ) )
+              {
+                delay = std::stod( ( *syn_spec )[ names::delay ] );
+              }
 
               RngPtr rng = get_vp_specific_rng( target_thread );
               get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );

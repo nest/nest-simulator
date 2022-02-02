@@ -24,6 +24,7 @@
 
 
 // Includes from nestkernel:
+#include "conn_parameter.h"
 #include "kernel_manager.h"
 
 // Includes from sli:
@@ -45,23 +46,12 @@ SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
   , delay_dataset_ ( false )
   , syn_weight_data_ ( 0 )
   , delay_data_ ( 0 )
-  , param_dicts_ ()
 {
 }
 
 void
 SonataConnector::connect()
 {
-  // From https://portal.hdfgroup.org/display/HDF5/Introduction+to+Parallel+HDF5:
-  // "Each process of the MPI communicator creates an access template and sets it up with MPI parallel access
-  // information. This is done with the H5P_CREATE call to obtain the file access property list and the
-  // H5P_SET_FAPL_MPIO call to set up parallel I/O access."
-  //auto access_prop_list = H5Pcreate(H5P_FILE_ACCESS);
-  // set parallel access with communicator
-  //H5Pset_fapl_mpio(access_prop_list, MPI_COMM_WORLD, MPI_INFO_NULL);
-
-
-
   auto edges = getValue< ArrayDatum >( sonata_dynamics_->lookup( "edges" ) );
 
   //std::ofstream MyFile("check_conns.txt");
@@ -70,10 +60,6 @@ SonataConnector::connect()
   {
     auto edge_dict = getValue< DictionaryDatum >( edge_dictionary_datum );
     auto edge_file = getValue< std::string >( edge_dict->lookup( "edges_file" ) );
-
-    // Create new, empty, synapse dictionaries, one per thread. Will be filled with synapse parameters from the
-    // different edge types
-    set_synapse_params();
 
     // Open the specified file and the specified group in the file.
     H5::H5File file( edge_file, H5F_ACC_RDONLY );
@@ -135,97 +121,81 @@ SonataConnector::connect()
         assert( num_source_node_id == num_target_node_id );
 
         std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
-
 #pragma omp parallel
         {
           auto tid = kernel().vp_manager.get_thread_id();
 
           try
+          {
+            // Retrieve parameters
+            auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
+            auto current_source_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value ) );
+            auto current_target_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value ) );
+
+            // Connect
+            auto snode_it = current_source_nc->begin();
+            auto tnode_it = current_target_nc->begin();
+
+            for ( hsize_t i = 0; i < num_source_node_id; ++i )  // iterate sonata files
+            {
+              const auto sonata_source_id = source_node_id_data[ i ];
+              const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id;
+
+              const auto sonata_target_id = target_node_id_data[ i ];
+              const index target_id = ( *( tnode_it + sonata_target_id ) ).node_id;
+              Node* target = kernel().node_manager.get_node_or_proxy( target_id );
+
+              thread target_thread = target->get_thread();
+
+              if ( target->is_proxy() or tid != target_thread )
               {
-        // Retrieve parameters
-        auto nest_nodes = getValue< DictionaryDatum >( sonata_dynamics_->lookup( "nodes" ) );
-        auto current_source_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value ) );
-        auto current_target_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value ) );
-
-        // Connect
-        auto snode_it = current_source_nc->begin();
-        auto tnode_it = current_target_nc->begin();
-
-        for ( hsize_t i = 0; i < num_source_node_id; ++i )  // iterate sonata files
-        {
-          const auto sonata_source_id = source_node_id_data[ i ];
-          const index snode_id = ( *( snode_it + sonata_source_id ) ).node_id;
-
-          const auto sonata_target_id = target_node_id_data[ i ];
-          const index target_id = ( *( tnode_it + sonata_target_id ) ).node_id;
-          Node* target = kernel().node_manager.get_node_or_proxy( target_id );
-
-          thread target_thread = target->get_thread();
-
-          if ( target->is_proxy() or tid != target_thread )
-          {
-            // skip array parameters handled in other virtual processes
-            //skip_conn_parameter_( tid );
-            //std::cerr << "continue\n";
-            continue;
-          }
-
-          const auto syn_spec = type_id_2_syn_spec_[ edge_type_id_data[ i ] ];
-          const auto model_name = getValue< std::string >( ( *syn_spec )[ "synapse_model" ] );
-          index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( model_name );
-
-          double weight = numerics::nan;
-          if ( weight_dataset_ )
-          {
-            weight = syn_weight_data_[ i ];
-          }
-          else if ( syn_spec->known( names::weight ) )
-          {
-            weight = std::stod( ( *syn_spec )[ names::weight ] );
-          }
-
-          double delay = numerics::nan;
-          if ( delay_dataset_ )
-          {
-            delay = syn_weight_data_[ i ];
-          }
-          else if ( syn_spec->known( names::delay ) )
-          {
-            delay = std::stod( ( *syn_spec )[ names::delay ] );
-          }
-
-          RngPtr rng = get_vp_specific_rng( target_thread );
-          auto param_dict = new Dictionary();
-          auto pd = get_synapse_params_( syn_spec, snode_id, *target, target_thread, rng, param_dict );  //might have to create one param dict per syn_spec???? Do we keep the old versions now????
-
-          //if ( i % 100000 == 0 )
-          //{
-            //std::cerr << "connection number " << i << "\n";
-          //std::cerr << "connection number " << i << " source " << snode_id << " target " << target_id << " weight " << weight << " delay " << delay << "\n";
-
-          //MyFile << "connection number " << i << " source " << snode_id << " target " << target_id << " weight " << weight << " delay " << delay << "\n";
-          //MyFile << snode_id << " " << target_id << " " << weight << " " << delay << "\n";
-          //MyFile << snode_id << " " << target_id << "\n";
-            //std::cerr << "source node id data " << sonata_source_id << "\n";
-            //std::cerr << "snode_it begin " << (*snode_it).node_id << "\n";
-          //}
-
-          kernel().connection_manager.connect( snode_id,
-            target,
-            target_thread,
-            synapse_model_id,
-            pd,
-            delay,
-            weight );
-        }
+                // skip array parameters handled in other virtual processes
+                continue;
               }
-                  catch ( std::exception& err )
-                  {
-                    // We must create a new exception here, err's lifetime ends at
-                    // the end of the catch block.
-                    exceptions_raised_.at( tid ) =
-                      std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-                  }
+
+              auto edge_type_id = edge_type_id_data[ i ];
+              const auto syn_spec = type_id_2_syn_spec_[ edge_type_id ][ tid ];
+              index synapse_model_id = type_id_2_syn_model_[ edge_type_id ];
+
+              double weight = numerics::nan;
+              if ( weight_dataset_ )
+              {
+                weight = syn_weight_data_[ i ];
+              }
+              //else if ( syn_spec->known( names::weight ) )  // THIS WILL NOT WORK ANYMORE BECAUSE WEIGHT AND DELAY IS SKIPPED!! Use edge_params["edge_synapse"][type_id]
+              //{
+               // weight = std::stod( ( *syn_spec )[ names::weight ] );
+              //}
+
+              double delay = numerics::nan;
+              if ( delay_dataset_ )
+              {
+                delay = syn_weight_data_[ i ];
+              }
+              //else if ( syn_spec->known( names::delay ) )
+              //{
+                //delay = std::stod( ( *syn_spec )[ names::delay ] );
+              //}
+
+              RngPtr rng = get_vp_specific_rng( target_thread );
+              get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );
+
+              kernel().connection_manager.connect( snode_id,
+                target,
+                target_thread,
+                synapse_model_id,
+                type_id_2_param_dicts_[ edge_type_id ][ tid ],
+                delay,
+                weight );
+            }
+          }
+          catch ( std::exception& err )
+          {
+            // We must create a new exception here, err's lifetime ends at
+            // the end of the catch block.
+            exceptions_raised_.at( tid ) =
+              std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+          }
         }// omp parallel
         // check if any exceptions have been raised
         for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
@@ -320,15 +290,20 @@ SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_dict )
     {
       throw UnknownSynapseType( model_name );
     }
-    type_id_2_syn_spec_[ type_id ] = d;
+    index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( model_name );
+    set_synapse_params( d, synapse_model_id, type_id );
+    type_id_2_syn_model_[ type_id ] = synapse_model_id;
   }
 }
 
 void
-SonataConnector::set_synapse_params( DictionaryDatum syn_dict, DictionaryDatum synapse_params, index synapse_model_id, int type_id )
+SonataConnector::set_synapse_params( DictionaryDatum syn_dict, index synapse_model_id, int type_id )
 {
-  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );  // NOT AT ALL SURE THIS IS NEEDED!
+  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   std::set< Name > skip_syn_params_ = { names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model };
+
+  std::map< Name, ConnParameter* > synapse_params;
+
   for ( Dictionary::const_iterator default_it = syn_defaults->begin(); default_it != syn_defaults->end(); ++default_it )
   {
     const Name param_name = default_it->first;
@@ -348,47 +323,46 @@ SonataConnector::set_synapse_params( DictionaryDatum syn_dict, DictionaryDatum s
   // create it here once to avoid re-creating the object over and over again.
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    type_id_2_syn_spec_[ type_id ].push_back( new Dictionary() );
+    type_id_2_syn_spec_[ type_id ].push_back( synapse_params );  // DO WE NEED TO DEFINE THIS PER THREAD???
+    type_id_2_param_dicts_[ type_id ].push_back( new Dictionary );
 
-    for (  auto syn_param_it = synapse_params->begin(); syn_param_it != synapse_params->end(); ++syn_param_it )
+    for ( auto param : synapse_params )
     {
-      if ( ( syn_param_it->second )->provides_long() )
+      if ( param.second->provides_long() )
       {
-        ( *type_id_2_syn_spec_[ type_id ][ tid ] )[ syn_param_it->first ] = Token( new IntegerDatum( 0 ) );
+        ( *type_id_2_param_dicts_[ type_id ][ tid ] )[ param.first ] = Token( new IntegerDatum( 0 ) );
       }
       else
       {
-        ( *type_id_2_syn_spec_[ type_id ][ tid ] )[ syn_param_it->first ] = Token( new DoubleDatum( 0.0 ) );
+        ( *type_id_2_param_dicts_[ type_id ][ tid ] )[ param.first ] = Token( new DoubleDatum( 0.0 ) );
       }
     }
   }
 }
 
-DictionaryDatum
-SonataConnector::get_synapse_params_( DictionaryDatum syn_params, index snode_id, Node& target, thread target_thread, RngPtr rng, DictionaryDatum param_dict )
+void
+SonataConnector::get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id )
 {
-  std::set< Name > skip_syn_params_ = { names::weight, names::delay, names::synapse_model };
-
-  for ( auto syn_param_it = syn_params->begin(); syn_param_it != syn_params->end(); ++syn_param_it )
+  for ( auto const& syn_param : type_id_2_syn_spec_[ edge_type_id ][ target_thread ] )
   {
-    const Name param_name = syn_param_it->first;
-    if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
-    {
-      continue; // weight, delay or other non-settable parameter
-    }
+    const Name param_name = syn_param.first;
+    const ConnParameter* param = syn_param.second;
 
-    auto parameter = ConnParameter::create( ( *syn_params )[ param_name ], kernel().vp_manager.get_num_threads() );
-
-    if ( parameter->provides_long() )
+    if ( param->provides_long() )
     {
-      ( *param_dict )[ param_name ] = parameter->value_int( target_thread, rng, snode_id, &target );
+      // change value of dictionary entry without allocating new datum
+      IntegerDatum* dd = static_cast< IntegerDatum* >(
+        ( ( *type_id_2_param_dicts_[ edge_type_id ][ target_thread ] )[ param_name ] ).datum() );
+      ( *dd ) = param->value_int( target_thread, rng, snode_id, &target );
     }
     else
     {
-      ( *param_dict )[ param_name ] = parameter->value_double( target_thread, rng, snode_id, &target );
+      // change value of dictionary entry without allocating new datum
+      DoubleDatum* dd = static_cast< DoubleDatum* >(
+        ( ( *type_id_2_param_dicts_[ edge_type_id ][ target_thread ] )[ param_name ] ).datum() );
+      ( *dd ) = param->value_double( target_thread, rng, snode_id, &target );
     }
   }
-  return param_dict;
 }
 
 } // namespace nest

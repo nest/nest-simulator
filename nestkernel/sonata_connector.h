@@ -30,6 +30,7 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "conn_parameter.h"
 #include "nest_datums.h"
 
 #include "H5Cpp.h"
@@ -56,19 +57,17 @@ private:
   void get_attributes_( std::string& attribute_value, H5::DataSet dataset, std::string attribute_name );
   void weight_and_delay_from_dataset_( H5::Group group);
   void create_type_id_2_syn_spec_( DictionaryDatum edge_dict );
-  void set_synapse_params();
-  DictionaryDatum get_synapse_params_( DictionaryDatum syn_params, index snode_id, Node& target, thread target_thread, RngPtr rng, DictionaryDatum param_dict );
+  void set_synapse_params(DictionaryDatum syn_dict, index synapse_model_id, int type_id);
+  void get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id );
 
   DictionaryDatum sonata_dynamics_;
   bool weight_dataset_;
   bool delay_dataset_;
   double* syn_weight_data_;
   double* delay_data_;
-  //std::map< int, DictionaryDatum > type_id_2_syn_spec_;
-  std::map< int, std::vector< DictionaryDatum > > type_id_2_syn_spec_;
-  //DictionaryDatum param_dict_;
-  //! dictionaries to pass to connect function, one per thread
-  std::vector< DictionaryDatum > param_dicts_;
+  std::map< int, index > type_id_2_syn_model_;
+  std::map< int, std::vector< std::map< Name, ConnParameter* > > > type_id_2_syn_spec_;
+  std::map< int, std::vector< DictionaryDatum > > type_id_2_param_dicts_;
 
 };
 

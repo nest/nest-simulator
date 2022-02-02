@@ -77,7 +77,7 @@ start() {
     if [ "${WSGI}" = "uwsgi" ]; then
       set-uwsgi_opts
       uwsgi --module nest.server:app ${UWSGI_OPTS}
-    elif [ "${WSGI}" == "gunicorn" ]; then
+    elif [ "${WSGI}" = "gunicorn" ]; then
       set-gunicorn_opts
       gunicorn nest.server:app ${GUNICORN_OPTS}
     fi

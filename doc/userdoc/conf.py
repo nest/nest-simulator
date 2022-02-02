@@ -106,7 +106,7 @@ extensions = [
 mathjax_path = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['templates']
 
 sphinx_gallery_conf = {
      # 'doc_module': ('sphinx_gallery', 'numpy'),

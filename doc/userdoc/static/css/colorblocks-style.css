@@ -30,9 +30,8 @@ h1, h2, h3, h4, h5, h6{
 /* links */
 a,
 a:visited,
-a:active,
-a:hover{color:#4f4c4c;}
-a:hover{ text-decoration:underline;}
+a:active {color:#f63;}
+a:hover{text-decoration:underline;}
 
 
 /* Box sizing. Awesome thing. Read about it here: http://www.w3schools.com/cssref/css3_pr_box-sizing.asp */
@@ -272,7 +271,7 @@ This is for mobile devices with a bit larger screens.
 #banner{
 	float:left;
 	text-align:left;
-	margin: 25px 0 0 50px;
+	margin: px 0 0 50px;
 }
 .menu-toggle{/*make menu float right, instead of sitting under the logo*/
 	margin-top:10px; /*this depends on the height of the logo*/
@@ -294,7 +293,7 @@ header{
 #banner{ 
 	float:left; 
 	text-align:left;
-	margin: 25px 0 0 50px;
+	margin: 50px 0 0 50px;
 }
 #hero{
 	padding:13px 0;
@@ -637,6 +636,15 @@ html {
 
 #intro .accordion pre:last-of-type code {
     border-radius: 0 0 10px 10px;
+}
+
+#intro.vertical-padding div#main.blueelement.wrapper.clearfix ul li a {
+  color: #fff;
+
+}
+
+#backmatter.greenelement.vertical-padding div.wrapper.clearfix p a {
+ color: #fff;
 }
 
 #intro .accordion div {

@@ -186,8 +186,10 @@ html_theme_options = {
 
     # Set the repo location to get a badge with stats
     'repo_url': 'https://github.com/nest/nest-simulator/',
-    'repo_name': 'NEST',
-
+    'repo_name': 'NEST simulator',
+    "nav_links": [
+        {"href": "index", "internal": True, "title": "NEST docs home"}
+        ],
     # Visible levels of the global TOC; -1 means unlimited
     'globaltoc_depth': 1,
     # If False, expand all TOC entries
@@ -252,6 +254,7 @@ def toc_customizer(app, docname, source):
 
 def setup(app):
     app.connect("source-read", toc_customizer)
+    app.add_css_file('css/nest_material.css')
     app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
     app.add_js_file("js/copybutton.js")

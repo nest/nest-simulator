@@ -37,7 +37,7 @@ Table of Contents
    Neurons <neuron_docs/index>
    Synapses and connections <synapse_docs/index>
    Devices  <device_docs/index>
-   Spatially-structured networks <networks/index>
+   Spatially-structured networks <network_docs/index>
    Simulation behavior <nest_behavior_docs/running_simulations>
    Random numbers <nest_behavior_docs/random_numbers>
    Built-in timers <nest_behavior_docs/built-in_timers>
@@ -48,6 +48,7 @@ Table of Contents
 
    ref_material/pynest_apis
    Model directory <models/index>
+   From NEST 2.x to 3.x <release_notes/v3.0/refguide_nest2_nest3>
    Glossary <glossary>
 
 .. toctree::

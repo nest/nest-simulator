@@ -53,9 +53,15 @@
           <h1>Welcome!</h1>
           <h2>NEST simulator documentation</h2>
       	  <p>
-	    Installing NEST is (literally) as simple as typing<br/>
+	    Installing NEST is as simple as typing<br/>
 	    <code class="install">pip3 install nest-simulator</code>
       Or check out our <a href="installation/index.html">other installation options</a> 
+  <p>
+        In case the installtion with <code>pip</code> does not provide
+        the flexibility you need, we have plenty of other options!
+        <a href="#" class="buttonlink">Installation options</a>
+
+      </p>
 	  </p>
         </div>
         <div class="grid_2">
@@ -75,7 +81,8 @@
     </div>
   </section>
   <section id="intro" class="vertical-padding">
-    <div class="wrapper clearfix">
+    <div id="main" class="blueelement wrapper clearfix">
+      <div class="row vertical-padding">
       <div class="grid_12">
          <h2> Here is a sample NEST script. Click each section and discover related topics!</h2>
       </div>
@@ -152,127 +159,9 @@
         </div>
       </div>
 
-      <!--
-      <h1>Download and installation</h1>
-      <p>
-        In case the installtion with <code>pip</code> does not provide
-        the flexibility you need, we have plenty of other options!
-        <a href="#" class="buttonlink">Linux</a>
+   </div>
+  </section>
 
-      </p>
-      <h1>Getting started</h1>
-      <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
-        do eiusmod tempor incididunt ut labore et dolore magna
-        aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-        ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis
-        aute irure dolor in reprehenderit in voluptate velit esse
-        cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia
-        deserunt mollit anim id est laborum...
-      </p>
--->
-    </div>
-  </section>
-<!---
-  <section id="features" class="wide-content">
-    <div id="main" class="blueelement wrapper clearfix">
-       <h1>Features</h1> 
-      <div class="row vertical-padding">
-        <div class="grid_4 narrow">
-          <img class="icon" src="_static/img/Nodes-256.png" />
-          <h3 class="icon-h3">Neuron models</h3>
-          <p>
-            NEST comes loaded with numerous state-of-the art neuron
-            models. Textbook standards like integrate-and-fire and
-            Hodgkin-Huxley type models are available alongside high
-            quality implementations of models published by the
-            neuroscience community. NESTML provides a framework to
-            create models without the use of C++.
-          </p>
-          <p>
-            <a class="learn" href="models/models_intro.html">» Visit the model directory</a><br/>
-            <a class="learn" href="#">» Learn about off-grid simulations</a><br/>
-            <a class="learn" href="#">» Create models with NESTML</a>
-          </p>
-        </div>
-        <div class="grid_4 narrow">
-          <img class="icon" src="_static/img/Node-256.png" />
-          <h3 class="icon-h3">Neuronal plasticity</h3>
-          <p>
-            Create connections between neurons with our numerous synapse
-            models of STDP or short-tem plasticity. Looking for
-            gap junctions, or synapses for rate connections or continuous delay?
-            We got you covered!
-          </p>
-          <p>
-            <a class="learn" href="synapse_docs/connection_management.html">» Learn about managing connections</a><br/>
-            <a class="learn" href="synapse_docs/simulations_with_gap_junctions.html">» Simulate with gap junctions</a>
-          </p>
-        </div>
-        <div class="grid_4 narrow">
-          <img class="icon" src="_static/img/Gauge-256.png" />
-          <h3 class="icon-h3">Virtual devices</h3>
-          <p>
-            NEST works like an physiological experiment but inside
-            a computer. We have several different stimulating
-            and recording devices you can use to perform your
-            virtual experiment.
-          </p>
-          <p>
-            <a class="learn" href="device_docs/stimulate_the_network.html">» Stimulate the network</a><br/>
-            <a class="learn" href="device_docs/record_from_simulations.html">» Record from simulations</a>
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="grid_4 narrow">
-          <img class="icon" src="_static/img/Data-Replace-256.png" />
-          <h3 class="icon-h3">Optimized for HPC</h3>
-          <p>
-            Whether you want to work on a small cluster or the
-            largest supercomputers, NEST can scale to your needs. Find out
-            how to set up your environment for efficient simulations no 
-            matter the size!
-          </p>
-          <p>
-            <a class="learn" href="hpc_docs/parallel_computing.html ">» See our guide to parallel computing</a><br/>
-            <a class="learn" href="#">» Tips for HPC set up </a><br>
-            <a class="learn" href="#">» Discover our benchmarking recommendations  </a>
-          </p>
-        </div>
-        <div class="grid_4 narrow">
-          <img class="icon" src="_static/img/Instrument-Microscope-256.png" />
-          <h3 class="icon-h3">Ready for science</h3>
-          <p>
-            To ensure you get the most out of NEST for your research needs, we provide
-            thorough guides on a number of topics, like how randomness works in NEST or
-            tips on how to run simulations. But we also know your study might need something
-            custom, so we made NEST extensible.
-          </p>
-          <p>
-            <a class="learn" href="network_docs/index.html">» Discover how to set up a network in NEST</a><br>
-            <a class="learn" href="https://github.com/nest/nest-extension-module">» Check out NEST extension module </a>
-          </p>
-        </div>
-        <div class="grid_4 narrow">
-          <img class="icon" src="_static/img/Chat-256.png" />
-          <h3 class="icon-h3">Community building</h3>
-          <p>
-            We rely on our amazing community to share knowledge and provide us
-            with feedback. Spot a problem with NEST? Have a question you want
-            to ask developers? Find out how to get in touch with us or contribute
-            to NEST!
-          </p>
-          <p>
-            <a class="learn" href="community.html">» Learn more about contributing to NEST</a><br>
-            <a class="learn" href="community.html">» Contact us</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
--->
   <section id="topics" class="vertical-padding">
     <div class="wrapper clearfix">
       <div class="row">

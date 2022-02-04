@@ -3,10 +3,6 @@
 NEST Server
 ===========
 
-.. contents:: On this page, you'll find
-   :local:
-   :depth: 1
-
 What is NEST Server?
 --------------------
 

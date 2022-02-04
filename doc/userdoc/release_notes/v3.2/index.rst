@@ -11,12 +11,8 @@ NEST.
 If you transition from a version earlier than 3.1, please see our
 selection of earlier :doc:`transition guides <release_notes/index>`.
 
-.. contents:: On this page you'll find
-   :local:
-   :depth: 1
-
 ConnPlotter
 ~~~~~~~~~~~
-All files related to ConnPlotter have been removed from NEST 3.2 and 
+All files related to ConnPlotter have been removed from NEST 3.2 and
 moved to a separate repository `connplotter <https://github.com/nest
 /connplotter> _`.

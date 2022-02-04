@@ -3,10 +3,6 @@
 Connection Management
 =====================
 
-.. contents:: On this page, you'll find
-   :local:
-   :depth: 2
-
 Connections between populations of neurons and between neurons and
 devices for stimulation and recording in NEST are created with the
 :py:func:`.Connect` function. Although each connection is internally

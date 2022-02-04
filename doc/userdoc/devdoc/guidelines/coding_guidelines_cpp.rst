@@ -13,10 +13,6 @@ on their own.
 
 For Python, we enforce `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_ formatting.
 
-.. contents:: On this page, you'll find
-   :local:
-   :depth: 3
-
 Tooling
 -------
 

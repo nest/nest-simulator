@@ -273,6 +273,7 @@ This is for mobile devices with a bit larger screens.
 	text-align:left;
 	margin: px 0 0 50px;
 }
+
 .menu-toggle{/*make menu float right, instead of sitting under the logo*/
 	margin-top:10px; /*this depends on the height of the logo*/
 	float:right;
@@ -482,7 +483,7 @@ you can add resource intensive styles.
 */
 @media only screen and (min-width: 1024px) {
 #hero h1{ font-size:1.4em;}
-} 
+}
 
 /*
 LARGE VIEWING SIZE
@@ -490,7 +491,7 @@ This is for the larger monitors and possibly full screen viewers.
 */
 @media only screen and (min-width: 1240px) {
 #hero h1{ font-size:2em;}
-} 
+}
 
 /*
 RETINA (2x RESOLUTION DEVICES)
@@ -502,7 +503,7 @@ other displays with a 2x resolution.
        only screen and (min-device-pixel-ratio: 1.5) {
 
 
-} 
+}
 
 /*
 iPHONE 5 MEDIA QUERY
@@ -510,7 +511,6 @@ iPhone 5 or iPod Touch 5th generation styles (you can include your own file if y
 */
 @media (device-height: 568px) and (-webkit-min-device-pixel-ratio: 2) { 
 
-  
 }
 
 /*
@@ -746,15 +746,6 @@ code.xref, a code {
 .bs-sidenav.affix {
 	position: static;
 }
-.rst-content code, .rst-content tt, code {
-    border: none;
-    font-size: 85%;
-    background: None;
-    padding-left: 2px;
-    color: black;
-    padding-right: 2px;
-}
-
 .navbar-brand img {
    display: None;
 }
@@ -770,27 +761,6 @@ code.xref, a code {
 code.descclassname {
 	display: none;
 }
-/* from css w3schools: */
-/*
-
-.top-nav {
-  overflow: hidden;
-  background-color: #f63;
-  position: relative; /* Set the navbar to fixed position */
-/*  top: 0; /* Position the navbar at the top of the page */
-/*  width: 100%; /* Full width */
- /* height: 50px;
-}
-*/
-
-
-/* Change background on mouse-over 
-
-.top-nav a:hover {
-  background: #ddd;
-  color: black;
-}
-*/
 
 /* Links inside the navbar */
 .center { 
@@ -823,9 +793,4 @@ code.descclassname {
   color: #fff;
 }
 
-[data-md-color-primary="orange"] .md-header, [data-md-color-primary="orange"] .md-hero {
-	background-color: #ff6633;
-}
-.md-header {
-	color: #fff;
-}
+

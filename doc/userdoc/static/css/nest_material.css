@@ -1,3 +1,21 @@
+/* Set color scheme to NEST orange */
+
+div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__icon{
+  color: #fff;
+}
+html [data-md-color-primary="orange"] .md-nav--primary .md-nav__title--site {
+	background-color: #fff;
+}
+[data-md-color-primary="orange"] .md-nav__source {
+	background-color: #000;
+}
+[data-md-color-primary="orange"] .md-header, [data-md-color-primary="orange"] .md-hero {
+	background-color: #ff6633;
+}
+.admonition-title::before {
+  color: #fff;
+}
+
 [data-md-color-primary="orange"] .md-tabs {
 	background-color: #ff6633;
 }
@@ -10,11 +28,12 @@
 a.md-tabs__link, a.md-source {
   color: #fff;
 }
+/* use blue color from index.html */
 .md-typeset .admonition, .md-typeset details {
   background-color: #1281B3;
   border-radius: 5px;
   color: white;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .md-typeset .admonition > .admonition-title, .md-typeset .admonition > summary, .md-typeset details > .admonition-title, .md-typeset details > summary {
@@ -30,7 +49,7 @@ div.admonition.danger {
  border-left-color: #f63;
 }
 .md-typeset .admonition.warning > .admonition-title {
-  background-color: None;
+  background-color: #fff0;
 }
 .md-tabs {
 	color: #fff;
@@ -39,14 +58,11 @@ div.admonition.danger {
 .md-header {
  color: #fff;
 }
-
-.md-container {
-  padding-top: 0;
-}
-
 .md-nav__link:focus, .md-nav__link:hover {
 	color: #ff6633;
 }
+
+/* Highlight background of code in white so orange does not clash with blue background */
 
 code.xref, a code, a.reference.external, a.reference.internal {
 	font-weight: bold;
@@ -55,17 +71,37 @@ code.xref, a code, a.reference.external, a.reference.internal {
   border-radius: 2px;
 }
 
+/* Increasing font sizes */
+
+.md-typeset .admonition.warning > .admonition-title,
 ul.md-tabs__list li.md-tabs__item a.md-tabs__link {
  color: #fff;
-font-size: .9rem;
-opacity:0.9;
+ font-size: 1.0rem;
+ opacity:0.9;
 }
 .md-typeset {
-	font-size: .9rem;
+	font-size: 1.0rem;
 }
 .md-nav {
+	font-size: .9rem;
+}
+.md-typeset .footnote {
 	font-size: .8rem;
 }
-div.md-header-nav__source a.md-source div.md-source__repository. div.md-source__icon{
-  color: #fff;
+.md-container {
+  padding-top: 0;
 }
+.md-typeset .admonition > .admonition-title::before, .md-typeset .admonition > summary::before, 
+.md-typeset details > .admonition-title::before, .md-typeset details > summary::before {
+	color: #fff;
+}
+
+.md-typeset .admonition.attention > .admonition-title::before, .md-typeset .admonition.attention > summary::before, 
+.md-typeset .admonition.caution > .admonition-title::before, .md-typeset .admonition.caution > summary::before,
+.md-typeset .admonition.warning > .admonition-title::before, .md-typeset .admonition.warning > summary::before,
+.md-typeset details.attention > .admonition-title::before, .md-typeset details.attention > summary::before,
+.md-typeset details.caution > .admonition-title::before, .md-typeset details.caution > summary::before,
+.md-typeset details.warning > .admonition-title::before, .md-typeset details.warning > summary::before {
+	color: #fff;
+}
+

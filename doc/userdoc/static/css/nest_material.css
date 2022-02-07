@@ -25,6 +25,15 @@ html [data-md-color-primary="orange"] .md-nav--primary .md-nav__title--site {
 [data-md-color-primary="orange"] .md-nav__link--active, [data-md-color-primary="orange"] .md-nav__link:active {
 	color: #ff6633;
 }
+/*
+.md-typeset a {
+	color: #f63;
+}
+
+.md-nav__link--active, .md-nav__link:active {
+	color: #8e391d;
+}
+*/
 a.md-tabs__link, a.md-source {
   color: #fff;
 }
@@ -69,6 +78,8 @@ code.xref, a code, a.reference.external, a.reference.internal {
 	color: #f63;
   background-color: #fff;
   border-radius: 2px;
+  padding-right: 2px;
+  padding-left: 2px;
 }
 
 /* Increasing font sizes */

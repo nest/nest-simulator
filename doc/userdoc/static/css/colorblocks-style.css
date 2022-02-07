@@ -246,15 +246,6 @@ a.buttonlink:hover{
   clear: both;
 }
 
-.md-typeset a {
-	color: #f63;
-}
-
-.md-nav__link--active, .md-nav__link:active {
-	color: #8e391d;
-}
-
-
 /****************************************
 *****************************************
 MEDIAQUERIES
@@ -758,9 +749,6 @@ code.xref, a code {
   background-color: #f63;
 }
 
-code.descclassname {
-	display: none;
-}
 
 /* Links inside the navbar */
 .center { 
@@ -793,4 +781,23 @@ code.descclassname {
   color: #fff;
 }
 
+.sig-prename.descclassname{
+  display: none;
+}
 
+.sig.sig-object.py{
+ background-color:#ff663344;
+}
+
+.button-container {
+    width: 520px;
+    overflow-y: auto;
+}
+/*
+.button-container > a {
+    width: 100px;
+    height: 100px;
+    float: left;
+    background: lightgray;
+    margin: 10px;
+}*/

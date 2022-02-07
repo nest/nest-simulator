@@ -35,7 +35,6 @@
       <div class="menu-toggle">Menu</div>
     <ul class="srt-menu" id="menu-main-navigation">
  <li><a href="#intro">Get started</a></li>
-	<li><a href="#features">Features</a></li>
 	<li><a href="#topics">Learn NEST</a></li>
 	<li><a href="#backmatter">Ecosystem</a></li>
       </ul>
@@ -49,32 +48,29 @@
         <div class="grid_5">
           <h1>Welcome!</h1>
           <h2>NEST simulator documentation</h2>
-      	  <p>
-	    Installing NEST is as simple as typing<br/>
-	    <code class="install">pip3 install nest-simulator</code>
-      Or check out our <a href="installation/index.html">other installation options</a> 
   <p>
-        In case the installtion with <code>pip</code> does not provide
-        the flexibility you need, we have plenty of other options!
+  We provide several installation options depending on your needs. </p>
+  <p>
+  Click the button to get NEST!
+  </p>
         <a href="#" class="buttonlink">Installation options</a>
 
       </p>
-	  </p>
         </div>
         <div class="grid_2">
         </div>
         <div class="grid_5 rightfloat">
-          <p>quick links</p>
-          <ul>
-            <li>NESTML - fast prototyping, create own model </li>
-            <li>HPC - all the info for clusters and supercomputer set ups </li>
-            <li>APIs - find all functions </li>
-            <li>Convert scripts from NEST 2.x to 3.x </li>
-            <li>Contact us! </li>
-            <li> NEST simulator home page</li>
-          </ul>
-                  </div>
-      </div>
+          <H2>Quick links</H2>
+          <div class="menu-container">
+    <div class="button-container">
+       <a href="contents.html" class="buttonlink">Overview of all documentation</a>
+       <a href="release_notes/v3.0/refguide_nest2_nest3.html" class="buttonlink">Upgrade NEST 2.x to NEST 3.x</a>
+       <a href="release_notes/index.html" class="buttonlink">Release Notes</a>
+       <a href="hpc_docs/index.html" class="buttonlink">NEST on HPC systems</a>
+       <a href="https://nestml.readthedocs.io/en/latest/" class="buttonlink">NESTML</a>
+       <a href="community.html" class="buttonlink">Contact us</a>
+    </div>
+    </div>
     </div>
   </section>
   <section id="intro" class="vertical-padding">
@@ -105,8 +101,8 @@
         </code></pre>
         <div>
 	  <ul>
-            <li><a href="release_notes/v3.0/features/node_handles.html">Learn about creating neurons</a></li>
-            <li><a href= "release_notes/v3.0/features/parametrization.html">Discover parameterization possibilities</a></li>
+            <li><a href="neuron_docs/node_handles.html">Learn about creating neurons</a></li>
+            <li><a href= "neuron_docs/parametrization.html">Discover parameterization possibilities</a></li>
             <li><a href="models/index_neuron.html">Want a different neuron model? Find them all here!</a></li>
             <li><a href="network_docs/random_numbers.html">Learn how we do randomness in NEST</a></li>
             <li><a href="ref_material/pynest_apis.html#module-nest.lib.hl_api_nodes">Get API docs for Create</a></li>
@@ -122,7 +118,7 @@
 	  <ul>
             <li><a href="device_docs/stimulate_the_network.html">Learn about stimulating the network</a></li>
             <li><a href="models/index_generator.html">Explore the stimulators in our model directory</a></li>
-            <li><a href="release_notes/v3.0/features/handling_connections.html">Find out more about synapse creation in NEST</a></li>
+            <li><a href="synapse_docs/handling_connections.html">Find out more about synapse creation in NEST</a></li>
             <li><a href="synapse_docs/connection_management.html">Find out how to manage connections in NEST</a></li>
 	  </ul>
         </div>
@@ -151,7 +147,6 @@
 	  <ul>
             <li><a href="network_docs/running_simulations.html">Check out our guide how to run simulations</a></li>
             <li><a href="ref_material/pynest_apis.html#module-nest.lib.hl_api_simulation.Simulate">Get API docs for Simulate</a></li>
-            <li><a>Need other visualizations? See NEST Desktop Elephant?</a></li>
 	  </ul>
         </div>
       </div>
@@ -221,7 +216,7 @@
         integration, and code reviews to ensure that the NEST
         code is rock solid at all times. If you want the gritty details
         and find out how it's done
-        come to the dark side! See our <a href="#">developer facing documentation.</a>
+        come to the dark side! See our <a href="devdoc/index.html">developer facing documentation.</a>
               </p>
     </div>
   </section>

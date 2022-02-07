@@ -203,10 +203,6 @@ html_additional_pages = {'index': 'index.html'}
 html_sidebars = {
     "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
 }
-rst_prolog = ".. warning:: \n   This version of the documentation is NOT an official release. \
-             You are looking at 'latest', which is in active and ongoing development. \
-             You can change versions on the bottom left of the screen."
-rst_epilog = ""
 
 # -- Options for HTMLHelp output ------------------------------------------
 

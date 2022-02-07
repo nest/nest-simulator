@@ -50,7 +50,7 @@ Synapse type for a plastic synapse after Urbanczik and Senn
 Description
 +++++++++++
 
-urbanczik_synapse is a connector to create Urbanczik synapses as defined in
+``urbanczik_synapse`` is a connector to create Urbanczik synapses as defined in
 [1]_ that can connect suitable :ref:`multicompartment models
 <multicompartment-models>`. In contrast to most STDP models, the synaptic weight
 depends on the postsynaptic dendritic potential, in addition to the pre- and
@@ -60,6 +60,13 @@ Urbanczik synapses require the archiving of the dendritic membrane potential
 which is continuous in time. Therefore they can only be connected to neuron
 models that are capable of doing this archiving. So far, the only compatible
 model is :doc:`pp_cond_exp_mc_urbanczik <pp_cond_exp_mc_urbanczik>`.
+
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :ref:`precise spike timing <sim_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
 
 Parameters
 ++++++++++
@@ -74,11 +81,6 @@ Wmin        real   Minimum allowed weight
 All other parameters are stored in the neuron models that are compatible
 with the Urbanczik synapse.
 
-Remarks:
-
-So far the implementation of the urbanczik_synapse only supports
-two-compartment neurons.
-
 Transmits
 +++++++++
 
@@ -87,8 +89,9 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Urbanczik R. and Senn W (2014). Learning by the dendritic prediction of
-       somatic spiking. Neuron, 81:521 - 528. https://doi.org/10.1016/j.neuron.2013.11.030
+.. [1] Urbanczik R. and Senn W (2014). Learning by the dendritic
+       prediction of somatic spiking. Neuron, 81:521 - 528.
+       https://doi.org/10.1016/j.neuron.2013.11.030
 
 See also
 ++++++++
@@ -125,8 +128,8 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 

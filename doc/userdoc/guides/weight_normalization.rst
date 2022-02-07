@@ -1,3 +1,5 @@
+.. _weight_normalization:
+
 Weight normalization
 ====================
 
@@ -26,9 +28,9 @@ This would look something like:
 
 .. code-block:: python
 
-   def normalize_weights(neuron_gids_to_be_normalized, w_target=1):
-       for neur in neuron_gids_to_be_normalized:
-           conn = nest.GetConnections(target=[neur])
+   def normalize_weights(neurons_to_be_normalized, w_target=1):
+       for neuron in neurons_to_be_normalized:
+           conn = nest.GetConnections(target=neuron)
            w = np.array(conn.weight)
            w_normed = w / sum(abs(w))  # L1-norm
            conn.weight = w_target * w_normed

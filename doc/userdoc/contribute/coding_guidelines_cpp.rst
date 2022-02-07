@@ -1,3 +1,5 @@
+.. _code_style_cpp:
+
 NEST coding style guidelines for C++
 ====================================
 
@@ -27,47 +29,21 @@ on the clang compiler frontend. It prettyprints input files in a
 configurable manner, and also has Vim and Emacs integration. We supply a
 :ref:`clang-format-file` to enforce some parts of the coding style. During
 the code review process we check that there is no difference between the committed
-files and the formatted version of the committed files:
+files and the formatted version of the committed files.
 
-Developers can benefit from the tool by formatting their changes before issuing
-a pull request: for fixing the formatting of a single file consider using
-``clang-format -i <committed file>`` on that file. For fixing more files at once
-we provide a script that applies the formatting. From the source directory
-call:
-
-.. code::
-
-   ./extras/format_all_c_c++_files.sh [start folder, defaults to '$PWD']
-
-We use clang-format version 3.6 in the Travis CI. Older versions do not
-understand all formatting options we defined in ``.clang-format``. Newer versions
-lead to formatting differences to files formatted with version 3.6 even though the
-same set of rules is used.
-
-Get ``clang-format``:
-Ubuntu see `here <http://llvm.org/apt/>`_:
+Developers can benefit from the tool by formatting their changes
+before issuing a pull request. For fixing more files at once we
+provide a script that applies the formatting. From the source
+directory call:
 
 .. code::
 
-   # To retrieve the archive signature:
-   wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+   ./build_support/format_all_c_c++_files.sh [start folder, defaults to '$PWD']
 
-   # Repository for Trusty (14.04)
-   sudo sh -c 'echo "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" >> /etc/apt/sources.list'
+We use clang-format version 9 in our CI, which is readily available on all Ubuntu versions since 20.04 LTS by running ``apt install clang-format-9``. To install on OS X, you can install by using the following steps:
 
-   # Repositories for Precise (12.04)
-   sudo sh -c 'echo "\ndeb http://llvm.org/apt/precise/ llvm-toolchain-precise-3.6 main" >> /etc/apt/sources.list'
-   sudo sh -c 'echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu precise main" >> /etc/apt/sources.list'
-   # make sure each 'deb ...' is on its own line in /etc/apt/sources.list
-
-   # install clang-format with:
-   sudo apt-get update
-   sudo apt-get install libstdc++6 libllvm3.6 clang-format-3.6
-
-OS X:
-
-* Installing ``clang-format-3.6`` from the `pre-built
-  binaries <http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-apple-darwin.tar.xz>`_.
+1. download and unpack the `pre-built Clang+LLVM-9.0.1 binaries <https://github.com/llvm/llvm-project/releases/download/llvmorg-9.0.1/clang+llvm-9.0.1-x86_64-apple-darwin.tar.xz>`_
+2. copy ``bin/clang-format`` from the archive to ``clang-format-9`` in a location, where it will be found, e.g., ``/usr/local/bin``.
 
 Further we use `Vera++ <https://bitbucket.org/verateam/vera/wiki/Home>`_, which
 'is a programmable tool for verification, analysis and transformation of C++
@@ -85,7 +61,7 @@ Ubuntu:
 
 .. code::
 
-   apt-get install vera++
+   apt install vera++
 
 OS X:
 
@@ -109,7 +85,7 @@ Ubuntu 15.10:
 
 .. code::
 
-  apt-get install cppcheck
+  apt install cppcheck
 
 Earlier versions of Ubuntu do not provide a package for cppcheck 1.69. Please
 follow the instructions to build cppcheck from scratch.
@@ -137,15 +113,15 @@ Build from scratch:
 Local static analysis
 #####################
 
-We ship a script ``./extras/check_code_style.sh`` that lets you perform the
+We ship a script ``./build_support/check_code_style.sh`` that lets you perform the
 checks on all changed files as we do during the Travis CI tasks.
 
 .. code::
 
-   $ ./extras/check_code_style.sh --help
+   $ ./build_support/check_code_style.sh --help
    Usage: check_code_style.sh [options ...]
 
-   Usage: ./extras/check_code_style.sh [options ...]
+   Usage: ./build_support/check_code_style.sh [options ...]
 
    This script processes C/C++ and Python source code files to verify compliance with the NEST
    coding  style  guidelines.  The  checks are performed the same way as in the NEST Travis CI
@@ -155,7 +131,7 @@ checks on all changed files as we do during the Travis CI tasks.
 
    The script expects to be run from the base directory of the NEST sources,
    i.e. all executions should start like:
-    ./extras/check_code_style.sh ...
+    ./build_support/check_code_style.sh ...
 
    The setup of the tooling is explained here:
    https://nest-simulator.readthedocs.io/en/latest/contribute/coding_guidelines_cpp.html
@@ -184,10 +160,8 @@ checks on all changed files as we do during the Travis CI tasks.
                                               the NEST Travis CI build and test environment.
 
        --clang-format=exe               The name of the CLANG-FORMAT executable.
-                                        Default: --clang-format=clang-format-3.6
-                                        Note: CLANG-FORMAT version 3.6 is required.
-                                              This corresponds to the version installed in
-                                              the NEST Travis CI build and test environment.
+                                        Default: --clang-format=clang-format-9
+                                        Note: CLANG-FORMAT version 9 is required.
 
        --pep8=exe                       The name of the PEP8 executable.
                                         Default: --pep8=pep8
@@ -210,7 +184,7 @@ line:
 
 .. code::
 
-   ./extras/check_code_style.sh --git-start=104d47c0 --git-end=d66e4465
+   ./build_support/check_code_style.sh --git-start=104d47c0 --git-end=d66e4465
 
 General remarks and resources
 #############################
@@ -246,7 +220,7 @@ Compiler
 
 NEST compiles with any recent version of the `GNU C/C++
 Compiler <https://gcc.gnu.org/>`_ ``gcc``. Support for and limitations of other
-compilers is described in the :doc:`Installation Instructions <../installation/index>`
+compilers is described in the :ref:`Installation Instructions <install_nest>`
 
 Online reference documents
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -914,7 +888,7 @@ Vera++ profile
 ##############
 
 The Vera++ profile required for testing NEST is available as
-``extras/vera++.profile``. To make it available, copy this file with the
+``build_support/vera++.profile``. To make it available, copy this file with the
 new name ``nest`` to ``/usr/lib/vera++/profiles``. The exact path might
 differ depending on how you installed Vera++. Please refer to the
 documentation of `Vera++ <https://bitbucket.org/verateam/vera/wiki/Home>`_ in that case.

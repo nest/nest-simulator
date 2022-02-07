@@ -1,3 +1,5 @@
+.. _record_sims:
+
 Recording from simulations
 ==========================
 
@@ -25,9 +27,10 @@ the inclusion of a backend for writing binary files in parallel on
 large clusters and supercomputers. If MPI is enabled, a special data
 exchange backend is built, which is useful in co-simulation scenarios.
 
-See the guide on :doc:`recording from simulations
-<../../record_from_simulations>` for details on potentially
-available recording backends.
+.. seealso::
+
+  See the guide on :ref:`recording from simulations
+  <record_simulations>` for details on recording backends.
 
 Changes
 ^^^^^^^
@@ -96,5 +99,5 @@ made the code more complex and prone to errors. In case of high user
 demand, the functionality will be re-added in form of a recording
 backend.
 
-All details about the new infrastructure can be found in the guide on
-:doc:`recording from simulations <../../record_from_simulations>`.
+Details about the new infrastructure can be found in the guide on
+:ref:`recording from simulations <record_simulations>`.

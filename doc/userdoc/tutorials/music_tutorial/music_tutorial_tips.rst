@@ -1,3 +1,5 @@
+.. _tips_music:
+
 Practical tips
 ==============
 
@@ -34,11 +36,6 @@ Start MUSIC using mpirun
     parser expects it and will complain (or crash) otherwise. Also, if
     you try to process comand line options in your Pynest script, it is
     very likely you will confuse MUSIC.
-
-    .. note::
-
-       Please note that MUSIC and the recording backend for Arbor are mutually exclusive
-       and cannot be enabled at the same time.
 
 
 Disable messages
@@ -87,7 +84,7 @@ Build Autotool-enable project
     To build an Autotool-enabled C/C++ project, you don’t actually need to
     be in the main directory. You can create a subdirectory and build
     everything from there. For instance, with the simple C++ MUSIC project
-    in section :doc:`C++ build <music_tutorial_3>`, we can do this:
+    in section :ref:`C++ build <music_tutorial_3>`, we can do this:
 
     .. code-block:: sh
 
@@ -108,5 +105,3 @@ Build Autotool-enable project
     almost ashamed to admit just how many years it took before I
     realized you could do this. I sometimes actually kept two copies of
     projects checked out just so I could build a separate debug version.
-
-

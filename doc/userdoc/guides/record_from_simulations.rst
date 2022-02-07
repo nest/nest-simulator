@@ -1,3 +1,5 @@
+.. _record_simulations:
+
 Record from simulations
 =======================
 
@@ -15,7 +17,7 @@ section about :ref:`Recording Backends <recording_backends>`.
 
 Recording devices can only reliably record data that was generated
 during the previous simulation time step interval. See the guide about
-:doc:`running simulations <running_simulations>` for details about the
+:ref:`running simulations <run_simulations>` for details about the
 temporal aspects of the simulation loop.
 
 .. note::
@@ -94,7 +96,7 @@ properties can be obtained from the kernel's status dictionary.
 
 ::
 
-   nest.GetKernelStatus("recording_backends")
+   >>> print(nest.recording_backends)
    {u'ascii': {},
     u'memory': {},
     u'mpi': {},
@@ -106,12 +108,12 @@ properties can be obtained from the kernel's status dictionary.
      u'sion_n_files': 1}}
 
 The example shows that only the `sionlib` backend has backend-specific
-global properties, which can be modified by supplying a nested
-dictionary to :py:func:`.SetKernelStatus`.
+global properties, which can be modified by setting a nested
+dictionary on the kernel attribute ``recording_backends``.
 
 ::
 
-    nest.SetKernelStatus({"recording_backends": {'sionlib': {'buffer_size': 512}}})
+    nest.recording_backends = {'sionlib': {'buffer_size': 512}}
 
 The following is a list of built-in recording backends that come with
 NEST:

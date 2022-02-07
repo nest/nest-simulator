@@ -221,7 +221,7 @@ nest::ConnectionManager::get_synapse_status( const index source_node_id,
   // receiving devices
   if ( ( source->has_proxies() and target->has_proxies() and connections_[ tid ][ syn_id ] != NULL )
     or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver()
-         and connections_[ tid ][ syn_id ] != NULL ) ) )
+      and connections_[ tid ][ syn_id ] != NULL ) ) )
   {
     connections_[ tid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
   }
@@ -262,7 +262,7 @@ nest::ConnectionManager::set_synapse_status( const index source_node_id,
     // receiving devices
     if ( ( source->has_proxies() and target->has_proxies() and connections_[ tid ][ syn_id ] != NULL )
       or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver()
-           and connections_[ tid ][ syn_id ] != NULL ) ) )
+        and connections_[ tid ][ syn_id ] != NULL ) ) )
     {
       connections_[ tid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
     }
@@ -460,8 +460,8 @@ nest::ConnectionManager::update_delay_extrema_()
 
   if ( not get_user_set_delay_extrema() )
   {
-    // If no min/max_delay is set explicitly (SetKernelStatus), then the default
-    // delay used by the SPBuilders have to be respected for the min/max_delay.
+    // If no min/max_delay is set explicitly, then the default delay used by the
+    // SPBuilders have to be respected for min/max_delay.
     min_delay_ = std::min( min_delay_, kernel().sp_manager.builder_min_delay() );
     max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
   }
@@ -607,8 +607,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
   index synapse_model_id( kernel().model_manager.get_synapsedict()->lookup( syn_model ) );
 
   // Increments pointers to weight and delay, if they are specified.
-  auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d )
-  {
+  auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d ) {
     if ( weights != nullptr )
     {
       ++w;
@@ -810,10 +809,10 @@ nest::ConnectionManager::increase_connection_count( const thread tid, const syni
   ++num_connections_[ tid ][ syn_id ];
   if ( num_connections_[ tid ][ syn_id ] >= MAX_LCID )
   {
-    throw KernelException( String::compose(
-      "Too many connections: at most %1 connections supported per virtual "
-      "process and synapse model.",
-      MAX_LCID ) );
+    throw KernelException(
+      String::compose( "Too many connections: at most %1 connections supported per virtual "
+                       "process and synapse model.",
+        MAX_LCID ) );
   }
 }
 
@@ -848,8 +847,6 @@ nest::ConnectionManager::disconnect( const thread tid,
   const index snode_id,
   const index tnode_id )
 {
-  set_connections_have_changed();
-
   assert( syn_id != invalid_synindex );
 
   const index lcid = find_connection( tid, syn_id, snode_id, tnode_id );

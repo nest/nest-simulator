@@ -84,7 +84,7 @@ class DumpingTestCase(unittest.TestCase):
         l2 = nest.Create('iaf_psc_alpha', positions=pos)
         nest.Connect(l1, l2, cdict)
 
-        print('Num. connections: ', nest.GetKernelStatus('num_connections'))
+        print('Num. connections:', nest.num_connections)
 
         filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
         nest.DumpLayerConnections(l1, l2, 'static_synapse', filename)
@@ -109,7 +109,7 @@ class DumpingTestCase(unittest.TestCase):
         syn_model = 'stdp_synapse'
         nest.Connect(l2, l3, cdict, {'synapse_model': syn_model})
 
-        print('Num. connections: ', nest.GetKernelStatus('num_connections'))
+        print('Num. connections:', nest.num_connections)
 
         filename = os.path.join(self.nest_tmpdir(), 'test_DumpConns.out.cnn')
         nest.DumpLayerConnections(l2, l3, syn_model, filename)

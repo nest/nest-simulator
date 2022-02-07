@@ -1,5 +1,7 @@
 :orphan:
 
+.. _music_latency:
+
 The SetAcceptableLatency command
 --------------------------------
 
@@ -31,10 +33,4 @@ simulation in subtle or obvious ways. In simple feed-forward cases like
 in our example, MUSIC does not need to use any of that extra delay so
 things may work fine, but in complex simulations with recurrent
 connections this may no longer be the case.
-
-.. note::
-
-   Please note that MUSIC and the recording backend for Arbor are mutually exclusive
-   and cannot be enabled at the same time.
-
 

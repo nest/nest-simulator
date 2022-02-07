@@ -63,7 +63,8 @@ public:
 
   GenericDatum( const GenericDatum< D, slt >& gd ) = default;
 
-  const D& operator=( const D& d_s )
+  const D&
+  operator=( const D& d_s )
   {
     d = d_s;
     return d;

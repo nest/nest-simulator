@@ -34,6 +34,22 @@ and independent of network size (indegree=11250).
 
 This is the standard network investigated in [1]_, [2]_, [3]_.
 
+A note on connectivity
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. image:: ../examples/hpc_benchmark_connectivity.svg
+   :width: 50 %
+   :alt: HPC Benchmark network architecture
+   :align: right
+
+Each neuron receives :math:`K_{in,{\\tau} E}` excitatory connections randomly
+drawn from population E and :math:`K_{in,\\tau I}` inhibitory connections from
+population I. Autapses are prohibited (denoted by the crossed out A next to
+the connections) while multapses are allowed (denoted by the M). Each neuron
+receives additional input from an external stimulation device. All delays are
+constant, all weights but excitatory onto excitatory are constant. Excitatory
+onto excitatory weights are time dependent. Figure taken from [4]_.
+
 A note on scaling
 ~~~~~~~~~~~~~~~~~
 
@@ -69,6 +85,8 @@ References
        for neuroscience. Front. Neuroinform. 6:26
 .. [3] Kunkel et al (2014). Spiking network simulation code for petascale
        computers. Front. Neuroinform. 8:78
+.. [4] Senk et al (2021). Connectivity Concepts in Neuronal Network Modeling.
+       arXiv. 2110.02883
 
 """
 
@@ -207,10 +225,9 @@ def build_network(logger):
     stdp_params = brunel_params['stdp_params']
 
     # set global kernel parameters
-    nest.SetKernelStatus({
-        'total_num_virtual_procs': params['nvp'],
-        'resolution': params['dt'],
-        'overwrite_files': True})
+    nest.total_num_virtual_procs = params['nvp']
+    nest.resolution = params['dt']
+    nest.overwrite_files = True
 
     nest.message(M_INFO, 'build_network', 'Creating excitatory population.')
     E_neurons = nest.Create('iaf_psc_alpha', NE, params=model_params)
@@ -220,7 +237,7 @@ def build_network(logger):
 
     if brunel_params['randomize_Vm']:
         nest.message(M_INFO, 'build_network',
-                     'Randomzing membrane potentials.')
+                     'Randomizing membrane potentials.')
 
         random_vm = nest.random.normal(brunel_params['mean_potential'],
                                        brunel_params['sigma_potential'])
@@ -382,7 +399,7 @@ def run_simulation():
         if params['record_spikes']:
             logger.log(str(compute_rate(sr)) + ' # average rate')
 
-        print(nest.GetKernelStatus())
+        print(nest.kernel_status)
 
 
 def compute_rate(sr):
@@ -412,7 +429,7 @@ def lambertwm1(x):
     return sp.lambertw(x, k=-1 if x < 0 else 0).real
 
 
-class Logger(object):
+class Logger:
     """Logger context manager used to properly log memory and timing
     information from network simulations.
 

@@ -25,9 +25,9 @@
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
 #include "event.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 #include "nest.h"
@@ -45,7 +45,7 @@ Current-based generalized integrate-and-fire neuron model with multiple synaptic
 Description
 +++++++++++
 
-gif_psc_exp_multisynapse is the generalized integrate-and-fire neuron
+``gif_psc_exp_multisynapse`` is the generalized integrate-and-fire neuron
 according to Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with
 exponential shaped postsynaptic currents.
 
@@ -55,7 +55,7 @@ differential equation:
 
 .. math::
 
- C*dV(t)/dt = -g_L*(V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
+ C \cdot dV(t)/dt = -g_L \cdot (V(t)-E_L) - \eta_1(t) - \eta_2(t) - \ldots
     - \eta_n(t) + I(t)
 
 where each :math:`\eta_i` is a spike-triggered current (stc), and the neuron
@@ -64,7 +64,7 @@ Dynamic of each :math:`\eta_i` is described by:
 
 .. math::
 
- \tau_\eta{_i}*d{\eta_i}/dt = -\eta_i
+ \tau_\eta{_i} \cdot d{\eta_i}/dt = -\eta_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -78,7 +78,7 @@ firing intensity:
 
 .. math::
 
- \lambda(t) = \lambda_0 * \exp (V(t)-V_T(t)) / \Delta_V
+ \lambda(t) = \lambda_0 \cdot \exp (V(t)-V_T(t)) / \Delta_V
 
 where :math:`V_T(t)` is a time-dependent firing threshold:
 
@@ -92,7 +92,7 @@ Dynamic of each :math:`\gamma_i` is described by:
 
 .. math::
 
-   \tau_{\gamma_i}*d\gamma_i/dt = -\gamma_i
+   \tau_{\gamma_i} \cdot d\gamma_i/dt = -\gamma_i
 
 and in case of spike emission, its value increased by a constant (which can be
 positive or negative):
@@ -114,22 +114,22 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
 
 .. math::
 
-  q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} * (1 - \exp( -\tau_{ref} /
+  q{_\eta}_{giftoolbox} = q_{\eta_{NEST}} \cdot (1 - \exp( -\tau_{ref} /
    \tau_\eta ))
 
 The same formula applies for :math:`q_{\gamma}`.
 
 On the postsynaptic side, there can be arbitrarily many synaptic time constants
-(gif_psc_exp has exactly two: tau_syn_ex and tau_syn_in). This can be reached
+(``gif_psc_exp`` has exactly two: ``tau_syn_ex`` and ``tau_syn_in``). This can be reached
 by specifying separate receptor ports, each for a different time constant. The
-port number has to match the respective "receptor_type" in the connectors.
+port number has to match the respective ``receptor_type`` in the connectors.
 
 The shape of postsynaptic current is exponential.
 
 .. note::
 
-   If `tau_m` is very close to a synaptic time constant, the model
-   will numerically behave as if `tau_m` is equal to the synaptic
+   If ``tau_m`` is very close to a synaptic time constant, the model
+   will numerically behave as if ``tau_m`` is equal to the synaptic
    time constant, to avoid numerical instabilities.
 
    For implementation details see the

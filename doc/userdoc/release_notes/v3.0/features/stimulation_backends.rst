@@ -1,3 +1,5 @@
+.. _stimulation_backends:
+
 Stimulation backends
 ====================
 
@@ -12,13 +14,18 @@ another simulator, or a generic signal generator toolkit.
 
 Technically, this new feature is implemented through stimulation backends that can be based on NEST has been extended by an architecture to select of Nest has been modified to include a backend for
 stimulation devices. This modification is inspired by the backend for
-recording devices. (:doc:`recording from simulations <recording_simulations>`)
+recording devices. (:ref:`recording from simulations <record_simulations>`)
 
 With NEST 3.0, we change the terminology of input device to stimulation device.
 NEST 3.0 supports one stimulation backend, `MPI communication`. This backend is
 available only when the NEST is compiled with MPI support. This is useful in
 case of co-simulation and allows a closed loop simulation if it's coupled with the
 MPI recording backend.
+
+.. seealso::
+
+  Details about the new infrastructure can be found in the guide on
+  :ref:`stimulating the network <stimulate_network>`.
 
 Changes
 ^^^^^^^
@@ -30,5 +37,4 @@ parametrization.  If a backend, such as ``mpi`` is selected, the
 values for producing the stimuli are received from the backend's input
 channel.
 
-All details about the new infrastructure can be found in the guide on
-:doc:`stimulating the network <../../stimulate_the_network.rst>`.
+

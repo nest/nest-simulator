@@ -27,56 +27,63 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 project( nest CXX C )
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
+# check if the given CMAKE_INSTALL_PREFIX is not empty
+if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
+  message(FATAL_ERROR "CMAKE_INSTALL_PREFIX cannot be an empty string")
+endif()
+
+# handle relative installation prefixes
+if( NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
+    # convert relative path to absolute path
+    get_filename_component(absPath ${CMAKE_INSTALL_PREFIX} ABSOLUTE BASE_DIR ${CMAKE_BINARY_DIR})
+    set(CMAKE_INSTALL_PREFIX ${absPath})
+    message(STATUS "Relative CMAKE_INSTALL_PREFIX has been set to absolute path ${CMAKE_INSTALL_PREFIX}")
+endif()
+
 ################################################################################
 ##################         All User Defined options           ##################
 ################################################################################
 
-# set NEST defaults
-set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time. [default 1000.0]" )
-set( tics_per_step "100" CACHE STRING "Specify resolution. [default 100]" )
+# use Python to build PyNEST
+set( with-python ON CACHE STRING "Build PyNEST [default=ON]. To set a specific Python, give the install path." )
+option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx." ON )
 
-# add user modules
-set( external-modules OFF CACHE STRING "External NEST modules to be linked in, separated by ';'. [default=OFF]" )
+# select parallelization scheme
+set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]. Optionally give directory with MPI installation." )
+set( with-openmp ON CACHE BOOL "Build with OpenMP multi-threading [default=ON]. Optionally set OMP compiler flags." )
 
-# use detailed NEST internal timers
-set( with-detailed-timers OFF CACHE STRING "Enable detailed NEST internal time measurements. Detailed timers can affect the performance. [default=OFF]" )
+# external libraries
+set( with-libneurosim OFF CACHE STRING "Build with libneurosim [default=OFF]. Optionally give the directory where libneurosim is installed." )
+set( with-music OFF CACHE STRING "Build with MUSIC [default=OFF]. Optionally give the directory where MUSIC is installed." )
+set( with-sionlib OFF CACHE STRING "Build with SIONlib [default=OFF]. Optionally give the directory where sionlib is installed." )
+set( with-boost ON CACHE STRING "Build with Boost [default=ON]. To set a specific Boost installation, give the install path." )
+set( with-readline ON CACHE STRING "Build with GNU Readline library [default=ON]. To set a specific library, give the install path." )
+set( with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses ltdl for dynamic loading of external user modules." )
+set( with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path." )
 
-# connect NEST with external projects
-set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
-set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
-set( with-sionlib OFF CACHE STRING "Request the use of SIONlib. Optionally give the directory where SIONlib is installed. [default=OFF]" )
-set( with-recordingbackend-arbor OFF CACHE STRING "Request compilation of the recording backend for Arbor. Requires MPI, Python and mpi4py. [default=OFF]" )
+# NEST properties
+set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time [default=1000 tics per ms]." )
+set( tics_per_step "100" CACHE STRING "Specify resolution [default=100 tics per step]." )
+set( external-modules OFF CACHE STRING "External NEST modules to be linked in, separated by ';', [default=OFF]." )
+set( with-detailed-timers OFF CACHE STRING "Build with detailed internal time measurements [default=OFF]. Detailed timers can affect the performance." )
+set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuron identifier type [default='standard']. 'standard' is recommended for most users. If running on more than 262144 MPI processes or more than 512 threads, change to 'hpc'." )
 
-# set parallelization scheme
-set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
-set( with-openmp ON CACHE BOOL "Enable OpenMP multithreading. Optional: set OMP flag. [default=ON]" )
-
-# define default libraries
-set( with-gsl ON CACHE STRING "Find a gsl library. To set a specific gsl installation, set install path. [default=ON]" )
-set( with-readline ON CACHE STRING "Find a readline library. To set a specific readline, set install path. [default=ON]" )
-set( with-ltdl ON CACHE STRING "Find a ltdl library. To set a specific ltdl, set install path. [default=ON]" )
-set( with-python ON CACHE STRING "Build PyNEST. To set a specific Python, set install path. [default=ON]" )
-option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx. [default=ON]" ON )
-set( with-boost ON CACHE STRING "Find a Boost library. To set a specific Boost installation, set install path. [default=ON]" )
-
-# Whether to build a 'mostly' static executable and static libraries.
-option( static-libraries "Build static executable and libraries. [default=OFF]" OFF )
-# additional compile flags
-set( with-optimize ON CACHE STRING "Enable user defined optimizations. [default ON, when ON, defaults to '-O2']" )
-set( with-warning ON CACHE STRING "Enable user defined warnings. [default ON, when ON, defaults to '-Wall']" )
-set( with-debug OFF CACHE STRING "Enable user defined debug flags. [default OFF, when ON, defaults to '-g']" )
-set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Intel compiler. [defaults to '-fp-model strict']" )
-set( with-libraries OFF CACHE STRING "Link additional libraries. Give full path. Separate multiple libraries by ';'. [default OFF]" )
-set( with-includes OFF CACHE STRING "Add additional include paths. Give full path without '-I'. Separate multiple include paths by ';'. [default OFF]" )
-set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1'. Separate multiple defines by ';'. [default OFF]" )
-set( with-version-suffix "" CACHE STRING "Set a user defined version suffix. [default '']" )
+# generic build configuration
+option( static-libraries "Build static executable and libraries [default=OFF]" OFF )
+set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=OFF (uses '-O2')]. When ON, '-O3' is used. Separate multiple flags by ';'." )
+set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )
+set( with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'." )
+set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Intel compiler [default='-fp-model strict']. Separate multiple flags by ';'." )
+set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
+set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
+set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
+set( with-version-suffix "" CACHE STRING "Set a user defined version suffix [default='']." )
 
 # cross-compiling
 # should be set via toolchain files
 set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
 option( k-computer "Enable K computer." OFF )
 
-set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuron identifier type. 'standard' is recommended for most users. If running on more than 262144 MPI processes or more than 512 threads, change to 'hpc'. [default standard]" )
 
 ################################################################################
 ##################      Project Directory variables           ##################
@@ -155,7 +162,6 @@ nest_process_with_music()
 nest_process_with_sionlib()
 nest_process_with_mpi4py()
 nest_process_with_boost()
-nest_process_with_recordingbackend_arbor()
 nest_process_target_bits_split()
 nest_process_version_suffix()
 
@@ -226,8 +232,9 @@ add_custom_target( installcheck
 ################################################################################
 
 add_subdirectory( doc )
+add_subdirectory( bin )
 add_subdirectory( examples )
-add_subdirectory( extras )
+add_subdirectory( build_support )
 add_subdirectory( lib )
 add_subdirectory( libnestutil )
 add_subdirectory( models )
@@ -331,13 +338,13 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/nest-config.in"
-    "${PROJECT_BINARY_DIR}/extras/nest-config" @ONLY
+    "${PROJECT_SOURCE_DIR}/bin/nest-config.in"
+    "${PROJECT_BINARY_DIR}/bin/nest-config" @ONLY
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/nest_vars.sh.in"
-    "${PROJECT_BINARY_DIR}/extras/nest_vars.sh" @ONLY
+    "${PROJECT_SOURCE_DIR}/bin/nest_vars.sh.in"
+    "${PROJECT_BINARY_DIR}/bin/nest_vars.sh" @ONLY
 )
 
 configure_file(
@@ -348,6 +355,11 @@ configure_file(
 configure_file(
     "${PROJECT_SOURCE_DIR}/doc/fulldoc.conf.in"
     "${PROJECT_BINARY_DIR}/doc/fulldoc.conf" @ONLY
+)
+
+configure_file(
+    "${PROJECT_SOURCE_DIR}/pynest/nest/versionchecker.py.in"
+    "${PROJECT_BINARY_DIR}/pynest/nest/versionchecker.py" @ONLY
 )
 
 

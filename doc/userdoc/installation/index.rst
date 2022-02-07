@@ -1,9 +1,16 @@
+.. _install_nest:
+
 Install NEST
 ============
 
 
 Who are you?
 ~~~~~~~~~~~~
+
+These installation instructions should work for most users who do
+not need custom configurations for their systems. If you want to
+compile NEST from source, check the :ref:`advanced_install` section
+and :ref:`cmake_options`.
 
 .. container:: twocol
 
@@ -75,8 +82,16 @@ Who are you?
 
          I am a developer and want to contribute to the code or documentation of NEST.
 
-
 ----
 
-If installation didn't work, see the :doc:`troubleshooting section <../troubleshooting>`.
+If installation didn't work, see the :ref:`troubleshooting section <troubleshooting>`.
 
+
+.. toctree::
+   :hidden:
+
+   linux_install
+   mac_install
+   hpc_install
+   livemedia
+   cmake_options

@@ -24,9 +24,9 @@
 #define VOLUME_TRANSMITTER_H
 
 // Includes from nestkernel:
-#include "archiving_node.h"
 #include "event.h"
 #include "nest_types.h"
+#include "node.h"
 #include "ring_buffer.h"
 #include "spikecounter.h"
 
@@ -103,7 +103,7 @@ EndUserDocs */
 
 class ConnectorBase;
 
-class volume_transmitter : public ArchivingNode
+class volume_transmitter : public Node
 {
 
 public:
@@ -201,7 +201,6 @@ inline void
 volume_transmitter::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  ArchivingNode::get_status( d );
 }
 
 inline void
@@ -209,12 +208,6 @@ volume_transmitter::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
-  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

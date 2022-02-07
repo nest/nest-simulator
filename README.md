@@ -3,18 +3,18 @@
 [![Documentation](https://img.shields.io/readthedocs/nest-simulator?logo=readthedocs&logo=Read%20the%20Docs&label=Documentation)](https://nest-simulator.org/documentation)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4739103.svg)](https://doi.org/10.5281/zenodo.4739103)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5886894.svg)](https://doi.org/10.5281/zenodo.5886894)
 
 [![Latest release](https://img.shields.io/github/release/nest/nest-simulator.svg?color=brightgreen&label=latest%20release)](https://github.com/nest/nest-simulator/releases)
 [![GitHub contributors](https://img.shields.io/github/contributors/nest/nest-simulator?logo=github)](https://github.com/nest/nest-simulator)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/nest/nest-simulator?logo=github&color=%23ff6633)](https://github.com/nest/nest-simulator)
 
-[![Ubuntu version](https://img.shields.io/badge/ubuntu-v2.20.0%20(PPA)-blue?logo=debian)](https://nest-simulator.readthedocs.io/en/latest/installation/)
+[![Ubuntu version](https://img.shields.io/badge/ubuntu-(PPA)-blue?logo=debian)](https://nest-simulator.readthedocs.io/en/latest/installation/)
 [![Fedora package](https://img.shields.io/fedora/v/nest?logo=fedora)](https://src.fedoraproject.org/rpms/nest)
 [![Conda version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
 [![Homebrew version](https://img.shields.io/homebrew/v/nest.svg?logo=apple)](https://formulae.brew.sh/formula/nest)
-[![Docker Image Version](https://img.shields.io/docker/v/nestsim/nest/2.20.0?label=docker&logo=docker&logoColor=white)](https://hub.docker.com/r/nestsim/nest)
-[![Virtual applicance](https://img.shields.io/badge/VM-v2.20.0-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/download.html#download-livemedia)
+[![Docker Image Version](https://img.shields.io/docker/v/nestsim/nest?label=docker&sort=semver&logo=docker&logoColor=white)](https://hub.docker.com/r/nestsim/nest)
+[![Virtual applicance](https://img.shields.io/badge/VM-v3.1-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/download.html#download-livemedia)
 
 [![YouTube Video Views](https://img.shields.io/youtube/views/K7KXmIv6ROY?style=social)](https://www.youtube.com/results?search_query=nest-simulator+neurons)
 [![Twitter Follow](https://img.shields.io/twitter/follow/nestsimulator?style=social)](https://twitter.com/nestsimulator)
@@ -125,61 +125,6 @@ to find out how to install NEST.
 
 Please cite NEST if you use it in your work.
 
-If you use NEST 3.0, please cite it as **Hahne, Jan et al. (2021).
-NEST 3.0. Zenodo. 10.5281/zenodo.4739103**. The full citation is available
-in different formats on [Zenodo](https://doi.org/10.5281/zenodo.4739103).
+- You can find all the information for [citing NEST here](https://nest-simulator.readthedocs.io/en/latest/citing-nest.html)
 
-If you use NEST 2.20.1, please cite it as **Fardet, Tanguy et al. (2020)
-NEST 2.20.1. Zenodo. 10.5281/zenodo.4018718**. The full citation is available
-in different formats on [Zenodo](https://doi.org/10.5281/zenodo.4018718).
 
-If you use NEST 2.20.0, please cite it as **Fardet, Tanguy et al. (2020)
-NEST 2.20.0. Zenodo. 10.5281/zenodo.3605514**. The full citation is available
-in different formats on [Zenodo](https://doi.org/10.5281/zenodo.3605514).
-
-If you use NEST 2.18.0, please cite it as **Jordan, Jakob et al. (2019)
-NEST 2.18.0. Zenodo. 10.5281/zenodo.2605422**. The full citation is available
-in different formats on [Zenodo](https://doi.org/10.5281/zenodo.2605422).
-
-If you use NEST 2.16.0, please cite it as **Linssen, Charl et al. (2018)
-NEST 2.16.0. Zenodo. 10.5281/zenodo.1400175**. The full citation is available
-in different formats on [Zenodo](https://doi.org/10.5281/zenodo.1400175).
-
-If you use NEST 2.14.0, please cite it as **Peyser, Alexander et al. (2017).
-NEST 2.14.0. Zenodo. 10.5281/zenodo.882971**. The full citation is available
-in different formats on [Zenodo](https://doi.org/10.5281/zenodo.882971).
-
-If you use NEST 2.12.0, please cite it as **Kunkel, Susanne et al. (2017).
-NEST 2.12.0. Zenodo. 10.5281/zenodo.259534**. The full citation is available
-in different formats on [Zenodo](https://doi.org/10.5281/zenodo.259534).
-
-If you use NEST v2.10.0, please cite it as **Bos, Hannah et al. (2015).
-NEST 2.10.0. Zenodo. 10.5281/zenodo.44222**. The full citation is available
-in different formats on [Zenodo](https://doi.org/10.5281/zenodo.44222).
-
-If you use NEST v2.8.0, please cite it as **Eppler, Jochen Martin et al. (2015).
-NEST 2.8.0. Zenodo. 10.5281/zenodo.32969**. The full citation is available
-in different formats on [Zenodo](https://doi.org/10.5281/zenodo.32969).
-
-For all versions below NEST v2.8.0 and for citing NEST without referring to a
-specific version, please use: [Gewaltig M-O & Diesmann M (2007) NEST (Neural
-Simulation Tool) Scholarpedia
-2(4):1430](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool)).
-
-Here is a suitable BibTeX entry:
-
-```latex
-@ARTICLE{Gewaltig:NEST,
-  author  = {Marc-Oliver Gewaltig and Markus Diesmann},
-  title   = {NEST (NEural Simulation Tool)},
-  journal = {Scholarpedia},
-  year    = {2007},
-  volume  = {2},
-  pages   = {1430},
-  number  = {4}
-}
-```
-
-Please get in touch with us about your publications that used NEST, we will add
-them to our [publication list](https://www.nest-simulator.org/publications), thus
-making them visible to potential readers.

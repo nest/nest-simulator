@@ -24,9 +24,9 @@
 #define EVENT_H
 
 // C++ includes:
+#include <algorithm>
 #include <cassert>
 #include <cstring>
-#include <algorithm>
 #include <vector>
 
 // Includes from nestkernel:
@@ -248,12 +248,12 @@ public:
   /**
    * Set drift_factor of the event (see DiffusionConnectionEvent).
    */
-  virtual void set_drift_factor( weight ){};
+  virtual void set_drift_factor( weight ) {};
 
   /**
    * Set diffusion_factor of the event (see DiffusionConnectionEvent).
    */
-  virtual void set_diffusion_factor( weight ){};
+  virtual void set_diffusion_factor( weight ) {};
 
   /**
    * Returns true if the pointer to the sender node is valid.
@@ -967,22 +967,20 @@ private:
   static std::vector< synindex > supported_syn_ids_;
   static size_t coeff_length_; // length of coeffarray
 
-  union CoeffarrayBegin
-  {
+  union CoeffarrayBegin {
     std::vector< unsigned int >::iterator as_uint;
     typename std::vector< DataType >::iterator as_d;
 
-    CoeffarrayBegin(){}; // need to provide default constructor due to
-                         // non-trivial constructors of iterators
+    CoeffarrayBegin() {}; // need to provide default constructor due to
+                          // non-trivial constructors of iterators
   } coeffarray_begin_;
 
-  union CoeffarrayEnd
-  {
+  union CoeffarrayEnd {
     std::vector< unsigned int >::iterator as_uint;
     typename std::vector< DataType >::iterator as_d;
 
-    CoeffarrayEnd(){}; // need to provide default constructor due to
-                       // non-trivial constructors of iterators
+    CoeffarrayEnd() {}; // need to provide default constructor due to
+                        // non-trivial constructors of iterators
   } coeffarray_end_;
 
 public:
@@ -1062,7 +1060,8 @@ public:
    * The following operator is used to read the information of the
    * DataSecondaryEvent from the buffer in EventDeliveryManager::deliver_events
    */
-  std::vector< unsigned int >::iterator& operator<<( std::vector< unsigned int >::iterator& pos )
+  std::vector< unsigned int >::iterator&
+  operator<<( std::vector< unsigned int >::iterator& pos )
   {
     // The synid can be skipped here as it is stored in a static vector
 
@@ -1083,7 +1082,8 @@ public:
    * All DataSecondaryEvents are identified by the synid of the
    * first element in supported_syn_ids_.
    */
-  std::vector< unsigned int >::iterator& operator>>( std::vector< unsigned int >::iterator& pos )
+  std::vector< unsigned int >::iterator&
+  operator>>( std::vector< unsigned int >::iterator& pos )
   {
     for ( typename std::vector< DataType >::iterator it = coeffarray_begin_.as_d; it != coeffarray_end_.as_d; ++it )
     {

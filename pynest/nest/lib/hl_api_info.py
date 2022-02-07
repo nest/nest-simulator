@@ -28,8 +28,8 @@ import os
 import textwrap
 import webbrowser
 
-from ..ll_api import *
-from .hl_api_helper import *
+from ..ll_api import check_stack, sli_func, sps, sr, spp
+from .hl_api_helper import broadcast, is_iterable, is_literal, load_help, show_help_with_pager, uni_str
 from .hl_api_types import to_json
 import nest
 
@@ -74,7 +74,7 @@ def helpdesk():
 
     Please note that the help pages will only be available if you ran
     ``make html`` prior to installing NEST. For more details, see
-    :ref:`documentation_workflow`.
+    :ref:`doc_workflow`.
 
     """
 

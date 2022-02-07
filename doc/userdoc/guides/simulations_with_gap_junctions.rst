@@ -1,3 +1,5 @@
+.. _sim_gap_junctions:
+
 Simulations with gap junctions
 ==============================
 
@@ -107,11 +109,11 @@ general the following parameters can be set via kernel parameters:
 
 .. code:: python
 
-    nest.SetKernelStatus({'use_wfr': True,
-                          'wfr_comm_interval': 1.0,
-                          'wfr_tol': 0.0001,
-                          'wfr_max_iterations': 15,
-                          'wfr_interpolation_order': 3})
+    nest.use_wfr = True
+    nest.wfr_comm_interval = 1.0
+    nest.wfr_tol = 0.0001
+    nest.wfr_max_iterations = 15
+    nest.wfr_interpolation_order = 3
 
 For a detailed description of the parameters and their function see
 (`Hahne et al. 2016 <https://arxiv.org/abs/1610.09990>`__, Table 2).

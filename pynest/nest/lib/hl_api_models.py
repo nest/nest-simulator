@@ -23,8 +23,8 @@
 Functions for model handling
 """
 
-from ..ll_api import *
-from .hl_api_helper import *
+from ..ll_api import check_stack, sps, sr, spp
+from .hl_api_helper import is_iterable, is_literal, model_deprecation_warning
 from .hl_api_types import to_json
 
 __all__ = [
@@ -95,7 +95,7 @@ def Models(mtype="all", sel=None):
 
 @check_stack
 def ConnectionRules():
-    """Return a typle of all available connection rules, sorted by name.
+    """Return a tuple of all available connection rules, sorted by name.
 
     Returns
     -------

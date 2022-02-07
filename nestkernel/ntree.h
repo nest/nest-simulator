@@ -25,9 +25,9 @@
 
 // C++ includes:
 #include <bitset>
+#include <iterator>
 #include <utility>
 #include <vector>
-#include <iterator>
 
 // Includes from spatial:
 #include "position.h"
@@ -108,7 +108,8 @@ public:
     /**
      * Postfix increment operator.
      */
-    iterator operator++( int )
+    iterator
+    operator++( int )
     {
       iterator tmp = *this;
       ++*this;
@@ -119,11 +120,13 @@ public:
      * Iterators are equal if they point to the same node in the same
      * ntree.
      */
-    bool operator==( const iterator& other ) const
+    bool
+    operator==( const iterator& other ) const
     {
       return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
     }
-    bool operator!=( const iterator& other ) const
+    bool
+    operator!=( const iterator& other ) const
     {
       return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
     }
@@ -132,7 +135,7 @@ public:
     /**
      * Move to the next leaf quadrant, or set ntree_ to 0 if there are no
      * more leaves.
-    */
+     */
     void next_leaf_();
 
     Ntree* ntree_;
@@ -188,7 +191,8 @@ public:
     /**
      * Postfix increment operator.
      */
-    masked_iterator operator++( int )
+    masked_iterator
+    operator++( int )
     {
       masked_iterator tmp = *this;
       ++*this;
@@ -199,11 +203,13 @@ public:
      * Iterators are equal if they point to the same node in the same
      * ntree.
      */
-    bool operator==( const masked_iterator& other ) const
+    bool
+    operator==( const masked_iterator& other ) const
     {
       return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
     }
-    bool operator!=( const masked_iterator& other ) const
+    bool
+    operator!=( const masked_iterator& other ) const
     {
       return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
     }

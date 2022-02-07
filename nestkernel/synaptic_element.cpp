@@ -37,9 +37,9 @@
 #include "dictutils.h"
 
 /* ----------------------------------------------------------------
-* SynapticElement
-* Default constructors defining default parameters and state
-* ---------------------------------------------------------------- */
+ * SynapticElement
+ * Default constructors defining default parameters and state
+ * ---------------------------------------------------------------- */
 
 nest::SynapticElement::SynapticElement()
   : z_( 0.0 )
@@ -67,7 +67,8 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
   growth_curve_->set( nc_parameters );
 }
 
-nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& other )
+nest::SynapticElement&
+nest::SynapticElement::operator=( const SynapticElement& other )
 {
   if ( this != &other )
   {
@@ -92,8 +93,8 @@ nest::SynapticElement& nest::SynapticElement::operator=( const SynapticElement& 
 }
 
 /* ----------------------------------------------------------------
-* get function to store current values in dictionary
-* ---------------------------------------------------------------- */
+ * get function to store current values in dictionary
+ * ---------------------------------------------------------------- */
 void
 nest::SynapticElement::get( DictionaryDatum& d ) const
 {
@@ -109,8 +110,8 @@ nest::SynapticElement::get( DictionaryDatum& d ) const
 }
 
 /* ----------------------------------------------------------------
-* set function to store dictionary values in the SynaticElement
-* ---------------------------------------------------------------- */
+ * set function to store dictionary values in the SynaticElement
+ * ---------------------------------------------------------------- */
 void
 nest::SynapticElement::set( const DictionaryDatum& d )
 {
@@ -141,8 +142,8 @@ nest::SynapticElement::set( const DictionaryDatum& d )
 
 
 /* ----------------------------------------------------------------
-* Update the number of element at the time t (in ms)
-* ---------------------------------------------------------------- */
+ * Update the number of element at the time t (in ms)
+ * ---------------------------------------------------------------- */
 void
 nest::SynapticElement::update( double t, double t_minus, double Ca_minus, double tau_Ca )
 {

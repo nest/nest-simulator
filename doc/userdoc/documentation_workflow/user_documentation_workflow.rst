@@ -1,4 +1,4 @@
-.. _documentation_workflow:
+.. _userdoc_workflow:
 
 User-level documentation workflow
 #################################
@@ -30,8 +30,8 @@ This workflow aims for the concept of **user-correctable documentation**.
 .. note::
    This workflow shows you how to create **user-level documentation**
    for NEST. For the **developer documentation**, please refer to our
-   :doc:`Developer documentation workflow
-   <developer_documentation_workflow>`.
+   :ref:`Developer documentation workflow
+   <devdoc_workflow>`.
 
 Changing the documentation
 ++++++++++++++++++++++++++
@@ -49,26 +49,27 @@ Setting up your environment
 +++++++++++++++++++++++++++
 
 We recommend that you set up a full NEST developer environment using
-Conda (for details on Conda, see :doc:`../installation/conda_tips`):
+Conda (for details on Conda, see :ref:`conda_tips`):
 
 .. code-block:: bash
 
-    conda env create -f <nest_source_dir>/extras/conda-nest-simulator-dev.yml
-    conda activate nest-simulator-dev
+    cd <nest_source_dir>/
+    conda env create -p conda/
+    conda activate conda/
 
 If you later on want to deactivate or delete the build environment:
 
 .. code-block:: bash
 
    conda deactivate
-   conda remove --name nest-simulator-dev --all
+   rm -rf conda/
 
 If you want to install only a minimal set of packages for building the
 documentation and avoid using Conda, you can use pip:
 
 .. code-block:: bash
 
-    pip3 install -r <nest_source_dir>/extras/nest-simulator-doc-requirements.txt
+    pip3 install -r <nest_source_dir>/doc/requirements.txt
 
 
 Generating documentation with Sphinx
@@ -135,9 +136,7 @@ sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
 5. Re-render documentation as described above.
 
-You can find our full :doc:`documentation style guide <../contribute/styleguide/styleguide>` here.
-
-Previewing on Read the Docs (optional)
+You can find our full :ref:`documentation style guide <doc_styleguide> on Read the Docs (optional).
 ++++++++++++++++++++++++++++++++++++++
 
 Proceed as follows to preview your version of the documentation on Read the
@@ -171,6 +170,6 @@ Creating pull request
 +++++++++++++++++++++
 
 Once your documentation work is finished, you can create a
-:doc:`pull request <../contribute/development_workflow` to the ``master``
+:ref:`pull request <git_workflow>` to the ``master``
 branch of the NEST Source Code Repository. Your pull request will be reviewed
 by the NEST Documentation Team!

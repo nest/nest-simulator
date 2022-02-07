@@ -1,3 +1,5 @@
+.. _toc_guides:
+
 Guides
 ======
 
@@ -7,18 +9,19 @@ Here you can find details on a variety of topics in NEST.
     :maxdepth: 1
     :caption: In-depth guides to NEST
 
-    built-in_timers
     connection_management
     running_simulations
     stimulate_the_network
     record_from_simulations
-    parallel_computing
+    weight_normalization
     random_numbers
+    built-in_timers
+    Reference guide 2.x to 3.0 <../release_notes/v3.0/refguide_nest2_nest3>
     spatially_structured_networks
+    parallel_computing
     simulations_with_gap_junctions
     simulations_with_precise_spike_times
     using_nest_with_music
-    weight_normalization
 
 .. toctree::
     :maxdepth: 1

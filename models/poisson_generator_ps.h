@@ -49,10 +49,10 @@ spike timing version with arbitrary dead times
 Description
 +++++++++++
 
-The poisson_generator_ps simulates a neuron firing with Poisson
-statistics (with dead time), i.e. exponentially distributed interspike
+The ``poisson_generator_ps`` simulates a neuron firing with Poisson
+statistics (with dead time), that is, exponentially distributed interspike
 intervals plus constant dead time, spike events have exact timing,
-i.e. they are not constrained to the simulation time grid.
+that is, they are not constrained to the simulation time grid.
 
 .. note::
    This generator must be connected to all its targets using the

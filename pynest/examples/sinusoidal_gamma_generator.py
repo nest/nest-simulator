@@ -55,7 +55,7 @@ nest.ResetKernel()   # in case we run the script multiple times from iPython
 
 
 plt.figure()
-nest.SetKernelStatus({'resolution': 0.01})
+nest.resolution = 0.01
 
 
 ###############################################################################
@@ -113,7 +113,7 @@ for j in range(num_nodes):
 
 
 nest.ResetKernel()
-nest.SetKernelStatus({'local_num_threads': 4})
+nest.local_num_threads = 4
 
 
 ###############################################################################
@@ -149,7 +149,7 @@ plt.title('Individual spike trains for each target')
 
 
 nest.ResetKernel()
-nest.SetKernelStatus({'local_num_threads': 4})
+nest.local_num_threads = 4
 
 g = nest.Create('sinusoidal_gamma_generator',
                 params={'rate': 100.0, 'amplitude': 50.0,
@@ -179,7 +179,8 @@ plt.title('One spike train for all targets')
 def step(t, n, initial, after, seed=1, dt=0.05):
 
     nest.ResetKernel()
-    nest.SetKernelStatus({"resolution": dt, "rng_seed": seed})
+    nest.resolution = dt
+    nest.rng_seed = seed
 
     g = nest.Create('sinusoidal_gamma_generator', n, params=initial)
     sr = nest.Create('spike_recorder')

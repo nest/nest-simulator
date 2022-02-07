@@ -1,7 +1,11 @@
+.. _refguide_2_3:
+
 Reference guide: NEST 2.x vs NEST 3.0
 =====================================
 
 * This guide shows changes to functions or their output between PyNEST 2.x and PyNEST 3.0
+
+* For additional changes in NEST 3.1 and beyond see our :ref:`release_notes`
 
 * Functions not mentioned are unchanged
 
@@ -15,7 +19,7 @@ Reference guide: NEST 2.x vs NEST 3.0
 
 .. seealso::
 
-  To see code examples of the key changes, check out our :doc:`nest3_features/index`.
+  To see more of the key changes in 3.0, check out our :ref:`list here <toc_3.0_features>`.
 
 .. _setverbosity:
 
@@ -503,7 +507,7 @@ for spatially distributed nodes.
 +-------+------------------------------------------------------------+
 
 What's removed from NEST 3.0?
-=============================
+-----------------------------
 
 Subnets
 ~~~~~~~

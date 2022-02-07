@@ -2,11 +2,14 @@
 Welcome to the NEST simulator documentation!
 ********************************************
 
-If you use NEST for your project, don't forget to :doc:`cite NEST <citing-nest>`!
+In our :ref:`release notes <release_notes>`, you can find an overview of the newest changes and features for NEST 3.x.
+
+If you are transitioning from NEST 2.x to NEST 3.x, check out our :ref:`reference guide <refguide_2_3>`.
+
 
 +------------------------------------+---------------------------------------+
 |                                    |                                       |
-|    :doc:`Download <download>`      |  :doc:`Install <installation/index>`  |
+|    :ref:`Download <download>`      |  :ref:`Install <install_nest>`  |
 |                                    |                                       |
 +------------------------------------+---------------------------------------+
 
@@ -21,13 +24,15 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
 3.  Models of learning and plasticity.
 
 **New to NEST?**
-    Start here at our :doc:`Getting Started <getting_started>` page
+    Start here at our :ref:`getting_started` page
 
 
 **Know which model you need?**
     NEST comes packaged with a large collection of neuron and synaptic plasticity models.
     You can find a list of all available models in our :doc:`model directory <models/index>`,
     or select a model category by clicking one of the images:
+
+If you use NEST for your project, don't forget to :ref:`cite NEST <cite_nest>`!
 
 .. raw:: html
 
@@ -59,42 +64,43 @@ NEST is a simulator for **spiking neural network models**, ideal for networks of
     using the `NESTML modeling language <https://nestml.readthedocs.io/>`_.
 
 **Have a question or issue with NEST?**
-    See our :doc:`Getting Help <getting_help>` page.
+    See our :ref:`Getting Help <getting_help>` page.
 
 Where to find what
 ------------------
 
-* :doc:`Tutorials <tutorials/index>` show you step by step instructions using NEST. If you haven't used NEST before, the PyNEST tutorial is a good place to start.
+* :ref:`Tutorials <tutorials>` show you step by step instructions using NEST. If you haven't used NEST before, the PyNEST tutorial is a good place to start.
 
-* :doc:`Example Networks <examples/index>`  demonstrate the use of dozens of the neural network models implemented in NEST.
+* :ref:`Example Networks <pynest_examples>`  demonstrate the use of dozens of the neural network models implemented in NEST.
 
-* :doc:`Topical Guides <guides/index>` provide deeper insight into several topics and concepts from :doc:`Parallel Computing <guides/parallel_computing>` to handling :doc:`Gap Junction Simulations <guides/simulations_with_gap_junctions>` and :doc:`setting up a spatially-structured network <guides/spatially_structured_networks>`.
+* :ref:`Topical Guides <toc_guides>` provide deeper insight into several topics and concepts from :ref:`Parallel Computing <parallel_computing>`
+  to handling :ref:`Gap Junction Simulations <sim_gap_junctions>` and :ref:`setting up a spatially-structured network <spatial_networks>`.
 
-* :doc:`Reference Material <ref_material/index>` provides a quick look up of definitions, functions and terms.
+* :ref:`Reference Material <pynest_api>` provides a quick look up of definitions, functions and terms.
 
 Interested in contributing?
 ---------------------------
 
-* Have you used NEST in an article or presentation? :doc:`Let us know <community>` and we will add it to our list of `publications <https://www.nest-simulator.org/publications/>`_.
-  Find out how to :doc:`cite NEST <citing-nest>` in your work.
+* Have you used NEST in an article or presentation? :ref:`Let us know <community>` and we will add it to our list of `publications <https://www.nest-simulator.org/publications/>`_.
+  Find out how to :ref:`cite NEST <cite_nest>` in your work.
 
-* If you have any comments or suggestions, please share them on our :doc:`Mailing List <community>`.
+* If you have any comments or suggestions, please share them on our :ref:`Mailing List <community>`.
 
-* Want to contribute code? Visit out our :doc:`Contributing <contribute/index>` pages to get started!
+* Want to contribute code? Visit out our :ref:`Contributing <contribute>` pages to get started!
 
-* Interested in creating or editing documentation? Check out our :doc:`Documentation workflows <documentation_workflow/index>`.
+* Interested in creating or editing documentation? Check out our :ref:`Documentation workflows <doc_workflow>`.
 
 * For more info about our larger community and the history of NEST check out the `NEST Initiative <https://www.nest-initiative.org>`_ website
 
 Related projects
 ----------------
 
-* :doc:`Discover related projects here <related_projects>`
+* :ref:`Discover related projects here <related_projects>`
 
 License
 -------
 
-NEST is available under the :doc:`GNU General Public License 2 or later <license>`. This means that you can
+NEST is available under the :ref:`GNU General Public License 2 or later <license>`. This means that you can
 
 -  use NEST for your research,
 -  modify and improve NEST according to your needs,

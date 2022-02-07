@@ -5,6 +5,10 @@ Administrator installation instructions
 
 If you need to deploy NEST on a machine
 
+.. seealso::
+
+   :ref:`Optimize NEST for HPC systems <>`
+
 - For small clusters (what is small?) see docker installation / spack
 
 Docker container

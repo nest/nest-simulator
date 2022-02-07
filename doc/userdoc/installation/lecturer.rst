@@ -1,3 +1,5 @@
+.. _lecturer:
+
 Lecturer installation instructions
 ----------------------------------
 

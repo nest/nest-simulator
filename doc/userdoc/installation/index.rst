@@ -7,11 +7,6 @@ Install NEST
 Who are you?
 ~~~~~~~~~~~~
 
-These installation instructions should work for most users who do
-not need custom configurations for their systems. If you want to
-compile NEST from source, check the :ref:`advanced_install` section
-and :ref:`cmake_options`.
-
 .. container:: twocol
 
    .. container:: leftside
@@ -46,6 +41,7 @@ and :ref:`cmake_options`.
 
          I'm a lecturer who wants to set up a temporary NEST environment for a classroom or workshop to demonstrate neuroscientifc concepts.
 
+         Take me to :ref:`lecturer install instructionsi <lecturer>`,
 |
 |
 
@@ -64,6 +60,7 @@ and :ref:`cmake_options`.
 
          I'm an administrator responsible for deploying NEST on a cluster or high performance machine for researchers and students.
 
+         Take me to the :ref`admin installation <admin_install>`
 |
 |
 
@@ -82,6 +79,7 @@ and :ref:`cmake_options`.
 
          I am a developer and want to contribute to the code or documentation of NEST.
 
+         Take me to the :ref:`source installation <developer>
 ----
 
 If installation didn't work, see the :ref:`troubleshooting section <troubleshooting>`.

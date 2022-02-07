@@ -1,3 +1,5 @@
+.. _sli_doc:
+
 SLI documentation
 =================
 

@@ -1,3 +1,5 @@
+.. _developer_space:
+
 Developer space
 ===============
 

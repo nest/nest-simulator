@@ -49,7 +49,7 @@ Table of Contents
    ref_material/pynest_apis
    Model directory <models/index>
    From NEST 2.x to 3.x <release_notes/v3.0/refguide_nest2_nest3>
-   Glossary <glossary>
+   Glossary <ref_material/glossary>
 
 .. toctree::
    :maxdepth: 1

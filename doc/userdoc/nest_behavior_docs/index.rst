@@ -1,18 +1,12 @@
+.. _behavior_index:
+
 How NEST works
 ==============
 
 
-* how to run simulations
+.. toctree::
 
-* built in timers
-
-* randomness in NEST
-
-* parallel computing > HPC
-
-* benchmarking > HPC
-
-* pinning threads > HPC
-
-
+   built-in_timers
+   random_numbers
+   running_simulations
 

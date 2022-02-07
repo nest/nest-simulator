@@ -1,3 +1,5 @@
+.. _coupling_index:
+
 Coupling NEST with other tools
 ==============================
 
@@ -7,5 +9,5 @@ Communicate with other tools
 .. toctree::
     :maxdepth: 1
 
-    ../nest_server
+    nest_server
     using_nest_with_music

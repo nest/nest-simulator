@@ -1,3 +1,5 @@
+.. _neurons_index:
+
 All about neurons in NEST
 =========================
 

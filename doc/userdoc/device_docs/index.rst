@@ -1,3 +1,5 @@
+.. _device_index:
+
 All about devices in NEST
 =========================
 

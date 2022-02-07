@@ -1,3 +1,5 @@
+.. _hpc_index:
+
 All about high performance computing
 ====================================
 

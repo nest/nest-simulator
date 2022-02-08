@@ -41,19 +41,18 @@ class Node;
 /**
  * Provide sparse representation of local nodes.
  *
- * This class is a container providing lookup of local nodes (as Node*)
+ * This class is a container providing lookup of thread-local nodes (as Node*)
  * based on node IDs.
  *
  * Basically, this array is a vector containing only pointers to local nodes.
- * For M MPI processes, we have
+ * For N virtual processes, we have (if only nodes without proxies)
  *
- *   node ID  %  M  --> rank
- *   node ID div M  --> index on rank
+ *   node ID  %  N  --> VP
+ *   node ID div N  --> index on VP
  *
  * so that the latter gives and index into the local node array. This index
  * will be skewed due to nodes without proxies present on all ranks, whence
- * computation may give an index that is too low and we must search to the right
- * for the actual node. We never need to search to the left.
+ * we must search from the estimated location in the array.
  */
 class SparseNodeArray
 {
@@ -143,7 +142,13 @@ private:
   index max_node_id_;              //!< largest node ID in network
   index local_min_node_id_;        //!< smallest local node ID
   index local_max_node_id_;        //!< largest local node ID
-  double node_id_idx_scale_;       //!< interpolation factor
+
+  /**
+   * Factor for estimating location of node in array.
+   *
+   * Mutable to allow adjustment based on lookup experience.
+   */
+  mutable double node_id_idx_scale_;
 };
 
 } // namespace nest

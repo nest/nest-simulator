@@ -74,7 +74,7 @@ nest::SparseNodeArray::add_local_node( Node& node )
   // implies nodes_.size() > 1
   if ( local_max_node_id_ > local_min_node_id_ )
   {
-    double size = static_cast< double >( nodes_.size() - 1 );
+    const double size = static_cast< double >( nodes_.size() - 1 );
     node_id_idx_scale_ = size / ( local_max_node_id_ - local_min_node_id_ );
   }
   assert( node_id_idx_scale_ > 0. );
@@ -110,19 +110,31 @@ nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
   }
 
   // now estimate index
-  size_t idx = std::floor( node_id_idx_scale_ * ( node_id - local_min_node_id_ ) );
-  assert( idx < nodes_.size() );
+  const size_t idx_guess = std::min( static_cast< size_t >( std::floor( node_id_idx_scale_ * ( node_id - local_min_node_id_ ) ) ),
+  		                               nodes_.size() - 1 );
+  assert( idx_guess < nodes_.size() );
 
   // search left if necessary
+  auto idx = idx_guess;
   while ( 0 < idx and node_id < nodes_[ idx ].node_id_ )
   {
     --idx;
   }
+
   // search right if necessary
   while ( idx < nodes_.size() and nodes_[ idx ].node_id_ < node_id )
   {
     ++idx;
   }
+
+  // adjust scaling based on search steps required
+  if ( std::abs( static_cast< long >( idx ) - static_cast< long >( idx_guess )) > 10 )
+  {
+  	node_id_idx_scale_ = static_cast< double >( idx ) / ( node_id - local_min_node_id_ );
+  }
+  assert( node_id_idx_scale_ >= 0.0 );
+  assert( node_id_idx_scale_ <= 1.0 );
+
   if ( idx < nodes_.size() and nodes_[ idx ].node_id_ == node_id )
   {
     return nodes_[ idx ].node_;

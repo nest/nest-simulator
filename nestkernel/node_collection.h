@@ -136,6 +136,8 @@ private:
     size_t part,
     size_t offset,
     size_t step = 1 );
+    
+  void cond_update_idx();  //!< conditionally updates element_idx and part_idx  
 
 public:
   nc_const_iterator( const nc_const_iterator& nci ) = default;
@@ -677,34 +679,7 @@ nc_const_iterator::operator++()
   else
   {
     element_idx_ += step_;
-    // If we went past the size of the primitive, we need to adjust the element
-    // and primitive part indices.
-    size_t primitive_size = composite_collection_->parts_[ part_idx_ ].size();
-    while ( element_idx_ >= primitive_size )
-    {
-      element_idx_ = element_idx_ - primitive_size;
-      ++part_idx_;
-      if ( part_idx_ < composite_collection_->parts_.size() )
-      {
-        primitive_size = composite_collection_->parts_[ part_idx_ ].size();
-      }
-    }
-    // If we went past the end of the composite, we need to adjust the
-    // position of the iterator.
-    if ( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 )
-    {
-      if ( part_idx_ >= composite_collection_->end_part_ and element_idx_ >= composite_collection_->end_offset_ )
-      {
-        part_idx_ = composite_collection_->end_part_;
-        element_idx_ = composite_collection_->end_offset_;
-      }
-    }
-    else if ( part_idx_ >= composite_collection_->parts_.size() )
-    {
-      auto end_of_composite = composite_collection_->end();
-      part_idx_ = end_of_composite.part_idx_;
-      element_idx_ = end_of_composite.element_idx_;
-    }
+    cond_update_idx();
   }
   return *this;
 }
@@ -719,34 +694,7 @@ nc_const_iterator::operator+=( const size_t n )
   else
   {
     element_idx_ += n * step_;
-    // If we went past the size of the primitive, we need to adjust the element
-    // and primitive part indices.
-    size_t primitive_size = composite_collection_->parts_[ part_idx_ ].size();
-    while ( element_idx_ >= primitive_size )
-    {
-      element_idx_ = element_idx_ - primitive_size;
-      ++part_idx_;
-      if ( part_idx_ < composite_collection_->parts_.size() )
-      {
-        primitive_size = composite_collection_->parts_[ part_idx_ ].size();
-      }
-    }
-    // If we went past the end of the composite, we need to adjust the
-    // position of the iterator.
-    if ( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 )
-    {
-      if ( part_idx_ >= composite_collection_->end_part_ and element_idx_ >= composite_collection_->end_offset_ )
-      {
-        part_idx_ = composite_collection_->end_part_;
-        element_idx_ = composite_collection_->end_offset_;
-      }
-    }
-    else if ( part_idx_ >= composite_collection_->parts_.size() )
-    {
-      auto end_of_composite = composite_collection_->end();
-      part_idx_ = end_of_composite.part_idx_;
-      element_idx_ = end_of_composite.element_idx_;
-    }
+    cond_update_idx();
   }
   return *this;
 }

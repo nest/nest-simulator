@@ -132,7 +132,9 @@ nest::LoggingManager::all_entries_accessed( const Dictionary& d,
   {
     if ( dict_miss_is_error_ )
     {
+      std::cout << "all_entries_accessed(): before throw; missed=" << missed << std::endl;
       throw UnaccessedDictionaryEntry( missed );
+      std::cout << "all_entries_accessed(): after throw" << std::endl;
     }
     else
     {

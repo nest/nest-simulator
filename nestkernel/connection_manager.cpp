@@ -423,7 +423,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   ConnBuilder* cb = get_conn_builder( rule_name, sources, targets, conn_spec, syn_specs );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
-  ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
+  //ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
   for ( auto syn_params : syn_specs )
   {
     ALL_ENTRIES_ACCESSED( *syn_params, "Connect", "Unread dictionary entries in syn_spec: " );

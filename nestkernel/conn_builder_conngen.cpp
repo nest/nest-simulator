@@ -41,6 +41,7 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
   , cg_( ConnectionGeneratorDatum() )
   , params_map_()
 {
+  std::cout << "ConnectionGeneratorBuilder init." << std::endl;
   updateValue< ConnectionGeneratorDatum >( conn_spec, "cg", cg_ );
   if ( cg_->arity() != 0 )
   {

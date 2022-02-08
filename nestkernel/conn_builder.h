@@ -427,6 +427,23 @@ private:
   ParameterDatum p_; //!< connection probability
 };
 
+class BernoulliAstroBuilder : public ConnBuilder
+{
+public:
+  BernoulliAstroBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
+
+protected:
+  void connect_();
+
+private:
+  void inner_connect_( const int, RngPtr, Node*, index );
+  ParameterDatum p_; //!< connection probability
+  ParameterDatum p_astro_; //!< connection probability astro=>neuron
+};
+
 class SymmetricBernoulliBuilder : public ConnBuilder
 {
 public:

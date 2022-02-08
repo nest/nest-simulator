@@ -136,8 +136,8 @@ private:
     size_t part,
     size_t offset,
     size_t step = 1 );
-    
-  void cond_update_idx();  //!< conditionally updates element_idx and part_idx  
+
+  void cond_update_idx(); //!< conditionally updates element_idx and part_idx
 
 public:
   nc_const_iterator( const nc_const_iterator& nci ) = default;

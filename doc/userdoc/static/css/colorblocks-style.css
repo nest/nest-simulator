@@ -793,11 +793,8 @@ code.xref, a code {
     width: 520px;
     overflow-y: auto;
 }
-/*
-.button-container > a {
-    width: 100px;
-    height: 100px;
-    float: left;
-    background: lightgray;
-    margin: 10px;
-}*/
+
+.hljs {
+ color: #444;
+ background: #f0f0f0;
+}

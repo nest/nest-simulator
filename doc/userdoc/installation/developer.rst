@@ -1,47 +1,45 @@
+.. _dev_install:
+
 Developer installation instructions
 -----------------------------------
 
-- compile from source
-
-- developer workflows / tools
-
-- Run benchmarks
 
 Compile NEST from source code:
 
-*  Download the source code for the  `current release <https://github.com/nest/nest-simulator/releases>_`
+*  Download the source code for the  `current release <https://github.com/nest/nest-simulator/releases>`_.
 
-* Unpack the tarball
+* Unpack the tarball.
 
-  .. code-block::
+.. code-block::
 
     tar -xzvf nest-simulator-x.y.z.tar.gz
 
-* Or Fork NEST and clone the repository on `GitHub <https://github.com/nest/nest-simulator>`_. See details on :doc:`GitHub workflows here <../contribute/development_workflow>`).
+* Or Fork NEST and clone the repository on `GitHub <https://github.com/nest/nest-simulator>`_.
+  See details on :ref:`GitHub workflows here <git_workflow>`.
 
 If not already installed on your system, the following packages are recommended (see also the Dependencies section)
 
 create a build directory
 
-  .. code-block:: bash
+.. code-block:: bash
 
      mkdir build/
 
 change into build directory
 
-  .. code-block:: bash
+.. code-block:: bash
 
      cd build/
 
 compile and build NEST:
 
-  .. code-block:: bash
+.. code-block:: bash
 
      cmake /source/directory/
 
 See our :doc:`cmake_options` for different configuration options
 
-  .. code-block:: bash
+.. code-block:: bash
 
      make
      make install
@@ -53,9 +51,9 @@ See our :doc:`cmake_options` for different configuration options
 Developer tools
 ~~~~~~~~~~~~~~~
 
-A complete list of required packages to run tests, build documentation, nest-server, NEST
-is available in a conda yaml file.
+A complete list of required packages to install NEST, run tests, and  build documentation, is available in the
+``environment.yml`` file  on the `NEST simulator GitHub page <https://github.com/nest/nest-simulator>`_.
 
-See development workflows here
+Check out all the :ref:`development workflows here <developer_space>`.
 
 

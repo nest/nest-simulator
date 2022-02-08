@@ -3,34 +3,49 @@
 Lecturer installation instructions
 ----------------------------------
 
-For a centralized installation workflow where participants connect to NEST over the internet (i.e, participants do not need to install NEST themselves).
-.... (requirement mac or Linux - does MS work?)
 
-* Check out  graphical user interface NEST-Desktop, to help visualize and illustrate complex network simulations.
+NEST Desktop
+~~~~~~~~~~~~
 
-* Docker installation
+* :doc:`NEST Desktop <desktop:index>` is a graphical user interface designed for illustrating neural network concepts
+  ideal for the classroom setting.
 
-* where should i install nest? (any considerations / requirements) what about wifi / internet connections
+We recommend you checkout the NEST desktop project and see if it fits your needs!
 
-* see here for installing docker
 
-* what information do particpants need
+Docker install
+~~~~~~~~~~~~~~
 
-    * what do they need to install?
+We provide a docker container for NEST, with options to include NEST-Desktop, Jupyter notebooks or Jupyterlab.
 
-    * NEST Server?
+See :ref:`instructions for docker here <docker>`.
 
-* For situations where particpants will need to install NEST, we recommend the compneurolab live media (all operating systems)
 
-    * suggest participants to look at main page (interasctivs sample script) to get an idea
 
-* here are some teaching resources
+Live media
+~~~~~~~~~~
 
-    * PyNEST tutorials
 
-    * nestml tutorials
+We provide an OVA live media format that can work in virtual machines (like Virtualbox).
+See the :ref:`live media install instructions here <live_media>`
 
-    * NEST-Desktop analysis of . . .
+Alternatively, you can check out the `Comp-Neuro Fedora Project <https://labs.fedoraproject.org/en/comp-neuro/>`_.
+They provide an image of many computational neuroscience tools including NEST!
+
+.. note::
+
+  NEST developers do not officially support the Comp-Neuro Fedora Project. Questions and issues regarding the image from
+  Comp-Neuro Fedora should be directed to that community.
+
+.. admonition:: Teaching material
+
+  Here is some material that you find useful for your students:
+
+  * :ref:`PyNEST tutorials <tutorials>`
+
+  * For creating and modifying models, see :doc:`NESTML tutorials <nestml:tutorials/tutorials_list>`
+
+
 
 
 

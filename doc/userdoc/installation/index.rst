@@ -41,7 +41,7 @@ Who are you?
 
          I'm a lecturer who wants to set up a temporary NEST environment for a classroom or workshop to demonstrate neuroscientifc concepts.
 
-         Take me to :ref:`lecturer install instructionsi <lecturer>`,
+         Take me to :ref:`lecturer install instructions <lecturer>`,
 |
 |
 
@@ -60,7 +60,8 @@ Who are you?
 
          I'm an administrator responsible for deploying NEST on a cluster or high performance machine for researchers and students.
 
-         Take me to the :ref`admin installation <admin_install>`
+         Take me to the :ref:`admin installation <admin_install>`.
+
 |
 |
 
@@ -79,7 +80,7 @@ Who are you?
 
          I am a developer and want to contribute to the code or documentation of NEST.
 
-         Take me to the :ref:`source installation <developer>
+         Take me to the :ref:`source installation <dev_install>.
 ----
 
 If installation didn't work, see the :ref:`troubleshooting section <troubleshooting>`.

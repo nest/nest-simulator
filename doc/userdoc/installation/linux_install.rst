@@ -45,8 +45,8 @@ If you want to use PyNEST, we recommend to install the following along with thei
 Installation from source in a conda environment
 --------------------------------------------------------
 
-* Get nest-simulator from Github `https://github.com/nest/nest-simulator`_ or download a zip `here`_.
-* Create a conda environment from this `environment.yml https://github.com/nest/nest-simulator/blob/master/environment.yml`_ file. 
+* Get nest-simulator from Github `<https://github.com/nest/nest-simulator>`_ or download a zip `here`_.
+* Create a conda environment from this `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_ file. 
 
 .. code-block:: bash
     conda env create -f nest-simulator/environment.yml -p <path/to/conda/env>
@@ -109,7 +109,7 @@ further adjust settings for your system.
     python -m venv nest_env
     source nest_env/bin/activate
 
-* Unpack the tarball `missing_link_to_tarball`_
+* Unpack the tarball `<missing_link_to_tarball>`_
 
 .. code-block:: sh
 

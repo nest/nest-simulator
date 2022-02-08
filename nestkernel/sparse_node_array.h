@@ -143,12 +143,25 @@ private:
   index local_min_node_id_;        //!< smallest local node ID
   index local_max_node_id_;        //!< largest local node ID
 
-  /**
-   * Factor for estimating location of node in array.
+  /*
+   * We assume that either all neurons or all devices are created first.
+   * As long as scale_split_id_ == -1, we have only seen one kind of nodes.
+   * When the first local node is added, adding_nodes_with_proxies_ gets the proper value.
+   * Once we get a node of a kind not agreeing with the value of adding_nodes_with_proxies_,
+   * we have seen a node-kind change and we set scale_split_id_ to the NodeID of the node we are
+   * adding. We later apply id_idx_scale_[node_id < scale_split_id_].
    *
-   * Mutable to allow adjustment based on lookup experience.
+   * Note / needed changes:
+   * - scale_split_id_ should grow with each node as long as not split
+   * - also need scale_split_idx_
+   * - id_idx_scale_[0] is updated as long as we have not split while adding, after split ...[1]
+   * - During lookup, the scale of the part used is updated.
    */
-  mutable double node_id_idx_scale_;
+  index scale_split_id_;
+  size_t scale_split_idx_;
+  bool split_has_occured_;
+  bool adding_nodes_with_proxies_;
+  mutable double id_idx_scale_[ 2 ] = { 1.0, 1.0 };
 };
 
 } // namespace nest
@@ -178,7 +191,12 @@ nest::SparseNodeArray::clear()
   max_node_id_ = 0;
   local_min_node_id_ = 0;
   local_max_node_id_ = 0;
-  node_id_idx_scale_ = 1.;
+  scale_split_id_ = 0;
+  scale_split_idx_ = 0;
+  split_has_occured_ = false;
+  adding_nodes_with_proxies_ = false;
+  id_idx_scale_[ 0 ] = 1.0;
+  id_idx_scale_[ 1 ] = 1.0;
 }
 
 inline nest::Node*

@@ -1,3 +1,5 @@
+.. _music_tutorial_4:
+
 The pymusic interface
 ---------------------
 
@@ -8,7 +10,7 @@ be a lot more convenient than C++. You have Numpy, Scipy and other high-level
 libraries available, and you don’t need to compile anything.
 
 The interface is closely modelled on the C++ API; indeed, the steps to
-use it is almost exactly the same. You can mostly refer to the :doc:`C++
+use it is almost exactly the same. You can mostly refer to the :ref:`C++
 description <music_tutorial_3>` for explanation. Below we will only highlight the
 differences to the C++ API. The full example code is in the
 ``pymusic`` directory in the MUSIC repository.

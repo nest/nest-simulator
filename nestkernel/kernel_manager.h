@@ -41,7 +41,6 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-// clang-format off
 /** @BeginDocumentation
  Name: kernel - Global properties of the simulation kernel.
 
@@ -71,17 +70,20 @@
                                              communication (read only)
 
  Random number generators
- rng_types                     arraytype   - Names of random number generator types available (read only)
+ rng_types                     arraytype   - Names of random number generator types
+                                             available (read only)
  rng_type                      stringtype  - Name of random number generator type used by kernel
- rng_seed                      integertype - Seed value used as basis of seeding of all random number
-                                             generators managed by the kernel (\f$1 leq s \leq 2^{32}-1\f$).
+ rng_seed                      integertype - Seed value used as basis of seeding of all random
+                                             number generators managed by the kernel
+                                             (\f$1 leq s \leq 2^{32}-1\f$).
 
  Output
  data_path                     stringtype  - A path, where all data is written to
                                              (default is the current directory)
  data_prefix                   stringtype  - A common prefix for all data files
  overwrite_files               booltype    - Whether to overwrite existing data files
- print_time                    booltype    - Whether to print progress information during the simulation
+ print_time                    booltype    - Whether to print progress information during the
+                                             simulation
 
  Network information
  network_size                  integertype - The number of nodes in the network (read only)
@@ -100,7 +102,6 @@
 
  SeeAlso: Simulate, Node
  */
-// clang-format on
 
 namespace nest
 {

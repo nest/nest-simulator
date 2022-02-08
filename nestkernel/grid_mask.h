@@ -152,7 +152,7 @@ GridMask< D >::get_dict() const
 
   long shape_x = lower_right_[ 0 ] - upper_left_[ 0 ];
   long shape_y = lower_right_[ 1 ] - upper_left_[ 1 ];
-  std::vector< long > shape_dim{ shape_x, shape_y };
+  std::vector< long > shape_dim { shape_x, shape_y };
 
   if ( D == 3 )
   {

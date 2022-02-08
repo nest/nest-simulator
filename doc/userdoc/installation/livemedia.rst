@@ -1,3 +1,5 @@
+.. _live_media:
+
 NEST LIVE MEDIA Installation
 =============================
 
@@ -28,9 +30,9 @@ Windows users can follow instructions on the website (see above).
 NEST image setup
 ------------------
 
-* Download the `NEST live medium <https://www.nest-simulator.org/downloads/gplreleases/NEST_2.20.0_Virtual_Box_lubuntu_18.04.ova>`_
+* Download the `NEST live medium <https://www.nest-simulator.org/downloads/gplreleases/nest-latest.ova>`_
 
-* Start Virtual Box and import the virtual machine image "NEST_2.20.0_Virtual_Box_lubuntu_18.04.ova" (**File** > **Import Appliance**)
+* Start Virtual Box and import the virtual machine image (**File** > **Import Appliance**)
 
 * Once imported, you can run the NEST image
 

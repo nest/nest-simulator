@@ -33,4 +33,3 @@ install( FILES sli/nestrc.sli
     DESTINATION ${CMAKE_INSTALL_DOCDIR}/sli
     )
 
-add_subdirectory( ConnPlotter )

@@ -115,7 +115,7 @@ fdbuf::close()
     // std::cerr<<"overflow failed!"<<std::endl;
     success = false;
   }
-  if (::close( m_fd ) == -1 )
+  if ( ::close( m_fd ) == -1 )
   {
     // std::cerr<<"::close failed: "<<std::endl;perror(NULL);
     success = false;

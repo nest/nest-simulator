@@ -25,8 +25,8 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
-#include <limits>
 #include <iostream>
+#include <limits>
 
 // Includes from libnestutil:
 #include "numerics.h"
@@ -34,8 +34,8 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "universal_data_logger_impl.h"
 #include "name.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -150,15 +150,15 @@ nest::glif_cond::Parameters_::Parameters_()
   , th_spike_add_( 0.37 )    // in mV
   , th_spike_decay_( 0.009 ) // in 1/ms
   , voltage_reset_fraction_( 0.20 )
-  , voltage_reset_add_( 18.51 )                          // in mV
-  , th_voltage_index_( 0.005 )                           // in 1/ms
-  , th_voltage_decay_( 0.09 )                            // in 1/ms
-  , asc_init_( std::vector< double >( 2, 0.0 ) )         // in pA
-  , asc_decay_( std::vector< double >{ 0.003, 0.1 } )    // in 1/ms
-  , asc_amps_( std::vector< double >{ -9.18, -198.94 } ) // in pA
-  , asc_r_( std::vector< double >( 2, 1.0 ) )            // in ms
-  , tau_syn_( std::vector< double >{ 0.2, 2.0 } )        // in ms
-  , E_rev_( std::vector< double >{ 0.0, -85.0 } )        // in mV
+  , voltage_reset_add_( 18.51 )                           // in mV
+  , th_voltage_index_( 0.005 )                            // in 1/ms
+  , th_voltage_decay_( 0.09 )                             // in 1/ms
+  , asc_init_( std::vector< double >( 2, 0.0 ) )          // in pA
+  , asc_decay_( std::vector< double > { 0.003, 0.1 } )    // in 1/ms
+  , asc_amps_( std::vector< double > { -9.18, -198.94 } ) // in pA
+  , asc_r_( std::vector< double >( 2, 1.0 ) )             // in ms
+  , tau_syn_( std::vector< double > { 0.2, 2.0 } )        // in ms
+  , E_rev_( std::vector< double > { 0.0, -85.0 } )        // in mV
   , has_connections_( false )
   , has_theta_spike_( false )
   , has_asc_( false )
@@ -363,7 +363,8 @@ nest::glif_cond::Parameters_::set( const DictionaryDatum& d )
     {
       throw BadProperty(
         "The reversal potential and synaptic time constant arrays, "
-        "i.e., E_rev (" + std::to_string( E_rev_.size() ) + ") and tau_syn (" + std::to_string( tau_syn_.size() )
+        "i.e., E_rev ("
+        + std::to_string( E_rev_.size() ) + ") and tau_syn (" + std::to_string( tau_syn_.size() )
         + "), must have the same size." );
     }
 
@@ -395,8 +396,8 @@ nest::glif_cond::State_::get( DictionaryDatum& d, const Parameters_& p ) const
   std::vector< double >* dg = new std::vector< double >();
   std::vector< double >* g = new std::vector< double >();
 
-  for ( size_t i = 0; i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS )
-                            / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
+  for ( size_t i = 0; i
+        < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS ) / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         ++i )
   {
     dg->push_back( y_[ State_::DG_SYN - State_::NUMBER_OF_RECORDABLES_ELEMENTS

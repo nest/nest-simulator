@@ -78,7 +78,7 @@ Conductance based exponential integrate-and-fire neuron model
 Description
 +++++++++++
 
-aeif_cond_alpha is the adaptive exponential integrate and fire neuron according
+``aeif_cond_alpha`` is the adaptive exponential integrate and fire neuron according
 to Brette and Gerstner (2005).
 Synaptic conductances are modelled as alpha-functions.
 
@@ -102,6 +102,8 @@ and
 
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
+
+See also [1]_.
 
 Parameters
 ++++++++++
@@ -308,8 +310,8 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_cond_alpha& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_cond_alpha& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_cond_alpha& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_cond_alpha& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< aeif_cond_alpha > logger_;

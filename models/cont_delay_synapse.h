@@ -43,23 +43,21 @@ Synapse type for continuous delays
 Description
 +++++++++++
 
-cont_delay_synapse relaxes the condition that NEST only implements delays
-which are an integer multiple of the time step h. A continuous delay is
-decomposed into an integer part (delay_) and a double (delay_offset_) so
-that the actual delay is given by  delay_*h - delay_offset_. This can be
+``cont_delay_synapse`` relaxes the condition that NEST only implements delays
+which are an integer multiple of the time step `h`. A continuous delay is
+decomposed into an integer part (``delay_``) and a double (``delay_offset_``) so
+that the actual delay is given by  ``delay_*h - delay_offset_``. This can be
 combined with off-grid spike times.
 
-Remarks:
+All delays set by the normal NEST Connect function will be rounded, even
+when using cont_delay_synapse. To set non-grid delays, you must either
 
-All delays set by the normal NEST Connect function will be rounded, even when
-using cont_delay_synapse. To set non-grid delays, you must either
+1. set the delay as model default using :py:func:`.SetDefaults`, which
+   is very efficient, but results in a situation where all synapses then
+   will have the same delay.
 
-1) set the delay as synapse default, as in the example above
-2) set the delay for each synapse after the connections have been created,
-
-Alternative 1) is much more efficient, but all synapses then will have the
-               same delay.
-Alternative 2) is slower, but allows individual delay values.
+2. set the delay for each synapse after the connections have been
+   created, which is slower, but allows individual delay values.
 
 Continuous delays cannot be shorter than the simulation resolution.
 
@@ -107,9 +105,9 @@ public:
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
-  using ConnectionBase::set_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
+  using ConnectionBase::set_delay_steps;
 
   //! Used by ConnectorModel::add_connection() for fast initialization
   void

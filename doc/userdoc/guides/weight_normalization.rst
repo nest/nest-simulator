@@ -1,3 +1,5 @@
+.. _weight_normalization:
+
 Weight normalization
 ====================
 

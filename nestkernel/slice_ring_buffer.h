@@ -234,17 +234,20 @@ inline SliceRingBuffer::SpikeInfo::SpikeInfo( long stamp, double ps_offset, doub
 {
 }
 
-inline bool SliceRingBuffer::SpikeInfo::operator<( const SpikeInfo& b ) const
+inline bool
+SliceRingBuffer::SpikeInfo::operator<( const SpikeInfo& b ) const
 {
   return stamp_ == b.stamp_ ? ps_offset_ > b.ps_offset_ : stamp_ < b.stamp_;
 }
 
-inline bool SliceRingBuffer::SpikeInfo::operator<=( const SpikeInfo& b ) const
+inline bool
+SliceRingBuffer::SpikeInfo::operator<=( const SpikeInfo& b ) const
 {
   return not( *this > b );
 }
 
-inline bool SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const
+inline bool
+SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const
 {
   return stamp_ == b.stamp_ ? ps_offset_ < b.ps_offset_ : stamp_ > b.stamp_;
 }

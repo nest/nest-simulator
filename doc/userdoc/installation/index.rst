@@ -80,7 +80,7 @@ Who are you?
 
          I am a developer and want to contribute to the code or documentation of NEST.
 
-         Take me to the :ref:`source installation <dev_install>.
+         Take me to the :ref:`source installation <dev_install>`.
 ----
 
 If installation didn't work, see the :ref:`troubleshooting section <troubleshooting>`.

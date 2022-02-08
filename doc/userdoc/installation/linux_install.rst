@@ -42,6 +42,43 @@ If you want to use PyNEST, we recommend to install the following along with thei
 
 .. _source-install:
 
+Installation from source in a conda environment
+--------------------------------------------------------
+
+* Get nest-simulator from Github `https://github.com/nest/nest-simulator`_ or download a zip `here`_.
+* Create a conda environment from this `environment.yml https://github.com/nest/nest-simulator/blob/master/environment.yml`_ file. 
+
+.. code-block:: bash
+    conda env create -f nest-simulator/environment.yml -p <path/to/conda/env>
+    conda activate <path/to/conda/env>
+    
+* Create a build directory:
+
+.. code-block:: sh
+
+    mkdir build_dir
+
+* Change to the build directory:
+
+.. code-block:: sh
+
+    cd build_dir
+
+* Configure NEST. Add the cmake option -CDMAKE_INSTALL_PREFIX:PATH=$CONDA_PREFIX to link nest to your active conda environment. You may need additional ``cmake`` options (see :ref:`cmake_options`).
+
+.. code-block:: sh
+
+   cmake -CDMAKE_INSTALL_PREFIX:PATH=$CONDA_PREFIX </path/to/NEST/src>
+
+* Compile and install NEST:
+
+.. code-block:: sh
+
+    make
+    make install
+    make installcheck    
+
+
 Installation from source in a virtual Python environment
 --------------------------------------------------------
 
@@ -72,7 +109,7 @@ further adjust settings for your system.
     python -m venv nest_env
     source nest_env/bin/activate
 
-* Unpack the tarball
+* Unpack the tarball `missing_link_to_tarball`_
 
 .. code-block:: sh
 

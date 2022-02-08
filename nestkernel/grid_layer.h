@@ -29,7 +29,8 @@
 namespace nest
 {
 
-/** Layer with neurons placed in a grid
+/**
+ * Layer with neurons placed in a grid
  */
 template < int D >
 class GridLayer : public Layer< D >

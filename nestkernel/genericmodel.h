@@ -61,18 +61,18 @@ public:
   bool is_off_grid();
   void calibrate_time( const TimeConverter& tc );
   /**
-     @note The decision of whether one node can receive a certain
-     event was originally in the node. But in the distributed case,
-     it may be that you only have a proxy node and not he real
-     thing. Thus, you need to be able to make this decision without
-     having the node. Since the model now takes responsibility for a
-     lot of general node properties, it was a natural place to put
-     this function.
-
-     Model::send_test_event() is a forwarding function that calls
-     send_test_event() from the prototype. Since proxies know the
-     model they represent, they can now answer a call to check
-     connection by referring back to the model.
+   *  @note The decision of whether one node can receive a certain
+   *  event was originally in the node. But in the distributed case,
+   *  it may be that you only have a proxy node and not he real
+   *  thing. Thus, you need to be able to make this decision without
+   *  having the node. Since the model now takes responsibility for a
+   *  lot of general node properties, it was a natural place to put
+   *  this function.
+   *
+   *  Model::send_test_event() is a forwarding function that calls
+   *  send_test_event() from the prototype. Since proxies know the
+   *  model they represent, they can now answer a call to check
+   *  connection by referring back to the model.
    */
   port send_test_event( Node&, rport, synindex, bool );
 
@@ -120,9 +120,7 @@ private:
    */
   std::string deprecation_info_;
 
-  /**
-   * False until deprecation warning has been issued once
-   */
+  //! False until deprecation warning has been issued once
   bool deprecation_warning_issued_;
 };
 

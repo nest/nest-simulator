@@ -108,7 +108,7 @@ def Create(model, n=1, params=None, positions=None):
         # For compatibility with SLI.
         if params is None:
             params = {}
-        layer = sli_func('CreateLayerParams', layer_specs, params)
+        layer = sli_func('CreateLayerParamsDefaults', layer_specs, params)
 
         return layer
 

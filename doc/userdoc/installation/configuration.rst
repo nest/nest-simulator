@@ -1,3 +1,5 @@
+.. _config_options:
+
 Configuration Options
 =====================
 
@@ -13,7 +15,7 @@ By adapting this file, you can set a number of options:
 
 * The browser for displaying the helpdesk
 * The pager for showing the built-in help in the terminal
-* The ``mpirun`` command for :doc:`parallel execution <../guides/parallel_computing>` of the testsuite
+* The ``mpirun`` command for :ref:`parallel execution <parallel_computing>` of the testsuite
 
 In case your MPI Implementation requires special options (e.g. ``--oversubscribe`` to allow the use of more
 processes than available compute cores in OpenMPI versions above 3.0), you can add them to the ``mpirun`` command as shown in
@@ -68,7 +70,7 @@ Scripts can be run by typing:
    <nest_install_dir>/nest <file>
 
 If you are a Vim user and require support for SLI files, please refer to
-our :doc:`../contribute/styleguide/vim_support_sli`.
+our :ref:`vim_sli`.
 
 Supplying SLI scripts with parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

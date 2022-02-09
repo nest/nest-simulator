@@ -79,12 +79,12 @@ nest::glif_psc::Parameters_::Parameters_()
   , th_spike_add_( 0.37 )    // in mV
   , th_spike_decay_( 0.009 ) // in 1/ms
   , voltage_reset_fraction_( 0.20 )
-  , voltage_reset_add_( 18.51 )                          // in mV
-  , th_voltage_index_( 0.005 )                           // in 1/ms
-  , th_voltage_decay_( 0.09 )                            // in 1/ms
-  , asc_init_( std::vector< double >( 2, 0.0 ) )         // in pA
-  , asc_decay_( std::vector< double >{ 0.003, 0.1 } )    // in 1/ms
-  , asc_amps_( std::vector< double >{ -9.18, -198.94 } ) // in pA
+  , voltage_reset_add_( 18.51 )                           // in mV
+  , th_voltage_index_( 0.005 )                            // in 1/ms
+  , th_voltage_decay_( 0.09 )                             // in 1/ms
+  , asc_init_( std::vector< double >( 2, 0.0 ) )          // in pA
+  , asc_decay_( std::vector< double > { 0.003, 0.1 } )    // in 1/ms
+  , asc_amps_( std::vector< double > { -9.18, -198.94 } ) // in pA
   , asc_r_( std::vector< double >( 2, 1.0 ) )
   , tau_syn_( std::vector< double >( 1, 2.0 ) ) // in ms
   , has_connections_( false )

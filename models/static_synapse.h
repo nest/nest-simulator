@@ -39,7 +39,7 @@ Synapse type for static connections
 Description
 +++++++++++
 
-static_synapse does not support any kind of plasticity. It simply stores
+``static_synapse`` does not support any kind of plasticity. It simply stores
 the parameters target, weight, delay and receiver port for each connection.
 
 Transmits

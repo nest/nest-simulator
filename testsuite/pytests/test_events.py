@@ -62,7 +62,7 @@ class EventsTestCase(unittest.TestCase):
 
         d = nest.GetStatus(sr, 'events')[0]
 
-        self.assert_(len(d['times']) > 0)
+        self.assertGreater(len(d['times']), 0)
 
 
 def suite():

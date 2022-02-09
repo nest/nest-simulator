@@ -66,7 +66,7 @@ Simple conductance based leaky integrate-and-fire neuron model
 Description
 +++++++++++
 
-iaf_cond_beta is an implementation of a spiking neuron using IAF dynamics with
+``iaf_cond_beta`` is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a postsynaptic change
 of conductance modelled by a beta function. The beta function
 is normalized such that an event of weight 1.0 results in a peak current of
@@ -78,7 +78,9 @@ is normalized such that an event of weight 1.0 results in a peak current of
    when designing your own models with nonlinear dynamics.
    One weakness of this class is that it distinguishes between
    inputs to the two synapses by the sign of the synaptic weight.
-   It would be better to use receptor_types, cf iaf_cond_alpha_mc.
+   It would be better to use ``receptor_types``, cf ``iaf_cond_alpha_mc``.
+
+See also [1]_, [2]_, [3]_, [4]_, [5]_.
 
 Parameters
 ++++++++++

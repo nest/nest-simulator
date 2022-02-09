@@ -226,7 +226,7 @@ private:
   {
     chunk( char* mem, chunk* next )
       : mem_( mem )
-      , next_( next ){};
+      , next_( next ) {};
     char* mem_;
     chunk* next_;
   };

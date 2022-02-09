@@ -34,8 +34,8 @@
 #include <string>
 
 // Includes from libnestutil:
-#include "numerics.h"
 #include "dict_util.h"
+#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"

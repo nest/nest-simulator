@@ -40,15 +40,13 @@ Synapse type for static connections with homogeneous weight
 Description
 +++++++++++
 
-static_synapse_hom_w does not support any kind of plasticity. It simply
+``static_synapse_hom_w`` does not support any kind of plasticity. It simply
 stores the parameters delay, target, and receiver port for each connection
 and uses a common weight for all connections.
 
-Remarks:
-
 The common weight for all connections of this model must be set by
-SetDefaults on the model. If you create copies of this model using
-CopyModel, each derived model can have a different weight.
+``SetDefaults`` on the model. If you create copies of this model using
+``CopyModel``, each derived model can have a different weight.
 
 Transmits
 +++++++++
@@ -76,9 +74,9 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
+  using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
-  using ConnectionBase::get_delay_steps;
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {

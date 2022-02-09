@@ -49,21 +49,21 @@ Provide a piecewise constant input rate
 Description
 +++++++++++
 
-The rate_generator provides a piecewise constant rate input to the
+The ``rate_generator`` provides a piecewise constant rate input to the
 connected rate unit(s). Please note that this input is handled in the same
-way as input from any other rate unit, i.e. it is processed by the input
+way as input from any other rate unit, that is, it is processed by the input
 function of the receiving rate unit. The amplitude of the rate is changed
 at the specified times. The unit of the rate is Hz.
 
-If allow_offgrid_times is false, times will be rounded to the nearest
+If ``allow_offgrid_times`` is false, times will be rounded to the nearest
 grid point if they are less than tic/2 from the grid point, otherwise
 NEST reports an error. If true, times are rounded to the nearest grid
 point if within tic/2 from the grid point, otherwise they are rounded
 up to the *end* of the grid point.
 
 Times of amplitude changes must be strictly increasing after conversion
-to simulation time steps. The option allow_offgrid_times may be
-useful, e.g., if you are using randomized times for rate changes
+to simulation time steps. The option ``allow_offgrid_times`` may be
+useful, for example, if you are using randomized times for rate changes
 which typically would not fall onto simulation time steps.
 
 .. include:: ../models/stimulation_device.rst
@@ -109,7 +109,7 @@ public:
   step_rate_generator( const step_rate_generator& );
 
   // port send_test_event( Node&, rport, synindex, bool );
-  void sends_secondary_event( DelayedRateConnectionEvent& ) override{};
+  void sends_secondary_event( DelayedRateConnectionEvent& ) override {};
 
   using Node::handle;
   using Node::handles_test_event;

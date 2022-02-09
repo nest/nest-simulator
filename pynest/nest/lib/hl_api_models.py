@@ -98,7 +98,7 @@ def Models(mtype="all", sel=None):
 
 @check_stack
 def ConnectionRules():
-    """Return a typle of all available connection rules, sorted by name.
+    """Return a tuple of all available connection rules, sorted by name.
 
     Returns
     -------

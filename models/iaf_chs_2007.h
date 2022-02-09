@@ -47,16 +47,16 @@ Description
 +++++++++++
 
 The membrane potential is the sum of stereotyped events: the postsynaptic
-potentials (V_syn), waveforms that include a spike and the subsequent
-after-hyperpolarization (V_spike) and Gaussian-distributed white noise.
+potentials (``V_syn``), waveforms that include a spike and the subsequent
+after-hyperpolarization (``V_spike``) and Gaussian-distributed white noise.
 
 The postsynaptic potential is described by alpha function where
-U_epsp is the maximal amplitude of the EPSP and tau_epsp is the time to
+``U_epsp`` is the maximal amplitude of the EPSP and ``tau_epsp`` is the time to
 peak of the EPSP.
 
 The spike waveform is described as a delta peak followed by a membrane
-potential reset and exponential decay. U_reset is the magnitude of the
-reset/after-hyperpolarization and tau_reset is the time constant of
+potential reset and exponential decay. ``U_reset`` is the magnitude of the
+reset/after-hyperpolarization and ``tau_reset`` is the time constant of
 recovery from this hyperpolarization.
 
 The linear subthreshold dynamics is integrated by the Exact
@@ -64,11 +64,14 @@ Integration scheme [1]_. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
-Remarks:
-The way the noise term was implemented in the original model makes it
-unsuitable for simulation in NEST. The workaround was to prepare the
-noise signal externally prior to simulation. The noise signal,
-if present, has to be at least as long as the simulation.
+.. note::
+
+   The way the noise term was implemented in the original model makes
+   it unsuitable for simulation in NEST. The workaround was to prepare
+   the noise signal externally prior to simulation. The noise signal,
+   if present, has to be at least as long as the simulation.
+
+See also [2]_.
 
 Parameters
 ++++++++++

@@ -90,10 +90,8 @@ class TestSPBuilder(unittest.TestCase):
                 nest.Connect(projection)
                 nest.BuildNetwork()
             except nest.kernel.NESTError as e:
-                self.assertRegexpMatches(
-                    str(e), 'This connection rule is not implemented ' +
-                    'for structural plasticity'
-                )
+                msg = 'This connection rule is not implemented for structural plasticity'
+                self.assertRegex(str(e), msg)
 
 
 def suite():

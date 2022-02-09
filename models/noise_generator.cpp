@@ -79,7 +79,8 @@ nest::noise_generator::Parameters_::Parameters_( const Parameters_& p )
   dt_.calibrate();
 }
 
-nest::noise_generator::Parameters_& nest::noise_generator::Parameters_::operator=( const Parameters_& p )
+nest::noise_generator::Parameters_&
+nest::noise_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {

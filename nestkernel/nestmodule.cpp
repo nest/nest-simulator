@@ -2157,11 +2157,6 @@ NestModule::CreateLayer_D_DFunction::execute( SLIInterpreter* i ) const
 
   NodeCollectionDatum layer = create_layer( layer_dict );
 
-  for ( auto&& node_id_triple : *layer )
-  {
-    set_node_status( node_id_triple.node_id, params );
-  }
-
   i->OStack.pop( 2 );
   i->OStack.push( layer );
   i->EStack.pop();

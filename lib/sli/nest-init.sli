@@ -1513,6 +1513,22 @@ def
   /CreateLayer_D_D load
 def
 
+/CreateLayerParamsDefaults [/dictionarytype /dictionarytype]
+{
+  /params Set
+  /layer_dict Set
+
+  layer_dict /elements get cvlit /model Set
+  model GetDefaults /model_defaults Set
+  /changed_defaults << >> def
+  params keys { /key Set changed_defaults key model_defaults key get put } forall
+
+  model params SetDefaults
+  layer_dict << >> CreateLayerParams
+  model changed_defaults SetDefaults
+}
+def
+
 /CreateLayer [/dictionarytype]
 {
   << >> CreateLayerParams

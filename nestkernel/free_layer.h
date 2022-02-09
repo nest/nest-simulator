@@ -184,9 +184,8 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
         // max_point on all processes.
         Position< D > point = pos->get_values( rng );
 
-        const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( ( *nc_it ).node_id );
-        assert( node );
-        if ( not node->is_proxy() )
+        const auto is_local_node = kernel().node_manager.is_local_node_id( ( *nc_it ).node_id );
+        if ( is_local_node )
         {
           positions_.push_back( point );
         }

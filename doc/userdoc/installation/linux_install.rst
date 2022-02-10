@@ -48,7 +48,8 @@ Installation from source in a conda environment
 * Get nest-simulator from Github `<https://github.com/nest/nest-simulator>`_ or download a zip `<here>`_.
 * Create a conda environment from this `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_ file. 
 
-.. code-block:: bash
+.. code-block:: sh
+
     conda env create -f nest-simulator/environment.yml -p <path/to/conda/env>
     conda activate <path/to/conda/env>
     

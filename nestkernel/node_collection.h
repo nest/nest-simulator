@@ -137,7 +137,10 @@ private:
     size_t offset,
     size_t step = 1 );
 
-  void cond_update_idx(); //!< conditionally updates element_idx and part_idx
+  /**
+   * Conditionally update element_idx and part_idx for composite NodeCollections
+   */
+  void composite_update_indices_();
 
 public:
   nc_const_iterator( const nc_const_iterator& nci ) = default;
@@ -668,9 +671,9 @@ nc_const_iterator::operator*() const
 inline nc_const_iterator&
 nc_const_iterator::operator++()
 {
+  element_idx_ += step_;
   if ( primitive_collection_ )
   {
-    element_idx_ += step_;
     if ( element_idx_ >= primitive_collection_->size() )
     {
       element_idx_ = primitive_collection_->size();
@@ -678,8 +681,7 @@ nc_const_iterator::operator++()
   }
   else
   {
-    element_idx_ += step_;
-    cond_update_idx();
+    composite_update_indices_();
   }
   return *this;
 }
@@ -687,14 +689,10 @@ nc_const_iterator::operator++()
 inline nc_const_iterator&
 nc_const_iterator::operator+=( const size_t n )
 {
-  if ( primitive_collection_ )
+  element_idx_ += n * step_;
+  if ( composite_collection_ )
   {
-    element_idx_ += n * step_;
-  }
-  else
-  {
-    element_idx_ += n * step_;
-    cond_update_idx();
+    composite_update_indices_();
   }
   return *this;
 }

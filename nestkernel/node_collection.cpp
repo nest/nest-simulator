@@ -93,7 +93,7 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
 }
 
 void
-nc_const_iterator::cond_update_idx()
+nc_const_iterator::composite_update_indices_()
 {
   // If we went past the size of the primitive, we need to adjust the element
   // and primitive part indices.

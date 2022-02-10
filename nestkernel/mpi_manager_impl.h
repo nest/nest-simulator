@@ -26,12 +26,12 @@
 #include "config.h"
 
 /* To avoid problems on BlueGene/L, mpi.h MUST be the
- first included file after config.h.
+ * first included file after config.h.
  */
 #ifdef HAVE_MPI
 // C includes:
 #include <mpi.h>
-#endif /* #ifdef HAVE_MPI */
+#endif // #ifdef HAVE_MPI 
 
 #include "mpi_manager.h"
 
@@ -49,20 +49,20 @@ nest::MPIManager::get_process_id_of_vp( const thread vp ) const
 // Variable to hold the MPI communicator to use.
 #ifdef HAVE_MUSIC
 extern MPI::Intracomm comm;
-#else  /* #ifdef HAVE_MUSIC */
+#else  // * #ifdef HAVE_MUSIC
 extern MPI_Comm comm;
-#endif /* #ifdef HAVE_MUSIC */
+#endif // #ifdef HAVE_MUSIC
 
 
 /* ------------------------------------------------------
-   The following datatypes are defined here in communicator_impl.h
-   file instead of as static class members, to avoid inclusion
-   of mpi.h in the .h file. This is necessary, because on
-   BlueGene/L mpi.h MUST be included FIRST. Having mpi.h in
-   the .h file would lead to requirements on include-order
-   throughout the NEST code base and is not acceptable.
-   Reported by Mikael Djurfeldt.
-   Hans Ekkehard Plesser, 2010-01-28
+ *  The following datatypes are defined here in communicator_impl.h
+ *  file instead of as static class members, to avoid inclusion
+ *  of mpi.h in the .h file. This is necessary, because on
+ *  BlueGene/L mpi.h MUST be included FIRST. Having mpi.h in
+ *  the .h file would lead to requirements on include-order
+ *  throughout the NEST code base and is not acceptable.
+ *  Reported by Mikael Djurfeldt.
+ *  Hans Ekkehard Plesser, 2010-01-28
  */
 template < typename T >
 struct MPI_Type
@@ -103,6 +103,6 @@ nest::MPIManager::get_process_id_of_node_id( const index ) const
   return 0;
 }
 
-#endif /* HAVE_MPI */
+#endif // HAVE_MPI
 
-#endif /* MPI_MANAGER_IMPL_H */
+#endif // MPI_MANAGER_IMPL_H

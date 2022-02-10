@@ -69,9 +69,6 @@ MUSICManager::finalize()
 {
 }
 
-/*
-     - set the ... properties
-*/
 void
 MUSICManager::set_status( const DictionaryDatum& )
 {
@@ -98,16 +95,18 @@ MUSICManager::enter_runtime( double h_min_delay )
   std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms", h_min_delay );
   LOG( M_INFO, "MUSICManager::enter_runtime", msg );
 
-  // MUSIC needs the step size in seconds
-  // std::cout << "nest::MPIManager::enter_runtime\n";
-  // std::cout << "timestep = " << h_min_delay*1e-3 << std::endl;
+  /*
+   * MUSIC needs the step size in seconds
+   * std::cout << "nest::MPIManager::enter_runtime\n";
+   * std::cout << "timestep = " << h_min_delay*1e-3 << std::endl;
+   */
   if ( music_runtime == 0 )
   {
     music_runtime = new MUSIC::Runtime( music_setup, h_min_delay * 1e-3 );
   }
 }
 
-#else /* #ifdef HAVE_MUSIC */
+#else // #ifdef HAVE_MUSIC
 
 void
 MUSICManager::init_music( int*, char*** )
@@ -119,8 +118,7 @@ MUSICManager::enter_runtime( double )
 {
 }
 
-#endif /* #ifdef HAVE_MUSIC */
-
+#endif // #ifdef HAVE_MUSIC
 
 void
 MUSICManager::music_finalize()
@@ -135,11 +133,11 @@ MUSICManager::music_finalize()
 
   music_runtime->finalize();
   delete music_runtime;
-#else /* #ifdef HAVE_MUSIC */
+#else // #ifdef HAVE_MUSIC
 #ifdef HAVE_MPI
   MPI_Finalize();
 #endif
-#endif /* #ifdef HAVE_MUSIC */
+#endif // #ifdef HAVE_MUSIC
 }
 
 #ifdef HAVE_MUSIC

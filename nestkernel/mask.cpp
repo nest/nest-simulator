@@ -114,11 +114,12 @@ template <>
 void
 BoxMask< 2 >::calculate_min_max_values_()
 {
-  // Rotate the corners of the box to find the new minimum and maximum x and y
-  // values to define the bounding box of the rotated box. If the box is not
-  // rotated, the min values correspond to the lower_left values and the max
-  // values correspond to the upper_right values.
-
+  /*
+   * Rotate the corners of the box to find the new minimum and maximum x and y
+   * values to define the bounding box of the rotated box. If the box is not
+   * rotated, the min values correspond to the lower_left values and the max
+   * values correspond to the upper_right values.
+   */
   if ( not is_rotated_ )
   {
     min_values_ = lower_left_;
@@ -282,15 +283,16 @@ BoxMask< 2 >::inside( const Position< 2 >& p ) const
   {
     return ( lower_left_ <= p ) && ( p <= upper_right_ );
   }
-
-  // If we have a rotated box, we rotate the point down to the unrotated box,
-  // and check if it is inside said unrotated box.
-
-  // The new x, y values are calculated using a rotation matrix:
-  // [new_x, new_y] = R(-azimuth)*[x - x_c, y - y_c]
-  // where R(-t) = [cos(t) sin(t); -sin(t) cos(t)]
-
-  // See https://en.wikipedia.org/wiki/Rotation_matrix for more.
+  /*
+  * If we have a rotated box, we rotate the point down to the unrotated box,
+  * and check if it is inside said unrotated box.
+  *
+  * The new x, y values are calculated using a rotation matrix:
+  * [new_x, new_y] = R(-azimuth)*[x - x_c, y - y_c]
+  * where R(-t) = [cos(t) sin(t); -sin(t) cos(t)]
+  *
+  * See https://en.wikipedia.org/wiki/Rotation_matrix for more.
+  */
 
   const double new_x = p[ 0 ] * azimuth_cos_ - cntr_x_az_cos_ + p[ 1 ] * azimuth_sin_ - cntr_y_az_sin_ + cntr_[ 0 ];
   const double new_y = -p[ 0 ] * azimuth_sin_ + cntr_x_az_sin_ + p[ 1 ] * azimuth_cos_ - cntr_y_az_cos_ + cntr_[ 1 ];
@@ -310,17 +312,18 @@ BoxMask< 3 >::inside( const Position< 3 >& p ) const
     return ( lower_left_ <= p ) && ( p <= upper_right_ );
   }
 
-  // If we have a rotated box, we rotate the point down to the unrotated box,
-  // and check if it is inside said unrotated box.
-
-  // The new x, y, z values are calculated using rotation matrices:
-  // [new_x, new_y, new_z] =
-  //       R_y(-polar)*R_z(-azimuth)*[x - x_c, y - y_c, z - z_c]
-  // where R_z(-t) = [cos(t) sin(t) 0; -sin(t) cos(t) 0; 0 0 1] and
-  //       R_y(-t) = [cos(t) 0 -sin(t); 0 1 0; sin(t) 0 cos(t)]
-
-  // See https://en.wikipedia.org/wiki/Rotation_matrix for more.
-
+  /*
+   *  If we have a rotated box, we rotate the point down to the unrotated box,
+   *  and check if it is inside said unrotated box.
+   *
+   *  The new x, y, z values are calculated using rotation matrices:
+   *  [new_x, new_y, new_z] =
+   *        R_y(-polar)*R_z(-azimuth)*[x - x_c, y - y_c, z - z_c]
+   *  where R_z(-t) = [cos(t) sin(t) 0; -sin(t) cos(t) 0; 0 0 1] and
+   *        R_y(-t) = [cos(t) 0 -sin(t); 0 1 0; sin(t) 0 cos(t)]
+   *
+   *  See https://en.wikipedia.org/wiki/Rotation_matrix for more.
+   */
   const double new_x = p[ 0 ] * az_cos_pol_cos_ - cntr_x_az_cos_pol_cos_ + p[ 1 ] * az_sin_pol_cos_
     - cntr_y_az_sin_pol_cos_ - p[ 2 ] * polar_sin_ + cntr_z_pol_sin_ + cntr_[ 0 ];
   const double new_y = -p[ 0 ] * azimuth_sin_ + cntr_x_az_sin_ + p[ 1 ] * azimuth_cos_ - cntr_y_az_cos_ + cntr_[ 1 ];
@@ -347,14 +350,15 @@ template <>
 bool
 EllipseMask< 3 >::inside( const Position< 3 >& p ) const
 {
-  // The new x, y, z values are calculated using rotation matrices:
-  // [new_x, new_y, new_z] =
-  //       R_y(-polar)*R_z(azimuth)*[x - x_c, y - y_c, z - z_c]
-  // where R_z(t) = [cos(t) sin(t) 0; sin(t) -cos(t) 0; 0 0 1] and
-  //       R_y(-t) = [cos(t) 0 -sin(t); 0 1 0; sin(t) 0 cos(t)]
-
-  // See https://en.wikipedia.org/wiki/Rotation_matrix for more.
-
+  /*
+   * The new x, y, z values are calculated using rotation matrices:
+   * [new_x, new_y, new_z] =
+   *       R_y(-polar)*R_z(azimuth)*[x - x_c, y - y_c, z - z_c]
+   * where R_z(t) = [cos(t) sin(t) 0; sin(t) -cos(t) 0; 0 0 1] and
+   *       R_y(-t) = [cos(t) 0 -sin(t); 0 1 0; sin(t) 0 cos(t)]
+   *
+   * See https://en.wikipedia.org/wiki/Rotation_matrix for more.
+   */
   const double new_x =
     ( ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_ + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_ ) * polar_cos_
     - ( p[ 2 ] - center_[ 2 ] ) * polar_sin_;

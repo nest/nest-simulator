@@ -43,31 +43,31 @@
 #endif
 
 /*
-Encapsulates all calls to MUSIC. We need to strip out all #ifdef
-HAVE_MUSIC from other places and put them here. Look into those
-functions:
-
-void nest::Communicator::finalize()
-
-Linked Functions:
-
-void set_status( index, const DictionaryDatum& );
-DictionaryDatum get_status( index );
-void register_music_in_port( std::string portname );
-void unregister_music_in_port( std::string portname );
-void register_music_event_in_proxy( std::string portname, int channel,
-nest::Node* mp );
-void set_music_in_port_acceptable_latency( std::string portname, double
-latency );
-void set_music_in_port_max_buffered( std::string portname, int maxbuffered );
-void publish_music_in_ports_();
-void update_music_event_handlers_( Time const&, const long, const long );
-
-Linked Data Structures:
-
-struct MusicPortData
-std::map< std::string, MusicPortData > music_in_portlist_;
-std::map< std::string, MusicEventHandler > music_event_in_portmap_;
+ * Encapsulates all calls to MUSIC. We need to strip out all #ifdef
+ * HAVE_MUSIC from other places and put them here. Look into those
+ * functions:
+ *
+ * void nest::Communicator::finalize()
+ *
+ * Linked Functions:
+ *
+ * void set_status( index, const DictionaryDatum& );
+ * DictionaryDatum get_status( index );
+ * void register_music_in_port( std::string portname );
+ * void unregister_music_in_port( std::string portname );
+ * void register_music_event_in_proxy( std::string portname, int channel,
+ * nest::Node* mp );
+ * void set_music_in_port_acceptable_latency( std::string portname, double
+ * latency );
+ * void set_music_in_port_max_buffered( std::string portname, int maxbuffered );
+ * void publish_music_in_ports_();
+ * void update_music_event_handlers_( Time const&, const long, const long );
+ *
+ * Linked Data Structures:
+ *
+ * struct MusicPortData
+ * std::map< std::string, MusicPortData > music_in_portlist_;
+ * std::map< std::string, MusicEventHandler > music_event_in_portmap_;
  */
 
 namespace nest

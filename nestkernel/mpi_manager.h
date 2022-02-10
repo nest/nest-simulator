@@ -108,9 +108,9 @@ public:
    */
   thread get_process_id_of_vp( const thread vp ) const;
 
-  /*
-   * Return the process id of the node with the specified node ID.
-   */
+
+  //  Return the process id of the node with the specified node ID.
+
   thread get_process_id_of_node_id( const index node_id ) const;
 
   /**
@@ -130,10 +130,16 @@ public:
    */
   void communicate( std::vector< long >& send_buffer, std::vector< long >& recv_buffer );
 
+  /**
+   * communicate (on-grid) if compiled without MPI
+   */
   void communicate( std::vector< unsigned int >& send_buffer,
     std::vector< unsigned int >& recv_buffer,
     std::vector< int >& displacements );
 
+  /**
+   * communicate (off-grid) if compiled without MPI
+   */
   void communicate( std::vector< OffGridSpike >& send_buffer,
     std::vector< OffGridSpike >& recv_buffer,
     std::vector< int >& displacements );
@@ -153,9 +159,7 @@ public:
   void communicate( std::vector< int >& );
   void communicate( std::vector< long >& );
 
-  /*
-   * Sum across all rank
-   */
+   // Sum across all rank
   void communicate_Allreduce_sum_in_place( double buffer );
   void communicate_Allreduce_sum_in_place( std::vector< double >& buffer );
   void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
@@ -237,6 +241,11 @@ public:
   void communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buffer, std::vector< D >& recv_buffer );
   template < class D >
   void communicate_secondary_events_Alltoallv( std::vector< D >& send_buffer, std::vector< D >& recv_buffer );
+
+  /**
+   * Ensure all processes have reached the same stage by waiting until all
+   * processes have sent a dummy message to process 0.
+   */
 
   void synchronize();
 
@@ -360,22 +369,26 @@ private:
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_target_data_per_rank_;
 
-  std::vector< int > recv_counts_secondary_events_in_int_per_rank_; //!< how many secondary elements (in ints) will be
-                                                                    //!< received from each rank
+  /**
+   * how many secondary elements (in ints) will be received from each rank
+   */
+  std::vector< int > recv_counts_secondary_events_in_int_per_rank_; 
+
   std::vector< int >
     send_counts_secondary_events_in_int_per_rank_; //!< how many secondary elements (in ints) will be sent to each rank
 
-  std::vector< int > recv_displacements_secondary_events_in_int_per_rank_; //!< offset in the MPI receive buffer (in
-  //!< ints) at which elements received from each
-  //!< rank will be written
+  /**
+   * offset in the MPI receive buffer (in ints) at which elements received from each rank will be written
+   */
+  std::vector< int > recv_displacements_secondary_events_in_int_per_rank_;
 
-  std::vector< int > send_displacements_secondary_events_in_int_per_rank_; //!< offset in the MPI send buffer (in ints)
-  //!< from which elements send to each rank will
-  //!< be read
-
+  /**
+   * offset in the MPI send buffer (in ints) from which elements send to each rank will be read
+   */
+  std::vector< int > send_displacements_secondary_events_in_int_per_rank_; 
 #ifdef HAVE_MPI
+  std::vector< int > comm_step_; 
   //! array containing communication partner for each step.
-  std::vector< int > comm_step_;
   unsigned int COMM_OVERFLOW_ERROR;
 
   //! Variable to hold the MPI communicator to use (the datatype matters).
@@ -404,7 +417,7 @@ private:
     std::vector< T >& recv_buffer,
     std::vector< int >& displacements );
 
-#endif /* #ifdef HAVE_MPI */
+#endif // #ifdef HAVE_MPI 
 
 public:
   /**

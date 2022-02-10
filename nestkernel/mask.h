@@ -266,7 +266,7 @@ protected:
   Position< D > lower_left_;
   Position< D > upper_right_;
 
-  /*
+  /**
    * The {min,max}_values_ correspond to the minimum and maximum x, y, z values
    * after the box has been rotated. That is, the lower_left and upper_right of
    * the bounding box of the rotated box. If the box is not rotated,

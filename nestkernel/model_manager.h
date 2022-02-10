@@ -93,9 +93,11 @@ public:
    * @throws UnknownSynapseType
    */
 
-  //  TODO: make the return type const, after the increment of
-  //  num_connections and the min_ and max_delay setting in
-  //  ConnectorBase was moved out to the ConnectionManager
+  /*  
+   *  TODO: make the return type const, after the increment of
+   *  num_connections and the min_ and max_delay setting in
+   *  ConnectorBase was moved out to the ConnectionManager
+   */  
   ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 );
 
   const std::vector< ConnectorModel* >& get_synapse_prototypes( thread tid );
@@ -346,31 +348,31 @@ private:
   std::vector< std::map< synindex, SecondaryEvent* > > secondary_events_prototypes_;
 
   /** @BeginDocumentation
-   Name: modeldict - dictionary containing all devices and models of NEST
-
-   Description:
-   'modeldict info' shows the contents of the dictionary
-
-   SeeAlso: info, Device, RecordingDevice
+   * Name: modeldict - dictionary containing all devices and models of NEST
+   *
+   * Description:
+   * 'modeldict info' shows the contents of the dictionary
+   *
+   * SeeAlso: info, Device, RecordingDevice
    */
   DictionaryDatum modeldict_; //!< Dictionary of all models
 
   /** @BeginDocumentation
-   Name: synapsedict - Dictionary containing all synapse models.
-
-   Description:
-   'synapsedict info' shows the contents of the dictionary
-   Synapse model names ending with '_hpc' provide minimal memory requirements by
-   using thread-local target neuron IDs and fixing the `rport` to 0.
-   Synapse model names ending with '_lbl' allow to assign an individual integer
-   label (`synapse_label`) to created synapses at the cost of increased memory
-   requirements.
-
-   FirstVersion: October 2005
-
-   Author: Jochen Martin Eppler
-
-   SeeAlso: info
+   * Name: synapsedict - Dictionary containing all synapse models.
+   * 
+   * Description:
+   * 'synapsedict info' shows the contents of the dictionary
+   * Synapse model names ending with '_hpc' provide minimal memory requirements by
+   * using thread-local target neuron IDs and fixing the `rport` to 0.
+   * Synapse model names ending with '_lbl' allow to assign an individual integer
+   * label (`synapse_label`) to created synapses at the cost of increased memory
+   * requirements.
+   *
+   * FirstVersion: October 2005
+   *
+   * Author: Jochen Martin Eppler
+   *
+   * SeeAlso: info
    */
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
 

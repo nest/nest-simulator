@@ -41,19 +41,18 @@ class Node;
 /**
  * Provide sparse representation of local nodes.
  *
- * This class is a container providing lookup of local nodes (as Node*)
+ * This class is a container providing lookup of thread-local nodes (as Node*)
  * based on node IDs.
  *
  * Basically, this array is a vector containing only pointers to local nodes.
- * For M MPI processes, we have
+ * For N virtual processes, we have (if only nodes without proxies)
  *
- *   node ID  %  M  --> rank
- *   node ID div M  --> index on rank
+ *   node ID  %  N  --> VP
+ *   node ID div N  --> index on VP
  *
  * so that the latter gives and index into the local node array. This index
  * will be skewed due to nodes without proxies present on all ranks, whence
- * computation may give an index that is too low and we must search to the right
- * for the actual node. We never need to search to the left.
+ * we must search from the estimated location in the array.
  */
 class SparseNodeArray
 {
@@ -143,7 +142,26 @@ private:
   index max_node_id_;              //!< largest node ID in network
   index local_min_node_id_;        //!< smallest local node ID
   index local_max_node_id_;        //!< largest local node ID
-  double node_id_idx_scale_;       //!< interpolation factor
+
+  /*
+   * We assume that either all neurons or all devices are created first.
+   * As long as scale_split_id_ == -1, we have only seen one kind of nodes.
+   * When the first local node is added, adding_nodes_with_proxies_ gets the proper value.
+   * Once we get a node of a kind not agreeing with the value of adding_nodes_with_proxies_,
+   * we have seen a node-kind change and we set scale_split_id_ to the NodeID of the node we are
+   * adding. We later apply id_idx_scale_[node_id < scale_split_id_].
+   *
+   * Note / needed changes:
+   * - scale_split_id_ should grow with each node as long as not split
+   * - also need scale_split_idx_
+   * - id_idx_scale_[0] is updated as long as we have not split while adding, after split ...[1]
+   * - During lookup, the scale of the part used is updated.
+   */
+  index scale_split_id_;
+  size_t scale_split_idx_;
+  bool split_has_occured_;
+  bool adding_nodes_with_proxies_;
+  mutable double id_idx_scale_[ 2 ] = { 1.0, 1.0 };
 };
 
 } // namespace nest
@@ -173,7 +191,12 @@ nest::SparseNodeArray::clear()
   max_node_id_ = 0;
   local_min_node_id_ = 0;
   local_max_node_id_ = 0;
-  node_id_idx_scale_ = 1.;
+  scale_split_id_ = 0;
+  scale_split_idx_ = 0;
+  split_has_occured_ = false;
+  adding_nodes_with_proxies_ = false;
+  id_idx_scale_[ 0 ] = 1.0;
+  id_idx_scale_[ 1 ] = 1.0;
 }
 
 inline nest::Node*

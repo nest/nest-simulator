@@ -193,12 +193,12 @@ Last /target get 6 eq assert_or_die
 ResetKernel
 
 /n_connections 0 def
-modeldict
+GetKernelStatus /node_models get
 {
-  pop Create /node_a Set
-  modeldict
+  Create /node_a Set
+  GetKernelStatus /node_models get
   {
-    pop Create /node_b Set
+    Create /node_b Set
 
     % try to connect node_a and node_b
     {

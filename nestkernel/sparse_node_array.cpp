@@ -55,10 +55,9 @@ nest::SparseNodeArray::SparseNodeArray()
 nest::SparseNodeArray::~SparseNodeArray()
 {
 #pragma omp critical
-	{
-		std::cerr << left_ctr_ << '\t' << right_ctr_ << std::endl;
-
-	}
+  {
+    std::cerr << left_ctr_ << '\t' << right_ctr_ << std::endl;
+  }
 }
 
 void
@@ -118,8 +117,8 @@ nest::SparseNodeArray::add_local_node( Node& node )
     }
     else
     {
-      lookup_split_node_id_ = node_id;  // update to last node so far on left side
-      ++lookup_split_idx_;              // index one beyond that node
+      lookup_split_node_id_ = node_id; // update to last node so far on left side
+      ++lookup_split_idx_;             // index one beyond that node
     }
   }
 }
@@ -150,15 +149,17 @@ nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
    *
    * The following lookup is safe at this point:
    * - We have at least one local node, which by definition is on the left side, so nodes_[0] is fine.
-   * - left_side can only be false if we have at least one node on the right side, and then nodes_[lookup_split_idx_] is safe.
+   * - left_side can only be false if we have at least one node on the right side, and then nodes_[lookup_split_idx_] is
+   * safe.
    */
   const bool left_side = node_id <= lookup_split_node_id_;
   const double scale = left_side ? left_scale_ : right_scale_;
   const size_t base_idx = left_side ? 0 : lookup_split_idx_;
-  const index base_id = nodes_[base_idx].node_id_;
+  const index base_id = nodes_[ base_idx ].node_id_;
 
   // estimate index, limit to array size for safety size
-  auto idx = std::min( static_cast< size_t >( base_idx + std::floor( scale * ( node_id - base_id ) ) ), nodes_.size() - 1 );
+  auto idx =
+    std::min( static_cast< size_t >( base_idx + std::floor( scale * ( node_id - base_id ) ) ), nodes_.size() - 1 );
 
   // search left if necessary
   while ( 0 < idx and node_id < nodes_[ idx ].node_id_ )

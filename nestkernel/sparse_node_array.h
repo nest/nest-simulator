@@ -82,7 +82,6 @@ class Node;
 class SparseNodeArray
 {
 public:
-
   /**
    * Entry representing individual node.
    *
@@ -93,7 +92,7 @@ public:
    */
   class NodeEntry
   {
-	  friend class SparseNodeArray;
+    friend class SparseNodeArray;
 
   public:
     /**
@@ -101,20 +100,20 @@ public:
      * This constructor is only provided to allow BlockVector to initialize
      * new blocks with "zero" values.
      */
-	NodeEntry()
+    NodeEntry()
       : node_( nullptr )
       , node_id_( 0 )
     {
     }
 
-	/**
-	 * @param Node to be represented
-	 * @param Index of node to be represented
-	 */
+    /**
+     * @param Node to be represented
+     * @param Index of node to be represented
+     */
     NodeEntry( Node&, index );
 
-    Node* get_node() const;      //!< return pointer to represented node
-    index get_node_id() const;   //!< return ID of represented node
+    Node* get_node() const;    //!< return pointer to represented node
+    index get_node_id() const; //!< return ID of represented node
 
   private:
     Node* node_;    //!< @note pointer to allow zero-entries for BlockVector compatibility
@@ -187,8 +186,8 @@ private:
   index local_min_node_id_;        //!< smallest local node ID
   index local_max_node_id_;        //!< largest local node ID
 
-  double left_scale_;     //!< scale factor for left side of array
-  double right_scale_;    //!< scale factor for right side of array
+  double left_scale_;  //!< scale factor for left side of array
+  double right_scale_; //!< scale factor for right side of array
 
   /**
    * Largest node ID in left side of array.

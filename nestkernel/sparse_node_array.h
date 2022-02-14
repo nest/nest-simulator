@@ -39,51 +39,100 @@ namespace nest
 class Node;
 
 /**
- * Provide sparse representation of local nodes.
+ * Sparse representation of local nodes.
  *
- * This class is a container providing lookup of thread-local nodes (as Node*)
- * based on node IDs.
+ * SparseNodeArray maps node IDs of thread-local nodes to Node*. It provides
+ * an const iterator interface for iteration over all local nodes, lookup by
+ * node ID and lookup by numeric index into local nodes. The latter is provided
+ * to support HPC synapses using TargetIdentifierIndex representation.
  *
- * Basically, this array is a vector containing only pointers to local nodes.
- * For N virtual processes, we have (if only nodes without proxies)
+ * For efficient lookup, all normal nodes (with proxies) and all devices need
+ * to be created en bloc. It does not matter which are created first. If nodes
+ * and devices are created alternatingly, lookup performance may suffer significantly
+ * if many devices are present. This mainly affects network connection.
  *
- *   node ID  %  N  --> VP
- *   node ID div N  --> index on VP
+ * As nodes are added to an initially empty SparseNodeArray, the array tracks
+ * whether nodes have proxies or not. Array lookup is split at the point of the first
+ * proxy/no-proxy (or no-proxy/proxy) transition between nodes. In the no-proxy
+ * region, where all nodes are represented locally, Node IDs are mapped directly
+ * to array indices. In the proxy region, they are scaled by 1/n_vp.
  *
- * so that the latter gives and index into the local node array. This index
- * will be skewed due to nodes without proxies present on all ranks, whence
- * we must search from the estimated location in the array.
+ * To also support cases in which users interleave creation of nodes with and
+ * without proxies or use nodes with special behavior (music nodes, e.g.), we
+ * perform a linear search from the estimated location of the node in the array.
+ *
+ * The following invariants hold:
+ *
+ * 1. Entries are sorted by strictly increasing node ID (nid).
+ * 2. All entries with index i < lookup_split_idx_ belong to the left part of the array,
+ *    all remaining entries to the right part.
+ * 3. Provided that the array has at least one element, the following holds:
+ *    1. All entries with node ID nid <= lookup_split_node_id_ belong to the left part of the array,
+ *       all remaining entries to the right part.
+ *    2. nodes_[lookup_split_idx_-1].get_node_id() == lookup_split_node_id_
+ *    3. nodes_[0].get_node()->has_proxies() == nodes_[i].get_node()->has_proxies() for 0 <= i < lookup_split_idx_
+ *
+ * @note
+ * - Invariant 3.3 simply means that all nodes in the left part of the array have the same value of has_proxies().
+ * - Letting lookup_split_node_id_ to the last node ID in the left part of the array, while lookup_split_node_idx_
+ *   points to the first element in the right part makes for slightly simpler code and avoids any negative values.
+ *   It exploits the fact that node ID >= 1.
+ *
  */
 class SparseNodeArray
 {
 public:
-  struct NodeEntry
+
+  /**
+   * Entry representing individual node.
+   *
+   * @note
+   * - The Node ID is stored in the entry to ensure cache locality during lookup.
+   * - Actual entries will always point to valid nodes.
+   * - Must be public to allow iteration by SparseNodeArray-users.
+   */
+  class NodeEntry
   {
-    NodeEntry()
+	  friend class SparseNodeArray;
+
+  public:
+    /**
+     * @note
+     * This constructor is only provided to allow BlockVector to initialize
+     * new blocks with "zero" values.
+     */
+	NodeEntry()
       : node_( nullptr )
       , node_id_( 0 )
     {
     }
+
+	/**
+	 * @param Node to be represented
+	 * @param Index of node to be represented
+	 */
     NodeEntry( Node&, index );
 
-    // Accessor functions here are mostly in place to make things "look nice".
-    // Since SparseNodeArray only exposes access to const_interator, iterators
-    // could anyways not be used to change entry contents.
-    // TODO: But we may want to re-think this.
-    Node* get_node() const;
-    index get_node_id() const;
+    Node* get_node() const;      //!< return pointer to represented node
+    index get_node_id() const;   //!< return ID of represented node
 
-    Node* node_;
+  private:
+    Node* node_;    //!< @note pointer to allow zero-entries for BlockVector compatibility
     index node_id_; //!< store node ID locally for faster searching
   };
 
+  //! Iterator inherited from BlockVector
   typedef BlockVector< SparseNodeArray::NodeEntry >::const_iterator const_iterator;
 
-  //! Create empty spare node array
+  //! Create empty sparse node array
   SparseNodeArray();
+  ~SparseNodeArray();
 
   /**
    * Return size of container.
+   *
+   * This is the number of local nodes.
+   *
    * @see get_max_node_id()
    */
   size_t size() const;
@@ -97,45 +146,40 @@ public:
   void add_local_node( Node& );
 
   /**
-   * Set max node ID to max in network.
+   * Set max node ID to maximum in network.
    *
-   * Ensures that array knows about non-local nodes
-   * with node IDs higher than highest local node ID.
+   * @note
+   * Must be called by any method adding nodes to the network at end of
+   * each batch of nodes added.
    */
   void update_max_node_id( index );
 
   /**
-   *  Lookup node based on node ID
+   * Globally largest node ID.
+   */
+  index get_max_node_id() const;
+
+  /**
+   *  Return pointer to node or nullptr if node is not local.
    *
-   *  Returns 0 if node ID is not local.
-   *
+   *  @note
    *  The caller is responsible for providing proper
-   *  proxy node pointers for non-local nodes
-   *
-   *  @see get_node_by_index()
+   *  proxy-node pointers for non-local nodes.
    */
   Node* get_node_by_node_id( index ) const;
 
   /**
    * Lookup node based on index into container.
    *
-   * Use this when you need to iterate over local nodes only.
-   *
-   * @see get_node_by_node_id()
+   * @note Required for target lookup by HPC synapses.
    */
   Node* get_node_by_index( size_t ) const;
 
   /**
-   * Get constant iterators for safe iteration of SparseNodeArray.
+   * Constant iterators for safe iteration of SparseNodeArray.
    */
   const_iterator begin() const;
   const_iterator end() const;
-
-  /**
-   * Return largest node ID in global network.
-   * @see size
-   */
-  index get_max_node_id() const;
 
 private:
   BlockVector< NodeEntry > nodes_; //!< stores local node information
@@ -143,28 +187,37 @@ private:
   index local_min_node_id_;        //!< smallest local node ID
   index local_max_node_id_;        //!< largest local node ID
 
-  /*
-   * We assume that either all neurons or all devices are created first.
-   * As long as scale_split_id_ == -1, we have only seen one kind of nodes.
-   * When the first local node is added, adding_nodes_with_proxies_ gets the proper value.
-   * Once we get a node of a kind not agreeing with the value of adding_nodes_with_proxies_,
-   * we have seen a node-kind change and we set scale_split_id_ to the NodeID of the node we are
-   * adding. We later apply id_idx_scale_[node_id < scale_split_id_].
-   *
-   * Note / needed changes:
-   * - scale_split_id_ should grow with each node as long as not split
-   * - also need scale_split_idx_
-   * - id_idx_scale_[0] is updated as long as we have not split while adding, after split ...[1]
-   * - During lookup, the scale of the part used is updated.
+  double left_scale_;     //!< scale factor for left side of array
+  double right_scale_;    //!< scale factor for right side of array
+
+  /**
+   * Largest node ID in left side of array.
    */
-  index scale_split_id_;
-  size_t scale_split_idx_;
-  bool split_has_occured_;
-  bool adding_nodes_with_proxies_;
-  mutable double id_idx_scale_[ 2 ] = { 1.0, 1.0 };
+  index lookup_split_node_id_;
+
+  /**
+   * Array index of first element in right side of array.
+   */
+  size_t lookup_split_idx_;
+
+  /**
+   * Mark whether split has happened during network construction.
+   *
+   * False as long as only one kind of neuron has been added.
+   */
+  bool have_split_;
+
+  /**
+   * Proxy status of nodes on left side of array.
+   */
+  bool left_side_has_proxies_;
+
+  mutable size_t left_ctr_;
+  mutable size_t right_ctr_;
 };
 
 } // namespace nest
+
 
 inline nest::SparseNodeArray::const_iterator
 nest::SparseNodeArray::begin() const
@@ -184,21 +237,6 @@ nest::SparseNodeArray::size() const
   return nodes_.size();
 }
 
-inline void
-nest::SparseNodeArray::clear()
-{
-  nodes_.clear();
-  max_node_id_ = 0;
-  local_min_node_id_ = 0;
-  local_max_node_id_ = 0;
-  scale_split_id_ = 0;
-  scale_split_idx_ = 0;
-  split_has_occured_ = false;
-  adding_nodes_with_proxies_ = false;
-  id_idx_scale_[ 0 ] = 1.0;
-  id_idx_scale_[ 1 ] = 1.0;
-}
-
 inline nest::Node*
 nest::SparseNodeArray::get_node_by_index( size_t idx ) const
 {
@@ -215,12 +253,14 @@ nest::SparseNodeArray::get_max_node_id() const
 inline nest::Node*
 nest::SparseNodeArray::NodeEntry::get_node() const
 {
+  assert( node_ != nullptr );
   return node_;
 }
 
 inline nest::index
 nest::SparseNodeArray::NodeEntry::get_node_id() const
 {
+  assert( node_id_ > 0 );
   return node_id_;
 }
 

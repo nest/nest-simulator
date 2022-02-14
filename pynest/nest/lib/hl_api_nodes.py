@@ -48,6 +48,12 @@ def Create(model, n=1, params=None, positions=None):
     given, a single node is created. Note that if setting parameters of the
     nodes fail, the nodes will still have been created.
 
+    Note
+    ----
+    During network construction, create all nodes representing model neurons first, then all nodes
+    representing devices (generators, recorders or meters). Otherwise, network connection can be
+    slow, especially in parallel simulations of networks with many devices.
+
     Parameters
     ----------
     model : str

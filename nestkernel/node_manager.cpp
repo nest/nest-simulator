@@ -524,28 +524,19 @@ NodeManager::ensure_valid_thread_local_ids()
       {
         wfr_nodes_vec_[ tid ].clear();
 
-        size_t num_thread_local_wfr_nodes = 0;
-        for ( size_t idx = 0; idx < local_nodes_[ tid ].size(); ++idx )
-        {
-          Node* node = local_nodes_[ tid ].get_node_by_index( idx );
-          if ( node != 0 and node->node_uses_wfr_ )
-          {
-            ++num_thread_local_wfr_nodes;
-          }
-        }
+        const size_t num_thread_local_wfr_nodes = std::count_if(local_nodes_[tid].begin(), local_nodes_[tid].end(),
+        	                                                	[](const SparseNodeArray::NodeEntry& elem) { return elem.get_node()->node_uses_wfr_; });
         wfr_nodes_vec_[ tid ].reserve( num_thread_local_wfr_nodes );
 
-        for ( size_t idx = 0; idx < local_nodes_[ tid ].size(); ++idx )
+        auto node_it = local_nodes_[tid].begin();
+        size_t idx = 0;
+        for (  ; node_it < local_nodes_[tid].end() ; ++node_it, ++idx )
         {
-          Node* node = local_nodes_[ tid ].get_node_by_index( idx );
-
-          if ( node != 0 )
+          auto node = node_it->get_node();
+          node->set_thread_lid( idx );
+          if ( node->node_uses_wfr_ )
           {
-            node->set_thread_lid( idx );
-            if ( node->node_uses_wfr_ )
-            {
-              wfr_nodes_vec_[ tid ].push_back( node );
-            }
+            wfr_nodes_vec_[ tid ].push_back( node );
           }
         }
       } // end of for threads

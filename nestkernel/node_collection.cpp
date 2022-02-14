@@ -243,7 +243,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first,
   , last_( last )
   , model_id_( model_id )
   , metadata_( meta )
-  , nodes_have_no_proxies_( not kernel().model_manager.get_model( model_id_ )->has_proxies() )
+  , nodes_have_no_proxies_( not kernel().model_manager.get_node_model( model_id_ )->has_proxies() )
 {
   assert_consistent_model_ids_( model_id_ );
 
@@ -255,7 +255,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last, index
   , last_( last )
   , model_id_( model_id )
   , metadata_( nullptr )
-  , nodes_have_no_proxies_( not kernel().model_manager.get_model( model_id_ )->has_proxies() )
+  , nodes_have_no_proxies_( not kernel().model_manager.get_node_model( model_id_ )->has_proxies() )
 {
   assert( first_ <= last_ );
 }
@@ -279,7 +279,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
     }
   }
   model_id_ = first_model_id;
-  nodes_have_no_proxies_ = not kernel().model_manager.get_model( model_id_ )->has_proxies();
+  nodes_have_no_proxies_ = not kernel().model_manager.get_node_model( model_id_ )->has_proxies();
 }
 
 NodeCollectionPrimitive::NodeCollectionPrimitive()
@@ -457,7 +457,8 @@ NodeCollectionPrimitive::print_me( std::ostream& out ) const
 void
 NodeCollectionPrimitive::print_primitive( std::ostream& out ) const
 {
-  std::string model = model_id_ != invalid_index ? kernel().model_manager.get_model( model_id_ )->get_name() : "none";
+  std::string model =
+    model_id_ != invalid_index ? kernel().model_manager.get_node_model( model_id_ )->get_name() : "none";
 
   out << "model=" << model << ", size=" << size();
 
@@ -984,7 +985,8 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
         if ( it != begin() )
         {
           // Need to count the primitive, so can't start at begin()
-          out << "\n" + space << "model=" << kernel().model_manager.get_model( first_in_primitive.model_id )->get_name()
+          out << "\n" + space
+              << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
               << ", size=" << primitive_size << ", ";
           if ( primitive_size == 1 )
           {
@@ -1012,7 +1014,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     }
 
     // Need to also print the last primitive
-    out << "\n" + space << "model=" << kernel().model_manager.get_model( first_in_primitive.model_id )->get_name()
+    out << "\n" + space << "model=" << kernel().model_manager.get_node_model( first_in_primitive.model_id )->get_name()
         << ", size=" << primitive_size << ", ";
     if ( primitive_size == 1 )
     {

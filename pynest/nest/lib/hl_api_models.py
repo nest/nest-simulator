@@ -92,7 +92,7 @@ def Models(mtype="all", sel=None):
 @deprecated("nest.connection_rules")
 @check_stack
 def ConnectionRules():
-    """Return a tuple of all available connection rules.
+    """Return a tuple of all available connection rules, sorted by name.
 
     Returns
     -------

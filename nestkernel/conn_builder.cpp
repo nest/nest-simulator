@@ -1608,21 +1608,53 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   const std::vector< DictionaryDatum >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
-  if ( pd )
+  ParameterDatum* pd_p = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
+  ParameterDatum* pd_p_astro = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p_astro ].datum() );
+  ParameterDatum* pd_c_spill = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::c_spill ].datum() );  
+  astro_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
+  // Probability of neuron=>neuron connection
+  if ( pd_p )
   {
-    p_ = *pd;
+    p_ = *pd_p;
     // TODO: Checks of parameter range
   }
   else
   {
     // Assume p is a scalar
-    const double value = ( *conn_spec )[ names::p ];
-    if ( value < 0 or 1 < value )
+    const double value_p = ( *conn_spec )[ names::p ];
+    if ( value_p < 0 or 1 < value_p )
     {
       throw BadProperty( "Connection probability 0 <= p <= 1 required." );
     }
-    p_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+    p_ = std::shared_ptr< Parameter >( new ConstantParameter( value_p ) );
+  }
+  // Probability of astrocyte=>neuron connection
+  if ( pd_p_astro )
+  {
+    p_astro_ = *pd_p_astro;
+  }
+  else
+  {
+    const double value_p_astro = ( *conn_spec )[ names::p_astro ];
+    if ( value_p_astro < 0 or 1 < value_p_astro )
+    {
+      throw BadProperty( "Connection probability 0 <= p_astro <= 1 required." );
+    }
+    p_astro_ = std::shared_ptr< Parameter >( new ConstantParameter( value_p_astro ) );
+  }
+  // c_spill of astrocyte=>neuron connection
+  if ( pd_c_spill )
+  {    
+    c_spill_ = *pd_c_spill;
+  }
+  else
+  {
+    const double value_c_spill = ( *conn_spec )[ names::c_spill ];
+    if ( value_c_spill < 0 or 1 < value_c_spill )
+    {
+      throw BadProperty( "Coefficient 0 <= c_spill <= 1 required." );
+    }
+    c_spill_ = std::shared_ptr< Parameter >( new ConstantParameter( value_c_spill ) );
   }
 }
 

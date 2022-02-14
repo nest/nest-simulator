@@ -182,7 +182,6 @@ Dictionary::all_accessed_( std::string& missed, std::string prefix ) const
 {
   missed = "";
   
-  //std::cout << "all_accessed_() start" << std::endl;
   // build list of all non-accessed Token names
   for ( TokenMap::const_iterator it = TokenMap::begin(); it != TokenMap::end(); ++it )
   {
@@ -202,7 +201,6 @@ Dictionary::all_accessed_( std::string& missed, std::string prefix ) const
       subdict->all_accessed_( missed, prefix + it->first.toString() + "::" );
     }
   }
-  //std::cout << "all_accessed_() end" << std::endl;
   return missed.empty();
 }
 

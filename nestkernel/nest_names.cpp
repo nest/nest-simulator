@@ -71,6 +71,7 @@ const Name asc_amps( "asc_amps" );
 const Name asc_decay( "asc_decay" );
 const Name asc_init( "asc_init" );
 const Name asc_r( "asc_r" );
+const Name astrocyte( "astrocyte" );
 const Name available( "available" );
 const Name azimuth_angle( "azimuth_angle" );
 
@@ -91,6 +92,7 @@ const Name c( "c" );
 const Name c_1( "c_1" );
 const Name c_2( "c_2" );
 const Name c_3( "c_3" );
+const Name c_spill( "c_spill" );
 const Name capacity( "capacity" );
 const Name center( "center" );
 const Name circular( "circular" );
@@ -344,6 +346,7 @@ const Name overwrite_files( "overwrite_files" );
 
 const Name P( "P" );
 const Name p( "p" );
+const Name p_astro( "p_astro" );
 const Name p_copy( "p_copy" );
 const Name p_transmit( "p_transmit" );
 const Name pairwise_bernoulli_on_source( "pairwise_bernoulli_on_source" );

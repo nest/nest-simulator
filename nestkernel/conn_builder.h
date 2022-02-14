@@ -442,6 +442,8 @@ private:
   void inner_connect_( const int, RngPtr, Node*, index );
   ParameterDatum p_; //!< connection probability
   ParameterDatum p_astro_; //!< connection probability astro=>neuron
+  ParameterDatum c_spill_;
+  NodeCollectionPTR astro_;
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

@@ -94,5 +94,5 @@ Removal of deprecated models
 The models ``iaf_psc_alpha_canon`` and ``pp_pop_psc_delta`` have long
 been deprecated and have now been removed from NEST. In case you
 depend on them, you will find similar functionality in the replacement
-models ``iaf_psc_alpha_ps`` and ``pp_psc_delta``, respectively.
+models ``iaf_psc_alpha_ps`` and ``gif_pop_psc_exp``, respectively.
 

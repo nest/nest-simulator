@@ -133,8 +133,8 @@ def % brunel_setup
       /total_num_virtual_procs total_num_virtual_procs
     >> SetKernelStatus
 
-    /E_neurons /iaf_psc_alpha_canon NE Create def  % create excitatory neurons
-    /I_neurons /iaf_psc_alpha_canon NI Create def  % create inhibitory neurons
+    /E_neurons /iaf_psc_alpha_ps NE Create def  % create excitatory neurons
+    /I_neurons /iaf_psc_alpha_ps NI Create def  % create inhibitory neurons
     /allNeurons E_neurons I_neurons join def
 
     /expoisson /poisson_generator_ps Create def

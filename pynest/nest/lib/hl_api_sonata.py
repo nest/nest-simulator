@@ -171,10 +171,7 @@ class SonataConnector(object):
                                     timestamps = {i: [] for i in range(num_elements)}
                                     dt = self.config['run']['dt']
                                     for indx, node_id in enumerate(node_ids):
-                                        rate = round(spikes[indx] / dt) * dt
-                                        if rate == 0.:
-                                            continue
-                                        timestamps[node_id].append(rate)#np.round(spikes[indx], 1))
+                                        timestamps[node_id].append(spikes[indx])
 
                                     #nodes = NodeCollection([])
                                     #for node_id in np.unique(node_ids):
@@ -183,7 +180,7 @@ class SonataConnector(object):
                                         #   nc.set(**dynamics)  #this needs to be re-added.
                                     #    nodes += nc
                                 nodes = Create(model, num_elements)
-                                nodes.set([{'spike_times': timestamps[i]} for i in range(len(nodes))])
+                                nodes.set([{'spike_times': timestamps[i], 'precise_times': True} for i in range(len(nodes))])
                     else:
                         model = node_types.model_template.iloc[0].replace('nest:','')
                         print(model)

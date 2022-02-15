@@ -1610,8 +1610,7 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
 {
   ParameterDatum* pd_p = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
   ParameterDatum* pd_p_astro = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p_astro ].datum() );
-  ParameterDatum* pd_c_spill = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::c_spill ].datum() );  
-  astro_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
+  astrocytes_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
   // Probability of neuron=>neuron connection
   if ( pd_p )
   {
@@ -1641,20 +1640,6 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
       throw BadProperty( "Connection probability 0 <= p_astro <= 1 required." );
     }
     p_astro_ = std::shared_ptr< Parameter >( new ConstantParameter( value_p_astro ) );
-  }
-  // c_spill of astrocyte=>neuron connection
-  if ( pd_c_spill )
-  {    
-    c_spill_ = *pd_c_spill;
-  }
-  else
-  {
-    const double value_c_spill = ( *conn_spec )[ names::c_spill ];
-    if ( value_c_spill < 0 or 1 < value_c_spill )
-    {
-      throw BadProperty( "Coefficient 0 <= c_spill <= 1 required." );
-    }
-    c_spill_ = std::shared_ptr< Parameter >( new ConstantParameter( value_c_spill ) );
   }
 }
 
@@ -1720,6 +1705,7 @@ void
 nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id )
 {
   const thread target_thread = target->get_thread();
+  std::vector< index > snode_ids;
 
   // check whether the target is on our thread
   if ( tid != target_thread )
@@ -1730,6 +1716,7 @@ nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* ta
   // It is not possible to create multapses with this type of BernoulliBuilder,
   // hence leave out corresponding checks.
 
+  // Neuron-neuron connections
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
@@ -1745,9 +1732,53 @@ nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* ta
     }
 
     single_connect_( snode_id, *target, target_thread, rng );
+    snode_ids.push_back( snode_id );
+  }
+  
+  // Connections with astrocytes
+  NodeCollection::const_iterator astro_it = astrocytes_->begin();
+  for ( ; astro_it < astrocytes_->end(); ++astro_it )
+  {
+    const index astro_id = ( *astro_it ).node_id;
+
+    if ( not allow_autapses_ and astro_id == tnode_id )
+    {
+      continue;
+    }
+    if ( rng->drand() >= p_astro_->value( rng, target ) )
+    {
+      continue;
+    }
+    single_connect_astro_( astro_id, snode_ids, *target, target_thread, rng );
   }
 }
 
+void
+nest::BernoulliAstroBuilder::single_connect_astro_( index astro_id, const std::vector< index >& snode_ids, Node& target, thread target_thread, RngPtr rng )
+{
+  if ( this->requires_proxies() and not target.has_proxies() )
+  {
+    throw IllegalConnection( "Cannot use this rule to connect to nodes without proxies (usually devices)." );
+  }
+  
+  // Connect astrocyte=>postsynaptic
+  index synapse_indx_astro = kernel().model_manager.get_synapsedict()->lookup( "sic_connection" );
+  update_param_dict_( astro_id, target, target_thread, rng, 0 );
+  kernel().connection_manager.connect(astro_id,
+    &target,
+    target_thread,
+    synapse_indx_astro,
+    param_dicts_[ 0 ][ target_thread ],
+    1.0,
+    1.0);
+    
+  // Connect presynaptic=>astrocyte
+  for (std::size_t i = 0; i < snode_ids.size(); ++i)
+  {
+    Node* const astro_node = kernel().node_manager.get_node_or_proxy( astro_id );
+    single_connect_( snode_ids[i], *astro_node, target_thread, rng );      
+  }
+}
 
 nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,

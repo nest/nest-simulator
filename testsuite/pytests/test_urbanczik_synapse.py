@@ -40,7 +40,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
 
-        mc_models = ["iaf_cond_alpha_mc", "pp_cond_exp_mc_urbanczik"] # Multi-compartment models
+        mc_models = ["iaf_cond_alpha_mc", "pp_cond_exp_mc_urbanczik"]  # Multi-compartment models
         supported_models = ["pp_cond_exp_mc_urbanczik"]
         unsupported_models = [n for n in nest.node_models if n not in supported_models]
 

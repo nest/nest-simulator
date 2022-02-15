@@ -64,7 +64,7 @@ M_ERROR setverbosity
 def
 
 {
-  modeldict keys { run_test } forall
+  GetKernelStatus /node_models get { run_test } forall
 }
 pass_or_die
 

@@ -115,8 +115,7 @@ class TestSynapseCollection(unittest.TestCase):
         # Key is None
         all_values = conns.get()
 
-        expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+        expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         target_ref = [1, 2, 1, 2]
         dpw_ref = {'delay': [1., 1., 1., 1.],
@@ -297,8 +296,7 @@ class TestSynapseCollection(unittest.TestCase):
         nest.Connect(nrn, nrn)
         conns = nest.GetConnections()
 
-        expected_syn_model = 'static_synapse'
-        expected_syn_id = nest.ll_api.sli_func('synapsedict')[expected_syn_model]
+        expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         conns_val = conns.get(output='pandas')
         pnds_ref = pandas.DataFrame({'delay': 1.,

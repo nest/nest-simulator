@@ -49,6 +49,21 @@ SonataConnector::SonataConnector( const DictionaryDatum& sonata_dynamics )
 {
 }
 
+SonataConnector::~SonataConnector()
+{
+  for ( auto params_vec_map : type_id_2_syn_spec_ )
+  {
+    for ( auto params: params_vec_map.second )
+    {
+      for ( auto synapse_parameters : params )
+      {
+        delete synapse_parameters.second;
+      }
+    }
+  }
+  //type_id_2_syn_spec_.clear();
+}
+
 void
 SonataConnector::connect()
 {
@@ -166,7 +181,7 @@ SonataConnector::connect()
               }
               else if ( syn_spec->known( names::weight ) )
               {
-                weight = std::stod( ( *syn_spec )[ names::weight ] );
+                weight = std::stod( ( *syn_spec )[ names::weight ] );  // kan konverteres tidligere, om de i det hele tatt trengs
               }
 
               double delay = numerics::nan;
@@ -189,6 +204,10 @@ SonataConnector::connect()
                 type_id_2_param_dicts_[ edge_type_id ][ tid ],
                 delay,
                 weight );
+              /*if ( i >= 1000000 )
+              {
+                break;
+              }*/
             }
           }
           catch ( std::exception& err )
@@ -207,19 +226,12 @@ SonataConnector::connect()
             throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
           }
         }
-#pragma omp barrier
+//#pragma omp barrier
 
         delete source_node_id_data;
         delete target_node_id_data;
-        if ( weight_dataset_ )
-        {
-          delete syn_weight_data_;
-        }
-        if ( delay_dataset_ )
-        {
-          delete delay_data_;
-        }
         delete edge_type_id_data;
+        reset_params();
       }
       else
       {
@@ -365,6 +377,33 @@ SonataConnector::get_synapse_params_( index snode_id, Node& target, thread targe
       ( *dd ) = param->value_double( target_thread, rng, snode_id, &target );
     }
   }
+}
+
+void
+SonataConnector::reset_params()
+{
+  if ( weight_dataset_ )
+  {
+    delete syn_weight_data_;
+  }
+  if ( delay_dataset_ )
+  {
+    delete delay_data_;
+  }
+
+  type_id_2_syn_model_.clear();
+  for ( auto params_vec_map : type_id_2_syn_spec_ )
+  {
+    for ( auto params: params_vec_map.second )
+    {
+      for ( auto synapse_parameters : params )
+      {
+        synapse_parameters.second->reset();
+      }
+    }
+  }
+  type_id_2_syn_spec_.clear();
+  type_id_2_param_dicts_.clear();
 }
 
 } // namespace nest

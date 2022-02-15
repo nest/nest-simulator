@@ -47,6 +47,7 @@ class SonataConnector
    */
 public:
   SonataConnector( const DictionaryDatum& sonata_dynamics );
+  ~SonataConnector();
 
   void connect();
 
@@ -59,6 +60,7 @@ private:
   void create_type_id_2_syn_spec_( DictionaryDatum edge_dict );
   void set_synapse_params(DictionaryDatum syn_dict, index synapse_model_id, int type_id);
   void get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id );
+  void reset_params();
 
   DictionaryDatum sonata_dynamics_;
   bool weight_dataset_;

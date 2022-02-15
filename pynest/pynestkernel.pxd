@@ -190,11 +190,14 @@ cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     void reset_kernel()
     NodeCollectionPTR create( const string model_name, const long n ) except +
+
+    NodeCollectionPTR make_nodecollection( const vector[size_t] node_ids ) except +
+
     NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step ) except +
     void connect(NodeCollectionPTR sources,
                  NodeCollectionPTR targets,
                  const dictionary& connectivity,
-                 const vector[dictionary]& synapse_params )
+                 const vector[dictionary]& synapse_params ) except +
     string pprint_to_string( NodeCollectionPTR nc )
     size_t nc_size( NodeCollectionPTR nc )
     dictionary get_kernel_status()

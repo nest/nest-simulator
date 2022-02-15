@@ -193,7 +193,8 @@ class NodeCollection(object):
             # Data from user, must be converted to datum
             # Data can be anything that can be converted to a NodeCollection,
             # such as list, tuple, etc.
-            nc = kernel.make_nodecollection(data) # TODO-PYNEST-NG: implement
+            nc = kernel.llapi_make_nodecollection(data)  # TODO-PYNEST-NG: implement
+            self._datum = nc._datum
 
     def __iter__(self):
         return NodeCollectionIterator(self)

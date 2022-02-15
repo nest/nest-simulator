@@ -31,16 +31,16 @@
 #include "mpi_manager_impl.h"
 #include "parameter.h"
 
+#include "connector_model_impl.h"
 #include "iaf_psc_alpha.h"
 #include "static_synapse.h"
-#include "connector_model_impl.h"
 
 
 #include "connection_manager_impl.h"
 
+#include "genericmodel_impl.h"
 #include "model_manager.h"
 #include "model_manager_impl.h"
-#include "genericmodel_impl.h"
 
 #include "dictionary.h"
 
@@ -201,7 +201,7 @@ get_nc_status( NodeCollectionPTR node_collection )
       else
       {
         // key does not exist yet
-        result[ kv_pair.first ] = std::vector< boost::any >{ kv_pair.second };
+        result[ kv_pair.first ] = std::vector< boost::any > { kv_pair.second };
       }
     }
   }
@@ -305,6 +305,12 @@ create( const std::string model_name, const index n_nodes )
   const index model_id = static_cast< index >( kernel().model_manager.get_modeldict().get< index >( model_name ) );
 
   return kernel().node_manager.add_node( model_id, n_nodes );
+}
+
+NodeCollectionPTR
+make_nodecollection( const std::vector< index > node_ids )
+{
+  return NodeCollection::create( node_ids );
 }
 
 NodeCollectionPTR

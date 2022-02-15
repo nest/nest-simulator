@@ -686,6 +686,17 @@ def llapi_create(string model, long n):
     obj._set_nc(gids)
     return nest.NodeCollection(obj)
 
+def llapi_make_nodecollection(object node_ids):
+    cdef NodeCollectionPTR gids
+    try:
+        gids = make_nodecollection(node_ids)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_make_nodecollection', '') from None
+    obj = NodeCollectionObject()
+    obj._set_nc(gids)
+    return nest.NodeCollection(obj)
+
 def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
     cdef vector[dictionary] syn_param_vec
     if synapse_params is not None:

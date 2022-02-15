@@ -27,9 +27,9 @@
 #include <ostream>
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "enum_bitfield.h"
 #include "logging.h"
-#include "dictionary.h"
 
 // Includes from nestkernel:
 #include "nest_datums.h"
@@ -117,6 +117,8 @@ dictionary get_connection_status( const ConnectionDatum& conn );
 NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step );
 
 NodeCollectionPTR create( const std::string model_name, const index n );
+
+NodeCollectionPTR make_nodecollection( const std::vector< index > node_ids );
 
 NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );
 

@@ -115,6 +115,7 @@ public:
   get_thread() const
   {
     assert( false );
+    return invalid_thread_;
   }
 
 private:

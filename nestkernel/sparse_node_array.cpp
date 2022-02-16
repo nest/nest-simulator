@@ -155,7 +155,6 @@ nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
   // estimate index, limit to array size for safety size
   auto idx =
     std::min( static_cast< size_t >( base_idx + std::floor( scale * ( node_id - base_id ) ) ), nodes_.size() - 1 );
-  const auto start_idx = idx;
 
   // search left if necessary
   while ( 0 < idx and node_id < nodes_[ idx ].node_id_ )

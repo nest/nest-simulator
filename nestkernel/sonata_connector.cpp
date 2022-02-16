@@ -69,8 +69,6 @@ SonataConnector::connect()
 {
   auto edges = getValue< ArrayDatum >( sonata_dynamics_->lookup( "edges" ) );
 
-  //std::ofstream MyFile("check_conns.txt");
-
   for ( auto edge_dictionary_datum : edges )
   {
     auto edge_dict = getValue< DictionaryDatum >( edge_dictionary_datum );
@@ -131,8 +129,8 @@ SonataConnector::connect()
         get_attributes_( target_attribute_value, target_node_id, "node_population" );
 
         // Create map of edge type ids to NEST synapse_model ids
-        create_type_id_2_syn_spec_( edge_dict );
         auto edge_params = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
+        create_type_id_2_syn_spec_( edge_params );
 
         assert( num_source_node_id == num_target_node_id );
 
@@ -165,7 +163,6 @@ SonataConnector::connect()
 
               if ( target->is_proxy() or tid != target_thread )
               {
-                // skip array parameters handled in other virtual processes
                 continue;
               }
 
@@ -181,7 +178,7 @@ SonataConnector::connect()
               }
               else if ( syn_spec->known( names::weight ) )
               {
-                weight = std::stod( ( *syn_spec )[ names::weight ] );  // kan konverteres tidligere, om de i det hele tatt trengs
+                weight = ( *syn_spec )[ names::weight ];
               }
 
               double delay = numerics::nan;
@@ -191,7 +188,7 @@ SonataConnector::connect()
               }
               else if ( syn_spec->known( names::delay ) )
               {
-                delay = std::stod( ( *syn_spec )[ names::delay ] );
+                delay = ( *syn_spec )[ names::delay ];
               }
 
               RngPtr rng = get_vp_specific_rng( target_thread );
@@ -204,10 +201,6 @@ SonataConnector::connect()
                 type_id_2_param_dicts_[ edge_type_id ][ tid ],
                 delay,
                 weight );
-              /*if ( i >= 1000000 )
-              {
-                break;
-              }*/
             }
           }
           catch ( std::exception& err )
@@ -226,7 +219,6 @@ SonataConnector::connect()
             throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
           }
         }
-//#pragma omp barrier
 
         delete source_node_id_data;
         delete target_node_id_data;
@@ -244,9 +236,6 @@ SonataConnector::connect()
     edges_group.close();
     file.close();
   }
-
-
-  //MyFile.close();
 }
 
 hsize_t
@@ -290,10 +279,8 @@ SonataConnector::weight_and_delay_from_dataset_( H5::Group group )
 }
 
 void
-SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_dict )
+SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_params )
 {
-  auto edge_params = getValue< DictionaryDatum >( edge_dict->lookup( "edge_synapse" ) );
-
   for ( auto it = edge_params->begin(); it != edge_params->end(); ++it )
   {
     const auto type_id = std::stoi( it->first.toString() );

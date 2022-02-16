@@ -44,6 +44,7 @@ nest.ResetKernel()
 #example = '300_pointneurons'
 example = 'GLIF'
 plot = True
+pre_sim_time = 10
 
 if example == '300_pointneurons':
     base_path = '/home/stine/Work/sonata/examples/300_pointneurons/'
@@ -51,7 +52,7 @@ if example == '300_pointneurons':
     sim_config = 'simulation_config.json'
     population_to_plot = 'internal'
 elif example == 'GLIF':
-    base_path = '/home/stine/Work/sonata/examples/glif_nest_220/'#'/home/stine/Work/sonata/examples/GLIF_NEST/'
+    base_path = '/home/stine/Work/sonata/examples/glif_nest_220/'
     config = 'config.json'
     sim_config = None
     population_to_plot = 'v1'
@@ -107,7 +108,7 @@ print("number of connections: ", nest.GetKernelStatus('num_connections'))
 print("number of neurons: ", nest.GetKernelStatus('network_size'))
 
 start_time_presim = time.time()
-nest.Simulate(10.)
+#nest.Simulate(pre_sim_time)
 end_time_presim = time.time() - start_time_presim
 
 if plot:

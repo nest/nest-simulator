@@ -212,9 +212,11 @@ class SonataConnector(object):
                     d['synapse_model'] = d.pop('model_template')
                     setable_params = GetDefaults(d['synapse_model'])
                     if 'syn_weight' in d:
-                        d['weight'] = d.pop('syn_weight')
+                        d['weight'] = float(d.pop('syn_weight'))
 
                     synapse_dict = {key: d[key] for key in setable_params if key in d}
+                    if 'delay' in synapse_dict:
+                        synapse_dict['delay'] = float(synapse_dict['delay'])
 
                     with open(self.config['components']['synaptic_models_dir'] + '/' + d['dynamics_params']) as dynamics_file:
                         dynamics = json.load(dynamics_file)

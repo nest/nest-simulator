@@ -78,7 +78,7 @@ class Node;
  * 4. nodes_[0].get_node()->has_proxies() == nodes_[i].get_node()->has_proxies() for 0 <= i < lookup_split_idx_
  *
  * @note
- * - Invariant 5 simply means that all nodes in the left part of the array have the same value of has_proxies().
+ * - The last invariant simply means that all nodes in the left part of the array have the same value of has_proxies().
  *
  */
 class SparseNodeArray

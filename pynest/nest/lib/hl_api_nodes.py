@@ -51,8 +51,9 @@ def Create(model, n=1, params=None, positions=None):
     Note
     ----
     During network construction, create all nodes representing model neurons first, then all nodes
-    representing devices (generators, recorders or meters). Otherwise, network connection can be
-    slow, especially in parallel simulations of networks with many devices.
+    representing devices (generators, recorders or meters), or all devices first and then all neurons.
+    Otherwise, network connection can be slow, especially in parallel simulations of networks
+    with many devices.
 
     Parameters
     ----------

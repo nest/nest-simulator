@@ -29,9 +29,6 @@
 #include "vp_manager_impl.h"
 
 
-#include <iomanip>
-#include <iostream>
-
 nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, index node_id )
   : node_( &node )
   , node_id_( node_id )
@@ -82,13 +79,13 @@ nest::SparseNodeArray::add_local_node( Node& node )
   // mark array inconsistent until set_max_node_id() called
   global_max_node_id_ = 0;
 
-  // Setup when first node is added
+  // set up when first node is added
   if ( local_min_node_id_ == 0 )
   {
     local_min_node_id_ = node_id;
     left_side_has_proxies_ = node.has_proxies();
 
-    // We now know which scale applies on which side of the split
+    // we now know which scale applies on which side of the split
     const double proxy_scale = 1.0 / static_cast< double >( kernel().vp_manager.get_num_virtual_processes() );
     if ( left_side_has_proxies_ )
     {

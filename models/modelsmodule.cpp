@@ -22,11 +22,19 @@
 
 #include "modelsmodule.h"
 
-// Includes from nestkernel
+// Includes from nestkernel:
+#include "common_synapse_properties.h"
+#include "connector_model_impl.h"
+#include "genericmodel.h"
 #include "genericmodel_impl.h"
+#include "kernel_manager.h"
+#include "model.h"
+#include "model_manager_impl.h"
+#include "target_identifier.h"
 
 // Generated includes:
 #include "config.h"
+
 
 // Neuron models
 #include "aeif_cond_alpha.h"
@@ -147,15 +155,6 @@
 #include "urbanczik_synapse.h"
 #include "vogels_sprekeler_synapse.h"
 
-// Includes from nestkernel:
-#include "common_synapse_properties.h"
-#include "connector_model_impl.h"
-#include "genericmodel.h"
-#include "kernel_manager.h"
-#include "model.h"
-#include "model_manager_impl.h"
-#include "target_identifier.h"
-
 #ifdef HAVE_MUSIC
 #include "music_cont_in_proxy.h"
 #include "music_cont_out_proxy.h"
@@ -165,6 +164,7 @@
 #include "music_rate_in_proxy.h"
 #include "music_rate_out_proxy.h"
 #endif
+
 
 namespace nest
 {
@@ -336,7 +336,6 @@ ModelsModule::init( SLIInterpreter* )
   // register secondary connection models
   register_secondary_connection_model< GapJunction >(
     "gap_junction", RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
-
   register_secondary_connection_model< RateConnectionInstantaneous >(
     "rate_connection_instantaneous", RegisterConnectionModelFlags::SUPPORTS_WFR );
   register_secondary_connection_model< RateConnectionDelayed >(

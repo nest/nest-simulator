@@ -29,6 +29,9 @@
 #include "vp_manager_impl.h"
 
 
+#include <iomanip>
+#include <iostream>
+
 nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, index node_id )
   : node_( &node )
   , node_id_( node_id )
@@ -37,40 +40,30 @@ nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, index node_id )
 
 nest::SparseNodeArray::SparseNodeArray()
   : nodes_()
-  , max_node_id_( 0 )
+  , global_max_node_id_( 0 )
   , local_min_node_id_( 0 )
   , local_max_node_id_( 0 )
   , left_scale_( 1.0 )
   , right_scale_( 1.0 )
-  , lookup_split_node_id_( 0 )
-  , lookup_split_idx_( 0 )
+  , split_node_id_( 0 )
+  , split_idx_( 0 )
   , have_split_( false )
   , left_side_has_proxies_( false ) // meaningless initial value
-  , left_ctr_( 0 )
-  , right_ctr_( 0 )
 {
-}
-
-#include <iostream>
-nest::SparseNodeArray::~SparseNodeArray()
-{
-#pragma omp critical
-  {
-    std::cerr << left_ctr_ << '\t' << right_ctr_ << std::endl;
-  }
 }
 
 void
 nest::SparseNodeArray::clear()
 {
   nodes_.clear();
-  max_node_id_ = 0;
+
+  global_max_node_id_ = 0;
   local_min_node_id_ = 0;
   local_max_node_id_ = 0;
   left_scale_ = 1.0;
   right_scale_ = 1.0;
-  lookup_split_node_id_ = 0;
-  lookup_split_idx_ = 0;
+  split_node_id_ = 0;
+  split_idx_ = 0;
   have_split_ = false;
   left_side_has_proxies_ = false;
 }
@@ -80,18 +73,17 @@ nest::SparseNodeArray::add_local_node( Node& node )
 {
   const index node_id = node.get_node_id();
 
-  // protect against node ID 0
-  assert( node_id > 0 );
+  // ensure increasing order
+  assert( node_id > local_max_node_id_ );
 
-  // node_id must exceed max_node_id_ to ensure strictly increasing order
-  assert( node_id > max_node_id_ );
-
-  // all is consistent, register node and update auxiliary variables
   nodes_.push_back( NodeEntry( node, node_id ) );
   local_max_node_id_ = node_id;
-  max_node_id_ = node_id;
 
-  if ( local_min_node_id_ == 0 ) // We are adding the first node
+  // mark array inconsistent until set_max_node_id() called
+  global_max_node_id_ = 0;
+
+  // Setup when first node is added
+  if ( local_min_node_id_ == 0 )
   {
     local_min_node_id_ = node_id;
     left_side_has_proxies_ = node.has_proxies();
@@ -117,24 +109,29 @@ nest::SparseNodeArray::add_local_node( Node& node )
     }
     else
     {
-      lookup_split_node_id_ = node_id; // update to last node so far on left side
-      ++lookup_split_idx_;             // index one beyond that node
+      ++split_idx_; // index one beyond the node
     }
   }
 }
 
 void
-nest::SparseNodeArray::update_max_node_id( index node_id )
+nest::SparseNodeArray::set_max_node_id( index node_id )
 {
   assert( node_id > 0 ); // minimum node ID is 1
-  assert( node_id >= max_node_id_ );
-  max_node_id_ = node_id;
+  assert( node_id >= local_max_node_id_ );
+  global_max_node_id_ = node_id;
+  if ( not have_split_ )
+  {
+    split_node_id_ = global_max_node_id_ + 1;
+  }
 }
 
 nest::Node*
 nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
 {
-  if ( node_id < 1 or max_node_id_ < node_id )
+  assert( is_consistent_() );
+
+  if ( node_id < 1 or global_max_node_id_ < node_id )
   {
     throw UnknownNode();
   }
@@ -147,32 +144,29 @@ nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
 
   /* Find base index and node ID for estimating location of desired node in array.
    *
-   * The following lookup is safe at this point:
-   * - We have at least one local node, which by definition is on the left side, so nodes_[0] is fine.
-   * - left_side can only be false if we have at least one node on the right side, and then nodes_[lookup_split_idx_] is
-   * safe.
+   * In the expression for base_id, split_node_id_ will only be used if we are on the
+   * right side, when the value is well-defined.
    */
-  const bool left_side = node_id <= lookup_split_node_id_;
+  const bool left_side = node_id < split_node_id_;
   const double scale = left_side ? left_scale_ : right_scale_;
-  const size_t base_idx = left_side ? 0 : lookup_split_idx_;
-  const index base_id = nodes_[ base_idx ].node_id_;
+  const size_t base_idx = left_side ? 0 : split_idx_;
+  const index base_id = left_side ? local_min_node_id_ : split_node_id_;
 
   // estimate index, limit to array size for safety size
   auto idx =
     std::min( static_cast< size_t >( base_idx + std::floor( scale * ( node_id - base_id ) ) ), nodes_.size() - 1 );
+  const auto start_idx = idx;
 
   // search left if necessary
   while ( 0 < idx and node_id < nodes_[ idx ].node_id_ )
   {
     --idx;
-    ++left_ctr_;
   }
 
   // search right if necessary
   while ( idx < nodes_.size() and nodes_[ idx ].node_id_ < node_id )
   {
     ++idx;
-    ++right_ctr_;
   }
 
   if ( idx < nodes_.size() and nodes_[ idx ].node_id_ == node_id )

@@ -57,26 +57,28 @@ class Node;
  * region, where all nodes are represented locally, Node IDs are mapped directly
  * to array indices. In the proxy region, they are scaled by 1/n_vp.
  *
+ * To reliably reject requests for node IDs beyond the globally maximal node ID, the
+ * latter must be set explicit. A SparseNodeArray is said to be in *consistent state*
+ * if the global maximal node ID has been set. Once add_local_node() is called, the
+ * array is not in consistent state until the global maximal node ID is set again. This
+ * is indicated by setting the max_node_id_ == 0. Looking up nodes while the
+ * array is not in consistent state triggers an assertion.
+ *
  * To also support cases in which users interleave creation of nodes with and
  * without proxies or use nodes with special behavior (music nodes, e.g.), we
  * perform a linear search from the estimated location of the node in the array.
  *
- * The following invariants hold:
+ * The following invariants hold when the array is in consistent state:
  *
  * 1. Entries are sorted by strictly increasing node ID (nid).
- * 2. All entries with index i < lookup_split_idx_ belong to the left part of the array,
+ * 2. All entries with index i < split_idx_ belong to the left part of the array,
  *    all remaining entries to the right part.
- * 3. Provided that the array has at least one element, the following holds:
- *    1. All entries with node ID nid <= lookup_split_node_id_ belong to the left part of the array,
- *       all remaining entries to the right part.
- *    2. nodes_[lookup_split_idx_-1].get_node_id() == lookup_split_node_id_
- *    3. nodes_[0].get_node()->has_proxies() == nodes_[i].get_node()->has_proxies() for 0 <= i < lookup_split_idx_
+ * 3. All entries with node ID nid < split_node_id_ belong to the left part of the array,
+ *    all remaining entries to the right part.
+ * 4. nodes_[0].get_node()->has_proxies() == nodes_[i].get_node()->has_proxies() for 0 <= i < lookup_split_idx_
  *
  * @note
- * - Invariant 3.3 simply means that all nodes in the left part of the array have the same value of has_proxies().
- * - Letting lookup_split_node_id_ to the last node ID in the left part of the array, while lookup_split_node_idx_
- *   points to the first element in the right part makes for slightly simpler code and avoids any negative values.
- *   It exploits the fact that node ID >= 1.
+ * - Invariant 5 simply means that all nodes in the left part of the array have the same value of has_proxies().
  *
  */
 class SparseNodeArray
@@ -125,7 +127,6 @@ public:
 
   //! Create empty sparse node array
   SparseNodeArray();
-  ~SparseNodeArray();
 
   /**
    * Return size of container.
@@ -147,11 +148,13 @@ public:
   /**
    * Set max node ID to maximum in network.
    *
+   * This also sets split_node_id_ to max node ID + 1 as long as we have not split.
+   *
    * @note
    * Must be called by any method adding nodes to the network at end of
    * each batch of nodes added.
    */
-  void update_max_node_id( index );
+  void set_max_node_id( index );
 
   /**
    * Globally largest node ID.
@@ -181,8 +184,10 @@ public:
   const_iterator end() const;
 
 private:
+  bool is_consistent_() const;
+
   BlockVector< NodeEntry > nodes_; //!< stores local node information
-  index max_node_id_;              //!< largest node ID in network
+  index global_max_node_id_;       //!< globally largest node ID
   index local_min_node_id_;        //!< smallest local node ID
   index local_max_node_id_;        //!< largest local node ID
 
@@ -190,14 +195,17 @@ private:
   double right_scale_; //!< scale factor for right side of array
 
   /**
-   * Largest node ID in left side of array.
+   * Globally smallest node ID in right side of array.
+   *
+   * - Is updated by set_max_node_id()
+   * - Is global_max_node_id_ + 1 as long as right side is empty.
    */
-  index lookup_split_node_id_;
+  index split_node_id_;
 
   /**
    * Array index of first element in right side of array.
    */
-  size_t lookup_split_idx_;
+  size_t split_idx_;
 
   /**
    * Mark whether split has happened during network construction.
@@ -210,9 +218,6 @@ private:
    * Proxy status of nodes on left side of array.
    */
   bool left_side_has_proxies_;
-
-  mutable size_t left_ctr_;
-  mutable size_t right_ctr_;
 };
 
 } // namespace nest
@@ -246,7 +251,13 @@ nest::SparseNodeArray::get_node_by_index( size_t idx ) const
 inline nest::index
 nest::SparseNodeArray::get_max_node_id() const
 {
-  return max_node_id_;
+  return global_max_node_id_;
+}
+
+inline bool
+nest::SparseNodeArray::is_consistent_() const
+{
+  return nodes_.size() == 0 or global_max_node_id_ > 0;
 }
 
 inline nest::Node*

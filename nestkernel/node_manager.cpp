@@ -221,7 +221,7 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
         local_nodes_[ t ].add_local_node( *node );
         node_id += num_vps;
       }
-      local_nodes_[ t ].update_max_node_id( max_node_id );
+      local_nodes_[ t ].set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -260,7 +260,7 @@ NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, N
 
         local_nodes_[ t ].add_local_node( *node );
       }
-      local_nodes_[ t ].update_max_node_id( max_node_id );
+      local_nodes_[ t ].set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {
@@ -298,7 +298,7 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
           local_nodes_[ 0 ].add_local_node( *node );
         }
       }
-      local_nodes_.at( t ).update_max_node_id( max_node_id );
+      local_nodes_.at( t ).set_max_node_id( max_node_id );
     }
     catch ( std::exception& err )
     {

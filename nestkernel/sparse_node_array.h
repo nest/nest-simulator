@@ -42,7 +42,7 @@ class Node;
  * Sparse representation of local nodes.
  *
  * SparseNodeArray maps node IDs of thread-local nodes to Node*. It provides
- * an const iterator interface for iteration over all local nodes, lookup by
+ * a const iterator interface for iteration over all local nodes, lookup by
  * node ID and lookup by numeric index into local nodes. The latter is provided
  * to support HPC synapses using TargetIdentifierIndex representation.
  *

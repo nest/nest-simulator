@@ -158,7 +158,7 @@ nest::K::K( const DictionaryDatum& channel_params )
   , gbar_K_( 0.0 )
   , e_K_( -85. )
 {
-  // update sodium channel parameters
+  // update potassium channel parameters
   if ( channel_params->known( "gbar_K" ) )
   {
     gbar_K_ = getValue< double >( channel_params, "gbar_K" );
@@ -255,7 +255,7 @@ nest::AMPA::AMPA( const long syn_index, const DictionaryDatum& receptor_params )
 {
   syn_idx = syn_index;
 
-  // update sodium channel parameters
+  // update AMPA receptor parameters
   if ( receptor_params->known( "e_AMPA" ) )
   {
     e_rev_ = getValue< double >( receptor_params, "e_AMPA" );
@@ -300,7 +300,7 @@ nest::AMPA::f_numstep( const double v_comp, const long lag )
   // voltage derivative of total current
   double d_i_tot_dv = -g_AMPA;
 
-  // for numberical integration
+  // for numerical integration
   double g_val = -d_i_tot_dv / 2.;
   double i_val = i_tot + g_val * v_comp;
 
@@ -333,7 +333,7 @@ nest::GABA::GABA( const long syn_index, const DictionaryDatum& receptor_params )
 {
   syn_idx = syn_index;
 
-  // update sodium channel parameters
+  // update GABA receptor parameters
   if ( receptor_params->known( "e_GABA" ) )
   {
     e_rev_ = getValue< double >( receptor_params, "e_GABA" );
@@ -378,7 +378,7 @@ nest::GABA::f_numstep( const double v_comp, const long lag )
   // voltage derivative of total current
   double d_i_tot_dv = -g_GABA;
 
-  // for numberical integration
+  // for numerical integration
   double g_val = -d_i_tot_dv / 2.;
   double i_val = i_tot + g_val * v_comp;
 
@@ -411,7 +411,7 @@ nest::NMDA::NMDA( const long syn_index, const DictionaryDatum& receptor_params )
 {
   syn_idx = syn_index;
 
-  // update sodium channel parameters
+  // update NMDA receptor parameters
   if ( receptor_params->known( "e_NMDA" ) )
   {
     e_rev_ = getValue< double >( receptor_params, "e_NMDA" );
@@ -459,7 +459,7 @@ nest::NMDA::f_numstep( const double v_comp, const long lag )
   // voltage derivative of total current
   double d_i_tot_dv = g_NMDA * ( NMDA_sigmoid.second * ( e_rev_ - v_comp ) - NMDA_sigmoid.first );
 
-  // for numberical integration
+  // for numerical integration
   double g_val = -d_i_tot_dv / 2.;
   double i_val = i_tot + g_val * v_comp;
 
@@ -506,7 +506,7 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const DictionaryDatum& recepto
 {
   syn_idx = syn_index;
 
-  // update sodium channel parameters
+  // update AMPA+NMDA receptor parameters
   if ( receptor_params->known( "e_AMPA_NMDA" ) )
   {
     e_rev_ = getValue< double >( receptor_params, "e_AMPA_NMDA" );
@@ -580,7 +580,7 @@ nest::AMPA_NMDA::f_numstep( const double v_comp, const long lag )
   double d_i_tot_dv =
     -g_AMPA + NMDA_ratio_ * g_NMDA * ( NMDA_sigmoid.second * ( e_rev_ - v_comp ) - NMDA_sigmoid.first );
 
-  // for numberical integration
+  // for numerical integration
   double g_val = -d_i_tot_dv / 2.;
   double i_val = i_tot + g_val * v_comp;
 

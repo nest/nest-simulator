@@ -65,7 +65,7 @@ class Node;
  * array is not in a consistent state triggers an assertion.
  *
  * To also support cases in which users interleave creation of nodes with and
- * without proxies or use nodes with special behavior (music nodes, e.g.), we
+ * without proxies or use nodes with special behavior (e.g., MUSIC nodes), we
  * perform a linear search from the estimated location of the node in the array.
  *
  * The following invariants hold when the array is in consistent state:

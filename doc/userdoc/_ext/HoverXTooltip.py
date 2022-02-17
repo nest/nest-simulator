@@ -242,7 +242,6 @@ def setup(app):
         TYPE: Description
     """
     # add external css/js files
-    app.add_js_file('js/jquery-2.0.3.min.js')
     app.add_js_file('js/bootstrap.min.js')
     app.add_css_file('css/bootstrap.min.css')
 

@@ -109,17 +109,6 @@ ModelManager::register_secondary_connection_model( const std::string& name, cons
     enumFlagSet( flags, RegisterConnectionModelFlags::SUPPORTS_WFR ) );
 
   synindex syn_id = register_connection_model_( cm );
-
-  // idea: save *cm in data structure
-  // otherwise when number of threads is increased no way to get further
-  // elements
-  if ( secondary_connector_models_.size() < syn_id + ( unsigned int ) 1 )
-  {
-    secondary_connector_models_.resize( syn_id + 1, NULL );
-  }
-
-  secondary_connector_models_[ syn_id ] = cm;
-
   ConnectionT< TargetIdentifierPtrRport >::EventType::set_syn_id( syn_id );
 
   // create labeled secondary event connection model
@@ -129,17 +118,6 @@ ModelManager::register_secondary_connection_model( const std::string& name, cons
     enumFlagSet( flags, RegisterConnectionModelFlags::SUPPORTS_WFR ) );
 
   syn_id = register_connection_model_( cm );
-
-  // idea: save *cm in data structure
-  // otherwise when number of threads is increased no way to get further
-  // elements
-  if ( secondary_connector_models_.size() < syn_id + ( unsigned int ) 1 )
-  {
-    secondary_connector_models_.resize( syn_id + 1, NULL );
-  }
-
-  secondary_connector_models_[ syn_id ] = cm;
-
   ConnectionT< TargetIdentifierPtrRport >::EventType::set_syn_id( syn_id );
 }
 

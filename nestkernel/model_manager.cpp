@@ -266,10 +266,9 @@ ModelManager::copy_connection_model_( index old_id, Name new_name )
   if ( new_id == invalid_synindex ) // we wrapped around (=63), maximal id of
                                     // connection_model = 62, see nest_types.h
   {
-    const std::string msg =
-      "CopyModel cannot generate another synapse. Maximal synapse model count "
-      "of "
-      + std::to_string( MAX_SYN_ID ) + " exceeded.";
+    const std::string msg = String::compose(
+      "CopyModel cannot generate another synapse. Maximal synapse model count of %1 exceeded.",
+      MAX_SYN_ID );
     LOG( M_ERROR, "ModelManager::copy_connection_model_", msg );
     throw KernelException( "Synapse model count exceeded" );
   }
@@ -572,8 +571,7 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
   {
     delete cf;
     std::string msg = String::compose(
-      "A synapse type called '%1' already exists.\n"
-      "Please choose a different name!",
+      "A synapse type called '%1' already exists. Please choose a different name!",
       cf->get_name() );
     throw NamingConflict( msg );
   }

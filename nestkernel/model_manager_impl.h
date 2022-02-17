@@ -67,8 +67,7 @@ ModelManager::register_connection_model( const std::string& name, const Register
     enumFlagSet( flags, RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING ) );
   register_connection_model_( cf );
 
-  // register the "hpc" version with the same parameters but a different target
-  // identifier
+  // register the "hpc" version with the same parameters but a different target identifier
   if ( enumFlagSet( flags, RegisterConnectionModelFlags::REGISTER_HPC ) )
   {
     cf = new GenericConnectorModel< ConnectionT< TargetIdentifierIndex > >( name + "_hpc",
@@ -81,8 +80,7 @@ ModelManager::register_connection_model( const std::string& name, const Register
     register_connection_model_( cf );
   }
 
-  // register the "lbl" (labeled) version with the same parameters but a
-  // different connection type
+  // register the "lbl" (labeled) version with the same parameters but a different connection type
   if ( enumFlagSet( flags, RegisterConnectionModelFlags::REGISTER_LBL ) )
   {
     cf = new GenericConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl",

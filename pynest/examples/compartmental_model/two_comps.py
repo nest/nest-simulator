@@ -28,7 +28,6 @@ import nest
 import matplotlib.pyplot as plt
 
 nest.ResetKernel()
-nest.SetKernelStatus(dict(resolution=.1))
 
 soma_params = {
     # passive parameters

@@ -227,7 +227,7 @@ class NodeCollection(object):
         elif isinstance(key, (int, numpy.integer)):
             if abs(key + (key >= 0)) > self.__len__():
                 raise IndexError('index value outside of the NodeCollection')
-            return sli_func('Take', self._datum, [key + (key >= 0)])
+            return self[key:key + 1:1]
         elif isinstance(key, (list, tuple)):
             if len(key) == 0:
                 return NodeCollection([])

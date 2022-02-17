@@ -64,7 +64,7 @@ class Node;
  * is indicated by setting the max_node_id_ == 0. Looking up nodes while the
  * array is not in a consistent state triggers an assertion.
  *
- * To also support cases in which users interleave creation of nodes with and
+ * To also support cases in which users alternate creation of nodes with and
  * without proxies or use nodes with special behavior (e.g., MUSIC nodes), we
  * perform a linear search from the estimated location of the node in the array.
  *

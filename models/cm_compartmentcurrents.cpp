@@ -22,7 +22,6 @@
 #include "cm_compartmentcurrents.h"
 
 
-// Na channel //////////////////////////////////////////////////////////////////
 nest::Na::Na()
   // initialization state state variables
   : m_Na_( 0.0 )
@@ -142,10 +141,8 @@ nest::Na::f_numstep( const double v_comp )
 
   return std::make_pair( g_val, i_val );
 }
-////////////////////////////////////////////////////////////////////////////////
 
 
-// K channel ///////////////////////////////////////////////////////////////////
 nest::K::K()
   // initialization state variables
   : n_K_( 0.0 )
@@ -171,7 +168,6 @@ nest::K::K( const DictionaryDatum& channel_params )
     e_K_ = getValue< double >( channel_params, "e_K" );
   }
 }
-
 
 void
 nest::K::append_recordables( std::map< Name, double* >* recordables, const long compartment_idx )
@@ -232,10 +228,8 @@ nest::K::f_numstep( const double v_comp )
 
   return std::make_pair( g_val, i_val );
 }
-////////////////////////////////////////////////////////////////////////////////
 
 
-// AMPA synapse ////////////////////////////////////////////////////////////////
 nest::AMPA::AMPA( const long syn_index )
   // initialization state variables
   : g_r_AMPA_( 0.0 )
@@ -312,10 +306,8 @@ nest::AMPA::f_numstep( const double v_comp, const long lag )
 
   return std::make_pair( g_val, i_val );
 }
-////////////////////////////////////////////////////////////////////////////////
 
 
-// GABA synapse ////////////////////////////////////////////////////////////////
 nest::GABA::GABA( const long syn_index )
   // initialization state variables
   : g_r_GABA_( 0.0 )
@@ -392,10 +384,8 @@ nest::GABA::f_numstep( const double v_comp, const long lag )
 
   return std::make_pair( g_val, i_val );
 }
-////////////////////////////////////////////////////////////////////////////////
 
 
-// NMDA synapse ////////////////////////////////////////////////////////////////
 nest::NMDA::NMDA( const long syn_index )
   // initialization state variables
   : g_r_NMDA_( 0.0 )
@@ -475,10 +465,8 @@ nest::NMDA::f_numstep( const double v_comp, const long lag )
 
   return std::make_pair( g_val, i_val );
 }
-////////////////////////////////////////////////////////////////////////////////
 
 
-// AMPA_NMDA synapse ///////////////////////////////////////////////////////////
 nest::AMPA_NMDA::AMPA_NMDA( const long syn_index )
   // initialization state variables
   : g_r_AN_AMPA_( 0.0 )
@@ -598,4 +586,3 @@ nest::AMPA_NMDA::f_numstep( const double v_comp, const long lag )
 
   return std::make_pair( g_val, i_val );
 }
-////////////////////////////////////////////////////////////////////////////////

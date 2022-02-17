@@ -806,6 +806,64 @@ class NEASTTestCase(unittest.TestCase):
                                     "Cannot connect with unknown recordable v_comp1"):
             nest.Connect(mm, n_neat)
 
+    def test_continuerun(self, dt=0.1):
+        recordables = [
+            'v_comp0', 'v_comp1',
+            'g_r_GABA_0', 'g_d_GABA_0',
+            'g_r_AMPA_1', 'g_d_AMPA_1'
+        ]
+
+        # case 1: continuous simulation
+        nest.ResetKernel()
+        nest.SetKernelStatus(dict(resolution=dt))
+
+        n_neat = nest.Create('cm_default')
+        nest.SetStatus(n_neat, {"compartments": [{"parent_idx": -1, "params": SP},
+                                                   {"parent_idx": 0, "params": DP[0]}],
+                                "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
+                                                {"comp_idx": 1, "receptor_type": "AMPA"}]})
+
+
+        sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
+        sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
+
+        nest.Connect(sg_1, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
+        nest.Connect(sg_2, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
+
+        m_neat = nest.Create('multimeter', 1, {'record_from': recordables, 'interval': 1.})
+        nest.Connect(m_neat, n_neat)
+
+        nest.Simulate(100.)
+
+        events_neat_0 = nest.GetStatus(m_neat, 'events')[0]
+
+        # case 2: two nest.Simulate() calls
+        nest.ResetKernel()
+        nest.SetKernelStatus(dict(resolution=dt))
+
+        n_neat = nest.Create('cm_default')
+        nest.SetStatus(n_neat, {"compartments": [{"parent_idx": -1, "params": SP},
+                                                   {"parent_idx": 0, "params": DP[0]}],
+                                "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
+                                                {"comp_idx": 1, "receptor_type": "AMPA"}]})
+
+
+        sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
+        sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
+
+        nest.Connect(sg_1, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
+        nest.Connect(sg_2, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
+
+        m_neat = nest.Create('multimeter', 1, {'record_from': recordables, 'interval': 1.})
+        nest.Connect(m_neat, n_neat)
+
+        nest.Simulate(12.)
+        nest.Simulate(88.)
+        events_neat_1 = nest.GetStatus(m_neat, 'events')[0]
+
+        for key in recordables:
+            assert np.allclose(events_neat_0[key], events_neat_1[key])
+
 
 def suite():
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721

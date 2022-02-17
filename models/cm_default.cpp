@@ -263,6 +263,8 @@ nest::cm_default::calibrate()
   c_tree_.init_pointers();
   // initialize the pointers to the synapse buffers for the receptor currents
   c_tree_.set_syn_buffers( syn_buffers_ );
+  // initialize the recordables pointers
+  init_recordables_pointers_();
 
   c_tree_.calibrate();
 }

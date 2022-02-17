@@ -89,7 +89,6 @@ mm = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp
 nest.Connect(mm, cm)
 
 nest.Simulate(400.)
-# nest.Simulate(.2)
 res = nest.GetStatus(mm, 'events')[0]
 
 plt.plot(res['times'], res['v_comp0'], c='b', label='v_comp0')

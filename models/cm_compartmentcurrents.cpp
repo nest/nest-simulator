@@ -24,15 +24,19 @@
 
 // Na channel //////////////////////////////////////////////////////////////////
 nest::Na::Na()
+  // initialization state state variables
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
+  // initialization parameters
   , gbar_Na_( 0.0 )
   , e_Na_( 50. )
 {
 }
 nest::Na::Na( const DictionaryDatum& channel_params )
+  // initialization state state variables
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
+  // initialization parameters
   , gbar_Na_( 0.0 )
   , e_Na_( 50. )
 {
@@ -143,13 +147,17 @@ nest::Na::f_numstep( const double v_comp )
 
 // K channel ///////////////////////////////////////////////////////////////////
 nest::K::K()
+  // initialization state variables
   : n_K_( 0.0 )
+  // initialization parameters
   , gbar_K_( 0.0 )
   , e_K_( -85. )
 {
 }
 nest::K::K( const DictionaryDatum& channel_params )
+  // initialization state variables
   : n_K_( 0.0 )
+  // initialization parameters
   , gbar_K_( 0.0 )
   , e_K_( -85. )
 {
@@ -229,7 +237,11 @@ nest::K::f_numstep( const double v_comp )
 
 // AMPA synapse ////////////////////////////////////////////////////////////////
 nest::AMPA::AMPA( const long syn_index )
-  : e_rev_( 0.0 )
+  // initialization state variables
+  : g_r_AMPA_( 0.0 )
+  , g_d_AMPA_( 0.0 )
+  // initialization parameters
+  , e_rev_( 0.0 )
   , tau_r_( 0.2 )
   , tau_d_( 3.0 )
 {
@@ -239,7 +251,11 @@ nest::AMPA::AMPA( const long syn_index )
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
 nest::AMPA::AMPA( const long syn_index, const DictionaryDatum& receptor_params )
-  : e_rev_( 0.0 )
+  // initialization state variables
+  : g_r_AMPA_( 0.0 )
+  , g_d_AMPA_( 0.0 )
+  // initialization parameters
+  , e_rev_( 0.0 )
   , tau_r_( 0.2 )
   , tau_d_( 3.0 )
 {
@@ -301,7 +317,11 @@ nest::AMPA::f_numstep( const double v_comp, const long lag )
 
 // GABA synapse ////////////////////////////////////////////////////////////////
 nest::GABA::GABA( const long syn_index )
-  : e_rev_( -80. )
+  // initialization state variables
+  : g_r_GABA_( 0.0 )
+  , g_d_GABA_( 0.0 )
+  // initialization parameters
+  , e_rev_( -80. )
   , tau_r_( 0.2 )
   , tau_d_( 10.0 )
 {
@@ -311,7 +331,11 @@ nest::GABA::GABA( const long syn_index )
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
 nest::GABA::GABA( const long syn_index, const DictionaryDatum& receptor_params )
-  : e_rev_( -80. )
+  // initialization state variables
+  : g_r_GABA_( 0.0 )
+  , g_d_GABA_( 0.0 )
+  // initialization parameters
+  , e_rev_( -80. )
   , tau_r_( 0.2 )
   , tau_d_( 10.0 )
 {
@@ -373,7 +397,11 @@ nest::GABA::f_numstep( const double v_comp, const long lag )
 
 // NMDA synapse ////////////////////////////////////////////////////////////////
 nest::NMDA::NMDA( const long syn_index )
-  : e_rev_( 0. )
+  // initialization state variables
+  : g_r_NMDA_( 0.0 )
+  , g_d_NMDA_( 0.0 )
+  // initialization parameters
+  , e_rev_( 0. )
   , tau_r_( 0.2 )
   , tau_d_( 43.0 )
 {
@@ -383,7 +411,11 @@ nest::NMDA::NMDA( const long syn_index )
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
 nest::NMDA::NMDA( const long syn_index, const DictionaryDatum& receptor_params )
-  : e_rev_( 0. )
+  // initialization state variables
+  : g_r_NMDA_( 0.0 )
+  , g_d_NMDA_( 0.0 )
+  // initialization parameters
+  , e_rev_( 0. )
   , tau_r_( 0.2 )
   , tau_d_( 43.0 )
 {
@@ -448,7 +480,13 @@ nest::NMDA::f_numstep( const double v_comp, const long lag )
 
 // AMPA_NMDA synapse ///////////////////////////////////////////////////////////
 nest::AMPA_NMDA::AMPA_NMDA( const long syn_index )
-  : e_rev_( 0. )
+  // initialization state variables
+  : g_r_AN_AMPA_( 0.0 )
+  , g_d_AN_AMPA_( 0.0 )
+  , g_r_AN_NMDA_( 0.0 )
+  , g_d_AN_NMDA_( 0.0 )
+  // initialization parameters
+  , e_rev_( 0. )
   , tau_r_AMPA_( 0.2 )
   , tau_d_AMPA_( 3.0 )
   , tau_r_NMDA_( 0.2 )
@@ -465,7 +503,13 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index )
   g_norm_NMDA_ = 1. / ( -std::exp( -tp / tau_r_NMDA_ ) + std::exp( -tp / tau_d_NMDA_ ) );
 }
 nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const DictionaryDatum& receptor_params )
-  : e_rev_( 0. )
+  // initialization state variables
+  : g_r_AN_AMPA_( 0.0 )
+  , g_d_AN_AMPA_( 0.0 )
+  , g_r_AN_NMDA_( 0.0 )
+  , g_d_AN_NMDA_( 0.0 )
+  // initialization parameters
+  , e_rev_( 0. )
   , tau_r_AMPA_( 0.2 )
   , tau_d_AMPA_( 3.0 )
   , tau_r_NMDA_( 0.2 )

@@ -65,10 +65,7 @@ public:
   // calibrate initialization
   void
   calibrate()
-  {
-    m_Na_ = 0.0;
-    h_Na_ = 0.0;
-  };
+  {};
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
   // numerical integration step
@@ -106,9 +103,7 @@ public:
   // calibrate initialization
   void
   calibrate()
-  {
-    n_K_ = 0.0;
-  };
+  {};
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
   // numerical integration step
@@ -121,15 +116,16 @@ class AMPA
 private:
   // global synapse index
   long syn_idx = 0;
+
+  // state variables
+  double g_r_AMPA_ = 0., g_d_AMPA_ = 0.;
+
   // user defined parameters
   double e_rev_ = 0.0;              // mV
   double tau_r_ = 0.2, tau_d_ = 3.; // ms
 
   // assigned variables
   double g_norm_ = 1.0;
-
-  // state variables
-  double g_r_AMPA_ = 0., g_d_AMPA_ = 0.;
 
   // propagators
   double prop_r_ = 0., prop_d_ = 0.;
@@ -158,8 +154,6 @@ public:
     prop_r_ = std::exp( -dt / tau_r_ );
     prop_d_ = std::exp( -dt / tau_d_ );
 
-    g_r_AMPA_ = 0.;
-    g_d_AMPA_ = 0.;
     b_spikes_->clear();
   };
   void append_recordables( std::map< Name, double* >* recordables );
@@ -179,15 +173,16 @@ class GABA
 private:
   // global synapse index
   long syn_idx = 0;
+
+  // state variables
+  double g_r_GABA_ = 0., g_d_GABA_ = 0.;
+
   // user defined parameters
   double e_rev_ = 0.0;               // mV
   double tau_r_ = 0.2, tau_d_ = 10.; // ms
 
   // assigned variables
   double g_norm_ = 1.0;
-
-  // state variables
-  double g_r_GABA_ = 0., g_d_GABA_ = 0.;
 
   // propagators
   double prop_r_ = 0., prop_d_ = 0.;
@@ -216,8 +211,6 @@ public:
     prop_r_ = std::exp( -dt / tau_r_ );
     prop_d_ = std::exp( -dt / tau_d_ );
 
-    g_r_GABA_ = 0.;
-    g_d_GABA_ = 0.;
     b_spikes_->clear();
   };
   void append_recordables( std::map< Name, double* >* recordables );
@@ -237,15 +230,16 @@ class NMDA
 private:
   // global synapse index
   long syn_idx = 0;
+
+  // state variables
+  double g_r_NMDA_ = 0., g_d_NMDA_ = 0.;
+
   // user defined parameters
   double e_rev_ = 0.0;               // mV
   double tau_r_ = 0.2, tau_d_ = 43.; // ms
 
   // assigned variables
   double g_norm_ = 1.0;
-
-  // state variables
-  double g_r_NMDA_ = 0., g_d_NMDA_ = 0.;
 
   // propagators
   double prop_r_ = 0., prop_d_ = 0.;
@@ -274,8 +268,6 @@ public:
     prop_r_ = std::exp( -dt / tau_r_ );
     prop_d_ = std::exp( -dt / tau_d_ );
 
-    g_r_NMDA_ = 0.;
-    g_d_NMDA_ = 0.;
     b_spikes_->clear();
   };
   void append_recordables( std::map< Name, double* >* recordables );
@@ -305,6 +297,11 @@ class AMPA_NMDA
 private:
   // global synapse index
   long syn_idx = 0;
+
+  // state variables
+  double g_r_AN_AMPA_ = 0., g_d_AN_AMPA_ = 0.;
+  double g_r_AN_NMDA_ = 0., g_d_AN_NMDA_ = 0.;
+
   // user defined parameters
   double e_rev_ = 0.0;                         // mV
   double tau_r_AMPA_ = 0.2, tau_d_AMPA_ = 43.; // ms
@@ -314,10 +311,6 @@ private:
   // assigned variables
   double g_norm_AMPA_ = 1.0;
   double g_norm_NMDA_ = 1.0;
-
-  // state variables
-  double g_r_AN_AMPA_ = 0., g_d_AN_AMPA_ = 0.;
-  double g_r_AN_NMDA_ = 0., g_d_AN_NMDA_ = 0.;
 
   // propagators
   double prop_r_AMPA_ = 0., prop_d_AMPA_ = 0.;
@@ -348,10 +341,6 @@ public:
     prop_r_NMDA_ = std::exp( -dt / tau_r_NMDA_ );
     prop_d_NMDA_ = std::exp( -dt / tau_d_NMDA_ );
 
-    g_r_AN_AMPA_ = 0.;
-    g_d_AN_AMPA_ = 0.;
-    g_r_AN_NMDA_ = 0.;
-    g_d_AN_NMDA_ = 0.;
     b_spikes_->clear();
   };
   void append_recordables( std::map< Name, double* >* recordables );

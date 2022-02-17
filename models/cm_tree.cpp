@@ -44,6 +44,8 @@ nest::Compartment::Compartment( const long compartment_index, const long parent_
   , hh( 0.0 )
   , n_passed( 0 )
 {
+  v_comp = el;
+
   compartment_currents = CompartmentCurrents();
 }
 nest::Compartment::Compartment( const long compartment_index,
@@ -69,10 +71,13 @@ nest::Compartment::Compartment( const long compartment_index,
   , hh( 0.0 )
   , n_passed( 0 )
 {
+
   updateValue< double >( compartment_params, names::C_m, ca );
   updateValue< double >( compartment_params, names::g_C, gc );
   updateValue< double >( compartment_params, names::g_L, gl );
   updateValue< double >( compartment_params, names::e_L, el );
+
+  v_comp = el;
 
   compartment_currents = CompartmentCurrents( compartment_params );
 }
@@ -80,7 +85,6 @@ nest::Compartment::Compartment( const long compartment_index,
 void
 nest::Compartment::calibrate()
 {
-  v_comp = el;
   compartment_currents.calibrate();
 
   const double dt = Time::get_resolution().get_ms();

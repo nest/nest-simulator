@@ -62,7 +62,7 @@ class Node;
  * if the global maximal node ID has been set. Once add_local_node() is called, the
  * array is not in consistent state until the global maximal node ID is set again. This
  * is indicated by setting the max_node_id_ == 0. Looking up nodes while the
- * array is not in consistent state triggers an assertion.
+ * array is not in a consistent state triggers an assertion.
  *
  * To also support cases in which users interleave creation of nodes with and
  * without proxies or use nodes with special behavior (music nodes, e.g.), we

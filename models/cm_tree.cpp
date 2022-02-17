@@ -22,7 +22,6 @@
 #include "cm_tree.h"
 
 
-// compartment compartment functions ///////////////////////////////////////////
 nest::Compartment::Compartment( const long compartment_index, const long parent_index )
   : xx_( 0.0 )
   , yy_( 0.0 )
@@ -149,10 +148,8 @@ nest::Compartment::construct_matrix_element( const long lag )
   // add input current
   ff += currents.get_value( lag );
 }
-////////////////////////////////////////////////////////////////////////////////
 
 
-// compartment tree functions //////////////////////////////////////////////////
 nest::CompTree::CompTree()
   : root_( -1, -1 )
   , size_( 0 )
@@ -172,12 +169,14 @@ nest::CompTree::add_compartment( const long parent_index )
   Compartment* compartment = new Compartment( size_, parent_index );
   add_compartment( compartment, parent_index );
 }
+
 void
 nest::CompTree::add_compartment( const long parent_index, const DictionaryDatum& compartment_params )
 {
   Compartment* compartment = new Compartment( size_, parent_index, compartment_params );
   add_compartment( compartment, parent_index );
 }
+
 void
 nest::CompTree::add_compartment( Compartment* compartment, const long parent_index )
 {
@@ -228,6 +227,7 @@ nest::CompTree::get_compartment( const long compartment_index ) const
 {
   return get_compartment( compartment_index, get_root(), 1 );
 }
+
 nest::Compartment*
 nest::CompTree::get_compartment( const long compartment_index, Compartment* compartment, const long raise_flag ) const
 {
@@ -255,6 +255,7 @@ nest::CompTree::get_compartment( const long compartment_index, Compartment* comp
 
   return r_compartment;
 }
+
 /**
  * Get the compartment corresponding to the provided index in the tree. Optimized
  * trough the use of a pointer vector containing all compartments. Calling this
@@ -277,6 +278,7 @@ nest::CompTree::init_pointers()
   set_compartments();
   set_leafs();
 }
+
 /**
  * For each compartments, sets its pointer towards its parent compartment
  */
@@ -292,6 +294,7 @@ nest::CompTree::set_parents()
     comp_ptr->parent = parent_ptr;
   }
 }
+
 /**
  * Creates a vector of compartment pointers, organized in the order in which they were
  * added by `add_compartment()`
@@ -307,6 +310,7 @@ nest::CompTree::set_compartments()
     compartments_.push_back( get_compartment( *compartment_idx_it ) );
   }
 }
+
 /**
  * Creates a vector of compartment pointers of compartments that are also leafs of the tree.
  */
@@ -423,6 +427,7 @@ nest::CompTree::solve_matrix()
   // do up sweep to set voltages
   solve_matrix_upsweep( &root_, 0.0 );
 }
+
 void
 nest::CompTree::solve_matrix_downsweep( Compartment* compartment, std::vector< Compartment* >::iterator leaf_it )
 {
@@ -454,6 +459,7 @@ nest::CompTree::solve_matrix_downsweep( Compartment* compartment, std::vector< C
     }
   }
 }
+
 void
 nest::CompTree::solve_matrix_upsweep( Compartment* compartment, double vv )
 {
@@ -490,4 +496,3 @@ nest::CompTree::print_tree() const
   }
   std::cout << std::endl;
 }
-////////////////////////////////////////////////////////////////////////////////

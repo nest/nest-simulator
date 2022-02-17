@@ -39,6 +39,7 @@
 #include "nest_types.h"
 #include "node.h"
 #include "per_thread_bool_indicator.h"
+#include "secondary_event.h"
 #include "spike_data.h"
 #include "target_table.h"
 #include "vp_manager.h"

@@ -24,6 +24,7 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "secondary_event.h"
 
 // Includes from sli:
 #include "dictutils.h"

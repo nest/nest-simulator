@@ -34,6 +34,7 @@
 #include "event.h"
 #include "nest_time.h"
 #include "nest_types.h"
+#include "secondary_event.h"
 
 // Includes from sli:
 #include "dictutils.h"

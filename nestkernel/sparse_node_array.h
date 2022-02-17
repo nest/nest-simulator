@@ -58,7 +58,7 @@ class Node;
  * to array indices. In the proxy region, they are scaled by 1/n_vp.
  *
  * To reliably reject requests for node IDs beyond the globally maximal node ID, the
- * latter must be set explicit. A SparseNodeArray is said to be in *consistent state*
+ * latter must be set explicitly. A SparseNodeArray is said to be in *consistent state*
  * if the global maximal node ID has been set. Once add_local_node() is called, the
  * array is not in consistent state until the global maximal node ID is set again. This
  * is indicated by setting the max_node_id_ == 0. Looking up nodes while the

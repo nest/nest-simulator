@@ -29,7 +29,6 @@ import nest
 import matplotlib.pyplot as plt
 
 nest.ResetKernel()
-nest.SetKernelStatus(dict(resolution=.1))
 
 # somatic and dendritic parameters
 soma_params = {
@@ -47,21 +46,23 @@ dend_params = {
 
 # create a model with three compartments
 cm = nest.Create('cm_default')
-nest.SetStatus(cm, {'compartments': {"parent_idx": -1, "params": soma_params}})
-nest.SetStatus(cm, {'compartments': [{"parent_idx":  0, "params": dend_params},
-                                     {"parent_idx":  0, "params": dend_params}]})
+cm.compartments = [
+    {"parent_idx": -1, "params": soma_params},
+    {"parent_idx":  0, "params": dend_params},
+    {"parent_idx":  0, "params": dend_params}
+]
 
 # spike threshold
 nest.SetStatus(cm, {'V_th': -50.})
 
 # add GABA receptor in compartment 0 (soma)
-nest.SetStatus(cm, {'receptors': {"comp_idx": 0, "receptor_type": "GABA"}})
+cm.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
 syn_idx_GABA = 0
 # add AMPA receptor in compartment 1
-nest.SetStatus(cm, {'receptors': {"comp_idx": 1, "receptor_type": "AMPA", "params": {}}})
+cm.receptors = {"comp_idx": 1, "receptor_type": "AMPA", "params": {}}
 syn_idx_AMPA = 1
 # add AMPA+NMDA receptor in compartment 2
-nest.SetStatus(cm, {'receptors': {"comp_idx": 2, "receptor_type": "AMPA_NMDA"}})
+cm.receptors = {"comp_idx": 2, "receptor_type": "AMPA_NMDA"}
 syn_idx_NMDA = 2
 
 # create three spike generators

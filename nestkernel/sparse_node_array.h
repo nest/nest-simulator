@@ -46,7 +46,7 @@ class Node;
  * node ID and lookup by numeric index into local nodes. The latter is provided
  * to support HPC synapses using TargetIdentifierIndex representation.
  *
- * For efficient lookup, all normal nodes (with proxies) need to be created together 
+ * For efficient lookup, all normal nodes (with proxies) need to be created together
  * and all devices need to be created together. It does not matter which are created first. If nodes
  * and devices are created alternatingly, lookup performance may suffer significantly
  * if many devices are present. This mainly affects network connection.

@@ -107,6 +107,7 @@ void set_kernel_status( const dictionary& dict );
 dictionary get_kernel_status();
 
 dictionary get_nc_status( NodeCollectionPTR node_collection );
+void set_nc_status( NodeCollectionPTR nc, dictionary& params );
 
 void set_node_status( const index node_id, const dictionary& dict );
 dictionary get_node_status( const index node_id );

@@ -734,3 +734,8 @@ def llapi_get_nc_status(NodeCollectionObject nc):
     cdef dictionary statuses = get_nc_status(nc.thisptr)
     # return vec_of_dict_to_list(statuses)
     return dictionary_to_pydict(statuses)
+
+def llapi_set_nc_status(NodeCollectionObject nc, object params):
+    cdef dictionary params_dict = pydict_to_dictionary(params)
+    set_nc_status(nc.thisptr, params_dict)
+    exceptionCls = getattr(NESTErrors, str(e))

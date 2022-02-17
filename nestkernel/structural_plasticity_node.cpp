@@ -117,10 +117,10 @@ nest::StructuralPlasticityNode::set_status( const dictionary& d )
   //     }
   //   }
   // }
-  // if ( not d.known( names::synaptic_elements.toString() ) )
-  // {
-  //   return;
-  // }
+  if ( not d.known( names::synaptic_elements.toString() ) )
+  {
+    return;
+  }
   // we replace the existing synaptic_elements_map_ by the new one
   dictionary synaptic_elements_d;
   std::pair< std::map< Name, SynapticElement >::iterator, bool > insert_result;

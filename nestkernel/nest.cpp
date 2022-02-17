@@ -209,6 +209,15 @@ get_nc_status( NodeCollectionPTR node_collection )
 }
 
 void
+set_nc_status( NodeCollectionPTR nc, dictionary& params )
+{
+  for ( auto it = nc->begin(); it < nc->end(); ++it )
+  {
+    kernel().node_manager.set_status( ( *it ).node_id, params );
+  }
+}
+
+void
 set_node_status( const index node_id, const dictionary& dict )
 {
   kernel().node_manager.set_status( node_id, dict );

@@ -461,7 +461,7 @@ class NodeCollection(object):
         if (isinstance(params, (list, tuple)) and self.__len__() != len(params)):
             raise TypeError("status dict must be a dict, or a list of dicts of length {} ".format(self.__len__()))
 
-        sli_func('SetStatus', self._datum, params)
+        kernel.llapi_set_nc_status(self._datum, params)
 
     def tolist(self):
         """

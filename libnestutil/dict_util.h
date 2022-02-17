@@ -71,7 +71,8 @@ template < typename T >
 bool
 update_value_param( dictionary const& d, const std::string& key, T& value, nest::Node* node )
 {
-  if ( is_parameter( d.at( key ) ) )
+  const auto it = d.find( key );
+  if ( it != d.end() and is_parameter( it->second ) )
   {
     if ( not node )
     {

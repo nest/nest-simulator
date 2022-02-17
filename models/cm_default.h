@@ -95,13 +95,11 @@ subsequently to connect synapses to the receptor
         'synapse_model': 'static_synapse', 'weight': 5., 'delay': 0.5,
         'receptor_type': 2})
 
-Note:
-  In the `nest.SetStatus()` call, the 'receptor_type' entry is string that
-  specifies the type of receptor. In the `nest.Connect()` call, the
+.. note:: In the `nest.SetStatus()` call, the 'receptor_type' entry is string
+  that specifies the type of receptor. In the `nest.Connect()` call, the
   'receptor_type' entry is and integer that specifies the receptor index.
 
-Note:
-  The "compartments" resp. "receptors" entries can be a dict or a list
+.. note: The "compartments" resp. "receptors" entries can be a dict or a list
   of dicts containing compartment resp. receptor details. When a dict is provided,
   a single compartment resp. receptor is added to the model. When a list of dicts
   is provided, multiple compartments resp. receptors are added with a single

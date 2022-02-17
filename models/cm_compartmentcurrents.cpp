@@ -65,10 +65,10 @@ nest::Na::f_numstep( const double v_comp )
 
   if ( gbar_Na_ > 1e-9 )
   {
-    /*
-    Channel rate equations from the following .mod file:
-    https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
-    */
+    /**
+     * Channel rate equations from the following .mod file:
+     * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
+     */
     // auxiliary variables
     double v_comp_plus_35 = v_comp + 35.013;
 
@@ -183,10 +183,10 @@ nest::K::f_numstep( const double v_comp )
 
   if ( gbar_K_ > 1e-9 )
   {
-    /*
-    Channel rate equations from the following .mod file:
-    https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/kv.mod#tabs-2
-    */
+    /**
+     * Channel rate equations from the following .mod file:
+     * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/kv.mod#tabs-2
+     */
     // auxiliary variables
     double v_comp_minus_25 = v_comp - 25.;
 

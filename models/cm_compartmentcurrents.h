@@ -30,20 +30,20 @@ namespace nest
 {
 
 
-/*
-Channel taken from the following .mod file:
-https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
-
-Info in .mod file:
-> Sodium channel, Hodgkin-Huxley style kinetics.
->
-> Kinetics were fit to data from Huguenard et al. (1988) and Hamill et
-> al. (1991)
->
-> ...
->
-> Author: Zach Mainen, Salk Institute, 1994, zach@salk.edu
-*/
+/**
+ * Channel taken from the following .mod file:
+ * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
+ *
+ * Info in .mod file:
+ * > Sodium channel, Hodgkin-Huxley style kinetics.
+ * >
+ * > Kinetics were fit to data from Huguenard et al. (1988) and Hamill et
+ * > al. (1991)
+ * >
+ * > ...
+ * >
+ * > Author: Zach Mainen, Salk Institute, 1994, zach@salk.edu
+ */
 class Na
 {
 private:
@@ -73,16 +73,16 @@ public:
 };
 
 
-/*
-Channel taken from the following .mod file:
-https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/kv.mod#tabs-2
-
-Info in .mod file:
-> Potassium channel, Hodgkin-Huxley style kinetics
-> Kinetic rates based roughly on Sah et al. and Hamill et al. (1991)
->
-> Author: Zach Mainen, Salk Institute, 1995, zach@salk.edu
-*/
+/**
+ * Channel taken from the following .mod file:
+ * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/kv.mod#tabs-2
+ *
+ * Info in .mod file:
+ * > Potassium channel, Hodgkin-Huxley style kinetics
+ * > Kinetic rates based roughly on Sah et al. and Hamill et al. (1991)
+ * >
+ * > Author: Zach Mainen, Salk Institute, 1995, zach@salk.edu
+ */
 class K
 {
 private:

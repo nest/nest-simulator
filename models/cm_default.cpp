@@ -25,7 +25,6 @@
 namespace nest
 {
 
-
 /*
  * For some reason this code block is needed. However, I have found no
  * difference in calling init_recordable_pointers() from the calibrate function,
@@ -104,13 +103,13 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
   updateValue< double >( statusdict, names::V_th, V_th_ );
   ArchivingNode::set_status( statusdict );
 
-  /*
-  Add a compartment (or compartments) to the tree, so that the new compartment
-  has the compartment specified by "parent_idx" as parent. The parent
-  has to be in the tree, otherwise an error will be raised.  We add either a
-  single compartment or multiple compartments, depending on wether the
-  entry was a list of dicts or a single dict
-  */
+  /**
+   * Add a compartment (or compartments) to the tree, so that the new compartment
+   * has the compartment specified by "parent_idx" as parent. The parent
+   * has to be in the tree, otherwise an error will be raised.  We add either a
+   * single compartment or multiple compartments, depending on wether the
+   * entry was a list of dicts or a single dict
+   */
   if ( statusdict->known( names::compartments ) )
   {
     Datum* dat = ( *statusdict )[ names::compartments ].datum();
@@ -141,13 +140,13 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
     }
   }
 
-  /*
-  Add a receptor (or receptors) to the tree, so that the new receptor
-  targets the compartment specified by "comp_idx". The compartment
-  has to be in the tree, otherwise an error will be raised.  We add either a
-  single receptor or multiple receptors, depending on wether the
-  entry was a list of dicts or a single dict
-  */
+  /**
+   * Add a receptor (or receptors) to the tree, so that the new receptor
+   * targets the compartment specified by "comp_idx". The compartment
+   * has to be in the tree, otherwise an error will be raised.  We add either a
+   * single receptor or multiple receptors, depending on wether the
+   * entry was a list of dicts or a single dict
+   */
   if ( statusdict->known( names::receptors ) )
   {
     Datum* dat = ( *statusdict )[ names::receptors ].datum();
@@ -175,11 +174,11 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
         "multiple receptors" );
     }
   }
-  /*
-  we need to initialize the recordables pointers to guarantee that the
-  recordables of the new compartments and/or receptors will be in the
-  recordables map
-  */
+  /**
+   * we need to initialize the recordables pointers to guarantee that the
+   * recordables of the new compartments and/or receptors will be in the
+   * recordables map
+   */
   init_recordables_pointers_();
 }
 void
@@ -224,12 +223,12 @@ nest::cm_default::add_receptor_( DictionaryDatum& dd )
 void
 nest::cm_default::init_recordables_pointers_()
 {
-  /*
-  Get the map of all recordables (i.e. all state variables of the model):
-  --> keys are state variable names suffixed by the compartment index for
-      voltage (e.g. "v_comp1") or by the synapse index for receptor currents
-  --> values are pointers to the specific state variables
-  */
+  /**
+   * Get the map of all recordables (i.e. all state variables of the model):
+   * --> keys are state variable names suffixed by the compartment index for
+   *     voltage (e.g. "v_comp1") or by the synapse index for receptor currents
+   * --> values are pointers to the specific state variables
+   */
   std::map< Name, double* > recordables = c_tree_.get_recordables();
 
   for ( auto rec_it = recordables.begin(); rec_it != recordables.end(); rec_it++ )
@@ -269,7 +268,7 @@ nest::cm_default::calibrate()
   c_tree_.calibrate();
 }
 
-/* ----------------------------------------------------------------
+/**
  * Update and spike handling functions
  */
 void

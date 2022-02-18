@@ -62,17 +62,15 @@ cm.compartments = [
 # spike threshold
 nest.SetStatus(cm, {'V_th': -50.})
 
+###############################################################################
+# - GABA receptor in compartment 0 (soma)
+# - AMPA receptor in compartment 1
+#   note that it is also possible to specify the receptor parameters, if we want
+#   to overwrite the default values
+# - AMPA+NMDA receptor in compartment 2
 receptors = [
-###############################################################################
-# GABA receptor in compartment 0 (soma)
     {"comp_idx": 0, "receptor_type": "GABA"},
-###############################################################################
-# AMPA receptor in compartment 1
-# note that it is also possible to specify the receptor parameters, if we want
-# to overwrite the default values
     {"comp_idx": 1, "receptor_type": "AMPA", "params": {"tau_r_AMPA": .2, "tau_d_AMPA": 3., "e_AMPA": 0.}},
-###############################################################################
-# AMPA+NMDA receptor in compartment 2
     {"comp_idx": 2, "receptor_type": "AMPA_NMDA"}
 ]
 cm.receptors = receptors

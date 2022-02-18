@@ -578,7 +578,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
   sw_construction_connect.start();
 
   // Mapping pointers to the first parameter value of each parameter to their respective names.
-  // The bool is whether the value is an integer or not, which is determined at a later point.
+  // The bool indicates whether the value is an integer or not, and is determined at a later point.
   std::map< Name, std::pair< double*, bool > > param_pointers;
   if ( p_keys.size() != 0 )
   {

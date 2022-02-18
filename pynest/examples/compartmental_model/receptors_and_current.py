@@ -81,7 +81,7 @@ syn_idx_GABA, syn_idx_AMPA, syn_idx_NMDA = 0, 1, 2
 
 ###############################################################################
 # create three spike generators
-sg1 = nest.Create('spike_generator', 1, {'spike_times': [101., 105., 106.,110., 150.]})
+sg1 = nest.Create('spike_generator', 1, {'spike_times': [101., 105., 106., 110., 150.]})
 sg2 = nest.Create('spike_generator', 1, {'spike_times': [115., 155., 160., 162., 170., 254., 260., 272., 278.]})
 sg3 = nest.Create('spike_generator', 1, {'spike_times': [250., 255., 260., 262., 270.]})
 

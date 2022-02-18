@@ -118,7 +118,8 @@ sim 1 eq {
         /E_L E_L
         /I_e I_e
         /tau_m tau_m
-        /tau_syn tau_syn_ex
+        /tau_syn_ex tau_syn_ex
+        /tau_syn_in tau_syn_ex
         /V_m  E_L
         /V_reset V_reset
         /V_th  V_th
@@ -149,7 +150,7 @@ userdict begin
  0.0 0.2 5.0 {
   cvd /strength Set
 
-  (weigth [pA]:\t) =only strength =
+  (weight [pA]:\t) =only strength =
 
   %set resolution and limits on delays
   % limits must be set BEFORE connecting any elements

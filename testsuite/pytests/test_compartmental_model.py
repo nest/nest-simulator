@@ -296,8 +296,10 @@ def create_2tdend_4comp(dt=0.1):
            1   5
           /     \
          2       6
-        / \     / \
-       3   4   7   8
+         |      / \
+         |     7   8
+        / \
+       3   4
     """
     # create nest model with two compartments
     nest.ResetKernel()

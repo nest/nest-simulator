@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# pynest_example_template.py
+# receptors_and_current.py
 #
 # This file is part of NEST.
 #

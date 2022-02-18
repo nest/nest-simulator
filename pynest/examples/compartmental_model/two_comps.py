@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# pynest_example_template.py
+# two_comps.py
 #
 # This file is part of NEST.
 #
@@ -37,30 +37,27 @@ import matplotlib.pyplot as plt
 nest.ResetKernel()
 
 soma_params = {
-###############################################################################
-# passive parameters
+    # passive parameters
     'C_m': 89.245535,           # [pF] Capacitance
     'g_C': 0.0,                 # soma has no parent
     'g_L': 8.924572508,         # [nS] Leak conductance
     'e_L': -75.0,               # [mV] leak reversal
-###############################################################################
-# ion channel params
+    # ion channel params
     'gbar_Na': 4608.698576715,  # [nS] Na maximal conductance
     'e_Na': 60.,                # [mV] Na reversal
     'gbar_K': 956.112772900,    # [nS] K maximal conductance
     'e_K': -90.                 # [mV] K reversal
 }
 
-dend_params_passive = {
 ###############################################################################
-# passive parameters
+# by default, active conducances are set to zero, so we don't need to specify
+# them explicitely
+dend_params_passive = {
+    # passive parameters
     'C_m': 1.929929,
     'g_C': 1.255439494,
     'g_L': 0.192992878,
     'e_L': -75.0,
-###############################################################################
-# by default, active conducances are set to zero, so we don't need to specify
-# them explicitely
 }
 dend_params_active = {
     # passive parameters
@@ -114,8 +111,8 @@ syn_idx_dend_act = 1
 
 ###############################################################################
 # create a two spike generators
-sg_soma = nest.Create('spike_generator', 1, {'spike_times': [10.,13.,16.]})
-sg_dend = nest.Create('spike_generator', 1, {'spike_times': [70.,73.,76.]})
+sg_soma = nest.Create('spike_generator', 1, {'spike_times': [10., 13., 16.]})
+sg_dend = nest.Create('spike_generator', 1, {'spike_times': [70., 73., 76.]})
 
 ###############################################################################
 # connect spike generators to passive dendrite model (weight in nS)
@@ -156,7 +153,7 @@ ax_soma.plot(res_pas['times'], res_pas['v_comp0'], c='b', label='passive dend')
 ax_soma.plot(res_act['times'], res_act['v_comp0'], c='r', label='active dend')
 ax_soma.set_xlabel(r'$t$ (ms)')
 ax_soma.set_ylabel(r'$v_{soma}$ (mV)')
-ax_soma.set_ylim((-90.,40.))
+ax_soma.set_ylim((-90., 40.))
 ax_soma.legend(loc=0)
 ###############################################################################
 # plot voltage for dendritic compartment
@@ -165,7 +162,7 @@ ax_dend.plot(res_pas['times'], res_pas['v_comp1'], c='b', label='passive dend')
 ax_dend.plot(res_act['times'], res_act['v_comp1'], c='r', label='active dend')
 ax_dend.set_xlabel(r'$t$ (ms)')
 ax_dend.set_ylabel(r'$v_{dend}$ (mV)')
-ax_dend.set_ylim((-90.,40.))
+ax_dend.set_ylim((-90., 40.))
 ax_dend.legend(loc=0)
 
 plt.figure('channel state variables')
@@ -180,7 +177,7 @@ ax_soma.plot(res_act['times'], res_act['h_Na_0'], c='r', ls='--', lw=2., label='
 ax_soma.plot(res_act['times'], res_act['n_K_0'], c='g', ls='--', lw=2., label='n_K active dend')
 ax_soma.set_xlabel(r'$t$ (ms)')
 ax_soma.set_ylabel(r'svar')
-ax_soma.set_ylim((0.,1.))
+ax_soma.set_ylim((0., 1.))
 ax_soma.legend(loc=0)
 ###############################################################################
 # plot ion channel state variables for dendritic compartment
@@ -193,7 +190,7 @@ ax_dend.plot(res_act['times'], res_act['h_Na_1'], c='r', ls='--', lw=2., label='
 ax_dend.plot(res_act['times'], res_act['n_K_1'], c='g', ls='--', lw=2., label='n_K active dend')
 ax_dend.set_xlabel(r'$t$ (ms)')
 ax_dend.set_ylabel(r'svar')
-ax_dend.set_ylim((0.,1.))
+ax_dend.set_ylim((0., 1.))
 ax_dend.legend(loc=0)
 
 plt.figure('dendritic synapse conductances')
@@ -202,10 +199,11 @@ plt.figure('dendritic synapse conductances')
 ax_dend = plt.gca()
 ax_dend.plot(res_pas['times'], res_pas['g_r_AN_AMPA_1'] + res_pas['g_d_AN_AMPA_1'], c='b', label='AMPA passive dend')
 ax_dend.plot(res_pas['times'], res_pas['g_r_AN_NMDA_1'] + res_pas['g_d_AN_NMDA_1'], c='r', label='NMDA passive dend')
-ax_dend.plot(res_act['times'], res_act['g_r_AN_AMPA_1'] + res_act['g_d_AN_AMPA_1'], c='b', ls='--', lw=2., label='AMPA active dend')
-ax_dend.plot(res_act['times'], res_act['g_r_AN_NMDA_1'] + res_act['g_d_AN_NMDA_1'], c='r', ls='--', lw=2., label='NMDA active dend')
+ax_dend.plot(res_act['times'], res_act['g_r_AN_AMPA_1'] + res_act['g_d_AN_AMPA_1'],
+             c='b', ls='--', lw=2., label='AMPA active dend')
+ax_dend.plot(res_act['times'], res_act['g_r_AN_NMDA_1'] + res_act['g_d_AN_NMDA_1'],
+             c='r', ls='--', lw=2., label='NMDA active dend')
 ax_dend.legend(loc=0)
 
 plt.tight_layout()
 plt.show()
-

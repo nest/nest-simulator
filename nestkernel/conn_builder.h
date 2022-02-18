@@ -444,14 +444,13 @@ private:
   // From conn_spec
   NodeCollectionPTR astrocytes_;
   ParameterDatum p_; //!< connection probability
-  ParameterDatum p_astro_; //!< connection probability astro=>neuron
+  ParameterDatum p_astro_; //!< connection probability astrocyte=>neuron
   // From syn_spec
-  //index syn_indx_astro_;
-  index syn_indx_astro_;
-  double c_spill_;
-  double w_;
-  double d_;
-  double w_astro_;
+  index synapse_model_id_astro_; // synapse model astrocyte=>neuron
+  double c_spill_; // Coefficient c_spill
+  double w_; // synaptic weight neuron=>neuron
+  double d_; // synaptic delay neuron=>neuron
+  double w_astro_; // synaptic weight astrocyte=>neuron
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

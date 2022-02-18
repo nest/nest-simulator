@@ -722,7 +722,6 @@ NestModule::Disconnect_aFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 {
-  std::cout << "NestModule::Connect_g_g_D_DFunction::execute()" << std::endl;
   kernel().connection_manager.sw_construction_connect.start();
 
   i->assert_stack_load( 4 );

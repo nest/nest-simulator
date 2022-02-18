@@ -1612,7 +1612,6 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   astrocytes_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
   
   // Probability of neuron=>neuron connection
-  std::cout << "pd_p" << std::endl;
   ParameterDatum* pd_p = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
   if ( pd_p )
   {
@@ -1631,7 +1630,6 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
   
   // Probability of astrocyte=>neuron connection
-  std::cout << "pd_p_astro" << std::endl;
   ParameterDatum* pd_p_astro = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p_astro ].datum() );
   if ( pd_p_astro )
   {
@@ -1648,7 +1646,6 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
   
   // Astrocyte synapse model
-  std::cout << "syn_indx_astro_" << std::endl;
   if ( syn_specs[0]->known( names::synapse_model_astro ) )
   {
     const std::string syn_name = ( *syn_specs[0] )[ names::synapse_model_astro ];
@@ -1656,16 +1653,15 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     {
       throw UnknownSynapseType( syn_name );
     }
-    syn_indx_astro_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+    synapse_model_id_astro_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
   }
   else
   {
-    syn_indx_astro_ = kernel().model_manager.get_synapsedict()->lookup( "sic_connection" );
+    synapse_model_id_astro_ = kernel().model_manager.get_synapsedict()->lookup( "sic_connection" );
   }  
-  DictionaryDatum syn_defaults_astro = kernel().model_manager.get_connector_defaults( syn_indx_astro_ );
+  DictionaryDatum syn_defaults_astro = kernel().model_manager.get_connector_defaults( synapse_model_id_astro_ );
   
   // Coefficient c_spill of neuron=>astrocyte connection
-  std::cout << "c_spill_" << std::endl;
   if ( syn_specs[0]->known( names::c_spill ) )
   {
     c_spill_ = ( *syn_specs[0] )[ names::c_spill ];
@@ -1680,7 +1676,6 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
   
   // Weights and delays
-  std::cout << "names::weight" << std::endl;
   if ( syn_specs[0]->known( names::weight ) )
   {
     w_ = ( *syn_specs[0] )[ names::weight ];
@@ -1689,7 +1684,6 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   {
     w_ = ( *syn_defaults_astro )[ names::weight ];
   }
-  std::cout << "names::delay" << std::endl;
   if ( syn_specs[0]->known( names::delay ) )
   {
     d_ = ( *syn_specs[0] )[ names::delay ];
@@ -1698,7 +1692,6 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   {
     d_ = ( *syn_defaults_astro )[ names::delay ];
   }
-  std::cout << "names::weight_astro" << std::endl;
   if ( syn_specs[0]->known( names::weight_astro ) )
   {
     w_astro_ = ( *syn_specs[0] )[ names::weight_astro ];
@@ -1796,8 +1789,14 @@ nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* ta
     {
       continue;
     }
-
-    single_connect_( snode_id, *target, target_thread, rng );
+    update_param_dict_( snode_id, *target, target_thread, rng, 0 );
+    kernel().connection_manager.connect( snode_id,
+      target,
+      target_thread,
+      synapse_model_id_[0],
+      param_dicts_[ 0 ][ target_thread ],
+      d_,
+      w_ * ( 1 - c_spill_) );
     snode_ids.push_back( snode_id );
   }
   
@@ -1828,21 +1827,27 @@ nest::BernoulliAstroBuilder::single_connect_astro_( index astro_id, const std::v
   }
   
   // Connect astrocyte=>postsynaptic
-  index synapse_indx_astro = kernel().model_manager.get_synapsedict()->lookup( "sic_connection" );
   update_param_dict_( astro_id, target, target_thread, rng, 0 );
-  kernel().connection_manager.connect(astro_id,
+  kernel().connection_manager.connect( astro_id,
     &target,
     target_thread,
-    synapse_indx_astro,
+    synapse_model_id_astro_,
     param_dicts_[ 0 ][ target_thread ],
-    1.0,
-    1.0);
+    numerics::nan,
+    w_astro_ );
     
   // Connect presynaptic=>astrocyte
   for (std::size_t i = 0; i < snode_ids.size(); ++i)
   {
     Node* const astro_node = kernel().node_manager.get_node_or_proxy( astro_id );
-    single_connect_( snode_ids[i], *astro_node, target_thread, rng );      
+    update_param_dict_( snode_ids[i], *astro_node, target_thread, rng, 0 );
+    kernel().connection_manager.connect( snode_ids[i],
+      astro_node,
+      target_thread,
+      synapse_model_id_[0],
+      param_dicts_[ 0 ][ target_thread ],
+      d_,
+      w_*c_spill_ );
   }
 }
 

@@ -81,7 +81,7 @@ AH 09) =
 /V_reset 0.0 def                % reset potential
 /V_th  20.0 def                 % threshold potential
 /t_refra 0.25 def               % refractory time
-/tau_syn_ex 1.648 def           % syn. time constant 3/2ln3
+/tau_syn 1.648 def              % syn. time constant 3/2ln3
 
 /gamma 0.5 def                  % parameter determining the degree of synchrony at the beginning
 
@@ -118,8 +118,8 @@ sim 1 eq {
         /E_L E_L
         /I_e I_e
         /tau_m tau_m
-        /tau_syn_ex tau_syn_ex
-        /tau_syn_in tau_syn_ex
+        /tau_syn_ex tau_syn
+        /tau_syn_in tau_syn
         /V_m  E_L
         /V_reset V_reset
         /V_th  V_th
@@ -132,7 +132,7 @@ sim 1 eq {
         /E_L E_L
         /I_e I_e
         /tau_m tau_m
-        /tau_syn_ex tau_syn_ex
+        /tau_syn_ex tau_syn
         /V_m  E_L
         /V_reset V_reset
         /V_th  V_th

@@ -29,18 +29,18 @@ import math
 import numpy as np
 
 
-SP =  {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -70.0}
+SP = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -70.0}
 DP = [
-      {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -70.0},
-      {'C_m': 0.08, 'g_C': 0.11, 'g_L': 0.007, 'e_L': -70.0},
-      {'C_m': 0.09, 'g_C': 0.07, 'g_L': 0.011, 'e_L': -70.0},
-      {'C_m': 0.15, 'g_C': 0.12, 'g_L': 0.014, 'e_L': -70.0},
-      {'C_m': 0.20, 'g_C': 0.32, 'g_L': 0.022, 'e_L': -55.0},
-      {'C_m': 0.12, 'g_C': 0.12, 'g_L': 0.010, 'e_L': -23.0},
-      {'C_m': 0.32, 'g_C': 0.09, 'g_L': 0.032, 'e_L': -32.0},
-      {'C_m': 0.01, 'g_C': 0.05, 'g_L': 0.001, 'e_L': -88.0},
-      {'C_m': 0.02, 'g_C': 0.03, 'g_L': 0.002, 'e_L': -90.0},
-     ]
+    {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -70.0},
+    {'C_m': 0.08, 'g_C': 0.11, 'g_L': 0.007, 'e_L': -70.0},
+    {'C_m': 0.09, 'g_C': 0.07, 'g_L': 0.011, 'e_L': -70.0},
+    {'C_m': 0.15, 'g_C': 0.12, 'g_L': 0.014, 'e_L': -70.0},
+    {'C_m': 0.20, 'g_C': 0.32, 'g_L': 0.022, 'e_L': -55.0},
+    {'C_m': 0.12, 'g_C': 0.12, 'g_L': 0.010, 'e_L': -23.0},
+    {'C_m': 0.32, 'g_C': 0.09, 'g_L': 0.032, 'e_L': -32.0},
+    {'C_m': 0.01, 'g_C': 0.05, 'g_L': 0.001, 'e_L': -88.0},
+    {'C_m': 0.02, 'g_C': 0.03, 'g_L': 0.002, 'e_L': -90.0},
+]
 
 
 def create_1dend_1comp(dt=0.1):
@@ -62,26 +62,26 @@ def create_1dend_1comp(dt=0.1):
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
-    aa = np.zeros((2,2))
+    aa = np.zeros((2, 2))
     bb = np.zeros(2)
 
-    aa[0,0] = SP['C_m'] / dt + SP['g_L'] / 2. +  DP[0]['g_C'] / 2.
-    aa[0,1] = -DP[0]['g_C'] / 2.;
-    aa[1,0] = -DP[0]['g_C'] / 2.;
-    aa[1,1] = DP[0]['C_m'] / dt + DP[0]['g_L'] / 2. + DP[0]['g_C'] / 2.
+    aa[0, 0] = SP['C_m'] / dt + SP['g_L'] / 2. + DP[0]['g_C'] / 2.
+    aa[0, 1] = -DP[0]['g_C'] / 2.
+    aa[1, 0] = -DP[0]['g_C'] / 2.
+    aa[1, 1] = DP[0]['C_m'] / dt + DP[0]['g_L'] / 2. + DP[0]['g_C'] / 2.
 
     bb[0] = SP['C_m'] / dt * SP['e_L'] + SP['g_L'] * SP['e_L'] / 2. - \
-            DP[0]['g_C'] * (SP['e_L'] - DP[0]['e_L']) / 2.
+        DP[0]['g_C'] * (SP['e_L'] - DP[0]['e_L']) / 2.
     bb[1] = DP[0]['C_m'] / dt * DP[0]['e_L'] + DP[0]['g_L'] * DP[0]['e_L'] / 2. - \
-            DP[0]['g_C'] * (DP[0]['e_L'] - SP['e_L']) / 2.
+        DP[0]['g_C'] * (DP[0]['e_L'] - SP['e_L']) / 2.
 
     # create steady state matrix for attenuation test
-    ss = np.zeros((2,2))
+    ss = np.zeros((2, 2))
 
-    ss[0,0] = - SP['g_L'] - DP[0]['g_C']
-    ss[0,1] = DP[0]['g_C']
-    ss[1,0] = DP[0]['g_C']
-    ss[1,1] = - DP[0]['g_L'] - DP[0]['g_C']
+    ss[0, 0] = - SP['g_L'] - DP[0]['g_C']
+    ss[0, 1] = DP[0]['g_C']
+    ss[1, 0] = DP[0]['g_C']
+    ss[1, 1] = - DP[0]['g_L'] - DP[0]['g_C']
 
     return (n_neat, m_neat), (aa, bb), ss
 
@@ -98,7 +98,7 @@ def create_2dend_1comp(dt=0.1):
     n_neat = nest.Create('cm_default')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
-    nest.SetStatus(n_neat, {"compartments": { "parent_idx": -1, "params": SP}})
+    nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
     nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
     nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[1]}})
 
@@ -106,39 +106,39 @@ def create_2dend_1comp(dt=0.1):
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
-    aa = np.zeros((3,3))
+    aa = np.zeros((3, 3))
     bb = np.zeros(3)
 
-    aa[0,0] = SP['C_m'] / dt + SP['g_L'] / 2. + DP[0]['g_C'] / 2. + DP[1]['g_C'] / 2.
+    aa[0, 0] = SP['C_m'] / dt + SP['g_L'] / 2. + DP[0]['g_C'] / 2. + DP[1]['g_C'] / 2.
 
-    aa[0,1] = -DP[0]['g_C'] / 2.;
-    aa[1,0] = -DP[0]['g_C'] / 2.;
-    aa[1,1] = DP[0]['C_m'] / dt + DP[0]['g_L'] / 2. + DP[0]['g_C'] / 2.
+    aa[0, 1] = -DP[0]['g_C'] / 2.
+    aa[1, 0] = -DP[0]['g_C'] / 2.
+    aa[1, 1] = DP[0]['C_m'] / dt + DP[0]['g_L'] / 2. + DP[0]['g_C'] / 2.
 
-    aa[0,2] = -DP[1]['g_C'] / 2.;
-    aa[2,0] = -DP[1]['g_C'] / 2.;
-    aa[2,2] = DP[1]['C_m'] / dt + DP[1]['g_L'] / 2. + DP[1]['g_C'] / 2.
+    aa[0, 2] = -DP[1]['g_C'] / 2.
+    aa[2, 0] = -DP[1]['g_C'] / 2.
+    aa[2, 2] = DP[1]['C_m'] / dt + DP[1]['g_L'] / 2. + DP[1]['g_C'] / 2.
 
     bb[0] = SP['C_m'] / dt * SP['e_L'] + SP['g_L'] * SP['e_L'] / 2. - \
-            DP[0]['g_C'] * (SP['e_L'] - DP[0]['e_L']) / 2. - \
-            DP[1]['g_C'] * (SP['e_L'] - DP[1]['e_L']) / 2.
+        DP[0]['g_C'] * (SP['e_L'] - DP[0]['e_L']) / 2. - \
+        DP[1]['g_C'] * (SP['e_L'] - DP[1]['e_L']) / 2.
     bb[1] = DP[0]['C_m'] / dt * DP[0]['e_L'] + DP[0]['g_L'] * DP[0]['e_L'] / 2. - \
-            DP[0]['g_C'] * (DP[0]['e_L'] - SP['e_L']) / 2.
+        DP[0]['g_C'] * (DP[0]['e_L'] - SP['e_L']) / 2.
     bb[2] = DP[1]['C_m'] / dt * DP[1]['e_L'] + DP[1]['g_L'] * DP[1]['e_L'] / 2. - \
-            DP[1]['g_C'] * (DP[1]['e_L'] - SP['e_L']) / 2.
+        DP[1]['g_C'] * (DP[1]['e_L'] - SP['e_L']) / 2.
 
     # create steady state matrix for attenuation test
-    ss = np.zeros((3,3))
+    ss = np.zeros((3, 3))
 
-    ss[0,0] = - SP['g_L'] - DP[0]['g_C'] - DP[1]['g_C']
+    ss[0, 0] = - SP['g_L'] - DP[0]['g_C'] - DP[1]['g_C']
 
-    ss[0,1] = DP[0]['g_C']
-    ss[1,0] = DP[0]['g_C']
-    ss[1,1] = - DP[0]['g_L'] - DP[0]['g_C']
+    ss[0, 1] = DP[0]['g_C']
+    ss[1, 0] = DP[0]['g_C']
+    ss[1, 1] = - DP[0]['g_L'] - DP[0]['g_C']
 
-    ss[0,2] = DP[1]['g_C']
-    ss[2,0] = DP[1]['g_C']
-    ss[2,2] = - DP[1]['g_L'] - DP[1]['g_C']
+    ss[0, 2] = DP[1]['g_C']
+    ss[2, 0] = DP[1]['g_C']
+    ss[2, 2] = - DP[1]['g_L'] - DP[1]['g_C']
 
     return (n_neat, m_neat), (aa, bb), ss
 
@@ -165,39 +165,39 @@ def create_1dend_2comp(dt=0.1):
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
-    aa = np.zeros((3,3))
+    aa = np.zeros((3, 3))
     bb = np.zeros(3)
 
-    aa[0,0] = SP['C_m'] / dt + SP['g_L'] / 2. + DP[0]['g_C'] / 2.
+    aa[0, 0] = SP['C_m'] / dt + SP['g_L'] / 2. + DP[0]['g_C'] / 2.
 
-    aa[0,1] = -DP[0]['g_C'] / 2.;
-    aa[1,0] = -DP[0]['g_C'] / 2.;
-    aa[1,1] = DP[0]['C_m'] / dt + DP[0]['g_L'] / 2. + DP[0]['g_C'] / 2. + DP[1]['g_C'] / 2.
+    aa[0, 1] = -DP[0]['g_C'] / 2.
+    aa[1, 0] = -DP[0]['g_C'] / 2.
+    aa[1, 1] = DP[0]['C_m'] / dt + DP[0]['g_L'] / 2. + DP[0]['g_C'] / 2. + DP[1]['g_C'] / 2.
 
-    aa[1,2] = -DP[1]['g_C'] / 2.;
-    aa[2,1] = -DP[1]['g_C'] / 2.;
-    aa[2,2] = DP[1]['C_m'] / dt + DP[1]['g_L'] / 2. + DP[1]['g_C'] / 2.
+    aa[1, 2] = -DP[1]['g_C'] / 2.
+    aa[2, 1] = -DP[1]['g_C'] / 2.
+    aa[2, 2] = DP[1]['C_m'] / dt + DP[1]['g_L'] / 2. + DP[1]['g_C'] / 2.
 
     bb[0] = SP['C_m'] / dt * SP['e_L'] + SP['g_L'] * SP['e_L'] / 2. - \
-            DP[0]['g_C'] * (SP['e_L'] - DP[0]['e_L']) / 2.
+        DP[0]['g_C'] * (SP['e_L'] - DP[0]['e_L']) / 2.
     bb[1] = DP[0]['C_m'] / dt * DP[0]['e_L'] + DP[0]['g_L'] * DP[0]['e_L'] / 2. - \
-            DP[0]['g_C'] * (DP[0]['e_L'] - SP['e_L']) / 2. - \
-            DP[1]['g_C'] * (DP[0]['e_L'] - DP[1]['e_L']) / 2.
+        DP[0]['g_C'] * (DP[0]['e_L'] - SP['e_L']) / 2. - \
+        DP[1]['g_C'] * (DP[0]['e_L'] - DP[1]['e_L']) / 2.
     bb[2] = DP[1]['C_m'] / dt * DP[1]['e_L'] + DP[1]['g_L'] * DP[1]['e_L'] / 2. - \
-            DP[1]['g_C'] * (DP[1]['e_L'] - SP['e_L']) / 2.
+        DP[1]['g_C'] * (DP[1]['e_L'] - SP['e_L']) / 2.
 
     # create steady state matrix for attenuation test
-    ss = np.zeros((3,3))
+    ss = np.zeros((3, 3))
 
-    ss[0,0] = - SP['g_L'] - DP[0]['g_C']
+    ss[0, 0] = - SP['g_L'] - DP[0]['g_C']
 
-    ss[0,1] = DP[0]['g_C']
-    ss[1,0] = DP[0]['g_C']
-    ss[1,1] = - DP[0]['g_L'] - DP[0]['g_C'] - DP[1]['g_C']
+    ss[0, 1] = DP[0]['g_C']
+    ss[1, 0] = DP[0]['g_C']
+    ss[1, 1] = - DP[0]['g_L'] - DP[0]['g_C'] - DP[1]['g_C']
 
-    ss[1,2] = DP[1]['g_C']
-    ss[2,1] = DP[1]['g_C']
-    ss[2,2] = - DP[1]['g_L'] - DP[1]['g_C']
+    ss[1, 2] = DP[1]['g_C']
+    ss[2, 1] = DP[1]['g_C']
+    ss[2, 2] = - DP[1]['g_L'] - DP[1]['g_C']
 
     return (n_neat, m_neat), (aa, bb), ss
 
@@ -225,66 +225,66 @@ def create_tdend_4comp(dt=0.1):
     nest.SetStatus(n_neat, {"compartments": {"parent_idx": 2, "params": DP[3]}})
 
     m_neat = nest.Create('multimeter', 1,
-                         {'record_from': ['v_comp%d'%ii for ii in range(5)],
-                                          'interval': .1})
+                         {'record_from': ['v_comp%d' % ii for ii in range(5)],
+                          'interval': .1})
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
-    aa = np.zeros((5,5))
+    aa = np.zeros((5, 5))
     bb = np.zeros(5)
 
-    aa[0,0] = SP['C_m'] / dt + SP['g_L'] / 2. + DP[0]['g_C'] / 2.
+    aa[0, 0] = SP['C_m'] / dt + SP['g_L'] / 2. + DP[0]['g_C'] / 2.
 
-    aa[0,1] = -DP[0]['g_C'] / 2.;
-    aa[1,0] = -DP[0]['g_C'] / 2.;
-    aa[1,1] = DP[0]['C_m'] / dt + DP[0]['g_L'] / 2. + DP[0]['g_C'] / 2. + DP[1]['g_C'] / 2.
+    aa[0, 1] = -DP[0]['g_C'] / 2.
+    aa[1, 0] = -DP[0]['g_C'] / 2.
+    aa[1, 1] = DP[0]['C_m'] / dt + DP[0]['g_L'] / 2. + DP[0]['g_C'] / 2. + DP[1]['g_C'] / 2.
 
-    aa[1,2] = -DP[1]['g_C'] / 2.;
-    aa[2,1] = -DP[1]['g_C'] / 2.;
-    aa[2,2] = DP[1]['C_m'] / dt + DP[1]['g_L'] / 2. + DP[1]['g_C'] / 2. + DP[2]['g_C'] / 2. + DP[3]['g_C'] / 2.
+    aa[1, 2] = -DP[1]['g_C'] / 2.
+    aa[2, 1] = -DP[1]['g_C'] / 2.
+    aa[2, 2] = DP[1]['C_m'] / dt + DP[1]['g_L'] / 2. + DP[1]['g_C'] / 2. + DP[2]['g_C'] / 2. + DP[3]['g_C'] / 2.
 
-    aa[2,3] = -DP[2]['g_C'] / 2.;
-    aa[3,2] = -DP[2]['g_C'] / 2.;
-    aa[3,3] = DP[2]['C_m'] / dt + DP[2]['g_L'] / 2. + DP[2]['g_C'] / 2.
+    aa[2, 3] = -DP[2]['g_C'] / 2.
+    aa[3, 2] = -DP[2]['g_C'] / 2.
+    aa[3, 3] = DP[2]['C_m'] / dt + DP[2]['g_L'] / 2. + DP[2]['g_C'] / 2.
 
-    aa[2,4] = -DP[3]['g_C'] / 2.;
-    aa[4,2] = -DP[3]['g_C'] / 2.;
-    aa[4,4] = DP[3]['C_m'] / dt + DP[3]['g_L'] / 2. + DP[3]['g_C'] / 2.
+    aa[2, 4] = -DP[3]['g_C'] / 2.
+    aa[4, 2] = -DP[3]['g_C'] / 2.
+    aa[4, 4] = DP[3]['C_m'] / dt + DP[3]['g_L'] / 2. + DP[3]['g_C'] / 2.
 
     bb[0] = SP['C_m'] / dt * SP['e_L'] + SP['g_L'] * SP['e_L'] / 2. - \
-            DP[0]['g_C'] * (SP['e_L'] - DP[0]['e_L']) / 2.
+        DP[0]['g_C'] * (SP['e_L'] - DP[0]['e_L']) / 2.
     bb[1] = DP[0]['C_m'] / dt * DP[0]['e_L'] + DP[0]['g_L'] * DP[0]['e_L'] / 2. - \
-            DP[0]['g_C'] * (DP[0]['e_L'] - SP['e_L']) / 2. - \
-            DP[1]['g_C'] * (DP[0]['e_L'] - DP[1]['e_L']) / 2.
+        DP[0]['g_C'] * (DP[0]['e_L'] - SP['e_L']) / 2. - \
+        DP[1]['g_C'] * (DP[0]['e_L'] - DP[1]['e_L']) / 2.
     bb[2] = DP[1]['C_m'] / dt * DP[1]['e_L'] + DP[1]['g_L'] * DP[1]['e_L'] / 2. - \
-            DP[1]['g_C'] * (DP[1]['e_L'] - DP[0]['e_L']) / 2. - \
-            DP[2]['g_C'] * (DP[1]['e_L'] - DP[2]['e_L']) / 2. - \
-            DP[3]['g_C'] * (DP[1]['e_L'] - DP[3]['e_L']) / 2.
+        DP[1]['g_C'] * (DP[1]['e_L'] - DP[0]['e_L']) / 2. - \
+        DP[2]['g_C'] * (DP[1]['e_L'] - DP[2]['e_L']) / 2. - \
+        DP[3]['g_C'] * (DP[1]['e_L'] - DP[3]['e_L']) / 2.
     bb[3] = DP[2]['C_m'] / dt * DP[2]['e_L'] + DP[2]['g_L'] * DP[2]['e_L'] / 2. - \
-            DP[2]['g_C'] * (DP[2]['e_L'] - DP[1]['e_L']) / 2.
+        DP[2]['g_C'] * (DP[2]['e_L'] - DP[1]['e_L']) / 2.
     bb[4] = DP[3]['C_m'] / dt * DP[3]['e_L'] + DP[3]['g_L'] * DP[3]['e_L'] / 2. - \
-            DP[3]['g_C'] * (DP[3]['e_L'] - DP[1]['e_L']) / 2.
+        DP[3]['g_C'] * (DP[3]['e_L'] - DP[1]['e_L']) / 2.
 
     # create steady state matrix for attenuation test
-    ss = np.zeros((5,5))
+    ss = np.zeros((5, 5))
 
-    ss[0,0] = - SP['g_L'] - DP[0]['g_C']
+    ss[0, 0] = - SP['g_L'] - DP[0]['g_C']
 
-    ss[0,1] = DP[0]['g_C']
-    ss[1,0] = DP[0]['g_C']
-    ss[1,1] = - DP[0]['g_L'] - DP[0]['g_C'] - DP[1]['g_C']
+    ss[0, 1] = DP[0]['g_C']
+    ss[1, 0] = DP[0]['g_C']
+    ss[1, 1] = - DP[0]['g_L'] - DP[0]['g_C'] - DP[1]['g_C']
 
-    ss[1,2] = DP[1]['g_C']
-    ss[2,1] = DP[1]['g_C']
-    ss[2,2] = - DP[1]['g_L'] - DP[1]['g_C']  - DP[2]['g_C'] - DP[3]['g_C']
+    ss[1, 2] = DP[1]['g_C']
+    ss[2, 1] = DP[1]['g_C']
+    ss[2, 2] = - DP[1]['g_L'] - DP[1]['g_C'] - DP[2]['g_C'] - DP[3]['g_C']
 
-    ss[2,3] = DP[2]['g_C']
-    ss[3,2] = DP[2]['g_C']
-    ss[3,3] = - DP[2]['g_L'] - DP[2]['g_C']
+    ss[2, 3] = DP[2]['g_C']
+    ss[3, 2] = DP[2]['g_C']
+    ss[3, 3] = - DP[2]['g_L'] - DP[2]['g_C']
 
-    ss[2,4] = DP[3]['g_C']
-    ss[4,2] = DP[3]['g_C']
-    ss[4,4] = - DP[3]['g_L'] - DP[3]['g_C']
+    ss[2, 4] = DP[3]['g_C']
+    ss[4, 2] = DP[3]['g_C']
+    ss[4, 4] = - DP[3]['g_L'] - DP[3]['g_C']
 
     return (n_neat, m_neat), (aa, bb), ss
 
@@ -305,7 +305,6 @@ def create_2tdend_4comp(dt=0.1):
     n_neat = nest.Create('cm_default')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
-
     nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
     # dendrite 1
     nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
@@ -319,112 +318,112 @@ def create_2tdend_4comp(dt=0.1):
     nest.SetStatus(n_neat, {"compartments": {"parent_idx": 6, "params": DP[7]}})
 
     m_neat = nest.Create('multimeter', 1,
-                         {'record_from': ['v_comp%d'%ii for ii in range(9)],
-                                          'interval': .1})
+                         {'record_from': ['v_comp%d' % ii for ii in range(9)],
+                          'interval': .1})
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
-    aa = np.zeros((9,9))
+    aa = np.zeros((9, 9))
     bb = np.zeros(9)
 
-    aa[0,0] = SP['C_m'] / dt + SP['g_L'] / 2. + DP[0]['g_C'] / 2. + DP[4]['g_C'] / 2.
+    aa[0, 0] = SP['C_m'] / dt + SP['g_L'] / 2. + DP[0]['g_C'] / 2. + DP[4]['g_C'] / 2.
 
-    aa[0,1] = -DP[0]['g_C'] / 2.;
-    aa[1,0] = -DP[0]['g_C'] / 2.;
-    aa[1,1] = DP[0]['C_m'] / dt + DP[0]['g_L'] / 2. + DP[0]['g_C'] / 2. + DP[1]['g_C'] / 2.
+    aa[0, 1] = -DP[0]['g_C'] / 2.
+    aa[1, 0] = -DP[0]['g_C'] / 2.
+    aa[1, 1] = DP[0]['C_m'] / dt + DP[0]['g_L'] / 2. + DP[0]['g_C'] / 2. + DP[1]['g_C'] / 2.
 
-    aa[1,2] = -DP[1]['g_C'] / 2.;
-    aa[2,1] = -DP[1]['g_C'] / 2.;
-    aa[2,2] = DP[1]['C_m'] / dt + DP[1]['g_L'] / 2. + DP[1]['g_C'] / 2. + DP[2]['g_C'] / 2. + DP[3]['g_C'] / 2.
+    aa[1, 2] = -DP[1]['g_C'] / 2.
+    aa[2, 1] = -DP[1]['g_C'] / 2.
+    aa[2, 2] = DP[1]['C_m'] / dt + DP[1]['g_L'] / 2. + DP[1]['g_C'] / 2. + DP[2]['g_C'] / 2. + DP[3]['g_C'] / 2.
 
-    aa[2,3] = -DP[2]['g_C'] / 2.;
-    aa[3,2] = -DP[2]['g_C'] / 2.;
-    aa[3,3] = DP[2]['C_m'] / dt + DP[2]['g_L'] / 2. + DP[2]['g_C'] / 2.
+    aa[2, 3] = -DP[2]['g_C'] / 2.
+    aa[3, 2] = -DP[2]['g_C'] / 2.
+    aa[3, 3] = DP[2]['C_m'] / dt + DP[2]['g_L'] / 2. + DP[2]['g_C'] / 2.
 
-    aa[2,4] = -DP[3]['g_C'] / 2.;
-    aa[4,2] = -DP[3]['g_C'] / 2.;
-    aa[4,4] = DP[3]['C_m'] / dt + DP[3]['g_L'] / 2. + DP[3]['g_C'] / 2.
+    aa[2, 4] = -DP[3]['g_C'] / 2.
+    aa[4, 2] = -DP[3]['g_C'] / 2.
+    aa[4, 4] = DP[3]['C_m'] / dt + DP[3]['g_L'] / 2. + DP[3]['g_C'] / 2.
 
-    aa[0,5] = -DP[4]['g_C'] / 2.;
-    aa[5,0] = -DP[4]['g_C'] / 2.;
-    aa[5,5] = DP[4]['C_m'] / dt + DP[4]['g_L'] / 2. + DP[4]['g_C'] / 2. + DP[5]['g_C'] / 2.
+    aa[0, 5] = -DP[4]['g_C'] / 2.
+    aa[5, 0] = -DP[4]['g_C'] / 2.
+    aa[5, 5] = DP[4]['C_m'] / dt + DP[4]['g_L'] / 2. + DP[4]['g_C'] / 2. + DP[5]['g_C'] / 2.
 
-    aa[5,6] = -DP[5]['g_C'] / 2.;
-    aa[6,5] = -DP[5]['g_C'] / 2.;
-    aa[6,6] = DP[5]['C_m'] / dt + DP[5]['g_L'] / 2. + DP[5]['g_C'] / 2. + DP[6]['g_C'] / 2. + DP[7]['g_C'] / 2.
+    aa[5, 6] = -DP[5]['g_C'] / 2.
+    aa[6, 5] = -DP[5]['g_C'] / 2.
+    aa[6, 6] = DP[5]['C_m'] / dt + DP[5]['g_L'] / 2. + DP[5]['g_C'] / 2. + DP[6]['g_C'] / 2. + DP[7]['g_C'] / 2.
 
-    aa[6,7] = -DP[6]['g_C'] / 2.;
-    aa[7,6] = -DP[6]['g_C'] / 2.;
-    aa[7,7] = DP[6]['C_m'] / dt + DP[6]['g_L'] / 2. + DP[6]['g_C'] / 2.
+    aa[6, 7] = -DP[6]['g_C'] / 2.
+    aa[7, 6] = -DP[6]['g_C'] / 2.
+    aa[7, 7] = DP[6]['C_m'] / dt + DP[6]['g_L'] / 2. + DP[6]['g_C'] / 2.
 
-    aa[6,8] = -DP[7]['g_C'] / 2.;
-    aa[8,6] = -DP[7]['g_C'] / 2.;
-    aa[8,8] = DP[7]['C_m'] / dt + DP[7]['g_L'] / 2. + DP[7]['g_C'] / 2.
+    aa[6, 8] = -DP[7]['g_C'] / 2.
+    aa[8, 6] = -DP[7]['g_C'] / 2.
+    aa[8, 8] = DP[7]['C_m'] / dt + DP[7]['g_L'] / 2. + DP[7]['g_C'] / 2.
 
     bb[0] = SP['C_m'] / dt * SP['e_L'] + SP['g_L'] * SP['e_L'] / 2. - \
-            DP[0]['g_C'] * (SP['e_L'] - DP[0]['e_L']) / 2. - \
-            DP[4]['g_C'] * (SP['e_L'] - DP[4]['e_L']) / 2.
+        DP[0]['g_C'] * (SP['e_L'] - DP[0]['e_L']) / 2. - \
+        DP[4]['g_C'] * (SP['e_L'] - DP[4]['e_L']) / 2.
 
     bb[1] = DP[0]['C_m'] / dt * DP[0]['e_L'] + DP[0]['g_L'] * DP[0]['e_L'] / 2. - \
-            DP[0]['g_C'] * (DP[0]['e_L'] - SP['e_L']) / 2. - \
-            DP[1]['g_C'] * (DP[0]['e_L'] - DP[1]['e_L']) / 2.
+        DP[0]['g_C'] * (DP[0]['e_L'] - SP['e_L']) / 2. - \
+        DP[1]['g_C'] * (DP[0]['e_L'] - DP[1]['e_L']) / 2.
     bb[2] = DP[1]['C_m'] / dt * DP[1]['e_L'] + DP[1]['g_L'] * DP[1]['e_L'] / 2. - \
-            DP[1]['g_C'] * (DP[1]['e_L'] - DP[0]['e_L']) / 2. - \
-            DP[2]['g_C'] * (DP[1]['e_L'] - DP[2]['e_L']) / 2. - \
-            DP[3]['g_C'] * (DP[1]['e_L'] - DP[3]['e_L']) / 2.
+        DP[1]['g_C'] * (DP[1]['e_L'] - DP[0]['e_L']) / 2. - \
+        DP[2]['g_C'] * (DP[1]['e_L'] - DP[2]['e_L']) / 2. - \
+        DP[3]['g_C'] * (DP[1]['e_L'] - DP[3]['e_L']) / 2.
     bb[3] = DP[2]['C_m'] / dt * DP[2]['e_L'] + DP[2]['g_L'] * DP[2]['e_L'] / 2. - \
-            DP[2]['g_C'] * (DP[2]['e_L'] - DP[1]['e_L']) / 2.
+        DP[2]['g_C'] * (DP[2]['e_L'] - DP[1]['e_L']) / 2.
     bb[4] = DP[3]['C_m'] / dt * DP[3]['e_L'] + DP[3]['g_L'] * DP[3]['e_L'] / 2. - \
-            DP[3]['g_C'] * (DP[3]['e_L'] - DP[1]['e_L']) / 2.
+        DP[3]['g_C'] * (DP[3]['e_L'] - DP[1]['e_L']) / 2.
 
     bb[5] = DP[4]['C_m'] / dt * DP[4]['e_L'] + DP[4]['g_L'] * DP[4]['e_L'] / 2. - \
-            DP[4]['g_C'] * (DP[4]['e_L'] - SP['e_L']) / 2. - \
-            DP[5]['g_C'] * (DP[4]['e_L'] - DP[5]['e_L']) / 2.
+        DP[4]['g_C'] * (DP[4]['e_L'] - SP['e_L']) / 2. - \
+        DP[5]['g_C'] * (DP[4]['e_L'] - DP[5]['e_L']) / 2.
     bb[6] = DP[5]['C_m'] / dt * DP[5]['e_L'] + DP[5]['g_L'] * DP[5]['e_L'] / 2. - \
-            DP[5]['g_C'] * (DP[5]['e_L'] - DP[4]['e_L']) / 2. - \
-            DP[6]['g_C'] * (DP[5]['e_L'] - DP[6]['e_L']) / 2. - \
-            DP[7]['g_C'] * (DP[5]['e_L'] - DP[7]['e_L']) / 2.
+        DP[5]['g_C'] * (DP[5]['e_L'] - DP[4]['e_L']) / 2. - \
+        DP[6]['g_C'] * (DP[5]['e_L'] - DP[6]['e_L']) / 2. - \
+        DP[7]['g_C'] * (DP[5]['e_L'] - DP[7]['e_L']) / 2.
     bb[7] = DP[6]['C_m'] / dt * DP[6]['e_L'] + DP[6]['g_L'] * DP[6]['e_L'] / 2. - \
-            DP[6]['g_C'] * (DP[6]['e_L'] - DP[5]['e_L']) / 2.
+        DP[6]['g_C'] * (DP[6]['e_L'] - DP[5]['e_L']) / 2.
     bb[8] = DP[7]['C_m'] / dt * DP[7]['e_L'] + DP[7]['g_L'] * DP[7]['e_L'] / 2. - \
-            DP[7]['g_C'] * (DP[7]['e_L'] - DP[5]['e_L']) / 2.
+        DP[7]['g_C'] * (DP[7]['e_L'] - DP[5]['e_L']) / 2.
 
     # create steady state matrix for attenuation test
-    ss = np.zeros((9,9))
+    ss = np.zeros((9, 9))
 
-    ss[0,0] = - SP['g_L'] - DP[0]['g_C'] - DP[4]['g_C']
+    ss[0, 0] = - SP['g_L'] - DP[0]['g_C'] - DP[4]['g_C']
 
-    ss[0,1] = DP[0]['g_C']
-    ss[1,0] = DP[0]['g_C']
-    ss[1,1] = - DP[0]['g_L'] - DP[0]['g_C'] - DP[1]['g_C']
+    ss[0, 1] = DP[0]['g_C']
+    ss[1, 0] = DP[0]['g_C']
+    ss[1, 1] = - DP[0]['g_L'] - DP[0]['g_C'] - DP[1]['g_C']
 
-    ss[1,2] = DP[1]['g_C']
-    ss[2,1] = DP[1]['g_C']
-    ss[2,2] = - DP[1]['g_L'] - DP[1]['g_C']  - DP[2]['g_C'] - DP[3]['g_C']
+    ss[1, 2] = DP[1]['g_C']
+    ss[2, 1] = DP[1]['g_C']
+    ss[2, 2] = - DP[1]['g_L'] - DP[1]['g_C'] - DP[2]['g_C'] - DP[3]['g_C']
 
-    ss[2,3] = DP[2]['g_C']
-    ss[3,2] = DP[2]['g_C']
-    ss[3,3] = - DP[2]['g_L'] - DP[2]['g_C']
+    ss[2, 3] = DP[2]['g_C']
+    ss[3, 2] = DP[2]['g_C']
+    ss[3, 3] = - DP[2]['g_L'] - DP[2]['g_C']
 
-    ss[2,4] = DP[3]['g_C']
-    ss[4,2] = DP[3]['g_C']
-    ss[4,4] = - DP[3]['g_L'] - DP[3]['g_C']
+    ss[2, 4] = DP[3]['g_C']
+    ss[4, 2] = DP[3]['g_C']
+    ss[4, 4] = - DP[3]['g_L'] - DP[3]['g_C']
 
-    ss[0,5] = DP[4]['g_C']
-    ss[5,0] = DP[4]['g_C']
-    ss[5,5] = - DP[4]['g_L'] - DP[4]['g_C'] - DP[5]['g_C']
+    ss[0, 5] = DP[4]['g_C']
+    ss[5, 0] = DP[4]['g_C']
+    ss[5, 5] = - DP[4]['g_L'] - DP[4]['g_C'] - DP[5]['g_C']
 
-    ss[5,6] = DP[5]['g_C']
-    ss[6,5] = DP[5]['g_C']
-    ss[6,6] = - DP[5]['g_L'] - DP[5]['g_C']  - DP[6]['g_C'] - DP[7]['g_C']
+    ss[5, 6] = DP[5]['g_C']
+    ss[6, 5] = DP[5]['g_C']
+    ss[6, 6] = - DP[5]['g_L'] - DP[5]['g_C'] - DP[6]['g_C'] - DP[7]['g_C']
 
-    ss[6,7] = DP[6]['g_C']
-    ss[7,6] = DP[6]['g_C']
-    ss[7,7] = - DP[6]['g_L'] - DP[6]['g_C']
+    ss[6, 7] = DP[6]['g_C']
+    ss[7, 6] = DP[6]['g_C']
+    ss[7, 7] = - DP[6]['g_L'] - DP[6]['g_C']
 
-    ss[6,8] = DP[7]['g_C']
-    ss[8,6] = DP[7]['g_C']
-    ss[8,8] = - DP[7]['g_L'] - DP[7]['g_C']
+    ss[6, 8] = DP[7]['g_C']
+    ss[8, 6] = DP[7]['g_C']
+    ss[8, 8] = - DP[7]['g_L'] - DP[7]['g_C']
 
     return (n_neat, m_neat), (aa, bb), ss
 
@@ -437,7 +436,7 @@ class NEASTTestCase(unittest.TestCase):
         """
         Test the matrix inversion corresponding to one integration step
         """
-        (n_neat, m_neat), (aa, bb), _ = eval('create_%s(dt=dt)'%model_name)
+        (n_neat, m_neat), (aa, bb), _ = eval('create_%s(dt=dt)' % model_name)
 
         n_comp = len(bb)
         i_in = 0.1 * np.arange(1, n_comp + 1)
@@ -447,14 +446,14 @@ class NEASTTestCase(unittest.TestCase):
             nest.Connect(nest.Create('dc_generator', {'amplitude': i_amp}), n_neat,
                          syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                    'delay': dt, 'receptor_type': ii}
-                        )
+                         )
 
             bb[ii] += i_amp
 
         # run the NEST model for 2 timesteps (input arrives only on second step)
         nest.Simulate(3.*dt)
         events_neat = nest.GetStatus(m_neat, 'events')[0]
-        v_neat = np.array([events_neat['v_comp%d'%ii][-1] for ii in range(n_comp)])
+        v_neat = np.array([events_neat['v_comp%d' % ii][-1] for ii in range(n_comp)])
 
         # construct numpy solution
         v_sol = np.linalg.solve(aa, bb)
@@ -476,7 +475,7 @@ class NEASTTestCase(unittest.TestCase):
         second time-step, but the initial conditions will be differen from
         the leak reversal
         """
-        (n_neat, m_neat), (aa, bb), _ = eval('create_%s(dt=dt)'%model_name)
+        (n_neat, m_neat), (aa, bb), _ = eval('create_%s(dt=dt)' % model_name)
 
         # need to add zero input otherwise the simulation don't run
         n_comp = len(bb)
@@ -487,14 +486,14 @@ class NEASTTestCase(unittest.TestCase):
             nest.Connect(nest.Create('dc_generator', {'amplitude': i_amp}), n_neat,
                          syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                    'delay': dt, 'receptor_type': ii}
-                        )
+                         )
 
             bb[ii] += i_amp
 
         # run the NEST model for 1 timestep
         nest.Simulate(2.*dt)
         events_neat = nest.GetStatus(m_neat, 'events')[0]
-        v_neat = np.array([events_neat['v_comp%d'%ii][0] for ii in range(n_comp)])
+        v_neat = np.array([events_neat['v_comp%d' % ii][0] for ii in range(n_comp)])
 
         # construct numpy solution
         v_sol = np.linalg.solve(aa, bb)
@@ -505,14 +504,14 @@ class NEASTTestCase(unittest.TestCase):
         """
         Test the attenuation properties of the models
         """
-        (n_neat, m_neat), _, gg = eval('create_%s(dt=dt)'%model_name)
+        (n_neat, m_neat), _, gg = eval('create_%s(dt=dt)' % model_name)
         n_comp = gg.shape[0]
 
         # compute impedance matrix from conductance matrix
         zz = np.linalg.inv(-gg)
 
         for ii in range(n_comp):
-            (n_neat, m_neat), _, gg = eval('create_%s(dt=dt)'%model_name)
+            (n_neat, m_neat), _, gg = eval('create_%s(dt=dt)' % model_name)
             # add current
             nest.Connect(nest.Create('dc_generator', {'amplitude': i_amp}), n_neat,
                          syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
@@ -521,12 +520,12 @@ class NEASTTestCase(unittest.TestCase):
             # run the NEST model
             nest.Simulate(t_max)
             events_neat = nest.GetStatus(m_neat, 'events')[0]
-            v_neat = np.array([events_neat['v_comp%d'%ii][-1] - \
-                               events_neat['v_comp%d'%ii][int(t_max/(2.*dt))-1] \
+            v_neat = np.array([events_neat['v_comp%d' % ii][-1] -
+                               events_neat['v_comp%d' % ii][int(t_max/(2.*dt))-1]
                                for ii in range(n_comp)])
 
             att_neat = v_neat / v_neat[ii]
-            att_sol = zz[ii,:] / zz[ii,ii]
+            att_sol = zz[ii, :] / zz[ii, ii]
 
             self.assertTrue(np.allclose(att_neat, att_sol))
 
@@ -541,7 +540,7 @@ class NEASTTestCase(unittest.TestCase):
         """
         Test whether the model converges to the correct equilibrium potential
         """
-        (n_neat, m_neat), _, gg = eval('create_%s(dt=dt)'%model_name)
+        (n_neat, m_neat), _, gg = eval('create_%s(dt=dt)' % model_name)
         n_comp = gg.shape[0]
 
         gl = np.array([SP['g_L']] + [DP[ii]['g_L'] for ii in range(n_comp-1)])
@@ -555,7 +554,7 @@ class NEASTTestCase(unittest.TestCase):
         # run the NEST model
         nest.Simulate(t_max)
         events_neat = nest.GetStatus(m_neat, 'events')[0]
-        v_neat = np.array([events_neat['v_comp%d'%ii][-1] for ii in range(n_comp)])
+        v_neat = np.array([events_neat['v_comp%d' % ii][-1] for ii in range(n_comp)])
 
         # explicit solution for steady state voltage
         v_sol = np.linalg.solve(-gg, gl*el)
@@ -572,17 +571,17 @@ class NEASTTestCase(unittest.TestCase):
         tau_d = 3.
         weight = .001
         # synaptic conductance window surface
-        tp = (tau_r * tau_d) / (tau_d - tau_r) * np.log(tau_d / tau_r);
-        surf = (tau_d - tau_r ) / (-np.exp(-tp / tau_r) + np.exp(-tp / tau_d));
+        tp = (tau_r * tau_d) / (tau_d - tau_r) * np.log(tau_d / tau_r)
+        surf = (tau_d - tau_r) / (-np.exp(-tp / tau_r) + np.exp(-tp / tau_d))
 
         # create the nest model
-        (n_neat, m_neat), _, gg = eval('create_%s(dt=dt)'%model_name)
+        (n_neat, m_neat), _, gg = eval('create_%s(dt=dt)' % model_name)
         n_comp = gg.shape[0]
 
         gl = np.array([SP['g_L']] + [DP[ii]['g_L'] for ii in range(n_comp-1)])
         el = np.array([SP['e_L']] + [DP[ii]['e_L'] for ii in range(n_comp-1)])
 
-        syn_weights = weight * np.arange(1,n_comp+1)
+        syn_weights = weight * np.arange(1, n_comp+1)
 
         # average synaptic conductances
         gs = np.zeros(n_comp)
@@ -601,7 +600,7 @@ class NEASTTestCase(unittest.TestCase):
         # run the NEST model
         nest.Simulate(t_max)
         events_neat = nest.GetStatus(m_neat, 'events')[0]
-        v_neat = np.array([events_neat['v_comp%d'%ii][-1] for ii in range(n_comp)])
+        v_neat = np.array([events_neat['v_comp%d' % ii][-1] for ii in range(n_comp)])
 
         # explicit solution for steady state voltage
         v_sol = np.linalg.solve(-gg + np.diag(gs), gl*el)
@@ -614,7 +613,6 @@ class NEASTTestCase(unittest.TestCase):
         self.test_conductance_input(model_name='1dend_2comp')
         self.test_conductance_input(model_name='tdend_4comp')
         self.test_conductance_input(model_name='2tdend_4comp')
-
 
     def test_spike_transmission(self, dt=.01):
         dt = 0.1
@@ -685,7 +683,6 @@ class NEASTTestCase(unittest.TestCase):
 
         nest.Connect(sg_11, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
         nest.Connect(sg_12, n_neat_1, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
-
 
         m_neat_0 = nest.Create('multimeter', 1, {'record_from': ['v_comp0'], 'interval': dt})
         nest.Connect(m_neat_0, n_neat_0)
@@ -777,7 +774,7 @@ class NEASTTestCase(unittest.TestCase):
                                     "Port with id 3 does not exist. Valid current "
                                     "receptor ports for cm_default are in \[0, 2\[."):
             nest.Connect(dc, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
-                                                 'receptor_type': 3})
+                                               'receptor_type': 3})
 
         # test connection port out of range for spike input
         n_neat = nest.Create('cm_default')
@@ -792,8 +789,7 @@ class NEASTTestCase(unittest.TestCase):
                                     "Port with id 3 does not exist. Valid spike "
                                     "receptor ports for cm_default are in \[0, 3\[."):
             nest.Connect(sg, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
-                                                 'receptor_type': 3})
-
+                                               'receptor_type': 3})
 
         # test connection with unknown recordable
         n_neat = nest.Create('cm_default')
@@ -819,9 +815,9 @@ class NEASTTestCase(unittest.TestCase):
 
         n_neat = nest.Create('cm_default')
         nest.SetStatus(n_neat, {"compartments": [{"parent_idx": -1, "params": SP},
-                                                   {"parent_idx": 0, "params": DP[0]}],
+                                                 {"parent_idx": 0, "params": DP[0]}],
                                 "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
-                                                {"comp_idx": 1, "receptor_type": "AMPA"}]})
+                                              {"comp_idx": 1, "receptor_type": "AMPA"}]})
 
         sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
@@ -842,9 +838,9 @@ class NEASTTestCase(unittest.TestCase):
 
         n_neat = nest.Create('cm_default')
         nest.SetStatus(n_neat, {"compartments": [{"parent_idx": -1, "params": SP},
-                                                   {"parent_idx": 0, "params": DP[0]}],
+                                                 {"parent_idx": 0, "params": DP[0]}],
                                 "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
-                                                {"comp_idx": 1, "receptor_type": "AMPA"}]})
+                                              {"comp_idx": 1, "receptor_type": "AMPA"}]})
 
         sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})

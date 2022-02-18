@@ -133,7 +133,7 @@ public:
   // constructor, destructor
   explicit AMPA( const long syn_index );
   AMPA( const long syn_index, const DictionaryDatum& receptor_params );
-  ~AMPA(){};
+  ~AMPA() {};
 
   long
   get_syn_idx()

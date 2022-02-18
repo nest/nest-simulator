@@ -116,7 +116,8 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
      * Until an operator to explicititly append compartments is added to the
      * API, we disable this functionality
      */
-    if ( c_tree_.get_size() > 0 ){
+    if ( c_tree_.get_size() > 0 )
+    {
       throw BadProperty( "\'compartments\' is already defined for this model" );
     }
 
@@ -160,7 +161,8 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
      * Until an operator to explicititly append receptors is added to the
      * API, we disable this functionality
      */
-    if ( long( syn_buffers_.size() ) > 0 ){
+    if ( long( syn_buffers_.size() ) > 0 )
+    {
       throw BadProperty( "\'receptors\' is already defined for this model" );
     }
 

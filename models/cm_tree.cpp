@@ -190,7 +190,8 @@ nest::CompTree::add_compartment( Compartment* compartment, const long parent_ind
      * exception message
      */
     Compartment* parent = get_compartment( parent_index, get_root(), 0 );
-    if ( parent == nullptr ){
+    if ( parent == nullptr )
+    {
       std::string msg = "does not exist in tree, but was specified as a parent compartment";
       throw UnknownCompartment( parent_index, msg );
     }
@@ -247,7 +248,7 @@ nest::CompTree::get_compartment( const long compartment_index, Compartment* comp
     }
   }
 
-  if ( (not r_compartment) && raise_flag )
+  if ( ( not r_compartment ) && raise_flag )
   {
     std::string msg = "does not exist in tree";
     throw UnknownCompartment( compartment_index, msg );

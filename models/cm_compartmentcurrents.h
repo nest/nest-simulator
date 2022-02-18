@@ -60,12 +60,10 @@ private:
 public:
   Na();
   explicit Na( const DictionaryDatum& channel_params );
-  ~Na(){};
+  ~Na() {};
 
   // calibrate initialization
-  void
-  calibrate()
-  {};
+  void calibrate() {};
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
   // numerical integration step
@@ -98,12 +96,10 @@ private:
 public:
   K();
   explicit K( const DictionaryDatum& channel_params );
-  ~K(){};
+  ~K() {};
 
   // calibrate initialization
-  void
-  calibrate()
-  {};
+  void calibrate() {};
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
   // numerical integration step
@@ -194,7 +190,7 @@ public:
   // constructor, destructor
   explicit GABA( const long syn_index );
   GABA( const long syn_index, const DictionaryDatum& receptor_params );
-  ~GABA(){};
+  ~GABA() {};
 
   long
   get_syn_idx()
@@ -251,7 +247,7 @@ public:
   // constructor, destructor
   explicit NMDA( const long syn_index );
   NMDA( const long syn_index, const DictionaryDatum& receptor_params );
-  ~NMDA(){};
+  ~NMDA() {};
 
   long
   get_syn_idx()
@@ -323,7 +319,7 @@ public:
   // constructor, destructor
   explicit AMPA_NMDA( const long syn_index );
   AMPA_NMDA( const long syn_index, const DictionaryDatum& receptor_params );
-  ~AMPA_NMDA(){};
+  ~AMPA_NMDA() {};
 
   long
   get_syn_idx()
@@ -380,11 +376,11 @@ private:
 public:
   CompartmentCurrents()
     : Na_chan_()
-    , K_chan_(){};
+    , K_chan_() {};
   explicit CompartmentCurrents( const DictionaryDatum& channel_params )
     : Na_chan_( channel_params )
-    , K_chan_( channel_params ){};
-  ~CompartmentCurrents(){};
+    , K_chan_( channel_params ) {};
+  ~CompartmentCurrents() {};
 
   void
   calibrate()

@@ -823,7 +823,6 @@ class NEASTTestCase(unittest.TestCase):
                                 "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
                                                 {"comp_idx": 1, "receptor_type": "AMPA"}]})
 
-
         sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})
 
@@ -846,7 +845,6 @@ class NEASTTestCase(unittest.TestCase):
                                                    {"parent_idx": 0, "params": DP[0]}],
                                 "receptors": [{"comp_idx": 0, "receptor_type": "GABA"},
                                                 {"comp_idx": 1, "receptor_type": "AMPA"}]})
-
 
         sg_1 = nest.Create('spike_generator', 1, {'spike_times': [10.]})
         sg_2 = nest.Create('spike_generator', 1, {'spike_times': [15.]})

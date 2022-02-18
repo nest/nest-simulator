@@ -423,6 +423,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   ConnBuilder* cb = get_conn_builder( rule_name, sources, targets, conn_spec, syn_specs );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
+  std::cout << "ALL_ENTRIES_ACCESSED()" << std::endl;
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
   for ( auto syn_params : syn_specs )
   {
@@ -430,8 +431,10 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   }
 
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
+  std::cout << "set_connections_have_changed()" << std::endl;
   set_connections_have_changed();
 
+  std::cout << "cb->connect()" << std::endl;
   cb->connect();
   delete cb;
 }

@@ -1608,10 +1608,12 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   const std::vector< DictionaryDatum >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
-  ParameterDatum* pd_p = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
-  ParameterDatum* pd_p_astro = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p_astro ].datum() );
+  // Astrocytes
   astrocytes_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
+  
   // Probability of neuron=>neuron connection
+  std::cout << "pd_p" << std::endl;
+  ParameterDatum* pd_p = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
   if ( pd_p )
   {
     p_ = *pd_p;
@@ -1627,7 +1629,10 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     }
     p_ = std::shared_ptr< Parameter >( new ConstantParameter( value_p ) );
   }
+  
   // Probability of astrocyte=>neuron connection
+  std::cout << "pd_p_astro" << std::endl;
+  ParameterDatum* pd_p_astro = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p_astro ].datum() );
   if ( pd_p_astro )
   {
     p_astro_ = *pd_p_astro;
@@ -1640,6 +1645,67 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
       throw BadProperty( "Connection probability 0 <= p_astro <= 1 required." );
     }
     p_astro_ = std::shared_ptr< Parameter >( new ConstantParameter( value_p_astro ) );
+  }
+  
+  // Astrocyte synapse model
+  std::cout << "syn_indx_astro_" << std::endl;
+  if ( syn_specs[0]->known( names::synapse_model_astro ) )
+  {
+    const std::string syn_name = ( *syn_specs[0] )[ names::synapse_model_astro ];
+    if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
+    {
+      throw UnknownSynapseType( syn_name );
+    }
+    syn_indx_astro_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+  }
+  else
+  {
+    syn_indx_astro_ = kernel().model_manager.get_synapsedict()->lookup( "sic_connection" );
+  }  
+  DictionaryDatum syn_defaults_astro = kernel().model_manager.get_connector_defaults( syn_indx_astro_ );
+  
+  // Coefficient c_spill of neuron=>astrocyte connection
+  std::cout << "c_spill_" << std::endl;
+  if ( syn_specs[0]->known( names::c_spill ) )
+  {
+    c_spill_ = ( *syn_specs[0] )[ names::c_spill ];
+    if ( c_spill_ < 0 or 1 < c_spill_ )
+    {
+      throw BadProperty( "Coefficient 0 <= c_spill <= 1 required." );
+    }
+  }
+  else
+  {
+    c_spill_ = 0.3;
+  }
+  
+  // Weights and delays
+  std::cout << "names::weight" << std::endl;
+  if ( syn_specs[0]->known( names::weight ) )
+  {
+    w_ = ( *syn_specs[0] )[ names::weight ];
+  }
+  else
+  {
+    w_ = ( *syn_defaults_astro )[ names::weight ];
+  }
+  std::cout << "names::delay" << std::endl;
+  if ( syn_specs[0]->known( names::delay ) )
+  {
+    d_ = ( *syn_specs[0] )[ names::delay ];
+  }
+  else
+  {
+    d_ = ( *syn_defaults_astro )[ names::delay ];
+  }
+  std::cout << "names::weight_astro" << std::endl;
+  if ( syn_specs[0]->known( names::weight_astro ) )
+  {
+    w_astro_ = ( *syn_specs[0] )[ names::weight_astro ];
+  }
+  else
+  {
+    w_astro_ = ( *syn_defaults_astro )[ names::weight ];
   }
 }
 

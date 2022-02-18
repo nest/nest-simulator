@@ -441,10 +441,17 @@ protected:
 private:
   void inner_connect_( const int, RngPtr, Node*, index );
   void single_connect_astro_( index, const std::vector< index >&, Node&, thread, RngPtr );
+  // From conn_spec
+  NodeCollectionPTR astrocytes_;
   ParameterDatum p_; //!< connection probability
   ParameterDatum p_astro_; //!< connection probability astro=>neuron
-  ParameterDatum c_spill_;
-  NodeCollectionPTR astrocytes_;
+  // From syn_spec
+  //index syn_indx_astro_;
+  index syn_indx_astro_;
+  double c_spill_;
+  double w_;
+  double d_;
+  double w_astro_;
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

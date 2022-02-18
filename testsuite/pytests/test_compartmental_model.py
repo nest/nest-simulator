@@ -53,10 +53,12 @@ def create_1dend_1comp(dt=0.1):
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
     n_neat = nest.Create('cm_default')
-    nest.SetStatus(n_neat, {'V_th': 100.})
 
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
+    n_neat.V_th = 100.
+    n_neat.compartments = [
+        {"parent_idx": -1, "params": SP},
+        {"parent_idx": 0, "params": DP[0]}
+    ]
 
     m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1'], 'interval': .1})
     nest.Connect(m_neat, n_neat)
@@ -96,11 +98,13 @@ def create_2dend_1comp(dt=0.1):
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
     n_neat = nest.Create('cm_default')
-    nest.SetStatus(n_neat, {'V_th': 100.})
 
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[1]}})
+    n_neat.V_th = 100.
+    n_neat.compartments = [
+        {"parent_idx": -1, "params": SP},
+        {"parent_idx": 0, "params": DP[0]},
+        {"parent_idx": 0, "params": DP[1]}
+    ]
 
     m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp2'], 'interval': .1})
     nest.Connect(m_neat, n_neat)
@@ -155,11 +159,13 @@ def create_1dend_2comp(dt=0.1):
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
     n_neat = nest.Create('cm_default')
-    nest.SetStatus(n_neat, {'V_th': 100.})
 
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 1, "params": DP[1]}})
+    n_neat.V_th = 100.
+    n_neat.compartments = [
+        {"parent_idx": -1, "params": SP},
+        {"parent_idx": 0, "params": DP[0]},
+        {"parent_idx": 1, "params": DP[1]}
+    ]
 
     m_neat = nest.Create('multimeter', 1, {'record_from': ['v_comp0', 'v_comp1', 'v_comp2'], 'interval': .1})
     nest.Connect(m_neat, n_neat)
@@ -218,11 +224,14 @@ def create_tdend_4comp(dt=0.1):
     n_neat = nest.Create('cm_default')
     nest.SetStatus(n_neat, {'V_th': 100.})
 
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 1, "params": DP[1]}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 2, "params": DP[2]}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 2, "params": DP[3]}})
+    n_neat.V_th = 100.
+    n_neat.compartments = [
+        {"parent_idx": -1, "params": SP},
+        {"parent_idx": 0, "params": DP[0]},
+        {"parent_idx": 1, "params": DP[1]},
+        {"parent_idx": 2, "params": DP[2]},
+        {"parent_idx": 2, "params": DP[3]}
+    ]
 
     m_neat = nest.Create('multimeter', 1,
                          {'record_from': ['v_comp%d' % ii for ii in range(5)],
@@ -305,19 +314,21 @@ def create_2tdend_4comp(dt=0.1):
     nest.ResetKernel()
     nest.SetKernelStatus(dict(resolution=dt))
     n_neat = nest.Create('cm_default')
-    nest.SetStatus(n_neat, {'V_th': 100.})
 
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
-    # dendrite 1
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 1, "params": DP[1]}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 2, "params": DP[2]}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 2, "params": DP[3]}})
-    # dendrite 2
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[4]}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 5, "params": DP[5]}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 6, "params": DP[6]}})
-    nest.SetStatus(n_neat, {"compartments": {"parent_idx": 6, "params": DP[7]}})
+    n_neat.V_th = 100.
+    n_neat.compartments = [
+        {"parent_idx": -1, "params": SP},
+        # dendrite 1
+        {"parent_idx": 0, "params": DP[0]},
+        {"parent_idx": 1, "params": DP[1]},
+        {"parent_idx": 2, "params": DP[2]},
+        {"parent_idx": 2, "params": DP[3]},
+        # dendrite 2
+        {"parent_idx": 0, "params": DP[4]},
+        {"parent_idx": 5, "params": DP[5]},
+        {"parent_idx": 6, "params": DP[6]},
+        {"parent_idx": 6, "params": DP[7]}
+    ]
 
     m_neat = nest.Create('multimeter', 1,
                          {'record_from': ['v_comp%d' % ii for ii in range(9)],
@@ -589,11 +600,14 @@ class NEASTTestCase(unittest.TestCase):
         gs = np.zeros(n_comp)
         gs = syn_weights * surf
 
-        for ii, sw in enumerate(syn_weights):
-            nest.SetStatus(n_neat, {"receptors": {"comp_idx": ii, "receptor_type": "AMPA"}})
-            syn_idx = ii
+        n_neat.receptors = [
+            {"comp_idx": ii, "receptor_type": "AMPA"}
+            for ii in range(len(syn_weights))
+        ]
 
-            # add AMPA synapse
+        for ii, sw in enumerate(syn_weights):
+            syn_idx = ii
+            # connect spike generator to AMPA synapse
             sg = nest.Create('spike_generator', 1, {'spike_times': np.arange(0.1, t_max, dt)})
             nest.Connect(sg, n_neat,
                          syn_spec={'synapse_model': 'static_synapse', 'weight': sw*dt,
@@ -668,10 +682,14 @@ class NEASTTestCase(unittest.TestCase):
 
         # set status with individual calls for each receptor and compartment
         n_neat_0 = nest.Create('cm_default')
-        nest.SetStatus(n_neat_0, {"compartments": {"parent_idx": -1, "params": SP}})
-        nest.SetStatus(n_neat_0, {"compartments": {"parent_idx": 0, "params": DP[0]}})
-        nest.SetStatus(n_neat_0, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
-        nest.SetStatus(n_neat_0, {"receptors": {"comp_idx": 1, "receptor_type": "AMPA"}})
+        n_neat_0.compartments = [
+            {"parent_idx": -1, "params": SP},
+            {"parent_idx": 0, "params": DP[0]}
+        ]
+        n_neat_0.receptors = [
+            {"comp_idx": 0, "receptor_type": "GABA"},
+            {"comp_idx": 1, "receptor_type": "AMPA"}
+        ]
 
         nest.Connect(sg_01, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 0})
         nest.Connect(sg_02, n_neat_0, syn_spec={'synapse_model': 'static_synapse', 'weight': .1, 'receptor_type': 1})
@@ -701,27 +719,31 @@ class NEASTTestCase(unittest.TestCase):
 
     def test_getstatus(self):
         n_neat = nest.Create('cm_default')
-        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
-        nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": DP[0]}})
-        nest.SetStatus(n_neat, {"receptors": {"comp_idx": 1, "receptor_type": "AMPA"}})
-        nest.SetStatus(n_neat, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
+        n_neat.compartments = [
+            {"parent_idx": -1, "params": SP},
+            {"parent_idx": 0, "params": DP[0]}
+        ]
+        n_neat.receptors = [
+            {"comp_idx": 1, "receptor_type": "AMPA"},
+            {"comp_idx": 0, "receptor_type": "GABA"}
+        ]
 
-        compartments = nest.GetStatus(n_neat, keys="compartments")
-        receptors = nest.GetStatus(n_neat, keys="receptors")
+        compartments = n_neat.compartments
+        receptors = n_neat.receptors
 
-        self.assertTrue(compartments[0][0]["comp_idx"] == 0)
-        self.assertTrue(compartments[0][0]["parent_idx"] == -1)
-        self.assertTrue(compartments[0][1]["comp_idx"] == 1)
-        self.assertTrue(compartments[0][1]["parent_idx"] == 0)
+        self.assertTrue(compartments[0]["comp_idx"] == 0)
+        self.assertTrue(compartments[0]["parent_idx"] == -1)
+        self.assertTrue(compartments[1]["comp_idx"] == 1)
+        self.assertTrue(compartments[1]["parent_idx"] == 0)
 
-        self.assertTrue(receptors[0][0]["comp_idx"] == 0)
-        self.assertTrue(receptors[0][0]["receptor_idx"] == 1)
-        self.assertTrue(receptors[0][0]["receptor_type"] == "GABA")
-        self.assertTrue(receptors[0][1]["comp_idx"] == 1)
-        self.assertTrue(receptors[0][1]["receptor_idx"] == 0)
-        self.assertTrue(receptors[0][1]["receptor_type"] == "AMPA")
+        self.assertTrue(receptors[0]["comp_idx"] == 0)
+        self.assertTrue(receptors[0]["receptor_idx"] == 1)
+        self.assertTrue(receptors[0]["receptor_type"] == "GABA")
+        self.assertTrue(receptors[1]["comp_idx"] == 1)
+        self.assertTrue(receptors[1]["receptor_idx"] == 0)
+        self.assertTrue(receptors[1]["receptor_type"] == "AMPA")
 
-        recordables = nest.GetStatus(n_neat, keys="recordables")[0]
+        recordables = n_neat.recordables
         recordables_ = {'m_Na_0', 'h_Na_0', 'n_K_0', 'v_comp0',
                         'm_Na_1', 'h_Na_1', 'n_K_1', 'v_comp1',
                         'g_r_AMPA_0', 'g_d_AMPA_0',
@@ -731,34 +753,40 @@ class NEASTTestCase(unittest.TestCase):
     def test_error_handling(self):
         # test double root
         n_neat = nest.Create('cm_default')
-        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
                                     "UnknownCompartment in SLI function SetStatus_id: "
                                     "Compartment 0 , the root, "
                                     "has already been instantiated."):
-            nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+            n_neat.compartments = [
+                {"parent_idx": -1, "params": SP},
+                {"parent_idx": -1, "params": SP}
+            ]
 
         # test undefined parent compartment
         n_neat = nest.Create('cm_default')
-        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+
         with self.assertRaisesRegex(nest.kernel.NESTError,
                                     "UnknownCompartment in SLI function SetStatus_id: "
                                     "Compartment 15 does not exist in tree, "
                                     "but was specified as a parent."):
-            nest.SetStatus(n_neat, {"compartments": {"parent_idx": 15, "params": SP}})
+            n_neat.compartments = [
+                {"parent_idx": -1, "params": SP},
+                {"parent_idx": 15, "params": SP}
+            ]
 
         # test undefined compartment when adding receptor
         n_neat = nest.Create('cm_default')
-        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+        n_neat.compartments = {"parent_idx": -1, "params": SP}
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
                                     "UnknownCompartment in SLI function SetStatus_id: "
                                     "Compartment 12 does not exist in tree."):
-            nest.SetStatus(n_neat, {"receptors": {"comp_idx": 12, "receptor_type": "GABA"}})
+            n_neat.receptors = {"comp_idx": 12, "receptor_type": "GABA"}
 
         # test simulate without adding compartments
         n_neat = nest.Create('cm_default')
+
         with self.assertRaisesRegex(nest.kernel.NESTError,
                                     "UnknownCompartment in SLI function Simulate_d: "
                                     "Compartment 0 does not exist in tree, "
@@ -767,8 +795,10 @@ class NEASTTestCase(unittest.TestCase):
 
         # test connection port out of range for current input
         n_neat = nest.Create('cm_default')
-        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
-        nest.SetStatus(n_neat, {"compartments": {"parent_idx": 0, "params": SP}})
+        n_neat.compartments = [
+            {"parent_idx": -1, "params": SP},
+            {"parent_idx": 0, "params": SP}
+        ]
         dc = nest.Create('dc_generator', {'amplitude': 2.0})
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
@@ -780,10 +810,12 @@ class NEASTTestCase(unittest.TestCase):
 
         # test connection port out of range for spike input
         n_neat = nest.Create('cm_default')
-        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
-        nest.SetStatus(n_neat, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
-        nest.SetStatus(n_neat, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
-        nest.SetStatus(n_neat, {"receptors": {"comp_idx": 0, "receptor_type": "GABA"}})
+        n_neat.compartments = {"parent_idx": -1, "params": SP}
+        n_neat.receptors = [
+            {"comp_idx": 0, "receptor_type": "GABA"},
+            {"comp_idx": 0, "receptor_type": "GABA"},
+            {"comp_idx": 0, "receptor_type": "GABA"}
+        ]
         sg = nest.Create('spike_generator', 1, {'spike_times': [10.]})
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
@@ -795,7 +827,7 @@ class NEASTTestCase(unittest.TestCase):
 
         # test connection with unknown recordable
         n_neat = nest.Create('cm_default')
-        nest.SetStatus(n_neat, {"compartments": {"parent_idx": -1, "params": SP}})
+        n_neat.compartments = {"parent_idx": -1, "params": SP}
         mm = nest.Create('multimeter', 1, {'record_from': ['v_comp1'], 'interval': 1.})
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
@@ -803,6 +835,19 @@ class NEASTTestCase(unittest.TestCase):
                                     "Creation of connection is not possible because:\n"
                                     "Cannot connect with unknown recordable v_comp1"):
             nest.Connect(mm, n_neat)
+
+        # test adding compartments and receptors twice
+        n_neat = nest.Create('cm_default')
+        n_neat.compartments = {"parent_idx": -1, "params": SP}
+        n_neat.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                                    "\'compartments\' is already defined for this model"):
+            n_neat.compartments = {"parent_idx": 0, "params": SP}
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                                    "\'receptors\' is already defined for this model"):
+            n_neat.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
 
     def test_continuerun(self, dt=0.1):
         recordables = [

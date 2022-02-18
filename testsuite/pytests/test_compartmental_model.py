@@ -772,7 +772,7 @@ class NEASTTestCase(unittest.TestCase):
         with self.assertRaisesRegex(nest.kernel.NESTError,
                                     "UnknownPort in SLI function Connect_g_g_D_D: "
                                     "Port with id 3 does not exist. Valid current "
-                                    "receptor ports for cm_default are in \[0, 2\[."):
+                                    "receptor ports for cm_default are in [0, 2[."):
             nest.Connect(dc, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                                'receptor_type': 3})
 
@@ -787,7 +787,7 @@ class NEASTTestCase(unittest.TestCase):
         with self.assertRaisesRegex(nest.kernel.NESTError,
                                     "UnknownPort in SLI function Connect_g_g_D_D: "
                                     "Port with id 3 does not exist. Valid spike "
-                                    "receptor ports for cm_default are in \[0, 3\[."):
+                                    "receptor ports for cm_default are in [0, 3[."):
             nest.Connect(sg, n_neat, syn_spec={'synapse_model': 'static_synapse', 'weight': 1.,
                                                'receptor_type': 3})
 

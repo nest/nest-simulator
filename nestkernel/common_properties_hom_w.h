@@ -48,10 +48,10 @@ namespace nest
 class CommonPropertiesHomW : public CommonSynapseProperties
 {
 public:
-   /**
-    * Default constructor.
-    * Sets all property values to defaults.
-    */
+  /**
+   * Default constructor.
+   * Sets all property values to defaults.
+   */
   CommonPropertiesHomW()
     : CommonSynapseProperties()
     , weight_( 1.0 )

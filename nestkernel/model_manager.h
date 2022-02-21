@@ -93,11 +93,11 @@ public:
    * @throws UnknownSynapseType
    */
 
-  /*  
+  /*
    *  TODO: make the return type const, after the increment of
    *  num_connections and the min_ and max_delay setting in
    *  ConnectorBase was moved out to the ConnectionManager
-   */  
+   */
   ConnectorModel& get_synapse_prototype( synindex syn_id, thread t = 0 );
 
   const std::vector< ConnectorModel* >& get_synapse_prototypes( thread tid );
@@ -359,7 +359,7 @@ private:
 
   /** @BeginDocumentation
    * Name: synapsedict - Dictionary containing all synapse models.
-   * 
+   *
    * Description:
    * 'synapsedict info' shows the contents of the dictionary
    * Synapse model names ending with '_hpc' provide minimal memory requirements by

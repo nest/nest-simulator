@@ -80,8 +80,10 @@ public:
   //! Now we can delete synapses with or without structural plasticity
   virtual void disconnect();
 
-  ConnBuilder( NodeCollectionPTR sources, NodeCollectionPTR targets, const DictionaryDatum& conn_spec, 
-      const std::vector< DictionaryDatum >& syn_specs );
+  ConnBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    const DictionaryDatum& conn_spec,
+    const std::vector< DictionaryDatum >& syn_specs );
   virtual ~ConnBuilder();
 
   index
@@ -109,18 +111,18 @@ public:
 
   bool all_parameters_scalar_() const;
 
-/**
- * Updates the number of connected synaptic elements in the
- * target and the source.
- * Returns 0 if the target is either on another
- * MPI machine or another thread. Returns 1 otherwise.
- *
- * @param snode_id id of the source
- * @param tnode_id id of the target
- * @param tid thread id
- * @param update amount of connected synaptic elements to update
- * @return
- */
+  /**
+   * Updates the number of connected synaptic elements in the
+   * target and the source.
+   * Returns 0 if the target is either on another
+   * MPI machine or another thread. Returns 1 otherwise.
+   *
+   * @param snode_id id of the source
+   * @param tnode_id id of the target
+   * @param tid thread id
+   * @param update amount of connected synaptic elements to update
+   * @return
+   */
   bool change_connected_synaptic_elements( index snode_id, index tnode_id, const int tid, int update );
 
   virtual bool
@@ -147,7 +149,7 @@ protected:
   virtual void connect_() = 0;
   virtual void
 
-   sp_connect_()
+  sp_connect_()
   {
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
@@ -349,11 +351,11 @@ protected:
   void connect_();
 
   /**
-  * Solves the connection of two nodes on a AllToAll basis with
-  * structural plasticity. This means this method is used by the
-  * structural plasticity manager based on the homostatic rules defined
-  * for the synaptic elements on each node.
-  */
+   * Solves the connection of two nodes on a AllToAll basis with
+   * structural plasticity. This means this method is used by the
+   * structural plasticity manager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_connect_();
 
   /**

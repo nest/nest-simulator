@@ -159,7 +159,7 @@ public:
   void communicate( std::vector< int >& );
   void communicate( std::vector< long >& );
 
-   // Sum across all rank
+  // Sum across all rank
   void communicate_Allreduce_sum_in_place( double buffer );
   void communicate_Allreduce_sum_in_place( std::vector< double >& buffer );
   void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
@@ -372,7 +372,7 @@ private:
   /**
    * how many secondary elements (in ints) will be received from each rank
    */
-  std::vector< int > recv_counts_secondary_events_in_int_per_rank_; 
+  std::vector< int > recv_counts_secondary_events_in_int_per_rank_;
 
   std::vector< int >
     send_counts_secondary_events_in_int_per_rank_; //!< how many secondary elements (in ints) will be sent to each rank
@@ -385,9 +385,9 @@ private:
   /**
    * offset in the MPI send buffer (in ints) from which elements send to each rank will be read
    */
-  std::vector< int > send_displacements_secondary_events_in_int_per_rank_; 
+  std::vector< int > send_displacements_secondary_events_in_int_per_rank_;
 #ifdef HAVE_MPI
-  std::vector< int > comm_step_; 
+  std::vector< int > comm_step_;
   //! array containing communication partner for each step.
   unsigned int COMM_OVERFLOW_ERROR;
 
@@ -417,7 +417,7 @@ private:
     std::vector< T >& recv_buffer,
     std::vector< int >& displacements );
 
-#endif // #ifdef HAVE_MPI 
+#endif // #ifdef HAVE_MPI
 
 public:
   /**

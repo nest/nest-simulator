@@ -104,7 +104,6 @@ public:
   void connect( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
 private:
-
   /**
    * Wrapper for masked and unmasked pools.
    *

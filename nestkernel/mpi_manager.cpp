@@ -52,7 +52,7 @@ MPI_Datatype MPI_Type< unsigned int >::type = MPI_INT;
 template <>
 MPI_Datatype MPI_Type< unsigned long >::type = MPI_UNSIGNED_LONG;
 
-#endif // #ifdef HAVE_MPI 
+#endif // #ifdef HAVE_MPI
 
 nest::MPIManager::MPIManager()
   : num_processes_( 1 )
@@ -100,7 +100,7 @@ nest::MPIManager::init_mpi( int*, char*** )
   send_displacements_secondary_events_in_int_per_rank_.resize( 1, 0 );
 }
 
-#else // HAVE_MPI 
+#else // HAVE_MPI
 
 void
 nest::MPIManager::set_communicator( MPI_Comm global_comm )
@@ -697,7 +697,7 @@ nest::MPIManager::communicate_Allgather( std::vector< int >& buffer )
 
 
 // Sum across all rank
- 
+
 void
 nest::MPIManager::communicate_Allreduce_sum_in_place( double buffer )
 {
@@ -986,7 +986,7 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
   return foo.elapsed() / samples;
 }
 
-#else // #ifdef 
+#else // #ifdef
 
 void
 nest::MPIManager::communicate( std::vector< unsigned int >& send_buffer,

@@ -46,7 +46,7 @@ namespace nest
  * Description:
  *
  * Synopsis: (module_name) Install -> handle
-*/
+ */
 
 // structure to store handles and pointers to modules
 struct sDynModule;

@@ -284,15 +284,15 @@ BoxMask< 2 >::inside( const Position< 2 >& p ) const
     return ( lower_left_ <= p ) && ( p <= upper_right_ );
   }
   /*
-  * If we have a rotated box, we rotate the point down to the unrotated box,
-  * and check if it is inside said unrotated box.
-  *
-  * The new x, y values are calculated using a rotation matrix:
-  * [new_x, new_y] = R(-azimuth)*[x - x_c, y - y_c]
-  * where R(-t) = [cos(t) sin(t); -sin(t) cos(t)]
-  *
-  * See https://en.wikipedia.org/wiki/Rotation_matrix for more.
-  */
+   * If we have a rotated box, we rotate the point down to the unrotated box,
+   * and check if it is inside said unrotated box.
+   *
+   * The new x, y values are calculated using a rotation matrix:
+   * [new_x, new_y] = R(-azimuth)*[x - x_c, y - y_c]
+   * where R(-t) = [cos(t) sin(t); -sin(t) cos(t)]
+   *
+   * See https://en.wikipedia.org/wiki/Rotation_matrix for more.
+   */
 
   const double new_x = p[ 0 ] * azimuth_cos_ - cntr_x_az_cos_ + p[ 1 ] * azimuth_sin_ - cntr_y_az_sin_ + cntr_[ 0 ];
   const double new_y = -p[ 0 ] * azimuth_sin_ + cntr_x_az_sin_ + p[ 1 ] * azimuth_cos_ - cntr_y_az_cos_ + cntr_[ 1 ];

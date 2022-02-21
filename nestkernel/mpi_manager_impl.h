@@ -31,7 +31,7 @@
 #ifdef HAVE_MPI
 // C includes:
 #include <mpi.h>
-#endif // #ifdef HAVE_MPI 
+#endif // #ifdef HAVE_MPI
 
 #include "mpi_manager.h"
 

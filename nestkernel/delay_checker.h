@@ -37,7 +37,7 @@ class DelayChecker
 {
 public:
   DelayChecker();
-  DelayChecker( const DelayChecker& cr);
+  DelayChecker( const DelayChecker& cr );
 
   const Time& get_min_delay() const;
 
@@ -80,10 +80,10 @@ public:
 
   bool get_user_set_delay_extrema() const;
 
-  void calibrate( const TimeConverter& tc);
+  void calibrate( const TimeConverter& tc );
 
-  void get_status( DictionaryDatum& d) const;
-  void set_status( const DictionaryDatum& d);
+  void get_status( DictionaryDatum& d ) const;
+  void set_status( const DictionaryDatum& d );
 
 private:
   Time min_delay_;              //!< Minimal delay of all created synapses.

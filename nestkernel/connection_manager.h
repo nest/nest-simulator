@@ -104,9 +104,9 @@ public:
    * Create connections.
    */
   void connect( NodeCollectionPTR sources,
-      NodeCollectionPTR targets,
-      const DictionaryDatum& conn_spec,
-      const std::vector< DictionaryDatum >& syn_specs);
+    NodeCollectionPTR targets,
+    const DictionaryDatum& conn_spec,
+    const std::vector< DictionaryDatum >& syn_specs );
 
   void connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec );
 

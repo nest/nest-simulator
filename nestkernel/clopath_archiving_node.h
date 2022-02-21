@@ -47,14 +47,14 @@ class ClopathArchivingNode : public ArchivingNode
 {
 
 public:
-   /**
-    * Constructor.
-    */
+  /**
+   * Constructor.
+   */
   ClopathArchivingNode();
 
-   /**
-    * Copy Constructor.
-    */
+  /**
+   * Copy Constructor.
+   */
   ClopathArchivingNode( const ClopathArchivingNode& );
 
   /**

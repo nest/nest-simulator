@@ -26,9 +26,10 @@ See also Anno et al. [1]_ for detailed study on this topic.
 
 * :ref:`Example job script (standard configuration options for HPC systems) <slurm_script>`
 
-* :ref:`Advanced settings: Pinning threads <pinning_threads>`
+* :ref:`Threading <threads>`
 
-* :ref:`Additional settings (move to benchmarking?) <advanced_hpc>`
+* :ref:`MPI processes <mpi_process>`
+
 
 Understanding parallelism in NEST
 ---------------------------------
@@ -37,6 +38,10 @@ To understand how NEST utilizes thread parallel and distributed computing in sim
 :ref:`parallel_computing`.
 We explain how neurons, devices, and synapses in NEST intersect with threads and processes in parallel setups.
 
+Speed up simulations
+--------------------
+
+* #2290 - Speed up look up of nodes
 
 Benchmarking NEST
 -----------------

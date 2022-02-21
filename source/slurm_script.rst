@@ -92,7 +92,7 @@ This is also known as wall time, which is the time allocated to your job.
 The number of nodes needed for your job (see :ref:`figure here <overview_hardware>`). The number of nodes will depend on your memory needs and if you're
 trying to increase the speed of the simulation.
 
-How much memeory does your simulation need? To get a rough estimate of the memory requirements for your simulation, you can
+How much memory does your simulation need? To get a rough estimate of the memory requirements for your simulation, you can
 use the number of synapses.  One synapse is roughly equivalent to X.
 For example: The microcircuit model requires around 16 GB of memory and the multi-area-model requires 1.4 TB.
 If a node has 128 GB of memory then one node is more than sufficient for the microcircuit model but the multi-area model
@@ -200,6 +200,20 @@ Don't forget to set ``local_num_threads`` in your script!
 
 ----
 
+
+
+
+.. list-table:: Additional Slurm settings
+   :header-rows: 1
+
+   * - Setting
+     - Description
+   * - `export CPU_AFFINITY=True`
+     - make stuff do something
+   * - `--exclusive`
+     - Prevents other processes or jobs from doing work on the same node
+
+
 For more information about how parallelism works in NEST see our guide to :ref:`parallel_computing`.
 
-For advanced configuration options, see our :ref:`advanced_hpc`
+For advanced configuration options, see our :ref:`mpi_process` and :ref:`threads` documentation.

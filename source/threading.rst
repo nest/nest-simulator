@@ -1,7 +1,23 @@
+.. _threads:
+
+Threading
+=========
+
+
+* The smallest unit of executable program is known as a thread. The thread is a virtual component. A single core can
+  have one or two threads. Therefore the total number of possible threads is double the number of cores. In NEST, we recommend
+  only having one thread per core.
+  See :ref:`overview_hardware`.
+
+
+* You can adjust the number of threads in relation to the number of :ref:`MPI processes <mpi_process>` you use.
+
+
+
 .. _pinning_threads:
 
 Pinning threads
-===============
+--------------
 
 Pinning threads allows you to control the distribution of threads across available cores on your system, and is particularly
 useful in high performance computing (HPC) systems.

@@ -141,6 +141,7 @@ MUSICManager::music_finalize()
 }
 
 #ifdef HAVE_MUSIC
+
 MPI::Intracomm
 MUSICManager::communicator()
 {
@@ -306,5 +307,7 @@ MUSICManager::update_music_event_handlers( Time const& origin, const long from, 
     it->second.update( origin, from, to );
   }
 }
+
 #endif
-}
+
+} // namespace nest

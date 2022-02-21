@@ -544,10 +544,10 @@ NestModule::SetDefaults_l_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const Name name = getValue< Name >( i->OStack.pick( 1 ) );
+  const std::string name = getValue< std::string >( i->OStack.pick( 1 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  kernel().model_manager.set_model_defaults( name, params );
+  set_model_defaults( name, params );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -558,7 +558,7 @@ NestModule::GetDefaults_lFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const Name modelname = getValue< Name >( i->OStack.pick( 0 ) );
+  const std::string modelname = getValue< std::string >( i->OStack.pick( 0 ) );
 
   DictionaryDatum dict = get_model_defaults( modelname );
 

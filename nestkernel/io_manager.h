@@ -43,12 +43,14 @@ namespace nest
 class IOManager : public ManagerInterface
 {
 public:
-  void initialize() override; // called from meta-manager to construct
-  void finalize() override;   // called from meta-manger to reinit
-  void change_num_threads( thread ) override;
+  void initialize() override;
+  void finalize() override;
+  void change_number_of_threads() override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
-  void set_status( const DictionaryDatum& ) override; // set parameters
-  void get_status( DictionaryDatum& ) override;       // get parameters
+  void set_recording_backend_status( std::string, const DictionaryDatum& );
+  DictionaryDatum get_recording_backend_status( std::string );
 
   IOManager(); // Construct only by meta-manager
   ~IOManager() override;

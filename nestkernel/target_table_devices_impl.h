@@ -46,7 +46,7 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
   assert( syn_id < target_to_devices_[ tid ][ lid ].size() );
 
   kernel()
-    .model_manager.get_synapse_prototype( syn_id, tid )
+    .model_manager.get_connection_model( syn_id, tid )
     .add_connection( source, target, target_to_devices_[ tid ][ lid ], syn_id, p, d, w );
 }
 
@@ -65,7 +65,7 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
   assert( syn_id < target_from_devices_[ tid ][ ldid ].size() );
 
   kernel()
-    .model_manager.get_synapse_prototype( syn_id, tid )
+    .model_manager.get_connection_model( syn_id, tid )
     .add_connection( source, target, target_from_devices_[ tid ][ ldid ], syn_id, p, d, w );
 
   // store node ID of sending device

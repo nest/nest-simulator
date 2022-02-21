@@ -73,14 +73,16 @@
 namespace nest
 {
 
+/**
+ * Encapsulate all calls to MUSIC.
+ */
 class MUSICManager : public ManagerInterface
 {
 public:
-  virtual void initialize(); // called from meta-manager to construct
-  virtual void finalize();   // called from meta-manger to reinit
-
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  virtual void initialize() override;
+  virtual void finalize() override;
+  virtual void set_status( const DictionaryDatum& ) override;
+  virtual void get_status( DictionaryDatum& ) override;
 
   MUSICManager();
 
@@ -116,8 +118,8 @@ public:
    * registers the initial port name. This typically happens when the
    * copy constructor of the model registers a port, as in
    * models/music_event_in_proxy.cpp. Setting pristine = true causes
-   * the port to be also added to pristine_music_in_portlist.  See
-   * also comment above Network::pristine_music_in_portlist_.
+   * the port to be also added to pristine_music_in_portlist. See
+   * also pristine_music_in_portlist_.
    */
   void register_music_in_port( std::string portname, bool pristine = false );
 
@@ -197,7 +199,7 @@ public:
 
   /**
    * Publish all MUSIC input ports that were registered using
-   * Network::register_music_event_in_proxy().
+   * register_music_event_in_proxy().
    */
   void publish_music_in_ports_();
 

@@ -58,13 +58,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   AbstractLayer* layer_local = 0;
 
   auto element_name = getValue< std::string >( layer_dict, names::elements );
-  auto element_model = kernel().model_manager.get_modeldict()->lookup( element_name );
-
-  if ( element_model.empty() )
-  {
-    throw UnknownModelName( element_name );
-  }
-  auto element_id = static_cast< long >( element_model );
+  auto element_id = kernel().model_manager.get_node_model_id( element_name );
 
   if ( layer_dict->known( names::positions ) )
   {

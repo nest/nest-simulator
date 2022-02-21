@@ -199,50 +199,50 @@ public:
 
   //@{
 
- /** @BeginDocumentation
-  *  Name: GetStatus - return the property dictionary of a node, connection, or object
-  *
-  *  Synopsis:
-  *  node_id   GetStatus -> dict
-  *  conn  GetStatus -> dict
-  *  obj   GetStatus -> dict
-  *
-  *  Description:
-  *  GetStatus returns a dictionary with the status information
-  *  for a node (specified by its node_id), a connection (specified by a connection
-  *  object), or an object as used in object-oriented programming in SLI (see cvo for more).
-  *
-  *  The interpreter exchanges data with the network element using
-  *  its status dictionary. To abbreviate the access pattern
-  *       node_id GetStatus /lit get
-  *  a variant of get implicitly calls GetStatus
-  *       node_id /lit get .
-  *  In this way network elements and dictionaries can be accessed
-  *  with the same syntax. Sometimes access to nested data structures in
-  *  the status dictionary is required. In this case the advanced addressing
-  *  scheme of get is useful in which the second argument is an array of
-  *  literals. See the documentation of get for details.
-  *
-  *  The information contained in the property dictionary depends on the
-  *  concrete node model.
-  *
-  *  Please refer to the model documentation for details.
-  *
-  *  Standard entries for nodes:
-  *
-  *  global_id   - local ID of the node
-  *  model       - literal, defining the current node
-  *  frozen      - frozen nodes are not updated
-  *  thread      - the thread the node is allocated on
-  *  vp          - the virtual process a node belongs to
-  *
-  *  Note that the standard entries cannot be modified directly.
-  *
-  *  Author: Marc-Oliver Gewaltig
-  *  Availability: NEST
-  *  SeeAlso: ShowStatus, info, SetStatus, get, GetStatus_dict,
-  *  GetKernelStatus
-  */
+  /** @BeginDocumentation
+   *  Name: GetStatus - return the property dictionary of a node, connection, or object
+   *
+   *  Synopsis:
+   *  node_id   GetStatus -> dict
+   *  conn  GetStatus -> dict
+   *  obj   GetStatus -> dict
+   *
+   *  Description:
+   *  GetStatus returns a dictionary with the status information
+   *  for a node (specified by its node_id), a connection (specified by a connection
+   *  object), or an object as used in object-oriented programming in SLI (see cvo for more).
+   *
+   *  The interpreter exchanges data with the network element using
+   *  its status dictionary. To abbreviate the access pattern
+   *       node_id GetStatus /lit get
+   *  a variant of get implicitly calls GetStatus
+   *       node_id /lit get .
+   *  In this way network elements and dictionaries can be accessed
+   *  with the same syntax. Sometimes access to nested data structures in
+   *  the status dictionary is required. In this case the advanced addressing
+   *  scheme of get is useful in which the second argument is an array of
+   *  literals. See the documentation of get for details.
+   *
+   *  The information contained in the property dictionary depends on the
+   *  concrete node model.
+   *
+   *  Please refer to the model documentation for details.
+   *
+   *  Standard entries for nodes:
+   *
+   *  global_id   - local ID of the node
+   *  model       - literal, defining the current node
+   *  frozen      - frozen nodes are not updated
+   *  thread      - the thread the node is allocated on
+   *  vp          - the virtual process a node belongs to
+   *
+   *  Note that the standard entries cannot be modified directly.
+   *
+   *  Author: Marc-Oliver Gewaltig
+   *  Availability: NEST
+   *  SeeAlso: ShowStatus, info, SetStatus, get, GetStatus_dict,
+   *  GetKernelStatus
+   */
 
   class GetStatus_gFunction : public SLIFunction
   {
@@ -431,22 +431,22 @@ public:
   } preparefunction;
 
   /** @BeginDocumentation
-    *  Name: Run - simulate n milliseconds
-    *
-    *  Synopsis:
-    *  n(int) Run -> -
-    *
-    *  Description: Simulate the network for n milliseconds.
-    *  Call prepare before, and cleanup after.
-    *  t m mul Simulate = Prepare m { t Run } repeat Cleanup
-    *
-    *  Note: Run must only be used after Prepare is called, and
-    *  before Cleanup to finalize state (close files, etc).
-    *  Any changes made between Prepare and Cleanup may cause
-    *  undefined behavior and incorrect results.
-    *
-    *  SeeAlso: Simulate, unit_conversion, Prepare, Cleanup
-    */
+   *  Name: Run - simulate n milliseconds
+   *
+   *  Synopsis:
+   *  n(int) Run -> -
+   *
+   *  Description: Simulate the network for n milliseconds.
+   *  Call prepare before, and cleanup after.
+   *  t m mul Simulate = Prepare m { t Run } repeat Cleanup
+   *
+   *  Note: Run must only be used after Prepare is called, and
+   *  before Cleanup to finalize state (close files, etc).
+   *  Any changes made between Prepare and Cleanup may cause
+   *  undefined behavior and incorrect results.
+   *
+   *  SeeAlso: Simulate, unit_conversion, Prepare, Cleanup
+   */
   class RunFunction : public SLIFunction
   {
   public:
@@ -770,45 +770,45 @@ public:
     void execute( SLIInterpreter* ) const;
   } timecommunicationalltoallv_i_ifunction;
 
- /** @BeginDocumentation
-  *  Name: ProcessorName - Returns a unique specifier for the actual node.
-  *  Synopsis: ProcessorName -> string
-  *  Availability: NEST 2.0
-  *  Author: Alexander Hanuschkin
-  *  FirstVersion: April 2009
-  *  Description:
-  *  This function returns the name of the processor it was called
-  *  on (MPI_Get_processor_name). See MPI documentation for more details. If NEST
-  *  is not compiled with MPI support, this function returns the hostname of
-  *  the machine as returned by the POSIX function gethostname().
-  *  Examples:
-  *  (I'm process ) =only Rank 1 add =only ( of ) =only NumProcesses =only ( on
-  *  machine ) =only
-  *  ProcessorName =
-  *  SeeAlso: Rank, NumProcesses, SyncProcesses
-  */
+  /** @BeginDocumentation
+   *  Name: ProcessorName - Returns a unique specifier for the actual node.
+   *  Synopsis: ProcessorName -> string
+   *  Availability: NEST 2.0
+   *  Author: Alexander Hanuschkin
+   *  FirstVersion: April 2009
+   *  Description:
+   *  This function returns the name of the processor it was called
+   *  on (MPI_Get_processor_name). See MPI documentation for more details. If NEST
+   *  is not compiled with MPI support, this function returns the hostname of
+   *  the machine as returned by the POSIX function gethostname().
+   *  Examples:
+   *  (I'm process ) =only Rank 1 add =only ( of ) =only NumProcesses =only ( on
+   *  machine ) =only
+   *  ProcessorName =
+   *  SeeAlso: Rank, NumProcesses, SyncProcesses
+   */
   class ProcessorNameFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
   } processornamefunction;
 
 #ifdef HAVE_MPI
- /** @BeginDocumentation
-  *  Name: abort - Abort all NEST processes gracefully.
-  *  Parameters:
-  *  exitcode - The exitcode to quit with
-  *  Description:
-  *  This function can be run by the user to end all NEST processes as
-  *  gracefully as possible. If NEST is compiled without MPI support,
-  *  this will just call quit_i. If compiled with MPI support, it will
-  *  call MPI_Abort, which will kill all processes of the application
-  *  and thus prevents deadlocks. The exitcode is userabort in both
-  *  cases (see statusdict/exitcodes).
-  *  Availability: NEST 2.0
-  *  Author: Jochen Martin Eppler
-  *  FirstVersion: October 2012
-  *  SeeAlso: quit, Rank, SyncProcesses, ProcessorName
-  */
+  /** @BeginDocumentation
+   *  Name: abort - Abort all NEST processes gracefully.
+   *  Parameters:
+   *  exitcode - The exitcode to quit with
+   *  Description:
+   *  This function can be run by the user to end all NEST processes as
+   *  gracefully as possible. If NEST is compiled without MPI support,
+   *  this will just call quit_i. If compiled with MPI support, it will
+   *  call MPI_Abort, which will kill all processes of the application
+   *  and thus prevents deadlocks. The exitcode is userabort in both
+   *  cases (see statusdict/exitcodes).
+   *  Availability: NEST 2.0
+   *  Author: Jochen Martin Eppler
+   *  FirstVersion: October 2012
+   *  SeeAlso: quit, Rank, SyncProcesses, ProcessorName
+   */
   class MPIAbort_iFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
@@ -910,22 +910,23 @@ public:
     void execute( SLIInterpreter* ) const;
   } get_g_ifunction;
 
- /** @BeginDocumentation
-  *  Name: nest::Take_g_a - slice a NodeCollection
+  /** @BeginDocumentation
+   *  Name: nest::Take_g_a - slice a NodeCollection
 
-  *  Synopsis:
-  *  nc array Take_g_a -> NodeCollection
+   *  Synopsis:
+   *  nc array Take_g_a -> NodeCollection
 
-  *  Parameters:
-  *  nc - NodeCollection to be sliced
-  *  array - array of the form [start stop step]
+   *  Parameters:
+   *  nc - NodeCollection to be sliced
+   *  array - array of the form [start stop step]
 
-  *  Description:
-  *  Slice a `NodeCollection` using pythonic slicing conventions:
-  *  - Include elements from and including `start` to but excluding `stop`.
-  *  - `step` is the step length in the slice and must be positive.
-  *  - Negative values for `start` and `stop` count from the end of the `NodeCollection`,  i.e., -1 is the last element.
-  */
+   *  Description:
+   *  Slice a `NodeCollection` using pythonic slicing conventions:
+   *  - Include elements from and including `start` to but excluding `stop`.
+   *  - `step` is the step length in the slice and must be positive.
+   *  - Negative values for `start` and `stop` count from the end of the `NodeCollection`,  i.e., -1 is the last
+   element.
+   */
   class Take_g_aFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
@@ -1752,7 +1753,7 @@ public:
    *  mask objects using Boolean operators. The mask is specified in a dictionary.
    *
    *  Author: Håkon Enger
-  */
+   */
   class CreateMask_DFunction : public SLIFunction
   {
   public:

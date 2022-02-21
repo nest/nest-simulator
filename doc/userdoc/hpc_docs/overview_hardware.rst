@@ -4,7 +4,7 @@ Overview of various hardware and software components
 ====================================================
 
 
-.. image:: _static/img/hpc_ware1.png
+.. image:: static/img/hpc_ware1.png
 
 
 

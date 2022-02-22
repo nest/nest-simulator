@@ -125,6 +125,7 @@ varies depending on what HPC system you are using).
 In this example, we are assuming there are 64 cores in a node. We are using 1 MPI process (``ntasks-per-node``) and 64 threads
 (``cpus-per-task``). We can increase the ``ntasks-per-node``
 to 2, but then we would need to decrease the ``cpus-per-task`` to 32 (because we want the total to be 64).
+
 |
 
 ::

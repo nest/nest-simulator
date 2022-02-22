@@ -52,7 +52,7 @@ Sequential pinning scheme
 
 Description of what you're looking at
 
-.. figure:: static/img/CPUs-lin-lin.gif
+.. figure:: ../static/img/CPUs-lin-lin.gif
 
    sequential placing - cores closely packed
 
@@ -67,7 +67,7 @@ Description of what you're looking at
 Distant pinning scheme
 ``````````````````````
 
-.. figure:: static/img/CPUs-lin-sparse.gif
+.. figure:: ../static/img/CPUs-lin-sparse.gif
 
    distant placing
 

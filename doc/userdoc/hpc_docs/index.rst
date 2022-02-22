@@ -3,8 +3,8 @@
 All about high performance computing
 ====================================
 
-Optimize NEST performace on high performance computers (HPC)
-------------------------------------------------------------
+Optimize NEST performace
+------------------------
 
 
 For large simulations, optimizing your system will make running NEST faster and more efficient.
@@ -34,8 +34,8 @@ See also Anno et al. [1]_ for detailed study on this topic.
 * :ref:`MPI processes <mpi_process>`
 
 
-Understanding parallelism in NEST
----------------------------------
+Understand parallelism in NEST
+------------------------------
 
 To understand how NEST utilizes thread parallel and distributed computing in simulations, see our guide on
 :ref:`parallel_computing`.

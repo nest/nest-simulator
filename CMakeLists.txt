@@ -82,7 +82,6 @@ set( with-version-suffix "" CACHE STRING "Set a user defined version suffix [def
 # cross-compiling
 # should be set via toolchain files
 set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
-option( k-computer "Enable K computer." OFF )
 
 
 ################################################################################
@@ -145,7 +144,6 @@ nest_process_with_warning()
 nest_process_with_libraries()
 nest_process_with_includes()
 nest_process_with_defines()
-nest_process_k_computer()
 nest_process_enable_bluegene()
 nest_process_static_libraries()
 nest_process_external_modules()

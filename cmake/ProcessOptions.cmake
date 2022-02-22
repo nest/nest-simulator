@@ -71,9 +71,6 @@ endfunction()
 function( NEST_PROCESS_WITH_WARNING )
   if ( with-warning )
     if ( with-warning STREQUAL "ON" )
-      if ( NOT k-computer STREQUAL "ON" )
-        set( with-warning "-Wall" )
-      else()
         set( with-warning "" )
       endif()
     endif ()
@@ -126,17 +123,6 @@ function( NEST_PROCESS_WITH_DEFINES )
         message( FATAL_ERROR "Define '${def}' does not match '-D.*' !" )
       endif ()
     endforeach ()
-  endif ()
-endfunction()
-
-function( NEST_PROCESS_K_COMPUTER )
-  # is set in the Fujitsu-Sparc64.cmake file
-  if ( k-computer )
-    set( IS_K ON PARENT_SCOPE )
-    # need alternative tokens command to compile NEST
-    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --alternative_tokens" PARENT_SCOPE )
-    # FCC accepts GNU flags when -Xg is supplied
-    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xg --alternative_tokens" PARENT_SCOPE )
   endif ()
 endfunction()
 

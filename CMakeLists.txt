@@ -79,11 +79,6 @@ set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF].
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
 set( with-version-suffix "" CACHE STRING "Set a user defined version suffix [default='']." )
 
-# cross-compiling
-# should be set via toolchain files
-set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
-
-
 ################################################################################
 ##################      Project Directory variables           ##################
 ################################################################################
@@ -144,7 +139,6 @@ nest_process_with_warning()
 nest_process_with_libraries()
 nest_process_with_includes()
 nest_process_with_defines()
-nest_process_enable_bluegene()
 nest_process_static_libraries()
 nest_process_external_modules()
 nest_process_tics_per_ms()

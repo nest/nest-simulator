@@ -298,13 +298,6 @@ public:
     void execute( SLIInterpreter* ) const; // This is all we need.
   };
 
-#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-  class MemoryThisjobBgFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  };
-#endif
-
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
   class MemoryThisjobDarwinFunction : public SLIFunction
   {
@@ -350,10 +343,6 @@ public:
   GetPPIDFunction getppidfunction;
   GetPGRPFunction getpgrpfunction;
   MkfifoFunction mkfifofunction;
-
-#if defined IS_BLUEGENE_P || defined IS_BLUEGENE_Q
-  MemoryThisjobBgFunction memorythisjobbgfunction;
-#endif
 
 #if defined __APPLE__ && defined HAVE_MACH_MACH_H
   MemoryThisjobDarwinFunction memorythisjobdarwinfunction;

@@ -41,10 +41,10 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
+#include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "booldatum.h"
 
 namespace nest
 {
@@ -81,8 +81,8 @@ nest::sinusoidal_gamma_generator::Parameters_::Parameters_( const Parameters_& p
 {
 }
 
-nest::sinusoidal_gamma_generator::Parameters_& nest::sinusoidal_gamma_generator::Parameters_::operator=(
-  const Parameters_& p )
+nest::sinusoidal_gamma_generator::Parameters_&
+nest::sinusoidal_gamma_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {

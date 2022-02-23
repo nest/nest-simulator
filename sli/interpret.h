@@ -59,8 +59,9 @@ class Dictionary;
 class FunctionDatum;
 class BoolDatum;
 
-extern "C" {
-void SLIthrowsignal( int s );
+extern "C"
+{
+  void SLIthrowsignal( int s );
 }
 
 class SLIInterpreter

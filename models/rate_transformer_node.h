@@ -60,7 +60,7 @@ Base class for rate transformer model of the form
 
 The rate transformer node simply applies the nonlinearity specified in the
 input-function of the template class to all incoming inputs. The boolean
-parameter linear_summation determines whether the input function is applied to
+parameter ``linear_summation`` determines whether the input function is applied to
 the summed up incoming connections (True, default value, input
 represents phi) or to each input individually (False, input represents psi).
 
@@ -114,8 +114,8 @@ public:
    */
 
   using Node::handle;
-  using Node::sends_secondary_event;
   using Node::handles_test_event;
+  using Node::sends_secondary_event;
 
   void handle( InstantaneousRateConnectionEvent& );
   void handle( DelayedRateConnectionEvent& );

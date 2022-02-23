@@ -51,10 +51,12 @@ Description
 
 This device can be used to inject a Gaussian "white" noise current into a node.
 
-The current is not really white, but a piecewise constant current with Gaussian
-distributed amplitude. The current changes at intervals of dt. dt must be a
-multiple of the simulation step size, the default is 1.0 ms,
-corresponding to a 1 kHz cut-off.
+The current is not really white, but a piecewise constant current with
+Gaussian distributed amplitude. The current changes at intervals of
+dt. dt must be a multiple of the simulation step size, the default is
+10 times the simulation resolution (equating to 1.0 ms, corresponding
+to a 1 kHz cut-off).
+
 Additionally a second sinusodial modulated term can be added to the standard
 deviation of the noise.
 
@@ -116,7 +118,7 @@ std
     The standard deviation of noise current (pA)
 
 dt
-    The interval between changes in current in ms (default: 1.0)
+    The interval between changes in current (ms; default: 10 * resolution)
 
 std_mod
     The modulated standard deviation of noise current (pA)
@@ -169,9 +171,9 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
+  using Node::event_hook;
   using Node::handle;
   using Node::handles_test_event;
-  using Node::event_hook;
   using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool ) override;
@@ -234,6 +236,8 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
     void set( const DictionaryDatum&, const noise_generator&, Node* node );
+
+    Time get_default_dt();
   };
 
   // ------------------------------------------------------------
@@ -343,12 +347,6 @@ noise_generator::sends_signal() const
   return ALL;
 }
 
-inline void
-noise_generator::calibrate_time( const TimeConverter& tc )
-{
-  P_.dt_ = tc.from_old_tics( P_.dt_.get_tics() );
-}
-
 inline bool
 noise_generator::local_receiver() const
 {
@@ -359,6 +357,12 @@ inline StimulationDevice::Type
 noise_generator::get_type() const
 {
   return StimulationDevice::Type::CURRENT_GENERATOR;
+}
+
+inline Time
+noise_generator::Parameters_::get_default_dt()
+{
+  return 10 * Time::get_resolution();
 }
 
 } // namespace

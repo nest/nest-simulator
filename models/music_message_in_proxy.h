@@ -61,15 +61,15 @@ A device which receives message strings from MUSIC
 Description
 +++++++++++
 
-A music_message_in_proxy can be used to receive message strings from
+A ``music_message_in_proxy`` can be used to receive message strings from
 remote MUSIC applications in NEST.
 
 It uses the MUSIC library to receive message strings from other
-applications. The music_message_in_proxy represents an input port to
-which MUSIC can connect a message source. The music_message_in_proxy
+applications. The ``music_message_in_proxy`` represents an input port to
+which MUSIC can connect a message source. The ``music_message_in_proxy``
 can queried using GetStatus to retrieve the messages.
 
-To clear the data array, the parameter *n_messages* can be set to 0.
+To clear the data array, the parameter ``n_messages`` can be set to 0.
 
 This model is only available if NEST was compiled with MUSIC.
 
@@ -103,7 +103,8 @@ class MsgHandler : public MUSIC::MessageHandler
   ArrayDatum messages;                 //!< The buffer for incoming message
   std::vector< double > message_times; //!< The buffer for incoming message
 
-  void operator()( double t, void* msg, size_t size )
+  void
+  operator()( double t, void* msg, size_t size )
   {
     message_times.push_back( t * 1000.0 );
     messages.push_back( std::string( static_cast< char* >( msg ), size ) );

@@ -55,7 +55,7 @@ Description
 
 .. versionadded:: 2.18
 
-iaf_psc_alpha_ps is the "canonical" implementation of the leaky
+``iaf_psc_alpha_ps`` is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with alpha-shaped postsynaptic
 currents in the sense of [1]_. This is the most exact implementation
 available.

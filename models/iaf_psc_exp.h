@@ -45,11 +45,11 @@ Leaky integrate-and-fire neuron model with exponential PSCs
 Description
 +++++++++++
 
-iaf_psc_exp is an implementation of a leaky integrate-and-fire model
+``iaf_psc_exp`` is an implementation of a leaky integrate-and-fire model
 with exponential shaped postsynaptic currents (PSCs) according to [1]_.
 Thus, postsynaptic currents have an infinitely short rise time.
 
-The threshold crossing is followed by an absolute refractory period (t_ref)
+The threshold crossing is followed by an absolute refractory period (``t_ref``)
 during which the membrane potential is clamped to the resting potential
 and spiking is prohibited.
 
@@ -74,19 +74,20 @@ model with escape noise [4]_.
 
 .. note::
 
-  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-  `tau_syn_in`, respectively, to avoid numerical instabilities.
+
+  If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
+  will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
+  ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
-iaf_psc_exp can handle current input in two ways:
+``iaf_psc_exp`` can handle current input in two ways:
 
-1. Current input through receptor_type 0 is handled as a stepwise constant
+1. Current input through ``receptor_type`` 0 is handled as a stepwise constant
    current input as in other iaf models, that is, this current directly enters the
    membrane potential equation.
-2. In contrast, current input through receptor_type 1 is filtered through an
+2. In contrast, current input through ``receptor_type`` 1 is filtered through an
    exponential kernel with the time constant of the excitatory synapse,
    ``tau_syn_ex``.
 

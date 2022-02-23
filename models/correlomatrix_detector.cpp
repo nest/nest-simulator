@@ -28,7 +28,9 @@
 #include <numeric>
 
 // Includes from libnestutil:
+#include "compose.hpp"
 #include "dict_util.h"
+#include "logging.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
@@ -43,7 +45,7 @@
  * ---------------------------------------------------------------- */
 
 nest::correlomatrix_detector::Parameters_::Parameters_()
-  : delta_tau_( 5 * Time::get_resolution() )
+  : delta_tau_( get_default_delta_tau() )
   , tau_max_( 10 * delta_tau_ )
   , Tstart_( Time::ms( 0.0 ) )
   , Tstop_( Time::pos_inf() )
@@ -58,19 +60,22 @@ nest::correlomatrix_detector::Parameters_::Parameters_( const Parameters_& p )
   , Tstop_( p.Tstop_ )
   , N_channels_( p.N_channels_ )
 {
-  // Check for proper properties is not done here but in the
-  // correlomatrix_detector() copy c'tor. The check cannot be
-  // placed here, since this c'tor is also used to copy to
-  // temporaries in correlomatrix_detector::set_status().
-  // If we checked for errors here, we could never change values
-  // that have become invalid after a resolution change.
-  delta_tau_.calibrate();
+  if ( delta_tau_.is_step() )
+  {
+    delta_tau_.calibrate();
+  }
+  else
+  {
+    delta_tau_ = get_default_delta_tau();
+  }
+
   tau_max_.calibrate();
   Tstart_.calibrate();
   Tstop_.calibrate();
 }
 
-nest::correlomatrix_detector::Parameters_& nest::correlomatrix_detector::Parameters_::operator=( const Parameters_& p )
+nest::correlomatrix_detector::Parameters_&
+nest::correlomatrix_detector::Parameters_::operator=( const Parameters_& p )
 {
   delta_tau_ = p.delta_tau_;
   tau_max_ = p.tau_max_;
@@ -237,10 +242,6 @@ nest::correlomatrix_detector::correlomatrix_detector()
   , P_()
   , S_()
 {
-  if ( not P_.delta_tau_.is_step() )
-  {
-    throw InvalidDefaultResolution( get_name(), names::delta_tau, P_.delta_tau_ );
-  }
 }
 
 nest::correlomatrix_detector::correlomatrix_detector( const correlomatrix_detector& n )
@@ -249,10 +250,6 @@ nest::correlomatrix_detector::correlomatrix_detector( const correlomatrix_detect
   , P_( n.P_ )
   , S_()
 {
-  if ( not P_.delta_tau_.is_step() )
-  {
-    throw InvalidTimeInModel( get_name(), names::delta_tau, P_.delta_tau_ );
-  }
 }
 
 
@@ -360,8 +357,9 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
         if ( sender_ind <= other_ind )
         {
-          bin = -1. * std::floor( ( 0.5 * P_.delta_tau_.get_steps() - std::abs( spike_i - spike_j->timestep_ ) )
-                        / P_.delta_tau_.get_steps() );
+          bin = -1.
+            * std::floor( ( 0.5 * P_.delta_tau_.get_steps() - std::abs( spike_i - spike_j->timestep_ ) )
+              / P_.delta_tau_.get_steps() );
         }
         else
         {
@@ -390,4 +388,24 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
     } // t in [TStart, Tstop]
 
   } // device active
+}
+
+void
+nest::correlomatrix_detector::calibrate_time( const TimeConverter& tc )
+{
+  if ( P_.delta_tau_.is_step() )
+  {
+    P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
+  }
+  else
+  {
+    const double old = P_.delta_tau_.get_ms();
+    P_.delta_tau_ = P_.get_default_delta_tau();
+    std::string msg = String::compose( "Default for delta_tau changed from %1 to %2 ms", old, P_.delta_tau_.get_ms() );
+    LOG( M_INFO, get_name(), msg );
+  }
+
+  P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );
+  P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
+  P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
 }

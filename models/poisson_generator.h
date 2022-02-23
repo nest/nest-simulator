@@ -44,8 +44,8 @@ Generate spikes with Poisson process statistics
 Description
 +++++++++++
 
-The poisson_generator simulates a neuron that is firing with Poisson
-statistics, i.e. exponentially distributed interspike intervals. It will
+The ``poisson_generator`` simulates a neuron that is firing with Poisson
+statistics, that is, exponentially distributed interspike intervals. It will
 generate a `unique` spike train for each of it's targets. If you do not want
 this behavior and need the same spike train for all targets, you have to use a
 ``parrot_neuron`` between the poisson generator and the targets.

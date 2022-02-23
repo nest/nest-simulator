@@ -21,8 +21,8 @@
  */
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
 #include "target_table.h"
+#include "kernel_manager.h"
 
 // Includes from libnestutil
 #include "vector_util.h"
@@ -63,7 +63,7 @@ nest::TargetTable::prepare( const thread tid )
   for ( size_t lid = 0; lid < num_local_nodes; ++lid )
   {
     // resize to maximal possible synapse-type index
-    secondary_send_buffer_pos_[ tid ][ lid ].resize( kernel().model_manager.get_num_synapse_prototypes() );
+    secondary_send_buffer_pos_[ tid ][ lid ].resize( kernel().model_manager.get_num_connection_models() );
   }
 }
 

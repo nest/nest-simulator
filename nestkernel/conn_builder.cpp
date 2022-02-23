@@ -76,7 +76,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   delays_.resize( syn_specs.size() );
   synapse_params_.resize( syn_specs.size() );
   synapse_model_id_.resize( syn_specs.size() );
-  synapse_model_id_[ 0 ] = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
+  synapse_model_id_[ 0 ] = kernel().model_manager.get_synapse_model_id( "static_synapse" );
   param_dicts_.resize( syn_specs.size() );
 
   // loop through vector of synapse dictionaries, and set synapse parameters
@@ -440,16 +440,13 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t synaps
     throw BadProperty( "Synapse spec must contain synapse model." );
   }
   const std::string syn_name = ( *syn_params )[ names::synapse_model ];
-  if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
-  {
-    throw UnknownSynapseType( syn_name );
-  }
 
-  index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+  // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
+  const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_id_[ synapse_indx ] = synapse_model_id;
 
   // We need to make sure that Connect can process all synapse parameters specified.
-  const ConnectorModel& synapse_model = kernel().model_manager.get_synapse_prototype( synapse_model_id );
+  const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
   synapse_model.check_synapse_params( syn_params );
 }
 
@@ -1475,7 +1472,7 @@ nest::FixedTotalNumberBuilder::connect_()
     sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
   }
 
-// end code adapted from gsl 1.8
+  // end code adapted from gsl 1.8
 
 #pragma omp parallel
   {

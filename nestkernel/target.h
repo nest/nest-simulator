@@ -27,13 +27,13 @@
 #include <cassert>
 
 // Includes from nestkernel:
+#include "exceptions.h"
 #include "nest_types.h"
 #include "static_assert.h"
-#include "exceptions.h"
 
 namespace nest
 {
-// clang-format off
+
 /**
  * This class implements a 64-bit target neuron identifier type. It uniquely identifies
  * a target neuron on a (remote) machine. Used in TargetTable for the presynaptic part
@@ -65,7 +65,6 @@ namespace nest
  * of bits needs to sum to 64. The processed flag must always use one
  * bit.
  */
-// clang-format on
 
 enum enum_status_target_id
 {
@@ -176,7 +175,8 @@ inline Target::Target( const Target& target )
   set_status( TARGET_ID_UNPROCESSED ); // initialize
 }
 
-inline Target& Target::operator=( const Target& other )
+inline Target&
+Target::operator=( const Target& other )
 {
   remote_target_id_ = other.remote_target_id_;
   set_status( TARGET_ID_UNPROCESSED );

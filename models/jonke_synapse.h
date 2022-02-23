@@ -50,7 +50,7 @@ Description
 +++++++++++
 
 jonke_synapse is a connector to create synapses with spike time
-dependent plasticity. Unlike stdp_synapse, we use the update equations:
+dependent plasticity. Unlike ``stdp_synapse``, we use the update equations:
 
 .. math::
 

@@ -43,10 +43,10 @@ Synapse type for continuous delays
 Description
 +++++++++++
 
-cont_delay_synapse relaxes the condition that NEST only implements delays
-which are an integer multiple of the time step h. A continuous delay is
-decomposed into an integer part (delay_) and a double (delay_offset_) so
-that the actual delay is given by  delay_*h - delay_offset_. This can be
+``cont_delay_synapse`` relaxes the condition that NEST only implements delays
+which are an integer multiple of the time step `h`. A continuous delay is
+decomposed into an integer part (``delay_``) and a double (``delay_offset_``) so
+that the actual delay is given by  ``delay_*h - delay_offset_``. This can be
 combined with off-grid spike times.
 
 All delays set by the normal NEST Connect function will be rounded, even
@@ -105,9 +105,9 @@ public:
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
-  using ConnectionBase::set_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
+  using ConnectionBase::set_delay_steps;
 
   //! Used by ConnectorModel::add_connection() for fast initialization
   void

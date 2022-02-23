@@ -58,7 +58,7 @@ public:
     , begin_of_free_storage( NULL )
     , end_of_free_storage( NULL )
     , alloc_block_size( ARRAY_ALLOC_SIZE )
-    , refs_( 1 ){};
+    , refs_( 1 ) {};
 
   TokenArrayObj( size_t, const Token& = Token(), size_t = 0 );
   TokenArrayObj( const TokenArrayObj& );

@@ -49,11 +49,14 @@ Device for evaluating cross correlation between two spike sources
 Description
 +++++++++++
 
-The correlation_detector device is a recording device. It is used to record
-spikes from two pools of spike inputs and calculates the count_histogram of
-inter-spike intervals (raw cross correlation) binned to bins of duration
-:math:`\delta_\tau`. The result can be obtained via GetStatus under the key
-/count_histogram.
+The ``correlation_detector`` is a device that receives spikes from two pools of
+spike inputs and calculates the ``count_histogram`` of inter-spike intervals
+(raw cross correlation) binned to bins of duration :math:`\delta_\tau`.
+The corresponding parameter ``delta_tau`` defaults to 5 times the simulation
+resolution.
+
+The result can be obtained from the node's status dictionary under the key
+``count_histogram``.
 
 In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors, the
@@ -64,7 +67,7 @@ histogram counts in the following way:
 
 Let :math:`t_{1,i}` be the spike times of source 1,
 :math:`t_{2,j}` the spike times of source 2.
-histogram[n] then contains the sum of products of the weight
+``histogram[n]`` then contains the sum of products of the weight
 :math:`w_{1,i}\cdot w_{2,j}`, count_histogram[n] contains 1 summed over all events
 with :math:`t_{2,j}-t_{1,i}` in
 
@@ -75,13 +78,13 @@ with :math:`t_{2,j}-t_{1,i}` in
 
 The bins are centered around the time difference they represent, but are
 left-closed and right-open. This means that events with time difference
--tau_max-delta_tau/2 are counted in the leftmost bin, but event with
-difference tau_max+delta_tau/2 are not counted at all.
+:math:`-\tau_{max}-\delta_\tau/2` are counted in the leftmost bin, but event with
+difference :math:`\tau_{max}+\delta_\tau/2` are not counted at all.
 
 The correlation detector has two inputs, which are selected via the
 receptor_port of the incoming connection: All incoming connections with
-receptor_port = 0 will be pooled as the spike source 1, the ones with
-receptor_port = 1 will be used as spike source 2.
+``receptor_port = 0`` will be pooled as the spike source 1, the ones with
+``receptor_port = 1`` will be used as spike source 2.
 
 Correlation detectors ignore any connection delays.
 
@@ -105,13 +108,14 @@ the
                               effects of the correlation counts.
 delta_tau            ms       Bin width. This has to be an odd multiple of
                               the resolution, to allow the symmetry between
-                              positive and negative time-lags.
-tau_max              ms       One-sided width. In the lower triagnular part
-                              events with differences in [0,
-tau_max+delta_tau/2)
+                              positive and negative time-lags. Defaults to 5
+                              times the simulation resolution
+tau_max              ms       One-sided width. In the lower triangular part
+                              events with differences in [0, tau_max+delta_tau/2)
                               are counted. On the diagonal and in the upper
                               triangular part events with differences in
-                              (0, tau_max+delta_tau/2].
+                              (0, tau_max+delta_tau/2]. Defaults to 10 times the
+                              value of delta_tau.
 N_channels           integer  The number of pools. This defines the range of
                               receptor_type. Default is 1.
                               Setting N_channels clears count_covariance,
@@ -151,7 +155,7 @@ EndUserDocs */
  *   be iterator since that may change
  * - update() deletes all entries before now-tau_max, sorts the new
  *   entries, then registers new entries in histogram
-*/
+ */
 
 class correlation_detector : public Node
 {
@@ -220,7 +224,8 @@ private:
     /**
      * Greater operator needed for insertion sort.
      */
-    inline bool operator>( const Spike_& second ) const
+    inline bool
+    operator>( const Spike_& second ) const
     {
       return timestep_ > second.timestep_;
     }
@@ -252,6 +257,8 @@ private:
      *          binwidth or tau_max.
      */
     bool set( const DictionaryDatum&, const correlation_detector&, Node* );
+
+    Time get_default_delta_tau();
   };
 
   // ------------------------------------------------------------
@@ -312,7 +319,7 @@ correlation_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline void
-nest::correlation_detector::get_status( DictionaryDatum& d ) const
+correlation_detector::get_status( DictionaryDatum& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -320,7 +327,7 @@ nest::correlation_detector::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-nest::correlation_detector::set_status( const DictionaryDatum& d )
+correlation_detector::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );
@@ -332,13 +339,10 @@ nest::correlation_detector::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-inline void
-nest::correlation_detector::calibrate_time( const TimeConverter& tc )
+inline Time
+correlation_detector::Parameters_::get_default_delta_tau()
 {
-  P_.delta_tau_ = tc.from_old_tics( P_.delta_tau_.get_tics() );
-  P_.tau_max_ = tc.from_old_tics( P_.tau_max_.get_tics() );
-  P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
-  P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
+  return 5 * Time::get_resolution();
 }
 
 

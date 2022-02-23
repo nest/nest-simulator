@@ -28,8 +28,8 @@
 #include <limits>
 
 // Includes from libnestutil:
-#include "numerics.h"
 #include "dict_util.h"
+#include "numerics.h"
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -91,8 +91,8 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
-  using Node::sends_signal;
   using Node::receives_signal;
+  using Node::sends_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
 

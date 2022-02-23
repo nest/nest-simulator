@@ -172,7 +172,8 @@ nest::hh_psc_alpha::State_::State_( const State_& s )
   }
 }
 
-nest::hh_psc_alpha::State_& nest::hh_psc_alpha::State_::operator=( const State_& s )
+nest::hh_psc_alpha::State_&
+nest::hh_psc_alpha::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )

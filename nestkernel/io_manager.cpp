@@ -165,7 +165,8 @@ IOManager::finalize()
   }
 }
 
-void IOManager::change_num_threads( thread )
+void
+IOManager::change_number_of_threads()
 {
   for ( const auto& it : recording_backends_ )
   {
@@ -180,24 +181,24 @@ void IOManager::change_num_threads( thread )
 }
 
 void
+IOManager::set_recording_backend_status( std::string recording_backend, const DictionaryDatum& d )
+{
+  recording_backends_[ recording_backend ]->set_status( d );
+}
+
+void
 IOManager::set_status( const DictionaryDatum& d )
 {
   set_data_path_prefix_( d );
-
   updateValue< bool >( d, names::overwrite_files, overwrite_files_ );
+}
 
-  DictionaryDatum recording_backends;
-  if ( updateValue< DictionaryDatum >( d, names::recording_backends, recording_backends ) )
-  {
-    for ( const auto& it : recording_backends_ )
-    {
-      DictionaryDatum recording_backend_status;
-      if ( updateValue< DictionaryDatum >( recording_backends, it.first, recording_backend_status ) )
-      {
-        it.second->set_status( recording_backend_status );
-      }
-    }
-  }
+DictionaryDatum
+IOManager::get_recording_backend_status( std::string recording_backend )
+{
+  DictionaryDatum status( new Dictionary );
+  recording_backends_[ recording_backend ]->get_status( status );
+  return status;
 }
 
 void
@@ -207,14 +208,19 @@ IOManager::get_status( DictionaryDatum& d )
   ( *d )[ names::data_prefix ] = data_prefix_;
   ( *d )[ names::overwrite_files ] = overwrite_files_;
 
-  DictionaryDatum recording_backends( new Dictionary );
+  ArrayDatum recording_backends;
   for ( const auto& it : recording_backends_ )
   {
-    DictionaryDatum recording_backend_status( new Dictionary );
-    it.second->get_status( recording_backend_status );
-    ( *recording_backends )[ it.first ] = recording_backend_status;
+    recording_backends.push_back( new LiteralDatum( it.first ) );
   }
   ( *d )[ names::recording_backends ] = recording_backends;
+
+  ArrayDatum stimulation_backends;
+  for ( const auto& it : stimulation_backends_ )
+  {
+    stimulation_backends.push_back( new LiteralDatum( it.first ) );
+  }
+  ( *d )[ names::stimulation_backends ] = stimulation_backends;
 }
 
 void

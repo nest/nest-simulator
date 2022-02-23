@@ -43,23 +43,30 @@ Synapse type for spike-timing dependent plasticity using homogeneous parameters
 Description
 +++++++++++
 
-stdp_facetshw_synapse is a connector to create synapses with spike-timing
+``stdp_facetshw_synapse`` is a connector to create synapses with spike-timing
 dependent plasticity (as defined in [1]_).
-This connector is a modified version of stdp_synapse.
+This connector is a modified version of ``stdp_synapse``.
 It includes constraints of the hardware developed in the FACETS (BrainScaleS)
-project [2,3], as e.g. 4-bit weight resolution, sequential updates of groups
+project [2]_, [3]_, as for example, 4-bit weight resolution, sequential updates of groups
 of synapses and reduced symmetric nearest-neighbor spike pairing scheme. For
 details see [3]_.
-The modified spike pairing scheme requires the calculation of tau_minus_
-within this synapse and not at the neuron site via Kplus_ like in
-stdp_synapse_hom.
+The modified spike pairing scheme requires the calculation of ``tau_minus_``
+within this synapse and not at the neuron site via ``Kplus_`` like in
+``stdp_synapse_hom``.
 
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
+
+The synapse IDs are assigned to each synapse in an ascending order (0,1,2,
+...) according their first presynaptic activity and is used to group synapses
+that are updated at once. It is possible to avoid activity dependent synapse
+ID assignments by manually setting the no_synapses and the synapse_id(s)
+before running the simulation. The weights will be discretized after the
+first presynaptic activity at a synapse.
 
 Parameters
 ++++++++++
@@ -86,7 +93,7 @@ Parameters
                         integers
  configbit_0            list of     Configuration bits for evaluation
                         integers    function. For details see code in
-                                    function eval_function_ and [4]_
+                                    function ``eval_function_`` and [4]_
                                     (configbit[0]=e_cc, ..[1]_=e_ca,
                                     ..[2]_=e_ac, ..[3]=e_aa).
                                     Depending on these two sets of
@@ -103,6 +110,9 @@ Parameters
                                     always reset) is allowed.
 ======================= =========== ===========================================
 
+Common properties can only be set on the synapse model using
+:py:func:`.SetDefaults`.
+
 ============  ======= =====================================================
 **Individual properties**
 ---------------------------------------------------------------------------
@@ -115,17 +125,6 @@ Parameters
  synapse_id   integer Synapse ID, used to assign synapses to groups (synapse
                       drivers)
 ============  ======= =====================================================
-
-Remarks:
-
-The synapse IDs are assigned to each synapse in an ascending order (0,1,2,
-...) according their first presynaptic activity and is used to group synapses
-that are updated at once. It is possible to avoid activity dependent synapse
-ID assignments by manually setting the no_synapses and the synapse_id(s)
-before running the simulation. The weights will be discretized after the
-first presynaptic activity at a synapse.
-
-Common properties can only be set on the synapse model using SetDefaults.
 
 Transmits
 +++++++++
@@ -152,7 +151,7 @@ References
 See also
 ++++++++
 
-stdp_synapse, synapsedict, tsodyks_synapse, static_synapse
+stdp_synapse, tsodyks_synapse, static_synapse
 
 EndUserDocs */
 

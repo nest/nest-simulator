@@ -49,6 +49,7 @@ Synaptic depression is motivated by depletion of vesicles in the readily
 releasable pool of synaptic vesicles (variable x in equation (3)). Synaptic
 facilitation comes about by a presynaptic increase of release probability,
 which is modeled by variable U in Eq (4).
+
 The original interpretation of variable y is the amount of glutamate
 concentration in the synaptic cleft. In [1]_ this variable is taken to be
 directly proportional to the synaptic current caused in the postsynaptic
@@ -57,26 +58,27 @@ to reproduce the results of [1]_ and to use this model of synaptic plasticity
 in its original sense, the user therefore has to ensure the following
 conditions:
 
-1.) The postsynaptic neuron must be of type iaf_psc_exp or iaf_psc_exp_htum,
+1.) The postsynaptic neuron must be of type ``iaf_psc_exp`` or ``iaf_psc_exp_htum``,
 because these neuron models have a postsynaptic current which decays
 exponentially.
 
-2.) The time constant of each tsodyks_synapse targeting a particular neuron
+2.) The time constant of each ``tsodyks_synapse`` targeting a particular neuron
 must be chosen equal to that neuron's synaptic time constant. In particular
 that means that all synapses targeting a particular neuron have the same
-parameter tau_psc.
+parameter ``tau_psc``.
 
 However, there are no technical restrictions using this model of synaptic
 plasticity also in conjunction with neuron models that have a different
 dynamics for their synaptic current or conductance. The effective synaptic
 weight, which will be transmitted to the postsynaptic neuron upon occurrence
-of a spike at time t is u(t)*x(t)*w, where u(t) and x(t) are defined in
-Eq (3) and (4), w is the synaptic weight specified upon connection.
-The interpretation is as follows: The quantity u(t)*x(t) is the release
-probability times the amount of releasable synaptic vesicles at time t of the
+of a spike at time t is :math:`u(t) \cdot x(t) \cdot w`, where `u(t)` and `x(t)` are defined in
+Eq (3) and (4), `w` is the synaptic weight specified upon connection.
+The interpretation is as follows: The quantity :math:`u(t) \cdot x(t)` is the release
+probability times the amount of releasable synaptic vesicles at time `t` of the
 presynaptic neuron's spike, so this equals the amount of transmitter expelled
 into the synaptic cleft.
-The amount of transmitter than relaxes back to 0 with time constant tau_psc
+
+The amount of transmitter then relaxes back to 0 with time constant tau_psc
 of the synapse's variable y. Since the dynamics of y(t) is linear, the
 postsynaptic neuron can reconstruct from the amplitude of the synaptic
 impulse u(t)*x(t)*w the full shape of y(t). The postsynaptic neuron, however,
@@ -87,7 +89,7 @@ an arbitrary postsynaptic effect depending on y(t).
 .. warning::
 
    This synaptic plasticity rule does not take
-   :doc:`precise spike timing <simulations_with_precise_spike_times>` into
+   :ref:`precise spike timing <sim_precise_spike_times>` into
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
@@ -106,11 +108,11 @@ Parameters
                   cleft [0,1]
 ========  ======  ========================================================
 
-Remarks:
+.. note::
 
-The weight and the parameters U, tau_psc, tau_fac, and tau_rec are common to
-all synapses of the model and must be set using SetDefaults on the synapse
-model.
+   The weight and the parameters U, tau_psc, tau_fac, and tau_rec are
+   common to all synapses of the model and must be set using
+   :py:func:`.SetDefaults` on the synapse model.
 
 References
 ++++++++++

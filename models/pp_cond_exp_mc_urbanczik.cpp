@@ -149,7 +149,8 @@ nest::pp_cond_exp_mc_urbanczik_dynamics( double, const double y[], double f[], v
     // In the paper the resting potential is set to zero and
     // the capacitance to one.
     f[ S::idx( n, S::V_M ) ] = ( -node.P_.urbanczik_params.g_L[ n ] * ( V_dnd - node.P_.urbanczik_params.E_L[ n ] )
-                                 + I_syn_ex + I_syn_in + I_conn_s_d ) / node.P_.urbanczik_params.C_m[ n ];
+                                 + I_syn_ex + I_syn_in + I_conn_s_d )
+      / node.P_.urbanczik_params.C_m[ n ];
 
     // derivative dendritic current
     f[ S::idx( n, S::I_EXC ) ] = -I_syn_ex / node.P_.urbanczik_params.tau_syn_ex[ n ];
@@ -239,8 +240,8 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_( const Parameters_& p )
   }
 }
 
-nest::pp_cond_exp_mc_urbanczik::Parameters_& nest::pp_cond_exp_mc_urbanczik::Parameters_::operator=(
-  const Parameters_& p )
+nest::pp_cond_exp_mc_urbanczik::Parameters_&
+nest::pp_cond_exp_mc_urbanczik::Parameters_::operator=( const Parameters_& p )
 {
   assert( this != &p ); // would be bad logical error in program
 
@@ -291,7 +292,8 @@ nest::pp_cond_exp_mc_urbanczik::State_::State_( const State_& s )
   }
 }
 
-nest::pp_cond_exp_mc_urbanczik::State_& nest::pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
+nest::pp_cond_exp_mc_urbanczik::State_&
+nest::pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )

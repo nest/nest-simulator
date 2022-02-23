@@ -1,3 +1,5 @@
+.. _nest_server:
+
 NEST Server
 ===========
 
@@ -10,7 +12,7 @@ What is NEST Server?
 
 NEST Server enables users to interact with the NEST simulation engine
 via a RESTful API. Using this approach, you can perform the same basic
-operations as with :doc:`PyNEST <ref_material/pynest_apis>`, but
+operations as with :ref:`PyNEST <pynest_api>`, but
 instead of doing so by directly importing the ``nest`` module, all
 commands, including their arguments and result data, are channeled
 through HTTP requests and responses over a TCP/IP connection.
@@ -248,13 +250,14 @@ Client to execute a simple script on the Server using the
     from NESTServerClient import NESTServerClient
     nsc = NESTServerClient()
 
-    response = nsc.exec_script("print('Hello world!')")
-    print(response['stdout'])                        # 'Hello world!'
+    script = "print('Hello world!')"
+    response = nsc.exec_script(script)
+    print(response['stdout'])          # 'Hello world!'
 
-    response = nsc.exec_script("models=nest.Models()", 'models')
+    script = "models=nest.node_models"
+    response = nsc.exec_script(script, return_vars='models')
     models = response['data']
-
-    print(models)                                    # the list of models
+    print(models)                      # the list of models
 
 In a more realistic scenario, you probably already have your
 simulation script stored in a file. Such scripts can be sent to the
@@ -266,7 +269,7 @@ the NEST Server Client.
     from NESTServerClient import NESTServerClient
     nsc = NESTServerClient()
 
-    response = nsc.from_file('simulation_script.py', 'n_events')
+    response = nsc.from_file('simulation_script.py', return_vars='n_events')
     n_events = response['data']
 
     print('Number of events:', n_events)
@@ -345,9 +348,9 @@ You can retrieve data about the callable functions of NEST by running::
 
   curl localhost:5000/api
 
-Retrieve available models in NEST::
+Retrieve the current kernel status dict from NEST::
 
-  curl localhost:5000/api/Models
+  curl localhost:5000/api/GetKernelStatus
 
 Send API request with function arguments in JSON format::
 
@@ -544,7 +547,7 @@ Using the above code, we can already send API-requests to NEST Server:
 
 .. code-block:: JavaScript
 
-    getAPI('Models');  // a list of models
+    getAPI('GetKernelStatus');  // the current kernel status dict
 
 Sending API calls with data requires a POST request, which can handle
 the data in JSON-format. To allow for this, we can define a function

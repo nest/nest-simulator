@@ -30,8 +30,8 @@
 
 // C includes:
 #include <gsl/gsl_errno.h>
-#include <gsl/gsl_odeiv.h>
 #include <gsl/gsl_matrix.h>
+#include <gsl/gsl_odeiv.h>
 #include <gsl/gsl_sf_exp.h>
 
 // Includes from nestkernel:
@@ -69,7 +69,7 @@ Hodgkin-Huxley neuron with gap junction support and beta function synaptic condu
 Description
 +++++++++++
 
-hh_cond_beta_gap_traub is an implementation of a modified Hodgkin-Huxley model
+``hh_cond_beta_gap_traub`` is an implementation of a modified Hodgkin-Huxley model
 that also supports gap junctions.
 
 This model was specifically developed for a major review of simulators [1]_,
@@ -77,7 +77,7 @@ based on a model of hippocampal pyramidal cells by Traub and Miles [2]_.
 The key differences between the current model and the model in [2]_ are:
 
 - This model is a point neuron, not a compartmental model.
-- This model includes only I_Na and I_K, with simpler I_K dynamics than
+- This model includes only ``I_Na`` and ``I_K``, with simpler ``I_K`` dynamics than
   in [2]_, so it has only three instead of eight gating variables;
   in particular, all Ca dynamics have been removed.
 - Incoming spikes induce an instantaneous conductance change followed by

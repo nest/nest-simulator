@@ -25,10 +25,10 @@
 
 // C++ includes:
 #include <ctime>
+#include <memory>
 #include <ostream>
 #include <stdexcept> // out_of_range
 #include <vector>
-#include <memory>
 
 // Includes from libnestuil:
 #include "lockptr.h"
@@ -76,9 +76,9 @@ public:
 class NodeIDTriple
 {
 public:
-  index node_id{ 0 };
-  index model_id{ 0 };
-  size_t lid{ 0 };
+  index node_id { 0 };
+  index model_id { 0 };
+  size_t lid { 0 };
   NodeIDTriple() = default;
 };
 
@@ -136,6 +136,11 @@ private:
     size_t part,
     size_t offset,
     size_t step = 1 );
+
+  /**
+   * Conditionally update element_idx and part_idx for composite NodeCollections
+   */
+  void composite_update_indices_();
 
 public:
   nc_const_iterator( const nc_const_iterator& nci ) = default;
@@ -529,21 +534,21 @@ public:
   NodeCollectionComposite( const NodeCollectionPrimitive&, size_t, size_t, size_t );
 
   /**
-     * Composite copy constructor.
-     *
-     * @param comp Composite to be copied.
-     */
+   * Composite copy constructor.
+   *
+   * @param comp Composite to be copied.
+   */
   NodeCollectionComposite( const NodeCollectionComposite& );
 
   /**
-     * Creates a new composite from another, with boundaries and step length.
-     * This constructor is used only when slicing.
-     *
-     * @param composite Composite to slice.
-     * @param start Index in the composite to begin at.
-     * @param end Index in the composite one past the node to end at.
-     * @param step Length to step in the composite.
-     */
+   * Creates a new composite from another, with boundaries and step length.
+   * This constructor is used only when slicing.
+   *
+   * @param composite Composite to slice.
+   * @param start Index in the composite to begin at.
+   * @param end Index in the composite one past the node to end at.
+   * @param step Length to step in the composite.
+   */
   NodeCollectionComposite( const NodeCollectionComposite&, size_t, size_t, size_t );
 
   /**
@@ -597,7 +602,8 @@ public:
   bool has_proxies() const override;
 };
 
-inline bool NodeCollection::operator!=( NodeCollectionPTR rhs ) const
+inline bool
+NodeCollection::operator!=( NodeCollectionPTR rhs ) const
 {
   return not( *this == rhs );
 }
@@ -628,7 +634,7 @@ inline NodeIDTriple nc_const_iterator::operator*() const
     {
       if ( not( part_idx_ < composite_collection_->end_part_
              or ( part_idx_ == composite_collection_->end_part_
-                  and element_idx_ < composite_collection_->end_offset_ ) ) )
+               and element_idx_ < composite_collection_->end_offset_ ) ) )
       {
         throw KernelException( "Invalid NodeCollection iterator (composite element beyond specified end element)" );
       }
@@ -661,11 +667,12 @@ inline NodeIDTriple nc_const_iterator::operator*() const
   return gt;
 }
 
-inline nc_const_iterator& nc_const_iterator::operator++()
+inline nc_const_iterator&
+nc_const_iterator::operator++()
 {
+  element_idx_ += step_;
   if ( primitive_collection_ )
   {
-    element_idx_ += step_;
     if ( element_idx_ >= primitive_collection_->size() )
     {
       element_idx_ = primitive_collection_->size();
@@ -673,72 +680,43 @@ inline nc_const_iterator& nc_const_iterator::operator++()
   }
   else
   {
-    element_idx_ += step_;
-    // If we went past the size of the primitive, we need to adjust the element
-    // and primitive part indices.
-    size_t primitive_size = composite_collection_->parts_[ part_idx_ ].size();
-    while ( element_idx_ >= primitive_size )
-    {
-      element_idx_ = element_idx_ - primitive_size;
-      ++part_idx_;
-      if ( part_idx_ < composite_collection_->parts_.size() )
-      {
-        primitive_size = composite_collection_->parts_[ part_idx_ ].size();
-      }
-    }
-    // If we went past the end of the composite, we need to adjust the
-    // position of the iterator.
-    if ( composite_collection_->end_offset_ != 0 or composite_collection_->end_part_ != 0 )
-    {
-      if ( part_idx_ >= composite_collection_->end_part_ and element_idx_ >= composite_collection_->end_offset_ )
-      {
-        part_idx_ = composite_collection_->end_part_;
-        element_idx_ = composite_collection_->end_offset_;
-      }
-    }
-    else if ( part_idx_ >= composite_collection_->parts_.size() )
-    {
-      auto end_of_composite = composite_collection_->end();
-      part_idx_ = end_of_composite.part_idx_;
-      element_idx_ = end_of_composite.element_idx_;
-    }
+    composite_update_indices_();
   }
   return *this;
 }
 
-inline nc_const_iterator& nc_const_iterator::operator+=( const size_t n )
+inline nc_const_iterator&
+nc_const_iterator::operator+=( const size_t n )
 {
-  if ( primitive_collection_ )
+  element_idx_ += n * step_;
+  if ( composite_collection_ )
   {
-    element_idx_ += n * step_;
-  }
-  else
-  {
-    for ( size_t i = 0; i < n; ++i )
-    {
-      operator++();
-    }
+    composite_update_indices_();
   }
   return *this;
 }
 
-inline nc_const_iterator nc_const_iterator::operator+( const size_t n ) const
+inline nc_const_iterator
+nc_const_iterator::operator+( const size_t n ) const
 {
   nc_const_iterator it = *this;
   return it += n;
 }
 
-inline bool nc_const_iterator::operator!=( const nc_const_iterator& rhs ) const
+inline bool
+nc_const_iterator::operator!=( const nc_const_iterator& rhs ) const
 {
   return not( part_idx_ == rhs.part_idx_ and element_idx_ == rhs.element_idx_ );
 }
 
-inline bool nc_const_iterator::operator<( const nc_const_iterator& rhs ) const
+inline bool
+nc_const_iterator::operator<( const nc_const_iterator& rhs ) const
 {
   return ( part_idx_ < rhs.part_idx_ or ( part_idx_ == rhs.part_idx_ and element_idx_ < rhs.element_idx_ ) );
 }
 
-inline bool nc_const_iterator::operator<=( const nc_const_iterator& rhs ) const
+inline bool
+nc_const_iterator::operator<=( const nc_const_iterator& rhs ) const
 {
   return ( part_idx_ < rhs.part_idx_ or ( part_idx_ == rhs.part_idx_ and element_idx_ <= rhs.element_idx_ ) );
 }
@@ -760,7 +738,8 @@ inline index NodeCollectionPrimitive::operator[]( const size_t idx ) const
   return first_ + idx;
 }
 
-inline bool NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
+inline bool
+NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
   // Checking that rhs_ptr is valid first, to avoid segfaults. If rhs is a NodeCollectionComposite,
@@ -778,7 +757,8 @@ inline bool NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
   return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_ and eq_metadata;
 }
 
-inline bool NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
+inline bool
+NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
 {
   // Not dereferencing rhs_ptr->metadata_ in the equality comparison because we want to avoid overloading
   // operator==() of *metadata_, and to let it handle typechecking.
@@ -885,7 +865,8 @@ inline index NodeCollectionComposite::operator[]( const size_t i ) const
 }
 
 
-inline bool NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
+inline bool
+NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 {
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
 

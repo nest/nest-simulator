@@ -45,7 +45,7 @@ How to work with randomness in NEST
 NEST makes randomness easy: Setting a single seed gives you full
 control over randomness throughout a simulation, and you can choose seed values
 at liberty. NEST's powerful mechanism to :ref:`parameterize nodes and synapses <param_ex>`
-and NEST's :ref:`probabilistic connection rules <connection_mgnt>` allow you
+and NEST's :ref:`probabilistic connection rules <conn_rules>` allow you
 to construct your network with parameters with a wide range of random properties,
 from uniformly distributed numbers drawn from a fixed interval to mathematical
 expressions combining spatial information with probability distributions. Neuron, device,

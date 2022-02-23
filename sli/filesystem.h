@@ -113,8 +113,8 @@ public:
   TmpNamFunction tmpnamfunction;
   CompareFilesFunction comparefilesfunction;
 
-  FilesystemModule( void ){};
-  ~FilesystemModule(){};
+  FilesystemModule( void ) {};
+  ~FilesystemModule() {};
 
   void init( SLIInterpreter* );
   const std::string name( void ) const;

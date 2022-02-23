@@ -1,3 +1,5 @@
+.. _release_3.1:
+
 All about NEST 3.1
 ==================
 
@@ -9,8 +11,8 @@ update your simulation scripts when you come from an older version of
 NEST.
 
 If you transition from a version earlier than 3.0, please see our
-extensive :doc:`transition guide from NEST 2.x to 3.0
-<nest2_to_nest3/index>`.
+extensive :ref:`transition guide from NEST 2.x to 3.0
+<refguide_2_3>`.
 
 .. contents:: On this page you'll find
    :local:
@@ -62,7 +64,7 @@ Deprecation information
   later on, we suggest you switch to using the new interface
   for kernel properties now.
 * Model ``pp_pop_psc_delta`` has been deprecated since 2016 and
-  will be removed in NEST 3.2. Please use model :doc:`gif_pop_psc_exp <gif_pop_psc_exp>`
+  will be removed in NEST 3.2. Please use model ``gif_pop_psc_exp``
   instead.
 * The `nest.hl_api` namespace contained the same members as `nest`
   and is being removed in NEST 3.2. All imports from `nest.hl_api`

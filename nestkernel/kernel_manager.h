@@ -41,7 +41,6 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-// clang-format off
 /** @BeginDocumentation
  Name: kernel - Global properties of the simulation kernel.
 
@@ -71,17 +70,20 @@
                                              communication (read only)
 
  Random number generators
- rng_types                     arraytype   - Names of random number generator types available (read only)
+ rng_types                     arraytype   - Names of random number generator types
+                                             available (read only)
  rng_type                      stringtype  - Name of random number generator type used by kernel
- rng_seed                      integertype - Seed value used as basis of seeding of all random number
-                                             generators managed by the kernel (\f$1 leq s \leq 2^{32}-1\f$).
+ rng_seed                      integertype - Seed value used as basis of seeding of all random
+                                             number generators managed by the kernel
+                                             (\f$1 leq s \leq 2^{32}-1\f$).
 
  Output
  data_path                     stringtype  - A path, where all data is written to
                                              (default is the current directory)
  data_prefix                   stringtype  - A common prefix for all data files
  overwrite_files               booltype    - Whether to overwrite existing data files
- print_time                    booltype    - Whether to print progress information during the simulation
+ print_time                    booltype    - Whether to print progress information during the
+                                             simulation
 
  Network information
  network_size                  integertype - The number of nodes in the network (read only)
@@ -100,7 +102,6 @@
 
  SeeAlso: Simulate, Node
  */
-// clang-format on
 
 namespace nest
 {
@@ -149,7 +150,7 @@ public:
   /**
    * Reset kernel.
    *
-   * Resets kernel by finalizing and initializing.
+   * Resets the kernel by finalizing and initializing all managers.
    *
    * @see initialize(), finalize()
    */
@@ -158,18 +159,16 @@ public:
   /**
    * Change number of threads.
    *
-   * The kernel first needs to be finalized with the old number of threads
-   * and then initialized with the new number of threads.
-   *
-   * @see initialize(), finalize()
+   * Set the new number of threads on all managers by calling
+   * change_number_of_threads() on each of them.
    */
-  void change_number_of_threads( thread );
-
-  void prepare();
-  void cleanup();
+  void change_number_of_threads( thread new_num_threads );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );
+
+  void prepare();
+  void cleanup();
 
   //! Returns true if kernel is initialized
   bool is_initialized() const;
@@ -192,7 +191,7 @@ public:
 
 private:
   std::vector< ManagerInterface* > managers;
-  bool initialized_; //!< true if all sub-managers initialized
+  bool initialized_; //!< true if the kernel is initialized
 };
 
 KernelManager& kernel();

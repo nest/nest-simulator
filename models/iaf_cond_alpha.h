@@ -66,17 +66,18 @@ Simple conductance based leaky integrate-and-fire neuron model
 Description
 +++++++++++
 
-iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
+``iaf_cond_alpha`` is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a postsynaptic change
 of conductance modelled by an alpha function. The alpha function
 is normalized such that an event of weight 1.0 results in a peak current of 1 nS
 at :math:`t = \tau_{syn}`.
 
+See also [1]_, [2]_, [3]_.
+
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
 
 =========== ======= ===========================================================
  V_m        mV      Membrane potential
@@ -93,7 +94,6 @@ The following parameters can be set in the status dictionary.
  I_e        pA      Constant input current
 =========== ======= ===========================================================
 
-
 Sends
 +++++
 
@@ -103,16 +103,6 @@ Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
-
-Remarks:
-
- @note Per 2009-04-17, this class has been revised to our newest
-        insights into class design. Please use THIS CLASS as a reference
-        when designing your own models with nonlinear dynamics.
-        One weakness of this class is that it distinguishes between
-        inputs to the two synapses by the sign of the synaptic weight.
-        It would be better to use receptor_types, cf iaf_cond_alpha_mc.
-
 
 References
 ++++++++++
@@ -267,8 +257,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_alpha& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_cond_alpha& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_alpha& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_cond_alpha& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_cond_alpha > logger_;

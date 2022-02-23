@@ -1,7 +1,9 @@
+.. _getting_started:
+
 Getting started
 ===============
 
-Have you already :doc:`installed NEST <installation/index>`?
+Have you already :ref:`installed NEST <install_nest>`?
 
 Then let's look at how to create a neural network simulation!
 
@@ -85,12 +87,12 @@ Take a look at the :py:func:`.set_verbosity` documentation, which describes how 
 Want to know more?
 ------------------
 
-* Check out our :doc:`PyNEST tutorial <tutorials/index>`, which
+* Check out our :ref:`PyNEST tutorial <tutorials>`, which
   provides full explanations on how to build your first neural network
   simulation in NEST.
 
-* We have a large collection of :doc:`Example networks
-  <examples/index>` for you to explore.
+* We have a large collection of :ref:`Example networks
+  <pynest_examples>` for you to explore.
 
 * Regularly used terms and default physical units in NEST are
-  explained in the :doc:`Glossary <glossary>`.
+  explained in the :ref:`Glossary <glossary>`.

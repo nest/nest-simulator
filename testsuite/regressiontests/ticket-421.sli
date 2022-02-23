@@ -60,7 +60,7 @@ Author: Hans Ekkehard Plesser, 2010-05-05
 M_WARNING setverbosity
 
 {
-  modeldict keys
+  GetKernelStatus /node_models get
   {
     /model Set
 

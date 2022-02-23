@@ -1,3 +1,5 @@
+.. _pynest_examples:
+
 PyNEST examples
 ===============
 
@@ -9,6 +11,7 @@ PyNEST examples
    ../auto_examples/one_neuron_with_noise
    ../auto_examples/twoneurons
    ../auto_examples/balancedneuron
+   ../auto_examples/recording_demo
    ../auto_examples/BrodyHopfield
    ../auto_examples/CampbellSiegert
    ../auto_examples/hh_psc_alpha
@@ -33,6 +36,7 @@ PyNEST examples
    ../auto_examples/clopath_synapse_small_network
    ../auto_examples/tsodyks_depressing
    ../auto_examples/tsodyks_facilitating
+   ../auto_examples/urbanczik_synapse_example
 
 
 .. toctree::
@@ -91,7 +95,7 @@ PyNEST examples
 
 .. toctree::
    :maxdepth: 1
-   :caption: Spatially arranged networks examples
+   :caption: Spatially-stuctured networks examples
 
    ../auto_examples/spatial/conncomp
    ../auto_examples/spatial/conncon_sources

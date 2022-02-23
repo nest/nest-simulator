@@ -2179,9 +2179,9 @@ SeeAlso: welcome
 { 
   << >>
   begin
-    
+
     (HOME) getenv pop     % get home directory (we alrady know that $HOME is set)
-    
+
     (/.slirc)       % Check if a legacy file is present
     join
     ifstream       
@@ -2197,15 +2197,15 @@ SeeAlso: welcome
     {% $HOME/.slirc is not present
       (HOME) getenv pop % get home directory (we alrady know that $HOME is set)
       (/.nestrc) join /outfile Set
-      statusdict /prgdocdir get (/examples/nestrc.sli) join /infile Set  
-      
+      statusdict /prgdocdir get (/examples/sli/nestrc.sli) join /infile Set
+
       infile outfile CopyFile 
       {
         M_WARNING (evalrcfile) (NEST has created its configuration file $HOME/.nestrc) message
         M_WARNING (evalrcfile) (If this troubles you, type '/nestrc help' at the prompt to learn more.) message
       } :addwarnings 
     } ifelse
-    
+
   end
 } def
 
@@ -2340,6 +2340,26 @@ SeeAlso: statusdict
 % Add directories in environment variable SLI_PATH to the search path
 % for SLI files. Directories have to be separated by colon.
 (SLI_PATH) getenv { (:) breakup { addpath } forall } if
+
+
+/** @BeginDocumentation
+Name: unittest::exit_test_gracefully - End test script and report it as skipped
+Synopsis: literal exit_test_gracefully -> -
+Description:
+This function will terminate NEST/SLI with a return code signaling that a
+test was skipped. It should be used to leave test scripts that have special
+prerequisites.
+Parameters:
+literal - Reason for exit
+Example:
+/unittest using
+is_threaded not { /skipped_no_threading exit_test_gracefully } if
+SeeAlso: skip_if_no_mpi, skip_if_have_mpi, skip_if_not_threaded, skip_if_without_gsl, skip_if_without_music 
+*/
+/exit_test_gracefully[/literaltype]
+{
+  statusdict/exitcodes :: exch get quit_i
+} bind def
 
 
 /** @BeginDocumentation

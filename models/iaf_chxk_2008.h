@@ -56,14 +56,14 @@ precise spike times used in Casti et al. 2008
 Description
 +++++++++++
 
-iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with
+``iaf_chxk_2008`` is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses [1]_. A spike is emitted when the membrane potential
 is crossed from below. After a spike, an afterhyperpolarizing (AHP) conductance
 is activated which repolarizes the neuron over time. Membrane potential is not
 reset explicitly and the model also has no explicit refractory time.
 
 The AHP conductance and excitatory and inhibitory synaptic input conductances
-follow alpha-function time courses as in the iaf_cond_alpha model.
+follow alpha-function time courses as in the ``iaf_cond_alpha`` model.
 
 .. note::
    In accordance with the original Fortran implementation of the model used
@@ -71,7 +71,7 @@ follow alpha-function time courses as in the iaf_cond_alpha model.
    determined by linear interpolation within the time step during which the
    threshold was crossed.
 
-   iaf_chxk_2008 neurons therefore emit spikes with precise spike time
+   ``iaf_chxk_2008`` neurons therefore emit spikes with precise spike time
    information, but they ignore precise spike times when handling synaptic
    input.
 
@@ -178,7 +178,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
   void update( Time const&, const long, const long );
@@ -230,8 +229,7 @@ private:
    * dynamics and the refractory count. The state vector must be a
    * C-style array to be compatible with GSL ODE solvers.
    *
-   * @note Copy constructor and assignment operator are required because
-   *       of the C-style array.
+   * @note Copy constructor required because  of the C-style array.
    */
 public:
   struct State_
@@ -257,6 +255,7 @@ public:
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
+
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -279,8 +278,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_chxk_2008& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_chxk_2008& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_chxk_2008& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_chxk_2008& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_chxk_2008 > logger_;

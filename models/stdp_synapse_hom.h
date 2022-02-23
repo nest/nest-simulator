@@ -42,7 +42,7 @@ Synapse type for spike-timing dependent plasticity using homogeneous parameters
 Description
 +++++++++++
 
-stdp_synapse_hom is a connector to create synapses with spike time
+``stdp_synapse_hom`` is a connector to create synapses with spike time
 dependent plasticity (as defined in [1]_). Here the weight dependence
 exponent can be set separately for potentiation and depression.
 
@@ -55,6 +55,13 @@ Examples:
 * additive STDP       [3]_  mu_plus = mu_minus = 0.0
 * Guetig STDP         [1]_  mu_plus = mu_minus = [0.0,1.0]
 * van Rossum STDP     [4]_  mu_plus = 0.0 mu_minus = 1.0
+
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :ref:`precise spike timing <sim_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
 
 Parameters
 ++++++++++
@@ -69,8 +76,6 @@ Parameters
  mu_minus real     Weight dependence exponent, depression
  Wmax     real     Maximum allowed weight
 ========= =======  ======================================================
-
-Remarks:
 
 The parameters are common to all synapses of the model and must be set using
 SetDefaults on the synapse model.

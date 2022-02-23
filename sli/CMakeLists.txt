@@ -26,7 +26,7 @@ set( sli_sources
     charcode.cc charcode.h
     datum.cc datum.h
     dict.cc dict.h
-    dictdatum.cc dictdatum.h
+    dictdatum.h
     dictstack.cc dictstack.h
     dictutils.cc dictutils.h
     doubledatum.cc doubledatum.h
@@ -38,14 +38,14 @@ set( sli_sources
     get_mem.c
     integerdatum.cc integerdatum.h
     interpret.cc interpret.h
-    iostreamdatum.cc iostreamdatum.h
+    iostreamdatum.h
     literaldatum.cc
-    lockptrdatum.h lockptrdatum_impl.h
+    lockptrdatum.h
     sharedptrdatum.h
     name.cc name.h
     slinames.h slinames.cpp
     namedatum.cc namedatum.h
-    numericdatum.h numericdatum_impl.h
+    numericdatum.h
     oosupport.cc oosupport.h
     parser.cc parser.h
     parserdatum.h
@@ -98,11 +98,13 @@ add_executable( sli puresli.cc )
 target_link_libraries( sli sli_lib sli_readline ${GSL_LIBRARIES} OpenMP::OpenMP_CXX )
 
 target_include_directories( sli PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     )
 
 target_include_directories( sli_lib PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     )
@@ -112,6 +114,7 @@ set_target_properties( sli_lib
     )
 
 target_include_directories( sli_readline PRIVATE
+    ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     )

@@ -24,7 +24,7 @@
 
 #ifdef HAVE_MUSIC
 
-// Includes from C++:
+// C++ includes:
 #include <numeric>
 #include <string>
 
@@ -206,11 +206,6 @@ nest::music_cont_out_proxy::music_cont_out_proxy( const music_cont_out_proxy& n 
 }
 
 void
-nest::music_cont_out_proxy::init_state_( const Node& /* np */ )
-{
-}
-
-void
 nest::music_cont_out_proxy::init_buffers_()
 {
   B_.data_.clear();
@@ -242,10 +237,7 @@ nest::music_cont_out_proxy::calibrate()
   // only publish the output port once,
   if ( S_.published_ == false )
   {
-    const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
-    assert( synmodel.empty() == false && "synapse 'static_synapse' not available" );
-
-    const index synmodel_id = static_cast< index >( synmodel );
+    const index synmodel_id = kernel().model_manager.get_synapse_model_id( "static_synapse" );
     std::vector< MUSIC::GlobalIndex > music_index_map;
 
     DictionaryDatum dummy_params = new Dictionary();

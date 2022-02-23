@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Testing the adapting exponential integrate and fire model in NEST (Brette and Gerstner Fig 2C)
-----------------------------------------------------------------------------------------------------
+"""
+Testing the adapting exponential integrate and fire model in NEST (Brette and Gerstner Fig 2C)
+----------------------------------------------------------------------------------------------
 
 This example tests the adaptive integrate and fire model (AdEx) according to
 Brette and Gerstner [1]_ reproduces Figure 2C of the paper.
@@ -29,7 +30,7 @@ To be consistent with the other parameters in the equations, `b` must be
 converted to `pA` (pico Ampere).
 
 References
-~~~~~~~~~~~
+~~~~~~~~~~
 
 .. [1] Brette R and Gerstner W (2005). Adaptive exponential integrate-and-fire model as an effective
        description of neuronal activity J. Neurophysiology. https://doi.org/10.1152/jn.00686.2005
@@ -47,14 +48,12 @@ nest.ResetKernel()
 # First we make sure that the resolution of the simulation is 0.1 ms. This is
 # important, since the slop of the action potential is very steep.
 
-res = 0.1
-nest.SetKernelStatus({"resolution": res})
+nest.resolution = 0.1
 neuron = nest.Create("aeif_cond_alpha")
 
 ###############################################################################
 # `a` and `b` are parameters of the adex model. Their values come from the
 # publication.
-
 
 neuron.set(a=4.0, b=80.5)
 
@@ -63,8 +62,8 @@ neuron.set(a=4.0, b=80.5)
 # producing stimulus currents during two time-intervals.
 
 dc = nest.Create("dc_generator", 2)
+dc.set(amplitude=[500.0, 800.0], start=[0.0, 500.0], stop=[200.0, 1000.0])
 
-dc.set(amplitude=[500.0, 800.0], start=[0.0,  500.0], stop=[200.0, 1000.0])
 ###############################################################################
 # We connect the DC generators.
 
@@ -85,4 +84,4 @@ nest.Simulate(1000.0)
 
 nest.voltage_trace.from_device(voltmeter)
 plt.axis([0, 1000, -80, -20])
-nest.voltage_trace.show()
+plt.show()

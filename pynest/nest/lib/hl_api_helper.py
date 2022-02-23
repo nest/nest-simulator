@@ -38,7 +38,7 @@ import pydoc
 
 from string import Template
 
-from ..ll_api import *
+from ..ll_api import check_stack, sli_func, sps, sr, spp
 from .. import pynestkernel as kernel
 
 __all__ = [
@@ -70,7 +70,9 @@ __all__ = [
 _deprecation_warning = {'deprecated_model': {'deprecation_issued': False,
                                              'replacement': 'replacement_mod'},
                         'iaf_psc_alpha_canon': {'deprecation_issued': False,
-                                                'replacement': 'iaf_psc_alpha_ps'}}
+                                                'replacement': 'iaf_psc_alpha_ps'},
+                        'pp_pop_psc_delta': {'deprecation_issued': False,
+                                             'replacement': 'gif_pop_psc_exp'}}
 
 
 def format_Warning(message, category, filename, lineno, line=None):
@@ -593,7 +595,7 @@ def get_parameters_hierarchical_addressing(nc, params):
     return result
 
 
-class SuppressedDeprecationWarning(object):
+class SuppressedDeprecationWarning:
     """
     Context manager turning off deprecation warnings for given methods.
 

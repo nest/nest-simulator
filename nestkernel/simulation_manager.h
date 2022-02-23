@@ -49,11 +49,10 @@ class SimulationManager : public ManagerInterface
 public:
   SimulationManager();
 
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  virtual void initialize() override;
+  virtual void finalize() override;
+  virtual void set_status( const DictionaryDatum& ) override;
+  virtual void get_status( DictionaryDatum& ) override;
 
   /**
       check for errors in time before run
@@ -68,22 +67,24 @@ public:
   */
 
   /**
-     Initialize simulation for a set of run calls.
-     Must be called before a sequence of runs, and again after cleanup.
-  */
-  void prepare();
+   * Initialize simulation for a set of run calls.
+   * Must be called before a sequence of runs, and again after cleanup.
+   */
+  void prepare() override;
+
   /**
-     Run a simulation for another `Time`. Can be repeated ad infinitum with
-     calls to get_status(), but any changes to the network are undefined,
-     leading serious risk of incorrect results.
-  */
+   * Run a simulation for another `Time`. Can be repeated ad infinitum with
+   * calls to get_status(), but any changes to the network are undefined,
+   * leading serious risk of incorrect results.
+   */
   void run( Time const& );
+
   /**
-     Closes a set of runs, doing finalizations such as file closures.
-     After cleanup() is called, no more run()s can be called before another
-     prepare() call.
-  */
-  void cleanup();
+   * Closes a set of runs, doing finalizations such as file closures.
+   * After cleanup() is called, no more run()s can be called before another
+   * prepare() call.
+   */
+  void cleanup() override;
 
   /**
    * Returns true if waveform relaxation is used.
@@ -146,6 +147,21 @@ public:
   // TODO: Precisely how defined? Rename!
   Time const& get_clock() const;
 
+  /**
+   * Get the simulation duration in the current call to run().
+   */
+  Time run_duration() const;
+
+  /**
+   * Get the start time of the current call to run().
+   */
+  Time run_start_time() const;
+
+  /**
+   * Get the simulation's time at the end of the current call to run().
+   */
+  Time run_end_time() const;
+
   //! Return start of current time slice, in steps.
   // TODO: rename / precisely how defined?
   delay get_from_step() const;
@@ -176,8 +192,8 @@ private:
 
   Time clock_;                     //!< SimulationManager clock, updated once per slice
   delay slice_;                    //!< current update slice
-  delay to_do_;                    //!< number of pending cycles.
-  delay to_do_total_;              //!< number of requested cycles in current simulation.
+  delay to_do_;                    //!< number of pending steps
+  delay to_do_total_;              //!< number of requested steps in current simulation
   delay from_step_;                //!< update clock_+from_step<=T<clock_+to_step_
   delay to_step_;                  //!< update clock_+from_step<=T<clock_+to_step_
   timeval t_slice_begin_;          //!< Wall-clock time at the begin of a time slice
@@ -200,6 +216,10 @@ private:
                                    //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
+  double update_time_limit_;       //!< throw exception if single update cycle takes longer
+                                   //!< than update_time_limit_ (seconds, default inf)
+  double min_update_time_;         //!< shortest update time seen so far (seconds)
+  double max_update_time_;         //!< longest update time seen so far (seconds)
 
   // private stop watches for benchmarking purposes
   Stopwatch sw_simulate_;
@@ -247,6 +267,26 @@ inline Time const&
 SimulationManager::get_clock() const
 {
   return clock_;
+}
+
+inline Time
+SimulationManager::run_duration() const
+{
+  return to_do_total_ * Time::get_resolution();
+}
+
+inline Time
+SimulationManager::run_start_time() const
+{
+  assert( not simulating_ ); // implicit due to using get_time()
+  return get_time() - ( to_do_total_ - to_do_ ) * Time::get_resolution();
+}
+
+inline Time
+SimulationManager::run_end_time() const
+{
+  assert( not simulating_ ); // implicit due to using get_time()
+  return ( get_time().get_steps() + to_do_ ) * Time::get_resolution();
 }
 
 inline delay

@@ -73,7 +73,8 @@ nest::multimeter::Parameters_::Parameters_( const Parameters_& p )
   interval_.calibrate();
 }
 
-nest::multimeter::Parameters_& nest::multimeter::Parameters_::operator=( const Parameters_& p )
+nest::multimeter::Parameters_&
+nest::multimeter::Parameters_::operator=( const Parameters_& p )
 {
   interval_ = p.interval_;
   offset_ = p.offset_;

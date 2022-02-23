@@ -108,8 +108,8 @@ public:
    * Returns the time elapsed between the start and stop of the
    * stopwatch. If it is running, it returns the time from start
    * until now. If the stopwatch is run previously, the previous
-   * runtime is added. If you want only the last measurment, you
-   * have to reset the timer, before stating the measurment.
+   * runtime is added. If you want only the last measurement, you
+   * have to reset the timer, before stating the measurement.
    * Does not change the running state.
    */
   double elapsed( timeunit_t timeunit = SECONDS ) const;
@@ -118,8 +118,8 @@ public:
    * Returns the time elapsed between the start and stop of the
    * stopwatch. If it is running, it returns the time from start
    * until now. If the stopwatch is run previously, the previous
-   * runtime is added. If you want only the last measurment, you
-   * have to reset the timer, before stating the measurment.
+   * runtime is added. If you want only the last measurement, you
+   * have to reset the timer, before stating the measurement.
    * Does not change the running state.
    * In contrast to Stopwatch::elapsed(), only the timestamp is returned,
    * that is the number if microseconds as an integer.
@@ -218,7 +218,7 @@ nest::Stopwatch::elapsed_timestamp() const
   }
   else
   {
-    // stopped before, get time of current measurment + last measurments
+    // stopped before, get time of current measurement + last measurements
     return _end - _beg + _prev_elapsed;
   }
 #else
@@ -232,7 +232,7 @@ nest::Stopwatch::reset()
 #ifndef DISABLE_TIMING
   _beg = 0; // invariant: _end >= _beg
   _end = 0;
-  _prev_elapsed = 0; // erase all prev. measurments
+  _prev_elapsed = 0; // erase all prev. measurements
   _running = false;  // of course not running.
 #endif
 }

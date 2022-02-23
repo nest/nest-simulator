@@ -64,7 +64,7 @@ update. This ensures that a neuron is updated on average every :math:`\tau_m`
 ms. Since in the original papers [1]_ [2]_ neurons are coupled with zero
 delay, this implementation follows that definition. It uses the update
 scheme described in [3]_ to maintain causality: The incoming events in
-time step t_i are taken into account at the beginning of the time step
+time step `t_i` are taken into account at the beginning of the time step
 to calculate the gain function and to decide upon a transition.  In
 order to obtain delayed coupling with delay :math:`d`, the user has to specify
 the delay :math:`d+h` upon connection, where :math:`h` is the simulation time step.
@@ -147,10 +147,11 @@ public:
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
   void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
-  bool operator()( librandom::RngPtr rng, double h );
+  bool operator()( RngPtr rng, double h );
 };
 
-inline bool gainfunction_erfc::operator()( librandom::RngPtr rng, double h )
+inline bool
+gainfunction_erfc::operator()( RngPtr rng, double h )
 {
   return rng->drand() < 0.5 * erfc( -( h - theta_ ) / ( sqrt( 2. ) * sigma_ ) );
 }

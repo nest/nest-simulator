@@ -34,8 +34,8 @@
 #include <string>
 
 // Includes from libnestutil:
-#include "numerics.h"
 #include "dict_util.h"
+#include "numerics.h"
 
 
 // Includes from nestkernel:
@@ -147,14 +147,6 @@ nest::rate_transformer_node< TNonlinearities >::rate_transformer_node( const rat
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-template < class TNonlinearities >
-void
-nest::rate_transformer_node< TNonlinearities >::init_state_( const Node& proto )
-{
-  const rate_transformer_node& pr = downcast< rate_transformer_node >( proto );
-  S_ = pr.S_;
-}
 
 template < class TNonlinearities >
 void

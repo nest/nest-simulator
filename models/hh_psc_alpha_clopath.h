@@ -67,7 +67,7 @@ Hodgkin-Huxley neuron model with support for Clopath plasticity
 Description
 +++++++++++
 
-hh_psc_alpha_clopath is an implementation of a spiking neuron using the
+``hh_psc_alpha_clopath`` is an implementation of a spiking neuron using the
 Hodgkin-Huxley formalism and that is capable of connecting to a Clopath
 synapse.
 
@@ -81,6 +81,8 @@ weight 1.0 results in a peak current of 1 pA.
 Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
+
+See also [1]_, [2]_, [3]_, [4]_, [5]_, [6]_.
 
 Parameters
 ++++++++++
@@ -208,7 +210,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
   void update( Time const&, const long, const long );
@@ -256,8 +257,7 @@ public:
 
   /**
    * State variables of the model.
-   * @note Copy constructor and assignment operator required because
-   *       of C-style array.
+   * @note Copy constructor required because of C-style array.
    */
   struct State_
   {
@@ -290,6 +290,7 @@ public:
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
+
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
@@ -304,8 +305,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( hh_psc_alpha_clopath& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, hh_psc_alpha_clopath& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_psc_alpha_clopath& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, hh_psc_alpha_clopath& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< hh_psc_alpha_clopath > logger_;

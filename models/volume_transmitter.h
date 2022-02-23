@@ -24,9 +24,9 @@
 #define VOLUME_TRANSMITTER_H
 
 // Includes from nestkernel:
-#include "archiving_node.h"
 #include "event.h"
 #include "nest_types.h"
+#include "node.h"
 #include "ring_buffer.h"
 #include "spikecounter.h"
 
@@ -42,7 +42,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Node used in combination with neuromodulated synaptic plasticity
+Support node for neuromodulated synaptic plasticity
 
 Description
 +++++++++++
@@ -51,31 +51,33 @@ The volume transmitter is used in combination with neuromodulated
 synaptic plasticity, plasticity that depends not only on the activity
 of the pre- and the postsynaptic neuron but also on a non-local
 neuromodulatory third signal. It collects the spikes from all neurons
-connected to the volume transmitter and delivers the spikes to a subset
-of synapses in the network. The user specifies this subset by
-passing the volume transmitter as a parameter when a
-neuromodulatory synapse is defined.
+connected to the volume transmitter and delivers the spikes to a
+subset of synapses in the network. The user specifies this subset by
+passing the volume transmitter as a parameter when a neuromodulatory
+synapse is defined.
 
 It is assumed that the neuromodulatory signal is a function of the
-spike times of all spikes emitted by the population of neurons connected
-to the volume transmitter. The neuromodulatory dynamics is calculated
-in the synapses itself.
+spike times of all spikes emitted by the population of neurons
+connected to the volume transmitter. The neuromodulatory dynamics is
+calculated in the synapses itself.
 
-The volume transmitter interacts in a hybrid structure with the neuromodulated
-synapses: In addition to the delivery of the neuromodulatory spikes triggered
-by every pre-synaptic spike, the neuromodulatory spike history is delivered
-at regular time intervals. The interval is equal to ``deliver_interval * d_min``,
-where ``deliver_interval`` is an (integer) entry in the parameter dictionary and
-``d_min`` is the minimal synaptic delay.
+The volume transmitter interacts in a hybrid structure with the
+neuromodulated synapses: In addition to the delivery of the
+neuromodulatory spikes triggered by every pre-synaptic spike, the
+neuromodulatory spike history is delivered at regular time
+intervals. The interval is equal to ``deliver_interval * d_min``,
+where ``deliver_interval`` is an (integer) entry in the parameter
+dictionary and ``d_min`` is the minimal synaptic delay.
 
 The implementation is based on the framework presented in [1]_.
 
 Parameters
 ++++++++++
 
-- deliver_interval - time interval given in d_min time steps in which
-                     the volume signal is delivered from the volume
-                     transmitter to the assigned synapses. Must be integer.
+deliver_interval
+    Time interval given in d_min time steps in which the volume signal
+    is delivered from the volume transmitter to the assigned synapses.
+    Must be integer.
 
 References
 ++++++++++
@@ -101,7 +103,7 @@ EndUserDocs */
 
 class ConnectorBase;
 
-class volume_transmitter : public ArchivingNode
+class volume_transmitter : public Node
 {
 
 public:
@@ -152,7 +154,6 @@ public:
   const std::vector< spikecounter >& deliver_spikes();
 
 private:
-  void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
 
@@ -200,7 +201,6 @@ inline void
 volume_transmitter::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
-  ArchivingNode::get_status( d );
 }
 
 inline void
@@ -208,12 +208,6 @@ volume_transmitter::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d, this );   // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
-  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

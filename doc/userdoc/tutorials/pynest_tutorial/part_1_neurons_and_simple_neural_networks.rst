@@ -1,3 +1,5 @@
+.. _pynest_tutorial_1:
+
 Part 1: Neurons and simple neural networks
 ==========================================
 
@@ -9,7 +11,7 @@ neuronal networks. When you have worked through this material, you will
 know how to:
 
 -  start PyNEST
--  create neurons and stimulating/recording devices
+-  create neurons and stimulation or recording devices
 -  query and set their parameters
 -  connect them to each other or to devices
 -  simulate the network
@@ -18,14 +20,14 @@ know how to:
 For more information on the usage of PyNEST, please see the other
 sections of this primer:
 
--  :doc:`Part 2: Populations of neurons <part_2_populations_of_neurons>`
--  :doc:`Part 3: Connecting networks with
-   synapses <part_3_connecting_networks_with_synapses>`
--  :doc:`Part 4: Spatially structured
-   networks <part_4_spatially_structured_networks>`
+-  :ref:`Part 2: Populations of neurons <pynest_tutorial_2>`
+-  :ref:`Part 3: Connecting networks with
+   synapses <pynest_tutorial_3>`
+-  :ref:`Part 4: Spatially structured
+   networks <pynest_tutorial_4>`
 
-More advanced examples can be found at `Example
-Networks <https://www.nest-simulator.org/more-example-networks/>`__, or
+More advanced examples can be found at :ref:`Example
+Networks <pynest_examples>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
@@ -40,8 +42,8 @@ PyNEST - an interface to the NEST simulator
 
    Python Interface Figure.
    The Python interpreter imports NEST as a module and
-   dynamically loads the NEST simulator kernel (``pynestkernel.so``). The
-   core functionality is defined in ``hl_api.py``. A simulation script of
+   dynamically loads the NEST simulator kernel (``pynestkernel.so``).
+   A simulation script of
    the user (``mysimulation.py``) uses functions defined in this high-level
    API. These functions generate code in SLI (Simulation Language
    Interpreter), the native language of the interpreter of NEST. This
@@ -55,7 +57,7 @@ illustrates the interaction between the user’s simulation script
 (``mysimulation.py``) and the NEST simulator. Eppler et al. [3]_
 contains a technically detailed description of the implementation of this
 interface and parts of this text are based on this reference. The
-simulation kernel is written in C++ to obtain the highest possible performance
+simulation kernel is written in C++ to obtain the highest possible performance
 for the simulation.
 
 You can use PyNEST interactively from the Python prompt or from within
@@ -90,17 +92,15 @@ prompted for.
 
     dir(nest)
 
-One such command is ``nest.Models()``, which will return a list of all
-the available models you can use. If you want to obtain more information
-about a particular command, you may use Python’s standard help system.
+If you want to obtain more information about a particular command, you
+may use Python’s standard help system, which will return the help text
+(docstring) explaining the use of this particular function. There is a
+help system within NEST as well. You can open the help pages in a
+browser using ``nest.helpdesk()`` and you can get the help page for a
+particular NEST object (like a synapse or neuron model) using
+``nest.help('object')``.
 
-This will return the help text (docstring) explaining the use of this
-particular function. There is a help system within NEST as well. You
-can open the help pages in a browser using ``nest.helpdesk()`` and you
-can get the help page for a particular NEST object (like a synapse or
-neuron model) using ``nest.help(object)``.
-
-Creating Nodes
+Creating nodes
 --------------
 
 A neural network in NEST consists of two basic element types: nodes and
@@ -110,12 +110,12 @@ arranged with spatial structure to build networks distributed in space
 - we will get to this later in the course. For now we
 will work with the default network structure of NEST.
 
-New nodes are created with the command ``Create``, which takes as arguments the model name of the
+New nodes are created with the command :py:func:`.Create`, which takes as arguments the model name of the
 desired node type, and optionally the number of nodes to be created and
-the initialising parameters. The function returns a ``NodeCollection`` of handles to
-the new nodes, which you can assign to a variable for later use. A ``NodeCollection`` is a compact
+the initialising parameters. The function returns a :py:class:`.NodeCollection` of handles to
+the new nodes, which you can assign to a variable for later use. A :py:class:`.NodeCollection` is a compact
 representation of the node handles, which are integer numbers, called *ids*. Many PyNEST functions expect
-or return a ``NodeCollection`` (see `command overview`_). Thus, it is
+or return a :py:class:`.NodeCollection` (see `command overview`_). Thus, it is
 easy to apply functions to large sets of nodes with a single function
 call.
 
@@ -147,7 +147,7 @@ Many of these properties are not relevant for the dynamics of the
 neuron. To find out what the interesting properties are, look at the
 documentation of the model through the helpdesk. If you already know
 which properties you are interested in, you can specify a key, or a list
-of keys, as an optional argument to ``get``:
+of keys, as an optional argument to :py:meth:`~.NodeCollection.get`:
 
 ::
 
@@ -157,13 +157,14 @@ of keys, as an optional argument to ``get``:
 In the first case we query the value of the constant background current
 ``I_e``; the result is given as a floating point element. In the second
 case, we query the values of the reset potential and threshold of the
-neuron, and receive the result as a dictionary . If ``get`` is
+neuron, and receive the result as a dictionary . If :py:meth:`~.NodeCollection.get` is
 called on a NodeCollection with more than one element, the returned dictionary
 will contain lists with the same number of elements as the number of nodes in
-the NodeCollection. If ``get`` is called with a specific key on a NodeCollection
-with several elements, a list the size of the NodeCollection will be returned.
+the NodeCollection. If ``get()`` is
+called with a specific key on a NodeCollection with several elements, a list
+the size of the NodeCollection will be returned.
 
-To modify the properties in the dictionary, we use ``set``. In the
+To modify the properties in the dictionary, we use :py:meth:`~.NodeCollection.set`. In the
 following example, the background current is set to 375.0pA, a value
 causing the neuron to spike periodically.
 
@@ -247,7 +248,7 @@ to form a small network.
    Spikes of the neuron.
 
 
-The order in which the arguments to ``Connect`` are specified reflects
+The order in which the arguments to :py:func:`.Connect` are specified reflects
 the flow of events: if the neuron spikes, it sends an event to the spike
 recorder. Conversely, the multimeter periodically sends requests to the
 neuron to ask for its membrane potential at that point in time. This can
@@ -308,14 +309,14 @@ obtain and display the spikes from the spike recorder.
     plt.plot(ts, evs, ".")
     plt.show()
 
-Here we extract the events more concisely by sending the parameter name to ``get``.
-This extracts the dictionary element
+Here we extract the events more concisely by sending the parameter name to
+:py:meth:`~.NodeCollection.get`. This extracts the dictionary element
 with the key ``events`` rather than the whole status dictionary. The
 output should look like :numref:`VM-neuron` and :numref:`spikes-one-neuron`.
 If you want to execute this as a script, just paste all lines into a text
 file named, say, ``one-neuron.py`` . You can then run it from the command
 line by prefixing the file name with ``python``, or from the Python or ipython
-prompt, by prefixing it with ``run``.
+prompt, by prefixing it with :py:func:`.Run`.
 
 It is possible to collect information of multiple neurons on a single
 multimeter. This does complicate retrieving the information: the data
@@ -380,13 +381,13 @@ Additionally, the constant input current should be set to 0:
     neuron.set(I_e=0.0)
 
 Each event of the excitatory generator should produce a postsynaptic
-current of 1.2pA amplitude, an inhibitory event of -2.0pA. The synaptic
-weights can be defined in a dictionary, which is passed to the
-``Connect`` function using the keyword ``syn_spec`` (synapse
-specifications). In general all parameters determining the synapse can
-be specified in the synapse dictionary, such as ``"weight"``,
-``"delay"``, the synaptic model (``"synapse_model"``) and parameters specific to
-the synaptic model.
+current of 1.2pA amplitude, an inhibitory event of -2.0pA. The
+synaptic weights can be defined in a dictionary, which is passed to
+the :py:func:`.Connect` function using the keyword ``syn_spec``
+(synapse specifications). In general all parameters determining the
+synapse can be specified in the synapse dictionary, such as
+``"weight"``, ``"delay"``, the synaptic model (``"synapse_model"``)
+and parameters specific to the synaptic model.
 
 ::
 
@@ -418,8 +419,8 @@ the synaptic model.
 The rest of the code remains as before. You should see a membrane
 potential as in :numref:`vm_one_neuron_noise` and :numref:`spikes_one_neuron_noise`.
 
-In the next part of the introduction (:doc:`Part 2: Populations of
-neurons <part_2_populations_of_neurons>`) we will look at more
+In the next part of the introduction (:ref:`Part 2: Populations of
+neurons <pynest_tutorial_2>`) we will look at more
 methods for connecting many neurons at once.
 
 Two connected neurons
@@ -474,7 +475,7 @@ the following sections of this introduction will add more.
 Getting information about NEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See the :doc:`Getting Help Section <../../getting_help>`
+See the :ref:`Getting Help Section <getting_help>`
 
 Nodes
 ~~~~~
@@ -505,9 +506,9 @@ Nodes
 Connections
 ~~~~~~~~~~~
 
-This is an abbreviated version of the documentation for the ``Connect``
+This is an abbreviated version of the documentation for the :py:func:`.Connect`
 function, please see NEST’s online help for the full version and
-:doc:`Connection Management <../../guides/connection_management>` for an introduction
+:ref:`Connection Management <connection_management>` for an introduction
 and examples.
 
 -  ``Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=False)``
@@ -534,21 +535,22 @@ the dictionary.
 Synapse
 ^^^^^^^
 
-The synapse model and its properties can be inserted either as a string
-describing one synapse model (synapse models are listed in the
-synapsedict) or as a dictionary. If no synapse model
-is specified the default model ``"static_synapse"`` will be used.
-Available keys in the synapse dictionary are ``"synapse_model"``, ``"weight"``,
-``"delay"``, ``"receptor_type"`` and parameters specific to the chosen
-synapse model. All parameters are optional and if not specified will use
-the default values determined by the current synapse model. ``"synapse_model"``
-determines the synapse type, taken from pre-defined synapse types in
-NEST or manually specified synapses created via ``CopyModel()``. All
-other parameters can be scalars or distributions. In the case of scalar
-parameters, all keys take doubles except for ``"receptor_type"`` which
-has to be initialised with an integer. Distributed parameters are
-initialised with a Parameter with distribution-specific
-arguments (such as ``"mean"`` and ``"std"``).
+The synapse model and its properties can be inserted either as a
+string naming a synapse model (see ``nest.synapse_models`` for all
+available models) or as a dictionary. If no synapse model is
+specified, the default model ``"static_synapse"`` will be used.
+Available keys in the synapse dictionary are ``"synapse_model"``,
+``"weight"``, ``"delay"``, ``"receptor_type"``, as well as parameters
+specific to the chosen synapse model. All parameters are optional and
+if not specified will use the default values determined by the current
+synapse model. ``"synapse_model"`` determines the synapse type, taken
+from pre-defined synapse types in NEST or manually specified synapses
+created via :py:func:`.CopyModel`.  All other parameters can be
+scalars or distributions. In the case of scalar parameters, all keys
+take doubles except for ``"receptor_type"`` which has to be
+initialized with an integer.  Distributed parameters are initialized
+with a Parameter with distribution-specific arguments (such as
+``"mean"`` and ``"std"``).
 
 Simulation control
 ~~~~~~~~~~~~~~~~~~

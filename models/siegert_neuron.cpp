@@ -20,7 +20,6 @@
  *
  */
 
-
 #include "siegert_neuron.h"
 
 #ifdef HAVE_GSL
@@ -278,13 +277,6 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::siegert_neuron::init_state_( const Node& proto )
-{
-  const siegert_neuron& pr = downcast< siegert_neuron >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::siegert_neuron::init_buffers_()

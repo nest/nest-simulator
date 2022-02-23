@@ -35,12 +35,12 @@
 
 // Includes from sli:
 #include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
 #include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
-#include "numerics.h"
 #include "compose.hpp"
+#include "numerics.h"
 #include "propagator_stability.h"
 
 namespace nest
@@ -162,20 +162,20 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
-      "tau_sfa: %1\nSize of q_sfa: %2",
-      tau_sfa_.size(),
-      q_sfa_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
+                       "tau_sfa: %1\nSize of q_sfa: %2",
+        tau_sfa_.size(),
+        q_sfa_.size() ) );
   }
 
   if ( tau_stc_.size() != q_stc_.size() )
   {
-    throw BadProperty( String::compose(
-      "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
-      "tau_stc: %1\nSize of q_stc: %2",
-      tau_stc_.size(),
-      q_stc_.size() ) );
+    throw BadProperty(
+      String::compose( "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
+                       "tau_stc: %1\nSize of q_stc: %2",
+        tau_stc_.size(),
+        q_stc_.size() ) );
   }
   if ( g_L_ <= 0 )
   {
@@ -269,14 +269,6 @@ nest::gif_psc_exp::gif_psc_exp( const gif_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_psc_exp::init_state_( const Node& proto )
-{
-  const gif_psc_exp& pr = downcast< gif_psc_exp >( proto );
-  S_ = pr.S_;
-  // sfa_elems_ and stc_elems_ are initialized in calibrate()
-}
-
-void
 nest::gif_psc_exp::init_buffers_()
 {
   B_.spikes_ex_.clear(); // includes resize
@@ -292,7 +284,7 @@ nest::gif_psc_exp::calibrate()
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
-  V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
+  V_.rng_ = get_vp_specific_rng( get_thread() );
 
   V_.P11ex_ = std::exp( -h / P_.tau_ex_ );
   V_.P11in_ = std::exp( -h / P_.tau_in_ );

@@ -76,12 +76,12 @@ systemdict /GNUReadline known not {
 	/DumpLayerNodes_os_i /FileNames_r /FileNames_s /FixedPoint__p
 	/FixedPoint__p_i /Flatten_a /Flatten_a_i
 	/GetConnections_D /GetDefaults_l /GetPosition_i /GetStatus_C /GetStatus_a
-	/GetStatus_dict /GetStatus_i /GetStatus_v /GetValue_a_P /Inside_a_M
+	/GetStatus_dict /GetStatus_i /GetValue_a_P /Inside_a_M
 	/JoinTo_ald /JoinTo_cont /JoinTo_d /MapIndexed_a /MapIndexed_s /MapThread_a
 	/Map_s /MathematicaToSliIndex_a /MathematicaToSliIndex_i
 	/Part_a /Partition_a_i_i /RandomArray_v_i
 	/Random_i /SetDefaults_l_D
-	/SetStatus_CD /SetStatus_aa /SetStatus_dict /SetStatus_id /SetStatus_v
+	/SetStatus_CD /SetStatus_aa /SetStatus_dict /SetStatus_id
 	/Simulate_d /Take_a_a /Take_a_i /TimeCommunicationAlltoall_i_i
 	/TimeCommunicationAlltoallv_i_i /TimeCommunication_i_i_b
 	/TimeCommunicationv_i_i /UnitStep_d /UnitStep_da /UnitStep_i

@@ -124,7 +124,8 @@ Name::info( std::ostream& out )
 }
 
 
-std::ostream& operator<<( std::ostream& o, const Name& n )
+std::ostream&
+operator<<( std::ostream& o, const Name& n )
 {
   o << n.toString().c_str();
   return o;

@@ -26,8 +26,8 @@
 #include <numeric>
 
 // Includes from libnestutil:
-#include "dict_util.h"
 #include "compose.hpp"
+#include "dict_util.h"
 #include "logging.h"
 
 // Includes from nestkernel:
@@ -52,12 +52,6 @@ nest::spin_detector::spin_detector( const spin_detector& n )
   , last_in_node_id_( 0 )
   , t_last_in_spike_( Time::neg_inf() ) // mark as not initialized
 {
-}
-
-void
-nest::spin_detector::init_state_( const Node& )
-{
-  init_buffers_();
 }
 
 void

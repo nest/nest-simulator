@@ -1,5 +1,4 @@
-Acknowledgments
----------------
+**Acknowledgments**
 
 NEST development has been supported by many organisations, programs, and 
 individuals since 1993. The following list of support received is therefore 

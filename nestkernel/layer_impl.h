@@ -26,9 +26,9 @@
 #include "layer.h"
 
 // Includes from nestkernel:
-#include "node_collection.h"
-#include "nest_datums.h"
 #include "booldatum.h"
+#include "nest_datums.h"
+#include "node_collection.h"
 
 // Includes from spatial:
 #include "grid_layer.h"

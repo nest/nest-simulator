@@ -39,8 +39,8 @@
 #include "logging.h"
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
 #include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -49,12 +49,6 @@
 nest::music_event_in_proxy::Parameters_::Parameters_()
   : port_name_( "event_in" )
   , channel_( 0 )
-{
-}
-
-nest::music_event_in_proxy::Parameters_::Parameters_( const Parameters_& op )
-  : port_name_( op.port_name_ )
-  , channel_( op.channel_ )
 {
 }
 
@@ -120,14 +114,6 @@ nest::music_event_in_proxy::music_event_in_proxy( const music_event_in_proxy& n 
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::music_event_in_proxy::init_state_( const Node& proto )
-{
-  const music_event_in_proxy& pr = downcast< music_event_in_proxy >( proto );
-
-  S_ = pr.S_;
-}
 
 void
 nest::music_event_in_proxy::init_buffers_()

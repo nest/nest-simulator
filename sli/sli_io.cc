@@ -372,8 +372,8 @@ IsstreamFunction::execute( SLIInterpreter* i ) const
 void
 OsstreamFunction::execute( SLIInterpreter* i ) const
 {
-// call: osstream -> osstream true
-//                -> false
+  // call: osstream -> osstream true
+  //                -> false
 
 #ifdef HAVE_SSTREAM
   std::ostringstream* out = new std::ostringstream();
@@ -461,8 +461,8 @@ StrSStreamFunction::execute( SLIInterpreter* i ) const
 void
 OstrstreamFunction::execute( SLIInterpreter* i ) const
 {
-// call: ostrstream -> ostrstream true
-//                  -> false
+  // call: ostrstream -> ostrstream true
+  //                  -> false
 
 #ifdef HAVE_SSTREAM
   std::ostringstream* out = new std::ostringstream();

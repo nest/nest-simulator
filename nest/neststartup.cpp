@@ -33,17 +33,14 @@
 #include "logging.h"
 #include "logging_event.h"
 
-// Includes from librandom:
-#include "random_numbers.h"
-
 // Includes from nestkernel:
 #include "dynamicloader.h"
+#include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "nest.h"
 #include "nestmodule.h"
-#include "model_manager_impl.h"
-#include "exceptions.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -107,31 +104,23 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
 #endif
 
   addmodule< OOSupportModule >( engine );
-  addmodule< RandomNumbers >( engine );
 
 #if defined( _BUILD_NEST_CLI ) && defined( HAVE_READLINE )
   addmodule< GNUReadline >( engine );
 #endif
 
   addmodule< SLIArrayModule >( engine );
-  addmodule< SpecialFunctionsModule >( engine ); // safe without GSL
+  addmodule< SpecialFunctionsModule >( engine );
   addmodule< SLIgraphics >( engine );
   engine.addmodule( new SLIStartup( *argc, *argv ) );
   addmodule< Processes >( engine );
   addmodule< RegexpModule >( engine );
   addmodule< FilesystemModule >( engine );
 
-  // register NestModule class
+  // NestModule extends SLI by commands for neuronal simulations
   addmodule< nest::NestModule >( engine );
 
-  // this can make problems with reference counting, if
-  // the intepreter decides cleans up memory before NEST is ready
-  engine.def( "modeldict", nest::kernel().model_manager.get_modeldict() );
-  engine.def( "synapsedict", nest::kernel().model_manager.get_synapsedict() );
-  engine.def( "connruledict", nest::kernel().connection_manager.get_connruledict() );
-  engine.def( "growthcurvedict", nest::kernel().sp_manager.get_growthcurvedict() );
-
-  // now add static modules providing models
+  // now add static modules providing components.
   add_static_modules( engine );
 
 /*

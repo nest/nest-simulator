@@ -53,13 +53,13 @@ Device to forward spikes to remote applications using MUSIC
 Description
 +++++++++++
 
-A music_event_out_proxy is used to send spikes to a remote application that
+A ``music_event_out_proxy`` is used to send spikes to a remote application that
 also uses MUSIC.
 
-The music_event_out_proxy represents a complete MUSIC event output
+The ``music_event_out_proxy`` represents a complete MUSIC event output
 port. The channel on the port to which a source node forwards its
 events is determined during connection setup by using the parameter
-music_channel of the connection. The name of the port is set via
+``music_channel`` of the connection. The name of the port is set via
 SetStatus (see Parameters section below).
 
 This model is only available if NEST was compiled with MUSIC.
@@ -126,7 +126,6 @@ public:
   void set_status( const DictionaryDatum& );
 
 private:
-  void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
 
@@ -143,8 +142,7 @@ private:
   {
     std::string port_name_; //!< the name of MUSIC port to connect to
 
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
+    Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;          //!< Store current values in dictionary
     void set( const DictionaryDatum&, State_& ); //!< Set values from dicitonary

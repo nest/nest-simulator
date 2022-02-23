@@ -67,7 +67,7 @@ Hodgkin-Huxley neuron model
 Description
 +++++++++++
 
-hh_psc_alpha is an implementation of a spiking neuron using the Hodgkin-Huxley
+``hh_psc_alpha`` is an implementation of a spiking neuron using the Hodgkin-Huxley
 formalism.
 
 1. Postsynaptic currents
@@ -80,6 +80,8 @@ weight 1.0 results in a peak current of 1 pA.
 Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
+
+See also [1]_, [2]_, [3]_.
 
 Parameters
 ++++++++++
@@ -259,8 +261,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( hh_psc_alpha& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, hh_psc_alpha& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_psc_alpha& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, hh_psc_alpha& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< hh_psc_alpha > logger_;

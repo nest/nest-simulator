@@ -38,7 +38,7 @@ class CreateTestCase(unittest.TestCase):
     def test_ModelCreate(self):
         """Model Creation"""
 
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             node = nest.Create(model)
             self.assertGreater(node.get('global_id'), 0)
 
@@ -46,7 +46,7 @@ class CreateTestCase(unittest.TestCase):
         """Model Creation with N"""
 
         num_nodes = 10
-        for model in nest.Models(mtype='nodes'):
+        for model in nest.node_models:
             nodes = nest.Create(model, num_nodes)
             self.assertEqual(len(nodes), num_nodes)
 

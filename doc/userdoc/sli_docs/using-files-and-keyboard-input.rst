@@ -1,5 +1,7 @@
 :orphan:
 
+.. _files_keyboard_sli:
+
 Using files and keyboard input
 ==============================
 

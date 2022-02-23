@@ -1,3 +1,5 @@
+.. _doc_workflow:
+
 Documentation workflows
 =======================
 

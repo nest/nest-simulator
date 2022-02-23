@@ -1,5 +1,7 @@
 :orphan:
 
+.. _programming_sli:
+
 Programming in SLI
 ==================
 
@@ -297,7 +299,7 @@ numbers:
    49
    64
    81
-   100                                                                             
+   100
    SLI ]
 
 Command Description ``n proc repeat`` Execute procedure proc n times.

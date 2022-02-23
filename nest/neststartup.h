@@ -27,8 +27,8 @@
 #include "config.h"
 
 #if defined( HAVE_LIBNEUROSIM ) && defined( _IS_PYNEST )
-#include <neurosim/pyneurosim.h>
 #include "datum.h"
+#include <neurosim/pyneurosim.h>
 #define CYTHON_isConnectionGenerator( x ) PNS::isConnectionGenerator( x )
 Datum* CYTHON_unpackConnectionGeneratorDatum( PyObject* );
 #else

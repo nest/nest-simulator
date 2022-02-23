@@ -88,7 +88,7 @@ private:
   double n_K_ = 0.0;
   // user-defined parameters potassium channel (maximal conductance, reversal potential)
   double gbar_K_ = 0.0;
-  double e_K_ = 0.0;
+  double e_K_ = -85.;
 
   // temperature factor for reaction rates
   double q10_ = 1. / 3.21;
@@ -174,7 +174,7 @@ private:
   double g_r_GABA_ = 0., g_d_GABA_ = 0.;
 
   // user defined parameters
-  double e_rev_ = 0.0;               // mV
+  double e_rev_ = -80.;              // mV
   double tau_r_ = 0.2, tau_d_ = 10.; // ms
 
   // assigned variables

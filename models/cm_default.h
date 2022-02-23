@@ -65,13 +65,13 @@ in the standard manner
 .. code-block:: Python
     cm =  nest.Create('cm_default')
 
-compartments can using the `nest.SetStatus()` function
+compartments can be added as follows
 
 .. code-block:: Python
-    nest.SetStatus(cm, {"compartments": [{"parent_idx": -1,
-                                          "params": {"e_L": -65.}},
-                                          {"parent_idx": 0,
-                                          "params": {"e_L": -60., "g_C": 0.02}})
+    cm.compartments = [
+        {"parent_idx": -1, "params": {"e_L": -65.}},
+        {"parent_idx": 0, "params": {"e_L": -60., "g_C": 0.02}}
+    ]
 
 Each compartment is assigned an index, corresponding to the order in which they
 were added. Subsequently, compartment indices are used to specify parent
@@ -79,12 +79,14 @@ compartments in the tree, or are used to assign receptors to the compartments.
 By convention, the first compartment is the root (soma), which has no parent.
 In this case, `parent_index` is ``-1``.
 
-To add receptors to the model, also use `nest.SetStatus()`
+Synaptic receptors can be added as follows
 
 .. code-block:: Python
-    nest.SetStatus(cm, {"receptors": {"comp_idx": 1,
-                                      "receptor_type": "AMPA",
-                                      "params": {"e_AMPA": 0., "tau_AMPA": 3.})
+    cm.receptors = [{
+        "comp_idx": 1,
+        "receptor_type": "AMPA",
+        "params": {"e_AMPA": 0., "tau_AMPA": 3.}
+    }]
 
 Similar to compartments, each receptor is assigned an index, starting at 0 and
 corresponding to the order in which they are added. This index is used
@@ -147,7 +149,7 @@ by specifying the following entries in the `SetStatus` dictionary argument:
  gbar_Na    uS      Maximal conductance Na channel (default: 0 uS)
  e_Na       mV      Reversal Na channel default (default: 50 mV)
  gbar_K     uS      Maximal conductance K channel (default: 0 uS)
- e_K        mV      Reversal K channel (default: 50 mV)
+ e_K        mV      Reversal K channel (default: -85 mV)
 =========== ======= ===========================================================
 
 For receptors, the choice is from 'AMPA', 'GABA' or 'NMDA' or 'AMPA_NMDA'.
@@ -164,7 +166,7 @@ If `receptor_type` is AMPA
 If `receptor_type` is GABA
 
 =========== ======= ===========================================================
- e_GABA     mV      GABA reversal (default 0 mV)
+ e_GABA     mV      GABA reversal (default -80 mV)
  tau_r_GABA ms      GABA rise time (default .2 ms)
  tau_d_GABA ms      GABA decay time (default 10. ms)
 =========== ======= ===========================================================

@@ -98,9 +98,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
     def test_SetLabelToSynapseOnConnect(self):
         """Set a label to a labeled synapse on connect."""
 
-        labeled_synapse_models = [s for s in nest.Models(
-            mtype='synapses') if s.endswith("_lbl")]
-        for syn in labeled_synapse_models:
+        for syn in [s for s in nest.synapse_models if s.endswith("_lbl")]:
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
@@ -117,9 +115,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
     def test_SetLabelToSynapseSetStatus(self):
         """Set a label to a labeled synapse on SetStatus."""
 
-        labeled_synapse_models = [s for s in nest.Models(
-            mtype='synapses') if s.endswith("_lbl")]
-        for syn in labeled_synapse_models:
+        for syn in [s for s in nest.synapse_models if s.endswith("_lbl")]:
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
@@ -143,9 +139,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
     def test_SetLabelToSynapseSetDefaults(self):
         """Set a label to a labeled synapse on SetDefaults."""
 
-        labeled_synapse_models = [s for s in nest.Models(
-            mtype='synapses') if s.endswith("_lbl")]
-        for syn in labeled_synapse_models:
+        for syn in [s for s in nest.synapse_models if s.endswith("_lbl")]:
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
@@ -163,9 +157,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
     def test_GetLabeledSynapses(self):
         """Get labeled synapses with GetConnections."""
 
-        labeled_synapse_models = [s for s in nest.Models(
-            mtype='synapses') if s.endswith("_lbl")]
-        for syn in labeled_synapse_models:
+        for syn in [s for s in nest.synapse_models if s.endswith("_lbl")]:
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
@@ -189,9 +181,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
     def test_SetLabelToNotLabeledSynapse(self):
         """Try set a label to an 'un-label-able' synapse."""
-        labeled_synapse_models = [s for s in nest.Models(
-            mtype='synapses') if not s.endswith("_lbl")]
-        for syn in labeled_synapse_models:
+
+        for syn in [s for s in nest.synapse_models if not s.endswith("_lbl")]:
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required

@@ -95,6 +95,7 @@ GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
 
   ( *d )[ names::receptor_type ] = receptor_type_;
   ( *d )[ names::synapse_model ] = LiteralDatum( name_ );
+  ( *d )[ names::synapse_modelid ] = kernel().model_manager.get_synapse_model_id( name_ );
   ( *d )[ names::requires_symmetric ] = requires_symmetric_;
   ( *d )[ names::has_delay ] = has_delay_;
 }

@@ -70,122 +70,77 @@ void
 nest::VPManager::set_status( const DictionaryDatum& d )
 {
   long n_threads = get_num_threads();
-  bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
-  if ( n_threads_updated )
-  {
-    if ( kernel().node_manager.size() > 0 )
-    {
-      throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
-    }
-    if ( kernel().model_manager.has_user_models() )
-    {
-      throw KernelException(
-        "Custom neuron models exist: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().model_manager.has_user_prototypes() )
-    {
-      throw KernelException(
-        "Custom synapse types exist: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().connection_manager.get_user_set_delay_extrema() )
-    {
-      throw KernelException(
-        "Delay extrema have been set: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().simulation_manager.has_been_simulated() )
-    {
-      throw KernelException(
-        "The network has been simulated: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( not Time::resolution_is_default() )
-    {
-      throw KernelException(
-        "The resolution has been set: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().model_manager.are_model_defaults_modified() )
-    {
-      throw KernelException(
-        "Model defaults have been modified: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().sp_manager.is_structural_plasticity_enabled() and ( n_threads > 1 ) )
-    {
-      throw KernelException(
-        "Multiple threads can not be used if structural plasticity is "
-        "enabled" );
-    }
-
-    if ( n_threads > 1 and force_singlethreading_ )
-    {
-      LOG( M_WARNING, "VPManager::set_status", "No multithreading available, using single threading" );
-      n_threads = 1;
-    }
-
-    kernel().change_number_of_threads( n_threads );
-  }
-
   long n_vps = get_num_virtual_processes();
+
+  bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
   bool n_vps_updated = updateValue< long >( d, names::total_num_virtual_procs, n_vps );
+
   if ( n_vps_updated )
   {
+    if ( not n_threads_updated )
+    {
+      n_threads = n_vps / kernel().mpi_manager.get_num_processes();
+    }
+
+    const bool n_threads_conflict = n_vps / kernel().mpi_manager.get_num_processes() != n_threads;
+    const bool n_procs_conflict = n_vps % kernel().mpi_manager.get_num_processes() != 0;
+    if ( n_threads_conflict or n_procs_conflict )
+    {
+      throw BadProperty(
+        "Requested total_num_virtual_procs is incompatible with the number of processes and threads."
+        "It must be an integer multiple of num_processes and equal to "
+        "local_num_threads * num_processes. Value unchanged." );
+    }
+  }
+
+  if ( force_singlethreading_ and n_threads > 1 )
+  {
+    std::string msg = "Multithreading requested, but unavailable. Using a single thread.";
+    LOG( M_WARNING, "VPManager::set_status", msg );
+    n_threads = 1;
+  }
+
+  // We only want to act if new values differ from the old
+  n_threads_updated = n_threads != get_num_threads();
+  n_vps_updated = n_vps != get_num_virtual_processes();
+
+  if ( n_threads_updated or n_vps_updated )
+  {
+    if ( kernel().sp_manager.is_structural_plasticity_enabled() and ( n_threads > 1 ) )
+    {
+      throw KernelException( "Structural plasticity enabled: multithreading cannot be enabled." );
+    }
+
+    std::vector< std::string > errors;
     if ( kernel().node_manager.size() > 0 )
     {
-      throw KernelException( "Nodes exist: Thread/process number cannot be changed." );
-    }
-    if ( kernel().model_manager.has_user_models() )
-    {
-      throw KernelException(
-        "Custom neuron models exist: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( kernel().model_manager.has_user_prototypes() )
-    {
-      throw KernelException(
-        "Custom synapse types exist: Thread/process number cannot be "
-        "changed." );
+      errors.push_back( "Nodes exist" );
     }
     if ( kernel().connection_manager.get_user_set_delay_extrema() )
     {
-      throw KernelException(
-        "Delay extrema have been set: Thread/process number cannot be "
-        "changed." );
+      errors.push_back( "Delay extrema have been set" );
     }
     if ( kernel().simulation_manager.has_been_simulated() )
     {
-      throw KernelException(
-        "The network has been simulated: Thread/process number cannot be "
-        "changed." );
-    }
-    if ( not Time::resolution_is_default() )
-    {
-      throw KernelException(
-        "The resolution has been set: Thread/process number cannot be "
-        "changed." );
+      errors.push_back( "Network has been simulated" );
     }
     if ( kernel().model_manager.are_model_defaults_modified() )
     {
-      throw KernelException(
-        "Model defaults have been modified: Thread/process number cannot be "
-        "changed." );
+      errors.push_back( "Model defaults were modified" );
     }
 
-    if ( n_vps % kernel().mpi_manager.get_num_processes() != 0 )
+    if ( errors.size() == 1 )
     {
-      throw BadProperty(
-        "Number of virtual processes (threads*processes) must be an integer "
-        "multiple of the number of processes. Value unchanged." );
+      throw KernelException( errors[ 0 ] + ": number of threads cannot be changed." );
     }
-
-    long n_threads = n_vps / kernel().mpi_manager.get_num_processes();
-    if ( ( n_threads > 1 ) and ( force_singlethreading_ ) )
+    if ( errors.size() > 1 )
     {
-      LOG( M_WARNING, "VPManager::set_status", "No multithreading available, using single threading" );
-      n_threads = 1;
+      std::string msg = "Number of threads unchanged. Error conditions:";
+      for ( auto& error : errors )
+      {
+        msg += " " + error + ".";
+      }
+      throw KernelException( msg );
     }
 
     kernel().change_number_of_threads( n_threads );

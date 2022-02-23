@@ -25,13 +25,15 @@ r"""PyNEST - Python interface for the NEST simulator
 
 * ``nest.__version__`` displays the NEST version.
 
-* ``nest.Models()`` shows all available neuron, device and synapse models.
+* ``nest.node_models`` shows all available neuron and device models.
 
-* ``nest.help('model_name') displays help for the given model, e.g., ``nest.help('iaf_psc_exp')``
+* ``nest.synapse_models`` shows all available synapse models.
 
-* To get help on functions in the ``nest`` package, use Python's ``help()`` function
-  or IPython's ``?``, e.g.
+* ``nest.help("model_name") displays help for the given model, e.g.,
+  ``nest.help("iaf_psc_exp")``
 
+* To get help on functions in the ``nest`` package, use Python's
+  ``help()`` function or IPython's ``?``, e.g.
      - ``help(nest.Create)``
      - ``nest.Connect?``
 
@@ -304,6 +306,11 @@ class NestModule(types.ModuleType):
         ),
         default=10000.0,
     )
+    growth_curves = KernelAttribute(
+        "list[str]",
+        "The list of the available structural plasticity growth curves",
+        readonly=True,
+    )
     use_compressed_spikes = KernelAttribute(
         "bool",
         (
@@ -337,6 +344,21 @@ class NestModule(types.ModuleType):
         readonly=True,
         localonly=True,
     )
+    connection_rules = KernelAttribute(
+        "list[str]",
+        "The list of available connection rules",
+        readonly=True,
+    )
+    node_models = KernelAttribute(
+        "list[str]",
+        "The list of the available node (i.e., neuron or device) models",
+        readonly=True,
+    )
+    synapse_models = KernelAttribute(
+        "list[str]",
+        "The list of the available synapse models",
+        readonly=True,
+    )
     local_spike_counter = KernelAttribute(
         "int",
         (
@@ -348,23 +370,14 @@ class NestModule(types.ModuleType):
         readonly=True,
     )
     recording_backends = KernelAttribute(
-        "dict[str, dict]",
-        (
-            "Dict of backends for recording devices. Each recording backend can"
-            + " have a set of global parameters that can be modified through"
-            + " this attribute by passing a dictionary with the name of the"
-            + " recording backend as key and a dictionary with the global"
-            + " parameters to be overwritten as value.\n\n"
-            + "Example\n"
-            + "~~~~~~~\n\n"
-            + "Please note that NEST must be compiled with SionLIB for the"
-            + " ``sionlib`` backend to be available.\n\n"
-            + ".. code-block:: python\n\n"
-            + "  nest.recording_backends = dict(sionlib=dict(buffer_size=1024))"
-            + "\n\n"
-            + ".. seealso:: The valid global parameters are listed in the"
-            + " documentation of each recording backend"
-        ),
+        "list[str]",
+        "List of available backends for recording devices.",
+        readonly=True,
+    )
+    stimulation_backends = KernelAttribute(
+        "list[str]",
+        "List of available backends for stimulation devices.",
+        readonly=True,
     )
     dict_miss_is_error = KernelAttribute(
         "bool",

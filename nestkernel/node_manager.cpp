@@ -59,8 +59,8 @@ NodeManager::NodeManager()
 
 NodeManager::~NodeManager()
 {
-  destruct_nodes_(); // We must destruct nodes properly, since devices may need
-                     // to close files.
+  // We must destruct nodes here, since devices may need to close files.
+  destruct_nodes_();
 }
 
 void
@@ -79,6 +79,14 @@ void
 NodeManager::finalize()
 {
   destruct_nodes_();
+}
+
+void
+NodeManager::change_number_of_threads()
+{
+  // No nodes exist at this point, so nothing to tear down. See
+  // checks for node_manager.size() in VPManager::set_status()
+  initialize();
 }
 
 DictionaryDatum
@@ -100,17 +108,12 @@ NodeManager::add_node( index model_id, long n )
 
   have_nodes_changed_ = true;
 
-  if ( model_id >= kernel().model_manager.get_num_node_models() )
-  {
-    throw UnknownModelID( model_id );
-  }
-
   if ( n < 1 )
   {
     throw BadProperty();
   }
 
-  Model* model = kernel().model_manager.get_model( model_id );
+  Model* model = kernel().model_manager.get_node_model( model_id );
   assert( model != 0 );
   model->deprecation_warning( "Create" );
 
@@ -736,7 +739,7 @@ NodeManager::print( std::ostream& out ) const
   {
     const index first_node_id = it->get_first_node_id();
     const index last_node_id = it->get_last_node_id();
-    const Model* mod = kernel().model_manager.get_model( it->get_model_id() );
+    const Model* mod = kernel().model_manager.get_node_model( it->get_model_id() );
 
     std::stringstream node_id_range_strs;
     node_id_range_strs << std::setw( max_node_id_width + 1 ) << first_node_id;

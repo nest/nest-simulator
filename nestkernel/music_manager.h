@@ -42,45 +42,20 @@
 #include "music_rate_in_handler.h"
 #endif
 
-/*
-Encapsulates all calls to MUSIC. We need to strip out all #ifdef
-HAVE_MUSIC from other places and put them here. Look into those
-functions:
-
-void nest::Communicator::finalize()
-
-Linked Functions:
-
-void set_status( index, const DictionaryDatum& );
-DictionaryDatum get_status( index );
-void register_music_in_port( std::string portname );
-void unregister_music_in_port( std::string portname );
-void register_music_event_in_proxy( std::string portname, int channel,
-nest::Node* mp );
-void set_music_in_port_acceptable_latency( std::string portname, double
-latency );
-void set_music_in_port_max_buffered( std::string portname, int maxbuffered );
-void publish_music_in_ports_();
-void update_music_event_handlers_( Time const&, const long, const long );
-
-Linked Data Structures:
-
-struct MusicPortData
-std::map< std::string, MusicPortData > music_in_portlist_;
-std::map< std::string, MusicEventHandler > music_event_in_portmap_;
- */
 
 namespace nest
 {
 
+/**
+ * Encapsulate all calls to MUSIC.
+ */
 class MUSICManager : public ManagerInterface
 {
 public:
-  virtual void initialize(); // called from meta-manager to construct
-  virtual void finalize();   // called from meta-manger to reinit
-
-  virtual void set_status( const DictionaryDatum& );
-  virtual void get_status( DictionaryDatum& );
+  virtual void initialize() override;
+  virtual void finalize() override;
+  virtual void set_status( const DictionaryDatum& ) override;
+  virtual void get_status( DictionaryDatum& ) override;
 
   MUSICManager();
 
@@ -116,8 +91,8 @@ public:
    * registers the initial port name. This typically happens when the
    * copy constructor of the model registers a port, as in
    * models/music_event_in_proxy.cpp. Setting pristine = true causes
-   * the port to be also added to pristine_music_in_portlist.  See
-   * also comment above Network::pristine_music_in_portlist_.
+   * the port to be also added to pristine_music_in_portlist. See
+   * also pristine_music_in_portlist_.
    */
   void register_music_in_port( std::string portname, bool pristine = false );
 
@@ -197,7 +172,7 @@ public:
 
   /**
    * Publish all MUSIC input ports that were registered using
-   * Network::register_music_event_in_proxy().
+   * register_music_event_in_proxy().
    */
   void publish_music_in_ports_();
 

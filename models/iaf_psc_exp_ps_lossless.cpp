@@ -212,7 +212,6 @@ nest::iaf_psc_exp_ps_lossless::State_::get( DictionaryDatum& d, const Parameters
 {
   def< double >( d, names::V_m, y2_ + p.E_L_ ); // Membrane potential
   def< bool >( d, names::is_refractory, is_refractory_ );
-  def< double >( d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
   def< double >( d, names::offset, last_spike_offset_ );
   def< double >( d, names::I_syn_ex, I_syn_ex_ );
   def< double >( d, names::I_syn_in, I_syn_in_ );

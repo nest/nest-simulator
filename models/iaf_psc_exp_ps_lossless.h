@@ -500,6 +500,8 @@ iaf_psc_exp_ps_lossless::get_status( DictionaryDatum& d ) const
   P_.get( d );
   S_.get( d, P_ );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
+
+  def< double >( d, names::t_spike, get_spiketime_ms() );
 }
 
 inline void

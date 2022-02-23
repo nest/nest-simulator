@@ -20,23 +20,22 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-...
+Class for creating networks from SONATA files
 """
 
+import csv
 import h5py   # TODO this need to be a try except thing
 import json
-import pandas as pd
 import numpy as np
+import pandas as pd
 import warnings
-import csv
-from string import Template
 
-from .hl_api_info import GetStatus
-from .hl_api_types import NodeCollection
-from .hl_api_nodes import Create
-from .hl_api_models import GetDefaults
 from .hl_api_connections import GetConnections
+from .hl_api_info import GetStatus
+from .hl_api_models import GetDefaults
+from .hl_api_nodes import Create
 from .hl_api_simulation import GetKernelStatus
+from .hl_api_types import NodeCollection
 
 
 __all__ = [
@@ -58,6 +57,12 @@ class SonataConnector(object):
             self.convert_config_(sim_config)
 
     def convert_config_(self, json_config):
+        """
+        Convert SONATA config files to dictionary containing absolute paths and simulation parameters
+        
+        TODO: Create separate sim_config dictionary to be used in simulation scripts, and let self.config
+        be private
+        """
         with open(self.base_path + json_config) as fp:
             config = json.load(fp)
 
@@ -84,14 +89,14 @@ class SonataConnector(object):
                 else:
                     return obj
         self.config.update(do_substitutions(config))
-        print(self.config)
-        print("")
-        
+
     def is_unique_(self, col):
+        """Check if all values in column is unique"""
         numpy_array = col.to_numpy()
         return (numpy_array[0] == numpy_array).all()
-    
+
     def save_nodes_to_file(self):
+        """For debugging purposes, can be removed"""
         with open('node_information.txt', 'w') as file:
             for name, nc in self.node_collections.items():
                 file.write(name + ': ')
@@ -102,6 +107,7 @@ class SonataConnector(object):
                 file.write('\n\n')
 
     def check_node_params(self):
+        """For debugging purposes, can be removed"""
         for nodes in self.config['networks']['nodes']:
             node_types_file = nodes['node_types_file']
             node_types = pd.read_csv(node_types_file, sep='\s+')
@@ -130,7 +136,7 @@ class SonataConnector(object):
             print(f'All node parameters for nc {population_name} ok!')
 
     def create_nodes(self):
-        # Create nodes
+        """Create nodes from SONATA files"""
 
         for nodes in self.config['networks']['nodes']:
             node_types_file = nodes['node_types_file']
@@ -149,7 +155,8 @@ class SonataConnector(object):
                 for ind in node_types.index:
                     dynamics = {}
                     if have_dynamics:
-                        with open(self.config['components']['point_neuron_models_dir'] + '/' + node_types['dynamics_params'][ind]) as dynamics_file:
+                        with open(self.config['components']['point_neuron_models_dir'] + '/' +
+                                  node_types['dynamics_params'][ind]) as dynamics_file:
                             dynamics.update(json.load(dynamics_file))
                     node_type_map[node_types['node_type_id'][ind]] = dynamics
 
@@ -180,7 +187,8 @@ class SonataConnector(object):
                                         #   nc.set(**dynamics)  #this needs to be re-added.
                                     #    nodes += nc
                                 nodes = Create(model, num_elements)
-                                nodes.set([{'spike_times': timestamps[i], 'precise_times': True} for i in range(len(nodes))])
+                                nodes.set([{'spike_times': timestamps[i], 'precise_times': True}
+                                           for i in range(len(nodes))])
                     else:
                         model = node_types.model_template.iloc[0].replace('nest:','')
                         print(model)
@@ -190,12 +198,13 @@ class SonataConnector(object):
                         for node_type in np.unique(node_type_ids):  # might have to iterate over node_group_id as well
                             indx = np.where(node_type_ids[:] == node_type)[0]
                             nodes[indx].set(node_type_map[node_type])
-    
+
                     self.node_collections[population_name] = nodes
             else:
                 raise NotImplemented("TODO: More than one NEST model currently not implemented")
 
     def create_edge_dict(self):
+        """Create edge dictionary used when connecting with SONATA files"""
 
         for edges in self.config['networks']['edges']:
             edge_dict = {}
@@ -218,7 +227,8 @@ class SonataConnector(object):
                     if 'delay' in synapse_dict:
                         synapse_dict['delay'] = float(synapse_dict['delay'])
 
-                    with open(self.config['components']['synaptic_models_dir'] + '/' + d['dynamics_params']) as dynamics_file:
+                    with open(self.config['components']['synaptic_models_dir'] + '/' +
+                              d['dynamics_params']) as dynamics_file:
                         dynamics = json.load(dynamics_file)
                     synapse_dict.update(dynamics)
 
@@ -228,6 +238,7 @@ class SonataConnector(object):
             self.edge_types.append(edge_dict)
 
     def dump_connections(self, orig_outname):
+        """For debugging purposes, can be removed"""
         net_size = GetKernelStatus('network_size')
         print(f'network size: {net_size}')
         if True:
@@ -254,9 +265,6 @@ class SonataConnector(object):
             if prev < net_size:
                 with open(orig_outname + '_rest.txt', 'w') as connections_file:
                     conns = GetConnections(source=nc[prev:])
-                    #if len(conns) == 0:
-                    #    print("no connections!")
-                    #    conns = GetConnections(target=nc[prev:])
                     for l in GetStatus(conns):  # for comparison with bmtk built on NEST 2.20
                         s = f'{l["source"]} {l["target"]} {l["delay"]} {l["weight"]} {l["synapse_model"]} {l["receptor"]}\n'
                         connections_file.write(s)

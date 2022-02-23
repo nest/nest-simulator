@@ -61,7 +61,7 @@ SonataConnector::~SonataConnector()
       }
     }
   }
-  //type_id_2_syn_spec_.clear();
+  type_id_2_syn_spec_.clear();
 }
 
 void
@@ -167,8 +167,6 @@ SonataConnector::connect()
               }
 
               auto edge_type_id = edge_type_id_data[ i ];
-              index synapse_model_id = type_id_2_syn_model_[ edge_type_id ];
-
               const auto syn_spec = getValue< DictionaryDatum >( edge_params->lookup( std::to_string( edge_type_id ) ) );
 
               double weight = numerics::nan;
@@ -197,7 +195,7 @@ SonataConnector::connect()
               kernel().connection_manager.connect( snode_id,
                 target,
                 target_thread,
-                synapse_model_id,
+                type_id_2_syn_model_[ edge_type_id ],
                 type_id_2_param_dicts_[ edge_type_id ][ tid ],
                 delay,
                 weight );

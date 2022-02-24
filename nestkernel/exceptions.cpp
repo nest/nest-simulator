@@ -171,7 +171,7 @@ std::string
 nest::UnknownPort::message() const
 {
   std::ostringstream out;
-  out << "Port with id " << id_ << " does not exist." ;
+  out << "Port with id " << id_ << " does not exist.";
   if ( not info_.empty() )
   {
     out << " " << info_ << ".";

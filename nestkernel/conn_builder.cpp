@@ -163,7 +163,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tno
   // check whether the source is on this mpi machine
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
-    Node* const source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
+    StructuralPlasticityNode* const source = static_cast<StructuralPlasticityNode*>(kernel().node_manager.get_node_or_proxy( snode_id, tid ));
     const thread source_thread = source->get_thread();
 
     // check whether the source is on our thread
@@ -181,7 +181,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tno
   }
   else
   {
-    Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+    StructuralPlasticityNode* const target = static_cast<StructuralPlasticityNode*>(kernel().node_manager.get_node_or_proxy( tnode_id, tid ));
     const thread target_thread = target->get_thread();
     // check whether the target is on our thread
     if ( tid != target_thread )

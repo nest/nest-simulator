@@ -45,8 +45,6 @@ namespace nest
  */
 class StructuralPlasticityNode : public Node
 {
-  using Node::get_synaptic_elements;
-
 public:
   /**
    * \fn StructuralPlasticityNode()

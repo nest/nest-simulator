@@ -45,6 +45,7 @@
 #include "node.h"
 #include "source.h"
 #include "spikecounter.h"
+#include "structural_plasticity_node.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -348,7 +349,7 @@ public:
     index lcid = start_lcid;
     while ( true )
     {
-      if ( C_[ lcid ].get_target( tid )->get_synaptic_elements( post_synaptic_element ) != 0.0
+      if ( static_cast< StructuralPlasticityNode* >(C_[ lcid ].get_target( tid ))->get_synaptic_elements( post_synaptic_element ) != 0.0
         and not C_[ lcid ].is_disabled() )
       {
         target_node_ids.push_back( C_[ lcid ].get_target( tid )->get_node_id() );

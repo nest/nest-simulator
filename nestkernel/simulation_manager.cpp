@@ -817,7 +817,7 @@ nest::SimulationManager::update_()
               i != kernel().node_manager.get_local_nodes( tid ).end();
               ++i )
         {
-          Node* node = i->get_node();
+          StructuralPlasticityNode* node = static_cast<StructuralPlasticityNode*>(i->get_node());
           node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
         }
 #pragma omp barrier
@@ -830,7 +830,7 @@ nest::SimulationManager::update_()
               i != kernel().node_manager.get_local_nodes( tid ).end();
               ++i )
         {
-          Node* node = i->get_node();
+          StructuralPlasticityNode* node = static_cast<StructuralPlasticityNode*>(i->get_node());
           node->decay_synaptic_elements_vacant();
         }
 
@@ -1062,7 +1062,7 @@ nest::SimulationManager::update_()
           i != kernel().node_manager.get_local_nodes( tid ).end();
           ++i )
     {
-      Node* node = i->get_node();
+      StructuralPlasticityNode* node = static_cast<StructuralPlasticityNode*>(i->get_node());
       node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     }
 

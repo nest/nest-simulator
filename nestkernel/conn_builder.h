@@ -40,6 +40,7 @@
 #include "nest_time.h"
 #include "node_collection.h"
 #include "parameter.h"
+#include "structural_plasticity_node.h"
 
 // Includes from sli:
 #include "dictdatum.h"

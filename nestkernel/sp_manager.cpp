@@ -540,7 +540,7 @@ SPManager::delete_synapse( const index snode_id,
   const int tid = kernel().vp_manager.get_thread_id();
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
-    Node* const source = kernel().node_manager.get_node_or_proxy( snode_id );
+    StructuralPlasticityNode* const source = static_cast< StructuralPlasticityNode* const >( kernel().node_manager.get_node_or_proxy( snode_id ) );
     const thread source_thread = source->get_thread();
     if ( tid == source_thread )
     {
@@ -550,7 +550,7 @@ SPManager::delete_synapse( const index snode_id,
 
   if ( kernel().node_manager.is_local_node_id( tnode_id ) )
   {
-    Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id );
+    StructuralPlasticityNode* const target = static_cast< StructuralPlasticityNode* const >( kernel().node_manager.get_node_or_proxy( tnode_id ) );
     const thread target_thread = target->get_thread();
     if ( tid == target_thread )
     {
@@ -656,7 +656,7 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
     for ( node_it = local_nodes.begin(); node_it < local_nodes.end(); node_it++ )
     {
       node_id = node_it->get_node_id();
-      Node* node = node_it->get_node();
+      StructuralPlasticityNode* node = static_cast< StructuralPlasticityNode* >( node_it->get_node() );
       n = node->get_synaptic_elements_vacant( se_name );
       if ( n > 0 )
       {

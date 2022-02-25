@@ -186,11 +186,7 @@ NodeManager::add_node( index model_id, long n )
 void
 NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
 {
-  // upper limit for number of neurons per thread; in practice, either
-  // max_new_per_thread-1 or max_new_per_thread nodes will be created
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
-  const size_t max_new_per_thread =
-    static_cast< size_t >( std::ceil( static_cast< double >( max_node_id - min_node_id + 1 ) / num_vps ) );
 
 #pragma omp parallel
   {
@@ -198,8 +194,6 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
 
     try
     {
-      model.reserve_additional( t, max_new_per_thread );
-
       // Need to find smallest node ID with:
       //   - node ID local to this vp
       //   - node_id >= min_node_id
@@ -235,15 +229,11 @@ NodeManager::add_neurons_( Model& model, index min_node_id, index max_node_id, N
 void
 NodeManager::add_devices_( Model& model, index min_node_id, index max_node_id, NodeCollectionPTR nc_ptr )
 {
-  const size_t n_per_thread = max_node_id - min_node_id + 1;
-
 #pragma omp parallel
   {
     const index t = kernel().vp_manager.get_thread_id();
     try
     {
-      model.reserve_additional( t, n_per_thread );
-
       for ( index node_id = min_node_id; node_id <= max_node_id; ++node_id )
       {
         // keep track of number of thread local devices

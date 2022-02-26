@@ -1649,15 +1649,15 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   if ( syn_specs[0]->known( names::synapse_model_astro ) )
   {
     const std::string syn_name = ( *syn_specs[0] )[ names::synapse_model_astro ];
-    if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
-    {
-      throw UnknownSynapseType( syn_name );
-    }
-    synapse_model_id_astro_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+    //if ( not kernel().model_manager.synapsedict_->known( syn_name ) )
+    //{
+    //  throw UnknownSynapseType( syn_name );
+    //}
+    synapse_model_id_astro_ = kernel().model_manager.get_synapse_model_id( syn_name );
   }
   else
   {
-    synapse_model_id_astro_ = kernel().model_manager.get_synapsedict()->lookup( "sic_connection" );
+    synapse_model_id_astro_ = kernel().model_manager.get_synapse_model_id( "sic_connection" );
   }  
   DictionaryDatum syn_defaults_astro = kernel().model_manager.get_connector_defaults( synapse_model_id_astro_ );
   

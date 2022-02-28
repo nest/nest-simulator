@@ -88,6 +88,15 @@ nested dictionaries and leads to simpler and more readable code:
 |                                        |                                          |
 +----------------------------------------+------------------------------------------+
 
+Compartmental models
+~~~~~~~~~~~~~~~~~~~~
+
+A compartmental modelling framework has been added. The layout of the
+model is user-configurable at runtime, and can be adapted to represent any
+dendritic and/or axonal structure. By default, there are two ion channels, one
+Na-channel and one K-channel, and four receptor types (AMPA, GABA, NMDA and
+AMPA+NMDA).
+
 Removal of deprecated models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -95,4 +104,3 @@ The models ``iaf_psc_alpha_canon`` and ``pp_pop_psc_delta`` have long
 been deprecated and have now been removed from NEST. In case you
 depend on them, you will find similar functionality in the replacement
 models ``iaf_psc_alpha_ps`` and ``gif_pop_psc_exp``, respectively.
-

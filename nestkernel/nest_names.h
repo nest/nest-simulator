@@ -115,7 +115,9 @@ extern const Name capacity;
 extern const Name center;
 extern const Name circular;
 extern const Name clear;
+extern const Name comp_idx;
 extern const Name comparator;
+extern const Name compartments;
 extern const Name configbit_0;
 extern const Name configbit_1;
 extern const Name connection_count;
@@ -167,6 +169,7 @@ extern const Name E_Na;
 extern const Name E_ahp;
 extern const Name E_ex;
 extern const Name E_in;
+extern const Name e_L;
 extern const Name E_rev;
 extern const Name E_rev_AMPA;
 extern const Name E_rev_GABA_A;
@@ -200,6 +203,7 @@ extern const Name GABA_A;
 extern const Name GABA_B;
 extern const Name g;
 extern const Name g_AMPA;
+extern const Name g_C;
 extern const Name g_GABA_A;
 extern const Name g_GABA_B;
 extern const Name g_K;
@@ -354,6 +358,8 @@ extern const Name p_copy;
 extern const Name p_transmit;
 extern const Name pairwise_bernoulli_on_source;
 extern const Name pairwise_bernoulli_on_target;
+extern const Name params;
+extern const Name parent_idx;
 extern const Name phase;
 extern const Name phi_max;
 extern const Name polar_angle;
@@ -386,6 +392,7 @@ extern const Name rate_slope;
 extern const Name rate_times;
 extern const Name rate_values;
 extern const Name readout_cycle_duration;
+extern const Name receptor_idx;
 extern const Name receptor_type;
 extern const Name receptor_types;
 extern const Name receptors;
@@ -614,6 +621,7 @@ extern const Name y_1;
 
 extern const Name z;
 extern const Name z_connected;
+
 } // namespace names
 
 } // namespace nest

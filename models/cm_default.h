@@ -104,9 +104,9 @@ subsequently to connect synapses to the receptor:
 
 .. note::
 
-  In the ``nest.SetStatus()`` call, the ``receptor_type`` entry is string
+  In the ``nest.SetStatus()`` call, the ``receptor_type`` entry is a string
   that specifies the type of receptor. In the ``nest.Connect()`` call, the
-  ``receptor_type`` entry is and integer that specifies the receptor index.
+  ``receptor_type`` entry is an integer that specifies the receptor index.
 
 .. note::
 
@@ -120,7 +120,7 @@ Compartment voltages can be recorded. To do so, create a multimeter in the
 standard manner but specify the recorded voltages as
 ``v_comp{compartment_index}``. Ion channels state variables can be recorded as well,
 using the syntax ``{state_variable_name}{compartment_index}``. For receptor state
-variables, use the receptor index ``{state_variable_name}{receptor_index}`:`
+variables, use the receptor index ``{state_variable_name}{receptor_index}``:
 
 .. code-block:: Python
 

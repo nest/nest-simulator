@@ -118,7 +118,7 @@ Possible commands are `start`, `stop`, `status`, or `log`. The meaning
 of the other arguments is as follows:
 
 -d
-    Run Nest Server in the background (i.e., daemonize it)
+    Run NEST Server in the background (i.e., daemonize it)
 -o
     Print all outputs to the console
 -h <host>

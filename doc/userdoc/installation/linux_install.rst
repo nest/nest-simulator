@@ -43,24 +43,6 @@ If you want to use PyNEST, we recommend to install the following along with thei
 .. _source-install:
 
 
-What gets installed where
--------------------------
-
-By default, everything will be installed to the subdirectories ``<nest_install_dir>/{bin,lib,share}``, where
-``/install/path`` is the install path given to ``cmake``:
-
-- Executables ``<nest_install_dir>/bin``
-- Dynamic libraries ``<nest_install_dir>/lib/``
-- SLI libraries ``<nest_install_dir>/share/nest/sli``
-- Documentation ``<nest_install_dir>/share/doc/nest``
-- Examples ``<nest_install_dir>/share/doc/nest/examples``
-- PyNEST ``<nest_install_dir>/lib/pythonX.Y/site-packages/nest``
-- PyNEST examples ``<nest_install_dir>/share/doc/nest/examples/pynest``
-
-If you want to run the ``nest`` executable or use the ``nest`` Python module without providing explicit paths, you
-have to add the installation directory to your search paths.
-Please refer to the :ref:`next section <environment_variables>` section for this.
-
 
 .. _environment_variables:
 
@@ -70,14 +52,6 @@ Environment variables
 A number of environment variables are used to specify where the components of a NEST installation are found. In
 particular when installing to a custom directory, it is typically necessary to explicitly set these variables, so that
 your operating system can find the NEST binaries, its libraries and custom extension modules.
-
-For your convenience, a shell script setting all required environment variables is provided in
-``<nest_install_dir>/bin/nest_vars.sh``. Setting the environment variables in your active shell session requires
-sourcing the script:
-
-.. code-block:: sh
-
-   source <nest_install_dir>/bin/nest_vars.sh
 
 You may want to include this line in your ``.bashrc`` file, so that the environment variables are set automatically
 whenever you open a new terminal.

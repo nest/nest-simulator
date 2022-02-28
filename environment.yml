@@ -11,17 +11,13 @@
 # parallelisation, GSL-dependent models, NumPy and Pandas-dependent
 # features of PyNEST and examples requiring Matplotlib, and to run
 # the NEST testsuite. It also comprises all tools required to build
-# NEST documentation and to run NEST server. The requirements for the
+# NEST documentation and to run NEST Server. The requirements for the
 # documentation and server are marked in separate sections below so
 # you can remove them if you would like a leaner environment.
 #
 # NOTE: Do NOT delete the PIP section at the end of the file. Environment files
 #       allow just a single PIP section. All dependencies not satisfied by
 #       conda-forge are placed there.
-#
-# NOTE: If you are working on Apple Silicon (M1 CPU), you must comment out the
-#       NEST Server section below because conda-forge does not provide uwsgi
-#       for osx-arm64 yet.
 #
 # NOTE: libneurosim, MUSIC and SIONLib are not included in this environment.
 #
@@ -80,20 +76,20 @@ dependencies:
   - tqdm
   - yamllint
 
-  # Running NEST Server ----
-  - flask
-  - flask_cors
   - requests
-  - uwsgi
   - werkzeug
 
   # PIP dependencies -- do not delete
   - pip:
-    # For testsuite
-    - junitparser >= 2
-    # For documentation
-    - example
-    - Image
-    - sphinx_autobuild
-    - sphinx_gallery
-    - sphinx-tabs
+      # For testsuite
+      - junitparser >= 2
+      # For documentation
+      - example
+      - Image
+      - sphinx_autobuild
+      - sphinx_gallery
+      - sphinx-tabs
+      # For NEST Server
+      - Flask
+      - Flask-Cors
+      - gunicorn

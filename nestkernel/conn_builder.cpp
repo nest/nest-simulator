@@ -1610,13 +1610,14 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
 {
   // Astrocytes
   astrocytes_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
+  astrocytes_size_ = astrocytes_->size();
+  targets_size_ = targets->size();
   
   // Probability of neuron=>neuron connection
   ParameterDatum* pd_p = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
   if ( pd_p )
   {
     p_ = *pd_p;
-    // TODO: Checks of parameter range
   }
   else
   {
@@ -1630,19 +1631,29 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
   
   // Probability of astrocyte=>neuron connection
-  ParameterDatum* pd_p_astro = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p_astro ].datum() );
-  if ( pd_p_astro )
+  if ( conn_spec->known( names::p_astro ))
   {
-    p_astro_ = *pd_p_astro;
+    // p_astro given, do Bernoulli connection
+    astro_isBernoulli = true;
+    ParameterDatum* pd_p_astro = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p_astro ].datum() );
+    if ( pd_p_astro )
+    {
+      p_astro_ = *pd_p_astro;
+    }
+    else
+    {
+      const double value_p_astro = ( *conn_spec )[ names::p_astro ];
+      if ( value_p_astro < 0 or 1 < value_p_astro )
+      {
+        throw BadProperty( "Connection probability 0 <= p_astro <= 1 required." );
+      }
+      p_astro_ = std::shared_ptr< Parameter >( new ConstantParameter( value_p_astro ) );
+    }
   }
   else
   {
-    const double value_p_astro = ( *conn_spec )[ names::p_astro ];
-    if ( value_p_astro < 0 or 1 < value_p_astro )
-    {
-      throw BadProperty( "Connection probability 0 <= p_astro <= 1 required." );
-    }
-    p_astro_ = std::shared_ptr< Parameter >( new ConstantParameter( value_p_astro ) );
+    // p_astro not given, do even distribution
+    astro_isBernoulli = false;
   }
   
   // Astrocyte synapse model
@@ -1806,13 +1817,27 @@ nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* ta
   {
     const index astro_id = ( *astro_it ).node_id;
 
-    if ( not allow_autapses_ and astro_id == tnode_id )
+    //if ( not allow_autapses_ and astro_id == tnode_id )
+    //{
+    //  continue;
+    //}
+    // Bernoulli connection
+    if ( astro_isBernoulli == true )
     {
-      continue;
+      if ( rng->drand() >= p_astro_->value( rng, target ) )
+      {
+        continue;
+      }
     }
-    if ( rng->drand() >= p_astro_->value( rng, target ) )
+    // Even distribution
+    else
     {
-      continue;
+      long index_target = targets_->find( tnode_id );
+      long index_astro = astrocytes_->find( astro_id );
+      if ( index_astro != std::floor( float(index_target) * float(astrocytes_size_) / float(targets_size_) ) )
+      {
+        continue;
+      }
     }
     single_connect_astro_( astro_id, snode_ids, *target, target_thread, rng );
   }

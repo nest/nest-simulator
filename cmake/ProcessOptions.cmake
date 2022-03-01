@@ -53,9 +53,6 @@ function( NEST_PROCESS_WITH_DEBUG )
 endfunction()
 
 function( NEST_PROCESS_WITH_STD )
-  if ( NOT with-cpp-std )
-    set( with-cpp-std "c++11" )
-  endif ()
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=${with-cpp-std}" PARENT_SCOPE )
 endfunction()
 

@@ -42,7 +42,24 @@ __all__ = [
 ]
 
 class SonataConnector(object):
-    """
+    """ Class for creating networks from SONATA files.
+
+    The nodes are created on Python level by iterating the SONATA node files and corresponding CSV parameter
+    files and then calling :py:func:`Create()<nest.lib.hl_api_nodes.Create>`.
+    The connections are created by first iterating the edge (synapse) CSV files on python level and creating
+    synapse dictionaries. These are then sent to the NEST kernel along with the edge SONATA files to create
+    the connections.
+
+    Parameters
+    ----------
+    base_path: string
+        absolute path to SONATA files (to the level of config.json)
+    config: json file
+        json file containing SONATA paths and parameters
+    sim_config: json file (optional)
+        json file containing simulation parameters
+        Only needed if simulation parameters are not given in `config`.
+
     """
 
     def __init__(self, base_path, config, sim_config=None):
@@ -56,7 +73,13 @@ class SonataConnector(object):
             self.convert_config_(sim_config)
 
     def convert_config_(self, json_config):
-        """Convert SONATA config files to dictionary containing absolute paths and simulation parameters."""
+        """Convert SONATA config files to dictionary containing absolute paths and simulation parameters.
+        
+        Parameters
+        ----------
+        json_config: json file
+            json file containing all SONATA paths and parameters.
+        """
 
         with open(self.base_path + json_config) as fp:
             config = json.load(fp)
@@ -148,7 +171,18 @@ class SonataConnector(object):
                 raise NotImplemented("More than one NEST model per csv file currently not implemented")
 
     def is_unique_(self, col):
-        """Check if all values in column are unique."""
+        """Check if all values in column are unique.
+
+        Parameters
+        ----------
+        col: pandas dataframe series
+            column for checking for uniqueness.
+
+        Returns
+        -------
+        bool:
+            Whether or not the values in the column are unique.
+        """
         numpy_array = col.to_numpy()
         return (numpy_array[0] == numpy_array).all()
 

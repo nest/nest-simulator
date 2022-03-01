@@ -54,9 +54,9 @@ extern MPI_Comm comm;
 /* ------------------------------------------------------
    The following datatypes are defined here in communicator_impl.h
    file instead of as static class members, to avoid inclusion
-   of mpi.h in the .h file. Having mpi.h in the .h file would
-   lead to requirements on include-order throughout the NEST
-   code base and is not acceptable.
+   of mpi.h in the .h file, which caused problems on BlueGene systems. 
+   Having mpi.h in the .h file would lead to requirements on include-order 
+   throughout the NEST code base and is not acceptable.
    Reported by Mikael Djurfeldt.
    Hans Ekkehard Plesser, 2010-01-28
  */

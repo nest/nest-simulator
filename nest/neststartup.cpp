@@ -127,7 +127,7 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
  * The following section concerns shared user modules and is thus only
  * included if we built with libtool and libltdl.
  *
- * On some machines, we need to link user modules statically, but for convenience
+ * One may want to link user modules statically, but for convenience
  * they still register themselves with the DyamicLoadModule during static
  * initialization. At the same time, we need to create the DynamicLoaderModule,
  * since the compiler might otherwise optimize DynamicLoaderModule::registerLinkedModule() away.

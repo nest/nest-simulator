@@ -283,13 +283,11 @@ SonataConnector::create_type_id_2_syn_spec_( DictionaryDatum edge_params )
   {
     const auto type_id = std::stoi( it->first.toString() );
     auto d = getValue< DictionaryDatum >( it->second );
-    const auto model_name = getValue< std::string >( ( *d )[ "synapse_model" ] );
+    const auto syn_name = getValue< std::string >( ( *d )[ "synapse_model" ] );
 
-    if ( not kernel().model_manager.get_synapsedict()->known( model_name ) )
-    {
-      throw UnknownSynapseType( model_name );
-    }
-    index synapse_model_id = kernel().model_manager.get_synapsedict()->lookup( model_name );
+    // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
+    const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
+
     set_synapse_params( d, synapse_model_id, type_id );
     type_id_2_syn_model_[ type_id ] = synapse_model_id;
   }

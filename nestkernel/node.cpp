@@ -112,18 +112,14 @@ Node::get_name() const
     return std::string( "UnknownNode" );
   }
 
-  return kernel().model_manager.get_model( model_id_ )->get_name();
+  return kernel().model_manager.get_node_model( model_id_ )->get_name();
 }
 
 Model&
 Node::get_model_() const
 {
-  if ( model_id_ < 0 )
-  {
-    throw UnknownModelID( model_id_ );
-  }
-
-  return *kernel().model_manager.get_model( model_id_ );
+  assert( model_id_ >= 0 );
+  return *kernel().model_manager.get_node_model( model_id_ );
 }
 
 DictionaryDatum
@@ -152,6 +148,7 @@ Node::get_status_base()
   // add information available for all nodes
   ( *dict )[ names::local ] = kernel().node_manager.is_local_node( this );
   ( *dict )[ names::model ] = LiteralDatum( get_name() );
+  ( *dict )[ names::model_id ] = get_model_id();
   ( *dict )[ names::global_id ] = get_node_id();
   ( *dict )[ names::vp ] = get_vp();
   ( *dict )[ names::element_type ] = LiteralDatum( get_element_type() );

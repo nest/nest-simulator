@@ -119,6 +119,13 @@ EventDeliveryManager::finalize()
 }
 
 void
+EventDeliveryManager::change_number_of_threads()
+{
+  finalize();
+  initialize();
+}
+
+void
 EventDeliveryManager::set_status( const DictionaryDatum& dict )
 {
   updateValue< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
@@ -585,7 +592,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
 {
   const unsigned int send_recv_count_spike_data_per_rank =
     kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
-  const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_synapse_prototypes( tid );
+  const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_connection_models( tid );
 
   bool are_others_completed = true;
 

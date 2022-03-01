@@ -73,20 +73,20 @@ However, there are no technical restrictions using this model of synaptic
 plasticity also in conjunction with neuron models that have a different
 dynamics for their synaptic current or conductance. The effective synaptic
 weight, which will be transmitted to the postsynaptic neuron upon occurrence
-of a spike at time t is :math:`u(t) \cdot x(t) \cdot w`, where ``u(t)`` and ``x(t)`` are defined in
-Eq (3) and (4), w is the synaptic weight specified upon connection.
+of a spike at time t is :math:`u(t) \cdot x(t) \cdot w`, where ``u(t)`` and ``x(t)``
+are defined in Eq (3) and (4), w is the synaptic weight specified upon connection.
 The interpretation is as follows: The quantity :math:`u(t) \cdot x(t)` is the release
 probability times the amount of releasable synaptic vesicles at time t of the
 presynaptic neuron's spike, so this equals the amount of transmitter expelled
 into the synaptic cleft.
 
-The amount of transmitter than relaxes back to 0 with time constant tau_psc
+The amount of transmitter then relaxes back to 0 with time constant tau_psc
 of the synapse's variable y. Since the dynamics of ``y(t)`` is linear, the
 postsynaptic neuron can reconstruct from the amplitude of the synaptic
-impulse :math:`u(t) \cdot x(t) \cdot w` the full shape of ``y(t)``. The postsynaptic neuron, however,
-might choose to have a synaptic current that is not necessarily identical to
-the concentration of transmitter ``y(t)`` in the synaptic cleft. It may realize
-an arbitrary postsynaptic effect depending on ``y(t)``.
+impulse :math:`u(t) \cdot x(t) \cdot w` the full shape of ``y(t)``. The postsynaptic
+neuron, however, might choose to have a synaptic current that is not necessarily
+identical to the concentration of transmitter ``y(t)`` in the synaptic cleft. It may
+realize an arbitrary postsynaptic effect depending on ``y(t)``.
 
 .. warning::
 

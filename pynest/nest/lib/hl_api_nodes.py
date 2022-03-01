@@ -82,6 +82,13 @@ def Create(model, n=1, params=None, positions=None):
 
     model_deprecation_warning(model)
 
+    # If any of the elements in the parameter dictionary is either an array-like object,
+    # or a NEST parameter, we create the nodes first, then set the given values. If not,
+    # we can pass the parameter specification to SLI when the nodes are created.
+    iterable_or_parameter_in_params = True
+    if isinstance(params, dict) and params:  # if params is a dict and not empty
+        iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
+
     if positions is not None:
         # Explicitly retrieve lazy loaded spatial property from the module class.
         # This is needed because the automatic lookup fails. See #2135.
@@ -105,30 +112,28 @@ def Create(model, n=1, params=None, positions=None):
                 layer_specs['center'] = positions.center
         if positions.extent is not None:
             layer_specs['extent'] = positions.extent
-        # For compatibility with SLI.
-        if params is None:
-            params = {}
-        layer = sli_func('CreateLayerParams', layer_specs, params)
 
-        return layer
-
-    # If any of the elements in the parameter dictionary is either an array-like object,
-    # or a NEST parameter, we create the nodes first, then set the given values. If not,
-    # we can pass the parameter specification to SLI when the nodes are created.
-    iterable_or_parameter_in_params = True
-    if isinstance(params, dict) and params:  # if params is a dict and not empty
-        iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
-
-    if not iterable_or_parameter_in_params:
-        cmd = "/%s 3 1 roll exch Create" % model
-        sps(params)
+        if not iterable_or_parameter_in_params:
+            if params is None:
+                # For compatibility with SLI.
+                params = {}
+            node_ids = sli_func('CreateLayerParams', layer_specs, params)
+        else:
+            # If node params contains iterable of Parameter, set after nodes are created. Empty dictionary
+            # needed for SLI
+            node_ids = sli_func('CreateLayerParams', layer_specs, {})
     else:
-        cmd = "/%s exch Create" % model
+        # Nodes without positions
+        if not iterable_or_parameter_in_params:
+            cmd = "/%s 3 1 roll exch Create" % model
+            sps(params)
+        else:
+            cmd = "/%s exch Create" % model
 
-    sps(n)
-    sr(cmd)
+        sps(n)
+        sr(cmd)
 
-    node_ids = spp()
+        node_ids = spp()
 
     if params is not None and iterable_or_parameter_in_params:
         try:

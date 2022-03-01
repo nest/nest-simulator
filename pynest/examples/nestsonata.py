@@ -70,7 +70,7 @@ mem_ini = memory_thisjob()
 start_time_create = time.time()
 
 # Create nodes
-sonata_connector.create_nodes()
+sonata_connector.Create()
 
 end_time_create = time.time() - start_time_create
 mem_create = memory_thisjob()

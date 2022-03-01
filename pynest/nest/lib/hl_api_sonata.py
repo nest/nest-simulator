@@ -28,7 +28,6 @@ import h5py   # TODO this need to be a try except thing
 import json
 import numpy as np
 import pandas as pd
-import warnings
 
 from .hl_api_connections import GetConnections
 from .hl_api_info import GetStatus
@@ -91,19 +90,36 @@ class SonataConnector(object):
         numpy_array = col.to_numpy()
         return (numpy_array[0] == numpy_array).all()
 
-    def create_nodes(self):
-        """Create nodes from SONATA files"""
+    def Create(self):
+        """Create nodes from SONATA files.
 
+        Iterates SONATA nodes files and creates nodes with parameters given in corresponding CSV files.
+
+        Notes
+        -----
+        We currently do not iterate SONATA node groups, so node parameters can only be given
+        through CSV files at the moment.
+
+        Raises
+        ------
+        NESTError
+            If setting node parameters fail.
+        NotImplemented
+            If the model type given in the CSV files do not match a NEST type, or if more than one NEST model is
+            given per CSV file.
+        """
+
+        # Iterate node files in config file
         for nodes in self.config['networks']['nodes']:
-            node_types_file = nodes['node_types_file']
-            node_types = pd.read_csv(node_types_file, sep='\s+')
+            node_types_file_name = nodes['node_types_file']
+            node_types = pd.read_csv(node_types_file_name, sep='\s+')  # CSV file containing parameters ++
 
             one_model = (node_types['model_type'] == 'virtual').all() or self.is_unique_(node_types['model_template'])
 
             if one_model:
                 model_type = node_types.model_type.iloc[0]
                 if model_type not in ['point_neuron', 'point_process', 'virtual']:
-                    warnings.warn(f'model of type {model_type} is not a NEST model, it will not be used.')
+                    raise NotImplemented(f'model of type {model_type} is not a NEST model, it cannot be used.')
 
                 # Extract node parameters
                 have_dynamics = 'dynamics_params' in node_types.keys()
@@ -150,7 +166,7 @@ class SonataConnector(object):
                         # Set node parameters
                         if have_dynamics:
                             node_type_ids = population['node_type_id']
-                            for node_type in np.unique(node_type_ids):  # might have to iterate over node_group_id as well
+                            for node_type in np.unique(node_type_ids):
                                 indx = np.where(node_type_ids[:] == node_type)[0]
                                 nodes[indx].set(node_type_map[node_type])
 

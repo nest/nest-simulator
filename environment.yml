@@ -76,20 +76,20 @@ dependencies:
   - tqdm
   - yamllint
 
+  # Running NEST Server ----
+  - flask
+  - flask_cors
+  - gunicorn
   - requests
   - werkzeug
 
   # PIP dependencies -- do not delete
   - pip:
-      # For testsuite
-      - junitparser >= 2
-      # For documentation
-      - example
-      - Image
-      - sphinx_autobuild
-      - sphinx_gallery
-      - sphinx-tabs
-      # For NEST Server
-      - Flask
-      - Flask-Cors
-      - gunicorn
+    # For testsuite
+    - junitparser >= 2
+    # For documentation
+    - example
+    - Image
+    - sphinx_autobuild
+    - sphinx_gallery
+    - sphinx-tabs

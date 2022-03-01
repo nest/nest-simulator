@@ -113,8 +113,7 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
 
 @check_stack
-def Connect(pre=None, post=None, conn_spec=None, syn_spec=None, sonata_dynamics=None,
-            return_synapsecollection=False):
+def Connect(pre=None, post=None, conn_spec=None, syn_spec=None, return_synapsecollection=False):
     """
     Connect `pre` nodes to `post` nodes.
 
@@ -205,11 +204,6 @@ def Connect(pre=None, post=None, conn_spec=None, syn_spec=None, sonata_dynamics=
     ---------
     :ref:`connection_management`
     """
-    if sonata_dynamics:
-        sps(sonata_dynamics)
-        sr('Connect_sonata')
-
-        return
 
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
 

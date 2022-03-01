@@ -66,7 +66,6 @@ if not sonata_connector.config['target_simulator'] == 'NEST':
 nest.set(resolution=sonata_connector.config['run']['dt'], overwrite_files=True, total_num_virtual_procs=4)#, tics_per_ms=sonata_connector.config['run']['nsteps_block'])
 
 mem_ini = memory_thisjob()
-
 start_time_create = time.time()
 
 # Create nodes
@@ -75,12 +74,9 @@ sonata_connector.Create()
 end_time_create = time.time() - start_time_create
 mem_create = memory_thisjob()
 
-start_time_dict = time.time()
-
 # Create edge dict
+start_time_dict = time.time()
 sonata_connector.create_edge_dict()
-
-sonata_dynamics = {'nodes': sonata_connector.node_collections, 'edges': sonata_connector.edge_types}
 
 end_time_dict = time.time() - start_time_dict
 print(sonata_connector.node_collections)
@@ -89,7 +85,7 @@ print()
 start_time_connect = time.time()
 
 # Connect
-nest.Connect(sonata_dynamics=sonata_dynamics)
+sonata_connector.Connect()
 print("done connecting")
 
 end_time_connect = time.time() - start_time_connect

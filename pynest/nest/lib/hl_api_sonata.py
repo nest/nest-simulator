@@ -29,6 +29,7 @@ import json
 import numpy as np
 import pandas as pd
 
+from ..ll_api import sps, sr
 from .hl_api_connections import GetConnections
 from .hl_api_info import GetStatus
 from .hl_api_models import GetDefaults
@@ -282,3 +283,14 @@ class SonataConnector(object):
             edge_dict['edge_synapse'] = edge_params
 
             self.edge_types.append(edge_dict)
+
+    def Connect(self):
+        """Connect nodes in SONATA edge files.
+
+        NEST kernel will iterate the list in `edge_types` containing dictionaries with the edge files and synapse
+        dictionaries, and use the `NodeCollection`s given in `node_collections` to create the connections.
+        """
+        sonata_dynamics = {'nodes': self.node_collections, 'edges': self.edge_types}
+
+        sps(sonata_dynamics)
+        sr('Connect_sonata')

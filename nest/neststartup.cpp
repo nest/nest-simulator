@@ -136,6 +136,14 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
   // dynamic loader module for managing linked and dynamically loaded extension
   // modules
   nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( engine );
+
+  // initialize all modules that were linked at compile time.
+  // These modules were registered via DynamicLoader::registerLinkedModule
+  // from their constructor
+  pDynLoader->initLinkedModules( engine );
+
+  // interpreter will delete module on destruction
+  engine.addmodule( pDynLoader );
 #endif
 
 #ifdef _IS_PYNEST

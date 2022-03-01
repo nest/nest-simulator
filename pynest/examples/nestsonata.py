@@ -71,24 +71,14 @@ start_time_create = time.time()
 
 # Create nodes
 sonata_connector.create_nodes()
-# sonata_connector.check_node_params()
+
 end_time_create = time.time() - start_time_create
 mem_create = memory_thisjob()
 
-
-#net_size = nest.GetKernelStatus('network_size')
-#with open('spike_trains.txt', 'w') as spikes_file:
-#    for node in nest.NodeCollection(list(range(1, net_size + 1))):
-#        if 'spike_times' in list(node.get()):
-#            s = f'{node.global_id} {node.spike_times}\n'
-#            spikes_file.write(s)
-
-
-
 start_time_dict = time.time()
 
+# Create edge dict
 sonata_connector.create_edge_dict()
-
 
 sonata_dynamics = {'nodes': sonata_connector.node_collections, 'edges': sonata_connector.edge_types}
 
@@ -98,6 +88,7 @@ print()
 
 start_time_connect = time.time()
 
+# Connect
 nest.Connect(sonata_dynamics=sonata_dynamics)
 print("done connecting")
 
@@ -107,6 +98,8 @@ mem_connect = memory_thisjob()
 print("number of connections: ", nest.GetKernelStatus('num_connections'))
 print("number of neurons: ", nest.GetKernelStatus('network_size'))
 
+
+# Simulate
 start_time_presim = time.time()
 #nest.Simulate(pre_sim_time)
 end_time_presim = time.time() - start_time_presim
@@ -121,7 +114,6 @@ if plot:
 
 print('simulating')
 
-#print(sonata_connector.node_collections['lgn'].get('precise_times'))
 
 start_time_sim = time.time()
 
@@ -149,15 +141,6 @@ print(f'memory create: {mem_create}')
 print(f'memory connect: {mem_connect}\n')
 print(f'number of spikes: {nest.GetKernelStatus("local_spike_counter")}')
 
-#sonata_connector.dump_connections('check_connections_glif')
-
-#with open('NEST_neurons_GLIF.txt', 'w') as neurons_file:
-#    for model in nest.GetStatus(nest.NodeCollection(list(range(1, nest.GetKernelStatus('network_size') + 1))), 'model'):
-#        neurons_file.write(str(model) + "\n")
-#with open('NEST_neuron_params_GLIF.txt', 'w') as neurons_file:
-#    for dd in nest.GetStatus(nest.NodeCollection(list(range(1, nest.GetKernelStatus('network_size') + 1)))):
-#        neurons_file.write(str(dd) + "\n")
-
 if plot:
     nest.raster_plot.from_device(s_rec)
     plt.show()
@@ -167,32 +150,6 @@ print(nest.NodeCollection([net_size - 1]).get())
 print(nest.NodeCollection([net_size]).get())
 print("number of neurons: ", nest.GetKernelStatus('network_size'))
 print(nest.NodeCollection(list(range(1, net_size+1))))
-#print(s_rec.get())
-
-#conn = nest.GetConnections()
-#print(conn)
-
-# Check against h5 files
-if False:
-    with h5py.File('/home/stine/Work/sonata/examples/GLIF_NEST/./network/v1_v1_edges.h5', 'r') as edges_file:
-        edge = edges_file['edges']['v1_to_v1']
-        source_node_id = edge['target_node_id']
-    
-        with open('check_conns.txt', 'r') as check_conns_file:
-            count = 0
-            for line in check_conns_file:
-                src = line[:]
-                s_src = source_node_id[count]
-                count += 1
-                if int(src) - 1 != s_src:
-                    raise ValueError(f'sonata target {s_src} do not match NEST target {src} for connection number {count}')
-
-
-
-
-
-
-
 
 
 

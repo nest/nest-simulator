@@ -95,46 +95,6 @@ class SonataConnector(object):
         numpy_array = col.to_numpy()
         return (numpy_array[0] == numpy_array).all()
 
-    def save_nodes_to_file(self):
-        """For debugging purposes, can be removed"""
-        with open('node_information.txt', 'w') as file:
-            for name, nc in self.node_collections.items():
-                file.write(name + ': ')
-                file.write(str(nc))
-                file.write('\n')
-                params = nc.get()
-                file.write(str(params))
-                file.write('\n\n')
-
-    def check_node_params(self):
-        """For debugging purposes, can be removed"""
-        for nodes in self.config['networks']['nodes']:
-            node_types_file = nodes['node_types_file']
-            node_types = pd.read_csv(node_types_file, sep='\s+')
-
-            with h5py.File(nodes["nodes_file"], 'r') as nodes_file:
-                population_name = list(nodes_file['nodes'].keys())[0]
-                population = nodes_file['nodes'][population_name]
-
-                nc = self.node_collections[population_name]
-
-                node_type_ids = population['node_type_id']
-                if 'dynamics_params' in node_types.keys():
-                    for count, node_type in enumerate(node_type_ids):
-                        dynamics = {}
-                        json_file = node_types.dynamics_params[node_types['node_type_id'] == node_type].iloc[0]
-
-                        with open(self.config['components']['point_neuron_models_dir'] + '/' + json_file) as dynamics_file:
-                            dynamics.update(json.load(dynamics_file))
-                        node_params = nc[count].get(dynamics.keys())
-                        for k, v in node_params.items():
-                            if isinstance(v, tuple):
-                                node_params[k] = list(v)
-                        if node_params != dynamics:
-                            raise ValueError(f'NodeCollection {nc} with name {population_name} has the wrong parameters! Expected \n{dynamics}, \n got \n{node_params}')
-
-            print(f'All node parameters for nc {population_name} ok!')
-
     def create_nodes(self):
         """Create nodes from SONATA files"""
 
@@ -236,39 +196,3 @@ class SonataConnector(object):
             edge_dict['edge_synapse'] = edge_params
 
             self.edge_types.append(edge_dict)
-
-    def dump_connections(self, orig_outname):
-        """For debugging purposes, can be removed"""
-        net_size = GetKernelStatus('network_size')
-        print(f'network size: {net_size}')
-        if True:
-            net_size = GetKernelStatus('network_size')
-            print(f'network size: {net_size}')
-            counter = 0
-            prev = 0
-            num_files = 100
-            nc = NodeCollection(list(range(1, net_size + 1)))
-            orig_step = int(net_size / num_files)
-            step = orig_step
-            print(step)
-            for file_indx in range(num_files):
-                outname = orig_outname + '_' + str(file_indx) + '.txt'
-                with open(outname, 'w') as connections_file:
-                    print(nc[prev:step])
-                    conns = GetConnections(source=nc[prev:step])
-                    for l in GetStatus(conns):  # for comparison with bmtk built on NEST 2.20
-                        s = f'{l["source"]} {l["target"]} {l["delay"]} {l["weight"]} {l["synapse_model"]} {l["receptor"]}\n'
-                        connections_file.write(s)
-                    counter += len(conns)
-                    prev = step
-                    step += orig_step
-            if prev < net_size:
-                with open(orig_outname + '_rest.txt', 'w') as connections_file:
-                    conns = GetConnections(source=nc[prev:])
-                    for l in GetStatus(conns):  # for comparison with bmtk built on NEST 2.20
-                        s = f'{l["source"]} {l["target"]} {l["delay"]} {l["weight"]} {l["synapse_model"]} {l["receptor"]}\n'
-                        connections_file.write(s)
-                    counter += len(conns)
-
-            print(f'number of counted connections: {counter}')
-        print(f'num connections: {GetKernelStatus("num_connections")}')

@@ -127,9 +127,6 @@ include( GetTriple )
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
 get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
 
-# set default compiler flags
-nest_set_default_compiler_flags()
-
 # Process the command line arguments
 # IMPORTANT: Do not change the order of nest_process_with_python() and include( GNUInstallDirs )!
 #            If NEST is built with Python, nest_process_with_python() defaults CMAKE_INSTALL_PREFIX

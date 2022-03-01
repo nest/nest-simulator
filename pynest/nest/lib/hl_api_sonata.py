@@ -85,11 +85,6 @@ class SonataConnector(object):
                     return obj
         self.config.update(do_substitutions(config))
 
-    def is_unique_(self, col):
-        """Check if all values in column are unique."""
-        numpy_array = col.to_numpy()
-        return (numpy_array[0] == numpy_array).all()
-
     def Create(self):
         """Create nodes from SONATA files.
 
@@ -124,14 +119,7 @@ class SonataConnector(object):
                 # Extract node parameters
                 have_dynamics = 'dynamics_params' in node_types.keys()
 
-                node_type_map = {}
-                for ind in node_types.index:
-                    dynamics = {}
-                    if have_dynamics:
-                        with open(self.config['components']['point_neuron_models_dir'] + '/' +
-                                  node_types['dynamics_params'][ind]) as dynamics_file:
-                            dynamics.update(json.load(dynamics_file))
-                    node_type_map[node_types['node_type_id'][ind]] = dynamics
+                node_type_map = self.create_node_type_parameter_map_(node_types, have_dynamics)
 
                 # Open sonata node files and create nodes
                 with h5py.File(nodes["nodes_file"], 'r') as nodes_file:
@@ -142,22 +130,7 @@ class SonataConnector(object):
                         num_elements =  population['node_id'].size
 
                         if model_type == 'virtual':
-                            model = 'spike_generator'
-                            # First need to iterate to the current spike population dictionary in config file
-                            for input_dict in self.config['inputs'].values():
-                                node_set = input_dict['node_set']
-                                if node_set == population_name:
-                                    # Spiketrains are given in h5 files
-                                    with h5py.File(input_dict['input_file'], 'r') as spiking_file:
-                                        spikes = spiking_file['spikes']['timestamps']
-                                        node_ids = spiking_file['spikes']['gids']
-                                        timestamps = {i: [] for i in range(num_elements)}
-                                        for indx, node_id in enumerate(node_ids):
-                                            timestamps[node_id].append(spikes[indx])
-
-                                    nodes = Create(model, num_elements)
-                                    nodes.set([{'spike_times': timestamps[i], 'precise_times': True}
-                                               for i in range(len(nodes))])
+                            nodes = self.create_spike_generators_(population_name, num_elements)
                         else:
                             # Create non-device nodes
                             model = node_types.model_template.iloc[0].replace('nest:','')
@@ -173,6 +146,74 @@ class SonataConnector(object):
                         self.node_collections[population_name] = nodes
             else:
                 raise NotImplemented("More than one NEST model per csv file currently not implemented")
+
+    def is_unique_(self, col):
+        """Check if all values in column are unique."""
+        numpy_array = col.to_numpy()
+        return (numpy_array[0] == numpy_array).all()
+
+    def create_node_type_parameter_map_(self, node_types, have_dynamics):
+        """Create map between node type id and node parameter.
+
+        Node parameters are given as JSON files, and need to be mapped to the correct `node_type_id`. This is then
+        used for setting the right node parameters when the nodes are created.
+
+        Parameters
+        ----------
+        node_types : pandas dataframe
+            Dataframe containing all node type information.
+        have_dynamics : bool
+            Whether or not node_types have a `dynamics` column. The `dynamics` column contains the name
+            of the JSON file containing the node parameters for the respective `node_type_id`.
+
+        Returns
+        -------
+        Dictionary:
+            Dictionary containing the map between the node type id and the node parameter dictionary.
+        """
+
+        node_type_map = {}
+        if have_dynamics:
+            for ind in node_types.index:
+                dynamics = {}
+                with open(self.config['components']['point_neuron_models_dir'] + '/' +
+                          node_types['dynamics_params'][ind]) as dynamics_file:
+                    dynamics.update(json.load(dynamics_file))
+                node_type_map[node_types['node_type_id'][ind]] = dynamics
+        return node_type_map
+    
+    def create_spike_generators_(self, population_name, num_elements):
+        """Create `num_elements` spike generators with `spike_times` given in SONATA files.
+
+        Parameters
+        ----------
+        population_name: string
+            Name of population
+        num_elements: int
+            Number of spike generators to be created
+
+        Returns
+        NodeCollection:
+            Object representing the created spike generators
+        """
+
+        model = 'spike_generator'
+        # First need to iterate to the current spike population dictionary in config file
+        for input_dict in self.config['inputs'].values():
+            node_set = input_dict['node_set']
+            if node_set == population_name:
+                # Spiketrains are given in h5 files
+                with h5py.File(input_dict['input_file'], 'r') as spiking_file:
+                    spikes = spiking_file['spikes']['timestamps']
+                    node_ids = spiking_file['spikes']['gids']
+                    timestamps = {i: [] for i in range(num_elements)}  # Map node id's to spike times
+                    for indx, node_id in enumerate(node_ids):
+                        timestamps[node_id].append(spikes[indx])
+
+                nodes = Create(model, num_elements)
+                nodes.set([{'spike_times': timestamps[i], 'precise_times': True} for i in range(len(nodes))])
+                break  # Once we have iterated to the correct node set, we can break and return the nodes
+        return nodes
 
     def create_edge_dict(self):
         """Create edge dictionary used when connecting with SONATA files"""

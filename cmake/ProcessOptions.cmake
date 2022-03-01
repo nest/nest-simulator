@@ -52,6 +52,13 @@ function( NEST_PROCESS_WITH_DEBUG )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_STD )
+  if ( NOT with-std )
+    set( with-std "c++11" )
+  endif ()
+  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=${with-std}" PARENT_SCOPE )
+endfunction()
+
 function( NEST_PROCESS_WITH_INTEL_COMPILER_FLAGS )
   if ( NOT with-intel-compiler-flags )
     set( with-intel-compiler-flags "-fp-model strict" )

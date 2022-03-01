@@ -8,7 +8,7 @@ STDOUT="${NEST_SERVER_STDOUT:-0}"
 usage() {
   echo "NEST Server"
   echo "-----------"
-  echo "Usage: nest-server log|status|start|stop|restart [-D] [-h <HOST>] [-o] [-p <PORT>]"
+  echo "Usage: nest-server log|status|start|stop|restart [-d] [-h <HOST>] [-o] [-p <PORT>]"
   echo ""
   echo "Commands:"
   echo "  log         display the server log stored in /tmp/nest-server.log"
@@ -18,9 +18,9 @@ usage() {
   echo "  restart     restart (i.e. stop and start) a server instance on <HOST>:<PORT>"
   echo
   echo "Options:"
-  echo "  -D                 daemonize the server process"
+  echo "  -d                 daemonize the server process"
   echo "  -h <HOST>          use hostname/IP address <HOST> for the server [default: 127.0.0.1]"
-  echo "  -o                 print all output to the console"
+  echo "  -o                 print all outputs to the console"
   echo "  -p <PORT>          use port <PORT> for opening the socket [default: 5000]"
 }
 
@@ -82,9 +82,9 @@ stop() {
 }
 
 CMD=$1; shift
-while getopts "Dh:op:" opt; do
+while getopts "dh:op:" opt; do
     case $opt in
-        D) DAEMON=1 ;;
+        d) DAEMON=1 ;;
         h) HOST=$OPTARG ;;
         o) STDOUT=1 ;;
         p) PORT=$OPTARG ;;

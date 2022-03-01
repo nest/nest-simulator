@@ -21,9 +21,11 @@
 #
 # NOTE: libneurosim, MUSIC and SIONLib are not included in this environment.
 #
-# The default name of the environment is nest-simulator-dev, since it is mainly
-# aimed at NEST developers. You can specify a different name by passing
-# -n my_name to the conda env create command.
+# To create an environment from this file, run
+#
+#     conda env create --name <my_env_name> --file environment.yml
+#
+# where <my_env_name> is a name of your choice.
 
 channels:
   - conda-forge
@@ -81,6 +83,7 @@ dependencies:
   - flask_cors
   - gunicorn
   - requests
+  - restrictedpython
   - werkzeug
 
   # PIP dependencies -- do not delete

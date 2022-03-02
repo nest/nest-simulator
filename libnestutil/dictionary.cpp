@@ -20,15 +20,17 @@
  *
  */
 
+#include <algorithm>
+#include <boost/any.hpp>
+#include <iostream>
 #include <map>
 #include <string>
 #include <vector>
-#include <boost/any.hpp>
-#include <iostream>
 
 #include "dictionary.h"
-#include "parameter.h"
+#include "kernel_manager.h"
 #include "nest_datums.h"
+#include "parameter.h"
 
 
 // debug
@@ -304,7 +306,8 @@ value_equal( const boost::any first, const boost::any second )
 }
 
 
-bool dictionary::operator==( const dictionary& other ) const
+bool
+dictionary::operator==( const dictionary& other ) const
 {
   // Iterate elements in the other dictionary
   for ( auto& kv_pair : other )
@@ -315,7 +318,7 @@ bool dictionary::operator==( const dictionary& other ) const
       return false;
     }
     // Check for equality
-    const auto value = at( kv_pair.first );
+    const auto value = maptype_::at( kv_pair.first );
     if ( not value_equal( value, kv_pair.second ) )
     {
       return false;
@@ -323,4 +326,57 @@ bool dictionary::operator==( const dictionary& other ) const
   }
   // All elements are equal
   return true;
+}
+
+
+boost::any& dictionary::operator[]( const std::string& key )
+{
+  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
+  return maptype_::operator[]( key );
+}
+
+boost::any& dictionary::operator[]( std::string&& key )
+{
+  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
+  return maptype_::operator[]( key );
+}
+
+boost::any&
+dictionary::at( const std::string& key )
+{
+  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
+  return maptype_::at( key );
+}
+
+const boost::any&
+dictionary::at( const std::string& key ) const
+{
+  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
+  return maptype_::at( key );
+}
+
+dictionary::iterator
+dictionary::find( const std::string& key )
+{
+  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
+  return maptype_::find( key );
+}
+
+dictionary::const_iterator
+dictionary::find( const std::string& key ) const
+{
+  nest::kernel().get_dict_access_flag_manager().register_access( *this, key );
+  return maptype_::find( key );
+}
+
+void
+dictionary::init_access_flags() const
+{
+  nest::kernel().get_dict_access_flag_manager().init_access_flags( *this );
+}
+
+void
+dictionary::all_entries_accessed() const
+{
+  nest::kernel().get_dict_access_flag_manager().all_accessed( *this );
 }

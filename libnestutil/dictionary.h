@@ -23,10 +23,11 @@
 #ifndef DICTIONARY_H_
 #define DICTIONARY_H_
 
+#include <boost/any.hpp>
 #include <map>
 #include <string>
+#include <unordered_set>
 #include <vector>
-#include <boost/any.hpp>
 
 #include "sliexceptions.h"
 
@@ -53,6 +54,9 @@ bool value_equal( const boost::any first, const boost::any second );
 
 class dictionary : public std::map< std::string, boost::any >
 {
+private:
+  using maptype_ = std::map< std::string, boost::any >;
+
 public:
   template < typename T >
   T
@@ -87,14 +91,28 @@ public:
   bool
   known( const std::string& key ) const
   {
-    return find( key ) != end();
+    // Bypass find() function to not set access flag
+    return maptype_::find( key ) != end();
   }
 
   bool operator==( const dictionary& other ) const;
-  bool operator!=( const dictionary& other ) const
+
+  bool
+  operator!=( const dictionary& other ) const
   {
     return not( *this == other );
   }
+
+  void init_access_flags() const;
+  void all_entries_accessed() const;
+
+  // Wrappers for access flags
+  boost::any& operator[]( const std::string& key );
+  boost::any& operator[]( std::string&& key );
+  boost::any& at( const std::string& key );
+  const boost::any& at( const std::string& key ) const;
+  iterator find( const std::string& key );
+  const_iterator find( const std::string& key ) const;
 };
 
 #endif /* DICTIONARY_H_ */

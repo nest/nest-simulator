@@ -21,6 +21,7 @@ set( nestutil_sources
     beta_normalization_factor.h
     block_vector.h
     dictionary.h dictionary.cpp
+    dictionary_access_flag_manager.h dictionary_access_flag_manager.cpp
     dict_util.h
     enum_bitfield.h
     iterator_pair.h

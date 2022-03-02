@@ -211,10 +211,12 @@ get_nc_status( NodeCollectionPTR node_collection )
 void
 set_nc_status( NodeCollectionPTR nc, dictionary& params )
 {
+  params.init_access_flags();
   for ( auto it = nc->begin(); it < nc->end(); ++it )
   {
     kernel().node_manager.set_status( ( *it ).node_id, params );
   }
+  params.all_entries_accessed();
 }
 
 void

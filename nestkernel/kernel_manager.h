@@ -38,6 +38,9 @@
 #include "sp_manager.h"
 #include "vp_manager.h"
 
+// Includes from libnestutil
+#include "dictionary_access_flag_manager.h"
+
 // Includes from sli:
 #include "dictdatum.h"
 
@@ -112,6 +115,7 @@ private:
   ~KernelManager();
 
   unsigned long fingerprint_;
+  DictionaryAccessFlagManager dict_access_flag_manager_;
 
   static KernelManager* kernel_manager_instance_;
 
@@ -176,6 +180,8 @@ public:
 
   unsigned long get_fingerprint() const;
 
+  DictionaryAccessFlagManager& get_dict_access_flag_manager();
+
   LoggingManager logging_manager;
   MPIManager mpi_manager;
   VPManager vp_manager;
@@ -222,6 +228,12 @@ inline unsigned long
 nest::KernelManager::get_fingerprint() const
 {
   return fingerprint_;
+}
+
+inline DictionaryAccessFlagManager&
+nest::KernelManager::get_dict_access_flag_manager()
+{
+  return dict_access_flag_manager_;
 }
 
 #endif /* KERNEL_MANAGER_H */

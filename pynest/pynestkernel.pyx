@@ -737,5 +737,8 @@ def llapi_get_nc_status(NodeCollectionObject nc):
 
 def llapi_set_nc_status(NodeCollectionObject nc, object params):
     cdef dictionary params_dict = pydict_to_dictionary(params)
-    set_nc_status(nc.thisptr, params_dict)
-    exceptionCls = getattr(NESTErrors, str(e))
+    try:
+        set_nc_status(nc.thisptr, params_dict)
+    except RuntimeError as e:
+        exceptionCls = getattr(NESTErrors, str(e))
+        raise exceptionCls('llapi_set_nc_status', '') from None

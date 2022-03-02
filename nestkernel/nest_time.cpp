@@ -63,9 +63,11 @@ double Time::Range::MS_PER_TIC = 1 / Time::Range::TICS_PER_MS;
 double Time::Range::MS_PER_STEP = TICS_PER_STEP / TICS_PER_MS;
 double Time::Range::STEPS_PER_MS = 1 / Time::Range::MS_PER_STEP;
 
-// define for unit -- const'ness is in the header
-// should only be necessary when not folded away
-// by the compiler as compile time consts
+/*
+ * define for unit -- const'ness is in the header
+ * should only be necessary when not folded away
+ * by the compiler as compile time consts
+ */
 const tic_t Time::LimitPosInf::tics;
 const delay Time::LimitPosInf::steps;
 const tic_t Time::LimitNegInf::tics;
@@ -170,8 +172,7 @@ Time::fromstamp( Time::ms_stamp t )
     return LIM_NEG_INF.tics;
   }
   // why not just fmod STEPS_PER_MS? This gives different
-  // results in corner cases --- and I don't think the
-  // intended ones.
+  // results in corner cases --- and I don't think the intended ones.
   tic_t n = static_cast< tic_t >( t.t * Range::TICS_PER_MS );
   n -= ( n % Range::TICS_PER_STEP );
   const double ms = n * Range::TICS_PER_STEP_INV * Range::MS_PER_STEP;

@@ -60,9 +60,11 @@ namespace nest
  * different architectures (e.g. 32 or 64 bit).
  */
 
-// constexpr-functions for convenient compile-time generation of the bit-masks
-// and bit-constants. An ill-defined length or size will cause a compile-time
-// error, e.g., num_bits to be shifted exceeds the sizeof(<datatype>) * 8.
+/*
+ * constexpr-functions for convenient compile-time generation of the bit-masks
+ * and bit-constants. An ill-defined length or size will cause a compile-time
+ * error, e.g., num_bits to be shifted exceeds the sizeof(<datatype>) * 8.
+ */
 constexpr uint64_t
 generate_bit_mask( const uint8_t num_bits, const uint8_t bit_position )
 {
@@ -75,9 +77,9 @@ generate_max_value( const uint8_t num_bits )
   return ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 );
 }
 
-/*
- * Sizes of bitfields used in various classes in the kernel.
- */
+
+// Sizes of bitfields used in various classes in the kernel.
+
 #if TARGET_BITS_SPLIT == TARGET_BITS_SPLIT_STANDARD
 constexpr uint8_t NUM_BITS_RANK = 18U;
 constexpr uint8_t NUM_BITS_TID = 9U;

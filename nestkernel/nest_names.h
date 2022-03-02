@@ -633,4 +633,4 @@ extern const Name z_connected;
 
 } // namespace nest
 
-#endif /* #ifndef NEST_NAMES_H */
+#endif // #ifndef NEST_NAMES_H 

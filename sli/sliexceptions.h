@@ -290,8 +290,8 @@ public:
   {
   }
 
-  DictError( char const* const )
-    : InterpreterError( "DictError" )
+  DictError( char const* const what )
+    : InterpreterError( what )
   {
   }
 };
@@ -396,7 +396,7 @@ public:
   }
   // input: string with names of not accessed
   UnaccessedDictionaryEntry( const std::string& m )
-    : DictError( "UnaccessedDictionaryEntry" )
+    : DictError( (std::string( "UnaccessedDictionaryEntry: Unused dictionary items:" ) + m).c_str() )
     , msg_( m )
   {
   }

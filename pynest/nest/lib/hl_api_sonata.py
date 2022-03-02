@@ -251,12 +251,25 @@ class SonataConnector(object):
         return nodes
 
     def create_edge_dict(self):
-        """Create edge dictionary used when connecting with SONATA files"""
+        """Create a list of edge dictionaries used when connecting with SONATA files.
+
+        The function iterates edge (synapse) files in the config file and creates one dictionary per edge file.
+        The dictionary contains two keys, `edges_file` and `edge_synapse`. `edges_file` is a path to the SONATA
+        edge file used for creating the connections of the given edge. `edge_synapse` contains a dictionary
+        that maps `edge_type_id` to a synapse dictionary.
+
+        edge_types thus have the following structure:
+        edge_types = [{'edges_file': string,
+                       'edge_synapse': {'edge_type_id_1: syn_params, ..., 'edge_type_id_n: syn_params}},
+                      ...,
+                      {..}
+                     ]
+        """
 
         for edges in self.config['networks']['edges']:
             edge_dict = {}
-            edge_dict['edges_file'] = edges['edges_file']
-            edge_types_file = edges['edge_types_file']  # Synapses
+            edge_dict['edges_file'] = edges['edges_file']  # File containg all source id's and target id's
+            edge_types_file = edges['edge_types_file']  # CSV file containing synapse parameters
 
             with open(edge_types_file, 'r') as csv_file:
                 reader = csv.DictReader(csv_file, delimiter=' ', quotechar='"')
@@ -272,13 +285,16 @@ class SonataConnector(object):
 
                     synapse_dict = {key: d[key] for key in setable_params if key in d}
                     if 'delay' in synapse_dict:
+                        # Convert to float
                         synapse_dict['delay'] = float(synapse_dict['delay'])
 
                     with open(self.config['components']['synaptic_models_dir'] + '/' +
                               d['dynamics_params']) as dynamics_file:
+                        # Other synapse parameters not given in CSV files
                         dynamics = json.load(dynamics_file)
                     synapse_dict.update(dynamics)
 
+                    # Map synapse_dict to edge_type_id so the correct synapse dictionary is used when connecting
                     edge_params[d['edge_type_id']] = synapse_dict
             edge_dict['edge_synapse'] = edge_params
 

@@ -60,6 +60,8 @@ elif example == 'GLIF':
 
 sonata_connector = nest.SonataConnector(base_path, config, sim_config)
 
+# TODO: Create convenience functions, with a bool in case you want to simulate
+
 if not sonata_connector.config['target_simulator'] == 'NEST':
     raise NotImplementedError('Only `target_simulator` of type NEST is supported.')
 

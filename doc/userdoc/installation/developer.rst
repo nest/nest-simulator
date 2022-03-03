@@ -58,7 +58,7 @@ Install from source in a conda environment
 
 .. code-block:: sh
 
-   cmake -CDMAKE_INSTALL_PREFIX:PATH=$CONDA_PREFIX </path/to/NEST/src>
+   cmake -DCMAKE_INSTALL_PREFIX:PATH=$CONDA_PREFIX </path/to/NEST/src>
 
 * Compile and install NEST:
 

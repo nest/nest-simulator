@@ -376,7 +376,9 @@ dictionary::init_access_flags() const
 }
 
 void
-dictionary::all_entries_accessed() const
+dictionary::all_entries_accessed( const std::string where, const std::string what ) const
 {
-  nest::kernel().get_dict_access_flag_manager().all_accessed( *this );
+  nest::kernel().get_dict_access_flag_manager().all_accessed( *this, where, what );
 }
+
+// TODO-PYNEST-NG: Convenience function for accessed()?

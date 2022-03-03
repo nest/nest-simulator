@@ -221,7 +221,7 @@ nest::ConnectionManager::get_synapse_status( const index source_node_id,
   // receiving devices
   if ( ( source->has_proxies() and target->has_proxies() and connections_[ tid ][ syn_id ] != NULL )
     or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver()
-         and connections_[ tid ][ syn_id ] != NULL ) ) )
+      and connections_[ tid ][ syn_id ] != NULL ) ) )
   {
     connections_[ tid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
   }
@@ -262,7 +262,7 @@ nest::ConnectionManager::set_synapse_status( const index source_node_id,
     // receiving devices
     if ( ( source->has_proxies() and target->has_proxies() and connections_[ tid ][ syn_id ] != NULL )
       or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver()
-           and connections_[ tid ][ syn_id ] != NULL ) ) )
+        and connections_[ tid ][ syn_id ] != NULL ) ) )
     {
       connections_[ tid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
     }
@@ -383,14 +383,11 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
     throw IllegalConnection( "Postsynaptic nodes cannot be an empty NodeCollection" );
   }
 
-  // TODO-PYNEST-NG: Access flags
-
-  // conn_spec->clear_access_flags();
-
-  // for ( auto syn_params : syn_specs )
-  // {
-  //   syn_params->clear_access_flags();
-  // }
+  conn_spec.init_access_flags();
+  for ( auto& syn_param : syn_specs )
+  {
+    syn_param.init_access_flags();
+  }
 
   if ( not conn_spec.known( names::rule.toString() ) )
   {
@@ -409,11 +406,11 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   assert( cb != 0 );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
-  // ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
-  // for ( auto syn_params : syn_specs )
-  // {
-  //   ALL_ENTRIES_ACCESSED( *syn_params, "Connect", "Unread dictionary entries in syn_spec: " );
-  // }
+  conn_spec.all_entries_accessed( "Connect", "conn_spec" );
+  for ( auto& syn_param : syn_specs )
+  {
+    syn_param.all_entries_accessed( "Connect", "syn_spec" );
+  }
 
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
   set_connections_have_changed();
@@ -609,8 +606,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
   index synapse_model_id( kernel().model_manager.get_synapsedict().get< synindex >( syn_model ) );
 
   // Increments pointers to weight and delay, if they are specified.
-  auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d )
-  {
+  auto increment_wd = [weights, delays]( decltype( weights ) & w, decltype( delays ) & d ) {
     if ( weights != nullptr )
     {
       ++w;
@@ -692,10 +688,10 @@ nest::ConnectionManager::connect_arrays( long* sources,
           }
         }
 
+        param_dicts[ tid ].init_access_flags();
         connect( *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
 
-        // TODO-PYNEST-NG: Access flags
-        // ALL_ENTRIES_ACCESSED( *param_dicts[ tid ], "connect_arrays", "Unread dictionary entries: " );
+        param_dicts[ tid ].all_entries_accessed( "connect_arrays", "params" );
 
         increment_wd( w, d );
       }
@@ -810,10 +806,10 @@ nest::ConnectionManager::increase_connection_count( const thread tid, const syni
   ++num_connections_[ tid ][ syn_id ];
   if ( num_connections_[ tid ][ syn_id ] >= MAX_LCID )
   {
-    throw KernelException( String::compose(
-      "Too many connections: at most %1 connections supported per virtual "
-      "process and synapse model.",
-      MAX_LCID ) );
+    throw KernelException(
+      String::compose( "Too many connections: at most %1 connections supported per virtual "
+                       "process and synapse model.",
+        MAX_LCID ) );
   }
 }
 

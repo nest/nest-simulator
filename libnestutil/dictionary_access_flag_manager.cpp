@@ -29,7 +29,9 @@
 #include "dictionary_access_flag_manager.h"
 
 void
-DictionaryAccessFlagManager::all_accessed( const dictionary& dict ) const
+DictionaryAccessFlagManager::all_accessed( const dictionary& dict,
+  const std::string where,
+  const std::string what ) const
 {
   std::vector< key_type_ > keys;              // To hold keys of the dictionary
   std::vector< key_type_ > accessed_keys;     // To hold accessed keys, copied from the unordered_set in access_flags_
@@ -59,6 +61,16 @@ DictionaryAccessFlagManager::all_accessed( const dictionary& dict ) const
       not_accessed_keys.begin(), not_accessed_keys.end(), key_type_(), []( const key_type_& a, const key_type_& b ) {
         return a + " " + b;
       } );
-    throw UnaccessedDictionaryEntry( missed );
+
+    // TODO-PYNEST-NG: special case for blank <what> ("unaccessed elements in function <where>")?
+
+    throw UnaccessedDictionaryEntry( std::string( "unaccessed elements in " ) + what + std::string( ", in function " )
+      + where + std::string( ": " ) + missed );
   }
+}
+
+bool
+DictionaryAccessFlagManager::accessed( const dictionary& dict, const key_type_& key )
+{
+  return access_flags_.at( &dict ).count( key ) > 0;
 }

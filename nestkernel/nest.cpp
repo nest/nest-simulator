@@ -159,10 +159,9 @@ get_vp_specific_rng( thread tid )
 void
 set_kernel_status( const dictionary& dict )
 {
-  // TODO-PYNEST-NG: access flags
-  // dict->clear_access_flags();
+  dict.init_access_flags();
   kernel().set_status( dict );
-  // ALL_ENTRIES_ACCESSED( *dict, "SetKernelStatus", "Unread dictionary entries: " );
+  dict.all_entries_accessed( "SetKernelStatus", "params" );
 }
 
 dictionary
@@ -216,7 +215,7 @@ set_nc_status( NodeCollectionPTR nc, dictionary& params )
   {
     kernel().node_manager.set_status( ( *it ).node_id, params );
   }
-  params.all_entries_accessed();
+  params.all_entries_accessed( "NodeCollection.set()", "params" );
 }
 
 void
@@ -355,12 +354,11 @@ connect_arrays( long* sources,
 ArrayDatum
 get_connections( const dictionary& dict )
 {
-  // TODO-PYNEST-NG: access flags
-  // dict->clear_access_flags();
+  dict.init_access_flags();
 
   ArrayDatum array = kernel().connection_manager.get_connections( dict );
 
-  // ALL_ENTRIES_ACCESSED( *dict, "GetConnections", "Unread dictionary entries: " );
+  dict.all_entries_accessed( "GetConnections", "params" );
 
   return array;
 }
@@ -502,10 +500,12 @@ create_parameter( const dictionary& param_dict )
     throw BadProperty( "Parameter definition dictionary must contain one single key only." );
   }
 
-  // TODO-PYNEST-NG: Access flags
   const auto n = param_dict.begin()->first;
   const auto pdict = param_dict.get< dictionary >( n );
-  return create_parameter( n, pdict );
+  pdict.init_access_flags();
+  auto parameter = create_parameter( n, pdict );
+  pdict.all_entries_accessed( "create_parameter", "param" );
+  return parameter;
 }
 
 std::shared_ptr< Parameter >

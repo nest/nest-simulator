@@ -104,7 +104,15 @@ public:
   }
 
   void init_access_flags() const;
-  void all_entries_accessed() const;
+
+  /**
+   * @brief Check that all elements in the dictionary have been accessed.
+   *
+   * @param where Which function the error occurs in
+   * @param what Which parameter triggers the error
+   *
+   */
+  void all_entries_accessed( const std::string where, const std::string what ) const;
 
   // Wrappers for access flags
   boost::any& operator[]( const std::string& key );

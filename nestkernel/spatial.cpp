@@ -113,12 +113,11 @@ get_layer( NodeCollectionPTR nc )
 NodeCollectionPTR
 create_layer( const dictionary& layer_dict )
 {
-  // TODO-PYNEST-NG: Access flags
-  // layer_dict->clear_access_flags();
+  layer_dict.init_access_flags();
 
   NodeCollectionPTR layer = AbstractLayer::create_layer( layer_dict );
 
-  // ALL_ENTRIES_ACCESSED( *layer_dict, "nest::CreateLayer", "Unread dictionary entries: " );
+  layer_dict.all_entries_accessed( "CreateLayer", "params" );
 
   return layer;
 }
@@ -412,12 +411,11 @@ distance( const ArrayDatum conns )
 MaskDatum
 create_mask( const dictionary& mask_dict )
 {
-  // TODO-PYNEST-NG: access flags
-  // mask_dict->clear_access_flags();
+  mask_dict.init_access_flags();
 
   MaskDatum datum( NestModule::create_mask( mask_dict ) );
 
-  // ALL_ENTRIES_ACCESSED( *mask_dict, "nest::CreateMask", "Unread dictionary entries: " );
+  mask_dict.all_entries_accessed( "CreateMask", "params" );
 
   return datum;
 }
@@ -452,10 +450,9 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
   AbstractLayerPTR source = get_layer( source_nc );
   AbstractLayerPTR target = get_layer( target_nc );
 
-  // TODO-PYNEST-NG: Access flags
-  // connection_dict->clear_access_flags();
+  connection_dict.init_access_flags();
   ConnectionCreator connector( connection_dict );
-  // ALL_ENTRIES_ACCESSED( *connection_dict, "nest::CreateLayers", "Unread dictionary entries: " );
+  connection_dict.all_entries_accessed( "CreateLayers", "params" );
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
   kernel().connection_manager.set_connections_have_changed();

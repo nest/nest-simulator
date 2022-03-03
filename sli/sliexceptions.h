@@ -71,7 +71,7 @@ public:
   {
   }
 
-  virtual ~SLIException() throw(){};
+  virtual ~SLIException() throw() {};
 
   /**
    * Returns the SLI error name, used by raiseerror.
@@ -358,7 +358,7 @@ public:
   StackUnderflow( int n, int g )
     : InterpreterError( "StackUnderflow" )
     , needed( n )
-    , given( g ){};
+    , given( g ) {};
 
   std::string message() const;
 };
@@ -396,7 +396,7 @@ public:
   }
   // input: string with names of not accessed
   UnaccessedDictionaryEntry( const std::string& m )
-    : DictError( (std::string( "UnaccessedDictionaryEntry: Unused dictionary items:" ) + m).c_str() )
+    : DictError( ( std::string( "UnaccessedDictionaryEntry: " ) + m ).c_str() )
     , msg_( m )
   {
   }

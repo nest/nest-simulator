@@ -51,11 +51,10 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
 
     conn_spec.update_value( "params_map", params_map_ );
 
-    // TODO-PYNEST-NG: access flags
-    // for ( Dictionary::iterator it = params_map_->begin(); it != params_map_->end(); ++it )
-    // {
-    //   it->second.set_access_flag();
-    // }
+    for ( auto& kv : params_map_ )
+    {
+      nest::kernel().get_dict_access_flag_manager().register_access( params_map_, kv.first );
+    }
 
     if ( syn_specs[ 0 ].known( names::weight.toString() ) or syn_specs[ 0 ].known( names::delay.toString() ) )
     {

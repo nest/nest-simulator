@@ -128,8 +128,8 @@ SPManager::set_status( const dictionary& d )
   {
     return;
   } /*
-    * Configure synapses model updated during the simulation.
-    */
+     * Configure synapses model updated during the simulation.
+     */
   Token synmodel;
   dictionary syn_specs;
   dictionary syn_spec;
@@ -277,9 +277,8 @@ SPManager::disconnect( NodeCollectionPTR sources,
   }
 
   ConnBuilder* cb = NULL;
-  // TODO-PYNEST-NG: Access flags
-  // conn_spec->clear_access_flags();
-  // syn_spec->clear_access_flags();
+  conn_spec.init_access_flags();
+  syn_spec.init_access_flags();
 
   if ( not conn_spec.known( names::rule.toString() ) )
   {
@@ -314,9 +313,8 @@ SPManager::disconnect( NodeCollectionPTR sources,
   assert( cb != 0 );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
-  // TODO-PYNEST-NG: Access flags
-  // ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries: " );
-  // ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries: " );
+  conn_spec.all_entries_accessed( "Disconnect", "conn_spec" );
+  syn_spec.all_entries_accessed( "Disconnect", "syn_spec" );
 
   // Set flag before calling cb->disconnect() in case exception is thrown after some connections have been removed.
   kernel().connection_manager.set_connections_have_changed();

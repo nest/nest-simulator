@@ -135,23 +135,21 @@ nest::StimulationDevice::set_status( const dictionary& d )
     // copy all properties not previously accessed from d to backend_params
     for ( auto& kv_pair : d )
     {
-      // TODO-PYNEST-NG: access flags
-      // if ( not kv_pair.second.accessed() )
-      // {
-      //   backend_params[ kv_pair.first.toString() ] = kv_pair.second;
-      // }
+      if ( not kernel().get_dict_access_flag_manager().accessed( d, kv_pair.first ) )
+      {
+        backend_params[ kv_pair.first ] = kv_pair.second;
+      }
     }
 
     // cache all properties accessed by the backend in private member
     backend_params_.clear();
     for ( auto& kv_pair : backend_params )
     {
-      // TODO-PYNEST-NG: access flags
-      // if ( kv_pair.second.accessed() )
-      // {
-      //   backend_params_[ kv_pair.first.toString() ] = kv_pair.second;
-      //   d->lookup( kv_pair.first ).set_access_flag();
-      // }
+      if ( kernel().get_dict_access_flag_manager().accessed( backend_params, kv_pair.first ) )
+      {
+        backend_params_[ kv_pair.first ] = kv_pair.second;
+        kernel().get_dict_access_flag_manager().register_access( d, kv_pair.first );
+      }
     }
   }
   else

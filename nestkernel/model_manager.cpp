@@ -268,7 +268,8 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
   {
     const std::string msg =
       "CopyModel cannot generate another synapse. Maximal synapse model count "
-      "of " + std::to_string( MAX_SYN_ID ) + " exceeded.";
+      "of "
+      + std::to_string( MAX_SYN_ID ) + " exceeded.";
     LOG( M_ERROR, "ModelManager::copy_synapse_model_", msg );
     throw KernelException( "Synapse model count exceeded" );
   }
@@ -320,19 +321,18 @@ ModelManager::set_model_defaults( Name name, dictionary params )
 void
 ModelManager::set_node_defaults_( index model_id, const dictionary& params )
 {
-  // TODO-PYNEST-NG: Access flags
-  // params->clear_access_flags();
+  params.init_access_flags();
 
   get_model( model_id )->set_status( params );
 
-  // ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_node_defaults_", "Unread dictionary entries: " );
+  params.all_entries_accessed( "ModelManager::set_node_defaults_", "params" );
 }
 
 void
 ModelManager::set_synapse_defaults_( index model_id, const dictionary& params )
 {
-  // TODO-PYNEST-NG: Access flags
-  // params->clear_access_flags();
+  params.init_access_flags();
+
   assert_valid_syn_id( model_id );
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
@@ -363,7 +363,7 @@ ModelManager::set_synapse_defaults_( index model_id, const dictionary& params )
     }
   }
 
-  // ALL_ENTRIES_ACCESSED( *params, "ModelManager::set_synapse_defaults_", "Unread dictionary entries: " );
+  params.all_entries_accessed( "ModelManager::set_synapse_defaults_", "params" );
 }
 
 // TODO: replace int with index and return value -1 with invalid_index, also

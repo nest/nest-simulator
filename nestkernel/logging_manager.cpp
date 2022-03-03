@@ -127,7 +127,7 @@ nest::LoggingManager::all_entries_accessed( const dictionary& d,
   const std::string& file,
   const size_t line ) const
 {
-  // TODO-PYNEST-NG: Access flags
+  // TODO-PYNEST-NG: Access flags (function never used?)
   // std::string missed;
   // if ( not d.all_accessed( missed ) )
   // {
@@ -150,7 +150,7 @@ nest::LoggingManager::all_entries_accessed( const dictionary& d,
   const std::string& file,
   const size_t line ) const
 {
-  // TODO-PYNEST-NG: Access flags
+  // TODO-PYNEST-NG: Access flags (function never used?)
   // std::string missed;
   // if ( not d.all_accessed( missed ) )
   // {

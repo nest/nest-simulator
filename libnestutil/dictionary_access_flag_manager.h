@@ -41,7 +41,26 @@ public:
 
   void init_access_flags( const dictionary& );
   void register_access( const dictionary&, const key_type_& );
-  void all_accessed( const dictionary& ) const;
+
+  /**
+   * @brief Check that all elements in a dictionary have been accessed.
+   *
+   * @param dict Dictionary to check
+   * @param where Which function the error occurs in
+   * @param what Which parameter triggers the error
+   *
+   */
+  void all_accessed( const dictionary& dict, const std::string where, const std::string what ) const;
+
+  /**
+   * @brief Return whether the specified key has been accessed by the dictionary.
+   *
+   * @param dict Dictionary to check
+   * @param key Key to check
+   * @return true if key has been accessed
+   * @return false if key has not been accessed
+   */
+  bool accessed( const dictionary& dict, const key_type_& key );
 };
 
 inline void

@@ -603,16 +603,15 @@ NodeManager::set_status_single_node_( Node& target, const dictionary& d, bool cl
   // proxies have no properties
   if ( not target.is_proxy() )
   {
-    // TODO-PYNEST-NG: access flags
-    // if ( clear_flags )
-    // {
-    //   d->clear_access_flags();
-    // }
+    if ( clear_flags )
+    {
+      d.init_access_flags();
+    }
     target.set_status_base( d );
 
     // TODO: Not sure this check should be at single neuron level; advantage is
     // it stops after first failure.
-    // ALL_ENTRIES_ACCESSED( *d, "NodeManager::set_status", "Unread dictionary entries: " );
+    d.all_entries_accessed( "NodeManager::set_status", "params" );
   }
 }
 
@@ -642,8 +641,8 @@ NodeManager::prepare_nodes()
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
+  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
 #endif
 
     // We prepare nodes in a parallel region. Therefore, we need to catch

@@ -92,9 +92,6 @@ ConnectionCreator::ConnectionCreator( dictionary dict )
   extract_params_( dict, param_dicts_[ 0 ] );
   // }
 
-  // TODO-PYNEST-NG: access flags
-  // ALL_ENTRIES_ACCESSED( *dict, "ConnectionCreator", "Unread dictionary entries: " );
-
   // Set default synapse_model, weight and delay if not given explicitly
   if ( synapse_model_.empty() )
   {
@@ -192,8 +189,7 @@ ConnectionCreator::extract_params_( dictionary& dict_datum, std::vector< diction
   dictionary syn_dict;
   // Using a lambda function here instead of updateValue because updateValue causes
   // problems when setting a value to a dictionary-entry in syn_dict.
-  auto copy_long_if_known = [&syn_dict, &dict_datum]( const std::string& name ) -> void
-  {
+  auto copy_long_if_known = [&syn_dict, &dict_datum]( const std::string& name ) -> void {
     if ( dict_datum.known( name ) )
     {
       syn_dict[ name ] = dict_datum.get< long >( name );

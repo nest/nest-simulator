@@ -21,7 +21,7 @@
  */
 
 
-#include <algorithm> // std::sort, std::copy, std::set_difference
+#include <algorithm> // std::copy_if
 #include <numeric>   // std::accumulate
 #include <string>
 #include <vector>
@@ -33,34 +33,21 @@ DictionaryAccessFlagManager::all_accessed( const dictionary& dict,
   const std::string where,
   const std::string what ) const
 {
-  std::vector< key_type_ > keys;              // To hold keys of the dictionary
-  std::vector< key_type_ > accessed_keys;     // To hold accessed keys, copied from the unordered_set in access_flags_
-  std::vector< key_type_ > not_accessed_keys; // To hold keys in the dictionary that are not accessed
+  // Vector of elements in the dictionary that are not accessed
+  std::vector< dictionary::value_type > not_accessed_kv_pairs;
 
-  const auto access_set = access_flags_.at( &dict );
+  const auto& access_set = access_flags_.at( &dict );
+  const auto comparator = [&access_set](
+                            dictionary::value_type kv ) { return access_set.find( kv.first ) == access_set.end(); };
 
-  // Reserve memory for sizes we know
-  keys.reserve( dict.size() );
-  accessed_keys.reserve( access_set.size() );
-  // Copy the keys from the dictionary to the vector
-  for ( auto&& kv : dict )
+  std::copy_if( dict.begin(), dict.end(), std::back_inserter( not_accessed_kv_pairs ), comparator );
+
+  if ( not_accessed_kv_pairs.size() > 0 )
   {
-    keys.emplace_back( kv.first );
-  }
-  // Copy the keys from the set of accessed keys to the vector
-  std::copy( access_set.begin(), access_set.end(), std::back_inserter( accessed_keys ) );
-  // Sort keys so we can use set_difference to find unaccessed keys
-  std::sort( keys.begin(), keys.end() );
-  std::sort( accessed_keys.begin(), accessed_keys.end() );
-  std::set_difference(
-    keys.begin(), keys.end(), accessed_keys.begin(), accessed_keys.end(), std::back_inserter( not_accessed_keys ) );
-
-  if ( not_accessed_keys.size() > 0 )
-  {
-    const auto missed = std::accumulate(
-      not_accessed_keys.begin(), not_accessed_keys.end(), key_type_(), []( const key_type_& a, const key_type_& b ) {
-        return a + " " + b;
-      } );
+    const auto missed = std::accumulate( not_accessed_kv_pairs.begin(),
+      not_accessed_kv_pairs.end(),
+      key_type_(),
+      []( const key_type_& a, const dictionary::value_type& b ) { return a + " " + b.first; } );
 
     // TODO-PYNEST-NG: special case for blank <what> ("unaccessed elements in function <where>")?
 

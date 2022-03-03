@@ -54,6 +54,10 @@ bool value_equal( const boost::any first, const boost::any second );
 
 class dictionary : public std::map< std::string, boost::any >
 {
+  // TODO-PYNEST-NG: Meta-information about entries:
+  //                   * Value type (enum?)
+  //                   * Whether value is writable
+  //                   * Docstring for each entry
 private:
   using maptype_ = std::map< std::string, boost::any >;
 

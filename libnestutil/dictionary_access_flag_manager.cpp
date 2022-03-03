@@ -54,6 +54,7 @@ DictionaryAccessFlagManager::all_accessed( const dictionary& dict,
     throw UnaccessedDictionaryEntry( std::string( "unaccessed elements in " ) + what + std::string( ", in function " )
       + where + std::string( ": " ) + missed );
   }
+  // TODO-PYNEST-NG: clear access_flags_[ &dict ] to reclaim memory?
 }
 
 bool

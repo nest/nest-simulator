@@ -140,6 +140,12 @@ Node::get_local_device_id() const
   assert( false && "set_local_device_id() called on a non-device node." );
 }
 
+void
+Node::add_synapse_to_check( adjustentry& )
+{
+  throw UnexpectedEvent();
+}
+
 DictionaryDatum
 Node::get_status_base()
 {

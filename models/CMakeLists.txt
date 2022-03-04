@@ -67,6 +67,7 @@ set( models_sources
     iaf_cond_exp.h iaf_cond_exp.cpp
     iaf_cond_exp_sfa_rr.h iaf_cond_exp_sfa_rr.cpp
     iaf_psc_alpha.h iaf_psc_alpha.cpp
+    iaf_psc_alpha_ax_delay.h iaf_psc_alpha_ax_delay.cpp
     iaf_psc_alpha_canon.cpp iaf_psc_alpha_canon.cpp
     iaf_psc_alpha_multisynapse.h iaf_psc_alpha_multisynapse.cpp
     iaf_psc_alpha_ps.cpp iaf_psc_alpha_ps.h
@@ -124,6 +125,7 @@ set( models_sources
     stdp_nn_restr_synapse.h
     stdp_nn_symm_synapse.h
     stdp_pl_synapse_hom.h stdp_pl_synapse_hom.cpp
+    stdp_pl_synapse_hom_ax_delay.h stdp_pl_synapse_hom_ax_delay.cpp
     stdp_synapse.h
     stdp_synapse_facetshw_hom.h stdp_synapse_facetshw_hom_impl.h
     stdp_synapse_hom.h stdp_synapse_hom.cpp

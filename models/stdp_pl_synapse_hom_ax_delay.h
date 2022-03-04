@@ -1,5 +1,5 @@
 /*
- *  stdp_pl_synapse_hom.h
+ *  stdp_pl_synapse_hom_ax_delay.h
  *
  *  This file is part of NEST.
  *
@@ -20,13 +20,14 @@
  *
  */
 
-#ifndef STDP_PL_SYNAPSE_HOM_H
-#define STDP_PL_SYNAPSE_HOM_H
+#ifndef STDP_PL_SYNAPSE_HOM_AX_DELAY_H
+#define STDP_PL_SYNAPSE_HOM_AX_DELAY_H
 
 // C++ includes:
 #include <cmath>
 
 // Includes from nestkernel:
+#include "adjustentry.h"
 #include "connection.h"
 
 namespace nest
@@ -88,9 +89,9 @@ EndUserDocs */
 
 /**
  * Class containing the common properties for all synapses of type
- * stdp_pl_synapse_hom.
+ * stdp_pl_synapse_hom_ax_delay.
  */
-class STDPPLHomCommonProperties : public CommonSynapseProperties
+class STDPPLHomAxDelayCommonProperties : public CommonSynapseProperties
 {
 
 public:
@@ -98,7 +99,7 @@ public:
    * Default constructor.
    * Sets all property values to defaults.
    */
-  STDPPLHomCommonProperties();
+  STDPPLHomAxDelayCommonProperties();
 
   /**
    * Get all properties and put them into a dictionary.
@@ -125,11 +126,11 @@ public:
  * parameters are the same for all synapses.
  */
 template < typename targetidentifierT >
-class stdp_pl_synapse_hom : public Connection< targetidentifierT >
+class stdp_pl_synapse_hom_ax_delay : public Connection< targetidentifierT >
 {
 
 public:
-  typedef STDPPLHomCommonProperties CommonPropertiesType;
+  typedef STDPPLHomAxDelayCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
 
@@ -137,14 +138,14 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  stdp_pl_synapse_hom();
+  stdp_pl_synapse_hom_ax_delay();
 
   /**
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  stdp_pl_synapse_hom( const stdp_pl_synapse_hom& ) = default;
-  stdp_pl_synapse_hom& operator=( const stdp_pl_synapse_hom& ) = default;
+  stdp_pl_synapse_hom_ax_delay( const stdp_pl_synapse_hom_ax_delay& ) = default;
+  stdp_pl_synapse_hom_ax_delay& operator=( const stdp_pl_synapse_hom_ax_delay& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -169,7 +170,12 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, const STDPPLHomCommonProperties& );
+  void send( Event& e, thread t, const STDPPLHomAxDelayCommonProperties& );
+
+  /**
+   * Adjusts the weight according to the missed spike.
+   */
+  void adjust_weight( adjustentry* a, const double missing_spike, const STDPPLHomAxDelayCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -227,13 +233,13 @@ public:
 
 private:
   double
-  facilitate_( double w, double kplus, const STDPPLHomCommonProperties& cp )
+  facilitate_( double w, double kplus, const STDPPLHomAxDelayCommonProperties& cp )
   {
     return w + ( cp.lambda_ * std::pow( w, cp.mu_ ) * kplus );
   }
 
   double
-  depress_( double w, double kminus, const STDPPLHomCommonProperties& cp )
+  depress_( double w, double kminus, const STDPPLHomAxDelayCommonProperties& cp )
   {
     double new_w = w - ( cp.lambda_ * cp.alpha_ * w * kminus );
     return new_w > 0.0 ? new_w : 0.0;
@@ -246,7 +252,7 @@ private:
 };
 
 //
-// Implementation of class stdp_pl_synapse_hom.
+// Implementation of class stdp_pl_synapse_hom_ax_delay.
 //
 
 /**
@@ -256,7 +262,9 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPPLHomCommonProperties& cp )
+stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
+  thread t,
+  const STDPPLHomAxDelayCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
 
@@ -286,6 +294,9 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPPL
     start++;
   }
 
+  // store weight before depression for potential adjustment
+  const double old_weight = weight_;
+
   // depression due to new pre-synaptic spike
   const double K_minus = target->get_K_value( t_spike + cp.axonal_delay_ - dendritic_delay );
   weight_ = depress_( weight_, K_minus, cp );
@@ -296,13 +307,25 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPPL
   e.set_rport( get_rport() );
   e();
 
+  if ( cp.axonal_delay_ > dendritic_delay )
+  {
+    SpikeData sender_spike_data_ = e.get_sender_spike_data();
+    adjustentry a = adjustentry( t_lastspike_,
+      old_weight,
+      t_spike + cp.axonal_delay_ - dendritic_delay,
+      sender_spike_data_.get_tid(),
+      sender_spike_data_.get_syn_id(),
+      sender_spike_data_.get_lcid() );
+    target->add_synapse_to_check( a );
+  }
+
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
 
   t_lastspike_ = t_spike;
 }
 
 template < typename targetidentifierT >
-stdp_pl_synapse_hom< targetidentifierT >::stdp_pl_synapse_hom()
+stdp_pl_synapse_hom_ax_delay< targetidentifierT >::stdp_pl_synapse_hom_ax_delay()
   : ConnectionBase()
   , weight_( 1.0 )
   , Kplus_( 0.0 )
@@ -312,7 +335,7 @@ stdp_pl_synapse_hom< targetidentifierT >::stdp_pl_synapse_hom()
 
 template < typename targetidentifierT >
 void
-stdp_pl_synapse_hom< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_pl_synapse_hom_ax_delay< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
 
   // base class properties, different for individual synapse
@@ -326,7 +349,7 @@ stdp_pl_synapse_hom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-stdp_pl_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_pl_synapse_hom_ax_delay< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
@@ -335,6 +358,60 @@ stdp_pl_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, 
   updateValue< double >( d, names::Kplus, Kplus_ );
 }
 
+template < typename targetidentifierT >
+inline void
+stdp_pl_synapse_hom_ax_delay< targetidentifierT >::adjust_weight( adjustentry* a,
+  const double missing_spike,
+  const STDPPLHomAxDelayCommonProperties& cp )
+{
+  const double ori_weight_ = weight_;
+  weight_ = a->old_weight_; // removes the last depressive step
+
+  Node* target = get_target( a->tid_ );
+
+  double dendritic_delay = get_delay() - cp.axonal_delay_;
+  double t_spike = a->t_received_ - cp.axonal_delay_ + dendritic_delay;
+
+  std::deque< histentry >::iterator start;
+  std::deque< histentry >::iterator finish;
+
+  // we know the time but read it anyway as this then keeps the access counter correct
+  target->get_history( missing_spike - 1e-3, missing_spike + 1e-3, &start, &finish );
+
+  while ( start != finish )
+  {
+    start++;
+  }
+
+  // facilitation due to new post-synaptic spike
+  const double minus_dt = a->t_lastspike_ + cp.axonal_delay_ - ( missing_spike + dendritic_delay );
+  if ( minus_dt >= 0 )
+  {
+    std::cout << minus_dt << "\tmissing\t" << missing_spike << "\tlast_spike\t" << a->t_lastspike_ << "\tweight\t"
+              << ori_weight_ << std::endl;
+    return;
+  }
+  assert( minus_dt < 0 ); // -1.0 * kernel().connection_manager.get_stdp_eps() );
+  double Kplus_corr =
+    ( Kplus_ - 1.0 ) / std::exp( ( a->t_lastspike_ - t_spike ) / cp.tau_plus_ ); // TODO: check with test
+  weight_ = facilitate_( weight_, Kplus_corr * std::exp( minus_dt / cp.tau_plus_ ), cp );
+
+  // update adjustentry in case there are more post spikes
+  a->old_weight_ = weight_;
+
+  // depression taking into account new post-synaptic spike
+  const double K_minus = target->get_K_value( t_spike + cp.axonal_delay_ - dendritic_delay );
+  weight_ = depress_( weight_, K_minus, cp );
+
+  SpikeEvent e;
+  e.set_receiver( *target );
+  e.set_weight( weight_ - ori_weight_ );
+  e.set_delay_steps( get_delay_steps() );
+  e.set_rport( get_rport() );
+  e.set_stamp( Time::ms_stamp( t_spike ) );
+  e();
+}
+
 } // of namespace nest
 
-#endif // of #ifndef STDP_PL_SYNAPSE_HOM_H
+#endif // of #ifndef STDP_PL_SYNAPSE_HOM_AX_DELAY_H

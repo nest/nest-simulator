@@ -63,6 +63,7 @@
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_psc_alpha.h"
+#include "iaf_psc_alpha_ax_delay.h"
 #include "iaf_psc_alpha_canon.h"
 #include "iaf_psc_alpha_multisynapse.h"
 #include "iaf_psc_alpha_ps.h"
@@ -137,6 +138,7 @@
 #include "stdp_nn_restr_synapse.h"
 #include "stdp_nn_symm_synapse.h"
 #include "stdp_pl_synapse_hom.h"
+#include "stdp_pl_synapse_hom_ax_delay.h"
 #include "stdp_synapse.h"
 #include "stdp_synapse_facetshw_hom.h"
 #include "stdp_synapse_facetshw_hom_impl.h"
@@ -216,6 +218,7 @@ ModelsModule::init( SLIInterpreter* )
 
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_ax_delay >( "iaf_psc_alpha_ax_delay" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_canon >(
     "iaf_psc_alpha_canon", /*deprecation_info*/ "a future version of NEST" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
@@ -330,6 +333,7 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< stdp_nn_symm_synapse >( "stdp_nn_symm_synapse" );
   register_connection_model< stdp_nn_pre_centered_synapse >( "stdp_nn_pre_centered_synapse" );
   register_connection_model< stdp_pl_synapse_hom >( "stdp_pl_synapse_hom" );
+  register_connection_model< stdp_pl_synapse_hom_ax_delay >( "stdp_pl_synapse_hom_ax_delay" );
   register_connection_model< stdp_triplet_synapse >( "stdp_triplet_synapse" );
   register_connection_model< tsodyks_synapse >( "tsodyks_synapse" );
   register_connection_model< tsodyks_synapse_hom >( "tsodyks_synapse_hom" );

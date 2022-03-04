@@ -32,6 +32,7 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "adjustentry.h"
 #include "event.h"
 #include "histentry.h"
 #include "nest_names.h"
@@ -816,6 +817,11 @@ public:
    * @see set_local_device_id
    */
   virtual index get_local_device_id() const;
+
+  /**
+   * Adds synapses to be checked for missed spike data.
+   */
+  virtual void add_synapse_to_check( adjustentry& );
 
   /**
    * Member of DeprecationWarning class to be used by models if parameters are

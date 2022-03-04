@@ -28,6 +28,7 @@
 #include <deque>
 
 // Includes from nestkernel:
+#include "adjustentry.h"
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -128,6 +129,12 @@ public:
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d );
 
+  /**
+   * Adds synapses to be checked for missed spike data.
+   */
+  void add_synapse_to_check( adjustentry& );
+
+
 protected:
   /**
    * \fn void set_spiketime(Time const & t_sp, double offset)
@@ -140,6 +147,12 @@ protected:
    * return most recent spike time in ms
    */
   inline double get_spiketime_ms() const;
+
+
+  /**
+   * Resets synsapses to check for missed spike
+   */
+  void reset_syns_to_check();
 
   /**
    * \fn void clear_history()
@@ -170,6 +183,11 @@ private:
   double trace_;
 
   double last_spike_;
+
+  // adjusting weights for missed spike in axonal delay
+  void adjust_weights();
+
+  std::vector< adjustentry > syns_to_check_;
 
   // spiking history needed by stdp synapses
   std::deque< histentry > history_;

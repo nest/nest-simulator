@@ -49,6 +49,8 @@ namespace nest
 
 class ConnectorModel;
 
+class adjustentry;
+
 /**
  * Base class for dummy nodes used in connection testing.
  *
@@ -158,6 +160,11 @@ public:
    * Calibrate the delay of this connection to the desired resolution.
    */
   void calibrate( const TimeConverter& );
+
+  /**
+   * Adjusting weights if axonal delay is greater than 0
+   */
+  void adjust_weight( adjustentry*, const double, const CommonSynapseProperties& );
 
   /**
    * Return the delay of the connection in ms
@@ -381,6 +388,13 @@ Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
   {
     syn_id_delay_.delay = 1;
   }
+}
+
+template < typename targetidentifierT >
+inline void
+Connection< targetidentifierT >::adjust_weight( adjustentry*, const double, const CommonSynapseProperties& )
+{
+  throw IllegalConnection( "Not implemented" );
 }
 
 template < typename targetidentifierT >

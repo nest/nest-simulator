@@ -61,6 +61,16 @@ Connector< ConnectionT >::send_weight_event( const thread tid,
   }
 }
 
+template < typename ConnectionT >
+void
+Connector< ConnectionT >::adjust_weight( adjustentry* a, const double t_lastspike_post_syn )
+{
+  typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >(
+    kernel().model_manager.get_connection_models( a->tid_ )[ a->syn_id_ ] )
+                                                           ->get_common_properties();
+  C_[ a->lcid_ ].adjust_weight( a, t_lastspike_post_syn, cp );
+}
+
 } // of namespace nest
 
 #endif

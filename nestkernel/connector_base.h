@@ -157,6 +157,8 @@ public:
    */
   virtual index send( const thread tid, const index lcid, const std::vector< ConnectorModel* >& cm, Event& e ) = 0;
 
+  virtual void adjust_weight( adjustentry* a, const double t_lastspike_post_syn ) = 0;
+
   virtual void
   send_weight_event( const thread tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) = 0;
 
@@ -410,6 +412,8 @@ public:
 
     return 1 + lcid_offset; // event was delivered to at least one target
   }
+
+  void adjust_weight( adjustentry* a, const double t_lastspike_post_syn );
 
   // Implemented in connector_base_impl.h
   void send_weight_event( const thread tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp );

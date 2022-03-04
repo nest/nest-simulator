@@ -215,6 +215,7 @@ nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
   {
     last_spike_ = t_sp_ms;
   }
+  adjust_weights();
 }
 
 void
@@ -261,6 +262,30 @@ nest::ArchivingNode::set_status( const DictionaryDatum& d )
   {
     clear_history();
   }
+}
+
+void
+ArchivingNode::add_synapse_to_check( adjustentry& a )
+{
+  syns_to_check_.push_back( a );
+}
+
+void
+nest::ArchivingNode::adjust_weights()
+{
+  for ( auto it = syns_to_check_.begin(); it < syns_to_check_.end(); ++it )
+  {
+    if ( ( it->t_received_ - last_spike_ ) > -1.0 * kernel().connection_manager.get_stdp_eps() )
+    {
+      kernel().connection_manager.adjust_weight( &( *it ), last_spike_ );
+    }
+  }
+}
+
+void
+ArchivingNode::reset_syns_to_check()
+{
+  syns_to_check_.clear();
 }
 
 void

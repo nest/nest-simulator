@@ -256,6 +256,8 @@ public:
   void
   send( const thread tid, const synindex syn_id, const index lcid, const std::vector< ConnectorModel* >& cm, Event& e );
 
+  void adjust_weight( adjustentry* a, const double t_lastspike_post_syn );
+
   /**
    * Send event e to all device targets of source source_node_id
    */
@@ -829,6 +831,12 @@ ConnectionManager::send( const thread tid,
   Event& e )
 {
   connections_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
+}
+
+inline void
+ConnectionManager::adjust_weight( adjustentry* a, const double t_lastspike_post_syn )
+{
+  connections_[ a->tid_ ][ a->syn_id_ ]->adjust_weight( a, t_lastspike_post_syn );
 }
 
 inline void

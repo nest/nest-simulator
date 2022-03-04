@@ -1608,10 +1608,12 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   const std::vector< DictionaryDatum >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
-  // Astrocytes
+  // For astrocyte connectivity
   astrocytes_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
   astrocytes_size_ = astrocytes_->size();
   targets_size_ = targets->size();
+  is_target_with_astro_.resize( targets_size_ );
+  std::fill( is_target_with_astro_.begin(), is_target_with_astro_.end(), false );
   
   // Probability of neuron=>neuron connection
   ParameterDatum* pd_p = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
@@ -1776,6 +1778,7 @@ nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* ta
 {
   const thread target_thread = target->get_thread();
   std::vector< index > snode_ids;
+  long index_target = targets_->find( tnode_id );
 
   // check whether the target is on our thread
   if ( tid != target_thread )
@@ -1810,21 +1813,24 @@ nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* ta
       w_ * ( 1 - c_spill_) );
     snode_ids.push_back( snode_id );
   }
-  
+
+  // Return if no source neuron for this target neuron
+  if ( snode_ids.size() == 0 )
+  {
+    return;
+  }
+
   // Connections with astrocytes
   NodeCollection::const_iterator astro_it = astrocytes_->begin();
   for ( ; astro_it < astrocytes_->end(); ++astro_it )
   {
     const index astro_id = ( *astro_it ).node_id;
+    long index_astro = astrocytes_->find( astro_id );
 
-    //if ( not allow_autapses_ and astro_id == tnode_id )
-    //{
-    //  continue;
-    //}
     // Bernoulli connection
     if ( astro_isBernoulli == true )
     {
-      if ( rng->drand() >= p_astro_->value( rng, target ) )
+      if ( ( rng->drand() >= p_astro_->value( rng, target ) ) || ( is_target_with_astro_[ index_target ] == true ) )
       {
         continue;
       }
@@ -1832,14 +1838,13 @@ nest::BernoulliAstroBuilder::inner_connect_( const int tid, RngPtr rng, Node* ta
     // Even distribution
     else
     {
-      long index_target = targets_->find( tnode_id );
-      long index_astro = astrocytes_->find( astro_id );
-      if ( index_astro != std::floor( float(index_target) * float(astrocytes_size_) / float(targets_size_) ) )
+      if ( index_astro != std::floor( float( index_target ) * float( astrocytes_size_ ) / float( targets_size_ ) ) )
       {
         continue;
       }
     }
     single_connect_astro_( astro_id, snode_ids, *target, target_thread, rng );
+    is_target_with_astro_[ index_target ] = true;
   }
 }
 

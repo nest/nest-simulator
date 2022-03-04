@@ -451,10 +451,11 @@ private:
   double w_; // synaptic weight neuron=>neuron
   double d_; // synaptic delay neuron=>neuron
   double w_astro_; // synaptic weight astrocyte=>neuron
-  // For astrocyte=>neuron connection rule
+  // For astrocyte connections
   bool astro_isBernoulli;
   int astrocytes_size_;
   int targets_size_;
+  std::vector< bool > is_target_with_astro_;
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

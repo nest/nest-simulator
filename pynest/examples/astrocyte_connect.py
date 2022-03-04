@@ -6,6 +6,8 @@ post_neurons = nest.Create('aeif_cond_alpha_astro', 10)
 astrocytes = nest.Create('astrocyte', 10)
 
 # Connect
+## When p_astro is given, astrocyte=>neuron is Bernoulli connection
+## When p_astro not given, astrocyte=>neuron is evenly distributed
 nest.Connect(
     pre_neurons, post_neurons,
     conn_spec=dict(

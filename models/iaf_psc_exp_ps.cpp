@@ -254,7 +254,7 @@ nest::iaf_psc_exp_ps::calibrate()
 
   V_.h_ms_ = Time::get_resolution().get_ms();
 
-  V_.expm1_tau_m_ =std::expm1( -V_.h_ms_ / P_.tau_m_ );
+  V_.expm1_tau_m_ = std::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.exp_tau_ex_ = std::exp( -V_.h_ms_ / P_.tau_ex_ );
   V_.exp_tau_in_ = std::exp( -V_.h_ms_ / P_.tau_in_ );
   V_.P20_ = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -V_.h_ms_ / P_.tau_m_ );

@@ -113,12 +113,12 @@ subsequently to connect synapses to the receptor:
   Each compartments' respective "receptors" entries can be a dictionary or a list
   of dictionaries containing receptor details. When a dictionary is provided,
   a single compartment receptor is added to the model. When a list of dicts
-  is provided, multiple compartments receptors are added with a single
+  is provided, multiple compartments' receptors are added with a single
   ``nest.SetStatus()`` call.
 
 Compartment voltages can be recorded. To do so, create a multimeter in the
 standard manner but specify the recorded voltages as
-``v_comp{compartment_index}``. Ion channels state variables can be recorded as well,
+``v_comp{compartment_index}``. State variables for ion channels can be recorded as well,
 using the syntax ``{state_variable_name}{compartment_index}``. For receptor state
 variables, use the receptor index ``{state_variable_name}{receptor_index}``:
 
@@ -143,7 +143,7 @@ The following parameters can be set in the status dictionary.
  V_th       mV      Spike threshold (default: -55.0 mV)
 =========== ======= ===========================================================
 
-The following parameters can be set using the ``AddCompartment`` function
+The following parameters can be used when adding compartments using ``SetStatus()``
 
 =========== ======= ===============================================================
  C_m        uF      Capacitance of compartment (default: 1 uF)

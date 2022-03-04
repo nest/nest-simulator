@@ -117,13 +117,17 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
   assert( pnode );
   const nest::iaf_cond_alpha_mc& node = *( reinterpret_cast< nest::iaf_cond_alpha_mc* >( pnode ) );
 
+  const bool is_refractory = node.S_.r_ > 0;
+
   // compute dynamics for each compartment
   // computations written quite explicitly for clarity, assume compile
   // will optimized most stuff away ...
   for ( size_t n = 0; n < N::NCOMP; ++n )
   {
     // membrane potential for current compartment
-    const double V = y[ S::idx( n, S::V_M ) ];
+    const double V = is_refractory ? node.P_.V_reset : std::min(  y[ S::idx( n, S::V_M ) ], node.P_.V_th );
+    const double V_nm1 = is_refractory ? node.P_.V_reset : std::min( y[ S::idx( n - 1, S::V_M ) ], node.P_.V_th );
+    const double V_np1 = is_refractory ? node.P_.V_reset : std::min( y[ S::idx( n + 1, S::V_M ) ], node.P_.V_th );
 
     // excitatory synaptic current
     const double I_syn_exc = y[ S::idx( n, S::G_EXC ) ] * ( V - node.P_.E_ex[ n ] );
@@ -135,13 +139,14 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
     const double I_L = node.P_.g_L[ n ] * ( V - node.P_.E_L[ n ] );
 
     // coupling currents
-    const double I_conn = ( n > N::SOMA ? node.P_.g_conn[ n - 1 ] * ( V - y[ S::idx( n - 1, S::V_M ) ] ) : 0 )
-      + ( n < N::NCOMP - 1 ? node.P_.g_conn[ n ] * ( V - y[ S::idx( n + 1, S::V_M ) ] ) : 0 );
+    const double I_conn = ( n > N::SOMA ? node.P_.g_conn[ n - 1 ] * ( V - V_nm1 ) : 0 )
+      + ( n < N::NCOMP - 1 ? node.P_.g_conn[ n ] * ( V - V_np1 ) : 0 );
 
     // derivatives
     // membrane potential
-    f[ S::idx( n, S::V_M ) ] =
-      ( -I_L - I_syn_exc - I_syn_inh - I_conn + node.B_.I_stim_[ n ] + node.P_.I_e[ n ] ) / node.P_.C_m[ n ];
+    f[ S::idx( n, S::V_M ) ] = is_refractory
+      ? 0.0
+      : ( -I_L - I_syn_exc - I_syn_inh - I_conn + node.B_.I_stim_[ n ] + node.P_.I_e[ n ] ) / node.P_.C_m[ n ];
 
     // excitatory conductance
     f[ S::idx( n, S::DG_EXC ) ] = -y[ S::idx( n, S::DG_EXC ) ] / node.P_.tau_synE[ n ];

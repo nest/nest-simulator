@@ -499,9 +499,9 @@ iaf_psc_exp_ps_lossless::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  ArchivingNode::get_status( d );
 
-  def< double >( d, names::t_spike, get_spiketime_ms() );
+  ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
@@ -511,6 +511,12 @@ iaf_psc_exp_ps_lossless::set_status( const DictionaryDatum& d )
   double delta_EL = ptmp.set( d, this ); // throws if BadProperty
   State_ stmp = S_;                      // temporary copy in case of errors
   stmp.set( d, ptmp, delta_EL, this );   // throws if BadProperty
+
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  ArchivingNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -52,9 +52,9 @@ start() {
   if pid > /dev/null;  then
     echo "NEST Server is already running at http://${HOST}:${PORT}."
   else
-    echo "NEST Server is running at http://${HOST}:${PORT}."
+    echo "NEST Server is now running at http://${HOST}:${PORT}."
     if [ "${DAEMON}" -eq 0 ]; then
-      echo "Press CTRL + C to stop..."
+      echo "Use CTRL + C to stop this service."
       if [ "${STDOUT}" -eq 1 ]; then
         echo "-------------------------------------------------"
       fi
